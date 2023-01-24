@@ -52,10 +52,10 @@ public:
     constexpr bool get(size_t, Dependency = Dependency()) const;
     constexpr void set(size_t);
     constexpr void set(size_t, bool);
-    constexpr bool testAndSet(size_t);
-    constexpr bool testAndClear(size_t);
-    constexpr bool concurrentTestAndSet(size_t, Dependency = Dependency());
-    constexpr bool concurrentTestAndClear(size_t, Dependency = Dependency());
+    constexpr bool testAndSet(size_t); // Returns the previous bit value.
+    constexpr bool testAndClear(size_t); // Returns the previous bit value.
+    constexpr bool concurrentTestAndSet(size_t, Dependency = Dependency()); // Returns the previous bit value.
+    constexpr bool concurrentTestAndClear(size_t, Dependency = Dependency()); // Returns the previous bit value.
     constexpr size_t nextPossiblyUnset(size_t) const;
     constexpr void clear(size_t);
     constexpr void clearAll();
@@ -186,9 +186,9 @@ inline constexpr bool Bitmap<bitmapSize, WordType>::testAndSet(size_t n)
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
-    bool result = bits[index] & mask;
+    bool previousValue = bits[index] & mask;
     bits[index] |= mask;
-    return result;
+    return previousValue;
 }
 
 template<size_t bitmapSize, typename WordType>
@@ -196,9 +196,9 @@ inline constexpr bool Bitmap<bitmapSize, WordType>::testAndClear(size_t n)
 {
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
-    bool result = bits[index] & mask;
+    bool previousValue = bits[index] & mask;
     bits[index] &= ~mask;
-    return result;
+    return previousValue;
 }
 
 template<size_t bitmapSize, typename WordType>
@@ -207,6 +207,9 @@ ALWAYS_INLINE constexpr bool Bitmap<bitmapSize, WordType>::concurrentTestAndSet(
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* data = dependency.consume(bits.data()) + index;
+    // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
+    // then the previous bit must have been false since we're trying to set it. Hence,
+    // the result of transactionRelaxed() is the inverse of our expected result.
     return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&] (WordType& value) -> bool {
             if (value & mask)
@@ -223,7 +226,10 @@ ALWAYS_INLINE constexpr bool Bitmap<bitmapSize, WordType>::concurrentTestAndClea
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* data = dependency.consume(bits.data()) + index;
-    return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
+    // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
+    // then the previous bit must have been true since we're trying to clear it. Hence,
+    // the result of transactionRelaxed() matches our expected result.
+    return bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&] (WordType& value) -> bool {
             if (!(value & mask))
                 return false;
