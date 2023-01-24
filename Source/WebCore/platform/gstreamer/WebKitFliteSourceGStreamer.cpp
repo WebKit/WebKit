@@ -225,6 +225,9 @@ static Vector<GUniquePtr<cst_voice>>& fliteVoices()
 
 static cst_voice* fliteVoice(const char* name)
 {
+    if (!name)
+        return nullptr;
+
     for (auto& voice : fliteVoices()) {
         if (String::fromUTF8(voice->name) == String::fromUTF8(name))
             return voice.get();
@@ -250,13 +253,16 @@ Vector<Ref<PlatformSpeechSynthesisVoice>>& ensureFliteVoicesInitialized()
     return voiceList;
 }
 
-void webKitFliteSrcSetUtterance(WebKitFliteSrc* src, const String& text, const PlatformSpeechSynthesisVoice& platformSpeechSynthesisVoice)
+void webKitFliteSrcSetUtterance(WebKitFliteSrc* src, const PlatformSpeechSynthesisVoice* platformSpeechSynthesisVoice, const String& text)
 {
     WebKitFliteSrcPrivate* priv = src->priv;
 
     ASSERT(!fliteVoices().isEmpty());
 
-    cst_voice* voice = fliteVoice(platformSpeechSynthesisVoice.name().utf8().data());
+    cst_voice* voice = nullptr;
+    if (platformSpeechSynthesisVoice && !platformSpeechSynthesisVoice->name().isEmpty())
+        voice = fliteVoice(platformSpeechSynthesisVoice->name().utf8().data());
+
     // We use the first registered voice as default, where no voice is specified.
     priv->currentVoice = voice ? voice : fliteVoices()[0].get();
     priv->text = text;
