@@ -185,7 +185,7 @@ static EncodedJSValue arrayBufferSlice(JSGlobalObject* globalObject, JSValue arr
         else
             finalIndex = static_cast<unsigned>(std::min<double>(relativeEnd, byteLength));
     } else
-        finalIndex = thisObject->impl()->byteLength();
+        finalIndex = byteLength;
     ASSERT(finalIndex <= byteLength);
 
     // 14. Let newLen be max(final - first, 0).
