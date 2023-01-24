@@ -1261,10 +1261,14 @@
 (allow mach-bootstrap
     (apply-message-filter
         (deny mach-message-send)
-        (with-filter (require-not (state-flag "WebContentProcessLaunched"))
-            (allow mach-message-send (mach-bootstrap-message-numbers)))
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
         (with-filter (extension "com.apple.webkit.mach-bootstrap")
-            (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))))
+            (allow mach-message-send (mach-bootstrap-message-numbers-post-launch)))
+#else
+        (allow mach-message-send (mach-bootstrap-message-numbers-post-launch))
+#endif
+        (with-filter (require-not (state-flag "WebContentProcessLaunched"))
+            (allow mach-message-send (mach-bootstrap-message-numbers)))))
 #else
 (allow-mach-bootstrap-with-filter)
 #endif

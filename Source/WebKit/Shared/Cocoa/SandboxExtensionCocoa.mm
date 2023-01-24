@@ -347,8 +347,10 @@ auto SandboxExtension::createHandlesForMachLookup(Span<const ASCIILiteral> servi
         return handle;
     });
 
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
     if (machBootstrapOptions == MachBootstrapOptions::EnableMachBootstrap)
         handles.append(createHandleForMachBootstrapExtension());
+#endif
 
     return handles;
 }
