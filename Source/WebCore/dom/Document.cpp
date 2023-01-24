@@ -4995,6 +4995,11 @@ void Document::setCSSTarget(Element* newTarget)
     m_cssTarget = newTarget;
 }
 
+Element* Document::cssTarget() const
+{
+    return m_cssTarget.get();
+}
+
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]++;
