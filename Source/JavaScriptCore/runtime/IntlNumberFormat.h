@@ -89,15 +89,15 @@ public:
     IntlMathematicalValue() = default;
 
     explicit IntlMathematicalValue(double value)
-        : m_numberType(numberTypeFromDouble(value))
-        , m_sign(std::signbit(value))
-        , m_value(value)
+        : m_value(purifyNaN(value))
+        , m_numberType(numberTypeFromDouble(value))
+        , m_sign(!std::isnan(value) && std::signbit(value))
     { }
 
     explicit IntlMathematicalValue(NumberType numberType, bool sign, CString value)
-        : m_numberType(numberType)
+        : m_value(value)
+        , m_numberType(numberType)
         , m_sign(sign)
-        , m_value(value)
     {
     }
 
@@ -147,9 +147,9 @@ public:
     }
 
 private:
+    Value m_value { 0.0 };
     NumberType m_numberType { NumberType::Integer };
     bool m_sign { false };
-    Value m_value { 0.0 };
 };
 
 class IntlNumberFormat final : public JSNonFinalObject {

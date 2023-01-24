@@ -382,6 +382,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
             skeletonBuilder.append('0');
 
         // 3.l. If value is not 0 or display is not "auto", then
+        value = purifyNaN(value);
         if (value != 0 || unitData.display() != IntlDurationFormat::Display::Auto) {
             auto formatDouble = [&](const String& skeleton) -> String {
                 auto scope = DECLARE_THROW_SCOPE(vm);

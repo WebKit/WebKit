@@ -766,6 +766,8 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value) con
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
+    value = purifyNaN(value);
+
     Vector<UChar, 32> buffer;
 #if HAVE(ICU_U_NUMBER_FORMATTER)
     ASSERT(m_numberFormatter);
@@ -1519,6 +1521,8 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    value = purifyNaN(value);
 
     UErrorCode status = U_ZERO_ERROR;
     auto fieldItr = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
