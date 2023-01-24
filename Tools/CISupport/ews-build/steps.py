@@ -1926,7 +1926,7 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
 class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'block-pull-request'
 
-    def start(self):
+    def run(self):
         pr_number = self.getProperty('github.number', '')
         build_finish_summary = self.getProperty('build_finish_summary', None)
 
@@ -1942,10 +1942,9 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
                 not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
             )):
                 rc = FAILURE
-        self.finished(rc)
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
-        return None
+        return rc
 
     def getResultSummary(self):
         if self.results == SUCCESS:
