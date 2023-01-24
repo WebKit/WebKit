@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,75 +25,25 @@
 
 #pragma once
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
 #include "GPUBasedCanvasRenderingContext.h"
-#include "GPUCanvasConfiguration.h"
-#include "GPUSurface.h"
-#include "GPUSwapChain.h"
-#include "GPUTexture.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
-#include "HTMLCanvasElement.h"
-#include "IOSurface.h"
-#include "OffscreenCanvas.h"
-#include "PlatformCALayer.h"
 #include <variant>
-#include <wtf/MachSendRight.h>
-#endif
-
+#include <wtf/IsoMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
+#if ENABLE(OFFSCREEN_CANVAS)
+#include "OffscreenCanvas.h"
+#endif
+
 namespace WebCore {
 
-class DisplayBufferDisplayDelegate final : public GraphicsLayerContentsDisplayDelegate {
-public:
-    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque = true, float contentsScale = 1)
-    {
-        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, contentsScale));
-    }
-    // GraphicsLayerContentsDisplayDelegate overrides.
-    void prepareToDelegateDisplay(PlatformCALayer& layer) final
-    {
-        layer.setOpaque(m_isOpaque);
-        layer.setContentsScale(m_contentsScale);
-    }
-    void display(PlatformCALayer& layer) final
-    {
-        if (m_displayBuffer)
-            layer.setContents(m_displayBuffer);
-        else
-            layer.clearContents();
-    }
-    GraphicsLayer::CompositingCoordinatesOrientation orientation() const final
-    {
-        return GraphicsLayer::CompositingCoordinatesOrientation::TopDown;
-    }
-    void setDisplayBuffer(WTF::MachSendRight&& displayBuffer)
-    {
-        if (!displayBuffer) {
-            m_displayBuffer = { };
-            return;
-        }
+class CanvasBase;
+class GPU;
+struct GPUCanvasConfiguration;
+class GPUTexture;
 
-        if (m_displayBuffer && displayBuffer.sendRight() == m_displayBuffer.sendRight())
-            return;
-
-        m_displayBuffer = displayBuffer.copySendRight();
-    }
-private:
-    DisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
-        : m_contentsScale(contentsScale)
-        , m_isOpaque(isOpaque)
-    {
-    }
-    WTF::MachSendRight m_displayBuffer;
-    const float m_contentsScale;
-    const bool m_isOpaque;
-};
-
-class GPUCanvasContext final : public GPUBasedCanvasRenderingContext {
+class GPUCanvasContext : public GPUBasedCanvasRenderingContext {
     WTF_MAKE_ISO_ALLOCATED(GPUCanvasContext);
 public:
 #if ENABLE(OFFSCREEN_CANVAS)
@@ -104,23 +54,10 @@ public:
 
     static std::unique_ptr<GPUCanvasContext> create(CanvasBase&);
 
-    DestinationColorSpace colorSpace() const override;
-    bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
-    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
-    bool needsPreparationForDisplay() const override { return true; }
-    void prepareForDisplay() override;
-    PixelFormat pixelFormat() const override;
-    void reshape(int width, int height) override;
-
-    // FIXME: implement these to allow for painting
-    void prepareForDisplayWithPaint() override { }
-    void paintRenderingResultsToCanvas() override { }
-    // GPUCanvasContext methods:
-    CanvasType canvas();
-    void configure(GPUCanvasConfiguration&&);
-    RefPtr<GPUTexture> getCurrentTexture();
-
-    void unconfigure();
+    virtual CanvasType canvas() = 0;
+    virtual void configure(GPUCanvasConfiguration&&) = 0;
+    virtual void unconfigure() = 0;
+    virtual RefPtr<GPUTexture> getCurrentTexture() = 0;
 
     bool isWebGPU() const override { return true; }
     const char* activeDOMObjectName() const override
@@ -128,32 +65,10 @@ public:
         return "GPUCanvasElement";
     }
 
-private:
-    explicit GPUCanvasContext(CanvasBase&);
-
-    void markContextChangedAndNotifyCanvasObservers();
-    void createSwapChainIfNeeded();
-
-    std::optional<GPUCanvasConfiguration> m_configuration;
-    Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
-    RefPtr<GPUSwapChain> m_swapChain;
-    RefPtr<GPUSurface> m_surface;
-
-    int m_width { 0 };
-    int m_height { 0 };
-    bool m_compositingResultsNeedsUpdating { false };
+protected:
+    GPUCanvasContext(CanvasBase&);
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::GPUCanvasContext, isWebGPU())
-
-#else
-namespace WebCore {
-
-class GPUCanvasContext : public RefCounted<GPUCanvasContext> {
-public:
-};
-
-}
-#endif // HAVE(WEBGPU_IMPLEMENTATION)

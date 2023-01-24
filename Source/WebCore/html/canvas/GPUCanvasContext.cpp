@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,201 +24,24 @@
  */
 
 #include "config.h"
-
-#if HAVE(WEBGPU_IMPLEMENTATION)
-
 #include "GPUCanvasContext.h"
 
-#include "GPUAdapter.h"
-#include "GPUCanvasConfiguration.h"
-#include "GPUSurface.h"
-#include "GPUSurfaceDescriptor.h"
-#include "GPUSwapChain.h"
-#include "GPUSwapChainDescriptor.h"
-#include "GPUTextureDescriptor.h"
-#include "GraphicsLayerContentsDisplayDelegate.h"
-#include "RenderBox.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-static IntSize getCanvasSizeAsIntSize(const GPUCanvasContext::CanvasType& canvas)
-{
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> IntSize {
-        auto scaleFactor = htmlCanvas->document().deviceScaleFactor();
-        return { static_cast<int>(scaleFactor * htmlCanvas->width()), static_cast<int>(scaleFactor * htmlCanvas->height()) };
-    }
-#if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> IntSize {
-        return { static_cast<int>(offscreenCanvas->width()), static_cast<int>(offscreenCanvas->height()) };
-    }
-#endif
-    );
-}
-
-static bool platformSupportsWebGPUSurface()
-{
-#if PLATFORM(COCOA)
-    return true;
-#else
-    return false;
-#endif
-}
-
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContext);
 
-std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
+#if !PLATFORM(COCOA)
+std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase&)
 {
-    if (!platformSupportsWebGPUSurface())
-        return nullptr;
-
-    auto context = std::unique_ptr<GPUCanvasContext>(new GPUCanvasContext(canvas));
-    context->suspendIfNeeded();
-    return context;
+    return nullptr;
 }
+#endif
 
 GPUCanvasContext::GPUCanvasContext(CanvasBase& canvas)
     : GPUBasedCanvasRenderingContext(canvas)
-    , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
 {
-    ASSERT(platformSupportsWebGPUSurface());
 }
 
-void GPUCanvasContext::reshape(int width, int height)
-{
-    if (m_width == width && m_height == height)
-        return;
-
-    m_width = width;
-    m_height = height;
-    m_swapChain = nullptr;
-
-    createSwapChainIfNeeded();
-}
-
-GPUCanvasContext::CanvasType GPUCanvasContext::canvas()
-{
-    return htmlCanvas();
-}
-
-void GPUCanvasContext::configure(GPUCanvasConfiguration&& configuration)
-{
-    m_configuration = WTFMove(configuration);
-
-    auto canvasSize = getCanvasSizeAsIntSize(htmlCanvas());
-    reshape(canvasSize.width(), canvasSize.height());
-}
-
-void GPUCanvasContext::createSwapChainIfNeeded()
-{
-    if (m_swapChain || !m_configuration)
-        return;
-
-    GPUSurfaceDescriptor surfaceDescriptor = {
-        { "WebGPU Canvas surface"_s },
-        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
-        1 /* sampleCount */,
-        m_configuration->format,
-        m_configuration->usage
-    };
-
-    m_surface = m_configuration->device->createSurface(surfaceDescriptor);
-    ASSERT(m_surface);
-
-    GPUSwapChainDescriptor descriptor = {
-        { "WebGPU Canvas swap chain"_s },
-        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
-        1 /* sampleCount */,
-        m_configuration->format,
-        m_configuration->usage
-    };
-
-    m_swapChain = m_configuration->device->createSwapChain(*m_surface, descriptor);
-    ASSERT(m_swapChain);
-}
-
-RefPtr<GPUTexture> GPUCanvasContext::getCurrentTexture()
-{
-    if (!m_configuration)
-        return nullptr;
-
-    createSwapChainIfNeeded();
-
-    GPUTextureDescriptor descriptor = {
-        { "WebGPU Display texture"_s },
-        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
-        1 /* mipMapCount */,
-        1 /* sampleCount */,
-        GPUTextureDimension::_2d,
-        m_configuration->format,
-        m_configuration->usage,
-        m_configuration->viewFormats
-    };
-
-    markContextChangedAndNotifyCanvasObservers();
-    return m_configuration->device->createSurfaceTexture(descriptor, *m_surface);
-}
-
-PixelFormat GPUCanvasContext::pixelFormat() const
-{
-    return PixelFormat::BGRA8;
-}
-
-void GPUCanvasContext::unconfigure()
-{
-    m_configuration.reset();
-}
-
-DestinationColorSpace GPUCanvasContext::colorSpace() const
-{
-    return DestinationColorSpace::SRGB();
-}
-
-RefPtr<GraphicsLayerContentsDisplayDelegate> GPUCanvasContext::layerContentsDisplayDelegate()
-{
-    return m_layerContentsDisplayDelegate.ptr();
-}
-
-void GPUCanvasContext::prepareForDisplay()
-{
-#if PLATFORM(COCOA)
-    m_swapChain->prepareForDisplay([protectedThis = Ref { *this }] (auto sendRight) {
-        protectedThis->m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(sendRight));
-        protectedThis->m_compositingResultsNeedsUpdating = false;
-    });
-#endif
-}
-
-void GPUCanvasContext::markContextChangedAndNotifyCanvasObservers()
-{
-    m_compositingResultsNeedsUpdating = true;
-
-    bool canvasIsDirty = false;
-
-    if (auto* canvas = htmlCanvas()) {
-        auto* renderBox = canvas->renderBox();
-        if (isAccelerated() && renderBox && renderBox->hasAcceleratedCompositing()) {
-            canvasIsDirty = true;
-            canvas->clearCopiedImage();
-            renderBox->contentChanged(CanvasChanged);
-        }
-    }
-
-    if (!canvasIsDirty) {
-        canvasIsDirty = true;
-        canvasBase().didDraw({ });
-    }
-
-    if (!isAccelerated())
-        return;
-
-    auto* canvas = htmlCanvas();
-    if (!canvas)
-        return;
-
-    canvas->notifyObserversCanvasChanged({ });
-}
-
-}
-
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+} // namespace WebCore
