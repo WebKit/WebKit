@@ -59,6 +59,7 @@
 #include <JavaScriptCore/RemoteInspector.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
+#include <cstdlib>
 #include <glib/gi18n-lib.h>
 #include <libintl.h>
 #include <memory>
@@ -1345,6 +1346,26 @@ void webkit_web_context_set_sandbox_enabled(WebKitWebContext* context, gboolean 
 }
 #endif
 
+static bool pathIsHomeDirectory(const char* path)
+{
+    std::unique_ptr<char, decltype(free)*> resolvedPath(realpath(path, nullptr), free);
+    if (!resolvedPath) {
+        g_warning("Failed to canonicalize path %s: %s", path, g_strerror(errno));
+        return true;
+    }
+
+    if (!strcmp(resolvedPath.get(), "/home"))
+        return true;
+
+    std::unique_ptr<char, decltype(free)*> resolvedHomeDirectory(realpath(g_get_home_dir(), nullptr), free);
+    if (!resolvedPath) {
+        g_warning("Failed to canonicalize path %s: %s", g_get_home_dir(), g_strerror(errno));
+        return true;
+    }
+
+    return !strcmp(resolvedPath.get(), resolvedHomeDirectory.get());
+}
+
 static bool pathIsBlocked(const char* path)
 {
     static const Vector<CString, 4> blockedPrefixes = {
@@ -1354,6 +1375,9 @@ static bool pathIsBlocked(const char* path)
     };
 
     if (!g_path_is_absolute(path))
+        return true;
+
+    if (pathIsHomeDirectory(path))
         return true;
 
     GUniquePtr<char*> splitPath(g_strsplit(path, G_DIR_SEPARATOR_S, 3));
@@ -1368,12 +1392,13 @@ static bool pathIsBlocked(const char* path)
  *
  * Adds a path to be mounted in the sandbox.
  *
- * @path must exist before any web process
- * has been created otherwise it will be silently ignored. It is a fatal error to
- * add paths after a web process has been spawned.
+ * @path must exist before any web process has been created; otherwise,
+ * it will be silently ignored. It is a fatal error to add paths after
+ * a web process has been spawned.
  *
- * Paths in directories such as `/sys`, `/proc`, and `/dev` or all of `/`
- * are not valid.
+ * Paths under `/sys`, `/proc`, and `/dev` are invalid. Attempting to
+ * add all of `/` is not valid. Since 2.40, adding the user's entire
+ * home directory or /home is also not valid.
  *
  * See also webkit_web_context_set_sandbox_enabled()
  *
