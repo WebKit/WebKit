@@ -4253,6 +4253,7 @@ void SpeculativeJIT::compile(Node* node)
     case DateGetInt32OrNaN:
     case DateGetTime:
     case StringCodePointAt:
+    case CallWasm:
         DFG_CRASH(m_graph, node, "unexpected node in DFG backend");
         break;
     }

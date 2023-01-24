@@ -36,9 +36,12 @@
 #include "DFGJITCode.h"
 #include "DFGPhase.h"
 #include "JSObjectInlines.h"
+#include "JSWebAssemblyInstance.h"
 #include "MathCommon.h"
 #include "RegExpObject.h"
 #include "StringPrototypeInlines.h"
+#include "WasmCallingConvention.h"
+#include "WebAssemblyFunction.h"
 #include <cstdlib>
 #include <wtf/text/StringBuilder.h>
 
@@ -1113,7 +1116,8 @@ private:
             ExecutableBase* executable = nullptr;
             Edge callee = m_graph.varArgChild(m_node, 0);
             CallVariant callVariant;
-            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>()) {
+            JSFunction* function = callee->dynamicCastConstant<JSFunction*>();
+            if (function) {
                 executable = function->executable();
                 callVariant = CallVariant(function);
             } else if (callee->isFunctionAllocation()) {
@@ -1132,11 +1136,168 @@ private:
                     break;
             }
 
+#if ENABLE(WEBASSEMBLY)
             // FIXME: Support wasm IC.
             // DirectCall to wasm function has suboptimal implementation. We avoid using DirectCall if we know that function is a wasm function.
             // https://bugs.webkit.org/show_bug.cgi?id=220339
-            if (executable->intrinsic() == WasmFunctionIntrinsic)
+            if (executable->intrinsic() == WasmFunctionIntrinsic) {
+                if (m_node->op() != Call) // FIXME: We should support tail-call.
+                    break;
+                if (!function)
+                    break;
+                auto* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(function);
+                if (!wasmFunction)
+                    break;
+                const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
+                const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
+                const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
+                Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+                if (wasmCallInfo.argumentsOrResultsIncludeV128 || wasmCallInfo.argumentsIncludeI64)
+                    break;
+
+                unsigned numPassedArgs = m_node->numChildren() - /* |callee| and |this| */ 2;
+                if (signature.argumentCount() > numPassedArgs)
+                    break;
+
+                if (!signature.returnsVoid() && signature.returnCount() != 1)
+                    break;
+
+                bool success = true;
+                for (unsigned index = 0; index < signature.argumentCount(); ++index) {
+                    auto type = signature.argumentType(index);
+                    Edge argument = m_graph.varArgChild(m_node, 2 + index);
+                    switch (type.kind) {
+                    case Wasm::TypeKind::I32: {
+                        if (!argument->shouldSpeculateInt32())
+                            success = false;
+                        break;
+                    }
+                    case Wasm::TypeKind::Ref:
+                    case Wasm::TypeKind::RefNull:
+                    case Wasm::TypeKind::Funcref:
+                    case Wasm::TypeKind::Externref: {
+                        if (!Wasm::isExternref(type) || !type.isNullable())
+                            success = false;
+                        break;
+                    }
+                    case Wasm::TypeKind::F32:
+                    case Wasm::TypeKind::F64: {
+                        if (!argument->shouldSpeculateNumber())
+                            success = false;
+                        break;
+                    }
+                    default: {
+                        success = false;
+                        break;
+                    }
+                    }
+                }
+
+                if (!signature.returnsVoid()) {
+                    ASSERT(signature.returnCount() == 1);
+                    auto type = signature.returnType(0);
+                    switch (type.kind) {
+                    case Wasm::TypeKind::I32:
+                    case Wasm::TypeKind::Ref:
+                    case Wasm::TypeKind::RefNull:
+                    case Wasm::TypeKind::Funcref:
+                    case Wasm::TypeKind::Externref:
+                    case Wasm::TypeKind::F32:
+                    case Wasm::TypeKind::F64: {
+                        break;
+                    }
+                    default: {
+                        success = false;
+                        break;
+                    }
+                    }
+                }
+
+                auto indexForChecks = [&]() -> std::optional<unsigned> {
+                    unsigned index = m_nodeIndex;
+                    while (!m_block->at(index)->origin.exitOK) {
+                        if (index)
+                            return std::nullopt;
+                        index--;
+                    }
+                    return index;
+                };
+
+                auto checkIndexValue = indexForChecks();
+                if (!checkIndexValue)
+                    break;
+
+                if (!success || !is64Bit() || !m_graph.m_plan.isFTL())
+                    break;
+
+                // We need to update m_parameterSlots before we get to the backend, but we don't
+                // want to do too much of this.
+                unsigned numAllocatedArgs = static_cast<unsigned>(signature.argumentCount()) + /* |this| for wasm */ 1;
+                if (numAllocatedArgs <= Options::maximumDirectCallStackSize())
+                    m_graph.m_parameterSlots = std::max(m_graph.m_parameterSlots, Graph::parameterSlotsForArgCount(numAllocatedArgs));
+
+                unsigned checkIndex = checkIndexValue.value();
+                for (unsigned index = 0; index < signature.argumentCount(); ++index) {
+                    auto type = signature.argumentType(index);
+                    Edge argument = m_graph.varArgChild(m_node, 2 + index);
+                    Node* argumentNode = argument.node();
+                    switch (type.kind) {
+                    case Wasm::TypeKind::I32: {
+                        m_insertionSet.insertCheck(checkIndex, m_node->origin, Edge(argumentNode, Int32Use));
+                        m_graph.varArgChild(m_node, 2 + index) = Edge(argumentNode, KnownInt32Use);
+                        break;
+                    }
+                    case Wasm::TypeKind::Ref:
+                    case Wasm::TypeKind::RefNull:
+                    case Wasm::TypeKind::Funcref:
+                    case Wasm::TypeKind::Externref: {
+                        break;
+                    }
+                    case Wasm::TypeKind::F32:
+                    case Wasm::TypeKind::F64: {
+                        UseKind useKind;
+                        if (argument->shouldSpeculateDoubleReal())
+                            useKind = RealNumberUse;
+                        else if (argument->shouldSpeculateNumber())
+                            useKind = NumberUse;
+                        else
+                            useKind = NotCellNorBigIntUse;
+                        Node* result = m_insertionSet.insertNode(checkIndex, SpecBytecodeDouble, DoubleRep, m_node->origin, Edge(argumentNode, useKind));
+                        m_graph.varArgChild(m_node, 2 + index) = Edge(result, DoubleRepUse);
+                        break;
+                    }
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+                }
+
+                if (!signature.returnsVoid()) {
+                    auto type = signature.returnType(0);
+                    switch (type.kind) {
+                    case Wasm::TypeKind::I32: {
+                        m_node->setResult(NodeResultInt32);
+                        break;
+                    }
+                    case Wasm::TypeKind::Ref:
+                    case Wasm::TypeKind::RefNull:
+                    case Wasm::TypeKind::Funcref:
+                    case Wasm::TypeKind::Externref: {
+                        break;
+                    }
+                    case Wasm::TypeKind::F32:
+                    case Wasm::TypeKind::F64: {
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                    }
+                }
+
+                m_node->convertToCallWasm(m_graph.freeze(wasmFunction));
                 break;
+            }
+#endif
             
             if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable)) {
                 if (m_node->op() == Construct && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)

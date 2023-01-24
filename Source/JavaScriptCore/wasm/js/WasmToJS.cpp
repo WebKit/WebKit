@@ -54,7 +54,7 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
 
 static Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> handleBadImportTypeUse(JIT& jit, unsigned importIndex, Wasm::ExceptionType exceptionType)
 {
-    jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
+    jit.move(GPRInfo::wasmContextInstancePointer, GPRInfo::argumentGPR0);
 
     emitThrowWasmToJSException(jit, GPRInfo::argumentGPR0, exceptionType);
 

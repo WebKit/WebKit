@@ -290,6 +290,7 @@ bool doesGC(Graph& graph, Node* node)
     case DirectConstruct:
     case DirectTailCall:
     case DirectTailCallInlinedCaller:
+    case CallWasm:
     case ForceOSRExit:
     case FunctionToString:
     case GetById:

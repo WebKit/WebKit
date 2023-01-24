@@ -916,6 +916,7 @@ private:
         case CallForwardVarargs:
         case ConstructForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
+        case CallWasm:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case GetClosureVar:

@@ -86,6 +86,7 @@
 #include "JSLexicalEnvironment.h"
 #include "JSMapIterator.h"
 #include "JSSetIterator.h"
+#include "JSWebAssemblyInstance.h"
 #include "LLIntThunks.h"
 #include "OperandsInlines.h"
 #include "PCToCodeOriginMap.h"
@@ -98,6 +99,9 @@
 #include "SuperSampler.h"
 #include "ThunkGenerators.h"
 #include "VirtualRegister.h"
+#include "WasmInstance.h"
+#include "WasmModuleInformation.h"
+#include "WebAssemblyFunction.h"
 #include "YarrJITRegisters.h"
 #include <atomic>
 #include <wtf/Box.h>
@@ -1394,6 +1398,9 @@ private:
             break;
         case CallDirectEval:
             compileCallDirectEval();
+            break;
+        case CallWasm:
+            compileCallWasm();
             break;
         case VarargsLength:
             compileVarargsLength();
@@ -11605,7 +11612,218 @@ IGNORE_CLANG_WARNINGS_END
         
         setJSValue(patchpoint);
     }
-    
+
+    void compileCallWasm()
+    {
+        Node* node = m_node;
+        WebAssemblyFunction* wasmFunction = node->castOperand<WebAssemblyFunction*>();
+
+        const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
+        const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
+        const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
+        Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
+
+        RegisterAtOffsetList savedResultRegisters = wasmCallInfo.computeResultsOffsetList();
+        unsigned totalFrameSize = wasmCallInfo.headerAndArgumentStackSizeInBytes;
+        totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
+        totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
+
+        m_proc.requestCallArgAreaSizeInBytes(totalFrameSize);
+
+        Vector<ConstrainedValue> arguments;
+        auto setArgument = [&] (LValue value, VirtualRegister reg) {
+            intptr_t offsetFromSP = (reg.offset() - CallerFrameAndPC::sizeInRegisters) * sizeof(EncodedJSValue);
+            arguments.append(ConstrainedValue(value, ValueRep::stackArgument(offsetFromSP)));
+        };
+
+        for (unsigned i = signature.argumentCount(); i--;) {
+            bool isStack = wasmCallInfo.params[i].location.isStackArgument();
+            auto type = signature.argumentType(i);
+            if (isStack) {
+                switch (type.kind) {
+                case Wasm::TypeKind::I32:
+                    arguments.append(ConstrainedValue(lowInt32(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                    break;
+                case Wasm::TypeKind::Ref:
+                case Wasm::TypeKind::RefNull:
+                case Wasm::TypeKind::Funcref:
+                case Wasm::TypeKind::Externref:
+                    ASSERT(Wasm::isExternref(type) && type.isNullable());
+                    arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                    break;
+                case Wasm::TypeKind::F32:
+                    arguments.append(ConstrainedValue(m_out.doubleToFloat(lowDouble(m_graph.varArgChild(node, 2 + i))), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                    break;
+                case Wasm::TypeKind::F64:
+                    arguments.append(ConstrainedValue(lowDouble(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+
+            } else {
+                switch (type.kind) {
+                case Wasm::TypeKind::I32:
+                    arguments.append(ConstrainedValue(m_out.zeroExtPtr(lowInt32(m_graph.varArgChild(node, 2 + i))), ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
+                    break;
+                case Wasm::TypeKind::Ref:
+                case Wasm::TypeKind::RefNull:
+                case Wasm::TypeKind::Funcref:
+                case Wasm::TypeKind::Externref:
+                    ASSERT(Wasm::isExternref(type) && type.isNullable());
+                    arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
+                    break;
+                case Wasm::TypeKind::F32:
+                    arguments.append(ConstrainedValue(m_out.doubleToFloat(lowDouble(m_graph.varArgChild(node, 2 + i))), ValueRep::reg(wasmCallInfo.params[i].location.fpr())));
+                    break;
+                case Wasm::TypeKind::F64:
+                    arguments.append(ConstrainedValue(lowDouble(m_graph.varArgChild(node, 2 + i)), ValueRep::reg(wasmCallInfo.params[i].location.fpr())));
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            }
+        }
+
+        // Set up new wasm instance in the pinned register.
+        bool wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = false;
+        bool wasmBaseMemoryPointerConfiguredAsInputContraints = false;
+        auto* jsInstance = wasmFunction->instance();
+        arguments.append(ConstrainedValue(m_out.constIntPtr(&jsInstance->instance()), ValueRep::reg(GPRInfo::wasmContextInstancePointer)));
+        if (!!jsInstance->instance().module().moduleInformation().memory) {
+            auto mode = jsInstance->memoryMode();
+            if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->instance().memory()->sharingMode() == MemorySharingMode::Shared)) {
+                // Capacity and basePointer will not be changed.
+                if (mode == MemoryMode::BoundsChecking) {
+                    arguments.append(ConstrainedValue(m_out.constInt64(jsInstance->instance().memory()->mappedCapacity()), ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister)));
+                    wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints = true;
+                }
+                arguments.append(ConstrainedValue(m_out.constIntPtr(jsInstance->instance().memory()->basePointer()), ValueRep::reg(GPRInfo::wasmBaseMemoryPointer)));
+                wasmBaseMemoryPointerConfiguredAsInputContraints = true;
+            }
+        }
+
+        // Anchor JSWebAssemblyInstance in |this| for GC.
+        setArgument(frozenPointer(m_graph.freeze(jsInstance)), VirtualRegister(CallFrameSlot::thisArgument));
+
+        PatchpointValue* patchpoint = nullptr;
+        if (signature.returnsVoid())
+            patchpoint = m_out.patchpoint(Void);
+        else {
+            switch (signature.returnType(0).kind) {
+            case Wasm::TypeKind::I32: {
+                patchpoint = m_out.patchpoint(Int32);
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
+                break;
+            }
+            case Wasm::TypeKind::Ref:
+            case Wasm::TypeKind::RefNull:
+            case Wasm::TypeKind::Funcref:
+            case Wasm::TypeKind::Externref: {
+                patchpoint = m_out.patchpoint(Int64);
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
+                break;
+            }
+            case Wasm::TypeKind::F32: {
+                patchpoint = m_out.patchpoint(Float);
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.fpr()) };
+                break;
+            }
+            case Wasm::TypeKind::F64: {
+                patchpoint = m_out.patchpoint(Double);
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.fpr()) };
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+        patchpoint->appendVector(arguments);
+
+        auto clobber = RegisterSetBuilder::macroClobberedRegisters();
+        if (!wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints)
+            clobber.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+        if (!wasmBaseMemoryPointerConfiguredAsInputContraints)
+            clobber.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
+        patchpoint->clobber(WTFMove(clobber));
+        auto clobberLate = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
+        clobberLate.add(GPRInfo::wasmContextInstancePointer, IgnoreVectors); // Because it is already tied to Wasm::Instance* in patchpoint's input constraint, we should say it is late clobbered.
+        if (wasmBoundsCheckingSizeRegisterConfiguredAsInputContraints)
+            clobberLate.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+        if (wasmBaseMemoryPointerConfiguredAsInputContraints)
+            clobberLate.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
+        patchpoint->clobberLate(WTFMove(clobberLate));
+        RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
+
+        CodeOrigin codeOrigin = codeOriginDescriptionOfCallSite();
+        State* state = &m_ftlState;
+        patchpoint->setGenerator(
+            [=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+
+                CallSiteIndex callSiteIndex = state->jitCode->common.codeOrigins->addUniqueCallSiteIndex(codeOrigin);
+
+                exceptionHandle->scheduleExitCreationForUnwind(params, callSiteIndex);
+
+                jit.store32(CCallHelpers::TrustedImm32(callSiteIndex.bits()), CCallHelpers::tagFor(VirtualRegister(CallFrameSlot::argumentCountIncludingThis)));
+
+                constexpr GPRReg scratchGPR = GPRInfo::nonPreservedNonArgumentGPR0;
+                static_assert(noOverlap(GPRInfo::wasmBoundsCheckingSizeRegister, GPRInfo::wasmBaseMemoryPointer, scratchGPR));
+                ASSERT(!RegisterSetBuilder::macroClobberedRegisters().contains(scratchGPR, IgnoreVectors));
+                if (!!jsInstance->instance().module().moduleInformation().memory) {
+                    auto mode = jsInstance->memoryMode();
+                    if (!(mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && jsInstance->instance().memory()->sharingMode() == MemorySharingMode::Shared))) {
+                        // We always clobber GPRInfo::wasmBoundsCheckingSizeRegister regardless of mode. It is OK since patchpoint already said it is clobbered.
+                        if (isARM64E())
+                            jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                        else {
+                            if (mode == MemoryMode::BoundsChecking)
+                                jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                            else
+                                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
+                        }
+                        jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+                    }
+                }
+
+                // FIXME: Currently we just do an indirect jump. But we should teach the Module
+                // how to repatch us:
+                // https://bugs.webkit.org/show_bug.cgi?id=196570
+                jit.loadPtr(wasmFunction->entrypointLoadLocation(), scratchGPR);
+                jit.call(scratchGPR, WasmEntryPtrTag);
+            });
+
+        if (signature.returnsVoid())
+            setJSValue(m_out.constInt64(JSValue::encode(jsUndefined())));
+        else {
+            switch (signature.returnType(0).kind) {
+            case Wasm::TypeKind::I32: {
+                setInt32(patchpoint);
+                break;
+            }
+            case Wasm::TypeKind::Ref:
+            case Wasm::TypeKind::RefNull:
+            case Wasm::TypeKind::Funcref:
+            case Wasm::TypeKind::Externref: {
+                setJSValue(patchpoint);
+                break;
+            }
+            case Wasm::TypeKind::F32: {
+                setJSValue(boxDouble(purifyNaN(m_out.floatToDouble(patchpoint))));
+                break;
+            }
+            case Wasm::TypeKind::F64: {
+                setJSValue(boxDouble(purifyNaN(patchpoint)));
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    }
+
     void compileVarargsLength()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
