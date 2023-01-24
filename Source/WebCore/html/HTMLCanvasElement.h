@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -44,6 +44,7 @@ namespace WebCore {
 class BlobCallback;
 class CanvasRenderingContext;
 class CanvasRenderingContext2D;
+class GPUCanvasContext;
 class GraphicsContext;
 class Image;
 class ImageBitmapRenderingContext;
@@ -57,10 +58,6 @@ class WebCoreOpaqueRoot;
 struct CanvasRenderingContext2DSettings;
 struct ImageBitmapRenderingContextSettings;
 struct UncachedString;
-
-#if HAVE(WEBGPU_IMPLEMENTATION)
-class GPUCanvasContext;
-#endif
 
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(HTMLCanvasElement);
@@ -96,10 +93,8 @@ public:
     ImageBitmapRenderingContext* getContextBitmapRenderer(const String&, ImageBitmapRenderingContextSettings&&);
 
     static bool isWebGPUType(const String&);
-#if HAVE(WEBGPU_IMPLEMENTATION)
     GPUCanvasContext* createContextWebGPU(const String&);
     GPUCanvasContext* getContextWebGPU(const String&);
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
 
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
     WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);

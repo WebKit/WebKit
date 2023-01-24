@@ -53,15 +53,6 @@ static IntSize getCanvasSizeAsIntSize(const GPUCanvasContext::CanvasType& canvas
     );
 }
 
-static bool platformSupportsWebGPUSurface()
-{
-#if PLATFORM(COCOA)
-    return true;
-#else
-    return false;
-#endif
-}
-
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
 
 std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
@@ -74,9 +65,6 @@ std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
 
 std::unique_ptr<GPUCanvasContextCocoa> GPUCanvasContextCocoa::create(CanvasBase& canvas)
 {
-    if (!platformSupportsWebGPUSurface())
-        return nullptr;
-
     return std::unique_ptr<GPUCanvasContextCocoa>(new GPUCanvasContextCocoa(canvas));
 }
 
@@ -84,7 +72,6 @@ GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
 {
-    ASSERT(platformSupportsWebGPUSurface());
 }
 
 void GPUCanvasContextCocoa::reshape(int width, int height)
