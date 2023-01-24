@@ -24,9 +24,11 @@
 
 #pragma once
 
-#include "AXObjectCache.h"
+#include "AccessibilityObject.h"
 
 namespace WebCore {
+
+struct CharacterOffset;
 
 struct TextMarkerData {
     unsigned treeID;
@@ -67,38 +69,8 @@ struct TextMarkerData {
         ignored = ignoredParam;
     }
 
-    TextMarkerData(AXObjectCache& cache, Node* nodeParam, const VisiblePosition& visiblePosition,
-        int charStart = 0, int charOffset = 0, bool ignoredParam = false)
-    {
-        initializeAXIDs(cache, nodeParam);
-
-        node = nodeParam;
-        auto position = visiblePosition.deepEquivalent();
-        offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
-        anchorType = position.anchorType();
-        affinity = visiblePosition.affinity();
-
-        characterStart = std::max(charStart, 0);
-        characterOffset = std::max(charOffset, 0);
-        ignored = ignoredParam;
-    }
-
-    TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffset, bool ignoredParam = false)
-    {
-        initializeAXIDs(cache, characterOffset.node);
-
-        node = characterOffset.node;
-        auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffset);
-        auto position = visiblePosition.deepEquivalent();
-        offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
-        // When creating from a CharacterOffset, always set the anchorType to PositionIsOffsetInAnchor.
-        anchorType = Position::PositionIsOffsetInAnchor;
-        affinity = visiblePosition.affinity();
-
-        characterStart = std::max(characterOffset.startIndex, 0);
-        this->characterOffset = std::max(characterOffset.offset, 0);
-        ignored = ignoredParam;
-    }
+    TextMarkerData(AXObjectCache&, Node*, const VisiblePosition&, int charStart = 0, int charOffset = 0, bool ignoredParam = false);
+    TextMarkerData(AXObjectCache&, const CharacterOffset&, bool ignoredParam = false);
 
     AXID axTreeID() const
     {
@@ -110,14 +82,7 @@ struct TextMarkerData {
         return makeObjectIdentifier<AXIDType>(objectID);
     }
 private:
-    void initializeAXIDs(AXObjectCache& cache, Node* node)
-    {
-        memset(static_cast<void*>(this), 0, sizeof(*this));
-
-        treeID = cache.treeID().toUInt64();
-        if (RefPtr object = cache.getOrCreate(node))
-            objectID = object->objectID().toUInt64();
-    }
+    void initializeAXIDs(AXObjectCache&, Node*);
 };
 
 #if PLATFORM(MAC)

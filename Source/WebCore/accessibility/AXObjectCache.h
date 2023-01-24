@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AXIsolatedTree.h"
+#include "AXTextMarker.h"
 #include "AXTextStateChangeIntent.h"
 #include "AXTreeStore.h"
 #include "AccessibilityObject.h"
@@ -44,7 +45,6 @@ class TextStream;
 
 namespace WebCore {
 
-class AXTextMarker;
 class Document;
 class HTMLAreaElement;
 class HTMLTableElement;
@@ -57,7 +57,6 @@ class RenderText;
 class ScrollView;
 class VisiblePosition;
 class Widget;
-struct TextMarkerData;
 
 struct CharacterOffset {
     Node* node;
@@ -717,6 +716,10 @@ inline CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(const Si
 inline CharacterOffset AXObjectCache::endCharacterOffsetOfLine(const CharacterOffset&) { return CharacterOffset(); }
 inline CharacterOffset AXObjectCache::nextCharacterOffset(const CharacterOffset&, bool) { return CharacterOffset(); }
 inline CharacterOffset AXObjectCache::previousCharacterOffset(const CharacterOffset&, bool) { return CharacterOffset(); }
+inline std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(const VisiblePosition&) { return std::nullopt; }
+inline TextMarkerData AXObjectCache::textMarkerDataForCharacterOffset(const CharacterOffset&) { return { }; }
+inline VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(const TextMarkerData&) { return { }; }
+inline VisiblePosition AXObjectCache::visiblePositionFromCharacterOffset(const CharacterOffset&) { return { }; }
 #if PLATFORM(COCOA)
 inline void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&) { }
 inline void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*, AXTextEditType, const String&, const VisiblePosition&) { }
