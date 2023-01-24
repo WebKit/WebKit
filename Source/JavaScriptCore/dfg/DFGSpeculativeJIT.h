@@ -598,9 +598,9 @@ public:
     }
 
 #if USE(JSVALUE64)
-    static MacroAssembler::Imm64 valueOfJSConstantAsImm64(Node* node)
+    static Imm64 valueOfJSConstantAsImm64(Node* node)
     {
-        return MacroAssembler::Imm64(JSValue::encode(node->asJSValue()));
+        return Imm64(JSValue::encode(node->asJSValue()));
     }
 #endif
 
@@ -722,8 +722,8 @@ public:
     void nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operand);
     void nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, Node* branchNode);
     
-    void genericJSValuePeepholeBranch(Node*, Node* branchNode, MacroAssembler::RelationalCondition, S_JITOperation_GJJ helperFunction);
-    void genericJSValueNonPeepholeCompare(Node*, MacroAssembler::RelationalCondition, S_JITOperation_GJJ helperFunction);
+    void genericJSValuePeepholeBranch(Node*, Node* branchNode, RelationalCondition, S_JITOperation_GJJ helperFunction);
+    void genericJSValueNonPeepholeCompare(Node*, RelationalCondition, S_JITOperation_GJJ helperFunction);
     
     void nonSpeculativePeepholeStrictEq(Node*, Node* branchNode, bool invert = false);
     void genericJSValueNonPeepholeStrictEq(Node*, bool invert = false);
@@ -739,7 +739,7 @@ public:
 
     void emitCall(Node*);
 
-    void emitAllocateButterfly(GPRReg storageGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, MacroAssembler::JumpList& slowCases);
+    void emitAllocateButterfly(GPRReg storageGPR, GPRReg sizeGPR, GPRReg scratch1, GPRReg scratch2, GPRReg scratch3, JumpList& slowCases);
     void emitInitializeButterfly(GPRReg storageGPR, GPRReg sizeGPR, JSValueRegs emptyValueRegs, GPRReg scratchGPR);
     void compileAllocateNewArrayWithSize(Node*, GPRReg resultGPR, GPRReg sizeGPR, IndexingType, bool shouldConvertLargeSizeToArrayStorage = true);
     
@@ -931,20 +931,20 @@ public:
     std::enable_if_t<
         FunctionTraits<OperationType>::hasResult,
     void>
-    callOperation(CCallHelpers::Address address, ResultRegType result, Args... args)
+    callOperation(Address address, ResultRegType result, Args... args)
     {
         setupArgumentsForIndirectCall<OperationType>(address, args...);
-        appendCallSetResult(CCallHelpers::Address(GPRInfo::nonArgGPR0, address.offset), result);
+        appendCallSetResult(Address(GPRInfo::nonArgGPR0, address.offset), result);
     }
 
     template<typename OperationType, typename... Args>
     std::enable_if_t<
         !FunctionTraits<OperationType>::hasResult,
     void>
-    callOperation(CCallHelpers::Address address, Args... args)
+    callOperation(Address address, Args... args)
     {
         setupArgumentsForIndirectCall<OperationType>(address, args...);
-        appendCall(CCallHelpers::Address(GPRInfo::nonArgGPR0, address.offset));
+        appendCall(Address(GPRInfo::nonArgGPR0, address.offset));
     }
 
     JITCompiler::Call callThrowOperationWithCallFrameRollback(V_JITOperation_Cb operation, GPRReg codeBlockGPR)
@@ -981,7 +981,7 @@ public:
         return Base::appendCall(function);
     }
 
-    void appendCall(CCallHelpers::Address address)
+    void appendCall(Address address)
     {
         prepareForExternalCall();
         emitStoreCodeOrigin(m_currentNode->origin.semantic);
@@ -995,20 +995,20 @@ public:
         return Base::appendOperationCall(function);
     }
 
-    void appendCallSetResult(CCallHelpers::Address address, GPRReg result)
+    void appendCallSetResult(Address address, GPRReg result)
     {
         appendCall(address);
         if (result != InvalidGPRReg)
             move(GPRInfo::returnValueGPR, result);
     }
 
-    void appendCallSetResult(CCallHelpers::Address address, GPRReg result1, GPRReg result2)
+    void appendCallSetResult(Address address, GPRReg result1, GPRReg result2)
     {
         appendCall(address);
         setupResults(result1, result2);
     }
 
-    void appendCallSetResult(CCallHelpers::Address address, JSValueRegs resultRegs)
+    void appendCallSetResult(Address address, JSValueRegs resultRegs)
     {
 #if USE(JSVALUE64)
         appendCallSetResult(address, resultRegs.gpr());
@@ -1157,11 +1157,11 @@ public:
         addBranch(jump(), destination);
     }
     
-    void addBranch(const MacroAssembler::Jump& jump, BasicBlock* destination)
+    void addBranch(const Jump& jump, BasicBlock* destination)
     {
         m_branches.append(BranchRecord(jump, destination));
     }
-    void addBranch(const MacroAssembler::JumpList& jump, BasicBlock* destination);
+    void addBranch(const JumpList&, BasicBlock* destination);
 
     void linkBranches();
 
@@ -1176,9 +1176,9 @@ public:
         return betterUseStrictInt52(edge.node());
     }
     
-    bool compare(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_JITOperation_GJJ);
-    void compileCompareUnsigned(Node*, MacroAssembler::RelationalCondition);
-    bool compilePeepHoleBranch(Node*, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, S_JITOperation_GJJ);
+    bool compare(Node*, RelationalCondition, DoubleCondition, S_JITOperation_GJJ);
+    void compileCompareUnsigned(Node*, RelationalCondition);
+    bool compilePeepHoleBranch(Node*, RelationalCondition, DoubleCondition, S_JITOperation_GJJ);
     void compilePeepHoleInt32Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
     void compilePeepHoleInt52Branch(Node*, Node* branchNode, JITCompiler::RelationalCondition);
 #if USE(BIGINT32)
@@ -1269,15 +1269,15 @@ public:
     void compileNewTypedArrayWithInt52Size(Node*);
 #endif
 
-    void compileInt32Compare(Node*, MacroAssembler::RelationalCondition);
-    void compileInt52Compare(Node*, MacroAssembler::RelationalCondition);
+    void compileInt32Compare(Node*, RelationalCondition);
+    void compileInt52Compare(Node*, RelationalCondition);
 #if USE(BIGINT32)
-    void compileBigInt32Compare(Node*, MacroAssembler::RelationalCondition);
+    void compileBigInt32Compare(Node*, RelationalCondition);
 #endif
-    void compileBooleanCompare(Node*, MacroAssembler::RelationalCondition);
-    void compileDoubleCompare(Node*, MacroAssembler::DoubleCondition);
-    void compileStringCompare(Node*, MacroAssembler::RelationalCondition);
-    void compileStringIdentCompare(Node*, MacroAssembler::RelationalCondition);
+    void compileBooleanCompare(Node*, RelationalCondition);
+    void compileDoubleCompare(Node*, DoubleCondition);
+    void compileStringCompare(Node*, RelationalCondition);
+    void compileStringIdentCompare(Node*, RelationalCondition);
     
     bool compileStrictEq(Node*);
 
@@ -1445,7 +1445,7 @@ public:
         Edge valueUse);
     void loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType);
     void setIntTypedArrayLoadResult(Node*, JSValueRegs resultRegs, TypedArrayType, bool canSpeculate, bool shouldBox, FPRReg);
-    template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, MacroAssembler::JumpList&, size_t, FunctionExecutable*);
+    template <typename ClassType> void compileNewFunctionCommon(GPRReg, RegisteredStructure, GPRReg, GPRReg, GPRReg, JumpList&, size_t, FunctionExecutable*);
     void compileNewFunction(Node*);
     void compileSetFunctionName(Node*);
     void compileNewRegexp(Node*);
@@ -1582,7 +1582,7 @@ public:
     template <typename StructureType> // StructureType can be GPR or ImmPtr.
     void emitAllocateJSCell(
         GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure,
-        GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+        GPRReg scratchGPR, JumpList& slowPath)
     {
         Base::emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
     }
@@ -1592,7 +1592,7 @@ public:
     template <typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObject(
         GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure,
-        StorageType storage, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
+        StorageType storage, GPRReg scratchGPR, JumpList& slowPath)
     {
         Base::emitAllocateJSObject(
             resultGPR, allocator, allocatorGPR, structure, storage, scratchGPR, slowPath);
@@ -1602,7 +1602,7 @@ public:
     template <typename ClassType, typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObjectWithKnownSize(
         GPRReg resultGPR, StructureType structure, StorageType storage, GPRReg scratchGPR1,
-        GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath, size_t size)
+        GPRReg scratchGPR2, JumpList& slowPath, size_t size)
     {
         emitAllocateJSObjectWithKnownSize<ClassType>(vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath, size);
     }
@@ -1610,14 +1610,14 @@ public:
     // Convenience allocator for a built-in object.
     template <typename ClassType, typename StructureType, typename StorageType> // StructureType and StorageType can be GPR or ImmPtr.
     void emitAllocateJSObject(GPRReg resultGPR, StructureType structure, StorageType storage,
-        GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
+        GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
     {
         emitAllocateJSObject<ClassType>(vm(), resultGPR, structure, storage, scratchGPR1, scratchGPR2, slowPath);
     }
 
     using Base::emitAllocateVariableSizedJSObject;
     template <typename ClassType, typename StructureType> // StructureType and StorageType can be GPR or ImmPtr.
-    void emitAllocateVariableSizedJSObject(GPRReg resultGPR, StructureType structure, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, MacroAssembler::JumpList& slowPath)
+    void emitAllocateVariableSizedJSObject(GPRReg resultGPR, StructureType structure, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
     {
         emitAllocateVariableSizedJSObject<ClassType>(vm(), resultGPR, structure, allocationSize, scratchGPR1, scratchGPR2, slowPath);
     }
@@ -1632,20 +1632,20 @@ public:
     
     // Generate an OSR exit fuzz check. Returns Jump() if OSR exit fuzz is not enabled, or if
     // it's in training mode.
-    MacroAssembler::Jump emitOSRExitFuzzCheck();
+    Jump emitOSRExitFuzzCheck();
     
     // Add a speculation check.
-    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail);
-    void speculationCheck(ExitKind, JSValueSource, Node*, const MacroAssembler::JumpList& jumpsToFail);
+    void speculationCheck(ExitKind, JSValueSource, Node*, Jump jumpToFail);
+    void speculationCheck(ExitKind, JSValueSource, Node*, const JumpList& jumpsToFail);
 
     // Add a speculation check without additional recovery, and with a promise to supply a jump later.
     OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, Node*);
     OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, Edge);
-    void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail);
-    void speculationCheck(ExitKind, JSValueSource, Edge, const MacroAssembler::JumpList& jumpsToFail);
+    void speculationCheck(ExitKind, JSValueSource, Edge, Jump jumpToFail);
+    void speculationCheck(ExitKind, JSValueSource, Edge, const JumpList& jumpsToFail);
     // Add a speculation check with additional recovery.
-    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
-    void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
+    void speculationCheck(ExitKind, JSValueSource, Node*, Jump jumpToFail, const SpeculationRecovery&);
+    void speculationCheck(ExitKind, JSValueSource, Edge, Jump jumpToFail, const SpeculationRecovery&);
     
     void compileInvalidationPoint(Node*);
     
@@ -1657,8 +1657,8 @@ public:
     
     // Helpers for performing type checks on an edge stored in the given registers.
     bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_interpreter.needsTypeCheck(edge, typesPassedThrough); }
-    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, ExitKind = BadType);
-    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::JumpList jumpListToFail, ExitKind = BadType);
+    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, Jump jumpToFail, ExitKind = BadType);
+    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, JumpList jumpListToFail, ExitKind = BadType);
     
     void speculateCellTypeWithoutTypeFiltering(Edge, GPRReg cellGPR, JSType);
     void speculateCellType(Edge, GPRReg cellGPR, SpeculatedType, JSType);
@@ -1798,16 +1798,16 @@ public:
     // flag is cleared, indicating no further code generation should take place.
     bool m_compileOkay;
 
-    Vector<MacroAssembler::Label> m_osrEntryHeads;
+    Vector<Label> m_osrEntryHeads;
     
     struct BranchRecord {
-        BranchRecord(MacroAssembler::Jump jump, BasicBlock* destination)
+        BranchRecord(Jump jump, BasicBlock* destination)
             : jump(jump)
             , destination(destination)
         {
         }
 
-        MacroAssembler::Jump jump;
+        Jump jump;
         BasicBlock* destination;
     };
     Vector<BranchRecord, 8> m_branches;
