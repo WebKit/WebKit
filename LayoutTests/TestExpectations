@@ -6193,3 +6193,6 @@ fast/text/text-edge-no-half-leading-with-line-height-simple.html [ Skip ]
 webkit.org/b/249010 [ Debug ] fast/text/line-clamp-truncation-assert.html [ Skip ]
 
 webkit.org/b/245905 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-019.html [ ImageOnlyFailure ]
+
+# This test can cause OOM error, depending on device and memory usage, and there is no guarantee. Ignore console log, which appears when OOM happens since what we would like to ensure is just no crash.
+js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
