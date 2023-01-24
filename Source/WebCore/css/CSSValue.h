@@ -37,8 +37,9 @@ enum CSSPropertyID : uint16_t;
 struct ComputedStyleDependencies {
     Vector<CSSPropertyID> properties;
     Vector<CSSPropertyID> rootProperties;
+    bool containerDimensions { false };
 
-    bool isEmpty() const { return properties.isEmpty() && rootProperties.isEmpty(); }
+    bool isEmpty() const { return properties.isEmpty() && rootProperties.isEmpty() && !containerDimensions; }
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
