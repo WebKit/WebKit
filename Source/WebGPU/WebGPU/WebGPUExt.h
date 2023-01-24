@@ -90,8 +90,6 @@ typedef struct WGPUTextureDescriptorViewFormats {
 
 typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
-    uint32_t width;
-    uint32_t height;
 } WGPUSurfaceDescriptorCocoaCustomSurface;
 
 typedef struct WGPUTextureDescriptorCocoaCustomSurface {

@@ -106,10 +106,7 @@ void GPUCanvasContextCocoa::createSwapChainIfNeeded()
 
     GPUSurfaceDescriptor surfaceDescriptor = {
         { "WebGPU Canvas surface"_s },
-        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
-        1 /* sampleCount */,
-        m_configuration->format,
-        m_configuration->usage
+        // FIXME: Include the CompositorIntegration here.
     };
 
     m_surface = m_configuration->device->createSurface(surfaceDescriptor);
@@ -117,10 +114,13 @@ void GPUCanvasContextCocoa::createSwapChainIfNeeded()
 
     GPUSwapChainDescriptor descriptor = {
         { "WebGPU Canvas swap chain"_s },
-        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
-        1 /* sampleCount */,
         m_configuration->format,
-        m_configuration->usage
+        m_configuration->usage,
+        m_configuration->viewFormats,
+        m_configuration->colorSpace,
+        m_configuration->compositingAlphaMode,
+        static_cast<uint32_t>(m_width), // FIXME: Is it possible for these to be negative?
+        static_cast<uint32_t>(m_height),
     };
 
     m_swapChain = m_configuration->device->createSwapChain(*m_surface, descriptor);

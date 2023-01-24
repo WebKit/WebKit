@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,12 @@
 
 #pragma once
 
-#include "WebGPUExtent3D.h"
-#include "WebGPUIntegralTypes.h"
 #include "WebGPUObjectDescriptorBase.h"
 #include "WebGPUTextureFormat.h"
 
 namespace PAL::WebGPU {
 
 struct SurfaceDescriptor : public ObjectDescriptorBase {
-    Extent3D size;
-    Size32 sampleCount { 1 };
-    TextureFormat format { TextureFormat::R8unorm };
-    TextureUsageFlags usage;
 };
 
 } // namespace PAL::WebGPU
