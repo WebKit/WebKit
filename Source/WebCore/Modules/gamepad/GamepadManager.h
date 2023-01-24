@@ -30,6 +30,7 @@
 #include "GamepadProviderClient.h"
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -37,6 +38,7 @@ namespace WebCore {
 class DOMWindow;
 class Gamepad;
 class NavigatorGamepad;
+class WeakPtrImplWithEventTargetData;
 
 class GamepadManager : public GamepadProviderClient {
     WTF_MAKE_NONCOPYABLE(GamepadManager);
@@ -48,15 +50,15 @@ public:
     void platformGamepadDisconnected(PlatformGamepad&) final;
     void platformGamepadInputActivity(EventMakesGamepadsVisible) final;
 
-    void registerNavigator(NavigatorGamepad*);
-    void unregisterNavigator(NavigatorGamepad*);
-    void registerDOMWindow(DOMWindow*);
-    void unregisterDOMWindow(DOMWindow*);
+    void registerNavigator(NavigatorGamepad&);
+    void unregisterNavigator(NavigatorGamepad&);
+    void registerDOMWindow(DOMWindow&);
+    void unregisterDOMWindow(DOMWindow&);
 
 private:
     GamepadManager();
 
-    void makeGamepadVisible(PlatformGamepad&, HashSet<NavigatorGamepad*>&, HashSet<DOMWindow*>&);
+    void makeGamepadVisible(PlatformGamepad&, WeakHashSet<NavigatorGamepad>&, WeakHashSet<DOMWindow, WeakPtrImplWithEventTargetData>&);
     void dispatchGamepadEvent(const AtomString& eventName, PlatformGamepad&);
 
     void maybeStartMonitoringGamepads();
@@ -64,10 +66,10 @@ private:
 
     bool m_isMonitoringGamepads;
 
-    HashSet<NavigatorGamepad*> m_navigators;
-    HashSet<NavigatorGamepad*> m_gamepadBlindNavigators;
-    HashSet<DOMWindow*> m_domWindows;
-    HashSet<DOMWindow*> m_gamepadBlindDOMWindows;
+    WeakHashSet<NavigatorGamepad> m_navigators;
+    WeakHashSet<NavigatorGamepad> m_gamepadBlindNavigators;
+    WeakHashSet<DOMWindow, WeakPtrImplWithEventTargetData> m_domWindows;
+    WeakHashSet<DOMWindow, WeakPtrImplWithEventTargetData> m_gamepadBlindDOMWindows;
 };
 
 } // namespace WebCore

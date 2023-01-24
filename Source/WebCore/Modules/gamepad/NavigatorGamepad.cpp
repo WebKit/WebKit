@@ -40,12 +40,12 @@ namespace WebCore {
 NavigatorGamepad::NavigatorGamepad(Navigator& navigator)
     : m_navigator(navigator)
 {
-    GamepadManager::singleton().registerNavigator(this);
+    GamepadManager::singleton().registerNavigator(*this);
 }
 
 NavigatorGamepad::~NavigatorGamepad()
 {
-    GamepadManager::singleton().unregisterNavigator(this);
+    GamepadManager::singleton().unregisterNavigator(*this);
 }
 
 const char* NavigatorGamepad::supplementName()
