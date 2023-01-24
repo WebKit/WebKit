@@ -913,7 +913,7 @@ class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
         rc = yield super().run()
         if rc == FAILURE:
             self.build.buildFinished(['Git issue, retrying build'], RETRY)
-        return rc
+        defer.returnValue(rc)
 
 
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
@@ -1024,7 +1024,7 @@ for l in lines[1:]:
 
         _ = yield self.downloadFileContentToWorker('.buildbot-diff', patch)
         res = yield super().run()
-        return res
+        defer.returnValue(res)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
@@ -5353,7 +5353,8 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         if rc == SKIPPED:
             self.summary = 'Patches have no commit message'
-            return rc
+            defer.returnValue(rc)
+            return
 
         self.contributors, errors = Contributors.load(use_network=True)
         for error in errors:
@@ -5392,7 +5393,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             self.setProperty('comment_text', f"{self.summary}, blocking PR #{self.getProperty('github.number')}")
             self.setProperty('build_finish_summary', 'Commit message validation failed')
             self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
-        return rc
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results in (SUCCESS, FAILURE):
