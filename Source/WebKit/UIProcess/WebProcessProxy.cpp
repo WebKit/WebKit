@@ -1561,8 +1561,17 @@ void WebProcessProxy::sendProcessDidResume(ResumeReason)
         send(Messages::WebProcess::ProcessDidResume(), 0);
 }
 
+void WebProcessProxy::setThrottleStateForTesting(ProcessThrottleState state)
+{
+    m_areThrottleStateChangesEnabled = true;
+    didChangeThrottleState(state);
+    m_areThrottleStateChangesEnabled = false;
+}
+
 void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
 {
+    if (UNLIKELY(!m_areThrottleStateChangesEnabled))
+        return;
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "didChangeThrottleState: type=%u", (unsigned)type);
 
     if (isStandaloneServiceWorkerProcess()) {
