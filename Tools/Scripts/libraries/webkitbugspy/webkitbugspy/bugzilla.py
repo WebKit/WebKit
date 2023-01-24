@@ -230,6 +230,8 @@ class Tracker(GenericTracker):
             # Attempt to match radar importer first
             if self.radar_importer:
                 for comment in issue.comments:
+                    if not comment:
+                        continue
                     if comment.user != self.radar_importer:
                         continue
                     candidate = GenericTracker.from_string(comment.content)
@@ -238,7 +240,9 @@ class Tracker(GenericTracker):
                     issue._references.append(candidate)
                     refs.add(candidate.link)
 
-            for text in [issue.description] + [comment.content for comment in issue.comments]:
+            for text in [issue.description] + [comment.content for comment in issue.comments if comment]:
+                if not text:
+                    continue
                 for match in self.REFERENCE_RE.findall(text):
                     candidate = GenericTracker.from_string(match[0]) or self.from_string(match[0])
                     if not candidate or candidate.link in refs or (isinstance(candidate.tracker, type(issue.tracker)) and candidate.id == issue.id):
