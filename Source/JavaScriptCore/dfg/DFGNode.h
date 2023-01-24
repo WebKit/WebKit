@@ -830,6 +830,8 @@ public:
     
     void convertToDirectCall(FrozenValue*);
 
+    void convertToCallWasm(FrozenValue*);
+
     void convertToCallDOM(Graph&);
 
     void convertToRegExpExecNonGlobalOrStickyWithoutChecks(FrozenValue* regExp);
@@ -1817,6 +1819,7 @@ public:
         case ConstructVarargs:
         case CallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
+        case CallWasm:
         case GetByOffset:
         case MultiGetByOffset:
         case GetClosureVar:
@@ -1925,6 +1928,7 @@ public:
         case DirectTailCall:
         case DirectConstruct:
         case DirectTailCallInlinedCaller:
+        case CallWasm:
         case RegExpExecNonGlobalOrSticky:
         case RegExpMatchFastGlobal:
         case RegExpTestInline:

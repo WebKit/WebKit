@@ -221,7 +221,7 @@ class Package(object):
                     if not version_candidate:
                         continue
                     version = Version(*version_candidate.group().split('.'))
-                    if self.version and version not in self.version:
+                    if self.version and version != self.version:
                         continue
 
                     link = package['href'].split('#')[0]

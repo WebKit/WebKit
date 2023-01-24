@@ -2951,6 +2951,7 @@ private:
         case ConstructForwardVarargs:
         case TailCallForwardVarargs:
         case TailCallForwardVarargsInlinedCaller:
+        case CallWasm:
         case VarargsLength:
         case ProfileControlFlow:
         case NewObject:

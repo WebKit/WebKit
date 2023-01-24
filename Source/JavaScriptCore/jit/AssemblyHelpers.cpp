@@ -1063,28 +1063,11 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 }
 
 #if ENABLE(WEBASSEMBLY)
-void AssemblyHelpers::loadWasmContextInstance(GPRReg dst)
-{
-    JIT_COMMENT(*this, "Load wasm context instance to ", dst);
-    move(GPRInfo::wasmContextInstancePointer, dst);
-    JIT_COMMENT(*this, "Load wasm instance done");
-}
-
 void AssemblyHelpers::storeWasmContextInstance(GPRReg src)
 {
     JIT_COMMENT(*this, "Store wasm context instance from", src);
     move(src, GPRInfo::wasmContextInstancePointer);
     JIT_COMMENT(*this, "Store wasm context instance done");
-}
-
-bool AssemblyHelpers::loadWasmContextInstanceNeedsMacroScratchRegister()
-{
-    return false;
-}
-
-bool AssemblyHelpers::storeWasmContextInstanceNeedsMacroScratchRegister()
-{
-    return false;
 }
 
 void AssemblyHelpers::prepareWasmCallOperation(GPRReg instanceGPR)

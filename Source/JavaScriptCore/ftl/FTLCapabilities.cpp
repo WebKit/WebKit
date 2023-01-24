@@ -194,6 +194,7 @@ inline CapabilityLevel canCompile(Node* node)
     case TailCallForwardVarargs:
     case TailCallForwardVarargsInlinedCaller:
     case ConstructForwardVarargs:
+    case CallWasm:
     case VarargsLength:
     case LoadVarargs:
     case ValueToInt32:

@@ -25,6 +25,8 @@
 
 #import "config.h"
 #import "_WKFeatureInternal.h"
+#import "_WKExperimentalFeature.h"
+#import "_WKInternalDebugFeature.h"
 
 #import <WebCore/WebCoreObjCExtras.h>
 
@@ -92,6 +94,15 @@
 - (BOOL)isHidden
 {
     return _wrappedFeature->isHidden();
+}
+
+// For binary compatibility, some interfaces declare that they use the old
+// _WKExperimentalFeature and _WKInternalDebugFeature classes, even though all
+// instantiated features are actually instances of _WKFeature. Override
+// isKindOfClass to prevent clients from detecting the change in instance type.
+- (BOOL)isKindOfClass:(Class)aClass
+{
+    return [super isKindOfClass:aClass] || [aClass isEqual:[_WKExperimentalFeature class]] || [aClass isEqual:[_WKInternalDebugFeature class]];
 }
 
 #pragma mark WKObject protocol implementation

@@ -290,6 +290,12 @@ void Node::convertToDirectCall(FrozenValue* executable)
     m_opInfo = executable;
 }
 
+void Node::convertToCallWasm(FrozenValue* callee)
+{
+    m_op = CallWasm;
+    m_opInfo = callee;
+}
+
 void Node::convertToCallDOM(Graph& graph)
 {
     ASSERT(op() == Call);
