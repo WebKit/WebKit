@@ -67,7 +67,6 @@ WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PU
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM and libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG-XL images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
@@ -130,6 +129,8 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SPELLCHECK PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_EVENTS PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_CRYPTO PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PUBLIC ON)
+
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PUBLIC ON)
 
 # Private options shared with other WebKit ports. Add options here when
 # we need a value different from the default defined in WebKitFeatures.cmake.
