@@ -1326,7 +1326,7 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCompatibility)
 {
-    ASSERT(m_type == KeyDown);
+    ASSERT(m_type == PlatformEvent::Type::KeyDown);
     m_type = type;
     if (backwardsCompatibility || m_handledByInputMethod)
         return;
