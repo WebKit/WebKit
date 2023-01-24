@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #import "PresentationContextIOSurface.h"
 
 #import "APIConversions.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 // borrowed from pal/spi/cocoa/IOTypesSPI.h
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
@@ -73,28 +74,29 @@ static NSDictionary *optionsFor32BitSurface(int width, int height, unsigned pixe
 static RetainPtr<IOSurfaceRef> createIOSurface(int width, int height)
 {
     NSDictionary *options = optionsFor32BitSurface(width, height, 'BGRA');
-    return adoptCF(IOSurfaceCreate((CFDictionaryRef)options));
+    return adoptCF(IOSurfaceCreate(bridge_cast(options)));
 }
 
-static RetainPtr<IOSurfaceRef> createSurfaceFromDescriptor(const WGPUSurfaceDescriptor& descriptor)
+static RetainPtr<IOSurfaceRef> createSurfaceFromDescriptor(const WGPUSwapChainDescriptor& descriptor)
 {
-    if (!descriptor.nextInChain || descriptor.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking))
+    if (descriptor.nextInChain) {
+        // FIXME: We need better error handling.
         return nullptr;
+    }
 
-    auto widthHeight = reinterpret_cast<const WGPUSurfaceDescriptorCocoaCustomSurface*>(descriptor.nextInChain);
-    return createIOSurface(widthHeight->width, widthHeight->height);
+    return createIOSurface(descriptor.width, descriptor.height);
 }
 
-PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor& descriptor)
-    : m_displayBuffer(createSurfaceFromDescriptor(descriptor))
-    , m_drawingBuffer(createSurfaceFromDescriptor(descriptor))
+PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&)
 {
 }
 
 PresentationContextIOSurface::~PresentationContextIOSurface() = default;
 
-void PresentationContextIOSurface::configure(Device&, const WGPUSwapChainDescriptor&)
+void PresentationContextIOSurface::configure(Device&, const WGPUSwapChainDescriptor& descriptor)
 {
+    m_displayBuffer = createSurfaceFromDescriptor(descriptor);
+    m_drawingBuffer = createSurfaceFromDescriptor(descriptor);
 }
 
 void PresentationContextIOSurface::present()

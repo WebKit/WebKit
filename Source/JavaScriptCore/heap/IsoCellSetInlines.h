@@ -33,6 +33,10 @@ namespace JSC {
 
 inline bool IsoCellSet::add(HeapCell* cell)
 {
+    // We want to return true if the cell is newly added. concurrentTestAndSet() returns the
+    // previous bit value. Since we're trying to set the bit for this add, the cell would be
+    // newly added only if the previous bit was not set. Hence, our result will be the
+    // inverse of the concurrentTestAndSet() result.
     if (cell->isPreciseAllocation())
         return !m_lowerTierBits.concurrentTestAndSet(cell->preciseAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
@@ -45,8 +49,12 @@ inline bool IsoCellSet::add(HeapCell* cell)
 
 inline bool IsoCellSet::remove(HeapCell* cell)
 {
+    // We want to return true if the cell was previously present and will be removed now.
+    // concurrentTestAndClear() returns the previous bit value. Since we're trying to clear
+    // the bit for this remove, the cell would be newly removed only if the previous bit
+    // was set. Hence, our result matches the concurrentTestAndClear() result.
     if (cell->isPreciseAllocation())
-        return !m_lowerTierBits.concurrentTestAndClear(cell->preciseAllocation().lowerTierIndex());
+        return m_lowerTierBits.concurrentTestAndClear(cell->preciseAllocation().lowerTierIndex());
     AtomIndices atomIndices(cell);
     auto& bitsPtrRef = m_bits[atomIndices.blockIndex];
     auto* bits = bitsPtrRef.get();

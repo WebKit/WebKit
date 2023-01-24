@@ -913,7 +913,7 @@ class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
         rc = yield super().run()
         if rc == FAILURE:
             self.build.buildFinished(['Git issue, retrying build'], RETRY)
-        return rc
+        defer.returnValue(rc)
 
 
 class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
@@ -1024,7 +1024,7 @@ for l in lines[1:]:
 
         _ = yield self.downloadFileContentToWorker('.buildbot-diff', patch)
         res = yield super().run()
-        return res
+        defer.returnValue(res)
 
     def getResultSummary(self):
         if self.results != SUCCESS:
@@ -1818,8 +1818,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         self._addToLog('stdio', reason)
         self.setProperty('build_finish_summary', reason)
         self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest(), SetCommitQueueMinusFlagOnPatch()])
-        self.finished(FAILURE)
         self.descriptionDone = reason
+        return FAILURE
 
     def is_reviewer(self, email):
         contributor = self.contributors.get(email.lower())
@@ -1835,17 +1835,16 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             return ''
         return contributor.get('name')
 
-    def start(self):
+    def run(self):
         self.contributors, errors = Contributors.load(use_network=True)
         for error in errors:
             print(error)
             self._addToLog('stdio', error)
 
         if not self.contributors:
-            self.finished(FAILURE)
             self.descriptionDone = 'Failed to get contributors information'
             self.build.buildFinished(['Failed to get contributors information'], FAILURE)
-            return None
+            return FAILURE
 
         pr_number = self.getProperty('github.number', '')
 
@@ -1855,8 +1854,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             committer = self.getProperty('patch_committer', '').lower()
 
         if not self.is_committer(committer):
-            self.fail_build_due_to_invalid_status(committer, 'committer')
-            return None
+            return self.fail_build_due_to_invalid_status(committer, 'committer')
         self._addToLog('stdio', f'{committer} is a valid commiter.\n')
 
         if pr_number:
@@ -1869,8 +1867,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         validators = self.VALIDATORS_FOR.get(remote, [])
         lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
         if validators and not any([validator.lower() in lower_case_reviewers for validator in validators]):
-            self.fail_build_due_to_no_validators(validators)
-            return None
+            return self.fail_build_due_to_no_validators(validators)
 
         if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
             reviewers = list(filter(self.is_reviewer, reviewers))
@@ -1880,18 +1877,15 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
             self._addToLog('stdio', f'Reviewer not found. Commit message  will be checked for reviewer name in later steps\n')
             self.descriptionDone = 'Validated committer, reviewer not found'
-            self.finished(SUCCESS)
-            return None
+            return SUCCESS
 
         for reviewer in reviewers:
             if not self.is_reviewer(reviewer):
-                self.fail_build_due_to_invalid_status(reviewer, 'reviewer')
-                return None
+                return self.fail_build_due_to_invalid_status(reviewer, 'reviewer')
             self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
         self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])
 
-        self.finished(SUCCESS)
-        return None
+        return SUCCESS
 
 
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
@@ -1926,7 +1920,7 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
 class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'block-pull-request'
 
-    def start(self):
+    def run(self):
         pr_number = self.getProperty('github.number', '')
         build_finish_summary = self.getProperty('build_finish_summary', None)
 
@@ -1942,10 +1936,9 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
                 not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
             )):
                 rc = FAILURE
-        self.finished(rc)
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
-        return None
+        return rc
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -5360,7 +5353,8 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         if rc == SKIPPED:
             self.summary = 'Patches have no commit message'
-            return rc
+            defer.returnValue(rc)
+            return
 
         self.contributors, errors = Contributors.load(use_network=True)
         for error in errors:
@@ -5399,7 +5393,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
             self.setProperty('comment_text', f"{self.summary}, blocking PR #{self.getProperty('github.number')}")
             self.setProperty('build_finish_summary', 'Commit message validation failed')
             self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
-        return rc
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results in (SUCCESS, FAILURE):

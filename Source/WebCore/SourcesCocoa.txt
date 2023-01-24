@@ -152,6 +152,7 @@ crypto/mac/CryptoAlgorithmAES_GCMMac.cpp
 crypto/mac/CryptoAlgorithmAES_KWMac.cpp
 crypto/mac/CryptoAlgorithmECDHMac.cpp
 crypto/mac/CryptoAlgorithmECDSAMac.cpp
+crypto/mac/CryptoAlgorithmEd25519Cocoa.cpp
 crypto/mac/CryptoAlgorithmHKDFMac.cpp
 crypto/mac/CryptoAlgorithmHMACMac.cpp
 crypto/mac/CryptoAlgorithmPBKDF2Mac.cpp
@@ -161,6 +162,7 @@ crypto/mac/CryptoAlgorithmRSA_OAEPMac.cpp
 crypto/mac/CryptoAlgorithmRSA_PSSMac.cpp
 crypto/mac/CryptoAlgorithmRegistryMac.cpp
 crypto/mac/CryptoKeyECMac.cpp
+crypto/mac/CryptoKeyOKPCocoa.cpp
 crypto/mac/CryptoKeyMac.cpp
 crypto/mac/CryptoKeyRSAMac.cpp
 crypto/mac/CryptoUtilitiesCocoa.cpp

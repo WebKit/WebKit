@@ -133,6 +133,7 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class FullscreenManager;
+class GPUCanvasContext;
 class HTMLAllCollection;
 class HTMLAttachmentElement;
 class HTMLBodyElement;
@@ -239,10 +240,6 @@ class ContentChangeObserver;
 class DOMTimerHoldingTank;
 #endif
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
-class GPUCanvasContext;
-#endif
-
 struct ApplicationManifest;
 struct BoundaryPoint;
 struct ClientOrigin;
@@ -345,9 +342,7 @@ using RenderingContext = std::variant<
 #if ENABLE(WEBGL2)
     RefPtr<WebGL2RenderingContext>,
 #endif
-#if HAVE(WEBGPU_IMPLEMENTATION)
     RefPtr<GPUCanvasContext>,
-#endif
     RefPtr<ImageBitmapRenderingContext>,
     RefPtr<CanvasRenderingContext2D>
 >;
@@ -864,7 +859,7 @@ public:
 
     // Updates for :target (CSS3 selector).
     void setCSSTarget(Element*);
-    Element* cssTarget() const { return m_cssTarget; }
+    Element* cssTarget() const;
 
     WEBCORE_EXPORT void scheduleFullStyleRebuild();
     void scheduleStyleRecalc();
@@ -1960,7 +1955,7 @@ private:
 
     std::unique_ptr<Style::Update> m_pendingRenderTreeUpdate;
 
-    Element* m_cssTarget { nullptr };
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
 

@@ -2448,6 +2448,10 @@ imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointere
 [ BigSur+ Debug ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 [ BigSur+ Release ] imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Pass Failure ]
 
+# These tests have been flaky on macOS since their import.
+imported/w3c/web-platform-tests/websockets/cookies/005.html?wss&wpt_flags=https [ Pass Failure ]
+imported/w3c/web-platform-tests/websockets/cookies/007.html?wss&wpt_flags=https [ Pass Failure ]
+
 #webkit.org/b/248537 Batch mark expectations for Ventura test failures
 [ BigSur+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-disabled-by-feature-policy.https.sub.html [ Pass Failure ]
 [ BigSur+ Debug ] inspector/css/pseudo-element-matches-for-pseudo-element-node.html [ Pass Crash ]
@@ -2480,3 +2484,4 @@ imported/w3c/web-platform-tests/html/user-activation/activation-trigger-pointere
 
 webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
 
+webkit.org/b/251051 [ BigSur+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]

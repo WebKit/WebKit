@@ -37,6 +37,17 @@
 
 namespace WebCore {
 
+FontChanges::FontChanges(String&& fontName, String&& fontFamily, std::optional<double>&& fontSize, std::optional<double>&& fontSizeDelta, std::optional<bool>&& bold, std::optional<bool>&& italic)
+    : m_fontName(WTFMove(fontName))
+    , m_fontFamily(WTFMove(fontFamily))
+    , m_fontSize(WTFMove(fontSize))
+    , m_fontSizeDelta(WTFMove(fontSizeDelta))
+    , m_bold(WTFMove(bold))
+    , m_italic(WTFMove(italic))
+{
+    ASSERT(!m_fontSize || !m_fontSizeDelta);
+}
+
 #if !PLATFORM(COCOA)
 
 const String& FontChanges::platformFontFamilyNameForCSS() const
@@ -89,6 +100,17 @@ static RefPtr<CSSValueList> cssValueListForShadow(const FontShadow& shadow)
     auto color = CSSValuePool::singleton().createColorValue(shadow.color);
     list->prepend(CSSShadowValue::create(WTFMove(width), WTFMove(height), WTFMove(blurRadius), { }, { }, WTFMove(color)));
     return list.ptr();
+}
+
+FontAttributeChanges::FontAttributeChanges(std::optional<VerticalAlignChange>&& verticalAlign, std::optional<Color>&& backgroundColor, std::optional<Color>&& foregroundColor, std::optional<FontShadow>&& shadow, std::optional<bool>&& strikeThrough, std::optional<bool>&& underline, FontChanges&& fontChanges)
+    : m_verticalAlign(WTFMove(verticalAlign))
+    , m_backgroundColor(WTFMove(backgroundColor))
+    , m_foregroundColor(WTFMove(foregroundColor))
+    , m_shadow(WTFMove(shadow))
+    , m_strikeThrough(WTFMove(strikeThrough))
+    , m_underline(WTFMove(underline))
+    , m_fontChanges(WTFMove(fontChanges))
+{
 }
 
 EditAction FontAttributeChanges::editAction() const

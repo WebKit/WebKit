@@ -64,17 +64,17 @@ struct _WebKitPrintCustomWidgetClass {
     void    (*_webkit_reserved3) (void);
 };
 
-WEBKIT_API GType
+WEBKIT_DEPRECATED GType
 webkit_print_custom_widget_get_type   (void);
 
-WEBKIT_API WebKitPrintCustomWidget *
+WEBKIT_DEPRECATED WebKitPrintCustomWidget *
 webkit_print_custom_widget_new        (GtkWidget               *widget,
                                        const char              *title);
 
-WEBKIT_API GtkWidget *
+WEBKIT_DEPRECATED GtkWidget *
 webkit_print_custom_widget_get_widget (WebKitPrintCustomWidget *print_custom_widget);
 
-WEBKIT_API const gchar *
+WEBKIT_DEPRECATED const gchar *
 webkit_print_custom_widget_get_title  (WebKitPrintCustomWidget *print_custom_widget);
 
 G_END_DECLS

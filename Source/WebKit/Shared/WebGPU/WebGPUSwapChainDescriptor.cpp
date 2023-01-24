@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,7 @@ std::optional<SwapChainDescriptor> ConvertToBackingContext::convertToBacking(con
     if (!base)
         return std::nullopt;
 
-    auto size = convertToBacking(swapChainDescriptor.size);
-    if (!size)
-        return std::nullopt;
-
-    return { { WTFMove(*base), WTFMove(*size),  swapChainDescriptor.sampleCount, swapChainDescriptor.format, swapChainDescriptor.usage } };
+    return { { WTFMove(*base), swapChainDescriptor.format, swapChainDescriptor.usage, swapChainDescriptor.viewFormats, swapChainDescriptor.colorSpace, swapChainDescriptor.compositingAlphaMode, swapChainDescriptor.width, swapChainDescriptor.height } };
 }
 
 std::optional<PAL::WebGPU::SwapChainDescriptor> ConvertFromBackingContext::convertFromBacking(const SwapChainDescriptor& swapChainDescriptor)
@@ -53,11 +49,7 @@ std::optional<PAL::WebGPU::SwapChainDescriptor> ConvertFromBackingContext::conve
     if (!base)
         return std::nullopt;
 
-    auto size = convertFromBacking(swapChainDescriptor.size);
-    if (!size)
-        return std::nullopt;
-
-    return { { WTFMove(*base), WTFMove(*size), swapChainDescriptor.sampleCount, swapChainDescriptor.format, swapChainDescriptor.usage } };
+    return { { WTFMove(*base), swapChainDescriptor.format, swapChainDescriptor.usage, swapChainDescriptor.viewFormats, swapChainDescriptor.colorSpace, swapChainDescriptor.compositingAlphaMode, swapChainDescriptor.width, swapChainDescriptor.height } };
 }
 
 } // namespace WebKit

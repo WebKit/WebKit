@@ -29,6 +29,7 @@
 
 #include "Supplementable.h"
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -36,7 +37,7 @@ class Gamepad;
 class Navigator;
 class PlatformGamepad;
 
-class NavigatorGamepad : public Supplement<Navigator> {
+class NavigatorGamepad : public Supplement<Navigator>, public CanMakeWeakPtr<NavigatorGamepad> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigatorGamepad(Navigator&);

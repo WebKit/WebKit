@@ -24,79 +24,81 @@ kkk
 </div>
 
 <div id="console"></div>
-
+<script src="../resources/ui-helper.js"></script>
 <script>
 function log(message)
 {
     document.getElementById("console").innerHTML += message + "<br>";
 }
 
-function centerMouseOn(element)
+function centerOfElement(element)
 {
-    eventSender.mouseMoveTo(element.offsetLeft + element.offsetWidth / 2,
-        element.offsetTop + element.offsetHeight / 2);
+    return { x: element.offsetLeft + element.offsetWidth / 2, y : element.offsetTop + element.offsetHeight / 2 };
 }
 
-function testRTL()
+async function testRTL()
 {
     var rtl = document.getElementById("rtl");
-    centerMouseOn(rtl);
+    var position = centerOfElement(rtl);
     var offsetBefore = rtl.scrollLeft;
 
-    rtl.onscroll = function() {
-        var offsetAfter = rtl.scrollLeft;
-        if (offsetBefore > offsetAfter)
-            log("rtl: PASS");
-        else {
-            log("rtl: FAIL");
-            log("scrollLeft before: " + offsetBefore);
-            log("scrollLeft after: " + offsetAfter);
-        }
-        testBT();
-    }
+    await Promise.all([
+        UIHelper.waitForEvent(rtl, 'scroll'),
+        UIHelper.statelessMouseWheelScrollAt(position.x, position.y, 1, 0)
+    ]);
 
-    eventSender.mouseScrollBy(1, 0);
+    var offsetAfter = rtl.scrollLeft;
+    if (offsetBefore > offsetAfter)
+        log("rtl: PASS");
+    else {
+        log("rtl: FAIL");
+        log("scrollLeft before: " + offsetBefore);
+        log("scrollLeft after: " + offsetAfter);
+    }
 }
 
-function testBT()
+async function testBT()
 {
     var bt = document.getElementById("bt");
-    centerMouseOn(bt);
-    offsetBefore = bt.scrollTop;
-    bt.onscroll = function() {
-        offsetAfter = bt.scrollTop;
-        if (offsetBefore > offsetAfter)
-            log("bt: PASS");
-        else {
-            log("bt: FAIL");
-            log("scrollTop before: " + offsetBefore);
-            log("scrollTop after: " + offsetAfter);
-        }
-
-        document.body.removeChild(document.getElementById("rtl"));
-        document.body.removeChild(document.getElementById("bt"));
-        testRunner.notifyDone();
+    var position = centerOfElement(bt);
+    var offsetBefore = bt.scrollTop;
+    await Promise.all([
+        UIHelper.waitForEvent(bt, 'scroll'),
+        UIHelper.statelessMouseWheelScrollAt(position.x, position.y, 0, 1)
+    ]);
+    
+    var offsetAfter = bt.scrollTop;
+    if (offsetBefore > offsetAfter)
+        log("bt: PASS");
+    else {
+        log("bt: FAIL");
+        log("scrollTop before: " + offsetBefore);
+        log("scrollTop after: " + offsetAfter);
     }
 
-    eventSender.mouseScrollBy(0, 1);
+    document.body.removeChild(document.getElementById("rtl"));
+    document.body.removeChild(document.getElementById("bt"));
 }
 
-function test()
+async function runTest()
 {
-    if (window.testRunner) {
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
-    }
-
     if (!window.eventSender || !window.eventSender.mouseScrollBy) {
-        log("This test requires DumpRenderTree with eventSender.mouseScrollBy.");
+        log("This test requires eventSender.mouseScrollBy.");
         return;
     }
 
-    testRTL();
+    await testRTL();
+    await testBT();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
-test();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener('load', runTest, false);
 </script>
 
 </body>

@@ -1,0 +1,32 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+onload = () => {
+    inputElement.setRangeText("foo");
+}
+
+function inputFocusHandler()
+{
+    datalistElement.id = "foo";
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+function selectBlurHandler()
+{
+    tableElement.cloneNode(true);
+}
+</script>
+<body>
+<p>This test passes if it doesn't crash.</p>
+<table id="tableElement" background="foo">
+<form id="formElement">
+<input id="inputElement" list="formElement" onfocus="inputFocusHandler()">
+<select onblur="selectBlurHandler()" autofocus="autofocus">
+<keygen>
+<datalist id="datalistElement">foo</datalist>

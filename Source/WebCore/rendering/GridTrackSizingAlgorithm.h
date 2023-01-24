@@ -129,6 +129,10 @@ public:
     LayoutUnit maxContentSize() const { return m_maxContentSize; };
 
     LayoutUnit baselineOffsetForChild(const RenderBox&, GridAxis) const;
+
+    // The estimated grid area should be use pre-layout versus the grid area, which should be used once
+    // layout is complete.
+    std::optional<LayoutUnit> gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
     std::optional<LayoutUnit> estimatedGridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
     void cacheBaselineAlignedItem(const RenderBox&, GridAxis);
@@ -172,8 +176,6 @@ private:
     template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan);
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&) const;
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<GridTrack*>* growBeyondGrowthLimitsTracks, LayoutUnit& freeSpace) const;
-
-    std::optional<LayoutUnit> gridAreaBreadthForChild(const RenderBox&, GridTrackSizingDirection) const;
 
     void computeBaselineAlignmentContext();
     void updateBaselineAlignmentContext(const RenderBox&, GridAxis);

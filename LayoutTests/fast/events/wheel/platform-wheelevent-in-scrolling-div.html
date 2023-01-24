@@ -23,9 +23,7 @@
                     overflowElement.addEventListener("mousewheel", mousewheelHandler, false);
 
                 eventSender.mouseMoveTo(100, 110);
-                await UIHelper.startMonitoringWheelEvents();
-                eventSender.mouseScrollBy(-expectedScrollLeft, -expectedScrollTop);
-                await UIHelper.waitForScrollCompletion();
+                await UIHelper.statelessMouseWheelScrollAt(100, 110, -expectedScrollLeft, -expectedScrollTop);
                 checkOffsets();
             }
 

@@ -9,6 +9,7 @@ file(MAKE_DIRECTORY ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit2)
 list(APPEND WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMimeInfo.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
+    ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitPrintCustomWidget.h.in
 )
 
 list(APPEND WebKitWebExtension_HEADER_TEMPLATES

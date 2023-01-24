@@ -32,6 +32,7 @@
 #include "CryptoKeyAES.h"
 #include "CryptoKeyEC.h"
 #include "CryptoKeyHMAC.h"
+#include "CryptoKeyOKP.h"
 #include "CryptoKeyRSA.h"
 #include "CryptoKeyRSAComponents.h"
 #include "CryptoKeyRaw.h"
@@ -295,8 +296,9 @@ enum class CryptoKeyClassSubtag {
     RSA = 2,
     EC = 3,
     Raw = 4,
+    OKP = 5,
 };
-const uint8_t cryptoKeyClassSubtagMaximumValue = 4;
+const uint8_t cryptoKeyClassSubtagMaximumValue = 5;
 
 enum class CryptoKeyAsymmetricTypeSubtag {
     Public = 0,
@@ -336,8 +338,10 @@ enum class CryptoAlgorithmIdentifierTag {
     SHA_512 = 18,
     HKDF = 20,
     PBKDF2 = 21,
+    ED25519 = 22,
 };
-const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 21;
+
+const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 22;
 
 static unsigned countUsages(CryptoKeyUsageBitmap usages)
 {
@@ -349,6 +353,13 @@ static unsigned countUsages(CryptoKeyUsageBitmap usages)
     }
     return count;
 }
+
+enum class CryptoKeyOKPOpNameTag {
+    X25519 = 0,
+    ED25519 = 1,
+};
+const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
+
 
 #endif
 
@@ -1616,6 +1627,11 @@ private:
     {
         writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
     }
+
+    void write(CryptoKeyOKPOpNameTag tag)
+    {
+        writeLittleEndian<uint8_t>(m_buffer, static_cast<uint8_t>(tag));
+    }
 #endif
 
     void write(uint8_t c)
@@ -1810,6 +1826,18 @@ private:
     }
 
 #if ENABLE(WEB_CRYPTO)
+    void write(CryptoKeyOKP::NamedCurve curve)
+    {
+        switch (curve) {
+        case CryptoKeyOKP::NamedCurve::X25519:
+            write(CryptoKeyOKPOpNameTag::X25519);
+            break;
+        case CryptoKeyOKP::NamedCurve::Ed25519:
+            write(CryptoKeyOKPOpNameTag::ED25519);
+            break;
+        }
+    }
+
     void write(CryptoAlgorithmIdentifier algorithm)
     {
         switch (algorithm) {
@@ -1869,6 +1897,9 @@ private:
             break;
         case CryptoAlgorithmIdentifier::PBKDF2:
             write(CryptoAlgorithmIdentifierTag::PBKDF2);
+            break;
+        case CryptoAlgorithmIdentifier::Ed25519:
+            write(CryptoAlgorithmIdentifierTag::ED25519);
             break;
         }
     }
@@ -1977,7 +2008,7 @@ private:
             write(key->algorithmIdentifier());
             write(downcast<CryptoKeyRaw>(*key).key());
             break;
-        case CryptoKeyClass::RSA:
+        case CryptoKeyClass::RSA: {
             write(CryptoKeyClassSubtag::RSA);
             write(key->algorithmIdentifier());
             CryptoAlgorithmIdentifier hash;
@@ -1986,6 +2017,13 @@ private:
             if (isRestrictedToHash)
                 write(hash);
             write(*downcast<CryptoKeyRSA>(*key).exportData());
+            break;
+        }
+        case CryptoKeyClass::OKP:
+            write(CryptoKeyClassSubtag::OKP);
+            write(key->algorithmIdentifier());
+            write(downcast<CryptoKeyOKP>(*key).namedCurve());
+            write(downcast<CryptoKeyOKP>(*key).platformKey());
             break;
         }
     }
@@ -2974,6 +3012,26 @@ private:
     }
 
 #if ENABLE(WEB_CRYPTO)
+    bool read(CryptoKeyOKP::NamedCurve& result)
+    {
+        uint8_t nameTag;
+        if (!read(nameTag))
+            return false;
+        if (nameTag > cryptoKeyOKPOpNameTagMaximumValue)
+            return false;
+
+        switch (static_cast<CryptoKeyOKPOpNameTag>(nameTag)) {
+        case CryptoKeyOKPOpNameTag::X25519:
+            result = CryptoKeyOKP::NamedCurve::X25519;
+            break;
+        case CryptoKeyOKPOpNameTag::ED25519:
+            result = CryptoKeyOKP::NamedCurve::Ed25519;
+            break;
+        }
+
+        return true;
+    }
+
     bool read(CryptoAlgorithmIdentifier& result)
     {
         uint8_t algorithmTag;
@@ -3038,6 +3096,9 @@ private:
             break;
         case CryptoAlgorithmIdentifierTag::PBKDF2:
             result = CryptoAlgorithmIdentifier::PBKDF2;
+            break;
+        case CryptoAlgorithmIdentifierTag::ED25519:
+            result = CryptoAlgorithmIdentifier::Ed25519;
             break;
         }
         return true;
@@ -3209,6 +3270,24 @@ private:
         return true;
     }
 
+    bool readOKPKey(bool extractable, CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
+    {
+        CryptoAlgorithmIdentifier algorithm;
+        if (!read(algorithm))
+            return false;
+        if (!CryptoKeyOKP::isValidOKPAlgorithm(algorithm))
+            return false;
+        CryptoKeyOKP::NamedCurve namedCurve;
+        if (!read(namedCurve))
+            return false;
+        Vector<uint8_t> keyData;
+        if (!read(keyData))
+            return false;
+
+        result = CryptoKeyOKP::importRaw(algorithm, namedCurve, WTFMove(keyData), extractable, usages);
+        return true;
+    }
+
     bool readRawKey(CryptoKeyUsageBitmap usages, RefPtr<CryptoKey>& result)
     {
         CryptoAlgorithmIdentifier algorithm;
@@ -3291,6 +3370,10 @@ private:
             break;
         case CryptoKeyClassSubtag::Raw:
             if (!readRawKey(usages, result))
+                return false;
+            break;
+        case CryptoKeyClassSubtag::OKP:
+            if (!readOKPKey(extractable, usages, result))
                 return false;
             break;
         }

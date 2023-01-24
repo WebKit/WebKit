@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,9 +31,7 @@ typedef (
 #if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
     WebGL2RenderingContext or
 #endif
-#if defined(HAVE_WEBGPU_IMPLEMENTATION) && HAVE_WEBGPU_IMPLEMENTATION
     GPUCanvasContext or
-#endif
     ImageBitmapRenderingContext or 
     CanvasRenderingContext2D) RenderingContext;
 

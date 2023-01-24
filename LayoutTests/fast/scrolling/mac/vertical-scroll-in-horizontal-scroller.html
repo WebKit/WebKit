@@ -32,6 +32,8 @@
             await UIHelper.startMonitoringWheelEvents();
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseScrollByWithWheelAndMomentumPhases(deltaX, deltaY, "none", "none");
+
+            // FIXME: Use await UIHelper.waitForScrollCompletion();
             return new Promise(resolve => {
                 eventSender.callAfterScrollingCompletes(() => {
                     requestAnimationFrame(resolve);

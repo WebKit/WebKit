@@ -10,23 +10,30 @@ input::-webkit-textfield-decoration-container {
 }
 </style>
 <input type="search">
+<script src="../../../resources/ui-helper.js"></script>
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }
 
-if (window.eventSender) {
+window.addEventListener('load', async () => {
+    if (!window.eventSender)
+        return;
+
     var input = document.querySelector('input');
     var x = input.offsetLeft + input.offsetWidth / 2;
     var y = input.offsetTop + input.offsetHeight / 2;
+
+    // Can't use UIHelper.statelessMouseWheelScrollAt() because the test doesn't trigger any scrolling.
+    await UIHelper.ensurePresentationUpdate();
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseScrollBy(0, 10);
-    
-    setTimeout(function() {
-        document.body.appendChild(document.createTextNode('PASS'));
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 100);
-}
+    await UIHelper.delayFor(0);
+
+    document.body.appendChild(document.createTextNode('PASS'));
+    if (window.testRunner)
+        testRunner.notifyDone();    
+}, false);
+
 </script>

@@ -4992,6 +4992,11 @@ void Document::setCSSTarget(Element* newTarget)
     m_cssTarget = newTarget;
 }
 
+Element* Document::cssTarget() const
+{
+    return m_cssTarget.get();
+}
+
 void Document::registerNodeListForInvalidation(LiveNodeList& list)
 {
     m_nodeListAndCollectionCounts[list.invalidationType()]++;
@@ -6715,10 +6720,8 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
     if (is<ImageBitmapRenderingContext>(*context))
         return RenderingContext { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*context) } };
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
     if (is<GPUCanvasContext>(*context))
         return RenderingContext { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*context) } };
-#endif
 
     return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
 }

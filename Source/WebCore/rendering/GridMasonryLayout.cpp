@@ -168,9 +168,10 @@ void GridMasonryLayout::placeItemsWithIndefiniteGridAxisPosition()
 void GridMasonryLayout::setItemGridAxisContainingBlockToGridArea(RenderBox& child)
 {
     if (gridAxisDirection() == ForColumns)
-        child.setOverridingContainingBlockContentLogicalWidth(m_renderGrid.m_trackSizingAlgorithm.estimatedGridAreaBreadthForChild(child, ForColumns));
+        child.setOverridingContainingBlockContentLogicalWidth(m_renderGrid.m_trackSizingAlgorithm.gridAreaBreadthForChild(child, ForColumns));
     else
-        child.setOverridingContainingBlockContentLogicalHeight(m_renderGrid.m_trackSizingAlgorithm.estimatedGridAreaBreadthForChild(child, ForRows));
+        child.setOverridingContainingBlockContentLogicalHeight(m_renderGrid.m_trackSizingAlgorithm.gridAreaBreadthForChild(child, ForRows));
+    
     // FIXME(249230): Try to cache masonry layout sizes
     child.setChildNeedsLayout(MarkOnlyThis);
 }

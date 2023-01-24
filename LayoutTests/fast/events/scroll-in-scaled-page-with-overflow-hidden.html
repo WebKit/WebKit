@@ -3,6 +3,7 @@
         html, body { margin:0; overflow: hidden; }
     </style>
     <script src="../../resources/js-test.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
 </head>
 
 <div>This tests that a usually overflow: hidden viewport should be scrollable when scaled. Otherwise, you can't get to content
@@ -13,7 +14,7 @@
 </div>
 
 <script>
-    window.addEventListener('load', function() {
+    window.addEventListener('load', async () => {
         if (!window.testRunner) {
             debug("This test only works in the test runner.");
             return;
@@ -35,14 +36,12 @@
         // and https://drafts.csswg.org/cssom-view/#dom-element-scrolltop
         shouldBe("window.scrollY", "0");
 
-        document.body.onscroll = function() {
-            shouldBe("window.scrollY", "100");
-            finishJSTest();
-        }
+        await Promise.all([
+            UIHelper.waitForEvent(window, "scroll"),
+            UIHelper.statelessMouseWheelScrollAt(100, 100, 0, -5)
+        ]);
 
-        if (window.eventSender) {
-            eventSender.mouseMoveTo(100, 100);
-            eventSender.mouseScrollBy(0, -5);
-        }
+        shouldBe("window.scrollY", "100");
+        finishJSTest();
     });
 </script>

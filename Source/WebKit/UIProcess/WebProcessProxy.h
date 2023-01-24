@@ -402,7 +402,7 @@ public:
     void startServiceWorkerBackgroundProcessing();
     void endServiceWorkerBackgroundProcessing();
 #endif
-    void setThrottleStateForTesting(ProcessThrottleState state) { didChangeThrottleState(state); }
+    void setThrottleStateForTesting(ProcessThrottleState);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UserMediaCaptureManagerProxy* userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }
@@ -647,6 +647,7 @@ private:
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_activityForHoldingLockedFiles;
     ForegroundWebProcessToken m_foregroundToken;
     BackgroundWebProcessToken m_backgroundToken;
+    bool m_areThrottleStateChangesEnabled { true };
 
 #if HAVE(CVDISPLAYLINK)
     DisplayLinkProcessProxyClient m_displayLinkClient;

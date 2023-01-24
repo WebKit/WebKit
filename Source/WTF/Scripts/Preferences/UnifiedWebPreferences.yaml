@@ -6599,6 +6599,19 @@ WebCodecsEnabled:
       "USE(GSTREAMER)": true
       default: false
 
+WebCryptoSafeCurvesEnabled:
+  type: bool
+  status: preview
+  humanReadableName: "Web Crypto Safe Curves"
+  humanReadableDescription: "Enable Web Crypto Safe Curves"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebGL2Enabled:
   type: bool
   status: stable

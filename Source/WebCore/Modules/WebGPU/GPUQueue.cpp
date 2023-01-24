@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,9 @@
 #include "GPUImageCopyExternalImage.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
-
-#if HAVE(WEBGPU_IMPLEMENTATION)
-#include <WebCore/ImageBuffer.h>
-#include <WebCore/PixelBuffer.h>
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
+#include "ImageBuffer.h"
+#include "OffscreenCanvas.h"
+#include "PixelBuffer.h"
 
 namespace WebCore {
 
@@ -87,25 +85,26 @@ void GPUQueue::writeTexture(
     m_backing->writeTexture(destination.convertToBacking(), data.data(), data.length(), imageDataLayout.convertToBacking(), convertToBacking(size));
 }
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
 static ImageBuffer* imageBufferForSource(const auto& source)
 {
     return WTF::switchOn(source, [] (const RefPtr<ImageBitmap>& imageBitmap) {
         return imageBitmap->buffer();
     }, [] (const RefPtr<HTMLCanvasElement>& canvasElement) {
         return canvasElement->buffer();
-    }, [] (const RefPtr<OffscreenCanvas>& offscreenCanvasElement) {
+    }
+#if ENABLE(OFFSCREEN_CANVAS)
+    , [] (const RefPtr<OffscreenCanvas>& offscreenCanvasElement) {
         return offscreenCanvasElement->buffer();
-    });
+    }
+#endif
+    );
 }
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
 
 void GPUQueue::copyExternalImageToTexture(
     const GPUImageCopyExternalImage& source,
     const GPUImageCopyTextureTagged& destination,
     const GPUExtent3D& copySize)
 {
-#if HAVE(WEBGPU_IMPLEMENTATION)
     auto imageBuffer = imageBufferForSource(source.source);
     if (!imageBuffer)
         return;
@@ -121,11 +120,6 @@ void GPUQueue::copyExternalImageToTexture(
     auto rows = size.height();
     GPUImageDataLayout dataLayout { 0, sizeInBytes / rows, rows };
     m_backing->writeTexture(destination.convertToBacking(), pixelBuffer->bytes(), sizeInBytes, dataLayout.convertToBacking(), convertToBacking(copySize));
-#else
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(copySize);
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
 }
 
-}
+} // namespace WebCore

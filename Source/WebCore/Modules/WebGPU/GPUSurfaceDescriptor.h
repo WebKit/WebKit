@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,11 +25,7 @@
 
 #pragma once
 
-#include "GPUExtent3DDict.h"
-#include "GPUIntegralTypes.h"
 #include "GPUObjectDescriptorBase.h"
-#include "GPUTextureFormat.h"
-#include "GPUTextureUsage.h"
 #include <pal/graphics/WebGPU/WebGPUSurfaceDescriptor.h>
 
 namespace WebCore {
@@ -39,17 +35,9 @@ struct GPUSurfaceDescriptor : public GPUObjectDescriptorBase {
     {
         return {
             { label },
-            WebCore::convertToBacking(size),
-            sampleCount,
-            WebCore::convertToBacking(format),
-            convertTextureUsageFlagsToBacking(usage)
         };
     }
 
-    GPUExtent3D size;
-    GPUSize32 sampleCount { 1 };
-    GPUTextureFormat format { GPUTextureFormat::R8unorm };
-    GPUTextureUsageFlags usage { GPUTextureUsage::RENDER_ATTACHMENT };
 };
 
 }

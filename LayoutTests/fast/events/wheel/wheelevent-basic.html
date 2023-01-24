@@ -2,6 +2,7 @@
 <html>
 <head>
 <link rel="help" href="http://www.w3.org/TR/DOM-Level-3-Events/#events-WheelEvent">
+<script src="../../../resources/ui-helper.js"></script>
 <script src="../../../resources/js-test-pre.js"></script>
 <script>
 var eventDeltaX = 0;
@@ -12,7 +13,7 @@ var scrollDeltaY;
 jsTestIsAsync = true;
 
 var testDiv;
-function runTest() {
+async function runTest() {
     // Basic checks.
     shouldBe('WheelEvent.prototype.__proto__', 'MouseEvent.prototype');
     shouldBe('WheelEvent.DOM_DELTA_PIXEL', '0x00');
@@ -24,9 +25,9 @@ function runTest() {
     shouldBeNull('document.onwheel');
     shouldBeNull('testDiv.onwheel');
     testDiv.addEventListener('wheel', wheelHandler);
+
     if (window.eventSender) {
-        eventSender.mouseMoveTo(testDiv.offsetLeft + 5, testDiv.offsetTop + 5);
-        eventSender.mouseScrollBy(-1, -2);
+        await UIHelper.statelessMouseWheelScrollAt(testDiv.offsetLeft + 5, testDiv.offsetTop + 5, -1, -2);        
     } else {
         debug("FAIL: This test requires window.eventSender.");
     }

@@ -207,7 +207,6 @@ UIProcess/API/gtk/WebKitEmojiChooser.cpp @no-unify
 UIProcess/API/gtk/WebKitInputMethodContextGtk.cpp @no-unify
 UIProcess/API/gtk/WebKitInputMethodContextImplGtk.cpp @no-unify
 UIProcess/API/gtk/WebKitPopupMenu.cpp @no-unify
-UIProcess/API/gtk/WebKitPrintCustomWidget.cpp @no-unify
 UIProcess/API/gtk/WebKitPrintOperation.cpp @no-unify
 UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp @no-unify
 UIProcess/API/gtk/WebKitScriptDialogGtk.cpp @no-unify

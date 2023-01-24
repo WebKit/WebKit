@@ -8,6 +8,7 @@
             background-image: linear-gradient(white, gray)
         }
   </style>
+  <script src="../../resources/ui-helper.js"></script>
   <script>
        if (window.testRunner) {
            testRunner.dumpAsText();
@@ -30,14 +31,13 @@
             testRunner.notifyDone();
         }
 
-        function scrollTest()
+        async function scrollTest()
         {
             var externalScrollableArea = document.getElementById('externalScrollableArea');
             var externalScrollableAreaBounds = externalScrollableArea.getBoundingClientRect();
 
             logResult('Sending mouse events');
-            eventSender.mouseMoveTo(externalScrollableAreaBounds.left + 60, externalScrollableAreaBounds.bottom - 60);
-            eventSender.mouseScrollBy(0, -10);
+            await UIHelper.statelessMouseWheelScrollAt(externalScrollableAreaBounds.left + 60, externalScrollableAreaBounds.bottom - 60, 0, -10);
         }
 
         function startTest()

@@ -99,7 +99,8 @@ struct Box {
     bool isHorizontal() const { return style().isHorizontalWritingMode(); }
 
     bool hasContent() const { return m_hasContent; }
-    bool isVisible() const { return !m_isFullyTruncated && style().visibility() == Visibility::Visible; }
+    bool isVisible() const { return !isFullyTruncated() && style().visibility() == Visibility::Visible; }
+    bool isFullyTruncated() const { return m_isFullyTruncated; } 
 
     const FloatRect& visualRectIgnoringBlockDirection() const { return m_unflippedVisualRect; }
     static FloatRect visibleRectIgnoringBlockDirection(const Box&, const FloatRect& visibleLineRect);

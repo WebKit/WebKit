@@ -633,7 +633,7 @@ std::optional<LayoutUnit> GridTrackSizingAlgorithm::gridAreaBreadthForChild(cons
     // To determine the column track's size based on an orthogonal grid item we need it's logical
     // height, which may depend on the row track's size. It's possible that the row tracks sizing
     // logic has not been performed yet, so we will need to do an estimation.
-    if (direction == ForRows && (m_sizingState == ColumnSizingFirstIteration || m_sizingState == ColumnSizingSecondIteration)) {
+    if (direction == ForRows && (m_sizingState == ColumnSizingFirstIteration || m_sizingState == ColumnSizingSecondIteration) && !m_renderGrid->areMasonryColumns()) {
         ASSERT(GridLayoutFunctions::isOrthogonalChild(*m_renderGrid, child));
         // FIXME (jfernandez) Content Alignment should account for this heuristic.
         // https://github.com/w3c/csswg-drafts/issues/2697
