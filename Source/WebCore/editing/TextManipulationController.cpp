@@ -51,7 +51,7 @@
 
 namespace WebCore {
 
-inline bool TextManipulationController::ExclusionRule::match(const Element& element) const
+inline bool TextManipulationControllerExclusionRule::match(const Element& element) const
 {
     return WTF::switchOn(rule, [&element] (ElementRule rule) {
         return rule.localName == element.localName();
@@ -658,13 +658,13 @@ auto TextManipulationController::completeManipulation(const Vector<WebCore::Text
         auto& itemToComplete = completionItems[i];
         auto identifier = itemToComplete.identifier;
         if (!identifier) {
-            failures.append(ManipulationFailure { identifier, i, ManipulationFailureType::InvalidItem });
+            failures.append(ManipulationFailure { identifier, i, ManipulationFailure::Type::InvalidItem });
             continue;
         }
 
         auto itemDataIterator = m_items.find(identifier);
         if (itemDataIterator == m_items.end()) {
-            failures.append(ManipulationFailure { identifier, i, ManipulationFailureType::InvalidItem });
+            failures.append(ManipulationFailure { identifier, i, ManipulationFailure::Type::InvalidItem });
             continue;
         }
 
@@ -750,23 +750,23 @@ void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDown
         insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *currentNode });
 }
 
-auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<TextManipulationToken>& replacementTokens, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement) -> std::optional<ManipulationFailureType>
+auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<TextManipulationToken>& replacementTokens, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement) -> std::optional<ManipulationFailure::Type>
 {
     if (item.start.isOrphan() || item.end.isOrphan())
-        return ManipulationFailureType::ContentChanged;
+        return ManipulationFailure::Type::ContentChanged;
 
     if (item.start.isNull() || item.end.isNull()) {
         RELEASE_ASSERT(item.tokens.size() == 1);
         RefPtr element = { item.element.get() };
         if (!element)
-            return ManipulationFailureType::ContentChanged;
+            return ManipulationFailure::Type::ContentChanged;
         if (replacementTokens.size() > 1 && !canPerformTextManipulationByReplacingEntireTextContent(*element) && item.attributeName == nullQName())
-            return ManipulationFailureType::InvalidToken;
+            return ManipulationFailure::Type::InvalidToken;
         auto expectedTokenIdentifier = item.tokens[0].identifier;
         StringBuilder newValue;
         for (size_t i = 0; i < replacementTokens.size(); ++i) {
             if (replacementTokens[i].identifier != expectedTokenIdentifier)
-                return ManipulationFailureType::InvalidToken;
+                return ManipulationFailure::Type::InvalidToken;
             if (i)
                 newValue.append(' ');
             newValue.append(replacementTokens[i].content);
@@ -806,7 +806,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         Vector<TextManipulationToken> tokensInCurrentNode;
         if (content.isReplacedContent) {
             if (currentTokenIndex >= item.tokens.size())
-                return ManipulationFailureType::ContentChanged;
+                return ManipulationFailure::Type::ContentChanged;
 
             tokensInCurrentNode.append(item.tokens[currentTokenIndex]);
         } else
@@ -817,12 +817,12 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         });
         for (auto& token : tokensInCurrentNode) {
             if (currentTokenIndex >= item.tokens.size())
-                return ManipulationFailureType::ContentChanged;
+                return ManipulationFailure::Type::ContentChanged;
 
             auto& currentToken = item.tokens[currentTokenIndex++];
             bool isContentUnchanged = areEqualIgnoringLeadingAndTrailingWhitespaces(currentToken.content, token.content);
             if (!content.isReplacedContent && !isContentUnchanged)
-                return ManipulationFailureType::ContentChanged;
+                return ManipulationFailure::Type::ContentChanged;
 
             tokenExchangeMap.set(currentToken.identifier, TokenExchangeData { content.node.copyRef(), currentToken.content, !isNodeIncluded });
         }
@@ -840,14 +840,14 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
     }
 
     if (!firstContentNode)
-        return ManipulationFailureType::ContentChanged;
+        return ManipulationFailure::Type::ContentChanged;
 
     while (lastChildOfCommonAncestorInRange && lastChildOfCommonAncestorInRange->parentNode() != commonAncestor)
         lastChildOfCommonAncestorInRange = lastChildOfCommonAncestorInRange->parentNode();
 
     if (!lastChildOfCommonAncestorInRange) {
         RELEASE_LOG_ERROR(TextManipulation, "%p - TextManipulationController::replace lastChildOfCommonAncestorInRange is null", this);
-        return ManipulationFailureType::ContentChanged;
+        return ManipulationFailure::Type::ContentChanged;
     }
 
     for (auto node = commonAncestor; node; node = node->parentNode())
@@ -872,7 +872,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         auto& replacementToken = replacementTokens[index];
         auto it = tokenExchangeMap.find(replacementToken.identifier);
         if (it == tokenExchangeMap.end())
-            return ManipulationFailureType::InvalidToken;
+            return ManipulationFailure::Type::InvalidToken;
 
         auto& exchangeData = it->value;
         auto* originalNode = exchangeData.node.get();
@@ -882,11 +882,11 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         RefPtr<Node> replacementNode;
         if (exchangeData.isExcluded) {
             if (exchangeData.isConsumed)
-                return ManipulationFailureType::ExclusionViolation;
+                return ManipulationFailure::Type::ExclusionViolation;
             exchangeData.isConsumed = true;
 
             if (!replacementToken.content.isNull() && replacementToken.content != exchangeData.originalContent)
-                return ManipulationFailureType::ExclusionViolation;
+                return ManipulationFailure::Type::ExclusionViolation;
 
             replacementNode = originalNode;
             for (RefPtr<Node> descendentNode = NodeTraversal::next(*originalNode, originalNode); descendentNode; descendentNode = NodeTraversal::next(*descendentNode, originalNode))

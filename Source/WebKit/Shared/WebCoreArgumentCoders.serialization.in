@@ -2809,3 +2809,78 @@ enum class WebCore::MediaEncodingType : bool;
 class WebCore::BufferSource {
     Span<const uint8_t> span()
 }
+
+struct WebCore::FontShadow {
+    WebCore::Color color;
+    WebCore::FloatSize offset;
+    double blurRadius;
+};
+
+struct WebCore::CompositionHighlight {
+    unsigned startOffset;
+    unsigned endOffset;
+    WebCore::Color color;
+};
+
+header: <WebCore/FontAttributeChanges.h>
+[CustomHeader] class WebCore::FontChanges {
+    String m_fontName;
+    String m_fontFamily;
+    std::optional<double> m_fontSize;
+    [Validator='!*m_fontSize || !*m_fontSizeDelta'] std::optional<double> m_fontSizeDelta;
+    std::optional<bool> m_bold;
+    std::optional<bool> m_italic;
+};
+
+class WebCore::FontAttributeChanges {
+    std::optional<WebCore::VerticalAlignChange> m_verticalAlign;
+    std::optional<WebCore::Color> m_backgroundColor;
+    std::optional<WebCore::Color> m_foregroundColor;
+    std::optional<WebCore::FontShadow> m_shadow;
+    std::optional<bool> m_strikeThrough;
+    std::optional<bool> m_underline;
+    WebCore::FontChanges m_fontChanges;
+};
+
+header: <WebCore/TextManipulationController.h>
+[Nested, CustomHeader] enum class WebCore::TextManipulationControllerExclusionRule::Type : uint8_t {
+    Exclude,
+    Include
+};
+
+header: <WebCore/TextManipulationController.h>
+[Nested, CustomHeader] struct WebCore::TextManipulationControllerExclusionRule::ElementRule {
+    AtomString localName;
+};
+
+header: <WebCore/TextManipulationController.h>
+[Nested, CustomHeader] struct WebCore::TextManipulationControllerExclusionRule::AttributeRule {
+    AtomString name;
+    String value;
+};
+
+header: <WebCore/TextManipulationController.h>
+[Nested, CustomHeader] struct WebCore::TextManipulationControllerExclusionRule::ClassRule {
+    AtomString className;
+};
+
+header: <WebCore/TextManipulationController.h>
+[CustomHeader] struct WebCore::TextManipulationControllerExclusionRule {
+    WebCore::TextManipulationControllerExclusionRule::Type type;
+    std::variant<WebCore::TextManipulationControllerExclusionRule::ElementRule, WebCore::TextManipulationControllerExclusionRule::AttributeRule, WebCore::TextManipulationControllerExclusionRule::ClassRule> rule;
+};
+
+header: <WebCore/TextManipulationController.h>
+[Nested, CustomHeader] enum class WebCore::TextManipulationControllerManipulationFailure::Type : uint8_t {
+    ContentChanged,
+    InvalidItem,
+    InvalidToken,
+    ExclusionViolation,
+};
+
+header: <WebCore/TextManipulationController.h>
+[CustomHeader] struct WebCore::TextManipulationControllerManipulationFailure {
+    WebCore::TextManipulationItemIdentifier identifier;
+    uint64_t index;
+    WebCore::TextManipulationControllerManipulationFailure::Type type;
+};

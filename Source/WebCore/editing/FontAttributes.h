@@ -40,9 +40,6 @@ struct TextList {
     int startingItemNumber { 0 };
     bool ordered { false };
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<TextList> decode(Decoder&);
-
 #if PLATFORM(COCOA)
     RetainPtr<NSTextList> createTextList() const;
 #endif

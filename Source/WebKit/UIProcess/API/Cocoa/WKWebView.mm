@@ -2307,7 +2307,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         if (coreFailure.index >= items.count)
             return nil;
         auto errorCode = static_cast<NSInteger>(([&coreFailure] {
-            using Type = WebCore::TextManipulationController::ManipulationFailureType;
+            using Type = WebCore::TextManipulationController::ManipulationFailure::Type;
             switch (coreFailure.type) {
             case Type::ContentChanged:
                 return _WKTextManipulationItemErrorContentChanged;

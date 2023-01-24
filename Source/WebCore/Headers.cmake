@@ -870,6 +870,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     editing/TextIterator.h
     editing/TextIteratorBehavior.h
     editing/TextManipulationController.h
+    editing/TextManipulationControllerExclusionRule.h
+    editing/TextManipulationControllerManipulationFailure.h
     editing/TextManipulationItem.h
     editing/TextManipulationToken.h
     editing/UndoStep.h
