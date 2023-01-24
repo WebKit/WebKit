@@ -393,9 +393,11 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
     }
 
-    // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
-    [CATransaction begin];
-    [CATransaction commit];
+    if (!WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM)) {
+        // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
+        [CATransaction begin];
+        [CATransaction commit];
+    }
 
     HashSet<RemoteLayerTreeDisplayRefreshMonitor*> monitorsToNotify = m_displayRefreshMonitors;
     ASSERT(!m_displayRefreshMonitorsToNotify);
