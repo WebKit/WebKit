@@ -277,23 +277,32 @@ String CallFrame::friendlyFunctionName()
 
 void CallFrame::dump(PrintStream& out) const
 {
-    if (!this->isWasmFrame()) {
-        if (CodeBlock* codeBlock = this->codeBlock()) {
-            out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " ", bytecodeIndex(), "]");
+    if (this->isWasmFrame()) {
+#if ENABLE(WEBASSEMBLY)
+        Wasm::Callee* wasmCallee = callee().asWasmCallee();
+        out.print(Wasm::makeString(wasmCallee->indexOrName()), " [", Wasm::makeString(wasmCallee->compilationMode()), "]");
+        out.print("(Wasm::Instance: ", RawPointer(wasmInstance()), ")");
+#else
+        out.print(RawPointer(returnPCForInspection()));
+#endif
+        return;
+    }
 
-            out.print("(");
-            thisValue().dumpForBacktrace(out);
+    if (CodeBlock* codeBlock = this->codeBlock()) {
+        out.print(codeBlock->inferredName(), "#", codeBlock->hashAsStringIfPossible(), " [", codeBlock->jitType(), " ", bytecodeIndex(), "]");
 
-            for (size_t i = 0; i < argumentCount(); ++i) {
-                out.print(", ");
-                JSValue value = argument(i);
-                value.dumpForBacktrace(out);
-            }
+        out.print("(");
+        thisValue().dumpForBacktrace(out);
 
-            out.print(")");
-
-            return;
+        for (size_t i = 0; i < argumentCount(); ++i) {
+            out.print(", ");
+            JSValue value = argument(i);
+            value.dumpForBacktrace(out);
         }
+
+        out.print(")");
+
+        return;
     }
 
     out.print(RawPointer(returnPCForInspection()));
