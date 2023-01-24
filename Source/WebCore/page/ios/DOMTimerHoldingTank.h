@@ -48,7 +48,7 @@ public:
 private:
     void stopExceededMaximumHoldTimer();
 
-    HashSet<const DOMTimer*> m_timers;
+    WeakHashSet<DOMTimer> m_timers;
     Timer m_exceededMaximumHoldTimer;
 };
 
