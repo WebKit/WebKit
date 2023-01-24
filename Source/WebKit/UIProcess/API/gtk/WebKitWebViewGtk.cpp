@@ -333,6 +333,7 @@ GtkWidget* webkit_web_view_new()
     return webkit_web_view_new_with_context(webkit_web_context_get_default());
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_view_new_with_context:
  * @context: the #WebKitWebContext to be used by the #WebKitWebView
@@ -355,6 +356,7 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
         "web-context", context,
         nullptr));
 }
+#endif
 
 /**
  * webkit_web_view_new_with_related_view: (constructor)
@@ -388,6 +390,7 @@ GtkWidget* webkit_web_view_new_with_related_view(WebKitWebView* webView)
         nullptr));
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_view_new_with_settings:
  * @settings: a #WebKitSettings
@@ -426,6 +429,7 @@ GtkWidget* webkit_web_view_new_with_user_content_manager(WebKitUserContentManage
 
     return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "user-content-manager", userContentManager, nullptr));
 }
+#endif
 
 /**
  * webkit_web_view_set_background_color:

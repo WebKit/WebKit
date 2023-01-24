@@ -58,9 +58,9 @@ struct _WebKitUserContentManagerPrivate {
  * webkit_user_content_manager_add_style_sheet().
  *
  * To use a #WebKitUserContentManager, it must be created using
- * webkit_user_content_manager_new(), and then passed to
- * webkit_web_view_new_with_user_content_manager(). User style
- * sheets can be created with webkit_user_style_sheet_new().
+ * webkit_user_content_manager_new(), and then used to construct
+ * a #WebKitWebView. User style sheets can be created with
+ * webkit_user_style_sheet_new().
  *
  * User style sheets can be added and removed at any time, but
  * they will affect the web pages loaded afterwards.

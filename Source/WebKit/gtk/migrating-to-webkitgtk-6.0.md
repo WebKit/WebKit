@@ -59,3 +59,10 @@ enabled. This property was previously disabled by default.
 [signal@WebKit.WebView::context-menu] and [signal@WebKit.WebView::show-option-menu]
 no longer have a [type@Gdk.Event] parameter. Adjust your signal handlers
 accordingly.
+
+## Changes to WebKitWebView construction
+
+`webkit_web_view_new_with_context()`, `webkit_web_view_new_with_settings()`, and
+`webkit_web_view_new_with_user_content_manager()` have all been removed. You
+may directly use `g_object_new()` instead. [ctor@WebKit.WebView.new] and
+[ctor@WebKit.WebView.new_with_related_view] both remain.
