@@ -37,8 +37,8 @@ public:
     virtual ~CachedScript();
 
     enum class ShouldDecodeAsUTF8Only : bool { No, Yes };
-    StringView script(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
-    unsigned scriptHash(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
+    WEBCORE_EXPORT StringView script(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
+    WEBCORE_EXPORT unsigned scriptHash(ShouldDecodeAsUTF8Only = ShouldDecodeAsUTF8Only::No);
 
 private:
     bool mayTryReplaceEncodedData() const final { return true; }
