@@ -1,29 +1,29 @@
 
 PASS setup
-FAIL Sign and verify using generated Ed25519 keys. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS Sign and verify using generated Ed25519 keys.
 FAIL Sign and verify using generated Ed448 keys. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL importVectorKeys step: EdDSA Ed25519 verification assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 verification
 FAIL importVectorKeys step: EdDSA Ed448 verification assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 verification with altered signature after call assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 verification with altered signature after call
 FAIL importVectorKeys step: EdDSA Ed448 verification with altered signature after call assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 with altered data after call assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 with altered data after call
 FAIL importVectorKeys step: EdDSA Ed448 with altered data after call assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 using privateKey to verify assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 using privateKey to verify
 FAIL importVectorKeys step: EdDSA Ed448 using privateKey to verify assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 using publicKey to sign assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 using publicKey to sign
 FAIL importVectorKeys step: EdDSA Ed448 using publicKey to sign assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 no verify usage assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 no verify usage
 FAIL importVectorKeys step: EdDSA Ed448 no verify usage assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 round trip assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 round trip
 FAIL importVectorKeys step: EdDSA Ed448 round trip assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 verification failure due to altered signature assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 signing with wrong algorithm name
+PASS EdDSA Ed25519 verifying with wrong algorithm name
+PASS EdDSA Ed25519 verification failure due to altered signature
 FAIL importVectorKeys step: EdDSA Ed448 verification failure due to altered signature assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 verification failure due to shortened signature assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 verification failure due to shortened signature
 FAIL importVectorKeys step: EdDSA Ed448 verification failure due to shortened signature assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 verification failure due to altered data assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
+PASS EdDSA Ed25519 verification failure due to altered data
 FAIL importVectorKeys step: EdDSA Ed448 verification failure due to altered data assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 signing with wrong algorithm name assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
 FAIL importVectorKeys step: EdDSA Ed448 signing with wrong algorithm name assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
-FAIL importVectorKeys step: EdDSA Ed25519 verifying with wrong algorithm name assert_unreached: importVectorKeys failed for EdDSA Ed25519. Message: ''The operation is not supported.'' Reached unreachable code
 FAIL importVectorKeys step: EdDSA Ed448 verifying with wrong algorithm name assert_unreached: importVectorKeys failed for EdDSA Ed448. Message: ''The operation is not supported.'' Reached unreachable code
 

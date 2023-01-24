@@ -51,6 +51,7 @@ enum class CryptoKeyClass {
     AES,
     EC,
     HMAC,
+    OKP,
     RSA,
     Raw,
 };

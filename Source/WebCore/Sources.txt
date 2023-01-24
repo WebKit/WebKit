@@ -710,6 +710,7 @@ crypto/algorithms/CryptoAlgorithmAES_GCM.cpp
 crypto/algorithms/CryptoAlgorithmAES_KW.cpp
 crypto/algorithms/CryptoAlgorithmECDH.cpp
 crypto/algorithms/CryptoAlgorithmECDSA.cpp
+crypto/algorithms/CryptoAlgorithmEd25519.cpp
 crypto/algorithms/CryptoAlgorithmHKDF.cpp
 crypto/algorithms/CryptoAlgorithmHMAC.cpp
 crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
@@ -725,6 +726,7 @@ crypto/algorithms/CryptoAlgorithmSHA512.cpp
 crypto/keys/CryptoKeyAES.cpp
 crypto/keys/CryptoKeyEC.cpp
 crypto/keys/CryptoKeyHMAC.cpp
+crypto/keys/CryptoKeyOKP.cpp
 crypto/keys/CryptoKeyRSA.cpp
 crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
