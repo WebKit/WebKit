@@ -72,7 +72,7 @@ struct _WebKitFileChooserRequestPrivate {
     bool handledRequest;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitFileChooserRequest, webkit_file_chooser_request, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitFileChooserRequest, webkit_file_chooser_request, G_TYPE_OBJECT)
 
 enum {
     PROP_0,

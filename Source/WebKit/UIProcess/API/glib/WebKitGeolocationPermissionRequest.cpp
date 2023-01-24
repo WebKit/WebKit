@@ -64,7 +64,7 @@ struct _WebKitGeolocationPermissionRequestPrivate {
     bool madeDecision;
 };
 
-WEBKIT_DEFINE_TYPE_WITH_CODE(
+WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE_IN_2022_API(
     WebKitGeolocationPermissionRequest, webkit_geolocation_permission_request, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST, webkit_permission_request_interface_init))
 

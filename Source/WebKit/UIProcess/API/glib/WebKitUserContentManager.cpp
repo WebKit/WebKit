@@ -68,7 +68,7 @@ struct _WebKitUserContentManagerPrivate {
  * Since: 2.6
  */
 
-WEBKIT_DEFINE_TYPE(WebKitUserContentManager, webkit_user_content_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitUserContentManager, webkit_user_content_manager, G_TYPE_OBJECT)
 
 enum {
     SCRIPT_MESSAGE_RECEIVED,

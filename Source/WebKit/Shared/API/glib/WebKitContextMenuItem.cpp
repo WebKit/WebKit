@@ -60,7 +60,7 @@ struct _WebKitContextMenuItemPrivate {
     GRefPtr<WebKitContextMenu> subMenu;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitContextMenuItem, webkit_context_menu_item, G_TYPE_INITIALLY_UNOWNED)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitContextMenuItem, webkit_context_menu_item, G_TYPE_INITIALLY_UNOWNED)
 
 static void webkit_context_menu_item_class_init(WebKitContextMenuItemClass*)
 {

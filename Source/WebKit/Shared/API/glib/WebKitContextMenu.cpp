@@ -61,7 +61,7 @@ struct _WebKitContextMenuPrivate {
 #endif
 };
 
-WEBKIT_DEFINE_TYPE(WebKitContextMenu, webkit_context_menu, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitContextMenu, webkit_context_menu, G_TYPE_OBJECT)
 
 static void webkitContextMenuDispose(GObject* object)
 {

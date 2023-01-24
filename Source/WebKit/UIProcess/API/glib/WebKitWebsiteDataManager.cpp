@@ -112,7 +112,7 @@ struct _WebKitWebsiteDataManagerPrivate {
 #endif
 };
 
-WEBKIT_DEFINE_TYPE(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebsiteDataManager, webkit_website_data_manager, G_TYPE_OBJECT)
 
 static void webkitWebsiteDataManagerGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {

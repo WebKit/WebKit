@@ -299,7 +299,7 @@ void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 }
 #endif // ENABLE(REMOTE_INSPECTOR)
 
-WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 #if PLATFORM(GTK)
 #define INJECTED_BUNDLE_FILENAME "libwebkit" WEBKITGTK_API_INFIX "gtkinjectedbundle.so"

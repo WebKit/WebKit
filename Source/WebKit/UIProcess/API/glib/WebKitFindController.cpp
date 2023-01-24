@@ -80,7 +80,7 @@ struct _WebKitFindControllerPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitFindController, webkit_find_controller, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitFindController, webkit_find_controller, G_TYPE_OBJECT)
 
 static inline OptionSet<WebKit::FindOptions> toWebFindOptions(uint32_t findOptions)
 {

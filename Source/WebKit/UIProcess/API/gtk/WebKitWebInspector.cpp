@@ -90,7 +90,7 @@ struct _WebKitWebInspectorPrivate {
     bool canAttach;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT)
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
