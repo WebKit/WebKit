@@ -24,6 +24,8 @@
 UIProcess/API/glib/WebKitMimeInfo.cpp @no-unify
 UIProcess/API/glib/WebKitPlugin.cpp @no-unify
 
+UIProcess/API/gtk/WebKitPrintCustomWidget.cpp @no-unify
+
 WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp @no-unify
 
 WebProcess/InjectedBundle/API/glib/DOM/DOMObjectCache.cpp @no-unify
@@ -140,4 +142,3 @@ WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathExpression.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathNSResolver.cpp
 WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.cpp
-
