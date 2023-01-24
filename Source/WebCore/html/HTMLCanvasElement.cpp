@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -255,13 +255,11 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
         }
 #endif
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
         if (m_context->isWebGPU()) {
             if (!isWebGPUType(contextId))
                 return { std::nullopt };
             return { downcast<GPUCanvasContext>(m_context.get()) };
         }
-#endif
 
         ASSERT_NOT_REACHED();
         return std::optional<RenderingContext> { std::nullopt };
@@ -308,14 +306,12 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
     }
 #endif
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
     if (isWebGPUType(contextId)) {
         auto context = createContextWebGPU(contextId);
         if (!context)
             return { std::nullopt };
         return { context };
     }
-#endif
 
     return std::optional<RenderingContext> { std::nullopt };
 }
@@ -333,10 +329,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
         return getContextWebGL(HTMLCanvasElement::toWebGLVersion(type));
 #endif
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
     if (HTMLCanvasElement::isWebGPUType(type))
         return getContextWebGPU(type);
-#endif
 
     return nullptr;
 }
@@ -522,7 +516,6 @@ bool HTMLCanvasElement::isWebGPUType(const String& type)
     return type == "webgpu"_s;
 }
 
-#if HAVE(WEBGPU_IMPLEMENTATION)
 GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
@@ -560,7 +553,6 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 
     return static_cast<GPUCanvasContext*>(m_context.get());
 }
-#endif // HAVE(WEBGPU_IMPLEMENTATION)
 
 void HTMLCanvasElement::didDraw(const std::optional<FloatRect>& rect)
 {

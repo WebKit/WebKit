@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -25,9 +25,7 @@ typedef (
 #if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
     WebGL2RenderingContext or
 #endif
-#if defined(HAVE_WEBGPU_IMPLEMENTATION) && HAVE_WEBGPU_IMPLEMENTATION
     GPUCanvasContext or
-#endif
     ImageBitmapRenderingContext or 
     CanvasRenderingContext2D) RenderingContext;
 

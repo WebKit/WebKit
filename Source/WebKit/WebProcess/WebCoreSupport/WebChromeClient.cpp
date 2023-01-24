@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -957,14 +957,12 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
 
 RefPtr<PAL::WebGPU::GPU> WebChromeClient::createGPUForWebGPU() const
 {
-#if HAVE(WEBGPU_IMPLEMENTATION)
 #if ENABLE(GPU_PROCESS)
     return RemoteGPUProxy::create(WebProcess::singleton().ensureGPUProcessConnection(), WebGPU::DowncastConvertToBackingContext::create(), WebGPUIdentifier::generate(), m_page.ensureRemoteRenderingBackendProxy().ensureBackendCreated());
-#else
+#elif HAVE(WEBGPU_IMPLEMENTATION)
     return PAL::WebGPU::create([](PAL::WebGPU::WorkItem&& workItem) {
         callOnMainRunLoop(WTFMove(workItem));
     });
-#endif
 #else
     return nullptr;
 #endif
