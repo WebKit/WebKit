@@ -53,7 +53,7 @@ String CachedScript::encoding() const
     return String::fromLatin1(m_decoder->encoding().name());
 }
 
-StringView CachedScript::script()
+StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
 {
     if (!m_data)
         return emptyString();
@@ -79,12 +79,19 @@ StringView CachedScript::script()
     if (m_decodingState == DataAndDecodedStringHaveSameBytes)
         return { contiguousData.data(), static_cast<unsigned>(m_data->size()) };
 
-    if (!m_script) {
-        m_script = m_decoder->decodeAndFlush(contiguousData.data(), encodedSize());
-        ASSERT(!m_scriptHash || m_scriptHash == m_script.impl()->hash());
-        if (m_decodingState == NeverDecoded)
+    bool shouldForceRedecoding = m_wasForceDecodedAsUTF8 != (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes);
+    if (!m_script || shouldForceRedecoding) {
+        if (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes) {
+            auto forceUTF8Decoder = TextResourceDecoder::create("text/javascript"_s, PAL::UTF8Encoding());
+            forceUTF8Decoder->setAlwaysUseUTF8();
+            m_script = forceUTF8Decoder->decodeAndFlush(contiguousData.data(), encodedSize());
+        } else
+            m_script = m_decoder->decodeAndFlush(contiguousData.data(), encodedSize());
+        if (m_decodingState == NeverDecoded || shouldForceRedecoding)
             m_scriptHash = m_script.impl()->hash();
+        ASSERT(!m_scriptHash || m_scriptHash == m_script.impl()->hash());
         m_decodingState = DataAndDecodedStringHaveDifferentBytes;
+        m_wasForceDecodedAsUTF8 = shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes;
         setDecodedSize(m_script.sizeInBytes());
     }
 
@@ -92,10 +99,10 @@ StringView CachedScript::script()
     return m_script;
 }
 
-unsigned CachedScript::scriptHash()
+unsigned CachedScript::scriptHash(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
 {
-    if (m_decodingState == NeverDecoded)
-        script();
+    if (m_decodingState == NeverDecoded || (m_decodingState == DataAndDecodedStringHaveDifferentBytes && m_wasForceDecodedAsUTF8 != (shouldDecodeAsUTF8Only == ShouldDecodeAsUTF8Only::Yes)))
+        script(shouldDecodeAsUTF8Only);
     return m_scriptHash;
 }
 
@@ -126,6 +133,7 @@ void CachedScript::setBodyDataFrom(const CachedResource& resource)
 
     m_script = script.m_script;
     m_scriptHash = script.m_scriptHash;
+    m_wasForceDecodedAsUTF8 = script.m_wasForceDecodedAsUTF8;
     m_decodingState = script.m_decodingState;
     m_decoder = script.m_decoder;
 }
