@@ -54,7 +54,7 @@ struct _WebKitNavigationPolicyDecisionPrivate {
     CString frameName;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
 
 enum {
     PROP_0,

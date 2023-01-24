@@ -85,7 +85,7 @@ struct _WebKitUserContentFilterStorePrivate {
 #endif
 };
 
-WEBKIT_DEFINE_TYPE(WebKitUserContentFilterStore, webkit_user_content_filter_store, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitUserContentFilterStore, webkit_user_content_filter_store, G_TYPE_OBJECT)
 
 static void webkitUserContentFilterStoreGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {

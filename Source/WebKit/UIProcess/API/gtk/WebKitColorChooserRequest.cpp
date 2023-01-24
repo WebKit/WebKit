@@ -77,7 +77,7 @@ struct _WebKitColorChooserRequestPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitColorChooserRequest, webkit_color_chooser_request, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitColorChooserRequest, webkit_color_chooser_request, G_TYPE_OBJECT)
 
 static void webkitColorChooserRequestDispose(GObject* object)
 {

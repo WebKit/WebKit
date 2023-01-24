@@ -289,7 +289,7 @@ void AuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(con
 }
 
 
-void AuthenticatorCoordinator::isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&& promise) const
+void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& document, DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
     if (!m_client)  {
         promise.reject(Exception { UnknownError, "Unknown internal error."_s });
@@ -300,7 +300,7 @@ void AuthenticatorCoordinator::isConditionalMediationAvailable(DOMPromiseDeferre
         promise.resolve(result);
     };
     // Async operations are dispatched and handled in the messenger.
-    m_client->isConditionalMediationAvailable(WTFMove(completionHandler));
+    m_client->isConditionalMediationAvailable(document.securityOrigin(), WTFMove(completionHandler));
 }
 
 void AuthenticatorCoordinator::resetUserGestureRequirement()

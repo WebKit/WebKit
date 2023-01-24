@@ -52,7 +52,7 @@ struct _WebKitMediaKeySystemPermissionRequestPrivate {
     CString keySystem;
 };
 
-WEBKIT_DEFINE_TYPE_WITH_CODE(
+WEBKIT_DEFINE_FINAL_TYPE_WITH_CODE_IN_2022_API(
     WebKitMediaKeySystemPermissionRequest, webkit_media_key_system_permission_request, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST, webkit_permission_request_interface_init))
 

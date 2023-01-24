@@ -25,11 +25,53 @@
 #include "config.h"
 #include "AXTextMarker.h"
 
+#include "AXObjectCache.h"
 #include "AXTreeStore.h"
 #include "HTMLInputElement.h"
 #include "RenderObject.h"
 
 namespace WebCore {
+
+TextMarkerData::TextMarkerData(AXObjectCache& cache, Node* nodeParam, const VisiblePosition& visiblePosition, int charStart, int charOffset, bool ignoredParam)
+{
+    initializeAXIDs(cache, nodeParam);
+
+    node = nodeParam;
+    auto position = visiblePosition.deepEquivalent();
+    offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
+    anchorType = position.anchorType();
+    affinity = visiblePosition.affinity();
+
+    characterStart = std::max(charStart, 0);
+    characterOffset = std::max(charOffset, 0);
+    ignored = ignoredParam;
+}
+
+TextMarkerData::TextMarkerData(AXObjectCache& cache, const CharacterOffset& characterOffset, bool ignoredParam)
+{
+    initializeAXIDs(cache, characterOffset.node);
+
+    node = characterOffset.node;
+    auto visiblePosition = cache.visiblePositionFromCharacterOffset(characterOffset);
+    auto position = visiblePosition.deepEquivalent();
+    offset = !visiblePosition.isNull() ? std::max(position.deprecatedEditingOffset(), 0) : 0;
+    // When creating from a CharacterOffset, always set the anchorType to PositionIsOffsetInAnchor.
+    anchorType = Position::PositionIsOffsetInAnchor;
+    affinity = visiblePosition.affinity();
+
+    characterStart = std::max(characterOffset.startIndex, 0);
+    this->characterOffset = std::max(characterOffset.offset, 0);
+    ignored = ignoredParam;
+}
+
+void TextMarkerData::initializeAXIDs(AXObjectCache& cache, Node* node)
+{
+    memset(static_cast<void*>(this), 0, sizeof(*this));
+
+    treeID = cache.treeID().toUInt64();
+    if (RefPtr object = cache.getOrCreate(node))
+        objectID = object->objectID().toUInt64();
+}
 
 AXTextMarker::AXTextMarker(const VisiblePosition& visiblePosition)
 {

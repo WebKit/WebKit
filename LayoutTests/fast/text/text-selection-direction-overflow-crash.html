@@ -1,0 +1,15 @@
+<style>
+.classA { rotate: 60deg; min-height: 38%; font-size: 1px; display: inline-flex; -webkit-transform: translate(0px, 0px) scale(83); clip-path: polygon(0px 0px, 1px 0px); scale: 0.29403306255747363 32 7; -webkit-transform-origin: top left; }
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function testCase() {
+    try { textElement.selectionDirection = String.fromCodePoint(738995, 91741); } catch(e) { }
+}
+</script>
+<body onload=testCase()>
+<button id="buttonElement" class="classA"></button>
+<textarea id="textElement">Foo</textarea>
+<p>PASS if no crash.</p>
+</body>

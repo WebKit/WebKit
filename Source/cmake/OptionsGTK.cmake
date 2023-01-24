@@ -17,7 +17,6 @@ find_package(Cairo 1.14.0 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype 2.4.2 REQUIRED)
 find_package(LibGcrypt 1.6.0 REQUIRED)
-find_package(GLIB 2.56.4 REQUIRED COMPONENTS gio gio-unix gobject gthread gmodule)
 find_package(HarfBuzz 0.9.18 REQUIRED COMPONENTS ICU)
 find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG REQUIRED)
@@ -67,7 +66,6 @@ WEBKIT_OPTION_DEFINE(ENABLE_JOURNALD_LOG "Whether to enable journald logging" PU
 WEBKIT_OPTION_DEFINE(ENABLE_QUARTZ_TARGET "Whether to enable support for the Quartz windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_WAYLAND_TARGET "Whether to enable support for the Wayland windowing target." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(ENABLE_X11_TARGET "Whether to enable support for the X11 windowing target." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(USE_AVIF "Whether to enable support for AVIF images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GBM "Whether to enable usage of GBM and libdrm." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_GTK4 "Whether to enable usage of GTK4 instead of GTK3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_JPEGXL "Whether to enable support for JPEG-XL images." PUBLIC ${ENABLE_EXPERIMENTAL_FEATURES})
@@ -130,6 +128,8 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SPELLCHECK PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_EVENTS PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_CRYPTO PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PUBLIC ON)
+
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_AVIF PUBLIC ON)
 
 # Private options shared with other WebKit ports. Add options here when
 # we need a value different from the default defined in WebKitFeatures.cmake.
@@ -235,6 +235,13 @@ else ()
     set(WEBKITGTK_API_VERSION "4.1")
     SET_AND_EXPOSE_TO_BUILD(ENABLE_2022_GLIB_API OFF)
 endif ()
+
+if (ENABLE_2022_GLIB_API)
+    set(GLIB_MINIMUM_VERSION 2.70.0)
+else ()
+    set(GLIB_MINIMUM_VERSION 2.56.4)
+endif ()
+find_package(GLIB ${GLIB_MINIMUM_VERSION} REQUIRED COMPONENTS gio gio-unix gobject gthread gmodule)
 
 EXPOSE_STRING_VARIABLE_TO_BUILD(WEBKITGTK_API_INFIX)
 EXPOSE_STRING_VARIABLE_TO_BUILD(WEBKITGTK_API_VERSION)

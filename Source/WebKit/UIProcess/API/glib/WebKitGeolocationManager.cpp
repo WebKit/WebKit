@@ -245,7 +245,7 @@ struct _WebKitGeolocationManagerPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitGeolocationManager, webkit_geolocation_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitGeolocationManager, webkit_geolocation_manager, G_TYPE_OBJECT)
 
 static void webkitGeolocationManagerStart(WebKitGeolocationManager* manager)
 {

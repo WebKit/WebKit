@@ -53,7 +53,7 @@ struct _WebKitURIRequestPrivate {
     GUniquePtr<SoupMessageHeaders> httpHeaders;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
 
 static void webkitURIRequestGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {

@@ -95,7 +95,7 @@ struct _WebKitCookieManagerPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT)
 
 static inline SoupCookiePersistentStorageType toSoupCookiePersistentStorageType(WebKitCookiePersistentStorage kitStorage)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,7 +22,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#if defined(HAVE_WEBGPU_IMPLEMENTATION) && HAVE_WEBGPU_IMPLEMENTATION
 
 // https://gpuweb.github.io/gpuweb/#gpucanvascontext
 
@@ -30,7 +29,8 @@
     ActiveDOMObject,
     EnabledBySetting=WebGPU,
     Exposed=(Window), /* https://bugs.webkit.org/show_bug.cgi?id=232542: DedicatedWorker */
-    SecureContext
+    SecureContext,
+    SkipVTableValidation,
 ]
 interface GPUCanvasContext {
     readonly attribute (HTMLCanvasElement
@@ -44,7 +44,3 @@ interface GPUCanvasContext {
 
     GPUTexture getCurrentTexture();
 };
-#else
-interface GPUCanvasContext {
-};
-#endif // HAVE_WEBGPU_IMPLEMENTATION

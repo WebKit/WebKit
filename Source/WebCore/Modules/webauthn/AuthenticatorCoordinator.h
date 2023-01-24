@@ -64,7 +64,7 @@ public:
     void create(const Document&, const PublicKeyCredentialCreationOptions&, WebAuthn::Scope, RefPtr<AbortSignal>&&, CredentialPromise&&);
     void discoverFromExternalSource(const Document&, CredentialRequestOptions&&, const ScopeAndCrossOriginParent&, CredentialPromise&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
-    void isConditionalMediationAvailable(DOMPromiseDeferred<IDLBoolean>&&) const;
+    void isConditionalMediationAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
 
     void resetUserGestureRequirement();
 

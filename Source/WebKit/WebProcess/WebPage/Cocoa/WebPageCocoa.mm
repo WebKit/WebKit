@@ -792,7 +792,7 @@ Vector<FloatRect> WebPage::getEvasionRectsAroundSelection(const Vector<WebCore::
             continue;
 
         auto bounds = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
-        auto area = bounds.area();
+        auto area = bounds.area<RecordOverflow>();
         if (area.hasOverflowed() || area > contextMenuAreaLimit)
             continue;
 

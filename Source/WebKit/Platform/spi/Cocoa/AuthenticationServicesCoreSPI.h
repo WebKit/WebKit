@@ -30,6 +30,7 @@
 @interface ASCWebKitSPISupport : NSObject
 @property (class, nonatomic) BOOL shouldUseAlternateCredentialStore;
 + (BOOL)arePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty;
++ (BOOL)canCurrentProcessAccessPasskeysForRelyingParty:(nonnull NSString *)relyingParty;
 @end
 
 // FIXME: Most of the forward declarations below should be behind a non-Apple-internal SDK compile-time flag.
