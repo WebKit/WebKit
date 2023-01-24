@@ -32,8 +32,8 @@
 #include "Weak.h"
 #include <wtf/CagedPtr.h>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/PackedRefPtr.h>
 #include <wtf/SharedTask.h>
+#include <wtf/SizeEfficientPtr.h>
 #include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>

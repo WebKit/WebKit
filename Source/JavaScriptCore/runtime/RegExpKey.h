@@ -30,14 +30,14 @@
 
 #include "YarrFlags.h"
 #include <wtf/OptionSet.h>
-#include <wtf/PackedRefPtr.h>
+#include <wtf/SizeEfficientPtr.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
 
 struct RegExpKey {
     OptionSet<Yarr::Flags> flagsValue;
-    PackedRefPtr<StringImpl> pattern;
+    SizeEfficientRefPtr<StringImpl> pattern;
 
     RegExpKey()
     {

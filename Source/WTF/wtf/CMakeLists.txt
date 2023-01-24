@@ -257,6 +257,7 @@ set(WTF_PUBLIC_HEADERS
     SinglyLinkedList.h
     SinglyLinkedListWithTail.h
     SixCharacterHash.h
+    SizeEfficientPtr.h
     SmallSet.h
     SoftLinking.h
     SortedArrayMap.h

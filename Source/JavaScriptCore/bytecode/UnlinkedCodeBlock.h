@@ -433,8 +433,8 @@ private:
     unsigned m_lineCount { 0 };
     unsigned m_endColumn { UINT_MAX };
 
-    PackedRefPtr<StringImpl> m_sourceURLDirective;
-    PackedRefPtr<StringImpl> m_sourceMappingURLDirective;
+    SizeEfficientRefPtr<StringImpl> m_sourceURLDirective;
+    SizeEfficientRefPtr<StringImpl> m_sourceMappingURLDirective;
 
     FixedVector<JSInstructionStream::Offset> m_jumpTargets;
     Ref<UnlinkedMetadataTable> m_metadata;

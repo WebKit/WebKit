@@ -209,7 +209,7 @@ void StreamingCompiler::fail(JSGlobalObject* globalObject, JSValue error)
     JSPromise* promise = jsCast<JSPromise*>(ticket->target());
     // The pending work TicketData was keeping the promise alive. We need to
     // make sure it is reachable from the stack before we remove it from the
-    // pending work list. Note: m_ticket stores it as a PackedPtr, which is not
+    // pending work list. Note: m_ticket stores it as a SizeEfficientPtr, which is not
     // scannable by the GC.
     WTF::compilerFence();
     m_vm.deferredWorkTimer->cancelPendingWork(ticket);

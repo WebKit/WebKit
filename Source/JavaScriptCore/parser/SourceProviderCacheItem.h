@@ -105,12 +105,12 @@ public:
     unsigned constructorKind : 2; // ConstructorKind
     bool usesImportMeta : 1 { false };
 
-    PackedPtr<UniquedStringImpl>* usedVariables() const { return const_cast<PackedPtr<UniquedStringImpl>*>(m_variables); }
+    SizeEfficientPtr<UniquedStringImpl>* usedVariables() const { return const_cast<SizeEfficientPtr<UniquedStringImpl>*>(m_variables); }
 
 private:
     SourceProviderCacheItem(const SourceProviderCacheItemCreationParameters&);
 
-    PackedPtr<UniquedStringImpl> m_variables[0];
+    SizeEfficientPtr<UniquedStringImpl> m_variables[0];
 };
 
 inline SourceProviderCacheItem::~SourceProviderCacheItem()

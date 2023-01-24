@@ -38,7 +38,7 @@ namespace JSC {
 
 class CallLinkInfo;
 
-class PolymorphicCallNode : public PackedRawSentinelNode<PolymorphicCallNode> {
+class PolymorphicCallNode : public SizeEfficientRawSentinelNode<PolymorphicCallNode> {
     WTF_MAKE_NONCOPYABLE(PolymorphicCallNode);
 public:
     PolymorphicCallNode(CallLinkInfo* info)
@@ -54,7 +54,7 @@ public:
     void clearCallLinkInfo();
     
 private:
-    PackedPtr<CallLinkInfo> m_callLinkInfo;
+    SizeEfficientPtr<CallLinkInfo> m_callLinkInfo;
 };
 
 class PolymorphicCallCase {

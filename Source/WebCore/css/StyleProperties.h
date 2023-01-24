@@ -201,14 +201,14 @@ public:
     void* m_storage;
 
 private:
-    PackedPtr<const CSSValue>* valueArray() const;
+    SizeEfficientPtr<const CSSValue>* valueArray() const;
     const StylePropertyMetadata* metadataArray() const;
     ImmutableStyleProperties(const CSSProperty*, unsigned count, CSSParserMode);
 };
 
-inline PackedPtr<const CSSValue>* ImmutableStyleProperties::valueArray() const
+inline SizeEfficientPtr<const CSSValue>* ImmutableStyleProperties::valueArray() const
 {
-    return bitwise_cast<PackedPtr<const CSSValue>*>(bitwise_cast<const uint8_t*>(metadataArray()) + (m_arraySize * sizeof(StylePropertyMetadata)));
+    return bitwise_cast<SizeEfficientPtr<const CSSValue>*>(bitwise_cast<const uint8_t*>(metadataArray()) + (m_arraySize * sizeof(StylePropertyMetadata)));
 }
 
 inline const StylePropertyMetadata* ImmutableStyleProperties::metadataArray() const

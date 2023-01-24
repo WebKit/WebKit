@@ -38,9 +38,9 @@
 #include <tuple>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/PackedRefPtr.h>
-#include <wtf/RecursiveLockAdapter.h>
 #include <wtf/Hasher.h>
+#include <wtf/RecursiveLockAdapter.h>
+#include <wtf/SizeEfficientPtr.h>
 
 namespace JSC {
 namespace DOMJIT {
@@ -79,7 +79,7 @@ private:
     void finalize(Handle<Unknown>, void* context) final;
     
     struct Entry {
-        PackedRefPtr<ExecutableMemoryHandle> handle;
+        SizeEfficientRefPtr<ExecutableMemoryHandle> handle;
         bool needsCrossModifyingCodeFence;
     };
     using CTIStubMap = HashMap<ThunkGenerator, Entry>;

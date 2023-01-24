@@ -39,7 +39,7 @@
 #include <iterator>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>
-#include <wtf/Packed.h>
+#include <wtf/SizeEfficientPtr.h>
 
 namespace WTF {
 
@@ -320,10 +320,10 @@ inline void SentinelLinkedList<T, RawNode>::takeFrom(SentinelLinkedList<T, RawNo
 }
 
 template<typename T>
-using PackedRawSentinelNode = BasicRawSentinelNode<T, PackedPtrTraits<T>>;
+using SizeEfficientRawSentinelNode = BasicRawSentinelNode<T, SizeEfficientPtrTraits<T>>;
 
 }
 
 using WTF::BasicRawSentinelNode;
-using WTF::PackedRawSentinelNode;
+using WTF::SizeEfficientRawSentinelNode;
 using WTF::SentinelLinkedList;
