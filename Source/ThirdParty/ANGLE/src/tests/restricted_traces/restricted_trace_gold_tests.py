@@ -11,7 +11,6 @@
 
 import argparse
 import contextlib
-import fnmatch
 import json
 import logging
 import os
@@ -225,13 +224,6 @@ def upload_test_result_to_skia_gold(args, gold_session_manager, gold_session, go
     if not os.path.isfile(png_file_name):
         raise Exception('Screenshot not found: ' + png_file_name)
 
-    # TODO(anglebug.com/7550): temporary logging of skia_gold_session's RunComparison internals
-    auth_rc, auth_stdout = gold_session.Authenticate(use_luci=use_luci)
-    if auth_rc == 0:
-        init_rc, init_stdout = gold_session.Initialize()
-        if init_stdout is not None:
-            logging.info('gold_session.Initialize stdout: %s', init_stdout)
-
     status, error = gold_session.RunComparison(
         name=image_name, png_file=png_file_name, use_luci=use_luci)
 
@@ -299,16 +291,7 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
         traces = [trace.split(' ')[0] for trace in tests]
 
         if args.isolated_script_test_filter:
-            filtered = []
-            for trace in traces:
-                # Apply test filter if present.
-                full_name = 'angle_restricted_trace_gold_tests.%s' % trace
-                if not fnmatch.fnmatch(full_name, args.isolated_script_test_filter):
-                    logging.info('Skipping test %s because it does not match filter %s' %
-                                 (full_name, args.isolated_script_test_filter))
-                else:
-                    filtered += [trace]
-            traces = filtered
+            traces = angle_test_util.FilterTests(traces, args.isolated_script_test_filter)
 
         batches = _get_batches(traces, args.batch_size)
 

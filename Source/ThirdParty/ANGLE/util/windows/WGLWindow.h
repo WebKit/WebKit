@@ -61,6 +61,12 @@ class ANGLE_UTIL_EXPORT WGLWindow : public GLWindowBase
                          const AttribKHR *attrib_list) override;
     EGLBoolean destroyImage(Image image) override;
     EGLBoolean destroyImageKHR(Image image) override;
+    Sync createSync(EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list) override;
+    Sync createSyncKHR(EGLDisplay dpy, EGLenum type, const EGLint *attrib_list) override;
+    EGLBoolean destroySync(EGLDisplay dpy, Sync sync) override;
+    EGLBoolean destroySyncKHR(EGLDisplay dpy, Sync sync) override;
+    EGLint clientWaitSync(EGLDisplay dpy, Sync sync, EGLint flags, EGLTimeKHR timeout) override;
+    EGLint clientWaitSyncKHR(EGLDisplay dpy, Sync sync, EGLint flags, EGLTimeKHR timeout) override;
     EGLint getEGLError() override;
     Surface createPbufferSurface(const EGLint *attrib_list) override;
     EGLBoolean destroySurface(Surface surface) override;

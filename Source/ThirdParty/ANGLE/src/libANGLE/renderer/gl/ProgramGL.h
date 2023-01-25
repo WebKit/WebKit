@@ -108,6 +108,8 @@ class ProgramGL : public ProgramImpl
 
     ANGLE_INLINE GLuint getProgramID() const { return mProgramID; }
 
+    void updateEnabledClipDistances(uint8_t enabledClipDistancesPacked) const;
+
     void enableSideBySideRenderingPath() const;
     void enableLayeredRenderingPath(int baseViewIndex) const;
 
@@ -151,6 +153,10 @@ class ProgramGL : public ProgramImpl
 
     std::vector<GLint> mUniformRealLocationMap;
     std::vector<GLuint> mUniformBlockRealLocationMap;
+
+    bool mHasAppliedTransformFeedbackVaryings;
+
+    GLint mClipDistanceEnabledUniformLocation;
 
     GLint mMultiviewBaseViewLayerIndexUniformLocation;
 

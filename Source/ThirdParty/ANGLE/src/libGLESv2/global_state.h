@@ -81,6 +81,13 @@ constexpr size_t kAndroidOpenGLTlsSlot = 3;
                 __asm__("mov %%fs:0, %0" : "=r"(__val)); \
                 __val;                                   \
             })
+#    elif defined(__riscv)
+#        define ANGLE_ANDROID_GET_GL_TLS()          \
+            ({                                      \
+                void **__val;                       \
+                __asm__("mv %0, tp" : "=r"(__val)); \
+                __val;                              \
+            })
 #    else
 #        error unsupported architecture
 #    endif

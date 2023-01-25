@@ -572,6 +572,8 @@ TEST_P(DrawBuffersTest, FirstHalfNULL)
     bool flags[8]  = {false};
     GLenum bufs[8] = {GL_NONE};
 
+    ASSERT_GT(mMaxDrawBuffers, 0);
+    ASSERT_LE(mMaxDrawBuffers, 8);
     GLuint halfMaxDrawBuffers = static_cast<GLuint>(mMaxDrawBuffers) / 2;
 
     for (GLuint texIndex = 0; texIndex < halfMaxDrawBuffers; texIndex++)
@@ -613,6 +615,179 @@ TEST_P(DrawBuffersTest, DefaultFramebufferDrawBufferQuery)
     EXPECT_EQ(GL_NONE, drawbuffer);
 }
 
+// Test that drawing with all color buffers disabled works.
+TEST_P(DrawBuffersTest, None)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    bool flags[8]  = {false};
+    GLenum bufs[8] = {GL_NONE};
+    GLTexture textures[8];
+
+    ASSERT_GT(mMaxDrawBuffers, 0);
+    ASSERT_LE(mMaxDrawBuffers, 8);
+    for (GLint texIndex = 0; texIndex < mMaxDrawBuffers; ++texIndex)
+    {
+        glBindTexture(GL_TEXTURE_2D, textures[texIndex]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + texIndex, GL_TEXTURE_2D,
+                               textures[texIndex], 0);
+        flags[texIndex] = true;
+        bufs[texIndex]  = GL_COLOR_ATTACHMENT0 + texIndex;
+    }
+
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    for (GLint texIndex = 0; texIndex < mMaxDrawBuffers; ++texIndex)
+    {
+        bufs[texIndex] = GL_NONE;
+    }
+
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+    drawQuad(program, positionAttrib(), 0.5);
+
+    ASSERT_GL_NO_ERROR();
+
+    for (GLint texIndex = 0; texIndex < mMaxDrawBuffers; ++texIndex)
+    {
+        glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               textures[texIndex], 0);
+        EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, 127, 127, 127, 255, 1);
+    }
+
+    glDeleteProgram(program);
+}
+
+// Test that drawing with a color buffer disabled and a depth buffer enabled works.
+TEST_P(DrawBuffersTest, NoneWithDepth)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    bool flags[8]  = {true, false, false, false, false, false, false, false};
+    GLenum bufs[8] = {
+        GL_COLOR_ATTACHMENT0, GL_NONE, GL_NONE, GL_NONE, GL_NONE, GL_NONE, GL_NONE, GL_NONE};
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, getWindowWidth(),
+                          getWindowHeight());
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rb);
+
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    ASSERT_GT(mMaxDrawBuffers, 0);
+    ASSERT_LE(mMaxDrawBuffers, 8);
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+
+    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClearDepthf(0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, 127, 127, 127, 255, 1);
+
+    // Color buffer must remain untouched, depth buffer must be set to 1.0
+    bufs[0] = GL_NONE;
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+    drawQuad(program, positionAttrib(), 1.0);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, 127, 127, 127, 255, 1);
+
+    // Draw with the color buffer and depth test enabled.
+    // Depth test must fail and the color buffer must remain unchanged.
+    bufs[0] = GL_COLOR_ATTACHMENT0;
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+    glDepthFunc(GL_LESS);
+    drawQuad(program, positionAttrib(), 1.0);
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, 127, 127, 127, 255, 1);
+
+    // Draw with another Z value.
+    // Depth test must pass and the color buffer must be updated.
+    drawQuad(program, positionAttrib(), 0.0);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+
+    glDeleteProgram(program);
+}
+
+// Test that drawing with a color buffer disabled and a stencil buffer enabled works.
+TEST_P(DrawBuffersTest, NoneWithStencil)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    bool flags[8]  = {true, false, false, false, false, false, false, false};
+    GLenum bufs[8] = {
+        GL_COLOR_ATTACHMENT0, GL_NONE, GL_NONE, GL_NONE, GL_NONE, GL_NONE, GL_NONE, GL_NONE};
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+    GLRenderbuffer rb;
+    glBindRenderbuffer(GL_RENDERBUFFER, rb);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, getWindowWidth(), getWindowHeight());
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rb);
+
+    EXPECT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    ASSERT_GT(mMaxDrawBuffers, 0);
+    ASSERT_LE(mMaxDrawBuffers, 8);
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+
+    glClearColor(0.5, 0.5, 0.5, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, 127, 127, 127, 255, 1);
+
+    // Color buffer must remain untouched, stencil test must pass and stencil buffer must be
+    // incremented to 1.
+    bufs[0] = GL_NONE;
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
+    drawQuad(program, positionAttrib(), 1.0);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, 127, 127, 127, 255, 1);
+
+    // Draw with the color buffer enabled and stencil test expecting 0.
+    // Stencil test must fail, and both the color and the stencil buffers must remain unchanged.
+    bufs[0] = GL_COLOR_ATTACHMENT0;
+    setDrawBuffers(mMaxDrawBuffers, bufs);
+    glStencilFunc(GL_EQUAL, 0, 255);
+    drawQuad(program, positionAttrib(), 1.0);
+    EXPECT_PIXEL_NEAR(getWindowWidth() / 2, getWindowHeight() / 2, 127, 127, 127, 255, 1);
+
+    // Draw with stencil ref value matching the stored stencil buffer value.
+    // Stencil test must pass and the color buffer must be updated.
+    glStencilFunc(GL_EQUAL, 1, 255);
+    drawQuad(program, positionAttrib(), 1.0);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::red);
+
+    glDeleteProgram(program);
+}
+
 // Test that draws to every buffer and verifies that every buffer was drawn to.
 TEST_P(DrawBuffersTest, AllRGBA8)
 {
@@ -622,6 +797,8 @@ TEST_P(DrawBuffersTest, AllRGBA8)
     GLenum bufs[8] = {GL_NONE};
     GLTexture textures[8];
 
+    ASSERT_GT(mMaxDrawBuffers, 0);
+    ASSERT_LE(mMaxDrawBuffers, 8);
     for (GLint texIndex = 0; texIndex < mMaxDrawBuffers; ++texIndex)
     {
         glBindTexture(GL_TEXTURE_2D, textures[texIndex]);
@@ -1264,6 +1441,45 @@ void main()
     EXPECT_PIXEL_NEAR(0, 0, 255, 255, 255, 255, 1);
     glReadBuffer(GL_COLOR_ATTACHMENT3);
     EXPECT_PIXEL_NEAR(0, 0, 143, 175, 159, 143, 1);
+}
+
+// Test that a disabled color attachment incompatible with a fragment output
+// is correctly ignored and does not affect other attachments.
+TEST_P(DrawBuffersTestES3, DrawWithDisabledIncompatibleAttachment)
+{
+    ANGLE_SKIP_TEST_IF(!setupTest());
+
+    ASSERT_GE(mMaxDrawBuffers, 4);
+    for (GLuint texIndex = 0; texIndex < 4; texIndex++)
+    {
+        glBindTexture(GL_TEXTURE_2D, mTextures[texIndex]);
+        if (texIndex == 1)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8UI, getWindowWidth(), getWindowHeight(), 0,
+                         GL_RGBA_INTEGER, GL_UNSIGNED_BYTE, nullptr);
+        }
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + texIndex, GL_TEXTURE_2D,
+                               mTextures[texIndex], 0);
+    }
+    ASSERT_GL_NO_ERROR();
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+
+    const GLenum bufs[] = {GL_COLOR_ATTACHMENT0, GL_NONE, GL_COLOR_ATTACHMENT2,
+                           GL_COLOR_ATTACHMENT3};
+    setDrawBuffers(4, bufs);
+
+    bool flags[8] = {true, true, true, true};
+    GLuint program;
+    setupMRTProgram(flags, &program);
+
+    drawQuad(program, positionAttrib(), 0.5);
+    EXPECT_GL_NO_ERROR();
+
+    verifyAttachment2D(0, mTextures[0], GL_TEXTURE_2D, 0);
+    verifyAttachment2D(2, mTextures[2], GL_TEXTURE_2D, 0);
+    verifyAttachment2D(3, mTextures[3], GL_TEXTURE_2D, 0);
+
+    glDeleteProgram(program);
 }
 
 // Vulkan backend is setting per buffer color mask to false for draw buffers that set to GL_NONE.

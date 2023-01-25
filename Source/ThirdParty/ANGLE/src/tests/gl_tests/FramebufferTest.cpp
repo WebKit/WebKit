@@ -5251,11 +5251,94 @@ void main()
     ASSERT_EGL_SUCCESS();
 }
 
+class FramebufferExtensionsTest : public FramebufferTest
+{
+  protected:
+    FramebufferExtensionsTest() { setExtensionsEnabled(false); }
+
+    void checkParameter(GLenum expectedComponentType)
+    {
+        GLint componentType = 0;
+        glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                              GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT,
+                                              &componentType);
+        EXPECT_EQ(componentType, static_cast<GLint>(expectedComponentType));
+        if (expectedComponentType)
+        {
+            EXPECT_GL_NO_ERROR();
+        }
+        else
+        {
+            EXPECT_GL_ERROR(GL_INVALID_ENUM);
+        }
+    }
+
+    void checkTexture(GLenum format, GLenum type, GLenum expectedComponentType)
+    {
+        GLTexture texture;
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, 8, 8, 0, format, type, nullptr);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        ASSERT_GL_NO_ERROR();
+        checkParameter(expectedComponentType);
+    }
+
+    void checkRenderbuffer(GLenum format, GLenum expectedComponentType)
+    {
+        GLRenderbuffer renderbuffer;
+        glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, format, 8, 8);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  renderbuffer);
+        ASSERT_GL_NO_ERROR();
+        checkParameter(expectedComponentType);
+    }
+
+    void test(const char *extensionName, GLenum format, bool supportsRenderbuffer)
+    {
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        checkTexture(GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        checkRenderbuffer(GL_RGB565, 0);
+
+        ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled(extensionName));
+
+        checkTexture(GL_RGBA, GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED_EXT);
+        checkRenderbuffer(GL_RGB565, GL_UNSIGNED_NORMALIZED_EXT);
+
+        if (supportsRenderbuffer)
+            checkRenderbuffer(format, GL_FLOAT);
+    }
+};
+
+// Tests that GL_EXT_color_buffer_half_float enables component type state queries on
+// framebuffer attachments.
+TEST_P(FramebufferExtensionsTest, ColorBufferHalfFloat)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_OES_texture_half_float"));
+    test("GL_EXT_color_buffer_half_float", GL_RGBA16F_EXT, true);
+}
+
+// Tests that GL_CHROMIUM_color_buffer_float_rgb enables component type state queries on
+// framebuffer attachments.
+TEST_P(FramebufferExtensionsTest, ColorBufferFloatRgb)
+{
+    test("GL_CHROMIUM_color_buffer_float_rgb", GL_RGB32F_EXT, false);
+}
+
+// Tests that GL_CHROMIUM_color_buffer_float_rgba enables component type state queries on
+// framebuffer attachments.
+TEST_P(FramebufferExtensionsTest, ColorBufferFloatRgba)
+{
+    test("GL_CHROMIUM_color_buffer_float_rgba", GL_RGBA32F_EXT, true);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND(AddMockTextureNoRenderTargetTest,
                                ES2_D3D9().enable(Feature::AddMockTextureNoRenderTarget),
                                ES2_D3D11().enable(Feature::AddMockTextureNoRenderTarget));
 
 ANGLE_INSTANTIATE_TEST_ES2(FramebufferTest);
+ANGLE_INSTANTIATE_TEST_ES2(FramebufferExtensionsTest);
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(FramebufferFormatsTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferTest_ES3);

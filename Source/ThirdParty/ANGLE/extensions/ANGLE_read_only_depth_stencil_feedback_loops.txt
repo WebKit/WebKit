@@ -9,6 +9,7 @@ Name Strings
 Contributors
 
     Jamie Madill, Google Inc.
+    Shahbaz Youssefi, Google Inc.
 
 Contact
 
@@ -20,7 +21,7 @@ Status
 
 Version
 
-    Last Modified Date: May 9, 2022
+    Last Modified Date: Dec 22, 2022
     Author Revision: 1
 
 Number
@@ -35,8 +36,8 @@ Dependencies
 
 Overview
 
-    This extension allows defined results when reading from a depth
-    texture that is bound as a read-only depth buffer.
+    This extension allows defined results when reading from a depth or stencil
+    texture that is bound as a read-only depth or stencil buffer.
 
 IP Status
 
@@ -55,8 +56,10 @@ Samplers)
 
     Added to the list of conditions in 8.14.2.1 (Rendering Feedback Loops):
 
-    "The texture is not a depth/stencil texture, or the value of
+    "The texture is not a depth texture, or the value of
     DEPTH_WRITEMASK is not FALSE."
+
+    "The texture is not a stencil texture, or stencil is not being modified."
 
 Additions to Chapter 9 of the OpenGL ES 3.1 Specification (Framebuffers and
 Framebuffer Objects)
@@ -69,7 +72,9 @@ Framebuffer Objects)
     Added from the end of section in 9.3.1 (Rendering Feedback Loops):
 
     "Note that if writing to a given depth texture is disabled (via the depth
-    writemask) during rendering, a feedback loop will not occur."
+    writemask) during rendering, a feedback loop will not occur.  Additionally,
+    if writing to a given stencil texture is disabled (via the stencil mask and ops),
+    a feedback loop will not occur."
 
 Errors
 
@@ -85,6 +90,8 @@ Issues
 
 Revision History
 
+    Revision 2, 2022/12/22
+      - Adjust language to exclude read-only stencil from feedback loop
     Revision 1, 2022/05/09
       - Initial revision.
 

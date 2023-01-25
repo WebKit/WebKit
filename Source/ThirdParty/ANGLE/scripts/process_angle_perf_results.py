@@ -12,11 +12,14 @@ from __future__ import print_function
 
 import argparse
 import collections
+import datetime
 import json
 import logging
 import multiprocessing
 import os
+import pathlib
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -27,9 +30,13 @@ logging.basicConfig(
     format='(%(levelname)s) %(asctime)s pid=%(process)d'
     '  %(module)s.%(funcName)s:%(lineno)d  %(message)s')
 
-d = os.path.dirname
-ANGLE_DIR = d(d(os.path.realpath(__file__)))
-sys.path.append(os.path.join(ANGLE_DIR, 'tools', 'perf'))
+PY_UTILS = str(pathlib.Path(__file__).resolve().parents[1] / 'src' / 'tests' / 'py_utils')
+if PY_UTILS not in sys.path:
+    os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
+import angle_metrics
+import angle_path_util
+
+angle_path_util.AddDepsDirToPath('tools/perf')
 from core import path_util
 
 path_util.AddTelemetryToPath()
@@ -52,6 +59,9 @@ RESULTS_URL = 'https://chromeperf.appspot.com'
 JSON_CONTENT_TYPE = 'application/json'
 MACHINE_GROUP = 'ANGLE'
 BUILD_URL = 'https://ci.chromium.org/ui/p/angle/builders/ci/%s/%d'
+
+GSUTIL_PY_PATH = str(
+    pathlib.Path(__file__).resolve().parents[1] / 'third_party' / 'depot_tools' / 'gsutil.py')
 
 
 def _upload_perf_results(json_to_upload, name, configuration_name, build_properties,
@@ -238,6 +248,42 @@ def _scan_output_dir(task_output_dir):
     return benchmark_directory_map, benchmarks_shard_map_file
 
 
+def _upload_to_skia_perf(benchmark_directory_map, benchmark_enabled_map, build_properties_map):
+    metric_filenames = []
+
+    for benchmark_name, directories in benchmark_directory_map.items():
+        if not benchmark_enabled_map.get(benchmark_name, False):
+            continue
+
+        for directory in directories:
+            metric_filenames.append(os.path.join(directory, 'angle_metrics.json'))
+
+    assert metric_filenames
+
+    buildername = build_properties_map['buildername']  # e.g. win10-nvidia-gtx1660-perf
+    skia_data = {
+        'version': 1,
+        'git_hash': build_properties_map['got_angle_revision'],
+        'key': {
+            'buildername': buildername,
+        },
+        'results': angle_metrics.ConvertToSkiaPerf(metric_filenames),
+    }
+
+    skia_perf_dir = tempfile.mkdtemp('skia_perf')
+    try:
+        local_file = os.path.join(skia_perf_dir, '%s.%s.json' % (buildername, time.time()))
+        with open(local_file, 'w') as f:
+            json.dump(skia_data, f, indent=2)
+        gs_dir = 'gs://angle-perf-skia/angle_perftests/%s/' % (
+            datetime.datetime.now().strftime('%Y/%m/%d/%H'))
+        upload_cmd = ['vpython3', GSUTIL_PY_PATH, 'cp', local_file, gs_dir]
+        logging.info('Skia upload: %s', ' '.join(upload_cmd))
+        subprocess.check_call(upload_cmd)
+    finally:
+        shutil.rmtree(skia_perf_dir)
+
+
 def process_perf_results(output_json,
                          configuration_name,
                          build_properties,
@@ -305,6 +351,13 @@ def process_perf_results(output_json,
                 build_properties_map, extra_links, output_results_dir)
         except Exception:
             logging.exception('Error handling perf results jsons')
+            return_code = 1
+
+        try:
+            _upload_to_skia_perf(benchmark_directory_map, benchmark_enabled_map,
+                                 build_properties_map)
+        except Exception:
+            logging.exception('Error uploading to skia perf')
             return_code = 1
 
     if handle_non_perf:
@@ -663,7 +716,7 @@ def main():
     # away tools/perf/core/chromium.perf.fyi.extras.json
     parser.add_argument('--configuration-name', help=argparse.SUPPRESS)
     parser.add_argument('--build-properties', help=argparse.SUPPRESS)
-    parser.add_argument('--summary-json', help=argparse.SUPPRESS)
+    parser.add_argument('--summary-json', required=True, help=argparse.SUPPRESS)
     parser.add_argument('--task-output-dir', required=True, help=argparse.SUPPRESS)
     parser.add_argument('-o', '--output-json', required=True, help=argparse.SUPPRESS)
     parser.add_argument(
@@ -685,15 +738,27 @@ def main():
 
     args = parser.parse_args()
 
+    with open(args.summary_json) as f:
+        shard_summary = json.load(f)
+    shard_failed = any(int(shard['exit_code']) != 0 for shard in shard_summary['shards'])
+
     output_results_dir = tempfile.mkdtemp('outputresults')
     try:
         return_code, _ = process_perf_results(args.output_json, args.configuration_name,
                                               args.build_properties, args.task_output_dir,
                                               args.smoke_test_mode, output_results_dir,
                                               args.lightweight, args.skip_perf)
-        return return_code
+    except Exception:
+        logging.exception('process_perf_results raised an exception')
+        return_code = 1
     finally:
         shutil.rmtree(output_results_dir)
+
+    if return_code != 0 and shard_failed:
+        logging.warning('Perf processing failed but one or more shards failed earlier')
+        return_code = 0  # Enables the failed build info to be rendered normally
+
+    return return_code
 
 
 if __name__ == '__main__':

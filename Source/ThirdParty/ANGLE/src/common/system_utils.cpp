@@ -218,7 +218,14 @@ void *OpenSystemLibraryAndGetError(const char *libraryName,
                                    SearchType searchType,
                                    std::string *errorOut)
 {
-    std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
+    std::string libraryWithExtension = std::string(libraryName);
+    std::string dotExtension         = std::string(".") + GetSharedLibraryExtension();
+    // Only append the extension if it's not already present. This enables building libEGL.so.1
+    // and libGLESv2.so.2 by setting these as ANGLE_EGL_LIBRARY_NAME and ANGLE_GLESV2_LIBRARY_NAME.
+    if (libraryWithExtension.find(dotExtension) == std::string::npos)
+    {
+        libraryWithExtension += dotExtension;
+    }
 #if ANGLE_PLATFORM_IOS
     // On iOS, libraryWithExtension is a directory in which the library resides.
     // The actual library name doesn't have an extension at all.

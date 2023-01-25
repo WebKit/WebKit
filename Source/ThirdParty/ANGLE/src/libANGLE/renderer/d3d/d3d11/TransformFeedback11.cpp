@@ -123,7 +123,7 @@ const std::vector<UINT> &TransformFeedback11::getSOBufferOffsets() const
     return mBufferOffsets;
 }
 
-Serial TransformFeedback11::getSerial() const
+UniqueSerial TransformFeedback11::getSerial() const
 {
     return mSerial;
 }

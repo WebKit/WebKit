@@ -529,6 +529,8 @@ GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
     }
 }
 
+// GL_ANGLE_clip_cull_distance
+
 // GL_ANGLE_copy_texture_3d
 void GL_APIENTRY GL_CopyTexture3DANGLE(GLuint sourceId,
                                        GLint sourceLevel,
@@ -1403,26 +1405,28 @@ void GL_APIENTRY GL_MultiDrawElementsInstancedANGLE(GLenum mode,
 // GL_ANGLE_program_binary
 
 // GL_ANGLE_provoking_vertex
-void GL_APIENTRY GL_ProvokingVertexANGLE(GLenum mode)
+void GL_APIENTRY GL_ProvokingVertexANGLE(GLenum provokeMode)
 {
     Context *context = GetValidGlobalContext();
-    EVENT(context, GLProvokingVertexANGLE, "context = %d, mode = %s", CID(context),
-          GLenumToString(GLESEnum::VertexProvokingMode, mode));
+    EVENT(context, GLProvokingVertexANGLE, "context = %d, provokeMode = %s", CID(context),
+          GLenumToString(GLESEnum::VertexProvokingMode, provokeMode));
 
     if (context)
     {
-        ProvokingVertexConvention modePacked = PackParam<ProvokingVertexConvention>(mode);
+        ProvokingVertexConvention provokeModePacked =
+            PackParam<ProvokingVertexConvention>(provokeMode);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid = (context->skipValidation() ||
-                            (ValidatePixelLocalStorageInactive(
-                                 context, angle::EntryPoint::GLProvokingVertexANGLE) &&
-                             ValidateProvokingVertexANGLE(
-                                 context, angle::EntryPoint::GLProvokingVertexANGLE, modePacked)));
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context,
+                                                angle::EntryPoint::GLProvokingVertexANGLE) &&
+              ValidateProvokingVertexANGLE(context, angle::EntryPoint::GLProvokingVertexANGLE,
+                                           provokeModePacked)));
         if (isCallValid)
         {
-            context->provokingVertex(modePacked);
+            context->provokingVertex(provokeModePacked);
         }
-        ANGLE_CAPTURE_GL(ProvokingVertexANGLE, isCallValid, context, modePacked);
+        ANGLE_CAPTURE_GL(ProvokingVertexANGLE, isCallValid, context, provokeModePacked);
     }
     else
     {
@@ -1680,7 +1684,8 @@ void GL_APIENTRY GL_GetProgramivRobustANGLE(GLuint program,
                          bufSize, length, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetRenderbufferParameterivRobustANGLE(GLenum target,
@@ -1745,7 +1750,8 @@ void GL_APIENTRY GL_GetShaderivRobustANGLE(GLuint shader,
                          length, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetTexParameterfvRobustANGLE(GLenum target,
@@ -3672,7 +3678,8 @@ void GL_APIENTRY GL_GetQueryObjectivRobustANGLE(GLuint id,
                          bufSize, length, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetQueryObjecti64vRobustANGLE(GLuint id,
@@ -3704,7 +3711,8 @@ void GL_APIENTRY GL_GetQueryObjecti64vRobustANGLE(GLuint id,
                          bufSize, length, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetQueryObjectui64vRobustANGLE(GLuint id,
@@ -4594,6 +4602,7 @@ void GL_APIENTRY GL_EGLImageTargetTexStorageEXT(GLenum target,
                                                 GLeglImageOES image,
                                                 const GLint *attrib_list)
 {
+    ANGLE_SCOPED_GLOBAL_LOCK();
     Context *context = GetValidGlobalContext();
     EVENT(context, GLEGLImageTargetTexStorageEXT,
           "context = %d, target = %s, image = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
@@ -4627,6 +4636,7 @@ void GL_APIENTRY GL_EGLImageTargetTextureStorageEXT(GLuint texture,
                                                     GLeglImageOES image,
                                                     const GLint *attrib_list)
 {
+    ANGLE_SCOPED_GLOBAL_LOCK();
     Context *context = GetValidGlobalContext();
     EVENT(context, GLEGLImageTargetTextureStorageEXT,
           "context = %d, texture = %u, image = 0x%016" PRIxPTR ", attrib_list = 0x%016" PRIxPTR "",
@@ -5361,7 +5371,8 @@ void GL_APIENTRY GL_GetQueryObjecti64vEXT(GLuint id, GLenum pname, GLint64 *para
         ANGLE_CAPTURE_GL(GetQueryObjecti64vEXT, isCallValid, context, idPacked, pname, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetQueryObjectivEXT(GLuint id, GLenum pname, GLint *params)
@@ -5386,7 +5397,8 @@ void GL_APIENTRY GL_GetQueryObjectivEXT(GLuint id, GLenum pname, GLint *params)
         ANGLE_CAPTURE_GL(GetQueryObjectivEXT, isCallValid, context, idPacked, pname, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetQueryObjectui64vEXT(GLuint id, GLenum pname, GLuint64 *params)
@@ -6806,6 +6818,34 @@ void GL_APIENTRY GL_RenderbufferStorageMultisampleEXT(GLenum target,
 // GetQueryivEXT is already defined.
 
 // IsQueryEXT is already defined.
+
+// GL_EXT_polygon_offset_clamp
+void GL_APIENTRY GL_PolygonOffsetClampEXT(GLfloat factor, GLfloat units, GLfloat clamp)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLPolygonOffsetClampEXT, "context = %d, factor = %f, units = %f, clamp = %f",
+          CID(context), factor, units, clamp);
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context,
+                                                angle::EntryPoint::GLPolygonOffsetClampEXT) &&
+              ValidatePolygonOffsetClampEXT(context, angle::EntryPoint::GLPolygonOffsetClampEXT,
+                                            factor, units, clamp)));
+        if (isCallValid)
+        {
+            context->polygonOffsetClamp(factor, units, clamp);
+        }
+        ANGLE_CAPTURE_GL(PolygonOffsetClampEXT, isCallValid, context, factor, units, clamp);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
 
 // GL_EXT_primitive_bounding_box
 void GL_APIENTRY GL_PrimitiveBoundingBoxEXT(GLfloat minX,
@@ -9917,6 +9957,7 @@ void GL_APIENTRY GL_BlitFramebufferNV(GLint srcX0,
 // GL_OES_EGL_image
 void GL_APIENTRY GL_EGLImageTargetRenderbufferStorageOES(GLenum target, GLeglImageOES image)
 {
+    ANGLE_SCOPED_GLOBAL_LOCK();
     Context *context = GetValidGlobalContext();
     EVENT(context, GLEGLImageTargetRenderbufferStorageOES,
           "context = %d, target = %s, image = 0x%016" PRIxPTR "", CID(context),
@@ -9948,6 +9989,7 @@ void GL_APIENTRY GL_EGLImageTargetRenderbufferStorageOES(GLenum target, GLeglIma
 
 void GL_APIENTRY GL_EGLImageTargetTexture2DOES(GLenum target, GLeglImageOES image)
 {
+    ANGLE_SCOPED_GLOBAL_LOCK();
     Context *context = GetValidGlobalContext();
     EVENT(context, GLEGLImageTargetTexture2DOES,
           "context = %d, target = %s, image = 0x%016" PRIxPTR "", CID(context),

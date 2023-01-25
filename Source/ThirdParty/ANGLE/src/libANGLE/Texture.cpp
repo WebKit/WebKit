@@ -2117,7 +2117,7 @@ const OffsetBindingPointer<Buffer> &Texture::getBuffer() const
     return mState.mBuffer;
 }
 
-void Texture::onAttach(const Context *context, rx::Serial framebufferSerial)
+void Texture::onAttach(const Context *context, rx::UniqueSerial framebufferSerial)
 {
     addRef();
 
@@ -2131,7 +2131,7 @@ void Texture::onAttach(const Context *context, rx::Serial framebufferSerial)
     }
 }
 
-void Texture::onDetach(const Context *context, rx::Serial framebufferSerial)
+void Texture::onDetach(const Context *context, rx::UniqueSerial framebufferSerial)
 {
     // Erase first instance. If there are multiple bindings, leave the others.
     ASSERT(isBoundToFramebuffer(framebufferSerial));

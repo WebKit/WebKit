@@ -7,7 +7,7 @@ find_library(QUARTZ_LIBRARY Quartz)
 find_package(ZLIB REQUIRED)
 
 list(APPEND ANGLE_SOURCES
-    ${_metal_backend_sources}
+    ${metal_backend_sources}
 
     ${angle_translator_lib_metal_sources}
 

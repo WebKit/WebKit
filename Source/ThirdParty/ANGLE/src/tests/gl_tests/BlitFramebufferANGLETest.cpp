@@ -1855,6 +1855,69 @@ TEST_P(BlitFramebufferTest, MultisampleDepthClear)
     ASSERT_GL_NO_ERROR();
 }
 
+// Tests clearing a multisampled depth buffer with a glFenceSync in between.
+TEST_P(BlitFramebufferTest, MultisampleDepthClearWithFenceSync)
+{
+    // http://anglebug.com/4092
+    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
+
+    GLRenderbuffer depthMS;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthMS.get());
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 2, GL_DEPTH_COMPONENT24, 256, 256);
+
+    GLRenderbuffer colorMS;
+    glBindRenderbuffer(GL_RENDERBUFFER, colorMS.get());
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 2, GL_RGBA8, 256, 256);
+
+    GLRenderbuffer colorResolved;
+    glBindRenderbuffer(GL_RENDERBUFFER, colorResolved.get());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, 256, 256);
+
+    GLFramebuffer framebufferMS;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebufferMS.get());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthMS.get());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorMS.get());
+
+    // Clear depth buffer to 0.5 and color to green.
+    glClearDepthf(0.5f);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+    glFlush();
+
+    // Draw red into the multisampled color buffer.
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_EQUAL);
+    drawQuad(drawRed.get(), essl3_shaders::PositionAttrib(), 0.0f);
+
+    // This should trigger a deferred renderPass end
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    EXPECT_GL_NO_ERROR();
+
+    // Resolve the color buffer to make sure the above draw worked correctly, which in turn implies
+    // that the multisampled depth clear worked.
+    GLFramebuffer framebufferResolved;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebufferResolved.get());
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              colorResolved.get());
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebufferMS.get());
+    glBlitFramebuffer(0, 0, 256, 256, 0, 0, 256, 256, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebufferResolved.get());
+
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(255, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, 255, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(255, 255, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(127, 127, GLColor::red);
+
+    glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test resolving a multisampled stencil buffer.
 TEST_P(BlitFramebufferTest, MultisampleStencil)
 {
@@ -2771,6 +2834,42 @@ TEST_P(BlitFramebufferTest, BlitSRGBToRGBOversizedDestArea)
     EXPECT_PIXEL_COLOR_EQ(kWidth - 1, 3 * kHeight / 4 + 1, GLColor::yellow);
     EXPECT_PIXEL_COLOR_EQ(kWidth - 1, kHeight - 1, GLColor::yellow);
     EXPECT_PIXEL_COLOR_EQ(7 * kWidth / 8, 7 * kHeight / 8, GLColor::yellow);
+}
+
+// This test is to demonstrate a bug that when a program is created and used and then destroyed, we
+// should not have a dangling PipelineHelper pointer in the context point to the already destroyed
+// object.
+TEST_P(BlitFramebufferTest, useAndDestroyProgramThenBlit)
+{
+    constexpr const GLsizei kWidth  = 256;
+    constexpr const GLsizei kHeight = 256;
+
+    GLRenderbuffer sourceRBO, targetRBO;
+    GLFramebuffer sourceFBO, targetFBO;
+
+    {
+        initColorFBO(&sourceFBO, &sourceRBO, GL_SRGB8_ALPHA8, kWidth, kHeight);
+        // checkerProgram will be created and destroyed in this code block
+        ANGLE_GL_PROGRAM(checkerProgram, essl1_shaders::vs::Passthrough(),
+                         essl1_shaders::fs::Checkered());
+        glViewport(0, 0, kWidth, kHeight);
+        glBindFramebuffer(GL_FRAMEBUFFER, sourceFBO);
+        drawQuad(checkerProgram.get(), essl1_shaders::PositionAttrib(), 0.5f);
+        EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+    }
+    initColorFBO(&targetFBO, &targetRBO, GL_RGBA8, kWidth, kHeight);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Blit call should not crash or assert
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, sourceFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, targetFBO);
+    glBlitFramebuffer(0, 0, kWidth, kHeight, -kWidth / 2, -kHeight / 2, 3 * kWidth / 2,
+                      3 * kHeight / 2, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
 }
 
 // Test blitFramebuffer size overflow checks. WebGL 2.0 spec section 5.41. We do validation for

@@ -1285,7 +1285,7 @@ angle::Result StateManager11::syncBlendState(const gl::Context *context,
 {
     const d3d11::BlendState *dxBlendState = nullptr;
     const d3d11::BlendStateKey &key       = RenderStateCache::GetBlendStateKey(
-              context, mFramebuffer11, blendStateExt, sampleAlphaToCoverage);
+        context, mFramebuffer11, blendStateExt, sampleAlphaToCoverage);
 
     ANGLE_TRY(mRenderer->getBlendState(context, key, &dxBlendState));
 

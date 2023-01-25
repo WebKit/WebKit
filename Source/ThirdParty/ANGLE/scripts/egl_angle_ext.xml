@@ -136,6 +136,10 @@
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSyncKHR</ptype> <name>sync</name></param>
         </command>
+        <command>
+            <proto><ptype>void</ptype> <name>eglWaitUntilWorkScheduledANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+        </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
@@ -184,6 +188,11 @@
                 <enum name="EGL_PROGRAM_CACHE_RESIZE_ANGLE"/>
                 <enum name="EGL_PROGRAM_CACHE_TRIM_ANGLE"/>
                 <enum name="EGL_CONTEXT_PROGRAM_BINARY_CACHE_ENABLED_ANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_wait_until_work_scheduled" supported="egl">
+            <require>
+                <command name="eglWaitUntilWorkScheduledANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_swap_with_frame_token" supported="egl">

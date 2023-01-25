@@ -118,6 +118,8 @@ angle::CallCapture CaptureMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(
     const GLuint *baseInstances,
     GLsizei drawcount);
 
+// GL_ANGLE_clip_cull_distance
+
 // GL_ANGLE_copy_texture_3d
 angle::CallCapture CaptureCopyTexture3DANGLE(const State &glState,
                                              bool isCallValid,
@@ -333,7 +335,7 @@ angle::CallCapture CaptureMultiDrawElementsInstancedANGLE(const State &glState,
 // GL_ANGLE_provoking_vertex
 angle::CallCapture CaptureProvokingVertexANGLE(const State &glState,
                                                bool isCallValid,
-                                               ProvokingVertexConvention modePacked);
+                                               ProvokingVertexConvention provokeModePacked);
 
 // GL_ANGLE_request_extension
 angle::CallCapture CaptureRequestExtensionANGLE(const State &glState,
@@ -1474,6 +1476,13 @@ angle::CallCapture CaptureRenderbufferStorageMultisampleEXT(const State &glState
 // GL_EXT_multisampled_render_to_texture2
 
 // GL_EXT_occlusion_query_boolean
+
+// GL_EXT_polygon_offset_clamp
+angle::CallCapture CapturePolygonOffsetClampEXT(const State &glState,
+                                                bool isCallValid,
+                                                GLfloat factor,
+                                                GLfloat units,
+                                                GLfloat clamp);
 
 // GL_EXT_primitive_bounding_box
 angle::CallCapture CapturePrimitiveBoundingBoxEXT(const State &glState,

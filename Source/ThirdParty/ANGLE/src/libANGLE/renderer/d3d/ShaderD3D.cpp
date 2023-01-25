@@ -114,8 +114,6 @@ void ShaderD3D::uncompile()
     // set by compileToHLSL
     mCompilerOutputType = SH_ESSL_OUTPUT;
 
-    mUsesClipDistance            = false;
-    mUsesCullDistance            = false;
     mUsesMultipleRenderTargets   = false;
     mUsesFragColor               = false;
     mUsesFragData                = false;
@@ -133,6 +131,8 @@ void ShaderD3D::uncompile()
     mUsesDiscardRewriting        = false;
     mUsesNestedBreak             = false;
     mRequiresIEEEStrictCompiling = false;
+    mClipDistanceSize            = 0;
+    mCullDistanceSize            = 0;
 
     mDebugInfo.clear();
 }
@@ -291,12 +291,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
     }
     if (extensions.shaderPixelLocalStorageANGLE)
     {
-        options->pls.type = mRenderer->getNativePixelLocalStorageType();
-        if (extensions.shaderPixelLocalStorageCoherentANGLE)
-        {
-            options->pls.fragmentSynchronizationType =
-                ShFragmentSynchronizationType::RasterizerOrderViews_D3D;
-        }
+        options->pls = mRenderer->getNativePixelLocalStorageOptions();
     }
 
     auto postTranslateFunctor = [this](gl::ShCompilerInstance *compiler, std::string *infoLog) {
@@ -305,8 +300,6 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
 
         const std::string &translatedSource = mState.getTranslatedSource();
 
-        mUsesClipDistance = translatedSource.find("GL_USES_CLIP_DISTANCE") != std::string::npos;
-        mUsesCullDistance = translatedSource.find("GL_USES_CULL_DISTANCE") != std::string::npos;
         mUsesMultipleRenderTargets = translatedSource.find("GL_USES_MRT") != std::string::npos;
         mUsesFragColor      = translatedSource.find("GL_USES_FRAG_COLOR") != std::string::npos;
         mUsesFragData       = translatedSource.find("GL_USES_FRAG_DATA") != std::string::npos;
@@ -331,6 +324,8 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
 
         ShHandle compilerHandle = compiler->getHandle();
 
+        mClipDistanceSize   = sh::GetClipDistanceArraySize(compilerHandle);
+        mCullDistanceSize   = sh::GetCullDistanceArraySize(compilerHandle);
         mUniformRegisterMap = GetUniformRegisterMap(sh::GetUniformRegisterMap(compilerHandle));
         mReadonlyImage2DRegisterIndex = sh::GetReadonlyImage2DRegisterIndex(compilerHandle);
         mImage2DRegisterIndex         = sh::GetImage2DRegisterIndex(compilerHandle);

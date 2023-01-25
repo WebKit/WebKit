@@ -1145,7 +1145,7 @@ angle::Result TextureVk::copySubImageImplWithTransfer(ContextVk *contextVk,
             extents.depth = 1;
         }
 
-        vk::ImageHelper::Copy(srcImage, mImage, srcOffset, dstOffsetModified, extents,
+        vk::ImageHelper::Copy(contextVk, srcImage, mImage, srcOffset, dstOffsetModified, extents,
                               srcSubresource, destSubresource, commandBuffer);
     }
     else
@@ -1178,8 +1178,8 @@ angle::Result TextureVk::copySubImageImplWithTransfer(ContextVk *contextVk,
             extents.depth = 1;
         }
 
-        vk::ImageHelper::Copy(srcImage, &stagingImage->get(), srcOffset, gl::kOffsetZero, extents,
-                              srcSubresource, destSubresource, commandBuffer);
+        vk::ImageHelper::Copy(contextVk, srcImage, &stagingImage->get(), srcOffset, gl::kOffsetZero,
+                              extents, srcSubresource, destSubresource, commandBuffer);
 
         // Stage the copy for when the image storage is actually created.
         VkImageType imageType = gl_vk::GetImageType(mState.getType());
@@ -1525,11 +1525,11 @@ angle::Result TextureVk::setEGLImageTarget(const gl::Context *context,
         vk::ImageLayout newLayout = vk::ImageLayout::AllGraphicsShadersWrite;
         if (mImage->getUsage() & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
         {
-            newLayout = vk::ImageLayout::ColorAttachment;
+            newLayout = vk::ImageLayout::ColorWrite;
         }
         else if (mImage->getUsage() & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT)
         {
-            newLayout = vk::ImageLayout::DepthStencilAttachment;
+            newLayout = vk::ImageLayout::DepthWriteStencilWrite;
         }
         else if (mImage->getUsage() &
                  (VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT))
@@ -1543,6 +1543,8 @@ angle::Result TextureVk::setEGLImageTarget(const gl::Context *context,
         ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
         mImage->changeLayoutAndQueue(contextVk, mImage->getAspectFlags(), newLayout,
                                      rendererQueueFamilyIndex, commandBuffer);
+
+        ANGLE_TRY(contextVk->onEGLImageQueueChange());
     }
 
     return angle::Result::Continue;
@@ -1892,7 +1894,7 @@ angle::Result TextureVk::copyBufferDataToImage(ContextVk *contextVk,
     ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
 
     commandBuffer->copyBufferToImage(srcBuffer->getBuffer().getHandle(), mImage->getImage(),
-                                     mImage->getCurrentLayout(), 1, &region);
+                                     mImage->getCurrentLayout(contextVk), 1, &region);
 
     return angle::Result::Continue;
 }
@@ -2193,9 +2195,9 @@ angle::Result TextureVk::copyAndStageImageData(ContextVk *contextVk,
         copyRegion.dstSubresource.mipLevel = levelVk.get();
         gl_vk::GetExtent(levelExtents, &copyRegion.extent);
 
-        commandBuffer->copyImage(srcImage->getImage(), srcImage->getCurrentLayout(),
+        commandBuffer->copyImage(srcImage->getImage(), srcImage->getCurrentLayout(contextVk),
                                  stagingImage->get().getImage(),
-                                 stagingImage->get().getCurrentLayout(), 1, &copyRegion);
+                                 stagingImage->get().getCurrentLayout(contextVk), 1, &copyRegion);
     }
 
     // Stage the staging image in the destination
@@ -3234,10 +3236,13 @@ angle::Result TextureVk::initImageViews(ContextVk *contextVk, uint32_t levelCoun
     // Use this as a proxy for the SRGB override & skip decode settings.
     bool createExtraSRGBViews = mRequiresMutableStorage;
 
+    const VkImageUsageFlags kDisallowedSwizzledUsage =
+        VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT |
+        VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR;
     ANGLE_TRY(getImageViews().initReadViews(contextVk, mState.getType(), *mImage, formatSwizzle,
                                             readSwizzle, baseLevelVk, levelCount, baseLayer,
                                             getImageViewLayerCount(), createExtraSRGBViews,
-                                            getImage().getUsage() & ~VK_IMAGE_USAGE_STORAGE_BIT));
+                                            getImage().getUsage() & ~kDisallowedSwizzledUsage));
 
     updateCachedImageViewSerials();
 
@@ -3292,7 +3297,7 @@ void TextureVk::releaseImageViews(ContextVk *contextVk)
 
     for (vk::ImageViewHelper &imageViewHelper : mMultisampledImageViews)
     {
-        mImage->collectViewGarbage(renderer, &imageViewHelper);
+        imageViewHelper.release(renderer, mImage->getResourceUse());
     }
 
     for (auto &renderTargets : mSingleLayerRenderTargets)
@@ -3604,7 +3609,7 @@ angle::Result TextureVk::refreshImageViews(ContextVk *contextVk)
     else
     {
         RendererVk *renderer = contextVk->getRenderer();
-        mImage->collectViewGarbage(renderer, &imageView);
+        imageView.release(renderer, mImage->getResourceUse());
 
         for (auto &renderTargets : mSingleLayerRenderTargets)
         {

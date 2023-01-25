@@ -138,7 +138,7 @@ def backup_single_trace(trace, backup_path):
 
 
 def backup_traces(args, traces):
-    for trace in fnmatch.filter(traces, args.traces):
+    for trace in angle_test_util.FilterTests(traces, args.traces):
         backup_single_trace(trace, args.out_path)
 
 
@@ -155,7 +155,7 @@ def restore_single_trace(trace, backup_path):
 
 
 def restore_traces(args, traces):
-    for trace in fnmatch.filter(traces, args.traces):
+    for trace in angle_test_util.FilterTests(traces, args.traces):
         restore_single_trace(trace, args.out_path)
 
 
@@ -259,7 +259,7 @@ def upgrade_traces(args, traces):
 
     failures = []
 
-    for trace in fnmatch.filter(traces, args.traces):
+    for trace in angle_test_util.FilterTests(traces, args.traces):
         if not upgrade_single_trace(args, trace_binary, trace, args.out_path, args.no_overwrite,
                                     args.c_sources):
             failures += [trace]
@@ -296,7 +296,7 @@ def validate_traces(args, traces):
     failures = []
     trace_binary = os.path.join(args.gn_path, args.test_suite)
 
-    for trace in fnmatch.filter(traces, args.traces):
+    for trace in angle_test_util.FilterTests(traces, args.traces):
         if not validate_single_trace(args, trace_binary, trace, additional_args, additional_env):
             failures += [trace]
 
@@ -330,7 +330,7 @@ def interpret_traces(args, traces):
     else:
         trace_binary = args.test_suite
 
-    for trace in fnmatch.filter(traces, args.traces):
+    for trace in angle_test_util.FilterTests(traces, args.traces):
         with tempfile.TemporaryDirectory() as backup_path:
             backup_single_trace(trace, backup_path)
             result = FAIL
@@ -339,8 +339,10 @@ def interpret_traces(args, traces):
                     logging.debug('Using temporary path %s.' % out_path)
                     if upgrade_single_trace(args, trace_binary, trace, out_path, False, True):
                         if restore_single_trace(trace, out_path):
-                            if validate_single_trace(args, trace_binary, trace,
-                                                     ['--trace-interpreter'], {}):
+                            validate_args = ['--trace-interpreter']
+                            if args.verbose:
+                                validate_args += ['--verbose-logging']
+                            if validate_single_trace(args, trace_binary, trace, validate_args, {}):
                                 logging.info('%s passed!' % trace)
                                 result = PASS
             finally:
@@ -391,7 +393,7 @@ def get_min_reqs(args, traces):
     skipped_traces = []
     trace_binary = os.path.join(args.gn_path, args.test_suite)
 
-    for trace in fnmatch.filter(traces, args.traces):
+    for trace in angle_test_util.FilterTests(traces, args.traces):
         print(f"Finding requirements for {trace}")
         extensions = []
         json_data = load_trace_json(trace)
@@ -600,6 +602,12 @@ def main():
     add_upgrade_args(interpret_parser)
     interpret_parser.add_argument(
         '--show-test-stdout', help='Log test output.', action='store_true', default=False)
+    interpret_parser.add_argument(
+        '-v',
+        '--verbose',
+        help='Verbose logging in the trace tests.',
+        action='store_true',
+        default=False)
 
     get_min_reqs_parser = subparsers.add_parser(
         'get_min_reqs',

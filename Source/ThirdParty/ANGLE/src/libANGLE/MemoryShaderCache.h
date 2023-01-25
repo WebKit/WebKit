@@ -41,7 +41,7 @@ class MemoryShaderCache final : angle::NonCopyable
                             Shader *shader,
                             const ShCompileOptions &compileOptions,
                             const ShCompilerInstance &compilerInstance,
-                            egl::BlobCache::Key *hashOut);
+                            const egl::BlobCache::Key &shaderHash);
 
     // Empty the cache.
     void clear();

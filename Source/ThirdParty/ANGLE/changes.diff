@@ -100,8 +100,20 @@ index 648c7190a9382f0ce020839322fae56acfbe40db..9ddc681d320550b171a2916cac8e9a4b
  namespace sh
  {
  
+diff --git a/src/libANGLE/Constants.h b/src/libANGLE/Constants.h
+index 36152825e438d5b5f42a40c6662a4fc2b002f7d0..d3c03c1816f7d69bb3e3001e1e6869eb26dbc917 100644
+--- a/src/libANGLE/Constants.h
++++ b/src/libANGLE/Constants.h
+@@ -11,6 +11,7 @@
+ 
+ #include "common/platform.h"
+ 
++#include <stddef.h>
+ #include <stdint.h>
+ 
+ namespace gl
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index baf589a87e376a4dfc6d88d2882ebc36c11c3af0..62b0b8562631b7c3fd0718cd3d96d99d9b8404d8 100644
+index db7ac1c53bf21a5e26415b2d9a37af14e84b9c6c..9b1f2b58cfc38d3e455fa43a2d4a20b0d0986499 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -114,60 +126,6 @@ index baf589a87e376a4dfc6d88d2882ebc36c11c3af0..62b0b8562631b7c3fd0718cd3d96d99d
  #include "libANGLE/State.h"
  
  #include <string.h>
-diff --git a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
-index ae040dfc19960b7cc686d0c2136454eb246ca80d..9e69e2fa308675249c48aee6b44b09cd4a5d2dfa 100644
---- a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
-+++ b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
-@@ -114,12 +114,14 @@ const ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::getVariableBy
-     return mData[shaderType][typeAndIndex.variableType][typeAndIndex.index];
- }
- 
-+#if ANGLE_ENABLE_METAL_SPIRV
- bool ShaderInterfaceVariableInfoMap::hasTransformFeedbackInfo(gl::ShaderType shaderType,
-                                                               uint32_t bufferIndex) const
- {
-     std::string bufferName = rx::GetXfbBufferName(bufferIndex);
-     return hasVariable(shaderType, bufferName);
- }
-+#endif
- 
- void ShaderInterfaceVariableInfoMap::mapIndexedResourceByName(gl::ShaderType shaderType,
-                                                               ShaderVariableType variableType,
-diff --git a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
-index ce9c26e401ffd4fa59eb8308a5210998970bec8c..dcaa142fc2a5e0d45ddf7e8fcaac14bb7f30ff2d 100644
---- a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
-+++ b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
-@@ -89,7 +89,9 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
-     bool hasAtomicCounterInfo(gl::ShaderType shaderType) const;
-     const ShaderInterfaceVariableInfo &getAtomicCounterInfo(gl::ShaderType shaderType) const;
-     const ShaderInterfaceVariableInfo &getFramebufferFetchInfo(gl::ShaderType shaderType) const;
-+#if ANGLE_ENABLE_METAL_SPIRV
-     bool hasTransformFeedbackInfo(gl::ShaderType shaderType, uint32_t bufferIndex) const;
-+#endif
-     const ShaderInterfaceVariableInfo &getTransformFeedbackInfo(gl::ShaderType shaderType,
-                                                                 uint32_t bufferIndex) const;
- 
-diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.h b/src/libANGLE/renderer/glslang_wrapper_utils.h
-index 7448407a8afd08ab512ab9ab7eddc7ca78e6d978..b2c73c7566dd909cdfb2d7a31a9ef9a1293ce67a 100644
---- a/src/libANGLE/renderer/glslang_wrapper_utils.h
-+++ b/src/libANGLE/renderer/glslang_wrapper_utils.h
-@@ -152,7 +152,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
-                                              bool isTransformFeedbackStage,
-                                              GlslangProgramInterfaceInfo *programInterfaceInfo,
-                                              ShaderInterfaceVariableInfoMap *variableInfoMapOut);
--
-+#if ANGLE_ENABLE_METAL_SPIRV
- // Retrieves the compiled SPIR-V code for each shader stage, and calls |GlslangAssignLocations|.
- void GlslangGetShaderSpirvCode(const gl::Context *context,
-                                const GlslangSourceOptions &options,
-@@ -166,6 +166,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
-                                         const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                         const angle::spirv::Blob &initialSpirvBlob,
-                                         angle::spirv::Blob *spirvBlobOut);
-+#endif
- 
- }  // namespace rx
- 
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
 index f72f9432b28f719520896c23fb2f9dfde6a85c0f..8c63a7cd450ef7b12a13c112fbcbd4794fca0a80 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
@@ -182,21 +140,12 @@ index f72f9432b28f719520896c23fb2f9dfde6a85c0f..8c63a7cd450ef7b12a13c112fbcbd479
      }
  
 diff --git a/src/libANGLE/renderer/metal/ContextMtl.mm b/src/libANGLE/renderer/metal/ContextMtl.mm
-index 6e6f8ce99316c05af79d65c1edafd12621341c48..be8b83d97d3e80beb50dfa06f93f2c03bac89588 100644
+index 500546927395f7d0b0ec2c1a491e729120109805..4f64783cf9be8b9cb52de60cbf37d9394a456d22 100644
 --- a/src/libANGLE/renderer/metal/ContextMtl.mm
 +++ b/src/libANGLE/renderer/metal/ContextMtl.mm
-@@ -2314,7 +2314,7 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
- {
-     ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
-                             indexTypeOrNone, indices, xfbPass));
--    if (!mRenderEncoder.valid())
-+    if (ANGLE_UNLIKELY(!mRenderEncoder.valid() || !mRenderEncoder.hasPipelineState()))
-     {
-         // Flush occurred during setup, due to running out of memory while setting up the render
-         // pass state. This would happen for example when there is no more space in the uniform
-@@ -2323,8 +2323,21 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
-         ANGLE_TRY(setupDrawImpl(context, mode, firstVertex, vertexOrIndexCount, instances,
-                                 indexTypeOrNone, indices, xfbPass));
+@@ -2450,8 +2450,21 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
+             return angle::Result::Continue;
+         }
          // Setup with flushed state should either produce a working encoder or fail with an error
 -        // result.
 -        ASSERT(mRenderEncoder.valid());
@@ -219,10 +168,10 @@ index 6e6f8ce99316c05af79d65c1edafd12621341c48..be8b83d97d3e80beb50dfa06f93f2c03
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index da53697971b69594397244a29e2f078f04c86c81..f495e5231bbcd39e79e00e385225373b96b16f10 100644
+index 716c0656f01cb558e27c3f9d7a2ba4cf97770cc9..9f835b2d26efe0c810dcfbea5168fc0a0edffbc8 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1296,8 +1296,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1350,8 +1350,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -233,10 +182,10 @@ index da53697971b69594397244a29e2f078f04c86c81..f495e5231bbcd39e79e00e385225373b
      {
          return [mMetalDevice supports32BitFloatFiltering];
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 09cbbf094724d88836031302446b6b012efa6107..ea77d3e38a533aa9a88906c1ae15e28758263b51 100644
+index 73f5371c691fa030d2d02dc718decdcb9e4c3542..489460f69489aa566dde04801dd180ceb06d0c0e 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -1109,7 +1109,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
+@@ -1124,7 +1124,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
                                      bool uniformBuffersDirty)
  {
      ContextMtl *context = mtl::GetImpl(glContext);
@@ -259,16 +208,61 @@ index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860
  };
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index b1f2c5a6aee83e2cf955777f65a94816487d39ca..8a39f03321902ce5cbef0529ce727f8911c87c44 100644
+index 0a44decec8b2df3a9d447438c35bf4c3c1ba6d42..1c055cc1b0f8cdabe6de33292f3b68570622ab02 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-@@ -499,6 +499,7 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -506,6 +506,7 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
 +    bool hasPipelineState() const { return mPipelineStateSet; }
  
      uint64_t getSerial() const { return mSerial; }
+ 
+diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
+index e1fb7a2b980bd3cabd0191d51197d164b5118f75..681dc278ca3411513a2b6c10bca0b9f30b504322 100644
+--- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
++++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
+@@ -364,24 +364,38 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
+     [encoder setVisibilityResultMode:mode offset:offset];
+ }
+ 
++#if (defined(__MAC_10_15) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_15) || \
++    (defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_13_0)
++#   define ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE 1
++#endif
++
++#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
++    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
++#   define ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED 1
++#endif
++
+ inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
+ {
+     id<MTLResource> resource = stream->fetch<id<MTLResource>>();
+     MTLResourceUsage usage   = stream->fetch<MTLResourceUsage>();
+     mtl::RenderStages stages = stream->fetch<mtl::RenderStages>();
+     ANGLE_UNUSED_VARIABLE(stages);
+-#if defined(__IPHONE_13_0) || defined(__MAC_10_15)
++#if ANGLE_MTL_USE_RESOURCE_USAGE_DEPRECATED
++    [encoder useResource:resource usage:usage stages:stages];
++#else
++#   if ANGLE_MTL_USE_RESOURCE_USAGE_STAGES_AVAILABLE
+     if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.0, 13.0))
+     {
+         [encoder useResource:resource usage:usage stages:stages];
+     }
+     else
+-#endif
++#   endif
+     {
+         ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
+         [encoder useResource:resource usage:usage];
+         ANGLE_APPLE_ALLOW_DEPRECATED_END
+     }
++#endif
+     [resource ANGLE_MTL_RELEASE];
+ }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 index 8fceb8736e4a1403494bdae9ff9db2406cba4937..701f6cce21496cddbac68e1d39c513de2557e910 100644
@@ -426,10 +420,10 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..2ecf7b40bd5a2edc3fd9d69841e266b6
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.h b/src/libANGLE/renderer/metal/mtl_resources.h
-index c6ae440f55600d78c1625c6faa5a2ca37e6aceb3..5e246779df967041e12b046f943646e3396a6590 100644
+index 9b10ac07b789a6fc99cbb525e35211e36c8ad15a..c9a0134b9e3ac5baa5c61e0d85286c214e3605a2 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.h
 +++ b/src/libANGLE/renderer/metal/mtl_resources.h
-@@ -352,7 +352,9 @@ class Texture final : public Resource,
+@@ -365,7 +365,9 @@ class Texture final : public Resource,
      size_t mEstimatedByteSize = 0;
  };
  
@@ -441,7 +435,7 @@ index c6ae440f55600d78c1625c6faa5a2ca37e6aceb3..5e246779df967041e12b046f943646e3
    public:
      static angle::Result MakeBuffer(ContextMtl *context,
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 6eff044a755774ccef9fc59fb1ac09480d67faba..f5bf18784329bfecee2a2e08a0161d039ebcb6e4 100644
+index 144924035b1586af408e570806cca455396d71bc..f339f1a8290b017d3825c4ae8cbd3983ce845e34 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -35,12 +35,14 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
@@ -470,7 +464,7 @@ index 6eff044a755774ccef9fc59fb1ac09480d67faba..f5bf18784329bfecee2a2e08a0161d03
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -507,12 +509,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
+@@ -529,12 +531,12 @@ Texture::Texture(Texture *original,
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -485,7 +479,7 @@ index 6eff044a755774ccef9fc59fb1ac09480d67faba..f5bf18784329bfecee2a2e08a0161d03
  }
  
  bool Texture::isCPUAccessible() const
-@@ -991,7 +993,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
+@@ -1028,7 +1030,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -494,7 +488,7 @@ index 6eff044a755774ccef9fc59fb1ac09480d67faba..f5bf18784329bfecee2a2e08a0161d03
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1012,7 +1014,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
+@@ -1049,7 +1051,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  
@@ -504,73 +498,27 @@ index 6eff044a755774ccef9fc59fb1ac09480d67faba..f5bf18784329bfecee2a2e08a0161d03
          if (this->isBeingUsedByGPU(context))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-index b9c947b9dd7eeda2651a41cc863687b067f6aa8f..fbc2d4dd53b0040fa70f102cbc9224f3195f0be9 100644
+index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac26c5d99b3 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-@@ -932,6 +932,62 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::insertRenderPipelin
-     return re.first->second;
- }
+@@ -21,9 +21,16 @@
  
-+static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descriptor,
-+                                        ContextMtl *context,
-+                                        const mtl::ContextDevice &device)
-+{
-+    // Ensure there is at least one valid render target.
-+    bool hasValidRenderTarget = false;
+ #define ANGLE_OBJC_CP_PROPERTY(DST, SRC, PROPERTY) \
+     (DST).PROPERTY = static_cast<__typeof__((DST).PROPERTY)>(ToObjC((SRC).PROPERTY))
++#define ANGLE_OBJC_CP_PROPERTY2(DST, SRC, PROPERTY, DST_PROPERTY)  \
++    (DST).DST_PROPERTY = static_cast<__typeof__((DST).DST_PROPERTY)>(ToObjC((SRC).PROPERTY))
+ 
+ #define ANGLE_PROP_EQ(LHS, RHS, PROP) ((LHS).PROP == (RHS).PROP)
+ 
++#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
++    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
++#   define ANGLE_MTL_RENDER_PIPELINE_DESC_RASTER_SAMPLE_COUNT_AVAILABLE 1
++#endif
 +
-+    const NSUInteger maxColorRenderTargets = GetMaxNumberOfRenderTargetsForDevice(device);
-+    for (NSUInteger i = 0; i < maxColorRenderTargets; ++i)
-+    {
-+        auto colorAttachment = descriptor.colorAttachments[i];
-+        if (colorAttachment && colorAttachment.pixelFormat != MTLPixelFormatInvalid)
-+        {
-+            hasValidRenderTarget = true;
-+            break;
-+        }
-+    }
-+
-+    if (!hasValidRenderTarget && descriptor.depthAttachmentPixelFormat != MTLPixelFormatInvalid)
-+    {
-+        hasValidRenderTarget = true;
-+    }
-+
-+    if (!hasValidRenderTarget && descriptor.stencilAttachmentPixelFormat != MTLPixelFormatInvalid)
-+    {
-+        hasValidRenderTarget = true;
-+    }
-+
-+    if (!hasValidRenderTarget)
-+    {
-+        UNREACHABLE();
-+        ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline requires at least one render target.",
-+                               GL_INVALID_OPERATION);
-+        return false;
-+    }
-+
-+    // Ensure the device can support the storage requirement for render targets.
-+    if (DeviceHasMaximumRenderTargetSize(device))
-+    {
-+        // TODO: Is the use of NSUInteger in 32 bit systems ok without any overflow checking?
-+        NSUInteger maxSize = GetMaxRenderTargetSizeForDeviceInBytes(device);
-+        NSUInteger renderTargetSize =
-+            ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(descriptor, context, device);
-+        if (renderTargetSize > maxSize)
-+        {
-+            std::stringstream errorStream;
-+            errorStream << "This set of render targets requires " << renderTargetSize
-+                        << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
-+            ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
-+            return false;
-+        }
-+    }
-+
-+    return true;
-+}
-+
- AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
-     ContextMtl *context,
-     const RenderPipelineDesc &originalDesc,
-@@ -993,23 +1049,10 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
+ namespace rx
+ {
+ namespace mtl
+@@ -1069,23 +1076,10 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
  
          auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
  
@@ -593,8 +541,8 @@ index b9c947b9dd7eeda2651a41cc863687b067f6aa8f..fbc2d4dd53b0040fa70f102cbc9224f3
          }
 -        }
  
-         // Special attribute slot for default attribute
-         if (insertDefaultAttribLayout)
+         if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
+         {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.h b/src/libANGLE/renderer/metal/mtl_utils.h
 index d218c13ed14be57f514cbf3c9dbeedefcdd49621..b236d92655d0307bb0b61ce51bf6406e9e934e96 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.h
@@ -612,11 +560,62 @@ index d218c13ed14be57f514cbf3c9dbeedefcdd49621..b236d92655d0307bb0b61ce51bf6406e
                                                            AutoObjCPtr<NSError *> *error);
  
  bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily);
+diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
+index dddcb790fe9f27b10e97ca4458a4d2a9b2555e0c..c94e9b389d17d0d272bd0a4a7edc63a2442c08f7 100644
+--- a/src/libANGLE/renderer/metal/mtl_utils.mm
++++ b/src/libANGLE/renderer/metal/mtl_utils.mm
+@@ -1338,6 +1338,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+ #endif      // TARGET_OS_IOS || TARGET_OS_TV
+ }
+ 
++#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
++    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0) || \
++    (defined(__TVOS_16_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_16_0)
++#   define ANGLE_MTL_FEATURE_SET_DEPRECATED 1
++#   define ANGLE_MTL_GPU_FAMILY_MAC1_DEPRECATED 1
++#endif
++
++#if ANGLE_MTL_GPU_FAMILY_MAC1_DEPRECATED
++#   define ANGLE_MTL_GPU_FAMILY_MAC1 MTLGPUFamilyMac2
++#   define ANGLE_MTL_GPU_FAMILY_MAC2 MTLGPUFamilyMac2
++#elif TARGET_OS_MACCATALYST
++#   define ANGLE_MTL_GPU_FAMILY_MAC1 MTLGPUFamilyMacCatalyst1
++#   define ANGLE_MTL_GPU_FAMILY_MAC2 MTLGPUFamilyMacCatalyst2
++#else // !ANGLE_MTL_GPU_FAMILY_MAC1_DEPRECATED && !TARGET_OS_MACCATALYST
++#   define ANGLE_MTL_GPU_FAMILY_MAC1 MTLGPUFamilyMac1
++#   define ANGLE_MTL_GPU_FAMILY_MAC2 MTLGPUFamilyMac2
++#endif
++
+ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+ {
+ #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+@@ -1352,10 +1370,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+ #        if TARGET_OS_MACCATALYST
+             ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
+             case 1:
+-                family = MTLGPUFamilyMacCatalyst1;
++                family = ANGLE_MTL_GPU_FAMILY_MAC1;
+                 break;
+             case 2:
+-                family = MTLGPUFamilyMacCatalyst2;
++                family = ANGLE_MTL_GPU_FAMILY_MAC2;
+                 break;
+                 ANGLE_APPLE_ALLOW_DEPRECATED_END
+ #        else   // TARGET_OS_MACCATALYST
+@@ -1378,7 +1396,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+ 
+     // If device doesn't support [MTLDevice supportsFamily:], then use
+     // [MTLDevice supportsFeatureSet:].
+-#    if TARGET_OS_MACCATALYST
++#    if TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATED
+     UNREACHABLE();
+     return false;
+ #    else
 diff --git a/src/libANGLE/renderer/serial_utils.h b/src/libANGLE/renderer/serial_utils.h
-index 49a65c4e26d5a5a661cc6536fa7d30d0f97a503f..d9d42cdd514b9b12284ec6dcb6a3cf6cfcce041c 100644
+index d1c994959e313fb1f8091ad395d0028126b0e8eb..5f9bf0729de3615c351b3a9d918ee0fde201c94f 100644
 --- a/src/libANGLE/renderer/serial_utils.h
 +++ b/src/libANGLE/renderer/serial_utils.h
-@@ -84,7 +84,7 @@ class Serial final
+@@ -119,7 +119,7 @@ class Serial final
  class AtomicQueueSerial final
  {
    public:
@@ -625,3 +624,36 @@ index 49a65c4e26d5a5a661cc6536fa7d30d0f97a503f..d9d42cdd514b9b12284ec6dcb6a3cf6c
      AtomicQueueSerial &operator=(const Serial &other)
      {
          mValue.store(other.mValue, std::memory_order_release);
+diff --git a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp
+index 8fe01dba762d07b0f1261fd4cf7934bb2bbb5601..22d0e77101d6c00a446e77db88ee7fdc2ab2573e 100644
+--- a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp
++++ b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp
+@@ -113,12 +113,14 @@ const ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::getVariableBy
+     return mData[shaderType][typeAndIndex.variableType][typeAndIndex.index];
+ }
+ 
++#if ANGLE_ENABLE_METAL_SPIRV
+ bool ShaderInterfaceVariableInfoMap::hasTransformFeedbackInfo(gl::ShaderType shaderType,
+                                                               uint32_t bufferIndex) const
+ {
+     std::string bufferName = rx::SpvGetXfbBufferName(bufferIndex);
+     return hasVariable(shaderType, bufferName);
+ }
++#endif
+ 
+ void ShaderInterfaceVariableInfoMap::mapIndexedResourceByName(gl::ShaderType shaderType,
+                                                               ShaderVariableType variableType,
+diff --git a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h
+index 1f969fbc1b5adcbdae4108c012633d67d40368d9..eb5ed5729cf874284e6109c924d11537de17aa09 100644
+--- a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h
++++ b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h
+@@ -88,7 +88,9 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
+     bool hasAtomicCounterInfo(gl::ShaderType shaderType) const;
+     const ShaderInterfaceVariableInfo &getAtomicCounterInfo(gl::ShaderType shaderType) const;
+     const ShaderInterfaceVariableInfo &getFramebufferFetchInfo(gl::ShaderType shaderType) const;
++#if ANGLE_ENABLE_METAL_SPIRV
+     bool hasTransformFeedbackInfo(gl::ShaderType shaderType, uint32_t bufferIndex) const;
++#endif
+     const ShaderInterfaceVariableInfo &getTransformFeedbackInfo(gl::ShaderType shaderType,
+                                                                 uint32_t bufferIndex) const;
+ 

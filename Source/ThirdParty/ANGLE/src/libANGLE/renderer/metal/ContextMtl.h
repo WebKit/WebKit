@@ -208,7 +208,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     const gl::TextureCapsMap &getNativeTextureCaps() const override;
     const gl::Extensions &getNativeExtensions() const override;
     const gl::Limitations &getNativeLimitations() const override;
-    ShPixelLocalStorageType getNativePixelLocalStorageType() const override;
+    const ShPixelLocalStorageOptions &getNativePixelLocalStorageOptions() const override;
 
     const ProgramMtl *getProgram() const { return mProgram; }
 
@@ -409,7 +409,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
                             GLsizei instanceCount,
                             gl::DrawElementsType indexTypeOrNone,
                             const void *indices,
-                            bool xfbPass);
+                            bool xfbPass,
+                            bool *isNoOp);
 
     angle::Result setupDrawImpl(const gl::Context *context,
                                 gl::PrimitiveMode mode,
@@ -418,7 +419,8 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                 GLsizei instanceCount,
                                 gl::DrawElementsType indexTypeOrNone,
                                 const void *indices,
-                                bool xfbPass);
+                                bool xfbPass,
+                                bool *isNoOp);
 
     angle::Result drawTriFanArrays(const gl::Context *context,
                                    GLint first,

@@ -48,8 +48,10 @@ bool IsMetalRendererAvailable()
                     // Hardcode constant to sidestep compiler errors. Call will
                     // return false on older macOS versions.
                     const NSUInteger macFamily2v1 = 10005;
+                    ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
                     if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(macFamily2v1)])
                         gpuFamilySufficient = true;
+                    ANGLE_APPLE_ALLOW_DEPRECATED_END
                 }
 #elif defined(ANGLE_PLATFORM_IOS) && !TARGET_OS_SIMULATOR
                 // A8 devices (iPad Mini 4, iPad Air 2) cannot use ANGLE's Metal backend.

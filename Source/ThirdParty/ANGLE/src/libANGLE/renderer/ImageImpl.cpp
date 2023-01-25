@@ -11,6 +11,11 @@
 namespace rx
 {
 
+bool ExternalImageSiblingImpl::hasFrontBufferUsage() const
+{
+    return false;
+}
+
 bool ExternalImageSiblingImpl::isCubeMap() const
 {
     return false;

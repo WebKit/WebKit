@@ -101,10 +101,10 @@ class GLImplFactory : angle::NonCopyable
     // Overlay creation
     virtual OverlayImpl *createOverlay(const gl::OverlayState &state) = 0;
 
-    rx::Serial generateSerial() { return mSerialFactory.generate(); }
+    rx::UniqueSerial generateSerial() { return mSerialFactory.generate(); }
 
   private:
-    rx::SerialFactory mSerialFactory;
+    rx::UniqueSerialFactory mSerialFactory;
 };
 
 inline GLImplFactory::GLImplFactory() = default;

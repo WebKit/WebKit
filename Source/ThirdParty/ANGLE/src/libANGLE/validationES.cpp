@@ -71,13 +71,6 @@ bool CompressedTextureFormatRequiresExactSize(GLenum internalFormat)
             return false;
     }
 }
-bool CompressedSubTextureFormatRequiresExactSize(GLenum internalFormat)
-{
-    // Compressed sub textures have additional formats that requires exact size.
-    // ES 3.1, Section 8.7, Page 171
-    return CompressedTextureFormatRequiresExactSize(internalFormat) ||
-           IsETC2EACFormat(internalFormat) || IsASTC2DFormat(internalFormat);
-}
 
 bool DifferenceCanOverflow(GLint a, GLint b)
 {
@@ -1177,50 +1170,64 @@ bool ValidCompressedSubImageSize(const Context *context,
                                  size_t textureHeight,
                                  size_t textureDepth)
 {
+    // Passing non-compressed internal format to sub-image compressed entry points generates
+    // INVALID_OPERATION, so check it here.
     const InternalFormat &formatInfo = GetSizedInternalFormatInfo(internalFormat);
     if (!formatInfo.compressed)
     {
         return false;
     }
 
-    if (xoffset < 0 || yoffset < 0 || zoffset < 0 || width < 0 || height < 0 || depth < 0)
+    // Negative dimensions already checked in ValidImageSizeParameters called by
+    // ValidateES2TexImageParametersBase or ValidateES3TexImageParametersBase.
+    ASSERT(width >= 0 && height >= 0 && depth >= 0);
+
+    // Negative and overflowed offsets already checked in ValidateES2TexImageParametersBase or
+    // ValidateES3TexImageParametersBase.
+    ASSERT(xoffset >= 0 && yoffset >= 0 && zoffset >= 0);
+    ASSERT(std::numeric_limits<GLsizei>::max() - xoffset >= width &&
+           std::numeric_limits<GLsizei>::max() - yoffset >= height &&
+           std::numeric_limits<GLsizei>::max() - zoffset >= depth);
+
+    // Ensure that format's block dimensions are set.
+    ASSERT(formatInfo.compressedBlockWidth > 0 && formatInfo.compressedBlockHeight > 0 &&
+           formatInfo.compressedBlockDepth > 0);
+
+    // Check if the whole image is being replaced. For 2D texture blocks, zoffset and depth do not
+    // affect whether the replaced region fills the entire image.
+    if ((xoffset == 0 && static_cast<size_t>(width) == textureWidth) &&
+        (yoffset == 0 && static_cast<size_t>(height) == textureHeight) &&
+        ((zoffset == 0 && static_cast<size_t>(depth) == textureDepth) ||
+         formatInfo.compressedBlockDepth == 1))
+    {
+        // All compressed formats support whole image replacement, early pass.
+        return true;
+    }
+
+    // The replaced region does not match the image size. Fail if the format does not support
+    // partial updates.
+    if (CompressedFormatRequiresWholeImage(internalFormat))
     {
         return false;
     }
 
-    // ANGLE does not support compressed 3D blocks (provided exclusively by ASTC 3D formats), so
-    // there is no need to check the depth here. Only width and height determine whether a 2D array
-    // element or a 2D slice of a sliced 3D texture fill the entire level.
-    bool fillsEntireMip = xoffset == 0 && yoffset == 0 &&
-                          static_cast<size_t>(width) == textureWidth &&
-                          static_cast<size_t>(height) == textureHeight;
-
-    if (CompressedFormatRequiresWholeImage(internalFormat))
+    // The format supports partial updates. Check that the origin of the replaced region is aligned
+    // to block boundaries.
+    if (xoffset % formatInfo.compressedBlockWidth != 0 ||
+        yoffset % formatInfo.compressedBlockHeight != 0 ||
+        zoffset % formatInfo.compressedBlockDepth != 0)
     {
-        return fillsEntireMip;
+        return false;
     }
 
-    if (CompressedSubTextureFormatRequiresExactSize(internalFormat))
-    {
-        if (xoffset % formatInfo.compressedBlockWidth != 0 ||
-            yoffset % formatInfo.compressedBlockHeight != 0 ||
-            zoffset % formatInfo.compressedBlockDepth != 0)
-        {
-            return false;
-        }
-
-        // Allowed to either have data that is a multiple of block size or is smaller than the block
-        // size but fills the entire mip
-        bool sizeMultipleOfBlockSize = (width % formatInfo.compressedBlockWidth) == 0 &&
-                                       (height % formatInfo.compressedBlockHeight) == 0 &&
-                                       (depth % formatInfo.compressedBlockDepth) == 0;
-        if (!sizeMultipleOfBlockSize && !fillsEntireMip)
-        {
-            return false;
-        }
-    }
-
-    return true;
+    // The replaced region dimensions must either be multiples of the block dimensions or exactly
+    // reach the image boundaries.
+    return (static_cast<size_t>(xoffset + width) == textureWidth ||
+            width % formatInfo.compressedBlockWidth == 0) &&
+           (static_cast<size_t>(yoffset + height) == textureHeight ||
+            height % formatInfo.compressedBlockHeight == 0) &&
+           (static_cast<size_t>(zoffset + depth) == textureDepth ||
+            depth % formatInfo.compressedBlockDepth == 0);
 }
 
 bool ValidImageDataSize(const Context *context,
@@ -5564,13 +5571,22 @@ bool ValidateGetFramebufferAttachmentParameterivBase(const Context *context,
             }
             break;
 
+        case GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
+            if (clientVersion < 3 && !context->getExtensions().colorBufferHalfFloatEXT &&
+                !context->getExtensions().colorBufferFloatRgbCHROMIUM &&
+                !context->getExtensions().colorBufferFloatRgbaCHROMIUM)
+            {
+                context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, pname);
+                return false;
+            }
+            break;
+
         case GL_FRAMEBUFFER_ATTACHMENT_RED_SIZE:
         case GL_FRAMEBUFFER_ATTACHMENT_GREEN_SIZE:
         case GL_FRAMEBUFFER_ATTACHMENT_BLUE_SIZE:
         case GL_FRAMEBUFFER_ATTACHMENT_ALPHA_SIZE:
         case GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE:
         case GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE:
-        case GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
         case GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
             if (clientVersion < 3)
             {

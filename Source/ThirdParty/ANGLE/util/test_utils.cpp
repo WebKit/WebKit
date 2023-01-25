@@ -50,7 +50,7 @@ const char *GetSingleArg(const char *flag,
             return ptr + 1;
         }
 
-        if (argIndex < *argc - 1)
+        if (*ptr == '\0' && argIndex < *argc - 1)
         {
             ptr = argv[argIndex + 1];
             if (handling == ArgHandling::Delete)
@@ -76,6 +76,7 @@ const DisplayTypeInfo kDisplayTypes[] = {
     {"null", EGL_PLATFORM_ANGLE_TYPE_NULL_ANGLE},
     {"swiftshader", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
     {"vulkan", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
+    {"vulkan-null", EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE},
 };
 }  // anonymous namespace
 
@@ -175,6 +176,7 @@ bool ParseIntArgWithHandling(const char *flag,
     }
 
     *valueOut = static_cast<int>(longValue);
+    // Note: return value is always false with ArgHandling::Preserve handling
     return handling == ArgHandling::Delete;
 }
 
@@ -206,16 +208,27 @@ bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std:
     return true;
 }
 
-bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut)
+bool ParseCStringArgWithHandling(const char *flag,
+                                 int *argc,
+                                 char **argv,
+                                 int argIndex,
+                                 const char **valueOut,
+                                 ArgHandling handling)
 {
-    const char *value = GetSingleArg(flag, argc, argv, argIndex, ArgHandling::Delete);
+    const char *value = GetSingleArg(flag, argc, argv, argIndex, handling);
     if (!value)
     {
         return false;
     }
 
     *valueOut = value;
-    return true;
+    // Note: return value is always false with ArgHandling::Preserve handling
+    return handling == ArgHandling::Delete;
+}
+
+bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut)
+{
+    return ParseCStringArgWithHandling(flag, argc, argv, argIndex, valueOut, ArgHandling::Delete);
 }
 
 void AddArg(int *argc, char **argv, const char *arg)
@@ -248,13 +261,17 @@ uint32_t GetPlatformANGLETypeFromArg(const char *useANGLEArg, uint32_t defaultPl
 
 uint32_t GetANGLEDeviceTypeFromArg(const char *useANGLEArg, uint32_t defaultDeviceType)
 {
-    if (useANGLEArg && strcmp(useANGLEArg, "swiftshader") == 0)
+    if (useANGLEArg)
     {
-        return EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
+        if (strcmp(useANGLEArg, "swiftshader") == 0)
+        {
+            return EGL_PLATFORM_ANGLE_DEVICE_TYPE_SWIFTSHADER_ANGLE;
+        }
+        if (strstr(useANGLEArg, "null") != 0)
+        {
+            return EGL_PLATFORM_ANGLE_DEVICE_TYPE_NULL_ANGLE;
+        }
     }
-    else
-    {
-        return defaultDeviceType;
-    }
+    return defaultDeviceType;
 }
 }  // namespace angle

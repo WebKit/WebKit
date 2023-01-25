@@ -1501,11 +1501,12 @@ CallCapture CaptureMultiDrawElementsInstancedANGLE(const State &glState,
 
 CallCapture CaptureProvokingVertexANGLE(const State &glState,
                                         bool isCallValid,
-                                        ProvokingVertexConvention modePacked)
+                                        ProvokingVertexConvention provokeModePacked)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("modePacked", ParamType::TProvokingVertexConvention, modePacked);
+    paramBuffer.addValueParam("provokeModePacked", ParamType::TProvokingVertexConvention,
+                              provokeModePacked);
 
     return CallCapture(angle::EntryPoint::GLProvokingVertexANGLE, std::move(paramBuffer));
 }
@@ -7033,6 +7034,21 @@ CallCapture CaptureRenderbufferStorageMultisampleEXT(const State &glState,
 
     return CallCapture(angle::EntryPoint::GLRenderbufferStorageMultisampleEXT,
                        std::move(paramBuffer));
+}
+
+CallCapture CapturePolygonOffsetClampEXT(const State &glState,
+                                         bool isCallValid,
+                                         GLfloat factor,
+                                         GLfloat units,
+                                         GLfloat clamp)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("factor", ParamType::TGLfloat, factor);
+    paramBuffer.addValueParam("units", ParamType::TGLfloat, units);
+    paramBuffer.addValueParam("clamp", ParamType::TGLfloat, clamp);
+
+    return CallCapture(angle::EntryPoint::GLPolygonOffsetClampEXT, std::move(paramBuffer));
 }
 
 CallCapture CapturePrimitiveBoundingBoxEXT(const State &glState,

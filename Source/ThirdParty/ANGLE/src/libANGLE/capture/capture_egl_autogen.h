@@ -427,6 +427,9 @@ angle::CallCapture CaptureExportVkImageANGLE(egl::Thread *thread,
                                              void *vk_image,
                                              void *vk_image_create_info,
                                              EGLBoolean returnValue);
+angle::CallCapture CaptureWaitUntilWorkScheduledANGLE(egl::Thread *thread,
+                                                      bool isCallValid,
+                                                      egl::Display *dpyPacked);
 angle::CallCapture CaptureGetSyncValuesCHROMIUM(egl::Thread *thread,
                                                 bool isCallValid,
                                                 egl::Display *dpyPacked,

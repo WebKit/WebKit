@@ -263,6 +263,9 @@ class ProgramPrelude : public TIntermTraverser
     void textureProjLodOffset();
     void textureProjOffset();
     void textureSize();
+    void imageLoad();
+    void imageStore();
+    void memoryBarrierImage();
 
   private:
     TInfoSinkBase &mOut;
@@ -3100,6 +3103,36 @@ ANGLE_ALWAYS_INLINE auto ANGLE_textureSize_impl(
 )",
                         textureEnv())
 
+PROGRAM_PRELUDE_DECLARE(imageLoad, R"(
+template <typename T, metal::access Access>
+ANGLE_ALWAYS_INLINE auto ANGLE_imageLoad(
+    thread const metal::texture2d<T, Access> &texture,
+    metal::int2 coord)
+{
+    return texture.read(uint2(coord));
+}
+)")
+
+PROGRAM_PRELUDE_DECLARE(imageStore, R"(
+template <typename T, metal::access Access>
+ANGLE_ALWAYS_INLINE auto ANGLE_imageStore(
+    thread const metal::texture2d<T, Access> &texture,
+    metal::int2 coord,
+    metal::vec<T, 4> value)
+{
+    return texture.write(value, uint2(coord));
+}
+)")
+
+// TODO(anglebug.com/7279): When using raster order groups and pixel local storage, which only
+// accesses the pixel coordinate, we probably only need an execution barrier (mem_flags::mem_none).
+PROGRAM_PRELUDE_DECLARE(memoryBarrierImage, R"(
+ANGLE_ALWAYS_INLINE void ANGLE_memoryBarrierImage()
+{
+    simdgroup_barrier(metal::mem_flags::mem_texture);
+}
+)")
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Returned Name is valid for as long as `buffer` is still alive.
@@ -3496,6 +3529,9 @@ ProgramPrelude::FuncToEmitter ProgramPrelude::BuildFuncToEmitter()
     putBuiltIn("textureProjLodOffset", EMIT_METHOD(textureProjLodOffset));
     putBuiltIn("textureProjOffset", EMIT_METHOD(textureProjOffset));
     putBuiltIn("textureSize", EMIT_METHOD(textureSize));
+    putBuiltIn("imageLoad", EMIT_METHOD(imageLoad));
+    putBuiltIn("imageStore", EMIT_METHOD(imageStore));
+    putBuiltIn("memoryBarrierImage", EMIT_METHOD(memoryBarrierImage));
 
     return map;
 
@@ -3891,7 +3927,6 @@ void ProgramPrelude::visitOperator(TOperator op,
         case TOperator::EOpMemoryBarrier:
         case TOperator::EOpMemoryBarrierAtomicCounter:
         case TOperator::EOpMemoryBarrierBuffer:
-        case TOperator::EOpMemoryBarrierImage:
         case TOperator::EOpMemoryBarrierShared:
         case TOperator::EOpGroupMemoryBarrier:
         case TOperator::EOpAtomicAdd:

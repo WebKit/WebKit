@@ -114,6 +114,7 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     // and hasn't been restarted.
     bool ready() const;
     void commit(CommandBufferFinishOperation operation);
+    void wait(CommandBufferFinishOperation operation);
 
     void present(id<CAMetalDrawable> presentationDrawable);
 
@@ -169,8 +170,9 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     std::vector<std::string> mDebugGroups;
 
     std::unordered_set<id> mResourceList;
-    size_t mWorkingResourceSize = 0;
-    bool mCommitted             = false;
+    size_t mWorkingResourceSize              = 0;
+    bool mCommitted                          = false;
+    CommandBufferFinishOperation mLastWaitOp = mtl::NoWait;
 };
 
 class CommandEncoder : public WrappedObject<id<MTLCommandEncoder>>, angle::NonCopyable
@@ -429,6 +431,7 @@ class RenderCommandEncoder final : public CommandEncoder
     RenderCommandEncoder &setTexture(gl::ShaderType shaderType,
                                      const TextureRef &texture,
                                      uint32_t index);
+    RenderCommandEncoder &setRWTexture(gl::ShaderType, const TextureRef &, uint32_t index);
 
     RenderCommandEncoder &draw(MTLPrimitiveType primitiveType,
                                uint32_t vertexStart,
@@ -467,6 +470,10 @@ class RenderCommandEncoder final : public CommandEncoder
     RenderCommandEncoder &useResource(const BufferRef &resource,
                                       MTLResourceUsage usage,
                                       mtl::RenderStages states);
+
+    RenderCommandEncoder &memoryBarrier(mtl::BarrierScope,
+                                        mtl::RenderStages after,
+                                        mtl::RenderStages before);
 
     RenderCommandEncoder &memoryBarrierWithResource(const BufferRef &resource,
                                                     mtl::RenderStages after,
@@ -514,7 +521,7 @@ class RenderCommandEncoder final : public CommandEncoder
     void initAttachmentWriteDependencyAndScissorRect(const RenderPassAttachmentDesc &attachment);
     void initWriteDependency(const TextureRef &texture);
 
-    void finalizeLoadStoreAction(MTLRenderPassAttachmentDescriptor *objCRenderPassAttachment);
+    bool finalizeLoadStoreAction(MTLRenderPassAttachmentDescriptor *objCRenderPassAttachment);
 
     void encodeMetalEncoder();
     void simulateDiscardFramebuffer();

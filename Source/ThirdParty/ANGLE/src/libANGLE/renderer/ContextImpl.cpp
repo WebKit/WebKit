@@ -9,7 +9,7 @@
 
 #include "libANGLE/renderer/ContextImpl.h"
 
-#include "common/third_party/base/anglebase/no_destructor.h"
+#include "common/base/anglebase/no_destructor.h"
 #include "libANGLE/Context.h"
 
 namespace rx
@@ -91,7 +91,8 @@ angle::Result ContextImpl::drawPixelLocalStorageEXTEnable(gl::Context *,
                                                           const gl::PixelLocalStoragePlane[],
                                                           const GLenum loadops[])
 {
-    ASSERT(getNativePixelLocalStorageType() == ShPixelLocalStorageType::PixelLocalStorageEXT);
+    ASSERT(getNativePixelLocalStorageOptions().type ==
+           ShPixelLocalStorageType::PixelLocalStorageEXT);
     UNREACHABLE();
     return angle::Result::Stop;
 }
@@ -100,7 +101,8 @@ angle::Result ContextImpl::drawPixelLocalStorageEXTDisable(gl::Context *,
                                                            const gl::PixelLocalStoragePlane[],
                                                            const GLenum storeops[])
 {
-    ASSERT(getNativePixelLocalStorageType() == ShPixelLocalStorageType::PixelLocalStorageEXT);
+    ASSERT(getNativePixelLocalStorageOptions().type ==
+           ShPixelLocalStorageType::PixelLocalStorageEXT);
     UNREACHABLE();
     return angle::Result::Stop;
 }

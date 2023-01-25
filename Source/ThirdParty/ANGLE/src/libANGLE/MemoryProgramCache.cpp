@@ -16,9 +16,9 @@
 #include <GLSLANG/ShaderVars.h>
 #include <anglebase/sha1.h>
 
+#include "common/BinaryStream.h"
 #include "common/angle_version_info.h"
 #include "common/utilities.h"
-#include "libANGLE/BinaryStream.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Debug.h"
 #include "libANGLE/Uniform.h"
@@ -32,67 +32,34 @@ namespace gl
 
 namespace
 {
-class HashStream final : angle::NonCopyable
-{
-  public:
-    std::string str() { return mStringStream.str(); }
 
-    template <typename T>
-    HashStream &operator<<(T value)
-    {
-        mStringStream << value << kSeparator;
-        return *this;
-    }
-
-  private:
-    static constexpr char kSeparator = ':';
-    std::ostringstream mStringStream;
-};
-
-HashStream &operator<<(HashStream &stream, Shader *shader)
-{
-    if (shader)
-    {
-        stream << shader->getSourceString().c_str() << shader->getSourceString().length()
-               << shader->getCompilerResourcesString().c_str();
-    }
-    return stream;
-}
-
-HashStream &operator<<(HashStream &stream, const ProgramBindings &bindings)
+void WriteProgramBindings(BinaryOutputStream *stream, const ProgramBindings &bindings)
 {
     for (const auto &binding : bindings.getStableIterationMap())
     {
-        stream << binding.first << binding.second;
+        stream->writeString(binding.first);
+        stream->writeInt(binding.second);
     }
-    return stream;
 }
 
-HashStream &operator<<(HashStream &stream, const ProgramAliasedBindings &bindings)
+void WriteProgramAliasedBindings(BinaryOutputStream *stream, const ProgramAliasedBindings &bindings)
 {
     for (const auto &binding : bindings.getStableIterationMap())
     {
-        stream << binding.first << binding.second.location;
+        stream->writeString(binding.first);
+        stream->writeInt(binding.second.location);
     }
-    return stream;
 }
 
-HashStream &operator<<(HashStream &stream, const std::vector<std::string> &strings)
-{
-    for (const auto &str : strings)
-    {
-        stream << str;
-    }
-    return stream;
-}
-
-HashStream &operator<<(HashStream &stream, const std::vector<gl::VariableLocation> &locations)
+void WriteVariableLocations(BinaryOutputStream *stream,
+                            const std::vector<gl::VariableLocation> &locations)
 {
     for (const auto &loc : locations)
     {
-        stream << loc.index << loc.arrayIndex << loc.ignored;
+        stream->writeInt(loc.index);
+        stream->writeInt(loc.arrayIndex);
+        stream->writeBool(loc.ignored);
     }
-    return stream;
 }
 
 }  // anonymous namespace
@@ -105,32 +72,44 @@ void MemoryProgramCache::ComputeHash(const Context *context,
                                      const Program *program,
                                      egl::BlobCache::Key *hashOut)
 {
-    // Compute the program hash. Start with the shader hashes and resource strings.
-    HashStream hashStream;
+    // Compute the program hash. Start with the shader hashes.
+    BinaryOutputStream hashStream;
     for (ShaderType shaderType : AllShaderTypes())
     {
-        hashStream << program->getAttachedShader(shaderType);
+        Shader *shader = program->getAttachedShader(shaderType);
+        if (shader)
+        {
+            shader->writeShaderKey(&hashStream);
+        }
     }
 
     // Add some ANGLE metadata and Context properties, such as version and back-end.
-    hashStream << angle::GetANGLECommitHash() << context->getClientMajorVersion()
-               << context->getClientMinorVersion() << context->getString(GL_RENDERER);
+    hashStream.writeString(angle::GetANGLEShaderProgramVersion());
+    hashStream.writeInt(angle::GetANGLESHVersion());
+    hashStream.writeInt(context->getClientMajorVersion());
+    hashStream.writeInt(context->getClientMinorVersion());
+    hashStream.writeString(reinterpret_cast<const char *>(context->getString(GL_RENDERER)));
 
     // Hash pre-link program properties.
-    hashStream << program->getAttributeBindings() << program->getUniformLocationBindings()
-               << program->getFragmentOutputLocations() << program->getFragmentOutputIndexes()
-               << program->getState().getTransformFeedbackVaryingNames()
-               << program->getState().getTransformFeedbackBufferMode()
-               << program->getState().getOutputLocations()
-               << program->getState().getSecondaryOutputLocations();
+    WriteProgramBindings(&hashStream, program->getAttributeBindings());
+    WriteProgramAliasedBindings(&hashStream, program->getUniformLocationBindings());
+    WriteProgramAliasedBindings(&hashStream, program->getFragmentOutputLocations());
+    WriteProgramAliasedBindings(&hashStream, program->getFragmentOutputIndexes());
+    for (const std::string &transformFeedbackVaryingName :
+         program->getState().getTransformFeedbackVaryingNames())
+    {
+        hashStream.writeString(transformFeedbackVaryingName);
+    }
+    hashStream.writeInt(program->getState().getTransformFeedbackBufferMode());
+    WriteVariableLocations(&hashStream, program->getState().getOutputLocations());
+    WriteVariableLocations(&hashStream, program->getState().getSecondaryOutputLocations());
 
     // Include the status of FrameCapture, which adds source strings to the binary
-    hashStream << context->getShareGroup()->getFrameCaptureShared()->enabled();
+    hashStream.writeBool(context->getShareGroup()->getFrameCaptureShared()->enabled());
 
     // Call the secure SHA hashing function.
-    const std::string &programKey = hashStream.str();
-    angle::base::SHA1HashBytes(reinterpret_cast<const unsigned char *>(programKey.c_str()),
-                               programKey.length(), hashOut->data());
+    const std::vector<uint8_t> &programKey = hashStream.getData();
+    angle::base::SHA1HashBytes(programKey.data(), programKey.size(), hashOut->data());
 }
 
 angle::Result MemoryProgramCache::getProgram(const Context *context,

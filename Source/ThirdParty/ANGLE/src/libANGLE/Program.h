@@ -105,14 +105,8 @@ bool IsActiveInterfaceBlock(const sh::InterfaceBlock &interfaceBlock);
 void WriteBlockMemberInfo(BinaryOutputStream *stream, const sh::BlockMemberInfo &var);
 void LoadBlockMemberInfo(BinaryInputStream *stream, sh::BlockMemberInfo *var);
 
-void WriteShaderVar(BinaryOutputStream *stream, const sh::ShaderVariable &var);
-void LoadShaderVar(BinaryInputStream *stream, sh::ShaderVariable *var);
-
 void WriteInterfaceBlock(BinaryOutputStream *stream, const InterfaceBlock &block);
 void LoadInterfaceBlock(BinaryInputStream *stream, InterfaceBlock *block);
-
-void WriteShInterfaceBlock(BinaryOutputStream *stream, const sh::InterfaceBlock &block);
-void LoadShInterfaceBlock(BinaryInputStream *stream, sh::InterfaceBlock *block);
 
 void WriteShaderVariableBuffer(BinaryOutputStream *stream, const ShaderVariableBuffer &var);
 void LoadShaderVariableBuffer(BinaryInputStream *stream, ShaderVariableBuffer *var);
@@ -777,7 +771,7 @@ class Program final : public LabeledObject, public angle::Subject
     // Writes a program's binary to the output memory buffer.
     angle::Result serialize(const Context *context, angle::MemoryBuffer *binaryOut) const;
 
-    rx::Serial serial() const { return mSerial; }
+    rx::UniqueSerial serial() const { return mSerial; }
 
     const ProgramExecutable &getExecutable() const { return mState.getExecutable(); }
     ProgramExecutable &getExecutable() { return mState.getExecutable(); }
@@ -867,7 +861,7 @@ class Program final : public LabeledObject, public angle::Subject
                                  GLboolean transpose,
                                  const UniformT *v);
 
-    rx::Serial mSerial;
+    rx::UniqueSerial mSerial;
     ProgramState mState;
     rx::ProgramImpl *mProgram;
 

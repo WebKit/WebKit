@@ -151,8 +151,6 @@ int GLInternalFormatToGbmFourCCFormat(GLenum internalFormat)
             return GBM_FORMAT_XBGR8888;
         case GL_RGB10_A2:
             return GBM_FORMAT_ABGR2101010;
-        case GL_R16_EXT:
-            return GBM_FORMAT_R16;
         default:
             WARN() << "Unknown internalFormat: " << internalFormat << ". Treating as 0";
             return 0;

@@ -219,6 +219,12 @@ PlatformParameters ES1_EGL();
 PlatformParameters ES2_EGL();
 PlatformParameters ES3_EGL();
 
+PlatformParameters ES1_ANGLE_Vulkan_Secondaries();
+PlatformParameters ES2_ANGLE_Vulkan_Secondaries();
+PlatformParameters ES3_ANGLE_Vulkan_Secondaries();
+PlatformParameters ES31_ANGLE_Vulkan_Secondaries();
+PlatformParameters ES32_ANGLE_Vulkan_Secondaries();
+
 PlatformParameters ES1_Zink();
 PlatformParameters ES2_Zink();
 PlatformParameters ES3_Zink();
@@ -252,6 +258,13 @@ inline PlatformParameters WithHighPowerGPU(const PlatformParameters &paramsIn)
 {
     PlatformParameters paramsOut                   = paramsIn;
     paramsOut.eglParameters.displayPowerPreference = EGL_HIGH_POWER_ANGLE;
+    return paramsOut;
+}
+
+inline PlatformParameters WithVulkanSecondaries(const PlatformParameters &params)
+{
+    PlatformParameters paramsOut = params;
+    paramsOut.driver             = GLESDriverType::AngleVulkanSecondariesEGL;
     return paramsOut;
 }
 }  // namespace angle

@@ -11,6 +11,7 @@
 #ifndef LIBANGLE_PIXEL_LOCAL_STORAGE_H_
 #define LIBANGLE_PIXEL_LOCAL_STORAGE_H_
 
+#include "GLSLANG/ShaderLang.h"
 #include "angle_gl.h"
 #include "libANGLE/ImageIndex.h"
 #include "libANGLE/angletypes.h"
@@ -78,7 +79,7 @@ class PixelLocalStoragePlane : angle::NonCopyable
     bool getTextureImageExtents(const Context *, Extents *extents) const;
 
     // Attaches this plane to the specified color attachment point on the current draw framebuffer.
-    void attachToDrawFramebuffer(Context *, Extents plsExtents, GLenum colorAttachment) const;
+    void attachToDrawFramebuffer(Context *, GLenum colorAttachment) const;
 
     // Interface for clearing typed pixel local storage planes.
     class ClearCommands
@@ -96,7 +97,7 @@ class PixelLocalStoragePlane : angle::NonCopyable
     void issueClearCommand(ClearCommands *, int target, GLenum loadop) const;
 
     // Binds this PLS plane to a texture image unit for image load/store shader operations.
-    void bindToImage(Context *, Extents plsExtents, GLuint unit, bool needsR32Packing) const;
+    void bindToImage(Context *, GLuint unit, bool needsR32Packing) const;
 
     // Low-level access to the backing texture. The plane must not be memoryless or deinitialized.
     const ImageIndex &getTextureImageIndex() const { return mTextureImageIndex; }
@@ -174,16 +175,7 @@ class PixelLocalStorage
     void barrier(Context *);
 
   protected:
-    // In some implementations we need to allocate backing textures even for memoryless planes.
-    // glInvalidateFramebuffer() will ideally prevent memory transactions with these textures where
-    // possible.
-    enum class MemorylessBackingType : bool
-    {
-        TrueMemoryless,   // No allocations necessary for memoryless planes.
-        InternalTextures  // Allocate internal textures for memoryless planes.
-    };
-
-    PixelLocalStorage(MemorylessBackingType);
+    PixelLocalStorage(const ShPixelLocalStorageOptions &);
 
     // Called when the context is lost or destroyed. Causes the subclass to clear its GL object
     // handles.
@@ -198,8 +190,9 @@ class PixelLocalStorage
     virtual void onEnd(Context *, const GLenum storeops[])                              = 0;
     virtual void onBarrier(Context *)                                                   = 0;
 
+    const ShPixelLocalStorageOptions mPLSOptions;
+
   private:
-    const MemorylessBackingType mMemorylessBackingType;
     std::array<PixelLocalStoragePlane, IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES> mPlanes;
 };
 

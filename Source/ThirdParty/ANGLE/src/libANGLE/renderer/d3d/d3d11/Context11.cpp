@@ -116,7 +116,11 @@ angle::Result ReadbackIndirectBuffer(const gl::Context *context,
 }  // anonymous namespace
 
 Context11::Context11(const gl::State &state, gl::ErrorSet *errorSet, Renderer11 *renderer)
-    : ContextD3D(state, errorSet), mRenderer(renderer)
+    : ContextD3D(state, errorSet),
+      mRenderer(renderer),
+      mDisjointQueryStarted(false),
+      mDisjoint(false),
+      mFrequency(0)
 {}
 
 Context11::~Context11() {}
@@ -800,9 +804,71 @@ angle::Result Context11::syncState(const gl::Context *context,
     return angle::Result::Continue;
 }
 
+angle::Result Context11::checkDisjointQuery()
+{
+    if (!mDisjointQuery.valid())
+    {
+        D3D11_QUERY_DESC queryDesc;
+        queryDesc.Query     = gl_d3d11::ConvertQueryType(gl::QueryType::Timestamp);
+        queryDesc.MiscFlags = 0;
+
+        ANGLE_TRY(mRenderer->allocateResource(this, queryDesc, &mDisjointQuery));
+        mRenderer->getDeviceContext()->Begin(mDisjointQuery.get());
+        mDisjointQueryStarted = true;
+    }
+    return angle::Result::Continue;
+}
+
+HRESULT Context11::checkDisjointQueryStatus()
+{
+    HRESULT result = S_OK;
+    if (mDisjointQuery.valid())
+    {
+        ID3D11DeviceContext *context = mRenderer->getDeviceContext();
+        if (mDisjointQueryStarted)
+        {
+            context->End(mDisjointQuery.get());
+            mDisjointQueryStarted = false;
+        }
+        D3D11_QUERY_DATA_TIMESTAMP_DISJOINT timeStats = {};
+        result = context->GetData(mDisjointQuery.get(), &timeStats, sizeof(timeStats), 0);
+        if (result == S_OK)
+        {
+            mFrequency = timeStats.Frequency;
+            mDisjoint  = timeStats.Disjoint;
+            mDisjointQuery.reset();
+        }
+    }
+    return result;
+}
+
+UINT64 Context11::getDisjointFrequency()
+{
+    return mFrequency;
+}
+
+void Context11::setDisjointFrequency(UINT64 frequency)
+{
+    mFrequency = frequency;
+}
+
+void Context11::setGPUDisjoint()
+{
+    mDisjoint = true;
+}
+
 GLint Context11::getGPUDisjoint()
 {
-    return mRenderer->getGPUDisjoint();
+    if (mRenderer->getFeatures().enableTimestampQueries.enabled)
+    {
+        checkDisjointQueryStatus();
+    }
+    bool disjoint = mDisjoint;
+
+    // Disjoint flag is cleared when read
+    mDisjoint = false;
+
+    return disjoint;
 }
 
 GLint64 Context11::getTimestamp()
@@ -862,9 +928,9 @@ const gl::Limitations &Context11::getNativeLimitations() const
     return mRenderer->getNativeLimitations();
 }
 
-ShPixelLocalStorageType Context11::getNativePixelLocalStorageType() const
+const ShPixelLocalStorageOptions &Context11::getNativePixelLocalStorageOptions() const
 {
-    return mRenderer->getNativePixelLocalStorageType();
+    return mRenderer->getNativePixelLocalStorageOptions();
 }
 
 angle::Result Context11::dispatchCompute(const gl::Context *context,

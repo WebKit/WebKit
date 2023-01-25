@@ -107,7 +107,7 @@ void CaptureGetProgramInterfaceiv_params(const State &glState,
                                          GLint *params,
                                          ParamCapture *paramCapture)
 {
-    CaptureMemory(params, sizeof(GLint), paramCapture);
+    paramCapture->readBufferSizeBytes = sizeof(GLint);
 }
 
 void CaptureGetProgramPipelineInfoLog_length(const State &glState,

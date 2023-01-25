@@ -51,8 +51,6 @@ if (enable_java_templates) {
         }
       }
 
-      uncompress_shared_libraries = true
-
       if (android_64bit_target_cpu) {
         if (symbol_level == 0) {
           secondary_abi_shared_libraries = []

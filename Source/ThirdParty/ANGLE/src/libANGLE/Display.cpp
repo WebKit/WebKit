@@ -57,9 +57,6 @@
 #        include "libANGLE/renderer/gl/apple/DisplayApple_api.h"
 #    elif defined(ANGLE_PLATFORM_LINUX)
 #        include "libANGLE/renderer/gl/egl/DisplayEGL.h"
-#        if defined(ANGLE_USE_GBM)
-#            include "libANGLE/renderer/gl/egl/gbm/DisplayGbm.h"
-#        endif
 #        if defined(ANGLE_USE_X11)
 #            include "libANGLE/renderer/gl/glx/DisplayGLX.h"
 #        endif
@@ -350,9 +347,7 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
 #        if defined(ANGLE_USE_GBM)
             if (platformType == 0)
             {
-                // If platformType is unknown, use DisplayGbm now. In the future, it should use
-                // DisplayEGL letting native EGL decide what display to use.
-                impl = new rx::DisplayGbm(state);
+                impl = new rx::DisplayEGL(state);
                 break;
             }
 #        endif
@@ -394,11 +389,9 @@ rx::DisplayImpl *CreateDisplayFromAttribs(EGLAttrib displayType,
             if (platformType == 0 ||
                 platformType == EGL_PLATFORM_VULKAN_DISPLAY_MODE_HEADLESS_ANGLE)
             {
-                // If platformType is unknown, use DisplayGbm now. In the future, it should use
-                // DisplayEGL letting native EGL decide what display to use.
                 // platformType == EGL_PLATFORM_VULKAN_DISPLAY_MODE_HEADLESS_ANGLE is a hack,
                 // to allow ChromeOS GLES backend to continue functioning when Vulkan is enabled.
-                impl = new rx::DisplayGbm(state);
+                impl = new rx::DisplayEGL(state);
                 break;
             }
 #        endif
@@ -1212,10 +1205,6 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
         return NoError();
     }
 
-    mMemoryProgramCache.clear();
-    mMemoryShaderCache.clear();
-    mBlobCache.setBlobCacheFuncs(nullptr, nullptr);
-
     // The global texture and semaphore managers should be deleted with the last context that uses
     // it.
     ASSERT(mGlobalTextureShareGroupUsers == 0 && mTextureManager == nullptr);
@@ -1234,6 +1223,10 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
     }
 
     mImplementation->terminate();
+
+    mMemoryProgramCache.clear();
+    mMemoryShaderCache.clear();
+    mBlobCache.setBlobCacheFuncs(nullptr, nullptr);
 
     mSingleThreadPool.reset();
     mMultiThreadPool.reset();
@@ -1273,6 +1266,9 @@ void Display::threadCleanup(Thread *thread)
 
     (void)terminate(thread, noActiveThreads ? TerminateReason::NoActiveThreads
                                             : TerminateReason::InternalCleanup);
+
+    // This "thread" is no longer active, reset its cached context
+    thread->setCurrent(nullptr);
 }
 
 std::vector<const Config *> Display::getConfigs(const egl::AttributeMap &attribs) const
@@ -2236,10 +2232,6 @@ void Display::initializeFrontendFeatures()
     // No longer enable this on any Impl - crbug.com/1165751
     ANGLE_FEATURE_CONDITION((&mFrontendFeatures), scalarizeVecAndMatConstructorArgs, false);
 
-    // Disabled by default. To reduce the risk, create a feature to enable
-    // compressing pipeline cache in multi-thread pool.
-    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, enableCompressingPipelineCacheInThreadPool, false);
-
     // Disabled by default until work on the extension is complete - anglebug.com/7279.
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, false);
 
@@ -2509,6 +2501,12 @@ Error Display::forceGPUSwitch(EGLint gpuIDHigh, EGLint gpuIDLow)
 {
     ANGLE_TRY(mImplementation->forceGPUSwitch(gpuIDHigh, gpuIDLow));
     initVendorString();
+    return NoError();
+}
+
+Error Display::waitUntilWorkScheduled()
+{
+    ANGLE_TRY(mImplementation->waitUntilWorkScheduled());
     return NoError();
 }
 

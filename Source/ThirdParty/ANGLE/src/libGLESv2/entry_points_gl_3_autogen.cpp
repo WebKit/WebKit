@@ -989,7 +989,8 @@ void GL_APIENTRY GL_GetQueryObjecti64v(GLuint id, GLenum pname, GLint64 *params)
         ANGLE_CAPTURE_GL(GetQueryObjecti64v, isCallValid, context, idPacked, pname, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetQueryObjectui64v(GLuint id, GLenum pname, GLuint64 *params)

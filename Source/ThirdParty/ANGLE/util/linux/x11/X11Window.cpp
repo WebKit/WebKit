@@ -250,6 +250,22 @@ static void AddX11KeyStateToEvent(Event *event, unsigned int state)
     event->Key.System  = state & Mod4Mask;
 }
 
+void setWindowSizeHints(Display *display, Window window, int width, int height)
+{
+    // Set PMinSize and PMaxSize on XSizeHints so windows larger than the screen do not get adjusted
+    // to screen size
+    XSizeHints *sizeHints = XAllocSizeHints();
+    sizeHints->flags      = PMinSize | PMaxSize;
+    sizeHints->min_width  = width;
+    sizeHints->min_height = height;
+    sizeHints->max_width  = width;
+    sizeHints->max_height = height;
+
+    XSetWMNormalHints(display, window, sizeHints);
+
+    XFree(sizeHints);
+}
+
 }  // namespace
 
 X11Window::X11Window()
@@ -361,6 +377,8 @@ bool X11Window::initializeImpl(const std::string &name, int width, int height)
         return false;
     }
 
+    setWindowSizeHints(mDisplay, mWindow, width, height);
+
     XFlush(mDisplay);
 
     mX      = 0;
@@ -446,7 +464,9 @@ bool X11Window::setPosition(int x, int y)
 
 bool X11Window::resize(int width, int height)
 {
+    setWindowSizeHints(mDisplay, mWindow, width, height);
     XResizeWindow(mDisplay, mWindow, width, height);
+
     XFlush(mDisplay);
 
     Timer timer;

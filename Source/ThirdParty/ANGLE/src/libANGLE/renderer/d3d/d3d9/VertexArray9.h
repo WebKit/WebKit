@@ -30,10 +30,10 @@ class VertexArray9 : public VertexArrayImpl
 
     ~VertexArray9() override {}
 
-    Serial getCurrentStateSerial() const { return mCurrentStateSerial; }
+    UniqueSerial getCurrentStateSerial() const { return mCurrentStateSerial; }
 
   private:
-    Serial mCurrentStateSerial;
+    UniqueSerial mCurrentStateSerial;
 };
 
 inline angle::Result VertexArray9::syncState(const gl::Context *context,

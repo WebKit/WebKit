@@ -251,14 +251,14 @@ CallCapture CaptureClearBufferuiv(const State &glState,
 
 CallCapture CaptureClientWaitSync(const State &glState,
                                   bool isCallValid,
-                                  GLsync sync,
+                                  SyncID syncPacked,
                                   GLbitfield flags,
                                   GLuint64 timeout,
                                   GLenum returnValue)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("sync", ParamType::TGLsync, sync);
+    paramBuffer.addValueParam("syncPacked", ParamType::TSyncID, syncPacked);
     paramBuffer.addEnumParam("flags", GLESEnum::SyncObjectMask, ParamType::TGLbitfield, flags);
     paramBuffer.addValueParam("timeout", ParamType::TGLuint64, timeout);
 
@@ -461,11 +461,11 @@ CallCapture CaptureDeleteSamplers(const State &glState,
     return CallCapture(angle::EntryPoint::GLDeleteSamplers, std::move(paramBuffer));
 }
 
-CallCapture CaptureDeleteSync(const State &glState, bool isCallValid, GLsync sync)
+CallCapture CaptureDeleteSync(const State &glState, bool isCallValid, SyncID syncPacked)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("sync", ParamType::TGLsync, sync);
+    paramBuffer.addValueParam("syncPacked", ParamType::TSyncID, syncPacked);
 
     return CallCapture(angle::EntryPoint::GLDeleteSync, std::move(paramBuffer));
 }
@@ -1364,7 +1364,7 @@ CallCapture CaptureGetStringi(const State &glState,
 
 CallCapture CaptureGetSynciv(const State &glState,
                              bool isCallValid,
-                             GLsync sync,
+                             SyncID syncPacked,
                              GLenum pname,
                              GLsizei count,
                              GLsizei *length,
@@ -1372,7 +1372,7 @@ CallCapture CaptureGetSynciv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("sync", ParamType::TGLsync, sync);
+    paramBuffer.addValueParam("syncPacked", ParamType::TSyncID, syncPacked);
     paramBuffer.addEnumParam("pname", GLESEnum::SyncParameterName, ParamType::TGLenum, pname);
     paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
@@ -1380,7 +1380,7 @@ CallCapture CaptureGetSynciv(const State &glState,
     {
         ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
         InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
-        CaptureGetSynciv_length(glState, isCallValid, sync, pname, count, length, values,
+        CaptureGetSynciv_length(glState, isCallValid, syncPacked, pname, count, length, values,
                                 &lengthParam);
         paramBuffer.addParam(std::move(lengthParam));
     }
@@ -1396,7 +1396,7 @@ CallCapture CaptureGetSynciv(const State &glState,
     {
         ParamCapture valuesParam("values", ParamType::TGLintPointer);
         InitParamValue(ParamType::TGLintPointer, values, &valuesParam.value);
-        CaptureGetSynciv_values(glState, isCallValid, sync, pname, count, length, values,
+        CaptureGetSynciv_values(glState, isCallValid, syncPacked, pname, count, length, values,
                                 &valuesParam);
         paramBuffer.addParam(std::move(valuesParam));
     }
@@ -1764,12 +1764,12 @@ CallCapture CaptureIsSampler(const State &glState,
 
 CallCapture CaptureIsSync(const State &glState,
                           bool isCallValid,
-                          GLsync sync,
+                          SyncID syncPacked,
                           GLboolean returnValue)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("sync", ParamType::TGLsync, sync);
+    paramBuffer.addValueParam("syncPacked", ParamType::TSyncID, syncPacked);
 
     ParamCapture returnValueCapture("returnValue", ParamType::TGLboolean);
     InitParamValue(ParamType::TGLboolean, returnValue, &returnValueCapture.value);
@@ -2726,13 +2726,13 @@ CallCapture CaptureVertexAttribIPointer(const State &glState,
 
 CallCapture CaptureWaitSync(const State &glState,
                             bool isCallValid,
-                            GLsync sync,
+                            SyncID syncPacked,
                             GLbitfield flags,
                             GLuint64 timeout)
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addValueParam("sync", ParamType::TGLsync, sync);
+    paramBuffer.addValueParam("syncPacked", ParamType::TSyncID, syncPacked);
     paramBuffer.addEnumParam("flags", GLESEnum::SyncBehaviorFlags, ParamType::TGLbitfield, flags);
     paramBuffer.addValueParam("timeout", ParamType::TGLuint64, timeout);
 

@@ -8454,7 +8454,8 @@ void GL_APIENTRY GL_GetQueryObjectiv(GLuint id, GLenum pname, GLint *params)
         ANGLE_CAPTURE_GL(GetQueryObjectiv, isCallValid, context, idPacked, pname, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void *GL_APIENTRY GL_MapBuffer(GLenum target, GLenum access)

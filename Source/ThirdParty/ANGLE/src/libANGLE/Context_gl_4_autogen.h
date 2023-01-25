@@ -350,7 +350,6 @@
                                       GLsizei maxdrawcount, GLsizei stride);                       \
     void multiDrawElementsIndirectCount(GLenum mode, GLenum type, const void *indirect,            \
                                         GLintptr drawcount, GLsizei maxdrawcount, GLsizei stride); \
-    void polygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp);                         \
     void specializeShader(GLuint shader, const GLchar *pEntryPoint,                                \
                           GLuint numSpecializationConstants, const GLuint *pConstantIndex,         \
                           const GLuint *pConstantValue);

@@ -152,51 +152,6 @@ void Overlay::initOverlayWidgets()
     }
 
     {
-        RunningGraph *widget = new RunningGraph(100);
-        {
-            const int32_t fontSize = GetFontSize(0, kLargeFont);
-            const int32_t offsetX  = -50;
-            const int32_t offsetY  = 100;
-            const int32_t width    = 6 * static_cast<uint32_t>(widget->runningValues.size());
-            const int32_t height   = 100;
-
-            widget->type          = WidgetType::RunningGraph;
-            widget->fontSize      = fontSize;
-            widget->coords[0]     = offsetX - width;
-            widget->coords[1]     = offsetY;
-            widget->coords[2]     = offsetX;
-            widget->coords[3]     = offsetY + height;
-            widget->color[0]      = 1.0f;
-            widget->color[1]      = 0.7843137254901961f;
-            widget->color[2]      = 0.29411764705882354f;
-            widget->color[3]      = 0.7843137254901961f;
-            widget->matchToWidget = nullptr;
-        }
-        mState.mOverlayWidgets[WidgetId::VulkanRenderPassBufferCount].reset(widget);
-        {
-            const int32_t fontSize = GetFontSize(kFontMipSmall, kLargeFont);
-            const int32_t offsetX =
-                mState.mOverlayWidgets[WidgetId::VulkanRenderPassBufferCount]->coords[0];
-            const int32_t offsetY =
-                mState.mOverlayWidgets[WidgetId::VulkanRenderPassBufferCount]->coords[1];
-            const int32_t width  = 40 * (kFontGlyphWidth >> fontSize);
-            const int32_t height = (kFontGlyphHeight >> fontSize);
-
-            widget->description.type          = WidgetType::Text;
-            widget->description.fontSize      = fontSize;
-            widget->description.coords[0]     = offsetX;
-            widget->description.coords[1]     = std::max(offsetY - height, 1);
-            widget->description.coords[2]     = std::min(offsetX + width, -1);
-            widget->description.coords[3]     = offsetY;
-            widget->description.color[0]      = 1.0f;
-            widget->description.color[1]      = 0.7843137254901961f;
-            widget->description.color[2]      = 0.29411764705882354f;
-            widget->description.color[3]      = 1.0f;
-            widget->description.matchToWidget = nullptr;
-        }
-    }
-
-    {
         RunningHistogram *widget = new RunningHistogram(50);
         {
             const int32_t fontSize = GetFontSize(0, kLargeFont);

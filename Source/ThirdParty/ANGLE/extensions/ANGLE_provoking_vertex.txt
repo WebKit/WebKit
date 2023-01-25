@@ -49,11 +49,11 @@ Overview
 
 New Procedures and Functions
 
-    void ProvokingVertexANGLE(enum mode);
+    void ProvokingVertexANGLE(enum provokeMode);
 
 New Tokens
 
-    Accepted by the <mode> parameter of ProvokingVertex:
+    Accepted by the <provokeMode> parameter of ProvokingVertex:
 
         FIRST_VERTEX_CONVENTION_ANGLE             0x8E4D
         LAST_VERTEX_CONVENTION_ANGLE              0x8E4E
@@ -100,7 +100,7 @@ Additions to Chapter 2 of the OpenGL ES 3.0 Specification (OpenGL ES Operation)
 
        void ProvokingVertexANGLE(enum provokeMode);
 
-    provokeMode must be either FIRST_VERTEX_CONVENTION_ANGLE or
+    <provokeMode> must be either FIRST_VERTEX_CONVENTION_ANGLE or
     LAST_VERTEX_CONVENTION_ANGLE, and controls selection of the vertex whose
     values are assigned to varying outputs, as shown in Table 2.12.
 

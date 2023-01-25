@@ -36,6 +36,8 @@ struct ParamCapture : angle::NonCopyable
     size_t readBufferSizeBytes  = 0;
 };
 
+using Captures = std::vector<ParamCapture>;
+
 class ParamBuffer final : angle::NonCopyable
 {
   public:
@@ -290,9 +292,9 @@ void WriteParamValueReplay<ParamType::TUniformBlockIndex>(std::ostream &os,
                                                           gl::UniformBlockIndex value);
 
 template <>
-void WriteParamValueReplay<ParamType::TGLsync>(std::ostream &os,
+void WriteParamValueReplay<ParamType::TSyncID>(std::ostream &os,
                                                const CallCapture &call,
-                                               GLsync value);
+                                               gl::SyncID value);
 
 template <>
 void WriteParamValueReplay<ParamType::TGLubyte>(std::ostream &os,

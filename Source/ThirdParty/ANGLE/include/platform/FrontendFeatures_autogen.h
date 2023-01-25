@@ -79,10 +79,6 @@ struct FrontendFeatures : FeatureSetBase
                                        "Set the context limits like frame capturing was enabled",
                                        &members, "http://anglebug.com/5750"};
 
-    FeatureInfo enableCompressingPipelineCacheInThreadPool = {
-        "enableCompressingPipelineCacheInThreadPool", FeatureCategory::FrontendWorkarounds,
-        "Enable compressing pipeline cache in thread pool.", &members, "http://anglebug.com/4722"};
-
     FeatureInfo forceRobustResourceInit = {
         "forceRobustResourceInit", FeatureCategory::FrontendFeatures,
         "Force-enable robust resource init", &members, "http://anglebug.com/6041"};

@@ -63,8 +63,8 @@ struct FramebufferStatus
 class FramebufferState final : angle::NonCopyable
 {
   public:
-    explicit FramebufferState(rx::Serial serial);
-    FramebufferState(const Caps &caps, FramebufferID id, rx::Serial serial);
+    explicit FramebufferState(rx::UniqueSerial serial);
+    FramebufferState(const Caps &caps, FramebufferID id, rx::UniqueSerial serial);
     ~FramebufferState();
 
     const std::string &getLabel() const;
@@ -137,7 +137,7 @@ class FramebufferState final : angle::NonCopyable
 
     const Offset &getSurfaceTextureOffset() const { return mSurfaceTextureOffset; }
 
-    rx::Serial getFramebufferSerial() const { return mFramebufferSerial; }
+    rx::UniqueSerial getFramebufferSerial() const { return mFramebufferSerial; }
 
     bool isBoundAsDrawFramebuffer(const Context *context) const;
 
@@ -149,9 +149,9 @@ class FramebufferState final : angle::NonCopyable
     friend class Framebuffer;
 
     // The Framebuffer ID is unique to a Context.
-    // The Framebuffer Serial is unique to a Share Group.
+    // The Framebuffer UniqueSerial is unique to a Share Group.
     FramebufferID mId;
-    rx::Serial mFramebufferSerial;
+    rx::UniqueSerial mFramebufferSerial;
     std::string mLabel;
 
     DrawBuffersVector<FramebufferAttachment> mColorAttachments;

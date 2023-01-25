@@ -134,9 +134,9 @@ void UpdateUniformLocation(GLuint program, const char *name, GLint location, GLi
     {
         programLocations.resize(location + count, 0);
     }
+    GLuint mappedProgramID = gShaderProgramMap[program];
     for (GLint arrayIndex = 0; arrayIndex < count; ++arrayIndex)
     {
-        GLuint mappedProgramID = gShaderProgramMap[program];
         programLocations[location + arrayIndex] =
             glGetUniformLocation(mappedProgramID, name) + arrayIndex;
     }
@@ -156,7 +156,8 @@ void UpdateUniformBlockIndex(GLuint program, const char *name, GLuint index)
 void UniformBlockBinding(GLuint program, GLuint uniformblockIndex, GLuint binding)
 {
     glUniformBlockBinding(gShaderProgramMap[program],
-                          gUniformBlockIndexes[program][uniformblockIndex], binding);
+                          gUniformBlockIndexes[gShaderProgramMap[program]][uniformblockIndex],
+                          binding);
 }
 
 void UpdateCurrentProgram(GLuint program)
@@ -167,6 +168,7 @@ void UpdateCurrentProgram(GLuint program)
 uint8_t *gBinaryData;
 uint8_t *gReadBuffer;
 uint8_t *gClientArrays[kMaxClientArrays];
+GLuint *gResourceIDBuffer;
 SyncResourceMap gSyncMap;
 ContextMap gContextMap;
 GLuint gShareContextId;
@@ -193,6 +195,7 @@ SurfaceMap gSurfaceMap;
 GLeglImageOES *gEGLImageMap2;
 EGLSurface *gSurfaceMap2;
 EGLContext *gContextMap2;
+GLsync *gSyncMap2;
 
 void SetBinaryDataDecompressCallback(DecompressCallback decompressCallback,
                                      DeleteCallback deleteCallback)
@@ -217,6 +220,39 @@ T *AllocateZeroedValues(size_t count)
 GLuint *AllocateZeroedUints(size_t count)
 {
     return AllocateZeroedValues<GLuint>(count);
+}
+
+void InitializeReplay3(const char *binaryDataFileName,
+                       size_t maxClientArraySize,
+                       size_t readBufferSize,
+                       size_t resourceIDBufferSize,
+                       GLuint contextId,
+                       uint32_t maxBuffer,
+                       uint32_t maxContext,
+                       uint32_t maxFenceNV,
+                       uint32_t maxFramebuffer,
+                       uint32_t maxImage,
+                       uint32_t maxMemoryObject,
+                       uint32_t maxProgramPipeline,
+                       uint32_t maxQuery,
+                       uint32_t maxRenderbuffer,
+                       uint32_t maxSampler,
+                       uint32_t maxSemaphore,
+                       uint32_t maxShaderProgram,
+                       uint32_t maxSurface,
+                       uint32_t maxSync,
+                       uint32_t maxTexture,
+                       uint32_t maxTransformFeedback,
+                       uint32_t maxVertexArray)
+{
+    InitializeReplay2(binaryDataFileName, maxClientArraySize, readBufferSize, contextId, maxBuffer,
+                      maxContext, maxFenceNV, maxFramebuffer, maxImage, maxMemoryObject,
+                      maxProgramPipeline, maxQuery, maxRenderbuffer, maxSampler, maxSemaphore,
+                      maxShaderProgram, maxSurface, maxTexture, maxTransformFeedback,
+                      maxVertexArray);
+
+    gSyncMap2         = AllocateZeroedValues<GLsync>(maxSync);
+    gResourceIDBuffer = AllocateZeroedUints(resourceIDBufferSize);
 }
 
 void InitializeReplay2(const char *binaryDataFileName,
@@ -307,6 +343,7 @@ void FinishReplay()
         delete[] clientArray;
     }
     delete[] gReadBuffer;
+    delete[] gResourceIDBuffer;
 
     delete[] gBufferMap;
     delete[] gContextMap2;
@@ -322,6 +359,7 @@ void FinishReplay()
     delete[] gSamplerMap;
     delete[] gSemaphoreMap;
     delete[] gSurfaceMap2;
+    delete[] gSyncMap2;
     delete[] gTransformFeedbackMap;
     delete[] gVertexArrayMap;
 
@@ -351,6 +389,11 @@ void UpdateClientBufferDataWithOffset(GLuint bufferID,
 {
     uintptr_t dest = reinterpret_cast<uintptr_t>(gMappedBufferData[gBufferMap[bufferID]]) + offset;
     memcpy(reinterpret_cast<void *>(dest), source, size);
+}
+
+void UpdateResourceIDBuffer(int resourceIndex, GLuint id)
+{
+    gResourceIDBuffer[resourceIndex] = id;
 }
 
 void UpdateBufferID(GLuint id, GLsizei readBufferOffset)
@@ -495,6 +538,11 @@ void CreateShaderProgramv(GLenum type,
 void FenceSync(GLenum condition, GLbitfield flags, uintptr_t fenceSync)
 {
     gSyncMap[fenceSync] = glFenceSync(condition, flags);
+}
+
+void FenceSync2(GLenum condition, GLbitfield flags, uintptr_t fenceSync)
+{
+    gSyncMap2[fenceSync] = glFenceSync(condition, flags);
 }
 
 void CreateEGLImage(EGLDisplay dpy,

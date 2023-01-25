@@ -227,7 +227,7 @@ TEMPLATE_ENTRY_POINT_DECL = """{angle_export}{return_type} {export_def} {name}({
 
 TEMPLATE_GLES_ENTRY_POINT_NO_RETURN = """\
 void GL_APIENTRY GL_{name}({params})
-{{
+{{{optional_gl_entry_point_locks}
     Context *context = {context_getter};
     {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
@@ -250,7 +250,7 @@ void GL_APIENTRY GL_{name}({params})
 
 TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
 {return_type} GL_APIENTRY GL_{name}({params})
-{{
+{{{optional_gl_entry_point_locks}
     Context *context = {context_getter};
     {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
@@ -1027,7 +1027,7 @@ void EnsureEGLLoaded()
     }
 
     std::string errorOut;
-    gEntryPointsLib = OpenSystemLibraryAndGetError(ANGLE_GLESV2_LIBRARY_NAME, angle::SearchType::ModuleDir, &errorOut);
+    gEntryPointsLib = OpenSystemLibraryAndGetError(ANGLE_DISPATCH_LIBRARY, angle::SearchType::ModuleDir, &errorOut);
     if (gEntryPointsLib)
     {
         LoadLibEGL_EGL(GlobalLoad);
@@ -1679,6 +1679,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             get_egl_entry_point_labeled_object(ep_to_object, cmd_name, params, packed_enums),
         "entry_point_locks":
             get_locks(api, cmd_name, params),
+        "optional_gl_entry_point_locks":
+            get_optional_gl_locks(api, cmd_name, params),
         "preamble":
             get_preamble(api, cmd_name, params)
     }
@@ -2491,7 +2493,9 @@ def format_replay_params(api, command_name, param_text_list, packed_enums, resou
             cmd_no_suffix = strip_suffix(api, command_name)
             if cmd_no_suffix in packed_enums and param_name in packed_enums[cmd_no_suffix]:
                 packed_type = remove_id_suffix(packed_enums[cmd_no_suffix][param_name])
-                if packed_type in resource_id_types:
+                if packed_type == 'Sync':
+                    param_access = 'gSyncMap2[captures[%d].value.GLuintVal]' % i
+                elif packed_type in resource_id_types:
                     param_access = 'g%sMap[%s]' % (packed_type, param_access)
                 elif packed_type == 'UniformLocation':
                     param_access = 'gUniformLocations[gCurrentProgram][%s]' % param_access
@@ -2677,6 +2681,18 @@ def get_locks(api, cmd_name, params):
 
     if has_surface:
         return ordered_lock_statements(LOCK_GLOBAL_SURFACE, LOCK_GLOBAL)
+
+    return ordered_lock_statements(LOCK_GLOBAL)
+
+
+def get_optional_gl_locks(api, cmd_name, params):
+    if api != apis.GLES:
+        return ""
+
+    # EGLImage related commands need to access EGLImage and Display which should
+    # be protected with global lock
+    if not cmd_name.startswith("glEGLImage"):
+        return ""
 
     return ordered_lock_statements(LOCK_GLOBAL)
 
@@ -3368,14 +3384,19 @@ def main():
 
     everything = "Khronos and ANGLE XML files"
 
-    for lib in ["libGLESv2" + suffix for suffix in ["", "_no_capture", "_with_capture"]]:
+    for lib in [
+            "libGLESv2" + suffix
+            for suffix in ["", "_no_capture", "_with_capture", "_vulkan_secondaries"]
+    ]:
         write_windows_def_file(everything, lib, lib, "libGLESv2", libgles_ep_exports)
 
     write_windows_def_file(everything, "opengl32_with_wgl", "opengl32", "libGLESv2",
                            libgl_ep_exports + sorted(wgl_commands))
     write_windows_def_file(everything, "opengl32", "opengl32", "libGLESv2", libgl_ep_exports)
-    write_windows_def_file("egl.xml and egl_angle_ext.xml", "libEGL", "libEGL", "libEGL",
-                           libegl_windows_def_exports)
+
+    for lib in ["libEGL" + suffix for suffix in ["", "_vulkan_secondaries"]]:
+        write_windows_def_file("egl.xml and egl_angle_ext.xml", lib, lib, "libEGL",
+                               libegl_windows_def_exports)
 
     all_gles_param_types = sorted(GLEntryPoints.all_param_types)
     all_egl_param_types = sorted(EGLEntryPoints.all_param_types)

@@ -9,5 +9,3 @@ wayland_dir = angle_wayland_dir
 
 # ANGLE standalone has no Wayland GN
 wayland_gn_dir = ""
-
-use_system_libwayland = true

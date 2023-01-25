@@ -44,7 +44,7 @@ the shader uses the std140 layout.
 According to ESSL spec 3.0, 5.7 Structure and Array Operations,  the following operators
 are allowed to operate on arrays as whole entities:
 
-|  Operator NameName         |    Operator    |
+|  Operator Name             |    Operator    |
 |  :----------------         |    :------:    |
 |  field or method selector  |        .       |
 |  assignment                |     ==  !=     |
@@ -59,7 +59,6 @@ Other operator usage is unsupported. Example unsupported usages:
 
 | Operator On the Uniform Array Member    |                  examples                        |
 |             :------                     |                  :------                         |
-| indexing             | TYPE var = buf[INDEX];                                              |
 | method selector      | buf.length();   // Angle don’t support it, too.                     |
 | equality == !=       | TYPE var[NUMBER] = {…}; <br> if (var == buf);                       |
 | assignment =         | TYPE var[NUMBER] = {…}; <br> var = buf;                             |

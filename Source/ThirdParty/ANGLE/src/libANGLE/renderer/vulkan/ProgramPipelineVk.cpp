@@ -9,9 +9,6 @@
 
 #include "libANGLE/renderer/vulkan/ProgramPipelineVk.h"
 
-#include "libANGLE/renderer/glslang_wrapper_utils.h"
-#include "libANGLE/renderer/vulkan/GlslangWrapperVk.h"
-
 namespace rx
 {
 
@@ -38,10 +35,9 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 {
     ContextVk *contextVk                      = vk::GetImpl(glContext);
     const gl::ProgramExecutable &glExecutable = mState.getExecutable();
-    GlslangSourceOptions options =
-        GlslangWrapperVk::CreateSourceOptions(contextVk->getRenderer()->getFeatures());
-    GlslangProgramInterfaceInfo glslangProgramInterfaceInfo;
-    GlslangWrapperVk::ResetGlslangProgramInterfaceInfo(&glslangProgramInterfaceInfo);
+    SpvSourceOptions options                  = SpvCreateSourceOptions(contextVk->getFeatures());
+    SpvProgramInterfaceInfo spvProgramInterfaceInfo;
+    spvProgramInterfaceInfo = {};
 
     reset(contextVk);
     mExecutable.clearVariableInfoMap();
@@ -64,9 +60,9 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
                     shaderType == linkedTransformFeedbackStage &&
                     !glProgram->getState().getLinkedTransformFeedbackVaryings().empty();
 
-                GlslangAssignTransformFeedbackLocations(
+                SpvAssignTransformFeedbackLocations(
                     shaderType, glProgram->getExecutable(), isTransformFeedbackStage,
-                    &glslangProgramInterfaceInfo, &mExecutable.mVariableInfoMap);
+                    &spvProgramInterfaceInfo, &mExecutable.mVariableInfoMap);
             }
         }
     }
@@ -81,9 +77,9 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
             shaderType == linkedTransformFeedbackStage &&
             !glExecutable.getLinkedTransformFeedbackVaryings().empty();
 
-        GlslangAssignLocations(options, glExecutable, varyingPacking, shaderType, frontShaderType,
-                               isTransformFeedbackStage, &glslangProgramInterfaceInfo,
-                               &uniformBindingIndexMap, &mExecutable.mVariableInfoMap);
+        SpvAssignLocations(options, glExecutable, varyingPacking, shaderType, frontShaderType,
+                           isTransformFeedbackStage, &spvProgramInterfaceInfo,
+                           &uniformBindingIndexMap, &mExecutable.mVariableInfoMap);
         frontShaderType = shaderType;
 
         const gl::Program *program               = mState.getShaderProgram(shaderType);
@@ -97,6 +93,12 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
     }
 
     mExecutable.setAllDefaultUniformsDirty(glExecutable);
+
+    if (contextVk->getFeatures().varyingsRequireMatchingPrecisionInSpirv.enabled &&
+        contextVk->getFeatures().enablePrecisionQualifiers.enabled)
+    {
+        mExecutable.resolvePrecisionMismatch(mergedVaryings);
+    }
 
     ANGLE_TRY(mExecutable.createPipelineLayout(contextVk, mState.getExecutable(), nullptr));
 

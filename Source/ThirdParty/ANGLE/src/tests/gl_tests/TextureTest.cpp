@@ -7774,7 +7774,7 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
         GLushort pixelValue  = 0x6A35;
         GLushort imageData[] = {pixelValue, pixelValue, pixelValue, pixelValue};
         GLColor16UI color    = SliceFormatColor16UI(
-               format, GLColor16UI(pixelValue, pixelValue, pixelValue, pixelValue));
+            format, GLColor16UI(pixelValue, pixelValue, pixelValue, pixelValue));
         // Size of drawing viewport
         constexpr GLint width = 8, height = 8;
 
@@ -10910,6 +10910,96 @@ void main()
     EXPECT_EQ(ptr[3], 1u);
 
     glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+}
+
+// Verify a common pattern used by the Unreal Engine that trips up the tracer
+TEST_P(CopyImageTestES31, CubeMapCopyImageSubData)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    constexpr char kVS[] =
+        R"(#version 300 es
+        precision mediump float;
+        in vec3 pos;
+        void main() {
+            gl_Position = vec4(pos, 1.0);
+        })";
+
+    constexpr char kFS[] =
+        R"(#version 300 es
+        precision mediump float;
+        out vec4 color;
+        uniform samplerCube uTex;
+        void main(){
+            // sample from lod 1.0
+            color = textureLod(uTex, vec3(1.0), 1.0);
+        })";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+
+    // Set up two cube maps, then verify we can copy between them
+    constexpr size_t kSize = 2;
+    constexpr int levels   = 2;
+    std::vector<GLColor> pixelsGreen(kSize * kSize, GLColor::green);
+    std::vector<GLColor> pixelsRed(kSize * kSize, GLColor::red);
+
+    // Initialize src to green
+    GLTexture texCubeSrc;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texCubeSrc);
+    for (int i = 0; i < levels; i++)
+    {
+        for (GLenum face = 0; face < 6; face++)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, i, GL_RGBA, kSize >> i, kSize >> i,
+                         0, GL_RGBA, GL_UNSIGNED_BYTE, pixelsGreen.data());
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+
+    // Initialize dst to red
+    GLTexture texCubeDst;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texCubeDst);
+    for (int i = 0; i < levels; i++)
+    {
+        for (GLenum face = 0; face < 6; face++)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, i, GL_RGBA, kSize >> i, kSize >> i,
+                         0, GL_RGBA, GL_UNSIGNED_BYTE, pixelsRed.data());
+        }
+    }
+    ASSERT_GL_NO_ERROR();
+
+    // Clear to blue
+    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    // Sample from the dst texture to ensure it has the right color
+    GLint textureLoc = glGetUniformLocation(program, "uTex");
+    ASSERT_NE(-1, textureLoc);
+    glUniform1i(textureLoc, 0);
+
+    // Draw once and sample from level 1, which is red
+    drawQuad(program, "pos", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Swap to trigger MEC
+    swapBuffers();
+
+    // Copy level 1 from src to dst
+    glCopyImageSubDataEXT(texCubeSrc, GL_TEXTURE_CUBE_MAP, 1, 0, 0, 0, texCubeDst,
+                          GL_TEXTURE_CUBE_MAP, 1, 0, 0, 0, kSize >> 1, kSize >> 1, 6);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw again and verify we get green
+    drawQuad(program, "pos", 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    // Swap again to end the capture
+    swapBuffers();
+
+    ASSERT_GL_NO_ERROR();
 }
 
 class TextureChangeStorageUploadTest : public ANGLETest<>

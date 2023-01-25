@@ -927,6 +927,29 @@ bool ValidateIsEnablediOES(const Context *context,
     return ValidateIsEnabledi(context, entryPoint, target, index);
 }
 
+bool ValidateProvokingVertexANGLE(const Context *context,
+                                  angle::EntryPoint entryPoint,
+                                  ProvokingVertexConvention provokeModePacked)
+{
+    if (!context->getExtensions().provokingVertexANGLE)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    switch (provokeModePacked)
+    {
+        case ProvokingVertexConvention::FirstVertexConvention:
+        case ProvokingVertexConvention::LastVertexConvention:
+            break;
+        default:
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidProvokingVertex);
+            return false;
+    }
+
+    return true;
+}
+
 bool ValidateGetInteger64vEXT(const Context *context,
                               angle::EntryPoint entryPoint,
                               GLenum pname,
@@ -1697,11 +1720,11 @@ bool ValidatePLSLoadOperation(const Context *context, angle::EntryPoint entryPoi
     // in Table X.1.
     switch (loadop)
     {
-        case GL_ZERO:
-        case GL_CLEAR_ANGLE:
-        case GL_KEEP:
+        case GL_LOAD_OP_ZERO_ANGLE:
+        case GL_LOAD_OP_CLEAR_ANGLE:
+        case GL_LOAD_OP_LOAD_ANGLE:
         case GL_DONT_CARE:
-        case GL_DISABLE_ANGLE:
+        case GL_LOAD_OP_DISABLE_ANGLE:
             return true;
         default:
             context->validationErrorF(entryPoint, GL_INVALID_ENUM, kPLSInvalidLoadOperation,
@@ -1716,7 +1739,7 @@ bool ValidatePLSStoreOperation(const Context *context, angle::EntryPoint entryPo
     // one of the Store Operations enumerated in Table X.2.
     switch (storeop)
     {
-        case GL_KEEP:
+        case GL_STORE_OP_STORE_ANGLE:
         case GL_DONT_CARE:
             return true;
         default:
@@ -1970,13 +1993,13 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
             return false;
         }
 
-        if (loadops[i] == GL_DISABLE_ANGLE)
+        if (loadops[i] == GL_LOAD_OP_DISABLE_ANGLE)
         {
             continue;
         }
 
-        // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is not DISABLE_ANGLE, and the pixel
-        // local storage plane at that same index is is in a deinitialized state.
+        // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is not LOAD_OP_DISABLE_ANGLE, and
+        // the pixel local storage plane at that same index is is in a deinitialized state.
         if (pls == nullptr || pls->getPlane(i).isDeinitialized())
         {
             context->validationError(entryPoint, GL_INVALID_OPERATION,
@@ -2009,9 +2032,10 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
         }
         else
         {
-            // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is KEEP and the pixel local
-            // storage plane at that same index is memoryless.
-            if (loadops[i] == GL_KEEP)
+            // INVALID_OPERATION is generated if <loadops>[0..<n>-1] is
+            // LOAD_OP_LOAD_ANGLE and the pixel local storage plane at that same
+            // index is memoryless.
+            if (loadops[i] == GL_LOAD_OP_LOAD_ANGLE)
             {
                 context->validationError(entryPoint, GL_INVALID_OPERATION,
                                          kPLSKeepingMemorylessPlane);
@@ -2418,6 +2442,22 @@ bool ValidateNamedBufferStorageExternalEXT(const Context *context,
 {
     UNIMPLEMENTED();
     return false;
+}
+
+// GL_EXT_polygon_offset_clamp
+bool ValidatePolygonOffsetClampEXT(const Context *context,
+                                   angle::EntryPoint entryPoint,
+                                   GLfloat factor,
+                                   GLfloat units,
+                                   GLfloat clamp)
+{
+    if (!context->getExtensions().polygonOffsetClampEXT)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return true;
 }
 
 // GL_EXT_primitive_bounding_box

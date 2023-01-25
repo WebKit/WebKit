@@ -13,9 +13,10 @@
 
 #include "common/Color.h"
 #include "common/FixedVector.h"
+#include "common/WorkerThread.h"
 #include "libANGLE/Uniform.h"
-#include "libANGLE/renderer/ShaderInterfaceVariableInfoMap.h"
 #include "libANGLE/renderer/vulkan/ResourceVk.h"
+#include "libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 namespace gl
@@ -56,8 +57,6 @@ enum class DescriptorSetIndex : uint32_t
     EnumCount   = InvalidEnum,
 };
 
-class PipelineCacheAccess;
-
 namespace vk
 {
 class BufferHelper;
@@ -65,6 +64,8 @@ class DynamicDescriptorPool;
 class ImageHelper;
 class SamplerHelper;
 enum class ImageLayout;
+class PipelineCacheAccess;
+class RenderPassCommandBufferHelper;
 
 using RefCountedDescriptorSetLayout    = RefCounted<DescriptorSetLayout>;
 using RefCountedPipelineLayout         = RefCounted<PipelineLayout>;
@@ -300,8 +301,12 @@ enum class CacheLookUpFeedback
     None,
     Hit,
     Miss,
+    LinkedDrawHit,
+    LinkedDrawMiss,
     WarmUpHit,
     WarmUpMiss,
+    UtilsHit,
+    UtilsMiss,
 };
 
 struct PackedAttachmentOpsDesc final
@@ -321,11 +326,11 @@ struct PackedAttachmentOpsDesc final
     uint16_t isStencilInvalidated : 1;
     uint16_t padding1 : 6;
 
-    // 4-bits to force pad the structure to exactly 2 bytes.  Note that we currently don't support
-    // any of the extension layouts, whose values start at 1'000'000'000.
-    uint16_t initialLayout : 4;
-    uint16_t finalLayout : 4;
-    uint16_t padding2 : 8;
+    // Layouts take values from ImageLayout, so they are small.  Layouts that are possible here are
+    // placed at the beginning of that enum.
+    uint16_t initialLayout : 5;
+    uint16_t finalLayout : 5;
+    uint16_t padding2 : 6;
 };
 
 static_assert(sizeof(PackedAttachmentOpsDesc) == 4, "Size check failed");
@@ -418,11 +423,13 @@ struct PackedInputAssemblyState final
 
         // Whether the pipeline is robust (vertex input copy)
         uint32_t isRobustContext : 1;
+        // Whether the pipeline needs access to protected content (vertex input copy)
+        uint32_t isProtectedContext : 1;
 
         // Which attributes are actually active in the program and should affect the pipeline.
         uint32_t programActiveAttributeLocations : gl::MAX_VERTEX_ATTRIBS;
 
-        uint32_t padding : 24 - gl::MAX_VERTEX_ATTRIBS;
+        uint32_t padding : 23 - gl::MAX_VERTEX_ATTRIBS;
     } bits;
 };
 
@@ -474,8 +481,10 @@ struct PackedPreRasterizationAndFragmentStates final
 
         // Whether the pipeline is robust (shader stages copy)
         uint32_t isRobustContext : 1;
+        // Whether the pipeline needs access to protected content (shader stages copy)
+        uint32_t isProtectedContext : 1;
 
-        uint32_t padding : 3;
+        uint32_t padding : 2;
     } bits;
 
     // Affecting specialization constants
@@ -549,12 +558,15 @@ struct PackedBlendMaskAndLogicOpState final
         // Dynamic in VK_EXT_extended_dynamic_state2
         uint32_t logicOp : 4;
 
+        // Whether the pipeline needs access to protected content (fragment output copy)
+        uint32_t isProtectedContext : 1;
+
         // Output that is present in the framebuffer but is never written to in the shader.  Used by
         // GL_ANGLE_robust_fragment_shader_output which defines the behavior in this case (which is
         // to mask these outputs)
         uint32_t missingOutputsMask : gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
 
-        uint32_t padding : 19 - gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
+        uint32_t padding : 18 - gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
     } bits;
 };
 
@@ -610,6 +622,8 @@ static_assert(kNumGraphicsPipelineDirtyBits <= 64, "Too many pipeline dirty bits
 
 // Set of dirty bits. Each bit represents kGraphicsPipelineDirtyBitBytes in the desc.
 using GraphicsPipelineTransitionBits = angle::BitSet<kNumGraphicsPipelineDirtyBits>;
+
+GraphicsPipelineTransitionBits GetGraphicsPipelineTransitionBitsMask(GraphicsPipelineSubset subset);
 
 // Disable padding warnings for a few helper structs that aggregate Vulkan state objects.  These are
 // not used as hash keys, they just simplify passing them around to functions.
@@ -694,15 +708,15 @@ class GraphicsPipelineDesc final
         return reinterpret_cast<const T *>(this);
     }
 
-    angle::Result initializePipeline(Context *context,
-                                     PipelineCacheAccess *pipelineCache,
-                                     GraphicsPipelineSubset subset,
-                                     const RenderPass &compatibleRenderPass,
-                                     const PipelineLayout &pipelineLayout,
-                                     const ShaderModuleMap &shaders,
-                                     const SpecializationConstants &specConsts,
-                                     Pipeline *pipelineOut,
-                                     CacheLookUpFeedback *feedbackOut) const;
+    VkResult initializePipeline(Context *context,
+                                PipelineCacheAccess *pipelineCache,
+                                GraphicsPipelineSubset subset,
+                                const RenderPass &compatibleRenderPass,
+                                const PipelineLayout &pipelineLayout,
+                                const ShaderModuleMap &shaders,
+                                const SpecializationConstants &specConsts,
+                                Pipeline *pipelineOut,
+                                CacheLookUpFeedback *feedbackOut) const;
 
     // Vertex input state. For ES 3.1 this should be separated into binding and attribute.
     void updateVertexInput(ContextVk *contextVk,
@@ -1200,6 +1214,116 @@ ANGLE_INLINE bool GraphicsPipelineTransitionMatch(GraphicsPipelineTransitionBits
     return true;
 }
 
+// A class that encapsulates the vk::PipelineCache and associated mutex.  The mutex may be nullptr
+// if synchronization is not necessary.
+class PipelineCacheAccess
+{
+  public:
+    PipelineCacheAccess()  = default;
+    ~PipelineCacheAccess() = default;
+
+    void init(const vk::PipelineCache *pipelineCache, std::mutex *mutex)
+    {
+        mPipelineCache = pipelineCache;
+        mMutex         = mutex;
+    }
+
+    VkResult createGraphicsPipeline(vk::Context *context,
+                                    const VkGraphicsPipelineCreateInfo &createInfo,
+                                    vk::Pipeline *pipelineOut);
+    VkResult createComputePipeline(vk::Context *context,
+                                   const VkComputePipelineCreateInfo &createInfo,
+                                   vk::Pipeline *pipelineOut);
+
+    void merge(RendererVk *renderer, const vk::PipelineCache &pipelineCache);
+
+    bool isThreadSafe() const { return mMutex != nullptr; }
+
+  private:
+    std::unique_lock<std::mutex> getLock();
+
+    const vk::PipelineCache *mPipelineCache = nullptr;
+    std::mutex *mMutex;
+};
+
+// Monolithic pipeline creation tasks are created as soon as a pipeline is created out of libraries.
+// However, they are not immediately posted to the worker queue to allow pacing.  One each use of a
+// pipeline, an attempt is made to post the task.
+class CreateMonolithicPipelineTask : public Context, public angle::Closure
+{
+  public:
+    CreateMonolithicPipelineTask(RendererVk *renderer,
+                                 const PipelineCacheAccess &pipelineCache,
+                                 const PipelineLayout &pipelineLayout,
+                                 const ShaderModuleMap &shaders,
+                                 const SpecializationConstants &specConsts,
+                                 const GraphicsPipelineDesc &desc);
+
+    // The compatible render pass is set only when the task is ready to run.  This is because the
+    // render pass cache may have been cleared since the task was created (e.g. to accomodate
+    // framebuffer fetch).  Such render pass cache clears ensure there are no active tasks, so it's
+    // safe to hold on to this pointer for the brief period between task post and completion.
+    const RenderPassDesc &getRenderPassDesc() const { return mDesc.getRenderPassDesc(); }
+    void setCompatibleRenderPass(const RenderPass *compatibleRenderPass);
+
+    void operator()() override;
+
+    VkResult getResult() const { return mResult; }
+    Pipeline &getPipeline() { return mPipeline; }
+    CacheLookUpFeedback getFeedback() const { return mFeedback; }
+
+    void handleError(VkResult result,
+                     const char *file,
+                     const char *function,
+                     unsigned int line) override;
+
+  private:
+    // Input to pipeline creation
+    PipelineCacheAccess mPipelineCache;
+    const RenderPass *mCompatibleRenderPass;
+    const PipelineLayout &mPipelineLayout;
+    const ShaderModuleMap &mShaders;
+    SpecializationConstants mSpecConsts;
+    GraphicsPipelineDesc mDesc;
+
+    // Results
+    VkResult mResult;
+    Pipeline mPipeline;
+    CacheLookUpFeedback mFeedback;
+};
+
+class WaitableMonolithicPipelineCreationTask
+{
+  public:
+    ~WaitableMonolithicPipelineCreationTask();
+
+    void setTask(std::shared_ptr<CreateMonolithicPipelineTask> &&task) { mTask = std::move(task); }
+    void setRenderPass(const RenderPass *compatibleRenderPass)
+    {
+        mTask->setCompatibleRenderPass(compatibleRenderPass);
+    }
+    void onSchedule(const std::shared_ptr<angle::WaitableEvent> &waitableEvent)
+    {
+        mWaitableEvent = waitableEvent;
+    }
+    void reset()
+    {
+        mWaitableEvent.reset();
+        mTask.reset();
+    }
+
+    bool isValid() const { return mTask.get() != nullptr; }
+    bool isPosted() const { return mWaitableEvent.get() != nullptr; }
+    bool isReady() { return mWaitableEvent->isReady(); }
+    void wait() { return mWaitableEvent->wait(); }
+
+    std::shared_ptr<CreateMonolithicPipelineTask> getTask() const { return mTask; }
+
+  private:
+    std::shared_ptr<angle::WaitableEvent> mWaitableEvent;
+    std::shared_ptr<CreateMonolithicPipelineTask> mTask;
+};
+
 class PipelineHelper final : public Resource
 {
   public:
@@ -1211,7 +1335,12 @@ class PipelineHelper final : public Resource
     void release(ContextVk *contextVk);
 
     bool valid() const { return mPipeline.valid(); }
-    Pipeline &getPipeline() { return mPipeline; }
+    const Pipeline &getPipeline() const { return mPipeline; }
+
+    // Get the pipeline.  If there is a monolithic pipeline creation task pending, scheduling it is
+    // attempted.  If that task is done, the pipeline is replaced with the results and the old
+    // pipeline released.
+    angle::Result getPreferredPipeline(ContextVk *contextVk, const Pipeline **pipelineOut);
 
     ANGLE_INLINE bool findTransition(GraphicsPipelineTransitionBits bits,
                                      const GraphicsPipelineDesc &desc,
@@ -1236,17 +1365,50 @@ class PipelineHelper final : public Resource
 
     const std::vector<GraphicsPipelineTransition> getTransitions() const { return mTransitions; }
 
-    void setCacheLookUpFeedback(CacheLookUpFeedback feedback)
+    void setComputePipeline(Pipeline &&pipeline, CacheLookUpFeedback feedback)
     {
+        ASSERT(!mPipeline.valid());
+        mPipeline = std::move(pipeline);
+
         ASSERT(mCacheLookUpFeedback == CacheLookUpFeedback::None);
         mCacheLookUpFeedback = feedback;
     }
     CacheLookUpFeedback getCacheLookUpFeedback() const { return mCacheLookUpFeedback; }
 
+    void setLinkedLibraryReferences(vk::PipelineHelper *shadersPipeline);
+
+    void retainInRenderPass(RenderPassCommandBufferHelper *renderPassCommands);
+
+    void setMonolithicPipelineCreationTask(std::shared_ptr<CreateMonolithicPipelineTask> &&task)
+    {
+        mMonolithicPipelineCreationTask.setTask(std::move(task));
+    }
+
   private:
+    void reset();
+
     std::vector<GraphicsPipelineTransition> mTransitions;
     Pipeline mPipeline;
-    CacheLookUpFeedback mCacheLookUpFeedback = CacheLookUpFeedback::None;
+    CacheLookUpFeedback mCacheLookUpFeedback           = CacheLookUpFeedback::None;
+    CacheLookUpFeedback mMonolithicCacheLookUpFeedback = CacheLookUpFeedback::None;
+
+    // The list of pipeline helpers that were referenced when creating a linked pipeline.  These
+    // pipelines must be kept alive, so their serial is updated at the same time as this object.
+    // Not necessary for vertex input and fragment output as they stay alive until context's
+    // destruction.
+    PipelineHelper *mLinkedShaders = nullptr;
+
+    // If pipeline libraries are used and monolithic pipelines are created in parallel, this is the
+    // temporary library created (previously in |mPipeline|) that is now replaced by the monolithic
+    // one.  It is not immediately garbage collected when replaced, because there is currently a bug
+    // with that.  http://anglebug.com/7862
+    Pipeline mLinkedPipelineToRelease;
+
+    // An async task to create a monolithic pipeline.  Only used if the pipeline was originally
+    // created as a linked library.  The |getPipeline()| call will attempt to schedule this task
+    // through the share group, which manages and paces these tasks.  Once the task results are
+    // ready, |mPipeline| is released and replaced by the result of this task.
+    WaitableMonolithicPipelineCreationTask mMonolithicPipelineCreationTask;
 };
 
 class FramebufferHelper : public Resource
@@ -1436,7 +1598,8 @@ class DescriptorSetDesc
         return mWriteDescriptors[bindingIndex].descriptorCount;
     }
 
-    void updateDescriptorSet(UpdateDescriptorSetsBuilder *updateBuilder,
+    void updateDescriptorSet(Context *context,
+                             UpdateDescriptorSetsBuilder *updateBuilder,
                              const DescriptorDescHandles *handles,
                              VkDescriptorSet descriptorSet) const;
 
@@ -1554,7 +1717,8 @@ class DescriptorSetDescBuilder final
                                            PipelineType pipelineType,
                                            const SharedDescriptorSetCacheKey &sharedCacheKey);
 
-    void updateDescriptorSet(UpdateDescriptorSetsBuilder *updateBuilder,
+    void updateDescriptorSet(Context *context,
+                             UpdateDescriptorSetsBuilder *updateBuilder,
                              VkDescriptorSet descriptorSet) const;
 
     // If sharedCacheKey is not null, it means a new cache entry for descriptoret has been created.
@@ -2014,12 +2178,12 @@ class RenderPassCache final : angle::NonCopyable
     RenderPassCache();
     ~RenderPassCache();
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(ContextVk *contextVk);
     void clear(ContextVk *contextVk);
 
     ANGLE_INLINE angle::Result getCompatibleRenderPass(ContextVk *contextVk,
                                                        const vk::RenderPassDesc &desc,
-                                                       vk::RenderPass **renderPassOut)
+                                                       const vk::RenderPass **renderPassOut)
     {
         auto outerIt = mPayload.find(desc);
         if (outerIt != mPayload.end())
@@ -2034,24 +2198,24 @@ class RenderPassCache final : angle::NonCopyable
         }
 
         mCompatibleRenderPassCacheStats.missAndIncrementSize();
-        return addRenderPass(contextVk, desc, renderPassOut);
+        return addCompatibleRenderPass(contextVk, desc, renderPassOut);
     }
 
     angle::Result getRenderPassWithOps(ContextVk *contextVk,
                                        const vk::RenderPassDesc &desc,
                                        const vk::AttachmentOpsArray &attachmentOps,
-                                       vk::RenderPass **renderPassOut);
+                                       const vk::RenderPass **renderPassOut);
 
   private:
     angle::Result getRenderPassWithOpsImpl(ContextVk *contextVk,
                                            const vk::RenderPassDesc &desc,
                                            const vk::AttachmentOpsArray &attachmentOps,
                                            bool updatePerfCounters,
-                                           vk::RenderPass **renderPassOut);
+                                           const vk::RenderPass **renderPassOut);
 
-    angle::Result addRenderPass(ContextVk *contextVk,
-                                const vk::RenderPassDesc &desc,
-                                vk::RenderPass **renderPassOut);
+    angle::Result addCompatibleRenderPass(ContextVk *contextVk,
+                                          const vk::RenderPassDesc &desc,
+                                          const vk::RenderPass **renderPassOut);
 
     // Use a two-layer caching scheme. The top level matches the "compatible" RenderPass elements.
     // The second layer caches the attachment load/store ops and initial/final layout.
@@ -2064,40 +2228,15 @@ class RenderPassCache final : angle::NonCopyable
     CacheStats mRenderPassWithOpsCacheStats;
 };
 
-// A class that encapsulates the vk::PipelineCache and associated mutex.  The mutex may be nullptr
-// if synchronization is not necessary.
-class PipelineCacheAccess
-{
-  public:
-    PipelineCacheAccess()  = default;
-    ~PipelineCacheAccess() = default;
-
-    void init(const vk::PipelineCache *pipelineCache, std::mutex *mutex)
-    {
-        mPipelineCache = pipelineCache;
-        mMutex         = mutex;
-    }
-
-    angle::Result createGraphicsPipeline(vk::Context *context,
-                                         const VkGraphicsPipelineCreateInfo &createInfo,
-                                         vk::Pipeline *pipelineOut);
-    angle::Result createComputePipeline(vk::Context *context,
-                                        const VkComputePipelineCreateInfo &createInfo,
-                                        vk::Pipeline *pipelineOut);
-
-    void merge(RendererVk *renderer, const vk::PipelineCache &pipelineCache);
-
-  private:
-    std::unique_lock<std::mutex> getLock();
-
-    const vk::PipelineCache *mPipelineCache = nullptr;
-    std::mutex *mMutex;
-};
-
 enum class PipelineSource
 {
+    // Pipeline created when warming up the program's pipeline cache
     WarmUp,
+    // Monolithic pipeline created at draw time
     Draw,
+    // Pipeline created at draw time by linking partial pipeline libraries
+    DrawLinked,
+    // Pipeline created for UtilsVk
     Utils,
 };
 
@@ -2199,7 +2338,7 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
     GraphicsPipelineCache() = default;
     ~GraphicsPipelineCache() override { ASSERT(mPayload.empty()); }
 
-    void destroy(RendererVk *rendererVk);
+    void destroy(ContextVk *contextVk);
     void release(ContextVk *contextVk);
 
     void populate(const vk::GraphicsPipelineDesc &desc, vk::Pipeline &&pipeline);
@@ -2224,7 +2363,7 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
     }
 
     angle::Result createPipeline(ContextVk *contextVk,
-                                 PipelineCacheAccess *pipelineCache,
+                                 vk::PipelineCacheAccess *pipelineCache,
                                  const vk::RenderPass &compatibleRenderPass,
                                  const vk::PipelineLayout &pipelineLayout,
                                  const vk::ShaderModuleMap &shaders,
@@ -2234,15 +2373,36 @@ class GraphicsPipelineCache final : public HasCacheStats<VulkanCacheType::Graphi
                                  const vk::GraphicsPipelineDesc **descPtrOut,
                                  vk::PipelineHelper **pipelineOut);
 
+    angle::Result linkLibraries(ContextVk *contextVk,
+                                vk::PipelineCacheAccess *pipelineCache,
+                                const vk::GraphicsPipelineDesc &desc,
+                                const vk::PipelineLayout &pipelineLayout,
+                                vk::PipelineHelper *vertexInputPipeline,
+                                vk::PipelineHelper *shadersPipeline,
+                                vk::PipelineHelper *fragmentOutputPipeline,
+                                const vk::GraphicsPipelineDesc **descPtrOut,
+                                vk::PipelineHelper **pipelineOut);
+
     // Helper for VulkanPipelineCachePerf that resets the object without destroying any object.
     void reset() { mPayload.clear(); }
 
   private:
+    void addToCache(PipelineSource source,
+                    const vk::GraphicsPipelineDesc &desc,
+                    vk::Pipeline &&pipeline,
+                    vk::CacheLookUpFeedback feedback,
+                    const vk::GraphicsPipelineDesc **descPtrOut,
+                    vk::PipelineHelper **pipelineOut);
+
     using KeyEqual = typename GraphicsPipelineCacheTypeHelper<Hash>::KeyEqual;
     std::unordered_map<vk::GraphicsPipelineDesc, vk::PipelineHelper, Hash, KeyEqual> mPayload;
 };
 
-using CompleteGraphicsPipelineCache = GraphicsPipelineCache<GraphicsPipelineDescCompleteHash>;
+using CompleteGraphicsPipelineCache    = GraphicsPipelineCache<GraphicsPipelineDescCompleteHash>;
+using VertexInputGraphicsPipelineCache = GraphicsPipelineCache<GraphicsPipelineDescVertexInputHash>;
+using ShadersGraphicsPipelineCache     = GraphicsPipelineCache<GraphicsPipelineDescShadersHash>;
+using FragmentOutputGraphicsPipelineCache =
+    GraphicsPipelineCache<GraphicsPipelineDescFragmentOutputHash>;
 
 class DescriptorSetLayoutCache final : angle::NonCopyable
 {

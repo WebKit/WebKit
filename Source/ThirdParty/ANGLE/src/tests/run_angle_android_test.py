@@ -12,7 +12,6 @@
 #       --no-warmup --steps-per-trial 1000 --trials 1)
 
 import argparse
-import fnmatch
 import logging
 import os
 import pathlib
@@ -28,7 +27,9 @@ import angle_test_util
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'suite', help='Test suite to run.', choices=['angle_perftests', 'angle_end2end_tests'])
+        'suite',
+        help='Test suite to run.',
+        choices=['angle_end2end_tests', 'angle_perftests', 'angle_trace_tests'])
     parser.add_argument(
         '-f',
         '--filter',
@@ -41,7 +42,7 @@ def main():
 
     args, extra_flags = parser.parse_known_args()
 
-    logging.basicConfig(level=args.log.upper())
+    angle_test_util.SetupLogging(args.log.upper())
 
     android_helper.Initialize(args.suite)
     assert android_helper.IsAndroid()
@@ -54,14 +55,14 @@ def main():
 
     tests = angle_test_util.GetTestsFromOutput(output)
     if args.filter:
-        tests = [test for test in tests if fnmatch.fnmatch(test, args.filter)]
+        tests = angle_test_util.FilterTests(tests, args.filter)
 
     if args.list_tests:
         for test in tests:
             print(test)
         return 0
 
-    if args.suite == 'angle_perftests':
+    if args.suite == 'angle_trace_tests':
         traces = set(android_helper.GetTraceFromTestName(test) for test in tests)
         android_helper.PrepareRestrictedTraces(traces)
 

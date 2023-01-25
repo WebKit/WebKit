@@ -147,7 +147,7 @@ bool ShouldUseCPUToCopyData(ContextVk *contextVk, size_t copySize, size_t buffer
 
 bool RenderPassUsesBufferForReadOnly(ContextVk *contextVk, const vk::BufferHelper &buffer)
 {
-    if (!contextVk->hasStartedRenderPass())
+    if (!contextVk->hasActiveRenderPass())
     {
         return false;
     }
@@ -404,8 +404,9 @@ angle::Result BufferVk::setDataWithMemoryType(const gl::Context *context,
         return angle::Result::Continue;
     }
 
-    const bool bufferSizeChanged              = size != static_cast<size_t>(mState.getSize());
-    const bool inUseAndRespecifiedWithoutData = (data == nullptr && isCurrentlyInUse(contextVk));
+    const bool bufferSizeChanged = size != static_cast<size_t>(mState.getSize());
+    const bool inUseAndRespecifiedWithoutData =
+        (data == nullptr && isCurrentlyInUse(contextVk->getRenderer()));
 
     // The entire buffer is being respecified, possibly with null data.
     // Release and init a new mBuffer with requested size.
@@ -500,7 +501,7 @@ angle::Result BufferVk::allocStagingBuffer(ContextVk *contextVk,
     {
         if (size <= mStagingBuffer.getSize() &&
             (coherency == vk::MemoryCoherency::Coherent) == mStagingBuffer.isCoherent() &&
-            !mStagingBuffer.isCurrentlyInUse(contextVk->getLastCompletedQueueSerial()))
+            !contextVk->getRenderer()->hasUnfinishedUse(mStagingBuffer.getResourceUse()))
         {
             // If size is big enough and it is idle, then just reuse the existing staging buffer
             *mapPtr                = mStagingBuffer.getMappedMemory();
@@ -641,6 +642,7 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
                                      GLbitfield access,
                                      void **mapPtr)
 {
+    RendererVk *renderer = contextVk->getRenderer();
     ASSERT(mBuffer.valid());
 
     // Record map call parameters in case this call is from angle internal (the access/offset/length
@@ -667,15 +669,15 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
     {
         // If app is not going to write, all we need is to ensure GPU write is finished.
         // Concurrent reads from CPU and GPU is allowed.
-        if (mBuffer.isCurrentlyInUseForWrite(contextVk->getLastCompletedQueueSerial()))
+        if (renderer->hasUnfinishedUse(mBuffer.getWriteResourceUse()))
         {
-            // If there are pending commands for the resource, flush them.
-            if (mBuffer.usedInRecordedCommands())
+            // If there are unflushed write commands for the resource, flush them.
+            if (contextVk->hasUnsubmittedUse(mBuffer.getWriteResourceUse()))
             {
                 ANGLE_TRY(
                     contextVk->flushImpl(nullptr, RenderPassClosureReason::BufferWriteThenMap));
             }
-            ANGLE_TRY(mBuffer.finishGPUWriteCommands(contextVk));
+            ANGLE_TRY(renderer->finishResourceUse(contextVk, mBuffer.getWriteResourceUse()));
         }
         if (hostVisible)
         {
@@ -691,7 +693,7 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
     }
 
     // Write case, buffer not in use.
-    if (isExternalBuffer() || !isCurrentlyInUse(contextVk))
+    if (isExternalBuffer() || !isCurrentlyInUse(contextVk->getRenderer()))
     {
         return mBuffer.mapWithOffset(contextVk, mapPtrBytes, static_cast<size_t>(offset));
     }
@@ -723,7 +725,7 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
         return angle::Result::Continue;
     }
 
-    if (!mBuffer.isCurrentlyInUseForWrite(contextVk->getLastCompletedQueueSerial()))
+    if (!renderer->hasUnfinishedUse(mBuffer.getWriteResourceUse()))
     {
         // This will keep the new buffer mapped and update mapPtr, so return immediately.
         return ghostMappedBuffer(contextVk, offset, length, access, mapPtr);
@@ -910,7 +912,7 @@ angle::Result BufferVk::acquireAndUpdate(ContextVk *contextVk,
         // If the buffer is host visible and the GPU is not writing to it, we use the CPU to do the
         // copy. We need to save the source buffer pointer before we acquire a new buffer.
         if (src.isHostVisible() &&
-            !src.isCurrentlyInUseForWrite(contextVk->getLastCompletedQueueSerial()) &&
+            !contextVk->getRenderer()->hasUnfinishedUse(src.getWriteResourceUse()) &&
             ShouldUseCPUToCopyData(contextVk, copySize, bufferSize))
         {
             uint8_t *mapPointer = nullptr;
@@ -981,7 +983,7 @@ angle::Result BufferVk::setDataImpl(ContextVk *contextVk,
     //          acquire a new BufferHelper from the pool
     //     else stage the update
     // else update the buffer directly
-    if (isCurrentlyInUse(contextVk))
+    if (isCurrentlyInUse(contextVk->getRenderer()))
     {
         // If storage has just been redefined, don't go down acquireAndUpdate code path. There is no
         // reason you acquire another new buffer right after redefined. And if we do go into
@@ -1086,9 +1088,8 @@ angle::Result BufferVk::acquireBufferHelper(ContextVk *contextVk, size_t sizeInB
     return angle::Result::Continue;
 }
 
-bool BufferVk::isCurrentlyInUse(ContextVk *contextVk) const
+bool BufferVk::isCurrentlyInUse(RendererVk *renderer) const
 {
-    return mBuffer.isCurrentlyInUse(contextVk->getLastCompletedQueueSerial());
+    return renderer->hasUnfinishedUse(mBuffer.getResourceUse());
 }
-
 }  // namespace rx

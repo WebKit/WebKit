@@ -12,6 +12,7 @@
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/FindMain.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/IntermTraverse.h"
 #include "compiler/translator/util.h"
@@ -179,7 +180,7 @@ void AddArrayZeroInitSequence(const TIntermTyped *initializedNode,
 }
 
 void InsertInitCode(TCompiler *compiler,
-                    TIntermSequence *mainBody,
+                    TIntermBlock *root,
                     const InitVariableList &variables,
                     TSymbolTable *symbolTable,
                     int shaderVersion,
@@ -187,6 +188,7 @@ void InsertInitCode(TCompiler *compiler,
                     bool canUseLoopsToInitialize,
                     bool highPrecisionSupported)
 {
+    TIntermSequence *mainBody = FindMainBody(root)->getSequence();
     for (const ShaderVariable &var : variables)
     {
         // Note that tempVariableName will reference a short-lived char array here - that's fine
@@ -209,6 +211,13 @@ void InsertInitCode(TCompiler *compiler,
                 // the shader sets the extensions it is using.
                 initializedSymbol =
                     new TIntermBinary(EOpIndexDirect, initializedSymbol, CreateIndexNode(0));
+            }
+            else if (initializedSymbol->getQualifier() == EvqClipDistance ||
+                     initializedSymbol->getQualifier() == EvqCullDistance)
+            {
+                // The built-in may have been implicitly resized.
+                initializedSymbol =
+                    new TIntermSymbol(&FindSymbolNode(root, tempVariableName)->variable());
             }
         }
         else
@@ -349,9 +358,8 @@ bool InitializeVariables(TCompiler *compiler,
                          bool canUseLoopsToInitialize,
                          bool highPrecisionSupported)
 {
-    TIntermBlock *body = FindMainBody(root);
-    InsertInitCode(compiler, body->getSequence(), vars, symbolTable, shaderVersion,
-                   extensionBehavior, canUseLoopsToInitialize, highPrecisionSupported);
+    InsertInitCode(compiler, root, vars, symbolTable, shaderVersion, extensionBehavior,
+                   canUseLoopsToInitialize, highPrecisionSupported);
 
     return compiler->validateAST(root);
 }

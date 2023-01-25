@@ -4,6 +4,7 @@
 
 import contextlib
 import datetime
+import fnmatch
 import json
 import importlib
 import io
@@ -195,3 +196,10 @@ def GetTestsFromOutput(output):
     start = out_lines.index('Tests list:')
     end = out_lines.index('End tests list.')
     return out_lines[start + 1:end]
+
+
+def FilterTests(tests, test_filter):
+    matches = set()
+    for single_filter in test_filter.split(':'):
+        matches.update(fnmatch.filter(tests, single_filter))
+    return sorted(matches)

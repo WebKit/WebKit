@@ -39,6 +39,8 @@ ProgramGL::ProgramGL(const gl::ProgramState &data,
       mFunctions(functions),
       mFeatures(features),
       mStateManager(stateManager),
+      mHasAppliedTransformFeedbackVaryings(false),
+      mClipDistanceEnabledUniformLocation(-1),
       mMultiviewBaseViewLayerIndexUniformLocation(-1),
       mProgramID(0),
       mRenderer(renderer),
@@ -253,10 +255,14 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
 
         if (transformFeedbackVaryingMappedNames.empty())
         {
-            if (mFunctions->transformFeedbackVaryings)
+            // Only clear the transform feedback state if transform feedback varyings have already
+            // been set.
+            if (mHasAppliedTransformFeedbackVaryings)
             {
+                ASSERT(mFunctions->transformFeedbackVaryings);
                 mFunctions->transformFeedbackVaryings(mProgramID, 0, nullptr,
                                                       mState.getTransformFeedbackBufferMode());
+                mHasAppliedTransformFeedbackVaryings = false;
             }
         }
         else
@@ -270,6 +276,7 @@ std::unique_ptr<LinkEvent> ProgramGL::link(const gl::Context *context,
             mFunctions->transformFeedbackVaryings(
                 mProgramID, static_cast<GLsizei>(transformFeedbackVaryingMappedNames.size()),
                 &transformFeedbackVaryings[0], mState.getTransformFeedbackBufferMode());
+            mHasAppliedTransformFeedbackVaryings = true;
         }
 
         for (const gl::ShaderType shaderType : gl::kAllGraphicsShaderTypes)
@@ -960,6 +967,7 @@ void ProgramGL::preLink()
     mUniformRealLocationMap.clear();
     mUniformBlockRealLocationMap.clear();
 
+    mClipDistanceEnabledUniformLocation         = -1;
     mMultiviewBaseViewLayerIndexUniformLocation = -1;
 }
 
@@ -1033,12 +1041,30 @@ void ProgramGL::postLink()
         mUniformRealLocationMap[uniformLocation] = realLocation;
     }
 
+    if (mFeatures.emulateClipDistanceState.enabled && mState.getExecutable().hasClipDistance())
+    {
+        ASSERT(mFunctions->standard == STANDARD_GL_ES);
+        mClipDistanceEnabledUniformLocation =
+            mFunctions->getUniformLocation(mProgramID, "angle_ClipDistanceEnabled");
+        ASSERT(mClipDistanceEnabledUniformLocation != -1);
+    }
+
     if (mState.usesMultiview())
     {
         mMultiviewBaseViewLayerIndexUniformLocation =
             mFunctions->getUniformLocation(mProgramID, "multiviewBaseViewLayerIndex");
         ASSERT(mMultiviewBaseViewLayerIndexUniformLocation != -1);
     }
+}
+
+void ProgramGL::updateEnabledClipDistances(uint8_t enabledClipDistancesPacked) const
+{
+    ASSERT(mState.getExecutable().hasClipDistance());
+    ASSERT(mClipDistanceEnabledUniformLocation != -1);
+
+    ASSERT(mFunctions->programUniform1ui != nullptr);
+    mFunctions->programUniform1ui(mProgramID, mClipDistanceEnabledUniformLocation,
+                                  enabledClipDistancesPacked);
 }
 
 void ProgramGL::enableSideBySideRenderingPath() const

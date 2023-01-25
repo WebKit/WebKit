@@ -52,6 +52,8 @@ std::string VendorName(VendorID vendor)
             return "Vivante";
         case kVendorID_VMWare:
             return "VMWare";
+        case kVendorID_VirtIO:
+            return "VirtIO";
         case kVendorID_Apple:
             return "Apple";
         case kVendorID_Microsoft:
@@ -178,6 +180,11 @@ bool IsVeriSilicon(VendorID vendorId)
 bool IsVMWare(VendorID vendorId)
 {
     return vendorId == kVendorID_VMWare;
+}
+
+bool IsVirtIO(VendorID vendorId)
+{
+    return vendorId == kVendorID_VirtIO;
 }
 
 bool IsVivante(VendorID vendorId)
@@ -390,6 +397,17 @@ VersionInfo ParseNvidiaDriverVersion(uint32_t version)
         version >> 14 & 0xff,  // minor
         version >> 6 & 0xff,   // subMinor
         version & 0x3f         // patch
+    };
+}
+
+VersionInfo ParseMesaDriverVersion(uint32_t version)
+{
+    // Mesa uses VK_MAKE_VERSION
+    return {
+        version >> 22 & 0x7F,
+        version >> 12 & 0x3FF,
+        version & 0xFFF,
+        0,
     };
 }
 

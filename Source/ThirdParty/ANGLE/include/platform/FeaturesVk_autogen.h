@@ -56,6 +56,13 @@ struct FeaturesVk : FeatureSetBase
         "Enable uploading the previously defined mutable mipmap texture.", &members,
         "https://anglebug.com/7308"};
 
+    FeatureInfo supportsMemoryBudget = {
+        "supportsMemoryBudget",
+        FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_EXT_memory_budget extension.",
+        &members,
+    };
+
     FeatureInfo supportsRenderpass2 = {
         "supportsRenderpass2",
         FeatureCategory::VulkanFeatures,
@@ -272,11 +279,6 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo shadowBuffers = {
-        "shadowBuffers", FeatureCategory::VulkanFeatures,
-        "Allocate a shadow buffer for GL buffer objects to reduce glMap* latency.", &members,
-        "http://anglebug.com/4339"};
-
     FeatureInfo preferCPUForBufferSubData = {
         "preferCPUForBufferSubData", FeatureCategory::VulkanFeatures,
         "Prefer use CPU to do bufferSubData instead of staged update.", &members,
@@ -295,6 +297,12 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo enablePrecisionQualifiers = {
         "enablePrecisionQualifiers", FeatureCategory::VulkanFeatures,
         "Enable precision qualifiers in shaders", &members, "http://anglebug.com/3078"};
+
+    FeatureInfo varyingsRequireMatchingPrecisionInSpirv = {
+        "varyingsRequireMatchingPrecisionInSpirv", FeatureCategory::VulkanWorkarounds,
+        "Add additional SPIRV instructions to make sure precision "
+        "between shader stages match with each other",
+        &members, "http://anglebug.com/7488"};
 
     FeatureInfo preferAggregateBarrierCalls = {
         "preferAggregateBarrierCalls", FeatureCategory::VulkanWorkarounds,
@@ -763,6 +771,11 @@ struct FeaturesVk : FeatureSetBase
         "Whether monolithic pipelines perform significantly better than libraries", &members,
         "https://anglebug.com/7369"};
 
+    FeatureInfo slowDownMonolithicPipelineCreationForTesting = {
+        "slowDownMonolithicPipelineCreationForTesting", FeatureCategory::VulkanWorkarounds,
+        "Artificially slow down async monolithic pipeline creation for threading testing", &members,
+        "https://anglebug.com/7369"};
+
     FeatureInfo syncMonolithicPipelinesToBlobCache = {
         "syncMonolithicPipelinesToBlobCache", FeatureCategory::VulkanWorkarounds,
         "Whether it's beneficial to store monolithic pipelines in the blob cache when "
@@ -777,10 +790,33 @@ struct FeaturesVk : FeatureSetBase
         "monolithic pipelines can reuse blobs from partial pipelines",
         &members, "https://anglebug.com/7369"};
 
+    FeatureInfo hasEffectivePipelineCacheSerialization = {
+        "hasEffectivePipelineCacheSerialization", FeatureCategory::VulkanFeatures,
+        "Whether the implementation serializes the Vulkan pipeline cache effectively. "
+        "On some implementations, pipeline cache serialization returns no data, so there "
+        "is no benefit to serializing it",
+        &members, "https://anglebug.com/7369"};
+
+    FeatureInfo enableAsyncPipelineCacheCompression = {
+        "enableAsyncPipelineCacheCompression", FeatureCategory::VulkanWorkarounds,
+        "Enable compressing pipeline cache in a thread.", &members, "http://anglebug.com/4722"};
+
     FeatureInfo supportsPipelineProtectedAccess = {
         "supportsPipelineProtectedAccess", FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_EXT_pipeline_protected_access extension", &members,
         "https://anglebug.com/7714"};
+
+    FeatureInfo supportsMixedReadWriteDepthStencilLayouts = {
+        "supportsMixedReadWriteDepthStencilLayouts", FeatureCategory::VulkanFeatures,
+        "VkDevice supports the mixed read and write depth/stencil layouts introduced by "
+        "VK_KHR_maintenance2",
+        &members, "https://anglebug.com/7899"};
+
+    FeatureInfo supportsSwapchainMaintenance1 = {
+        "supportsSwapchainMaintenance1", FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 "
+        "extensions",
+        &members, "https://anglebug.com/7847"};
 
     FeatureInfo preferSubmitOnAnySamplesPassedQueryEnd = {
         "preferSubmitOnAnySamplesPassedQueryEnd", FeatureCategory::VulkanWorkarounds,

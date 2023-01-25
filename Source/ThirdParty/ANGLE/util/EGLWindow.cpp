@@ -280,8 +280,7 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
     if (driverType == angle::GLESDriverType::SystemWGL)
         return false;
 
-    if (driverType == angle::GLESDriverType::AngleEGL &&
-        strstr(extensionString, "EGL_ANGLE_platform_angle"))
+    if (IsANGLE(driverType) && strstr(extensionString, "EGL_ANGLE_platform_angle"))
     {
         mDisplay = eglGetPlatformDisplay(EGL_PLATFORM_ANGLE_ANGLE,
                                          reinterpret_cast<void *>(osWindow->getNativeDisplay()),
@@ -780,6 +779,36 @@ EGLBoolean EGLWindow::destroyImage(Image image)
 EGLBoolean EGLWindow::destroyImageKHR(Image image)
 {
     return eglDestroyImageKHR(getDisplay(), image);
+}
+
+EGLWindow::Sync EGLWindow::createSync(EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list)
+{
+    return eglCreateSync(dpy, type, attrib_list);
+}
+
+EGLWindow::Sync EGLWindow::createSyncKHR(EGLDisplay dpy, EGLenum type, const EGLint *attrib_list)
+{
+    return eglCreateSyncKHR(dpy, type, attrib_list);
+}
+
+EGLBoolean EGLWindow::destroySync(EGLDisplay dpy, Sync sync)
+{
+    return eglDestroySync(dpy, sync);
+}
+
+EGLBoolean EGLWindow::destroySyncKHR(EGLDisplay dpy, Sync sync)
+{
+    return eglDestroySyncKHR(dpy, sync);
+}
+
+EGLint EGLWindow::clientWaitSync(EGLDisplay dpy, Sync sync, EGLint flags, EGLTimeKHR timeout)
+{
+    return eglClientWaitSync(dpy, sync, flags, timeout);
+}
+
+EGLint EGLWindow::clientWaitSyncKHR(EGLDisplay dpy, Sync sync, EGLint flags, EGLTimeKHR timeout)
+{
+    return eglClientWaitSyncKHR(dpy, sync, flags, timeout);
 }
 
 EGLint EGLWindow::getEGLError()

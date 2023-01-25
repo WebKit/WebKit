@@ -33,6 +33,7 @@ class HardwareBufferImageSiblingVkAndroid : public ExternalImageSiblingVk
     bool isRenderable(const gl::Context *context) const override;
     bool isTexturable(const gl::Context *context) const override;
     bool isYUV() const override;
+    bool hasFrontBufferUsage() const override;
     bool isCubeMap() const override;
     bool hasProtectedContent() const override;
     gl::Extents getSize() const override;

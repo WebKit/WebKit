@@ -220,7 +220,9 @@ class TParseContext : angle::NonCopyable
 
     // For built-ins that can be redeclared, adjusts the type qualifier so transformations can
     // identify them correctly.
-    void adjustRedeclaredBuiltInType(const ImmutableString &identifier, TType *type);
+    void adjustRedeclaredBuiltInType(const TSourceLoc &line,
+                                     const ImmutableString &identifier,
+                                     TType *type);
 
     // Returns true on success. *initNode may still be nullptr on success in case the initialization
     // is not needed in the AST.
@@ -612,10 +614,6 @@ class TParseContext : angle::NonCopyable
                                                             TType type,
                                                             const TSourceLoc &line);
 
-    void checkCombinedClipCullDistanceIsValid(const TSourceLoc &line,
-                                              const ImmutableString &identifier,
-                                              const int arraySize);
-
     // Check texture offset is within range.
     void checkSingleTextureOffset(const TSourceLoc &line,
                                   const TConstantUnion *values,
@@ -732,9 +730,15 @@ class TParseContext : angle::NonCopyable
                                   // without precision, explicit or implicit.
     bool mFragmentPrecisionHighOnESSL1;  // true if highp precision is supported when compiling
                                          // ESSL1.
-    bool mEarlyFragmentTestsSpecified;   // true if |layout(early_fragment_tests) in| is specified.
+    bool mEarlyFragmentTestsSpecified;   // true if layout(early_fragment_tests) in; is specified.
     bool mHasDiscard;                    // true if |discard| is encountered in the shader.
-    bool mSampleQualifierSpecified;      // true if the |sample| qualifier is used.
+    bool mSampleQualifierSpecified;      // true if the |sample| qualifier is used
+    bool mPositionRedeclaredForSeparateShaderObject;       // true if EXT_separate_shader_objects is
+                                                           // enabled and gl_Position is redefined.
+    bool mPointSizeRedeclaredForSeparateShaderObject;      // true if EXT_separate_shader_objects is
+                                                           // enabled and gl_PointSize is redefined.
+    bool mPositionOrPointSizeUsedForSeparateShaderObject;  // true if gl_Position or gl_PointSize
+                                                           // has been referenced.
     TLayoutMatrixPacking mDefaultUniformMatrixPacking;
     TLayoutBlockStorage mDefaultUniformBlockStorage;
     TLayoutMatrixPacking mDefaultBufferMatrixPacking;

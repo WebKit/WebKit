@@ -645,12 +645,11 @@
             "issue": "http://anglebug.com/7527"
         },
         {
-            "name": "disable_clip_cull_distance",
+            "name": "emulate_clip_distance_state",
             "category": "Workarounds",
             "description": [
-                "Shader compiler does not handle redeclared built-ins."
-            ],
-            "issue": "https://anglebug.com/7763"
+                "Some drivers ignore GL_CLIP_DISTANCEi_EXT state."
+            ]
         },
         {
             "name": "supports_fragment_shader_interlock_NV",

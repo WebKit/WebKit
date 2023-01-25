@@ -165,9 +165,6 @@ struct Limitations
     bool compressedBaseMipLevelMultipleOfFour = false;
 
     bool limitWebglMaxTextureSizeTo4096 = false;
-
-    // When clip and cull distances are used simultaneously, D3D11 can support up to four of each.
-    bool limitSimultaneousClipAndCullDistanceUsage = false;
 };
 
 struct TypePrecision
@@ -372,7 +369,7 @@ struct Caps
     GLuint maxDebugGroupStackDepth = 0;
     GLuint maxLabelLength          = 0;
 
-    // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+    // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
     GLuint maxClipDistances                = 0;
     GLuint maxCullDistances                = 0;
     GLuint maxCombinedClipAndCullDistances = 0;
@@ -414,10 +411,10 @@ struct Caps
     Caps();
 
     // Support for NPOT surfaces
-    bool textureNPOT;
+    bool textureNPOT = false;
 
     // Support for Stencil8 configs
-    bool stencil8;
+    bool stencil8 = false;
 };
 
 struct DisplayExtensions
@@ -573,6 +570,9 @@ struct DisplayExtensions
 
     // EGL_ANGLE_power_preference
     bool powerPreference = false;
+
+    // EGL_ANGLE_wait_until_work_scheduled
+    bool waitUntilWorkScheduled = false;
 
     // EGL_ANGLE_image_d3d11_texture
     bool imageD3D11Texture = false;

@@ -183,6 +183,8 @@
                                            GLsizei width, GLsizei height);                         \
     /* GL_EXT_multisampled_render_to_texture2 */                                                   \
     /* GL_EXT_occlusion_query_boolean */                                                           \
+    /* GL_EXT_polygon_offset_clamp */                                                              \
+    void polygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp);                         \
     /* GL_EXT_primitive_bounding_box */                                                            \
     /* GL_EXT_protected_textures */                                                                \
     /* GL_EXT_pvrtc_sRGB */                                                                        \
@@ -352,6 +354,7 @@
         const GLuint *baseInstances, GLsizei drawcount);                                           \
     /* GL_ANGLE_base_vertex_base_instance_shader_builtin */                                        \
     /* GL_ANGLE_client_arrays */                                                                   \
+    /* GL_ANGLE_clip_cull_distance */                                                              \
     /* GL_ANGLE_compressed_texture_etc */                                                          \
     /* GL_ANGLE_copy_texture_3d */                                                                 \
     void copyTexture3D(TextureID sourceIdPacked, GLint sourceLevel,                                \
@@ -413,7 +416,7 @@
     /* GL_ANGLE_program_binary */                                                                  \
     /* GL_ANGLE_program_cache_control */                                                           \
     /* GL_ANGLE_provoking_vertex */                                                                \
-    void provokingVertex(ProvokingVertexConvention modePacked);                                    \
+    void provokingVertex(ProvokingVertexConvention provokeModePacked);                             \
     /* GL_ANGLE_read_only_depth_stencil_feedback_loops */                                          \
     /* GL_ANGLE_relaxed_vertex_attribute_type */                                                   \
     /* GL_ANGLE_request_extension */                                                               \

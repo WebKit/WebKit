@@ -48,7 +48,7 @@ class VertexArray11 : public VertexArrayImpl
 
     const std::vector<TranslatedAttribute> &getTranslatedAttribs() const;
 
-    Serial getCurrentStateSerial() const { return mCurrentStateSerial; }
+    UniqueSerial getCurrentStateSerial() const { return mCurrentStateSerial; }
 
     // In case of a multi-view program change, we have to update all attributes so that the divisor
     // is adjusted.
@@ -93,7 +93,7 @@ class VertexArray11 : public VertexArrayImpl
     // A set of attributes we know are dirty, and need to be re-translated.
     gl::AttributesMask mAttribsToTranslate;
 
-    Serial mCurrentStateSerial;
+    UniqueSerial mCurrentStateSerial;
 
     // The numViews value used to adjust the divisor.
     int mAppliedNumViewsToDivisor;

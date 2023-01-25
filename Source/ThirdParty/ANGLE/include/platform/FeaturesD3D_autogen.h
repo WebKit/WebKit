@@ -168,6 +168,13 @@ struct FeaturesD3D : FeatureSetBase
     FeatureInfo disableRasterizerOrderViews = {
         "disableRasterizerOrderViews", FeatureCategory::D3DWorkarounds, "Disable ROVs for testing",
         &members, "http://anglebug.com/7279"};
+
+    FeatureInfo enableTimestampQueries = {
+        "enableTimestampQueries",
+        FeatureCategory::D3DWorkarounds,
+        "Enable timestamp on GL_EXT_disjoint_timer_query extension",
+        &members,
+    };
 };
 
 inline FeaturesD3D::FeaturesD3D()  = default;

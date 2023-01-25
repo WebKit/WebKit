@@ -4,7 +4,7 @@
 
 #include "perf_test.h"
 
-#include "common/third_party/base/anglebase/no_destructor.h"
+#include "common/base/anglebase/no_destructor.h"
 
 #include <stdarg.h>
 #include <stdio.h>

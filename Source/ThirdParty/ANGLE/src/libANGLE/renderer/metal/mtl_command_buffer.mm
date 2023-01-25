@@ -12,6 +12,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include "mtl_command_buffer.h"
 #if ANGLE_MTL_SIMULATE_DISCARD_FRAMEBUFFER
 #    include <random>
 #endif
@@ -69,6 +70,7 @@ namespace
     PROC(DrawIndexedInstancedBaseVertexBaseInstance) \
     PROC(SetVisibilityResultMode)                    \
     PROC(UseResource)                                \
+    PROC(MemoryBarrier)                              \
     PROC(MemoryBarrierWithResource)                  \
     PROC(InsertDebugsign)                            \
     PROC(PushDebugGroup)                             \
@@ -389,10 +391,28 @@ inline void UseResourceCmd(id<MTLRenderCommandEncoder> encoder, IntermediateComm
     else
 #   endif
     {
+        ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
         [encoder useResource:resource usage:usage];
+        ANGLE_APPLE_ALLOW_DEPRECATED_END
     }
 #endif
     [resource ANGLE_MTL_RELEASE];
+}
+
+inline void MemoryBarrierCmd(id<MTLRenderCommandEncoder> encoder, IntermediateCommandStream *stream)
+{
+    mtl::RenderStages scope  = stream->fetch<mtl::BarrierScope>();
+    mtl::RenderStages after  = stream->fetch<mtl::RenderStages>();
+    mtl::RenderStages before = stream->fetch<mtl::RenderStages>();
+    ANGLE_UNUSED_VARIABLE(scope);
+    ANGLE_UNUSED_VARIABLE(after);
+    ANGLE_UNUSED_VARIABLE(before);
+#if defined(__MAC_10_14) && (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
+    if (ANGLE_APPLE_AVAILABLE_XC(10.14, 13.0))
+    {
+        [encoder memoryBarrierWithScope:scope afterStages:after beforeStages:before];
+    }
+#endif
 }
 
 inline void MemoryBarrierWithResourceCmd(id<MTLRenderCommandEncoder> encoder,
@@ -620,14 +640,44 @@ void CommandBuffer::commit(CommandBufferFinishOperation operation)
     std::lock_guard<std::mutex> lg(mLock);
     if (commitImpl())
     {
-        if (operation == WaitUntilScheduled)
-        {
-            [get() waitUntilScheduled];
-        }
-        else if (operation == WaitUntilFinished)
-        {
-            [get() waitUntilCompleted];
-        }
+        wait(operation);
+    }
+}
+
+void CommandBuffer::wait(CommandBufferFinishOperation operation)
+{
+    // NOTE: A CommandBuffer is valid forever under current conditions (2022-12-22)
+    // except before the first call to restart.
+    if (!valid())
+    {
+        return;
+    }
+
+    // You can't wait on an uncommitted command buffer.
+    ASSERT(mCommitted);
+
+    switch (operation)
+    {
+        case NoWait:
+            break;
+
+        case WaitUntilScheduled:
+            // Only wait if we haven't already waited
+            if (mLastWaitOp == NoWait)
+            {
+                [get() waitUntilScheduled];
+                mLastWaitOp = WaitUntilScheduled;
+            }
+            break;
+
+        case WaitUntilFinished:
+            // Only wait if we haven't already waited until finished.
+            if (mLastWaitOp != WaitUntilFinished)
+            {
+                [get() waitUntilCompleted];
+                mLastWaitOp = WaitUntilFinished;
+            }
+            break;
     }
 }
 
@@ -722,6 +772,7 @@ void CommandBuffer::restart()
     set(metalCmdBuffer);
     mQueueSerial = serial;
     mCommitted   = false;
+    mLastWaitOp  = mtl::NoWait;
 
     for (std::string &marker : mDebugGroups)
     {
@@ -1131,7 +1182,7 @@ void RenderCommandEncoder::reset()
     mCommands.clear();
 }
 
-void RenderCommandEncoder::finalizeLoadStoreAction(
+bool RenderCommandEncoder::finalizeLoadStoreAction(
     MTLRenderPassAttachmentDescriptor *objCRenderPassAttachment)
 {
     if (!objCRenderPassAttachment.texture)
@@ -1139,7 +1190,7 @@ void RenderCommandEncoder::finalizeLoadStoreAction(
         objCRenderPassAttachment.loadAction     = MTLLoadActionDontCare;
         objCRenderPassAttachment.storeAction    = MTLStoreActionDontCare;
         objCRenderPassAttachment.resolveTexture = nil;
-        return;
+        return false;
     }
 
     if (objCRenderPassAttachment.resolveTexture)
@@ -1166,6 +1217,8 @@ void RenderCommandEncoder::finalizeLoadStoreAction(
         // If storeAction hasn't been set for this attachment, we set to dontcare.
         objCRenderPassAttachment.storeAction = MTLStoreActionDontCare;
     }
+
+    return true;
 }
 
 void RenderCommandEncoder::endEncoding()
@@ -1178,6 +1231,8 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
     if (!valid())
         return;
 
+    bool hasAttachment = false;
+
     // Last minute correcting the store options.
     MTLRenderPassDescriptor *objCRenderPassDesc = mCachedRenderPassDescObjC.get();
     for (uint32_t i = 0; i < mRenderPassDesc.numColorAttachments; ++i)
@@ -1185,17 +1240,20 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
         // Update store action set between restart() and endEncoding()
         objCRenderPassDesc.colorAttachments[i].storeAction =
             mRenderPassDesc.colorAttachments[i].storeAction;
-        finalizeLoadStoreAction(objCRenderPassDesc.colorAttachments[i]);
+        if (finalizeLoadStoreAction(objCRenderPassDesc.colorAttachments[i]))
+            hasAttachment = true;
     }
 
     // Update store action set between restart() and endEncoding()
     objCRenderPassDesc.depthAttachment.storeAction = mRenderPassDesc.depthAttachment.storeAction;
-    finalizeLoadStoreAction(objCRenderPassDesc.depthAttachment);
+    if (finalizeLoadStoreAction(objCRenderPassDesc.depthAttachment))
+        hasAttachment = true;
 
     // Update store action set between restart() and endEncoding()
     objCRenderPassDesc.stencilAttachment.storeAction =
         mRenderPassDesc.stencilAttachment.storeAction;
-    finalizeLoadStoreAction(objCRenderPassDesc.stencilAttachment);
+    if (finalizeLoadStoreAction(objCRenderPassDesc.stencilAttachment))
+        hasAttachment = true;
 
     // Set visibility result buffer
     if (mOcclusionQueryPool.getNumRenderPassAllocatedQueries())
@@ -1208,8 +1266,32 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
         objCRenderPassDesc.visibilityResultBuffer = nil;
     }
 
-    // Encode the actual encoder
-    encodeMetalEncoder();
+    // If a render pass has intended side effects but no attachments, the app must set a default
+    // width/height.
+    bool hasSideEffects =
+        hasAttachment || (mRenderPassDesc.defaultWidth != 0 && mRenderPassDesc.defaultHeight != 0);
+
+    // Encode the actual encoder. It will not be created when there are no side effects.
+    if (hasSideEffects)
+    {
+        // Metal validation messages say: Either set rendertargets in RenderPassDescriptor or set
+        // defaultRasterSampleCount.
+        ASSERT(hasAttachment || objCRenderPassDesc.defaultRasterSampleCount != 0);
+        encodeMetalEncoder();
+    }
+    else if (!hasSideEffects && hasDrawCalls())
+    {
+        // Command encoder should not have been created if no side effects occur, but draw calls do.
+        UNREACHABLE();
+        // Fallback to clearing commands if on release.
+        mCommands.clear();
+    }
+    // If no side effects, and no drawing is encoded, there's no point in encoding. Skip the
+    // commands.
+    else
+    {
+        mCommands.clear();
+    }
 
     CommandEncoder::endEncoding();
 
@@ -1675,6 +1757,7 @@ RenderCommandEncoder &RenderCommandEncoder::setSamplerState(gl::ShaderType shade
 
     return *this;
 }
+
 RenderCommandEncoder &RenderCommandEncoder::setTexture(gl::ShaderType shaderType,
                                                        const TextureRef &texture,
                                                        uint32_t index)
@@ -1700,6 +1783,19 @@ RenderCommandEncoder &RenderCommandEncoder::setTexture(gl::ShaderType shaderType
         .push(index);
 
     return *this;
+}
+
+RenderCommandEncoder &RenderCommandEncoder::setRWTexture(gl::ShaderType shaderType,
+                                                         const TextureRef &texture,
+                                                         uint32_t index)
+{
+    if (index >= kMaxShaderSamplers)
+    {
+        return *this;
+    }
+
+    cmdBuffer().setWriteDependency(texture);
+    return setTexture(shaderType, texture, index);
 }
 
 RenderCommandEncoder &RenderCommandEncoder::draw(MTLPrimitiveType primitiveType,
@@ -1869,6 +1965,14 @@ RenderCommandEncoder &RenderCommandEncoder::useResource(const BufferRef &resourc
         .push(usage)
         .push(states);
 
+    return *this;
+}
+
+RenderCommandEncoder &RenderCommandEncoder::memoryBarrier(mtl::BarrierScope scope,
+                                                          mtl::RenderStages after,
+                                                          mtl::RenderStages before)
+{
+    mCommands.push(CmdType::MemoryBarrier).push(scope).push(after).push(before);
     return *this;
 }
 

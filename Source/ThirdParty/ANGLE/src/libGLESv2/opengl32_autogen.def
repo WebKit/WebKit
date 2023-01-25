@@ -481,6 +481,8 @@ EXPORTS
     glMultiDrawArraysInstancedBaseInstanceANGLE
     glMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE
 
+    ; GL_ANGLE_clip_cull_distance
+
     ; GL_ANGLE_copy_texture_3d
     glCopySubTexture3DANGLE
     glCopyTexture3DANGLE
@@ -790,6 +792,9 @@ EXPORTS
     ; GL_EXT_multisampled_render_to_texture2
 
     ; GL_EXT_occlusion_query_boolean
+
+    ; GL_EXT_polygon_offset_clamp
+    glPolygonOffsetClampEXT
 
     ; GL_EXT_primitive_bounding_box
     glPrimitiveBoundingBoxEXT

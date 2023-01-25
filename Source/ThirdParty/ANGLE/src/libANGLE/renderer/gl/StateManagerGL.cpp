@@ -2104,6 +2104,12 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                         updateMultiviewBaseViewLayerIndexUniform(
                             program, state.getDrawFramebuffer()->getImplementation()->getState());
                     }
+
+                    if (mFeatures.emulateClipDistanceState.enabled)
+                    {
+                        updateEmulatedClipDistanceState(executable, program,
+                                                        state.getEnabledClipDistances());
+                    }
                 }
 
                 if (!program ||
@@ -2189,6 +2195,12 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                     {
                         case gl::State::EXTENDED_DIRTY_BIT_CLIP_DISTANCES:
                             setClipDistancesEnable(state.getEnabledClipDistances());
+                            if (mFeatures.emulateClipDistanceState.enabled)
+                            {
+                                updateEmulatedClipDistanceState(state.getProgramExecutable(),
+                                                                state.getProgram(),
+                                                                state.getEnabledClipDistances());
+                            }
                             break;
                         case gl::State::EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED:
                             setLogicOpEnabled(state.isLogicOpEnabled());
@@ -2535,6 +2547,19 @@ void StateManagerGL::updateMultiviewBaseViewLayerIndexUniformImpl(
     if (drawFramebufferState.isMultiview())
     {
         programGL->enableLayeredRenderingPath(drawFramebufferState.getBaseViewIndex());
+    }
+}
+
+void StateManagerGL::updateEmulatedClipDistanceState(
+    const gl::ProgramExecutable *executable,
+    const gl::Program *program,
+    const gl::State::ClipDistanceEnableBits enables) const
+{
+    ASSERT(mFeatures.emulateClipDistanceState.enabled);
+    if (executable && executable->hasClipDistance())
+    {
+        const ProgramGL *programGL = GetImplAs<ProgramGL>(program);
+        programGL->updateEnabledClipDistances(static_cast<uint8_t>(enables.bits()));
     }
 }
 

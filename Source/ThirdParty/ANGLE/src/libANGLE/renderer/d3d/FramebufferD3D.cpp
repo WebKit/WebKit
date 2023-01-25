@@ -57,7 +57,7 @@ ClearParameters GetClearParameters(const gl::State &state, GLbitfield mask)
     {
         clearParams.scissorEnabled = true;
         clearParams.scissor        = gl::Rectangle(surfaceTextureOffset.x, surfaceTextureOffset.y,
-                                            framebufferSize.width, framebufferSize.height);
+                                                   framebufferSize.width, framebufferSize.height);
     }
 
     const bool clearColor =
@@ -368,7 +368,7 @@ const gl::AttachmentList &FramebufferD3D::getColorAttachmentsForRender(const gl:
             // it to be attached to a new binding point.
             if (mMockAttachment.isAttached())
             {
-                mMockAttachment.detach(context, Serial());
+                mMockAttachment.detach(context, UniqueSerial());
             }
 
             gl::Texture *mockTex = nullptr;
@@ -379,7 +379,7 @@ const gl::AttachmentList &FramebufferD3D::getColorAttachmentsForRender(const gl:
                 gl::ImageIndex index = gl::ImageIndex::Make2D(0);
                 mMockAttachment      = gl::FramebufferAttachment(
                     context, GL_TEXTURE, GL_COLOR_ATTACHMENT0_EXT + activeProgramLocation, index,
-                    mockTex, Serial());
+                    mockTex, UniqueSerial());
                 colorAttachmentsForRender.push_back(&mMockAttachment);
             }
         }
@@ -395,7 +395,7 @@ void FramebufferD3D::destroy(const gl::Context *context)
 {
     if (mMockAttachment.isAttached())
     {
-        mMockAttachment.detach(context, Serial());
+        mMockAttachment.detach(context, UniqueSerial());
     }
 }
 

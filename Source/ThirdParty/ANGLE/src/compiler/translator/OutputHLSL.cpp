@@ -312,6 +312,8 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
                        PerformanceDiagnostics *perfDiagnostics,
                        const std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap,
                        const std::vector<InterfaceBlock> &shaderStorageBlocks,
+                       uint8_t clipDistanceSize,
+                       uint8_t cullDistanceSize,
                        bool isEarlyFragmentTestsSpecified)
     : TIntermTraverser(true, true, true, symbolTable),
       mShaderType(shaderType),
@@ -329,11 +331,11 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
       mCurrentFunctionMetadata(nullptr),
       mWorkGroupSize(workGroupSize),
       mPerfDiagnostics(perfDiagnostics),
+      mClipDistanceSize(clipDistanceSize),
+      mCullDistanceSize(cullDistanceSize),
       mIsEarlyFragmentTestsSpecified(isEarlyFragmentTestsSpecified),
       mNeedStructMapping(false)
 {
-    mUsesClipDistance     = false;
-    mUsesCullDistance     = false;
     mUsesFragColor        = false;
     mUsesFragData         = false;
     mUsesDepthRange       = false;
@@ -907,18 +909,26 @@ void OutputHLSL::header(TInfoSinkBase &out,
                    "\n";
         }
 
-        if (mUsesClipDistance)
+        if (mClipDistanceSize)
         {
-            out << (mUsesCullDistance
-                        ? "static float gl_ClipDistance[4] = {0, 0, 0, 0};\n"
-                        : "static float gl_ClipDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+            out << "static float gl_ClipDistance[" << static_cast<int>(mClipDistanceSize)
+                << "] = {0";
+            for (unsigned int i = 1; i < mClipDistanceSize; i++)
+            {
+                out << ", 0";
+            }
+            out << "};\n";
         }
 
-        if (mUsesCullDistance)
+        if (mCullDistanceSize)
         {
-            out << (mUsesClipDistance
-                        ? "static float gl_CullDistance[4] = {0, 0, 0, 0};\n"
-                        : "static float gl_CullDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+            out << "static float gl_CullDistance[" << static_cast<int>(mCullDistanceSize)
+                << "] = {0";
+            for (unsigned int i = 1; i < mCullDistanceSize; i++)
+            {
+                out << ", 0";
+            }
+            out << "};\n";
         }
 
         if (usingMRTExtension && mNumRenderTargets > 1)
@@ -948,18 +958,26 @@ void OutputHLSL::header(TInfoSinkBase &out,
         out << "\n"
                "static float4 gl_Position = float4(0, 0, 0, 0);\n";
 
-        if (mUsesClipDistance)
+        if (mClipDistanceSize)
         {
-            out << (mUsesCullDistance
-                        ? "static float gl_ClipDistance[4] = {0, 0, 0, 0};\n"
-                        : "static float gl_ClipDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+            out << "static float gl_ClipDistance[" << static_cast<int>(mClipDistanceSize)
+                << "] = {0";
+            for (size_t i = 1; i < mClipDistanceSize; i++)
+            {
+                out << ", 0";
+            }
+            out << "};\n";
         }
 
-        if (mUsesCullDistance)
+        if (mCullDistanceSize)
         {
-            out << (mUsesClipDistance
-                        ? "static float gl_CullDistance[4] = {0, 0, 0, 0};\n"
-                        : "static float gl_CullDistance[8] = {0, 0, 0, 0, 0, 0, 0, 0};\n");
+            out << "static float gl_CullDistance[" << static_cast<int>(mCullDistanceSize)
+                << "] = {0";
+            for (size_t i = 1; i < mCullDistanceSize; i++)
+            {
+                out << ", 0";
+            }
+            out << "};\n";
         }
 
         if (mUsesPointSize)
@@ -1031,7 +1049,7 @@ void OutputHLSL::header(TInfoSinkBase &out,
                 out << "    uint dx_VertexID : packoffset(c4.y);\n";
             }
 
-            if (mUsesClipDistance)
+            if (mClipDistanceSize)
             {
                 out << "    uint clipDistancesEnabled : packoffset(c4.z);\n";
             }
@@ -1141,16 +1159,6 @@ void OutputHLSL::header(TInfoSinkBase &out,
     mTextureFunctionHLSL->textureFunctionHeader(out, mOutputType, getDimensionsIgnoresBaseLevel);
     mImageFunctionHLSL->imageFunctionHeader(out);
     mAtomicCounterFunctionHLSL->atomicCounterFunctionHeader(out);
-
-    if (mUsesClipDistance)
-    {
-        out << "#define GL_USES_CLIP_DISTANCE\n";
-    }
-
-    if (mUsesCullDistance)
-    {
-        out << "#define GL_USES_CULL_DISTANCE\n";
-    }
 
     if (mUsesFragCoord)
     {
@@ -1311,12 +1319,10 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
         }
         else if (qualifier == EvqClipDistance)
         {
-            mUsesClipDistance = true;
             out << name;
         }
         else if (qualifier == EvqCullDistance)
         {
-            mUsesCullDistance = true;
             out << name;
         }
         else if (qualifier == EvqFragColor)

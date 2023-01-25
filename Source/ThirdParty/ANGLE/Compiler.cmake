@@ -5,14 +5,12 @@
 # Use of this source code is governed by a BSD - style license that can be
 # found in the LICENSE file.
 
-
 set(angle_translator_exported_headers
     "include/GLSLANG/ShaderLang.h"
     "include/GLSLANG/ShaderVars.h"
     "src/compiler/translator/blocklayout.h"
     "src/compiler/translator/blocklayoutHLSL.h"
 )
-
 
 set(angle_translator_sources
     "include/EGL/egl.h"
@@ -136,6 +134,8 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/ConvertUnsupportedConstructorsToFunctionCalls.h"
     "src/compiler/translator/tree_ops/DeclareAndInitBuiltinsForInstancedMultiview.cpp"
     "src/compiler/translator/tree_ops/DeclareAndInitBuiltinsForInstancedMultiview.h"
+    "src/compiler/translator/tree_ops/DeclarePerVertexBlocks.cpp"
+    "src/compiler/translator/tree_ops/DeclarePerVertexBlocks.h"
     "src/compiler/translator/tree_ops/DeferGlobalInitializers.cpp"
     "src/compiler/translator/tree_ops/DeferGlobalInitializers.h"
     "src/compiler/translator/tree_ops/EmulateGLFragColorBroadcast.cpp"
@@ -247,21 +247,25 @@ set(angle_translator_sources
     "src/compiler/translator/util.cpp"
     "src/compiler/translator/util.h"
 )
+
 set(angle_translator_glsl_base_sources
     "src/compiler/translator/OutputGLSLBase.cpp"
     "src/compiler/translator/OutputGLSLBase.h"
 )
+
 set(angle_translator_glsl_and_vulkan_base_sources
     "src/compiler/translator/BuiltinsWorkaroundGLSL.cpp"
     "src/compiler/translator/BuiltinsWorkaroundGLSL.h"
     "src/compiler/translator/OutputGLSL.cpp"
     "src/compiler/translator/OutputGLSL.h"
 )
+
 set(angle_translator_essl_sources
     "src/compiler/translator/OutputESSL.cpp"
     "src/compiler/translator/OutputESSL.h"
     "src/compiler/translator/TranslatorESSL.cpp"
 )
+
 set(angle_translator_glsl_sources
     "src/compiler/translator/BuiltInFunctionEmulatorGLSL.cpp"
     "src/compiler/translator/BuiltInFunctionEmulatorGLSL.h"
@@ -274,6 +278,7 @@ set(angle_translator_glsl_sources
     "src/compiler/translator/tree_ops/gl/RewriteRepeatedAssignToSwizzled.cpp"
     "src/compiler/translator/tree_ops/gl/UseInterfaceBlockFields.cpp"
 )
+
 set(angle_translator_apple_sources
     "src/compiler/translator/tree_ops/apple/AddAndTrueToLoopCondition.cpp"
     "src/compiler/translator/tree_ops/apple/RewriteDoWhile.cpp"
@@ -281,6 +286,7 @@ set(angle_translator_apple_sources
     "src/compiler/translator/tree_ops/apple/RewriteUnaryMinusOperatorFloat.cpp"
     "src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp"
 )
+
 set(angle_translator_hlsl_sources
     "src/compiler/translator/ASTMetadataHLSL.cpp"
     "src/compiler/translator/ASTMetadataHLSL.h"
@@ -342,14 +348,13 @@ set(angle_translator_hlsl_sources
     "src/compiler/translator/tree_ops/d3d/WrapSwitchStatementsInBlocks.cpp"
     "src/compiler/translator/tree_ops/d3d/WrapSwitchStatementsInBlocks.h"
 )
+
 set(angle_translator_lib_vulkan_sources
     "src/compiler/translator/BuildSPIRV.cpp"
     "src/compiler/translator/BuildSPIRV.h"
     "src/compiler/translator/OutputSPIRV.cpp"
     "src/compiler/translator/OutputSPIRV.h"
     "src/compiler/translator/TranslatorVulkan.cpp"
-    "src/compiler/translator/tree_ops/vulkan/DeclarePerVertexBlocks.cpp"
-    "src/compiler/translator/tree_ops/vulkan/DeclarePerVertexBlocks.h"
     "src/compiler/translator/tree_ops/vulkan/EmulateAdvancedBlendEquations.cpp"
     "src/compiler/translator/tree_ops/vulkan/EmulateAdvancedBlendEquations.h"
     "src/compiler/translator/tree_ops/vulkan/EmulateDithering.cpp"
@@ -368,16 +373,15 @@ set(angle_translator_lib_vulkan_sources
     "src/compiler/translator/tree_ops/vulkan/RewriteR32fImages.h"
 )
 
-
 set(angle_translator_essl_symbol_table_sources
     "src/compiler/translator/ImmutableString_ESSL_autogen.cpp"
     "src/compiler/translator/SymbolTable_ESSL_autogen.cpp"
 )
+
 set(angle_translator_glsl_symbol_table_sources
     "src/compiler/translator/ImmutableString_autogen.cpp"
     "src/compiler/translator/SymbolTable_autogen.cpp"
 )
-
 
 set(angle_translator_lib_metal_sources
     "src/compiler/translator/DriverUniformMetal.cpp"
@@ -447,7 +451,6 @@ set(angle_translator_lib_metal_sources
     "src/compiler/translator/TranslatorMetalDirect/WrapMain.cpp"
     "src/compiler/translator/TranslatorMetalDirect/WrapMain.h"
 )
-
 
 set(angle_preprocessor_sources
     "src/compiler/preprocessor/DiagnosticsBase.cpp"

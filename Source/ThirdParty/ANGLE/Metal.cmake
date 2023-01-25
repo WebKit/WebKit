@@ -6,15 +6,11 @@
 # found in the LICENSE file.
 #
 # This file houses the build configuration for the ANGLE Metal back-end.
+# Copyright 2022 The ANGLE Project Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
 
-
-
-
-
-
-
-
-set(_metal_backend_sources
+set(metal_backend_sources
     "src/libANGLE/renderer/metal/BufferMtl.h"
     "src/libANGLE/renderer/metal/BufferMtl.mm"
     "src/libANGLE/renderer/metal/CompilerMtl.h"
@@ -56,6 +52,8 @@ set(_metal_backend_sources
     "src/libANGLE/renderer/metal/TransformFeedbackMtl.mm"
     "src/libANGLE/renderer/metal/VertexArrayMtl.h"
     "src/libANGLE/renderer/metal/VertexArrayMtl.mm"
+    "src/libANGLE/renderer/metal/mtl_buffer_manager.h"
+    "src/libANGLE/renderer/metal/mtl_buffer_manager.mm"
     "src/libANGLE/renderer/metal/mtl_buffer_pool.h"
     "src/libANGLE/renderer/metal/mtl_buffer_pool.mm"
     "src/libANGLE/renderer/metal/mtl_command_buffer.h"
@@ -68,8 +66,8 @@ set(_metal_backend_sources
     "src/libANGLE/renderer/metal/mtl_format_table_autogen.mm"
     "src/libANGLE/renderer/metal/mtl_format_utils.h"
     "src/libANGLE/renderer/metal/mtl_format_utils.mm"
-    "src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
-    "src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm"
+    "src/libANGLE/renderer/metal/mtl_msl_utils.h"
+    "src/libANGLE/renderer/metal/mtl_msl_utils.mm"
     "src/libANGLE/renderer/metal/mtl_occlusion_query_pool.h"
     "src/libANGLE/renderer/metal/mtl_occlusion_query_pool.mm"
     "src/libANGLE/renderer/metal/mtl_render_utils.h"
@@ -86,4 +84,3 @@ set(_metal_backend_sources
     "src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc"
     "src/libANGLE/renderer/metal/shaders/rewrite_indices_shared.h"
 )
-

@@ -136,8 +136,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
     // GL_ANGLE_shader_pixel_local_storage.
     if (displayMtl->getNativeExtensions().shaderPixelLocalStorageANGLE)
     {
-        options->pls.type                        = displayMtl->getNativePixelLocalStorageType();
-        options->pls.fragmentSynchronizationType = displayMtl->getPLSSynchronizationType();
+        options->pls = displayMtl->getNativePixelLocalStorageOptions();
     }
 
     return compileImplMtl(context, compilerInstance, getState().getSource(), options);

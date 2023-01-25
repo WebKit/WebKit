@@ -180,6 +180,14 @@
             ]
         },
         {
+            "name": "allow_renderpass_without_attachment",
+            "category": "Features",
+            "description": [
+                "Allow creation of render passes without any attachments"
+            ]
+        },
+
+        {
             "name": "multisample_color_format_shader_read_workaround",
             "category": "Workarounds",
             "description": [
@@ -275,6 +283,30 @@
                 "Makes bufferSubData always update via CPU"
             ],
             "issue": "http://anglebug.com/7544"
+        },
+        {
+            "name": "disable_programmable_blending",
+            "category": "Features",
+            "description": [
+                "Disable programmable blending in order to test read_write pixel local storage textures"
+            ],
+            "issue": "http://anglebug.com/7279"
+        },
+        {
+            "name": "disable_r_w_texture_tier2_support",
+            "category": "Features",
+            "description": [
+                "Disable tier2 read_write textures in order to test tier1 support"
+            ],
+            "issue": "http://anglebug.com/7279"
+        },
+        {
+            "name": "disable_raster_order_groups",
+            "category": "Features",
+            "description": [
+                "Disable raster order groups in order to test pixel local storage memory barriers"
+            ],
+            "issue": "http://anglebug.com/7279"
         }
     ]
 }

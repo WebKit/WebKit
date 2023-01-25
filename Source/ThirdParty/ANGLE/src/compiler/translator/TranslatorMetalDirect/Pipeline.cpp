@@ -138,6 +138,9 @@ bool Pipeline::uses(const TVariable &var) const
         case Type::Texture:
             return IsSampler(nodeType.getBasicType());
 
+        case Type::Image:
+            return IsImage(nodeType.getBasicType());
+
         case Type::InstanceId:
             return Name(var) == Name(*BuiltInVariable::gl_InstanceID());
     }
@@ -177,6 +180,9 @@ Name Pipeline::getStructTypeName(Variant variant) const
             break;
         case Type::Texture:
             name = VARIANT_NAME(variant, "TextureEnvs");
+            break;
+        case Type::Image:
+            name = VARIANT_NAME(variant, "Images");
             break;
         case Type::InstanceId:
             name = VARIANT_NAME(variant, "InstanceId");
@@ -222,6 +228,9 @@ Name Pipeline::getStructInstanceName(Variant variant) const
         case Type::Texture:
             name = VARIANT_NAME(variant, "textureEnvs");
             break;
+        case Type::Image:
+            name = VARIANT_NAME(variant, "images");
+            break;
         case Type::InstanceId:
             name = VARIANT_NAME(variant, "instanceId");
             break;
@@ -250,6 +259,7 @@ static bool AllowPacking(Pipeline::Type type)
         case Type::InvocationVertexGlobals:
         case Type::InvocationFragmentGlobals:
         case Type::Texture:
+        case Type::Image:
         case Type::InstanceId:
             return false;
     }
@@ -274,6 +284,7 @@ static bool AllowPadding(Pipeline::Type type)
             return true;
 
         case Type::Texture:
+        case Type::Image:
         case Type::InstanceId:
             return false;
     }
@@ -404,6 +415,7 @@ ModifyStructConfig Pipeline::externalStructModifyConfig() const
         case Type::InvocationVertexGlobals:
         case Type::InvocationFragmentGlobals:
         case Type::Texture:
+        case Type::Image:
         case Type::InstanceId:
             break;
     }
@@ -420,6 +432,7 @@ bool Pipeline::alwaysRequiresLocalVariableDeclarationInMain() const
         case Type::UserUniforms:
         case Type::AngleUniforms:
         case Type::UniformBuffer:
+        case Type::Image:
             return false;
 
         case Type::VertexOut:
@@ -445,6 +458,7 @@ bool Pipeline::isPipelineOut() const
         case Type::InvocationVertexGlobals:
         case Type::InvocationFragmentGlobals:
         case Type::Texture:
+        case Type::Image:
         case Type::InstanceId:
         case Type::UniformBuffer:
             return false;
@@ -465,6 +479,7 @@ AddressSpace Pipeline::externalAddressSpace() const
         case Type::InvocationVertexGlobals:
         case Type::InvocationFragmentGlobals:
         case Type::Texture:
+        case Type::Image:
         case Type::InstanceId:
         case Type::FragmentOut:
         case Type::VertexOut:

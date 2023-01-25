@@ -3051,7 +3051,8 @@ angle::Result Renderer9::getVertexSpaceRequired(const gl::Context *context,
 void Renderer9::generateCaps(gl::Caps *outCaps,
                              gl::TextureCapsMap *outTextureCaps,
                              gl::Extensions *outExtensions,
-                             gl::Limitations *outLimitations) const
+                             gl::Limitations *outLimitations,
+                             ShPixelLocalStorageOptions *outPLSOptions) const
 {
     d3d9_gl::GenerateCaps(mD3d9, mDevice, mDeviceType, mAdapter, outCaps, outTextureCaps,
                           outExtensions, outLimitations);

@@ -89,13 +89,6 @@
 # Skip because Timeout
 
 # ES3 Flaky
-6510 : FenceSyncTest.BasicOperations/* = FLAKY
-6510 : FenceSyncTest.BasicQueries/* = FLAKY
-6510 : FenceSyncTest.IsSync/* = FLAKY
-6510 : FenceSyncTest.Errors/* = FLAKY
-6510 : FenceSyncTest.MultipleFenceDraw/* = FLAKY
-6510 : FenceSyncTest.NullLength/* = FLAKY
-
 6631 : MultithreadingTest.MultiContextCreateAndDeleteResources/* = CRASH
 6631 WIN : MultithreadingTestES3.MultithreadFenceDraw/* = CRASH
 6631 WIN : MultithreadingTestES3.MultithreadFenceTexImage/* = CRASH

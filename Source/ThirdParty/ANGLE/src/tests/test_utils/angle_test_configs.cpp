@@ -215,6 +215,10 @@ std::ostream &operator<<(std::ostream &stream, const PlatformParameters &pp)
         case GLESDriverType::AngleEGL:
             stream << GetRendererName(pp.eglParameters.renderer);
             break;
+        case GLESDriverType::AngleVulkanSecondariesEGL:
+            ASSERT(pp.eglParameters.renderer == EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE);
+            stream << "ANGLE_Vulkan_Secondaries";
+            break;
         case GLESDriverType::SystemWGL:
             stream << "WGL";
             break;
@@ -889,6 +893,31 @@ PlatformParameters ES2_EGL()
 PlatformParameters ES3_EGL()
 {
     return PlatformParameters(EGL_OPENGL_ES_API, 3, 0, 0, GLESDriverType::SystemEGL);
+}
+
+PlatformParameters ES1_ANGLE_Vulkan_Secondaries()
+{
+    return WithVulkanSecondaries(ES1_VULKAN());
+}
+
+PlatformParameters ES2_ANGLE_Vulkan_Secondaries()
+{
+    return WithVulkanSecondaries(ES2_VULKAN());
+}
+
+PlatformParameters ES3_ANGLE_Vulkan_Secondaries()
+{
+    return WithVulkanSecondaries(ES3_VULKAN());
+}
+
+PlatformParameters ES31_ANGLE_Vulkan_Secondaries()
+{
+    return WithVulkanSecondaries(ES31_VULKAN());
+}
+
+PlatformParameters ES32_ANGLE_Vulkan_Secondaries()
+{
+    return WithVulkanSecondaries(ES32_VULKAN());
 }
 
 PlatformParameters ES1_Zink()

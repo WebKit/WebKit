@@ -133,9 +133,16 @@ class FramebufferVk : public FramebufferImpl
     {
         mReadOnlyDepthFeedbackLoopMode = readOnlyDepthFeedbackModeEnabled;
     }
+    void setReadOnlyStencilFeedbackLoopMode(bool readOnlyStencilFeedbackModeEnabled)
+    {
+        mReadOnlyStencilFeedbackLoopMode = readOnlyStencilFeedbackModeEnabled;
+    }
     bool isReadOnlyDepthFeedbackLoopMode() const { return mReadOnlyDepthFeedbackLoopMode; }
-    void updateRenderPassReadOnlyDepthMode(ContextVk *contextVk,
+    bool isReadOnlyStencilFeedbackLoopMode() const { return mReadOnlyStencilFeedbackLoopMode; }
+    void updateRenderPassDepthReadOnlyMode(ContextVk *contextVk,
                                            vk::RenderPassCommandBufferHelper *renderPass);
+    void updateRenderPassStencilReadOnlyMode(ContextVk *contextVk,
+                                             vk::RenderPassCommandBufferHelper *renderPass);
 
     void switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch);
 
@@ -146,7 +153,14 @@ class FramebufferVk : public FramebufferImpl
 
     void releaseCurrentFramebuffer(ContextVk *contextVk);
 
-    vk::RenderPassSerial getLastRenderPassSerial() const { return mLastRenderPassSerial; }
+    const QueueSerial &getLastRenderPassQueueSerial() const { return mLastRenderPassQueueSerial; }
+
+    bool attachmentHasAHB() const { return mIsAHBColorAttachments.any(); }
+
+    bool hasFrontBufferUsage() const
+    {
+        return (mAttachmentHasFrontBufferUsage & mState.getColorAttachmentsMask()).any();
+    }
 
     enum class RenderTargetImage
     {
@@ -174,6 +188,12 @@ class FramebufferVk : public FramebufferImpl
         vk::FramebufferAttachmentsVector<RenderTargetInfo> *renderTargetsInfoOut);
 
   private:
+    enum class ClearWithCommand
+    {
+        Always,
+        OptimizeWithLoadOp,
+    };
+
     // The 'in' rectangles must be clipped to the scissor and FBO. The clipping is done in 'blit'.
     angle::Result blitWithCommand(ContextVk *contextVk,
                                   const gl::Rectangle &sourceArea,
@@ -220,7 +240,10 @@ class FramebufferVk : public FramebufferImpl
     void redeferClears(ContextVk *contextVk);
     void redeferClearsForReadFramebuffer(ContextVk *contextVk);
     void redeferClearsImpl(ContextVk *contextVk);
-    void clearWithCommand(ContextVk *contextVk, const gl::Rectangle &scissoredRenderArea);
+    void clearWithCommand(ContextVk *contextVk,
+                          const gl::Rectangle &scissoredRenderArea,
+                          ClearWithCommand behavior,
+                          vk::ClearValuesArray *clears);
     void clearWithLoadOp(ContextVk *contextVk);
     void updateActiveColorMasks(size_t colorIndex, bool r, bool g, bool b, bool a);
     void updateRenderPassDesc(ContextVk *contextVk);
@@ -239,6 +262,10 @@ class FramebufferVk : public FramebufferImpl
 
     RenderTargetVk *getReadPixelsRenderTarget(GLenum format) const;
     VkImageAspectFlagBits getReadPixelsAspectFlags(GLenum format) const;
+
+    void updateRenderPassDepthStencilReadOnlyMode(ContextVk *contextVk,
+                                                  VkImageAspectFlags dsAspectFlags,
+                                                  vk::RenderPassCommandBufferHelper *renderPass);
 
     VkClearValue getCorrectedColorClearValue(size_t colorIndexGL,
                                              const VkClearColorValue &clearColor) const;
@@ -274,17 +301,19 @@ class FramebufferVk : public FramebufferImpl
 
     vk::ClearValuesArray mDeferredClears;
 
-    // Tracks if we are in depth feedback loop. Depth read only feedback loop is a special kind of
-    // depth stencil read only mode. When we are in feedback loop, we must flush renderpass to exit
-    // the loop instead of update the layout.
+    // Tracks if we are in depth/stencil *read-only* feedback loop.  This is specially allowed as
+    // both usages (attachment and texture) are read-only.  When switching away from read-only
+    // feedback loop, the render pass is broken is to accommodate the new writable layout.
     bool mReadOnlyDepthFeedbackLoopMode;
+    bool mReadOnlyStencilFeedbackLoopMode;
 
     gl::DrawBufferMask mIsAHBColorAttachments;
+    gl::DrawBufferMask mAttachmentHasFrontBufferUsage;
 
     bool mIsCurrentFramebufferCached;
 
     // Serial of the render pass this framebuffer has opened, if any.
-    vk::RenderPassSerial mLastRenderPassSerial;
+    QueueSerial mLastRenderPassQueueSerial;
 };
 }  // namespace rx
 

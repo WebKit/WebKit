@@ -129,8 +129,8 @@ namespace impl
 {
 static constexpr size_t kSwapHistorySize = 2;
 
-// Old swapchain and associated present semaphores that need to be scheduled for destruction when
-// appropriate.
+// Old swapchain and associated present semaphores that need to be scheduled for
+// recycling/destruction when appropriate.
 struct SwapchainCleanupData : angle::NonCopyable
 {
     SwapchainCleanupData();
@@ -141,27 +141,37 @@ struct SwapchainCleanupData : angle::NonCopyable
 
     // The swapchain to be destroyed.
     VkSwapchainKHR swapchain = VK_NULL_HANDLE;
-    // Any present semaphores that were pending destruction at the time the swapchain was
-    // recreated will be scheduled for destruction at the same time as the swapchain.
+    // Any present semaphores that were pending recycle at the time the swapchain was recreated will
+    // be scheduled for recycling at the same time as the swapchain's destruction.
     std::vector<vk::Semaphore> semaphores;
 };
 
-// A circular buffer per image stores the semaphores used for presenting that image.  Taking the
-// swap history into account, only the oldest semaphore is guaranteed to be no longer in use by the
-// presentation engine.  See doc/PresentSemaphores.md for details.
+// Each present operation is associated with a wait semaphore.  To know when that semaphore can be
+// recycled, a fence is used in the call to vkAcquireNextImageKHR.  When that fence is signaled, the
+// semaphore used in the last present operation involving the returned image can be recycled.  See
+// doc/PresentSemaphores.md for details.
 //
-// Old swapchains are scheduled to be destroyed at the same time as the first semaphore used to
-// present an image of the new swapchain.  This is to ensure that the presentation engine is no
-// longer presenting an image from the old swapchain.
-struct ImagePresentHistory : angle::NonCopyable
+// Old swapchains are scheduled to be destroyed at the same time as the last wait semaphore used to
+// present an image to the old swapchains can be recycled.
+struct ImagePresentOperation : angle::NonCopyable
 {
-    ImagePresentHistory();
-    ImagePresentHistory(ImagePresentHistory &&other);
-    ImagePresentHistory &operator=(ImagePresentHistory &&other);
-    ~ImagePresentHistory();
+    ImagePresentOperation();
+    ImagePresentOperation(ImagePresentOperation &&other);
+    ImagePresentOperation &operator=(ImagePresentOperation &&other);
+    ~ImagePresentOperation();
 
+    void destroy(VkDevice device,
+                 vk::Recycler<vk::Fence> *fenceRecycler,
+                 vk::Recycler<vk::Semaphore> *semaphoreRecycler);
+
+    vk::Fence fence;
     vk::Semaphore semaphore;
     std::vector<SwapchainCleanupData> oldSwapchains;
+
+    // Used to associate an acquire fence with the previous present operation of the image.
+    // Only relevant when VK_EXT_swapchain_maintenance1 is not supported; otherwise a fence is
+    // always associated with the present operation.
+    uint32_t imageIndex;
 };
 
 // Swapchain images and their associated objects.
@@ -177,9 +187,6 @@ struct SwapchainImage : angle::NonCopyable
     vk::Framebuffer fetchFramebuffer;
     vk::Framebuffer framebufferResolveMS;
 
-    // A circular array of semaphores used for presenting this image.
-    static constexpr size_t kPresentHistorySize = kSwapHistorySize + 1;
-    angle::CircularBuffer<ImagePresentHistory, kPresentHistorySize> presentHistory;
     uint64_t mFrameNumber = 0;
 };
 }  // namespace impl
@@ -350,17 +357,24 @@ class WindowSurfaceVk : public SurfaceVk
     angle::Result computePresentOutOfDate(vk::Context *context,
                                           VkResult result,
                                           bool *presentOutOfDate);
+    angle::Result prePresentSubmit(ContextVk *contextVk, const vk::Semaphore &presentSemaphore);
     angle::Result present(ContextVk *contextVk,
                           const EGLint *rects,
                           EGLint n_rects,
                           const void *pNextChain,
                           bool *presentOutOfDate);
 
+    angle::Result cleanUpPresentHistory(vk::Context *context);
+
+    // Throttle the CPU such that application's logic and command buffer recording doesn't get more
+    // than two frame ahead of the frame being rendered (and three frames ahead of the one being
+    // presented).  This is a failsafe, as the application should ensure command buffer recording is
+    // not ahead of the frame being rendered by *one* frame.
+    angle::Result throttleCPU(ContextVk *contextVk, const QueueSerial &currentSubmitSerial);
+
     void updateOverlay(ContextVk *contextVk) const;
     bool overlayHasEnabledWidget(ContextVk *contextVk) const;
     angle::Result drawOverlay(ContextVk *contextVk, impl::SwapchainImage *image) const;
-
-    angle::Result newPresentSemaphore(vk::Context *context, vk::Semaphore *semaphoreOut);
 
     bool isMultiSampled() const;
 
@@ -378,8 +392,11 @@ class WindowSurfaceVk : public SurfaceVk
     VkCompositeAlphaFlagBitsKHR mCompositeAlpha;
 
     // A circular buffer that stores the serial of the submission fence of the context on every
-    // swap. The CPU is throttled by waiting for the 2nd previous serial to finish.
-    angle::CircularBuffer<Serial, impl::kSwapHistorySize> mSwapHistory;
+    // swap. The CPU is throttled by waiting for the 2nd previous serial to finish.  This should
+    // normally be a no-op, as the application should pace itself to avoid input lag, and is
+    // implemented in ANGLE as a fail safe.  Removing this throttling requires untangling it from
+    // acquire semaphore recycling (see mAcquireImageSemaphores below)
+    angle::CircularBuffer<QueueSerial, impl::kSwapHistorySize> mSwapHistory;
 
     // The previous swapchain which needs to be scheduled for destruction when appropriate.  This
     // will be done when the first image of the current swapchain is presented.  If there were
@@ -398,16 +415,18 @@ class WindowSurfaceVk : public SurfaceVk
     // number of semaphores that are used to acquire swapchain images, and that is
     // kSwapHistorySize+1:
     //
-    //                    Unrelated submission in      Submission as part of
-    //                      the middle of frame            buffer swap
-    //                               |                          |
-    //                               V                          V
-    //     Frame i:     ... ANI ... QS (fence Fa) ... Wait(..) QS (Fence Fb) QP
-    //     Frame i+1:   ... ANI ... QS (fence Fc) ... Wait(..) QS (Fence Fd) QP
-    //     Frame i+2:   ... ANI ... QS (fence Fe) ... Wait(Fb) QS (Fence Ff) QP
-    //                                                 ^
-    //                                                 |
-    //                                          CPU throttling
+    //             Unrelated submission in     Submission as part of
+    //               the middle of frame          buffer swap
+    //                              |                 |
+    //                              V                 V
+    //     Frame i:     ... ANI ... QS (fence Fa) ... QS (Fence Fb) QP Wait(..)
+    //     Frame i+1:   ... ANI ... QS (fence Fc) ... QS (Fence Fd) QP Wait(..) <--\
+    //     Frame i+2:   ... ANI ... QS (fence Fe) ... QS (Fence Ff) QP Wait(Fb)    |
+    //                                                                  ^          |
+    //                                                                  |          |
+    //                                                           CPU throttling    |
+    //                                                                             |
+    //                               Note: app should throttle itself here (equivalent of Wait(Fb))
     //
     // In frame i+2 (2 is kSwapHistorySize), ANGLE waits on fence Fb which means that the semaphore
     // used for Frame i's ANI can be reused (because Fb-is-signalled implies Fa-is-signalled).
@@ -423,6 +442,11 @@ class WindowSurfaceVk : public SurfaceVk
     // During window resizing when swapchains are recreated every frame, the number of in-flight
     // present semaphores can grow indefinitely.  See doc/PresentSemaphores.md.
     vk::Recycler<vk::Semaphore> mPresentSemaphoreRecycler;
+    // Fences are associated with present semaphores to know when they can be recycled.
+    vk::Recycler<vk::Fence> mPresentFenceRecycler;
+
+    // The presentation history, used to recycle semaphores and destroy old swapchains.
+    std::deque<impl::ImagePresentOperation> mPresentHistory;
 
     // Depth/stencil image.  Possibly multisampled.
     vk::ImageHelper mDepthStencilImage;

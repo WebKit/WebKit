@@ -64,7 +64,6 @@ class ShCompilerInstance final : public angle::NonCopyable
     ShHandle getHandle();
     ShaderType getShaderType() const;
     ShBuiltInResources getBuiltInResources() const;
-    const std::string &getBuiltinResourcesString() const;
     ShShaderOutput getShaderOutputType() const;
 
   private:

@@ -410,21 +410,6 @@ void AppendWidgetDataHelper::AppendVulkanSecondaryCommandBufferPoolWaste(
                                  format);
 }
 
-void AppendWidgetDataHelper::AppendVulkanRenderPassBufferCount(const overlay::Widget *widget,
-                                                               const gl::Extents &imageExtent,
-                                                               TextWidgetData *textWidget,
-                                                               GraphWidgetData *graphWidget,
-                                                               OverlayWidgetCounts *widgetCounts)
-{
-    auto format = [](uint64_t curValue, uint64_t maxValue) {
-        std::ostringstream text;
-        text << "RP VkBuffers (Max: " << maxValue << ")";
-        return text.str();
-    };
-
-    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
-}
-
 void AppendWidgetDataHelper::AppendVulkanWriteDescriptorSetCount(const overlay::Widget *widget,
                                                                  const gl::Extents &imageExtent,
                                                                  TextWidgetData *textWidget,

@@ -82,6 +82,20 @@
 
 #define ANGLE_APPLE_UNUSED __attribute__((unused))
 
+#if __has_warning("-Wdeprecated-declarations")
+#    define ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN \
+        _Pragma("GCC diagnostic push")         \
+            _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#else
+#    define ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
+#endif
+
+#if __has_warning("-Wdeprecated-declarations")
+#    define ANGLE_APPLE_ALLOW_DEPRECATED_END _Pragma("GCC diagnostic pop")
+#else
+#    define ANGLE_APPLE_ALLOW_DEPRECATED_END
+#endif
+
 namespace angle
 {
 bool IsMetalRendererAvailable();

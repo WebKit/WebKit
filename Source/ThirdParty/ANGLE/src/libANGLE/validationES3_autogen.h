@@ -83,7 +83,7 @@ bool ValidateClearBufferuiv(const Context *context,
                             const GLuint *value);
 bool ValidateClientWaitSync(const Context *context,
                             angle::EntryPoint entryPoint,
-                            GLsync sync,
+                            SyncID syncPacked,
                             GLbitfield flags,
                             GLuint64 timeout);
 bool ValidateCompressedTexImage3D(const Context *context,
@@ -136,7 +136,7 @@ bool ValidateDeleteSamplers(const Context *context,
                             angle::EntryPoint entryPoint,
                             GLsizei count,
                             const SamplerID *samplersPacked);
-bool ValidateDeleteSync(const Context *context, angle::EntryPoint entryPoint, GLsync sync);
+bool ValidateDeleteSync(const Context *context, angle::EntryPoint entryPoint, SyncID syncPacked);
 bool ValidateDeleteTransformFeedbacks(const Context *context,
                                       angle::EntryPoint entryPoint,
                                       GLsizei n,
@@ -292,7 +292,7 @@ bool ValidateGetStringi(const Context *context,
                         GLuint index);
 bool ValidateGetSynciv(const Context *context,
                        angle::EntryPoint entryPoint,
-                       GLsync sync,
+                       SyncID syncPacked,
                        GLenum pname,
                        GLsizei count,
                        const GLsizei *length,
@@ -349,7 +349,7 @@ bool ValidateIsQuery(const Context *context, angle::EntryPoint entryPoint, Query
 bool ValidateIsSampler(const Context *context,
                        angle::EntryPoint entryPoint,
                        SamplerID samplerPacked);
-bool ValidateIsSync(const Context *context, angle::EntryPoint entryPoint, GLsync sync);
+bool ValidateIsSync(const Context *context, angle::EntryPoint entryPoint, SyncID syncPacked);
 bool ValidateIsTransformFeedback(const Context *context,
                                  angle::EntryPoint entryPoint,
                                  TransformFeedbackID idPacked);
@@ -570,7 +570,7 @@ bool ValidateVertexAttribIPointer(const Context *context,
                                   const void *pointer);
 bool ValidateWaitSync(const Context *context,
                       angle::EntryPoint entryPoint,
-                      GLsync sync,
+                      SyncID syncPacked,
                       GLbitfield flags,
                       GLuint64 timeout);
 }  // namespace gl

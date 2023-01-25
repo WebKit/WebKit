@@ -106,7 +106,7 @@ void GenerateCaps(const FunctionsGL *functions,
                   gl::Limitations *limitations,
                   gl::Version *maxSupportedESVersion,
                   MultiviewImplementationTypeGL *multiviewImplementationType,
-                  ShPixelLocalStorageType *);
+                  ShPixelLocalStorageOptions *);
 
 void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *features);
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features);

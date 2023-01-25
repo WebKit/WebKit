@@ -301,7 +301,10 @@ void TranslatorGLSL::writeExtensionBehavior(TIntermNode *root,
                  << "\n";
         }
 
-        if (getOutputType() != SH_ESSL_OUTPUT && iter.first == TExtension::EXT_clip_cull_distance &&
+        if (getOutputType() != SH_ESSL_OUTPUT &&
+            (iter.first == TExtension::EXT_clip_cull_distance ||
+             (iter.first == TExtension::ANGLE_clip_cull_distance &&
+              getResources().MaxCullDistances > 0)) &&
             getOutputType() < SH_GLSL_450_CORE_OUTPUT)
         {
             sink << "#extension GL_ARB_cull_distance : " << GetBehaviorString(iter.second) << "\n";

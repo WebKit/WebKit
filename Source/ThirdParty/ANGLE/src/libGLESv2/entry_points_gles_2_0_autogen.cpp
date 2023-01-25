@@ -1866,7 +1866,8 @@ void GL_APIENTRY GL_GetProgramiv(GLuint program, GLenum pname, GLint *params)
         ANGLE_CAPTURE_GL(GetProgramiv, isCallValid, context, programPacked, pname, params);
     }
     else
-    {}
+    {
+    }
 }
 
 void GL_APIENTRY GL_GetRenderbufferParameteriv(GLenum target, GLenum pname, GLint *params)
@@ -2009,7 +2010,8 @@ void GL_APIENTRY GL_GetShaderiv(GLuint shader, GLenum pname, GLint *params)
         ANGLE_CAPTURE_GL(GetShaderiv, isCallValid, context, shaderPacked, pname, params);
     }
     else
-    {}
+    {
+    }
 }
 
 const GLubyte *GL_APIENTRY GL_GetString(GLenum name)

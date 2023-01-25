@@ -1381,6 +1381,38 @@ TEST_P(BufferDataTestES3, BufferDataWithNullFollowedByMap)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test glFenceSync call breaks renderPass followed by glCopyBufferSubData that read access the same
+// buffer that renderPass reads. There was a bug that this triggers assertion angleproject.com/7903.
+TEST_P(BufferDataTestES3, bufferReadFromRenderPassAndOutsideRenderPassWithFenceSyncInBetween)
+{
+    glUseProgram(mProgram);
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    std::vector<GLfloat> data(6, 1.0f);
+    GLsizei bufferSize = sizeof(GLfloat) * data.size();
+    glBufferData(GL_ARRAY_BUFFER, bufferSize, data.data(), GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(mAttribLocation, 1, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(mAttribLocation);
+    glScissor(0, 0, getWindowWidth() / 2, getWindowHeight());
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+
+    GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+    EXPECT_GL_NO_ERROR();
+
+    GLBuffer dstBuffer;
+    glBindBuffer(GL_COPY_WRITE_BUFFER, dstBuffer);
+    glBufferData(GL_COPY_WRITE_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+    glCopyBufferSubData(GL_ARRAY_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, bufferSize);
+
+    glBindBuffer(GL_ARRAY_BUFFER, dstBuffer);
+    glScissor(getWindowWidth() / 2, 0, getWindowWidth() / 2, getWindowHeight());
+    drawQuad(mProgram, "position", 0.5f);
+    EXPECT_GL_NO_ERROR();
+    glClientWaitSync(sync, GL_SYNC_FLUSH_COMMANDS_BIT, GL_TIMEOUT_IGNORED);
+    EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::red);
+}
+
 class BufferStorageTestES3 : public BufferDataTest
 {};
 

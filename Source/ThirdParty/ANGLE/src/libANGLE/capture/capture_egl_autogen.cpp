@@ -1401,6 +1401,17 @@ CallCapture CaptureExportVkImageANGLE(egl::Thread *thread,
     return CallCapture(angle::EntryPoint::EGLExportVkImageANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureWaitUntilWorkScheduledANGLE(egl::Thread *thread,
+                                               bool isCallValid,
+                                               egl::Display *dpyPacked)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
+
+    return CallCapture(angle::EntryPoint::EGLWaitUntilWorkScheduledANGLE, std::move(paramBuffer));
+}
+
 CallCapture CaptureGetSyncValuesCHROMIUM(egl::Thread *thread,
                                          bool isCallValid,
                                          egl::Display *dpyPacked,

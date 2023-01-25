@@ -682,9 +682,9 @@ class StateManager11 final : angle::NonCopyable
     ComputeConstantBufferArray<GLsizeiptr> mCurrentConstantBufferCSSize;
 
     // Currently applied transform feedback buffers
-    Serial mAppliedTFSerial;
+    UniqueSerial mAppliedTFSerial;
 
-    Serial mEmptySerial;
+    UniqueSerial mEmptySerial;
 
     // These objects are cached to avoid having to query the impls.
     ProgramD3D *mProgramD3D;

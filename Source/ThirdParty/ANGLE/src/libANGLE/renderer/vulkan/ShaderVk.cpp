@@ -110,21 +110,7 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
 
     if (contextVk->getExtensions().shaderPixelLocalStorageANGLE)
     {
-        options->pls.type = contextVk->getNativePixelLocalStorageType();
-        if (contextVk->getExtensions().shaderPixelLocalStorageCoherentANGLE)
-        {
-            if (options->pls.type == ShPixelLocalStorageType::FramebufferFetch)
-            {
-                options->pls.fragmentSynchronizationType = ShFragmentSynchronizationType::Automatic;
-            }
-            else
-            {
-                ASSERT(contextVk->getFeatures().supportsFragmentShaderPixelInterlock.enabled);
-                // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock
-                options->pls.fragmentSynchronizationType =
-                    ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
-            }
-        }
+        options->pls = contextVk->getNativePixelLocalStorageOptions();
     }
 
     return compileImpl(context, compilerInstance, mState.getSource(), options);

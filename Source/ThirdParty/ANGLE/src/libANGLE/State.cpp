@@ -521,9 +521,8 @@ void State::initialize(Context *context)
         mShaderStorageBuffers.resize(mCaps.maxShaderStorageBufferBindings);
     }
     if (clientVersion >= Version(3, 1) ||
-        (nativeExtensions.shaderPixelLocalStorageANGLE &&
-         ShPixelLocalStorageTypeUsesImages(
-             context->getImplementation()->getNativePixelLocalStorageType())))
+        (context->getImplementation()->getNativePixelLocalStorageOptions().type ==
+         ShPixelLocalStorageType::ImageLoadStore))
     {
         mImageUnits.resize(mCaps.maxImageUnits);
     }
@@ -1350,7 +1349,7 @@ void State::setEnableFeature(GLenum feature, bool enabled)
         case GL_SAMPLE_SHADING:
             setSampleShading(enabled);
             return;
-        // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+        // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
         case GL_CLIP_DISTANCE0_EXT:
         case GL_CLIP_DISTANCE1_EXT:
         case GL_CLIP_DISTANCE2_EXT:
@@ -1506,7 +1505,7 @@ bool State::getEnableFeature(GLenum feature) const
             return mTextureRectangleEnabled;
         case GL_SAMPLE_SHADING:
             return isSampleShadingEnabled();
-        // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+        // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
         case GL_CLIP_DISTANCE0_EXT:
         case GL_CLIP_DISTANCE1_EXT:
         case GL_CLIP_DISTANCE2_EXT:
@@ -2226,7 +2225,7 @@ angle::Result State::detachBuffer(Context *context, const Buffer *buffer)
         context->getStateCache().onActiveTransformFeedbackChange(context);
     }
 
-    if (getVertexArray()->detachBuffer(context, bufferID))
+    if (mVertexArray && mVertexArray->detachBuffer(context, bufferID))
     {
         mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
         context->getStateCache().onVertexArrayStateChange(context);
@@ -2544,6 +2543,22 @@ void State::getBooleanv(GLenum pname, GLboolean *params) const
             break;
         case GL_ROBUST_FRAGMENT_SHADER_OUTPUT_ANGLE:
             *params = mExtensions.robustFragmentShaderOutputANGLE ? GL_TRUE : GL_FALSE;
+            break;
+        // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
+        case GL_CLIP_DISTANCE0_EXT:
+        case GL_CLIP_DISTANCE1_EXT:
+        case GL_CLIP_DISTANCE2_EXT:
+        case GL_CLIP_DISTANCE3_EXT:
+        case GL_CLIP_DISTANCE4_EXT:
+        case GL_CLIP_DISTANCE5_EXT:
+        case GL_CLIP_DISTANCE6_EXT:
+        case GL_CLIP_DISTANCE7_EXT:
+            if (mClientVersion.major >= 2)
+            {
+                // If GLES version is 1, the GL_CLIP_DISTANCE0_EXT enum will be used as
+                // GL_CLIP_PLANE0 instead.
+                *params = mClipDistancesEnabled.test(pname - GL_CLIP_DISTANCE0_EXT);
+            }
             break;
         default:
             UNREACHABLE();

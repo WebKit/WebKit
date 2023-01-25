@@ -12,7 +12,6 @@
 
 #include "libANGLE/renderer/TransformFeedbackImpl.h"
 
-#include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 namespace gl
@@ -23,6 +22,7 @@ class ProgramState;
 namespace rx
 {
 class UpdateDescriptorSetsBuilder;
+class ShaderInterfaceVariableInfoMap;
 
 namespace vk
 {

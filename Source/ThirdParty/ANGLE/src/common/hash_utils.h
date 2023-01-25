@@ -9,7 +9,7 @@
 #define COMMON_HASHUTILS_H_
 
 #include "common/debug.h"
-#include "common/third_party/xxhash/xxhash.h"
+#include "xxhash.h"
 
 namespace angle
 {

@@ -89,11 +89,12 @@ struct BuiltinVarying final : private angle::NonCopyable
 
     std::string str() const;
     void enableSystem(const std::string &systemValueSemantic);
+    void enableSystem(const std::string &systemValueSemantic, unsigned int sizeVal);
     void enable(const std::string &semanticVal, unsigned int indexVal);
 
     bool enabled;
     std::string semantic;
-    unsigned int index;
+    unsigned int indexOrSize;
     bool systemValue;
 };
 

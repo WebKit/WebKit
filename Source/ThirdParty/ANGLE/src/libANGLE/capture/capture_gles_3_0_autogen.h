@@ -84,7 +84,7 @@ angle::CallCapture CaptureClearBufferuiv(const State &glState,
                                          const GLuint *value);
 angle::CallCapture CaptureClientWaitSync(const State &glState,
                                          bool isCallValid,
-                                         GLsync sync,
+                                         SyncID syncPacked,
                                          GLbitfield flags,
                                          GLuint64 timeout,
                                          GLenum returnValue);
@@ -138,7 +138,7 @@ angle::CallCapture CaptureDeleteSamplers(const State &glState,
                                          bool isCallValid,
                                          GLsizei count,
                                          const SamplerID *samplersPacked);
-angle::CallCapture CaptureDeleteSync(const State &glState, bool isCallValid, GLsync sync);
+angle::CallCapture CaptureDeleteSync(const State &glState, bool isCallValid, SyncID syncPacked);
 angle::CallCapture CaptureDeleteTransformFeedbacks(const State &glState,
                                                    bool isCallValid,
                                                    GLsizei n,
@@ -297,7 +297,7 @@ angle::CallCapture CaptureGetStringi(const State &glState,
                                      const GLubyte *returnValue);
 angle::CallCapture CaptureGetSynciv(const State &glState,
                                     bool isCallValid,
-                                    GLsync sync,
+                                    SyncID syncPacked,
                                     GLenum pname,
                                     GLsizei count,
                                     GLsizei *length,
@@ -361,7 +361,7 @@ angle::CallCapture CaptureIsSampler(const State &glState,
                                     GLboolean returnValue);
 angle::CallCapture CaptureIsSync(const State &glState,
                                  bool isCallValid,
-                                 GLsync sync,
+                                 SyncID syncPacked,
                                  GLboolean returnValue);
 angle::CallCapture CaptureIsTransformFeedback(const State &glState,
                                               bool isCallValid,
@@ -587,7 +587,7 @@ angle::CallCapture CaptureVertexAttribIPointer(const State &glState,
                                                const void *pointer);
 angle::CallCapture CaptureWaitSync(const State &glState,
                                    bool isCallValid,
-                                   GLsync sync,
+                                   SyncID syncPacked,
                                    GLbitfield flags,
                                    GLuint64 timeout);
 
@@ -830,7 +830,7 @@ void CaptureGetSamplerParameteriv_params(const State &glState,
                                          angle::ParamCapture *paramCapture);
 void CaptureGetSynciv_length(const State &glState,
                              bool isCallValid,
-                             GLsync sync,
+                             SyncID syncPacked,
                              GLenum pname,
                              GLsizei count,
                              GLsizei *length,
@@ -838,7 +838,7 @@ void CaptureGetSynciv_length(const State &glState,
                              angle::ParamCapture *paramCapture);
 void CaptureGetSynciv_values(const State &glState,
                              bool isCallValid,
-                             GLsync sync,
+                             SyncID syncPacked,
                              GLenum pname,
                              GLsizei count,
                              GLsizei *length,

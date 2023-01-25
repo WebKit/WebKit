@@ -212,6 +212,130 @@ void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &c
 template <typename T>
 struct AssertFalse : std::false_type
 {};
+
+GLuint GetResourceIDMapValue(ResourceIDType resourceIDType, GLuint key);
+
+template <typename T>
+T GetParamValue(ParamType type, const ParamValue &value);
+
+template <>
+inline GLuint GetParamValue<GLuint>(ParamType type, const ParamValue &value)
+{
+    ResourceIDType resourceIDType = GetResourceIDTypeFromParamType(type);
+    if (resourceIDType == ResourceIDType::InvalidEnum)
+    {
+        return value.GLuintVal;
+    }
+    else
+    {
+        return GetResourceIDMapValue(resourceIDType, value.GLuintVal);
+    }
+}
+
+template <>
+inline GLint GetParamValue<GLint>(ParamType type, const ParamValue &value)
+{
+    return value.GLintVal;
+}
+
+template <>
+inline const void *GetParamValue<const void *>(ParamType type, const ParamValue &value)
+{
+    return value.voidConstPointerVal;
+}
+
+template <>
+inline GLuint64 GetParamValue<GLuint64>(ParamType type, const ParamValue &value)
+{
+    return value.GLuint64Val;
+}
+
+template <>
+inline GLint64 GetParamValue<GLint64>(ParamType type, const ParamValue &value)
+{
+    return value.GLint64Val;
+}
+
+template <>
+inline const char *GetParamValue<const char *>(ParamType type, const ParamValue &value)
+{
+    return value.GLcharConstPointerVal;
+}
+
+template <>
+inline void *GetParamValue<void *>(ParamType type, const ParamValue &value)
+{
+    return value.voidPointerVal;
+}
+
+#if defined(ANGLE_IS_64_BIT_CPU)
+template <>
+inline const EGLAttrib *GetParamValue<const EGLAttrib *>(ParamType type, const ParamValue &value)
+{
+    return value.EGLAttribConstPointerVal;
+}
+#endif  // defined(ANGLE_IS_64_BIT_CPU)
+
+template <>
+inline const EGLint *GetParamValue<const EGLint *>(ParamType type, const ParamValue &value)
+{
+    return value.EGLintConstPointerVal;
+}
+
+template <>
+inline const GLchar *const *GetParamValue<const GLchar *const *>(ParamType type,
+                                                                 const ParamValue &value)
+{
+    return value.GLcharConstPointerPointerVal;
+}
+
+// On Apple platforms, std::is_same<uint64_t, long> is false despite being both 8 bits.
+#if defined(ANGLE_PLATFORM_APPLE) || !defined(ANGLE_IS_64_BIT_CPU)
+template <>
+inline long GetParamValue<long>(ParamType type, const ParamValue &value)
+{
+    return static_cast<long>(value.GLint64Val);
+}
+
+template <>
+inline unsigned long GetParamValue<unsigned long>(ParamType type, const ParamValue &value)
+{
+    return static_cast<unsigned long>(value.GLuint64Val);
+}
+#endif  // defined(ANGLE_PLATFORM_APPLE)
+
+template <typename T>
+T GetParamValue(ParamType type, const ParamValue &value)
+{
+    static_assert(AssertFalse<T>::value, "No specialization for type.");
+}
+
+template <typename T>
+struct Traits;
+
+template <typename... Args>
+struct Traits<void(Args...)>
+{
+    static constexpr size_t NArgs = sizeof...(Args);
+    template <size_t Idx>
+    struct Arg
+    {
+        typedef typename std::tuple_element<Idx, std::tuple<Args...>>::type Type;
+    };
+};
+
+template <typename Fn, size_t Idx>
+using FnArg = typename Traits<Fn>::template Arg<Idx>::Type;
+
+template <typename Fn, size_t NArgs>
+using EnableIfNArgs = typename std::enable_if_t<Traits<Fn>::NArgs == NArgs, int>;
+
+template <typename Fn, size_t Idx>
+FnArg<Fn, Idx> Arg(const Captures &cap)
+{
+    ASSERT(Idx < cap.size());
+    return GetParamValue<FnArg<Fn, Idx>>(cap[Idx].type, cap[Idx].value);
+}
 }  // namespace angle
 
 #endif  // UTIL_CAPTURE_FRAME_CAPTURE_TEST_UTILS_H_
