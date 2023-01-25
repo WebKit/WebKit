@@ -371,8 +371,8 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
         ASSERT(basePointer() == newMemory);
         return success();
     }
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     case MemoryMode::Signaling: {
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         size_t extraBytes = desiredSize - size();
         RELEASE_ASSERT(extraBytes);
         bool allocationSuccess = tryAllocate(vm,
@@ -402,8 +402,10 @@ Expected<PageCount, GrowFailReason> Memory::grow(VM& vm, PageCount delta)
 
         m_handle->updateSize(desiredSize);
         return success();
-    }
+#else
+        return oldPageCount;
 #endif
+    }
     }
 
     RELEASE_ASSERT_NOT_REACHED();
