@@ -138,7 +138,7 @@ CSSDocumentation = {
         "description": "A shorthand property which sets both 'column-width' and 'column-count'."
     },
     "-webkit-filter": {
-        "description": "Processes an element\u2019s rendering before it is displayed in the document, by applying one or more filter effects."
+        "description": "Processes an element's rendering before it is displayed in the document, by applying one or more filter effects."
     },
     "-webkit-flow-from": {
         "description": "Makes a block container a region and associates it with a named flow."
@@ -312,16 +312,19 @@ CSSDocumentation = {
         "syntax": "[ <integer> && <symbol> ]#"
     },
     "align-content": {
-        "description": "Aligns a flex container\u2019s lines within the flex container when there is extra space in the cross-axis, similar to how 'justify-content' aligns individual items within the main-axis.",
-        "syntax": "normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position>"
+        "description": "Aligns a flex container's lines within the flex container when there is extra space in the cross-axis, similar to how 'justify-content' aligns individual items within the main-axis.",
+        "syntax": "normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/align-content"
     },
     "align-items": {
         "description": "Aligns flex items along the cross axis of the current line of the flex container.",
-        "syntax": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]"
+        "syntax": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/align-items"
     },
     "align-self": {
         "description": "Allows the default alignment along the cross axis to be overridden for individual flex items.",
-        "syntax": "auto | normal | stretch | <baseline-position> | <overflow-position>? <self-position>"
+        "syntax": "auto | normal | stretch | <baseline-position> | <overflow-position>? <self-position>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/align-self"
     },
     "align-tracks": {
         "description": "The align-tracks CSS property sets the alignment in the masonry axis for grid containers that have masonry in their block axis.",
@@ -330,7 +333,7 @@ CSSDocumentation = {
     },
     "all": {
         "description": "Shorthand that resets all properties except 'direction' and 'unicode-bidi'.",
-        "syntax": "initial | inherit | unset | revert",
+        "syntax": "initial | inherit | unset | revert | revert-layer",
         "url": "https://developer.mozilla.org/docs/Web/CSS/all"
     },
     "alt": {
@@ -341,6 +344,11 @@ CSSDocumentation = {
         "description": "Shorthand property combines six of the animation properties into a single property.",
         "syntax": "<single-animation>#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/animation"
+    },
+    "animation-composition": {
+        "description": "The composite operation to use when multiple animations affect the same property.",
+        "syntax": "<single-animation-composition>#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/animation-composition"
     },
     "animation-delay": {
         "description": "Defines when the animation will start.",
@@ -503,42 +511,42 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-color"
     },
     "border-block-end": {
-        "description": "Logical 'border-bottom'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'> || <'border-top-style'> || <color>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end"
     },
     "border-block-end-color": {
-        "description": "Logical 'border-bottom-color'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-bottom-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-color'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end-color"
     },
     "border-block-end-style": {
-        "description": "Logical 'border-bottom-style'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-bottom-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-style'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end-style"
     },
     "border-block-end-width": {
-        "description": "Logical 'border-bottom-width'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-bottom-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-end-width"
     },
     "border-block-start": {
-        "description": "Logical 'border-top'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'> || <'border-top-style'> || <color>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start"
     },
     "border-block-start-color": {
-        "description": "Logical 'border-top-color'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-top-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-color'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start-color"
     },
     "border-block-start-style": {
-        "description": "Logical 'border-top-style'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-top-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-style'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start-style"
     },
     "border-block-start-width": {
-        "description": "Logical 'border-top-width'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-top-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-block-start-width"
     },
@@ -643,42 +651,42 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-color"
     },
     "border-inline-end": {
-        "description": "Logical 'border-right'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'> || <'border-top-style'> || <color>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end"
     },
     "border-inline-end-color": {
-        "description": "Logical 'border-right-color'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-right-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-color'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end-color"
     },
     "border-inline-end-style": {
-        "description": "Logical 'border-right-style'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-right-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-style'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end-style"
     },
     "border-inline-end-width": {
-        "description": "Logical 'border-right-width'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-right-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-end-width"
     },
     "border-inline-start": {
-        "description": "Logical 'border-left'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'> || <'border-top-style'> || <color>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start"
     },
     "border-inline-start-color": {
-        "description": "Logical 'border-left-color'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-left-color'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-color'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start-color"
     },
     "border-inline-start-style": {
-        "description": "Logical 'border-left-style'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-left-style'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-style'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start-style"
     },
     "border-inline-start-width": {
-        "description": "Logical 'border-left-width'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'border-left-width'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'border-top-width'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/border-inline-start-width"
     },
@@ -854,25 +862,36 @@ CSSDocumentation = {
     },
     "break-after": {
         "description": "Describes the page/column/region break behavior after the generated box.",
-        "syntax": "auto | avoid | always | all | avoid-page | page | left | right | recto | verso | avoid-column | column | avoid-region | region"
+        "syntax": "auto | avoid | always | all | avoid-page | page | left | right | recto | verso | avoid-column | column | avoid-region | region",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/break-after"
     },
     "break-before": {
         "description": "Describes the page/column/region break behavior before the generated box.",
-        "syntax": "auto | avoid | always | all | avoid-page | page | left | right | recto | verso | avoid-column | column | avoid-region | region"
+        "syntax": "auto | avoid | always | all | avoid-page | page | left | right | recto | verso | avoid-column | column | avoid-region | region",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/break-before"
     },
     "break-inside": {
         "description": "Describes the page/column/region break behavior inside the principal box.",
-        "syntax": "auto | avoid | avoid-page | avoid-column | avoid-region"
+        "syntax": "auto | avoid | avoid-page | avoid-column | avoid-region",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/break-inside"
     },
     "caption-side": {
         "description": "Specifies the position of the caption box with respect to the table box.",
         "syntax": "top | bottom | block-start | block-end | inline-start | inline-end",
         "url": "https://developer.mozilla.org/docs/Web/CSS/caption-side"
     },
+    "caret": {
+        "description": "Shorthand for setting caret-color and caret-shape.",
+        "syntax": "<'caret-color'> || <'caret-shape'>"
+    },
     "caret-color": {
         "description": "Controls the color of the text insertion indicator.",
         "syntax": "auto | <color>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/caret-color"
+    },
+    "caret-shape": {
+        "description": "Specifies the desired shape of the text insertion caret.",
+        "syntax": "auto | bar | block | underscore"
     },
     "clear": {
         "description": "Indicates which sides of an element's box(es) may not be adjacent to an earlier floating box. The 'clear' property does not consider floats inside the element itself or in other block formatting contexts.",
@@ -880,7 +899,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/clear"
     },
     "clip": {
-        "description": "Deprecated. Use the 'clip-path' property when support allows. Defines the visible portion of an element\u2019s box.",
+        "description": "Deprecated. Use the 'clip-path' property when support allows. Defines the visible portion of an element's box.",
         "syntax": "<shape> | auto",
         "url": "https://developer.mozilla.org/docs/Web/CSS/clip"
     },
@@ -917,7 +936,8 @@ CSSDocumentation = {
     },
     "column-gap": {
         "description": "Sets the gap between columns. If there is a column rule between columns, it will appear in the middle of the gap.",
-        "syntax": "normal | <length-percentage>"
+        "syntax": "normal | <length-percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/column-gap"
     },
     "column-rule": {
         "description": "Shorthand for setting 'column-rule-width', 'column-rule-style', and 'column-rule-color' at the same place in the style sheet. Omitted values are set to their initial values.",
@@ -956,8 +976,33 @@ CSSDocumentation = {
     },
     "contain": {
         "description": "Indicates that an element and its contents are, as much as possible, independent of the rest of the document tree.",
-        "syntax": "none | strict | content | [ size || layout || style || paint ]",
+        "syntax": "none | strict | content | [ [ size || inline-size ] || layout || style || paint ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/contain"
+    },
+    "contain-intrinsic-block-size": {
+        "description": "Block size of an element when the element is subject to size containment.",
+        "syntax": "none | <length> | auto <length>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-block-size"
+    },
+    "contain-intrinsic-height": {
+        "description": "Height of an element when the element is subject to size containment.",
+        "syntax": "none | <length> | auto <length>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-height"
+    },
+    "contain-intrinsic-inline-size": {
+        "description": "Inline size of an element when the element is subject to size containment.",
+        "syntax": "none | <length> | auto <length>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-inline-size"
+    },
+    "contain-intrinsic-size": {
+        "description": "Size of an element when the element is subject to size containment.",
+        "syntax": "[ none | <length> | auto <length> ]{1,2}",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-size"
+    },
+    "contain-intrinsic-width": {
+        "description": "Width of an element when the element is subject to size containment.",
+        "syntax": "none | <length> | auto <length>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-width"
     },
     "content": {
         "description": "Determines which page-based occurrence of a given element is applied to a counter or string value.",
@@ -1012,7 +1057,7 @@ CSSDocumentation = {
         "description": "Deprecated. Use 'isolation' property instead when support allows. Specifies how the accumulation of the background image is managed."
     },
     "fallback": {
-        "description": "@counter-style descriptor. Specifies a fallback counter style to be used when the current counter style can\u2019t create a representation for a given counter value.",
+        "description": "@counter-style descriptor. Specifies a fallback counter style to be used when the current counter style can't create a representation for a given counter value.",
         "syntax": "<counter-style-name>"
     },
     "fill": {
@@ -1025,7 +1070,7 @@ CSSDocumentation = {
         "description": "Indicates the algorithm (or winding rule) which is to be used to determine what parts of the canvas are included inside the shape."
     },
     "filter": {
-        "description": "Processes an element\u2019s rendering before it is displayed in the document, by applying one or more filter effects.",
+        "description": "Processes an element's rendering before it is displayed in the document, by applying one or more filter effects.",
         "syntax": "none | <filter-function-list>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/filter"
     },
@@ -1040,7 +1085,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/flex-basis"
     },
     "flex-direction": {
-        "description": "Specifies how flex items are placed in the flex container, by setting the direction of the flex container\u2019s main axis.",
+        "description": "Specifies how flex items are placed in the flex container, by setting the direction of the flex container's main axis.",
         "syntax": "row | row-reverse | column | column-reverse",
         "url": "https://developer.mozilla.org/docs/Web/CSS/flex-direction"
     },
@@ -1139,6 +1184,21 @@ CSSDocumentation = {
         "syntax": "none | [ weight || style || small-caps ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
     },
+    "font-synthesis-small-caps": {
+        "description": "Controls whether user agents are allowed to synthesize small-caps font faces when a font family lacks small-caps faces.",
+        "syntax": "none | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+    },
+    "font-synthesis-style": {
+        "description": "Controls whether user agents are allowed to synthesize oblique font faces when a font family lacks italic faces.",
+        "syntax": "none | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+    },
+    "font-synthesis-weight": {
+        "description": "Controls whether user agents are allowed to synthesize bold font faces when a font family lacks bold faces.",
+        "syntax": "none | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+    },
     "font-variant": {
         "description": "Specifies variant representations of the font",
         "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> || stylistic(<feature-value-name>) || historical-forms || styleset(<feature-value-name>#) || character-variant(<feature-value-name>#) || swash(<feature-value-name>) || ornaments(<feature-value-name>) || annotation(<feature-value-name>) || [ small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps ] || <numeric-figure-values> || <numeric-spacing-values> || <numeric-fraction-values> || ordinal || slashed-zero || <east-asian-variant-values> || <east-asian-width-values> || ruby ]",
@@ -1160,7 +1220,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-variant-east-asian"
     },
     "font-variant-ligatures": {
-        "description": "Specifies control over which ligatures are enabled or disabled. A value of \u2018normal\u2019 implies that the defaults set by the font are used.",
+        "description": "Specifies control over which ligatures are enabled or disabled. A value of 'normal' implies that the defaults set by the font are used.",
         "syntax": "normal | none | [ <common-lig-values> || <discretionary-lig-values> || <historical-lig-values> || <contextual-alt-values> ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/font-variant-ligatures"
     },
@@ -1191,7 +1251,8 @@ CSSDocumentation = {
     },
     "gap": {
         "description": "The gap CSS property is a shorthand property for row-gap and column-gap specifying the gutters between grid rows and columns.",
-        "syntax": "<'row-gap'> <'column-gap'>?"
+        "syntax": "<'row-gap'> <'column-gap'>?",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/gap"
     },
     "glyph-orientation-horizontal": {
         "description": "Controls glyph orientation when the inline-progression-direction is horizontal."
@@ -1205,7 +1266,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid"
     },
     "grid-area": {
-        "description": "Determine a grid item\u2019s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement. Shorthand for 'grid-row-start', 'grid-column-start', 'grid-row-end', and 'grid-column-end'.",
+        "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement. Shorthand for 'grid-row-start', 'grid-column-start', 'grid-row-end', and 'grid-column-end'.",
         "syntax": "<grid-line> [ / <grid-line> ]{0,3}",
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid-area"
     },
@@ -1230,7 +1291,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid-column"
     },
     "grid-column-end": {
-        "description": "Determine a grid item\u2019s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+        "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
         "syntax": "<grid-line>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid-column-end"
     },
@@ -1239,7 +1300,7 @@ CSSDocumentation = {
         "syntax": "<length-percentage>"
     },
     "grid-column-start": {
-        "description": "Determine a grid item\u2019s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+        "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
         "syntax": "<grid-line>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid-column-start"
     },
@@ -1253,7 +1314,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid-row"
     },
     "grid-row-end": {
-        "description": "Determine a grid item\u2019s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+        "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
         "syntax": "<grid-line>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid-row-end"
     },
@@ -1262,7 +1323,7 @@ CSSDocumentation = {
         "syntax": "<length-percentage>"
     },
     "grid-row-start": {
-        "description": "Determine a grid item\u2019s size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
+        "description": "Determine a grid item's size and location within the grid by contributing a line, a span, or nothing (automatic) to its grid placement.",
         "syntax": "<grid-line>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/grid-row-start"
     },
@@ -1394,15 +1455,18 @@ CSSDocumentation = {
     },
     "justify-content": {
         "description": "Aligns flex items along the main axis of the current line of the flex container.",
-        "syntax": "normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ]"
+        "syntax": "normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ]",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/justify-content"
     },
     "justify-items": {
         "description": "Defines the default justify-self for all items of the box, giving them the default way of justifying each box along the appropriate axis",
-        "syntax": "normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ]"
+        "syntax": "normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ] | legacy | legacy && [ left | right | center ]",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/justify-items"
     },
     "justify-self": {
         "description": "Defines the way of justifying a box inside its container along the appropriate axis.",
-        "syntax": "auto | normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ]"
+        "syntax": "auto | normal | stretch | <baseline-position> | <overflow-position>? [ <self-position> | left | right ]",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/justify-self"
     },
     "justify-tracks": {
         "description": "The justify-tracks CSS property sets the alignment in the masonry axis for grid containers that have masonry in their inline axis",
@@ -1464,7 +1528,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/list-style-position"
     },
     "list-style-type": {
-        "description": "Used to construct the default contents of a list item\u2019s marker",
+        "description": "Used to construct the default contents of a list item's marker",
         "syntax": "<counter-style> | <string> | none",
         "url": "https://developer.mozilla.org/docs/Web/CSS/list-style-type"
     },
@@ -1479,12 +1543,12 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-block"
     },
     "margin-block-end": {
-        "description": "Logical 'margin-bottom'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'margin-bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'margin-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-block-end"
     },
     "margin-block-start": {
-        "description": "Logical 'margin-top'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'margin-top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'margin-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-block-start"
     },
@@ -1499,12 +1563,12 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-inline"
     },
     "margin-inline-end": {
-        "description": "Logical 'margin-right'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'margin-right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'margin-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-inline-end"
     },
     "margin-inline-start": {
-        "description": "Logical 'margin-left'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'margin-left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'margin-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-inline-start"
     },
@@ -1529,7 +1593,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-trim"
     },
     "marker": {
-        "description": "Specifies the marker symbol that shall be used for all points on the sets the value for all vertices on the given \u2018path\u2019 element or basic shape."
+        "description": "Specifies the marker symbol that shall be used for all points on the sets the value for all vertices on the given 'path' element or basic shape."
     },
     "marker-end": {
         "description": "Specifies the marker that will be drawn at the last vertices of the given markable element."
@@ -1633,6 +1697,16 @@ CSSDocumentation = {
         "syntax": "[ pack | next ] || [ definite-first | ordered ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/masonry-auto-flow"
     },
+    "math-depth": {
+        "description": "Describe a notion of \"depth\" for each element of a mathematical formula, with respect to the top-level container of that formula.",
+        "syntax": "auto-add | add(<integer>) | <integer>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/math-depth"
+    },
+    "math-shift": {
+        "description": "Used for positioning superscript during the layout of MathML scripted elements.",
+        "syntax": "normal | compact",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/math-shift"
+    },
     "math-style": {
         "description": "The math-style property indicates whether MathML equations should render with normal or compact height.",
         "syntax": "normal | compact",
@@ -1692,7 +1766,7 @@ CSSDocumentation = {
     },
     "mix-blend-mode": {
         "description": "Defines the formula that must be used to mix the colors with the backdrop.",
-        "syntax": "<blend-mode>",
+        "syntax": "<blend-mode> | plus-lighter",
         "url": "https://developer.mozilla.org/docs/Web/CSS/mix-blend-mode"
     },
     "motion": {
@@ -1747,10 +1821,10 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/offset-anchor"
     },
     "offset-block-end": {
-        "description": "Logical 'bottom'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'."
+        "description": "Logical 'bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'."
     },
     "offset-block-start": {
-        "description": "Logical 'top'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'."
+        "description": "Logical 'top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'."
     },
     "offset-distance": {
         "description": "The offset-distance CSS property specifies a position along an offset-path.",
@@ -1758,10 +1832,10 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/offset-distance"
     },
     "offset-inline-end": {
-        "description": "Logical 'right'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'."
+        "description": "Logical 'right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'."
     },
     "offset-inline-start": {
-        "description": "Logical 'left'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'."
+        "description": "Logical 'left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'."
     },
     "offset-path": {
         "description": "The offset-path CSS property specifies the offset path where the element gets positioned. The exact element\u2019s position on the offset path is determined by the offset-distance property. An offset path is either a specified path with one or multiple sub-paths or the geometry of a not-styled basic shape. Each shape or path must define an initial position for the computed value of \"0\" for offset-distance and an initial direction which specifies the rotation of the object to the initial position.\n\nIn this specification, a direction (or rotation) of 0 degrees is equivalent to the direction of the positive x-axis in the object\u2019s local coordinate system. In other words, a rotation of 0 degree points to the right side of the UA if the object and its ancestors have no transformation applied.",
@@ -1893,7 +1967,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/overscroll-behavior-y"
     },
     "pad": {
-        "description": "@counter-style descriptor. Specifies a \u201cfixed-width\u201d counter style, where representations shorter than the pad value are padded with a particular <symbol>",
+        "description": "@counter-style descriptor. Specifies a \"fixed-width\" counter style, where representations shorter than the pad value are padded with a particular <symbol>",
         "syntax": "<integer> && <symbol>"
     },
     "padding": {
@@ -1907,12 +1981,12 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/padding-block"
     },
     "padding-block-end": {
-        "description": "Logical 'padding-bottom'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'padding-bottom'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'padding-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/padding-block-end"
     },
     "padding-block-start": {
-        "description": "Logical 'padding-top'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'padding-top'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'padding-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/padding-block-start"
     },
@@ -1927,12 +2001,12 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/padding-inline"
     },
     "padding-inline-end": {
-        "description": "Logical 'padding-right'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'padding-right'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'padding-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/padding-inline-end"
     },
     "padding-inline-start": {
-        "description": "Logical 'padding-left'. Mapping depends on the parent element\u2019s 'writing-mode', 'direction', and 'text-orientation'.",
+        "description": "Logical 'padding-left'. Mapping depends on the parent element's 'writing-mode', 'direction', and 'text-orientation'.",
         "syntax": "<'padding-left'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/padding-inline-start"
     },
@@ -2041,7 +2115,8 @@ CSSDocumentation = {
     },
     "row-gap": {
         "description": "The row-gap CSS property specifies the gutter between grid rows.",
-        "syntax": "normal | <length-percentage>"
+        "syntax": "normal | <length-percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/row-gap"
     },
     "ruby-align": {
         "description": "Specifies how text is distributed within the various ruby boxes when their contents do not exactly fill their respective boxes.",
@@ -2189,12 +2264,12 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-align"
     },
     "scroll-snap-coordinate": {
-        "description": "Defines the x and y coordinate within the element which will align with the nearest ancestor scroll container\u2019s snap-destination for the respective axis.",
+        "description": "Defines the x and y coordinate within the element which will align with the nearest ancestor scroll container's snap-destination for the respective axis.",
         "syntax": "none | <position>#",
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-coordinate"
     },
     "scroll-snap-destination": {
-        "description": "Define the x and y coordinate within the scroll container\u2019s visual viewport which element snap points will align with.",
+        "description": "Define the x and y coordinate within the scroll container's visual viewport which element snap points will align with.",
         "syntax": "<position>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-destination"
     },
@@ -2227,6 +2302,21 @@ CSSDocumentation = {
         "description": "The scroll-snap-type-y CSS property defines how strictly snap points are enforced on the vertical axis of the scroll container in case there is one.\n\nSpecifying any precise animations or physics used to enforce those snap points is not covered by this property but instead left up to the user agent.",
         "syntax": "none | mandatory | proximity",
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-snap-type-y"
+    },
+    "scroll-timeline": {
+        "description": "Defines a name that can be used to identify the source element of a scroll timeline, along with the scrollbar axis that should provide the timeline.",
+        "syntax": "<scroll-timeline-name> || <scroll-timeline-axis>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline"
+    },
+    "scroll-timeline-axis": {
+        "description": "Specifies the scrollbar that will be used to provide the timeline for a scroll-timeline animation",
+        "syntax": "block | inline | vertical | horizontal",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline-axis"
+    },
+    "scroll-timeline-name": {
+        "description": "Defines a name that can be used to identify an element as the source of a scroll-timeline.",
+        "syntax": "none | <custom-ident>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline-name"
     },
     "scrollbar-3dlight-color": {
         "description": "Determines the color of the top and left edges of the scroll box and scroll arrows of a scroll bar.",
@@ -2351,7 +2441,7 @@ CSSDocumentation = {
         "syntax": "<string>"
     },
     "system": {
-        "description": "@counter-style descriptor. Specifies which algorithm will be used to construct the counter\u2019s representation based on the counter value.",
+        "description": "@counter-style descriptor. Specifies which algorithm will be used to construct the counter's representation based on the counter value.",
         "syntax": "cyclic | numeric | alphabetic | symbolic | additive | [ fixed <integer>? ] | [ extends <counter-style-name> ]"
     },
     "tab-size": {
@@ -2458,7 +2548,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-overflow"
     },
     "text-rendering": {
-        "description": "The creator of SVG content might want to provide a hint to the implementation about what tradeoffs to make as it renders text. The \u2018text-rendering\u2019 property provides these hints.",
+        "description": "The creator of SVG content might want to provide a hint to the implementation about what tradeoffs to make as it renders text. The 'text-rendering' property provides these hints.",
         "syntax": "auto | optimizeSpeed | optimizeLegibility | geometricPrecision",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-rendering"
     },
@@ -2473,7 +2563,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-size-adjust"
     },
     "text-transform": {
-        "description": "Controls capitalization effects of an element\u2019s text.",
+        "description": "Controls capitalization effects of an element's text.",
         "syntax": "none | capitalize | uppercase | lowercase | full-width | full-size-kana",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-transform"
     },
@@ -2575,7 +2665,7 @@ CSSDocumentation = {
         "syntax": "auto | contain | cover"
     },
     "visibility": {
-        "description": "Specifies whether the boxes generated by an element are rendered. Invisible boxes still affect layout (set the \u2018display\u2019 property to \u2018none\u2019 to suppress box generation altogether).",
+        "description": "Specifies whether the boxes generated by an element are rendered. Invisible boxes still affect layout (set the 'display' property to 'none' to suppress box generation altogether).",
         "syntax": "visible | hidden | collapse",
         "url": "https://developer.mozilla.org/docs/Web/CSS/visibility"
     },
@@ -2605,7 +2695,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/word-break"
     },
     "word-spacing": {
-        "description": "Specifies additional spacing between \u201cwords\u201d.",
+        "description": "Specifies additional spacing between \"words\".",
         "syntax": "normal | <length>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/word-spacing"
     },
