@@ -56,6 +56,10 @@ PASS Rule not applied [<gandalf>, grey, false]
 PASS Rule not applied [gandalf, grey, false]
 PASS Rule not applied [<color>, notacolor, false]
 PASS Rule not applied [<length>, 10em, false]
+PASS Rule not applied [<transform-function>, translateX(1em), false]
+PASS Rule not applied [<transform-function>, translateY(1lh), false]
+PASS Rule not applied [<transform-list>, rotate(10deg) translateX(1em), false]
+PASS Rule not applied [<transform-list>, rotate(10deg) translateY(1lh), false]
 PASS Non-inherited properties do not inherit
 PASS Inherited properties inherit
 PASS Initial values substituted as computed value
