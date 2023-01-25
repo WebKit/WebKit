@@ -1,46 +1,52 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
-<body id="body">
-
-<p id="description"></p>
-<div id="console"></div>
+<body>
 
 <script>
+var output = "This tests that a page with a content inset will not affect the bounds of the main frame scroll view. It will appear as the same as the web area's bounds.\n\n";
 
-    description("This tests that a page with a content inset will not affect the bounds of the main frame scroll view. It will appear as the same as the web area's sbounds");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
-        var webArea = accessibilityController.rootElement.childAtIndex(0);
-        var webX = webArea.x;
-        var webY = webArea.y - webArea.height;
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var webX = webArea.x;
+    var webY = webArea.y - webArea.height;
 
-        var scrollView = webArea.parentElement();
-        var scrollViewX = scrollView.x;
-        // to get what the y that we're expecting, we need to subtract the height, because Cocoa requires the bottom point to be consider the y origin.
-        var scrollViewY = scrollView.y - scrollView.height;
-        var scrollViewHeight = scrollView.height;  
+    var scrollView = webArea.parentElement();
+    var scrollViewX = scrollView.x;
+    // to get what the y that we're expecting, we need to subtract the height, because Cocoa requires the bottom point to be consider the y origin.
+    var scrollViewY = scrollView.y - scrollView.height;
+    var scrollViewHeight = scrollView.height;
 
-        debug("The position of the web area and the scroll view should be the same when there's no content inset");
-        shouldBeTrue("webX == scrollViewX && webY == scrollViewY");
-        debug("\n");
- 
-        window.internals.setTopContentInset(100);
+    output += "The position of the web area and the scroll view should be the same when there's no content inset.\n";
+    output += expect("webX == scrollViewX && webY == scrollViewY", "true")
 
-        var newScrollViewHeight = scrollView.height;
-        var newScrollViewY =  scrollView.y - scrollView.height;
-        debug("After setting the content inset, the new y position should be less than the initial");
-        shouldBe("newScrollViewY - scrollViewY", "100")
-        debug("\n");
+    output += "\nSetting the main-frame top content inset to 100px.\n";
+    window.internals.setTopContentInset(100);
 
-        debug("The content inset also reduces the height of the scroll view, which should be reflected here.");
-        shouldBeTrue("scrollViewHeight > newScrollViewHeight");
-        debug("\n");
-    }
+    var newScrollViewHeight, newScrollViewY;
+    setTimeout(async function() {
+        await waitFor(() => {
+            newScrollViewY =  scrollView.y - scrollView.height;
+            return newScrollViewY - scrollViewY === 100;
+        });
+        newScrollViewHeight = scrollView.height;
+
+        output += "After setting the content inset, the new y position should be less than the initial.\n";
+        output += expect("newScrollViewY - scrollViewY", "100");
+
+        output += "\nThe content inset also reduces the height of the scroll view, which should be reflected here.\n";
+        output += expect("scrollViewHeight > newScrollViewHeight", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>
+
