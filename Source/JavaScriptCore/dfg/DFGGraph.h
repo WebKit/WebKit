@@ -1322,6 +1322,9 @@ private:
             return add->canSpeculateInt32(source) ? SpeculateInt32 : DontSpeculateInt32;
         
         double doubleImmediate = immediateValue.asDouble();
+        if (std::isnan(doubleImmediate))
+            return DontSpeculateInt32;
+
         const double twoToThe48 = 281474976710656.0;
         if (doubleImmediate < -twoToThe48 || doubleImmediate > twoToThe48)
             return DontSpeculateInt32;
