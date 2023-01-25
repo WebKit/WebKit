@@ -31,6 +31,7 @@
 #include "PlatformStrategies.h"
 
 #include <gio/gio.h>
+#include <wtf/glib/GUniquePtr.h>
 
 // https://specifications.freedesktop.org/mpris-spec/latest/
 static const char s_mprisInterface[] =
