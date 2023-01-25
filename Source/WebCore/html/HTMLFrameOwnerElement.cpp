@@ -84,8 +84,7 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
 
 HTMLFrameOwnerElement::~HTMLFrameOwnerElement()
 {
-    if (m_contentFrame)
-        m_contentFrame->disconnectOwnerElement();
+    RELEASE_ASSERT_WITH_MESSAGE(!m_contentFrame, "clearContentFrame needs to be called before destroying this HTMLFrameOwnerElement");
 }
 
 Document* HTMLFrameOwnerElement::contentDocument() const
