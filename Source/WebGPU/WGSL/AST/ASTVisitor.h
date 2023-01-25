@@ -68,6 +68,7 @@ public:
     virtual void visit(Uint32Literal&);
     virtual void visit(UnaryExpression&);
     virtual void visit(BinaryExpression&);
+    virtual void visit(PointerDereference&);
 
     // Statement
     virtual void visit(Statement&);

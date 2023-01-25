@@ -274,6 +274,13 @@ void StringDumper::visit(BinaryExpression& expression)
     visit(expression.rhs());
 }
 
+void StringDumper::visit(PointerDereference& pointerDereference)
+{
+    m_out.print("(*");
+    visit(pointerDereference.target());
+    m_out.print(")");
+}
+
 // Statement
 void StringDumper::visit(AssignmentStatement& statement)
 {

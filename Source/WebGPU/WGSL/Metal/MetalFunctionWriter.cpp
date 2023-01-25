@@ -70,6 +70,7 @@ public:
     void visit(AST::StructureAccess&) override;
     void visit(AST::UnaryExpression&) override;
     void visit(AST::BinaryExpression&) override;
+    void visit(AST::PointerDereference&) override;
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
@@ -356,6 +357,12 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
     visit(binary.rhs());
 }
 
+void FunctionDefinitionWriter::visit(AST::PointerDereference& pointerDereference)
+{
+    m_stringBuilder.append("(*");
+    visit(pointerDereference.target());
+    m_stringBuilder.append(")");
+}
 void FunctionDefinitionWriter::visit(AST::ArrayAccess& access)
 {
     visit(access.base());

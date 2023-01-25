@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,27 @@
 
 #pragma once
 
-#include "ASTArrayAccess.h"
-#include "ASTAssignmentStatement.h"
-#include "ASTAttribute.h"
-#include "ASTBinaryExpression.h"
-#include "ASTBindingAttribute.h"
-#include "ASTBuiltinAttribute.h"
-#include "ASTCallableExpression.h"
-#include "ASTCompoundStatement.h"
-#include "ASTDecl.h"
 #include "ASTExpression.h"
-#include "ASTFunctionDecl.h"
-#include "ASTGlobalDirective.h"
-#include "ASTGroupAttribute.h"
-#include "ASTIdentifierExpression.h"
-#include "ASTLiteralExpressions.h"
-#include "ASTLocationAttribute.h"
-#include "ASTNode.h"
-#include "ASTPointerDereference.h"
-#include "ASTReturnStatement.h"
-#include "ASTShaderModule.h"
-#include "ASTStageAttribute.h"
-#include "ASTStatement.h"
-#include "ASTStructureAccess.h"
-#include "ASTStructureDecl.h"
-#include "ASTTypeDecl.h"
-#include "ASTUnaryExpression.h"
-#include "ASTVariableDecl.h"
-#include "ASTVariableQualifier.h"
-#include "ASTVariableStatement.h"
+
+namespace WGSL::AST {
+
+class PointerDereference final : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    PointerDereference(SourceSpan span, UniqueRef<Expression>&& target)
+        : Expression(span)
+        , m_target(WTFMove(target))
+    {
+    }
+
+    Kind kind() const override;
+    Expression& target() { return m_target.get(); }
+
+private:
+    UniqueRef<Expression> m_target;
+};
+
+} // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(PointerDereference)
