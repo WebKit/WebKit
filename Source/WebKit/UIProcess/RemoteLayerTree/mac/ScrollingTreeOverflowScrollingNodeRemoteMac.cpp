@@ -55,13 +55,11 @@ void ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren(cons
     ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(stateNode);
     const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
 
-    // FIXME: Push to ScrollingTreeScrollingNodeDelegateMac?
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer))
-        m_scrollerPair->verticalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer()));
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer))
-        m_scrollerPair->horizontalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer()));
-
+    CALayer* horizontalLayer = nullptr;
+    CALayer* verticalLayer = nullptr;
+    m_delegate->getScrollbarLayersForStateNode(scrollingStateNode, &horizontalLayer, &verticalLayer);
+    m_scrollerPair->horizontalScroller().setHostLayer(horizontalLayer);
+    m_scrollerPair->verticalScroller().setHostLayer(verticalLayer);
     m_scrollerPair->updateValues();
 }
 

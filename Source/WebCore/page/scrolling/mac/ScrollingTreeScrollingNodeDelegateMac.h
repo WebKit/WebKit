@@ -41,6 +41,7 @@ class IntPoint;
 class ScrollingStateScrollingNode;
 class ScrollingTreeScrollingNode;
 class ScrollingTree;
+class ScrollerPairMac;
 
 class ScrollingTreeScrollingNodeDelegateMac final : public ThreadedScrollingTreeScrollingNodeDelegate {
 public:
@@ -60,6 +61,7 @@ public:
 
 private:
     void updateFromStateNode(const ScrollingStateScrollingNode&) final;
+    void getScrollbarLayersForStateNode(const ScrollingStateScrollingNode& scrollingStateNode, CALayer **horizontalLayer, CALayer **verticalLayer) final;
 
     // ScrollingEffectsControllerClient.
     bool allowsHorizontalStretching(const PlatformWheelEvent&) const final;

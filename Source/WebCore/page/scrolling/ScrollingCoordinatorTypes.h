@@ -84,8 +84,8 @@ struct ScrollableAreaParameters {
     bool allowsHorizontalScrolling { false };
     bool allowsVerticalScrolling { false };
 
-    bool horizontalScrollbarHiddenByStyle { false };
-    bool verticalScrollbarHiddenByStyle { false };
+    NativeScrollbarVisibility horizontalNativeScrollbarVisibility { NativeScrollbarVisibility::Visible };
+    NativeScrollbarVisibility verticalNativeScrollbarVisibility { NativeScrollbarVisibility::Visible };
 
     bool useDarkAppearanceForScrollbars { false };
 
@@ -99,8 +99,8 @@ struct ScrollableAreaParameters {
             && verticalOverscrollBehavior == other.verticalOverscrollBehavior
             && allowsHorizontalScrolling == other.allowsHorizontalScrolling
             && allowsVerticalScrolling == other.allowsVerticalScrolling
-            && horizontalScrollbarHiddenByStyle == other.horizontalScrollbarHiddenByStyle
-            && verticalScrollbarHiddenByStyle == other.verticalScrollbarHiddenByStyle
+            && horizontalNativeScrollbarVisibility == other.horizontalNativeScrollbarVisibility
+            && verticalNativeScrollbarVisibility == other.verticalNativeScrollbarVisibility
             && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars;
     }
 };

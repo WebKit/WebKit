@@ -829,8 +829,8 @@ private:
     bool canShowNonOverlayScrollbars() const final;
 
     bool styleHidesScrollbarWithOrientation(ScrollbarOrientation) const;
-    bool horizontalScrollbarHiddenByStyle() const final;
-    bool verticalScrollbarHiddenByStyle() const final;
+    NativeScrollbarVisibility horizontalNativeScrollbarVisibility() const final;
+    NativeScrollbarVisibility verticalNativeScrollbarVisibility() const final;
 
     // Override scrollbar notifications to update the AXObject cache.
     void didAddScrollbar(Scrollbar*, ScrollbarOrientation) final;

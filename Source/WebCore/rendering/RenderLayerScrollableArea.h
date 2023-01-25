@@ -138,8 +138,8 @@ public:
     // All methods in this section override ScrollableaArea methods (final).
     void availableContentSizeChanged(AvailableSizeChangeReason) final;
 
-    bool horizontalScrollbarHiddenByStyle() const final;
-    bool verticalScrollbarHiddenByStyle() const final;
+    NativeScrollbarVisibility horizontalNativeScrollbarVisibility() const final;
+    NativeScrollbarVisibility verticalNativeScrollbarVisibility() const final;
 
     bool canShowNonOverlayScrollbars() const final;
 

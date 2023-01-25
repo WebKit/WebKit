@@ -1822,6 +1822,13 @@ header: <WebCore/ScrollTypes.h>
     AlwaysOn
 };
 
+header: <WebCore/ScrollTypes.h>
+[CustomHeader] enum class WebCore::NativeScrollbarVisibility : uint8_t {
+    Visible,
+    HiddenByStyle,
+    ReplacedByCustomScrollbar
+};
+
 header: <WebCore/ScrollingCoordinatorTypes.h>
 [CustomHeader] struct WebCore::ScrollableAreaParameters {
     WebCore::ScrollElasticity horizontalScrollElasticity;
@@ -1832,8 +1839,8 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
     WebCore::OverscrollBehavior verticalOverscrollBehavior;
     bool allowsHorizontalScrolling;
     bool allowsVerticalScrolling;
-    bool horizontalScrollbarHiddenByStyle;
-    bool verticalScrollbarHiddenByStyle;
+    WebCore::NativeScrollbarVisibility horizontalNativeScrollbarVisibility;
+    WebCore::NativeScrollbarVisibility verticalNativeScrollbarVisibility;
     bool useDarkAppearanceForScrollbars;
 };
 

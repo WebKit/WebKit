@@ -828,19 +828,16 @@ void RenderLayerScrollableArea::invalidateScrollCornerRect(const IntRect& rect)
         m_resizer->repaintRectangle(rect);
 }
 
-static bool scrollbarHiddenByStyle(Scrollbar* scrollbar)
+NativeScrollbarVisibility RenderLayerScrollableArea::horizontalNativeScrollbarVisibility() const
 {
-    return scrollbar && scrollbar->isHiddenByStyle();
+    auto scrollbar = horizontalScrollbar();
+    return Scrollbar::nativeScrollbarVisibility(scrollbar);
 }
 
-bool RenderLayerScrollableArea::horizontalScrollbarHiddenByStyle() const
+NativeScrollbarVisibility RenderLayerScrollableArea::verticalNativeScrollbarVisibility() const
 {
-    return scrollbarHiddenByStyle(horizontalScrollbar());
-}
-
-bool RenderLayerScrollableArea::verticalScrollbarHiddenByStyle() const
-{
-    return scrollbarHiddenByStyle(verticalScrollbar());
+    auto scrollbar = verticalScrollbar();
+    return Scrollbar::nativeScrollbarVisibility(scrollbar);
 }
 
 bool RenderLayerScrollableArea::canShowNonOverlayScrollbars() const

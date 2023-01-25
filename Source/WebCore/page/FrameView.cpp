@@ -1542,24 +1542,24 @@ bool FrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientat
     return scrollbarStyle && scrollbarStyle->display() == DisplayType::None;
 }
 
-bool FrameView::horizontalScrollbarHiddenByStyle() const
+NativeScrollbarVisibility FrameView::horizontalNativeScrollbarVisibility() const
 {
     if (managesScrollbars()) {
         auto* scrollbar = horizontalScrollbar();
-        return scrollbar && scrollbar->isHiddenByStyle();
+        return Scrollbar::nativeScrollbarVisibility(scrollbar);
     }
 
-    return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Horizontal);
+    return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Horizontal) ? NativeScrollbarVisibility::HiddenByStyle : NativeScrollbarVisibility::Visible;
 }
 
-bool FrameView::verticalScrollbarHiddenByStyle() const
+NativeScrollbarVisibility FrameView::verticalNativeScrollbarVisibility() const
 {
     if (managesScrollbars()) {
         auto* scrollbar = verticalScrollbar();
-        return scrollbar && scrollbar->isHiddenByStyle();
+        return Scrollbar::nativeScrollbarVisibility(scrollbar);
     }
-    
-    return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Vertical);
+
+    return styleHidesScrollbarWithOrientation(ScrollbarOrientation::Vertical) ? NativeScrollbarVisibility::HiddenByStyle : NativeScrollbarVisibility::Visible;
 }
 
 void FrameView::setCannotBlitToWindow()
