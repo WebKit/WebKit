@@ -174,7 +174,7 @@ SVGElement::SVGElement(const QualifiedName& tagName, Document& document, UniqueR
 SVGElement::~SVGElement()
 {
     if (m_svgRareData) {
-        RELEASE_ASSERT(m_svgRareData->referencingElements().computesEmpty());
+        RELEASE_ASSERT(m_svgRareData->referencingElements().isEmptyIgnoringNullReferences());
         for (SVGElement& instance : copyToVectorOf<Ref<SVGElement>>(instances()))
             instance.m_svgRareData->setCorrespondingElement(nullptr);
         RELEASE_ASSERT(!m_svgRareData->correspondingElement());
@@ -276,7 +276,7 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
                 extensions.addElementToRebuild(element);
                 Ref { element }->clearTarget();
             }
-            RELEASE_ASSERT(m_svgRareData->referencingElements().computesEmpty());
+            RELEASE_ASSERT(m_svgRareData->referencingElements().isEmptyIgnoringNullReferences());
         }
         extensions.removeElementToRebuild(*this);
     }

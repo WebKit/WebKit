@@ -538,7 +538,7 @@ WeakHashSet<RenderElement>& SVGHitTestCycleDetectionScope::visitedElements()
 
 bool SVGHitTestCycleDetectionScope::isEmpty()
 {
-    return visitedElements().computesEmpty();
+    return visitedElements().isEmptyIgnoringNullReferences();
 }
 
 bool SVGHitTestCycleDetectionScope::isVisiting(const RenderElement& element)

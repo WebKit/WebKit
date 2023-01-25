@@ -188,7 +188,7 @@ void WebGeolocationManagerProxy::stopUpdatingWithProxy(WebProcessProxy& proxy, c
             providerSetEnabledHighAccuracy(perDomainData, highAccuracyShouldBeEnabled);
     }
 
-    if (perDomainData.watchers.computesEmpty() && perDomainData.watchersNeedingHighAccuracy.computesEmpty())
+    if (perDomainData.watchers.isEmptyIgnoringNullReferences() && perDomainData.watchersNeedingHighAccuracy.isEmptyIgnoringNullReferences())
         m_perDomainData.remove(it);
 }
 
@@ -220,13 +220,13 @@ bool WebGeolocationManagerProxy::isUpdating(const PerDomainData& perDomainData) 
 {
 #if PLATFORM(IOS_FAMILY)
     if (!m_clientProvider)
-        return !perDomainData.watchers.computesEmpty();
+        return !perDomainData.watchers.isEmptyIgnoringNullReferences();
 #else
     UNUSED_PARAM(perDomainData);
 #endif
 
     for (auto& perDomainData : m_perDomainData.values()) {
-        if (!perDomainData->watchers.computesEmpty())
+        if (!perDomainData->watchers.isEmptyIgnoringNullReferences())
             return true;
     }
     return false;
@@ -237,13 +237,13 @@ bool WebGeolocationManagerProxy::isHighAccuracyEnabled(const PerDomainData& perD
 {
 #if PLATFORM(IOS_FAMILY)
     if (!m_clientProvider)
-        return !perDomainData.watchersNeedingHighAccuracy.computesEmpty();
+        return !perDomainData.watchersNeedingHighAccuracy.isEmptyIgnoringNullReferences();
 #else
     UNUSED_PARAM(perDomainData);
 #endif
 
     for (auto& data : m_perDomainData.values()) {
-        if (!data->watchersNeedingHighAccuracy.computesEmpty())
+        if (!data->watchersNeedingHighAccuracy.isEmptyIgnoringNullReferences())
             return true;
     }
     return false;
@@ -255,7 +255,7 @@ void WebGeolocationManagerProxy::providerStartUpdating(PerDomainData& perDomainD
     if (!m_clientProvider) {
         ASSERT(!perDomainData.provider);
         perDomainData.provider = makeUnique<WebCore::CoreLocationGeolocationProvider>(registrableDomain, *this);
-        perDomainData.provider->setEnableHighAccuracy(!perDomainData.watchersNeedingHighAccuracy.computesEmpty());
+        perDomainData.provider->setEnableHighAccuracy(!perDomainData.watchersNeedingHighAccuracy.isEmptyIgnoringNullReferences());
         return;
     }
 #else

@@ -73,7 +73,7 @@ void DocumentTimelinesController::detachFromDocument()
 {
     m_currentTimeClearingTaskCancellationGroup.cancel();
 
-    while (!m_timelines.computesEmpty())
+    while (!m_timelines.isEmptyIgnoringNullReferences())
         m_timelines.begin()->detachFromDocument();
 }
 

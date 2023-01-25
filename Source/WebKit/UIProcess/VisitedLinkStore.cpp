@@ -43,7 +43,7 @@ Ref<VisitedLinkStore> VisitedLinkStore::create()
 
 VisitedLinkStore::~VisitedLinkStore()
 {
-    RELEASE_ASSERT(m_processes.computesEmpty());
+    RELEASE_ASSERT(m_processes.isEmptyIgnoringNullReferences());
 }
 
 VisitedLinkStore::VisitedLinkStore()

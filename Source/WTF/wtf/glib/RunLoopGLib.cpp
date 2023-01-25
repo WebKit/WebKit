@@ -149,7 +149,7 @@ void RunLoop::observe(const RunLoop::Observer& observer)
 
 void RunLoop::notify(RunLoop::Event event, const char* name)
 {
-    if (m_observers.computesEmpty())
+    if (m_observers.isEmptyIgnoringNullReferences())
         return;
 
     m_observers.forEach([event, name = String::fromUTF8(name)](auto& observer) {

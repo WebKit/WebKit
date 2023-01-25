@@ -44,7 +44,7 @@ ScreenOrientationProvider::~ScreenOrientationProvider()
 
 void ScreenOrientationProvider::addObserver(Observer& observer)
 {
-    bool wasEmpty = m_observers.computesEmpty();
+    bool wasEmpty = m_observers.isEmptyIgnoringNullReferences();
     m_observers.add(observer);
     if (wasEmpty)
         platformStartListeningForChanges();
@@ -53,7 +53,7 @@ void ScreenOrientationProvider::addObserver(Observer& observer)
 void ScreenOrientationProvider::removeObserver(Observer& observer)
 {
     m_observers.remove(observer);
-    if (m_observers.computesEmpty()) {
+    if (m_observers.isEmptyIgnoringNullReferences()) {
         m_currentOrientation = std::nullopt;
         platformStopListeningForChanges();
     }
@@ -76,7 +76,7 @@ ScreenOrientationType ScreenOrientationProvider::currentOrientation()
         return *m_currentOrientation;
 
     auto orientation = platformCurrentOrientation();
-    if (!m_observers.computesEmpty())
+    if (!m_observers.isEmptyIgnoringNullReferences())
         m_currentOrientation = orientation;
     return orientation;
 }

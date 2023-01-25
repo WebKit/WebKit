@@ -375,7 +375,7 @@ bool ContentChangeObserver::containsObservedDOMTimer(const DOMTimer& timer) cons
 
 bool ContentChangeObserver::hasObservedDOMTimer() const
 {
-    return !m_DOMTimerList.computesEmpty();
+    return !m_DOMTimerList.isEmptyIgnoringNullReferences();
 }
 
 void ContentChangeObserver::styleRecalcDidStart()
@@ -469,7 +469,7 @@ void ContentChangeObserver::elementDidBecomeHidden(const Element& element)
     if (!m_visibilityCandidateList.remove(element))
         return;
 //    ASSERT(hasVisibleChangeState());
-    if (m_visibilityCandidateList.computesEmpty())
+    if (m_visibilityCandidateList.isEmptyIgnoringNullReferences())
         setHasIndeterminateState();
 }
 

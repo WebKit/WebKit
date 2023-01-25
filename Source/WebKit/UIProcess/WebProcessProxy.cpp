@@ -372,7 +372,7 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     if (value) {
         RELEASE_ASSERT(m_pageMap.isEmpty());
         RELEASE_ASSERT(!m_suspendedPageCount);
-        RELEASE_ASSERT(m_provisionalPages.computesEmpty());
+        RELEASE_ASSERT(m_provisionalPages.isEmptyIgnoringNullReferences());
         m_previouslyApprovedFilePaths.clear();
     }
 
@@ -442,7 +442,7 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     ASSERT(m_provisionalPages.contains(provisionalPage));
     m_provisionalPages.remove(provisionalPage);
     updateRegistrationWithDataStore();
-    if (m_provisionalPages.computesEmpty())
+    if (m_provisionalPages.isEmptyIgnoringNullReferences())
         maybeShutDown();
 }
 
@@ -464,7 +464,7 @@ void WebProcessProxy::removeProvisionalFrameProxy(ProvisionalFrameProxy& provisi
     ASSERT(m_provisionalFrames.contains(provisionalFrame));
     m_provisionalFrames.remove(provisionalFrame);
     updateRegistrationWithDataStore();
-    if (m_provisionalFrames.computesEmpty())
+    if (m_provisionalFrames.isEmptyIgnoringNullReferences())
         maybeShutDown();
 }
 
@@ -1305,8 +1305,8 @@ bool WebProcessProxy::canTerminateAuxiliaryProcess()
     if (!m_pageMap.isEmpty()
         || !m_frameMap.isEmpty()
         || m_suspendedPageCount
-        || !m_provisionalPages.computesEmpty()
-        || !m_provisionalFrames.computesEmpty()
+        || !m_provisionalPages.isEmptyIgnoringNullReferences()
+        || !m_provisionalFrames.isEmptyIgnoringNullReferences()
         || m_isInProcessCache
         || m_shutdownPreventingScopeCounter.value()) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "canTerminateAuxiliaryProcess: returns false (pageCount=%u, provisionalPageCount=%u, m_suspendedPageCount=%u, m_isInProcessCache=%d, m_shutdownPreventingScopeCounter=%lu)", m_pageMap.size(), m_provisionalPages.computeSize(), m_suspendedPageCount, m_isInProcessCache, m_shutdownPreventingScopeCounter.value());

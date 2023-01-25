@@ -117,7 +117,7 @@ void GamepadManager::platformGamepadInputActivity(EventMakesGamepadsVisible even
     if (eventVisibility == EventMakesGamepadsVisible::No)
         return;
 
-    if (m_gamepadBlindNavigators.computesEmpty() && m_gamepadBlindDOMWindows.computesEmpty())
+    if (m_gamepadBlindNavigators.isEmptyIgnoringNullReferences() && m_gamepadBlindDOMWindows.isEmptyIgnoringNullReferences())
         return;
 
     for (auto* gamepad : GamepadProvider::singleton().platformGamepads()) {
@@ -133,7 +133,7 @@ void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, WeakHa
 {
     LOG(Gamepad, "(%u) GamepadManager::makeGamepadVisible - New gamepad '%s' is visible", (unsigned)getpid(), platformGamepad.id().utf8().data());
 
-    if (navigatorSet.computesEmpty() && domWindowSet.computesEmpty())
+    if (navigatorSet.isEmptyIgnoringNullReferences() && domWindowSet.isEmptyIgnoringNullReferences())
         return;
 
     for (auto& navigator : navigatorSet)
@@ -218,7 +218,7 @@ void GamepadManager::maybeStartMonitoringGamepads()
     if (m_isMonitoringGamepads)
         return;
 
-    if (!m_navigators.computesEmpty() || !m_domWindows.computesEmpty()) {
+    if (!m_navigators.isEmptyIgnoringNullReferences() || !m_domWindows.isEmptyIgnoringNullReferences()) {
         LOG(Gamepad, "(%u) GamepadManager has %i NavigatorGamepads and %i DOMWindows registered, is starting gamepad monitoring", (unsigned)getpid(), m_navigators.computeSize(), m_domWindows.computeSize());
         m_isMonitoringGamepads = true;
         GamepadProvider::singleton().startMonitoringGamepads(*this);
@@ -230,7 +230,7 @@ void GamepadManager::maybeStopMonitoringGamepads()
     if (!m_isMonitoringGamepads)
         return;
 
-    if (m_navigators.computesEmpty() && m_domWindows.computesEmpty()) {
+    if (m_navigators.isEmptyIgnoringNullReferences() && m_domWindows.isEmptyIgnoringNullReferences()) {
         LOG(Gamepad, "(%u) GamepadManager has no NavigatorGamepads or DOMWindows registered, is stopping gamepad monitoring", (unsigned)getpid());
         m_isMonitoringGamepads = false;
         GamepadProvider::singleton().stopMonitoringGamepads(*this);

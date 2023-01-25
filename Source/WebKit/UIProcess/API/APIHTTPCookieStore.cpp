@@ -54,7 +54,7 @@ HTTPCookieStore::HTTPCookieStore(WebKit::WebsiteDataStore& websiteDataStore)
 
 HTTPCookieStore::~HTTPCookieStore()
 {
-    ASSERT(m_observers.computesEmpty());
+    ASSERT(m_observers.isEmptyIgnoringNullReferences());
 }
 
 void HTTPCookieStore::filterAppBoundCookies(Vector<WebCore::Cookie>&& cookies, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
@@ -167,7 +167,7 @@ void HTTPCookieStore::flushCookies(CompletionHandler<void()>&& completionHandler
 
 void HTTPCookieStore::registerObserver(Observer& observer)
 {
-    bool wasObserving = !m_observers.computesEmpty();
+    bool wasObserving = !m_observers.isEmptyIgnoringNullReferences();
     m_observers.add(observer);
     if (wasObserving)
         return;
@@ -179,7 +179,7 @@ void HTTPCookieStore::registerObserver(Observer& observer)
 void HTTPCookieStore::unregisterObserver(Observer& observer)
 {
     m_observers.remove(observer);
-    if (!m_observers.computesEmpty())
+    if (!m_observers.isEmptyIgnoringNullReferences())
         return;
 
     if (auto* networkProcess = networkProcessIfExists())

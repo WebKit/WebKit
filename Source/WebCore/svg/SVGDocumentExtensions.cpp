@@ -207,7 +207,7 @@ void SVGDocumentExtensions::removeElementFromPendingResources(SVGElement& elemen
         for (auto& resource : m_pendingResources) {
             auto& elements = resource.value;
             elements.remove(element);
-            if (elements.computesEmpty())
+            if (elements.isEmptyIgnoringNullReferences())
                 toBeRemoved.append(resource.key);
         }
 
@@ -224,7 +224,7 @@ void SVGDocumentExtensions::removeElementFromPendingResources(SVGElement& elemen
         for (auto& resource : m_pendingResourcesForRemoval) {
             auto& elements = resource.value;
             elements.remove(element);
-            if (elements.computesEmpty())
+            if (elements.isEmptyIgnoringNullReferences())
                 toBeRemoved.append(resource.key);
         }
 
@@ -242,7 +242,7 @@ void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomString& id)
     ASSERT(!m_pendingResourcesForRemoval.contains(id));
 
     auto existing = m_pendingResources.take(id);
-    if (!existing.computesEmpty())
+    if (!existing.isEmptyIgnoringNullReferences())
         m_pendingResourcesForRemoval.add(id, WTFMove(existing));
 }
 
@@ -262,7 +262,7 @@ RefPtr<SVGElement> SVGDocumentExtensions::takeElementFromPendingResourcesForRemo
 
     resourceSet.remove(*firstElement);
 
-    if (resourceSet.computesEmpty())
+    if (resourceSet.isEmptyIgnoringNullReferences())
         m_pendingResourcesForRemoval.remove(id);
 
     return firstElement;

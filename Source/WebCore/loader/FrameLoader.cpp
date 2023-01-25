@@ -1700,7 +1700,7 @@ void FrameLoader::clearProvisionalLoadForPolicyCheck()
 
 bool FrameLoader::hasOpenedFrames() const
 {
-    return !m_openedFrames.computesEmpty();
+    return !m_openedFrames.isEmptyIgnoringNullReferences();
 }
 
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)

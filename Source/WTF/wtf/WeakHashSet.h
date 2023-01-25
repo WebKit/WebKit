@@ -139,7 +139,12 @@ public:
 
     unsigned capacity() const { return m_set.capacity(); }
 
-    bool computesEmpty() const { return begin() == end(); }
+    bool isEmptyIgnoringNullReferences() const
+    {
+        if (m_set.isEmpty())
+            return true;
+        return begin() == end();
+    }
 
     bool hasNullReferences() const
     {

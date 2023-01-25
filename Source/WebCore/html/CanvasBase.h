@@ -97,7 +97,7 @@ public:
     void addDisplayBufferObserver(CanvasDisplayBufferObserver&);
     void removeDisplayBufferObserver(CanvasDisplayBufferObserver&);
     void notifyObserversCanvasDisplayBufferPrepared();
-    bool hasDisplayBufferObservers() const { return !m_displayBufferObservers.computesEmpty(); }
+    bool hasDisplayBufferObservers() const { return !m_displayBufferObservers.isEmptyIgnoringNullReferences(); }
 
     HashSet<Element*> cssCanvasClients() const;
 
