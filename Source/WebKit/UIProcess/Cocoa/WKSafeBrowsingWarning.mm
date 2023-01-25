@@ -601,4 +601,11 @@ static RetainPtr<ViewType> makeLabel(NSAttributedString *attributedString)
 #endif
 }
 
+#if PLATFORM(MAC)
+- (BOOL)clipsToBounds
+{
+    return YES;
+}
+#endif
+
 @end
