@@ -1,0 +1,27 @@
+Tests for WI.FontStyles.Conversion
+
+
+== Running test suite: WI.FontStyles.Conversion
+-- Running test case: WI.FontStyles.Conversion.axisValueToFontPropertyValue
+PASS: Mapping "wdth" 100 to font-stretch: 100%
+PASS: Mapping "slnt" 0 to font-style: oblique 0deg
+PASS: Mapping "slnt" 14 to font-style: oblique 14deg
+PASS: Mapping "ital" 0 to font-style: normal
+PASS: Mapping "ital" 1 to font-style: italic
+PASS: Mapping "ital" 99 to font-style: italic
+PASS: Mapping "xxxx" 99 to xxxx: 99
+
+-- Running test case: WI.FontStyles.Conversion.fontPropertyValueToAxisValue
+PASS: Mapping font-stretch: 100% to "wdth" 100
+PASS: Mapping font-stretch: 99.9% to "wdth" 99.9
+PASS: Mapping font-style: normal to "slnt" 0
+PASS: Mapping font-style: italic to "slnt" 14
+PASS: Mapping font-style: oblique to "slnt" 14
+PASS: Mapping font-style: oblique -99.9deg to "slnt" -99.9
+PASS: Mapping font-style: oblique to "ital" 1
+PASS: Mapping font-style: italic to "ital" 1
+PASS: Mapping font-style: oblique 0deg to "ital" 0
+PASS: Mapping font-style: oblique 14deg to "ital" 1
+PASS: Mapping font-style: oblique 99.9deg to "ital" 1
+PASS: Mapping xxxx: 99.9 to "xxxx" 99.9
+

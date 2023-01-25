@@ -77,6 +77,8 @@ WI.FontStyles = class FontStyles
             return `${value}%`;
         case "slnt":
             return `oblique ${value}deg`;
+        case "ital":
+            return value >= 1 ? "italic" : "normal";
         default:
             return value;
         }
@@ -87,15 +89,25 @@ WI.FontStyles = class FontStyles
         switch (tag) {
         case "wdth":
             return parseFloat(value);
+        case "ital":
         case "slnt":
+            // See: https://w3c.github.io/csswg-drafts/css-fonts/#valdef-font-style-oblique-angle--90deg-90deg
+            const obliqueAngleDefaultValue = 14;
+
             if (value === "normal")
                 return 0;
 
-            if (value === "oblique")
-                return 14;
+            if (tag === "ital" && (value === "oblique" || value === "italic"))
+                return 1;
+
+            if (tag === "slnt" && (value === "oblique" || value === "italic"))
+                return obliqueAngleDefaultValue;
 
             let degrees = value.match(/oblique (?<degrees>-?\d+(\.\d+)?)deg/)?.groups?.degrees;
-            if (degrees)
+            if (degrees && tag === "ital")
+                return parseFloat(degrees) >= obliqueAngleDefaultValue ? 1 : 0; // The `ital` variation axis acts as an on/off toggle (0 = off, 1 = on).
+
+            if (degrees && tag === "slnt")
                 return parseFloat(degrees);
 
             console.assert(false, `Unexpected font property value associated with variation axis ${tag}`, value);

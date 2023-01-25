@@ -48,7 +48,7 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
         this._inputRangeElement.min = minimumValue;
         this._inputRangeElement.max = maximumValue;
         this._inputRangeElement.value = value ?? defaultValue;
-        this._inputRangeElement.step = this._getAxisResolution(minimumValue, maximumValue);
+        this._inputRangeElement.step = this._getAxisResolution(minimumValue, maximumValue, tag);
 
         this._variationMinValueElement = this._variationRangeElement.appendChild(document.createElement("div"));
         this._variationMinValueElement.className = "variation-minvalue";
@@ -126,12 +126,16 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
         return value.toLocaleString(undefined, options);
     }
 
-    _getAxisResolution(min, max)
+    _getAxisResolution(min, max, tag)
     {
+        // The `ital` variation axis acts as an on/off toggle (0 = off, 1 = on).
+        if (tag === "ital" && min === 0 && max === 1)
+            return 1;
+
         let delta = max - min;
         if (delta <= 1)
             return 0.01;
-        
+
         if (delta <= 10)
             return 0.1;
 
