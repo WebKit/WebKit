@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ElementIdentifier.h"
 #include "FloatRect.h"
 #include "LayoutRect.h"
 #include "LayoutUnit.h"
@@ -45,7 +46,7 @@ struct SnapOffset {
     T offset;
     ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    uint64_t snapTargetID;
+    ElementIdentifier snapTargetID;
     bool isFocused;
     Vector<size_t> snapAreaIndices;
 };
@@ -57,6 +58,7 @@ struct ScrollSnapOffsetsInfo {
     Vector<SnapOffset<UnitType>> horizontalSnapOffsets;
     Vector<SnapOffset<UnitType>> verticalSnapOffsets;
     Vector<RectType> snapAreas;
+    Vector<ElementIdentifier> snapAreasIDs;
 
     bool isEqual(const ScrollSnapOffsetsInfo<UnitType, RectType>& other) const
     {
