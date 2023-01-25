@@ -126,6 +126,15 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
     return {{ WTFMove(type), WTFMove(subtype), parseParameters(StringView(input), semicolonIndex + 1) }};
 }
 
+FetchBodyConsumer::FetchBodyConsumer(Type type)
+    : m_type(type)
+{
+}
+
+FetchBodyConsumer::FetchBodyConsumer(FetchBodyConsumer&&) = default;
+FetchBodyConsumer::~FetchBodyConsumer() = default;
+FetchBodyConsumer& FetchBodyConsumer::operator=(FetchBodyConsumer&&) = default;
+
 // https://fetch.spec.whatwg.org/#concept-body-package-data
 RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* context, const String& contentType, const uint8_t* data, size_t length)
 {

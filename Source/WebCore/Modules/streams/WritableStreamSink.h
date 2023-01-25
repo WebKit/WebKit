@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

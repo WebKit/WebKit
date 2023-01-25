@@ -33,7 +33,6 @@
 #include "GPUImageCopyTextureTagged.h"
 #include "GPUImageDataLayout.h"
 #include "GPUIntegralTypes.h"
-#include "JSDOMPromiseDeferred.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUQueue.h>
 #include <wtf/Ref.h>

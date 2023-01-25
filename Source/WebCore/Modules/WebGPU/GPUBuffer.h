@@ -27,7 +27,7 @@
 
 #include "GPUIntegralTypes.h"
 #include "GPUMapMode.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <cstdint>
 #include <optional>

@@ -281,6 +281,11 @@ ExceptionOr<Ref<AudioBuffer>> BaseAudioContext::createBuffer(unsigned numberOfCh
     return AudioBuffer::create(AudioBufferOptions {numberOfChannels, length, sampleRate});
 }
 
+void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback)
+{
+    decodeAudioData(WTFMove(audioData), WTFMove(successCallback), WTFMove(errorCallback), std::nullopt);
+}
+
 void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<AudioBufferCallback>&& successCallback, RefPtr<AudioBufferCallback>&& errorCallback, std::optional<Ref<DeferredPromise>>&& promise)
 {
     if (promise && (!document() || !document()->isFullyActive())) {

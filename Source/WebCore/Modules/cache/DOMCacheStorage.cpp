@@ -30,6 +30,7 @@
 #include "ClientOrigin.h"
 #include "EventLoop.h"
 #include "JSDOMCache.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 #include "MultiCacheQueryOptions.h"
 #include "ScriptExecutionContext.h"

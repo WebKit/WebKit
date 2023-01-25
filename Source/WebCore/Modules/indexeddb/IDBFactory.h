@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>

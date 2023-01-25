@@ -27,7 +27,6 @@
 
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
 #include "JSValueInWrappedObject.h"
 #include <wtf/Function.h>
 #include <wtf/Ref.h>

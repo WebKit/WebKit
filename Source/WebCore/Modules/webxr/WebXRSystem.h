@@ -30,7 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "HTMLCanvasElement.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLRenderingContextBase.h"
 #include "XRReferenceSpaceType.h"

@@ -32,6 +32,7 @@
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
 #include "ImageBuffer.h"
+#include "JSDOMPromiseDeferred.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"
 

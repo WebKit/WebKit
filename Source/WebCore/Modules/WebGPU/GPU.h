@@ -28,7 +28,7 @@
 #include "GPUAdapter.h"
 #include "GPURequestAdapterOptions.h"
 #include "GPUTextureFormat.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
@@ -43,7 +43,6 @@ public:
     {
         return adoptRef(*new GPU(WTFMove(backing)));
     }
-
     ~GPU();
 
     using RequestAdapterPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<GPUAdapter>>>;
@@ -54,10 +53,7 @@ public:
 private:
     GPU(Ref<PAL::WebGPU::GPU>&&);
 
-    struct PendingRequestAdapterArguments {
-        std::optional<GPURequestAdapterOptions> options;
-        RequestAdapterPromise promise;
-    };
+    struct PendingRequestAdapterArguments;
     Deque<PendingRequestAdapterArguments> m_pendingRequestAdapterArguments;
     Ref<PAL::WebGPU::GPU> m_backing;
 };

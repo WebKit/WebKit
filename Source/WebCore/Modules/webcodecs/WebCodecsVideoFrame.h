@@ -29,7 +29,7 @@
 
 #include "ContextDestructionObserver.h"
 #include "DOMRectReadOnly.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "PlaneLayout.h"
 #include "VideoColorSpaceInit.h"
 #include "WebCodecsAlphaOption.h"
@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class BufferSource;
 class CSSStyleImageValue;
 class DOMRectReadOnly;
 class HTMLCanvasElement;

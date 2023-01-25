@@ -63,7 +63,7 @@
 #endif
 
 #if ENABLE(WEBXR)
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #endif
 
 #include "GCGLSpan.h"

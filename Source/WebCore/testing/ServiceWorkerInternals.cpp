@@ -30,6 +30,7 @@
 
 #include "FetchEvent.h"
 #include "FetchRequest.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSFetchResponse.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"

@@ -31,6 +31,7 @@
 
 #include "Document.h"
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebXRReferenceSpace.h"
 #include "SecurityOrigin.h"
 #include "WebCoreOpaqueRoot.h"
@@ -378,7 +379,7 @@ void WebXRSession::didCompleteShutdown()
     // Resolve end promise from XRSession::end()
     if (m_endPromise) {
         m_endPromise->resolve();
-        m_endPromise = std::nullopt;
+        m_endPromise = nullptr;
     }
 
     // From https://immersive-web.github.io/webxr/#shut-down-the-session
@@ -398,7 +399,7 @@ ExceptionOr<void> WebXRSession::end(EndPromise&& promise)
         return Exception { InvalidStateError, "Cannot end a session more than once"_s };
 
     ASSERT(!m_endPromise);
-    m_endPromise = WTFMove(promise);
+    m_endPromise = makeUnique<EndPromise>(WTFMove(promise));
 
     // 1. Let promise be a new Promise.
     // 2. Shut down the target XRSession object.

@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "GPUShaderModule.h"
+
+#include "JSDOMPromiseDeferred.h"
 #include "JSGPUCompilationInfo.h"
 
 namespace WebCore {

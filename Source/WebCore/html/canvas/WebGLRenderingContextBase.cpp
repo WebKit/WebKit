@@ -63,6 +63,7 @@
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "IntSize.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSExecState.h"
 #include "KHRParallelShaderCompile.h"
 #include "Logging.h"

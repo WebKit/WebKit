@@ -33,6 +33,7 @@
 #include "IDBDatabaseIdentifier.h"
 #include "IDBKey.h"
 #include "IDBOpenDBRequest.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSIDBFactory.h"
 #include "Logging.h"
 #include "Page.h"

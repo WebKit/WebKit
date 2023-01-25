@@ -33,6 +33,7 @@
 #include "AudioUtilities.h"
 #include "Document.h"
 #include "JSAudioBuffer.h"
+#include "JSDOMPromiseDeferred.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioContextOptions.h"
 #include <wtf/IsoMallocInlines.h>

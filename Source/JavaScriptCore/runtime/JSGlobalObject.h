@@ -1089,7 +1089,7 @@ public:
 
     StructureCache& structureCache() { return m_structureCache; }
 
-    void setUnhandledRejectionCallback(VM& vm, JSObject* function) { m_unhandledRejectionCallback.set(vm, function); }
+    inline void setUnhandledRejectionCallback(VM&, JSObject*);
     JSObject* unhandledRejectionCallback() const { return m_unhandledRejectionCallback.get(); }
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, Exception*);

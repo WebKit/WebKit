@@ -27,7 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionOptionsInit.h"

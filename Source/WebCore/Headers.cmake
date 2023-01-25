@@ -526,6 +526,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     bindings/js/JSDOMMicrotask.h
     bindings/js/JSDOMOperation.h
     bindings/js/JSDOMPromiseDeferred.h
+    bindings/js/JSDOMPromiseDeferredForward.h
     bindings/js/JSDOMWindowBase.h
     bindings/js/JSDOMWrapper.h
     bindings/js/JSDOMWrapperCache.h

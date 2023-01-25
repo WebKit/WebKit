@@ -29,7 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "WebXRFrame.h"
 #include "WebXRInputSourceArray.h"
 #include "WebXRRenderState.h"
@@ -138,7 +138,7 @@ private:
     XRVisibilityState m_visibilityState { XRVisibilityState::Visible };
     UniqueRef<WebXRInputSourceArray> m_inputSources;
     bool m_ended { false };
-    std::optional<EndPromise> m_endPromise;
+    std::unique_ptr<EndPromise> m_endPromise;
 
     WebXRSystem& m_xrSystem;
     XRSessionMode m_mode;

@@ -30,6 +30,7 @@
 
 #include "DOMCSSNamespace.h"
 #include "Document.h"
+#include "JSDOMPromiseDeferred.h"
 #include "PaintWorkletGlobalScope.h"
 #include "WorkletGlobalScopeProxy.h"
 #include <wtf/text/WTFString.h>

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include "DOMPromiseProxy.h"
 #include "EventTarget.h"
 #include "GPUComputePipeline.h"
 #include "GPUDeviceLostInfo.h"
@@ -34,7 +33,7 @@
 #include "GPUErrorFilter.h"
 #include "GPURenderPipeline.h"
 #include "GPUQueue.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "ScriptExecutionContext.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUDevice.h>
@@ -150,7 +149,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    LostPromise m_lostPromise;
+    UniqueRef<LostPromise> m_lostPromise;
     Ref<PAL::WebGPU::Device> m_backing;
     Ref<GPUQueue> m_queue;
     Ref<GPUPipelineLayout> m_autoPipelineLayout;

@@ -27,11 +27,13 @@
 
 #if ENABLE(WEBXR)
 
+#include "ExceptionOr.h"
 #include "FakeXRBoundsPoint.h"
 #include "FakeXRInputSourceInit.h"
 #include "FakeXRViewInit.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "PlatformXR.h"
+#include "Timer.h"
 #include "WebFakeXRInputController.h"
 #include "XRVisibilityState.h"
 #include <wtf/RefCounted.h>

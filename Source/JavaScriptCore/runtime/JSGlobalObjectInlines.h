@@ -34,6 +34,7 @@
 #include "JSFunction.h"
 #include "LinkTimeConstant.h"
 #include "ObjectPrototype.h"
+#include "StrongInlines.h"
 #include <wtf/Hasher.h>
 
 namespace JSC {
@@ -78,6 +79,11 @@ ALWAYS_INLINE bool JSGlobalObject::stringPrototypeChainIsSane()
 {
     ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
     return m_stringPrototypeChainIsSaneWatchpointSet.isStillValid();
+}
+
+inline void JSGlobalObject::setUnhandledRejectionCallback(VM& vm, JSObject* function)
+{
+    m_unhandledRejectionCallback.set(vm, function);
 }
 
 ALWAYS_INLINE bool JSGlobalObject::isArrayPrototypeIteratorProtocolFastAndNonObservable()

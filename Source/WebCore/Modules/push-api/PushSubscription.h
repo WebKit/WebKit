@@ -29,7 +29,7 @@
 
 #include "EpochTimeStamp.h"
 #include "ExceptionOr.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "PushEncryptionKeyName.h"
 #include "PushSubscriptionData.h"
 #include "PushSubscriptionJSON.h"
@@ -38,6 +38,10 @@
 #include <variant>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
+
+namespace JSC {
+class ArrayBuffer;
+}
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 
 #include "EpochTimeStamp.h"
 #include "IDLTypes.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "ServiceWorkerIdentifier.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/RefCounted.h>

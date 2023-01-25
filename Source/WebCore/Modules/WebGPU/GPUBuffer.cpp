@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPUBuffer.h"
 
+#include "JSDOMPromiseDeferred.h"
+
 namespace WebCore {
 
 String GPUBuffer::label() const

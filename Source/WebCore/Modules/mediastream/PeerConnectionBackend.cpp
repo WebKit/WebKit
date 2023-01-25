@@ -35,6 +35,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSRTCCertificate.h"
 #include "Logging.h"
 #include "Page.h"
