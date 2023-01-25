@@ -318,6 +318,8 @@ struct Element {
     ElementType m_type;
     TemporalUnit m_unit;
     String m_string;
+    double m_value;
+    std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>> m_formattedNumber;
 };
 
 static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlDurationFormat* durationFormat, ISO8601::Duration duration)
@@ -384,7 +386,21 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
         // 3.l. If value is not 0 or display is not "auto", then
         value = purifyNaN(value);
         if (value != 0 || unitData.display() != IntlDurationFormat::Display::Auto) {
-            auto formatDouble = [&](const String& skeleton) -> String {
+            auto formatToString = [&](UFormattedNumber* formattedNumber) -> String {
+                auto scope = DECLARE_THROW_SCOPE(vm);
+
+                UErrorCode status = U_ZERO_ERROR;
+                Vector<UChar, 32> buffer;
+                status = callBufferProducingFunction(unumf_resultToString, formattedNumber, buffer);
+                if (U_FAILURE(status)) {
+                    throwTypeError(globalObject, scope, "Failed to format a number."_s);
+                    return { };
+                }
+
+                return String(WTFMove(buffer));
+            };
+
+            auto formatDouble = [&](const String& skeleton) -> std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>> {
                 auto scope = DECLARE_THROW_SCOPE(vm);
 
                 dataLogLnIf(IntlDurationFormatInternal::verbose, skeleton);
@@ -408,24 +424,21 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     throwTypeError(globalObject, scope, "Failed to format a number."_s);
                     return { };
                 }
-                Vector<UChar, 32> buffer;
-                status = callBufferProducingFunction(unumf_resultToString, formattedNumber.get(), buffer);
-                if (U_FAILURE(status)) {
-                    throwTypeError(globalObject, scope, "Failed to format a number."_s);
-                    return { };
-                }
 
-                return String(WTFMove(buffer));
+                return formattedNumber;
             };
 
             switch (unitData.style()) {
             // 3.l.i. If style is "2-digit" or "numeric", then
             case IntlDurationFormat::UnitStyle::TwoDigit:
             case IntlDurationFormat::UnitStyle::Numeric: {
-                String formatted = formatDouble(skeletonBuilder.toString());
+                auto formattedNumber = formatDouble(skeletonBuilder.toString());
                 RETURN_IF_EXCEPTION(scope, { });
 
-                elements.append({ ElementType::Element, unit, WTFMove(formatted) });
+                auto formatted = formatToString(formattedNumber.get());
+                RETURN_IF_EXCEPTION(scope, { });
+
+                elements.append({ ElementType::Element, unit, WTFMove(formatted), value, WTFMove(formattedNumber) });
 
                 if (unit == TemporalUnit::Hour || unit == TemporalUnit::Minute) {
                     IntlDurationFormat::UnitData nextUnit;
@@ -443,7 +456,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     if (nextValue != 0 || nextUnit.display() != IntlDurationFormat::Display::Auto) {
                         if (separator.isNull())
                             separator = retrieveSeparator(durationFormat->dataLocaleWithExtensions(), durationFormat->numberingSystem());
-                        elements.append({ ElementType::Literal, unit, separator });
+                        elements.append({ ElementType::Literal, unit, separator, value, nullptr });
                     }
                 }
                 break;
@@ -463,10 +476,13 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     skeletonBuilder.append(" unit-width-narrow");
                 }
 
-                String formatted = formatDouble(skeletonBuilder.toString());
+                auto formattedNumber = formatDouble(skeletonBuilder.toString());
                 RETURN_IF_EXCEPTION(scope, { });
 
-                elements.append({ ElementType::Element, unit, WTFMove(formatted) });
+                auto formatted = formatToString(formattedNumber.get());
+                RETURN_IF_EXCEPTION(scope, { });
+
+                elements.append({ ElementType::Element, unit, WTFMove(formatted), value, WTFMove(formattedNumber) });
                 break;
             }
             }
@@ -614,26 +630,38 @@ JSValue IntlDurationFormat::formatToParts(JSGlobalObject* globalObject, ISO8601:
         return part;
     };
 
-    auto pushElements = [&](JSArray* parts, unsigned elementIndex) {
+    auto pushElements = [&](JSArray* parts, unsigned elementIndex) -> void {
         auto scope = DECLARE_THROW_SCOPE(vm);
         if (elementIndex < groupedElements.size()) {
             auto& elements = groupedElements[elementIndex];
             for (auto& element : elements) {
-                JSString* type = nullptr;
-                JSString* value = jsString(vm, element.m_string);
                 switch (element.m_type) {
                 case ElementType::Element: {
-                    type = jsString(vm, String(temporalUnitPluralPropertyName(vm, element.m_unit).uid()));
+                    UErrorCode status = U_ZERO_ERROR;
+                    auto fieldItr = std::unique_ptr<UFieldPositionIterator, UFieldPositionIteratorDeleter>(ufieldpositer_open(&status));
+                    if (U_FAILURE(status)) {
+                        throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
+                        return;
+                    }
+                    unumf_resultGetAllFieldPositions(element.m_formattedNumber.get(), fieldItr.get(), &status);
+                    if (U_FAILURE(status)) {
+                        throwTypeError(globalObject, scope, "Failed to format a number."_s);
+                        return;
+                    }
+                    IntlFieldIterator iterator(*fieldItr.get());
+                    JSString* type = jsString(vm, String(temporalUnitSingularPropertyName(vm, element.m_unit).uid()));
+                    IntlNumberFormat::formatToPartsInternal(globalObject, IntlNumberFormat::Style::Unit, std::signbit(element.m_value), IntlMathematicalValue::numberTypeFromDouble(element.m_value), element.m_string, iterator, parts, nullptr, type);
+                    RETURN_IF_EXCEPTION(scope, void());
                     break;
                 }
                 case ElementType::Literal: {
-                    type = literalString;
+                    JSString* value = jsString(vm, element.m_string);
+                    JSObject* part = createPart(literalString, value);
+                    parts->push(globalObject, part);
+                    RETURN_IF_EXCEPTION(scope, void());
                     break;
                 }
                 }
-                JSObject* part = createPart(type, value);
-                parts->push(globalObject, part);
-                RETURN_IF_EXCEPTION(scope, void());
             }
         }
     };

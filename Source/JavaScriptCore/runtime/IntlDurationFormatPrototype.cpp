@@ -86,11 +86,11 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatPrototypeFuncFormat, (JSGlobalObject*
     if (!durationFormat)
         return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.format called on value that's not a DurationFormat"_s);
 
-    auto* object = jsDynamicCast<JSObject*>(callFrame->argument(0));
-    if (UNLIKELY(!object))
-        return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.format argument needs to be an object"_s);
+    JSValue argument = callFrame->argument(0);
+    if (UNLIKELY(!argument.isObject() && !argument.isString()))
+        return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.format argument needs to be an object or a string"_s);
 
-    auto duration = TemporalDuration::toISO8601Duration(globalObject, object);
+    auto duration = TemporalDuration::toISO8601Duration(globalObject, argument);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(durationFormat->format(globalObject, WTFMove(duration))));
@@ -106,11 +106,11 @@ JSC_DEFINE_HOST_FUNCTION(intlDurationFormatPrototypeFuncFormatToParts, (JSGlobal
     if (!durationFormat)
         return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.formatToParts called on value that's not a DurationFormat"_s);
 
-    auto* object = jsDynamicCast<JSObject*>(callFrame->argument(0));
-    if (UNLIKELY(!object))
-        return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.formatToParts argument needs to be an object"_s);
+    JSValue argument = callFrame->argument(0);
+    if (UNLIKELY(!argument.isObject() && !argument.isString()))
+        return throwVMTypeError(globalObject, scope, "Intl.DurationFormat.prototype.formatToParts argument needs to be an object or a string"_s);
 
-    auto duration = TemporalDuration::toISO8601Duration(globalObject, object);
+    auto duration = TemporalDuration::toISO8601Duration(globalObject, argument);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(durationFormat->formatToParts(globalObject, WTFMove(duration))));

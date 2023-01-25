@@ -166,7 +166,7 @@ function test() {
         shouldThrow(() => df.format({}), TypeError);
         shouldThrow(() => df.format([]), TypeError);
         shouldThrow(() => df.format(42), TypeError);
-        shouldThrow(() => df.format("Apple"), TypeError);
+        shouldThrow(() => df.format("Apple"), RangeError);
         shouldThrow(() => df.format(null), TypeError);
         shouldThrow(() => df.format(undefined), TypeError);
         shouldThrow(() => df.format([null]), TypeError);
@@ -194,11 +194,17 @@ function test() {
     {
         const duration = { hours: 1, minutes: 2, seconds: 3 };
         const expected = [
-            {"type":"hours","value":"1 hour"},
+            {"type":"integer","value":"1","unit":"hour"},
+            {"type":"literal","value":" ","unit":"hour"},
+            {"type":"unit","value":"hour","unit":"hour"},
             {"type":"literal","value":", "},
-            {"type":"minutes","value":"2 minutes"},
+            {"type":"integer","value":"2","unit":"minute"},
+            {"type":"literal","value":" ","unit":"minute"},
+            {"type":"unit","value":"minutes","unit":"minute"},
             {"type":"literal","value":", "},
-            {"type":"seconds","value":"3 seconds"}
+            {"type":"integer","value":"3","unit":"second"},
+            {"type":"literal","value":" ","unit":"second"},
+            {"type":"unit","value":"seconds","unit":"second"}
         ];
 
         const df = new Intl.DurationFormat('en-GB', { style: 'long' });
@@ -211,7 +217,7 @@ function test() {
 
         shouldThrow(() => df.formatToParts(), TypeError);
         shouldThrow(() => df.formatToParts([]), TypeError);
-        shouldThrow(() => df.formatToParts("Apple"), TypeError);
+        shouldThrow(() => df.formatToParts("Apple"), RangeError);
         shouldThrow(() => df.formatToParts(42), TypeError);
         shouldThrow(() => df.formatToParts(null), TypeError);
         shouldThrow(() => df.formatToParts(undefined), TypeError);
