@@ -92,15 +92,6 @@ void MemoryBackingStoreTransaction::addExistingIndex(MemoryIndex& index)
 void MemoryBackingStoreTransaction::indexDeleted(Ref<MemoryIndex>&& index)
 {
     m_indexes.remove(&index.get());
-
-    // If this MemoryIndex belongs to an object store that will not get restored if this transaction aborts,
-    // then we can forget about it altogether.
-    auto& objectStore = index->objectStore();
-    if (auto deletedObjectStore = m_deletedObjectStores.get(objectStore.info().name())) {
-        if (deletedObjectStore != &objectStore)
-            return;
-    }
-
     auto addResult = m_deletedIndexes.add(index->info().name(), nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = WTFMove(index);
@@ -124,13 +115,17 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(Ref<MemoryObjectStore>&& 
 {
     ASSERT(m_objectStores.contains(&objectStore.get()));
     m_objectStores.remove(&objectStore.get());
-
     objectStore->deleteAllIndexes(*this);
 
     // If the store removed is previously added in this transaction, we don't need to
     // keep it for transaction abort.
-    if (auto addedObjectStore = m_versionChangeAddedObjectStores.take(&objectStore.get()))
+    if (auto addedObjectStore = m_versionChangeAddedObjectStores.take(&objectStore.get())) {
+        // We don't need to track its indexes either.
+        m_deletedIndexes.removeIf([identifier = objectStore->info().identifier()](auto& entry) {
+            return entry.value->objectStore().info().identifier() == identifier;
+        });
         return;
+    }
 
     auto addResult = m_deletedObjectStores.add(objectStore->info().name(), nullptr);
     if (addResult.isNewEntry)
@@ -226,6 +221,9 @@ void MemoryBackingStoreTransaction::abort()
 
     for (const auto& objectStore : m_versionChangeAddedObjectStores)
         m_backingStore.removeObjectStoreForVersionChangeAbort(*objectStore);
+    m_deletedIndexes.removeIf([&](auto& entry) {
+        return m_versionChangeAddedObjectStores.contains(&entry.value->objectStore());
+    });
     m_versionChangeAddedObjectStores.clear();
 
     for (auto& objectStore : m_deletedObjectStores.values()) {
@@ -266,8 +264,10 @@ void MemoryBackingStoreTransaction::abort()
         }
     }
 
-    for (auto& index : m_deletedIndexes.values())
+    for (auto& index : m_deletedIndexes.values()) {
+        RELEASE_ASSERT(m_backingStore.hasObjectStore(index->info().objectStoreIdentifier()));
         index->objectStore().maybeRestoreDeletedIndex(*index);
+    }
     m_deletedIndexes.clear();
 
     finish();
