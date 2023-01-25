@@ -91,6 +91,7 @@ public:
     virtual const AtomString& formControlType() const = 0;
 
 protected:
+    bool hasDisabledAttribute() const { return m_disabled; }
     virtual bool computeWillValidate() const;
     virtual bool readOnlyBarsFromConstraintValidation() const { return false; }
     void updateWillValidateAndValidity();
@@ -105,7 +106,6 @@ protected:
     void parseDisabledAttribute(const AtomString&);
     void parseReadOnlyAttribute(const AtomString&);
 
-    virtual void disabledAttributeChanged();
     virtual void disabledStateChanged();
     virtual void readOnlyStateChanged();
 
@@ -118,6 +118,7 @@ protected:
 
 private:
     bool computeIsDisabledByFieldsetAncestor() const;
+    void setDisabledInternal(bool disabled, bool disabledByAncestorFieldset);
     virtual HTMLElement* validationAnchorElement() = 0;
 
     void startDelayingUpdateValidity() { ++m_delayedUpdateValidityCount; }

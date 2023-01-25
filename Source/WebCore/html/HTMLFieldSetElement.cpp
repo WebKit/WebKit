@@ -52,7 +52,7 @@ inline HTMLFieldSetElement::HTMLFieldSetElement(const QualifiedName& tagName, Do
 
 HTMLFieldSetElement::~HTMLFieldSetElement()
 {
-    if (m_hasDisabledAttribute)
+    if (hasDisabledAttribute())
         document().removeDisabledFieldsetElement();
 }
 
@@ -82,18 +82,16 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
     }
 }
 
-void HTMLFieldSetElement::disabledAttributeChanged()
+void HTMLFieldSetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    bool hasDisabledAttribute = hasAttributeWithoutSynchronization(disabledAttr);
-    if (m_hasDisabledAttribute != hasDisabledAttribute) {
-        m_hasDisabledAttribute = hasDisabledAttribute;
-        if (hasDisabledAttribute)
+    HTMLFormControlElement::parseAttribute(name, value);
+
+    if (name == disabledAttr) {
+        if (hasDisabledAttribute())
             document().addDisabledFieldsetElement();
         else
             document().removeDisabledFieldsetElement();
     }
-
-    HTMLFormControlElement::disabledAttributeChanged();
 }
 
 void HTMLFieldSetElement::disabledStateChanged()
@@ -136,7 +134,7 @@ void HTMLFieldSetElement::didMoveToNewDocument(Document& oldDocument, Document& 
 {
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
     HTMLFormControlElement::didMoveToNewDocument(oldDocument, newDocument);
-    if (m_hasDisabledAttribute) {
+    if (hasDisabledAttribute()) {
         oldDocument.removeDisabledFieldsetElement();
         newDocument.addDisabledFieldsetElement();
     }
