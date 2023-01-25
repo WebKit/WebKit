@@ -80,6 +80,9 @@ Token Lexer<T>::lex()
     case '@':
         shift();
         return makeToken(TokenType::Attribute);
+    case '*':
+        shift();
+        return makeToken(TokenType::Star);
     case '.': {
         shift();
         unsigned offset = currentOffset();

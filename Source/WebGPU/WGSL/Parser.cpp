@@ -617,6 +617,12 @@ template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeExpression(UniqueRef<AST::Expression>&& lhs)
 {
     // FIXME: fill in
+    START_PARSE();
+    if (current().m_type == TokenType::Star) {
+        consume();
+        PARSE(rhs, UnaryExpression);
+        RETURN_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), AST::BinaryOperation::Multiply);
+    }
     return WTFMove(lhs);
 }
 

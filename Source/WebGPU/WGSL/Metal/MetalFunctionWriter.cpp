@@ -375,6 +375,10 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
     switch (binary.operation()) {
     case AST::BinaryOperation::Add:
         m_stringBuilder.append(" + ");
+        break;
+    case AST::BinaryOperation::Multiply:
+        m_stringBuilder.append(" * ");
+        break;
     }
     visit(binary.rhs());
 }
@@ -446,8 +450,7 @@ void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 
 void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 {
-    m_stringBuilder.append(m_indent);
-    m_stringBuilder.append("return");
+    m_stringBuilder.append(m_indent, "return");
     if (statement.maybeExpression()) {
         m_stringBuilder.append(" ");
         visit(*statement.maybeExpression());

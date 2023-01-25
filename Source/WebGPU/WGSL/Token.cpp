@@ -125,6 +125,8 @@ String toString(TokenType type)
         return ")"_s;
     case TokenType::Semicolon:
         return ";"_s;
+    case TokenType::Star:
+        return "*"_s;
     }
 }
 
