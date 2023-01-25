@@ -1596,139 +1596,130 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     def doStepIf(self, step):
         return not self.getProperty('skip_validation', False)
 
+    @defer.inlineCallbacks
     def skip_build(self, reason):
-        self._addToLog('stdio', reason)
-        self.finished(FAILURE)
+        yield self._addToLog('stdio', reason)
         self.build.results = SKIPPED
         self.descriptionDone = reason
         self.build.buildFinished([reason], SKIPPED)
+        defer.returnValue(FAILURE)
 
+    @defer.inlineCallbacks
     def fail_build(self, reason):
-        self._addToLog('stdio', reason)
-        self.finished(FAILURE)
+        yield self._addToLog('stdio', reason)
         self.build.results = FAILURE
         self.descriptionDone = reason
         self.build.buildFinished([reason], FAILURE)
+        defer.returnValue(FAILURE)
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         patch_id = self.getProperty('patch_id', '')
         pr_number = self.getProperty('github.number', '')
 
         if not patch_id and not pr_number:
-            self._addToLog('stdio', 'No patch_id or pr_number found. Unable to proceed without one of them.\n')
+            yield self._addToLog('stdio', 'No patch_id or pr_number found. Unable to proceed without one of them.\n')
             self.descriptionDone = 'No change found'
-            self.finished(FAILURE)
-            return None
+            defer.returnValue(FAILURE)
+            return
 
         if patch_id and pr_number:
-            self._addToLog('stdio', 'Both patch_id and pr_number found. Unable to proceed with both.\n')
+            yield self._addToLog('stdio', 'Both patch_id and pr_number found. Unable to proceed with both.\n')
             self.descriptionDone = 'Error: both PR and patch number found'
-            self.finished(FAILURE)
-            return None
+            defer.returnValue(FAILURE)
+            return
 
-        if patch_id and not self.validate_bugzilla(patch_id):
-            return None
-        if pr_number and not self.validate_github(pr_number):
-            return None
+        if patch_id:
+            status = yield self.validate_bugzilla(patch_id)
+        if pr_number:
+            status = yield self.validate_github(pr_number)
+        if status != SUCCESS:
+            defer.returnValue(status)
+            return
 
         if self.verifyBugClosed and patch_id:
-            self._addToLog('stdio', 'Bug is open.\n')
+            yield self._addToLog('stdio', 'Bug is open.\n')
         if self.verifyObsolete:
-            self._addToLog('stdio', 'Change is not obsolete.\n')
+            yield self._addToLog('stdio', 'Change is not obsolete.\n')
         if self.verifyReviewDenied and patch_id:
-            self._addToLog('stdio', 'Change has not been denied.\n')
+            yield self._addToLog('stdio', 'Change has not been denied.\n')
         if self.verifycqplus and patch_id:
-            self._addToLog('stdio', 'Change is in commit queue.\n')
-            self._addToLog('stdio', 'Change has been reviewed.\n')
+            yield self._addToLog('stdio', 'Change is in commit queue.\n')
+            yield self._addToLog('stdio', 'Change has been reviewed.\n')
         if self.verifyNoDraftForMergeQueue and pr_number:
-            self._addToLog('stdio', 'Change is not a draft.\n')
+            yield self._addToLog('stdio', 'Change is not a draft.\n')
         if self.verifyMergeQueue and pr_number:
-            self._addToLog('stdio', 'Change is in merge queue.\n')
+            yield self._addToLog('stdio', 'Change is in merge queue.\n')
         if self.enableSkipEWSLabel and pr_number:
-            self._addToLog('stdio', f'PR does not have {self.SKIP_EWS_LABEL} label.\n')
-        self.finished(SUCCESS)
-        return None
+            yield self._addToLog('stdio', f'PR does not have {self.SKIP_EWS_LABEL} label.\n')
+        defer.returnValue(SUCCESS)
 
     def validate_bugzilla(self, patch_id):
         bug_id = self.getProperty('bug_id', '') or self.get_bug_id_from_patch(patch_id)
 
         bug_closed = self._is_bug_closed(bug_id) if self.verifyBugClosed else 0
         if bug_closed == 1:
-            self.skip_build('Bug {} is already closed'.format(bug_id))
-            return False
+            return self.skip_build('Bug {} is already closed'.format(bug_id))
 
         obsolete = self._is_patch_obsolete(patch_id) if self.verifyObsolete else 0
         if obsolete == 1:
-            self.skip_build('Patch {} is obsolete'.format(patch_id))
-            return False
+            return self.skip_build('Patch {} is obsolete'.format(patch_id))
 
         review_denied = self._is_patch_review_denied(patch_id) if self.verifyReviewDenied else 0
         if review_denied == 1:
-            self.skip_build('Patch {} is marked r-'.format(patch_id))
-            return False
+            return self.skip_build('Patch {} is marked r-'.format(patch_id))
 
         cq_plus = self._is_patch_cq_plus(patch_id) if self.verifycqplus else 1
         if cq_plus != 1:
-            self.skip_build('Patch {} is not marked cq+.'.format(patch_id))
-            return False
+            return self.skip_build('Patch {} is not marked cq+.'.format(patch_id))
 
         acceptable_review_flag = self._does_patch_have_acceptable_review_flag(patch_id) if self.verifycqplus else 1
         if acceptable_review_flag != 1:
-            self.skip_build('Patch {} does not have acceptable review flag.'.format(patch_id))
-            return False
+            return self.skip_build('Patch {} does not have acceptable review flag.'.format(patch_id))
 
         if obsolete == -1 or review_denied == -1 or bug_closed == -1:
-            self.finished(WARNINGS)
-            return False
-        return True
+            return defer.succeed(WARNINGS)
+        return defer.succeed(SUCCESS)
 
     def validate_github(self, pr_number):
         if not pr_number:
-            return False
+            return defer.succeed(FAILURE)
 
         repository_url = self.getProperty('repository', '')
         pr_json = self.get_pr_json(pr_number, repository_url, retry=3)
 
         pr_closed = self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
         if pr_closed == 1:
-            self.skip_build('Pull request {} is already closed'.format(pr_number))
-            return False
+            return self.skip_build('Pull request {} is already closed'.format(pr_number))
 
         obsolete = self._is_hash_outdated(pr_json) if self.verifyObsolete else 0
         if obsolete == 1:
-            self.skip_build('Hash {} on PR {} is outdated'.format(self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number))
-            return False
+            return self.skip_build('Hash {} on PR {} is outdated'.format(self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number))
 
         blocked = self._is_pr_blocked(pr_json) if self.verifyMergeQueue else 0
         if blocked == 1:
-            self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
-            return False
+            return self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
 
         skip_ews = self._does_pr_has_skip_label(pr_json) if self.enableSkipEWSLabel else 0
         if skip_ews == 1:
-            self.skip_build(f'Skipping as PR {pr_number} has {self.SKIP_EWS_LABEL} label')
-            return False
+            return self.skip_build(f'Skipping as PR {pr_number} has {self.SKIP_EWS_LABEL} label')
 
         if self.verifyMergeQueue:
             if not pr_json:
                 self.send_email_for_github_failure()
-                self.skip_build('Infrastructure issue: unable to check PR status, please contact an admin')
-                return False
+                return self.skip_build('Infrastructure issue: unable to check PR status, please contact an admin')
             merge_queue = self._is_pr_in_merge_queue(pr_json)
             if merge_queue == 0:
-                self.skip_build("PR {} does not have a merge queue label".format(pr_number))
-                return False
+                return self.skip_build("PR {} does not have a merge queue label".format(pr_number))
 
         draft = self._is_pr_draft(pr_json) if self.verifyNoDraftForMergeQueue else 0
         if draft == 1:
-            self.fail_build("PR {} is a draft pull request".format(pr_number))
-            return False
+            return self.fail_build("PR {} is a draft pull request".format(pr_number))
 
         if -1 in (obsolete, pr_closed, blocked, draft):
-            self.finished(WARNINGS)
-            return False
+            return defer.succeed(WARNINGS)
 
-        return True
+        return defer.succeed(SUCCESS)
 
     def send_email_for_github_failure(self):
         try:
