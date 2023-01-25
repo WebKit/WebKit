@@ -330,7 +330,7 @@ void webkitWebViewRestoreWindow(WebKitWebView* view, CompletionHandler<void()>&&
  */
 GtkWidget* webkit_web_view_new()
 {
-    return webkit_web_view_new_with_context(webkit_web_context_get_default());
+    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr));
 }
 
 #if !ENABLE(2022_GLIB_API)
