@@ -207,7 +207,7 @@ public:
         // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The embedder-specific logic occurs through import function.
         Instance* targetInstance { nullptr };
         WasmToWasmImportableFunction::LoadLocation wasmEntrypointLoadLocation { nullptr };
-        CodePtr<WasmEntryPtrTag> wasmToEmbedderStub;
+        CodePtr<WasmEntryPtrTag> importFunctionStub;
         WriteBarrier<JSObject> importFunction { };
     };
     unsigned numImportFunctions() const { return m_numImportFunctions; }
@@ -218,7 +218,7 @@ public:
     }
     static size_t offsetOfTargetInstance(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, targetInstance); }
     static size_t offsetOfWasmEntrypointLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmEntrypointLoadLocation); }
-    static size_t offsetOfWasmToEmbedderStub(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmToEmbedderStub); }
+    static size_t offsetOfImportFunctionStub(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunctionStub); }
     static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
     WriteBarrier<JSObject>& importFunction(unsigned importFunctionNum) { return importFunctionInfo(importFunctionNum)->importFunction; }
 

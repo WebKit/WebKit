@@ -3147,6 +3147,58 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             results.append(tmpForType(signature.as<FunctionSignature>()->returnType(i)));
     }
 
+    m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
+
+    auto currentInstance = self().gPtr();
+    append(Move, instanceValue(), currentInstance);
+
+    if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
+
+        auto emitCallToEmbedder = [&, this](CallPatchpointData data) -> void {
+            CallPatchpointData::first_type patchpoint = data.first;
+            CallPatchpointData::second_type handle = data.second;
+            // We need to clobber all potential pinned registers since we might be leaving the instance.
+            // We pessimistically assume we could be calling to something that is bounds checking.
+            // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
+            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
+            patchpoint->setGenerator([this, handle, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                if (isTailCall)
+                    prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
+                if (handle)
+                    handle->generate(jit, params, this);
+                JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
+                if (isTailCall) {
+                    // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
+                    CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
+                    jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
+                    jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
+                    jit.farJump(params[0].gpr(), WasmEntryPtrTag);
+                } else
+                    jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
+            });
+        };
+
+        m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
+
+        auto jumpDestination = self().gPtr();
+        append(Move, Arg::bigImm(Instance::offsetOfImportFunctionStub(functionIndex)), jumpDestination);
+        append(Derived::AddPtr, instanceValue(), jumpDestination);
+        append(Move, Arg::addr(jumpDestination), jumpDestination);
+
+        if (isTailCall) {
+            emitCallToEmbedder(self().emitTailCallPatchpoint(m_currentBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
+            return { };
+        }
+
+        emitCallToEmbedder(self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
+
+        // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
+        restoreWebAssemblyGlobalState(m_info.memory, currentInstance, m_currentBlock);
+
+        return { };
+    } // isImportedFunctionFromFunctionIndexSpace
+
     Vector<UnlinkedWasmToWasmCall>* unlinkedWasmToWasmCalls = &m_unlinkedWasmToWasmCalls;
 
     auto emitUnlinkedWasmToWasmCall = [&, this](CallPatchpointData data) -> void {
@@ -3171,89 +3223,6 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
             });
         });
     };
-
-    auto emitCallToEmbedder = [&, this](CallPatchpointData data) -> void {
-        CallPatchpointData::first_type patchpoint = data.first;
-        CallPatchpointData::second_type handle = data.second;
-        // We need to clobber all potential pinned registers since we might be leaving the instance.
-        // We pessimistically assume we could be calling to something that is bounds checking.
-        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
-        patchpoint->setGenerator([this, handle, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            if (isTailCall)
-                prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
-            if (handle)
-                handle->generate(jit, params, this);
-            JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
-            if (isTailCall) {
-                // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
-                CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
-                jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), GPRInfo::nonPreservedNonArgumentGPR1);
-                jit.storePtr(GPRInfo::nonPreservedNonArgumentGPR1, thisSlot.withOffset(PayloadOffset));
-                jit.farJump(params[0].gpr(), WasmEntryPtrTag);
-            } else
-                jit.call(params[params.proc().resultCount(params.value()->type())].gpr(), WasmEntryPtrTag);
-        });
-    };
-
-    m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
-
-    auto currentInstance = self().gPtr();
-    append(Move, instanceValue(), currentInstance);
-
-    if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
-        m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
-
-        auto targetInstance = self().gPtr();
-
-        // FIXME: We should have better isel here.
-        // https://bugs.webkit.org/show_bug.cgi?id=193999
-        append(Move, Arg::bigImm(Instance::offsetOfTargetInstance(functionIndex)), targetInstance);
-        append(Derived::AddPtr, instanceValue(), targetInstance);
-        append(Move, Arg::addr(targetInstance), targetInstance);
-
-        BasicBlock* isWasmBlock = m_code.addBlock();
-        BasicBlock* isEmbedderBlock = m_code.addBlock();
-        append(Derived::BranchTestPtr, Arg::resCond(MacroAssembler::NonZero), targetInstance, targetInstance);
-        m_currentBlock->setSuccessors(isWasmBlock, isEmbedderBlock);
-
-        auto jumpDestination = self().gPtr();
-        append(isEmbedderBlock, Move, Arg::bigImm(Instance::offsetOfWasmToEmbedderStub(functionIndex)), jumpDestination);
-        append(isEmbedderBlock, Derived::AddPtr, instanceValue(), jumpDestination);
-        append(isEmbedderBlock, Move, Arg::addr(jumpDestination), jumpDestination);
-
-        if (isTailCall) {
-            emitUnlinkedWasmToWasmCall(self().emitTailCallPatchpoint(isWasmBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args));
-            emitCallToEmbedder(self().emitTailCallPatchpoint(isEmbedderBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
-            return { };
-        }
-
-        auto data = self().emitCallPatchpoint(isWasmBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo);
-        auto* patchpoint = data.first;
-
-        // We need to clobber all potential pinned registers since we might be leaving the instance.
-        // We pessimistically assume we could be calling to something that is bounds checking.
-        // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
-
-        emitUnlinkedWasmToWasmCall(WTFMove(data));
-
-        emitCallToEmbedder(self().emitCallPatchpoint(isEmbedderBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
-
-        BasicBlock* continuation = m_code.addBlock();
-        m_currentBlock = continuation;
-        append(isEmbedderBlock, Jump);
-        isEmbedderBlock->setSuccessors(continuation);
-        append(isWasmBlock, Jump);
-        isWasmBlock->setSuccessors(continuation);
-
-        // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
-        restoreWebAssemblyGlobalState(m_info.memory, currentInstance, continuation);
-
-        return { };
-
-    } // isImportedFunctionFromFunctionIndexSpace
 
     if (isTailCall) {
         emitUnlinkedWasmToWasmCall(self().emitTailCallPatchpoint(m_currentBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args));

@@ -561,13 +561,7 @@ inline SlowPathReturnType doWasmCall(Wasm::Instance* instance, unsigned function
 
     if (functionIndex < importFunctionCount) {
         Wasm::Instance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
-        if (functionInfo->targetInstance) {
-            // target is a wasm function from a different instance
-            codePtr = instance->calleeGroup()->wasmToWasmExitStub(functionIndex);
-        } else {
-            // target is JS
-            codePtr = functionInfo->wasmToEmbedderStub;
-        }
+        codePtr = functionInfo->importFunctionStub;
     } else {
         // Target is a wasm function within the same instance
         codePtr = *instance->calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);

@@ -139,7 +139,10 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
 
     for (unsigned importFunctionNum = 0; importFunctionNum < instance().numImportFunctions(); ++importFunctionNum) {
         auto* info = instance().importFunctionInfo(importFunctionNum);
-        info->wasmToEmbedderStub = m_module->wasmToEmbedderStub(importFunctionNum);
+        if (!info->targetInstance)
+            info->importFunctionStub = m_module->importFunctionStub(importFunctionNum);
+        else
+            info->importFunctionStub = wasmCalleeGroup->wasmToWasmExitStub(importFunctionNum);
     }
 
     if (creationMode == Wasm::CreationMode::FromJS) {

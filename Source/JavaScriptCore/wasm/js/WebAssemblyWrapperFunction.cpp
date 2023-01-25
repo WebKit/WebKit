@@ -55,7 +55,7 @@ WebAssemblyWrapperFunction* WebAssemblyWrapperFunction::create(VM& vm, JSGlobalO
     else
         executable = vm.getHostFunction(callWebAssemblyWrapperFunction, ImplementationVisibility::Public, NoIntrinsic, callHostFunctionAsConstructor, nullptr, name);
 
-    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->wasmToEmbedderStub });
+    WebAssemblyWrapperFunction* result = new (NotNull, allocateCell<WebAssemblyWrapperFunction>(vm)) WebAssemblyWrapperFunction(vm, executable, globalObject, structure, Wasm::WasmToWasmImportableFunction { typeIndex, &instance->instance().importFunctionInfo(importIndex)->importFunctionStub });
     result->finishCreation(vm, executable, signature.argumentCount(), name, function, instance);
     return result;
 }
