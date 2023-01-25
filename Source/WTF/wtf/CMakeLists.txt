@@ -81,6 +81,7 @@ set(WTF_PUBLIC_HEADERS
     FastTLS.h
     FilePrintStream.h
     FileSystem.h
+    FixedBitVector.h
     FixedVector.h
     FixedWidthDouble.h
     FlipBytes.h

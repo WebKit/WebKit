@@ -836,6 +836,7 @@
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 		FEEA4DF9216D7BE400AC0602 /* StackPointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEEA4DF8216D7BE400AC0602 /* StackPointer.cpp */; };
 		FF895F11282AB96400E7BAE8 /* CompactRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FF910E982979FE6F00D1A24D /* FixedBitVector.h in Headers */ = {isa = PBXBuildFile; fileRef = FF910E972979FE6F00D1A24D /* FixedBitVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FFEE46F42825DF80003BC981 /* CompactPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = FFEE46F32825DF80003BC981 /* CompactPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -1766,6 +1767,7 @@
 		FEF295BF20B49DCB00CF283A /* UTF8ConversionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTF8ConversionError.h; sourceTree = "<group>"; };
 		FF0A436588954F3CB07DBECA /* StdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdList.h; sourceTree = "<group>"; };
 		FF895F10282AB96400E7BAE8 /* CompactRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactRefPtr.h; sourceTree = "<group>"; };
+		FF910E972979FE6F00D1A24D /* FixedBitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FixedBitVector.h; sourceTree = "<group>"; };
 		FFEE46F32825DF80003BC981 /* CompactPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPtr.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2046,6 +2048,7 @@
 				0F9D335C165DBA73005AD387 /* FilePrintStream.h */,
 				A331D95A21F24992009F02AA /* FileSystem.cpp */,
 				A331D95921F24992009F02AA /* FileSystem.h */,
+				FF910E972979FE6F00D1A24D /* FixedBitVector.h */,
 				E3E0F04F26197157004640FC /* FixedVector.h */,
 				33479C1C27236F2000B2E1B7 /* FixedWidthDouble.h */,
 				0F2B66A517B6B4F700A7AE3F /* FlipBytes.h */,
@@ -3008,6 +3011,7 @@
 				DD3DC96E27A4BF8E007E5B61 /* FilePrintStream.h in Headers */,
 				DD3DC8F827A4BF8E007E5B61 /* FileSystem.h in Headers */,
 				DDF306FB27C086CC006A526F /* fixed-dtoa.h in Headers */,
+				FF910E982979FE6F00D1A24D /* FixedBitVector.h in Headers */,
 				DD3DC96527A4BF8E007E5B61 /* FixedVector.h in Headers */,
 				339B7B1127C45EF50072BF9A /* FixedWidthDouble.h in Headers */,
 				DD3DC8D327A4BF8E007E5B61 /* FlipBytes.h in Headers */,

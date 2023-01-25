@@ -232,6 +232,9 @@ auto SectionParser::parseFunction() -> PartialResult
         m_info->functions.uncheckedAppend({ start, end, false, false, Vector<uint8_t>() });
     }
 
+    // Note that `initializeReferencedFunctionsTracker` should only be used after both parseImport and parseFunction
+    // finish updating importFunctionTypeIndices and internalFunctionTypeIndices.
+    m_info->initializeReferencedFunctionsTracker();
     return { };
 }
 
