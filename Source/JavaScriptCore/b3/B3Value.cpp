@@ -687,7 +687,6 @@ Effects Value::effects() const
     case VectorExtaddPairwise:
     case VectorMulSat:
     case VectorSwizzle:
-    case VectorShuffle:
         break;
     case Div:
     case UDiv:

@@ -472,6 +472,23 @@ public:
         return { };
     }
 
+    Value* fixupOutOfBoundsIndicesForSwizzle(Value* input, Value* indexes)
+    {
+        // The intel version of the swizzle instruction does not handle OOB indices properly,
+        // so we need to fix them up.
+        ASSERT(isX86());
+        // Let each byte mask be 112 (0x70) then after VectorAddSat
+        // each index > 15 would set the saturated index's bit 7 to 1,
+        // whose corresponding byte will be zero cleared in VectorSwizzle.
+        // https://github.com/WebAssembly/simd/issues/93
+        v128_t mask;
+        mask.u64x2[0] = 0x7070707070707070;
+        mask.u64x2[1] = 0x7070707070707070;
+        auto saturatingMask = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), mask);
+        auto saturatedIndexes = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorAddSat, B3::V128, SIMDLane::i8x16, SIMDSignMode::Unsigned, saturatingMask, indexes);
+        return m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, input, saturatedIndexes);
+    }
+
     auto addSIMDV_VV(SIMDLaneOperation op, SIMDInfo info, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
     {
         B3_OP_CASES()
@@ -494,6 +511,11 @@ public:
         B3_OP_CASE(SubSat)
         B3_OP_CASE(Max)
         B3_OP_CASE(Min)
+
+        if (isX86() && b3Op == B3::VectorSwizzle) {
+            result = push(fixupOutOfBoundsIndicesForSwizzle(get(a), get(b)));
+            return { };
+        }
 
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(a), get(b)));
@@ -2954,8 +2976,39 @@ auto B3IRGenerator::addSIMDExtmul(SIMDLaneOperation op, SIMDInfo info, Expressio
 
 auto B3IRGenerator::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
 {
-    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorShuffle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, 
-        imm, get(a), get(b)));
+    if constexpr (isX86()) {
+        v128_t leftImm = imm;
+        v128_t rightImm = imm;
+        for (unsigned i = 0; i < 16; ++i) {
+            if (leftImm.u8x16[i] > 15)
+                leftImm.u8x16[i] = 0xFF; // Force OOB
+            if (rightImm.u8x16[i] < 16 || rightImm.u8x16[i] > 31)
+                rightImm.u8x16[i] = 0xFF; // Force OOB
+        }
+        // Store each byte (w/ index < 16) of `a` to result
+        // and zero clear each byte (w/ index > 15) in result.
+        Value* leftImmConst = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), leftImm);
+        Value* leftResult = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+            VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, get(a), leftImmConst);
+
+        // Store each byte (w/ index - 16 >= 0) of `b` to result2
+        // and zero clear each byte (w/ index - 16 < 0) in result2.
+        Value* rightImmConst = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), rightImm);
+        Value* rightResult = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+            VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, get(b), rightImmConst);
+
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+            VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, leftResult, rightResult));
+
+        return { };
+    }
+
+    if constexpr (!isARM64())
+        UNREACHABLE_FOR_PLATFORM();
+
+    Value* indexes = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), imm);
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+        VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, get(a), get(b), indexes));
 
     return { };
 }

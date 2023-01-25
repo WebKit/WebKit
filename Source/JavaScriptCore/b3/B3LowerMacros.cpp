@@ -418,42 +418,6 @@ private:
                 break;
             }
 
-            case VectorShuffle: {
-                if (!isX86())
-                    break;
-                // Store each byte (w/ index < 16) of `a` to result
-                // and zero clear each byte (w/ index > 15) in result.
-                Value* indexes = m_insertionSet.insert<Const128Value>(m_index, m_origin, m_value->as<SIMDValue>()->immediate());
-                Value* result1 = addSIMDSwizzleHelperX86(m_value->child(0), indexes);
-
-                // Store each byte (w/ index - 16 >= 0) of `b` to result2
-                // and zero clear each byte (w/ index - 16 < 0) in result2.
-                v128_t mask;
-                mask.u64x2[0] = 0x1010101010101010;
-                mask.u64x2[1] = 0x1010101010101010;
-                Value* maskConst = m_insertionSet.insert<Const128Value>(m_index, m_origin, mask);
-                Value* computedMask = m_insertionSet.insert<SIMDValue>(m_index, m_origin,
-                    VectorSub, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, indexes, maskConst);
-                Value* result2 = m_insertionSet.insert<SIMDValue>(m_index, m_origin,
-                    VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, m_value->child(1), computedMask);
-
-                // Since each index in [0, 31], we can return result1 VectorOr result2.
-                Value* result = m_insertionSet.insert<SIMDValue>(m_index, m_origin,
-                    VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, result1, result2);
-                m_value->replaceWithIdentity(result);
-                m_changed = true;
-                break;
-            }
-
-            case VectorSwizzle: {
-                if (!isX86())
-                    break;
-                Value* result = addSIMDSwizzleHelperX86(m_value->child(0), m_value->child(1));
-                m_value->replaceWithIdentity(result);
-                m_changed = true;
-                break;
-            }
-
             case VectorPopcnt: {
                 if (!isX86())
                     break;
@@ -581,21 +545,6 @@ private:
         Value* result = m_insertionSet.insert<SIMDValue>(m_index, m_origin, VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, compareResult, allOnesConst);
         m_value->replaceWithIdentity(result);
         m_changed = true;
-    }
-
-    Value* addSIMDSwizzleHelperX86(Value* input, Value* indexes)
-    {
-        ASSERT(isX86());
-        // Let each byte mask be 112 (0x70) then after VectorAddSat
-        // each index > 15 would set the saturated index's bit 7 to 1,
-        // whose corresponding byte will be zero cleared in VectorSwizzle.
-        // https://github.com/WebAssembly/simd/issues/93
-        v128_t mask;
-        mask.u64x2[0] = 0x7070707070707070;
-        mask.u64x2[1] = 0x7070707070707070;
-        auto saturatingMask = m_insertionSet.insert<Const128Value>(m_index, m_origin, mask);
-        auto saturatedIndexes = m_insertionSet.insert<SIMDValue>(m_index, m_origin, VectorAddSat, B3::V128, SIMDLane::i8x16, SIMDSignMode::Unsigned, saturatingMask, indexes);
-        return m_insertionSet.insert<SIMDValue>(m_index, m_origin, VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, input, saturatedIndexes);
     }
 
     void makeDivisionChill(Opcode nonChillOpcode)

@@ -309,42 +309,6 @@ void lowerMacros(Code& code)
                 inst = Inst();
             };
 
-            auto handleVectorShuffle = [&] {
-                if (!isARM64())
-                    return;
-
-#if CPU(ARM64)
-                Tmp n(ARM64Registers::q0);
-                Tmp n2(ARM64Registers::q1);
-#else
-                Tmp n;
-                Tmp n2;
-#endif
-
-                v128_t imm;
-                imm.u64x2[0] = inst.args[0].value();
-                imm.u64x2[1] = inst.args[1].value();
-                Tmp a = inst.args[2].tmp();
-                Tmp b = inst.args[3].tmp();
-                Tmp dst = inst.args[4].tmp();
-                auto* origin = inst.origin;
-
-                auto control = code.newTmp(FP);
-                insertionSet.insert(instIndex, MoveVector, origin, a, n);
-                insertionSet.insert(instIndex, MoveVector, origin, b, n2);
-
-                // FIXME: this is bad, we should load
-                auto gpTmp = code.newTmp(GP);
-                insertionSet.insert(instIndex, Move, origin, Arg::bigImm(imm.u64x2[0]), gpTmp);
-                insertionSet.insert(instIndex, MoveZeroToVector, origin, control);
-                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(0), gpTmp, control);
-                insertionSet.insert(instIndex, Move, origin, Arg::bigImm(imm.u64x2[1]), gpTmp);
-                insertionSet.insert(instIndex, VectorReplaceLaneInt64, origin, Arg::imm(1), gpTmp, control);
-
-                insertionSet.insert(instIndex, VectorSwizzle2, origin, n, n2, control, dst);
-                inst = Inst();
-            };
-
             auto handleVectorAbs = [&] {
                 SIMDInfo simdInfo = inst.args[0].simdInfo();
 
@@ -482,9 +446,6 @@ void lowerMacros(Code& code)
                 break;
             case VectorBitmask:
                 handleVectorBitmask();
-                break;
-            case VectorShuffle:
-                handleVectorShuffle();
                 break;
             case VectorBitwiseSelect:
                 handleVectorBitwiseSelect();

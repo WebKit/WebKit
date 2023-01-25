@@ -483,7 +483,7 @@ public:
         return { };
     }
 
-    auto addSIMDSwizzleHelperX86(ExpressionType& a, ExpressionType& b, ExpressionType& result) -> PartialResult
+    auto fixupOutOfBoundsIndicesForSwizzle(ExpressionType& a, ExpressionType& b, ExpressionType& result) -> PartialResult
     {
         ASSERT(isX86() && result.type() == Types::V128);
         // Let each byte mask be 112 (0x70) then after VectorAddSat
@@ -529,7 +529,7 @@ public:
         }
 
         if (isX86() && airOp == B3::Air::VectorSwizzle) {
-            addSIMDSwizzleHelperX86(a, b, result);
+            fixupOutOfBoundsIndicesForSwizzle(a, b, result);
             return { };
         }
 
@@ -1673,27 +1673,45 @@ auto AirIRGenerator64::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionTy
 {
     result = v128();
 
-    if (isX86()) {
+    if constexpr (isX86()) {
+        v128_t leftImm = imm;
+        v128_t rightImm = imm;
+        for (unsigned i = 0; i < 16; ++i) {
+            if (leftImm.u8x16[i] > 15)
+                leftImm.u8x16[i] = 0xFF; // Force OOB
+            if (rightImm.u8x16[i] < 16 || rightImm.u8x16[i] > 31)
+                rightImm.u8x16[i] = 0xFF; // Force OOB
+        }
         // Store each byte (w/ index < 16) of `a` to result
         // and zero clear each byte (w/ index > 15) in result.
-        auto indexes = addConstant(imm);
-        addSIMDSwizzleHelperX86(a, indexes, result);
+        auto left = v128();
+        auto leftImmConst = addConstant(leftImm);
+        append(B3::Air::VectorSwizzle, a, leftImmConst, left);
 
         // Store each byte (w/ index - 16 >= 0) of `b` to result2
         // and zero clear each byte (w/ index - 16 < 0) in result2.
-        auto result2 = v128();
-        v128_t mask;
-        mask.u64x2[0] = 0x1010101010101010;
-        mask.u64x2[1] = 0x1010101010101010;
-        append(VectorSub, Arg::simdInfo(SIMDInfo { SIMDLane::i8x16, SIMDSignMode::None }), indexes, addConstant(mask), indexes);
-        append(B3::Air::VectorSwizzle, b, indexes, result2);
+        auto right = v128();
+        auto rightImmConst = addConstant(rightImm);
+        append(B3::Air::VectorSwizzle, b, rightImmConst, right);
 
-        // Since each index in [0, 31], we can return result2 VectorOr result.
-        append(VectorOr, Arg::simdInfo(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }), result, result2, result);
+        append(VectorOr, Arg::simdInfo(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }), left, right, result);
         return { };
     }
 
-    append(VectorShuffle, Arg::bigImm(imm.u64x2[0]), Arg::bigImm(imm.u64x2[1]), a, b, result);
+    if constexpr (!isARM64())
+        UNREACHABLE_FOR_PLATFORM();
+
+#if CPU(ARM64)
+    // The tbl instruction requires these values to be adjacent.
+    Tmp n(ARM64Registers::q30);
+    Tmp m(ARM64Registers::q31);
+#else
+    Tmp n;
+    Tmp m;
+#endif
+    append(MoveVector, a, n);
+    append(MoveVector, b, m);
+    append(VectorSwizzle2, n, m, addConstant(imm), result);
 
     return { };
 }
