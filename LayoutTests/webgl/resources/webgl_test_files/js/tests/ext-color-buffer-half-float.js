@@ -422,6 +422,33 @@ if (!gl) {
       runRGB16FNegativeTest();
   }
 
+  if (version == 1) {
+      debug("");
+      debug("Testing that component type framebuffer attachment queries are rejected with the extension disabled");
+      const fbo = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+      const rbo = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,gl.RENDERBUFFER, rbo);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565, 8, 8);
+      wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Setup renderbuffer should succeed.");
+      shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, 0x8211 /* FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE */)');
+      wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "Query must fail.");
+      gl.deleteRenderbuffer(rbo);
+
+      const tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Setup texture should succeed.");
+      shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, 0x8211 /* FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE */)');
+      wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "Query must fail.");
+      gl.deleteTexture(tex);
+
+      gl.deleteFramebuffer(fbo);
+  }
+
   let oesTextureHalfFloat = null;
   if (version == 1) {
     // oesTextureHalfFloat implicitly enables EXT_color_buffer_half_float if supported
@@ -466,6 +493,47 @@ if (!gl) {
       runCopyTexImageTest(true);
 
       runUniqueObjectTest();
+
+      {
+          debug("");
+          debug("Testing that component type framebuffer attachment queries are accepted with the extension enabled");
+          const fbo = gl.createFramebuffer();
+          gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+          const rbo = gl.createRenderbuffer();
+          gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+          gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,gl.RENDERBUFFER, rbo);
+          gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565, 8, 8);
+          shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'ext.UNSIGNED_NORMALIZED_EXT');
+          gl.renderbufferStorage(gl.RENDERBUFFER, ext.RGBA16F_EXT, 8, 8);
+          shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'gl.FLOAT');
+          wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No errors after valid renderbuffer attachment queries.");
+
+          gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT,gl.RENDERBUFFER, rbo);
+          gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, 8, 8);
+          wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No errors after depth-stencil renderbuffer setup.");
+          shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)');
+          wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "Component type query is not allowed for combined depth-stencil attachments.");
+          gl.deleteRenderbuffer(rbo);
+
+          const tex = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, tex);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+          shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'ext.UNSIGNED_NORMALIZED_EXT');
+          const tex_ext = gl.getExtension("OES_texture_half_float");
+          if (version > 1 || tex_ext) {
+              if (version > 1)
+                  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, 8, 8, 0, gl.RGBA, gl.HALF_FLOAT, null);
+              else
+                  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, tex_ext.HALF_FLOAT_OES, null);
+              shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'gl.FLOAT');
+          }
+          wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No errors after valid texture attachment queries.");
+          gl.deleteTexture(tex);
+
+          gl.deleteFramebuffer(fbo);
+      }
   }
 }
 

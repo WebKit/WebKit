@@ -60,6 +60,7 @@ debug("");
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
 var gl = wtu.create3DContext(canvas);
+var ext = null;
 
 if (!gl) {
     testFailed("WebGL context does not exist");
@@ -80,6 +81,33 @@ if (!gl) {
     // First verify that allocation of floating-point textures fails if
     // the extension has not been enabled yet.
     runTextureCreationTest(testProgram, false);
+
+    {
+        debug("");
+        debug("Testing that component type framebuffer attachment queries are rejected with the extension disabled");
+        const fbo = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+        const rbo = gl.createRenderbuffer();
+        gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,gl.RENDERBUFFER, rbo);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565, 8, 8);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Setup renderbuffer should succeed.");
+        shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, 0x8211 /* FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT */)');
+        wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "Query must fail.");
+        gl.deleteRenderbuffer(rbo);
+
+        const tex = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Setup texture should succeed.");
+        shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, 0x8211 /* FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT */)');
+        wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "Query must fail.");
+        gl.deleteTexture(tex);
+
+        gl.deleteFramebuffer(fbo);
+    }
 
     if (!gl.getExtension("OES_texture_float")) {
         testPassed("No OES_texture_float support -- this is legal");
@@ -108,6 +136,43 @@ if (!gl) {
                 runRenderTargetAndReadbackTest(testProgram, gl.RGBA, 4, [10000, 10000, 10000, 10000], 1, true);
                 runRenderTargetAndReadbackTest(testProgram, gl.RGBA, 4, [10000, 10000, 10000, 10000], 0.5, true);
                 runFramebufferTest();
+
+                {
+                    debug("");
+                    debug("Testing that component type framebuffer attachment queries are accepted with the extension enabled");
+                    ext = gl.getExtension("WEBGL_color_buffer_float");
+                    shouldBeNonNull('ext');
+                    const fbo = gl.createFramebuffer();
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+                    const rbo = gl.createRenderbuffer();
+                    gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+                    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,gl.RENDERBUFFER, rbo);
+                    gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGB565, 8, 8);
+                    shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'ext.UNSIGNED_NORMALIZED_EXT');
+                    gl.renderbufferStorage(gl.RENDERBUFFER, ext.RGBA32F_EXT, 8, 8);
+                    shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'gl.FLOAT');
+                    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No errors after valid renderbuffer attachment queries.");
+
+                    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT,gl.RENDERBUFFER, rbo);
+                    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, 8, 8);
+                    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No errors after depth-stencil renderbuffer setup.");
+                    shouldBeNull('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.DEPTH_STENCIL_ATTACHMENT, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)');
+                    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "Component type query is not allowed for combined depth-stencil attachments.");
+                    gl.deleteRenderbuffer(rbo);
+
+                    const tex = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, tex);
+                    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+                    shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'ext.UNSIGNED_NORMALIZED_EXT');
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, gl.FLOAT, null);
+                    shouldBe('gl.getFramebufferAttachmentParameter(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, ext.FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT)', 'gl.FLOAT');
+                    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No errors after valid texture attachment queries.");
+                    gl.deleteTexture(tex);
+
+                    gl.deleteFramebuffer(fbo);
+                }
 
                 debug("");
                 debug("Test float32 blending without EXT_float_blend.");

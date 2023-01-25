@@ -56,35 +56,20 @@ function checkPixels(flipY)
     }
 }
 
-async function testImageBitmapFromBlobWithFlipY(blob, flipY)
+async function testImageBitmapWithFlipY(source, flipY)
 {
-    let bitmap;
-    // As a concession to Firefox, which doesn't yet implement
-    // createImageBitmap with creation options, skip the tests
-    // involving flipY=true if ImageBitmap creation throws an
-    // exception, and use the single-argument constructor for the
-    // flipY=false case.
-    if (flipY) {
-        try {
-            bitmap = await createImageBitmap(blob, {imageOrientation: flipY});
-        } catch (e) {
-            output("  (createImageBitmap options not supported - skipping flipY=true case)");
-            return;
-        }
-    } else {
-        bitmap = await createImageBitmap(blob);
-    }
+    const bitmap = await createImageBitmap(source, flipY ? {imageOrientation: flipY} : undefined);
 
     output("  Testing texImage2D, flipY = " + flipY);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, bitmap);
     wtu.clearAndDrawUnitQuad(gl, [0, 0, 0, 255]);
-    checkPixels(flipY);
+    checkPixels(flipY == "flipY");
 
     output("  Testing texSubImage2D, flipY = " + flipY);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, bitmap.width, bitmap.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, bitmap);
     wtu.clearAndDrawUnitQuad(gl, [0, 0, 0, 255]);
-    checkPixels(flipY);
+    checkPixels(flipY == "flipY");
 }
 
 async function testImageBitmapFromBlob(filename)
@@ -93,8 +78,16 @@ async function testImageBitmapFromBlob(filename)
     let blob = await response.blob();
     output("----------------------------------------------------------------");
     output("Testing " + filename + " via ImageBitmap from Blob");
-    await testImageBitmapFromBlobWithFlipY(blob, true);
-    await testImageBitmapFromBlobWithFlipY(blob, false);
+    await testImageBitmapWithFlipY(blob, "flipY");
+    await testImageBitmapWithFlipY(blob, "none");
+    await testImageBitmapWithFlipY(blob, undefined);
+}
+
+async function testImageBitmapFromImage(image)
+{
+    await testImageBitmapWithFlipY(image, "flipY");
+    await testImageBitmapWithFlipY(image, "none");
+    await testImageBitmapWithFlipY(image, undefined);
 }
 
 async function testImageElementWithFlipY(image, flipY)
@@ -124,6 +117,11 @@ async function testImageElement(filename)
 
     await testImageElementWithFlipY(image, true);
     await testImageElementWithFlipY(image, false);
+
+    output("----------------------------------------------------------------");
+    output("Testing " + filename + " via ImageBitmap from HTMLImageElement");
+
+    await testImageBitmapFromImage(image);
 }
 
 async function testSingleImage(filename)
@@ -149,9 +147,9 @@ async function run()
         "exif-orientation-test-3-rotate-180.jpg",
         "exif-orientation-test-4-mirror-vertical.jpg",
         "exif-orientation-test-5-mirror-horizontal-90-ccw.jpg",
-        "exif-orientation-test-6-90-ccw.jpg",
+        "exif-orientation-test-6-90-cw.jpg",
         "exif-orientation-test-7-mirror-horizontal-90-cw.jpg",
-        "exif-orientation-test-8-90-cw.jpg",
+        "exif-orientation-test-8-90-ccw.jpg",
     ];
 
     for (let fn of filenames) {
