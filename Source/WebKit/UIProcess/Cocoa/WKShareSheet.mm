@@ -35,6 +35,7 @@
 #import <pal/spi/mac/QuarantineSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
@@ -42,6 +43,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
+#import <LinkPresentation/LPLinkMetadata.h>
 #else
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #endif
@@ -51,6 +53,13 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+
+SOFT_LINK_FRAMEWORK(LinkPresentation)
+SOFT_LINK_CLASS(LinkPresentation, LPLinkMetadata)
+
+@interface LPLinkMetadata (Staging_102382126)
+- (void)_setIncomplete:(BOOL)incomplete;
+@end
 
 @interface WKShareSheetFileItemProvider : UIActivityItemProvider
 - (instancetype)initWithURL:(NSURL *)url;
@@ -77,6 +86,45 @@
 - (id)item
 {
     return _url.get();
+}
+
+@end
+
+@interface WKShareSheetURLItemProvider : UIActivityItemProvider
+- (instancetype)initWithURL:(NSURL *)url;
+@end
+
+@implementation WKShareSheetURLItemProvider {
+    RetainPtr<NSURL> _url;
+    RetainPtr<LPLinkMetadata> _metadata;
+}
+
+- (instancetype)initWithURL:(NSURL *)url
+{
+    if (!(self = [super initWithPlaceholderItem:url]))
+        return nil;
+
+    _metadata = adoptNS([allocLPLinkMetadataInstance() init]);
+    [_metadata setOriginalURL:url];
+    [_metadata setURL:url];
+    [_metadata setTitle:url._title];
+
+    if ([_metadata respondsToSelector:@selector(_setIncomplete:)])
+        [_metadata _setIncomplete:YES];
+
+    _url = url;
+
+    return self;
+}
+
+- (id)item
+{
+    return _url.get();
+}
+
+- (LPLinkMetadata *)activityViewControllerLinkMetadata:(UIActivityViewController *)activityViewController
+{
+    return _metadata.get();
 }
 
 @end
@@ -178,8 +226,16 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 #if PLATFORM(IOS_FAMILY)
         if (!data.shareData.title.isEmpty())
             url._title = data.shareData.title;
-#endif
+
+        if (data.originator == WebCore::ShareDataOriginator::Web) {
+            auto itemProvider = adoptNS([[WKShareSheetURLItemProvider alloc] initWithURL:url]);
+            if (itemProvider)
+                [shareDataArray addObject:itemProvider.get()];
+        } else
+            [shareDataArray addObject:url];
+#else
         [shareDataArray addObject:url];
+#endif
     }
     
     if (!data.shareData.title.isEmpty() && ![shareDataArray count])
