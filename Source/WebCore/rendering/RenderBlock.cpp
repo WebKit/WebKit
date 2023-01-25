@@ -1022,7 +1022,8 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
     // If we are paginated or in a line grid, compute a vertical position for our object now.
     // If it's wrong we'll lay out again.
     LayoutUnit oldLogicalTop;
-    bool needsBlockDirectionLocationSetBeforeLayout = r.needsLayout() && view().frameView().layoutContext().layoutState()->needsBlockDirectionLocationSetBeforeLayout();
+    auto* layoutState = view().frameView().layoutContext().layoutState();
+    bool needsBlockDirectionLocationSetBeforeLayout = r.needsLayout() && layoutState && layoutState->needsBlockDirectionLocationSetBeforeLayout();
     if (needsBlockDirectionLocationSetBeforeLayout) {
         if (isHorizontalWritingMode() == r.isHorizontalWritingMode())
             r.updateLogicalHeight();
@@ -1054,7 +1055,7 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
         r.layoutIfNeeded();
     }
     
-    if (view().frameView().layoutContext().layoutState()->isPaginated() && is<RenderBlockFlow>(*this))
+    if (layoutState && layoutState->isPaginated() && is<RenderBlockFlow>(*this))
         downcast<RenderBlockFlow>(*this).adjustSizeContainmentChildForPagination(r, r.logicalTop());
 }
 
@@ -1085,7 +1086,7 @@ void RenderBlock::markPositionedObjectsForLayout()
 void RenderBlock::markForPaginationRelayoutIfNeeded()
 {
     auto* layoutState = view().frameView().layoutContext().layoutState();
-    if (needsLayout() || !layoutState->isPaginated())
+    if (needsLayout() || !layoutState || !layoutState->isPaginated())
         return;
 
     if (layoutState->pageLogicalHeightChanged() || (layoutState->pageLogicalHeight() && layoutState->pageLogicalOffset(this, logicalTop()) != pageLogicalOffset()))
