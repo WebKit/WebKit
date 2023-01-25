@@ -28,6 +28,7 @@
 
 #import "AGXCompilerService.h"
 #import "DOMURL.h"
+#import "DeprecatedGlobalSettings.h"
 #import "DictionaryLookup.h"
 #import "Document.h"
 #import "EventHandler.h"
@@ -39,6 +40,13 @@
 #import "SimpleRange.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVPlayer.h>
+
+#if PLATFORM(MAC)
+#import "NSScrollerImpDetails.h"
+#import "ScrollbarThemeMac.h"
+#import <pal/spi/mac/NSScrollerImpSPI.h>
+#endif
+
 #if PLATFORM(COCOA)
 #import <Metal/Metal.h>
 #endif
@@ -128,6 +136,22 @@ ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, 
         return nullptr;
 
     return RefPtr<Range> { createLiveRange(std::get<SimpleRange>(*range)) };
+}
+
+void Internals::setUsesOverlayScrollbars(bool enabled)
+{
+    WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(enabled);
+
+    ScrollerStyle::setUseOverlayScrollbars(enabled);
+
+    ScrollbarTheme& theme = ScrollbarTheme::theme();
+    if (theme.isMockTheme())
+        return;
+
+    static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
+
+    NSScrollerStyle style = enabled ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
+    [NSScrollerImpPair _updateAllScrollerImpPairsForNewRecommendedScrollerStyle:style];
 }
 
 #endif

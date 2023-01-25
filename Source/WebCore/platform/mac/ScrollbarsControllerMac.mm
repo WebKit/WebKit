@@ -954,7 +954,8 @@ void ScrollbarsControllerMac::updateScrollerStyle()
 
     NSScrollerStyle newStyle = [m_scrollerImpPair scrollerStyle];
 
-    if (Scrollbar* verticalScrollbar = scrollableArea().verticalScrollbar()) {
+    Scrollbar* verticalScrollbar = scrollableArea().verticalScrollbar();
+    if (verticalScrollbar && !verticalScrollbar->isCustomScrollbar()) {
         verticalScrollbar->invalidate();
 
         NSScrollerImp *oldVerticalPainter = [m_scrollerImpPair verticalScrollerImp];
@@ -971,7 +972,8 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         verticalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
     }
 
-    if (Scrollbar* horizontalScrollbar = scrollableArea().horizontalScrollbar()) {
+    Scrollbar* horizontalScrollbar = scrollableArea().horizontalScrollbar();
+    if (horizontalScrollbar && !horizontalScrollbar->isCustomScrollbar()) {
         horizontalScrollbar->invalidate();
 
         NSScrollerImp *oldHorizontalPainter = [m_scrollerImpPair horizontalScrollerImp];

@@ -77,6 +77,8 @@ fast/harness/uiscriptcontroller [ Pass ]
 
 fast/events/do-not-drag-and-drop-data-detectors-link.html [ Pass ]
 
+scrollbars/custom-scrollbar-scroller-style-change.html [ Pass ]
+
 http/tests/gzip-content-encoding [ Pass ]
 
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass ]
