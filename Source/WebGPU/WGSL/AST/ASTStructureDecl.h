@@ -57,14 +57,23 @@ private:
     Ref<TypeDecl> m_type;
 };
 
+enum class StructRole : uint8_t {
+    UserDefined,
+    VertexInput,
+    FragmentInput,
+    ComputeInput,
+    VertexOutput,
+};
+
 class StructDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
     using List = UniqueRefVector<StructDecl>;
 
-    StructDecl(SourceSpan sourceSpan, const String& name, StructMember::List&& members, Attribute::List&& attributes)
+    StructDecl(SourceSpan sourceSpan, const String& name, StructMember::List&& members, Attribute::List&& attributes, StructRole role)
         : Decl(sourceSpan)
+        , m_role(role)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
         , m_members(WTFMove(members))
@@ -72,11 +81,15 @@ public:
     }
 
     Kind kind() const override;
+    StructRole role() const { return m_role; }
     const String& name() const { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     StructMember::List& members() { return m_members; }
 
+    void setRole(StructRole role) { m_role = role; }
+
 private:
+    StructRole m_role;
     String m_name;
     Attribute::List m_attributes;
     StructMember::List m_members;
