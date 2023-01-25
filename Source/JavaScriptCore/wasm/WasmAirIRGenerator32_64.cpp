@@ -564,6 +564,9 @@ auto AirIRGenerator32::emitCheckAndPreparePointer(ExpressionType pointer, uint32
         });
         break;
     }
+    case MemoryMode::Signaling: {
+        break;
+    }
     }
 
     append(AddPtr, memoryBase, result);

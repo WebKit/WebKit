@@ -304,7 +304,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         return;
     }
 
-    auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, uint64_t snapTargetID, bool isFocused, size_t snapAreaIndices)
+    auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, ElementIdentifier snapTargetID, bool isFocused, size_t snapAreaIndices)
     {
         if (!offsets.isValidKey(newOffset))
             return;
@@ -324,6 +324,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     HashMap<LayoutUnit, SnapOffset<LayoutUnit>> verticalSnapOffsetsMap;
     HashMap<LayoutUnit, SnapOffset<LayoutUnit>> horizontalSnapOffsetsMap;
     Vector<LayoutRect> snapAreas;
+    Vector<ElementIdentifier> snapAreasIDs;
 
     auto maxScrollOffset = scrollableArea.maximumScrollOffset();
     maxScrollOffset.clampNegativeToZero();
@@ -387,8 +388,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         snapAreas.append(scrollSnapAreaAsOffsets);
         
         auto isFocused = child->element() ? focusedElement == child->element() : false;
-        auto identifier = child->element() ? child->element()->identifier().toUInt64() : 0;
-
+        auto identifier = child->element() ? child->element()->identifier() : makeObjectIdentifier<ElementIdentifierType>(0);
+        snapAreasIDs.append(identifier);
         if (snapsHorizontally) {
             auto absoluteScrollXPosition = computeScrollSnapAlignOffset(scrollSnapArea.x(), scrollSnapArea.maxX(), xAlign, areaXAxisFlipped) - computeScrollSnapAlignOffset(scrollSnapPort.x(), scrollSnapPort.maxX(), xAlign, areaXAxisFlipped);
             auto absoluteScrollOffset = clampTo<int>(scrollableArea.scrollOffsetFromPosition({ roundToInt(absoluteScrollXPosition), 0 }).x(), 0, maxScrollOffset.x());
@@ -425,7 +426,8 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         scrollSnapType.strictness,
         horizontalSnapOffsets,
         verticalSnapOffsets,
-        snapAreas
+        snapAreas,
+        snapAreasIDs
     });
 }
 
@@ -464,6 +466,7 @@ static ScrollSnapOffsetsInfo<OutputType, OutputRectType> convertOffsetInfo(const
         convertOffsets(input.horizontalSnapOffsets),
         convertOffsets(input.verticalSnapOffsets),
         convertRects(input.snapAreas),
+        input.snapAreasIDs
     };
 }
 

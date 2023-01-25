@@ -74,25 +74,12 @@ public:
         return axis == ScrollEventAxis::Horizontal ? m_activeSnapIndexX : m_activeSnapIndexY;
     }
     
-    std::optional<unsigned> activeSnapIDForAxis(ScrollEventAxis axis) const
-    {
-        return axis == ScrollEventAxis::Horizontal ? m_activeSnapIDX : m_activeSnapIDY;
-    }
-
     void setActiveSnapIndexForAxis(ScrollEventAxis axis, std::optional<unsigned> index)
     {
         if (axis == ScrollEventAxis::Horizontal)
             m_activeSnapIndexX = index;
         else
             m_activeSnapIndexY = index;
-    }
-    
-    void setActiveSnapIndexIDForAxis(ScrollEventAxis axis, std::optional<unsigned> snapIndexID)
-    {
-        if (axis == ScrollEventAxis::Horizontal)
-            m_activeSnapIDX = snapIndexID;
-        else
-            m_activeSnapIDY = snapIndexID;
     }
 
     std::optional<unsigned> closestSnapPointForOffset(ScrollEventAxis, ScrollOffset, const ScrollExtents&, float pageScale) const;
@@ -111,8 +98,10 @@ public:
 
     void transitionToUserInteractionState();
     void transitionToDestinationReachedState();
-    bool preserveCurrentTargetForAxis(ScrollEventAxis);
-    void setFocusedElementForAxis(ScrollEventAxis);
+    bool preserveCurrentTargetForAxis(ScrollEventAxis, ElementIdentifier);
+    Vector<SnapOffset<LayoutUnit>> currentlySnappedOffsetsForAxis(ScrollEventAxis) const;
+    ElementIdentifier chooseBoxToResnapTo(const Vector<SnapOffset<LayoutUnit>>&, const Vector<SnapOffset<LayoutUnit>>&) const;
+    HashSet<ElementIdentifier> currentlySnappedBoxes() const;
 private:
     std::pair<float, std::optional<unsigned>> targetOffsetForStartOffset(ScrollEventAxis, const ScrollExtents&, float startOffset, FloatPoint predictedOffset, float pageScale, float initialDelta) const;
     bool setupAnimationForState(ScrollSnapState, const ScrollExtents&, float pageScale, const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta);
@@ -123,11 +112,11 @@ private:
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
     LayoutScrollSnapOffsetsInfo m_snapOffsetsInfo;
-
+    
     std::optional<unsigned> m_activeSnapIndexX;
     std::optional<unsigned> m_activeSnapIndexY;
-    std::optional<unsigned> m_activeSnapIDX;
-    std::optional<unsigned> m_activeSnapIDY;
+    Vector<SnapOffset<LayoutUnit>> m_currentlySnappedBoxesX;
+    Vector<SnapOffset<LayoutUnit>> m_currentlySnappedBoxesY;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);

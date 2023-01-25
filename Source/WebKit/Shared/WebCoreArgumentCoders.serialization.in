@@ -2760,13 +2760,14 @@ header: <WebCore/ScrollingStateNode.h>
     Vector<WebCore::FloatSnapOffset> horizontalSnapOffsets;
     Vector<WebCore::FloatSnapOffset> verticalSnapOffsets;
     Vector<WebCore::FloatRect> snapAreas;
+    Vector<WebCore::ElementIdentifier> snapAreasIDs;
 }
 
 [Alias=struct SnapOffset<float>, CustomHeader] alias WebCore::FloatSnapOffset {
     float offset;
     WebCore::ScrollSnapStop stop;
     bool hasSnapAreaLargerThanViewport;
-    uint64_t snapTargetID;
+    WebCore::ElementIdentifier snapTargetID;
     bool isFocused;
     Vector<size_t> snapAreaIndices;
 };
@@ -2891,3 +2892,5 @@ header: <WebCore/TextManipulationController.h>
     uint64_t index;
     WebCore::TextManipulationControllerManipulationFailure::Type type;
 };
+
+using WebCore::SharedStringHash = uint32_t

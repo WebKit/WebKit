@@ -472,6 +472,23 @@ public:
         return { };
     }
 
+    Value* fixupOutOfBoundsIndicesForSwizzle(Value* input, Value* indexes)
+    {
+        // The intel version of the swizzle instruction does not handle OOB indices properly,
+        // so we need to fix them up.
+        ASSERT(isX86());
+        // Let each byte mask be 112 (0x70) then after VectorAddSat
+        // each index > 15 would set the saturated index's bit 7 to 1,
+        // whose corresponding byte will be zero cleared in VectorSwizzle.
+        // https://github.com/WebAssembly/simd/issues/93
+        v128_t mask;
+        mask.u64x2[0] = 0x7070707070707070;
+        mask.u64x2[1] = 0x7070707070707070;
+        auto saturatingMask = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), mask);
+        auto saturatedIndexes = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorAddSat, B3::V128, SIMDLane::i8x16, SIMDSignMode::Unsigned, saturatingMask, indexes);
+        return m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, input, saturatedIndexes);
+    }
+
     auto addSIMDV_VV(SIMDLaneOperation op, SIMDInfo info, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
     {
         B3_OP_CASES()
@@ -494,6 +511,11 @@ public:
         B3_OP_CASE(SubSat)
         B3_OP_CASE(Max)
         B3_OP_CASE(Min)
+
+        if (isX86() && b3Op == B3::VectorSwizzle) {
+            result = push(fixupOutOfBoundsIndicesForSwizzle(get(a), get(b)));
+            return { };
+        }
 
         result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
             get(a), get(b)));
@@ -688,8 +710,9 @@ private:
     int32_t WARN_UNUSED_RETURN fixupPointerPlusOffset(Value*&, uint32_t);
     Value* WARN_UNUSED_RETURN fixupPointerPlusOffsetForAtomicOps(ExtAtomicOpType, Value*, uint32_t);
 
-    void restoreWasmContextInstance(Procedure&, BasicBlock*, Value*);
-    void restoreWebAssemblyGlobalState(const MemoryInformation&, Value* instance, Procedure&, BasicBlock*, bool restoreInstance = true);
+    void restoreWasmContextInstance(BasicBlock*, Value*);
+    void restoreWebAssemblyGlobalState(const MemoryInformation&, Value* instance, BasicBlock*);
+    void reloadMemoryRegistersFromInstance(const MemoryInformation&, Value* instance, BasicBlock*);
 
     Value* loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type);
     void connectControlAtEntrypoint(unsigned& indexInBuffer, Value* pointer, ControlData&, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis = false);
@@ -763,11 +786,7 @@ private:
 
     bool useSignalingMemory() const
     {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         return m_mode == MemoryMode::Signaling;
-#else
-        return false;
-#endif
     }
 
     FunctionParser<B3IRGenerator>* m_parser { nullptr };
@@ -800,12 +819,23 @@ private:
 
     std::optional<bool> m_hasExceptionHandlers;
 
-    Value* m_instanceValue { nullptr }; // Always use the accessor below to ensure the instance value is materialized when used.
-    bool m_usesInstanceValue { false };
+    Value* m_instanceValue { nullptr };
+    Value* m_baseMemoryValue { nullptr };
+    Value* m_boundsCheckingSizeValue { nullptr };
+
     Value* instanceValue()
     {
-        m_usesInstanceValue = true;
         return m_instanceValue;
+    }
+
+    Value* baseMemoryValue()
+    {
+        return m_baseMemoryValue;
+    }
+
+    Value* boundsCheckingSizeValue()
+    {
+        return m_boundsCheckingSizeValue;
     }
 
     uint32_t m_maxNumJSCallArguments { 0 };
@@ -831,11 +861,11 @@ int32_t B3IRGenerator::fixupPointerPlusOffset(Value*& ptr, uint32_t offset)
     return offset;
 }
 
-void B3IRGenerator::restoreWasmContextInstance(Procedure& proc, BasicBlock* block, Value* arg)
+void B3IRGenerator::restoreWasmContextInstance(BasicBlock* block, Value* arg)
 {
     // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
     // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
-    PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(proc, B3::Void, Origin());
+    PatchpointValue* patchpoint = block->appendNew<PatchpointValue>(m_proc, B3::Void, Origin());
     Effects effects = Effects::none();
     effects.writesPinned = true;
     effects.reads = B3::HeapRange::top();
@@ -880,25 +910,44 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Callee& callee, Proc
             case MemoryMode::BoundsChecking:
                 ASSERT_UNUSED(pinnedGPR, GPRInfo::wasmBoundsCheckingSizeRegister == pinnedGPR);
                 break;
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
             case MemoryMode::Signaling:
                 ASSERT_UNUSED(pinnedGPR, InvalidGPRReg == pinnedGPR);
                 break;
-#endif
             }
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsMemoryAccess);
         });
     }
 
     {
-        B3::PatchpointValue* getInstance = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
         // FIXME: Because WasmToWasm call clobbers wasmContextInstance register and does not restore it, we need to restore it in the caller side.
         // This prevents us from using ArgumentReg to this (logically) immutable pinned register.
+
+        B3::PatchpointValue* getInstance = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
         getInstance->effects.writesPinned = false;
         getInstance->effects.readsPinned = true;
         getInstance->resultConstraints = { ValueRep::reg(GPRInfo::wasmContextInstancePointer) };
         getInstance->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
         m_instanceValue = getInstance;
+
+        if (!!m_info.memory) {
+            if (useSignalingMemory() || m_info.memory.isShared()) {
+                // Capacity and basePointer will not be changed in this case.
+                if (m_mode == MemoryMode::BoundsChecking) {
+                    B3::PatchpointValue* getBoundsCheckingSize = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
+                    getBoundsCheckingSize->effects.writesPinned = false;
+                    getBoundsCheckingSize->effects.readsPinned = true;
+                    getBoundsCheckingSize->resultConstraints = { ValueRep::reg(GPRInfo::wasmBoundsCheckingSizeRegister) };
+                    getBoundsCheckingSize->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
+                    m_boundsCheckingSizeValue = getBoundsCheckingSize;
+                }
+                B3::PatchpointValue* getBaseMemory = m_topLevelBlock->appendNew<B3::PatchpointValue>(m_proc, pointerType(), Origin());
+                getBaseMemory->effects.writesPinned = false;
+                getBaseMemory->effects.readsPinned = true;
+                getBaseMemory->resultConstraints = { ValueRep::reg(GPRInfo::wasmBaseMemoryPointer) };
+                getBaseMemory->setGenerator([=] (CCallHelpers&, const B3::StackmapGenerationParams&) { });
+                m_baseMemoryValue = getBaseMemory;
+            }
+        }
     }
 
     m_prologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([=, this] (CCallHelpers& jit, B3::Air::Code& code) {
@@ -978,18 +1027,48 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Callee& callee, Proc
         m_currentBlock = m_proc.addBlock();
 }
 
-void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memory, Value* instance, Procedure& proc, BasicBlock* block, bool restoreInstance)
+void B3IRGenerator::restoreWebAssemblyGlobalState(const MemoryInformation& memory, Value* instance, BasicBlock* block)
 {
-    if (restoreInstance)
-        restoreWasmContextInstance(proc, block, instance);
+    restoreWasmContextInstance(block, instance);
 
+    if (!!memory) {
+        if (useSignalingMemory() || memory.isShared()) {
+            RegisterSet clobbers;
+            clobbers.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
+            if (m_mode == MemoryMode::BoundsChecking)
+                clobbers.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+
+            B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
+            Effects effects = Effects::none();
+            effects.writesPinned = true;
+            effects.reads = B3::HeapRange::top();
+            patchpoint->effects = effects;
+            patchpoint->clobber(clobbers);
+
+            patchpoint->append(baseMemoryValue(), ValueRep::SomeRegister);
+            if (m_mode == MemoryMode::BoundsChecking)
+                patchpoint->append(boundsCheckingSizeValue(), ValueRep::SomeRegister);
+            patchpoint->setGenerator([](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+                jit.move(params[0].gpr(), GPRInfo::wasmBaseMemoryPointer);
+                if (params.size() == 2)
+                    jit.move(params[1].gpr(), GPRInfo::wasmBoundsCheckingSizeRegister);
+            });
+            return;
+        }
+
+        reloadMemoryRegistersFromInstance(memory, instance, block);
+    }
+}
+
+void B3IRGenerator::reloadMemoryRegistersFromInstance(const MemoryInformation& memory, Value* instance, BasicBlock* block)
+{
     if (!!memory) {
         RegisterSet clobbers;
         clobbers.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
         clobbers.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
         clobbers.merge(RegisterSetBuilder::macroClobberedRegisters());
 
-        B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(proc, B3::Void, origin());
+        B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
         Effects effects = Effects::none();
         effects.writesPinned = true;
         effects.reads = B3::HeapRange::top();
@@ -1442,7 +1521,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, V
     }
 
     // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
-    restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_proc, m_currentBlock);
+    restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
 
     return { };
 }
@@ -1452,7 +1531,7 @@ auto B3IRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result) 
     result = push(callWasmOperation(m_currentBlock, Int32, operationGrowMemory,
         instanceValue(), get(delta)));
 
-    restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_proc, m_currentBlock);
+    restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
 
     return { };
 }
@@ -1696,8 +1775,8 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(Value* pointer, uint32_t
         break;
     }
 
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     case MemoryMode::Signaling: {
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
         // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
         // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
@@ -1712,9 +1791,9 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(Value* pointer, uint32_t
             size_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
             m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, sizeOfOperation + offset - 1, maximum);
         }
+#endif
         break;
     }
-#endif
     }
 
     pointer = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), pointer);
@@ -2897,8 +2976,39 @@ auto B3IRGenerator::addSIMDExtmul(SIMDLaneOperation op, SIMDInfo info, Expressio
 
 auto B3IRGenerator::addSIMDShuffle(v128_t imm, ExpressionType a, ExpressionType b, ExpressionType& result) -> PartialResult
 {
-    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), VectorShuffle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, 
-        imm, get(a), get(b)));
+    if constexpr (isX86()) {
+        v128_t leftImm = imm;
+        v128_t rightImm = imm;
+        for (unsigned i = 0; i < 16; ++i) {
+            if (leftImm.u8x16[i] > 15)
+                leftImm.u8x16[i] = 0xFF; // Force OOB
+            if (rightImm.u8x16[i] < 16 || rightImm.u8x16[i] > 31)
+                rightImm.u8x16[i] = 0xFF; // Force OOB
+        }
+        // Store each byte (w/ index < 16) of `a` to result
+        // and zero clear each byte (w/ index > 15) in result.
+        Value* leftImmConst = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), leftImm);
+        Value* leftResult = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+            VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, get(a), leftImmConst);
+
+        // Store each byte (w/ index - 16 >= 0) of `b` to result2
+        // and zero clear each byte (w/ index - 16 < 0) in result2.
+        Value* rightImmConst = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), rightImm);
+        Value* rightResult = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+            VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, get(b), rightImmConst);
+
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+            VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, leftResult, rightResult));
+
+        return { };
+    }
+
+    if constexpr (!isARM64())
+        UNREACHABLE_FOR_PLATFORM();
+
+    Value* indexes = m_currentBlock->appendNew<Const128Value>(m_proc, origin(), imm);
+    result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(),
+        VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, get(a), get(b), indexes));
 
     return { };
 }
@@ -3474,7 +3584,7 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     HandlerType handlerType = kind == CatchKind::Catch ? HandlerType::Catch : HandlerType::CatchAll;
     m_exceptionHandlers.append({ handlerType, data.tryStart(), data.tryEnd(), 0, m_tryCatchDepth, exceptionIndex });
 
-    restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_proc, m_currentBlock, false);
+    reloadMemoryRegistersFromInstance(m_info.memory, instanceValue(), m_currentBlock);
 
     Value* pointer = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
 
@@ -3919,7 +4029,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             fillResults(result);
 
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
-        restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_proc, m_currentBlock);
+        restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
 
         return { };
 
@@ -3967,7 +4077,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
     fillResults(callResult);
 
     if (m_info.callCanClobberInstance(functionIndex))
-        restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_proc, m_currentBlock);
+        restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
 
     return { };
 }

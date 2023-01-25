@@ -95,31 +95,16 @@ float ScrollSnapAnimatorState::adjustedScrollDestination(ScrollEventAxis axis, F
     return offset * pageScale;
 }
 
-void ScrollSnapAnimatorState::setFocusedElementForAxis(ScrollEventAxis axis)
+// Returns whether the snap point is changed or not
+bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis, ElementIdentifier boxID)
 {
-    auto snapOffsets = snapOffsetsForAxis(axis);
-    auto found = std::find_if(snapOffsets.begin(), snapOffsets.end(), [](SnapOffset<LayoutUnit> p) -> bool {
-        return p.isFocused;
-    });
-    if (found == snapOffsets.end())
-        return;
-
-    auto newIndex = std::distance(snapOffsets.begin(), found);
-    auto newID = snapOffsets[newIndex].snapTargetID;
-    setActiveSnapIndexForAxis(axis, newIndex);
-    setActiveSnapIndexIDForAxis(axis, newID);
-}
-
-bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis)
-{
-    auto snapID = activeSnapIDForAxis(axis);
     auto snapOffsets = snapOffsetsForAxis(axis);
     
-    auto found = std::find_if(snapOffsets.begin(), snapOffsets.end(), [snapID](SnapOffset<LayoutUnit> p) -> bool {
-        return p.snapTargetID == *snapID;
+    auto found = std::find_if(snapOffsets.begin(), snapOffsets.end(), [boxID](SnapOffset<LayoutUnit> p) -> bool {
+        return p.snapTargetID == boxID;
     });
     if (found == snapOffsets.end()) {
-        setActiveSnapIndexIDForAxis(axis, std::nullopt);
+        setActiveSnapIndexForAxis(axis, std::nullopt);
         return false;
     }
     
@@ -127,17 +112,78 @@ bool ScrollSnapAnimatorState::preserveCurrentTargetForAxis(ScrollEventAxis axis)
     return true;
 }
 
+Vector<SnapOffset<LayoutUnit>> ScrollSnapAnimatorState::currentlySnappedOffsetsForAxis(ScrollEventAxis axis) const
+{
+    Vector<SnapOffset<LayoutUnit>> currentlySnappedOffsets;
+    auto snapOffsets = snapOffsetsForAxis(axis);
+    auto activeIndex = activeSnapIndexForAxis(axis);
+    
+    if (activeIndex && *activeIndex < snapOffsets.size())
+        currentlySnappedOffsets.append(snapOffsets[*activeIndex]);
+    return currentlySnappedOffsets;
+}
+
+static bool isSnappedToMultipleBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets)
+{
+    HashSet<ElementIdentifier> boxIDs;
+    
+    for (const auto& offset : horizontalOffsets) {
+        boxIDs.add(offset.snapTargetID);
+        if (offset.snapAreaIndices.size() > 1)
+            return true;
+    }
+    
+    for (const auto& offset : verticalOffsets) {
+        boxIDs.add(offset.snapTargetID);
+        if (offset.snapAreaIndices.size() > 1)
+            return true;
+    }
+    
+    return boxIDs.size() > 1;
+}
+
+HashSet<ElementIdentifier> ScrollSnapAnimatorState::currentlySnappedBoxes() const
+{
+    HashSet<ElementIdentifier> snappedBoxIDs;
+        
+    for (auto offset : m_currentlySnappedBoxesX) {
+        snappedBoxIDs.add(offset.snapTargetID);
+        for (auto i : offset.snapAreaIndices)
+            snappedBoxIDs.add(m_snapOffsetsInfo.snapAreasIDs[i]);
+    }
+    
+    for (auto offset : m_currentlySnappedBoxesY) {
+        snappedBoxIDs.add(offset.snapTargetID);
+        for (auto i : offset.snapAreaIndices)
+            snappedBoxIDs.add(m_snapOffsetsInfo.snapAreasIDs[i]);
+    }
+    return snappedBoxIDs;
+}
+
+ElementIdentifier ScrollSnapAnimatorState::chooseBoxToResnapTo(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const
+{
+    auto snappedBoxIDs = currentlySnappedBoxes();
+        
+    auto found = std::find_if(horizontalOffsets.begin(), horizontalOffsets.end(), [snappedBoxIDs](SnapOffset<LayoutUnit> p) -> bool {
+        return snappedBoxIDs.contains(p.snapTargetID) && p.isFocused;
+    });
+    if (found != horizontalOffsets.end())
+        return found->snapTargetID;
+    
+    found = std::find_if(verticalOffsets.begin(), verticalOffsets.end(), [snappedBoxIDs](SnapOffset<LayoutUnit> p) -> bool {
+        return snappedBoxIDs.contains(p.snapTargetID) && p.isFocused;
+    });
+    if (found != verticalOffsets.end())
+        return found->snapTargetID;
+    
+    return *snappedBoxIDs.begin();
+}
+
 bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const ScrollExtents& scrollExtents, float pageScale)
 {
-    // Check if we need to set the active target to a focused element
-    setFocusedElementForAxis(ScrollEventAxis::Vertical);
-    setFocusedElementForAxis(ScrollEventAxis::Horizontal);
-    
     bool snapPointChanged = false;
     auto activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
     auto activeVerticalIndex = activeSnapIndexForAxis(ScrollEventAxis::Vertical);
-    auto activeHorizontalID = activeSnapIDForAxis(ScrollEventAxis::Horizontal);
-    auto activeVerticalID = activeSnapIDForAxis(ScrollEventAxis::Vertical);
     auto snapOffsetsVertical = snapOffsetsForAxis(ScrollEventAxis::Vertical);
     auto snapOffsetsHorizontal = snapOffsetsForAxis(ScrollEventAxis::Horizontal);
     
@@ -151,23 +197,26 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
         activeHorizontalIndex = activeSnapIndexForAxis(ScrollEventAxis::Horizontal);
     }
     
-    // If we have active targets, see if we need to preserve one of them
-    if (activeHorizontalID && activeHorizontalIndex && activeVerticalID && activeVerticalIndex && *activeHorizontalID
-        != snapOffsetsHorizontal[*activeHorizontalIndex].snapTargetID && *activeVerticalID
-        != snapOffsetsVertical[*activeVerticalIndex].snapTargetID)
-        snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal);
+    auto horizontalOffsets = currentlySnappedOffsetsForAxis(ScrollEventAxis::Horizontal);
+    auto verticalOffsets = currentlySnappedOffsetsForAxis(ScrollEventAxis::Vertical);
 
-    // If we do not have current targets and are snapped to multiple targets, set them
-    if ((!activeHorizontalID && activeHorizontalIndex) && (!activeVerticalID && activeVerticalIndex)) {
-        auto horizontalID = snapOffsetsForAxis(ScrollEventAxis::Horizontal)[*activeHorizontalIndex].snapTargetID;
-        auto verticalID = snapOffsetsForAxis(ScrollEventAxis::Vertical)[*activeVerticalIndex].snapTargetID;
-        if (horizontalID && verticalID && horizontalID != verticalID) {
-            setActiveSnapIndexIDForAxis(ScrollEventAxis::Horizontal, horizontalID);
-            setActiveSnapIndexIDForAxis(ScrollEventAxis::Vertical, verticalID);
-        }
-    }
+    auto wasSnappedToMultipleBoxes = isSnappedToMultipleBoxes(m_currentlySnappedBoxesX, m_currentlySnappedBoxesY);
+    auto currentlySnappedToMultipleBoxes = isSnappedToMultipleBoxes(horizontalOffsets, verticalOffsets);
     
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() current target: horizontal: " << activeHorizontalID << " vertical: "<< activeVerticalID);
+    if (wasSnappedToMultipleBoxes && !currentlySnappedToMultipleBoxes) {
+        // Pick offset to snap to
+        auto box = chooseBoxToResnapTo(snapOffsetsHorizontal, snapOffsetsVertical);
+        snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Horizontal, box);
+        snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Vertical, box);
+        horizontalOffsets = currentlySnappedOffsetsForAxis(ScrollEventAxis::Horizontal);
+        verticalOffsets = currentlySnappedOffsetsForAxis(ScrollEventAxis::Vertical);
+        currentlySnappedToMultipleBoxes = isSnappedToMultipleBoxes(horizontalOffsets, verticalOffsets);
+        LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() current target: " << box << " snapPointChanged: " << snapPointChanged);
+    }
+    if (wasSnappedToMultipleBoxes != currentlySnappedToMultipleBoxes) {
+        m_currentlySnappedBoxesX = horizontalOffsets;
+        m_currentlySnappedBoxesY = verticalOffsets;
+    }
     return snapPointChanged;
 }
 

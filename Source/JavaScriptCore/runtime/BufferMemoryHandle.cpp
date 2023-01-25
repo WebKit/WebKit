@@ -261,8 +261,8 @@ BufferMemoryHandle::~BufferMemoryHandle()
         void* memory = this->memory();
         BufferMemoryManager::singleton().freePhysicalBytes(m_size);
         switch (m_mode) {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         case MemoryMode::Signaling: {
+#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
             // nullBasePointer's zero-sized memory is not used for MemoryMode::Signaling.
             constexpr bool readable = true;
             constexpr bool writable = true;
@@ -275,9 +275,9 @@ BufferMemoryHandle::~BufferMemoryHandle()
                 RELEASE_ASSERT_NOT_REACHED();
             }
             BufferMemoryManager::singleton().freeFastMemory(memory);
+#endif
             break;
         }
-#endif
         case MemoryMode::BoundsChecking: {
             switch (m_sharingMode) {
             case MemorySharingMode::Default: {

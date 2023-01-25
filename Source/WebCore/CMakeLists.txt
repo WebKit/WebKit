@@ -1755,6 +1755,7 @@ set(WebCore_PLUG_INS_RESOURCES
 )
 
 set(WebCore_LIBRARIES
+    ICU::uc
     LibXml2::LibXml2
     SQLite::SQLite3
     ZLIB::ZLIB

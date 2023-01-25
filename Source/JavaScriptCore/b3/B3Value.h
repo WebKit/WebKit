@@ -529,9 +529,7 @@ protected:
         case VectorShl:
         case VectorShr:
         case VectorMulSat:
-        case VectorSwizzle:
         case VectorAvgRound:
-        case VectorShuffle:
             return 2 * sizeof(Value*);
         case Select:
         case AtomicWeakCAS:
@@ -544,6 +542,7 @@ protected:
         case CheckSub:
         case CheckMul:
         case Patchpoint:
+        case VectorSwizzle:
             return sizeof(Vector<Value*, 3>);
 #ifdef NDEBUG
         default:
@@ -743,8 +742,6 @@ private:
         case VectorShl:
         case VectorShr:
         case VectorMulSat:
-        case VectorSwizzle:
-        case VectorShuffle:
         case VectorAvgRound:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);

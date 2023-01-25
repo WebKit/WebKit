@@ -4119,23 +4119,24 @@ private:
             emitSIMDMonomorphicBinaryOp(Air::VectorMulSat);
             return;
         case B3::VectorSwizzle:
-            emitSIMDMonomorphicBinaryOp(Air::VectorSwizzle);
-            return;
-        case B3::VectorShuffle: {
-            SIMDValue* value = m_value->as<SIMDValue>();
-            auto imm = value->immediate();
-            auto a = tmp(value->child(0));
-            auto b = tmp(value->child(1));
-            auto result = tmp(m_value);
-
-            if constexpr (isX86()) {
-                RELEASE_ASSERT_NOT_REACHED(); // FIXME
-                return;
+            if (m_value->numChildren() == 2)
+                emitSIMDMonomorphicBinaryOp(Air::VectorSwizzle);
+            else {
+                ASSERT(isARM64());
+                ASSERT(m_value->numChildren() == 3);
+#if CPU(ARM64)
+                // The tbl instruction requires these values to be adjacent.
+                Tmp a(ARM64Registers::q30);
+                Tmp b(ARM64Registers::q31);
+#else
+                Tmp a;
+                Tmp b;
+#endif
+                append(Air::MoveVector, tmp(m_value->child(0)), a);
+                append(Air::MoveVector, tmp(m_value->child(1)), b);
+                append(Air::VectorSwizzle2, a, b, tmp(m_value->child(2)), tmp(m_value));
             }
-
-            append(Air::VectorShuffle, Arg::bigImm(imm.u64x2[0]), Arg::bigImm(imm.u64x2[1]), a, b, result);
             return;
-        }
 
         case Fence: {
             FenceValue* fence = m_value->as<FenceValue>();

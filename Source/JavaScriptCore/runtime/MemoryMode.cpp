@@ -38,11 +38,9 @@ void printInternal(PrintStream& out, JSC::MemoryMode mode)
     case JSC::MemoryMode::BoundsChecking:
         out.print("BoundsChecking");
         return;
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     case JSC::MemoryMode::Signaling:
         out.print("Signaling");
         return;
-#endif
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

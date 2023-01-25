@@ -596,7 +596,7 @@ def generate_impl(serialized_types, serialized_enums, headers):
     return '\n'.join(result)
 
 
-def generate_serialized_type_info(serialized_types, serialized_enums, headers):
+def generate_serialized_type_info(serialized_types, serialized_enums, headers, typedefs):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -629,6 +629,10 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
                 result.append('            }')
             else:
                 result.append('            }, {')
+        result.append('        } },')
+    for typedef in typedefs:
+        result.append('        { "' + typedef[0] + '"_s, {')
+        result.append('            { "' + typedef[1] + '"_s, "alias"_s }')
         result.append('        } },')
     result.append('    };')
     result.append('}')
@@ -665,6 +669,7 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
 def parse_serialized_types(file, file_name):
     serialized_types = []
     serialized_enums = []
+    typedefs = []
     headers = []
 
     attributes = None
@@ -766,6 +771,10 @@ def parse_serialized_types(file, file_name):
         if match:
             struct_or_class, name = match.groups()
             continue
+        match = re.search(r'using (.*) = (.*)', line)
+        if match:
+            typedefs.append(match.groups())
+            continue
 
         if underlying_type is not None:
             members.append(EnumMember(line.strip(' ,'), member_condition))
@@ -804,21 +813,24 @@ def parse_serialized_types(file, file_name):
             if match:
                 member_type, member_name = match.groups()
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
-    return [serialized_types, serialized_enums, headers]
+    return [serialized_types, serialized_enums, headers, typedefs]
 
 
 def main(argv):
     serialized_types = []
     serialized_enums = []
+    typedefs = []
     headers = []
     file_extension = argv[1]
     for i in range(3, len(argv)):
         with open(argv[2] + argv[i]) as file:
-            new_types, new_enums, new_headers = parse_serialized_types(file, argv[i])
+            new_types, new_enums, new_headers, new_typedefs = parse_serialized_types(file, argv[i])
             for type in new_types:
                 serialized_types.append(type)
             for enum in new_enums:
                 serialized_enums.append(enum)
+            for typedef in new_typedefs:
+                typedefs.append(typedef)
             for header in new_headers:
                 headers.append(header)
     headers.sort()
@@ -828,7 +840,7 @@ def main(argv):
     with open('GeneratedSerializers.%s' % file_extension, "w+") as output:
         output.write(generate_impl(serialized_types, serialized_enums, headers))
     with open('SerializedTypeInfo.%s' % file_extension, "w+") as output:
-        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers))
+        output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, typedefs))
     return 0
 
 

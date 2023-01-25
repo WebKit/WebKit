@@ -5511,13 +5511,6 @@ public:
         RELEASE_ASSERT(b == a + 1);
         m_assembler.tbl2(dest, a, b, control);
     }
-    void vectorShuffle(TrustedImm64, TrustedImm64, FPRegisterID, FPRegisterID, FPRegisterID) 
-    {
-        // This macro should have been lowered by now.
-        bool hideNoReturn = true;
-        if (hideNoReturn)
-            RELEASE_ASSERT_NOT_REACHED();
-    }
 
     // Misc helper functions.
 

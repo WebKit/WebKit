@@ -352,8 +352,6 @@
 
 #if PLATFORM(MAC)
 #include "GraphicsChecksMac.h"
-#include "NSScrollerImpDetails.h"
-#include "ScrollbarThemeMac.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -3984,18 +3982,12 @@ JSC::JSValue Internals::evaluateInWorldIgnoringException(const String& name, con
     return scriptController.executeScriptInWorldIgnoringException(world, source);
 }
 
+#if !PLATFORM(MAC)
 void Internals::setUsesOverlayScrollbars(bool enabled)
 {
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(enabled);
-#if PLATFORM(MAC)
-    ScrollerStyle::setUseOverlayScrollbars(enabled);
-    ScrollbarTheme& theme = ScrollbarTheme::theme();
-    if (theme.isMockTheme())
-        return;
-
-    static_cast<ScrollbarThemeMac&>(theme).preferencesChanged();
-#endif
 }
+#endif
 
 void Internals::forceReload(bool endToEnd)
 {

@@ -108,3 +108,5 @@ struct NullableSoftLinkedMember {
   WebCore::StepsTimingFunction,
   WebCore::SpringTimingFunction
 }
+
+using WebCore::SharedStringHash = uint32_t

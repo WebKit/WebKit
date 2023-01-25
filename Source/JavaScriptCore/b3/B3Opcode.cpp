@@ -522,9 +522,6 @@ void printInternal(PrintStream& out, Opcode opcode)
     case VectorSwizzle:
         out.print("VectorSwizzle");
         return;
-    case VectorShuffle:
-        out.print("VectorShuffle");
-        return;
     case Upsilon:
         out.print("Upsilon");
         return;
