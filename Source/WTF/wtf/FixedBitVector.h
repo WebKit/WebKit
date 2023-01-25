@@ -58,6 +58,8 @@ public:
     // the BitVector is constructed with size less or equal to `maxInlineBits`.
     size_t size() const { return m_bitVector.size(); }
 
+    bool isEmpty() const { return m_bitVector.isEmpty(); }
+
     size_t findBit(size_t startIndex, bool value) const;
 
     bool operator==(const FixedBitVector&) const;
