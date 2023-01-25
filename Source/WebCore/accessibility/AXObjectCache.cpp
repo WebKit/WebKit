@@ -3623,7 +3623,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         bool node { false };
     };
     HashMap<AXID, UpdatedFields> updatedObjects;
-    auto updateNode = [&] (RefPtr<AXCoreObject> axObject) {
+    auto updateNode = [&] (RefPtr<AccessibilityObject> axObject) {
         auto updatedFields = updatedObjects.get(axObject->objectID());
         if (!updatedFields.node) {
             updatedObjects.set(axObject->objectID(), UpdatedFields { updatedFields.children, true });

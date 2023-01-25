@@ -305,23 +305,23 @@ public:
 #endif
     };
 
-    void generateSubtree(AXCoreObject&);
-    void updateNode(AXCoreObject&);
+    void generateSubtree(AccessibilityObject&);
+    void updateNode(AccessibilityObject&);
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
     void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); };
     void updateNodeProperties(AXCoreObject&, const Vector<AXPropertyName>&);
-    void updateNodeAndDependentProperties(AXCoreObject&);
-    void updatePropertiesForSelfAndDescendants(AXCoreObject&, const Vector<AXPropertyName>&);
+    void updateNodeAndDependentProperties(AccessibilityObject&);
+    void updatePropertiesForSelfAndDescendants(AccessibilityObject&, const Vector<AXPropertyName>&);
 
     double loadingProgress() { return m_loadingProgress; }
     void updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
-    void removeNode(const AXCoreObject&);
+    void removeNode(const AccessibilityObject&);
     // Removes the given node and all its descendants from m_nodeMap.
-    void removeSubtreeFromNodeMap(AXID axID, AXCoreObject*);
+    void removeSubtreeFromNodeMap(AXID axID, AccessibilityObject*);
 
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
@@ -350,7 +350,7 @@ private:
     static HashMap<PageIdentifier, Ref<AXIsolatedTree>>& treePageCache() WTF_REQUIRES_LOCK(s_storeLock);
 
     enum class AttachWrapper : bool { OnMainThread, OnAXThread };
-    std::optional<NodeChange> nodeChangeForObject(Ref<AXCoreObject>, AttachWrapper = AttachWrapper::OnMainThread);
+    std::optional<NodeChange> nodeChangeForObject(Ref<AccessibilityObject>, AttachWrapper = AttachWrapper::OnMainThread);
     void collectNodeChangesForSubtree(AXCoreObject&);
     bool isCollectingNodeChanges() const { return m_collectingNodeChangesAtTreeLevel > 0; }
     void queueChange(const NodeChange&) WTF_REQUIRES_LOCK(m_changeLogLock);
