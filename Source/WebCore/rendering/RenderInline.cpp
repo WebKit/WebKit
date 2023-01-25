@@ -461,10 +461,10 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
 
     if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
-            firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeft() + borderStart();
+            firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
             for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
             ASSERT(inlineBox);
-            lastInlineBoxPaddingBoxRight = inlineBox->logicalRight() - borderEnd();
+            lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
             return std::max(0_lu, lastInlineBoxPaddingBoxRight - firstInlineBoxPaddingBoxLeft);
         }
         return { };
@@ -883,7 +883,7 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
         blockPosition = firstLineBox()->logicalTop();
     } else if (LayoutIntegration::LineLayout::containing(*this)) {
         if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
-            inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeft());
+            inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeftIgnoringInlineDirection());
             blockPosition = inlineBox->logicalTop();
         }
     }

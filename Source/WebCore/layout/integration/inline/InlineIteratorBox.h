@@ -61,13 +61,17 @@ public:
 
     FloatRect visualRect() const;
     FloatRect visualRectIgnoringBlockDirection() const;
+    // Visual in inline direction, logical for writing mode.
+    FloatRect logicalRectIgnoringInlineDirection() const;
 
-    float logicalTop() const { return isHorizontal() ? visualRectIgnoringBlockDirection().y() : visualRectIgnoringBlockDirection().x(); }
-    float logicalBottom() const { return isHorizontal() ? visualRectIgnoringBlockDirection().maxY() : visualRectIgnoringBlockDirection().maxX(); }
-    float logicalLeft() const { return isHorizontal() ? visualRectIgnoringBlockDirection().x() : visualRectIgnoringBlockDirection().y(); }
-    float logicalRight() const { return isHorizontal() ? visualRectIgnoringBlockDirection().maxX() : visualRectIgnoringBlockDirection().maxY(); }
-    float logicalWidth() const { return isHorizontal() ? visualRectIgnoringBlockDirection().width() : visualRectIgnoringBlockDirection().height(); }
-    float logicalHeight() const { return isHorizontal() ? visualRectIgnoringBlockDirection().height() : visualRectIgnoringBlockDirection().width(); }
+    float logicalTop() const { return logicalRectIgnoringInlineDirection().y(); }
+    float logicalBottom() const { return logicalRectIgnoringInlineDirection().maxY(); }
+    float logicalHeight() const { return logicalRectIgnoringInlineDirection().height(); }
+    float logicalWidth() const { return logicalRectIgnoringInlineDirection().width(); }
+
+    // Return visual left/right coords in inline direction (they are still considered logical values as there's no flip for writing mode).
+    float logicalLeftIgnoringInlineDirection() const { return logicalRectIgnoringInlineDirection().x(); }
+    float logicalRightIgnoringInlineDirection() const { return logicalRectIgnoringInlineDirection().maxX(); }
 
     bool isHorizontal() const;
 
@@ -183,6 +187,15 @@ inline FloatRect Box::visualRectIgnoringBlockDirection() const
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.visualRectIgnoringBlockDirection();
     });
+}
+
+inline FloatRect Box::logicalRectIgnoringInlineDirection() const
+{
+    auto visualRectIgnoringBlockDirection = this->visualRectIgnoringBlockDirection();
+    if (isHorizontal())
+        return visualRectIgnoringBlockDirection;
+
+    return { visualRectIgnoringBlockDirection.y(), visualRectIgnoringBlockDirection.x(), visualRectIgnoringBlockDirection.height(), visualRectIgnoringBlockDirection.width() };
 }
 
 inline bool Box::isHorizontal() const
