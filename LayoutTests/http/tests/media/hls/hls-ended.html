@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>hls-ended</title>
+    <script src=../../media-resources/video-test.js></script>
+    <script>
+    window.addEventListener('load', async event => {
+        video = document.getElementById('video');
+        run('video.src = "../resources/hls/test-vod.m3u8"');
+        await waitFor(video, 'canplay');
+        run('video.currentTime = video.duration - 0.5');
+        await waitFor(video, 'seeked');
+        run('video.play()');
+        await waitFor(video, 'ended');
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video id="video"></video>
+</body>
+</html>
