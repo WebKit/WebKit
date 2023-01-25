@@ -16,13 +16,15 @@ set(DumpRenderTree_SOURCES
     WorkQueue.cpp
 )
 
+set(DumpRenderTree_LIBRARIES
+    WebKit::TestRunnerShared
+    WebKit::WebCoreTestSupport
+)
 set(DumpRenderTree_FRAMEWORKS
     JavaScriptCore
     PAL
-    TestRunnerShared
     WTF
     WebCore
-    WebCoreTestSupport
     WebKitLegacy
 )
 if (NOT USE_SYSTEM_MALLOC)

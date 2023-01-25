@@ -31,7 +31,7 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WebKitTestRunner_SHARED_DIR}/spi
 )
 
-list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
+list(APPEND TestRunnerInjectedBundle_SOURCES
     ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/AccessibilityCommonCocoa.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/ActivateFontsCocoa.mm
     ${WebKitTestRunner_DIR}/InjectedBundle/cocoa/InjectedBundlePageCocoa.mm
@@ -48,7 +48,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     ${WebKitTestRunner_SHARED_DIR}/EventSerialization/mac/SharedEventStreamsMac.mm
 )
 
-list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
+list(APPEND TestRunnerInjectedBundle_LIBRARIES
     ${FOUNDATION_LIBRARY}
     JavaScriptCore
     WTF
