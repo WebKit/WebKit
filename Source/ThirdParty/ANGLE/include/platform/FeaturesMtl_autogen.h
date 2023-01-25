@@ -192,6 +192,13 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo allowRenderpassWithoutAttachment = {
+        "allowRenderpassWithoutAttachment",
+        FeatureCategory::MetalFeatures,
+        "Allow creation of render passes without any attachments",
+        &members,
+    };
+
     FeatureInfo multisampleColorFormatShaderReadWorkaround = {
         "multisampleColorFormatShaderReadWorkaround", FeatureCategory::MetalWorkarounds,
         "Add shaderRead usage to some multisampled texture formats", &members,
@@ -253,6 +260,21 @@ struct FeaturesMtl : FeatureSetBase
     FeatureInfo preferCpuForBuffersubdata = {
         "preferCpuForBuffersubdata", FeatureCategory::MetalFeatures,
         "Makes bufferSubData always update via CPU", &members, "http://anglebug.com/7544"};
+
+    FeatureInfo disableProgrammableBlending = {
+        "disableProgrammableBlending", FeatureCategory::MetalFeatures,
+        "Disable programmable blending in order to test read_write pixel local storage textures",
+        &members, "http://anglebug.com/7279"};
+
+    FeatureInfo disableRWTextureTier2Support = {
+        "disableRWTextureTier2Support", FeatureCategory::MetalFeatures,
+        "Disable tier2 read_write textures in order to test tier1 support", &members,
+        "http://anglebug.com/7279"};
+
+    FeatureInfo disableRasterOrderGroups = {
+        "disableRasterOrderGroups", FeatureCategory::MetalFeatures,
+        "Disable raster order groups in order to test pixel local storage memory barriers",
+        &members, "http://anglebug.com/7279"};
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

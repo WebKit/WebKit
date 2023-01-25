@@ -53,6 +53,7 @@
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/tree_util/ReplaceClipCullDistanceVariable.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
+#include "compiler/translator/tree_util/RunAtTheBeginningOfShader.h"
 #include "compiler/translator/tree_util/RunAtTheEndOfShader.h"
 #include "compiler/translator/tree_util/SpecializationConstant.h"
 #include "compiler/translator/util.h"
@@ -416,6 +417,63 @@ void AddSampleMaskDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
 
     // Append the assignment as a statement at the end of the shader.
     return RunAtTheEndOfShader(compiler, root, assignment, symbolTable);
+}
+
+[[nodiscard]] bool EmulateClipDistanceVaryings(TCompiler *compiler,
+                                               TIntermBlock *root,
+                                               TSymbolTable *symbolTable,
+                                               const GLenum shaderType)
+{
+    ASSERT(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER);
+
+    const TVariable *clipDistanceVar =
+        &FindSymbolNode(root, ImmutableString("gl_ClipDistance"))->variable();
+
+    const bool fragment = shaderType == GL_FRAGMENT_SHADER;
+    if (fragment)
+    {
+        TType *globalType = new TType(EbtFloat, EbpHigh, EvqGlobal, 1, 1);
+        globalType->toArrayBaseType();
+        globalType->makeArray(compiler->getClipDistanceArraySize());
+
+        const TVariable *globalVar = new TVariable(symbolTable, ImmutableString("ClipDistance"),
+                                                   globalType, SymbolType::AngleInternal);
+        if (!compiler->isClipDistanceRedeclared())
+        {
+            TIntermDeclaration *globalDecl = new TIntermDeclaration();
+            globalDecl->appendDeclarator(new TIntermSymbol(globalVar));
+            root->insertStatement(0, globalDecl);
+        }
+
+        if (!ReplaceVariable(compiler, root, clipDistanceVar, globalVar))
+        {
+            return false;
+        }
+        clipDistanceVar = globalVar;
+    }
+
+    TIntermBlock *assignBlock = new TIntermBlock();
+    size_t index              = FindMainIndex(root);
+    TIntermSymbol *arraySym   = new TIntermSymbol(clipDistanceVar);
+    TType *type = new TType(EbtFloat, EbpHigh, fragment ? EvqFragmentIn : EvqVertexOut, 1, 1);
+    for (uint8_t i = 0; i < compiler->getClipDistanceArraySize(); i++)
+    {
+        std::stringstream name;
+        name << "ClipDistance_" << static_cast<int>(i);
+        TIntermSymbol *varyingSym = new TIntermSymbol(new TVariable(
+            symbolTable, ImmutableString(name.str()), type, SymbolType::AngleInternal));
+
+        TIntermDeclaration *varyingDecl = new TIntermDeclaration();
+        varyingDecl->appendDeclarator(varyingSym);
+        root->insertStatement(index++, varyingDecl);
+
+        TIntermTyped *arrayAccess = new TIntermBinary(EOpIndexDirect, arraySym, CreateIndexNode(i));
+        assignBlock->appendStatement(new TIntermBinary(
+            EOpAssign, fragment ? arrayAccess : varyingSym, fragment ? varyingSym : arrayAccess));
+    }
+
+    return fragment ? RunAtTheBeginningOfShader(compiler, root, assignBlock)
+                    : RunAtTheEndOfShader(compiler, root, assignBlock, symbolTable);
 }
 }  // namespace
 
@@ -898,12 +956,18 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
             return false;
         }
 
+        if (getClipDistanceArraySize())
+        {
+            if (!EmulateClipDistanceVaryings(this, root, &getSymbolTable(), getShaderType()))
+            {
+                return false;
+            }
+        }
+
         if (usesFrontFacing)
         {
             DeclareRightBeforeMain(*root, *BuiltInVariable::gl_FrontFacing());
         }
-
-        EmitEarlyFragmentTestsGLSL(*this, sink);
     }
     else if (getShaderType() == GL_VERTEX_SHADER)
     {
@@ -931,22 +995,19 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
             return false;
         }
 
-        // Search for the gl_ClipDistance usage, if its used, we need to do some replacements.
-        bool useClipDistance = false;
-        for (const ShaderVariable &outputVarying : mOutputVaryings)
+        if (getClipDistanceArraySize())
         {
-            if (outputVarying.name == "gl_ClipDistance")
+            if (!ZeroDisabledClipDistanceAssignments(this, root, &getSymbolTable(), getShaderType(),
+                                                     driverUniforms->getClipDistancesEnabled()))
             {
-                useClipDistance = true;
-                break;
+                return false;
             }
-        }
 
-        if (useClipDistance &&
-            !ZeroDisabledClipDistanceAssignments(this, root, &getSymbolTable(), getShaderType(),
-                                                 driverUniforms->getClipDistancesEnabled()))
-        {
-            return false;
+            if (IsExtensionEnabled(getExtensionBehavior(), TExtension::ANGLE_clip_cull_distance) &&
+                !EmulateClipDistanceVaryings(this, root, &getSymbolTable(), getShaderType()))
+            {
+                return false;
+            }
         }
 
         if (!transformDepthBeforeCorrection(root, driverUniforms))

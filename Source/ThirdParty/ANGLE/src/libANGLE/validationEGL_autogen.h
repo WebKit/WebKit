@@ -325,6 +325,10 @@ bool ValidateExportVkImageANGLE(const ValidationContext *val,
                                 const void *vk_image,
                                 const void *vk_image_create_info);
 
+// EGL_ANGLE_wait_until_work_scheduled
+bool ValidateWaitUntilWorkScheduledANGLE(const ValidationContext *val,
+                                         const egl::Display *dpyPacked);
+
 // EGL_CHROMIUM_sync_control
 bool ValidateGetSyncValuesCHROMIUM(const ValidationContext *val,
                                    const egl::Display *dpyPacked,

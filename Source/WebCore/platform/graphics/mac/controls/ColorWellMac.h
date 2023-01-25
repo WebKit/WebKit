@@ -33,14 +33,14 @@ namespace WebCore {
 
 class ColorWellPart;
 
-class ColorWellMac : public ButtonControlMac {
+class ColorWellMac final : public ButtonControlMac {
 public:
     ColorWellMac(ColorWellPart& owningPart, ControlFactoryMac&, NSButtonCell *);
 
 private:
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 
 } // namespace WebCore

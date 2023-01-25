@@ -75,7 +75,15 @@ EGLsizeiANDROID GetBlob(const void *key,
     auto entry = gApplicationCache.find(keyVec);
     if (entry == gApplicationCache.end())
     {
-        gLastCacheOpResult = CacheOpResult::GetNotFound;
+        // A compile+link operation can generate multiple queries to the cache; one per shader, one
+        // for link, and in the Vulkan backend, potentially also one for the pipeline cache.  For
+        // the purposes of the test, make sure that any of these hitting the cache is considered a
+        // success, particularly because it's valid for the pipeline cache entry not to exist in the
+        // cache.
+        if (gLastCacheOpResult != CacheOpResult::GetSuccess)
+        {
+            gLastCacheOpResult = CacheOpResult::GetNotFound;
+        }
         return 0;
     }
 

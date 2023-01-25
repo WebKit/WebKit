@@ -15,7 +15,7 @@ namespace rx
 {
 TEST(SerialTest, Monotonic)
 {
-    SerialFactory factory;
+    AtomicSerialFactory factory;
 
     Serial a = factory.generate();
     Serial b = factory.generate();

@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure (Error message):
-//  expected:
-//  "WebAssembly.Instance(): Argument 1 must be an object"
-//  found:
-//  "second argument to WebAssembly.Instance must be undefined or an Object (evaluating 'new WebAssembly.Instance(module, ffi)')"
-// Looks like we need to translate exception strings.
-
 // Copyright 2015 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -41,16 +32,14 @@ function checkSuccessfulInstantiation(builder, ffi, handler) {
 }
 
 function checkFailingInstantiation(
-    builder, ffi, error, message, prepend_context = true) {
+    builder, ffi, error, message) {
   // Test synchronous instantiation.
   assertThrows(
-      _ => builder.instantiate(ffi), error,
-      (prepend_context ? 'WebAssembly.Instance(): ' : '') + message);
+      _ => builder.instantiate(ffi), error, message);
 
   // Test asynchronous instantiation.
   assertThrowsAsync(
-      builder.asyncInstantiate(ffi), error,
-      (prepend_context ? 'WebAssembly.instantiate(): ' : '') + message);
+      builder.asyncInstantiate(ffi), error, message);
 }
 
 (function testValidFFI() {
@@ -63,19 +52,19 @@ function checkFailingInstantiation(
   // print(arguments.callee.name);
   checkFailingInstantiation(
       CreateDefaultBuilder(), 17, TypeError,
-      'Argument 1 must be an object');
+      /second argument/);
   checkFailingInstantiation(
       CreateDefaultBuilder(), {}, TypeError,
-      'Import #0 module="mod" error: module is not an object or function');
+      /import mod:fun must be an object/);
   checkFailingInstantiation(
       CreateDefaultBuilder(), {mod: {}}, WebAssembly.LinkError,
-      'Import #0 module="mod" function="fun" error: function import requires a callable');
+      /import function mod:fun must be callable/);
   checkFailingInstantiation(
       CreateDefaultBuilder(), {mod: {fun: {}}}, WebAssembly.LinkError,
-      'Import #0 module="mod" function="fun" error: function import requires a callable');
+      /import function mod:fun must be callable/);
   checkFailingInstantiation(
       CreateDefaultBuilder(), {mod: {fun: 0}}, WebAssembly.LinkError,
-      'Import #0 module="mod" function="fun" error: function import requires a callable');
+      /import function mod:fun must be callable/);
 })();
 
 (function testImportWithInvalidSignature() {
@@ -94,7 +83,7 @@ function checkFailingInstantiation(
   let exported = builder.instantiate().exports.exp;
   checkFailingInstantiation(
       CreateDefaultBuilder(), {mod: {fun: exported}}, WebAssembly.LinkError,
-      'Import #0 module="mod" function="fun" error: imported function does not match the expected type');
+      /imported function mod:fun signature doesn't match the provided WebAssembly function's signature/);
 })();
 
 (function regression870646() {
@@ -223,5 +212,5 @@ function checkFailingInstantiation(
       builder, {'': {f: _ => Symbol()}},
       instance => assertThrows(
           instance.exports.main, TypeError,
-          'Cannot convert a Symbol value to a number'));
+          /Cannot convert a symbol to a number/));
 })();

@@ -513,10 +513,10 @@ void Recorder::applyFillPattern()
 }
 #endif
 
-void Recorder::drawControlPart(ControlPart& part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void Recorder::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     appendStateChangeItemIfNecessary();
-    recordDrawControlPart(part, rect, deviceScaleFactor, style);
+    recordDrawControlPart(part, borderRect, deviceScaleFactor, style);
 }
 
 void Recorder::clip(const FloatRect& rect)

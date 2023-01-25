@@ -134,6 +134,8 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
     virtual egl::Error handleGPUSwitch();
     virtual egl::Error forceGPUSwitch(EGLint gpuIDHigh, EGLint gpuIDLow);
 
+    virtual egl::Error waitUntilWorkScheduled();
+
     virtual bool isX11() const;
     virtual bool isWayland() const;
     virtual bool isGBM() const;

@@ -11,6 +11,7 @@
 
 #include "libANGLE/VaryingPacking.h"
 
+#include "common/CompiledShaderState.h"
 #include "common/utilities.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/ProgramExecutable.h"

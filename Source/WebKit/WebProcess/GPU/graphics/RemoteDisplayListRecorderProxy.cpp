@@ -407,9 +407,9 @@ void RemoteDisplayListRecorderProxy::recordClearRect(const FloatRect& rect)
     send(Messages::RemoteDisplayListRecorder::ClearRect(rect));
 }
 
-void RemoteDisplayListRecorderProxy::recordDrawControlPart(ControlPart& part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void RemoteDisplayListRecorderProxy::recordDrawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    send(Messages::RemoteDisplayListRecorder::DrawControlPart(part, rect, deviceScaleFactor, style));
+    send(Messages::RemoteDisplayListRecorder::DrawControlPart(part, borderRect, deviceScaleFactor, style));
 }
 
 #if USE(CG)

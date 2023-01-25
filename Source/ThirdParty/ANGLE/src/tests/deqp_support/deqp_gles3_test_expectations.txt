@@ -453,6 +453,7 @@
 4394 MAC OPENGL INTEL : dEQP-GLES3.functional.draw_buffers_indexed.random.max_implementation_draw_buffers.14 = FAIL
 4394 MAC OPENGL INTEL : dEQP-GLES3.functional.draw_buffers_indexed.random.max_implementation_draw_buffers.17 = FAIL
 
+
 // Android only failures
 1964 ANDROID GLES : dEQP-GLES3.functional.occlusion_query.* = FAIL
 1962 ANDROID GLES : dEQP-GLES3.functional.shaders.preprocessor.conditional_inclusion.basic_2_fragment = FAIL
@@ -730,6 +731,7 @@
 6571 MAC METAL INTEL : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.linear_linear = FAIL
 6571 MAC METAL INTEL : dEQP-GLES3.functional.texture.mipmap.3d.max_lod.nearest_linear = FAIL
 7451 MAC METAL INTEL : dEQP-GLES3.functional.shaders.builtin_variable.pointcoord = FAIL
+7838 MAC METAL INTEL : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_* = FAIL
 
 /////////////////////////////////////
 
@@ -743,6 +745,7 @@
 6528 PIXEL4ORXL GLES : dEQP-GLES3.functional.transform_feedback.random.interleaved.triangles.8 = FAIL
 6528 PIXEL4ORXL GLES : dEQP-GLES3.functional.transform_feedback.random.interleaved.triangles.10 = FAIL
 6528 PIXEL4ORXL GLES : dEQP-GLES3.functional.transform_feedback.random_full_array_capture.* = FAIL
+7838 PIXEL4ORXL GLES : dEQP-GLES3.functional.shaders.function.global_variable_aliasing_* = FAIL
 
 // Pixel 6 expectations
 6917 PIXEL6 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element*separate*float = FAIL

@@ -39,6 +39,9 @@ class ReadOnlyFeedbackLoopTest : public ANGLETest<>
     }
 };
 
+class ReadOnlyFeedbackLoopTestES31 : public ReadOnlyFeedbackLoopTest
+{};
+
 // Fill out a depth texture to specific values and use it both as a sampler and a depth texture
 // with depth write disabled. This is to test a "read-only feedback loop" that needs to be
 // supported to match industry standard.
@@ -651,5 +654,387 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(kSize - 1, kSize - 1, GLColor::blue);
 }
 
+// Tests that sampling from stencil while simultaneously bound as read-only attachment works.  Depth
+// is being written at the same time.
+TEST_P(ReadOnlyFeedbackLoopTestES31, SampleStencilWhileReadOnlyAttachment)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_read_only_depth_stencil_feedback_loops"));
+
+    constexpr GLsizei kSize = 64;
+
+    // Create FBO with color, depth and stencil
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLTexture depthStencil;
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencil,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Initialize depth/stencil
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0xAA, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Draw red with depth = 1 and stencil = 0xAA
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Break the render pass by making a copy of the color texture.
+    GLTexture copyTex;
+    glBindTexture(GL_TEXTURE_2D, copyTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kSize, kSize / 2);
+    ASSERT_GL_NO_ERROR();
+
+    // Disable stencil output and bind stencil as sampler.
+    glDepthFunc(GL_LESS);
+    glStencilFunc(GL_EQUAL, 0xAA, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+    constexpr char kVS[] = R"(#version 310 es
+precision highp float;
+in vec4 position;
+out vec2 texCoord;
+
+void main()
+{
+    gl_Position = position;
+    texCoord = position.xy * 0.5 + vec2(0.5);
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+precision mediump usampler2D;
+
+in vec2 texCoord;
+
+uniform usampler2D stencil;
+
+out vec4 color;
+
+void main()
+{
+    bool stencilPass = texture(stencil, texCoord).x == 0xAAu;
+
+    color = vec4(0, stencilPass, 0, 1);
+}
+)";
+
+    ANGLE_GL_PROGRAM(validateStencil, kVS, kFS);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(validateStencil);
+    glUniform1i(glGetUniformLocation(validateStencil, "stencil"), 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(validateStencil, "position", 0.95);
+    ASSERT_GL_NO_ERROR();
+
+    // Break the render pass
+    glBindTexture(GL_TEXTURE_2D, copyTex);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, kSize / 2, 0, 0, kSize, kSize / 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer readFramebuffer;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFramebuffer);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, copyTex, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(0, kSize / 2, kSize, kSize / 2, GLColor::green);
+
+    // Validate that depth was overwritten in the previous render pass
+    glDepthFunc(GL_GREATER);
+    glDepthMask(GL_FALSE);
+
+    glUseProgram(drawColor);
+    glUniform4f(colorUniformLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.97);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::blue);
+}
+
+// Tests that sampling from depth while simultaneously bound as read-only attachment works.  Stencil
+// is being written at the same time.
+TEST_P(ReadOnlyFeedbackLoopTestES31, SampleDepthWhileReadOnlyAttachment)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_read_only_depth_stencil_feedback_loops"));
+
+    constexpr GLsizei kSize = 64;
+
+    // Create FBO with color, depth and stencil
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLTexture depthStencil;
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencil,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Initialize depth/stencil
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0xAA, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Draw red with depth = 1 and stencil = 0xAA
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Break the render pass by making a copy of the color texture.
+    GLTexture copyTex;
+    glBindTexture(GL_TEXTURE_2D, copyTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kSize, kSize / 2);
+    ASSERT_GL_NO_ERROR();
+
+    // Disable depth output and bind depth as sampler.
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_FALSE);
+    glStencilFunc(GL_ALWAYS, 0xBB, 0xEE);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    constexpr char kVS[] = R"(#version 310 es
+precision highp float;
+in vec4 position;
+out vec2 texCoord;
+
+void main()
+{
+    gl_Position = position;
+    texCoord = position.xy * 0.5 + vec2(0.5);
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+in vec2 texCoord;
+
+uniform sampler2D depth;
+
+out vec4 color;
+
+void main()
+{
+    bool depthPass = abs(texture(depth, texCoord).x - 1.0) < 0.1;
+
+    color = vec4(0, depthPass, 0, 1);
+}
+)";
+
+    ANGLE_GL_PROGRAM(validateDepth, kVS, kFS);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(validateDepth);
+    glUniform1i(glGetUniformLocation(validateDepth, "depth"), 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(validateDepth, "position", 0.95);
+    ASSERT_GL_NO_ERROR();
+
+    // Break the render pass
+    glBindTexture(GL_TEXTURE_2D, copyTex);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, kSize / 2, 0, 0, kSize, kSize / 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer readFramebuffer;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFramebuffer);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, copyTex, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(0, kSize / 2, kSize, kSize / 2, GLColor::green);
+
+    // Validate that stencil was overwritten in the previous render pass
+    glStencilFunc(GL_EQUAL, 0xBB, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+    glUseProgram(drawColor);
+    glUniform4f(colorUniformLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.97);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::blue);
+}
+
+// Tests that sampling from depth and stencil while simultaneously bound as read-only attachment
+// works.
+TEST_P(ReadOnlyFeedbackLoopTestES31, SampleDepthAndStencilWhileReadOnlyAttachment)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_read_only_depth_stencil_feedback_loops"));
+
+    constexpr GLsizei kSize = 64;
+
+    // Create FBO with color, depth and stencil
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+
+    GLTexture depthStencil;
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, kSize, kSize);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencil,
+                           0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    // Initialize depth/stencil
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS);
+
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0xAA, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    // Draw red with depth = 1 and stencil = 0xAA
+    glUniform4f(colorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Break the render pass by making a copy of the color texture.
+    GLTexture copyTex;
+    glBindTexture(GL_TEXTURE_2D, copyTex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, kSize, kSize / 2);
+    ASSERT_GL_NO_ERROR();
+
+    // Disable depth/stencil output and bind both depth and stencil as samplers.
+    glDepthFunc(GL_LESS);
+    glDepthMask(GL_FALSE);
+    glStencilFunc(GL_EQUAL, 0xAA, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+    constexpr char kVS[] = R"(#version 310 es
+precision highp float;
+in vec4 position;
+out vec2 texCoord;
+
+void main()
+{
+    gl_Position = position;
+    texCoord = position.xy * 0.5 + vec2(0.5);
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+precision mediump usampler2D;
+
+in vec2 texCoord;
+
+uniform sampler2D depth;
+uniform usampler2D stencil;
+
+out vec4 color;
+
+void main()
+{
+    // Note: Due to GL_DEPTH_STENCIL_TEXTURE_MODE, it is not possible to read both the depth and
+    // stencil aspects correctly.  For the sake of test (reading both aspects), just make sure to
+    // sample from depth.
+    bool depthPass = !isinf(texture(depth, texCoord).x);
+    bool stencilPass = texture(stencil, texCoord).x == 0xAAu;
+
+    color = vec4(0, depthPass, stencilPass, 1);
+}
+)";
+
+    ANGLE_GL_PROGRAM(validateDepthStencil, kVS, kFS);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, depthStencil);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+    ASSERT_GL_NO_ERROR();
+
+    glUseProgram(validateDepthStencil);
+    glUniform1i(glGetUniformLocation(validateDepthStencil, "depth"), 0);
+    glUniform1i(glGetUniformLocation(validateDepthStencil, "stencil"), 1);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(validateDepthStencil, "position", 0.95);
+    ASSERT_GL_NO_ERROR();
+
+    // Break the render pass
+    glBindTexture(GL_TEXTURE_2D, copyTex);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, kSize / 2, 0, 0, kSize, kSize / 2);
+    ASSERT_GL_NO_ERROR();
+
+    GLFramebuffer readFramebuffer;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, readFramebuffer);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, copyTex, 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(0, kSize / 2, kSize, kSize / 2, GLColor::cyan);
+}
+
 // Instantiate the test for ES3.
 ANGLE_INSTANTIATE_TEST_ES3(ReadOnlyFeedbackLoopTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadOnlyFeedbackLoopTestES31);
+ANGLE_INSTANTIATE_TEST_ES31(ReadOnlyFeedbackLoopTestES31);

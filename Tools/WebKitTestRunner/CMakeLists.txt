@@ -16,13 +16,16 @@ set(WebKitTestRunner_SOURCES
     WorkQueueManager.cpp
 )
 
+set(WebKitTestRunner_LIBRARIES
+    WebKit::TestRunnerShared
+    WebKit::WebCoreTestSupport
+)
 set(WebKitTestRunner_FRAMEWORKS
     JavaScriptCore
     PAL
-    TestRunnerShared
     WTF
     WebCore
-    WebCoreTestSupport
+    WebKit
 )
 if (NOT USE_SYSTEM_MALLOC)
     list(APPEND WebKitTestRunner_FRAMEWORKS bmalloc)
@@ -34,7 +37,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
     endif ()
 endif ()
 
-set(WebKitTestRunner_INCLUDE_DIRECTORIES
+set(WebKitTestRunner_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/UIScriptContext
@@ -62,7 +65,9 @@ list(APPEND WebKitTestRunner_SOURCES
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/TestOptionsGeneratedKeys.h
 )
 
-set(WebKitTestRunnerInjectedBundle_SOURCES
+set(WebKitTestRunner_DEPENDENCIES TestRunnerInjectedBundle)
+
+set(TestRunnerInjectedBundle_SOURCES
     InjectedBundle/AccessibilityController.cpp
     InjectedBundle/AccessibilityTextMarker.cpp
     InjectedBundle/AccessibilityTextMarkerRange.cpp
@@ -76,21 +81,21 @@ set(WebKitTestRunnerInjectedBundle_SOURCES
     InjectedBundle/TextInputController.cpp
 )
 
-set(WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
+set(TestRunnerInjectedBundle_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_BINARY_DIR}
     ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
     ${WebKitTestRunner_DIR}
     ${WebKitTestRunner_DIR}/InjectedBundle
 )
 
-set(WebKitTestRunnerInjectedBundle_LIBRARIES
+set(TestRunnerInjectedBundle_LIBRARY_TYPE SHARED)
+set(TestRunnerInjectedBundle_PRIVATE_LIBRARIES
     WebKit::TestRunnerShared
-    WebKit::WebCore
     WebKit::WebCoreTestSupport
-    WebKit::WebKit
 )
+set(TestRunnerInjectedBundle_FRAMEWORKS ${WebKitTestRunner_FRAMEWORKS})
 
-set(WebKitTestRunnerInjectedBundle_IDL_FILES
+set(TestRunnerInjectedBundle_IDL_FILES
     "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityController.idl"
     "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityTextMarker.idl"
     "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/AccessibilityTextMarkerRange.idl"
@@ -101,27 +106,25 @@ set(WebKitTestRunnerInjectedBundle_IDL_FILES
     "${WebKitTestRunner_DIR}/InjectedBundle/Bindings/TextInputController.idl"
 )
 
-set(WebKitTestRunner_DEPENDENCIES
-    TestRunnerInjectedBundle
-)
-
-GENERATE_BINDINGS(WebKitTestRunnerInjectedBundleBindings
-    OUTPUT_SOURCE WebKitTestRunnerInjectedBundle_SOURCES
-    INPUT_FILES ${WebKitTestRunnerInjectedBundle_IDL_FILES}
+GENERATE_BINDINGS(TestRunnerInjectedBundleBindings
+    OUTPUT_SOURCE TestRunnerInjectedBundle_SOURCES
+    INPUT_FILES ${TestRunnerInjectedBundle_IDL_FILES}
     BASE_DIR ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
     IDL_INCLUDES ${WebKitTestRunner_DIR}/InjectedBundle/Bindings
     FEATURES ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}
     DESTINATION ${WebKitTestRunner_DERIVED_SOURCES_DIR}/InjectedBundle
-    GENERATOR TestRunner)
+    GENERATOR TestRunner
+)
+
+set(TestRunnerInjectedBundle_DEPENDENCIES
+    TestRunnerInjectedBundleBindings
+)
 
 WEBKIT_EXECUTABLE_DECLARE(WebKitTestRunner)
+WEBKIT_LIBRARY_DECLARE(TestRunnerInjectedBundle)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-add_library(TestRunnerInjectedBundle SHARED ${WebKitTestRunnerInjectedBundle_SOURCES})
-target_include_directories(TestRunnerInjectedBundle PRIVATE ${WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES})
-target_link_libraries(TestRunnerInjectedBundle PRIVATE ${WebKitTestRunnerInjectedBundle_LIBRARIES})
-add_dependencies(TestRunnerInjectedBundle WebKitTestRunnerInjectedBundleBindings)
-
+WEBKIT_LIBRARY(TestRunnerInjectedBundle)
 WEBKIT_EXECUTABLE(WebKitTestRunner)
 
 if (COMPILER_IS_GCC_OR_CLANG)

@@ -54,18 +54,21 @@ class GLClipCullDistanceReferenceTraverser : public TIntermTraverser
 {
   public:
     GLClipCullDistanceReferenceTraverser(const TIntermSymbol **redeclaredSymOut,
+                                         const TVariable **variableOut,
                                          bool *nonConstIdxUsedOut,
                                          unsigned int *maxConstIdxOut,
                                          ClipCullDistanceIdxSet *constIndicesOut,
                                          TQualifier targetQualifier)
         : TIntermTraverser(true, false, false),
           mRedeclaredSym(redeclaredSymOut),
+          mVariable(variableOut),
           mUseNonConstClipCullDistanceIndex(nonConstIdxUsedOut),
           mMaxConstClipCullDistanceIndex(maxConstIdxOut),
           mConstClipCullDistanceIndices(constIndicesOut),
           mTargetQualifier(targetQualifier)
     {
         *mRedeclaredSym                    = nullptr;
+        *mVariable                         = nullptr;
         *mUseNonConstClipCullDistanceIndex = false;
         *mMaxConstClipCullDistanceIndex    = 0;
         mConstClipCullDistanceIndices->reset();
@@ -149,6 +152,7 @@ class GLClipCullDistanceReferenceTraverser : public TIntermTraverser
             mConstClipCullDistanceIndices->set(idx);
 
             *mMaxConstClipCullDistanceIndex = std::max(*mMaxConstClipCullDistanceIndex, idx);
+            *mVariable                      = &clipCullDistance->variable();
         }
 
         return true;
@@ -156,6 +160,7 @@ class GLClipCullDistanceReferenceTraverser : public TIntermTraverser
 
   private:
     const TIntermSymbol **mRedeclaredSym;
+    const TVariable **mVariable;
     // Flag indicating whether there is at least one reference of gl_ClipDistance with non-constant
     // index
     bool *mUseNonConstClipCullDistanceIndex;
@@ -488,9 +493,11 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
     ClipCullDistanceIdxSet constIndices;
     bool useNonConstIndex                  = false;
     const TIntermSymbol *redeclaredBuiltIn = nullptr;
+    const TVariable *builtInVariable       = nullptr;
     unsigned int maxConstIndex             = 0;
-    GLClipCullDistanceReferenceTraverser indexTraverser(
-        &redeclaredBuiltIn, &useNonConstIndex, &maxConstIndex, &constIndices, builtInQualifier);
+    GLClipCullDistanceReferenceTraverser indexTraverser(&redeclaredBuiltIn, &builtInVariable,
+                                                        &useNonConstIndex, &maxConstIndex,
+                                                        &constIndices, builtInQualifier);
     root->traverse(&indexTraverser);
     if (!useNonConstIndex && constIndices.none())
     {
@@ -507,9 +514,9 @@ bool ReplaceClipCullDistanceAssignments::assignValueToOriginalVariableImpl(
     }
     else
     {
-        // User defined not found, find in built-in table
-        builtInVar = static_cast<const TVariable *>(
-            symbolTable->findBuiltIn(name, compiler->getShaderVersion()));
+        // User defined not found, use implicitly defined. The symbol table cannot be used here as
+        // the variable type could have been adjusted after validation
+        builtInVar = builtInVariable;
     }
     if (!builtInVar)
     {

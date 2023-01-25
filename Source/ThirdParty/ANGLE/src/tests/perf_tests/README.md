@@ -59,11 +59,12 @@ Several command-line arguments control how the tests run:
 * `--render-test-output-dir=dir`: Directory to store test artifacts (including screenshots but unlike `--screenshot-dir`, `dir` here is always a local directory regardless of platform and `--save-screenshots` isn't implied).
 * `--verbose`: Print extra timing information.
 * `--warmup-trials x`: Number of times to warm up the test before starting timing. Defaults to 3.
-* `--warmup-steps x`: Maximum number of steps for the warmup loops. Defaults to unlimited.
+* `--warmup-steps x`: Maximum number of steps for the warmup loops. Defaults to unlimited. Set to -1 to use a trace's frame count.
 * `--no-warmup`: Skip warming up the tests. Equivalent to `--warmup-steps 0`.
 * `--calibration-time`: Run each test calibration step in a fixed time. Defaults to 1 second.
 * `--trial-time x` or `--max-trial-time x`: Run each test trial under this max time. Defaults to 10 seconds.
 * `--fixed-test-time x`: Run the tests until this much time has elapsed.
+* `--fixed-test-time-with-warmup x`: Start with a warmup trial, then run the tests until this much time has elapsed.
 * `--trials`: Number of times to repeat testing. Defaults to 3.
 * `--no-finish`: Don't call glFinish after each test trial.
 * `--validation`: Enable serialization validation in the trace tests. Normally used with SwiftShader and retracing.

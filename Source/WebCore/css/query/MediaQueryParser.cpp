@@ -79,17 +79,19 @@ std::optional<MediaQuery> MediaQueryParser::parseCondition(CSSParserTokenRange r
 
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range)
 {
+    range.consumeWhitespace();
+
+    if (range.atEnd())
+        return { };
+
     MediaQueryList list;
 
-    while (!range.atEnd()) {
+    while (true) {
         auto begin = range.begin();
         while (!range.atEnd() && range.peek().type() != CommaToken)
             range.consumeComponentValue();
 
         auto subrange = range.makeSubRange(begin, &range.peek());
-
-        if (!range.atEnd())
-            range.consumeIncludingWhitespace();
 
         auto consumeMediaQueryOrNotAll = [&] {
             if (auto query = consumeMediaQuery(subrange))
@@ -99,6 +101,10 @@ MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& rang
         };
 
         list.append(consumeMediaQueryOrNotAll());
+
+        if (range.atEnd())
+            break;
+        range.consumeIncludingWhitespace();
     }
 
     return list;

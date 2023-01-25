@@ -33,12 +33,12 @@ namespace WebCore {
 
 class SearchFieldPart;
 
-class SearchFieldMac : public SearchControlMac {
+class SearchFieldMac final : public SearchControlMac {
 public:
     SearchFieldMac(SearchFieldPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *);
 
 private:
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 
 } // namespace WebCore

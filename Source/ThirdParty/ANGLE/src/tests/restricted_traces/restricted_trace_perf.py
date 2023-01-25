@@ -195,12 +195,11 @@ def run_trace(trace, args):
     if args.maxsteps != '':
         adb_command += '--max-steps-performed\ ' + args.maxsteps + '\ '
     if args.fixedtime != '':
-        adb_command += '--fixed-test-time\ ' + args.fixedtime + '\ '
+        adb_command += '--fixed-test-time-with-warmup\ ' + args.fixedtime + '\ '
     if args.minimizegpuwork:
         adb_command += '--minimize-gpu-work\ '
     adb_command += '--verbose\ '
-    adb_command += '--verbose-logging\ '
-    adb_command += '--warmup-trials\ 1\"\ '
+    adb_command += '--verbose-logging\"\ '
     adb_command += '-e org.chromium.native_test.NativeTestInstrumentationTestRunner.ShardNanoTimeout "1000000000000000000" '
     adb_command += '-e org.chromium.native_test.NativeTestInstrumentationTestRunner.NativeTestActivity com.android.angle.test.AngleUnitTestActivity '
     adb_command += 'com.android.angle.test/org.chromium.build.gtest_apk.NativeTestInstrumentationTestRunner'

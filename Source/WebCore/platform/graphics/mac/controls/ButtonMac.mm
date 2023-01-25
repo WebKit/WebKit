@@ -49,9 +49,9 @@ IntSize ButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&) cons
 {
     // Buttons really only constrain height. They respect width.
     static const IntSize cellSizes[] = {
-        { 0, 21 },
-        { 0, 18 },
-        { 0, 15 },
+        { 0, 20 },
+        { 0, 16 },
+        { 0, 13 },
         { 0, 28 }
     };
     return cellSizes[controlSize];
@@ -59,15 +59,14 @@ IntSize ButtonMac::cellSize(NSControlSize controlSize, const ControlStyle&) cons
 
 IntOutsets ButtonMac::cellOutsets(NSControlSize controlSize, const ControlStyle&) const
 {
-    // FIXME: These values may need to be reevaluated. They appear to have been originally chosen
-    // to reflect the size of shadows around native form controls on macOS, but as of macOS 10.15,
-    // these margins extend well past the boundaries of a native button cell's shadows.
+    // FIXME: Determine these values programmatically.
+    // https://bugs.webkit.org/show_bug.cgi?id=251066
     static const IntOutsets cellOutsets[] = {
         // top right bottom left
+        { 5, 7, 7, 7 },
         { 4, 6, 7, 6 },
-        { 4, 5, 6, 5 },
-        { 0, 1, 1, 1 },
-        { 4, 6, 7, 6 },
+        { 1, 2, 2, 2 },
+        { 6, 6, 6, 6 },
     };
     return cellOutsets[controlSize];
 }
@@ -98,21 +97,22 @@ FloatRect ButtonMac::rectForBounds(const FloatRect& bounds, const ControlStyle& 
         return bounds;
 
     auto controlSize = [m_buttonCell controlSize];
-    auto size = cellSize(controlSize, style);
-    auto outsets = cellOutsets(controlSize, style);
 
+    // Explicitly use `FloatSize` to support non-integral sizes following zoom.
+    FloatSize size = cellSize(controlSize, style);
     size.scale(style.zoomFactor);
     size.setWidth(bounds.width());
 
     auto rect = bounds;
     auto delta = rect.height() - size.height();
     if (delta > 0)
-        rect.expand(0, delta / 2);
+        rect.inflateY(-delta / 2);
 
+    auto outsets = cellOutsets(controlSize, style);
     return inflatedRect(rect, size, outsets, style);
 }
 
-void ButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void ButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -120,14 +120,14 @@ void ButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float devi
 
     GraphicsContextStateSaver stateSaver(context);
 
-    auto inflatedRect = rectForBounds(rect, style);
+    auto inflatedRect = rectForBounds(borderRect.rect(), style);
 
     if (style.zoomFactor != 1) {
         inflatedRect.scale(1 / style.zoomFactor);
         context.scale(style.zoomFactor);
     }
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
     auto *window = [view window];
     auto *previousDefaultButtonCell = [window defaultButtonCell];
 

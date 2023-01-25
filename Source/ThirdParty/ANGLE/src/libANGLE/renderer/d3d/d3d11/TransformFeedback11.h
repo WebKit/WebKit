@@ -45,7 +45,7 @@ class TransformFeedback11 : public TransformFeedbackImpl
                                const std::vector<ID3D11Buffer *> **buffersOut);
     const std::vector<UINT> &getSOBufferOffsets() const;
 
-    Serial getSerial() const;
+    UniqueSerial getSerial() const;
 
   private:
     Renderer11 *mRenderer;
@@ -54,7 +54,7 @@ class TransformFeedback11 : public TransformFeedbackImpl
     std::vector<ID3D11Buffer *> mBuffers;
     std::vector<UINT> mBufferOffsets;
 
-    Serial mSerial;
+    UniqueSerial mSerial;
 };
 }  // namespace rx
 

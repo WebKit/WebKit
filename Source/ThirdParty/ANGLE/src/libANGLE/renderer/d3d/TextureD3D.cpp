@@ -605,12 +605,23 @@ angle::Result TextureD3D::ensureBindFlags(const gl::Context *context, BindFlags 
         if ((bindFlags.renderTarget && !mTexStorage->isRenderTarget()) ||
             (bindFlags.unorderedAccess && !mTexStorage->isUnorderedAccess()))
         {
-            TexStoragePointer newRenderTargetStorage;
-            ANGLE_TRY(createCompleteStorage(context, bindFlags, &newRenderTargetStorage));
+            // Preserve all the texture's previous bind flags when creating a new storage.
+            BindFlags newBindFlags = bindFlags;
+            if (mTexStorage->isRenderTarget())
+            {
+                newBindFlags.renderTarget = true;
+            }
+            if (mTexStorage->isUnorderedAccess())
+            {
+                newBindFlags.unorderedAccess = true;
+            }
 
-            ANGLE_TRY(mTexStorage->copyToStorage(context, newRenderTargetStorage.get()));
-            ANGLE_TRY(setCompleteTexStorage(context, newRenderTargetStorage.get()));
-            newRenderTargetStorage.release();
+            TexStoragePointer newStorage;
+            ANGLE_TRY(createCompleteStorage(context, newBindFlags, &newStorage));
+
+            ANGLE_TRY(mTexStorage->copyToStorage(context, newStorage.get()));
+            ANGLE_TRY(setCompleteTexStorage(context, newStorage.get()));
+            newStorage.release();
             // If this texture is used in compute shader, we should invalidate this texture so that
             // the UAV/SRV is rebound again with this new texture storage in next dispatch call.
             mTexStorage->invalidateTextures();

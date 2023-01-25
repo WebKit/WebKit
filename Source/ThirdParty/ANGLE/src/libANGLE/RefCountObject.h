@@ -183,9 +183,9 @@ template <typename IDType>
 class RefCountObject : public gl::RefCountObjectNoID
 {
   public:
-    explicit RefCountObject(rx::Serial serial, IDType id) : mSerial(serial), mId(id) {}
+    explicit RefCountObject(rx::UniqueSerial serial, IDType id) : mSerial(serial), mId(id) {}
 
-    rx::Serial serial() const { return mSerial; }
+    rx::UniqueSerial serial() const { return mSerial; }
     IDType id() const { return mId; }
 
   protected:
@@ -193,7 +193,7 @@ class RefCountObject : public gl::RefCountObjectNoID
 
   private:
     // Unique serials are used to identify resources for frame capture.
-    rx::Serial mSerial;
+    rx::UniqueSerial mSerial;
     IDType mId;
 };
 
@@ -282,7 +282,7 @@ class SubjectBindingPointer : protected BindingPointer<SubjectT>, public angle::
         : ObserverBindingBase(observer, index)
     {}
     ~SubjectBindingPointer() override {}
-    SubjectBindingPointer(const SubjectBindingPointer &other) = default;
+    SubjectBindingPointer(const SubjectBindingPointer &other)            = default;
     SubjectBindingPointer &operator=(const SubjectBindingPointer &other) = default;
 
     void bind(const Context *context, SubjectT *subject)

@@ -102,6 +102,10 @@ class FramebufferMtl : public FramebufferImpl
     WindowSurfaceMtl *getAttachedBackbuffer() const { return mBackbuffer; }
 
     bool renderPassHasStarted(ContextMtl *contextMtl) const;
+    bool renderPassHasDefaultWidthOrHeight() const
+    {
+        return mRenderPassDesc.defaultWidth > 0 || mRenderPassDesc.defaultHeight > 0;
+    }
     mtl::RenderCommandEncoder *ensureRenderPassStarted(const gl::Context *context);
 
     // Call this to notify FramebufferMtl whenever its render pass has started.

@@ -680,6 +680,7 @@ ANGLE_UTIL_EXPORT PFNGLMULTIDRAWELEMENTSINDIRECTEXTPROC l_glMultiDrawElementsInd
 ANGLE_UTIL_EXPORT PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEEXTPROC
     l_glFramebufferTexture2DMultisampleEXT;
 ANGLE_UTIL_EXPORT PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC l_glRenderbufferStorageMultisampleEXT;
+ANGLE_UTIL_EXPORT PFNGLPOLYGONOFFSETCLAMPEXTPROC l_glPolygonOffsetClampEXT;
 ANGLE_UTIL_EXPORT PFNGLPRIMITIVEBOUNDINGBOXEXTPROC l_glPrimitiveBoundingBoxEXT;
 ANGLE_UTIL_EXPORT PFNGLGETGRAPHICSRESETSTATUSEXTPROC l_glGetGraphicsResetStatusEXT;
 ANGLE_UTIL_EXPORT PFNGLGETNUNIFORMFVEXTPROC l_glGetnUniformfvEXT;
@@ -1919,6 +1920,8 @@ void LoadUtilGLES(LoadProc loadProc)
     l_glRenderbufferStorageMultisampleEXT =
         reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC>(
             loadProc("glRenderbufferStorageMultisampleEXT"));
+    l_glPolygonOffsetClampEXT =
+        reinterpret_cast<PFNGLPOLYGONOFFSETCLAMPEXTPROC>(loadProc("glPolygonOffsetClampEXT"));
     l_glPrimitiveBoundingBoxEXT =
         reinterpret_cast<PFNGLPRIMITIVEBOUNDINGBOXEXTPROC>(loadProc("glPrimitiveBoundingBoxEXT"));
     l_glGetGraphicsResetStatusEXT = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSEXTPROC>(

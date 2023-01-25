@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    let suite = InspectorTest.createSyncSuite("WI.FontStyles.Conversion");
+
+    suite.addTestCase({
+        name: "WI.FontStyles.Conversion.axisValueToFontPropertyValue",
+        description: "Check that font variation axis values map to appropriate font CSS properties values.",
+        test() {
+            const tests = [
+                {
+                    "tag": "wdth",
+                    "property": "font-stretch",
+                    "value": 100,
+                    "expected": "100%",
+                },
+                {
+                    "tag": "slnt",
+                    "property": "font-style",
+                    "value": 0,
+                    "expected": "oblique 0deg",
+                },
+                {
+                    "tag": "slnt",
+                    "property": "font-style",
+                    "value": 14,
+                    "expected": "oblique 14deg",
+                },
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": 0,
+                    "expected": "normal",
+                },                
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": 1,
+                    "expected": "italic",
+                },
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": 99,
+                    "expected": "italic",
+                },
+                {
+                    "tag": "xxxx",
+                    "property": "xxxx",
+                    "value": 99,
+                    "expected": 99,
+                },
+            ];
+
+            for (let {tag, property, value, expected} of tests) {
+                InspectorTest.expectEqual(WI.FontStyles.axisValueToFontPropertyValue(tag, value), expected, `Mapping "${tag}" ${value} to ${property}: ${expected}`);
+            }
+        },
+    });
+
+    suite.addTestCase({
+        name: "WI.FontStyles.Conversion.fontPropertyValueToAxisValue",
+        description: "Check that font CSS property values map to appropriate font variation axis values.",
+        test() {
+            const tests = [
+                {
+                    "tag": "wdth",
+                    "property": "font-stretch",
+                    "value": "100%",
+                    "expected": 100,
+                },
+                {
+                    "tag": "wdth",
+                    "property": "font-stretch",
+                    "value": "99.9%",
+                    "expected": 99.9,
+                },
+                {
+                    "tag": "slnt",
+                    "property": "font-style",
+                    "value": "normal",
+                    "expected": 0,
+                },
+                {
+                    "tag": "slnt",
+                    "property": "font-style",
+                    "value": "italic",
+                    "expected": 14,
+                },
+                {
+                    "tag": "slnt",
+                    "property": "font-style",
+                    "value": "oblique",
+                    "expected": 14,
+                },
+                {
+                    "tag": "slnt",
+                    "property": "font-style",
+                    "value": "oblique -99.9deg",
+                    "expected": -99.9,
+                },
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": "oblique",
+                    "expected": 1,
+                },
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": "italic",
+                    "expected": 1,
+                },
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": "oblique 0deg",
+                    "expected": 0,
+                },
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": "oblique 14deg",
+                    "expected": 1,
+                },
+                {
+                    "tag": "ital",
+                    "property": "font-style",
+                    "value": "oblique 99.9deg",
+                    "expected": 1,
+                },
+                {
+                    "tag": "xxxx",
+                    "property": "xxxx",
+                    "value": 99.9,
+                    "expected": 99.9,
+                },
+            ];
+
+            for (let {tag, property, value, expected} of tests) {
+                InspectorTest.expectEqual(WI.FontStyles.fontPropertyValueToAxisValue(tag, value), expected, `Mapping ${property}: ${value} to "${tag}" ${expected}`);
+            }
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+
+</head>
+<body onload="runTest();">
+<p>Tests for WI.FontStyles.Conversion</p>
+</body>
+</html>

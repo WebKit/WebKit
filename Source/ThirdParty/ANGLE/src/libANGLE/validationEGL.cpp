@@ -1539,6 +1539,7 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
         case EGL_CONTEXT_MINOR_VERSION:
         case EGL_CONTEXT_FLAGS_KHR:
         case EGL_CONTEXT_OPENGL_DEBUG:
+        case EGL_CONTEXT_OPENGL_ROBUST_ACCESS:
             break;
 
         case EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR:
@@ -1813,6 +1814,7 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
         }
 
         case EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT:
+        case EGL_CONTEXT_OPENGL_ROBUST_ACCESS:
             if (value != EGL_TRUE && value != EGL_FALSE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE);
@@ -6413,6 +6415,12 @@ bool ValidateForceGPUSwitchANGLE(const ValidationContext *val,
                                  const Display *display,
                                  EGLint gpuIDHigh,
                                  EGLint gpuIDLow)
+{
+    ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
+    return true;
+}
+
+bool ValidateWaitUntilWorkScheduledANGLE(const ValidationContext *val, const Display *display)
 {
     ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
     return true;

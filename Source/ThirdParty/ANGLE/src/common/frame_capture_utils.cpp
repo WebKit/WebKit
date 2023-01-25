@@ -122,9 +122,9 @@ void ParamBuffer::addReturnValue(ParamCapture &&returnValue)
 
 const char *ParamBuffer::getNextParamName()
 {
-    static const char *kParamNames[] = {"p0",  "p1",  "p2",  "p3",  "p4",  "p5",  "p6",
-                                        "p7",  "p8",  "p9",  "p10", "p11", "p12", "p13",
-                                        "p14", "p15", "p16", "p17", "p18", "p19", "p20"};
+    static const char *kParamNames[] = {"p0",  "p1",  "p2",  "p3",  "p4",  "p5",  "p6",  "p7",
+                                        "p8",  "p9",  "p10", "p11", "p12", "p13", "p14", "p15",
+                                        "p16", "p17", "p18", "p19", "p20", "p21"};
     ASSERT(mParamCaptures.size() < ArraySize(kParamNames));
     return kParamNames[mParamCaptures.size()];
 }
@@ -390,11 +390,11 @@ void WriteParamValueReplay<ParamType::TShaderProgramID>(std::ostream &os,
 }
 
 template <>
-void WriteParamValueReplay<ParamType::TGLsync>(std::ostream &os,
+void WriteParamValueReplay<ParamType::TSyncID>(std::ostream &os,
                                                const CallCapture &call,
-                                               GLsync value)
+                                               gl::SyncID value)
 {
-    os << "gSyncMap[" << FmtPointerIndex(value) << "]";
+    os << "gSyncMap2[" << value.value << "]";
 }
 
 template <>

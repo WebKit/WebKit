@@ -1198,10 +1198,115 @@ TEST_P(DepthStencilFormatsTest, VerifyDepth16UploadData)
     ASSERT_GL_NO_ERROR();
 }
 
+class DepthStencilFormatsTestES31 : public DepthStencilFormatsTestBase
+{};
+
+// Test depth24 texture sample from fragment shader and then read access from compute
+TEST_P(DepthStencilFormatsTestES31, DrawReadDrawDispatch)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_depth24") ||
+                       !IsGLExtensionEnabled("GL_NV_read_depth"));
+
+    const char kVS[] = R"(#version 310 es
+layout (location = 0) in vec3 pos;
+void main(void) {
+    gl_Position = vec4(pos, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+precision highp float;
+uniform sampler2D tex;
+out vec4 fragColor;
+void main(void) {
+        float d = texture(tex,vec2(0,0)).x;
+        fragColor = vec4(d, 0, 0, 1);
+})";
+
+    // Create depth texture
+    GLTexture depthTexture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthTexture);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT24, 1, 1);
+
+    // Clear depth texture to 0.51f
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    GLfloat depthValue = 0.51f;
+    glClearDepthf(depthValue);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    GLuint actualDepthValue;
+    GLfloat depthErrorTolerance = 0.001f;
+    glReadPixels(0, 0, 1, 1, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, &actualDepthValue);
+    EXPECT_NEAR(depthValue, actualDepthValue / (float)UINT_MAX, depthErrorTolerance);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Render to surface with texture sample from depth texture
+    ANGLE_GL_PROGRAM(graphicsProgram, kVS, kFS);
+    glUseProgram(graphicsProgram);
+    const auto &quadVertices = GetQuadVertices();
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, quadVertices.size() * sizeof(Vector3), quadVertices.data(),
+                 GL_STATIC_DRAW);
+    GLint positionAttributeLocation = 0;
+    glBindAttribLocation(graphicsProgram, positionAttributeLocation, "pos");
+    glVertexAttribPointer(positionAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionAttributeLocation);
+
+    GLint uTextureLocation = glGetUniformLocation(graphicsProgram, "tex");
+    ASSERT_NE(-1, uTextureLocation);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depthTexture);
+    glUniform1i(uTextureLocation, 0);
+    // Sample the depth texture from fragment shader and verify. This flushes out commands which
+    // ensures there will be no layout transition in next renderPass.
+    glDepthMask(false);
+    glDisable(GL_DEPTH_TEST);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor((GLubyte)(depthValue * 255), 0u, 0u, 255u));
+
+    // Sample the depth texture from fragment shader. No image layout transition expected here.
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Sample it from compute shader while the renderPass also sample from the same texture
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(std140, binding=0) buffer buf {
+    vec4 outData;
+};
+uniform sampler2D u_tex2D;
+void main()
+{
+    outData = texture(u_tex2D, vec2(gl_LocalInvocationID.xy));
+})";
+    ANGLE_GL_COMPUTE_PROGRAM(computeProgram, kCS);
+    glUseProgram(computeProgram);
+    GLBuffer ssbo;
+    const std::vector<GLfloat> initialData(16, 0.0f);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, 16, initialData.data(), GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    const GLfloat *ptr = reinterpret_cast<const GLfloat *>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, 16, GL_MAP_READ_BIT));
+    EXPECT_NEAR(depthValue, ptr[0], depthErrorTolerance);
+    EXPECT_GL_NO_ERROR();
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(DepthStencilFormatsTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DepthStencilFormatsTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(DepthStencilFormatsTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DepthStencilFormatsTestES31);
+ANGLE_INSTANTIATE_TEST_ES31(DepthStencilFormatsTestES31);
 
 class TinyDepthStencilWorkaroundTest : public ANGLETest<>
 {

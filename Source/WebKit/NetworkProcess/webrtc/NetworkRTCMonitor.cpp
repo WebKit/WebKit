@@ -71,7 +71,7 @@ static NetworkManagerWrapper& networkManager()
 
 void NetworkManagerWrapper::addListener(NetworkRTCMonitor& monitor)
 {
-    bool shouldStart = m_observers.computesEmpty();
+    bool shouldStart = m_observers.isEmptyIgnoringNullReferences();
     m_observers.add(monitor);
     if (!shouldStart) {
         if (m_didReceiveResults)
@@ -93,7 +93,7 @@ void NetworkManagerWrapper::addListener(NetworkRTCMonitor& monitor)
 void NetworkManagerWrapper::removeListener(NetworkRTCMonitor& monitor)
 {
     m_observers.remove(monitor);
-    if (!m_observers.computesEmpty())
+    if (!m_observers.isEmptyIgnoringNullReferences())
         return;
 
     monitor.rtcProvider().callOnRTCNetworkThread([this]() {

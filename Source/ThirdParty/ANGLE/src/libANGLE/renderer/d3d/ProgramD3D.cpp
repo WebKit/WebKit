@@ -433,18 +433,6 @@ bool ProgramD3DMetadata::usesSecondaryColor() const
     return (shader && shader->usesSecondaryColor());
 }
 
-bool ProgramD3DMetadata::usesClipDistance() const
-{
-    const rx::ShaderD3D *shader = mAttachedShaders[gl::ShaderType::Vertex];
-    return shader && shader->usesClipDistance();
-}
-
-bool ProgramD3DMetadata::usesCullDistance() const
-{
-    const rx::ShaderD3D *shader = mAttachedShaders[gl::ShaderType::Vertex];
-    return shader && shader->usesCullDistance();
-}
-
 bool ProgramD3DMetadata::usesFragDepth() const
 {
     const rx::ShaderD3D *shader = mAttachedShaders[gl::ShaderType::Fragment];
@@ -552,6 +540,18 @@ bool ProgramD3DMetadata::usesCustomOutVars() const
 const ShaderD3D *ProgramD3DMetadata::getFragmentShader() const
 {
     return mAttachedShaders[gl::ShaderType::Fragment];
+}
+
+uint8_t ProgramD3DMetadata::getClipDistanceArraySize() const
+{
+    const rx::ShaderD3D *shader = mAttachedShaders[gl::ShaderType::Vertex];
+    return shader ? shader->getClipDistanceArraySize() : 0;
+}
+
+uint8_t ProgramD3DMetadata::getCullDistanceArraySize() const
+{
+    const rx::ShaderD3D *shader = mAttachedShaders[gl::ShaderType::Vertex];
+    return shader ? shader->getCullDistanceArraySize() : 0;
 }
 
 // ProgramD3D::GetExecutableTask class
@@ -1684,9 +1684,9 @@ angle::Result ProgramD3D::getGeometryExecutableForPrimitiveType(d3d::Context *co
 
     ShaderExecutableD3D *geometryExecutable = nullptr;
     angle::Result result                    = mRenderer->compileToExecutable(
-                           context, *currentInfoLog, geometryHLSL, gl::ShaderType::Geometry, mStreamOutVaryings,
-                           (mState.getTransformFeedbackBufferMode() == GL_SEPARATE_ATTRIBS), CompilerWorkaroundsD3D(),
-                           &geometryExecutable);
+        context, *currentInfoLog, geometryHLSL, gl::ShaderType::Geometry, mStreamOutVaryings,
+        (mState.getTransformFeedbackBufferMode() == GL_SEPARATE_ATTRIBS), CompilerWorkaroundsD3D(),
+        &geometryExecutable);
 
     if (!infoLog && result == angle::Result::Stop)
     {
@@ -3148,7 +3148,7 @@ void ProgramD3D::initAttribLocationsToD3DSemantic(const gl::Context *context)
     }
 }
 
-void ProgramD3D::updateCachedInputLayout(Serial associatedSerial, const gl::State &state)
+void ProgramD3D::updateCachedInputLayout(UniqueSerial associatedSerial, const gl::State &state)
 {
     if (mCurrentVertexArrayStateSerial == associatedSerial)
     {
@@ -3252,7 +3252,7 @@ void ProgramD3D::gatherTransformFeedbackVaryings(const gl::VaryingPacking &varyi
             if (builtins.glPosition.enabled)
             {
                 mStreamOutVaryings.emplace_back(builtins.glPosition.semantic,
-                                                builtins.glPosition.index, 4, outputSlot);
+                                                builtins.glPosition.indexOrSize, 4, outputSlot);
             }
         }
         else if (tfVaryingName == "gl_FragCoord")
@@ -3260,7 +3260,7 @@ void ProgramD3D::gatherTransformFeedbackVaryings(const gl::VaryingPacking &varyi
             if (builtins.glFragCoord.enabled)
             {
                 mStreamOutVaryings.emplace_back(builtins.glFragCoord.semantic,
-                                                builtins.glFragCoord.index, 4, outputSlot);
+                                                builtins.glFragCoord.indexOrSize, 4, outputSlot);
             }
         }
         else if (tfVaryingName == "gl_PointSize")

@@ -157,11 +157,9 @@ AutoObjCPtr<MTLRenderPipelineDescriptor *> CreateMTLRenderPipelineDescriptor(
     }
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, depthAttachmentPixelFormat);
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, stencilAttachmentPixelFormat);
-#if ANGLE_MTL_RENDER_PIPELINE_DESC_RASTER_SAMPLE_COUNT_AVAILABLE
-    ANGLE_OBJC_CP_PROPERTY2(objCDesc.get(), desc.outputDescriptor, sampleCount, rasterSampleCount);
-#else
+    ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, sampleCount);
-#endif
+    ANGLE_APPLE_ALLOW_DEPRECATED_END
 
 #if ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, inputPrimitiveTopology);
@@ -806,6 +804,11 @@ bool RenderPassDesc::equalIgnoreLoadStoreOptions(const RenderPassDesc &other) co
         }
     }
 
+    if (defaultWidth != other.defaultWidth || defaultHeight != other.defaultHeight)
+    {
+        return false;
+    }
+
     return depthAttachment.equalIgnoreLoadStoreOptions(other.depthAttachment) &&
            stencilAttachment.equalIgnoreLoadStoreOptions(other.stencilAttachment);
 }
@@ -825,6 +828,11 @@ bool RenderPassDesc::operator==(const RenderPassDesc &other) const
         {
             return false;
         }
+    }
+
+    if (defaultWidth != other.defaultWidth || defaultHeight != other.defaultHeight)
+    {
+        return false;
     }
 
     return depthAttachment == other.depthAttachment && stencilAttachment == other.stencilAttachment;
@@ -853,6 +861,13 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
 
     ToObjC(depthAttachment, objCDesc.depthAttachment);
     ToObjC(stencilAttachment, objCDesc.stencilAttachment);
+
+    if ((defaultWidth | defaultHeight) != 0)
+    {
+        objCDesc.renderTargetWidth        = defaultWidth;
+        objCDesc.renderTargetHeight       = defaultHeight;
+        objCDesc.defaultRasterSampleCount = 1;
+    }
 }
 
 // RenderPipelineCache implementation
@@ -947,9 +962,9 @@ static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descr
                                         ContextMtl *context,
                                         const mtl::ContextDevice &device)
 {
-    // Ensure there is at least one valid render target.
-    bool hasValidRenderTarget = false;
 
+    // Ensure there is at least one valid render target.
+    bool hasValidRenderTarget              = false;
     const NSUInteger maxColorRenderTargets = GetMaxNumberOfRenderTargetsForDevice(device);
     for (NSUInteger i = 0; i < maxColorRenderTargets; ++i)
     {
@@ -971,11 +986,12 @@ static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descr
         hasValidRenderTarget = true;
     }
 
-    if (!hasValidRenderTarget)
+    if (!hasValidRenderTarget &&
+        !context->getDisplay()->getFeatures().allowRenderpassWithoutAttachment.enabled)
     {
-        UNREACHABLE();
-        ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline requires at least one render target.",
-                               GL_INVALID_OPERATION);
+        ANGLE_MTL_HANDLE_ERROR(
+            context, "Render pipeline requires at least one render target for this device.",
+            GL_INVALID_OPERATION);
         return false;
     }
 
@@ -1059,6 +1075,11 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
         const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
         auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
+
+        if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
+        {
+            return nil;
+        }
 
         if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
         {

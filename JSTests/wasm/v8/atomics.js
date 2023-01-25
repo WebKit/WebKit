@@ -1,7 +1,7 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
 //@ skip
 // Failure:
-i// Exception: Failure (Error message):
+// Exception: Failure (Error message):
 //  expected:
 //  should match '/(\/Out of bounds memory access\/|operation does not support unaligned accesses)/'
 //  found:
@@ -489,5 +489,5 @@ function CmpExchgLoop(opcode, alignment) {
   assertEquals(false, WebAssembly.validate(builder.toBuffer()));
   assertThrows(
       () => builder.toModule(), WebAssembly.CompileError,
-      /invalid atomic opcode: 0xfe790/);
+      /WebAssembly.Module doesn't parse at byte 4: invalid extended atomic op 1936, in function at index 0/);
 })();

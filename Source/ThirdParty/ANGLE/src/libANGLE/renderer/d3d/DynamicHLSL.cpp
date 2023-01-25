@@ -437,18 +437,24 @@ void DynamicHLSL::generateVaryingLinkHLSL(const VaryingPacking &varyingPacking,
 
     if (builtins.glClipDistance.enabled)
     {
-        hlslStream << "    float4 gl_ClipDistance0 : " << builtins.glClipDistance.str() << "0;\n";
-        if (!builtins.glCullDistance.enabled)
-            hlslStream << "    float4 gl_ClipDistance1 : " << builtins.glClipDistance.str()
-                       << "1;\n";
+        ASSERT(builtins.glClipDistance.indexOrSize > 0 && builtins.glClipDistance.indexOrSize < 9);
+        for (unsigned int i = 0; i < (builtins.glClipDistance.indexOrSize + 3) >> 2; i++)
+        {
+            unsigned int size = std::min(builtins.glClipDistance.indexOrSize - 4u * i, 4u);
+            hlslStream << "    float" << ((size == 1) ? "" : Str(size)) << " gl_ClipDistance" << i
+                       << " : " << builtins.glClipDistance.str() << i << ";\n";
+        }
     }
 
     if (builtins.glCullDistance.enabled)
     {
-        hlslStream << "    float4 gl_CullDistance0 : " << builtins.glCullDistance.str() << "0;\n";
-        if (!builtins.glClipDistance.enabled)
-            hlslStream << "    float4 gl_CullDistance1 : " << builtins.glCullDistance.str()
-                       << "1;\n";
+        ASSERT(builtins.glCullDistance.indexOrSize > 0 && builtins.glCullDistance.indexOrSize < 9);
+        for (unsigned int i = 0; i < (builtins.glCullDistance.indexOrSize + 3) >> 2; i++)
+        {
+            unsigned int size = std::min(builtins.glCullDistance.indexOrSize - 4u * i, 4u);
+            hlslStream << "    float" << ((size == 1) ? "" : Str(size)) << " gl_CullDistance" << i
+                       << " : " << builtins.glCullDistance.str() << i << ";\n";
+        }
     }
 
     if (builtins.glFragCoord.enabled)
@@ -592,32 +598,87 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
 
     if (vertexBuiltins.glClipDistance.enabled)
     {
-        if (vertexBuiltins.glCullDistance.enabled)
+        ASSERT(vertexBuiltins.glClipDistance.indexOrSize > 0 &&
+               vertexBuiltins.glClipDistance.indexOrSize < 9);
+        vertexGenerateOutput << "    output.gl_ClipDistance0 = (clipDistancesEnabled & ";
+        switch (vertexBuiltins.glClipDistance.indexOrSize)
         {
-            vertexGenerateOutput << "    output.gl_ClipDistance0 = (float4)gl_ClipDistance"
-                                    "* bool4(clipDistancesEnabled & int4(1, 2, 4, 8));\n";
+            case 1:
+                vertexGenerateOutput << "1) ? (float)gl_ClipDistance : 0;\n";
+                break;
+            case 2:
+                vertexGenerateOutput << "int2(1, 2)) ? (float2)gl_ClipDistance : 0;\n";
+                break;
+            case 3:
+                vertexGenerateOutput << "int3(1, 2, 4)) ? (float3)gl_ClipDistance : 0;\n";
+                break;
+            default:
+                vertexGenerateOutput << "int4(1, 2, 4, 8)) ? (float4)gl_ClipDistance : 0;\n";
+                break;
         }
-        else
+        if (vertexBuiltins.glClipDistance.indexOrSize > 4)
         {
-            vertexGenerateOutput << "    output.gl_ClipDistance0 = ((float4[2])gl_ClipDistance)[0] "
-                                    "* bool4(clipDistancesEnabled & int4(1, 2, 4, 8));\n";
-            vertexGenerateOutput << "    output.gl_ClipDistance1 = ((float4[2])gl_ClipDistance)[1] "
-                                    "* bool4(clipDistancesEnabled & int4(16, 32, 64, 128));\n";
+            vertexGenerateOutput << "    output.gl_ClipDistance1 = (clipDistancesEnabled & ";
+            switch (vertexBuiltins.glClipDistance.indexOrSize)
+            {
+                case 5:
+                    vertexGenerateOutput << "16) ? gl_ClipDistance[4] : 0;\n";
+                    break;
+                case 6:
+                    vertexGenerateOutput << "int2(16, 32)) ? "
+                                            "((float2[3])gl_ClipDistance)[2] : 0;\n";
+                    break;
+                case 7:
+                    vertexGenerateOutput << "int3(16, 32, 64)) ? float3(gl_ClipDistance[4], "
+                                            "gl_ClipDistance[5], gl_ClipDistance[6]) : 0;\n";
+                    break;
+                case 8:
+                    vertexGenerateOutput << "int4(16, 32, 64, 128)) ? "
+                                            "((float4[2])gl_ClipDistance)[1] : 0;\n";
+                    break;
+            }
         }
     }
 
     if (vertexBuiltins.glCullDistance.enabled)
     {
-        if (vertexBuiltins.glClipDistance.enabled)
+        ASSERT(vertexBuiltins.glCullDistance.indexOrSize > 0 &&
+               vertexBuiltins.glCullDistance.indexOrSize < 9);
+        vertexGenerateOutput << "    output.gl_CullDistance0 = ";
+        switch (vertexBuiltins.glCullDistance.indexOrSize)
         {
-            vertexGenerateOutput << "    output.gl_CullDistance0 = (float4)gl_CullDistance;\n";
+            case 1:
+                vertexGenerateOutput << "(float)gl_CullDistance;\n";
+                break;
+            case 2:
+                vertexGenerateOutput << "(float2)gl_CullDistance;\n";
+                break;
+            case 3:
+                vertexGenerateOutput << "(float3)gl_CullDistance;\n";
+                break;
+            default:
+                vertexGenerateOutput << "(float4)gl_CullDistance;\n";
+                break;
         }
-        else
+        if (vertexBuiltins.glCullDistance.indexOrSize > 4)
         {
-            vertexGenerateOutput
-                << "    output.gl_CullDistance0 = ((float4[2])gl_CullDistance)[0];\n";
-            vertexGenerateOutput
-                << "    output.gl_CullDistance1 = ((float4[2])gl_CullDistance)[1];\n";
+            vertexGenerateOutput << "    output.gl_CullDistance1 = ";
+            switch (vertexBuiltins.glCullDistance.indexOrSize)
+            {
+                case 5:
+                    vertexGenerateOutput << "gl_CullDistance[4];\n";
+                    break;
+                case 6:
+                    vertexGenerateOutput << "((float2[3])gl_CullDistance)[2];\n";
+                    break;
+                case 7:
+                    vertexGenerateOutput << "float3(gl_CullDistance[4], "
+                                            "gl_CullDistance[5], gl_CullDistance[6]);\n";
+                    break;
+                case 8:
+                    vertexGenerateOutput << "((float4[2])gl_CullDistance)[1];\n";
+                    break;
+            }
         }
     }
 
@@ -913,29 +974,79 @@ void DynamicHLSL::generateShaderLinkHLSL(const gl::Context *context,
         }
     }
 
-    if (fragmentShader && fragmentShader->usesClipDistance())
+    if (fragmentShader && fragmentShader->getClipDistanceArraySize())
     {
-        if (vertexBuiltins.glCullDistance.enabled)
+        ASSERT(vertexBuiltins.glClipDistance.indexOrSize > 0 &&
+               vertexBuiltins.glClipDistance.indexOrSize < 9);
+        switch (pixelBuiltins.glClipDistance.indexOrSize)
         {
-            pixelPrologue << "    (float4)gl_ClipDistance = input.gl_ClipDistance0;\n";
+            case 1:
+                pixelPrologue << "    (float)gl_ClipDistance = input.gl_ClipDistance0;\n";
+                break;
+            case 2:
+                pixelPrologue << "    (float2)gl_ClipDistance = input.gl_ClipDistance0;\n";
+                break;
+            case 3:
+                pixelPrologue << "    (float3)gl_ClipDistance = input.gl_ClipDistance0;\n";
+                break;
+            default:
+                pixelPrologue << "    (float4)gl_ClipDistance = input.gl_ClipDistance0;\n";
+                break;
         }
-        else
+        switch (pixelBuiltins.glClipDistance.indexOrSize)
         {
-            pixelPrologue << "    ((float4[2])gl_ClipDistance)[0] = input.gl_ClipDistance0;\n";
-            pixelPrologue << "    ((float4[2])gl_ClipDistance)[1] = input.gl_ClipDistance1;\n";
+            case 5:
+                pixelPrologue << "    gl_ClipDistance[4] = input.gl_ClipDistance1;\n";
+                break;
+            case 6:
+                pixelPrologue << "    ((float2[3])gl_ClipDistance)[2] = input.gl_ClipDistance1;\n";
+                break;
+            case 7:
+                pixelPrologue << "    gl_ClipDistance[4] = input.gl_ClipDistance1.x;\n";
+                pixelPrologue << "    gl_ClipDistance[5] = input.gl_ClipDistance1.y;\n";
+                pixelPrologue << "    gl_ClipDistance[6] = input.gl_ClipDistance1.z;\n";
+                break;
+            case 8:
+                pixelPrologue << "    ((float4[2])gl_ClipDistance)[1] = input.gl_ClipDistance1;\n";
+                break;
         }
     }
 
-    if (fragmentShader && fragmentShader->usesCullDistance())
+    if (fragmentShader && fragmentShader->getCullDistanceArraySize())
     {
-        if (vertexBuiltins.glClipDistance.enabled)
+        ASSERT(vertexBuiltins.glCullDistance.indexOrSize > 0 &&
+               vertexBuiltins.glCullDistance.indexOrSize < 9);
+        switch (pixelBuiltins.glCullDistance.indexOrSize)
         {
-            pixelPrologue << "    (float4)gl_CullDistance = input.gl_CullDistance0;\n";
+            case 1:
+                pixelPrologue << "    (float)gl_CullDistance = input.gl_CullDistance0;\n";
+                break;
+            case 2:
+                pixelPrologue << "    (float2)gl_CullDistance = input.gl_CullDistance0;\n";
+                break;
+            case 3:
+                pixelPrologue << "    (float3)gl_CullDistance = input.gl_CullDistance0;\n";
+                break;
+            default:
+                pixelPrologue << "    (float4)gl_CullDistance = input.gl_CullDistance0;\n";
+                break;
         }
-        else
+        switch (pixelBuiltins.glCullDistance.indexOrSize)
         {
-            pixelPrologue << "    ((float4[2])gl_CullDistance)[0] = input.gl_CullDistance0;\n";
-            pixelPrologue << "    ((float4[2])gl_CullDistance)[1] = input.gl_CullDistance1;\n";
+            case 5:
+                pixelPrologue << "    gl_CullDistance[4] = input.gl_CullDistance1;\n";
+                break;
+            case 6:
+                pixelPrologue << "    ((float2[3])gl_CullDistance)[2] = input.gl_CullDistance1;\n";
+                break;
+            case 7:
+                pixelPrologue << "    gl_CullDistance[4] = input.gl_CullDistance1.x;\n";
+                pixelPrologue << "    gl_CullDistance[5] = input.gl_CullDistance1.y;\n";
+                pixelPrologue << "    gl_CullDistance[6] = input.gl_CullDistance1.z;\n";
+                break;
+            case 8:
+                pixelPrologue << "    ((float4[2])gl_CullDistance)[1] = input.gl_CullDistance1;\n";
+                break;
         }
     }
 
@@ -1473,11 +1584,11 @@ void DynamicHLSL::getPixelShaderOutputKey(const gl::State &data,
 }
 
 // BuiltinVarying Implementation.
-BuiltinVarying::BuiltinVarying() : enabled(false), index(0), systemValue(false) {}
+BuiltinVarying::BuiltinVarying() : enabled(false), indexOrSize(0), systemValue(false) {}
 
 std::string BuiltinVarying::str() const
 {
-    return (systemValue ? semantic : (semantic + Str(index)));
+    return (systemValue ? semantic : (semantic + Str(indexOrSize)));
 }
 
 void BuiltinVarying::enableSystem(const std::string &systemValueSemantic)
@@ -1487,11 +1598,19 @@ void BuiltinVarying::enableSystem(const std::string &systemValueSemantic)
     systemValue = true;
 }
 
+void BuiltinVarying::enableSystem(const std::string &systemValueSemantic, unsigned int sizeVal)
+{
+    enabled     = true;
+    semantic    = systemValueSemantic;
+    systemValue = true;
+    indexOrSize = sizeVal;
+}
+
 void BuiltinVarying::enable(const std::string &semanticVal, unsigned int indexVal)
 {
-    enabled  = true;
-    semantic = semanticVal;
-    index    = indexVal;
+    enabled     = true;
+    semantic    = semanticVal;
+    indexOrSize = indexVal;
 }
 
 // BuiltinVaryingsD3D Implementation.
@@ -1554,14 +1673,16 @@ void BuiltinVaryingsD3D::updateBuiltins(gl::ShaderType shaderType,
         builtins->glPosition.enable(userSemantic, reservedSemanticIndex++);
     }
 
-    if (metadata.usesClipDistance())
+    if (metadata.getClipDistanceArraySize())
     {
-        builtins->glClipDistance.enableSystem("SV_ClipDistance");
+        builtins->glClipDistance.enableSystem("SV_ClipDistance",
+                                              metadata.getClipDistanceArraySize());
     }
 
-    if (metadata.usesCullDistance())
+    if (metadata.getCullDistanceArraySize())
     {
-        builtins->glCullDistance.enableSystem("SV_CullDistance");
+        builtins->glCullDistance.enableSystem("SV_CullDistance",
+                                              metadata.getCullDistanceArraySize());
     }
 
     if (metadata.usesFragCoord())

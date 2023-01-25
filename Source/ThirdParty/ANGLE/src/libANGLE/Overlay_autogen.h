@@ -20,8 +20,6 @@ enum class WidgetId
     VulkanValidationMessageCount,
     // Number of RenderPasses in a frame (Count).
     VulkanRenderPassCount,
-    // Number of buffers used in RenderPasses (Count).
-    VulkanRenderPassBufferCount,
     // Secondary Command Buffer pool memory waste (Bytes).
     VulkanSecondaryCommandBufferPoolWaste,
     // Number of Descriptor Set writes in a frame (Count).
@@ -63,7 +61,6 @@ enum class WidgetId
     PROC(VulkanLastValidationMessage)           \
     PROC(VulkanValidationMessageCount)          \
     PROC(VulkanRenderPassCount)                 \
-    PROC(VulkanRenderPassBufferCount)           \
     PROC(VulkanSecondaryCommandBufferPoolWaste) \
     PROC(VulkanWriteDescriptorSetCount)         \
     PROC(VulkanDescriptorSetAllocations)        \

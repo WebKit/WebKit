@@ -1048,6 +1048,8 @@ angle::Result FramebufferMtl::getReadableViewForRenderTarget(
 angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
                                                 mtl::RenderPassDesc *pDescOut)
 {
+    const gl::DrawBufferMask enabledDrawBuffers = getState().getEnabledDrawBuffers();
+
     mtl::RenderPassDesc &desc = *pDescOut;
 
     mRenderPassFirstColorAttachmentFormat = nullptr;
@@ -1062,7 +1064,10 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
         mtl::RenderPassColorAttachmentDesc &colorAttachment = desc.colorAttachments[colorIndexGL];
         const RenderTargetMtl *colorRenderTarget            = mColorRenderTargets[colorIndexGL];
 
-        if (colorRenderTarget)
+        // GL allows data types of fragment shader color outputs to be incompatible with disabled
+        // color attachments. To prevent various Metal validation issues, assign textures only to
+        // enabled attachments.
+        if (colorRenderTarget && enabledDrawBuffers.test(colorIndexGL))
         {
             colorRenderTarget->toRenderPassAttachmentDesc(&colorAttachment);
 
@@ -1108,6 +1113,13 @@ angle::Result FramebufferMtl::prepareRenderPass(const gl::Context *context,
     else
     {
         desc.stencilAttachment.reset();
+    }
+
+    if (desc.numColorAttachments == 0 && mDepthRenderTarget == nullptr &&
+        mStencilRenderTarget == nullptr)
+    {
+        desc.defaultWidth  = mState.getDefaultWidth();
+        desc.defaultHeight = mState.getDefaultHeight();
     }
 
     return angle::Result::Continue;

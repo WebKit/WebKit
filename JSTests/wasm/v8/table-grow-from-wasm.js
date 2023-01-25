@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure (Error message):
-//  expected:
-//  should match '/table index is out of bounds/'
-//  found:
-//  "Out of bounds table access (evaluating 'instance.exports.get(size)')"
-// Looks like we need to update the exception strings.
-
 // Copyright 2019 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.

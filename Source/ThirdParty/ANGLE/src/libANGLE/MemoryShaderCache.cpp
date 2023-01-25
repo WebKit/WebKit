@@ -12,9 +12,8 @@
 #include <GLSLANG/ShaderVars.h>
 #include <anglebase/sha1.h>
 
-#include "common/angle_version_info.h"
+#include "common/BinaryStream.h"
 #include "common/utilities.h"
-#include "libANGLE/BinaryStream.h"
 #include "libANGLE/Compiler.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Debug.h"
@@ -26,38 +25,6 @@
 namespace gl
 {
 
-namespace
-{
-void ComputeHash(const Context *context,
-                 const Shader *shader,
-                 const ShCompileOptions &compileOptions,
-                 const ShCompilerInstance &compilerInstance,
-                 egl::BlobCache::Key *hashOut)
-{
-    BinaryOutputStream hashStream;
-    // Compute the shader hash. Start with the shader hashes and resource strings.
-    hashStream.writeEnum(shader->getType());
-    hashStream.writeString(shader->getSourceString());
-
-    // Include the commit hash
-    hashStream.writeString(angle::GetANGLECommitHash());
-
-    hashStream.writeEnum(Compiler::SelectShaderSpec(context->getState()));
-    hashStream.writeEnum(compilerInstance.getShaderOutputType());
-    hashStream.writeBytes(reinterpret_cast<const uint8_t *>(&compileOptions),
-                          sizeof(compileOptions));
-
-    // Include the ShBuiltInResources, which represent the extensions and constants used by the
-    // shader.
-    const ShBuiltInResources resources = compilerInstance.getBuiltInResources();
-    hashStream.writeBytes(reinterpret_cast<const uint8_t *>(&resources), sizeof(resources));
-
-    // Call the secure SHA hashing function.
-    const std::vector<uint8_t> &shaderKey = hashStream.getData();
-    angle::base::SHA1HashBytes(shaderKey.data(), shaderKey.size(), hashOut->data());
-}
-}  // namespace
-
 MemoryShaderCache::MemoryShaderCache(egl::BlobCache &blobCache) : mBlobCache(blobCache) {}
 
 MemoryShaderCache::~MemoryShaderCache() {}
@@ -66,7 +33,7 @@ angle::Result MemoryShaderCache::getShader(const Context *context,
                                            Shader *shader,
                                            const ShCompileOptions &compileOptions,
                                            const ShCompilerInstance &compilerInstance,
-                                           egl::BlobCache::Key *hashOut)
+                                           const egl::BlobCache::Key &shaderHash)
 {
     // If caching is effectively disabled, don't bother calculating the hash.
     if (!mBlobCache.isCachingEnabled())
@@ -74,10 +41,8 @@ angle::Result MemoryShaderCache::getShader(const Context *context,
         return angle::Result::Incomplete;
     }
 
-    ComputeHash(context, shader, compileOptions, compilerInstance, hashOut);
-
     angle::MemoryBuffer uncompressedData;
-    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), *hashOut, &uncompressedData))
+    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), shaderHash, &uncompressedData))
     {
         case egl::BlobCache::GetAndDecompressResult::DecompressFailure:
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
@@ -104,7 +69,7 @@ angle::Result MemoryShaderCache::getShader(const Context *context,
             // Cache load failed, evict.
             ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Failed to load shader binary from cache.");
-            mBlobCache.remove(*hashOut);
+            mBlobCache.remove(shaderHash);
             return angle::Result::Incomplete;
     }
 

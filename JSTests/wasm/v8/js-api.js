@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure (Error message):
-//  expected:
-//  should match '/must be invoked with 'new'/'
-//  found:
-//  "calling WebAssembly.Module constructor without new is invalid"
-// Looks like we need to update the exception strings.
-
 // Copyright 2016 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -155,24 +146,24 @@ assertEq(Module.length, 1);
 assertEq(Module.name, 'Module');
 assertTrue(isConstructor(Module));
 assertThrows(
-    () => Module(), TypeError, /must be invoked with 'new'/);
+    () => Module(), TypeError, /constructor without new is invalid/);
 assertThrows(
-    () => new Module(), TypeError, /Argument 0 must be a buffer source/);
+    () => new Module(), TypeError, /first argument must be an ArrayBufferView or an ArrayBuffer/);
 assertThrows(
     () => new Module(undefined), TypeError,
-    'WebAssembly.Module(): Argument 0 must be a buffer source');
+    /first argument must be an ArrayBufferView or an ArrayBuffer/);
 assertThrows(
     () => new Module(1), TypeError,
-    'WebAssembly.Module(): Argument 0 must be a buffer source');
+    /first argument must be an ArrayBufferView or an ArrayBuffer/);
 assertThrows(
     () => new Module({}), TypeError,
-    'WebAssembly.Module(): Argument 0 must be a buffer source');
+    /first argument must be an ArrayBufferView or an ArrayBuffer/);
 assertThrows(
     () => new Module(new Uint8Array()), CompileError,
-    /BufferSource argument is empty/);
+    /WebAssembly.Module doesn't parse at byte 0/);
 assertThrows(
     () => new Module(new ArrayBuffer()), CompileError,
-    /BufferSource argument is empty/);
+    /WebAssembly.Module doesn't parse at byte 0/);
 assertTrue(new Module(emptyModuleBinary) instanceof Module);
 assertTrue(new Module(emptyModuleBinary.buffer) instanceof Module);
 
@@ -209,13 +200,13 @@ let moduleImports = moduleImportsDesc.value;
 assertEq(moduleImports.length, 1);
 assertFalse(isConstructor(moduleImports));
 assertThrows(
-    () => moduleImports(), TypeError, /Argument 0 must be a WebAssembly.Module/);
+    () => moduleImports(), TypeError, /WebAssembly.Module.imports called with non WebAssembly.Module argument/);
 assertThrows(
     () => moduleImports(undefined), TypeError,
-    /Argument 0 must be a WebAssembly.Module/);
+    /WebAssembly.Module.imports called with non WebAssembly.Module argument/);
 assertThrows(
     () => moduleImports({}), TypeError,
-    /Argument 0 must be a WebAssembly.Module/);
+    /WebAssembly.Module.imports called with non WebAssembly.Module argument/);
 var arr = moduleImports(new Module(emptyModuleBinary));
 assertTrue(arr instanceof Array);
 assertEq(arr.length, 0);
@@ -257,13 +248,13 @@ let moduleExports = moduleExportsDesc.value;
 assertEq(moduleExports.length, 1);
 assertFalse(isConstructor(moduleExports));
 assertThrows(
-    () => moduleExports(), TypeError, /Argument 0 must be a WebAssembly.Module/);
+    () => moduleExports(), TypeError, /WebAssembly.Module.exports called with non WebAssembly.Module argument/);
 assertThrows(
     () => moduleExports(undefined), TypeError,
-    /Argument 0 must be a WebAssembly.Module/);
+    /WebAssembly.Module.exports called with non WebAssembly.Module argument/);
 assertThrows(
     () => moduleExports({}), TypeError,
-    /Argument 0 must be a WebAssembly.Module/);
+    /WebAssembly.Module.exports called with non WebAssembly.Module argument/);
 var arr = moduleExports(emptyModule);
 assertTrue(arr instanceof Array);
 assertEq(arr.length, 0);
@@ -304,20 +295,20 @@ let moduleCustomSections = moduleCustomSectionsDesc.value;
 assertEq(moduleCustomSections.length, 2);
 assertFalse(isConstructor(moduleCustomSections));
 assertThrows(
-    () => moduleCustomSections(), TypeError, /Argument 0 must be a WebAssembly.Module/);
+    () => moduleCustomSections(), TypeError, /Not enough arguments/);
 assertThrows(
     () => moduleCustomSections(undefined), TypeError,
-    /Argument 0 must be a WebAssembly.Module/);
+    /Not enough arguments/);
 assertThrows(
     () => moduleCustomSections({}), TypeError,
-    /Argument 0 must be a WebAssembly.Module/);
+    /Not enough arguments/);
 var arr = moduleCustomSections(emptyModule, 'x');
 assertEq(arr instanceof Array, true);
 assertEq(arr.length, 0);
 
 assertThrows(
     () => moduleCustomSections(1), TypeError,
-    'WebAssembly.Module.customSections(): Argument 0 must be a WebAssembly.Module');
+    'Not enough arguments');
 
 let customSectionModuleBinary2 = (() => {
   let builder = new WasmModuleBuilder();
@@ -363,16 +354,16 @@ assertEq(Instance.length, 1);
 assertEq(Instance.name, 'Instance');
 assertTrue(isConstructor(Instance));
 assertThrows(
-    () => Instance(), TypeError, /must be invoked with 'new'/);
+    () => Instance(), TypeError, /constructor without new is invalid/);
 assertThrows(
     () => new Instance(1), TypeError,
-    'WebAssembly.Instance(): Argument 0 must be a WebAssembly.Module');
+    /first argument to WebAssembly.Instance must be a WebAssembly.Module/);
 assertThrows(
     () => new Instance({}), TypeError,
-    'WebAssembly.Instance(): Argument 0 must be a WebAssembly.Module');
+    /first argument to WebAssembly.Instance must be a WebAssembly.Module/);
 assertThrows(
     () => new Instance(emptyModule, null), TypeError,
-    'WebAssembly.Instance(): Argument 1 must be an object');
+    /second argument to WebAssembly.Instance must be undefined or an Object/);
 assertThrows(() => new Instance(importingModule, null), TypeError);
 assertThrows(
     () => new Instance(importingModule, undefined), TypeError);
@@ -443,26 +434,26 @@ assertEq(Memory.length, 1);
 assertEq(Memory.name, 'Memory');
 assertTrue(isConstructor(Memory));
 assertThrows(
-    () => Memory(), TypeError, /must be invoked with 'new'/);
+    () => Memory(), TypeError, /constructor without new is invalid/);
 assertThrows(
     () => new Memory(1), TypeError,
-    'WebAssembly.Memory(): Argument 0 must be a memory descriptor');
+    /WebAssembly.Memory expects its first argument to be an object/);
 assertThrows(
     () => new Memory({initial: {valueOf() { throw new Error('here') }}}), Error,
     'here');
 assertThrows(
-    () => new Memory({initial: -1}), TypeError, /must be non-negative/);
+    () => new Memory({initial: -1}), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => new Memory({initial: Math.pow(2, 32)}), TypeError,
-    /must be in the unsigned long range/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => new Memory({initial: 1, maximum: Math.pow(2, 32) / Math.pow(2, 14)}),
-    RangeError, /is above the upper bound/);
+    RangeError, /WebAssembly.Memory 'maximum' page count is too large/);
 assertThrows(
     () => new Memory({initial: 2, maximum: 1}), RangeError,
-    /is below the lower bound/);
+    /'maximum' page count must be than greater than or equal to the 'initial' page count/);
 assertThrows(
-    () => new Memory({maximum: -1}), TypeError, /'initial' is required/);
+    () => new Memory({maximum: -1}), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertTrue(new Memory({initial: 1}) instanceof Memory);
 assertEq(new Memory({initial: 1.5}).buffer.byteLength, kPageSize);
 
@@ -499,9 +490,9 @@ assertTrue(bufferDesc.configurable);
 // 'WebAssembly.Memory.prototype.buffer' getter
 let bufferGetter = bufferDesc.get;
 assertThrows(
-    () => bufferGetter.call(), TypeError, /Receiver is not a WebAssembly.Memory/);
+    () => bufferGetter.call(), TypeError, /WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value/);
 assertThrows(
-    () => bufferGetter.call({}), TypeError, /Receiver is not a WebAssembly.Memory/);
+    () => bufferGetter.call({}), TypeError, /WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value/);
 assertTrue(bufferGetter.call(mem1) instanceof ArrayBuffer);
 assertEq(bufferGetter.call(mem1).byteLength, kPageSize);
 
@@ -516,14 +507,14 @@ let memGrow = memGrowDesc.value;
 assertEq(memGrow.length, 1);
 assertFalse(isConstructor(memGrow));
 assertThrows(
-    () => memGrow.call(), TypeError, /Receiver is not a WebAssembly.Memory/);
+    () => memGrow.call(), TypeError, /WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value/);
 assertThrows(
-    () => memGrow.call({}), TypeError, /Receiver is not a WebAssembly.Memory/);
+    () => memGrow.call({}), TypeError, /WebAssembly.Memory.prototype.buffer getter called with non WebAssembly.Memory |this| value/);
 assertThrows(
-    () => memGrow.call(mem1, -1), TypeError, /must be non-negative/);
+    () => memGrow.call(mem1, -1), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => memGrow.call(mem1, Math.pow(2, 32)), TypeError,
-    /must be in the unsigned long range/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 var mem = new Memory({initial: 1, maximum: 2});
 var buf = mem.buffer;
 assertEq(buf.byteLength, kPageSize);
@@ -542,9 +533,9 @@ assertTrue(buf !== mem.buffer);
 assertEq(buf.byteLength, 0);
 buf = mem.buffer;
 assertEq(buf.byteLength, 2 * kPageSize);
-assertThrows(() => mem.grow(1), Error, /Maximum memory size exceeded/);
-assertThrows(() => mem.grow(Infinity), Error, /must be convertible to a valid number/);
-assertThrows(() => mem.grow(-Infinity), Error, /must be convertible to a valid number/);
+assertThrows(() => mem.grow(1), Error, /WebAssembly.Memory.grow would exceed the memory's declared maximum size/);
+assertThrows(() => mem.grow(Infinity), Error, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
+assertThrows(() => mem.grow(-Infinity), Error, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertEq(buf, mem.buffer);
 let throwOnValueOf = {
   valueOf: function() {
@@ -588,33 +579,33 @@ assertEq(Table.length, 1);
 assertEq(Table.name, 'Table');
 assertTrue(isConstructor(Table));
 assertThrows(
-    () => Table(), TypeError, /must be invoked with 'new'/);
+    () => Table(), TypeError, /constructor without new is invalid/);
 assertThrows(
-    () => new Table(1), TypeError, 'WebAssembly.Table(): Argument 0 must be a table descriptor');
+    () => new Table(1), TypeError, /WebAssembly.Table expects its first argument to be an object/);
 assertThrows(
-    () => new Table({initial: 1, element: 1}), TypeError, /must be a WebAssembly reference type/);
+    () => new Table({initial: 1, element: 1}), TypeError, /WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'/);
 assertThrows(
     () => new Table({initial: 1, element: 'any'}), TypeError,
-    /must be a WebAssembly reference type/);
+    /WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'/);
 assertThrows(
     () => new Table({initial: 1, element: {valueOf() { return 'anyfunc' }}}),
-    TypeError, /must be a WebAssembly reference type/);
+    TypeError, /WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'/);
 assertThrows(
     () => new Table(
         {initial: {valueOf() { throw new Error('here') }}, element: 'anyfunc'}),
     Error, 'here');
 assertThrows(
     () => new Table({initial: -1, element: 'anyfunc'}), TypeError,
-    /must be non-negative/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => new Table({initial: Math.pow(2, 32), element: 'anyfunc'}), TypeError,
-    /must be in the unsigned long range/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => new Table({initial: 2, maximum: 1, element: 'anyfunc'}), RangeError,
-    /is below the lower bound/);
+    /'maximum' property must be greater than or equal to the 'initial' property/);
 assertThrows(
     () => new Table({initial: 2, maximum: Math.pow(2, 32), element: 'anyfunc'}),
-    TypeError, /must be in the unsigned long range/);
+    TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertTrue(new Table({initial: 1, element: 'anyfunc'}) instanceof Table);
 assertTrue(new Table({initial: 1.5, element: 'anyfunc'}) instanceof Table);
 assertTrue(
@@ -657,9 +648,9 @@ assertTrue(lengthDesc.configurable);
 let lengthGetter = lengthDesc.get;
 assertEq(lengthGetter.length, 0);
 assertThrows(
-    () => lengthGetter.call(), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => lengthGetter.call(), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertThrows(
-    () => lengthGetter.call({}), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => lengthGetter.call({}), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertEq(typeof lengthGetter.call(tbl1), 'number');
 assertEq(lengthGetter.call(tbl1), 2);
 
@@ -674,22 +665,22 @@ let get = getDesc.value;
 assertEq(get.length, 1);
 assertFalse(isConstructor(get));
 assertThrows(
-    () => get.call(), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => get.call(), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertThrows(
-    () => get.call({}), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => get.call({}), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertThrows(
-    () => get.call(tbl1), TypeError, /must be convertible to a valid number/);
+    () => get.call(tbl1), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertEq(get.call(tbl1, 0), null);
 assertEq(get.call(tbl1, 0, Infinity), null);
 assertEq(get.call(tbl1, 1), null);
 assertEq(get.call(tbl1, 1.5), null);
-assertThrows(() => get.call(tbl1, 2), RangeError, /invalid index \d+ into function table/);
+assertThrows(() => get.call(tbl1, 2), RangeError, /WebAssembly.Table.prototype.get expects an integer less than the length of the table/);
 assertThrows(
-    () => get.call(tbl1, 2.5), RangeError, /invalid index \d+ into function table/);
-assertThrows(() => get.call(tbl1, -1), TypeError, /must be non-negative/);
+    () => get.call(tbl1, 2.5), RangeError, /WebAssembly.Table.prototype.get expects an integer less than the length of the table/);
+assertThrows(() => get.call(tbl1, -1), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => get.call(tbl1, Math.pow(2, 33)), TypeError,
-  /must be in the unsigned long range/);
+  /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => get.call(tbl1, {valueOf() { throw new Error('hi') }}), Error, 'hi');
 
@@ -704,40 +695,40 @@ let set = setDesc.value;
 assertEq(set.length, 1);
 assertFalse(isConstructor(set));
 assertThrows(
-    () => set.call(), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => set.call(), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertThrows(
-    () => set.call({}), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => set.call({}), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertThrows(
     () => set.call(tbl1, undefined), TypeError,
-    /must be convertible to a valid number/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
-    () => set.call(tbl1, 2, null), RangeError, /invalid index \d+ into function table/);
+    () => set.call(tbl1, 2, null), RangeError, /WebAssembly.Table.prototype.set expects an integer less than the length of the table/);
 assertThrows(
-    () => set.call(tbl1, -1, null), TypeError, /must be non-negative/);
+    () => set.call(tbl1, -1, null), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => set.call(tbl1, Math.pow(2, 33), null), TypeError,
-    /must be in the unsigned long range/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => set.call(tbl1, Infinity, null), TypeError,
-  /must be convertible to a valid number/);
+  /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => set.call(tbl1, -Infinity, null), TypeError,
-  /must be convertible to a valid number/);
+  /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => set.call(tbl1, 0, undefined), TypeError,
-    /Argument 1 is invalid for table: /);
+    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
 assertThrows(
     () => set.call(tbl1, undefined, undefined), TypeError,
-    /must be convertible to a valid number/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => set.call(tbl1, 0, {}), TypeError,
-    /Argument 1 is invalid for table:.*null.*or a Wasm function object/);
+    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
 assertThrows(
     () => set.call(tbl1, 0, function() {}), TypeError,
-    /Argument 1 is invalid for table:.*null.*or a Wasm function object/);
+    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
 assertThrows(
     () => set.call(tbl1, 0, Math.sin), TypeError,
-    /Argument 1 is invalid for table:.*null.*or a Wasm function object/);
+    /WebAssembly.Table.prototype.set expects the second argument to be null or an instance of WebAssembly.Function/);
 assertThrows(
     () => set.call(tbl1, {valueOf() { throw Error('hai') }}, null), Error,
     'hai');
@@ -745,7 +736,7 @@ assertEq(set.call(tbl1, 0, null), undefined);
 assertEq(set.call(tbl1, 1, null), undefined);
 assertThrows(
     () => set.call(tbl1, undefined, null), TypeError,
-    /must be convertible to a valid number/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 
 // 'WebAssembly.Table.prototype.grow' data property
 let tblGrowDesc = Object.getOwnPropertyDescriptor(tableProto, 'grow');
@@ -758,30 +749,30 @@ let tblGrow = tblGrowDesc.value;
 assertEq(tblGrow.length, 1);
 assertFalse(isConstructor(tblGrow));
 assertThrows(
-    () => tblGrow.call(), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => tblGrow.call(), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertThrows(
-    () => tblGrow.call({}), TypeError, /Receiver is not a WebAssembly.Table/);
+    () => tblGrow.call({}), TypeError, /expected |this| value to be an instance of WebAssembly.Table/);
 assertThrows(
-    () => tblGrow.call(tbl1, -1), TypeError, /must be non-negative/);
+    () => tblGrow.call(tbl1, -1), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
     () => tblGrow.call(tbl1, Math.pow(2, 32)), TypeError,
-    /must be in the unsigned long range/);
+    /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 var tbl = new Table({element: 'anyfunc', initial: 1, maximum: 2});
 assertEq(tbl.length, 1);
 assertThrows(
-    () => tbl.grow(Infinity), TypeError, /must be convertible to a valid number/);
+    () => tbl.grow(Infinity), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
-    () => tbl.grow(-Infinity), TypeError, /must be convertible to a valid number/);
+    () => tbl.grow(-Infinity), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertEq(tbl.grow(0), 1);
 assertEq(tbl.length, 1);
 assertEq(tbl.grow(1, null, 4), 1);
 assertEq(tbl.length, 2);
 assertEq(tbl.length, 2);
-assertThrows(() => tbl.grow(1), Error, /failed to grow table by \d+/);
+assertThrows(() => tbl.grow(1), Error, /WebAssembly.Table.prototype.grow could not grow the table/);
 assertThrows(
-    () => tbl.grow(Infinity), TypeError, /must be convertible to a valid number/);
+    () => tbl.grow(Infinity), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 assertThrows(
-    () => tbl.grow(-Infinity), TypeError, /must be convertible to a valid number/);
+    () => tbl.grow(-Infinity), TypeError, /Expect an integer argument in the range[\s\S]*2\^32 - 1/);
 
 // 'WebAssembly.validate' function
 assertThrows(() => WebAssembly.validate(), TypeError);

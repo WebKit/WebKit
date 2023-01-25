@@ -350,7 +350,7 @@ FramebufferStatus FramebufferStatus::Incomplete(GLenum status, const char *reaso
 }
 
 // This constructor is only used for default framebuffers.
-FramebufferState::FramebufferState(rx::Serial serial)
+FramebufferState::FramebufferState(rx::UniqueSerial serial)
     : mId(Framebuffer::kDefaultDrawFramebufferHandle),
       mFramebufferSerial(serial),
       mLabel(),
@@ -373,7 +373,7 @@ FramebufferState::FramebufferState(rx::Serial serial)
     mEnabledDrawBuffers.set(0);
 }
 
-FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, rx::Serial serial)
+FramebufferState::FramebufferState(const Caps &caps, FramebufferID id, rx::UniqueSerial serial)
     : mId(id),
       mFramebufferSerial(serial),
       mLabel(),

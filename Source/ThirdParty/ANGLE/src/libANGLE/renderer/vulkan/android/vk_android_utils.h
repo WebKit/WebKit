@@ -30,7 +30,9 @@ angle::Result InitAndroidExternalMemory(ContextVk *contextVk,
                                         VkMemoryPropertyFlags memoryProperties,
                                         Buffer *buffer,
                                         VkMemoryPropertyFlags *memoryPropertyFlagsOut,
-                                        DeviceMemory *deviceMemoryOut);
+                                        uint32_t *memoryTypeIndexOut,
+                                        DeviceMemory *deviceMemoryOut,
+                                        VkDeviceSize *sizeOut);
 
 void ReleaseAndroidExternalMemory(RendererVk *rendererVk, EGLClientBuffer clientBuffer);
 }  // namespace vk

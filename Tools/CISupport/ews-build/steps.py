@@ -4983,28 +4983,31 @@ class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
     name = 'check-status-on-other-ewses'
     descriptionDone = ['Checked change status on other queues']
 
+    @defer.inlineCallbacks
     def get_change_status(self, change_id, queue):
-        url = '{}status/{}'.format(EWS_URL, change_id)
+        url = '{}status/{}/'.format(EWS_URL, change_id)
         try:
-            response = requests.get(url, timeout=60)
+            response = yield TwistedAdditions.request(url, logger=lambda content: self._addToLog('stdio', content))
             if response.status_code != 200:
                 self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(url, response.status_code))
-                return -1
-            queue_data = response.json().get(queue)
-            if not queue_data:
-                return -1
-            return queue_data.get('state')
-        except Exception as e:
+                defer.returnValue(-1)
+                return
+            queue_data = response.json().get(queue, None)
+            if queue_data:
+                defer.returnValue(queue_data.get('state', None))
+            else:
+                defer.returnValue(-1)
+        except:
             self._addToLog('stdio', 'Failed to access {}\n'.format(url))
-            return -1
+            defer.returnValue(-1)
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         change_id = self.getProperty('github.head.sha', self.getProperty('patch_id', ''))
-        change_status_on_mac_wk2 = self.get_change_status(change_id, 'mac-wk2')
+        change_status_on_mac_wk2 = yield self.get_change_status(change_id, 'mac-wk2')
         if change_status_on_mac_wk2 == SUCCESS:
             self.setProperty('passed_mac_wk2', True)
-        self.finished(SUCCESS)
-        return None
+        defer.returnValue(SUCCESS)
 
 
 class ValidateRemote(shell.ShellCommand):

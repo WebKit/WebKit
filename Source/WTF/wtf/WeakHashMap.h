@@ -321,7 +321,7 @@ public:
             return !iterator.key.get();
         });
         if (result)
-            amortizedCleanupIfNeeded(count);
+            increaseOperationCountSinceLastCleanup(count);
         else
             m_operationCountSinceLastCleanup = 0;
         return result;

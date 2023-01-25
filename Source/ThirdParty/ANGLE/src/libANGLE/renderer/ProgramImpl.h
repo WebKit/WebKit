@@ -9,8 +9,8 @@
 #ifndef LIBANGLE_RENDERER_PROGRAMIMPL_H_
 #define LIBANGLE_RENDERER_PROGRAMIMPL_H_
 
+#include "common/BinaryStream.h"
 #include "common/angleutils.h"
-#include "libANGLE/BinaryStream.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/Shader.h"

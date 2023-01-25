@@ -1388,6 +1388,8 @@ String MediaPlayerPrivateAVFoundationObjC::errorLog() const
 void MediaPlayerPrivateAVFoundationObjC::didEnd()
 {
     m_requestedPlaying = false;
+    m_timeControlStatusAtCachedCurrentTime = AVPlayerTimeControlStatusPaused;
+    m_wallClockAtCachedCurrentTime = std::nullopt;
     MediaPlayerPrivateAVFoundation::didEnd();
 }
 

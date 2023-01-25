@@ -11,7 +11,7 @@
 #define LIBANGLE_RENDERER_VULKAN_VK_HEADERS_H_
 
 #if ANGLE_SHARED_LIBVULKAN
-#    include "third_party/volk/volk.h"
+#    include <volk.h>
 #else
 #    include <vulkan/vulkan.h>
 #endif

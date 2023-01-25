@@ -163,7 +163,7 @@ private:
 
     bool hasVisibleChangeState() const { return observedContentChange() == WKContentVisibilityChange; }
     bool hasObservedDOMTimer() const;
-    bool hasObservedTransition() const { return !m_elementsWithTransition.computesEmpty(); }
+    bool hasObservedTransition() const { return !m_elementsWithTransition.isEmptyIgnoringNullReferences(); }
 
     void setIsBetweenTouchEndAndMouseMoved(bool isBetween) { m_isBetweenTouchEndAndMouseMoved = isBetween; }
     bool isBetweenTouchEndAndMouseMoved() const { return m_isBetweenTouchEndAndMouseMoved; }

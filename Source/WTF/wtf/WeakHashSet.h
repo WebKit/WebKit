@@ -47,8 +47,10 @@ public:
         using reference = const value_type&;
 
     private:
-        WeakHashSetConstIterator(const WeakPtrImplSet& set, typename WeakPtrImplSet::const_iterator position)
-            : m_position(position), m_endPosition(set.end())
+        WeakHashSetConstIterator(const WeakHashSet& set, typename WeakPtrImplSet::const_iterator position)
+            : m_set(set)
+            , m_position(position)
+            , m_endPosition(set.m_set.end())
         {
             skipEmptyBuckets();
         }
@@ -63,6 +65,7 @@ public:
             ASSERT(m_position != m_endPosition);
             ++m_position;
             skipEmptyBuckets();
+            m_set.increaseOperationCountSinceLastCleanup();
             return *this;
         }
 
@@ -85,6 +88,7 @@ public:
     private:
         template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
 
+        const WeakHashSet& m_set;
         typename WeakPtrImplSet::const_iterator m_position;
         typename WeakPtrImplSet::const_iterator m_endPosition;
     };
@@ -92,17 +96,8 @@ public:
 
     WeakHashSet() { }
 
-    const_iterator begin() const
-    {
-        increaseOperationCountSinceLastCleanup();
-        return WeakHashSetConstIterator(m_set, m_set.begin());
-    }
-
-    const_iterator end() const
-    {
-        increaseOperationCountSinceLastCleanup();
-        return WeakHashSetConstIterator(m_set, m_set.end());
-    }
+    const_iterator begin() const { return WeakHashSetConstIterator(*this, m_set.begin()); }
+    const_iterator end() const { return WeakHashSetConstIterator(*this, m_set.end()); }
 
     template <typename U>
     AddResult add(const U& value)
@@ -139,11 +134,25 @@ public:
 
     unsigned capacity() const { return m_set.capacity(); }
 
-    bool computesEmpty() const { return begin() == end(); }
+    bool isEmptyIgnoringNullReferences() const
+    {
+        if (m_set.isEmpty())
+            return true;
+        return begin() == end();
+    }
 
     bool hasNullReferences() const
     {
-        return WTF::anyOf(m_set, [] (auto& value) { return !value.get(); });
+        unsigned count = 0;
+        auto result = WTF::anyOf(m_set, [&](auto& value) {
+            ++count;
+            return !value.get();
+        });
+        if (result)
+            increaseOperationCountSinceLastCleanup(count);
+        else
+            m_operationCountSinceLastCleanup = 0;
+        return result;
     }
 
     unsigned computeSize() const
@@ -154,7 +163,6 @@ public:
 
     void forEach(const Function<void(T&)>& callback)
     {
-        increaseOperationCountSinceLastCleanup();
         auto items = map(m_set, [](const Ref<WeakPtrImpl>& item) {
             auto* pointer = static_cast<T*>(item->template get<T>());
             return WeakPtr<T, WeakPtrImpl> { pointer };
@@ -180,9 +188,9 @@ private:
         m_operationCountSinceLastCleanup = 0;
     }
 
-    ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup() const
+    ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup(unsigned count = 1) const
     {
-        unsigned currentCount = m_operationCountSinceLastCleanup++;
+        unsigned currentCount = m_operationCountSinceLastCleanup += count;
         return currentCount;
     }
 

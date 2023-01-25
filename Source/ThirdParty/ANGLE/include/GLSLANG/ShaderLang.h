@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 312
+#define ANGLE_SH_VERSION 319
 
 enum ShShaderSpec
 {
@@ -76,20 +76,31 @@ enum ShShaderOutput
     SH_MSL_METAL_OUTPUT = 0x8B4D,
 };
 
+struct ShCompileOptionsMetal
+{
+    // Direct-to-metal backend constants:
+
+    // Binding index for driver uniforms:
+    int driverUniformsBindingIndex;
+    // Binding index for default uniforms:
+    int defaultUniformsBindingIndex;
+    // Binding index for UBO's argument buffer
+    int UBOArgumentBufferBindingIndex;
+};
+
 // For ANGLE_shader_pixel_local_storage.
 // Instructs the compiler which pixel local storage configuration to generate code for.
-enum class ShPixelLocalStorageType
+enum class ShPixelLocalStorageType : uint8_t
 {
     NotSupported,
-    ImageStoreR32PackedFormats,
-    ImageStoreNativeFormats,
+    ImageLoadStore,
     FramebufferFetch,
     PixelLocalStorageEXT,  // GL_EXT_shader_pixel_local_storage.
 };
 
 // For ANGLE_shader_pixel_local_storage_coherent.
 // Instructs the compiler which fragment synchronization method to use, if any.
-enum class ShFragmentSynchronizationType
+enum class ShFragmentSynchronizationType : uint8_t
 {
     NotSupported,  // Fragments cannot be ordered or synchronized.
 
@@ -107,25 +118,21 @@ enum class ShFragmentSynchronizationType
     EnumCount = InvalidEnum,
 };
 
-// Compile options.
-struct ShCompileOptionsMetal
-{
-    // Direct-to-metal backend constants:
-
-    // Binding index for driver uniforms:
-    int driverUniformsBindingIndex;
-    // Binding index for default uniforms:
-    int defaultUniformsBindingIndex;
-    // Binding index for UBO's argument buffer
-    int UBOArgumentBufferBindingIndex;
-};
-
-struct ShCompileOptionsPLS
+struct ShPixelLocalStorageOptions
 {
     ShPixelLocalStorageType type = ShPixelLocalStorageType::NotSupported;
+
     // For ANGLE_shader_pixel_local_storage_coherent.
-    ShFragmentSynchronizationType fragmentSynchronizationType =
-        ShFragmentSynchronizationType::NotSupported;
+    ShFragmentSynchronizationType fragmentSyncType = ShFragmentSynchronizationType::NotSupported;
+
+    // ShPixelLocalStorageType::ImageLoadStore only: Can we use rgba8/rgba8i/rgba8ui image formats?
+    // Or do we need to manually pack and unpack from r32i/r32ui?
+    bool supportsNativeRGBA8ImageFormats = false;
+
+    // anglebug.com/7792 -- Metal [[raster_order_group()]] does not work for read_write textures on
+    // AMD when the render pass doesn't have a color attachment on slot 0. To work around this we
+    // attach one of the PLS textures to GL_COLOR_ATTACHMENT0, if there isn't one already.
+    bool renderPassNeedsAMDRasterOrderGroupsWorkaround = false;
 };
 
 struct ShCompileOptions
@@ -407,11 +414,11 @@ struct ShCompileOptions
     // We may want to apply it generally.
     uint64_t passHighpToPackUnormSnormBuiltins : 1;
 
-    // When clip and cull distances are used simultaneously, D3D11 can support up to four of each.
-    uint64_t limitSimultaneousClipAndCullDistanceUsage : 1;
+    // Use an integer uniform to pass a bitset of enabled clip distances.
+    uint64_t emulateClipDistanceState : 1;
 
     ShCompileOptionsMetal metal;
-    ShCompileOptionsPLS pls;
+    ShPixelLocalStorageOptions pls;
 };
 
 // The 64 bits hash function. The first parameter is the input string; the
@@ -484,8 +491,10 @@ struct ShBuiltInResources
     int EXT_texture_buffer;
     int OES_sample_variables;
     int EXT_clip_cull_distance;
+    int ANGLE_clip_cull_distance;
     int EXT_primitive_bounding_box;
     int OES_primitive_bounding_box;
+    int EXT_separate_shader_objects;
     int ANGLE_base_vertex_base_instance_shader_builtin;
     int ANDROID_extension_pack_es31a;
     int KHR_blend_equation_advanced;
@@ -653,7 +662,7 @@ struct ShBuiltInResources
     // Subpixel bits used in rasterization.
     int SubPixelBits;
 
-    // APPLE_clip_distance/EXT_clip_cull_distance constant
+    // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance constants
     int MaxClipDistances;
     int MaxCullDistances;
     int MaxCombinedClipAndCullDistances;
@@ -849,6 +858,9 @@ unsigned int GetImage2DRegisterIndex(const ShHandle handle);
 // handle: Specifies the compiler
 const std::set<std::string> *GetUsedImage2DFunctionNames(const ShHandle handle);
 
+uint8_t GetClipDistanceArraySize(const ShHandle handle);
+uint8_t GetCullDistanceArraySize(const ShHandle handle);
+bool HasClipDistanceInVertexShader(const ShHandle handle);
 bool HasDiscardInFragmentShader(const ShHandle handle);
 bool HasValidGeometryShaderInputPrimitiveType(const ShHandle handle);
 bool HasValidGeometryShaderOutputPrimitiveType(const ShHandle handle);

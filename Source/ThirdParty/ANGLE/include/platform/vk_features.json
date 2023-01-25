@@ -53,6 +53,13 @@
             "issue": "https://anglebug.com/7308"
         },
         {
+            "name": "supports_memory_budget",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_memory_budget extension."
+            ]
+        },
+        {
             "name": "supports_renderpass2",
             "category": "Features",
             "description": [
@@ -333,14 +340,6 @@
             ]
         },
         {
-            "name": "shadow_buffers",
-            "category": "Features",
-            "description": [
-                "Allocate a shadow buffer for GL buffer objects to reduce glMap* latency."
-            ],
-            "issue": "http://anglebug.com/4339"
-        },
-        {
             "name": "prefer_CPU_for_buffer_sub_data",
             "category": "Features",
             "description": [
@@ -371,6 +370,15 @@
                 "Enable precision qualifiers in shaders"
             ],
             "issue": "http://anglebug.com/3078"
+        },
+        {
+            "name": "varyings_require_matching_precision_in_spirv",
+            "category": "Workarounds",
+            "description": [
+                "Add additional SPIRV instructions to make sure precision ",
+                "between shader stages match with each other"
+            ],
+            "issue": "http://anglebug.com/7488"
         },
         {
             "name": "prefer_aggregate_barrier_calls",
@@ -1031,6 +1039,14 @@
             "issue": "https://anglebug.com/7369"
         },
         {
+            "name": "slow_down_monolithic_pipeline_creation_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Artificially slow down async monolithic pipeline creation for threading testing"
+            ],
+            "issue": "https://anglebug.com/7369"
+        },
+        {
             "name": "sync_monolithic_pipelines_to_blob_cache",
             "category": "Workarounds",
             "description": [
@@ -1051,12 +1067,46 @@
             "issue": "https://anglebug.com/7369"
         },
         {
+            "name": "has_effective_pipeline_cache_serialization",
+            "category": "Features",
+            "description": [
+                "Whether the implementation serializes the Vulkan pipeline cache effectively. ",
+                "On some implementations, pipeline cache serialization returns no data, so there ",
+                "is no benefit to serializing it"
+            ],
+            "issue": "https://anglebug.com/7369"
+        },
+        {
+            "name": "enable_async_pipeline_cache_compression",
+            "category": "Workarounds",
+            "description": [
+                "Enable compressing pipeline cache in a thread."
+            ],
+            "issue": "http://anglebug.com/4722"
+        },
+        {
             "name": "supports_pipeline_protected_access",
             "category": "Features",
             "description": [
                 "VkDevice supports the VK_EXT_pipeline_protected_access extension"
             ],
             "issue": "https://anglebug.com/7714"
+	},
+        {
+            "name": "supports_mixed_read_write_depth_stencil_layouts",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the mixed read and write depth/stencil layouts introduced by VK_KHR_maintenance2"
+            ],
+            "issue": "https://anglebug.com/7899"
+	},
+        {
+            "name": "supports_swapchain_maintenance1",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 extensions"
+            ],
+            "issue": "https://anglebug.com/7847"
 	},
 	{
             "name": "prefer_submit_on_any_samples_passed_query_end",

@@ -1067,7 +1067,7 @@ void RendererVk::ensureCapsInitialized() const
         }
     }
 
-    // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+    // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
     // From the EXT_clip_cull_distance extension spec:
     //
     // > Modify Section 7.2, "Built-In Constants" (p. 126)
@@ -1086,8 +1086,9 @@ void RendererVk::ensureCapsInitialized() const
     if (mPhysicalDeviceFeatures.shaderClipDistance &&
         limitsVk.maxClipDistances >= kMaxClipDistancePerSpec)
     {
-        mNativeExtensions.clipDistanceAPPLE = true;
-        mNativeCaps.maxClipDistances        = limitsVk.maxClipDistances;
+        mNativeExtensions.clipDistanceAPPLE     = true;
+        mNativeExtensions.clipCullDistanceANGLE = true;
+        mNativeCaps.maxClipDistances            = limitsVk.maxClipDistances;
 
         if (mPhysicalDeviceFeatures.shaderCullDistance &&
             limitsVk.maxCullDistances >= kMaxCullDistancePerSpec &&
@@ -1145,9 +1146,28 @@ void RendererVk::ensureCapsInitialized() const
 
     // GL_ANGLE_shader_pixel_local_storage
     mNativeExtensions.shaderPixelLocalStorageANGLE = true;
-    mNativeExtensions.shaderPixelLocalStorageCoherentANGLE =
-        getFeatures().supportsShaderFramebufferFetch.enabled ||
-        getFeatures().supportsFragmentShaderPixelInterlock.enabled;
+    if (getFeatures().supportsShaderFramebufferFetch.enabled)
+    {
+        mNativeExtensions.shaderPixelLocalStorageCoherentANGLE = true;
+        mNativePLSOptions.type             = ShPixelLocalStorageType::FramebufferFetch;
+        mNativePLSOptions.fragmentSyncType = ShFragmentSynchronizationType::Automatic;
+    }
+    else if (getFeatures().supportsFragmentShaderPixelInterlock.enabled)
+    {
+        // Use shader images with VK_EXT_fragment_shader_interlock, instead of attachments, if
+        // they're our only option to be coherent.
+        mNativeExtensions.shaderPixelLocalStorageCoherentANGLE = true;
+        mNativePLSOptions.type = ShPixelLocalStorageType::ImageLoadStore;
+        // GL_ARB_fragment_shader_interlock compiles to SPV_EXT_fragment_shader_interlock.
+        mNativePLSOptions.fragmentSyncType =
+            ShFragmentSynchronizationType::FragmentShaderInterlock_ARB_GL;
+        mNativePLSOptions.supportsNativeRGBA8ImageFormats = true;
+    }
+    else
+    {
+        mNativePLSOptions.type = ShPixelLocalStorageType::FramebufferFetch;
+        ASSERT(mNativePLSOptions.fragmentSyncType == ShFragmentSynchronizationType::NotSupported);
+    }
 
     mNativeExtensions.logicOpANGLE = mPhysicalDeviceFeatures.logicOp == VK_TRUE;
 }

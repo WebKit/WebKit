@@ -51,33 +51,33 @@ WebDeviceOrientationUpdateProvider::~WebDeviceOrientationUpdateProvider()
 
 void WebDeviceOrientationUpdateProvider::startUpdatingDeviceOrientation(WebCore::MotionManagerClient& client)
 {
-    if (m_deviceOrientationClients.computesEmpty() && m_page)
+    if (m_deviceOrientationClients.isEmptyIgnoringNullReferences() && m_page)
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceOrientation());
     m_deviceOrientationClients.add(client);
 }
 
 void WebDeviceOrientationUpdateProvider::stopUpdatingDeviceOrientation(WebCore::MotionManagerClient& client)
 {
-    if (m_deviceOrientationClients.computesEmpty())
+    if (m_deviceOrientationClients.isEmptyIgnoringNullReferences())
         return;
     m_deviceOrientationClients.remove(client);
-    if (m_deviceOrientationClients.computesEmpty() && m_page)
+    if (m_deviceOrientationClients.isEmptyIgnoringNullReferences() && m_page)
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StopUpdatingDeviceOrientation());
 }
 
 void WebDeviceOrientationUpdateProvider::startUpdatingDeviceMotion(WebCore::MotionManagerClient& client)
 {
-    if (m_deviceMotionClients.computesEmpty() && m_page)
+    if (m_deviceMotionClients.isEmptyIgnoringNullReferences() && m_page)
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StartUpdatingDeviceMotion());
     m_deviceMotionClients.add(client);
 }
 
 void WebDeviceOrientationUpdateProvider::stopUpdatingDeviceMotion(WebCore::MotionManagerClient& client)
 {
-    if (m_deviceMotionClients.computesEmpty())
+    if (m_deviceMotionClients.isEmptyIgnoringNullReferences())
         return;
     m_deviceMotionClients.remove(client);
-    if (m_deviceMotionClients.computesEmpty() && m_page)
+    if (m_deviceMotionClients.isEmptyIgnoringNullReferences() && m_page)
         m_page->send(Messages::WebDeviceOrientationUpdateProviderProxy::StopUpdatingDeviceMotion());
 }
 

@@ -98,7 +98,7 @@ class FenceSyncTest : public Test
         mImpl = new MockSyncImpl;
         EXPECT_CALL(factory, createSync()).WillOnce(Return(mImpl));
 
-        mFence = new gl::Sync(&factory, 1);
+        mFence = new gl::Sync(&factory, {1});
         EXPECT_CALL(*mImpl, destroy());
         mFence->addRef();
     }

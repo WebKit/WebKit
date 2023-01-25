@@ -412,7 +412,7 @@ static bool drawCellFocusRing(NSCell *cell, NSRect cellFrame, NSView *controlVie
 // Buttons really only constrain height. They respect width.
 static const std::array<IntSize, 4>& buttonSizes()
 {
-    static const std::array<IntSize, 4> sizes = { { IntSize(0, 21), IntSize(0, 18), IntSize(0, 15), IntSize(0, 28) } };
+    static const std::array<IntSize, 4> sizes = { { IntSize(0, 20), IntSize(0, 16), IntSize(0, 13), IntSize(0, 28) } };
     return sizes;
 }
 
@@ -423,10 +423,10 @@ static const int* buttonMargins(NSControlSize controlSize)
     // these margins extend well past the boundaries of a native button cell's shadows.
     static const int margins[4][4] =
     {
+        { 5, 7, 7, 7 },
         { 4, 6, 7, 6 },
-        { 4, 5, 6, 5 },
-        { 0, 1, 1, 1 },
-        { 4, 6, 7, 6 },
+        { 1, 2, 2, 2 },
+        { 6, 6, 6, 6 },
     };
     return margins[controlSize];
 }

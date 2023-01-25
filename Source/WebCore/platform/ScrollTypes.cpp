@@ -40,6 +40,16 @@ TextStream& operator<<(TextStream& ts, ScrollType scrollType)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, NativeScrollbarVisibility scrollBarHidden)
+{
+    switch (scrollBarHidden) {
+    case NativeScrollbarVisibility::Visible: ts << 0; break;
+    case NativeScrollbarVisibility::HiddenByStyle: ts << 1; break;
+    case NativeScrollbarVisibility::ReplacedByCustomScrollbar: ts << 2; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, ScrollClamping clamping)
 {
     switch (clamping) {

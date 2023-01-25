@@ -180,6 +180,10 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
     VkCommandBuffer cmdBuffer = primary->getHandle();
 
     ANGLE_TRACE_EVENT0("gpu.angle", "SecondaryCommandBuffer::executeCommands");
+
+    // Used for ring buffer allocators only.
+    mCommandAllocator.terminateLastCommandBlock();
+
     for (const CommandHeader *command : mCommands)
     {
         for (const CommandHeader *currentCommand                      = command;
@@ -784,7 +788,14 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
 void SecondaryCommandBuffer::getMemoryUsageStats(size_t *usedMemoryOut,
                                                  size_t *allocatedMemoryOut) const
 {
-    *allocatedMemoryOut = kBlockSize * mCommands.size();
+    mCommandAllocator.getMemoryUsageStats(usedMemoryOut, allocatedMemoryOut);
+}
+
+void SecondaryCommandBuffer::getMemoryUsageStatsForPoolAlloc(size_t blockSize,
+                                                             size_t *usedMemoryOut,
+                                                             size_t *allocatedMemoryOut) const
+{
+    *allocatedMemoryOut = blockSize * mCommands.size();
 
     *usedMemoryOut = 0;
     for (const CommandHeader *command : mCommands)

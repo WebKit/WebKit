@@ -49,6 +49,7 @@ struct Extensions
     void setTextureExtensionSupport(const TextureCapsMap &textureCaps);
 
     // Helper functions
+    bool clipCullDistanceAny() const { return (clipCullDistanceANGLE || clipCullDistanceEXT); }
     bool copyImageAny() const { return (copyImageEXT || copyImageOES); }
     bool depthTextureAny() const { return (depthTextureANGLE || depthTextureOES); }
     bool drawBuffersIndexedAny() const { return (drawBuffersIndexedEXT || drawBuffersIndexedOES); }
@@ -323,6 +324,9 @@ struct Extensions
     // GL_NV_pixel_buffer_object
     bool pixelBufferObjectNV = false;
 
+    // GL_EXT_polygon_offset_clamp
+    bool polygonOffsetClampEXT = false;
+
     // GL_EXT_primitive_bounding_box
     bool primitiveBoundingBoxEXT = false;
 
@@ -571,6 +575,9 @@ struct Extensions
 
     // GL_ANGLE_client_arrays
     bool clientArraysANGLE = false;
+
+    // GL_ANGLE_clip_cull_distance
+    bool clipCullDistanceANGLE = false;
 
     // GL_CHROMIUM_color_buffer_float_rgb
     bool colorBufferFloatRgbCHROMIUM = false;

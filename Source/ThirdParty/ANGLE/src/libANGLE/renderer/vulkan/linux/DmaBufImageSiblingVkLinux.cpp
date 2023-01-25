@@ -528,10 +528,10 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
         const VkSamplerYcbcrModelConversion model = GetYcbcrModel(mAttribs);
         const VkSamplerYcbcrRange range           = GetYcbcrRange(mAttribs);
         const VkComponentMapping components       = {
-                  VK_COMPONENT_SWIZZLE_IDENTITY,
-                  VK_COMPONENT_SWIZZLE_IDENTITY,
-                  VK_COMPONENT_SWIZZLE_IDENTITY,
-                  VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
+            VK_COMPONENT_SWIZZLE_IDENTITY,
         };
 
         ANGLE_VK_CHECK(displayVk, renderer->getFeatures().supportsYUVSamplerConversion.enabled,

@@ -627,6 +627,11 @@ bool Surface::isCreatedWithAHB() const
     return false;
 }
 
+bool Surface::hasFrontBufferUsage() const
+{
+    return false;
+}
+
 GLuint Surface::getId() const
 {
     return mState.id.value;

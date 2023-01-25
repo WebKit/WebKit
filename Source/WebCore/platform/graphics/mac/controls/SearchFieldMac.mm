@@ -42,7 +42,7 @@ SearchFieldMac::SearchFieldMac(SearchFieldPart& owningPart, ControlFactoryMac& c
     ASSERT(searchFieldCell);
 }
 
-void SearchFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void SearchFieldMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
@@ -50,13 +50,13 @@ void SearchFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float
 
     GraphicsContextStateSaver stateSaver(context);
 
-    auto logicalRect = rect;
+    auto logicalRect = borderRect.rect();
     if (style.zoomFactor != 1) {
         logicalRect.scale(1 / style.zoomFactor);
         context.scale(style.zoomFactor);
     }
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
 
     [m_searchFieldCell setSearchButtonCell:nil];
 
@@ -65,7 +65,7 @@ void SearchFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float
     [m_searchFieldCell resetSearchButtonCell];
     
 #if ENABLE(DATALIST_ELEMENT)
-    drawListButton(context, rect, deviceScaleFactor, style);
+    drawListButton(context, borderRect.rect(), deviceScaleFactor, style);
 #endif
 }
 

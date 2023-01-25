@@ -236,9 +236,13 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
             listValue->collectComputedStyleDependencies(dependencies);
         return;
     }
-
-    if (is<CSSPrimitiveValue>(*this))
-        downcast<CSSPrimitiveValue>(*this).collectComputedStyleDependencies(dependencies);
+    if (auto* asFunction = dynamicDowncast<CSSFunctionValue>(*this)) {
+        for (auto& argument : *asFunction)
+            argument->collectComputedStyleDependencies(dependencies);
+        return;
+    }
+    if (auto* asPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*this))
+        asPrimitiveValue->collectComputedStyleDependencies(dependencies);
 }
 
 bool CSSValue::equals(const CSSValue& other) const

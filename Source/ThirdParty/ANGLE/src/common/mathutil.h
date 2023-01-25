@@ -215,6 +215,18 @@ destType bitCast(const sourceType &source)
     return output;
 }
 
+template <typename DestT, typename SrcT>
+DestT unsafe_int_to_pointer_cast(SrcT src)
+{
+    return reinterpret_cast<DestT>(static_cast<uintptr_t>(src));
+}
+
+template <typename DestT, typename SrcT>
+DestT unsafe_pointer_to_int_cast(SrcT src)
+{
+    return static_cast<DestT>(reinterpret_cast<uintptr_t>(src));
+}
+
 // https://stackoverflow.com/a/37581284
 template <typename T>
 static constexpr double normalize(T value)

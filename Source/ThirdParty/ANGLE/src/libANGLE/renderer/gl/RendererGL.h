@@ -113,7 +113,7 @@ class RendererGL : angle::NonCopyable
     const gl::TextureCapsMap &getNativeTextureCaps() const;
     const gl::Extensions &getNativeExtensions() const;
     const gl::Limitations &getNativeLimitations() const;
-    ShPixelLocalStorageType getNativePixelLocalStorageType() const;
+    const ShPixelLocalStorageOptions &getNativePixelLocalStorageOptions() const;
     void initializeFrontendFeatures(angle::FrontendFeatures *features) const;
 
     angle::Result dispatchCompute(const gl::Context *context,
@@ -171,8 +171,8 @@ class RendererGL : angle::NonCopyable
     mutable gl::TextureCapsMap mNativeTextureCaps;
     mutable gl::Extensions mNativeExtensions;
     mutable gl::Limitations mNativeLimitations;
+    mutable ShPixelLocalStorageOptions mNativePLSOptions;
     mutable MultiviewImplementationTypeGL mMultiviewImplementationType;
-    mutable ShPixelLocalStorageType mPixelLocalStorageType;
 
     bool mWorkDoneSinceLastFlush = false;
 

@@ -39,6 +39,8 @@ class CachedBitVector;
 
 namespace WTF {
 
+class FixedBitVector;
+
 // This is a space-efficient, resizeable bitvector class. In the common case it
 // occupies one word, but if necessary, it will inflate this one word to point
 // to a single chunk of out-of-line allocated storage to store an arbitrary number
@@ -361,6 +363,7 @@ public:
 
 private:
     friend class JSC::CachedBitVector;
+    friend class FixedBitVector;
 
     static unsigned bitsInPointer()
     {

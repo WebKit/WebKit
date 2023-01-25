@@ -433,7 +433,8 @@ angle::Result Context9::syncState(const gl::Context *context,
 
 GLint Context9::getGPUDisjoint()
 {
-    return mRenderer->getGPUDisjoint();
+    // Disjoint timer queries are not supported.
+    return false;
 }
 
 GLint64 Context9::getTimestamp()
@@ -467,9 +468,9 @@ const gl::Limitations &Context9::getNativeLimitations() const
     return mRenderer->getNativeLimitations();
 }
 
-ShPixelLocalStorageType Context9::getNativePixelLocalStorageType() const
+const ShPixelLocalStorageOptions &Context9::getNativePixelLocalStorageOptions() const
 {
-    return mRenderer->getNativePixelLocalStorageType();
+    return mRenderer->getNativePixelLocalStorageOptions();
 }
 
 angle::Result Context9::dispatchCompute(const gl::Context *context,

@@ -653,7 +653,7 @@ void HTMLFormElement::addInvalidFormControl(const HTMLElement& formControlElemen
     ASSERT(static_cast<const Element&>(formControlElement).matchesInvalidPseudoClass());
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
-    if (m_invalidFormControls.computesEmpty())
+    if (m_invalidFormControls.isEmptyIgnoringNullReferences())
         emplace(styleInvalidation, *this, { { CSSSelector::PseudoClassValid, false }, { CSSSelector::PseudoClassInvalid, true } });
 
     m_invalidFormControls.add(formControlElement);
@@ -899,7 +899,7 @@ void HTMLFormElement::removeFromPastNamesMap(FormAssociatedElement& item)
 
 bool HTMLFormElement::matchesValidPseudoClass() const
 {
-    return m_invalidFormControls.computesEmpty();
+    return m_invalidFormControls.isEmptyIgnoringNullReferences();
 }
 
 bool HTMLFormElement::matchesInvalidPseudoClass() const

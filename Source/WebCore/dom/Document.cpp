@@ -822,14 +822,14 @@ void Document::commonTeardown()
     m_documentFragmentForInnerOuterHTML = nullptr;
 
     auto intersectionObservers = m_intersectionObservers;
-    for (auto& intersectionObserver : intersectionObservers) {
-        if (intersectionObserver)
+    for (auto& weakIntersectionObserver : intersectionObservers) {
+        if (RefPtr intersectionObserver = weakIntersectionObserver.get())
             intersectionObserver->disconnect();
     }
 
     auto resizeObservers = m_resizeObservers;
-    for (auto& resizeObserver : resizeObservers) {
-        if (resizeObserver)
+    for (auto& weakResizeObserver : resizeObservers) {
+        if (RefPtr resizeObserver = weakResizeObserver.get())
             resizeObserver->disconnect();
     }
 
@@ -7039,7 +7039,7 @@ void Document::removeMediaCanStartListener(MediaCanStartListener& listener)
 
 MediaCanStartListener* Document::takeAnyMediaCanStartListener()
 {
-    if (m_mediaCanStartListeners.computesEmpty())
+    if (m_mediaCanStartListeners.isEmptyIgnoringNullReferences())
         return nullptr;
 
     MediaCanStartListener* listener = m_mediaCanStartListeners.begin().get();

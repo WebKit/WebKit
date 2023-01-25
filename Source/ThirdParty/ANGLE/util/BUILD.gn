@@ -353,7 +353,7 @@ foreach(is_shared_library,
       }
     } else {
       public_configs += [
-        "$angle_root:angle_static",
+        "$angle_root:angle_static_config",
         "$angle_root:gl_prototypes",
       ]
     }

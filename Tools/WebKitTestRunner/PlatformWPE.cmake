@@ -32,13 +32,12 @@ list(APPEND WebKitTestRunner_LIBRARIES
     WebKit::WPEToolingBackends
 )
 
-list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
-    $<TARGET_OBJECTS:JavaScriptCore>
+list(APPEND TestRunnerInjectedBundle_LIBRARIES
     ${GLIB_LIBRARIES}
     Cairo::Cairo
 )
 
-list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
+list(APPEND TestRunnerInjectedBundle_SOURCES
     InjectedBundle/atspi/AccessibilityControllerAtspi.cpp
     InjectedBundle/atspi/AccessibilityNotificationHandler.cpp
     InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp
@@ -48,7 +47,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     InjectedBundle/wpe/TestRunnerWPE.cpp
 )
 
-list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
+list(APPEND TestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${WebKitTestRunner_DIR}/InjectedBundle/atspi
     ${WebKitTestRunner_DIR}/InjectedBundle/wpe

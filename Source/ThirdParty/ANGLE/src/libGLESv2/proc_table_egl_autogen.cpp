@@ -154,6 +154,7 @@ const ProcEntry g_procTable[] = {
     {"eglWaitNative", P(EGL_WaitNative)},
     {"eglWaitSync", P(EGL_WaitSync)},
     {"eglWaitSyncKHR", P(EGL_WaitSyncKHR)},
+    {"eglWaitUntilWorkScheduledANGLE", P(EGL_WaitUntilWorkScheduledANGLE)},
     DESKTOP_ONLY("glAccum", GL_Accum)
     {"glAcquireTexturesANGLE", P(GL_AcquireTexturesANGLE)},
     {"glActiveShaderProgram", P(GL_ActiveShaderProgram)},
@@ -1052,6 +1053,7 @@ const ProcEntry g_procTable[] = {
     DESKTOP_ONLY("glPolygonMode", GL_PolygonMode)
     {"glPolygonOffset", P(GL_PolygonOffset)},
     DESKTOP_ONLY("glPolygonOffsetClamp", GL_PolygonOffsetClamp)
+    {"glPolygonOffsetClampEXT", P(GL_PolygonOffsetClampEXT)},
     {"glPolygonOffsetx", P(GL_PolygonOffsetx)},
     DESKTOP_ONLY("glPolygonStipple", GL_PolygonStipple)
     DESKTOP_ONLY("glPopAttrib", GL_PopAttrib)

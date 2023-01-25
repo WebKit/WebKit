@@ -40,7 +40,7 @@ class UtilsVk : angle::NonCopyable
     UtilsVk();
     ~UtilsVk();
 
-    void destroy(RendererVk *renderer);
+    void destroy(ContextVk *contextVk);
 
     struct ConvertIndexParameters
     {

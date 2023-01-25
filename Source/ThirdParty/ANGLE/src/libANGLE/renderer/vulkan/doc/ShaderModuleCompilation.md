@@ -31,8 +31,9 @@ binding and location indices set in step 1. Additionally, component and various 
 decorations are added, inactive varyings are removed, early fragment tests are enabled or disabled,
 debug info is removed and pre-rotation is applied. At this time, `VkShaderModule`s are created (and
 cached). The appropriate specialization constants are then resolved and the `VkPipeline` object is
-created.  Note that we currently don't use [SPIRV-Tools][SPIRV-Tools] to perform any SPIR-V
-optimization. This could be something to improve on in the future.
+created (see details [here](PipelineCreation)).  Note that we currently don't use
+[SPIRV-Tools][SPIRV-Tools] to perform any SPIR-V optimization. This could be something to improve on
+in the future.
 
 See the below diagram for a high-level view of the shader translation flow:
 
@@ -60,7 +61,7 @@ App->"ANGLE Front-end": glLinkProgram
 
 Note right of "Vulkan Back-end": ProgramVk inits uniforms,\nlayouts, and descriptors.
 
-"Vulkan Back-end"->"Link-Time SPIR-V Transformer": GlslangWrapperVk::GetShaderCode
+"Vulkan Back-end"->"Link-Time SPIR-V Transformer": SpvGetShaderSpirvCode
 "Link-Time SPIR-V Transformer"- ->"Vulkan Back-end": retrieve SPIR-V and determine decorations
 "Vulkan Back-end"- ->"ANGLE Front-end": return success
 
@@ -69,7 +70,7 @@ Note right of App: App execution continues...
 App->"ANGLE Front-end": glDrawArrays (any draw)
 "ANGLE Front-end"->"Vulkan Back-end": ContextVk::drawArrays
 
-"Vulkan Back-end"->"Link-Time SPIR-V Transformer": GlslangWrapperVk::TransformSpirV
+"Vulkan Back-end"->"Link-Time SPIR-V Transformer": SpvTransformSpirvCode
 "Link-Time SPIR-V Transformer"- ->"Vulkan Back-end": return transformed SPIR-V
 
 Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nrecord the draw.
@@ -80,8 +81,8 @@ Note right of "Vulkan Back-end": We init VkShaderModules\nand VkPipeline then\nr
 ![Vulkan Shader Translation Flow](https://raw.githubusercontent.com/google/angle/main/src/libANGLE/renderer/vulkan/doc/img/VulkanShaderTranslation.svg?sanitize=true)
 
 [GL_KHR_vulkan_glsl]: https://github.com/KhronosGroup/GLSL/blob/main/extensions/khr/GL_KHR_vulkan_glsl.txt
-[GlslangWrapperVk.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/libANGLE/renderer/vulkan/GlslangWrapperVk.cpp
 [SPIRV-Tools]: https://github.com/KhronosGroup/SPIRV-Tools
 [translator]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/
 [TranslatorVulkan.cpp]: https://chromium.googlesource.com/angle/angle/+/refs/heads/main/src/compiler/translator/TranslatorVulkan.cpp
 [VkShaderModule]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkShaderModule.html
+[PipelineCreation]: PipelineCreation.md

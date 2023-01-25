@@ -47,6 +47,7 @@ angle_toggleable_extensions = [
 angle_requestable_extensions = [
     "GL_ANGLE_base_vertex_base_instance",
     "GL_ANGLE_base_vertex_base_instance_shader_builtin",
+    "GL_ANGLE_clip_cull_distance",
     "GL_ANGLE_compressed_texture_etc",
     "GL_ANGLE_copy_texture_3d",
     "GL_ANGLE_framebuffer_multisample",
@@ -113,6 +114,7 @@ gles_requestable_extensions = [
     "GL_EXT_multisampled_render_to_texture",
     "GL_EXT_multisampled_render_to_texture2",
     "GL_EXT_occlusion_query_boolean",
+    "GL_EXT_polygon_offset_clamp",
     "GL_EXT_protected_textures",
     "GL_EXT_pvrtc_sRGB",
     "GL_EXT_read_format_bgra",
@@ -319,6 +321,7 @@ supported_egl_extensions = [
     "EGL_ANGLE_swap_with_frame_token",
     "EGL_ANGLE_sync_control_rate",
     "EGL_ANGLE_vulkan_image",
+    "EGL_ANGLE_wait_until_work_scheduled",
     "EGL_ANGLE_window_fixed_size",
     "EGL_CHROMIUM_sync_control",
     "EGL_EXT_create_context_robustness",

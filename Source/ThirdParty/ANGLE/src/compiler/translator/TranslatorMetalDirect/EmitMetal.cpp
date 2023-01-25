@@ -223,7 +223,7 @@ GenMetalTraverser::GenMetalTraverser(const TCompiler &compiler,
       mMainUniformBufferIndex(compileOptions.metal.defaultUniformsBindingIndex),
       mDriverUniformsBindingIndex(compileOptions.metal.driverUniformsBindingIndex),
       mUBOArgumentBufferBindingIndex(compileOptions.metal.UBOArgumentBufferBindingIndex),
-      mRasterOrderGroupsSupported(compileOptions.pls.fragmentSynchronizationType ==
+      mRasterOrderGroupsSupported(compileOptions.pls.fragmentSyncType ==
                                   ShFragmentSynchronizationType::RasterOrderGroups_Metal)
 {}
 
@@ -658,7 +658,6 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpMemoryBarrier:
         case TOperator::EOpMemoryBarrierAtomicCounter:
         case TOperator::EOpMemoryBarrierBuffer:
-        case TOperator::EOpMemoryBarrierImage:
         case TOperator::EOpMemoryBarrierShared:
         case TOperator::EOpGroupMemoryBarrier:
         case TOperator::EOpAtomicAdd:
@@ -941,6 +940,30 @@ void GenMetalTraverser::emitBareTypeName(const TType &type, const EmitTypeConfig
                     emitNameOf(env);
                 }
             }
+            else if (IsImage(basicType))
+            {
+                mOut << "metal::texture2d<";
+                switch (type.getBasicType())
+                {
+                    case EbtImage2D:
+                        mOut << "float";
+                        break;
+                    case EbtIImage2D:
+                        mOut << "int";
+                        break;
+                    case EbtUImage2D:
+                        mOut << "uint";
+                        break;
+                    default:
+                        UNIMPLEMENTED();
+                        break;
+                }
+                if (type.getMemoryQualifier().readonly || type.getMemoryQualifier().writeonly)
+                {
+                    UNIMPLEMENTED();
+                }
+                mOut << ", metal::access::read_write>";
+            }
             else
             {
                 UNIMPLEMENTED();
@@ -1115,6 +1138,24 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
 
         default:
             break;
+    }
+
+    if (IsImage(type.getBasicType()))
+    {
+        if (type.getArraySizeProduct() != 1)
+        {
+            UNIMPLEMENTED();
+        }
+        mOut << " [[";
+        if (type.getLayoutQualifier().rasterOrdered)
+        {
+            mOut << "raster_order_group(0), ";
+        }
+        mOut << "texture(" << mMainTextureIndex << ")]]";
+        TranslatorMetalReflection *reflection = mtl::getTranslatorMetalReflection(&mCompiler);
+        reflection->addRWTextureBinding(type.getLayoutQualifier().binding,
+                                        static_cast<int>(mMainTextureIndex));
+        ++mMainTextureIndex;
     }
 }
 
@@ -1815,13 +1856,17 @@ void GenMetalTraverser::emitFunctionReturn(const TFunction &func)
     if (isMain)
     {
         const TStructure *structure = returnType.getStruct();
-        ASSERT(structure != nullptr);
         if (mPipelineStructs.fragmentOut.matches(*structure))
         {
+            if (mCompiler.isEarlyFragmentTestsSpecified())
+            {
+                mOut << "[[early_fragment_tests]]\n";
+            }
             mOut << "fragment ";
         }
         else if (mPipelineStructs.vertexOut.matches(*structure))
         {
+            ASSERT(structure != nullptr);
             mOut << "vertex __VERTEX_OUT(";
             isVertexMain = true;
         }
@@ -1891,7 +1936,7 @@ void GenMetalTraverser::emitFunctionParameter(const TFunction &func, const TVari
         {
             mOut << " [[texture(" << (mMainTextureIndex) << ")]]";
             const std::string originalName = reflection->getOriginalName(param.uniqueId().get());
-            reflection->addTextureBinding(originalName, mMainSamplerIndex);
+            reflection->addTextureBinding(originalName, mMainTextureIndex);
             mMainTextureIndex += type.getArraySizeProduct();
         }
         else if (Name(param) == Pipeline{Pipeline::Type::InstanceId, nullptr}.getStructInstanceName(
@@ -1922,7 +1967,8 @@ bool GenMetalTraverser::visitFunctionDefinition(Visit, TIntermFunctionDefinition
     {
         const TType &returnType     = func.getReturnType();
         const TStructure *structure = returnType.getStruct();
-        isTraversingVertexMain      = (mPipelineStructs.vertexOut.matches(*structure));
+        isTraversingVertexMain      = (mPipelineStructs.vertexOut.matches(*structure)) &&
+                                 mCompiler.getShaderType() == GL_VERTEX_SHADER;
     }
     emitIndentation();
     emitFunctionSignature(func);
@@ -1981,6 +2027,9 @@ GenMetalTraverser::FuncToName GenMetalTraverser::BuildFuncToName()
     putAngle("textureProjLodOffset");
     putAngle("textureProjOffset");
     putAngle("textureSize");
+    putAngle("imageLoad");
+    putAngle("imageStore");
+    putAngle("memoryBarrierImage");
 
     return map;
 }
@@ -2087,11 +2136,9 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
                     return nullptr;
                 };
 
-                ASSERT(!args.empty());
                 const TType *argType0 = getArgType(0);
                 const TType *argType1 = getArgType(1);
                 const TType *argType2 = getArgType(2);
-                ASSERT(argType0);
 
                 const char *opName = GetOperatorString(op, retType, argType0, argType1, argType2);
 

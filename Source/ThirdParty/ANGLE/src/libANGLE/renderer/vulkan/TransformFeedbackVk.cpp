@@ -11,12 +11,12 @@
 
 #include "libANGLE/Context.h"
 #include "libANGLE/Query.h"
-#include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/vulkan/BufferVk.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
 #include "libANGLE/renderer/vulkan/QueryVk.h"
+#include "libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h"
 
 #include "common/debug.h"
 

@@ -74,7 +74,7 @@ WebPreferences::WebPreferences(const WebPreferences& other)
 
 WebPreferences::~WebPreferences()
 {
-    ASSERT(m_pages.computesEmpty());
+    ASSERT(m_pages.isEmptyIgnoringNullReferences());
 }
 
 const Vector<RefPtr<API::Object>>& WebPreferences::experimentalFeatures()

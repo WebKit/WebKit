@@ -83,11 +83,11 @@ FloatRect ProgressBarMac::rectForBounds(const FloatRect& bounds, const ControlSt
     return inflatedRect(bounds, size, outsets, style);
 }
 
-void ProgressBarMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    auto inflatedRect = rectForBounds(rect, style);
+    auto inflatedRect = rectForBounds(borderRect.rect(), style);
     auto imageBuffer = context.createImageBuffer(inflatedRect.size(), deviceScaleFactor);
     if (!imageBuffer)
         return;

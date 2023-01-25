@@ -187,12 +187,12 @@ import * as assert from '../assert.js'
                 false,
             ];
             for (let value of list) {
-                assert.throws(() => binding.value = value, WebAssembly.RuntimeError, `Funcref must be an exported wasm function (evaluating 'binding.value = value')`);
+                assert.throws(() => binding.value = value, TypeError, `Funcref must be an exported wasm function`);
                 assert.eq(binding.value, null);
                 assert.eq(instance.exports.getFuncref(), null);
                 instance.exports.setFuncref(null);
                 assert.eq(instance.exports.getFuncref(), null);
-                assert.throws(() => instance.exports.setFuncref(value), WebAssembly.RuntimeError, `Funcref must be an exported wasm function (evaluating 'func(...args)')`);
+                assert.throws(() => instance.exports.setFuncref(value), TypeError, `Funcref must be an exported wasm function`);
                 assert.eq(instance.exports.getFuncref(), null);
             }
             binding.value = instance.exports.setFuncref;

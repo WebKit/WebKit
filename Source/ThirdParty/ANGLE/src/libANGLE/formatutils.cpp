@@ -1846,17 +1846,19 @@ bool InternalFormat::computeCompressedImageSize(const Extents &size, GLuint *res
 
     CheckedNumeric<GLuint> checkedBlockWidth(compressedBlockWidth);
     CheckedNumeric<GLuint> checkedBlockHeight(compressedBlockHeight);
+    CheckedNumeric<GLuint> checkedBlockDepth(compressedBlockDepth);
     GLuint minBlockWidth, minBlockHeight;
     std::tie(minBlockWidth, minBlockHeight) = getCompressedImageMinBlocks();
 
     ASSERT(compressed);
     auto numBlocksWide = (checkedWidth + checkedBlockWidth - 1u) / checkedBlockWidth;
     auto numBlocksHigh = (checkedHeight + checkedBlockHeight - 1u) / checkedBlockHeight;
+    auto numBlocksDeep = (checkedDepth + checkedBlockDepth - 1u) / checkedBlockDepth;
     if (numBlocksWide.IsValid() && numBlocksWide.ValueOrDie() < minBlockWidth)
         numBlocksWide = minBlockWidth;
     if (numBlocksHigh.IsValid() && numBlocksHigh.ValueOrDie() < minBlockHeight)
         numBlocksHigh = minBlockHeight;
-    auto bytes = numBlocksWide * numBlocksHigh * pixelBytes * checkedDepth;
+    auto bytes = numBlocksWide * numBlocksHigh * numBlocksDeep * pixelBytes;
     return CheckedMathResult(bytes, resultOut);
 }
 
@@ -1870,22 +1872,10 @@ std::pair<GLuint, GLuint> InternalFormat::getCompressedImageMinBlocks() const
     // ANGLE's texture tables are written in terms of blocks. The 4BPP formats use 4x4 blocks, and
     // the 2BPP formats, 8x4 blocks. Therefore, both kinds of formats require a minimum of 2x2
     // blocks.
-    switch (internalFormat)
+    if (IsPVRTC1Format(internalFormat))
     {
-        case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
-        case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
-        case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
-        case GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
-        case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
-        case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT:
-            minBlockWidth  = 2;
-            minBlockHeight = 2;
-            break;
-
-        default:
-            break;
+        minBlockWidth  = 2;
+        minBlockHeight = 2;
     }
 
     return std::make_pair(minBlockWidth, minBlockHeight);

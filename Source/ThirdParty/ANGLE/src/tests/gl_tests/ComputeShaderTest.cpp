@@ -3924,6 +3924,95 @@ void main(void) {
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::blue);
 }
 
+// Test color texture sample from fragment shader and then read access from compute
+TEST_P(ComputeShaderTest, DrawReadDrawDispatch)
+{
+    const char kVS[] = R"(#version 310 es
+layout (location = 0) in vec3 pos;
+void main(void) {
+    gl_Position = vec4(pos, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+precision highp float;
+uniform sampler2D tex;
+out vec4 fragColor;
+void main(void) {
+        fragColor = texture(tex,vec2(0,0));
+})";
+
+    // Create color texture
+    GLTexture colorTexture;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, 1, 1);
+    const GLColor textureData = GLColor::green;
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, textureData.data());
+
+    // Render to surface with texture sample
+    ANGLE_GL_PROGRAM(graphicsProgram, kVS, kFS);
+    glUseProgram(graphicsProgram);
+    const auto &quadVertices = GetQuadVertices();
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, quadVertices.size() * sizeof(Vector3), quadVertices.data(),
+                 GL_STATIC_DRAW);
+    GLint positionAttributeLocation = 0;
+    glBindAttribLocation(graphicsProgram, positionAttributeLocation, "pos");
+    glVertexAttribPointer(positionAttributeLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(positionAttributeLocation);
+
+    GLint uTextureLocation = glGetUniformLocation(graphicsProgram, "tex");
+    ASSERT_NE(-1, uTextureLocation);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, colorTexture);
+    glUniform1i(uTextureLocation, 0);
+    // Sample the color texture from fragment shader and verify. This flushes out commands which
+    // ensures there will be no layout transition in next renderPass.
+    glDisable(GL_DEPTH_TEST);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, textureData);
+
+    // Sample the texture from fragment shader. No image layout transition expected here.
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Sample it from compute shader while the renderPass also sample from the same texture
+    constexpr char kCS[] = R"(#version 310 es
+layout(local_size_x=1, local_size_y=1, local_size_z=1) in;
+layout(std140, binding=0) buffer buf {
+    vec4 outData;
+};
+uniform sampler2D u_tex2D;
+void main()
+{
+    outData = texture(u_tex2D, vec2(gl_LocalInvocationID.xy));
+})";
+    ANGLE_GL_COMPUTE_PROGRAM(computeProgram, kCS);
+    glUseProgram(computeProgram);
+    uTextureLocation = glGetUniformLocation(computeProgram, "u_tex2D");
+    ASSERT_NE(-1, uTextureLocation);
+    glUniform1i(uTextureLocation, 0);
+    GLBuffer ssbo;
+    const std::vector<GLfloat> initialData(4, 0.0f);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, initialData.size() * sizeof(GLfloat), initialData.data(),
+                 GL_STATIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+    const GLfloat *ptr      = reinterpret_cast<const GLfloat *>(glMapBufferRange(
+        GL_SHADER_STORAGE_BUFFER, 0, initialData.size() * sizeof(GLfloat), GL_MAP_READ_BIT));
+    angle::Vector4 expected = textureData.toNormalizedVector();
+    EXPECT_NEAR(expected[0], ptr[0], 0.001);
+    EXPECT_NEAR(expected[1], ptr[1], 0.001);
+    EXPECT_NEAR(expected[2], ptr[2], 0.001);
+    EXPECT_NEAR(expected[3], ptr[3], 0.001);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that invalid memory barrier will produce an error.
 TEST_P(ComputeShaderTest, InvalidMemoryBarrier)
 {

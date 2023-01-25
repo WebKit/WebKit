@@ -88,7 +88,7 @@ class ShareGroup final : angle::NonCopyable
 
     rx::ShareGroupImpl *getImplementation() const { return mImplementation; }
 
-    rx::Serial generateFramebufferSerial() { return mFramebufferSerialFactory.generate(); }
+    rx::UniqueSerial generateFramebufferSerial() { return mFramebufferSerialFactory.generate(); }
 
     angle::FrameCaptureShared *getFrameCaptureShared() { return mFrameCaptureShared.get(); }
 
@@ -106,7 +106,7 @@ class ShareGroup final : angle::NonCopyable
   private:
     size_t mRefCount;
     rx::ShareGroupImpl *mImplementation;
-    rx::SerialFactory mFramebufferSerialFactory;
+    rx::UniqueSerialFactory mFramebufferSerialFactory;
 
     // Note: we use a raw pointer here so we can exclude frame capture sources from the build.
     std::unique_ptr<angle::FrameCaptureShared> mFrameCaptureShared;
@@ -312,6 +312,8 @@ class Display final : public LabeledObject,
 
     egl::Error handleGPUSwitch();
     egl::Error forceGPUSwitch(EGLint gpuIDHigh, EGLint gpuIDLow);
+
+    egl::Error waitUntilWorkScheduled();
 
     std::mutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
     std::mutex &getProgramCacheMutex() { return mProgramCacheMutex; }

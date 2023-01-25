@@ -1367,12 +1367,25 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
 
         switch (macFamily)
         {
+#        if TARGET_OS_MACCATALYST
+            ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
             case 1:
                 family = ANGLE_MTL_GPU_FAMILY_MAC1;
                 break;
             case 2:
                 family = ANGLE_MTL_GPU_FAMILY_MAC2;
                 break;
+                ANGLE_APPLE_ALLOW_DEPRECATED_END
+#        else   // TARGET_OS_MACCATALYST
+            ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
+            case 1:
+                family = MTLGPUFamilyMac1;
+                break;
+                ANGLE_APPLE_ALLOW_DEPRECATED_END
+            case 2:
+                family = MTLGPUFamilyMac2;
+                break;
+#        endif  // TARGET_OS_MACCATALYST
             default:
                 return false;
         }
@@ -1386,8 +1399,9 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
 #    if TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATED
     UNREACHABLE();
     return false;
-#    else // !(TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATEZD)
+#    else
 
+    ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
     MTLFeatureSet featureSet;
     switch (macFamily)
     {
@@ -1403,7 +1417,8 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
             return false;
     }
     return [device supportsFeatureSet:featureSet];
-#    endif  // TARGET_OS_MACCATALYST || ANGLE_MTL_FEATURE_SET_DEPRECATED
+    ANGLE_APPLE_ALLOW_DEPRECATED_END
+#    endif  // TARGET_OS_MACCATALYST
 #else       // #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 
     return false;
@@ -1482,12 +1497,9 @@ NSUInteger ComputeTotalSizeUsedForMTLRenderPipelineDescriptor(
     const mtl::ContextDevice &device)
 {
     NSUInteger currentRenderTargetSize = 0;
-#if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
-    (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
-    bool isMsaa = descriptor.rasterSampleCount > 1;
-#else
+    ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
     bool isMsaa = descriptor.sampleCount > 1;
-#endif
+    ANGLE_APPLE_ALLOW_DEPRECATED_END
     for (NSUInteger i = 0; i < GetMaxNumberOfRenderTargetsForDevice(device); i++)
     {
         MTLRenderPipelineColorAttachmentDescriptor *color = descriptor.colorAttachments[i];

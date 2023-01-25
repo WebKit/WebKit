@@ -96,8 +96,11 @@ class Rewriter : public TIntermRebuild
         if (arg->getAsAggregate())
         {
             const TFunction *func = arg->getAsAggregate()->getFunction();
+            // These two builtins already generate references, and the
+            // ANGLE_inout and ANGLE_out overloads in ProgramPrelude are both
+            // unnecessary and incompatible.
             if (func && func->symbolType() == SymbolType::AngleInternal &&
-                func->name() == "swizzle_ref")
+                (func->name() == "swizzle_ref" || func->name() == "elem_ref"))
             {
                 return true;
             }

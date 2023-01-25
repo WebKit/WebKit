@@ -207,6 +207,19 @@ class TCompiler : public TShHandleBase
     // it's expected to no longer transform.
     void enableValidateNoMoreTransformations();
 
+    bool areClipDistanceOrCullDistanceRedeclared() const
+    {
+        return mClipDistanceRedeclared || mCullDistanceRedeclared;
+    }
+
+    uint8_t getClipDistanceArraySize() const { return mClipDistanceSize; }
+
+    uint8_t getCullDistanceArraySize() const { return mCullDistanceSize; }
+
+    bool isClipDistanceRedeclared() const { return mClipDistanceRedeclared; }
+
+    bool hasClipDistance() const { return mClipDistanceUsed; }
+
   protected:
     // Add emulated functions to the built-in function emulator.
     virtual void initBuiltInFunctionEmulator(BuiltInFunctionEmulator *emu,
@@ -296,6 +309,8 @@ class TCompiler : public TShHandleBase
                              const TParseContext &parseContext,
                              const ShCompileOptions &compileOptions);
 
+    bool resizeClipAndCullDistanceBuiltins(TIntermBlock *root);
+
     bool postParseChecks(const TParseContext &parseContext);
 
     sh::GLenum mShaderType;
@@ -338,6 +353,13 @@ class TCompiler : public TShHandleBase
 
     // GL_OVR_multiview num_views.
     int mNumViews;
+
+    // Track gl_ClipDistance / gl_CullDistance usage.
+    uint8_t mClipDistanceSize;
+    uint8_t mCullDistanceSize;
+    bool mClipDistanceRedeclared;
+    bool mCullDistanceRedeclared;
+    bool mClipDistanceUsed;
 
     // geometry shader parameters.
     int mGeometryShaderMaxVertices;

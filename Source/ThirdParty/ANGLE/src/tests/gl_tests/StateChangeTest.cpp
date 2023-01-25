@@ -9798,6 +9798,109 @@ void main()
     ASSERT_GL_NO_ERROR();
 }
 
+// Test for a bug with the VK_EXT_graphics_pipeline_library implementation in a scenario such as
+// this:
+//
+// - Use blend function A, draw  <-- a new pipeline is created
+// - Use blend function B, draw  <-- a new pipeline is created,
+//                                   new transition from A to B
+// - Switch to program 2
+// - Use blend function A, draw  <-- a new pipeline is created
+// - Switch to program 1
+// -                       draw  <-- the first pipeline is retrieved from cache,
+//                                   new transition from B to A
+// - Use blend function B, draw  <-- the second pipeline is retrieved from transition
+// - Switch to program 3
+// -                       draw  <-- a new pipeline is created
+//
+// With graphics pipeline library, the fragment output partial pipeline changes as follows:
+//
+// - Use blend function A, draw  <-- a new fragment output pipeline is created
+// - Use blend function B, draw  <-- a new fragment output pipeline is created,
+//                                   new transition from A to B
+// - Switch to program 2
+// - Use blend function A, draw  <-- the first fragment output pipeline is retrieved from cache
+// - Switch to program 1
+// -                       draw  <-- the first monolithic pipeline is retrieved from cache
+// - Use blend function B, draw  <-- the second monolithic pipeline is retrieved from transition
+// - Switch to program 3
+// -                       draw  <-- the second fragment output pipeline is retrieved from cache
+//
+// The bug was that the dirty blend state was discarded when the monolithic pipeline was retrieved
+// through the transition graph, and the last draw call used a stale fragment output pipeline (from
+// the last draw call with function A)
+//
+TEST_P(StateChangeTestES3, FragmentOutputStateChangeAfterCachedPipelineTransition)
+{
+    // Program 1
+    ANGLE_GL_PROGRAM(drawColor, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    // Program 2
+    ANGLE_GL_PROGRAM(drawColor2, essl3_shaders::vs::Simple(), R"(#version 300 es
+precision mediump float;
+out vec4 colorOut;
+uniform vec4 colorIn;
+void main()
+{
+    colorOut = colorIn;
+}
+)");
+    // Program 3
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+
+    glUseProgram(drawColor2);
+    GLint color2UniformLocation = glGetUniformLocation(drawColor2, "colorIn");
+    ASSERT_NE(color2UniformLocation, -1);
+
+    glUseProgram(drawColor);
+    GLint colorUniformLocation =
+        glGetUniformLocation(drawColor, angle::essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Framebuffer color is now (0, 0, 0, 0)
+
+    glUniform4f(colorUniformLocation, 0, 0, 1, 0.25f);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    // Framebuffer color is now (0, 0, 0.25, 0.25*0.25)
+
+    glBlendFunc(GL_ONE, GL_ONE);
+    glUniform4f(colorUniformLocation, 0, 0, 0.25, 0.5 - 0.0625);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    // Framebuffer color is now (0, 0, 0.5, 0.5)
+
+    // Draw with a different program, but same fragment output state.  The fragment output pipeline
+    // is retrieved from cache.
+    glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+    glUseProgram(drawColor2);
+    glUniform4f(color2UniformLocation, 1, 0, 0, 0.5);
+    drawQuad(drawColor2, essl1_shaders::PositionAttrib(), 0.5f);
+    // Framebuffer color is now (0.5, 0, 0.25, 0.5)
+
+    // Draw with the original program and the first fragment output state, so it's retrieved from
+    // cache.
+    glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
+    glUseProgram(drawColor);
+    glUniform4f(colorUniformLocation, 0, 0, 0.5, 0.25);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    // Framebuffer color is now (0.25, 0, 0.25, 0.25+0.25*0.25)
+
+    // Change to the second fragment output state, so it's retrieved through the transition graph.
+    glBlendFunc(GL_ONE, GL_ONE);
+    glUniform4f(colorUniformLocation, 0, 0, 0.5, 0.25 - 0.25 * 0.25);
+    drawQuad(drawColor, essl1_shaders::PositionAttrib(), 0.5f);
+    // Framebuffer color is now (0.25, 0, 0.75, 0.5)
+
+    // Draw with the third program, not changing the fragment output state.
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    // Framebuffer color is now (0.25, 1, 0.75, 1)
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(64, 255, 192, 255), 1);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Tests a specific case for multiview and queries.
 TEST_P(SimpleStateChangeTestES3, MultiviewAndQueries)
 {

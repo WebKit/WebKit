@@ -344,14 +344,14 @@ public:
     void addSlowRepaintObject(RenderElement&);
     void removeSlowRepaintObject(RenderElement&);
     bool hasSlowRepaintObject(const RenderElement& renderer) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(renderer); }
-    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && !m_slowRepaintObjects->computesEmpty(); }
+    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && !m_slowRepaintObjects->isEmptyIgnoringNullReferences(); }
     WeakHashSet<RenderElement>* slowRepaintObjects() const { return m_slowRepaintObjects.get(); }
 
     // Includes fixed- and sticky-position objects.
     void addViewportConstrainedObject(RenderLayerModelObject&);
     void removeViewportConstrainedObject(RenderLayerModelObject&);
     const WeakHashSet<RenderLayerModelObject>* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
-    bool hasViewportConstrainedObjects() const { return m_viewportConstrainedObjects && !m_viewportConstrainedObjects->computesEmpty(); }
+    bool hasViewportConstrainedObjects() const { return m_viewportConstrainedObjects && !m_viewportConstrainedObjects->isEmptyIgnoringNullReferences(); }
     
     float frameScaleFactor() const;
 
@@ -829,8 +829,8 @@ private:
     bool canShowNonOverlayScrollbars() const final;
 
     bool styleHidesScrollbarWithOrientation(ScrollbarOrientation) const;
-    bool horizontalScrollbarHiddenByStyle() const final;
-    bool verticalScrollbarHiddenByStyle() const final;
+    NativeScrollbarVisibility horizontalNativeScrollbarVisibility() const final;
+    NativeScrollbarVisibility verticalNativeScrollbarVisibility() const final;
 
     // Override scrollbar notifications to update the AXObject cache.
     void didAddScrollbar(Scrollbar*, ScrollbarOrientation) final;

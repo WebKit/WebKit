@@ -40,13 +40,13 @@ class ContextNoErrorTest : public ANGLETest<>
         glBindTexture(GL_TEXTURE_2D, mNaughtyTexture);
     }
 
-    GLuint mNaughtyTexture;
+    GLuint mNaughtyTexture = 0;
 };
 
 class ContextNoErrorPPOTest31 : public ContextNoErrorTest
 {
   protected:
-    ~ContextNoErrorPPOTest31()
+    void testTearDown() override
     {
         glDeleteProgram(mVertProg);
         glDeleteProgram(mFragProg);
@@ -58,9 +58,9 @@ class ContextNoErrorPPOTest31 : public ContextNoErrorTest
                          const GLfloat positionAttribZ,
                          const GLfloat positionAttribXYScale);
 
-    GLuint mVertProg;
-    GLuint mFragProg;
-    GLuint mPipeline;
+    GLuint mVertProg = 0;
+    GLuint mFragProg = 0;
+    GLuint mPipeline = 0;
 };
 
 void ContextNoErrorPPOTest31::bindProgramPipeline(const GLchar *vertString,

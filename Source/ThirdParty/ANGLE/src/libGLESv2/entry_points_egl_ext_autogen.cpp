@@ -713,6 +713,24 @@ EGLBoolean EGLAPIENTRY EGL_ExportVkImageANGLE(EGLDisplay dpy,
     return returnValue;
 }
 
+// EGL_ANGLE_wait_until_work_scheduled
+void EGLAPIENTRY EGL_WaitUntilWorkScheduledANGLE(EGLDisplay dpy)
+{
+
+    ANGLE_SCOPED_GLOBAL_LOCK();
+    EGL_EVENT(WaitUntilWorkScheduledANGLE, "dpy = 0x%016" PRIxPTR "", (uintptr_t)dpy);
+
+    Thread *thread = egl::GetCurrentThread();
+
+    egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
+
+    ANGLE_EGL_VALIDATE_VOID(thread, WaitUntilWorkScheduledANGLE, GetDisplayIfValid(dpyPacked),
+                            dpyPacked);
+
+    WaitUntilWorkScheduledANGLE(thread, dpyPacked);
+    ANGLE_CAPTURE_EGL(WaitUntilWorkScheduledANGLE, true, thread, dpyPacked);
+}
+
 // EGL_CHROMIUM_sync_control
 EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
                                                  EGLSurface surface,

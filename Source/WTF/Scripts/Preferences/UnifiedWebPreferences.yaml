@@ -617,7 +617,7 @@ AttachmentElementEnabled:
 
 AudioDescriptionsEnabled:
   type: bool
-  status: developer
+  status: preview
   condition: ENABLE(VIDEO)
   humanReadableName: "Audio descriptions for video - Standard"
   humanReadableDescription: "Enable standard audio descriptions for video"
@@ -1467,7 +1467,7 @@ CookieConsentAPIEnabled:
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 CookieEnabled:
   type: bool
-  status: developer
+  status: embedder
   humanReadableName: "Cookies Enabled"
   webKitLegacyBinding: custom
   defaultValue:
@@ -1951,7 +1951,7 @@ DisabledAdaptationsMetaTagEnabled:
 
 DisallowSyncXHRDuringPageDismissalEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Disallow sync XHR during page dismissal"
   humanReadableDescription: "Disallow synchronous XMLHttpRequest during page dismissal"
   defaultValue:
@@ -2104,7 +2104,7 @@ ExposeSpeakersEnabled:
 
 ExtendedAudioDescriptionsEnabled:
   type: bool
-  status: developer
+  status: preview
   condition: ENABLE(VIDEO)
   humanReadableName: "Audio descriptions for video - Extended"
   humanReadableDescription: "Enable extended audio descriptions for video"
@@ -2452,7 +2452,7 @@ GetUserMediaRequiresFocus:
 
 GoogleAntiFlickerOptimizationQuirkEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
   humanReadableDescription: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
   defaultValue:
@@ -2560,7 +2560,7 @@ HighlightAPIEnabled:
 
 HyperlinkAuditingEnabled:
   type: bool
-  status: developer
+  status: embedder
   humanReadableName: "Hyperlink Auditing"
   humanReadableDescription: "Enable Hyperlink Auditing"
   defaultValue:
@@ -3088,7 +3088,7 @@ IsLoggedInAPIEnabled:
 # FIXME: This is not implemented for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 IsNSURLSessionWebSocketEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "NSURLSession WebSocket"
   humanReadableDescription: "Use NSURLSession WebSocket API"
   condition: HAVE(NSURLSESSION_WEBSOCKET)
@@ -3273,7 +3273,7 @@ LayoutViewportHeightExpansionFactor:
 
 LazyIframeLoadingEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Lazy iframe loading"
   humanReadableDescription: "Enable lazy iframe loading support"
   defaultValue:
@@ -3286,7 +3286,7 @@ LazyIframeLoadingEnabled:
 
 LazyImageLoadingEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Lazy image loading"
   humanReadableDescription: "Enable lazy image loading support"
   defaultValue:
@@ -3561,7 +3561,7 @@ ManageCaptureStatusBarInGPUProcessEnabled:
 
 MaskWebGLStringsEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Mask WebGL Strings"
   humanReadableDescription: "Mask WebGL Vendor, Renderer, Shader Language Strings"
   condition: ENABLE(WEBGL) || ENABLE(WEBGL2)
@@ -4135,7 +4135,7 @@ NeedsKeyboardEventDisambiguationQuirks:
 
 NeedsSiteSpecificQuirks:
   type: bool
-  status: developer
+  status: embedder
   humanReadableName: "Needs Site-Specific Quirks"
   humanReadableDescription: "Enable site-specific quirks"
   webKitLegacyPreferenceKey: WebKitUseSiteSpecificSpoofing
@@ -4467,7 +4467,7 @@ PerformanceResourceTimingSensitivePropertiesEnabled:
 
 PermissionsAPIEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Permissions API"
   humanReadableDescription: "Enable Permissions API"
   defaultValue:
@@ -4549,7 +4549,7 @@ PreferFasterClickOverDoubleTap:
 
 PreferPageRenderingUpdatesNear60FPSEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Prefer Page Rendering Updates near 60fps"
   humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than using the display's refresh rate"
   defaultValue:
@@ -4605,7 +4605,7 @@ PrivateClickMeasurementEnabled:
 
 PrivateClickMeasurementFraudPreventionEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Private Click Measurement Fraud Prevention"
   humanReadableDescription: "Enable Private Click Measurement Fraud Prevention"
   defaultValue:
@@ -4618,7 +4618,7 @@ PrivateClickMeasurementFraudPreventionEnabled:
 
 ProcessSwapOnCrossSiteNavigationEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Swap Processes on Cross-Site Navigation"
   humanReadableDescription: "Swap WebContent Processes on cross-site navigations"
   webcoreBinding: none
@@ -5159,7 +5159,7 @@ SerifFontFamily:
 
 ServerTimingEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Server Timing"
   humanReadableDescription: "Enable Server Timing API"
   webcoreBinding: DeprecatedGlobalSettings
@@ -5206,7 +5206,7 @@ ServiceWorkerNavigationPreloadEnabled:
 
 ServiceWorkersEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Service Workers"
   humanReadableDescription: "Enable Service Workers"
   condition: ENABLE(SERVICE_WORKER)
@@ -5235,7 +5235,7 @@ ServiceWorkersUserGestureEnabled:
 
 SharedWorkerEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "SharedWorker"
   humanReadableDescription: "Enabled SharedWorker API"
   defaultValue:
@@ -5572,7 +5572,7 @@ SpeakerSelectionRequiresUserGesture:
 
 SpeechRecognitionEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "SpeechRecognition API"
   humanReadableDescription: "Enable SpeechRecognition of WebSpeech API"
   defaultValue:
@@ -5667,7 +5667,7 @@ StorageAPIEstimateEnabled:
 
 StorageAccessAPIEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Storage Access API"
   humanReadableDescription: "Enable Storage Access API"
   defaultValue:
@@ -5869,7 +5869,7 @@ TextRecognitionInVideosEnabled:
 
 ThirdPartyIframeRedirectBlockingEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Block top-level redirects by third-party iframes"
   humanReadableDescription: "Block top-level redirects by third-party iframes"
   defaultValue:
@@ -5929,7 +5929,7 @@ TrackConfigurationEnabled:
 
 TransformStreamAPIEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "TransformStream API"
   humanReadableDescription: "Enable Transform Stream API"
   defaultValue:
@@ -6195,7 +6195,7 @@ UserActivationAPIEnabled:
 
 UserGesturePromisePropagationEnabled:
   type: bool
-  status: developer
+  status: internal
   humanReadableName: "UserGesture Promise Propagation"
   humanReadableDescription: "UserGesture Promise Propagation"
   defaultValue:
@@ -6356,7 +6356,7 @@ VisualTranslationEnabled:
 
 VisualViewportAPIEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Visual Viewport API"
   humanReadableDescription: "Enable Visual Viewport API"
   defaultValue:
@@ -6433,7 +6433,7 @@ WebAPIsInShadowRealmEnabled:
 
 WebAnimationsCompositeOperationsEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Web Animations composite operations"
   humanReadableDescription: "Support for the CompositeOperation enum and properties consuming it"
   defaultValue:
@@ -6472,7 +6472,7 @@ WebAnimationsCustomFrameRateEnabled:
 
 WebAnimationsIterationCompositeEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Web Animations iteration composite"
   humanReadableDescription: "Support for the KeyframeEffect.iterationComposite property"
   defaultValue:
@@ -6485,7 +6485,7 @@ WebAnimationsIterationCompositeEnabled:
 
 WebAnimationsMutableTimelinesEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Web Animations mutable timelines"
   humanReadableDescription: "Support for setting the timeline property of an Animation object"
   defaultValue:
@@ -6699,7 +6699,7 @@ WebInspectorEngineeringSettingsAllowed:
 
 WebLocksAPIEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Web Locks API"
   humanReadableDescription: "Web Locks API"
   defaultValue:
@@ -6832,7 +6832,7 @@ WebRTCH264SimulcastEnabled:
 
 WebRTCH265CodecEnabled:
   type: bool
-  status: internal
+  status: developer
   condition: ENABLE(WEB_RTC)
   humanReadableName: "WebRTC H265 codec"
   humanReadableDescription: "Enable WebRTC H265 codec"
@@ -6955,7 +6955,7 @@ WebRTCVP9Profile0CodecEnabled:
 
 WebRTCVP9Profile2CodecEnabled:
   type: bool
-  status: internal
+  status: developer
   humanReadableName: "WebRTC VP9 profile 2 codec"
   humanReadableDescription: "Enable WebRTC VP9 profile 2 codec"
   condition: ENABLE(WEB_RTC)
@@ -7008,7 +7008,7 @@ WebShareEnabled:
 
 WebShareFileAPIEnabled:
   type: bool
-  status: developer
+  status: stable
   humanReadableName: "Web Share API Level 2"
   humanReadableDescription: "Enable level 2 of Web Share API"
   defaultValue:

@@ -49,7 +49,7 @@ bool TextFieldMac::shouldPaintCustomTextField(const ControlStyle& style)
     return userPrefersContrast() && !style.states.contains(ControlStyle::State::DarkAppearance);
 }
 
-void TextFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void TextFieldMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     const auto& states = style.states;
     auto enabled = states.contains(ControlStyle::State::Enabled) && !states.contains(ControlStyle::State::ReadOnly);
@@ -57,7 +57,7 @@ void TextFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float d
     LocalCurrentGraphicsContext localContext(context);
     GraphicsContextStateSaver stateSaver(context);
 
-    FloatRect paintRect(rect);
+    FloatRect paintRect(borderRect.rect());
 
     if (shouldPaintCustomTextField(style)) {
         constexpr int strokeThickness = 1;
@@ -78,7 +78,7 @@ void TextFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float d
             paintRect.move(0, -1 / transform.yScale());
         }
         
-        auto *view = m_controlFactory.drawingView(rect, style);
+        auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
         
         [m_textFieldCell.get() setEnabled:enabled];
         [m_textFieldCell.get() drawWithFrame:NSRect(paintRect) inView:view];
@@ -86,7 +86,7 @@ void TextFieldMac::draw(GraphicsContext& context, const FloatRect& rect, float d
     }
 
 #if ENABLE(DATALIST_ELEMENT)
-    drawListButton(context, rect, deviceScaleFactor, style);
+    drawListButton(context, borderRect.rect(), deviceScaleFactor, style);
 #endif
 }
 

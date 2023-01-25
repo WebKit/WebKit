@@ -60,7 +60,8 @@ set(ANGLE_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/KHR"
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/common/third_party/base"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/common/base"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/common/third_party/xxhash"
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/zlib/google"
     "${CMAKE_CURRENT_BINARY_DIR}/include"
 )
@@ -72,6 +73,7 @@ set(ANGLE_DEFINITIONS
 
 set(ANGLE_SOURCES
     ${libangle_common_sources}
+    ${libangle_common_shader_state_sources}
     ${angle_preprocessor_sources}
     ${angle_translator_glsl_base_sources}
     ${angle_translator_essl_sources}

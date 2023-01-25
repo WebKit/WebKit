@@ -178,6 +178,7 @@ struct PerfMonitorTriplet
     FN(pipelineCreationCacheMisses)                \
     FN(pipelineCreationTotalCacheHitsDurationNs)   \
     FN(pipelineCreationTotalCacheMissesDurationNs) \
+    FN(monolithicPipelineCreation)                 \
     FN(descriptorSetAllocations)                   \
     FN(descriptorSetCacheTotalSize)                \
     FN(descriptorSetCacheKeySizeBytes)             \

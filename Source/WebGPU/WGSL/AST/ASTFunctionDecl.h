@@ -35,14 +35,21 @@
 
 namespace WGSL::AST {
 
+enum class ParameterRole {
+    UserDefined,
+    StageIn,
+    GlobalVariable,
+};
+
 class Parameter final : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
     using List = UniqueRefVector<Parameter>;
 
-    Parameter(SourceSpan span, const String& name, Ref<TypeDecl>&& type, Attribute::List&& attributes)
+    Parameter(SourceSpan span, const String& name, Ref<TypeDecl>&& type, Attribute::List&& attributes, ParameterRole role)
         : Node(span)
+        , m_role(role)
         , m_name(name)
         , m_type(WTFMove(type))
         , m_attributes(WTFMove(attributes))
@@ -53,8 +60,10 @@ public:
     const String& name() const { return m_name; }
     TypeDecl& type() { return m_type.get(); }
     Attribute::List& attributes() { return m_attributes; }
+    ParameterRole role() { return m_role; }
 
 private:
+    ParameterRole m_role;
     String m_name;
     Ref<TypeDecl> m_type;
     Attribute::List m_attributes;

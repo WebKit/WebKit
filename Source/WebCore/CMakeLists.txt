@@ -2302,12 +2302,15 @@ set(WebCoreTestSupport_INTERFACE_INCLUDE_DIRECTORIES
 )
 
 WEBKIT_FRAMEWORK_DECLARE(WebCore)
-WEBKIT_FRAMEWORK_DECLARE(WebCoreTestSupport)
+WEBKIT_LIBRARY_DECLARE(WebCoreTestSupport)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+
+list(APPEND WebCoreTestSupport_LIBRARIES ${WebCore_LIBRARIES})
+list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES ${WebCore_PRIVATE_LIBRARIES})
+list(APPEND WebCoreTestSupport_DEPENDENCIES WebCore)
 
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/platform/ColorData)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/ColorData.cpp)
-
 
 # Generate DOMJITAbstractHeapRepository.h
 add_custom_command(
@@ -2642,6 +2645,7 @@ WEBKIT_COPY_FILES(WebCore_CopyPrivateHeaders
     FLATTENED
 )
 list(APPEND WebCore_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
+list(APPEND WebCoreTestSupport_INTERFACE_DEPENDENCIES WebCore_CopyPrivateHeaders)
 # WebCore_CopyPrivateHeaders needs to have a direct or indirect
 # dependency of WebCore target for CMake Visual Studio generator to
 # eliminate duplicated custom commands. Otherwise, CSSPropertyNames.h
@@ -2677,15 +2681,7 @@ list(APPEND WebCoreTestSupport_INCLUDE_DIRECTORIES ${WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCoreTestSupport_PRIVATE_INCLUDE_DIRECTORIES ${WebCore_PRIVATE_INCLUDE_DIRECTORIES})
 list(APPEND WebCoreTestSupport_SYSTEM_INCLUDE_DIRECTORIES ${WebCore_SYSTEM_INCLUDE_DIRECTORIES})
 
-if (WebCore_LIBRARY_TYPE STREQUAL SHARED)
-    list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES WebCore)
-else ()
-    list(APPEND WebCoreTestSupport_LIBRARIES ${WebCore_LIBRARIES})
-    list(APPEND WebCoreTestSupport_PRIVATE_LIBRARIES ${WebCore_PRIVATE_LIBRARIES})
-    list(APPEND WebCoreTestSupport_DEPENDENCIES WebCore)
-endif ()
-
-WEBKIT_FRAMEWORK(WebCoreTestSupport)
+WEBKIT_LIBRARY(WebCoreTestSupport)
 
 if (${WebCore_LIBRARY_TYPE} MATCHES "SHARED")
     set_target_properties(WebCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})

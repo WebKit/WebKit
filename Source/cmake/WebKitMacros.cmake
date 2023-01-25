@@ -99,6 +99,16 @@ macro(WEBKIT_FRAMEWORK_DECLARE _target)
     add_library(${_target} ${${_target}_LIBRARY_TYPE} "${CMAKE_BINARY_DIR}/cmakeconfig.h")
 endmacro()
 
+macro(WEBKIT_LIBRARY_DECLARE _target)
+    # add_library() without any source files triggers CMake warning
+    # Addition of dummy "source" file does not result in any changes in generated build.ninja file
+    add_library(${_target} ${${_target}_LIBRARY_TYPE} "${CMAKE_BINARY_DIR}/cmakeconfig.h")
+
+    if (${_target}_LIBRARY_TYPE STREQUAL "OBJECT")
+        list(APPEND ${_target}_INTERFACE_LIBRARIES $<TARGET_OBJECTS:${_target}>)
+    endif ()
+endmacro()
+
 macro(WEBKIT_EXECUTABLE_DECLARE _target)
     add_executable(${_target} "${CMAKE_BINARY_DIR}/cmakeconfig.h")
 endmacro()
@@ -182,7 +192,7 @@ macro(_WEBKIT_TARGET_ANALYZE _target)
     endif ()
 endmacro()
 
-function(_WEBKIT_LINK_FRAMEWORK_INTO target_name framework _public_frameworks_var _private_frameworks_var)
+function(_WEBKIT_TARGET_LINK_FRAMEWORK_INTO target_name framework _public_frameworks_var _private_frameworks_var)
     set_property(GLOBAL PROPERTY ${framework}_LINKED_INTO ${target_name})
 
     get_property(_framework_public_frameworks GLOBAL PROPERTY ${framework}_FRAMEWORKS)
@@ -193,7 +203,7 @@ function(_WEBKIT_LINK_FRAMEWORK_INTO target_name framework _public_frameworks_va
     get_property(_framework_private_frameworks GLOBAL PROPERTY ${framework}_PRIVATE_FRAMEWORKS)
     foreach (dependency IN LISTS _framework_private_frameworks)
         set(${_private_frameworks_var} "${${_private_frameworks_var}};${dependency}" PARENT_SCOPE)
-        _WEBKIT_LINK_FRAMEWORK_INTO(${target_name} ${dependency} ${_public_frameworks_var} ${_private_frameworks_var})
+        _WEBKIT_TARGET_LINK_FRAMEWORK_INTO(${target_name} ${dependency} ${_public_frameworks_var} ${_private_frameworks_var})
     endforeach ()
 endfunction()
 
@@ -222,7 +232,7 @@ macro(_WEBKIT_FRAMEWORK_LINK_FRAMEWORK _target_name)
     if (${_target_name}_LIBRARY_TYPE STREQUAL "SHARED")
         set_property(GLOBAL PROPERTY ${_target_name}_LINKED_INTO ${_target_name})
         foreach (framework IN LISTS _private_frameworks)
-            _WEBKIT_LINK_FRAMEWORK_INTO(${_target_name} ${framework} _public_frameworks _private_frameworks)
+            _WEBKIT_TARGET_LINK_FRAMEWORK_INTO(${_target_name} ${framework} _public_frameworks _private_frameworks)
         endforeach ()
     endif ()
 
@@ -266,11 +276,11 @@ macro(_WEBKIT_FRAMEWORK_LINK_FRAMEWORK _target_name)
     set_property(GLOBAL PROPERTY ${_target_name}_PRIVATE_FRAMEWORKS ${_private_frameworks})
 endmacro()
 
-macro(_WEBKIT_EXECUTABLE_LINK_FRAMEWORK _target)
+macro(_WEBKIT_TARGET_LINK_FRAMEWORK _target)
     foreach (framework IN LISTS ${_target}_FRAMEWORKS)
         get_property(_linked_into GLOBAL PROPERTY ${framework}_LINKED_INTO)
 
-        # See if the executable is linking a framework that the specified framework is already linked into
+        # See if the target is linking a framework that the specified framework is already linked into
         if ((NOT _linked_into) OR (${framework} STREQUAL ${_linked_into}) OR (NOT ${_linked_into} IN_LIST ${_target}_FRAMEWORKS))
             list(APPEND ${_target}_PRIVATE_LIBRARIES WebKit::${framework})
 
@@ -281,6 +291,34 @@ macro(_WEBKIT_EXECUTABLE_LINK_FRAMEWORK _target)
             endif ()
         endif ()
     endforeach ()
+endmacro()
+
+macro(_WEBKIT_LIBRARY_LINK_FRAMEWORK _target)
+    # See if the library is SHARED and if so just link frameworks the same as executables
+    if (${_target}_LIBRARY_TYPE STREQUAL SHARED)
+        _WEBKIT_TARGET_LINK_FRAMEWORK(${_target})
+    else ()
+        # Include the framework headers but don't try and link the frameworks
+        foreach (framework IN LISTS ${_target}_FRAMEWORKS)
+            list(APPEND ${_target}_INCLUDE_DIRECTORIES
+                ${${framework}_FRAMEWORK_HEADERS_DIR}
+                ${${framework}_PRIVATE_FRAMEWORK_HEADERS_DIR}
+            )
+        endforeach ()
+    endif ()
+endmacro()
+
+macro(_WEBKIT_TARGET_INTERFACE _target)
+    add_library(${_target}_PostBuild INTERFACE)
+    target_link_libraries(${_target}_PostBuild INTERFACE ${${_target}_INTERFACE_LIBRARIES})
+    target_include_directories(${_target}_PostBuild INTERFACE ${${_target}_INTERFACE_INCLUDE_DIRECTORIES})
+    if (${_target}_INTERFACE_DEPENDENCIES)
+        add_dependencies(${_target}_PostBuild ${${_target}_INTERFACE_DEPENDENCIES})
+    endif ()
+    if (NOT ${_target}_LIBRARY_TYPE STREQUAL "SHARED")
+        target_compile_definitions(${_target}_PostBuild INTERFACE "STATICALLY_LINKED_WITH_${_target}")
+    endif ()
+    add_library(WebKit::${_target} ALIAS ${_target}_PostBuild)
 endmacro()
 
 macro(WEBKIT_FRAMEWORK _target)
@@ -306,20 +344,23 @@ macro(WEBKIT_FRAMEWORK _target)
         install(TARGETS ${_target} FRAMEWORK DESTINATION ${LIB_INSTALL_DIR})
     endif ()
 
-    add_library(${_target}_PostBuild INTERFACE)
-    target_link_libraries(${_target}_PostBuild INTERFACE ${${_target}_INTERFACE_LIBRARIES})
-    target_include_directories(${_target}_PostBuild INTERFACE ${${_target}_INTERFACE_INCLUDE_DIRECTORIES})
-    if (${_target}_INTERFACE_DEPENDENCIES)
-        add_dependencies(${_target}_PostBuild ${${_target}_INTERFACE_DEPENDENCIES})
+    _WEBKIT_TARGET_INTERFACE(${_target})
+endmacro()
+
+macro(WEBKIT_LIBRARY _target)
+    _WEBKIT_LIBRARY_LINK_FRAMEWORK(${_target})
+    _WEBKIT_TARGET(${_target} ${_target})
+    _WEBKIT_TARGET_ANALYZE(${_target})
+
+    if (${_target}_OUTPUT_NAME)
+        set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${${_target}_OUTPUT_NAME})
     endif ()
-    if (NOT ${_target}_LIBRARY_TYPE STREQUAL "SHARED")
-        target_compile_definitions(${_target}_PostBuild INTERFACE "STATICALLY_LINKED_WITH_${_target}")
-    endif ()
-    add_library(WebKit::${_target} ALIAS ${_target}_PostBuild)
+
+    _WEBKIT_TARGET_INTERFACE(${_target})
 endmacro()
 
 macro(WEBKIT_EXECUTABLE _target)
-    _WEBKIT_EXECUTABLE_LINK_FRAMEWORK(${_target})
+    _WEBKIT_TARGET_LINK_FRAMEWORK(${_target})
     _WEBKIT_TARGET(${_target} ${_target})
     _WEBKIT_TARGET_ANALYZE(${_target})
 
@@ -351,7 +392,7 @@ macro(WEBKIT_WRAP_EXECUTABLE _target)
 
     add_library(${_wrapped_target_name} SHARED "${CMAKE_BINARY_DIR}/cmakeconfig.h")
 
-    _WEBKIT_EXECUTABLE_LINK_FRAMEWORK(${_target})
+    _WEBKIT_TARGET_LINK_FRAMEWORK(${_target})
     _WEBKIT_TARGET(${_target} ${_wrapped_target_name})
     _WEBKIT_TARGET_ANALYZE(${_wrapped_target_name})
 

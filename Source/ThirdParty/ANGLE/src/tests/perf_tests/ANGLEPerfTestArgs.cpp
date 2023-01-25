@@ -11,12 +11,18 @@
 #include <string.h>
 #include <sstream>
 
+#include "common/debug.h"
 #include "util/test_utils.h"
 
 namespace angle
 {
+
+constexpr int kDefaultStepsPerTrial    = 0;
+constexpr int kDefaultTrialTimeSeconds = 0;
+constexpr int kDefaultTestTrials       = 3;
+
 bool gCalibration                  = false;
-int gStepsPerTrial                 = 0;
+int gStepsPerTrial                 = kDefaultStepsPerTrial;
 int gMaxStepsPerformed             = 0;
 bool gEnableTrace                  = false;
 const char *gTraceFile             = "ANGLETrace.json";
@@ -26,8 +32,8 @@ bool gSaveScreenshots              = false;
 int gScreenshotFrame               = 1;
 bool gVerboseLogging               = false;
 int gCalibrationTimeSeconds        = 1;
-int gTrialTimeSeconds              = 0;
-int gTestTrials                    = 3;
+int gTrialTimeSeconds              = kDefaultTrialTimeSeconds;
+int gTestTrials                    = kDefaultTestTrials;
 bool gNoFinish                     = false;
 bool gRetraceMode                  = false;
 bool gMinimizeGPUWork              = false;
@@ -40,14 +46,18 @@ bool gVsync                        = false;
 bool gOneFrameOnly                 = false;
 bool gNoWarmup                     = false;
 int gFixedTestTime                 = 0;
+int gFixedTestTimeWithWarmup       = 0;
 bool gTraceInterpreter             = false;
 const char *gPrintExtensionsToFile = nullptr;
 const char *gRequestedExtensions   = nullptr;
 
 // Default to three warmup trials. There's no science to this. More than two was experimentally
 // helpful on a Windows NVIDIA setup when testing with Vulkan and native trace tests.
-int gWarmupTrials = 3;
-int gWarmupSteps  = std::numeric_limits<int>::max();
+constexpr int kDefaultWarmupTrials = 3;
+constexpr int kDefaultWarmupSteps  = 0;
+
+int gWarmupTrials = kDefaultWarmupTrials;
+int gWarmupSteps  = kDefaultWarmupSteps;
 
 namespace
 {
@@ -66,6 +76,8 @@ bool PerfTestArg(int *argc, char **argv, int argIndex)
            ParseIntArg("--steps-per-trial", argc, argv, argIndex, &gStepsPerTrial) ||
            ParseIntArg("--max-steps-performed", argc, argv, argIndex, &gMaxStepsPerformed) ||
            ParseIntArg("--fixed-test-time", argc, argv, argIndex, &gFixedTestTime) ||
+           ParseIntArg("--fixed-test-time-with-warmup", argc, argv, argIndex,
+                       &gFixedTestTimeWithWarmup) ||
            ParseIntArg("--warmup-trials", argc, argv, argIndex, &gWarmupTrials) ||
            ParseIntArg("--warmup-steps", argc, argv, argIndex, &gWarmupSteps) ||
            ParseIntArg("--calibration-time", argc, argv, argIndex, &gCalibrationTimeSeconds) ||
@@ -85,8 +97,8 @@ bool TraceTestArg(int *argc, char **argv, int argIndex)
            ParseFlag("--trace-interpreter", argc, argv, argIndex, &gTraceInterpreter) ||
            ParseFlag("--interpreter", argc, argv, argIndex, &gTraceInterpreter) ||
            ParseIntArg("--screenshot-frame", argc, argv, argIndex, &gScreenshotFrame) ||
-           ParseCStringArg("--render-test-output-dir", argc, argv, argIndex,
-                           &gRenderTestOutputDir) ||
+           ParseCStringArgWithHandling("--render-test-output-dir", argc, argv, argIndex,
+                                       &gRenderTestOutputDir, ArgHandling::Preserve) ||
            ParseCStringArg("--screenshot-dir", argc, argv, argIndex, &gScreenshotDir) ||
            ParseCStringArg("--use-angle", argc, argv, argIndex, &gUseANGLE) ||
            ParseCStringArg("--use-gl", argc, argv, argIndex, &gUseGL) ||
@@ -111,6 +123,9 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
 
     if (gOneFrameOnly)
     {
+        // Ensure defaults were provided for params we're about to set
+        ASSERT(gStepsPerTrial == kDefaultStepsPerTrial && gWarmupTrials == kDefaultWarmupTrials);
+
         gStepsPerTrial = 1;
         gWarmupTrials  = 0;
     }
@@ -122,6 +137,10 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
 
     if (gMaxStepsPerformed > 0)
     {
+        // Ensure defaults were provided for params we're about to set
+        ASSERT(gWarmupTrials == kDefaultWarmupTrials && gTestTrials == kDefaultTestTrials &&
+               gTrialTimeSeconds == kDefaultTrialTimeSeconds);
+
         gWarmupTrials     = 0;
         gTestTrials       = 1;
         gTrialTimeSeconds = 36000;
@@ -129,10 +148,32 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
 
     if (gFixedTestTime != 0)
     {
+        // Ensure defaults were provided for params we're about to set
+        ASSERT(gTrialTimeSeconds == kDefaultTrialTimeSeconds &&
+               gStepsPerTrial == kDefaultStepsPerTrial && gTestTrials == kDefaultTestTrials &&
+               gWarmupTrials == kDefaultWarmupTrials);
+
         gTrialTimeSeconds = gFixedTestTime;
         gStepsPerTrial    = std::numeric_limits<int>::max();
         gTestTrials       = 1;
         gWarmupTrials     = 0;
+    }
+
+    if (gFixedTestTimeWithWarmup != 0)
+    {
+        // Ensure defaults were provided for params we're about to set
+        ASSERT(gTrialTimeSeconds == kDefaultTrialTimeSeconds &&
+               gStepsPerTrial == kDefaultStepsPerTrial && gTestTrials == kDefaultTestTrials &&
+               gWarmupTrials == kDefaultWarmupTrials && gWarmupSteps == kDefaultWarmupSteps);
+
+        // This option is primarily useful for trace replays when you want to iterate once through
+        // the trace to warm caches, then run for a fixed amount of time. It is equivalent to:
+        // --trial-time X --steps-per-trial INF --trials 1 --warmup-trials 1 --warmup-steps <frames>
+        gTrialTimeSeconds = gFixedTestTimeWithWarmup;
+        gStepsPerTrial    = std::numeric_limits<int>::max();
+        gTestTrials       = 1;
+        gWarmupTrials     = 1;
+        gWarmupSteps      = kAllFrames;
     }
 
     if (gNoWarmup)

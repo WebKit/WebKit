@@ -465,24 +465,24 @@ ANGLE_INLINE bool IsETC2EACFormat(const GLenum format)
     }
 }
 
-ANGLE_INLINE bool IsPVRTC1Format(const GLenum format)
+ANGLE_INLINE constexpr bool IsPVRTC1Format(const GLenum format)
 {
-    switch (format)
-    {
-        case GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
-        case GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
-        case GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
-        case GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
-        case GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT:
-        case GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT:
-        case GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT:
-            return true;
-
-        default:
-            return false;
-    }
+    // This function is called for all compressed texture uploads. The expression below generates
+    // fewer instructions than a regular switch statement. Two groups of four consecutive values,
+    // each group starts with two least significant bits unset.
+    return ((format & ~3) == GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG) ||
+           ((format & ~3) == GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT);
 }
+static_assert(IsPVRTC1Format(GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG), "0x8C00");
+static_assert(IsPVRTC1Format(GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG), "0x8C01");
+static_assert(IsPVRTC1Format(GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG), "0x8C02");
+static_assert(IsPVRTC1Format(GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG), "0x8C03");
+static_assert(IsPVRTC1Format(GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT), "0x8A54");
+static_assert(IsPVRTC1Format(GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT), "0x8A55");
+static_assert(IsPVRTC1Format(GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT), "0x8A56");
+static_assert(IsPVRTC1Format(GL_COMPRESSED_SRGB_ALPHA_PVRTC_4BPPV1_EXT), "0x8A57");
+static_assert(!IsPVRTC1Format(0x8BFF) && !IsPVRTC1Format(0x8C04), "invalid");
+static_assert(!IsPVRTC1Format(0x8A53) && !IsPVRTC1Format(0x8A58), "invalid");
 
 ANGLE_INLINE bool IsBGRAFormat(const GLenum internalFormat)
 {

@@ -27,7 +27,7 @@ class FenceNVTest : public ANGLETest<>
 class FenceSyncTest : public ANGLETest<>
 {
   public:
-    static constexpr uint32_t kSize = 1024;
+    static constexpr uint32_t kSize = 256;
 
   protected:
     FenceSyncTest()

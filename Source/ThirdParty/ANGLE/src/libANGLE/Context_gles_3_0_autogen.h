@@ -25,7 +25,7 @@
     void clearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat *value);                     \
     void clearBufferiv(GLenum buffer, GLint drawbuffer, const GLint *value);                       \
     void clearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint *value);                     \
-    GLenum clientWaitSync(GLsync sync, GLbitfield flags, GLuint64 timeout);                        \
+    GLenum clientWaitSync(SyncID syncPacked, GLbitfield flags, GLuint64 timeout);                  \
     void compressedTexImage3D(TextureTarget targetPacked, GLint level, GLenum internalformat,      \
                               GLsizei width, GLsizei height, GLsizei depth, GLint border,          \
                               GLsizei imageSize, const void *data);                                \
@@ -39,7 +39,7 @@
                            GLint zoffset, GLint x, GLint y, GLsizei width, GLsizei height);        \
     void deleteQueries(GLsizei n, const QueryID *idsPacked);                                       \
     void deleteSamplers(GLsizei count, const SamplerID *samplersPacked);                           \
-    void deleteSync(GLsync sync);                                                                  \
+    void deleteSync(SyncID syncPacked);                                                            \
     void deleteTransformFeedbacks(GLsizei n, const TransformFeedbackID *idsPacked);                \
     void deleteVertexArrays(GLsizei n, const VertexArrayID *arraysPacked);                         \
     void drawArraysInstanced(PrimitiveMode modePacked, GLint first, GLsizei count,                 \
@@ -83,7 +83,8 @@
     void getSamplerParameterfv(SamplerID samplerPacked, GLenum pname, GLfloat *params);            \
     void getSamplerParameteriv(SamplerID samplerPacked, GLenum pname, GLint *params);              \
     const GLubyte *getStringi(GLenum name, GLuint index);                                          \
-    void getSynciv(GLsync sync, GLenum pname, GLsizei count, GLsizei *length, GLint *values);      \
+    void getSynciv(SyncID syncPacked, GLenum pname, GLsizei count, GLsizei *length,                \
+                   GLint *values);                                                                 \
     void getTransformFeedbackVarying(ShaderProgramID programPacked, GLuint index, GLsizei bufSize, \
                                      GLsizei *length, GLsizei *size, GLenum *type, GLchar *name);  \
     GLuint getUniformBlockIndex(ShaderProgramID programPacked, const GLchar *uniformBlockName);    \
@@ -99,7 +100,7 @@
                                   GLsizei height);                                                 \
     GLboolean isQuery(QueryID idPacked) const;                                                     \
     GLboolean isSampler(SamplerID samplerPacked) const;                                            \
-    GLboolean isSync(GLsync sync) const;                                                           \
+    GLboolean isSync(SyncID syncPacked) const;                                                     \
     GLboolean isTransformFeedback(TransformFeedbackID idPacked) const;                             \
     GLboolean isVertexArray(VertexArrayID arrayPacked) const;                                      \
     void *mapBufferRange(BufferBinding targetPacked, GLintptr offset, GLsizeiptr length,           \
@@ -159,6 +160,6 @@
     void vertexAttribI4uiv(GLuint index, const GLuint *v);                                         \
     void vertexAttribIPointer(GLuint index, GLint size, VertexAttribType typePacked,               \
                               GLsizei stride, const void *pointer);                                \
-    void waitSync(GLsync sync, GLbitfield flags, GLuint64 timeout);
+    void waitSync(SyncID syncPacked, GLbitfield flags, GLuint64 timeout);
 
 #endif  // ANGLE_CONTEXT_API_3_0_AUTOGEN_H_

@@ -432,6 +432,7 @@ Renderer11::Renderer11(egl::Display *display)
     mRenderer11DeviceCaps.supportsDXGI1_2                        = false;
     mRenderer11DeviceCaps.allowES3OnFL10_0                       = false;
     mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats  = false;
+    mRenderer11DeviceCaps.supportsUAVLoadStoreCommonFormats      = false;
     mRenderer11DeviceCaps.supportsRasterizerOrderViews           = false;
     mRenderer11DeviceCaps.B5G6R5support                          = 0;
     mRenderer11DeviceCaps.B4G4R4A4support                        = 0;
@@ -1095,8 +1096,28 @@ void Renderer11::populateRenderer11DeviceCaps()
         {
             mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats =
                 d3d11Options2.TypedUAVLoadAdditionalFormats;
+            // If ROVs are disabled for testing, also disable typed UAV loads to ensure we test the
+            // bare bones codepath of typeless UAV.
             if (!getFeatures().disableRasterizerOrderViews.enabled)
             {
+                if (mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats)
+                {
+                    // TypedUAVLoadAdditionalFormats is true. Now check if we can both load and
+                    // store the common additional formats. The common formats are supported in a
+                    // set, so we only need to check one:
+                    // https://learn.microsoft.com/en-us/windows/win32/direct3d11/typed-unordered-access-view-loads.
+                    D3D11_FEATURE_DATA_FORMAT_SUPPORT2 d3d11Format2{};
+                    d3d11Format2.InFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+                    result = mDevice->CheckFeatureSupport(D3D11_FEATURE_FORMAT_SUPPORT2,
+                                                          &d3d11Format2, sizeof(d3d11Format2));
+                    if (SUCCEEDED(result))
+                    {
+                        constexpr UINT loadStoreFlags = D3D11_FORMAT_SUPPORT2_UAV_TYPED_LOAD |
+                                                        D3D11_FORMAT_SUPPORT2_UAV_TYPED_STORE;
+                        mRenderer11DeviceCaps.supportsUAVLoadStoreCommonFormats =
+                            (d3d11Format2.OutFormatSupport2 & loadStoreFlags) == loadStoreFlags;
+                    }
+                }
                 mRenderer11DeviceCaps.supportsRasterizerOrderViews = d3d11Options2.ROVsSupported;
             }
         }
@@ -4065,10 +4086,12 @@ angle::Result Renderer11::getVertexSpaceRequired(const gl::Context *context,
 void Renderer11::generateCaps(gl::Caps *outCaps,
                               gl::TextureCapsMap *outTextureCaps,
                               gl::Extensions *outExtensions,
-                              gl::Limitations *outLimitations) const
+                              gl::Limitations *outLimitations,
+                              ShPixelLocalStorageOptions *outPLSOptions) const
 {
     d3d11_gl::GenerateCaps(mDevice, mDeviceContext, mRenderer11DeviceCaps, getFeatures(),
-                           mDescription, outCaps, outTextureCaps, outExtensions, outLimitations);
+                           mDescription, outCaps, outTextureCaps, outExtensions, outLimitations,
+                           outPLSOptions);
 }
 
 void Renderer11::initializeFeatures(angle::FeaturesD3D *features) const

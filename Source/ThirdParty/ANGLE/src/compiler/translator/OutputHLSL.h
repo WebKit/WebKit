@@ -52,6 +52,8 @@ class OutputHLSL : public TIntermTraverser
                PerformanceDiagnostics *perfDiagnostics,
                const std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap,
                const std::vector<InterfaceBlock> &shaderStorageBlocks,
+               uint8_t clipDistanceSize,
+               uint8_t cullDistanceSize,
                bool isEarlyFragmentTestsSpecified);
 
     ~OutputHLSL() override;
@@ -194,8 +196,6 @@ class OutputHLSL : public TIntermTraverser
     AtomicCounterFunctionHLSL *mAtomicCounterFunctionHLSL;
 
     // Parameters determining what goes in the header output
-    bool mUsesClipDistance;
-    bool mUsesCullDistance;
     bool mUsesFragColor;
     bool mUsesFragData;
     bool mUsesDepthRange;
@@ -283,6 +283,8 @@ class OutputHLSL : public TIntermTraverser
     bool needStructMapping(TIntermTyped *node);
 
     ShaderStorageBlockOutputHLSL *mSSBOOutputHLSL;
+    uint8_t mClipDistanceSize;
+    uint8_t mCullDistanceSize;
     bool mIsEarlyFragmentTestsSpecified;
     bool mNeedStructMapping;
 };

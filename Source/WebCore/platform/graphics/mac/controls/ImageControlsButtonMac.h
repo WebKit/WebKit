@@ -35,14 +35,14 @@ namespace WebCore {
 
 class ImageControlsButtonPart;
 
-class ImageControlsButtonMac : public ControlMac {
+class ImageControlsButtonMac final : public ControlMac {
 public:
     ImageControlsButtonMac(ImageControlsButtonPart&, ControlFactoryMac&, NSServicesRolloverButtonCell *);
 
     static IntSize servicesRolloverButtonCellSize();
 
 private:
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
     RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButtonCell;
 };

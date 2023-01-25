@@ -156,27 +156,34 @@ New Tokens
     Accepted as array elements in the <loadops> parameter of
     BeginPixelLocalStorageANGLE():
 
-        CLEAR_ANGLE                                                       0x96E4
-        DISABLE_ANGLE                                                     0x96E5
+        LOAD_OP_ZERO_ANGLE                                                0x96E4
+        LOAD_OP_CLEAR_ANGLE                                               0x96E5
+        LOAD_OP_LOAD_ANGLE                                                0x96E6
+        LOAD_OP_DISABLE_ANGLE                                             0x96E7
+
+    Accepted as array elements in the <storeops> parameter of
+    EndPixelLocalStorageANGLE():
+
+        STORE_OP_STORE_ANGLE                                              0x96E8
 
     Accepted by the <pname> parameter of
     GetFramebufferPixelLocalStorageParameterivANGLE():
 
-        PIXEL_LOCAL_FORMAT_ANGLE                                          0x96E6
-        PIXEL_LOCAL_TEXTURE_NAME_ANGLE                                    0x96E7
-        PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE                                   0x96E8
-        PIXEL_LOCAL_TEXTURE_LAYER_ANGLE                                   0x96E9
+        PIXEL_LOCAL_FORMAT_ANGLE                                          0x96E9
+        PIXEL_LOCAL_TEXTURE_NAME_ANGLE                                    0x96EA
+        PIXEL_LOCAL_TEXTURE_LEVEL_ANGLE                                   0x96EB
+        PIXEL_LOCAL_TEXTURE_LAYER_ANGLE                                   0x96EC
 
     Accepted by the <pname> parameter of
     GetFramebufferPixelLocalStorageParameterfvANGLE():
 
-        PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE                               0x96EA
+        PIXEL_LOCAL_CLEAR_VALUE_FLOAT_ANGLE                               0x96ED
 
     Accepted by the <pname> parameter of
     GetFramebufferPixelLocalStorageParameterivANGLE():
 
-        PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE                                 0x96EB
-        PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE                        0x96EC
+        PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE                                 0x96EE
+        PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE                        0x96EF
 
 New GLSL Opaque Types
 
@@ -224,37 +231,40 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
         Load Operation    Description
         -----------------------------------------------------------------------
-        ZERO              Clear all components of the pixel local storage
-                          plane to 0. This is recommended over CLEAR_ANGLE, as
-                          it is more likely to be performant on all
-                          implementations.
+        LOAD_OP_ZERO_ANGLE       Clear all components of the pixel local storage
+                                 plane to 0. This is recommended over
+                                 LOAD_OP_CLEAR_ANGLE, as it is more likely to be
+                                 performant on all implementations.
 
-        CLEAR_ANGLE       Clear the pixel local storage plane to its
-                          framebuffer's ith clear value of corresponding type.
-                          Pixel local clear values are specified with
-                          FramebufferPixelLocalClearValue{f,i,ui}vANGLE(), as
-                          described in section 4.4.2.Y "Pixel Local Clear
-                          State". If the magnitude of any component of the clear
-                          value is too large to be represented in the plane's
-                          internalformat, it is clamped.
+        LOAD_OP_CLEAR_ANGLE      Clear the pixel local storage plane to its
+                                 framebuffer's ith clear value of corresponding
+                                 type. Pixel local clear values are specified
+                                 with
+                                 FramebufferPixelLocalClearValue{f,i,ui}vANGLE(),
+                                 as described in section 4.4.2.Y "Pixel Local
+                                 Clear State". If the magnitude of any component
+                                 of the clear value is too large to be
+                                 represented in the plane's internalformat, it
+                                 is clamped.
 
-        KEEP              Load the contents of the bound texture image into
-                          pixel local storage. This Load Operation is only valid
-                          for pixel local storage planes that have a texture
-                          binding. Texture bindings are established with
-                          FramebufferTexturePixelLocalStorageANGLE() as
-                          described in section 4.4.2.X "Configuring Pixel Local
-                          Storage on a Framebuffer".
+        LOAD_OP_LOAD_ANGLE       Load the contents of the bound texture image
+                                 into pixel local storage. This Load Operation
+                                 is only valid for pixel local storage planes
+                                 that have a texture binding. Texture bindings
+                                 are established with
+                                 FramebufferTexturePixelLocalStorageANGLE() as
+                                 described in section 4.4.2.X "Configuring Pixel
+                                 Local Storage on a Framebuffer".
 
-        DONT_CARE         Leave the initial contents of the pixel local storage
-                          plane undefined, favoring speed, and with the caveat
-                          that they are _not_ leaked from outside the current
-                          draw framebuffer.
+        DONT_CARE                Leave the initial contents of the pixel local
+                                 storage plane undefined, favoring speed, and
+                                 with the caveat that they are _not_ leaked from
+                                 outside the current draw framebuffer.
 
-        DISABLE_ANGLE     Leave this plane disabled.
+        LOAD_OP_DISABLE_ANGLE    Leave this plane disabled.
 
-                          Note that all pixel local storage planes on or after
-                          index <n> are disabled implicitly.
+                                 Note that all pixel local storage planes on or
+                                 after index <n> are disabled implicitly.
 
         Table X.1: Pixel local storage Load Operations.
 
@@ -267,12 +277,13 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
         Store Operation    Description
         -----------------------------------------------------------------------
-        KEEP               Update the the bound texture image to reflect the
-                           pixel local storage contents.
+        STORE_OP_STORE_ANGLE    Update the the bound texture image to reflect
+                                the pixel local storage contents.
 
-        DONT_CARE          Leave the bound texture image contents undefined,
-                           with the caveat that they are either unchanged, or
-                           not leaked from outside the current draw framebuffer.
+        DONT_CARE               Leave the bound texture image contents
+                                undefined, with the caveat that they are either
+                                unchanged, or not leaked from outside the
+                                current draw framebuffer.
 
         Table X.2: Pixel local storage Store Operations.
 
@@ -316,11 +327,12 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         Operations enumerated in Table X.1.
 
       * INVALID_OPERATION is generated if <loadops>[0..<n>-1] is not
-        DISABLE_ANGLE, and the pixel local storage plane at that same index is
-        in a deinitialized state.
+        LOAD_OP_DISABLE_ANGLE, and the pixel local storage plane at that same
+        index is in a deinitialized state.
 
-      * INVALID_OPERATION is generated if <loadops>[0..<n>-1] is KEEP and the
-        pixel local storage plane at that same index is memoryless.
+      * INVALID_OPERATION is generated if <loadops>[0..<n>-1] is
+        LOAD_OP_LOAD_ANGLE and the pixel local storage plane at that same index
+        is memoryless.
 
       * INVALID_OPERATION is generated if all enabled, texture-backed pixel
         local storage planes do not have the same width and height.
@@ -358,7 +370,7 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
     After a successful call to BeginPixelLocalStorageANGLE(), the pixel local
     storage planes indexed in the range [0..<n>-1] (except those whose Load
-    Operation was GL_DISABLE_ANGLE) are fully activated, initialized and
+    Operation was LOAD_OP_DISABLE_ANGLE) are fully activated, initialized and
     available for fragment shaders to read and write.
     PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE is also updated to equal <n>. Pixel
     local storage data will persist across all fragment invocations and across
@@ -399,7 +411,7 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         PRIMITIVE_RESTART_FIXED_INDEX, SCISSOR_TEST, STENCIL_TEST
 
       * INVALID_OPERATION is generated by ClearBufferfv(), ClearBufferiv(),
-        ClearBufferuiv() if <buffer> is GL_COLOR and:
+        ClearBufferuiv() if <buffer> is COLOR and:
 
         <buffer> < MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
         <buffer> <
@@ -568,7 +580,7 @@ Additions to the OpenGL ES Specification, Version 3.0.6
     When a texture image is bound to pixel local storage, the application may
     also choose to initialize the pixel local storage plane using its bound
     texture image contents during BeginPixelLocalStorageANGLE(), by passing Load
-    Operation KEEP.
+    Operation LOAD_OP_LOAD_ANGLE.
 
     An immutable texture layer image may be bound to a pixel local storage plane
     on the current draw framebuffer by calling:
@@ -589,9 +601,9 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
       * <layer> specifies the texture layer to bind:
 
-        - Zero if <backingtexture> is a GL_TEXTURE_2D
-        - The Cube Map Face to bind if <backingtexture> is a
-          GL_TEXTURE_CUBE_MAP, as enumerated in Table X.4
+        - Zero if <backingtexture> is a TEXTURE_2D
+        - The Cube Map Face to bind if <backingtexture> is a TEXTURE_CUBE_MAP,
+          as enumerated in Table X.4
 
           <layer>    Cube Map Face
           --------------------------------------
@@ -605,8 +617,8 @@ Additions to the OpenGL ES Specification, Version 3.0.6
           Table X.4: <layer> numbers of cube map texture faces. The layers are
           numbered in the same sequence as the cube map face token values.
 
-        - The array index to bind if <backingtexture> is a GL_TEXTURE_2D_ARRAY
-        - The Z coordinate to bind if <backingtexture> is a GL_TEXTURE_3D
+        - The array index to bind if <backingtexture> is a TEXTURE_2D_ARRAY
+        - The Z coordinate to bind if <backingtexture> is a TEXTURE_3D
 
     Errors:
 
@@ -623,19 +635,18 @@ Additions to the OpenGL ES Specification, Version 3.0.6
         existing immutable texture object, or zero.
 
       * INVALID_ENUM is generated if <backingtexture> is nonzero and not of type
-        GL_TEXTURE_2D, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_2D_ARRAY, or
-        GL_TEXTURE_3D.
+        TEXTURE_2D, TEXTURE_CUBE_MAP, TEXTURE_2D_ARRAY, or TEXTURE_3D.
 
       * INVALID_VALUE is generated if <backingtexture> is nonzero and
         <level> < 0.
 
-      * GL_INVALID_VALUE is generated if <backingtexture> is nonzero and
+      * INVALID_VALUE is generated if <backingtexture> is nonzero and
         <level> >= the immutable number of mipmap levels in <backingtexture>.
 
       * INVALID_VALUE is generated if <backingtexture> is nonzero and
         <layer> < 0.
 
-      * GL_INVALID_VALUE is generated if <backingtexture> is nonzero and
+      * INVALID_VALUE is generated if <backingtexture> is nonzero and
         <layer> >= the immutable number of texture layers in <backingtexture>.
 
       * INVALID_ENUM is generated if <backingtexture> is nonzero and its
@@ -656,9 +667,9 @@ Additions to the OpenGL ES Specification, Version 3.0.6
 
     Each pixel local storage plane on a framebuffer has state for three separate
     clear values: a 4-component vector of type FLOAT, INT, and UNSIGNED_INT.
-    When the Load Operation CLEAR_ANGLE is executed, a pixel local storage plane
-    is cleared to the value whose type corresponds to its internalformat. (See
-    Table X.4.) Clear values are set with the commands:
+    When the Load Operation LOAD_OP_CLEAR_ANGLE is executed, a pixel local
+    storage plane is cleared to the value whose type corresponds to its
+    internalformat. (See Table X.4.) Clear values are set with the commands:
 
       void FramebufferPixelLocalClearValuefvANGLE(int plane,
                                                   const float value[4])
@@ -1010,9 +1021,10 @@ Issues
       virtual context, and BeginPixelLocalStorageANGLE() again before returning
       control.
 
-    (2) Depending on the implementation, <loadops> of ZERO and KEEP can have
-    very different performance characteristics. Would a <loadop> of DONT_CARE,
-    which makes the PLS contents undefined, be acceptable in WebGL?
+    (2) Depending on the implementation, <loadops> of LOAD_OP_ZERO_ANGLE and
+    LOAD_OP_LOAD_ANGLE can have very different performance characteristics.
+    Would a <loadop> of DONT_CARE, which makes the PLS contents undefined, be
+    acceptable in WebGL?
 
       RESOLVED: From a security standpoint, the crucial aspect is that the data
       doesn't come from another context, and that needs to be specified. Similar

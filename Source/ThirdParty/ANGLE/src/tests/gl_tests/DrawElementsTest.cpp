@@ -570,6 +570,87 @@ TEST_P(DrawElementsTest, PartOfIndexBufferThenAll)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test that glDrawElements call with different index buffer offsets work as expected
+TEST_P(DrawElementsTest, DrawElementsWithDifferentIndexBufferOffsets)
+{
+    const std::array<Vector3, 4> &vertices = GetIndexedQuadVertices();
+    const std::array<GLushort, 6> &indices = GetQuadIndices();
+
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ANGLE_GL_PROGRAM(programDrawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    ANGLE_GL_PROGRAM(programDrawGreen, essl3_shaders::vs::Simple(), essl3_shaders::fs::Green());
+    ANGLE_GL_PROGRAM(programDrawBlue, essl3_shaders::vs::Simple(), essl3_shaders::fs::Blue());
+
+    glUseProgram(programDrawRed);
+
+    GLuint vertexArray;
+    glGenVertexArrays(1, &vertexArray);
+    glBindVertexArray(vertexArray);
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    GLint posLocation = glGetAttribLocation(programDrawRed, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLocation);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    // Draw both triangles of quad
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices.data());
+    EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 2, GLColor::red);
+
+    glUseProgram(programDrawGreen);
+
+    GLuint vertexArray1;
+    glGenVertexArrays(1, &vertexArray1);
+    glBindVertexArray(vertexArray1);
+    GLBuffer vertexBuffer1;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * vertices.size(), vertices.data(),
+                 GL_STATIC_DRAW);
+
+    posLocation = glGetAttribLocation(programDrawGreen, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLocation);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), indices.data(),
+                 GL_DYNAMIC_DRAW);
+
+    // Draw right triangle of quad
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(6));
+    EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 2, GLColor::green);
+
+    glUseProgram(programDrawBlue);
+
+    glBindVertexArray(vertexArray);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    posLocation = glGetAttribLocation(programDrawBlue, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLocation);
+    glVertexAttribPointer(posLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posLocation);
+
+    // Draw both triangles of quad
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices.data());
+    EXPECT_PIXEL_COLOR_EQ(0, 1, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 2, GLColor::blue);
+
+    glDeleteVertexArrays(1, &vertexArray);
+    glDeleteVertexArrays(1, &vertexArray1);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test that the offset in the index buffer is forced to be a multiple of the element size
 TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
 {

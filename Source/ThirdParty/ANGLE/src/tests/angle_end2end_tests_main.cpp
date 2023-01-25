@@ -28,7 +28,11 @@ int main(int argc, char **argv)
 {
     angle::TestSuite testSuite(&argc, argv);
     ANGLEProcessTestArgs(&argc, argv);
-    RegisterContextCompatibilityTests();
+
+    if (!IsTSan())
+    {
+        RegisterContextCompatibilityTests();
+    }
 
     constexpr size_t kMaxPath = 512;
     std::array<char, kMaxPath> foundDataPath;

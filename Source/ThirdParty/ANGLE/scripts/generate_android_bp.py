@@ -442,6 +442,33 @@ def is_input_in_tool_files(tool_files, input):
     return input in tool_files
 
 
+# special handling the {{response_file_name}} args in GN:
+# see https://gn.googlesource.com/gn/+/main/docs/reference.md#var_response_file_contents
+# in GN, if we use response_file_contents, the GN build system will automatically
+# write contents specified in response_file_contents arg into a temporary file
+# identified by {{response_file_name}}. However, Android blueprint does not have
+# the matching machanism. Android blueprint does automatically generate the
+# temporary file and does not recognize '{{response_file_name}}'.
+# To solve the problem:
+# 1) replace the '{{response_file_name}}' in command argument with the new
+# temporary file name.
+# 2) write the content specified in 'response_file_contents' to the new temporary
+# file
+# This function completes step 1) above. It checks if there are
+# '{{response_file_name}}' used in the command arguments. If there are,
+# the function replaces the '{{response_file_name}}' with the new temp file
+# named 'gn_response_file', and returns the new temp file to indicate
+# we need to complete step 2)
+def handle_gn_build_arg_response_file_name(command_arg_list):
+    new_temp_file_name = None
+    updated_args = command_arg_list[:]
+    for index, arg in enumerate(updated_args):
+        if arg == '{{response_file_name}}':
+            new_temp_file_name = 'gn_response_file'
+            updated_args[index] = new_temp_file_name
+    return new_temp_file_name, updated_args
+
+
 def action_target_to_blueprint(abi, target, build_info):
     target_info = build_info[abi][target]
     blueprint_type = blueprint_gen_types[target_info['type']]
@@ -462,6 +489,7 @@ def action_target_to_blueprint(abi, target, build_info):
             input for input in gn_inputs
             if not is_input_in_tool_files(target_info['script'], input)
         ]
+
     bp_srcs = gn_paths_to_blueprint_paths(gn_inputs)
 
     bp['srcs'] = bp_srcs
@@ -479,9 +507,18 @@ def action_target_to_blueprint(abi, target, build_info):
 
     bp['tool_files'] = [gn_path_to_blueprint_path(target_info['script'])]
 
-    # Generate the full command, $(location) refers to tool_files[0], the script
-    cmd = ['$(location)'] + gn_action_args_to_blueprint_args(bp_srcs, bp_outputs,
-                                                             target_info['args'])
+    new_temporary_gn_response_file, updated_args = handle_gn_build_arg_response_file_name(
+        target_info['args'])
+
+    if new_temporary_gn_response_file:
+        # add the command 'echo $(in) > gn_response_file' to
+        # write $response_file_contents into the new_temporary_gn_response_file.
+        cmd = ['echo $(in) >', new_temporary_gn_response_file, '&&', '$(location)'
+              ] + gn_action_args_to_blueprint_args(bp_srcs, bp_outputs, updated_args)
+    else:
+        cmd = ['$(location)'] + gn_action_args_to_blueprint_args(bp_srcs, bp_outputs,
+                                                                 target_info['args'])
+
     bp['cmd'] = ' '.join(cmd)
 
     bp['sdk_version'] = SDK_VERSION
@@ -600,7 +637,6 @@ def main():
         ],
         'license_text': [
             'LICENSE',
-            'src/common/third_party/smhasher/LICENSE',
             'src/common/third_party/xxhash/LICENSE',
             'src/libANGLE/renderer/vulkan/shaders/src/third_party/ffx_spd/LICENSE',
             'src/tests/test_utils/third_party/LICENSE',
@@ -666,7 +702,6 @@ def main():
                 "--extra-packages com.android.angle.common",
             ],
             'srcs': [':ANGLE_srcs'],
-            'plugins': ['java_api_finder',],
             'privileged': True,
             'product_specific': True,
             'owner': 'google',

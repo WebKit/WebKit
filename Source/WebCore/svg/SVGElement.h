@@ -60,7 +60,7 @@ public:
 
     String title() const override;
     virtual bool supportsMarkers() const { return false; }
-    bool hasRelativeLengths() const { return !m_elementsWithRelativeLengths.computesEmpty(); }
+    bool hasRelativeLengths() const { return !m_elementsWithRelativeLengths.isEmptyIgnoringNullReferences(); }
     virtual bool needsPendingResourceHandling() const { return true; }
     bool instanceUpdatesBlocked() const;
     void setInstanceUpdatesBlocked(bool);

@@ -33,7 +33,7 @@ namespace WebCore {
 
 class MenuListPart;
 
-class MenuListMac : public ControlMac {
+class MenuListMac final : public ControlMac {
 public:
     MenuListMac(MenuListPart& owningPart, ControlFactoryMac&, NSPopUpButtonCell *);
 
@@ -45,7 +45,7 @@ private:
 
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
     RetainPtr<NSPopUpButtonCell> m_popUpButtonCell;
 };

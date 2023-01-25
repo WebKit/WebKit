@@ -10,4 +10,4 @@ assert.throws(() => {
     new WebAssembly.Global({
         value: 'anyfunc'
     }, {});
-}, WebAssembly.RuntimeError, `Funcref must be an exported wasm function`);
+}, TypeError, `Funcref must be an exported wasm function`);

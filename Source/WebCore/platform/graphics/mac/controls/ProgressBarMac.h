@@ -34,19 +34,19 @@ namespace WebCore {
 
 class ProgressBarPart;
 
-class ProgressBarMac : public ControlMac {
+class ProgressBarMac final : public ControlMac {
 public:
     ProgressBarMac(ProgressBarPart&, ControlFactoryMac&);
 
 private:
     const ProgressBarPart& owningProgressBarPart() const { return downcast<ProgressBarPart>(m_owningPart); }
 
-    IntSize cellSize(NSControlSize, const ControlStyle&) const final;
-    IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const final;
+    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
+    IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
 
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 
 } // namespace WebCore

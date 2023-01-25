@@ -123,7 +123,7 @@ class EGLRobustnessTest : public ANGLETest<>
                                          3,
                                          EGL_CONTEXT_MINOR_VERSION_KHR,
                                          0,
-                                         EGL_CONTEXT_OPENGL_ROBUST_ACCESS_EXT,
+                                         EGL_CONTEXT_OPENGL_ROBUST_ACCESS,
                                          EGL_TRUE,
                                          EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT,
                                          resetStrategy,

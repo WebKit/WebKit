@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "InnerSpinButtonPart.h"
 #import "LocalCurrentGraphicsContext.h"
@@ -54,7 +55,7 @@ IntSize InnerSpinButtonMac::cellSize(NSControlSize controlSize, const ControlSty
     return sizes[controlSize];
 }
 
-void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float, const ControlStyle& style)
+void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -73,7 +74,7 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRect& rect, f
         coreUIState = (__bridge NSString *)kCUIStateActive;
 
     NSString *coreUISize;
-    auto controlSize = controlSizeForSize(rect.size(), style);
+    auto controlSize = controlSizeForSize(borderRect.rect().size(), style);
     if (controlSize == NSControlSizeMini)
         coreUISize = (__bridge NSString *)kCUISizeMini;
     else if (controlSize == NSControlSizeSmall)
@@ -81,7 +82,7 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRect& rect, f
     else
         coreUISize = (__bridge NSString *)kCUISizeRegular;
 
-    IntRect logicalRect(rect);
+    IntRect logicalRect(borderRect.rect());
 
     GraphicsContextStateSaver stateSaver(context);
     if (style.zoomFactor != 1) {

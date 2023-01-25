@@ -284,7 +284,7 @@ void RendererGL::generateCaps(gl::Caps *outCaps,
 {
     nativegl_gl::GenerateCaps(mFunctions.get(), mFeatures, outCaps, outTextureCaps, outExtensions,
                               outLimitations, &mMaxSupportedESVersion,
-                              &mMultiviewImplementationType, &mPixelLocalStorageType);
+                              &mMultiviewImplementationType, &mNativePLSOptions);
 }
 
 GLint RendererGL::getGPUDisjoint()
@@ -333,9 +333,9 @@ const gl::Limitations &RendererGL::getNativeLimitations() const
     return mNativeLimitations;
 }
 
-ShPixelLocalStorageType RendererGL::getNativePixelLocalStorageType() const
+const ShPixelLocalStorageOptions &RendererGL::getNativePixelLocalStorageOptions() const
 {
-    return mPixelLocalStorageType;
+    return mNativePLSOptions;
 }
 
 PLSProgramCache *RendererGL::getPLSProgramCache()

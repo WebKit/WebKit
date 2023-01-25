@@ -38,12 +38,11 @@
 
 namespace WebCore {
 
-AXIsolatedObject::AXIsolatedObject(const Ref<AXCoreObject>& axObject, AXIsolatedTree* tree)
+AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXIsolatedTree* tree)
     : AXCoreObject(axObject->objectID())
     , m_cachedTree(tree)
 {
     ASSERT(isMainThread());
-    ASSERT(is<AccessibilityObject>(axObject));
     ASSERT(objectID().isValid());
 
     auto* axParent = axObject->parentObjectUnignored();
@@ -59,7 +58,7 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AXCoreObject>& axObject, AXIsolated
     initializeProperties(axObject, isRoot);
 }
 
-Ref<AXIsolatedObject> AXIsolatedObject::create(const Ref<AXCoreObject>& object, AXIsolatedTree* tree)
+Ref<AXIsolatedObject> AXIsolatedObject::create(const Ref<AccessibilityObject>& object, AXIsolatedTree* tree)
 {
     return adoptRef(*new AXIsolatedObject(object, tree));
 }
@@ -69,11 +68,9 @@ AXIsolatedObject::~AXIsolatedObject()
     ASSERT(!wrapper());
 }
 
-void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject, IsRoot isRoot)
+void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axObject, IsRoot isRoot)
 {
-    ASSERT(is<AccessibilityObject>(coreObject));
-    auto& object = downcast<AccessibilityObject>(coreObject.get());
-
+    auto& object = axObject.get();
     setProperty(AXPropertyName::ARIALandmarkRoleDescription, object.ariaLandmarkRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::AccessibilityDescription, object.accessibilityDescription().isolatedCopy());
 
@@ -359,7 +356,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AXCoreObject>& coreObject,
     setProperty(AXPropertyName::LocalizedActionVerb, object.localizedActionVerb().isolatedCopy());
 #endif
 
-    initializePlatformProperties(coreObject, isRoot);
+    initializePlatformProperties(axObject, isRoot);
 }
 
 AccessibilityObject* AXIsolatedObject::associatedAXObject() const

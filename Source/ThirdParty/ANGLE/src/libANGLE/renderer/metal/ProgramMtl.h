@@ -18,13 +18,11 @@
 #include "common/Optional.h"
 #include "common/utilities.h"
 #include "libANGLE/renderer/ProgramImpl.h"
-#include "libANGLE/renderer/ShaderInterfaceVariableInfoMap.h"
-#include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_common.h"
 #include "libANGLE/renderer/metal/mtl_context_device.h"
-#include "libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
+#include "libANGLE/renderer/metal/mtl_msl_utils.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 
@@ -270,8 +268,6 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
 
     // Cached references of current shader variants.
     gl::ShaderMap<ProgramShaderObjVariantMtl *> mCurrentShaderVariants;
-
-    ShaderInterfaceVariableInfoMap mVariableInfoMap;
     // Scratch data:
     // Legalized buffers and their offsets. For example, uniform buffer's offset=1 is not a valid
     // offset, it will be converted to legal offset and the result is stored in this array.

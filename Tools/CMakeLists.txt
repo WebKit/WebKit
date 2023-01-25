@@ -1,5 +1,7 @@
 set_property(DIRECTORY . PROPERTY FOLDER "Tools")
 
+set(TestRunnerShared_LIBRARY_TYPE OBJECT)
+
 # Individual subdirectories are added in the port's cmake file
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 

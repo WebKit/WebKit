@@ -28,6 +28,7 @@ class BitSetTest : public testing::Test
 using BitSetTypes = ::testing::Types<BitSet<12>, BitSet32<12>, BitSet64<12>>;
 TYPED_TEST_SUITE(BitSetTest, BitSetTypes);
 
+// Basic test of various bitset functionalities
 TYPED_TEST(BitSetTest, Basic)
 {
     EXPECT_EQ(TypeParam::Zero().bits(), 0u);
@@ -120,6 +121,7 @@ TYPED_TEST(BitSetTest, InitializerList)
     }
 }
 
+// Test bitwise operations
 TYPED_TEST(BitSetTest, BitwiseOperators)
 {
     TypeParam mBits = this->mBits;
@@ -180,6 +182,30 @@ TYPED_TEST(BitSetTest, BitwiseOperators)
     EXPECT_EQ(mBits.bits() & ~kMask, 0u);
     mBits ^= kOtherMaskedValue;
     EXPECT_EQ(mBits.bits() & ~kMask, 0u);
+}
+
+// Test BitSetT::Mask
+TYPED_TEST(BitSetTest, Mask)
+{
+    // Test constexpr usage
+    TypeParam bits = TypeParam::Mask(0);
+    EXPECT_EQ(bits.bits(), 0u);
+
+    bits = TypeParam::Mask(1);
+    EXPECT_EQ(bits.bits(), 1u);
+
+    bits = TypeParam::Mask(2);
+    EXPECT_EQ(bits.bits(), 3u);
+
+    bits = TypeParam::Mask(TypeParam::size());
+    EXPECT_EQ(bits.bits(), (1u << TypeParam::size()) - 1);
+
+    // Complete test
+    for (size_t i = 0; i < TypeParam::size(); ++i)
+    {
+        bits = TypeParam::Mask(i);
+        EXPECT_EQ(bits.bits(), (1u << i) - 1);
+    }
 }
 
 template <typename T>
@@ -407,6 +433,7 @@ using BitSetArrayTypes =
     ::testing::Types<BitSetArray<65>, BitSetArray<128>, BitSetArray<130>, BitSetArray<511>>;
 TYPED_TEST_SUITE(BitSetArrayTest, BitSetArrayTypes);
 
+// Basic test of various BitSetArray functionalities
 TYPED_TEST(BitSetArrayTest, BasicTest)
 {
     TypeParam &mBits = this->mBitSet;
@@ -610,6 +637,7 @@ TEST(BitSetArrayTest, InitializerList)
     }
 }
 
+// Test iteration over BitSetArray where there are gaps
 TYPED_TEST(BitSetArrayTest, IterationWithGaps)
 {
     TypeParam &mBits = this->mBitSet;
@@ -628,6 +656,66 @@ TYPED_TEST(BitSetArrayTest, IterationWithGaps)
     EXPECT_EQ(bitsToBeSet, bitsActuallySet);
     EXPECT_EQ(mBits.count(), bitsToBeSet.size());
     mBits.reset();
+}
+
+// Test BitSetArray::Mask
+TYPED_TEST(BitSetArrayTest, Mask)
+{
+    // Test constexpr usage
+    TypeParam bits = TypeParam::Mask(0);
+    for (size_t i = 0; i < bits.size(); ++i)
+    {
+        EXPECT_FALSE(bits[i]) << i;
+    }
+
+    bits = TypeParam::Mask(1);
+    for (size_t i = 0; i < bits.size(); ++i)
+    {
+        if (i < 1)
+        {
+            EXPECT_TRUE(bits[i]) << i;
+        }
+        else
+        {
+            EXPECT_FALSE(bits[i]) << i;
+        }
+    }
+
+    bits = TypeParam::Mask(2);
+    for (size_t i = 0; i < bits.size(); ++i)
+    {
+        if (i < 2)
+        {
+            EXPECT_TRUE(bits[i]) << i;
+        }
+        else
+        {
+            EXPECT_FALSE(bits[i]) << i;
+        }
+    }
+
+    bits = TypeParam::Mask(TypeParam::size());
+    for (size_t i = 0; i < bits.size(); ++i)
+    {
+        EXPECT_TRUE(bits[i]) << i;
+    }
+
+    // Complete test
+    for (size_t i = 0; i < TypeParam::size(); ++i)
+    {
+        bits = TypeParam::Mask(i);
+        for (size_t j = 0; j < bits.size(); ++j)
+        {
+            if (j < i)
+            {
+                EXPECT_TRUE(bits[j]) << j;
+            }
+            else
+            {
+                EXPECT_FALSE(bits[j]) << j;
+            }
+        }
+    }
 }
 
 // Unit test for angle::Bit

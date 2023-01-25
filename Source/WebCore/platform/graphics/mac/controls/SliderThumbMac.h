@@ -33,7 +33,7 @@ namespace WebCore {
 
 class SliderThumbPart;
 
-class SliderThumbMac : public ControlMac {
+class SliderThumbMac final : public ControlMac {
 public:
     SliderThumbMac(SliderThumbPart&, ControlFactoryMac&, NSSliderCell *);
 
@@ -42,7 +42,7 @@ private:
 
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
     RetainPtr<NSSliderCell> m_sliderCell;
 };

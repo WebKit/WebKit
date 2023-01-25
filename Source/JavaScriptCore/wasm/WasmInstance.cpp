@@ -259,7 +259,7 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
             globalObject,
             globalObject->webAssemblyFunctionStructure(),
             signature.argumentCount(),
-            String(),
+            WTF::makeString(functionIndex),
             jsInstance,
             embedderEntrypointCallee,
             entrypointLoadLocation,

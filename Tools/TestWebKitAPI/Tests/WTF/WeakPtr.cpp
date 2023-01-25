@@ -759,7 +759,7 @@ TEST(WTF_WeakPtr, WeakHashSetExpansion)
     }
 }
 
-TEST(WTF_WeakPtr, WeakHashSetComputesEmpty)
+TEST(WTF_WeakPtr, WeakHashSetisEmptyIgnoringNullReferences)
 {
     {
         WeakHashSet<Base> weakHashSet;
@@ -767,10 +767,10 @@ TEST(WTF_WeakPtr, WeakHashSetComputesEmpty)
             Base object;
             EXPECT_EQ(s_baseWeakReferences, 0u);
             weakHashSet.add(object);
-            EXPECT_FALSE(weakHashSet.computesEmpty());
+            EXPECT_FALSE(weakHashSet.isEmptyIgnoringNullReferences());
         }
         EXPECT_EQ(s_baseWeakReferences, 1u);
-        EXPECT_TRUE(weakHashSet.computesEmpty());
+        EXPECT_TRUE(weakHashSet.isEmptyIgnoringNullReferences());
     }
 
     {
@@ -782,12 +782,12 @@ TEST(WTF_WeakPtr, WeakHashSetComputesEmpty)
         {
             Base object2;
             weakHashSet.add(object2);
-            EXPECT_FALSE(weakHashSet.computesEmpty());
+            EXPECT_FALSE(weakHashSet.isEmptyIgnoringNullReferences());
         }
         EXPECT_EQ(s_baseWeakReferences, 2u);
-        EXPECT_FALSE(weakHashSet.computesEmpty());
+        EXPECT_FALSE(weakHashSet.isEmptyIgnoringNullReferences());
         weakHashSet.remove(object1);
-        EXPECT_TRUE(weakHashSet.computesEmpty());
+        EXPECT_TRUE(weakHashSet.isEmptyIgnoringNullReferences());
     }
 
     {
@@ -803,9 +803,9 @@ TEST(WTF_WeakPtr, WeakHashSetComputesEmpty)
 
         EXPECT_EQ(s_baseWeakReferences, objects.size() + 1);
         EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), objects.size() + 1);
-        EXPECT_FALSE(weakHashSet.computesEmpty());
+        EXPECT_FALSE(weakHashSet.isEmptyIgnoringNullReferences());
         firstObject = nullptr;
-        EXPECT_FALSE(weakHashSet.computesEmpty());
+        EXPECT_FALSE(weakHashSet.isEmptyIgnoringNullReferences());
         EXPECT_EQ(s_baseWeakReferences, objects.size() + 1);
         EXPECT_EQ(computeSizeOfWeakHashSet(weakHashSet), objects.size());
     }
@@ -823,10 +823,10 @@ TEST(WTF_WeakPtr, WeakHashSetComputeSize)
             EXPECT_EQ(weakHashSet.computeSize(), 1u);
             weakHashSet.checkConsistency();
         }
-        EXPECT_TRUE(weakHashSet.computesEmpty());
+        EXPECT_TRUE(weakHashSet.isEmptyIgnoringNullReferences());
         EXPECT_EQ(weakHashSet.computeSize(), 0u);
         EXPECT_EQ(s_baseWeakReferences, 0u);
-        EXPECT_TRUE(weakHashSet.computesEmpty());
+        EXPECT_TRUE(weakHashSet.isEmptyIgnoringNullReferences());
         weakHashSet.checkConsistency();
     }
 
@@ -906,6 +906,75 @@ TEST(WTF_WeakPtr, WeakHashSetComputeSize)
         EXPECT_EQ(s_baseWeakReferences, objectsCount);
         EXPECT_EQ(weakHashSet.computeSize(), 0u);
         EXPECT_EQ(s_baseWeakReferences, 0u);
+    }
+}
+
+TEST(WTF_WeakPtr, WeakHashSetAmortizedCleanup)
+{
+    {
+        WeakHashSet<Base> weakHashSet;
+        Vector<std::unique_ptr<Base>> objects;
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        for (unsigned i = 0; i < 50; ++i) {
+            objects.append(makeUnique<Base>());
+            weakHashSet.add(*objects[i]);
+        }
+        EXPECT_EQ(s_baseWeakReferences, 50u);
+        EXPECT_EQ(weakHashSet.computeSize(), 50u);
+        EXPECT_FALSE(weakHashSet.hasNullReferences());
+        for (unsigned i = 0; i < objects.size(); ++i) {
+            if (!(i % 8))
+                objects[i] = nullptr;
+        }
+        EXPECT_EQ(s_baseWeakReferences, 50u);
+        EXPECT_TRUE(weakHashSet.hasNullReferences());
+        for (unsigned i = 0; i < 3; ++i) {
+            unsigned count = 0;
+            for (auto& item : weakHashSet) {
+                UNUSED_PARAM(item);
+                count++;
+            } 
+            EXPECT_EQ(count, 43u);
+        }
+        EXPECT_EQ(s_baseWeakReferences, 50u);
+        EXPECT_TRUE(weakHashSet.hasNullReferences());
+        Base object;
+        weakHashSet.add(object);
+        EXPECT_EQ(s_baseWeakReferences, 44u);
+        EXPECT_FALSE(weakHashSet.hasNullReferences());
+    }
+
+    {
+        WeakHashSet<Base> weakHashSet;
+        Vector<std::unique_ptr<Base>> objects;
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        for (unsigned i = 0; i < 50; ++i) {
+            objects.append(makeUnique<Base>());
+            weakHashSet.add(*objects[i]);
+        }
+        EXPECT_EQ(s_baseWeakReferences, 50u);
+        EXPECT_EQ(weakHashSet.computeSize(), 50u);
+        EXPECT_FALSE(weakHashSet.hasNullReferences());
+        Vector<Base*> objectsInIterationOrder;
+        for (auto& item : weakHashSet)
+            objectsInIterationOrder.append(&item);
+        for (unsigned i = 0; i < 50; ++i) {
+            if (i < 40)
+                continue;
+            auto* objectToRemove = objectsInIterationOrder[i];
+            for (unsigned j = 0; j < 50; ++j) {
+                if (objects[j].get() == objectToRemove)
+                    objects[j] = nullptr;
+            }
+        }
+        EXPECT_EQ(s_baseWeakReferences, 50u);
+        for (unsigned i = 0; i < 5; ++i)
+            EXPECT_TRUE(weakHashSet.hasNullReferences());
+        EXPECT_EQ(s_baseWeakReferences, 50u);
+        Base object;
+        weakHashSet.add(object);
+        EXPECT_EQ(s_baseWeakReferences, 41u);
+        EXPECT_FALSE(weakHashSet.hasNullReferences());
     }
 }
 
@@ -1785,14 +1854,14 @@ TEST(WTF_WeakPtr, WeakHashMapAmortizedCleanup)
             }
 
             weakHashMap.checkConsistency();
-            EXPECT_EQ(s_baseWeakReferences, 40u);
+            EXPECT_EQ(s_baseWeakReferences, 50u);
             EXPECT_TRUE(weakHashMap.hasNullReferences());
 
             for (unsigned i = 0; i < 4; ++i)
                 collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
 
             weakHashMap.checkConsistency();
-            EXPECT_EQ(s_baseWeakReferences, 40u);
+            EXPECT_EQ(s_baseWeakReferences, 50u);
             EXPECT_TRUE(weakHashMap.hasNullReferences());
         }
     }
@@ -1838,8 +1907,8 @@ TEST(WTF_WeakPtr, WeakHashMapAmortizedCleanup)
                     objects[i] = nullptr;
             }
             weakHashMap.checkConsistency();
-            EXPECT_EQ(s_baseWeakReferences, 42u);
-            EXPECT_EQ(ValueObject::s_count, 42u);
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_EQ(ValueObject::s_count, 50u);
             EXPECT_TRUE(weakHashMap.hasNullReferences());
 
             for (unsigned i = 0; i < 4; ++i) {
@@ -1950,8 +2019,8 @@ TEST(WTF_WeakPtr, MultipleInheritance)
         EXPECT_TRUE(derived.meowCalled());
         EXPECT_TRUE(derived.woofCalled());
     }
-    EXPECT_TRUE(base1Set.computesEmpty());
-    EXPECT_TRUE(base2Set.computesEmpty());
+    EXPECT_TRUE(base1Set.isEmptyIgnoringNullReferences());
+    EXPECT_TRUE(base2Set.isEmptyIgnoringNullReferences());
 }
 
 struct ThreadSafeInstanceCounter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ThreadSafeInstanceCounter> {
@@ -2091,10 +2160,10 @@ TEST(WTF_ThreadSafeWeakPtr, ThreadSafeWeakHashSet)
 
     EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 1u);
     EXPECT_TRUE(set.contains(*first));
-    EXPECT_FALSE(set.computesEmpty());
+    EXPECT_FALSE(set.isEmptyIgnoringNullReferences());
     set.clear();
     EXPECT_FALSE(set.contains(*first));
-    EXPECT_TRUE(set.computesEmpty());
+    EXPECT_TRUE(set.isEmptyIgnoringNullReferences());
     first = nullptr;
     EXPECT_EQ(ThreadSafeInstanceCounter::instanceCount, 0u);
 }

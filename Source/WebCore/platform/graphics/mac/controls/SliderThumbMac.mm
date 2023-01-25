@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "ControlFactoryMac.h"
+#import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
@@ -68,12 +69,12 @@ FloatRect SliderThumbMac::rectForBounds(const FloatRect& bounds, const ControlSt
     return { bounds.location(), bounds.size() + FloatSize { 0, verticalSliderHeightPadding * style.zoomFactor } };
 }
 
-void SliderThumbMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void SliderThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
     LocalCurrentGraphicsContext localContext(context);
     
-    auto logicalRect = rectForBounds(rect, style);
+    auto logicalRect = rectForBounds(borderRect.rect(), style);
 
     GraphicsContextStateSaver stateSaver(context);
 
@@ -86,7 +87,7 @@ void SliderThumbMac::draw(GraphicsContext& context, const FloatRect& rect, float
     auto styleForDrawing = style;
     styleForDrawing.states.remove(ControlStyle::State::Focused);
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
 
     drawCell(context, logicalRect, deviceScaleFactor, styleForDrawing, m_sliderCell.get(), view, true);
 }

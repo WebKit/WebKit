@@ -1433,7 +1433,7 @@ void NetworkProcessProxy::removeSession(WebsiteDataStore& websiteDataStore)
     if (canSendMessage())
         send(Messages::NetworkProcess::DestroySession { websiteDataStore.sessionID() }, 0);
 
-    if (m_websiteDataStores.computesEmpty())
+    if (m_websiteDataStores.isEmptyIgnoringNullReferences())
         defaultNetworkProcess() = nullptr;
 }
 

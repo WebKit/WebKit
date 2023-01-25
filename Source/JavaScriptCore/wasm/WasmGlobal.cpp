@@ -95,14 +95,14 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
         break;
     }
     case TypeKind::V128: {
-        throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Cannot set value of v128 global"_s));
+        throwTypeError(globalObject, throwScope, "Cannot set value of v128 global"_s);
         return;
     }
     default: {
         if (isExternref(m_type)) {
             RELEASE_ASSERT(m_owner);
             if (!m_type.isNullable() && argument.isNull()) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"_s));
+                throwTypeError(globalObject, throwScope, "Non-null Externref cannot be null"_s);
                 return;
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
@@ -111,7 +111,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
             if (!isWebAssemblyHostFunction(argument, wasmFunction, wasmWrapperFunction) && (!m_type.isNullable() || !argument.isNull())) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
+                throwTypeError(globalObject, throwScope, "Funcref must be an exported wasm function"_s);
                 return;
             }
 
@@ -119,16 +119,16 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 Wasm::TypeIndex paramIndex = m_type.index;
                 Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                 if (paramIndex != argIndex) {
-                    throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"_s));
+                    throwTypeError(globalObject, throwScope, "Argument function did not match the reference type"_s);
                     return;
                 }
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
         } else if (isRefWithTypeIndex(m_type)) {
-            throwVMException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Unsupported use of struct or array type"_s));
+            throwTypeError(globalObject, throwScope, "Unsupported use of struct or array type"_s);
             return;
         } else if (Wasm::isI31ref(m_type)) {
-            throwVMException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "I31ref import from JS currently unsupported"_s));
+            throwTypeError(globalObject, throwScope, "I31ref import from JS currently unsupported"_s);
             return;
         }
     }

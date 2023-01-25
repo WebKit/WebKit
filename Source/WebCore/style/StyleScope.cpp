@@ -268,17 +268,17 @@ void Scope::removePendingSheet(const ProcessingInstruction& processingInstructio
 
 bool Scope::hasPendingSheets() const
 {
-    return hasPendingSheetsBeforeBody() || !m_elementsInBodyWithPendingSheets.computesEmpty();
+    return hasPendingSheetsBeforeBody() || !m_elementsInBodyWithPendingSheets.isEmptyIgnoringNullReferences();
 }
 
 bool Scope::hasPendingSheetsBeforeBody() const
 {
-    return !m_elementsInHeadWithPendingSheets.computesEmpty() || !m_processingInstructionsWithPendingSheets.computesEmpty();
+    return !m_elementsInHeadWithPendingSheets.isEmptyIgnoringNullReferences() || !m_processingInstructionsWithPendingSheets.isEmptyIgnoringNullReferences();
 }
 
 bool Scope::hasPendingSheetsInBody() const
 {
-    return !m_elementsInBodyWithPendingSheets.computesEmpty();
+    return !m_elementsInBodyWithPendingSheets.isEmptyIgnoringNullReferences();
 }
 
 void Scope::didRemovePendingStylesheet()

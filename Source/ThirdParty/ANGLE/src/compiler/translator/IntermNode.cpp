@@ -3229,32 +3229,32 @@ TConstantUnion *TIntermConstantUnion::foldUnaryComponentWise(TOperator op,
 
             case EOpIsnan:
                 ASSERT(getType().getBasicType() == EbtFloat);
-                resultArray[i].setBConst(gl::isNaN(operandArray[0].getFConst()));
+                resultArray[i].setBConst(gl::isNaN(operandArray[i].getFConst()));
                 break;
 
             case EOpIsinf:
                 ASSERT(getType().getBasicType() == EbtFloat);
-                resultArray[i].setBConst(gl::isInf(operandArray[0].getFConst()));
+                resultArray[i].setBConst(gl::isInf(operandArray[i].getFConst()));
                 break;
 
             case EOpFloatBitsToInt:
                 ASSERT(getType().getBasicType() == EbtFloat);
-                resultArray[i].setIConst(gl::bitCast<int32_t>(operandArray[0].getFConst()));
+                resultArray[i].setIConst(gl::bitCast<int32_t>(operandArray[i].getFConst()));
                 break;
 
             case EOpFloatBitsToUint:
                 ASSERT(getType().getBasicType() == EbtFloat);
-                resultArray[i].setUConst(gl::bitCast<uint32_t>(operandArray[0].getFConst()));
+                resultArray[i].setUConst(gl::bitCast<uint32_t>(operandArray[i].getFConst()));
                 break;
 
             case EOpIntBitsToFloat:
                 ASSERT(getType().getBasicType() == EbtInt);
-                resultArray[i].setFConst(gl::bitCast<float>(operandArray[0].getIConst()));
+                resultArray[i].setFConst(gl::bitCast<float>(operandArray[i].getIConst()));
                 break;
 
             case EOpUintBitsToFloat:
                 ASSERT(getType().getBasicType() == EbtUInt);
-                resultArray[i].setFConst(gl::bitCast<float>(operandArray[0].getUConst()));
+                resultArray[i].setFConst(gl::bitCast<float>(operandArray[i].getUConst()));
                 break;
 
             case EOpExp:

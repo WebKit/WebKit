@@ -1969,6 +1969,38 @@ void SPIRVBuilder::writeMemberDecorations(const SpirvType &type, spirv::IdRef ty
                                        {});
         }
 
+        // Add memory qualifier decorations to buffer members
+        if (fieldType.getMemoryQualifier().coherent)
+        {
+            spirv::WriteMemberDecorate(&mSpirvDecorations, typeId,
+                                       spirv::LiteralInteger(fieldIndex), spv::DecorationCoherent,
+                                       {});
+        }
+        if (fieldType.getMemoryQualifier().readonly)
+        {
+            spirv::WriteMemberDecorate(&mSpirvDecorations, typeId,
+                                       spirv::LiteralInteger(fieldIndex),
+                                       spv::DecorationNonWritable, {});
+        }
+        if (fieldType.getMemoryQualifier().writeonly)
+        {
+            spirv::WriteMemberDecorate(&mSpirvDecorations, typeId,
+                                       spirv::LiteralInteger(fieldIndex),
+                                       spv::DecorationNonReadable, {});
+        }
+        if (fieldType.getMemoryQualifier().restrictQualifier)
+        {
+            spirv::WriteMemberDecorate(&mSpirvDecorations, typeId,
+                                       spirv::LiteralInteger(fieldIndex), spv::DecorationRestrict,
+                                       {});
+        }
+        if (fieldType.getMemoryQualifier().volatileQualifier)
+        {
+            spirv::WriteMemberDecorate(&mSpirvDecorations, typeId,
+                                       spirv::LiteralInteger(fieldIndex), spv::DecorationVolatile,
+                                       {});
+        }
+
         // Add matrix decorations if any.
         if (fieldType.isMatrix())
         {

@@ -136,8 +136,8 @@ public:
     virtual ScrollbarMode verticalScrollbarMode() const { return ScrollbarMode::Auto; }
     bool canHaveScrollbars() const { return horizontalScrollbarMode() != ScrollbarMode::AlwaysOff || verticalScrollbarMode() != ScrollbarMode::AlwaysOff; }
 
-    virtual bool horizontalScrollbarHiddenByStyle() const { return false; }
-    virtual bool verticalScrollbarHiddenByStyle() const { return false; }
+    virtual NativeScrollbarVisibility horizontalNativeScrollbarVisibility() const { return NativeScrollbarVisibility::Visible; }
+    virtual NativeScrollbarVisibility verticalNativeScrollbarVisibility() const { return NativeScrollbarVisibility::Visible; }
     
     virtual OverscrollBehavior horizontalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
     virtual OverscrollBehavior verticalOverscrollBehavior() const { return OverscrollBehavior::Auto; }

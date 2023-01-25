@@ -42,6 +42,7 @@
 #include "ASTLiteralExpressions.h"
 #include "ASTLocationAttribute.h"
 #include "ASTNode.h"
+#include "ASTPointerDereference.h"
 #include "ASTReturnStatement.h"
 #include "ASTShaderModule.h"
 #include "ASTStageAttribute.h"

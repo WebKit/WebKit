@@ -264,7 +264,7 @@ Expected<AST::StructDecl, Error> Parser<Lexer>::parseStructDecl(AST::Attribute::
 
     CONSUME_TYPE(BraceRight);
 
-    RETURN_NODE(StructDecl, name.m_ident, WTFMove(members), WTFMove(attributes));
+    RETURN_NODE(StructDecl, name.m_ident, WTFMove(members), WTFMove(attributes), AST::StructRole::UserDefined);
 }
 
 template<typename Lexer>
@@ -512,7 +512,7 @@ Expected<AST::Parameter, Error> Parser<Lexer>::parseParameter()
     CONSUME_TYPE(Colon);
     PARSE(type, TypeDecl);
 
-    RETURN_NODE(Parameter, name.m_ident, WTFMove(type), WTFMove(attributes));
+    RETURN_NODE(Parameter, name.m_ident, WTFMove(type), WTFMove(attributes), AST::ParameterRole::UserDefined);
 }
 
 template<typename Lexer>
@@ -617,6 +617,12 @@ template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeExpression(UniqueRef<AST::Expression>&& lhs)
 {
     // FIXME: fill in
+    START_PARSE();
+    if (current().m_type == TokenType::Star) {
+        consume();
+        PARSE(rhs, UnaryExpression);
+        RETURN_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), AST::BinaryOperation::Multiply);
+    }
     return WTFMove(lhs);
 }
 

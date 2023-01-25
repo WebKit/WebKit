@@ -28,12 +28,6 @@ namespace sh
 struct ShaderVariable;
 }
 
-constexpr bool ShPixelLocalStorageTypeUsesImages(ShPixelLocalStorageType type)
-{
-    return type == ShPixelLocalStorageType::ImageStoreR32PackedFormats ||
-           type == ShPixelLocalStorageType::ImageStoreNativeFormats;
-}
-
 namespace gl
 {
 

@@ -133,16 +133,25 @@ enum ArgHandling
     Preserve,
 };
 
+bool ParseIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut);
+bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut);
+bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut);
+bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut);
+
+// Note: return value is always false with ArgHandling::Preserve handling
 bool ParseIntArgWithHandling(const char *flag,
                              int *argc,
                              char **argv,
                              int argIndex,
                              int *valueOut,
                              ArgHandling handling);
-bool ParseIntArg(const char *flag, int *argc, char **argv, int argIndex, int *valueOut);
-bool ParseFlag(const char *flag, int *argc, char **argv, int argIndex, bool *flagOut);
-bool ParseStringArg(const char *flag, int *argc, char **argv, int argIndex, std::string *valueOut);
-bool ParseCStringArg(const char *flag, int *argc, char **argv, int argIndex, const char **valueOut);
+bool ParseCStringArgWithHandling(const char *flag,
+                                 int *argc,
+                                 char **argv,
+                                 int argIndex,
+                                 const char **valueOut,
+                                 ArgHandling handling);
+
 void AddArg(int *argc, char **argv, const char *arg);
 
 uint32_t GetPlatformANGLETypeFromArg(const char *useANGLEArg, uint32_t defaultPlatformType);

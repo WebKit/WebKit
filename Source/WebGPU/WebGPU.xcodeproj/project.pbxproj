@@ -86,6 +86,8 @@
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
 		9789C31B297EA105009E9006 /* CallGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C319297EA105009E9006 /* CallGraph.h */; };
+		9789C32229802690009E9006 /* ASTBinaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C32029802690009E9006 /* ASTBinaryExpression.h */; };
+		9789C32329802690009E9006 /* ASTPointerDereference.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C32129802690009E9006 /* ASTPointerDereference.h */; };
 		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
 		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
@@ -337,6 +339,8 @@
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
 		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
 		9789C319297EA105009E9006 /* CallGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallGraph.h; sourceTree = "<group>"; };
+		9789C32029802690009E9006 /* ASTBinaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBinaryExpression.h; sourceTree = "<group>"; };
+		9789C32129802690009E9006 /* ASTPointerDereference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTPointerDereference.h; sourceTree = "<group>"; };
 		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
 		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
@@ -676,6 +680,7 @@
 				3A7E164B28C57BB7003F49C9 /* ASTArrayAccess.h */,
 				33EA187F27BC24E200A1DD52 /* ASTAssignmentStatement.h */,
 				33EA186927BC1BE600A1DD52 /* ASTAttribute.h */,
+				9789C32029802690009E9006 /* ASTBinaryExpression.h */,
 				3A2479DB290629CE0012B3E6 /* ASTBindingAttribute.h */,
 				3A2479DC290629CE0012B3E6 /* ASTBuiltinAttribute.h */,
 				33EA188527BC26DF00A1DD52 /* ASTCallableExpression.h */,
@@ -690,6 +695,7 @@
 				33EA188727BC361E00A1DD52 /* ASTLiteralExpressions.h */,
 				3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */,
 				33EA185D27BC194F00A1DD52 /* ASTNode.h */,
+				9789C32129802690009E9006 /* ASTPointerDereference.h */,
 				33EA187D27BC249000A1DD52 /* ASTReturnStatement.h */,
 				33EA186F27BC1E8A00A1DD52 /* ASTShaderModule.h */,
 				3A2479DA290629CE0012B3E6 /* ASTStageAttribute.h */,
@@ -740,6 +746,7 @@
 				3A7E164C28C57BB8003F49C9 /* ASTArrayAccess.h in Headers */,
 				33EA188027BC24E200A1DD52 /* ASTAssignmentStatement.h in Headers */,
 				33EA186A27BC1BE600A1DD52 /* ASTAttribute.h in Headers */,
+				9789C32229802690009E9006 /* ASTBinaryExpression.h in Headers */,
 				3A2479E0290629CE0012B3E6 /* ASTBindingAttribute.h in Headers */,
 				3A2479E1290629CE0012B3E6 /* ASTBuiltinAttribute.h in Headers */,
 				33EA188627BC26DF00A1DD52 /* ASTCallableExpression.h in Headers */,
@@ -754,6 +761,7 @@
 				33EA188827BC361E00A1DD52 /* ASTLiteralExpressions.h in Headers */,
 				3A2479DE290629CE0012B3E6 /* ASTLocationAttribute.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
+				9789C32329802690009E9006 /* ASTPointerDereference.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ASTReturnStatement.h in Headers */,
 				33EA187027BC1E8A00A1DD52 /* ASTShaderModule.h in Headers */,
 				3A2479DF290629CE0012B3E6 /* ASTStageAttribute.h in Headers */,

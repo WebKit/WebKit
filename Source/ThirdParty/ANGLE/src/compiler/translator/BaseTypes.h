@@ -1076,8 +1076,8 @@ enum TQualifier
     EvqViewIDOVR,      // OVR_multiview
     EvqViewportIndex,  // gl_ViewportIndex
 
-    EvqClipDistance,  // APPLE_clip_distance/EXT_clip_cull_distance
-    EvqCullDistance,  // EXT_clip_cull_distance
+    EvqClipDistance,  // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance
+    EvqCullDistance,  // EXT_clip_cull_distance / ANGLE_clip_cull_distance
 
     // built-ins written by the shader_framebuffer_fetch extension(s)
     EvqLastFragColor,
@@ -1615,7 +1615,7 @@ inline const char *getQualifierString(TQualifier q)
     case EvqPatchOut:               return "patch out";
     case EvqTessControlIn:          return "in";
     case EvqTessControlOut:         return "out";
-    case EvqPerVertexOut:           return "gl_out";
+    case EvqPerVertexOut:           return "out";
     case EvqPatchVerticesIn:        return "PatchVerticesIn";
     case EvqTessLevelOuter:         return "TessLevelOuter";
     case EvqTessLevelInner:         return "TessLevelInner";

@@ -27,17 +27,13 @@ list(APPEND WebKitTestRunner_LIBRARIES
     GTK::GTK
 )
 
-list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
+list(APPEND TestRunnerInjectedBundle_LIBRARIES
     ${GLIB_LIBRARIES}
     Fontconfig::Fontconfig
     GTK::GTK
 )
 
-list(APPEND WebKitTestRunner_FRAMEWORKS
-    WebKit
-)
-
-list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
+list(APPEND TestRunnerInjectedBundle_SOURCES
     InjectedBundle/atspi/AccessibilityControllerAtspi.cpp
     InjectedBundle/atspi/AccessibilityNotificationHandler.cpp
     InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp
@@ -48,7 +44,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     InjectedBundle/gtk/TestRunnerGtk.cpp
 )
 
-list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
+list(APPEND TestRunnerInjectedBundle_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${WebKitTestRunner_DIR}/InjectedBundle/atspi
     ${WebKitTestRunner_DIR}/InjectedBundle/gtk

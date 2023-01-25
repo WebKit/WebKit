@@ -192,6 +192,9 @@ void Visitor::visit(Expression& expression)
     case Expression::Kind::BinaryExpression:
         checkErrorAndVisit(downcast<BinaryExpression>(expression));
         break;
+    case Expression::Kind::PointerDereference:
+        checkErrorAndVisit(downcast<PointerDereference>(expression));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled expression kind");
     }
@@ -252,6 +255,11 @@ void Visitor::visit(BinaryExpression& binaryExpression)
 {
     checkErrorAndVisit(binaryExpression.lhs());
     checkErrorAndVisit(binaryExpression.rhs());
+}
+
+void Visitor::visit(PointerDereference& pointerDereference)
+{
+    checkErrorAndVisit(pointerDereference.target());
 }
 
 // Statement

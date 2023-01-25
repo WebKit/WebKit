@@ -143,7 +143,9 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
         {
             for (TExtensionBehavior::iterator iter = mExtensionBehavior.begin();
                  iter != mExtensionBehavior.end(); ++iter)
+            {
                 iter->second = behaviorVal;
+            }
         }
         return;
     }
@@ -245,10 +247,11 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
                 iter->second = behaviorVal;
             }
         }
-        // GL_APPLE_clip_distance is implicitly enabled when GL_EXT_clip_cull_distance is enabled
-        else if (name == "GL_EXT_clip_cull_distance")
+        // GL_APPLE_clip_distance is implicitly enabled when GL_EXT_clip_cull_distance or
+        // GL_ANGLE_clip_cull_distance are enabled.
+        else if (name == "GL_EXT_clip_cull_distance" || name == "GL_ANGLE_clip_cull_distance")
         {
-            // This extension only can be enabled on greater than ESSL 300
+            // These extensions only can be enabled on greater than ESSL 300
             if (mShaderVersion < 300)
             {
                 mDiagnostics.error(loc, "extension can be enabled on greater than ESSL 300",

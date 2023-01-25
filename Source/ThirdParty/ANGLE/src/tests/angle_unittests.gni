@@ -7,6 +7,7 @@ import("../../gni/angle.gni")
 angle_unittests_sources = [
   "../../util/test_utils_unittest.cpp",
   "../../util/test_utils_unittest_helper.h",
+  "../common/BinaryStream_unittest.cpp",
   "../common/CircularBuffer_unittest.cpp",
   "../common/FastVector_unittest.cpp",
   "../common/FixedVector_unittest.cpp",
@@ -28,7 +29,6 @@ angle_unittests_sources = [
   "../gpu_info_util/SystemInfo_unittest.cpp",
   "../image_util/AstcDecompressorTestUtils.h",
   "../image_util/AstcDecompressor_unittest.cpp",
-  "../libANGLE/BinaryStream_unittest.cpp",
   "../libANGLE/BlobCache_unittest.cpp",
   "../libANGLE/Config_unittest.cpp",
   "../libANGLE/Fence_unittest.cpp",

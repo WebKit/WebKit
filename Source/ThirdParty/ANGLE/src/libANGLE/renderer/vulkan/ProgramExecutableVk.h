@@ -15,9 +15,9 @@
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/InfoLog.h"
-#include "libANGLE/renderer/ShaderInterfaceVariableInfoMap.h"
-#include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
+#include "libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h"
+#include "libANGLE/renderer/vulkan/spv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -139,15 +139,25 @@ class ProgramExecutableVk
 
     angle::Result createGraphicsPipeline(ContextVk *contextVk,
                                          vk::GraphicsPipelineSubset pipelineSubset,
-                                         PipelineCacheAccess *pipelineCache,
+                                         vk::PipelineCacheAccess *pipelineCache,
                                          PipelineSource source,
                                          const vk::GraphicsPipelineDesc &desc,
                                          const gl::ProgramExecutable &glExecutable,
                                          const vk::GraphicsPipelineDesc **descPtrOut,
                                          vk::PipelineHelper **pipelineOut);
 
+    angle::Result linkGraphicsPipelineLibraries(ContextVk *contextVk,
+                                                vk::PipelineCacheAccess *pipelineCache,
+                                                const vk::GraphicsPipelineDesc &desc,
+                                                const gl::ProgramExecutable &glExecutable,
+                                                vk::PipelineHelper *vertexInputPipeline,
+                                                vk::PipelineHelper *shadersPipeline,
+                                                vk::PipelineHelper *fragmentOutputPipeline,
+                                                const vk::GraphicsPipelineDesc **descPtrOut,
+                                                vk::PipelineHelper **pipelineOut);
+
     angle::Result getOrCreateComputePipeline(ContextVk *contextVk,
-                                             PipelineCacheAccess *pipelineCache,
+                                             vk::PipelineCacheAccess *pipelineCache,
                                              PipelineSource source,
                                              const gl::ProgramExecutable &glExecutable,
                                              vk::PipelineHelper **pipelineOut);
@@ -258,6 +268,8 @@ class ProgramExecutableVk
         const gl::ActiveTextureArray<TextureVk *> *activeTextures,
         vk::DescriptorSetLayoutDesc *descOut);
 
+    void resolvePrecisionMismatch(const gl::ProgramMergedVaryings &mergedVaryings);
+
     size_t calcUniformUpdateRequiredSpace(vk::Context *context,
                                           const gl::ProgramExecutable &glExecutable,
                                           gl::ShaderMap<VkDeviceSize> *uniformOffsets) const;
@@ -318,7 +330,7 @@ class ProgramExecutableVk
     angle::Result createGraphicsPipelineImpl(ContextVk *contextVk,
                                              ProgramTransformOptions transformOptions,
                                              vk::GraphicsPipelineSubset pipelineSubset,
-                                             PipelineCacheAccess *pipelineCache,
+                                             vk::PipelineCacheAccess *pipelineCache,
                                              PipelineSource source,
                                              const vk::GraphicsPipelineDesc &desc,
                                              const gl::ProgramExecutable &glExecutable,
@@ -336,8 +348,11 @@ class ProgramExecutableVk
                                              DescriptorSetIndex setIndex,
                                              vk::SharedDescriptorSetCacheKey *newSharedCacheKeyOut);
 
+    // When loading from cache / binary, initialize the pipeline cache with given data.  Otherwise
+    // the cache is lazily created as needed.
     angle::Result initializePipelineCache(ContextVk *contextVk,
                                           const std::vector<uint8_t> &compressedPipelineData);
+    angle::Result ensurePipelineCacheInitialized(ContextVk *contextVk);
 
     void resetLayout(ContextVk *contextVk);
 
@@ -367,8 +382,15 @@ class ProgramExecutableVk
     ProgramInfo mGraphicsProgramInfos[ProgramTransformOptions::kPermutationCount];
     ProgramInfo mComputeProgramInfo;
 
+    // Pipeline caches.  The pipelines are tightly coupled with the shaders they are created for, so
+    // they live in the program executable.  With VK_EXT_graphics_pipeline_library, the pipeline is
+    // divided in subsets; the "shaders" subset is created based on the shaders, so its cache lives
+    // in the program executable.  The "vertex input" and "fragment output" pipelines are
+    // independent, and live in the context.
     CompleteGraphicsPipelineCache
         mCompleteGraphicsPipelines[ProgramTransformOptions::kPermutationCount];
+    ShadersGraphicsPipelineCache
+        mShadersGraphicsPipelines[ProgramTransformOptions::kPermutationCount];
     vk::ComputePipelineCache mComputePipelines;
 
     DefaultUniformBlockMap mDefaultUniformBlocks;
@@ -378,24 +400,17 @@ class ProgramExecutableVk
 
     // The pipeline cache specific to this program executable.  Currently:
     //
-    // - This is only used during warm up (at link time)
+    // - This is used during warm up (at link time)
     // - The contents are merged to RendererVk's pipeline cache immediately after warm up
     // - The contents are returned as part of program binary
     // - Draw-time pipeline creation uses RendererVk's cache
     //
-    // This cache is not used for draw-time pipeline creations to allow reuse of other blobs that
-    // are independent of the actual shaders; vertex input fetch, fragment output and blend.
+    // Without VK_EXT_graphics_pipeline_library, this cache is not used for draw-time pipeline
+    // creations to allow reuse of other blobs that are independent of the actual shaders; vertex
+    // input fetch, fragment output and blend.
     //
-    // TODO(http://anglebug.com/7369): Once VK_EXT_graphics_pipeline_library is supported, the
-    // situation should change as follows:
-    //
-    // - The cache is still warmed up at link time
-    // - The contents are returned as part of program binary
-    // - RendererVk's cache is split in two; one corresponding to VERTEX_INPUT_INTERFACE pipelines,
-    //   one corresponding to FRAGMENT_OUTPUT_INTERFACE pipelines.
-    // - Draw-time pipeline creations use this cache, creating
-    //   PRE_RASTERIZATION_SHADERS|FRAGMENT_SHADER pipelines.
-    //
+    // With VK_EXT_graphics_pipeline_library, this cache is used for the "shaders" subset of the
+    // pipeline.
     vk::PipelineCache mPipelineCache;
 };
 

@@ -64,6 +64,7 @@ public:
         Uint32Literal,
         UnaryExpression,
         BinaryExpression,
+        PointerDereference,
 
         ShaderModule,
 

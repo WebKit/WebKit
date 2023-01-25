@@ -213,6 +213,11 @@ class State : angle::NonCopyable
 
     // Stencil state maniupulation
     bool isStencilTestEnabled() const { return mDepthStencil.stencilTest; }
+    bool isStencilWriteEnabled() const
+    {
+        return mDepthStencil.stencilTest &&
+               !(mDepthStencil.isStencilNoOp() && mDepthStencil.isStencilBackNoOp());
+    }
     void setStencilTest(bool enabled);
     void setStencilParams(GLenum stencilFunc, GLint stencilRef, GLuint stencilMask);
     void setStencilBackParams(GLenum stencilBackFunc, GLint stencilBackRef, GLuint stencilBackMask);
@@ -1188,7 +1193,7 @@ class State : angle::NonCopyable
     // GL_KHR_parallel_shader_compile
     GLuint mMaxShaderCompilerThreads;
 
-    // GL_APPLE_clip_distance/GL_EXT_clip_cull_distance
+    // GL_APPLE_clip_distance / GL_EXT_clip_cull_distance / GL_ANGLE_clip_cull_distance
     ClipDistanceEnableBits mClipDistancesEnabled;
 
     // GL_EXT_tessellation_shader

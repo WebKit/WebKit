@@ -427,6 +427,75 @@ TEST_P(VulkanImageTest, ClientBuffer)
     vkFreeMemory(helper.getDevice(), vkDeviceMemory, nullptr);
 }
 
+// Test importing VkImage with eglCreateImageKHR and drawing to make sure no errors occur in setting
+// up the framebuffer, including an imageless framebuffer.
+TEST_P(VulkanImageTest, ClientBufferWithDraw)
+{
+    EGLWindow *window  = getEGLWindow();
+    EGLDisplay display = window->getDisplay();
+
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(display, "EGL_ANGLE_vulkan_image"));
+
+    VulkanHelper helper;
+    helper.initializeFromANGLE();
+
+    constexpr VkImageUsageFlags kDefaultImageUsageFlags =
+        VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT |
+        VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT |
+        VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+
+    VkImage vkImage                   = VK_NULL_HANDLE;
+    VkDeviceMemory vkDeviceMemory     = VK_NULL_HANDLE;
+    VkDeviceSize deviceSize           = 0u;
+    VkImageCreateInfo imageCreateInfo = {};
+
+    VkResult result = VK_SUCCESS;
+    result          = helper.createImage2D(VK_FORMAT_R8G8B8A8_UNORM, 0, kDefaultImageUsageFlags,
+                                           {kWidth, kHeight, 1}, &vkImage, &vkDeviceMemory, &deviceSize,
+                                           &imageCreateInfo);
+    EXPECT_EQ(result, VK_SUCCESS);
+    EXPECT_EQ(imageCreateInfo.sType, VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
+
+    uint64_t info    = reinterpret_cast<uint64_t>(&imageCreateInfo);
+    EGLint attribs[] = {
+        EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE,
+        static_cast<EGLint>((info >> 32) & 0xffffffff),
+        EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE,
+        static_cast<EGLint>(info & 0xffffffff),
+        EGL_NONE,
+    };
+    EGLImageKHR eglImage = eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_VULKAN_IMAGE_ANGLE,
+                                             reinterpret_cast<EGLClientBuffer>(&vkImage), attribs);
+    EXPECT_NE(eglImage, EGL_NO_IMAGE_KHR);
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, eglImage);
+
+    GLuint textures[1] = {texture};
+    GLenum layouts[1]  = {GL_NONE};
+    glAcquireTexturesANGLE(1, textures, layouts);
+
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_GL_NO_ERROR();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    framebuffer.reset();
+    texture.reset();
+
+    glFinish();
+
+    EXPECT_EGL_TRUE(eglDestroyImageKHR(display, eglImage));
+    vkDestroyImage(helper.getDevice(), vkImage, nullptr);
+    vkFreeMemory(helper.getDevice(), vkDeviceMemory, nullptr);
+}
+
 // Test that texture storage created from VkImage memory is considered pre-initialized in GL.
 TEST_P(VulkanImageTest, PreInitializedOnGLImport)
 {

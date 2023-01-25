@@ -536,6 +536,9 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
         case ParamType::TSurfaceID:
             WriteParamValueReplay<ParamType::TSurfaceID>(os, call, param.value.SurfaceIDVal);
             break;
+        case ParamType::TSyncID:
+            WriteParamValueReplay<ParamType::TSyncID>(os, call, param.value.SyncIDVal);
+            break;
         case ParamType::TTextureEnvParameter:
             WriteParamValueReplay<ParamType::TTextureEnvParameter>(
                 os, call, param.value.TextureEnvParameterVal);
@@ -936,6 +939,8 @@ const char *ParamTypeToString(ParamType paramType)
             return "GLenum";
         case ParamType::TSurfaceID:
             return "GLuint";
+        case ParamType::TSyncID:
+            return "GLuint";
         case ParamType::TTextureEnvParameter:
             return "GLenum";
         case ParamType::TTextureEnvTarget:
@@ -1066,6 +1071,8 @@ ResourceIDType GetResourceIDTypeFromParamType(ParamType paramType)
             return ResourceIDType::ShaderProgram;
         case ParamType::TSurfaceID:
             return ResourceIDType::Surface;
+        case ParamType::TSyncID:
+            return ResourceIDType::Sync;
         case ParamType::TTextureID:
             return ResourceIDType::Texture;
         case ParamType::TTextureIDConstPointer:
@@ -1119,6 +1126,8 @@ const char *GetResourceIDTypeName(ResourceIDType resourceIDType)
             return "ShaderProgram";
         case ResourceIDType::Surface:
             return "Surface";
+        case ResourceIDType::Sync:
+            return "Sync";
         case ResourceIDType::Texture:
             return "Texture";
         case ResourceIDType::TransformFeedback:

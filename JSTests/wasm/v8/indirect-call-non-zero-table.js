@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Fails with:
-// Exception: CompileError: WebAssembly.Module doesn't parse at byte 4: invalid opcode 19, in function at index 7 (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')
-// Module@[native code]
-// toModule@.tests/wasm.yaml/wasm/v8/wasm-module-builder.js:2082:34
-// instantiate@.tests/wasm.yaml/wasm/v8/wasm-module-builder.js:2071:31
-// IndirectCallToNonZeroTable@indirect-call-non-zero-table.js:88:39
-// global code@indirect-call-non-zero-table.js:110:3
-
 // Copyright 2019 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.

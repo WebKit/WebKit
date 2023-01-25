@@ -570,8 +570,8 @@ class Texture final : public RefCountObject<TextureID>,
     void setGenerateMipmapHint(GLenum generate);
     GLenum getGenerateMipmapHint() const;
 
-    void onAttach(const Context *context, rx::Serial framebufferSerial) override;
-    void onDetach(const Context *context, rx::Serial framebufferSerial) override;
+    void onAttach(const Context *context, rx::UniqueSerial framebufferSerial) override;
+    void onDetach(const Context *context, rx::UniqueSerial framebufferSerial) override;
 
     // Used specifically for FramebufferAttachmentObject.
     GLuint getId() const override;
@@ -585,7 +585,7 @@ class Texture final : public RefCountObject<TextureID>,
     void setInitState(GLenum binding, const ImageIndex &imageIndex, InitState initState) override;
     void setInitState(InitState initState);
 
-    bool isBoundToFramebuffer(rx::Serial framebufferSerial) const
+    bool isBoundToFramebuffer(rx::UniqueSerial framebufferSerial) const
     {
         for (size_t index = 0; index < mBoundFramebufferSerials.size(); ++index)
         {
@@ -701,7 +701,7 @@ class Texture final : public RefCountObject<TextureID>,
     // attachment Feedback Loop checks we then need to check further to see when a Texture is bound
     // to mulitple bindings that the bindings don't overlap.
     static constexpr uint32_t kFastFramebufferSerialCount = 8;
-    angle::FastVector<rx::Serial, kFastFramebufferSerialCount> mBoundFramebufferSerials;
+    angle::FastVector<rx::UniqueSerial, kFastFramebufferSerialCount> mBoundFramebufferSerials;
 
     struct SamplerCompletenessCache
     {

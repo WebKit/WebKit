@@ -30,7 +30,7 @@
 #include "WasmBranchHints.h"
 #include "WasmFormat.h"
 
-#include <wtf/BitVector.h>
+#include <wtf/FixedBitVector.h>
 #include <wtf/HashMap.h>
 
 namespace JSC { namespace Wasm {
@@ -91,8 +91,10 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
     const TableInformation& table(unsigned index) const { return tables[index]; }
 
-    const BitVector& referencedFunctions() const { return m_referencedFunctions; }
-    void addReferencedFunction(unsigned index) const { m_referencedFunctions.set(index); }
+    void initializeReferencedFunctionsTracker() const { m_referencedFunctions = FixedBitVector(functionIndexSpaceSize()); }
+    const FixedBitVector& referencedFunctions() const { return m_referencedFunctions; }
+    bool hasReferencedFunction(unsigned index) const { return m_referencedFunctions.test(index); }
+    void addReferencedFunction(unsigned index) const { m_referencedFunctions.concurrentTestAndSet(index); }
 
     bool isDeclaredFunction(uint32_t index) const { return m_declaredFunctions.contains(index); }
     void addDeclaredFunction(uint32_t index) { m_declaredFunctions.set(index); }
@@ -160,7 +162,9 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;
-    mutable BitVector m_referencedFunctions;
+    mutable FixedBitVector m_referencedFunctions;
+    // FIXME: We should use a synchronous mechanism for `m_clobberingTailCalls`
+    // to prevent potential race condition. https://bugs.webkit.org/show_bug.cgi?id=251124
     BitVector m_clobberingTailCalls;
 };
 

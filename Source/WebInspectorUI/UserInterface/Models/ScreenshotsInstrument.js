@@ -36,6 +36,10 @@ WI.ScreenshotsInstrument = class ScreenshotsInstrument extends WI.Instrument
 
     static supported()
     {
+        // FIXME: <webkit.org/b/251113> Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.Page)
+            return false;
+
         // COMPATIBILITY (macOS 12.3, iOS 15.4): Timeline.Instrument.Screenshot did not exist yet.
         return InspectorBackend.Enum.Timeline.Instrument.Screenshot;
     }

@@ -204,20 +204,20 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
     default: {
         if (Wasm::isExternref(type)) {
             if (!type.isNullable() && value.isNull())
-                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"_s));
+                return throwVMTypeError(globalObject, scope, "Non-null Externref cannot be null"_s);
         } else if (Wasm::isFuncref(type) || isRefWithTypeIndex(type)) {
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
             if (!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
-                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
+                return throwVMTypeError(globalObject, scope, "Funcref must be an exported wasm function"_s);
             if (isRefWithTypeIndex(type) && !value.isNull()) {
                 Wasm::TypeIndex paramIndex = type.index;
                 Wasm::TypeIndex argIndex = wasmFunction ? wasmFunction->typeIndex() : wasmWrapperFunction->typeIndex();
                 if (paramIndex != argIndex)
-                    return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"_s));
+                    return throwVMTypeError(globalObject, scope, "Argument function did not match the reference type"_s);
             }
         } else if (Wasm::isI31ref(type))
-            return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "I31ref import from JS currently unsupported"_s));
+            return throwVMTypeError(globalObject, scope, "I31ref import from JS currently unsupported"_s);
         else
             RELEASE_ASSERT_NOT_REACHED();
     }

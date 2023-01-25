@@ -61,7 +61,7 @@ FramebufferAttachment::FramebufferAttachment(const Context *context,
                                              GLenum binding,
                                              const ImageIndex &textureIndex,
                                              FramebufferAttachmentObject *resource,
-                                             rx::Serial framebufferSerial)
+                                             rx::UniqueSerial framebufferSerial)
     : mResource(nullptr)
 {
     attach(context, type, binding, textureIndex, resource, kDefaultNumViews, kDefaultBaseViewIndex,
@@ -91,7 +91,7 @@ FramebufferAttachment::~FramebufferAttachment()
     ASSERT(!isAttached());
 }
 
-void FramebufferAttachment::detach(const Context *context, rx::Serial framebufferSerial)
+void FramebufferAttachment::detach(const Context *context, rx::UniqueSerial framebufferSerial)
 {
     mType = GL_NONE;
     if (mResource != nullptr)
@@ -116,7 +116,7 @@ void FramebufferAttachment::attach(const Context *context,
                                    GLuint baseViewIndex,
                                    bool isMultiview,
                                    GLsizei samples,
-                                   rx::Serial framebufferSerial)
+                                   rx::UniqueSerial framebufferSerial)
 {
     if (resource == nullptr)
     {

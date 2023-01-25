@@ -1,23 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-//  Stack: MjsUnitAssertionError@mjsunit.js:36:27
-//  failWithMessage@mjsunit.js:323:36
-//  fail@mjsunit.js:343:27
-//  assertEquals@mjsunit.js:413:11 
-//  checkException@mjsunit.js:503:19
-//  assertThrows@mjsunit.js:518:21
-//  testInvalidIndex@start-function.js:47:15
-//  global code@start-function.js:51:3
-//  MjsUnitAssertionError@mjsunit.js:36:27
-//  failWithMessage@mjsunit.js:323:36
-//  fail@mjsunit.js:343:27
-//  assertEquals@mjsunit.js:413:11
-//  checkException@mjsunit.js:503:19
-//  assertThrows@mjsunit.js:518:21
-//  testInvalidIndex@start-function.js:66:15
-//  global code@start-function.js:70:3
-
 // Copyright 2016 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -65,8 +46,7 @@ assertThrows(() => {instantiate(kSig_i_v, [kExprI32Const, 0]);});
 
   assertThrows(
       () => builder.instantiate(), WebAssembly.CompileError,
-      'WebAssembly.Module(): ' +
-          'function index 1 out of bounds (1 entry) @+20');
+      /WebAssembly.Module doesn't parse at byte/);
 })();
 
 
@@ -82,7 +62,7 @@ assertThrows(() => {instantiate(kSig_i_v, [kExprI32Const, 0]);});
 
   assertThrows(
       () => builder.instantiate(), WebAssembly.CompileError,
-      'WebAssembly.Module(): unexpected section <Start> @+27');
+      /WebAssembly.Module doesn't parse at byte/);
 })();
 
 
@@ -170,7 +150,7 @@ assertThrows(() => {instantiate(kSig_i_v, [kExprI32Const, 0]);});
   builder.addStart(func.index);
 
   assertThrows(
-      () => builder.instantiate(), WebAssembly.RuntimeError, /unreachable/);
+      () => builder.instantiate(), WebAssembly.RuntimeError, /unreachable/i);
   assertThrowsAsync(builder.asyncInstantiate(), WebAssembly.RuntimeError);
   assertThrowsAsync(
       WebAssembly.instantiate(builder.toModule()), WebAssembly.RuntimeError);

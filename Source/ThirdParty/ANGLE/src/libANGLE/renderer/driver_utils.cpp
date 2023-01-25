@@ -272,6 +272,8 @@ const char *GetVendorString(uint32_t vendorId)
             return "Vivante";
         case VENDOR_ID_VMWARE:
             return "VMware";
+        case VENDOR_ID_VIRTIO:
+            return "VirtIO";
         case 0xba5eba11:  // Mock vendor ID used for tests.
             return "Test";
         case 0:

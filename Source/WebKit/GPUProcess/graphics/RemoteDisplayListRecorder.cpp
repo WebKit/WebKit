@@ -556,12 +556,12 @@ void RemoteDisplayListRecorder::clearRect(const FloatRect& rect)
     handleItem(DisplayList::ClearRect(rect));
 }
 
-void RemoteDisplayListRecorder::drawControlPart(Ref<ControlPart> part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void RemoteDisplayListRecorder::drawControlPart(Ref<ControlPart> part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     if (!m_controlFactory)
         m_controlFactory = ControlFactory::createControlFactory();
     part->setControlFactory(m_controlFactory.get());
-    handleItem(DisplayList::DrawControlPart(WTFMove(part), rect, deviceScaleFactor, style));
+    handleItem(DisplayList::DrawControlPart(WTFMove(part), borderRect, deviceScaleFactor, style));
 }
 
 #if USE(CG)

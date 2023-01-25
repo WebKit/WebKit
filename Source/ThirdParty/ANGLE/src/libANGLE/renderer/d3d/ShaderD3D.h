@@ -73,8 +73,6 @@ class ShaderD3D : public ShaderImpl
 
     void generateWorkarounds(CompilerWorkaroundsD3D *workarounds) const;
 
-    bool usesClipDistance() const { return mUsesClipDistance; }
-    bool usesCullDistance() const { return mUsesCullDistance; }
     bool usesMultipleRenderTargets() const { return mUsesMultipleRenderTargets; }
     bool usesFragColor() const { return mUsesFragColor; }
     bool usesFragData() const { return mUsesFragData; }
@@ -89,12 +87,12 @@ class ShaderD3D : public ShaderImpl
     bool usesVertexID() const { return mUsesVertexID; }
     bool usesViewID() const { return mUsesViewID; }
     bool hasANGLEMultiviewEnabled() const { return mHasANGLEMultiviewEnabled; }
+    uint8_t getClipDistanceArraySize() const { return mClipDistanceSize; }
+    uint8_t getCullDistanceArraySize() const { return mCullDistanceSize; }
 
     ShShaderOutput getCompilerOutputType() const;
 
   private:
-    bool mUsesClipDistance;
-    bool mUsesCullDistance;
     bool mUsesMultipleRenderTargets;
     bool mUsesFragColor;
     bool mUsesFragData;
@@ -112,6 +110,8 @@ class ShaderD3D : public ShaderImpl
     bool mUsesDiscardRewriting;
     bool mUsesNestedBreak;
     bool mRequiresIEEEStrictCompiling;
+    uint8_t mClipDistanceSize;
+    uint8_t mCullDistanceSize;
 
     RendererD3D *mRenderer;
     ShShaderOutput mCompilerOutputType;

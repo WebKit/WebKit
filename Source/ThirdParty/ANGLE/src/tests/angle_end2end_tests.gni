@@ -14,6 +14,7 @@ angle_end2end_tests_sources = [
   "egl_tests/EGLCreateContextAttribsTest.cpp",
   "egl_tests/EGLDebugTest.cpp",
   "egl_tests/EGLDisplaySelectionTest.cpp",
+  "egl_tests/EGLDisplayTest.cpp",
   "egl_tests/EGLLockSurface3Test.cpp",
   "egl_tests/EGLMultiContextTest.cpp",
   "egl_tests/EGLNoConfigContextTest.cpp",
@@ -169,6 +170,7 @@ angle_end2end_tests_sources = [
   "gl_tests/gles1/ClientActiveTextureTest.cpp",
   "gl_tests/gles1/ClientStateEnable.cpp",
   "gl_tests/gles1/ClipPlaneTest.cpp",
+  "gl_tests/gles1/ColorMaterialTest.cpp",
   "gl_tests/gles1/CurrentColorTest.cpp",
   "gl_tests/gles1/CurrentNormalTest.cpp",
   "gl_tests/gles1/CurrentTextureCoordsTest.cpp",
@@ -207,6 +209,7 @@ angle_end2end_tests_mac_sources = [
   "egl_tests/EGLPowerPreferenceTest.cpp",
   "egl_tests/EGLSurfaceTestMac.mm",
   "egl_tests/EGLSyncTestMetalSharedEvent.mm",
+  "egl_tests/EGLWaitUntilWorkScheduledTest.cpp",
   "gl_tests/ImageTestMetal.mm",
 ]
 angle_end2end_tests_win_sources = [

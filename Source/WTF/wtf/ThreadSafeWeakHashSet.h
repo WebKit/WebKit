@@ -69,7 +69,7 @@ public:
         return m_set.contains(value.m_controlBlock);
     }
 
-    bool computesEmpty() const
+    bool isEmptyIgnoringNullReferences() const
     {
         Locker locker { m_lock };
         amortizedCleanupIfNeeded();

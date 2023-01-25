@@ -22,7 +22,7 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
 #include "libANGLE/renderer/metal/TextureMtl.h"
-#include "libANGLE/renderer/metal/mtl_glslang_mtl_utils.h"
+#include "libANGLE/renderer/metal/mtl_msl_utils.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
 #include "libANGLE/renderer/renderer_utils.h"
 
@@ -325,15 +325,14 @@ angle::Result ProgramMtl::linkImplDirect(const gl::Context *glContext,
 
     reset(contextMtl);
     ANGLE_TRY(initDefaultUniformBlocks(glContext));
-    ShaderInterfaceVariableInfoMap variableInfoMap;
 
     gl::ShaderMap<std::string> shaderSources;
     gl::ShaderMap<std::string> translatedMslShaders;
-    mtl::MSLGetShaderSource(glContext, mState, resources, &shaderSources, &variableInfoMap);
+    mtl::MSLGetShaderSource(glContext, mState, resources, &shaderSources);
 
-    ANGLE_TRY(mtl::GlslangGetMSL(glContext, mState, contextMtl->getCaps(), shaderSources,
-                                 variableInfoMap, &mMslShaderTranslateInfo, &translatedMslShaders,
-                                 mState.getExecutable().getTransformFeedbackBufferCount()));
+    ANGLE_TRY(mtl::MTLGetMSL(glContext, mState, contextMtl->getCaps(), shaderSources,
+                             &mMslShaderTranslateInfo, &translatedMslShaders,
+                             mState.getExecutable().getTransformFeedbackBufferCount()));
     mMslXfbOnlyVertexShaderInfo = mMslShaderTranslateInfo[gl::ShaderType::Vertex];
     for (gl::ShaderType shaderType : gl::kAllGLES2ShaderTypes)
     {
@@ -450,7 +449,7 @@ angle::Result ProgramMtl::initDefaultUniformBlocks(const gl::Context *glContext)
         if (location.used() && !location.ignored)
         {
             const gl::LinkedUniform &uniform = uniforms[location.index];
-            if (uniform.isInDefaultBlock() && !uniform.isSampler())
+            if (uniform.isInDefaultBlock() && !uniform.isSampler() && !uniform.isImage())
             {
                 std::string uniformName = uniform.name;
                 if (uniform.isArray())
@@ -739,6 +738,10 @@ void ProgramMtl::saveShaderInternalInfo(gl::BinaryOutputStream *stream)
             stream->writeInt<uint32_t>(binding.textureBinding);
             stream->writeInt<uint32_t>(binding.samplerBinding);
         }
+        for (int rwTextureBinding : mMslShaderTranslateInfo[shaderType].actualImageBindings)
+        {
+            stream->writeInt<int>(rwTextureBinding);
+        }
 
         for (uint32_t uboBinding : mMslShaderTranslateInfo[shaderType].actualUBOBindings)
         {
@@ -759,6 +762,10 @@ void ProgramMtl::saveShaderInternalInfo(gl::BinaryOutputStream *stream)
         {
             stream->writeInt<uint32_t>(binding.textureBinding);
             stream->writeInt<uint32_t>(binding.samplerBinding);
+        }
+        for (int rwTextureBinding : mMslXfbOnlyVertexShaderInfo.actualImageBindings)
+        {
+            stream->writeInt<int>(rwTextureBinding);
         }
 
         for (uint32_t &uboBinding : mMslXfbOnlyVertexShaderInfo.actualUBOBindings)
@@ -785,6 +792,10 @@ void ProgramMtl::loadShaderInternalInfo(gl::BinaryInputStream *stream)
             binding.textureBinding = stream->readInt<uint32_t>();
             binding.samplerBinding = stream->readInt<uint32_t>();
         }
+        for (int &rwTextureBinding : mMslShaderTranslateInfo[shaderType].actualImageBindings)
+        {
+            rwTextureBinding = stream->readInt<int>();
+        }
 
         for (uint32_t &uboBinding : mMslShaderTranslateInfo[shaderType].actualUBOBindings)
         {
@@ -805,6 +816,10 @@ void ProgramMtl::loadShaderInternalInfo(gl::BinaryInputStream *stream)
         {
             binding.textureBinding = stream->readInt<uint32_t>();
             binding.samplerBinding = stream->readInt<uint32_t>();
+        }
+        for (int &rwTextureBinding : mMslXfbOnlyVertexShaderInfo.actualImageBindings)
+        {
+            rwTextureBinding = stream->readInt<int>();
         }
 
         for (uint32_t &uboBinding : mMslXfbOnlyVertexShaderInfo.actualUBOBindings)
@@ -1265,6 +1280,29 @@ angle::Result ProgramMtl::updateTextures(const gl::Context *glContext,
         {
             cmdEncoder->setData(shaderType, mShadowCompareModes,
                                 mtl::kShadowSamplerCompareModesBindingIndex);
+        }
+
+        for (const gl::ImageBinding &imageBinding : mState.getImageBindings())
+        {
+            if (imageBinding.boundImageUnits.size() != 1)
+            {
+                UNIMPLEMENTED();
+                continue;
+            }
+
+            int glslImageBinding    = imageBinding.boundImageUnits[0];
+            int mtlRWTextureBinding = shaderInfo.actualImageBindings[glslImageBinding];
+            ASSERT(mtlRWTextureBinding < static_cast<int>(mtl::kMaxShaderImages));
+            if (mtlRWTextureBinding < 0)
+            {
+                continue;  // The program does not have an image bound at this unit.
+            }
+
+            const gl::ImageUnit &imageUnit = glState.getImageUnit(glslImageBinding);
+            TextureMtl *textureMtl         = mtl::GetImpl(imageUnit.texture.get());
+            ANGLE_TRY(textureMtl->bindToShaderImage(
+                glContext, cmdEncoder, shaderType, static_cast<uint32_t>(mtlRWTextureBinding),
+                imageUnit.level, imageUnit.layer, imageUnit.format));
         }
     }  // for shader types
 

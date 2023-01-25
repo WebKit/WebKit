@@ -116,7 +116,7 @@ void RenderTargetVk::onColorResolve(ContextVk *contextVk, uint32_t framebufferLa
     ASSERT(mResolveImage == nullptr);
 
     contextVk->onImageRenderPassWrite(mLevelIndexGL, mLayerIndex, framebufferLayerCount,
-                                      VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::ColorAttachment,
+                                      VK_IMAGE_ASPECT_COLOR_BIT, vk::ImageLayout::ColorWrite,
                                       mImage);
 }
 

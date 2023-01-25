@@ -112,9 +112,14 @@ enum class TextureDimension
 // next highest values to meet native drivers are 16 bits or 32 bits.
 constexpr uint32_t kAttributeOffsetMaxBits = 15;
 constexpr uint32_t kInvalidMemoryTypeIndex = UINT32_MAX;
+constexpr uint32_t kInvalidMemoryHeapIndex = UINT32_MAX;
 
 namespace vk
 {
+
+// Used for memory allocation tracking.
+enum class MemoryAllocationType;
+
 // A packed attachment index interface with vulkan API
 class PackedAttachmentIndex final
 {
@@ -185,6 +190,54 @@ struct Error
     uint32_t line;
 };
 
+class QueueSerialIndexAllocator final
+{
+  public:
+    QueueSerialIndexAllocator() : mLargestIndexEverAllocated(kInvalidQueueSerialIndex)
+    {
+        // Start with every index is free
+        mFreeIndexBitSetArray.set();
+        ASSERT(mFreeIndexBitSetArray.all());
+    }
+    SerialIndex allocate()
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        if (mFreeIndexBitSetArray.none())
+        {
+            ERR() << "Run out of queue serial index. All " << kMaxQueueSerialIndexCount
+                  << " indices are used.";
+            return kInvalidQueueSerialIndex;
+        }
+        SerialIndex index = static_cast<SerialIndex>(mFreeIndexBitSetArray.first());
+        ASSERT(index < kMaxQueueSerialIndexCount);
+        mFreeIndexBitSetArray.reset(index);
+        mLargestIndexEverAllocated = (~mFreeIndexBitSetArray).last();
+        return index;
+    }
+
+    void release(SerialIndex index)
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        ASSERT(index <= mLargestIndexEverAllocated);
+        ASSERT(!mFreeIndexBitSetArray.test(index));
+        mFreeIndexBitSetArray.set(index);
+        // mLargestIndexEverAllocated is for optimization. Even if we released queueIndex, we may
+        // still have resources still have serial the index. Thus do not decrement
+        // mLargestIndexEverAllocated here. The only downside is that we may get into slightly less
+        // optimal code path in GetBatchCountUpToSerials.
+    }
+
+    size_t getLargestIndexEverAllocated() const
+    {
+        return mLargestIndexEverAllocated.load(std::memory_order_consume);
+    }
+
+  private:
+    angle::BitSetArray<kMaxQueueSerialIndexCount> mFreeIndexBitSetArray;
+    std::atomic<size_t> mLargestIndexEverAllocated;
+    std::mutex mMutex;
+};
+
 // Abstracts error handling. Implemented by both ContextVk for GL and DisplayVk for EGL errors.
 class Context : angle::NonCopyable
 {
@@ -203,9 +256,17 @@ class Context : angle::NonCopyable
     const angle::VulkanPerfCounters &getPerfCounters() const { return mPerfCounters; }
     angle::VulkanPerfCounters &getPerfCounters() { return mPerfCounters; }
 
+    SerialIndex getCurrentQueueSerialIndex() const { return mCurrentQueueSerialIndex; }
+    Serial getLastSubmittedSerial() const { return mLastSubmittedSerial; }
+
   protected:
     RendererVk *const mRenderer;
     angle::VulkanPerfCounters mPerfCounters;
+
+    // Per context queue serial
+    SerialIndex mCurrentQueueSerialIndex;
+    Serial mLastFlushedSerial;
+    Serial mLastSubmittedSerial;
 };
 
 class RenderPassDesc;
@@ -295,43 +356,6 @@ inline OverlayVk *GetImpl(const gl::MockOverlay *glObject)
     return nullptr;
 }
 
-template <typename ObjT>
-class ObjectAndSerial final : angle::NonCopyable
-{
-  public:
-    ObjectAndSerial() {}
-
-    ObjectAndSerial(ObjT &&object, Serial serial) : mObject(std::move(object)), mSerial(serial) {}
-
-    ObjectAndSerial(ObjectAndSerial &&other)
-        : mObject(std::move(other.mObject)), mSerial(std::move(other.mSerial))
-    {}
-    ObjectAndSerial &operator=(ObjectAndSerial &&other)
-    {
-        mObject = std::move(other.mObject);
-        mSerial = std::move(other.mSerial);
-        return *this;
-    }
-
-    Serial getSerial() const { return mSerial; }
-    void updateSerial(Serial newSerial) { mSerial = newSerial; }
-
-    const ObjT &get() const { return mObject; }
-    ObjT &get() { return mObject; }
-
-    bool valid() const { return mObject.valid(); }
-
-    void destroy(VkDevice device)
-    {
-        mObject.destroy(device);
-        mSerial = Serial();
-    }
-
-  private:
-    ObjT mObject;
-    Serial mSerial;
-};
-
 // Reference to a deleted object. The object is due to be destroyed at some point in the future.
 // |mHandleType| determines the type of the object and which destroy function should be called.
 class GarbageObject
@@ -371,11 +395,39 @@ GarbageObject GetGarbage(T *obj)
 using GarbageList = std::vector<GarbageObject>;
 
 // A list of garbage objects and the associated serial after which the objects can be destroyed.
-using GarbageAndSerial = ObjectAndSerial<GarbageList>;
+class GarbageAndQueueSerial final : angle::NonCopyable
+{
+  public:
+    GarbageAndQueueSerial() {}
+
+    GarbageAndQueueSerial(GarbageList &&object, QueueSerial serial)
+        : mObject(std::move(object)), mQueueSerial(serial)
+    {}
+
+    GarbageAndQueueSerial(GarbageAndQueueSerial &&other)
+        : mObject(std::move(other.mObject)), mQueueSerial(std::move(other.mQueueSerial))
+    {}
+    GarbageAndQueueSerial &operator=(GarbageAndQueueSerial &&other)
+    {
+        mObject      = std::move(other.mObject);
+        mQueueSerial = std::move(other.mQueueSerial);
+        return *this;
+    }
+
+    QueueSerial getQueueSerial() const { return mQueueSerial; }
+    void updateQueueSerial(const QueueSerial &newQueueSerial) { mQueueSerial = newQueueSerial; }
+
+    const GarbageList &get() const { return mObject; }
+    GarbageList &get() { return mObject; }
+
+  private:
+    GarbageList mObject;
+    QueueSerial mQueueSerial;
+};
 
 // Houses multiple lists of garbage objects. Each sub-list has a different lifetime. They should be
 // sorted such that later-living garbage is ordered later in the list.
-using GarbageQueue = std::queue<GarbageAndSerial>;
+using GarbageQueue = std::queue<GarbageAndQueueSerial>;
 
 class MemoryProperties final : angle::NonCopyable
 {
@@ -392,6 +444,17 @@ class MemoryProperties final : angle::NonCopyable
                                             uint32_t *indexOut) const;
     void destroy();
 
+    uint32_t getHeapIndexForMemoryType(uint32_t memoryType) const
+    {
+        if (memoryType == kInvalidMemoryTypeIndex)
+        {
+            return kInvalidMemoryHeapIndex;
+        }
+
+        ASSERT(memoryType < getMemoryTypeCount());
+        return mMemoryProperties.memoryTypes[memoryType].heapIndex;
+    }
+
     VkDeviceSize getHeapSizeForMemoryType(uint32_t memoryType) const
     {
         uint32_t heapIndex = mMemoryProperties.memoryTypes[memoryType].heapIndex;
@@ -400,6 +463,7 @@ class MemoryProperties final : angle::NonCopyable
 
     const VkMemoryType &getMemoryType(uint32_t i) const { return mMemoryProperties.memoryTypes[i]; }
 
+    uint32_t getMemoryHeapCount() const { return mMemoryProperties.memoryHeapCount; }
     uint32_t getMemoryTypeCount() const { return mMemoryProperties.memoryTypeCount; }
 
   private:
@@ -412,7 +476,7 @@ class StagingBuffer final : angle::NonCopyable
   public:
     StagingBuffer();
     void release(ContextVk *contextVk);
-    void collectGarbage(RendererVk *renderer, Serial serial);
+    void collectGarbage(RendererVk *renderer, const QueueSerial &queueSerial);
     void destroy(RendererVk *renderer);
 
     angle::Result init(Context *context, VkDeviceSize size, StagingUsage usage);
@@ -441,36 +505,44 @@ angle::Result InitMappableDeviceMemory(Context *context,
                                        VkMemoryPropertyFlags memoryPropertyFlags);
 
 angle::Result AllocateBufferMemory(Context *context,
+                                   vk::MemoryAllocationType memoryAllocationType,
                                    VkMemoryPropertyFlags requestedMemoryPropertyFlags,
                                    VkMemoryPropertyFlags *memoryPropertyFlagsOut,
                                    const void *extraAllocationInfo,
                                    Buffer *buffer,
+                                   uint32_t *memoryTypeIndexOut,
                                    DeviceMemory *deviceMemoryOut,
                                    VkDeviceSize *sizeOut);
 
 angle::Result AllocateImageMemory(Context *context,
+                                  vk::MemoryAllocationType memoryAllocationType,
                                   VkMemoryPropertyFlags memoryPropertyFlags,
                                   VkMemoryPropertyFlags *memoryPropertyFlagsOut,
                                   const void *extraAllocationInfo,
                                   Image *image,
+                                  uint32_t *memoryTypeIndexOut,
                                   DeviceMemory *deviceMemoryOut,
                                   VkDeviceSize *sizeOut);
 
 angle::Result AllocateImageMemoryWithRequirements(
     Context *context,
+    vk::MemoryAllocationType memoryAllocationType,
     VkMemoryPropertyFlags memoryPropertyFlags,
     const VkMemoryRequirements &memoryRequirements,
     const void *extraAllocationInfo,
     const VkBindImagePlaneMemoryInfoKHR *extraBindInfo,
     Image *image,
+    uint32_t *memoryTypeIndexOut,
     DeviceMemory *deviceMemoryOut);
 
 angle::Result AllocateBufferMemoryWithRequirements(Context *context,
+                                                   MemoryAllocationType memoryAllocationType,
                                                    VkMemoryPropertyFlags memoryPropertyFlags,
                                                    const VkMemoryRequirements &memoryRequirements,
                                                    const void *extraAllocationInfo,
                                                    Buffer *buffer,
                                                    VkMemoryPropertyFlags *memoryPropertyFlagsOut,
+                                                   uint32_t *memoryTypeIndexOut,
                                                    DeviceMemory *deviceMemoryOut);
 
 angle::Result InitShaderModule(Context *context,
@@ -855,38 +927,36 @@ class ClearValuesArray final
     X(ImageOrBufferView)      \
     X(Sampler)
 
-#define ANGLE_DEFINE_VK_SERIAL_TYPE(Type)                                  \
-    class Type##Serial                                                     \
-    {                                                                      \
-      public:                                                              \
-        constexpr Type##Serial() : mSerial(kInvalid)                       \
-        {}                                                                 \
-        constexpr explicit Type##Serial(uint32_t serial) : mSerial(serial) \
-        {}                                                                 \
-                                                                           \
-        constexpr bool operator==(const Type##Serial &other) const         \
-        {                                                                  \
-            ASSERT(mSerial != kInvalid || other.mSerial != kInvalid);      \
-            return mSerial == other.mSerial;                               \
-        }                                                                  \
-        constexpr bool operator!=(const Type##Serial &other) const         \
-        {                                                                  \
-            ASSERT(mSerial != kInvalid || other.mSerial != kInvalid);      \
-            return mSerial != other.mSerial;                               \
-        }                                                                  \
-        constexpr uint32_t getValue() const                                \
-        {                                                                  \
-            return mSerial;                                                \
-        }                                                                  \
-        constexpr bool valid() const                                       \
-        {                                                                  \
-            return mSerial != kInvalid;                                    \
-        }                                                                  \
-                                                                           \
-      private:                                                             \
-        uint32_t mSerial;                                                  \
-        static constexpr uint32_t kInvalid = 0;                            \
-    };                                                                     \
+#define ANGLE_DEFINE_VK_SERIAL_TYPE(Type)                                     \
+    class Type##Serial                                                        \
+    {                                                                         \
+      public:                                                                 \
+        constexpr Type##Serial() : mSerial(kInvalid) {}                       \
+        constexpr explicit Type##Serial(uint32_t serial) : mSerial(serial) {} \
+                                                                              \
+        constexpr bool operator==(const Type##Serial &other) const            \
+        {                                                                     \
+            ASSERT(mSerial != kInvalid || other.mSerial != kInvalid);         \
+            return mSerial == other.mSerial;                                  \
+        }                                                                     \
+        constexpr bool operator!=(const Type##Serial &other) const            \
+        {                                                                     \
+            ASSERT(mSerial != kInvalid || other.mSerial != kInvalid);         \
+            return mSerial != other.mSerial;                                  \
+        }                                                                     \
+        constexpr uint32_t getValue() const                                   \
+        {                                                                     \
+            return mSerial;                                                   \
+        }                                                                     \
+        constexpr bool valid() const                                          \
+        {                                                                     \
+            return mSerial != kInvalid;                                       \
+        }                                                                     \
+                                                                              \
+      private:                                                                \
+        uint32_t mSerial;                                                     \
+        static constexpr uint32_t kInvalid = 0;                               \
+    };                                                                        \
     static constexpr Type##Serial kInvalid##Type##Serial = Type##Serial();
 
 ANGLE_VK_SERIAL_OP(ANGLE_DEFINE_VK_SERIAL_TYPE)
@@ -970,12 +1040,46 @@ angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
                                       uint64_t handle,
                                       const std::string &label);
 
+// Used to store memory allocation information for tracking purposes.
+struct MemoryAllocationInfo
+{
+    MemoryAllocationInfo() = default;
+    uint64_t id;
+    MemoryAllocationType allocType;
+    uint32_t memoryHeapIndex;
+    void *handle;
+    VkDeviceSize size;
+};
+
+class MemoryAllocInfoMapKey
+{
+  public:
+    MemoryAllocInfoMapKey() : handle(nullptr) {}
+    MemoryAllocInfoMapKey(void *handle) : handle(handle) {}
+
+    bool operator==(const MemoryAllocInfoMapKey &rhs) const
+    {
+        return reinterpret_cast<uint64_t>(handle) == reinterpret_cast<uint64_t>(rhs.handle);
+    }
+
+    size_t hash() const;
+
+  private:
+    void *handle;
+};
+
+// Number format used for memory allocation data, using three-digit grouping.
+class MemoryAllocationLogNumberFormat : public std::numpunct<char>
+{
+  protected:
+    virtual std::string do_grouping() const override { return "\3"; }
+};
+
 }  // namespace vk
 
 #if !defined(ANGLE_SHARED_LIBVULKAN)
 // Lazily load entry points for each extension as necessary.
 void InitDebugUtilsEXTFunctions(VkInstance instance);
-void InitDebugReportEXTFunctions(VkInstance instance);
 void InitGetPhysicalDeviceProperties2KHRFunctions(VkInstance instance);
 void InitTransformFeedbackEXTFunctions(VkDevice device);
 void InitSamplerYcbcrKHRFunctions(VkDevice device);
@@ -1182,6 +1286,7 @@ enum class RenderPassClosureReason
     CopyTextureOnCPU,
     TextureReformatToRenderable,
     DeviceLocalBufferMap,
+    OutOfReservedQueueSerialForOutsideCommands,
 
     // UtilsVk
     PrepareForBlit,
@@ -1195,6 +1300,16 @@ enum class RenderPassClosureReason
 };
 
 }  // namespace rx
+
+// Introduce std::hash for MemoryAllocInfoMapKey.
+namespace std
+{
+template <>
+struct hash<rx::vk::MemoryAllocInfoMapKey>
+{
+    size_t operator()(const rx::vk::MemoryAllocInfoMapKey &key) const { return key.hash(); }
+};
+}  // namespace std
 
 #define ANGLE_VK_TRY(context, command)                                                   \
     do                                                                                   \

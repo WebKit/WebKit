@@ -68,6 +68,7 @@ public:
     void visit(Uint32Literal&) override;
     void visit(UnaryExpression&) override;
     void visit(BinaryExpression&) override;
+    void visit(PointerDereference&) override;
 
     // Statement
     void visit(AssignmentStatement&) override;

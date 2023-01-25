@@ -127,7 +127,7 @@ public:
     void strokePath(const WebCore::Path&);
     void strokeEllipse(const WebCore::FloatRect&);
     void clearRect(const WebCore::FloatRect&);
-    void drawControlPart(Ref<WebCore::ControlPart>, const WebCore::FloatRect&, float deviceScaleFactor, const WebCore::ControlStyle&);
+    void drawControlPart(Ref<WebCore::ControlPart>, const WebCore::FloatRoundedRect& borderRect, float deviceScaleFactor, const WebCore::ControlStyle&);
 #if USE(CG)
     void applyStrokePattern();
     void applyFillPattern();

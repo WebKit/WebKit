@@ -132,9 +132,12 @@ class SubProcess():
 class ChildProcessesManager():
 
     @classmethod
-    def _GetGnAndNinjaAbsolutePaths(self):
-        path = os.path.join('third_party', 'depot_tools')
-        return os.path.join(path, winext('gn', 'bat')), os.path.join(path, winext('ninja', 'exe'))
+    def _GetGnAbsolutePaths(self):
+        return os.path.join('third_party', 'depot_tools', winext('gn', 'bat'))
+
+    @classmethod
+    def _GetNinjaAbsolutePaths(self):
+        return os.path.join('third_party', 'ninja', 'ninja')
 
     def __init__(self, args, logger, ninja_lock):
         # a dictionary of Subprocess, with pid as key
@@ -142,7 +145,8 @@ class ChildProcessesManager():
         # list of Python multiprocess.Process handles
         self.workers = []
 
-        self._gn_path, self._ninja_path = self._GetGnAndNinjaAbsolutePaths()
+        self._gn_path = self._GetGnAbsolutePaths()
+        self._ninja_path = self._GetNinjaAbsolutePaths()
         self._use_goma = AutodetectGoma()
         self._logger = logger
         self._ninja_lock = ninja_lock

@@ -222,6 +222,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->EXT_texture_buffer                             = 0;
     resources->OES_sample_variables                           = 0;
     resources->EXT_clip_cull_distance                         = 0;
+    resources->ANGLE_clip_cull_distance                       = 0;
     resources->KHR_blend_equation_advanced                    = 0;
 
     resources->MaxClipDistances                = 8;
@@ -729,6 +730,37 @@ const std::set<std::string> *GetUsedImage2DFunctionNames(const ShHandle handle)
 #else
     return nullptr;
 #endif  // ANGLE_ENABLE_HLSL
+}
+
+uint8_t GetClipDistanceArraySize(const ShHandle handle)
+{
+    ASSERT(handle);
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    return compiler->getClipDistanceArraySize();
+}
+
+uint8_t GetCullDistanceArraySize(const ShHandle handle)
+{
+    ASSERT(handle);
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    return compiler->getCullDistanceArraySize();
+}
+
+bool HasClipDistanceInVertexShader(const ShHandle handle)
+{
+    ASSERT(handle);
+
+    TShHandleBase *base = static_cast<TShHandleBase *>(handle);
+    TCompiler *compiler = base->getAsCompiler();
+    ASSERT(compiler);
+
+    return compiler->getShaderType() == GL_VERTEX_SHADER && compiler->hasClipDistance();
 }
 
 bool HasDiscardInFragmentShader(const ShHandle handle)

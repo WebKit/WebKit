@@ -907,11 +907,23 @@ angle::Result GLES1Renderer::initializeRendererProgram(Context *context, State *
     ShaderProgramID vertexShader;
     ShaderProgramID fragmentShader;
 
+    // Set the count of texture units to a minimum (at least one for simplicity), to avoid requiring
+    // unnecessary vertex attributes and take up varying slots.
+    uint32_t maxTexUnitsEnabled = 1;
+    for (int i = 0; i < kTexUnitCount; i++)
+    {
+        if (mShaderState.texCubeEnables[i] || mShaderState.tex2DEnables[i])
+        {
+            maxTexUnitsEnabled = i + 1;
+        }
+    }
+
     std::stringstream GLES1DrawVShaderStateDefs;
     addVertexShaderDefs(GLES1DrawVShaderStateDefs);
 
     std::stringstream vertexStream;
     vertexStream << kGLES1DrawVShaderHeader;
+    vertexStream << kGLES1TexUnitsDefine << maxTexUnitsEnabled << "\n";
     vertexStream << GLES1DrawVShaderStateDefs.str();
     vertexStream << kGLES1DrawVShader;
 
@@ -935,6 +947,7 @@ angle::Result GLES1Renderer::initializeRendererProgram(Context *context, State *
         }
     }
     fragmentStream << kGLES1DrawFShaderHeader;
+    fragmentStream << kGLES1TexUnitsDefine << maxTexUnitsEnabled << "\n";
     fragmentStream << GLES1DrawFShaderStateDefs.str();
     fragmentStream << kGLES1DrawFShaderUniformDefs;
     if (mShaderState.mGLES1StateEnabled[GLES1StateEnables::LogicOpThroughFramebufferFetch])

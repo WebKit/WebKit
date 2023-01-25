@@ -65,24 +65,24 @@ LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
     }
 
     auto lineSelectionRect = LineSelection::logicalRect(*lineBox());
-    auto selectionRect = LayoutRect { logicalLeft(), lineSelectionRect.y(), logicalWidth(), lineSelectionRect.height() };
+    auto selectionRect = LayoutRect { logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), logicalWidth(), lineSelectionRect.height() };
 
     auto textRun = this->textRun();
     if (clampedStart || clampedEnd != textRun.length())
         fontCascade().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
 
-    return snappedSelectionRect(selectionRect, logicalRight(), lineSelectionRect.y(), lineSelectionRect.height(), isHorizontal());
+    return snappedSelectionRect(selectionRect, logicalRightIgnoringInlineDirection(), lineSelectionRect.y(), lineSelectionRect.height(), isHorizontal());
 }
 
 unsigned TextBox::offsetForPosition(float x, bool includePartialGlyphs) const
 {
     if (isLineBreak())
         return 0;
-    if (x - logicalLeft() > logicalWidth())
+    if (x - logicalLeftIgnoringInlineDirection() > logicalWidth())
         return isLeftToRightDirection() ? length() : 0;
-    if (x - logicalLeft() < 0)
+    if (x - logicalLeftIgnoringInlineDirection() < 0)
         return isLeftToRightDirection() ? 0 : length();
-    return fontCascade().offsetForPosition(textRun(TextRunMode::Editing), x - logicalLeft(), includePartialGlyphs);
+    return fontCascade().offsetForPosition(textRun(TextRunMode::Editing), x - logicalLeftIgnoringInlineDirection(), includePartialGlyphs);
 }
 
 float TextBox::positionForOffset(unsigned offset) const
@@ -91,7 +91,7 @@ float TextBox::positionForOffset(unsigned offset) const
     ASSERT(offset <= end());
 
     if (isLineBreak())
-        return logicalLeft();
+        return logicalLeftIgnoringInlineDirection();
 
     auto [startOffset, endOffset] = [&] {
         if (direction() == TextDirection::RTL)
@@ -99,7 +99,7 @@ float TextBox::positionForOffset(unsigned offset) const
         return std::pair { 0u, selectableRange().clamp(offset) };
     }();
 
-    auto selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
+    auto selectionRect = LayoutRect(logicalLeftIgnoringInlineDirection(), 0, 0, 0);
     
     auto textRun = this->textRun(TextRunMode::Editing);
     fontCascade().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);

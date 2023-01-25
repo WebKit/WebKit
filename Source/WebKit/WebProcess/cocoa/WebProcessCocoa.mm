@@ -172,15 +172,6 @@
 #import <WebKitAdditions/VideoToolboxAdditions.h>
 #endif
 
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-#include <WebKitAdditions/InternalBuildAdditions.h>
-#else
-static bool isInternalBuild()
-{
-    return false;
-}
-#endif
-
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 // FIXME: This is only for binary compatibility with versions of UIKit in macOS 11 that are missing the change in <rdar://problem/68524148>.
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -254,10 +245,7 @@ static void softlinkDataDetectorsFrameworks()
 
 static void initializeLogd()
 {
-    if (isInternalBuild())
-        os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG | OS_TRACE_MODE_STREAM_LIVE);
-    else
-        os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG);
+    os_trace_set_mode(OS_TRACE_MODE_INFO | OS_TRACE_MODE_DEBUG);
 
     // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
     // This is needed to block launchd after the WebContent process has launched, since access to launchd is

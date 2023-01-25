@@ -35,7 +35,7 @@ namespace WebCore {
 
 PluginInfoProvider::~PluginInfoProvider()
 {
-    ASSERT(m_pages.computesEmpty());
+    ASSERT(m_pages.isEmptyIgnoringNullReferences());
 }
 
 void PluginInfoProvider::clearPagesPluginData()

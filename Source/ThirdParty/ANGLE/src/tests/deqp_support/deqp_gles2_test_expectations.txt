@@ -288,6 +288,7 @@
 6466 MAC METAL INTEL : dEQP-GLES2.functional.texture.vertex.cube.filtering.nearest_mipmap_nearest_linear* = FAIL
 6466 MAC METAL INTEL : dEQP-GLES2.functional.texture.vertex.cube.wrap.* = FAIL
 7451 MAC METAL INTEL : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
+7838 MAC METAL INTEL : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_* = FAIL
 
 6297 MAC METAL : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond* = FAIL
 
@@ -303,6 +304,7 @@
 
 6528 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_array_function_arg_vertex = FAIL
 6528 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_function_arg_vertex = FAIL
+7838 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.function.global_variable_aliasing_* = FAIL
 
 6709 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.13 = FAIL
 6709 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.26 = FAIL
@@ -312,3 +314,6 @@
 6678 UBSAN : dEQP-GLES2.functional.shaders.random.* = SKIP
 6678 UBSAN : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.* = SKIP
 6678 UBSAN : dEQP-GLES2.functional.shaders.texture_functions.vertex.texture2dprojlod_vec3 = SKIP
+
+// Pixel 6 test expectations
+7867 PIXEL6 : dEQP-GLES2.functional.shaders.algorithm.rgb_to_hsl_vertex = SKIP

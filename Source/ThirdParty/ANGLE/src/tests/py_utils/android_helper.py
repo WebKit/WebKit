@@ -64,6 +64,15 @@ def _FindPackageName(apk_path):
     return package_name
 
 
+def _InitializeAndroid(apk_path):
+    _GetAdbRoot()
+    assert _FindPackageName(apk_path) == TEST_PACKAGE_NAME
+
+    if logging.getLogger().isEnabledFor(logging.DEBUG):
+        logging.debug(_AdbShell('dumpsys nfc | grep mScreenState || true').decode())
+        logging.debug(_AdbShell('df -h').decode())
+
+
 def Initialize(suite_name):
     if _Global.initialized:
         return
@@ -71,8 +80,7 @@ def Initialize(suite_name):
     apk_path = _ApkPath(suite_name)
     if os.path.exists(apk_path):
         _Global.is_android = True
-        _GetAdbRoot()
-        assert _FindPackageName(apk_path) == TEST_PACKAGE_NAME
+        _InitializeAndroid(apk_path)
 
     _Global.initialized = True
 

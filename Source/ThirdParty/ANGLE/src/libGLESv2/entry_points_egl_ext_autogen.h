@@ -139,6 +139,9 @@ ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_ExportVkImageANGLE(EGLDisplay dpy,
                                                            void *vk_image,
                                                            void *vk_image_create_info);
 
+// EGL_ANGLE_wait_until_work_scheduled
+ANGLE_EXPORT void EGLAPIENTRY EGL_WaitUntilWorkScheduledANGLE(EGLDisplay dpy);
+
 // EGL_CHROMIUM_sync_control
 ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
                                                               EGLSurface surface,

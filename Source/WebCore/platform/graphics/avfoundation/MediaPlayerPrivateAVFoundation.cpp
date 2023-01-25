@@ -687,6 +687,7 @@ void MediaPlayerPrivateAVFoundation::didEnd()
     // Hang onto the current time and use it as duration from now on since we are definitely at
     // the end of the movie. Do this because the initial duration is sometimes an estimate.
     MediaTime now = currentMediaTime();
+    ALWAYS_LOG(LOGIDENTIFIER, "currentTime: ", now, ", seeking: ", m_seeking);
     if (now > MediaTime::zeroTime() && !m_seeking)
         m_cachedDuration = now;
 

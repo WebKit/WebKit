@@ -112,6 +112,12 @@ ContextNULL::ContextNULL(const gl::State &state,
     mCaps = GenerateMinimumCaps(maxClientVersion, mExtensions);
 
     InitMinimumTextureCapsMap(maxClientVersion, mExtensions, &mTextureCaps);
+
+    if (mExtensions.shaderPixelLocalStorageANGLE)
+    {
+        mPLSOptions.type             = ShPixelLocalStorageType::FramebufferFetch;
+        mPLSOptions.fragmentSyncType = ShFragmentSynchronizationType::Automatic;
+    }
 }
 
 ContextNULL::~ContextNULL() {}
@@ -408,11 +414,9 @@ const gl::Limitations &ContextNULL::getNativeLimitations() const
     return mLimitations;
 }
 
-ShPixelLocalStorageType ContextNULL::getNativePixelLocalStorageType() const
+const ShPixelLocalStorageOptions &ContextNULL::getNativePixelLocalStorageOptions() const
 {
-    return getNativeExtensions().shaderPixelLocalStorageANGLE
-               ? ShPixelLocalStorageType::FramebufferFetch
-               : ShPixelLocalStorageType::NotSupported;
+    return mPLSOptions;
 }
 
 CompilerImpl *ContextNULL::createCompiler()

@@ -1,12 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure (Error message):
-//  expected:
-//  should match '/Compiling function #0:"three snowmen: ☃☃☃" failed: /'
-//  found:
-//  "WebAssembly.Module doesn't validate:  block with type: () -> [I32] returns: 1 but stack has: 0 values, in function at index 0 (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')"
-
 // Copyright 2017 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -60,7 +52,7 @@ checkExports('☺☺mul☺☺', '☺☺mul☺☺', '☺☺add☺☺', '☺☺add
   builder.addFunction('three snowmen: ☃☃☃', kSig_i_v).addBody([]).exportFunc();
   assertThrows(
       () => builder.instantiate(), WebAssembly.CompileError,
-      /Compiling function #0:"three snowmen: ☃☃☃" failed: /);
+      /doesn't validate/);
 })();
 
 (function errorMessageUnicodeInImportModuleName() {
@@ -68,7 +60,7 @@ checkExports('☺☺mul☺☺', '☺☺mul☺☺', '☺☺add☺☺', '☺☺add
   builder.addImport('three snowmen: ☃☃☃', 'foo', kSig_i_v);
   assertThrows(
       () => builder.instantiate({}), TypeError,
-      /WebAssembly.Instance\(\): Import #0 module="three snowmen: ☃☃☃" error: /);
+      /import three snowmen: ☃☃☃:foo must be an object/);
 })();
 
 (function errorMessageUnicodeInImportElemName() {
@@ -76,8 +68,7 @@ checkExports('☺☺mul☺☺', '☺☺mul☺☺', '☺☺add☺☺', '☺☺add
   builder.addImport('mod', 'three snowmen: ☃☃☃', kSig_i_v);
   assertThrows(
       () => builder.instantiate({mod: {}}), WebAssembly.LinkError,
-      'WebAssembly.Instance\(\): Import #0 module="mod" function="three ' +
-          'snowmen: ☃☃☃" error: function import requires a callable');
+      /import function mod:three snowmen: ☃☃☃ must be callable/);
 })();
 
 (function errorMessageUnicodeInImportModAndElemName() {
@@ -87,7 +78,5 @@ checkExports('☺☺mul☺☺', '☺☺mul☺☺', '☺☺add☺☺', '☺☺add
   builder.addImport(mod_name, func_name, kSig_i_v);
   assertThrows(
       () => builder.instantiate({[mod_name]: {}}), WebAssembly.LinkError,
-      'WebAssembly.Instance(): Import #0 module="' + mod_name +
-          '" function="' + func_name +
-          '" error: function import requires a callable');
+      /import function ☮▁▂▃▄☾ ♛ ◡ ♛ ☽▄▃▂▁☮:☾˙❀‿❀˙☽ must be callable/);
 })();

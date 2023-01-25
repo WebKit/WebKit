@@ -124,8 +124,4 @@ let testFct = () => {
   assertEquals(-123, wasm.i32_shr_s_by_negative_22((-123 << 10) + 456));
 };
 
-for (let i = 0; i < 20; i++) testFct();
-for (let fct of fcts) {
-  %WasmTierUpFunction(instance, fct.index);
-}
-testFct();
+for (let i = 0; i < 10000; i++) testFct();

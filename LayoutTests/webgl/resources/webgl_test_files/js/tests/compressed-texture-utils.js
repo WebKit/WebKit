@@ -67,6 +67,10 @@ let testCompressedFormatsUnavailableWhenExtensionDisabled = function(gl, compres
         if (compressedFormats.hasOwnProperty(name)) {
             gl.compressedTexImage2D(gl.TEXTURE_2D, 0, compressedFormats[name], testSize, testSize, 0, new Uint8Array(expectedByteLength(testSize, testSize, compressedFormats[name])));
             wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "Trying to use format " + name + " with extension disabled.");
+            if (gl.texStorage2D) {
+                gl.texStorage2D(gl.TEXTURE_2D, 1, compressedFormats[name], testSize, testSize);
+                wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "Trying to use format " + name + " with texStorage2D with extension disabled.");
+            }
         }
     }
     gl.bindTexture(gl.TEXTURE_2D, null);

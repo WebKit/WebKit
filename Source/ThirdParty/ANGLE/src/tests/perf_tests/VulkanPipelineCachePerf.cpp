@@ -92,7 +92,7 @@ void VulkanPipelineCachePerfTest::step()
     vk::RenderPass rp;
     vk::PipelineLayout pl;
     vk::PipelineCache pc;
-    PipelineCacheAccess spc;
+    vk::PipelineCacheAccess spc;
     vk::RefCounted<vk::ShaderModule> vsRefCounted;
     vk::RefCounted<vk::ShaderModule> fsRefCounted;
     vk::ShaderModuleMap ssm;

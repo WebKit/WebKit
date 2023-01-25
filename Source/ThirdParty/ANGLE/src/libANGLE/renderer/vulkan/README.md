@@ -24,20 +24,28 @@ of a front-end OpenGL Context. ContextVk processes state changes and handles act
 
 ## Command recording
 
-The back-end records commands into command buffers via the following `ContextVk` APIs:
+A render pass has three states: `unstarted`, started and active (we call it `active` in short),
+started but inactive (we call it `inactive` in short). The back-end records commands into command
+buffers via the following `ContextVk` APIs:
 
  * `beginNewRenderPass`: Writes out (aka flushes) prior pending commands into a primary command
    buffer, then starts a new render pass. Returns a secondary command buffer *inside* a render pass
-   instance.
+instance.
  * `getOutsideRenderPassCommandBuffer`: May flush prior command buffers and close the render pass if
    necessary, in addition to issuing the appropriate barriers. Returns a secondary command buffer
-   *outside* a render pass instance.
+*outside* a render pass instance.
  * `getStartedRenderPassCommands`: Returns a reference to the currently open render pass' commands
    buffer.
+ * `onRenderPassFinished`: Puts render pass into inactive state where you can not record more
+   commands into secondary command buffer, except in some special cases where ANGLE does some
+optimization internally.
+ * `flushCommandsAndEndRenderPassWithoutSubmit`: Marks the end of render pass. It flushes secondary
+   command buffer into vulkan's primary command buffer, puts secondary command buffer back to
+unstarted state and then goes into recycler for reuse.
 
 The back-end (mostly) records Image and Buffer barriers through additional `CommandBufferAccess`
-APIs, the result of which is passed to `getOutsideRenderPassCommandBuffer`.  Note that the
-barriers are not actually recorded until `getOutsideRenderPassCommandBuffer` is called:
+APIs, the result of which is passed to `getOutsideRenderPassCommandBuffer`.  Note that the barriers
+are not actually recorded until `getOutsideRenderPassCommandBuffer` is called:
 
  * `onBufferTransferRead` and `onBufferComputeShaderRead` accumulate `VkBuffer` read barriers.
  * `onBufferTransferWrite` and `onBufferComputeShaderWrite` accumulate `VkBuffer` write barriers.
@@ -48,7 +56,7 @@ barriers are not actually recorded until `getOutsideRenderPassCommandBuffer` is 
    started RenderPass.
 
 After the back-end records commands to the primary buffer and we flush (e.g. on swap) or when we call
-`ContextVk::finishToSerial`, ANGLE submits the primary command buffer to a `VkQueue`.
+`RendererVk::finishQueueSerial`, ANGLE submits the primary command buffer to a `VkQueue`.
 
 See the [code][CommandAPIs] for more details.
 

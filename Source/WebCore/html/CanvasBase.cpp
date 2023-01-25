@@ -69,7 +69,7 @@ CanvasBase::CanvasBase(IntSize size)
 CanvasBase::~CanvasBase()
 {
     ASSERT(m_didNotifyObserversCanvasDestroyed);
-    ASSERT(m_observers.computesEmpty());
+    ASSERT(m_observers.isEmptyIgnoringNullReferences());
     ASSERT(!m_imageBuffer);
 }
 

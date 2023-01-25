@@ -70,6 +70,7 @@ public:
     void visit(AST::StructureAccess&) override;
     void visit(AST::UnaryExpression&) override;
     void visit(AST::BinaryExpression&) override;
+    void visit(AST::PointerDereference&) override;
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
@@ -84,8 +85,10 @@ public:
 
     void visit(AST::Parameter&) override;
 
+private:
     StringBuilder& m_stringBuilder;
     Indentation<4> m_indent { 0 };
+    std::optional<AST::StructRole> m_structRole;
 };
 
 void FunctionDefinitionWriter::visit(AST::ShaderModule& shaderModule)
@@ -107,16 +110,18 @@ void FunctionDefinitionWriter::visit(AST::FunctionDecl& functionDefinition)
     for (auto& parameter : functionDefinition.parameters()) {
         if (!first)
             m_stringBuilder.append(", ");
-        bool isBuiltin = false;
-        for (auto& attribute : parameter.attributes()) {
-            if (attribute->kind() == AST::Node::Kind::BuiltinAttribute) {
-                isBuiltin = true;
-                break;
-            }
-        }
-        checkErrorAndVisit(parameter);
-        if (!isBuiltin)
+        switch (parameter.role()) {
+        case AST::ParameterRole::UserDefined:
+            checkErrorAndVisit(parameter);
+            break;
+        case AST::ParameterRole::StageIn:
+            checkErrorAndVisit(parameter);
             m_stringBuilder.append(" [[stage_in]]");
+            break;
+        case AST::ParameterRole::GlobalVariable:
+            // FIXME: add support for global variables
+            break;
+        }
         first = false;
     }
     m_stringBuilder.append(")\n");
@@ -129,6 +134,7 @@ void FunctionDefinitionWriter::visit(AST::FunctionDecl& functionDefinition)
 void FunctionDefinitionWriter::visit(AST::StructDecl& structDecl)
 {
     // FIXME: visit struct attributes
+    m_structRole = { structDecl.role() };
     m_stringBuilder.append(m_indent, "struct ", structDecl.name(), " {\n");
     {
         IndentationScope scope(m_indent);
@@ -144,12 +150,14 @@ void FunctionDefinitionWriter::visit(AST::StructDecl& structDecl)
         }
     }
     m_stringBuilder.append(m_indent, "};\n\n");
+    m_structRole = std::nullopt;
 }
 
 void FunctionDefinitionWriter::visit(AST::VariableDecl& variableDecl)
 {
     ASSERT(variableDecl.maybeTypeDecl());
 
+    m_stringBuilder.append(m_indent);
     visit(*variableDecl.maybeTypeDecl());
     m_stringBuilder.append(" ", variableDecl.name());
     if (variableDecl.maybeInitializer()) {
@@ -197,6 +205,21 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
 {
+    if (m_structRole.has_value()) {
+        auto role = *m_structRole;
+        switch (role) {
+        case AST::StructRole::UserDefined:
+            break;
+        case AST::StructRole::VertexOutput:
+        case AST::StructRole::FragmentInput:
+            m_stringBuilder.append("[[user(loc", location.location(), ")]]");
+            return;
+        case AST::StructRole::VertexInput:
+        case AST::StructRole::ComputeInput:
+            // FIXME: not sure if these should actually be attributes or not
+            break;
+        }
+    }
     m_stringBuilder.append("[[attribute(", location.location(), ")]]");
 }
 
@@ -352,10 +375,20 @@ void FunctionDefinitionWriter::visit(AST::BinaryExpression& binary)
     switch (binary.operation()) {
     case AST::BinaryOperation::Add:
         m_stringBuilder.append(" + ");
+        break;
+    case AST::BinaryOperation::Multiply:
+        m_stringBuilder.append(" * ");
+        break;
     }
     visit(binary.rhs());
 }
 
+void FunctionDefinitionWriter::visit(AST::PointerDereference& pointerDereference)
+{
+    m_stringBuilder.append("(*");
+    visit(pointerDereference.target());
+    m_stringBuilder.append(")");
+}
 void FunctionDefinitionWriter::visit(AST::ArrayAccess& access)
 {
     visit(access.base());
@@ -417,8 +450,7 @@ void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
 
 void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 {
-    m_stringBuilder.append(m_indent);
-    m_stringBuilder.append("return");
+    m_stringBuilder.append(m_indent, "return");
     if (statement.maybeExpression()) {
         m_stringBuilder.append(" ");
         visit(*statement.maybeExpression());

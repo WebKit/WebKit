@@ -137,7 +137,7 @@ function testStructJS() {
       `);
       m.exports.f();
     },
-    WebAssembly.RuntimeError,
+    TypeError,
     "Unsupported use of struct or array type"
   )
 
@@ -151,7 +151,7 @@ function testStructJS() {
       `);
       m.exports.f(null);
     },
-    WebAssembly.RuntimeError,
+    TypeError,
     "Unsupported use of struct or array type"
   )
 
@@ -166,7 +166,7 @@ function testStructJS() {
       `, { m: { f: (x) => { return; } } });
       m.exports.g();
     },
-    WebAssembly.RuntimeError,
+    TypeError,
     "Unsupported use of struct or array type"
   )
 
@@ -181,7 +181,7 @@ function testStructJS() {
       `, { m: { f: (x) => { return null; } } });
       m.exports.g();
     },
-    WebAssembly.RuntimeError,
+    TypeError,
     "Unsupported use of struct or array type"
   )
 
@@ -196,7 +196,7 @@ function testStructJS() {
       `);
       m.exports.g.value = 42;
     },
-    WebAssembly.RuntimeError,
+    TypeError,
     "Unsupported use of struct or array type"
   )
 }

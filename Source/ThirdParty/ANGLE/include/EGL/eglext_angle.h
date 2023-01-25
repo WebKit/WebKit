@@ -291,6 +291,14 @@ EGLAPI void EGLAPIENTRY eglForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh,
 #endif
 #endif /* EGL_ANGLE_power_preference */
 
+#ifndef EGL_ANGLE_wait_until_work_scheduled
+#define EGL_ANGLE_wait_until_work_scheduled 1
+typedef void(EGLAPIENTRYP PFNEGLWAITUNTILWORKSCHEDULEDANGLEPROC) (EGLDisplay dpy);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI void EGLAPIENTRY eglWaitUntilWorkScheduledANGLE(EGLDisplay dpy);
+#endif
+#endif /* EGL_ANGLE_wait_until_work_scheduled */
+
 #ifndef EGL_ANGLE_feature_control
 #define EGL_ANGLE_feature_control 1
 #define EGL_FEATURE_NAME_ANGLE 0x3460

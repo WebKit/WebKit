@@ -110,6 +110,8 @@ struct SpirvType
     SpirvTypeSpec typeSpec;
 };
 
+bool operator==(const SpirvType &a, const SpirvType &b);
+
 struct SpirvIdAndIdList
 {
     spirv::IdRef id;

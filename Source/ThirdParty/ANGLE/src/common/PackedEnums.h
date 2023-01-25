@@ -705,6 +705,7 @@ struct IsResourceIDType;
     X(Renderbuffer)             \
     X(Sampler)                  \
     X(Semaphore)                \
+    X(Sync)                     \
     X(Texture)                  \
     X(TransformFeedback)        \
     X(VertexArray)
@@ -884,17 +885,24 @@ PackParam(FromT from)
     return {from};
 }
 
-// Third case: handling non-EGLImage pointer resource ids.
+template <typename EnumT>
+using IsEGLImage = std::is_same<EnumT, egl::ImageID>;
+
+template <typename EnumT>
+using IsGLSync = std::is_same<EnumT, gl::SyncID>;
+
+// Third case: handling EGLImage and GLSync pointer resource ids.
 template <typename EnumT, typename FromT>
-typename std::enable_if<std::is_same<EnumT, egl::ImageID>::value, EnumT>::type PackParam(FromT from)
+typename std::enable_if<IsEGLImage<EnumT>::value || IsGLSync<EnumT>::value, EnumT>::type PackParam(
+    FromT from)
 {
     return {static_cast<GLuint>(reinterpret_cast<uintptr_t>(from))};
 }
 
-// Fourth case: handling EGLImage resource ids.
+// Fourth case: handling non-EGLImage non-GLsync resource ids.
 template <typename EnumT, typename FromT>
 typename std::enable_if<std::is_pointer<FromT>::value && !std::is_enum<EnumT>::value &&
-                            !std::is_same<EnumT, egl::ImageID>::value,
+                            !IsEGLImage<EnumT>::value && !IsGLSync<EnumT>::value,
                         EnumT>::type
 PackParam(FromT from)
 {

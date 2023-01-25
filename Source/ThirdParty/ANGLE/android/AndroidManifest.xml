@@ -9,7 +9,8 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="com.android.angle">
 
-    <application android:label="com.android.angle"
+    <application android:allowBackup="false"
+                 android:label="com.android.angle"
                  android:extractNativeLibs="false"
                  android:forceQueryable="true"
                  android:multiArch="true">

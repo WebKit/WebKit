@@ -188,7 +188,7 @@ class Preference
   end
 
   def ephemeral?
-    %w{ embedder unstable internal testable }.include? @status
+    %w{ unstable internal testable }.include? @status
   end
 
   def defaultOverridable?

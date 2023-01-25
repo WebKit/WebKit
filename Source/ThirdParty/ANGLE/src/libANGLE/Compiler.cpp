@@ -123,11 +123,17 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     // GL_EXT_clip_cull_distance
     mResources.EXT_clip_cull_distance = extensions.clipCullDistanceEXT;
 
+    // GL_ANGLE_clip_cull_distance
+    mResources.ANGLE_clip_cull_distance = extensions.clipCullDistanceANGLE;
+
     // GL_EXT_primitive_bounding_box
     mResources.EXT_primitive_bounding_box = extensions.primitiveBoundingBoxEXT;
 
     // GL_OES_primitive_bounding_box
     mResources.OES_primitive_bounding_box = extensions.primitiveBoundingBoxOES;
+
+    // GL_EXT_separate_shader_objects
+    mResources.EXT_separate_shader_objects = extensions.separateShaderObjectsEXT;
 
     // GLSL ES 3.0 constants
     mResources.MaxVertexOutputVectors  = caps.maxVertexOutputComponents / 4;
@@ -139,7 +145,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.EXT_blend_func_extended  = extensions.blendFuncExtendedEXT;
     mResources.MaxDualSourceDrawBuffers = caps.maxDualSourceDrawBuffers;
 
-    // APPLE_clip_distance/EXT_clip_cull_distance
+    // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance
     mResources.MaxClipDistances                = caps.maxClipDistances;
     mResources.MaxCullDistances                = caps.maxCullDistances;
     mResources.MaxCombinedClipAndCullDistances = caps.maxCombinedClipAndCullDistances;
@@ -407,11 +413,6 @@ ShaderType ShCompilerInstance::getShaderType() const
 ShBuiltInResources ShCompilerInstance::getBuiltInResources() const
 {
     return sh::GetBuiltInResources(mHandle);
-}
-
-const std::string &ShCompilerInstance::getBuiltinResourcesString() const
-{
-    return sh::GetBuiltInResourcesString(mHandle);
 }
 
 ShShaderOutput ShCompilerInstance::getShaderOutputType() const

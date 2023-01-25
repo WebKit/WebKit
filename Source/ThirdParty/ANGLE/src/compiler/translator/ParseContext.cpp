@@ -227,6 +227,9 @@ TParseContext::TParseContext(TSymbolTable &symt,
       mEarlyFragmentTestsSpecified(false),
       mHasDiscard(false),
       mSampleQualifierSpecified(false),
+      mPositionRedeclaredForSeparateShaderObject(false),
+      mPointSizeRedeclaredForSeparateShaderObject(false),
+      mPositionOrPointSizeUsedForSeparateShaderObject(false),
       mDefaultUniformMatrixPacking(EmpColumnMajor),
       mDefaultUniformBlockStorage(sh::IsWebGLBasedSpec(spec) ? EbsStd140 : EbsShared),
       mDefaultBufferMatrixPacking(EmpColumnMajor),
@@ -1456,6 +1459,42 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
             return false;
         }
     }
+    else if (isExtensionEnabled(TExtension::EXT_separate_shader_objects) &&
+             mShaderType == GL_VERTEX_SHADER)
+    {
+        bool isRedefiningPositionOrPointSize = false;
+        if (identifier == "gl_Position")
+        {
+            if (type->getBasicType() != EbtFloat || type->getNominalSize() != 4 ||
+                type->getSecondarySize() != 1 || type->isArray())
+            {
+                error(line, "gl_Position can only be redeclared as vec4", identifier);
+                return false;
+            }
+            needsReservedCheck                         = false;
+            mPositionRedeclaredForSeparateShaderObject = true;
+            isRedefiningPositionOrPointSize            = true;
+        }
+        else if (identifier == "gl_PointSize")
+        {
+            if (type->getBasicType() != EbtFloat || type->getNominalSize() != 1 ||
+                type->getSecondarySize() != 1 || type->isArray())
+            {
+                error(line, "gl_PointSize can only be redeclared as float", identifier);
+                return false;
+            }
+            needsReservedCheck                          = false;
+            mPointSizeRedeclaredForSeparateShaderObject = true;
+            isRedefiningPositionOrPointSize             = true;
+        }
+        if (isRedefiningPositionOrPointSize && mPositionOrPointSizeUsedForSeparateShaderObject)
+        {
+            error(line,
+                  "When EXT_separate_shader_objects is enabled, both gl_Position and "
+                  "gl_PointSize must be redeclared before either is used",
+                  identifier);
+        }
+    }
 
     if (needsReservedCheck && !checkIsNotReserved(line, identifier))
         return false;
@@ -2435,6 +2474,51 @@ const TVariable *TParseContext::getNamedVariable(const TSourceLoc &location,
     {
         checkNoncoherentIsSpecified(location, variable->getType().getLayoutQualifier().noncoherent);
     }
+
+    // When EXT_separate_shader_objects is enabled, gl_Position and gl_PointSize must both be
+    // redeclared before either is accessed:
+    //
+    // > The following vertex shader outputs may be redeclared at global scope to
+    // > specify a built-in output interface, with or without special qualifiers:
+    // >
+    // >     gl_Position
+    // >     gl_PointSize
+    // >
+    // >   When compiling shaders using either of the above variables, both such
+    // >   variables must be redeclared prior to use.  ((Note:  This restriction
+    // >   applies only to shaders using version 300 that enable the
+    // >   EXT_separate_shader_objects extension; shaders not enabling the
+    // >   extension do not have this requirement.))
+    //
+    // However, there are dEQP tests that enable all extensions and don't actually redeclare these
+    // variables.  Per https://gitlab.khronos.org/opengl/API/-/issues/169, there are drivers that do
+    // enforce this, but they fail linking instead of compilation.
+    //
+    // In ANGLE, we make sure that they are both redeclared before use if any is redeclared, but if
+    // neither are redeclared, we don't fail compilation.  Currently, linking also doesn't fail in
+    // ANGLE (similarly to almost all other drivers).
+    if (isExtensionEnabled(TExtension::EXT_separate_shader_objects) &&
+        mShaderType == GL_VERTEX_SHADER)
+    {
+        if (variable->getType().getQualifier() == EvqPosition ||
+            variable->getType().getQualifier() == EvqPointSize)
+        {
+            mPositionOrPointSizeUsedForSeparateShaderObject = true;
+            const bool eitherIsRedeclared = mPositionRedeclaredForSeparateShaderObject ||
+                                            mPointSizeRedeclaredForSeparateShaderObject;
+            const bool bothAreRedeclared = mPositionRedeclaredForSeparateShaderObject &&
+                                           mPointSizeRedeclaredForSeparateShaderObject;
+
+            if (eitherIsRedeclared && !bothAreRedeclared)
+            {
+                error(location,
+                      "When EXT_separate_shader_objects is enabled, both gl_Position and "
+                      "gl_PointSize must be redeclared before either is used",
+                      name);
+            }
+        }
+    }
+
     return variable;
 }
 
@@ -2492,19 +2576,46 @@ TIntermTyped *TParseContext::parseVariableIdentifier(const TSourceLoc &location,
     return node;
 }
 
-void TParseContext::adjustRedeclaredBuiltInType(const ImmutableString &identifier, TType *type)
+void TParseContext::adjustRedeclaredBuiltInType(const TSourceLoc &line,
+                                                const ImmutableString &identifier,
+                                                TType *type)
 {
     if (identifier == "gl_ClipDistance")
     {
+        const TQualifier qualifier = type->getQualifier();
+        if ((mShaderType == GL_VERTEX_SHADER &&
+             !(qualifier == EvqVertexOut || qualifier == EvqVaryingOut)) ||
+            (mShaderType == GL_FRAGMENT_SHADER && qualifier != EvqFragmentIn))
+        {
+            error(line, "invalid or missing storage qualifier", identifier);
+            return;
+        }
+
         type->setQualifier(EvqClipDistance);
     }
     else if (identifier == "gl_CullDistance")
     {
+        const TQualifier qualifier = type->getQualifier();
+        if ((mShaderType == GL_VERTEX_SHADER && qualifier != EvqVertexOut) ||
+            (mShaderType == GL_FRAGMENT_SHADER && qualifier != EvqFragmentIn))
+        {
+            error(line, "invalid or missing storage qualifier", identifier);
+            return;
+        }
+
         type->setQualifier(EvqCullDistance);
     }
     else if (identifier == "gl_LastFragData")
     {
         type->setQualifier(EvqLastFragData);
+    }
+    else if (identifier == "gl_Position")
+    {
+        type->setQualifier(EvqPosition);
+    }
+    else if (identifier == "gl_PointSize")
+    {
+        type->setQualifier(EvqPointSize);
     }
 }
 
@@ -3196,6 +3307,8 @@ TIntermDeclaration *TParseContext::parseSingleDeclaration(
         }
     }
 
+    adjustRedeclaredBuiltInType(identifierOrTypeLocation, identifier, type);
+
     TIntermDeclaration *declaration = new TIntermDeclaration();
     declaration->setLine(identifierOrTypeLocation);
     if (symbol)
@@ -3239,7 +3352,7 @@ TIntermDeclaration *TParseContext::parseSingleArrayDeclaration(
         checkAtomicCounterOffsetAlignment(identifierLocation, *arrayType);
     }
 
-    adjustRedeclaredBuiltInType(identifier, arrayType);
+    adjustRedeclaredBuiltInType(identifierLocation, identifier, arrayType);
 
     TIntermDeclaration *declaration = new TIntermDeclaration();
     declaration->setLine(identifierLocation);
@@ -3415,7 +3528,7 @@ void TParseContext::parseDeclarator(TPublicType &publicType,
         checkAtomicCounterOffsetAlignment(identifierLocation, *type);
     }
 
-    adjustRedeclaredBuiltInType(identifier, type);
+    adjustRedeclaredBuiltInType(identifierLocation, identifier, type);
 
     TVariable *variable = nullptr;
     if (declareVariable(identifierLocation, identifier, type, &variable))
@@ -3460,7 +3573,7 @@ void TParseContext::parseArrayDeclarator(TPublicType &elementType,
             checkAtomicCounterOffsetAlignment(identifierLocation, *arrayType);
         }
 
-        adjustRedeclaredBuiltInType(identifier, arrayType);
+        adjustRedeclaredBuiltInType(identifierLocation, identifier, arrayType);
 
         TVariable *variable = nullptr;
         if (declareVariable(identifierLocation, identifier, arrayType, &variable))
@@ -4139,7 +4252,7 @@ TIntermFunctionPrototype *TParseContext::addFunctionPrototypeDeclaration(
     // function is declared multiple times.
     bool hadPrototypeDeclaration = false;
     const TFunction *function    = symbolTable.markFunctionHasPrototypeDeclaration(
-           parsedFunction.getMangledName(), &hadPrototypeDeclaration);
+        parsedFunction.getMangledName(), &hadPrototypeDeclaration);
 
     if (hadPrototypeDeclaration && mShaderVersion == 100)
     {
@@ -4897,7 +5010,7 @@ TIntermDeclaration *TParseContext::addInterfaceBlock(
             if (field->name() == "gl_Position" || field->name() == "gl_PointSize" ||
                 field->name() == "gl_ClipDistance" || field->name() == "gl_CullDistance")
             {
-                // These builtins can be redifined only when used within a redefiend gl_PerVertex
+                // These builtins can be redefined only when used within a redefined gl_PerVertex
                 // block
                 if (interfaceBlock->name() != "gl_PerVertex")
                 {

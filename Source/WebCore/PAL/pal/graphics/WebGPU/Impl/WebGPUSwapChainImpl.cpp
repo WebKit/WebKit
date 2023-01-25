@@ -45,12 +45,16 @@ SwapChainImpl::SwapChainImpl(WGPUSurface surface, WGPUSwapChain swapChain, Conve
 
 SwapChainImpl::~SwapChainImpl()
 {
-    wgpuSwapChainRelease(m_backing);
+    destroy();
 }
 
 void SwapChainImpl::destroy()
 {
+    if (!m_backing)
+        return;
+
     wgpuSwapChainRelease(m_backing);
+    m_backing = nullptr;
 }
 
 void SwapChainImpl::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)

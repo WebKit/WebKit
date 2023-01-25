@@ -1245,6 +1245,7 @@
 		FEC2A85624CEB65F00ADBC35 /* PropertySlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC2A85524CEB65F00ADBC35 /* PropertySlot.cpp */; };
 		FF10AAF92831B1E600B9875B /* CompactPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF10AAF82831B1E600B9875B /* CompactPtr.cpp */; };
 		FF5D0CB4283221AD00F3278A /* CompactRefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF5D0CB3283221AD00F3278A /* CompactRefPtr.cpp */; };
+		FF910EA5297A0D1100D1A24D /* FixedBitVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3532,6 +3533,7 @@
 		FF10AAF82831B1E600B9875B /* CompactPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactPtr.cpp; sourceTree = "<group>"; };
 		FF25942A2834B7A7006892D6 /* AlignedRefLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignedRefLogger.h; sourceTree = "<group>"; };
 		FF5D0CB3283221AD00F3278A /* CompactRefPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactRefPtr.cpp; sourceTree = "<group>"; };
+		FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FixedBitVector.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5079,6 +5081,7 @@
 				1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */,
 				AD7C434C1DD2A5470026888B /* Expected.cpp */,
 				A310827121F296EC00C28B97 /* FileSystem.cpp */,
+				FF910E9D297A0D1100D1A24D /* FixedBitVector.cpp */,
 				E3210518261979F300157C67 /* FixedVector.cpp */,
 				9310CD361EF708FB0050FFE0 /* Function.cpp */,
 				83DB79671EF63B3C00BFA5E5 /* Function.cpp */,
@@ -6044,6 +6047,7 @@
 				1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */,
 				AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */,
 				A310827221F296FF00C28B97 /* FileSystem.cpp in Sources */,
+				FF910EA5297A0D1100D1A24D /* FixedBitVector.cpp in Sources */,
 				E3210519261979F300157C67 /* FixedVector.cpp in Sources */,
 				9310CD381EF708FB0050FFE0 /* Function.cpp in Sources */,
 				6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */,
