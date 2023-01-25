@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "ColorSpaceCG.h"
+#import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "MenuListButtonPart.h"
@@ -70,10 +71,13 @@ static void mainGradientInterpolate(void*, const CGFloat* inData, CGFloat* outDa
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-static void drawMenuListBackground(GraphicsContext& context, const FloatRect& rect, const ControlStyle&)
+static void drawMenuListBackground(GraphicsContext& context, const FloatRect& rect, const FloatRoundedRect& borderRect, const ControlStyle&)
 {
     ContextContainer cgContextContainer(context);
     CGContextRef cgContext = cgContextContainer.context();
+
+    const auto& radii = borderRect.radii();
+    int radius = radii.topLeft().width();
 
     CGColorSpaceRef cspace = sRGBColorSpaceRef();
 
@@ -82,7 +86,7 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
     RetainPtr<CGFunctionRef> topFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &topCallbacks));
     RetainPtr<CGShadingRef> topShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(topGradient.x(), topGradient.y()), CGPointMake(topGradient.x(), topGradient.maxY()), topFunction.get(), false, false));
 
-    FloatRect bottomGradient(rect.x(), rect.y() + rect.height() / 2.0f, rect.width(), rect.height() / 2.0f);
+    FloatRect bottomGradient(rect.x() + radius, rect.y() + rect.height() / 2.0f, rect.width() - 2.0f * radius, rect.height() / 2.0f);
     struct CGFunctionCallbacks bottomCallbacks = { 0, bottomGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> bottomFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &bottomCallbacks));
     RetainPtr<CGShadingRef> bottomShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bottomGradient.x(),  bottomGradient.y()), CGPointMake(bottomGradient.x(), bottomGradient.maxY()), bottomFunction.get(), false, false));
@@ -91,13 +95,14 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
     RetainPtr<CGFunctionRef> mainFunction = adoptCF(CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(rect.x(),  rect.y()), CGPointMake(rect.x(), rect.maxY()), mainFunction.get(), false, false));
 
-    RetainPtr<CGShadingRef> leftShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(rect.x(),  rect.y()), CGPointMake(rect.x(), rect.y()), mainFunction.get(), false, false));
+    RetainPtr<CGShadingRef> leftShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(rect.x(),  rect.y()), CGPointMake(rect.x() + radius, rect.y()), mainFunction.get(), false, false));
 
-    RetainPtr<CGShadingRef> rightShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(rect.maxX(),  rect.y()), CGPointMake(rect.maxX(), rect.y()), mainFunction.get(), false, false));
+    RetainPtr<CGShadingRef> rightShading = adoptCF(CGShadingCreateAxial(cspace, CGPointMake(rect.maxX(),  rect.y()), CGPointMake(rect.maxX() - radius, rect.y()), mainFunction.get(), false, false));
 
     {
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, rect);
+        context.clipRoundedRect(borderRect);
         cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, mainShading.get());
     }
@@ -105,6 +110,7 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
     {
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, topGradient);
+        context.clipRoundedRect(FloatRoundedRect(enclosingIntRect(topGradient), radii.topLeft(), radii.topRight(), { }, { }));
         cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, topShading.get());
     }
@@ -112,6 +118,7 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
     if (!bottomGradient.isEmpty()) {
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, bottomGradient);
+        context.clipRoundedRect(FloatRoundedRect(enclosingIntRect(bottomGradient), { }, { }, radii.bottomLeft(), radii.bottomRight()));
         cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, bottomShading.get());
     }
@@ -119,22 +126,23 @@ static void drawMenuListBackground(GraphicsContext& context, const FloatRect& re
     {
         GraphicsContextStateSaver stateSaver(context);
         CGContextClipToRect(cgContext, rect);
+        context.clipRoundedRect(borderRect);
         cgContext = cgContextContainer.context();
         CGContextDrawShading(cgContext, leftShading.get());
         CGContextDrawShading(cgContext, rightShading.get());
     }
 }
 
-void MenuListButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float, const ControlStyle& style)
+void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
 {
-    auto bounds = rect;
+    auto bounds = borderRect.rect();
     bounds.contract(style.borderWidth);
 
     if (bounds.isEmpty())
         return;
 
     // Draw the gradients to give the styled popup menu a button appearance
-    drawMenuListBackground(context, bounds, style);
+    drawMenuListBackground(context, bounds, borderRect, style);
 
     static constexpr float baseFontSize = 11.0f;
     static constexpr float baseArrowHeight = 4.0f;

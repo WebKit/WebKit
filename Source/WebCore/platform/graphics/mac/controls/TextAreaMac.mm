@@ -40,14 +40,14 @@ TextAreaMac::TextAreaMac(TextAreaPart& owningPart)
     ASSERT(owningPart.type() == StyleAppearance::Listbox || owningPart.type() == StyleAppearance::TextArea);
 }
 
-void TextAreaMac::draw(GraphicsContext& context, const FloatRect& rect, float, const ControlStyle& style)
+void TextAreaMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
 {
     LocalCurrentGraphicsContext localContext(context);
 
     bool enabled = style.states.contains(ControlStyle::State::Enabled);
     bool readOnly = style.states.contains(ControlStyle::State::ReadOnly);
 
-    _NSDrawCarbonThemeListBox(rect, enabled && !readOnly, YES, YES);
+    _NSDrawCarbonThemeListBox(borderRect.rect(), enabled && !readOnly, YES, YES);
 }
 
 } // namespace WebCore

@@ -33,18 +33,18 @@ namespace WebCore {
 
 class SearchFieldCancelButtonPart;
 
-class SearchFieldCancelButtonMac : public SearchControlMac {
+class SearchFieldCancelButtonMac final : public SearchControlMac {
 public:
     SearchFieldCancelButtonMac(SearchFieldCancelButtonPart& owningPart, ControlFactoryMac&, NSSearchFieldCell *);
 
 private:
-    IntSize cellSize(NSControlSize, const ControlStyle&) const final;
+    IntSize cellSize(NSControlSize, const ControlStyle&) const override;
 
-    FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const final;
+    FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 
-    void updateCellStates(const FloatRect&, const ControlStyle&) final;
+    void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) final;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 
 } // namespace WebCore

@@ -413,9 +413,9 @@ void ClearRect::apply(GraphicsContext& context) const
     context.clearRect(m_rect);
 }
 
-DrawControlPart::DrawControlPart(ControlPart& part, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+DrawControlPart::DrawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
     : m_part(part)
-    , m_rect(rect)
+    , m_borderRect(borderRect)
     , m_deviceScaleFactor(deviceScaleFactor)
     , m_style(style)
 {
@@ -423,7 +423,7 @@ DrawControlPart::DrawControlPart(ControlPart& part, const FloatRect& rect, float
 
 void DrawControlPart::apply(GraphicsContext& context)
 {
-    context.drawControlPart(m_part, m_rect, m_deviceScaleFactor, m_style);
+    context.drawControlPart(m_part, m_borderRect, m_deviceScaleFactor, m_style);
 }
 
 void BeginTransparencyLayer::apply(GraphicsContext& context) const
@@ -868,7 +868,7 @@ void dumpItem(TextStream& ts, const ClearRect& item, OptionSet<AsTextFlag>)
 void dumpItem(TextStream& ts, const DrawControlPart& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("type", item.type());
-    ts.dumpProperty("rect", item.rect());
+    ts.dumpProperty("border-rect", item.borderRect());
     ts.dumpProperty("device-scale-factor", item.deviceScaleFactor());
     ts.dumpProperty("style", item.style());
 }

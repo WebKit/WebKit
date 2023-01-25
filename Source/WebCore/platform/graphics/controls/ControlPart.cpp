@@ -27,6 +27,7 @@
 #include "ControlPart.h"
 
 #include "ControlFactory.h"
+#include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
 
 namespace WebCore {
@@ -68,7 +69,7 @@ FloatRect ControlPart::rectForBounds(const FloatRect& bounds, const ControlStyle
     return platformControl->rectForBounds(bounds, style);
 }
 
-void ControlPart::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style) const
+void ControlPart::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style) const
 {
     auto platformControl = this->platformControl();
     if (!platformControl)
@@ -78,8 +79,8 @@ void ControlPart::draw(GraphicsContext& context, const FloatRect& rect, float de
     // smaller than the layer bounds (e.g. tiled layers)
     platformControl->setFocusRingClipRect(context.clipBounds());
 
-    platformControl->updateCellStates(rect, style);
-    platformControl->draw(context, rect, deviceScaleFactor, style);
+    platformControl->updateCellStates(borderRect.rect(), style);
+    platformControl->draw(context, borderRect, deviceScaleFactor, style);
 
     platformControl->setFocusRingClipRect({ });
 }

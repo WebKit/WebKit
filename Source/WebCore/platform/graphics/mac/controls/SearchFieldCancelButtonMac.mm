@@ -78,7 +78,7 @@ void SearchFieldCancelButtonMac::updateCellStates(const FloatRect& rect, const C
     SearchControlMac::updateCellStates(rect, style);
 }
 
-void SearchFieldCancelButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void SearchFieldCancelButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
@@ -86,7 +86,7 @@ void SearchFieldCancelButtonMac::draw(GraphicsContext& context, const FloatRect&
 
     GraphicsContextStateSaver stateSaver(context);
 
-    auto logicalRect = rectForBounds(rect, style);
+    auto logicalRect = rectForBounds(borderRect.rect(), style);
     if (style.zoomFactor != 1) {
         logicalRect.scale(1 / style.zoomFactor);
         context.scale(style.zoomFactor);
@@ -96,7 +96,7 @@ void SearchFieldCancelButtonMac::draw(GraphicsContext& context, const FloatRect&
     auto styleForDrawing = style;
     styleForDrawing.states.remove(ControlStyle::State::Focused);
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
 
     drawCell(context, logicalRect, deviceScaleFactor, styleForDrawing, [m_searchFieldCell cancelButtonCell], view, true);
 }

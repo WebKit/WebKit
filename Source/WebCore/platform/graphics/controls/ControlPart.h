@@ -47,7 +47,7 @@ public:
 
     FloatSize sizeForBounds(const FloatRect& bounds, const ControlStyle&);
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&);
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) const;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) const;
 
 protected:
     WEBCORE_EXPORT ControlPart(StyleAppearance);

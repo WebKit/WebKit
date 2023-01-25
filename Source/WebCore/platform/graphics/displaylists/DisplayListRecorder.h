@@ -133,7 +133,7 @@ protected:
     virtual void recordStrokeEllipse(const FloatRect&) = 0;
     virtual void recordClearRect(const FloatRect&) = 0;
 
-    virtual void recordDrawControlPart(ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) = 0;
+    virtual void recordDrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) = 0;
 
 #if USE(CG)
     virtual void recordApplyStrokePattern() = 0;
@@ -222,7 +222,7 @@ private:
     WEBCORE_EXPORT void applyFillPattern() final;
 #endif
 
-    WEBCORE_EXPORT void drawControlPart(ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) final;
+    WEBCORE_EXPORT void drawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) final;
 
     WEBCORE_EXPORT void drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter&, FilterResults&) final;
 

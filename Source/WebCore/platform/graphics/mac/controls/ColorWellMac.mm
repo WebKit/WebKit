@@ -46,7 +46,7 @@ void ColorWellMac::updateCellStates(const FloatRect& rect, const ControlStyle& s
     [m_buttonCell setBezelStyle:NSBezelStyleTexturedSquare];
 }
 
-void ColorWellMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void ColorWellMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -55,7 +55,7 @@ void ColorWellMac::draw(GraphicsContext& context, const FloatRect& rect, float d
     GraphicsContextStateSaver stateSaver(context);
     LocalCurrentGraphicsContext localContext(context);
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
     auto *window = [view window];
     auto *previousDefaultButtonCell = [window defaultButtonCell];
 
@@ -63,7 +63,7 @@ void ColorWellMac::draw(GraphicsContext& context, const FloatRect& rect, float d
     if ([previousDefaultButtonCell isEqual:m_buttonCell.get()])
         [window setDefaultButtonCell:nil];
 
-    drawCell(context, rect, deviceScaleFactor, style, m_buttonCell.get(), view, true);
+    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_buttonCell.get(), view, true);
 
     // Restore the window default button cell.
     if (![previousDefaultButtonCell isEqual:m_buttonCell.get()])

@@ -40,7 +40,7 @@ public:
 private:
     static bool shouldPaintCustomTextField(const ControlStyle&);
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) final;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 
     RetainPtr<NSTextFieldCell> m_textFieldCell;
 };

@@ -1822,10 +1822,10 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
 
-    WEBCORE_EXPORT DrawControlPart(ControlPart&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
+    WEBCORE_EXPORT DrawControlPart(ControlPart&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&);
 
     StyleAppearance type() const { return m_part->type(); }
-    FloatRect rect() const { return m_rect; }
+    FloatRoundedRect borderRect() const { return m_borderRect; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     const ControlStyle& style() const { return m_style; }
 
@@ -1833,7 +1833,7 @@ public:
 
 private:
     Ref<ControlPart> m_part;
-    FloatRect m_rect;
+    FloatRoundedRect m_borderRect;
     float m_deviceScaleFactor;
     ControlStyle m_style;
 };

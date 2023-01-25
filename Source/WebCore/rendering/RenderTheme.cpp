@@ -741,10 +741,11 @@ bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo
 
     float deviceScaleFactor = box.document().deviceScaleFactor();
     auto zoomedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
+    auto borderRect = FloatRoundedRect(box.style().getRoundedBorderFor(LayoutRect(zoomedRect)));
     auto controlStyle = extractControlStyleForRenderer(box);
     auto& context = paintInfo.context();
 
-    context.drawControlPart(part, zoomedRect, deviceScaleFactor, controlStyle);
+    context.drawControlPart(part, borderRect, deviceScaleFactor, controlStyle);
     return false;
 }
 

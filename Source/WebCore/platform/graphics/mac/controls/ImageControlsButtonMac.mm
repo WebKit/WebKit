@@ -48,16 +48,16 @@ IntSize ImageControlsButtonMac::servicesRolloverButtonCellSize()
     return { };
 }
 
-void ImageControlsButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void ImageControlsButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     LocalCurrentGraphicsContext localContext(context);
     GraphicsContextStateSaver stateSaver(context);
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
     
-    drawCell(context, rect, deviceScaleFactor, style, m_servicesRolloverButtonCell.get(), view, true);
+    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_servicesRolloverButtonCell.get(), view, true);
     
     END_BLOCK_OBJC_EXCEPTIONS
 }

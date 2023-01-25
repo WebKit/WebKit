@@ -33,14 +33,14 @@ namespace WebCore {
 
 class InnerSpinButtonPart;
 
-class InnerSpinButtonMac : public ControlMac {
+class InnerSpinButtonMac final : public ControlMac {
 public:
     InnerSpinButtonMac(InnerSpinButtonPart&, ControlFactoryMac&);
 
 private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 
 } // namespace WebCore

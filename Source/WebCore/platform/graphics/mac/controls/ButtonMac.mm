@@ -112,7 +112,7 @@ FloatRect ButtonMac::rectForBounds(const FloatRect& bounds, const ControlStyle& 
     return inflatedRect(rect, size, outsets, style);
 }
 
-void ButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void ButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -120,14 +120,14 @@ void ButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float devi
 
     GraphicsContextStateSaver stateSaver(context);
 
-    auto inflatedRect = rectForBounds(rect, style);
+    auto inflatedRect = rectForBounds(borderRect.rect(), style);
 
     if (style.zoomFactor != 1) {
         inflatedRect.scale(1 / style.zoomFactor);
         context.scale(style.zoomFactor);
     }
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
     auto *window = [view window];
     auto *previousDefaultButtonCell = [window defaultButtonCell];
 

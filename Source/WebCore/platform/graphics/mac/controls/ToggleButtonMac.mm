@@ -95,7 +95,7 @@ IntOutsets ToggleButtonMac::cellOutsets(NSControlSize controlSize, const Control
     return (m_owningPart.type() == StyleAppearance::Checkbox ? checkboxOutsets : radioOutsets)[controlSize];
 }
 
-void ToggleButtonMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void ToggleButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -114,7 +114,7 @@ void ToggleButtonMac::draw(GraphicsContext& context, const FloatRect& rect, floa
         outsets.left() * style.zoomFactor
     };
 
-    auto logicalRect = rect;
+    auto logicalRect = borderRect.rect();
     logicalRect.setSize(zoomedSize);
     logicalRect.expand(zoomedOutsets);
 
@@ -125,7 +125,7 @@ void ToggleButtonMac::draw(GraphicsContext& context, const FloatRect& rect, floa
 
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
 
     if ([m_buttonCell _stateAnimationRunning]) {
         context.translate(logicalRect.location());

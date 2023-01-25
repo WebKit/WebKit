@@ -88,13 +88,13 @@ FloatSize MeterMac::sizeForBounds(const FloatRect& bounds) const
     return { std::max<float>(bounds.width(), cellSize.width), std::max<float>(bounds.height(), cellSize.height) };
 }
 
-void MeterMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void MeterMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
 
-    drawCell(context, rect, deviceScaleFactor, style, m_levelIndicatorCell.get(), view);
+    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_levelIndicatorCell.get(), view);
 }
 
 } // namespace WebCore

@@ -103,13 +103,13 @@ FloatRect MenuListMac::rectForBounds(const FloatRect& bounds, const ControlStyle
     return inflatedRect(bounds, size, outsets, style);
 }
 
-void MenuListMac::draw(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style)
+void MenuListMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     LocalCurrentGraphicsContext localContext(context);
 
-    auto inflatedRect = rectForBounds(rect, style);
+    auto inflatedRect = rectForBounds(borderRect.rect(), style);
 
     GraphicsContextStateSaver stateSaver(context);
 
@@ -120,7 +120,7 @@ void MenuListMac::draw(GraphicsContext& context, const FloatRect& rect, float de
 
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    auto *view = m_controlFactory.drawingView(rect, style);
+    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
 
     drawCell(context, inflatedRect, deviceScaleFactor, style, m_popUpButtonCell.get(), view, true);
 

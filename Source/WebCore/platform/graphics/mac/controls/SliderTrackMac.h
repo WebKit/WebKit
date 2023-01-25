@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class SliderTrackMac : public ControlMac {
+class SliderTrackMac final : public ControlMac {
 public:
     SliderTrackMac(SliderTrackPart&, ControlFactoryMac&);
 
@@ -41,7 +41,7 @@ private:
 
     FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
 
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) override;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 
 } // namespace WebCore

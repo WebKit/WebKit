@@ -38,7 +38,7 @@ public:
     MenuListButtonMac(MenuListButtonPart&, ControlFactoryMac&);
 
 private:
-    void draw(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&) final;
+    void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 
 } // namespace WebCore

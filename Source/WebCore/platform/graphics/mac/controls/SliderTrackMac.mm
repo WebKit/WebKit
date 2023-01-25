@@ -69,7 +69,7 @@ static void trackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outD
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
 
-void SliderTrackMac::draw(GraphicsContext& context, const FloatRect& rect, float, const ControlStyle& style)
+void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
 {
     static constexpr int sliderTrackRadius = 2;
     static constexpr IntSize sliderRadius(sliderTrackRadius, sliderTrackRadius);
@@ -81,12 +81,12 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRect& rect, float
     auto& sliderTrackPart = owningSliderTrackPart();
 
 #if ENABLE(DATALIST_ELEMENT)
-    sliderTrackPart.drawTicks(context, rect, style);
+    sliderTrackPart.drawTicks(context, borderRect.rect(), style);
 #endif
 
     GraphicsContextStateSaver stateSaver(context);
 
-    auto logicalRect = rectForBounds(rect, style);
+    auto logicalRect = rectForBounds(borderRect.rect(), style);
     CGContextClipToRect(cgContext, logicalRect);
 
     struct CGFunctionCallbacks mainCallbacks = { 0, trackGradientInterpolate, NULL };
