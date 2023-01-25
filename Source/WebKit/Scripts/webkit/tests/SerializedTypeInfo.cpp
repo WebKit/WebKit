@@ -172,6 +172,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "secondMember"_s
             }
         } },
+        { "WebCore::SharedStringHash"_s, {
+            { "uint32_t"_s, "alias"_s }
+        } },
     };
 }
 

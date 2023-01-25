@@ -2892,3 +2892,5 @@ header: <WebCore/TextManipulationController.h>
     uint64_t index;
     WebCore::TextManipulationControllerManipulationFailure::Type type;
 };
+
+using WebCore::SharedStringHash = uint32_t

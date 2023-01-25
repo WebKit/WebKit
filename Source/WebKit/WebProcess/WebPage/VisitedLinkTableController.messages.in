@@ -22,7 +22,7 @@
 
 messages -> VisitedLinkTableController {
     SetVisitedLinkTable(WebKit::SharedMemory::Handle handle)
-    VisitedLinkStateChanged(Vector<uint32_t> linkHashes)
+    VisitedLinkStateChanged(Vector<WebCore::SharedStringHash> linkHashes)
     AllVisitedLinkStateChanged()
     RemoveAllVisitedLinks()
 }
