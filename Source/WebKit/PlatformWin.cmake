@@ -4,6 +4,8 @@ set(NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
 set(GPUProcess_OUTPUT_NAME WebKitGPUProcess)
 set(PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 
+set(WebKit_USE_PREFIX_HEADER ON)
+
 include(Headers.cmake)
 
 list(APPEND WebKit_SOURCES
