@@ -330,7 +330,7 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
 
@@ -371,6 +371,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             if (renderer.isFloating() && !renderer.parent()->style().isHorizontalWritingMode())
                 return false;
 #endif
+            if (renderer.isFloating() && flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
+                // Floats inside fragmentation need integration support.
+                return false;
+            }
             if (renderer.isOutOfFlowPositioned()) {
                 if (!renderer.parent()->style().isLeftToRightDirection())
                     return false;
@@ -456,7 +460,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
 
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
-        if (auto childReasons = canUseForChild(child, includeReasons))
+        if (auto childReasons = canUseForChild(flow, child, includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
     }
     auto styleReasons = canUseForStyle(flow, includeReasons);
