@@ -21,19 +21,19 @@
       Air (Assembly Intermediate Representation).</p>
     
     <p>Air programs are represented using a
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirCode.h"><code>Air::Code</code></a>
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirCode.h"><code>Air::Code</code></a>
       object. <code>Code</code> comprises an array of
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirBasicBlock.h">basic
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirBasicBlock.h">basic
         blocks</a>. Each basic block comprises an array of
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirInst.h"><code>Inst</code></a>s.
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirInst.h"><code>Inst</code></a>s.
       Air has an explicit control flow graph: each basic block has predecessor and successor blocks.
       Execution always begins at the first basic block (<code>code[0]</code>). The <code>Inst</code>s
       in each block are executed in order. Each <code>Inst</code> has an opcode, some flags, an
       array of arguments
-      (<a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirArg.h"><code>Arg</code></a>s),
+      (<a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirArg.h"><code>Arg</code></a>s),
       and an origin. The opcode and flags are wrapped in a <code>Kind</code>, to make it
       convenient to carry them around together. The origin is simply a B3 IR
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/B3Value.h"><code>Value</code></a>.
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/B3Value.h"><code>Value</code></a>.
       Some opcodes use the origin for additional meta-data. This works because Air code always
       coexists with the B3 procedure from which it was generated.</p>
     
@@ -57,9 +57,9 @@
       instruction sequence, and this includes CPU concepts like registers and direct accesses to the
       stack. Air also has a higher-level form in which the assembly has not yet undergone register
       or stack allocation. Therefore, Air also supports abstract registers (called
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirTmp.h"><code>Tmp</code></a>s)
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirTmp.h"><code>Tmp</code></a>s)
       and abstract
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirStackSlot.h">stack
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirStackSlot.h">stack
         slots</a>. A <code>Tmp</code> object can either hold an unallocated temporary or a
       register.</p>
     
@@ -349,13 +349,13 @@ Foo32 %tmp</code></pre></li>
       <code>Tmp</code>s or any abstract stack slots. If we wrote the
       code for validating, iterating, and generating each form by hand, we would have a bad time.
       For this reason, Air comes with an
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/opcode_generator.rb">opcode code generator</a>
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/opcode_generator.rb">opcode code generator</a>
       that uses a
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">opcode definition file</a>
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">opcode definition file</a>
       as input. The opcode definition file use a simple and concise syntax that lets us define many
       opcodes at once and constrain them to the CPU kinds that support them. Additionally, Air
       supports <i>custom</i> opcodes, where the code generator emits calls to
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirCustom.h">hand-written
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirCustom.h">hand-written
         C++ code</a>. This section describes the opcode definition language.</p>
     
     <p>It's easiest to understand the opcode definitions with an example. Let's use the two-argument
@@ -390,7 +390,7 @@ Foo32 %tmp</code></pre></li>
       <code>MacroAssembler::add32</code>, for example.</p>
     
     <p>See the header of
-      <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">AirOpcode.opcodes</a>
+      <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">AirOpcode.opcodes</a>
       for a complete list of shorthand used by Air's opcode definition language.</p>
     
     <h2>Summary</h2>
@@ -399,7 +399,7 @@ Foo32 %tmp</code></pre></li>
       which method name to use and its args indicate the arguments to pass to that method. We
       use code generation to create a massive switch statement that turns the reflective Insts
       into actual calls to MacroAssembler. Consequently, we can "add" new instructions to Air
-      usually by just editing the <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">AirOpcode.opcodes</a>
+      usually by just editing the <a href="https://github.com/WebKit/WebKit/tree/main/Source/JavaScriptCore/b3/air/AirOpcode.opcodes">AirOpcode.opcodes</a>
       file.</p>
   </div>
 </body>
