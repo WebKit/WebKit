@@ -169,6 +169,7 @@
 #if !PLATFORM(WIN)
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
+#import <wtf/IsoMallocInlines.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/text/AtomString.h>
 #import <wtf/text/WTFString.h>
