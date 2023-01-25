@@ -73,8 +73,9 @@ void Table::operator delete(Table* table, std::destroying_delete_t)
 }
 
 Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
-    : m_type(type)
-    , m_maximum(maximum)
+    : m_maximum(maximum)
+    , m_type(type)
+    , m_isFixedSized(maximum && maximum.value() == initial)
     , m_owner(nullptr)
 {
     setLength(initial);
@@ -88,8 +89,13 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum
     switch (type) {
     case TableElementType::Externref:
         return adoptRef(new ExternRefTable(initial, maximum));
-    case TableElementType::Funcref:
+    case TableElementType::Funcref: {
+        if (maximum && maximum.value() == initial) {
+            // If the table is fixed-sized, we should put table slots inline to avoid one-level indirection.
+            return FuncRefTable::createFixedSized(initial);
+        }
         return adoptRef(new FuncRefTable(initial, maximum));
+    }
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -253,13 +259,31 @@ FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum)
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_importableFunctions = MallocPtr<Function, VMMalloc>::malloc(sizeof(Function) * Checked<size_t>(allocatedLength(m_length)));
+    if (isFixedSized())
+        m_importableFunctions = adoptMallocPtr<Function, VMMalloc>(tailPointer());
+    else
+        m_importableFunctions = MallocPtr<Function, VMMalloc>::malloc(sizeof(Function) * Checked<size_t>(allocatedLength(m_length)));
+
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
         new (&m_importableFunctions.get()[i]) Function();
         ASSERT(m_importableFunctions.get()[i].m_function.typeIndex == Wasm::TypeDefinition::invalidIndex); // We rely on this in compiled code.
         ASSERT(!m_importableFunctions.get()[i].m_instance);
         ASSERT(m_importableFunctions.get()[i].m_value.isNull());
     }
+}
+
+FuncRefTable::~FuncRefTable()
+{
+    // If FuncRefTable is fixed-sized, this pointer is not managed by this handle.
+    if (isFixedSized()) {
+        auto* unmanagedPointer = m_importableFunctions.leakPtr();
+        UNUSED_PARAM(unmanagedPointer);
+    }
+}
+
+Ref<FuncRefTable> FuncRefTable::createFixedSized(uint32_t size)
+{
+    return adoptRef(*new (NotNull, fastMalloc(allocationSize(allocatedLength(size)))) FuncRefTable(size, size));
 }
 
 void FuncRefTable::setFunction(uint32_t index, JSObject* optionalWrapper, WasmToWasmImportableFunction function, Instance* instance)

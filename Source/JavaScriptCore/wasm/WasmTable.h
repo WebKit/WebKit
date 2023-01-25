@@ -94,9 +94,12 @@ protected:
 
     void setLength(uint32_t);
 
+    bool isFixedSized() const { return m_isFixedSized; }
+
     uint32_t m_length;
+    NO_UNIQUE_ADDRESS const std::optional<uint32_t> m_maximum;
     const TableElementType m_type;
-    const std::optional<uint32_t> m_maximum;
+    bool m_isFixedSized { false };
     JSWebAssemblyTable* m_owner;
 };
 
@@ -118,7 +121,7 @@ class FuncRefTable final : public Table {
 public:
     friend class Table;
 
-    JS_EXPORT_PRIVATE ~FuncRefTable() = default;
+    JS_EXPORT_PRIVATE ~FuncRefTable();
 
     // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
     struct Function {
@@ -136,6 +139,13 @@ public:
     void copyFunction(const FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     static ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }
+    static constexpr ptrdiff_t offsetOfTail() { return WTF::roundUpToMultipleOf<alignof(Function)>(sizeof(FuncRefTable)); }
+    static constexpr ptrdiff_t offsetOfFunctionsForFixedSizedTable() { return offsetOfTail(); }
+
+    static size_t allocationSize(uint32_t size)
+    {
+        return offsetOfTail() + sizeof(Function) * size;
+    }
 
     void clear(uint32_t);
     void set(uint32_t, JSValue);
@@ -143,6 +153,10 @@ public:
 
 private:
     FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum);
+
+    Function* tailPointer() { return bitwise_cast<Function*>(bitwise_cast<uint8_t*>(this) + offsetOfTail()); }
+
+    static Ref<FuncRefTable> createFixedSized(uint32_t size);
 
     MallocPtr<Function, VMMalloc> m_importableFunctions;
 };
