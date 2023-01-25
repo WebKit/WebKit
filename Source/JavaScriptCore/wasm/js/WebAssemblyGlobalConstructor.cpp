@@ -62,7 +62,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
     {
         JSValue argument = callFrame->argument(0);
         if (!argument.isObject())
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global expects its first argument to be an object"_s)));
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Global expects its first argument to be an object"_s);
         globalDescriptor = jsCast<JSObject*>(argument);
     }
 
@@ -99,7 +99,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         else if (valueString == "externref"_s)
             type = Wasm::externrefType();
         else
-            return JSValue::encode(throwException(globalObject, throwScope, createTypeError(globalObject, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', 'f64', 'anyfunc', 'funcref', or 'externref'"_s)));
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', 'f64', 'anyfunc', 'funcref', or 'externref'"_s);
     }
 
     uint64_t initialValue = 0;
@@ -141,17 +141,15 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
         if (Wasm::isFuncref(type)) {
             if (argument.isUndefined())
                 argument = defaultValueForReferenceType(type);
-            if (!isWebAssemblyHostFunction(argument) && !argument.isNull()) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
-                return { };
-            }
+            if (!isWebAssemblyHostFunction(argument) && !argument.isNull())
+                return throwVMTypeError(globalObject, throwScope, "Funcref must be an exported wasm function"_s);
             initialValue = JSValue::encode(argument);
         } else if (Wasm::isExternref(type)) {
             if (argument.isUndefined())
                 argument = defaultValueForReferenceType(type);
             initialValue = JSValue::encode(argument);
         } else if (Wasm::isExternref(type))
-            return throwVMException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "I31ref import from JS currently unsupported"_s));
+            return throwVMTypeError(globalObject, throwScope, "I31ref import from JS currently unsupported"_s);
         else
             RELEASE_ASSERT_NOT_REACHED();
     }

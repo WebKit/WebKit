@@ -3,7 +3,7 @@
 // Failure:
 // Exception: Failure (Error message):
 //  expected:
-//  should match '/imported table does not match the expected type/'
+//  should match '/Table import /'
 //  found:
 //  "Table import imp:table provided a 'type' that is wrong (evaluating 'new WebAssembly.Instance(module, ffi)')"
 // Looks like we need to update the exception strings.
@@ -56,7 +56,7 @@ load("wasm-module-builder.js");
   let table_func = new WebAssembly.Table(
       { element: "anyfunc", initial: 3, maximum: 10 });
   assertThrows(() => builder.instantiate({ imp: { table: table_func } }),
-    WebAssembly.LinkError, /imported table does not match the expected type/);
+    WebAssembly.LinkError, /Table import /);
 })();
 
 (function TestExternRefDropDeclarativeElementSegment() {

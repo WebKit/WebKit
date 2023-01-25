@@ -932,14 +932,14 @@ let kTrapMsgs = [
   /Unreachable/,                                    // --
   /Out of bounds memory access/,                    // --
   /Division by zero/,                               // --
-  'divide result unrepresentable',                  // --
-  'remainder by zero',                              // --
+  /Integer overflow/,                  // --
+  /Division by zero|remainder by zero/,                              // --
   'float unrepresentable in integer range',         // --
-  'table index is out of bounds',                   // --
-  'null function or function signature mismatch',   // --
-  'operation does not support unaligned accesses',  // --
+  /Out of bounds call_indirect|Out of bounds table access/, // --
+  /null table entry|signature that does not match/,   // --
+  /operation does not support unaligned accesses|Out of bounds memory access/,  // --
   'data segment out of bounds',                     // --
-  'element segment out of bounds',                  // --
+  'Out of bounds table access',                  // --
   'rethrowing null value',                          // --
   'requested new array is too large',               // --
   'array element access out of bounds',             // --
@@ -954,7 +954,12 @@ function assertTraps(trap, code) {
 
 function assertTrapsOneOf(traps, code) {
   const errorChecker = new RegExp(
-    '(' + traps.map(trap => kTrapMsgs[trap]).join('|') + ')'
+    '(' + traps.map(trap => {
+        let message = kTrapMsgs[trap];
+        if (typeof message == 'string')
+            return message;
+        return message.source;
+    }).join('|') + ')'
   );
   assertThrows(code, WebAssembly.RuntimeError, errorChecker);
 }

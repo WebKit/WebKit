@@ -76,7 +76,31 @@ ALWAYS_INLINE ASCIILiteral errorMessageForExceptionType(ExceptionType type)
 
 ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
 {
-    return type == ExceptionType::TypeErrorInvalidV128Use;
+    switch (type) {
+    case ExceptionType::OutOfBoundsMemoryAccess:
+    case ExceptionType::OutOfBoundsTableAccess:
+    case ExceptionType::OutOfBoundsCallIndirect:
+    case ExceptionType::NullTableEntry:
+    case ExceptionType::NullReference:
+    case ExceptionType::NullI31Get:
+    case ExceptionType::BadSignature:
+    case ExceptionType::OutOfBoundsTrunc:
+    case ExceptionType::Unreachable:
+    case ExceptionType::DivisionByZero:
+    case ExceptionType::IntegerOverflow:
+    case ExceptionType::StackOverflow:
+    case ExceptionType::OutOfBoundsArrayGet:
+    case ExceptionType::OutOfBoundsArraySet:
+    case ExceptionType::NullArrayGet:
+    case ExceptionType::NullArraySet:
+    case ExceptionType::NullArrayLen:
+        return false;
+    case ExceptionType::FuncrefNotWasm:
+    case ExceptionType::InvalidGCTypeUse:
+    case ExceptionType::TypeErrorInvalidV128Use:
+        return true;
+    }
+    return false;
 }
 
 } } // namespace JSC::Wasm

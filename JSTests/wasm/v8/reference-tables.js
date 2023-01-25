@@ -42,14 +42,14 @@ load("wasm-module-builder.js");
     builder.addImportedTable(
         'imports', 'table', 1, 100, wasmRefNullType(unary_type));
     builder.instantiate({imports: {table: exporting_instance.exports.table}})
-  }, WebAssembly.LinkError, /imported table does not match the expected type/);
+  }, WebAssembly.LinkError, /Table import /);
 
   // Type for imported table must match exactly.
   assertThrows(() => {
     var builder = new WasmModuleBuilder();
     builder.addImportedTable('imports', 'table', 1, 100, kWasmFuncRef);
     builder.instantiate({imports: {table: exporting_instance.exports.table}})
-  }, WebAssembly.LinkError, /imported table does not match the expected type/);
+  }, WebAssembly.LinkError, /Table import /);
 
   var instance = (function() {
     var builder = new WasmModuleBuilder();
@@ -423,7 +423,7 @@ load("wasm-module-builder.js");
     builder.addImportedTable(
         'imports', 'table', 1, 100, wasmRefNullType(struct_type));
     builder.instantiate({imports: {table: exporting_instance.exports.table}})
-  }, WebAssembly.LinkError, /imported table does not match the expected type/);
+  }, WebAssembly.LinkError, /Table import /);
 
   // Mismatching nullability.
   assertThrows(() => {
@@ -432,7 +432,7 @@ load("wasm-module-builder.js");
     builder.addImportedTable(
         'imports', 'table', 1, 100, wasmRefType(struct_type));
     builder.instantiate({imports: {table: exporting_instance.exports.table}})
-  }, WebAssembly.LinkError, /imported table does not match the expected type/);
+  }, WebAssembly.LinkError, /Table import /);
 
   // Equivalent struct type.
   let builder = new WasmModuleBuilder();

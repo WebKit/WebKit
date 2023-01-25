@@ -1,8 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Skipping this test due to the following issues:
-// call to %ScheduleGCInStackCheck()
-
 // Copyright 2018 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -285,7 +281,7 @@ load("wasm-module-builder.js");
 
   const instance = builder.instantiate({
     q: {
-      triggerGC: () => %ScheduleGCInStackCheck(),
+      triggerGC: () => fullGC(),
       func: (ref) => assertEquals(ref.hello, 4)
     }
   });
@@ -330,7 +326,7 @@ load("wasm-module-builder.js");
 
   const instance = builder.instantiate({
     q: {
-      triggerGC: () => %ScheduleGCInStackCheck(),
+      triggerGC: () => fullGC(),
       func: (ref) => assertEquals(ref.hello, 4)
     }
   });

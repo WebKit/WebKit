@@ -614,7 +614,7 @@ function js_div(a, b) { return (a / b) | 0; }
   // the added function does not match.
   assertThrows(
       () => instance0.exports.main(0), WebAssembly.RuntimeError,
-      /signature mismatch/);
+      /signature that does not match/);
 })();
 
 (function IndirectCallIntoOtherInstance() {
@@ -932,5 +932,5 @@ function js_div(a, b) { return (a / b) | 0; }
 
   assertThrows(
     () => builder.instantiate(), WebAssembly.CompileError,
-    /non-imported globals cannot be used in constant expressions/);
+    /opcode for exp in element section/);
 })();

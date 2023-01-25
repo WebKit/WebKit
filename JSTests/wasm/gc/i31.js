@@ -200,7 +200,7 @@ function testI31JS() {
       `);
       m.exports.f(42);
     },
-    WebAssembly.RuntimeError,
+    TypeError,
     "I31ref import from JS currently unsupported"
   )
 
@@ -221,7 +221,7 @@ function testI31JS() {
       `);
       m.exports.g.value = 42;
     },
-    WebAssembly.RuntimeError,
+    TypeError,
     "I31ref import from JS currently unsupported"
   )
 }

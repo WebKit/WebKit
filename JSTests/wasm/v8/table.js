@@ -1,25 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure (Error message): expected <should match '/above the upper bound/'> found <"couldn't create Table">
-//
-//  Stack: MjsUnitAssertionError@mjsunit.js:36:27
-//  failWithMessage@mjsunit.js:323:36
-//  fail@mjsunit.js:343:27
-//  assertMatches@mjsunit.js:599:11
-//  checkException@mjsunit.js:501:20
-//  assertThrows@mjsunit.js:518:21
-//  TestConstructor@table.js:107:15
-//  global code@table.js:121:3
-//  MjsUnitAssertionError@mjsunit.js:36:27
-//  failWithMessage@mjsunit.js:323:36
-//  fail@mjsunit.js:343:27
-//  assertMatches@mjsunit.js:599:11
-//  checkException@mjsunit.js:501:20
-//  assertThrows@mjsunit.js:518:21
-//  TestConstructor@table.js:107:15
-//  global code@table.js:121:3
-
 // Copyright 2016 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -33,7 +12,7 @@ load("wasm-module-builder.js");
 // Basic tests.
 
 const outOfUint32RangeValue = 1e12;
-const kV8MaxWasmTableSize = 10000000;
+const kV8MaxWasmTableSize = 9999999;
 
 function assertTableIsValid(table, length) {
   assertSame(WebAssembly.Table.prototype, table.__proto__);
@@ -117,7 +96,7 @@ function assertTableIsValid(table, length) {
   assertThrows(
     () => new WebAssembly.Table(
       {element: "anyfunc", initial: kV8MaxWasmTableSize + 1}),
-    RangeError, /above the upper bound/);
+    RangeError, /couldn't create Table/);
 })();
 
 (function TestMaximumIsReadOnce() {

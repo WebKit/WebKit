@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure (Error message):
-//  expected:
-//  should match '/null function or function signature mismatch/'
-//  found:
-//  "call_indirect to a signature that does not match (evaluating 'module.exports.main(2, 12, 33)')"
-// Looks like we need to update the exception strings.
-
 // Copyright 2015 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.

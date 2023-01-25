@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure (Error message):
-//  expected:
-//  should match '/Duplicate export name 'g' for global 0 and global 1/'
-//  found:
-//  "WebAssembly.Module doesn't parse at byte 30: duplicate export: 'g' (evaluating 'new WebAssembly.Module(this.toBuffer(debug))')"
-// Probably need to translate exception strings.
-
 // Copyright 2017 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -20,7 +11,7 @@ load("wasm-module-builder.js");
   builder.addGlobal(kWasmI64, false).exportAs('g');
   assertThrows(
       () => builder.instantiate(), WebAssembly.CompileError,
-      /Duplicate export name 'g' for global 0 and global 1/);
+      /duplicate export: 'g'/);
 })();
 
 (function exportNameClashWithFunction() {
@@ -29,7 +20,7 @@ load("wasm-module-builder.js");
   builder.addFunction('f', kSig_v_v).addBody([]).exportAs('foo');
   assertThrows(
       () => builder.instantiate(), WebAssembly.CompileError,
-      /Duplicate export name 'foo' for global 0 and function 0/);
+      /duplicate export: 'foo'/);
 })();
 
 (function veryLongExportName() {
@@ -43,7 +34,7 @@ load("wasm-module-builder.js");
   global.exportAs(export_name);
   global.exportAs(export_name);
   var error_msg =
-      'Duplicate export name \'(abc){10,20}ab?c?\.\.\.\' for global 0 and global 0';
+      'duplicate export: ';
   assertThrows(
       () => builder.instantiate(), WebAssembly.CompileError,
       new RegExp(error_msg));
