@@ -960,6 +960,9 @@ media/now-playing-status-without-media.html [ Skip ]
 # WebM not supported in WK1 on macOS.
 http/tests/media/video-webm-stall.html
 
+# Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
+webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1727,7 +1730,6 @@ webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html 
 webkit.org/b/195098 pointer-lock/pointermove-movement-delta.html [ Failure ]
 
 webkit.org/b/196915 [ Debug ] inspector/timeline/timeline-recording.html [ Pass Failure ]
-webkit.org/b/244301 inspector/timeline/timeline-event-screenshots.html [ Failure ]
 
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource.html [ Skip ]
 webkit.org/b/195623 http/tests/cache/link-prefetch-main-resource-iframe.html [ Skip ]
