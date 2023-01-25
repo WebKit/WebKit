@@ -268,9 +268,8 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         PER_PAGE_LIMIT = 100  # GitHub will list a maximum of 100 files in a single response
         NUM_PAGE_LIMIT = 30  # GitHub stops returning files in a PR after 3000 files
 
-        headers = {}
-        if self._token:
-            headers["Authorization"] = "token " + self._token
+        username, access_token = GitHub.credentials(user=user)
+        auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
 
         page = 1
         files = []
@@ -281,8 +280,10 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
                 params=dict(
                     per_page=PER_PAGE_LIMIT,
                     page=page,
-                ), headers=headers,
-                logger=log.msg,
+                ), headers=dict(
+                    Authorization=['Basic {}'.format(auth_header)],
+                    Accept=['application/vnd.github.v3+json'],
+                ), logger=log.msg,
             )
             if not response or response.status_code // 100 != 2:
                 break
