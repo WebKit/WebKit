@@ -3269,13 +3269,18 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
         RELEASE_ASSERT(Arg::isValidAddrForm(Move32, FuncRefTable::offsetOfLength(), pointerWidth()));
 
         self().emitLoad(instanceValue().tmp(), Instance::offsetOfTablePtr(m_numImportFunctions, tableIndex), callableFunctionBufferLength);
-        append(Move, Arg::addr(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);
         ASSERT(tableIndex < m_info.tableCount());
         auto& tableInformation = m_info.table(tableIndex);
-        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial())
+        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial()) {
+            if (!tableInformation.isImport())
+                append(Derived::AddPtr, Arg::imm(FuncRefTable::offsetOfFunctionsForFixedSizedTable()), callableFunctionBufferLength, callableFunctionBuffer);
+            else
+                append(Move, Arg::addr(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);
             callableFunctionBufferLength = self().addConstant(Types::I32, tableInformation.initial());
-        else
+        } else {
+            append(Move, Arg::addr(callableFunctionBufferLength, FuncRefTable::offsetOfFunctions()), callableFunctionBuffer);
             append(Move32, Arg::addr(callableFunctionBufferLength, Table::offsetOfLength()), callableFunctionBufferLength);
+        }
     }
 
     append(Move32, calleeIndex, calleeIndex);

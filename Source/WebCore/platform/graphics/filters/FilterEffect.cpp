@@ -139,8 +139,10 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
     auto imageRect = calculateImageRect(filter, inputImageRects(inputs), primitiveSubregion);
     auto absoluteImageRect = enclosingIntRect(filter.scaledByFilterScale(imageRect));
 
-    if (absoluteImageRect.isEmpty() || ImageBuffer::sizeNeedsClamping(absoluteImageRect.size()))
+    if (absoluteImageRect.isEmpty() || ImageBuffer::sizeNeedsClamping(absoluteImageRect.size())) {
+        LOG_WITH_STREAM(Filters, stream << "FilterEffect " << filterName() << " " << this << " apply(): " << *this << " absoluteImageRect " << absoluteImageRect << " is empty or needs clamping; bailing.");
         return nullptr;
+    }
 
     auto applier = createApplier(filter);
     if (!applier)

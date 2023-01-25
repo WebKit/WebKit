@@ -3043,9 +3043,10 @@ std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetF
     return { Path(), WindRule::NonZero };
 }
 
-void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, const LayerPaintingInfo& paintingInfo, const LayoutSize& offsetFromRoot)
+void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, EventRegionContextStateSaver& eventRegionStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot)
 {
-    if (!renderer().hasClipPath() || context.paintingDisabled() || paintingInfo.paintDirtyRect.isEmpty())
+    bool isCollectingEventRegion = paintFlags.contains(PaintLayerFlag::CollectingEventRegion);
+    if (!renderer().hasClipPath() || (context.paintingDisabled() && !isCollectingEventRegion) || paintingInfo.paintDirtyRect.isEmpty())
         return;
 
     // SVG elements get clipped in SVG code.
@@ -3060,8 +3061,15 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
     if (is<ShapePathOperation>(*style.clipPath()) || (is<BoxPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
         // clippedContentBounds is used as the reference box for inlines, which is also poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
         auto [path, windRule] = computeClipPath(paintingOffsetFromRoot, clippedContentBounds);
+
+        if (isCollectingEventRegion) {
+            eventRegionStateSaver.pushClip(path, windRule);
+            return;
+        }
+
         stateSaver.save();
         context.clipPath(path, windRule);
+        return;
     }
 
     if (is<ReferencePathOperation>(style.clipPath())) {
@@ -3080,7 +3088,11 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
             context.translate(offset);
             clipperRenderer->applyClippingToContext(context, renderer(), { { }, referenceBox.size() }, snappedClippingBounds, renderer().style().effectiveZoom());
             context.translate(-offset);
+            
+            // FIXME: Support event regions.
         }
+        
+        return;
     }
 }
 
@@ -3197,8 +3209,10 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
 
     GraphicsContextStateSaver stateSaver(context, false);
+    EventRegionContextStateSaver eventRegionStateSaver(paintingInfo.eventRegionContext);
+
     if (shouldApplyClipPath(paintingInfo.paintBehavior, localPaintFlags))
-        setupClipPath(context, stateSaver, paintingInfo, columnAwareOffsetFromRoot);
+        setupClipPath(context, stateSaver, eventRegionStateSaver, paintingInfo, localPaintFlags, columnAwareOffsetFromRoot);
 
     bool selectionAndBackgroundsOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionAndBackgroundsOnly);
     bool selectionOnly = paintingInfo.paintBehavior.contains(PaintBehavior::SelectionOnly);
@@ -3816,7 +3830,7 @@ void RenderLayer::collectEventRegionForFragments(const LayerFragments& layerFrag
     for (const auto& fragment : layerFragments) {
         PaintInfo paintInfo(context, fragment.foregroundRect.rect(), PaintPhase::EventRegion, paintBehavior);
         paintInfo.eventRegionContext = localPaintingInfo.eventRegionContext;
-        if (localPaintingInfo.clipToDirtyRect)
+        if (localPaintingInfo.clipToDirtyRect) // clip-path?
             paintInfo.eventRegionContext->pushClip(enclosingIntRect(fragment.backgroundRect.rect()));
 
         renderer().paint(paintInfo, paintOffsetForRenderer(fragment, localPaintingInfo));
@@ -5035,7 +5049,7 @@ bool RenderLayer::shouldApplyClipPath(OptionSet<PaintBehavior> paintBehavior, Op
     if (paintsToWindow || (paintBehavior & PaintBehavior::FlattenCompositingLayers))
         return true;
 
-    return paintFlags.contains(PaintLayerFlag::PaintingCompositingClipPathPhase);
+    return paintFlags.containsAny({ PaintLayerFlag::PaintingCompositingClipPathPhase, PaintLayerFlag::CollectingEventRegion });
 }
 
 bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const

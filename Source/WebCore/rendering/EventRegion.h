@@ -38,8 +38,10 @@
 namespace WebCore {
 
 class EventRegion;
+class Path;
 class RenderObject;
 class RenderStyle;
+enum class WindRule : uint8_t;
 
 class EventRegionContext {
 public:
@@ -49,6 +51,7 @@ public:
     void popTransform();
 
     void pushClip(const IntRect&);
+    void pushClip(const Path&, WindRule);
     void popClip();
 
     void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
@@ -90,6 +93,14 @@ public:
         ASSERT(!m_pushedClip);
         if (m_context)
             m_context->pushClip(clipRect);
+        m_pushedClip = true;
+    }
+
+    void pushClip(const Path& path, WindRule windRule)
+    {
+        ASSERT(!m_pushedClip);
+        if (m_context)
+            m_context->pushClip(path, windRule);
         m_pushedClip = true;
     }
 

@@ -3549,7 +3549,7 @@ void Document::setURL(const URL& url)
 const URL& Document::urlForBindings() const
 {
     auto shouldAdjustURL = [this] {
-        if (m_url.url().isEmpty() || !loader() || !isTopDocument())
+        if (m_url.url().isEmpty() || !loader() || !isTopDocument() || !frame())
             return false;
 
         auto* topDocumentLoader = topDocument().loader();
@@ -3560,7 +3560,11 @@ const URL& Document::urlForBindings() const
         if (preNavigationURL.isEmpty() || RegistrableDomain { URL { preNavigationURL } }.matches(securityOrigin().data()))
             return false;
 
-        return true;
+        auto sourceURL = frame()->script().sourceURL();
+        if (sourceURL && RegistrableDomain { *sourceURL }.matches(securityOrigin().data()))
+            return false;
+
+        return m_hasLoadedThirdPartyScript;
     }();
 
     if (shouldAdjustURL)

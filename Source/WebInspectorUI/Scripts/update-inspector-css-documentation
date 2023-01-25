@@ -65,13 +65,10 @@ except json.JSONDecodeError as err:
 
 print("Extracting CSS property data")
 
-properties = {}
-for prop in data["properties"]:
-    name = prop.get("name")
-    prop_override = overrides.get(name, {})
-    description = prop_override.get("description") or prop.get("description")
-    syntax = prop_override.get("syntax") or prop.get("syntax")
-    references = prop_override.get("references") or prop.get("references")
+def build_property_object(name, property_override = {}, property_payload = {}):
+    description = property_override.get("description") or property_payload.get("description")
+    syntax = property_override.get("syntax") or property_payload.get("syntax")
+    references = property_override.get("references") or property_payload.get("references")
     url = ""
 
     if (references):
@@ -83,22 +80,38 @@ for prop in data["properties"]:
 
     # Skip properties with unsupported prefixes. Keep in sync with prefix list from WI.CSSManager.canonicalNameForPropertyName().
     if (name.startswith("-") and not name.startswith(("-webkit-", "-khtml-", "-apple-"))):
-        continue
+        return None
 
     # Skip properties lacking any meaningful content.
     if (not description and not syntax):
-        continue
+        return None
 
-    properties[name] = {}
+    property_object = {}
 
     if (description):
-        properties[name]["description"] = description
+        property_object["description"] = description
 
     if (syntax):
-        properties[name]["syntax"] = syntax
+        property_object["syntax"] = syntax
 
     if (url):
-        properties[name]["url"] = url
+        property_object["url"] = url
+
+    return property_object
+
+properties = {}
+for property_payload in data["properties"]:
+    name = property_payload.get("name")
+    property_override = overrides.get(name, {})
+    property_object = build_property_object(name, property_override, property_payload)
+
+    if (property_object):
+        properties[name] = property_object
+
+# Ensure properties defined only in local overrides but not in the upstream payload are added to the output.
+for (name, property_override) in overrides.items():
+    if (name not in properties):
+        properties[name] = build_property_object(name, property_override, {})
 
 try:
     file_path = Path(ROOT_DIR, OUTPUT_DIR, OUTPUT_FILENAME).resolve()

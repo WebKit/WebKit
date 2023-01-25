@@ -3983,17 +3983,24 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
     // can be to the embedder for our stack check calculation.
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
-    Value* callableFunctionBuffer;
+    Value* callableFunctionBuffer = nullptr;
     Value* callableFunctionBufferLength;
     {
         Value* table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfTablePtr(m_numImportFunctions, tableIndex)));
-        callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(FuncRefTable::offsetOfFunctions()));
         ASSERT(tableIndex < m_info.tableCount());
         auto& tableInformation = m_info.table(tableIndex);
-        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial())
+
+        if (tableInformation.maximum() && tableInformation.maximum().value() == tableInformation.initial()) {
             callableFunctionBufferLength = constant(B3::Int32, tableInformation.initial(), origin());
-        else
+            if (!tableInformation.isImport()) {
+                // Table is fixed-sized and it is not imported one. Thus this is definitely fixed-sized FuncRefTable.
+                callableFunctionBuffer = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), table, constant(pointerType(), safeCast<int32_t>(FuncRefTable::offsetOfFunctionsForFixedSizedTable())));
+            }
+        } else
             callableFunctionBufferLength = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), table, safeCast<int32_t>(Table::offsetOfLength()));
+
+        if (!callableFunctionBuffer)
+            callableFunctionBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), table, safeCast<int32_t>(FuncRefTable::offsetOfFunctions()));
     }
 
     // Check the index we are looking for is valid.

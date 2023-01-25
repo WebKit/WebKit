@@ -38,8 +38,6 @@ webxr [ Skip ]
 [ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ Timeout ]
 
 # rdar://102572503
-imported/w3c/web-platform/css/css-backgrounds/box-shadow-039.html [ ImageOnlyFailure ]
-imported/w3c/web-platform/css/css-backgrounds/box-shadow-040.html [ ImageOnlyFailure ]
 compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
 
 # rdar://102588345

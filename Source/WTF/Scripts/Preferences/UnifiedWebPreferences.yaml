@@ -5880,6 +5880,20 @@ ThirdPartyIframeRedirectBlockingEnabled:
     WebCore:
       default: true
 
+ThreadedAnimationResolutionEnabled:
+  type: bool
+  status: unstable
+  humanReadableName: "Threaded animation resolution"
+  humanReadableDescription: "Run accelerated animations on a separate thread"
+  condition: ENABLE(THREADED_ANIMATION_RESOLUTION)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ThreadedScrollingEnabled:
   type: bool
   status: embedder

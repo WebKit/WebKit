@@ -91,7 +91,13 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
 
     const TableInformation& table(unsigned index) const { return tables[index]; }
 
-    void initializeReferencedFunctionsTracker() const { m_referencedFunctions = FixedBitVector(functionIndexSpaceSize()); }
+    void initializeFunctionTrackers() const
+    {
+        size_t totalNumberOfFunctions = functionIndexSpaceSize();
+        m_referencedFunctions = FixedBitVector(totalNumberOfFunctions);
+        m_clobberingTailCalls = FixedBitVector(totalNumberOfFunctions);
+    }
+
     const FixedBitVector& referencedFunctions() const { return m_referencedFunctions; }
     bool hasReferencedFunction(unsigned index) const { return m_referencedFunctions.test(index); }
     void addReferencedFunction(unsigned index) const { m_referencedFunctions.concurrentTestAndSet(index); }
@@ -132,9 +138,9 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
             : it->value.getBranchHint(branchOffset);
     }
 
-    const BitVector& clobberingTailCalls() const { return m_clobberingTailCalls; }
-    bool callCanClobberInstance(uint32_t index) const { return m_clobberingTailCalls.contains(index); }
-    void addClobberingTailCall(uint32_t index) { m_clobberingTailCalls.set(index); }
+    const FixedBitVector& clobberingTailCalls() const { return m_clobberingTailCalls; }
+    bool callCanClobberInstance(uint32_t index) const { return m_clobberingTailCalls.test(index); }
+    void addClobberingTailCall(uint32_t index) { m_clobberingTailCalls.concurrentTestAndSet(index); }
 
     Vector<Import> imports;
     Vector<TypeIndex> importFunctionTypeIndices;
@@ -163,9 +169,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     BitVector m_declaredFunctions;
     BitVector m_declaredExceptions;
     mutable FixedBitVector m_referencedFunctions;
-    // FIXME: We should use a synchronous mechanism for `m_clobberingTailCalls`
-    // to prevent potential race condition. https://bugs.webkit.org/show_bug.cgi?id=251124
-    BitVector m_clobberingTailCalls;
+    mutable FixedBitVector m_clobberingTailCalls;
 };
 
     

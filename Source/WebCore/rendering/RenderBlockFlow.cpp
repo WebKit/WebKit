@@ -1409,9 +1409,8 @@ LayoutUnit RenderBlockFlow::clearFloatsIfNeeded(RenderBox& child, MarginInfo& ma
     if (marginInfo.canCollapseWithMarginBefore()) {
         // We can no longer collapse with the top of the block since a clear
         // occurred. The empty blocks collapse into the cleared block.
-        // FIXME: This isn't quite correct. Need clarification for what to do
-        // if the height the cleared block is offset by is smaller than the
-        // margins involved.
+        // https://www.w3.org/TR/CSS2/visuren.html#clearance
+        // "CSS2.1 - Computing the clearance of an element on which 'clear' is set is done..."
         setMaxMarginBeforeValues(oldTopPosMargin, oldTopNegMargin);
         marginInfo.setAtBeforeSideOfBlock(false);
     }

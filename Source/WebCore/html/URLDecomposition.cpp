@@ -135,21 +135,9 @@ String URLDecomposition::hostname() const
     return fullURL().host().toString();
 }
 
-static StringView removeAllLeadingSolidusCharacters(StringView string)
-{
-    unsigned i;
-    unsigned length = string.length();
-    for (i = 0; i < length; ++i) {
-        if (string[i] != '/')
-            break;
-    }
-    return string.substring(i);
-}
-
-void URLDecomposition::setHostname(StringView value)
+void URLDecomposition::setHostname(StringView host)
 {
     auto fullURL = this->fullURL();
-    auto host = removeAllLeadingSolidusCharacters(value);
     if (host.isEmpty() && !fullURL.protocolIs("file"_s) && fullURL.hasSpecialScheme())
         return;
     if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
