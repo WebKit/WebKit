@@ -54,7 +54,7 @@ struct CompilationContext;
 struct ModuleInformation;
 struct UnlinkedHandlerInfo;
 
-using BlockSignature = const TypeDefinition*;
+using BlockSignature = RefPtr<const TypeDefinition>;
 
 enum class TableElementType : uint8_t {
     Externref,
