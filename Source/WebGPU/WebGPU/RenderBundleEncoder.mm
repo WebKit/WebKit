@@ -227,7 +227,7 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
     for (const auto& resource : group.resources())
         m_resources.append(resource);
 
-    [icbCommand setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:groupIndex];
+    [icbCommand setVertexBuffer:group.vertexArgumentBuffer() offset:0 atIndex:m_device->vertexBufferIndexForBindGroup(groupIndex)];
     [icbCommand setFragmentBuffer:group.fragmentArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 

@@ -468,9 +468,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
     const auto& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     if (pipelineLayout.numberOfBindGroupLayouts())
-        return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, depthStencilDescriptor, pipelineLayout, descriptor.vertex.bufferCount, *this);
+        return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, depthStencilDescriptor, pipelineLayout, *this);
 
-    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, depthStencilDescriptor, reflection, descriptor.vertex.bufferCount, *this);
+    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, depthStencilDescriptor, reflection, *this);
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
@@ -482,7 +482,7 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     });
 }
 
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, MTLRenderPipelineReflection *reflection, uint32_t vertexShaderInputBufferCount, Device& device)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, MTLRenderPipelineReflection *reflection, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
     , m_primitiveType(primitiveType)
@@ -494,14 +494,13 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
 #if HAVE(METAL_BUFFER_BINDING_REFLECTION)
     , m_reflection(reflection)
 #endif
-    , m_vertexShaderInputBufferCount(vertexShaderInputBufferCount)
 {
 #if !HAVE(METAL_BUFFER_BINDING_REFLECTION)
     UNUSED_PARAM(reflection);
 #endif
 }
 
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, const PipelineLayout &pipelineLayout, uint32_t vertexShaderInputBufferCount, Device& device)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, const PipelineLayout &pipelineLayout, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
     , m_primitiveType(primitiveType)
@@ -511,7 +510,6 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
     , m_depthStencilDescriptor(depthStencilDescriptor)
     , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
     , m_pipelineLayout(&pipelineLayout)
-    , m_vertexShaderInputBufferCount(vertexShaderInputBufferCount)
 {
 }
 
@@ -560,8 +558,9 @@ BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 #if HAVE(METAL_BUFFER_BINDING_REFLECTION)
     uint32_t bindingIndex = 0;
     Vector<WGPUBindGroupLayoutEntry> entries;
+    auto vertexStageGroupIndex = m_device->vertexBufferIndexForBindGroup(groupIndex);
     for (id<MTLBufferBinding> binding in m_reflection.vertexBindings) {
-        if (binding.index != groupIndex + m_vertexShaderInputBufferCount)
+        if (binding.index != vertexStageGroupIndex)
             continue;
 
         ASSERT(binding.type == MTLBindingTypeBuffer);

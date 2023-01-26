@@ -178,7 +178,7 @@ async function helloCube() {
                     sampler textureSampler;
                 };
     
-                vertex VertexOut vsmain(VertexIn vin [[stage_in]], const device VertexShaderArguments &values [[buffer(1)]])
+                vertex VertexOut vsmain(VertexIn vin [[stage_in]], const device VertexShaderArguments &values [[buffer(8)]])
                 {
                     VertexOut vout;
                     float alpha = values.time[0] * alphaMultiplier;

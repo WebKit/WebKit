@@ -253,6 +253,19 @@ void Device::generateAValidationError(String&& message)
     }
 }
 
+uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
+{
+    // FIXME: use value in HardwareCapabilities from https://github.com/gpuweb/gpuweb/issues/2749
+    return 8;
+}
+
+uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const
+{
+    auto maxIndex = maxBuffersPlusVertexBuffersForVertexStage();
+    ASSERT(groupIndex <= maxIndex);
+    return groupIndex > maxIndex ? 0 : (maxIndex - groupIndex);
+}
+
 void Device::captureFrameIfNeeded() const
 {
     GPUFrameCapture::captureSingleFrameIfNeeded(m_device);
