@@ -405,7 +405,7 @@ void registerWebKitGStreamerElements()
         // The new demuxers based on adaptivedemux2 cannot be used in WebKit yet because this new
         // base class does not abstract away network access. They can't work in a sandboxed
         // media process, so demote their rank in order to prevent decodebin3 from auto-plugging them.
-        if (webkitGstCheckVersion(1, 21, 0)) {
+        if (webkitGstCheckVersion(1, 22, 0)) {
             const char* const elementNames[] = { "dashdemux2", "hlsdemux2", "mssdemux2" };
             for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
                 if (auto factory = adoptGRef(gst_element_factory_find(elementNames[i])))

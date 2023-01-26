@@ -1652,6 +1652,7 @@ webkit.org/b/224074 webrtc/concurrentVideoPlayback2.html [ Timeout Pass ]
 # Pending investigation.
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-removetrack.https.html [ Crash Failure Timeout ]
 webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none-manual.https.html [ Crash Failure Pass ]
+webkit.org/b/251146 webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs

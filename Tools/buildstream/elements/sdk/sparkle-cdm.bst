@@ -6,7 +6,7 @@ build-depends:
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 - freedesktop-sdk.bst:components/json-glib.bst
-- sdk/gstreamer.bst
+- freedesktop-sdk.bst:components/gstreamer.bst
 
 variables:
   meson-local: >-

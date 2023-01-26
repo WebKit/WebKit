@@ -7,8 +7,8 @@ build-depends:
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 - freedesktop-sdk.bst:components/dav1d.bst
-- sdk/gstreamer.bst
-- sdk/gst-plugins-base.bst
+- freedesktop-sdk.bst:components/gstreamer.bst
+- freedesktop-sdk.bst:components/gstreamer-plugins-base.bst
 
 environment:
   PATH: /usr/bin:/usr/lib/sdk/rust/bin
@@ -20,7 +20,7 @@ config:
 
   install-commands:
   - |
-    install -D -m a+r -t "%{install-root}%{libdir}/gstreamer-1.0" ./target/release/libgst*
+    install -D -m a+r -t "%{install-root}%{libdir}/gstreamer-1.0" ./target/release/libgst*.so
 
 public:
   bst:
