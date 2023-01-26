@@ -3885,3 +3885,5 @@ webkit.org/b/250922 imported/w3c/web-platform-tests/webstorage/storage_local_win
 webkit.org/b/251040 [ Debug ] fast/forms/ios/remove-view-after-focus.html [ Pass Crash ]
 
 webkit.org/b/251047 [ Debug ] fast/loader/crash-replacing-location-before-load.html [ Pass Crash ]
+
+webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
