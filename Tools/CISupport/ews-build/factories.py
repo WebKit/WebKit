@@ -323,7 +323,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         super(MergeQueueFactoryBase, self).__init__()
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
@@ -347,11 +347,11 @@ class MergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(CheckStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())
@@ -363,7 +363,7 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
     def __init__(self, platform, **kwargs):
         super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())
