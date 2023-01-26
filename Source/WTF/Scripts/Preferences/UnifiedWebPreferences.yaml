@@ -60,6 +60,11 @@
 #   web platform feature or a "shipping" feature intended to be always-on.
 #   ANY default value.
 #
+# == Defaults Overridable ==
+#  When features are declared with "defaultsOverridable: true", platform user
+#  defaults may override a default value at runtime, using the preference
+#  name prefixed with "WebKitDebug".
+#
 # FIXME: Currently, default values are unchecked. We should audit and refactor
 # features so that their defaults agree with their status's definition, and use
 # the generator to enforce this in the future.
@@ -107,6 +112,7 @@ AcceleratedCompositingForFixedPositionEnabled:
 AcceleratedDrawingEnabled:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "GraphicsLayerCA accelerated drawing"
   humanReadableDescription: "Enable GraphicsLayerCA accelerated drawing"
   defaultValue:
@@ -1339,6 +1345,7 @@ ColorFilterEnabled:
 CompositingBordersVisible:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Compositing borders visible"
   webKitLegacyPreferenceKey: WebKitShowDebugBorders
   webcoreName: showDebugBorders
@@ -1356,6 +1363,7 @@ CompositingBordersVisible:
 CompositingRepaintCountersVisible:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Compositing repaint counters visible"
   webKitLegacyPreferenceKey: WebKitShowRepaintCounter
   webcoreName: showRepaintCounter
@@ -1814,6 +1822,7 @@ DeprecationReportingEnabled:
 DeveloperExtrasEnabled:
   type: bool
   status: embedder
+  defaultsOverridable: true
   webKitLegacyPreferenceKey: WebKitDeveloperExtrasEnabledPreferenceKey
   webKitLegacyBinding: custom
   defaultValue:
@@ -1926,6 +1935,7 @@ DirectoryUploadEnabled:
 DisableScreenSizeOverride:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Disable screen size override"
   webcoreBinding: DeprecatedGlobalSettings
   condition: PLATFORM(IOS_FAMILY)
@@ -1966,6 +1976,7 @@ DisallowSyncXHRDuringPageDismissalEnabled:
 DisplayListDrawingEnabled:
   type: bool
   status: unstable
+  defaultsOverridable: true
   humanReadableName: "DisplayList Drawing"
   humanReadableDescription: "Enable display-list drawing"
   defaultValue:
@@ -2289,6 +2300,7 @@ FocusVisibleEnabled:
 ForceAlwaysUserScalable:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Force always user-scalable"
   webcoreBinding: none
   condition: PLATFORM(IOS_FAMILY)
@@ -3314,6 +3326,7 @@ LegacyEncryptedMediaAPIEnabled:
 LegacyLineLayoutVisualCoverageEnabled:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Legacy line layout visual coverage"
   humanReadableDescription: "Enable legacy line layout visual coverage"
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
@@ -3503,6 +3516,7 @@ LocalStorageEnabled:
 LogsPageMessagesToSystemConsoleEnabled:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Log page messages to system console"
   humanReadableDescription: "Enable logging page messages to system console"
   defaultValue:
@@ -4108,7 +4122,8 @@ NeedsFrameNameFallbackToIdQuirk:
 
 NeedsInAppBrowserPrivacyQuirks:
   type: bool
-  status: embedder
+  status: internal
+  defaultsOverridable: true
   humanReadableName: "Needs In-App Browser Privacy Quirks"
   humanReadableDescription: "Enable quirks needed to support In-App Browser privacy"
   webcoreBinding: none
@@ -4884,6 +4899,7 @@ ResourceLoadSchedulingEnabled:
 ResourceUsageOverlayVisible:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Resource usage overlay"
   humanReadableDescription: "Make resource usage overlay visible"
   condition: ENABLE(RESOURCE_USAGE)
@@ -5907,6 +5923,7 @@ ThreadedScrollingEnabled:
 TiledScrollingIndicatorVisible:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Tiled scrolling indicator"
   humanReadableDescription: "Make tiled scrolling indicator visible"
   webcoreName: showTiledScrollingIndicator
@@ -6343,6 +6360,7 @@ ViewGestureDebuggingEnabled:
 VisibleDebugOverlayRegions:
   type: uint32_t
   status: embedder
+  defaultsOverridable: true
   webcoreType: DebugOverlayRegions
   defaultValue:
     WebKitLegacy:
@@ -6702,6 +6720,7 @@ WebGPU:
 WebInspectorEngineeringSettingsAllowed:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "WebInspector engineering settings allowed"
   defaultValue:
     WebKitLegacy:
