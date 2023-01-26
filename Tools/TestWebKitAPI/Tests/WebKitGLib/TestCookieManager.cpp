@@ -57,9 +57,17 @@ public:
 
     CookieManagerTest()
         : WebViewTest()
+#if ENABLE(2022_GLIB_API)
+        , m_cookieManager(webkit_network_session_get_cookie_manager(m_networkSession.get()))
+        , m_websiteDataManager(webkit_network_session_get_website_data_manager(m_networkSession.get()))
+#else
         , m_cookieManager(webkit_web_context_get_cookie_manager(m_webContext.get()))
+        , m_websiteDataManager(webkit_web_context_get_website_data_manager(m_webContext.get()))
+#endif
     {
-        g_assert_true(webkit_website_data_manager_get_cookie_manager(webkit_web_context_get_website_data_manager(m_webContext.get())) == m_cookieManager);
+#if !ENABLE(2022_GLIB_API)
+        g_assert_true(webkit_website_data_manager_get_cookie_manager(m_websiteDataManager) == m_cookieManager);
+#endif
         g_signal_connect(m_cookieManager, "changed", G_CALLBACK(cookiesChangedCallback), this);
     }
 
@@ -175,28 +183,37 @@ public:
         webkit_cookie_manager_set_accept_policy(m_cookieManager, policy);
     }
 
-    static void getDomainsReadyCallback(GObject* object, GAsyncResult* result, gpointer userData)
+    GUniquePtr<GList> fetch()
     {
-        GUniqueOutPtr<GError> error;
-        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-        char** domains = webkit_cookie_manager_get_domains_with_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, &error.outPtr());
-        G_GNUC_END_IGNORE_DEPRECATIONS;
-        g_assert_no_error(error.get());
+        struct TestData {
+            GUniquePtr<GList> dataList;
+            GMainLoop* mainLoop;
+        } data = { nullptr, m_mainLoop };
 
-        CookieManagerTest* test = static_cast<CookieManagerTest*>(userData);
-        test->m_domains = domains;
-        g_main_loop_quit(test->m_mainLoop);
+        webkit_website_data_manager_fetch(m_websiteDataManager, WEBKIT_WEBSITE_DATA_COOKIES, nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) {
+            auto* data = static_cast<TestData*>(userData);
+            GUniqueOutPtr<GError> error;
+            data->dataList.reset(webkit_website_data_manager_fetch_finish(WEBKIT_WEBSITE_DATA_MANAGER(object), result, &error.outPtr()));
+            g_assert_no_error(error.get());
+            g_main_loop_quit(data->mainLoop);
+        }, &data);
+        g_main_loop_run(m_mainLoop);
+        return WTFMove(data.dataList);
     }
 
     char** getDomains()
     {
-        g_strfreev(m_domains);
-        m_domains = 0;
-        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-        webkit_cookie_manager_get_domains_with_cookies(m_cookieManager, 0, getDomainsReadyCallback, this);
-        G_GNUC_END_IGNORE_DEPRECATIONS;
-        g_main_loop_run(m_mainLoop);
+        g_clear_pointer(&m_domains, g_strfreev);
+        GUniquePtr<GList> dataList = fetch();
+        GPtrArray* domains = g_ptr_array_sized_new(g_list_length(dataList.get()));
+        for (GList* item = dataList.get(); item; item = g_list_next(item)) {
+            auto* data = static_cast<WebKitWebsiteData*>(item->data);
+            g_ptr_array_add(domains, g_strdup(webkit_website_data_get_name(data)));
+            webkit_website_data_unref(data);
+        }
+        g_ptr_array_add(domains, nullptr);
 
+        m_domains = reinterpret_cast<char**>(g_ptr_array_free(domains, FALSE));
         return m_domains;
     }
 
@@ -214,16 +231,23 @@ public:
 
     void deleteCookiesForDomain(const char* domain)
     {
-        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-        webkit_cookie_manager_delete_cookies_for_domain(m_cookieManager, domain);
-        G_GNUC_END_IGNORE_DEPRECATIONS;
+        GUniquePtr<GList> dataList = fetch();
+        GUniquePtr<GList> cookies;
+        for (GList* item = dataList.get(); item; item = g_list_next(item)) {
+            auto* data = static_cast<WebKitWebsiteData*>(item->data);
+            if (!g_strcmp0(webkit_website_data_get_name(data), domain))
+                cookies.reset(g_list_prepend(cookies.get(), webkit_website_data_ref(data)));
+            webkit_website_data_unref(data);
+        }
+        webkit_website_data_manager_remove(m_websiteDataManager, WEBKIT_WEBSITE_DATA_COOKIES, cookies.get(), nullptr, nullptr, nullptr);
+        g_list_foreach(cookies.get(), [](gpointer data, gpointer) {
+            webkit_website_data_unref(static_cast<WebKitWebsiteData*>(data));
+        }, nullptr);
     }
 
     void deleteAllCookies()
     {
-        G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-        webkit_cookie_manager_delete_all_cookies(m_cookieManager);
-        G_GNUC_END_IGNORE_DEPRECATIONS;
+        webkit_website_data_manager_clear(m_websiteDataManager, WEBKIT_WEBSITE_DATA_COOKIES, 0, nullptr, nullptr, nullptr);
     }
 
     void waitUntilCookiesChanged(int cookiesExpectedToChangeCount = 1)
@@ -235,7 +259,17 @@ public:
         m_finishLoopWhenCookiesChange = false;
     }
 
+    void setITPEnable(bool enable)
+    {
+#if ENABLE(2022_GLIB_API)
+        webkit_network_session_set_itp_enabled(m_networkSession.get(), enable);
+#else
+        webkit_website_data_manager_set_itp_enabled(m_websiteDataManager, enable);
+#endif
+    }
+
     WebKitCookieManager* m_cookieManager { nullptr };
+    WebKitWebsiteDataManager* m_websiteDataManager { nullptr };
     WebKitCookieAcceptPolicy m_acceptPolicy { WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY };
     char** m_domains { nullptr };
     GList* m_cookies { nullptr };
@@ -278,23 +312,22 @@ static void testCookieManagerAcceptPolicy(CookieManagerTest* test, gconstpointer
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
     // ITP never uses NO_THIRD_PARTY.
-    auto* manager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
-    webkit_website_data_manager_set_itp_enabled(manager, TRUE);
+    test->setITPEnable(true);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    webkit_website_data_manager_set_itp_enabled(manager, FALSE);
+    test->setITPEnable(false);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
-    webkit_website_data_manager_set_itp_enabled(manager, TRUE);
+    test->setITPEnable(true);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    webkit_website_data_manager_set_itp_enabled(manager, FALSE);
+    test->setITPEnable(false);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY);
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
-    webkit_website_data_manager_set_itp_enabled(manager, TRUE);
+    test->setITPEnable(true);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
     test->setAcceptPolicy(WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
-    webkit_website_data_manager_set_itp_enabled(manager, FALSE);
+    test->setITPEnable(false);
     g_assert_cmpint(test->getAcceptPolicy(), ==, WEBKIT_COOKIE_POLICY_ACCEPT_NEVER);
 }
 
@@ -667,15 +700,26 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
     g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> ephemeralSession = adoptGRef(webkit_network_session_new_ephemeral());
+#endif
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
 #if PLATFORM(WPE)
         "backend", Test::createWebViewBackend(),
 #endif
         "web-context", webkit_web_view_get_context(test->m_webView),
+#if ENABLE(2022_GLIB_API)
+        "network-session", ephemeralSession.get(),
+#else
         "is-ephemeral", TRUE,
+#endif
         nullptr));
+#if ENABLE(2022_GLIB_API)
+    g_assert_true(webkit_web_view_get_network_session(webView.get()) == ephemeralSession.get());
+#else
     g_assert_true(webkit_web_view_is_ephemeral(webView.get()));
     g_assert_false(webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
+#endif
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), kServer->getURIForPath("/index.html").data());
@@ -685,24 +729,32 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
     g_assert_nonnull(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
+#if ENABLE(2022_GLIB_API)
+    auto* viewDataManager = webkit_network_session_get_website_data_manager(ephemeralSession.get());
+#else
     auto* viewDataManager = webkit_web_view_get_website_data_manager(webView.get());
+#endif
     g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(viewDataManager));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(viewDataManager));
+#if ENABLE(2022_GLIB_API)
+    auto* cookieManager = webkit_network_session_get_cookie_manager(ephemeralSession.get());
+#else
     g_assert_true(viewDataManager != webkit_web_context_get_website_data_manager(webkit_web_view_get_context(test->m_webView)));
     auto* cookieManager = webkit_website_data_manager_get_cookie_manager(viewDataManager);
+#endif
     g_assert_true(WEBKIT_IS_COOKIE_MANAGER(cookieManager));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(cookieManager));
     g_assert_true(cookieManager != test->m_cookieManager);
-    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
-    webkit_cookie_manager_get_domains_with_cookies(cookieManager, nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) {
+    webkit_website_data_manager_fetch(viewDataManager, WEBKIT_WEBSITE_DATA_COOKIES, nullptr, [](GObject* object, GAsyncResult* result, gpointer userData) {
         auto* test = static_cast<CookieManagerTest*>(userData);
-        GUniquePtr<char*> domains(webkit_cookie_manager_get_domains_with_cookies_finish(WEBKIT_COOKIE_MANAGER(object), result, nullptr));
+        GUniquePtr<GList> domains(webkit_website_data_manager_fetch_finish(WEBKIT_WEBSITE_DATA_MANAGER(object), result, nullptr));
         g_assert_nonnull(domains);
-        g_assert_cmpint(g_strv_length(domains.get()), ==, 1);
-        g_assert_cmpstr(domains.get()[0], ==, kFirstPartyDomain);
+        g_assert_cmpint(g_list_length(domains.get()), ==, 1);
+        auto* data = static_cast<WebKitWebsiteData*>(domains.get()->data);
+        g_assert_cmpstr(webkit_website_data_get_name(data), ==, kFirstPartyDomain);
+        webkit_website_data_unref(data);
         test->quitMainLoop();
     }, test);
-    G_GNUC_END_IGNORE_DEPRECATIONS;
     g_main_loop_run(test->m_mainLoop);
 }
 

@@ -89,7 +89,7 @@ public:
         return TRUE;
     }
 
-    static void downloadStartedCallback(WebKitWebContext* context, WebKitDownload* download, DownloadTest* test)
+    static void downloadStartedCallback(DownloadTest* test, WebKitDownload* download)
     {
         g_assert_nonnull(webkit_download_get_request(download));
         test->started(download);
@@ -106,12 +106,20 @@ public:
         , m_downloadSize(0)
         , m_allowOverwrite(false)
     {
-        g_signal_connect(m_webContext.get(), "download-started", G_CALLBACK(downloadStartedCallback), this);
+#if ENABLE(2022_GLIB_API)
+        g_signal_connect_swapped(m_networkSession.get(), "download-started", G_CALLBACK(downloadStartedCallback), this);
+#else
+        g_signal_connect_swapped(m_webContext.get(), "download-started", G_CALLBACK(downloadStartedCallback), this);
+#endif
     }
 
     ~DownloadTest()
     {
-        g_signal_handlers_disconnect_matched(m_webContext.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+#if ENABLE(2022_GLIB_API)
+        g_signal_handlers_disconnect_matched(m_networkSession.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#else
+        g_signal_handlers_disconnect_matched(m_webContext.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#endif
         g_main_loop_unref(m_mainLoop);
     }
 
@@ -160,7 +168,11 @@ public:
 
     GRefPtr<WebKitDownload> downloadURIAndWaitUntilFinishes(const CString& requestURI)
     {
+#if ENABLE(2022_GLIB_API)
+        GRefPtr<WebKitDownload> download = adoptGRef(webkit_network_session_download_uri(m_networkSession.get(), requestURI.data()));
+#else
         GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_context_download_uri(m_webContext.get(), requestURI.data()));
+#endif
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
 
         g_assert_false(webkit_download_get_allow_overwrite(download.get()));
@@ -539,7 +551,7 @@ class WebViewDownloadTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(WebViewDownloadTest);
 
-    static void downloadStartedCallback(WebKitWebContext* context, WebKitDownload* download, WebViewDownloadTest* test)
+    static void downloadStartedCallback(WebViewDownloadTest* test, WebKitDownload* download)
     {
         test->m_download = download;
         test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download));
@@ -550,12 +562,20 @@ public:
 
     WebViewDownloadTest()
     {
-        g_signal_connect(webkit_web_view_get_context(m_webView), "download-started", G_CALLBACK(downloadStartedCallback), this);
+#if ENABLE(2022_GLIB_API)
+        g_signal_connect_swapped(webkit_web_view_get_network_session(m_webView), "download-started", G_CALLBACK(downloadStartedCallback), this);
+#else
+        g_signal_connect_swapped(webkit_web_view_get_context(m_webView), "download-started", G_CALLBACK(downloadStartedCallback), this);
+#endif
     }
 
     ~WebViewDownloadTest()
     {
-        g_signal_handlers_disconnect_matched(webkit_web_view_get_context(m_webView), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+#if ENABLE(2022_GLIB_API)
+        g_signal_handlers_disconnect_matched(webkit_web_view_get_network_session(m_webView), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#else
+        g_signal_handlers_disconnect_matched(webkit_web_view_get_context(m_webView), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#endif
     }
 
     void waitUntilDownloadStarted()
@@ -586,7 +606,11 @@ public:
     }
 
 #if PLATFORM(GTK)
+#if ENABLE(2022_GLIB_API)
+    static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, WebKitHitTestResult* hitTestResult, WebViewDownloadTest* test)
+#else
     static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult, WebViewDownloadTest* test)
+#endif
     {
         g_assert_true(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
         GList* items = webkit_context_menu_get_items(contextMenu);
@@ -803,14 +827,23 @@ static void testDownloadUserAgent(DownloadTest* test, gconstpointer)
 
 static void testDownloadEphemeralContext(Test* test, gconstpointer)
 {
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> networkSession = adoptGRef(webkit_network_session_new_ephemeral());
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(networkSession.get()));
+#else
     GRefPtr<WebKitWebsiteDataManager> manager = adoptGRef(webkit_website_data_manager_new_ephemeral());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(manager.get()));
     GRefPtr<WebKitWebContext> context = adoptGRef(webkit_web_context_new_with_website_data_manager(manager.get()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context.get()));
     g_assert_true(webkit_web_context_is_ephemeral(context.get()));
+#endif
 
     GRefPtr<GMainLoop> mainLoop = adoptGRef(g_main_loop_new(nullptr, TRUE));
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitDownload> download = adoptGRef(webkit_network_session_download_uri(networkSession.get(), kServer->getURIForPath("/test.pdf").data()));
+#else
     GRefPtr<WebKitDownload> download = adoptGRef(webkit_web_context_download_uri(context.get(), kServer->getURIForPath("/test.pdf").data()));
+#endif
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(download.get()));
     g_signal_connect(download.get(), "decide-destination", G_CALLBACK(+[](WebKitDownload* download, const gchar* suggestedFilename, gpointer) {
         GUniquePtr<char> destination(g_build_filename(Test::dataDirectory(), suggestedFilename, nullptr));
@@ -827,7 +860,7 @@ static void testDownloadEphemeralContext(Test* test, gconstpointer)
     g_file_delete(destFile.get(), nullptr, nullptr);
 }
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK)
 static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -858,7 +891,7 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), >, 0);
     g_file_delete(downloadFile.get(), nullptr, nullptr);
 }
-#endif // PLATFORM(GTK) && !USE(GTK4)
+#endif // PLATFORM(GTK)
 
 #if PLATFORM(GTK)
 static void testBlobDownload(WebViewDownloadTest* test, gconstpointer)
@@ -916,12 +949,9 @@ void beforeAll()
     DownloadTest::add("Downloads", "text-plain-mime-type", testDownloadTextPlainMIMEType);
     DownloadTest::add("Downloads", "user-agent", testDownloadUserAgent);
     Test::add("Downloads", "ephemeral-context", testDownloadEphemeralContext);
-    // FIXME: Implement keyStroke in WPE.
 #if PLATFORM(GTK)
-#if !USE(GTK4)
-    // FIXME: Rework context menu API in GTK4 to not expose GdkEvent.
+    // FIXME: Implement keyStroke in WPE.
     WebViewDownloadTest::add("Downloads", "contex-menu-download-actions", testContextMenuDownloadActions);
-#endif
     // FIXME: Implement mouse click in WPE.
     WebViewDownloadTest::add("Downloads", "blob-download", testBlobDownload);
 #endif

@@ -76,6 +76,9 @@
 #include <@API_INCLUDE_PREFIX@/WebKitNavigationAction.h>
 #include <@API_INCLUDE_PREFIX@/WebKitNavigationPolicyDecision.h>
 #include <@API_INCLUDE_PREFIX@/WebKitNetworkProxySettings.h>
+#if ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitNetworkSession.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitNotification.h>
 #include <@API_INCLUDE_PREFIX@/WebKitNotificationPermissionRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitOptionMenu.h>

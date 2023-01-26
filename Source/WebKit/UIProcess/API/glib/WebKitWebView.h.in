@@ -54,6 +54,10 @@
 #include <@API_INCLUDE_PREFIX@/WebKitWebsitePolicies.h>
 #include <@API_INCLUDE_PREFIX@/WebKitWindowProperties.h>
 
+#if ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitNetworkSession.h>
+#endif
+
 #if PLATFORM(GTK)
 #include <JavaScriptCore/JSBase.h>
 #include <webkit/WebKitColorChooserRequest.h>
@@ -471,8 +475,10 @@ WEBKIT_API WebKitWebViewBackend *
 webkit_web_view_get_backend                          (WebKitWebView             *web_view);
 #endif
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API gboolean
 webkit_web_view_is_ephemeral                         (WebKitWebView             *web_view);
+#endif
 
 WEBKIT_API gboolean
 webkit_web_view_is_controlled_by_automation          (WebKitWebView             *web_view);
@@ -480,8 +486,13 @@ webkit_web_view_is_controlled_by_automation          (WebKitWebView             
 WEBKIT_API WebKitAutomationBrowsingContextPresentation
 webkit_web_view_get_automation_presentation_type     (WebKitWebView             *web_view);
 
+#if ENABLE(2022_GLIB_API)
+WEBKIT_API WebKitNetworkSession *
+webkit_web_view_get_network_session                  (WebKitWebView             *web_view);
+#else
 WEBKIT_API WebKitWebsiteDataManager *
 webkit_web_view_get_website_data_manager             (WebKitWebView             *web_view);
+#endif
 
 WEBKIT_API WebKitWebContext *
 webkit_web_view_get_context                          (WebKitWebView             *web_view);

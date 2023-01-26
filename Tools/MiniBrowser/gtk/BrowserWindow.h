@@ -50,7 +50,12 @@ typedef struct _BrowserWindowClass   BrowserWindowClass;
 
 GType browser_window_get_type(void);
 
+#if GTK_CHECK_VERSION(3, 98, 0)
+GtkWidget* browser_window_new(GtkWindow*, WebKitWebContext*, WebKitNetworkSession*);
+WebKitNetworkSession* browser_window_get_network_session(BrowserWindow*);
+#else
 GtkWidget* browser_window_new(GtkWindow*, WebKitWebContext*);
+#endif
 WebKitWebContext* browser_window_get_web_context(BrowserWindow*);
 void browser_window_append_view(BrowserWindow*, WebKitWebView*);
 void browser_window_load_uri(BrowserWindow*, const char *uri);

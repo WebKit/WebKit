@@ -41,6 +41,7 @@ static void testWebContextDefault(Test* test, gconstpointer)
     g_assert_true(webkit_web_context_get_default() != test->m_webContext.get());
 }
 
+#if !ENABLE(2022_GLIB_API)
 static void testWebContextEphemeral(Test* test, gconstpointer)
 {
     // By default web contexts are not ephemeral.
@@ -78,6 +79,7 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
     context = adoptGRef(webkit_web_context_new_with_website_data_manager(ephemeralManager.get()));
     g_assert_true(webkit_web_context_is_ephemeral(context.get()));
 }
+#endif
 
 static const char* kBarHTML = "<html><body>Bar</body></html>";
 static const char* kEchoHTMLFormat = "<html><body>%s</body></html>";
@@ -768,6 +770,7 @@ public:
 #endif
 };
 
+#if !ENABLE(2022_GLIB_API)
 #if SOUP_CHECK_VERSION(2, 61, 90)
 #if USE(SOUP2)
 static void webSocketServerCallback(SoupServer*, SoupWebsocketConnection*, const char*, SoupClientContext*, gpointer userData)
@@ -881,6 +884,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     kServer->removeWebSocketHandler();
 #endif
 }
+#endif
 
 class MemoryPressureTest : public WebViewTest {
 public:
@@ -1066,7 +1070,9 @@ void beforeAll()
     kServer->run(serverCallback);
 
     Test::add("WebKitWebContext", "default-context", testWebContextDefault);
+#if !ENABLE(2022_GLIB_API)
     Test::add("WebKitWebContext", "ephemeral", testWebContextEphemeral);
+#endif
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
     // FIXME: implement spellchecker in WPE.
 #if PLATFORM(GTK)
@@ -1075,7 +1081,9 @@ void beforeAll()
     WebViewTest::add("WebKitWebContext", "languages", testWebContextLanguages);
     SecurityPolicyTest::add("WebKitSecurityManager", "security-policy", testWebContextSecurityPolicy);
     WebViewTest::add("WebKitSecurityManager", "file-xhr", testWebContextSecurityFileXHR);
+#if !ENABLE(2022_GLIB_API)
     ProxyTest::add("WebKitWebContext", "proxy", testWebContextProxySettings);
+#endif
     MemoryPressureTest::add("WebKitWebContext", "memory-pressure", testMemoryPressureSettings);
     WebViewTest::add("WebKitWebContext", "timezone", testWebContextTimeZoneOverride);
     WebViewTest::add("WebKitWebContext", "timezone-worker", testWebContextTimeZoneOverrideInWorker);

@@ -31,6 +31,10 @@
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(2022_GLIB_API)
+#include "WebKitNetworkSession.h"
+#endif
+
 using namespace WebKit;
 
 /**
@@ -350,13 +354,27 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
 {
     auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
     session->priv->webContext = webContext;
-    if (capabilities.acceptInsecureCertificates)
+#if ENABLE(2022_GLIB_API)
+    WebKitNetworkSession* networkSession = webkitWebContextGetNetworkSessionForAutomation(webContext);
+#endif
+
+    if (capabilities.acceptInsecureCertificates) {
+#if ENABLE(2022_GLIB_API)
+        webkit_network_session_set_tls_errors_policy(networkSession, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+#else
         webkit_website_data_manager_set_tls_errors_policy(webkit_web_context_get_website_data_manager(webContext), WEBKIT_TLS_ERRORS_POLICY_IGNORE);
+#endif
+    }
 
     for (auto& certificate : capabilities.certificates) {
         GRefPtr<GTlsCertificate> tlsCertificate = adoptGRef(g_tls_certificate_new_from_file(certificate.second.utf8().data(), nullptr));
-        if (tlsCertificate)
+        if (tlsCertificate) {
+#if ENABLE(2022_GLIB_API)
+            webkit_network_session_allow_tls_certificate_for_host(networkSession, tlsCertificate.get(), certificate.first.utf8().data());
+#else
             webkit_web_context_allow_tls_certificate_for_host(webContext, tlsCertificate.get(), certificate.first.utf8().data());
+#endif
+        }
     }
     if (capabilities.proxy) {
         if (capabilities.proxy->type == "pac"_s) {
@@ -365,13 +383,21 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
             if (capabilities.proxy->autoconfigURL)
                 settings.defaultProxyURL = capabilities.proxy->autoconfigURL->utf8();
             if (!settings.isEmpty()) {
+#if ENABLE(2022_GLIB_API)
+                auto& dataStore = webkitWebsiteDataManagerGetDataStore(webkit_network_session_get_website_data_manager(networkSession));
+#else
                 auto& dataStore = webkitWebsiteDataManagerGetDataStore(webkit_web_context_get_website_data_manager(webContext));
+#endif
                 dataStore.setNetworkProxySettings(WTFMove(settings));
             }
         } else {
             WebKitNetworkProxySettings* proxySettings = nullptr;
             auto proxyMode = parseProxyCapabilities(*capabilities.proxy, &proxySettings);
+#if ENABLE(2022_GLIB_API)
+            webkit_network_session_set_proxy_settings(networkSession, proxyMode, proxySettings);
+#else
             webkit_website_data_manager_set_network_proxy_settings(webkit_web_context_get_website_data_manager(webContext), proxyMode, proxySettings);
+#endif
             if (proxySettings)
                 webkit_network_proxy_settings_free(proxySettings);
         }

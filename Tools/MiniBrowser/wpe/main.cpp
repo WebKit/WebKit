@@ -76,8 +76,8 @@ static const GOptionEntry commandLineOptions[] =
 
 class InputClient final : public WPEToolingBackends::ViewBackend::InputClient {
 public:
-    InputClient(GMainLoop* loop, WebKitWebView* webView)
-        : m_loop(loop)
+    InputClient(GApplication* application, WebKitWebView* webView)
+        : m_application(application)
         , m_webView(webView)
     {
     }
@@ -88,7 +88,7 @@ public:
             return false;
 
         if (event->modifiers & wpe_input_keyboard_modifier_control && event->key_code == WPE_KEY_q) {
-            g_main_loop_quit(m_loop);
+            g_application_quit(m_application);
             return true;
         }
 
@@ -108,7 +108,7 @@ public:
     }
 
 private:
-    GMainLoop* m_loop { nullptr };
+    GApplication* m_application { nullptr };
     WebKitWebView* m_webView { nullptr };
 };
 
@@ -183,50 +183,42 @@ static WebKitWebView* createWebView(WebKitWebView* webView, WebKitNavigationActi
     return newWebView;
 }
 
-int main(int argc, char *argv[])
+static void activate(GApplication* application, WPEToolingBackends::ViewBackend* backend)
 {
-#if ENABLE_DEVELOPER_MODE
-    g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
-#endif
+    g_application_hold(application);
+#if ENABLE_2022_GLIB_API
+    WebKitNetworkSession* networkSession = nullptr;
+    if (!automationMode) {
+        networkSession = privateMode ? webkit_network_session_new_ephemeral() : webkit_network_session_new(nullptr, nullptr);
+        webkit_network_session_set_itp_enabled(networkSession, enableITP);
 
-    GOptionContext* context = g_option_context_new(nullptr);
-    g_option_context_add_main_entries(context, commandLineOptions, nullptr);
+        if (proxy) {
+            auto* webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
+            webkit_network_session_set_proxy_settings(networkSession, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, webkitProxySettings);
+            webkit_network_proxy_settings_free(webkitProxySettings);
+        }
 
-#if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
-    g_option_context_add_group(context, gst_init_get_option_group());
-#endif
+        if (ignoreTLSErrors)
+            webkit_network_session_set_tls_errors_policy(networkSession, WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 
-    GError* error = nullptr;
-    if (!g_option_context_parse(context, &argc, &argv, &error)) {
-        g_printerr("Cannot parse arguments: %s\n", error->message);
-        g_error_free(error);
-        g_option_context_free(context);
+        if (cookiesPolicy) {
+            auto* cookieManager = webkit_network_session_get_cookie_manager(networkSession);
+            auto* enumClass = static_cast<GEnumClass*>(g_type_class_ref(WEBKIT_TYPE_COOKIE_ACCEPT_POLICY));
+            GEnumValue* enumValue = g_enum_get_value_by_nick(enumClass, cookiesPolicy);
+            if (enumValue)
+                webkit_cookie_manager_set_accept_policy(cookieManager, static_cast<WebKitCookieAcceptPolicy>(enumValue->value));
+            g_type_class_unref(enumClass);
+        }
 
-        return 1;
-    }
-    g_option_context_free(context);
-
-    if (printVersion) {
-        g_print("WPE WebKit %u.%u.%u",
-            webkit_get_major_version(),
-            webkit_get_minor_version(),
-            webkit_get_micro_version());
-        if (g_strcmp0(BUILD_REVISION, "tarball"))
-            g_print(" (%s)", BUILD_REVISION);
-        g_print("\n");
-        return 0;
-    }
-
-    auto* loop = g_main_loop_new(nullptr, FALSE);
-
-    auto backend = createViewBackend(1280, 720);
-    struct wpe_view_backend* wpeBackend = backend->backend();
-    if (!wpeBackend) {
-        g_warning("Failed to create WPE view backend");
-        g_main_loop_unref(loop);
-        return 1;
+        if (cookiesFile && !webkit_network_session_is_ephemeral(networkSession)) {
+            auto* cookieManager = webkit_network_session_get_cookie_manager(networkSession);
+            auto storageType = g_str_has_suffix(cookiesFile, ".txt") ? WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT : WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE;
+            webkit_cookie_manager_set_persistent_storage(cookieManager, cookiesFile, storageType);
+        }
     }
 
+    auto* webContext = WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "time-zone-override", timeZone, nullptr));
+#else
     auto* manager = (privateMode || automationMode) ? webkit_website_data_manager_new_ephemeral() : webkit_website_data_manager_new(nullptr);
     webkit_website_data_manager_set_itp_enabled(manager, enableITP);
 
@@ -256,6 +248,7 @@ int main(int argc, char *argv[])
         auto storageType = g_str_has_suffix(cookiesFile, ".txt") ? WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT : WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE;
         webkit_cookie_manager_set_persistent_storage(cookieManager, cookiesFile, storageType);
     }
+#endif
 
     WebKitUserContentManager* userContentManager = nullptr;
     if (contentFilter) {
@@ -290,25 +283,27 @@ int main(int argc, char *argv[])
         "enable-encrypted-media", TRUE,
         nullptr);
 
-    auto* backendPtr = backend.get();
-    auto* viewBackend = webkit_web_view_backend_new(wpeBackend, [](gpointer data) {
+    auto* viewBackend = webkit_web_view_backend_new(backend->backend(), [](gpointer data) {
         delete static_cast<WPEToolingBackends::ViewBackend*>(data);
-    }, backend.release());
+    }, backend);
 
     auto* webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", viewBackend,
         "web-context", webContext,
+#if ENABLE_2022_GLIB_API
+        "network-session", networkSession,
+#endif
         "settings", settings,
         "user-content-manager", userContentManager,
         "is-controlled-by-automation", automationMode,
         nullptr));
     g_object_unref(settings);
 
-    backendPtr->setInputClient(std::make_unique<InputClient>(loop, webView));
+    backend->setInputClient(std::make_unique<InputClient>(application, webView));
 #if defined(ENABLE_ACCESSIBILITY) && ENABLE_ACCESSIBILITY
-    auto* accessible = wpe_view_backend_dispatch_get_accessible(wpeBackend);
+    auto* accessible = wpe_view_backend_dispatch_get_accessible(backend->backend());
     if (ATK_IS_OBJECT(accessible))
-        backendPtr->setAccessibleChild(ATK_OBJECT(accessible));
+        backend->setAccessibleChild(ATK_OBJECT(accessible));
 #endif
 
     openViews = g_hash_table_new_full(nullptr, nullptr, g_object_unref, nullptr);
@@ -339,14 +334,59 @@ int main(int argc, char *argv[])
     else
         webkit_web_view_load_uri(webView, "https://wpewebkit.org");
 
-    g_main_loop_run(loop);
+    g_object_unref(webContext);
+#if ENABLE_2022_GLIB_API
+    g_clear_object(&networkSession);
+#endif
+}
+
+int main(int argc, char *argv[])
+{
+#if ENABLE_DEVELOPER_MODE
+    g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
+#endif
+
+    GOptionContext* context = g_option_context_new(nullptr);
+    g_option_context_add_main_entries(context, commandLineOptions, nullptr);
+
+#if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
+    g_option_context_add_group(context, gst_init_get_option_group());
+#endif
+
+    GError* error = nullptr;
+    if (!g_option_context_parse(context, &argc, &argv, &error)) {
+        g_printerr("Cannot parse arguments: %s\n", error->message);
+        g_error_free(error);
+        g_option_context_free(context);
+
+        return 1;
+    }
+    g_option_context_free(context);
+
+    if (printVersion) {
+        g_print("WPE WebKit %u.%u.%u",
+            webkit_get_major_version(),
+            webkit_get_minor_version(),
+            webkit_get_micro_version());
+        if (g_strcmp0(BUILD_REVISION, "tarball"))
+            g_print(" (%s)", BUILD_REVISION);
+        g_print("\n");
+        return 0;
+    }
+
+    auto backend = createViewBackend(1280, 720);
+    struct wpe_view_backend* wpeBackend = backend->backend();
+    if (!wpeBackend) {
+        g_warning("Failed to create WPE view backend");
+        return 1;
+    }
+
+    GApplication* application = g_application_new("org.wpewebkit.MiniBrowser", G_APPLICATION_NON_UNIQUE);
+    g_signal_connect(application, "activate", G_CALLBACK(activate), backend.release());
+    g_application_run(application, 0, nullptr);
+    g_object_unref(application);
 
     g_hash_table_destroy(openViews);
-
-
-    if (privateMode || automationMode)
-        g_object_unref(webContext);
-    g_main_loop_unref(loop);
 
     return 0;
 }

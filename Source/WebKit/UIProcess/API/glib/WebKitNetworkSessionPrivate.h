@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Igalia S.L.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,12 +19,7 @@
 
 #pragma once
 
-#include "WebResourceLoadStatisticsStore.h"
-#include "WebsiteDataStore.h"
-#include <wtf/glib/GUniquePtr.h>
+#include "WebKitDownload.h"
+#include "WebKitNetworkSession.h"
 
-#if ENABLE(2022_GLIB_API)
-WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(GUniquePtr<char>&&, GUniquePtr<char>&&);
-#endif
-WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
-WebKitITPThirdParty* webkitITPThirdPartyCreate(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&&);
+void webkitNetworkSessionDownloadStarted(WebKitNetworkSession*, WebKitDownload*);
