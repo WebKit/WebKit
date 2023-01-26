@@ -117,6 +117,7 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
         , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.ascent()
         , lineBox.baselineType()
+        , rootInlineBoxRect.left()
         , contentVisualOffsetInInlineDirection
         , rootInlineBox.logicalWidth()
         , lineBox.isHorizontal()

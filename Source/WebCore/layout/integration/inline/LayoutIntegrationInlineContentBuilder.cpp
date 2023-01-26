@@ -155,7 +155,7 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         auto ellipsis = std::optional<Line::Ellipsis> { };
         if (auto ellipsisVisualRect = line.ellipsisVisualRect())
             ellipsis = { *ellipsisVisualRect, rootBoxStyle.isLeftToRightDirection() };
-        inlineContent.lines.append({ firstBoxIndex, boxCount, line.lineBoxLogicalRect(), line.lineBoxRect(), line.enclosingLogicalTopAndBottom().top, line.enclosingLogicalTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentVisualOffsetInInlineDirection(), line.contentLogicalWidth(), line.isHorizontal(), ellipsis });
+        inlineContent.lines.append({ firstBoxIndex, boxCount, line.lineBoxLogicalRect(), line.lineBoxRect(), line.enclosingLogicalTopAndBottom().top, line.enclosingLogicalTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentLogicalLeft(), line.contentLogicalLeftIgnoringInlineDirection(), line.contentLogicalWidth(), line.isHorizontal(), ellipsis });
     }
 }
 
