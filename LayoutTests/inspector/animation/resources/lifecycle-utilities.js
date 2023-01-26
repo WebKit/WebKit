@@ -50,15 +50,8 @@ TestPage.registerInitializer(() => {
     InspectorTest.AnimationLifecycleUtilities = {};
 
     InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated = async function(animationType) {
-        let nameChangedPromise = null;
-        if (animationType === WI.Animation.Type.WebAnimation)
-            nameChangedPromise = WI.Animation.awaitEvent(WI.Animation.Event.NameChanged);
-
         let animationCollectionItemAddedEvent = await WI.animationManager.animationCollection.awaitEvent(WI.Collection.Event.ItemAdded);
-
         let animation = animationCollectionItemAddedEvent.data.item;
-
-        await nameChangedPromise;
 
         InspectorTest.pass(`Animation created '${animation.displayName}'.`);
 

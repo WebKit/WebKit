@@ -4,6 +4,17 @@
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script src="resources/lifecycle-utilities.js"></script>
 <script>
+
+function addNamedAnimationToBody()
+{
+    document.getElementsByTagName("body")[0].classList.add("customAnimation");
+}
+
+function removeNamedAnimationFromBody()
+{
+    document.getElementsByTagName("body")[0].classList.remove("customAnimation");
+}
+
 function test()
 {
     let suite = InspectorTest.createAsyncSuite("Animation.Lifecycle");
@@ -45,9 +56,53 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "Animation.Lifecycle.WebAnimation.CustomProperty",
+        description: "Check that Web Inspector is notified whenever web animations with custom properties are created/destroyed.",
+        async test() {
+            InspectorTest.log("Adding named animation to body.");
+            let creationResults = await Promise.all([
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationCreated(WI.Animation.Type.WebAnimation),
+                InspectorTest.evaluateInPage(`addNamedAnimationToBody()`),
+            ]);
+
+            let animationId = creationResults[0].animationId;
+
+            InspectorTest.log("Removing named animation from body.");
+            await Promise.all([
+                InspectorTest.AnimationLifecycleUtilities.awaitAnimationDestroyed(animationId),
+                InspectorTest.evaluateInPage(`removeNamedAnimationFromBody()`),
+            ]);
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
+<style>
+@property --customProperty {
+    syntax: "<number>+|none";
+    inherits: false;
+    initial-value: none;
+}
+
+@keyframes customKeyframes {
+    from {
+        --customProperty: 0 0 -4;
+    }
+
+    to {
+        --customProperty: 0 1 -4;
+    }
+}
+
+.customAnimation {
+    animation-name: customKeyframes;
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    animation-direction: alternate;
+}
+</style>
 </head>
 <body onload="runTest()">
     <p>Tests for the Animation.animationCreated and Animation.animationDestroyed events.</p>

@@ -37,3 +37,32 @@ keyframes:
 ]
 
 
+-- Running test case: Animation.Lifecycle.WebAnimation.CustomProperty
+Adding named animation to body.
+PASS: Animation created 'customKeyframes'.
+FAIL: Animation type should be Web Animation.
+    Expected: "web-animation"
+    Actual: "css-animation"
+iterationCount: Infinity
+iterationDuration: 1000
+timingFunction: "linear"
+playbackDirection: "alternate"
+fillMode: "none"
+keyframes:
+[
+  {
+    "offset": 0,
+    "easing": "ease",
+    "style": "--customProperty: 0 0 -4;"
+  },
+  {
+    "offset": 1,
+    "easing": "ease",
+    "style": "--customProperty: 0 0 -4;"
+  }
+]
+
+Removing named animation from body.
+PASS: Animation destroyed.
+PASS: Removed animation has expected ID.
+
