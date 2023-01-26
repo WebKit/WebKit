@@ -10,7 +10,7 @@ jsTestIsAsync = true;
 
 if (window.testRunner) {
     testRunner.setCustomPolicyDelegate(true, false);
-    testRunner.skipPolicyDelegateNotifyDone();
+    if (testRunner.skipPolicyDelegateNotifyDone) { testRunner.skipPolicyDelegateNotifyDone() }
 }
 
 onload = function() {
