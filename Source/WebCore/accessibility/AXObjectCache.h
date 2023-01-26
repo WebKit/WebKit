@@ -189,6 +189,19 @@ public:
     void loadingFinished() { updateLoadingProgress(1); }
     double loadingProgress() const { return m_loadingProgress; }
 
+    struct AttributeChange {
+        Element* element { nullptr };
+        QualifiedName attrName;
+        AtomString oldValue;
+        AtomString newValue;
+    };
+    using DeferredCollection = std::variant<HashMap<Element*, String>
+        , ListHashSet<Node*>
+        , ListHashSet<RefPtr<AccessibilityObject>>
+        , Vector<AttributeChange>
+        , Vector<std::pair<Node*, Node*>>
+        , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
+        , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>>;
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
@@ -231,7 +244,7 @@ public:
     AXTextMarker previousTextMarker(const AXTextMarker&);
     VisiblePosition visiblePositionForTextMarkerData(const TextMarkerData&);
     CharacterOffset characterOffsetForTextMarkerData(TextMarkerData&);
-    // Use ignoreNextNodeStart/ignorePreviousNodeEnd to determine the behavior when we are at node boundary. 
+    // Use ignoreNextNodeStart/ignorePreviousNodeEnd to determine the behavior when we are at node boundary.
     CharacterOffset nextCharacterOffset(const CharacterOffset&, bool ignoreNextNodeStart = true);
     CharacterOffset previousCharacterOffset(const CharacterOffset&, bool ignorePreviousNodeEnd = true);
     TextMarkerData startOrEndTextMarkerDataForRange(const SimpleRange&, bool);
@@ -484,7 +497,6 @@ private:
     bool enqueuePasswordValueChangeNotification(AccessibilityObject*);
     void passwordNotificationPostTimerFired();
 
-    void processDeferredChildrenChangedList();
     void handleChildrenChanged(AccessibilityObject&);
     void handleRoleChanged(Element*, const AtomString&, const AtomString&);
     void handleRoleDescriptionChanged(Element*);
@@ -580,15 +592,7 @@ private:
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     HashMap<Element*, String> m_deferredTextFormControlValue;
-
-    struct AttributeChange {
-        Element* element { nullptr };
-        QualifiedName attrName;
-        AtomString oldValue;
-        AtomString newValue;
-    };
     Vector<AttributeChange> m_deferredAttributeChange;
-
     Vector<std::pair<Node*, Node*>> m_deferredFocusedNodeChange;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_deferredRegenerateIsolatedTree { false };

@@ -3450,15 +3450,6 @@ void AXObjectCache::performCacheUpdateTimerFired()
     performDeferredCacheUpdate();
 }
 
-void AXObjectCache::processDeferredChildrenChangedList()
-{
-    AXTRACE(makeString("AXObjectCache::processDeferredChildrenChangedList 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
-    AXLOG(makeString("ChildrenChangedList size ", m_deferredChildrenChangedList.size()));
-    for (auto& child : m_deferredChildrenChangedList)
-        handleChildrenChanged(*child);
-    m_deferredChildrenChangedList.clear();
-}
-
 void AXObjectCache::performDeferredCacheUpdate()
 {
     AXTRACE(makeString("AXObjectCache::performDeferredCacheUpdate 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
@@ -3468,53 +3459,56 @@ void AXObjectCache::performDeferredCacheUpdate()
     }
     SetForScope performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
 
-    AXLOG(makeString("RecomputeTableIsExposedList size ", m_deferredRecomputeTableIsExposedList.computeSize()));
+    AXLOGDeferredCollection("RecomputeTableIsExposedList"_s, m_deferredRecomputeTableIsExposedList);
     m_deferredRecomputeTableIsExposedList.forEach([this] (auto& tableElement) {
         if (auto* axTable = dynamicDowncast<AccessibilityTable>(get(&tableElement)))
             axTable->recomputeIsExposable();
     });
     m_deferredRecomputeTableIsExposedList.clear();
 
-    AXLOG(makeString("NodeAddedOrRemovedList size ", m_deferredNodeAddedOrRemovedList.size()));
+    AXLOGDeferredCollection("NodeAddedOrRemovedList"_s, m_deferredNodeAddedOrRemovedList);
     for (auto* nodeChild : m_deferredNodeAddedOrRemovedList) {
         handleMenuOpened(nodeChild);
         handleLiveRegionCreated(nodeChild);
     }
     m_deferredNodeAddedOrRemovedList.clear();
 
-    processDeferredChildrenChangedList();
+    AXLOGDeferredCollection("ChildrenChangedList"_s, m_deferredChildrenChangedList);
+    for (auto& child : m_deferredChildrenChangedList)
+        handleChildrenChanged(*child);
+    m_deferredChildrenChangedList.clear();
 
-    AXLOG(makeString("TextChangedList size ", m_deferredTextChangedList.size()));
+    AXLOGDeferredCollection("TextChangedList"_s, m_deferredTextChangedList);
     for (auto* node : m_deferredTextChangedList)
         handleTextChanged(getOrCreate(node));
     m_deferredTextChangedList.clear();
 
-    AXLOG(makeString("RecomputeIsIgnoredList size ", m_deferredRecomputeIsIgnoredList.computeSize()));
+    AXLOGDeferredCollection("RecomputeIsIgnoredList"_s, m_deferredRecomputeIsIgnoredList);
     m_deferredRecomputeIsIgnoredList.forEach([this] (auto& element) {
         if (auto* renderer = element.renderer())
             recomputeIsIgnored(renderer);
     });
     m_deferredRecomputeIsIgnoredList.clear();
 
-    AXLOG(makeString("SelectedChildredChangedList size ", m_deferredSelectedChildredChangedList.computeSize()));
+    AXLOGDeferredCollection("SelectedChildredChangedList"_s, m_deferredSelectedChildredChangedList);
     m_deferredSelectedChildredChangedList.forEach([this] (auto& selectElement) {
         selectedChildrenChanged(&selectElement);
     });
     m_deferredSelectedChildredChangedList.clear();
 
-    AXLOG(makeString("TextFormControlValue size ", m_deferredTextFormControlValue.size()));
+    AXLOGDeferredCollection("TextFormControlValue"_s, m_deferredTextFormControlValue);
     for (auto& deferredFormControlContext : m_deferredTextFormControlValue) {
         auto& textFormControlElement = downcast<HTMLTextFormControlElement>(*deferredFormControlContext.key);
         postTextReplacementNotificationForTextControl(textFormControlElement, deferredFormControlContext.value, textFormControlElement.innerTextValue());
     }
     m_deferredTextFormControlValue.clear();
 
-    AXLOG(makeString("AttributeChange size ", m_deferredAttributeChange.size()));
+    AXLOGDeferredCollection("AttributeChange"_s, m_deferredAttributeChange);
     for (const auto& attributeChange : m_deferredAttributeChange)
         handleAttributeChange(attributeChange.element, attributeChange.attrName, attributeChange.oldValue, attributeChange.newValue);
     m_deferredAttributeChange.clear();
 
-    AXLOG(makeString("FocusedNodeChange size ", m_deferredFocusedNodeChange.size()));
+    AXLOGDeferredCollection("FocusedNodeChange"_s, m_deferredFocusedNodeChange);
     for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange) {
         // Don't recompute the active modal for each individal focus change, as that could cause a lot of expensive tree rebuilding. Instead, we do it once below.
         handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second, UpdateModal::No);
@@ -3527,7 +3521,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     bool shouldRecomputeModal = updatedFocusedElement;
     m_deferredFocusedNodeChange.clear();
 
-    AXLOG(makeString("ModalChangedList size ", m_deferredModalChangedList.computeSize()));
+    AXLOGDeferredCollection("ModalChangedList"_s, m_deferredModalChangedList);
     for (auto& element : m_deferredModalChangedList) {
         if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog"_s) && !nodeHasRole(&element, "alertdialog"_s))
             continue;
@@ -3557,7 +3551,7 @@ void AXObjectCache::performDeferredCacheUpdate()
             focusCurrentModal();
     }
 
-    AXLOG(makeString("MenuListChange size ", m_deferredMenuListChange.computeSize()));
+    AXLOGDeferredCollection("MenuListChange"_s, m_deferredMenuListChange);
     m_deferredMenuListChange.forEach([this] (auto& element) {
         handleMenuListValueChanged(element);
     });

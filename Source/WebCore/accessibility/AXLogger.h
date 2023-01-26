@@ -65,6 +65,7 @@ public:
 #endif
     void log(AXObjectCache&);
     static void add(TextStream&, const RefPtr<AXCoreObject>&, bool recursive = false);
+    void log(const String&, const AXObjectCache::DeferredCollection&);
 private:
     bool shouldLog();
     String m_methodName;
@@ -72,11 +73,13 @@ private:
 
 #define AXTRACE(methodName) AXLogger axLogger(methodName)
 #define AXLOG(x) axLogger.log(x)
+#define AXLOGDeferredCollection(name, collection) axLogger.log(name, collection)
 
 #else
 
 #define AXTRACE(methodName) (void)0
 #define AXLOG(x) (void)0
+#define AXLOGDeferredCollection(name, collection) (void)0
 
 #endif // !LOG_DISABLED
 

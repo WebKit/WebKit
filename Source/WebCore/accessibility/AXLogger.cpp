@@ -190,6 +190,25 @@ void AXLogger::log(AXObjectCache& axObjectCache)
     }
 }
 
+void AXLogger::log(const String& collectionName, const AXObjectCache::DeferredCollection& collection)
+{
+    unsigned size = 0;
+    WTF::switchOn(collection,
+        [&size] (const HashMap<Element*, String>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const ListHashSet<Node*>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const ListHashSet<RefPtr<AccessibilityObject>>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const Vector<AXObjectCache::AttributeChange>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const Vector<std::pair<Node*, Node*>>& typedCollection) { size = typedCollection.size(); },
+        [&size] (const WeakHashSet<Element, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
+        [&size] (const WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>& typedCollection) { size = typedCollection.computeSize(); },
+        [] (auto&) {
+            ASSERT_NOT_REACHED();
+            return;
+        });
+    if (size)
+        log(makeString(collectionName, " size: ", size));
+}
+
 #endif // !LOG_DISABLED
 
 TextStream& operator<<(TextStream& stream, AccessibilityRole role)
