@@ -68,7 +68,7 @@ SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
 
 Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const
 {
-    return SecurityOrigin::create(protocol.isolatedCopy(), host.isolatedCopy(), port);
+    return SecurityOrigin::create(isolatedCopy());
 }
 
 static const char separatorCharacter = '_';
@@ -127,6 +127,7 @@ SecurityOriginData SecurityOriginData::isolatedCopy() const &
     result.protocol = protocol.isolatedCopy();
     result.host = host.isolatedCopy();
     result.port = port;
+    result.opaqueOriginIdentifier = opaqueOriginIdentifier;
 
     return result;
 }
@@ -138,6 +139,7 @@ SecurityOriginData SecurityOriginData::isolatedCopy() &&
     result.protocol = WTFMove(protocol).isolatedCopy();
     result.host = WTFMove(host).isolatedCopy();
     result.port = port;
+    result.opaqueOriginIdentifier = opaqueOriginIdentifier;
 
     return result;
 }
@@ -149,7 +151,7 @@ bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)
 
     return a.protocol == b.protocol
         && a.host == b.host
-        && a.port == b.port;
+        && a.port == b.port
+        && a.opaqueOriginIdentifier == b.opaqueOriginIdentifier;
 }
-
 } // namespace WebCore
