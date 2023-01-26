@@ -2638,6 +2638,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructNewDefault(uint32_t t
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addStructGet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
 {
+    emitThrowOnNullReference(structReference, ExceptionType::NullStructGet);
+
     auto payload = self().gPtr();
     auto structBase = self().extractJSValuePointer(structReference);
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);
@@ -2654,6 +2656,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructGet(ExpressionType st
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addStructSet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType value) -> PartialResult
 {
+    emitThrowOnNullReference(structReference, ExceptionType::NullStructSet);
+
     auto payload = self().gPtr();
     auto structBase = self().extractJSValuePointer(structReference);
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);

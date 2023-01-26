@@ -53,6 +53,8 @@ namespace Wasm {
     macro(NullArrayGet, "array.get to a null reference"_s) \
     macro(NullArraySet, "array.set to a null reference"_s) \
     macro(NullArrayLen, "array.len to a null reference"_s) \
+    macro(NullStructGet, "struct.get to a null reference"_s) \
+    macro(NullStructSet, "struct.set to a null reference"_s) \
     macro(TypeErrorInvalidV128Use, "an exported wasm function cannot contain a v128 parameter or return value"_s) \
     macro(NullRefAsNonNull, "ref.as_non_null to a null reference"_s)
 
@@ -95,6 +97,8 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::NullArrayGet:
     case ExceptionType::NullArraySet:
     case ExceptionType::NullArrayLen:
+    case ExceptionType::NullStructGet:
+    case ExceptionType::NullStructSet:
     case ExceptionType::NullRefAsNonNull:
         return false;
     case ExceptionType::FuncrefNotWasm:

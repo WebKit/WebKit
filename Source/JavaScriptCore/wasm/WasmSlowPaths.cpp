@@ -480,6 +480,8 @@ WASM_SLOW_PATH_DECL(struct_get)
     UNUSED_PARAM(instance);
     auto instruction = pc->as<WasmStructGet>();
     auto structReference = READ(instruction.m_structReference).encodedJSValue();
+    if (JSValue::decode(structReference).isNull())
+        WASM_THROW(Wasm::ExceptionType::NullStructGet);
     WASM_RETURN(Wasm::structGet(structReference, instruction.m_fieldIndex));
 }
 
@@ -489,6 +491,8 @@ WASM_SLOW_PATH_DECL(struct_set)
 
     auto instruction = pc->as<WasmStructSet>();
     auto structReference = READ(instruction.m_structReference).encodedJSValue();
+    if (JSValue::decode(structReference).isNull())
+        WASM_THROW(Wasm::ExceptionType::NullStructSet);
     auto value = READ(instruction.m_value).encodedJSValue();
     Wasm::structSet(instance, structReference, instruction.m_fieldIndex, value);
     WASM_END();

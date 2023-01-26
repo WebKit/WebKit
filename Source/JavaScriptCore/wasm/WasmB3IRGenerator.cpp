@@ -2914,6 +2914,14 @@ auto B3IRGenerator::addStructNewDefault(uint32_t typeIndex, ExpressionType& resu
 
 auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
 {
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullStructGet);
+        });
+    }
+
     Value* payloadBase = m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Load), pointerType(), origin(), get(structReference), JSWebAssemblyStruct::offsetOfPayload());
     int32_t fieldOffset = fixupPointerPlusOffset(payloadBase, *structType.getFieldOffset(fieldIndex));
 
@@ -2947,6 +2955,14 @@ auto B3IRGenerator::addStructGet(ExpressionType structReference, const StructTyp
 
 auto B3IRGenerator::addStructSet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType value) -> PartialResult
 {
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(structReference), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullStructSet);
+        });
+    }
+
     emitStructSet(get(structReference), fieldIndex, structType, get(value));
     return { };
 }
