@@ -2,7 +2,8 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -160,32 +161,41 @@ void HTMLMetaElement::process()
     if (!isInDocumentTree())
         return;
 
+    // https://html.spec.whatwg.org/multipage/semantics.html#the-meta-element
+    // All below situations require a content attribute (which can be the empty string).
     const AtomString& contentValue = attributeWithoutSynchronization(contentAttr);
     if (contentValue.isNull())
         return;
-
-    if (equalLettersIgnoringASCIICase(name(), "viewport"_s))
-        document().processViewport(contentValue, ViewportArguments::ViewportMeta);
-    else if (document().settings().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(name(), "disabled-adaptations"_s))
-        document().processDisabledAdaptations(contentValue);
-#if ENABLE(DARK_MODE_CSS)
-    else if (equalLettersIgnoringASCIICase(name(), "color-scheme"_s) || equalLettersIgnoringASCIICase(name(), "supported-color-schemes"_s))
-        document().processColorScheme(contentValue);
-#endif
-    else if (equalLettersIgnoringASCIICase(name(), "theme-color"_s))
-        document().metaElementThemeColorChanged(*this);
-#if PLATFORM(IOS_FAMILY)
-    else if (equalLettersIgnoringASCIICase(name(), "format-detection"_s))
-        document().processFormatDetection(contentValue);
-    else if (equalLettersIgnoringASCIICase(name(), "apple-mobile-web-app-orientations"_s))
-        document().processWebAppOrientations();
-#endif
-    else if (equalLettersIgnoringASCIICase(name(), "referrer"_s))
-        document().processReferrerPolicy(contentValue, ReferrerPolicySource::MetaTag);
-
+    
     const AtomString& httpEquivValue = attributeWithoutSynchronization(http_equivAttr);
+    // Get the document to process the tag, but only if we're actually part of DOM
+    // tree (changing a meta tag while it's not in the tree shouldn't have any effect
+    // on the document)
     if (!httpEquivValue.isNull())
         document().processMetaHttpEquiv(httpEquivValue, contentValue, isDescendantOf(document().head()));
+    
+    const AtomString& nameValue = attributeWithoutSynchronization(nameAttr);
+    if (nameValue.isNull())
+        return;
+
+    if (equalLettersIgnoringASCIICase(nameValue, "viewport"_s))
+        document().processViewport(contentValue, ViewportArguments::ViewportMeta);
+    else if (document().settings().disabledAdaptationsMetaTagEnabled() && equalLettersIgnoringASCIICase(nameValue, "disabled-adaptations"_s))
+        document().processDisabledAdaptations(contentValue);
+#if ENABLE(DARK_MODE_CSS)
+    else if (equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s))
+        document().processColorScheme(contentValue);
+#endif
+    else if (equalLettersIgnoringASCIICase(nameValue, "theme-color"_s))
+        document().metaElementThemeColorChanged(*this);
+#if PLATFORM(IOS_FAMILY)
+    else if (equalLettersIgnoringASCIICase(nameValue, "format-detection"_s))
+        document().processFormatDetection(contentValue);
+    else if (equalLettersIgnoringASCIICase(nameValue, "apple-mobile-web-app-orientations"_s))
+        document().processWebAppOrientations();
+#endif
+    else if (equalLettersIgnoringASCIICase(nameValue, "referrer"_s))
+        document().processReferrerPolicy(contentValue, ReferrerPolicySource::MetaTag);
 }
 
 const AtomString& HTMLMetaElement::content() const
