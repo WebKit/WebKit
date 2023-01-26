@@ -328,75 +328,89 @@ class TestGitHubMixin(unittest.TestCase):
         def json(self):
             return json.loads(self.text)
 
+    @defer.inlineCallbacks
     def test_no_reviewers(self):
         logs = dict(stdio=[])
         mixin = GitHubMixin()
-        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([])
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: defer.succeed(self.Response.fromJson([]))
         mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
-        self.assertEqual(mixin.get_reviewers(1234), [])
+        reviewers = yield mixin.get_reviewers(1234)
+        self.assertEqual(reviewers, [])
         self.assertEqual(logs, dict(stdio=[]))
 
+    @defer.inlineCallbacks
     def test_single_review(self):
         logs = dict(stdio=[])
         mixin = GitHubMixin()
-        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: defer.succeed(self.Response.fromJson([
             dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
-        ], url=url)
+        ], url=url))
         mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
-        self.assertEqual(mixin.get_reviewers(1234), ['webkit-reviewer'])
+        reviewers = yield mixin.get_reviewers(1234)
+        self.assertEqual(reviewers, ['webkit-reviewer'])
         self.assertEqual(logs, dict(stdio=[]))
 
+    @defer.inlineCallbacks
     def test_multipe_reviews(self):
         logs = dict(stdio=[])
         mixin = GitHubMixin()
-        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: defer.succeed(self.Response.fromJson([
             dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
             dict(id=2, state='COMMENTED', user=dict(login='webkit-committer')),
             dict(id=3, state='APPROVED', user=dict(login='webkit-committer')),
-        ], url=url)
+        ], url=url))
         mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
-        self.assertEqual(mixin.get_reviewers(1234), ['webkit-committer', 'webkit-reviewer'])
+        reviewers = yield mixin.get_reviewers(1234)
+        self.assertEqual(reviewers, ['webkit-committer', 'webkit-reviewer'])
         self.assertEqual(logs, dict(stdio=[]))
 
+    @defer.inlineCallbacks
     def test_retracted_review(self):
         logs = dict(stdio=[])
         mixin = GitHubMixin()
-        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: defer.succeed(self.Response.fromJson([
             dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
             dict(id=2, state='CHANGES_REQUESTED', user=dict(login='webkit-reviewer')),
-        ], url=url)
+        ], url=url))
         mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
-        self.assertEqual(mixin.get_reviewers(1234), [])
+        reviewers = yield mixin.get_reviewers(1234)
+        self.assertEqual(reviewers, [])
         self.assertEqual(logs, dict(stdio=[]))
 
+    @defer.inlineCallbacks
     def test_pagination(self):
         logs = dict(stdio=[])
         mixin = GitHubMixin()
-        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson([
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: defer.succeed(self.Response.fromJson([
             dict(id=101, state='APPROVED', user=dict(login='webkit-committer')),
-        ], url=url) if 'page=2' in url else self.Response.fromJson([
+        ], url=url)) if 'page=2' in url else defer.succeed(self.Response.fromJson([
             dict(id=1, state='APPROVED', user=dict(login='webkit-reviewer')),
         ] + [
             dict(id=i, state='COMMENTED', user=dict(login='webkit-reviewer')) for i in range(1, 100)
-        ], url=url)
+        ], url=url))
         mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
-        self.assertEqual(mixin.get_reviewers(1234), ['webkit-committer', 'webkit-reviewer'])
+        reviewers = yield mixin.get_reviewers(1234)
+        self.assertEqual(reviewers, ['webkit-committer', 'webkit-reviewer'])
         self.assertEqual(logs, dict(stdio=[]))
 
+    @defer.inlineCallbacks
     def test_reviewers_invalid_response(self):
         logs = dict(stdio=[])
         mixin = GitHubMixin()
-        mixin.fetch_data_from_url_with_authentication_github = lambda url: self.Response.fromJson({}, url=url)
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: defer.succeed(self.Response.fromJson({}, url=url))
         mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
-        self.assertEqual(mixin.get_reviewers(1234), [])
+        reviewers = yield mixin.get_reviewers(1234)
+        self.assertEqual(reviewers, [])
         self.assertEqual(logs, dict(stdio=[]))
 
+    @defer.inlineCallbacks
     def test_reviewers_error(self):
         logs = dict(stdio=[])
         mixin = GitHubMixin()
-        mixin.fetch_data_from_url_with_authentication_github = lambda url: None
+        mixin.fetch_data_from_url_with_authentication_github = lambda url: defer.succeed(None)
         mixin._addToLog = lambda logName, message, logs=logs: logs[logName].append(message)
-        self.assertEqual(mixin.get_reviewers(1234), [])
+        reviewers = yield mixin.get_reviewers(1234)
+        self.assertEqual(reviewers, [])
         self.assertEqual(logs, dict(stdio=[]))
 
 
