@@ -17,12 +17,14 @@ function changeHandler()
 input.focus();
 document.execCommand('InsertText', false, 'foo bar baz');
 shouldBeEqualToString('input.value', 'foo bar baz');
+shouldBe('changeEventCounter', '0');
 input.blur();
 shouldBe('changeEventCounter', '1');
 shouldBeEqualToString('input.value', '');
 input.focus();
 document.execCommand('InsertText', false, 'foo bar baz');
 shouldBeEqualToString('input.value', 'foo bar baz');
+shouldBe('changeEventCounter', '1');
 input.blur();
 shouldBe('changeEventCounter', '2');
 </script>
