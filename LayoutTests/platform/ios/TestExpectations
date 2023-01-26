@@ -3888,4 +3888,6 @@ webkit.org/b/251047 [ Debug ] fast/loader/crash-replacing-location-before-load.h
 
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
 
-webkit.org/b/251188 [ Release arm64 ] fast/forms/linebox-overflow-in-textarea-padding-simple-lines.html [ ImageOnlyFailure ]
+webkit.org/b/251188 [ Release arm64 ] fast/forms/linebox-overflow-in-textarea-padding-simple-lines.html [ Failure ]
+
+webkit.org/b/251192 [ Release arm64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.html [ Failure ]
