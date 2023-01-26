@@ -1041,6 +1041,19 @@ void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVi
         GST_VIDEO_INFO_COLORIMETRY(info).range = GST_VIDEO_COLOR_RANGE_UNKNOWN;
 }
 
+void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>& element)
+{
+    auto elementHasProperty = [&](const char* name) -> bool {
+        return g_object_class_find_property(G_OBJECT_GET_CLASS(element.get()), name);
+    };
+
+    if (elementHasProperty("max-threads"))
+        g_object_set(element.get(), "max-threads", 1, nullptr);
+
+    if (elementHasProperty("max-errors"))
+        g_object_set(element.get(), "max-errors", 0, nullptr);
+}
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER)

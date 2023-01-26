@@ -39,10 +39,11 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
 
     public:
-        static Ref<Stream> create(GRefPtr<GstPad>&& pad)
+        static Ref<Stream> create(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness)
         {
-            return adoptRef(*new Stream(WTFMove(pad)));
+            return adoptRef(*new Stream(WTFMove(pad), WTFMove(downstreamHarness)));
         }
+
         ~Stream();
 
         GRefPtr<GstBuffer> pullBuffer();
@@ -54,12 +55,15 @@ public:
         const GRefPtr<GstCaps>& outputCaps();
 
     private:
-        Stream(GRefPtr<GstPad>&&);
+        Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&);
+
         GstFlowReturn chainBuffer(GstBuffer*);
         bool sinkQuery(GstPad*, GstObject*, GstQuery*);
         bool sinkEvent(GstEvent*);
 
         GRefPtr<GstPad> m_pad;
+        RefPtr<GStreamerElementHarness> m_downstreamHarness;
+
         GRefPtr<GstPad> m_targetPad;
         GRefPtr<GstCaps> m_outputCaps;
 
@@ -70,10 +74,11 @@ public:
         Deque<GRefPtr<GstEvent>> m_sinkEventQueue WTF_GUARDED_BY_LOCK(m_sinkEventQueueLock);
     };
 
+    using PadLinkCallback = Function<RefPtr<GStreamerElementHarness>(const GRefPtr<GstPad>&)>;
     using ProcessBufferCallback = Function<void(Stream&, const GRefPtr<GstBuffer>&)>;
-    static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessBufferCallback&& processOutputBufferCallback)
+    static Ref<GStreamerElementHarness> create(GRefPtr<GstElement>&& element, ProcessBufferCallback&& processOutputBufferCallback, std::optional<PadLinkCallback> padLinkCallback = std::nullopt)
     {
-        return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputBufferCallback)));
+        return adoptRef(*new GStreamerElementHarness(WTFMove(element), WTFMove(processOutputBufferCallback), WTFMove(padLinkCallback)));
     }
     ~GStreamerElementHarness();
 
@@ -83,6 +88,8 @@ public:
     bool pushBuffer(GstBuffer*);
     bool pushEvent(GstEvent*);
 
+    GstPad* inputPad() const { return m_srcPad.get(); }
+    const GRefPtr<GstCaps>& inputCaps() const { return m_inputCaps; }
     const Vector<RefPtr<Stream>>& outputStreams() const { return m_outputStreams; }
 
     GstElement* element() const { return m_element.get(); }
@@ -91,7 +98,9 @@ public:
     void flush();
 
 private:
-    GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessBufferCallback&&);
+    GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessBufferCallback&&, std::optional<PadLinkCallback>&&);
+
+    GstFlowReturn pushBufferFull(GstBuffer*);
 
     bool srcQuery(GstPad*, GstObject*, GstQuery*);
     bool srcEvent(GstEvent*);
@@ -100,6 +109,7 @@ private:
 
     GRefPtr<GstElement> m_element;
     ProcessBufferCallback m_processOutputBufferCallback;
+    std::optional<PadLinkCallback> m_padLinkCallback;
 
     GRefPtr<GstCaps> m_inputCaps;
 

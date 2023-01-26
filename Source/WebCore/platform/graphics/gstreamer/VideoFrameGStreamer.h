@@ -32,6 +32,7 @@ namespace WebCore {
 
 class PixelBuffer;
 class IntSize;
+class ImageGStreamer;
 
 class VideoFrameGStreamer final : public VideoFrame {
 public:
@@ -51,6 +52,8 @@ public:
 
     GstSample* sample() const { return m_sample.get(); }
     RefPtr<JSC::Uint8ClampedArray> computeRGBAImageData() const;
+
+    RefPtr<ImageGStreamer> convertToImage();
 
     FloatSize presentationSize() const final { return m_presentationSize; }
     uint32_t pixelFormat() const final;

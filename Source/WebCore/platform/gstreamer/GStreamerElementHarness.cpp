@@ -78,9 +78,10 @@ static GstStaticPadTemplate s_harnessSinkPadTemplate = GST_STATIC_PAD_TEMPLATE("
  * source pads. Support for different topologies can be added as-needed.
  */
 
-GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, ProcessBufferCallback&& processOutputBufferCallback)
+GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, ProcessBufferCallback&& processOutputBufferCallback, std::optional<PadLinkCallback>&& padLinkCallback)
     : m_element(WTFMove(element))
     , m_processOutputBufferCallback(WTFMove(processOutputBufferCallback))
+    , m_padLinkCallback(WTFMove(padLinkCallback))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -104,8 +105,17 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
         g_signal_connect(m_element.get(), "pad-added", reinterpret_cast<GCallback>(+[](GstElement* element, GstPad* pad, gpointer userData) {
             GST_DEBUG_OBJECT(element, "Pad added: %" GST_PTR_FORMAT, pad);
             auto& harness = *reinterpret_cast<GStreamerElementHarness*>(userData);
-            auto stream = GStreamerElementHarness::Stream::create(GRefPtr<GstPad>(pad));
-            harness.m_outputStreams.append(WTFMove(stream));
+            RefPtr<GStreamerElementHarness> downstreamHarness;
+            GRefPtr<GstPad> outputPad(pad);
+            if (harness.m_padLinkCallback) {
+                downstreamHarness = harness.m_padLinkCallback.value()(outputPad);
+                if (!downstreamHarness) {
+                    GST_DEBUG_OBJECT(element, "Unable to create a Stream for pad %" GST_PTR_FORMAT, pad);
+                    return;
+                }
+            }
+
+            harness.m_outputStreams.append(GStreamerElementHarness::Stream::create(WTFMove(outputPad), WTFMove(downstreamHarness)));
         }), this);
 
         g_signal_connect(m_element.get(), "pad-removed", reinterpret_cast<GCallback>(+[](GstElement* element, GstPad* pad, gpointer userData) {
@@ -119,7 +129,7 @@ GStreamerElementHarness::GStreamerElementHarness(GRefPtr<GstElement>&& element, 
     } else {
         GST_DEBUG_OBJECT(m_element.get(), "Expecting output buffers on static src pad.");
         auto elementSrcPad = adoptGRef(gst_element_get_static_pad(m_element.get(), "src"));
-        auto stream = GStreamerElementHarness::Stream::create(WTFMove(elementSrcPad));
+        auto stream = GStreamerElementHarness::Stream::create(WTFMove(elementSrcPad), nullptr);
         m_outputStreams.append(WTFMove(stream));
     }
 
@@ -207,10 +217,16 @@ bool GStreamerElementHarness::pushBuffer(GstBuffer* buffer)
     if (!m_stickyEventsSent.load())
         return false;
 
+    auto result = pushBufferFull(buffer);
+    return result == GST_FLOW_OK || result == GST_FLOW_EOS;
+}
+
+GstFlowReturn GStreamerElementHarness::pushBufferFull(GstBuffer* buffer)
+{
     GST_TRACE_OBJECT(m_element.get(), "Pushing %" GST_PTR_FORMAT, buffer);
     auto result = gst_pad_push(m_srcPad.get(), buffer);
     GST_TRACE_OBJECT(m_element.get(), "Buffer push result: %s", gst_flow_get_name(result));
-    return result == GST_FLOW_OK || result == GST_FLOW_EOS;
+    return result;
 }
 
 bool GStreamerElementHarness::pushEvent(GstEvent* event)
@@ -221,14 +237,17 @@ bool GStreamerElementHarness::pushEvent(GstEvent* event)
     return result;
 }
 
-GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad)
+GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerElementHarness>&& downstreamHarness)
     : m_pad(WTFMove(pad))
+    , m_downstreamHarness(WTFMove(downstreamHarness))
 {
     m_targetPad = gst_pad_new_from_static_template(&s_harnessSinkPadTemplate, "sink");
     gst_pad_link(m_pad.get(), m_targetPad.get());
 
     gst_pad_set_chain_function_full(m_targetPad.get(), reinterpret_cast<GstPadChainFunction>(+[](GstPad* pad, GstObject*, GstBuffer* buffer) -> GstFlowReturn {
         auto& stream = *reinterpret_cast<GStreamerElementHarness::Stream*>(pad->chaindata);
+        if (stream.m_downstreamHarness)
+            return stream.m_downstreamHarness->pushBufferFull(buffer);
         return stream.chainBuffer(buffer);
     }),  this, nullptr);
     gst_pad_set_query_function_full(m_targetPad.get(), reinterpret_cast<GstPadQueryFunction>(+[](GstPad* pad, GstObject* parent, GstQuery* query) -> gboolean {
