@@ -8,6 +8,7 @@ PACKAGES=(
     bubblewrap
     cairo-devel
     cmake
+    flite-devel
     gcc-c++
     gi-docgen
     gobject-introspection-devel
