@@ -1615,6 +1615,7 @@ bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
     GridSpan span = outer->gridSpanForChild(*m_renderGrid, direction);
     Vector<GridTrack>& allTracks = tracks(m_direction);
     int numTracks = allTracks.size();
+    RELEASE_ASSERT((parentTracks.size()  - 1) >= (numTracks - 1 + span.startLine()));
     for (int i = 0; i < numTracks; i++)
         allTracks[i] = parentTracks[i + span.startLine()];
 

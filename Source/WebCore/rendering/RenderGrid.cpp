@@ -106,9 +106,16 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         }
     }
 
+    auto subgridChanged = subgridDidChange(*oldStyle);
     if (explicitGridDidResize(*oldStyle) || namedGridLinesDefinitionDidChange(*oldStyle) || implicitGridLinesDefinitionDidChange(*oldStyle) || oldStyle->gridAutoFlow() != style().gridAutoFlow()
-        || (style().gridAutoRepeatColumns().size() || style().gridAutoRepeatRows().size()))
-        dirtyGrid();
+        || (style().gridAutoRepeatColumns().size() || style().gridAutoRepeatRows().size()) || subgridChanged)
+        dirtyGrid(subgridChanged);
+}
+
+bool RenderGrid::subgridDidChange(const RenderStyle& oldStyle) const
+{
+    return oldStyle.gridSubgridRows() != style().gridSubgridRows()
+        || oldStyle.gridSubgridColumns() != style().gridSubgridColumns();
 }
 
 bool RenderGrid::explicitGridDidResize(const RenderStyle& oldStyle) const
@@ -1190,12 +1197,20 @@ GridTrackSizingDirection RenderGrid::autoPlacementMinorAxisDirection() const
     return (autoPlacementMajorAxisDirection() == ForColumns) ? ForRows : ForColumns;
 }
 
-void RenderGrid::dirtyGrid()
+void RenderGrid::dirtyGrid(bool subgridChanged)
 {
     if (currentGrid().needsItemsPlacement())
         return;
 
     currentGrid().setNeedsItemsPlacement(true);
+
+    auto currentChild = this;
+    while (currentChild && (subgridChanged || currentChild->isSubgridRows() || currentChild->isSubgridColumns())) {
+        currentChild = dynamicDowncast<RenderGrid>(currentChild->parent());
+        if (currentChild)
+            currentChild->currentGrid().setNeedsItemsPlacement(true);
+        subgridChanged = false;
+    }
 }
 
 Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirection direction) const
