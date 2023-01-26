@@ -5565,7 +5565,7 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     @classmethod
     def is_test_gardening(cls, lines):
         for line in lines:
-            if line.lstrip().startswith('Unreviewed test gardening'):
+            if line.lstrip().lower().startswith('unreviewed test gardening'):
                 return True
         return False
 
