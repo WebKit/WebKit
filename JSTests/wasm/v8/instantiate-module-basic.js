@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure:
-//  expected:
-//  contains 'Argument 0'
-//  found:
-//  "TypeError: first argument to WebAssembly.Instance must be a WebAssembly.Module (evaluating 'new WebAssembly.Instance(invalid_cases[i])')"
-// Looks like we need to update the exception strings.
-
 // Copyright 2015 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -96,7 +87,7 @@ assertFalse(WebAssembly.validate(bytes(88, 88, 88, 88, 88, 88, 88, 88)));
       let instance = new WebAssembly.Instance(invalid_cases[i]);
       assertUnreachable('should not be able to instantiate invalid modules.');
     } catch (e) {
-      assertContains('Argument 0', e.toString());
+      assertContains('first argument to WebAssembly.Instance must', e.toString());
     }
   }
 })();

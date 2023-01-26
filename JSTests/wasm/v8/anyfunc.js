@@ -1,15 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Object <Error(RuntimeError: Funcref must be an exported wasm function (evaluating 'instance.exports.main({'hello': 'world'})'))> is not an instance of <TypeError> but of <RuntimeError>
-// MjsUnitAssertionError@mjsunit.js:36:27
-// failWithMessage@mjsunit.js:323:36
-// assertInstanceof@mjsunit.js:563:22
-// checkException@mjsunit.js:498:23
-// assertThrows@mjsunit.js:518:21
-// testAnyFuncIdentityFunction@anyfunc.js:30:15
-// global code@anyfunc.js:34:3
-
 // Copyright 2019 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -27,7 +16,7 @@ load("wasm-module-builder.js");
 
   const instance = builder.instantiate();
 
-//  assertThrows(() => instance.exports.main(print), TypeError);
+  assertThrows(() => instance.exports.main(print), TypeError);
   assertThrows(() => instance.exports.main({'hello': 'world'}), TypeError);
   assertSame(
       instance.exports.main, instance.exports.main(instance.exports.main));

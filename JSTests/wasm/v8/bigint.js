@@ -1,13 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Failure:
-//  expected:
-//  contains ''value' must be a WebAssembly type'
-//  found:
-//  "WebAssembly.Global expects its 'value' field to be the string 'i32', 'i64', 'f32', 'f64', 'anyfunc', 'funcref', or 'externref'"
-// Looks like we need to change the expected exception.
-
 // Copyright 2018 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -172,7 +163,7 @@ load("wasm-module-builder.js");
   try {
     new WebAssembly.Global(argument);
   } catch (e) {
-    assertContains("'value' must be a WebAssembly type", e.message);
+    assertContains("expects its 'value' field to be the string", e.message);
   }
 })();
 

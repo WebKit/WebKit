@@ -1,16 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: Object <Error(LinkError: Invalid data segment initialization: segment of 2 bytes memory of 65536 bytes, at offset 65535, segment writes outside of memory (evaluating 'new WebAssembly.Instance(module, ffi)'))> is not an instance of <RuntimeError> but of <LinkError>
-//
-//  Stack: MjsUnitAssertionError@mjsunit.js:36:27
-//  failWithMessage@mjsunit.js:323:36
-//  assertInstanceof@mjsunit.js:563:22
-//  checkException@mjsunit.js:498:23
-//  assertThrows@mjsunit.js:518:21
-//  TestLazyDataSegmentBoundsCheck@bulk-memory.js:208:15
-//  global code@bulk-memory.js:214:3
-
 // Copyright 2018 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -267,5 +255,5 @@ function getMemoryFill(mem) {
   assertEquals(false, WebAssembly.validate(builder.toBuffer()));
   assertThrows(
       () => builder.toModule(), WebAssembly.CompileError,
-      /invalid numeric opcode: 0xfc790/);
+      /invalid 0xfc extended op 1936/);
 })();

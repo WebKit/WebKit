@@ -1,9 +1,4 @@
 //@ requireOptions("--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1")
-//@ skip
-// Failure:
-// Exception: ReferenceError: Can't find variable: performance
-//  global code@code-space-overflow.js:23:26
-
 // Copyright 2022 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -20,9 +15,9 @@
 
 load("wasm-module-builder.js");
 
-const start = performance.now();
+const start = Date.now();
 function time(name) {
-  const ms_since_start = (performance.now() - start).toFixed(1).padStart(7);
+  const ms_since_start = (Date.now() - start).toFixed(1).padStart(7);
   // print(`[${ms_since_start}] ${name}`);
 }
 
