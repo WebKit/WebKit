@@ -378,13 +378,48 @@ struct _WebKitWebViewClass {
     gboolean   (* query_permission_state)      (WebKitWebView               *web_view,
                                                 WebKitPermissionStateQuery  *query);
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && !ENABLE(2022_GLIB_API)
     /*< private >*/
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
     void (*_webkit_reserved4) (void);
+#endif
+
+#if ENABLE(2022_GLIB_API)
+    /*< private >*/
+    void (*_webkit_reserved0)  (void);
+    void (*_webkit_reserved1)  (void);
+    void (*_webkit_reserved2)  (void);
+    void (*_webkit_reserved3)  (void);
+    void (*_webkit_reserved4)  (void);
+    void (*_webkit_reserved5)  (void);
+    void (*_webkit_reserved6)  (void);
+    void (*_webkit_reserved7)  (void);
+    void (*_webkit_reserved8)  (void);
+    void (*_webkit_reserved9)  (void);
+    void (*_webkit_reserved10) (void);
+    void (*_webkit_reserved11) (void);
+    void (*_webkit_reserved12) (void);
+    void (*_webkit_reserved13) (void);
+    void (*_webkit_reserved14) (void);
+    void (*_webkit_reserved15) (void);
+    void (*_webkit_reserved16) (void);
+    void (*_webkit_reserved17) (void);
+    void (*_webkit_reserved18) (void);
+    void (*_webkit_reserved19) (void);
+    void (*_webkit_reserved20) (void);
+    void (*_webkit_reserved21) (void);
+    void (*_webkit_reserved22) (void);
+    void (*_webkit_reserved23) (void);
+    void (*_webkit_reserved24) (void);
+    void (*_webkit_reserved25) (void);
+    void (*_webkit_reserved26) (void);
+    void (*_webkit_reserved27) (void);
+    void (*_webkit_reserved28) (void);
+    void (*_webkit_reserved29) (void);
+    void (*_webkit_reserved30) (void);
 #endif
 };
 
