@@ -827,6 +827,19 @@ public:
     static constexpr GCGLenum RGB16_SNORM_EXT = 0x8F9A;
     static constexpr GCGLenum RGBA16_SNORM_EXT = 0x8F9B;
 
+    // GL_ANGLE_clip_cull_distance
+    static constexpr GCGLenum MAX_CLIP_DISTANCES_ANGLE = 0x0D32;
+    static constexpr GCGLenum MAX_CULL_DISTANCES_ANGLE = 0x82F9;
+    static constexpr GCGLenum MAX_COMBINED_CLIP_AND_CULL_DISTANCES_ANGLE = 0x82FA;
+    static constexpr GCGLenum CLIP_DISTANCE0_ANGLE = 0x3000;
+    static constexpr GCGLenum CLIP_DISTANCE1_ANGLE = 0x3001;
+    static constexpr GCGLenum CLIP_DISTANCE2_ANGLE = 0x3002;
+    static constexpr GCGLenum CLIP_DISTANCE3_ANGLE = 0x3003;
+    static constexpr GCGLenum CLIP_DISTANCE4_ANGLE = 0x3004;
+    static constexpr GCGLenum CLIP_DISTANCE5_ANGLE = 0x3005;
+    static constexpr GCGLenum CLIP_DISTANCE6_ANGLE = 0x3006;
+    static constexpr GCGLenum CLIP_DISTANCE7_ANGLE = 0x3007;
+
     // GL_ANGLE_provoking_vertex
     static constexpr GCGLenum FIRST_VERTEX_CONVENTION_ANGLE = 0x8E4D;
     static constexpr GCGLenum LAST_VERTEX_CONVENTION_ANGLE = 0x8E4E;

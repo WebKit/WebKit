@@ -52,6 +52,7 @@
 #include "JSOESTextureHalfFloatLinear.h"
 #include "JSOESVertexArrayObject.h"
 #include "JSWebGLBuffer.h"
+#include "JSWebGLClipCullDistance.h"
 #include "JSWebGLColorBufferFloat.h"
 #include "JSWebGLCompressedTextureASTC.h"
 #include "JSWebGLCompressedTextureETC.h"
@@ -191,6 +192,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(OESTextureHalfFloat)
         TO_JS(OESTextureHalfFloatLinear)
         TO_JS(OESVertexArrayObject)
+        TO_JS(WebGLClipCullDistance)
         TO_JS(WebGLColorBufferFloat)
         TO_JS(WebGLCompressedTextureASTC)
         TO_JS(WebGLCompressedTextureETC)

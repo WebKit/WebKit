@@ -2835,6 +2835,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLActiveInfo.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLActiveInfo.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBuffer.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLBuffer.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLClipCullDistance.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLClipCullDistance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLColorBufferFloat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLColorBufferFloat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLCompressedTextureASTC.cpp
