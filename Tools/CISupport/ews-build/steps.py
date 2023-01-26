@@ -5004,7 +5004,7 @@ class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
         try:
             response = yield TwistedAdditions.request(url, logger=lambda content: self._addToLog('stdio', content))
             if response.status_code != 200:
-                self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(url, response.status_code))
+                yield self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(url, response.status_code))
                 defer.returnValue(-1)
                 return
             queue_data = response.json().get(queue, None)
@@ -5012,8 +5012,8 @@ class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
                 defer.returnValue(queue_data.get('state', None))
             else:
                 defer.returnValue(-1)
-        except:
-            self._addToLog('stdio', 'Failed to access {}\n'.format(url))
+        except Exception as e:
+            yield self._addToLog('stdio', f'Failed to access {url}\n    {e}\n')
             defer.returnValue(-1)
 
     @defer.inlineCallbacks
