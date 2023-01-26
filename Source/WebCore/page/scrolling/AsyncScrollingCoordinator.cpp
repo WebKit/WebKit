@@ -1074,6 +1074,11 @@ String AsyncScrollingCoordinator::scrollingTreeAsText(OptionSet<ScrollingStateTr
     return m_scrollingTree->scrollingTreeAsText(behavior);
 }
 
+bool AsyncScrollingCoordinator::haveScrollingTree() const
+{
+    return !!m_scrollingTree;
+}
+
 void AsyncScrollingCoordinator::setActiveScrollSnapIndices(ScrollingNodeID scrollingNodeID, std::optional<unsigned> horizontalIndex, std::optional<unsigned> verticalIndex)
 {
     ASSERT(isMainThread());

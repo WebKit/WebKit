@@ -1559,9 +1559,12 @@ window.UIHelper = class UIHelper {
 
     static getScrollingTree()
     {
-        if (!this.isWebKit2() || !this.isIOSFamily())
-            return Promise.resolve();
+        if (!this.isWebKit2())
+            return Promise.resolve('');
 
+        if (window.internals.haveScrollingTree())
+            return Promise.resolve(window.internals.scrollingTreeAsText());
+            
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {
                 return uiController.scrollingTreeAsText;

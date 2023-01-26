@@ -31,6 +31,7 @@
 #import "MediaSessionCoordinatorProxyPrivate.h"
 #import "PlaybackSessionManagerProxy.h"
 #import "PrintInfo.h"
+#import "RemoteScrollingCoordinatorProxy.h"
 #import "UserMediaProcessManager.h"
 #import "ViewGestureController.h"
 #import "WebPageProxy.h"
@@ -138,6 +139,15 @@
 {
     // For subclasses to override;
     return NO;
+}
+
+- (NSString *)_scrollingTreeAsText
+{
+    WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
+    if (!coordinator)
+        return @"";
+
+    return coordinator->scrollingTreeAsText();
 }
 
 - (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled

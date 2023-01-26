@@ -3206,6 +3206,25 @@ ExceptionOr<String> Internals::scrollingTreeAsText() const
     return scrollingCoordinator->scrollingTreeAsText();
 }
 
+ExceptionOr<bool> Internals::haveScrollingTree() const
+{
+    auto* document = contextDocument();
+    if (!document || !document->frame())
+        return Exception { InvalidAccessError };
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    auto page = document->page();
+    if (!page)
+        return false;
+
+    auto scrollingCoordinator = page->scrollingCoordinator();
+    if (!scrollingCoordinator)
+        return false;
+
+    return scrollingCoordinator->haveScrollingTree();
+}
+
 ExceptionOr<String> Internals::synchronousScrollingReasons() const
 {
     Document* document = contextDocument();

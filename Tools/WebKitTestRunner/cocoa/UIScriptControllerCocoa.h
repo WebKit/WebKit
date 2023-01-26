@@ -54,6 +54,8 @@ private:
     JSRetainPtr<JSStringRef> firstRedoLabel() const override;
     NSUndoManager *platformUndoManager() const override;
 
+    JSRetainPtr<JSStringRef> scrollingTreeAsText() const override;
+
     void setDidShowContextMenuCallback(JSValueRef) override;
     void setDidDismissContextMenuCallback(JSValueRef) override;
     bool isShowingContextMenu() const override;

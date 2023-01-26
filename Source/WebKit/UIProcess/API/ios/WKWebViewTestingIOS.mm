@@ -30,7 +30,6 @@
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
-#import "RemoteScrollingCoordinatorProxy.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #import "WKFullScreenWindowController.h"
@@ -221,15 +220,6 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
     [_contentView _updateChangedSelection];
 
     return [_contentView _uiTextSelectionRects];
-}
-
-- (NSString *)_scrollingTreeAsText
-{
-    WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
-    if (!coordinator)
-        return @"";
-
-    return coordinator->scrollingTreeAsText();
 }
 
 static String allowListedClassToString(UIView *view)

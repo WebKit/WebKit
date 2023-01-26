@@ -613,6 +613,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     DOMString scrollingStateTreeAsText();
     DOMString scrollingTreeAsText();
+    boolean haveScrollingTree();
     DOMString synchronousScrollingReasons();
     DOMRectList nonFastScrollableRects();
 

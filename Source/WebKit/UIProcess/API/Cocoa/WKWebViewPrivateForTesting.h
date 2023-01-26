@@ -82,6 +82,7 @@ struct WKAppPrivacyReportTestingData {
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts;
 
 @property (nonatomic, setter=_setScrollingUpdatesDisabledForTesting:) BOOL _scrollingUpdatesDisabledForTesting;
+@property (nonatomic, readonly) NSString *_scrollingTreeAsText;
 
 - (void)_processWillSuspendForTesting:(void (^)(void))completionHandler;
 - (void)_processWillSuspendImminentlyForTesting;

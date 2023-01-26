@@ -84,6 +84,8 @@ protected:
 
     WEBCORE_EXPORT String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
     WEBCORE_EXPORT String scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> = { }) const override;
+    WEBCORE_EXPORT bool haveScrollingTree() const override;
+
     WEBCORE_EXPORT void willCommitTree() override;
     void synchronizeStateFromScrollingTree();
     void scheduleRenderingUpdate();
