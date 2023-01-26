@@ -629,8 +629,8 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* jsCalleeInstance, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
-    B3::PatchpointValue* createCallPatchpoint(BasicBlock*, Value* jsCalleeInstance, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* jsCalleeAnchor, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
+    B3::PatchpointValue* createCallPatchpoint(BasicBlock*, Value* jsCalleeAnchor, B3::Type, const CallInformation&, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
     B3::PatchpointValue* createTailCallPatchpoint(BasicBlock*, const Vector<ArgumentLocation>&, const Vector<ExpressionType>& tmpArgs, const Checked<int32_t>& tailCallStackOffsetFromFP, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor);
 
     void dump(const ControlStack&, const Stack* expressionStack);
@@ -1406,7 +1406,7 @@ auto B3IRGenerator::addCrash() -> PartialResult
     return { };
 }
 
-auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* jsCalleeInstance, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* jsCalleeAnchor, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -1486,7 +1486,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, V
     m_makesCalls = true;
 
     B3::Type returnType = toB3ResultType(&signature);
-    Value* callResult = createCallPatchpoint(m_currentBlock, jsCalleeInstance, returnType, wasmCalleeInfo, args,
+    Value* callResult = createCallPatchpoint(m_currentBlock, jsCalleeAnchor, returnType, wasmCalleeInfo, args,
         scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>([=, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we're always calling something that is bounds checking so
@@ -3813,13 +3813,13 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expres
 }
 
 
-B3::PatchpointValue* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeInstance, B3::Type returnType, const CallInformation& wasmCalleeInfo, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
+B3::PatchpointValue* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Value* jsCalleeAnchor, B3::Type returnType, const CallInformation& wasmCalleeInfo, const Vector<ExpressionType>& tmpArgs, const ScopedLambda<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>& patchpointFunctor)
 {
     Vector<B3::ConstrainedValue> constrainedPatchArgs;
     for (unsigned i = 0; i < tmpArgs.size(); ++i)
         constrainedPatchArgs.append(B3::ConstrainedValue(get(block, tmpArgs[i]), wasmCalleeInfo.params[i]));
-    if (jsCalleeInstance)
-        constrainedPatchArgs.append(B3::ConstrainedValue(jsCalleeInstance, wasmCalleeInfo.thisArgument));
+    if (jsCalleeAnchor)
+        constrainedPatchArgs.append(B3::ConstrainedValue(jsCalleeAnchor, wasmCalleeInfo.thisArgument));
 
     Box<PatchpointExceptionHandle> exceptionHandle = Box<PatchpointExceptionHandle>::create(m_hasExceptionHandlers);
 
@@ -4125,46 +4125,30 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
 
     calleeIndex = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex);
 
-    Value* callableFunction;
-    {
-        // Compute the offset in the table index space we are looking for.
-        Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), calleeIndex, constant(pointerType(), sizeof(FuncRefTable::Function)));
-        callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, offset);
+    Value* callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), calleeIndex, constant(pointerType(), sizeof(FuncRefTable::Function))));
 
-        // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
-        // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
-        static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
-        Value* calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()));
-        {
-            CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-                m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
-                    calleeSignatureIndex,
-                    m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeDefinition::invalidIndex)));
-
-            check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-                this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
-            });
-        }
-
-        // Check the signature matches the value we expect.
-        {
-            Value* expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeInformation::get(originalSignature));
-            CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-                m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
-
-            check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-                this->emitExceptionCheck(jit, ExceptionType::BadSignature);
-            });
-        }
-    }
-
+    // Check that the WasmToWasmImportableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
+    // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
+    static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
+    Value* calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()));
+    Value* calleeCodeLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()));
     Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfInstance()));
-    Value* jsCalleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), calleeInstance, safeCast<int32_t>(Instance::offsetOfOwner()));
-    Value* calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction,
-            safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation())));
+    Value* jsCalleeAnchor = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfValue()));
 
-    return emitIndirectCall(calleeInstance, calleeCode, jsCalleeInstance, signature, args, results, callType);
+    Value* expectedSignatureIndex = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), TypeInformation::get(originalSignature));
+    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
+    check->append(calleeSignatureIndex, ValueRep::SomeRegister);
+    check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        GPRReg indexGPR = params[0].gpr();
+        static_assert(TypeDefinition::invalidIndex == 0);
+        auto badSignatureCase = jit.branchTest64(CCallHelpers::NonZero, indexGPR);
+        this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
+        badSignatureCase.link(&jit);
+        this->emitExceptionCheck(jit, ExceptionType::BadSignature);
+    });
+
+    Value* calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), calleeCodeLocation);
+    return emitIndirectCall(calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, callType);
 }
 
 auto B3IRGenerator::addCallRef(const TypeDefinition& originalSignature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
