@@ -150,14 +150,24 @@ struct _WebKitInputMethodContextClass {
     void     (* reset)              (WebKitInputMethodContext *context);
 
     /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-    void (*_webkit_reserved4) (void);
-    void (*_webkit_reserved5) (void);
-    void (*_webkit_reserved6) (void);
-    void (*_webkit_reserved7) (void);
+    void (*_webkit_reserved0)  (void);
+    void (*_webkit_reserved1)  (void);
+    void (*_webkit_reserved2)  (void);
+    void (*_webkit_reserved3)  (void);
+    void (*_webkit_reserved4)  (void);
+    void (*_webkit_reserved5)  (void);
+    void (*_webkit_reserved6)  (void);
+    void (*_webkit_reserved7)  (void);
+#if ENABLE(2022_GLIB_API)
+    void (*_webkit_reserved8)  (void);
+    void (*_webkit_reserved9)  (void);
+    void (*_webkit_reserved10) (void);
+    void (*_webkit_reserved11) (void);
+    void (*_webkit_reserved12) (void);
+    void (*_webkit_reserved13) (void);
+    void (*_webkit_reserved14) (void);
+    void (*_webkit_reserved15) (void);
+#endif
 };
 
 WEBKIT_API GType
