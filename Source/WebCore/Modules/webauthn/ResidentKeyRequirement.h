@@ -27,8 +27,6 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class ResidentKeyRequirement : uint8_t {
@@ -38,18 +36,5 @@ enum class ResidentKeyRequirement : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ResidentKeyRequirement> {
-    using values = EnumValues<
-        WebCore::ResidentKeyRequirement,
-        WebCore::ResidentKeyRequirement::Required,
-        WebCore::ResidentKeyRequirement::Preferred,
-        WebCore::ResidentKeyRequirement::Discouraged
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(WEB_AUTHN)

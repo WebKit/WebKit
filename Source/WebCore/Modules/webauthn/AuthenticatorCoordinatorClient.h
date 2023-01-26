@@ -42,7 +42,7 @@ class DeferredPromise;
 class Frame;
 class SecurityOrigin;
 
-enum class AuthenticatorAttachment;
+enum class AuthenticatorAttachment : uint8_t;
 enum class MediationRequirement : uint8_t;
 
 struct AuthenticatorResponseData;

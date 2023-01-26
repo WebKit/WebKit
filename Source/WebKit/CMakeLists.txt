@@ -520,6 +520,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     GPUProcess/media/InitializationSegmentInfo.serialization.in
     GPUProcess/media/MediaDescriptionInfo.serialization.in
+    GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in
     GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
 
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
@@ -556,6 +557,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/API/APIURLResponse.serialization.in
 
     Shared/Databases/IndexedDB/WebIDBResult.serialization.in
+
+    Shared/Extensions/WebExtensionEventListenerType.serialization.in
 
     Shared/RemoteLayerTree/RemoteLayerTree.serialization.in
 
@@ -630,6 +633,7 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/XR/XRSystem.serialization.in
 
+    WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
     WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 )
 

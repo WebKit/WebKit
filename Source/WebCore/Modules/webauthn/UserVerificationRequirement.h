@@ -27,8 +27,6 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
 enum class UserVerificationRequirement : uint8_t {

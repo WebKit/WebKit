@@ -448,7 +448,7 @@ static Vector<IDBKeyData> createKeyPathArray(JSGlobalObject& lexicalGlobalObject
             return { };
 
         Vector<IDBKeyData> keys;
-        if (info.multiEntry() && idbKey->type() == IndexedDB::Array) {
+        if (info.multiEntry() && idbKey->type() == IndexedDB::KeyType::Array) {
             for (auto& key : idbKey->array())
                 keys.append(key.get());
         } else

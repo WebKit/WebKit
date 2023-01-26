@@ -89,6 +89,7 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteSourceBufferProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteTextTrackProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoTrackProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/ios/RemoteMediaSessionHelperProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
@@ -166,6 +167,7 @@ $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 $(PROJECT_DIR)/Shared/EditorState.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionEventListenerType.serialization.in
 $(PROJECT_DIR)/Shared/FocusedElementInformation.serialization.in
 $(PROJECT_DIR)/Shared/FrameInfoData.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
@@ -347,6 +349,7 @@ $(PROJECT_DIR)/WebProcess/GPU/media/RemoteCDMInstanceSession.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteImageDecoderAVF.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteImageDecoderAVFManager.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteLegacyCDMSession.messages.in
+$(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in
 $(PROJECT_DIR)/WebProcess/GPU/media/RemoteRemoteCommandListener.messages.in
 $(PROJECT_DIR)/WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in

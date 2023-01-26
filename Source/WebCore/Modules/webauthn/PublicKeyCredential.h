@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-enum class AuthenticatorAttachment;
+enum class AuthenticatorAttachment : uint8_t;
 class AuthenticatorResponse;
 class Document;
 
