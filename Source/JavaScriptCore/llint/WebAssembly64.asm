@@ -104,6 +104,15 @@ wasmOp(ref_is_null, WasmRefIsNull, macro(ctx)
     returni(ctx, t0)
 end)
 
+wasmOp(ref_as_non_null, WasmRefAsNonNull, macro(ctx)
+    mloadp(ctx, m_ref, t0)
+    bqeq t0, ValueNull, .nullRef
+    returnq(ctx, t0)
+
+.nullRef:
+    throwException(NullRefAsNonNull)
+end)
+
 wasmOp(get_global, WasmGetGlobal, macro(ctx)
     loadp Wasm::Instance::m_globals[wasmInstance], t0
     wgetu(ctx, m_globalIndex, t1)

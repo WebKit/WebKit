@@ -2056,6 +2056,18 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         return { };
     }
 
+    case RefAsNonNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
+        TypedExpression ref;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "ref.as_non_null");
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addRefAsNonNull(ref, result));
+
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+        return { };
+    }
+
     case GetLocal: {
         uint32_t index;
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
@@ -2942,6 +2954,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case RefFunc: {
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
+        return { };
+    }
+
+    case RefAsNonNull: {
         return { };
     }
 

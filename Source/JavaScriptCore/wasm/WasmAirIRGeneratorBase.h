@@ -362,6 +362,7 @@ struct AirIRGeneratorBase {
     // References
     //                               addRefIsNull (in derived classes)
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -1242,6 +1243,15 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addRefFunc(uint32_t index, Exp
         result = tmpForType(Types::Funcref);
     emitCCall(&operationWasmRefFunc, result, instanceValue(), self().addConstant(Types::I32, index));
 
+    return { };
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addRefAsNonNull(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    emitThrowOnNullReference(reference, ExceptionType::NullRefAsNonNull);
+    result = self().tmpForType(Type { TypeKind::Ref, reference.type().index });
+    append(Move, reference, result);
     return { };
 }
 

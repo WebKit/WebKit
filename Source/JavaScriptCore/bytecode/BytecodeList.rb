@@ -1588,6 +1588,12 @@ op :ref_func,
         functionIndex: unsigned,
     }
 
+op :ref_as_non_null,
+    args: {
+        dst: VirtualRegister,
+        ref: VirtualRegister,
+    }
+
 op :get_global,
     args: {
         dst: VirtualRegister,

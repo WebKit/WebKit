@@ -65,6 +65,8 @@
 
 - path: wasm/function-references-spec-tests/call_ref.wast.js
   cmd: runWebAssemblyFunctionReferenceSpecTest :normal
+- path: wasm/function-references-spec-tests/ref_as_non_null.wast.js
+  cmd: runWebAssemblyFunctionReferenceSpecTest :normal
 - path: wasm/function-references-spec-tests/ref_null.wast.js
   cmd: runWebAssemblyFunctionReferenceSpecTest :normal
 - path: wasm/function-references-spec-tests/call-null-ref.wast.js
