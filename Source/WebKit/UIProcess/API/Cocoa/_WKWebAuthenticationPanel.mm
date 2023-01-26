@@ -182,11 +182,16 @@ static _WKWebAuthenticationTransport wkWebAuthenticationTransport(WebCore::Authe
         return _WKWebAuthenticationTransportUSB;
     case WebCore::AuthenticatorTransport::Nfc:
         return _WKWebAuthenticationTransportNFC;
+    case WebCore::AuthenticatorTransport::Ble:
+        return _WKWebAuthenticationTransportBLE;
     case WebCore::AuthenticatorTransport::Internal:
         return _WKWebAuthenticationTransportInternal;
-    default:
-        ASSERT_NOT_REACHED();
-        return _WKWebAuthenticationTransportUSB;
+    case WebCore::AuthenticatorTransport::Cable:
+        return _WKWebAuthenticationTransportCaBLE;
+    case WebCore::AuthenticatorTransport::Hybrid:
+        return _WKWebAuthenticationTransportHybrid;
+    case WebCore::AuthenticatorTransport::SmartCard:
+        return _WKWebAuthenticationTransportSmartCard;
     }
 }
 
@@ -783,11 +788,16 @@ static WebCore::AuthenticatorTransport authenticatorTransport(_WKWebAuthenticati
         return WebCore::AuthenticatorTransport::Usb;
     case _WKWebAuthenticationTransportNFC:
         return WebCore::AuthenticatorTransport::Nfc;
+    case _WKWebAuthenticationTransportBLE:
+        return WebCore::AuthenticatorTransport::Ble;
     case _WKWebAuthenticationTransportInternal:
         return WebCore::AuthenticatorTransport::Internal;
-    default:
-        ASSERT_NOT_REACHED();
-        return WebCore::AuthenticatorTransport::Usb;
+    case _WKWebAuthenticationTransportCaBLE:
+        return WebCore::AuthenticatorTransport::Cable;
+    case _WKWebAuthenticationTransportHybrid:
+        return WebCore::AuthenticatorTransport::Hybrid;
+    case _WKWebAuthenticationTransportSmartCard:
+        return WebCore::AuthenticatorTransport::SmartCard;
     }
 }
 

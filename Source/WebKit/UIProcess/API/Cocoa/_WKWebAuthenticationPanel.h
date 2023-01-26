@@ -61,7 +61,11 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationResult) {
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationTransport) {
     _WKWebAuthenticationTransportUSB,
     _WKWebAuthenticationTransportNFC,
+    _WKWebAuthenticationTransportBLE,
     _WKWebAuthenticationTransportInternal,
+    _WKWebAuthenticationTransportCaBLE,
+    _WKWebAuthenticationTransportHybrid,
+    _WKWebAuthenticationTransportSmartCard,
 } WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 
 typedef NS_ENUM(NSInteger, _WKWebAuthenticationType) {
