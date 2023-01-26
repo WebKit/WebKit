@@ -15,7 +15,7 @@ function lastPathComponent()
 }
 
 function runFirstStageOfTest()
-{   
+{
     history.replaceState("FirstEntry", null, "?FirstEntry");
     history.pushState("SecondEntry", null, "?SecondEntry");
     history.back();

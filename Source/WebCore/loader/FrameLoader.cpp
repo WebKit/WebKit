@@ -737,11 +737,6 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_didCallImplicitClose = false;
     m_frame.document()->setReadyState(Document::Loading);
 
-    if (m_pendingStateObject) {
-        m_frame.document()->statePopped(*m_pendingStateObject);
-        m_pendingStateObject = nullptr;
-    }
-
     if (dispatch)
         dispatchDidClearWindowObjectsInAllWorlds();
 
@@ -2271,10 +2266,6 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
                 history().updateForStandardLoad(HistoryController::UpdateAllExceptBackForwardList);
 
             history().updateForBackForwardNavigation();
-
-            // For cached pages, CachedFrame::restore will take care of firing the popstate event with the history item's state object
-            if (history().currentItem() && !cachedPage)
-                m_pendingStateObject = history().currentItem()->stateObject();
 
             // Create a document view for this document, or used the cached view.
             if (cachedPage) {
