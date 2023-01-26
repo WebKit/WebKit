@@ -24,7 +24,6 @@ function test()
                 InspectorTest.expectTrue(matches, `${mediaQuery} media query matches.`);
             else
                 InspectorTest.expectFalse(matches, `${mediaQuery} media query does not match.`);
-
             InspectorTest.expectEqual(value, expectedValue, `${cssPropertyName}: ${expectedValue}`);
         }
     }
@@ -136,6 +135,41 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "Page.overrideUserPreference.ForcedColors",
+        description: "",
+        async test() {
+            let cssPropertyName = "--test-forced-colors";
+            let mediaQuery = "(forced-colors: active)";
+            let testCases = [
+                {
+                    expectedValue: "none",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.ForcedColors,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Active,
+                    expectedValue: "active",
+                    expectedMatchMedia: true,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.ForcedColors,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.None,
+                    expectedValue: "none",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.ForcedColors,
+                    preferenceValue: null,
+                    expectedValue: "none",
+                    expectedMatchMedia: false,
+                },
+            ];
+
+            await testOverridePreference({cssPropertyName, mediaQuery, testCases});
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 
@@ -149,6 +183,7 @@ function test()
         --test-prefers-reduced-motion: no-preference;
         --test-prefers-contrast: no-preference;
         --test-prefers-color-scheme: light;
+        --test-forced-colors: none;
     }
 
     @media (prefers-reduced-motion) {
@@ -166,6 +201,12 @@ function test()
     @media (prefers-color-scheme: dark) {
         body {
             --test-prefers-color-scheme: dark;
+        }
+    }
+
+    @media (forced-colors: active) {
+        body {
+            --test-forced-colors: active;
         }
     }
     </style>

@@ -355,8 +355,20 @@ const FeatureSchema& forcedColors()
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "forced-colors"_s,
         Vector { CSSValueNone, CSSValueActive },
-        [](auto&) {
-            return MatchingIdentifiers { CSSValueNone };
+        [](auto& context) {
+            bool userForcedColors = [&] {
+                auto& frame = *context.document.frame();
+                switch (frame.settings().forcedForcedColorsAccessibilityValue()) {
+                case ForcedAccessibilityValue::On:
+                    return true;
+                case ForcedAccessibilityValue::Off:
+                    return false;
+                case ForcedAccessibilityValue::System:
+                    return false;
+                }
+                return false;
+            }();
+            return MatchingIdentifiers { userForcedColors ? CSSValueActive : CSSValueNone };
         }
     };
     return schema;
@@ -752,6 +764,8 @@ std::optional<MediaQueryDynamicDependency> dynamicDependency(const FeatureSchema
     if (&schema == &prefersColorScheme())
         return MediaQueryDynamicDependency::Appearance;
 #endif
+    if (&schema == &forcedColors())
+        return MediaQueryDynamicDependency::Appearance;
 
     if (&schema == &invertedColors() || &schema == &monochrome() || &schema == &prefersReducedMotion() || &schema == &prefersContrast())
         return MediaQueryDynamicDependency::Accessibility;

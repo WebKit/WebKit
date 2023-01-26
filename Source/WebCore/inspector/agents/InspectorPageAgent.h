@@ -160,6 +160,7 @@ private:
     void overridePrefersReducedMotion(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersColorScheme(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
+    void overrideForcedColors(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
 
     Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
     Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);

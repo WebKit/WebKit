@@ -159,6 +159,13 @@ ForcedDisplayIsMonochromeAccessibilityValue:
     WebCore:
       default: ForcedAccessibilityValue::System
 
+ForcedForcedColorsAccessibilityValue:
+  type: uint32_t
+  refinedType: ForcedAccessibilityValue
+  defaultValue:
+    WebCore:
+      default: ForcedAccessibilityValue::System
+
 ForcedPrefersContrastAccessibilityValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue

@@ -168,6 +168,17 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
                 defaultValue: WI.CSSManager.UserPreferenceDefaultValue,
             });
 
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `PrefersContrast` value for `Page.UserPreferenceName` did not exist yet.
+        if (InspectorBackend.Enum.Page?.UserPreferenceName?.ForcedColors)
+            this._createSelectElement({
+                contentElement,
+                id: "override-forced-colors",
+                label: WI.UIString("Forced Colors", "Forced colors @ User Preferences Overrides", "Label for input to override the preference for forced colors."),
+                preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.ForcedColors,
+                preferenceValues: [InspectorBackend.Enum.Page.UserPreferenceValue.Active, InspectorBackend.Enum.Page.UserPreferenceValue.None],
+                defaultValue: WI.CSSManager.UserPreferenceDefaultValue,
+            });
+
         return contentElement;
     }
 
@@ -181,6 +192,10 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
             return WI.UIString("On", "On @ User Preferences Overrides", "Label for a preference that is turned on.");
         case InspectorBackend.Enum.Page.UserPreferenceValue?.NoPreference:
             return WI.UIString("Off", "Off @ User Preferences Overrides", "Label for a preference that is turned off.");
+        case InspectorBackend.Enum.Page.UserPreferenceValue?.Active:
+            return WI.UIString("Active", "Active @ User Preferences Overrides", "Label for a preference that is active.");
+        case InspectorBackend.Enum.Page.UserPreferenceValue?.None:
+            return WI.UIString("None", "None @ User Preferences Overrides", "Label for a preference that is none.");
         case InspectorBackend.Enum.Page.UserPreferenceValue?.Light:
         case WI.CSSManager.Appearance.Light:
             return WI.UIString("Light", "Light @ User Preferences Overrides", "Label for the light color scheme preference.");

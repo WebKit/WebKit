@@ -389,6 +389,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     inspectedPageSettings.setWebSecurityEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue::System);
     inspectedPageSettings.setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue::System);
+    inspectedPageSettings.setForcedForcedColorsAccessibilityValue(ForcedAccessibilityValue::System);
 
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled, std::nullopt);
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::ITPDebugModeEnabled, std::nullopt);
@@ -512,6 +513,10 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserPreference(Protoco
     case Protocol::Page::UserPreferenceName::PrefersColorScheme:
         overridePrefersColorScheme(WTFMove(value));
         return { };
+
+    case Protocol::Page::UserPreferenceName::ForcedColors:
+        overrideForcedColors(WTFMove(value));
+        return { };
     }
 
     ASSERT_NOT_REACHED();
@@ -556,6 +561,19 @@ void InspectorPageAgent::overridePrefersColorScheme(std::optional<Protocol::Page
 #else
     UNUSED_PARAM(value);
 #endif
+}
+
+void InspectorPageAgent::overrideForcedColors(std::optional<Protocol::Page::UserPreferenceValue>&& value)
+{
+    ForcedAccessibilityValue forcedValue = ForcedAccessibilityValue::System;
+
+    if (value == Protocol::Page::UserPreferenceValue::Active)
+        forcedValue = ForcedAccessibilityValue::On;
+    else if (value == Protocol::Page::UserPreferenceValue::None)
+        forcedValue = ForcedAccessibilityValue::Off;
+
+    m_inspectedPage.settings().setForcedForcedColorsAccessibilityValue(forcedValue);
+    m_inspectedPage.accessibilitySettingsDidChange();
 }
 
 static Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(Cookie::SameSitePolicy policy)
@@ -1014,6 +1032,12 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
 
     defaultUserPreferences->addItem(WTFMove(prefersColorSchemeUserPreference));
 #endif
+
+    auto forcedColorsPreference = Protocol::Page::UserPreference::create()
+        .setName(Protocol::Page::UserPreferenceName::ForcedColors)
+        .setValue(Protocol::Page::UserPreferenceValue::None)
+        .release();
+    defaultUserPreferences->addItem(WTFMove(forcedColorsPreference));
 
     m_frontendDispatcher->defaultUserPreferencesDidChange(WTFMove(defaultUserPreferences));
 }

@@ -41,3 +41,16 @@ Removing PrefersColorScheme override
 PASS: (prefers-color-scheme: dark) media query does not match.
 PASS: --test-prefers-color-scheme: light
 
+-- Running test case: Page.overrideUserPreference.ForcedColors
+PASS: (forced-colors: active) media query does not match.
+PASS: --test-forced-colors: none
+Overriding ForcedColors value to Active
+PASS: (forced-colors: active) media query matches.
+PASS: --test-forced-colors: active
+Overriding ForcedColors value to None
+PASS: (forced-colors: active) media query does not match.
+PASS: --test-forced-colors: none
+Removing ForcedColors override
+PASS: (forced-colors: active) media query does not match.
+PASS: --test-forced-colors: none
+

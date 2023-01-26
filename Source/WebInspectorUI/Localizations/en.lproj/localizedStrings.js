@@ -114,6 +114,8 @@ localizedStrings["Accessibility @ User Preferences Overrides"] = "Accessibility"
 localizedStrings["Action"] = "Action";
 /* Tooltip for a time range bar that represents when a CSS animation/transition is running */
 localizedStrings["Active"] = "Active";
+/* Label for a preference that is turned active. */
+localizedStrings["Active @ User Preferences Overrides"] = "Active";
 localizedStrings["Ad Click Attribution Debug Mode"] = "Ad Click Attribution Debug Mode";
 localizedStrings["Add"] = "Add";
 localizedStrings["Add %s Rule"] = "Add %s Rule";
@@ -737,6 +739,8 @@ localizedStrings["Font was synthesized to be bold because no bold font is availa
 localizedStrings["Font was synthesized to be oblique because no oblique font is available."] = "Font was synthesized to be oblique because no oblique font is available.";
 localizedStrings["Fonts"] = "Fonts";
 localizedStrings["Force print media styles"] = "Force print media styles";
+/* Label for input to override the preference for forced-colors. */
+localizedStrings["Forced colors @ User Preferences Overrides"] = "Forced colors";
 /* Layout phase records that were imperative (forced) */
 localizedStrings["Forced Layout"] = "Forced Layout";
 /* A context menu item to force (override) a DOM node's pseudo-classes */
@@ -1091,6 +1095,8 @@ localizedStrings["Node"] = "Node";
 localizedStrings["Node Removed @ DOM Breakpoint"] = "Node Removed";
 localizedStrings["Nodes"] = "Nodes";
 localizedStrings["None"] = "None";
+/* Label for a preference that is turned none. */
+localizedStrings["None @ User Preferences Overrides"] = "None";
 /* Property value for any `normal` CSS value. */
 localizedStrings["Normal @ Font Details Sidebar Property Value"] = "Normal";
 localizedStrings["Not found"] = "Not found";
