@@ -509,7 +509,7 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, M
     , m_frontFace(frontFace)
     , m_cullMode(cullMode)
     , m_depthStencilDescriptor(depthStencilDescriptor)
-    , m_depthStencilState([device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor])
+    , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
     , m_pipelineLayout(&pipelineLayout)
     , m_vertexShaderInputBufferCount(vertexShaderInputBufferCount)
 {
