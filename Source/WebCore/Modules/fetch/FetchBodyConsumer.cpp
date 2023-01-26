@@ -193,7 +193,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         return std::nullopt;
     };
 
-    auto form = DOMFormData::create(PAL::UTF8Encoding());
+    auto form = DOMFormData::create(context, PAL::UTF8Encoding());
     auto mimeType = parseMIMEType(contentType);
     if (auto multipartBoundary = parseMultipartBoundary(mimeType)) {
         auto boundaryWithDashes = makeString("--", *multipartBoundary);

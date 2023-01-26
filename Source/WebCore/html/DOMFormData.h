@@ -41,7 +41,7 @@ namespace WebCore {
 template<typename> class ExceptionOr;
 class HTMLFormElement;
 
-class DOMFormData : public RefCounted<DOMFormData> {
+class DOMFormData : public RefCounted<DOMFormData>, public ContextDestructionObserver {
 public:
     using FormDataEntryValue = std::variant<RefPtr<File>, String>;
 
@@ -50,8 +50,8 @@ public:
         FormDataEntryValue data;
     };
 
-    static ExceptionOr<Ref<DOMFormData>> create(HTMLFormElement*);
-    static Ref<DOMFormData> create(const PAL::TextEncoding&);
+    static ExceptionOr<Ref<DOMFormData>> create(ScriptExecutionContext&, HTMLFormElement*);
+    static Ref<DOMFormData> create(ScriptExecutionContext*, const PAL::TextEncoding&);
 
     const Vector<Item>& items() const { return m_items; }
     const PAL::TextEncoding& encoding() const { return m_encoding; }
@@ -78,7 +78,7 @@ public:
     Iterator createIterator(ScriptExecutionContext*) { return Iterator { *this }; }
 
 private:
-    explicit DOMFormData(const PAL::TextEncoding& = PAL::UTF8Encoding());
+    explicit DOMFormData(ScriptExecutionContext*, const PAL::TextEncoding& = PAL::UTF8Encoding());
 
     void set(const String& name, Item&&);
 

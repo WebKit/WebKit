@@ -210,7 +210,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     }
 
     auto dataEncoding = isMailtoForm ? PAL::UTF8Encoding() : encodingFromAcceptCharset(copiedAttributes.acceptCharset(), document);
-    auto domFormData = DOMFormData::create(dataEncoding.encodingForFormSubmissionOrURLParsing());
+    auto domFormData = DOMFormData::create(&document, dataEncoding.encodingForFormSubmissionOrURLParsing());
     StringPairVector formValues;
 
     auto result = form.constructEntryList(submitter.copyRef(), WTFMove(domFormData), &formValues);
