@@ -145,7 +145,7 @@ auto SearchInputType::handleKeydownEvent(KeyboardEvent& event) -> ShouldCallBase
     const String& key = event.keyIdentifier();
     if (key == "U+001B"_s) {
         Ref<HTMLInputElement> protectedInputElement(*element());
-        protectedInputElement->setValueForUser(emptyString());
+        protectedInputElement->setValue(emptyString(), DispatchChangeEvent);
         protectedInputElement->onSearch();
         event.setDefaultHandled();
         return ShouldCallBaseEventHandler::Yes;
