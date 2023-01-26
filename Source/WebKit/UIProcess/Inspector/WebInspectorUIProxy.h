@@ -131,7 +131,7 @@ public:
 
 #if PLATFORM(MAC)
     enum class InspectionTargetType { Local, Remote };
-    static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType);
+    static RetainPtr<NSWindow> createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType, WebPageProxy* inspectedPage = nullptr);
     static void showSavePanel(NSWindow *, NSURL *, Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool forceSaveAs, CompletionHandler<void(NSURL *)>&&);
 
     void didBecomeActive();
@@ -140,7 +140,6 @@ public:
     void inspectedViewFrameDidChange(CGFloat = 0);
     void windowFrameDidChange();
     void windowFullScreenDidChange();
-    NSWindow *inspectorWindow() const { return m_inspectorWindow.get(); }
 
     void closeFrontendPage();
     void closeFrontendAfterInactivityTimerFired();

@@ -24,16 +24,11 @@
  */
 
 #import "config.h"
-#import "_WKInspectorWindow.h"
+#import "_WKInspectorWindowInternal.h"
 
 #if PLATFORM(MAC)
 
 @implementation _WKInspectorWindow
-
-- (BOOL)isForRemoteTarget
-{
-    return _forRemoteTarget;
-}
 
 @end
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/_WKInspectorWindow.h>
 
 #if !TARGET_OS_IPHONE
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WKWebView;
+@interface _WKInspectorWindow ()
 
-WK_CLASS_AVAILABLE(macos(10.15))
-@interface _WKInspectorWindow : NSWindow
-
-@property (nonatomic, readonly, getter=isForRemoteTarget) BOOL forRemoteTarget;
-@property (nonatomic, nullable, readonly, weak) WKWebView *inspectedWebView WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readwrite, getter=isForRemoteTarget) BOOL forRemoteTarget;
+@property (nonatomic, nullable, readwrite, weak) WKWebView *inspectedWebView;
 
 @end
 
 NS_ASSUME_NONNULL_END
 
-#endif
+#endif // !TARGET_OS_IPHONE

@@ -5745,6 +5745,7 @@
 		63C32C231E9810D900699BD0 /* _WKGeolocationPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKGeolocationPosition.mm; sourceTree = "<group>"; };
 		63C32C241E9810D900699BD0 /* _WKGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPosition.h; sourceTree = "<group>"; };
 		63C32C271E98119000699BD0 /* _WKGeolocationPositionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationPositionInternal.h; sourceTree = "<group>"; };
+		63DCF6AF2980C0E50016E213 /* _WKInspectorWindowInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKInspectorWindowInternal.h; sourceTree = "<group>"; };
 		63FABE191E970D65003011D5 /* _WKGeolocationCoreLocationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKGeolocationCoreLocationProvider.h; sourceTree = "<group>"; };
 		650994DF28C942B7006EE6DB /* com.apple.WebKit.WebContent.Crashy.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.WebContent.Crashy.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageResourceLoadClient.cpp; sourceTree = "<group>"; };
@@ -10270,6 +10271,7 @@
 				99996A9E25004BCB004F7559 /* _WKInspectorTesting.mm */,
 				A5C0F0AA2000656E00536536 /* _WKInspectorWindow.h */,
 				A5C0F0A92000656E00536536 /* _WKInspectorWindow.mm */,
+				63DCF6AF2980C0E50016E213 /* _WKInspectorWindowInternal.h */,
 				31B362942141EBAD007BFA53 /* _WKInternalDebugFeature.h */,
 				31B362922141EBAC007BFA53 /* _WKInternalDebugFeature.mm */,
 				2D790A9C1AD7050D00AB90B3 /* _WKLayoutMode.h */,

@@ -43,7 +43,7 @@
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorInternal.h"
-#import "_WKInspectorWindow.h"
+#import "_WKInspectorWindowInternal.h"
 #import <SecurityInterface/SFCertificatePanel.h>
 #import <SecurityInterface/SFCertificateView.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
@@ -356,7 +356,7 @@ void WebInspectorUIProxy::updateInspectorWindowTitle() const
     }
 }
 
-RetainPtr<NSWindow> WebInspectorUIProxy::createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType targetType)
+RetainPtr<NSWindow> WebInspectorUIProxy::createFrontendWindow(NSRect savedWindowFrame, InspectionTargetType targetType, WebPageProxy* inspectedPage)
 {
     NSRect windowFrame = !NSIsEmptyRect(savedWindowFrame) ? savedWindowFrame : NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight);
     auto window = adoptNS([[_WKInspectorWindow alloc] initWithContentRect:windowFrame styleMask:windowStyleMask backing:NSBackingStoreBuffered defer:NO]);
@@ -366,6 +366,9 @@ RetainPtr<NSWindow> WebInspectorUIProxy::createFrontendWindow(NSRect savedWindow
 
     bool forRemoteTarget = targetType == InspectionTargetType::Remote;
     [window setForRemoteTarget:forRemoteTarget];
+
+    if (inspectedPage)
+        [window setInspectedWebView:inspectedPage->cocoaView().get()];
 
     CGFloat approximatelyHalfScreenSize = ([window screen].frame.size.width / 2) - 4;
     CGFloat minimumFullScreenWidth = std::max<CGFloat>(636, approximatelyHalfScreenSize);
@@ -473,7 +476,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
         savedWindowFrame = NSRectFromString(savedWindowFrameString);
     }
 
-    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local);
+    m_inspectorWindow = WebInspectorUIProxy::createFrontendWindow(savedWindowFrame, InspectionTargetType::Local, inspectedPage());
     [m_inspectorWindow setDelegate:m_objCAdapter.get()];
 
     WKWebView *inspectorView = [m_inspectorViewController webView];
