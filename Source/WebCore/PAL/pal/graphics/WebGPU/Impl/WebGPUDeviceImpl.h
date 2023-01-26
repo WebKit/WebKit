@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,6 @@ private:
     Ref<Buffer> createBuffer(const BufferDescriptor&) final;
     Ref<Texture> createTexture(const TextureDescriptor&) final;
     Ref<Texture> createSurfaceTexture(const TextureDescriptor&, const Surface&) final;
-    Ref<Surface> createSurface(const SurfaceDescriptor&) final;
     Ref<SwapChain> createSwapChain(const Surface&, const SwapChainDescriptor&) final;
     Ref<Sampler> createSampler(const SamplerDescriptor&) final;
     Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) final;

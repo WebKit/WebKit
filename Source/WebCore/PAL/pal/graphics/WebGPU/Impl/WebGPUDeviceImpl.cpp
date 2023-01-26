@@ -164,22 +164,6 @@ Ref<Texture> DeviceImpl::createSurfaceTexture(const TextureDescriptor& descripto
     return TextureImpl::create(wgpuDeviceCreateTexture(backing(), &backingDescriptor), descriptor.format, descriptor.dimension, m_convertToBackingContext);
 }
 
-Ref<Surface> DeviceImpl::createSurface(const SurfaceDescriptor& descriptor)
-{
-    auto label = descriptor.label.utf8();
-
-    WGPUSurfaceDescriptorCocoaCustomSurface cocoaSurface {
-        { nullptr, static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking) },
-    };
-
-    WGPUSurfaceDescriptor surfaceDescriptor {
-        &cocoaSurface.chain,
-        label.data()
-    };
-
-    return SurfaceImpl::create(wgpuInstanceCreateSurface(nullptr, &surfaceDescriptor), m_convertToBackingContext);
-}
-
 Ref<SwapChain> DeviceImpl::createSwapChain(const Surface& surface, const SwapChainDescriptor& descriptor)
 {
     auto label = descriptor.label.utf8();

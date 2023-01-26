@@ -55,22 +55,23 @@ static IntSize getCanvasSizeAsIntSize(const GPUCanvasContext::CanvasType& canvas
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
 
-std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
+std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas, GPU& gpu)
 {
-    auto context = GPUCanvasContextCocoa::create(canvas);
+    auto context = GPUCanvasContextCocoa::create(canvas, gpu);
     if (context)
         context->suspendIfNeeded();
     return context;
 }
 
-std::unique_ptr<GPUCanvasContextCocoa> GPUCanvasContextCocoa::create(CanvasBase& canvas)
+std::unique_ptr<GPUCanvasContextCocoa> GPUCanvasContextCocoa::create(CanvasBase& canvas, GPU& gpu)
 {
-    return std::unique_ptr<GPUCanvasContextCocoa>(new GPUCanvasContextCocoa(canvas));
+    return std::unique_ptr<GPUCanvasContextCocoa>(new GPUCanvasContextCocoa(canvas, gpu));
 }
 
-GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas)
+GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
+    , m_gpu(gpu)
 {
 }
 
@@ -109,7 +110,7 @@ void GPUCanvasContextCocoa::createSwapChainIfNeeded()
         // FIXME: Include the CompositorIntegration here.
     };
 
-    m_surface = m_configuration->device->createSurface(surfaceDescriptor);
+    m_surface = m_gpu->createSurface(surfaceDescriptor);
     ASSERT(m_surface);
 
     GPUSwapChainDescriptor descriptor = {

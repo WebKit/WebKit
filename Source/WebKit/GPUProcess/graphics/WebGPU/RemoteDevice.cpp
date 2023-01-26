@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,18 +120,6 @@ void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebG
     auto buffer = m_backing->createBuffer(*convertedDescriptor);
     auto remoteBuffer = RemoteBuffer::create(buffer, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteBuffer);
-}
-
-void RemoteDevice::createSurface(const WebGPU::SurfaceDescriptor& descriptor, WebGPUIdentifier identifier)
-{
-    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
-
-    auto surface = m_backing->createSurface(*convertedDescriptor);
-    auto remoteSurface = RemoteSurface::create(surface, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteSurface);
 }
 
 void RemoteDevice::createSwapChain(WebGPUIdentifier surfaceIdentifier, const WebGPU::SwapChainDescriptor& descriptor, WebGPUIdentifier identifier)

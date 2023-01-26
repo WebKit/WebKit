@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,7 +98,6 @@ private:
     void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
     void createSurfaceTexture(WebGPUIdentifier, const WebGPU::TextureDescriptor&, WebGPUIdentifier);
-    void createSurface(const WebGPU::SurfaceDescriptor&, WebGPUIdentifier);
     void createSwapChain(WebGPUIdentifier, const WebGPU::SwapChainDescriptor&, WebGPUIdentifier);
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
     void importExternalTexture(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);

@@ -52,7 +52,7 @@ public:
     using CanvasType = std::variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
-    static std::unique_ptr<GPUCanvasContext> create(CanvasBase&);
+    static std::unique_ptr<GPUCanvasContext> create(CanvasBase&, GPU&);
 
     virtual CanvasType canvas() = 0;
     virtual void configure(GPUCanvasConfiguration&&) = 0;

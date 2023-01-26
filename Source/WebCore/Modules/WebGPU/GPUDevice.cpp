@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,11 +124,6 @@ Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDesc
 Ref<GPUTexture> GPUDevice::createSurfaceTexture(const GPUTextureDescriptor& textureDescriptor, const GPUSurface& surface)
 {
     return GPUTexture::create(m_backing->createSurfaceTexture(textureDescriptor.convertToBacking(), surface.backing()));
-}
-
-Ref<GPUSurface> GPUDevice::createSurface(const GPUSurfaceDescriptor& surfaceDescriptor)
-{
-    return GPUSurface::create(m_backing->createSurface(surfaceDescriptor.convertToBacking()));
 }
 
 Ref<GPUSwapChain> GPUDevice::createSwapChain(const GPUSurface& surface, const GPUSwapChainDescriptor& swapChainDescriptor)

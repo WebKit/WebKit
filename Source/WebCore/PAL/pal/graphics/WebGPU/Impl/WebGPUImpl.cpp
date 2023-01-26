@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@
 
 #include "WebGPUAdapterImpl.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
+#include "WebGPUSurfaceDescriptor.h"
+#include "WebGPUSurfaceImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 
@@ -58,6 +60,22 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
     wgpuInstanceRequestAdapterWithBlock(m_backing, &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus, WGPUAdapter adapter, const char*) mutable {
         callback(AdapterImpl::create(adapter, convertToBackingContext));
     }).get());
+}
+
+Ref<Surface> GPUImpl::createSurface(const SurfaceDescriptor& descriptor)
+{
+    auto label = descriptor.label.utf8();
+
+    WGPUSurfaceDescriptorCocoaCustomSurface cocoaSurface {
+        { nullptr, static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking) },
+    };
+
+    WGPUSurfaceDescriptor surfaceDescriptor {
+        &cocoaSurface.chain,
+        label.data()
+    };
+
+    return SurfaceImpl::create(wgpuInstanceCreateSurface(nullptr, &surfaceDescriptor), m_convertToBackingContext);
 }
 
 } // namespace PAL::WebGPU

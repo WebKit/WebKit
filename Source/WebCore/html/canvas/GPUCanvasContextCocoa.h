@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GPU.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUCanvasConfiguration.h"
 #include "GPUCanvasContext.h"
@@ -99,7 +100,7 @@ public:
     using CanvasType = std::variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
-    static std::unique_ptr<GPUCanvasContextCocoa> create(CanvasBase&);
+    static std::unique_ptr<GPUCanvasContextCocoa> create(CanvasBase&, GPU&);
 
     DestinationColorSpace colorSpace() const override;
     bool compositingResultsNeedUpdating() const override { return m_compositingResultsNeedsUpdating; }
@@ -125,7 +126,7 @@ public:
     }
 
 private:
-    explicit GPUCanvasContextCocoa(CanvasBase&);
+    explicit GPUCanvasContextCocoa(CanvasBase&, GPU&);
 
     void markContextChangedAndNotifyCanvasObservers();
     void createSwapChainIfNeeded();
@@ -134,6 +135,7 @@ private:
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     RefPtr<GPUSwapChain> m_swapChain;
     RefPtr<GPUSurface> m_surface;
+    Ref<GPU> m_gpu; // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251067 We shouldn't need to retain this.
 
     int m_width { 0 };
     int m_height { 0 };
