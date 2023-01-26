@@ -45,7 +45,6 @@
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
-#import <pal/spi/mac/MediaRemoteSPI.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/WTFString.h>
 
@@ -1269,83 +1268,6 @@ TEST(WebKit2, DoNotUnmuteWhenTakingAThumbnail)
     EXPECT_TRUE(cameraCaptureState == WKMediaCaptureStateMuted);
 }
 #endif
-
-#if WK_HAVE_C_SPI
-TEST(WebKit2, WebRTCAndRemoteCommands)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
-    configuration.get().processPool = (WKProcessPool *)context.get();
-    configuration.get().processPool._configuration.shouldCaptureAudioInUIProcess = NO;
-
-    initializeMediaCaptureConfiguration(configuration.get());
-
-    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
-    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
-
-    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-    [webView _setMediaCaptureReportingDelayForTesting:0];
-
-    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
-    [webView addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
-    [webView addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
-
-    cameraCaptureStateChange = false;
-    microphoneCaptureStateChange = false;
-
-    done = false;
-    [webView loadTestPageNamed:@"webrtc-remote"];
-
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
-
-    done = false;
-    [webView stringByEvaluatingJavaScript:@"startTest()"];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    cameraCaptureStateChange = false;
-    microphoneCaptureStateChange = false;
-    [webView stringByEvaluatingJavaScript:@"sendCommand('pause')"];
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
-
-    [webView stringByEvaluatingJavaScript:@"sendCommand('play')"];
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
-
-    [webView stringByEvaluatingJavaScript:@"sendCommand('toggleplaypause')"];
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
-
-    [webView stringByEvaluatingJavaScript:@"sendCommand('toggleplaypause')"];
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
-
-    done = false;
-    // register handlers will catch commands, so capture should not muted.
-    [webView stringByEvaluatingJavaScript:@"registerHandlers()"];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    [webView stringByEvaluatingJavaScript:@"sendCommand('pause')"];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
-
-    [webView stringByEvaluatingJavaScript:@"sendCommand('play')"];
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
-}
-#endif // WK_HAVE_C_SPI
 
 } // namespace TestWebKitAPI
 

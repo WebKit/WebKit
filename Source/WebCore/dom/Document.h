@@ -1525,7 +1525,6 @@ public:
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
     void stopMediaCapture(MediaProducerMediaCaptureKind);
     void mediaStreamCaptureStateChanged();
-    size_t activeMediaElementsWithMediaStreamCount() const { return m_activeMediaElementsWithMediaStreamCount; }
 #endif
 
 // FIXME: Find a better place for this functionality.
@@ -2266,7 +2265,6 @@ private:
 #if ENABLE(MEDIA_STREAM)
     String m_idHashSalt;
     bool m_hasHadCaptureMediaStreamTrack { false };
-    size_t m_activeMediaElementsWithMediaStreamCount { 0 };
 #endif
 
 #if ASSERT_ENABLED
