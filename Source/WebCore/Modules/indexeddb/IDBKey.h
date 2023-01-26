@@ -144,11 +144,6 @@ public:
 
     size_t sizeEstimate() const { return m_sizeEstimate; }
 
-    static int compareTypes(IndexedDB::KeyType a, IndexedDB::KeyType b)
-    {
-        return b - a;
-    }
-
     using RefCounted<IDBKey>::ref;
     using RefCounted<IDBKey>::deref;
 

@@ -120,6 +120,12 @@ public:
 
     Test()
     {
+#if ENABLE(2022_GLIB_API)
+        m_networkSession = adoptGRef(webkit_network_session_new(dataDirectory(), dataDirectory()));
+        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_networkSession.get()));
+
+        m_webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, "memory-pressure-settings", s_memoryPressureSettings, nullptr)));
+#else
         GRefPtr<WebKitWebsiteDataManager> websiteDataManager = adoptGRef(webkit_website_data_manager_new(
             "base-data-directory", dataDirectory(),
             "base-cache-directory", dataDirectory(),
@@ -127,12 +133,13 @@ public:
 
         m_webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT,
             "website-data-manager", websiteDataManager.get(),
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK)
             "process-swap-on-cross-site-navigation-enabled", TRUE,
             "use-system-appearance-for-scrollbars", FALSE,
 #endif
             "memory-pressure-settings", s_memoryPressureSettings,
             nullptr)));
+#endif
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webContext.get()));
         g_signal_connect(m_webContext.get(), "initialize-web-extensions", G_CALLBACK(initializeWebExtensionsCallback), this);
     }
@@ -141,6 +148,9 @@ public:
     {
         g_signal_handlers_disconnect_matched(m_webContext.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
         m_webContext = nullptr;
+#if ENABLE(2022_GLIB_API)
+        m_networkSession = nullptr;
+#endif
         if (m_watchedObjects.isEmpty())
             return;
 
@@ -282,6 +292,9 @@ public:
 
     HashSet<GObject*> m_watchedObjects;
     GRefPtr<WebKitWebContext> m_webContext;
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> m_networkSession;
+#endif
     static GRefPtr<GDBusServer> s_dbusServer;
     static Vector<GRefPtr<GDBusConnection>> s_dbusConnections;
     static HashMap<uint64_t, GDBusConnection*> s_dbusConnectionPageMap;

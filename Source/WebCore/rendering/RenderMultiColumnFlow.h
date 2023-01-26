@@ -48,7 +48,7 @@ public:
     static RenderBox* nextColumnSetOrSpannerSiblingOf(const RenderBox*);
     static RenderBox* previousColumnSetOrSpannerSiblingOf(const RenderBox*);
 
-    RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(RenderBox* spanner) const;
+    RenderMultiColumnSpannerPlaceholder* findColumnSpannerPlaceholder(const RenderBox* spanner) const;
 
     void layout() override;
 
@@ -95,7 +95,7 @@ public:
     // FIXME: Eventually as column and fragment flow threads start nesting, this will end up changing.
     bool shouldCheckColumnBreaks() const override;
 
-    typedef HashMap<RenderBox*, WeakPtr<RenderMultiColumnSpannerPlaceholder>> SpannerMap;
+    typedef HashMap<const RenderBox*, WeakPtr<RenderMultiColumnSpannerPlaceholder>> SpannerMap;
     SpannerMap& spannerMap() { return *m_spannerMap; }
 
 private:

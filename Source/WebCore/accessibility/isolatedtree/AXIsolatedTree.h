@@ -359,7 +359,7 @@ private:
     void queueRemovalsAndUnresolvedChanges(Vector<AXID>&&);
 
     unsigned m_maxTreeDepth { 0 };
-    AXObjectCache* m_axObjectCache { nullptr };
+    WeakPtr<AXObjectCache> m_axObjectCache;
     bool m_usedOnAXThread { true };
 
     // Stores the parent ID and children IDS for a given IsolatedObject.
@@ -407,7 +407,7 @@ private:
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const
 {
     ASSERT(isMainThread());
-    return m_axObjectCache;
+    return m_axObjectCache.get();
 }
 
 inline RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(std::optional<PageIdentifier> pageID)

@@ -142,7 +142,7 @@ bool GStreamerMediaEndpoint::initializePipeline()
         });
     }), this);
 
-    if (webkitGstCheckVersion(1, 21, 0)) {
+    if (webkitGstCheckVersion(1, 22, 0)) {
         g_signal_connect_swapped(m_webrtcBin.get(), "prepare-data-channel", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDataChannel* channel, gboolean isLocal) {
             endPoint->prepareDataChannel(channel, isLocal);
         }), this);
@@ -1033,7 +1033,7 @@ void GStreamerMediaEndpoint::prepareDataChannel(GstWebRTCDataChannel* dataChanne
 
 UniqueRef<GStreamerDataChannelHandler> GStreamerMediaEndpoint::findOrCreateIncomingChannelHandler(GRefPtr<GstWebRTCDataChannel>&& dataChannel)
 {
-    if (!webkitGstCheckVersion(1, 21, 0))
+    if (!webkitGstCheckVersion(1, 22, 0))
         return makeUniqueRef<GStreamerDataChannelHandler>(WTFMove(dataChannel));
 
     auto identifier = makeObjectIdentifier<GstWebRTCDataChannel>(reinterpret_cast<uintptr_t>(dataChannel.get()));

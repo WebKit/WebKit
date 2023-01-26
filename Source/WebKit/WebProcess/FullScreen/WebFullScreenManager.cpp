@@ -40,6 +40,7 @@
 #include <WebCore/FrameView.h>
 #include <WebCore/FullscreenManager.h>
 #include <WebCore/HTMLVideoElement.h>
+#include <WebCore/JSDOMPromiseDeferred.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderView.h>

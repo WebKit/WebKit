@@ -52,13 +52,21 @@ void WebViewTest::initializeWebView()
 {
     g_assert_null(m_webView);
 
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> networkSession = shouldCreateEphemeralWebView ? adoptGRef(webkit_network_session_new_ephemeral()) : m_networkSession;
+#endif
+
     m_webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
 #if PLATFORM(WPE)
         "backend", Test::createWebViewBackend(),
 #endif
         "web-context", m_webContext.get(),
         "user-content-manager", m_userContentManager.get(),
+#if ENABLE(2022_GLIB_API)
+        "network-session", networkSession.get(),
+#else
         "is-ephemeral", shouldCreateEphemeralWebView,
+#endif
         nullptr));
 
     platformInitializeWebView();

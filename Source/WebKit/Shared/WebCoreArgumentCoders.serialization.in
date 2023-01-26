@@ -252,6 +252,36 @@ struct WebCore::IDBDatabaseNameAndVersion {
     std::variant<Vector<WebCore::IDBKeyData>, String, double, WebCore::ThreadSafeDataBuffer> m_value;
 }
 
+enum class WebCore::IndexedDB::KeyType : int8_t {
+    Max,
+    Invalid,
+    Array,
+    Binary,
+    String,
+    Date,
+    Number,
+    Min,
+};
+
+enum class WebCore::IndexedDB::CursorDirection : uint8_t {
+    Next,
+    Nextunique,
+    Prev,
+    Prevunique,
+};
+
+enum class WebCore::IndexedDB::ObjectStoreOverwriteMode : uint8_t {
+    Overwrite,
+    OverwriteForCursor,
+    NoOverwrite,
+};
+
+enum class WebCore::IndexedDB::RequestType : uint8_t {
+    Open,
+    Delete,
+    Other,
+};
+
 #if USE(CG)
 headers: <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
 [AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
@@ -1590,12 +1620,6 @@ struct WebCore::DataListSuggestionInformation {
 };
 #endif
 
-struct WebCore::SecurityOriginData {
-    [Validator='!protocol->isHashTableDeletedValue()'] String protocol;
-    String host;
-    std::optional<uint16_t> port;
-};
-
 struct WebCore::ClientOrigin {
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData clientOrigin;
@@ -2163,6 +2187,18 @@ enum class WebCore::UserVerificationRequirement : uint8_t {
     Preferred,
     Discouraged
 };
+
+enum class WebCore::ResidentKeyRequirement : uint8_t {
+    Required,
+    Preferred,
+    Discouraged
+};
+
+enum class WebCore::AuthenticatorAttachment : uint8_t {
+    Platform,
+    CrossPlatform
+};
+
 #endif // ENABLE(WEB_AUTHN)
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -2668,7 +2704,6 @@ struct WebCore::SameSiteInfo {
     WebCore::SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
-    Markable<WebCore::OpaqueOriginIdentifier, WebCore::OpaqueOriginIdentifier::MarkableTraits> m_opaqueOriginIdentifier;
     bool m_universalAccess;
     bool m_domainWasSetInDOM;
     bool m_canLoadLocalResources;
@@ -2894,3 +2929,97 @@ header: <WebCore/TextManipulationController.h>
 };
 
 using WebCore::SharedStringHash = uint32_t
+
+struct WebCore::FourCC {
+    uint32_t value;
+};
+
+header: <WebCore/MediaPlayer.h>
+[CustomHeader] struct WebCore::MediaEngineSupportParameters {
+    WebCore::ContentType type;
+    URL url;
+    bool isMediaSource;
+    bool isMediaStream;
+    bool requiresRemotePlayback;
+    Vector<WebCore::ContentType> contentTypesRequiringHardwareSupport;
+    std::optional<Vector<String>> allowedMediaContainerTypes;
+    std::optional<Vector<String>> allowedMediaCodecTypes;
+    std::optional<Vector<WebCore::FourCC>> allowedMediaVideoCodecIDs;
+    std::optional<Vector<WebCore::FourCC>> allowedMediaAudioCodecIDs;
+    std::optional<Vector<WebCore::FourCC>> allowedMediaCaptionFormatTypes;
+};
+
+enum class WebCore::MediaPlayerNetworkState : uint8_t {
+    Empty,
+    Idle,
+    Loading,
+    Loaded,
+    FormatError,
+    NetworkError,
+    DecodeError
+};
+
+enum class WebCore::MediaPlayerReadyState : uint8_t {
+    HaveNothing,
+    HaveMetadata,
+    HaveCurrentData,
+    HaveFutureData,
+    HaveEnoughData
+};
+
+enum class WebCore::MediaPlayerMovieLoadType : uint8_t {
+    Unknown,
+    Download,
+    StoredStream,
+    LiveStream
+};
+
+enum class WebCore::MediaPlayerPreload : uint8_t {
+    None,
+    MetaData,
+    Auto
+};
+
+enum class WebCore::MediaPlayerVideoGravity : uint8_t {
+    Resize,
+    ResizeAspect,
+    ResizeAspectFill
+};
+
+enum class WebCore::MediaPlayerSupportsType : uint8_t {
+    IsNotSupported,
+    IsSupported,
+    MayBeSupported
+};
+
+enum class WebCore::MediaPlayerBufferingPolicy : uint8_t {
+    Default,
+    LimitReadAhead,
+    MakeResourcesPurgeable,
+    PurgeResources,
+};
+
+enum class WebCore::MediaPlayerMediaEngineIdentifier : uint8_t {
+    AVFoundation,
+    AVFoundationMSE,
+    AVFoundationMediaStream,
+    AVFoundationCF,
+    GStreamer,
+    GStreamerMSE,
+    HolePunch,
+    MediaFoundation,
+    MockMSE,
+    CocoaWebM
+};
+
+enum class WebCore::MediaPlayerWirelessPlaybackTargetType : uint8_t {
+    TargetTypeNone,
+    TargetTypeAirPlay,
+    TargetTypeTVOut
+};
+
+enum class WebCore::MediaPlayerPitchCorrectionAlgorithm : uint8_t {
+    BestAllAround,
+    BestForMusic,
+    BestForSpeech,
+};

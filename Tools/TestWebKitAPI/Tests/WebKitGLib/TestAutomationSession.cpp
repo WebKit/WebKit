@@ -340,6 +340,12 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
         nullptr));
     g_assert_true(webkit_web_view_is_controlled_by_automation(webView.get()));
     g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(webView.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW);
+#if ENABLE(2022_GLIB_API)
+    // Automation session has its own ephemeral session.
+    auto* networkSession = webkit_web_view_get_network_session(webView.get());
+    g_assert_false(networkSession == test->m_networkSession.get());
+    g_assert_true(webkit_network_session_is_ephemeral(networkSession));
+#endif
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
 
     auto newWebViewInWindow = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
@@ -347,10 +353,17 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
         "backend", Test::createWebViewBackend(),
 #endif
         "web-context", test->m_webContext.get(),
+#if ENABLE(2022_GLIB_API)
+        // Check also here that network session property is ignored when is-controlled-by-automation is true.
+        "network-session", test->m_networkSession.get(),
+#endif
         "is-controlled-by-automation", TRUE,
         nullptr));
     g_assert_true(webkit_web_view_is_controlled_by_automation(newWebViewInWindow.get()));
     g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(newWebViewInWindow.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW);
+#if ENABLE(2022_GLIB_API)
+    g_assert_true(webkit_web_view_get_network_session(newWebViewInWindow.get()) == networkSession);
+#endif
     g_assert_true(test->createNewWindow(newWebViewInWindow.get()));
 
     auto newWebViewInTab = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,

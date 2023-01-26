@@ -22,15 +22,13 @@
 #if USE(GSTREAMER) && ENABLE(VIDEO)
 
 #include "GStreamerCommon.h"
+#include "GStreamerElementHarness.h"
 #include "ImageDecoder.h"
 #include "MIMETypeRegistry.h"
 #include "SampleMap.h"
 #include "SharedBuffer.h"
-#include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
-#include <wtf/RunLoop.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -76,51 +74,9 @@ public:
     bool isAllDataReceived() const final { return m_eos; }
     void clearFrameBufferCache(size_t) final;
 
-    void setHasEOS();
-    void notifySample(GRefPtr<GstSample>&&);
-
 private:
-    class InnerDecoder : public ThreadSafeRefCounted<InnerDecoder>, public CanMakeWeakPtr<InnerDecoder> {
-        WTF_MAKE_FAST_ALLOCATED;
-        WTF_MAKE_NONCOPYABLE(InnerDecoder);
-    public:
-        static RefPtr<InnerDecoder> create(ImageDecoderGStreamer& decoder, const uint8_t* data, gssize size)
-        {
-            return adoptRef(*new InnerDecoder(decoder, data, size));
-        }
-
-        InnerDecoder(ImageDecoderGStreamer& decoder, const uint8_t* data, gssize size)
-            : m_decoder(decoder)
-            , m_runLoop(RunLoop::current())
-        {
-            m_memoryStream = adoptGRef(g_memory_input_stream_new_from_data(data, size, nullptr));
-        }
-
-        ~InnerDecoder();
-
-        void run();
-        EncodedDataStatus encodedDataStatus() const;
-
-    private :
-        static void decodebinPadAddedCallback(ImageDecoderGStreamer::InnerDecoder*, GstPad*);
-        void handleMessage(GstMessage*);
-        void preparePipeline();
-        void connectDecoderPad(GstPad*);
-
-        ImageDecoderGStreamer& m_decoder;
-        GRefPtr<GstElement> m_pipeline;
-        GRefPtr<GInputStream> m_memoryStream;
-        GRefPtr<GstElement> m_decodebin;
-        RunLoop& m_runLoop;
-
-        Condition m_messageCondition;
-        Lock m_messageLock;
-        bool m_messageDispatched WTF_GUARDED_BY_LOCK(m_messageLock) { false };
-    };
-
-    void handleSample(GRefPtr<GstSample>&&);
     void pushEncodedData(const FragmentedSharedBuffer&);
-
+    void storeDecodedSample(GRefPtr<GstSample>&&);
     const ImageDecoderGStreamerSample* sampleAtIndex(size_t) const;
 
     Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
@@ -130,12 +86,10 @@ private:
     bool m_eos { false };
     std::optional<IntSize> m_size;
     String m_mimeType;
-    RefPtr<ImageDecoderGStreamer::InnerDecoder> m_innerDecoder;
-    Condition m_sampleCondition;
-    Lock m_sampleLock;
-    GRefPtr<GstSample> m_sample WTF_GUARDED_BY_LOCK(m_sampleLock);
-    Condition m_handlerCondition;
-    Lock m_handlerLock;
+
+    RefPtr<GStreamerElementHarness> m_decoderHarness;
 };
-}
-#endif
+
+} // namespace WebCore
+
+#endif // USE(GSTREAMER) && ENABLE(VIDEO)

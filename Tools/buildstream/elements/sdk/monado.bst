@@ -10,7 +10,7 @@ depends:
 - freedesktop-sdk.bst:components/vulkan-headers.bst
 - freedesktop-sdk.bst:components/vulkan-icd-loader.bst
 - sdk/eigen.bst
-- sdk/gst-plugins-base.bst
+- freedesktop-sdk.bst:components/gstreamer-plugins-base.bst
 
 public:
   bst:

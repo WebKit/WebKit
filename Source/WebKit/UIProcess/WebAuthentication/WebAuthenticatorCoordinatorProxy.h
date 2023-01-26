@@ -34,7 +34,7 @@
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
-enum class AuthenticatorAttachment;
+enum class AuthenticatorAttachment : uint8_t;
 struct ExceptionData;
 struct PublicKeyCredentialCreationOptions;
 struct AuthenticatorResponseData;

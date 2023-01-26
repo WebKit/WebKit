@@ -135,7 +135,7 @@ async function helloCube() {
                     device float *time [[id(0)]];
                 };
     
-                vertex Vertex vsmain(device Vertex *vertices [[buffer(0)]], device VertexShaderArguments &values [[buffer(1)]], unsigned VertexIndex [[vertex_id]])
+                vertex Vertex vsmain(device Vertex *vertices [[buffer(0)]], device VertexShaderArguments &values [[buffer(8)]], unsigned VertexIndex [[vertex_id]])
                 {
                     Vertex vout;
                     float alpha = values.time[0];
@@ -239,7 +239,7 @@ async function helloCube() {
         renderPassEncoder.setPipeline(renderPipeline);
         const vertexBufferSlot = 0;
         renderPassEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
-        renderPassEncoder.setBindGroup(1, uniformBindGroup);
+        renderPassEncoder.setBindGroup(0, uniformBindGroup);
         renderPassEncoder.drawIndirect(indirectBuffer, 0);
         renderPassEncoder.end();
         

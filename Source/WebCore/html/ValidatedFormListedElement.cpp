@@ -262,13 +262,11 @@ void ValidatedFormListedElement::updateValidity()
 
         if (willValidate) {
             if (!newIsValid) {
-                if (element.isConnected())
-                    addInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                addInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
                 if (auto* form = this->form())
                     form->addInvalidFormControl(element);
             } else {
-                if (element.isConnected())
-                    removeInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
+                removeInvalidElementToAncestorFromInsertionPoint(element, element.parentNode());
                 if (auto* form = this->form())
                     form->removeInvalidFormControlIfNeeded(element);
             }

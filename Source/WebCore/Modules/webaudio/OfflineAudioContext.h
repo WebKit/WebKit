@@ -26,7 +26,7 @@
 #pragma once
 
 #include "BaseAudioContext.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "OfflineAudioDestinationNode.h"
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>

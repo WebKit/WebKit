@@ -7,7 +7,6 @@ depends:
 - filtered.bst
 
 # replaced (patched) elements:
-- sdk/abseil-cpp.bst
 - sdk/adwaita-icon-theme.bst
 - sdk/apitrace.bst
 - sdk/breakpad.bst
@@ -16,19 +15,12 @@ depends:
 - sdk/ccls.bst
 - sdk/eigen.bst
 - sdk/enchant-2.bst
-- sdk/ffmpeg.bst
 - sdk/flite.bst
 - sdk/gi-docgen.bst
 - sdk/graphviz.bst
-- sdk/gst-libav.bst
 - sdk/gst-plugin-closedcaption.bst
 - sdk/gst-plugin-dav1d.bst
 - sdk/gst-plugin-rtp.bst
-- sdk/gst-plugins-bad.bst
-- sdk/gst-plugins-base.bst
-- sdk/gst-plugins-good.bst
-- sdk/gst-plugins-ugly.bst
-- sdk/gstreamer.bst
 - sdk/gtk+-3.bst
 - sdk/gtk.bst
 - sdk/icecc.bst
@@ -36,7 +28,6 @@ depends:
 - sdk/libavif.bst
 - sdk/libevent.bst
 - sdk/libjxl.bst
-- sdk/libkate.bst
 - sdk/libmanette.bst
 - sdk/libsecret.bst
 - sdk/libusrsctp.bst
@@ -53,10 +44,8 @@ depends:
 - sdk/sccache.bst
 - sdk/sparkle-cdm.bst
 - sdk/unifdef.bst
-- sdk/webrtc-audio-processing-1.bst
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst
-- sdk/x264.bst
 - sdk/xdg-dbus-proxy.bst
 - sdk/xorg-server.bst
 
@@ -104,6 +93,12 @@ depends:
 - freedesktop-sdk.bst:components/google-crosextra-carlito.bst
 - freedesktop-sdk.bst:components/gpgme.bst
 - freedesktop-sdk.bst:components/graphite2.bst
+- freedesktop-sdk.bst:components/gstreamer-libav.bst
+- freedesktop-sdk.bst:components/gstreamer-plugins-bad.bst
+- freedesktop-sdk.bst:components/gstreamer-plugins-base.bst
+- freedesktop-sdk.bst:components/gstreamer-plugins-good.bst
+- freedesktop-sdk.bst:components/gstreamer-plugins-ugly.bst
+- freedesktop-sdk.bst:components/gstreamer.bst
 - freedesktop-sdk.bst:components/gtk-doc.bst
 - freedesktop-sdk.bst:components/gzip.bst
 - freedesktop-sdk.bst:components/harfbuzz.bst

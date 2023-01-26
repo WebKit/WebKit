@@ -27,7 +27,8 @@
 
 #if ENABLE(WEBXR)
 
-#include "JSDOMPromiseDeferred.h"
+#include "EventTarget.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "WebFakeXRDevice.h"
 #include "XRSessionMode.h"
 #include "XRSimulateUserActivationFunction.h"
@@ -36,6 +37,7 @@
 
 namespace WebCore {
 
+class Document;
 class WebXRSystem;
 
 class WebXRTest final : public RefCounted<WebXRTest> {

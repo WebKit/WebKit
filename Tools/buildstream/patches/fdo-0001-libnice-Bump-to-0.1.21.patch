@@ -1,0 +1,25 @@
+From 38252abec6b732955f3dfa0b36a62dc5a885b131 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Tue, 24 Jan 2023 12:11:30 +0000
+Subject: [PATCH] libnice: Bump to 0.1.21
+
+gst-plugins-bad requires at least 0.1.20.
+---
+ elements/components/libnice.bst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/elements/components/libnice.bst b/elements/components/libnice.bst
+index 360a358cc..306a50ed7 100644
+--- a/elements/components/libnice.bst
++++ b/elements/components/libnice.bst
+@@ -28,5 +28,5 @@ variables:
+ sources:
+ - kind: git_tag
+   url: freedesktop:libnice/libnice.git
+-  track: master
+-  ref: 0.1.19-0-g64ef27e4847016568985f0f3c1fe4a4fb632e408
++  track: 0.1.21
++  ref: 0.1.21-0-g3d9cae16a5094aadb1651572644cb5786a8b4e2d
+-- 
+2.39.1
+

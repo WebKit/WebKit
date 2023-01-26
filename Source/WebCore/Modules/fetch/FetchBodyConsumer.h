@@ -30,7 +30,7 @@
 
 #include "FetchBodySource.h"
 #include "FormDataConsumer.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "ReadableStreamSink.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SharedBuffer.h"
@@ -48,7 +48,10 @@ class FetchBodyConsumer {
 public:
     enum class Type { None, ArrayBuffer, Blob, JSON, Text, FormData };
 
-    explicit FetchBodyConsumer(Type type) : m_type(type) { }
+    explicit FetchBodyConsumer(Type);
+    FetchBodyConsumer(FetchBodyConsumer&&);
+    ~FetchBodyConsumer();
+    FetchBodyConsumer& operator=(FetchBodyConsumer&&);
 
     FetchBodyConsumer clone();
 

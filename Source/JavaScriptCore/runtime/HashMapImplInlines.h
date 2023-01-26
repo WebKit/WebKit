@@ -273,7 +273,7 @@ ALWAYS_INLINE bool HashMapImpl<HashMapBucketType>::remove(JSGlobalObject* global
     key = normalizeMapKey(key);
     uint32_t hash = jsMapHash(globalObject, vm, key);
     RETURN_IF_EXCEPTION(scope, false);
-    return removeNormalized(globalObject, key, hash);
+    RELEASE_AND_RETURN(scope, removeNormalized(globalObject, key, hash));
 }
 
 template <typename HashMapBucketType>

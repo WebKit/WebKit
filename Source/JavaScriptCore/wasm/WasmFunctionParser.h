@@ -1427,7 +1427,7 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> Pa
 template<typename Context>
 auto FunctionParser<Context>::unify(const ControlType& controlData) -> PartialResult
 {
-    const TypeDefinition* typeDefinition = controlData.signature(); // just to avoid a weird compiler error with templates at the next line.
+    RefPtr<const TypeDefinition> typeDefinition = controlData.signature(); // just to avoid a weird compiler error with templates at the next line.
     const FunctionSignature* signature = typeDefinition->as<FunctionSignature>();
     WASM_VALIDATOR_FAIL_IF(signature->returnCount() != m_expressionStack.size(), " block with type: ", signature->toString(), " returns: ", signature->returnCount(), " but stack has: ", m_expressionStack.size(), " values");
     for (unsigned i = 0; i < signature->returnCount(); ++i)
@@ -2053,6 +2053,18 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         }
 
         m_expressionStack.constructAndAppend(Types::Funcref, result);
+        return { };
+    }
+
+    case RefAsNonNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
+        TypedExpression ref;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "ref.as_non_null");
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addRefAsNonNull(ref, result));
+
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
         return { };
     }
 
@@ -2942,6 +2954,10 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case RefFunc: {
         uint32_t unused;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get immediate for ", m_currentOpcode, " in unreachable context");
+        return { };
+    }
+
+    case RefAsNonNull: {
         return { };
     }
 

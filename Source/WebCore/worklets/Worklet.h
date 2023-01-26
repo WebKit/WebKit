@@ -28,7 +28,7 @@
 #include "ActiveDOMObject.h"
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "ScriptWrappable.h"
 #include "WorkletOptions.h"
 #include <wtf/HashSet.h>

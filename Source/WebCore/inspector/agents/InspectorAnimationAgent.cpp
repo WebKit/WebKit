@@ -229,6 +229,7 @@ InspectorAnimationAgent::InspectorAnimationAgent(PageAgentContext& context)
     , m_backendDispatcher(Inspector::AnimationBackendDispatcher::create(context.backendDispatcher, this))
     , m_injectedScriptManager(context.injectedScriptManager)
     , m_inspectedPage(context.inspectedPage)
+    , m_animationBindingTimer(*this, &InspectorAnimationAgent::animationBindingTimerFired)
     , m_animationDestroyedTimer(*this, &InspectorAnimationAgent::animationDestroyedTimerFired)
 {
 }
@@ -269,7 +270,7 @@ Protocol::ErrorStringOr<void> InspectorAnimationAgent::enable()
     {
         for (auto* animation : WebAnimation::instances()) {
             if (existsInCurrentPage(animation->scriptExecutionContext()))
-                bindAnimation(*animation, false);
+                bindAnimation(*animation, nullptr);
         }
     }
 
@@ -491,7 +492,17 @@ void InspectorAnimationAgent::didCreateWebAnimation(WebAnimation& animation)
         return;
     }
 
-    bindAnimation(animation, true);
+    // It is not safe in all cases to resolve animation properties while still resolving styles, so binding animations
+    // must be defered to prevent reentrancy into `WebCore::Document::updateStyleIfNeeded`.
+    m_animationsPendingBinding.set(animation, Inspector::createScriptCallStack(JSExecState::currentState())->buildInspectorObject());
+    if (!m_animationBindingTimer.isActive())
+        m_animationBindingTimer.startOneShot(0_s);
+}
+
+void InspectorAnimationAgent::animationBindingTimerFired()
+{
+    for (auto&& [animation, backtrace] : std::exchange(m_animationsPendingBinding, { }))
+        bindAnimation(animation, WTFMove(backtrace));
 }
 
 void InspectorAnimationAgent::willDestroyWebAnimation(WebAnimation& animation)
@@ -540,7 +551,7 @@ WebAnimation* InspectorAnimationAgent::assertAnimation(Protocol::ErrorString& er
     return animation;
 }
 
-void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, bool captureBacktrace)
+void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, RefPtr<Protocol::Console::StackTrace> backtrace)
 {
     auto animationId = makeString("animation:" + IdentifiersFactory::createIdentifier());
     m_animationIdMap.set(animationId, &animation);
@@ -561,10 +572,8 @@ void InspectorAnimationAgent::bindAnimation(WebAnimation& animation, bool captur
     if (auto* effect = animation.effect())
         animationPayload->setEffect(buildObjectForEffect(*effect));
 
-    if (captureBacktrace) {
-        auto stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
-        animationPayload->setStackTrace(stackTrace->buildInspectorObject());
-    }
+    if (backtrace)
+        animationPayload->setStackTrace(backtrace.releaseNonNull());
 
     m_frontendDispatcher->animationCreated(WTFMove(animationPayload));
 }
@@ -597,8 +606,11 @@ void InspectorAnimationAgent::reset()
 {
     m_animationIdMap.clear();
 
-    m_removedAnimationIds.clear();
+    m_animationsPendingBinding.clear();
+    if (m_animationBindingTimer.isActive())
+        m_animationBindingTimer.stop();
 
+    m_removedAnimationIds.clear();
     if (m_animationDestroyedTimer.isActive())
         m_animationDestroyedTimer.stop();
 }

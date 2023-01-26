@@ -63,6 +63,7 @@
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "IntSize.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSExecState.h"
 #include "KHRParallelShaderCompile.h"
 #include "Logging.h"
@@ -84,6 +85,7 @@
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
+#include "WebGLClipCullDistance.h"
 #include "WebGLColorBufferFloat.h"
 #include "WebGLCompressedTextureASTC.h"
 #include "WebGLCompressedTextureETC.h"
@@ -3000,6 +3002,7 @@ bool WebGLRenderingContextBase::extensionIsEnabled(const String& name)
     CHECK_EXTENSION(m_oesTextureHalfFloat, "OES_texture_half_float");
     CHECK_EXTENSION(m_oesTextureHalfFloatLinear, "OES_texture_half_float_linear");
     CHECK_EXTENSION(m_oesVertexArrayObject, "OES_vertex_array_object");
+    CHECK_EXTENSION(m_webglClipCullDistance, "WEBGL_clip_cull_distance");
     CHECK_EXTENSION(m_webglColorBufferFloat, "WEBGL_color_buffer_float");
     CHECK_EXTENSION(m_webglCompressedTextureASTC, "WEBGL_compressed_texture_astc");
     CHECK_EXTENSION(m_webglCompressedTextureETC, "WEBGL_compressed_texture_etc");
@@ -5810,6 +5813,7 @@ void WebGLRenderingContextBase::loseExtensions(LostContextMode mode)
     LOSE_EXTENSION(m_oesTextureHalfFloat);
     LOSE_EXTENSION(m_oesTextureHalfFloatLinear);
     LOSE_EXTENSION(m_oesVertexArrayObject);
+    LOSE_EXTENSION(m_webglClipCullDistance);
     LOSE_EXTENSION(m_webglColorBufferFloat);
     LOSE_EXTENSION(m_webglCompressedTextureASTC);
     LOSE_EXTENSION(m_webglCompressedTextureETC);

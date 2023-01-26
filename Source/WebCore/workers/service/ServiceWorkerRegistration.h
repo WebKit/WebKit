@@ -29,7 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "Notification.h"
 #include "NotificationOptions.h"
 #include "PushPermissionState.h"

@@ -171,7 +171,27 @@ class GitHubMixin(object):
     PER_PAGE_LIMIT = 100
     NUM_PAGE_LIMIT = 10
 
+    @defer.inlineCallbacks
     def fetch_data_from_url_with_authentication_github(self, url):
+        headers = {'Accept': ['application/vnd.github.v3+json']}
+        username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
+        if username and access_token:
+            auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
+            headers['Authorization'] = ['Basic {}'.format(auth_header)]
+
+        response = yield TwistedAdditions.request(
+            url, type=b'GET',
+            headers=headers,
+            logger=self._addToLog,
+        )
+        if response and response.status_code // 100 != 2:
+            yield self._addToLog('stdio', f'Accessed {url} with unexpected status code {response.status_code}.\n')
+            defer.returnValue(False if response.status_code // 100 == 4 else None)
+        else:
+            defer.returnValue(response)
+
+    # FIXME: Remove when all GitHub requests are using Twisted's deferred requests
+    def fetch_data_from_url_with_authentication_github_old(self, url):
         response = None
         try:
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
@@ -195,7 +215,7 @@ class GitHubMixin(object):
             return None
 
         pr_url = '{}/pulls/{}'.format(api_url, pr_number)
-        content = self.fetch_data_from_url_with_authentication_github(pr_url)
+        content = self.fetch_data_from_url_with_authentication_github_old(pr_url)
         if not content:
             return content
 
@@ -216,15 +236,17 @@ class GitHubMixin(object):
 
         return None
 
+    @defer.inlineCallbacks
     def get_reviewers(self, pr_number, repository_url=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return []
+            defer.returnValue([])
+            return
 
         reviews = []
         reviews_url = f'{api_url}/pulls/{pr_number}/reviews?per_page={self.PER_PAGE_LIMIT}'
         for page in range(1, self.NUM_PAGE_LIMIT + 1):
-            content = self.fetch_data_from_url_with_authentication_github(
+            content = yield self.fetch_data_from_url_with_authentication_github(
                 f'{api_url}/pulls/{pr_number}/reviews?per_page={self.PER_PAGE_LIMIT}&page={page}'
             )
             if not content:
@@ -249,7 +271,7 @@ class GitHubMixin(object):
                 last_approved[reviewer] = max(review_id, last_approved.get(reviewer, 0))
             elif review.get('state') == 'CHANGES_REQUESTED':
                 last_rejected[reviewer] = max(review_id, last_rejected.get(reviewer, 0))
-        return sorted([reviewer for reviewer, _id in last_approved.items() if _id > last_rejected.get(reviewer, 0)])
+        defer.returnValue(sorted([reviewer for reviewer, _id in last_approved.items() if _id > last_rejected.get(reviewer, 0)]))
 
     def _is_pr_closed(self, pr_json):
         # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
@@ -338,7 +360,7 @@ class GitHubMixin(object):
             return False
 
         pr_label_url = f'{api_url}/issues/{pr_number}/labels'
-        content = self.fetch_data_from_url_with_authentication_github(pr_label_url)
+        content = self.fetch_data_from_url_with_authentication_github_old(pr_label_url)
         if not content:
             self._addToLog('stdio', "Failed to fetch existing labels, cannot remove labels\n")
             return True
@@ -1826,6 +1848,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             return ''
         return contributor.get('name')
 
+    @defer.inlineCallbacks
     def run(self):
         self.contributors, errors = Contributors.load(use_network=True)
         for error in errors:
@@ -1835,7 +1858,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         if not self.contributors:
             self.descriptionDone = 'Failed to get contributors information'
             self.build.buildFinished(['Failed to get contributors information'], FAILURE)
-            return FAILURE
+            defer.returnValue(FAILURE)
+            return
 
         pr_number = self.getProperty('github.number', '')
 
@@ -1849,7 +1873,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         self._addToLog('stdio', f'{committer} is a valid commiter.\n')
 
         if pr_number:
-            reviewers = self.get_reviewers(pr_number, self.getProperty('repository', ''))
+            reviewers = yield self.get_reviewers(pr_number, self.getProperty('repository', ''))
         else:
             reviewer = self.getProperty('reviewer', '').lower()
             reviewers = [reviewer] if reviewer else []
@@ -1858,7 +1882,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         validators = self.VALIDATORS_FOR.get(remote, [])
         lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
         if validators and not any([validator.lower() in lower_case_reviewers for validator in validators]):
-            return self.fail_build_due_to_no_validators(validators)
+            defer.returnValue(self.fail_build_due_to_no_validators(validators))
+            return
 
         if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
             reviewers = list(filter(self.is_reviewer, reviewers))
@@ -1868,15 +1893,16 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
             self._addToLog('stdio', f'Reviewer not found. Commit message  will be checked for reviewer name in later steps\n')
             self.descriptionDone = 'Validated committer, reviewer not found'
-            return SUCCESS
+            defer.returnValue(SUCCESS)
+            return
 
         for reviewer in reviewers:
             if not self.is_reviewer(reviewer):
-                return self.fail_build_due_to_invalid_status(reviewer, 'reviewer')
+                defer.returnValue(self.fail_build_due_to_invalid_status(reviewer, 'reviewer'))
             self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
         self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])
 
-        return SUCCESS
+        defer.returnValue(SUCCESS)
 
 
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
@@ -1987,15 +2013,13 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
         GitHubMixin.REQUEST_MERGE_QUEUE_LABEL,
     ]
 
-    def start(self):
+    def run(self):
         pr_number = self.getProperty('github.number', '')
 
         repository_url = self.getProperty('repository', '')
-        rc = SUCCESS
         if not self.remove_labels(pr_number, self.LABELS_TO_REMOVE, repository_url=repository_url):
-            rc = FAILURE
-        self.finished(rc)
-        return None
+            return FAILURE
+        return SUCCESS
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -4980,7 +5004,7 @@ class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
         try:
             response = yield TwistedAdditions.request(url, logger=lambda content: self._addToLog('stdio', content))
             if response.status_code != 200:
-                self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(url, response.status_code))
+                yield self._addToLog('stdio', 'Failed to access {} with status code: {}\n'.format(url, response.status_code))
                 defer.returnValue(-1)
                 return
             queue_data = response.json().get(queue, None)
@@ -4988,8 +5012,8 @@ class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
                 defer.returnValue(queue_data.get('state', None))
             else:
                 defer.returnValue(-1)
-        except:
-            self._addToLog('stdio', 'Failed to access {}\n'.format(url))
+        except Exception as e:
+            yield self._addToLog('stdio', f'Failed to access {url}\n    {e}\n')
             defer.returnValue(-1)
 
     @defer.inlineCallbacks
@@ -5541,7 +5565,7 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     @classmethod
     def is_test_gardening(cls, lines):
         for line in lines:
-            if line.lstrip().startswith('Unreviewed test gardening'):
+            if line.lstrip().lower().startswith('unreviewed test gardening'):
                 return True
         return False
 

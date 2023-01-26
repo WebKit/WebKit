@@ -26,9 +26,10 @@
 #include "config.h"
 #include "BasicCredential.h"
 
-#include "AuthenticatorCoordinator.h"
-
 #if ENABLE(WEB_AUTHN)
+
+#include "AuthenticatorCoordinator.h"
+#include "JSDOMPromiseDeferred.h"
 
 namespace WebCore {
 

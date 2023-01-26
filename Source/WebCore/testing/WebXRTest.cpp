@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR)
 
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebFakeXRDevice.h"
 #include "JSXRReferenceSpaceType.h"
 #include "PlatformXR.h"

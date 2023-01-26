@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "FeaturePolicy.h"
 #include "IDLTypes.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebXRSession.h"
 #include "JSXRReferenceSpaceType.h"
 #include "Navigator.h"

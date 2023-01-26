@@ -45,6 +45,9 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitInputMethodContext, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitInstallMissingMediaPluginsPermissionRequest, g_object_unref)
 #endif
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNavigationPolicyDecision, g_object_unref)
+#if ENABLE(2022_GLIB_API)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNetworkSession, g_object_unref)
+#endif
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNotification, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitNotificationPermissionRequest, g_object_unref)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC (WebKitPermissionRequest, g_object_unref)

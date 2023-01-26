@@ -91,7 +91,7 @@ static inline void fillRemoteInboundRTPStreamStats(RTCStatsReport::RemoteInbound
     if (gst_structure_get_double(structure, "jitter", &jitter))
         stats.jitter = jitter;
 
-#if GST_CHECK_VERSION(1, 21, 0)
+#if GST_CHECK_VERSION(1, 22, 0)
     int64_t packetsLost;
     if (gst_structure_get_int64(structure, "packets-lost", &packetsLost))
         stats.packetsLost = packetsLost;
@@ -121,7 +121,7 @@ static inline void fillInboundRTPStreamStats(RTCStatsReport::InboundRtpStreamSta
     if (gst_structure_get_uint64(structure, "bytes-received", &value))
         stats.bytesReceived = value;
 
-#if GST_CHECK_VERSION(1, 21, 0)
+#if GST_CHECK_VERSION(1, 22, 0)
     int64_t packetsLost;
     if (gst_structure_get_int64(structure, "packets-lost", &packetsLost))
         stats.packetsLost = packetsLost;

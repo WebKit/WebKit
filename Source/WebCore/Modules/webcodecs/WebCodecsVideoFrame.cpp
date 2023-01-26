@@ -37,6 +37,7 @@
 #include "HTMLVideoElement.h"
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSPlaneLayout.h"
 #include "OffscreenCanvas.h"
 #include "PixelBuffer.h"

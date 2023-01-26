@@ -36,9 +36,15 @@ static void testUIProcessAutocleanups(WebViewTest* test, gconstpointer)
     g_assert_true(WEBKIT_IS_WEB_CONTEXT(context));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context));
 
+#if ENABLE(2022_GLIB_API)
+    g_autoptr(WebKitNetworkSession) session = webkit_network_session_new(nullptr, nullptr);
+    g_assert_true(WEBKIT_IS_NETWORK_SESSION(session));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(session));
+#else
     g_autoptr(WebKitWebsiteDataManager) manager = webkit_website_data_manager_new(nullptr);
     g_assert_true(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
-    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(context));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(manager));
+#endif
 
     g_autoptr(WebKitUserScript) userScript = webkit_user_script_new("",
         WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_START,

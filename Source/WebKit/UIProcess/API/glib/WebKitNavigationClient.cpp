@@ -34,6 +34,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(2022_GLIB_API)
+#include "WebKitNetworkSessionPrivate.h"
+#endif
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -158,19 +162,31 @@ private:
     void navigationActionDidBecomeDownload(WebPageProxy&, API::NavigationAction&, DownloadProxy& downloadProxy) override
     {
         auto download = webkitDownloadCreate(downloadProxy, m_webView);
+#if ENABLE(2022_GLIB_API)
+        webkitNetworkSessionDownloadStarted(webkit_web_view_get_network_session(m_webView), download.get());
+#else
         webkitWebContextDownloadStarted(webkit_web_view_get_context(m_webView), download.get());
+#endif
     }
 
     void navigationResponseDidBecomeDownload(WebPageProxy&, API::NavigationResponse&, DownloadProxy& downloadProxy) override
     {
         auto download = webkitDownloadCreate(downloadProxy, m_webView);
+#if ENABLE(2022_GLIB_API)
+        webkitNetworkSessionDownloadStarted(webkit_web_view_get_network_session(m_webView), download.get());
+#else
         webkitWebContextDownloadStarted(webkit_web_view_get_context(m_webView), download.get());
+#endif
     }
 
     void contextMenuDidCreateDownload(WebPageProxy&, DownloadProxy& downloadProxy) override
     {
         auto download = webkitDownloadCreate(downloadProxy, m_webView);
+#if ENABLE(2022_GLIB_API)
+        webkitNetworkSessionDownloadStarted(webkit_web_view_get_network_session(m_webView), download.get());
+#else
         webkitWebContextDownloadStarted(webkit_web_view_get_context(m_webView), download.get());
+#endif
     }
 
     WebKitWebView* m_webView;

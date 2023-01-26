@@ -76,7 +76,8 @@ public:
         CrossThreadData() = default;
         CrossThreadData(CrossThreadData&&) = default;
         CrossThreadData& operator=(CrossThreadData&&) = default;
-        WEBCORE_EXPORT CrossThreadData copy() const;
+
+        WEBCORE_EXPORT CrossThreadData isolatedCopy() const;
 
         URL url;
         String mimeType;

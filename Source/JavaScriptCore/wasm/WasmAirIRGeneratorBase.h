@@ -362,6 +362,7 @@ struct AirIRGeneratorBase {
     // References
     //                               addRefIsNull (in derived classes)
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -471,7 +472,7 @@ struct AirIRGeneratorBase {
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, Vector<ExpressionType>& args, ResultList& results);
-    PartialResult WARN_UNUSED_RETURN emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, ExpressionType jsCalleeInstance, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
+    PartialResult WARN_UNUSED_RETURN emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, ExpressionType jsCalleeAnchor, const TypeDefinition&, const Vector<ExpressionType>& args, ResultList&, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
 
@@ -1242,6 +1243,15 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addRefFunc(uint32_t index, Exp
         result = tmpForType(Types::Funcref);
     emitCCall(&operationWasmRefFunc, result, instanceValue(), self().addConstant(Types::I32, index));
 
+    return { };
+}
+
+template <typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addRefAsNonNull(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    emitThrowOnNullReference(reference, ExceptionType::NullRefAsNonNull);
+    result = self().tmpForType(Type { TypeKind::Ref, reference.type().index });
+    append(Move, reference, result);
     return { };
 }
 
@@ -2628,6 +2638,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructNewDefault(uint32_t t
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addStructGet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType& result) -> PartialResult
 {
+    emitThrowOnNullReference(structReference, ExceptionType::NullStructGet);
+
     auto payload = self().gPtr();
     auto structBase = self().extractJSValuePointer(structReference);
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);
@@ -2644,6 +2656,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addStructGet(ExpressionType st
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addStructSet(ExpressionType structReference, const StructType& structType, uint32_t fieldIndex, ExpressionType value) -> PartialResult
 {
+    emitThrowOnNullReference(structReference, ExceptionType::NullStructSet);
+
     auto payload = self().gPtr();
     auto structBase = self().extractJSValuePointer(structReference);
     self().emitLoad(structBase, JSWebAssemblyStruct::offsetOfPayload(), payload);
@@ -3294,6 +3308,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
 
     ExpressionType calleeCode = self().gPtr();
     ExpressionType calleeInstance = self().gPtr();
+    ExpressionType jsCalleeAnchor = self().gPtr();
     {
         static_assert(sizeof(TypeIndex) == sizeof(void*));
         ExpressionType calleeSignatureIndex = self().gPtr();
@@ -3304,6 +3319,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
 
         append(Move, Arg::addr(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), calleeCode); // Pointer to callee code.
         append(Move, Arg::addr(calleeSignatureIndex, FuncRefTable::Function::offsetOfInstance()), calleeInstance);
+        append(Move, Arg::addr(calleeSignatureIndex, FuncRefTable::Function::offsetOfValue()), jsCalleeAnchor);
 
         // FIXME: This seems wasteful to do two checks just for a nicer error message.
         // We should move just to use a single branch and then figure out what
@@ -3327,9 +3343,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
         });
     }
 
-    ExpressionType jsCalleeInstance = self().gPtr();
-    append(Move, Arg::addr(calleeInstance, Instance::offsetOfOwner()), jsCalleeInstance);
-    return self().emitIndirectCall(calleeInstance, calleeCode, jsCalleeInstance, signature, args, results, callType);
+    return self().emitIndirectCall(calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, callType);
 }
 
 template <typename Derived, typename ExpressionType>
@@ -3357,7 +3371,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallRef(const TypeDefinitio
 }
 
 template<typename Derived, typename ExpressionType>
-auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, ExpressionType jsCalleeInstance, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
+auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionType calleeInstance, ExpressionType calleeCode, ExpressionType jsCalleeAnchor, const TypeDefinition& signature, const Vector<ExpressionType>& args, ResultList& results, CallType callType) -> PartialResult
 {
     bool isTailCall = callType == CallType::TailCall;
     ASSERT(callType == CallType::Call || isTailCall);
@@ -3449,7 +3463,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
 
     // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
 
-    auto data = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { calleeCode, B3::ValueRep::SomeRegister }, { jsCalleeInstance, wasmCalleeInfo.thisArgument } });
+    auto data = self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { calleeCode, B3::ValueRep::SomeRegister }, { jsCalleeAnchor, wasmCalleeInfo.thisArgument } });
     auto* patchpoint = data.first;
     auto exceptionHandle = data.second;
 

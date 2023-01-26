@@ -106,6 +106,8 @@ void WebSharedWorkerServerToContextConnection::sharedWorkerTerminated(WebCore::S
 
 void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorker& sharedWorker)
 {
+    m_connection.networkProcess().addAllowedFirstPartyForCookies(m_connection.webProcessIdentifier(), WebCore::RegistrableDomain::uncheckedCreateFromHost(sharedWorker.origin().topOrigin.host), LoadedWebArchive::No, [] { });
+
     CONTEXT_CONNECTION_RELEASE_LOG("launchSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
     sharedWorker.markAsRunning();
     auto initializationData = sharedWorker.initializationData();

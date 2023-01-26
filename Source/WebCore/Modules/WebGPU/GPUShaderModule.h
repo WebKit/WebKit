@@ -27,7 +27,7 @@
 
 #include "GPUBindGroupLayout.h"
 #include "GPUCompilationInfo.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include <pal/graphics/WebGPU/WebGPUShaderModule.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>

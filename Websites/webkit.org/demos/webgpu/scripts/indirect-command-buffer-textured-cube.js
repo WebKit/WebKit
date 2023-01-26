@@ -171,7 +171,7 @@ async function helloCube() {
                     sampler textureSampler;
                 };
     
-                vertex VertexOut vsmain(const device float *vertices [[buffer(0)]], const device VertexShaderArguments &values [[buffer(1)]], unsigned VertexIndex [[vertex_id]])
+                vertex VertexOut vsmain(const device float *vertices [[buffer(0)]], const device VertexShaderArguments &values [[buffer(8)]], unsigned VertexIndex [[vertex_id]])
                 {
                     VertexOut vout;
                     float alpha = values.time[0];
@@ -196,7 +196,7 @@ async function helloCube() {
                     return vout;
                 }
 
-                fragment float4 fsmain(VertexOut in [[stage_in]], device FragmentShaderArguments &values [[buffer(1)]])
+                fragment float4 fsmain(VertexOut in [[stage_in]], device FragmentShaderArguments &values [[buffer(0)]])
                 {
                     return 0.5 * in.color + 0.5 * float4(values.colorTexture.sample(values.textureSampler, in.uv));
                 }
@@ -227,7 +227,7 @@ async function helloCube() {
     const renderBundleEncoder = device.createRenderBundleEncoder({ colorFormats: ["bgra8unorm"] });
     const vertexBufferSlot = 0;
     renderBundleEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
-    renderBundleEncoder.setBindGroup(1, uniformBindGroup);
+    renderBundleEncoder.setBindGroup(0, uniformBindGroup);
     renderBundleEncoder.draw(36, 1, 0, 0); // 36 vertices, 1 instance, 0th vertex, 0th instance.
     
     renderBundle = renderBundleEncoder.finish();

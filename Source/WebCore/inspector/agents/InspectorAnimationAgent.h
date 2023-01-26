@@ -33,6 +33,7 @@
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/WeakHashMap.h>
 
 namespace WebCore {
 
@@ -44,6 +45,7 @@ class Frame;
 class KeyframeEffect;
 class Page;
 class WebAnimation;
+class WeakPtrImplWithEventTargetData;
 
 struct Styleable;
 
@@ -79,7 +81,8 @@ public:
 private:
     String findAnimationId(WebAnimation&);
     WebAnimation* assertAnimation(Inspector::Protocol::ErrorString&, const String& animationId);
-    void bindAnimation(WebAnimation&, bool captureBacktrace);
+    void bindAnimation(WebAnimation&, RefPtr<Inspector::Protocol::Console::StackTrace> backtrace);
+    void animationBindingTimerFired();
     void unbindAnimation(const String& animationId);
     void animationDestroyedTimerFired();
     void reset();
@@ -93,6 +96,10 @@ private:
     Page& m_inspectedPage;
 
     MemoryCompactRobinHoodHashMap<String, WebAnimation*> m_animationIdMap;
+
+    WeakHashMap<WebAnimation, Ref<Inspector::Protocol::Console::StackTrace>, WeakPtrImplWithEventTargetData> m_animationsPendingBinding;
+    Timer m_animationBindingTimer;
+
     Vector<String> m_removedAnimationIds;
     Timer m_animationDestroyedTimer;
 

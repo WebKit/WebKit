@@ -29,9 +29,10 @@
 
 #include "ActiveDOMObject.h"
 #include "ExceptionOr.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "RTCRtpTransformBackend.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 

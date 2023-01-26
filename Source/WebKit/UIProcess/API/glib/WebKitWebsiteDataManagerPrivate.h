@@ -19,6 +19,12 @@
 
 #pragma once
 
+#include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteDataStore.h"
+#include <wtf/glib/GUniquePtr.h>
 
+#if ENABLE(2022_GLIB_API)
+WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(GUniquePtr<char>&&, GUniquePtr<char>&&);
+#endif
 WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
+WebKitITPThirdParty* webkitITPThirdPartyCreate(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&&);

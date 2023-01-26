@@ -40,6 +40,8 @@ if sys.version_info >= (3, 7):
     AutoInstall.register(Package('pytest_timeout', Version(2, 1, 0), pypi_name='pytest-timeout'))
     AutoInstall.register(Package('pytest', Version(7, 2, 0), implicit_deps=['pytest_asyncio', 'pytest_timeout']))
     AutoInstall.register(Package('websockets', Version(8, 1)))
+    if sys.version_info < (3, 11):
+        AutoInstall.register(Package('exceptiongroup', Version(1, 1, 0), wheel=True))
 elif sys.version_info >= (2, 7) and sys.version_info < (3,):
     AutoInstall.register(Package('pylint', Version(0, 28, 0)))
     AutoInstall.register(Package('logilab.common', Version(0, 58, 1), pypi_name='logilab-common', aliases=['logilab']))

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionDetails.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Expected.h>
 #include <wtf/JSONValues.h>
@@ -41,7 +42,6 @@ namespace WebCore {
 class DOMPromise;
 class JSDOMGlobalObject;
 class Page;
-struct ExceptionDetails;
 
 class InspectorFrontendAPIDispatcher final
     : public RefCounted<InspectorFrontendAPIDispatcher>

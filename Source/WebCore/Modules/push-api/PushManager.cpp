@@ -32,6 +32,7 @@
 #include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "Exception.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSPushPermissionState.h"
 #include "JSPushSubscription.h"
 #include "Logging.h"

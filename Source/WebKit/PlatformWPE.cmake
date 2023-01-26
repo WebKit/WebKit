@@ -194,6 +194,12 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/webkit.h.in
 )
 
+if (ENABLE_2022_GLIB_API)
+    list(APPEND WPE_API_HEADER_TEMPLATES
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNetworkSession.h.in
+    )
+endif ()
+
 set(WPE_API_INSTALLED_HEADERS
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitEnumTypes.h
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitVersion.h

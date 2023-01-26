@@ -1,0 +1,61 @@
+From 1d4b4f9352661b81730f3c688d59c3ce0378217f Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 25 Jan 2023 12:27:31 +0000
+Subject: [PATCH 4/5] gst-plugins-ugly: Enable x264 encoder
+
+---
+ .../components/gstreamer-plugins-ugly.bst     |  3 +++
+ elements/components/x264.bst                  | 20 +++++++++++++++++++
+ 2 files changed, 23 insertions(+)
+ create mode 100644 elements/components/x264.bst
+
+diff --git a/elements/components/gstreamer-plugins-ugly.bst b/elements/components/gstreamer-plugins-ugly.bst
+index 472463e3e..f5664d7db 100644
+--- a/elements/components/gstreamer-plugins-ugly.bst
++++ b/elements/components/gstreamer-plugins-ugly.bst
+@@ -8,6 +8,7 @@ depends:
+ - components/gstreamer.bst
+ - components/gstreamer-plugins-base.bst
+ - components/orc.bst
++- components/x264.bst
+ 
+ variables:
+   command-subdir: subprojects/gst-plugins-ugly
+@@ -21,6 +22,8 @@ variables:
+     -Dxingmux=enabled
+     -Dorc=enabled
+     -Dpackage-origin="freedesktop-sdk"
++    -Dx264=enabled
++    -Dgpl=enabled
+ 
+ (@):
+ - elements/include/gstreamer-source.yml
+diff --git a/elements/components/x264.bst b/elements/components/x264.bst
+new file mode 100644
+index 000000000..a91077126
+--- /dev/null
++++ b/elements/components/x264.bst
+@@ -0,0 +1,20 @@
++kind: autotools
++
++build-depends:
++- public-stacks/buildsystem-autotools.bst
++
++depends:
++- bootstrap-import.bst
++
++sources:
++- kind: git_tag
++  url: git_https:code.videolan.org/videolan/x264.git
++  track: master
++  ref: ae03d92b52bb7581df2e75d571989cb1ecd19cbd
++variables:
++  conf-local: >-
++    --enable-shared
++    --enable-static
++    --enable-pic
++    --disable-lavf
++    --disable-asm
+-- 
+2.39.1
+

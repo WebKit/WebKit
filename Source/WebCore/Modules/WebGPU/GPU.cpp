@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPU.h"
 
+#include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapter.h"
 
 namespace WebCore {
@@ -44,6 +45,11 @@ static PAL::WebGPU::RequestAdapterOptions convertToBacking(const std::optional<G
 
     return options->convertToBacking();
 }
+
+struct GPU::PendingRequestAdapterArguments {
+    std::optional<GPURequestAdapterOptions> options;
+    RequestAdapterPromise promise;
+};
 
 void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options, RequestAdapterPromise&& promise)
 {

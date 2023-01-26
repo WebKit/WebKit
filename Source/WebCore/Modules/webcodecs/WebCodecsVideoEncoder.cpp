@@ -31,6 +31,7 @@
 #include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebCodecsVideoEncoderSupport.h"
 #include "Logging.h"
 #include "WebCodecsEncodedVideoChunk.h"

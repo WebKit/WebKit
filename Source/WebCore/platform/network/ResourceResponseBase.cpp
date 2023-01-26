@@ -84,17 +84,19 @@ ResourceResponseBase::ResourceResponseBase(std::optional<ResourceResponseBase::R
 {
 }
 
-ResourceResponseBase::CrossThreadData ResourceResponseBase::CrossThreadData::copy() const
+ResourceResponseBase::CrossThreadData ResourceResponseBase::CrossThreadData::isolatedCopy() const
 {
     ResourceResponseBase::CrossThreadData result;
-    result.url = url;
-    result.mimeType = mimeType;
+    result.url = url.isolatedCopy();
+    result.mimeType = mimeType.isolatedCopy();
     result.expectedContentLength = expectedContentLength;
-    result.textEncodingName = textEncodingName;
+    result.textEncodingName = textEncodingName.isolatedCopy();
     result.httpStatusCode = httpStatusCode;
-    result.httpVersion = httpVersion;
-    result.httpHeaderFields = httpHeaderFields;
-    result.networkLoadMetrics = networkLoadMetrics;
+    result.httpStatusText = httpStatusText.isolatedCopy();
+    result.httpVersion = httpVersion.isolatedCopy();
+    result.httpHeaderFields = httpHeaderFields.isolatedCopy();
+    if (networkLoadMetrics)
+        result.networkLoadMetrics = networkLoadMetrics->isolatedCopy();
     result.type = type;
     result.tainting = tainting;
     result.isRedirected = isRedirected;
@@ -131,13 +133,13 @@ ResourceResponse ResourceResponseBase::fromCrossThreadData(CrossThreadData&& dat
     ResourceResponse response;
 
     response.setURL(data.url);
-    response.setMimeType(AtomString { data.mimeType });
+    response.setMimeType(AtomString { WTFMove(data.mimeType) });
     response.setExpectedContentLength(data.expectedContentLength);
     response.setTextEncodingName(AtomString { WTFMove(data.textEncodingName) });
 
     response.setHTTPStatusCode(data.httpStatusCode);
-    response.setHTTPStatusText(AtomString { data.httpStatusText });
-    response.setHTTPVersion(AtomString { data.httpVersion });
+    response.setHTTPStatusText(AtomString { WTFMove(data.httpStatusText) });
+    response.setHTTPVersion(AtomString { WTFMove(data.httpVersion) });
 
     response.m_httpHeaderFields = WTFMove(data.httpHeaderFields);
     if (data.networkLoadMetrics)

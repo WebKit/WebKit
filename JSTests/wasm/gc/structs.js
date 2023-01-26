@@ -766,6 +766,19 @@ function testStructGet() {
     WebAssembly.CompileError,
     "WebAssembly.Module doesn't validate: struct.get invalid index: Structref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
+
+  // Test null checks.
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (struct (field i32)))
+        (func (export "f") (result i32)
+          (struct.get 0 0 (ref.null 0)))
+      )
+    `).exports.f(),
+    WebAssembly.RuntimeError,
+    "struct.get to a null reference"
+  );
 }
 
 function testStructSet() {
@@ -1164,6 +1177,19 @@ function testStructSet() {
       `),
     WebAssembly.CompileError,
     "WebAssembly.Module doesn't validate: struct.set index 5 is out of bound, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+  );
+
+  // Test null checks.
+  assert.throws(
+    () => instantiate(`
+      (module
+        (type (struct (field (mut i32))))
+        (func (export "f") (result)
+          (struct.set 0 0 (ref.null 0) (i32.const 42)))
+      )
+    `).exports.f(),
+    WebAssembly.RuntimeError,
+    "struct.set to a null reference"
   );
 }
 

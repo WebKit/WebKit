@@ -1891,6 +1891,7 @@ if (ENABLE_WEBGL)
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/WebGL2RenderingContext.cpp
         html/canvas/WebGLBuffer.cpp
+        html/canvas/WebGLClipCullDistance.cpp
         html/canvas/WebGLColorBufferFloat.cpp
         html/canvas/WebGLCompressedTextureASTC.cpp
         html/canvas/WebGLCompressedTextureETC.cpp
@@ -1959,6 +1960,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGL2RenderingContext.idl
     html/canvas/WebGLActiveInfo.idl
     html/canvas/WebGLBuffer.idl
+    html/canvas/WebGLClipCullDistance.idl
     html/canvas/WebGLColorBufferFloat.idl
     html/canvas/WebGLCompressedTextureASTC.idl
     html/canvas/WebGLCompressedTextureETC.idl

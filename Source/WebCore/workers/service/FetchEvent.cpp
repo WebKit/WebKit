@@ -27,6 +27,7 @@
 #include "FetchEvent.h"
 
 #include "CachedResourceRequestInitiatorTypes.h"
+#include "DOMPromiseProxy.h"
 #include "EventNames.h"
 #include "FetchRequest.h"
 #include "JSDOMPromise.h"

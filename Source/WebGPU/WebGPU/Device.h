@@ -109,6 +109,9 @@ public:
     Instance& instance() const { return m_adapter->instance(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
+    uint32_t maxBuffersPlusVertexBuffersForVertexStage() const;
+    uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
+
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
     Device(Adapter&);

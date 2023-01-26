@@ -41,7 +41,7 @@ public:
         FloatRect visualRect;
         bool isLeftPositioned { true };
     };
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, float enclosingContentLogicalTop, float enclosingContentLogicalBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentVisualOffsetInInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<Ellipsis> ellipsis, bool isFirstAfterPageBreak = false)
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, float enclosingContentLogicalTop, float enclosingContentLogicalBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<Ellipsis> ellipsis, bool isFirstAfterPageBreak = false)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
@@ -51,7 +51,8 @@ public:
         , m_scrollableOverflow(scrollableOverflow)
         , m_inkOverflow(inkOverflow)
         , m_baseline(baseline)
-        , m_contentVisualOffsetInInlineDirection(contentVisualOffsetInInlineDirection)
+        , m_contentLogicalLeft(contentLogicalLeft)
+        , m_contentLogicalLeftIgnoringInlineDirection(contentLogicalLeftIgnoringInlineDirection)
         , m_contentLogicalWidth(contentLogicalWidth)
         , m_baselineType(baselineType)
         , m_isHorizontal(isHorizontal)
@@ -88,8 +89,10 @@ public:
 
     bool isHorizontal() const { return m_isHorizontal; }
 
-    float contentVisualOffsetInInlineDirection() const { return m_contentVisualOffsetInInlineDirection; }
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
+    float contentLogicalLeft() const { return m_contentLogicalLeft; }
+    // This is "visual" left in inline direction (it is still considered logical as there's no flip for writing mode).
+    float contentLogicalLeftIgnoringInlineDirection() const { return m_contentLogicalLeftIgnoringInlineDirection; }
 
     bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
 
@@ -107,7 +110,9 @@ private:
     FloatRect m_scrollableOverflow;
     FloatRect m_inkOverflow;
     float m_baseline { 0.f };
-    float m_contentVisualOffsetInInlineDirection { 0.f };
+    // Content is mostly in flush with the line box edge except for cases like text-align.
+    float m_contentLogicalLeft { 0.f };
+    float m_contentLogicalLeftIgnoringInlineDirection { 0.f };
     float m_contentLogicalWidth { 0.f };
     FontBaseline m_baselineType { AlphabeticBaseline };
     bool m_isHorizontal { true };

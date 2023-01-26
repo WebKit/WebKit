@@ -81,6 +81,10 @@
 #include "WebKitRemoteInspectorProtocolHandler.h"
 #endif
 
+#if ENABLE(2022_GLIB_API)
+#include "WebKitNetworkSession.h"
+#endif
+
 using namespace WebKit;
 
 /**
@@ -118,7 +122,9 @@ enum {
 #if PLATFORM(GTK) && !USE(GTK4)
     PROP_LOCAL_STORAGE_DIRECTORY,
 #endif
+#if !ENABLE(2022_GLIB_API)
     PROP_WEBSITE_DATA_MANAGER,
+#endif
 #if PLATFORM(GTK) && !USE(GTK4)
     PROP_PSON_ENABLED,
     PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS,
@@ -131,7 +137,9 @@ enum {
 static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 enum {
+#if !ENABLE(2022_GLIB_API)
     DOWNLOAD_STARTED,
+#endif
     INITIALIZE_WEB_EXTENSIONS,
     INITIALIZE_NOTIFICATION_PERMISSIONS,
     AUTOMATION_STARTED,
@@ -200,10 +208,12 @@ typedef HashMap<String, RefPtr<WebKitURISchemeHandler> > URISchemeHandlerMap;
 class WebKitAutomationClient;
 
 struct _WebKitWebContextPrivate {
+#if !ENABLE(2022_GLIB_API)
     _WebKitWebContextPrivate()
         : dnsPrefetchHystereris([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) dnsPrefetchedHosts.clear(); })
     {
     }
+#endif
 
     RefPtr<WebProcessPool> processPool;
     bool clientsDetached;
@@ -212,14 +222,17 @@ struct _WebKitWebContextPrivate {
     bool useSystemAppearanceForScrollbars;
 #endif
 
+#if !ENABLE(2022_GLIB_API)
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
+    CString faviconDatabaseDirectory;
+#endif
     GRefPtr<WebKitSecurityManager> securityManager;
     URISchemeHandlerMap uriSchemeHandlers;
     GRefPtr<WebKitGeolocationManager> geolocationManager;
     std::unique_ptr<WebKitNotificationProvider> notificationProvider;
+#if !ENABLE(2022_GLIB_API)
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
-
-    CString faviconDatabaseDirectory;
+#endif
 
     HashMap<WebPageProxyIdentifier, WebKitWebView*> webViews;
 
@@ -233,11 +246,16 @@ struct _WebKitWebContextPrivate {
 #endif
     std::unique_ptr<WebKitAutomationClient> automationClient;
     GRefPtr<WebKitAutomationSession> automationSession;
+#if ENABLE(2022_GLIB_API)
+    GRefPtr<WebKitNetworkSession> automationNetworkSession;
+#endif
 #endif
     std::unique_ptr<WebKitProtocolHandler> webkitProtocolHandler;
 
+#if !ENABLE(2022_GLIB_API)
     HashSet<String> dnsPrefetchedHosts;
     PAL::HysteresisActivity dnsPrefetchHystereris;
+#endif
 
     WebKitMemoryPressureSettings* memoryPressureSettings;
 
@@ -297,7 +315,19 @@ void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 {
     webContext->priv->processPool->setAutomationSession(nullptr);
     webContext->priv->automationSession = nullptr;
+#if ENABLE(2022_GLIB_API)
+    webContext->priv->automationNetworkSession = nullptr;
+#endif
 }
+
+#if ENABLE(2022_GLIB_API)
+WebKitNetworkSession* webkitWebContextGetNetworkSessionForAutomation(WebKitWebContext* webContext)
+{
+    if (!webContext->priv->automationNetworkSession && webContext->priv->automationClient)
+        webContext->priv->automationNetworkSession = adoptGRef(webkit_network_session_new_ephemeral());
+    return webContext->priv->automationNetworkSession.get();
+}
+#endif
 #endif // ENABLE(REMOTE_INSPECTOR)
 
 WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
@@ -336,9 +366,11 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
         g_value_set_string(value, context->priv->localStorageDirectory.data());
         break;
 #endif
+#if !ENABLE(2022_GLIB_API)
     case PROP_WEBSITE_DATA_MANAGER:
         g_value_set_object(value, webkit_web_context_get_website_data_manager(context));
         break;
+#endif
 #if PLATFORM(GTK) && !USE(GTK4)
     case PROP_PSON_ENABLED:
         g_value_set_boolean(value, context->priv->psonEnabled);
@@ -365,11 +397,13 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->localStorageDirectory = g_value_get_string(value);
         break;
 #endif
+#if !ENABLE(2022_GLIB_API)
     case PROP_WEBSITE_DATA_MANAGER: {
         gpointer manager = g_value_get_object(value);
         context->priv->websiteDataManager = manager ? WEBKIT_WEBSITE_DATA_MANAGER(manager) : nullptr;
         break;
     }
+#endif
 #if PLATFORM(GTK) && !USE(GTK4)
     case PROP_PSON_ENABLED:
         context->priv->psonEnabled = g_value_get_boolean(value);
@@ -419,13 +453,10 @@ static void webkitWebContextConstructed(GObject* object)
     }
     configuration.setTimeZoneOverride(String::fromUTF8(priv->timeZoneOverride.data(), priv->timeZoneOverride.length()));
 
-    if (!priv->websiteDataManager) {
-        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new(
 #if !ENABLE(2022_GLIB_API)
-                    "local-storage-directory", priv->localStorageDirectory.data(),
+    if (!priv->websiteDataManager)
+        priv->websiteDataManager = adoptGRef(webkit_website_data_manager_new("local-storage-directory", priv->localStorageDirectory.data(), nullptr));
 #endif
-        nullptr));
-    }
 
     priv->processPool = WebProcessPool::create(configuration);
     priv->processPool->setUserMessageHandler([webContext](UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler) {
@@ -462,10 +493,12 @@ static void webkitWebContextDispose(GObject* object)
         priv->processPool->setInjectedBundleClient(nullptr);
     }
 
+#if !ENABLE(2022_GLIB_API)
     if (priv->faviconDatabase) {
         webkitFaviconDatabaseClose(priv->faviconDatabase.get());
         priv->faviconDatabase = nullptr;
     }
+#endif
 
     if (priv->processPool) {
         priv->processPool->setUserMessageHandler(nullptr);
@@ -509,6 +542,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 #endif
 
+#if !ENABLE(2022_GLIB_API)
     /**
      * WebKitWebContext:website-data-manager:
      *
@@ -522,6 +556,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             nullptr, nullptr,
             WEBKIT_TYPE_WEBSITE_DATA_MANAGER,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+#endif
 
 #if PLATFORM(GTK) && !USE(GTK4)
     /**
@@ -600,6 +635,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
+#if !ENABLE(2022_GLIB_API)
     /**
      * WebKitWebContext::download-started:
      * @context: the #WebKitWebContext
@@ -616,6 +652,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
             g_cclosure_marshal_VOID__OBJECT,
             G_TYPE_NONE, 1,
             WEBKIT_TYPE_DOWNLOAD);
+#endif
 
     /**
      * WebKitWebContext::initialize-web-extensions:
@@ -742,6 +779,7 @@ WebKitWebContext* webkit_web_context_new(void)
     return WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, nullptr));
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_new_ephemeral:
  *
@@ -814,6 +852,7 @@ gboolean webkit_web_context_is_ephemeral(WebKitWebContext* context)
 
     return webkit_website_data_manager_is_ephemeral(context->priv->websiteDataManager.get());
 }
+#endif
 
 /**
  * webkit_web_context_is_automation_allowed:
@@ -952,6 +991,7 @@ WebKitCacheModel webkit_web_context_get_cache_model(WebKitWebContext* context)
     return WEBKIT_CACHE_MODEL_WEB_BROWSER;
 }
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_clear_cache:
  * @context: a #WebKitWebContext
@@ -971,7 +1011,6 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
     websiteDataStore.removeData(websiteDataTypes, -WallTime::infinity(), [] { });
 }
 
-#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_set_network_proxy_settings:
  * @context: a #WebKitWebContext
@@ -998,7 +1037,6 @@ void webkit_web_context_set_network_proxy_settings(WebKitWebContext* context, We
 
     webkit_website_data_manager_set_network_proxy_settings(context->priv->websiteDataManager.get(), proxyMode, proxySettings);
 }
-#endif
 
 /**
  * webkit_web_context_download_uri:
@@ -1047,6 +1085,7 @@ WebKitCookieManager* webkit_web_context_get_cookie_manager(WebKitWebContext* con
 
     return webkit_website_data_manager_get_cookie_manager(context->priv->websiteDataManager.get());
 }
+#endif
 
 /**
  * webkit_web_context_get_geolocation_manager:
@@ -1065,6 +1104,7 @@ WebKitGeolocationManager* webkit_web_context_get_geolocation_manager(WebKitWebCo
     return context->priv->geolocationManager.get();
 }
 
+#if !ENABLE(2022_GLIB_API)
 static void ensureFaviconDatabase(WebKitWebContext* context)
 {
     WebKitWebContextPrivate* priv = context->priv;
@@ -1166,6 +1206,7 @@ WebKitFaviconDatabase* webkit_web_context_get_favicon_database(WebKitWebContext*
     ensureFaviconDatabase(context);
     return context->priv->faviconDatabase.get();
 }
+#endif
 
 /**
  * webkit_web_context_get_security_manager:
@@ -1677,6 +1718,7 @@ void webkit_web_context_set_disk_cache_directory(WebKitWebContext*, const char*)
 }
 #endif
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_context_prefetch_dns:
  * @context: a #WebKitWebContext
@@ -1692,8 +1734,10 @@ void webkit_web_context_prefetch_dns(WebKitWebContext* context, const char* host
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
     g_return_if_fail(hostname);
 
-    auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
-    websiteDataStore.networkProcess().send(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)), 0);
+    if (context->priv->dnsPrefetchedHosts.add(String::fromUTF8(hostname)).isNewEntry) {
+        auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
+        websiteDataStore.networkProcess().send(Messages::NetworkProcess::PrefetchDNS(String::fromUTF8(hostname)), 0);
+    }
     context->priv->dnsPrefetchHystereris.impulse();
 }
 
@@ -1717,6 +1761,7 @@ void webkit_web_context_allow_tls_certificate_for_host(WebKitWebContext* context
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get());
     websiteDataStore.allowSpecificHTTPSCertificateForHost(certificateInfo, String::fromUTF8(host));
 }
+#endif
 
 #if !ENABLE(2022_GLIB_API)
 /**
@@ -1939,10 +1984,12 @@ void webkitWebContextInitializeNotificationPermissions(WebKitWebContext* context
     g_signal_emit(context, signals[INITIALIZE_NOTIFICATION_PERMISSIONS], 0);
 }
 
+#if !ENABLE(2022_GLIB_API)
 void webkitWebContextDownloadStarted(WebKitWebContext* context, WebKitDownload* download)
 {
     g_signal_emit(context, signals[DOWNLOAD_STARTED], 0, download);
 }
+#endif
 
 GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext* context)
 {
@@ -1980,8 +2027,10 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebVi
         pageConfiguration->setOverrideContentSecurityPolicy(String::fromUTF8(defaultContentSecurityPolicy));
 
     WebKitWebsiteDataManager* manager = webkitWebViewGetWebsiteDataManager(webView);
+#if !ENABLE(2022_GLIB_API)
     if (!manager)
         manager = context->priv->websiteDataManager.get();
+#endif
     pageConfiguration->setWebsiteDataStore(&webkitWebsiteDataManagerGetDataStore(manager));
     pageConfiguration->setDefaultWebsitePolicies(webkitWebsitePoliciesGetWebsitePolicies(defaultWebsitePolicies));
     webkitWebViewCreatePage(webView, WTFMove(pageConfiguration));

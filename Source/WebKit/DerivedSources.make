@@ -461,6 +461,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in \
 	GPUProcess/media/InitializationSegmentInfo.serialization.in \
 	GPUProcess/media/MediaDescriptionInfo.serialization.in \
+	GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	Shared/API/APIError.serialization.in \
@@ -476,6 +477,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/EditorState.serialization.in \
+	Shared/Extensions/WebExtensionEventListenerType.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
 	Shared/FrameInfoData.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
@@ -574,6 +576,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUBlendComponent.serialization.in \
 	Shared/WebGPU/WebGPUBindGroupEntry.serialization.in \
 	Shared/XR/XRSystem.serialization.in \
+	WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in \
 #
 

@@ -253,7 +253,7 @@ SOAuthorizationCoordinator& WebsiteDataStore::soAuthorizationCoordinator(const W
 
 static Ref<NetworkProcessProxy> networkProcessForSession(PAL::SessionID sessionID)
 {
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if ((PLATFORM(GTK) || PLATFORM(WPE)) && !ENABLE(2022_GLIB_API))
     if (sessionID.isEphemeral()) {
         // Reuse a previous persistent session network process for ephemeral sessions.
         for (auto* dataStore : allDataStores().values()) {

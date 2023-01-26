@@ -66,3 +66,18 @@ accordingly.
 `webkit_web_view_new_with_user_content_manager()` have all been removed. You
 may directly use `g_object_new()` instead. [ctor@WebKit.WebView.new] and
 [ctor@WebKit.WebView.new_with_related_view] both remain.
+
+## Network session API
+
+WebKit now uses a single global network process for all web contexts, and different
+network sessions can be created and used in the same network process. All the networking
+APIs have been moved from [type@WebKit.WebContext] and [type@WebKit.WebsiteDataManager] to the new class
+[type@WebKit.NetworkSession]. There's a default global persistent session that you can get with
+[func@WebKit.NetworkSession.get_default]. You can also create new sessions with
+[ctor@WebKit.NetworkSession.new] for persistent sessions and [ctor@WebKit.NetworkSession.new_ephemeral]
+for ephemeral sessions. It's no longer possible to create a [type@WebKit.WebsiteDataManager], it's now
+created by the [type@WebKit.NetworkSession] automatically at construction time. The [type@WebKit.NetworkSession]
+to be used must be passed to the [type@WebKit.WebView] as a construct parameter. You can pass the
+same [type@WebKit.NetworkSession] object to several web views to use the same session. The only exception
+is automation mode, which uses its own ephemeral session that is configured by the automation
+session capabilities.

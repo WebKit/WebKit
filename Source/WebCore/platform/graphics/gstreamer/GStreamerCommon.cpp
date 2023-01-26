@@ -405,7 +405,7 @@ void registerWebKitGStreamerElements()
         // The new demuxers based on adaptivedemux2 cannot be used in WebKit yet because this new
         // base class does not abstract away network access. They can't work in a sandboxed
         // media process, so demote their rank in order to prevent decodebin3 from auto-plugging them.
-        if (webkitGstCheckVersion(1, 21, 0)) {
+        if (webkitGstCheckVersion(1, 22, 0)) {
             const char* const elementNames[] = { "dashdemux2", "hlsdemux2", "mssdemux2" };
             for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
                 if (auto factory = adoptGRef(gst_element_factory_find(elementNames[i])))
@@ -1039,6 +1039,19 @@ void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVi
         GST_VIDEO_INFO_COLORIMETRY(info).range = *colorSpace.fullRange ? GST_VIDEO_COLOR_RANGE_0_255 : GST_VIDEO_COLOR_RANGE_16_235;
     else
         GST_VIDEO_INFO_COLORIMETRY(info).range = GST_VIDEO_COLOR_RANGE_UNKNOWN;
+}
+
+void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>& element)
+{
+    auto elementHasProperty = [&](const char* name) -> bool {
+        return g_object_class_find_property(G_OBJECT_GET_CLASS(element.get()), name);
+    };
+
+    if (elementHasProperty("max-threads"))
+        g_object_set(element.get(), "max-threads", 1, nullptr);
+
+    if (elementHasProperty("max-errors"))
+        g_object_set(element.get(), "max-errors", 0, nullptr);
 }
 
 } // namespace WebCore

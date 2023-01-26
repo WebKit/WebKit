@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "ReadableStreamDefaultController.h"
 #include <wtf/WeakPtr.h>
 
@@ -36,6 +36,7 @@ namespace WebCore {
 
 class ReadableStreamSource : public RefCounted<ReadableStreamSource> {
 public:
+    ReadableStreamSource();
     virtual ~ReadableStreamSource();
 
     void start(ReadableStreamDefaultController&&, DOMPromiseDeferred<void>&&);

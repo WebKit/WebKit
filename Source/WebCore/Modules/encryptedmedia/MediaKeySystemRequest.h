@@ -28,7 +28,7 @@
 
 #include "ActiveDOMObject.h"
 #include "IDLTypes.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "MediaKeySystemRequestIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>

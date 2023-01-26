@@ -128,17 +128,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
     : m_outputCallback(WTFMove(outputCallback))
     , m_postTaskCallback(WTFMove(postTaskCallback))
 {
-    GUniquePtr<char> elementName(gst_element_get_name(element.get()));
-    auto elementHasProperty = [&](const char* name) -> bool {
-        return g_object_class_find_property(G_OBJECT_GET_CLASS(element.get()), name);
-    };
-    if (g_str_has_prefix(elementName.get(), "avdec")) {
-        if (elementHasProperty("max-threads"))
-            g_object_set(element.get(), "max-threads", 1, nullptr);
-    }
-
-    if (elementHasProperty("max-errors"))
-        g_object_set(element.get(), "max-errors", 0, nullptr);
+    configureVideoDecoderForHarnessing(element);
 
     GST_DEBUG_OBJECT(element.get(), "Configuring decoder for codec %s", codecName.ascii().data());
     GRefPtr<GstCaps> inputCaps;

@@ -27,11 +27,18 @@
 
 #if !TARGET_OS_IPHONE
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class WKWebView;
+
 WK_CLASS_AVAILABLE(macos(10.15))
 @interface _WKInspectorWindow : NSWindow
 
-@property (nonatomic, getter=isForRemoteTarget) BOOL forRemoteTarget;
+@property (nonatomic, readonly, getter=isForRemoteTarget) BOOL forRemoteTarget;
+@property (nonatomic, nullable, readonly, weak) WKWebView *inspectedWebView WK_API_AVAILABLE(macos(WK_MAC_TBA));
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif

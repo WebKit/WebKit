@@ -29,7 +29,7 @@
 #include "GPUDeviceDescriptor.h"
 #include "GPUSupportedFeatures.h"
 #include "GPUSupportedLimits.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "ScriptExecutionContext.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>

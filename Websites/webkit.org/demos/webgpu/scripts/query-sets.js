@@ -92,7 +92,7 @@ async function helloTriangle() {
                     device float *time [[id(0)]];
                 };
 
-                vertex Vertex vsmain(const device VertexShaderArguments &values [[buffer(1)]], unsigned VertexIndex [[vertex_id]])
+                vertex Vertex vsmain(const device VertexShaderArguments &values [[buffer(8)]], unsigned VertexIndex [[vertex_id]])
                 {
                    float2 pos[3] = {
                        float2( 0.0,  0.5 + .05 * values.time[0]),
@@ -190,7 +190,7 @@ async function helloTriangle() {
         renderPassEncoder.setPipeline(renderPipeline);
         const vertexBufferSlot = 0;
         renderPassEncoder.setVertexBuffer(vertexBufferSlot, vertexBuffer, 0);
-        renderPassEncoder.setBindGroup(1, uniformBindGroup);
+        renderPassEncoder.setBindGroup(0, uniformBindGroup);
         renderPassEncoder.beginOcclusionQuery(0);
         renderPassEncoder.draw(3, 1, 0, 0); // 3 vertices, 1 instance, 0th vertex, 0th instance.
         renderPassEncoder.endOcclusionQuery();

@@ -27,7 +27,9 @@
 #include <@API_INCLUDE_PREFIX@/WebKitCookieManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDownload.h>
+#if !ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitFaviconDatabase.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitGeolocationManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitNetworkProxySettings.h>
 #include <@API_INCLUDE_PREFIX@/WebKitSecurityManager.h>
@@ -140,6 +142,7 @@ webkit_web_context_get_default                      (void);
 WEBKIT_API WebKitWebContext *
 webkit_web_context_new                              (void);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API WebKitWebContext *
 webkit_web_context_new_ephemeral                    (void);
 
@@ -151,6 +154,7 @@ webkit_web_context_get_website_data_manager         (WebKitWebContext           
 
 WEBKIT_API gboolean
 webkit_web_context_is_ephemeral                     (WebKitWebContext              *context);
+#endif
 
 WEBKIT_API gboolean
 webkit_web_context_is_automation_allowed            (WebKitWebContext              *context);
@@ -173,15 +177,14 @@ WEBKIT_DEPRECATED guint
 webkit_web_context_get_web_process_count_limit      (WebKitWebContext              *context);
 #endif
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API void
 webkit_web_context_clear_cache                      (WebKitWebContext              *context);
 
-#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_set_network_proxy_settings) void
 webkit_web_context_set_network_proxy_settings       (WebKitWebContext              *context,
                                                      WebKitNetworkProxyMode         proxy_mode,
                                                      WebKitNetworkProxySettings    *proxy_settings);
-#endif
 
 WEBKIT_API WebKitDownload *
 webkit_web_context_download_uri                     (WebKitWebContext              *context,
@@ -189,10 +192,12 @@ webkit_web_context_download_uri                     (WebKitWebContext           
 
 WEBKIT_API WebKitCookieManager *
 webkit_web_context_get_cookie_manager               (WebKitWebContext              *context);
+#endif
 
 WEBKIT_API WebKitGeolocationManager *
 webkit_web_context_get_geolocation_manager          (WebKitWebContext              *context);
 
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API WebKitFaviconDatabase *
 webkit_web_context_get_favicon_database             (WebKitWebContext              *context);
 
@@ -201,6 +206,7 @@ webkit_web_context_set_favicon_database_directory   (WebKitWebContext           
                                                      const gchar                   *path);
 WEBKIT_API const gchar *
 webkit_web_context_get_favicon_database_directory   (WebKitWebContext              *context);
+#endif
 
 WEBKIT_API WebKitSecurityManager *
 webkit_web_context_get_security_manager             (WebKitWebContext              *context);

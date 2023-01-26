@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+FetchBody::~FetchBody() = default;
+
 ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
 {
     return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable -> ExceptionOr<FetchBody> {

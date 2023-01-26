@@ -31,6 +31,7 @@ PACKAGES=(
     autotools-dev
     bubblewrap
     cmake
+    flite1-dev
     gawk
     $(aptIfExists gi-docgen)
     gperf

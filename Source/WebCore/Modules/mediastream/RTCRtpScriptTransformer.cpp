@@ -30,6 +30,7 @@
 
 #include "DedicatedWorkerGlobalScope.h"
 #include "EventLoop.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
 #include "MessageWithMessagePorts.h"

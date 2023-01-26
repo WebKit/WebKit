@@ -30,6 +30,7 @@
 #include "AudioContext.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
+#include <JavaScriptCore/TypedArrays.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 

@@ -8,8 +8,10 @@
 description("Checks that the client can prevent a fragment navigation via the decidePolicyForNavigationAction delegate.");
 jsTestIsAsync = true;
 
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.setCustomPolicyDelegate(true, false);
+    if (testRunner.skipPolicyDelegateNotifyDone) { testRunner.skipPolicyDelegateNotifyDone() }
+}
 
 onload = function() {
     location = "#test";

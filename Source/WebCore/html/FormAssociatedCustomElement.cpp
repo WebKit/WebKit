@@ -273,7 +273,7 @@ void FormAssociatedCustomElement::restoreFormControlState(const FormControlState
     if (savedState.size() == 1)
         restoredState.emplace<String>(savedState[0]);
     else {
-        auto formData = DOMFormData::create(PAL::UTF8Encoding());
+        auto formData = DOMFormData::create(&asHTMLElement().document(), PAL::UTF8Encoding());
         for (size_t i = 0; i < savedState.size(); i += 2)
             formData->append(savedState[i], savedState[i + 1]);
         restoredState.emplace<RefPtr<DOMFormData>>(formData.ptr());

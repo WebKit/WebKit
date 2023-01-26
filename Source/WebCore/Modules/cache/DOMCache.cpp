@@ -31,6 +31,7 @@
 #include "EventLoop.h"
 #include "FetchResponse.h"
 #include "HTTPParsers.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSFetchRequest.h"
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"

@@ -82,6 +82,10 @@ def main(
     )
 
     subparsers = parser.add_subparsers(help='sub-command help')
+    subparser = subparsers.add_parser('help', help='Print all help messages')
+    arguments.LoggingGroup(subparser, loggers=loggers)
+    subparser.set_defaults(main=lambda *args, **kwargs: parser.print_help())
+
     programs = [
         Blame, Branch, Canonicalize, Checkout,
         Clean, Find, Info, Land, Log, Pull,

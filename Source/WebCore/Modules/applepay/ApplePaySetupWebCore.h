@@ -29,7 +29,7 @@
 
 #include "ApplePaySetupConfiguration.h"
 #include <WebCore/ActiveDOMObject.h>
-#include <WebCore/JSDOMPromiseDeferred.h>
+#include <WebCore/JSDOMPromiseDeferredForward.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -38,7 +38,6 @@
 namespace WebCore {
 
 class ApplePaySetupFeature;
-class DeferredPromise;
 class Document;
 
 class ApplePaySetup : public ActiveDOMObject, public RefCounted<ApplePaySetup> {

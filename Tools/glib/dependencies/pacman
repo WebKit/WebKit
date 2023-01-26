@@ -9,6 +9,7 @@ PACKAGES=(
     cmake
     file
     findutils
+    flite
     gawk
     gcc
     gperf

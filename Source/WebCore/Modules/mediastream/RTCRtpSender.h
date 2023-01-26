@@ -32,7 +32,7 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "MediaStreamTrack.h"
 #include "RTCDtlsTransport.h"
 #include "RTCRtpSenderBackend.h"

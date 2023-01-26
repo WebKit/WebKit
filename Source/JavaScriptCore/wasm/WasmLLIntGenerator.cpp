@@ -267,6 +267,7 @@ public:
     // References
     PartialResult WARN_UNUSED_RETURN addRefIsNull(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefAsNonNull(ExpressionType, ExpressionType&);
 
     // Tables
     PartialResult WARN_UNUSED_RETURN addTableGet(unsigned, ExpressionType index, ExpressionType& result);
@@ -1450,6 +1451,14 @@ auto LLIntGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Parti
 {
     result = push();
     WasmRefFunc::emit(this, result, index);
+
+    return { };
+}
+
+auto LLIntGenerator::addRefAsNonNull(ExpressionType reference, ExpressionType& result) -> PartialResult
+{
+    result = push();
+    WasmRefAsNonNull::emit(this, result, reference);
 
     return { };
 }

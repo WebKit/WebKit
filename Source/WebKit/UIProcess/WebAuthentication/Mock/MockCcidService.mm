@@ -54,6 +54,10 @@
     reply(TRUE, nil);
 }
 
+- (void)endSession
+{
+}
+
 - (void)transmitRequest:(NSData *)request reply:(void(^)(NSData * response, NSError * error))reply
 {
     reply(m_service->nextReply().get(), nil);

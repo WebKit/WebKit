@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-enum class AuthenticatorAttachment;
+enum class AuthenticatorAttachment : uint8_t;
 
 struct PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)

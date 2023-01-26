@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUDevice.h"
 
+#include "DOMPromiseProxy.h"
 #include "GPUBindGroup.h"
 #include "GPUBindGroupDescriptor.h"
 #include "GPUBindGroupLayout.h"
@@ -58,6 +59,7 @@
 #include "GPUSwapChainDescriptor.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSGPUComputePipeline.h"
 #include "JSGPUOutOfMemoryError.h"
 #include "JSGPURenderPipeline.h"
@@ -70,6 +72,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(GPUDevice);
 
 GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::WebGPU::Device>&& backing)
     : ActiveDOMObject { scriptExecutionContext }
+    , m_lostPromise(makeUniqueRef<LostPromise>())
     , m_backing(WTFMove(backing))
     , m_queue(GPUQueue::create(Ref { m_backing->queue() }))
     , m_autoPipelineLayout(createPipelineLayout({ { "autoLayout"_s, }, { } }))

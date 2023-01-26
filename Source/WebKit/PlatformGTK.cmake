@@ -182,6 +182,12 @@ set(WebKitGTK_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitWebViewBase.h.in
 )
 
+if (ENABLE_2022_GLIB_API)
+    list(APPEND WebKitGTK_HEADER_TEMPLATES
+        ${WEBKIT_DIR}/UIProcess/API/glib/WebKitNetworkSession.h.in
+    )
+endif ()
+
 set(WebKitGTK_INSTALLED_HEADERS
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitEnumTypes.h
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit/WebKitVersion.h

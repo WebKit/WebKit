@@ -86,6 +86,11 @@ void RenderLayerScrollableArea::clear()
     auto& renderer = m_layer.renderer();
     if (m_registeredScrollableArea)
         renderer.view().frameView().removeScrollableArea(this);
+    
+    if (m_isRegisteredForAnimatedScroll) {
+        renderer.view().frameView().removeScrollableAreaForAnimatedScroll(this);
+        m_isRegisteredForAnimatedScroll = false;
+    }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     unregisterAsTouchEventListenerForScrolling();

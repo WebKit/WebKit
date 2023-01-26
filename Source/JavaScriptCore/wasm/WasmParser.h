@@ -310,9 +310,19 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseVarUInt1(uint8_t& result)
 template<typename SuccessType>
 ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::parseBlockSignature(const ModuleInformation& info, BlockSignature& result)
 {
-    int8_t typeKind;
-    if (peekInt7(typeKind) && isValidTypeKind(typeKind)) {
-        Type type = { static_cast<TypeKind>(typeKind), 0 };
+    int8_t kindByte;
+    if (peekInt7(kindByte) && isValidTypeKind(kindByte)) {
+        TypeKind typeKind = static_cast<TypeKind>(kindByte);
+        if (Options::useWebAssemblyTypedFunctionReferences() && (isValidHeapTypeKind(typeKind) || typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull)) {
+            Type resultType;
+            WASM_PARSER_FAIL_IF(!parseValueType(info, resultType), "result type of block is not a valid ref type");
+            Vector<Type, 1> returnTypes { resultType };
+            result = TypeInformation::typeDefinitionForFunction(returnTypes, { });
+
+            return { };
+        }
+
+        Type type = { typeKind, 0 };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: ", makeString(type.kind), " is not a value type or Void");
         result = m_typeInformation.thunkFor(type);
         m_offset++;

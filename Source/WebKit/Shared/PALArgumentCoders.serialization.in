@@ -127,3 +127,8 @@ enum class PAL::WebGPU::TextureAspect : uint8_t {
 };
 
 enum class PAL::WebGPU::PowerPreference : bool
+
+header: <pal/graphics/WebGPU/WebGPUPredefinedColorSpace.h>
+enum class PAL::WebGPU::PredefinedColorSpace : uint8_t {
+    SRGB
+};

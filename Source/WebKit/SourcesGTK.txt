@@ -157,6 +157,7 @@ UIProcess/API/glib/WebKitNavigationAction.cpp @no-unify
 UIProcess/API/glib/WebKitNavigationClient.cpp @no-unify
 UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp @no-unify
 UIProcess/API/glib/WebKitNetworkProxySettings.cpp @no-unify
+UIProcess/API/glib/WebKitNetworkSession.cpp @no-unify
 UIProcess/API/glib/WebKitNotification.cpp @no-unify
 UIProcess/API/glib/WebKitNotificationPermissionRequest.cpp @no-unify
 UIProcess/API/glib/WebKitNotificationProvider.cpp @no-unify

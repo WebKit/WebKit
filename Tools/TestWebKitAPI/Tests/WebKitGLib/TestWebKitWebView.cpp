@@ -219,11 +219,19 @@ static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loa
 
 static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
 {
+#if ENABLE(2022_GLIB_API)
+    auto* networkSession = webkit_web_view_get_network_session(test->m_webView);
+    g_assert_false(webkit_network_session_is_ephemeral(networkSession));
+    auto* manager = webkit_network_session_get_website_data_manager(networkSession);
+    g_assert_false(webkit_website_data_manager_is_ephemeral(manager));
+    GRefPtr<WebKitNetworkSession> ephemeralSession = adoptGRef(webkit_network_session_new_ephemeral());
+#else
     g_assert_false(webkit_web_view_is_ephemeral(test->m_webView));
     g_assert_false(webkit_web_context_is_ephemeral(webkit_web_view_get_context(test->m_webView)));
     auto* manager = webkit_web_context_get_website_data_manager(test->m_webContext.get());
     g_assert_false(webkit_website_data_manager_is_ephemeral(manager));
     g_assert_true(webkit_web_view_get_website_data_manager(test->m_webView) == manager);
+#endif
     webkit_website_data_manager_clear(manager, WEBKIT_WEBSITE_DATA_DISK_CACHE, 0, nullptr, [](GObject* manager, GAsyncResult* result, gpointer userData) {
         webkit_website_data_manager_clear_finish(WEBKIT_WEBSITE_DATA_MANAGER(manager), result, nullptr);
         static_cast<WebViewTest*>(userData)->quitMainLoop();
@@ -236,11 +244,20 @@ static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
         "backend", Test::createWebViewBackend(),
 #endif
         "web-context", webkit_web_view_get_context(test->m_webView),
+#if ENABLE(2022_GLIB_API)
+        "network-session", ephemeralSession.get(),
+#else
         "is-ephemeral", TRUE,
+#endif
         nullptr));
+#if ENABLE(2022_GLIB_API)
+    g_assert_true(webkit_network_session_is_ephemeral(webkit_web_view_get_network_session(webView.get())));
+    g_assert_true(webkit_web_view_get_network_session(webView.get()) != networkSession);
+#else
     g_assert_true(webkit_web_view_is_ephemeral(webView.get()));
     g_assert_false(webkit_web_context_is_ephemeral(webkit_web_view_get_context(webView.get())));
     g_assert_true(webkit_web_view_get_website_data_manager(webView.get()) != manager);
+#endif
 
     g_signal_connect(webView.get(), "load-changed", G_CALLBACK(ephemeralViewloadChanged), test);
     webkit_web_view_load_uri(webView.get(), gServer->getURIForPath("/").data());

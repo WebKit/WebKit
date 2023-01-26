@@ -31,6 +31,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGText.h"
@@ -84,7 +85,8 @@ void RenderLayerModelObject::willBeDestroyed()
 
 void RenderLayerModelObject::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
-    if (auto* layer = this->layer(); layer && layer->needsFullRepaint() && isInternalMove == IsInternalMove::No)
+    bool shouldNotRepaint = is<RenderMultiColumnSet>(this->previousSibling());
+    if (auto* layer = this->layer(); layer && layer->needsFullRepaint() && isInternalMove == IsInternalMove::No && !shouldNotRepaint)
         issueRepaint(std::nullopt, ClipRepaintToLayer::No, ForceRepaint::Yes);
 
     RenderElement::willBeRemovedFromTree(isInternalMove);

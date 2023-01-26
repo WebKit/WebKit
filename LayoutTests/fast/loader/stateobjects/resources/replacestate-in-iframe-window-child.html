@@ -1,11 +1,4 @@
 <script>
-window.onload = function() {
-  if (!sessionStorage.beganTest) {
-    sessionStorage.beganTest = true; 
-    top.opener.windowLoaded();
-  }
-}
-
 window.onunload = function() {
   // No page cache
 }
@@ -16,5 +9,11 @@ window.onpageshow = function(e) {
     top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
   else
     sessionStorage.alreadyShown = true;
+  if (!sessionStorage.beganTest) {
+    sessionStorage.beganTest = true;
+    top.opener.windowLoaded();
+  } else {
+    top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
+  }
 }
 </script>

@@ -102,7 +102,6 @@ private:
     id<MTLBuffer> m_indexBuffer { nil };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
-    NSUInteger m_vertexShaderInputBufferCount { 0 };
     NSUInteger m_visibilityResultBufferOffset { 0 };
     NSUInteger m_visibilityResultBufferSize { 0 };
     bool m_depthReadOnly { false };

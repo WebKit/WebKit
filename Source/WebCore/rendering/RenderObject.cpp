@@ -916,6 +916,15 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     bool repaintRectNeedsConverting = false;
     // Issue repaint on the renderer with outline: auto.
     for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
+        if (is<RenderMultiColumnSet>(renderer->previousSibling())) {
+            auto previousMultiColumnSet = downcast<RenderMultiColumnSet>(renderer->previousSibling());
+            auto enclosingMultiColumnFlow = previousMultiColumnSet->multiColumnFlow();
+            auto& previousMultiColumnSetBox = downcast<RenderBox>(*renderer);
+            auto renderMultiColumnPlaceholder = enclosingMultiColumnFlow->findColumnSpannerPlaceholder(&previousMultiColumnSetBox);
+            ASSERT(renderMultiColumnPlaceholder);
+            renderer = renderMultiColumnPlaceholder;
+        }
+
         bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
             || renderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On

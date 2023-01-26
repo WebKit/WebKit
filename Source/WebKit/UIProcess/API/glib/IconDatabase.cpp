@@ -56,7 +56,7 @@ IconDatabase::IconDatabase(const String& path, AllowDatabaseWrite allowDatabaseW
     // We initialize the database synchronously, it's hopefully fast enough because it makes
     // the implementation a lot simpler.
     m_workQueue->dispatchSync([&] {
-        if (allowDatabaseWrite == AllowDatabaseWrite::No && !FileSystem::fileExists(path))
+        if (allowDatabaseWrite == AllowDatabaseWrite::No && (path.isNull() || !FileSystem::fileExists(path)))
             return;
 
         auto databaseDirectory = FileSystem::parentPath(path);

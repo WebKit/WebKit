@@ -1443,6 +1443,7 @@ html/canvas/PlaceholderRenderingContext.cpp
 html/canvas/PredefinedColorSpace.cpp
 html/canvas/WebGL2RenderingContext.cpp
 html/canvas/WebGLBuffer.cpp
+html/canvas/WebGLClipCullDistance.cpp
 html/canvas/WebGLColorBufferFloat.cpp
 html/canvas/WebGLCompressedTextureASTC.cpp
 html/canvas/WebGLCompressedTextureETC.cpp
@@ -4200,6 +4201,7 @@ JSWebCodecsVideoFrame.cpp
 JSWebGL2RenderingContext.cpp
 JSWebGLActiveInfo.cpp
 JSWebGLBuffer.cpp
+JSWebGLClipCullDistance.cpp
 JSWebGLColorBufferFloat.cpp
 JSWebGLCompressedTextureASTC.cpp
 JSWebGLCompressedTextureETC.cpp

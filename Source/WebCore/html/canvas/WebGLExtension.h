@@ -79,6 +79,7 @@ public:
         OESTextureHalfFloatName,
         OESTextureHalfFloatLinearName,
         OESVertexArrayObjectName,
+        WebGLClipCullDistanceName,
         WebGLColorBufferFloatName,
         WebGLCompressedTextureASTCName,
         WebGLCompressedTextureETCName,

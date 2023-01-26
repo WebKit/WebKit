@@ -29,7 +29,7 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "VideoDecoder.h"
 #include "WebCodecsCodecState.h"
 #include "WebCodecsEncodedVideoChunkType.h"

@@ -40,6 +40,9 @@ struct _BrowserWindow {
     GtkApplicationWindow parent;
 
     WebKitWebContext *webContext;
+#if GTK_CHECK_VERSION(3, 98, 0)
+    WebKitNetworkSession *networkSession;
+#endif
 
     GtkWidget *mainBox;
     GtkWidget *toolbar;
@@ -159,7 +162,11 @@ static void webViewTitleChanged(WebKitWebView *webView, GParamSpec *pspec, Brows
     char *privateTitle = NULL;
     if (webkit_web_view_is_controlled_by_automation(webView))
         privateTitle = g_strdup_printf("[Automation] %s", title);
+#if GTK_CHECK_VERSION(3, 98, 0)
+    else if (webkit_network_session_is_ephemeral(webkit_web_view_get_network_session(webView)))
+#else
     else if (webkit_web_view_is_ephemeral(webView))
+#endif
         privateTitle = g_strdup_printf("[Private] %s", title);
     gtk_window_set_title(GTK_WINDOW(window), privateTitle ? privateTitle : title);
     g_free(privateTitle);
@@ -185,9 +192,9 @@ static void webViewLoadProgressChanged(WebKitWebView *webView, GParamSpec *pspec
     }
 }
 
+#if !GTK_CHECK_VERSION(3, 98, 0)
 static void downloadStarted(WebKitWebContext *webContext, WebKitDownload *download, BrowserWindow *window)
 {
-#if !GTK_CHECK_VERSION(3, 98, 0)
     if (!window->downloadsBar) {
         window->downloadsBar = browser_downloads_bar_new();
         gtk_box_pack_start(GTK_BOX(window->mainBox), window->downloadsBar, FALSE, FALSE, 0);
@@ -196,8 +203,8 @@ static void downloadStarted(WebKitWebContext *webContext, WebKitDownload *downlo
         gtk_widget_show(window->downloadsBar);
     }
     browser_downloads_bar_add_download(BROWSER_DOWNLOADS_BAR(window->downloadsBar), download);
-#endif
 }
+#endif
 
 static void browserWindowHistoryItemActivated(BrowserWindow *window, GVariant *parameter, GAction *action)
 {
@@ -458,7 +465,11 @@ static GtkWidget *webViewCreate(WebKitWebView *webView, WebKitNavigationAction *
     WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(webView));
     webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
 
+#if GTK_CHECK_VERSION(3, 98, 0)
+    GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext, window->networkSession);
+#else
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
+#endif
     gtk_window_set_application(GTK_WINDOW(newWindow), gtk_window_get_application(GTK_WINDOW(window)));
     browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
     gtk_widget_grab_focus(GTK_WIDGET(newWebView));
@@ -504,6 +515,9 @@ static gboolean webViewDecidePolicy(WebKitWebView *webView, WebKitPolicyDecision
     /* Opening a new tab if link clicked with the middle button. */
     WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", webkit_web_view_get_context(webView),
+#if GTK_CHECK_VERSION(3, 98, 0)
+        "network-session", webkit_web_view_get_network_session(webView),
+#endif
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
@@ -756,6 +770,9 @@ static void newTabCallback(GSimpleAction *action, GVariant *parameter, gpointer 
 
     browser_window_append_view(window, WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", webkit_web_view_get_context(webView),
+#if GTK_CHECK_VERSION(3, 98, 0)
+        "network-session", window->networkSession,
+#endif
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
         "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
@@ -774,15 +791,33 @@ static void openPrivateWindow(GSimpleAction *action, GVariant *parameter, gpoint
 {
     BrowserWindow *window = BROWSER_WINDOW(userData);
     WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
+
+#if GTK_CHECK_VERSION(3, 98, 0)
+    WebKitNetworkSession *networkSession = NULL;
+    if (!webkit_web_view_is_controlled_by_automation(webView)) {
+        networkSession = webkit_network_session_new_ephemeral();
+        webkit_network_session_set_tls_errors_policy(networkSession, webkit_network_session_get_tls_errors_policy(window->networkSession));
+        // FIXME: we need public api to get proxy settings.
+    }
+#endif
     WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", webkit_web_view_get_context(webView),
         "settings", webkit_web_view_get_settings(webView),
         "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+#if GTK_CHECK_VERSION(3, 98, 0)
+        "network-session", networkSession,
+#else
         "is-ephemeral", TRUE,
+#endif
         "is-controlled-by-automation", webkit_web_view_is_controlled_by_automation(webView),
         "website-policies", webkit_web_view_get_website_policies(webView),
         NULL));
+#if GTK_CHECK_VERSION(3, 98, 0)
+    GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext, networkSession);
+    g_clear_object(&networkSession);
+#else
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
+#endif
     gtk_window_set_application(GTK_WINDOW(newWindow), gtk_window_get_application(GTK_WINDOW(window)));
     browser_window_append_view(BROWSER_WINDOW(newWindow), newWebView);
     gtk_widget_grab_focus(GTK_WIDGET(newWebView));
@@ -961,6 +996,10 @@ static void browserWindowFinalize(GObject *gObject)
 
     g_signal_handlers_disconnect_matched(window->webContext, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
     g_object_unref(window->webContext);
+
+#if GTK_CHECK_VERSION(3, 98, 5)
+    g_clear_object(&window->networkSession);
+#endif
 
     if (window->favicon) {
         g_object_unref(window->favicon);
@@ -1461,7 +1500,11 @@ static void browser_window_class_init(BrowserWindowClass *klass)
 }
 
 /* Public API. */
+#if GTK_CHECK_VERSION(3, 98, 0)
+GtkWidget *browser_window_new(GtkWindow *parent, WebKitWebContext *webContext, WebKitNetworkSession *networkSession)
+#else
 GtkWidget *browser_window_new(GtkWindow *parent, WebKitWebContext *webContext)
+#endif
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(webContext), NULL);
 
@@ -1472,7 +1515,12 @@ GtkWidget *browser_window_new(GtkWindow *parent, WebKitWebContext *webContext)
         NULL));
 
     window->webContext = g_object_ref(webContext);
+#if GTK_CHECK_VERSION(3, 98, 0)
+    window->networkSession = networkSession ? g_object_ref(networkSession) : NULL;
+#else
     g_signal_connect(window->webContext, "download-started", G_CALLBACK(downloadStarted), window);
+#endif
+
     if (parent) {
         window->parentWindow = parent;
         g_object_add_weak_pointer(G_OBJECT(parent), (gpointer *)&window->parentWindow);
@@ -1480,6 +1528,15 @@ GtkWidget *browser_window_new(GtkWindow *parent, WebKitWebContext *webContext)
 
     return GTK_WIDGET(window);
 }
+
+#if GTK_CHECK_VERSION(3, 98, 0)
+WebKitNetworkSession *browser_window_get_network_session(BrowserWindow *window)
+{
+    g_return_val_if_fail(BROWSER_IS_WINDOW(window), NULL);
+
+    return window->networkSession;
+}
+#endif
 
 WebKitWebContext *browser_window_get_web_context(BrowserWindow *window)
 {
@@ -1568,6 +1625,9 @@ void browser_window_load_session(BrowserWindow *window, const char *sessionFile)
         if (!webView) {
             webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
                 "web-context", webkit_web_view_get_context(previousWebView),
+#if GTK_CHECK_VERSION(3, 98, 0)
+                "network-session", webkit_web_view_get_network_session(previousWebView),
+#endif
                 "settings", webkit_web_view_get_settings(previousWebView),
                 "user-content-manager", webkit_web_view_get_user_content_manager(previousWebView),
                 "website-policies", webkit_web_view_get_website_policies(previousWebView),
@@ -1637,7 +1697,11 @@ WebKitWebView *browser_window_get_or_create_web_view_for_automation(BrowserWindo
         "is-controlled-by-automation", TRUE,
         "website-policies", webkit_web_view_get_website_policies(webView),
         NULL));
+#if GTK_CHECK_VERSION(3, 98, 0)
+    GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext, window->networkSession);
+#else
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext);
+#endif
     gtk_window_set_application(GTK_WINDOW(newWindow), gtk_window_get_application(GTK_WINDOW(window)));
 #if !GTK_CHECK_VERSION(3, 98, 0)
     gtk_window_set_focus_on_map(GTK_WINDOW(newWindow), FALSE);

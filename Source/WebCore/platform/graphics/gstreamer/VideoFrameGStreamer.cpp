@@ -565,6 +565,11 @@ RefPtr<JSC::Uint8ClampedArray> VideoFrameGStreamer::computeRGBAImageData() const
     return JSC::Uint8ClampedArray::tryCreate(WTFMove(bufferStorage), 0, byteLength);
 }
 
+RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
+{
+    return GstSampleColorConverter::singleton().convertSampleToImage(m_sample);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

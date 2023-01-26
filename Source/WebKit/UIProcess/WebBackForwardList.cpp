@@ -489,6 +489,18 @@ static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserG
         return item;
 #endif
 
+    // For example:
+    // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
+    // If we're on Google and navigate back, we don't want to skip anything and load Yahoo#a.
+    // However, if we're on Yahoo and navigate forward, we do want to skip items and end up on Google#b.
+    if (direction == NavigationDirection::Backward && !backForwardList.currentItem()->wasCreatedByJSWithoutUserInteraction())
+        return item;
+
+    // For example:
+    // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
+    // If we are on Google#b and navigate backwards, we want to skip over Google#a and Google, to end up on Yahoo#a.
+    // If we are on Yahoo#a and navigate forwards, we want to skip over Google and Google#a, to end up on Google#b.
+
     auto* originalItem = item;
     while (item->wasCreatedByJSWithoutUserInteraction()) {
         itemIndex += delta;
@@ -496,6 +508,27 @@ static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserG
         if (!item)
             return originalItem;
         RELEASE_LOG(Loading, "UI Navigation is skipping a WebBackForwardListItem because it was added by JavaScript without user interaction");
+    }
+
+    // We are now on the next item that has user interaction.
+    ASSERT(!item->wasCreatedByJSWithoutUserInteraction());
+
+    if (direction == NavigationDirection::Backward) {
+        // If going backwards, skip over next item with user iteraction since this is the one the user
+        // thinks they're on.
+        --itemIndex;
+        item = backForwardList.itemAtIndex(itemIndex);
+        if (!item)
+            return originalItem;
+        RELEASE_LOG(Loading, "UI Navigation is skipping a WebBackForwardListItem that has user interaction because we started on an item that didn't have interaction");
+    } else {
+        // If going forward and there are items that we created by JS without user interaction, move forward to the last
+        // one in the series.
+        auto* nextItem = backForwardList.itemAtIndex(itemIndex + 1);
+        while (nextItem && nextItem->wasCreatedByJSWithoutUserInteraction()) {
+            item = nextItem;
+            nextItem = backForwardList.itemAtIndex(++itemIndex);
+        }
     }
     return item;
 }

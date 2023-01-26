@@ -30,6 +30,7 @@
 
 #include "CryptoKeyRaw.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
 #include "JSWritableStreamSink.h"

@@ -35,11 +35,16 @@ Ref<CacheStorageMemoryStore> CacheStorageMemoryStore::create()
     return adoptRef(*new CacheStorageMemoryStore);
 }
 
+static CacheStorageRecord copyCacheStorageRecord(const CacheStorageRecord& record)
+{
+    return { record.info, record.requestHeadersGuard, record.request, record.options, record.referrer, record.responseHeadersGuard, record.responseData.isolatedCopy(), record.responseBodySize, WebCore::DOMCacheEngine::copyResponseBody(record.responseBody) };
+}
+
 void CacheStorageMemoryStore::readAllRecords(ReadAllRecordsCallback&& callback)
 {
     callback(WTF::map(m_records.values(), [](const auto& record) {
         RELEASE_ASSERT(record);
-        return record->copy();
+        return copyCacheStorageRecord(*record);
     }));
 }
 
@@ -49,7 +54,7 @@ void CacheStorageMemoryStore::readRecords(const Vector<CacheStorageRecordInforma
         auto iterator = m_records.find(recordInfo.identifier);
         if (iterator == m_records.end())
             return std::nullopt;
-        return { iterator->value->copy() };
+        return copyCacheStorageRecord(*iterator->value);
     });
     return callback(WTFMove(result));
 }

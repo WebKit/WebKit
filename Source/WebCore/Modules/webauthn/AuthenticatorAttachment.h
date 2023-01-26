@@ -27,27 +27,13 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <wtf/EnumTraits.h>
-
 namespace WebCore {
 
-enum class AuthenticatorAttachment {
+enum class AuthenticatorAttachment : uint8_t {
     Platform,
     CrossPlatform
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AuthenticatorAttachment> {
-    using values = EnumValues<
-        WebCore::AuthenticatorAttachment,
-        WebCore::AuthenticatorAttachment::Platform,
-        WebCore::AuthenticatorAttachment::CrossPlatform
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(WEB_AUTHN)

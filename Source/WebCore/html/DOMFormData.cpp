@@ -37,14 +37,15 @@
 
 namespace WebCore {
 
-DOMFormData::DOMFormData(const PAL::TextEncoding& encoding)
-    : m_encoding(encoding)
+DOMFormData::DOMFormData(ScriptExecutionContext* context, const PAL::TextEncoding& encoding)
+    : ContextDestructionObserver(context)
+    , m_encoding(encoding)
 {
 }
 
-ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
+ExceptionOr<Ref<DOMFormData>> DOMFormData::create(ScriptExecutionContext& context, HTMLFormElement* form)
 {
-    auto formData = adoptRef(*new DOMFormData);
+    auto formData = adoptRef(*new DOMFormData(&context));
     if (!form)
         return formData;
     
@@ -56,14 +57,14 @@ ExceptionOr<Ref<DOMFormData>> DOMFormData::create(HTMLFormElement* form)
     return result.releaseNonNull();
 }
 
-Ref<DOMFormData> DOMFormData::create(const PAL::TextEncoding& encoding)
+Ref<DOMFormData> DOMFormData::create(ScriptExecutionContext* context, const PAL::TextEncoding& encoding)
 {
-    return adoptRef(*new DOMFormData(encoding));
+    return adoptRef(*new DOMFormData(context, encoding));
 }
 
 Ref<DOMFormData> DOMFormData::clone() const
 {
-    auto newFormData = adoptRef(*new DOMFormData(this->encoding()));
+    auto newFormData = adoptRef(*new DOMFormData(scriptExecutionContext(), this->encoding()));
     newFormData->m_items = m_items;
     
     return newFormData;

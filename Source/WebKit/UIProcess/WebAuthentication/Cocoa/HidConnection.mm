@@ -66,7 +66,7 @@ HidConnection::~HidConnection()
 
 void HidConnection::initialize()
 {
-    IOHIDDeviceOpen(m_device.get(), kIOHIDOptionsTypeNone);
+    IOHIDDeviceOpen(m_device.get(), kIOHIDOptionsTypeSeizeDevice);
     IOHIDDeviceScheduleWithRunLoop(m_device.get(), CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
     m_inputBuffer.resize(kHidMaxPacketSize);
     IOHIDDeviceRegisterInputReportCallback(m_device.get(), m_inputBuffer.data(), m_inputBuffer.size(), &reportReceived, this);

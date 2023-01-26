@@ -31,7 +31,7 @@
 #include "AddEventListenerOptions.h"
 #include "EventTarget.h"
 #include "IDLTypes.h"
-#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
 #include "MessageEvent.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
@@ -52,8 +52,6 @@ class ServiceWorker;
 
 enum class ServiceWorkerUpdateViaCache : uint8_t;
 enum class WorkerType : bool;
-
-template<typename IDLType> class DOMPromiseProxy;
 
 class ServiceWorkerContainer final : public EventTarget, public ActiveDOMObject, public ServiceWorkerJobClient {
     WTF_MAKE_NONCOPYABLE(ServiceWorkerContainer);

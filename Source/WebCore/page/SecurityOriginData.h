@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include "ProcessQualified.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Hasher.h>
+#include <wtf/Markable.h>
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -34,6 +37,10 @@ class Frame;
 class SecurityOrigin;
 
 struct SecurityOriginData {
+    enum OpaqueOriginIdentifierType { };
+    using OpaqueOriginIdentifier = ProcessQualified<ObjectIdentifier<OpaqueOriginIdentifierType>>;
+    using MarkableOpaqueOriginIdentifier = Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits>;
+
     SecurityOriginData() = default;
     SecurityOriginData(const String& protocol, const String& host, std::optional<uint16_t> port)
         : protocol(protocol)
@@ -41,6 +48,13 @@ struct SecurityOriginData {
         , port(port)
     {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isHashTableDeletedValue());
+    }
+    explicit SecurityOriginData(OpaqueOriginIdentifier opaqueOriginIdentifier)
+        : protocol(emptyString())
+        , host(emptyString())
+        , port(std::nullopt)
+        , opaqueOriginIdentifier(opaqueOriginIdentifier)
+    {
     }
     SecurityOriginData(WTF::HashTableDeletedValueType)
         : protocol(WTF::HashTableDeletedValue)
@@ -57,6 +71,11 @@ struct SecurityOriginData {
         };
     }
 
+    static SecurityOriginData createOpaque()
+    {
+        return SecurityOriginData { SecurityOriginData::OpaqueOriginIdentifier::generateThreadSafe() };
+    }
+
     WEBCORE_EXPORT Ref<SecurityOrigin> securityOrigin() const;
 
     // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
@@ -65,6 +84,7 @@ struct SecurityOriginData {
     String protocol;
     String host;
     std::optional<uint16_t> port;
+    MarkableOpaqueOriginIdentifier opaqueOriginIdentifier;
 
     WEBCORE_EXPORT SecurityOriginData isolatedCopy() const &;
     WEBCORE_EXPORT SecurityOriginData isolatedCopy() &&;
@@ -80,7 +100,7 @@ struct SecurityOriginData {
     }
     bool isOpaque() const
     {
-        return protocol == emptyString() && host == emptyString() && !port;
+        return !!opaqueOriginIdentifier;
     }
 
     bool isHashTableDeletedValue() const
@@ -95,14 +115,53 @@ struct SecurityOriginData {
 #if !LOG_DISABLED
     String debugString() const { return toString(); }
 #endif
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<SecurityOriginData> decode(Decoder&);
 };
+
+template<class Encoder>
+void SecurityOriginData::encode(Encoder& encoder) const
+{
+    encoder << opaqueOriginIdentifier;
+    if (opaqueOriginIdentifier)
+        return;
+    encoder << protocol << host << port;
+}
+
+template<class Decoder>
+std::optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
+{
+    std::optional<SecurityOriginData::MarkableOpaqueOriginIdentifier> opaqueOriginIdentifier;
+    decoder >> opaqueOriginIdentifier;
+    if (!opaqueOriginIdentifier)
+        return std::nullopt;
+    if (*opaqueOriginIdentifier)
+        return SecurityOriginData(**opaqueOriginIdentifier);
+    std::optional<String> protocol;
+    decoder >> protocol;
+    if (!protocol)
+        return std::nullopt;
+    if (protocol->isHashTableDeletedValue())
+        return std::nullopt;
+    std::optional<String> host;
+    decoder >> host;
+    if (!host)
+        return std::nullopt;
+    std::optional<std::optional<uint16_t>> port;
+    decoder >> port;
+    if (!port)
+        return std::nullopt;
+    return SecurityOriginData(WTFMove(*protocol), WTFMove(*host), *port);
+}
+
 
 WEBCORE_EXPORT bool operator==(const SecurityOriginData&, const SecurityOriginData&);
 inline bool operator!=(const SecurityOriginData& first, const SecurityOriginData& second) { return !(first == second); }
 
 inline void add(Hasher& hasher, const SecurityOriginData& data)
 {
-    add(hasher, data.protocol, data.host, data.port);
+    add(hasher, data.protocol, data.host, data.port, data.opaqueOriginIdentifier);
 }
 
 struct SecurityOriginDataHashTraits : SimpleClassHashTraits<SecurityOriginData> {

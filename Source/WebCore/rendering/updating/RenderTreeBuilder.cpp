@@ -43,6 +43,7 @@
 #include "RenderMathMLFenced.h"
 #include "RenderMenuList.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderReplaced.h"
 #include "RenderRuby.h"
@@ -932,7 +933,6 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
 RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
-
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
     ASSERT(child.parent() == &parent);
 
@@ -943,9 +943,10 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     // that a positioned child got yanked). We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
     if (!parent.renderTreeBeingDestroyed() && child.everHadLayout()) {
-        if (child.isBody())
+        bool shouldNotRepaint = is<RenderMultiColumnSet>(child.previousSibling());
+        if (child.isBody() && !shouldNotRepaint)
             parent.view().repaintRootContents();
-        else
+        else if (!shouldNotRepaint)
             child.repaint();
         child.setNeedsLayoutAndPrefWidthsRecalc();
     }

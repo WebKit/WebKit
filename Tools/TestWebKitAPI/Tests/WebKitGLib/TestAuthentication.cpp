@@ -254,10 +254,17 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
     g_assert_false(test->m_authenticationSucceededReceived);
 #endif
 
+#if ENABLE(2022_GLIB_API)
+    auto* networkSession = webkit_web_view_get_network_session(test->m_webView);
+    g_assert_true(webkit_network_session_get_persistent_credential_storage_enabled(networkSession));
+    webkit_network_session_set_persistent_credential_storage_enabled(networkSession, FALSE);
+    g_assert_false(webkit_network_session_get_persistent_credential_storage_enabled(networkSession));
+#else
     auto* websiteDataManager = webkit_web_view_get_website_data_manager(test->m_webView);
     g_assert_true(webkit_website_data_manager_get_persistent_credential_storage_enabled(websiteDataManager));
     webkit_website_data_manager_set_persistent_credential_storage_enabled(websiteDataManager, FALSE);
     g_assert_false(webkit_website_data_manager_get_persistent_credential_storage_enabled(websiteDataManager));
+#endif
 
     test->loadURI(kServer->getURIForPath("/auth-test.html").data());
     request = test->waitForAuthenticationRequest();
@@ -280,7 +287,11 @@ static void testWebViewAuthenticationStorage(AuthenticationTest* test, gconstpoi
     test->waitUntilLoadFinished();
     g_assert_false(test->m_authenticationCancelledReceived);
     g_assert_true(test->m_authenticationSucceededReceived);
+#if ENABLE(2022_GLIB_API)
+    webkit_network_session_set_persistent_credential_storage_enabled(networkSession, TRUE);
+#else
     webkit_website_data_manager_set_persistent_credential_storage_enabled(websiteDataManager, TRUE);
+#endif
 }
 
 static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpointer)
@@ -467,8 +478,12 @@ public:
         g_assert_false(m_proxyServer.baseURL().isNull());
         gProxyServerPort = m_proxyServer.port();
         WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(m_proxyServer.baseURL().string().utf8().data(), nullptr);
+#if ENABLE(2022_GLIB_API)
+        webkit_network_session_set_proxy_settings(m_networkSession.get(), WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
+#else
         auto* websiteDataManager = webkit_web_context_get_website_data_manager(m_webContext.get());
         webkit_website_data_manager_set_network_proxy_settings(websiteDataManager, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, settings);
+#endif
         webkit_network_proxy_settings_free(settings);
     }
 
