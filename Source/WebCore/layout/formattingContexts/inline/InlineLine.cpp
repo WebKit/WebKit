@@ -470,6 +470,11 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             return true;
         if (inlineTextItem.isQuirkNonBreakingSpace() || lastRun.isNonBreakingSpace())
             return true;
+        if (!inlineTextItem.style().isLeftToRightDirection() && TextUtil::shouldPreserveSpacesAndTabs(inlineTextItem.layoutBox()) && inlineTextItem.isWhitespace() != lastRun.isWhitespaceOnly()) {
+            // Whitespace content with position dependent width (e.g. tab character) does not work well when included with non-whitespace content.
+            // We may end up with mismatching computed widths and misplaced glyphs at paint time -unless we keep dedicated runs with explicit positions.
+            return true;
+        }
         return false;
     }();
     auto oldContentLogicalWidth = contentLogicalWidth();

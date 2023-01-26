@@ -23,7 +23,37 @@ layer at (15,12) size 141x14 scrollWidth 304
 layer at (173,12) size 139x14 scrollX 163 scrollWidth 303
   RenderBlock {DIV} at (6,3) size 141x15
     RenderText {#text} at (-162,0) size 303x14
-      text run at (-162,0) width 302: "this text field has a lot of text in it so that it needs to scrol"
+      text run at (-162,0) width 19: "this"
+      text run at (-143,0) width 4: " "
+      text run at (-139,0) width 20: "text"
+      text run at (-119,0) width 3: " "
+      text run at (-116,0) width 23: "field"
+      text run at (-93,0) width 3: " "
+      text run at (-90,0) width 18: "has"
+      text run at (-72,0) width 3: " "
+      text run at (-69,0) width 7: "a"
+      text run at (-62,0) width 3: " "
+      text run at (-59,0) width 13: "lot"
+      text run at (-46,0) width 3: " "
+      text run at (-43,0) width 11: "of"
+      text run at (-32,0) width 3: " "
+      text run at (-29,0) width 20: "text"
+      text run at (-9,0) width 3: " "
+      text run at (-6,0) width 9: "in"
+      text run at (2,0) width 5: " "
+      text run at (6,0) width 7: "it"
+      text run at (12,0) width 5: " "
+      text run at (16,0) width 13: "so"
+      text run at (28,0) width 4: " "
+      text run at (31,0) width 22: "that"
+      text run at (52,0) width 4: " "
+      text run at (55,0) width 8: "it"
+      text run at (62,0) width 4: " "
+      text run at (65,0) width 33: "needs"
+      text run at (97,0) width 4: " "
+      text run at (100,0) width 12: "to"
+      text run at (111,0) width 4: " "
+      text run at (114,0) width 26: "scrol"
 layer at (330,12) size 141x14 scrollX 162 scrollWidth 304
   RenderBlock {DIV} at (6,3) size 143x15
     RenderText {#text} at (0,0) size 303x14
