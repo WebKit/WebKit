@@ -73,6 +73,7 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void);
 
 bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem);
 
+void pas_probabilistic_malloc_initialize_pgm();
 bool pas_probabilistic_guard_malloc_should_call_pgm();
 
 PAS_END_EXTERN_C;

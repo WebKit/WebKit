@@ -168,7 +168,7 @@ pas_try_allocate_common_impl_slow(
             pas_physical_memory_transaction_begin(&transaction);
             pas_heap_lock_lock();
                         
-            if (pas_probabilistic_guard_malloc_should_call_pgm())
+            if (config.pgm_enabled && pas_probabilistic_guard_malloc_should_call_pgm())
                 result = pas_large_heap_try_allocate_pgm(&heap->large_heap, size, alignment, config.config_ptr, &transaction);
             else
                 result = pas_large_heap_try_allocate(&heap->large_heap, size, alignment, config.config_ptr, &transaction);
