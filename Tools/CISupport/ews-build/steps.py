@@ -1987,15 +1987,13 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
         GitHubMixin.REQUEST_MERGE_QUEUE_LABEL,
     ]
 
-    def start(self):
+    def run(self):
         pr_number = self.getProperty('github.number', '')
 
         repository_url = self.getProperty('repository', '')
-        rc = SUCCESS
         if not self.remove_labels(pr_number, self.LABELS_TO_REMOVE, repository_url=repository_url):
-            rc = FAILURE
-        self.finished(rc)
-        return None
+            return FAILURE
+        return SUCCESS
 
     def getResultSummary(self):
         if self.results == SUCCESS:
