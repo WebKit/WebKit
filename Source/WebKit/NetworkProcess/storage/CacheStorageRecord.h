@@ -79,11 +79,6 @@ struct CacheStorageRecord {
     {
     }
 
-    CacheStorageRecord copy() const
-    {
-        return CacheStorageRecord { info, requestHeadersGuard, request, options, referrer, responseHeadersGuard, responseData.copy(), responseBodySize, WebCore::DOMCacheEngine::copyResponseBody(responseBody) };
-    }
-
     CacheStorageRecordInformation info;
     WebCore::FetchHeaders::Guard requestHeadersGuard;
     WebCore::ResourceRequest request;
