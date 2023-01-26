@@ -141,7 +141,7 @@ void webKitTextCombinerHandleCaps(WebKitTextCombiner* combiner, GstPad* pad, con
     }
 }
 
-static GstPad* webkitTextCombinerRequestNewPad(GstElement* element, GstPadTemplate* templ, const char* name, const GstCaps* caps)
+static GstPad* webkitTextCombinerRequestNewPad(GstElement* element, GstPadTemplate*, const char*, const GstCaps*)
 {
     auto* combiner = WEBKIT_TEXT_COMBINER(element);
     ASSERT(combiner);
@@ -150,7 +150,7 @@ static GstPad* webkitTextCombinerRequestNewPad(GstElement* element, GstPadTempla
     auto* ghostPad = GST_PAD_CAST(g_object_new(WEBKIT_TYPE_TEXT_COMBINER_PAD, "direction", GST_PAD_SINK, nullptr));
     ASSERT(ghostPad);
 
-    auto* internalPad = gst_element_request_pad(combiner->priv->combinerElement.get(), templ, name, caps);
+    auto* internalPad = gst_element_request_pad_simple(combiner->priv->combinerElement.get(), "sink_%u");
     g_object_set(WEBKIT_TEXT_COMBINER_PAD(ghostPad), "inner-combiner-pad", internalPad, nullptr);
 
     gst_pad_set_active(ghostPad, true);
