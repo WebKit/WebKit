@@ -720,6 +720,9 @@ public:
     static constexpr GCGLenum SRGB8_ALPHA8_EXT = 0x8C43;
     static constexpr GCGLenum FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210;
 
+    // EXT_color_buffer_half_float
+    static constexpr GCGLenum FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT = 0x8211;
+
     // EXT_blend_minmax enums
     static constexpr GCGLenum MIN_EXT = 0x8007;
     static constexpr GCGLenum MAX_EXT = 0x8008;

@@ -2781,9 +2781,9 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         if (attachmentObject->isTexture())
             return static_pointer_cast<WebGLTexture>(WTFMove(attachmentObject));
         return static_pointer_cast<WebGLRenderbuffer>(WTFMove(attachmentObject));
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
-    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
         if (!attachmentObject->isTexture())
             break;
         FALLTHROUGH;
@@ -2797,13 +2797,13 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
         return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE:
         if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT) {
-            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "COMPONENT_TYPE can't be queried for DEPTH_STENCIL_ATTACHMENT");
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "component type cannot be queried for DEPTH_STENCIL_ATTACHMENT");
             return nullptr;
         }
         return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
     }
 
-    synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name for attachment");
+    synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name");
     return nullptr;
 }
 

@@ -228,17 +228,21 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
 
 WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum target, GCGLenum attachment, GCGLenum pname)
 {
-    if (isContextLost() || !validateFramebufferFuncParameters("getFramebufferAttachmentParameter", target, attachment))
+    if (isContextLost())
+        return nullptr;
+
+    const char* functionName = "getFramebufferAttachmentParameter";
+    if (!validateFramebufferFuncParameters(functionName, target, attachment))
         return nullptr;
 
     if (!m_framebufferBinding || !m_framebufferBinding->object()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getFramebufferAttachmentParameter", "no framebuffer bound");
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "no framebuffer bound");
         return nullptr;
     }
 
 #if ENABLE(WEBXR)
     if (m_framebufferBinding->isOpaque()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getFramebufferAttachmentParameter", "An opaque framebuffer's attachments cannot be inspected or changed");
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "An opaque framebuffer's attachments cannot be inspected or changed");
         return nullptr;
     }
 #endif
@@ -249,48 +253,44 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
             return static_cast<unsigned>(GraphicsContextGL::NONE);
         // OpenGL ES 2.0 specifies INVALID_ENUM in this case, while desktop GL
         // specifies INVALID_OPERATION.
-        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name");
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name");
         return nullptr;
     }
 
-    if (object->isTexture()) {
-        switch (pname) {
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+    switch (pname) {
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
+        if (object->isTexture())
             return static_cast<unsigned>(GraphicsContextGL::TEXTURE);
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+        return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
+        if (object->isTexture())
             return static_pointer_cast<WebGLTexture>(WTFMove(object));
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT:
-            return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
-        default:
-            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for texture attachment");
+        return static_pointer_cast<WebGLRenderbuffer>(WTFMove(object));
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL:
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE:
+        if (!object->isTexture())
+            break;
+        return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT:
+        if (!m_extsRGB) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name, EXT_sRGB not enabled");
             return nullptr;
         }
-    } else {
-        ASSERT(object->isRenderbuffer());
-        switch (pname) {
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE:
-            return static_cast<unsigned>(GraphicsContextGL::RENDERBUFFER);
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_OBJECT_NAME:
-            return static_pointer_cast<WebGLRenderbuffer>(WTFMove(object));
-        case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT: {
-            if (!m_extsRGB) {
-                synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
-                return nullptr;
-            }
-            RefPtr renderBuffer = static_pointer_cast<WebGLRenderbuffer>(WTFMove(object));
-            GCGLenum renderBufferFormat = renderBuffer->getInternalFormat();
-            ASSERT(renderBufferFormat != GraphicsContextGL::SRGB_EXT && renderBufferFormat != GraphicsContextGL::SRGB_ALPHA_EXT);
-            if (renderBufferFormat == GraphicsContextGL::SRGB8_ALPHA8_EXT)
-                return static_cast<unsigned>(GraphicsContextGL::SRGB_EXT);
-            return static_cast<unsigned>(GraphicsContextGL::LINEAR);
-        }
-        default:
-            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getFramebufferAttachmentParameter", "invalid parameter name for renderbuffer attachment");
+        return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
+    case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT:
+        if (!m_extColorBufferHalfFloat && !m_webglColorBufferFloat) {
+            synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name, EXT_color_buffer_half_float or WEBGL_color_buffer_float not enabled");
             return nullptr;
         }
+        if (attachment == GraphicsContextGL::DEPTH_STENCIL_ATTACHMENT) {
+            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "component type cannot be queried for DEPTH_STENCIL_ATTACHMENT");
+            return nullptr;
+        }
+        return m_context->getFramebufferAttachmentParameteri(target, attachment, pname);
     }
+
+    synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid parameter name");
+    return nullptr;
 }
 
 GCGLint WebGLRenderingContext::getMaxDrawBuffers()
