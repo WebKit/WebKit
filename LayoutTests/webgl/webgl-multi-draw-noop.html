@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>PASS if no crash.</p>
+<script>
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  window.testRunner.dumpAsText();
+}
+let canvas = document.createElement('canvas');
+let ctx = canvas.getContext('webgl');
+let multiDraw = ctx.getExtension('WEBGL_multi_draw');
+
+multiDraw.multiDrawElementsWEBGL(0, [], 0, 0, [], 0, 0);
+multiDraw.multiDrawElementsInstancedWEBGL(0, [], 0, 0, [], 0, [], 0, 0);
+multiDraw.multiDrawArraysWEBGL(0, [], 0, [], 0, 0);
+multiDraw.multiDrawArraysInstancedWEBGL(0, [], 0, [], 0, [], 0, 0);
+
+if (window.testRunner)
+  testRunner.notifyDone();
+</script>    
+</body>
+
