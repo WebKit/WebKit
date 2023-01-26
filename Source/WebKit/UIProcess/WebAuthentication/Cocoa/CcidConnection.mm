@@ -74,47 +74,53 @@ const uint8_t kGetUidCommand[] = {
 
 void CcidConnection::detectContactless()
 {
-    [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:kGetUidCommand length:sizeof(kGetUidCommand)]).get() reply:makeBlockPtr([this](NSData * _Nullable versionData, NSError * _Nullable error) {
+    transact(Vector { kGetUidCommand, sizeof(kGetUidCommand) }, [weakThis = WeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
         // Only contactless smart cards have uid, check for longer length than apdu status
-        if (versionData && [versionData length] > 2) {
-            callOnMainRunLoop([this] () mutable {
-                m_contactless = true;
-            });
+        if (response.size() > 2) {
+            if (weakThis)
+                weakThis->m_contactless = true;
         }
-    }).get()];
+    });
 }
 
 void CcidConnection::trySelectFidoApplet()
 {
-    [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:kCtapNfcAppletSelectionCommand length:sizeof(kCtapNfcAppletSelectionCommand)]).get() reply:makeBlockPtr([this](NSData * _Nullable versionData, NSError * _Nullable error) {
-        if (compareCcidVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))
-            || compareCcidVersion(versionData, kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap))) {
-            callOnMainRunLoop([this] () mutable {
-                if (m_service)
-                    m_service->didConnectTag();
-            });
+    transact(Vector { kCtapNfcAppletSelectionCommand, sizeof(kCtapNfcAppletSelectionCommand) }, [weakThis = WeakPtr { *this }] (Vector<uint8_t>&& response) mutable {
+        ASSERT(RunLoop::isMain());
+        if (!weakThis)
+            return;
+        if (response == Vector { kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f) }
+            || response == Vector { kCtapNfcAppletSelectionCtap, sizeof(kCtapNfcAppletSelectionCtap) }) {
+            if (weakThis && weakThis->m_service)
+                weakThis->m_service->didConnectTag();
             return;
         }
-            [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:kCtapNfcU2fVersionCommand length:sizeof(kCtapNfcU2fVersionCommand)]).get() reply:makeBlockPtr([this](NSData * _Nullable versionData, NSError * _Nullable error) {
-                if (compareCcidVersion(versionData, kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f))) {
-                    callOnMainRunLoop([this] () mutable {
-                        if (m_service)
-                            m_service->didConnectTag();
-                    });
-                    return;
-                }
-            }).get()];
-    }).get()];
+        weakThis->transact(Vector { kCtapNfcAppletSelectionCommand, sizeof(kCtapNfcAppletSelectionCommand) }, [weakThis = WTFMove(weakThis)] (Vector<uint8_t>&& response) mutable {
+            ASSERT(RunLoop::isMain());
+            if (!weakThis)
+                return;
+            if (response == Vector { kCtapNfcAppletSelectionU2f, sizeof(kCtapNfcAppletSelectionU2f) }) {
+                if (weakThis && weakThis->m_service)
+                    weakThis->m_service->didConnectTag();
+            }
+        });
+    });
 }
 
 void CcidConnection::transact(Vector<uint8_t>&& data, DataReceivedCallback&& callback) const
 {
-    [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).autorelease() reply:makeBlockPtr([this, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
-        auto response = vectorFromNSData(nsResponse);
-        callOnMainRunLoop([this, response = WTFMove(response), callback = WTFMove(callback)] () mutable {
-            callback(WTFMove(response));
-            (void)this;
-        });
+    [m_smartCard beginSessionWithReply:makeBlockPtr([this, data = WTFMove(data), callback = WTFMove(callback)] (BOOL success, NSError *error) mutable {
+        if (!success)
+            return;
+        [m_smartCard transmitRequest:adoptNS([[NSData alloc] initWithBytes:data.data() length:data.size()]).autorelease() reply:makeBlockPtr([this, callback = WTFMove(callback)](NSData * _Nullable nsResponse, NSError * _Nullable error) mutable {
+            [m_smartCard endSession];
+            callOnMainRunLoop([response = vectorFromNSData(nsResponse), callback = WTFMove(callback)] () mutable {
+                callback(WTFMove(response));
+            });
+        }).get()];
     }).get()];
 }
 
@@ -132,10 +138,8 @@ void CcidConnection::restartPolling()
 
 void CcidConnection::startPolling()
 {
-    [m_smartCard beginSessionWithReply:makeBlockPtr([this] (BOOL success, NSError *error) mutable {
-        detectContactless();
-        trySelectFidoApplet();
-    }).get()];
+    detectContactless();
+    trySelectFidoApplet();
 }
 
 } // namespace WebKit

@@ -222,7 +222,8 @@ enum IOHIDReportType {
 };
 
 enum {
-    kIOHIDOptionsTypeNone     = 0x00,
+    kIOHIDOptionsTypeNone        = 0x00,
+    kIOHIDOptionsTypeSeizeDevice = 0x01,
 };
 typedef uint32_t IOHIDOptionsType;
 
