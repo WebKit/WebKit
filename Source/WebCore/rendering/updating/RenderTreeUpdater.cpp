@@ -406,8 +406,8 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
     if (UNLIKELY(textManipulationController))
         textManipulationController->didAddOrCreateRendererForNode(element);
 
-    if (AXObjectCache* cache = m_document.axObjectCache())
-        cache->updateCacheAfterNodeIsAttached(&element);
+    if (auto* cache = m_document.axObjectCache())
+        cache->onRendererCreated(element);
 }
 
 bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
