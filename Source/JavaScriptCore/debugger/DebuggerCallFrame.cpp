@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -263,7 +263,7 @@ JSValue DebuggerCallFrame::evaluateWithScopeExtension(VM& vm, const String& scri
         globalObject->setGlobalScopeExtension(JSWithScope::create(vm, globalObject, ignoredPreviousScope, scopeExtensionObject));
     }
 
-    JSValue result = vm.interpreter.execute(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope(vm)->jsScope());
+    JSValue result = vm.interpreter.executeEval(eval, globalObject, debuggerCallFrame->thisValue(vm), debuggerCallFrame->scope(vm)->jsScope());
     if (UNLIKELY(catchScope.exception())) {
         exception = catchScope.exception();
         catchScope.clearException();

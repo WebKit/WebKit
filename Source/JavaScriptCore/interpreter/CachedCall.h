@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,7 +65,7 @@ namespace JSC {
         {
             ASSERT(m_valid);
             ASSERT(m_arguments.size() == static_cast<size_t>(m_protoCallFrame.argumentCount()));
-            return m_interpreter.execute(m_closure);
+            return m_interpreter.executeCachedCall(m_closure);
         }
         void setThis(JSValue v) { m_protoCallFrame.setThisValue(v); }
 
