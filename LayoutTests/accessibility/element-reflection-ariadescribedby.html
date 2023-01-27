@@ -1,6 +1,10 @@
-<!DOCTYPE html>
-<script src="../resources/js-test.js"></script>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
 <script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
 
 <div id="desc1">First description</div>
 <div id="target1">Target 1</div>
@@ -13,63 +17,73 @@
 <x-custom></x-custom>
 
 <script>
-  class XTarget extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let target = document.createElement("div");
-      target.id = "innertarget";
-      target.textContent = "Target 3";
-      target.ariaDescribedByElements = [desc3];
-      this.shadowRoot.appendChild(target);
-    }
-  }
-  customElements.define("x-target", XTarget);
+var output = "Checks that element reflection is exposed to the a11y tree for 'ariaDescribedByElements'\n\n";
 
-  class XCustom extends HTMLElement {
+class XTarget extends HTMLElement {
     constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-      let desc = document.createElement("div");
-      desc.id = "desc5";
-      desc.textContent = "Fifth description";
-      let target = document.createElement("div");
-      target.id = "target5";
-      target.textContent = "Target 5";
-      this.shadowRoot.appendChild(desc);
-      this.shadowRoot.appendChild(target);
-      target.ariaDescribedByElements = [desc];
-      document.body.appendChild(desc);
+        super();
+        this.attachShadow({ mode: "open" });
+        let target = document.createElement("div");
+        target.id = "innertarget";
+        target.textContent = "Target 3";
+        target.ariaDescribedByElements = [desc3];
+        this.shadowRoot.appendChild(target);
     }
-  }
-  customElements.define("x-custom", XCustom);
+}
+customElements.define("x-target", XTarget);
 
-  description("Checks that element reflection is exposed to the a11y tree for 'ariaDescribedByElements'");
-  if (!window.accessibilityController) {
-    debug("This test requires accessibilityController");
-  } else {
+class XCustom extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        let desc = document.createElement("div");
+        desc.id = "desc5";
+        desc.textContent = "Fifth description";
+        let target = document.createElement("div");
+        target.id = "target5";
+        target.textContent = "Target 5";
+        this.shadowRoot.appendChild(desc);
+        this.shadowRoot.appendChild(target);
+        target.ariaDescribedByElements = [desc];
+        document.body.appendChild(desc);
+    }
+}
+customElements.define("x-custom", XCustom);
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var axTarget1, axTarget2, axTarget4, axTarget5, axInnerTarget;
     target1.ariaDescribedByElements = [desc1];
-    var axTarget1 = accessibilityController.accessibleElementById("target1");
-    shouldBeEqualToString("axTarget1.helpText", "AXHelp: First description");
+    setTimeout(async function() {
+        axTarget1 = accessibilityController.accessibleElementById("target1");
+        output += await expectAsync("axTarget1.helpText", "'AXHelp: First description'");
 
-    target2.ariaDescribedByElements = [document.getElementsByClassName("desc")[0]];
-    var axTarget2 = accessibilityController.accessibleElementById("target2");
-    shouldBeEqualToString("axTarget2.helpText", "AXHelp: Second description");
-    target2.setAttribute("aria-describedby", "desc1");
-    shouldBeEqualToString("axTarget2.helpText", "AXHelp: First description");
+        target2.ariaDescribedByElements = [document.getElementsByClassName("desc")[0]];
+        axTarget2 = accessibilityController.accessibleElementById("target2");
+        output += await expectAsync("axTarget2.helpText", "'AXHelp: Second description'");
+        target2.setAttribute("aria-describedby", "desc1");
+        output += await expectAsync("axTarget2.helpText", "'AXHelp: First description'");
 
-    var axInnerTarget = accessibilityController.accessibleElementById("innertarget");
-    shouldBeEqualToString("axInnerTarget.helpText", "AXHelp: Third description");
+        axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+        output += expect("axInnerTarget.helpText", "'AXHelp: Third description'");
 
-    target2.ariaDescribedByElements = [desc1, document.getElementsByClassName("desc")[0], desc3];
-    shouldBeEqualToString("axTarget2.helpText", "AXHelp: First description Second description Third description");
+        target2.ariaDescribedByElements = [desc1, document.getElementsByClassName("desc")[0], desc3];
+        output += await expectAsync("axTarget2.helpText", "'AXHelp: First description Second description Third description'");
 
-    target4.ariaDescribedByElements = [desc4];
-    desc4.id = "desc4-new";
-    var axTarget4 = accessibilityController.accessibleElementById("target4");
-    shouldBeEqualToString("axTarget4.helpText", "AXHelp: Fourth description");
+        target4.ariaDescribedByElements = [desc4];
+        desc4.id = "desc4-new";
+        axTarget4 = accessibilityController.accessibleElementById("target4");
+        output += await expectAsync("axTarget4.helpText", "'AXHelp: Fourth description'");
 
-    var axTarget5 = accessibilityController.accessibleElementById("target5");
-    shouldBeEqualToString("axTarget5.helpText", "AXHelp: Fifth description");
-  }
+        axTarget5 = accessibilityController.accessibleElementById("target5");
+        output += expect("axTarget5.helpText", "'AXHelp: Fifth description'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
+</body>
+</html>
+
