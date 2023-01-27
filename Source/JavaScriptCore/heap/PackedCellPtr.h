@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+// We cannot use CompactPtr since JSCell is 8-byte aligned.
 template<typename T>
 class PackedCellPtr : public PackedAlignedPtr<T, 8> {
 public:

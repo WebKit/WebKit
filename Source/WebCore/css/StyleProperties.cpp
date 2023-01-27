@@ -65,7 +65,7 @@ constexpr unsigned maxShorthandsForLonghand = 4; // FIXME: Generate this from CS
 
 static size_t sizeForImmutableStylePropertiesWithPropertyCount(unsigned count)
 {
-    return sizeof(ImmutableStyleProperties) - sizeof(void*) + sizeof(StylePropertyMetadata) * count + sizeof(PackedPtr<const CSSValue>) * count;
+    return sizeof(ImmutableStyleProperties) - sizeof(void*) + sizeof(StylePropertyMetadata) * count + sizeof(SizeEfficientPtr<const CSSValue>) * count;
 }
 
 static bool isValueIDIncludingList(const CSSValue& value, CSSValueID id)
@@ -111,7 +111,7 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
     : StyleProperties(cssParserMode, length)
 {
     StylePropertyMetadata* metadataArray = const_cast<StylePropertyMetadata*>(this->metadataArray());
-    PackedPtr<CSSValue>* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    SizeEfficientPtr<CSSValue>* valueArray = bitwise_cast<SizeEfficientPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < length; ++i) {
         metadataArray[i] = properties[i].metadata();
         auto* value = properties[i].value();
@@ -122,7 +122,7 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
 
 ImmutableStyleProperties::~ImmutableStyleProperties()
 {
-    PackedPtr<CSSValue>* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    SizeEfficientPtr<CSSValue>* valueArray = bitwise_cast<SizeEfficientPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < m_arraySize; ++i)
         valueArray[i]->deref();
 }

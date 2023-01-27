@@ -951,9 +951,9 @@ private:
     VM* const m_vm;
 
     const void* const m_instructionsRawPointer { nullptr };
-    SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
+    SentinelLinkedList<CallLinkInfo, SizeEfficientRawSentinelNode<CallLinkInfo>> m_incomingCalls;
 #if ENABLE(JIT)
-    SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
+    SentinelLinkedList<PolymorphicCallNode, SizeEfficientRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
 #endif
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;

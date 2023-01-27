@@ -66,8 +66,8 @@ private:
 
     BlockDirectory m_directory;
     std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;
-    SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
-    SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
+    SentinelLinkedList<PreciseAllocation, SizeEfficientRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
+    SentinelLinkedList<IsoCellSet, SizeEfficientRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
 

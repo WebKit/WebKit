@@ -171,7 +171,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStubImpl(ThunkGenerator key,
     MacroAssemblerCodeRef<JITThunkPtrTag> codeRef = generateThunk();
 
     bool needsCrossModifyingCodeFence = isCompilationThread();
-    auto addResult = m_ctiStubMap.add(key, Entry { PackedRefPtr<ExecutableMemoryHandle>(codeRef.executableMemory()), needsCrossModifyingCodeFence });
+    auto addResult = m_ctiStubMap.add(key, Entry { SizeEfficientRefPtr<ExecutableMemoryHandle>(codeRef.executableMemory()), needsCrossModifyingCodeFence });
     RELEASE_ASSERT(addResult.isNewEntry); // Thunks aren't recursive, so anything we generated transitively shouldn't have generated 'key'.
     return handleEntry(addResult.iterator->value);
 }

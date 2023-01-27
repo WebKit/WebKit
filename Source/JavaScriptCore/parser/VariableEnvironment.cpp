@@ -219,7 +219,7 @@ void CompactTDZEnvironment::sortCompact(Compact& compact)
 CompactTDZEnvironment::CompactTDZEnvironment(const TDZEnvironment& env)
 {
     m_hash = 0; // Note: XOR is commutative so order doesn't matter here.
-    Compact variables = WTF::map(env, [this](auto& key) -> PackedRefPtr<UniquedStringImpl> {
+    Compact variables = WTF::map(env, [this](auto& key) -> SizeEfficientRefPtr<UniquedStringImpl> {
         m_hash ^= key->hash();
         return key.get();
     });

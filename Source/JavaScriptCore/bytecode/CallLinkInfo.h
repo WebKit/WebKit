@@ -55,7 +55,7 @@ struct BaselineUnlinkedCallLinkInfo;
 
 using CompileTimeCallLinkInfo = std::variant<OptimizingCallLinkInfo*, BaselineUnlinkedCallLinkInfo*, DFG::UnlinkedCallLinkInfo*>;
 
-class CallLinkInfo : public PackedRawSentinelNode<CallLinkInfo> {
+class CallLinkInfo : public SizeEfficientRawSentinelNode<CallLinkInfo> {
 public:
     friend class LLIntOffsetsExtractor;
 

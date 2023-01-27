@@ -27,8 +27,8 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Packed.h>
 #include <wtf/RawPtrTraits.h>
+#include <wtf/SizeEfficientPtr.h>
 
 namespace WTF {
 
@@ -165,9 +165,9 @@ private:
 };
 
 template<typename T>
-using PackedBag = Bag<T, PackedPtrTraits<T>>;
+using SizeEfficientBag = Bag<T, SizeEfficientPtrTraits<T>>;
 
 } // namespace WTF
 
 using WTF::Bag;
-using WTF::PackedBag;
+using WTF::SizeEfficientBag;

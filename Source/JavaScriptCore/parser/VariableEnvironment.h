@@ -140,12 +140,12 @@ struct PrivateNameEntryHashTraits : HashTraits<PrivateNameEntry> {
     static constexpr bool needsDestruction = false;
 };
 
-typedef HashMap<PackedRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> PrivateNameEnvironment;
+typedef HashMap<SizeEfficientRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> PrivateNameEnvironment;
 
 class VariableEnvironment {
     WTF_MAKE_FAST_ALLOCATED;
 private:
-    typedef HashMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
+    typedef HashMap<SizeEfficientRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
 
 public:
 
@@ -341,7 +341,7 @@ class CompactTDZEnvironment {
 
     friend class CachedCompactTDZEnvironment;
 
-    using Compact = Vector<PackedRefPtr<UniquedStringImpl>>;
+    using Compact = Vector<SizeEfficientRefPtr<UniquedStringImpl>>;
     using Inflated = TDZEnvironment;
     using Variables = std::variant<Compact, Inflated>;
 
