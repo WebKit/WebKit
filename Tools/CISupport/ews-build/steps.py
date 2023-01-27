@@ -1559,28 +1559,6 @@ class BugzillaMixin(AddToLogMixin):
             return FAILURE
         return SUCCESS
 
-    def create_bug(self, bug_title, bug_description, component='Tools / Tests', cc_list=None):
-        bug_url = '{}rest/bug'.format(BUG_SERVER_URL)
-        if not (bug_title and bug_description):
-            return FAILURE
-
-        try:
-            response = requests.post(bug_url, data={'product': 'WebKit',
-                                                    'component': component,
-                                                    'version': 'WebKit Nightly Build',
-                                                    'summary': bug_title,
-                                                    'description': bug_description,
-                                                    'cc': cc_list,
-                                                    'Bugzilla_api_key': self.get_bugzilla_api_key()})
-            if response.status_code not in [200, 201]:
-                self._addToLog('stdio', 'Unable to file bug. Unexpected response code from bugzilla: {}'.format(response.status_code))
-                return FAILURE
-        except Exception as e:
-            self._addToLog('stdio', 'Error in creating bug: {}'.format(bug_title))
-            return FAILURE
-        self._addToLog('stdio', 'Filed bug: {}'.format(bug_title))
-        return SUCCESS
-
 
 class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     name = 'validate-change'
