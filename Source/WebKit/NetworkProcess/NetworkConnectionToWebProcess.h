@@ -73,6 +73,7 @@ class ResourceError;
 class ResourceRequest;
 enum class ApplyTrackingPrevention : bool;
 enum class StorageAccessScope : bool;
+struct ClientOrigin;
 struct PolicyContainer;
 struct RequestStorageAccessResult;
 struct SameSiteInfo;
@@ -126,8 +127,6 @@ public:
     void didCleanupResourceLoader(NetworkResourceLoader&);
     void transferKeptAliveLoad(NetworkResourceLoader&);
     void setOnLineState(bool);
-
-    void deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
 
     bool captureExtraNetworkLoadMetricsEnabled() const { return m_captureExtraNetworkLoadMetricsEnabled; }
 

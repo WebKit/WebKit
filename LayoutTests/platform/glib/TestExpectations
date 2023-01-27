@@ -2966,6 +2966,9 @@ http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html 
 
 webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
 
+# NetworkStorageSession::deleteCookies() doesn't obey partitioning for glib ports.
+http/wpt/clear-site-data/partitioning.html [ Skip ]
+
 # Failure since import.
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.tentative.sub.html [ Failure ]
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll_largeValue.tentative.any.html [ Failure ]

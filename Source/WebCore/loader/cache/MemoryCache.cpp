@@ -28,6 +28,7 @@
 #include "CachedImageClient.h"
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
+#include "ClientOrigin.h"
 #include "Document.h"
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
@@ -484,16 +485,14 @@ void MemoryCache::resourceAccessed(CachedResource& resource)
     insertInLRUList(resource);
 }
 
-void MemoryCache::removeResourcesWithOrigin(SecurityOrigin& origin)
+void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin, const String& cachePartition)
 {
-    String originPartition = ResourceRequest::partitionName(origin.host());
-
     Vector<CachedResource*> resourcesWithOrigin;
     for (auto& resources : m_sessionResources.values()) {
         for (auto& keyValue : *resources) {
             auto& resource = *keyValue.value;
             auto& partitionName = keyValue.key.second;
-            if (partitionName == originPartition) {
+            if (partitionName == cachePartition) {
                 resourcesWithOrigin.append(&resource);
                 continue;
             }
@@ -505,6 +504,18 @@ void MemoryCache::removeResourcesWithOrigin(SecurityOrigin& origin)
 
     for (auto* resource : resourcesWithOrigin)
         remove(*resource);
+}
+
+void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin)
+{
+    String originPartition = ResourceRequest::partitionName(origin.host());
+    removeResourcesWithOrigin(origin, originPartition);
+}
+
+void MemoryCache::removeResourcesWithOrigin(const ClientOrigin& origin)
+{
+    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host);
+    removeResourcesWithOrigin(origin.clientOrigin.securityOrigin(), cachePartition);
 }
 
 void MemoryCache::removeResourcesWithOrigins(PAL::SessionID sessionID, const HashSet<RefPtr<SecurityOrigin>>& origins)

@@ -314,27 +314,41 @@ void SWServer::endSuspension()
 
 void SWServer::clear(const SecurityOriginData& securityOrigin, CompletionHandler<void()>&& completionHandler)
 {
+    clearInternal([securityOrigin](auto& key) {
+        return key.relatesToOrigin(securityOrigin);
+    }, WTFMove(completionHandler));
+}
+
+void SWServer::clear(const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
+{
+    clearInternal([origin](auto& key) {
+        return key.topOrigin() == origin.topOrigin && origin.clientOrigin == SecurityOriginData::fromURL(key.scope());
+    }, WTFMove(completionHandler));
+}
+
+void SWServer::clearInternal(Function<bool(const ServiceWorkerRegistrationKey&)>&& matches, CompletionHandler<void()>&& completionHandler)
+{
     if (!m_importCompleted) {
-        m_clearCompletionCallbacks.append([this, securityOrigin, completionHandler = WTFMove(completionHandler)] () mutable {
+        m_clearCompletionCallbacks.append([this, matches = WTFMove(matches), completionHandler = WTFMove(completionHandler)] () mutable {
             ASSERT(m_importCompleted);
-            clear(securityOrigin, WTFMove(completionHandler));
+            clearInternal(WTFMove(matches), WTFMove(completionHandler));
         });
         return;
     }
 
     m_jobQueues.removeIf([&](auto& keyAndValue) {
-        return keyAndValue.key.relatesToOrigin(securityOrigin);
+        return matches(keyAndValue.key);
     });
 
     Vector<SWServerRegistration*> registrationsToRemove;
     for (auto& registration : m_registrations.values()) {
-        if (registration->key().relatesToOrigin(securityOrigin))
+        if (matches(registration->key()))
             registrationsToRemove.append(registration.get());
     }
 
     for (auto& contextDatas : m_pendingContextDatas.values()) {
         contextDatas.removeAllMatching([&](auto& contextData) {
-            return contextData.registration.key.relatesToOrigin(securityOrigin);
+            return matches(contextData.registration.key);
         });
     }
 

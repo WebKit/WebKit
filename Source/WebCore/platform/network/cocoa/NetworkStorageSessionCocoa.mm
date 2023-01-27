@@ -26,10 +26,12 @@
 #import "config.h"
 #import "NetworkStorageSession.h"
 
+#import "ClientOrigin.h"
 #import "Cookie.h"
 #import "CookieRequestHeaderFieldProxy.h"
 #import "CookieStorageObserver.h"
 #import "HTTPCookieAcceptPolicyCocoa.h"
+#import "ResourceRequest.h"
 #import "SameSiteInfo.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -575,50 +577,58 @@ void NetworkStorageSession::deleteAllCookies(CompletionHandler<void()>&& complet
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr(WTFMove(work)).get());
 }
 
-void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly scriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
+void NetworkStorageSession::deleteCookiesMatching(const Function<bool(NSHTTPCookie *)>& matches, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
 
-    auto aggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler), cookieStorage = RetainPtr { nsCookieStorage() }] () mutable {
-        [cookieStorage _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)] () mutable {
-            ensureOnMainThread(WTFMove(completionHandler));
-        }).get()];
-    });
-    
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = this->cookieStorage();
+    auto nsCookieStorage = adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorage.get()]);
+    auto aggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler), nsCookieStorage = WTFMove(nsCookieStorage)] () mutable {
+        [nsCookieStorage _saveCookies:makeBlockPtr([completionHandler = WTFMove(completionHandler)] () mutable {
+            ensureOnMainThread(WTFMove(completionHandler));
+        }).get()];
+    });
+
     RetainPtr<NSArray> cookies = httpCookies(cookieStorage.get());
     if (!cookies)
         return;
 
-    HashMap<String, Vector<RetainPtr<NSHTTPCookie>>> cookiesByDomain;
     for (NSHTTPCookie *cookie in cookies.get()) {
-        if (!cookie.domain || (includeHttpOnlyCookies == IncludeHttpOnlyCookies::No && cookie.isHTTPOnly))
-            continue;
-
-#if ENABLE(JS_COOKIE_CHECKING)
-        bool setInJS = [[cookie properties] valueForKey:@"SetInJavaScript"];
-        if (scriptWrittenCookiesOnly == ScriptWrittenCookiesOnly::Yes && !setInJS)
-            continue;
-#else
-        UNUSED_PARAM(scriptWrittenCookiesOnly);
-#endif
-        cookiesByDomain.ensure(cookie.domain, [] {
-            return Vector<RetainPtr<NSHTTPCookie>>();
-        }).iterator->value.append(cookie);
-    }
-
-    for (const auto& hostname : hostnames) {
-        auto it = cookiesByDomain.find(hostname);
-        if (it == cookiesByDomain.end())
-            continue;
-
-        for (auto& cookie : it->value)
-            deleteHTTPCookie(cookieStorage.get(), cookie.get(), [aggregator] { });
+        if (matches(cookie))
+            deleteHTTPCookie(cookieStorage.get(), cookie, [aggregator] { });
     }
 
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
+{
+    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host);
+    deleteCookiesMatching([domain = origin.clientOrigin.host, &cachePartition](NSHTTPCookie* cookie) {
+        return String(cookie.domain) == domain && equalIgnoringNullity(String(cookie._storagePartition), cachePartition);
+    }, WTFMove(completionHandler));
+}
+
+void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& hostnames, IncludeHttpOnlyCookies includeHttpOnlyCookies, ScriptWrittenCookiesOnly scriptWrittenCookiesOnly, CompletionHandler<void()>&& completionHandler)
+{
+    HashSet<String> hostnamesSet;
+    for (auto& hostname : hostnames)
+        hostnamesSet.add(hostname);
+
+    deleteCookiesMatching([&](NSHTTPCookie* cookie) {
+        if (!cookie.domain || (includeHttpOnlyCookies == IncludeHttpOnlyCookies::No && cookie.isHTTPOnly))
+            return false;
+#if ENABLE(JS_COOKIE_CHECKING)
+        bool setInJS = [[cookie properties] valueForKey:@"SetInJavaScript"];
+        if (scriptWrittenCookiesOnly == ScriptWrittenCookiesOnly::Yes && !setInJS)
+            return false;
+#else
+        UNUSED_PARAM(scriptWrittenCookiesOnly);
+#endif
+        return hostnamesSet.contains(String(cookie.domain));
+    }, WTFMove(completionHandler));
 }
 
 void NetworkStorageSession::deleteAllCookiesModifiedSince(WallTime timePoint, CompletionHandler<void()>&& completionHandler)
