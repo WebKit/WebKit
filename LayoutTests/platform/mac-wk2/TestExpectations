@@ -101,6 +101,8 @@ fast/canvas/webgl/context-update-on-display-configuration.html [ Pass ]
 
 fast/misc/valid-primary-screen-displayID.html [ Pass ]
 
+ipc/webpageproxy-correctionpanel-no-crash.html [ Pass ]
+
 # Skipped because of <rdar://problem/45388584>.
 http/tests/webAPIStatistics [ Pass ]
 
