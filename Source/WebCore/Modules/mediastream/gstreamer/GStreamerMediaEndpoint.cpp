@@ -147,9 +147,10 @@ bool GStreamerMediaEndpoint::initializePipeline()
             endPoint->prepareDataChannel(channel, isLocal);
         }), this);
 
-        g_signal_connect_swapped(m_webrtcBin.get(), "request-aux-sender", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDTLSTransport* transport) -> GstElement* {
-            if (auto sender = endPoint->requestAuxiliarySender(transport))
-                return sender.leakRef();
+        g_signal_connect_swapped(m_webrtcBin.get(), "request-aux-sender", G_CALLBACK(+[](GStreamerMediaEndpoint* endPoint, GstWebRTCDTLSTransport*) -> GstElement* {
+            // `sender` ownership is transferred to the signal caller.
+            if (auto sender = endPoint->requestAuxiliarySender())
+                return sender;
             return nullptr;
         }), this);
     }
@@ -179,10 +180,6 @@ void GStreamerMediaEndpoint::teardownPipeline()
     stopLoggingStats();
 #endif
     m_statsCollector->setElement(nullptr);
-
-    for (auto& [sessionId, auxiliarySender] : m_auxiliarySenders)
-        g_signal_handlers_disconnect_by_data(auxiliarySender.get(), this);
-    m_auxiliarySenders.clear();
 
     g_signal_handlers_disconnect_by_data(m_webrtcBin.get(), this);
     disconnectSimpleBusMessageCallback(m_pipeline.get());
@@ -786,7 +783,8 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     if (g_object_class_find_property(G_OBJECT_GET_CLASS(pad), "msid")) {
         GUniqueOutPtr<char> msid;
         g_object_get(pad, "msid", &msid.outPtr(), nullptr);
-        mediaStreamId = String::fromLatin1(msid.get());
+        if (msid)
+            mediaStreamId = String::fromLatin1(msid.get());
     } else if (const char* msidAttribute = gst_sdp_media_get_attribute_val(media, "msid")) {
         auto components = makeString(msidAttribute).split(' ');
         if (components.size() == 2)
@@ -1057,19 +1055,11 @@ void GStreamerMediaEndpoint::onDataChannel(GstWebRTCDataChannel* dataChannel)
     });
 }
 
-GRefPtr<GstElement> GStreamerMediaEndpoint::requestAuxiliarySender(GstWebRTCDTLSTransport* transport)
+GstElement* GStreamerMediaEndpoint::requestAuxiliarySender()
 {
-    unsigned sessionId;
-    g_object_get(transport, "session-id", &sessionId, nullptr);
-
-    if (m_auxiliarySenders.contains(sessionId)) {
-        GST_WARNING_OBJECT(m_pipeline.get(), "Auxiliary sender already requested for session %u", sessionId);
-        return nullptr;
-    }
-
     // Don't use makeGStreamerElement() here because it would be called mutiple times and emit an
     // error every single time if the element is not found.
-    GRefPtr<GstElement> estimator(gst_element_factory_make("rtpgccbwe", nullptr));
+    auto* estimator = gst_element_factory_make("rtpgccbwe", nullptr);
     if (!estimator) {
         static std::once_flag onceFlag;
         std::call_once(onceFlag, [] {
@@ -1078,14 +1068,13 @@ GRefPtr<GstElement> GStreamerMediaEndpoint::requestAuxiliarySender(GstWebRTCDTLS
         return nullptr;
     }
 
-    g_signal_connect(estimator.get(), "notify::estimated-bitrate", G_CALLBACK(+[](GstElement* estimator, GParamSpec*, GStreamerMediaEndpoint* endPoint) {
+    g_signal_connect(estimator, "notify::estimated-bitrate", G_CALLBACK(+[](GstElement* estimator, GParamSpec*, GStreamerMediaEndpoint* endPoint) {
         uint32_t estimatedBitrate;
         g_object_get(estimator, "estimated-bitrate", &estimatedBitrate, nullptr);
         gst_element_send_event(endPoint->pipeline(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, gst_structure_new("encoder-bitrate-change-request", "bitrate", G_TYPE_UINT, static_cast<uint32_t>(estimatedBitrate / 1000), nullptr)));
     }), this);
-    m_auxiliarySenders.add(sessionId, WTFMove(estimator));
 
-    return GRefPtr<GstElement>(m_auxiliarySenders.get(sessionId));
+    return estimator;
 }
 
 void GStreamerMediaEndpoint::close()
