@@ -28,6 +28,7 @@
 #include "StrongInlines.h"
 #include <glib/gprintf.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 
 /**
@@ -40,7 +41,7 @@
  */
 
 struct _JSCExceptionPrivate {
-    JSCContext* context;
+    GWeakPtr<JSCContext> context;
     JSC::Strong<JSC::JSObject> jsException;
     bool cached;
     GUniquePtr<char> errorName;
@@ -53,21 +54,8 @@ struct _JSCExceptionPrivate {
 
 WEBKIT_DEFINE_TYPE(JSCException, jsc_exception, G_TYPE_OBJECT)
 
-static void jscExceptionDispose(GObject* object)
+static void jsc_exception_class_init(JSCExceptionClass*)
 {
-    JSCExceptionPrivate* priv = JSC_EXCEPTION(object)->priv;
-    if (priv->context) {
-        g_object_remove_weak_pointer(G_OBJECT(priv->context), reinterpret_cast<void**>(&priv->context));
-        priv->context = nullptr;
-    }
-
-    G_OBJECT_CLASS(jsc_exception_parent_class)->dispose(object);
-}
-
-static void jsc_exception_class_init(JSCExceptionClass* klass)
-{
-    GObjectClass* objClass = G_OBJECT_CLASS(klass);
-    objClass->dispose = jscExceptionDispose;
 }
 
 GRefPtr<JSCException> jscExceptionCreate(JSCContext* context, JSValueRef jsException)
@@ -80,8 +68,7 @@ GRefPtr<JSCException> jscExceptionCreate(JSCContext* context, JSValueRef jsExcep
     exception->priv->jsException.set(vm, toJS(JSValueToObject(jsContext, jsException, nullptr)));
     // The context has a strong reference to the exception, so we can't ref the context. We use a weak
     // pointer instead to invalidate the exception if the context is destroyed before.
-    exception->priv->context = context;
-    g_object_add_weak_pointer(G_OBJECT(context), reinterpret_cast<void**>(&exception->priv->context));
+    exception->priv->context.reset(context);
     return exception;
 }
 
@@ -98,7 +85,7 @@ void jscExceptionEnsureProperties(JSCException* exception)
 
     priv->cached = true;
 
-    auto value = jscContextGetOrCreateValue(priv->context, toRef(priv->jsException.get()));
+    auto value = jscContextGetOrCreateValue(priv->context.get(), toRef(priv->jsException.get()));
     auto propertyValue = adoptGRef(jsc_value_object_get_property(value.get(), "name"));
     if (!jsc_value_is_undefined(propertyValue.get()))
         priv->errorName.reset(jsc_value_to_string(propertyValue.get()));
@@ -379,7 +366,7 @@ char* jsc_exception_to_string(JSCException* exception)
     JSCExceptionPrivate* priv = exception->priv;
     g_return_val_if_fail(priv->context, nullptr);
 
-    auto value = jscContextGetOrCreateValue(priv->context, toRef(priv->jsException.get()));
+    auto value = jscContextGetOrCreateValue(priv->context.get(), toRef(priv->jsException.get()));
     return jsc_value_to_string(value.get());
 }
 

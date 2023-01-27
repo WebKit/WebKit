@@ -57,6 +57,8 @@ OBJC_CLASS WKWebInspectorUIProxyObjCAdapter;
 OBJC_CLASS WKInspectorViewController;
 #elif PLATFORM(WIN)
 #include "WebView.h"
+#elif PLATFORM(GTK)
+#include <wtf/glib/GWeakPtr.h>
 #endif
 
 namespace WebCore {
@@ -152,7 +154,7 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    GtkWidget* inspectorView() const { return m_inspectorView; };
+    GtkWidget* inspectorView() const { return m_inspectorView.get(); };
     void setClient(std::unique_ptr<WebInspectorUIProxyClient>&&);
 #endif
 
@@ -331,8 +333,8 @@ private:
     bool m_isObservingContentLayoutRect { false };
 #elif PLATFORM(GTK)
     std::unique_ptr<WebInspectorUIProxyClient> m_client;
-    GtkWidget* m_inspectorView { nullptr };
-    GtkWidget* m_inspectorWindow { nullptr };
+    GWeakPtr<GtkWidget> m_inspectorView;
+    GWeakPtr<GtkWidget> m_inspectorWindow;
     GtkWidget* m_headerBar { nullptr };
     String m_inspectedURLString;
 #elif PLATFORM(WIN)

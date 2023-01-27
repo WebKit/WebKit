@@ -44,7 +44,7 @@ void RemoteWebInspectorUIProxy::updateWindowTitle(const CString& targetName)
 {
     if (!m_window)
         return;
-    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_window), !targetName.isNull() ? targetName.data() : nullptr);
+    webkitInspectorWindowSetSubtitle(WEBKIT_INSPECTOR_WINDOW(m_window.get()), !targetName.isNull() ? targetName.data() : nullptr);
 }
 
 static void remoteInspectorViewDestroyed(RemoteWebInspectorUIProxy* inspectorProxy)
@@ -68,32 +68,30 @@ WebPageProxy* RemoteWebInspectorUIProxy::platformCreateFrontendPageAndWindow()
     pageConfiguration->setProcessPool(&WebKit::defaultInspectorProcessPool(inspectorLevelForPage(nullptr)));
     pageConfiguration->setPreferences(preferences.ptr());
     pageConfiguration->setPageGroup(pageGroup.ptr());
-    m_webView = GTK_WIDGET(webkitWebViewBaseCreate(*pageConfiguration.ptr()));
-    g_signal_connect_swapped(m_webView, "destroy", G_CALLBACK(remoteInspectorViewDestroyed), this);
-    g_object_add_weak_pointer(G_OBJECT(m_webView), reinterpret_cast<void**>(&m_webView));
+    m_webView.reset(GTK_WIDGET(webkitWebViewBaseCreate(*pageConfiguration.ptr())));
+    g_signal_connect_swapped(m_webView.get(), "destroy", G_CALLBACK(remoteInspectorViewDestroyed), this);
 
-    m_window = webkitInspectorWindowNew();
+    m_window.reset(webkitInspectorWindowNew());
 #if USE(GTK4)
-    gtk_window_set_child(GTK_WINDOW(m_window), m_webView);
+    gtk_window_set_child(GTK_WINDOW(m_window.get()), m_webView.get());
 #else
-    gtk_container_add(GTK_CONTAINER(m_window), m_webView);
-    gtk_widget_show(m_webView);
+    gtk_container_add(GTK_CONTAINER(m_window.get()), m_webView.get());
+    gtk_widget_show(m_webView.get());
 #endif
 
-    g_object_add_weak_pointer(G_OBJECT(m_window), reinterpret_cast<void**>(&m_window));
-    gtk_window_present(GTK_WINDOW(m_window));
+    gtk_window_present(GTK_WINDOW(m_window.get()));
 
-    return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView));
+    return webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView.get()));
 }
 
 void RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow()
 {
     if (m_webView) {
-        if (auto* webPage = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView)))
+        if (auto* webPage = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_webView.get())))
             webPage->close();
     }
     if (m_window)
-        gtk_widget_destroy(m_window);
+        gtk_widget_destroy(m_window.get());
 }
 
 void RemoteWebInspectorUIProxy::platformResetState()
@@ -103,7 +101,7 @@ void RemoteWebInspectorUIProxy::platformResetState()
 void RemoteWebInspectorUIProxy::platformBringToFront()
 {
     if (m_window)
-        gtk_window_present(GTK_WINDOW(m_window));
+        gtk_window_present(GTK_WINDOW(m_window.get()));
 }
 
 static void remoteFileReplaceContentsCallback(GObject* sourceObject, GAsyncResult* result, gpointer userData)
@@ -118,7 +116,7 @@ void RemoteWebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::Sav
     UNUSED_PARAM(forceSaveAs);
 
     GRefPtr<GtkFileChooserNative> dialog = adoptGRef(gtk_file_chooser_native_new("Save File",
-        GTK_WINDOW(m_window), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
+        GTK_WINDOW(m_window.get()), GTK_FILE_CHOOSER_ACTION_SAVE, "Save", "Cancel"));
 
     GtkFileChooser* chooser = GTK_FILE_CHOOSER(dialog.get());
 #if !USE(GTK4)
