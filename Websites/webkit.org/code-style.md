@@ -1287,6 +1287,20 @@ signed b; // Uses "signed" instead of "int".
 signed int c; // Doesn't omit "signed".
 ```
 
+[](#types-use-unsigned) Use unsigned types to represent values which cannot be negative.
+
+###### Right:
+
+```cpp
+unsigned count = ...;
+```
+
+###### Wrong:
+
+```cpp
+int count = ...;
+```
+
 ### Classes
 
 [](#classes-explicit) Use a constructor to do an implicit conversion when the argument is reasonably thought of as a type conversion and the type conversion is fast. Otherwise, use the explicit keyword or a function returning the type. This only applies to single argument constructors.
