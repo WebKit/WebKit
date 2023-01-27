@@ -1118,10 +1118,56 @@ bool MediaElementSession::allowsPlaybackControlsForAutoplayingAudio() const
 }
 
 #if ENABLE(MEDIA_SESSION)
+#if ENABLE(MEDIA_STREAM)
+static bool isDocumentPlayingSeveralMediaStreams(Document& document)
+{
+    // We restrict to capturing document for now, until we have a good way to state to the UIProcess application that audio rendering is muted from here.
+    return document.activeMediaElementsWithMediaStreamCount() > 1 && MediaProducer::isCapturing(document.mediaState());
+}
+
+static bool processRemoteControlCommandIfPlayingMediaStreams(Document& document, PlatformMediaSession::RemoteControlCommandType commandType)
+{
+    auto* page = document.page();
+    if (!page)
+        return false;
+
+    if (!isDocumentPlayingSeveralMediaStreams(document))
+        return false;
+
+    WebCore::MediaProducerMutedStateFlags mutedState;
+    mutedState.add(WebCore::MediaProducerMutedState::AudioIsMuted);
+    mutedState.add(WebCore::MediaProducer::AudioAndVideoCaptureIsMuted);
+    mutedState.add(WebCore::MediaProducerMutedState::ScreenCaptureIsMuted);
+
+    switch (commandType) {
+    case PlatformMediaSession::PlayCommand:
+        page->setMuted({ });
+        return true;
+    case PlatformMediaSession::StopCommand:
+    case PlatformMediaSession::PauseCommand:
+        page->setMuted(mutedState);
+        return true;
+    case PlatformMediaSession::TogglePlayPauseCommand:
+        if (page->mutedState().containsAny(mutedState))
+            page->setMuted({ });
+        else
+            page->setMuted(mutedState);
+        return true;
+    default:
+        break;
+    }
+    return false;
+}
+#endif
+
 void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandType commandType, const RemoteCommandArgument& argument)
 {
     auto* session = mediaSession();
     if (!session || !session->hasActiveActionHandlers()) {
+#if ENABLE(MEDIA_STREAM)
+        if (processRemoteControlCommandIfPlayingMediaStreams(m_element.document(), commandType))
+            return;
+#endif
         PlatformMediaSession::didReceiveRemoteControlCommand(commandType, argument);
         return;
     }
@@ -1189,6 +1235,11 @@ std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
     auto* page = m_element.document().page();
     bool allowsNowPlayingControlsVisibility = page && !page->isVisibleAndActive();
     bool isPlaying = state() == PlatformMediaSession::Playing;
+#if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_STREAM)
+    if (isPlaying && isDocumentPlayingSeveralMediaStreams(m_element.document()) && page)
+        isPlaying = !page->mutedState().contains(MediaProducerMutedState::AudioIsMuted);
+#endif
+
     bool supportsSeeking = m_element.supportsSeeking();
     double rate = 1.0;
     double duration = supportsSeeking ? m_element.duration() : MediaPlayer::invalidTime();
