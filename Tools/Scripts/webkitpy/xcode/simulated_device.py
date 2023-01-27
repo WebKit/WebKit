@@ -81,6 +81,7 @@ class SimulatedDeviceManager(object):
     _device_identifier_to_name = {}
     _managing_simulator_app = False
     _last_updated_state = 0
+    elapsed_time = 0
 
     @staticmethod
     def _create_runtimes(runtimes):
@@ -386,59 +387,63 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def initialize_devices(requests, host=None, name_base='Managed', simulator_ui=True, timeout=SIMULATOR_BOOT_TIMEOUT, **kwargs):
-        host = host or SystemHost.get_default()
-        if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
+        started_at = time.time()
+
+        try:
+            host = host or SystemHost.get_default()
+            if SimulatedDeviceManager.INITIALIZED_DEVICES is not None:
+                return SimulatedDeviceManager.INITIALIZED_DEVICES
+
+            if not host.platform.is_mac():
+                return None
+
+            SimulatedDeviceManager.INITIALIZED_DEVICES = []
+            atexit.register(SimulatedDeviceManager.tear_down)
+
+            # Convert to iterable type
+            if not hasattr(requests, '__iter__'):
+                requests = [requests]
+
+            # Check running sims
+            for device in SimulatedDeviceManager.available_devices(host):
+                matched_request = SimulatedDeviceManager._does_fulfill_request(device, requests)
+                if matched_request is None:
+                    continue
+                requests.remove(matched_request)
+                _log.debug(u'Attached to running simulator {}'.format(device))
+                SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+
+                # DeviceRequests are compared by reference
+                requests_copy = [request for request in requests]
+
+                # Merging requests means that if 4 devices are requested, but only one is running, these
+                # 4 requests will be fulfilled by the 1 running device.
+                for request in requests_copy:
+                    if not request.merge_requests:
+                        continue
+                    if not request.use_booted_simulator:
+                        continue
+                    if request.device_type != device.device_type and not request.allow_incomplete_match:
+                        continue
+                    if request.device_type.software_variant != device.device_type.software_variant:
+                        continue
+                    requests.remove(request)
+
+            for request in requests:
+                device = SimulatedDeviceManager._create_or_find_device_for_request(request, host, name_base)
+                assert device is not None
+
+                SimulatedDeviceManager._boot_device(device, host)
+
+            if simulator_ui and host.executive.run_command(['killall', '-0', 'Simulator.app'], return_exit_code=True) != 0:
+                SimulatedDeviceManager._managing_simulator_app = not host.executive.run_command(['open', '-g', '-b', SimulatedDeviceManager.simulator_bundle_id, '--args', '-PasteboardAutomaticSync', '0'], return_exit_code=True)
+
+            deadline = time.time() + timeout
+            for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
+                SimulatedDeviceManager._wait_until_device_is_usable(device, deadline)
             return SimulatedDeviceManager.INITIALIZED_DEVICES
-
-        if not host.platform.is_mac():
-            return None
-
-        SimulatedDeviceManager.INITIALIZED_DEVICES = []
-        atexit.register(SimulatedDeviceManager.tear_down)
-
-        # Convert to iterable type
-        if not hasattr(requests, '__iter__'):
-            requests = [requests]
-
-        # Check running sims
-        for device in SimulatedDeviceManager.available_devices(host):
-            matched_request = SimulatedDeviceManager._does_fulfill_request(device, requests)
-            if matched_request is None:
-                continue
-            requests.remove(matched_request)
-            _log.debug(u'Attached to running simulator {}'.format(device))
-            SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
-
-            # DeviceRequests are compared by reference
-            requests_copy = [request for request in requests]
-
-            # Merging requests means that if 4 devices are requested, but only one is running, these
-            # 4 requests will be fulfilled by the 1 running device.
-            for request in requests_copy:
-                if not request.merge_requests:
-                    continue
-                if not request.use_booted_simulator:
-                    continue
-                if request.device_type != device.device_type and not request.allow_incomplete_match:
-                    continue
-                if request.device_type.software_variant != device.device_type.software_variant:
-                    continue
-                requests.remove(request)
-
-        for request in requests:
-            device = SimulatedDeviceManager._create_or_find_device_for_request(request, host, name_base)
-            assert device is not None
-
-            SimulatedDeviceManager._boot_device(device, host)
-
-        if simulator_ui and host.executive.run_command(['killall', '-0', 'Simulator.app'], return_exit_code=True) != 0:
-            SimulatedDeviceManager._managing_simulator_app = not host.executive.run_command(['open', '-g', '-b', SimulatedDeviceManager.simulator_bundle_id, '--args', '-PasteboardAutomaticSync', '0'], return_exit_code=True)
-
-        deadline = time.time() + timeout
-        for device in SimulatedDeviceManager.INITIALIZED_DEVICES:
-            SimulatedDeviceManager._wait_until_device_is_usable(device, deadline)
-
-        return SimulatedDeviceManager.INITIALIZED_DEVICES
+        finally:
+            SimulatedDeviceManager.elapsed_time += time.time() - started_at
 
     @staticmethod
     @memoized
@@ -496,30 +501,35 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def tear_down(host=None, timeout=SIMULATOR_BOOT_TIMEOUT):
-        host = host or SystemHost.get_default()
-        if SimulatedDeviceManager._managing_simulator_app:
-            host.executive.run_command(['killall', '-9', 'Simulator.app'], return_exit_code=True)
-            SimulatedDeviceManager._managing_simulator_app = False
+        started_at = time.time()
 
-        if SimulatedDeviceManager.INITIALIZED_DEVICES is None:
-            return
+        try:
+            host = host or SystemHost.get_default()
+            if SimulatedDeviceManager._managing_simulator_app:
+                host.executive.run_command(['killall', '-9', 'Simulator.app'], return_exit_code=True)
+                SimulatedDeviceManager._managing_simulator_app = False
 
-        deadline = time.time() + timeout
-        while SimulatedDeviceManager.INITIALIZED_DEVICES:
-            device = SimulatedDeviceManager.INITIALIZED_DEVICES[0]
-            if device is None:
-                SimulatedDeviceManager.INITIALIZED_DEVICES.remove(None)
-                continue
-            device.platform_device._tear_down(deadline - time.time())
+            if SimulatedDeviceManager.INITIALIZED_DEVICES is None:
+                return
 
-        SimulatedDeviceManager.INITIALIZED_DEVICES = None
+            deadline = time.time() + timeout
+            while SimulatedDeviceManager.INITIALIZED_DEVICES:
+                device = SimulatedDeviceManager.INITIALIZED_DEVICES[0]
+                if device is None:
+                    SimulatedDeviceManager.INITIALIZED_DEVICES.remove(None)
+                    continue
+                device.platform_device._tear_down(deadline - time.time())
 
-        # If we were managing the simulator, there are some cache files we need to remove
-        for directory in host.filesystem.glob('/tmp/com.apple.CoreSimulator.SimDevice.*'):
-            host.filesystem.rmtree(directory)
-        core_simulator_directory = host.filesystem.expanduser(host.filesystem.join('~', 'Library', 'Developer', 'CoreSimulator'))
-        host.filesystem.rmtree(host.filesystem.join(core_simulator_directory, 'Caches'))
-        host.filesystem.rmtree(host.filesystem.join(core_simulator_directory, 'Temp'))
+            SimulatedDeviceManager.INITIALIZED_DEVICES = None
+
+            # If we were managing the simulator, there are some cache files we need to remove
+            for directory in host.filesystem.glob('/tmp/com.apple.CoreSimulator.SimDevice.*'):
+                host.filesystem.rmtree(directory)
+            core_simulator_directory = host.filesystem.expanduser(host.filesystem.join('~', 'Library', 'Developer', 'CoreSimulator'))
+            host.filesystem.rmtree(host.filesystem.join(core_simulator_directory, 'Caches'))
+            host.filesystem.rmtree(host.filesystem.join(core_simulator_directory, 'Temp'))
+        finally:
+            SimulatedDeviceManager.elapsed_time += time.time() - started_at
 
 
 class SimulatedDevice(object):

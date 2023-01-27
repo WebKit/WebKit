@@ -50,6 +50,11 @@ class BuildBotPrinter(object):
             self.print_run_results(run_details.initial_results)
         self.print_unexpected_results(run_details.summarized_results, run_details.enabled_pixel_tests_in_retry)
 
+        from webkitpy.xcode.simulated_device import SimulatedDeviceManager
+        if SimulatedDeviceManager.elapsed_time:
+            self._print("")
+            self._print("Spend {} minutes dealing with simulators".format((SimulatedDeviceManager.elapsed_time // 6) / 10))
+
     def _print(self, msg):
         self.stream.write(msg + '\n')
 
