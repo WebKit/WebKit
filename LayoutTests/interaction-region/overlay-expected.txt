@@ -1,5 +1,3 @@
-This is a link, outside the frame.
-This is a link, inside an aria-hidden div
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -13,8 +11,12 @@ This is a link, inside an aria-hidden div
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (region
-            (rect (-3,-3) width=35 height=25)
+        (occlusion
+            (rect (0,0) width=200 height=100)
+)
+        (borderRadius 0.00),
+        (occlusion
+            (rect (0,200) width=200 height=100)
 )
         (borderRadius 0.00)])
       )

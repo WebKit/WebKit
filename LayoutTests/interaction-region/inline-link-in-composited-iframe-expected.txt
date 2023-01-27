@@ -13,7 +13,7 @@ This is a link, outside the frame.
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (region
+        (interaction
             (rect (-3,-3) width=35 height=25)
 )
         (borderRadius 0.00)])
@@ -27,7 +27,7 @@ This is a link, outside the frame.
             (rect (2,2) width=200 height=200)
 
           (interaction regions [
-            (region
+            (interaction
                 (rect (7,7) width=35 height=25)
 )
             (borderRadius 0.00)])

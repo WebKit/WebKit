@@ -337,6 +337,7 @@ interface UIScriptController {
 
     readonly attribute DOMString scrollingTreeAsText;
     readonly attribute DOMString uiViewTreeAsText;
+    readonly attribute DOMString caLayerTreeAsText;
 
     boolean mayContainEditableElementsInRect(unsigned long x, unsigned long y, unsigned long width, unsigned long height);
 

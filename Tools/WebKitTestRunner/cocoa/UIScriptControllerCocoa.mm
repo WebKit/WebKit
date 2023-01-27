@@ -173,6 +173,11 @@ JSRetainPtr<JSStringRef> UIScriptControllerCocoa::lastUndoLabel() const
     return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().undoActionName));
 }
 
+JSRetainPtr<JSStringRef> UIScriptControllerCocoa::caLayerTreeAsText() const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _caLayerTreeAsText]));
+}
+
 JSRetainPtr<JSStringRef> UIScriptControllerCocoa::firstRedoLabel() const
 {
     return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().redoActionName));

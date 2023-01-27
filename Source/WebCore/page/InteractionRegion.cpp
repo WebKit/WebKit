@@ -105,22 +105,19 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
 
     auto& mainFrameView = *regionRenderer.document().frame()->mainFrame().view();
-    auto layoutArea = mainFrameView.layoutSize().area();
+    auto layoutSize = mainFrameView.layoutSize();
+    // Adding some wiggle room, we use this to avoid extreme cases.
+    layoutSize.scale(1.3, 1.3);
+    auto layoutArea = layoutSize.area();
 
     auto checkedRegionArea = bounds.area<RecordOverflow>();
     if (checkedRegionArea.hasOverflowed())
-        return std::nullopt;
-
-    if (checkedRegionArea.value() > layoutArea / 2)
         return std::nullopt;
 
     auto element = dynamicDowncast<Element>(regionRenderer.node());
     if (!element) 
         element = regionRenderer.node()->parentElement();
     if (!element)
-        return std::nullopt;
-
-    if (!isNodeAriaVisible(element))
         return std::nullopt;
 
     if (auto* linkElement = element->enclosingLinkEventParentOrSelf())
@@ -139,11 +136,26 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
 
     // FIXME: Consider also allowing elements that only receive touch events.
-    if (!renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick))
-        return std::nullopt;
+    bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
+    bool hasPointer = cursorTypeForElement(*element) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*element);
+    if (!hasListener || !hasPointer) {
+        bool isOverlay = checkedRegionArea.value() <= layoutArea && renderer.style().specifiedZIndex() > 0;
+        if (isOverlay) {
+            Region boundsRegion;
+            boundsRegion.unite(bounds);
 
-    auto cursor = cursorTypeForElement(*element);
-    if (cursor != CursorType::Pointer && !shouldAllowNonPointerCursorForElement(*element))
+            return { {
+                element->identifier(),
+                boundsRegion,
+                0,
+                InteractionRegion::Type::Occlusion
+            } };
+        }
+
+        return std::nullopt;
+    }
+
+    if (checkedRegionArea.value() > layoutArea / 2)
         return std::nullopt;
 
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
@@ -170,13 +182,14 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     return { {
         element->identifier(),
         boundsRegion,
-        borderRadius
+        borderRadius,
+        InteractionRegion::Type::Interaction
     } };
 }
 
 TextStream& operator<<(TextStream& ts, const InteractionRegion& interactionRegion)
 {
-    ts.dumpProperty("region", interactionRegion.regionInLayerCoordinates);
+    ts.dumpProperty(interactionRegion.type == InteractionRegion::Type::Occlusion ? "occlusion" : "interaction", interactionRegion.regionInLayerCoordinates);
     ts.dumpProperty("borderRadius", interactionRegion.borderRadius);
 
     return ts;

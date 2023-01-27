@@ -47,6 +47,8 @@ struct WKAppPrivacyReportTestingData {
 
 @interface WKWebView (WKTesting)
 
+@property (nonatomic, readonly) NSString *_caLayerTreeAsText;
+
 - (void)_addEventAttributionWithSourceID:(uint8_t)sourceID destinationURL:(NSURL *)destination sourceDescription:(NSString *)sourceDescription purchaser:(NSString *)purchaser reportEndpoint:(NSURL *)reportEndpoint optionalNonce:(nullable NSString *)nonce applicationBundleID:(NSString *)bundleID ephemeral:(BOOL)ephemeral WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_setPageScale:(CGFloat)scale withOrigin:(CGPoint)origin;

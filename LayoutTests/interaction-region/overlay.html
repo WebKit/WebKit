@@ -3,14 +3,21 @@
 <style>
     body { margin: 0; }
 
-    #page {
+    .overlay {
+        z-index: 1;
         width: 200px;
-        height: 200px;
+        height: 100px;
+        background-color: green;
+    }
+    #not-occlusion {
+        pointer-events: none;
+        background-color: red;
     }
 </style>
 <body>
-<a href="#">This</a> is a link, outside the frame.<br/>
-<div id="frame" aria-hidden="true"><a href="#">This</a> is a link, inside an aria-hidden div</div>
+<div class="overlay"></div>
+<div class="overlay" id="not-occlusion"></div>
+<div class="overlay" onclick="click()"></div>
 
 <pre id="results"></pre>
 <script>
