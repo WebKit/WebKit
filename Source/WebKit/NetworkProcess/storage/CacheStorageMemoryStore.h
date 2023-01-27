@@ -39,7 +39,7 @@ public:
 private:
     CacheStorageMemoryStore() = default;
     // CacheStorageStore
-    void readAllRecords(ReadAllRecordsCallback&&) final;
+    void readAllRecordInfos(ReadAllRecordInfosCallback&&) final;
     void readRecords(const Vector<CacheStorageRecordInformation>&, ReadRecordsCallback&&) final;
     void deleteRecords(const Vector<CacheStorageRecordInformation>&, WriteRecordsCallback&&) final;
     void writeRecords(Vector<CacheStorageRecord>&&, WriteRecordsCallback&&) final;
