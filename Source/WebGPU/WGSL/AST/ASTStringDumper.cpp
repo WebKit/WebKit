@@ -371,9 +371,10 @@ void StringDumper::visit(StructType& type)
     m_out.print(type.structDecl().name());
 }
 
-void StringDumper::visit(TypeReference& type)
+void StringDumper::visit(ReferenceType& type)
 {
     visit(type.type());
+    m_out.print("&");
 }
 
 void StringDumper::visit(Parameter& parameter)

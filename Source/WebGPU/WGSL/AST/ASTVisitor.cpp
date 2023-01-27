@@ -323,8 +323,8 @@ void Visitor::visit(TypeDecl& typeDecl)
     case Node::Kind::StructType:
         checkErrorAndVisit(downcast<StructType>(typeDecl));
         break;
-    case Node::Kind::TypeReference:
-        checkErrorAndVisit(downcast<TypeReference>(typeDecl));
+    case Node::Kind::ReferenceType:
+        checkErrorAndVisit(downcast<ReferenceType>(typeDecl));
         break;
     default:
         ASSERT_NOT_REACHED("Unhandled type declaration kind");
@@ -350,8 +350,9 @@ void Visitor::visit(StructType&)
 {
 }
 
-void Visitor::visit(TypeReference&)
+void Visitor::visit(ReferenceType& referenceType)
 {
+    checkErrorAndVisit(referenceType.type());
 }
 
 //

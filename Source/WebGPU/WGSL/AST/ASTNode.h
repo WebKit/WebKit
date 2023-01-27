@@ -79,7 +79,7 @@ public:
         NamedType,
         ParameterizedType,
         StructType,
-        TypeReference,
+        ReferenceType,
 
         Parameter,
         StructMember,

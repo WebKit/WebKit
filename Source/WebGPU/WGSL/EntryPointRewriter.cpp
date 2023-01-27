@@ -78,9 +78,6 @@ private:
 
 AST::TypeDecl& EntryPointRewriter::getResolvedType(AST::TypeDecl& type)
 {
-    if (type.kind() == AST::Node::Kind::TypeReference)
-        return getResolvedType(downcast<AST::TypeReference>(type).type());
-
     if (type.kind() == AST::Node::Kind::NamedType) {
         if (auto* resolvedType = downcast<AST::NamedType>(type).maybeResolvedReference())
             return getResolvedType(*resolvedType);
@@ -141,12 +138,10 @@ void EntryPointRewriter::constructInputStruct()
     // insert `var ${parameter.name()} = ${structName}.${parameter.name()}`
     AST::StructMember::List structMembers;
     for (auto& parameter : m_parameters) {
-        auto parameterType = adoptRef(*new AST::TypeReference(m_emptySourceSpan, parameter.m_type.copyRef()));
-
         structMembers.append(makeUniqueRef<AST::StructMember>(
             m_emptySourceSpan,
-            parameter.m_name,
-            parameterType.copyRef(),
+            WTFMove(parameter.m_name),
+            WTFMove(parameter.m_type),
             WTFMove(parameter.m_attributes)
         ));
     }

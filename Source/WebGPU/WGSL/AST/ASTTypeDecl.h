@@ -174,11 +174,11 @@ private:
     StructDecl& m_structDecl;
 };
 
-class TypeReference final : public TypeDecl {
+class ReferenceType final : public TypeDecl {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    TypeReference(SourceSpan span, Ref<TypeDecl>&& type)
+    ReferenceType(SourceSpan span, Ref<TypeDecl>&& type)
         : TypeDecl(span)
         , m_type(WTFMove(type))
     {
@@ -207,7 +207,7 @@ static bool isType(const WGSL::AST::Node& node)
     case WGSL::AST::Node::Kind::NamedType:
     case WGSL::AST::Node::Kind::ParameterizedType:
     case WGSL::AST::Node::Kind::StructType:
-    case WGSL::AST::Node::Kind::TypeReference:
+    case WGSL::AST::Node::Kind::ReferenceType:
         return true;
     default:
         return false;
@@ -219,4 +219,4 @@ SPECIALIZE_TYPE_TRAITS_WGSL_AST(ArrayType)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(NamedType)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(ParameterizedType)
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructType)
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(TypeReference)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ReferenceType)

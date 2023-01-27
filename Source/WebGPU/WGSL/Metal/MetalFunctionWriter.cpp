@@ -81,7 +81,7 @@ public:
     void visit(AST::NamedType&) override;
     void visit(AST::ParameterizedType&) override;
     void visit(AST::StructType&) override;
-    void visit(AST::TypeReference&) override;
+    void visit(AST::ReferenceType&) override;
 
     void visit(AST::Parameter&) override;
 
@@ -312,9 +312,10 @@ void FunctionDefinitionWriter::visit(AST::StructType& structType)
     m_stringBuilder.append(structType.structDecl().name());
 }
 
-void FunctionDefinitionWriter::visit(AST::TypeReference& type)
+void FunctionDefinitionWriter::visit(AST::ReferenceType& type)
 {
     visit(type.type());
+    m_stringBuilder.append("&");
 }
 
 void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
