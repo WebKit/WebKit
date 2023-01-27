@@ -54,6 +54,8 @@ public:
     void visit(AST::BuiltinAttribute&) override;
     void visit(AST::LocationAttribute&) override;
     void visit(AST::StageAttribute&) override;
+    void visit(AST::GroupAttribute&) override;
+    void visit(AST::BindingAttribute&) override;
 
     void visit(AST::FunctionDecl&) override;
     void visit(AST::StructDecl&) override;
@@ -84,6 +86,7 @@ public:
     void visit(AST::ReferenceType&) override;
 
     void visit(AST::Parameter&) override;
+    void visitArgumentBufferParameter(AST::Parameter&);
 
 private:
     StringBuilder& m_stringBuilder;
@@ -118,8 +121,8 @@ void FunctionDefinitionWriter::visit(AST::FunctionDecl& functionDefinition)
             checkErrorAndVisit(parameter);
             m_stringBuilder.append(" [[stage_in]]");
             break;
-        case AST::ParameterRole::GlobalVariable:
-            // FIXME: add support for global variables
+        case AST::ParameterRole::ArgumentBuffer:
+            visitArgumentBufferParameter(parameter);
             break;
         }
         first = false;
@@ -140,6 +143,8 @@ void FunctionDefinitionWriter::visit(AST::StructDecl& structDecl)
         IndentationScope scope(m_indent);
         for (auto& member : structDecl.members()) {
             m_stringBuilder.append(m_indent);
+            if (m_structRole == AST::StructRole::ArgumentBuffer)
+                m_stringBuilder.append("const device ");
             visit(member.type());
             m_stringBuilder.append(" ", member.name());
             for (auto &attribute : member.attributes()) {
@@ -203,6 +208,18 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
     }
 }
 
+void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
+{
+    // FIXME: the correct function to compute the group number with the appropriate
+    // limits is implemented in Device::vertexBufferIndexForBindGroup.
+    m_stringBuilder.append("[[buffer(", 8 - group.group(), ")]]");
+}
+
+void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
+{
+    m_stringBuilder.append("[[id(", binding.binding(), ")]]");
+}
+
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
 {
     if (m_structRole.has_value()) {
@@ -213,6 +230,8 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructRole::VertexOutput:
         case AST::StructRole::FragmentInput:
             m_stringBuilder.append("[[user(loc", location.location(), ")]]");
+            return;
+        case AST::StructRole::ArgumentBuffer:
             return;
         case AST::StructRole::VertexInput:
         case AST::StructRole::ComputeInput:
@@ -322,6 +341,17 @@ void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
     visit(parameter.type());
     m_stringBuilder.append(" ", parameter.name());
+    for (auto& attribute : parameter.attributes()) {
+        m_stringBuilder.append(" ");
+        checkErrorAndVisit(attribute);
+    }
+}
+
+void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& parameter)
+{
+    m_stringBuilder.append("const device ");
+    visit(parameter.type());
+    m_stringBuilder.append("& ", parameter.name());
     for (auto& attribute : parameter.attributes()) {
         m_stringBuilder.append(" ");
         checkErrorAndVisit(attribute);

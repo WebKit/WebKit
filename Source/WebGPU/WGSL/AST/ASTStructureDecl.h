@@ -63,6 +63,7 @@ enum class StructRole : uint8_t {
     FragmentInput,
     ComputeInput,
     VertexOutput,
+    ArgumentBuffer,
 };
 
 class StructDecl final : public Decl {

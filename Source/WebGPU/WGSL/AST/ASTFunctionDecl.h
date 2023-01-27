@@ -38,7 +38,7 @@ namespace WGSL::AST {
 enum class ParameterRole {
     UserDefined,
     StageIn,
-    GlobalVariable,
+    ArgumentBuffer,
 };
 
 class Parameter final : public Node {

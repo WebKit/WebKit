@@ -28,6 +28,7 @@
 
 #include "CallGraph.h"
 #include "EntryPointRewriter.h"
+#include "GlobalVariableRewriter.h"
 #include "Metal/MetalCodeGenerator.h"
 #include "Parser.h"
 #include "PhaseTimer.h"
@@ -88,7 +89,6 @@ SuccessfulCheck::~SuccessfulCheck() = default;
 
 PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
-    UNUSED_PARAM(pipelineLayouts);
     PhaseTimes phaseTimes;
     Metal::RenderMetalCode generatedCode;
 
@@ -98,6 +98,7 @@ PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayo
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
         RUN_PASS(resolveTypeReferences, ast);
         RUN_PASS(rewriteEntryPoints, callGraph);
+        RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
 
         dumpASTAtEndIfNeeded(ast);
 
