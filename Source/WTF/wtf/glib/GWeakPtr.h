@@ -75,7 +75,7 @@ public:
         addWeakPtr();
     }
 
-    GWeakPtr& operator=(nullptr_t)
+    GWeakPtr& operator=(std::nullptr_t)
     {
         reset();
         return *this;
