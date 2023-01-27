@@ -147,6 +147,7 @@ public:
 private:
     template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
     template<typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakPtrFactory;
 
@@ -244,6 +245,7 @@ public:
 
 private:
     template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
     template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename> friend class WeakPtr;
 
