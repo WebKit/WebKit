@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -250,13 +250,13 @@ void testBitmapConcurrentTestAndSet()
     for (size_t i = 0; i < size; ++i)
         ASSERT_EQ(bitmap1.get(i), expectedBits1[i]);
     for (size_t i = 0; i < size; ++i)
-        ASSERT_EQ(bitmap1.testAndSet(i), expectedBits1[i]);
+        ASSERT_EQ(bitmap1.concurrentTestAndSet(i), expectedBits1[i]);
     ASSERT_TRUE(bitmap1.isFull());
 
     ASSERT_FALSE(smallBitmapZeroes.isFull());
     ASSERT_TRUE(smallBitmapZeroes.isEmpty());
     for (size_t i = 0; i < smallSize; ++i)
-        ASSERT_FALSE(smallBitmapZeroes.testAndSet(i));
+        ASSERT_FALSE(smallBitmapZeroes.concurrentTestAndSet(i));
     ASSERT_TRUE(smallBitmapZeroes.isFull());
 }
 
@@ -271,13 +271,13 @@ void testBitmapConcurrentTestAndClear()
     for (size_t i = 0; i < size; ++i)
         ASSERT_EQ(bitmap1.get(i), expectedBits1[i]);
     for (size_t i = 0; i < size; ++i)
-        ASSERT_EQ(bitmap1.testAndClear(i), expectedBits1[i]);
+        ASSERT_EQ(bitmap1.concurrentTestAndClear(i), expectedBits1[i]);
     ASSERT_TRUE(bitmap1.isEmpty());
 
     ASSERT_FALSE(smallBitmapOnes.isEmpty());
     ASSERT_TRUE(smallBitmapOnes.isFull());
     for (size_t i = 0; i < smallSize; ++i)
-        ASSERT_TRUE(smallBitmapOnes.testAndClear(i));
+        ASSERT_TRUE(smallBitmapOnes.concurrentTestAndClear(i));
     ASSERT_TRUE(smallBitmapOnes.isEmpty());
 }
 
