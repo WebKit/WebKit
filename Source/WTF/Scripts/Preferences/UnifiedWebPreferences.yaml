@@ -71,7 +71,7 @@
 
 AVFoundationEnabled:
   type: bool
-  status: internal
+  status: embedder
   getter: isAVFoundationEnabled
   humanReadableName: "AVFoundation"
   humanReadableDescription: "Enable AVFoundation"
@@ -4328,7 +4328,7 @@ PageVisibilityBasedProcessSuppressionEnabled:
 
 PaginateDuringLayoutEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Paginate during layout"
   humanReadableDescription: "Enable pagination during layout"
   defaultValue:
@@ -5067,7 +5067,7 @@ ScreenWakeLockAPIEnabled:
 
 ScrollAnimatorEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Scroll animator"
   humanReadableDescription: "Enable scroll animator"
   defaultValue:
@@ -5097,7 +5097,7 @@ ScrollToTextFragmentEnabled:
 
 ScrollToTextFragmentIndicatorEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Scroll To Text Fragment Indicator"
   humanReadableDescription: "Enable Scroll To Text Fragment Indicator"
   defaultValue:
