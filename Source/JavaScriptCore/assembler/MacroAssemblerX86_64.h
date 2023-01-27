@@ -2438,6 +2438,13 @@ public:
 
     DEFINE_SIGNED_SIMD_FUNCS(vectorExtractLane);
 
+    void vectorDupElement(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    {
+        UNUSED_PARAM(simdLane); UNUSED_PARAM(lane); UNUSED_PARAM(src); UNUSED_PARAM(dest);
+    }
+
+    DEFINE_SIMD_FUNCS(vectorDupElement);
+
     void compareFloatingPointVectorUnordered(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVX());

@@ -363,6 +363,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case VectorReplaceLane:
         out.print("VectorReplaceLane");
         return;
+    case VectorDupElement:
+        out.print("VectorDupElement");
+        return;
     case VectorEqual:
         out.print("VectorEqual");
         return;

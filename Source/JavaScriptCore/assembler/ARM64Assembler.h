@@ -1534,7 +1534,6 @@ public:
     ALWAYS_INLINE void dupElement(FPRegisterID vd, FPRegisterID vn, SIMDLane lane, uint32_t laneIndex)
     {
         // Take element from vector and put it in vd
-        ASSERT(scalarTypeIsFloatingPoint(lane));
         insn(simdGeneral(0, 1, encodeLaneAndIndex(lane, laneIndex), 0b0000, vn, vd));
     }
 

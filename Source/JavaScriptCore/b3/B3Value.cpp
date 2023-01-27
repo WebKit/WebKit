@@ -634,6 +634,7 @@ Effects Value::effects() const
     case FMax:
     case VectorExtractLane:
     case VectorReplaceLane:
+    case VectorDupElement:
     case VectorEqual:
     case VectorNotEqual:
     case VectorLessThan:

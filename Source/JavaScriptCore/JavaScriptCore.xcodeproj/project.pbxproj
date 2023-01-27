@@ -1996,6 +1996,7 @@
 		E378DC8D2727629400427B0B /* IntlNumberFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1D792F61B43864B004516F5 /* IntlNumberFormat.cpp */; };
 		E379006628F8F4E100206FD8 /* DFGValidateUnlinked.h in Headers */ = {isa = PBXBuildFile; fileRef = E379006428F8F4E100206FD8 /* DFGValidateUnlinked.h */; };
 		E3794E761B77EB97005543AE /* ModuleAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = E3794E741B77EB97005543AE /* ModuleAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E379B59029834EC5007C4C0E /* SIMDShuffle.h in Headers */ = {isa = PBXBuildFile; fileRef = E379B58F29834EC5007C4C0E /* SIMDShuffle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E383500A2390D93B0036316D /* WasmGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = E38350092390D9370036316D /* WasmGlobal.h */; };
 		E3850B15226ED641009ABF9C /* DFGMinifiedIDInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3850B14226ED63E009ABF9C /* DFGMinifiedIDInlines.h */; };
 		E38652E3237CA0C900E1D5EE /* BlockDirectoryBits.h in Headers */ = {isa = PBXBuildFile; fileRef = E38652E2237CA0C800E1D5EE /* BlockDirectoryBits.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5532,6 +5533,7 @@
 		E379006428F8F4E100206FD8 /* DFGValidateUnlinked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGValidateUnlinked.h; path = dfg/DFGValidateUnlinked.h; sourceTree = "<group>"; };
 		E3794E731B77EB97005543AE /* ModuleAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModuleAnalyzer.cpp; sourceTree = "<group>"; };
 		E3794E741B77EB97005543AE /* ModuleAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModuleAnalyzer.h; sourceTree = "<group>"; };
+		E379B58F29834EC5007C4C0E /* SIMDShuffle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIMDShuffle.h; sourceTree = "<group>"; };
 		E37CFB2D22F27C57009A7B38 /* WasmCompilationMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCompilationMode.cpp; sourceTree = "<group>"; };
 		E380A76B1DCD7195000F89E6 /* MacroAssemblerHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerHelpers.h; sourceTree = "<group>"; };
 		E380D66B1F19249D00A59095 /* BuiltinNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinNames.cpp; sourceTree = "<group>"; };
@@ -6753,6 +6755,7 @@
 				0FEE98401A8865B600754E93 /* SetupVarargsFrame.h */,
 				4B8F57F32953B29600090D27 /* SIMDInfo.cpp */,
 				4BC18E5428FDE6C800ECD68D /* SIMDInfo.h */,
+				E379B58F29834EC5007C4C0E /* SIMDShuffle.h */,
 				6B731CC02647A8370014646F /* SlowPathCall.cpp */,
 				A709F2EF17A0AC0400512E98 /* SlowPathCall.h */,
 				E3F23A7B1ECF13E500978D99 /* Snippet.h */,
@@ -11218,6 +11221,7 @@
 				8602960526FB552D0078EB62 /* ShadowRealmPrototype.h in Headers */,
 				FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */,
 				4BC18E5628FDE6C800ECD68D /* SIMDInfo.h in Headers */,
+				E379B59029834EC5007C4C0E /* SIMDShuffle.h in Headers */,
 				0F4D8C781FCA3CFA001D32AC /* SimpleMarkingConstraint.h in Headers */,
 				0F2B670517B6B5AB00A7AE3F /* SimpleTypedArrayController.h in Headers */,
 				14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */,

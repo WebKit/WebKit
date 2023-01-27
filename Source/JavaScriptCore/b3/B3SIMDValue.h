@@ -39,6 +39,7 @@ public:
         switch (kind.opcode()) {
         case VectorExtractLane:
         case VectorReplaceLane:
+        case VectorDupElement:
         case VectorEqual:
         case VectorNotEqual:
         case VectorLessThan:
