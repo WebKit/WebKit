@@ -41,6 +41,7 @@
 
 namespace PAL::WebGPU {
 class GPU;
+struct PresentationContextDescriptor;
 }
 
 namespace IPC {
@@ -55,7 +56,6 @@ class RemoteRenderingBackend;
 namespace WebGPU {
 class ObjectHeap;
 struct RequestAdapterOptions;
-struct SurfaceDescriptor;
 }
 
 class RemoteGPU final : public IPC::StreamMessageReceiver {
@@ -137,7 +137,7 @@ private:
 
     void requestAdapter(const WebGPU::RequestAdapterOptions&, WebGPUIdentifier, CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&&);
 
-    void createSurface(const WebGPU::SurfaceDescriptor&, WebGPUIdentifier);
+    void createPresentationContext(const WebGPU::PresentationContextDescriptor&, WebGPUIdentifier);
 
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;

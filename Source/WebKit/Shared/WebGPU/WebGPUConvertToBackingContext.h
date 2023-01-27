@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,6 +90,9 @@ class OutOfMemoryError;
 struct PipelineDescriptorBase;
 class PipelineLayout;
 struct PipelineLayoutDescriptor;
+struct PresentationConfiguration;
+class PresentationContext;
+struct PresentationContextDescriptor;
 struct PrimitiveState;
 struct ProgrammableStage;
 class QuerySet;
@@ -117,10 +120,6 @@ struct StencilFaceState;
 struct StorageTextureBindingLayout;
 class SupportedFeatures;
 class SupportedLimits;
-class Surface;
-struct SurfaceDescriptor;
-class SwapChain;
-struct SwapChainDescriptor;
 class Texture;
 struct TextureBindingLayout;
 struct TextureDescriptor;
@@ -167,6 +166,8 @@ struct ObjectDescriptorBase;
 struct OutOfMemoryError;
 struct PipelineDescriptorBase;
 struct PipelineLayoutDescriptor;
+struct PresentationContextDescriptor;
+struct PresentationConfiguration;
 struct PrimitiveState;
 struct ProgrammableStage;
 struct QuerySetDescriptor;
@@ -186,8 +187,6 @@ struct StencilFaceState;
 struct StorageTextureBindingLayout;
 struct SupportedFeatures;
 struct SupportedLimits;
-struct SurfaceDescriptor;
-struct SwapChainDescriptor;
 struct TextureBindingLayout;
 struct TextureDescriptor;
 struct TextureViewDescriptor;
@@ -243,6 +242,8 @@ public:
     std::optional<OutOfMemoryError> convertToBacking(const PAL::WebGPU::OutOfMemoryError&);
     std::optional<PipelineDescriptorBase> convertToBacking(const PAL::WebGPU::PipelineDescriptorBase&);
     std::optional<PipelineLayoutDescriptor> convertToBacking(const PAL::WebGPU::PipelineLayoutDescriptor&);
+    std::optional<PresentationConfiguration> convertToBacking(const PAL::WebGPU::PresentationConfiguration&);
+    std::optional<PresentationContextDescriptor> convertToBacking(const PAL::WebGPU::PresentationContextDescriptor&);
     std::optional<PrimitiveState> convertToBacking(const PAL::WebGPU::PrimitiveState&);
     std::optional<ProgrammableStage> convertToBacking(const PAL::WebGPU::ProgrammableStage&);
     std::optional<QuerySetDescriptor> convertToBacking(const PAL::WebGPU::QuerySetDescriptor&);
@@ -264,8 +265,6 @@ public:
     std::optional<StorageTextureBindingLayout> convertToBacking(const PAL::WebGPU::StorageTextureBindingLayout&);
     std::optional<SupportedFeatures> convertToBacking(const PAL::WebGPU::SupportedFeatures&);
     std::optional<SupportedLimits> convertToBacking(const PAL::WebGPU::SupportedLimits&);
-    std::optional<SurfaceDescriptor> convertToBacking(const PAL::WebGPU::SurfaceDescriptor&);
-    std::optional<SwapChainDescriptor> convertToBacking(const PAL::WebGPU::SwapChainDescriptor&);
     std::optional<TextureBindingLayout> convertToBacking(const PAL::WebGPU::TextureBindingLayout&);
     std::optional<TextureDescriptor> convertToBacking(const PAL::WebGPU::TextureDescriptor&);
     std::optional<TextureViewDescriptor> convertToBacking(const PAL::WebGPU::TextureViewDescriptor&);
@@ -286,6 +285,7 @@ public:
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ExternalTexture&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::GPU&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::PipelineLayout&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::PresentationContext&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::QuerySet&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Queue&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderBundleEncoder&) = 0;
@@ -294,8 +294,6 @@ public:
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderPipeline&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Sampler&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ShaderModule&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Surface&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::SwapChain&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Texture&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::TextureView&) = 0;
 };

@@ -34,8 +34,9 @@
 #include "RemoteGPU.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
-#include "RemoteSurfaceProxy.h"
+#include "RemotePresentationContextProxy.h"
 #include "WebGPUConvertToBackingContext.h"
+#include <pal/graphics/WebGPU/WebGPUPresentationContextDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPUSupportedFeatures.h>
 #include <pal/graphics/WebGPU/WebGPUSupportedLimits.h>
 
@@ -149,21 +150,21 @@ void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& op
     callback(WebGPU::RemoteAdapterProxy::create(WTFMove(response->name), WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), response->isFallbackAdapter, *this, m_convertToBackingContext, identifier));
 }
 
-Ref<PAL::WebGPU::Surface> RemoteGPUProxy::createSurface(const PAL::WebGPU::SurfaceDescriptor& descriptor)
+Ref<PAL::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(const PAL::WebGPU::PresentationContextDescriptor& descriptor)
 {
     // FIXME: Should we be consulting m_lost?
 
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor) {
         // FIXME: Implement error handling.
-        return WebGPU::RemoteSurfaceProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
+        return WebGPU::RemotePresentationContextProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
     }
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteGPU::CreateSurface(*convertedDescriptor, identifier));
+    auto sendResult = send(Messages::RemoteGPU::CreatePresentationContext(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
-    return WebGPU::RemoteSurfaceProxy::create(*this, m_convertToBackingContext, identifier);
+    return WebGPU::RemotePresentationContextProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
 } // namespace WebKit

@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -858,6 +858,8 @@ def headers_for_type(type):
         'WebKit::WebGPU::OutOfMemoryError': ['"WebGPUOutOfMemoryError.h"'],
         'WebKit::WebGPU::PipelineDescriptorBase': ['"WebGPUPipelineDescriptorBase.h"'],
         'WebKit::WebGPU::PipelineLayoutDescriptor': ['"WebGPUPipelineLayoutDescriptor.h"'],
+        'WebKit::WebGPU::PresentationConfiguration': ['"WebGPUPresentationConfiguration.h"'],
+        'WebKit::WebGPU::PresentationContextDescriptor': ['"WebGPUPresentationContextDescriptor.h"'],
         'WebKit::WebGPU::PrimitiveState': ['"WebGPUPrimitiveState.h"'],
         'WebKit::WebGPU::ProgrammableStage': ['"WebGPUProgrammableStage.h"'],
         'WebKit::WebGPU::QuerySetDescriptor': ['"WebGPUQuerySetDescriptor.h"'],
@@ -877,8 +879,6 @@ def headers_for_type(type):
         'WebKit::WebGPU::StorageTextureBindingLayout': ['"WebGPUStorageTextureBindingLayout.h"'],
         'WebKit::WebGPU::SupportedFeatures': ['"WebGPUSupportedFeatures.h"'],
         'WebKit::WebGPU::SupportedLimits': ['"WebGPUSupportedLimits.h"'],
-        'WebKit::WebGPU::SurfaceDescriptor': ['"WebGPUSurfaceDescriptor.h"'],
-        'WebKit::WebGPU::SwapChainDescriptor': ['"WebGPUSwapChainDescriptor.h"'],
         'WebKit::WebGPU::TextureBindingLayout': ['"WebGPUTextureBindingLayout.h"'],
         'WebKit::WebGPU::TextureDescriptor': ['"WebGPUTextureDescriptor.h"'],
         'WebKit::WebGPU::TextureViewDescriptor': ['"WebGPUTextureViewDescriptor.h"'],

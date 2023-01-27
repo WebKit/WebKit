@@ -25,7 +25,7 @@
 
 messages -> RemoteGPU NotRefCounted Stream {
     void RequestAdapter(WebKit::WebGPU::RequestAdapterOptions options, WebKit::WebGPUIdentifier identifier) -> (std::optional<WebKit::RemoteGPU::RequestAdapterResponse> response) Synchronous
-    void CreateSurface(WebKit::WebGPU::SurfaceDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
+    void CreatePresentationContext(WebKit::WebGPU::PresentationContextDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
 }
 
 #endif

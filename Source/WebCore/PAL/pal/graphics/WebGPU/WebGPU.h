@@ -34,8 +34,8 @@
 namespace PAL::WebGPU {
 
 class Adapter;
-class Surface;
-struct SurfaceDescriptor;
+class PresentationContext;
+struct PresentationContextDescriptor;
 
 class GPU : public RefCounted<GPU> {
 public:
@@ -43,7 +43,7 @@ public:
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
 
-    virtual Ref<Surface> createSurface(const SurfaceDescriptor&) = 0;
+    virtual Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 
 protected:
     GPU() = default;

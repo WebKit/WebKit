@@ -277,6 +277,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/graphics/WebGPU/RemoteExternalTexture \
 	GPUProcess/graphics/WebGPU/RemoteGPU \
 	GPUProcess/graphics/WebGPU/RemotePipelineLayout \
+	GPUProcess/graphics/WebGPU/RemotePresentationContext \
 	GPUProcess/graphics/WebGPU/RemoteQuerySet \
 	GPUProcess/graphics/WebGPU/RemoteQueue \
 	GPUProcess/graphics/WebGPU/RemoteRenderBundle \
@@ -285,8 +286,6 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/graphics/WebGPU/RemoteRenderPipeline \
 	GPUProcess/graphics/WebGPU/RemoteSampler \
 	GPUProcess/graphics/WebGPU/RemoteShaderModule \
-	GPUProcess/graphics/WebGPU/RemoteSurface \
-	GPUProcess/graphics/WebGPU/RemoteSwapChain \
 	GPUProcess/graphics/WebGPU/RemoteTexture \
 	GPUProcess/graphics/WebGPU/RemoteTextureView \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \
@@ -535,6 +534,8 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in \
 	Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in \
 	Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in \
+	Shared/WebGPU/WebGPUPresentationConfiguration.serialization.in \
+	Shared/WebGPU/WebGPUPresentationContextDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUQuerySetDescriptor.serialization.in \
 	Shared/WebGPU/WebGPURenderBundleDescriptor.serialization.in \
 	Shared/WebGPU/WebGPURenderBundleEncoderDescriptor.serialization.in \
@@ -546,8 +547,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUSamplerDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUShaderModuleCompilationHint.serialization.in \
 	Shared/WebGPU/WebGPUShaderModuleDescriptor.serialization.in \
-	Shared/WebGPU/WebGPUSurfaceDescriptor.serialization.in \
-	Shared/WebGPU/WebGPUSwapChainDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUTextureDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUVertexState.serialization.in \

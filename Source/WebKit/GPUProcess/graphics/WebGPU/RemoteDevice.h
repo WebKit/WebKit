@@ -60,8 +60,6 @@ struct RenderBundleEncoderDescriptor;
 struct RenderPipelineDescriptor;
 struct SamplerDescriptor;
 struct ShaderModuleDescriptor;
-struct SurfaceDescriptor;
-struct SwapChainDescriptor;
 struct TextureDescriptor;
 }
 
@@ -98,7 +96,6 @@ private:
     void createBuffer(const WebGPU::BufferDescriptor&, WebGPUIdentifier);
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
     void createSurfaceTexture(WebGPUIdentifier, const WebGPU::TextureDescriptor&, WebGPUIdentifier);
-    void createSwapChain(WebGPUIdentifier, const WebGPU::SwapChainDescriptor&, WebGPUIdentifier);
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
     void importExternalTexture(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);
 

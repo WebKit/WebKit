@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,7 @@ public:
     WGPUDevice convertToBacking(const Device&) final;
     WGPUInstance convertToBacking(const GPU&) final;
     WGPUPipelineLayout convertToBacking(const PipelineLayout&) final;
+    WGPUSurface convertToBacking(const PresentationContext&) final;
     WGPUQuerySet convertToBacking(const QuerySet&) final;
     WGPUQueue convertToBacking(const Queue&) final;
     WGPURenderBundleEncoder convertToBacking(const RenderBundleEncoder&) final;
@@ -60,15 +61,11 @@ public:
     WGPURenderPipeline convertToBacking(const RenderPipeline&) final;
     WGPUSampler convertToBacking(const Sampler&) final;
     WGPUShaderModule convertToBacking(const ShaderModule&) final;
-    WGPUSurface convertToBacking(const Surface&) final;
-    WGPUSwapChain convertToBacking(const SwapChain&) final;
     WGPUTexture convertToBacking(const Texture&) final;
     WGPUTextureView convertToBacking(const TextureView&) final;
 
 private:
-    DowncastConvertToBackingContext()
-    {
-    }
+    DowncastConvertToBackingContext() = default;
 };
 
 } // namespace PAL::WebGPU

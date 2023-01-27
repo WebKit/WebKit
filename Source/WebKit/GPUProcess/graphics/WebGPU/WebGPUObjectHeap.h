@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ class Device;
 class ExternalTexture;
 class GPU;
 class PipelineLayout;
+class PresentationContext;
 class QuerySet;
 class Queue;
 class RenderBundleEncoder;
@@ -72,6 +73,7 @@ class RemoteComputePipeline;
 class RemoteDevice;
 class RemoteExternalTexture;
 class RemotePipelineLayout;
+class RemotePresentationContext;
 class RemoteQuerySet;
 class RemoteQueue;
 class RemoteRenderBundleEncoder;
@@ -80,8 +82,6 @@ class RemoteRenderPassEncoder;
 class RemoteRenderPipeline;
 class RemoteSampler;
 class RemoteShaderModule;
-class RemoteSurface;
-class RemoteSwapChain;
 class RemoteTexture;
 class RemoteTextureView;
 }
@@ -109,6 +109,7 @@ public:
     void addObject(WebGPUIdentifier, RemoteDevice&);
     void addObject(WebGPUIdentifier, RemoteExternalTexture&);
     void addObject(WebGPUIdentifier, RemotePipelineLayout&);
+    void addObject(WebGPUIdentifier, RemotePresentationContext&);
     void addObject(WebGPUIdentifier, RemoteQuerySet&);
     void addObject(WebGPUIdentifier, RemoteQueue&);
     void addObject(WebGPUIdentifier, RemoteRenderBundleEncoder&);
@@ -117,8 +118,6 @@ public:
     void addObject(WebGPUIdentifier, RemoteRenderPipeline&);
     void addObject(WebGPUIdentifier, RemoteSampler&);
     void addObject(WebGPUIdentifier, RemoteShaderModule&);
-    void addObject(WebGPUIdentifier, RemoteSurface&);
-    void addObject(WebGPUIdentifier, RemoteSwapChain&);
     void addObject(WebGPUIdentifier, RemoteTexture&);
     void addObject(WebGPUIdentifier, RemoteTextureView&);
 
@@ -137,6 +136,7 @@ public:
     PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::ExternalTexture* convertExternalTextureFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::PipelineLayout* convertPipelineLayoutFromBacking(WebGPUIdentifier) final;
+    PAL::WebGPU::PresentationContext* convertPresentationContextFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::QuerySet* convertQuerySetFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::Queue* convertQueueFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::RenderBundleEncoder* convertRenderBundleEncoderFromBacking(WebGPUIdentifier) final;
@@ -145,8 +145,6 @@ public:
     PAL::WebGPU::RenderPipeline* convertRenderPipelineFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::Sampler* convertSamplerFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::Surface* convertSurfaceFromBacking(WebGPUIdentifier) final;
-    PAL::WebGPU::SwapChain* convertSwapChainFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) final;
     PAL::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) final;
 
@@ -166,6 +164,7 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteDevice>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteExternalTexture>,
         IPC::ScopedActiveMessageReceiveQueue<RemotePipelineLayout>,
+        IPC::ScopedActiveMessageReceiveQueue<RemotePresentationContext>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteQuerySet>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteQueue>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteRenderBundleEncoder>,
@@ -174,8 +173,6 @@ private:
         IPC::ScopedActiveMessageReceiveQueue<RemoteRenderPipeline>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteSampler>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteShaderModule>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteSurface>,
-        IPC::ScopedActiveMessageReceiveQueue<RemoteSwapChain>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTexture>,
         IPC::ScopedActiveMessageReceiveQueue<RemoteTextureView>
     >;

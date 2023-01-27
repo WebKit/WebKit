@@ -30,8 +30,8 @@
 
 #include "WebGPUAdapterImpl.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
-#include "WebGPUSurfaceDescriptor.h"
-#include "WebGPUSurfaceImpl.h"
+#include "WebGPUPresentationContextDescriptor.h"
+#include "WebGPUPresentationContextImpl.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 
@@ -62,20 +62,18 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
     }).get());
 }
 
-Ref<Surface> GPUImpl::createSurface(const SurfaceDescriptor& descriptor)
+Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationContextDescriptor&)
 {
-    auto label = descriptor.label.utf8();
-
     WGPUSurfaceDescriptorCocoaCustomSurface cocoaSurface {
         { nullptr, static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking) },
     };
 
     WGPUSurfaceDescriptor surfaceDescriptor {
         &cocoaSurface.chain,
-        label.data()
+        nullptr,
     };
 
-    return SurfaceImpl::create(wgpuInstanceCreateSurface(nullptr, &surfaceDescriptor), m_convertToBackingContext);
+    return PresentationContextImpl::create(wgpuInstanceCreateSurface(m_backing, &surfaceDescriptor), m_convertToBackingContext);
 }
 
 } // namespace PAL::WebGPU

@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-class GPUSurface;
-struct GPUSurfaceDescriptor;
+class GPUPresentationContext;
+struct GPUPresentationContextDescriptor;
 
 class GPU : public RefCounted<GPU> {
 public:
@@ -53,7 +53,7 @@ public:
 
     GPUTextureFormat getPreferredCanvasFormat();
 
-    Ref<GPUSurface> createSurface(const GPUSurfaceDescriptor&);
+    Ref<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);
 
 private:
     GPU(Ref<PAL::WebGPU::GPU>&&);

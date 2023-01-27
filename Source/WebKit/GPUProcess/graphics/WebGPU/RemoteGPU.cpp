@@ -32,15 +32,13 @@
 #include "RemoteAdapter.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
+#include "RemotePresentationContext.h"
 #include "RemoteRenderingBackend.h"
-#include "RemoteSurface.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include "WebGPUSurfaceDescriptor.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
-#include <pal/graphics/WebGPU/WebGPUSurface.h>
-#include <pal/graphics/WebGPU/WebGPUSurfaceDescriptor.h>
+#include <pal/graphics/WebGPU/WebGPUPresentationContextDescriptor.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 #import <pal/graphics/WebGPU/Impl/WebGPUCreateImpl.h>
@@ -166,7 +164,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
     });
 }
 
-void RemoteGPU::createSurface(const WebGPU::SurfaceDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     ASSERT(m_backing);
@@ -176,9 +174,9 @@ void RemoteGPU::createSurface(const WebGPU::SurfaceDescriptor& descriptor, WebGP
     if (!convertedDescriptor)
         return;
 
-    auto surface = m_backing->createSurface(*convertedDescriptor);
-    auto remoteSurface = RemoteSurface::create(surface, m_objectHeap, *m_streamConnection, identifier);
-    m_objectHeap->addObject(identifier, remoteSurface);
+    auto presentationContext = m_backing->createPresentationContext(*convertedDescriptor);
+    auto remotePresentationContext = RemotePresentationContext::create(presentationContext, m_objectHeap, *m_streamConnection, identifier);
+    m_objectHeap->addObject(identifier, remotePresentationContext);
 }
 
 } // namespace WebKit

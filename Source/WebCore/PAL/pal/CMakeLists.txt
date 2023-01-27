@@ -23,6 +23,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h
     graphics/WebGPU/Impl/WebGPUImpl.h
     graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.h
+    graphics/WebGPU/Impl/WebGPUPresentationContextImpl.h
     graphics/WebGPU/Impl/WebGPUQuerySetImpl.h
     graphics/WebGPU/Impl/WebGPUQueueImpl.h
     graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.h
@@ -31,8 +32,6 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h
     graphics/WebGPU/Impl/WebGPUSamplerImpl.h
     graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h
-    graphics/WebGPU/Impl/WebGPUSurfaceImpl.h
-    graphics/WebGPU/Impl/WebGPUSwapChainImpl.h
     graphics/WebGPU/Impl/WebGPUTextureImpl.h
     graphics/WebGPU/Impl/WebGPUTextureViewImpl.h
 
@@ -109,6 +108,9 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h
     graphics/WebGPU/WebGPUPowerPreference.h
     graphics/WebGPU/WebGPUPredefinedColorSpace.h
+    graphics/WebGPU/WebGPUPresentationConfiguration.h
+    graphics/WebGPU/WebGPUPresentationContext.h
+    graphics/WebGPU/WebGPUPresentationContextDescriptor.h
     graphics/WebGPU/WebGPUPrimitiveState.h
     graphics/WebGPU/WebGPUPrimitiveTopology.h
     graphics/WebGPU/WebGPUProgrammableStage.h
@@ -145,10 +147,6 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUStoreOp.h
     graphics/WebGPU/WebGPUSupportedFeatures.h
     graphics/WebGPU/WebGPUSupportedLimits.h
-    graphics/WebGPU/WebGPUSurface.h
-    graphics/WebGPU/WebGPUSurfaceDescriptor.h
-    graphics/WebGPU/WebGPUSwapChain.h
-    graphics/WebGPU/WebGPUSwapChainDescriptor.h
     graphics/WebGPU/WebGPUTexture.h
     graphics/WebGPU/WebGPUTextureAspect.h
     graphics/WebGPU/WebGPUTextureBindingLayout.h
@@ -214,6 +212,7 @@ set(PAL_SOURCES
     graphics/WebGPU/Impl/WebGPUExternalTextureImpl.cpp
     graphics/WebGPU/Impl/WebGPUImpl.cpp
     graphics/WebGPU/Impl/WebGPUPipelineLayoutImpl.cpp
+    graphics/WebGPU/Impl/WebGPUPresentationContextImpl.cpp
     graphics/WebGPU/Impl/WebGPUQuerySetImpl.cpp
     graphics/WebGPU/Impl/WebGPUQueueImpl.cpp
     graphics/WebGPU/Impl/WebGPURenderBundleEncoderImpl.cpp

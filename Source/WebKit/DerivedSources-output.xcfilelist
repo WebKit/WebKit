@@ -246,6 +246,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteObjectRegistryMessageReceiver.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteObjectRegistryMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemotePipelineLayoutMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemotePipelineLayoutMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemotePresentationContextMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemotePresentationContextMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteQuerySetMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteQuerySetMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteQueueMessageReceiver.cpp

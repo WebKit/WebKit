@@ -59,6 +59,7 @@ class GPURenderPipeline;
 struct GPURenderPipelineDescriptor;
 class GPUPipelineLayout;
 struct GPUPipelineLayoutDescriptor;
+class GPUPresentationContext;
 class GPUQuerySet;
 struct GPUQuerySetDescriptor;
 class GPURenderBundleEncoder;
@@ -71,10 +72,6 @@ class GPUShaderModule;
 struct GPUShaderModuleDescriptor;
 class GPUSupportedFeatures;
 class GPUSupportedLimits;
-class GPUSurface;
-struct GPUSurfaceDescriptor;
-class GPUSwapChain;
-struct GPUSwapChainDescriptor;
 class GPUTexture;
 struct GPUTextureDescriptor;
 
@@ -100,8 +97,7 @@ public:
 
     Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
     Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
-    Ref<GPUTexture> createSurfaceTexture(const GPUTextureDescriptor&, const GPUSurface&);
-    Ref<GPUSwapChain> createSwapChain(const GPUSurface&, const GPUSwapChainDescriptor&);
+    Ref<GPUTexture> createSurfaceTexture(const GPUTextureDescriptor&, const GPUPresentationContext&);
     Ref<GPUSampler> createSampler(const std::optional<GPUSamplerDescriptor>&);
     Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);
 

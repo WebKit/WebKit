@@ -61,7 +61,7 @@ private:
 
     void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) final;
 
-    Ref<Surface> createSurface(const SurfaceDescriptor&) final;
+    Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) final;
 
     WGPUInstance m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

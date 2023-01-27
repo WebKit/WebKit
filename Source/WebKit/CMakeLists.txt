@@ -151,6 +151,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/WebGPU/RemoteExternalTexture
     GPUProcess/graphics/WebGPU/RemoteGPU
     GPUProcess/graphics/WebGPU/RemotePipelineLayout
+    GPUProcess/graphics/WebGPU/RemotePresentationContext
     GPUProcess/graphics/WebGPU/RemoteQuerySet
     GPUProcess/graphics/WebGPU/RemoteQueue
     GPUProcess/graphics/WebGPU/RemoteRenderBundle
@@ -159,8 +160,6 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/WebGPU/RemoteRenderPipeline
     GPUProcess/graphics/WebGPU/RemoteSampler
     GPUProcess/graphics/WebGPU/RemoteShaderModule
-    GPUProcess/graphics/WebGPU/RemoteSurface
-    GPUProcess/graphics/WebGPU/RemoteSwapChain
     GPUProcess/graphics/WebGPU/RemoteTexture
     GPUProcess/graphics/WebGPU/RemoteTextureView
 
@@ -599,6 +598,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in
     Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in
     Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in
+    Shared/WebGPU/WebGPUPresentationConfiguration.serialization.in
+    Shared/WebGPU/WebGPUPresentationContextDescriptor.serialization.in
     Shared/WebGPU/WebGPUPrimitiveState.serialization.in
     Shared/WebGPU/WebGPUProgrammableStage.serialization.in
     Shared/WebGPU/WebGPUQuerySetDescriptor.serialization.in
@@ -619,8 +620,6 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
     Shared/WebGPU/WebGPUSupportedLimits.serialization.in
-    Shared/WebGPU/WebGPUSurfaceDescriptor.serialization.in
-    Shared/WebGPU/WebGPUSwapChainDescriptor.serialization.in
     Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUTextureDescriptor.serialization.in
     Shared/WebGPU/WebGPUTextureViewDescriptor.serialization.in

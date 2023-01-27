@@ -26,8 +26,8 @@
 #include "config.h"
 #include "GPU.h"
 
-#include "GPUSurface.h"
-#include "GPUSurfaceDescriptor.h"
+#include "GPUPresentationContext.h"
+#include "GPUPresentationContextDescriptor.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapter.h"
 
@@ -69,9 +69,9 @@ GPUTextureFormat GPU::getPreferredCanvasFormat()
     return GPUTextureFormat::Bgra8unorm;
 }
 
-Ref<GPUSurface> GPU::createSurface(const GPUSurfaceDescriptor& surfaceDescriptor)
+Ref<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentationContextDescriptor& presentationContextDescriptor)
 {
-    return GPUSurface::create(m_backing->createSurface(surfaceDescriptor.convertToBacking()));
+    return GPUPresentationContext::create(m_backing->createPresentationContext(presentationContextDescriptor.convertToBacking()));
 }
 
 } // namespace WebCore

@@ -29,8 +29,7 @@
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUCanvasConfiguration.h"
 #include "GPUCanvasContext.h"
-#include "GPUSurface.h"
-#include "GPUSwapChain.h"
+#include "GPUPresentationContext.h"
 #include "GPUTexture.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
@@ -129,12 +128,11 @@ private:
     explicit GPUCanvasContextCocoa(CanvasBase&, GPU&);
 
     void markContextChangedAndNotifyCanvasObservers();
-    void createSwapChainIfNeeded();
+    void createPresentationContextIfNeeded();
 
     std::optional<GPUCanvasConfiguration> m_configuration;
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
-    RefPtr<GPUSwapChain> m_swapChain;
-    RefPtr<GPUSurface> m_surface;
+    RefPtr<GPUPresentationContext> m_presentationContext;
     Ref<GPU> m_gpu; // FIXME: https://bugs.webkit.org/show_bug.cgi?id=251067 We shouldn't need to retain this.
 
     int m_width { 0 };
