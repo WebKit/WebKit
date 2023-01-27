@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Scrollbar.h"
 
+#include "DeprecatedGlobalSettings.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
@@ -482,10 +483,9 @@ NativeScrollbarVisibility Scrollbar::nativeScrollbarVisibility(const Scrollbar* 
 {
     if (scrollbar && scrollbar->isHiddenByStyle())
         return NativeScrollbarVisibility::HiddenByStyle;
-    if (scrollbar && scrollbar->isCustomScrollbar())
+    if (DeprecatedGlobalSettings::mockScrollbarsEnabled() || (scrollbar && scrollbar->isCustomScrollbar()))
         return NativeScrollbarVisibility::ReplacedByCustomScrollbar;
     return NativeScrollbarVisibility::Visible;
 }
-
 
 } // namespace WebCore
