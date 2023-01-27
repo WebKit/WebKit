@@ -125,7 +125,7 @@ private:
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     FloatRect m_strokeBoundingBox;
-    HashSet<RenderSVGResourceContainer*> m_resourcesNeedingToInvalidateClients;
+    WeakHashSet<RenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
 };
 
 } // namespace WebCore

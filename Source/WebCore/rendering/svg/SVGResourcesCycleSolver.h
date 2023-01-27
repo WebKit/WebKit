@@ -21,6 +21,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ private:
 
     RenderElement& m_renderer;
     SVGResources& m_resources;
-    HashSet<RenderSVGResourceContainer*> m_allResources; 
+    WeakHashSet<RenderSVGResourceContainer> m_allResources; 
 };
 
 } // namespace WebCore

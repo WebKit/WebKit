@@ -245,11 +245,11 @@ void RenderSVGRoot::layoutChildren()
     m_strokeBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::strokeBoundingBoxDecoration);
     containerLayout.positionChildrenRelativeToContainer();
 
-    if (!m_resourcesNeedingToInvalidateClients.isEmpty()) {
+    if (!m_resourcesNeedingToInvalidateClients.isEmptyIgnoringNullReferences()) {
         // Invalidate resource clients, which may mark some nodes for layout.
         for (auto& resource :  m_resourcesNeedingToInvalidateClients) {
-            resource->removeAllClientsFromCache();
-            SVGResourcesCache::clientStyleChanged(*resource, StyleDifference::Layout, nullptr, resource->style());
+            resource.removeAllClientsFromCache();
+            SVGResourcesCache::clientStyleChanged(resource, StyleDifference::Layout, nullptr, resource.style());
         }
 
         SetForScope clearLayoutSizeChanged(m_isLayoutSizeChanged, false);

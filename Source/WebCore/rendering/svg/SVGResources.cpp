@@ -360,28 +360,28 @@ void SVGResources::removeClientFromCache(RenderElement& renderer, bool markForIn
     }
 
     if (m_clipperFilterMaskerData) {
-        if (m_clipperFilterMaskerData->clipper)
-            m_clipperFilterMaskerData->clipper->removeClientFromCache(renderer, markForInvalidation);
-        if (m_clipperFilterMaskerData->filter)
-            m_clipperFilterMaskerData->filter->removeClientFromCache(renderer, markForInvalidation);
-        if (m_clipperFilterMaskerData->masker)
-            m_clipperFilterMaskerData->masker->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* clipper = m_clipperFilterMaskerData->clipper.get())
+            clipper->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* filter = m_clipperFilterMaskerData->filter.get())
+            filter->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* masker = m_clipperFilterMaskerData->masker.get())
+            masker->removeClientFromCache(renderer, markForInvalidation);
     }
 
     if (m_markerData) {
-        if (m_markerData->markerStart)
-            m_markerData->markerStart->removeClientFromCache(renderer, markForInvalidation);
-        if (m_markerData->markerMid)
-            m_markerData->markerMid->removeClientFromCache(renderer, markForInvalidation);
-        if (m_markerData->markerEnd)
-            m_markerData->markerEnd->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* markerStart = m_markerData->markerStart.get())
+            markerStart->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* markerMid = m_markerData->markerMid.get())
+            markerMid->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* markerEnd = m_markerData->markerEnd.get())
+            markerEnd->removeClientFromCache(renderer, markForInvalidation);
     }
 
     if (m_fillStrokeData) {
-        if (m_fillStrokeData->fill)
-            m_fillStrokeData->fill->removeClientFromCache(renderer, markForInvalidation);
-        if (m_fillStrokeData->stroke)
-            m_fillStrokeData->stroke->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* fill = m_fillStrokeData->fill.get())
+            fill->removeClientFromCache(renderer, markForInvalidation);
+        if (auto* stroke = m_fillStrokeData->stroke.get())
+            stroke->removeClientFromCache(renderer, markForInvalidation);
     }
 }
 
@@ -405,7 +405,7 @@ bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
         if (!m_clipperFilterMaskerData)
             break;
         if (m_clipperFilterMaskerData->masker == &resource) {
-            m_clipperFilterMaskerData->masker->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_clipperFilterMaskerData->masker = nullptr;
             foundResources = true;
         }
@@ -414,17 +414,17 @@ bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
         if (!m_markerData)
             break;
         if (m_markerData->markerStart == &resource) {
-            m_markerData->markerStart->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_markerData->markerStart = nullptr;
             foundResources = true;
         }
         if (m_markerData->markerMid == &resource) {
-            m_markerData->markerMid->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_markerData->markerMid = nullptr;
             foundResources = true;
         }
         if (m_markerData->markerEnd == &resource) {
-            m_markerData->markerEnd->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_markerData->markerEnd = nullptr;
             foundResources = true;
         }
@@ -435,12 +435,12 @@ bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
         if (!m_fillStrokeData)
             break;
         if (m_fillStrokeData->fill == &resource) {
-            m_fillStrokeData->fill->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_fillStrokeData->fill = nullptr;
             foundResources = true;
         }
         if (m_fillStrokeData->stroke == &resource) {
-            m_fillStrokeData->stroke->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_fillStrokeData->stroke = nullptr;
             foundResources = true;
         }
@@ -449,7 +449,7 @@ bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
         if (!m_clipperFilterMaskerData)
             break;
         if (m_clipperFilterMaskerData->filter == &resource) {
-            m_clipperFilterMaskerData->filter->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_clipperFilterMaskerData->filter = nullptr;
             foundResources = true;
         }
@@ -458,7 +458,7 @@ bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
         if (!m_clipperFilterMaskerData)
             break; 
         if (m_clipperFilterMaskerData->clipper == &resource) {
-            m_clipperFilterMaskerData->clipper->removeAllClientsFromCache();
+            resource.removeAllClientsFromCache();
             m_clipperFilterMaskerData->clipper = nullptr;
             foundResources = true;
         }
@@ -469,42 +469,42 @@ bool SVGResources::resourceDestroyed(RenderSVGResourceContainer& resource)
     return foundResources;
 }
 
-void SVGResources::buildSetOfResources(HashSet<RenderSVGResourceContainer*>& set)
+void SVGResources::buildSetOfResources(WeakHashSet<RenderSVGResourceContainer>& set)
 {
     if (isEmpty())
         return;
 
-    if (m_linkedResource) {
+    if (auto* linkedResource = m_linkedResource.get()) {
         ASSERT(!m_clipperFilterMaskerData);
         ASSERT(!m_markerData);
         ASSERT(!m_fillStrokeData);
-        set.add(m_linkedResource);
+        set.add(*linkedResource);
         return;
     }
 
     if (m_clipperFilterMaskerData) {
-        if (m_clipperFilterMaskerData->clipper)
-            set.add(m_clipperFilterMaskerData->clipper);
-        if (m_clipperFilterMaskerData->filter)
-            set.add(m_clipperFilterMaskerData->filter);
-        if (m_clipperFilterMaskerData->masker)
-            set.add(m_clipperFilterMaskerData->masker);
+        if (auto* clipper = m_clipperFilterMaskerData->clipper.get())
+            set.add(*clipper);
+        if (auto* filter = m_clipperFilterMaskerData->filter.get())
+            set.add(*filter);
+        if (auto* masker = m_clipperFilterMaskerData->masker.get())
+            set.add(*masker);
     }
 
     if (m_markerData) {
-        if (m_markerData->markerStart)
-            set.add(m_markerData->markerStart);
-        if (m_markerData->markerMid)
-            set.add(m_markerData->markerMid);
-        if (m_markerData->markerEnd)
-            set.add(m_markerData->markerEnd);
+        if (auto* markerStart = m_markerData->markerStart.get())
+            set.add(*markerStart);
+        if (auto* markerMid = m_markerData->markerMid.get())
+            set.add(*markerMid);
+        if (auto* markerEnd = m_markerData->markerEnd.get())
+            set.add(*markerEnd);
     }
 
     if (m_fillStrokeData) {
-        if (m_fillStrokeData->fill)
-            set.add(m_fillStrokeData->fill);
-        if (m_fillStrokeData->stroke)
-            set.add(m_fillStrokeData->stroke);
+        if (auto* fill = m_fillStrokeData->fill.get())
+            set.add(*fill);
+        if (auto* stroke = m_fillStrokeData->stroke.get())
+            set.add(*stroke);
     }
 }
 
@@ -707,32 +707,32 @@ void SVGResources::dump(const RenderObject* object)
 
     fprintf(stderr, "\n | List of resources:\n");
     if (m_clipperFilterMaskerData) {
-        if (RenderSVGResourceClipper* clipper = m_clipperFilterMaskerData->clipper)
+        if (auto* clipper = m_clipperFilterMaskerData->clipper.get())
             fprintf(stderr, " |-> Clipper    : %p (node=%p)\n", clipper, &clipper->clipPathElement());
-        if (RenderSVGResourceFilter* filter = m_clipperFilterMaskerData->filter)
+        if (auto* filter = m_clipperFilterMaskerData->filter.get())
             fprintf(stderr, " |-> Filter     : %p (node=%p)\n", filter, &filter->filterElement());
-        if (RenderSVGResourceMasker* masker = m_clipperFilterMaskerData->masker)
+        if (auto* masker = m_clipperFilterMaskerData->masker.get())
             fprintf(stderr, " |-> Masker     : %p (node=%p)\n", masker, &masker->maskElement());
     }
 
     if (m_markerData) {
-        if (RenderSVGResourceMarker* markerStart = m_markerData->markerStart)
+        if (auto* markerStart = m_markerData->markerStart.get())
             fprintf(stderr, " |-> MarkerStart: %p (node=%p)\n", markerStart, &markerStart->markerElement());
-        if (RenderSVGResourceMarker* markerMid = m_markerData->markerMid)
+        if (auto* markerMid = m_markerData->markerMid.get())
             fprintf(stderr, " |-> MarkerMid  : %p (node=%p)\n", markerMid, &markerMid->markerElement());
-        if (RenderSVGResourceMarker* markerEnd = m_markerData->markerEnd)
+        if (auto* markerEnd = m_markerData->markerEnd.get())
             fprintf(stderr, " |-> MarkerEnd  : %p (node=%p)\n", markerEnd, &markerEnd->markerElement());
     }
 
     if (m_fillStrokeData) {
-        if (RenderSVGResourceContainer* fill = m_fillStrokeData->fill)
+        if (auto* fill = m_fillStrokeData->fill.get())
             fprintf(stderr, " |-> Fill       : %p (node=%p)\n", fill, &fill->element());
-        if (RenderSVGResourceContainer* stroke = m_fillStrokeData->stroke)
+        if (auto* stroke = m_fillStrokeData->stroke.get())
             fprintf(stderr, " |-> Stroke     : %p (node=%p)\n", stroke, &stroke->element());
     }
 
     if (m_linkedResource)
-        fprintf(stderr, " |-> xlink:href : %p (node=%p)\n", m_linkedResource, &m_linkedResource->element());
+        fprintf(stderr, " |-> xlink:href : %p (node=%p)\n", m_linkedResource.get(), &m_linkedResource->element());
 }
 #endif
 

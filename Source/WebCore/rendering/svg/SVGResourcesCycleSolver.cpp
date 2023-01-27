@@ -58,19 +58,19 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) co
     // <marker id="a"> <path marker-start="url(#b)"/> ...
     // <marker id="b" marker-start="url(#a)"/>
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
-        HashSet<RenderSVGResourceContainer*> resourceSet;
+        WeakHashSet<RenderSVGResourceContainer> resourceSet;
         resources->buildSetOfResources(resourceSet);
 
         LOG_DEBUG_CYCLE("(%p) Examine our cached resources\n", &renderer);
 
         // Walk all resources and check whether they reference any resource contained in the resources set.
-        for (auto* resource : resourceSet) {
-            LOG_DEBUG_CYCLE("(%p) Check %p\n", &renderer, resource);
+        for (auto& resource : resourceSet) {
+            LOG_DEBUG_CYCLE("(%p) Check %p\n", &renderer, &resource);
             if (m_allResources.contains(resource))
                 return true;
 
             // Now check if the resources themselves contain cycles.
-            if (resourceContainsCycles(*resource))
+            if (resourceContainsCycles(resource))
                 return true;
         }
     }
@@ -89,12 +89,12 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) co
             LOG_DEBUG_CYCLE("(%p) Child %p had cached resources. Check them.\n", &renderer, &child);
 
             // A child of the given 'resource' contains resources.
-            HashSet<RenderSVGResourceContainer*> childResourceSet;
+            WeakHashSet<RenderSVGResourceContainer> childResourceSet;
             childResources->buildSetOfResources(childResourceSet);
 
             // Walk all child resources and check whether they reference any resource contained in the resources set.
-            for (auto* resource : childResourceSet) {
-                LOG_DEBUG_CYCLE("(%p) Child %p had resource %p\n", &renderer, &child, resource);
+            for (auto& resource : childResourceSet) {
+                LOG_DEBUG_CYCLE("(%p) Child %p had resource %p\n", &renderer, &child, &resource);
                 if (m_allResources.contains(resource))
                     return true;
             }
@@ -116,7 +116,7 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) co
 
 void SVGResourcesCycleSolver::resolveCycles()
 {
-    ASSERT(m_allResources.isEmpty());
+    ASSERT(m_allResources.isEmptyIgnoringNullReferences());
 
 #if DEBUG_CYCLE_DETECTION
     LOG_DEBUG_CYCLE("\nBefore cycle detection:\n");
@@ -124,14 +124,14 @@ void SVGResourcesCycleSolver::resolveCycles()
 #endif
 
     // Stash all resources into a HashSet for the ease of traversing.
-    HashSet<RenderSVGResourceContainer*> localResources;
+    WeakHashSet<RenderSVGResourceContainer> localResources;
     m_resources.buildSetOfResources(localResources);
-    ASSERT(!localResources.isEmpty());
+    ASSERT(!localResources.isEmptyIgnoringNullReferences());
 
     // Add all parent resource containers to the HashSet.
-    HashSet<RenderSVGResourceContainer*> ancestorResources;
+    WeakHashSet<RenderSVGResourceContainer> ancestorResources;
     for (auto& resource : ancestorsOfType<RenderSVGResourceContainer>(m_renderer))
-        ancestorResources.add(&resource);
+        ancestorResources.add(resource);
 
 #if DEBUG_CYCLE_DETECTION
     LOG_DEBUG_CYCLE("\nDetecting whether any resources references any of following objects:\n");
@@ -148,14 +148,14 @@ void SVGResourcesCycleSolver::resolveCycles()
 
     // Build combined set of local and parent resources.
     m_allResources = localResources;
-    for (auto* resource : ancestorResources)
+    for (auto& resource : ancestorResources)
         m_allResources.add(resource);
 
     // If we're a resource, add ourselves to the HashSet.
     if (is<RenderSVGResourceContainer>(m_renderer))
-        m_allResources.add(&downcast<RenderSVGResourceContainer>(m_renderer));
+        m_allResources.add(downcast<RenderSVGResourceContainer>(m_renderer));
 
-    ASSERT(!m_allResources.isEmpty());
+    ASSERT(!m_allResources.isEmptyIgnoringNullReferences());
 
 #if DEBUG_CYCLE_DETECTION
     LOG_DEBUG_CYCLE("\nAll resources:\n");
@@ -165,10 +165,10 @@ void SVGResourcesCycleSolver::resolveCycles()
 
     // The job of this function is to determine wheter any of the 'resources' associated with the given 'renderer'
     // references us (or whether any of its kids references us) -> that's a cycle, we need to find and break it.
-    for (auto* resource : localResources) {
-        if (ancestorResources.contains(resource) || resourceContainsCycles(*resource)) {
+    for (auto& resource : localResources) {
+        if (ancestorResources.contains(resource) || resourceContainsCycles(resource)) {
             LOG_DEBUG_CYCLE("\n**** Detected a cycle (see the last test in the output above) ****\n");
-            breakCycle(*resource);
+            breakCycle(resource);
         }
     }
 
