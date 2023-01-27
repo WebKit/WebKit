@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 // will be defined in terms of ARM64EAssembler for ARM64E.
 #include "ARM64EAssembler.h"
 #include "JITOperationValidation.h"
+#include "JSCConfig.h"
 #include "JSCPtrTag.h"
 #include "MacroAssemblerARM64.h"
 
@@ -87,6 +88,9 @@ public:
 
     ALWAYS_INLINE void validateUntaggedPtr(RegisterID target, RegisterID scratch = InvalidGPR)
     {
+        if (g_jscConfig.canUseFPAC)
+            return;
+
         if (scratch == InvalidGPR)
             scratch = getCachedDataTempRegisterIDAndInvalidate();
 
@@ -115,6 +119,7 @@ public:
 
     ALWAYS_INLINE void untagArrayPtr(RegisterID length, RegisterID target, bool validateAuth, RegisterID scratch)
     {
+        validateAuth = validateAuth && g_jscConfig.canUseFPAC;
         if (validateAuth) {
             ASSERT(scratch != InvalidGPRReg);
             move(target, scratch);
@@ -134,6 +139,7 @@ public:
 
     ALWAYS_INLINE void untagArrayPtrLength64(Address length, RegisterID target, bool validateAuth)
     {
+        validateAuth = validateAuth && g_jscConfig.canUseFPAC;
         auto lengthGPR = getCachedDataTempRegisterIDAndInvalidate();
         load64(length, lengthGPR);
         auto scratch = validateAuth ? getCachedMemoryTempRegisterIDAndInvalidate() : InvalidGPRReg; 
