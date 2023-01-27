@@ -4425,13 +4425,14 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
 
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
-
+#if ENABLE(MHTML)
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save));
     g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
     getPage(webView).getContentsAsMHTMLData([task](API::Data* data) {
         getContentsAsMHTMLDataCallback(data, task);
     });
+#endif
 }
 
 /**
@@ -4489,7 +4490,7 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
 
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
-
+#if ENABLE(MHTML)
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save_to_file));
     ViewSaveAsyncData* data = createViewSaveAsyncData();
@@ -4499,6 +4500,7 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     getPage(webView).getContentsAsMHTMLData([task](API::Data* data) {
         getContentsAsMHTMLDataCallback(data, task);
     });
+#endif
 }
 
 /**
