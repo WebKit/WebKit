@@ -27,6 +27,7 @@
 #include "WebsiteDataStore.h"
 
 #include <wtf/FileSystem.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -105,18 +106,35 @@ static String programName()
 #endif
 }
 
+const String& WebsiteDataStore::defaultBaseCacheDirectory()
+{
+    static NeverDestroyed<String> baseCacheDirectory;
+    static std::once_flag once;
+    std::call_once(once, [] {
+
+        baseCacheDirectory.get() = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), programName());
+    });
+    return baseCacheDirectory;
+}
+
+const String& WebsiteDataStore::defaultBaseDataDirectory()
+{
+    static NeverDestroyed<String> baseDataDirectory;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        baseDataDirectory.get() = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), programName());
+    });
+    return baseDataDirectory;
+}
+
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory, ShouldCreateDirectory)
 {
-    if (!baseCacheDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseCacheDirectory, directoryName);
-    return FileSystem::pathByAppendingComponents(FileSystem::userCacheDirectory(), { programName(), directoryName });
+    return FileSystem::pathByAppendingComponent(baseCacheDirectory.isNull() ? defaultBaseCacheDirectory() : baseCacheDirectory, directoryName);
 }
 
 String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const String& directoryName, const String& baseDataDirectory, ShouldCreateDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, directoryName);
-    return FileSystem::pathByAppendingComponents(FileSystem::userDataDirectory(), { programName(), directoryName });
+    return FileSystem::pathByAppendingComponent(baseDataDirectory.isNull() ? defaultBaseDataDirectory() : baseDataDirectory, directoryName);
 }
 
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
