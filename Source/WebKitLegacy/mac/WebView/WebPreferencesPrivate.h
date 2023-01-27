@@ -165,7 +165,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL webAudioEnabled;
 @property (nonatomic) BOOL webGLEnabled;
 @property (nonatomic, getter=forceLowPowerGPUForWebGL) BOOL forceWebGLUsesLowPower;
-@property (nonatomic) BOOL paginateDuringLayoutEnabled;
 @property (nonatomic) BOOL hyperlinkAuditingEnabled;
 @property (nonatomic) BOOL mediaPlaybackRequiresUserGesture; // Deprecated. Use videoPlaybackRequiresUserGesture and audioPlaybackRequiresUserGesture instead.
 @property (nonatomic) BOOL videoPlaybackRequiresUserGesture;

@@ -4340,19 +4340,6 @@ PageVisibilityBasedProcessSuppressionEnabled:
     WebKit:
       default: true
 
-PaginateDuringLayoutEnabled:
-  type: bool
-  status: embedder
-  humanReadableName: "Paginate during layout"
-  humanReadableDescription: "Enable pagination during layout"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 PaintTimingEnabled:
   type: bool

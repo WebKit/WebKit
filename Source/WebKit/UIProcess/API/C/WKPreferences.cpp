@@ -606,16 +606,6 @@ bool WKPreferencesGetPageCacheSupportsPlugins(WKPreferencesRef)
     return false;
 }
 
-void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setPaginateDuringLayoutEnabled(enabled);
-}
-
-bool WKPreferencesGetPaginateDuringLayoutEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->paginateDuringLayoutEnabled();
-}
-
 void WKPreferencesSetDOMPasteAllowed(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setDOMPasteAllowed(enabled);
@@ -2143,3 +2133,13 @@ bool WKPreferencesGetJavaEnabled(WKPreferencesRef)
 {
     return false;
 }
+
+void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetPaginateDuringLayoutEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
