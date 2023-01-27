@@ -1474,6 +1474,7 @@ html/canvas/WebGLSampler.cpp
 html/canvas/WebGLShader.cpp
 html/canvas/WebGLShaderPrecisionFormat.cpp
 html/canvas/WebGLSharedObject.cpp
+html/canvas/WebGLStateTracker.cpp
 html/canvas/WebGLSync.cpp
 html/canvas/WebGLTexture.cpp
 html/canvas/WebGLTransformFeedback.cpp
@@ -2033,7 +2034,6 @@ platform/VideoFrame.cpp
 platform/VideoPixelFormat.cpp
 platform/WebCoreCrossThreadCopier.cpp
 platform/WebCorePersistentCoders.cpp
-platform/WebGLStateTracker.cpp
 platform/Widget.cpp
 platform/animation/Animation.cpp
 platform/animation/AnimationList.cpp
