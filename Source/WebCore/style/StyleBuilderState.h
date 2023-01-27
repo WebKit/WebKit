@@ -134,6 +134,7 @@ private:
 
     HashSet<String> m_appliedCustomProperties;
     HashSet<String> m_inProgressCustomProperties;
+    HashSet<String> m_inCycleCustomProperties;
     Bitmap<numCSSProperties> m_inProgressProperties;
     Bitmap<numCSSProperties> m_inUnitCycleProperties;
 
