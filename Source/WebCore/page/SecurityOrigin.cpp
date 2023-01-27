@@ -176,14 +176,7 @@ bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
-    : SecurityOrigin(SecurityOriginData::fromURL(url))
-{
-    if (m_canLoadLocalResources)
-        m_filePath = url.fileSystemPath(); // In case enforceFilePathSeparation() is called.
-}
-
-SecurityOrigin::SecurityOrigin(SecurityOriginData&& data)
-    : m_data(WTFMove(data))
+    : m_data(SecurityOriginData::fromURL(url))
     , m_isLocal(LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(m_data.protocol))
 {
     // document.domain starts as m_data.host, but can be set by the DOM.
@@ -194,11 +187,15 @@ SecurityOrigin::SecurityOrigin(SecurityOriginData&& data)
 
     // By default, only local SecurityOrigins can load local resources.
     m_canLoadLocalResources = isLocal();
+
+    if (m_canLoadLocalResources)
+        m_filePath = url.fileSystemPath(); // In case enforceFilePathSeparation() is called.
 }
 
 SecurityOrigin::SecurityOrigin()
-    : m_data { SecurityOriginData::createOpaque() }
+    : m_data { emptyString(), emptyString(), std::nullopt }
     , m_domain { emptyString() }
+    , m_opaqueOriginIdentifier { OpaqueOriginIdentifier::generateThreadSafe() }
     , m_isPotentiallyTrustworthy { false }
 {
 }
@@ -207,6 +204,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     : m_data { other->m_data.isolatedCopy() }
     , m_domain { other->m_domain.isolatedCopy() }
     , m_filePath { other->m_filePath.isolatedCopy() }
+    , m_opaqueOriginIdentifier { other->m_opaqueOriginIdentifier }
     , m_universalAccess { other->m_universalAccess }
     , m_domainWasSetInDOM { other->m_domainWasSetInDOM }
     , m_canLoadLocalResources { other->m_canLoadLocalResources }
@@ -279,7 +277,7 @@ bool SecurityOrigin::isSameOriginDomain(const SecurityOrigin& other) const
         return true;
 
     if (isOpaque() || other.isOpaque())
-        return data().opaqueOriginIdentifier == other.data().opaqueOriginIdentifier;
+        return m_opaqueOriginIdentifier == other.m_opaqueOriginIdentifier;
 
     // Here are two cases where we should permit access:
     //
@@ -437,7 +435,7 @@ bool SecurityOrigin::isSameOriginAs(const SecurityOrigin& other) const
         return true;
 
     if (isOpaque() || other.isOpaque())
-        return data().opaqueOriginIdentifier == other.data().opaqueOriginIdentifier;
+        return m_opaqueOriginIdentifier == other.m_opaqueOriginIdentifier;
 
     return isSameSchemeHostPort(other);
 }
@@ -598,17 +596,13 @@ Ref<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String&
     return origin;
 }
 
-Ref<SecurityOrigin> SecurityOrigin::create(SecurityOriginData&& data)
-{
-    return adoptRef(*new SecurityOrigin(WTFMove(data)));
-}
-
-Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, String&& domain, String&& filePath, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal)
+Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, String&& domain, String&& filePath, Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits>&& opaqueOriginIdentifier, bool universalAccess, bool domainWasSetInDOM, bool canLoadLocalResources, bool enforcesFilePathSeparation, bool needsStorageAccessFromFileURLsQuirk, std::optional<bool> isPotentiallyTrustworthy, bool isLocal)
 {
     auto origin = adoptRef(*new SecurityOrigin);
     origin->m_data = WTFMove(data);
     origin->m_domain = WTFMove(domain);
     origin->m_filePath = WTFMove(filePath);
+    origin->m_opaqueOriginIdentifier = WTFMove(opaqueOriginIdentifier);
     origin->m_universalAccess = universalAccess;
     origin->m_domainWasSetInDOM = domainWasSetInDOM;
     origin->m_canLoadLocalResources = canLoadLocalResources;
@@ -625,7 +619,7 @@ bool SecurityOrigin::equal(const SecurityOrigin* other) const
         return true;
 
     if (isOpaque() || other->isOpaque())
-        return data().opaqueOriginIdentifier == other->data().opaqueOriginIdentifier;
+        return m_opaqueOriginIdentifier == other->m_opaqueOriginIdentifier;
     
     if (!isSameSchemeHostPort(*other))
         return false;
