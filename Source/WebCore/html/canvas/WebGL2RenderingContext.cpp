@@ -2628,7 +2628,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(WebGLLoseContext, m_webglLoseContext, "WEBGL_lose_context"_s, true);
     ENABLE_IF_REQUESTED(WebGLMultiDraw, m_webglMultiDraw, "WEBGL_multi_draw"_s, WebGLMultiDraw::supported(*m_context));
     ENABLE_IF_REQUESTED(WebGLMultiDrawInstancedBaseVertexBaseInstance, m_webglMultiDrawInstancedBaseVertexBaseInstance, "WEBGL_multi_draw_instanced_base_vertex_base_instance"_s, WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions);
-    ENABLE_IF_REQUESTED(WebGLProvokingVertex, m_webglProvokingVertex, "WEBGL_provoking_vertex"_s, WebGLProvokingVertex::supported(*m_context) && enableDraftExtensions);
+    ENABLE_IF_REQUESTED(WebGLProvokingVertex, m_webglProvokingVertex, "WEBGL_provoking_vertex"_s, WebGLProvokingVertex::supported(*m_context));
     return nullptr;
 }
 
@@ -2669,7 +2669,7 @@ std::optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("WEBGL_lose_context", true)
     APPEND_IF_SUPPORTED("WEBGL_multi_draw", WebGLMultiDraw::supported(*m_context))
     APPEND_IF_SUPPORTED("WEBGL_multi_draw_instanced_base_vertex_base_instance", WebGLMultiDrawInstancedBaseVertexBaseInstance::supported(*m_context) && enableDraftExtensions)
-    APPEND_IF_SUPPORTED("WEBGL_provoking_vertex", WebGLProvokingVertex::supported(*m_context) && enableDraftExtensions)
+    APPEND_IF_SUPPORTED("WEBGL_provoking_vertex", WebGLProvokingVertex::supported(*m_context))
 
     return result;
 }
