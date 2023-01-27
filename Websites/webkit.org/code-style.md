@@ -969,6 +969,44 @@ for (Vector<RefPtr<FrameView> >::iterator it = frameViews.begin(); it != end; ++
 []() { return static_cast<unsigned>(-1); }
 ```
 
+[](#function-return-arrow) Only use the arrow for function return types if it allows you to omit redundant information.
+
+###### Right:
+
+```cpp
+int foo()
+{
+    ...
+}
+```
+
+###### Wrong:
+
+```cpp
+auto foo() -> int
+{
+    ...
+}
+```
+
+###### Right:
+
+```cpp
+auto Foo::bar() -> Baz
+{
+    ...
+}
+```
+
+###### Wrong:
+
+```cpp
+Foo::Baz Foo::bar()
+{
+    ...
+}
+```
+
 ### Pointers and References
 
 [](#pointers-non-cpp) **Pointer types in non-C++ code**
