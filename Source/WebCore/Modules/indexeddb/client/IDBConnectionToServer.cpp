@@ -37,7 +37,7 @@
 #include "Logging.h"
 #include "SecurityOrigin.h"
 #include "TransactionOperation.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 
 namespace WebCore {

@@ -40,7 +40,7 @@
 #include "RenderTheme.h"
 #include "StyleResolver.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

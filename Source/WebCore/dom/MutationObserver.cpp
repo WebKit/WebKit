@@ -42,7 +42,7 @@
 #include "MutationRecord.h"
 #include "WindowEventLoop.h"
 #include <algorithm>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>

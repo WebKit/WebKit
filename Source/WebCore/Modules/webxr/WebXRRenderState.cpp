@@ -29,7 +29,7 @@
 #if ENABLE(WEBXR)
 
 #include "XRRenderStateInit.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

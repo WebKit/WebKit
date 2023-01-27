@@ -26,7 +26,7 @@
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

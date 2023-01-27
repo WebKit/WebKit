@@ -23,7 +23,7 @@
 #include "CSSFontFaceSrcValue.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

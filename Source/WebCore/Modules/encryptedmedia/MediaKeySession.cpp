@@ -51,7 +51,7 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include <wtf/HashCountedSet.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {

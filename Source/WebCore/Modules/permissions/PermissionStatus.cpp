@@ -40,7 +40,7 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <wtf/HashMap.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 

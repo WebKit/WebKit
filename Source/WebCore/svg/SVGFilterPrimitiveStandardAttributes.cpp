@@ -26,7 +26,7 @@
 #include "FilterEffect.h"
 #include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGElementInlines.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

@@ -31,7 +31,7 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

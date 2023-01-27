@@ -38,7 +38,7 @@
 #include "JSFontFaceSet.h"
 #include "Quirks.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

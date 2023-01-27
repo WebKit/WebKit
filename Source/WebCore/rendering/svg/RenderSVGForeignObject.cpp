@@ -38,7 +38,7 @@
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

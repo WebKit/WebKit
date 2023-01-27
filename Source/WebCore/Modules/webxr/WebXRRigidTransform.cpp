@@ -31,7 +31,7 @@
 #include "DOMPointReadOnly.h"
 #include "TransformationMatrix.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

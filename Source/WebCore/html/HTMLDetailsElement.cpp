@@ -36,7 +36,7 @@
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

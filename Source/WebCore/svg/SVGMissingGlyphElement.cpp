@@ -21,7 +21,7 @@
 
 #include "SVGMissingGlyphElement.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

@@ -34,7 +34,7 @@
 #include "HTMLAttachmentElement.h"
 #include "RenderChildIterator.h"
 #include "RenderTheme.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/URL.h>
 
 namespace WebCore {

@@ -36,7 +36,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "TestReportBody.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {

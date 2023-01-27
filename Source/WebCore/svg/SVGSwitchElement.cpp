@@ -26,7 +26,7 @@
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGElementTypeHelpers.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

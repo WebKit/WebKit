@@ -29,7 +29,7 @@
 #include "DisplayTree.h"
 #include "FillLayer.h"
 #include "ShadowData.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

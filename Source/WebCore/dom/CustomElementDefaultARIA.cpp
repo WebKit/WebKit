@@ -30,7 +30,7 @@
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "SpaceSplitString.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

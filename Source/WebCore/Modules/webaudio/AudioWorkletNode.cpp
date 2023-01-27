@@ -53,7 +53,7 @@
 #include "SerializedScriptValue.h"
 #include "WorkerRunLoop.h"
 #include <JavaScriptCore/JSLock.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

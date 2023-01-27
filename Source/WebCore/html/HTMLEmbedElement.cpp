@@ -38,7 +38,7 @@
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 
 namespace WebCore {

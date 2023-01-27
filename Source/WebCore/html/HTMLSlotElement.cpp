@@ -34,7 +34,7 @@
 #include "ShadowRoot.h"
 #include "SlotAssignment.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 

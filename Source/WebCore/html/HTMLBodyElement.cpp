@@ -38,7 +38,7 @@
 #include "JSHTMLBodyElement.h"
 #include "ResourceLoaderOptions.h"
 #include "StyleProperties.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

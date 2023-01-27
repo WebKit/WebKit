@@ -27,7 +27,7 @@
 #include "IDBCursorWithValue.h"
 
 #include <JavaScriptCore/HeapInlines.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

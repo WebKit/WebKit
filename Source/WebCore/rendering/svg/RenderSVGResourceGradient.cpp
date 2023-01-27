@@ -28,7 +28,7 @@
 #include "GraphicsContext.h"
 #include "RenderSVGText.h"
 #include "SVGRenderingContext.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

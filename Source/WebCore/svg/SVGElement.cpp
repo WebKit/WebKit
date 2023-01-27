@@ -59,7 +59,7 @@
 #include "StyleAdjuster.h"
 #include "XMLNames.h"
 #include <wtf/HashMap.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>

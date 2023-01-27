@@ -31,7 +31,7 @@
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

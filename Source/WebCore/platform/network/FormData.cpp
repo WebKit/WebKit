@@ -34,7 +34,7 @@
 #include <pal/text/TextEncoding.h>
 #include "ThreadableBlobRegistry.h"
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/LineEnding.h>
 
 namespace WebCore {

@@ -33,7 +33,7 @@
 #include "ImageBufferUtilitiesCG.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

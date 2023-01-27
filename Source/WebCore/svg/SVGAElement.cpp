@@ -45,7 +45,7 @@
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

@@ -32,7 +32,7 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/UUID.h>
 #include <wtf/text/StringBuilder.h>
 

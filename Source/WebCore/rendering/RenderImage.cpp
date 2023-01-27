@@ -60,7 +60,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 #if PLATFORM(IOS_FAMILY)

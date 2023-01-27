@@ -38,7 +38,7 @@
 #include "IDBResultData.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 
 namespace WebCore {

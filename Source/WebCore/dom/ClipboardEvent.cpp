@@ -24,7 +24,7 @@
 #include "ClipboardEvent.h"
 
 #include "DataTransfer.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

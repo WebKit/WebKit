@@ -21,7 +21,7 @@
 
 #include "DOMMimeType.h"
 #include "Navigator.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

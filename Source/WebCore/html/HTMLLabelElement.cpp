@@ -34,7 +34,7 @@
 #include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "SelectionRestorationMode.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

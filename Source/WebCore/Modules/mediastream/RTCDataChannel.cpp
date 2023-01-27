@@ -39,7 +39,7 @@
 #include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBufferView.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 

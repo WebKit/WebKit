@@ -38,7 +38,7 @@
 #include "SVGRenderSupport.h"
 #include "SVGStringList.h"
 #include "SVGTransformable.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

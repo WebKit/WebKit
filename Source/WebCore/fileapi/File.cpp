@@ -31,7 +31,7 @@
 #include "ThreadableBlobRegistry.h"
 #include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

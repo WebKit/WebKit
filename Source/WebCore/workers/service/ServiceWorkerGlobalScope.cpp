@@ -47,7 +47,7 @@
 #include "ServiceWorkerWindowClient.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerNavigator.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

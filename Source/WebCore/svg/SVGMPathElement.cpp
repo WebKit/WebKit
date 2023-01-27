@@ -27,7 +27,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGPathElement.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

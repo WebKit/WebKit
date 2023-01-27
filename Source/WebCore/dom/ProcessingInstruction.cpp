@@ -37,7 +37,7 @@
 #include "StyleSheetContents.h"
 #include "XMLDocumentParser.h"
 #include "XSLStyleSheet.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

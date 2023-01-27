@@ -46,7 +46,7 @@
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MathExtras.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>

@@ -60,7 +60,7 @@
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
 #include "WidthIterator.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextBreakIterator.h>

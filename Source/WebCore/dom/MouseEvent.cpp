@@ -35,7 +35,7 @@
 #include "RuntimeApplicationChecks.h"
 #include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

@@ -38,7 +38,7 @@
 #include "SecurityOrigin.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerStorageConnection.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

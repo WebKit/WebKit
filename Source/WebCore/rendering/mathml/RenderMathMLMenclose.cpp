@@ -32,7 +32,7 @@
 #include "GraphicsContext.h"
 #include "MathMLNames.h"
 #include "PaintInfo.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

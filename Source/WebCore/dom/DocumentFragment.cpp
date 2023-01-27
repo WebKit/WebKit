@@ -28,7 +28,7 @@
 #include "HTMLDocumentParser.h"
 #include "Page.h"
 #include "XMLDocumentParser.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

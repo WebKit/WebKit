@@ -46,7 +46,7 @@
 #include "ServiceWorkerTypes.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 #define REGISTRATION_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
 #define REGISTRATION_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)

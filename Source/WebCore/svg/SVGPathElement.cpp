@@ -31,7 +31,7 @@
 #include "SVGNames.h"
 #include "SVGPathUtilities.h"
 #include "SVGPoint.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

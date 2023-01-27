@@ -27,7 +27,7 @@
 #include "DeclarativeAnimationEvent.h"
 #include "WebAnimationUtilities.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

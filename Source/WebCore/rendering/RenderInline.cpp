@@ -51,7 +51,7 @@
 #include "StyleInheritedData.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

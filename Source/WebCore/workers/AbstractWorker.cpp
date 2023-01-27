@@ -35,7 +35,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "WorkerOptions.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

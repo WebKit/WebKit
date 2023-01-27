@@ -49,7 +49,7 @@
 #include "SVGURIReference.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

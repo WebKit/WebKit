@@ -28,7 +28,7 @@
 
 #include "DOMPoint.h"
 #include "DOMRect.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MathExtras.h>
 
 

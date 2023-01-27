@@ -36,7 +36,7 @@
 #include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -28,7 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

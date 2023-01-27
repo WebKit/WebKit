@@ -26,7 +26,7 @@
 #include "config.h"
 #include "HashChangeEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

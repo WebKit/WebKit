@@ -83,7 +83,7 @@
 #include <JavaScriptCore/SlotVisitorInlines.h>
 #include <JavaScriptCore/TypedArrayType.h>
 #include <algorithm>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 

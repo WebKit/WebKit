@@ -41,7 +41,7 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 #include "TextControlInnerElements.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 #if PLATFORM(IOS_FAMILY)

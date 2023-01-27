@@ -48,7 +48,7 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <optional>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 

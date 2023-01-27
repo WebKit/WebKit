@@ -39,7 +39,7 @@
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/HeapInlines.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

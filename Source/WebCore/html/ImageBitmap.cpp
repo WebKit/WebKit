@@ -57,7 +57,7 @@
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
 #include <variant>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 

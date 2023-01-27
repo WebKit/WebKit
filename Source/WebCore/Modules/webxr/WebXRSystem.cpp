@@ -50,7 +50,7 @@
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSString.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Scope.h>
 
 namespace WebCore {

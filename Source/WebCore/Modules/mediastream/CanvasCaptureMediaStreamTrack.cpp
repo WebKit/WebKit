@@ -31,7 +31,7 @@
 #include "HTMLCanvasElement.h"
 #include "VideoFrame.h"
 #include "WebGLRenderingContextBase.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

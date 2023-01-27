@@ -31,7 +31,7 @@
 #include "HTMLParserIdioms.h"
 #include "Settings.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 
 namespace WebCore {

@@ -23,7 +23,7 @@
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 #include "RenderLayer.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

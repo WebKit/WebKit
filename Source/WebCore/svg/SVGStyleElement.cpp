@@ -28,7 +28,7 @@
 #include "Document.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

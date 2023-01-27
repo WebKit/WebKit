@@ -26,7 +26,7 @@
 #include "config.h"
 #include "GPUCanvasContext.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

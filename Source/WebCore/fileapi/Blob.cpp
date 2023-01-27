@@ -44,7 +44,7 @@
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
 #include "WebCoreOpaqueRoot.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

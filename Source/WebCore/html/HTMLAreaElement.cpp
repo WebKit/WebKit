@@ -32,7 +32,7 @@
 #include "Path.h"
 #include "RenderImage.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

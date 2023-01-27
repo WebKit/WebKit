@@ -33,7 +33,7 @@
 #include "TextResourceDecoder.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSONObject.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

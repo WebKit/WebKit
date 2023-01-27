@@ -43,7 +43,7 @@
 #include "RenderTableCell.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/SortedArrayMap.h>
 
 namespace WebCore {

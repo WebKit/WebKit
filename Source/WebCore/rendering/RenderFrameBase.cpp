@@ -31,7 +31,7 @@
 #include "HTMLFrameElementBase.h"
 #include "RenderView.h"
 #include "ScriptDisallowedScope.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

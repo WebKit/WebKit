@@ -50,7 +50,7 @@
 #include "RenderedDocumentMarker.h"
 #include "Settings.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 #include <wtf/TypeCasts.h>
 namespace WebCore {

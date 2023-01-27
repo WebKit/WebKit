@@ -30,7 +30,7 @@
 #include "SVGStopElement.h"
 #include "SVGTransformable.h"
 #include "StyleResolver.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

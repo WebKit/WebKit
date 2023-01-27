@@ -60,7 +60,7 @@
 #include "SharedWorkerGlobalScope.h"
 #include "WorkerFetchResult.h"
 #include "WorkerSWClientConnection.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/URL.h>

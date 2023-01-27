@@ -27,7 +27,7 @@
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

@@ -46,7 +46,7 @@
 #include "SVGPathData.h"
 #include "SVGResourcesCache.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

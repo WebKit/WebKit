@@ -48,7 +48,7 @@
 #include "RenderVideo.h"
 #include "ScriptController.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)

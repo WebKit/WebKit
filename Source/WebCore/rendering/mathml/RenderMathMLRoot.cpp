@@ -38,7 +38,7 @@
 #include "RenderIterator.h"
 #include "RenderMathMLMenclose.h"
 #include "RenderMathMLOperator.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 static const UChar gRadicalCharacter = 0x221A;
 

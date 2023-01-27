@@ -36,7 +36,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSCast.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

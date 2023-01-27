@@ -28,7 +28,7 @@
 #include "LegacyRootInlineBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(TREE_DEBUGGING)

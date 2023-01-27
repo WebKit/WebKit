@@ -47,7 +47,7 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Locker.h>
 
 namespace WebCore {

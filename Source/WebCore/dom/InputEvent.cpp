@@ -29,7 +29,7 @@
 #include "DataTransfer.h"
 #include "Node.h"
 #include "WindowProxy.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Vector.h>
 
 namespace WebCore {

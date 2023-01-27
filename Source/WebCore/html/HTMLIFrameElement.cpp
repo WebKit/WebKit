@@ -37,7 +37,7 @@
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

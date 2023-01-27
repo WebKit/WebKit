@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebKitPlaybackTargetAvailabilityEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

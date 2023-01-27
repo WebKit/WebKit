@@ -40,7 +40,7 @@
 #include "NodeRareData.h"
 #include "RenderTable.h"
 #include "StyleProperties.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 
 namespace WebCore {

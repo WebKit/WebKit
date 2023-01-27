@@ -35,7 +35,7 @@
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

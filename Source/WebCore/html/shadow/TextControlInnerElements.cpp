@@ -48,7 +48,7 @@
 #include "StyleResolver.h"
 #include "TextEvent.h"
 #include "TextEventInputType.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 

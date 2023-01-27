@@ -33,7 +33,7 @@
 #include "SecurityOrigin.h"
 #include "StorageArea.h"
 #include "StorageType.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

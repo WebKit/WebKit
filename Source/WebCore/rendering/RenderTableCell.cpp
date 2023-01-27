@@ -40,7 +40,7 @@
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 #if ENABLE(MATHML)

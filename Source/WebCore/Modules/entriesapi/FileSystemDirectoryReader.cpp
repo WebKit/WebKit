@@ -34,7 +34,7 @@
 #include "FileSystemEntriesCallback.h"
 #include "ScriptExecutionContext.h"
 #include "WindowEventLoop.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 
 namespace WebCore {

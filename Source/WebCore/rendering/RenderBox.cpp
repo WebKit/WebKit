@@ -87,7 +87,7 @@
 #include <algorithm>
 #include <math.h>
 #include <wtf/Assertions.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

@@ -41,7 +41,7 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

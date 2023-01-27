@@ -28,7 +28,7 @@
 #include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGParserUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

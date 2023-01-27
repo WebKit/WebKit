@@ -44,7 +44,7 @@
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

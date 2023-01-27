@@ -38,7 +38,7 @@
 #include "WorkerThread.h"
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 #include <wtf/Scope.h>
 

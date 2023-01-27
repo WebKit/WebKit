@@ -32,7 +32,7 @@
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 using namespace JSC;

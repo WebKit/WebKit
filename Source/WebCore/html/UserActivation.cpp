@@ -27,7 +27,7 @@
 
 #include "DOMWindow.h"
 #include "Navigator.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

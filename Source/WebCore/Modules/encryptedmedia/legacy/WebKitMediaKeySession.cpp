@@ -40,7 +40,7 @@
 #include "WebKitMediaKeys.h"
 #include <JavaScriptCore/Uint8Array.h>
 #include <wtf/FileSystem.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {

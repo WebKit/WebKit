@@ -35,7 +35,7 @@
 #include "RenderView.h"
 #include "TextTrackCueGeneric.h"
 #include "VTTCue.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

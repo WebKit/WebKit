@@ -42,7 +42,7 @@
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
 #include "SVGUseElement.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

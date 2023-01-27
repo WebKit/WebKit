@@ -66,7 +66,7 @@
 #include "RTCSessionDescription.h"
 #include "RTCSessionDescriptionInit.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>

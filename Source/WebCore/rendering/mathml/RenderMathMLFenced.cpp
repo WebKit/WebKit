@@ -36,7 +36,7 @@
 #include "RenderMathMLFencedOperator.h"
 #include "RenderText.h"
 #include "RenderTreeBuilder.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

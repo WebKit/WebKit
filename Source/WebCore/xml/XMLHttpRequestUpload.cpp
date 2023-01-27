@@ -30,7 +30,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include <wtf/Assertions.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

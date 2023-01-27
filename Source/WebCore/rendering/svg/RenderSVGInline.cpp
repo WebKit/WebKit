@@ -30,7 +30,7 @@
 #include "SVGInlineFlowBox.h"
 #include "SVGRenderSupport.h"
 #include "SVGResourcesCache.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

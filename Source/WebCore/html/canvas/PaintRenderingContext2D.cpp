@@ -26,7 +26,7 @@
 #include "config.h"
 #include "PaintRenderingContext2D.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 
 #if ENABLE(CSS_PAINTING_API)
 

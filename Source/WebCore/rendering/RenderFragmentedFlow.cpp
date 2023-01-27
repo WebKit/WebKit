@@ -45,7 +45,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "TransformState.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

@@ -39,7 +39,7 @@
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 

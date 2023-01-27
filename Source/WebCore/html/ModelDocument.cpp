@@ -42,7 +42,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLStyleElement.h"
 #include "RawDataDocumentParser.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

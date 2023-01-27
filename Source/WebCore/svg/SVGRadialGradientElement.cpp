@@ -33,7 +33,7 @@
 #include "SVGNames.h"
 #include "SVGStopElement.h"
 #include "SVGUnitTypes.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

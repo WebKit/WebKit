@@ -50,7 +50,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include <wtf/HashFunctions.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

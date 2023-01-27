@@ -56,7 +56,7 @@
 #include "Text.h"
 #include "TextDocument.h"
 #include "XMLDocument.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(MODEL_ELEMENT)

@@ -52,7 +52,7 @@
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/UUID.h>

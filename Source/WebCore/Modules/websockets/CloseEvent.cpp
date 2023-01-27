@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CloseEvent.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

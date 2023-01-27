@@ -28,7 +28,7 @@
 #include "SVGAttributeAnimator.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

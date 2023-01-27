@@ -28,7 +28,7 @@
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
 #include "SVGTextFragment.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

@@ -33,7 +33,7 @@
 #include "JSDOMPromise.h"
 #include "JSFetchResponse.h"
 #include "Logging.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 #if ENABLE(SERVICE_WORKER)
 

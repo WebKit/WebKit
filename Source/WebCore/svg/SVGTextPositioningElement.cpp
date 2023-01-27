@@ -32,7 +32,7 @@
 #include "SVGTRefElement.h"
 #include "SVGTSpanElement.h"
 #include "SVGTextElement.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

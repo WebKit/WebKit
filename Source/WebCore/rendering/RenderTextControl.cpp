@@ -32,7 +32,7 @@
 #include "StyleProperties.h"
 #include "TextControlInnerElements.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

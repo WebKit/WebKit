@@ -36,7 +36,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderView.h"
 #include "StyleScope.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/unicode/CharacterNames.h>

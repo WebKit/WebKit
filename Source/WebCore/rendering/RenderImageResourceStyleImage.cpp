@@ -31,7 +31,7 @@
 #include "CachedImage.h"
 #include "RenderElement.h"
 #include "StyleCachedImage.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

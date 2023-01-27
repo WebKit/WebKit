@@ -31,7 +31,7 @@
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include "OffscreenCanvas.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

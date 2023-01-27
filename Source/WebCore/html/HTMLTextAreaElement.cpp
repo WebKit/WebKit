@@ -47,7 +47,7 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "TextNodeTraversal.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 

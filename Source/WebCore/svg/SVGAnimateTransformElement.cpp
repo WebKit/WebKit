@@ -25,7 +25,7 @@
 
 #include "SVGNames.h"
 #include "SVGTransformable.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

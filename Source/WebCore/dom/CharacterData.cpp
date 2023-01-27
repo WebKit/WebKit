@@ -34,7 +34,7 @@
 #include "ProcessingInstruction.h"
 #include "RenderText.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 
 namespace WebCore {

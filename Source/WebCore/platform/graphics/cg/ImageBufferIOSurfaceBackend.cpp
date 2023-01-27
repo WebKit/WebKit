@@ -36,7 +36,7 @@
 #include "PixelBuffer.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

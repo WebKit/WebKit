@@ -37,7 +37,7 @@
 #include "RenderStyle.h"
 #include "RenderTreeBuilder.h"
 #include "StyleInheritedData.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

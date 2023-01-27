@@ -35,7 +35,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "RTCPeerConnection.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

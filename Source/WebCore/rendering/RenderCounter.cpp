@@ -34,7 +34,7 @@
 #include "RenderListMarker.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(TREE_DEBUGGING)

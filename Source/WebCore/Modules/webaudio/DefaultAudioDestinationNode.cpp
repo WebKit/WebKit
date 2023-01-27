@@ -39,7 +39,7 @@
 #include "PlatformStrategies.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerRunLoop.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MainThread.h>
 
 constexpr unsigned EnabledInputChannels = 2;

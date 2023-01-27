@@ -28,7 +28,7 @@
 
 #include "IDBConnectionProxy.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

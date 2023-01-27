@@ -39,7 +39,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

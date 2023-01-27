@@ -32,7 +32,7 @@
 #include "HTMLCanvasElement.h"
 #include "ImageBufferPipe.h"
 #include "OffscreenCanvas.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

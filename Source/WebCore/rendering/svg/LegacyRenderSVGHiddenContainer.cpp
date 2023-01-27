@@ -20,7 +20,7 @@
 #include "config.h"
 #include "LegacyRenderSVGHiddenContainer.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

@@ -28,7 +28,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "ScriptDisallowedScope.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

@@ -36,7 +36,7 @@
 #include "MathMLNames.h"
 #include "MathMLPresentationElement.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 #if ENABLE(DEBUG_MATH_LAYOUT)
 #include "PaintInfo.h"

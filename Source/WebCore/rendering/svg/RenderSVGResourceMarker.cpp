@@ -25,7 +25,7 @@
 #include "GraphicsContext.h"
 #include "LegacyRenderSVGRoot.h"
 #include "RenderSVGResourceMarkerInlines.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

@@ -32,7 +32,7 @@
 #include "Logging.h"
 #include "VTTCue.h"
 #include "VTTRegionList.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/CString.h>
 
 namespace WebCore {

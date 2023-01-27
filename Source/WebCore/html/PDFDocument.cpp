@@ -45,7 +45,7 @@
 #include "RawDataDocumentParser.h"
 #include "ScriptController.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {

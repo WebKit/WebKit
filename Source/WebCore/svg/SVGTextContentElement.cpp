@@ -36,7 +36,7 @@
 #include "SVGRect.h"
 #include "SVGTextQuery.h"
 #include "XMLNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

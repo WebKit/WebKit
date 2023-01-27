@@ -70,7 +70,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <math.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RAMSize.h>
 #include <wtf/text/StringBuilder.h>
 

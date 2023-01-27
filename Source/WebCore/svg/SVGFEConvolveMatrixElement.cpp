@@ -25,7 +25,7 @@
 #include "FEConvolveMatrix.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {

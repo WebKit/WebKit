@@ -36,7 +36,7 @@
 #include "PaymentRequest.h"
 #include <JavaScriptCore/JSONObject.h>
 #include <JavaScriptCore/ThrowScope.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RunLoop.h>
 
 namespace WebCore {

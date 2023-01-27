@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 #include "KHRParallelShaderCompile.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 #include "RemoteFrame.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

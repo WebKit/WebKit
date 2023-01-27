@@ -34,7 +34,7 @@
 #include "Text.h"
 #include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 #include <wtf/text/StringBuilder.h>
 

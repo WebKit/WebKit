@@ -57,7 +57,7 @@
 #include "TextMetrics.h"
 #include "TextRun.h"
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 

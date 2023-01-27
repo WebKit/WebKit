@@ -40,7 +40,7 @@
 #include "WebXRView.h"
 #include "WebXRViewport.h"
 #include "XRWebGLLayerInit.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Scope.h>
 
 #if ENABLE(WEBGL2)

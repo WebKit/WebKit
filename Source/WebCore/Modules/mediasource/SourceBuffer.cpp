@@ -61,7 +61,7 @@
 #include <JavaScriptCore/VM.h>
 #include <limits>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StringPrintStream.h>
 #include <wtf/WeakPtr.h>
 

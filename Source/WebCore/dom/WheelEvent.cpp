@@ -26,7 +26,7 @@
 
 #include "DataTransfer.h"
 #include "EventNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

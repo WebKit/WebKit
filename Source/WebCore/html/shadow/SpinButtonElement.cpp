@@ -40,7 +40,7 @@
 #include "ScrollbarTheme.h"
 #include "ShadowPseudoIds.h"
 #include "WheelEvent.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 
 namespace WebCore {

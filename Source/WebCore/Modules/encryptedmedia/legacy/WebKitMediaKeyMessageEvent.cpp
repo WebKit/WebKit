@@ -29,7 +29,7 @@
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include <JavaScriptCore/Uint8Array.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

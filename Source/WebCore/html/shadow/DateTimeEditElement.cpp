@@ -41,7 +41,7 @@
 #include "ScriptDisallowedScope.h"
 #include "ShadowPseudoIds.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

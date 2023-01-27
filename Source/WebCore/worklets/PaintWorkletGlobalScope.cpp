@@ -33,7 +33,7 @@
 #include "JSCSSPaintCallback.h"
 #include "JSDOMConvert.h"
 #include "RenderView.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

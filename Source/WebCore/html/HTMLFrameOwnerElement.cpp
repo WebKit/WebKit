@@ -30,7 +30,7 @@
 #include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "StyleTreeResolver.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 
 namespace WebCore {

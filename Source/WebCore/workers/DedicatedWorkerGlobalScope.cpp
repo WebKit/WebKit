@@ -44,7 +44,7 @@
 #include "StructuredSerializeOptions.h"
 #include "Worker.h"
 #include "WorkerObjectProxy.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 #if ENABLE(NOTIFICATIONS)
 #include "WorkerNotificationClient.h"

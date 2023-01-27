@@ -36,7 +36,7 @@
 #include "Logging.h"
 #include "MediaElementAudioSourceOptions.h"
 #include "MediaPlayer.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Locker.h>
 
 // These are somewhat arbitrary limits, but we need to do some kind of sanity-checking.

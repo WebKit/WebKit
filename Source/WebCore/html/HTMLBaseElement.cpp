@@ -28,7 +28,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "TextResourceDecoder.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

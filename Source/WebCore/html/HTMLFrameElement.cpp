@@ -30,7 +30,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "RenderFrame.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

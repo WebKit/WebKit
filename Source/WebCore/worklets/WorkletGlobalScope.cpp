@@ -40,7 +40,7 @@
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ScriptCallStack.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 using namespace Inspector;

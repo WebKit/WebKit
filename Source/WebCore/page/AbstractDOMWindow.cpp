@@ -27,7 +27,7 @@
 #include "AbstractDOMWindow.h"
 
 #include "HTTPParsers.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

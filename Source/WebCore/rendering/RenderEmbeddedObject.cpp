@@ -55,7 +55,7 @@
 #include "SystemFontDatabase.h"
 #include "Text.h"
 #include "TextRun.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

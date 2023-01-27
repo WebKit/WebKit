@@ -44,7 +44,7 @@
 #include "PlaceholderRenderingContext.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 #if ENABLE(WEBGL)
 #include "Settings.h"

@@ -35,7 +35,7 @@
 #include "FrameLoader.h"
 #include "NavigationScheduler.h"
 #include "SecurityOrigin.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/URL.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

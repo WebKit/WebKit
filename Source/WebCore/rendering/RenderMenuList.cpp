@@ -49,7 +49,7 @@
 #include "StyleResolver.h"
 #include "TextRun.h"
 #include <math.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 #if PLATFORM(IOS_FAMILY)
 #include "LocalizedStrings.h"

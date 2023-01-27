@@ -131,7 +131,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
 #include <wtf/HexNumber.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>

@@ -26,7 +26,7 @@
 #include "RenderSVGEllipse.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInlines.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

@@ -34,7 +34,7 @@
 #include "WorkerOrWorkletThread.h"
 #include "WorkerRunLoop.h"
 #include "WorkletGlobalScope.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

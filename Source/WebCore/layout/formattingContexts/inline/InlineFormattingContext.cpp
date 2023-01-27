@@ -46,7 +46,7 @@
 #include "LayoutState.h"
 #include "Logging.h"
 #include "TextUtil.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

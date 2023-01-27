@@ -34,7 +34,7 @@
 #include "TextTrackList.h"
 #include "VTTRegionList.h"
 #include <math.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/CString.h>
 
 namespace WebCore {

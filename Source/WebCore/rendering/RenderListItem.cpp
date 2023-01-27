@@ -36,7 +36,7 @@
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include "UnicodeBidi.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 

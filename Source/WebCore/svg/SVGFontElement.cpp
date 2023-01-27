@@ -32,7 +32,7 @@
 #include "SVGNames.h"
 #include "SVGVKernElement.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

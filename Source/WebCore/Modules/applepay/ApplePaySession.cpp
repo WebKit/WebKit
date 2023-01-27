@@ -64,7 +64,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RunLoop.h>
 
 namespace WebCore {

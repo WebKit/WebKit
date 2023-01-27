@@ -34,7 +34,7 @@
 #include "StyledElement.h"
 #include "TextNodeTraversal.h"
 #include "XMLNSNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

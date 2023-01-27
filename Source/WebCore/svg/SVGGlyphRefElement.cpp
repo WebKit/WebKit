@@ -26,7 +26,7 @@
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

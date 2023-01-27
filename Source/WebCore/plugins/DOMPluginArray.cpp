@@ -23,7 +23,7 @@
 #include "DOMPlugin.h"
 #include "Frame.h"
 #include "Page.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

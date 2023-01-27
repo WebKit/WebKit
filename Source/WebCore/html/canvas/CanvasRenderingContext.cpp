@@ -38,7 +38,7 @@
 #include "PixelFormat.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/URL.h>

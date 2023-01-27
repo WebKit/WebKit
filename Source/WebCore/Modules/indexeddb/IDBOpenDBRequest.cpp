@@ -38,7 +38,7 @@
 #include "IDBVersionChangeEvent.h"
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

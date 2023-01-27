@@ -30,7 +30,7 @@
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
 #include <wtf/Assertions.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

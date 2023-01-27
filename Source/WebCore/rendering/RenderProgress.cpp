@@ -23,7 +23,7 @@
 
 #include "HTMLProgressElement.h"
 #include "RenderTheme.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

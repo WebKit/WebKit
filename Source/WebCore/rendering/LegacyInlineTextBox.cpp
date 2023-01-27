@@ -59,7 +59,7 @@
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
 #include <stdio.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/CString.h>
 #include <wtf/text/TextStream.h>
 

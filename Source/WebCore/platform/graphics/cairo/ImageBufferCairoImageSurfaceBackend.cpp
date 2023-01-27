@@ -35,7 +35,7 @@
 #include "Color.h"
 #include "ImageBackingStore.h"
 #include <cairo.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

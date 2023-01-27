@@ -33,7 +33,7 @@
 #include "SVGStringList.h"
 #include "SVGUnitTypes.h"
 #include "StyleResolver.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

@@ -26,7 +26,7 @@
 #include "TextDocument.h"
 
 #include "TextDocumentParser.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

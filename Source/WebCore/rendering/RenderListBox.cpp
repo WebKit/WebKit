@@ -64,7 +64,7 @@
 #include "StyleTreeResolver.h"
 #include "WheelEventTestMonitor.h"
 #include <math.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/StackStats.h>
 
 namespace WebCore {

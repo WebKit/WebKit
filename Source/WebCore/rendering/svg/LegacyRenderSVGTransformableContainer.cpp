@@ -26,7 +26,7 @@
 #include "SVGGElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGUseElement.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

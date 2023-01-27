@@ -29,7 +29,7 @@
 #include "EventTarget.h"
 #include "EventTargetInterfaces.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

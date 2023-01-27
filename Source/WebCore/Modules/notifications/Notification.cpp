@@ -51,7 +51,7 @@
 #include "WindowEventLoop.h"
 #include "WindowFocusAllowedIndicator.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Scope.h>
 
 namespace WebCore {

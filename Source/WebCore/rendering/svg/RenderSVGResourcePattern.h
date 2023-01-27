@@ -27,7 +27,7 @@
 #include "RenderSVGResourceContainer.h"
 #include "SVGPatternElement.h"
 #include <memory>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/HashMap.h>
 
 namespace WebCore {

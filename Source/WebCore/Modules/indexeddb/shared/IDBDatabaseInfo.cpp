@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IDBDatabaseInfo.h"
 
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

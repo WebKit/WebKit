@@ -43,7 +43,7 @@
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "XLinkNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/RobinHoodHashSet.h>
 
 namespace WebCore {

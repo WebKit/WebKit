@@ -55,7 +55,7 @@
 #include "StyledElement.h"
 #include "WebAnimationTypes.h"
 #include "WebAnimationUtilities.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>

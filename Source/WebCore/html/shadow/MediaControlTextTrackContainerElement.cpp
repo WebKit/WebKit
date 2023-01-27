@@ -57,7 +57,7 @@
 #include "TextTrackCueGeneric.h"
 #include "TextTrackList.h"
 #include "VTTRegionList.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Language.h>
 
 namespace WebCore {

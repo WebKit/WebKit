@@ -36,7 +36,7 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGInlineTextBox.h"
 #include "VisiblePosition.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 #if PLATFORM(IOS_FAMILY)
 #include "SelectionGeometry.h"

@@ -62,7 +62,7 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "SubresourceIntegrity.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>

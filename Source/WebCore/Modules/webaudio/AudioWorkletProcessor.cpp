@@ -41,7 +41,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <wtf/GetPtr.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

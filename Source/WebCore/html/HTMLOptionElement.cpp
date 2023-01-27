@@ -44,7 +44,7 @@
 #include "ScriptElement.h"
 #include "StyleResolver.h"
 #include "Text.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Ref.h>
 
 namespace WebCore {

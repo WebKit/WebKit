@@ -29,7 +29,7 @@
 #include "SVGComponentTransferFunctionElementInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

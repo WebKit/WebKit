@@ -47,7 +47,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/StrongInlines.h>
 #include <variant>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Scope.h>
 
 namespace WebCore {

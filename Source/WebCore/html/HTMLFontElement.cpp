@@ -31,7 +31,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "StyleProperties.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

@@ -42,7 +42,7 @@
 #include "MouseEvent.h"
 #include "RenderTableCell.h"
 #include "Settings.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {

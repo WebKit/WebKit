@@ -50,7 +50,7 @@
 #include "StyleProperties.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/FixedVector.h>
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>

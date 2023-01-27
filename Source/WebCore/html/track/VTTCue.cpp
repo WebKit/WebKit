@@ -57,7 +57,7 @@
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
 #include "WebVTTParser.h"
-#include <wtf/IsoMallocInlines.h>
+
 #include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>

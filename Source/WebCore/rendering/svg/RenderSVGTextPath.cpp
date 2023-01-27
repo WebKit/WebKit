@@ -33,7 +33,7 @@
 #include "SVGPathElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGTextPathElement.h"
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 

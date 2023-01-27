@@ -44,7 +44,7 @@
 #include "Text.h"
 #include "TextBoxPainter.h"
 #include <math.h>
-#include <wtf/IsoMallocInlines.h>
+
 
 namespace WebCore {
 
