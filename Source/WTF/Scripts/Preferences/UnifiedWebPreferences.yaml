@@ -2405,6 +2405,20 @@ GStreamerEnabled:
     WebKit:
       default: true
 
+GamepadTriggerRumbleEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "Gamepad trigger vibration support"
+  humanReadableDescription: "Support for Gamepad trigger vibration"
+  condition: ENABLE(GAMEPAD)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GamepadVibrationActuatorEnabled:
   type: bool
   status: testable

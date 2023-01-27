@@ -37,6 +37,9 @@ struct GamepadEffectParameters {
     double strongMagnitude = 0.0;
     double weakMagnitude = 0.0;
 
+    double leftTrigger = 0.0;
+    double rightTrigger = 0.0;
+
     // A maximum duration of 5 seconds is recommended by the specification:
     // - https://w3c.github.io/gamepad/extensions.html#gamepadeffectparameters-dictionary
     static constexpr Seconds maximumDuration = 5_s;
