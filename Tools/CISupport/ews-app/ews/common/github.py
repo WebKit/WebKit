@@ -321,7 +321,7 @@ class GitHubEWS(GitHub):
             elif re.search(r'Hash .* on PR .* is outdated', build.state_string):
                 hover_over_text += ' Commit was outdated when EWS attempted to process it.'
             elif re.search(r'Skipping as PR .* has skip-ews label', build.state_string):
-                hover_over_text += ' Skipped this build as PR had skip-ews label when EWS attempted to process it.'
+                hover_over_text = 'EWS skipped this build as PR had skip-ews label when EWS attempted to process it.'
         elif build.result == Buildbot.RETRY:
             hover_over_text = 'Build is being retried. Recent messages:' + self._steps_messages(build)
             icon = GitHubEWS.ICON_BUILD_ONGOING
