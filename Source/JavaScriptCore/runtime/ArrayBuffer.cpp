@@ -625,7 +625,7 @@ Expected<int64_t, GrowFailReason> SharedArrayBufferContents::grow(const Abstract
     return deltaByteLength;
 }
 
-ASCIILiteral errorMesasgeForTransfer(ArrayBuffer* buffer)
+ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
 {
     ASSERT(buffer->isLocked());
     if (buffer->isShared())
