@@ -78,7 +78,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
         static_assert(Extent, "Can't encode a fixed size of 0");
 
         if constexpr (Extent == WTF::dynamic_extent) {
-            auto size = static_cast<uint64_t>(span.size());
+            size_t size = span.size();
             encoder << size;
             if (!size)
                 return;
@@ -93,15 +93,13 @@ template<typename T, size_t Extent> struct ArgumentCoder<Span<T, Extent>> {
 
         size_t size = Extent;
         if constexpr (Extent == WTF::dynamic_extent) {
-            auto decodedSize = decoder.template decode<uint64_t>();
+            auto decodedSize = decoder.template decode<size_t>();
             if (!decodedSize)
                 return std::nullopt;
-            if (!*decodedSize)
-                return Span<T, Extent> { };
 
-            if (!isInBounds<size_t>(*decodedSize))
-                return std::nullopt;
-            size = static_cast<size_t>(*decodedSize);
+            size = *decodedSize;
+            if (!size)
+                return Span<T, Extent> { };
         }
 
         auto data = decoder.template decodeSpan<T>(size);
@@ -457,7 +455,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     {
         static_assert(std::is_same_v<std::remove_cvref_t<U>, Vector<T, inlineCapacity, OverflowHandler, minCapacity>>);
 
-        encoder << static_cast<uint64_t>(vector.size());
+        encoder << static_cast<size_t>(vector.size());
         for (auto&& item : vector)
             encoder << std::forward_like<U>(item);
     }
@@ -465,7 +463,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     template<typename Decoder>
     static std::optional<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> decode(Decoder& decoder)
     {
-        auto size = decoder.template decode<uint64_t>();
+        auto size = decoder.template decode<size_t>();
         if (!size)
             return std::nullopt;
 
@@ -508,7 +506,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
     {
         static_assert(std::is_same_v<std::remove_cvref_t<T>, HashMapType>);
 
-        encoder << static_cast<uint32_t>(hashMap.size());
+        encoder << static_cast<unsigned>(hashMap.size());
         for (auto&& entry : hashMap)
             encoder << std::forward_like<T>(entry);
     }
@@ -516,12 +514,12 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
     template<typename Decoder>
     static std::optional<HashMapType> decode(Decoder& decoder)
     {
-        uint32_t hashMapSize;
+        unsigned hashMapSize;
         if (!decoder.decode(hashMapSize))
             return std::nullopt;
 
         HashMapType hashMap;
-        for (uint32_t i = 0; i < hashMapSize; ++i) {
+        for (unsigned i = 0; i < hashMapSize; ++i) {
             auto key = decoder.template decode<KeyArg>();
             if (UNLIKELY(!key))
                 return std::nullopt;
@@ -549,7 +547,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
     template<typename Encoder>
     static void encode(Encoder& encoder, const HashSetType& hashSet)
     {
-        encoder << static_cast<uint64_t>(hashSet.size());
+        encoder << static_cast<unsigned>(hashSet.size());
         for (typename HashSetType::const_iterator it = hashSet.begin(), end = hashSet.end(); it != end; ++it)
             encoder << *it;
     }
@@ -557,12 +555,12 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
     template<typename Decoder>
     static std::optional<HashSetType> decode(Decoder& decoder)
     {
-        uint64_t hashSetSize;
+        unsigned hashSetSize;
         if (!decoder.decode(hashSetSize))
             return std::nullopt;
 
         HashSetType hashSet;
-        for (uint64_t i = 0; i < hashSetSize; ++i) {
+        for (unsigned i = 0; i < hashSetSize; ++i) {
             auto key = decoder.template decode<KeyArg>();
             if (!key)
                 return std::nullopt;
@@ -588,7 +586,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
     {
         static_assert(std::is_same_v<std::remove_cvref_t<T>, HashCountedSetType>);
 
-        encoder << static_cast<uint64_t>(hashCountedSet.size());
+        encoder << static_cast<unsigned>(hashCountedSet.size());
         for (auto&& entry : hashCountedSet)
             encoder << std::forward_like<T>(entry);
     }
@@ -596,12 +594,12 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
     template<typename Decoder>
     static std::optional<HashCountedSetType> decode(Decoder& decoder)
     {
-        uint64_t hashCountedSetSize;
+        unsigned hashCountedSetSize;
         if (!decoder.decode(hashCountedSetSize))
             return false;
 
         HashCountedSetType tempHashCountedSet;
-        for (uint64_t i = 0; i < hashCountedSetSize; ++i) {
+        for (unsigned i = 0; i < hashCountedSetSize; ++i) {
             KeyArg key;
             if (!decoder.decode(key))
                 return std::nullopt;
@@ -692,13 +690,13 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     {
         static_assert(std::is_same_v<std::remove_cvref_t<T>, std::variant<Types...>>);
 
-        unsigned i = variant.index();
+        size_t i = variant.index();
         encoder << i;
         encode(encoder, std::forward<T>(variant), std::index_sequence<> { }, i);
     }
 
     template<typename Encoder, typename T, size_t... Indices>
-    static void encode(Encoder& encoder, T&& variant, std::index_sequence<Indices...>, unsigned i)
+    static void encode(Encoder& encoder, T&& variant, std::index_sequence<Indices...>, size_t i)
     {
         constexpr size_t index = sizeof...(Indices);
         if constexpr (index < sizeof...(Types)) {
@@ -713,14 +711,14 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     template<typename Decoder>
     static std::optional<std::variant<Types...>> decode(Decoder& decoder)
     {
-        auto i = decoder.template decode<unsigned>();
+        auto i = decoder.template decode<size_t>();
         if (!i || *i >= sizeof...(Types))
             return std::nullopt;
         return decode(decoder, std::index_sequence<> { }, *i);
     }
 
     template<typename Decoder, size_t... Indices>
-    static std::optional<std::variant<Types...>> decode(Decoder& decoder, std::index_sequence<Indices...>, unsigned i)
+    static std::optional<std::variant<Types...>> decode(Decoder& decoder, std::index_sequence<Indices...>, size_t i)
     {
         constexpr size_t index = sizeof...(Indices);
         if constexpr (index < sizeof...(Types)) {
