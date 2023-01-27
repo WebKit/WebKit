@@ -32,9 +32,6 @@
 
 namespace WGSL {
 
-template<typename Lexer>
-Expected<AST::ShaderModule, Error> parse(const String& wgsl);
-
 Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl);
 Expected<AST::ShaderModule, Error> parseUChar(const String& wgsl);
 

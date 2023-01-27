@@ -314,8 +314,11 @@ String CryptoKeyOKP::generateJwkX() const
         return base64URLEncodeToString(m_data);
 
     ASSERT(type() == CryptoKeyType::Private);
+
+    auto* di = ccsha512_di();
     ccec25519pubkey publicKey;
-    cccurve25519_make_pub(publicKey, m_data.data());
+    cced25519_make_pub(di, publicKey, m_data.data());
+
     return base64URLEncodeToString(Span<const uint8_t> { publicKey, sizeof(publicKey) });
 }
 

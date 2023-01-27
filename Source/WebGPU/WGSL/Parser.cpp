@@ -107,7 +107,7 @@ Expected<AST::ShaderModule, Error> parse(const String& wgsl)
     Lexer lexer(wgsl);
     Parser parser(lexer);
 
-    return parser.parseShader();
+    return parser.parseShader(wgsl);
 }
 
 Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl)
@@ -138,7 +138,7 @@ void Parser<Lexer>::consume()
 }
 
 template<typename Lexer>
-Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader()
+Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader(const String& source)
 {
     START_PARSE();
 
@@ -151,7 +151,7 @@ Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader()
         decls.append(WTFMove(globalDecl));
     }
 
-    RETURN_NODE(ShaderModule, WTFMove(directives), WTFMove(decls));
+    RETURN_NODE(ShaderModule, source, WTFMove(directives), WTFMove(decls));
 }
 
 template<typename Lexer>

@@ -81,6 +81,7 @@ class Preference
   attr_accessor :type
   attr_accessor :refinedType
   attr_accessor :status
+  attr_accessor :defaultsOverridable
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
   attr_accessor :webcoreBinding
@@ -95,6 +96,7 @@ class Preference
     @type = opts["type"]
     @refinedType = opts["refinedType"]
     @status = opts["status"]
+    @defaultsOverridable = opts["defaultsOverridable"] || false
     @humanReadableName = (opts["humanReadableName"] || "")
     if not humanReadableName.start_with? "WebKitAdditions"
         @humanReadableName = '"' + humanReadableName + '"'
@@ -191,8 +193,8 @@ class Preference
     %w{ unstable internal testable }.include? @status
   end
 
-  def defaultOverridable?
-    %w{ internal }.include? @status
+  def defaultsOverridable?
+    @defaultsOverridable
   end
 
   # FIXME: These names correspond to the "experimental features" and "internal

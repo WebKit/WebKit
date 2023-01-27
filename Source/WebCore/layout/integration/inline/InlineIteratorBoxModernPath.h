@@ -92,10 +92,13 @@ public:
     {
         auto& style = box().style();
         auto expansion = box().expansion();
-        auto rect = this->visualRectIgnoringBlockDirection();
-        auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection());
+        auto logicalLeft = [&] {
+            if (style.isLeftToRightDirection())
+                return visualRectIgnoringBlockDirection().x() - (line().lineBoxLeft() + line().contentLogicalLeft());
+            return line().lineBoxRight() - (visualRectIgnoringBlockDirection().maxX() + line().contentLogicalLeft());
+        };
         auto characterScanForCodePath = isText() && !renderText().canUseSimpleFontCodePath();
-        auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text()->renderedContent(), xPos, expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
+        auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text()->renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         return textRun;
     };

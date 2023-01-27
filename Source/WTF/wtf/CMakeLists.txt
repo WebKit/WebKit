@@ -332,6 +332,7 @@ set(WTF_PUBLIC_HEADERS
     WeakHashCountedSet.h
     WeakHashMap.h
     WeakHashSet.h
+    WeakListHashSet.h
     WeakPtr.h
     WeakRandom.h
     WeakRandomNumber.h

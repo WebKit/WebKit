@@ -93,6 +93,43 @@ static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, c
     }
 }
 
+TEST(WGSLParserTests, SourceLifecycle)
+{
+    Expected<WGSL::AST::ShaderModule, WGSL::Error> shader = ([&]() {
+        auto source = makeString(
+            "@group(0)"_s,
+            " "_s,
+            "@binding(0)"_s,
+            "var<storage, read_write>"_s,
+            " "_s,
+            "x: B;"_s
+        );
+        return WGSL::parseLChar(source);
+    })();
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structs().isEmpty());
+    EXPECT_EQ(shader->globalVars().size(), 1u);
+    EXPECT_TRUE(shader->functions().isEmpty());
+    auto& var = shader->globalVars()[0];
+    EXPECT_EQ(var.attributes().size(), 2u);
+    EXPECT_TRUE(is<WGSL::AST::GroupAttribute>(var.attributes()[0].get()));
+    EXPECT_FALSE(downcast<WGSL::AST::GroupAttribute>(var.attributes()[0].get()).group());
+    EXPECT_TRUE(is<WGSL::AST::BindingAttribute>(var.attributes()[1].get()));
+    EXPECT_FALSE(downcast<WGSL::AST::BindingAttribute>(var.attributes()[1].get()).binding());
+    EXPECT_EQ(var.name(), "x"_s);
+    EXPECT_TRUE(var.maybeQualifier());
+    EXPECT_EQ(var.maybeQualifier()->storageClass(), WGSL::AST::StorageClass::Storage);
+    EXPECT_EQ(var.maybeQualifier()->accessMode(), WGSL::AST::AccessMode::ReadWrite);
+    EXPECT_TRUE(var.maybeTypeDecl());
+    EXPECT_TRUE(is<WGSL::AST::NamedType>(var.maybeTypeDecl()));
+    auto& namedType = downcast<WGSL::AST::NamedType>(*var.maybeTypeDecl());
+    EXPECT_EQ(namedType.name(), "B"_s);
+    EXPECT_FALSE(var.maybeInitializer());
+}
+
 TEST(WGSLParserTests, Struct)
 {
     // 1 field, without trailing comma

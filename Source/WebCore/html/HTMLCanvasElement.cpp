@@ -40,6 +40,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "GPU.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUCanvasContext.h"
 #include "GeometryUtilities.h"
@@ -57,6 +58,7 @@
 #include "JSNodeCustom.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
+#include "Navigator.h"
 #include "OffscreenCanvas.h"
 #include "PlaceholderRenderingContext.h"
 #include "RenderElement.h"
@@ -307,7 +309,12 @@ ExceptionOr<std::optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::
 #endif
 
     if (isWebGPUType(contextId)) {
-        auto context = createContextWebGPU(contextId);
+        GPU* gpu = nullptr;
+        if (auto* window = document().domWindow()) {
+            // FIXME: Should we be instead getting this through jsDynamicCast<JSDOMWindow*>(state)->wrapped().navigator().gpu()?
+            gpu = window->navigator().gpu();
+        }
+        auto context = createContextWebGPU(contextId, gpu);
         if (!context)
             return { std::nullopt };
         return { context };
@@ -330,7 +337,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 #endif
 
     if (HTMLCanvasElement::isWebGPUType(type))
-        return getContextWebGPU(type);
+        return getContextWebGPU(type, nullptr);
 
     return nullptr;
 }
@@ -516,15 +523,15 @@ bool HTMLCanvasElement::isWebGPUType(const String& type)
     return type == "webgpu"_s;
 }
 
-GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
+GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type, GPU* gpu)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
     ASSERT(!m_context);
 
-    if (!document().settings().webGPU())
+    if (!document().settings().webGPU() || !gpu)
         return nullptr;
 
-    m_context = GPUCanvasContext::create(*this);
+    m_context = GPUCanvasContext::create(*this, *gpu);
 
     if (m_context) {
         // Adds the current document as an observer, so that the document calls prepareForDisplay
@@ -538,7 +545,7 @@ GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
     return static_cast<GPUCanvasContext*>(m_context.get());
 }
 
-GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
+GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type, GPU* gpu)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
 
@@ -549,7 +556,7 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
         return nullptr;
 
     if (!m_context)
-        return createContextWebGPU(type);
+        return createContextWebGPU(type, gpu);
 
     return static_cast<GPUCanvasContext*>(m_context.get());
 }

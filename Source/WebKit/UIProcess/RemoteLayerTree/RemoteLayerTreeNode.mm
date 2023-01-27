@@ -75,6 +75,9 @@ void RemoteLayerTreeNode::detachFromParent()
         return;
     }
 #endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [interactionRegionsLayer() removeFromSuperlayer];
+#endif
     [layer() removeFromSuperlayer];
 }
 
@@ -86,6 +89,10 @@ void RemoteLayerTreeNode::setEventRegion(const WebCore::EventRegion& eventRegion
 void RemoteLayerTreeNode::initializeLayer()
 {
     [layer() setValue:[NSValue valueWithPointer:this] forKey:WKRemoteLayerTreeNodePropertyKey];
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    m_interactionRegionsLayer = adoptNS([[CALayer alloc] init]);
+    [m_interactionRegionsLayer setName:@"InteractionRegions Container"];
+#endif
 }
 
 WebCore::GraphicsLayer::PlatformLayerID RemoteLayerTreeNode::layerID(CALayer *layer)

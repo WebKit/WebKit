@@ -174,11 +174,20 @@ void Builder::applyCustomProperty(const AtomString& name)
     if (!property.cssValue[SelectorChecker::MatchDefault])
         return;
 
-    SetForScope levelScope(m_state.m_currentProperty, &property);
-
     Ref customPropertyValue = downcast<CSSCustomPropertyValue>(*property.cssValue[SelectorChecker::MatchDefault]);
 
     bool inCycle = !m_state.m_inProgressCustomProperties.add(name).isNewEntry;
+    if (inCycle) {
+        auto isNewCycle = m_state.m_inCycleCustomProperties.add(name).isNewEntry;
+        if (isNewCycle) {
+            // Continue resolving dependencies so we detect cycles for them as well.
+            resolveCustomPropertyValueWithVariableReferences(customPropertyValue.get());
+        }
+        return;
+    }
+    
+    // There may be multiple cycles through the same property. Avoid interference from any previously detected cycles.
+    auto savedInCycleProperties = std::exchange(m_state.m_inCycleCustomProperties, { });
 
     auto createInvalidOrUnset = [&] {
         // https://drafts.csswg.org/css-variables-2/#invalid-variables
@@ -193,35 +202,18 @@ void Builder::applyCustomProperty(const AtomString& name)
         return CSSCustomPropertyValue::createWithID(name, CSSValueUnset);
     };
 
-    auto valueToApply = [&]() -> RefPtr<CSSCustomPropertyValue> {
-        if (inCycle)
-            return createInvalidOrUnset();
+    auto resolvedValue = resolveCustomPropertyValueWithVariableReferences(customPropertyValue.get());
 
-        auto resolvedValue = resolveCustomPropertyValueWithVariableReferences(customPropertyValue.get());
-        if (m_state.m_appliedCustomProperties.contains(name))
-            return nullptr; // There was a cycle and the value was already resolved, so bail.
+    if (!resolvedValue || m_state.m_inCycleCustomProperties.contains(name))
+        resolvedValue = createInvalidOrUnset();
 
-        if (!resolvedValue)
-            return createInvalidOrUnset();
-
-        return resolvedValue;
-    }();
-
-    if (!valueToApply) {
-        ASSERT(!m_state.m_inProgressCustomProperties.contains(name));
-        return;
-    }
-
+    SetForScope levelScope(m_state.m_currentProperty, &property);
     SetForScope scopedLinkMatchMutation(m_state.m_linkMatch, SelectorChecker::MatchDefault);
-    applyProperty(CSSPropertyCustom, *valueToApply, SelectorChecker::MatchDefault);
+    applyProperty(CSSPropertyCustom, *resolvedValue, SelectorChecker::MatchDefault);
 
     m_state.m_inProgressCustomProperties.remove(name);
     m_state.m_appliedCustomProperties.add(name);
-
-    if (inCycle) {
-        // Resolve this value so that we reset its dependencies.
-        resolveCustomPropertyValueWithVariableReferences(customPropertyValue.get());
-    }
+    m_state.m_inCycleCustomProperties.formUnion(WTFMove(savedInCycleProperties));
 }
 
 inline void Builder::applyCascadeProperty(const PropertyCascade::Property& property)

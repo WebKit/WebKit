@@ -3,7 +3,7 @@
 <style>
     body { margin: 0; }
 
-    #button {
+    #button, #occlusion {
         display: inline-block;
         width: 135800px;
         height: 35000px;
@@ -11,9 +11,15 @@
         cursor: pointer;
         border-radius: 10px;
     }
+    #occlusion {
+        display: block;
+        z-index: 1;
+        cursor: auto;
+    }
 </style>
 <body>
 <div id="button" onclick="click()"></div>
+<div id="occlusion"></div>
 
 <pre id="results"></pre>
 <script>

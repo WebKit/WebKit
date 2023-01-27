@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2017-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ Modules/WebGPU/GPUDevice.cpp
 Modules/WebGPU/GPUDeviceLostInfo.cpp
 Modules/WebGPU/GPUExternalTexture.cpp
 Modules/WebGPU/GPUPipelineLayout.cpp
+Modules/WebGPU/GPUPresentationContext.cpp
 Modules/WebGPU/GPUQuerySet.cpp
 Modules/WebGPU/GPUQueue.cpp
 Modules/WebGPU/GPURenderBundle.cpp
@@ -46,8 +47,6 @@ Modules/WebGPU/GPUSampler.cpp
 Modules/WebGPU/GPUShaderModule.cpp
 Modules/WebGPU/GPUSupportedFeatures.cpp
 Modules/WebGPU/GPUSupportedLimits.cpp
-Modules/WebGPU/GPUSurface.cpp
-Modules/WebGPU/GPUSwapChain.cpp
 Modules/WebGPU/GPUTexture.cpp
 Modules/WebGPU/GPUTextureView.cpp
 Modules/WebGPU/GPUUncapturedErrorEvent.cpp
@@ -1475,6 +1474,7 @@ html/canvas/WebGLSampler.cpp
 html/canvas/WebGLShader.cpp
 html/canvas/WebGLShaderPrecisionFormat.cpp
 html/canvas/WebGLSharedObject.cpp
+html/canvas/WebGLStateTracker.cpp
 html/canvas/WebGLSync.cpp
 html/canvas/WebGLTexture.cpp
 html/canvas/WebGLTransformFeedback.cpp
@@ -2034,7 +2034,6 @@ platform/VideoFrame.cpp
 platform/VideoPixelFormat.cpp
 platform/WebCoreCrossThreadCopier.cpp
 platform/WebCorePersistentCoders.cpp
-platform/WebGLStateTracker.cpp
 platform/Widget.cpp
 platform/animation/Animation.cpp
 platform/animation/AnimationList.cpp

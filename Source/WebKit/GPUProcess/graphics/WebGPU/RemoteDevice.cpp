@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,6 @@
 #include "RemoteRenderPipeline.h"
 #include "RemoteSampler.h"
 #include "RemoteShaderModule.h"
-#include "RemoteSurface.h"
-#include "RemoteSwapChain.h"
 #include "RemoteTexture.h"
 #include "StreamServerConnection.h"
 #include "WebGPUCommandEncoderDescriptor.h"
@@ -74,10 +72,6 @@
 #include <pal/graphics/WebGPU/WebGPUSamplerDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPUShaderModule.h>
 #include <pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h>
-#include <pal/graphics/WebGPU/WebGPUSurface.h>
-#include <pal/graphics/WebGPU/WebGPUSurfaceDescriptor.h>
-#include <pal/graphics/WebGPU/WebGPUSwapChain.h>
-#include <pal/graphics/WebGPU/WebGPUSwapChainDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPUTexture.h>
 #include <pal/graphics/WebGPU/WebGPUTextureDescriptor.h>
 
@@ -122,35 +116,6 @@ void RemoteDevice::createBuffer(const WebGPU::BufferDescriptor& descriptor, WebG
     m_objectHeap.addObject(identifier, remoteBuffer);
 }
 
-void RemoteDevice::createSurface(const WebGPU::SurfaceDescriptor& descriptor, WebGPUIdentifier identifier)
-{
-    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
-
-    auto surface = m_backing->createSurface(*convertedDescriptor);
-    auto remoteSurface = RemoteSurface::create(surface, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteSurface);
-}
-
-void RemoteDevice::createSwapChain(WebGPUIdentifier surfaceIdentifier, const WebGPU::SwapChainDescriptor& descriptor, WebGPUIdentifier identifier)
-{
-    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
-
-    auto surface = m_objectHeap.convertSurfaceFromBacking(surfaceIdentifier);
-    ASSERT(surface);
-    if (!surface)
-        return;
-
-    auto swapChain = m_backing->createSwapChain(*surface, *convertedDescriptor);
-    auto remoteSwapChain = RemoteSwapChain::create(swapChain, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteSwapChain);
-}
-
 void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
@@ -163,16 +128,16 @@ void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, We
     m_objectHeap.addObject(identifier, remoteTexture);
 }
 
-void RemoteDevice::createSurfaceTexture(WebGPUIdentifier surfaceIdentifier, const WebGPU::TextureDescriptor& descriptor, WebGPUIdentifier identifier)
+void RemoteDevice::createSurfaceTexture(WebGPUIdentifier presentationContextIdentifier, const WebGPU::TextureDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
     if (!convertedDescriptor)
         return;
 
-    auto surface = m_objectHeap.convertSurfaceFromBacking(surfaceIdentifier);
-    ASSERT(surface);
-    auto texture = m_backing->createSurfaceTexture(*convertedDescriptor, *surface);
+    auto presentationContext = m_objectHeap.convertPresentationContextFromBacking(presentationContextIdentifier);
+    ASSERT(presentationContext);
+    auto texture = m_backing->createSurfaceTexture(*convertedDescriptor, *presentationContext);
     auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteTexture);
 }

@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 # Copyright (C) 2021 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'checkout-pull-request',
             'kill-old-processes',
             'jhbuild',
+            'validate-change',
             'compile-webkit',
             'install-built-product'
         ],
@@ -103,6 +104,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'iOS-16-Simulator-Build-EWS': [
@@ -117,6 +119,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'iOS-16-Simulator-WK2-Tests-EWS': [
@@ -153,6 +156,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'macOS-AppleSilicon-Ventura-Debug-WK2-Tests-EWS': [
@@ -188,6 +192,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'macOS-BigSur-Release-WK1-Tests-EWS': [
@@ -265,6 +270,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'watchOS-9-Simulator-Build-EWS': [
@@ -279,6 +285,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'tvOS-16-Build-EWS': [
@@ -293,6 +300,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'tvOS-16-Simulator-Build-EWS': [
@@ -307,6 +315,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'Windows-EWS': [
@@ -323,6 +332,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit',
             'validate-change',
             'layout-tests',
@@ -340,6 +350,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-webkit'
         ],
         'WPE-EWS': [
@@ -355,6 +366,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'checkout-pull-request',
             'kill-old-processes',
             'jhbuild',
+            'validate-change',
             'compile-webkit'
         ],
         'JSC-Tests-arm64-EWS': [
@@ -370,6 +382,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-jsc',
             'jscore-test'
         ],
@@ -386,6 +399,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-jsc',
             'jscore-test'
         ],
@@ -402,6 +416,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-jsc'
         ],
         'JSC-MIPSEL-32bits-Tests-EWS': [
@@ -434,6 +449,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-jsc'
         ],
         'JSC-ARMv7-32bits-Tests-EWS': [
@@ -466,6 +482,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'apply-patch',
             'checkout-pull-request',
             'kill-old-processes',
+            'validate-change',
             'compile-jsc'
         ],
         'Bindings-Tests-EWS': [
@@ -480,6 +497,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'apply-patch',
             'checkout-pull-request',
+            'validate-change',
             'bindings-tests'
         ],
         'WebKitPy-Tests-EWS': [
@@ -494,6 +512,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'apply-patch',
             'checkout-pull-request',
+            'validate-change',
             'webkitpy-tests-python2',
             'webkitpy-tests-python3',
             'set-build-summary'
@@ -509,6 +528,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'apply-patch',
             'checkout-pull-request',
+            'validate-change',
             'webkitperl-tests'
         ],
         'API-Tests-iOS-Simulator-EWS': [
@@ -572,6 +592,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'apply-patch',
             'checkout-pull-request',
+            'validate-change',
             'build-webkit-org-unit-tests',
             'buildbot-check-config-for-build-webkit',
             'ews-unit-tests',

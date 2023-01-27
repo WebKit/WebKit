@@ -380,6 +380,11 @@ public:
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
     static UnifiedOriginStorageLevel defaultUnifiedOriginStorageLevel();
 
+#if USE(GLIB)
+    static const String& defaultBaseCacheDirectory();
+    static const String& defaultBaseDataDirectory();
+#endif
+
     void resetQuota(CompletionHandler<void()>&&);
     void resetStoragePersistedState(CompletionHandler<void()>&&);
 #if PLATFORM(IOS_FAMILY)

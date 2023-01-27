@@ -102,6 +102,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BackForwardCache.h>
 #include <WebCore/CPUMonitor.h>
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
 #include <WebCore/DNS.h>
@@ -1447,6 +1448,17 @@ void WebProcess::deleteWebsiteData(OptionSet<WebsiteDataType> websiteDataTypes, 
 void WebProcess::deleteAllCookies(CompletionHandler<void()>&& completionHandler)
 {
     m_cookieJar->clearCache();
+    completionHandler();
+}
+
+void WebProcess::deleteWebsiteDataForOrigin(OptionSet<WebsiteDataType> websiteDataTypes, const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(websiteDataTypes.contains(WebsiteDataType::MemoryCache)); // This would be useless IPC otherwise.
+    if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
+        MemoryCache::singleton().removeResourcesWithOrigin(origin);
+        if (origin.topOrigin == origin.clientOrigin)
+            BackForwardCache::singleton().clearEntriesForOrigins({ RefPtr<SecurityOrigin> { origin.clientOrigin.securityOrigin() } });
+    }
     completionHandler();
 }
 

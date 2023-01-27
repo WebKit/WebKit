@@ -51,7 +51,11 @@ sub writeCongrats();
 checkRequiredSystemConfig();
 setConfiguration();
 
-if (shouldUseFlatpak()) {
+if (shouldBuildForCrossTarget()) {
+    print("Enabling cross-build for target machine: '". getCrossTargetName() . "'\n");
+    my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
+    runInCrossTargetEnvironment(@command);
+} elsif (shouldUseFlatpak()) {
     print "Building flatpak based environment\n";
     my @command = (File::Spec->catfile(sourceDir(), "Tools", "Scripts", "build-webkit"));
     runInFlatpak(@command);
@@ -123,6 +127,7 @@ Usage: $programName [options] [options to pass to build system]
   --analyze                         Enable static anaylsis (Apple platforms only)
   --lto-mode=<mode>                 Set Link Time Optimization mode (full, thin, or none) (LLVM only)
   --no-use-workspace                Build projects one at a time instead of using WebKit.xcworkspace (Apple platforms only)
+  --cross-target=<target_machine>   Use the cross-toolchain-helper to build WebKit for the specified machine (Linux platforms only)
 
   --ftw                             Build the FTW Windows port
   --gtk                             Build the GTK+ port

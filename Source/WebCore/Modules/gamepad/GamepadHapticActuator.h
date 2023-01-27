@@ -59,7 +59,10 @@ private:
     GamepadHapticActuator(Document*, Type, Gamepad&);
 
     Document* document();
+    const Document* document() const;
+
     void stopEffects(CompletionHandler<void()>&&);
+    RefPtr<DeferredPromise>& promiseForEffectType(EffectType);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
@@ -71,7 +74,8 @@ private:
 
     Type m_type;
     WeakPtr<Gamepad> m_gamepad;
-    RefPtr<DeferredPromise> m_playingEffectPromise;
+    RefPtr<DeferredPromise> m_dualRumbleEffectPromise;
+    RefPtr<DeferredPromise> m_triggerRumbleEffectPromise;
 };
 
 } // namespace WebCore

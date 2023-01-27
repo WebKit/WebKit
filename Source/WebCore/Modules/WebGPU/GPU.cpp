@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GPU.h"
 
+#include "GPUPresentationContext.h"
+#include "GPUPresentationContextDescriptor.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUAdapter.h"
 
@@ -67,4 +69,9 @@ GPUTextureFormat GPU::getPreferredCanvasFormat()
     return GPUTextureFormat::Bgra8unorm;
 }
 
+Ref<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentationContextDescriptor& presentationContextDescriptor)
+{
+    return GPUPresentationContext::create(m_backing->createPresentationContext(presentationContextDescriptor.convertToBacking()));
 }
+
+} // namespace WebCore

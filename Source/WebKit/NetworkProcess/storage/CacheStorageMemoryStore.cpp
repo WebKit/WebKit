@@ -40,11 +40,11 @@ static CacheStorageRecord copyCacheStorageRecord(const CacheStorageRecord& recor
     return { record.info, record.requestHeadersGuard, record.request, record.options, record.referrer, record.responseHeadersGuard, record.responseData.isolatedCopy(), record.responseBodySize, WebCore::DOMCacheEngine::copyResponseBody(record.responseBody) };
 }
 
-void CacheStorageMemoryStore::readAllRecords(ReadAllRecordsCallback&& callback)
+void CacheStorageMemoryStore::readAllRecordInfos(ReadAllRecordInfosCallback&& callback)
 {
     callback(WTF::map(m_records.values(), [](const auto& record) {
         RELEASE_ASSERT(record);
-        return copyCacheStorageRecord(*record);
+        return record->info;
     }));
 }
 

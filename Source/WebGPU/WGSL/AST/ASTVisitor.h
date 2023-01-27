@@ -83,7 +83,7 @@ public:
     virtual void visit(NamedType&);
     virtual void visit(ParameterizedType&);
     virtual void visit(StructType&);
-    virtual void visit(TypeReference&);
+    virtual void visit(ReferenceType&);
 
     virtual void visit(Parameter&);
     virtual void visit(StructMember&);

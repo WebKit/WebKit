@@ -36,10 +36,10 @@ struct CacheStorageRecordInformation;
 class CacheStorageStore : public RefCounted<CacheStorageStore> {
 public:
     virtual ~CacheStorageStore() = default;
-    using ReadAllRecordsCallback = CompletionHandler<void(Vector<CacheStorageRecord>&&)>;
+    using ReadAllRecordInfosCallback = CompletionHandler<void(Vector<CacheStorageRecordInformation>&&)>;
     using ReadRecordsCallback = CompletionHandler<void(Vector<std::optional<CacheStorageRecord>>&&)>;
     using WriteRecordsCallback = CompletionHandler<void(bool)>;
-    virtual void readAllRecords(ReadAllRecordsCallback&&) = 0;
+    virtual void readAllRecordInfos(ReadAllRecordInfosCallback&&) = 0;
     virtual void readRecords(const Vector<CacheStorageRecordInformation>&, ReadRecordsCallback&&) = 0;
     virtual void deleteRecords(const Vector<CacheStorageRecordInformation>&, WriteRecordsCallback&&) = 0;
     virtual void writeRecords(Vector<CacheStorageRecord>&&, WriteRecordsCallback&&) = 0;

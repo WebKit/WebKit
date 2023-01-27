@@ -420,29 +420,35 @@ auto switchOn(V&& v, F&&... f) -> decltype(std::visit(makeVisitor(std::forward<F
     return std::visit(makeVisitor(std::forward<F>(f)...), std::forward<V>(v));
 }
 
-namespace Detail {
+namespace detail {
 
-template<std::size_t, class, class> struct AlternativeIndexHelper;
+template<size_t, class, class> struct alternative_index_helper;
 
-template<std::size_t index, class T, class U>
-struct AlternativeIndexHelper<index, T, std::variant<U>> {
-    static constexpr std::size_t count = std::is_same_v<T, U>;
-    static constexpr std::size_t value = index;
+template<size_t index, class Type, class T>
+struct alternative_index_helper<index, Type, std::variant<T>> {
+    static constexpr size_t count = std::is_same_v<Type, T>;
+    static constexpr size_t value = index;
 };
 
-template<std::size_t index, class T, class U, class... Types> struct AlternativeIndexHelper<index, T, std::variant<U, Types...>> {
-    static constexpr std::size_t count = std::is_same_v<T, U> + AlternativeIndexHelper<index + 1, T, std::variant<Types...>>::count;
-    static constexpr std::size_t value = std::is_same_v<T, U> ? index : AlternativeIndexHelper<index + 1, T, std::variant<Types...>>::value;
+template<size_t index, class Type, class T, class... Types>
+struct alternative_index_helper<index, Type, std::variant<T, Types...>> {
+    static constexpr size_t count = std::is_same_v<Type, T> + alternative_index_helper<index + 1, Type, std::variant<Types...>>::count;
+    static constexpr size_t value = std::is_same_v<Type, T> ? index : alternative_index_helper<index + 1, Type, std::variant<Types...>>::value;
 };
 
-} // namespace Detail
+} // namespace detail
 
-template<class T, class U> struct alternativeIndex {
-    static_assert(Detail::AlternativeIndexHelper<0, T, U>::count == 1, "There needs to be exactly one of the given type in the variant");
-    static constexpr std::size_t value = Detail::AlternativeIndexHelper<0, T, U>::value;
+template<class T, class Variant> struct variant_alternative_index;
+
+template<class T, class Variant> struct variant_alternative_index<T, const Variant>
+    : variant_alternative_index<T, Variant> { };
+
+template<class T, class... Types> struct variant_alternative_index<T, std::variant<Types...>>
+    : std::integral_constant<size_t, detail::alternative_index_helper<0, T, std::variant<Types...>>::value> {
+    static_assert(detail::alternative_index_helper<0, T, std::remove_cv_t<std::variant<Types...>>>::count == 1);
 };
 
-template <class T, class U> inline constexpr std::size_t alternativeIndexV = alternativeIndex<T, U>::value;
+template<class T, class Variant> constexpr std::size_t alternativeIndexV = variant_alternative_index<T, Variant>::value;
 
 namespace Detail
 {

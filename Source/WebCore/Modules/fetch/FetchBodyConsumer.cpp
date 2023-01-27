@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc.
+ * Copyright (C) 2016-2023 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -36,6 +36,7 @@
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
+#include "JSDOMPromiseDeferred.h"
 #include "RFC7230.h"
 #include "TextResourceDecoder.h"
 #include <wtf/StringExtras.h>

@@ -902,6 +902,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/RegisterMap.h
     jit/RegisterSet.h
     jit/SIMDInfo.h
+    jit/SIMDShuffle.h
     jit/ScratchRegisterAllocator.h
     jit/Snippet.h
     jit/SnippetParams.h

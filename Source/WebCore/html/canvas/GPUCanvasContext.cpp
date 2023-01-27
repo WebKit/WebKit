@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContext);
 
 #if !PLATFORM(COCOA)
-std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase&)
+std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase&, GPU&)
 {
     return nullptr;
 }

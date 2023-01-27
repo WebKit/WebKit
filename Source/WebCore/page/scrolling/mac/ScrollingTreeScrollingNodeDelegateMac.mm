@@ -66,22 +66,6 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
     ThreadedScrollingTreeScrollingNodeDelegate::updateFromStateNode(scrollingStateNode);
 }
 
-void ScrollingTreeScrollingNodeDelegateMac::getScrollbarLayersForStateNode(const ScrollingStateScrollingNode& scrollingStateNode, CALayer **horizontalLayer, CALayer **verticalLayer)
-{
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer) && scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility == NativeScrollbarVisibility::Visible)
-        *verticalLayer = static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer());
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer) && scrollingStateNode.scrollableAreaParameters().horizontalNativeScrollbarVisibility ==  NativeScrollbarVisibility::Visible)
-        *horizontalLayer = static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer());
-
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)) {
-        if (scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
-            *verticalLayer = nullptr;
-        if (scrollingStateNode.scrollableAreaParameters().horizontalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
-            *horizontalLayer = nullptr;
-    }
-}
-
 bool ScrollingTreeScrollingNodeDelegateMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     bool wasInMomentumPhase = m_inMomentumPhase;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,6 +91,9 @@ class OutOfMemoryError;
 struct PipelineDescriptorBase;
 class PipelineLayout;
 struct PipelineLayoutDescriptor;
+struct PresentationConfiguration;
+class PresentationContext;
+struct PresentationContextDescriptor;
 struct PrimitiveState;
 struct ProgrammableStage;
 class QuerySet;
@@ -118,10 +121,6 @@ struct StencilFaceState;
 struct StorageTextureBindingLayout;
 class SupportedFeatures;
 class SupportedLimits;
-class Surface;
-struct SurfaceDescriptor;
-class SwapChain;
-struct SwapChainDescriptor;
 class Texture;
 struct TextureBindingLayout;
 struct TextureDescriptor;
@@ -168,6 +167,8 @@ struct ObjectDescriptorBase;
 struct OutOfMemoryError;
 struct PipelineDescriptorBase;
 struct PipelineLayoutDescriptor;
+struct PresentationConfiguration;
+struct PresentationContextDescriptor;
 struct PrimitiveState;
 struct ProgrammableStage;
 struct QuerySetDescriptor;
@@ -187,10 +188,6 @@ struct StencilFaceState;
 struct StorageTextureBindingLayout;
 struct SupportedFeatures;
 struct SupportedLimits;
-class Surface;
-struct SurfaceDescriptor;
-class SwapChain;
-struct SwapChainDescriptor;
 struct TextureBindingLayout;
 struct TextureDescriptor;
 struct TextureViewDescriptor;
@@ -246,6 +243,8 @@ public:
     RefPtr<PAL::WebGPU::OutOfMemoryError> convertFromBacking(const OutOfMemoryError&);
     std::optional<PAL::WebGPU::PipelineDescriptorBase> convertFromBacking(const PipelineDescriptorBase&);
     std::optional<PAL::WebGPU::PipelineLayoutDescriptor> convertFromBacking(const PipelineLayoutDescriptor&);
+    std::optional<PAL::WebGPU::PresentationConfiguration> convertFromBacking(const PresentationConfiguration&);
+    std::optional<PAL::WebGPU::PresentationContextDescriptor> convertFromBacking(const PresentationContextDescriptor&);
     std::optional<PAL::WebGPU::PrimitiveState> convertFromBacking(const PrimitiveState&);
     std::optional<PAL::WebGPU::ProgrammableStage> convertFromBacking(const ProgrammableStage&);
     std::optional<PAL::WebGPU::QuerySetDescriptor> convertFromBacking(const QuerySetDescriptor&);
@@ -267,8 +266,6 @@ public:
     std::optional<PAL::WebGPU::StorageTextureBindingLayout> convertFromBacking(const StorageTextureBindingLayout&);
     RefPtr<PAL::WebGPU::SupportedFeatures> convertFromBacking(const SupportedFeatures&);
     RefPtr<PAL::WebGPU::SupportedLimits> convertFromBacking(const SupportedLimits&);
-    std::optional<PAL::WebGPU::SurfaceDescriptor> convertFromBacking(const SurfaceDescriptor&);
-    std::optional<PAL::WebGPU::SwapChainDescriptor> convertFromBacking(const SwapChainDescriptor&);
     std::optional<PAL::WebGPU::TextureBindingLayout> convertFromBacking(const TextureBindingLayout&);
     std::optional<PAL::WebGPU::TextureDescriptor> convertFromBacking(const TextureDescriptor&);
     std::optional<PAL::WebGPU::TextureViewDescriptor> convertFromBacking(const TextureViewDescriptor&);
@@ -296,8 +293,7 @@ public:
     virtual PAL::WebGPU::RenderPipeline* convertRenderPipelineFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::Sampler* convertSamplerFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::ShaderModule* convertShaderModuleFromBacking(WebGPUIdentifier) = 0;
-    virtual PAL::WebGPU::Surface* convertSurfaceFromBacking(WebGPUIdentifier) = 0;
-    virtual PAL::WebGPU::SwapChain* convertSwapChainFromBacking(WebGPUIdentifier) = 0;
+    virtual PAL::WebGPU::PresentationContext* convertPresentationContextFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::Texture* convertTextureFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::TextureView* convertTextureViewFromBacking(WebGPUIdentifier) = 0;
 };

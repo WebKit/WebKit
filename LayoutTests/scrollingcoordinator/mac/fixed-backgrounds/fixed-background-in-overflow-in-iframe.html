@@ -12,13 +12,20 @@
             border: 1px solid black;
         }
     </style>
+    <script src="../../../resources/ui-helper.js"></script>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();            
+        }
 
-        window.addEventListener('load', () => {
-            if (window.internals)
-                document.getElementById('scrollingTree').innerText = window.internals.scrollingTreeAsText() + "\n";
+        window.addEventListener('load', async () => {
+            if (!window.internals)
+                return
+
+            document.getElementById('scrollingTree').innerText = await UIHelper.getScrollingTree();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
     </script>
 </head>

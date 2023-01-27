@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +42,6 @@
 #include "RemoteRenderPipelineProxy.h"
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
-#include "RemoteSurfaceProxy.h"
-#include "RemoteSwapChainProxy.h"
 #include "RemoteTextureProxy.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUConvertToBackingContext.h"
@@ -87,37 +85,6 @@ Ref<PAL::WebGPU::Buffer> RemoteDeviceProxy::createBuffer(const PAL::WebGPU::Buff
     return RemoteBufferProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
-Ref<PAL::WebGPU::Surface> RemoteDeviceProxy::createSurface(const PAL::WebGPU::SurfaceDescriptor& descriptor)
-{
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
-    if (!convertedDescriptor) {
-        // FIXME: Implement error handling.
-        return RemoteSurfaceProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
-    }
-
-    auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteDevice::CreateSurface(*convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
-
-    return RemoteSurfaceProxy::create(*this, m_convertToBackingContext, identifier);
-}
-
-Ref<PAL::WebGPU::SwapChain> RemoteDeviceProxy::createSwapChain(const PAL::WebGPU::Surface& surface, const PAL::WebGPU::SwapChainDescriptor& descriptor)
-{
-    auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
-    if (!convertedDescriptor) {
-        // FIXME: Implement error handling.
-        return RemoteSwapChainProxy::create(*this, m_convertToBackingContext, WebGPUIdentifier::generate());
-    }
-
-    auto convertedSurface = m_convertToBackingContext->convertToBacking(surface);
-    auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteDevice::CreateSwapChain(convertedSurface, *convertedDescriptor, identifier));
-    UNUSED_VARIABLE(sendResult);
-
-    return RemoteSwapChainProxy::create(*this, m_convertToBackingContext, identifier);
-}
-
 Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createTexture(const PAL::WebGPU::TextureDescriptor& descriptor)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
@@ -133,7 +100,7 @@ Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createTexture(const PAL::WebGPU::Te
     return RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
-Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createSurfaceTexture(const PAL::WebGPU::TextureDescriptor& descriptor, const PAL::WebGPU::Surface& surface)
+Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createSurfaceTexture(const PAL::WebGPU::TextureDescriptor& descriptor, const PAL::WebGPU::PresentationContext& presentationContext)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     if (!convertedDescriptor) {
@@ -142,7 +109,7 @@ Ref<PAL::WebGPU::Texture> RemoteDeviceProxy::createSurfaceTexture(const PAL::Web
     }
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteDevice::CreateSurfaceTexture(m_convertToBackingContext->convertToBacking(surface), *convertedDescriptor, identifier));
+    auto sendResult = send(Messages::RemoteDevice::CreateSurfaceTexture(m_convertToBackingContext->convertToBacking(presentationContext), *convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
 
     return RemoteTextureProxy::create(*this, m_convertToBackingContext, identifier);

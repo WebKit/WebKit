@@ -48,7 +48,9 @@ def main():
     parser.add_option("--release", action="store_const", const="release", dest="configuration")
     parser.add_option("--minify", action="store_true", dest="minify", default=False,
                       help="Create a minified archive by removing files that are not necessary for running applications against the built product, at the cost of complicating debugging.")
-                      
+    parser.add_option("--cross-target", action="store", dest="cross_target", type="string", default=None,
+                      help="Create the archive for a specific cross-build target (Linux ports only).")
+
     options, (action, ) = parser.parse_args()
     if not options.platform:
         parser.error("Platform is required")
@@ -59,9 +61,14 @@ def main():
     if action not in ('archive', 'extract'):
         parser.error("Action is required")
         return 1
+    if not options.cross_target:
+        env_target = os.environ.get('WEBKIT_CROSS_TARGET')
+        if env_target:
+            print('Using cross-target "{env_target}" from environment variable WEBKIT_CROSS_TARGET'.format(env_target=env_target))
+            options.cross_target = env_target
 
     genericPlatform = 'jsc-only' if options.platform.startswith('jsc') else options.platform.split('-', 1)[0]
-    determineWebKitBuildDirectories(genericPlatform, options.platform, options.configuration)
+    determineWebKitBuildDirectories(genericPlatform, options.platform, options.configuration, options.cross_target)
     if not _topLevelBuildDirectory:
         print('Could not determine top-level build directory', file=sys.stderr)
         return 1
@@ -75,7 +82,7 @@ def main():
         return extractBuiltProduct(options.configuration, genericPlatform)
 
 
-def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False):
+def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform='', returnTopLevelDirectory=False, crossTarget=None):
     if 'simulator' in fullPlatform:
         platform = platform + '-simulator'
     elif platform in ['ios', 'tvos', 'watchos']:
@@ -85,15 +92,17 @@ def webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, ful
         command += ['--top-level']
     else:
         command += ['--configuration']
+    if crossTarget:
+        command += ['--cross-target=%s' % crossTarget]
     return subprocess.Popen(command, stdout=subprocess.PIPE).communicate()[0].strip().decode('utf-8')
 
 
-def determineWebKitBuildDirectories(platform, fullPlatform, configuration):
+def determineWebKitBuildDirectories(platform, fullPlatform, configuration, cross_target=None):
     global _configurationBuildDirectory
     global _topLevelBuildDirectory
     global _hostBuildDirectory
-    _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform)
-    _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True)
+    _configurationBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, crossTarget=cross_target)
+    _topLevelBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, platform, fullPlatform, returnTopLevelDirectory=True, crossTarget=cross_target)
     if platform in ['ios', 'tvos', 'watchos']:
         _hostBuildDirectory = webkitBuildDirectoryForConfigurationAndPlatform(configuration, 'mac')
     else:
@@ -217,6 +226,8 @@ MINIFIED_EXCLUDED_PATTERNS = ('*.a', '*.dSYM', 'DerivedSources')
 def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
     assert platform in ('gtk', 'ios', 'jsc-only', 'mac', 'tvos', 'watchos', 'win', 'wincairo', 'wpe')
     global _configurationBuildDirectory
+
+    print("Archiving built product from directory: %s" % _configurationBuildDirectory)
 
     if platform in ['ios', 'tvos', 'watchos']:
         combinedDirectory = os.path.join(_topLevelBuildDirectory, 'combined-mac-and-{}'.format(platform))

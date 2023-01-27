@@ -393,6 +393,10 @@ accessibility/visible-character-range-width-changes.html [ Skip ]
 # Missing support of HTML Model element (ENABLE MODEL).
 accessibility/model-element-attributes.html [ Skip ]
 
+# Started failing after it was rewritten in https://bugs.webkit.org/show_bug.cgi?id=251175.
+# Test may need to be altered to accommodate glib-specific behavior?
+accessibility/element-reflection-ariadescribedby.html [ Timeout ]
+
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 # Added in r263823. Both tests are timing out.
@@ -2965,6 +2969,9 @@ webkit.org/b/236298 fast/text/simple-line-layout-with-justified-punctuation.html
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 
 webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
+
+# NetworkStorageSession::deleteCookies() doesn't obey partitioning for glib ports.
+http/wpt/clear-site-data/partitioning.html [ Skip ]
 
 # Failure since import.
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.tentative.sub.html [ Failure ]

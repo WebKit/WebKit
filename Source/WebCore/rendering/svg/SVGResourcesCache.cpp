@@ -48,11 +48,11 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
     solver.resolveCycles();
 
     // Walk resources and register the render object at each resources.
-    HashSet<RenderSVGResourceContainer*> resourceSet;
+    WeakHashSet<RenderSVGResourceContainer> resourceSet;
     resources.buildSetOfResources(resourceSet);
 
-    for (auto* resourceContainer : resourceSet)
-        resourceContainer->addClient(renderer);
+    for (auto& resourceContainer : resourceSet)
+        resourceContainer.addClient(renderer);
 }
 
 void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
@@ -62,11 +62,11 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
         return;
 
     // Walk resources and register the render object at each resources.
-    HashSet<RenderSVGResourceContainer*> resourceSet;
+    WeakHashSet<RenderSVGResourceContainer> resourceSet;
     resources->buildSetOfResources(resourceSet);
 
-    for (auto* resourceContainer : resourceSet)
-        resourceContainer->removeClient(renderer);
+    for (auto& resourceContainer : resourceSet)
+        resourceContainer.removeClient(renderer);
 }
 
 static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderElement& renderer)

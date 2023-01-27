@@ -97,6 +97,8 @@
 		979240C5297558F10050EA2C /* ResolveTypeReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C3297558F10050EA2C /* ResolveTypeReferences.h */; };
 		979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240C629769AC00050EA2C /* EntryPointRewriter.h */; };
 		979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240C729769AC00050EA2C /* EntryPointRewriter.cpp */; };
+		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
+		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
@@ -350,6 +352,8 @@
 		979240C3297558F10050EA2C /* ResolveTypeReferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveTypeReferences.h; sourceTree = "<group>"; };
 		979240C629769AC00050EA2C /* EntryPointRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntryPointRewriter.h; sourceTree = "<group>"; };
 		979240C729769AC00050EA2C /* EntryPointRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntryPointRewriter.cpp; sourceTree = "<group>"; };
+		97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalVariableRewriter.cpp; sourceTree = "<group>"; };
+		97F547B7298055D90011D79A /* GlobalVariableRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariableRewriter.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -630,6 +634,8 @@
 				1CEBD8042716BFAB00A5254D /* config.h */,
 				979240C729769AC00050EA2C /* EntryPointRewriter.cpp */,
 				979240C629769AC00050EA2C /* EntryPointRewriter.h */,
+				97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */,
+				97F547B7298055D90011D79A /* GlobalVariableRewriter.h */,
 				338BB2D527B6B68700E066AB /* Lexer.cpp */,
 				338BB2D327B6B66C00E066AB /* Lexer.h */,
 				339B7B1A27D800090072BF9A /* Parser.cpp */,
@@ -778,6 +784,7 @@
 				9789C31B297EA105009E9006 /* CallGraph.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
 				979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */,
+				97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
 				979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */,
 				979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */,
@@ -963,6 +970,7 @@
 				9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */,
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
 				979240C929769AC00050EA2C /* EntryPointRewriter.cpp in Sources */,
+				97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */,
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,
 				979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */,
 				979240B9297018290050EA2C /* MetalFunctionWriter.cpp in Sources */,

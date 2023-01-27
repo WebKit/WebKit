@@ -104,6 +104,11 @@ void UIScriptControllerCocoa::completeTaskAsynchronouslyAfterActivityStateUpdate
     });
 }
 
+JSRetainPtr<JSStringRef> UIScriptControllerCocoa::scrollingTreeAsText() const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));
+}
+
 void UIScriptControllerCocoa::removeViewFromWindow(JSValueRef callback)
 {
     // FIXME: On iOS, we never invoke the completion callback that's passed in. Fixing this causes the layout
@@ -166,6 +171,11 @@ void UIScriptControllerCocoa::setDefaultCalendarType(JSStringRef calendarIdentif
 JSRetainPtr<JSStringRef> UIScriptControllerCocoa::lastUndoLabel() const
 {
     return adopt(JSStringCreateWithCFString((__bridge CFStringRef)platformUndoManager().undoActionName));
+}
+
+JSRetainPtr<JSStringRef> UIScriptControllerCocoa::caLayerTreeAsText() const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _caLayerTreeAsText]));
 }
 
 JSRetainPtr<JSStringRef> UIScriptControllerCocoa::firstRedoLabel() const

@@ -6,8 +6,8 @@ PASS Cycle that starts in the middle of a chain
 PASS Cycle with extra edge
 PASS Cycle with extra edge (2)
 PASS Cycle with extra edge (3)
-FAIL Cycle with secondary cycle assert_equals: --a expected "" but got "cycle"
-FAIL Cycle with overlapping secondary cycle assert_equals: --a expected "" but got "cycle"
-FAIL Cycle with deeper secondary cycle assert_equals: --c expected "" but got "cycle"
+PASS Cycle with secondary cycle
+PASS Cycle with overlapping secondary cycle
+PASS Cycle with deeper secondary cycle
 PASS Cycle via fallback
 

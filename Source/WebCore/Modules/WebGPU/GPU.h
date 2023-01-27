@@ -37,6 +37,9 @@
 
 namespace WebCore {
 
+class GPUPresentationContext;
+struct GPUPresentationContextDescriptor;
+
 class GPU : public RefCounted<GPU> {
 public:
     static Ref<GPU> create(Ref<PAL::WebGPU::GPU>&& backing)
@@ -49,6 +52,8 @@ public:
     void requestAdapter(const std::optional<GPURequestAdapterOptions>&, RequestAdapterPromise&&);
 
     GPUTextureFormat getPreferredCanvasFormat();
+
+    Ref<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);
 
 private:
     GPU(Ref<PAL::WebGPU::GPU>&&);

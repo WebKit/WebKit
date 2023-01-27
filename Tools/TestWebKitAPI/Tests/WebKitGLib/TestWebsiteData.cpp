@@ -256,7 +256,12 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     g_assert_true(test->m_manager != defaultManager);
     g_assert_cmpstr(webkit_website_data_manager_get_base_data_directory(test->m_manager), !=, webkit_website_data_manager_get_base_data_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_base_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_base_cache_directory(defaultManager));
-#if !ENABLE(2022_GLIB_API)
+#if ENABLE(2022_GLIB_API)
+    g_assert_nonnull(webkit_website_data_manager_get_base_data_directory(defaultManager));
+    g_assert_nonnull(webkit_website_data_manager_get_base_cache_directory(defaultManager));
+#else
+    g_assert_null(webkit_website_data_manager_get_base_data_directory(defaultManager));
+    g_assert_null(webkit_website_data_manager_get_base_cache_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_local_storage_directory(test->m_manager), !=, webkit_website_data_manager_get_local_storage_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_indexeddb_directory(test->m_manager), !=, webkit_website_data_manager_get_indexeddb_directory(defaultManager));
     g_assert_cmpstr(webkit_website_data_manager_get_disk_cache_directory(test->m_manager), !=, webkit_website_data_manager_get_disk_cache_directory(defaultManager));

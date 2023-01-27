@@ -1894,16 +1894,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitSpatialNavigationEnabledPreferenceKey];
 }
 
-- (BOOL)paginateDuringLayoutEnabled
-{
-    return [self _boolValueForKey:WebKitPaginateDuringLayoutEnabledPreferenceKey];
-}
-
-- (void)setPaginateDuringLayoutEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitPaginateDuringLayoutEnabledPreferenceKey];
-}
-
 - (BOOL)hyperlinkAuditingEnabled
 {
     return [self _boolValueForKey:WebKitHyperlinkAuditingEnabledPreferenceKey];

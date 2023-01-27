@@ -22,9 +22,10 @@
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebsiteDataStore.h"
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CString.h>
 
 #if ENABLE(2022_GLIB_API)
-WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(GUniquePtr<char>&&, GUniquePtr<char>&&);
+WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(CString&&, CString&&);
 #endif
 WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteDataManager*);
 WebKitITPThirdParty* webkitITPThirdPartyCreate(WebKit::WebResourceLoadStatisticsStore::ThirdPartyData&&);

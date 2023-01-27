@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    .overlay {
+        z-index: 1;
+        width: 200px;
+        height: 100px;
+        background-color: green;
+    }
+    #not-occlusion {
+        pointer-events: none;
+        background-color: red;
+    }
+</style>
+<body>
+<div class="overlay"></div>
+<div class="overlay" id="not-occlusion"></div>
+<div class="overlay" onclick="click()"></div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

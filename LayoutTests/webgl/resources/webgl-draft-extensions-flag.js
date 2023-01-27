@@ -9,7 +9,6 @@ let currentDraftExtensions = {
         "WEBGL_clip_cull_distance",
         "WEBGL_draw_instanced_base_vertex_base_instance",
         "WEBGL_multi_draw_instanced_base_vertex_base_instance",
-        "WEBGL_provoking_vertex",
     ]
 };
 

@@ -68,7 +68,7 @@ class ArrayType;
 class NamedType;
 class ParameterizedType;
 class StructType;
-class TypeReference;
+class ReferenceType;
 
 class Parameter;
 class StructMember;

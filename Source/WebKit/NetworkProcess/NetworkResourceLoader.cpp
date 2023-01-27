@@ -54,6 +54,7 @@
 #include <WebCore/COEPInheritenceViolationReportBody.h>
 #include <WebCore/CORPViolationReportBody.h>
 #include <WebCore/CertificateInfo.h>
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
@@ -780,12 +781,25 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
     if (!typesToRemove)
         return completionHandler();
 
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    Vector<SecurityOriginData> origins = { SecurityOrigin::create(response.url())->data() };
-    m_connection->networkProcess().deleteWebsiteDataForOrigins(sessionID(), typesToRemove, origins, { response.url().host().toString() }, { }, { }, [callbackAggregator] { });
+    LOADER_RELEASE_LOG("processClearSiteDataHeader: BEGIN");
+
+    auto origin = SecurityOrigin::create(response.url())->data();
+    ClientOrigin clientOrigin {
+        m_parameters.topOrigin ? m_parameters.topOrigin->data() : origin,
+        origin
+    };
+
+    auto callbackAggregator = CallbackAggregator::create([this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!weakThis)
+            return completionHandler();
+
+        LOADER_RELEASE_LOG("processClearSiteDataHeader: END");
+        completionHandler();
+    });
+    m_connection->networkProcess().deleteWebsiteDataForOrigin(sessionID(), typesToRemove, clientOrigin, [callbackAggregator] { });
 
     if (WebsiteDataStore::computeWebProcessAccessTypeForDataRemoval(typesToRemove, sessionID().isEphemeral()) != WebsiteDataStore::ProcessAccessType::None)
-        m_connection->deleteWebsiteDataForOrigins(typesToRemove, origins, [callbackAggregator] { });
+        m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInWebProcessesForOrigin(typesToRemove, clientOrigin, sessionID()), [callbackAggregator] { });
 }
 
 static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(const std::optional<CrossOriginOpenerPolicyEnforcementResult>& currentCoopEnforcementResult)

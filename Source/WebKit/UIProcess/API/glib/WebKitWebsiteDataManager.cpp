@@ -92,8 +92,8 @@ enum {
 
 struct _WebKitWebsiteDataManagerPrivate {
     RefPtr<WebKit::WebsiteDataStore> websiteDataStore;
-    GUniquePtr<char> baseDataDirectory;
-    GUniquePtr<char> baseCacheDirectory;
+    CString baseDataDirectory;
+    CString baseCacheDirectory;
 
 #if ENABLE(2022_GLIB_API)
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
@@ -179,10 +179,10 @@ static void webkitWebsiteDataManagerSetProperty(GObject* object, guint propID, c
 
     switch (propID) {
     case PROP_BASE_DATA_DIRECTORY:
-        manager->priv->baseDataDirectory.reset(g_value_dup_string(value));
+        manager->priv->baseDataDirectory = g_value_get_string(value);
         break;
     case PROP_BASE_CACHE_DIRECTORY:
-        manager->priv->baseCacheDirectory.reset(g_value_dup_string(value));
+        manager->priv->baseCacheDirectory = g_value_get_string(value);
         break;
 #if !ENABLE(2022_GLIB_API)
     case PROP_LOCAL_STORAGE_DIRECTORY:
@@ -228,28 +228,28 @@ static void webkitWebsiteDataManagerConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_website_data_manager_parent_class)->constructed(object);
 
     WebKitWebsiteDataManagerPrivate* priv = WEBKIT_WEBSITE_DATA_MANAGER(object)->priv;
-    if (priv->baseDataDirectory) {
+    if (!priv->baseDataDirectory.isNull()) {
         if (!priv->localStorageDirectory)
-            priv->localStorageDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "localstorage", nullptr));
+            priv->localStorageDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "localstorage", nullptr));
         if (!priv->indexedDBDirectory)
-            priv->indexedDBDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "databases", "indexeddb", nullptr));
+            priv->indexedDBDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "databases", "indexeddb", nullptr));
         if (!priv->webSQLDirectory)
-            priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "databases", nullptr));
+            priv->webSQLDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "databases", nullptr));
         if (!priv->itpDirectory)
-            priv->itpDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "itp", nullptr));
+            priv->itpDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "itp", nullptr));
         if (!priv->swRegistrationsDirectory)
-            priv->swRegistrationsDirectory.reset(g_build_filename(priv->baseDataDirectory.get(), "serviceworkers", nullptr));
+            priv->swRegistrationsDirectory.reset(g_build_filename(priv->baseDataDirectory.data(), "serviceworkers", nullptr));
     }
 
-    if (priv->baseCacheDirectory) {
+    if (!priv->baseCacheDirectory.isNull()) {
         if (!priv->diskCacheDirectory)
-            priv->diskCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.get()));
+            priv->diskCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.data()));
         if (!priv->applicationCacheDirectory)
-            priv->applicationCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.get(), "applications", nullptr));
+            priv->applicationCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.data(), "applications", nullptr));
         if (!priv->hstsCacheDirectory)
-            priv->hstsCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.get()));
+            priv->hstsCacheDirectory.reset(g_strdup(priv->baseCacheDirectory.data()));
         if (!priv->domCacheDirectory)
-            priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.get(), "CacheStorage", nullptr));
+            priv->domCacheDirectory.reset(g_build_filename(priv->baseCacheDirectory.data(), "CacheStorage", nullptr));
     }
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
@@ -489,7 +489,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
 {
     WebKitWebsiteDataManagerPrivate* priv = manager->priv;
     if (!priv->websiteDataStore) {
-        auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(String::fromUTF8(priv->baseCacheDirectory.get()), String::fromUTF8(priv->baseDataDirectory.get()));
+        auto configuration = WebsiteDataStoreConfiguration::createWithBaseDirectories(String::fromUTF8(priv->baseCacheDirectory), String::fromUTF8(priv->baseDataDirectory));
 #if !ENABLE(2022_GLIB_API)
         if (priv->localStorageDirectory)
             configuration->setLocalStorageDirectory(FileSystem::stringFromFileSystemRepresentation(priv->localStorageDirectory.get()));
@@ -520,7 +520,7 @@ WebKit::WebsiteDataStore& webkitWebsiteDataManagerGetDataStore(WebKitWebsiteData
 }
 
 #if ENABLE(2022_GLIB_API)
-WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(GUniquePtr<char>&& baseDataDirectory, GUniquePtr<char>&& baseCacheDirectory)
+WebKitWebsiteDataManager* webkitWebsiteDataManagerCreate(CString&& baseDataDirectory, CString&& baseCacheDirectory)
 {
     auto* manager = WEBKIT_WEBSITE_DATA_MANAGER(g_object_new(WEBKIT_TYPE_WEBSITE_DATA_MANAGER, nullptr));
     manager->priv->baseDataDirectory = WTFMove(baseDataDirectory);
@@ -605,7 +605,7 @@ const gchar* webkit_website_data_manager_get_base_data_directory(WebKitWebsiteDa
     if (manager->priv->websiteDataStore && !manager->priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    return manager->priv->baseDataDirectory.get();
+    return manager->priv->baseDataDirectory.data();
 }
 
 /**
@@ -626,7 +626,7 @@ const gchar* webkit_website_data_manager_get_base_cache_directory(WebKitWebsiteD
     if (manager->priv->websiteDataStore && !manager->priv->websiteDataStore->isPersistent())
         return nullptr;
 
-    return manager->priv->baseCacheDirectory.get();
+    return manager->priv->baseCacheDirectory.data();
 }
 
 #if !ENABLE(2022_GLIB_API)
@@ -1040,20 +1040,10 @@ static String webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataMa
     if (webkit_website_data_manager_is_ephemeral(manager))
         return { };
 
-    if (manager->priv->baseCacheDirectory)
-        return FileSystem::pathByAppendingComponents(FileSystem::stringFromFileSystemRepresentation(manager->priv->baseCacheDirectory.get()), { "icondatabase"_s, "WebpageIcons.db"_s });
+    if (!manager->priv->baseCacheDirectory.isNull())
+        return FileSystem::pathByAppendingComponents(FileSystem::stringFromFileSystemRepresentation(manager->priv->baseCacheDirectory.data()), { "icondatabase"_s, "WebpageIcons.db"_s });
 
-    auto programName = []() -> String {
-        if (auto* prgname = g_get_prgname())
-            return String::fromUTF8(prgname);
-#if PLATFORM(GTK)
-        return "webkitgtk"_s;
-#elif PLATFORM(WPE)
-        return "wpe"_s;
-#endif
-        RELEASE_ASSERT_NOT_REACHED();
-    };
-    return FileSystem::pathByAppendingComponents(FileSystem::userCacheDirectory(), { programName(), "icondatabase"_s, "WebpageIcons.db"_s });
+    return FileSystem::pathByAppendingComponents(WebsiteDataStore::defaultBaseCacheDirectory(), { "icondatabase"_s, "WebpageIcons.db"_s });
 }
 
 /**

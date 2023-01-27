@@ -168,6 +168,12 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     for (auto& newlyUnreachableLayerID : transaction.layerIDsWithNewlyUnreachableBackingStore())
         layerForID(newlyUnreachableLayerID).contents = nullptr;
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    // The Interaction Regions subtree is always on top.
+    [m_rootNode->interactionRegionsLayer() removeFromSuperlayer];
+    [m_rootNode->layer() addSublayer:m_rootNode->interactionRegionsLayer()];
+#endif
+
     return rootLayerChanged;
 }
 

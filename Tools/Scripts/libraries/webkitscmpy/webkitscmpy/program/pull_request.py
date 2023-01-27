@@ -111,7 +111,7 @@ class PullRequest(Command):
             action=arguments.NoAction,
         )
         parser.add_argument(
-            '--ews', '--no-ews',
+            '--ews', '--skip-ews', '--no-ews',
             dest='ews', default=None,
             help='Explicitly enable or disable EWS on the PR',
             action=arguments.NoAction,

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <default sync-j="4"/>
+
+  <remote fetch="https://git.openembedded.org/" name="oe"/>
+  <remote fetch="https://git.yoctoproject.org/git/" name="yocto"/>
+  <remote fetch="https://github.com" name="github"/>
+
+  <!-- Yocto version: langdale -->
+
+  <project remote="yocto"  revision="da318dd088a3573e3abefdf14ea9b8bfecf36e3c" name="poky" path="sources/poky"/>
+  <project remote="github" revision="c354f92778c1d4bcd3680af7e0fb0d1414de2344" name="openembedded/meta-openembedded" path="sources/meta-openembedded"/>
+  <project remote="yocto"  revision="6f5771d2bcfbfb8f8ce17b455c29a5703f2027c9" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
+  <project remote="github" revision="5019d001d4a8fabba88800645bd7814f57764198" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
+
+</manifest>

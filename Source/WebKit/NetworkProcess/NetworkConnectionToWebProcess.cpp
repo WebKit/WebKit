@@ -73,6 +73,7 @@
 #include "WebSharedWorkerServerToContextConnection.h"
 #include "WebSharedWorkerServerToContextConnectionMessages.h"
 #include "WebsiteDataStoreParameters.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -1388,11 +1389,6 @@ void NetworkConnectionToWebProcess::broadcastConsoleMessage(JSC::MessageSource s
 void NetworkConnectionToWebProcess::setCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String>&& patterns)
 {
     networkProcess().setCORSDisablingPatterns(pageIdentifier, WTFMove(patterns));
-}
-
-void NetworkConnectionToWebProcess::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
-{
-    connection().sendWithAsyncReply(Messages::NetworkProcessConnection::DeleteWebsiteDataForOrigins { dataTypes, origins }, WTFMove(completionHandler));
 }
 
 void NetworkConnectionToWebProcess::setResourceLoadSchedulingMode(WebCore::PageIdentifier pageIdentifier, WebCore::LoadSchedulingMode mode)

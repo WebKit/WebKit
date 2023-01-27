@@ -52,7 +52,10 @@ private:
     void setDefaultCalendarType(JSStringRef calendarIdentifier, JSStringRef localeIdentifier) override;
     JSRetainPtr<JSStringRef> lastUndoLabel() const override;
     JSRetainPtr<JSStringRef> firstRedoLabel() const override;
+    JSRetainPtr<JSStringRef> caLayerTreeAsText() const override;
     NSUndoManager *platformUndoManager() const override;
+
+    JSRetainPtr<JSStringRef> scrollingTreeAsText() const override;
 
     void setDidShowContextMenuCallback(JSValueRef) override;
     void setDidDismissContextMenuCallback(JSValueRef) override;

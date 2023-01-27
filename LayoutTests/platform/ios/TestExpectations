@@ -62,6 +62,9 @@ http/tests/media/fairplay [ Pass ]
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
 
+# mac-only IPC test
+ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -3888,8 +3891,10 @@ webkit.org/b/251047 [ Debug ] fast/loader/crash-replacing-location-before-load.h
 
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
 
-webkit.org/b/251188 [ Release arm64 ] fast/forms/linebox-overflow-in-textarea-padding-simple-lines.html [ Failure ]
-
 webkit.org/b/251192 [ Release arm64 ] imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.html [ Failure ]
 
 webkit.org/b/251216 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
+
+webkit.org/b/251234 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Failure ]
+
+webkit.org/b/251274 [ Debug ] imported/w3c/web-platform-tests/fs/FileSystemFileHandle-create-sync-access-handle.https.tentative.window.html [ Pass Failure ]

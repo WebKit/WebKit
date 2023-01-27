@@ -138,10 +138,6 @@ WK_EXPORT void WKPreferencesSetPageCacheSupportsPlugins(WKPreferencesRef prefere
 WK_EXPORT bool WKPreferencesGetPageCacheSupportsPlugins(WKPreferencesRef preferences);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef preferences, bool enabled);
-WK_EXPORT bool WKPreferencesGetPaginateDuringLayoutEnabled(WKPreferencesRef preferences);
-
-// Defaults to false.
 WK_EXPORT void WKPreferencesSetDOMPasteAllowed(WKPreferencesRef preferences, bool enabled);
 WK_EXPORT bool WKPreferencesGetDOMPasteAllowed(WKPreferencesRef preferences);
 
@@ -559,6 +555,9 @@ WK_EXPORT void WKPreferencesSetSubpixelCSSOMElementMetricsEnabled(WKPreferencesR
 WK_EXPORT bool WKPreferencesGetSubpixelCSSOMElementMetricsEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetSubpixelAntialiasedLayerTextEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetPaginateDuringLayoutEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
+
 
 #ifdef __cplusplus
 }

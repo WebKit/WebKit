@@ -174,6 +174,7 @@ namespace JSC { namespace B3 {
         return MACRO(PatchpointValue); \
     case VectorExtractLane: \
     case VectorReplaceLane: \
+    case VectorDupElement: \
     case VectorEqual: \
     case VectorNotEqual: \
     case VectorLessThan: \

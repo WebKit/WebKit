@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include "GPUExternalTextureDescriptor.h"
 #include "GPUPipelineLayout.h"
 #include "GPUPipelineLayoutDescriptor.h"
+#include "GPUPresentationContext.h"
 #include "GPUQuerySet.h"
 #include "GPUQuerySetDescriptor.h"
 #include "GPURenderBundleEncoder.h"
@@ -53,10 +54,6 @@
 #include "GPUShaderModuleDescriptor.h"
 #include "GPUSupportedFeatures.h"
 #include "GPUSupportedLimits.h"
-#include "GPUSurface.h"
-#include "GPUSurfaceDescriptor.h"
-#include "GPUSwapChain.h"
-#include "GPUSwapChainDescriptor.h"
 #include "GPUTexture.h"
 #include "GPUTextureDescriptor.h"
 #include "JSDOMPromiseDeferred.h"
@@ -121,19 +118,9 @@ Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDesc
     return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()));
 }
 
-Ref<GPUTexture> GPUDevice::createSurfaceTexture(const GPUTextureDescriptor& textureDescriptor, const GPUSurface& surface)
+Ref<GPUTexture> GPUDevice::createSurfaceTexture(const GPUTextureDescriptor& textureDescriptor, const GPUPresentationContext& presentationContext)
 {
-    return GPUTexture::create(m_backing->createSurfaceTexture(textureDescriptor.convertToBacking(), surface.backing()));
-}
-
-Ref<GPUSurface> GPUDevice::createSurface(const GPUSurfaceDescriptor& surfaceDescriptor)
-{
-    return GPUSurface::create(m_backing->createSurface(surfaceDescriptor.convertToBacking()));
-}
-
-Ref<GPUSwapChain> GPUDevice::createSwapChain(const GPUSurface& surface, const GPUSwapChainDescriptor& swapChainDescriptor)
-{
-    return GPUSwapChain::create(m_backing->createSwapChain(surface.backing(), swapChainDescriptor.convertToBacking()));
+    return GPUTexture::create(m_backing->createSurfaceTexture(textureDescriptor.convertToBacking(), presentationContext.backing()));
 }
 
 static PAL::WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)

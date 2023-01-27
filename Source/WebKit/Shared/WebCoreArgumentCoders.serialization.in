@@ -1620,6 +1620,12 @@ struct WebCore::DataListSuggestionInformation {
 };
 #endif
 
+struct WebCore::SecurityOriginData {
+    [Validator='!protocol->isHashTableDeletedValue()'] String protocol;
+    String host;
+    std::optional<uint16_t> port;
+};
+
 struct WebCore::ClientOrigin {
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData clientOrigin;
@@ -2543,6 +2549,8 @@ struct WebCore::GamepadEffectParameters {
     double startDelay;
     double strongMagnitude;
     double weakMagnitude;
+    double leftTrigger;
+    double rightTrigger;
 };
 
 header: <WebCore/GamepadHapticEffectType.h>
@@ -2704,6 +2712,7 @@ struct WebCore::SameSiteInfo {
     WebCore::SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
+    Markable<WebCore::OpaqueOriginIdentifier, WebCore::OpaqueOriginIdentifier::MarkableTraits> m_opaqueOriginIdentifier;
     bool m_universalAccess;
     bool m_domainWasSetInDOM;
     bool m_canLoadLocalResources;

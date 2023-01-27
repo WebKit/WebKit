@@ -41,6 +41,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/PlatformDisplay.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
 #if PLATFORM(GTK)
@@ -55,14 +56,6 @@ public:
     explicit UIClient(WebKitWebView* webView)
         : m_webView(webView)
     {
-    }
-
-    ~UIClient()
-    {
-#if ENABLE(POINTER_LOCK)
-        if (m_pointerLockPermissionRequest)
-            g_object_remove_weak_pointer(G_OBJECT(m_pointerLockPermissionRequest), reinterpret_cast<void**>(&m_pointerLockPermissionRequest));
-#endif
     }
 
 private:
@@ -363,16 +356,14 @@ private:
     {
         GRefPtr<WebKitPointerLockPermissionRequest> permissionRequest = adoptGRef(webkitPointerLockPermissionRequestCreate(m_webView));
         RELEASE_ASSERT(!m_pointerLockPermissionRequest);
-        m_pointerLockPermissionRequest = permissionRequest.get();
-        g_object_add_weak_pointer(G_OBJECT(m_pointerLockPermissionRequest), reinterpret_cast<void**>(&m_pointerLockPermissionRequest));
+        m_pointerLockPermissionRequest.reset(permissionRequest.get());
         webkitWebViewMakePermissionRequest(m_webView, WEBKIT_PERMISSION_REQUEST(permissionRequest.get()));
     }
 
     void didLosePointerLock(WebPageProxy*) final
     {
         if (m_pointerLockPermissionRequest) {
-            webkitPointerLockPermissionRequestDidLosePointerLock(m_pointerLockPermissionRequest);
-            g_object_remove_weak_pointer(G_OBJECT(m_pointerLockPermissionRequest), reinterpret_cast<void**>(&m_pointerLockPermissionRequest));
+            webkitPointerLockPermissionRequestDidLosePointerLock(m_pointerLockPermissionRequest.get());
             m_pointerLockPermissionRequest = nullptr;
         }
         webkitWebViewDidLosePointerLock(m_webView);
@@ -388,7 +379,7 @@ private:
 
     WebKitWebView* m_webView;
 #if ENABLE(POINTER_LOCK)
-    WebKitPointerLockPermissionRequest* m_pointerLockPermissionRequest { nullptr };
+    GWeakPtr<WebKitPointerLockPermissionRequest> m_pointerLockPermissionRequest { nullptr };
 #endif
 };
 

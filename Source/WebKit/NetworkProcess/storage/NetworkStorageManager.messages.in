@@ -27,11 +27,11 @@
     Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted)
     Persist(struct WebCore::ClientOrigin origin) -> (bool persisted)
     Estimate(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::StorageEstimate> result);
-    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection
+    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
     CloseHandle(WebCore::FileSystemHandleIdentifier identifier)
     IsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (bool result)
-    GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection
-    GetDirectoryHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection
+    GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
+    GetDirectoryHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result)
     RemoveEntry(WebCore::FileSystemHandleIdentifier identifier, String name, bool deleteRecursively) -> (std::optional<WebKit::FileSystemStorageError> result)
     Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
     Move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, String newName) -> (std::optional<WebKit::FileSystemStorageError> result)
@@ -39,20 +39,20 @@
     CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>, WebKit::FileSystemStorageError> result)
     CloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> ()
     GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
-    GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result) WantsConnection
+    GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result)
 
-    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) WantsConnection
-    ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous WantsConnection
-    CancelConnectToStorageArea(WebCore::StorageType type, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
-    DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier) WantsConnection
+    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier)
+    ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous
+    CancelConnectToStorageArea(WebCore::StorageType type, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin)
+    DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier)
     CloneSessionStorageNamespace(WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID)
-    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool hasError, HashMap<String, String> allItems) WantsConnection
-    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> () WantsConnection
-    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> () WantsConnection
+    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool hasError, HashMap<String, String> allItems)
+    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> ()
+    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> ()
 
-    OpenDatabase(WebCore::IDBRequestData requestData) WantsConnection
+    OpenDatabase(WebCore::IDBRequestData requestData)
     OpenDBRequestCancelled(WebCore::IDBRequestData requestData)
-    DeleteDatabase(WebCore::IDBRequestData requestData) WantsConnection
+    DeleteDatabase(WebCore::IDBRequestData requestData)
     EstablishTransaction(uint64_t databaseConnectionIdentifier, WebCore::IDBTransactionInfo info)
     DatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
     DatabaseConnectionClosed(uint64_t databaseConnectionIdentifier)
@@ -68,20 +68,20 @@
     CreateIndex(WebCore::IDBRequestData requestData, WebCore::IDBIndexInfo info)
     DeleteIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, String indexName)
     RenameIndex(WebCore::IDBRequestData requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, String newName)
-    PutOrAdd(WebCore::IDBRequestData requestData, WebCore::IDBKeyData key, WebCore::IDBValue value, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode) WantsConnection
+    PutOrAdd(WebCore::IDBRequestData requestData, WebCore::IDBKeyData key, WebCore::IDBValue value, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
     GetRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBGetRecordData getRecordData)
     GetAllRecords(WebCore::IDBRequestData requestData, struct WebCore::IDBGetAllRecordsData getAllRecordsData)
     GetCount(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range)
     DeleteRecord(WebCore::IDBRequestData requestData, struct WebCore::IDBKeyRangeData range)
     OpenCursor(WebCore::IDBRequestData requestData, WebCore::IDBCursorInfo info)
     IterateCursor(WebCore::IDBRequestData requestData, struct WebCore::IDBIterateCursorData data)
-    GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
+    GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin)
 
     CacheStorageOpenCache(struct WebCore::ClientOrigin origin, String cacheName) -> (WebCore::DOMCacheEngine::CacheIdentifierOrError result)
     CacheStorageRemoveCache(WebCore::DOMCacheIdentifier cacheIdentifier) -> (WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError result)
     CacheStorageAllCaches(struct WebCore::ClientOrigin origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result)
-    CacheStorageReference(WebCore::DOMCacheIdentifier cacheIdentifier) WantsConnection
-    CacheStorageDereference(WebCore::DOMCacheIdentifier cacheIdentifier) WantsConnection
+    CacheStorageReference(WebCore::DOMCacheIdentifier cacheIdentifier)
+    CacheStorageDereference(WebCore::DOMCacheIdentifier cacheIdentifier)
     CacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::RecordsOrError result)
     CacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
     CacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)

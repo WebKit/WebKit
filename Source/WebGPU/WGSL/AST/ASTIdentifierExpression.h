@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include "ASTStructureAccess.h"
 
 #include <wtf/text/WTFString.h>
 
@@ -46,6 +47,12 @@ public:
 
 private:
     String m_identifier;
+
+protected:
+    // FIXME: This is necessary because we replace an IdentifierExpression with
+    // a StructureAccess for globals, so the sizes must be compatible. We need to
+    // introduce an IdentityExpression and remove this hack
+    uint8_t m_padding[sizeof(StructureAccess) - sizeof(Expression) - sizeof(String)];
 };
 
 } // namespace WGSL::AST

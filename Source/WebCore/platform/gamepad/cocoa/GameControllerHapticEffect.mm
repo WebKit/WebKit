@@ -30,6 +30,7 @@
 
 #import "GameControllerHapticEngines.h"
 #import "GamepadEffectParameters.h"
+#import "GamepadHapticEffectType.h"
 #import "Logging.h"
 #import <cmath>
 
@@ -45,7 +46,7 @@ static double magnitudeToIntensity(double magnitude)
     return std::sqrt(std::clamp<double>(magnitude, 0, 1));
 }
 
-std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, const GamepadEffectParameters& parameters, CompletionHandler<void(bool)>&& completionHandler)
+std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, GamepadHapticEffectType type, const GamepadEffectParameters& parameters)
 {
     auto createPlayer = [&](CHHapticEngine *engine, double magnitude) -> RetainPtr<id> {
         NSDictionary* hapticDict = @{
@@ -71,20 +72,32 @@ std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(G
 
         return retainPtr([engine createPlayerWithPattern:pattern.get() error:&error]);
     };
-    auto strongPlayer = createPlayer(engines.strongEngine(), parameters.strongMagnitude);
-    auto weakPlayer = createPlayer(engines.weakEngine(), parameters.weakMagnitude);
-    if (!strongPlayer || !weakPlayer) {
+
+    RetainPtr<id> leftPlayer;
+    RetainPtr<id> rightPlayer;
+    switch (type) {
+    case GamepadHapticEffectType::DualRumble: {
+        leftPlayer = createPlayer(engines.leftHandleEngine(), parameters.strongMagnitude);
+        rightPlayer = createPlayer(engines.rightHandleEngine(), parameters.weakMagnitude);
+        break;
+        }
+    case GamepadHapticEffectType::TriggerRumble: {
+        leftPlayer = createPlayer(engines.leftTriggerEngine(), parameters.leftTrigger);
+        rightPlayer = createPlayer(engines.rightTriggerEngine(), parameters.rightTrigger);
+        break;
+        }
+    }
+
+    if (!leftPlayer || !rightPlayer) {
         RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEffect: Failed to create the haptic effect players");
-        completionHandler(false);
         return nullptr;
     }
-    return std::unique_ptr<GameControllerHapticEffect>(new GameControllerHapticEffect(WTFMove(strongPlayer), WTFMove(weakPlayer), WTFMove(completionHandler)));
+    return std::unique_ptr<GameControllerHapticEffect>(new GameControllerHapticEffect(WTFMove(leftPlayer), WTFMove(rightPlayer)));
 }
 
-GameControllerHapticEffect::GameControllerHapticEffect(RetainPtr<id>&& strongPlayer, RetainPtr<id>&& weakPlayer, CompletionHandler<void(bool)>&& completionHandler)
-    : m_strongPlayer(WTFMove(strongPlayer))
-    , m_weakPlayer(WTFMove(weakPlayer))
-    , m_completionHandler(WTFMove(completionHandler))
+GameControllerHapticEffect::GameControllerHapticEffect(RetainPtr<id>&& leftPlayer, RetainPtr<id>&& rightPlayer)
+    : m_leftPlayer(WTFMove(leftPlayer))
+    , m_rightPlayer(WTFMove(rightPlayer))
 {
 }
 
@@ -94,40 +107,44 @@ GameControllerHapticEffect::~GameControllerHapticEffect()
         m_completionHandler(false);
 }
 
-bool GameControllerHapticEffect::start()
+void GameControllerHapticEffect::start(CompletionHandler<void(bool)>&& completionHandler)
 {
+    ASSERT(!m_completionHandler);
+    m_completionHandler = WTFMove(completionHandler);
+
     NSError *error;
-    if (m_strongPlayer && ![m_strongPlayer startAtTime:0 error:&error]) {
+    if (m_leftPlayer && ![m_leftPlayer startAtTime:0 error:&error]) {
         RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEffect::start: Failed to start the strong player");
-        m_strongPlayer = nullptr;
+        m_leftPlayer = nullptr;
     }
-    if (m_weakPlayer && ![m_weakPlayer startAtTime:0 error:&error]) {
+    if (m_rightPlayer && ![m_rightPlayer startAtTime:0 error:&error]) {
         RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEffect::start: Failed to start the weak player");
-        m_weakPlayer = nullptr;
+        m_rightPlayer = nullptr;
     }
-    return m_strongPlayer || m_weakPlayer;
+    if (!m_leftPlayer && !m_rightPlayer)
+        m_completionHandler(false);
 }
 
 void GameControllerHapticEffect::stop()
 {
     NSError *error;
-    if (auto player = std::exchange(m_strongPlayer, nullptr))
+    if (auto player = std::exchange(m_leftPlayer, nullptr))
         [player stopAtTime:0.0 error:&error];
-    if (auto player = std::exchange(m_weakPlayer, nullptr))
+    if (auto player = std::exchange(m_rightPlayer, nullptr))
         [player stopAtTime:0.0 error:&error];
 }
 
-void GameControllerHapticEffect::strongEffectFinishedPlaying()
+void GameControllerHapticEffect::leftEffectFinishedPlaying()
 {
-    m_strongPlayer = nullptr;
-    if (!m_weakPlayer && m_completionHandler)
+    m_leftPlayer = nullptr;
+    if (!m_rightPlayer && m_completionHandler)
         m_completionHandler(true);
 }
 
-void GameControllerHapticEffect::weakEffectFinishedPlaying()
+void GameControllerHapticEffect::rightEffectFinishedPlaying()
 {
-    m_weakPlayer = nullptr;
-    if (!m_strongPlayer && m_completionHandler)
+    m_rightPlayer = nullptr;
+    if (!m_leftPlayer && m_completionHandler)
         m_completionHandler(true);
 }
 

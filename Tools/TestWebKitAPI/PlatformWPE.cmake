@@ -16,6 +16,7 @@ list(APPEND TestWTF_SOURCES
 
     Tests/WTF/glib/GRefPtr.cpp
     Tests/WTF/glib/GUniquePtr.cpp
+    Tests/WTF/glib/GWeakPtr.cpp
     Tests/WTF/glib/WorkQueueGLib.cpp
 )
 

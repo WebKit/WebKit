@@ -4589,6 +4589,12 @@ void Document::updateIsPlayingMedia()
     state.add(MediaStreamTrack::captureState(*this));
     if (m_activeSpeechRecognition)
         state.add(MediaProducerMediaState::HasActiveAudioCaptureDevice);
+
+    m_activeMediaElementsWithMediaStreamCount = 0;
+    forEachMediaElement([&](auto& element) {
+        if (element.hasMediaStreamSrcObject() && element.isPlaying())
+            ++m_activeMediaElementsWithMediaStreamCount;
+    });
 #endif
 
     if (m_userHasInteractedWithMediaElement)

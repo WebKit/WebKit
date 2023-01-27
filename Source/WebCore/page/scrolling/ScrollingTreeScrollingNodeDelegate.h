@@ -51,10 +51,6 @@ public:
 
     virtual FloatPoint adjustedScrollPosition(const FloatPoint& scrollPosition) const { return scrollPosition; }
 
-#if PLATFORM(COCOA)
-    virtual void getScrollbarLayersForStateNode(const ScrollingStateScrollingNode&, CALayer**, CALayer**) { }
-#endif
-
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;
     WEBCORE_EXPORT FloatPoint lastCommittedScrollPosition() const;

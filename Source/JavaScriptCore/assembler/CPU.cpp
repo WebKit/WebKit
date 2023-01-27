@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CPU.h"
 
-#if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
+#if (CPU(X86) || CPU(X86_64) || CPU(ARM64E)) && OS(DARWIN)
 #include <mutex>
 #include <sys/sysctl.h>
 #endif
@@ -106,6 +106,24 @@ bool isARM64_LSE()
 #endif
 }
 #endif
+
+#if CPU(ARM64E)
+bool isARM64E_FPAC()
+{
+#if OS(DARWIN)
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        uint32_t val = 0;
+        size_t valSize = sizeof(val);
+        int rc = sysctlbyname("hw.optional.arm.FEAT_FPAC", &val, &valSize, nullptr, 0);
+        g_jscConfig.canUseFPAC = rc < 0 ? false : !!val;
+    });
+    return g_jscConfig.canUseFPAC;
+#else
+    return false;
+#endif
+}
+#endif // CPU(ARM64E)
 
 #if CPU(X86_64)
 bool isX86_64_AVX()

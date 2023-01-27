@@ -77,6 +77,7 @@ class CurlProxySettings;
 class NetworkingContext;
 class ResourceRequest;
 
+struct ClientOrigin;
 struct Cookie;
 struct CookieRequestHeaderFieldProxy;
 struct SameSiteInfo;
@@ -164,6 +165,7 @@ public:
     WEBCORE_EXPORT void deleteCookie(const URL&, const String&, CompletionHandler<void()>&&) const;
     WEBCORE_EXPORT void deleteAllCookies(CompletionHandler<void()>&&);
     WEBCORE_EXPORT void deleteAllCookiesModifiedSince(WallTime, CompletionHandler<void()>&&);
+    WEBCORE_EXPORT void deleteCookies(const ClientOrigin&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void deleteCookiesForHostnames(const Vector<String>& cookieHostNames, IncludeHttpOnlyCookies, ScriptWrittenCookiesOnly, CompletionHandler<void()>&&);
     WEBCORE_EXPORT Vector<Cookie> getAllCookies();
@@ -243,6 +245,7 @@ private:
     RetainPtr<NSArray> cookiesForURL(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking) const;
     void setHTTPCookiesForURL(CFHTTPCookieStorageRef, NSArray *cookies, NSURL *, NSURL *mainDocumentURL, const SameSiteInfo&) const;
     void deleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *, CompletionHandler<void()>&&) const;
+    void deleteCookiesMatching(const Function<bool(NSHTTPCookie *)>& matches, CompletionHandler<void()>&&);
 #endif
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)

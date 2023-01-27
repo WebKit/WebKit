@@ -55,7 +55,7 @@ void TestWithSuperclass::didReceiveMessage(IPC::Connection& connection, IPC::Dec
     if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name())
         return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithMultipleArguments);
     if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name())
-        return IPC::handleMessageAsyncWantsConnection<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
+        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
 #endif
     WebPageBase::didReceiveMessage(connection, decoder);
 }

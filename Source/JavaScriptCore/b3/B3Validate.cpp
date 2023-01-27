@@ -462,6 +462,12 @@ public:
                 VALIDATE(value->child(0)->type() == V128, ("At ", *value));
                 VALIDATE(value->child(1)->type() == toB3Type(Wasm::simdScalarType(value->asSIMDValue()->simdLane())), ("At ", *value));
                 break;
+            case VectorDupElement:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->child(0)->type() == V128, ("At ", *value));
+                VALIDATE(value->type() == V128, ("At ", *value));
+                break;
             case VectorNot:
             case VectorAbs:
             case VectorNeg:

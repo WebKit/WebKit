@@ -81,10 +81,10 @@ void CacheStorageCache::getSize(CompletionHandler<void(uint64_t)>&& callback)
         return callback(size);
     }
 
-    m_store->readAllRecords([callback = WTFMove(callback)](auto&& records) mutable {
+    m_store->readAllRecordInfos([callback = WTFMove(callback)](auto&& recordInfos) mutable {
         uint64_t size = 0;
-        for (auto& record : records)
-            size += record.info.size;
+        for (auto& recordInfo : recordInfos)
+            size += recordInfo.size;
 
         callback(size);
     });
@@ -95,19 +95,19 @@ void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& 
     if (m_isInitialized)
         return callback(WebCore::DOMCacheEngine::CacheIdentifierOperationResult { m_identifier, false });
 
-    m_store->readAllRecords([this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto records) mutable {
+    m_store->readAllRecordInfos([this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto recordInfos) mutable {
         if (!weakThis)
             return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
-        std::sort(records.begin(), records.end(), [](auto& a, auto& b) {
-            return a.info.insertionTime < b.info.insertionTime;
+        std::sort(recordInfos.begin(), recordInfos.end(), [](auto& a, auto& b) {
+            return a.insertionTime < b.insertionTime;
         });
 
-        for (auto& record : records) {
-            record.info.identifier = nextRecordIdentifier();
-            m_records.ensure(computeKeyURL(record.info.url), [] {
+        for (auto& recordInfo : recordInfos) {
+            recordInfo.identifier = nextRecordIdentifier();
+            m_records.ensure(computeKeyURL(recordInfo.url), [] {
                 return Vector<CacheStorageRecordInformation> { };
-            }).iterator->value.append(record.info);
+            }).iterator->value.append(recordInfo);
         }
 
         m_isInitialized = true;

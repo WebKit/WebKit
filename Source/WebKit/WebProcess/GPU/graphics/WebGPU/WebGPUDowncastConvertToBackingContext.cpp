@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "RemoteExternalTextureProxy.h"
 #include "RemoteGPUProxy.h"
 #include "RemotePipelineLayoutProxy.h"
+#include "RemotePresentationContextProxy.h"
 #include "RemoteQuerySetProxy.h"
 #include "RemoteQueueProxy.h"
 #include "RemoteRenderBundleEncoderProxy.h"
@@ -48,8 +49,6 @@
 #include "RemoteRenderPipelineProxy.h"
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
-#include "RemoteSurfaceProxy.h"
-#include "RemoteSwapChainProxy.h"
 #include "RemoteTextureProxy.h"
 #include "RemoteTextureViewProxy.h"
 
@@ -115,6 +114,11 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::We
     return static_cast<const RemotePipelineLayoutProxy&>(pipelineLayout).backing();
 }
 
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::PresentationContext& presentationContext)
+{
+    return static_cast<const RemotePresentationContextProxy&>(presentationContext).backing();
+}
+
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::QuerySet& querySet)
 {
     return static_cast<const RemoteQuerySetProxy&>(querySet).backing();
@@ -153,16 +157,6 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::We
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ShaderModule& shaderModule)
 {
     return static_cast<const RemoteShaderModuleProxy&>(shaderModule).backing();
-}
-
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Surface& surface)
-{
-    return static_cast<const RemoteSurfaceProxy&>(surface).backing();
-}
-
-WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::SwapChain& swapChain)
-{
-    return static_cast<const RemoteSwapChainProxy&>(swapChain).backing();
 }
 
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::Texture& texture)

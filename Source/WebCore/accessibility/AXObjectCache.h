@@ -183,8 +183,12 @@ public:
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
     void handleRoleChanged(AccessibilityObject*);
-    // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
-    void updateCacheAfterNodeIsAttached(Node*);
+    // Called when a RenderObject is created for an Element. Depending on the
+    // presence of a RenderObject, we may have instatiated an AXRenderObject or
+    // an AXNodeObject. This occurs when an Element with no renderer is
+    // re-parented into a subtree that does have a renderer.
+    void onRendererCreated(Element&);
+
     void updateLoadingProgress(double);
     void loadingFinished() { updateLoadingProgress(1); }
     double loadingProgress() const { return m_loadingProgress; }
@@ -196,6 +200,7 @@ public:
         AtomString newValue;
     };
     using DeferredCollection = std::variant<HashMap<Element*, String>
+        , HashSet<AXID>
         , ListHashSet<Node*>
         , ListHashSet<RefPtr<AccessibilityObject>>
         , Vector<AttributeChange>
@@ -583,6 +588,7 @@ private:
     Timer m_performCacheUpdateTimer;
 
     AXTextStateChangeIntent m_textSelectionIntent;
+    HashSet<AXID> m_deferredRemovedObjects;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
     WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
     ListHashSet<Node*> m_deferredTextChangedList;
@@ -701,7 +707,7 @@ inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextEditType
 inline void AXObjectCache::postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::handleTextChanged(AccessibilityObject*) { }
-inline void AXObjectCache::updateCacheAfterNodeIsAttached(Node*) { }
+inline void AXObjectCache::onRendererCreated(element&) { }
 inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }
 inline std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }

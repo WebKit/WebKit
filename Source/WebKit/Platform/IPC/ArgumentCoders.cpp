@@ -41,11 +41,11 @@ void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
 {
     // Special case the null string.
     if (string.isNull()) {
-        encoder << std::numeric_limits<uint32_t>::max();
+        encoder << std::numeric_limits<size_t>::max();
         return;
     }
 
-    encoder << static_cast<uint32_t>(string.length());
+    encoder << static_cast<size_t>(string.length());
     encoder.encodeSpan(string.bytes());
 }
 template void ArgumentCoder<CString>::encode<Encoder>(Encoder&, const CString&);
@@ -53,11 +53,11 @@ template void ArgumentCoder<CString>::encode<Encoder>(Encoder&, const CString&);
 template<typename Decoder>
 std::optional<CString> ArgumentCoder<CString>::decode(Decoder& decoder)
 {
-    auto length = decoder.template decode<uint32_t>();
+    auto length = decoder.template decode<size_t>();
     if (!length)
         return std::nullopt;
 
-    if (*length == std::numeric_limits<uint32_t>::max()) {
+    if (*length == std::numeric_limits<size_t>::max()) {
         // This is the null string.
         return CString();
     }
@@ -80,11 +80,11 @@ void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
 {
     // Special case the null string.
     if (string.isNull()) {
-        encoder << std::numeric_limits<uint32_t>::max();
+        encoder << std::numeric_limits<unsigned>::max();
         return;
     }
 
-    uint32_t length = string.length();
+    unsigned length = string.length();
     bool is8Bit = string.is8Bit();
 
     encoder << length << is8Bit;
@@ -100,7 +100,7 @@ template
 void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const String&);
 
 template<typename CharacterType, typename Decoder>
-static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
+static inline std::optional<String> decodeStringText(Decoder& decoder, unsigned length)
 {
     auto data = decoder.template decodeSpan<CharacterType>(length);
     if (!data.data())
@@ -111,11 +111,11 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t 
 template<typename Decoder>
 WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
-    auto length = decoder.template decode<uint32_t>();
+    auto length = decoder.template decode<unsigned>();
     if (!length)
         return std::nullopt;
     
-    if (*length == std::numeric_limits<uint32_t>::max()) {
+    if (*length == std::numeric_limits<unsigned>::max()) {
         // This is the null string.
         return String();
     }
@@ -140,7 +140,7 @@ void ArgumentCoder<StringView>::encode(Encoder& encoder, StringView string)
         return;
     }
 
-    uint32_t length = string.length();
+    unsigned length = string.length();
     bool is8Bit = string.is8Bit();
 
     encoder << length << is8Bit;

@@ -44,6 +44,7 @@
 #include "WebGPUOutOfMemoryError.h"
 #include "WebGPUPipelineLayoutDescriptor.h"
 #include "WebGPUPipelineLayoutImpl.h"
+#include "WebGPUPresentationContextImpl.h"
 #include "WebGPUQuerySetDescriptor.h"
 #include "WebGPUQuerySetImpl.h"
 #include "WebGPURenderBundleEncoderDescriptor.h"
@@ -54,10 +55,6 @@
 #include "WebGPUSamplerImpl.h"
 #include "WebGPUShaderModuleDescriptor.h"
 #include "WebGPUShaderModuleImpl.h"
-#include "WebGPUSurfaceDescriptor.h"
-#include "WebGPUSurfaceImpl.h"
-#include "WebGPUSwapChainDescriptor.h"
-#include "WebGPUSwapChainImpl.h"
 #include "WebGPUTextureDescriptor.h"
 #include "WebGPUTextureImpl.h"
 #include "WebGPUTextureViewImpl.h"
@@ -142,9 +139,9 @@ Ref<Texture> DeviceImpl::createTexture(const TextureDescriptor& descriptor)
     return TextureImpl::create(wgpuDeviceCreateTexture(backing(), &backingDescriptor), descriptor.format, descriptor.dimension, m_convertToBackingContext);
 }
 
-Ref<Texture> DeviceImpl::createSurfaceTexture(const TextureDescriptor& descriptor, const Surface& surface)
+Ref<Texture> DeviceImpl::createSurfaceTexture(const TextureDescriptor& descriptor, const PresentationContext& presentationContext)
 {
-    IOSurfaceRef ioSurface = static_cast<const SurfaceImpl&>(surface).drawingBuffer();
+    IOSurfaceRef ioSurface = static_cast<const PresentationContextImpl&>(presentationContext).drawingBuffer();
     ASSERT(ioSurface);
     auto backingTextureFormats = descriptor.viewFormats.map([&] (TextureFormat textureFormat) {
         return m_convertToBackingContext->convertToBacking(textureFormat);
@@ -162,40 +159,6 @@ Ref<Texture> DeviceImpl::createSurfaceTexture(const TextureDescriptor& descripto
     backingViewFormats.chain.next = reinterpret_cast<WGPUChainedStruct*>(&ioSurfaceDescriptor);
     WGPUTextureDescriptor backingDescriptor = createBackingDescriptor(backingViewFormats, descriptor, m_convertToBackingContext);
     return TextureImpl::create(wgpuDeviceCreateTexture(backing(), &backingDescriptor), descriptor.format, descriptor.dimension, m_convertToBackingContext);
-}
-
-Ref<Surface> DeviceImpl::createSurface(const SurfaceDescriptor& descriptor)
-{
-    auto label = descriptor.label.utf8();
-
-    WGPUSurfaceDescriptorCocoaCustomSurface cocoaSurface {
-        { nullptr, static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking) },
-    };
-
-    WGPUSurfaceDescriptor surfaceDescriptor {
-        &cocoaSurface.chain,
-        label.data()
-    };
-
-    return SurfaceImpl::create(wgpuInstanceCreateSurface(nullptr, &surfaceDescriptor), m_convertToBackingContext);
-}
-
-Ref<SwapChain> DeviceImpl::createSwapChain(const Surface& surface, const SwapChainDescriptor& descriptor)
-{
-    auto label = descriptor.label.utf8();
-
-    WGPUSwapChainDescriptor backingDescriptor {
-        nullptr,
-        label.data(),
-        m_convertToBackingContext->convertTextureUsageFlagsToBacking(descriptor.usage),
-        m_convertToBackingContext->convertToBacking(descriptor.format),
-        descriptor.width,
-        descriptor.height,
-        WGPUPresentMode_Immediate,
-    };
-
-    WGPUSurface wgpuSurface = m_convertToBackingContext->convertToBacking(surface);
-    return SwapChainImpl::create(wgpuSurface, wgpuDeviceCreateSwapChain(backing(), wgpuSurface, &backingDescriptor), m_convertToBackingContext);
 }
 
 Ref<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)

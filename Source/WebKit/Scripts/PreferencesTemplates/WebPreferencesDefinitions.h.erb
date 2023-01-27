@@ -70,7 +70,7 @@
 
 
 #define FOR_EACH_DEFAULT_OVERRIDABLE_WEBKIT_PREFERENCE(macro) \
-<%- for @pref in @exposedPreferences.select(&:defaultOverridable?) do -%>
+<%- for @pref in @exposedPreferences.select(&:defaultsOverridable?) do -%>
     macro(<%= @pref.name %>, <%= @pref.nameLower %>, <%= @pref.typeUpper %>, <%= @pref.type %>, DEFAULT_VALUE_FOR_<%= @pref.name %>, <%= @pref.humanReadableName %>, <%= @pref.humanReadableDescription %>) \
 <%- end -%>
     \

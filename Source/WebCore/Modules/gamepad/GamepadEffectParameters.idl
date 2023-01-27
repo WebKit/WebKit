@@ -31,4 +31,9 @@
     double startDelay = 0.0;
     double strongMagnitude = 0.0;
     double weakMagnitude = 0.0;
+
+    // Not in the specification but supported by Blink:
+    // https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/GamepadHapticsActuatorTriggerRumble/explainer.md
+    double leftTrigger = 0.0;
+    double rightTrigger = 0.0;
 };

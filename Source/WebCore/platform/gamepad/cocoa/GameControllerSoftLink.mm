@@ -56,6 +56,8 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCControllerDidD
 
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCHapticsLocalityLeftHandle, NSString *)
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCHapticsLocalityRightHandle, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCHapticsLocalityLeftTrigger, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE(WebCore, GameController, GCHapticsLocalityRightTrigger, NSString *)
 
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, GameController, ControllerClassForService, Class, (IOHIDServiceClientRef service), (service))

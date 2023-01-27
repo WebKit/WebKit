@@ -4176,8 +4176,10 @@ void WebPageProxy::accessibilitySettingsDidChange()
     if (!hasRunningProcess())
         return;
 
+#if PLATFORM(COCOA)
     // Also update screen properties which encodes invert colors.
-    process().processPool().screenPropertiesStateChanged();
+    process().processPool().screenPropertiesChanged();
+#endif
     send(Messages::WebPage::AccessibilitySettingsDidChange());
 }
 

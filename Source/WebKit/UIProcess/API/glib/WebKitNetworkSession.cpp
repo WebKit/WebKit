@@ -88,8 +88,8 @@ struct _WebKitNetworkSessionPrivate {
     GRefPtr<WebKitCookieManager> cookieManager;
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
 
-    GUniquePtr<char> dataDirectory;
-    GUniquePtr<char> cacheDirectory;
+    CString dataDirectory;
+    CString cacheDirectory;
 
     HashSet<String> dnsPrefetchedHosts;
     PAL::HysteresisActivity dnsPrefetchHystereris;
@@ -116,10 +116,10 @@ static void webkitNetworkSessionSetProperty(GObject* object, guint propID, const
 
     switch (propID) {
     case PROP_DATA_DIRECTORY:
-        session->priv->dataDirectory.reset(g_value_dup_string(value));
+        session->priv->dataDirectory = g_value_get_string(value);
         break;
     case PROP_CACHE_DIRECTORY:
-        session->priv->cacheDirectory.reset(g_value_dup_string(value));
+        session->priv->cacheDirectory = g_value_get_string(value);
         break;
     case PROP_IS_EPHEMERAL:
         if (g_value_get_boolean(value))
@@ -135,8 +135,12 @@ static void webkitNetworkSessionConstructed(GObject* object)
     G_OBJECT_CLASS(webkit_network_session_parent_class)->constructed(object);
 
     WebKitNetworkSessionPrivate* priv = WEBKIT_NETWORK_SESSION(object)->priv;
-    if (!priv->websiteDataManager)
-        priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(WTFMove(priv->dataDirectory), WTFMove(priv->cacheDirectory)));
+    if (!priv->websiteDataManager) {
+        priv->websiteDataManager = adoptGRef(webkitWebsiteDataManagerCreate(
+            !priv->dataDirectory.isNull() ? WTFMove(priv->dataDirectory) : WebsiteDataStore::defaultBaseDataDirectory().utf8(),
+            !priv->cacheDirectory.isNull() ? WTFMove(priv->cacheDirectory) : WebsiteDataStore::defaultBaseCacheDirectory().utf8())
+        );
+    }
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()).setIgnoreTLSErrors(false);
@@ -251,8 +255,14 @@ WebKitNetworkSession* webkit_network_session_get_default()
  * @cache_directrory: (nullable): a base direfctory for caches, or %NULL
  *
  * Creates a new #WebKitNetworkSession with a persistent #WebKitWebsiteDataManager.
+ * The parameters @data_directory and @cache_directrory will be used as construct
+ * properties of the #WebKitWebsiteDataManager of the network session. Note that if
+ * %NULL is passed, the default directory will be passed to #WebKitWebsiteDataManager
+ * so that webkit_website_data_manager_get_base_data_directory() and
+ * webkit_website_data_manager_get_base_cache_directory() always return a value for
+ * non ephemeral sessions.
  *
- * It must be passed as construction parameter of a #WebKitWebView.
+ * It must be passed as construct parameter of a #WebKitWebView.
  *
  * Returns: (transfer full): the newly created #WebKitNetworkSession
  *

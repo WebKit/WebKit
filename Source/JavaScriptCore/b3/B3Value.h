@@ -461,6 +461,7 @@ protected:
         case VectorAnyTrue: 
         case VectorAllTrue:
         case VectorExtaddPairwise:
+        case VectorDupElement:
             return sizeof(Value*);
         case Add:
         case Sub:
@@ -681,6 +682,7 @@ private:
         case VectorAnyTrue: 
         case VectorAllTrue:
         case VectorExtaddPairwise:
+        case VectorDupElement:
             if (UNLIKELY(numArgs != 1))
                 badKind(kind, numArgs);
             return One;

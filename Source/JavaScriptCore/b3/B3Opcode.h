@@ -347,6 +347,7 @@ enum Opcode : uint8_t {
     // SIMD instructions
     VectorExtractLane,
     VectorReplaceLane,
+    VectorDupElement, // Currently only some architectures support this.
 
     VectorSplat,
 

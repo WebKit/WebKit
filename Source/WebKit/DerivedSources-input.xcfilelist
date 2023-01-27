@@ -52,6 +52,7 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteDevice.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteExternalTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteGPU.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemotePipelineLayout.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemotePresentationContext.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteQuerySet.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteQueue.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteRenderBundle.messages.in
@@ -82,6 +83,7 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteLegacyCDMSessionProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerManagerProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxy.messages.in
+$(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaResourceManager.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteMediaSourceProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteRemoteCommandListenerProxy.messages.in
@@ -89,7 +91,6 @@ $(PROJECT_DIR)/GPUProcess/media/RemoteSourceBufferProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteTextTrackProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoFrameObjectHeap.messages.in
 $(PROJECT_DIR)/GPUProcess/media/RemoteVideoTrackProxy.messages.in
-$(PROJECT_DIR)/GPUProcess/media/RemoteMediaPlayerProxyConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/ios/RemoteMediaSessionHelperProxy.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/LibWebRTCCodecsProxy.messages.in
@@ -234,6 +235,8 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUOrigin3D.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in
+$(PROJECT_DIR)/Shared/WebGPU/WebGPUPresentationConfiguration.serialization.in
+$(PROJECT_DIR)/Shared/WebGPU/WebGPUPresentationContextDescriptor.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUPrimitiveState.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUProgrammableStage.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUQuerySetDescriptor.serialization.in

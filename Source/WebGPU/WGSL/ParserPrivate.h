@@ -61,7 +61,7 @@ public:
     {
     }
 
-    Expected<AST::ShaderModule, Error> parseShader();
+    Expected<AST::ShaderModule, Error> parseShader(const String& source);
 
     // UniqueRef whenever it can return multiple types.
     Expected<UniqueRef<AST::Decl>, Error> parseGlobalDecl();

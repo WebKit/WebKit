@@ -47,6 +47,10 @@ static bool areEffectParametersValid(GamepadHapticEffectType effectType, const G
         if (parameters.weakMagnitude < 0 || parameters.strongMagnitude < 0 || parameters.weakMagnitude > 1 || parameters.strongMagnitude > 1)
             return false;
     }
+    if (effectType == GamepadHapticEffectType::TriggerRumble) {
+        if (parameters.leftTrigger < 0 || parameters.rightTrigger < 0 || parameters.leftTrigger > 1 || parameters.rightTrigger > 1)
+            return false;
+    }
     return true;
 }
 
@@ -70,6 +74,9 @@ GamepadHapticActuator::~GamepadHapticActuator() = default;
 
 bool GamepadHapticActuator::canPlayEffectType(EffectType effectType) const
 {
+    if (effectType == EffectType::TriggerRumble && (!document() || !document()->settings().gamepadTriggerRumbleEnabled()))
+        return false;
+
     return m_gamepad && m_gamepad->supportedEffectTypes().contains(effectType);
 }
 
@@ -85,7 +92,8 @@ void GamepadHapticActuator::playEffect(EffectType effectType, GamepadEffectParam
         promise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         return;
     }
-    if (auto playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr)) {
+    auto& currentEffectPromise = promiseForEffectType(effectType);
+    if (auto playingEffectPromise = std::exchange(currentEffectPromise, nullptr)) {
         queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = WTFMove(playingEffectPromise)] {
             playingEffectPromise->resolve<IDLEnumeration<Result>>(Result::Preempted);
         });
@@ -97,11 +105,12 @@ void GamepadHapticActuator::playEffect(EffectType effectType, GamepadEffectParam
 
     effectParameters.duration = std::min(effectParameters.duration, GamepadEffectParameters::maximumDuration.milliseconds());
 
-    m_playingEffectPromise = WTFMove(promise);
-    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [this, protectedThis = makePendingActivity(*this), playingEffectPromise = m_playingEffectPromise](bool success) mutable {
-        if (m_playingEffectPromise != playingEffectPromise)
+    currentEffectPromise = WTFMove(promise);
+    GamepadProvider::singleton().playEffect(m_gamepad->index(), m_gamepad->id(), effectType, effectParameters, [this, protectedThis = makePendingActivity(*this), playingEffectPromise = currentEffectPromise, effectType](bool success) mutable {
+        auto& currentEffectPromise = promiseForEffectType(effectType);
+        if (playingEffectPromise != currentEffectPromise)
             return; // Was already pre-empted.
-        queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr), success] {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = std::exchange(currentEffectPromise, nullptr), success] {
             playingEffectPromise->resolve<IDLEnumeration<Result>>(success ? Result::Complete : Result::Preempted);
         });
     });
@@ -123,16 +132,26 @@ void GamepadHapticActuator::reset(Ref<DeferredPromise>&& promise)
 
 void GamepadHapticActuator::stopEffects(CompletionHandler<void()>&& completionHandler)
 {
-    if (!m_playingEffectPromise)
+    if (!m_triggerRumbleEffectPromise && !m_dualRumbleEffectPromise)
         return completionHandler();
 
-    queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [playingEffectPromise = std::exchange(m_playingEffectPromise, nullptr)] {
-        playingEffectPromise->resolve<IDLEnumeration<Result>>(Result::Preempted);
+    auto dualRumbleEffectPromise = std::exchange(m_dualRumbleEffectPromise, nullptr);
+    auto triggerRumbleEffectPromise = std::exchange(m_triggerRumbleEffectPromise, nullptr);
+    queueTaskKeepingObjectAlive(*this, TaskSource::Gamepad, [dualRumbleEffectPromise = WTFMove(dualRumbleEffectPromise), triggerRumbleEffectPromise = WTFMove(triggerRumbleEffectPromise)] {
+        if (dualRumbleEffectPromise)
+            dualRumbleEffectPromise->resolve<IDLEnumeration<Result>>(Result::Preempted);
+        if (triggerRumbleEffectPromise)
+            triggerRumbleEffectPromise->resolve<IDLEnumeration<Result>>(Result::Preempted);
     });
     GamepadProvider::singleton().stopEffects(m_gamepad->index(), m_gamepad->id(), WTFMove(completionHandler));
 }
 
 Document* GamepadHapticActuator::document()
+{
+    return downcast<Document>(scriptExecutionContext());
+}
+
+const Document* GamepadHapticActuator::document() const
 {
     return downcast<Document>(scriptExecutionContext());
 }
@@ -158,6 +177,17 @@ void GamepadHapticActuator::visibilityStateChanged()
     if (!document || !document->hidden())
         return;
     stopEffects([] { });
+}
+
+RefPtr<DeferredPromise>& GamepadHapticActuator::promiseForEffectType(EffectType effectType)
+{
+    switch (effectType) {
+    case EffectType::TriggerRumble:
+        return m_triggerRumbleEffectPromise;
+    case EffectType::DualRumble:
+        break;
+    }
+    return m_dualRumbleEffectPromise;
 }
 
 } // namespace WebCore

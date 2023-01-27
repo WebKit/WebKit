@@ -4952,6 +4952,14 @@ public:
 
     DEFINE_SIGNED_SIMD_FUNCS(vectorExtractLane);
 
+    // The behavior is the same to vectorExtractLane on ARM64.
+    void vectorDupElement(SIMDLane simdLane, TrustedImm32 lane, FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.dupElement(dest, src, simdLane, lane.m_value);
+    }
+
+    DEFINE_SIMD_FUNCS(vectorDupElement);
+
     void compareFloatingPointVector(DoubleCondition cond, SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));

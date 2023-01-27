@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -98,18 +98,21 @@ class WatchListFactory(factory.BuildFactory):
 class BindingsFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(ValidateChange(addURLs=False))
         self.addStep(RunBindingsTests())
 
 
 class WebKitPerlFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments)
+        self.addStep(ValidateChange(addURLs=False))
         self.addStep(RunWebKitPerlTests())
 
 
 class WebKitPyFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArgument=additionalArguments, checkRelevance=True)
+        self.addStep(ValidateChange(addURLs=False))
         self.addStep(RunWebKitPyPython2Tests())
         self.addStep(RunWebKitPyPython3Tests())
         self.addStep(SetBuildSummary())
@@ -123,6 +126,7 @@ class BuildFactory(Factory):
         self.addStep(KillOldProcesses())
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
+        self.addStep(ValidateChange(addURLs=False))
         self.addStep(CompileWebKit(skipUpload=self.skipUpload))
         if platform == 'gtk':
             self.addStep(InstallBuiltProduct())
@@ -174,6 +178,7 @@ class JSCBuildFactory(Factory):
     def __init__(self, platform, configuration='release', architectures=None, triggers=None, remotes=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
         self.addStep(CompileJSC())
 
 
@@ -181,6 +186,7 @@ class JSCBuildAndTestsFactory(Factory):
     def __init__(self, platform, configuration='release', architectures=None, remotes=None, additionalArguments=None, runTests='true', **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, remotes=remotes, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(addURLs=False))
         self.addStep(CompileJSC(skipUpload=True))
         if runTests.lower() == 'true':
             self.addStep(RunJavaScriptCoreTests())
@@ -248,6 +254,7 @@ class WindowsFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=True)
         self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.addStep(RunWebKit1Tests())
@@ -258,6 +265,7 @@ class WinCairoFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
         self.addStep(KillOldProcesses())
+        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.addStep(CompileWebKit(skipUpload=True))
 
 
@@ -274,12 +282,14 @@ class WPEFactory(Factory):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
         self.addStep(KillOldProcesses())
         self.addStep(InstallWpeDependencies())
+        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.addStep(CompileWebKit(skipUpload=True))
 
 
 class ServicesFactory(Factory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, additionalArguments=additionalArguments, checkRelevance=True)
+        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
         self.addStep(RunBuildWebKitOrgUnitTests())
         self.addStep(RunBuildbotCheckConfigForBuildWebKit())
         self.addStep(RunEWSUnitTests())
@@ -323,7 +333,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         super(MergeQueueFactoryBase, self).__init__()
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo())
@@ -347,11 +357,11 @@ class MergeQueueFactory(MergeQueueFactoryBase):
         self.addStep(CompileWebKit(skipUpload=True))
         self.addStep(KillOldProcesses())
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(CheckStatusOnEWSQueues())
         self.addStep(RunWebKitTests())
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())
@@ -363,7 +373,7 @@ class UnsafeMergeQueueFactory(MergeQueueFactoryBase):
     def __init__(self, platform, **kwargs):
         super(UnsafeMergeQueueFactory, self).__init__(platform, **kwargs)
 
-        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True, enableSkipEWSLabel=False))
         self.addStep(Canonicalize())
         self.addStep(PushPullRequestBranch())
         self.addStep(UpdatePullRequest())

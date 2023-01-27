@@ -682,6 +682,7 @@ private:
     WKRetainPtr<WKArrayRef> m_openPanelFileURLs;
 #if PLATFORM(IOS_FAMILY)
     WKRetainPtr<WKDataRef> m_openPanelFileURLsMediaIcon;
+    bool m_didLockOrientation { false };
 #endif
 
     std::unique_ptr<EventSenderProxy> m_eventSenderProxy;

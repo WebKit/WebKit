@@ -24,6 +24,8 @@ use webkitdirs;
 my $scriptsDir = relativeScriptsDir();
 if (defined $ENV{'WEBKIT_JHBUILD'} and $ENV{'WEBKIT_JHBUILD'}) {
     system("perl", "$scriptsDir/update-webkit-libs-jhbuild", "--wpe", @ARGV) == 0 or die $!;
+} elsif (defined $ENV{'WEBKIT_CROSS_TARGET'} or grep(/^--cross-target/, @ARGV)) {
+    system("$scriptsDir/cross-toolchain-helper", "--build-toolchain", @ARGV) == 0 or die $!;
 } else {
     system("$scriptsDir/update-webkit-flatpak", @ARGV) == 0 or die $!;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
+#include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
 #include <wtf/Deque.h>
 
 namespace WebKit {
@@ -98,6 +99,8 @@ private:
     IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 
     void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
+
+    Ref<PAL::WebGPU::PresentationContext> createPresentationContext(const PAL::WebGPU::PresentationContextDescriptor&) final;
 
     void abandonGPUProcess();
 

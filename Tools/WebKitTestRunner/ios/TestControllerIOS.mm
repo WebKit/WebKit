@@ -53,6 +53,44 @@
 SOFT_LINK_PRIVATE_FRAMEWORK(TextInput)
 SOFT_LINK_CLASS(TextInput, TIPreferencesController);
 
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+
+@interface WindowDidRotateObserver : NSObject
+@property (nonatomic, readonly) void (^callback)();
+@end
+
+@implementation WindowDidRotateObserver {
+}
+
+- (WindowDidRotateObserver *)initWithCallback:(void (^)())callback
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _callback = callback;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidRotate) name:UIWindowDidRotateNotification object:nil];
+    return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIWindowDidRotateNotification object:nil];
+    [super dealloc];
+}
+
+- (void)_windowDidRotate
+{
+    callOnMainThread([self, protectedSelf = RetainPtr<WindowDidRotateObserver>(self)] {
+        if (_callback)
+            _callback();
+    });
+}
+
+@end
+
+#endif // HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+
 static void overrideSyncInputManagerToAcceptedAutocorrection(id, SEL, TIKeyboardCandidate *candidate, TIKeyboardInput *input)
 {
     // Intentionally unimplemented. See usage below for more information.
@@ -166,22 +204,43 @@ static _WKFocusStartsInputSessionPolicy focusStartsInputSessionPolicy(const Test
 
 void TestController::restorePortraitOrientationIfNeeded()
 {
-#if PLATFORM(IOS)
-    auto *scene = mainWebView()->platformView().window.windowScene;
-    if (scene.interfaceOrientation == UIInterfaceOrientationPortrait)
+#if HAVE(UI_WINDOW_SCENE_GEOMETRY_PREFERENCES)
+    if (!mainWebView())
         return;
 
-    lockScreenOrientation(kWKScreenOrientationTypePortraitPrimary);
+    TestRunnerWKWebView *webView = mainWebView()->platformView();
+
+    auto *scene = webView.window.windowScene;
+    if (scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
+        return;
+
+    __block bool didRotate = false;
+    auto rotationObserver = adoptNS([[WindowDidRotateObserver alloc] initWithCallback:^{
+        didRotate = true;
+    }]);
+
+    if (m_didLockOrientation)
+        lockScreenOrientation(kWKScreenOrientationTypePortraitPrimary);
+    else {
+        auto geometryPreferences = adoptNS([[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:UIInterfaceOrientationMaskPortrait]);
+        [scene requestGeometryUpdateWithPreferences:geometryPreferences.get() errorHandler:^(NSError *error) {
+            NSLog(@"Failed to restore portrait orientation with error: %@.", error);
+        }];
+    }
 
     auto startTime = MonotonicTime::now();
     while ([NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:NSDate.distantPast]) {
-        if (scene.interfaceOrientation == UIInterfaceOrientationPortrait)
+        if (scene.effectiveGeometry.interfaceOrientation == UIInterfaceOrientationPortrait)
             break;
 
         if (MonotonicTime::now() - startTime >= m_currentInvocation->shortTimeout())
             break;
     }
-    unlockScreenOrientation();
+    runUntil(didRotate, m_currentInvocation->shortTimeout());
+    if (m_didLockOrientation) {
+        unlockScreenOrientation();
+        m_didLockOrientation = false;
+    }
 #else
     [[UIDevice currentDevice] setOrientation:UIDeviceOrientationPortrait animated:NO];
 #endif
@@ -449,6 +508,8 @@ void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
     // below won't do anything. UIKit prioritizes the top-most scene-sized window when determining interface
     // orientation.
     [webView.window makeKeyWindow];
+
+    m_didLockOrientation = true;
 
     switch (orientation) {
     case kWKScreenOrientationTypePortraitPrimary:

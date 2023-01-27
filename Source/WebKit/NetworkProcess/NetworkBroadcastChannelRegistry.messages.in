@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> NetworkBroadcastChannelRegistry NotRefCounted {
-    RegisterChannel(struct WebCore::ClientOrigin origin, String name) WantsConnection
-    UnregisterChannel(struct WebCore::ClientOrigin origin, String name) WantsConnection
-    PostMessage(struct WebCore::ClientOrigin origin, String name, struct WebCore::MessageWithMessagePorts message) -> () WantsConnection
+    RegisterChannel(struct WebCore::ClientOrigin origin, String name)
+    UnregisterChannel(struct WebCore::ClientOrigin origin, String name)
+    PostMessage(struct WebCore::ClientOrigin origin, String name, struct WebCore::MessageWithMessagePorts message) -> ()
 }

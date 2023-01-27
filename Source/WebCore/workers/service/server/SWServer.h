@@ -140,6 +140,7 @@ public:
 
     WEBCORE_EXPORT void clearAll(CompletionHandler<void()>&&);
     WEBCORE_EXPORT void clear(const SecurityOriginData&, CompletionHandler<void()>&&);
+    WEBCORE_EXPORT void clear(const ClientOrigin&, CompletionHandler<void()>&&);
 
     WEBCORE_EXPORT void startSuspension(CompletionHandler<void()>&&);
     WEBCORE_EXPORT void endSuspension();
@@ -270,6 +271,8 @@ private:
     void removeClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
 
     void terminatePreinstallationWorker(SWServerWorker&);
+
+    void clearInternal(Function<bool(const ServiceWorkerRegistrationKey&)>&& matches, CompletionHandler<void()>&&);
 
     WEBCORE_EXPORT SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL);
     bool runServiceWorker(ServiceWorkerIdentifier);

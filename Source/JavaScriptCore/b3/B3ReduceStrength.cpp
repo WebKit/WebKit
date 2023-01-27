@@ -41,6 +41,7 @@
 #include "B3UpsilonValue.h"
 #include "B3ValueKeyInlines.h"
 #include "B3ValueInlines.h"
+#include "SIMDShuffle.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -2440,6 +2441,62 @@ private:
                 m_valueForConstant.add(key, constInRoot);
                 m_value->replaceWithIdentity(constInRoot);
                 m_changed = true;
+            }
+            break;
+        }
+
+        case VectorSwizzle: {
+            if constexpr (isARM64()) {
+                if (m_value->numChildren() == 2 && m_value->child(1)->isConstant()) {
+                    v128_t pattern = m_value->child(1)->as<Const128Value>()->value();
+                    if (SIMDShuffle::isIdentity(pattern)) {
+                        replaceWithIdentity(m_value->child(0));
+                        break;
+                    }
+
+                    if (auto lane = SIMDShuffle::isI64x2DupElement(pattern)) {
+                        replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i64x2, SIMDSignMode::None, lane.value(), m_value->child(0));
+                        break;
+                    }
+
+                    if (auto lane = SIMDShuffle::isI32x4DupElement(pattern)) {
+                        replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i32x4, SIMDSignMode::None, lane.value(), m_value->child(0));
+                        break;
+                    }
+
+                    if (auto lane = SIMDShuffle::isI16x8DupElement(pattern)) {
+                        replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i16x8, SIMDSignMode::None, lane.value(), m_value->child(0));
+                        break;
+                    }
+
+                    if (auto lane = SIMDShuffle::isI8x16DupElement(pattern)) {
+                        replaceWithNew<SIMDValue>(m_value->origin(), VectorDupElement, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, lane.value(), m_value->child(0));
+                        break;
+                    }
+                    break;
+                }
+
+                if (m_value->numChildren() == 3 && m_value->child(2)->isConstant()) {
+                    v128_t pattern = m_value->child(2)->as<Const128Value>()->value();
+                    if (auto child = SIMDShuffle::isOnlyOneSideMask(pattern)) {
+                        switch (child.value()) {
+                        case 0: {
+                            replaceWithNew<SIMDValue>(m_value->origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, m_value->child(0), m_value->child(2));
+                            break;
+                        }
+                        case 1: {
+                            v128_t newPattern = pattern;
+                            for (unsigned i = 0; i < 16; ++i)
+                                newPattern.u8x16[i] = pattern.u8x16[i] - 16;
+                            Value* newPatternValue = m_proc.addConstant(m_value->origin(), B3::V128, newPattern);
+                            m_insertionSet.insertValue(m_index, newPatternValue);
+                            replaceWithNew<SIMDValue>(m_value->origin(), VectorSwizzle, B3::V128, SIMDLane::i8x16, SIMDSignMode::None, m_value->child(1), newPatternValue);
+                            break;
+                        }
+                        }
+                        break;
+                    }
+                }
             }
             break;
         }

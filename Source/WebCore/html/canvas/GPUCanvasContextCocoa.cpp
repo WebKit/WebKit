@@ -28,10 +28,9 @@
 
 #include "GPUAdapter.h"
 #include "GPUCanvasConfiguration.h"
-#include "GPUSurface.h"
-#include "GPUSurfaceDescriptor.h"
-#include "GPUSwapChain.h"
-#include "GPUSwapChainDescriptor.h"
+#include "GPUPresentationConfiguration.h"
+#include "GPUPresentationContext.h"
+#include "GPUPresentationContextDescriptor.h"
 #include "GPUTextureDescriptor.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "RenderBox.h"
@@ -55,22 +54,23 @@ static IntSize getCanvasSizeAsIntSize(const GPUCanvasContext::CanvasType& canvas
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
 
-std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas)
+std::unique_ptr<GPUCanvasContext> GPUCanvasContext::create(CanvasBase& canvas, GPU& gpu)
 {
-    auto context = GPUCanvasContextCocoa::create(canvas);
+    auto context = GPUCanvasContextCocoa::create(canvas, gpu);
     if (context)
         context->suspendIfNeeded();
     return context;
 }
 
-std::unique_ptr<GPUCanvasContextCocoa> GPUCanvasContextCocoa::create(CanvasBase& canvas)
+std::unique_ptr<GPUCanvasContextCocoa> GPUCanvasContextCocoa::create(CanvasBase& canvas, GPU& gpu)
 {
-    return std::unique_ptr<GPUCanvasContextCocoa>(new GPUCanvasContextCocoa(canvas));
+    return std::unique_ptr<GPUCanvasContextCocoa>(new GPUCanvasContextCocoa(canvas, gpu));
 }
 
-GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas)
+GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
+    , m_gpu(gpu)
 {
 }
 
@@ -81,9 +81,9 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
 
     m_width = width;
     m_height = height;
-    m_swapChain = nullptr;
+    m_presentationContext = nullptr;
 
-    createSwapChainIfNeeded();
+    createPresentationContextIfNeeded();
 }
 
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
@@ -99,21 +99,20 @@ void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
     reshape(canvasSize.width(), canvasSize.height());
 }
 
-void GPUCanvasContextCocoa::createSwapChainIfNeeded()
+void GPUCanvasContextCocoa::createPresentationContextIfNeeded()
 {
-    if (m_swapChain || !m_configuration)
+    if (!m_configuration)
         return;
 
-    GPUSurfaceDescriptor surfaceDescriptor = {
-        { "WebGPU Canvas surface"_s },
-        // FIXME: Include the CompositorIntegration here.
+    GPUPresentationContextDescriptor presentationContextDescriptor = {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250955 Add integration with the compositor here.
     };
 
-    m_surface = m_configuration->device->createSurface(surfaceDescriptor);
-    ASSERT(m_surface);
+    m_presentationContext = m_gpu->createPresentationContext(presentationContextDescriptor);
+    ASSERT(m_presentationContext);
 
-    GPUSwapChainDescriptor descriptor = {
-        { "WebGPU Canvas swap chain"_s },
+    GPUPresentationConfiguration configuration = {
+        m_configuration->device, // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250995 This is definitely a UAF
         m_configuration->format,
         m_configuration->usage,
         m_configuration->viewFormats,
@@ -123,8 +122,7 @@ void GPUCanvasContextCocoa::createSwapChainIfNeeded()
         static_cast<uint32_t>(m_height),
     };
 
-    m_swapChain = m_configuration->device->createSwapChain(*m_surface, descriptor);
-    ASSERT(m_swapChain);
+    m_presentationContext->configure(configuration);
 }
 
 RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
@@ -132,7 +130,7 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
     if (!m_configuration)
         return nullptr;
 
-    createSwapChainIfNeeded();
+    createPresentationContextIfNeeded();
 
     GPUTextureDescriptor descriptor = {
         { "WebGPU Display texture"_s },
@@ -146,7 +144,7 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
     };
 
     markContextChangedAndNotifyCanvasObservers();
-    return m_configuration->device->createSurfaceTexture(descriptor, *m_surface);
+    return m_configuration->device->createSurfaceTexture(descriptor, *m_presentationContext);
 }
 
 PixelFormat GPUCanvasContextCocoa::pixelFormat() const
@@ -172,7 +170,7 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GPUCanvasContextCocoa::layerContent
 void GPUCanvasContextCocoa::prepareForDisplay()
 {
 #if PLATFORM(COCOA)
-    m_swapChain->prepareForDisplay([protectedThis = Ref { *this }] (auto sendRight) {
+    m_presentationContext->prepareForDisplay([protectedThis = Ref { *this }] (auto sendRight) {
         protectedThis->m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(sendRight));
         protectedThis->m_compositingResultsNeedsUpdating = false;
     });
