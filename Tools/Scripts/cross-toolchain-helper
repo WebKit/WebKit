@@ -1,0 +1,654 @@
+#!/usr/bin/env python3
+#
+# Copyright (C) 2022 Igalia S.L.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+import argparse
+import configparser
+import os
+import sys
+import stat
+import logging
+import hashlib
+import shutil
+import re
+
+top_level_directory = os.path.realpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'Scripts', 'webkitpy'))
+
+import webkitpy
+import requests
+
+_log = logging.getLogger(__name__)
+LOG_MESSAGE = 25
+LOG_MYNAME = os.path.basename(__file__)
+
+def configure_logging(selected_log_level='info'):
+
+    class LogHandler(logging.StreamHandler):
+        def __init__(self, stream):
+             super().__init__(stream)
+
+        def format(self, record):
+            return '%s %s: %s' % (LOG_MYNAME, record.levelname, record.getMessage())
+
+    logging.addLevelName(LOG_MESSAGE, 'MESSAGE')
+    if selected_log_level == 'debug':
+        log_level = logging.DEBUG
+    elif selected_log_level == 'info':
+        log_level = logging.INFO
+    elif selected_log_level == 'quiet':
+        log_level = logging.NOTSET
+    elif selected_log_level == 'minimal':
+        log_level = logging.getLevelName(LOG_MESSAGE)
+
+    handler = LogHandler(sys.stdout)
+    logger = logging.getLogger()
+    logger.addHandler(handler)
+    logger.setLevel(log_level)
+    return handler
+
+
+class YoctoTargetsConfig():
+
+    def __init__(self, config_file, source_files_for_hash):
+        self._config_parser = configparser.RawConfigParser()
+        # Don't automatically convert to lowercase the keys, return it literally.
+        self._config_parser.optionxform = lambda option: option
+        self._config_parser.read(config_file)
+        self._directory_config_file = os.path.realpath(os.path.dirname(config_file))
+        self._available_targets = []
+        self._source_files_for_hash = source_files_for_hash
+        required_keys = ['repo_manifest_path', 'conf_bblayers_path', 'conf_local_path', 'image_basename', 'image_extension']
+        for target in self._config_parser.sections():
+            if not all(k in self._config_parser[target].keys() for k in required_keys):
+                _log.warning('Ignoring target {target} because it has not defined all the required config sections: "{required_keys}"'.format(target=target, required_keys=', '.join(required_keys)))
+                continue
+            found_all_paths = True
+            for key in self._config_parser[target]:
+                if key.endswith('_path'):
+                    key_path = self._get_path(self._config_parser[target][key])
+                    if not os.path.isfile(key_path):
+                        _log.warning('Ignoring target {target} because the config section {key} points to a not found file: "{key_path}"'.format(target=target, key=key, key_path=key_path))
+                        found_all_paths = False
+            if not found_all_paths:
+                continue
+            self._available_targets.append(target)
+
+    def _get_path(self, path):
+        if os.path.isabs(path):
+            return path
+        return os.path.join(self._directory_config_file, path)
+
+    def _get_value(self, target, key):
+        if target not in self.list_target_configs_available():
+            raise ValueError('Target {target} is not available'.format(target=target))
+        if key.endswith('_path'):
+            return self._get_path(self._config_parser[target][key])
+        return self._config_parser[target][key]
+
+    def get_manifest(self, target):
+        return self._get_value(target, 'repo_manifest_path')
+
+    def get_conf_local(self, target):
+        return self._get_value(target, 'conf_local_path')
+
+    def get_conf_bblayers(self, target):
+        return self._get_value(target, 'conf_bblayers_path')
+
+    def get_image_basename(self, target):
+        return self._get_value(target, 'image_basename')
+
+    def get_image_extension(self, target):
+        return self._get_value(target, 'image_extension')
+
+    def get_patch(self, target):
+        return self._get_value(target, 'patch_file_path')
+
+    def has_patch(self, target):
+        return 'patch_file_path' in self._config_parser[target]
+
+    def get_environment(self, target):
+        environment_dic = {}
+        for key in self._config_parser[target]:
+            if key.startswith('environment[') and key.endswith(']'):
+                key_value = self._get_value(target, key)
+                env_key = key.split('[',1)[1].rstrip(']')
+                environment_dic[env_key] = key_value
+        return environment_dic
+
+    def generate_and_export_hash_version_identifier(self, target):
+        hash_for_target = hashlib.md5()
+        for key in self._config_parser[target]:
+            key_value = self._get_value(target, key)
+            # if the key ends in _path hash the contents of the file rather than the filename
+            if key.endswith('_path'):
+                with open(key_value, 'r', encoding='utf-8') as f:
+                    hash_for_target.update(f.read().encode('utf-8', errors='ignore'))
+            else:
+                hash_for_target.update(key_value.encode('utf-8', errors='ignore'))
+        # We also include the contents of this python program into the hash.
+        for source_file in self._source_files_for_hash:
+            with open(source_file, 'r', encoding='utf-8') as f:
+                hash_for_target.update(f.read().encode('utf-8', errors='ignore'))
+        hash_version = hash_for_target.hexdigest()
+        # We use this env variable to pass the version info to a few bitbake/Yocto recipes
+        os.environ['WEBKIT_CROSS_VERSION'] = '{hash_version}'.format(hash_version=hash_version)
+        return '{target_name} {hash_version}'.format(target_name=target, hash_version=hash_version)
+
+    def list_target_configs_available(self):
+        return self._available_targets
+
+
+class YoctoCrossBuilder():
+
+    def __init__(self, targets_config, target, no_wipe, no_export_environment):
+        self._targets_config = targets_config
+        self._target = target
+        self._webkit_dir = top_level_directory
+        self._webkitbuild_dir = os.path.join(self._webkit_dir, 'WebKitBuild')
+        self._workdir = os.path.join(self._webkitbuild_dir, 'CrossToolChains', target)
+        self._workdir_version_file = os.path.join(self._workdir, '.target-info-version')
+        self._workdir_path_file = os.path.join(self._workdir, '.path')
+        self._workdir_build_yoctodir = os.path.join(self._workdir, 'build')
+        self._image_directory = os.path.join(self._workdir_build_yoctodir, 'image')
+        self._image_basename = targets_config.get_image_basename(self._target)
+        self._image_extension = targets_config.get_image_extension(self._target)
+        self._image_path = os.path.join(self._image_directory, self._image_basename + '.' + self._image_extension.lstrip('.'))
+        self._toolchain_directory = os.path.join(self._workdir, 'build', 'toolchain')
+        self._initialize_environment_for_target(no_export_environment)
+        self._hash_version_for_current_target = targets_config.generate_and_export_hash_version_identifier(self._target)
+        # Initialize the workdir at __init__() time, but only when is not previously built or is built with an old configuration.
+        if not self._is_workdir_initialized_at_current_version():
+            if not self._initialize_workdir(no_wipe):
+                raise RuntimeError('Unable to initialize working dir for target {target}'.format(target=target))
+            # Clean the build CMakeCaches.txt (if any) when the config changes as well
+            self._maybe_clean_webkit_build_caches(no_wipe)
+
+    def _maybe_clean_webkit_build_caches(self, no_wipe):
+        target_suffix = '_' + self._target
+        # Get a list of directories in WebKitBuild/* and WebKitBuild/*/*
+        first_level_candidate_dirs_for_target_builds = [d.path for d in os.scandir(self._webkitbuild_dir) if d.is_dir()]
+        second_level_candidate_dirs_for_target_builds = []
+        for subdir in first_level_candidate_dirs_for_target_builds:
+            if not subdir.endswith(target_suffix):
+                second_level_candidate_dirs_for_target_builds.extend([d.path for d in os.scandir(os.path.join(self._webkitbuild_dir, subdir)) if d.is_dir()])
+        # Then look for CMakeCache.txt inside directories with suffix "target_suffix"
+        all_candidate_dirs_for_target_builds = first_level_candidate_dirs_for_target_builds + second_level_candidate_dirs_for_target_builds
+        for candidate_build_dir in all_candidate_dirs_for_target_builds:
+            if candidate_build_dir.endswith(target_suffix):
+                candidate_cmake_cache_file = os.path.join(candidate_build_dir, 'CMakeCache.txt')
+                if os.path.isfile(candidate_cmake_cache_file):
+                    if no_wipe:
+                        _log.info('Configuration has changed. But no-wipe has been passed, so keeping CMake Cache from old build at: {cache_path}'.format(cache_path=candidate_cmake_cache_file))
+                    else:
+                        _log.info('Configuration has changed. Cleaning CMake Cache from old build at: {cache_path}'.format(cache_path=candidate_cmake_cache_file))
+                        os.remove(candidate_cmake_cache_file)
+
+    def _initialize_environment_for_target(self, no_export_environment):
+        environment_for_target = self._targets_config.get_environment(self._target)
+        if environment_for_target:
+            if no_export_environment:
+                    _log.info('No exporting environment as requested for {target}: '.format(target=self._target))
+            else:
+                _log.info('Adding defined environment for {target}: '.format(target=self._target))
+                for env_key in environment_for_target:
+                    os.environ[env_key] = environment_for_target[env_key]
+                    _log.info('export {env_key}="{env_value}"'.format(env_key=env_key, env_value=os.environ[env_key]))
+        # We use this env var in build-webkit script (webkitdirs.pm) to avoid entering into flatpak
+        os.environ['WEBKIT_CROSS_TARGET'] = '{target}'.format(target=self._target)
+
+    def _is_workdir_initialized_at_current_version(self):
+        if os.path.isfile(self._workdir_version_file) and os.path.isfile(self._workdir_path_file):
+            with open(self._workdir_version_file, 'r') as f:
+                version_saved = f.read().strip()
+            if version_saved == self._hash_version_for_current_target:
+                with open(self._workdir_path_file, 'r') as f:
+                    path_saved = f.read().strip()
+                return path_saved == self._workdir
+        return False
+
+    def _run_cmd(self, cmd):
+        return os.WEXITSTATUS(os.system(cmd))
+
+    def _add_recipe_to_include_version_file_into_image(self, local_conf_path):
+        poky_meta_dir = os.path.join(self._workdir, 'sources', 'poky', 'meta')
+        if not os.path.isdir(poky_meta_dir):
+            raise RuntimeError('Can not find poky meta directory at {poky_dir}'.format(poky_dir=poky_dir))
+        if not os.path.isfile(local_conf_path):
+            raise RuntimeError('Can not find local.conf file at {local_conf_path}'.format(local_conf_path=local_conf_path))
+        with open(local_conf_path, 'a') as f:
+            f.write('\n# This has been added automatically by cross-toolchain-helper script:\n')
+            f.write('IMAGE_INSTALL:append = " wk-target-info-ver"\n')
+        poky_wk_recipe_dir = os.path.join(poky_meta_dir, 'recipes-devtools', 'webkit')
+        if not os.path.isdir(poky_wk_recipe_dir):
+            os.makedirs(poky_wk_recipe_dir)
+        wk_helper_version_recipe_path = os.path.join(poky_wk_recipe_dir, 'wk-target-info-ver.bb')
+        with open(wk_helper_version_recipe_path, 'w') as f:
+            f.write('DESCRIPTION = "Include the version of the target from the WebKit script cross-toolchain-helper on the image."\n')
+            f.write('LICENSE = "MIT"\n')
+            f.write('LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"\n')
+            f.write('S = "${WORKDIR}"\n')
+            f.write('SRC_URI = "file://${TOPDIR}/../.target-info-version"\n')
+            f.write('do_install() {\n')
+            f.write('    mkdir -p "${D}/${datadir}"\n')
+            f.write('    cp "${TOPDIR}/../.target-info-version" "${D}/${datadir}/webkit-target-info-version"\n')
+            f.write('}\n')
+            f.write('FILES:${PN} = "${datadir}/webkit-target-info-version"\n')
+            f.write('BBCLASSEXTEND = "native nativesdk"\n')
+
+    # This is only meant to be executed once on the first run or when the configuration changes.
+    # It will wipe the current workdir (if it is there) unless no_wipe is passed.
+    def _initialize_workdir(self, no_wipe):
+        initial_directory = os.path.realpath(os.curdir)
+        try:
+            if os.path.isdir(self._workdir):
+                if os.path.isfile(self._workdir_version_file) and os.path.isfile(self._workdir_path_file):
+                    if no_wipe:
+                        _log.info('Configuration has changed. But no-wipe has been passed, so keeping old cross builder environment at: {workdir}'.format(workdir=self._workdir))
+                        return True
+                    _log.info('Configuration has changed. Deleting old cross builder environment at: {workdir}'.format(workdir=self._workdir))
+                else:
+                    _log.info('Previous initialization try failed to complete. Deleting old cross builder environment at: {workdir}'.format(workdir=self._workdir))
+                shutil.rmtree(self._workdir)
+            _log.info('Initializing cross builder environment at: {workdir}'.format(workdir=self._workdir))
+            os.makedirs(self._workdir)
+            # call repo clone into workdir
+            conf_dir = os.path.join(self._workdir_build_yoctodir, 'conf')
+            # Create confdir and copy config files
+            os.makedirs(conf_dir)
+            shutil.copy2(self._targets_config.get_conf_local(self._target), os.path.join(conf_dir, 'local.conf'))
+            # For bblayers.conf we need to resolve the BSPDIR variable to the workdir where it is deployed
+            with open(self._targets_config.get_conf_bblayers(self._target), 'r') as f:
+                bblayers_template = f.read()
+            with open(os.path.join(conf_dir, 'bblayers.conf'), 'w') as f:
+                f.write(bblayers_template % {'BSPDIR' : self._workdir})
+            # Copy manifest for repo tool
+            shutil.copy2(self._targets_config.get_manifest(self._target), os.path.join(self._workdir, 'manifest.xml'))
+            # Download repo tool
+            repo_path = os.path.join(self._workdir, 'repo')
+            req_repo = requests.get('https://raw.githubusercontent.com/GerritCodeReview/git-repo/main/repo')
+            if req_repo.status_code != 200:
+                _log.error('HTTP request to download repo tool gave an unexpected code: {code}'.format(code=req_repo.status_code))
+                return False
+            with open(repo_path, 'wb') as f:
+                f.write(req_repo.content)
+            # Make repo tool executable
+            os.chmod(repo_path, os.stat(repo_path).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+            # Initialize a git repository (needed by repo)
+            os.chdir(self._workdir)
+            if self._run_cmd('git init . && git add . && git commit -m "Initialize repository"') != 0:
+                _log.error('Error initializing git repository for repo tool')
+                return False
+            if self._run_cmd('./repo init -u {wdir} -m manifest.xml --depth 1'.format(wdir=self._workdir)) != 0:
+                _log.error('Error initializing repo')
+                return False
+            _log.info('Syncing repos... please wait')
+            if self._run_cmd('./repo sync -c') != 0:
+                _log.error('Error syncing repo')
+                return False
+            # Apply patch if needed
+            if self._targets_config.has_patch(self._target):
+                _log.info('Applying patch to repos')
+                patch_file_path = self._targets_config.get_patch(self._target)
+                if self._run_cmd('cat {patch_file} | patch -p1'.format(patch_file=patch_file_path)) != 0:
+                    _log.error('Error applying patch {patch_file} to repos'.format(patch_file=patch_file_path))
+                    return False
+            # All went fine so far, store the version that has been initialized
+            _log.info('Store toolchain and target version info: {target_version_info}'.format(target_version_info=self._hash_version_for_current_target))
+            self._add_recipe_to_include_version_file_into_image(os.path.join(conf_dir, 'local.conf'))
+            with open(self._workdir_version_file, 'w') as f:
+                f.write('{target_ver}\n'.format(target_ver=self._hash_version_for_current_target))
+            with open(self._workdir_path_file, 'w') as f:
+                f.write('{path_dst}\n'.format(path_dst=self._workdir))
+            return True
+        finally:
+            os.chdir(initial_directory)
+
+    def _do_bitbake(self, command):
+        initial_directory = os.path.realpath(os.curdir)
+        try:
+            poky_dir = os.path.join(self._workdir, 'sources', 'poky')
+            if not os.path.isdir(poky_dir):
+                raise RuntimeError('Can not find poky directory at {poky_dir}'.format(poky_dir=poky_dir))
+            os.chdir(poky_dir)
+            if not os.path.isfile('oe-init-build-env'):
+                raise RuntimeError('Can not find oe-init-build-env script in poky directory at {poky_dir}'.format(poky_dir=poky_dir))
+            if not os.path.isfile('oe-init-build-env'):
+                raise RuntimeError('Can not find poky init env script at: {poky_init_env_file}'.format(poky_init_env_file=poky_init_env_file))
+            _log.info('Running: {command}'.format(command=command))
+            if self._run_cmd('/bin/bash -c \'. oe-init-build-env "{build_directory}" ; {command}\''.format(build_directory=self._workdir_build_yoctodir, command=command)) != 0:
+                _log.error('Error running bitbake')
+                return False
+            return True
+        finally:
+            os.chdir(initial_directory)
+
+    def _find_files_inside_directory_match_str_suffix(self, directory_to_search, match_contains, match_suffix):
+        files_found = []
+        if not os.path.isdir(directory_to_search):
+            _log.error('Directory to search {directory_to_search} does not exist'.format(directory_to_search=directory_to_search))
+            return files_found
+        for root, dirs, files in os.walk(directory_to_search):
+            for file in files:
+                if match_contains in file and file.endswith(match_suffix):
+                    files_found.append(os.path.join(root, file))
+        return files_found
+
+    def build_image(self):
+        if os.path.isfile(self._image_path):
+            _log.info('Image already built at: {image_path}'.format(image_path=self._image_path))
+            return True
+        if not self._do_bitbake('bitbake {image}'.format(image=self._image_basename)):
+            _log.error('Bitbake command returned error')
+            return False
+        tmp_images_dir = os.path.join(self._workdir, 'build', 'tmp', 'deploy', 'images')
+        images_found = self._find_files_inside_directory_match_str_suffix(tmp_images_dir, self._image_basename, self._image_extension)
+        if len(images_found) == 0:
+            _log.error('Unable to find an image starting with "{image_basename}" and ending with "{image_extension}" in directory {image_directory}'.format(
+                        image_basename=self._image_basename, image_extension=self._image_extension, image_directory=tmp_images_dir))
+            return False
+        else:
+            # Pick the most recent one
+            last_generated_image_file = sorted(images_found, key=lambda t: -os.stat(t).st_mtime)[0]
+            _log.info('Copying image {generated_image} to {dest_image}'.format(generated_image=last_generated_image_file, dest_image=self._image_path))
+            os.makedirs(self._image_directory)
+            shutil.copy2(last_generated_image_file, self._image_path)
+            # Copy also the bmap file if available
+            bmap_image_file = last_generated_image_file.rsplit('.', 1)[0] + '.bmap'
+            if os.path.isfile(bmap_image_file):
+                shutil.copy2(bmap_image_file, self._image_path.rsplit('.', 1)[0] + '.bmap')
+            return True
+
+    def build_toolchain(self):
+        toolchain_path_configured_check_file = os.path.join(self._toolchain_directory, '.toolchain_path_configured')
+        if os.path.isdir(self._toolchain_directory):
+            if os.path.isfile(toolchain_path_configured_check_file):
+                with open(toolchain_path_configured_check_file, 'r') as f:
+                    toolchain_path_configured = f.read().strip()
+                if toolchain_path_configured == self._toolchain_directory:
+                    _log.info('Toolchain already built at: {toolchain_path}'.format(toolchain_path=self._toolchain_directory))
+                    return True
+                else:
+                    _log.warning('Toolchain was configured for path {toolchain_original_path} but now has been moved to {toolchain_new_path}. Reconfiguring toolchain'.format(
+                                  toolchain_original_path=toolchain_path_configured, toolchain_new_path=self._toolchain_directory))
+            _log.info('Cleaning toolchain directory: {toolchain_path}'.format(toolchain_path=self._toolchain_directory))
+            shutil.rmtree(self._toolchain_directory)
+
+        _log.info('Building toolchain')
+        if not self._do_bitbake('bitbake {image} -c populate_sdk'.format(image=self._image_basename)):
+            _log.error('Bitbake command returned error')
+            return False
+        tmp_sdk_dir = os.path.join(self._workdir, 'build', 'tmp', 'deploy', 'sdk')
+        toolchains_found = self._find_files_inside_directory_match_str_suffix(tmp_sdk_dir, self._image_basename, '.sh')
+        if len(toolchains_found) == 0:
+            _log.error('Unable to find a toolchain archive starting with "{image_basename}" and ending with ".sh" in directory {sdk_directory}'.format(
+                        image_basename=self._image_basename, sdk_directory=tmp_sdk_dir))
+            return False
+        else:
+            # Pick the most recent one
+            last_generated_toolchain_file = sorted(toolchains_found, key=lambda t: -os.stat(t).st_mtime)[0]
+            _log.info('Unpacking toolchain from: {generated_toolchain} to {dest_toolchain_dir}'.format(generated_toolchain=last_generated_toolchain_file, dest_toolchain_dir=self._toolchain_directory))
+            os.makedirs(self._toolchain_directory)
+            if self._run_cmd('{toolchain_script} -d {dest_toolchain_dir} -y'.format(toolchain_script=last_generated_toolchain_file, dest_toolchain_dir=self._toolchain_directory)) != 0:
+                _log.error('Error unpacking toolchain from script')
+                return False
+
+            # Remove optimization and debug flags from the environment source script. We want build-webkit script and cmake to set those instead rather than beeing set from the environment.
+            original_setup_env_path = self._get_cross_toolchain_env_path(check_toolchain_built=False)
+            _log.info('Patching toolchain environment-setup file to remove optimizations by default: {original_setup_env_path}'.format(original_setup_env_path=original_setup_env_path))
+            # This does the following:
+            # 1. Remove any line that exports CFLAGS/CXXFLAGS/LDFLAGS/CPPFLAGS
+            # 2. On the line that exports the compiler variables (export CC, export CXX and export CPP)
+            #    remove any compiler flag that is not machine related (-m*) or is '-E' (for cpp) or is for the sysroot.
+            patched_setup_env_path = original_setup_env_path + "-no-opt-flags"
+            flags_regex = re.compile('export +(C|CXX|LD|CPP)FLAGS')
+            compiler_regex = re.compile('export +C(C|XX|PP)( +)?=')
+            with open(original_setup_env_path, 'r') as fr:
+                with open(patched_setup_env_path, 'w') as fw:
+                    for line in fr.readlines():
+                        if not flags_regex.match(line):
+                            if compiler_regex.match(line):
+                                newline = ""
+                                for word in line.strip().split():
+                                    if word.startswith('-'):
+                                        if word.startswith('-m') or word == '-E' or word.startswith('--sysroot'):
+                                            newline += " " + word
+                                    else:
+                                        newline += " " + word
+                                if '="' in newline and not newline.endswith('"'):
+                                    newline += '"'
+                                newline = newline.strip() + '\n'
+                                fw.write(newline)
+                            else:
+                                fw.write(line)
+                    # When building cog, meson tries to load the wpe headers that are on the repo from the sysroot path.
+                    # That is not really a bug on meson as system libraries should be loaded from the sysroot when cross-building.
+                    # Workaround the issue by creating a symlink that also resolves this WebKit repository path inside the sysroot.
+                    fw.write('\nif ! test -d "${{OECORE_TARGET_SYSROOT}}/{webkit_dir}"; then\n'
+                             '    mkdir -p "${{OECORE_TARGET_SYSROOT}}/{webkit_dir_up}"\n'
+                             '    ln -s "{webkit_dir}" "${{OECORE_TARGET_SYSROOT}}/{webkit_dir_up}"\n'
+                             'fi\n'.format(webkit_dir=self._webkit_dir, webkit_dir_up=os.path.dirname(self._webkit_dir)))
+
+            # Put the patched setup-environ file in place of the other
+            # and save a copy of the original just for debugging purposes
+            shutil.move(original_setup_env_path, os.path.join(os.path.dirname(original_setup_env_path), '.backup_original_' + os.path.basename(original_setup_env_path)))
+            shutil.move(patched_setup_env_path, original_setup_env_path)
+
+            # Store the path to check in next startups it didn't changed
+            with open(toolchain_path_configured_check_file, 'w') as f:
+                f.write(self._toolchain_directory)
+            return True
+
+    def _get_cross_toolchain_env_path(self, check_toolchain_built=True):
+        if check_toolchain_built and not self.build_toolchain():
+            return None
+        env_setup_path = None
+        for file in os.listdir(self._toolchain_directory):
+            if file.startswith('environment-setup'):
+                env_setup_path = os.path.join(self._toolchain_directory, file)
+                break
+        if env_setup_path is None:
+            _log.error('Unable to find a file starting with "environment-setup" in the toolchain directory {toolchain_directory}'.format(toolchain_directory=self._toolchain_directory))
+        return env_setup_path
+
+    def bitbake_dev_shell(self):
+        poky_dir = os.path.join(self._workdir, 'sources', 'poky')
+        os.chdir(poky_dir)
+        with open('.rcfile-env-for-bitbake-devshell', 'w') as fw:
+            fw.write('export BUILDDIR={builddir}\n'.format(builddir=self._workdir_build_yoctodir))
+            for rcfile in ['/etc/bash.bashrc', os.path.join(os.environ['HOME'],'.bashrc')]:
+                if os.path.isfile(rcfile):
+                    fw.write('. "{rcfile}"\n'.format(rcfile=rcfile))
+            fw.write('. oe-init-build-env "{builddir}"\n'.format(builddir=self._workdir_build_yoctodir))
+            fw.write('export PS1="(WKBitBakeDevShell:{target}) ${{PS1}}"\n'.format(target=self._target))
+        assert(os.path.isfile('.rcfile-env-for-bitbake-devshell'))
+        _log.info('Entering into bitbake dev shell')
+        return self._run_cmd('/bin/bash --rcfile .rcfile-env-for-bitbake-devshell')
+
+    def cross_dev_shell(self):
+        cross_setup_env_path = self._get_cross_toolchain_env_path()
+        if cross_setup_env_path is None or not os.path.isfile(cross_setup_env_path):
+            _log.error('Error getting the "environment-setup" script from toolchain directory')
+            return 1
+        custom_rc_file = os.path.join(self._toolchain_directory, '.rcfile-env-for-bash-cross-toolchain')
+        with open(custom_rc_file, 'w') as fw:
+            for rcfile in ['/etc/bash.bashrc', os.path.join(os.environ['HOME'],'.bashrc'), cross_setup_env_path]:
+                if os.path.isfile(rcfile):
+                    fw.write('. "{rcfile}"\n'.format(rcfile=rcfile))
+            fw.write('echo -e "\\n##################################"\n')
+            fw.write('echo "  Welcome to the cross dev shell"\n')
+            fw.write('echo -e "Your environment is now configured\\n"\n')
+            fw.write('echo "Machine target: {target}"\n'.format(target=self._target))
+            fw.write('echo "GCC version: $($CC -dumpfullversion)"\n')
+            fw.write('echo "GCC target: $($CC -dumpmachine)"\n')
+            fw.write('echo -e "##################################"\n')
+            fw.write('export PS1="(WKCrossDevShell:{target}) ${{PS1}}"\n'.format(target=self._target))
+        assert (os.path.isfile(custom_rc_file))
+        _log.info('Entering into cross dev shell')
+        return self._run_cmd('/bin/bash --rcfile "{custom_rc_file}"'.format(custom_rc_file=custom_rc_file))
+
+    def execute_cmd_inside_cross_toolchain_env(self, command):
+        # The command to be executed is a string with the arguments quoted if needed (arguments with spaces).
+        # The function maybe_quote_run_cmd() should do this.
+        if not isinstance(command, str):
+            raise ValueError("Command to be execute has to be of type string. Command supplied is: {command}".format(command=command))
+        cross_setup_env_path = self._get_cross_toolchain_env_path()
+        if cross_setup_env_path is None or not os.path.isfile(cross_setup_env_path):
+            _log.error('Error getting the "environment-setup" script from toolchain directory')
+            return 1
+        _log.info('Running inside cross-toolchain env: {command}'.format(command=command))
+        return self._run_cmd('/bin/bash -c \'. {cross_setup_env_path} ; {command}\''.format(cross_setup_env_path=cross_setup_env_path, command=command))
+
+
+# argparse has issues parsing strings like '--'
+# we convert anything after cmd_key to a quoted string to workaround the issue.
+def maybe_quote_run_cmd(argv_list, cmd_key):
+    if cmd_key not in argv_list:
+        return argv_list
+
+    i = argv_list.index(cmd_key) + 1
+    if (len(argv_list) == i):
+        return argv_list
+
+    # Arguments before cmd_key
+    new_argv_list = argv_list[0:i]
+
+    # Everything after cmd_key gets converted into one argument separated
+    # by spaces. If some of this arguments has an space then quote it.
+    command_str = argv_list[i]
+    for command_arg in argv_list[i+1:]:
+        if ' ' in command_arg:
+            # if it has a space character put it inside double quotes
+            command_arg = '"{command_arg}"'.format(command_arg=command_arg)
+        command_str += ' {command_arg}'.format(command_arg=command_arg)
+    new_argv_list.append(command_str)
+
+    return new_argv_list
+
+
+def main():
+
+    conf_sub_dir = os.path.join('Tools', 'yocto')
+    targets_conf_sub_path = os.path.join(conf_sub_dir, 'targets.conf')
+    targets_conf_abs_path = os.path.join(top_level_directory, targets_conf_sub_path)
+    if not os.path.isfile(targets_conf_abs_path):
+        raise Exception('Can not open config file at: {config_file}'.format(config_file=targets_conf_abs_path))
+
+    # The version generated for the target is a hashed string of all the source files
+    # and configurations that can affect the result of the build. If you modify this
+    # script to import from other files that contain key functions for the build,
+    # then add the path to that import also to the array below.
+    source_files_for_hash = [__file__]
+    targets_config = YoctoTargetsConfig(targets_conf_abs_path, source_files_for_hash)
+    cross_targets_available = targets_config.list_target_configs_available()
+
+    parser = argparse.ArgumentParser('usage: %prog [options]', allow_abbrev=False,
+                                    epilog='NOTE: The script "build-webkit" will call this script when the flag "--cross-target" is passed to it. That allows to cross-build WebKit for the target directly with the script build-webkit. '
+                                    'Any environment variables this script recognizes like  WEBKIT_CROSS_WIPE_ON_CHANGE or WEBKIT_CROSS_EXPORT_ENV can be also used with the build-webkit script. '
+                                    'If you want to know more details check the documentation at: "{doc_path}"'.format(doc_path=os.path.join(conf_sub_dir,'README.md')))
+    action = parser.add_argument_group('action')
+    run_cmd_key = '--cross-toolchain-run-cmd'
+    parser.add_argument('--cross-target', dest='target', choices=cross_targets_available,
+                        help='The target hardware name. Specify this option as first one.')
+    parser.add_argument('--log-level', dest='log_level', choices=['quiet', 'minimal', 'info', 'debug'], default='info')
+    parser.add_argument('--no-wipe-on-change', action='store_true', dest='no_wipe',
+                        help='This tool detects when the configuration for target changes and by default wipes the previous built toolchain and image. '
+                             'If you pass this flag (or you set the environment variable "WEBKIT_CROSS_WIPE_ON_CHANGE" to "0") then it will not wipe it.')
+    parser.add_argument('--no-export-default-environment', action='store_true', dest='no_export_environment',
+                        help='This tool may export some environment variables defined in "{targets_sub_path}" for the target. '
+                             'This environment variables are usually used to change the default build parameters of the script "build-webkit". '
+                             'If you pass this flag (or you set the environment variable "WEBKIT_CROSS_EXPORT_ENV" to "0") then it will not export those.'.format(targets_sub_path=targets_conf_sub_path))
+    action.add_argument('--print-available-targets', dest='print_targets', action='store_true',
+                        help='Print the available targets (one per line)')
+    action.add_argument('--build-image', action='store_true', dest='generate_image',
+                        help='Build the image (rootfs+kernel) for the specified target.')
+    action.add_argument('--build-toolchain', action='store_true', dest='generate_toolchain',
+                        help='Build the cross-toolchain for the specified target.')
+    action.add_argument('--bitbake-dev-shell', action='store_true', dest='bitbake_dev_shell',
+                        help='Start a shell to develop with bitbake inside the built-in Yocto environment.')
+    action.add_argument('--cross-dev-shell', action='store_true', dest='cross_dev_shell',
+                        help='Start a shell to directly build WebKit or any other software for the target.')
+    action.add_argument(run_cmd_key, action='store', dest='execute_inside_cross_toolchain_environment_cmd', nargs=argparse.REMAINDER,
+                        help='Build the cross toolchain (only if still not built) and then execute \"command\" inside cross environment. '
+                             '\033[91mIMPORTANT\033[0m: This argument is the last one, any strings after it, even if separated by spaces or quotes will be considered part of the command to be executed. '
+                             'This means that any options this script understands (like --help) will not be recognized by the script if passed after this switch, but instead will be considered part of the command to execute.')
+    options = parser.parse_args(args=maybe_quote_run_cmd(sys.argv[1:], run_cmd_key))
+    configure_logging(options.log_level)
+
+    # Note: When modifiying this script, take into account that the script 'build-webkit'
+    # uses this script as a wrapper when the option '-cross-target' is passed to 'build-webkit'.
+    # More specifically, 'build-webkit' calls this script for the following use-cases:
+    # 1. --print-available-targets (so it knows which targets are available)
+    # 2. --cross-toolchain-run-cmd (to execute cmake and ninja/make inside the cross env)
+    if options.print_targets:
+        print('\n'.join(targets_config.list_target_configs_available()))
+        return 0
+
+    if not options.bitbake_dev_shell and not options.cross_dev_shell and not options.generate_toolchain \
+       and not options.generate_image and options.execute_inside_cross_toolchain_environment_cmd is None:
+        parser.error('Need to specify an action')
+
+    if not options.target:
+        env_target = os.environ.get('WEBKIT_CROSS_TARGET')
+        if env_target:
+            _log.info('Using cross-target "{env_target}" from environment variable WEBKIT_CROSS_TARGET'.format(env_target=env_target))
+            options.target = env_target
+        else:
+            parser.error('--cross-target is a required parameter for this action. Choose one from "{targets}"'.format(target=options.target, targets='", "'.join(cross_targets_available)))
+
+    if options.target not in cross_targets_available:
+        parser.error('Invalid cross-target "{target}". Choose from "{targets}"'.format(target=options.target, targets='", "'.join(cross_targets_available)))
+
+    if options.bitbake_dev_shell and options.cross_dev_shell:
+        parser.error('Only one type of devshell can be launched at the same time')
+
+    retcode = 0
+    no_wipe = (options.no_wipe) or (os.environ.get('WEBKIT_CROSS_WIPE_ON_CHANGE', '1') == '0')
+    no_export_environment = (options.no_export_environment) or (os.environ.get('WEBKIT_CROSS_EXPORT_ENV', '1') == '0')
+    builder = YoctoCrossBuilder(targets_config, options.target, no_wipe, no_export_environment)
+
+    if options.generate_toolchain:
+        if not builder.build_toolchain():
+            retcode += 1
+
+    if options.generate_image:
+        if not builder.build_image():
+            retcode += 1
+
+    if options.bitbake_dev_shell:
+        retcode += builder.bitbake_dev_shell()
+
+    if options.cross_dev_shell:
+        retcode += builder.cross_dev_shell()
+
+    if options.execute_inside_cross_toolchain_environment_cmd is not None:
+        str_command = options.execute_inside_cross_toolchain_environment_cmd
+        if isinstance(str_command, list):
+            if len(str_command) != 1:
+                raise ValueError('Unexpected error when parsing the command to be executed. str_command has value: {str_command}'.format(str_command=str_command))
+            str_command = str_command[0]
+        retcode += builder.execute_cmd_inside_cross_toolchain_env(str_command)
+    return retcode
+
+if __name__ == '__main__':
+    sys.exit(main())
