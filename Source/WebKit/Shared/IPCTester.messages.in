@@ -23,18 +23,18 @@
 #if ENABLE(IPC_TESTING_API)
 
 messages -> IPCTester NotRefCounted {
-    StartMessageTesting(String driverName) WantsConnection
+    StartMessageTesting(String driverName)
     StopMessageTesting() -> () Synchronous
     CreateStreamTester(WebKit::IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle serverConnection)
     ReleaseStreamTester(WebKit::IPCStreamTesterIdentifier identifier) -> () Synchronous
-    CreateConnectionTester(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection) WantsConnection
-    CreateConnectionTesterAndSendAsyncMessages(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection, uint32_t messageCount) WantsConnection
+    CreateConnectionTester(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection)
+    CreateConnectionTesterAndSendAsyncMessages(WebKit::IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle connection, uint32_t messageCount)
     ReleaseConnectionTester(WebKit::IPCConnectionTesterIdentifier identifier) -> () Synchronous
 
-    SendSameSemaphoreBack(IPC::Semaphore semaphore) WantsConnection
-    SendSemaphoreBackAndSignalProtocol(IPC::Semaphore semaphore) WantsConnection
+    SendSameSemaphoreBack(IPC::Semaphore semaphore)
+    SendSemaphoreBackAndSignalProtocol(IPC::Semaphore semaphore)
 
-    SendAsyncMessageToReceiver(uint32_t arg0) WantsConnection
+    SendAsyncMessageToReceiver(uint32_t arg0)
 }
 
 #endif

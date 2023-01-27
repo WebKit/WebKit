@@ -140,7 +140,7 @@ bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Co
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name())
         return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::getPluginProcessConnection);
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestMultipleAttributes::name())
-        return IPC::handleMessageSynchronousWantsConnection<Messages::TestWithLegacyReceiver::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::testMultipleAttributes);
+        return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::testMultipleAttributes);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);

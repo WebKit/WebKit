@@ -190,10 +190,13 @@ struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::t
 
 template<typename... MessageArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<Connection&, MessageArgumentTypes...>, std::tuple<>>
-    : MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> { };
+: MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
+    static constexpr bool expectsConnectionArgument = true;
+};
 
 template<typename... MessageArgumentTypes>
 struct MethodSignatureValidationImpl<std::tuple<MessageArgumentTypes...>, std::tuple<>> {
+    static constexpr bool expectsConnectionArgument = false;
     using MessageArguments = std::tuple<std::remove_cvref_t<MessageArgumentTypes>...>;
 };
 
@@ -227,21 +230,10 @@ void handleMessage(Connection& connection, Decoder& decoder, T* object, MF U::* 
         return;
 
     logMessage(connection, MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, WTFMove(*arguments));
-}
-
-template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageWantsConnection(Connection& connection, Decoder& decoder, T* object, MF U::* function)
-{
-    using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
-
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (UNLIKELY(!arguments))
-        return;
-
-    logMessage(connection, MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, connection, WTFMove(*arguments));
+    if constexpr (ValidationType::expectsConnectionArgument)
+        callMemberFunction(object, function, connection, WTFMove(*arguments));
+    else
+        callMemberFunction(object, function, WTFMove(*arguments));
 }
 
 template<typename MessageType, typename T, typename U, typename MF>
@@ -257,36 +249,18 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
-    logMessage(connection, MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, WTFMove(*arguments),
-        CompletionHandlerType([replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
+    CompletionHandlerType completionHandler(
+        [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
             logReply(connection, MessageType::name(), args...);
             (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
             connection->sendSyncReply(WTFMove(replyEncoder));
-        }));
-    return true;
-}
-
-template<typename MessageType, typename T, typename U, typename MF>
-bool handleMessageSynchronousWantsConnection(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
-{
-    using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
-
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (UNLIKELY(!arguments))
-        return false;
-    
-    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
-    using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
+        });
 
     logMessage(connection, MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, connection, WTFMove(*arguments),
-        CompletionHandlerType([replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
-            logReply(connection, MessageType::name(), args...);
-            (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
-            connection->sendSyncReply(WTFMove(replyEncoder));
-        }));
+    if constexpr (ValidationType::expectsConnectionArgument)
+        callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
+    else
+        callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
     return true;
 }
 
@@ -331,40 +305,19 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF 
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
-    logMessage(connection, MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, WTFMove(*arguments),
-        CompletionHandlerType { [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
+    CompletionHandlerType completionHandler {
+        [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
             auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID.toUInt64());
             logReply(connection, MessageType::name(), args...);
             (encoder.get() << ... << std::forward<decltype(args)>(args));
             connection->sendSyncReply(WTFMove(encoder));
-        }, MessageType::callbackThread });
-}
-
-template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder, T* object, MF U::* function)
-{
-    using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
-
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (UNLIKELY(!arguments))
-        return;
-    auto replyID = decoder.decode<Connection::AsyncReplyID>();
-    if (UNLIKELY(!replyID))
-        return;
-
-    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
-    using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
+        }, MessageType::callbackThread };
 
     logMessage(connection, MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, connection, WTFMove(*arguments),
-        CompletionHandlerType { [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
-            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID.toUInt64());
-            logReply(connection, MessageType::name(), args...);
-            (encoder.get() << ... << std::forward<decltype(args)>(args));
-            connection->sendSyncReply(WTFMove(encoder));
-        }, MessageType::callbackThread });
+    if constexpr (ValidationType::expectsConnectionArgument)
+        callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
+    else
+        callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
 }
 
 } // namespace IPC

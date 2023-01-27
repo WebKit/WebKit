@@ -26,7 +26,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, WANTS_CONNECTION_ATTRIBUTE, MessageReceiver, Message
+from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
@@ -497,9 +497,6 @@ def async_message_statement(receiver, message):
     if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
         dispatch_function += 'Async'
 
-    if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
-        dispatch_function += 'WantsConnection'
-
     connection = 'connection'
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         connection = 'connection.connection()'
@@ -516,8 +513,6 @@ def sync_message_statement(receiver, message):
         dispatch_function += 'Synchronous'
     elif message.reply_parameters is not None:
         dispatch_function += 'Async'
-    if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
-        dispatch_function += 'WantsConnection'
 
     maybe_reply_encoder = ", *replyEncoder"
     if receiver.has_attribute(STREAM_ATTRIBUTE):

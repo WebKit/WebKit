@@ -464,8 +464,8 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     DidPerformImmediateActionHitTest(struct WebKit::WebHitTestResultData result, bool contentPreventsDefault, WebKit::UserData userData)
 #endif
-    HandleMessage(String messageName, WebKit::UserData messageBody) WantsConnection
-    HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous WantsConnection
+    HandleMessage(String messageName, WebKit::UserData messageBody)
+    HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) Synchronous
 
     HandleAutoFillButtonClick(WebKit::UserData userData)
 
