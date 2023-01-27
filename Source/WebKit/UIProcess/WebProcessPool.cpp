@@ -402,19 +402,6 @@ void WebProcessPool::setApplicationIsActive(bool isActive)
     m_webProcessCache->setApplicationIsActive(isActive);
 }
 
-void WebProcessPool::screenPropertiesStateChanged()
-{
-#if PLATFORM(COCOA)
-    auto screenProperties = WebCore::collectScreenProperties();
-    sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
-
-#if PLATFORM(MAC)
-    if (auto process = gpuProcess())
-        process->setScreenProperties(screenProperties);
-#endif
-#endif
-}
-
 static bool shouldReportAuxiliaryProcessCrash(ProcessTerminationReason reason)
 {
     switch (reason) {

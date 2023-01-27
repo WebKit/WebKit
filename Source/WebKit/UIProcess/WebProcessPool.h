@@ -244,6 +244,14 @@ public:
 
     void handleMemoryPressureWarning(Critical);
 
+#if PLATFORM(COCOA)
+    void screenPropertiesChanged();
+#endif
+
+#if PLATFORM(MAC)
+    void displayPropertiesChanged(const WebCore::ScreenProperties&, WebCore::PlatformDisplayID, CGDisplayChangeSummaryFlags);
+#endif
+
 #if HAVE(CVDISPLAYLINK)
     DisplayLinkCollection& displayLinks() { return m_displayLinks; }
 
@@ -467,8 +475,6 @@ public:
     void didReachGoodTimeToPrewarm();
 
     void didCollectPrewarmInformation(const WebCore::RegistrableDomain&, const WebCore::PrewarmInformation&);
-
-    void screenPropertiesStateChanged();
 
     void addMockMediaDevice(const WebCore::MockMediaDevice&);
     void clearMockMediaDevices();

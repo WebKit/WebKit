@@ -2042,7 +2042,7 @@ void WebViewImpl::windowDidChangeOcclusionState()
 
 void WebViewImpl::screenDidChangeColorSpace()
 {
-    m_page->process().processPool().screenPropertiesStateChanged();
+    m_page->process().processPool().screenPropertiesChanged();
 }
 
 bool WebViewImpl::mightBeginDragWhileInactive()

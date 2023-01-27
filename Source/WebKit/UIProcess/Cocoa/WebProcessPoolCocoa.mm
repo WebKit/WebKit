@@ -744,7 +744,7 @@ void WebProcessPool::registerNotificationObservers()
     }];
 
     m_accessibilityDisplayOptionsNotificationObserver = [[NSWorkspace.sharedWorkspace notificationCenter] addObserverForName:NSWorkspaceAccessibilityDisplayOptionsDidChangeNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
-        screenPropertiesStateChanged();
+        screenPropertiesChanged();
     }];
 
     m_scrollerStyleNotificationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSPreferredScrollerStyleDidChangeNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
@@ -1183,19 +1183,40 @@ void WebProcessPool::notifyPreferencesChanged(const String& domain, const String
 }
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 
-#if PLATFORM(MAC)
-static void displayReconfigurationCallBack(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
+void WebProcessPool::screenPropertiesChanged()
 {
-    RunLoop::main().dispatch([display, flags]() {
+    auto screenProperties = WebCore::collectScreenProperties();
+    sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+
+#if PLATFORM(MAC) && ENABLE(GPU_PROCESS)
+    if (auto gpuProcess = this->gpuProcess())
+        gpuProcess->setScreenProperties(screenProperties);
+#endif
+}
+
+#if PLATFORM(MAC)
+void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& screenProperties, WebCore::PlatformDisplayID displayID, CGDisplayChangeSummaryFlags flags)
+{
+    sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
+    sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(displayID, flags));
+
+    if (auto* displayLink = displayLinks().displayLinkForDisplay(displayID))
+        displayLink->displayPropertiesChanged();
+
+#if ENABLE(GPU_PROCESS)
+    if (auto gpuProcess = this->gpuProcess()) {
+        gpuProcess->setScreenProperties(screenProperties);
+        gpuProcess->displayConfigurationChanged(displayID, flags);
+    }
+#endif
+}
+
+static void displayReconfigurationCallBack(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags, void *userInfo)
+{
+    RunLoop::main().dispatch([displayID, flags]() {
         auto screenProperties = WebCore::collectScreenProperties();
-        for (auto& processPool : WebProcessPool::allProcessPools()) {
-            processPool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
-            processPool->sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(display, flags));
-            if (auto gpuProcess = processPool->gpuProcess()) {
-                gpuProcess->displayConfigurationChanged(display, flags);
-                gpuProcess->setScreenProperties(screenProperties);
-            }
-        }
+        for (auto& processPool : WebProcessPool::allProcessPools())
+            processPool->displayPropertiesChanged(screenProperties, displayID, flags);
     });
 }
 

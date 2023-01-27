@@ -185,6 +185,11 @@ void DisplayLink::decrementFullSpeedRequestClientCount(Client& client)
     removeInfoForClientIfUnused(client);
 }
 
+void DisplayLink::displayPropertiesChanged()
+{
+    // FIXME: Detect whether the refresh frequency changed.
+}
+
 void DisplayLink::setObserverPreferredFramesPerSecond(Client& client, DisplayLinkObserverID observerID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink " << this << " setPreferredFramesPerSecond - display " << m_displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);

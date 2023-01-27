@@ -55,6 +55,8 @@ public:
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     WebCore::FramesPerSecond nominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
+    
+    void displayPropertiesChanged();
 
     void addObserver(Client&, DisplayLinkObserverID, WebCore::FramesPerSecond);
     void removeObserver(Client&, DisplayLinkObserverID);
