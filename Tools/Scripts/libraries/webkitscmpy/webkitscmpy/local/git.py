@@ -82,6 +82,8 @@ class Git(Scm):
             if branch == default_branch:
                 branch_point = None
             elif self._ordered_commits[branch]:
+                print("branch = ")
+                print(branch)
                 branch_point = int(self._hash_to_identifiers[self._ordered_commits[branch][0]].split('@')[0])
             else:
                 return
