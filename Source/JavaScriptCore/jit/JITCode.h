@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,6 @@ namespace DOMJIT {
 class Signature;
 }
 
-struct ProtoCallFrame;
 class TrackedReferences;
 class VM;
 
@@ -171,7 +170,7 @@ public:
     };
 
 protected:
-    JITCode(JITType, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
+    JITCode(JITType, CodePtr<JSEntryPtrTag> = nullptr, JITCode::ShareAttribute = JITCode::ShareAttribute::NotShared);
     
 public:
     virtual ~JITCode();
@@ -190,7 +189,9 @@ public:
             return JITType::None;
         return jitCode->jitType();
     }
-    
+
+    void* addressForCall() const { return m_addressForCall.taggedPtr(); }
+
     virtual CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) = 0;
     virtual void* executableAddressAtOffset(size_t offset) = 0;
     void* executableAddress() { return executableAddressAtOffset(0); }
@@ -204,8 +205,6 @@ public:
     virtual void shrinkToFit(const ConcurrentJSLocker&);
     
     virtual void validateReferences(const TrackedReferences&);
-    
-    JSValue execute(VM*, ProtoCallFrame*);
     
     void* start() { return dataAddressAtOffset(0); }
     virtual size_t size() = 0;
@@ -233,6 +232,7 @@ private:
     const ShareAttribute m_shareAttribute;
 protected:
     Intrinsic m_intrinsic { NoIntrinsic }; // Effective only in NativeExecutable.
+    CodePtr<JSEntryPtrTag> m_addressForCall;
 };
 
 class JITCodeWithCodeRef : public JITCode {
@@ -252,7 +252,7 @@ public:
     CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>) override;
 
 protected:
-    CodeRef<JSEntryPtrTag> m_ref;
+    RefPtr<ExecutableMemoryHandle> m_executableMemory;
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DirectJITCode);

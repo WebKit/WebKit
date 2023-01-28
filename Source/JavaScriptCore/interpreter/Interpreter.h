@@ -157,18 +157,6 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
         
-        static JSValue checkedReturn(JSValue returnValue)
-        {
-            ASSERT(returnValue);
-            return returnValue;
-        }
-        
-        static JSObject* checkedReturn(JSObject* returnValue)
-        {
-            ASSERT(returnValue);
-            return returnValue;
-        }
-
         CallFrameClosure prepareForRepeatCall(FunctionExecutable*, ProtoCallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*, const ArgList&);
 
         JSValue executeCachedCall(CallFrameClosure&);
