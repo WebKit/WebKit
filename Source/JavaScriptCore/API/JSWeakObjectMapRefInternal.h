@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,9 @@ typedef void (*JSWeakMapDestroyedCallback)(struct OpaqueJSWeakObjectMap*, void*)
 
 typedef JSC::WeakGCMap<void*, JSC::JSObject> WeakMapType;
 
+#define OPAQUE_JSWEAK_OBJECT_MAP_METHOD(method) \
+    WTF_VTBL_FUNCPTR_PTRAUTH_STR("OpaqueJSWeakObjectMap." #method) method
+
 struct OpaqueJSWeakObjectMap : public RefCounted<OpaqueJSWeakObjectMap> {
 public:
     static Ref<OpaqueJSWeakObjectMap> create(JSC::VM& vm, void* data, JSWeakMapDestroyedCallback callback)
@@ -62,8 +65,9 @@ private:
     }
     WeakMapType m_map;
     void* m_data;
-    JSWeakMapDestroyedCallback m_callback;
+    JSWeakMapDestroyedCallback OPAQUE_JSWEAK_OBJECT_MAP_METHOD(m_callback);
 };
 
+#undef OPAQUE_JSWEAK_OBJECT_MAP_METHOD
 
 #endif // JSWeakObjectMapInternal_h
