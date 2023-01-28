@@ -62,6 +62,8 @@ class Git(Scm):
 
                 self._fill(self.repo.default_branch)
                 for branch in self._ordered_commits.keys():
+                    print("##### Branch:")
+                    print(branch)
                     if branch == self.repo.default_branch:
                         continue
                     if not self._ordered_commits[branch]:
