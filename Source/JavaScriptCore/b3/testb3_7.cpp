@@ -2024,4 +2024,333 @@ void testDoubleMaxMin()
     testFMaxMin<double>();
 }
 
+void testVectorOrConstants(v128_t lhs, v128_t rhs)
+{
+    alignas(16) v128_t vector;
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lhsConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* rhsConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, lhsConstant, rhsConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+
+        compileAndRun<void>(proc, &vector);
+        CHECK(bitEquals(vector, vectorOr(lhs, rhs)));
+    }
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lhsConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* rhsConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* first = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, lhsConstant);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, first, rhsConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+        auto code = compileProc(proc);
+
+        for (auto& operand : v128Operands()) {
+            vector = operand.value;
+            invoke<void>(*code, &vector);
+            CHECK(bitEquals(vector, vectorOr(vectorOr(lhs, operand.value), rhs)));
+        }
+    }
+}
+
+void testVectorOrSelf()
+{
+    alignas(16) v128_t vector;
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, input);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    for (auto& operand : v128Operands()) {
+        vector = operand.value;
+        invoke<void>(*code, &vector);
+        CHECK(bitEquals(vector, vectorOr(operand.value, operand.value)));
+    }
+}
+
+void testVectorXorOrAllOnesToVectorAndXor()
+{
+    alignas(16) v128_t vectors[2];
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* constant = root->appendNew<Const128Value>(proc, Origin(), vectorAllOnes());
+    Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* input1 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address, sizeof(v128_t));
+    Value* result0 = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input0, constant);
+    Value* result1 = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input1, constant);
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, result0, result1);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    for (auto& operand0 : v128Operands()) {
+        for (auto& operand1 : v128Operands()) {
+            vectors[0] = operand0.value;
+            vectors[1] = operand1.value;
+            invoke<void>(*code, vectors);
+            CHECK(bitEquals(vectors[0], vectorOr(vectorXor(operand0.value, vectorAllOnes()), vectorXor(operand1.value, vectorAllOnes()))));
+        }
+    }
+}
+
+void testVectorXorAndAllOnesToVectorOrXor()
+{
+    alignas(16) v128_t vectors[2];
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* constant = root->appendNew<Const128Value>(proc, Origin(), vectorAllOnes());
+    Value* input0 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* input1 = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address, sizeof(v128_t));
+    Value* result0 = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input0, constant);
+    Value* result1 = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input1, constant);
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, result0, result1);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    for (auto& operand0 : v128Operands()) {
+        for (auto& operand1 : v128Operands()) {
+            vectors[0] = operand0.value;
+            vectors[1] = operand1.value;
+            invoke<void>(*code, vectors);
+            CHECK(bitEquals(vectors[0], vectorAnd(vectorXor(operand0.value, vectorAllOnes()), vectorXor(operand1.value, vectorAllOnes()))));
+        }
+    }
+}
+
+void testVectorXorOrAllOnesConstantToVectorAndXor(v128_t constant)
+{
+    alignas(16) v128_t vector;
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* allOnes = root->appendNew<Const128Value>(proc, Origin(), vectorAllOnes());
+    Value* constant0 = root->appendNew<Const128Value>(proc, Origin(), constant);
+    Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* result0 = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, allOnes);
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, result0, constant0);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    for (auto& operand : v128Operands()) {
+        vector = operand.value;
+        invoke<void>(*code, &vector);
+        CHECK(bitEquals(vector, vectorOr(vectorXor(operand.value, vectorAllOnes()), constant)));
+    }
+}
+
+void testVectorXorAndAllOnesConstantToVectorOrXor(v128_t constant)
+{
+    alignas(16) v128_t vector;
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* allOnes = root->appendNew<Const128Value>(proc, Origin(), vectorAllOnes());
+    Value* constant0 = root->appendNew<Const128Value>(proc, Origin(), constant);
+    Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* result0 = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, allOnes);
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, result0, constant0);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    for (auto& operand : v128Operands()) {
+        vector = operand.value;
+        invoke<void>(*code, &vector);
+        CHECK(bitEquals(vector, vectorAnd(vectorXor(operand.value, vectorAllOnes()), constant)));
+    }
+}
+
+void testVectorAndConstants(v128_t lhs, v128_t rhs)
+{
+    alignas(16) v128_t vector;
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lhsConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* rhsConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, lhsConstant, rhsConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+
+        compileAndRun<void>(proc, &vector);
+        CHECK(bitEquals(vector, vectorAnd(lhs, rhs)));
+    }
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lhsConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* rhsConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* first = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, lhsConstant);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, first, rhsConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+        auto code = compileProc(proc);
+
+        for (auto& operand : v128Operands()) {
+            vector = operand.value;
+            invoke<void>(*code, &vector);
+            CHECK(bitEquals(vector, vectorAnd(vectorAnd(lhs, operand.value), rhs)));
+        }
+    }
+}
+
+void testVectorAndSelf()
+{
+    alignas(16) v128_t vector;
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, input);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    for (auto& operand : v128Operands()) {
+        vector = operand.value;
+        invoke<void>(*code, &vector);
+        CHECK(bitEquals(vector, vectorAnd(operand.value, operand.value)));
+    }
+}
+
+void testVectorXorConstants(v128_t lhs, v128_t rhs)
+{
+    alignas(16) v128_t vector;
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lhsConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* rhsConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, lhsConstant, rhsConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+
+        compileAndRun<void>(proc, &vector);
+        CHECK(bitEquals(vector, vectorXor(lhs, rhs)));
+    }
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* lhsConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* rhsConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* first = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, lhsConstant);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, first, rhsConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+        auto code = compileProc(proc);
+
+        for (auto& operand : v128Operands()) {
+            vector = operand.value;
+            invoke<void>(*code, &vector);
+            CHECK(bitEquals(vector, vectorXor(vectorXor(lhs, operand.value), rhs)));
+        }
+    }
+}
+
+void testVectorXorSelf()
+{
+    alignas(16) v128_t vector;
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+    Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, input);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+    root->appendNewControlValue(proc, Return, Origin());
+
+    auto code = compileProc(proc);
+
+    for (auto& operand : v128Operands()) {
+        vector = operand.value;
+        invoke<void>(*code, &vector);
+        CHECK(bitEquals(vector, vectorXor(operand.value, operand.value)));
+    }
+}
+
+void testVectorAndConstantConstant(v128_t lhs, v128_t rhs)
+{
+    alignas(16) v128_t vector;
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* firstConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* secondConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* first = root->appendNew<SIMDValue>(proc, Origin(), VectorXor, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, firstConstant);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, first, secondConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+        auto code = compileProc(proc);
+
+        for (auto& operand : v128Operands()) {
+            vector = operand.value;
+            invoke<void>(*code, &vector);
+            CHECK(bitEquals(vector, vectorAnd(vectorXor(operand.value, lhs), rhs)));
+        }
+    }
+    {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+
+        Value* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+        Value* firstConstant = root->appendNew<Const128Value>(proc, Origin(), lhs);
+        Value* secondConstant = root->appendNew<Const128Value>(proc, Origin(), rhs);
+        Value* input = root->appendNew<MemoryValue>(proc, Load, V128, Origin(), address);
+        Value* first = root->appendNew<SIMDValue>(proc, Origin(), VectorOr, B3::V128, SIMDLane::v128, SIMDSignMode::None, input, firstConstant);
+        Value* result = root->appendNew<SIMDValue>(proc, Origin(), VectorAnd, B3::V128, SIMDLane::v128, SIMDSignMode::None, first, secondConstant);
+        root->appendNew<MemoryValue>(proc, Store, Origin(), result, address);
+        root->appendNewControlValue(proc, Return, Origin());
+        auto code = compileProc(proc);
+
+        for (auto& operand : v128Operands()) {
+            vector = operand.value;
+            invoke<void>(*code, &vector);
+            CHECK(bitEquals(vector, vectorAnd(vectorOr(operand.value, lhs), rhs)));
+        }
+    }
+}
+
 #endif // ENABLE(B3_JIT)

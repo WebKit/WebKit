@@ -39,6 +39,10 @@ public:
 
     inline v128_t value() const { return m_value; }
 
+    Value* vectorAndConstant(Procedure&, const Value* other) const final;
+    Value* vectorOrConstant(Procedure&, const Value* other) const final;
+    Value* vectorXorConstant(Procedure&, const Value* other) const final;
+
     B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 
 protected:

@@ -36,13 +36,42 @@ typedef union v128_u {
     uint16_t u16x8[8];
     uint32_t u32x4[4];
     uint64_t u64x2[2] = { 0, 0 };
-    v128_u() = default;
+
+    constexpr v128_u() = default;
+    constexpr v128_u(uint64_t first, uint64_t second)
+        : u64x2 { first, second }
+    { }
 } v128_t;
 
+constexpr v128_t vectorAllOnes()
+{
+    return v128_t { UINT64_MAX, UINT64_MAX };
+}
+
+constexpr v128_t vectorAllZeros()
+{
+    return v128_t { 0, 0 };
+}
+
 // Comparing based on bits. Not using float/double comparison.
-inline bool bitEquals(const v128_t& lhs, const v128_t rhs)
+constexpr bool bitEquals(const v128_t& lhs, const v128_t rhs)
 {
     return lhs.u64x2[0] == rhs.u64x2[0] && lhs.u64x2[1] == rhs.u64x2[1];
+}
+
+constexpr v128_t vectorOr(v128_t lhs, v128_t rhs)
+{
+    return v128_t { lhs.u64x2[0] | rhs.u64x2[0], lhs.u64x2[1] | rhs.u64x2[1] };
+}
+
+constexpr v128_t vectorAnd(v128_t lhs, v128_t rhs)
+{
+    return v128_t { lhs.u64x2[0] & rhs.u64x2[0], lhs.u64x2[1] & rhs.u64x2[1] };
+}
+
+constexpr v128_t vectorXor(v128_t lhs, v128_t rhs)
+{
+    return v128_t { lhs.u64x2[0] ^ rhs.u64x2[0], lhs.u64x2[1] ^ rhs.u64x2[1] };
 }
 
 enum class SIMDLane : uint8_t {

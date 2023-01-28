@@ -384,6 +384,11 @@ inline v128_t Value::asV128() const
     return as<Const128Value>()->value();
 }
 
+inline bool Value::isV128(v128_t value) const
+{
+    return hasV128() && bitEquals(asV128(), value);
+}
+
 inline bool Value::hasNumber() const
 {
     return hasInt() || hasDouble() || hasFloat();
