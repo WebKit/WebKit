@@ -2098,7 +2098,6 @@ editing/execCommand/enabling-and-selection.html [ Skip ]
 fast/forms/plaintext-mode-1.html [ Skip ]
 
 # Latest iOS failures as of Sept 1, 2015
-accessibility/ios-simulator/table-cell-ranges.html [ Failure ]
 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
 fast/parser/xml-declaration-missing-ending-mark.html [ Failure ]
 platform/ios/ios/accessibility/set-value.html [ Failure ]
@@ -3898,3 +3897,5 @@ webkit.org/b/251216 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 webkit.org/b/251234 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Failure ]
 
 webkit.org/b/251274 [ Debug ] imported/w3c/web-platform-tests/fs/FileSystemFileHandle-create-sync-access-handle.https.tentative.window.html [ Pass Failure ]
+
+webkit.org/b/251302 accessibility/ios-simulator/table-cell-ranges.html [ Failure ]
