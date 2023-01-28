@@ -145,6 +145,7 @@ void OSREntryPlan::work(CompilationEffort)
 
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
+        m_calleeGroup->callsiteCollection().addCallsites(locker, m_calleeGroup.get(), callee->wasmToWasmCallsites());
 
         resetInstructionCacheOnAllThreads();
         WTF::storeStoreFence();

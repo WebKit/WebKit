@@ -52,9 +52,12 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     , m_llintCallees(other.m_llintCallees)
     , m_embedderCallees(other.m_embedderCallees)
     , m_wasmIndirectCallEntryPoints(other.m_wasmIndirectCallEntryPoints)
-    , m_wasmToWasmCallsites(other.m_wasmToWasmCallsites)
     , m_wasmToWasmExitStubs(other.m_wasmToWasmExitStubs)
+    , m_callsiteCollection(m_calleeCount)
 {
+    Locker locker { m_lock };
+    auto callsites = other.callsiteCollection().calleeGroupCallsites();
+    m_callsiteCollection.addCalleeGroupCallsites(locker, *this, WTFMove(callsites));
     setCompilationFinished();
 }
 
@@ -62,6 +65,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
     , m_llintCallees(llintCallees)
+    , m_callsiteCollection(m_calleeCount)
 {
     RefPtr<CalleeGroup> protectedThis = this;
 
@@ -80,7 +84,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
                 m_wasmIndirectCallEntryPoints[i] = m_llintCallees->at(i)->entrypoint();
 
             m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
-            m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
+            m_callsiteCollection.addCalleeGroupCallsites(locker, *this, m_plan->takeWasmToWasmCallsites());
             m_embedderCallees = static_cast<LLIntPlan*>(m_plan.get())->takeEmbedderCallees();
 
             setCompilationFinished();
@@ -109,7 +113,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
             });
 
             m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
-            m_wasmToWasmCallsites = m_plan->takeWasmToWasmCallsites();
+            m_callsiteCollection.addCalleeGroupCallsites(locker, *this, m_plan->takeWasmToWasmCallsites());
 
             setCompilationFinished();
         })));

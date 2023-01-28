@@ -84,10 +84,6 @@ protected:
     virtual bool isComplete() const = 0;
     virtual void complete() WTF_REQUIRES_LOCK(m_lock) = 0;
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
-    static void updateCallSitesToCallUs(const AbstractLocker& calleeGroupLocker, CalleeGroup&, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace);
-#endif
-
     Ref<ModuleInformation> m_moduleInformation;
 
     Vector<std::pair<VM*, CompletionTask>, 1> m_completionTasks;
