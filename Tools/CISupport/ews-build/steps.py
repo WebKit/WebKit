@@ -4426,29 +4426,32 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
     descriptionDone = ['analyze-api-tests-results']
     NUM_FAILURES_TO_DISPLAY = 10
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         self.results = {}
-        d = self.getTestsResults(RunAPITests.name)
-        d.addCallback(lambda res: self.getTestsResults(ReRunAPITests.name))
-        d.addCallback(lambda res: self.getTestsResults(RunAPITestsWithoutChange.name))
-        d.addCallback(lambda res: self.analyzeResults())
-        return defer.succeed(None)
+        yield self.getTestsResults(RunAPITests.name)
+        yield self.getTestsResults(ReRunAPITests.name)
+        yield self.getTestsResults(RunAPITestsWithoutChange.name)
+        result = yield self.analyzeResults()
 
+        defer.returnValue(result)
+
+    @defer.inlineCallbacks
     def analyzeResults(self):
         if not self.results or len(self.results) == 0:
-            self._addToLog('stderr', 'Unable to parse API test results: {}'.format(self.results))
-            self.finished(RETRY)
+            yield self._addToLog('stderr', 'Unable to parse API test results: {}'.format(self.results))
             self.build.buildFinished(['Unable to parse API test results'], RETRY)
-            return -1
+            defer.returnValue(RETRY)
+            return
 
         first_run_results = self.results.get(RunAPITests.name)
         second_run_results = self.results.get(ReRunAPITests.name)
         clean_tree_results = self.results.get(RunAPITestsWithoutChange.name)
 
         if not (first_run_results and second_run_results):
-            self.finished(RETRY)
             self.build.buildFinished(['Unable to parse API test results'], RETRY)
-            return -1
+            defer.returnValue(RETRY)
+            return
 
         def getAPITestFailures(result):
             if not result:
@@ -4472,14 +4475,13 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
         new_failures_to_display = list(new_failures)[:self.NUM_FAILURES_TO_DISPLAY]
         new_failures_string = ', '.join(new_failures_to_display)
 
-        self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(list(first_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
-        self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(list(second_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
-        self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures_string))
-        self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures_string))
+        yield self._addToLog('stderr', '\nFailures in API Test first run: {}'.format(list(first_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
+        yield self._addToLog('stderr', '\nFailures in API Test second run: {}'.format(list(second_run_failures)[:self.NUM_FAILURES_TO_DISPLAY]))
+        yield self._addToLog('stderr', '\nFlaky Tests: {}'.format(flaky_failures_string))
+        yield self._addToLog('stderr', '\nFailures in API Test on clean tree: {}'.format(clean_tree_failures_string))
 
         if new_failures:
-            self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures_string))
-            self.finished(FAILURE)
+            yield self._addToLog('stderr', '\nNew failures: {}\n'.format(new_failures_string))
             self.build.results = FAILURE
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             message = 'Found {} new API test failure{}: {}'.format(len(new_failures), pluralSuffix, new_failures_string)
@@ -4487,9 +4489,9 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
                 message += ' ...'
             self.descriptionDone = message
             self.build.buildFinished([message], FAILURE)
+            defer.returnValue(FAILURE)
         else:
-            self._addToLog('stderr', '\nNo new failures\n')
-            self.finished(SUCCESS)
+            yield self._addToLog('stderr', '\nNo new failures\n')
             self.build.results = SUCCESS
             self.descriptionDone = 'Passed API tests'
             pluralSuffix = 's' if len(clean_tree_failures) > 1 else ''
@@ -4505,6 +4507,7 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
                 for flaky_failure in flaky_failures:
                     self.send_email_for_flaky_failure(flaky_failure)
             self.build.buildFinished([message], SUCCESS)
+            defer.returnValue(SUCCESS)
 
     def getBuildStepByName(self, name):
         for step in self.build.executedSteps:
@@ -4516,14 +4519,16 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
     def getTestsResults(self, name):
         step = self.getBuildStepByName(name)
         if not step:
-            self._addToLog('stderr', 'ERROR: step not found: {}'.format(step))
+            yield self._addToLog('stderr', 'ERROR: step not found: {}'.format(step))
             defer.returnValue(None)
+            return
 
         logs = yield self.master.db.logs.getLogs(step.stepid)
         log = next((log for log in logs if log['name'] == 'json'), None)
         if not log:
-            self._addToLog('stderr', 'ERROR: log for step not found: {}'.format(step))
+            yield self._addToLog('stderr', 'ERROR: log for step not found: {}'.format(step))
             defer.returnValue(None)
+            return
 
         lastline = int(max(0, log['num_lines'] - 1))
         logLines = yield self.master.db.logs.getLogLines(log['id'], 0, lastline)
@@ -4532,8 +4537,9 @@ class AnalyzeAPITestsResults(buildstep.BuildStep, AddToLogMixin):
 
         try:
             self.results[name] = json.loads(logLines)
+            defer.returnValue(self.results[name])
         except Exception as ex:
-            self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
+            yield self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
 
     def send_email_for_flaky_failure(self, test_name):
         try:
