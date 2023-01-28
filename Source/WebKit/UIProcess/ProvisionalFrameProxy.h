@@ -51,7 +51,7 @@ struct FrameInfoData;
 class ProvisionalFrameProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalFrameProxy(WebFrameProxy&, Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
+    ProvisionalFrameProxy(WebFrameProxy&, Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&, WebCore::SecurityOriginData&& sod);
     ~ProvisionalFrameProxy();
 
     WebProcessProxy& process() { return m_process.get(); }

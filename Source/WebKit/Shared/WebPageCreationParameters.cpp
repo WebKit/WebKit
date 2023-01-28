@@ -209,6 +209,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
     encoder << machBootstrapHandle;
 #endif
+
+    encoder << topDocumentSecurityOriginData;
 }
 
 std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
@@ -641,8 +643,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.contentSecurityPolicyModeForExtension))
         return std::nullopt;
 
-    if (!decoder.decode(parameters.mainFrameIdentifier))
+    std::optional<std::optional<WebCore::FrameIdentifier>> mainFrameIdentifier;
+    decoder >> mainFrameIdentifier;
+    if (!mainFrameIdentifier)
         return std::nullopt;
+    parameters.mainFrameIdentifier = WTFMove(*mainFrameIdentifier);
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     std::optional<Vector<String>> lookalikeCharacterStrings;
@@ -665,6 +670,12 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     parameters.machBootstrapHandle = WTFMove(*machBootstrapHandle);
 #endif
+
+    std::optional<std::optional<WebCore::SecurityOriginData>> topDocumentSecurityOriginData;
+    decoder >> topDocumentSecurityOriginData;
+    if (!topDocumentSecurityOriginData)
+        return std::nullopt;
+    parameters.topDocumentSecurityOriginData = WTFMove(*topDocumentSecurityOriginData);
 
     return { WTFMove(parameters) };
 }

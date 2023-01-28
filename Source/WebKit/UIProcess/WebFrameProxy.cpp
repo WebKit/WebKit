@@ -377,10 +377,10 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
     m_childFrames.add(WTFMove(child));
 }
 
-void WebFrameProxy::swapToProcess(Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request)
+void WebFrameProxy::swapToProcess(Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request, WebCore::SecurityOriginData&& sod)
 {
     ASSERT(!isMainFrame());
-    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, WTFMove(process), request);
+    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, WTFMove(process), request, WTFMove(sod));
 }
 
 IPC::Connection* WebFrameProxy::messageSenderConnection() const

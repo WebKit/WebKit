@@ -48,6 +48,7 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/Pagination.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
@@ -294,6 +295,8 @@ struct WebPageCreationParameters {
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
     SandboxExtension::Handle machBootstrapHandle;
 #endif
+
+    std::optional<WebCore::SecurityOriginData> topDocumentSecurityOriginData;
 };
 
 } // namespace WebKit
