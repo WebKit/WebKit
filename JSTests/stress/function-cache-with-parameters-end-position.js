@@ -22,7 +22,8 @@ for (var i = 0; i < 10; ++i) {
     var f = Function('/*) {\n*/', 'return 42');
     shouldBe(f.toString(),
 `function anonymous(/*) {
-*/) {
+*/
+) {
 return 42
 }`);
 }
@@ -33,7 +34,8 @@ for (var i = 0; i < 10; ++i) {
     var f = Function('/*) {\n*/', 'return 43');
     shouldBe(f.toString(),
 `function anonymous(/*) {
-*/) {
+*/
+) {
 return 43
 }`);
 }

@@ -87,11 +87,11 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
     String program;
     functionConstructorParametersEndPosition = std::nullopt;
     if (args.isEmpty())
-        program = makeString(prefix, functionName.string(), "() {\n\n}");
+        program = makeString(prefix, functionName.string(), "(\n) {\n\n}");
     else if (args.size() == 1) {
         auto body = args.at(0).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        program = tryMakeString(prefix, functionName.string(), "() {\n", body, "\n}");
+        program = tryMakeString(prefix, functionName.string(), "(\n) {\n", body, "\n}");
         if (UNLIKELY(!program)) {
             throwOutOfMemoryError(globalObject, scope);
             return { };
@@ -110,20 +110,20 @@ static String stringifyFunction(JSGlobalObject* globalObject, const ArgList& arg
             RETURN_IF_EXCEPTION(scope, { });
             auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
-            builder.append(", ", viewWithString.view);
+            builder.append(",", viewWithString.view);
         }
         if (UNLIKELY(builder.hasOverflowed())) {
             throwOutOfMemoryError(globalObject, scope);
             return { };
         }
 
-        functionConstructorParametersEndPosition = builder.length() + 1;
+        functionConstructorParametersEndPosition = builder.length() + sizeof("\n)") - 1;
 
         auto* bodyString = args.at(args.size() - 1).toString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         auto body = bodyString->viewWithUnderlyingString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        builder.append(") {\n", body.view, "\n}");
+        builder.append("\n) {\n", body.view, "\n}");
         if (UNLIKELY(builder.hasOverflowed())) {
             throwOutOfMemoryError(globalObject, scope);
             return { };

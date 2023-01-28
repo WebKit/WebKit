@@ -1,10 +1,4 @@
 ---
-test/annexB/built-ins/Function/createdynfn-html-close-comment-params.js:
-  default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-  strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-test/annexB/built-ins/Function/createdynfn-html-open-comment-params.js:
-  default: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
-  strict mode: "SyntaxError: Unexpected token '}'. Expected a parameter pattern or a ')' in parameter list."
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/func-block-decl-eval-func-skip-early-err-for-in.js:
@@ -615,18 +609,6 @@ test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
 test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
-test/built-ins/Function/prototype/toString/AsyncFunction.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/AsyncGenerator.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/Function.js:
-  default: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected token ';'. Expected a ')' or a ',' after a parameter declaration."
-test/built-ins/Function/prototype/toString/GeneratorFunction.js:
-  default: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
-  strict mode: "SyntaxError: Unexpected keyword 'yield'. Expected a ')' or a ',' after a parameter declaration."
 test/built-ins/Function/prototype/toString/async-arrow-function.js:
   default: 'Test262Error: Conforms to NativeFunction Syntax: "async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }" (async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })'
   strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "async ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ }" (async /* a */ ( /* b */ a /* c */ , /* d */ b /* e */ ) /* f */ => /* g */ { /* h */ ; /* i */ })'
