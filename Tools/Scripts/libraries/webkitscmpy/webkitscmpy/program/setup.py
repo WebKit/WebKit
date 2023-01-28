@@ -162,10 +162,14 @@ class Setup(Command):
 
     @classmethod
     def _add_remote(cls, repository, name, url, fetch=True):
-        returncode = run(
+        result = run(
             [repository.executable(), 'remote', 'add', name, url],
             capture_output=True, cwd=repository.root_path,
-        ).returncode
+        )
+        print(result.args)
+        returncode = result.returncode
+        print("~~~ returncode:")
+        print(returncode)
         if returncode == 3:
             returncode = run(
                 [repository.executable(), 'remote', 'set-url', name, url],
@@ -481,7 +485,7 @@ class Setup(Command):
                     result += 1
                     continue
                 fork_name = '{}-fork'.format(name)
-                log.info("Adding forked {remote} remote as '{name}'...".format(remote=name, name=fork_name))
+                log.info("(1) Adding forked {remote} remote as '{name}'...".format(remote=name, name=fork_name))
                 if cls._add_remote(repository, fork_name, cls._fork_remote(repository.url(), username, '{}-{}'.format(rmt.name, name)), fetch=False):
                     result += 1
                 else:
@@ -504,7 +508,7 @@ Automation may create pull requests and forks in unexpected locations
         if cls.github(args, rmt, team=repository.config().get('webkitscmpy.access.origin', None), **kwargs):
             return result + 1
 
-        log.info("Adding forked remote as 'fork'...".format(username))
+        log.info("(2) Adding forked remote as 'fork'...".format(username))
         if cls._add_remote(repository, 'fork', cls._fork_remote(repository.url(), username, rmt.name), fetch=False):
             result += 1
         else:
