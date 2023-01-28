@@ -169,8 +169,8 @@ void Scope::clearResolver()
 void Scope::releaseMemory()
 {
     if (!m_shadowRoot) {
-        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
-            descendantShadowRoot->styleScope().releaseMemory();
+        for (auto& descendantShadowRoot : m_document.inDocumentShadowRoots())
+            const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().releaseMemory();
     }
 
 #if ENABLE(CSS_SELECTOR_JIT)
@@ -664,8 +664,8 @@ void Scope::flushPendingDescendantUpdates()
 {
     ASSERT(m_hasDescendantWithPendingUpdate);
     ASSERT(!m_shadowRoot);
-    for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
-        descendantShadowRoot->styleScope().flushPendingUpdate();
+    for (auto& descendantShadowRoot : m_document.inDocumentShadowRoots())
+        const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().flushPendingUpdate();
     m_hasDescendantWithPendingUpdate = false;
 }
 
@@ -753,8 +753,8 @@ auto Scope::collectResolverScopes() -> ResolverScopes
 
     resolverScopes.add(*resolverIfExists(), Vector<WeakPtr<Scope>> { this });
 
-    for (auto* shadowRoot : m_document.inDocumentShadowRoots()) {
-        auto& scope = shadowRoot->styleScope();
+    for (auto& shadowRoot : m_document.inDocumentShadowRoots()) {
+        auto& scope = const_cast<ShadowRoot&>(shadowRoot).styleScope();
         auto* resolver = scope.resolverIfExists();
         if (!resolver)
             continue;
@@ -808,10 +808,10 @@ void Scope::didChangeStyleSheetEnvironment()
     if (!m_shadowRoot) {
         m_sharedShadowTreeResolvers.clear();
 
-        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots()) {
+        for (auto& descendantShadowRoot : m_document.inDocumentShadowRoots()) {
             // Stylesheets is author shadow roots are potentially affected.
-            if (descendantShadowRoot->mode() != ShadowRootMode::UserAgent)
-                descendantShadowRoot->styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
+            if (descendantShadowRoot.mode() != ShadowRootMode::UserAgent)
+                const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().scheduleUpdate(UpdateType::ContentsOrInterpretation);
         }
     }
     scheduleUpdate(UpdateType::ContentsOrInterpretation);
@@ -826,10 +826,10 @@ void Scope::didChangeViewportSize()
         if (!m_document.hasStyleWithViewportUnits())
             return;
 
-        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots()) {
-            if (descendantShadowRoot->mode() == ShadowRootMode::UserAgent)
+        for (auto& descendantShadowRoot : m_document.inDocumentShadowRoots()) {
+            if (descendantShadowRoot.mode() == ShadowRootMode::UserAgent)
                 continue;
-            descendantShadowRoot->styleScope().didChangeViewportSize();
+            const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().didChangeViewportSize();
         }
     }
 
@@ -849,8 +849,8 @@ void Scope::didChangeViewportSize()
 void Scope::invalidateMatchedDeclarationsCache()
 {
     if (!m_shadowRoot) {
-        for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots())
-            descendantShadowRoot->styleScope().invalidateMatchedDeclarationsCache();
+        for (auto& descendantShadowRoot : m_document.inDocumentShadowRoots())
+            const_cast<ShadowRoot&>(descendantShadowRoot).styleScope().invalidateMatchedDeclarationsCache();
     }
 
     if (auto* resolver = resolverIfExists())

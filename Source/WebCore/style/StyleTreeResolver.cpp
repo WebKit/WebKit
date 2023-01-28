@@ -77,8 +77,8 @@ TreeResolver::Scope::Scope(Document& document)
     document.setIsResolvingTreeStyle(true);
 
     // Ensure all shadow tree resolvers exist so their construction doesn't depend on traversal.
-    for (auto* shadowRoot : document.inDocumentShadowRoots())
-        shadowRoot->styleScope().resolver();
+    for (auto& shadowRoot : document.inDocumentShadowRoots())
+        const_cast<ShadowRoot&>(shadowRoot).styleScope().resolver();
 }
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)

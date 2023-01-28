@@ -6888,9 +6888,9 @@ String Internals::dumpStyleResolvers()
 
     dumpResolver("document resolver", document->styleScope().resolver());
 
-    for (auto* shadowRoot : document->inDocumentShadowRoots()) {
-        auto* name = shadowRoot->mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)" : "shadow root resolver (author)";
-        dumpResolver(name, shadowRoot->styleScope().resolver());
+    for (auto& shadowRoot : document->inDocumentShadowRoots()) {
+        auto* name = shadowRoot.mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)" : "shadow root resolver (author)";
+        dumpResolver(name, const_cast<ShadowRoot&>(shadowRoot).styleScope().resolver());
     }
 
     return result.toString();
