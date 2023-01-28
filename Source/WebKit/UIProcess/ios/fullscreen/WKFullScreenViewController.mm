@@ -420,6 +420,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
     [_bannerLabel setText:[NSString stringWithFormat:WEB_UI_NSSTRING(@"”%@” is in full screen.\nSwipe down to exit.", "Full Screen Warning Banner Content Text"), (NSString *)self.location]];
+    [_bannerLabel sizeToFit];
 #endif
 }
 
@@ -539,7 +540,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(FULLSCREEN_DISMISSAL_GESTURES)
         [[_banner centerYAnchor] constraintEqualToAnchor:margins.centerYAnchor],
         [[_banner centerXAnchor] constraintEqualToAnchor:margins.centerXAnchor],
-        [[_banner widthAnchor] constraintEqualToAnchor:margins.widthAnchor],
 #endif
         [[_stackView leadingAnchor] constraintEqualToAnchor:margins.leadingAnchor],
     ]];

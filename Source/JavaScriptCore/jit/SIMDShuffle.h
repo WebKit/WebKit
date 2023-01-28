@@ -124,6 +124,37 @@ public:
         return isLargerElementShuffle(pattern, 16);
     }
 
+    static bool isAllOutOfBoundsForUnaryShuffle(v128_t pattern)
+    {
+        for (unsigned i = 0; i < 16; ++i) {
+            if constexpr (isX86()) {
+                // https://www.felixcloutier.com/x86/pshufb
+                // On x64, OOB index means that highest bit is set.
+                // The acutal index is extracted by masking with 0b1111.
+                // So, for example, 0x11 index (17) will be converted to 0x1 access (not OOB).
+                if (!(pattern.u8x16[i] & 0x80))
+                    return false;
+            } else if constexpr (isARM64()) {
+                // https://developer.arm.com/documentation/dui0801/g/A64-SIMD-Vector-Instructions/TBL--vector-
+                // On ARM64, OOB index means out of 0..15 range for unary TBL.
+                if (pattern.u8x16[i] < 16)
+                    return false;
+            } else
+                return false;
+        }
+        return true;
+    }
+
+    static bool isAllOutOfBoundsForBinaryShuffle(v128_t pattern)
+    {
+        ASSERT(isARM64()); // Binary Shuffle is only supported by ARM64.
+        for (unsigned i = 0; i < 16; ++i) {
+            if (pattern.u8x16[i] < 32)
+                return false;
+        }
+        return true;
+    }
+
 private:
     static bool isLargerElementShuffle(v128_t pattern, unsigned size)
     {

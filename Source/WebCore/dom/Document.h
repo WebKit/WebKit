@@ -58,6 +58,7 @@
 #include <wtf/Observer.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -1546,7 +1547,7 @@ public:
 
     void didInsertInDocumentShadowRoot(ShadowRoot&);
     void didRemoveInDocumentShadowRoot(ShadowRoot&);
-    const ListHashSet<ShadowRoot*>& inDocumentShadowRoots() const { return m_inDocumentShadowRoots; }
+    const WeakListHashSet<ShadowRoot, WeakPtrImplWithEventTargetData>& inDocumentShadowRoots() const { return m_inDocumentShadowRoots; }
 
     void attachToCachedFrame(CachedFrameBase&);
     void detachFromCachedFrame(CachedFrameBase&);
@@ -2129,7 +2130,7 @@ private:
     WeakHashSet<MediaProducer> m_audioProducers;
     WeakPtr<SpeechRecognition> m_activeSpeechRecognition;
 
-    ListHashSet<ShadowRoot*> m_inDocumentShadowRoots;
+    WeakListHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_inDocumentShadowRoots;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     using TargetIdToClientMap = HashMap<PlaybackTargetClientContextIdentifier, WebCore::MediaPlaybackTargetClient*>;

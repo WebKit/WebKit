@@ -32,6 +32,30 @@ namespace JSC { namespace B3 {
 
 Const128Value::~Const128Value() = default;
 
+Value* Const128Value::vectorAndConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasV128())
+        return nullptr;
+    v128_t result = vectorAnd(m_value, other->asV128());
+    return proc.add<Const128Value>(origin(), result);
+}
+
+Value* Const128Value::vectorOrConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasV128())
+        return nullptr;
+    v128_t result = vectorOr(m_value, other->asV128());
+    return proc.add<Const128Value>(origin(), result);
+}
+
+Value* Const128Value::vectorXorConstant(Procedure& proc, const Value* other) const
+{
+    if (!other->hasV128())
+        return nullptr;
+    v128_t result = vectorXor(m_value, other->asV128());
+    return proc.add<Const128Value>(origin(), result);
+}
+
 void Const128Value::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma, m_value.u64x2[0], comma, m_value.u64x2[1]);

@@ -124,7 +124,7 @@ void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomS
         HTMLTablePartElement::parseAttribute(name, value);
 }
 
-const StyleProperties* HTMLTableCellElement::additionalPresentationalHintStyle() const
+const MutableStyleProperties* HTMLTableCellElement::additionalPresentationalHintStyle() const
 {
     if (auto table = findParentTable())
         return table->additionalCellStyle();

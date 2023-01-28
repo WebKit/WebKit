@@ -57,7 +57,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
-    const StyleProperties* additionalPresentationalHintStyle() const override;
+    const MutableStyleProperties* additionalPresentationalHintStyle() const override;
 
     bool isURLAttribute(const Attribute&) const override;
 

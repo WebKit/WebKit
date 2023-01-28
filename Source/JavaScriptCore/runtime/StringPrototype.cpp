@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2015 Jordan Harband (ljharb@gmail.com)
  *
@@ -31,7 +31,6 @@
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"
 #include "IntlObjectInlines.h"
-#include "JITCodeInlines.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSStringIterator.h"

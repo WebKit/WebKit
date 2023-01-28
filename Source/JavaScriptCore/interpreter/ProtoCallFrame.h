@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,6 @@ public:
     Register argCountAndCodeOriginValue;
     Register thisArg;
     uint32_t paddedArgCount;
-    bool hasArityMismatch;
     JSValue *args;
     JSGlobalObject* globalObject;
 
@@ -75,8 +74,6 @@ public:
         codeBlockValue = bitwise_cast<CallFrame*>(instance);
     }
 #endif
-
-    bool needArityCheck() { return hasArityMismatch; }
 
     JSValue argument(size_t argumentIndex)
     {

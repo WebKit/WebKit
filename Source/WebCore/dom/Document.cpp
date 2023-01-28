@@ -680,7 +680,7 @@ Document::~Document()
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_parentTreeScope);
     ASSERT(!m_disabledFieldsetElementsCount);
-    ASSERT(m_inDocumentShadowRoots.isEmpty());
+    ASSERT(m_inDocumentShadowRoots.isEmptyIgnoringNullReferences());
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     m_deviceMotionClient->deviceMotionControllerDestroyed();
@@ -8527,14 +8527,14 @@ DOMSelection* Document::getSelection()
 void Document::didInsertInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
     ASSERT(shadowRoot.isConnected());
-    ASSERT(!m_inDocumentShadowRoots.contains(&shadowRoot));
-    m_inDocumentShadowRoots.add(&shadowRoot);
+    ASSERT(!m_inDocumentShadowRoots.contains(shadowRoot));
+    m_inDocumentShadowRoots.add(shadowRoot);
 }
 
 void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
-    ASSERT(m_inDocumentShadowRoots.contains(&shadowRoot));
-    m_inDocumentShadowRoots.remove(&shadowRoot);
+    ASSERT(m_inDocumentShadowRoots.contains(shadowRoot));
+    m_inDocumentShadowRoots.remove(shadowRoot);
 }
 
 void Document::orientationChanged(int orientation)

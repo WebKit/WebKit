@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -350,6 +350,10 @@ macro doVMEntry(makeCall)
     loadp VMEntryRecord::m_prevTopEntryFrame[sp], t4
     storep t4, VM::topEntryFrame[t5]
 
+    # Tag is stored in r1 and payload is stored in r0 in little-endian architectures.
+    move UndefinedTag, r1
+    move 0, r0
+
     if ARMv7
         subp cfr, CalleeRegisterSaveSize, t5
         move t5, sp
@@ -446,6 +450,10 @@ op(llint_handle_uncaught_exception, macro()
     storep t5, VM::topCallFrame[t3]
     loadp VMEntryRecord::m_prevTopEntryFrame[sp], t5
     storep t5, VM::topEntryFrame[t3]
+
+    # Tag is stored in r1 and payload is stored in r0 in little-endian architectures.
+    move UndefinedTag, r1
+    move 0, r0
 
     if ARMv7
         subp cfr, CalleeRegisterSaveSize, t3

@@ -26,9 +26,12 @@
 #include "config.h"
 #include "TimingFunction.h"
 
+#include "CSSParserContext.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSValueKeywords.h"
+#include "MutableStyleProperties.h"
 #include "SpringSolver.h"
-#include "StyleProperties.h"
 #include "UnitBezier.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>

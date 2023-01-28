@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@
 #include "Interpreter.h"
 #include "InterpreterInlines.h"
 #include "IntlCollator.h"
-#include "JITCodeInlines.h"
+#include "JITCode.h"
 #include "JITWorklist.h"
 #include "JSArrayInlines.h"
 #include "JSArrayIterator.h"

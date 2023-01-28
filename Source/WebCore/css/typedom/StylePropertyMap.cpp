@@ -82,7 +82,7 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     if (!CSSProperty::isListValuedProperty(propertyID) && values.size() > 1)
         return Exception { TypeError, makeString(property, " is not a list-valued property but more than one value was provided"_s) };
 
-    if (isShorthandCSSProperty(propertyID)) {
+    if (isShorthand(propertyID)) {
         if (values.size() != 1)
             return Exception { TypeError, "Wrong number of values for shorthand CSS property"_s };
         String value;

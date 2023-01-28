@@ -550,7 +550,16 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 {
     auto webView = createWebViewWithIPCTestingAPI();
     NSDictionary *typeInfo = [webView objectByEvaluatingJavaScript:@"IPC.serializedTypeInfo"];
-    NSArray *expectedArray = @[@"bool", @"bool", @"bool"];
+    NSArray *expectedArray = @[@{
+        @"name": @"ignoreSearch",
+        @"type": @"bool"
+    }, @{
+        @"name": @"ignoreMethod",
+        @"type": @"bool"
+    }, @{
+        @"name": @"ignoreVary",
+        @"type": @"bool"
+    }];
     EXPECT_TRUE([typeInfo[@"WebCore::CacheQueryOptions"] isEqualToArray:expectedArray]);
     NSDictionary *expectedDictionary = @{
         @"isOptionSet" : @1,
@@ -581,8 +590,8 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         }
     }
     for (NSArray *memberTypes in typeInfo.allValues) {
-        for (NSString *memberType in memberTypes)
-            [typesNeedingDescriptions addObject:memberType];
+        for (NSDictionary *memberType in memberTypes)
+            [typesNeedingDescriptions addObject:memberType[@"type"]];
     }
 
     typesNeedingDescriptions = extractTypesFromContainers(typesNeedingDescriptions);

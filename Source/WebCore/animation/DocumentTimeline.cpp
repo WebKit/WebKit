@@ -27,6 +27,7 @@
 #include "DocumentTimeline.h"
 
 #include "AnimationEventBase.h"
+#include "CSSProperty.h"
 #include "CSSTransition.h"
 #include "CustomAnimationOptions.h"
 #include "CustomEffect.h"

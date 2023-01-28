@@ -130,8 +130,10 @@ void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database
     database->priv->iconDatabase->checkIconURLAndSetPageURLIfNeeded(icon.url.string(), pageURL,
         isEphemeral ? IconDatabase::AllowDatabaseWrite::No : IconDatabase::AllowDatabaseWrite::Yes,
             [database = GRefPtr<WebKitFaviconDatabase>(database), url = icon.url.string().isolatedCopy(), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)](bool found, bool changed) {
-            if (!webkitFaviconDatabaseIsOpen(database.get()))
+            if (!webkitFaviconDatabaseIsOpen(database.get())) {
+                completionHandler(false);
                 return;
+            }
 
             if (found && changed)
                 g_signal_emit(database.get(), signals[FAVICON_CHANGED], 0, pageURL.utf8().data(), url.utf8().data());

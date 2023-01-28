@@ -251,7 +251,7 @@ void Builder::applyRollbackCascadeProperty(const PropertyCascade::Property& prop
 
 void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::LinkMatchMask linkMatchMask)
 {
-    ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
+    ASSERT_WITH_MESSAGE(!isShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     auto valueToApply = resolveVariableReferences(id, value);
     auto& style = m_state.style();

@@ -41,6 +41,8 @@
 #include "CSSValuePool.h"
 #include "Document.h"
 #include "Element.h"
+#include "ImmutableStyleProperties.h"
+#include "MutableStyleProperties.h"
 #include "Page.h"
 #include "RenderTheme.h"
 #include "Settings.h"

@@ -190,6 +190,7 @@
 #import <WebCore/MediaRecorderProvider.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryRelease.h>
+#import <WebCore/MutableStyleProperties.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NodeList.h>
 #import <WebCore/Notification.h>
@@ -216,7 +217,6 @@
 #import <WebCore/SocketProvider.h>
 #import <WebCore/SocketStreamHandleImpl.h>
 #import <WebCore/StringUtilities.h>
-#import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/TranslationContextMenuInfo.h>

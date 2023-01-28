@@ -45,7 +45,7 @@ private:
     void parseAttribute(const QualifiedName&, const AtomString&) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
-    const StyleProperties* additionalPresentationalHintStyle() const final;
+    const MutableStyleProperties* additionalPresentationalHintStyle() const final;
 
     unsigned m_span;
 };

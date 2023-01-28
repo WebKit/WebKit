@@ -48,6 +48,7 @@
 #include "JSKeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
+#include "MutableStyleProperties.h"
 #include "PropertyAllowlist.h"
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
@@ -68,6 +69,13 @@
 
 namespace WebCore {
 using namespace JSC;
+
+KeyframeEffect::ParsedKeyframe::ParsedKeyframe()
+    : style(MutableStyleProperties::create())
+{
+}
+
+KeyframeEffect::ParsedKeyframe::~ParsedKeyframe() = default;
 
 static inline void invalidateElement(const std::optional<const Styleable>& styleable)
 {

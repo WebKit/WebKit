@@ -257,6 +257,11 @@ Ref<StyleRule> StyleRule::copy() const
     return adoptRef(*new StyleRule(*this));
 }
 
+void StyleRule::setProperties(Ref<StyleProperties>&& properties)
+{
+    m_properties = WTFMove(properties);
+}
+
 MutableStyleProperties& StyleRule::mutableProperties()
 {
     if (!is<MutableStyleProperties>(m_properties))

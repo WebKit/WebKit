@@ -426,6 +426,21 @@ Value* Value::sqrtConstant(Procedure&) const
     return nullptr;
 }
 
+Value* Value::vectorAndConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::vectorOrConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
+Value* Value::vectorXorConstant(Procedure&, const Value*) const
+{
+    return nullptr;
+}
+
 TriState Value::equalConstant(const Value*) const
 {
     return TriState::Indeterminate;

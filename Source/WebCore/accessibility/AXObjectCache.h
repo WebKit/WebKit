@@ -707,7 +707,7 @@ inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextEditType
 inline void AXObjectCache::postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::handleTextChanged(AccessibilityObject*) { }
-inline void AXObjectCache::onRendererCreated(element&) { }
+inline void AXObjectCache::onRendererCreated(Element&) { }
 inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }
 inline std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }

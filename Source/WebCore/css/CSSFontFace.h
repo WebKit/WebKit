@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FontSelectionValueInlines.h"
+#include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "RenderStyleConstants.h"
 #include "Settings.h"

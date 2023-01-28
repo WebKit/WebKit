@@ -54,6 +54,7 @@
 #import <WebCore/HTMLUListElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/ImageOverlay.h>
+#import <WebCore/MutableStyleProperties.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/PaymentCoordinator.h>

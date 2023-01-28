@@ -240,6 +240,10 @@ public:
     virtual Value* floorConstant(Procedure&) const;
     virtual Value* sqrtConstant(Procedure&) const;
 
+    virtual Value* vectorAndConstant(Procedure&, const Value* other) const;
+    virtual Value* vectorOrConstant(Procedure&, const Value* other) const;
+    virtual Value* vectorXorConstant(Procedure&, const Value* other) const;
+
     virtual TriState equalConstant(const Value* other) const;
     virtual TriState notEqualConstant(const Value* other) const;
     virtual TriState lessThanConstant(const Value* other) const;
@@ -251,7 +255,7 @@ public:
     virtual TriState aboveEqualConstant(const Value* other) const;
     virtual TriState belowEqualConstant(const Value* other) const;
     virtual TriState equalOrUnorderedConstant(const Value* other) const;
-    
+
     // If the value is a comparison then this returns the inverted form of that comparison, if
     // possible. It can be impossible for double comparisons, where for example LessThan and
     // GreaterEqual behave differently. If this returns a value, it is a new value, which must be
@@ -283,6 +287,7 @@ public:
 
     bool hasV128() const;
     v128_t asV128() const;
+    bool isV128(v128_t) const;
 
     bool hasNumber() const;
     template<typename T> bool isRepresentableAs() const;

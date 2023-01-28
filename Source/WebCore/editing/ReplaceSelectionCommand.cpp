@@ -64,7 +64,7 @@
 #include "ScriptElement.h"
 #include "SimplifyMarkupCommand.h"
 #include "SmartReplace.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisibleUnits.h"

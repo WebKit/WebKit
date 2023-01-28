@@ -71,7 +71,7 @@
 #include "RenderWidget.h"
 #include "SVGRenderTreeAsText.h"
 #include "ShadowRoot.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include <wtf/HexNumber.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextStream.h>

@@ -3044,6 +3044,10 @@ class GenerateCSSPropertyNames:
             {
                 return static_cast<uint16_t>(property) >= firstCSSProperty && static_cast<uint16_t>(property) < static_cast<uint16_t>(firstShorthandProperty);
             }
+            constexpr bool isShorthand(CSSPropertyID property)
+            {
+                return static_cast<uint16_t>(property) >= static_cast<uint16_t>(firstShorthandProperty) && static_cast<uint16_t>(property) <= static_cast<uint16_t>(lastShorthandProperty);
+            }
             """)
 
     def _generate_css_property_names_h_hash_traits(self, *, to):
@@ -3625,7 +3629,7 @@ class GenerateStyleBuilderGenerated:
 
                 with to.indent():
                     if property.codegen_properties.longhands:
-                        to.write(f"ASSERT(isShorthandCSSProperty(id));")
+                        to.write(f"ASSERT(isShorthand(id));")
                         to.write(f"ASSERT_NOT_REACHED();")
                     elif not property.codegen_properties.skip_builder:
                         apply_initial_arguments = ["builderState"]

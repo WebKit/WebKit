@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -333,8 +333,9 @@ macro doVMEntry(makeCall)
     loadp VMEntryRecord::m_prevTopEntryFrame[t4], extraTempReg
     storep extraTempReg, VM::topEntryFrame[vm]
 
-    subp cfr, CalleeRegisterSaveSize, sp
+    move ValueUndefined, r0
 
+    subp cfr, CalleeRegisterSaveSize, sp
     popCalleeSaves()
     functionEpilogue()
     ret
@@ -406,8 +407,9 @@ op(llint_handle_uncaught_exception, macro ()
     loadp VMEntryRecord::m_prevTopEntryFrame[t2], extraTempReg
     storep extraTempReg, VM::topEntryFrame[t3]
 
-    subp cfr, CalleeRegisterSaveSize, sp
+    move ValueUndefined, r0
 
+    subp cfr, CalleeRegisterSaveSize, sp
     popCalleeSaves()
     functionEpilogue()
     ret

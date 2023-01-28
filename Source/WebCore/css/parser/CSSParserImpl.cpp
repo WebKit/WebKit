@@ -54,7 +54,7 @@
 #include "MediaList.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"

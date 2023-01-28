@@ -65,8 +65,8 @@ public:
 
         ~WeakListHashSetIteratorBase() = default;
 
-        ALWAYS_INLINE T* makePeek() { return (*m_position)->template get<T>(); }
-        ALWAYS_INLINE const T* makePeek() const { return (*m_position)->template get<T>(); }
+        ALWAYS_INLINE T* makePeek() { return static_cast<T*>((*m_position)->template get<T>()); }
+        ALWAYS_INLINE const T* makePeek() const { return static_cast<const T*>((*m_position)->template get<T>()); }
 
         void advance()
         {

@@ -40,7 +40,7 @@
 #include "HTMLParserIdioms.h"
 #include "ISOVTTCue.h"
 #include "ProcessingInstruction.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "Text.h"

@@ -45,6 +45,7 @@
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "KeyframeList.h"
+#include "MutableStyleProperties.h"
 #include "Page.h"
 #include "PlaybackDirection.h"
 #include "RenderElement.h"

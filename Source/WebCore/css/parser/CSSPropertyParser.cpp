@@ -294,7 +294,7 @@ bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important
         return true;
 
     CSSParserTokenRange originalRange = m_range;
-    bool isShorthand = isShorthandCSSProperty(propertyID);
+    bool isShorthand = WebCore::isShorthand(propertyID);
 
     if (isShorthand) {
         // Variable references will fail to parse here and will fall out to the variable ref parser below.
@@ -539,7 +539,7 @@ bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property)
 
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID property)
 {
-    if (isShorthandCSSProperty(property))
+    if (isShorthand(property))
         return parseFontFaceDescriptorShorthand(property);
 
     auto parsedValue = CSSPropertyParsing::parseFontFaceDescriptor(m_range, property, m_context);

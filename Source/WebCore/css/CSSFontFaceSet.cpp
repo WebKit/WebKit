@@ -36,6 +36,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "FontCache.h"
+#include "FontSelectionValueInlines.h"
 #include "StyleBuilderConverter.h"
 #include "StyleProperties.h"
 

@@ -47,7 +47,7 @@
 #include "CSSValueList.h"
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/FixedVector.h>
 #include <wtf/IsoMallocInlines.h>
@@ -120,7 +120,7 @@ ExceptionOr<Vector<Ref<CSSStyleValue>>> CSSStyleValueFactory::parseStyleValue(co
     if (propertyID == CSSPropertyInvalid)
         return Exception { TypeError, "Property String is not a valid CSS property."_s };
 
-    if (isShorthandCSSProperty(propertyID)) {
+    if (isShorthand(propertyID)) {
         auto result = extractShorthandCSSValues(propertyID, cssText);
         if (result.hasException())
             return result.releaseException();

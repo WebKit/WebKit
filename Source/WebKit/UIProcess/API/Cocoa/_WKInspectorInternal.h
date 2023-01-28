@@ -27,6 +27,7 @@
 
 #import "WKObject.h"
 #import "WebInspectorUIProxy.h"
+#import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 

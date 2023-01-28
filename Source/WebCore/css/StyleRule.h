@@ -28,7 +28,6 @@
 #include "FontFeatureValues.h"
 #include "FontPaletteValues.h"
 #include "MediaQuery.h"
-#include "StyleProperties.h"
 #include "StyleRuleType.h"
 #include <map>
 #include <variant>
@@ -139,7 +138,7 @@ public:
 #endif
 
     static unsigned averageSizeInBytes();
-    void setProperties(Ref<StyleProperties> properties) { m_properties = properties; }
+    void setProperties(Ref<StyleProperties>&&);
     void setNestedRules(Vector<Ref<StyleRuleBase>> nestedRules) { m_nestedRules = nestedRules; }
     void setResolvedSelectorList(CSSSelectorList&& resolvedSelectorList) const { m_resolvedSelectorList = WTFMove(resolvedSelectorList); }
     const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }

@@ -28,7 +28,7 @@
 #include <WebCore/CSSGridIntegerRepeatValue.h>
 #include <WebCore/CSSParser.h>
 #include <WebCore/CSSValueList.h>
-#include <WebCore/StyleProperties.h>
+#include <WebCore/MutableStyleProperties.h>
 
 namespace TestWebKitAPI {
 
