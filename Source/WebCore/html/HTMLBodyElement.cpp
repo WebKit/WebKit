@@ -36,8 +36,8 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "JSHTMLBodyElement.h"
+#include "MutableStyleProperties.h"
 #include "ResourceLoaderOptions.h"
-#include "StyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

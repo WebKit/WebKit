@@ -19,8 +19,8 @@
 
 #pragma once
 
+#include "MutableStyleProperties.h"
 #include "SVGResourceElementClient.h"
-#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>

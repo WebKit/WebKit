@@ -457,7 +457,7 @@ static void compileTransitionPropertiesInStyle(const RenderStyle& style, HashSet
             WTF::switchOn(transitionProperty.animatableProperty,
                 [&] (CSSPropertyID propertyId) {
                     auto resolvedPropertyId = CSSProperty::resolveDirectionAwareProperty(propertyId, style.direction(), style.writingMode());
-                    if (isShorthandCSSProperty(resolvedPropertyId)) {
+                    if (isShorthand(resolvedPropertyId)) {
                         for (auto longhand : shorthandForProperty(resolvedPropertyId))
                             transitionProperties.add(longhand);
                     } else if (resolvedPropertyId != CSSPropertyInvalid)

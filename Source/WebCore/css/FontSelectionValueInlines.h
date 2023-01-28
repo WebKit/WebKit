@@ -30,28 +30,6 @@
 
 namespace WebCore {
 
-inline bool isCSS21Weight(FontSelectionValue weight)
-{
-    return weight == FontSelectionValue(100)
-        || weight == FontSelectionValue(200)
-        || weight == FontSelectionValue(300)
-        || weight == FontSelectionValue(400)
-        || weight == FontSelectionValue(500)
-        || weight == FontSelectionValue(600)
-        || weight == FontSelectionValue(700)
-        || weight == FontSelectionValue(800)
-        || weight == FontSelectionValue(900);
-}
-
-inline std::optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
-{
-    if (weight == normalWeightValue())
-        return CSSValueNormal;
-    if (weight == boldWeightValue())
-        return CSSValueBold;
-    return std::nullopt;
-}
-
 inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
 {
     switch (value) {

@@ -56,7 +56,7 @@
 #include "RenderElement.h"
 #include "StyleCachedImage.h"
 #include "StyleImage.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "Text.h"

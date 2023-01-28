@@ -36,7 +36,6 @@
 #include "KeyframeEffectOptions.h"
 #include "KeyframeList.h"
 #include "RenderStyle.h"
-#include "StyleProperties.h"
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
 #include <wtf/Ref.h>
@@ -47,18 +46,17 @@ namespace WebCore {
 
 class Element;
 class FilterOperations;
+class MutableStyleProperties;
 
 namespace Style {
 struct ResolutionContext;
 }
 
-class KeyframeEffect : public AnimationEffect
-    , public CSSPropertyBlendingClient {
+class KeyframeEffect : public AnimationEffect, public CSSPropertyBlendingClient {
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeEffectOptions>>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
     static Ref<KeyframeEffect> create(const Element&, PseudoId);
-    ~KeyframeEffect() { }
 
     struct BasePropertyIndexedKeyframe {
         std::variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
@@ -96,10 +94,8 @@ public:
         RefPtr<TimingFunction> timingFunction;
         Ref<MutableStyleProperties> style;
 
-        ParsedKeyframe()
-            : style(MutableStyleProperties::create())
-        {
-        }
+        ParsedKeyframe();
+        ~ParsedKeyframe();
     };
 
     const Vector<ParsedKeyframe>& parsedKeyframes() const { return m_parsedKeyframes; }

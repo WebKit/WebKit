@@ -28,7 +28,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "Document.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyledElement.h"
 
 namespace WebCore {

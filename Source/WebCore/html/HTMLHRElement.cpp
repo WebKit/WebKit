@@ -29,7 +29,7 @@
 #include "ElementInlines.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "StyleProperties.h"
+#include "MutableStyleProperties.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

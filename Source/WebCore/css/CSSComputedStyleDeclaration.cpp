@@ -37,7 +37,7 @@
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderStyle.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 #include "StyleScope.h"
 #include <wtf/IsoMallocInlines.h>

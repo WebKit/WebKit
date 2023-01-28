@@ -27,12 +27,12 @@
 
 #include "Attribute.h"
 #include "SpaceSplitString.h"
-#include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
 class Attr;
+class MutableStyleProperties;
 class ShareableElementData;
 class StyleProperties;
 class UniqueElementData;
@@ -94,7 +94,7 @@ public:
     void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
-    const StyleProperties* presentationalHintStyle() const;
+    const MutableStyleProperties* presentationalHintStyle() const;
 
     unsigned length() const;
     bool isEmpty() const { return !length(); }
@@ -223,7 +223,7 @@ public:
 
     static ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
 
-    mutable RefPtr<StyleProperties> m_presentationalHintStyle;
+    mutable RefPtr<MutableStyleProperties> m_presentationalHintStyle;
     typedef Vector<Attribute, 4> AttributeVector;
     AttributeVector m_attributeVector;
 };
@@ -249,7 +249,7 @@ inline const Attribute* ElementData::attributeBase() const
     return downcast<ShareableElementData>(*this).m_attributeArray;
 }
 
-inline const StyleProperties* ElementData::presentationalHintStyle() const
+inline const MutableStyleProperties* ElementData::presentationalHintStyle() const
 {
     if (!is<UniqueElementData>(*this))
         return nullptr;

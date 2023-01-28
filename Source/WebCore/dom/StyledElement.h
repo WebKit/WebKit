@@ -64,9 +64,9 @@ public:
     StylePropertyMap& ensureAttributeStyleMap();
 
     // https://html.spec.whatwg.org/#presentational-hints
-    const StyleProperties* presentationalHintStyle() const;
+    const MutableStyleProperties* presentationalHintStyle() const;
     virtual void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) { }
-    virtual const StyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
+    virtual const MutableStyleProperties* additionalPresentationalHintStyle() const { return nullptr; }
     virtual void collectExtraStyleForPresentationalHints(MutableStyleProperties&) { }
 
 protected:
@@ -97,7 +97,7 @@ private:
     void rebuildPresentationalHintStyle();
 };
 
-inline const StyleProperties* StyledElement::presentationalHintStyle() const
+inline const MutableStyleProperties* StyledElement::presentationalHintStyle() const
 {
     if (!elementData())
         return nullptr;

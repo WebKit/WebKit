@@ -30,12 +30,8 @@
 #include "JSDOMSetLike.h"
 #include "JSStaticRange.h"
 #include "NodeTraversal.h"
-#include "PropertySetCSSStyleDeclaration.h"
 #include "RenderBlockFlow.h"
-#include "RenderObject.h"
 #include "StaticRange.h"
-#include "StyleProperties.h"
-#include <wtf/Ref.h>
 
 namespace WebCore {
 

@@ -31,10 +31,12 @@
 #include "CSSStyleSheet.h"
 #include "CSSTokenizer.h"
 #include "CSSValuePair.h"
+#include "MutableStyleProperties.h"
 #include "Pair.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
 StyleRuleCounterStyle::StyleRuleCounterStyle(const AtomString& name, Ref<StyleProperties>&& properties, CSSCounterStyleDescriptors&& descriptors)
     : StyleRuleBase(StyleRuleType::CounterStyle)
     , m_name(name)

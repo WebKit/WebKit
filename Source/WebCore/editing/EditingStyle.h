@@ -33,7 +33,6 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "StyleProperties.h"
 #include "WritingDirection.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TriState.h>
@@ -201,10 +200,11 @@ private:
 
 class StyleChange {
 public:
-    StyleChange() { }
+    StyleChange() = default;
     StyleChange(EditingStyle*, const Position&);
+    ~StyleChange();
 
-    const StyleProperties* cssStyle() const { return m_cssStyle.get(); }
+    const MutableStyleProperties* cssStyle() const { return m_cssStyle.get(); }
     bool applyBold() const { return m_applyBold; }
     bool applyItalic() const { return m_applyItalic; }
     bool applyUnderline() const { return m_applyUnderline; }
@@ -224,6 +224,7 @@ public:
     {
         return !(*this == other);
     }
+
 private:
     void extractTextStyles(Document&, MutableStyleProperties&, bool shouldUseFixedFontDefaultSize);
 

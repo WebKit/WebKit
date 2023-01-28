@@ -27,7 +27,7 @@
 #include "PropertyAllowlist.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
-#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleScopeOrdinal.h"
 #include <wtf/Hasher.h>
 

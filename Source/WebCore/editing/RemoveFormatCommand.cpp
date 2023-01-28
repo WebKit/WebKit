@@ -33,7 +33,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
-#include "StyleProperties.h"
+#include "MutableStyleProperties.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
 
