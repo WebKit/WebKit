@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspectorPrivate.h"
+#import <WebKit/WKFoundation.h>
 
-#import "WKObject.h"
-#import "WebInspectorUIProxy.h"
-#import <wtf/WeakObjCPtr.h>
+NS_ASSUME_NONNULL_BEGIN
 
-namespace WebKit {
+/*! @abstract WKApplicationManifest represents the Web App Manifest data described by a web page currently displayed in a WKWebView.
+@discussion You do not create instances of WKApplicationManifest yourself. Instead, they are created by calling the getApplicationManifestWithCompletionHandler:
+method on WKWebView.
+An instance of WKApplicationManifest is a snapshot of the Web App Manifest data described by a web page at the time getApplicationManifestWithCompletionHandler: was called, and is not a live object.
+*/
 
-template<> struct WrapperTraits<WebInspectorUIProxy> {
-    using WrapperClass = _WKInspector;
-};
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface WKApplicationManifest : NSObject
 
-}
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
-@interface _WKInspector () <WKObject> {
-@package
-    API::ObjectStorage<WebKit::WebInspectorUIProxy> _inspector;
-    WeakObjCPtr<id <_WKInspectorDelegate> > _delegate;
-}
 @end
+
+NS_ASSUME_NONNULL_END

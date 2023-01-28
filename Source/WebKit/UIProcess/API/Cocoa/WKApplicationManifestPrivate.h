@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspectorPrivate.h"
+#import <WebKit/WKApplicationManifest.h>
+#import <WebKit/_WKApplicationManifest.h>
 
-#import "WKObject.h"
-#import "WebInspectorUIProxy.h"
-#import <wtf/WeakObjCPtr.h>
+NS_ASSUME_NONNULL_BEGIN
 
-namespace WebKit {
+@interface WKApplicationManifest (WKPrivate)
 
-template<> struct WrapperTraits<WebInspectorUIProxy> {
-    using WrapperClass = _WKInspector;
-};
+@property (nonatomic, readonly, nullable, copy) NSString *_name;
+@property (nonatomic, readonly, nullable, copy) NSString *_shortName;
+@property (nonatomic, readonly, nullable, copy) NSString *_applicationDescription;
+@property (nonatomic, readonly, nullable, copy) NSURL *_scope;
+@property (nonatomic, readonly, copy) NSURL *_startURL;
+@property (nonatomic, readonly, copy) NSURL *_manifestId;
+@property (nonatomic, readonly) _WKApplicationManifestDisplayMode _displayMode;
+@property (nonatomic, readonly, copy) NSArray<_WKApplicationManifestIcon *> *_icons;
 
-}
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, nullable, copy) UIColor *_themeColor;
+#else
+@property (nonatomic, readonly, nullable, copy) NSColor *_themeColor;
+#endif
 
-@interface _WKInspector () <WKObject> {
-@package
-    API::ObjectStorage<WebKit::WebInspectorUIProxy> _inspector;
-    WeakObjCPtr<id <_WKInspectorDelegate> > _delegate;
-}
 @end
+
+NS_ASSUME_NONNULL_END
