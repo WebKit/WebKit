@@ -365,8 +365,8 @@ static const float minVideoWidth = 468; // Keep in sync with `--controls-bar-wid
         _page->scalePage(_savedScale, WebCore::IntPoint());
         [self _manager]->restoreScrollPosition();
         _page->setTopContentInset(_savedTopContentInset);
-        [self _manager]->didExitFullScreen();
         [self _manager]->setAnimatingFullScreen(false);
+        [self _manager]->didExitFullScreen();
 
         // FIXME(53342): remove once pointer events fire when elements move out from under the pointer.
         NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved
@@ -532,8 +532,8 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
 
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
-    [self _manager]->didExitFullScreen();
     [self _manager]->setAnimatingFullScreen(false);
+    [self _manager]->didExitFullScreen();
     _page->scalePage(_savedScale, WebCore::IntPoint());
     [self _manager]->restoreScrollPosition();
     _page->setTopContentInset(_savedTopContentInset);
