@@ -55,6 +55,7 @@ class Git(Scm):
                 return
 
             try:
+                print("path: " + self.path)
                 with open(self.path) as file:
                     content = json.load(file)
                     self._ordered_commits = content['hashes']
