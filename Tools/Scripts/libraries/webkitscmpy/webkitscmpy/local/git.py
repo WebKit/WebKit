@@ -61,6 +61,8 @@ class Git(Scm):
                     self._ordered_revisions = content['revisions']
 
                 self._fill(self.repo.default_branch)
+                print("default: ")
+                print(self.repo.default_branch)
                 for branch in self._ordered_commits.keys():
                     print("##### Branch:")
                     print(branch)
