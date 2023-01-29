@@ -3451,6 +3451,13 @@ private:
             return;
         }
 
+        if (node->child1()->shouldSpeculateString()) {
+            fixEdge<StringUse>(node->child1());
+            node->setOpAndDefaultFlags(ToNumber);
+            node->clearFlags(NodeMustGenerate);
+            return;
+        }
+
         fixEdge<UntypedUse>(node->child1());
         node->setResult(NodeResultJS);
     }

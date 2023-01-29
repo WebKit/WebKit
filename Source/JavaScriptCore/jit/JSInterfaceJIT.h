@@ -49,6 +49,8 @@ namespace JSC {
         inline Jump emitLoadInt32(VirtualRegister, RegisterID dst);
         inline Jump emitLoadDouble(VirtualRegister, FPRegisterID dst, RegisterID scratch);
 
+        inline void emitLoadJSValue(VirtualRegister, JSValueRegs dst);
+
         VM* vm() const { return m_vm; }
 
         VM* const m_vm;
@@ -111,6 +113,11 @@ namespace JSC {
         return notNumber;
     }
 #endif
+
+inline void JSInterfaceJIT::emitLoadJSValue(VirtualRegister virtualRegister, JSValueRegs dst)
+{
+    loadValue(addressFor(virtualRegister), dst);
+}
 
 } // namespace JSC
 

@@ -114,6 +114,7 @@ namespace JSC {
     macro(StringPrototypeToLowerCaseIntrinsic) \
     macro(NumberPrototypeToStringIntrinsic) \
     macro(NumberIsIntegerIntrinsic) \
+    macro(NumberConstructorIntrinsic) \
     macro(IMulIntrinsic) \
     macro(RandomIntrinsic) \
     macro(FRoundIntrinsic) \

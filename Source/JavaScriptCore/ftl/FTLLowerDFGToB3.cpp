@@ -8686,28 +8686,42 @@ IGNORE_CLANG_WARNINGS_END
     void compileToNumber()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue value = lowJSValue(m_node->child1());
 
-        if (!(abstractValue(m_node->child1()).m_type & SpecBytecodeNumber))
-            setJSValue(vmCall(Int64, operationToNumber, weakPointer(globalObject), value));
-        else {
-            LBasicBlock notNumber = m_out.newBlock();
-            LBasicBlock continuation = m_out.newBlock();
+        switch (m_node->child1().useKind()) {
+        case StringUse: {
+            LValue value = lowString(m_node->child1());
+            setJSValue(vmCall(Int64, operationToNumberString, weakPointer(globalObject), value));
+            break;
+        }
+        case UntypedUse: {
+            LValue value = lowJSValue(m_node->child1());
 
-            ValueFromBlock fastResult = m_out.anchor(value);
-            m_out.branch(isNumber(value, provenType(m_node->child1())), unsure(continuation), unsure(notNumber));
+            if (!(abstractValue(m_node->child1()).m_type & SpecBytecodeNumber))
+                setJSValue(vmCall(Int64, operationToNumber, weakPointer(globalObject), value));
+            else {
+                LBasicBlock notNumber = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
 
-            // notNumber case.
-            LBasicBlock lastNext = m_out.appendTo(notNumber, continuation);
-            // We have several attempts to remove ToNumber. But ToNumber still exists.
-            // It means that converting non-numbers to numbers by this ToNumber is not rare.
-            // Instead of the lazy slow path generator, we call the operation here.
-            ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationToNumber, weakPointer(globalObject), value));
-            m_out.jump(continuation);
+                ValueFromBlock fastResult = m_out.anchor(value);
+                m_out.branch(isNumber(value, provenType(m_node->child1())), unsure(continuation), unsure(notNumber));
 
-            // continuation case.
-            m_out.appendTo(continuation, lastNext);
-            setJSValue(m_out.phi(Int64, fastResult, slowResult));
+                // notNumber case.
+                LBasicBlock lastNext = m_out.appendTo(notNumber, continuation);
+                // We have several attempts to remove ToNumber. But ToNumber still exists.
+                // It means that converting non-numbers to numbers by this ToNumber is not rare.
+                // Instead of the lazy slow path generator, we call the operation here.
+                ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, operationToNumber, weakPointer(globalObject), value));
+                m_out.jump(continuation);
+
+                // continuation case.
+                m_out.appendTo(continuation, lastNext);
+                setJSValue(m_out.phi(Int64, fastResult, slowResult));
+            }
+            break;
+        }
+        default:
+            DFG_CRASH(m_graph, m_node, "Bad use kind");
+            break;
         }
     }
     
