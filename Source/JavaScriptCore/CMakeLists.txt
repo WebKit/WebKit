@@ -1381,6 +1381,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/SamplingProfiler.h
     runtime/GeneratorFunctionPrototype.h
     runtime/AsyncFunctionPrototype.h
+
+    jit/Width.h
+    runtime/ClonedArguments.h
 )
 
 
