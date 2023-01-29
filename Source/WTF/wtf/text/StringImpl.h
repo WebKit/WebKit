@@ -40,7 +40,12 @@
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringHasher.h>
 #include <wtf/text/UTF8ConversionError.h>
+#include <wtf/unicode/UTF8Conversion.h>
 #include <wtf/ForkExtras.h>
+
+#if CPU(ARM64)
+#include <arm_neon.h>
+#endif
 
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
