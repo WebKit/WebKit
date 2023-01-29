@@ -271,12 +271,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     }
 
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
-    webkitWebViewBaseForwardNextKeyEvent(webkitWebViewBase);
-#if USE(GTK4)
-    gdk_display_put_event(gtk_widget_get_display(m_viewWidget), event.nativeEvent());
-#else
-    gtk_main_do_event(event.nativeEvent());
-#endif
+    webkitWebViewBasePropagateKeyEvent(webkitWebViewBase, event.nativeEvent());
 }
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
@@ -471,13 +466,7 @@ void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&
     if (gdk_event_get_event_type(event.nativeEvent()) != GDK_SCROLL)
         return;
 
-    webkitWebViewBaseForwardNextWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget));
-
-#if USE(GTK4)
-    gdk_display_put_event(gtk_widget_get_display(m_viewWidget), event.nativeEvent());
-#else
-    gtk_main_do_event(event.nativeEvent());
-#endif
+    webkitWebViewBasePropagateWheelEvent(WEBKIT_WEB_VIEW_BASE(m_viewWidget), event.nativeEvent());
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&)
