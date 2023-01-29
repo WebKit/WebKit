@@ -52,7 +52,7 @@
 #include <wtf/text/CString.h>
 
 #if !ENABLE(2022_GLIB_API)
-#include "WebKitConsoleMessage.h"
+#include "WebKitConsoleMessagePrivate.h"
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
 #include "WebKitDOMNodePrivate.h"
@@ -235,6 +235,13 @@ private:
     WebKitWebPage* m_webPage;
 };
 
+#if !ENABLE(2022_GLIB_API)
+static void webkitWebPageDidSendConsoleMessage(WebKitWebPage* webPage, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+{
+    WebKitConsoleMessage consoleMessage(source, level, message, lineNumber, sourceID);
+    g_signal_emit(webPage, signals[CONSOLE_MESSAGE_SENT], 0, &consoleMessage);
+}
+#endif
 
 class PageResourceLoadClient final : public API::InjectedBundle::ResourceLoadClient {
 public:
@@ -259,8 +266,47 @@ private:
         webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
     }
 
+#if !ENABLE(2022_GLIB_API)
+    void didReceiveResponseForResource(WebPage& page, WebFrame&, WebCore::ResourceLoaderIdentifier identifier, const ResourceResponse& response) override
+    {
+        // Post on the console as well to be consistent with the inspector.
+        if (response.httpStatusCode() >= 400) {
+            String errorMessage = makeString("Failed to load resource: the server responded with a status of ", response.httpStatusCode(), " (", response.httpStatusText(), ')');
+            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, response.url().string());
+        }
+    }
+
+    void didFailLoadForResource(WebPage& page, WebFrame&, WebCore::ResourceLoaderIdentifier identifier, const ResourceError& error) override
+    {
+        // Post on the console as well to be consistent with the inspector.
+        if (!error.isCancellation()) {
+            auto errorDescription = error.localizedDescription();
+            auto errorMessage = makeString("Failed to load resource", errorDescription.isEmpty() ? "" : ": ", errorDescription);
+            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage, 0, error.failingURL().string());
+        }
+    }
+#endif
+
     WebKitWebPage* m_webPage;
 };
+
+#if !ENABLE(2022_GLIB_API)
+class PageUIClient final : public API::InjectedBundle::PageUIClient {
+public:
+    explicit PageUIClient(WebKitWebPage* webPage)
+        : m_webPage(webPage)
+    {
+    }
+
+private:
+    void willAddMessageToConsole(WebPage*, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, unsigned /*columnNumber*/, const String& sourceID) override
+    {
+        webkitWebPageDidSendConsoleMessage(m_webPage, source, level, message, lineNumber, sourceID);
+    }
+
+    WebKitWebPage* m_webPage;
+};
+#endif
 
 class PageContextMenuClient final : public API::InjectedBundle::PageContextMenuClient {
 public:
@@ -521,8 +567,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
      * a security error or other errors, warnings, debug or log messages.
      * The @console_message contains information of the message.
      *
-     * This signal is now deprecated and it's never emitted.
-     *
      * Since: 2.12
      *
      * Deprecated: 2.40
@@ -706,6 +750,9 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     webPage->setInjectedBundlePageLoaderClient(makeUnique<PageLoaderClient>(page));
     webPage->setInjectedBundleContextMenuClient(makeUnique<PageContextMenuClient>(page));
     webPage->setInjectedBundleFormClient(makeUnique<PageFormClient>(page));
+#if !ENABLE(2022_GLIB_API)
+    webPage->setInjectedBundleUIClient(makeUnique<PageUIClient>(page));
+#endif
 
     return page;
 }
