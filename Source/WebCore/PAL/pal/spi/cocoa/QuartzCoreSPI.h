@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #import <CoreVideo/CoreVideo.h>
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
-#import <pal/spi/cocoa/IOSurfaceSPI.h>
+#import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

@@ -325,9 +325,6 @@
 		DD20DDE727BC90D70093D175 /* IOKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE5673862151A7B9002F92D7 /* IOKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDE827BC90D70093D175 /* IOPMLibSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1261F3BEB4900DBC317 /* IOPMLibSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDE927BC90D70093D175 /* IOPSLibSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1271F3BEB4900DBC317 /* IOPSLibSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD20DDEA27BC90D70093D175 /* IOReturnSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD20DDEB27BC90D70093D175 /* IOSurfaceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD20DDEC27BC90D70093D175 /* IOTypesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDED27BC90D70093D175 /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDEE27BC90D70093D175 /* MediaToolboxSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EB8A8DC12509E87E00D1BF90 /* MediaToolboxSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD20DDEF27BC90D70093D175 /* MetalSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC3ACE722BD7EB800F360F0 /* MetalSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -586,9 +583,6 @@
 		0C2DA1251F3BEB4900DBC317 /* DataDetectorsCoreSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSPI.h; sourceTree = "<group>"; };
 		0C2DA1261F3BEB4900DBC317 /* IOPMLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOPMLibSPI.h; sourceTree = "<group>"; };
 		0C2DA1271F3BEB4900DBC317 /* IOPSLibSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOPSLibSPI.h; sourceTree = "<group>"; };
-		0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOReturnSPI.h; sourceTree = "<group>"; };
-		0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOSurfaceSPI.h; sourceTree = "<group>"; };
-		0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOTypesSPI.h; sourceTree = "<group>"; };
 		0C2DA12B1F3BEB4900DBC317 /* URLFormattingSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLFormattingSPI.h; sourceTree = "<group>"; };
 		0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEFilterSourceSPI.h; sourceTree = "<group>"; };
 		0C2DA12E1F3BEB4900DBC317 /* NSAttributedStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAttributedStringSPI.h; sourceTree = "<group>"; };
@@ -1112,9 +1106,6 @@
 				CE5673862151A7B9002F92D7 /* IOKitSPI.h */,
 				0C2DA1261F3BEB4900DBC317 /* IOPMLibSPI.h */,
 				0C2DA1271F3BEB4900DBC317 /* IOPSLibSPI.h */,
-				0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */,
-				0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */,
-				0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */,
 				0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */,
 				EB8A8DC12509E87E00D1BF90 /* MediaToolboxSPI.h */,
 				1CC3ACE722BD7EB800F360F0 /* MetalSPI.h */,
@@ -1817,9 +1808,6 @@
 				DD20DE2027BC90D80093D175 /* IOKitSPIMac.h in Headers */,
 				DD20DDE827BC90D70093D175 /* IOPMLibSPI.h in Headers */,
 				DD20DDE927BC90D70093D175 /* IOPSLibSPI.h in Headers */,
-				DD20DDEA27BC90D70093D175 /* IOReturnSPI.h in Headers */,
-				DD20DDEB27BC90D70093D175 /* IOSurfaceSPI.h in Headers */,
-				DD20DDEC27BC90D70093D175 /* IOTypesSPI.h in Headers */,
 				DD20DE4F27BC90D80093D175 /* KillRing.h in Headers */,
 				DD20DDED27BC90D70093D175 /* LaunchServicesSPI.h in Headers */,
 				DD20DE6227BC90D80093D175 /* Logging.h in Headers */,
