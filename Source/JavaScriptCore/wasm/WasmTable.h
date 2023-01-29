@@ -123,7 +123,7 @@ public:
 
     JS_EXPORT_PRIVATE ~FuncRefTable();
 
-    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the embedder ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
+    // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to Instance here because the js ensures that Table keeps all the instances alive. We couldn't hold a Ref here because it would cause cycles.
     struct Function {
         WasmToWasmImportableFunction m_function;
         Instance* m_instance { nullptr };

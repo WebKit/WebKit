@@ -1664,7 +1664,7 @@
 		AD4937D41DDD27DE0077C807 /* WebAssemblyFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4937CA1DDD27340077C807 /* WebAssemblyFunction.h */; };
 		AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4B1DF81DF244D70071AE32 /* WasmBinding.h */; };
 		AD5B416F1EBAFB77008EFA43 /* WasmName.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5B416E1EBAFB65008EFA43 /* WasmName.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		AD5C36DD1F688B65000BCAAF /* WasmEmbedder.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36DC1F688B5F000BCAAF /* WasmEmbedder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AD5C36DD1F688B65000BCAAF /* WasmJS.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36DC1F688B5F000BCAAF /* WasmJS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36E61F69EC91000BCAAF /* WasmTable.h in Headers */ = {isa = PBXBuildFile; fileRef = AD5C36E41F69EC8B000BCAAF /* WasmTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD5C36EA1F75AD6A000BCAAF /* JSToWasm.h in Headers */ = {isa = PBXBuildFile; fileRef = AD8DD6CF1F67089F0004EB52 /* JSToWasm.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5104,7 +5104,7 @@
 		AD4B1DF71DF244D70071AE32 /* WasmBinding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBinding.cpp; sourceTree = "<group>"; };
 		AD4B1DF81DF244D70071AE32 /* WasmBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBinding.h; sourceTree = "<group>"; };
 		AD5B416E1EBAFB65008EFA43 /* WasmName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmName.h; sourceTree = "<group>"; };
-		AD5C36DC1F688B5F000BCAAF /* WasmEmbedder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmEmbedder.h; sourceTree = "<group>"; };
+		AD5C36DC1F688B5F000BCAAF /* WasmJS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmJS.h; sourceTree = "<group>"; };
 		AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmInstance.cpp; sourceTree = "<group>"; };
 		AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmInstance.h; sourceTree = "<group>"; };
 		AD5C36E31F69EC8B000BCAAF /* WasmTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTable.cpp; sourceTree = "<group>"; };
@@ -7505,7 +7505,6 @@
 				E3915C062309682900CB2561 /* WasmContext.cpp */,
 				AD412B321E7B2E8A008AF157 /* WasmContext.h */,
 				E36CC9462086314F0051FFD6 /* WasmCreationMode.h */,
-				AD5C36DC1F688B5F000BCAAF /* WasmEmbedder.h */,
 				14AB0C91231747B6000250BC /* WasmEntryPlan.cpp */,
 				14AB0C94231747B7000250BC /* WasmEntryPlan.h */,
 				79DAE2791E03C82200B526AA /* WasmExceptionType.h */,
@@ -7526,6 +7525,7 @@
 				AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */,
 				AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */,
 				52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */,
+				AD5C36DC1F688B5F000BCAAF /* WasmJS.h */,
 				AD00659D1ECAC7FE000CA926 /* WasmLimits.h */,
 				E308A80D294D39330044A109 /* WasmLLIntBuiltin.h */,
 				14C5AD6822F33FBF00F1FB83 /* WasmLLIntGenerator.cpp */,
@@ -11400,7 +11400,6 @@
 				E3BD2B7622F275020011765C /* WasmCompilationMode.h in Headers */,
 				AD412B341E7B2E9E008AF157 /* WasmContext.h in Headers */,
 				E36CC9472086314F0051FFD6 /* WasmCreationMode.h in Headers */,
-				AD5C36DD1F688B65000BCAAF /* WasmEmbedder.h in Headers */,
 				79DAE27A1E03C82200B526AA /* WasmExceptionType.h in Headers */,
 				5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */,
 				7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */,
@@ -11411,6 +11410,7 @@
 				AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */,
 				AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */,
 				52FDABC32788076B00C15B59 /* WasmIRGeneratorHelpers.h in Headers */,
+				AD5C36DD1F688B65000BCAAF /* WasmJS.h in Headers */,
 				AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */,
 				E308A80E294D39340044A109 /* WasmLLIntBuiltin.h in Headers */,
 				1450FA1F2357BEC90093CD4D /* WasmLLIntTierUpCounter.h in Headers */,

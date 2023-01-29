@@ -1110,7 +1110,6 @@ wasm/WasmCalleeRegistry.cpp
 wasm/WasmCallingConvention.cpp
 wasm/WasmCompilationMode.cpp
 wasm/WasmContext.cpp
-wasm/WasmEmbedder.h
 wasm/WasmEntryPlan.cpp
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp

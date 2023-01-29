@@ -72,8 +72,8 @@ inline void Callee::runWithDowncast(const Func& func)
     case CompilationMode::OMGForOSREntryMode:
         break;
 #endif
-    case CompilationMode::EmbedderEntrypointMode:
-        func(static_cast<EmbedderEntrypointCallee*>(this));
+    case CompilationMode::JSEntrypointMode:
+        func(static_cast<JSEntrypointCallee*>(this));
         break;
     case CompilationMode::JSToWasmICMode:
         func(static_cast<JSToWasmICCallee*>(this));

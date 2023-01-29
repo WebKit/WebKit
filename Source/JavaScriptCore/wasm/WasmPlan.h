@@ -29,7 +29,7 @@
 
 #include "CompilationResult.h"
 #include "WasmB3IRGenerator.h"
-#include "WasmEmbedder.h"
+#include "WasmJS.h"
 #include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
 #include <wtf/CrossThreadCopier.h>

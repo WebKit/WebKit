@@ -1275,13 +1275,13 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmCompilationMode.h
     wasm/WasmContext.h
     wasm/WasmCreationMode.h
-    wasm/WasmEmbedder.h
     wasm/WasmExceptionType.h
     wasm/WasmFaultSignalHandler.h
     wasm/WasmFormat.h
     wasm/WasmFunctionCodeBlockGenerator.h
     wasm/WasmHandlerInfo.h
     wasm/WasmIndexOrName.h
+    wasm/WasmJS.h
     wasm/WasmLLIntBuiltin.h
     wasm/WasmLLIntTierUpCounter.h
     wasm/WasmMemory.h
