@@ -358,10 +358,16 @@ void TextBoxPainter<TextBoxPath>::paintBackground(unsigned startOffset, unsigned
     auto deltaY = LayoutUnit { m_style.isFlippedLinesWritingMode() ? selectionBottom - m_logicalRect.maxY() : m_logicalRect.y() - selectionTop };
     auto selectionHeight = LayoutUnit { std::max(0.f, selectionBottom - selectionTop) };
     auto selectionRect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(m_logicalRect.width()), selectionHeight };
-    fontCascade().adjustSelectionRectForText(m_paintTextRun, selectionRect, startOffset, endOffset);
+    auto adjustedSelectionRect = selectionRect;
+    fontCascade().adjustSelectionRectForText(m_paintTextRun, adjustedSelectionRect, startOffset, endOffset);
+    if (m_paintTextRun.length() == endOffset - startOffset) {
+        // FIXME: We should reconsider re-measuring the content when non-whitespace runs are joined together (see webkit.org/b/251318).
+        auto visualRight = std::max(adjustedSelectionRect.maxX(), selectionRect.maxX());
+        adjustedSelectionRect.shiftMaxXEdgeTo(visualRight);
+    }
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.
-    auto backgroundRect = snapRectToDevicePixelsWithWritingDirection(selectionRect, m_document.deviceScaleFactor(), m_paintTextRun.ltr());
+    auto backgroundRect = snapRectToDevicePixels(adjustedSelectionRect, m_document.deviceScaleFactor());
     if (backgroundStyle == BackgroundStyle::Rounded) {
         backgroundRect.expand(-1, -1);
         backgroundRect.move(0.5, 0.5);
