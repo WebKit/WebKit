@@ -67,11 +67,18 @@ public:
     StringView(const LChar*, unsigned length);
     StringView(const UChar*, unsigned length);
     StringView(const char*, unsigned length);
-    StringView(ASCIILiteral);
-    ALWAYS_INLINE StringView(Span<const LChar> characters) : StringView(characters.data(), characters.size()) { }
-    ALWAYS_INLINE StringView(Span<const UChar> characters) : StringView(characters.data(), characters.size()) { }
+    StringView(const ASCIILiteral&);
+    ALWAYS_INLINE StringView(const Span<const LChar>& characters) : StringView(characters.data(), characters.size()) { }
+    ALWAYS_INLINE StringView(const Span<const UChar>& characters) : StringView(characters.data(), characters.size()) { }
 
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
+
+    // Explicitly deleting these constructors prevents construction of StringView objects with
+    // native string literals by using implicit converting constructors of String and Span types.
+    template<typename CharacterType, size_t N>
+    StringView(CharacterType(&)[N]) = delete;
+    template<typename CharacterType, size_t N>
+    StringView(const CharacterType(&)[N]) = delete;
 
     static StringView empty();
 
@@ -382,7 +389,7 @@ inline StringView::StringView(const char* characters, unsigned length)
     initialize(reinterpret_cast<const LChar*>(characters), length);
 }
 
-inline StringView::StringView(ASCIILiteral string)
+inline StringView::StringView(const ASCIILiteral& string)
 {
     initialize(string.characters8(), string.length());
 }
@@ -673,21 +680,6 @@ inline void StringView::invalidate(const StringImpl&)
 }
 
 #endif
-
-template<> class StringTypeAdapter<StringView, void> {
-public:
-    StringTypeAdapter(StringView string)
-        : m_string { string }
-    {
-    }
-
-    unsigned length() { return m_string.length(); }
-    bool is8Bit() { return m_string.is8Bit(); }
-    template<typename CharacterType> void writeTo(CharacterType* destination) { m_string.getCharacters(destination); }
-
-private:
-    StringView m_string;
-};
 
 template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>& buffer, StringView string)
 {

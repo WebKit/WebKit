@@ -81,6 +81,13 @@ public:
     // Construct a string from a constant string literal.
     String(ASCIILiteral);
 
+    // Explicitly deleting these constructors prevents construction of String objects with
+    // native string literals by using implicit converting constructors of StaticStringImpl and Span types.
+    template<typename CharacterType, size_t N>
+    String(CharacterType(&)[N]) = delete;
+    template<typename CharacterType, size_t N>
+    String(const CharacterType(&)[N]) = delete;
+
     String(const String&) = default;
     String(String&&) = default;
     String& operator=(const String&) = default;
