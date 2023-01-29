@@ -984,9 +984,6 @@ private:
 
 public:
     bool didEnterVM { false };
-    #if ENABLE(SINGLE_THREADED_VM_ENTRY_SCOPE)
-        void *entryScopeID { nullptr };
-    #endif
 private:
     bool m_failNextNewCodeBlock { false };
     bool m_globalConstRedeclarationShouldThrow { true };

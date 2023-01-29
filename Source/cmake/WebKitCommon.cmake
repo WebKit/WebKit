@@ -238,17 +238,17 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # -----------------------------------------------------------------------------
     # Job pool to avoid running too many memory hungry processes
     # -----------------------------------------------------------------------------
-    if (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
-        set_property(GLOBAL PROPERTY JOB_POOLS link_pool_jobs=4)
-    else ()
-        list(APPEND WK_POOLS link_pool_jobs=2)
-    endif ()
-    set(CMAKE_JOB_POOL_LINK link_pool_jobs)
-    if (DEFINED ENV{WEBKIT_NINJA_COMPILE_MAX})
-        list(APPEND WK_POOLS "compile_pool_jobs=$ENV{WEBKIT_NINJA_COMPILE_MAX}")
-        set(CMAKE_JOB_POOL_COMPILE compile_pool_jobs)
-    endif ()
-    set_property(GLOBAL PROPERTY JOB_POOLS ${WK_POOLS})
+    # if (${CMAKE_BUILD_TYPE} STREQUAL "Release" OR ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" OR ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    #     set_property(GLOBAL PROPERTY JOB_POOLS link_pool_jobs=4)
+    # else ()
+    #     list(APPEND WK_POOLS link_pool_jobs=2)
+    # endif ()
+    # set(CMAKE_JOB_POOL_LINK link_pool_jobs)
+    # if (DEFINED ENV{WEBKIT_NINJA_COMPILE_MAX})
+    #     list(APPEND WK_POOLS "compile_pool_jobs=$ENV{WEBKIT_NINJA_COMPILE_MAX}")
+    #     set(CMAKE_JOB_POOL_COMPILE compile_pool_jobs)
+    # endif ()
+    # set_property(GLOBAL PROPERTY JOB_POOLS ${WK_POOLS})
 
     # -----------------------------------------------------------------------------
     # Create derived sources directories

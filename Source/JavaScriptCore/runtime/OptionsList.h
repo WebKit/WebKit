@@ -91,6 +91,8 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useDOMJIT, is64Bit(), Normal, "allows the DOMJIT to be used if true") \
     \
     v(Bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
+    /* Bun Features */\
+    v(Bool, showPrivateScriptsInStackTraces, false, Normal, "Show private scripts in stack traces.") \
     \
     v(Unsigned, maxPerThreadStackUsage, 5 * MB, Normal, "Max allowed stack usage by the VM") \
     v(Unsigned, softReservedZoneSize, 128 * KB, Normal, "A buffer greater than reservedZoneSize that reserves space for stringifying exceptions.") \
@@ -540,6 +542,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, libpasScavengeContinuously, false, Normal, nullptr) \
     v(Bool, useWasmFaultSignalHandler, true, Normal, nullptr) \
     v(Bool, dumpUnlinkedDFGValidation, false, Normal, nullptr) \
+    v(Bool, dumpWasmOpcodeStatistics, false, Normal, nullptr) \
     \
     /* Feature Flags */\
     \
@@ -557,11 +560,9 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblyThreading, true, Normal, "Allow instructions from the wasm threading spec.") \
     v(Bool, useWebAssemblyTypedFunctionReferences, false, Normal, "Allow function types from the wasm typed function references spec.") \
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal.") \
-    v(Bool, useWebAssemblyExceptions, true, Normal, "Allow the new section and instructions from the wasm exception handling spec.") \
-    v(Bool, useWebAssemblyBranchHints, true, Normal, "Allow the new section from the wasm branch hinting spec.") \
-    v(Bool, useWebAssemblySIMD, false, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \
-    /* Bun Features */\
-    v(Bool, showPrivateScriptsInStackTraces, false, Normal, "Show private scripts in stack traces.") \
+    v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing.") \
+    v(Bool, useWebAssemblySIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \
+    v(Bool, useWebAssemblyTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec.") \
 
 
 enum OptionEquivalence {

@@ -233,7 +233,14 @@ Ref<ArrayBuffer> ArrayBuffer::createFromBytes(const void* data, size_t byteLengt
     if (data && !Gigacage::isCaged(Gigacage::Primitive, data))
         Gigacage::disablePrimitiveGigacage();
     
-    return adoptRef(*new ArrayBuffer(const_cast<void*>(data), byteLength, WTFMove(destructor)));
+    ArrayBufferContents contents(const_cast<void*>(data), byteLength, std::nullopt, WTFMove(destructor));
+    return create(WTFMove(contents));
+}
+
+Ref<ArrayBuffer> ArrayBuffer::createShared(Ref<SharedArrayBufferContents>&& shared)
+{
+    ArrayBufferContents contents(WTFMove(shared));
+    return create(WTFMove(contents));
 }
 
 RefPtr<ArrayBuffer> ArrayBuffer::tryCreate(size_t numElements, unsigned elementByteSize, std::optional<size_t> maxByteLength)
@@ -629,3 +636,4 @@ ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
 }
 
 } // namespace JSC
+

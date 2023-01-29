@@ -377,14 +377,6 @@ JS_EXPORT void JSValueProtect(JSContextRef ctx, JSValueRef value);
 JS_EXPORT void JSValueUnprotect(JSContextRef ctx, JSValueRef value);
 
 
-// Extra functions
-JS_EXPORT bool JSValueIsEqualString(JSContextRef ctx, JSValueRef value, const char* ptr, size_t length, JSValueRef* exception);
-
-// JS_EXPORT void* JSValueGetCell(JSContextRef ctx, JSValueRef value);
-// JS_EXPORT void JSValueReleaseCell(JSCJSCell *cell);
-// JS_EXPORT size_t JSStringLength(JSCJSString *string);
-// JS_EXPORT void JSStringIterate(JSCJSString *string, jsstring_iterator *iter);
-
 #ifdef __cplusplus
 }
 #endif
