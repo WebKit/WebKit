@@ -49,8 +49,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, Ref<API::PageConfigurati
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 void webkitWebViewBaseSetTooltipArea(WebKitWebViewBase*, const WebCore::IntRect&);
 void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase*, WebKit::WebHitTestResultData::IsScrollbar);
-void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
-void webkitWebViewBaseForwardNextWheelEvent(WebKitWebViewBase*);
+void webkitWebViewBasePropagateKeyEvent(WebKitWebViewBase*, GdkEvent*);
+void webkitWebViewBasePropagateWheelEvent(WebKitWebViewBase*, GdkEvent*);
 void webkitWebViewBaseChildMoveResize(WebKitWebViewBase*, GtkWidget*, const WebCore::IntRect&);
 void webkitWebViewBaseEnterFullScreen(WebKitWebViewBase*);
 void webkitWebViewBaseExitFullScreen(WebKitWebViewBase*);
