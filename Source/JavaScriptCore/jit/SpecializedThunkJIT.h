@@ -52,6 +52,12 @@ namespace JSC {
             emitFunctionPrologue();
             emitSaveThenMaterializeTagRegisters();
         }
+
+        void loadJSArgument(int argument, JSValueRegs dst)
+        {
+            VirtualRegister src = virtualRegisterForArgumentIncludingThis(argument + 1);
+            emitLoadJSValue(src, dst);
+        }
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)
         {
@@ -108,6 +114,15 @@ namespace JSC {
             ret();
         }
 #endif
+        void returnJSValue(JSValueRegs src)
+        {
+            if (src != JSRInfo::returnValueJSR)
+                moveValueRegs(src, JSRInfo::returnValueJSR);
+
+            emitRestoreSavedTagRegisters();
+            emitFunctionEpilogue();
+            ret();
+        }
         
         void returnDouble(FPRegisterID src)
         {

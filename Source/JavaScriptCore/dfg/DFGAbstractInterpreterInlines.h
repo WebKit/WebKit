@@ -2817,7 +2817,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case ToNumber: {
+        if (node->child1().useKind() == StringUse) {
+            setNonCellTypeForNode(node, SpecBytecodeNumber);
+            break;
+        }
+
         JSValue childConst = forNode(node->child1()).value();
+
         if (childConst && childConst.isNumber()) {
             didFoldClobberWorld();
             setConstant(node, childConst);

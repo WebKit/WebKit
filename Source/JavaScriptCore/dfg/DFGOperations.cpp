@@ -1626,6 +1626,38 @@ JSC_DEFINE_JIT_OPERATION(operationToNumber, EncodedJSValue, (JSGlobalObject* glo
     return JSValue::encode(jsNumber(JSValue::decode(value).toNumber(globalObject)));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationToNumberString, EncodedJSValue, (JSGlobalObject* globalObject, JSString* string))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    String view = string->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    unsigned size = view.length();
+    if (size == 1) {
+        UChar c = view[0];
+        if (isASCIIDigit(c))
+            return JSValue::encode(jsNumber(static_cast<int32_t>(c - '0')));
+        if (isStrWhiteSpace(c))
+            return JSValue::encode(jsNumber(0));
+        return JSValue::encode(jsNaN());
+    }
+
+    if (size == 2 && view[0] == '-') {
+        UChar c = view[1];
+        if (c == '0')
+            return JSValue::encode(jsNumber(-0.0));
+        if (isASCIIDigit(c))
+            return JSValue::encode(jsNumber(-static_cast<int32_t>(c - '0')));
+        return JSValue::encode(jsNaN());
+    }
+
+    return JSValue::encode(jsNumber(jsToNumber(view)));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationToNumeric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue value))
 {
     VM& vm = globalObject->vm();

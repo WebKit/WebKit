@@ -881,6 +881,9 @@ ALWAYS_INLINE JSValue JSValue::toNumeric(JSGlobalObject* globalObject) const
     if (isInt32() || isDouble() || isBigInt())
         return *this;
 
+    if (isString())
+        RELEASE_AND_RETURN(scope, jsNumber(asString(*this)->toNumber(globalObject)));
+
     JSValue primValue = this->toPrimitive(globalObject, PreferNumber);
     RETURN_IF_EXCEPTION(scope, { });
 
