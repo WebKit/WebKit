@@ -93,12 +93,12 @@ void ProvisionalFrameProxy::didReceiveMessage(IPC::Connection& connection, IPC::
     ASSERT(decoder.messageReceiverName() == Messages::WebPageProxy::messageReceiverName());
 
     if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForResponse::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DecidePolicyForResponse>(connection, decoder, this, &ProvisionalFrameProxy::decidePolicyForResponse);
+        IPC::handleMessage<Messages::WebPageProxy::DecidePolicyForResponse, &ProvisionalFrameProxy::decidePolicyForResponse>({ connection, decoder }, this);
         return;
     }
 
     if (decoder.messageName() == Messages::WebPageProxy::DidCommitLoadForFrame::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidCommitLoadForFrame>(connection, decoder, this, &ProvisionalFrameProxy::didCommitLoadForFrame);
+        IPC::handleMessage<Messages::WebPageProxy::DidCommitLoadForFrame, &ProvisionalFrameProxy::didCommitLoadForFrame>({ connection, decoder }, this);
         return;
     }
 

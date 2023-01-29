@@ -42,10 +42,15 @@ namespace WebKit {
 void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithImageData::SendImageData::name())
-        return IPC::handleMessage<Messages::TestWithImageData::SendImageData>(connection, decoder, this, &TestWithImageData::sendImageData);
-    if (decoder.messageName() == Messages::TestWithImageData::ReceiveImageData::name())
-        return IPC::handleMessageAsync<Messages::TestWithImageData::ReceiveImageData>(connection, decoder, this, &TestWithImageData::receiveImageData);
+
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithImageData*), TestWithImageData,
+        IPC::MessageHandlerListEntry<Messages::TestWithImageData::ReceiveImageData, &TestWithImageData::receiveImageData>,
+        IPC::MessageHandlerListEntry<Messages::TestWithImageData::SendImageData, &TestWithImageData::sendImageData>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

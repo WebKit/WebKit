@@ -44,8 +44,9 @@ class SendSemaphore {
 public:
     using Arguments = std::tuple<IPC::Semaphore>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_SendSemaphore; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_SendSemaphore; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = false;
 
     explicit SendSemaphore(const IPC::Semaphore& s0)
         : m_arguments(s0)
@@ -65,10 +66,11 @@ class ReceiveSemaphore {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = true;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
+    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
     const auto& arguments() const

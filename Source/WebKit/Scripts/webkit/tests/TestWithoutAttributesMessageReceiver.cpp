@@ -71,60 +71,49 @@ namespace WebKit {
 void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadURL>(connection, decoder, this, &TestWithoutAttributes::loadURL);
-#if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomething::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomething>(connection, decoder, this, &TestWithoutAttributes::loadSomething);
-#endif
-#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TouchEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TouchEvent>(connection, decoder, this, &TestWithoutAttributes::touchEvent);
-#endif
+
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithoutAttributes*), TestWithoutAttributes,
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    if (decoder.messageName() == Messages::TestWithoutAttributes::AddEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::AddEvent>(connection, decoder, this, &TestWithoutAttributes::addEvent);
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::AddEvent, &TestWithoutAttributes::addEvent>,
+#endif
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::Close, &TestWithoutAttributes::close>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::CreatePlugin, &TestWithoutAttributes::createPlugin>,
+#if ENABLE(DEPRECATED_FEATURE)
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::DeprecatedOperation, &TestWithoutAttributes::deprecatedOperation>,
+#endif
+#if PLATFORM(MAC)
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::DidCreateWebProcessConnection, &TestWithoutAttributes::didCreateWebProcessConnection>,
+#endif
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::DidReceivePolicyDecision, &TestWithoutAttributes::didReceivePolicyDecision>,
+#if ENABLE(FEATURE_FOR_TESTING)
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::ExperimentalOperation, &TestWithoutAttributes::experimentalOperation>,
+#endif
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::GetPlugins, &TestWithoutAttributes::getPlugins>,
+#if PLATFORM(MAC)
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::InterpretKeyEvent, &TestWithoutAttributes::interpretKeyEvent>,
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::LoadSomethingElse::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::LoadSomethingElse>(connection, decoder, this, &TestWithoutAttributes::loadSomethingElse);
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::LoadSomething, &TestWithoutAttributes::loadSomething>,
 #endif
-    if (decoder.messageName() == Messages::TestWithoutAttributes::DidReceivePolicyDecision::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DidReceivePolicyDecision>(connection, decoder, this, &TestWithoutAttributes::didReceivePolicyDecision);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::Close::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::Close>(connection, decoder, this, &TestWithoutAttributes::close);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::PreferencesDidChange::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::PreferencesDidChange>(connection, decoder, this, &TestWithoutAttributes::preferencesDidChange);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::SendDoubleAndFloat::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SendDoubleAndFloat>(connection, decoder, this, &TestWithoutAttributes::sendDoubleAndFloat);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::SendInts::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SendInts>(connection, decoder, this, &TestWithoutAttributes::sendInts);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::CreatePlugin::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::CreatePlugin>(connection, decoder, this, &TestWithoutAttributes::createPlugin);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::RunJavaScriptAlert::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::RunJavaScriptAlert>(connection, decoder, this, &TestWithoutAttributes::runJavaScriptAlert);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPlugins::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::GetPlugins>(connection, decoder, this, &TestWithoutAttributes::getPlugins);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TestParameterAttributes::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TestParameterAttributes>(connection, decoder, this, &TestWithoutAttributes::testParameterAttributes);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TemplateTest::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::TemplateTest>(connection, decoder, this, &TestWithoutAttributes::templateTest);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::SetVideoLayerID::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::SetVideoLayerID>(connection, decoder, this, &TestWithoutAttributes::setVideoLayerID);
-#if PLATFORM(MAC)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::InterpretKeyEvent::name())
-        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::InterpretKeyEvent>(connection, decoder, this, &TestWithoutAttributes::interpretKeyEvent);
+#if ENABLE(TOUCH_EVENTS)
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::LoadSomethingElse, &TestWithoutAttributes::loadSomethingElse>,
 #endif
-#if ENABLE(DEPRECATED_FEATURE)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::DeprecatedOperation::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::DeprecatedOperation>(connection, decoder, this, &TestWithoutAttributes::deprecatedOperation);
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::LoadURL, &TestWithoutAttributes::loadURL>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::PreferencesDidChange, &TestWithoutAttributes::preferencesDidChange>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::RunJavaScriptAlert, &TestWithoutAttributes::runJavaScriptAlert>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::SendDoubleAndFloat, &TestWithoutAttributes::sendDoubleAndFloat>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::SendInts, &TestWithoutAttributes::sendInts>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::SetVideoLayerID, &TestWithoutAttributes::setVideoLayerID>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::TemplateTest, &TestWithoutAttributes::templateTest>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::TestParameterAttributes, &TestWithoutAttributes::testParameterAttributes>,
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::TouchEvent, &TestWithoutAttributes::touchEvent>,
 #endif
-#if ENABLE(FEATURE_FOR_TESTING)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::ExperimentalOperation::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::ExperimentalOperation>(connection, decoder, this, &TestWithoutAttributes::experimentalOperation);
-#endif
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -137,10 +126,15 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
 bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPluginProcessConnection::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithoutAttributes::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::getPluginProcessConnection);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::TestMultipleAttributes::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithoutAttributes::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::testMultipleAttributes);
+
+    using SyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithoutAttributes*), TestWithoutAttributes,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::GetPluginProcessConnection, &TestWithoutAttributes::getPluginProcessConnection>,
+        IPC::MessageHandlerListEntry<Messages::TestWithoutAttributes::TestMultipleAttributes, &TestWithoutAttributes::testMultipleAttributes>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(SyncMessageHandlerListType::valid());
+    if (auto handler = SyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return handler({ connection, decoder, replyEncoder }, this);
+
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);

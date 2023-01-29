@@ -44,8 +44,9 @@ class SendString {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStreamBatched_SendString; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamBatched_SendString; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = true;
 

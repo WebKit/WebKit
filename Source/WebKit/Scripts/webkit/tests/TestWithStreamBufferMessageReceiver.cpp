@@ -39,8 +39,14 @@ namespace WebKit {
 void TestWithStreamBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithStreamBuffer::SendStreamBuffer::name())
-        return IPC::handleMessage<Messages::TestWithStreamBuffer::SendStreamBuffer>(connection, decoder, this, &TestWithStreamBuffer::sendStreamBuffer);
+
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithStreamBuffer*), TestWithStreamBuffer,
+        IPC::MessageHandlerListEntry<Messages::TestWithStreamBuffer::SendStreamBuffer, &TestWithStreamBuffer::sendStreamBuffer>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

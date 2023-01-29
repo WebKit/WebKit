@@ -45,28 +45,41 @@ namespace WebKit {
 void TestWithSuperclass::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSuperclass::LoadURL::name())
-        return IPC::handleMessage<Messages::TestWithSuperclass::LoadURL>(connection, decoder, this, &TestWithSuperclass::loadURL);
+
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithSuperclass*), TestWithSuperclass,
+        IPC::MessageHandlerListEntry<Messages::TestWithSuperclass::LoadURL, &TestWithSuperclass::loadURL>,
 #if ENABLE(TEST_FEATURE)
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessage::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessage>(connection, decoder, this, &TestWithSuperclass::testAsyncMessage);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithNoArguments);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithMultipleArguments);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestAsyncMessageWithConnection::name())
-        return IPC::handleMessageAsync<Messages::TestWithSuperclass::TestAsyncMessageWithConnection>(connection, decoder, this, &TestWithSuperclass::testAsyncMessageWithConnection);
+        IPC::MessageHandlerListEntry<Messages::TestWithSuperclass::TestAsyncMessage, &TestWithSuperclass::testAsyncMessage>,
 #endif
+#if ENABLE(TEST_FEATURE)
+        IPC::MessageHandlerListEntry<Messages::TestWithSuperclass::TestAsyncMessageWithConnection, &TestWithSuperclass::testAsyncMessageWithConnection>,
+#endif
+#if ENABLE(TEST_FEATURE)
+        IPC::MessageHandlerListEntry<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments, &TestWithSuperclass::testAsyncMessageWithMultipleArguments>,
+#endif
+#if ENABLE(TEST_FEATURE)
+        IPC::MessageHandlerListEntry<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments, &TestWithSuperclass::testAsyncMessageWithNoArguments>,
+#endif
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     WebPageBase::didReceiveMessage(connection, decoder);
 }
 
 bool TestWithSuperclass::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestSyncMessage::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSyncMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSyncMessage);
-    if (decoder.messageName() == Messages::TestWithSuperclass::TestSynchronousMessage::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithSuperclass::TestSynchronousMessage>(connection, decoder, replyEncoder, this, &TestWithSuperclass::testSynchronousMessage);
+
+    using SyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithSuperclass*), TestWithSuperclass,
+        IPC::MessageHandlerListEntry<Messages::TestWithSuperclass::TestSyncMessage, &TestWithSuperclass::testSyncMessage>,
+        IPC::MessageHandlerListEntry<Messages::TestWithSuperclass::TestSynchronousMessage, &TestWithSuperclass::testSynchronousMessage>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(SyncMessageHandlerListType::valid());
+    if (auto handler = SyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return handler({ connection, decoder, replyEncoder }, this);
+
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);

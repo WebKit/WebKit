@@ -166,8 +166,9 @@ def message_to_struct_declaration(receiver, message):
     result.append('public:\n')
     result.append('    using Arguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.parameters]))
     result.append('\n')
-    result.append('    static IPC::MessageName name() { return IPC::MessageName::%s_%s; }\n' % (receiver.name, message.name))
+    result.append('    static constexpr IPC::MessageName name() { return IPC::MessageName::%s_%s; }\n' % (receiver.name, message.name))
     result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(SYNCHRONOUS_ATTRIBUTE)])
+    result.append('    static constexpr bool isAsync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE)])
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('    static constexpr bool isStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_ATTRIBUTE)])
         if message.reply_parameters is not None:
@@ -180,7 +181,7 @@ def message_to_struct_declaration(receiver, message):
     result.append('\n')
     if message.reply_parameters != None:
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-            result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
+            result.append('    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
         if message.has_attribute(MAINTHREADCALLBACK_ATTRIBUTE):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;\n')
         else:
@@ -488,42 +489,6 @@ def handler_function(receiver, message):
     if message.name.find('URL') == 0:
         return '%s::%s' % (receiver.name, 'url' + message.name[3:])
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
-
-
-def async_message_statement(receiver, message):
-    dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
-
-    dispatch_function = 'handleMessage'
-    if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-        dispatch_function += 'Async'
-
-    connection = 'connection'
-    if receiver.has_attribute(STREAM_ATTRIBUTE):
-        connection = 'connection.connection()'
-
-    result = []
-    result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(%s, %s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
-    return result
-
-
-def sync_message_statement(receiver, message):
-    dispatch_function = 'handleMessage'
-    if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-        dispatch_function += 'Synchronous'
-    elif message.reply_parameters is not None:
-        dispatch_function += 'Async'
-
-    maybe_reply_encoder = ", *replyEncoder"
-    if receiver.has_attribute(STREAM_ATTRIBUTE):
-        maybe_reply_encoder = ''
-    elif message.reply_parameters is not None:
-        maybe_reply_encoder = ', replyEncoder'
-
-    result = []
-    result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
-    result.append('        return IPC::%s<Messages::%s::%s>(connection, decoder%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, maybe_reply_encoder, handler_function(receiver, message)))
-    return result
 
 
 def class_template_headers(template_string):
@@ -1009,19 +974,21 @@ def generate_message_handler(receiver):
         else:
             async_messages.append(message)
 
-    def collect_message_statements(messages, message_statement_function):
+    def construct_message_handler_list(messages, connection_type, handler_list_name):
         result = []
-        for condition, messages in itertools.groupby(messages, lambda m: m.condition):
-            if condition:
-                result.append('#if %s\n' % condition)
-            for message in messages:
-                result += message_statement_function(receiver, message)
-            if condition:
+        result.append('    using %s = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::%s>, %s*), %s,\n' % (handler_list_name, connection_type, receiver.name, receiver.name))
+        for message in sorted(messages, key=lambda m: m.name):
+            if message.condition:
+                result.append('#if %s\n' % message.condition)
+            result.append('        IPC::MessageHandlerListEntry<Messages::%s::%s, &%s>,\n' % (receiver.name, message.name, handler_function(receiver, message)))
+            if message.condition:
                 result.append('#endif\n')
+        result.append('        IPC::MessageHandlerListEntry<void, nullptr>>;\n')
         return result
 
-    async_message_statements = collect_message_statements(async_messages, async_message_statement)
-    sync_message_statements = collect_message_statements(sync_messages, sync_message_statement)
+    connection_type = 'StreamServerConnection' if receiver.has_attribute(STREAM_ATTRIBUTE) else 'Connection'
+    async_message_handler_list = construct_message_handler_list(async_messages, connection_type, 'AsyncMessageHandlerListType')
+    sync_message_handler_list = construct_message_handler_list(sync_messages, connection_type, 'SyncMessageHandlerListType')
 
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
@@ -1029,8 +996,14 @@ def generate_message_handler(receiver):
         assert(receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE))
-        result += async_message_statements
-        result += sync_message_statements
+        result += async_message_handler_list
+        result.append('    static_assert(AsyncMessageHandlerListType::valid());\n')
+        result.append('    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))\n')
+        result.append('        return std::void_t<>(handler({ connection, decoder }, this));\n\n')
+        result += sync_message_handler_list
+        result.append('    static_assert(SyncMessageHandlerListType::valid());\n')
+        result.append('    if (auto handler = SyncMessageHandlerListType::messageHandler(decoder.messageName()))\n')
+        result.append('        return std::void_t<>(handler({ connection, decoder }, this));\n\n')
         if (receiver.superclass):
             result.append('    %s::didReceiveStreamMessage(connection, decoder);\n' % (receiver.superclass))
         else:
@@ -1047,8 +1020,11 @@ def generate_message_handler(receiver):
         result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name, receive_variant))
         result.append('{\n')
         if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
-            result.append('    Ref protectedThis { *this };\n')
-        result += async_message_statements
+            result.append('    Ref protectedThis { *this };\n\n')
+        result += async_message_handler_list
+        result.append('    static_assert(AsyncMessageHandlerListType::valid());\n')
+        result.append('    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))\n')
+        result.append('        return std::void_t<>(handler({ connection, decoder }, this));\n\n')
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE) or receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE):
             result.append('    if (dispatchMessage(connection, decoder))\n')
             result.append('        return;\n')
@@ -1069,8 +1045,11 @@ def generate_message_handler(receiver):
         result.append('bool %s::didReceiveSync%sMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (receiver.name, receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''))
         result.append('{\n')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
-            result.append('    Ref protectedThis { *this };\n')
-        result += sync_message_statements
+            result.append('    Ref protectedThis { *this };\n\n')
+        result += sync_message_handler_list
+        result.append('    static_assert(SyncMessageHandlerListType::valid());\n')
+        result.append('    if (auto handler = SyncMessageHandlerListType::messageHandler(decoder.messageName()))\n')
+        result.append('        return handler({ connection, decoder, replyEncoder }, this);\n\n')
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE):
             result.append('    if (dispatchSyncMessage(connection, decoder, replyEncoder))\n')
             result.append('        return true;\n')

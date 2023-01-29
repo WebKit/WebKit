@@ -39,10 +39,15 @@ namespace WebKit {
 void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name())
-        return IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(connection, decoder, this, &TestWithSemaphore::sendSemaphore);
-    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
-        return IPC::handleMessageAsync<Messages::TestWithSemaphore::ReceiveSemaphore>(connection, decoder, this, &TestWithSemaphore::receiveSemaphore);
+
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithSemaphore*), TestWithSemaphore,
+        IPC::MessageHandlerListEntry<Messages::TestWithSemaphore::ReceiveSemaphore, &TestWithSemaphore::receiveSemaphore>,
+        IPC::MessageHandlerListEntry<Messages::TestWithSemaphore::SendSemaphore, &TestWithSemaphore::sendSemaphore>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
