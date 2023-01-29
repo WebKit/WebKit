@@ -66,6 +66,7 @@ Ref<GPUTextureView> GPUTexture::createView(const std::optional<GPUTextureViewDes
 
 void GPUTexture::destroy()
 {
+    m_backing->destroy();
 }
 
 }
