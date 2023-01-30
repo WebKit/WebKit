@@ -54,21 +54,11 @@ bool IsMetalRendererAvailable()
                     ANGLE_APPLE_ALLOW_DEPRECATED_END
                 }
 #elif defined(ANGLE_PLATFORM_IOS) && !TARGET_OS_SIMULATOR
-                // A8 devices (iPad Mini 4, iPad Air 2) cannot use ANGLE's Metal backend.
-                // This check can be removed once they are no longer supported.
-                if (ANGLE_APPLE_AVAILABLE_XCI(10.15, 13.1, 13))
-                {
-                    if ([device supportsFamily:MTLGPUFamilyApple3])
-                        gpuFamilySufficient = true;
-                }
-                else
-                {
-                    // Hardcode constant to sidestep compiler errors. Call will
-                    // return false on older macOS versions.
-                    const NSUInteger iosFamily3v1 = 4;
-                    if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(iosFamily3v1)])
-                        gpuFamilySufficient = true;
-                }
+                // Hardcode constant to sidestep compiler errors. Call will
+                // return false on older macOS versions.
+                const NSUInteger iosFamily3v1 = 4;
+                if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(iosFamily3v1)])
+                    gpuFamilySufficient = true;
 #elif defined(ANGLE_PLATFORM_IOS) && TARGET_OS_SIMULATOR
                 // FIXME: Currently we do not have good simulator query, as it does not support
                 // the whole feature set needed for iOS.
