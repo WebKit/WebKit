@@ -70,6 +70,8 @@ private:
     Expected<String, StorageError> getItem(const String& key);
     Expected<String, StorageError> getItemFromDatabase(const String& key);
 
+    bool handleDatabaseCorruptionIfNeeded(int databaseError);
+
     String m_path;
     Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::SQLiteDatabase> m_database;
