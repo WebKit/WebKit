@@ -341,16 +341,6 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamerMSE::buffered() c
     return m_mediaSource ? m_mediaSource->buffered() : makeUnique<PlatformTimeRanges>();
 }
 
-void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
-{
-    ASSERT(WEBKIT_IS_MEDIA_SRC(sourceElement));
-    GST_DEBUG_OBJECT(pipeline(), "Source %p setup (old was: %p)", sourceElement, m_source.get());
-    m_source = sourceElement;
-
-    if (m_hasAllTracks)
-        webKitMediaSrcEmitStreams(WEBKIT_MEDIA_SRC(m_source.get()), m_tracks);
-}
-
 void MediaPlayerPrivateGStreamerMSE::updateStates()
 {
     bool shouldBePlaying = !m_isPaused && readyState() >= MediaPlayer::ReadyState::HaveFutureData;

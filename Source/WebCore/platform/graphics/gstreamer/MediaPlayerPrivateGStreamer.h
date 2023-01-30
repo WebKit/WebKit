@@ -264,7 +264,7 @@ protected:
     static bool isAvailable();
 
     virtual void durationChanged();
-    virtual void sourceSetup(GstElement*);
+    void sourceSetup(GstElement*);
     virtual bool changePipelineState(GstState);
     virtual void updatePlaybackRate();
 

@@ -145,16 +145,8 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
     ASSERT(isMainThread());
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
-
-    if (!m_playerPrivate.hasAllTracks()) {
-        GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%s'", trackId.string().utf8().data());
-        MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
-        track->clearQueue();
-        return;
-    }
-
-    GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well. trackId = '%s'", trackId.string().utf8().data());
-    webKitMediaSrcFlush(m_playerPrivate.webKitMediaSrc(), trackId);
+    MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
+    track->clearQueue();
 }
 
 void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackId)

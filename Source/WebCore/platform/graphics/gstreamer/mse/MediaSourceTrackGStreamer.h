@@ -57,8 +57,6 @@ public:
 
     // This method is provided to clear the TrackQueue in cases where the stream hasn't been started (e.g. because
     // another SourceBuffer hasn't received the necessary initalization segment for playback).
-    // Otherwise, webKitMediaSrcFlush() should be used instead, which will also do a GStreamer pipeline flush where
-    // necessary.
     void clearQueue();
 
     void remove();

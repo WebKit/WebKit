@@ -66,8 +66,6 @@ public:
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
     MediaTime maxMediaTimeSeekable() const override;
 
-    void sourceSetup(GstElement*) override;
-
     // return false to avoid false-positive "stalled" event - it should be soon addressed in the spec
     // see: https://github.com/w3c/media-source/issues/88
     // see: https://w3c.github.io/media-source/#h-note-19
@@ -84,7 +82,6 @@ public:
 
     void asyncStateChangeDone() override;
 
-    bool hasAllTracks() const { return m_hasAllTracks; }
     void startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks);
     WebKitMediaSrc* webKitMediaSrc() { return reinterpret_cast<WebKitMediaSrc*>(m_source.get()); }
 
@@ -116,7 +113,6 @@ private:
     bool m_areDurationChangesBlocked = false;
     bool m_shouldReportDurationWhenUnblocking = false;
     bool m_isPipelinePlaying = true;
-    bool m_hasAllTracks = false;
     Vector<RefPtr<MediaSourceTrackGStreamer>> m_tracks;
 
     bool m_isWaitingForPreroll = true;

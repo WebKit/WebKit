@@ -642,15 +642,6 @@ static void webKitMediaSrcStreamFlush(Stream* stream, bool isSeekingFlush)
         stream->track->trackId().string().utf8().data(), boolForPrinting(isSeekingFlush));
 }
 
-void webKitMediaSrcFlush(WebKitMediaSrc* source, const AtomString& streamName)
-{
-    ASSERT(isMainThread());
-    GST_DEBUG_OBJECT(source, "Received non-seek flush request for stream '%s'.", streamName.string().utf8().data());
-    Stream* stream = source->priv->streamByName(streamName);
-
-    webKitMediaSrcStreamFlush(stream, false);
-}
-
 static void webKitMediaSrcSeek(WebKitMediaSrc* source, uint64_t startTime, double rate)
 {
     ASSERT(isMainThread());
