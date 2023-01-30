@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2141,7 +2141,14 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
 Texture::Texture(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor, Vector<WGPUTextureFormat>&& viewFormats, Device& device)
     : m_texture(texture)
-    , m_descriptor(descriptor)
+    , m_width(descriptor.size.width)
+    , m_height(descriptor.size.height)
+    , m_depthOrArrayLayers(descriptor.size.depthOrArrayLayers)
+    , m_mipLevelCount(descriptor.mipLevelCount)
+    , m_sampleCount(descriptor.sampleCount)
+    , m_dimension(descriptor.dimension)
+    , m_format(descriptor.format)
+    , m_usage(descriptor.usage)
     , m_viewFormats(WTFMove(viewFormats))
     , m_device(device)
 {
@@ -2161,21 +2168,21 @@ std::optional<WGPUTextureViewDescriptor> Texture::resolveTextureViewDescriptorDe
     WGPUTextureViewDescriptor resolved = descriptor;
 
     if (resolved.format == WGPUTextureFormat_Undefined) {
-        if (auto format = resolveTextureFormat(m_descriptor.format, descriptor.aspect))
+        if (auto format = resolveTextureFormat(m_format, descriptor.aspect))
             resolved.format = *format;
         else
-            resolved.format = m_descriptor.format;
+            resolved.format = m_format;
     }
 
     if (resolved.mipLevelCount == WGPU_MIP_LEVEL_COUNT_UNDEFINED) {
-        auto mipLevelCount = checkedDifference<uint32_t>(m_descriptor.mipLevelCount, resolved.baseMipLevel);
+        auto mipLevelCount = checkedDifference<uint32_t>(m_mipLevelCount, resolved.baseMipLevel);
         if (mipLevelCount.hasOverflowed())
             return std::nullopt;
         resolved.mipLevelCount = mipLevelCount.value();
     }
 
     if (resolved.dimension == WGPUTextureViewDimension_Undefined) {
-        switch (m_descriptor.dimension) {
+        switch (m_dimension) {
         case WGPUTextureDimension_1D:
             resolved.dimension = WGPUTextureViewDimension_1D;
             break;
@@ -2205,7 +2212,7 @@ std::optional<WGPUTextureViewDescriptor> Texture::resolveTextureViewDescriptorDe
             break;
         case WGPUTextureViewDimension_2DArray:
         case WGPUTextureViewDimension_CubeArray: {
-            auto arrayLayerCount = checkedDifference<uint32_t>(m_descriptor.size.depthOrArrayLayers, resolved.baseArrayLayer);
+            auto arrayLayerCount = checkedDifference<uint32_t>(m_depthOrArrayLayers, resolved.baseArrayLayer);
             if (arrayLayerCount.hasOverflowed())
                 return std::nullopt;
             resolved.arrayLayerCount = arrayLayerCount.value();
@@ -2239,11 +2246,11 @@ uint32_t Texture::arrayLayerCount() const
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-array-layer-count
 
-    switch (m_descriptor.dimension) {
+    switch (m_dimension) {
     case WGPUTextureDimension_1D:
         return 1;
     case WGPUTextureDimension_2D:
-        return m_descriptor.size.depthOrArrayLayers;
+        return m_depthOrArrayLayers;
     case WGPUTextureDimension_3D:
         return 1;
     case WGPUTextureDimension_Force32:
@@ -2258,10 +2265,10 @@ bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) co
         return false;
 
     if (descriptor.aspect == WGPUTextureAspect_All) {
-        if (descriptor.format != m_descriptor.format && !m_viewFormats.contains(descriptor.format))
+        if (descriptor.format != m_format && !m_viewFormats.contains(descriptor.format))
             return false;
     } else {
-        if (descriptor.format != resolveTextureFormat(m_descriptor.format, descriptor.aspect))
+        if (descriptor.format != resolveTextureFormat(m_format, descriptor.aspect))
             return false;
     }
 
@@ -2269,7 +2276,7 @@ bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) co
         return false;
 
     auto endMipLevel = checkedSum<uint32_t>(descriptor.baseMipLevel, descriptor.mipLevelCount);
-    if (endMipLevel.hasOverflowed() || endMipLevel.value() > m_descriptor.mipLevelCount)
+    if (endMipLevel.hasOverflowed() || endMipLevel.value() > m_mipLevelCount)
         return false;
 
     if (!descriptor.arrayLayerCount)
@@ -2279,7 +2286,7 @@ bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) co
     if (endArrayLayer.hasOverflowed() || endArrayLayer.value() > arrayLayerCount())
         return false;
 
-    if (m_descriptor.sampleCount > 1) {
+    if (m_sampleCount > 1) {
         if (descriptor.dimension != WGPUTextureViewDimension_2D)
             return false;
     }
@@ -2288,45 +2295,45 @@ bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) co
     case WGPUTextureViewDimension_Undefined:
         return false;
     case WGPUTextureViewDimension_1D:
-        if (m_descriptor.dimension != WGPUTextureDimension_1D)
+        if (m_dimension != WGPUTextureDimension_1D)
             return false;
 
         if (descriptor.arrayLayerCount != 1)
             return false;
         break;
     case WGPUTextureViewDimension_2D:
-        if (m_descriptor.dimension != WGPUTextureDimension_2D)
+        if (m_dimension != WGPUTextureDimension_2D)
             return false;
 
         if (descriptor.arrayLayerCount != 1)
             return false;
         break;
     case WGPUTextureViewDimension_2DArray:
-        if (m_descriptor.dimension != WGPUTextureDimension_2D)
+        if (m_dimension != WGPUTextureDimension_2D)
             return false;
         break;
     case WGPUTextureViewDimension_Cube:
-        if (m_descriptor.dimension != WGPUTextureDimension_2D)
+        if (m_dimension != WGPUTextureDimension_2D)
             return false;
 
         if (descriptor.arrayLayerCount != 6)
             return false;
 
-        if (m_descriptor.size.width != m_descriptor.size.height)
+        if (m_width != m_height)
             return false;
         break;
     case WGPUTextureViewDimension_CubeArray:
-        if (m_descriptor.dimension != WGPUTextureDimension_2D)
+        if (m_dimension != WGPUTextureDimension_2D)
             return false;
 
         if (descriptor.arrayLayerCount % 6)
             return false;
 
-        if (m_descriptor.size.width != m_descriptor.size.height)
+        if (m_width != m_height)
             return false;
         break;
     case WGPUTextureViewDimension_3D:
-        if (m_descriptor.dimension != WGPUTextureDimension_3D)
+        if (m_dimension != WGPUTextureDimension_3D)
             return false;
 
         if (descriptor.arrayLayerCount != 1)
@@ -2384,13 +2391,13 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
             textureType = MTLTextureType1DArray;
         break;
     case WGPUTextureViewDimension_2D:
-        if (m_descriptor.sampleCount > 1)
+        if (m_sampleCount > 1)
             textureType = MTLTextureType2DMultisample;
         else
             textureType = MTLTextureType2D;
         break;
     case WGPUTextureViewDimension_2DArray:
-        if (m_descriptor.sampleCount > 1) {
+        if (m_sampleCount > 1) {
 #if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
             return TextureView::createInvalid(m_device);
 #else
@@ -2424,8 +2431,8 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     texture.label = fromAPI(descriptor->label);
 
     std::optional<WGPUExtent3D> renderExtent;
-    if  (m_descriptor.usage & WGPUTextureUsage_RenderAttachment)
-        renderExtent = computeRenderExtent(m_descriptor.size, descriptor->baseMipLevel);
+    if (m_usage & WGPUTextureUsage_RenderAttachment)
+        renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
     return TextureView::create(texture, *descriptor, renderExtent, m_device);
 }
@@ -2446,22 +2453,22 @@ WGPUExtent3D Texture::logicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-logical-miplevel-specific-texture-extent
 
-    switch (m_descriptor.dimension) {
+    switch (m_dimension) {
     case WGPUTextureDimension_1D:
         return {
-            std::max(static_cast<uint32_t>(1), m_descriptor.size.width >> mipLevel),
+            std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
             1,
-            m_descriptor.size.depthOrArrayLayers };
+            m_depthOrArrayLayers };
     case WGPUTextureDimension_2D:
         return {
-            std::max(static_cast<uint32_t>(1), m_descriptor.size.width >> mipLevel),
-            std::max(static_cast<uint32_t>(1), m_descriptor.size.height >> mipLevel),
-            m_descriptor.size.depthOrArrayLayers };
+            std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
+            std::max(static_cast<uint32_t>(1), m_height >> mipLevel),
+            m_depthOrArrayLayers };
     case WGPUTextureDimension_3D:
         return {
-            std::max(static_cast<uint32_t>(1), m_descriptor.size.width >> mipLevel),
-            std::max(static_cast<uint32_t>(1), m_descriptor.size.height >> mipLevel),
-            std::max(static_cast<uint32_t>(1), m_descriptor.size.depthOrArrayLayers >> mipLevel) };
+            std::max(static_cast<uint32_t>(1), m_width >> mipLevel),
+            std::max(static_cast<uint32_t>(1), m_height >> mipLevel),
+            std::max(static_cast<uint32_t>(1), m_depthOrArrayLayers >> mipLevel) };
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
         return WGPUExtent3D { };
@@ -2474,21 +2481,21 @@ WGPUExtent3D Texture::physicalMiplevelSpecificTextureExtent(uint32_t mipLevel)
 
     auto logicalExtent = logicalMiplevelSpecificTextureExtent(mipLevel);
 
-    switch (m_descriptor.dimension) {
+    switch (m_dimension) {
     case WGPUTextureDimension_1D:
         return {
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_descriptor.format), logicalExtent.width)),
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width)),
             1,
             logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_2D:
         return {
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_descriptor.format), logicalExtent.width)),
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_descriptor.format), logicalExtent.height)),
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width)),
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height)),
             logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_3D:
         return {
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_descriptor.format), logicalExtent.width)),
-            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_descriptor.format), logicalExtent.height)),
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockWidth(m_format), logicalExtent.width)),
+            static_cast<uint32_t>(WTF::roundUpToMultipleOf(texelBlockHeight(m_format), logicalExtent.height)),
             logicalExtent.depthOrArrayLayers };
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
@@ -2507,14 +2514,14 @@ bool Texture::validateImageCopyTexture(const WGPUImageCopyTexture& imageCopyText
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpuimagecopytexture
 
-    uint32_t blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).descriptor().format);
+    uint32_t blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).format());
 
-    uint32_t blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).descriptor().format);
+    uint32_t blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).format());
 
     if (!fromAPI(imageCopyTexture.texture).isValid())
         return false;
 
-    if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).descriptor().mipLevelCount)
+    if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).mipLevelCount())
         return false;
 
     if (imageCopyTexture.origin.x % blockWidth)
@@ -2523,8 +2530,8 @@ bool Texture::validateImageCopyTexture(const WGPUImageCopyTexture& imageCopyText
     if (imageCopyTexture.origin.y % blockHeight)
         return false;
 
-    if (Texture::isDepthOrStencilFormat(fromAPI(imageCopyTexture.texture).descriptor().format)
-        || fromAPI(imageCopyTexture.texture).descriptor().sampleCount > 1) {
+    if (Texture::isDepthOrStencilFormat(fromAPI(imageCopyTexture.texture).format())
+        || fromAPI(imageCopyTexture.texture).sampleCount() > 1) {
         auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
         if (subresourceSize.width != copySize.width
             || subresourceSize.height != copySize.height
@@ -2789,9 +2796,9 @@ bool Texture::validateTextureCopyRange(const WGPUImageCopyTexture& imageCopyText
 {
     // https://gpuweb.github.io/gpuweb/#validating-texture-copy-range
 
-    auto blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).descriptor().format);
+    auto blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).format());
 
-    auto blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).descriptor().format);
+    auto blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).format());
 
     auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -84,7 +84,15 @@ public:
     WGPUExtent3D physicalMiplevelSpecificTextureExtent(uint32_t mipLevel);
 
     id<MTLTexture> texture() const { return m_texture; }
-    const WGPUTextureDescriptor& descriptor() const { return m_descriptor; }
+
+    uint32_t width() const { return m_width; }
+    uint32_t height() const { return m_height; }
+    uint32_t depthOrArrayLayers() const { return m_depthOrArrayLayers; }
+    uint32_t mipLevelCount() const { return m_mipLevelCount; }
+    uint32_t sampleCount() const { return m_sampleCount; }
+    WGPUTextureDimension dimension() const { return m_dimension; }
+    WGPUTextureFormat format() const { return m_format; }
+    WGPUTextureUsageFlags usage() const { return m_usage; }
 
     Device& device() const { return m_device; }
 
@@ -98,7 +106,15 @@ private:
 
     id<MTLTexture> m_texture { nil };
 
-    const WGPUTextureDescriptor m_descriptor { };
+    const uint32_t m_width { 0 };
+    const uint32_t m_height { 0 };
+    const uint32_t m_depthOrArrayLayers { 0 };
+    const uint32_t m_mipLevelCount { 0 };
+    const uint32_t m_sampleCount { 0 };
+    const WGPUTextureDimension m_dimension { WGPUTextureDimension_2D };
+    const WGPUTextureFormat m_format { WGPUTextureFormat_Undefined };
+    const WGPUTextureUsageFlags m_usage { WGPUTextureUsage_None };
+
     const Vector<WGPUTextureFormat> m_viewFormats;
 
     const Ref<Device> m_device;
