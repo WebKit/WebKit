@@ -30,6 +30,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class UIWindow;
 typedef struct __IOHIDEvent * IOHIDEventRef;
 
 WK_CLASS_AVAILABLE(ios(13.0))
@@ -37,9 +38,9 @@ WK_CLASS_AVAILABLE(ios(13.0))
 + (_WKTouchEventGenerator *)sharedTouchEventGenerator;
 
 // The 'location' parameter is in screen coordinates, as used by IOHIDEvent.
-- (void)touchDown:(CGPoint)location completionBlock:(void (^)(void))completionBlock;
-- (void)liftUp:(CGPoint)location completionBlock:(void (^)(void))completionBlock;
-- (void)moveToPoint:(CGPoint)location duration:(NSTimeInterval)seconds completionBlock:(void (^)(void))completionBlock;
+- (void)touchDown:(CGPoint)location window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock;
+- (void)liftUp:(CGPoint)location window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock;
+- (void)moveToPoint:(CGPoint)location duration:(NSTimeInterval)seconds window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock;
 
 // Clients must call this method whenever a HID event is delivered to the UIApplication.
 // It is used to detect when all synthesized touch events have been successfully delivered.
