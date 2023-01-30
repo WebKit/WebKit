@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MetalFunctionWriter.h"
 
+#include "API.h"
 #include "AST.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
@@ -41,8 +42,9 @@ namespace Metal {
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(StringBuilder& stringBuilder)
+    FunctionDefinitionWriter(AST::ShaderModule& shaderModule, StringBuilder& stringBuilder)
         : m_stringBuilder(stringBuilder)
+        , m_shaderModule(shaderModule)
     {
     }
 
@@ -90,6 +92,7 @@ public:
 
 private:
     StringBuilder& m_stringBuilder;
+    AST::ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructRole> m_structRole;
 };
@@ -210,9 +213,9 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 
 void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
-    // FIXME: the correct function to compute the group number with the appropriate
-    // limits is implemented in Device::vertexBufferIndexForBindGroup.
-    m_stringBuilder.append("[[buffer(", 8 - group.group(), ")]]");
+    auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage;
+    auto bufferIndex = vertexBufferIndexForBindGroup(group.group(), max);
+    m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");
 }
 
 void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
@@ -491,7 +494,7 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 
 RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, AST::ShaderModule& module)
 {
-    FunctionDefinitionWriter functionDefinitionWriter(stringBuilder);
+    FunctionDefinitionWriter functionDefinitionWriter(module, stringBuilder);
     functionDefinitionWriter.visit(module);
 
     // FIXME: return the actual entry points

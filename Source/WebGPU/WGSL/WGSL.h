@@ -65,7 +65,11 @@ struct SourceMap {
     // https://sourcemaps.info/spec.html
 };
 
-std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&);
+struct Configuration {
+    uint32_t maxBuffersPlusVertexBuffersForVertexStage;
+};
+
+std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration&);
 
 //
 // Step 2

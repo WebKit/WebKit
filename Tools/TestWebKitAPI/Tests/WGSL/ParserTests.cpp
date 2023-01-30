@@ -67,11 +67,18 @@ static void checkVec4F32Type(WGSL::AST::TypeDecl& type)
 
 namespace TestWGSLAPI {
 
+inline Expected<WGSL::AST::ShaderModule, WGSL::Error> parse(const String& wgsl)
+{
+    WGSL::Configuration configuration;
+    configuration.maxBuffersPlusVertexBuffersForVertexStage = 8;
+    return WGSL::parseLChar(wgsl, configuration);
+}
+
 static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, const Vector<String>& typeNames)
 {
     ASSERT(fieldNames.size() == typeNames.size());
 
-    auto shader = WGSL::parseLChar(program);
+    auto shader = parse(program);
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -104,7 +111,7 @@ TEST(WGSLParserTests, SourceLifecycle)
             " "_s,
             "x: B;"_s
         );
-        return WGSL::parseLChar(source);
+        return parse(source);
     })();
 
     EXPECT_SHADER(shader);
@@ -161,7 +168,7 @@ TEST(WGSLParserTests, Struct)
 
 TEST(WGSLParserTests, GlobalVariable)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "@group(0) @binding(0)\n"
         "var<storage, read_write> x: B;\n"_s);
 
@@ -190,7 +197,7 @@ TEST(WGSLParserTests, GlobalVariable)
 
 TEST(WGSLParserTests, FunctionDecl)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "@compute\n"
         "fn main() {\n"
         "    x.a = 42i;\n"
@@ -227,7 +234,7 @@ TEST(WGSLParserTests, FunctionDecl)
 
 TEST(WGSLParserTests, TrivialGraphicsShader)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "@vertex\n"
         "fn vertexShader(@location(0) x: vec4<f32>) -> @builtin(position) vec4<f32> {\n"
         "    return x;\n"
@@ -303,7 +310,7 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
 
 TEST(WGSLParserTests, LocalVariable)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "@vertex\n"
         "fn main() -> vec4<f32> {\n"
         "    var x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
@@ -364,7 +371,7 @@ TEST(WGSLParserTests, LocalVariable)
 
 TEST(WGSLParserTests, ArrayAccess)
 {
-    auto shader = WGSL::parseLChar("fn test() { return x[42i]; }"_s);
+    auto shader = parse("fn test() { return x[42i]; }"_s);
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
@@ -399,7 +406,7 @@ TEST(WGSLParserTests, ArrayAccess)
 
 TEST(WGSLParserTests, UnaryExpression)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "fn negate(x: f32) -> f32 {\n"
         "    return -x;\n"
         "}"_s);
@@ -439,7 +446,7 @@ TEST(WGSLParserTests, UnaryExpression)
 
 TEST(WGSLParserTests, BinaryExpression)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "fn add(x: f32, y: f32) -> f32 {\n"
         "    return x + y;\n"
         "}"_s);
@@ -486,7 +493,7 @@ TEST(WGSLParserTests, BinaryExpression)
 
 TEST(WGSLParserTests, TriangleVert)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "@vertex\n"
         "fn main(\n"
         "    @builtin(vertex_index) VertexIndex : u32\n"
@@ -561,7 +568,7 @@ TEST(WGSLParserTests, TriangleVert)
 
 TEST(WGSLParserTests, RedFrag)
 {
-    auto shader = WGSL::parseLChar(
+    auto shader = parse(
         "@fragment\n"
         "fn main() -> @location(0) vec4<f32> {\n"
         "    return vec4<f32>(1.0, 0.0, 0.0, 1.0);\n"

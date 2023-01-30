@@ -102,22 +102,24 @@ namespace WGSL {
     } while (false)
 
 template<typename Lexer>
-Expected<AST::ShaderModule, Error> parse(const String& wgsl)
+Expected<AST::ShaderModule, Error> parse(const String& wgsl, const Configuration& configuration)
 {
     Lexer lexer(wgsl);
     Parser parser(lexer);
 
-    return parser.parseShader(wgsl);
+    // FIXME: Add a top-level class so that we don't have to plumb all this
+    // information until we parse the root node
+    return parser.parseShader(wgsl, configuration);
 }
 
-Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl)
+Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl, const Configuration& configuration)
 {
-    return parse<Lexer<LChar>>(wgsl);
+    return parse<Lexer<LChar>>(wgsl, configuration);
 }
 
-Expected<AST::ShaderModule, Error> parseUChar(const String& wgsl)
+Expected<AST::ShaderModule, Error> parseUChar(const String& wgsl, const Configuration& configuration)
 {
-    return parse<Lexer<UChar>>(wgsl);
+    return parse<Lexer<UChar>>(wgsl, configuration);
 }
 
 template<typename Lexer>
@@ -138,7 +140,7 @@ void Parser<Lexer>::consume()
 }
 
 template<typename Lexer>
-Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader(const String& source)
+Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader(const String& source, const Configuration& configuration)
 {
     START_PARSE();
 
@@ -151,7 +153,7 @@ Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader(const String& sour
         decls.append(WTFMove(globalDecl));
     }
 
-    RETURN_NODE(ShaderModule, source, WTFMove(directives), WTFMove(decls));
+    RETURN_NODE(ShaderModule, source, configuration, WTFMove(directives), WTFMove(decls));
 }
 
 template<typename Lexer>

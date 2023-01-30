@@ -42,6 +42,8 @@ static String toString(WGSL::AST::ShaderModule& shaderModule)
 
 TEST(WGSLASTDumperTests, dumpTriangleVert)
 {
+    WGSL::Configuration configuration;
+    configuration.maxBuffersPlusVertexBuffersForVertexStage = 8;
     auto shader = WGSL::parseLChar(
         "@vertex\n"
         "fn main(\n"
@@ -53,7 +55,7 @@ TEST(WGSLASTDumperTests, dumpTriangleVert)
         "        vec2<f32>(0.5, -0.5)\n"
         "    );\n\n"
         "    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);\n"
-        "}\n"_s);
+        "}\n"_s, configuration);
 
     EXPECT_SHADER(shader);
     EXPECT_EQ(
