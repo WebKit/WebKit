@@ -2069,7 +2069,7 @@ void WebsiteDataStore::forwardManagedDomainsToITPIfInitialized(CompletionHandler
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     auto managedDomains = managedDomainsIfInitialized();
-    if (!managedDomains || managedDomains->get().isEmpty())
+    if (!managedDomains || managedDomains->isEmpty())
         return;
 
     auto propagateManagedDomains = [callbackAggregator] (WebsiteDataStore* store, const HashSet<WebCore::RegistrableDomain>& domains) {
