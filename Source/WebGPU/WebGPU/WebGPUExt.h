@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -151,6 +151,9 @@ typedef void (*WGPUProcInstanceRequestAdapterWithBlock)(WGPUInstance instance, W
 typedef void (*WGPUProcQueueOnSubmittedWorkDoneWithBlock)(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback);
 typedef void (*WGPUProcShaderModuleGetCompilationInfoWithBlock)(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback);
 
+// FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
+typedef WGPUTexture (*WGPUProcSwapChainGetCurrentTexture)(WGPUSwapChain swapChain);
+
 #endif  // !defined(WGPU_SKIP_PROCS)
 
 #if !defined(WGPU_SKIP_DECLARATIONS)
@@ -210,6 +213,9 @@ WGPU_EXPORT void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule sh
 
 WGPU_EXPORT IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface);
 WGPU_EXPORT IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface);
+
+// FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
+WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain);
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 

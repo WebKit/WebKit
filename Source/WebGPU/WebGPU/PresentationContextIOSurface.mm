@@ -90,6 +90,11 @@ void PresentationContextIOSurface::present()
     nextDrawable();
 }
 
+Texture* PresentationContextIOSurface::getCurrentTexture()
+{
+    return nullptr;
+}
+
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
 {
     return nullptr;

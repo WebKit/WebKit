@@ -157,6 +157,7 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
     };
 
     markContextChangedAndNotifyCanvasObservers();
+    // FIXME: This should use PresentationContext::getCurrentTexture() instead.
     return m_configuration->device->createSurfaceTexture(descriptor, m_presentationContext);
 }
 

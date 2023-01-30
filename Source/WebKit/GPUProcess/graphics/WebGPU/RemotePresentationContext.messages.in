@@ -27,6 +27,7 @@ messages -> RemotePresentationContext NotRefCounted Stream {
     void Configure(WebKit::WebGPU::PresentationConfiguration configuration)
     void Unconfigure()
     void GetCurrentTexture(WebKit::WebGPUIdentifier identifier)
+    void Present()
 #if PLATFORM(COCOA)
     void PrepareForDisplay() -> (MachSendRight displayBuffer) Synchronous NotStreamEncodableReply
 #endif
