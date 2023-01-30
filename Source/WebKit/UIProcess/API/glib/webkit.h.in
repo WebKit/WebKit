@@ -90,7 +90,9 @@
 #endif
 #if PLATFORM(GTK)
 #include <@API_INCLUDE_PREFIX@/WebKitPointerLockPermissionRequest.h>
+#if !ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitPrintCustomWidget.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitPrintOperation.h>
 #endif
 #include <@API_INCLUDE_PREFIX@/WebKitResponsePolicyDecision.h>
