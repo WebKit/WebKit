@@ -180,14 +180,12 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     totalFrameSize += sizeof(CPURegister); // Slot for the VM's previous wasm instance.
     totalFrameSize += wasmCallInfo.headerAndArgumentStackSizeInBytes;
     totalFrameSize += savedResultRegisters.sizeOfAreaInBytes();
+    totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
 
-    // FIXME: Optimize Wasm function call even if arguments include I64.
-    // This requires I64 extraction from BigInt.
-    // https://bugs.webkit.org/show_bug.cgi?id=220053
+#if USE(JSVALUE32_64)
     if (wasmCallInfo.argumentsIncludeI64)
         return nullptr;
-
-    totalFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), totalFrameSize);
+#endif
 
     jit.emitFunctionPrologue();
     jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
@@ -247,6 +245,21 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 jit.move(CCallHelpers::TrustedImm32(0), wasmCallInfo.params[i].location.jsr().tagGPR());
 #endif
             }
+            break;
+        }
+        case Wasm::TypeKind::I64: {
+#if USE(JSVALUE64)
+            static_assert(noOverlap(GPRInfo::wasmContextInstancePointer, GPRInfo::numberTagRegister, GPRInfo::notCellMaskRegister));
+            jit.loadValue(jsParam, scratchJSR);
+            slowPath.append(jit.branchIfNotCell(scratchJSR));
+            slowPath.append(jit.branchIfNotHeapBigInt(scratchJSR.payloadGPR()));
+            if (isStack) {
+                jit.toBigInt64(scratchJSR.payloadGPR(), stackLimitGPR, GPRInfo::notCellMaskRegister, GPRInfo::numberTagRegister);
+                jit.store64(stackLimitGPR, calleeFrame.withOffset(wasmCallInfo.params[i].location.offsetFromSP()));
+                jit.emitMaterializeTagCheckRegisters();
+            } else
+                jit.toBigInt64(scratchJSR.payloadGPR(), wasmCallInfo.params[i].location.jsr().payloadGPR(), stackLimitGPR, GPRInfo::wasmContextInstancePointer);
+#endif
             break;
         }
         case Wasm::TypeKind::Ref:
