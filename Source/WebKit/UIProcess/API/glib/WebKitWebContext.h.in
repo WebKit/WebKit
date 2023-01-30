@@ -283,12 +283,12 @@ WEBKIT_API void
 webkit_web_context_set_web_extensions_initialization_user_data
                                                     (WebKitWebContext              *context,
                                                      GVariant                      *user_data);
-
+#if !ENABLE(2022_GLIB_API)
 WEBKIT_API void
 webkit_web_context_prefetch_dns                     (WebKitWebContext              *context,
                                                      const gchar                   *hostname);
 
-#if PLATFORM(GTK) && !USE(GTK4)
+#if PLATFORM(GTK)
 WEBKIT_DEPRECATED_FOR(webkit_web_context_new_with_website_data_manager) void
 webkit_web_context_set_disk_cache_directory         (WebKitWebContext              *context,
                                                      const gchar                   *directory);
@@ -299,7 +299,6 @@ webkit_web_context_allow_tls_certificate_for_host   (WebKitWebContext           
                                                      GTlsCertificate               *certificate,
                                                      const gchar                   *host);
 
-#if !ENABLE(2022_GLIB_API)
 WEBKIT_DEPRECATED void
 webkit_web_context_set_process_model                (WebKitWebContext              *context,
                                                      WebKitProcessModel             process_model);

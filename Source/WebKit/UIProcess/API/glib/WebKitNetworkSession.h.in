@@ -124,6 +124,10 @@ WEBKIT_API GList *
 webkit_network_session_get_itp_summary_finish                    (WebKitNetworkSession         *session,
                                                                   GAsyncResult                 *result,
                                                                   GError                      **error);
+WEBKIT_API void
+webkit_network_session_prefetch_dns                              (WebKitNetworkSession         *session,
+                                                                  const char                   *hostname);
+
 WEBKIT_API WebKitDownload *
 webkit_network_session_download_uri                              (WebKitNetworkSession         *session,
                                                                   const char                   *uri);
