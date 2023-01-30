@@ -28,7 +28,6 @@
 
 #if PLATFORM(MAC)
 
-#import "RemoteScrollingTree.h"
 #import <WebCore/FloatPoint.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/NSScrollerImpDetails.h>
@@ -39,15 +38,15 @@
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 
-@interface WKScrollerImpPairDelegate : NSObject <NSScrollerImpPairDelegate> {
-    WebKit::ScrollerPairMac* _scrollerPair;
+@interface WebScrollerImpPairDelegateMac : NSObject <NSScrollerImpPairDelegate> {
+    WebCore::ScrollerPairMac* _scrollerPair;
 }
-- (id)initWithScrollerPair:(WebKit::ScrollerPairMac*)scrollerPair;
+- (id)initWithScrollerPair:(WebCore::ScrollerPairMac*)scrollerPair;
 @end
 
-@implementation WKScrollerImpPairDelegate
+@implementation WebScrollerImpPairDelegateMac
 
-- (id)initWithScrollerPair:(WebKit::ScrollerPairMac*)scrollerPair
+- (id)initWithScrollerPair:(WebCore::ScrollerPairMac*)scrollerPair
 {
     self = [super init];
     if (!self)
@@ -94,7 +93,7 @@
     if (!_scrollerPair || !scrollerImp)
         return NSZeroPoint;
 
-    WebKit::ScrollerMac* scroller = nullptr;
+    WebCore::ScrollerMac* scroller = nullptr;
     if ([scrollerImp isHorizontal])
         scroller = &_scrollerPair->horizontalScroller();
     else
@@ -118,14 +117,18 @@
 
 @end
 
-namespace WebKit {
+namespace WebCore {
 
 ScrollerPairMac::ScrollerPairMac(WebCore::ScrollingTreeScrollingNode& node)
     : m_scrollingNode(node)
     , m_verticalScroller(*this, ScrollerMac::Orientation::Vertical)
     , m_horizontalScroller(*this, ScrollerMac::Orientation::Horizontal)
 {
-    m_scrollerImpPairDelegate = adoptNS([[WKScrollerImpPairDelegate alloc] initWithScrollerPair:this]);
+}
+
+void ScrollerPairMac::init()
+{
+    m_scrollerImpPairDelegate = adoptNS([[WebScrollerImpPairDelegateMac alloc] initWithScrollerPair:this]);
 
     m_scrollerImpPair = adoptNS([[NSScrollerImpPair alloc] init]);
     [m_scrollerImpPair.get() setDelegate:m_scrollerImpPairDelegate.get()];
@@ -221,6 +224,21 @@ ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollerMac::Orien
     float proportion = totalSize ? (visibleSize - overhang) / totalSize : 1;
 
     return { value, proportion };
+}
+
+bool ScrollerPairMac::hasScrollerImp()
+{
+    return verticalScroller().scrollerImp() || horizontalScroller().scrollerImp();
+}
+
+void ScrollerPairMac::releaseReferencesToScrollerImpsOnTheMainThread()
+{
+    if (hasScrollerImp()) {
+        // FIXME: This is a workaround in place for the time being since NSScrollerImps cannot be deallocated
+        // on a non-main thread. rdar://problem/24535055
+        WTF::callOnMainThread([verticalScrollerImp = verticalScroller().takeScrollerImp(), horizontalScrollerImp = horizontalScroller().takeScrollerImp()] {
+        });
+    }
 }
 
 }

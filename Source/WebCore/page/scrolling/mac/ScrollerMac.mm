@@ -44,18 +44,18 @@ enum class FeatureToAnimate {
     ExpansionTransition
 };
 
-@interface WKScrollbarPartAnimation : NSAnimation {
-    WebKit::ScrollerMac* _scroller;
+@interface WebScrollbarPartAnimationMac : NSAnimation {
+    WebCore::ScrollerMac* _scroller;
     FeatureToAnimate _featureToAnimate;
     CGFloat _startValue;
     CGFloat _endValue;
 }
-- (id)initWithScroller:(WebKit::ScrollerMac*)scroller featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
+- (id)initWithScroller:(WebCore::ScrollerMac*)scroller featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration;
 @end
 
-@implementation WKScrollbarPartAnimation
+@implementation WebScrollbarPartAnimationMac
 
-- (id)initWithScroller:(WebKit::ScrollerMac*)scroller featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration
+- (id)initWithScroller:(WebCore::ScrollerMac*)scroller featureToAnimate:(FeatureToAnimate)featureToAnimate animateFrom:(CGFloat)startValue animateTo:(CGFloat)endValue duration:(NSTimeInterval)duration
 {
     self = [super initWithDuration:duration animationCurve:NSAnimationEaseInOut];
     if (!self)
@@ -124,21 +124,21 @@ enum class FeatureToAnimate {
 
 @end
 
-@interface WKScrollerImpDelegate : NSObject<NSAnimationDelegate, NSScrollerImpDelegate> {
-    WebKit::ScrollerMac* _scroller;
+@interface WebScrollerImpDelegateMac : NSObject<NSAnimationDelegate, NSScrollerImpDelegate> {
+    WebCore::ScrollerMac* _scroller;
 
-    RetainPtr<WKScrollbarPartAnimation> _knobAlphaAnimation;
-    RetainPtr<WKScrollbarPartAnimation> _trackAlphaAnimation;
-    RetainPtr<WKScrollbarPartAnimation> _uiStateTransitionAnimation;
-    RetainPtr<WKScrollbarPartAnimation> _expansionTransitionAnimation;
+    RetainPtr<WebScrollbarPartAnimationMac> _knobAlphaAnimation;
+    RetainPtr<WebScrollbarPartAnimationMac> _trackAlphaAnimation;
+    RetainPtr<WebScrollbarPartAnimationMac> _uiStateTransitionAnimation;
+    RetainPtr<WebScrollbarPartAnimationMac> _expansionTransitionAnimation;
 }
-- (id)initWithScroller:(WebKit::ScrollerMac*)scroller;
+- (id)initWithScroller:(WebCore::ScrollerMac*)scroller;
 - (void)cancelAnimations;
 @end
 
-@implementation WKScrollerImpDelegate
+@implementation WebScrollerImpDelegateMac
 
-- (id)initWithScroller:(WebKit::ScrollerMac*)scroller
+- (id)initWithScroller:(WebCore::ScrollerMac*)scroller
 {
     self = [super init];
     if (!self)
@@ -214,7 +214,7 @@ enum class FeatureToAnimate {
 }
 #endif
 
-- (void)setUpAlphaAnimation:(RetainPtr<WKScrollbarPartAnimation>&)scrollbarPartAnimation featureToAnimate:(FeatureToAnimate)featureToAnimate animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
+- (void)setUpAlphaAnimation:(RetainPtr<WebScrollbarPartAnimationMac>&)scrollbarPartAnimation featureToAnimate:(FeatureToAnimate)featureToAnimate animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
     // If we are currently animating,  stop
     if (scrollbarPartAnimation) {
@@ -222,7 +222,7 @@ enum class FeatureToAnimate {
         scrollbarPartAnimation = nil;
     }
 
-    scrollbarPartAnimation = adoptNS([[WKScrollbarPartAnimation alloc] initWithScroller:_scroller
+    scrollbarPartAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:_scroller
         featureToAnimate:featureToAnimate
         animateFrom:featureToAnimate == FeatureToAnimate::KnobAlpha ? [_scroller->scrollerImp() knobAlpha] : [_scroller->scrollerImp() trackAlpha]
         animateTo:newAlpha
@@ -259,7 +259,7 @@ enum class FeatureToAnimate {
     [scrollerImp setUiStateTransitionProgress:1 - [scrollerImp uiStateTransitionProgress]];
 
     if (!_uiStateTransitionAnimation) {
-        _uiStateTransitionAnimation = adoptNS([[WKScrollbarPartAnimation alloc] initWithScroller:_scroller
+        _uiStateTransitionAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:_scroller
             featureToAnimate:FeatureToAnimate::UIStateTransition
             animateFrom:[scrollerImp uiStateTransitionProgress]
             animateTo:1.0
@@ -284,7 +284,7 @@ enum class FeatureToAnimate {
     [scrollerImp setExpansionTransitionProgress:1 - [scrollerImp expansionTransitionProgress]];
 
     if (!_expansionTransitionAnimation) {
-        _expansionTransitionAnimation = adoptNS([[WKScrollbarPartAnimation alloc] initWithScroller:_scroller
+        _expansionTransitionAnimation = adoptNS([[WebScrollbarPartAnimationMac alloc] initWithScroller:_scroller
             featureToAnimate:FeatureToAnimate::ExpansionTransition
             animateFrom:[scrollerImp expansionTransitionProgress]
             animateTo:1.0
@@ -317,7 +317,7 @@ enum class FeatureToAnimate {
 
 @end
 
-namespace WebKit {
+namespace WebCore {
 
 ScrollerMac::ScrollerMac(ScrollerPairMac& pair, Orientation orientation)
     : m_pair(pair)
@@ -333,7 +333,7 @@ ScrollerMac::~ScrollerMac()
 
 void ScrollerMac::attach()
 {
-    m_scrollerImpDelegate = adoptNS([[WKScrollerImpDelegate alloc] initWithScroller:this]);
+    m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
 
     NSScrollerStyle newStyle = [m_pair.scrollerImpPair() scrollerStyle];
     m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:newStyle controlSize:NSControlSizeRegular horizontal:m_orientation == Orientation::Horizontal replacingScrollerImp:nil];

@@ -32,7 +32,7 @@
 #include <WebCore/FloatSize.h>
 
 OBJC_CLASS NSScrollerImpPair;
-OBJC_CLASS WKScrollerImpPairDelegate;
+OBJC_CLASS WebScrollerImpPairDelegateMac;
 
 namespace WebCore {
 class PlatformMouseEvent;
@@ -40,12 +40,13 @@ class PlatformWheelEvent;
 class ScrollingTreeScrollingNode;
 }
 
-namespace WebKit {
+namespace WebCore {
 
 class ScrollerPairMac {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ScrollerPairMac(WebCore::ScrollingTreeScrollingNode&);
+    void init();
 
     ~ScrollerPairMac();
 
@@ -68,6 +69,12 @@ public:
     Values valuesForOrientation(ScrollerMac::Orientation);
 
     NSScrollerImpPair *scrollerImpPair() { return m_scrollerImpPair.get(); }
+    NSScrollerImp *scrollerImpHorizontal() { return horizontalScroller().scrollerImp(); }
+    NSScrollerImp *scrollerImpVertical() { return verticalScroller().scrollerImp(); }
+    
+    void releaseReferencesToScrollerImpsOnTheMainThread();
+    
+    bool hasScrollerImp();
 
 private:
     WebCore::ScrollingTreeScrollingNode& m_scrollingNode;
@@ -82,7 +89,7 @@ private:
     std::optional<WebCore::FloatPoint> m_lastScrollPosition;
 
     RetainPtr<NSScrollerImpPair> m_scrollerImpPair;
-    RetainPtr<WKScrollerImpPairDelegate> m_scrollerImpPairDelegate;
+    RetainPtr<WebScrollerImpPairDelegateMac> m_scrollerImpPairDelegate;
 };
 
 }

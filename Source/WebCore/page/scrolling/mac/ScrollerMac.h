@@ -32,9 +32,9 @@
 
 OBJC_CLASS CALayer;
 OBJC_CLASS NSScrollerImp;
-OBJC_CLASS WKScrollerImpDelegate;
+OBJC_CLASS WebScrollerImpDelegateMac;
 
-namespace WebKit {
+namespace WebCore {
 
 class ScrollerPairMac;
 
@@ -55,7 +55,10 @@ public:
     CALayer *hostLayer() const { return m_hostLayer.get(); }
     void setHostLayer(CALayer *);
 
+    RetainPtr<NSScrollerImp> takeScrollerImp() { return std::exchange(m_scrollerImp, { }); }
     NSScrollerImp *scrollerImp() { return m_scrollerImp.get(); }
+    void setscrollerImp(NSScrollerImp *imp) { m_scrollerImp = imp; }
+
 
     WebCore::FloatPoint convertFromContent(const WebCore::FloatPoint&) const;
 
@@ -67,7 +70,7 @@ private:
 
     RetainPtr<CALayer> m_hostLayer;
     RetainPtr<NSScrollerImp> m_scrollerImp;
-    RetainPtr<WKScrollerImpDelegate> m_scrollerImpDelegate;
+    RetainPtr<WebScrollerImpDelegateMac> m_scrollerImpDelegate;
 };
 
 }
