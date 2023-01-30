@@ -360,6 +360,8 @@ JSC_DECLARE_JIT_OPERATION(operationDateGetUTCSeconds, EncodedJSValue, (VM*, Date
 JSC_DECLARE_JIT_OPERATION(operationDateGetTimezoneOffset, EncodedJSValue, (VM*, DateInstance*));
 JSC_DECLARE_JIT_OPERATION(operationDateGetYear, EncodedJSValue, (VM*, DateInstance*));
 
+JSC_DECLARE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObject*, int64_t));
+
 JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM*));
 
 JSC_DECLARE_JIT_OPERATION(operationTriggerReoptimizationNow, void, (CodeBlock* baselineCodeBlock, CodeBlock* optimizedCodeBlock, OSRExitBase*));

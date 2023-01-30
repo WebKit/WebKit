@@ -11631,6 +11631,7 @@ IGNORE_CLANG_WARNINGS_END
     {
         Node* node = m_node;
         WebAssemblyFunction* wasmFunction = node->castOperand<WebAssemblyFunction*>();
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
         const auto& typeDefinition = Wasm::TypeInformation::get(wasmFunction->typeIndex()).expand();
         const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
@@ -11653,49 +11654,56 @@ IGNORE_CLANG_WARNINGS_END
         for (unsigned i = signature.argumentCount(); i--;) {
             bool isStack = wasmCallInfo.params[i].location.isStackArgument();
             auto type = signature.argumentType(i);
-            if (isStack) {
-                switch (type.kind) {
-                case Wasm::TypeKind::I32:
+            switch (type.kind) {
+            case Wasm::TypeKind::I32:
+                if (isStack)
                     arguments.append(ConstrainedValue(lowInt32(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
-                    break;
-                case Wasm::TypeKind::Ref:
-                case Wasm::TypeKind::RefNull:
-                case Wasm::TypeKind::Funcref:
-                case Wasm::TypeKind::Externref:
-                    ASSERT(Wasm::isExternref(type) && type.isNullable());
-                    arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
-                    break;
-                case Wasm::TypeKind::F32:
-                    arguments.append(ConstrainedValue(m_out.doubleToFloat(lowDouble(m_graph.varArgChild(node, 2 + i))), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
-                    break;
-                case Wasm::TypeKind::F64:
-                    arguments.append(ConstrainedValue(lowDouble(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
-
-            } else {
-                switch (type.kind) {
-                case Wasm::TypeKind::I32:
+                else
                     arguments.append(ConstrainedValue(m_out.zeroExtPtr(lowInt32(m_graph.varArgChild(node, 2 + i))), ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
-                    break;
-                case Wasm::TypeKind::Ref:
-                case Wasm::TypeKind::RefNull:
-                case Wasm::TypeKind::Funcref:
-                case Wasm::TypeKind::Externref:
-                    ASSERT(Wasm::isExternref(type) && type.isNullable());
+                break;
+            case Wasm::TypeKind::I64: {
+                // FIXME: We are handling BigInt extraction here. But once BigInt Int64 value is natively represented in DFG / FTL pipeline, we should extract this as a DFG node,
+                // and we should attempt to perform constant-folding etc. And also, we can avoid usign this at all for DFG Int64 value.
+                LValue argument = lowHeapBigInt(m_graph.varArgChild(node, 2 + i));
+                PatchpointValue* patchpoint = m_out.patchpoint(Int64);
+                patchpoint->numGPScratchRegisters = 2;
+                patchpoint->append(ConstrainedValue(argument, ValueRep::SomeLateRegister));
+                patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+                patchpoint->setGenerator(
+                    [=](CCallHelpers& jit, const StackmapGenerationParams& params) {
+                        AllowMacroScratchRegisterUsage allowScratch(jit);
+                        jit.toBigInt64(params[1].gpr(), params[0].gpr(), params.gpScratch(0), params.gpScratch(1));
+                    });
+                if (isStack)
+                    arguments.append(ConstrainedValue(patchpoint, ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                else
+                    arguments.append(ConstrainedValue(patchpoint, ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
+                break;
+            }
+            case Wasm::TypeKind::Ref:
+            case Wasm::TypeKind::RefNull:
+            case Wasm::TypeKind::Funcref:
+            case Wasm::TypeKind::Externref:
+                ASSERT(Wasm::isExternref(type) && type.isNullable());
+                if (isStack)
+                    arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                else
                     arguments.append(ConstrainedValue(lowJSValue(m_graph.varArgChild(node, 2 + i)), ValueRep::reg(wasmCallInfo.params[i].location.jsr().payloadGPR())));
-                    break;
-                case Wasm::TypeKind::F32:
+                break;
+            case Wasm::TypeKind::F32:
+                if (isStack)
+                    arguments.append(ConstrainedValue(m_out.doubleToFloat(lowDouble(m_graph.varArgChild(node, 2 + i))), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                else
                     arguments.append(ConstrainedValue(m_out.doubleToFloat(lowDouble(m_graph.varArgChild(node, 2 + i))), ValueRep::reg(wasmCallInfo.params[i].location.fpr())));
-                    break;
-                case Wasm::TypeKind::F64:
+                break;
+            case Wasm::TypeKind::F64:
+                if (isStack)
+                    arguments.append(ConstrainedValue(lowDouble(m_graph.varArgChild(node, 2 + i)), ValueRep::stackArgument(wasmCallInfo.params[i].location.offsetFromSP())));
+                else
                     arguments.append(ConstrainedValue(lowDouble(m_graph.varArgChild(node, 2 + i)), ValueRep::reg(wasmCallInfo.params[i].location.fpr())));
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
             }
         }
 
@@ -11727,6 +11735,11 @@ IGNORE_CLANG_WARNINGS_END
             switch (signature.returnType(0).kind) {
             case Wasm::TypeKind::I32: {
                 patchpoint = m_out.patchpoint(Int32);
+                patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
+                break;
+            }
+            case Wasm::TypeKind::I64: {
+                patchpoint = m_out.patchpoint(Int64);
                 patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.jsr().payloadGPR()) };
                 break;
             }
@@ -11814,6 +11827,10 @@ IGNORE_CLANG_WARNINGS_END
             switch (signature.returnType(0).kind) {
             case Wasm::TypeKind::I32: {
                 setInt32(patchpoint);
+                break;
+            }
+            case Wasm::TypeKind::I64: {
+                setJSValue(vmCall(Int64, operationInt64ToBigInt, weakPointer(globalObject), patchpoint));
                 break;
             }
             case Wasm::TypeKind::Ref:
