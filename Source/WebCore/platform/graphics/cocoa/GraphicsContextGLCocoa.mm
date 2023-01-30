@@ -105,16 +105,13 @@ static bool platformSupportsMetal()
     auto device = adoptNS(MTLCreateSystemDefaultDevice());
 
     if (device) {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-        // A8 devices (iPad Mini 4, iPad Air 2) cannot use WebGL via Metal.
-        // This check can be removed once they are no longer supported.
-        return [device supportsFamily:MTLGPUFamilyApple3];
-#elif PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         // Old Macs, such as MacBookPro11,4 cannot use WebGL via Metal.
         // This check can be removed once they are no longer supported.
         return [device supportsFamily:MTLGPUFamilyMac2];
-#endif
+#else
         return true;
+#endif
     }
 
     return false;
