@@ -83,10 +83,10 @@ static bool getWebLocData(IDataObject* dataObject, String& url, String* title)
     
     if (title) {
         PathRemoveExtension(filename);
-        *title = String(filename);
+        *title = String(std::data(filename));
     }
     
-    url = String(urlBuffer);
+    url = String(std::data(urlBuffer));
     succeeded = true;
 
 exit:
@@ -113,10 +113,10 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
 
     if (title) {
         PathRemoveExtension(filename);
-        *title = String(filename);
+        *title = String(std::data(filename));
     }
     
-    url = String(urlBuffer);
+    url = String(std::data(urlBuffer));
     return true;
 }
 
@@ -382,7 +382,7 @@ void getFileDescriptorData(IDataObject* dataObject, int& size, String& pathname)
 
     FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(GlobalLock(store.hGlobal));
     size = fgd->fgd[0].nFileSizeLow;
-    pathname = String(fgd->fgd[0].cFileName);
+    pathname = String(std::data(fgd->fgd[0].cFileName));
 
     GlobalUnlock(store.hGlobal);
     ::ReleaseStgMedium(&store);
@@ -720,7 +720,7 @@ void getHDropData(IDataObject* data, FORMATETC* format, Vector<String>& dataStri
     for (UINT i = 0; i < fileCount; i++) {
         if (!DragQueryFileW(hdrop, i, filename, std::size(filename)))
             continue;
-        dataStrings.append(filename);
+        dataStrings.append(String(std::data(filename)));
     }
 
     GlobalUnlock(store.hGlobal);

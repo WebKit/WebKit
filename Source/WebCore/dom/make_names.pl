@@ -968,7 +968,7 @@ sub printTagNameCppFile
     print F "static constexpr StringImpl::StaticStringImpl unadjustedTagNames[] = {\n";
     for my $elementKey (sort byElementNameOrder keys %allElements) {
         next if $allElements{$elementKey}{unadjustedTagEnumValue} eq "";
-        print F "    \"$allElements{$elementKey}{parsedTagName}\",\n";
+        print F "    StringImpl::StaticStringImpl { \"$allElements{$elementKey}{parsedTagName}\" },\n";
     }
     print F "};\n";
     print F "\n";
