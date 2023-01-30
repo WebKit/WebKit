@@ -84,9 +84,11 @@ static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& sta
 
 void HTMLFieldSetElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
+    bool oldHasDisabledAttribute = hasDisabledAttribute();
+
     HTMLFormControlElement::parseAttribute(name, value);
 
-    if (name == disabledAttr) {
+    if (hasDisabledAttribute() != oldHasDisabledAttribute) {
         if (hasDisabledAttribute())
             document().addDisabledFieldsetElement();
         else
