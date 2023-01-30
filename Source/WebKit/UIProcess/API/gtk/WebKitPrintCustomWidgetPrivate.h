@@ -19,8 +19,12 @@
 
 #pragma once
 
+#if !ENABLE(2022_GLIB_API)
+
 #include "WebKitPrintCustomWidget.h"
 #include <gtk/gtk.h>
 
 void webkitPrintCustomWidgetEmitCustomWidgetApplySignal(WebKitPrintCustomWidget*);
 void webkitPrintCustomWidgetEmitUpdateCustomWidgetSignal(WebKitPrintCustomWidget*, GtkPageSetup*, GtkPrintSettings*);
+
+#endif
