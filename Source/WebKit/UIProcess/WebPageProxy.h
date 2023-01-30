@@ -159,6 +159,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "NetworkConnectionIntegrityHelpers.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include "RemoteLayerTreeNode.h"
 #include <wtf/WeakObjCPtr.h>
@@ -2737,7 +2738,6 @@ private:
     void waitForInitialLookalikeCharacterStrings(WebFramePolicyListenerProxy&);
     void sendCachedLookalikeCharacterStrings();
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    static Vector<String>& cachedLookalikeStrings();
     static Vector<WebCore::LookalikeCharactersSanitizationData>& cachedAllowedLookalikeStrings();
     void updateAllowedLookalikeCharacterStringsIfNeeded();
 #endif
@@ -3359,6 +3359,7 @@ private:
     bool m_isLockdownModeExplicitlySet { false };
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    RefPtr<LookalikeCharacters::Observer> m_lookalikeCharacterUpdateObserver;
     bool m_needsInitialLookalikeCharacterStrings { true };
     bool m_shouldUpdateAllowedLookalikeCharacterStrings { false };
 #endif
