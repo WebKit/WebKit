@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,31 @@
 
 #pragma once
 
-#include "ASTArrayAccess.h"
-#include "ASTAssignmentStatement.h"
-#include "ASTAttribute.h"
-#include "ASTBinaryExpression.h"
-#include "ASTBindingAttribute.h"
-#include "ASTBuiltinAttribute.h"
-#include "ASTCallableExpression.h"
-#include "ASTCompoundStatement.h"
-#include "ASTDecl.h"
 #include "ASTExpression.h"
-#include "ASTFunctionDecl.h"
-#include "ASTGlobalDirective.h"
-#include "ASTGroupAttribute.h"
-#include "ASTIdentifierExpression.h"
-#include "ASTIdentityExpression.h"
-#include "ASTLiteralExpressions.h"
-#include "ASTLocationAttribute.h"
-#include "ASTNode.h"
-#include "ASTPointerDereference.h"
-#include "ASTReturnStatement.h"
-#include "ASTShaderModule.h"
-#include "ASTStageAttribute.h"
-#include "ASTStatement.h"
-#include "ASTStructureAccess.h"
-#include "ASTStructureDecl.h"
-#include "ASTTypeDecl.h"
-#include "ASTUnaryExpression.h"
-#include "ASTVariableDecl.h"
-#include "ASTVariableQualifier.h"
-#include "ASTVariableStatement.h"
+
+namespace WGSL::AST {
+
+// This is a special node used when modifying the AST through compiler passes.
+// The passes can replace one node with another, but only if the size of the new
+// class fits in the existing space. This is a small node used when needing to insert a
+// larger node than the one current in the tree. E.g. replacing an identifier
+// with a structure access.
+class IdentityExpression final : public Expression {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    IdentityExpression(SourceSpan span, UniqueRef<Expression>&& expression)
+        : Expression(span)
+        , m_expression(WTFMove(expression))
+    {
+    }
+
+    Kind kind() const override;
+    Expression& expression() { return m_expression.get(); }
+
+private:
+    UniqueRef<Expression> m_expression;
+};
+
+} // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(IdentityExpression)

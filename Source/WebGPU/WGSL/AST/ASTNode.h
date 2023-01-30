@@ -65,6 +65,7 @@ public:
         UnaryExpression,
         BinaryExpression,
         PointerDereference,
+        IdentityExpression,
 
         ShaderModule,
 

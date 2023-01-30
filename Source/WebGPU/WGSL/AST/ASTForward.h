@@ -56,6 +56,7 @@ class Uint32Literal;
 class UnaryExpression;
 class BinaryExpression;
 class PointerDereference;
+class IdentityExpression;
 
 class Statement;
 class AssignmentStatement;

@@ -69,6 +69,7 @@ public:
     virtual void visit(UnaryExpression&);
     virtual void visit(BinaryExpression&);
     virtual void visit(PointerDereference&);
+    virtual void visit(IdentityExpression&);
 
     // Statement
     virtual void visit(Statement&);

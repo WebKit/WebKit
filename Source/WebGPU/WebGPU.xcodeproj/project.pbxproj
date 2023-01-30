@@ -89,6 +89,7 @@
 		9789C32229802690009E9006 /* ASTBinaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C32029802690009E9006 /* ASTBinaryExpression.h */; };
 		9789C32329802690009E9006 /* ASTPointerDereference.h in Headers */ = {isa = PBXBuildFile; fileRef = 9789C32129802690009E9006 /* ASTPointerDereference.h */; };
 		978A911B2984076900B37E5E /* API.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A911A2984076900B37E5E /* API.h */; };
+		978A91192983FE3100B37E5E /* ASTIdentityExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A91182983FE3100B37E5E /* ASTIdentityExpression.h */; };
 		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
 		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
@@ -345,6 +346,7 @@
 		9789C32029802690009E9006 /* ASTBinaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTBinaryExpression.h; sourceTree = "<group>"; };
 		9789C32129802690009E9006 /* ASTPointerDereference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTPointerDereference.h; sourceTree = "<group>"; };
 		978A911A2984076900B37E5E /* API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = API.h; sourceTree = "<group>"; };
+		978A91182983FE3100B37E5E /* ASTIdentityExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIdentityExpression.h; sourceTree = "<group>"; };
 		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
 		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
@@ -701,6 +703,7 @@
 				33EA185F27BC198100A1DD52 /* ASTGlobalDirective.h */,
 				3A2479D8290629CD0012B3E6 /* ASTGroupAttribute.h */,
 				33EA188127BC25D000A1DD52 /* ASTIdentifierExpression.h */,
+				978A91182983FE3100B37E5E /* ASTIdentityExpression.h */,
 				33EA188727BC361E00A1DD52 /* ASTLiteralExpressions.h */,
 				3A2479D9290629CE0012B3E6 /* ASTLocationAttribute.h */,
 				33EA185D27BC194F00A1DD52 /* ASTNode.h */,
@@ -768,6 +771,7 @@
 				33EA186027BC198100A1DD52 /* ASTGlobalDirective.h in Headers */,
 				3A2479DD290629CE0012B3E6 /* ASTGroupAttribute.h in Headers */,
 				33EA188227BC25D000A1DD52 /* ASTIdentifierExpression.h in Headers */,
+				978A91192983FE3100B37E5E /* ASTIdentityExpression.h in Headers */,
 				33EA188827BC361E00A1DD52 /* ASTLiteralExpressions.h in Headers */,
 				3A2479DE290629CE0012B3E6 /* ASTLocationAttribute.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
