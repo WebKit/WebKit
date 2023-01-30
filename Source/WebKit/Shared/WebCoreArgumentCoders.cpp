@@ -1370,7 +1370,7 @@ void ArgumentCoder<SystemImage>::encode(Encoder& encoder, const SystemImage& sys
 #endif
 #if USE(SYSTEM_PREVIEW)
     case SystemImageType::ARKitBadge:
-        downcast<ARKitBadgeSystemImage>(systemImage).encode(encoder);
+        encoder << downcast<ARKitBadgeSystemImage>(systemImage);
         return;
 #endif
 #if USE(APPKIT)
@@ -1414,8 +1414,13 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
     }
 #endif
 #if USE(SYSTEM_PREVIEW)
-    case SystemImageType::ARKitBadge:
-        return ARKitBadgeSystemImage::decode(decoder);
+    case SystemImageType::ARKitBadge: {
+        std::optional<Ref<ARKitBadgeSystemImage>> image;
+        decoder >> image;
+        if (!image)
+            return std::nullopt;
+        return WTFMove(*image);
+    }
 #endif
 #if USE(APPKIT)
     case SystemImageType::AppKitControl: {

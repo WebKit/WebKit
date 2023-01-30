@@ -3032,3 +3032,60 @@ enum class WebCore::MediaPlayerPitchCorrectionAlgorithm : uint8_t {
     BestForMusic,
     BestForSpeech,
 };
+
+class WebCore::GeolocationPositionData {
+    double timestamp;
+    double latitude;
+    double longitude;
+    double accuracy;
+    std::optional<double> altitude;
+    std::optional<double> altitudeAccuracy;
+    std::optional<double> heading;
+    std::optional<double> speed;
+    std::optional<double> floorLevel;
+};
+
+#if ENABLE(APP_HIGHLIGHTS)
+enum class WebCore::CreateNewGroupForHighlight : bool
+
+enum class WebCore::HighlightRequestOriginatedInApp : bool
+
+struct WebCore::AppHighlight {
+    Ref<WebCore::FragmentedSharedBuffer> highlight;
+    std::optional<String> text;
+    WebCore::CreateNewGroupForHighlight isNewGroup;
+    WebCore::HighlightRequestOriginatedInApp requestOriginatedInApp;
+};
+#endif // ENABLE(APP_HIGHLIGHTS)
+
+struct WebCore::MediaDeviceHashSalts {
+    String persistentDeviceSalt;
+    String ephemeralDeviceSalt;
+};
+
+enum class WebCore::SpeechRecognitionUpdateType : uint8_t {
+    Start,
+    AudioStart,
+    SoundStart,
+    SpeechStart,
+    SpeechEnd,
+    SoundEnd,
+    AudioEnd,
+    Result,
+    NoMatch,
+    Error,
+    End
+};
+
+class WebCore::SpeechRecognitionUpdate {
+    WebCore::SpeechRecognitionConnectionClientIdentifier m_clientIdentifier;
+    WebCore::SpeechRecognitionUpdateType m_type;
+    std::variant<std::monostate, WebCore::SpeechRecognitionError, Vector<WebCore::SpeechRecognitionResultData>> m_content;
+};
+
+#if USE(SYSTEM_PREVIEW)
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ARKitBadgeSystemImage {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatSize m_imageSize;
+};
+#endif
