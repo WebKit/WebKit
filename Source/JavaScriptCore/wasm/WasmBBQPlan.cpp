@@ -204,8 +204,8 @@ void BBQPlan::work(CompilationEffort effort)
             MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel<WasmEntryPtrTag>(entrypoint));
         }
 
-        m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, *m_calleeGroup, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
         m_calleeGroup->callsiteCollection().addCallsites(locker, *m_calleeGroup, callee->wasmToWasmCallsites());
+        m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, *m_calleeGroup, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
 
         {
             LLIntCallee& llintCallee = m_calleeGroup->m_llintCallees->at(m_functionIndex).get();

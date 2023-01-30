@@ -356,6 +356,8 @@ Expected<void, StorageError> SQLiteStorageArea::removeItem(IPC::Connection::Uniq
     }
 
     dispatchEvents(connection, storageAreaImplID, key, oldValue, String(), urlString);
+    if (m_cache)
+        m_cache->remove(key);
 
     return { };
 }

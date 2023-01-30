@@ -400,13 +400,17 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         [mutableRequest _setProhibitPrivacyProxy:YES];
 #endif
 
-    if (parameters.networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled))
+    auto networkConnectionIntegrityPolicy = parameters.networkConnectionIntegrityPolicy;
+    if (networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled))
         enableNetworkConnectionIntegrity(mutableRequest.get(), NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(request));
 
 #if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
-    if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableHosts:)] && parameters.networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::FailClosed))
+    if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableHosts:)] && networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::FailClosed))
         [mutableRequest _setPrivacyProxyFailClosedForUnreachableHosts:YES];
 #endif
+
+    if ([mutableRequest respondsToSelector:@selector(_setWebSearchContent:)] && networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::WebSearchContent))
+        [mutableRequest _setWebSearchContent:YES];
 
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;
