@@ -31,10 +31,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 
-namespace WebCore {
-class StorageQuotaManager;
-}
-
 namespace WebKit {
 
 namespace CacheStorage {
