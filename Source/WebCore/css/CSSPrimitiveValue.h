@@ -38,7 +38,6 @@ class CSSCalcValue;
 class CSSToLengthConversionData;
 class CSSUnresolvedColor;
 class Color;
-class Counter;
 class DeprecatedCSSOMPrimitiveValue;
 class FontCascadeDescription;
 class FontMetrics;
@@ -49,6 +48,7 @@ class Rect;
 class RenderStyle;
 class RenderView;
 
+struct Counter;
 struct Length;
 struct LengthSize;
 
@@ -141,8 +141,6 @@ public:
     static inline CSSPrimitiveValue& implicitInitialValue();
 
     ~CSSPrimitiveValue();
-
-    void cleanup();
 
     CSSUnitType primitiveType() const;
     ExceptionOr<float> getFloatValue(CSSUnitType) const;
@@ -248,10 +246,9 @@ private:
 
     double computeLengthDouble(const CSSToLengthConversionData&) const;
 
-    ALWAYS_INLINE String formatNumberForCustomCSSText() const;
+    ALWAYS_INLINE String serializeInternal() const;
     NEVER_INLINE String formatNumberValue(ASCIILiteral suffix) const;
     NEVER_INLINE String formatIntegerValue(ASCIILiteral suffix) const;
-    NEVER_INLINE String formatInfiniteOrNanValue(ASCIILiteral suffix) const;
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isViewportPercentageLength(CSSUnitType);
@@ -259,7 +256,7 @@ private:
     union {
         CSSPropertyID propertyID;
         CSSValueID valueID;
-        double num;
+        double number;
         StringImpl* string;
         Counter* counter;
         Rect* rect;

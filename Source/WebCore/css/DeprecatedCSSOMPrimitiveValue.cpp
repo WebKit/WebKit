@@ -115,9 +115,10 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
-    if (primitiveType() != CSS_COUNTER)
+    auto* counter = m_value->counterValue();
+    if (!counter)
         return Exception { InvalidAccessError };
-    return DeprecatedCSSOMCounter::create(*m_value->counterValue(), m_owner);
+    return DeprecatedCSSOMCounter::create(*counter);
 }
     
 ExceptionOr<Ref<DeprecatedCSSOMRect>> DeprecatedCSSOMPrimitiveValue::getRectValue() const
