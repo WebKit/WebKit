@@ -3879,8 +3879,6 @@ webkit.org/b/249486 media/audioSession/audioSessionType.html [ Failure ]
 # webkit.org/b/250885 CSS3/filters/effect-contrast-hw.html is a constant image failure
 [ Release arm64 ] css3/filters/effect-contrast-hw.html [ ImageOnlyFailure ]
 
-webkit.org/b/250922 imported/w3c/web-platform-tests/webstorage/storage_local_window_open.window.html [ Pass Timeout ]
-
 webkit.org/b/251040 [ Debug ] fast/forms/ios/remove-view-after-focus.html [ Pass Crash ]
 
 webkit.org/b/251047 [ Debug ] fast/loader/crash-replacing-location-before-load.html [ Pass Crash ]

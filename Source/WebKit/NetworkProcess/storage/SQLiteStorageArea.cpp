@@ -175,8 +175,11 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
         return false;
     }
 
-    if (quota() != WebCore::StorageMap::noQuota)
-        m_database->setMaximumSize(quota());
+    if (quota() != WebCore::StorageMap::noQuota) {
+        // Value is upconverted and stored as blob in database, so we need to make database file limit
+        // bigger than quota.
+        m_database->setMaximumSize(quota() * 2);
+    }
 
     return true;
 }
