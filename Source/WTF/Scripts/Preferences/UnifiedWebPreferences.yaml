@@ -2368,7 +2368,7 @@ FrameFlatteningEnabled:
 
 FullScreenEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Fullscreen API"
   humanReadableDescription: "Fullscreen API"
   condition: ENABLE(FULLSCREEN_API)
