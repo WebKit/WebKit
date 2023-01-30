@@ -110,7 +110,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 template<> inline CSSPrimitiveValue::operator ColumnSpan() const
 {
     // Map 1 to none for compatibility reasons.
-    if ((primitiveUnitType() == CSSUnitType::CSS_NUMBER || primitiveUnitType() == CSSUnitType::CSS_INTEGER) && m_value.num == 1)
+    if ((primitiveUnitType() == CSSUnitType::CSS_NUMBER || primitiveUnitType() == CSSUnitType::CSS_INTEGER) && m_value.number == 1)
         return ColumnSpan::None;
     return fromCSSValueID<ColumnSpan>(valueID());
 }

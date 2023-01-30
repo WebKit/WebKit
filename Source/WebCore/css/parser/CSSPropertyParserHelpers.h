@@ -261,7 +261,6 @@ RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeCursor(CSSParserTokenRange&, const CSSParserContext&, bool inQuirksMode);
 RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext&);
-RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool counters);
 RefPtr<CSSValue> consumeContent(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange&);

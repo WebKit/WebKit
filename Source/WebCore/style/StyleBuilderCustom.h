@@ -1600,14 +1600,10 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             didSet = true;
             // Register the fact that the attribute value affects the style.
             builderState.registerContentAttribute(attr.localName());
-        } else if (contentValue.isCounter()) {
+        } else if (auto* value = contentValue.counterValue()) {
             // FIXME: counter-style: we probably want to review this for custom counter-style.
-            auto* counterValue = contentValue.counterValue();
-            ListStyleType listStyleType = ListStyleType::None;
-            CSSValueID listStyleIdent = counterValue->listStyleIdent();
-            if (listStyleIdent != CSSValueNone)
-                listStyleType = static_cast<ListStyleType>(listStyleIdent - CSSValueDisc);
-            auto counter = makeUnique<CounterContent>(AtomString { counterValue->identifier() }, listStyleType, AtomString { counterValue->separator() });
+            auto listStyle = fromCSSValueID<ListStyleType>(value->listStyle);
+            auto counter = makeUnique<CounterContent>(value->identifier, listStyle, value->separator);
             builderState.style().setContent(WTFMove(counter), didSet);
             didSet = true;
         } else {
