@@ -39,6 +39,7 @@
 namespace WebCore {
 
 template<typename> class ExceptionOr;
+class HTMLElement;
 class HTMLFormElement;
 
 class DOMFormData : public RefCounted<DOMFormData>, public ContextDestructionObserver {
@@ -50,7 +51,7 @@ public:
         FormDataEntryValue data;
     };
 
-    static ExceptionOr<Ref<DOMFormData>> create(ScriptExecutionContext&, HTMLFormElement*);
+    static ExceptionOr<Ref<DOMFormData>> create(ScriptExecutionContext&, HTMLFormElement*, HTMLElement*);
     static Ref<DOMFormData> create(ScriptExecutionContext*, const PAL::TextEncoding&);
 
     const Vector<Item>& items() const { return m_items; }
