@@ -211,7 +211,7 @@ public:
         if (!m_stepPosition && *otherSteps.m_stepPosition == StepPosition::End)
             return true;
 
-        if (*m_stepPosition == StepPosition::End && !otherSteps.m_stepPosition)
+        if (!otherSteps.m_stepPosition && *m_stepPosition == StepPosition::End)
             return true;
 
         return false;
