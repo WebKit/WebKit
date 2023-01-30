@@ -1,0 +1,8 @@
+
+PASS COOP: same-origin-allow-popups to popup COOP: unsafe-none via an iframe, with same site iframe, same site popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: unsafe-none via an iframe, with same site iframe, same site popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: unsafe-none via an iframe, with same site iframe, same site popup with form
+PASS COOP: same-origin-allow-popups to popup COOP: unsafe-none via an iframe, with cross origin iframe, same site popup with window_open
+PASS COOP: same-origin-allow-popups to popup COOP: unsafe-none via an iframe, with cross origin iframe, same site popup with anchor
+PASS COOP: same-origin-allow-popups to popup COOP: unsafe-none via an iframe, with cross origin iframe, same site popup with form
+
