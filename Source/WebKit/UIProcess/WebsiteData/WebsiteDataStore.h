@@ -478,7 +478,7 @@ private:
 #endif
 
 #if ENABLE(MANAGED_DOMAINS)
-    static std::optional<std::reference_wrapper<HashSet<WebCore::RegistrableDomain>>> managedDomainsIfInitialized();
+    static const HashSet<WebCore::RegistrableDomain>* managedDomainsIfInitialized();
     static void forwardManagedDomainsToITPIfInitialized(CompletionHandler<void()>&&);
     void setManagedDomainsForITP(const HashSet<WebCore::RegistrableDomain>&, CompletionHandler<void()>&&);
 #endif

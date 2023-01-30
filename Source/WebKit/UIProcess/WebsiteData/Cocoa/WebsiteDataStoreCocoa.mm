@@ -787,12 +787,12 @@ void WebsiteDataStore::getManagedDomains(CompletionHandler<void(const HashSet<We
     });
 }
 
-std::optional<std::reference_wrapper<HashSet<WebCore::RegistrableDomain>>> WebsiteDataStore::managedDomainsIfInitialized()
+const HashSet<WebCore::RegistrableDomain>* WebsiteDataStore::managedDomainsIfInitialized()
 {
     ASSERT(RunLoop::isMain());
     if (!hasInitializedManagedDomains)
-        return std::nullopt;
-    return managedDomains();
+        return nullptr;
+    return &managedDomains();
 }
 
 void WebsiteDataStore::setManagedDomainsForTesting(HashSet<WebCore::RegistrableDomain>&& domains, CompletionHandler<void()>&& completionHandler)
