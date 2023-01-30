@@ -288,10 +288,10 @@ bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bo
         GST_BUFFER_DTS(outputBuffer.get()) = GST_BUFFER_DTS(buffer);
         GST_BUFFER_DURATION(outputBuffer.get()) = GST_BUFFER_DURATION(buffer);
         auto convertedSample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
-        result = m_harness->pushSample(convertedSample.get());
+        result = m_harness->pushSample(WTFMove(convertedSample));
     } else
 #endif
-        result = m_harness->pushSample(sample);
+        result = m_harness->pushSample(GRefPtr<GstSample>(sample));
 
     return result;
 }
