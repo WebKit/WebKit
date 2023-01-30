@@ -67,6 +67,7 @@ struct CommandBufferDescriptor;
 class CommandEncoder;
 struct CommandEncoderDescriptor;
 class CompilationMessage;
+class CompositorIntegration;
 struct ComputePassDescriptor;
 class ComputePassEncoder;
 class ComputePipeline;
@@ -280,6 +281,7 @@ public:
     virtual PAL::WebGPU::Buffer* convertBufferFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::CommandBuffer* convertCommandBufferFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::CommandEncoder* convertCommandEncoderFromBacking(WebGPUIdentifier) = 0;
+    virtual PAL::WebGPU::CompositorIntegration* convertCompositorIntegrationFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::ComputePassEncoder* convertComputePassEncoderFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::ComputePipeline* convertComputePipelineFromBacking(WebGPUIdentifier) = 0;
     virtual PAL::WebGPU::Device* convertDeviceFromBacking(WebGPUIdentifier) = 0;

@@ -34,6 +34,7 @@
 #include "RemoteBufferProxy.h"
 #include "RemoteCommandBufferProxy.h"
 #include "RemoteCommandEncoderProxy.h"
+#include "RemoteCompositorIntegrationProxy.h"
 #include "RemoteComputePassEncoderProxy.h"
 #include "RemoteComputePipelineProxy.h"
 #include "RemoteDeviceProxy.h"
@@ -82,6 +83,11 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::We
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::CommandEncoder& commandEncoder)
 {
     return static_cast<const RemoteCommandEncoderProxy&>(commandEncoder).backing();
+}
+
+WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::CompositorIntegration& compositorIntegration)
+{
+    return static_cast<const RemoteCompositorIntegrationProxy&>(compositorIntegration).backing();
 }
 
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassEncoder& computePassEncoder)

@@ -15,6 +15,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPUBufferImpl.h
     graphics/WebGPU/Impl/WebGPUCommandBufferImpl.h
     graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.h
+    graphics/WebGPU/Impl/WebGPUCompositorIntegrationImpl.h
     graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.h
     graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h
     graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h
@@ -67,6 +68,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUCompilationInfo.h
     graphics/WebGPU/WebGPUCompilationMessage.h
     graphics/WebGPU/WebGPUCompilationMessageType.h
+    graphics/WebGPU/WebGPUCompositorIntegration.h
     graphics/WebGPU/WebGPUComputePassDescriptor.h
     graphics/WebGPU/WebGPUComputePassEncoder.h
     graphics/WebGPU/WebGPUComputePassTimestampLocation.h
@@ -204,6 +206,7 @@ set(PAL_SOURCES
     graphics/WebGPU/Impl/WebGPUBufferImpl.cpp
     graphics/WebGPU/Impl/WebGPUCommandBufferImpl.cpp
     graphics/WebGPU/Impl/WebGPUCommandEncoderImpl.cpp
+    graphics/WebGPU/Impl/WebGPUCompositorIntegrationImpl.cpp
     graphics/WebGPU/Impl/WebGPUComputePassEncoderImpl.cpp
     graphics/WebGPU/Impl/WebGPUComputePipelineImpl.cpp
     graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp

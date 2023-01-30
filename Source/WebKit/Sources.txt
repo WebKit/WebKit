@@ -40,6 +40,7 @@ GPUProcess/graphics/WebGPU/RemoteBindGroupLayout.cpp
 GPUProcess/graphics/WebGPU/RemoteBuffer.cpp
 GPUProcess/graphics/WebGPU/RemoteCommandBuffer.cpp
 GPUProcess/graphics/WebGPU/RemoteCommandEncoder.cpp
+GPUProcess/graphics/WebGPU/RemoteCompositorIntegration.cpp
 GPUProcess/graphics/WebGPU/RemoteComputePassEncoder.cpp
 GPUProcess/graphics/WebGPU/RemoteComputePipeline.cpp
 GPUProcess/graphics/WebGPU/RemoteDevice.cpp
@@ -686,6 +687,7 @@ WebProcess/GPU/graphics/WebGPU/RemoteBindGroupProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteBufferProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteCommandBufferProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteCommandEncoderProxy.cpp
+WebProcess/GPU/graphics/WebGPU/RemoteCompositorIntegrationProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteComputePassEncoderProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteComputePipelineProxy.cpp
 WebProcess/GPU/graphics/WebGPU/RemoteDeviceProxy.cpp
@@ -869,6 +871,7 @@ RemoteBindGroupLayoutMessageReceiver.cpp
 RemoteBufferMessageReceiver.cpp
 RemoteCommandBufferMessageReceiver.cpp
 RemoteCommandEncoderMessageReceiver.cpp
+RemoteCompositorIntegrationMessageReceiver.cpp
 RemoteComputePassEncoderMessageReceiver.cpp
 RemoteComputePipelineMessageReceiver.cpp
 RemoteDeviceMessageReceiver.cpp

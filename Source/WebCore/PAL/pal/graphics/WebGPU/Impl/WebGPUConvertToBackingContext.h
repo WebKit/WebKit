@@ -54,6 +54,8 @@ class CommandBuffer;
 class CommandEncoder;
 enum class CompareFunction : uint8_t;
 enum class CompilationMessageType : uint8_t;
+class CompositorIntegration;
+class CompositorIntegrationImpl;
 enum class ComputePassTimestampLocation : uint8_t;
 class ComputePassEncoder;
 class ComputePipeline;
@@ -162,6 +164,7 @@ public:
     virtual WGPUSurface convertToBacking(const PresentationContext&) = 0;
     virtual WGPUTexture convertToBacking(const Texture&) = 0;
     virtual WGPUTextureView convertToBacking(const TextureView&) = 0;
+    virtual CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) = 0;
 };
 
 } // namespace PAL::WebGPU

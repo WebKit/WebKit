@@ -47,6 +47,9 @@
 		1C50DADF29837158005FA0A7 /* WebGPUPresentationContextImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C50DADD29837158005FA0A7 /* WebGPUPresentationContextImpl.cpp */; };
 		1C50DAE029837158005FA0A7 /* WebGPUPresentationContextImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DADE29837158005FA0A7 /* WebGPUPresentationContextImpl.h */; };
 		1C50DAE4298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DAE3298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C4F5A18297CB48B005BBEE9 /* WebGPUCompositorIntegrationImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4F5A17297CB46D005BBEE9 /* WebGPUCompositorIntegrationImpl.cpp */; };
+		1C4F5A19297CB48E005BBEE9 /* WebGPUCompositorIntegrationImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4F5A16297CB46C005BBEE9 /* WebGPUCompositorIntegrationImpl.h */; };
+		1C4F5A1B297CB4CA005BBEE9 /* WebGPUCompositorIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4F5A1A297CB4BD005BBEE9 /* WebGPUCompositorIntegration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C5C57C927571531003B540D /* TextCodecICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BD27571524003B540D /* TextCodecICU.cpp */; };
 		1C5C57CA27571531003B540D /* TextCodecUserDefined.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */; };
 		1C5C57CB27571531003B540D /* TextCodecUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BE27571525003B540D /* TextCodecUTF16.cpp */; };
@@ -697,6 +700,9 @@
 		1C36C52D2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDowncastConvertToBackingContext.h; sourceTree = "<group>"; };
 		1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		1C4876D71F8D7F4E00CCEEBD /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		1C4F5A16297CB46C005BBEE9 /* WebGPUCompositorIntegrationImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCompositorIntegrationImpl.h; sourceTree = "<group>"; };
+		1C4F5A17297CB46D005BBEE9 /* WebGPUCompositorIntegrationImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUCompositorIntegrationImpl.cpp; sourceTree = "<group>"; };
+		1C4F5A1A297CB4BD005BBEE9 /* WebGPUCompositorIntegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCompositorIntegration.h; sourceTree = "<group>"; };
 		1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libavif.xcodeproj; path = libavif/libavif.xcodeproj; sourceTree = "<group>"; };
 		1C50DAD329836B16005FA0A7 /* WebGPUPresentationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPresentationContext.h; sourceTree = "<group>"; };
 		1C50DAD72983700C005FA0A7 /* WebGPUPresentationConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPresentationConfiguration.h; sourceTree = "<group>"; };
@@ -1326,6 +1332,8 @@
 				1C19E6A4273F4244004B17B0 /* WebGPUCommandBufferImpl.h */,
 				1C19E65A273F3FD2004B17B0 /* WebGPUCommandEncoderImpl.cpp */,
 				1C19E6AB273F4245004B17B0 /* WebGPUCommandEncoderImpl.h */,
+				1C4F5A17297CB46D005BBEE9 /* WebGPUCompositorIntegrationImpl.cpp */,
+				1C4F5A16297CB46C005BBEE9 /* WebGPUCompositorIntegrationImpl.h */,
 				1C19E65E273F3FE2004B17B0 /* WebGPUComputePassEncoderImpl.cpp */,
 				1C19E69E273F4243004B17B0 /* WebGPUComputePassEncoderImpl.h */,
 				1C19E662273F3FEE004B17B0 /* WebGPUComputePipelineImpl.cpp */,
@@ -1479,6 +1487,7 @@
 				1CC5E45927374947006F6FF4 /* WebGPUCompilationInfo.h */,
 				1CC5E47927374949006F6FF4 /* WebGPUCompilationMessage.h */,
 				1CC5E43627374946006F6FF4 /* WebGPUCompilationMessageType.h */,
+				1C4F5A1A297CB4BD005BBEE9 /* WebGPUCompositorIntegration.h */,
 				1CC5E48C2737494A006F6FF4 /* WebGPUComputePassDescriptor.h */,
 				1CC5E43E27374946006F6FF4 /* WebGPUComputePassEncoder.h */,
 				1CC5E48227374949006F6FF4 /* WebGPUComputePassTimestampLocation.h */,
@@ -1974,6 +1983,8 @@
 				DD20DD5D27BC90D70093D175 /* WebGPUCompilationInfo.h in Headers */,
 				DD20DD5E27BC90D70093D175 /* WebGPUCompilationMessage.h in Headers */,
 				DD20DD5F27BC90D70093D175 /* WebGPUCompilationMessageType.h in Headers */,
+				1C4F5A1B297CB4CA005BBEE9 /* WebGPUCompositorIntegration.h in Headers */,
+				1C4F5A19297CB48E005BBEE9 /* WebGPUCompositorIntegrationImpl.h in Headers */,
 				DD20DD6027BC90D70093D175 /* WebGPUComputePassDescriptor.h in Headers */,
 				DD20DD6127BC90D70093D175 /* WebGPUComputePassEncoder.h in Headers */,
 				DD20DD2E27BC90D60093D175 /* WebGPUComputePassEncoderImpl.h in Headers */,
@@ -2279,6 +2290,7 @@
 				1C19E654273F3FB1004B17B0 /* WebGPUBufferImpl.cpp in Sources */,
 				1C19E658273F3FC0004B17B0 /* WebGPUCommandBufferImpl.cpp in Sources */,
 				1C19E65C273F3FD2004B17B0 /* WebGPUCommandEncoderImpl.cpp in Sources */,
+				1C4F5A18297CB48B005BBEE9 /* WebGPUCompositorIntegrationImpl.cpp in Sources */,
 				1C19E660273F3FE2004B17B0 /* WebGPUComputePassEncoderImpl.cpp in Sources */,
 				1C19E664273F3FEE004B17B0 /* WebGPUComputePipelineImpl.cpp in Sources */,
 				1C19E6B5273F85AF004B17B0 /* WebGPUConvertToBackingContext.cpp in Sources */,

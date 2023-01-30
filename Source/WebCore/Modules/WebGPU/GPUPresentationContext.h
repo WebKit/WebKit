@@ -38,6 +38,7 @@
 namespace WebCore {
 
 struct GPUPresentationConfiguration;
+class GPUTexture;
 
 class GPUPresentationContext : public RefCounted<GPUPresentationContext> {
 public:
