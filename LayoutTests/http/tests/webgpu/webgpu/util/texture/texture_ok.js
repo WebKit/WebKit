@@ -134,7 +134,6 @@ function createTextureCopyForMapRead(t, source, copySize, { format }) {
     usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     size: byteLength,
   });
-
   t.trackForCleanup(buffer);
 
   const cmd = t.device.createCommandEncoder();
@@ -232,7 +231,6 @@ function findFailedPixels(
     fillToWidth: 120,
     numberToString,
   };
-
   return `\
  between ${lowerCorner} and ${upperCorner} inclusive:
 ${generatePrettyTable(opts, [

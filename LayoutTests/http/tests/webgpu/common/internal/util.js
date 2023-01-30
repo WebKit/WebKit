@@ -6,5 +6,6 @@
  */export class StacklessError extends Error {constructor(message) {
     super(message);
     this.stack = undefined;
-  }}
+  }
+}
 //# sourceMappingURL=util.js.map

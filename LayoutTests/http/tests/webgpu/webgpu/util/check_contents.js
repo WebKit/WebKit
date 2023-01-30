@@ -122,7 +122,6 @@ export function checkElementsEqualGenerated(actual, generator) {
   const error = checkElementsPassPredicate(actual, (index, value) => value === generator(index), {
     predicatePrinter: [{ leftHeader: 'expected ==', getValueForCell: index => generator(index) }],
   });
-
   // If there was an error, extend it with additional extras.
   return error ? new ErrorWithExtra(error, () => ({ generator })) : undefined;
 }
@@ -184,7 +183,6 @@ export function checkElementsPassPredicate(actual, predicate, { predicatePrinter
     fillToWidth: 120,
     numberToString,
   };
-
   const msg = `Array had unexpected contents at indices ${failedElementsFirst} through ${failedElementsLast}.
  Starting at index ${printElementsStart}:
 ${generatePrettyTable(opts, [

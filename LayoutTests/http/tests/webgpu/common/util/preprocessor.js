@@ -5,7 +5,7 @@ var
 State;
 
 
-
+// Have already seen a passing condition; now skipping the rest
 
 
 // The transitions in the state space are the following preprocessor directives:
@@ -25,10 +25,10 @@ State;
     stack.length === this.depth,
     `Number of "$"s must match nesting depth, currently ${stack.length} (e.g. $if $$if $$endif $endif)`);
 
-  }}
+  }
 
 
-
+}
 
 class If extends Directive {
 
@@ -48,10 +48,10 @@ class If extends Directive {
       State.Skipping :
       this.predicate ?
       State.Passing :
-      State.Seeking });
-
-  }}
-
+      State.Seeking
+    });
+  }
+}
 
 class ElseIf extends If {
   applyTo(stack) {
@@ -64,8 +64,8 @@ class ElseIf extends If {
     } else {
       super.applyTo(stack);
     }
-  }}
-
+  }
+}
 
 class Else extends Directive {
   applyTo(stack) {
@@ -75,17 +75,17 @@ class Else extends Directive {
     assert(allowsFollowingElse, 'pp.else after pp.else');
     stack.push({
       allowsFollowingElse: false,
-      state: siblingState === State.Seeking ? State.Passing : State.Skipping });
-
-  }}
-
+      state: siblingState === State.Seeking ? State.Passing : State.Skipping
+    });
+  }
+}
 
 class EndIf extends Directive {
   applyTo(stack) {
     stack.pop();
     this.checkDepth(stack);
-  }}
-
+  }
+}
 
 /**
  * A simple template-based, non-line-based preprocessor implementing if/elif/else/endif.
@@ -105,7 +105,7 @@ class EndIf extends Directive {
  * ```
  *
  * @param strings - The array of constant string chunks of the template string.
- * @param ...values - The array of interpolated ${} values within the template string.
+ * @param ...values - The array of interpolated `${}` values within the template string.
  */
 export function pp(
 strings,

@@ -189,10 +189,13 @@ Tests creating 2d compressed textures on destroyed device. Tests valid combinati
         );
       })
   )
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
+  })
   .fn(async t => {
     const { awaitLost, format, usageType, usageCopy } = t.params;
-    const { blockWidth, blockHeight, feature } = kTextureFormatInfo[format];
-    await t.selectDeviceOrSkipTestCase(feature);
+    const { blockWidth, blockHeight } = kTextureFormatInfo[format];
     await t.executeAfterDestroy(() => {
       t.device.createTexture({
         size: { width: blockWidth, height: blockHeight },
@@ -233,7 +236,6 @@ Tests creating texture views on 2d uncompressed textures from destroyed device. 
       usage: kTextureUsageTypeInfo[usageType] | kTextureUsageCopyInfo[usageCopy],
       format,
     });
-
     await t.executeAfterDestroy(() => {
       texture.createView({ format });
     }, awaitLost);
@@ -262,16 +264,18 @@ Tests creating texture views on 2d compressed textures from destroyed device. Te
         );
       })
   )
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
+  })
   .fn(async t => {
     const { awaitLost, format, usageType, usageCopy } = t.params;
-    const { blockWidth, blockHeight, feature } = kTextureFormatInfo[format];
-    await t.selectDeviceOrSkipTestCase(feature);
+    const { blockWidth, blockHeight } = kTextureFormatInfo[format];
     const texture = t.device.createTexture({
       size: { width: blockWidth, height: blockHeight },
       usage: kTextureUsageTypeInfo[usageType] | kTextureUsageCopyInfo[usageCopy],
       format,
     });
-
     await t.executeAfterDestroy(() => {
       texture.createView({ format });
     }, awaitLost);
@@ -348,7 +352,6 @@ Tests creating bind group on destroyed device. Tests valid combinations of:
     const layout = t.device.createBindGroupLayout({
       entries: [{ binding: 0, visibility, ...entry }],
     });
-
     const resource = t.getBindingResource(resourceType);
     await t.executeAfterDestroy(() => {
       t.device.createBindGroup({ layout, entries: [{ binding: 0, resource }] });
@@ -372,7 +375,6 @@ Tests creating pipeline layouts on destroyed device. Tests valid combinations of
     const bindGroupLayout = t.device.createBindGroupLayout({
       entries: [{ binding: 0, visibility, ...entry }],
     });
-
     await t.executeAfterDestroy(() => {
       t.device.createPipelineLayout({
         bindGroupLayouts: [bindGroupLayout],
@@ -410,6 +412,7 @@ Tests creating compute pipeline on destroyed device.
     const cShader = t.device.createShaderModule({ code: t.getNoOpShaderCode('COMPUTE') });
     await t.executeAfterDestroy(() => {
       t.device.createComputePipeline({
+        layout: 'auto',
         compute: { module: cShader, entryPoint: 'main' },
       });
     }, awaitLost);
@@ -429,6 +432,7 @@ Tests creating render pipeline on destroyed device.
     const fShader = t.device.createShaderModule({ code: t.getNoOpShaderCode('FRAGMENT') });
     await t.executeAfterDestroy(() => {
       t.device.createRenderPipeline({
+        layout: 'auto',
         vertex: { module: vShader, entryPoint: 'main' },
         fragment: {
           module: fShader,
@@ -481,9 +485,12 @@ Tests creating query sets on destroyed device.
   `
   )
   .params(u => u.combine('type', kQueryTypes).beginSubcases().combine('awaitLost', [true, false]))
+  .beforeAllSubcases(t => {
+    const { type } = t.params;
+    t.selectDeviceForQueryTypeOrSkipTestCase(type);
+  })
   .fn(async t => {
     const { awaitLost, type } = t.params;
-    await t.selectDeviceForQueryTypeOrSkipTestCase(type);
     await t.executeAfterDestroy(() => {
       t.device.createQuerySet({ type, count: 4 });
     }, awaitLost);
@@ -505,12 +512,10 @@ Tests copyBufferToBuffer command with various uncompressed formats on destroyed 
       size: kBufferSize,
       usage: GPUBufferUsage.COPY_SRC,
     });
-
     const dst = t.device.createBuffer({
       size: kBufferSize,
       usage: GPUBufferUsage.COPY_DST,
     });
-
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'non-pass', maker => {
       maker.encoder.copyBufferToBuffer(src, 0, dst, 0, kBufferSize);
       return maker;
@@ -538,7 +543,6 @@ Tests copyBufferToTexture command on destroyed device.
         usage: GPUBufferUsage.COPY_SRC,
       }),
     };
-
     const dst = {
       texture: t.device.createTexture({
         size: { width: blockWidth, height: blockHeight },
@@ -546,7 +550,6 @@ Tests copyBufferToTexture command on destroyed device.
         format,
       }),
     };
-
     const copySize = { width: blockWidth, height: blockHeight };
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'non-pass', maker => {
       maker.encoder.copyBufferToTexture(src, dst, copySize);
@@ -576,14 +579,12 @@ Tests copyTextureToBuffer command on destroyed device.
         format,
       }),
     };
-
     const dst = {
       buffer: t.device.createBuffer({
         size: bytesPerBlock,
         usage: GPUBufferUsage.COPY_DST,
       }),
     };
-
     const copySize = { width: blockWidth, height: blockHeight };
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'non-pass', maker => {
       maker.encoder.copyTextureToBuffer(src, dst, copySize);
@@ -613,7 +614,6 @@ Tests copyTextureToTexture command on destroyed device.
         format,
       }),
     };
-
     const dst = {
       texture: t.device.createTexture({
         size: { width: blockWidth, height: blockHeight },
@@ -621,7 +621,6 @@ Tests copyTextureToTexture command on destroyed device.
         format,
       }),
     };
-
     const copySize = { width: blockWidth, height: blockHeight };
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'non-pass', maker => {
       maker.encoder.copyTextureToTexture(src, dst, copySize);
@@ -647,7 +646,6 @@ Tests encoding and finishing a clearBuffer command on destroyed device.
       size: kBufferSize,
       usage: GPUBufferUsage.COPY_SRC,
     });
-
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'non-pass', maker => {
       maker.encoder.clearBuffer(buffer, 0, kBufferSize);
       return maker;
@@ -669,9 +667,19 @@ Tests encoding and finishing a writeTimestamp command on destroyed device.
       .combine('stage', kCommandValidationStages)
       .combine('awaitLost', [true, false])
   )
+  .beforeAllSubcases(t => {
+    const { type } = t.params;
+
+    // writeTimestamp is only available for devices that enable the 'timestamp-query' feature.
+    const queryTypes = ['timestamp'];
+    if (type !== 'timestamp') {
+      queryTypes.push(type);
+    }
+
+    t.selectDeviceForQueryTypeOrSkipTestCase(queryTypes);
+  })
   .fn(async t => {
     const { type, stage, awaitLost } = t.params;
-    await t.selectDeviceForQueryTypeOrSkipTestCase(type);
     const querySet = t.device.createQuerySet({ type, count: 2 });
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'non-pass', maker => {
       maker.encoder.writeTimestamp(querySet, 0);
@@ -698,7 +706,6 @@ Tests encoding and finishing a resolveQuerySet command on destroyed device.
       size: kQueryCount * 8,
       usage: GPUBufferUsage.QUERY_RESOLVE,
     });
-
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'non-pass', maker => {
       maker.encoder.resolveQuerySet(querySet, 0, 1, destination, 0);
       return maker;
@@ -721,12 +728,12 @@ Tests encoding and dispatching a simple valid compute pass on destroyed device.
     const { stage, awaitLost } = t.params;
     const cShader = t.device.createShaderModule({ code: t.getNoOpShaderCode('COMPUTE') });
     const pipeline = t.device.createComputePipeline({
+      layout: 'auto',
       compute: { module: cShader, entryPoint: 'main' },
     });
-
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'compute pass', maker => {
       maker.encoder.setPipeline(pipeline);
-      maker.encoder.dispatch(1);
+      maker.encoder.dispatchWorkgroups(1);
       return maker;
     });
   });
@@ -748,6 +755,7 @@ Tests encoding and finishing a simple valid render pass on destroyed device.
     const vShader = t.device.createShaderModule({ code: t.getNoOpShaderCode('VERTEX') });
     const fShader = t.device.createShaderModule({ code: t.getNoOpShaderCode('FRAGMENT') });
     const pipeline = t.device.createRenderPipeline({
+      layout: 'auto',
       vertex: { module: vShader, entryPoint: 'main' },
       fragment: {
         module: fShader,
@@ -755,7 +763,6 @@ Tests encoding and finishing a simple valid render pass on destroyed device.
         targets: [{ format: 'rgba8unorm', writeMask: 0 }],
       },
     });
-
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'render pass', maker => {
       maker.encoder.setPipeline(pipeline);
       maker.encoder.draw(0);
@@ -780,6 +787,7 @@ Tests encoding and drawing a render pass including a render bundle on destroyed 
     const vShader = t.device.createShaderModule({ code: t.getNoOpShaderCode('VERTEX') });
     const fShader = t.device.createShaderModule({ code: t.getNoOpShaderCode('FRAGMENT') });
     const pipeline = t.device.createRenderPipeline({
+      layout: 'auto',
       vertex: { module: vShader, entryPoint: 'main' },
       fragment: {
         module: fShader,
@@ -787,7 +795,6 @@ Tests encoding and drawing a render pass including a render bundle on destroyed 
         targets: [{ format: 'rgba8unorm', writeMask: 0 }],
       },
     });
-
     await t.executeCommandsAfterDestroy(stage, awaitLost, 'render bundle', maker => {
       maker.encoder.setPipeline(pipeline);
       maker.encoder.draw(0);
@@ -810,7 +817,6 @@ Tests writeBuffer on queue on destroyed device.
       size: numElements,
       usage: GPUBufferUsage.COPY_DST,
     });
-
     const data = new Uint8Array(numElements);
     await t.executeAfterDestroy(() => {
       t.device.queue.writeBuffer(buffer, 0, data);
@@ -835,7 +841,6 @@ Tests writeTexture on queue on destroyed device with uncompressed formats.
       usage: GPUTextureUsage.COPY_DST,
       format,
     });
-
     await t.executeAfterDestroy(() => {
       t.device.queue.writeTexture(
         { texture },
@@ -858,17 +863,19 @@ Tests writeTexture on queue on destroyed device with compressed formats.
       .beginSubcases()
       .combine('awaitLost', [true, false])
   )
+  .beforeAllSubcases(t => {
+    const { format } = t.params;
+    t.selectDeviceOrSkipTestCase(kTextureFormatInfo[format].feature);
+  })
   .fn(async t => {
     const { format, awaitLost } = t.params;
-    const { blockWidth, blockHeight, bytesPerBlock, feature } = kTextureFormatInfo[format];
-    await t.selectDeviceOrSkipTestCase(feature);
+    const { blockWidth, blockHeight, bytesPerBlock } = kTextureFormatInfo[format];
     const data = new Uint8Array(bytesPerBlock);
     const texture = t.device.createTexture({
       size: { width: blockWidth, height: blockHeight },
       usage: GPUTextureUsage.COPY_DST,
       format,
     });
-
     await t.executeAfterDestroy(() => {
       t.device.queue.writeTexture(
         { texture },

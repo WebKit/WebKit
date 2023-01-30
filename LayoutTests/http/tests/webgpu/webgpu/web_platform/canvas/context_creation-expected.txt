@@ -1,13 +1,1 @@
-
-FAIL :return_type:offscreen=false assert_unreached:
-  - INFO: subcase: attributes="_undef_"
-  - EXPECTATION FAILED
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:235:43
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/context_creation.spec.js:47:13
-  - INFO: subcase: attributes={}
-  - EXPECTATION FAILED
-    expect@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:235:43
-    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/canvas/context_creation.spec.js:47:13
- Reached unreachable code
-PASS :return_type:offscreen=true
-
+(Populate me when we're ready to investigate this test)

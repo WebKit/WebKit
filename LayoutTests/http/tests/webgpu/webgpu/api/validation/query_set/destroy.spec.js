@@ -8,7 +8,7 @@ import { ValidationTest } from '../validation_test.js';
 
 export const g = makeTestGroup(ValidationTest);
 
-g.test('twice').fn(async t => {
+g.test('twice').fn(t => {
   const qset = t.device.createQuerySet({ type: 'occlusion', count: 1 });
 
   qset.destroy();

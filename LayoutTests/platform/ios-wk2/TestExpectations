@@ -2183,8 +2183,6 @@ webkit.org/b/238691 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Tim
 
 webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
 
-webkit.org/b/233621 http/tests/webgpu [ Skip ]
-
 webkit.org/b/237849 imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html [ ImageOnlyFailure ]
 
 #rdar://91780899

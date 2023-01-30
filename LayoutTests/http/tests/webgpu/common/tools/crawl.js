@@ -20,8 +20,8 @@ async function crawlFilesRecursively(dir) {
     return {
       path: p,
       isDirectory: stats.isDirectory(),
-      isFile: stats.isFile() };
-
+      isFile: stats.isFile()
+    };
   }));
 
 

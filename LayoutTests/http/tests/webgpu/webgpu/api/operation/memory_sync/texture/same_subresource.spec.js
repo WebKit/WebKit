@@ -34,7 +34,7 @@ const fullscreenQuadWGSL = `
     @builtin(position) Position : vec4<f32>
   };
 
-  @stage(vertex) fn vert_main(@builtin(vertex_index) VertexIndex : u32) -> VertexOutput {
+  @vertex fn vert_main(@builtin(vertex_index) VertexIndex : u32) -> VertexOutput {
     var pos = array<vec2<f32>, 6>(
         vec2<f32>( 1.0,  1.0),
         vec2<f32>( 1.0, -1.0),
@@ -85,7 +85,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
           {
             texture: this.texture,
           },
-
           { texture },
           this.kTextureSize
         );
@@ -118,7 +117,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
           {
             texture: this.texture,
           },
-
           { buffer, bytesPerRow },
           this.kTextureSize
         );
@@ -149,7 +147,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
                 sampleType: 'unfilterable-float',
               },
             },
-
             {
               binding: 1,
               visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.COMPUTE,
@@ -168,7 +165,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
               binding: 0,
               resource: this.texture.createView(),
             },
-
             {
               binding: 1,
               resource: texture.createView(),
@@ -185,24 +181,21 @@ class TextureSyncTestHelper extends OperationContextHelper {
                 @group(0) @binding(0) var inputTex: texture_2d<f32>;
                 @group(0) @binding(1) var outputTex: texture_storage_2d<rgba8unorm, write>;
 
-                @stage(fragment) fn frag_main(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
+                @fragment fn frag_main(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
                   let coord = vec2<i32>(fragCoord.xy);
                   textureStore(outputTex, coord, textureLoad(inputTex, coord, 0));
                   return vec4<f32>();
                 }
               `,
             });
-
             const renderPipeline = this.device.createRenderPipeline({
               layout: this.device.createPipelineLayout({
                 bindGroupLayouts: [bindGroupLayout],
               }),
-
               vertex: {
                 module,
                 entryPoint: 'vert_main',
               },
-
               fragment: {
                 module,
                 entryPoint: 'frag_main',
@@ -241,7 +234,7 @@ class TextureSyncTestHelper extends OperationContextHelper {
                 @group(0) @binding(0) var inputTex: texture_2d<f32>;
                 @group(0) @binding(1) var outputTex: texture_storage_2d<rgba8unorm, write>;
 
-                @stage(compute) @workgroup_size(8, 8)
+                @compute @workgroup_size(8, 8)
                 fn main(@builtin(global_invocation_id) gid : vec3<u32>) {
                   if (any(gid.xy >= vec2<u32>(textureDimensions(inputTex)))) {
                     return;
@@ -251,12 +244,10 @@ class TextureSyncTestHelper extends OperationContextHelper {
                 }
               `,
             });
-
             const computePipeline = this.device.createComputePipeline({
               layout: this.device.createPipelineLayout({
                 bindGroupLayouts: [bindGroupLayout],
               }),
-
               compute: {
                 module,
                 entryPoint: 'main',
@@ -266,7 +257,7 @@ class TextureSyncTestHelper extends OperationContextHelper {
             assert(this.computePassEncoder !== undefined);
             this.computePassEncoder.setPipeline(computePipeline);
             this.computePassEncoder.setBindGroup(0, bindGroup);
-            this.computePassEncoder.dispatch(
+            this.computePassEncoder.dispatchWorkgroups(
               Math.ceil(this.kTextureSize[0] / 8),
               Math.ceil(this.kTextureSize[1] / 8)
             );
@@ -304,7 +295,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
             },
           ],
         });
-
         this.currentContext = 'render-pass-encoder';
         break;
       }
@@ -324,7 +314,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
           {
             bytesPerRow: texelData.byteLength * this.kTextureSize[0],
           },
-
           this.kTextureSize
         );
 
@@ -352,7 +341,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
           {
             bytesPerRow: texelData.byteLength * this.kTextureSize[0],
           },
-
           this.kTextureSize
         );
 
@@ -424,7 +412,6 @@ class TextureSyncTestHelper extends OperationContextHelper {
             },
           ],
         });
-
         this.currentContext = 'render-pass-encoder';
         break;
       }
@@ -465,23 +452,20 @@ class TextureSyncTestHelper extends OperationContextHelper {
 
                 @group(0) @binding(0) var outputTex: texture_storage_2d<rgba8unorm, write>;
 
-                @stage(fragment) fn frag_main(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
+                @fragment fn frag_main(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
                   textureStore(outputTex, vec2<i32>(fragCoord.xy), ${storedValue});
                   return vec4<f32>();
                 }
               `,
             });
-
             const renderPipeline = this.device.createRenderPipeline({
               layout: this.device.createPipelineLayout({
                 bindGroupLayouts: [bindGroupLayout],
               }),
-
               vertex: {
                 module,
                 entryPoint: 'vert_main',
               },
-
               fragment: {
                 module,
                 entryPoint: 'frag_main',
@@ -519,7 +503,7 @@ class TextureSyncTestHelper extends OperationContextHelper {
               code: `
                 @group(0) @binding(0) var outputTex: texture_storage_2d<rgba8unorm, write>;
 
-                @stage(compute) @workgroup_size(8, 8)
+                @compute @workgroup_size(8, 8)
                 fn main(@builtin(global_invocation_id) gid : vec3<u32>) {
                   if (any(gid.xy >= vec2<u32>(textureDimensions(outputTex)))) {
                     return;
@@ -529,12 +513,10 @@ class TextureSyncTestHelper extends OperationContextHelper {
                 }
               `,
             });
-
             const computePipeline = this.device.createComputePipeline({
               layout: this.device.createPipelineLayout({
                 bindGroupLayouts: [bindGroupLayout],
               }),
-
               compute: {
                 module,
                 entryPoint: 'main',
@@ -544,7 +526,7 @@ class TextureSyncTestHelper extends OperationContextHelper {
             assert(this.computePassEncoder !== undefined);
             this.computePassEncoder.setPipeline(computePipeline);
             this.computePassEncoder.setBindGroup(0, bindGroup);
-            this.computePassEncoder.dispatch(
+            this.computePassEncoder.dispatchWorkgroups(
               Math.ceil(this.kTextureSize[0] / 8),
               Math.ceil(this.kTextureSize[1] / 8)
             );
@@ -596,7 +578,6 @@ g.test('rw')
         kOpInfo[t.params.read.op].readUsage |
         kOpInfo[t.params.write.op].writeUsage,
     });
-
     // [2] Use non-solid-color texture value.
     const texelValue1 = { R: 0, G: 1, B: 0, A: 1 };
     const texelValue2 = { R: 1, G: 0, B: 0, A: 1 };
@@ -646,7 +627,6 @@ g.test('wr')
     const helper = new TextureSyncTestHelper(t, {
       usage: kOpInfo[t.params.read.op].readUsage | kOpInfo[t.params.write.op].writeUsage,
     });
-
     // [2] Use non-solid-color texture value.
     const texelValue = { R: 0, G: 1, B: 0, A: 1 };
 
@@ -694,7 +674,6 @@ g.test('ww')
         kOpInfo[t.params.first.op].writeUsage |
         kOpInfo[t.params.second.op].writeUsage,
     });
-
     // [2] Use non-solid-color texture value.
     const texelValue1 = { R: 1, G: 0, B: 0, A: 1 };
     const texelValue2 = { R: 0, G: 1, B: 0, A: 1 };

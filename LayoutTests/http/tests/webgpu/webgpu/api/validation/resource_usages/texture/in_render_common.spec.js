@@ -24,7 +24,6 @@ class F extends ValidationTest {
       binding: 0,
       visibility: GPUShaderStage.FRAGMENT,
     };
-
     switch (textureUsage) {
       case 'texture':
         bindGroupLayoutEntry.texture = { viewDimension: '2d-array', sampleType };
@@ -35,7 +34,6 @@ class F extends ValidationTest {
           format: 'rgba8unorm',
           viewDimension: '2d-array',
         };
-
         break;
       default:
         unreachable();
@@ -45,7 +43,6 @@ class F extends ValidationTest {
     const layout = this.device.createBindGroupLayout({
       entries: [bindGroupLayoutEntry],
     });
-
     return this.device.createBindGroup({
       layout,
       entries: [{ binding: 0, resource: textureView }],
@@ -83,7 +80,7 @@ g.test('subresources,color_attachments')
       .combine('inSamePass', [true, false])
       .unless(t => t.inSamePass && t.level0 !== t.level1)
   )
-  .fn(async t => {
+  .fn(t => {
     const { layer0, level0, layer1, level1, inSamePass } = t.params;
 
     const texture = t.device.createTexture({
@@ -94,35 +91,32 @@ g.test('subresources,color_attachments')
     });
 
     const colorAttachment1 = t.getColorAttachment(texture, {
+      dimension: '2d',
       baseArrayLayer: layer0,
       arrayLayerCount: 1,
       baseMipLevel: level0,
       mipLevelCount: 1,
     });
-
     const colorAttachment2 = t.getColorAttachment(texture, {
+      dimension: '2d',
       baseArrayLayer: layer1,
       baseMipLevel: level1,
       mipLevelCount: 1,
     });
-
     const encoder = t.device.createCommandEncoder();
     if (inSamePass) {
       const renderPass = encoder.beginRenderPass({
         colorAttachments: [colorAttachment1, colorAttachment2],
       });
-
       renderPass.end();
     } else {
       const renderPass1 = encoder.beginRenderPass({
         colorAttachments: [colorAttachment1],
       });
-
       renderPass1.end();
       const renderPass2 = encoder.beginRenderPass({
         colorAttachments: [colorAttachment2],
       });
-
       renderPass2.end();
     }
 
@@ -157,7 +151,7 @@ g.test('subresources,color_attachment_and_bind_group')
       .unless(t => t.bgUsage === 'storage' && t.bgLevelCount > 1)
       .combine('inSamePass', [true, false])
   )
-  .fn(async t => {
+  .fn(t => {
     const {
       colorAttachmentLevel,
       colorAttachmentLayer,
@@ -178,7 +172,6 @@ g.test('subresources,color_attachment_and_bind_group')
       size: [kTextureSize, kTextureSize, kTextureLayers],
       mipLevelCount: kTextureLevels,
     });
-
     const bindGroupView = texture.createView({
       dimension: '2d-array',
       baseArrayLayer: bgLayer,
@@ -186,10 +179,10 @@ g.test('subresources,color_attachment_and_bind_group')
       baseMipLevel: bgLevel,
       mipLevelCount: bgLevelCount,
     });
-
     const bindGroup = t.createBindGroupForTest(bindGroupView, bgUsage, 'float');
 
     const colorAttachment = t.getColorAttachment(texture, {
+      dimension: '2d',
       baseArrayLayer: colorAttachmentLayer,
       arrayLayerCount: 1,
       baseMipLevel: colorAttachmentLevel,
@@ -200,7 +193,6 @@ g.test('subresources,color_attachment_and_bind_group')
     const renderPass = encoder.beginRenderPass({
       colorAttachments: [colorAttachment],
     });
-
     if (inSamePass) {
       renderPass.setBindGroup(0, bindGroup);
       renderPass.end();
@@ -213,12 +205,10 @@ g.test('subresources,color_attachment_and_bind_group')
         size: [kTextureSize, kTextureSize, 1],
         mipLevelCount: 1,
       });
-
       const colorAttachment2 = t.getColorAttachment(texture2);
       const renderPass2 = encoder.beginRenderPass({
         colorAttachments: [colorAttachment2],
       });
-
       renderPass2.setBindGroup(0, bindGroup);
       renderPass2.end();
     }
@@ -271,7 +261,7 @@ g.test('subresources,depth_stencil_attachment_and_bind_group')
       .combine('bgAspect', ['depth-only', 'stencil-only'])
       .combine('inSamePass', [true, false])
   )
-  .fn(async t => {
+  .fn(t => {
     const {
       dsLevel,
       dsLayer,
@@ -290,7 +280,6 @@ g.test('subresources,depth_stencil_attachment_and_bind_group')
       size: [kTextureSize, kTextureSize, kTextureLayers],
       mipLevelCount: kTextureLevels,
     });
-
     const bindGroupView = texture.createView({
       dimension: '2d-array',
       baseArrayLayer: bgLayer,
@@ -299,17 +288,16 @@ g.test('subresources,depth_stencil_attachment_and_bind_group')
       mipLevelCount: bgLevelCount,
       aspect: bgAspect,
     });
-
     const sampleType = bgAspect === 'depth-only' ? 'depth' : 'uint';
     const bindGroup = t.createBindGroupForTest(bindGroupView, 'texture', sampleType);
 
     const attachmentView = texture.createView({
+      dimension: '2d',
       baseArrayLayer: dsLayer,
       arrayLayerCount: 1,
       baseMipLevel: dsLevel,
       mipLevelCount: 1,
     });
-
     const depthStencilAttachment = {
       view: attachmentView,
       depthReadOnly: dsReadOnly,
@@ -325,7 +313,6 @@ g.test('subresources,depth_stencil_attachment_and_bind_group')
       colorAttachments: [],
       depthStencilAttachment,
     });
-
     if (inSamePass) {
       renderPass.setBindGroup(0, bindGroup);
       renderPass.end();
@@ -338,12 +325,10 @@ g.test('subresources,depth_stencil_attachment_and_bind_group')
         size: [kTextureSize, kTextureSize, 1],
         mipLevelCount: 1,
       });
-
       const colorAttachment2 = t.getColorAttachment(texture2);
       const renderPass2 = encoder.beginRenderPass({
         colorAttachments: [colorAttachment2],
       });
-
       renderPass2.setBindGroup(0, bindGroup);
       renderPass2.end();
     }
@@ -410,7 +395,7 @@ g.test('subresources,multiple_bind_groups')
       )
       .combine('inSamePass', [true, false])
   )
-  .fn(async t => {
+  .fn(t => {
     const { bg0Levels, bg0Layers, bg1Levels, bg1Layers, bgUsage0, bgUsage1, inSamePass } = t.params;
 
     const texture = t.device.createTexture({
@@ -419,7 +404,6 @@ g.test('subresources,multiple_bind_groups')
       size: [kTextureSize, kTextureSize, kTextureLayers],
       mipLevelCount: kTextureLevels,
     });
-
     const bg0 = texture.createView({
       dimension: '2d-array',
       baseArrayLayer: bg0Layers.base,
@@ -427,7 +411,6 @@ g.test('subresources,multiple_bind_groups')
       baseMipLevel: bg0Levels.base,
       mipLevelCount: bg0Levels.count,
     });
-
     const bg1 = texture.createView({
       dimension: '2d-array',
       baseArrayLayer: bg1Layers.base,
@@ -435,7 +418,6 @@ g.test('subresources,multiple_bind_groups')
       baseMipLevel: bg1Levels.base,
       mipLevelCount: bg1Levels.count,
     });
-
     const bindGroup0 = t.createBindGroupForTest(bg0, bgUsage0, 'float');
     const bindGroup1 = t.createBindGroupForTest(bg1, bgUsage1, 'float');
 
@@ -445,13 +427,11 @@ g.test('subresources,multiple_bind_groups')
       size: [kTextureSize, kTextureSize, 1],
       mipLevelCount: 1,
     });
-
     const colorAttachment = t.getColorAttachment(colorTexture);
     const encoder = t.device.createCommandEncoder();
     const renderPass = encoder.beginRenderPass({
       colorAttachments: [colorAttachment],
     });
-
     if (inSamePass) {
       renderPass.setBindGroup(0, bindGroup0);
       renderPass.setBindGroup(1, bindGroup1);
@@ -463,7 +443,6 @@ g.test('subresources,multiple_bind_groups')
       const renderPass2 = encoder.beginRenderPass({
         colorAttachments: [colorAttachment],
       });
-
       renderPass2.setBindGroup(1, bindGroup1);
       renderPass2.end();
     }
@@ -523,7 +502,7 @@ g.test('subresources,depth_stencil_texture_in_bind_groups')
       .combine('aspect1', ['depth-only', 'stencil-only'])
       .combine('inSamePass', [true, false])
   )
-  .fn(async t => {
+  .fn(t => {
     const {
       view0Levels,
       view0Layers,
@@ -540,7 +519,6 @@ g.test('subresources,depth_stencil_texture_in_bind_groups')
       size: [kTextureSize, kTextureSize, kTextureLayers],
       mipLevelCount: kTextureLevels,
     });
-
     const bindGroupView0 = texture.createView({
       dimension: '2d-array',
       baseArrayLayer: view0Layers.base,
@@ -549,7 +527,6 @@ g.test('subresources,depth_stencil_texture_in_bind_groups')
       mipLevelCount: view0Levels.count,
       aspect: aspect0,
     });
-
     const bindGroupView1 = texture.createView({
       dimension: '2d-array',
       baseArrayLayer: view1Layers.base,
@@ -570,13 +547,11 @@ g.test('subresources,depth_stencil_texture_in_bind_groups')
       size: [kTextureSize, kTextureSize, 1],
       mipLevelCount: 1,
     });
-
     const colorAttachment = t.getColorAttachment(colorTexture);
     const encoder = t.device.createCommandEncoder();
     const renderPass = encoder.beginRenderPass({
       colorAttachments: [colorAttachment],
     });
-
     if (inSamePass) {
       renderPass.setBindGroup(0, bindGroup0);
       renderPass.setBindGroup(1, bindGroup1);
@@ -588,7 +563,6 @@ g.test('subresources,depth_stencil_texture_in_bind_groups')
       const renderPass2 = encoder.beginRenderPass({
         colorAttachments: [colorAttachment],
       });
-
       renderPass2.setBindGroup(1, bindGroup1);
       renderPass2.end();
     }

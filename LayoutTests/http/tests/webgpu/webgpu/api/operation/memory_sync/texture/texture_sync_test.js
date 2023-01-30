@@ -21,43 +21,36 @@ export const kOpInfo = {
     readUsage: 0,
     writeUsage: GPUConst.TextureUsage.COPY_DST,
   },
-
   'b2t-copy': {
     contexts: ['command-encoder'],
     readUsage: 0,
     writeUsage: GPUConst.TextureUsage.COPY_DST,
   },
-
   't2t-copy': {
     contexts: ['command-encoder'],
     readUsage: GPUConst.TextureUsage.COPY_SRC,
     writeUsage: GPUConst.TextureUsage.COPY_DST,
   },
-
   't2b-copy': {
     contexts: ['command-encoder'],
     readUsage: GPUConst.TextureUsage.COPY_SRC,
     writeUsage: 0,
   },
-
   storage: {
     contexts: ['compute-pass-encoder', 'render-pass-encoder', 'render-bundle-encoder'],
     readUsage: 0,
     writeUsage: GPUConst.TextureUsage.STORAGE,
   },
-
   sample: {
     contexts: ['compute-pass-encoder', 'render-pass-encoder', 'render-bundle-encoder'],
     readUsage: GPUConst.TextureUsage.SAMPLED,
     writeUsage: 0,
   },
-
   'attachment-store': {
     contexts: ['command-encoder'],
     readUsage: 0,
     writeUsage: GPUConst.TextureUsage.RENDER_ATTACHMENT,
   },
-
   'attachment-resolve': {
     contexts: ['command-encoder'],
     readUsage: 0,
