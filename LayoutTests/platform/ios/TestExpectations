@@ -3896,3 +3896,5 @@ webkit.org/b/251234 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImag
 webkit.org/b/251274 [ Debug ] imported/w3c/web-platform-tests/fs/FileSystemFileHandle-create-sync-access-handle.https.tentative.window.html [ Pass Failure ]
 
 webkit.org/b/251302 accessibility/ios-simulator/table-cell-ranges.html [ Failure ]
+
+webkit.org/b/251312 fast/loader/stateobjects/popstate-does-not-fire-with-page-cache.html [ Pass Failure ]
