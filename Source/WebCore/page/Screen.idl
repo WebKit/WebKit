@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +27,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/cssom-view/#the-screen-interface
 
 [
     GenerateIsReachable=ReachableFromDOMWindow,
     Exposed=Window
 ] interface Screen {
-    readonly attribute unsigned long height;
-    readonly attribute unsigned long width;
+    readonly attribute long height;
+    readonly attribute long width;
     readonly attribute unsigned long colorDepth;
     readonly attribute unsigned long pixelDepth;
     readonly attribute long availLeft;
     readonly attribute long availTop;
-    readonly attribute unsigned long availHeight;
-    readonly attribute unsigned long availWidth;
+    readonly attribute long availHeight;
+    readonly attribute long availWidth;
 
     // https://w3c.github.io/screen-orientation/#extensions-to-the-screen-interface
     [SameObject, EnabledBySetting=ScreenOrientationAPIEnabled] readonly attribute ScreenOrientation orientation;

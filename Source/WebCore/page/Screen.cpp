@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,24 +53,24 @@ Screen::Screen(DOMWindow& window)
 
 Screen::~Screen() = default;
 
-unsigned Screen::height() const
+int Screen::height() const
 {
     auto* frame = this->frame();
     if (!frame)
         return 0;
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::Height);
-    return static_cast<unsigned>(frame->screenSize().height());
+    return static_cast<int>(frame->screenSize().height());
 }
 
-unsigned Screen::width() const
+int Screen::width() const
 {
     auto* frame = this->frame();
     if (!frame)
         return 0;
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::Width);
-    return static_cast<unsigned>(frame->screenSize().width());
+    return static_cast<int>(frame->screenSize().width());
 }
 
 unsigned Screen::colorDepth() const
@@ -117,24 +118,24 @@ int Screen::availTop() const
     return static_cast<int>(screenAvailableRect(frame->view()).y());
 }
 
-unsigned Screen::availHeight() const
+int Screen::availHeight() const
 {
     auto* frame = this->frame();
     if (!frame)
         return 0;
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::AvailHeight);
-    return static_cast<unsigned>(screenAvailableRect(frame->view()).height());
+    return static_cast<int>(screenAvailableRect(frame->view()).height());
 }
 
-unsigned Screen::availWidth() const
+int Screen::availWidth() const
 {
     auto* frame = this->frame();
     if (!frame)
         return 0;
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::AvailWidth);
-    return static_cast<unsigned>(screenAvailableRect(frame->view()).width());
+    return static_cast<int>(screenAvailableRect(frame->view()).width());
 }
 
 ScreenOrientation& Screen::orientation()
