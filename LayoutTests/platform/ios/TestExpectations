@@ -3894,3 +3894,5 @@ webkit.org/b/251234 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImag
 webkit.org/b/251302 accessibility/ios-simulator/table-cell-ranges.html [ Failure ]
 
 webkit.org/b/251306 http/tests/in-app-browser-privacy/sub-frame-redirect-to-non-app-bound-domain-blocked.html [ Pass Crash ]
+
+webkit.org/b/251312 fast/loader/stateobjects/popstate-does-not-fire-with-page-cache.html [ Pass Failure ]
