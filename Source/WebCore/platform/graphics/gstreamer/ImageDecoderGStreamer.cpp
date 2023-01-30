@@ -285,7 +285,7 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
     }
 
     parserHarness->start(WTFMove(caps));
-    parserHarness->pushBuffer(buffer.leakRef());
+    parserHarness->pushBuffer(WTFMove(buffer));
 
     if (!m_decoderHarness) {
         GST_WARNING_OBJECT(parserHarness->element(), "Parsing failed");
@@ -294,7 +294,7 @@ void ImageDecoderGStreamer::pushEncodedData(const FragmentedSharedBuffer& shared
 
     for (auto& stream : parserHarness->outputStreams()) {
         while (auto event = stream->pullEvent())
-            m_decoderHarness->pushEvent(event.leakRef());
+            m_decoderHarness->pushEvent(WTFMove(event));
     }
 
     m_decoderHarness->flush();

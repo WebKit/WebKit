@@ -174,7 +174,7 @@ void GStreamerElementHarness::start(GRefPtr<GstCaps>&& inputCaps)
 
     static Atomic<uint64_t> uniqueStreamId;
     auto streamId = makeString(GST_OBJECT_NAME(m_element.get()), '-', uniqueStreamId.exchangeAdd(1));
-    pushEvent(gst_event_new_stream_start(streamId.ascii().data()));
+    pushEvent(adoptGRef(gst_event_new_stream_start(streamId.ascii().data())));
 
     pushStickyEvents(WTFMove(inputCaps));
     m_playing.store(true);
@@ -184,7 +184,7 @@ void GStreamerElementHarness::pushStickyEvents(GRefPtr<GstCaps>&& inputCaps)
 {
     if (!m_inputCaps || !gst_caps_is_equal(inputCaps.get(), m_inputCaps.get())) {
         m_inputCaps = WTFMove(inputCaps);
-        pushEvent(gst_event_new_caps(m_inputCaps.get()));
+        pushEvent(adoptGRef(gst_event_new_caps(m_inputCaps.get())));
     } else if (m_stickyEventsSent.load()) {
         GST_DEBUG_OBJECT(m_element.get(), "Input caps have not changed, not pushing sticky events again");
         return;
@@ -192,14 +192,14 @@ void GStreamerElementHarness::pushStickyEvents(GRefPtr<GstCaps>&& inputCaps)
 
     GstSegment segment;
     gst_segment_init(&segment, GST_FORMAT_TIME);
-    pushEvent(gst_event_new_segment(&segment));
+    pushEvent(adoptGRef(gst_event_new_segment(&segment)));
 
     m_stickyEventsSent.store(true);
 }
 
-bool GStreamerElementHarness::pushSample(GstSample* sample)
+bool GStreamerElementHarness::pushSample(GRefPtr<GstSample>&& sample)
 {
-    GRefPtr<GstCaps> caps = gst_sample_get_caps(sample);
+    GRefPtr<GstCaps> caps = gst_sample_get_caps(sample.get());
     GST_TRACE_OBJECT(m_element.get(), "Pushing sample with caps %" GST_PTR_FORMAT, caps.get());
     if (!m_playing.load())
         start(WTFMove(caps));
@@ -209,30 +209,31 @@ bool GStreamerElementHarness::pushSample(GstSample* sample)
         if (!currentCaps || gst_pad_needs_reconfigure(m_srcPad.get()))
             pushStickyEvents(WTFMove(caps));
     }
-    return pushBuffer(gst_buffer_ref(gst_sample_get_buffer(sample)));
+    GRefPtr<GstBuffer> buffer = gst_sample_get_buffer(sample.get());
+    return pushBuffer(WTFMove(buffer));
 }
 
-bool GStreamerElementHarness::pushBuffer(GstBuffer* buffer)
+bool GStreamerElementHarness::pushBuffer(GRefPtr<GstBuffer>&& buffer)
 {
     if (!m_stickyEventsSent.load())
         return false;
 
-    auto result = pushBufferFull(buffer);
+    auto result = pushBufferFull(WTFMove(buffer));
     return result == GST_FLOW_OK || result == GST_FLOW_EOS;
 }
 
-GstFlowReturn GStreamerElementHarness::pushBufferFull(GstBuffer* buffer)
+GstFlowReturn GStreamerElementHarness::pushBufferFull(GRefPtr<GstBuffer>&& buffer)
 {
-    GST_TRACE_OBJECT(m_element.get(), "Pushing %" GST_PTR_FORMAT, buffer);
-    auto result = gst_pad_push(m_srcPad.get(), buffer);
+    GST_TRACE_OBJECT(m_element.get(), "Pushing %" GST_PTR_FORMAT, buffer.get());
+    auto result = gst_pad_push(m_srcPad.get(), buffer.leakRef());
     GST_TRACE_OBJECT(m_element.get(), "Buffer push result: %s", gst_flow_get_name(result));
     return result;
 }
 
-bool GStreamerElementHarness::pushEvent(GstEvent* event)
+bool GStreamerElementHarness::pushEvent(GRefPtr<GstEvent>&& event)
 {
-    GST_TRACE_OBJECT(m_element.get(), "Pushing %" GST_PTR_FORMAT, event);
-    auto result = gst_pad_push_event(m_srcPad.get(), event);
+    GST_TRACE_OBJECT(m_element.get(), "Pushing %" GST_PTR_FORMAT, event.get());
+    auto result = gst_pad_push_event(m_srcPad.get(), event.leakRef());
     GST_TRACE_OBJECT(m_element.get(), "Result: %s", boolForPrinting(result));
     return result;
 }
@@ -408,8 +409,8 @@ void GStreamerElementHarness::flush()
 
     processOutputBuffers();
 
-    pushEvent(gst_event_new_flush_start());
-    pushEvent(gst_event_new_flush_stop(FALSE));
+    pushEvent(adoptGRef(gst_event_new_flush_start()));
+    pushEvent(adoptGRef(gst_event_new_flush_stop(FALSE)));
 
     for (auto& stream : m_outputStreams) {
         bool flushReceived = false;
