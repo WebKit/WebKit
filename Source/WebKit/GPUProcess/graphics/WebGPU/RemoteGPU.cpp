@@ -38,6 +38,7 @@
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPU.h>
 #include <pal/graphics/WebGPU/WebGPUAdapter.h>
+#include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
 #include <pal/graphics/WebGPU/WebGPUPresentationContextDescriptor.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
