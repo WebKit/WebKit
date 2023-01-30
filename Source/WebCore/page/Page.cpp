@@ -4169,6 +4169,11 @@ String Page::sanitizeLookalikeCharacters(const String& urlString, LookalikeChara
     return urlString;
 }
 
+URL Page::allowedLookalikeCharacters(const URL& url) const
+{
+    return chrome().client().allowedLookalikeCharacters(url);
+}
+
 void Page::willBeginScrolling()
 {
 #if USE(APPKIT)

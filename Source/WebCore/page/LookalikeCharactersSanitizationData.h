@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,24 +25,47 @@
 
 #pragma once
 
-#import <wtf/CompletionHandler.h>
-#import <wtf/Vector.h>
-#import <wtf/text/WTFString.h>
+#include "RegistrableDomain.h"
+#include <optional>
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-#import <WebCore/LookalikeCharactersSanitizationData.h>
-#endif
+namespace WebCore {
 
-OBJC_CLASS NSURLSession;
+struct LookalikeCharactersSanitizationData {
+    RegistrableDomain domain;
+    String lookalikeCharacters;
 
-namespace WebKit {
+    LookalikeCharactersSanitizationData(RegistrableDomain&& domain, const String& lookalikeCharacters)
+        : domain(domain)
+        , lookalikeCharacters(lookalikeCharacters)
+    {
+    }
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    LookalikeCharactersSanitizationData(const String& domain, const String& lookalikeCharacters)
+        : domain(RegistrableDomain { URL { domain } } )
+        , lookalikeCharacters(lookalikeCharacters)
+    {
+    }
 
-void configureForNetworkConnectionIntegrity(NSURLSession *);
-void requestLookalikeCharacterStrings(CompletionHandler<void(const Vector<String>&)>&&);
-void requestAllowedLookalikeCharacterStrings(CompletionHandler<void(const Vector<WebCore::LookalikeCharactersSanitizationData>&)>&&);
+    template<class Encoder> void encode(Encoder& encoder) const
+    {
+        encoder << domain;
+        encoder << lookalikeCharacters;
+    }
 
-#endif
+    template<class Decoder> static std::optional<LookalikeCharactersSanitizationData> decode(Decoder& decoder)
+    {
+        std::optional<RegistrableDomain> domain;
+        decoder >> domain;
+        if (!domain)
+            return std::nullopt;
 
-} // namespace WebKit
+        std::optional<String> lookalikeCharacters;
+        decoder >> lookalikeCharacters;
+        if (!lookalikeCharacters)
+            return std::nullopt;
+
+        return { { WTFMove(*domain), WTFMove(*lookalikeCharacters) } };
+    }
+};
+
+}

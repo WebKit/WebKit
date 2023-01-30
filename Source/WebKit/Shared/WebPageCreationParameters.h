@@ -58,6 +58,10 @@
 #include <WebCore/ApplicationManifest.h>
 #endif
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+#include <WebCore/LookalikeCharactersSanitizationData.h>
+#endif
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 #include "WebExtensionControllerParameters.h"
 #endif
@@ -284,6 +288,7 @@ struct WebPageCreationParameters {
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     Vector<String> lookalikeCharacterStrings;
+    Vector<WebCore::LookalikeCharactersSanitizationData> allowedLookalikeCharacterStrings;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)

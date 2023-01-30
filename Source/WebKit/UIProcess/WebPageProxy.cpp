@@ -1177,6 +1177,7 @@ void WebPageProxy::initializeWebPage()
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     m_needsInitialLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
+    m_shouldUpdateAllowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings().isEmpty();
 #endif
 }
 
@@ -5238,6 +5239,9 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if USE(APPKIT)
         closeSharedPreviewPanelIfNecessary();
 #endif
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+        updateAllowedLookalikeCharacterStringsIfNeeded();
+#endif
     }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR) && HAVE(GROUP_ACTIVITIES)
@@ -6225,6 +6229,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 #endif
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
         newPage->m_needsInitialLookalikeCharacterStrings = cachedLookalikeStrings().isEmpty();
+        newPage->m_shouldUpdateAllowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings().isEmpty();
 #endif
     };
 
@@ -8827,6 +8832,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     if (preferences().sanitizeLookalikeCharactersInLinksEnabled())
         parameters.lookalikeCharacterStrings = cachedLookalikeStrings();
+
+    parameters.allowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings();
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -11857,6 +11864,35 @@ Vector<String>& WebPageProxy::cachedLookalikeStrings()
         return Vector<String> { };
     }();
     return cachedStrings.get();
+}
+
+Vector<WebCore::LookalikeCharactersSanitizationData>& WebPageProxy::cachedAllowedLookalikeStrings()
+{
+    static NeverDestroyed cachedAllowedStrings = [] {
+        return Vector<WebCore::LookalikeCharactersSanitizationData> { };
+    }();
+    return cachedAllowedStrings.get();
+}
+
+void WebPageProxy::updateAllowedLookalikeCharacterStringsIfNeeded()
+{
+    if (!m_shouldUpdateAllowedLookalikeCharacterStrings)
+        return;
+
+    m_shouldUpdateAllowedLookalikeCharacterStrings = false;
+
+    if (!cachedAllowedLookalikeStrings().isEmpty())
+        return;
+
+    requestAllowedLookalikeCharacterStrings([weakPage = WeakPtr { *this }](auto&& data) {
+        if (cachedAllowedLookalikeStrings().isEmpty()) {
+            cachedAllowedLookalikeStrings() = WTFMove(data);
+            cachedAllowedLookalikeStrings().shrinkToFit();
+        }
+        
+        if (RefPtr page = weakPage.get(); page && page->hasRunningProcess())
+            page->send(Messages::WebPage::SetAllowedLookalikeCharacterStrings(cachedAllowedLookalikeStrings()));
+    });
 }
 
 #endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)

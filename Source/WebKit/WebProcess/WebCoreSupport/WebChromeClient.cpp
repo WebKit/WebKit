@@ -1537,6 +1537,11 @@ URL WebChromeClient::sanitizeLookalikeCharacters(const URL& url, LookalikeCharac
     return m_page.sanitizeLookalikeCharacters(url, trigger);
 }
 
+URL WebChromeClient::allowedLookalikeCharacters(const URL& url) const
+{
+    return m_page.allowedLookalikeCharacters(url);
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 
 void WebChromeClient::textAutosizingUsesIdempotentModeChanged()

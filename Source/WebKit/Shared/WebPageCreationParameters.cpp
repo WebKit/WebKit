@@ -203,6 +203,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     encoder << lookalikeCharacterStrings;
+    encoder << allowedLookalikeCharacterStrings;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -649,6 +650,12 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!lookalikeCharacterStrings)
         return std::nullopt;
     parameters.lookalikeCharacterStrings = WTFMove(*lookalikeCharacterStrings);
+
+    std::optional<Vector<WebCore::LookalikeCharactersSanitizationData>> allowedLookalikeCharacterStrings;
+    decoder >> allowedLookalikeCharacterStrings;
+    if (!allowedLookalikeCharacterStrings)
+        return std::nullopt;
+    parameters.allowedLookalikeCharacterStrings = WTFMove(*allowedLookalikeCharacterStrings);
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)

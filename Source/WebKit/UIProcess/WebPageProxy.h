@@ -2738,6 +2738,8 @@ private:
     void sendCachedLookalikeCharacterStrings();
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     static Vector<String>& cachedLookalikeStrings();
+    static Vector<WebCore::LookalikeCharactersSanitizationData>& cachedAllowedLookalikeStrings();
+    void updateAllowedLookalikeCharacterStringsIfNeeded();
 #endif
 
 #if USE(RUNNINGBOARD)
@@ -3358,6 +3360,7 @@ private:
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     bool m_needsInitialLookalikeCharacterStrings { true };
+    bool m_shouldUpdateAllowedLookalikeCharacterStrings { false };
 #endif
 
     std::optional<PrivateClickMeasurementAndMetadata> m_privateClickMeasurement;

@@ -547,6 +547,7 @@ public:
 #endif
 
     virtual URL sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger) const { return url; }
+    virtual URL allowedLookalikeCharacters(const URL& url) const { return url; }
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
 
