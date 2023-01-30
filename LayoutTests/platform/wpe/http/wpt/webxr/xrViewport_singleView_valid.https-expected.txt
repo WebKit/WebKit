@@ -1,4 +1,0 @@
-
-PASS XRViewport attributes are valid even when there is only one view - webgl
-FAIL XRViewport attributes are valid even when there is only one view - webgl2 assert_implements: webgl2 not supported. undefined
-

@@ -3,9 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#000066]
-      RenderBlock (anonymous) at (0,0) size 784x0
-        RenderInline {BASEFONT} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,0) size 613x95
         RenderTableSection {TBODY} at (0,0) size 613x95
           RenderTableRow {TR} at (0,0) size 613x70
@@ -21,8 +18,6 @@ layer at (0,0) size 800x600
                   layer at (0,0) size 468x60
                     RenderBlock {HTML} at (0,0) size 468x60
                       RenderBody {BODY} at (0,0) size 468x60
-                        RenderInline {BASE} at (0,0) size 0x17
-                        RenderText {#text} at (0,0) size 0x0
                         RenderInline {A} at (0,0) size 468x17 [color=#0000EE]
                           RenderText {#text} at (0,0) size 0x0
                           RenderImage {IMG} at (0,0) size 468x60

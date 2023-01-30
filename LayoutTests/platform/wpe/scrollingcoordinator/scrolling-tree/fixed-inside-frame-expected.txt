@@ -79,9 +79,14 @@
                               (children 1
                                 (GraphicsLayer
                                   (position 10.00 130.00)
-                                  (bounds 455.00 100.00)
-                                  (contentsOpaque 1)
-                                  (drawsContent 1)
+                                  (preserves3D 1)
+                                  (children 1
+                                    (GraphicsLayer
+                                      (bounds 455.00 100.00)
+                                      (contentsOpaque 1)
+                                      (drawsContent 1)
+                                    )
+                                  )
                                 )
                               )
                             )

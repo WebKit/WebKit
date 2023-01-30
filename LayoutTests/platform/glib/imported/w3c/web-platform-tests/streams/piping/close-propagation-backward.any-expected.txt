@@ -1,3 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
 
 PASS Closing must be propagated backward: starts closed; preventCancel omitted; fulfilled cancel promise
 PASS Closing must be propagated backward: starts closed; preventCancel omitted; rejected cancel promise

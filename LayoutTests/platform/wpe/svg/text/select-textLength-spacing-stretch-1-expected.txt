@@ -1,29 +1,29 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,4) size 772x88
+  RenderSVGRoot {svg} at (0,4) size 800x88
     RenderSVGContainer {g} at (0,4) size 297x88
       RenderSVGPath {svg:line} at (47,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.95] [x2=10.00] [y2=12.17]
-      RenderSVGPath {svg:line} at (230,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=46.52] [y1=0.95] [x2=46.52] [y2=12.17]
-      RenderSVGRect {svg:rect} at (50,4) size 183x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.95] [width=36.52] [height=11.17]
+      RenderSVGPath {svg:line} at (236,4) size 6x57 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=47.73] [y1=0.95] [x2=47.73] [y2=12.17]
+      RenderSVGRect {svg:rect} at (50,4) size 189x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.95] [width=37.73] [height=11.17]
       RenderSVGText {svg:text} at (0,27) size 119x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 119x9
           chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 39 width 118.40: "Expected 'Text' to be selected, got: ''"
-    RenderSVGText {text} at (10,0) size 145x13 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 145x12
+    RenderSVGText {text} at (10,0) size 150x13 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 150x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.20: "T"
-        chunk 1 text run 2 at (21.84,10.00) startOffset 1 endOffset 2 width 5.60: "e"
-        chunk 1 text run 3 at (33.08,10.00) startOffset 2 endOffset 3 width 5.00: "x"
-        chunk 1 text run 4 at (43.72,10.00) startOffset 3 endOffset 4 width 2.80: "t"
-        chunk 1 text run 5 at (52.16,10.00) startOffset 4 endOffset 5 width 2.80: " "
-        chunk 1 text run 6 at (60.60,10.00) startOffset 5 endOffset 6 width 2.80: "t"
-        chunk 1 text run 7 at (69.04,10.00) startOffset 6 endOffset 7 width 5.60: "o"
-        chunk 1 text run 8 at (80.28,10.00) startOffset 7 endOffset 8 width 2.80: " "
-        chunk 1 text run 9 at (88.72,10.00) startOffset 8 endOffset 9 width 6.60: "S"
-        chunk 1 text run 10 at (100.96,10.00) startOffset 9 endOffset 10 width 2.80: "t"
-        chunk 1 text run 11 at (109.40,10.00) startOffset 10 endOffset 11 width 3.40: "r"
-        chunk 1 text run 12 at (118.44,10.00) startOffset 11 endOffset 12 width 5.60: "e"
-        chunk 1 text run 13 at (129.68,10.00) startOffset 12 endOffset 13 width 2.80: "t"
-        chunk 1 text run 14 at (138.12,10.00) startOffset 13 endOffset 14 width 5.00: "c"
-        chunk 1 text run 15 at (148.76,10.00) startOffset 14 endOffset 15 width 5.60: "h"
+        chunk 1 text run 2 at (22.24,10.00) startOffset 1 endOffset 2 width 5.60: "e"
+        chunk 1 text run 3 at (33.89,10.00) startOffset 2 endOffset 3 width 5.00: "x"
+        chunk 1 text run 4 at (44.93,10.00) startOffset 3 endOffset 4 width 2.80: "t"
+        chunk 1 text run 5 at (53.77,10.00) startOffset 4 endOffset 5 width 2.80: " "
+        chunk 1 text run 6 at (62.61,10.00) startOffset 5 endOffset 6 width 2.80: "t"
+        chunk 1 text run 7 at (71.46,10.00) startOffset 6 endOffset 7 width 5.60: "o"
+        chunk 1 text run 8 at (83.10,10.00) startOffset 7 endOffset 8 width 2.80: " "
+        chunk 1 text run 9 at (91.94,10.00) startOffset 8 endOffset 9 width 6.60: "S"
+        chunk 1 text run 10 at (104.59,10.00) startOffset 9 endOffset 10 width 2.80: "t"
+        chunk 1 text run 11 at (113.43,10.00) startOffset 10 endOffset 11 width 3.40: "r"
+        chunk 1 text run 12 at (122.87,10.00) startOffset 11 endOffset 12 width 5.60: "e"
+        chunk 1 text run 13 at (134.51,10.00) startOffset 12 endOffset 13 width 2.80: "t"
+        chunk 1 text run 14 at (143.36,10.00) startOffset 13 endOffset 14 width 5.00: "c"
+        chunk 1 text run 15 at (154.40,10.00) startOffset 14 endOffset 15 width 5.60: "h"
 caret: position 0 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

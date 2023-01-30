@@ -1,5 +1,0 @@
-
-
-PASS Reject multiple calls to XRSession.end() - webgl
-FAIL Reject multiple calls to XRSession.end() - webgl2 assert_implements: webgl2 not supported. undefined
-

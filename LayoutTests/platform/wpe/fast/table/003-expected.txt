@@ -36,28 +36,22 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,74) size 189x46
             RenderTableCell {TD} at (2,74) size 185x46 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,278) size 106x78
-        RenderTableSection {TBODY} at (0,0) size 106x78
-          RenderTableRow {TR} at (0,2) size 106x74
-            RenderTableCell {TD} at (2,2) size 102x74 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 100x71
-                text run at (1,1) width 87: "I should wrap"
-                text run at (1,19) width 81: "and not have"
-                text run at (1,37) width 56: "nowrap. "
-                text run at (57,37) width 44: "I really"
-                text run at (1,55) width 46: "should."
-      RenderTable {TABLE} at (0,356) size 106x78
-        RenderTableSection {TBODY} at (0,0) size 106x78
-          RenderTableRow {TR} at (0,2) size 106x74
-            RenderTableCell {TD} at (2,2) size 102x74 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 100x72
-                RenderText {#text} at (0,0) size 100x71
-                  text run at (0,0) width 87: "I should wrap"
-                  text run at (0,18) width 81: "and not have"
-                  text run at (0,36) width 56: "nowrap. "
-                  text run at (56,36) width 44: "I really"
-                  text run at (0,54) width 46: "should."
-      RenderTable {TABLE} at (0,434) size 369x24
+      RenderTable {TABLE} at (0,278) size 332x24
+        RenderTableSection {TBODY} at (0,0) size 332x24
+          RenderTableRow {TR} at (0,2) size 332x20
+            RenderTableCell {TD} at (2,2) size 328x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 326x17
+                text run at (1,1) width 232: "I should wrap and not have nowrap. "
+                text run at (233,1) width 94: "I really should."
+      RenderTable {TABLE} at (0,302) size 332x24
+        RenderTableSection {TBODY} at (0,0) size 332x24
+          RenderTableRow {TR} at (0,2) size 332x20
+            RenderTableCell {TD} at (2,2) size 328x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 326x18
+                RenderText {#text} at (0,0) size 326x17
+                  text run at (0,0) width 232: "I should wrap and not have nowrap. "
+                  text run at (232,0) width 94: "I really should."
+      RenderTable {TABLE} at (0,326) size 369x24
         RenderTableSection {TBODY} at (0,0) size 369x24
           RenderTableRow {TR} at (0,2) size 369x20
             RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]
@@ -65,7 +59,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 145: "I should have nowrap. "
                 text run at (146,1) width 98: "I really should. "
                 text run at (244,1) width 120: "Definitely. Should."
-      RenderTable {TABLE} at (0,458) size 369x24
+      RenderTable {TABLE} at (0,350) size 369x24
         RenderTableSection {TBODY} at (0,0) size 369x24
           RenderTableRow {TR} at (0,2) size 369x20
             RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]

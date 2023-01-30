@@ -147,23 +147,79 @@ layer at (11,95) size 167x18 scrollWidth 331
 layer at (11,119) size 166x18 scrollX 177 scrollWidth 343
   RenderBlock {DIV} at (3,3) size 166x18 [color=#A9A9A9]
     RenderText {#text} at (-177,0) size 343x17
-      text run at (-177,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-177,0) width 42: "Lorem"
+      text run at (-135,0) width 4: " "
+      text run at (-131,0) width 38: "ipsum"
+      text run at (-93,0) width 4: " "
+      text run at (-89,0) width 33: "dolor"
+      text run at (-56,0) width 4: " "
+      text run at (-52,0) width 14: "sit"
+      text run at (-38,0) width 4: " "
+      text run at (-34,0) width 34: "amet,"
+      text run at (0,0) width 4: " "
+      text run at (4,0) width 71: "consectetur"
+      text run at (75,0) width 4: " "
+      text run at (79,0) width 64: "adipiscing"
+      text run at (143,0) width 4: " "
+      text run at (147,0) width 19: "elit"
 layer at (11,119) size 166x18
   RenderBlock {DIV} at (3,3) size 166x18
 layer at (203,119) size 150x18 scrollX 193 scrollWidth 343
   RenderBlock {DIV} at (19,3) size 150x18 [color=#A9A9A9]
     RenderText {#text} at (-193,0) size 343x17
-      text run at (-193,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-193,0) width 42: "Lorem"
+      text run at (-151,0) width 4: " "
+      text run at (-147,0) width 38: "ipsum"
+      text run at (-109,0) width 4: " "
+      text run at (-105,0) width 33: "dolor"
+      text run at (-72,0) width 4: " "
+      text run at (-68,0) width 14: "sit"
+      text run at (-54,0) width 4: " "
+      text run at (-50,0) width 34: "amet,"
+      text run at (-16,0) width 4: " "
+      text run at (-12,0) width 71: "consectetur"
+      text run at (59,0) width 4: " "
+      text run at (63,0) width 64: "adipiscing"
+      text run at (127,0) width 4: " "
+      text run at (131,0) width 19: "elit"
 layer at (203,119) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
 layer at (363,119) size 166x18 scrollX 178 scrollWidth 344
   RenderBlock {DIV} at (3,3) size 166x18
     RenderText {#text} at (-177,0) size 343x17
-      text run at (-177,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-177,0) width 42: "Lorem"
+      text run at (-135,0) width 4: " "
+      text run at (-131,0) width 38: "ipsum"
+      text run at (-93,0) width 4: " "
+      text run at (-89,0) width 33: "dolor"
+      text run at (-56,0) width 4: " "
+      text run at (-52,0) width 14: "sit"
+      text run at (-38,0) width 4: " "
+      text run at (-34,0) width 34: "amet,"
+      text run at (0,0) width 4: " "
+      text run at (4,0) width 71: "consectetur"
+      text run at (75,0) width 4: " "
+      text run at (79,0) width 64: "adipiscing"
+      text run at (143,0) width 4: " "
+      text run at (147,0) width 19: "elit"
 layer at (555,119) size 150x18 scrollX 194 scrollWidth 344
   RenderBlock {DIV} at (0,0) size 150x18
     RenderText {#text} at (-193,0) size 343x17
-      text run at (-193,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-193,0) width 42: "Lorem"
+      text run at (-151,0) width 4: " "
+      text run at (-147,0) width 38: "ipsum"
+      text run at (-109,0) width 4: " "
+      text run at (-105,0) width 33: "dolor"
+      text run at (-72,0) width 4: " "
+      text run at (-68,0) width 14: "sit"
+      text run at (-54,0) width 4: " "
+      text run at (-50,0) width 34: "amet,"
+      text run at (-16,0) width 4: " "
+      text run at (-12,0) width 71: "consectetur"
+      text run at (59,0) width 4: " "
+      text run at (63,0) width 64: "adipiscing"
+      text run at (127,0) width 4: " "
+      text run at (131,0) width 19: "elit"
 layer at (11,143) size 166x18 scrollX 165 scrollWidth 331
   RenderBlock {DIV} at (0,0) size 166x18
     RenderText {#text} at (-164,0) size 330x17
@@ -195,23 +251,79 @@ layer at (11,225) size 167x18 scrollWidth 331
 layer at (11,249) size 166x18 scrollX 177 scrollWidth 343
   RenderBlock {DIV} at (3,3) size 166x18 [color=#A9A9A9]
     RenderText {#text} at (-177,0) size 343x17
-      text run at (-177,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-177,0) width 42: "Lorem"
+      text run at (-135,0) width 4: " "
+      text run at (-131,0) width 38: "ipsum"
+      text run at (-93,0) width 4: " "
+      text run at (-89,0) width 33: "dolor"
+      text run at (-56,0) width 4: " "
+      text run at (-52,0) width 14: "sit"
+      text run at (-38,0) width 4: " "
+      text run at (-34,0) width 34: "amet,"
+      text run at (0,0) width 4: " "
+      text run at (4,0) width 71: "consectetur"
+      text run at (75,0) width 4: " "
+      text run at (79,0) width 64: "adipiscing"
+      text run at (143,0) width 4: " "
+      text run at (147,0) width 19: "elit"
 layer at (11,249) size 166x18
   RenderBlock {DIV} at (3,3) size 166x18
 layer at (203,249) size 150x18 scrollX 193 scrollWidth 343
   RenderBlock {DIV} at (19,3) size 150x18 [color=#A9A9A9]
     RenderText {#text} at (-193,0) size 343x17
-      text run at (-193,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-193,0) width 42: "Lorem"
+      text run at (-151,0) width 4: " "
+      text run at (-147,0) width 38: "ipsum"
+      text run at (-109,0) width 4: " "
+      text run at (-105,0) width 33: "dolor"
+      text run at (-72,0) width 4: " "
+      text run at (-68,0) width 14: "sit"
+      text run at (-54,0) width 4: " "
+      text run at (-50,0) width 34: "amet,"
+      text run at (-16,0) width 4: " "
+      text run at (-12,0) width 71: "consectetur"
+      text run at (59,0) width 4: " "
+      text run at (63,0) width 64: "adipiscing"
+      text run at (127,0) width 4: " "
+      text run at (131,0) width 19: "elit"
 layer at (203,249) size 150x18
   RenderBlock {DIV} at (0,0) size 150x18
 layer at (363,249) size 166x18 scrollX 178 scrollWidth 344
   RenderBlock {DIV} at (3,3) size 166x18
     RenderText {#text} at (-177,0) size 343x17
-      text run at (-177,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-177,0) width 42: "Lorem"
+      text run at (-135,0) width 4: " "
+      text run at (-131,0) width 38: "ipsum"
+      text run at (-93,0) width 4: " "
+      text run at (-89,0) width 33: "dolor"
+      text run at (-56,0) width 4: " "
+      text run at (-52,0) width 14: "sit"
+      text run at (-38,0) width 4: " "
+      text run at (-34,0) width 34: "amet,"
+      text run at (0,0) width 4: " "
+      text run at (4,0) width 71: "consectetur"
+      text run at (75,0) width 4: " "
+      text run at (79,0) width 64: "adipiscing"
+      text run at (143,0) width 4: " "
+      text run at (147,0) width 19: "elit"
 layer at (555,249) size 150x18 scrollX 194 scrollWidth 344
   RenderBlock {DIV} at (0,0) size 150x18
     RenderText {#text} at (-193,0) size 343x17
-      text run at (-193,0) width 343: "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+      text run at (-193,0) width 42: "Lorem"
+      text run at (-151,0) width 4: " "
+      text run at (-147,0) width 38: "ipsum"
+      text run at (-109,0) width 4: " "
+      text run at (-105,0) width 33: "dolor"
+      text run at (-72,0) width 4: " "
+      text run at (-68,0) width 14: "sit"
+      text run at (-54,0) width 4: " "
+      text run at (-50,0) width 34: "amet,"
+      text run at (-16,0) width 4: " "
+      text run at (-12,0) width 71: "consectetur"
+      text run at (59,0) width 4: " "
+      text run at (63,0) width 64: "adipiscing"
+      text run at (127,0) width 4: " "
+      text run at (131,0) width 19: "elit"
 layer at (11,273) size 166x18 scrollX 165 scrollWidth 331
   RenderBlock {DIV} at (0,0) size 166x18
     RenderText {#text} at (-164,0) size 330x17

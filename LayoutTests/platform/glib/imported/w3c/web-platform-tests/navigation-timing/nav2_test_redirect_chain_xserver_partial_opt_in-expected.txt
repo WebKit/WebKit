@@ -1,9 +1,9 @@
-CONSOLE MESSAGE: Error: assert_equals: Expected redirectStart to be 0. expected 0 but got 4
+CONSOLE MESSAGE: Error: assert_equals: Expected redirectEnd to be 0. expected 0 but got 10
 Description
 
 This test validates the values of the window.performance.getEntriesByType("navigation")[0].redirectCount and the window.performance.getEntriesByType("navigation")[0].redirectStart/End times for a cross-origin server side redirect navigation when the redirect chooses to opt-in.
 
 
 
-FAIL Navigation Timing 2 WPT Error: assert_equals: Expected redirectStart to be 0. expected 0 but got 4
+FAIL Navigation Timing 2 WPT Error: assert_equals: Expected redirectEnd to be 0. expected 0 but got 10
 

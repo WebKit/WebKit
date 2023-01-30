@@ -1,8 +1,0 @@
-Header 1Footer 1
-Header 2Footer 2
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Keyboard scrolling with vertical snap-area overflow Test timed out
-NOTRUN Mouse-wheel scrolling with vertical snap-area overflow
-
