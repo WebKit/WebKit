@@ -38,7 +38,7 @@ namespace LayoutIntegration {
 
 enum class AvoidanceReason : uint64_t {
     FlowIsInsideANonMultiColumnThread            = 1LLU  << 0,
-    FlowHasInitialLetter                         = 1LLU  << 1,
+    // Unused                                    = 1LLU  << 1,
     // Unused                                    = 1LLU  << 2,
     ContentIsRuby                                = 1LLU  << 3,
     FlowIsPaginated                              = 1LLU  << 4,
