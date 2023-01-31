@@ -35,6 +35,11 @@ enum class FilterMode : uint8_t {
     Linear,
 };
 
+enum class MipmapFilterMode : uint8_t {
+    Nearest,
+    Linear,
+};
+
 } // namespace PAL::WebGPU
 
 namespace WTF {
@@ -44,6 +49,14 @@ template<> struct EnumTraits<PAL::WebGPU::FilterMode> {
         PAL::WebGPU::FilterMode,
         PAL::WebGPU::FilterMode::Nearest,
         PAL::WebGPU::FilterMode::Linear
+    >;
+};
+
+template<> struct EnumTraits<PAL::WebGPU::MipmapFilterMode> {
+    using values = EnumValues<
+        PAL::WebGPU::MipmapFilterMode,
+        PAL::WebGPU::MipmapFilterMode::Nearest,
+        PAL::WebGPU::MipmapFilterMode::Linear
     >;
 };
 

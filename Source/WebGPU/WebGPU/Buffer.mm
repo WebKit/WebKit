@@ -268,7 +268,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 
     m_mapMode = mode;
 
-    m_device->getQueue().onSubmittedWorkDone(0, [protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
+    m_device->getQueue().onSubmittedWorkDone([protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         if (protectedThis->m_state == State::MappingPending) {
             protectedThis->m_state = State::Mapped;
 
@@ -388,4 +388,10 @@ void wgpuBufferUnmap(WGPUBuffer buffer)
 void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
 {
     WebGPU::fromAPI(buffer).setLabel(WebGPU::fromAPI(label));
+}
+
+WGPUBufferUsage wgpuBufferGetUsage(WGPUBuffer buffer)
+{
+    // FIXME: this shouldn't need a cast - https://github.com/webgpu-native/webgpu-headers/issues/172
+    return static_cast<WGPUBufferUsage>(WebGPU::fromAPI(buffer).usage());
 }

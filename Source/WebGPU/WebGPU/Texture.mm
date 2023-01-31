@@ -37,8 +37,6 @@ namespace WebGPU {
 static std::optional<WGPUFeatureName> featureRequirementForFormat(WGPUTextureFormat format)
 {
     switch (format) {
-    case WGPUTextureFormat_Depth24UnormStencil8:
-        return WGPUFeatureName_Depth24UnormStencil8;
     case WGPUTextureFormat_Depth32FloatStencil8:
         return WGPUFeatureName_Depth32FloatStencil8;
     case WGPUTextureFormat_BC1RGBAUnorm:
@@ -242,7 +240,6 @@ static bool isCompressedFormat(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return false;
@@ -302,8 +299,6 @@ static std::optional<WGPUTextureFormat> depthSpecificFormat(WGPUTextureFormat te
         return WGPUTextureFormat_Depth24Plus;
     case WGPUTextureFormat_Depth24PlusStencil8:
         return WGPUTextureFormat_Depth24Plus;
-    case WGPUTextureFormat_Depth24UnormStencil8:
-        return WGPUTextureFormat_Undefined; // Return a non-nullopt value for the benefit of containsDepthAspect().
     case WGPUTextureFormat_Depth32Float:
         return WGPUTextureFormat_Depth32Float;
     case WGPUTextureFormat_Depth32FloatStencil8:
@@ -416,7 +411,6 @@ static std::optional<WGPUTextureFormat> stencilSpecificFormat(WGPUTextureFormat 
     case WGPUTextureFormat_Depth24Plus:
         return std::nullopt;
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
         return WGPUTextureFormat_Stencil8;
     case WGPUTextureFormat_Depth32Float:
         return std::nullopt;
@@ -602,7 +596,6 @@ uint32_t Texture::texelBlockWidth(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return 1;
@@ -722,7 +715,6 @@ uint32_t Texture::texelBlockHeight(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return 1;
@@ -772,7 +764,6 @@ static bool isRenderableFormat(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return true;
@@ -877,7 +868,6 @@ static bool supportsMultisampling(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return true;
@@ -1021,7 +1011,6 @@ static bool hasStorageBindingCapability(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
     case WGPUTextureFormat_BC1RGBAUnorm:
@@ -1131,7 +1120,6 @@ WGPUTextureFormat Texture::removeSRGBSuffix(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return format;
@@ -1563,8 +1551,6 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
         return MTLPixelFormatASTC_12x12_sRGB;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    case WGPUTextureFormat_Depth24UnormStencil8:
-        return MTLPixelFormatDepth24Unorm_Stencil8;
     case WGPUTextureFormat_BC1RGBAUnorm:
         return MTLPixelFormatBC1_RGBA;
     case WGPUTextureFormat_BC1RGBAUnormSrgb:
@@ -1594,7 +1580,6 @@ MTLPixelFormat Texture::pixelFormat(WGPUTextureFormat textureFormat)
     case WGPUTextureFormat_BC7RGBAUnormSrgb:
         return MTLPixelFormatBC7_RGBAUnorm_sRGB;
 #else
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_BC1RGBAUnorm:
     case WGPUTextureFormat_BC1RGBAUnormSrgb:
     case WGPUTextureFormat_BC2RGBAUnorm:
@@ -1673,9 +1658,6 @@ uint32_t Texture::texelBlockSize(WGPUTextureFormat format) // Bytes
         ASSERT(pixelFormat(format) == MTLPixelFormatDepth32Float);
         return 4;
     case WGPUTextureFormat_Depth24PlusStencil8:
-        ASSERT_NOT_REACHED();
-        return 0;
-    case WGPUTextureFormat_Depth24UnormStencil8:
         ASSERT_NOT_REACHED();
         return 0;
     case WGPUTextureFormat_Depth32Float:
@@ -1820,7 +1802,6 @@ std::optional<MTLPixelFormat> Texture::depthOnlyAspectMetalFormat(WGPUTextureFor
     case WGPUTextureFormat_Depth16Unorm:
     case WGPUTextureFormat_Depth24Plus:
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         // This is a bit surprising, but it should be correct.
@@ -1936,13 +1917,6 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     case WGPUTextureFormat_Depth24PlusStencil8:
         ASSERT(pixelFormat(textureFormat) == MTLPixelFormatDepth32Float_Stencil8);
         return MTLPixelFormatX32_Stencil8;
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    case WGPUTextureFormat_Depth24UnormStencil8:
-        return MTLPixelFormatX24_Stencil8;
-#else
-    case WGPUTextureFormat_Depth24UnormStencil8:
-        return std::nullopt;
-#endif
     case WGPUTextureFormat_Depth32Float:
         return std::nullopt;
     case WGPUTextureFormat_Depth32FloatStencil8:
@@ -2615,7 +2589,6 @@ bool Texture::isValidImageCopySource(WGPUTextureFormat format, WGPUTextureAspect
     case WGPUTextureFormat_Depth24Plus:
         return false;
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
         return aspect == WGPUTextureAspect_StencilOnly;
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
@@ -2728,7 +2701,6 @@ bool Texture::isValidImageCopyDestination(WGPUTextureFormat format, WGPUTextureA
     case WGPUTextureFormat_Depth24Plus:
         return false;
     case WGPUTextureFormat_Depth24PlusStencil8:
-    case WGPUTextureFormat_Depth24UnormStencil8:
         return aspect == WGPUTextureAspect_StencilOnly;
     case WGPUTextureFormat_Depth32Float:
         return false;
@@ -2906,4 +2878,45 @@ void wgpuTextureDestroy(WGPUTexture texture)
 void wgpuTextureSetLabel(WGPUTexture texture, const char* label)
 {
     WebGPU::fromAPI(texture).setLabel(WebGPU::fromAPI(label));
+}
+
+uint32_t wgpuTextureGetDepthOrArrayLayers(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).depthOrArrayLayers();
+}
+
+WGPUTextureDimension wgpuTextureGetDimension(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).dimension();
+}
+
+WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).format();
+}
+
+uint32_t wgpuTextureGetHeight(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).height();
+}
+
+uint32_t wgpuTextureGetWidth(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).width();
+}
+
+uint32_t wgpuTextureGetMipLevelCount(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).mipLevelCount();
+}
+
+uint32_t wgpuTextureGetSampleCount(WGPUTexture texture)
+{
+    return WebGPU::fromAPI(texture).sampleCount();
+}
+
+WGPUTextureUsage wgpuTextureGetUsage(WGPUTexture texture)
+{
+    // FIXME: this shouldn't need a cast - https://github.com/webgpu-native/webgpu-headers/issues/172
+    return static_cast<WGPUTextureUsage>(WebGPU::fromAPI(texture).usage());
 }

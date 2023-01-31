@@ -97,6 +97,8 @@ auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(
         format,
         1,
         1,
+        0,
+        nullptr,
     };
     auto texture = Texture::create(backingTexture, textureDescriptor, { format }, device);
 
@@ -111,6 +113,7 @@ auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(
         1,
         WGPUTextureAspect_All,
     };
+
     auto textureView = TextureView::create(backingTexture, textureViewDescriptor, { { width, height, 1 } }, device);
     return { currentDrawable, texture.ptr(), textureView.ptr() };
 }

@@ -46,9 +46,10 @@ static MTLLoadAction loadAction(WGPULoadOp loadOp)
         return MTLLoadActionLoad;
     case WGPULoadOp_Clear:
         return MTLLoadActionClear;
+    case WGPULoadOp_Undefined:
     case WGPULoadOp_Force32:
         ASSERT_NOT_REACHED();
-        return MTLLoadActionClear;
+        return MTLLoadActionDontCare;
     }
 }
 
@@ -59,6 +60,7 @@ static MTLStoreAction storeAction(WGPUStoreOp storeOp)
         return MTLStoreActionStore;
     case WGPUStoreOp_Discard:
         return MTLStoreActionDontCare;
+    case WGPUStoreOp_Undefined:
     case WGPUStoreOp_Force32:
         ASSERT_NOT_REACHED();
         return MTLStoreActionDontCare;
@@ -147,10 +149,10 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         const auto& attachment = descriptor.colorAttachments[i];
         const auto& mtlAttachment = mtlDescriptor.colorAttachments[i];
 
-        mtlAttachment.clearColor = MTLClearColorMake(attachment.clearColor.r,
-            attachment.clearColor.g,
-            attachment.clearColor.b,
-            attachment.clearColor.a);
+        mtlAttachment.clearColor = MTLClearColorMake(attachment.clearValue.r,
+            attachment.clearValue.g,
+            attachment.clearValue.b,
+            attachment.clearValue.a);
 
         mtlAttachment.texture = fromAPI(attachment.view).texture();
         mtlAttachment.level = 0;
@@ -172,7 +174,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.depthAttachment;
         depthReadOnly = attachment->depthReadOnly;
-        mtlAttachment.clearDepth = attachment->clearDepth;
+        mtlAttachment.clearDepth = attachment->depthClearValue;
         mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
@@ -183,7 +185,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         stencilReadOnly = attachment->stencilReadOnly;
         // FIXME: assign the correct stencil texture
         // mtlAttachment.texture = fromAPI(attachment->view).texture();
-        mtlAttachment.clearStencil = attachment->clearStencil;
+        mtlAttachment.clearStencil = attachment->stencilClearValue;
         mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);
     }

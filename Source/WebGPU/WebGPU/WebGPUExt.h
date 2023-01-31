@@ -46,7 +46,6 @@ typedef void (^WGPUWorkItem)(void);
 typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
 
 typedef enum WGPUSTypeExtended {
-    WGPUSTypeExtended_ShaderModuleDescriptorHints = 0x348970F3, // Random
     WGPUSTypeExtended_TextureDescriptorViewFormats = 0x1D5BC57, // Random
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
     WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking = 0x017E9710, // Random
@@ -65,22 +64,6 @@ typedef struct WGPUInstanceCocoaDescriptor {
     // wgpuInstanceProcessEvents() to synchronously run the queued callbacks.
     __unsafe_unretained WGPUScheduleWorkBlock scheduleWorkBlock;
 } WGPUInstanceCocoaDescriptor;
-
-typedef struct WGPUShaderModuleCompilationHint {
-    WGPUPipelineLayout layout;
-} WGPUShaderModuleCompilationHint;
-
-typedef struct WGPUShaderModuleCompilationHintEntry {
-    WGPUChainedStruct const * nextInChain;
-    char const * key;
-    WGPUShaderModuleCompilationHint hint;
-} WGPUShaderModuleCompilationHintEntry;
-
-typedef struct WGPUShaderModuleDescriptorHints {
-    WGPUChainedStruct chain;
-    uint32_t hintsCount;
-    WGPUShaderModuleCompilationHintEntry const * hints;
-} WGPUShaderModuleDescriptorHints;
 
 typedef struct WGPUTextureDescriptorViewFormats {
     WGPUChainedStruct chain;
@@ -208,7 +191,7 @@ WGPU_EXPORT bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBl
 WGPU_EXPORT void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback);
 WGPU_EXPORT void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback);
-WGPU_EXPORT void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback);
+WGPU_EXPORT void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlockCallback callback);
 WGPU_EXPORT void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback);
 
 WGPU_EXPORT IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface);

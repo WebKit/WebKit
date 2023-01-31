@@ -55,17 +55,17 @@ void ComputePassEncoderImpl::setPipeline(const ComputePipeline& computePipeline)
 
 void ComputePassEncoderImpl::dispatch(Size32 workgroupCountX, Size32 workgroupCountY, Size32 workgroupCountZ)
 {
-    wgpuComputePassEncoderDispatch(m_backing, workgroupCountX, workgroupCountY, workgroupCountZ);
+    wgpuComputePassEncoderDispatchWorkgroups(m_backing, workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
 void ComputePassEncoderImpl::dispatchIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuComputePassEncoderDispatchIndirect(m_backing, m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuComputePassEncoderDispatchWorkgroupsIndirect(m_backing, m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void ComputePassEncoderImpl::end()
 {
-    wgpuComputePassEncoderEndPass(m_backing);
+    wgpuComputePassEncoderEnd(m_backing);
 }
 
 void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,

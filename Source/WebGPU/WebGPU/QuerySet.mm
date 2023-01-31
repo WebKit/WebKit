@@ -118,6 +118,11 @@ Vector<MTLTimestamp> QuerySet::resolveTimestamps() const
     return timestamps;
 }
 
+WGPUQueryType QuerySet::queryType() const
+{
+    return visibilityBuffer() ? WGPUQueryType_Occlusion : WGPUQueryType_Timestamp;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -135,4 +140,14 @@ void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
 {
     WebGPU::fromAPI(querySet).setLabel(WebGPU::fromAPI(label));
+}
+
+uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
+{
+    return WebGPU::fromAPI(querySet).queryCount();
+}
+
+WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
+{
+    return WebGPU::fromAPI(querySet).queryType();
 }

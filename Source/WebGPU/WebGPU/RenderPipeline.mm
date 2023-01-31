@@ -317,6 +317,8 @@ static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode)
         return MTLVertexStepFunctionPerVertex;
     case WGPUVertexStepMode_Instance:
         return MTLVertexStepFunctionPerInstance;
+    case WGPUVertexStepMode_VertexBufferNotUsed:
+        return MTLVertexStepFunctionConstant;
     case WGPUVertexStepMode_Force32:
         ASSERT_NOT_REACHED();
         return MTLVertexStepFunctionPerVertex;

@@ -32,7 +32,6 @@ namespace WebCore {
 
 enum class GPUFeatureName : uint8_t {
     DepthClipControl,
-    Depth24unormStencil8,
     Depth32floatStencil8,
     TextureCompressionBc,
     TextureCompressionEtc2,
@@ -46,8 +45,6 @@ inline PAL::WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
     switch (featureName) {
     case GPUFeatureName::DepthClipControl:
         return PAL::WebGPU::FeatureName::DepthClipControl;
-    case GPUFeatureName::Depth24unormStencil8:
-        return PAL::WebGPU::FeatureName::Depth24unormStencil8;
     case GPUFeatureName::Depth32floatStencil8:
         return PAL::WebGPU::FeatureName::Depth32floatStencil8;
     case GPUFeatureName::TextureCompressionBc:

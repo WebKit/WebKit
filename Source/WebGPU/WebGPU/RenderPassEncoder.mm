@@ -282,7 +282,7 @@ void wgpuRenderPassEncoderEndOcclusionQuery(WGPURenderPassEncoder renderPassEnco
     WebGPU::fromAPI(renderPassEncoder).endOcclusionQuery();
 }
 
-void wgpuRenderPassEncoderEndPass(WGPURenderPassEncoder renderPassEncoder)
+void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 {
     WebGPU::fromAPI(renderPassEncoder).endPass();
 }

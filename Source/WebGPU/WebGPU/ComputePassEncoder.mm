@@ -151,17 +151,17 @@ void wgpuComputePassEncoderBeginPipelineStatisticsQuery(WGPUComputePassEncoder c
     WebGPU::fromAPI(computePassEncoder).beginPipelineStatisticsQuery(WebGPU::fromAPI(querySet), queryIndex);
 }
 
-void wgpuComputePassEncoderDispatch(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
+void wgpuComputePassEncoderDispatchWorkgroups(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
     WebGPU::fromAPI(computePassEncoder).dispatch(x, y, z);
 }
 
-void wgpuComputePassEncoderDispatchIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
+void wgpuComputePassEncoderDispatchWorkgroupsIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
     WebGPU::fromAPI(computePassEncoder).dispatchIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
 }
 
-void wgpuComputePassEncoderEndPass(WGPUComputePassEncoder computePassEncoder)
+void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder)
 {
     WebGPU::fromAPI(computePassEncoder).endPass();
 }

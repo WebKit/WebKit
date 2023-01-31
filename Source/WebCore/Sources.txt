@@ -3395,6 +3395,7 @@ JSGPUImageDataLayout.cpp
 JSGPUIndexFormat.cpp
 JSGPULoadOp.cpp
 JSGPUMapMode.cpp
+JSGPUMipmapFilterMode.cpp
 JSGPUMultisampleState.cpp
 JSGPUObjectBase.cpp
 JSGPUObjectDescriptorBase.cpp

@@ -58,7 +58,7 @@ public:
     id<MTLSamplerState> samplerState() const { return m_samplerState; }
     const WGPUSamplerDescriptor& descriptor() const { return m_descriptor; }
     bool isComparison() const { return descriptor().compare != WGPUCompareFunction_Undefined; }
-    bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUFilterMode_Linear; }
+    bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUMipmapFilterMode_Linear; }
 
     Device& device() const { return m_device; }
 

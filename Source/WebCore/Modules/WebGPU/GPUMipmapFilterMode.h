@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,24 @@
 #pragma once
 
 #include <cstdint>
-#include <wtf/EnumTraits.h>
+#include <pal/graphics/WebGPU/WebGPUFilterMode.h>
 
-namespace PAL::WebGPU {
+namespace WebCore {
 
-enum class FeatureName : uint8_t {
-    DepthClipControl,
-    Depth32floatStencil8,
-    TextureCompressionBc,
-    TextureCompressionEtc2,
-    TextureCompressionAstc,
-    TimestampQuery,
-    IndirectFirstInstance,
+enum class GPUMipmapFilterMode : uint8_t {
+    Nearest,
+    Linear,
 };
 
-} // namespace PAL::WebGPU
+inline PAL::WebGPU::MipmapFilterMode convertToBacking(GPUMipmapFilterMode filterMode)
+{
+    switch (filterMode) {
+    case GPUMipmapFilterMode::Nearest:
+        return PAL::WebGPU::MipmapFilterMode::Nearest;
+    case GPUMipmapFilterMode::Linear:
+        return PAL::WebGPU::MipmapFilterMode::Linear;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+}

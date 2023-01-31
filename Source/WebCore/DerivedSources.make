@@ -123,6 +123,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/WebGPU/GPUIndexFormat.idl \
     $(WebCore)/Modules/WebGPU/GPULoadOp.idl \
     $(WebCore)/Modules/WebGPU/GPUMapMode.idl \
+    $(WebCore)/Modules/WebGPU/GPUMipmapFilterMode.idl \
     $(WebCore)/Modules/WebGPU/GPUMultisampleState.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectBase.idl \
     $(WebCore)/Modules/WebGPU/GPUObjectDescriptorBase.idl \

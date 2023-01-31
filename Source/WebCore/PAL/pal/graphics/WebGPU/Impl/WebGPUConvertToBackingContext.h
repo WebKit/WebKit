@@ -68,6 +68,7 @@ enum class FrontFace : uint8_t;
 class GPU;
 enum class IndexFormat : uint8_t;
 enum class LoadOp : uint8_t;
+enum class MipmapFilterMode : uint8_t;
 class PipelineLayout;
 enum class PowerPreference : bool;
 class PresentationContext;
@@ -112,6 +113,7 @@ public:
     WGPUErrorFilter convertToBacking(ErrorFilter);
     WGPUFeatureName convertToBacking(FeatureName);
     WGPUFilterMode convertToBacking(FilterMode);
+    WGPUMipmapFilterMode convertToBacking(MipmapFilterMode);
     WGPUFrontFace convertToBacking(FrontFace);
     WGPUIndexFormat convertToBacking(IndexFormat);
     WGPULoadOp convertToBacking(LoadOp);
