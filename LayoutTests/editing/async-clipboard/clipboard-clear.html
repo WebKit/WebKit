@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function runTest() {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        window.testRunner.dumpAsText();
+    }
+
+    var clipboard = window.clientInformation.clipboard;
+    var textBlob = new Blob([ (new TextEncoder()).encode("a") ], { type : "text/plain" });
+    if (typeof ClipBoardItem !== "undefined") {
+        var cbi = new ClipboardItem({ "text/plain" : textBlob });
+        clipboard.write([cbi]);
+        clipboard.write([cbi]);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</head>
+<body onload=runTest()>
+<p>PASS if no crash.</p>
+</body>
+</html>
