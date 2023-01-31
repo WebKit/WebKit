@@ -508,7 +508,7 @@ void AppendPipeline::didReceiveInitializationSegment()
             ASSERT(track->webKitTrack);
             SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
             info.track = static_cast<AudioTrackPrivateGStreamer*>(track->webKitTrack.get());
-            info.description = GStreamerMediaDescription::create(track->caps.get());
+            info.description = GStreamerMediaDescription::create(track->caps);
             initializationSegment.audioTracks.append(info);
             break;
         }
@@ -516,7 +516,7 @@ void AppendPipeline::didReceiveInitializationSegment()
             ASSERT(track->webKitTrack);
             SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
             info.track = static_cast<VideoTrackPrivateGStreamer*>(track->webKitTrack.get());
-            info.description = GStreamerMediaDescription::create(track->caps.get());
+            info.description = GStreamerMediaDescription::create(track->caps);
             initializationSegment.videoTracks.append(info);
             break;
         }
