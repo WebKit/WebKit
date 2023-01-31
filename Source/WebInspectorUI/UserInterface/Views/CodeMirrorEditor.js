@@ -40,6 +40,9 @@ WI.CodeMirrorEditor = class CodeMirrorEditor
             tabSize: WI.settings.tabSize.value,
             lineWrapping: WI.settings.enableLineWrapping.value,
             showWhitespaceCharacters: WI.settings.showWhitespaceCharacters.value,
+            maxHighlightLength: WI.settings.experimentalLimitSourceCodeHighlighting.value ? 120 : 10000,
+            maxScanLineLength: WI.settings.experimentalLimitSourceCodeHighlighting.value ? 120 : 10000,
+            maxHighlightLineLength: WI.settings.experimentalLimitSourceCodeHighlighting.value ? 120 : 1000,
             ...options,
         });
 
