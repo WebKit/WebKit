@@ -2045,16 +2045,17 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     flunkOnFailure = False
     haltOnFailure = False
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         self.bug_id = self.getProperty('bug_id', '')
         self.pr_number = self.getProperty('github.number', '')
         self.comment_text = self.getProperty('comment_text', '')
 
         if not self.comment_text:
-            self._addToLog('stdio', 'comment_text build property not found.\n')
+            yield self._addToLog('stdio', 'comment_text build property not found.\n')
             self.descriptionDone = 'No comment found'
-            self.finished(WARNINGS)
-            return None
+            defer.returnValue(WARNINGS)
+            return
 
         rc = SUCCESS
         if self.pr_number and not self.comment_on_pr(self.pr_number, self.comment_text, self.getProperty('repository')):
@@ -2062,13 +2063,11 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         if self.bug_id and self.comment_on_bug(self.bug_id, self.comment_text) != SUCCESS:
             rc = FAILURE
         if not self.pr_number and not self.bug_id:
-            self._addToLog('stdio', 'No bug or pull request to comment to.\n')
+            yield self._addToLog('stdio', 'No bug or pull request to comment to.\n')
             self.descriptionDone = 'No bug or PR found'
-            self.finished(FAILURE)
-            return None
+            rc = FAILURE
 
-        self.finished(rc)
-        return None
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
