@@ -1663,7 +1663,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::prel
         resourceValue->increasePreloadCount();
 
         if (!m_preloads)
-            m_preloads = makeUnique<ListHashSet<CachedResource*>>();
+            m_preloads = makeUnique<ListHashSet<CheckedPtr<CachedResource>>>();
         m_preloads->add(resourceValue.get());
     }
     return resource;
@@ -1700,12 +1700,12 @@ void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
     if (!m_preloads)
         return;
 
-    std::unique_ptr<ListHashSet<CachedResource*>> remainingLinkPreloads;
-    for (auto* resource : *m_preloads) {
+    std::unique_ptr<ListHashSet<CheckedPtr<CachedResource>>> remainingLinkPreloads;
+    for (auto& resource : *m_preloads) {
         ASSERT(resource);
         if (mode == ClearPreloadsMode::ClearSpeculativePreloads && resource->isLinkPreload()) {
             if (!remainingLinkPreloads)
-                remainingLinkPreloads = makeUnique<ListHashSet<CachedResource*>>();
+                remainingLinkPreloads = makeUnique<ListHashSet<CheckedPtr<CachedResource>>>();
             remainingLinkPreloads->add(resource);
             continue;
         }

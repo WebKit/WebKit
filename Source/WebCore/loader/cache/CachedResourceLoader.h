@@ -211,7 +211,7 @@ private:
 
     int m_requestCount { 0 };
 
-    std::unique_ptr<ListHashSet<CachedResource*>> m_preloads;
+    std::unique_ptr<ListHashSet<CheckedPtr<CachedResource>>> m_preloads;
     Timer m_unusedPreloadsTimer;
 
     Timer m_garbageCollectDocumentResourcesTimer;
