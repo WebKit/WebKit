@@ -167,7 +167,7 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 - (RetainPtr<UIImage>)displayImage
 {
-    return adoptNS([[UIImage alloc] initWithCGImage:WebKit::iconForImageFile(self.fileURL).get()]);
+    return WebKit::iconForImageFile(self.fileURL);
 }
 
 @end
@@ -185,7 +185,7 @@ static NSString * firstUTIThatConformsTo(NSArray<NSString *> *typeIdentifiers, U
 
 - (RetainPtr<UIImage>)displayImage
 {
-    return adoptNS([[UIImage alloc] initWithCGImage:WebKit::iconForVideoFile(self.fileURL).get()]);
+    return WebKit::iconForVideoFile(self.fileURL);
 }
 
 @end
@@ -929,8 +929,7 @@ static NSString *displayStringForDocumentsAtURLs(NSArray<NSURL *> *urls)
 
         [retainedSelf->_view _removeTemporaryDirectoriesWhenDeallocated:std::exchange(retainedSelf->_temporaryUploadedFileURLs, { })];
         RunLoop::main().dispatch([retainedSelf = WTFMove(retainedSelf), maybeMovedURLs = WTFMove(maybeMovedURLs)] {
-            auto icon = adoptNS([[UIImage alloc] initWithCGImage:WebKit::iconForFiles({ [maybeMovedURLs firstObject].absoluteString }).get()]);
-            [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:icon.get()];
+            [retainedSelf _chooseFiles:maybeMovedURLs.get() displayString:displayStringForDocumentsAtURLs(maybeMovedURLs.get()) iconImage:WebKit::iconForFiles({ maybeMovedURLs.get()[0].absoluteString }).get()];
         });
     }).get());
 }

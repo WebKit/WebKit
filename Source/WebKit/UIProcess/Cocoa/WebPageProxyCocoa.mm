@@ -361,11 +361,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
         return nullptr;
 
     LocalCurrentGraphicsContext savedContext(*graphicsContext);
-#if PLATFORM(IOS_FAMILY)
     [image drawInRect:resultRect];
-#elif USE(APPKIT)
-    [image drawInRect:resultRect fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
-#endif
 
     return bitmap;
 }
@@ -676,12 +672,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     if (!image)
         return false;
 
-    auto flippedIcon = [NSImage imageWithSize:iconSize flipped:YES drawingHandler:^BOOL(NSRect destinationRect) {
-        [image drawInRect:destinationRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
-        return YES;
-    }];
-
-    auto convertedImage = convertPlatformImageToBitmap(flippedIcon, iconSize);
+    auto convertedImage = convertPlatformImageToBitmap(image, iconSize);
     if (!convertedImage)
         return false;
 

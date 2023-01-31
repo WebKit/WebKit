@@ -30,25 +30,38 @@
 
 #import "BitmapImage.h"
 #import "GraphicsContext.h"
+#import <pal/ios/UIKitSoftLink.h>
 
 namespace WebCore {
 
-Icon::Icon(RefPtr<NativeImage>&& image)
-    : m_cgImage(WTFMove(image))
+Icon::Icon(CocoaImage *image)
+    : m_image(image)
 {
-    ASSERT(m_cgImage);
 }
 
 Icon::~Icon()
 {
 }
 
-RefPtr<Icon> Icon::createIconForImage(PlatformImagePtr&& image)
+RefPtr<Icon> Icon::create(CocoaImage *image)
 {
     if (!image)
         return nullptr;
 
-    return adoptRef(new Icon(NativeImage::create(WTFMove(image))));
+    return adoptRef(new Icon(image));
+}
+
+RefPtr<Icon> Icon::create(PlatformImagePtr&& platformImage)
+{
+    if (!platformImage)
+        return nullptr;
+
+#if USE(APPKIT)
+    auto image = adoptNS([[NSImage alloc] initWithCGImage:platformImage.get() size:NSZeroSize]);
+#else
+    auto image = adoptNS([PAL::allocUIImageInstance() initWithCGImage:platformImage.get()]);
+#endif
+    return adoptRef(new Icon(image.get()));
 }
 
 void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
@@ -58,9 +71,16 @@ void Icon::paint(GraphicsContext& context, const FloatRect& destRect)
 
     GraphicsContextStateSaver stateSaver(context);
 
-    FloatRect srcRect(FloatPoint::zero(), m_cgImage->size());
+#if USE(APPKIT)
+    auto cgImage = [m_image CGImageForProposedRect:nil context:nil hints:nil];
+#else
+    auto cgImage = [m_image CGImage];
+#endif
+    auto image = NativeImage::create(cgImage);
+
+    FloatRect srcRect(FloatPoint::zero(), image->size());
     context.setImageInterpolationQuality(InterpolationQuality::High);
-    context.drawNativeImage(*m_cgImage, srcRect.size(), destRect, srcRect);
+    context.drawNativeImage(*image, srcRect.size(), destRect, srcRect);
 }
 
 }
