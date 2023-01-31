@@ -50,7 +50,7 @@ public:
     void configure(const GPUPresentationConfiguration&);
     void unconfigure();
 
-    GPUTexture& getCurrentTexture();
+    RefPtr<GPUTexture> getCurrentTexture();
 
     void present();
 

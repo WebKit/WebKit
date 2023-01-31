@@ -140,6 +140,9 @@ void GPUCanvasContextCocoa::configurePresentationContextIfNeeded()
 
 RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
 {
+    if (m_currentTexture)
+        return m_currentTexture;
+
     if (!m_configuration)
         return nullptr;
 
@@ -158,7 +161,8 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
 
     markContextChangedAndNotifyCanvasObservers();
     // FIXME: This should use PresentationContext::getCurrentTexture() instead.
-    return m_configuration->device->createSurfaceTexture(descriptor, m_presentationContext);
+    m_currentTexture = m_configuration->device->createSurfaceTexture(descriptor, m_presentationContext);
+    return m_currentTexture;
 }
 
 PixelFormat GPUCanvasContextCocoa::pixelFormat() const
@@ -189,6 +193,7 @@ void GPUCanvasContextCocoa::prepareForDisplay()
         protectedThis->m_compositingResultsNeedsUpdating = false;
     });
 #endif
+    m_currentTexture = nullptr;
 }
 
 void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()

@@ -46,7 +46,7 @@ public:
     virtual void configure(const PresentationConfiguration&) = 0;
     virtual void unconfigure() = 0;
 
-    virtual Texture& getCurrentTexture() = 0;
+    virtual RefPtr<Texture> getCurrentTexture() = 0;
 
     virtual void present() = 0;
 

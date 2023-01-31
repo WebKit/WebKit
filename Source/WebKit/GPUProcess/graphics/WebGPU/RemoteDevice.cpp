@@ -37,6 +37,7 @@
 #include "RemoteExternalTexture.h"
 #include "RemotePipelineLayout.h"
 #include "RemoteQuerySet.h"
+#include "RemoteQueue.h"
 #include "RemoteRenderBundleEncoder.h"
 #include "RemoteRenderPipeline.h"
 #include "RemoteSampler.h"
@@ -64,6 +65,7 @@
 #include <pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPUQuerySet.h>
 #include <pal/graphics/WebGPU/WebGPUQuerySetDescriptor.h>
+#include <pal/graphics/WebGPU/WebGPUQueue.h>
 #include <pal/graphics/WebGPU/WebGPURenderBundleEncoder.h>
 #include <pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h>
 #include <pal/graphics/WebGPU/WebGPURenderPipeline.h>
@@ -94,7 +96,7 @@ void RemoteDevice::stopListeningForIPC()
     m_streamConnection->stopReceivingMessages(Messages::RemoteDevice::messageReceiverName(), m_identifier.toUInt64());
 }
 
-RemoteQueue& RemoteDevice::queue()
+Ref<RemoteQueue> RemoteDevice::queue()
 {
     return m_queue;
 }

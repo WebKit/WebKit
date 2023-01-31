@@ -61,7 +61,7 @@ RemoteDeviceProxy::~RemoteDeviceProxy()
 {
 }
 
-PAL::WebGPU::Queue& RemoteDeviceProxy::queue()
+Ref<PAL::WebGPU::Queue> RemoteDeviceProxy::queue()
 {
     return m_queue;
 }

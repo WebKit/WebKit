@@ -62,7 +62,7 @@ void RemotePresentationContextProxy::unconfigure()
     UNUSED_VARIABLE(sendResult);
 }
 
-PAL::WebGPU::Texture& RemotePresentationContextProxy::getCurrentTexture()
+RefPtr<PAL::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture()
 {
     if (!m_currentTexture) {
         auto identifier = WebGPUIdentifier::generate();
@@ -72,7 +72,7 @@ PAL::WebGPU::Texture& RemotePresentationContextProxy::getCurrentTexture()
         m_currentTexture = RemoteTextureProxy::create(root(), m_convertToBackingContext, identifier);
     }
 
-    return *m_currentTexture;
+    return m_currentTexture;
 }
 
 void RemotePresentationContextProxy::present()

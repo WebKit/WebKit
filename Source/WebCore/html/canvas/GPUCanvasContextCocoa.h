@@ -134,6 +134,7 @@ private:
     std::optional<GPUCanvasConfiguration> m_configuration;
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     Ref<GPUPresentationContext> m_presentationContext;
+    RefPtr<GPUTexture> m_currentTexture;
 
     int m_width { 0 };
     int m_height { 0 };

@@ -90,7 +90,7 @@ void PresentationContextImpl::unconfigure()
     m_swapChain = nullptr;
 }
 
-Texture& PresentationContextImpl::getCurrentTexture()
+RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
 {
     // FIXME: If m_swapChain is nullptr, return an invalid texture.
 
@@ -99,7 +99,7 @@ Texture& PresentationContextImpl::getCurrentTexture()
         m_currentTexture = TextureImpl::create(wgpuSwapChainGetCurrentTexture(m_swapChain), m_format, TextureDimension::_2d, m_convertToBackingContext).ptr();
     }
 
-    return *m_currentTexture;
+    return m_currentTexture;
 }
 
 void PresentationContextImpl::present()

@@ -41,12 +41,14 @@ void GPUPresentationContext::unconfigure()
     m_backing->unconfigure();
 }
 
-GPUTexture& GPUPresentationContext::getCurrentTexture()
+RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
 {
-    if (!m_currentTexture)
-        m_currentTexture = GPUTexture::create(m_backing->getCurrentTexture()).ptr();
+    if (!m_currentTexture) {
+        if (auto currentTexture = m_backing->getCurrentTexture())
+            m_currentTexture = GPUTexture::create(*currentTexture).ptr();
+    }
 
-    return *m_currentTexture;
+    return m_currentTexture;
 }
 
 void GPUPresentationContext::present()

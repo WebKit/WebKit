@@ -74,7 +74,7 @@ DeviceImpl::DeviceImpl(WGPUDevice device, Ref<SupportedFeatures>&& features, Ref
 
 DeviceImpl::~DeviceImpl() = default;
 
-Queue& DeviceImpl::queue()
+Ref<Queue> DeviceImpl::queue()
 {
     return m_queue;
 }

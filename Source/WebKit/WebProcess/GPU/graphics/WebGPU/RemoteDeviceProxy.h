@@ -75,7 +75,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    PAL::WebGPU::Queue& queue() final;
+    Ref<PAL::WebGPU::Queue> queue() final;
 
     void destroy() final;
 

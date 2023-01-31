@@ -59,7 +59,7 @@ private:
 
     WGPUDevice backing() const { return m_deviceHolder->backingDevice(); }
 
-    Queue& queue() final;
+    Ref<Queue> queue() final;
 
     void destroy() final;
 

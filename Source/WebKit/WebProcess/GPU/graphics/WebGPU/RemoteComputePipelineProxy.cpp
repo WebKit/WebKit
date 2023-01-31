@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,11 +47,13 @@ RemoteComputePipelineProxy::~RemoteComputePipelineProxy()
 
 Ref<PAL::WebGPU::BindGroupLayout> RemoteComputePipelineProxy::getBindGroupLayout(uint32_t index)
 {
-    auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteComputePipeline::GetBindGroupLayout(index, identifier));
-    UNUSED_VARIABLE(sendResult);
+    return m_bindGroupLayouts.ensure(index, [this, index] {
+        auto identifier = WebGPUIdentifier::generate();
+        auto sendResult = send(Messages::RemoteComputePipeline::GetBindGroupLayout(index, identifier));
+        UNUSED_VARIABLE(sendResult);
 
-    return RemoteBindGroupLayoutProxy::create(m_parent, m_convertToBackingContext, identifier);
+        return RemoteBindGroupLayoutProxy::create(m_parent, m_convertToBackingContext, identifier);
+    }).iterator->value;
 }
 
 void RemoteComputePipelineProxy::setLabelInternal(const String& label)

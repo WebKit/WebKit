@@ -66,7 +66,7 @@ private:
     void configure(const PresentationConfiguration&) final;
     void unconfigure() final;
 
-    Texture& getCurrentTexture() final;
+    RefPtr<Texture> getCurrentTexture() final;
 
     void present() final;
 

@@ -77,7 +77,7 @@ private:
     void configure(const PAL::WebGPU::PresentationConfiguration&) final;
     void unconfigure() final;
 
-    PAL::WebGPU::Texture& getCurrentTexture() final;
+    RefPtr<PAL::WebGPU::Texture> getCurrentTexture() final;
 
     void present() final;
 

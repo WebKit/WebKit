@@ -93,7 +93,7 @@ public:
     SupportedLimits& limits() { return m_limits; }
     const SupportedLimits& limits() const { return m_limits; }
 
-    virtual Queue& queue() = 0;
+    virtual Ref<Queue> queue() = 0;
 
     virtual void destroy() = 0;
 
