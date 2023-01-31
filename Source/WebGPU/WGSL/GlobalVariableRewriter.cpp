@@ -265,12 +265,12 @@ auto RewriteGlobalVariables::read(const String& name) -> Global*
 
 String RewriteGlobalVariables::argumentBufferParameterName(unsigned group)
 {
-    return makeString("__ArgumentBufer_", String::number(group));
+    return makeString("__ArgumentBuffer_", String::number(group));
 }
 
 String RewriteGlobalVariables::argumentBufferStructName(unsigned group)
 {
-    return makeString("__ArgumentBuferT_", String::number(group));
+    return makeString("__ArgumentBufferT_", String::number(group));
 }
 
 void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts)
