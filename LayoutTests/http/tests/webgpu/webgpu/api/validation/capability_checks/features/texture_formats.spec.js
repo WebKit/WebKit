@@ -2,15 +2,11 @@
  * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
  **/ export const description = `
 Tests for capability checking for features enabling optional texture formats.
-
-TODO(#902): test GPUTextureViewDescriptor.format
-TODO(#902): test GPUCanvasConfiguration.format (it doesn't allow any optional formats today but the
-  error might still be different - exception instead of validation.
-
-TODO(#920): test GPUTextureDescriptor.viewFormats (if/when it takes formats)
 `;
 import { makeTestGroup } from '../../../../../common/framework/test_group.js';
+import { assert } from '../../../../../common/util/util.js';
 import { kAllTextureFormats, kTextureFormatInfo } from '../../../../capability_info.js';
+import { kAllCanvasTypes, createCanvas } from '../../../../util/create_elements.js';
 import { ValidationTest } from '../../validation_test.js';
 
 export const g = makeTestGroup(ValidationTest);
@@ -24,31 +20,206 @@ g.test('texture_descriptor')
     `
   Test creating a texture with an optional texture format will fail if the required optional feature
   is not enabled.
-
-  TODO(#919): Actually it should throw an exception, not fail with a validation error.
   `
   )
   .params(u =>
-    u
-      .combine('format', kOptionalTextureFormats)
-      .beginSubcases()
-      .combine('enable_required_feature', [true, false])
+    u.combine('format', kOptionalTextureFormats).combine('enable_required_feature', [true, false])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
     const { format, enable_required_feature } = t.params;
 
     const formatInfo = kTextureFormatInfo[format];
     if (enable_required_feature) {
-      await t.selectDeviceOrSkipTestCase(formatInfo.feature);
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
     }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
 
-    t.expectValidationError(() => {
+    const formatInfo = kTextureFormatInfo[format];
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
       t.device.createTexture({
         format,
         size: [formatInfo.blockWidth, formatInfo.blockHeight, 1],
         usage: GPUTextureUsage.TEXTURE_BINDING,
       });
-    }, !enable_required_feature);
+    });
+  });
+
+g.test('texture_descriptor_view_formats')
+  .desc(
+    `
+  Test creating a texture with view formats that have an optional texture format will fail if the
+  required optional feature is not enabled.
+  `
+  )
+  .params(u =>
+    u.combine('format', kOptionalTextureFormats).combine('enable_required_feature', [true, false])
+  )
+  .beforeAllSubcases(t => {
+    const { format, enable_required_feature } = t.params;
+
+    const formatInfo = kTextureFormatInfo[format];
+    if (enable_required_feature) {
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
+
+    const formatInfo = kTextureFormatInfo[format];
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
+      t.device.createTexture({
+        format,
+        size: [formatInfo.blockWidth, formatInfo.blockHeight, 1],
+        usage: GPUTextureUsage.TEXTURE_BINDING,
+        viewFormats: [format],
+      });
+    });
+  });
+
+g.test('texture_view_descriptor')
+  .desc(
+    `
+  Test creating a texture view with all texture formats will fail if the required optional feature
+  is not enabled.
+  `
+  )
+  .params(u =>
+    u.combine('format', kOptionalTextureFormats).combine('enable_required_feature', [true, false])
+  )
+  .beforeAllSubcases(t => {
+    const { format, enable_required_feature } = t.params;
+
+    const formatInfo = kTextureFormatInfo[format];
+    if (enable_required_feature) {
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
+
+    // If the required feature isn't enabled then the texture will fail to create and we won't be
+    // able to test createView, so pick and alternate guaranteed format instead. This will almost
+    // certainly not be view-compatible with the format being tested, but that doesn't matter since
+    // createView should throw an exception due to the format feature not being enabled before it
+    // has a chance to validate that the view and texture formats aren't compatible.
+    const textureFormat = enable_required_feature ? format : 'rgba8unorm';
+
+    const formatInfo = kTextureFormatInfo[format];
+    const testTexture = t.device.createTexture({
+      format: textureFormat,
+      size: [formatInfo.blockWidth, formatInfo.blockHeight, 1],
+      usage: GPUTextureUsage.TEXTURE_BINDING,
+    });
+    const testViewDesc = {
+      format,
+      dimension: '2d',
+      aspect: 'all',
+      arrayLayerCount: 1,
+      baseMipLevel: 0,
+      mipLevelCount: 1,
+      baseArrayLayer: 0,
+    };
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
+      testTexture.createView(testViewDesc);
+    });
+  });
+
+g.test('canvas_configuration')
+  .desc(
+    `
+  Test configuring a canvas with optional texture formats will throw an exception if the required
+  optional feature is not enabled. Otherwise, a validation error should be generated instead of
+  throwing an exception.
+  `
+  )
+  .params(u =>
+    u
+      .combine('format', kOptionalTextureFormats)
+      .combine('canvasType', kAllCanvasTypes)
+      .combine('enable_required_feature', [true, false])
+  )
+  .beforeAllSubcases(t => {
+    const { format, enable_required_feature } = t.params;
+
+    const formatInfo = kTextureFormatInfo[format];
+    if (enable_required_feature) {
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
+    }
+  })
+  .fn(t => {
+    const { format, canvasType, enable_required_feature } = t.params;
+
+    const canvas = createCanvas(t, canvasType, 2, 2);
+    const ctx = canvas.getContext('webgpu');
+    assert(ctx instanceof GPUCanvasContext, 'Failed to get WebGPU context from canvas');
+
+    const canvasConf = {
+      device: t.device,
+      format,
+      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+    };
+
+    if (enable_required_feature) {
+      t.expectValidationError(() => {
+        ctx.configure(canvasConf);
+      });
+    } else {
+      t.shouldThrow('TypeError', () => {
+        ctx.configure(canvasConf);
+      });
+    }
+  });
+
+g.test('canvas_configuration_view_formats')
+  .desc(
+    `
+  Test that configuring a canvas with view formats throws an exception if the required optional
+  feature is not enabled. Otherwise, a validation error should be generated instead of throwing an
+  exception.
+  `
+  )
+  .params(u =>
+    u
+      .combine('viewFormats', [
+        ...kOptionalTextureFormats.map(format => [format]),
+        ['bgra8unorm', 'bc1-rgba-unorm'],
+        ['bc1-rgba-unorm', 'bgra8unorm'],
+      ])
+      .combine('canvasType', kAllCanvasTypes)
+      .combine('enable_required_feature', [true, false])
+  )
+  .beforeAllSubcases(t => {
+    const { viewFormats, enable_required_feature } = t.params;
+
+    if (enable_required_feature) {
+      t.selectDeviceForTextureFormatOrSkipTestCase(viewFormats);
+    }
+  })
+  .fn(t => {
+    const { viewFormats, canvasType, enable_required_feature } = t.params;
+
+    const canvas = createCanvas(t, canvasType, 2, 2);
+    const ctx = canvas.getContext('webgpu');
+    assert(ctx instanceof GPUCanvasContext, 'Failed to get WebGPU context from canvas');
+
+    const canvasConf = {
+      device: t.device,
+      format: 'bgra8unorm',
+      usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+      viewFormats: viewFormats,
+    };
+
+    if (enable_required_feature) {
+      t.expectValidationError(() => {
+        ctx.configure(canvasConf);
+      });
+    } else {
+      t.shouldThrow('TypeError', () => {
+        ctx.configure(canvasConf);
+      });
+    }
   });
 
 g.test('storage_texture_binding_layout')
@@ -64,18 +235,20 @@ g.test('storage_texture_binding_layout')
     u
       .combine('format', kOptionalTextureFormats)
       .filter(t => kTextureFormatInfo[t.format].storage)
-      .beginSubcases()
       .combine('enable_required_feature', [true, false])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
     const { format, enable_required_feature } = t.params;
 
     const formatInfo = kTextureFormatInfo[format];
     if (enable_required_feature) {
-      await t.selectDeviceOrSkipTestCase(formatInfo.feature);
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
     }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
 
-    t.expectValidationError(() => {
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
       t.device.createBindGroupLayout({
         entries: [
           {
@@ -87,7 +260,7 @@ g.test('storage_texture_binding_layout')
           },
         ],
       });
-    }, !enable_required_feature);
+    });
   });
 
 g.test('color_target_state')
@@ -103,45 +276,45 @@ g.test('color_target_state')
     u
       .combine('format', kOptionalTextureFormats)
       .filter(t => kTextureFormatInfo[t.format].renderable && kTextureFormatInfo[t.format].color)
-      .beginSubcases()
       .combine('enable_required_feature', [true, false])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
     const { format, enable_required_feature } = t.params;
 
     const formatInfo = kTextureFormatInfo[format];
     if (enable_required_feature) {
-      await t.selectDeviceOrSkipTestCase(formatInfo.feature);
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
     }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
 
-    t.expectValidationError(() => {
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
       t.device.createRenderPipeline({
+        layout: 'auto',
         vertex: {
           module: t.device.createShaderModule({
             code: `
-              @stage(vertex)
+              @vertex
               fn main()-> @builtin(position) vec4<f32> {
                 return vec4<f32>(0.0, 0.0, 0.0, 1.0);
               }`,
           }),
-
           entryPoint: 'main',
         },
-
         fragment: {
           module: t.device.createShaderModule({
             code: `
-              @stage(fragment)
+              @fragment
               fn main() -> @location(0) vec4<f32> {
                 return vec4<f32>(0.0, 1.0, 0.0, 1.0);
               }`,
           }),
-
           entryPoint: 'main',
           targets: [{ format }],
         },
       });
-    }, !enable_required_feature);
+    });
   });
 
 g.test('depth_stencil_state')
@@ -159,49 +332,48 @@ g.test('depth_stencil_state')
           kTextureFormatInfo[t.format].renderable &&
           (kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil)
       )
-      .beginSubcases()
       .combine('enable_required_feature', [true, false])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
     const { format, enable_required_feature } = t.params;
 
     const formatInfo = kTextureFormatInfo[format];
     if (enable_required_feature) {
-      await t.selectDeviceOrSkipTestCase(formatInfo.feature);
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
     }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
 
-    t.expectValidationError(() => {
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
       t.device.createRenderPipeline({
+        layout: 'auto',
         vertex: {
           module: t.device.createShaderModule({
             code: `
-              @stage(vertex)
+              @vertex
               fn main()-> @builtin(position) vec4<f32> {
                 return vec4<f32>(0.0, 0.0, 0.0, 1.0);
               }`,
           }),
-
           entryPoint: 'main',
         },
-
         depthStencil: {
           format,
         },
-
         fragment: {
           module: t.device.createShaderModule({
             code: `
-              @stage(fragment)
+              @fragment
               fn main() -> @location(0) vec4<f32> {
                 return vec4<f32>(0.0, 1.0, 0.0, 1.0);
               }`,
           }),
-
           entryPoint: 'main',
           targets: [{ format: 'rgba8unorm' }],
         },
       });
-    }, !enable_required_feature);
+    });
   });
 
 g.test('render_bundle_encoder_descriptor_color_format')
@@ -217,22 +389,24 @@ g.test('render_bundle_encoder_descriptor_color_format')
     u
       .combine('format', kOptionalTextureFormats)
       .filter(t => kTextureFormatInfo[t.format].renderable && kTextureFormatInfo[t.format].color)
-      .beginSubcases()
       .combine('enable_required_feature', [true, false])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
     const { format, enable_required_feature } = t.params;
 
     const formatInfo = kTextureFormatInfo[format];
     if (enable_required_feature) {
-      await t.selectDeviceOrSkipTestCase(formatInfo.feature);
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
     }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
 
-    t.expectValidationError(() => {
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
       t.device.createRenderBundleEncoder({
         colorFormats: [format],
       });
-    }, !enable_required_feature);
+    });
   });
 
 g.test('render_bundle_encoder_descriptor_depth_stencil_format')
@@ -250,21 +424,23 @@ g.test('render_bundle_encoder_descriptor_depth_stencil_format')
           kTextureFormatInfo[t.format].renderable &&
           (kTextureFormatInfo[t.format].depth || kTextureFormatInfo[t.format].stencil)
       )
-      .beginSubcases()
       .combine('enable_required_feature', [true, false])
   )
-  .fn(async t => {
+  .beforeAllSubcases(t => {
     const { format, enable_required_feature } = t.params;
 
     const formatInfo = kTextureFormatInfo[format];
     if (enable_required_feature) {
-      await t.selectDeviceOrSkipTestCase(formatInfo.feature);
+      t.selectDeviceOrSkipTestCase(formatInfo.feature);
     }
+  })
+  .fn(t => {
+    const { format, enable_required_feature } = t.params;
 
-    t.expectValidationError(() => {
+    t.shouldThrow(enable_required_feature ? false : 'TypeError', () => {
       t.device.createRenderBundleEncoder({
         colorFormats: ['rgba8unorm'],
         depthStencilFormat: format,
       });
-    }, !enable_required_feature);
+    });
   });

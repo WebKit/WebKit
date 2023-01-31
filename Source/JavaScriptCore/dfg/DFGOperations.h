@@ -105,6 +105,7 @@ JSC_DECLARE_JIT_OPERATION(operationGetByValObjectSymbol, EncodedJSValue, (JSGlob
 JSC_DECLARE_JIT_OPERATION(operationToPrimitive, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationToPropertyKey, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationToNumber, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationToNumberString, EncodedJSValue, (JSGlobalObject*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationToNumeric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationCallNumberConstructor, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetPrototypeOf, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
@@ -356,6 +357,8 @@ JSC_DECLARE_JIT_OPERATION(operationDateGetSeconds, EncodedJSValue, (VM*, DateIns
 JSC_DECLARE_JIT_OPERATION(operationDateGetUTCSeconds, EncodedJSValue, (VM*, DateInstance*));
 JSC_DECLARE_JIT_OPERATION(operationDateGetTimezoneOffset, EncodedJSValue, (VM*, DateInstance*));
 JSC_DECLARE_JIT_OPERATION(operationDateGetYear, EncodedJSValue, (VM*, DateInstance*));
+
+JSC_DECLARE_JIT_OPERATION(operationInt64ToBigInt, EncodedJSValue, (JSGlobalObject*, int64_t));
 
 JSC_DECLARE_JIT_OPERATION(operationProcessTypeProfilerLogDFG, void, (VM*));
 

@@ -206,7 +206,7 @@ TEST(BifurcatedGraphicsContextTests, Borders)
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
     ctx.setStrokeColor(Color::red);
-    ctx.setStrokeStyle(SolidStroke);
+    ctx.setStrokeStyle(StrokeStyle::SolidStroke);
     ctx.setStrokeThickness(10);
     ctx.drawLine({ 0, 0 }, { contextWidth, 0 });
 

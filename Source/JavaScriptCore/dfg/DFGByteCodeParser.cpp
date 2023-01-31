@@ -201,15 +201,15 @@ private:
     void inlineCall(Node* callTargetNode, Operand result, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     template<typename ChecksFunctor>
-    bool handleIntrinsicCall(Node* callee, Operand result, CallVariant, Intrinsic, int registerOffset, int argumentCountIncludingThis, NodeType callOp, SpeculatedType prediction, const ChecksFunctor& insertChecks);
+    bool handleIntrinsicCall(Node* callee, Operand result, CallVariant, Intrinsic, int registerOffset, int argumentCountIncludingThis, NodeType callOp, CodeSpecializationKind, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleDOMJITCall(Node* callee, Operand result, const DOMJIT::Signature*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleIntrinsicGetter(Operand result, SpeculatedType prediction, const GetByVariant& intrinsicVariant, Node* thisNode, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
-    bool handleTypedArrayConstructor(Operand result, InternalFunction*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks);
+    bool handleTypedArrayConstructor(Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
-    bool handleConstantInternalFunction(Node* callTargetNode, Operand result, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, SpeculatedType, const ChecksFunctor& insertChecks);
+    bool handleConstantFunction(Node* callTargetNode, Operand result, JSObject*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, SpeculatedType, const ChecksFunctor& insertChecks);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
     bool handleDOMJITGetter(Operand result, const GetByVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
@@ -1924,18 +1924,21 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
         }
     };
 
-    if (InternalFunction* function = callee.internalFunction()) {
-        if (handleConstantInternalFunction(callTargetNode, result, function, registerOffset, argumentCountIncludingThis, specializationKind, prediction, insertChecksWithAccounting)) {
+    if (callee.internalFunction() || callee.function()) {
+        JSObject* function = callee.internalFunction() ? jsCast<JSObject*>(callee.internalFunction()) : jsCast<JSObject*>(callee.function());
+        if (handleConstantFunction(callTargetNode, result, function, registerOffset, argumentCountIncludingThis, specializationKind, prediction, insertChecksWithAccounting)) {
             endSpecialCase();
             return CallOptimizationResult::Inlined;
         }
         RELEASE_ASSERT(!didInsertChecks);
-        return CallOptimizationResult::DidNothing;
+        if (callee.internalFunction())
+            return CallOptimizationResult::DidNothing;
+        // For normal JSFunction case, the latter optimizations can be still effective.
     }
 
     Intrinsic intrinsic = callee.intrinsicFor(specializationKind);
     if (intrinsic != NoIntrinsic) {
-        if (handleIntrinsicCall(callTargetNode, result, callee, intrinsic, registerOffset, argumentCountIncludingThis, callOp, prediction, insertChecksWithAccounting)) {
+        if (handleIntrinsicCall(callTargetNode, result, callee, intrinsic, registerOffset, argumentCountIncludingThis, callOp, specializationKind, prediction, insertChecksWithAccounting)) {
             endSpecialCase();
             return CallOptimizationResult::Inlined;
         }
@@ -2330,10 +2333,11 @@ bool ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffse
 }
 
 template<typename ChecksFunctor>
-bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVariant variant, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, NodeType callOp, SpeculatedType prediction, const ChecksFunctor& insertChecks)
+bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVariant variant, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, NodeType callOp, CodeSpecializationKind kind, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
     VERBOSE_LOG("       The intrinsic is ", intrinsic, "\n");
     UNUSED_PARAM(callOp);
+    UNUSED_PARAM(kind);
 
     if (!isOpcodeShape<OpCallShape>(m_currentInstruction)) {
         VERBOSE_LOG("    Failing because instruction is not OpCallShape.\n");
@@ -3813,6 +3817,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return true;
         }
 
+        case NumberConstructorIntrinsic: {
+            insertChecks();
+            if (argumentCountIncludingThis <= 1)
+                setResult(jsConstant(jsNumber(0)));
+            else
+                setResult(addToGraph(CallNumberConstructor, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+            return true;
+        }
+
 #if ENABLE(WEBASSEMBLY)
         case WasmFunctionIntrinsic: {
             if (callOp != Call)
@@ -4131,7 +4144,7 @@ bool ByteCodeParser::handleModuleNamespaceLoad(VirtualRegister result, Speculate
 
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleTypedArrayConstructor(
-    Operand result, InternalFunction* function, int registerOffset,
+    Operand result, JSObject* function, int registerOffset,
     int argumentCountIncludingThis, TypedArrayType type, const ChecksFunctor& insertChecks)
 {
     if (!isTypedView(type))
@@ -4196,11 +4209,11 @@ bool ByteCodeParser::handleTypedArrayConstructor(
 }
 
 template<typename ChecksFunctor>
-bool ByteCodeParser::handleConstantInternalFunction(
-    Node* callTargetNode, Operand result, InternalFunction* function, int registerOffset,
+bool ByteCodeParser::handleConstantFunction(
+    Node* callTargetNode, Operand result, JSObject* function, int registerOffset,
     int argumentCountIncludingThis, CodeSpecializationKind kind, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
-    VERBOSE_LOG("    Handling constant internal function ", JSValue(function), "\n");
+    VERBOSE_LOG("    Handling constant function ", JSValue(function), "\n");
     
     // It so happens that the code below assumes that the result operand is valid. It's extremely
     // unlikely that the result operand would be invalid - you'd have to call this via a setter call.

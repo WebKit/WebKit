@@ -868,6 +868,42 @@ g_assert_nonnull(data);
     g_assert_null(dataList);
 }
 
+static void testWebViewHandleCorruptedLocalStorage(WebsiteDataTest* test, gconstpointer)
+{
+    const char html[] = "<html><script>let foo = (window.localStorage.length ? window.localStorage.getItem('item'):''); window.localStorage.setItem('item','value');</script></html>";
+    auto waitForFooChanged = [&test](WebKitWebView* webView) {
+        GUniqueOutPtr<GError> error;
+        JSCValue* jscvalue;
+        WebKitJavascriptResult* result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr(), webView);
+        g_assert_no_error(error.get());
+        jscvalue = webkit_javascript_result_get_js_value(result);
+        GUniquePtr<char> fooValue(jsc_value_to_string(jscvalue));
+        return fooValue;
+    };
+
+    // Create corrupted database file for local storage of "http://example.com".
+    const GUniquePtr<char> localStorageDirPath(g_build_filename(Test::dataDirectory(), "local-storage", nullptr));
+    const GUniquePtr<char> localStorageFilePath(g_build_filename(localStorageDirPath.get(), "http_example.com_0.localstorage", nullptr));
+    g_mkdir_with_parents(localStorageDirPath.get(), 0755);
+    g_file_set_contents(localStorageFilePath.get(), "GARBAGE", -1, nullptr);
+
+    g_assert_true(g_file_test(localStorageFilePath.get(), G_FILE_TEST_EXISTS));
+
+    // Loading a web page to store an item in localStorage.
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    auto fooValue(waitForFooChanged(test->m_webView));
+    g_assert_cmpstr(fooValue.get(), ==, "");
+
+    // Creating a second web view and loading a web page with the same url to read the item from localStorage.
+    auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView.get()));
+    webkit_web_view_load_html(webView.get(), html, "http://example.com");
+    test->waitUntilLoadFinished(webView.get());
+    fooValue = waitForFooChanged(webView.get());
+    g_assert_cmpstr(fooValue.get(), ==, "value");
+}
+
 class MemoryPressureTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(MemoryPressureTest, setup, teardown);
@@ -947,6 +983,7 @@ void beforeAll()
     WebsiteDataTest::add("WebKitWebsiteData", "itp", testWebsiteDataITP);
     WebsiteDataTest::add("WebKitWebsiteData", "service-worker-registrations", testWebsiteDataServiceWorkerRegistrations);
     WebsiteDataTest::add("WebKitWebsiteData", "dom-cache", testWebsiteDataDOMCache);
+    WebsiteDataTest::add("WebKitWebsiteData", "handle-corrupted-local-storage", testWebViewHandleCorruptedLocalStorage);
     MemoryPressureTest::add("WebKitWebsiteData", "memory-pressure", testMemoryPressureSettings);
 }
 

@@ -56,11 +56,9 @@ void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBu
 
 void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    wgpuQueueOnSubmittedWorkDoneWithBlock(backing(), m_signalValue, makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
+    wgpuQueueOnSubmittedWorkDoneWithBlock(backing(), makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
         callback();
     }).get());
-
-    ++m_signalValue;
 }
 
 void QueueImpl::writeBuffer(

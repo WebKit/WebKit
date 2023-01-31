@@ -2,7 +2,7 @@
  * @licstart The following is the entire license notice for the
  * JavaScript code in this page
  *
- * Copyright 2022 Mozilla Foundation
+ * Copyright 2023 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ return /******/ (() => { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.VerbosityLevel = exports.Util = exports.UnknownErrorException = exports.UnexpectedResponseException = exports.UNSUPPORTED_FEATURES = exports.TextRenderingMode = exports.StreamType = exports.RenderingIntentFlag = exports.PermissionFlag = exports.PasswordResponses = exports.PasswordException = exports.PageActionEventType = exports.OPS = exports.MissingPDFException = exports.LINE_FACTOR = exports.LINE_DESCENT_FACTOR = exports.InvalidPDFException = exports.ImageKind = exports.IDENTITY_MATRIX = exports.FormatError = exports.FontType = exports.FeatureTest = exports.FONT_IDENTITY_MATRIX = exports.DocumentActionEventType = exports.CMapCompressionType = exports.BaseException = exports.BASELINE_FACTOR = exports.AnnotationType = exports.AnnotationStateModelType = exports.AnnotationReviewState = exports.AnnotationReplyType = exports.AnnotationMode = exports.AnnotationMarkedState = exports.AnnotationFlag = exports.AnnotationFieldFlag = exports.AnnotationEditorType = exports.AnnotationEditorPrefix = exports.AnnotationEditorParamsType = exports.AnnotationBorderStyleType = exports.AnnotationActionEventType = exports.AbortException = void 0;
+exports.VerbosityLevel = exports.Util = exports.UnknownErrorException = exports.UnexpectedResponseException = exports.UNSUPPORTED_FEATURES = exports.TextRenderingMode = exports.RenderingIntentFlag = exports.PermissionFlag = exports.PasswordResponses = exports.PasswordException = exports.PageActionEventType = exports.OPS = exports.MissingPDFException = exports.LINE_FACTOR = exports.LINE_DESCENT_FACTOR = exports.InvalidPDFException = exports.ImageKind = exports.IDENTITY_MATRIX = exports.FormatError = exports.FeatureTest = exports.FONT_IDENTITY_MATRIX = exports.DocumentActionEventType = exports.CMapCompressionType = exports.BaseException = exports.BASELINE_FACTOR = exports.AnnotationType = exports.AnnotationStateModelType = exports.AnnotationReviewState = exports.AnnotationReplyType = exports.AnnotationMode = exports.AnnotationMarkedState = exports.AnnotationFlag = exports.AnnotationFieldFlag = exports.AnnotationEditorType = exports.AnnotationEditorPrefix = exports.AnnotationEditorParamsType = exports.AnnotationBorderStyleType = exports.AnnotationActionEventType = exports.AbortException = void 0;
 exports.arrayByteLength = arrayByteLength;
 exports.arraysToBytes = arraysToBytes;
 exports.assert = assert;
@@ -267,34 +267,6 @@ const PageActionEventType = {
   C: "PageClose"
 };
 exports.PageActionEventType = PageActionEventType;
-const StreamType = {
-  UNKNOWN: "UNKNOWN",
-  FLATE: "FLATE",
-  LZW: "LZW",
-  DCT: "DCT",
-  JPX: "JPX",
-  JBIG: "JBIG",
-  A85: "A85",
-  AHX: "AHX",
-  CCF: "CCF",
-  RLX: "RLX"
-};
-exports.StreamType = StreamType;
-const FontType = {
-  UNKNOWN: "UNKNOWN",
-  TYPE1: "TYPE1",
-  TYPE1STANDARD: "TYPE1STANDARD",
-  TYPE1C: "TYPE1C",
-  CIDFONTTYPE0: "CIDFONTTYPE0",
-  CIDFONTTYPE0C: "CIDFONTTYPE0C",
-  TRUETYPE: "TRUETYPE",
-  CIDFONTTYPE2: "CIDFONTTYPE2",
-  TYPE3: "TYPE3",
-  OPENTYPE: "OPENTYPE",
-  TYPE0: "TYPE0",
-  MMTYPE1: "MMTYPE1"
-};
-exports.FontType = FontType;
 const VerbosityLevel = {
   ERRORS: 0,
   WARNINGS: 1,
@@ -926,7 +898,6 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.build = exports.RenderTask = exports.PDFWorkerUtil = exports.PDFWorker = exports.PDFPageProxy = exports.PDFDocumentProxy = exports.PDFDocumentLoadingTask = exports.PDFDataRangeTransport = exports.LoopbackPort = exports.DefaultStandardFontDataFactory = exports.DefaultCanvasFactory = exports.DefaultCMapReaderFactory = void 0;
 exports.getDocument = getDocument;
-exports.setPDFNetworkStreamFactory = setPDFNetworkStreamFactory;
 exports.version = void 0;
 var _util = __w_pdfjs_require__(1);
 var _annotation_storage = __w_pdfjs_require__(3);
@@ -959,75 +930,90 @@ if (_is_node.isNodeJS) {
   exports.DefaultStandardFontDataFactory = DefaultStandardFontDataFactory = NodeStandardFontDataFactory;
 }
 let createPDFNetworkStream;
-function setPDFNetworkStreamFactory(pdfNetworkStreamFactory) {
-  createPDFNetworkStream = pdfNetworkStreamFactory;
+{
+  if (_is_node.isNodeJS) {
+    const {
+      PDFNodeStream
+    } = __w_pdfjs_require__(21);
+    createPDFNetworkStream = params => {
+      return new PDFNodeStream(params);
+    };
+  } else {
+    const {
+      PDFNetworkStream
+    } = __w_pdfjs_require__(24);
+    const {
+      PDFFetchStream
+    } = __w_pdfjs_require__(25);
+    createPDFNetworkStream = params => {
+      return (0, _display_utils.isValidFetchUrl)(params.url) ? new PDFFetchStream(params) : new PDFNetworkStream(params);
+    };
+  }
 }
 function getDocument(src) {
-  const task = new PDFDocumentLoadingTask();
-  let source;
   if (typeof src === "string" || src instanceof URL) {
-    source = {
+    src = {
       url: src
     };
   } else if ((0, _util.isArrayBuffer)(src)) {
-    source = {
+    src = {
       data: src
     };
   } else if (src instanceof PDFDataRangeTransport) {
-    source = {
+    (0, _display_utils.deprecated)("`PDFDataRangeTransport`-instance, " + "please use a parameter object with `range`-property instead.");
+    src = {
       range: src
     };
   } else {
     if (typeof src !== "object") {
       throw new Error("Invalid parameter in getDocument, " + "need either string, URL, TypedArray, or parameter object.");
     }
-    if (!src.url && !src.data && !src.range) {
-      throw new Error("Invalid parameter object: need either .data, .range or .url");
-    }
-    source = src;
   }
+  if (!src.url && !src.data && !src.range) {
+    throw new Error("Invalid parameter object: need either .data, .range or .url");
+  }
+  const task = new PDFDocumentLoadingTask();
   const params = Object.create(null);
   let rangeTransport = null,
     worker = null;
-  for (const key in source) {
-    const value = source[key];
+  for (const key in src) {
+    const val = src[key];
     switch (key) {
       case "url":
-        if (typeof window !== "undefined") {
-          try {
-            params[key] = new URL(value, window.location).href;
-            continue;
-          } catch (ex) {
-            (0, _util.warn)(`Cannot create valid URL: "${ex}".`);
-          }
-        } else if (typeof value === "string" || value instanceof URL) {
-          params[key] = value.toString();
+        if (val instanceof URL) {
+          params[key] = val.href;
           continue;
+        }
+        try {
+          params[key] = new URL(val, window.location).href;
+          continue;
+        } catch (ex) {
+          if (_is_node.isNodeJS && typeof val === "string") {
+            break;
+          }
         }
         throw new Error("Invalid PDF url data: " + "either string or URL-object is expected in the url property.");
       case "range":
-        rangeTransport = value;
+        rangeTransport = val;
         continue;
       case "worker":
-        worker = value;
+        worker = val;
         continue;
       case "data":
-        if (_is_node.isNodeJS && typeof Buffer !== "undefined" && value instanceof Buffer) {
-          params[key] = new Uint8Array(value);
-        } else if (value instanceof Uint8Array) {
+        if (_is_node.isNodeJS && typeof Buffer !== "undefined" && val instanceof Buffer) {
+          params[key] = new Uint8Array(val);
+        } else if (val instanceof Uint8Array && val.byteLength === val.buffer.byteLength) {
           break;
-        } else if (typeof value === "string") {
-          params[key] = (0, _util.stringToBytes)(value);
-        } else if (typeof value === "object" && value !== null && !isNaN(value.length)) {
-          params[key] = new Uint8Array(value);
-        } else if ((0, _util.isArrayBuffer)(value)) {
-          params[key] = new Uint8Array(value);
+        } else if (typeof val === "string") {
+          params[key] = (0, _util.stringToBytes)(val);
+        } else if (typeof val === "object" && val !== null && !isNaN(val.length) || (0, _util.isArrayBuffer)(val)) {
+          params[key] = new Uint8Array(val);
         } else {
           throw new Error("Invalid PDF binary data: either TypedArray, " + "string, or array-like object is expected in the data property.");
         }
         continue;
     }
-    params[key] = value;
+    params[key] = val;
   }
   params.CMapReaderFactory = params.CMapReaderFactory || DefaultCMapReaderFactory;
   params.StandardFontDataFactory = params.StandardFontDataFactory || DefaultStandardFontDataFactory;
@@ -1051,7 +1037,7 @@ function getDocument(src) {
     params.standardFontDataUrl = null;
   }
   if (typeof params.useWorkerFetch !== "boolean") {
-    params.useWorkerFetch = params.CMapReaderFactory === _display_utils.DOMCMapReaderFactory && params.StandardFontDataFactory === _display_utils.DOMStandardFontDataFactory;
+    params.useWorkerFetch = params.CMapReaderFactory === _display_utils.DOMCMapReaderFactory && params.StandardFontDataFactory === _display_utils.DOMStandardFontDataFactory && (0, _display_utils.isValidFetchUrl)(params.cMapUrl, document.baseURI) && (0, _display_utils.isValidFetchUrl)(params.standardFontDataUrl, document.baseURI);
   }
   if (typeof params.isEvalSupported !== "boolean") {
     params.isEvalSupported = true;
@@ -1138,9 +1124,10 @@ async function _fetchDocument(worker, source, pdfDataRangeTransport, docId) {
     source.progressiveDone = pdfDataRangeTransport.progressiveDone;
     source.contentDispositionFilename = pdfDataRangeTransport.contentDispositionFilename;
   }
+  const transfers = source.data ? [source.data.buffer] : null;
   const workerId = await worker.messageHandler.sendWithPromise("GetDocRequest", {
     docId,
-    apiVersion: '3.2.146',
+    apiVersion: '3.3.122',
     data: source.data,
     password: source.password,
     disableAutoFetch: source.disableAutoFetch,
@@ -1159,10 +1146,7 @@ async function _fetchDocument(worker, source, pdfDataRangeTransport, docId) {
       cMapUrl: source.useWorkerFetch ? source.cMapUrl : null,
       standardFontDataUrl: source.useWorkerFetch ? source.standardFontDataUrl : null
     }
-  });
-  if (source.data) {
-    source.data = null;
-  }
+  }, transfers);
   if (worker.destroyed) {
     throw new Error("Worker was destroyed");
   }
@@ -1273,10 +1257,6 @@ class PDFDocumentProxy {
   }
   get fingerprints() {
     return this._pdfInfo.fingerprints;
-  }
-  get stats() {
-    (0, _display_utils.deprecated)("The PDFDocumentProxy stats property will be removed in the future.");
-    return this._transport.stats;
   }
   get isPureXfa() {
     return (0, _util.shadow)(this, "isPureXfa", !!this._transport._htmlForXfa);
@@ -2039,7 +2019,6 @@ class PDFWorker {
 }
 exports.PDFWorker = PDFWorker;
 class WorkerTransport {
-  #docStats = null;
   #pageCache = new Map();
   #pagePromises = new Map();
   #metadataPromise = null;
@@ -2073,9 +2052,6 @@ class WorkerTransport {
   }
   get annotationStorage() {
     return (0, _util.shadow)(this, "annotationStorage", new _annotation_storage.AnnotationStorage());
-  }
-  get stats() {
-    return this.#docStats;
   }
   getRenderingIntent(intent, annotationMode = _util.AnnotationMode.ENABLE, printAnnotationStorage = null, isOpList = false) {
     let renderingIntent = _util.RenderingIntentFlag.DISPLAY;
@@ -2178,7 +2154,7 @@ class WorkerTransport {
             sink.close();
             return;
           }
-          (0, _util.assert)((0, _util.isArrayBuffer)(value), "GetReader - expected an ArrayBuffer.");
+          (0, _util.assert)(value instanceof ArrayBuffer, "GetReader - expected an ArrayBuffer.");
           sink.enqueue(new Uint8Array(value), 1, [value]);
         }).catch(reason => {
           sink.error(reason);
@@ -2233,7 +2209,7 @@ class WorkerTransport {
             sink.close();
             return;
           }
-          (0, _util.assert)((0, _util.isArrayBuffer)(value), "GetRangeReader - expected an ArrayBuffer.");
+          (0, _util.assert)(value instanceof ArrayBuffer, "GetRangeReader - expected an ArrayBuffer.");
           sink.enqueue(new Uint8Array(value), 1, [value]);
         }).catch(reason => {
           sink.error(reason);
@@ -2410,15 +2386,6 @@ class WorkerTransport {
       loadingTask.onProgress?.({
         loaded: data.loaded,
         total: data.total
-      });
-    });
-    messageHandler.on("DocStats", data => {
-      if (this.destroyed) {
-        return;
-      }
-      this.#docStats = Object.freeze({
-        streamTypes: Object.freeze(data.streamTypes),
-        fontTypes: Object.freeze(data.fontTypes)
       });
     });
     messageHandler.on("UnsupportedFeature", this._onUnsupportedFeature.bind(this));
@@ -2808,9 +2775,9 @@ class InternalRenderTask {
     }
   }
 }
-const version = '3.2.146';
+const version = '3.3.122';
 exports.version = version;
-const build = '3fd2a3548';
+const build = '562045607';
 exports.build = build;
 
 /***/ }),
@@ -4963,13 +4930,12 @@ var _util = __w_pdfjs_require__(1);
 var _display_utils = __w_pdfjs_require__(6);
 var _pattern_helper = __w_pdfjs_require__(12);
 var _image_utils = __w_pdfjs_require__(13);
-var _is_node = __w_pdfjs_require__(10);
 const MIN_FONT_SIZE = 16;
 const MAX_FONT_SIZE = 100;
 const MAX_GROUP_SIZE = 4096;
 const EXECUTION_TIME = 15;
 const EXECUTION_STEPS = 10;
-const MAX_SIZE_TO_COMPILE = _is_node.isNodeJS && typeof Path2D === "undefined" ? -1 : 1000;
+const MAX_SIZE_TO_COMPILE = 1000;
 const FULL_CHUNK_HEIGHT = 16;
 function mirrorContextOperations(ctx, destCtx) {
   if (ctx._removeMirroring) {
@@ -7205,7 +7171,6 @@ exports.TilingPattern = exports.PathType = void 0;
 exports.getShadingPattern = getShadingPattern;
 var _util = __w_pdfjs_require__(1);
 var _display_utils = __w_pdfjs_require__(6);
-var _is_node = __w_pdfjs_require__(10);
 const PathType = {
   FILL: "Fill",
   STROKE: "Stroke",
@@ -7213,7 +7178,7 @@ const PathType = {
 };
 exports.PathType = PathType;
 function applyBoundingBox(ctx, bbox) {
-  if (!bbox || _is_node.isNodeJS) {
+  if (!bbox) {
     return;
   }
   const width = bbox[2] - bbox[0];
@@ -7716,8 +7681,8 @@ Object.defineProperty(exports, "__esModule", ({
 exports.GlobalWorkerOptions = void 0;
 const GlobalWorkerOptions = Object.create(null);
 exports.GlobalWorkerOptions = GlobalWorkerOptions;
-GlobalWorkerOptions.workerPort = GlobalWorkerOptions.workerPort === undefined ? null : GlobalWorkerOptions.workerPort;
-GlobalWorkerOptions.workerSrc = GlobalWorkerOptions.workerSrc === undefined ? "" : GlobalWorkerOptions.workerSrc;
+GlobalWorkerOptions.workerPort = null;
+GlobalWorkerOptions.workerSrc = "";
 
 /***/ }),
 /* 15 */
@@ -8384,20 +8349,26 @@ exports.PDFDataTransportStream = void 0;
 var _util = __w_pdfjs_require__(1);
 var _display_utils = __w_pdfjs_require__(6);
 class PDFDataTransportStream {
-  constructor(params, pdfDataRangeTransport) {
+  constructor({
+    length,
+    initialData,
+    progressiveDone = false,
+    contentDispositionFilename = null,
+    disableRange = false,
+    disableStream = false
+  }, pdfDataRangeTransport) {
     (0, _util.assert)(pdfDataRangeTransport, 'PDFDataTransportStream - missing required "pdfDataRangeTransport" argument.');
     this._queuedChunks = [];
-    this._progressiveDone = params.progressiveDone || false;
-    this._contentDispositionFilename = params.contentDispositionFilename || null;
-    const initialData = params.initialData;
+    this._progressiveDone = progressiveDone;
+    this._contentDispositionFilename = contentDispositionFilename;
     if (initialData?.length > 0) {
-      const buffer = new Uint8Array(initialData).buffer;
+      const buffer = initialData instanceof Uint8Array && initialData.byteLength === initialData.buffer.byteLength ? initialData.buffer : new Uint8Array(initialData).buffer;
       this._queuedChunks.push(buffer);
     }
     this._pdfDataRangeTransport = pdfDataRangeTransport;
-    this._isStreamingSupported = !params.disableStream;
-    this._isRangeSupported = !params.disableRange;
-    this._contentLength = params.length;
+    this._isStreamingSupported = !disableStream;
+    this._isRangeSupported = !disableRange;
+    this._contentLength = length;
     this._fullRequestReader = null;
     this._rangeReaders = [];
     this._pdfDataRangeTransport.addRangeListener((begin, chunk) => {
@@ -8422,9 +8393,12 @@ class PDFDataTransportStream {
     });
     this._pdfDataRangeTransport.transportReady();
   }
-  _onReceiveData(args) {
-    const buffer = new Uint8Array(args.chunk).buffer;
-    if (args.begin === undefined) {
+  _onReceiveData({
+    begin,
+    chunk
+  }) {
+    const buffer = chunk instanceof Uint8Array && chunk.byteLength === chunk.buffer.byteLength ? chunk.buffer : new Uint8Array(chunk).buffer;
+    if (begin === undefined) {
       if (this._fullRequestReader) {
         this._fullRequestReader._enqueue(buffer);
       } else {
@@ -8432,7 +8406,7 @@ class PDFDataTransportStream {
       }
     } else {
       const found = this._rangeReaders.some(function (rangeReader) {
-        if (rangeReader._begin !== args.begin) {
+        if (rangeReader._begin !== begin) {
           return false;
         }
         rangeReader._enqueue(buffer);
@@ -8742,6 +8716,1207 @@ exports.NodeStandardFontDataFactory = NodeStandardFontDataFactory;
 
 /***/ }),
 /* 21 */
+/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.PDFNodeStream = void 0;
+var _util = __w_pdfjs_require__(1);
+var _network_utils = __w_pdfjs_require__(22);
+;
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
+const url = require("url");
+const fileUriRegex = /^file:\/\/\/[a-zA-Z]:\//;
+function parseUrl(sourceUrl) {
+  const parsedUrl = url.parse(sourceUrl);
+  if (parsedUrl.protocol === "file:" || parsedUrl.host) {
+    return parsedUrl;
+  }
+  if (/^[a-z]:[/\\]/i.test(sourceUrl)) {
+    return url.parse(`file:///${sourceUrl}`);
+  }
+  if (!parsedUrl.host) {
+    parsedUrl.protocol = "file:";
+  }
+  return parsedUrl;
+}
+class PDFNodeStream {
+  constructor(source) {
+    this.source = source;
+    this.url = parseUrl(source.url);
+    this.isHttp = this.url.protocol === "http:" || this.url.protocol === "https:";
+    this.isFsUrl = this.url.protocol === "file:";
+    this.httpHeaders = this.isHttp && source.httpHeaders || {};
+    this._fullRequestReader = null;
+    this._rangeRequestReaders = [];
+  }
+  get _progressiveDataLength() {
+    return this._fullRequestReader?._loaded ?? 0;
+  }
+  getFullReader() {
+    (0, _util.assert)(!this._fullRequestReader, "PDFNodeStream.getFullReader can only be called once.");
+    this._fullRequestReader = this.isFsUrl ? new PDFNodeStreamFsFullReader(this) : new PDFNodeStreamFullReader(this);
+    return this._fullRequestReader;
+  }
+  getRangeReader(start, end) {
+    if (end <= this._progressiveDataLength) {
+      return null;
+    }
+    const rangeReader = this.isFsUrl ? new PDFNodeStreamFsRangeReader(this, start, end) : new PDFNodeStreamRangeReader(this, start, end);
+    this._rangeRequestReaders.push(rangeReader);
+    return rangeReader;
+  }
+  cancelAllRequests(reason) {
+    this._fullRequestReader?.cancel(reason);
+    for (const reader of this._rangeRequestReaders.slice(0)) {
+      reader.cancel(reason);
+    }
+  }
+}
+exports.PDFNodeStream = PDFNodeStream;
+class BaseFullReader {
+  constructor(stream) {
+    this._url = stream.url;
+    this._done = false;
+    this._storedError = null;
+    this.onProgress = null;
+    const source = stream.source;
+    this._contentLength = source.length;
+    this._loaded = 0;
+    this._filename = null;
+    this._disableRange = source.disableRange || false;
+    this._rangeChunkSize = source.rangeChunkSize;
+    if (!this._rangeChunkSize && !this._disableRange) {
+      this._disableRange = true;
+    }
+    this._isStreamingSupported = !source.disableStream;
+    this._isRangeSupported = !source.disableRange;
+    this._readableStream = null;
+    this._readCapability = (0, _util.createPromiseCapability)();
+    this._headersCapability = (0, _util.createPromiseCapability)();
+  }
+  get headersReady() {
+    return this._headersCapability.promise;
+  }
+  get filename() {
+    return this._filename;
+  }
+  get contentLength() {
+    return this._contentLength;
+  }
+  get isRangeSupported() {
+    return this._isRangeSupported;
+  }
+  get isStreamingSupported() {
+    return this._isStreamingSupported;
+  }
+  async read() {
+    await this._readCapability.promise;
+    if (this._done) {
+      return {
+        value: undefined,
+        done: true
+      };
+    }
+    if (this._storedError) {
+      throw this._storedError;
+    }
+    const chunk = this._readableStream.read();
+    if (chunk === null) {
+      this._readCapability = (0, _util.createPromiseCapability)();
+      return this.read();
+    }
+    this._loaded += chunk.length;
+    this.onProgress?.({
+      loaded: this._loaded,
+      total: this._contentLength
+    });
+    const buffer = new Uint8Array(chunk).buffer;
+    return {
+      value: buffer,
+      done: false
+    };
+  }
+  cancel(reason) {
+    if (!this._readableStream) {
+      this._error(reason);
+      return;
+    }
+    this._readableStream.destroy(reason);
+  }
+  _error(reason) {
+    this._storedError = reason;
+    this._readCapability.resolve();
+  }
+  _setReadableStream(readableStream) {
+    this._readableStream = readableStream;
+    readableStream.on("readable", () => {
+      this._readCapability.resolve();
+    });
+    readableStream.on("end", () => {
+      readableStream.destroy();
+      this._done = true;
+      this._readCapability.resolve();
+    });
+    readableStream.on("error", reason => {
+      this._error(reason);
+    });
+    if (!this._isStreamingSupported && this._isRangeSupported) {
+      this._error(new _util.AbortException("streaming is disabled"));
+    }
+    if (this._storedError) {
+      this._readableStream.destroy(this._storedError);
+    }
+  }
+}
+class BaseRangeReader {
+  constructor(stream) {
+    this._url = stream.url;
+    this._done = false;
+    this._storedError = null;
+    this.onProgress = null;
+    this._loaded = 0;
+    this._readableStream = null;
+    this._readCapability = (0, _util.createPromiseCapability)();
+    const source = stream.source;
+    this._isStreamingSupported = !source.disableStream;
+  }
+  get isStreamingSupported() {
+    return this._isStreamingSupported;
+  }
+  async read() {
+    await this._readCapability.promise;
+    if (this._done) {
+      return {
+        value: undefined,
+        done: true
+      };
+    }
+    if (this._storedError) {
+      throw this._storedError;
+    }
+    const chunk = this._readableStream.read();
+    if (chunk === null) {
+      this._readCapability = (0, _util.createPromiseCapability)();
+      return this.read();
+    }
+    this._loaded += chunk.length;
+    this.onProgress?.({
+      loaded: this._loaded
+    });
+    const buffer = new Uint8Array(chunk).buffer;
+    return {
+      value: buffer,
+      done: false
+    };
+  }
+  cancel(reason) {
+    if (!this._readableStream) {
+      this._error(reason);
+      return;
+    }
+    this._readableStream.destroy(reason);
+  }
+  _error(reason) {
+    this._storedError = reason;
+    this._readCapability.resolve();
+  }
+  _setReadableStream(readableStream) {
+    this._readableStream = readableStream;
+    readableStream.on("readable", () => {
+      this._readCapability.resolve();
+    });
+    readableStream.on("end", () => {
+      readableStream.destroy();
+      this._done = true;
+      this._readCapability.resolve();
+    });
+    readableStream.on("error", reason => {
+      this._error(reason);
+    });
+    if (this._storedError) {
+      this._readableStream.destroy(this._storedError);
+    }
+  }
+}
+function createRequestOptions(parsedUrl, headers) {
+  return {
+    protocol: parsedUrl.protocol,
+    auth: parsedUrl.auth,
+    host: parsedUrl.hostname,
+    port: parsedUrl.port,
+    path: parsedUrl.path,
+    method: "GET",
+    headers
+  };
+}
+class PDFNodeStreamFullReader extends BaseFullReader {
+  constructor(stream) {
+    super(stream);
+    const handleResponse = response => {
+      if (response.statusCode === 404) {
+        const error = new _util.MissingPDFException(`Missing PDF "${this._url}".`);
+        this._storedError = error;
+        this._headersCapability.reject(error);
+        return;
+      }
+      this._headersCapability.resolve();
+      this._setReadableStream(response);
+      const getResponseHeader = name => {
+        return this._readableStream.headers[name.toLowerCase()];
+      };
+      const {
+        allowRangeRequests,
+        suggestedLength
+      } = (0, _network_utils.validateRangeRequestCapabilities)({
+        getResponseHeader,
+        isHttp: stream.isHttp,
+        rangeChunkSize: this._rangeChunkSize,
+        disableRange: this._disableRange
+      });
+      this._isRangeSupported = allowRangeRequests;
+      this._contentLength = suggestedLength || this._contentLength;
+      this._filename = (0, _network_utils.extractFilenameFromHeader)(getResponseHeader);
+    };
+    this._request = null;
+    if (this._url.protocol === "http:") {
+      this._request = http.request(createRequestOptions(this._url, stream.httpHeaders), handleResponse);
+    } else {
+      this._request = https.request(createRequestOptions(this._url, stream.httpHeaders), handleResponse);
+    }
+    this._request.on("error", reason => {
+      this._storedError = reason;
+      this._headersCapability.reject(reason);
+    });
+    this._request.end();
+  }
+}
+class PDFNodeStreamRangeReader extends BaseRangeReader {
+  constructor(stream, start, end) {
+    super(stream);
+    this._httpHeaders = {};
+    for (const property in stream.httpHeaders) {
+      const value = stream.httpHeaders[property];
+      if (value === undefined) {
+        continue;
+      }
+      this._httpHeaders[property] = value;
+    }
+    this._httpHeaders.Range = `bytes=${start}-${end - 1}`;
+    const handleResponse = response => {
+      if (response.statusCode === 404) {
+        const error = new _util.MissingPDFException(`Missing PDF "${this._url}".`);
+        this._storedError = error;
+        return;
+      }
+      this._setReadableStream(response);
+    };
+    this._request = null;
+    if (this._url.protocol === "http:") {
+      this._request = http.request(createRequestOptions(this._url, this._httpHeaders), handleResponse);
+    } else {
+      this._request = https.request(createRequestOptions(this._url, this._httpHeaders), handleResponse);
+    }
+    this._request.on("error", reason => {
+      this._storedError = reason;
+    });
+    this._request.end();
+  }
+}
+class PDFNodeStreamFsFullReader extends BaseFullReader {
+  constructor(stream) {
+    super(stream);
+    let path = decodeURIComponent(this._url.path);
+    if (fileUriRegex.test(this._url.href)) {
+      path = path.replace(/^\//, "");
+    }
+    fs.lstat(path, (error, stat) => {
+      if (error) {
+        if (error.code === "ENOENT") {
+          error = new _util.MissingPDFException(`Missing PDF "${path}".`);
+        }
+        this._storedError = error;
+        this._headersCapability.reject(error);
+        return;
+      }
+      this._contentLength = stat.size;
+      this._setReadableStream(fs.createReadStream(path));
+      this._headersCapability.resolve();
+    });
+  }
+}
+class PDFNodeStreamFsRangeReader extends BaseRangeReader {
+  constructor(stream, start, end) {
+    super(stream);
+    let path = decodeURIComponent(this._url.path);
+    if (fileUriRegex.test(this._url.href)) {
+      path = path.replace(/^\//, "");
+    }
+    this._setReadableStream(fs.createReadStream(path, {
+      start,
+      end: end - 1
+    }));
+  }
+}
+
+/***/ }),
+/* 22 */
+/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.createResponseStatusError = createResponseStatusError;
+exports.extractFilenameFromHeader = extractFilenameFromHeader;
+exports.validateRangeRequestCapabilities = validateRangeRequestCapabilities;
+exports.validateResponseStatus = validateResponseStatus;
+var _util = __w_pdfjs_require__(1);
+var _content_disposition = __w_pdfjs_require__(23);
+var _display_utils = __w_pdfjs_require__(6);
+function validateRangeRequestCapabilities({
+  getResponseHeader,
+  isHttp,
+  rangeChunkSize,
+  disableRange
+}) {
+  const returnValues = {
+    allowRangeRequests: false,
+    suggestedLength: undefined
+  };
+  const length = parseInt(getResponseHeader("Content-Length"), 10);
+  if (!Number.isInteger(length)) {
+    return returnValues;
+  }
+  returnValues.suggestedLength = length;
+  if (length <= 2 * rangeChunkSize) {
+    return returnValues;
+  }
+  if (disableRange || !isHttp) {
+    return returnValues;
+  }
+  if (getResponseHeader("Accept-Ranges") !== "bytes") {
+    return returnValues;
+  }
+  const contentEncoding = getResponseHeader("Content-Encoding") || "identity";
+  if (contentEncoding !== "identity") {
+    return returnValues;
+  }
+  returnValues.allowRangeRequests = true;
+  return returnValues;
+}
+function extractFilenameFromHeader(getResponseHeader) {
+  const contentDisposition = getResponseHeader("Content-Disposition");
+  if (contentDisposition) {
+    let filename = (0, _content_disposition.getFilenameFromContentDispositionHeader)(contentDisposition);
+    if (filename.includes("%")) {
+      try {
+        filename = decodeURIComponent(filename);
+      } catch (ex) {}
+    }
+    if ((0, _display_utils.isPdfFile)(filename)) {
+      return filename;
+    }
+  }
+  return null;
+}
+function createResponseStatusError(status, url) {
+  if (status === 404 || status === 0 && url.startsWith("file:")) {
+    return new _util.MissingPDFException('Missing PDF "' + url + '".');
+  }
+  return new _util.UnexpectedResponseException(`Unexpected server response (${status}) while retrieving PDF "${url}".`, status);
+}
+function validateResponseStatus(status) {
+  return status === 200 || status === 206;
+}
+
+/***/ }),
+/* 23 */
+/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.getFilenameFromContentDispositionHeader = getFilenameFromContentDispositionHeader;
+var _util = __w_pdfjs_require__(1);
+function getFilenameFromContentDispositionHeader(contentDisposition) {
+  let needsEncodingFixup = true;
+  let tmp = toParamRegExp("filename\\*", "i").exec(contentDisposition);
+  if (tmp) {
+    tmp = tmp[1];
+    let filename = rfc2616unquote(tmp);
+    filename = unescape(filename);
+    filename = rfc5987decode(filename);
+    filename = rfc2047decode(filename);
+    return fixupEncoding(filename);
+  }
+  tmp = rfc2231getparam(contentDisposition);
+  if (tmp) {
+    const filename = rfc2047decode(tmp);
+    return fixupEncoding(filename);
+  }
+  tmp = toParamRegExp("filename", "i").exec(contentDisposition);
+  if (tmp) {
+    tmp = tmp[1];
+    let filename = rfc2616unquote(tmp);
+    filename = rfc2047decode(filename);
+    return fixupEncoding(filename);
+  }
+  function toParamRegExp(attributePattern, flags) {
+    return new RegExp("(?:^|;)\\s*" + attributePattern + "\\s*=\\s*" + "(" + '[^";\\s][^;\\s]*' + "|" + '"(?:[^"\\\\]|\\\\"?)+"?' + ")", flags);
+  }
+  function textdecode(encoding, value) {
+    if (encoding) {
+      if (!/^[\x00-\xFF]+$/.test(value)) {
+        return value;
+      }
+      try {
+        const decoder = new TextDecoder(encoding, {
+          fatal: true
+        });
+        const buffer = (0, _util.stringToBytes)(value);
+        value = decoder.decode(buffer);
+        needsEncodingFixup = false;
+      } catch (e) {}
+    }
+    return value;
+  }
+  function fixupEncoding(value) {
+    if (needsEncodingFixup && /[\x80-\xff]/.test(value)) {
+      value = textdecode("utf-8", value);
+      if (needsEncodingFixup) {
+        value = textdecode("iso-8859-1", value);
+      }
+    }
+    return value;
+  }
+  function rfc2231getparam(contentDispositionStr) {
+    const matches = [];
+    let match;
+    const iter = toParamRegExp("filename\\*((?!0\\d)\\d+)(\\*?)", "ig");
+    while ((match = iter.exec(contentDispositionStr)) !== null) {
+      let [, n, quot, part] = match;
+      n = parseInt(n, 10);
+      if (n in matches) {
+        if (n === 0) {
+          break;
+        }
+        continue;
+      }
+      matches[n] = [quot, part];
+    }
+    const parts = [];
+    for (let n = 0; n < matches.length; ++n) {
+      if (!(n in matches)) {
+        break;
+      }
+      let [quot, part] = matches[n];
+      part = rfc2616unquote(part);
+      if (quot) {
+        part = unescape(part);
+        if (n === 0) {
+          part = rfc5987decode(part);
+        }
+      }
+      parts.push(part);
+    }
+    return parts.join("");
+  }
+  function rfc2616unquote(value) {
+    if (value.startsWith('"')) {
+      const parts = value.slice(1).split('\\"');
+      for (let i = 0; i < parts.length; ++i) {
+        const quotindex = parts[i].indexOf('"');
+        if (quotindex !== -1) {
+          parts[i] = parts[i].slice(0, quotindex);
+          parts.length = i + 1;
+        }
+        parts[i] = parts[i].replace(/\\(.)/g, "$1");
+      }
+      value = parts.join('"');
+    }
+    return value;
+  }
+  function rfc5987decode(extvalue) {
+    const encodingend = extvalue.indexOf("'");
+    if (encodingend === -1) {
+      return extvalue;
+    }
+    const encoding = extvalue.slice(0, encodingend);
+    const langvalue = extvalue.slice(encodingend + 1);
+    const value = langvalue.replace(/^[^']*'/, "");
+    return textdecode(encoding, value);
+  }
+  function rfc2047decode(value) {
+    if (!value.startsWith("=?") || /[\x00-\x19\x80-\xff]/.test(value)) {
+      return value;
+    }
+    return value.replace(/=\?([\w-]*)\?([QqBb])\?((?:[^?]|\?(?!=))*)\?=/g, function (matches, charset, encoding, text) {
+      if (encoding === "q" || encoding === "Q") {
+        text = text.replace(/_/g, " ");
+        text = text.replace(/=([0-9a-fA-F]{2})/g, function (match, hex) {
+          return String.fromCharCode(parseInt(hex, 16));
+        });
+        return textdecode(charset, text);
+      }
+      try {
+        text = atob(text);
+      } catch (e) {}
+      return textdecode(charset, text);
+    });
+  }
+  return "";
+}
+
+/***/ }),
+/* 24 */
+/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.PDFNetworkStream = void 0;
+var _util = __w_pdfjs_require__(1);
+var _network_utils = __w_pdfjs_require__(22);
+;
+const OK_RESPONSE = 200;
+const PARTIAL_CONTENT_RESPONSE = 206;
+function getArrayBuffer(xhr) {
+  const data = xhr.response;
+  if (typeof data !== "string") {
+    return data;
+  }
+  return (0, _util.stringToBytes)(data).buffer;
+}
+class NetworkManager {
+  constructor(url, args = {}) {
+    this.url = url;
+    this.isHttp = /^https?:/i.test(url);
+    this.httpHeaders = this.isHttp && args.httpHeaders || Object.create(null);
+    this.withCredentials = args.withCredentials || false;
+    this.getXhr = args.getXhr || function NetworkManager_getXhr() {
+      return new XMLHttpRequest();
+    };
+    this.currXhrId = 0;
+    this.pendingRequests = Object.create(null);
+  }
+  requestRange(begin, end, listeners) {
+    const args = {
+      begin,
+      end
+    };
+    for (const prop in listeners) {
+      args[prop] = listeners[prop];
+    }
+    return this.request(args);
+  }
+  requestFull(listeners) {
+    return this.request(listeners);
+  }
+  request(args) {
+    const xhr = this.getXhr();
+    const xhrId = this.currXhrId++;
+    const pendingRequest = this.pendingRequests[xhrId] = {
+      xhr
+    };
+    xhr.open("GET", this.url);
+    xhr.withCredentials = this.withCredentials;
+    for (const property in this.httpHeaders) {
+      const value = this.httpHeaders[property];
+      if (value === undefined) {
+        continue;
+      }
+      xhr.setRequestHeader(property, value);
+    }
+    if (this.isHttp && "begin" in args && "end" in args) {
+      xhr.setRequestHeader("Range", `bytes=${args.begin}-${args.end - 1}`);
+      pendingRequest.expectedStatus = PARTIAL_CONTENT_RESPONSE;
+    } else {
+      pendingRequest.expectedStatus = OK_RESPONSE;
+    }
+    xhr.responseType = "arraybuffer";
+    if (args.onError) {
+      xhr.onerror = function (evt) {
+        args.onError(xhr.status);
+      };
+    }
+    xhr.onreadystatechange = this.onStateChange.bind(this, xhrId);
+    xhr.onprogress = this.onProgress.bind(this, xhrId);
+    pendingRequest.onHeadersReceived = args.onHeadersReceived;
+    pendingRequest.onDone = args.onDone;
+    pendingRequest.onError = args.onError;
+    pendingRequest.onProgress = args.onProgress;
+    xhr.send(null);
+    return xhrId;
+  }
+  onProgress(xhrId, evt) {
+    const pendingRequest = this.pendingRequests[xhrId];
+    if (!pendingRequest) {
+      return;
+    }
+    pendingRequest.onProgress?.(evt);
+  }
+  onStateChange(xhrId, evt) {
+    const pendingRequest = this.pendingRequests[xhrId];
+    if (!pendingRequest) {
+      return;
+    }
+    const xhr = pendingRequest.xhr;
+    if (xhr.readyState >= 2 && pendingRequest.onHeadersReceived) {
+      pendingRequest.onHeadersReceived();
+      delete pendingRequest.onHeadersReceived;
+    }
+    if (xhr.readyState !== 4) {
+      return;
+    }
+    if (!(xhrId in this.pendingRequests)) {
+      return;
+    }
+    delete this.pendingRequests[xhrId];
+    if (xhr.status === 0 && this.isHttp) {
+      pendingRequest.onError?.(xhr.status);
+      return;
+    }
+    const xhrStatus = xhr.status || OK_RESPONSE;
+    const ok_response_on_range_request = xhrStatus === OK_RESPONSE && pendingRequest.expectedStatus === PARTIAL_CONTENT_RESPONSE;
+    if (!ok_response_on_range_request && xhrStatus !== pendingRequest.expectedStatus) {
+      pendingRequest.onError?.(xhr.status);
+      return;
+    }
+    const chunk = getArrayBuffer(xhr);
+    if (xhrStatus === PARTIAL_CONTENT_RESPONSE) {
+      const rangeHeader = xhr.getResponseHeader("Content-Range");
+      const matches = /bytes (\d+)-(\d+)\/(\d+)/.exec(rangeHeader);
+      pendingRequest.onDone({
+        begin: parseInt(matches[1], 10),
+        chunk
+      });
+    } else if (chunk) {
+      pendingRequest.onDone({
+        begin: 0,
+        chunk
+      });
+    } else {
+      pendingRequest.onError?.(xhr.status);
+    }
+  }
+  getRequestXhr(xhrId) {
+    return this.pendingRequests[xhrId].xhr;
+  }
+  isPendingRequest(xhrId) {
+    return xhrId in this.pendingRequests;
+  }
+  abortRequest(xhrId) {
+    const xhr = this.pendingRequests[xhrId].xhr;
+    delete this.pendingRequests[xhrId];
+    xhr.abort();
+  }
+}
+class PDFNetworkStream {
+  constructor(source) {
+    this._source = source;
+    this._manager = new NetworkManager(source.url, {
+      httpHeaders: source.httpHeaders,
+      withCredentials: source.withCredentials
+    });
+    this._rangeChunkSize = source.rangeChunkSize;
+    this._fullRequestReader = null;
+    this._rangeRequestReaders = [];
+  }
+  _onRangeRequestReaderClosed(reader) {
+    const i = this._rangeRequestReaders.indexOf(reader);
+    if (i >= 0) {
+      this._rangeRequestReaders.splice(i, 1);
+    }
+  }
+  getFullReader() {
+    (0, _util.assert)(!this._fullRequestReader, "PDFNetworkStream.getFullReader can only be called once.");
+    this._fullRequestReader = new PDFNetworkStreamFullRequestReader(this._manager, this._source);
+    return this._fullRequestReader;
+  }
+  getRangeReader(begin, end) {
+    const reader = new PDFNetworkStreamRangeRequestReader(this._manager, begin, end);
+    reader.onClosed = this._onRangeRequestReaderClosed.bind(this);
+    this._rangeRequestReaders.push(reader);
+    return reader;
+  }
+  cancelAllRequests(reason) {
+    this._fullRequestReader?.cancel(reason);
+    for (const reader of this._rangeRequestReaders.slice(0)) {
+      reader.cancel(reason);
+    }
+  }
+}
+exports.PDFNetworkStream = PDFNetworkStream;
+class PDFNetworkStreamFullRequestReader {
+  constructor(manager, source) {
+    this._manager = manager;
+    const args = {
+      onHeadersReceived: this._onHeadersReceived.bind(this),
+      onDone: this._onDone.bind(this),
+      onError: this._onError.bind(this),
+      onProgress: this._onProgress.bind(this)
+    };
+    this._url = source.url;
+    this._fullRequestId = manager.requestFull(args);
+    this._headersReceivedCapability = (0, _util.createPromiseCapability)();
+    this._disableRange = source.disableRange || false;
+    this._contentLength = source.length;
+    this._rangeChunkSize = source.rangeChunkSize;
+    if (!this._rangeChunkSize && !this._disableRange) {
+      this._disableRange = true;
+    }
+    this._isStreamingSupported = false;
+    this._isRangeSupported = false;
+    this._cachedChunks = [];
+    this._requests = [];
+    this._done = false;
+    this._storedError = undefined;
+    this._filename = null;
+    this.onProgress = null;
+  }
+  _onHeadersReceived() {
+    const fullRequestXhrId = this._fullRequestId;
+    const fullRequestXhr = this._manager.getRequestXhr(fullRequestXhrId);
+    const getResponseHeader = name => {
+      return fullRequestXhr.getResponseHeader(name);
+    };
+    const {
+      allowRangeRequests,
+      suggestedLength
+    } = (0, _network_utils.validateRangeRequestCapabilities)({
+      getResponseHeader,
+      isHttp: this._manager.isHttp,
+      rangeChunkSize: this._rangeChunkSize,
+      disableRange: this._disableRange
+    });
+    if (allowRangeRequests) {
+      this._isRangeSupported = true;
+    }
+    this._contentLength = suggestedLength || this._contentLength;
+    this._filename = (0, _network_utils.extractFilenameFromHeader)(getResponseHeader);
+    if (this._isRangeSupported) {
+      this._manager.abortRequest(fullRequestXhrId);
+    }
+    this._headersReceivedCapability.resolve();
+  }
+  _onDone(data) {
+    if (data) {
+      if (this._requests.length > 0) {
+        const requestCapability = this._requests.shift();
+        requestCapability.resolve({
+          value: data.chunk,
+          done: false
+        });
+      } else {
+        this._cachedChunks.push(data.chunk);
+      }
+    }
+    this._done = true;
+    if (this._cachedChunks.length > 0) {
+      return;
+    }
+    for (const requestCapability of this._requests) {
+      requestCapability.resolve({
+        value: undefined,
+        done: true
+      });
+    }
+    this._requests.length = 0;
+  }
+  _onError(status) {
+    this._storedError = (0, _network_utils.createResponseStatusError)(status, this._url);
+    this._headersReceivedCapability.reject(this._storedError);
+    for (const requestCapability of this._requests) {
+      requestCapability.reject(this._storedError);
+    }
+    this._requests.length = 0;
+    this._cachedChunks.length = 0;
+  }
+  _onProgress(evt) {
+    this.onProgress?.({
+      loaded: evt.loaded,
+      total: evt.lengthComputable ? evt.total : this._contentLength
+    });
+  }
+  get filename() {
+    return this._filename;
+  }
+  get isRangeSupported() {
+    return this._isRangeSupported;
+  }
+  get isStreamingSupported() {
+    return this._isStreamingSupported;
+  }
+  get contentLength() {
+    return this._contentLength;
+  }
+  get headersReady() {
+    return this._headersReceivedCapability.promise;
+  }
+  async read() {
+    if (this._storedError) {
+      throw this._storedError;
+    }
+    if (this._cachedChunks.length > 0) {
+      const chunk = this._cachedChunks.shift();
+      return {
+        value: chunk,
+        done: false
+      };
+    }
+    if (this._done) {
+      return {
+        value: undefined,
+        done: true
+      };
+    }
+    const requestCapability = (0, _util.createPromiseCapability)();
+    this._requests.push(requestCapability);
+    return requestCapability.promise;
+  }
+  cancel(reason) {
+    this._done = true;
+    this._headersReceivedCapability.reject(reason);
+    for (const requestCapability of this._requests) {
+      requestCapability.resolve({
+        value: undefined,
+        done: true
+      });
+    }
+    this._requests.length = 0;
+    if (this._manager.isPendingRequest(this._fullRequestId)) {
+      this._manager.abortRequest(this._fullRequestId);
+    }
+    this._fullRequestReader = null;
+  }
+}
+class PDFNetworkStreamRangeRequestReader {
+  constructor(manager, begin, end) {
+    this._manager = manager;
+    const args = {
+      onDone: this._onDone.bind(this),
+      onError: this._onError.bind(this),
+      onProgress: this._onProgress.bind(this)
+    };
+    this._url = manager.url;
+    this._requestId = manager.requestRange(begin, end, args);
+    this._requests = [];
+    this._queuedChunk = null;
+    this._done = false;
+    this._storedError = undefined;
+    this.onProgress = null;
+    this.onClosed = null;
+  }
+  _close() {
+    this.onClosed?.(this);
+  }
+  _onDone(data) {
+    const chunk = data.chunk;
+    if (this._requests.length > 0) {
+      const requestCapability = this._requests.shift();
+      requestCapability.resolve({
+        value: chunk,
+        done: false
+      });
+    } else {
+      this._queuedChunk = chunk;
+    }
+    this._done = true;
+    for (const requestCapability of this._requests) {
+      requestCapability.resolve({
+        value: undefined,
+        done: true
+      });
+    }
+    this._requests.length = 0;
+    this._close();
+  }
+  _onError(status) {
+    this._storedError = (0, _network_utils.createResponseStatusError)(status, this._url);
+    for (const requestCapability of this._requests) {
+      requestCapability.reject(this._storedError);
+    }
+    this._requests.length = 0;
+    this._queuedChunk = null;
+  }
+  _onProgress(evt) {
+    if (!this.isStreamingSupported) {
+      this.onProgress?.({
+        loaded: evt.loaded
+      });
+    }
+  }
+  get isStreamingSupported() {
+    return false;
+  }
+  async read() {
+    if (this._storedError) {
+      throw this._storedError;
+    }
+    if (this._queuedChunk !== null) {
+      const chunk = this._queuedChunk;
+      this._queuedChunk = null;
+      return {
+        value: chunk,
+        done: false
+      };
+    }
+    if (this._done) {
+      return {
+        value: undefined,
+        done: true
+      };
+    }
+    const requestCapability = (0, _util.createPromiseCapability)();
+    this._requests.push(requestCapability);
+    return requestCapability.promise;
+  }
+  cancel(reason) {
+    this._done = true;
+    for (const requestCapability of this._requests) {
+      requestCapability.resolve({
+        value: undefined,
+        done: true
+      });
+    }
+    this._requests.length = 0;
+    if (this._manager.isPendingRequest(this._requestId)) {
+      this._manager.abortRequest(this._requestId);
+    }
+    this._close();
+  }
+}
+
+/***/ }),
+/* 25 */
+/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.PDFFetchStream = void 0;
+var _util = __w_pdfjs_require__(1);
+var _network_utils = __w_pdfjs_require__(22);
+;
+function createFetchOptions(headers, withCredentials, abortController) {
+  return {
+    method: "GET",
+    headers,
+    signal: abortController.signal,
+    mode: "cors",
+    credentials: withCredentials ? "include" : "same-origin",
+    redirect: "follow"
+  };
+}
+function createHeaders(httpHeaders) {
+  const headers = new Headers();
+  for (const property in httpHeaders) {
+    const value = httpHeaders[property];
+    if (value === undefined) {
+      continue;
+    }
+    headers.append(property, value);
+  }
+  return headers;
+}
+function getArrayBuffer(val) {
+  if (val instanceof Uint8Array) {
+    return val.buffer;
+  }
+  if (val instanceof ArrayBuffer) {
+    return val;
+  }
+  (0, _util.warn)(`getArrayBuffer - unexpected data format: ${val}`);
+  return new Uint8Array(val).buffer;
+}
+class PDFFetchStream {
+  constructor(source) {
+    this.source = source;
+    this.isHttp = /^https?:/i.test(source.url);
+    this.httpHeaders = this.isHttp && source.httpHeaders || {};
+    this._fullRequestReader = null;
+    this._rangeRequestReaders = [];
+  }
+  get _progressiveDataLength() {
+    return this._fullRequestReader?._loaded ?? 0;
+  }
+  getFullReader() {
+    (0, _util.assert)(!this._fullRequestReader, "PDFFetchStream.getFullReader can only be called once.");
+    this._fullRequestReader = new PDFFetchStreamReader(this);
+    return this._fullRequestReader;
+  }
+  getRangeReader(begin, end) {
+    if (end <= this._progressiveDataLength) {
+      return null;
+    }
+    const reader = new PDFFetchStreamRangeReader(this, begin, end);
+    this._rangeRequestReaders.push(reader);
+    return reader;
+  }
+  cancelAllRequests(reason) {
+    this._fullRequestReader?.cancel(reason);
+    for (const reader of this._rangeRequestReaders.slice(0)) {
+      reader.cancel(reason);
+    }
+  }
+}
+exports.PDFFetchStream = PDFFetchStream;
+class PDFFetchStreamReader {
+  constructor(stream) {
+    this._stream = stream;
+    this._reader = null;
+    this._loaded = 0;
+    this._filename = null;
+    const source = stream.source;
+    this._withCredentials = source.withCredentials || false;
+    this._contentLength = source.length;
+    this._headersCapability = (0, _util.createPromiseCapability)();
+    this._disableRange = source.disableRange || false;
+    this._rangeChunkSize = source.rangeChunkSize;
+    if (!this._rangeChunkSize && !this._disableRange) {
+      this._disableRange = true;
+    }
+    this._abortController = new AbortController();
+    this._isStreamingSupported = !source.disableStream;
+    this._isRangeSupported = !source.disableRange;
+    this._headers = createHeaders(this._stream.httpHeaders);
+    const url = source.url;
+    fetch(url, createFetchOptions(this._headers, this._withCredentials, this._abortController)).then(response => {
+      if (!(0, _network_utils.validateResponseStatus)(response.status)) {
+        throw (0, _network_utils.createResponseStatusError)(response.status, url);
+      }
+      this._reader = response.body.getReader();
+      this._headersCapability.resolve();
+      const getResponseHeader = name => {
+        return response.headers.get(name);
+      };
+      const {
+        allowRangeRequests,
+        suggestedLength
+      } = (0, _network_utils.validateRangeRequestCapabilities)({
+        getResponseHeader,
+        isHttp: this._stream.isHttp,
+        rangeChunkSize: this._rangeChunkSize,
+        disableRange: this._disableRange
+      });
+      this._isRangeSupported = allowRangeRequests;
+      this._contentLength = suggestedLength || this._contentLength;
+      this._filename = (0, _network_utils.extractFilenameFromHeader)(getResponseHeader);
+      if (!this._isStreamingSupported && this._isRangeSupported) {
+        this.cancel(new _util.AbortException("Streaming is disabled."));
+      }
+    }).catch(this._headersCapability.reject);
+    this.onProgress = null;
+  }
+  get headersReady() {
+    return this._headersCapability.promise;
+  }
+  get filename() {
+    return this._filename;
+  }
+  get contentLength() {
+    return this._contentLength;
+  }
+  get isRangeSupported() {
+    return this._isRangeSupported;
+  }
+  get isStreamingSupported() {
+    return this._isStreamingSupported;
+  }
+  async read() {
+    await this._headersCapability.promise;
+    const {
+      value,
+      done
+    } = await this._reader.read();
+    if (done) {
+      return {
+        value,
+        done
+      };
+    }
+    this._loaded += value.byteLength;
+    this.onProgress?.({
+      loaded: this._loaded,
+      total: this._contentLength
+    });
+    return {
+      value: getArrayBuffer(value),
+      done: false
+    };
+  }
+  cancel(reason) {
+    this._reader?.cancel(reason);
+    this._abortController.abort();
+  }
+}
+class PDFFetchStreamRangeReader {
+  constructor(stream, begin, end) {
+    this._stream = stream;
+    this._reader = null;
+    this._loaded = 0;
+    const source = stream.source;
+    this._withCredentials = source.withCredentials || false;
+    this._readCapability = (0, _util.createPromiseCapability)();
+    this._isStreamingSupported = !source.disableStream;
+    this._abortController = new AbortController();
+    this._headers = createHeaders(this._stream.httpHeaders);
+    this._headers.append("Range", `bytes=${begin}-${end - 1}`);
+    const url = source.url;
+    fetch(url, createFetchOptions(this._headers, this._withCredentials, this._abortController)).then(response => {
+      if (!(0, _network_utils.validateResponseStatus)(response.status)) {
+        throw (0, _network_utils.createResponseStatusError)(response.status, url);
+      }
+      this._readCapability.resolve();
+      this._reader = response.body.getReader();
+    }).catch(this._readCapability.reject);
+    this.onProgress = null;
+  }
+  get isStreamingSupported() {
+    return this._isStreamingSupported;
+  }
+  async read() {
+    await this._readCapability.promise;
+    const {
+      value,
+      done
+    } = await this._reader.read();
+    if (done) {
+      return {
+        value,
+        done
+      };
+    }
+    this._loaded += value.byteLength;
+    this.onProgress?.({
+      loaded: this._loaded
+    });
+    return {
+      value: getArrayBuffer(value),
+      done: false
+    };
+  }
+  cancel(reason) {
+    this._reader?.cancel(reason);
+    this._abortController.abort();
+  }
+}
+
+/***/ }),
+/* 26 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -9108,7 +10283,7 @@ function updateTextLayer({
 }
 
 /***/ }),
-/* 22 */
+/* 27 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -9119,8 +10294,8 @@ Object.defineProperty(exports, "__esModule", ({
 exports.AnnotationEditorLayer = void 0;
 var _util = __w_pdfjs_require__(1);
 var _tools = __w_pdfjs_require__(5);
-var _freetext = __w_pdfjs_require__(23);
-var _ink = __w_pdfjs_require__(24);
+var _freetext = __w_pdfjs_require__(28);
+var _ink = __w_pdfjs_require__(29);
 var _display_utils = __w_pdfjs_require__(6);
 class AnnotationEditorLayer {
   #accessibilityManager;
@@ -9450,7 +10625,7 @@ class AnnotationEditorLayer {
 exports.AnnotationEditorLayer = AnnotationEditorLayer;
 
 /***/ }),
-/* 23 */
+/* 28 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -9776,7 +10951,7 @@ class FreeTextEditor extends _editor.AnnotationEditor {
 exports.FreeTextEditor = FreeTextEditor;
 
 /***/ }),
-/* 24 */
+/* 29 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -9793,7 +10968,7 @@ Object.defineProperty(exports, "fitCurve", ({
 }));
 var _util = __w_pdfjs_require__(1);
 var _editor = __w_pdfjs_require__(4);
-var _pdfjsFitCurve = __w_pdfjs_require__(25);
+var _pdfjsFitCurve = __w_pdfjs_require__(30);
 var _tools = __w_pdfjs_require__(5);
 const RESIZER_SIZE = 16;
 const TIME_TO_WAIT_BEFORE_FIXING_DIMS = 100;
@@ -10475,7 +11650,7 @@ class InkEditor extends _editor.AnnotationEditor {
 exports.InkEditor = InkEditor;
 
 /***/ }),
-/* 25 */
+/* 30 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -10484,11 +11659,11 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.fitCurve = void 0;
-const fitCurve = __w_pdfjs_require__(26);
+const fitCurve = __w_pdfjs_require__(31);
 exports.fitCurve = fitCurve;
 
 /***/ }),
-/* 26 */
+/* 31 */
 /***/ ((module) => {
 
 
@@ -10783,7 +11958,7 @@ module.exports.fitCubic = fitCubic;
 module.exports.createTangent = createTangent;
 
 /***/ }),
-/* 27 */
+/* 32 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -10795,8 +11970,8 @@ exports.AnnotationLayer = void 0;
 var _util = __w_pdfjs_require__(1);
 var _display_utils = __w_pdfjs_require__(6);
 var _annotation_storage = __w_pdfjs_require__(3);
-var _scripting_utils = __w_pdfjs_require__(28);
-var _xfa_layer = __w_pdfjs_require__(29);
+var _scripting_utils = __w_pdfjs_require__(33);
+var _xfa_layer = __w_pdfjs_require__(34);
 const DEFAULT_TAB_INDEX = 1000;
 const DEFAULT_FONT_SIZE = 9;
 const GetElementsByNameSet = new WeakSet();
@@ -12809,7 +13984,7 @@ class AnnotationLayer {
 exports.AnnotationLayer = AnnotationLayer;
 
 /***/ }),
-/* 28 */
+/* 33 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -12865,7 +14040,7 @@ class ColorConverters {
 exports.ColorConverters = ColorConverters;
 
 /***/ }),
-/* 29 */
+/* 34 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -13075,7 +14250,7 @@ class XfaLayer {
 exports.XfaLayer = XfaLayer;
 
 /***/ }),
-/* 30 */
+/* 35 */
 /***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
 
 
@@ -14348,1200 +15523,6 @@ exports.SVGGraphics = SVGGraphics;
   };
 }
 
-/***/ }),
-/* 31 */
-/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.PDFNodeStream = void 0;
-var _util = __w_pdfjs_require__(1);
-var _network_utils = __w_pdfjs_require__(32);
-;
-const fs = require("fs");
-const http = require("http");
-const https = require("https");
-const url = require("url");
-const fileUriRegex = /^file:\/\/\/[a-zA-Z]:\//;
-function parseUrl(sourceUrl) {
-  const parsedUrl = url.parse(sourceUrl);
-  if (parsedUrl.protocol === "file:" || parsedUrl.host) {
-    return parsedUrl;
-  }
-  if (/^[a-z]:[/\\]/i.test(sourceUrl)) {
-    return url.parse(`file:///${sourceUrl}`);
-  }
-  if (!parsedUrl.host) {
-    parsedUrl.protocol = "file:";
-  }
-  return parsedUrl;
-}
-class PDFNodeStream {
-  constructor(source) {
-    this.source = source;
-    this.url = parseUrl(source.url);
-    this.isHttp = this.url.protocol === "http:" || this.url.protocol === "https:";
-    this.isFsUrl = this.url.protocol === "file:";
-    this.httpHeaders = this.isHttp && source.httpHeaders || {};
-    this._fullRequestReader = null;
-    this._rangeRequestReaders = [];
-  }
-  get _progressiveDataLength() {
-    return this._fullRequestReader?._loaded ?? 0;
-  }
-  getFullReader() {
-    (0, _util.assert)(!this._fullRequestReader, "PDFNodeStream.getFullReader can only be called once.");
-    this._fullRequestReader = this.isFsUrl ? new PDFNodeStreamFsFullReader(this) : new PDFNodeStreamFullReader(this);
-    return this._fullRequestReader;
-  }
-  getRangeReader(start, end) {
-    if (end <= this._progressiveDataLength) {
-      return null;
-    }
-    const rangeReader = this.isFsUrl ? new PDFNodeStreamFsRangeReader(this, start, end) : new PDFNodeStreamRangeReader(this, start, end);
-    this._rangeRequestReaders.push(rangeReader);
-    return rangeReader;
-  }
-  cancelAllRequests(reason) {
-    this._fullRequestReader?.cancel(reason);
-    for (const reader of this._rangeRequestReaders.slice(0)) {
-      reader.cancel(reason);
-    }
-  }
-}
-exports.PDFNodeStream = PDFNodeStream;
-class BaseFullReader {
-  constructor(stream) {
-    this._url = stream.url;
-    this._done = false;
-    this._storedError = null;
-    this.onProgress = null;
-    const source = stream.source;
-    this._contentLength = source.length;
-    this._loaded = 0;
-    this._filename = null;
-    this._disableRange = source.disableRange || false;
-    this._rangeChunkSize = source.rangeChunkSize;
-    if (!this._rangeChunkSize && !this._disableRange) {
-      this._disableRange = true;
-    }
-    this._isStreamingSupported = !source.disableStream;
-    this._isRangeSupported = !source.disableRange;
-    this._readableStream = null;
-    this._readCapability = (0, _util.createPromiseCapability)();
-    this._headersCapability = (0, _util.createPromiseCapability)();
-  }
-  get headersReady() {
-    return this._headersCapability.promise;
-  }
-  get filename() {
-    return this._filename;
-  }
-  get contentLength() {
-    return this._contentLength;
-  }
-  get isRangeSupported() {
-    return this._isRangeSupported;
-  }
-  get isStreamingSupported() {
-    return this._isStreamingSupported;
-  }
-  async read() {
-    await this._readCapability.promise;
-    if (this._done) {
-      return {
-        value: undefined,
-        done: true
-      };
-    }
-    if (this._storedError) {
-      throw this._storedError;
-    }
-    const chunk = this._readableStream.read();
-    if (chunk === null) {
-      this._readCapability = (0, _util.createPromiseCapability)();
-      return this.read();
-    }
-    this._loaded += chunk.length;
-    this.onProgress?.({
-      loaded: this._loaded,
-      total: this._contentLength
-    });
-    const buffer = new Uint8Array(chunk).buffer;
-    return {
-      value: buffer,
-      done: false
-    };
-  }
-  cancel(reason) {
-    if (!this._readableStream) {
-      this._error(reason);
-      return;
-    }
-    this._readableStream.destroy(reason);
-  }
-  _error(reason) {
-    this._storedError = reason;
-    this._readCapability.resolve();
-  }
-  _setReadableStream(readableStream) {
-    this._readableStream = readableStream;
-    readableStream.on("readable", () => {
-      this._readCapability.resolve();
-    });
-    readableStream.on("end", () => {
-      readableStream.destroy();
-      this._done = true;
-      this._readCapability.resolve();
-    });
-    readableStream.on("error", reason => {
-      this._error(reason);
-    });
-    if (!this._isStreamingSupported && this._isRangeSupported) {
-      this._error(new _util.AbortException("streaming is disabled"));
-    }
-    if (this._storedError) {
-      this._readableStream.destroy(this._storedError);
-    }
-  }
-}
-class BaseRangeReader {
-  constructor(stream) {
-    this._url = stream.url;
-    this._done = false;
-    this._storedError = null;
-    this.onProgress = null;
-    this._loaded = 0;
-    this._readableStream = null;
-    this._readCapability = (0, _util.createPromiseCapability)();
-    const source = stream.source;
-    this._isStreamingSupported = !source.disableStream;
-  }
-  get isStreamingSupported() {
-    return this._isStreamingSupported;
-  }
-  async read() {
-    await this._readCapability.promise;
-    if (this._done) {
-      return {
-        value: undefined,
-        done: true
-      };
-    }
-    if (this._storedError) {
-      throw this._storedError;
-    }
-    const chunk = this._readableStream.read();
-    if (chunk === null) {
-      this._readCapability = (0, _util.createPromiseCapability)();
-      return this.read();
-    }
-    this._loaded += chunk.length;
-    this.onProgress?.({
-      loaded: this._loaded
-    });
-    const buffer = new Uint8Array(chunk).buffer;
-    return {
-      value: buffer,
-      done: false
-    };
-  }
-  cancel(reason) {
-    if (!this._readableStream) {
-      this._error(reason);
-      return;
-    }
-    this._readableStream.destroy(reason);
-  }
-  _error(reason) {
-    this._storedError = reason;
-    this._readCapability.resolve();
-  }
-  _setReadableStream(readableStream) {
-    this._readableStream = readableStream;
-    readableStream.on("readable", () => {
-      this._readCapability.resolve();
-    });
-    readableStream.on("end", () => {
-      readableStream.destroy();
-      this._done = true;
-      this._readCapability.resolve();
-    });
-    readableStream.on("error", reason => {
-      this._error(reason);
-    });
-    if (this._storedError) {
-      this._readableStream.destroy(this._storedError);
-    }
-  }
-}
-function createRequestOptions(parsedUrl, headers) {
-  return {
-    protocol: parsedUrl.protocol,
-    auth: parsedUrl.auth,
-    host: parsedUrl.hostname,
-    port: parsedUrl.port,
-    path: parsedUrl.path,
-    method: "GET",
-    headers
-  };
-}
-class PDFNodeStreamFullReader extends BaseFullReader {
-  constructor(stream) {
-    super(stream);
-    const handleResponse = response => {
-      if (response.statusCode === 404) {
-        const error = new _util.MissingPDFException(`Missing PDF "${this._url}".`);
-        this._storedError = error;
-        this._headersCapability.reject(error);
-        return;
-      }
-      this._headersCapability.resolve();
-      this._setReadableStream(response);
-      const getResponseHeader = name => {
-        return this._readableStream.headers[name.toLowerCase()];
-      };
-      const {
-        allowRangeRequests,
-        suggestedLength
-      } = (0, _network_utils.validateRangeRequestCapabilities)({
-        getResponseHeader,
-        isHttp: stream.isHttp,
-        rangeChunkSize: this._rangeChunkSize,
-        disableRange: this._disableRange
-      });
-      this._isRangeSupported = allowRangeRequests;
-      this._contentLength = suggestedLength || this._contentLength;
-      this._filename = (0, _network_utils.extractFilenameFromHeader)(getResponseHeader);
-    };
-    this._request = null;
-    if (this._url.protocol === "http:") {
-      this._request = http.request(createRequestOptions(this._url, stream.httpHeaders), handleResponse);
-    } else {
-      this._request = https.request(createRequestOptions(this._url, stream.httpHeaders), handleResponse);
-    }
-    this._request.on("error", reason => {
-      this._storedError = reason;
-      this._headersCapability.reject(reason);
-    });
-    this._request.end();
-  }
-}
-class PDFNodeStreamRangeReader extends BaseRangeReader {
-  constructor(stream, start, end) {
-    super(stream);
-    this._httpHeaders = {};
-    for (const property in stream.httpHeaders) {
-      const value = stream.httpHeaders[property];
-      if (value === undefined) {
-        continue;
-      }
-      this._httpHeaders[property] = value;
-    }
-    this._httpHeaders.Range = `bytes=${start}-${end - 1}`;
-    const handleResponse = response => {
-      if (response.statusCode === 404) {
-        const error = new _util.MissingPDFException(`Missing PDF "${this._url}".`);
-        this._storedError = error;
-        return;
-      }
-      this._setReadableStream(response);
-    };
-    this._request = null;
-    if (this._url.protocol === "http:") {
-      this._request = http.request(createRequestOptions(this._url, this._httpHeaders), handleResponse);
-    } else {
-      this._request = https.request(createRequestOptions(this._url, this._httpHeaders), handleResponse);
-    }
-    this._request.on("error", reason => {
-      this._storedError = reason;
-    });
-    this._request.end();
-  }
-}
-class PDFNodeStreamFsFullReader extends BaseFullReader {
-  constructor(stream) {
-    super(stream);
-    let path = decodeURIComponent(this._url.path);
-    if (fileUriRegex.test(this._url.href)) {
-      path = path.replace(/^\//, "");
-    }
-    fs.lstat(path, (error, stat) => {
-      if (error) {
-        if (error.code === "ENOENT") {
-          error = new _util.MissingPDFException(`Missing PDF "${path}".`);
-        }
-        this._storedError = error;
-        this._headersCapability.reject(error);
-        return;
-      }
-      this._contentLength = stat.size;
-      this._setReadableStream(fs.createReadStream(path));
-      this._headersCapability.resolve();
-    });
-  }
-}
-class PDFNodeStreamFsRangeReader extends BaseRangeReader {
-  constructor(stream, start, end) {
-    super(stream);
-    let path = decodeURIComponent(this._url.path);
-    if (fileUriRegex.test(this._url.href)) {
-      path = path.replace(/^\//, "");
-    }
-    this._setReadableStream(fs.createReadStream(path, {
-      start,
-      end: end - 1
-    }));
-  }
-}
-
-/***/ }),
-/* 32 */
-/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.createResponseStatusError = createResponseStatusError;
-exports.extractFilenameFromHeader = extractFilenameFromHeader;
-exports.validateRangeRequestCapabilities = validateRangeRequestCapabilities;
-exports.validateResponseStatus = validateResponseStatus;
-var _util = __w_pdfjs_require__(1);
-var _content_disposition = __w_pdfjs_require__(33);
-var _display_utils = __w_pdfjs_require__(6);
-function validateRangeRequestCapabilities({
-  getResponseHeader,
-  isHttp,
-  rangeChunkSize,
-  disableRange
-}) {
-  const returnValues = {
-    allowRangeRequests: false,
-    suggestedLength: undefined
-  };
-  const length = parseInt(getResponseHeader("Content-Length"), 10);
-  if (!Number.isInteger(length)) {
-    return returnValues;
-  }
-  returnValues.suggestedLength = length;
-  if (length <= 2 * rangeChunkSize) {
-    return returnValues;
-  }
-  if (disableRange || !isHttp) {
-    return returnValues;
-  }
-  if (getResponseHeader("Accept-Ranges") !== "bytes") {
-    return returnValues;
-  }
-  const contentEncoding = getResponseHeader("Content-Encoding") || "identity";
-  if (contentEncoding !== "identity") {
-    return returnValues;
-  }
-  returnValues.allowRangeRequests = true;
-  return returnValues;
-}
-function extractFilenameFromHeader(getResponseHeader) {
-  const contentDisposition = getResponseHeader("Content-Disposition");
-  if (contentDisposition) {
-    let filename = (0, _content_disposition.getFilenameFromContentDispositionHeader)(contentDisposition);
-    if (filename.includes("%")) {
-      try {
-        filename = decodeURIComponent(filename);
-      } catch (ex) {}
-    }
-    if ((0, _display_utils.isPdfFile)(filename)) {
-      return filename;
-    }
-  }
-  return null;
-}
-function createResponseStatusError(status, url) {
-  if (status === 404 || status === 0 && url.startsWith("file:")) {
-    return new _util.MissingPDFException('Missing PDF "' + url + '".');
-  }
-  return new _util.UnexpectedResponseException(`Unexpected server response (${status}) while retrieving PDF "${url}".`, status);
-}
-function validateResponseStatus(status) {
-  return status === 200 || status === 206;
-}
-
-/***/ }),
-/* 33 */
-/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.getFilenameFromContentDispositionHeader = getFilenameFromContentDispositionHeader;
-var _util = __w_pdfjs_require__(1);
-function getFilenameFromContentDispositionHeader(contentDisposition) {
-  let needsEncodingFixup = true;
-  let tmp = toParamRegExp("filename\\*", "i").exec(contentDisposition);
-  if (tmp) {
-    tmp = tmp[1];
-    let filename = rfc2616unquote(tmp);
-    filename = unescape(filename);
-    filename = rfc5987decode(filename);
-    filename = rfc2047decode(filename);
-    return fixupEncoding(filename);
-  }
-  tmp = rfc2231getparam(contentDisposition);
-  if (tmp) {
-    const filename = rfc2047decode(tmp);
-    return fixupEncoding(filename);
-  }
-  tmp = toParamRegExp("filename", "i").exec(contentDisposition);
-  if (tmp) {
-    tmp = tmp[1];
-    let filename = rfc2616unquote(tmp);
-    filename = rfc2047decode(filename);
-    return fixupEncoding(filename);
-  }
-  function toParamRegExp(attributePattern, flags) {
-    return new RegExp("(?:^|;)\\s*" + attributePattern + "\\s*=\\s*" + "(" + '[^";\\s][^;\\s]*' + "|" + '"(?:[^"\\\\]|\\\\"?)+"?' + ")", flags);
-  }
-  function textdecode(encoding, value) {
-    if (encoding) {
-      if (!/^[\x00-\xFF]+$/.test(value)) {
-        return value;
-      }
-      try {
-        const decoder = new TextDecoder(encoding, {
-          fatal: true
-        });
-        const buffer = (0, _util.stringToBytes)(value);
-        value = decoder.decode(buffer);
-        needsEncodingFixup = false;
-      } catch (e) {}
-    }
-    return value;
-  }
-  function fixupEncoding(value) {
-    if (needsEncodingFixup && /[\x80-\xff]/.test(value)) {
-      value = textdecode("utf-8", value);
-      if (needsEncodingFixup) {
-        value = textdecode("iso-8859-1", value);
-      }
-    }
-    return value;
-  }
-  function rfc2231getparam(contentDispositionStr) {
-    const matches = [];
-    let match;
-    const iter = toParamRegExp("filename\\*((?!0\\d)\\d+)(\\*?)", "ig");
-    while ((match = iter.exec(contentDispositionStr)) !== null) {
-      let [, n, quot, part] = match;
-      n = parseInt(n, 10);
-      if (n in matches) {
-        if (n === 0) {
-          break;
-        }
-        continue;
-      }
-      matches[n] = [quot, part];
-    }
-    const parts = [];
-    for (let n = 0; n < matches.length; ++n) {
-      if (!(n in matches)) {
-        break;
-      }
-      let [quot, part] = matches[n];
-      part = rfc2616unquote(part);
-      if (quot) {
-        part = unescape(part);
-        if (n === 0) {
-          part = rfc5987decode(part);
-        }
-      }
-      parts.push(part);
-    }
-    return parts.join("");
-  }
-  function rfc2616unquote(value) {
-    if (value.startsWith('"')) {
-      const parts = value.slice(1).split('\\"');
-      for (let i = 0; i < parts.length; ++i) {
-        const quotindex = parts[i].indexOf('"');
-        if (quotindex !== -1) {
-          parts[i] = parts[i].slice(0, quotindex);
-          parts.length = i + 1;
-        }
-        parts[i] = parts[i].replace(/\\(.)/g, "$1");
-      }
-      value = parts.join('"');
-    }
-    return value;
-  }
-  function rfc5987decode(extvalue) {
-    const encodingend = extvalue.indexOf("'");
-    if (encodingend === -1) {
-      return extvalue;
-    }
-    const encoding = extvalue.slice(0, encodingend);
-    const langvalue = extvalue.slice(encodingend + 1);
-    const value = langvalue.replace(/^[^']*'/, "");
-    return textdecode(encoding, value);
-  }
-  function rfc2047decode(value) {
-    if (!value.startsWith("=?") || /[\x00-\x19\x80-\xff]/.test(value)) {
-      return value;
-    }
-    return value.replace(/=\?([\w-]*)\?([QqBb])\?((?:[^?]|\?(?!=))*)\?=/g, function (matches, charset, encoding, text) {
-      if (encoding === "q" || encoding === "Q") {
-        text = text.replace(/_/g, " ");
-        text = text.replace(/=([0-9a-fA-F]{2})/g, function (match, hex) {
-          return String.fromCharCode(parseInt(hex, 16));
-        });
-        return textdecode(charset, text);
-      }
-      try {
-        text = atob(text);
-      } catch (e) {}
-      return textdecode(charset, text);
-    });
-  }
-  return "";
-}
-
-/***/ }),
-/* 34 */
-/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.PDFNetworkStream = void 0;
-var _util = __w_pdfjs_require__(1);
-var _network_utils = __w_pdfjs_require__(32);
-;
-const OK_RESPONSE = 200;
-const PARTIAL_CONTENT_RESPONSE = 206;
-function getArrayBuffer(xhr) {
-  const data = xhr.response;
-  if (typeof data !== "string") {
-    return data;
-  }
-  const array = (0, _util.stringToBytes)(data);
-  return array.buffer;
-}
-class NetworkManager {
-  constructor(url, args = {}) {
-    this.url = url;
-    this.isHttp = /^https?:/i.test(url);
-    this.httpHeaders = this.isHttp && args.httpHeaders || Object.create(null);
-    this.withCredentials = args.withCredentials || false;
-    this.getXhr = args.getXhr || function NetworkManager_getXhr() {
-      return new XMLHttpRequest();
-    };
-    this.currXhrId = 0;
-    this.pendingRequests = Object.create(null);
-  }
-  requestRange(begin, end, listeners) {
-    const args = {
-      begin,
-      end
-    };
-    for (const prop in listeners) {
-      args[prop] = listeners[prop];
-    }
-    return this.request(args);
-  }
-  requestFull(listeners) {
-    return this.request(listeners);
-  }
-  request(args) {
-    const xhr = this.getXhr();
-    const xhrId = this.currXhrId++;
-    const pendingRequest = this.pendingRequests[xhrId] = {
-      xhr
-    };
-    xhr.open("GET", this.url);
-    xhr.withCredentials = this.withCredentials;
-    for (const property in this.httpHeaders) {
-      const value = this.httpHeaders[property];
-      if (value === undefined) {
-        continue;
-      }
-      xhr.setRequestHeader(property, value);
-    }
-    if (this.isHttp && "begin" in args && "end" in args) {
-      xhr.setRequestHeader("Range", `bytes=${args.begin}-${args.end - 1}`);
-      pendingRequest.expectedStatus = PARTIAL_CONTENT_RESPONSE;
-    } else {
-      pendingRequest.expectedStatus = OK_RESPONSE;
-    }
-    xhr.responseType = "arraybuffer";
-    if (args.onError) {
-      xhr.onerror = function (evt) {
-        args.onError(xhr.status);
-      };
-    }
-    xhr.onreadystatechange = this.onStateChange.bind(this, xhrId);
-    xhr.onprogress = this.onProgress.bind(this, xhrId);
-    pendingRequest.onHeadersReceived = args.onHeadersReceived;
-    pendingRequest.onDone = args.onDone;
-    pendingRequest.onError = args.onError;
-    pendingRequest.onProgress = args.onProgress;
-    xhr.send(null);
-    return xhrId;
-  }
-  onProgress(xhrId, evt) {
-    const pendingRequest = this.pendingRequests[xhrId];
-    if (!pendingRequest) {
-      return;
-    }
-    pendingRequest.onProgress?.(evt);
-  }
-  onStateChange(xhrId, evt) {
-    const pendingRequest = this.pendingRequests[xhrId];
-    if (!pendingRequest) {
-      return;
-    }
-    const xhr = pendingRequest.xhr;
-    if (xhr.readyState >= 2 && pendingRequest.onHeadersReceived) {
-      pendingRequest.onHeadersReceived();
-      delete pendingRequest.onHeadersReceived;
-    }
-    if (xhr.readyState !== 4) {
-      return;
-    }
-    if (!(xhrId in this.pendingRequests)) {
-      return;
-    }
-    delete this.pendingRequests[xhrId];
-    if (xhr.status === 0 && this.isHttp) {
-      pendingRequest.onError?.(xhr.status);
-      return;
-    }
-    const xhrStatus = xhr.status || OK_RESPONSE;
-    const ok_response_on_range_request = xhrStatus === OK_RESPONSE && pendingRequest.expectedStatus === PARTIAL_CONTENT_RESPONSE;
-    if (!ok_response_on_range_request && xhrStatus !== pendingRequest.expectedStatus) {
-      pendingRequest.onError?.(xhr.status);
-      return;
-    }
-    const chunk = getArrayBuffer(xhr);
-    if (xhrStatus === PARTIAL_CONTENT_RESPONSE) {
-      const rangeHeader = xhr.getResponseHeader("Content-Range");
-      const matches = /bytes (\d+)-(\d+)\/(\d+)/.exec(rangeHeader);
-      pendingRequest.onDone({
-        begin: parseInt(matches[1], 10),
-        chunk
-      });
-    } else if (chunk) {
-      pendingRequest.onDone({
-        begin: 0,
-        chunk
-      });
-    } else {
-      pendingRequest.onError?.(xhr.status);
-    }
-  }
-  getRequestXhr(xhrId) {
-    return this.pendingRequests[xhrId].xhr;
-  }
-  isPendingRequest(xhrId) {
-    return xhrId in this.pendingRequests;
-  }
-  abortRequest(xhrId) {
-    const xhr = this.pendingRequests[xhrId].xhr;
-    delete this.pendingRequests[xhrId];
-    xhr.abort();
-  }
-}
-class PDFNetworkStream {
-  constructor(source) {
-    this._source = source;
-    this._manager = new NetworkManager(source.url, {
-      httpHeaders: source.httpHeaders,
-      withCredentials: source.withCredentials
-    });
-    this._rangeChunkSize = source.rangeChunkSize;
-    this._fullRequestReader = null;
-    this._rangeRequestReaders = [];
-  }
-  _onRangeRequestReaderClosed(reader) {
-    const i = this._rangeRequestReaders.indexOf(reader);
-    if (i >= 0) {
-      this._rangeRequestReaders.splice(i, 1);
-    }
-  }
-  getFullReader() {
-    (0, _util.assert)(!this._fullRequestReader, "PDFNetworkStream.getFullReader can only be called once.");
-    this._fullRequestReader = new PDFNetworkStreamFullRequestReader(this._manager, this._source);
-    return this._fullRequestReader;
-  }
-  getRangeReader(begin, end) {
-    const reader = new PDFNetworkStreamRangeRequestReader(this._manager, begin, end);
-    reader.onClosed = this._onRangeRequestReaderClosed.bind(this);
-    this._rangeRequestReaders.push(reader);
-    return reader;
-  }
-  cancelAllRequests(reason) {
-    this._fullRequestReader?.cancel(reason);
-    for (const reader of this._rangeRequestReaders.slice(0)) {
-      reader.cancel(reason);
-    }
-  }
-}
-exports.PDFNetworkStream = PDFNetworkStream;
-class PDFNetworkStreamFullRequestReader {
-  constructor(manager, source) {
-    this._manager = manager;
-    const args = {
-      onHeadersReceived: this._onHeadersReceived.bind(this),
-      onDone: this._onDone.bind(this),
-      onError: this._onError.bind(this),
-      onProgress: this._onProgress.bind(this)
-    };
-    this._url = source.url;
-    this._fullRequestId = manager.requestFull(args);
-    this._headersReceivedCapability = (0, _util.createPromiseCapability)();
-    this._disableRange = source.disableRange || false;
-    this._contentLength = source.length;
-    this._rangeChunkSize = source.rangeChunkSize;
-    if (!this._rangeChunkSize && !this._disableRange) {
-      this._disableRange = true;
-    }
-    this._isStreamingSupported = false;
-    this._isRangeSupported = false;
-    this._cachedChunks = [];
-    this._requests = [];
-    this._done = false;
-    this._storedError = undefined;
-    this._filename = null;
-    this.onProgress = null;
-  }
-  _onHeadersReceived() {
-    const fullRequestXhrId = this._fullRequestId;
-    const fullRequestXhr = this._manager.getRequestXhr(fullRequestXhrId);
-    const getResponseHeader = name => {
-      return fullRequestXhr.getResponseHeader(name);
-    };
-    const {
-      allowRangeRequests,
-      suggestedLength
-    } = (0, _network_utils.validateRangeRequestCapabilities)({
-      getResponseHeader,
-      isHttp: this._manager.isHttp,
-      rangeChunkSize: this._rangeChunkSize,
-      disableRange: this._disableRange
-    });
-    if (allowRangeRequests) {
-      this._isRangeSupported = true;
-    }
-    this._contentLength = suggestedLength || this._contentLength;
-    this._filename = (0, _network_utils.extractFilenameFromHeader)(getResponseHeader);
-    if (this._isRangeSupported) {
-      this._manager.abortRequest(fullRequestXhrId);
-    }
-    this._headersReceivedCapability.resolve();
-  }
-  _onDone(data) {
-    if (data) {
-      if (this._requests.length > 0) {
-        const requestCapability = this._requests.shift();
-        requestCapability.resolve({
-          value: data.chunk,
-          done: false
-        });
-      } else {
-        this._cachedChunks.push(data.chunk);
-      }
-    }
-    this._done = true;
-    if (this._cachedChunks.length > 0) {
-      return;
-    }
-    for (const requestCapability of this._requests) {
-      requestCapability.resolve({
-        value: undefined,
-        done: true
-      });
-    }
-    this._requests.length = 0;
-  }
-  _onError(status) {
-    this._storedError = (0, _network_utils.createResponseStatusError)(status, this._url);
-    this._headersReceivedCapability.reject(this._storedError);
-    for (const requestCapability of this._requests) {
-      requestCapability.reject(this._storedError);
-    }
-    this._requests.length = 0;
-    this._cachedChunks.length = 0;
-  }
-  _onProgress(evt) {
-    this.onProgress?.({
-      loaded: evt.loaded,
-      total: evt.lengthComputable ? evt.total : this._contentLength
-    });
-  }
-  get filename() {
-    return this._filename;
-  }
-  get isRangeSupported() {
-    return this._isRangeSupported;
-  }
-  get isStreamingSupported() {
-    return this._isStreamingSupported;
-  }
-  get contentLength() {
-    return this._contentLength;
-  }
-  get headersReady() {
-    return this._headersReceivedCapability.promise;
-  }
-  async read() {
-    if (this._storedError) {
-      throw this._storedError;
-    }
-    if (this._cachedChunks.length > 0) {
-      const chunk = this._cachedChunks.shift();
-      return {
-        value: chunk,
-        done: false
-      };
-    }
-    if (this._done) {
-      return {
-        value: undefined,
-        done: true
-      };
-    }
-    const requestCapability = (0, _util.createPromiseCapability)();
-    this._requests.push(requestCapability);
-    return requestCapability.promise;
-  }
-  cancel(reason) {
-    this._done = true;
-    this._headersReceivedCapability.reject(reason);
-    for (const requestCapability of this._requests) {
-      requestCapability.resolve({
-        value: undefined,
-        done: true
-      });
-    }
-    this._requests.length = 0;
-    if (this._manager.isPendingRequest(this._fullRequestId)) {
-      this._manager.abortRequest(this._fullRequestId);
-    }
-    this._fullRequestReader = null;
-  }
-}
-class PDFNetworkStreamRangeRequestReader {
-  constructor(manager, begin, end) {
-    this._manager = manager;
-    const args = {
-      onDone: this._onDone.bind(this),
-      onError: this._onError.bind(this),
-      onProgress: this._onProgress.bind(this)
-    };
-    this._url = manager.url;
-    this._requestId = manager.requestRange(begin, end, args);
-    this._requests = [];
-    this._queuedChunk = null;
-    this._done = false;
-    this._storedError = undefined;
-    this.onProgress = null;
-    this.onClosed = null;
-  }
-  _close() {
-    this.onClosed?.(this);
-  }
-  _onDone(data) {
-    const chunk = data.chunk;
-    if (this._requests.length > 0) {
-      const requestCapability = this._requests.shift();
-      requestCapability.resolve({
-        value: chunk,
-        done: false
-      });
-    } else {
-      this._queuedChunk = chunk;
-    }
-    this._done = true;
-    for (const requestCapability of this._requests) {
-      requestCapability.resolve({
-        value: undefined,
-        done: true
-      });
-    }
-    this._requests.length = 0;
-    this._close();
-  }
-  _onError(status) {
-    this._storedError = (0, _network_utils.createResponseStatusError)(status, this._url);
-    for (const requestCapability of this._requests) {
-      requestCapability.reject(this._storedError);
-    }
-    this._requests.length = 0;
-    this._queuedChunk = null;
-  }
-  _onProgress(evt) {
-    if (!this.isStreamingSupported) {
-      this.onProgress?.({
-        loaded: evt.loaded
-      });
-    }
-  }
-  get isStreamingSupported() {
-    return false;
-  }
-  async read() {
-    if (this._storedError) {
-      throw this._storedError;
-    }
-    if (this._queuedChunk !== null) {
-      const chunk = this._queuedChunk;
-      this._queuedChunk = null;
-      return {
-        value: chunk,
-        done: false
-      };
-    }
-    if (this._done) {
-      return {
-        value: undefined,
-        done: true
-      };
-    }
-    const requestCapability = (0, _util.createPromiseCapability)();
-    this._requests.push(requestCapability);
-    return requestCapability.promise;
-  }
-  cancel(reason) {
-    this._done = true;
-    for (const requestCapability of this._requests) {
-      requestCapability.resolve({
-        value: undefined,
-        done: true
-      });
-    }
-    this._requests.length = 0;
-    if (this._manager.isPendingRequest(this._requestId)) {
-      this._manager.abortRequest(this._requestId);
-    }
-    this._close();
-  }
-}
-
-/***/ }),
-/* 35 */
-/***/ ((__unused_webpack_module, exports, __w_pdfjs_require__) => {
-
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.PDFFetchStream = void 0;
-var _util = __w_pdfjs_require__(1);
-var _network_utils = __w_pdfjs_require__(32);
-;
-function createFetchOptions(headers, withCredentials, abortController) {
-  return {
-    method: "GET",
-    headers,
-    signal: abortController.signal,
-    mode: "cors",
-    credentials: withCredentials ? "include" : "same-origin",
-    redirect: "follow"
-  };
-}
-function createHeaders(httpHeaders) {
-  const headers = new Headers();
-  for (const property in httpHeaders) {
-    const value = httpHeaders[property];
-    if (value === undefined) {
-      continue;
-    }
-    headers.append(property, value);
-  }
-  return headers;
-}
-class PDFFetchStream {
-  constructor(source) {
-    this.source = source;
-    this.isHttp = /^https?:/i.test(source.url);
-    this.httpHeaders = this.isHttp && source.httpHeaders || {};
-    this._fullRequestReader = null;
-    this._rangeRequestReaders = [];
-  }
-  get _progressiveDataLength() {
-    return this._fullRequestReader?._loaded ?? 0;
-  }
-  getFullReader() {
-    (0, _util.assert)(!this._fullRequestReader, "PDFFetchStream.getFullReader can only be called once.");
-    this._fullRequestReader = new PDFFetchStreamReader(this);
-    return this._fullRequestReader;
-  }
-  getRangeReader(begin, end) {
-    if (end <= this._progressiveDataLength) {
-      return null;
-    }
-    const reader = new PDFFetchStreamRangeReader(this, begin, end);
-    this._rangeRequestReaders.push(reader);
-    return reader;
-  }
-  cancelAllRequests(reason) {
-    this._fullRequestReader?.cancel(reason);
-    for (const reader of this._rangeRequestReaders.slice(0)) {
-      reader.cancel(reason);
-    }
-  }
-}
-exports.PDFFetchStream = PDFFetchStream;
-class PDFFetchStreamReader {
-  constructor(stream) {
-    this._stream = stream;
-    this._reader = null;
-    this._loaded = 0;
-    this._filename = null;
-    const source = stream.source;
-    this._withCredentials = source.withCredentials || false;
-    this._contentLength = source.length;
-    this._headersCapability = (0, _util.createPromiseCapability)();
-    this._disableRange = source.disableRange || false;
-    this._rangeChunkSize = source.rangeChunkSize;
-    if (!this._rangeChunkSize && !this._disableRange) {
-      this._disableRange = true;
-    }
-    this._abortController = new AbortController();
-    this._isStreamingSupported = !source.disableStream;
-    this._isRangeSupported = !source.disableRange;
-    this._headers = createHeaders(this._stream.httpHeaders);
-    const url = source.url;
-    fetch(url, createFetchOptions(this._headers, this._withCredentials, this._abortController)).then(response => {
-      if (!(0, _network_utils.validateResponseStatus)(response.status)) {
-        throw (0, _network_utils.createResponseStatusError)(response.status, url);
-      }
-      this._reader = response.body.getReader();
-      this._headersCapability.resolve();
-      const getResponseHeader = name => {
-        return response.headers.get(name);
-      };
-      const {
-        allowRangeRequests,
-        suggestedLength
-      } = (0, _network_utils.validateRangeRequestCapabilities)({
-        getResponseHeader,
-        isHttp: this._stream.isHttp,
-        rangeChunkSize: this._rangeChunkSize,
-        disableRange: this._disableRange
-      });
-      this._isRangeSupported = allowRangeRequests;
-      this._contentLength = suggestedLength || this._contentLength;
-      this._filename = (0, _network_utils.extractFilenameFromHeader)(getResponseHeader);
-      if (!this._isStreamingSupported && this._isRangeSupported) {
-        this.cancel(new _util.AbortException("Streaming is disabled."));
-      }
-    }).catch(this._headersCapability.reject);
-    this.onProgress = null;
-  }
-  get headersReady() {
-    return this._headersCapability.promise;
-  }
-  get filename() {
-    return this._filename;
-  }
-  get contentLength() {
-    return this._contentLength;
-  }
-  get isRangeSupported() {
-    return this._isRangeSupported;
-  }
-  get isStreamingSupported() {
-    return this._isStreamingSupported;
-  }
-  async read() {
-    await this._headersCapability.promise;
-    const {
-      value,
-      done
-    } = await this._reader.read();
-    if (done) {
-      return {
-        value,
-        done
-      };
-    }
-    this._loaded += value.byteLength;
-    this.onProgress?.({
-      loaded: this._loaded,
-      total: this._contentLength
-    });
-    const buffer = new Uint8Array(value).buffer;
-    return {
-      value: buffer,
-      done: false
-    };
-  }
-  cancel(reason) {
-    this._reader?.cancel(reason);
-    this._abortController.abort();
-  }
-}
-class PDFFetchStreamRangeReader {
-  constructor(stream, begin, end) {
-    this._stream = stream;
-    this._reader = null;
-    this._loaded = 0;
-    const source = stream.source;
-    this._withCredentials = source.withCredentials || false;
-    this._readCapability = (0, _util.createPromiseCapability)();
-    this._isStreamingSupported = !source.disableStream;
-    this._abortController = new AbortController();
-    this._headers = createHeaders(this._stream.httpHeaders);
-    this._headers.append("Range", `bytes=${begin}-${end - 1}`);
-    const url = source.url;
-    fetch(url, createFetchOptions(this._headers, this._withCredentials, this._abortController)).then(response => {
-      if (!(0, _network_utils.validateResponseStatus)(response.status)) {
-        throw (0, _network_utils.createResponseStatusError)(response.status, url);
-      }
-      this._readCapability.resolve();
-      this._reader = response.body.getReader();
-    }).catch(this._readCapability.reject);
-    this.onProgress = null;
-  }
-  get isStreamingSupported() {
-    return this._isStreamingSupported;
-  }
-  async read() {
-    await this._readCapability.promise;
-    const {
-      value,
-      done
-    } = await this._reader.read();
-    if (done) {
-      return {
-        value,
-        done
-      };
-    }
-    this._loaded += value.byteLength;
-    this.onProgress?.({
-      loaded: this._loaded
-    });
-    const buffer = new Uint8Array(value).buffer;
-    return {
-      value: buffer,
-      done: false
-    };
-  }
-  cancel(reason) {
-    this._reader?.cancel(reason);
-    this._abortController.abort();
-  }
-}
-
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -15822,39 +15803,15 @@ Object.defineProperty(exports, "version", ({
 var _util = __w_pdfjs_require__(1);
 var _api = __w_pdfjs_require__(2);
 var _display_utils = __w_pdfjs_require__(6);
-var _text_layer = __w_pdfjs_require__(21);
-var _annotation_editor_layer = __w_pdfjs_require__(22);
+var _text_layer = __w_pdfjs_require__(26);
+var _annotation_editor_layer = __w_pdfjs_require__(27);
 var _tools = __w_pdfjs_require__(5);
-var _annotation_layer = __w_pdfjs_require__(27);
+var _annotation_layer = __w_pdfjs_require__(32);
 var _worker_options = __w_pdfjs_require__(14);
-var _is_node = __w_pdfjs_require__(10);
-var _svg = __w_pdfjs_require__(30);
-var _xfa_layer = __w_pdfjs_require__(29);
-const pdfjsVersion = '3.2.146';
-const pdfjsBuild = '3fd2a3548';
-{
-  if (_is_node.isNodeJS) {
-    const {
-      PDFNodeStream
-    } = __w_pdfjs_require__(31);
-    (0, _api.setPDFNetworkStreamFactory)(params => {
-      return new PDFNodeStream(params);
-    });
-  } else {
-    const {
-      PDFNetworkStream
-    } = __w_pdfjs_require__(34);
-    const {
-      PDFFetchStream
-    } = __w_pdfjs_require__(35);
-    (0, _api.setPDFNetworkStreamFactory)(params => {
-      if ((0, _display_utils.isValidFetchUrl)(params.url)) {
-        return new PDFFetchStream(params);
-      }
-      return new PDFNetworkStream(params);
-    });
-  }
-}
+var _svg = __w_pdfjs_require__(35);
+var _xfa_layer = __w_pdfjs_require__(34);
+const pdfjsVersion = '3.3.122';
+const pdfjsBuild = '562045607';
 })();
 
 /******/ 	return __webpack_exports__;

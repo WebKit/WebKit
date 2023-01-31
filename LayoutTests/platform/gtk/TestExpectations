@@ -1003,6 +1003,13 @@ webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/
 webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.http.html [ Failure ]
 webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.https.html [ Failure ]
 
+webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/010.html [ Failure ]
+webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/017.html [ Failure ]
+webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/018.html [ Failure ]
+webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/opening-handshake/001.html [ Failure ]
+webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
+webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/security/001.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1168,7 +1175,6 @@ webkit.org/b/214802 http/tests/navigation/ping-attribute/anchor-ping-and-follow-
 # Flaky on skip-failing-test bot (EWS)
 
 webkit.org/b/230017 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Failure ]
@@ -1179,8 +1185,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-uns
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-soap.https.html [ Failure ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html [ Failure ]
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/named_targeting.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/remove-element-unblocks-rendering.optional.html [ Failure ]
 
@@ -1597,6 +1601,7 @@ webkit.org/b/42194 fast/scrolling/scroll-select-list.html [ ImageOnlyFailure ]
 webkit.org/b/250610 fast/events/wheel/wheelevent-in-text-node.html [ Skip ]
 webkit.org/b/250610 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Skip ]
 webkit.org/b/250610 scrollbars/scroll-rtl-or-bt-layer.html [ Skip ]
+webkit.org/b/250610 fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ]
 
 # Missing glyph symbol is not rendered properly.
 webkit.org/b/140252 fast/css/line-height-determined-by-primary-font.html [ Failure ]
@@ -1661,7 +1666,6 @@ webkit.org/b/172272 fast/visual-viewport/client-coordinates-relative-to-layout-v
 
 webkit.org/b/172273 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure Crash ]
 
-webkit.org/b/172811 fast/block/float/032.html [ Failure ]
 webkit.org/b/172811 fast/forms/input-text-word-wrap.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-rtl.html [ Failure ]
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]

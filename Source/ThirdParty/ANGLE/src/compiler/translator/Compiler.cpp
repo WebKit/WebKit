@@ -9,7 +9,12 @@
 #include <sstream>
 
 #include "angle_gl.h"
-#include "common/utilities.h"
+
+#include "common/BinaryStream.h"
+#include "common/CompiledShaderState.h"
+#include "common/PackedEnums.h"
+#include "common/angle_version_info.h"
+
 #include "compiler/translator/CallDAG.h"
 #include "compiler/translator/CollectVariables.h"
 #include "compiler/translator/Initialize.h"
@@ -181,7 +186,8 @@ bool RemoveInvariant(sh::GLenum shaderType,
                      ShShaderOutput outputType,
                      const ShCompileOptions &compileOptions)
 {
-    if (shaderType == GL_FRAGMENT_SHADER && IsGLSL420OrNewer(outputType))
+    if (shaderType == GL_FRAGMENT_SHADER &&
+        (IsGLSL420OrNewer(outputType) || IsOutputVulkan(outputType)))
         return true;
 
     if (compileOptions.removeInvariantAndCentroidForESSL3 && shaderVersion >= 300 &&
@@ -623,6 +629,47 @@ unsigned int TCompiler::getSharedMemorySize() const
     }
 
     return sharedMemSize;
+}
+
+bool TCompiler::getShaderBinary(const ShHandle compilerHandle,
+                                const char *const shaderStrings[],
+                                size_t numStrings,
+                                const ShCompileOptions &compileOptions,
+                                ShaderBinaryBlob *const binaryOut)
+{
+    if (!compile(shaderStrings, numStrings, compileOptions))
+    {
+        return false;
+    }
+
+    gl::BinaryOutputStream stream;
+    gl::ShaderType shaderType = gl::FromGLenum<gl::ShaderType>(mShaderType);
+    gl::CompiledShaderState state(shaderType);
+    state.buildCompiledShaderState(compilerHandle, IsOutputVulkan(mOutputType));
+
+    stream.writeBytes(
+        reinterpret_cast<const unsigned char *>(angle::GetANGLEShaderProgramVersion()),
+        angle::GetANGLEShaderProgramVersionHashSize());
+    stream.writeEnum(shaderType);
+    stream.writeEnum(mOutputType);
+
+    // Serialize the full source string for the shader. Ignore the source path if it is provided.
+    std::string sourceString;
+    size_t startingIndex = compileOptions.sourcePath ? 1 : 0;
+    for (size_t i = startingIndex; i < numStrings; ++i)
+    {
+        sourceString.append(shaderStrings[i]);
+    }
+    stream.writeString(sourceString);
+
+    stream.writeBytes(reinterpret_cast<const uint8_t *>(&compileOptions), sizeof(compileOptions));
+    stream.writeBytes(reinterpret_cast<const uint8_t *>(&mResources), sizeof(mResources));
+
+    state.serialize(stream);
+
+    ASSERT(binaryOut);
+    *binaryOut = std::move(stream.getData());
+    return true;
 }
 
 bool TCompiler::validateAST(TIntermNode *root)

@@ -74,7 +74,7 @@ DeviceImpl::DeviceImpl(WGPUDevice device, Ref<SupportedFeatures>&& features, Ref
 
 DeviceImpl::~DeviceImpl() = default;
 
-Queue& DeviceImpl::queue()
+Ref<Queue> DeviceImpl::queue()
 {
     return m_queue;
 }
@@ -129,6 +129,8 @@ static WGPUTextureDescriptor createBackingDescriptor(WGPUTextureDescriptorViewFo
         convertToBackingContext->convertToBacking(descriptor.format),
         descriptor.mipLevelCount,
         descriptor.sampleCount,
+        backingViewFormats.viewFormatsCount,
+        backingViewFormats.viewFormats
     };
 }
 
@@ -283,30 +285,20 @@ Ref<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor& d
         return hint.key.utf8();
     });
 
-    Vector<WGPUShaderModuleCompilationHintEntry> hintsEntries;
+    Vector<WGPUShaderModuleCompilationHint> hintsEntries;
     hintsEntries.reserveInitialCapacity(descriptor.hints.size());
     for (size_t i = 0; i < descriptor.hints.size(); ++i) {
         const auto& hint = descriptor.hints[i].value;
-        hintsEntries.append(WGPUShaderModuleCompilationHintEntry {
+        hintsEntries.append(WGPUShaderModuleCompilationHint {
             nullptr,
-            entryPoints[i].data(), {
-                m_convertToBackingContext->convertToBacking(hint.pipelineLayout),
-            },
+            entryPoints[i].data(),
+            m_convertToBackingContext->convertToBacking(hint.pipelineLayout)
         });
     }
 
-    WGPUShaderModuleDescriptorHints backingShaderModuleHints {
-        {
-            nullptr,
-            static_cast<WGPUSType>(WGPUSTypeExtended_ShaderModuleDescriptorHints),
-        },
-        static_cast<uint32_t>(hintsEntries.size()),
-        hintsEntries.data(),
-    };
-
     WGPUShaderModuleWGSLDescriptor backingWGSLDescriptor {
         {
-            &backingShaderModuleHints.chain,
+            nullptr,
             WGPUSType_ShaderModuleWGSLDescriptor,
         },
         source.data(),
@@ -315,6 +307,8 @@ Ref<ShaderModule> DeviceImpl::createShaderModule(const ShaderModuleDescriptor& d
     WGPUShaderModuleDescriptor backingDescriptor {
         &backingWGSLDescriptor.chain,
         label.data(),
+        static_cast<uint32_t>(hintsEntries.size()),
+        hintsEntries.size() ? &hintsEntries[0] : nullptr,
     };
 
     return ShaderModuleImpl::create(wgpuDeviceCreateShaderModule(backing(), &backingDescriptor), m_convertToBackingContext);
@@ -625,6 +619,7 @@ void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&
         case WGPUErrorType_NoError:
         case WGPUErrorType_Force32:
             break;
+        case WGPUErrorType_Internal:
         case WGPUErrorType_Validation:
             error = { { ValidationError::create(String::fromLatin1(message)) } };
             break;

@@ -84,8 +84,6 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    uint64_t m_signalValue { 1 };
-
     Ref<DeviceHolderImpl> m_deviceHolder;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };

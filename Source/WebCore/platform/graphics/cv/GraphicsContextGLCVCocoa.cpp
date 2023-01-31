@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,11 +35,11 @@
 #include "Logging.h"
 #include "VideoFrameCV.h"
 #include <pal/spi/cf/CoreVideoSPI.h>
-#include <pal/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdMap.h>
 #include <wtf/cf/TypeCastsCF.h>
+#include <wtf/spi/cocoa/IOSurfaceSPI.h>
 #include <wtf/text/StringBuilder.h>
 
 #include "CoreVideoSoftLink.h"

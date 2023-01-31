@@ -28,7 +28,7 @@ layer at (0,0) size 785x680
             RenderText {#text} at (430,39) size 780x81
               text run at (430,39) width 235 RTL: "laboris nisi ut aliquip ex ea commodo"
               text run at (0,71) width 424 RTL: "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur"
-              text run at (423,71) width 325 RTL: "consequat. Duis aute irure dolor in reprehenderit in "
+              text run at (424,71) width 324 RTL: "consequat. Duis aute irure dolor in reprehenderit in "
               text run at (45,103) width 590 RTL: "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor"
               text run at (634,103) width 146 RTL: "sint occaecat cupidatat "
           RenderText {#text} at (0,135) size 561x17

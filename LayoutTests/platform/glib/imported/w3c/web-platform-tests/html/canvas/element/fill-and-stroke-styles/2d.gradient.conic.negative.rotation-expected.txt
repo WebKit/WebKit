@@ -1,8 +1,0 @@
-2d.gradient.conic.negative.rotation
-Conic gradient with negative rotation
-Actual output:
-Expected output:
-
-
-FAIL Conic gradient with negative rotation assert_equals: Red channel of the pixel at (25, 15) expected 255 but got 196
-

@@ -7,8 +7,10 @@
     <script>
     async function runTest() {
         consoleWrite("** Start first video with user gesture.")
-        if (window.internals)
+        if (window.internals) {
             run('window.internals.settings.setRequiresUserGestureForVideoPlayback(true);');
+            internals.setTransientActivationDuration(1);
+        }
         run('video1 = document.createElement("video")');
         run('video1.src = findMediaFile("video", "content/test")');
         video1.controls = 1;
@@ -37,13 +39,17 @@
         await waitFor(video2, 'ended');
 
         consoleWrite("<br>** Start third video without user gesture but after inheritance window, should fail.")
+        if (window.internals)
+            internals.setTransientActivationDuration(.4);
         await sleepFor(1200);
         run('video3 = document.createElement("video")');
         run('video3.src = findMediaFile("video", "content/test")');
         video3.controls = 1;
         run('document.body.appendChild(video3)');
 
-        await shouldReject(video3.play());
+        try {
+            await shouldReject(video3.play());
+        } catch (ex) { }
 
         endTest();
     }

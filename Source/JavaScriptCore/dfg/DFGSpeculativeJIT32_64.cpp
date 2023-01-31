@@ -3012,44 +3012,64 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case ToNumber: {
-        JSValueOperand argument(this, node->child1());
-        GPRTemporary resultTag(this, Reuse, argument, TagWord);
-        GPRTemporary resultPayload(this, Reuse, argument, PayloadWord);
-
-        GPRReg argumentPayloadGPR = argument.payloadGPR();
-        GPRReg argumentTagGPR = argument.tagGPR();
-        JSValueRegs argumentRegs = argument.jsValueRegs();
-        JSValueRegs resultRegs(resultTag.gpr(), resultPayload.gpr());
-
-        argument.use();
-
-        // We have several attempts to remove ToNumber. But ToNumber still exists.
-        // It means that converting non-numbers to numbers by this ToNumber is not rare.
-        // Instead of the slow path generator, we emit callOperation here.
-        if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
+        switch (node->child1().useKind()) {
+        case StringUse: {
+            SpeculateCellOperand argument(this, node->child1());
+            GPRReg argumentGPR = argument.gpr();
+            speculateString(node->child1(), argumentGPR);
             flushRegisters();
-            callOperation(operationToNumber, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs);
+            JSValueRegsFlushedCallResult result(this);
+            JSValueRegs resultRegs = result.regs();
+            callOperation(operationToNumberString, resultRegs, LinkableConstant::globalObject(*this, node), argumentGPR);
             exceptionCheck();
-        } else {
-            Jump notNumber;
-            {
-                GPRTemporary scratch(this);
-                notNumber = branchIfNotNumber(argument.jsValueRegs(), scratch.gpr());
-            }
-            move(argumentTagGPR, resultRegs.tagGPR());
-            move(argumentPayloadGPR, resultRegs.payloadGPR());
-            Jump done = jump();
-
-            notNumber.link(this);
-            silentSpillAllRegisters(resultRegs);
-            callOperation(operationToNumber, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs);
-            silentFillAllRegisters();
-            exceptionCheck();
-
-            done.link(this);
+            jsValueResult(resultRegs, node);
+            break;
         }
+        case UntypedUse: {
+            JSValueOperand argument(this, node->child1());
+            GPRTemporary resultTag(this, Reuse, argument, TagWord);
+            GPRTemporary resultPayload(this, Reuse, argument, PayloadWord);
 
-        jsValueResult(resultRegs.tagGPR(), resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
+            GPRReg argumentPayloadGPR = argument.payloadGPR();
+            GPRReg argumentTagGPR = argument.tagGPR();
+            JSValueRegs argumentRegs = argument.jsValueRegs();
+            JSValueRegs resultRegs(resultTag.gpr(), resultPayload.gpr());
+
+            argument.use();
+
+            // We have several attempts to remove ToNumber. But ToNumber still exists.
+            // It means that converting non-numbers to numbers by this ToNumber is not rare.
+            // Instead of the slow path generator, we emit callOperation here.
+            if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
+                flushRegisters();
+                callOperation(operationToNumber, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs);
+                exceptionCheck();
+            } else {
+                Jump notNumber;
+                {
+                    GPRTemporary scratch(this);
+                    notNumber = branchIfNotNumber(argument.jsValueRegs(), scratch.gpr());
+                }
+                move(argumentTagGPR, resultRegs.tagGPR());
+                move(argumentPayloadGPR, resultRegs.payloadGPR());
+                Jump done = jump();
+
+                notNumber.link(this);
+                silentSpillAllRegisters(resultRegs);
+                callOperation(operationToNumber, resultRegs, LinkableConstant::globalObject(*this, node), argumentRegs);
+                silentFillAllRegisters();
+                exceptionCheck();
+
+                done.link(this);
+            }
+
+            jsValueResult(resultRegs.tagGPR(), resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
+            break;
+        }
+        default:
+            DFG_CRASH(m_graph, node, "Bad use kind");
+            break;
+        }
         break;
     }
 

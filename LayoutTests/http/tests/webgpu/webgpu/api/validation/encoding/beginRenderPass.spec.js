@@ -3,6 +3,8 @@
  **/ export const description = `
 Note: render pass 'occlusionQuerySet' validation is tested in queries/general.spec.ts
 
+TODO: Check that depth-stencil attachment views must encompass all aspects.
+
 TODO: check for duplication (render_pass/, etc.), plan, and implement.
 Note possibly a lot of this should be operation tests instead.
 Notes:
@@ -41,22 +43,19 @@ g.test('color_attachments,device_mismatch')
       target0Mismatched: false,
       view1Mismatched: false,
       target1Mismatched: false,
-    },
-    // control case
+    }, // control case
     {
       view0Mismatched: false,
       target0Mismatched: true,
       view1Mismatched: false,
       target1Mismatched: true,
     },
-
     {
       view0Mismatched: true,
       target0Mismatched: false,
       view1Mismatched: true,
       target1Mismatched: false,
     },
-
     {
       view0Mismatched: false,
       target0Mismatched: false,
@@ -64,14 +63,12 @@ g.test('color_attachments,device_mismatch')
       target1Mismatched: true,
     },
   ])
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { view0Mismatched, target0Mismatched, view1Mismatched, target1Mismatched } = t.params;
-
     const mismatched = view0Mismatched || target0Mismatched || view1Mismatched || target1Mismatched;
-
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
 
     const view0Texture = view0Mismatched
       ? t.getDeviceMismatchedRenderTexture(4)
@@ -96,7 +93,6 @@ g.test('color_attachments,device_mismatch')
           storeOp: 'store',
           resolveTarget: target0Texture.createView(),
         },
-
         {
           view: view1Texture.createView(),
           clearValue: { r: 1.0, g: 0.0, b: 0.0, a: 1.0 },
@@ -106,7 +102,6 @@ g.test('color_attachments,device_mismatch')
         },
       ],
     });
-
     pass.end();
 
     encoder.validateFinish(!mismatched);
@@ -117,12 +112,11 @@ g.test('depth_stencil_attachment,device_mismatch')
     'Tests beginRenderPass cannot be called with a depth stencil attachment whose texture view is created from another device'
   )
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { mismatched } = t.params;
-
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
 
     const descriptor = {
       size: { width: 4, height: 4, depthOrArrayLayers: 1 },
@@ -147,7 +141,6 @@ g.test('depth_stencil_attachment,device_mismatch')
         stencilStoreOp: 'store',
       },
     });
-
     pass.end();
 
     encoder.validateFinish(!mismatched);
@@ -158,22 +151,63 @@ g.test('occlusion_query_set,device_mismatch')
     'Tests beginRenderPass cannot be called with an occlusion query set created from another device'
   )
   .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
-  .fn(async t => {
+  .beforeAllSubcases(t => {
+    t.selectMismatchedDeviceOrSkipTestCase(undefined);
+  })
+  .fn(t => {
     const { mismatched } = t.params;
+    const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
 
-    if (mismatched) {
-      await t.selectMismatchedDeviceOrSkipTestCase(undefined);
-    }
-
-    const device = mismatched ? t.mismatchedDevice : t.device;
-
-    const occlusionQuerySet = device.createQuerySet({
+    const occlusionQuerySet = sourceDevice.createQuerySet({
       type: 'occlusion',
       count: 1,
     });
-
     t.trackForCleanup(occlusionQuerySet);
 
     const encoder = t.createEncoder('render pass', { occlusionQuerySet });
+    encoder.validateFinish(!mismatched);
+  });
+
+g.test('timestamp_query_set,device_mismatch')
+  .desc(
+    `
+  Tests beginRenderPass cannot be called with a timestamp query set created from another device.
+  `
+  )
+  .paramsSubcasesOnly(u => u.combine('mismatched', [true, false]))
+  .beforeAllSubcases(t => {
+    t.selectDeviceOrSkipTestCase(['timestamp-query']);
+    t.selectMismatchedDeviceOrSkipTestCase('timestamp-query');
+  })
+  .fn(t => {
+    const { mismatched } = t.params;
+    const sourceDevice = mismatched ? t.mismatchedDevice : t.device;
+
+    const timestampWrite = {
+      querySet: sourceDevice.createQuerySet({ type: 'timestamp', count: 1 }),
+      queryIndex: 0,
+      location: 'beginning',
+    };
+
+    const colorTexture = t.device.createTexture({
+      format: 'rgba8unorm',
+      size: { width: 4, height: 4, depthOrArrayLayers: 1 },
+      usage: GPUTextureUsage.RENDER_ATTACHMENT,
+    });
+
+    const encoder = t.createEncoder('non-pass');
+    const pass = encoder.encoder.beginRenderPass({
+      colorAttachments: [
+        {
+          view: colorTexture.createView(),
+          loadOp: 'load',
+          storeOp: 'store',
+        },
+      ],
+
+      timestampWrites: [timestampWrite],
+    });
+    pass.end();
+
     encoder.validateFinish(!mismatched);
   });

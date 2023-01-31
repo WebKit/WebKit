@@ -98,6 +98,7 @@ $(PROJECT_DIR)/Modules/WebGPU/GPUImageDataLayout.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUIndexFormat.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPULoadOp.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUMapMode.idl
+$(PROJECT_DIR)/Modules/WebGPU/GPUMipmapFilterMode.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUMultisampleState.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUObjectBase.idl
 $(PROJECT_DIR)/Modules/WebGPU/GPUObjectDescriptorBase.idl

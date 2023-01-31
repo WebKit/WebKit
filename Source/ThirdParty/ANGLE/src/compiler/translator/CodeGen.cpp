@@ -23,9 +23,6 @@
 #ifdef ANGLE_ENABLE_METAL
 #    include "compiler/translator/TranslatorMetalDirect.h"
 #endif  // ANGLE_ENABLE_METAL
-#ifdef ANGLE_ENABLE_METAL_SPIRV
-#    include "compiler/translator/TranslatorMetal.h"
-#endif  // ANGLE_ENABLE_METAL_SPIRV
 
 #include "compiler/translator/util.h"
 

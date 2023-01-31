@@ -83,9 +83,6 @@ enum GPUTextureFormat {
     "depth24plus-stencil8",
     "depth32float",
 
-    // "depth24unorm-stencil8" feature
-    "depth24unorm-stencil8",
-
     // "depth32float-stencil8" feature
     "depth32float-stencil8",
 

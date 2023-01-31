@@ -29,7 +29,7 @@
 
 #include "CompilationResult.h"
 #include "WasmB3IRGenerator.h"
-#include "WasmEmbedder.h"
+#include "WasmJS.h"
 #include "WasmModuleInformation.h"
 #include <wtf/Bag.h>
 #include <wtf/CrossThreadCopier.h>
@@ -83,10 +83,6 @@ protected:
 
     virtual bool isComplete() const = 0;
     virtual void complete() WTF_REQUIRES_LOCK(m_lock) = 0;
-
-#if ENABLE(WEBASSEMBLY_B3JIT)
-    static void updateCallSitesToCallUs(const AbstractLocker& calleeGroupLocker, CalleeGroup&, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace);
-#endif
 
     Ref<ModuleInformation> m_moduleInformation;
 

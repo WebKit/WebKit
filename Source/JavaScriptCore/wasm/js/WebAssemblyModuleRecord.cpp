@@ -513,11 +513,11 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             //     a. Let func be an Exported Function Exotic Object created from c.
             //     b. Append func to funcs.
             //     c. Return func.
-            Wasm::Callee& embedderEntrypointCallee = calleeGroup->embedderEntrypointCalleeFromFunctionIndexSpace(index);
+            Wasm::Callee& jsEntrypointCallee = calleeGroup->jsEntrypointCalleeFromFunctionIndexSpace(index);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(index);
             Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(index);
             const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(index), m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, typeIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(index), m_instance.get(), jsEntrypointCallee, entrypointLoadLocation, typeIndex);
             wrapper = function;
         }
 
@@ -698,9 +698,9 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             JSObject* startFunction = m_instance->instance().importFunction(startFunctionIndexSpace).get();
             m_startFunction.set(vm, this, startFunction);
         } else {
-            Wasm::Callee& embedderEntrypointCallee = calleeGroup->embedderEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
+            Wasm::Callee& jsEntrypointCallee = calleeGroup->jsEntrypointCalleeFromFunctionIndexSpace(startFunctionIndexSpace);
             Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(startFunctionIndexSpace);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), "start"_s, m_instance.get(), embedderEntrypointCallee, entrypointLoadLocation, typeIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), "start"_s, m_instance.get(), jsEntrypointCallee, entrypointLoadLocation, typeIndex);
             m_startFunction.set(vm, this, function);
         }
     }

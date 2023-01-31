@@ -25,12 +25,25 @@
 #pragma once
 
 #include "AccessibilityObjectInterface.h"
+#include <variant>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+class AXIsolatedTree;
+#endif
+class AXObjectCache;
+
+using AXTreePtr = std::variant<WeakPtr<AXObjectCache>
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    , ThreadSafeWeakPtr<AXIsolatedTree>
+#endif
+>;
 
 template<typename T>
 class AXTreeStore {
@@ -38,10 +51,14 @@ class AXTreeStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AXID treeID() const { return m_id; }
-    static T* treeForID(AXID);
+    static AXObjectCache* axObjectCacheForID(AXID);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    static RefPtr<AXIsolatedTree> isolatedTreeForID(AXID);
+#endif
+
 protected:
     AXTreeStore() = default;
-    static void add(AXID, WeakPtr<T>);
+    static void add(AXID, const AXTreePtr&);
     static void remove(AXID);
     static bool contains(AXID);
 
@@ -49,14 +66,24 @@ protected:
     const AXID m_id { generateNewID() };
     static Lock s_storeLock;
 private:
-    static HashMap<AXID, WeakPtr<T>>& map() WTF_REQUIRES_LOCK(s_storeLock);
+    static HashMap<AXID, AXTreePtr>& map() WTF_REQUIRES_LOCK(s_storeLock);
 };
 
 template<typename T>
-inline void AXTreeStore<T>::add(AXID axID, WeakPtr<T> t)
+inline void AXTreeStore<T>::add(AXID axID, const AXTreePtr& tree)
 {
-    Locker locker { s_storeLock };
-    map().add(axID, t);
+    switchOn(tree,
+        [&] (const WeakPtr<AXObjectCache>& typedTree) {
+            Locker locker { s_storeLock };
+            map().add(axID, typedTree);
+        }
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        , [&] (const ThreadSafeWeakPtr<AXIsolatedTree>& typedTree) {
+            Locker locker { s_storeLock };
+            map().add(axID, typedTree.get());
+        }
+#endif
+    );
 }
 
 template<typename T>
@@ -74,16 +101,39 @@ inline bool AXTreeStore<T>::contains(AXID axID)
 }
 
 template<typename T>
-inline T* AXTreeStore<T>::treeForID(AXID axID)
+inline AXObjectCache* AXTreeStore<T>::axObjectCacheForID(AXID axID)
 {
     Locker locker { s_storeLock };
-    return map().get(axID).get();
+    auto tree = map().get(axID);
+    return switchOn(tree,
+        [] (WeakPtr<AXObjectCache>& typedTree) -> AXObjectCache* { return typedTree.get(); },
+        [] (auto&) -> AXObjectCache* {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+    );
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 template<typename T>
-inline HashMap<AXID, WeakPtr<T>>& AXTreeStore<T>::map()
+inline RefPtr<AXIsolatedTree> AXTreeStore<T>::isolatedTreeForID(AXID axID)
 {
-    static NeverDestroyed<HashMap<AXID, WeakPtr<T>>> map;
+    Locker locker { s_storeLock };
+    auto tree = map().get(axID);
+    return switchOn(tree,
+        [] (ThreadSafeWeakPtr<AXIsolatedTree>& typedTree) -> RefPtr<AXIsolatedTree> { return typedTree.get(); },
+        [] (auto&) -> RefPtr<AXIsolatedTree> {
+            ASSERT_NOT_REACHED();
+            return nullptr;
+        }
+    );
+}
+#endif
+
+template<typename T>
+inline HashMap<AXID, AXTreePtr>& AXTreeStore<T>::map()
+{
+    static NeverDestroyed<HashMap<AXID, AXTreePtr>> map;
     return map;
 }
 

@@ -2793,22 +2793,14 @@ void MediaPlayerPrivateGStreamer::configureDepayloader(GstElement* depayloader)
     if (!isMediaStreamPlayer())
         return;
 
-    auto depayloaderHasProperty = [&depayloader](const char* name) -> bool {
-        return g_object_class_find_property(G_OBJECT_GET_CLASS(depayloader), name);
-    };
-
-    if (depayloaderHasProperty("request-keyframe"))
+    if (gstObjectHasProperty(depayloader, "request-keyframe"))
         g_object_set(depayloader, "request-keyframe", TRUE, nullptr);
-    if (depayloaderHasProperty("wait-for-keyframe"))
+    if (gstObjectHasProperty(depayloader, "wait-for-keyframe"))
         g_object_set(depayloader, "wait-for-keyframe", TRUE, nullptr);
 }
 
 void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
 {
-    auto decoderHasProperty = [&decoder](const char* name) -> bool {
-        return g_object_class_find_property(G_OBJECT_GET_CLASS(decoder), name);
-    };
-
     GUniquePtr<char> name(gst_element_get_name(decoder));
     if (g_str_has_prefix(name.get(), "v4l2"))
         m_videoDecoderPlatform = GstVideoDecoderPlatform::Video4Linux;
@@ -2820,7 +2812,7 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
         // Set the decoder maximum number of threads to a low, fixed value, not depending on the
         // platform. This also helps with processing metrics gathering. When using the default value
         // the decoder introduces artificial processing latency reflecting the maximum number of threads.
-        if (decoderHasProperty("max-threads"))
+        if (gstObjectHasProperty(decoder, "max-threads"))
             g_object_set(decoder, "max-threads", 2, nullptr);
     }
 #if USE(TEXTURE_MAPPER_GL)
@@ -2830,15 +2822,14 @@ void MediaPlayerPrivateGStreamer::configureVideoDecoder(GstElement* decoder)
     if (!isMediaStreamPlayer())
         return;
 
-    if (decoderHasProperty("automatic-request-sync-points"))
+    if (gstObjectHasProperty(decoder, "automatic-request-sync-points"))
         g_object_set(decoder, "automatic-request-sync-points", TRUE, nullptr);
-    if (decoderHasProperty("discard-corrupted-frames"))
+    if (gstObjectHasProperty(decoder, "discard-corrupted-frames"))
         g_object_set(decoder, "discard-corrupted-frames", TRUE, nullptr);
-    if (decoderHasProperty("output-corrupt"))
+    if (gstObjectHasProperty(decoder, "output-corrupt"))
         g_object_set(decoder, "output-corrupt", FALSE, nullptr);
-    if (decoderHasProperty("max-errors"))
+    if (gstObjectHasProperty(decoder, "max-errors"))
         g_object_set(decoder, "max-errors", -1, nullptr);
-
 
     auto pad = adoptGRef(gst_element_get_static_pad(decoder, "src"));
     gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
@@ -3872,7 +3863,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
             if (gst_debug_category_get_threshold(webkit_media_player_debug) < GST_LEVEL_TRACE)
                 g_object_set(m_fpsSink.get(), "text-overlay", FALSE , nullptr);
 
-            if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink.get()), "video-sink")) {
+            if (gstObjectHasProperty(m_fpsSink.get(), "video-sink")) {
                 g_object_set(m_fpsSink.get(), "video-sink", m_videoSink.get(), nullptr);
                 videoSink = m_fpsSink.get();
             } else

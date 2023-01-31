@@ -32,6 +32,15 @@ export function setGPUProvider(provider) {
 
 let impl = undefined;
 
+let defaultRequestAdapterOptions;
+
+export function setDefaultRequestAdapterOptions(options) {
+  if (impl) {
+    throw new Error('must call setDefaultRequestAdapterOptions before getGPU');
+  }
+  defaultRequestAdapterOptions = { ...options };
+}
+
 /**
  * Finds and returns the `navigator.gpu` object (or equivalent, for non-browser implementations).
  * Throws an exception if not found.
@@ -42,6 +51,24 @@ export function getGPU() {
   }
 
   impl = gpuProvider();
+
+  if (defaultRequestAdapterOptions) {
+
+    const oldFn = impl.requestAdapter;
+    impl.requestAdapter = function (
+    options)
+    {
+      const promise = oldFn.call(this, { ...defaultRequestAdapterOptions, ...(options || {}) });
+      void promise.then(async (adapter) => {
+        if (adapter) {
+          const info = await adapter.requestAdapterInfo();
+
+          console.log(info);
+        }
+      });
+      return promise;
+    };
+  }
 
   return impl;
 }

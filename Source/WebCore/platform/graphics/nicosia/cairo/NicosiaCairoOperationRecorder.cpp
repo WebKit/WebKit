@@ -691,7 +691,7 @@ void CairoOperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint
         }
     };
 
-    if (strokeStyle() == NoStroke)
+    if (strokeStyle() == StrokeStyle::NoStroke)
         return;
 
     auto& state = this->state();

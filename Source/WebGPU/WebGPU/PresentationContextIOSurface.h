@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,6 @@
 
 namespace WebGPU {
 
-class Device;
-class TextureView;
-
 class PresentationContextIOSurface : public PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -45,6 +42,7 @@ public:
     void configure(Device&, const WGPUSwapChainDescriptor&) override;
 
     void present() override;
+    Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.
     TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
 
     RetainPtr<IOSurfaceRef> displayBuffer() const { return m_displayBuffer; }

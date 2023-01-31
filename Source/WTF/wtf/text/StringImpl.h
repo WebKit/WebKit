@@ -397,8 +397,8 @@ public:
         //       StringImpl::hash() only sets a new hash iff !hasHash().
         //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
 
-        template<unsigned characterCount> constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
-        template<unsigned characterCount> constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
+        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind = StringNormal);
+        template<unsigned characterCount> explicit constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind = StringNormal);
         operator StringImpl&();
     };
 

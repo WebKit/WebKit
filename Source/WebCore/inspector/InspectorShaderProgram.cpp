@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,6 @@
 #if ENABLE(WEBGL)
 
 #include "InspectorCanvas.h"
-
-#if ENABLE(WEBGL)
 #include "JSExecState.h"
 #include "ScriptExecutionContext.h"
 #include "WebGLProgram.h"
@@ -41,20 +39,16 @@
 #include <JavaScriptCore/IdentifiersFactory.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
-#endif
 
 namespace WebCore {
 
 using namespace Inspector;
 
-#if ENABLE(WEBGL)
 Ref<InspectorShaderProgram> InspectorShaderProgram::create(WebGLProgram& program, InspectorCanvas& inspectorCanvas)
 {
     return adoptRef(*new InspectorShaderProgram(program, inspectorCanvas));
 }
-#endif
 
-#if ENABLE(WEBGL)
 InspectorShaderProgram::InspectorShaderProgram(WebGLProgram& program, InspectorCanvas& inspectorCanvas)
     : m_identifier("program:" + IdentifiersFactory::createIdentifier())
     , m_canvas(inspectorCanvas)
@@ -62,18 +56,7 @@ InspectorShaderProgram::InspectorShaderProgram(WebGLProgram& program, InspectorC
 {
     ASSERT(is<WebGLRenderingContextBase>(m_canvas.canvasContext()));
 }
-#endif
 
-#if ENABLE(WEBGL)
-WebGLProgram* InspectorShaderProgram::program() const
-{
-    if (auto* programWrapper = std::get_if<std::reference_wrapper<WebGLProgram>>(&m_program))
-        return &programWrapper->get();
-    return nullptr;
-}
-#endif
-
-#if ENABLE(WEBGL)
 static WebGLShader* shaderForType(WebGLProgram& program, Inspector::Protocol::Canvas::ShaderType shaderType)
 {
     switch (shaderType) {
@@ -91,96 +74,48 @@ static WebGLShader* shaderForType(WebGLProgram& program, Inspector::Protocol::Ca
     ASSERT_NOT_REACHED();
     return nullptr;
 }
-#endif
 
 String InspectorShaderProgram::requestShaderSource(Inspector::Protocol::Canvas::ShaderType shaderType)
 {
-    return WTF::switchOn(m_program,
-#if ENABLE(WEBGL)
-        [&] (std::reference_wrapper<WebGLProgram> programWrapper) {
-            auto& program = programWrapper.get();
-            if (auto* shader = shaderForType(program, shaderType))
-                return shader->getSource();
-            return String();
-        },
-#endif
-        [&] (std::monostate) {
-#if ENABLE(WEBGL)
-            ASSERT_NOT_REACHED();
-#endif
-            return String();
-        }
-    );
+    auto* shader = shaderForType(m_program, shaderType);
+    if (!shader)
+        return String();
+    return shader->getSource();
 }
 
 bool InspectorShaderProgram::updateShader(Inspector::Protocol::Canvas::ShaderType shaderType, const String& source)
 {
-    return WTF::switchOn(m_program,
-#if ENABLE(WEBGL)
-        [&] (std::reference_wrapper<WebGLProgram> programWrapper) {
-            auto& program = programWrapper.get();
-            if (auto* shader = shaderForType(program, shaderType)) {
-                if (auto* context = m_canvas.canvasContext()) {
-                    if (is<WebGLRenderingContextBase>(context)) {
-                        auto& contextWebGLBase = downcast<WebGLRenderingContextBase>(*context);
-                        contextWebGLBase.shaderSource(*shader, source);
-                        contextWebGLBase.compileShader(*shader);
-                        auto compileStatus = contextWebGLBase.getShaderParameter(*shader, GraphicsContextGL::COMPILE_STATUS);
-                        if (std::holds_alternative<bool>(compileStatus)) {
-                            if (std::get<bool>(compileStatus))
-                                contextWebGLBase.linkProgramWithoutInvalidatingAttribLocations(&program);
-                            else {
-                                auto errors = contextWebGLBase.getShaderInfoLog(*shader);
-                                auto* scriptContext = m_canvas.scriptExecutionContext();
-                                for (auto error : StringView(errors).split('\n')) {
-                                    auto message = makeString("WebGL: "_s, error);
-                                    scriptContext->addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, message));
-                                }
-                            }
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        },
-#endif
-        [&] (std::monostate) {
-#if ENABLE(WEBGL)
-            ASSERT_NOT_REACHED();
-#endif
-            return false;
+    auto* shader = shaderForType(m_program, shaderType);
+    if (!shader)
+        return false;
+    auto* context = dynamicDowncast<WebGLRenderingContextBase>(m_canvas.canvasContext());
+    if (!context)
+        return false;
+    context->shaderSource(*shader, source);
+    context->compileShader(*shader);
+    auto compileStatus = context->getShaderParameter(*shader, GraphicsContextGL::COMPILE_STATUS);
+    if (!std::holds_alternative<bool>(compileStatus))
+        return false;
+    if (std::get<bool>(compileStatus))
+        context->linkProgramWithoutInvalidatingAttribLocations(&m_program);
+    else {
+        auto errors = context->getShaderInfoLog(*shader);
+        auto* scriptContext = m_canvas.scriptExecutionContext();
+        for (auto error : StringView(errors).split('\n')) {
+            auto message = makeString("WebGL: "_s, error);
+            scriptContext->addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, message));
         }
-    );
+    }
+    return true;
 }
 
 Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObjectForShaderProgram()
 {
-    using ProgramTypeType = std::optional<Inspector::Protocol::Canvas::ProgramType>;
-    auto programType = WTF::switchOn(m_program,
-#if ENABLE(WEBGL)
-        [&] (std::reference_wrapper<WebGLProgram>) -> ProgramTypeType {
-            return Inspector::Protocol::Canvas::ProgramType::Render;
-        },
-#endif
-        [&] (std::monostate) -> ProgramTypeType {
-#if ENABLE(WEBGL)
-            ASSERT_NOT_REACHED();
-#endif
-            return std::nullopt;
-        }
-    );
-    if (!programType) {
-        ASSERT_NOT_REACHED();
-        programType = Inspector::Protocol::Canvas::ProgramType::Render;
-    }
-
-    auto payload = Inspector::Protocol::Canvas::ShaderProgram::create()
+    return Inspector::Protocol::Canvas::ShaderProgram::create()
         .setProgramId(m_identifier)
-        .setProgramType(programType.value())
+        .setProgramType(Inspector::Protocol::Canvas::ProgramType::Render)
         .setCanvasId(m_canvas.identifier())
         .release();
-    return payload;
 }
 
 } // namespace WebCore

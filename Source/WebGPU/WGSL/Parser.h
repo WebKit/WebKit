@@ -27,12 +27,13 @@
 
 #include "ASTShaderModule.h"
 #include "CompilationMessage.h"
-#include "Lexer.h"
 #include <wtf/Expected.h>
 
 namespace WGSL {
 
-Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl);
-Expected<AST::ShaderModule, Error> parseUChar(const String& wgsl);
+struct Configuration;
+
+Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl, const Configuration&);
+Expected<AST::ShaderModule, Error> parseUChar(const String& wgsl, const Configuration&);
 
 } // namespace WGSL

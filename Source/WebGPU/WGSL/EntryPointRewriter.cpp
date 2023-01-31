@@ -59,6 +59,7 @@ private:
     static AST::TypeDecl& getResolvedType(AST::TypeDecl&);
 
     void collectParameters();
+    void checkReturnType();
     void constructInputStruct();
     void materialize(Vector<String>& path, MemberOrParameter&, IsBuiltin);
     void visit(Vector<String>& path, MemberOrParameter&&);
@@ -92,6 +93,7 @@ void EntryPointRewriter::rewrite()
     m_structParameterName = makeString("__", m_functionDecl.name(), "_in");
 
     collectParameters();
+    checkReturnType();
 
     // nothing to rewrite
     if (m_parameters.isEmpty()) {
@@ -113,15 +115,6 @@ void EntryPointRewriter::rewrite()
 
     while (m_materializations.size())
         m_functionDecl.body().statements().insert(0, m_materializations.takeLast());
-
-    if (auto* maybeReturnType = m_functionDecl.maybeReturnType()) {
-        auto& returnType = getResolvedType(*maybeReturnType);
-        if (returnType.kind() == AST::Node::Kind::StructType) {
-            auto& structDecl = downcast<AST::StructType>(returnType).structDecl();
-            ASSERT(structDecl.role() == AST::StructRole::UserDefined);
-            structDecl.setRole(AST::StructRole::VertexOutput);
-        }
-    }
 }
 
 void EntryPointRewriter::collectParameters()
@@ -130,6 +123,22 @@ void EntryPointRewriter::collectParameters()
         auto parameter = m_functionDecl.parameters().takeLast();
         Vector<String> path;
         visit(path, MemberOrParameter { parameter->name(), parameter->type(), WTFMove(parameter->attributes()) });
+    }
+}
+
+void EntryPointRewriter::checkReturnType()
+{
+    if (m_stage != AST::StageAttribute::Stage::Vertex)
+        return;
+
+    // FIXME: we might have to duplicate this struct if it has other uses
+    if (auto* maybeReturnType = m_functionDecl.maybeReturnType()) {
+        auto& returnType = getResolvedType(*maybeReturnType);
+        if (returnType.kind() == AST::Node::Kind::StructType) {
+            auto& structDecl = downcast<AST::StructType>(returnType).structDecl();
+            ASSERT(structDecl.role() == AST::StructRole::UserDefined);
+            structDecl.setRole(AST::StructRole::VertexOutput);
+        }
     }
 }
 

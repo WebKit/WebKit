@@ -1330,6 +1330,7 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
         case EvqClipDistance:
         case EvqCullDistance:
         case EvqLastFragData:
+        case EvqLastFragColor:
             symbolType = SymbolType::BuiltIn;
             break;
         default:
@@ -1396,6 +1397,14 @@ bool TParseContext::declareVariable(const TSourceLoc &line,
             error(line, "redeclaration of gl_LastFragData with size != gl_MaxDrawBuffers",
                   identifier);
             return false;
+        }
+    }
+    else if (identifier.beginsWith("gl_LastFragColorARM"))
+    {
+        // gl_LastFragColorARM may be redeclared with a new precision qualifier
+        if (const TSymbol *builtInSymbol = symbolTable.findBuiltIn(identifier, mShaderVersion))
+        {
+            needsReservedCheck = !checkCanUseOneOfExtensions(line, builtInSymbol->extensions());
         }
     }
     else if (type->isArray() && identifier == "gl_ClipDistance")
@@ -2608,6 +2617,10 @@ void TParseContext::adjustRedeclaredBuiltInType(const TSourceLoc &line,
     else if (identifier == "gl_LastFragData")
     {
         type->setQualifier(EvqLastFragData);
+    }
+    else if (identifier == "gl_LastFragColorARM")
+    {
+        type->setQualifier(EvqLastFragColor);
     }
     else if (identifier == "gl_Position")
     {

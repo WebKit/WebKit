@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2015 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,14 +45,14 @@ public:
     static Ref<Screen> create(DOMWindow& window) { return adoptRef(*new Screen(window)); }
     ~Screen();
 
-    unsigned height() const;
-    unsigned width() const;
+    int height() const;
+    int width() const;
     unsigned colorDepth() const;
     unsigned pixelDepth() const;
     int availLeft() const;
     int availTop() const;
-    unsigned availHeight() const;
-    unsigned availWidth() const;
+    int availHeight() const;
+    int availWidth() const;
 
     ScreenOrientation& orientation();
 

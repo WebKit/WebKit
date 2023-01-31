@@ -37,6 +37,7 @@
 namespace PAL::WebGPU {
 
 class ConvertToBackingContext;
+class TextureImpl;
 
 class PresentationContextImpl final : public PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
@@ -65,15 +66,20 @@ private:
     void configure(const PresentationConfiguration&) final;
     void unconfigure() final;
 
-    Texture* getCurrentTexture() final;
+    RefPtr<Texture> getCurrentTexture() final;
+
+    void present() final;
 
 #if PLATFORM(COCOA)
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 #endif
 
+    TextureFormat m_format { TextureFormat::Bgra8unorm };
+
     WGPUSurface m_backing { nullptr };
     WGPUSwapChain m_swapChain { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    RefPtr<TextureImpl> m_currentTexture;
 };
 
 } // namespace PAL::WebGPU

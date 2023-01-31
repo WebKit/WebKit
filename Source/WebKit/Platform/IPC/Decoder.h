@@ -96,6 +96,9 @@ public:
     WARN_UNUSED_RETURN Span<const T> decodeSpan(size_t);
 
     template<typename T>
+    WARN_UNUSED_RETURN std::optional<T> decodeObject();
+
+    template<typename T>
     WARN_UNUSED_RETURN bool decode(T& t)
     {
         using Impl = ArgumentCoder<std::remove_cvref_t<T>, void>;
@@ -242,6 +245,18 @@ inline Span<const T> Decoder::decodeSpan(size_t size)
 
     m_bufferPos = alignedPosition + size * sizeof(T);
     return { reinterpret_cast<const T*>(alignedPosition), size };
+}
+
+template<typename T>
+inline std::optional<T> Decoder::decodeObject()
+{
+    static_assert(std::is_trivially_copyable_v<T>);
+
+    auto data = decodeSpan<T>(1);
+    if (!data.data())
+        return std::nullopt;
+
+    return data[0];
 }
 
 } // namespace IPC

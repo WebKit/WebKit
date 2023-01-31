@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +46,10 @@ static MTLLoadAction loadAction(WGPULoadOp loadOp)
         return MTLLoadActionLoad;
     case WGPULoadOp_Clear:
         return MTLLoadActionClear;
+    case WGPULoadOp_Undefined:
     case WGPULoadOp_Force32:
         ASSERT_NOT_REACHED();
-        return MTLLoadActionClear;
+        return MTLLoadActionDontCare;
     }
 }
 
@@ -59,6 +60,7 @@ static MTLStoreAction storeAction(WGPUStoreOp storeOp)
         return MTLStoreActionStore;
     case WGPUStoreOp_Discard:
         return MTLStoreActionDontCare;
+    case WGPUStoreOp_Undefined:
     case WGPUStoreOp_Force32:
         ASSERT_NOT_REACHED();
         return MTLStoreActionDontCare;
@@ -116,8 +118,16 @@ void CommandEncoder::finalizeBlitCommandEncoder()
 
 Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return ComputePassEncoder::createInvalid(m_device);
+    if (descriptor.nextInChain)
+        return ComputePassEncoder::createInvalid(m_device);
+
+    MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor computePassDescriptor];
+    computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
+
+    id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
+    computeCommandEncoder.label = fromAPI(descriptor.label);
+
+    return ComputePassEncoder::create(computeCommandEncoder, m_device);
 }
 
 bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor& descriptor) const
@@ -131,7 +141,6 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
 
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
-    UNUSED_PARAM(descriptor);
     if (descriptor.nextInChain)
         return RenderPassEncoder::createInvalid(m_device);
 
@@ -147,10 +156,10 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         const auto& attachment = descriptor.colorAttachments[i];
         const auto& mtlAttachment = mtlDescriptor.colorAttachments[i];
 
-        mtlAttachment.clearColor = MTLClearColorMake(attachment.clearColor.r,
-            attachment.clearColor.g,
-            attachment.clearColor.b,
-            attachment.clearColor.a);
+        mtlAttachment.clearColor = MTLClearColorMake(attachment.clearValue.r,
+            attachment.clearValue.g,
+            attachment.clearValue.b,
+            attachment.clearValue.a);
 
         mtlAttachment.texture = fromAPI(attachment.view).texture();
         mtlAttachment.level = 0;
@@ -172,7 +181,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.depthAttachment;
         depthReadOnly = attachment->depthReadOnly;
-        mtlAttachment.clearDepth = attachment->clearDepth;
+        mtlAttachment.clearDepth = attachment->depthClearValue;
         mtlAttachment.texture = fromAPI(attachment->view).texture();
         mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
@@ -183,7 +192,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         stencilReadOnly = attachment->stencilReadOnly;
         // FIXME: assign the correct stencil texture
         // mtlAttachment.texture = fromAPI(attachment->view).texture();
-        mtlAttachment.clearStencil = attachment->clearStencil;
+        mtlAttachment.clearStencil = attachment->stencilClearValue;
         mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);
     }
@@ -305,7 +314,7 @@ static bool refersToAllAspects(WGPUTextureFormat format, WGPUTextureAspect aspec
 
 static bool validateCopyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
 {
-    const auto& dstTextureDesc = fromAPI(destination.texture).descriptor();
+    const auto& destinationTexture = fromAPI(destination.texture);
 
     if (!validateImageCopyBuffer(source))
         return false;
@@ -316,34 +325,34 @@ static bool validateCopyBufferToTexture(const WGPUImageCopyBuffer& source, const
     if (!Texture::validateImageCopyTexture(destination, copySize))
         return false;
 
-    if (!(dstTextureDesc.usage & WGPUTextureUsage_CopyDst))
+    if (!(destinationTexture.usage() & WGPUTextureUsage_CopyDst))
         return false;
 
-    if (dstTextureDesc.sampleCount != 1)
+    if (destinationTexture.sampleCount() != 1)
         return false;
 
-    WGPUTextureFormat aspectSpecificFormat = dstTextureDesc.format;
+    WGPUTextureFormat aspectSpecificFormat = destinationTexture.format();
 
-    if (Texture::isDepthOrStencilFormat(dstTextureDesc.format)) {
-        if (!Texture::refersToSingleAspect(dstTextureDesc.format, destination.aspect))
+    if (Texture::isDepthOrStencilFormat(destinationTexture.format())) {
+        if (!Texture::refersToSingleAspect(destinationTexture.format(), destination.aspect))
             return false;
 
-        if (!Texture::isValidImageCopyDestination(dstTextureDesc.format, destination.aspect))
+        if (!Texture::isValidImageCopyDestination(destinationTexture.format(), destination.aspect))
             return false;
 
-        aspectSpecificFormat = Texture::aspectSpecificFormat(dstTextureDesc.format, destination.aspect);
+        aspectSpecificFormat = Texture::aspectSpecificFormat(destinationTexture.format(), destination.aspect);
     }
 
     if (!Texture::validateTextureCopyRange(destination, copySize))
         return false;
 
-    if (!Texture::isDepthOrStencilFormat(dstTextureDesc.format)) {
-        auto texelBlockSize = Texture::texelBlockSize(dstTextureDesc.format);
+    if (!Texture::isDepthOrStencilFormat(destinationTexture.format())) {
+        auto texelBlockSize = Texture::texelBlockSize(destinationTexture.format());
         if (source.layout.offset % texelBlockSize)
             return false;
     }
 
-    if (Texture::isDepthOrStencilFormat(dstTextureDesc.format)) {
+    if (Texture::isDepthOrStencilFormat(destinationTexture.format())) {
         if (source.layout.offset % 4)
             return false;
     }
@@ -396,8 +405,8 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     auto heightForMetal = std::min(copySize.height, logicalSize.height);
     auto depthForMetal = std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
-    auto& destinationDescriptor = fromAPI(destination.texture).descriptor();
-    switch (destinationDescriptor.dimension) {
+    const auto& destinationTexture = fromAPI(destination.texture);
+    switch (destinationTexture.dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
@@ -467,27 +476,27 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
 
 static bool validateCopyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
 {
-    const auto& srcTextureDesc = fromAPI(source.texture).descriptor();
+    const auto& sourceTexture = fromAPI(source.texture);
 
     if (!Texture::validateImageCopyTexture(source, copySize))
         return false;
 
-    if (!(srcTextureDesc.usage & WGPUBufferUsage_CopySrc))
+    if (!(sourceTexture.usage() & WGPUBufferUsage_CopySrc))
         return false;
 
-    if (srcTextureDesc.sampleCount != 1)
+    if (sourceTexture.sampleCount() != 1)
         return false;
 
-    WGPUTextureFormat aspectSpecificFormat = srcTextureDesc.format;
+    WGPUTextureFormat aspectSpecificFormat = sourceTexture.format();
 
-    if (Texture::isDepthOrStencilFormat(srcTextureDesc.format)) {
-        if (!Texture::refersToSingleAspect(srcTextureDesc.format, source.aspect))
+    if (Texture::isDepthOrStencilFormat(sourceTexture.format())) {
+        if (!Texture::refersToSingleAspect(sourceTexture.format(), source.aspect))
             return false;
 
-        if (!Texture::isValidImageCopySource(srcTextureDesc.format, source.aspect))
+        if (!Texture::isValidImageCopySource(sourceTexture.format(), source.aspect))
             return false;
 
-        aspectSpecificFormat = Texture::aspectSpecificFormat(srcTextureDesc.format, source.aspect);
+        aspectSpecificFormat = Texture::aspectSpecificFormat(sourceTexture.format(), source.aspect);
     }
 
     if (!validateImageCopyBuffer(destination))
@@ -499,13 +508,13 @@ static bool validateCopyTextureToBuffer(const WGPUImageCopyTexture& source, cons
     if (!Texture::validateTextureCopyRange(source, copySize))
         return false;
 
-    if (!Texture::isDepthOrStencilFormat(srcTextureDesc.format)) {
-        auto texelBlockSize = Texture::texelBlockSize(srcTextureDesc.format);
+    if (!Texture::isDepthOrStencilFormat(sourceTexture.format())) {
+        auto texelBlockSize = Texture::texelBlockSize(sourceTexture.format());
         if (destination.layout.offset % texelBlockSize)
             return false;
     }
 
-    if (Texture::isDepthOrStencilFormat(srcTextureDesc.format)) {
+    if (Texture::isDepthOrStencilFormat(sourceTexture.format())) {
         if (destination.layout.offset % 4)
             return false;
     }
@@ -558,8 +567,8 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     auto heightForMetal = std::min(copySize.height, logicalSize.height);
     auto depthForMetal = std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers);
 
-    auto& sourceDescriptor = fromAPI(source.texture).descriptor();
-    switch (sourceDescriptor.dimension) {
+    const auto& sourceTexture = fromAPI(source.texture);
+    switch (sourceTexture.dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
@@ -639,31 +648,31 @@ static bool areCopyCompatible(WGPUTextureFormat format1, WGPUTextureFormat forma
 
 static bool validateCopyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
 {
-    const auto& srcTextureDesc = fromAPI(source.texture).descriptor();
+    const auto& sourceTexture = fromAPI(source.texture);
 
-    const auto& dstTextureDesc = fromAPI(destination.texture).descriptor();
+    const auto& destinationTexture = fromAPI(destination.texture);
 
     if (!Texture::validateImageCopyTexture(source, copySize))
         return false;
 
-    if (!(srcTextureDesc.usage & WGPUTextureUsage_CopySrc))
+    if (!(sourceTexture.usage() & WGPUTextureUsage_CopySrc))
         return false;
 
     if (!Texture::validateImageCopyTexture(destination, copySize))
         return false;
 
-    if (!(dstTextureDesc.usage & WGPUTextureUsage_CopyDst))
+    if (!(destinationTexture.usage() & WGPUTextureUsage_CopyDst))
         return false;
 
-    if (srcTextureDesc.sampleCount != dstTextureDesc.sampleCount)
+    if (sourceTexture.sampleCount() != destinationTexture.sampleCount())
         return false;
 
-    if (!areCopyCompatible(srcTextureDesc.format, dstTextureDesc.format))
+    if (!areCopyCompatible(sourceTexture.format(), destinationTexture.format()))
         return false;
 
-    if (Texture::isDepthOrStencilFormat(srcTextureDesc.format)) {
-        if (!refersToAllAspects(srcTextureDesc.format, source.aspect)
-            || !refersToAllAspects(dstTextureDesc.format, destination.aspect))
+    if (Texture::isDepthOrStencilFormat(sourceTexture.format())) {
+        if (!refersToAllAspects(sourceTexture.format(), source.aspect)
+            || !refersToAllAspects(destinationTexture.format(), destination.aspect))
             return false;
     }
 
@@ -677,7 +686,7 @@ static bool validateCopyTextureToTexture(const WGPUImageCopyTexture& source, con
     if (source.texture == destination.texture) {
         // Mip levels are never ranges.
         if (source.mipLevel == destination.mipLevel) {
-            switch (fromAPI(source.texture).descriptor().dimension) {
+            switch (fromAPI(source.texture).dimension()) {
             case WGPUTextureDimension_1D:
                 return false;
             case WGPUTextureDimension_2D: {
@@ -716,10 +725,10 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
 
     ensureBlitCommandEncoder();
 
-    auto& sourceDescriptor = fromAPI(source.texture).descriptor();
+    auto& sourceTexture = fromAPI(source.texture);
     // FIXME(PERFORMANCE): Is it actually faster to use the -[MTLBlitCommandEncoder copyFromTexture:...toTexture:...levelCount:]
     // variant, where possible, rather than calling the other variant in a loop?
-    switch (sourceDescriptor.dimension) {
+    switch (sourceTexture.dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."

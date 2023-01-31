@@ -317,6 +317,8 @@ private:
     WEBCORE_EXPORT void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
 
     WEBCORE_EXPORT void getDebugBorderInfo(Color&, float& width) const override;
+    virtual WEBCORE_EXPORT Color pageTiledBackingBorderColor() const;
+
     WEBCORE_EXPORT void dumpAdditionalProperties(WTF::TextStream&, OptionSet<LayerTreeAsTextOptions>) const override;
     void dumpInnerLayer(WTF::TextStream&, PlatformCALayer*, OptionSet<PlatformLayerTreeAsTextFlags>) const;
     const char *purposeNameForInnerLayer(PlatformCALayer&) const;

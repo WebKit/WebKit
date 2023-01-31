@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from base64 import b64encode
 from buildbot.plugins import steps, util
 from buildbot.process import buildstep, logobserver, properties, remotecommand
 from buildbot.process.results import Results, SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
@@ -1857,11 +1858,19 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             reviewers = [reviewer] if reviewer else []
 
         remote = self.getProperty('remote', DEFAULT_REMOTE)
-        validators = self.VALIDATORS_FOR.get(remote, [])
         lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
-        if validators and not any([validator.lower() in lower_case_reviewers for validator in validators]):
-            defer.returnValue(self.fail_build_due_to_no_validators(validators))
+        validators = [validator.lower() for validator in self.VALIDATORS_FOR.get(remote, [])]
+        if validators and not any([validator in lower_case_reviewers for validator in validators]):
+            defer.returnValue(self.fail_build_due_to_no_validators(self.VALIDATORS_FOR.get(remote, [])))
             return
+
+        # Validators are a special case, not all validators are WebKit reviewers. If we have a reviewer that
+        # is a validator but NOT a WebKit reviewer, remove them
+        def filter_out_non_reviewer_validators(candidate):
+            if candidate.lower() not in validators:
+                return True
+            return self.is_reviewer(candidate)
+        reviewers = list(filter(filter_out_non_reviewer_validators, reviewers))
 
         if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
             reviewers = list(filter(self.is_reviewer, reviewers))
@@ -2044,16 +2053,17 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     flunkOnFailure = False
     haltOnFailure = False
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         self.bug_id = self.getProperty('bug_id', '')
         self.pr_number = self.getProperty('github.number', '')
         self.comment_text = self.getProperty('comment_text', '')
 
         if not self.comment_text:
-            self._addToLog('stdio', 'comment_text build property not found.\n')
+            yield self._addToLog('stdio', 'comment_text build property not found.\n')
             self.descriptionDone = 'No comment found'
-            self.finished(WARNINGS)
-            return None
+            defer.returnValue(WARNINGS)
+            return
 
         rc = SUCCESS
         if self.pr_number and not self.comment_on_pr(self.pr_number, self.comment_text, self.getProperty('repository')):
@@ -2061,13 +2071,11 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         if self.bug_id and self.comment_on_bug(self.bug_id, self.comment_text) != SUCCESS:
             rc = FAILURE
         if not self.pr_number and not self.bug_id:
-            self._addToLog('stdio', 'No bug or pull request to comment to.\n')
+            yield self._addToLog('stdio', 'No bug or pull request to comment to.\n')
             self.descriptionDone = 'No bug or PR found'
-            self.finished(FAILURE)
-            return None
+            rc = FAILURE
 
-        self.finished(rc)
-        return None
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -4342,21 +4350,29 @@ class ExtractBuiltProduct(shell.ShellCommand):
         super().__init__(logEnviron=False, **kwargs)
 
 
-class RunAPITests(TestWithFailureCount):
+class RunAPITests(TestWithFailureCount, AddToLogMixin):
     name = 'run-api-tests'
     description = ['api tests running']
     descriptionDone = ['api-tests']
     jsonFileName = 'api_test_results.json'
     logfiles = {'json': jsonFileName}
+    test_failures_log_name = 'test-failures'
+    results_db_log_name = 'results-db'
+    suffix = 'first_run'
     command = ['python3', 'Tools/Scripts/run-api-tests', '--no-build',
                WithProperties('--%(configuration)s'), '--verbose', '--json-output={0}'.format(jsonFileName)]
     failedTestsFormatString = '%d api test%s failed or timed out'
 
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, **kwargs)
+        self.failing_tests_filtered = []
+        self.preexisting_failures_in_results_db = []
 
     @defer.inlineCallbacks
     def run(self):
+        self.log_observer_json = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer_json)
+
         platform = self.getProperty('platform')
         if platform == 'gtk':
             self.command = ['python3', 'Tools/Scripts/run-gtk-tests',
@@ -4367,16 +4383,36 @@ class RunAPITests(TestWithFailureCount):
 
         rc = yield super().run()
 
+        yield self.analyze_failures_using_results_db()
+
         if rc in [SUCCESS, WARNINGS]:
             message = 'Passed API tests'
             self.descriptionDone = message
             if self.name != RunAPITestsWithoutChange.name:
                 self.build.results = SUCCESS
                 self.build.buildFinished([message], SUCCESS)
+        elif (self.name != RunAPITestsWithoutChange.name and self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
+            # This means all the tests which failed in this run were also failing or flaky in results database
+            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.build.buildFinished([message], SUCCESS)
         else:
             self.doOnFailure()
 
         defer.returnValue(rc)
+
+    @defer.inlineCallbacks
+    def analyze_failures_using_results_db(self):
+        logTextJson = self.log_observer_json.getStdout()
+
+        failures = self.parse_api_failures_from_string(logTextJson)
+        self.setProperty(f'{self.suffix}_failures', sorted(failures))
+        if failures:
+            yield self._addToLog(self.test_failures_log_name, '\n'.join(failures))
+            yield self.filter_api_test_failures_using_results_db(failures)
+            self.setProperty(f'{self.suffix}_failures_filtered', sorted(self.failing_tests_filtered))
+            self.setProperty(f'results-db_{self.suffix}_pre_existing', sorted(self.preexisting_failures_in_results_db))
 
     def countFailures(self, returncode):
         log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
@@ -4393,9 +4429,60 @@ class RunAPITests(TestWithFailureCount):
             ReRunAPITests(),
         ])
 
+    def parse_api_failures_from_string(self, string):
+        if not string:
+            return []
+        try:
+            # Workaround for https://github.com/buildbot/buildbot/issues/4906
+            string = ''.join(string.splitlines())
+            result = json.loads(string)
+        except Exception as ex:
+            self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
+            return []
+
+        failures = ([failure.get('name') for failure in result.get('Timedout', [])] +
+                    [failure.get('name') for failure in result.get('Crashed', [])] +
+                    [failure.get('name') for failure in result.get('Failed', [])])
+        return failures
+
+    @defer.inlineCallbacks
+    def filter_api_test_failures_using_results_db(self, failing_tests):
+        self.failing_tests_filtered = failing_tests.copy()
+        identifier = self.getProperty('identifier', None)
+        platform = self.getProperty('platform', None)
+        configuration = {}
+        if platform:
+            configuration['platform'] = platform
+        style = self.getProperty('configuration', None)
+        if style and style in ['debug', 'release']:
+            configuration['style'] = style
+
+        yield self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
+        has_commit = False
+        if failing_tests and identifier:
+            has_commit = yield ResultsDatabase.has_commit(commit=identifier)
+            if not has_commit:
+                yield self._addToLog(self.results_db_log_name, f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
+
+        for test in failing_tests:
+            data = yield ResultsDatabase.is_test_pre_existing_failure(
+                test, configuration=configuration,
+                commit=identifier if has_commit else None,
+                suite='api-tests',
+            )
+            yield self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
+            if data['is_existing_failure']:
+                self.preexisting_failures_in_results_db.append(test)
+                self.failing_tests_filtered.remove(test)
+            else:
+                # Optimization to skip consulting results-db for every failure if we encounter any new failure,
+                # since until there is atleast one failure which is not pre-existing, we will anayways have to continue with retry logic.
+                break
+
 
 class ReRunAPITests(RunAPITests):
     name = 're-run-api-tests'
+    suffix = 'second_run'
 
     def doOnFailure(self):
         steps_to_add = [UnApplyPatch(), RevertPullRequestChanges(), ValidateChange(verifyBugClosed=False, addURLs=False)]
@@ -4417,6 +4504,9 @@ class RunAPITestsWithoutChange(RunAPITests):
     name = 'run-api-tests-without-change'
 
     def doOnFailure(self):
+        pass
+
+    def analyze_failures_using_results_db(self):
         pass
 
 

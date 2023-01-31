@@ -34,13 +34,13 @@ namespace WebGPU {
 
 struct ShaderModuleParameters {
     const WGPUShaderModuleWGSLDescriptor& wgsl;
-    const WGPUShaderModuleDescriptorHints* hints;
+    const WGPUShaderModuleCompilationHint* hints;
 };
 
 static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
 {
     const WGPUShaderModuleWGSLDescriptor* wgsl = nullptr;
-    const WGPUShaderModuleDescriptorHints* hints = nullptr;
+    const WGPUShaderModuleCompilationHint* hints = descriptor.hints;
 
     for (const WGPUChainedStruct* ptr = descriptor.nextInChain; ptr; ptr = ptr->next) {
         auto type = ptr->sType;
@@ -50,11 +50,6 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
             if (wgsl)
                 return std::nullopt;
             wgsl = reinterpret_cast<const WGPUShaderModuleWGSLDescriptor*>(ptr);
-            break;
-        case WGPUSTypeExtended_ShaderModuleDescriptorHints:
-            if (hints)
-                return std::nullopt;
-            hints = reinterpret_cast<const WGPUShaderModuleDescriptorHints*>(ptr);
             break;
         default:
             return std::nullopt;
@@ -82,17 +77,17 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     return library;
 }
 
-static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, String&& label)
+static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptor& suppliedHints, String&& label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
     HashMap<String, WGSL::PipelineLayout> wgslHints;
-    for (uint32_t i = 0; i < suppliedHints.hintsCount; ++i) {
+    for (uint32_t i = 0; i < suppliedHints.hintCount; ++i) {
         const auto& hint = suppliedHints.hints[i];
         if (hint.nextInChain)
             return nullptr;
-        auto hintKey = fromAPI(hint.key);
-        hints.add(hintKey, WebGPU::fromAPI(hint.hint.layout));
-        auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.hint.layout));
+        auto hintKey = fromAPI(hint.entryPoint);
+        hints.add(hintKey, WebGPU::fromAPI(hint.layout));
+        auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.layout));
         wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
 
@@ -112,10 +107,10 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
     if (!shaderModuleParameters)
         return ShaderModule::createInvalid(*this);
 
-    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt);
+    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage() });
 
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
-        if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && descriptor.hintCount) {
+        if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), descriptor, fromAPI(descriptor.label)))
             return result.releaseNonNull();
     } else {
         // FIXME: remove shader library generation from MSL after compiler bringup

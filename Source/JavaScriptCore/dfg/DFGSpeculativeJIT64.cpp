@@ -4100,36 +4100,58 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case ToNumber: {
-        JSValueOperand argument(this, node->child1());
-        GPRTemporary result(this, Reuse, argument);
+        switch (node->child1().useKind()) {
+        case StringUse: {
+            SpeculateCellOperand argument(this, node->child1());
+            GPRReg argumentGPR = argument.gpr();
+            speculateString(node->child1(), argumentGPR);
 
-        GPRReg argumentGPR = argument.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        argument.use();
-
-        // We have several attempts to remove ToNumber. But ToNumber still exists.
-        // It means that converting non-numbers to numbers by this ToNumber is not rare.
-        // Instead of the slow path generator, we emit callOperation here.
-        if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
             flushRegisters();
-            callOperation(operationToNumber, resultGPR, LinkableConstant::globalObject(*this, node), argumentGPR);
-            exceptionCheck();
-        } else {
-            Jump notNumber = branchIfNotNumber(argumentGPR);
-            move(argumentGPR, resultGPR);
-            Jump done = jump();
-
-            notNumber.link(this);
-            silentSpillAllRegisters(resultGPR);
-            callOperation(operationToNumber, resultGPR, LinkableConstant::globalObject(*this, node), argumentGPR);
-            silentFillAllRegisters();
+            JSValueRegsFlushedCallResult result(this);
+            JSValueRegs resultRegs = result.regs();
+            callOperation(operationToNumberString, resultRegs, LinkableConstant::globalObject(*this, node), argumentGPR);
             exceptionCheck();
 
-            done.link(this);
+            jsValueResult(resultRegs, node);
+            break;
         }
+        case UntypedUse: {
+            JSValueOperand argument(this, node->child1());
+            GPRTemporary result(this, Reuse, argument);
 
-        jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
+            GPRReg argumentGPR = argument.gpr();
+            GPRReg resultGPR = result.gpr();
+
+            argument.use();
+
+            // We have several attempts to remove ToNumber. But ToNumber still exists.
+            // It means that converting non-numbers to numbers by this ToNumber is not rare.
+            // Instead of the slow path generator, we emit callOperation here.
+            if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
+                flushRegisters();
+                callOperation(operationToNumber, resultGPR, LinkableConstant::globalObject(*this, node), argumentGPR);
+                exceptionCheck();
+            } else {
+                Jump notNumber = branchIfNotNumber(argumentGPR);
+                move(argumentGPR, resultGPR);
+                Jump done = jump();
+
+                notNumber.link(this);
+                silentSpillAllRegisters(resultGPR);
+                callOperation(operationToNumber, resultGPR, LinkableConstant::globalObject(*this, node), argumentGPR);
+                silentFillAllRegisters();
+                exceptionCheck();
+
+                done.link(this);
+            }
+
+            jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
+            break;
+        }
+        default:
+            DFG_CRASH(m_graph, node, "Bad use kind");
+            break;
+        }
         break;
     }
 

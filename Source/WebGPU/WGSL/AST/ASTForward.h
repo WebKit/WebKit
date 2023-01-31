@@ -36,6 +36,7 @@ class BuiltinAttribute;
 class GroupAttribute;
 class LocationAttribute;
 class StageAttribute;
+class WorkgroupSizeAttribute;
 
 class Decl;
 class FunctionDecl;
@@ -56,6 +57,7 @@ class Uint32Literal;
 class UnaryExpression;
 class BinaryExpression;
 class PointerDereference;
+class IdentityExpression;
 
 class Statement;
 class AssignmentStatement;

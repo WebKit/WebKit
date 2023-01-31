@@ -1043,15 +1043,26 @@ void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo* info, const PlatformVi
 
 void configureVideoDecoderForHarnessing(const GRefPtr<GstElement>& element)
 {
-    auto elementHasProperty = [&](const char* name) -> bool {
-        return g_object_class_find_property(G_OBJECT_GET_CLASS(element.get()), name);
-    };
-
-    if (elementHasProperty("max-threads"))
+    if (gstObjectHasProperty(element.get(), "max-threads"))
         g_object_set(element.get(), "max-threads", 1, nullptr);
 
-    if (elementHasProperty("max-errors"))
+    if (gstObjectHasProperty(element.get(), "max-errors"))
         g_object_set(element.get(), "max-errors", 0, nullptr);
+}
+
+static bool gstObjectHasProperty(GstObject* gstObject, const char* name)
+{
+    return g_object_class_find_property(G_OBJECT_GET_CLASS(gstObject), name);
+}
+
+bool gstObjectHasProperty(GstElement* element, const char* name)
+{
+    return gstObjectHasProperty(GST_OBJECT_CAST(element), name);
+}
+
+bool gstObjectHasProperty(GstPad* pad, const char* name)
+{
+    return gstObjectHasProperty(GST_OBJECT_CAST(pad), name);
 }
 
 } // namespace WebCore

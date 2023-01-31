@@ -163,6 +163,12 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
         auto* animation = effect->animation();
 
         auto inheritedPropertyChanged = [&]() {
+            // In the rare case where a non-inherted property was set to "inherit" on a keyframe,
+            // we consider that a property set to "inherit" changed without trying to work out whether
+            // the computed value changed.
+            if (effect->hasExplicitlyInheritedKeyframeProperty())
+                return true;
+
             if (previousLastStyleChangeEventStyle) {
                 for (auto property : effect->inheritedProperties()) {
                     ASSERT(effect->target());

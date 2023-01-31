@@ -1508,14 +1508,8 @@ RetainPtr<NSImage> RenderThemeMac::iconForAttachment(const String& fileName, con
     if (fileName.isNull() && attachmentType.isNull() && title.isNull())
         return nil;
 
-    if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title)) {
-        auto imageForIcon = adoptNS([[NSImage alloc] initWithCGImage:icon->image()->platformImage().get() size:NSZeroSize]);
-        // Need this because WebCore uses AppKit's flipped coordinate system exclusively.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [imageForIcon setFlipped:YES];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        return imageForIcon;
-    }
+    if (auto icon = WebCore::iconForAttachment(fileName, attachmentType, title))
+        return icon->image();
 
     return nil;
 }
@@ -1585,7 +1579,7 @@ static void paintAttachmentIcon(const RenderAttachment& attachment, GraphicsCont
     if (!shouldDrawIcon(attachment.attachmentElement().attachmentTitleForDisplay()))
         return;
 
-    context.drawImage(*icon, layout.iconRect, { ImageOrientation::OriginBottomLeft });
+    context.drawImage(*icon, layout.iconRect);
 }
 
 static std::pair<RefPtr<Image>, float> createAttachmentPlaceholderImage(float deviceScaleFactor, const AttachmentLayout& layout)
@@ -1694,7 +1688,7 @@ static void paintAttachmentPlaceholderBorder(const RenderAttachment& attachment,
     Color placeholderBorderColor = attachment.style().colorByApplyingColorFilter(attachmentPlaceholderBorderColor);
     context.setStrokeColor(placeholderBorderColor);
     context.setStrokeThickness(attachmentPlaceholderBorderWidth);
-    context.setStrokeStyle(DashedStroke);
+    context.setStrokeStyle(StrokeStyle::DashedStroke);
     context.setLineDash({attachmentPlaceholderBorderDashLength}, 0);
     context.strokePath(borderPath);
 }

@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "InternalFunction.h"
+#include "JSFunction.h"
 #include "MathCommon.h"
 
 namespace JSC {
@@ -28,23 +28,18 @@ namespace JSC {
 class NumberPrototype;
 class GetterSetter;
 
-class NumberConstructor final : public InternalFunction {
+class NumberConstructor final : public JSFunction {
 public:
-    typedef InternalFunction Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | ImplementsHasInstance | HasStaticPropertyTable;
+    using Base = JSFunction;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static NumberConstructor* create(VM& vm, Structure* structure, NumberPrototype* numberPrototype, GetterSetter*)
-    {
-        NumberConstructor* constructor = new (NotNull, allocateCell<NumberConstructor>(vm)) NumberConstructor(vm, structure);
-        constructor->finishCreation(vm, numberPrototype);
-        return constructor;
-    }
+    static NumberConstructor* create(VM&, Structure*, NumberPrototype*, GetterSetter*);
 
     DECLARE_INFO;
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto) 
-    { 
-        return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info()); 
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+    {
+        return Structure::create(vm, globalObject, proto, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
     static bool isIntegerImpl(JSValue value)
@@ -53,9 +48,9 @@ public:
     }
 
 private:
-    NumberConstructor(VM&, Structure*);
+    NumberConstructor(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
     void finishCreation(VM&, NumberPrototype*);
 };
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(NumberConstructor, InternalFunction);
+static_assert(sizeof(NumberConstructor) == sizeof(JSFunction), "Allocate NumberConstructor in JSFunction IsoSubspace");
 
 } // namespace JSC

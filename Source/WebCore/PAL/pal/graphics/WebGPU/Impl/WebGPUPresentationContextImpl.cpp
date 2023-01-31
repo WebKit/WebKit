@@ -66,6 +66,8 @@ void PresentationContextImpl::configure(const PresentationConfiguration& present
     if (m_swapChain)
         wgpuSwapChainRelease(m_swapChain);
 
+    m_format = presentationConfiguration.format;
+
     WGPUSwapChainDescriptor backingDescriptor {
         nullptr,
         nullptr,
@@ -88,10 +90,22 @@ void PresentationContextImpl::unconfigure()
     m_swapChain = nullptr;
 }
 
-Texture* PresentationContextImpl::getCurrentTexture()
+RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250958 Figure out how the lifetime of these objects should behave.
-    return nullptr;
+    // FIXME: If m_swapChain is nullptr, return an invalid texture.
+
+    if (!m_currentTexture) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250958 This is wrong; these objects are +0, but our Impl wrappers treat them as +1 objects.
+        m_currentTexture = TextureImpl::create(wgpuSwapChainGetCurrentTexture(m_swapChain), m_format, TextureDimension::_2d, m_convertToBackingContext).ptr();
+    }
+
+    return m_currentTexture;
+}
+
+void PresentationContextImpl::present()
+{
+    wgpuSwapChainPresent(m_swapChain);
+    m_currentTexture = nullptr;
 }
 
 #if PLATFORM(COCOA)

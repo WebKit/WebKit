@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Device.h"
 
+#import "API.h"
 #import "APIConversions.h"
 #import "BindGroup.h"
 #import "BindGroupLayout.h"
@@ -262,8 +263,7 @@ uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
 uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const
 {
     auto maxIndex = maxBuffersPlusVertexBuffersForVertexStage();
-    ASSERT(groupIndex <= maxIndex);
-    return groupIndex > maxIndex ? 0 : (maxIndex - groupIndex);
+    return WGSL::vertexBufferIndexForBindGroup(groupIndex, maxIndex);
 }
 
 void Device::captureFrameIfNeeded() const

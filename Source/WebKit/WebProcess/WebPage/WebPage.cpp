@@ -977,6 +977,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     setLookalikeCharacterStrings(WTFMove(parameters.lookalikeCharacterStrings));
+    setAllowedLookalikeCharacterStrings(WTFMove(parameters.allowedLookalikeCharacterStrings));
 #endif
 }
 
@@ -5096,7 +5097,7 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
         RetainPtr<CFDataRef> dataRef = adoptCF(CFDataCreate(nullptr, iconData.data(), iconData.size()));
         RetainPtr<CGDataProviderRef> imageProviderRef = adoptCF(CGDataProviderCreateWithCFData(dataRef.get()));
         RetainPtr<CGImageRef> imageRef = adoptCF(CGImageCreateWithPNGDataProvider(imageProviderRef.get(), nullptr, true, kCGRenderingIntentDefault));
-        icon = Icon::createIconForImage(WTFMove(imageRef));
+        icon = Icon::create(WTFMove(imageRef));
     }
 
     m_activeOpenPanelResultListener->didChooseFilesWithDisplayStringAndIcon(files, displayString, icon.get());
@@ -8399,7 +8400,6 @@ bool WebPage::isUsingUISideCompositing() const
 }
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-
 void WebPage::setLookalikeCharacterStrings(Vector<String>&& strings)
 {
     m_lookalikeCharacterStrings.clear();
@@ -8408,6 +8408,13 @@ void WebPage::setLookalikeCharacterStrings(Vector<String>&& strings)
         m_lookalikeCharacterStrings.add(string);
 }
 
+void WebPage::setAllowedLookalikeCharacterStrings(Vector<LookalikeCharactersSanitizationData>&& allowStrings)
+{
+    m_allowedLookalikeCharacterStrings.clear();
+    m_allowedLookalikeCharacterStrings.reserveInitialCapacity(allowStrings.size());
+    for (auto& data : allowStrings)
+        m_allowedLookalikeCharacterStrings.add(data.domain, data.lookalikeCharacters);
+}
 #endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
 bool WebPage::shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request) const

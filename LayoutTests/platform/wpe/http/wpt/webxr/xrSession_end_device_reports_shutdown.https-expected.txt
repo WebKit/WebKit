@@ -1,5 +1,0 @@
-
-
-PASS end event fires when immersive session ends and device reports when shutdown has completed - webgl
-FAIL end event fires when immersive session ends and device reports when shutdown has completed - webgl2 assert_implements: webgl2 not supported. undefined
-

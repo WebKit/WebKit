@@ -329,22 +329,27 @@ void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei w
 void RemoteGraphicsContextGLProxy::readnPixelsSharedMemory(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
     if (!isContextLost()) {
+        std::optional<SharedMemory::Handle> handle;
+#if PLATFORM(COCOA)
+        handle = SharedMemory::Handle::create(data.data(), data.size(), SharedMemory::Protection::ReadWrite);
+#else
         auto buffer = SharedMemory::allocate(data.size());
-        if (!buffer) {
-            markContextLost();
-            return;
+        if (buffer) {
+            handle = buffer->createHandle(SharedMemory::Protection::ReadWrite);
+            memcpy(buffer->data(), data.data(), data.size());
         }
-        auto handle = buffer->createHandle(SharedMemory::Protection::ReadWrite);
+#endif
         if (!handle || handle->isNull()) {
             markContextLost();
             return;
         }
-        memcpy(buffer->data(), data.data(), data.size());
         auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels2(x, y, width, height, format, type, WTFMove(*handle)));
         if (sendResult) {
+#if !PLATFORM(COCOA)
             auto [success] = sendResult.takeReply();
             if (success)
                 memcpy(data.data(), buffer->data(), data.size());
+#endif
         } else
             markContextLost();
     }

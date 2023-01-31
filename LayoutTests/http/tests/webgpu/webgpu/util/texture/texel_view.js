@@ -52,9 +52,9 @@ export class TexelView {
         coords.x >= origin.x &&
           coords.y >= origin.y &&
           coords.z >= origin.z &&
-          coords.x < size.width &&
-          coords.y < size.height &&
-          coords.z < size.depthOrArrayLayers,
+          coords.x < origin.x + size.width &&
+          coords.y < origin.y + size.height &&
+          coords.z < origin.z + size.depthOrArrayLayers,
         'coordinate out of bounds'
       );
 

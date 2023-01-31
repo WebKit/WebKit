@@ -91,7 +91,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache* axObjectCache)
 
     // Now that the tree is ready to take client requests, add it to the tree
     // maps so that it can be found.
-    AXTreeStore::add(tree->treeID(), tree.copyRef());
+    AXTreeStore::add(tree->treeID(), tree.ptr());
     auto pageID = axObjectCache->pageID();
     Locker locker { s_storeLock };
     ASSERT(!treePageCache().contains(*pageID));
@@ -772,15 +772,7 @@ void AXIsolatedTree::applyPendingChanges()
         // We don't need to bother clearing out any other non-cycle-causing member variables as they
         // will be cleaned up automatically when the tree is destroyed.
 
-#ifndef NDEBUG
         ASSERT(AXTreeStore::contains(treeID()));
-        if (auto tree = AXTreeStore::treeForID(treeID())) {
-            // At this point, there should only be two references left to this tree -- one in the map,
-            // and the `protectedThis` above.
-            ASSERT(tree->refCount() == 2, "Unexpected refcount before attempting to destroy isolated tree: %d", tree->refCount());
-        }
-#endif
-
         AXTreeStore::remove(treeID());
         return;
     }

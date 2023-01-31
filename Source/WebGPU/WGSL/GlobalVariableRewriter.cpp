@@ -111,10 +111,12 @@ void RewriteGlobalVariables::visit(AST::VariableDecl& variableDecl)
 }
 
 template <typename TargetType, typename CurrentType, typename... Arguments>
-void replace(CurrentType& dst, Arguments&&... arguments)
+void replace(CurrentType&& dst, Arguments&&... arguments)
 {
     static_assert(sizeof(TargetType) <= sizeof(CurrentType));
-    new (&dst) TargetType(dst.span(), std::forward<Arguments>(arguments)...);
+    auto span = dst.span();
+    dst.~CurrentType();
+    new (&dst) TargetType(span, std::forward<Arguments>(arguments)...);
 }
 
 void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
@@ -122,9 +124,9 @@ void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
     auto name = identifier.identifier();
     if (Global* global = read(name)) {
         if (auto resource = global->m_resource) {
-            replace<AST::StructureAccess>(identifier,
-                makeUniqueRef<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->m_group)),
-                WTFMove(name));
+            auto base = makeUniqueRef<AST::IdentifierExpression>(identifier.span(), argumentBufferParameterName(resource->m_group));
+            auto structureAccess = makeUniqueRef<AST::StructureAccess>(identifier.span(), WTFMove(base), WTFMove(name));
+            replace<AST::IdentityExpression>(WTFMove(identifier), WTFMove(structureAccess));
         }
     }
 }
@@ -263,12 +265,12 @@ auto RewriteGlobalVariables::read(const String& name) -> Global*
 
 String RewriteGlobalVariables::argumentBufferParameterName(unsigned group)
 {
-    return makeString("__ArgumentBufer_", String::number(group));
+    return makeString("__ArgumentBuffer_", String::number(group));
 }
 
 String RewriteGlobalVariables::argumentBufferStructName(unsigned group)
 {
-    return makeString("__ArgumentBuferT_", String::number(group));
+    return makeString("__ArgumentBufferT_", String::number(group));
 }
 
 void rewriteGlobalVariables(CallGraph& callGraph, const HashMap<String, PipelineLayout>& pipelineLayouts)

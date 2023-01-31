@@ -32,7 +32,6 @@ namespace PAL::WebGPU {
 
 enum class FeatureName : uint8_t {
     DepthClipControl,
-    Depth24unormStencil8,
     Depth32floatStencil8,
     TextureCompressionBc,
     TextureCompressionEtc2,

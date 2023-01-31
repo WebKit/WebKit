@@ -495,7 +495,6 @@
 5981 PIXEL4ORXL VULKAN : ClearTestES3.ScissoredClearHeterogeneousAttachments/* = SKIP
 5981 PIXEL4ORXL VULKAN : CubeMapTextureTest.SampleCoordinateTransform/* = SKIP
 5981 PIXEL4ORXL VULKAN : DepthStencilFormatsTest.DepthTextureRender/* = SKIP
-5981 PIXEL4ORXL VULKAN : EGLSyncTest.AndroidNativeFence_ClientWait/* = SKIP
 5981 PIXEL4ORXL VULKAN : EXTBlendFuncExtendedDrawTest.FragData/* = SKIP
 5981 PIXEL4ORXL VULKAN : EXTBlendFuncExtendedDrawTestES3.FragmentArrayOutputLocationsAPI/* = SKIP
 5981 PIXEL4ORXL VULKAN : EXTBlendFuncExtendedDrawTestES3.FragmentOutputLocationAPI/* = SKIP
@@ -568,7 +567,6 @@
 6931 PIXEL6 VULKAN : BlitFramebufferTest.OOBWrite/* = SKIP
 6931 PIXEL6 VULKAN : BufferDataTestES3.MapInvalidateThenBufferSubData/* = SKIP
 6931 PIXEL6 VULKAN : EGLSurfaceTest.ResizeWindowWithDraw/* = SKIP
-6931 PIXEL6 VULKAN : EGLSyncTest.AndroidNativeFence_ClientWait/* = SKIP
 6931 PIXEL6 VULKAN : ExternalBufferTestES31.* = SKIP
 6931 PIXEL6 VULKAN : FramebufferMultiviewLayeredClearTest.ScissoredClearBufferfi/* = SKIP
 6931 PIXEL6 VULKAN : FramebufferTest_ES31.MultipleTextureMultisampleResolveWithBlitMultipleResolves* = SKIP
@@ -755,9 +753,8 @@
 7768 IOS : ClipDistanceAPPLETest.ThreeClipDistances/ES3_OpenGL = SKIP
 7768 IOS : ClipDistanceAPPLETest.ThreeClipDistancesRedeclared/ES2_OpenGL = SKIP
 7768 IOS : ClipDistanceAPPLETest.ThreeClipDistancesRedeclared/ES3_OpenGL = SKIP
-
 7778 IOS : FramebufferTest_ES3.DrawWithDifferentPreRotations/ES3_OpenGL = SKIP
-
+7833 IOS : ShaderBinaryTest.* = SKIP
 7853 IOS : FramebufferExtensionsTest.ColorBufferHalfFloat/ES2_OpenGL = SKIP
 
 // Test is disabled as it only pertains to desktop GLSL

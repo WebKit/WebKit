@@ -78,6 +78,9 @@ void Visitor::visit(Attribute& attribute)
     case Node::Kind::StageAttribute:
         checkErrorAndVisit(downcast<StageAttribute>(attribute));
         break;
+    case Node::Kind::WorkgroupSizeAttribute:
+        checkErrorAndVisit(downcast<WorkgroupSizeAttribute>(attribute));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled attribute kind");
     }
@@ -100,6 +103,10 @@ void Visitor::visit(LocationAttribute&)
 }
 
 void Visitor::visit(StageAttribute&)
+{
+}
+
+void Visitor::visit(WorkgroupSizeAttribute&)
 {
 }
 
@@ -195,6 +202,9 @@ void Visitor::visit(Expression& expression)
     case Expression::Kind::PointerDereference:
         checkErrorAndVisit(downcast<PointerDereference>(expression));
         break;
+    case Expression::Kind::IdentityExpression:
+        checkErrorAndVisit(downcast<IdentityExpression>(expression));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled expression kind");
     }
@@ -260,6 +270,11 @@ void Visitor::visit(BinaryExpression& binaryExpression)
 void Visitor::visit(PointerDereference& pointerDereference)
 {
     checkErrorAndVisit(pointerDereference.target());
+}
+
+void Visitor::visit(IdentityExpression& identity)
+{
+    checkErrorAndVisit(identity.expression());
 }
 
 // Statement

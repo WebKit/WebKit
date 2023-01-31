@@ -134,6 +134,9 @@ void SetupDefaultPipelineState(const ContextVk *contextVk,
     graphicsPipelineDescOut->setRenderPassSampleCount(1);
     graphicsPipelineDescOut->setRenderPassFramebufferFetchMode(glExecutable.usesFramebufferFetch());
 
+    graphicsPipelineDescOut->setVertexShaderComponentTypes(
+        glExecutable.getNonBuiltinAttribLocationsMask(), glExecutable.getAttributesTypeMask());
+
     const std::vector<sh::ShaderVariable> &outputVariables   = glExecutable.getOutputVariables();
     const std::vector<gl::VariableLocation> &outputLocations = glExecutable.getOutputLocations();
 

@@ -1584,6 +1584,7 @@
 		93AB9B562575A28B0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AB9B51257589110098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp */; };
 		93AEC161278F8CD30066666F /* StorageAreaMapIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AEC160278F8CD20066666F /* StorageAreaMapIdentifier.h */; };
 		93B0A67526D5ADCF00AA21E4 /* WebPermissionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */; };
+		93B42F2F29834B2600DF1D45 /* FileSystemSyncAccessHandleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B42F2E29834A4200DF1D45 /* FileSystemSyncAccessHandleInfo.h */; };
 		93B631E527ABA62800443A44 /* IDBStorageConnectionToClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631E427ABA62700443A44 /* IDBStorageConnectionToClient.h */; };
 		93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631E627ABA65C00443A44 /* IDBStorageManager.h */; };
 		93B631ED27ABA6B400443A44 /* IDBStorageRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631EB27ABA6B300443A44 /* IDBStorageRegistry.h */; };
@@ -3614,6 +3615,11 @@
 		1C3BEB6F288883E300E66E38 /* _WKWebExtensionPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionPrivate.h; sourceTree = "<group>"; };
 		1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionControllerProxyCocoa.mm; sourceTree = "<group>"; };
 		1C4B7BBF28E7A43F00B7265A /* WebExtensionControllerParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionControllerParameters.serialization.in; sourceTree = "<group>"; };
+		1C4F5A1C297CB57A005BBEE9 /* RemoteCompositorIntegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCompositorIntegration.h; sourceTree = "<group>"; };
+		1C4F5A1D297CB57B005BBEE9 /* RemoteCompositorIntegration.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteCompositorIntegration.messages.in; sourceTree = "<group>"; };
+		1C4F5A1E297CB57B005BBEE9 /* RemoteCompositorIntegration.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCompositorIntegration.cpp; sourceTree = "<group>"; };
+		1C4F5A1F297CB5A2005BBEE9 /* RemoteCompositorIntegrationProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCompositorIntegrationProxy.cpp; sourceTree = "<group>"; };
+		1C4F5A20297CB5A3005BBEE9 /* RemoteCompositorIntegrationProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteCompositorIntegrationProxy.h; sourceTree = "<group>"; };
 		1C55A573275457C400EB7E95 /* RemoteTextureMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextureMessages.h; sourceTree = "<group>"; };
 		1C55A574275457C400EB7E95 /* RemoteRenderPipelineMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderPipelineMessageReceiver.cpp; sourceTree = "<group>"; };
 		1C55A577275457C400EB7E95 /* RemoteComputePipelineMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteComputePipelineMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -6187,6 +6193,7 @@
 		93AEC160278F8CD20066666F /* StorageAreaMapIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMapIdentifier.h; sourceTree = "<group>"; };
 		93B0A67326D5A72E00AA21E4 /* WebPermissionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPermissionController.cpp; sourceTree = "<group>"; };
 		93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPermissionController.h; sourceTree = "<group>"; };
+		93B42F2E29834A4200DF1D45 /* FileSystemSyncAccessHandleInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSystemSyncAccessHandleInfo.h; sourceTree = "<group>"; };
 		93B631E327ABA5F700443A44 /* IDBStorageConnectionToClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IDBStorageConnectionToClient.cpp; sourceTree = "<group>"; };
 		93B631E427ABA62700443A44 /* IDBStorageConnectionToClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBStorageConnectionToClient.h; sourceTree = "<group>"; };
 		93B631E627ABA65C00443A44 /* IDBStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBStorageManager.h; sourceTree = "<group>"; };
@@ -7530,12 +7537,8 @@
 		E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySupportSPI.h; sourceTree = "<group>"; };
 		E3EFB02C2550617C003C2F96 /* WebSystemSoundDelegate.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSystemSoundDelegate.cpp; sourceTree = "<group>"; };
 		E3EFB02D2550617C003C2F96 /* WebSystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSystemSoundDelegate.h; sourceTree = "<group>"; };
-		E404907021DE65F70037F0DB /* ScrollerPairMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollerPairMac.h; sourceTree = "<group>"; };
 		E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeFrameScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
-		E404907221DE65F70037F0DB /* ScrollerPairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerPairMac.mm; sourceTree = "<group>"; };
 		E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteMac.h; sourceTree = "<group>"; };
-		E404907421DE65F70037F0DB /* ScrollerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollerMac.mm; sourceTree = "<group>"; };
-		E404907521DE65F70037F0DB /* ScrollerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollerMac.h; sourceTree = "<group>"; };
 		E40C1F9321F0B96E00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeFrameScrollingNodeRemoteIOS.h; sourceTree = "<group>"; };
 		E40C1F9521F0B97F00530718 /* ScrollingTreeFrameScrollingNodeRemoteIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeFrameScrollingNodeRemoteIOS.mm; sourceTree = "<group>"; };
 		E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheEntry.h; sourceTree = "<group>"; };
@@ -8362,6 +8365,7 @@
 				8CFECE931490F140002AAA32 /* EditorState.cpp */,
 				1AA41AB412C02EC4002BE67B /* EditorState.h */,
 				5C6CED8E2900598000B5D522 /* EditorState.serialization.in */,
+				93B42F2E29834A4200DF1D45 /* FileSystemSyncAccessHandleInfo.h */,
 				C59C4A5718B81174007BDCB6 /* FocusedElementInformation.h */,
 				86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */,
 				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
@@ -9009,6 +9013,9 @@
 				1C98C05627446CB9002CCB78 /* RemoteCommandEncoder.cpp */,
 				1C98C05527446CB9002CCB78 /* RemoteCommandEncoder.h */,
 				1C98C0952744BD9B002CCB78 /* RemoteCommandEncoder.messages.in */,
+				1C4F5A1E297CB57B005BBEE9 /* RemoteCompositorIntegration.cpp */,
+				1C4F5A1C297CB57A005BBEE9 /* RemoteCompositorIntegration.h */,
+				1C4F5A1D297CB57B005BBEE9 /* RemoteCompositorIntegration.messages.in */,
 				1C98C05827446CBA002CCB78 /* RemoteComputePassEncoder.cpp */,
 				1C98C05A27446CBA002CCB78 /* RemoteComputePassEncoder.h */,
 				1C98C0932744BD9B002CCB78 /* RemoteComputePassEncoder.messages.in */,
@@ -9096,6 +9103,8 @@
 				1CB7462C27436EE700F19874 /* RemoteCommandBufferProxy.h */,
 				1CB7462227436EE600F19874 /* RemoteCommandEncoderProxy.cpp */,
 				1CB7464027436EEA00F19874 /* RemoteCommandEncoderProxy.h */,
+				1C4F5A1F297CB5A2005BBEE9 /* RemoteCompositorIntegrationProxy.cpp */,
+				1C4F5A20297CB5A3005BBEE9 /* RemoteCompositorIntegrationProxy.h */,
 				1CB7462327436EE600F19874 /* RemoteComputePassEncoderProxy.cpp */,
 				1CB7462627436EE600F19874 /* RemoteComputePassEncoderProxy.h */,
 				1CB7463F27436EEA00F19874 /* RemoteComputePipelineProxy.cpp */,
@@ -14442,10 +14451,6 @@
 				0F2E0DF628F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.mm */,
 				0FF7CE8A2901FDAC00EA62D6 /* RemoteScrollingTreeMac.h */,
 				0FF7CE8B2901FDAD00EA62D6 /* RemoteScrollingTreeMac.mm */,
-				E404907521DE65F70037F0DB /* ScrollerMac.h */,
-				E404907421DE65F70037F0DB /* ScrollerMac.mm */,
-				E404907021DE65F70037F0DB /* ScrollerPairMac.h */,
-				E404907221DE65F70037F0DB /* ScrollerPairMac.mm */,
 				E404907121DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.cpp */,
 				E404907321DE65F70037F0DB /* ScrollingTreeFrameScrollingNodeRemoteMac.h */,
 				0F73B767222B38C600805316 /* ScrollingTreeOverflowScrollingNodeRemoteMac.cpp */,
@@ -15061,6 +15066,7 @@
 				9312BAD626F33C2900FDDF5F /* FileSystemStorageHandle.h in Headers */,
 				935B579A26F51933008B48AC /* FileSystemStorageHandleRegistry.h in Headers */,
 				9312BAD526F33C2600FDDF5F /* FileSystemStorageManager.h in Headers */,
+				93B42F2F29834B2600DF1D45 /* FileSystemSyncAccessHandleInfo.h in Headers */,
 				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,

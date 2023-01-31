@@ -29,7 +29,7 @@
 
 #include "JITCompilation.h"
 #include "WasmBinding.h"
-#include "WasmEmbedder.h"
+#include "WasmJS.h"
 #include <wtf/Bag.h>
 #include <wtf/Expected.h>
 

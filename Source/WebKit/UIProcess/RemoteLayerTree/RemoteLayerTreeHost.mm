@@ -91,6 +91,11 @@ bool RemoteLayerTreeHost::replayCGDisplayListsIntoBackingStore() const
 #endif
 }
 
+bool RemoteLayerTreeHost::css3DTransformInteroperabilityEnabled() const
+{
+    return m_drawingArea->page().preferences().css3DTransformInteroperabilityEnabled();
+}
+
 bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& transaction, float indicatorScaleFactor)
 {
     if (!m_drawingArea)
@@ -289,6 +294,16 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
     ASSERT(!m_nodes.contains(properties.layerID));
 
     auto node = makeNode(properties);
+
+#if HAVE(CALAYER_USES_WEBKIT_BEHAVIOR)
+    if (css3DTransformInteroperabilityEnabled() && [node->layer() respondsToSelector:@selector(setUsesWebKitBehavior:)]) {
+        [node->layer() setUsesWebKitBehavior:YES];
+        if ([node->layer() isKindOfClass:[CATransformLayer class]])
+            [node->layer() setSortsSublayers:YES];
+        else
+            [node->layer() setSortsSublayers:NO];
+    }
+#endif
 
     m_nodes.add(properties.layerID, WTFMove(node));
 }

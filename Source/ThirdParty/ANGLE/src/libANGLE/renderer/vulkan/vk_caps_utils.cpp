@@ -355,6 +355,7 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.discardFramebufferEXT         = true;
     mNativeExtensions.textureBorderClampOES = getFeatures().supportsCustomBorderColor.enabled;
     mNativeExtensions.textureBorderClampEXT = getFeatures().supportsCustomBorderColor.enabled;
+    mNativeExtensions.polygonOffsetClampEXT = mPhysicalDeviceFeatures.depthBiasClamp == VK_TRUE;
     // Enable EXT_texture_type_2_10_10_10_REV
     mNativeExtensions.textureType2101010REVEXT = true;
 
@@ -936,6 +937,7 @@ void RendererVk::ensureCapsInitialized() const
         // gl::IMPLEMENTATION_MAX_DRAW_BUFFERS is used to support the extension.
         mNativeExtensions.shaderFramebufferFetchEXT =
             mNativeCaps.maxDrawBuffers >= gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
+        mNativeExtensions.shaderFramebufferFetchARM = mNativeExtensions.shaderFramebufferFetchEXT;
     }
 
     if (getFeatures().supportsShaderFramebufferFetchNonCoherent.enabled)
@@ -949,6 +951,9 @@ void RendererVk::ensureCapsInitialized() const
     // Enable Program Binary extension.
     mNativeExtensions.getProgramBinaryOES = true;
     mNativeCaps.programBinaryFormats.push_back(GL_PROGRAM_BINARY_ANGLE);
+
+    // Enable Shader Binary extension.
+    mNativeCaps.shaderBinaryFormats.push_back(GL_SHADER_BINARY_ANGLE);
 
     // Enable GL_NV_pixel_buffer_object extension.
     mNativeExtensions.pixelBufferObjectNV = true;

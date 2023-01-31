@@ -186,20 +186,26 @@ ScreenProperties collectScreenProperties()
 {
     ScreenProperties screenProperties;
 
+    // FIXME: This displayID doesn't match the synthetic displayIDs we use in iOS WebKit (see WebPageProxy::generateDisplayIDFromPageID()).
     PlatformDisplayID displayID = 0;
 
     for (UIScreen *screen in [PAL::getUIScreenClass() screens]) {
-        FloatRect screenAvailableRect = screen.bounds;
-        screenAvailableRect.setY(NSMaxY(screen.bounds) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
-        FloatRect screenRect = screen._referenceBounds;
-        DestinationColorSpace colorSpace { screenColorSpace(nullptr) };
-        int screenDepth = WebCore::screenDepth(nullptr);
-        int screenDepthPerComponent = WebCore::screenDepthPerComponent(nullptr);
-        bool screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
-        bool screenHasInvertedColors = WebCore::screenHasInvertedColors();
-        float scaleFactor = WebCore::screenPPIFactor();
+        ScreenData screenData;
 
-        screenProperties.screenDataMap.set(++displayID, ScreenData { screenAvailableRect, screenRect, WTFMove(colorSpace), screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, false, scaleFactor });
+        auto screenAvailableRect = FloatRect { screen.bounds };
+        screenAvailableRect.setY(NSMaxY(screen.bounds) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
+        screenData.screenAvailableRect = screenAvailableRect;
+        
+        screenData.screenRect = screen._referenceBounds;
+        screenData.colorSpace = { screenColorSpace(nullptr) };
+        screenData.screenDepth = WebCore::screenDepth(nullptr);
+        screenData.screenDepthPerComponent = WebCore::screenDepthPerComponent(nullptr);
+        screenData.screenSupportsExtendedColor = WebCore::screenSupportsExtendedColor(nullptr);
+        screenData.screenHasInvertedColors = WebCore::screenHasInvertedColors();
+        screenData.screenSupportsHighDynamicRange = false; // FIXME: Some iOS devices do have HDR displays.
+        screenData.scaleFactor = WebCore::screenPPIFactor();
+
+        screenProperties.screenDataMap.set(++displayID, WTFMove(screenData));
         
         if (screen == [PAL::getUIScreenClass() mainScreen])
             screenProperties.primaryDisplayID = displayID;

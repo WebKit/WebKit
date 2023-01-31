@@ -961,6 +961,8 @@ angle::CallCapture CaptureReleaseTexturesANGLE(const State &glState,
 
 // GL_ARB_sync
 
+// GL_ARM_shader_framebuffer_fetch
+
 // GL_CHROMIUM_bind_uniform_location
 angle::CallCapture CaptureBindUniformLocationCHROMIUM(const State &glState,
                                                       bool isCallValid,

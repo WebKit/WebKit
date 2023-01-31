@@ -1,13 +1,20 @@
 /**
 * AUTO-GENERATED - DO NOT EDIT. Source: https://github.com/gpuweb/cts
-**/import { SkipTestCase, UnexpectedPassError } from '../framework/fixture.js';import {
+**/import {
+SkipTestCase,
+
+UnexpectedPassError } from
+'../framework/fixture.js';
+import {
+
 builderIterateCasesWithSubcases,
 kUnitCaseParamsBuilder } from
 
 
 '../framework/params_builder.js';
+import { globalTestConfig } from '../framework/test_config.js';
 
-
+import { TestCaseRecorder } from '../internal/logging/test_case_recorder.js';
 import { extractPublicParams, mergeParams } from '../internal/params_utils.js';
 import { compareQueries, Ordering } from '../internal/query/compare.js';
 import { TestQuerySingleCase } from '../internal/query/query.js';
@@ -42,7 +49,10 @@ import { assert, unreachable } from '../util/util.js';
 
 
 
-export function makeTestGroup(fixture) {
+
+export function makeTestGroup(
+fixture)
+{
   return new TestGroup(fixture);
 }
 
@@ -70,7 +80,14 @@ fixture)
 
 
 
-export class TestGroup {
+
+
+
+
+
+
+export class TestGroup
+{
 
   seen = new Set();
   tests = [];
@@ -85,7 +102,7 @@ export class TestGroup {
 
   checkName(name) {
     assert(
-    // Shouldn't happen due to the rule above. Just makes sure that treated
+    // Shouldn't happen due to the rule above. Just makes sure that treating
     // unencoded strings as encoded strings is OK.
     name === decodeURIComponent(name),
     `Not decodeURIComponent-idempotent: ${name} !== ${decodeURIComponent(name)}`);
@@ -114,7 +131,33 @@ export class TestGroup {
     for (const test of this.tests) {
       test.validate();
     }
-  }}
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -183,11 +226,14 @@ class TestBuilder {
 
 
 
+
+
   testCases = undefined;
   batchSize = 0;
 
   constructor(testPath, fixture, testCreationStack) {
     this.testPath = testPath;
+    this.isUnimplemented = false;
     this.fixture = fixture;
     this.testCreationStack = testCreationStack;
   }
@@ -197,11 +243,13 @@ class TestBuilder {
     return this;
   }
 
-  uniqueId(id) {
+  specURL(url) {
     return this;
   }
 
-  specURL(url) {
+  beforeAllSubcases(fn) {
+    assert(this.beforeFn === undefined);
+    this.beforeFn = fn;
     return this;
   }
 
@@ -224,6 +272,7 @@ class TestBuilder {
 
     this.description =
     (this.description ? this.description + '\n\n' : '') + 'TODO: .unimplemented()';
+    this.isUnimplemented = true;
 
     this.testFn = () => {
       throw new SkipTestCase('test unimplemented');
@@ -300,9 +349,11 @@ class TestBuilder {
         yield new RunCaseSpecific(
         this.testPath,
         caseParams,
+        this.isUnimplemented,
         subcases,
         this.fixture,
         this.testFn,
+        this.beforeFn,
         this.testCreationStack);
 
       } else {
@@ -311,9 +362,11 @@ class TestBuilder {
           yield new RunCaseSpecific(
           this.testPath,
           caseParams,
+          this.isUnimplemented,
           subcaseArray,
           this.fixture,
           this.testFn,
+          this.beforeFn,
           this.testCreationStack);
 
         } else {
@@ -321,19 +374,23 @@ class TestBuilder {
             yield new RunCaseSpecific(
             this.testPath,
             { ...caseParams, batch__: i / this.batchSize },
+            this.isUnimplemented,
             subcaseArray.slice(i, Math.min(subcaseArray.length, i + this.batchSize)),
             this.fixture,
             this.testFn,
+            this.beforeFn,
             this.testCreationStack);
 
           }
         }
       }
     }
-  }}
-
+  }
+}
 
 class RunCaseSpecific {
+
+
 
 
 
@@ -345,21 +402,26 @@ class RunCaseSpecific {
   constructor(
   testPath,
   params,
+  isUnimplemented,
   subcases,
   fixture,
   fn,
+  beforeFn,
   testCreationStack)
   {
     this.id = { test: testPath, params: extractPublicParams(params) };
+    this.isUnimplemented = isUnimplemented;
     this.params = params;
     this.subcases = subcases;
     this.fixture = fixture;
     this.fn = fn;
+    this.beforeFn = beforeFn;
     this.testCreationStack = testCreationStack;
   }
 
   async runTest(
   rec,
+  sharedState,
   params,
   throwSkip,
   expectedStatus)
@@ -369,14 +431,14 @@ class RunCaseSpecific {
       if (expectedStatus === 'skip') {
         throw new SkipTestCase('Skipped by expectations');
       }
-      const inst = new this.fixture(rec, params);
 
+      const inst = new this.fixture(sharedState, rec, params);
       try {
-        await inst.doInit();
+        await inst.init();
         await this.fn(inst);
       } finally {
         // Runs as long as constructor succeeded, even if initialization or the test failed.
-        await inst.doFinalize();
+        await inst.finalize();
       }
     } catch (ex) {
       // There was an exception from constructor, init, test, or finalize.
@@ -428,40 +490,158 @@ class RunCaseSpecific {
       return didSeeFail ? 'fail' : 'pass';
     };
 
-    rec.start();
-    if (this.subcases) {
-      let totalCount = 0;
-      let skipCount = 0;
-      for (const subParams of this.subcases) {
-        rec.info(new Error('subcase: ' + stringifyPublicParams(subParams)));
-        try {
-          const params = mergeParams(this.params, subParams);
-          const subcaseQuery = new TestQuerySingleCase(
-          selfQuery.suite,
-          selfQuery.filePathParts,
-          selfQuery.testPathParts,
-          params);
-
-          await this.runTest(rec, params, true, getExpectedStatus(subcaseQuery));
-        } catch (ex) {
-          if (ex instanceof SkipTestCase) {
-            // Convert SkipTestCase to info messages
-            ex.message = 'subcase skipped: ' + ex.message;
-            rec.info(ex);
-            ++skipCount;
-          } else {
-            // Since we are catching all error inside runTest(), this should never happen
-            rec.threw(ex);
-          }
+    const { testHeartbeatCallback, maxSubcasesInFlight } = globalTestConfig;
+    try {
+      rec.start();
+      const sharedState = this.fixture.MakeSharedState(this.params);
+      try {
+        await sharedState.init();
+        if (this.beforeFn) {
+          await this.beforeFn(sharedState);
         }
-        ++totalCount;
+        await sharedState.postInit();
+        testHeartbeatCallback();
+
+        let allPreviousSubcasesFinalizedPromise = Promise.resolve();
+        if (this.subcases) {
+          let totalCount = 0;
+          let skipCount = 0;
+
+          // If there are too many subcases in flight, starting the next subcase will register
+          // `resolvePromiseBlockingSubcase` and wait until `subcaseFinishedCallback` is called.
+          let subcasesInFlight = 0;
+          let resolvePromiseBlockingSubcase = undefined;
+          const subcaseFinishedCallback = () => {
+            subcasesInFlight -= 1;
+            // If there is any subcase waiting on a previous subcase to finish,
+            // unblock it now, and clear the resolve callback.
+            if (resolvePromiseBlockingSubcase) {
+              resolvePromiseBlockingSubcase();
+              resolvePromiseBlockingSubcase = undefined;
+            }
+          };
+
+          for (const subParams of this.subcases) {
+            // Make a recorder that will defer all calls until `allPreviousSubcasesFinalizedPromise`
+            // resolves. Waiting on `allPreviousSubcasesFinalizedPromise` ensures that
+            // logs from all the previous subcases have been flushed before flushing new logs.
+            const subcasePrefix = 'subcase: ' + stringifyPublicParams(subParams);
+            const subRec = new Proxy(rec, {
+              get: (target, k) => {
+                const prop = TestCaseRecorder.prototype[k];
+                if (typeof prop === 'function') {
+                  testHeartbeatCallback();
+                  return function (...args) {
+                    void allPreviousSubcasesFinalizedPromise.then(() => {
+                      // Prepend the subcase name to all error messages.
+                      for (const arg of args) {
+                        if (arg instanceof Error) {
+                          try {
+                            arg.message = subcasePrefix + '\n' + arg.message;
+                          } catch {
+                            // If that fails (e.g. on DOMException), try to put it in the stack:
+                            let stack = subcasePrefix;
+                            if (arg.stack) stack += '\n' + arg.stack;
+                            try {
+                              arg.stack = stack;
+                            } catch {
+
+                              // If that fails too, just silence it.
+                            }}
+                        }
+                      }
+
+
+                      const rv = prop.apply(target, args);
+                      // Because this proxy executes functions in a deferred manner,
+                      // it should never be used for functions that need to return a value.
+                      assert(rv === undefined);
+                    });
+                  };
+                }
+                return prop;
+              }
+            });
+
+            const params = mergeParams(this.params, subParams);
+            const subcaseQuery = new TestQuerySingleCase(
+            selfQuery.suite,
+            selfQuery.filePathParts,
+            selfQuery.testPathParts,
+            params);
+
+
+            // Limit the maximum number of subcases in flight.
+            if (subcasesInFlight >= maxSubcasesInFlight) {
+              await new Promise((resolve) => {
+                // There should only be one subcase waiting at a time.
+                assert(resolvePromiseBlockingSubcase === undefined);
+                resolvePromiseBlockingSubcase = resolve;
+              });
+            }
+
+            subcasesInFlight += 1;
+            // Runs async without waiting so that subsequent subcases can start.
+            // All finalization steps will be waited on at the end of the testcase.
+            const finalizePromise = this.runTest(
+            subRec,
+            sharedState,
+            params,
+            /* throwSkip */true,
+            getExpectedStatus(subcaseQuery)).
+
+            then(() => {
+              subRec.info(new Error('OK'));
+            }).
+            catch((ex) => {
+              if (ex instanceof SkipTestCase) {
+                // Convert SkipTestCase to info messages
+                ex.message = 'subcase skipped: ' + ex.message;
+                subRec.info(ex);
+                ++skipCount;
+              } else {
+                // Since we are catching all error inside runTest(), this should never happen
+                subRec.threw(ex);
+              }
+            }).
+            finally(subcaseFinishedCallback);
+
+            allPreviousSubcasesFinalizedPromise = allPreviousSubcasesFinalizedPromise.then(
+            () => finalizePromise);
+
+            ++totalCount;
+          }
+
+          // Wait for all subcases to finalize and report their results.
+          await allPreviousSubcasesFinalizedPromise;
+
+          if (skipCount === totalCount) {
+            rec.skipped(new SkipTestCase('all subcases were skipped'));
+          }
+        } else {
+          await this.runTest(
+          rec,
+          sharedState,
+          this.params,
+          /* throwSkip */false,
+          getExpectedStatus(selfQuery));
+
+        }
+      } finally {
+        testHeartbeatCallback();
+        // Runs as long as the shared state constructor succeeded, even if initialization or a test failed.
+        await sharedState.finalize();
+        testHeartbeatCallback();
       }
-      if (skipCount === totalCount) {
-        rec.skipped(new SkipTestCase('all subcases were skipped'));
-      }
-    } else {
-      await this.runTest(rec, this.params, false, getExpectedStatus(selfQuery));
+    } catch (ex) {
+      // There was an exception from sharedState/fixture constructor, init, beforeFn, or test.
+      // An error from beforeFn may have been SkipTestCase.
+      // An error from finalize may have been an eventualAsyncExpectation failure
+      // or unexpected validation/OOM error from the GPUDevice.
+      rec.threw(ex);
+    } finally {
+      rec.finish();
     }
-    rec.finish();
-  }}
+  }
+}
 //# sourceMappingURL=test_group.js.map

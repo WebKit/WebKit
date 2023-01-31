@@ -2767,7 +2767,13 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
 
     case ToNumber: {
+        if (node->child1().useKind() == StringUse) {
+            setNonCellTypeForNode(node, SpecBytecodeNumber);
+            break;
+        }
+
         JSValue childConst = forNode(node->child1()).value();
+
         if (childConst && childConst.isNumber()) {
             didFoldClobberWorld();
             setConstant(node, childConst);
@@ -4610,6 +4616,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         switch (type.kind) {
         case Wasm::TypeKind::I32: {
             setNonCellTypeForNode(node, SpecInt32Only);
+            break;
+        }
+        case Wasm::TypeKind::I64: {
+            setTypeForNode(node, SpecBigInt);
             break;
         }
         case Wasm::TypeKind::Ref:

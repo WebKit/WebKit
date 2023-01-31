@@ -614,7 +614,7 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(unsigned mlineIndex, const GR
         sinkPad = adoptGRef(gst_element_request_pad(m_webrtcBin.get(), padTemplate, padId.utf8().data(), caps.get()));
     }
 
-    if (g_object_class_find_property(G_OBJECT_GET_CLASS(sinkPad.get()), "msid"))
+    if (gstObjectHasProperty(sinkPad.get(), "msid"))
         g_object_set(sinkPad.get(), "msid", mediaStreamID.ascii().data(), nullptr);
 
     GRefPtr<GstWebRTCRTPTransceiver> transceiver;
@@ -780,7 +780,7 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
     GUniquePtr<gchar> name(gst_pad_get_name(pad));
     auto mediaStreamId = String::fromLatin1(name.get());
 
-    if (g_object_class_find_property(G_OBJECT_GET_CLASS(pad), "msid")) {
+    if (gstObjectHasProperty(pad, "msid")) {
         GUniqueOutPtr<char> msid;
         g_object_get(pad, "msid", &msid.outPtr(), nullptr);
         if (msid)

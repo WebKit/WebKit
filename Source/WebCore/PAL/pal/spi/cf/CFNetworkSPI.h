@@ -522,4 +522,8 @@ WTF_EXTERN_C_END
 @property (nonatomic) BOOL _skipsStackTraceCapture;
 @end
 
+@interface NSMutableURLRequest (Staging_103362732)
+@property (setter=_setWebSearchContent:) BOOL _isWebSearchContent;
+@end
+
 #endif // defined(__OBJC__)

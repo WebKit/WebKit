@@ -151,7 +151,7 @@ void GraphicsContextCairo::drawNativeImage(NativeImage& nativeImage, const Float
 // This is only used to draw borders, so we should not draw shadows.
 void GraphicsContextCairo::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
-    if (strokeStyle() == NoStroke)
+    if (strokeStyle() == StrokeStyle::NoStroke)
         return;
 
     Cairo::drawLine(*this, point1, point2, strokeStyle(), strokeColor(), strokeThickness(), shouldAntialias());

@@ -1,6 +1,1 @@
-
-PASS :constructor:
-PASS :iff_uncaptured:
-PASS :only_original_device_is_event_target:
-PASS :uncapturederror_from_non_originating_thread:
-
+(Populate me when we're ready to investigate this test)

@@ -64,6 +64,7 @@ public:
     Device& device() const { return m_device; }
     Vector<MTLTimestamp> resolveTimestamps() const;
     uint32_t queryCount() const { return m_queryCount; }
+    WGPUQueryType queryType() const;
     id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
     id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_timestampBuffer; }
 

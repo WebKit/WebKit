@@ -69,7 +69,7 @@ g.test('compute,zero_init')
         }
       })
       .beginSubcases()
-      // Fewer subases: Only 0 and 2. If double-nested containers work, single-nested should too.
+      // Fewer subcases: Only 0 and 2. If double-nested containers work, single-nested should too.
       .combine('_containerDepth', [0, 2])
       .expandWithParams(function* (p) {
         const kElementCounts = [
@@ -111,7 +111,6 @@ g.test('compute,zero_init')
                   scalarType,
                   isAtomic,
                 };
-
                 if (!isAtomic) {
                   // Vector types
                   for (const vectorType of kVectorContainerTypes) {
@@ -193,7 +192,6 @@ g.test('compute,zero_init')
                       containerType,
                       members,
                     };
-
                     const serializedT = prettyPrint(t);
                     if (seenTypes.has(serializedT)) {
                       // We produced an identical type. shuffle the member indices,
@@ -222,7 +220,7 @@ g.test('compute,zero_init')
       })
   )
   .batch(15)
-  .fn(async t => {
+  .fn(t => {
     let moduleScope = `
       struct Output {
         failed : atomic<u32>
@@ -275,7 +273,6 @@ g.test('compute,zero_init')
                   scalarType: type.scalarType,
                   isAtomic: false,
                 },
-
                 depth + 1
               )}>`;
           }
@@ -323,7 +320,6 @@ g.test('compute,zero_init')
                       scalarType: type.scalarType,
                       isAtomic: false,
                     },
-
                     depth + 1
                   )}
                 }`;
@@ -339,7 +335,6 @@ g.test('compute,zero_init')
                         scalarType: type.scalarType,
                         isAtomic: false,
                       },
-
                       depth + 1
                     )}
                   }
@@ -380,7 +375,7 @@ g.test('compute,zero_init')
 
     const wgsl = `
       ${moduleScope}
-      @stage(compute) @workgroup_size(${t.params.workgroupSize})
+      @compute @workgroup_size(${t.params.workgroupSize})
       fn main() {
         ${functionScope}
         ${checkZeroCode}
@@ -389,11 +384,11 @@ g.test('compute,zero_init')
     `;
 
     const pipeline = t.device.createComputePipeline({
+      layout: 'auto',
       compute: {
         module: t.device.createShaderModule({
           code: wgsl,
         }),
-
         entryPoint: 'main',
       },
     });
@@ -402,14 +397,12 @@ g.test('compute,zero_init')
       size: 4,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
     });
-
     t.trackForCleanup(resultBuffer);
 
     const zeroBuffer = t.device.createBuffer({
       size: 4,
       usage: GPUBufferUsage.UNIFORM,
     });
-
     t.trackForCleanup(zeroBuffer);
 
     const bindGroup = t.device.createBindGroup({
@@ -421,7 +414,6 @@ g.test('compute,zero_init')
             buffer: resultBuffer,
           },
         },
-
         {
           binding: 1,
           resource: {
@@ -435,7 +427,7 @@ g.test('compute,zero_init')
     const pass = encoder.beginComputePass();
     pass.setPipeline(pipeline);
     pass.setBindGroup(0, bindGroup);
-    pass.dispatch(1);
+    pass.dispatchWorkgroups(1);
     pass.end();
     t.queue.submit([encoder.finish()]);
     t.expectGPUBufferValuesEqual(resultBuffer, new Uint32Array([0]));

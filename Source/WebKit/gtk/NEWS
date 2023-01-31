@@ -1,4 +1,30 @@
 ================
+WebKitGTK 2.39.7
+================
+
+What's new in WebKitGTK 2.39.7?
+
+  - Fix the webkit.h public header causing applications to fail to build.
+  - Fix several crashes and rendering issues.
+
+================
+WebKitGTK 2.39.6
+================
+
+What's new in WebKitGTK 2.39.6?
+
+  - Add support for speech synthesis using Flite.
+  - Bring back WebKitConsoleMessage API implementation.
+  - Fix async scroll event propagation for GTK4.
+  - Add network session API when building with GTK4.
+  - Make most public types final when building with GTK4.
+  - Remove WebKitPrintCustomWidget when building with GTK4.
+  - Remove most of the webkit_web_view_new_with_*() constructors when building with GTK4.
+  - Remove webkit_web_context_get/set_process_model when building with GTK4.
+  - Do not allow the sandbox to mount the entire home directory.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.39.5
 ================
 

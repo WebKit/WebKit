@@ -44,7 +44,7 @@ namespace WebCore {
 class AudioStreamDescription;
 class PlatformAudioData;
 class SpeechRecognitionUpdate;
-enum class SpeechRecognitionUpdateType;
+enum class SpeechRecognitionUpdateType : uint8_t;
 
 class SpeechRecognitionCaptureSourceImpl
     : public RealtimeMediaSource::Observer

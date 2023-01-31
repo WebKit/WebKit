@@ -20,50 +20,36 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
-class Counter final : public RefCounted<Counter> {
-public:
-    static Ref<Counter> create(Ref<CSSPrimitiveValue>&& identifier, Ref<CSSPrimitiveValue>&& listStyle, Ref<CSSPrimitiveValue>&& separator)
+enum CSSValueID : uint16_t;
+
+struct Counter : RefCounted<Counter> {
+    static Ref<Counter> create(AtomString identifier, AtomString separator, CSSValueID listStyle)
     {
-        return adoptRef(*new Counter(WTFMove(identifier), WTFMove(listStyle), WTFMove(separator)));
+        return adoptRef(*new Counter(WTFMove(identifier), WTFMove(separator), listStyle));
     }
 
-    String identifier() const { return m_identifier->stringValue(); }
-    String listStyle() const { return m_listStyle->stringValue(); }
-    String separator() const { return m_separator->stringValue(); }
-
-    const CSSPrimitiveValue& identifierValue() const { return m_identifier; }
-    const CSSPrimitiveValue& listStyleValue() const { return m_listStyle; }
-    const CSSPrimitiveValue& separatorValue() const { return m_separator; }
-    
-    CSSValueID listStyleIdent() const { return m_listStyle->valueID(); }
-
-    void setIdentifier(Ref<CSSPrimitiveValue>&& identifier) { m_identifier = WTFMove(identifier); }
-    void setListStyle(Ref<CSSPrimitiveValue>&& listStyle) { m_listStyle = WTFMove(listStyle); }
-    void setSeparator(Ref<CSSPrimitiveValue>&& separator) { m_separator = WTFMove(separator); }
+    const AtomString identifier;
+    const AtomString separator;
+    const CSSValueID listStyle;
 
     bool equals(const Counter& other) const
     {
-        return identifier() == other.identifier()
-            && listStyle() == other.listStyle()
-            && separator() == other.separator();
+        return identifier == other.identifier
+            && separator == other.separator
+            && listStyle == other.listStyle;
     }
 
 private:
-    Counter(Ref<CSSPrimitiveValue>&& identifier, Ref<CSSPrimitiveValue>&& listStyle, Ref<CSSPrimitiveValue>&& separator)
-        : m_identifier(WTFMove(identifier))
-        , m_listStyle(WTFMove(listStyle))
-        , m_separator(WTFMove(separator))
+    Counter(AtomString identifier, AtomString separator, CSSValueID listStyle)
+        : identifier(WTFMove(identifier))
+        , separator(WTFMove(separator))
+        , listStyle(listStyle)
     {
     }
-
-    Ref<CSSPrimitiveValue> m_identifier; // string
-    Ref<CSSPrimitiveValue> m_listStyle; // ident
-    Ref<CSSPrimitiveValue> m_separator; // string
 };
 
 } // namespace WebCore

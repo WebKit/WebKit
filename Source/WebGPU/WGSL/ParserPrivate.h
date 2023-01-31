@@ -52,6 +52,8 @@ enum class AccessMode : uint8_t;
 enum class StorageClass : uint8_t;
 }
 
+struct Configuration;
+
 template<typename Lexer>
 class Parser {
 public:
@@ -61,7 +63,7 @@ public:
     {
     }
 
-    Expected<AST::ShaderModule, Error> parseShader(const String& source);
+    Expected<AST::ShaderModule, Error> parseShader(const String& source, const Configuration&);
 
     // UniqueRef whenever it can return multiple types.
     Expected<UniqueRef<AST::Decl>, Error> parseGlobalDecl();

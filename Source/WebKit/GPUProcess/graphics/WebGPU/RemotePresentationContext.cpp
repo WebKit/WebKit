@@ -34,6 +34,7 @@
 #include "WebGPUObjectHeap.h"
 #include <pal/graphics/WebGPU/WebGPUPresentationConfiguration.h>
 #include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
+#include <pal/graphics/WebGPU/WebGPUTexture.h>
 
 namespace WebKit {
 
@@ -70,7 +71,23 @@ void RemotePresentationContext::unconfigure()
 
 void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250958 Figure out how the lifetime of these objects should behave.
+    auto texture = m_backing->getCurrentTexture();
+    // We're creating a new resource here, because we don't want the GetCurrentTexture message to be sync.
+    // If the message is async, then the WebGPUIdentifier goes from the Web process to the GPU Process, which
+    // means the Web Process is going to proceed and interact with the texture as-if it has this identifier.
+    // So we need to make sure the texture has this identifier.
+    // Maybe one day we could add the same texture into the ObjectHeap multiple times under multiple identifiers,
+    // but for now let's just create a new RemoteTexture object with the expected identifier, just for simplicity.
+    // The Web Process should already be caching these current textures internally, so it's unlikely that we'll
+    // actually run into a problem here.
+    // FIXME: Handle the situation where texture is nullptr.
+    auto remoteTexture = RemoteTexture::create(*texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
+    m_objectHeap.addObject(identifier, remoteTexture);
+}
+
+void RemotePresentationContext::present()
+{
+    m_backing->present();
 }
 
 #if PLATFORM(COCOA)

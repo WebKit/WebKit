@@ -141,6 +141,13 @@
 
 # Also multi-threaded
 7423 : EGLMultiContextTest.RepeatedEglInitAndTerminate/* = SKIP_FOR_CAPTURE
+7423 : EGLMultiContextTest.ThreadBClientWaitBeforeThreadASyncFlush/* = SKIP_FOR_CAPTURE
+7423 : EGLMultiContextTest.ThreadBServerWaitBeforeThreadASyncFlush/* = SKIP_FOR_CAPTURE
+7423 : EGLMultiContextTest.ThreadBGetStatusBeforeThreadASyncFlush/* = SKIP_FOR_CAPTURE
+7423 : EGLMultiContextTest.ThreadBClientWaitBeforeThreadASyncFinish/* = SKIP_FOR_CAPTURE
+7423 : EGLMultiContextTest.ThreadBServerWaitBeforeThreadASyncFinish/* = SKIP_FOR_CAPTURE
+7423 : EGLMultiContextTest.ThreadBGetStatusBeforeThreadASyncFinish/* = SKIP_FOR_CAPTURE
+7423 : EGLMultiContextTest.ThreadBCanSubmitWhileThreadAWaiting/* = SKIP_FOR_CAPTURE
 
 7419 : MultithreadingTestES3.CreateFramebufferFetchBeforeRenderPass/* = NOT_RUN
 7419 : MultithreadingTestES3.CreateFramebufferFetchMidRenderPass/* = NOT_RUN

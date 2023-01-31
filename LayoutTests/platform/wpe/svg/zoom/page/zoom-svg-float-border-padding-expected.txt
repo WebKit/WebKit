@@ -16,7 +16,6 @@ layer at (0,0) size 785x767
       RenderBlock {p} at (0,353) size 762x27
         RenderText {#text} at (0,0) size 523x25
           text run at (0,0) width 523: "There should be a red, white and blue pattern above this"
-      RenderBlock {hr} at (0,402) size 762x3 [border: (1px inset #000000)]
       RenderBlock {p} at (0,427) size 762x27
         RenderText {#text} at (0,0) size 524x25
           text run at (0,0) width 524: "There should be a red, white and blue pattern below this"
@@ -25,3 +24,5 @@ layer at (0,0) size 785x767
       RenderBlock {p} at (0,706) size 762x27
         RenderText {#text} at (0,0) size 523x25
           text run at (0,0) width 523: "There should be a red, white and blue pattern above this"
+layer at (12,414) size 762x2 backgroundClip at (12,414) size 761x2 clip at (0,0) size 0x0
+  RenderBlock {hr} at (0,402) size 762x3 [border: (1px inset #000000)]

@@ -211,6 +211,8 @@ static Expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMigrateD
     }
 
     if (version < currentPushDatabaseVersion) {
+        FileSystem::setExcludedFromBackup(FileSystem::parentPath(path), true);
+
         SQLiteTransaction transaction(db);
         transaction.begin();
 

@@ -34,6 +34,7 @@
 #include "WebGPUBufferImpl.h"
 #include "WebGPUCommandBufferImpl.h"
 #include "WebGPUCommandEncoderImpl.h"
+#include "WebGPUCompositorIntegrationImpl.h"
 #include "WebGPUComputePassEncoderImpl.h"
 #include "WebGPUComputePipelineImpl.h"
 #include "WebGPUDeviceImpl.h"
@@ -162,6 +163,11 @@ WGPUTexture DowncastConvertToBackingContext::convertToBacking(const Texture& tex
 WGPUTextureView DowncastConvertToBackingContext::convertToBacking(const TextureView& textureView)
 {
     return static_cast<const TextureViewImpl&>(textureView).backing();
+}
+
+CompositorIntegrationImpl& DowncastConvertToBackingContext::convertToBacking(CompositorIntegration& compositorIntegration)
+{
+    return static_cast<CompositorIntegrationImpl&>(compositorIntegration);
 }
 
 } // namespace PAL::WebGPU

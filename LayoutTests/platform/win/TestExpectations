@@ -931,6 +931,7 @@ webkit.org/b/149774 css3/font-variant-small-caps-synthesis.html [ Skip ] # WontF
 
 # monitorWheelEvents doesn't work in this test.
 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
+fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ]
 
 # TODO HiDPI tests require test infrastructure enhancements (e.g. testRunner.setBackingScaleFactor)
 # https://bugs.webkit.org/show_bug.cgi?id=87919

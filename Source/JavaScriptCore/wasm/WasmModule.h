@@ -28,7 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "WasmCalleeGroup.h"
-#include "WasmEmbedder.h"
+#include "WasmJS.h"
 #include "WasmMemory.h"
 #include "WasmOps.h"
 #include <wtf/Expected.h>

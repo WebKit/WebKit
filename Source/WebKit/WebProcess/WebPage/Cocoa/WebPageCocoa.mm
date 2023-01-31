@@ -675,6 +675,11 @@ URL WebPage::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanit
 {
     return url;
 }
+
+URL WebPage::allowedLookalikeCharacters(const URL& url)
+{
+    return url;
+}
 #endif
 
 Node* WebPage::clickableNodeAtLocation(const FloatPoint& viewportLocation, FloatPoint& adjustedViewportLocation) const

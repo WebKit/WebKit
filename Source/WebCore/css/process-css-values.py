@@ -340,7 +340,7 @@ class GenerationContext:
             CSSValueID findCSSValueKeyword(const char* characters, unsigned length);
             ASCIILiteral nameLiteral(CSSValueID);
             ASCIILiteral nameLiteralForSerialization(CSSValueID); // Lowercase.
-            const AtomString& nameString(CSSValueID);
+            WEBCORE_EXPORT const AtomString& nameString(CSSValueID);
             const AtomString& nameStringForSerialization(CSSValueID); // Lowercase.
 
             struct AllCSSValueKeywordsRange {

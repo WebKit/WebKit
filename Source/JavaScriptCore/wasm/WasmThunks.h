@@ -28,7 +28,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "MacroAssemblerCodeRef.h"
-#include "WasmEmbedder.h"
+#include "WasmJS.h"
 
 namespace JSC { namespace Wasm {
 

@@ -82,14 +82,14 @@ public:
 
 private:
     RetainPtr<WebEvent> m_savedCurrentEvent;
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     RetainPtr<WebEvent> m_event;
 #endif
 };
 
 inline CurrentEventScope::CurrentEventScope(WebEvent *event)
     : m_savedCurrentEvent(currentEventSlot())
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     , m_event(event)
 #endif
 {

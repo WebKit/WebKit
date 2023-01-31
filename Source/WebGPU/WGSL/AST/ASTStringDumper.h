@@ -49,6 +49,7 @@ public:
     void visit(GroupAttribute&) override;
     void visit(LocationAttribute&) override;
     void visit(StageAttribute&) override;
+    void visit(WorkgroupSizeAttribute&) override;
 
     // Declaration
     void visit(FunctionDecl&) override;

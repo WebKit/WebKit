@@ -1016,6 +1016,15 @@ webkit.org/b/214798 http/tests/images/image-supports-video.html [ Timeout Pass ]
 # Push subscription tests fail without platform-specific PushCrypto implementations.
 http/tests/push-api [ Skip ]
 
+# <CR>same-origin<CR> seems to be parsed as same-origin instead of failing
+webkit.org/b/251345 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?1-4 [ Failure ]
+
+# Slight difference where the failure happens in relation to mac's baseline
+webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?5-6 [ Failure ]
+webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-un.https.html?7-8 [ Failure ]
+webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?5-6 [ Failure ]
+webkit.org/b/251344 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?7-8 [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

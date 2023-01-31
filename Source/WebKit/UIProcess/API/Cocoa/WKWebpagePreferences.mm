@@ -618,6 +618,12 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::FailClosed))
         policy |= _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed;
 
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::WebSearchContent))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyWebSearchContent;
+
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::EnhancedTelemetry))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry;
+
     return policy;
 }
 
@@ -639,6 +645,12 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
     if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed)
         webCorePolicy.add(WebCore::NetworkConnectionIntegrity::FailClosed);
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyWebSearchContent)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::WebSearchContent);
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::EnhancedTelemetry);
 
     _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
 }

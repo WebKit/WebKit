@@ -118,7 +118,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     GraphicsContextStateSaver stateSaver(info.context());
 
     info.context().setStrokeThickness(1.0f);
-    info.context().setStrokeStyle(SolidStroke);
+    info.context().setStrokeStyle(StrokeStyle::SolidStroke);
     info.context().setStrokeColor(Color::blue);
 
     info.context().drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + pixelSnappedOffsetWidth(), adjustedPaintOffset.y()));

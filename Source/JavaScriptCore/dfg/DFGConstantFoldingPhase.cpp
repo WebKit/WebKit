@@ -902,6 +902,8 @@ private:
 
             case ToNumber:
             case CallNumberConstructor: {
+                if (node->child1().useKind() != UntypedUse)
+                    break;
                 if (m_state.forNode(node->child1()).m_type & ~SpecBytecodeNumber)
                     break;
 

@@ -17,6 +17,7 @@ navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
+navigator.pdfViewerEnabled is OK
 navigator.permissions is OK
 navigator.platform is OK
 navigator.plugins is OK
@@ -26,9 +27,11 @@ navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
 navigator.storage is OK
+navigator.userActivation is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
+navigator.wakeLock is OK
 navigator.webdriver is OK
 navigator.xr is OK
 navigator.appCodeName is OK
@@ -48,6 +51,7 @@ navigator.mediaCapabilities is OK
 navigator.mediaSession is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
+navigator.pdfViewerEnabled is OK
 navigator.permissions is OK
 navigator.platform is OK
 navigator.plugins is OK
@@ -57,9 +61,11 @@ navigator.requestMediaKeySystemAccess() is OK
 navigator.sendBeacon() threw err TypeError: Not enough arguments
 navigator.serviceWorker is OK
 navigator.storage is OK
+navigator.userActivation is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
+navigator.wakeLock is OK
 navigator.webdriver is OK
 navigator.xr is OK
 

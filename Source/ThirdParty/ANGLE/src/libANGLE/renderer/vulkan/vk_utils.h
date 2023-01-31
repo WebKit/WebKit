@@ -1068,13 +1068,6 @@ class MemoryAllocInfoMapKey
     void *handle;
 };
 
-// Number format used for memory allocation data, using three-digit grouping.
-class MemoryAllocationLogNumberFormat : public std::numpunct<char>
-{
-  protected:
-    virtual std::string do_grouping() const override { return "\3"; }
-};
-
 }  // namespace vk
 
 #if !defined(ANGLE_SHARED_LIBVULKAN)

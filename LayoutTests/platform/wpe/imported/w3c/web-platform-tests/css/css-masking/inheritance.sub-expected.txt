@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS Property clip has initial value auto
 PASS Property clip does not inherit

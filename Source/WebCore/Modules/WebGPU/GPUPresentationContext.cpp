@@ -41,10 +41,20 @@ void GPUPresentationContext::unconfigure()
     m_backing->unconfigure();
 }
 
-GPUTexture* GPUPresentationContext::getCurrentTexture()
+RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250958 Figure out how the lifetime of these objects should behave.
-    return nullptr;
+    if (!m_currentTexture) {
+        if (auto currentTexture = m_backing->getCurrentTexture())
+            m_currentTexture = GPUTexture::create(*currentTexture).ptr();
+    }
+
+    return m_currentTexture;
+}
+
+void GPUPresentationContext::present()
+{
+    m_backing->present();
+    m_currentTexture = nullptr;
 }
 
 #if PLATFORM(COCOA)

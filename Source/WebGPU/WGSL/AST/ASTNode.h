@@ -43,6 +43,7 @@ public:
         GroupAttribute,
         LocationAttribute,
         StageAttribute,
+        WorkgroupSizeAttribute,
 
         // Decl
         FunctionDecl,
@@ -65,6 +66,7 @@ public:
         UnaryExpression,
         BinaryExpression,
         PointerDereference,
+        IdentityExpression,
 
         ShaderModule,
 

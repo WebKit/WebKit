@@ -40,7 +40,6 @@
 #include "IDBValue.h"
 #include "IndexKey.h"
 #include "Logging.h"
-#include "StorageQuotaManager.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseManager.h"
 #include <wtf/Scope.h>

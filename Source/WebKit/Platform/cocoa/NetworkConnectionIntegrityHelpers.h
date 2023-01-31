@@ -26,9 +26,18 @@
 #pragma once
 
 #import <wtf/CompletionHandler.h>
+#import <wtf/Function.h>
+#import <wtf/Ref.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/WeakHashSet.h>
 #import <wtf/text/WTFString.h>
 
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+#import <WebCore/LookalikeCharactersSanitizationData.h>
+#endif
+
+OBJC_CLASS WKNetworkConnectionIntegrityNotificationListener;
 OBJC_CLASS NSURLSession;
 
 namespace WebKit {
@@ -36,8 +45,50 @@ namespace WebKit {
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
 void configureForNetworkConnectionIntegrity(NSURLSession *);
-void requestLookalikeCharacterStrings(CompletionHandler<void(const Vector<String>&)>&&);
+void requestAllowedLookalikeCharacterStrings(CompletionHandler<void(const Vector<WebCore::LookalikeCharactersSanitizationData>&)>&&);
 
-#endif
+class LookalikeCharacters {
+public:
+    static LookalikeCharacters& shared();
+
+    const Vector<String>& cachedStrings() const { return m_cachedStrings; }
+    void updateStrings(CompletionHandler<void()>&&);
+
+    class Observer : public RefCounted<Observer>, public CanMakeWeakPtr<Observer> {
+    public:
+        ~Observer() = default;
+
+    private:
+        friend class LookalikeCharacters;
+
+        Observer(Function<void()>&& callback)
+            : m_callback { WTFMove(callback) }
+        {
+        }
+
+        static Ref<Observer> create(Function<void()>&& callback)
+        {
+            return adoptRef(*new Observer(WTFMove(callback)));
+        }
+
+        void invokeCallback() { m_callback(); }
+
+        Function<void()> m_callback;
+    };
+
+    Ref<Observer> observeUpdates(Function<void()>&&);
+
+private:
+    LookalikeCharacters() = default;
+    void setCachedStrings(Vector<String>&&);
+
+    RetainPtr<WKNetworkConnectionIntegrityNotificationListener> m_notificationListener;
+    Vector<String> m_cachedStrings;
+    WeakHashSet<Observer> m_observers;
+};
+
+void configureForNetworkConnectionIntegrity(NSURLSession *);
+
+#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
 
 } // namespace WebKit

@@ -1,16 +1,1 @@
-
-FAIL :not_lost_on_gc: assert_unreached:
-  - EXCEPTION: null is not an object (evaluating 'getGPU().requestAdapter')
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/device/lost.spec.js:43:37
-    asyncFunctionResume@[native code]
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/device/lost.spec.js:47:7
- Reached unreachable code
-FAIL :lost_on_destroy: assert_unreached:
-  - EXCEPTION: null is not an object (evaluating 'getGPU().requestAdapter')
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/device/lost.spec.js:56:35
- Reached unreachable code
-FAIL :same_object: assert_unreached:
-  - EXCEPTION: null is not an object (evaluating 'getGPU().requestAdapter')
-    @http://127.0.0.1:8000/webgpu/webgpu/api/operation/device/lost.spec.js:66:35
- Reached unreachable code
-
+(Populate me when we're ready to investigate this test)

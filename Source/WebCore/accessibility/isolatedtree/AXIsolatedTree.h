@@ -35,6 +35,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -273,8 +274,7 @@ struct AXPropertyChange {
     AXPropertyMap properties; // Changed properties.
 };
 
-class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree>
-    , public CanMakeWeakPtr<AXIsolatedTree>
+class AXIsolatedTree : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXIsolatedTree>
     , public AXTreeStore<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree);
     WTF_MAKE_FAST_ALLOCATED;

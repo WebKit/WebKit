@@ -36,6 +36,17 @@ static constexpr Seconds kDefaultWaitForTimeout = 1_s;
 
 static constexpr Seconds kWaitForAbsenceTimeout = 300_ms;
 
+struct MockTestMessageWithConnection {
+    static constexpr bool isSync = false;
+    static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
+    const auto& arguments() { return m_arguments; }
+    MockTestMessageWithConnection(const IPC::Connection::Handle& handle)
+        : m_arguments(handle)
+    {
+    }
+    std::tuple<const IPC::Connection::Handle&> m_arguments;
+};
+
 namespace {
 class SimpleConnectionTest : public testing::Test {
 public:
@@ -265,6 +276,35 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
     }
 }
 
+TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
+{
+    ASSERT_TRUE(openBoth());
+    HashSet<uint64_t> done;
+    bClient().setAsyncMessageHandler([&] (IPC::Decoder& decoder) -> bool {
+        auto destinationID = decoder.destinationID();
+        auto handle = decoder.decode<IPC::Connection::Handle>();
+        if (!handle)
+            return false;
+        Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { handle->leakSendRight() });
+        MockConnectionClient mockClientClient;
+        clientConnection->open(mockClientClient);
+        EXPECT_TRUE(mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << destinationID;
+        clientConnection->invalidate();
+        done.add(destinationID);
+        return true;
+    });
+    for (uint64_t i = 1; i < 1001; ++i) {
+        auto identifiers = IPC::Connection::createConnectionIdentifierPair();
+        ASSERT_NE(identifiers, std::nullopt);
+        Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
+        MockConnectionClient mockServerClient;
+        serverConnection->open(mockServerClient);
+        a()->send(MockTestMessageWithConnection { WTFMove(identifiers->client) }, i);
+        serverConnection->invalidate();
+    }
+    while (done.size() < 1000)
+        RunLoop::current().cycle();
+}
 
 template<typename C>
 static void dispatchSync(RunLoop& runLoop, C&& function)

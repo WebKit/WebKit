@@ -487,7 +487,7 @@ void NetworkStorageManager::getFile(WebCore::FileSystemHandleIdentifier identifi
     completionHandler(handle->path());
 }
 
-void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<AccessHandleInfo, FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::createSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -506,6 +506,17 @@ void NetworkStorageManager::closeSyncAccessHandle(WebCore::FileSystemHandleIdent
         handle->closeSyncAccessHandle(accessHandleIdentifier);
 
     completionHandler();
+}
+
+void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(std::nullopt);
+
+    handle->requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, WTFMove(completionHandler));
 }
 
 void NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)

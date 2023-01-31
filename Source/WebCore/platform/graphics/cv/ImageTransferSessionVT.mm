@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #if !PLATFORM(MACCATALYST)
-#import <pal/spi/cocoa/IOSurfaceSPI.h>
+#import <wtf/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
 #import "CoreVideoSoftLink.h"

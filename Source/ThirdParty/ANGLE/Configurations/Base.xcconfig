@@ -59,7 +59,7 @@ PREBINDING = NO;
 WARNING_CFLAGS = $(WK_COMMON_WARNING_CFLAGS) $(WK_FIXME_WARNING_CFLAGS) -Wglobal-constructors -Wno-unknown-warning-option;
 
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
-WK_FIXME_WARNING_CFLAGS = -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-macro-redefined -Wno-sign-compare -Wno-undef -Wno-unused-parameter;
+WK_FIXME_WARNING_CFLAGS = -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-macro-redefined -Wno-undef -Wno-unused-parameter;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SUPPORTS_MACCATALYST = YES;

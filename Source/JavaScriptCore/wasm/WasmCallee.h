@@ -107,18 +107,18 @@ protected:
     Wasm::Entrypoint m_entrypoint;
 };
 
-class EmbedderEntrypointCallee final : public JITCallee {
+class JSEntrypointCallee final : public JITCallee {
 public:
-    static Ref<EmbedderEntrypointCallee> create()
+    static Ref<JSEntrypointCallee> create()
     {
-        return adoptRef(*new EmbedderEntrypointCallee);
+        return adoptRef(*new JSEntrypointCallee);
     }
 
     using JITCallee::setEntrypoint;
 
 private:
-    EmbedderEntrypointCallee()
-        : JITCallee(Wasm::CompilationMode::EmbedderEntrypointMode)
+    JSEntrypointCallee()
+        : JITCallee(Wasm::CompilationMode::JSEntrypointMode)
     {
     }
 };

@@ -56,6 +56,7 @@ class SamplerAnisotropicFilteringSlantedPlaneTest extends GPUTest {
     await super.init();
 
     this.pipeline = this.device.createRenderPipeline({
+      layout: 'auto',
       vertex: {
         module: this.device.createShaderModule({
           code: `
@@ -64,7 +65,7 @@ class SamplerAnisotropicFilteringSlantedPlaneTest extends GPUTest {
               @location(0) fragUV : vec2<f32>,
             };
 
-            @stage(vertex) fn main(
+            @vertex fn main(
               @builtin(vertex_index) VertexIndex : u32) -> Outputs {
               var position : array<vec3<f32>, 6> = array<vec3<f32>, 6>(
                 vec3<f32>(-0.5, 0.5, -0.5),
@@ -95,17 +96,15 @@ class SamplerAnisotropicFilteringSlantedPlaneTest extends GPUTest {
             }
             `,
         }),
-
         entryPoint: 'main',
       },
-
       fragment: {
         module: this.device.createShaderModule({
           code: `
             @group(0) @binding(0) var sampler0 : sampler;
             @group(0) @binding(1) var texture0 : texture_2d<f32>;
 
-            @stage(fragment) fn main(
+            @fragment fn main(
               @builtin(position) FragCoord : vec4<f32>,
               @location(0) fragUV: vec2<f32>)
               -> @location(0) vec4<f32> {
@@ -113,11 +112,9 @@ class SamplerAnisotropicFilteringSlantedPlaneTest extends GPUTest {
             }
             `,
         }),
-
         entryPoint: 'main',
         targets: [{ format: 'rgba8unorm' }],
       },
-
       primitive: { topology: 'triangle-list' },
     });
   }
@@ -141,7 +138,6 @@ class SamplerAnisotropicFilteringSlantedPlaneTest extends GPUTest {
       size: { width: kRTSize, height: kRTSize, depthOrArrayLayers: 1 },
       usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
     });
-
     const colorAttachmentView = colorAttachment.createView();
 
     const encoder = this.device.createCommandEncoder();
@@ -155,7 +151,6 @@ class SamplerAnisotropicFilteringSlantedPlaneTest extends GPUTest {
         },
       ],
     });
-
     pass.setPipeline(this.pipeline);
     pass.setBindGroup(0, bindGroup);
     pass.draw(6);
@@ -219,13 +214,11 @@ g.test('anisotropic_filter_checkerboard')
         bytesPerRow,
         rowsPerImage,
       },
-
       {
         texture,
         mipLevel: 0,
         origin: [0, 0, 0],
       },
-
       [textureSize, textureSize, 1]
     );
 
@@ -242,7 +235,6 @@ g.test('anisotropic_filter_checkerboard')
         mipmapFilter: 'linear',
         maxAnisotropy,
       });
-
       const result = await t.readGPUBufferRangeTyped(
         t.copyRenderTargetToBuffer(t.drawSlantedPlane(textureView, sampler)),
         { type: Uint8Array, typedLength: byteLength }
@@ -287,7 +279,6 @@ g.test('anisotropic_filter_mipmap_color')
 
       _generateWarningOnly: false,
     },
-
     {
       maxAnisotropy: 4,
       _results: [
@@ -298,7 +289,7 @@ g.test('anisotropic_filter_mipmap_color')
       _generateWarningOnly: true,
     },
   ])
-  .fn(async t => {
+  .fn(t => {
     const texture = t.createTexture2DWithMipmaps(colors);
 
     const textureView = texture.createView();

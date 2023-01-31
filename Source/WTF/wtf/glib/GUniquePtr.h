@@ -35,7 +35,12 @@ struct GPtrDeleter {
 };
 
 template<typename T>
-using GUniquePtr = std::unique_ptr<T, GPtrDeleter<T>>;
+struct GFreeDeleter {
+    void operator()(T* ptr) const { g_free(ptr); }
+};
+
+template<typename T, typename U = GPtrDeleter<T>>
+using GUniquePtr = std::unique_ptr<T, U>;
 
 #define FOR_EACH_GLIB_DELETER(macro) \
     macro(GError, g_error_free) \
@@ -122,6 +127,7 @@ private:
 
 using WTF::GUniquePtr;
 using WTF::GUniqueOutPtr;
+using WTF::GFreeDeleter;
 
 #endif // USE(GLIB)
 

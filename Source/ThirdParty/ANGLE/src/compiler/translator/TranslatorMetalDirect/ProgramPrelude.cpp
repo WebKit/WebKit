@@ -1177,6 +1177,21 @@ ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStruct(thread const T &a, thread const T 
 {
     return !ANGLE_equal(a, b);
 }
+template <typename T>
+ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStruct(constant const T &a, thread const T &b)
+{
+    return !ANGLE_equal(a, b);
+}
+template <typename T>
+ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStruct(thread const T &a, constant const T &b)
+{
+    return !ANGLE_equal(a, b);
+}
+template <typename T>
+ANGLE_ALWAYS_INLINE bool ANGLE_notEqualStruct(constant const T &a, constant const T &b)
+{
+    return !ANGLE_equal(a, b);
+}
 )",
                         equalVector(),
                         equalMatrix())

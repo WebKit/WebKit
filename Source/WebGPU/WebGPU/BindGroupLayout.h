@@ -70,6 +70,10 @@ public:
 
     bool bindingContainsStage(uint32_t bindingIndex, ShaderStage renderStage) const;
 
+#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
+    static WGPUBindGroupLayoutEntry createEntryFromStructMember(MTLStructMember *, uint32_t&, WGPUShaderStage);
+#endif
+
 private:
     BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>);
     BindGroupLayout();

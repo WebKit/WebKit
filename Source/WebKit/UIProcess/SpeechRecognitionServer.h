@@ -36,7 +36,7 @@
 #include <wtf/Deque.h>
 
 namespace WebCore {
-enum class SpeechRecognitionUpdateType;
+enum class SpeechRecognitionUpdateType : uint8_t;
 struct CaptureSourceOrError;
 struct ClientOrigin;
 }

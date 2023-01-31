@@ -125,26 +125,12 @@ ScreenProperties collectScreenProperties()
     ScreenProperties screenProperties;
     bool screenHasInvertedColors = [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldInvertColors];
 
-    for (NSScreen *screen in [NSScreen screens]) {
-        auto displayID = WebCore::displayID(screen);
-        FloatRect screenAvailableRect = screen.visibleFrame;
-        screenAvailableRect.setY(NSMaxY(screen.frame) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
-        FloatRect screenRect = screen.frame;
-        DestinationColorSpace colorSpace { screen.colorSpace.CGColorSpace };
-        int screenDepth = NSBitsPerPixelFromDepth(screen.depth);
-        int screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
-        bool screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
-        bool screenIsMonochrome = CGDisplayUsesForceToGray();
-        uint32_t displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
-        PlatformGPUID gpuID = 0;
-        bool screenSupportsHighDynamicRange = false;
-        float scaleFactor = screen.backingScaleFactor;
-        DynamicRangeMode dynamicRangeMode = DynamicRangeMode::None;
-
+    auto screenSupportsHighDynamicRange = [](PlatformDisplayID displayID, DynamicRangeMode& dynamicRangeMode) {
+        bool supportsHighDynamicRange = false;
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE)
         if (PAL::isAVFoundationFrameworkAvailable() && [PAL::getAVPlayerClass() respondsToSelector:@selector(preferredVideoRangeForDisplays:)]) {
             dynamicRangeMode = convertAVVideoRangeToEnum([PAL::getAVPlayerClass() preferredVideoRangeForDisplays:@[ @(displayID) ]]);
-            screenSupportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
+            supportsHighDynamicRange = dynamicRangeMode > DynamicRangeMode::Standard;
         }
 #endif
 #if HAVE(AVPLAYER_VIDEORANGEOVERRIDE) && USE(MEDIATOOLBOX)
@@ -152,17 +138,38 @@ ScreenProperties collectScreenProperties()
 #endif
 #if USE(MEDIATOOLBOX)
         if (PAL::isMediaToolboxFrameworkAvailable() && PAL::canLoad_MediaToolbox_MTShouldPlayHDRVideo())
-            screenSupportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
+            supportsHighDynamicRange = PAL::softLink_MediaToolbox_MTShouldPlayHDRVideo((__bridge CFArrayRef)@[ @(displayID) ]);
 #endif
 
-        if (!screenSupportsHighDynamicRange && dynamicRangeMode > DynamicRangeMode::Standard)
+        if (!supportsHighDynamicRange && dynamicRangeMode > DynamicRangeMode::Standard)
             dynamicRangeMode = DynamicRangeMode::Standard;
 
-        if (displayMask)
-            gpuID = gpuIDForDisplayMask(displayMask);
+        return supportsHighDynamicRange;
+    };
 
-        screenProperties.screenDataMap.set(displayID, ScreenData { screenAvailableRect, screenRect, WTFMove(colorSpace), screenDepth, screenDepthPerComponent, screenSupportsExtendedColor, screenHasInvertedColors, screenSupportsHighDynamicRange, screenIsMonochrome, displayMask, gpuID, dynamicRangeMode, scaleFactor });
+    for (NSScreen *screen in [NSScreen screens]) {
+        ScreenData screenData;
+        auto displayID = WebCore::displayID(screen);
 
+        auto screenAvailableRect = FloatRect { screen.visibleFrame };
+        screenAvailableRect.setY(NSMaxY(screen.frame) - (screenAvailableRect.y() + screenAvailableRect.height())); // flip
+        screenData.screenAvailableRect = screenAvailableRect;
+
+        screenData.screenRect = screen.frame;
+        screenData.colorSpace = DestinationColorSpace { screen.colorSpace.CGColorSpace };
+        screenData.screenDepth = NSBitsPerPixelFromDepth(screen.depth);
+        screenData.screenDepthPerComponent = NSBitsPerSampleFromDepth(screen.depth);
+        screenData.screenSupportsExtendedColor = [screen canRepresentDisplayGamut:NSDisplayGamutP3];
+        screenData.screenHasInvertedColors = screenHasInvertedColors;
+        screenData.screenIsMonochrome = CGDisplayUsesForceToGray();
+        screenData.displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
+        if (screenData.displayMask)
+            screenData.gpuID = gpuIDForDisplayMask(screenData.displayMask);
+
+        screenData.scaleFactor = screen.backingScaleFactor;
+        screenData.screenSupportsHighDynamicRange = screenSupportsHighDynamicRange(displayID, screenData.preferredDynamicRangeMode);
+
+        screenProperties.screenDataMap.set(displayID, WTFMove(screenData));
         if (!screenProperties.primaryDisplayID)
             screenProperties.primaryDisplayID = displayID;
     }

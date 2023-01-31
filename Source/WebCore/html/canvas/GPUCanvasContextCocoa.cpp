@@ -67,10 +67,17 @@ std::unique_ptr<GPUCanvasContextCocoa> GPUCanvasContextCocoa::create(CanvasBase&
     return std::unique_ptr<GPUCanvasContextCocoa>(new GPUCanvasContextCocoa(canvas, gpu));
 }
 
+static GPUPresentationContextDescriptor presentationContextDescriptor()
+{
+    return GPUPresentationContextDescriptor {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250955 Add integration with the compositor here.
+    };
+}
+
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
-    , m_gpu(gpu)
+    , m_presentationContext(gpu.createPresentationContext(presentationContextDescriptor()))
 {
 }
 
@@ -81,9 +88,9 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
 
     m_width = width;
     m_height = height;
-    m_presentationContext = nullptr;
+    unconfigurePresentationContextIfNeeded();
 
-    createPresentationContextIfNeeded();
+    configurePresentationContextIfNeeded();
 }
 
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
@@ -99,17 +106,22 @@ void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
     reshape(canvasSize.width(), canvasSize.height());
 }
 
-void GPUCanvasContextCocoa::createPresentationContextIfNeeded()
+void GPUCanvasContextCocoa::unconfigurePresentationContextIfNeeded()
 {
-    if (!m_configuration)
+    if (!m_presentationContextIsConfigured)
         return;
 
-    GPUPresentationContextDescriptor presentationContextDescriptor = {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250955 Add integration with the compositor here.
-    };
+    m_presentationContext->unconfigure();
+    m_presentationContextIsConfigured = false;
+}
 
-    m_presentationContext = m_gpu->createPresentationContext(presentationContextDescriptor);
-    ASSERT(m_presentationContext);
+void GPUCanvasContextCocoa::configurePresentationContextIfNeeded()
+{
+    if (m_presentationContextIsConfigured)
+        return;
+
+    if (!m_configuration)
+        return;
 
     GPUPresentationConfiguration configuration = {
         m_configuration->device, // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250995 This is definitely a UAF
@@ -123,14 +135,18 @@ void GPUCanvasContextCocoa::createPresentationContextIfNeeded()
     };
 
     m_presentationContext->configure(configuration);
+    m_presentationContextIsConfigured = true;
 }
 
 RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
 {
+    if (m_currentTexture)
+        return m_currentTexture;
+
     if (!m_configuration)
         return nullptr;
 
-    createPresentationContextIfNeeded();
+    configurePresentationContextIfNeeded();
 
     GPUTextureDescriptor descriptor = {
         { "WebGPU Display texture"_s },
@@ -144,7 +160,9 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
     };
 
     markContextChangedAndNotifyCanvasObservers();
-    return m_configuration->device->createSurfaceTexture(descriptor, *m_presentationContext);
+    // FIXME: This should use PresentationContext::getCurrentTexture() instead.
+    m_currentTexture = m_configuration->device->createSurfaceTexture(descriptor, m_presentationContext);
+    return m_currentTexture;
 }
 
 PixelFormat GPUCanvasContextCocoa::pixelFormat() const
@@ -175,6 +193,7 @@ void GPUCanvasContextCocoa::prepareForDisplay()
         protectedThis->m_compositingResultsNeedsUpdating = false;
     });
 #endif
+    m_currentTexture = nullptr;
 }
 
 void GPUCanvasContextCocoa::markContextChangedAndNotifyCanvasObservers()

@@ -63,9 +63,9 @@ namespace WGSL {
         return pass(__VA_ARGS__); \
     }();
 
-std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&)
+std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration& configuration)
 {
-    Expected<AST::ShaderModule, Error> parserResult = wgsl.is8Bit() ? parseLChar(wgsl) : parseUChar(wgsl);
+    Expected<AST::ShaderModule, Error> parserResult = wgsl.is8Bit() ? parseLChar(wgsl, configuration) : parseUChar(wgsl, configuration);
     if (!parserResult.has_value()) {
         // FIXME: Add support for returning multiple errors from the parser.
         return FailedCheck { { parserResult.error() }, { /* warnings */ } };

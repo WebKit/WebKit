@@ -39,6 +39,7 @@
 #include "ASTGlobalDirective.h"
 #include "ASTGroupAttribute.h"
 #include "ASTIdentifierExpression.h"
+#include "ASTIdentityExpression.h"
 #include "ASTLiteralExpressions.h"
 #include "ASTLocationAttribute.h"
 #include "ASTNode.h"
@@ -54,3 +55,4 @@
 #include "ASTVariableDecl.h"
 #include "ASTVariableQualifier.h"
 #include "ASTVariableStatement.h"
+#include "ASTWorkgroupSizeAttribute.h"

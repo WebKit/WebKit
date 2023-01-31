@@ -54,6 +54,8 @@ class CommandBuffer;
 class CommandEncoder;
 enum class CompareFunction : uint8_t;
 enum class CompilationMessageType : uint8_t;
+class CompositorIntegration;
+class CompositorIntegrationImpl;
 enum class ComputePassTimestampLocation : uint8_t;
 class ComputePassEncoder;
 class ComputePipeline;
@@ -66,6 +68,7 @@ enum class FrontFace : uint8_t;
 class GPU;
 enum class IndexFormat : uint8_t;
 enum class LoadOp : uint8_t;
+enum class MipmapFilterMode : uint8_t;
 class PipelineLayout;
 enum class PowerPreference : bool;
 class PresentationContext;
@@ -110,6 +113,7 @@ public:
     WGPUErrorFilter convertToBacking(ErrorFilter);
     WGPUFeatureName convertToBacking(FeatureName);
     WGPUFilterMode convertToBacking(FilterMode);
+    WGPUMipmapFilterMode convertToBacking(MipmapFilterMode);
     WGPUFrontFace convertToBacking(FrontFace);
     WGPUIndexFormat convertToBacking(IndexFormat);
     WGPULoadOp convertToBacking(LoadOp);
@@ -162,6 +166,7 @@ public:
     virtual WGPUSurface convertToBacking(const PresentationContext&) = 0;
     virtual WGPUTexture convertToBacking(const Texture&) = 0;
     virtual WGPUTextureView convertToBacking(const TextureView&) = 0;
+    virtual CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) = 0;
 };
 
 } // namespace PAL::WebGPU

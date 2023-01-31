@@ -30,7 +30,6 @@
 #include "NetworkCacheCoders.h"
 #include "NetworkCacheIOChannel.h"
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/StorageQuotaManager.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UUID.h>
 #include <wtf/persistence/PersistentDecoder.h>

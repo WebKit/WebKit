@@ -77,6 +77,8 @@ private:
 
     void getCurrentTexture(WebGPUIdentifier);
 
+    void present();
+
 #if PLATFORM(COCOA)
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&);
 #endif

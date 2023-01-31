@@ -80,6 +80,11 @@ static RetainPtr<CGPDFPageRef> systemPreviewLogo()
     return logoPage;
 }
 
+RenderingResourceIdentifier ARKitBadgeSystemImage::imageIdentifier() const
+{
+    return m_image ? m_image->nativeImage()->renderingResourceIdentifier() : m_renderingResourceIdentifier;
+}
+
 void ARKitBadgeSystemImage::draw(GraphicsContext& graphicsContext, const FloatRect& rect) const
 {
     auto page = systemPreviewLogo();

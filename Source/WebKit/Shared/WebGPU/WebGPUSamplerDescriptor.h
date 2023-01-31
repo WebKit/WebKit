@@ -42,7 +42,7 @@ struct SamplerDescriptor : public ObjectDescriptorBase {
     PAL::WebGPU::AddressMode addressModeW { PAL::WebGPU::AddressMode::ClampToEdge };
     PAL::WebGPU::FilterMode magFilter { PAL::WebGPU::FilterMode::Nearest };
     PAL::WebGPU::FilterMode minFilter { PAL::WebGPU::FilterMode::Nearest };
-    PAL::WebGPU::FilterMode mipmapFilter { PAL::WebGPU::FilterMode::Nearest };
+    PAL::WebGPU::MipmapFilterMode mipmapFilter { PAL::WebGPU::MipmapFilterMode::Nearest };
     float lodMinClamp { 0 };
     float lodMaxClamp { 32 };
     std::optional<PAL::WebGPU::CompareFunction> compare;

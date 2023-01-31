@@ -204,7 +204,7 @@ public:
     // Tail accessors.
     static constexpr size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(Instance)); }
     struct ImportFunctionInfo {
-        // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The embedder-specific logic occurs through import function.
+        // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The js-specific logic occurs through import function.
         Instance* targetInstance { nullptr };
         WasmToWasmImportableFunction::LoadLocation wasmEntrypointLoadLocation { nullptr };
         CodePtr<WasmEntryPtrTag> importFunctionStub;

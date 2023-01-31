@@ -1,0 +1,12 @@
+[Worker] This test checks FileSystemSyncAccessHandle returns error when limit is reached
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/sync-access-handle-storage-limit.js
+PASS [Worker] accessHandle.write(new Uint8Array(quota - 1).buffer) did not throw exception.
+PASS [Worker] accessHandle.write(new Uint8Array(2).buffer) threw exception QuotaExceededError: The quota has been exceeded..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

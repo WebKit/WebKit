@@ -93,6 +93,11 @@ void GraphicsLayerCARemote::moveToContext(RemoteLayerTreeContext& context)
     context.graphicsLayerDidEnterContext(*this);
 }
 
+Color GraphicsLayerCARemote::pageTiledBackingBorderColor() const
+{
+    return SRGBA<uint8_t> { 28, 74, 120, 128 }; // remote tile cache layer: navy blue
+}
+
 class GraphicsLayerCARemoteAsyncContentsDisplayDelegate : public GraphicsLayerAsyncContentsDisplayDelegate {
 public:
     GraphicsLayerCARemoteAsyncContentsDisplayDelegate(IPC::Connection& connection, DrawingAreaIdentifier identifier, WebCore::GraphicsLayer::PlatformLayerID layerID)

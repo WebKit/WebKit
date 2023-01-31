@@ -28,6 +28,7 @@
 #include "GPUAddressMode.h"
 #include "GPUCompareFunction.h"
 #include "GPUFilterMode.h"
+#include "GPUMipmapFilterMode.h"
 #include "GPUObjectDescriptorBase.h"
 #include <cstdint>
 #include <optional>
@@ -58,7 +59,7 @@ struct GPUSamplerDescriptor : public GPUObjectDescriptorBase {
     GPUAddressMode addressModeW { GPUAddressMode::ClampToEdge };
     GPUFilterMode magFilter { GPUFilterMode::Nearest };
     GPUFilterMode minFilter { GPUFilterMode::Nearest };
-    GPUFilterMode mipmapFilter { GPUFilterMode::Nearest };
+    GPUMipmapFilterMode mipmapFilter { GPUMipmapFilterMode::Nearest };
     float lodMinClamp { 0 };
     float lodMaxClamp { 32 };
     std::optional<GPUCompareFunction> compare;

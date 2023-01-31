@@ -54,6 +54,7 @@ struct Optional
     bool valid() const { return mValid; }
     T &value() { return mValue; }
     const T &value() const { return mValue; }
+    const T &valueOr(const T &defaultValue) const { return mValid ? mValue : defaultValue; }
 
     bool operator==(const Optional &other) const
     {

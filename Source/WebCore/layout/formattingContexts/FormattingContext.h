@@ -84,7 +84,7 @@ public:
 
     static const InitialContainingBlock& initialContainingBlock(const Box&);
     static const ElementBox& containingBlock(const Box&);
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     static const ElementBox& formattingContextRoot(const Box&);
 #endif
 
@@ -94,7 +94,7 @@ protected:
     FormattingState& formattingState() { return m_formattingState; }
     void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     virtual void validateGeometryConstraintsAfterLayout() const;
 #endif
 

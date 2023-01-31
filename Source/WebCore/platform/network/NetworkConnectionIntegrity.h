@@ -33,6 +33,8 @@ enum class NetworkConnectionIntegrity : uint8_t {
     HTTPSOnly = 1 << 2,
     HTTPSOnlyExplicitlyBypassedForDomain = 1 << 3,
     FailClosed = 1 << 4,
+    WebSearchContent = 1 << 5,
+    EnhancedTelemetry = 1 << 6,
 };
 
 }
@@ -46,7 +48,9 @@ template<> struct EnumTraits<WebCore::NetworkConnectionIntegrity> {
         WebCore::NetworkConnectionIntegrity::HTTPSFirst,
         WebCore::NetworkConnectionIntegrity::HTTPSOnly,
         WebCore::NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain,
-        WebCore::NetworkConnectionIntegrity::FailClosed
+        WebCore::NetworkConnectionIntegrity::FailClosed,
+        WebCore::NetworkConnectionIntegrity::WebSearchContent,
+        WebCore::NetworkConnectionIntegrity::EnhancedTelemetry
     >;
 };
 

@@ -966,6 +966,7 @@ public:
 
     URL sanitizeLookalikeCharacters(const URL&, LookalikeCharacterSanitizationTrigger) const;
     String sanitizeLookalikeCharacters(const String&, LookalikeCharacterSanitizationTrigger) const;
+    URL allowedLookalikeCharacters(const URL&) const;
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);

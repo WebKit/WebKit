@@ -47,6 +47,7 @@ public:
     virtual void visit(GroupAttribute&);
     virtual void visit(LocationAttribute&);
     virtual void visit(StageAttribute&);
+    virtual void visit(WorkgroupSizeAttribute&);
 
     // Declaration
     virtual void visit(Decl&);
@@ -69,6 +70,7 @@ public:
     virtual void visit(UnaryExpression&);
     virtual void visit(BinaryExpression&);
     virtual void visit(PointerDereference&);
+    virtual void visit(IdentityExpression&);
 
     // Statement
     virtual void visit(Statement&);

@@ -139,9 +139,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsSVG:
         stream << "SVG content";
         break;
-    case AvoidanceReason::FlowHasInitialLetter:
-        stream << "intial letter";
-        break;
     default:
         break;
     }
@@ -294,8 +291,6 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderElement& renderer, 
     OptionSet<AvoidanceReason> reasons;
     if (style.writingMode() == WritingMode::BottomToTop)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedWritingMode, reasons, includeReasons);
-    if (style.styleType() == PseudoId::FirstLetter && (!style.initialLetter().isEmpty() || style.initialLetterDrop() || style.initialLetterHeight()))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasInitialLetter, reasons, includeReasons);
     // These are non-standard properties.
     if (style.lineAlign() != LineAlign::None)
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasLineAlignEdges, reasons, includeReasons);

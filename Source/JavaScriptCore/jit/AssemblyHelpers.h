@@ -980,6 +980,22 @@ public:
 #endif
     }
 
+#if USE(JSVALUE64)
+    void toBigInt64(GPRReg cellGPR, GPRReg destGPR, GPRReg scratchGPR, GPRReg scratch2GPR)
+    {
+        ASSERT(noOverlap(cellGPR, destGPR, scratchGPR, scratch2GPR));
+        load32(Address(cellGPR, JSBigInt::offsetOfLength()), destGPR);
+        JumpList doneCases;
+        doneCases.append(branchTest32(Zero, destGPR));
+        loadPtr(Address(cellGPR, JSBigInt::offsetOfData()), scratchGPR);
+        cageConditionallyAndUntag(Gigacage::Primitive, scratchGPR, destGPR, scratch2GPR, false, false);
+        load64(Address(scratchGPR), destGPR);
+        doneCases.append(branchTest8(Zero, Address(cellGPR, JSBigInt::offsetOfSign())));
+        neg64(destGPR);
+        doneCases.link(this);
+    }
+#endif
+
     void isNotEmpty(GPRReg gpr, GPRReg dst)
     {
 #if USE(JSVALUE64)

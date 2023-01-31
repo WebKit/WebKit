@@ -34,6 +34,7 @@
 #include "RemoteBuffer.h"
 #include "RemoteCommandBuffer.h"
 #include "RemoteCommandEncoder.h"
+#include "RemoteCompositorIntegration.h"
 #include "RemoteComputePassEncoder.h"
 #include "RemoteComputePipeline.h"
 #include "RemoteDevice.h"
@@ -91,6 +92,12 @@ void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteCommandBuffer& com
 void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteCommandEncoder& commandEncoder)
 {
     auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder> { Ref { commandEncoder } } });
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void ObjectHeap::addObject(WebGPUIdentifier identifier, RemoteCompositorIntegration& querySet)
+{
+    auto result = m_objects.add(identifier, Object { IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration> { Ref { querySet } } });
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
@@ -247,6 +254,14 @@ PAL::WebGPU::CommandEncoder* ObjectHeap::convertCommandEncoderFromBacking(WebGPU
     if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>>(iterator->value))
         return nullptr;
     return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteCommandEncoder>>(iterator->value)->backing();
+}
+
+PAL::WebGPU::CompositorIntegration* ObjectHeap::convertCompositorIntegrationFromBacking(WebGPUIdentifier identifier)
+{
+    auto iterator = m_objects.find(identifier);
+    if (iterator == m_objects.end() || !std::holds_alternative<IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>>(iterator->value))
+        return nullptr;
+    return &std::get<IPC::ScopedActiveMessageReceiveQueue<RemoteCompositorIntegration>>(iterator->value)->backing();
 }
 
 PAL::WebGPU::ComputePassEncoder* ObjectHeap::convertComputePassEncoderFromBacking(WebGPUIdentifier identifier)

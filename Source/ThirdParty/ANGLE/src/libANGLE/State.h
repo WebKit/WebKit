@@ -235,7 +235,7 @@ class State : angle::NonCopyable
     // Depth bias/polygon offset state manipulation
     bool isPolygonOffsetFillEnabled() const { return mRasterizer.polygonOffsetFill; }
     void setPolygonOffsetFill(bool enabled);
-    void setPolygonOffsetParams(GLfloat factor, GLfloat units);
+    void setPolygonOffsetParams(GLfloat factor, GLfloat units, GLfloat clamp);
 
     // Multisample coverage state manipulation
     bool isSampleAlphaToCoverageEnabled() const { return mSampleAlphaToCoverage; }

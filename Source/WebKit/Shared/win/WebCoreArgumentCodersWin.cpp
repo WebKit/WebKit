@@ -39,14 +39,11 @@ using namespace WebCore;
 template<> struct ArgumentCoder<LOGFONT> {
     static void encode(Encoder& encoder, const LOGFONT& logFont)
     {
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&logFont), sizeof logFont, 1);
+        encoder.encodeObject(logFont);
     }
     static std::optional<LOGFONT> decode(Decoder& decoder)
     {
-        LOGFONT logFont;
-        if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&logFont), sizeof(logFont), 1))
-            return std::nullopt;
-        return logFont;
+        return decoder.decodeObject<LOGFONT>();
     }
 };
 

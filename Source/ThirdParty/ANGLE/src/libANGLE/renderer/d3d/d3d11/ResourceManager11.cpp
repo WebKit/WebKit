@@ -296,24 +296,17 @@ DXGI_FORMAT GetTypedColorFormatForClearing(DXGI_FORMAT dxgiFormat)
             return DXGI_FORMAT_R16_FLOAT;
         case DXGI_FORMAT_R8_TYPELESS:
             return DXGI_FORMAT_R8_UNORM;
-        case DXGI_FORMAT_BC1_TYPELESS:
-            return DXGI_FORMAT_BC1_UNORM;
-        case DXGI_FORMAT_BC2_TYPELESS:
-            return DXGI_FORMAT_BC2_UNORM;
-        case DXGI_FORMAT_BC3_TYPELESS:
-            return DXGI_FORMAT_BC3_UNORM;
-        case DXGI_FORMAT_BC4_TYPELESS:
-            return DXGI_FORMAT_BC4_UNORM;
-        case DXGI_FORMAT_BC5_TYPELESS:
-            return DXGI_FORMAT_BC5_UNORM;
         case DXGI_FORMAT_B8G8R8A8_TYPELESS:
             return DXGI_FORMAT_B8G8R8A8_UNORM;
         case DXGI_FORMAT_B8G8R8X8_TYPELESS:
             return DXGI_FORMAT_B8G8R8X8_UNORM;
+        case DXGI_FORMAT_BC1_TYPELESS:
+        case DXGI_FORMAT_BC2_TYPELESS:
+        case DXGI_FORMAT_BC3_TYPELESS:
+        case DXGI_FORMAT_BC4_TYPELESS:
+        case DXGI_FORMAT_BC5_TYPELESS:
         case DXGI_FORMAT_BC6H_TYPELESS:
-            return DXGI_FORMAT_BC6H_UF16;
         case DXGI_FORMAT_BC7_TYPELESS:
-            return DXGI_FORMAT_BC7_UNORM;
         case DXGI_FORMAT_R32G8X24_TYPELESS:
         case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS:
         case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT:

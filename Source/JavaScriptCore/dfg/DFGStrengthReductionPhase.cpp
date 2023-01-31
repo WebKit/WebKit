@@ -1152,7 +1152,7 @@ private:
                 const auto& signature = *typeDefinition.as<Wasm::FunctionSignature>();
                 const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
                 Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(typeDefinition);
-                if (wasmCallInfo.argumentsOrResultsIncludeV128 || wasmCallInfo.argumentsIncludeI64)
+                if (wasmCallInfo.argumentsOrResultsIncludeV128)
                     break;
 
                 unsigned numPassedArgs = m_node->numChildren() - /* |callee| and |this| */ 2;
@@ -1169,6 +1169,11 @@ private:
                     switch (type.kind) {
                     case Wasm::TypeKind::I32: {
                         if (!argument->shouldSpeculateInt32())
+                            success = false;
+                        break;
+                    }
+                    case Wasm::TypeKind::I64: {
+                        if (!argument->shouldSpeculateHeapBigInt())
                             success = false;
                         break;
                     }
@@ -1198,6 +1203,7 @@ private:
                     auto type = signature.returnType(0);
                     switch (type.kind) {
                     case Wasm::TypeKind::I32:
+                    case Wasm::TypeKind::I64:
                     case Wasm::TypeKind::Ref:
                     case Wasm::TypeKind::RefNull:
                     case Wasm::TypeKind::Funcref:
@@ -1230,11 +1236,8 @@ private:
                 if (!success || !is64Bit() || !m_graph.m_plan.isFTL())
                     break;
 
-                // We need to update m_parameterSlots before we get to the backend, but we don't
-                // want to do too much of this.
                 unsigned numAllocatedArgs = static_cast<unsigned>(signature.argumentCount()) + /* |this| for wasm */ 1;
-                if (numAllocatedArgs <= Options::maximumDirectCallStackSize())
-                    m_graph.m_parameterSlots = std::max(m_graph.m_parameterSlots, Graph::parameterSlotsForArgCount(numAllocatedArgs));
+                m_graph.m_parameterSlots = std::max(m_graph.m_parameterSlots, Graph::parameterSlotsForArgCount(numAllocatedArgs));
 
                 unsigned checkIndex = checkIndexValue.value();
                 for (unsigned index = 0; index < signature.argumentCount(); ++index) {
@@ -1245,6 +1248,11 @@ private:
                     case Wasm::TypeKind::I32: {
                         m_insertionSet.insertCheck(checkIndex, m_node->origin, Edge(argumentNode, Int32Use));
                         m_graph.varArgChild(m_node, 2 + index) = Edge(argumentNode, KnownInt32Use);
+                        break;
+                    }
+                    case Wasm::TypeKind::I64: {
+                        m_insertionSet.insertCheck(checkIndex, m_node->origin, Edge(argumentNode, HeapBigIntUse));
+                        m_graph.varArgChild(m_node, 2 + index) = Edge(argumentNode, KnownCellUse);
                         break;
                     }
                     case Wasm::TypeKind::Ref:
@@ -1276,6 +1284,9 @@ private:
                     switch (type.kind) {
                     case Wasm::TypeKind::I32: {
                         m_node->setResult(NodeResultInt32);
+                        break;
+                    }
+                    case Wasm::TypeKind::I64: {
                         break;
                     }
                     case Wasm::TypeKind::Ref:

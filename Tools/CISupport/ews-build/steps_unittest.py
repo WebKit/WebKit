@@ -5560,6 +5560,19 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.assertEqual(self.getProperty('reviewers_full_names'), ['WebKit Reviewer'])
         return rc
 
+    def test_success_pr_validators_not_reviewer(self):
+        self.setupStep(ValidateCommitterAndReviewer())
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-bug-bridge']
+        self.setProperty('github.number', '1234')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.setProperty('remote', 'apple')
+        self.expectHidden(False)
+        self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
+        self.expectOutcome(result=SUCCESS, state_string='Validated committer, reviewer not found')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('reviewers_full_names'), None)
+        return rc
+
     def test_success_no_pr_validators(self):
         self.setupStep(ValidateCommitterAndReviewer())
         ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer']

@@ -62,7 +62,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/StorageQuotaManager.h>
 #include <WebCore/WebLockRegistry.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
@@ -2069,7 +2068,7 @@ void WebsiteDataStore::forwardManagedDomainsToITPIfInitialized(CompletionHandler
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     auto managedDomains = managedDomainsIfInitialized();
-    if (!managedDomains || managedDomains->get().isEmpty())
+    if (!managedDomains || managedDomains->isEmpty())
         return;
 
     auto propagateManagedDomains = [callbackAggregator] (WebsiteDataStore* store, const HashSet<WebCore::RegistrableDomain>& domains) {

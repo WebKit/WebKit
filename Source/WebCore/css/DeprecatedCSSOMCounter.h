@@ -25,34 +25,33 @@
 
 #pragma once
 
+#include "CSSValueKeywords.h"
 #include "Counter.h"
-#include "DeprecatedCSSOMPrimitiveValue.h"
-#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
 public:
-    static Ref<DeprecatedCSSOMCounter> create(const Counter& counter, CSSStyleDeclaration& owner)
+    static Ref<DeprecatedCSSOMCounter> create(const Counter& counter)
     {
-        return adoptRef(*new DeprecatedCSSOMCounter(counter, owner));
+        return adoptRef(*new DeprecatedCSSOMCounter(counter));
     }
 
-    String identifier() const { return m_identifier->stringValue(); }
-    String listStyle() const { return m_listStyle->stringValue(); }
-    String separator() const { return m_separator->stringValue(); }
-    
+    String identifier() const { return m_identifier; }
+    String listStyle() const { return nameString(m_listStyle); }
+    String separator() const { return m_separator; }
+
 private:
-    DeprecatedCSSOMCounter(const Counter& counter, CSSStyleDeclaration& owner)
-        : m_identifier(counter.identifierValue().createDeprecatedCSSOMPrimitiveWrapper(owner))
-        , m_listStyle(counter.listStyleValue().createDeprecatedCSSOMPrimitiveWrapper(owner))
-        , m_separator(counter.separatorValue().createDeprecatedCSSOMPrimitiveWrapper(owner))
+    DeprecatedCSSOMCounter(const Counter& counter)
+        : m_identifier(counter.identifier.string())
+        , m_listStyle(counter.listStyle)
+        , m_separator(counter.separator.string())
     {
     }
-    
-    Ref<DeprecatedCSSOMPrimitiveValue> m_identifier;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_listStyle;
-    Ref<DeprecatedCSSOMPrimitiveValue> m_separator;
+
+    String m_identifier;
+    CSSValueID m_listStyle;
+    String m_separator;
 };
 
 } // namespace WebCore

@@ -85,7 +85,6 @@
 #include <WebCore/SWServer.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/StorageQuotaManager.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>

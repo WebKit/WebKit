@@ -193,8 +193,6 @@ angle::Result RenderStateCache::getRasterizerState(const gl::Context *context,
     rasterDesc.FillMode              = D3D11_FILL_SOLID;
     rasterDesc.CullMode              = cullMode;
     rasterDesc.FrontCounterClockwise = (rasterState.frontFace == GL_CCW) ? FALSE : TRUE;
-    rasterDesc.DepthBiasClamp = 0.0f;  // MSDN documentation of DepthBiasClamp implies a value of
-                                       // zero will preform no clamping, must be tested though.
     rasterDesc.DepthClipEnable       = TRUE;
     rasterDesc.ScissorEnable         = scissorEnabled ? TRUE : FALSE;
     rasterDesc.MultisampleEnable     = rasterState.multiSample;
@@ -202,13 +200,15 @@ angle::Result RenderStateCache::getRasterizerState(const gl::Context *context,
 
     if (rasterState.polygonOffsetFill)
     {
-        rasterDesc.SlopeScaledDepthBias = rasterState.polygonOffsetFactor;
         rasterDesc.DepthBias            = (INT)rasterState.polygonOffsetUnits;
+        rasterDesc.DepthBiasClamp       = rasterState.polygonOffsetClamp;
+        rasterDesc.SlopeScaledDepthBias = rasterState.polygonOffsetFactor;
     }
     else
     {
-        rasterDesc.SlopeScaledDepthBias = 0.0f;
         rasterDesc.DepthBias            = 0;
+        rasterDesc.DepthBiasClamp       = 0.0f;
+        rasterDesc.SlopeScaledDepthBias = 0.0f;
     }
 
     d3d11::RasterizerState dx11RasterizerState;

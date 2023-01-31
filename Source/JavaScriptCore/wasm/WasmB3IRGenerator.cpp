@@ -977,7 +977,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Callee& callee, Proc
                 // 1. Emit less code.
                 // 2. Try to speed things up by skipping stack checks.
                 minimumParentCheckSize,
-                // This allows us to elide stack checks in the Wasm -> Embedder call IC stub. Since these will
+                // This allows us to elide stack checks in the Wasm -> JS call IC stub. Since these will
                 // spill all arguments to the stack, we ensure that a stack check here covers the
                 // stack that such a stub would use.
                 Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + JSCallingConvention::headerSizeInBytes
@@ -4017,7 +4017,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
 
-        auto emitCallToEmbedder = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
+        auto emitCallToImport = [&, this](PatchpointValue* patchpoint, Box<PatchpointExceptionHandle> handle) -> void {
             patchpoint->append(jumpDestination, ValueRep(GPRInfo::nonPreservedNonArgumentGPR0));
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
@@ -4043,17 +4043,17 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
         m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
         // FIXME: Let's remove this indirection by creating a PIC friendly IC
-        // for calls out to the embedder. This shouldn't be that hard to do. We could probably
+        // for calls out to the js. This shouldn't be that hard to do. We could probably
         // implement the IC to be over Context*.
         // https://bugs.webkit.org/show_bug.cgi?id=170375
         jumpDestination = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), instanceValue(), safeCast<int32_t>(Instance::offsetOfImportFunctionStub(functionIndex)));
 
         if (isTailCall) {
-            createTailCallPatchpoint(m_currentBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP, scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToEmbedder));
+            createTailCallPatchpoint(m_currentBlock, wasmCalleeInfo.params, args, tailCallStackOffsetFromFP, scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToImport));
             return { };
         }
 
-        Value* result = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args, scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToEmbedder));
+        Value* result = createCallPatchpoint(m_currentBlock, nullptr, returnType, wasmCalleeInfo, args, scopedLambdaRef<void(PatchpointValue*, Box<PatchpointExceptionHandle>)>(emitCallToImport));
 
         if (returnType != B3::Void)
             fillResults(result);
@@ -4119,8 +4119,8 @@ auto B3IRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& o
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
 
     // Note: call indirect can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
-    // WebAssemblyWrapperFunction is like calling into the embedder, we conservatively assume all call indirects
-    // can be to the embedder for our stack check calculation.
+    // WebAssemblyWrapperFunction is like calling into the js, we conservatively assume all call indirects
+    // can be to the js for our stack check calculation.
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     Value* callableFunctionBuffer = nullptr;
@@ -4189,8 +4189,8 @@ auto B3IRGenerator::addCallRef(const TypeDefinition& originalSignature, Vector<E
     m_makesCalls = true;
 
     // Note: call ref can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
-    // WebAssemblyWrapperFunction is like calling into the embedder, we conservatively assume all call indirects
-    // can be to the embedder for our stack check calculation.
+    // WebAssemblyWrapperFunction is like calling into the js, we conservatively assume all call indirects
+    // can be to the js for our stack check calculation.
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     // Check the target reference for null.

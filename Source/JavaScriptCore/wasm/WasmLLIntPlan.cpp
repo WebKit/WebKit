@@ -168,7 +168,7 @@ void LLIntPlan::didCompleteCompilation()
             CCallHelpers jit;
             // The LLInt always bounds checks
             MemoryMode mode = MemoryMode::BoundsChecking;
-            Ref<EmbedderEntrypointCallee> callee = EmbedderEntrypointCallee::create();
+            Ref<JSEntrypointCallee> callee = JSEntrypointCallee::create();
             std::unique_ptr<InternalFunction> function = createJSToWasmWrapper(jit, callee.get(), signature, &m_unlinkedWasmToWasmCalls[functionIndex], m_moduleInformation.get(), mode, functionIndex);
 
             LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
@@ -178,12 +178,12 @@ void LLIntPlan::didCompleteCompilation()
             }
 
             function->entrypoint.compilation = makeUnique<Compilation>(
-                FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "Embedder->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
+                FINALIZE_CODE(linkBuffer, JITCompilationPtrTag, "JS->WebAssembly entrypoint[%i] %s", functionIndex, signature.toString().ascii().data()),
                 nullptr);
 
             callee->setEntrypoint(WTFMove(function->entrypoint));
 
-            auto result = m_embedderCallees.add(functionIndex, WTFMove(callee));
+            auto result = m_jsEntrypointCallees.add(functionIndex, WTFMove(callee));
             ASSERT_UNUSED(result, result.isNewEntry);
         }
     }

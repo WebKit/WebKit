@@ -359,8 +359,8 @@ macro makeJavaScriptCall(entry, protoCallFrame, temp1, temp2)
         cloopCallJSFunction entry
     elsif ARM64E
         move entry, t5
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::vmEntryToJavaScript) * PtrSize, a7
-        jmp [a7], NativeToJITGatePtrTag # JSEntryPtrTag
+        leap _g_config, a7
+        jmp JSCConfigGateMapOffset + (constexpr Gate::vmEntryToJavaScript) * PtrSize[a7], NativeToJITGatePtrTag # JSEntryPtrTag
         global _vmEntryToJavaScriptTrampoline
         _vmEntryToJavaScriptTrampoline:
         call t5, JSEntryPtrTag
@@ -499,8 +499,8 @@ if JIT
                 loadBaselineJITConstantPool()
 
                 if ARM64E
-                    leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::loopOSREntry) * PtrSize, a2
-                    jmp [a2], NativeToJITGatePtrTag # JSEntryPtrTag
+                    leap _g_config, a2
+                    jmp JSCConfigGateMapOffset + (constexpr Gate::loopOSREntry) * PtrSize[a2], NativeToJITGatePtrTag # JSEntryPtrTag
                 else
                     jmp r0, JSEntryPtrTag
                 end
@@ -746,8 +746,13 @@ macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
         lshiftp (constexpr StructureID::encodeShiftAmount), structureIDThenStructure
     elsif ADDRESS64
         andq (constexpr StructureID::structureIDMask), structureIDThenStructure
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
-        loadp [scratch], scratch
+        if X86_64_WIN or C_LOOP_WIN
+            leap JSCConfig + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap, scratch
+            loadp [scratch], scratch
+        else
+            leap _g_config, scratch
+            loadp JSCConfigOffset + constexpr JSC::offsetOfJSCConfigStartOfStructureHeap[scratch], scratch
+        end
         addp scratch, structureIDThenStructure
     end
 end
@@ -821,8 +826,8 @@ macro functionArityCheck(opcodeName, doneLabel)
 
 .noExtraSlot:
     if ARM64E
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%Untag) * PtrSize, t3
-        jmp [t3], NativeToJITGatePtrTag
+        leap _g_config, t3
+        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Untag) * PtrSize[t3], NativeToJITGatePtrTag
         _js_trampoline_%opcodeName%_untag:
         loadp 8[cfr], lr
         addp 16, cfr, t3
@@ -857,8 +862,8 @@ macro functionArityCheck(opcodeName, doneLabel)
     baddinz 1, t2, .fillLoop
 
     if ARM64E
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::%opcodeName%Tag) * PtrSize, t3
-        jmp [t3], NativeToJITGatePtrTag
+        leap _g_config, t3
+        jmp JSCConfigGateMapOffset + (constexpr Gate::%opcodeName%Tag) * PtrSize[t3], NativeToJITGatePtrTag
         _js_trampoline_%opcodeName%_tag:
         addp 16, cfr, t1
         tagReturnAddress t1
@@ -2720,8 +2725,8 @@ op(llint_throw_from_slow_path_trampoline, macro ()
     getVMFromCallFrame(t1, t2)
     if ARM64E
         loadp VM::targetMachinePCForThrow[t1], a0
-        leap JSCConfig + constexpr JSC::offsetOfJSCConfigGateMap + (constexpr Gate::exceptionHandler) * PtrSize, a1
-        jmp [a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
+        leap _g_config, a1
+        jmp JSCConfigGateMapOffset + (constexpr Gate::exceptionHandler) * PtrSize[a1], NativeToJITGatePtrTag # ExceptionHandlerPtrTag
     else
         jmp VM::targetMachinePCForThrow[t1], ExceptionHandlerPtrTag
     end

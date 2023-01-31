@@ -128,6 +128,11 @@ void StringDumper::visit(StageAttribute& stage)
     }
 }
 
+void StringDumper::visit(WorkgroupSizeAttribute& workgroupSize)
+{
+    m_out.print("@workgroup_size(", workgroupSize.size(), ")");
+}
+
 // Declaration
 void StringDumper::visit(FunctionDecl& function)
 {

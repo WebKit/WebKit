@@ -58,7 +58,6 @@ public:
         Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&);
 
         GstFlowReturn chainBuffer(GstBuffer*);
-        bool sinkQuery(GstPad*, GstObject*, GstQuery*);
         bool sinkEvent(GstEvent*);
 
         GRefPtr<GstPad> m_pad;
@@ -84,9 +83,9 @@ public:
 
     void start(GRefPtr<GstCaps>&&);
 
-    bool pushSample(GstSample*);
-    bool pushBuffer(GstBuffer*);
-    bool pushEvent(GstEvent*);
+    bool pushSample(GRefPtr<GstSample>&&);
+    bool pushBuffer(GRefPtr<GstBuffer>&&);
+    bool pushEvent(GRefPtr<GstEvent>&&);
 
     GstPad* inputPad() const { return m_srcPad.get(); }
     const GRefPtr<GstCaps>& inputCaps() const { return m_inputCaps; }
@@ -100,7 +99,7 @@ public:
 private:
     GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessBufferCallback&&, std::optional<PadLinkCallback>&&);
 
-    GstFlowReturn pushBufferFull(GstBuffer*);
+    GstFlowReturn pushBufferFull(GRefPtr<GstBuffer>&&);
 
     bool srcQuery(GstPad*, GstObject*, GstQuery*);
     bool srcEvent(GstEvent*);

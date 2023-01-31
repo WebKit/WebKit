@@ -855,7 +855,7 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibraryFromBinary(id<MTLDevice> metalDev
 
         auto library = [metalDevice newLibraryWithData:shaderSourceData error:&nsError];
 
-        [shaderSourceData ANGLE_MTL_AUTORELEASE];
+        dispatch_release(shaderSourceData);
 
         *errorOut = std::move(nsError);
 

@@ -64,66 +64,6 @@ static int toVMMemoryLedger(MemoryLedger memoryLedger)
 }
 #endif
 
-void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
-{
-#if HAVE(MACH_MEMORY_ENTRY)
-    if (!m_handle)
-        return;
-
-    kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), mach_task_self(), toVMMemoryLedger(memoryLedger), 0);
-    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
-#else
-    UNUSED_PARAM(memoryLedger);
-#endif
-}
-
-void SharedMemory::Handle::setOwnershipOfMemory(const WebCore::ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
-{
-#if HAVE(TASK_IDENTITY_TOKEN) && HAVE(MACH_MEMORY_ENTRY_OWNERSHIP_IDENTITY_TOKEN_SUPPORT)
-    if (!m_handle)
-        return;
-
-    kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), processIdentity.taskIdToken(), toVMMemoryLedger(memoryLedger), 0);
-    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
-#else
-    UNUSED_PARAM(memoryLedger);
-    UNUSED_PARAM(processIdentity);
-#endif
-}
-
-bool SharedMemory::Handle::isNull() const
-{
-    return !m_handle;
-}
-
-void SharedMemory::Handle::clear()
-{
-    *this = { };
-}
-
-void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
-{
-    encoder << static_cast<uint64_t>(m_size);
-    encoder << WTFMove(m_handle); // FIXME: add rvalue encode.
-}
-
-bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
-{
-    ASSERT(!handle.m_handle);
-    ASSERT(!handle.m_size);
-    uint64_t bufferSize;
-    if (!decoder.decode(bufferSize))
-        return false;
-
-    auto sendRight = decoder.decode<MachSendRight>();
-    if (UNLIKELY(!decoder.isValid()))
-        return false;
-    
-    handle.m_size = bufferSize;
-    handle.m_handle = WTFMove(*sendRight);
-    return true;
-}
-
 static inline void* toPointer(mach_vm_address_t address)
 {
     return reinterpret_cast<void*>(static_cast<uintptr_t>(address));
@@ -132,25 +72,6 @@ static inline void* toPointer(mach_vm_address_t address)
 static inline mach_vm_address_t toVMAddress(void* pointer)
 {
     return static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(pointer));
-}
-    
-RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
-{
-    ASSERT(size);
-
-    mach_vm_address_t address = 0;
-    // Using VM_FLAGS_PURGABLE so that we can later transfer ownership of the memory via mach_memory_entry_ownership().
-    kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, size, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
-    if (kr != KERN_SUCCESS) {
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %" PUBLIC_LOG_STRING " (%x)", nullptr, size, mach_error_string(kr), kr);
-        return nullptr;
-    }
-
-    auto sharedMemory = adoptRef(*new SharedMemory);
-    sharedMemory->m_size = size;
-    sharedMemory->m_data = toPointer(address);
-    sharedMemory->m_protection = Protection::ReadWrite;
-    return WTFMove(sharedMemory);
 }
 
 static inline vm_prot_t machProtection(SharedMemory::Protection protection)
@@ -193,6 +114,99 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
     RELEASE_ASSERT(memoryObjectSize >= size);
 
     return WTF::MachSendRight::adopt(port);
+}
+
+SharedMemory::Handle::Handle(MachSendRight&& sendRight, size_t size)
+    : m_handle(WTFMove(sendRight))
+    , m_size(size)
+{
+}
+
+void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
+{
+#if HAVE(MACH_MEMORY_ENTRY)
+    if (!m_handle)
+        return;
+
+    kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), mach_task_self(), toVMMemoryLedger(memoryLedger), 0);
+    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+#else
+    UNUSED_PARAM(memoryLedger);
+#endif
+}
+
+void SharedMemory::Handle::setOwnershipOfMemory(const WebCore::ProcessIdentity& processIdentity, MemoryLedger memoryLedger) const
+{
+#if HAVE(TASK_IDENTITY_TOKEN) && HAVE(MACH_MEMORY_ENTRY_OWNERSHIP_IDENTITY_TOKEN_SUPPORT)
+    if (!m_handle)
+        return;
+
+    kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), processIdentity.taskIdToken(), toVMMemoryLedger(memoryLedger), 0);
+    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+#else
+    UNUSED_PARAM(memoryLedger);
+    UNUSED_PARAM(processIdentity);
+#endif
+}
+
+bool SharedMemory::Handle::isNull() const
+{
+    return !m_handle;
+}
+
+void SharedMemory::Handle::clear()
+{
+    *this = { };
+}
+
+std::optional<SharedMemory::Handle> SharedMemory::Handle::create(void* data, size_t size, Protection protection)
+{
+    auto sendRight = makeMemoryEntry(size, toVMAddress(data), protection, MACH_PORT_NULL);
+    if (!sendRight)
+        return std::nullopt;
+    return std::optional<Handle> { std::in_place, WTFMove(sendRight), size };
+}
+
+void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
+{
+    encoder << static_cast<uint64_t>(m_size);
+    encoder << WTFMove(m_handle); // FIXME: add rvalue encode.
+}
+
+bool SharedMemory::Handle::decode(IPC::Decoder& decoder, Handle& handle)
+{
+    ASSERT(!handle.m_handle);
+    ASSERT(!handle.m_size);
+    uint64_t bufferSize;
+    if (!decoder.decode(bufferSize))
+        return false;
+
+    auto sendRight = decoder.decode<MachSendRight>();
+    if (UNLIKELY(!decoder.isValid()))
+        return false;
+
+    handle.m_size = bufferSize;
+    handle.m_handle = WTFMove(*sendRight);
+    return true;
+}
+
+RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
+{
+    ASSERT(size);
+
+    mach_vm_address_t address = 0;
+    // Using VM_FLAGS_PURGABLE so that we can later transfer ownership of the memory via mach_memory_entry_ownership().
+    kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, size, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %" PUBLIC_LOG_STRING " (%x)", nullptr, size, mach_error_string(kr), kr);
+        return nullptr;
+    }
+
+    auto sharedMemory = adoptRef(*new SharedMemory);
+    sharedMemory->m_size = size;
+    sharedMemory->m_data = toPointer(address);
+    sharedMemory->m_protection = Protection::ReadWrite;
+    return WTFMove(sharedMemory);
 }
 
 RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection protection)
@@ -244,33 +258,14 @@ SharedMemory::~SharedMemory()
         }
     }
 }
-    
+
 auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
-{
-    Handle handle;
-    ASSERT(!handle.m_handle);
-    ASSERT(!handle.m_size);
-
-    auto sendRight = createSendRight(protection);
-    if (!sendRight)
-        return std::nullopt;
-
-    handle.m_handle = WTFMove(sendRight);
-    handle.m_size = m_size;
-
-    return WTFMove(handle);
-}
-
-WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 {
     ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
     ASSERT(!!m_data ^ !!m_sendRight);
-
     if (m_sendRight && m_protection == protection)
-        return m_sendRight;
-
-    ASSERT(m_data);
-    return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
+        return std::optional<Handle> { std::in_place, MachSendRight { m_sendRight }, m_size };
+    return Handle::create(m_data, m_size, protection);
 }
 
 } // namespace WebKit

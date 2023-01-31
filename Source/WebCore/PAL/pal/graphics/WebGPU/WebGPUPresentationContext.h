@@ -46,7 +46,9 @@ public:
     virtual void configure(const PresentationConfiguration&) = 0;
     virtual void unconfigure() = 0;
 
-    virtual Texture* getCurrentTexture() = 0;
+    virtual RefPtr<Texture> getCurrentTexture() = 0;
+
+    virtual void present() = 0;
 
 #if PLATFORM(COCOA)
     virtual void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;

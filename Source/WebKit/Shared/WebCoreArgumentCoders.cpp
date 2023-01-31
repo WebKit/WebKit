@@ -262,9 +262,9 @@ void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bo
     SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
 }
     
-bool ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder, RectEdges<bool>& boxEdges)
+std::optional<RectEdges<bool>> ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder)
 {
-    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder, boxEdges);
+    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder);
 }
 
 #if ENABLE(META_VIEWPORT)
@@ -273,17 +273,9 @@ void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportAr
     SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
 }
 
-bool ArgumentCoder<ViewportArguments>::decode(Decoder& decoder, ViewportArguments& viewportArguments)
-{
-    return SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments);
-}
-
 std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& decoder)
 {
-    ViewportArguments viewportArguments;
-    if (!SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments))
-        return std::nullopt;
-    return viewportArguments;
+    return SimpleArgumentCoder<ViewportArguments>::decode(decoder);
 }
 
 #endif // ENABLE(META_VIEWPORT)
@@ -1370,7 +1362,7 @@ void ArgumentCoder<SystemImage>::encode(Encoder& encoder, const SystemImage& sys
 #endif
 #if USE(SYSTEM_PREVIEW)
     case SystemImageType::ARKitBadge:
-        downcast<ARKitBadgeSystemImage>(systemImage).encode(encoder);
+        encoder << downcast<ARKitBadgeSystemImage>(systemImage);
         return;
 #endif
 #if USE(APPKIT)
@@ -1414,8 +1406,13 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
     }
 #endif
 #if USE(SYSTEM_PREVIEW)
-    case SystemImageType::ARKitBadge:
-        return ARKitBadgeSystemImage::decode(decoder);
+    case SystemImageType::ARKitBadge: {
+        std::optional<Ref<ARKitBadgeSystemImage>> image;
+        decoder >> image;
+        if (!image)
+            return std::nullopt;
+        return WTFMove(*image);
+    }
 #endif
 #if USE(APPKIT)
     case SystemImageType::AppKitControl: {

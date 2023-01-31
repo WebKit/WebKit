@@ -304,6 +304,26 @@ static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu
     return FALSE;
 }
 
+#if !ENABLE(2022_GLIB_API)
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMessage* consoleMessage)
+{
+    g_assert_nonnull(consoleMessage);
+    GRefPtr<GVariant> variant = g_variant_new("(uusus)", webkit_console_message_get_source(consoleMessage),
+        webkit_console_message_get_level(consoleMessage), webkit_console_message_get_text(consoleMessage),
+        webkit_console_message_get_line(consoleMessage), webkit_console_message_get_source_id(consoleMessage));
+    GUniquePtr<char> messageString(g_variant_print(variant.get(), FALSE));
+    GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(webkit_web_page_get_main_frame(webPage)));
+    GRefPtr<JSCValue> console = adoptGRef(jsc_context_evaluate(jsContext.get(), "window.webkit.messageHandlers.console", -1));
+    g_assert_true(JSC_IS_VALUE(console.get()));
+    if (jsc_value_is_object(console.get())) {
+        GRefPtr<JSCValue> result = adoptGRef(jsc_value_object_invoke_method(console.get(), "postMessage", G_TYPE_STRING, messageString.get(), G_TYPE_NONE));
+        g_assert_true(JSC_IS_VALUE(result.get()));
+    }
+}
+G_GNUC_END_IGNORE_DEPRECATIONS;
+#endif
+
 static void emitFormControlsAssociated(GDBusConnection* connection, const char* formIds)
 {
     bool ok = g_dbus_connection_emit_signal(
@@ -519,6 +539,7 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
 #if !ENABLE(2022_GLIB_API)
     g_signal_connect(webPage, "form-controls-associated-for-frame", G_CALLBACK(formControlsAssociatedForFrameCallback), extension);
     g_signal_connect(webPage, "will-submit-form", G_CALLBACK(willSubmitFormDeprecatedCallback), extension);
+    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
 #endif
     g_signal_connect(webPage, "user-message-received", G_CALLBACK(pageMessageReceivedCallback), extension);
 

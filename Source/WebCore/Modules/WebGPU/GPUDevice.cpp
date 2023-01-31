@@ -98,7 +98,7 @@ Ref<GPUSupportedLimits> GPUDevice::limits() const
     return GPUSupportedLimits::create(m_backing->limits());
 }
 
-GPUQueue& GPUDevice::queue() const
+Ref<GPUQueue> GPUDevice::queue() const
 {
     return m_queue;
 }
@@ -133,7 +133,7 @@ static PAL::WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSa
             PAL::WebGPU::AddressMode::ClampToEdge,
             PAL::WebGPU::FilterMode::Nearest,
             PAL::WebGPU::FilterMode::Nearest,
-            PAL::WebGPU::FilterMode::Nearest,
+            PAL::WebGPU::MipmapFilterMode::Nearest,
             0,
             32,
             std::nullopt,

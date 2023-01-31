@@ -709,6 +709,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     SetLookalikeCharacterStrings(Vector<String> strings);
+    SetAllowedLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> allowedStrings);
 #endif
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

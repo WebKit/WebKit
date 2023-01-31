@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,11 @@
 
 #include "WebGPURenderPipeline.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/HashMap.h>
 
 namespace PAL::WebGPU {
 
+class BindGroupLayoutImpl;
 class ConvertToBackingContext;
 
 class RenderPipelineImpl final : public RenderPipeline {
@@ -62,6 +64,7 @@ private:
 
     WGPURenderPipeline m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    HashMap<uint32_t, Ref<BindGroupLayoutImpl>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupLayouts;
 };
 
 } // namespace PAL::WebGPU

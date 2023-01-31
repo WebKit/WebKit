@@ -456,6 +456,21 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::currentStateValue() const
     return OpaqueJSString::tryCreate(!value.isNull() ? value : "false"_s).leakRef();
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::sortDirection() const
+{
+    m_element->updateBackingStore();
+    auto sort = m_element->attributes().get("sort"_s);
+
+    if (sort == "ascending"_s)
+        return OpaqueJSString::tryCreate("AXAscendingSortDirection"_s).leakRef();
+    if (sort == "descending"_s)
+        return OpaqueJSString::tryCreate("AXDescendingSortDirection"_s).leakRef();
+    if (sort == "other"_s)
+        return OpaqueJSString::tryCreate("AXUnknownSortDirection"_s).leakRef();
+    
+    return nullptr;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElement::domIdentifier() const
 {
     m_element->updateBackingStore();

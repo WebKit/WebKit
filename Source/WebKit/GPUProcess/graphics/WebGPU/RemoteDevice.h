@@ -75,7 +75,7 @@ public:
 
     void stopListeningForIPC();
 
-    RemoteQueue& queue();
+    Ref<RemoteQueue> queue();
 
 private:
     friend class WebGPU::ObjectHeap;

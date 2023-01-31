@@ -35,6 +35,7 @@
 #import <CoreServices/CoreServices.h>
 #endif
 
+#import "CocoaImage.h"
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
 #import <CoreMedia/CoreMedia.h>
@@ -75,7 +76,7 @@ static PlatformImagePtr squareImage(CGImageRef image)
     return adoptCF(CGImageCreateWithImageInRect(image, squareCropRect));
 }
 
-static PlatformImagePtr thumbnailSizedImageForImage(CGImageRef image)
+static RetainPtr<CocoaImage> thumbnailSizedImageForImage(CGImageRef image)
 {
     auto squaredImage = squareImage(image);
     if (!squaredImage)
@@ -93,20 +94,22 @@ static PlatformImagePtr thumbnailSizedImageForImage(CGImageRef image)
     CGContextDrawImage(context.get(), destinationRect, squaredImage.get());
 
     auto scaledImage = adoptCF(CGBitmapContextCreateImage(context.get()));
-    if (!scaledImage)
-        return squaredImage;
 
-    return scaledImage;
+    auto thumbnailImage = scaledImage.get() ?: squaredImage.get();
+#if USE(APPKIT)
+    return adoptNS([[NSImage alloc] initWithCGImage:thumbnailImage size:NSZeroSize]);
+#else
+    return adoptNS([[UIImage alloc] initWithCGImage:thumbnailImage]);
+#endif
 }
 
-PlatformImagePtr fallbackIconForFile(NSURL *file)
+RetainPtr<CocoaImage> fallbackIconForFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
 #if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFileType:[@"." stringByAppendingString:file.pathExtension]];
-    return [icon CGImageForProposedRect:nil context:nil hints:nil];
+    return [[NSWorkspace sharedWorkspace] iconForFileType:[@"." stringByAppendingString:file.pathExtension]];
 ALLOW_DEPRECATED_DECLARATIONS_END
 #else
     UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL:file];
@@ -118,7 +121,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 const CFStringRef kCGImageSourceEnableRestrictedDecoding = CFSTR("kCGImageSourceEnableRestrictedDecoding");
 
-PlatformImagePtr iconForImageFile(NSURL *file)
+RetainPtr<CocoaImage> iconForImageFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
@@ -138,7 +141,7 @@ PlatformImagePtr iconForImageFile(NSURL *file)
     return thumbnailSizedImageForImage(thumbnail.get());
 }
 
-PlatformImagePtr iconForVideoFile(NSURL *file)
+RetainPtr<CocoaImage> iconForVideoFile(NSURL *file)
 {
     ASSERT_ARG(file, [file isFileURL]);
 
@@ -158,7 +161,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return thumbnailSizedImageForImage(imageRef.get());
 }
 
-PlatformImagePtr iconForFiles(const Vector<String>& filenames)
+RetainPtr<CocoaImage> iconForFiles(const Vector<String>& filenames)
 {
     if (!filenames.size())
         return nil;

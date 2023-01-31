@@ -515,9 +515,6 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
     switch (character) {
     case newlineCharacter:
     case carriageReturn:
-    case zeroWidthNoBreakSpace:
-    case zeroWidthNonJoiner:
-    case zeroWidthJoiner:
         return true;
     case tabCharacter:
         if (!whitespaceIsCollapsed)
@@ -537,6 +534,9 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
     case popDirectionalIsolate:
     case firstStrongIsolate:
     case objectReplacementCharacter:
+    case zeroWidthNoBreakSpace:
+    case zeroWidthNonJoiner:
+    case zeroWidthJoiner:
         return false;
         break;
     }

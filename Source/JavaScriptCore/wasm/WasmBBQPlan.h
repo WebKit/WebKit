@@ -46,7 +46,7 @@ namespace Wasm {
 
 class BBQCallee;
 class CalleeGroup;
-class EmbedderEntrypointCallee;
+class JSEntrypointCallee;
 
 class BBQPlan final : public EntryPlan {
 public:
@@ -65,7 +65,7 @@ public:
 
     void work(CompilationEffort) final;
 
-    using CalleeInitializer = Function<void(uint32_t, RefPtr<EmbedderEntrypointCallee>&&, Ref<BBQCallee>&&)>;
+    using CalleeInitializer = Function<void(uint32_t, RefPtr<JSEntrypointCallee>&&, Ref<BBQCallee>&&)>;
     void initializeCallees(const CalleeInitializer&);
 
     bool didReceiveFunctionData(unsigned, const FunctionData&) final;
@@ -88,7 +88,7 @@ private:
     Vector<std::unique_ptr<InternalFunction>> m_wasmInternalFunctions;
     Vector<std::unique_ptr<LinkBuffer>> m_wasmInternalFunctionLinkBuffers;
     Vector<Vector<CodeLocationLabel<ExceptionHandlerPtrTag>>> m_exceptionHandlerLocations;
-    HashMap<uint32_t, std::tuple<RefPtr<EmbedderEntrypointCallee>, std::unique_ptr<LinkBuffer>, std::unique_ptr<InternalFunction>>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_embedderToWasmInternalFunctions;
+    HashMap<uint32_t, std::tuple<RefPtr<JSEntrypointCallee>, std::unique_ptr<LinkBuffer>, std::unique_ptr<InternalFunction>>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsToWasmInternalFunctions;
     Vector<CompilationContext> m_compilationContexts;
     Vector<RefPtr<BBQCallee>> m_callees;
     Vector<Vector<CodeLocationLabel<WasmEntryPtrTag>>> m_allLoopEntrypoints;

@@ -1030,7 +1030,7 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
                 // 1. Emit less code.
                 // 2. Try to speed things up by skipping stack checks.
                 minimumParentCheckSize,
-                // This allows us to elide stack checks in the Wasm -> Embedder call IC stub. Since these will
+                // This allows us to elide stack checks in the Wasm -> JS call IC stub. Since these will
                 // spill all arguments to the stack, we ensure that a stack check here covers the
                 // stack that such a stub would use.
                 Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jsCallingConvention().headerSizeInBytes
@@ -3168,7 +3168,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
 
-        auto emitCallToEmbedder = [&, this](CallPatchpointData data) -> void {
+        auto emitCallToImport = [&, this](CallPatchpointData data) -> void {
             CallPatchpointData::first_type patchpoint = data.first;
             CallPatchpointData::second_type handle = data.second;
             // We need to clobber all potential pinned registers since we might be leaving the instance.
@@ -3181,7 +3181,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
                     prepareForTailCall(jit, params, tailCallStackOffsetFromFP);
                 if (handle)
                     handle->generate(jit, params, this);
-                JIT_COMMENT(jit, "Wasm to embedder imported function call patchpoint");
+                JIT_COMMENT(jit, "Wasm to imported function call patchpoint");
                 if (isTailCall) {
                     // In tail-call, we always configure JSWebAssemblyInstance* in |this| to anchor it from conservative GC roots.
                     CCallHelpers::Address thisSlot(CCallHelpers::stackPointerRegister, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register)) - prologueStackPointerDelta());
@@ -3201,11 +3201,11 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCall(uint32_t functionIndex
         append(Move, Arg::addr(jumpDestination), jumpDestination);
 
         if (isTailCall) {
-            emitCallToEmbedder(self().emitTailCallPatchpoint(m_currentBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
+            emitCallToImport(self().emitTailCallPatchpoint(m_currentBlock, tailCallStackOffsetFromFP, wasmCalleeInfo.params, args, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
             return { };
         }
 
-        emitCallToEmbedder(self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
+        emitCallToImport(self().emitCallPatchpoint(m_currentBlock, self().toB3ResultType(&signature), results, args, wasmCalleeInfo, { { jumpDestination, B3::ValueRep(GPRInfo::nonPreservedNonArgumentGPR0) } }));
 
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
         restoreWebAssemblyGlobalState(m_info.memory, currentInstance, m_currentBlock);
@@ -3272,8 +3272,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallIndirect(unsigned table
     ASSERT(m_info.tables[tableIndex].type() == TableElementType::Funcref);
 
     // Note: call indirect can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
-    // WebAssemblyWrapperFunction is like calling into the embedder, we conservatively assume all call indirects
-    // can be to the embedder for our stack check calculation.
+    // WebAssemblyWrapperFunction is like calling into the js, we conservatively assume all call indirects
+    // can be to the js for our stack check calculation.
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
 
     ExpressionType callableFunctionBuffer = self().gPtr();
@@ -3351,8 +3351,8 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addCallRef(const TypeDefinitio
 {
     m_makesCalls = true;
     // Note: call ref can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
-    // WebAssemblyWrapperFunction is like calling into the embedder, we conservatively assume all call indirects
-    // can be to the embedder for our stack check calculation.
+    // WebAssemblyWrapperFunction is like calling into the js, we conservatively assume all call indirects
+    // can be to the js for our stack check calculation.
     ExpressionType calleeFunction = args.takeLast();
     m_maxNumJSCallArguments = std::max(m_maxNumJSCallArguments, static_cast<uint32_t>(args.size()));
     const TypeDefinition& signature = originalSignature.expand();

@@ -1260,6 +1260,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
     page/LayoutMilestone.h
+    page/LookalikeCharactersSanitizationData.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h
     page/MediaProducer.h
@@ -1650,7 +1651,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GradientColorStops.h
     platform/graphics/GraphicsContext.h
     platform/graphics/GraphicsContextGL.h
+    platform/graphics/GraphicsContextGLActiveInfo.h
     platform/graphics/GraphicsContextGLAttributes.h
+    platform/graphics/GraphicsContextGLEnums.h
     platform/graphics/GraphicsContextGLState.h
     platform/graphics/GraphicsContextState.h
     platform/graphics/GraphicsContextStateSaver.h
@@ -1669,6 +1672,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBuffer.h
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
+    platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h
     platform/graphics/ImageFrame.h
     platform/graphics/ImageObserver.h

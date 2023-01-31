@@ -1657,12 +1657,20 @@ RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValue
     return consumeIdent(range);
 }
 
-RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
+static String consumeCustomIdentRaw(CSSParserTokenRange& range, bool shouldLowercase = false)
 {
     if (range.peek().type() != IdentToken || !isValidCustomIdentifier(range.peek().id()))
-        return nullptr;
+        return String();
     auto identifier = range.consumeIncludingWhitespace().value();
-    return CSSPrimitiveValue::createCustomIdent(shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString());
+    return shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString();
+}
+
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
+{
+    auto identifier = consumeCustomIdentRaw(range, shouldLowercase);
+    if (identifier.isNull())
+        return nullptr;
+    return CSSPrimitiveValue::createCustomIdent(WTFMove(identifier));
 }
 
 RefPtr<CSSPrimitiveValue> consumeDashedIdent(CSSParserTokenRange& range, bool shouldLowercase)
@@ -6522,35 +6530,31 @@ RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext& c
     return CSSPrimitiveValue::create(attrName, CSSUnitType::CSS_ATTR);
 }
 
-RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool counters)
+static RefPtr<CSSPrimitiveValue> consumeCounterContent(CSSParserTokenRange args, bool counters)
 {
-    RefPtr<CSSPrimitiveValue> identifier = consumeCustomIdent(args);
-    if (!identifier)
+    AtomString identifier { consumeCustomIdentRaw(args) };
+    if (identifier.isNull())
         return nullptr;
 
-    RefPtr<CSSPrimitiveValue> separator;
-    if (!counters)
-        separator = CSSPrimitiveValue::create(String(), CSSUnitType::CSS_STRING);
-    else {
+    AtomString separator;
+    if (counters) {
         if (!consumeCommaIncludingWhitespace(args) || args.peek().type() != StringToken)
             return nullptr;
-        separator = CSSPrimitiveValue::create(args.consumeIncludingWhitespace().value().toString(), CSSUnitType::CSS_STRING);
+        separator = args.consumeIncludingWhitespace().value().toAtomString();
     }
 
-    RefPtr<CSSPrimitiveValue> listStyle;
+    auto listStyle = CSSValueDecimal;
     if (consumeCommaIncludingWhitespace(args)) {
-        CSSValueID id = args.peek().id();
-        if ((id != CSSValueNone && !isPredefinedCounterStyle(id)))
+        listStyle = args.peek().id();
+        if (listStyle != CSSValueNone && !isPredefinedCounterStyle(listStyle))
             return nullptr;
-        listStyle = consumeIdent(args);
-    } else
-        listStyle = CSSPrimitiveValue::create(CSSValueDecimal);
+        args.consumeIncludingWhitespace();
+    }
 
     if (!args.atEnd())
         return nullptr;
-    
-    // FIXME-NEWPARSER: Should just have a CSSCounterValue.
-    return CSSPrimitiveValue::create(Counter::create(identifier.releaseNonNull(), listStyle.releaseNonNull(), separator.releaseNonNull()));
+
+    return CSSPrimitiveValue::create(Counter::create(WTFMove(identifier), WTFMove(separator), listStyle));
 }
 
 RefPtr<CSSValue> consumeContent(CSSParserTokenRange& range, const CSSParserContext& context)

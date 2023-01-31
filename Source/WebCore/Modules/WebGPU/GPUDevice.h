@@ -91,7 +91,7 @@ public:
     Ref<GPUSupportedFeatures> features() const;
     Ref<GPUSupportedLimits> limits() const;
 
-    GPUQueue& queue() const;
+    Ref<GPUQueue> queue() const;
 
     void destroy();
 

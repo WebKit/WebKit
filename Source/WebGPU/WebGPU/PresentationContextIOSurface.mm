@@ -28,21 +28,7 @@
 
 #import "APIConversions.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
-
-// borrowed from pal/spi/cocoa/IOTypesSPI.h
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
-#include <IOKit/IOTypes.h>
-#else
-
-enum {
-    kIOWriteCombineCache = 4,
-};
-
-enum {
-    kIOMapCacheShift = 8,
-    kIOMapWriteCombineCache = kIOWriteCombineCache << kIOMapCacheShift,
-};
-#endif
+#import <wtf/spi/cocoa/IOTypesSPI.h>
 
 namespace WebGPU {
 
@@ -102,6 +88,11 @@ void PresentationContextIOSurface::configure(Device&, const WGPUSwapChainDescrip
 void PresentationContextIOSurface::present()
 {
     nextDrawable();
+}
+
+Texture* PresentationContextIOSurface::getCurrentTexture()
+{
+    return nullptr;
 }
 
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
