@@ -528,8 +528,10 @@ BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
             continue;
 
         ASSERT(binding.type == MTLBindingTypeBuffer);
-        for (MTLStructMember *structMember in binding.bufferStructType.members)
-            entries.append(BindGroupLayout::createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Vertex));
+        for (MTLStructMember *structMember in binding.bufferStructType.members) {
+            if (structMember.dataType != MTLDataTypeUInt)
+                entries.append(BindGroupLayout::createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Vertex));
+        }
     }
 
     for (id<MTLBufferBinding> binding in m_reflection.fragmentBindings) {
@@ -537,8 +539,10 @@ BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
             continue;
 
         ASSERT(binding.type == MTLBindingTypeBuffer);
-        for (MTLStructMember *structMember in binding.bufferStructType.members)
-            entries.append(BindGroupLayout::createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Fragment));
+        for (MTLStructMember *structMember in binding.bufferStructType.members) {
+            if (structMember.dataType != MTLDataTypeUInt)
+                entries.append(BindGroupLayout::createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Fragment));
+        }
     }
 
     WGPUBindGroupLayoutDescriptor bindGroupLayoutDescriptor = { };

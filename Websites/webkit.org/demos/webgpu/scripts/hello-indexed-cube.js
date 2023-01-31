@@ -114,14 +114,16 @@ async function helloCube() {
     
                 struct VertexShaderArguments {
                     device float *time [[id(0)]];
+                    uint32_t bufferLength;
                 };
     
                 vertex Vertex vsmain(device Vertex *vertices [[buffer(0)]], device VertexShaderArguments &values [[buffer(8)]], unsigned VertexIndex [[vertex_id]])
                 {
                     Vertex vout;
-                    float alpha = values.time[0];
-                    float beta = values.time[1];
-                    float gamma = values.time[2];
+                    uint32_t bufferLength = values.bufferLength / sizeof(float);
+                    float alpha = values.time[min(0u, bufferLength - 1)];
+                    float beta = values.time[min(1u, bufferLength - 1)];
+                    float gamma = values.time[min(2u, bufferLength - 1)];
                     float cA = cos(alpha);
                     float sA = sin(alpha);
                     float cB = cos(beta);

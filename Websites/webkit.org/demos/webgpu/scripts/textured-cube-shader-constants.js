@@ -171,6 +171,7 @@ async function helloCube() {
     
                 struct VertexShaderArguments {
                     device float *time [[id(0)]];
+                    uint32_t bufferLength;
                 };
     
                 struct FragmentShaderArguments {

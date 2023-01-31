@@ -134,6 +134,7 @@ async function helloCube() {
     
                 struct VertexShaderArguments {
                     device float *time [[id(0)]];
+                    uint32_t bufferLength;
                 };
     
                 vertex Vertex vsmain(device Vertex *vertices [[buffer(0)]], device VertexShaderArguments &values [[buffer(8)]], unsigned VertexIndex [[vertex_id]])

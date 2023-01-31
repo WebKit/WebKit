@@ -241,8 +241,10 @@ BindGroupLayout* ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
             continue;
 
         ASSERT(binding.type == MTLBindingTypeBuffer);
-        for (MTLStructMember *structMember in binding.bufferStructType.members)
-            entries.append(BindGroupLayout::createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Compute));
+        for (MTLStructMember *structMember in binding.bufferStructType.members) {
+            if (structMember.dataType != MTLDataTypeUInt)
+                entries.append(BindGroupLayout::createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Compute));
+        }
     }
 
     WGPUBindGroupLayoutDescriptor bindGroupLayoutDescriptor = { };

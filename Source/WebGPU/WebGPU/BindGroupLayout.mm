@@ -128,6 +128,17 @@ static bool containsStage(WGPUShaderStageFlags stageBitfield, auto stage)
     return stageBitfield & (1 << static_cast<uint32_t>(stage));
 }
 
+static MTLArgumentDescriptor *makeBufferLengthDescriptorForBinding(const WGPUBufferBindingLayout& buffer)
+{
+    if (buffer.nextInChain)
+        return nil;
+
+    auto descriptor = [MTLArgumentDescriptor argumentDescriptor];
+    descriptor.dataType = MTLDataTypeUInt;
+    descriptor.access = MTLArgumentAccessReadOnly;
+    return descriptor;
+}
+
 Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor& descriptor)
 {
     if (descriptor.nextInChain || !descriptor.entryCount)
@@ -148,7 +159,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         shaderStageForBinding.add(entry.binding + 1, entry.visibility);
         MTLArgumentDescriptor *descriptor = nil;
 
-        if (isPresent(entry.buffer))
+        bool isBuffer = isPresent(entry.buffer);
+        if (isBuffer)
             descriptor = createArgumentDescriptor(entry.buffer);
         else if (isPresent(entry.sampler))
             descriptor = createArgumentDescriptor(entry.sampler);
@@ -161,8 +173,11 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             return BindGroupLayout::createInvalid(*this);
 
         for (size_t stage = 0; stage < stageCount; ++stage) {
-            if (containsStage(entry.visibility, stage))
+            if (containsStage(entry.visibility, stage)) {
                 addDescriptor(arguments[stage], descriptor);
+                if (isBuffer)
+                    addDescriptor(arguments[stage], makeBufferLengthDescriptorForBinding(entry.buffer));
+            }
         }
     }
 

@@ -146,7 +146,9 @@ async function helloCube() {
     
                 struct VertexShaderArguments {
                     device float *time [[id(0)]];
-                    device float4 *translation [[id(1)]];
+                    uint32_t timeLength [[id(1)]];
+                    device float4 *translation [[id(2)]];
+                    uint32_t translationLength [[id(3)]];
                 };
     
                 struct FragmentShaderArguments {
@@ -158,9 +160,10 @@ async function helloCube() {
                 {
                     VertexOut vout;
                     unsigned offset = InstanceIndex * 3;
-                    float alpha = values.time[offset];
-                    float beta = values.time[offset + 1];
-                    float gamma = values.time[offset + 2];
+                    uint32_t timeLength = values.timeLength / sizeof(values.time[0]);
+                    float alpha = values.time[min(timeLength, offset)];
+                    float beta = values.time[min(timeLength, offset + 1)];
+                    float gamma = values.time[min(timeLength, offset + 2)];
                     float cA = cos(alpha);
                     float sA = sin(alpha);
                     float cB = cos(beta);
@@ -172,7 +175,8 @@ async function helloCube() {
                                           cA*sB*sG - sA*cG,  sA*sB*sG + cA*cG,   cB * sG, 0,
                                           cA*sB*cG + sA*sG, sA*sB*cG - cA*sG, cB * cG, 0,
                                           0,     0,     0, 1);
-                    float4 translation = values.translation[InstanceIndex];
+                    uint32_t translationLength = values.translationLength / sizeof(values.translation[0]);
+                    float4 translation = values.translation[min(translationLength, InstanceIndex)];
 
                     VertexIn vin = *(device VertexIn*)(vertices + VertexIndex * vertexInputPackedFloatSize);
                     vout.position = vin.position * m + translation;

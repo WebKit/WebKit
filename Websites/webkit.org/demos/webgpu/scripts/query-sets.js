@@ -90,6 +90,7 @@ async function helloTriangle() {
     
                 struct VertexShaderArguments {
                     device float *time [[id(0)]];
+                    uint32_t bufferLength;
                 };
 
                 vertex Vertex vsmain(const device VertexShaderArguments &values [[buffer(8)]], unsigned VertexIndex [[vertex_id]])
