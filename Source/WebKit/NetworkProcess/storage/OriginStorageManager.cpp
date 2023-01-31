@@ -65,7 +65,8 @@ public:
     void setMode(StorageBucketMode mode) { m_mode = mode; }
     void connectionClosed(IPC::Connection::UniqueID);
     String typeStoragePath(StorageType) const;
-    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
+    FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, FileSystemStorageManager::QuotaCheckFunction&&);
+    FileSystemStorageManager* existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
     LocalStorageManager* existingLocalStorageManager() { return m_localStorageManager.get(); }
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
@@ -188,10 +189,10 @@ String OriginStorageManager::StorageBucket::typeStoragePath(StorageType type) co
     return FileSystem::pathByAppendingComponent(m_rootPath, storageIdentifier);
 }
 
-FileSystemStorageManager& OriginStorageManager::StorageBucket::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
+FileSystemStorageManager& OriginStorageManager::StorageBucket::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry, FileSystemStorageManager::QuotaCheckFunction&& quotaCheckFunction)
 {
     if (!m_fileSystemStorageManager)
-        m_fileSystemStorageManager = makeUnique<FileSystemStorageManager>(typeStoragePath(StorageType::FileSystem), registry);
+        m_fileSystemStorageManager = makeUnique<FileSystemStorageManager>(typeStoragePath(StorageType::FileSystem), registry, WTFMove(quotaCheckFunction));
 
     return *m_fileSystemStorageManager;
 }
@@ -568,12 +569,24 @@ String OriginStorageManager::originFileIdentifier()
     return originFileName;
 }
 
-static Ref<QuotaManager> createQuotaManager(uint64_t quota, const String& idbStoragePath, const String& cacheStoragePath, QuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction)
+Ref<QuotaManager> OriginStorageManager::createQuotaManager()
 {
-    QuotaManager::GetUsageFunction getUsageFunction = [idbStoragePath, cacheStoragePath]() {
-        return IDBStorageManager::idbStorageSize(idbStoragePath) + CacheStorageManager::cacheStorageSize(cacheStoragePath);
+    auto idbStoragePath = resolvedPath(WebsiteDataType::IndexedDBDatabases);
+    auto cacheStoragePath = resolvedPath(WebsiteDataType::DOMCache);
+    auto fileSystemStoragePath = resolvedPath(WebsiteDataType::FileSystem);
+    QuotaManager::GetUsageFunction getUsageFunction = [this, weakThis = WeakPtr { *this }, idbStoragePath, cacheStoragePath, fileSystemStoragePath]() {
+        uint64_t fileSystemStorageSize = valueOrDefault(FileSystem::directorySize(fileSystemStoragePath));
+        if (weakThis) {
+            if (auto* fileSystemStorageManager = existingFileSystemStorageManager()) {
+                CheckedUint64 totalFileSystemStorageSize = fileSystemStorageSize;
+                totalFileSystemStorageSize += fileSystemStorageManager->allocatedUnusedCapacity();
+                if (!totalFileSystemStorageSize.hasOverflowed())
+                    fileSystemStorageSize = totalFileSystemStorageSize;
+            }
+        }
+        return IDBStorageManager::idbStorageSize(idbStoragePath) + CacheStorageManager::cacheStorageSize(cacheStoragePath) + fileSystemStorageSize;
     };
-    return QuotaManager::create(quota, WTFMove(getUsageFunction), WTFMove(increaseQuotaFunction));
+    return QuotaManager::create(m_quota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }));
 }
 
 OriginStorageManager::OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
@@ -606,18 +619,28 @@ OriginStorageManager::StorageBucket& OriginStorageManager::defaultBucket()
 
 QuotaManager& OriginStorageManager::quotaManager()
 {
-    if (!m_quotaManager) {
-        auto idbStoragePath = defaultBucket().resolvedIDBStoragePath();
-        auto cacheStoragePath = defaultBucket().resolvedCacheStoragePath();
-        m_quotaManager = createQuotaManager(m_quota, idbStoragePath, cacheStoragePath, std::exchange(m_increaseQuotaFunction, { }));
-    }
+    if (!m_quotaManager)
+        m_quotaManager = createQuotaManager();
 
     return *m_quotaManager;
 }
 
 FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
 {
-    return defaultBucket().fileSystemStorageManager(registry);
+    return defaultBucket().fileSystemStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+        auto strongReference = quotaManager.get();
+        if (!strongReference)
+            return completionHandler(false);
+
+        strongReference->requestSpace(spaceRequested, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
+            completionHandler(decision == QuotaManager::Decision::Grant);
+        });
+    });
+}
+
+FileSystemStorageManager* OriginStorageManager::existingFileSystemStorageManager()
+{
+    return defaultBucket().existingFileSystemStorageManager();
 }
 
 LocalStorageManager& OriginStorageManager::localStorageManager(StorageAreaRegistry& registry)

@@ -25,12 +25,12 @@
 
 #pragma once
 
+#include "FileHandle.h"
 #include "FileSystemHandleIdentifier.h"
 #include "FileSystemSyncAccessHandleIdentifier.h"
 #include "ProcessQualified.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/FileSystem.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
@@ -49,10 +49,17 @@ public:
     using SameEntryCallback = CompletionHandler<void(ExceptionOr<bool>&&)>;
     using GetHandleCallback = CompletionHandler<void(ExceptionOr<Ref<FileSystemHandleCloseScope>>&&)>;
     using ResolveCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
-    using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<std::pair<FileSystemSyncAccessHandleIdentifier, FileHandle>>&&)>;
+    struct SyncAccessHandleInfo {
+        FileSystemSyncAccessHandleIdentifier identifier;
+        FileHandle file;
+        uint64_t capacity { 0 };
+        SyncAccessHandleInfo isolatedCopy() && { return { identifier, WTFMove(file).isolatedCopy(), capacity }; }
+    };
+    using GetAccessHandleCallback = CompletionHandler<void(ExceptionOr<SyncAccessHandleInfo>&&)>;
     using VoidCallback = CompletionHandler<void(ExceptionOr<void>&&)>;
     using GetHandleNamesCallback = CompletionHandler<void(ExceptionOr<Vector<String>>&&)>;
     using StringCallback = CompletionHandler<void(ExceptionOr<String>&&)>;
+    using RequestCapacityCallback = CompletionHandler<void(std::optional<uint64_t>&&)>;
 
     virtual bool isWorker() const { return false; }
     virtual void closeHandle(FileSystemHandleIdentifier) = 0;
@@ -65,6 +72,7 @@ public:
     virtual void getFile(FileSystemHandleIdentifier, StringCallback&&) = 0;
     virtual void createSyncAccessHandle(FileSystemHandleIdentifier, GetAccessHandleCallback&&) = 0;
     virtual void closeSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, VoidCallback&&) = 0;
+    virtual void requestNewCapacityForSyncAccessHandle(FileSystemHandleIdentifier, FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity, RequestCapacityCallback&&) = 0;
     virtual void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, ScriptExecutionContextIdentifier) = 0;
     virtual void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier) = 0;
     virtual void invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) = 0;
