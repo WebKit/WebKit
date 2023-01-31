@@ -2944,6 +2944,7 @@ struct WebCore::FourCC {
     uint32_t value;
 };
 
+#if ENABLE(VIDEO)
 header: <WebCore/MediaPlayer.h>
 [CustomHeader] struct WebCore::MediaEngineSupportParameters {
     WebCore::ContentType type;
@@ -2958,6 +2959,7 @@ header: <WebCore/MediaPlayer.h>
     std::optional<Vector<WebCore::FourCC>> allowedMediaAudioCodecIDs;
     std::optional<Vector<WebCore::FourCC>> allowedMediaCaptionFormatTypes;
 };
+#endif
 
 enum class WebCore::MediaPlayerNetworkState : uint8_t {
     Empty,
