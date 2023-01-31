@@ -72,7 +72,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_componentFunctions = {
         else if (!g_strcmp0(methodName, "ScrollTo")) {
             uint32_t scrollType;
             g_variant_get(parameters, "(u)", &scrollType);
-            atspiObject->scrollToMakeVisible(scrollType);
+            atspiObject->scrollToMakeVisible(static_cast<Atspi::ScrollType>(scrollType));
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", TRUE));
         } else if (!g_strcmp0(methodName, "ScrollToPoint")) {
             int x, y;
@@ -160,7 +160,7 @@ float AccessibilityObjectAtspi::opacity() const
     return 1;
 }
 
-void AccessibilityObjectAtspi::scrollToMakeVisible(uint32_t scrollType) const
+void AccessibilityObjectAtspi::scrollToMakeVisible(Atspi::ScrollType scrollType) const
 {
     auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject);
     if (!liveObject)

@@ -246,7 +246,7 @@ enum ComponentLayer {
     WindowLayer,
 };
 
-enum ScrollType {
+enum class ScrollType {
     TopLeft,
     BottomRight,
     TopEdge,

@@ -199,7 +199,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             int start, end;
             uint32_t scrollType;
             g_variant_get(parameters, "(iiu)", &start, &end, &scrollType);
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->scrollToMakeVisible(start, end, scrollType)));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(b)", atspiObject->scrollToMakeVisible(start, end, static_cast<Atspi::ScrollType>(scrollType))));
         } else if (!g_strcmp0(methodName, "ScrollSubstringToPoint")) {
             int start, end, x, y;
             uint32_t coordinateType;
@@ -936,7 +936,7 @@ void AccessibilityObjectAtspi::textAttributesChanged()
     AccessibilityAtspi::singleton().textAttributesChanged(*this);
 }
 
-bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffset, uint32_t scrollType) const
+bool AccessibilityObjectAtspi::scrollToMakeVisible(int startOffset, int endOffset, Atspi::ScrollType scrollType) const
 {
     auto utf16Text = text();
     auto utf8Text = utf16Text.utf8();

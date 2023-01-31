@@ -97,7 +97,7 @@ public:
 
     WEBCORE_EXPORT AccessibilityObjectAtspi* hitTest(const IntPoint&, Atspi::CoordinateType) const;
     WEBCORE_EXPORT IntRect elementRect(Atspi::CoordinateType) const;
-    WEBCORE_EXPORT void scrollToMakeVisible(uint32_t) const;
+    WEBCORE_EXPORT void scrollToMakeVisible(Atspi::ScrollType) const;
     WEBCORE_EXPORT void scrollToPoint(const IntPoint&, Atspi::CoordinateType) const;
 
     WEBCORE_EXPORT String text() const;
@@ -195,7 +195,7 @@ private:
     bool selectionBounds(int&, int&) const;
     bool selectRange(int, int);
     TextAttributes textAttributesWithUTF8Offset(std::optional<int> = std::nullopt, bool = false) const;
-    bool scrollToMakeVisible(int, int, uint32_t) const;
+    bool scrollToMakeVisible(int, int, Atspi::ScrollType) const;
     bool scrollToPoint(int, int, Atspi::CoordinateType, int, int) const;
 
     unsigned offsetInParent() const;
