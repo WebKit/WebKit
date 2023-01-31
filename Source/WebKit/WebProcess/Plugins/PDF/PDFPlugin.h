@@ -49,6 +49,7 @@
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 typedef const struct OpaqueJSValue* JSValueRef;
+typedef struct OpaqueJSClass* JSClassRef;
 
 OBJC_CLASS NSArray;
 OBJC_CLASS NSAttributedString;
@@ -286,6 +287,7 @@ private:
 #endif
 
     JSObjectRef makeJSPDFDoc(JSContextRef);
+    static JSClassRef jsPDFDocClass();
     static JSValueRef jsPDFDocPrint(JSContextRef, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
     void setSuggestedFilename(const String&);
