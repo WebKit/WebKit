@@ -256,6 +256,10 @@
 5990 PIXEL4ORXL VULKAN : KHR-GLES31.core.sample_variables.mask.rgba8ui.samples_4.mask_7 = SKIP
 5990 PIXEL4ORXL VULKAN : KHR-GLES31.core.sample_variables.mask.rgba8ui.samples_4.mask_zero = SKIP
 
+// Blocked on https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/4230
+7957 : KHR-GLES31.core.polygon_offset_clamp.PolygonOffsetClampMinMax = SKIP
+7957 : KHR-GLES31.core.polygon_offset_clamp.PolygonOffsetClampZeroInfinity = SKIP
+
 // Slow tests
 5755 SWIFTSHADER : KHR-GLES31.core.arrays_of_arrays.SizedDeclarationsPrimitive = TIMEOUT
 6295 : KHR-GLES31.core.arrays_of_arrays.ConstructorsAndUnsizedDeclConstructors1 = TIMEOUT

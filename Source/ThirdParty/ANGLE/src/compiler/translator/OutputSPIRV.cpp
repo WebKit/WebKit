@@ -450,6 +450,7 @@ spv::StorageClass GetStorageClass(const TType &type, GLenum shaderType)
         case EvqLocalInvocationIndex:
         case EvqViewIDOVR:
         case EvqLayerIn:
+        case EvqLastFragColor:
             return spv::StorageClassInput;
 
         case EvqPosition:
@@ -671,7 +672,7 @@ spirv::IdRef OutputSPIRVTraverser::getSymbolIdAndStorageClass(const TSymbol *sym
 
     const spirv::IdRef typeId = mBuilder.getTypeData(type, {}).id;
     const spirv::IdRef varId  = mBuilder.declareVariable(
-         typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name);
+        typeId, *storageClass, mBuilder.getDecorations(type), nullptr, name);
 
     mBuilder.addEntryPointInterfaceVariableId(varId);
     spirv::WriteDecorate(mBuilder.getSpirvDecorations(), varId, spv::DecorationBuiltIn,

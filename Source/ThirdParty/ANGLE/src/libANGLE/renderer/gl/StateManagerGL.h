@@ -59,6 +59,7 @@ struct ExternalContextState
     GLfloat lineWidth;
     GLfloat polygonOffsetFactor;
     GLfloat polygonOffsetUnits;
+    GLfloat polygonOffsetClamp;
     GLfloat sampleCoverageValue;
     bool sampleCoverageInvert;
     GLenum blendEquationRgb;
@@ -226,7 +227,7 @@ class StateManagerGL final : angle::NonCopyable
     void setCullFace(gl::CullFaceMode cullFace);
     void setFrontFace(GLenum frontFace);
     void setPolygonOffsetFillEnabled(bool enabled);
-    void setPolygonOffset(float factor, float units);
+    void setPolygonOffset(float factor, float units, float clamp);
     void setRasterizerDiscardEnabled(bool enabled);
     void setLineWidth(float width);
 
@@ -491,6 +492,7 @@ class StateManagerGL final : angle::NonCopyable
     bool mPolygonOffsetFillEnabled;
     GLfloat mPolygonOffsetFactor;
     GLfloat mPolygonOffsetUnits;
+    GLfloat mPolygonOffsetClamp;
     bool mRasterizerDiscardEnabled;
     float mLineWidth;
 

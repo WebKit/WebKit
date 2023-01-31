@@ -727,6 +727,8 @@ class GraphicsPipelineDesc final
                            angle::FormatID format,
                            bool compressed,
                            GLuint relativeOffset);
+    void setVertexShaderComponentTypes(gl::AttributesMask activeAttribLocations,
+                                       gl::ComponentTypeMask componentTypeMask);
     void updateVertexShaderComponentTypes(GraphicsPipelineTransitionBits *transition,
                                           gl::AttributesMask activeAttribLocations,
                                           gl::ComponentTypeMask componentTypeMask);
@@ -1516,9 +1518,10 @@ struct DescriptorInfoDesc
     uint32_t imageViewSerialOrOffset;
     uint32_t imageLayoutOrRange;  // Packed VkImageLayout
     uint32_t imageSubresourceRange;
+    uint32_t binding;  // TODO(anglebug.com/7974): Could be made implicit?
 };
 
-static_assert(sizeof(DescriptorInfoDesc) == 16, "Size mismatch");
+static_assert(sizeof(DescriptorInfoDesc) == 20, "Size mismatch");
 
 // Generic description of a descriptor set. Used as a key when indexing descriptor set caches. The
 // key storage is an angle:FixedVector. Beyond a certain fixed size we'll end up using heap memory
@@ -1759,7 +1762,9 @@ class DescriptorSetDescBuilder final
 };
 
 // Specialized update for textures.
-void UpdatePreCacheActiveTextures(const std::vector<gl::SamplerBinding> &samplerBindings,
+void UpdatePreCacheActiveTextures(const gl::ProgramExecutable &executable,
+                                  const ProgramExecutableVk &executableVk,
+                                  const std::vector<gl::SamplerBinding> &samplerBindings,
                                   const gl::ActiveTextureMask &activeTextures,
                                   const gl::ActiveTextureArray<TextureVk *> &textures,
                                   const gl::SamplerBindingVector &samplers,

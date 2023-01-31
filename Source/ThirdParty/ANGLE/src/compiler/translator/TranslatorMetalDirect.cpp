@@ -35,7 +35,6 @@
 #include "compiler/translator/tree_ops/ConvertUnsupportedConstructorsToFunctionCalls.h"
 #include "compiler/translator/tree_ops/InitializeVariables.h"
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
-#include "compiler/translator/tree_ops/NameNamelessUniformBuffers.h"
 #include "compiler/translator/tree_ops/RemoveAtomicCounterBuiltins.h"
 #include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
 #include "compiler/translator/tree_ops/RewriteArrayOfArrayOfOpaqueUniforms.h"
@@ -1088,25 +1087,6 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
     if (!SeparateCompoundExpressions(*this, symbolEnv, idGen, *root))
     {
         return false;
-    }
-
-    if (compileOptions.rewriteRowMajorMatrices && getShaderVersion() >= 300)
-    {
-        // "Make sure every uniform buffer variable has a name.  The following transformation
-        // relies on this." This pass was removed in e196bc85ac2dda0e9f6664cfc2eca0029e33d2d1,
-        // but currently finding it still necessary for MSL.
-        if (!NameNamelessUniformBuffers(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-        // Note: RewriteRowMajorMatrices can create temporaries moved above
-        // the statement they are used in. As such it must come after
-        // SeparateCompoundExpressions since it is not aware of short circuits
-        // and side effects.
-        if (!RewriteRowMajorMatrices(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
     }
 
     // Note: ReduceInterfaceBlocks removes row_major matrix layout specifiers

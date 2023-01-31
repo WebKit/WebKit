@@ -319,9 +319,8 @@ def gen_image_map_switch_mac_case(angle_format, actual_angle_format_info, angle_
         if actual_angle_format in mac_fallbacks:
             # This format requires fallback when depth24Stencil8PixelFormatSupported flag is false.
             # Fallback format:
-            actual_angle_format_fallback = mac_fallbacks[actual_angle_format]
-            fallback_condition = "metalDevice.depth24Stencil8PixelFormatSupported && \
-                                 !display->getFeatures().forceD24S8AsUnsupported.enabled"
+            actual_angle_format_fallback = mac_fallbacks[actual_angle_format]["format"]
+            fallback_condition = mac_fallbacks[actual_angle_format]["condition"]
             # return if else block:
             return image_format_assign_template2.format(
                 actual_angle_format=actual_angle_format,
@@ -415,7 +414,7 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
     mac_override_es3 = image_table["override_mac_es3"]
     mac_override_bc1 = image_table["override_mac_bc1"]
     ios_override = image_table["override_ios"]
-    mac_d24s8_fallbacks = image_table["d24s8_fallbacks_mac"]
+    mac_depth_fallbacks = image_table["depth_fallbacks_mac"]
     angle_to_mtl = image_table["map"]
     mac_specific_map = image_table["map_mac"]
     ios_specific_map = image_table["map_ios"]
@@ -448,7 +447,7 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
     switch_data += "#if TARGET_OS_OSX || TARGET_OS_MACCATALYST\n"
     for angle_format in sorted(mac_specific_map.keys()):
         switch_data += gen_image_map_switch_mac_case(angle_format, angle_format, angle_to_gl,
-                                                     mac_angle_to_mtl, mac_d24s8_fallbacks)
+                                                     mac_angle_to_mtl, mac_depth_fallbacks)
     for angle_format in sorted(mac_override.keys()):
         switch_data += gen_image_map_switch_simple_case(angle_format, mac_override[angle_format],
                                                         angle_to_gl, mac_angle_to_mtl)
@@ -508,14 +507,17 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
     # Try to support all iOS formats on newer macOS with Apple GPU.
     switch_data += "#if (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))\n"
     for angle_format in sorted(ios_specific_map.keys()):
-        if (angle_format in mac_override_es3.keys()):
-            # ETC/EAC or packed 16-bit
-            switch_data += gen_image_map_switch_es3_case(angle_format, angle_format, angle_to_gl,
-                                                         ios_angle_to_mtl, mac_override_es3)
-        else:
-            # ASTC sRGB or PVRTC1
-            switch_data += gen_image_map_switch_simple_case(angle_format, angle_format,
-                                                            angle_to_gl, ios_specific_map)
+        # Do not re-emit depth-specific formats.
+        if (angle_format not in mac_depth_fallbacks.keys()):
+            if (angle_format in mac_override_es3.keys()):
+                # ETC/EAC or packed 16-bit
+                switch_data += gen_image_map_switch_es3_case(angle_format, angle_format,
+                                                             angle_to_gl, ios_angle_to_mtl,
+                                                             mac_override_es3)
+            else:
+                # ASTC sRGB or PVRTC1
+                switch_data += gen_image_map_switch_simple_case(angle_format, angle_format,
+                                                                angle_to_gl, ios_specific_map)
     # ASTC LDR or HDR
     for angle_format in sorted(astc_tpl_map.keys()):
         switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl,
@@ -553,6 +555,9 @@ def gen_image_mtl_to_angle_switch_string(image_table):
     for angle_format in sorted(ios_specific_map.keys()):
         # ETC1_R8G8B8_UNORM_BLOCK is a duplicated of ETC2_R8G8B8_UNORM_BLOCK
         if angle_format == 'ETC1_R8G8B8_UNORM_BLOCK':
+            continue
+        # Do not re-emit formats that are in the general Mac table
+        if angle_format in mac_specific_map.keys():
             continue
         switch_data += case_image_mtl_to_angle_template.format(
             mtl_format=ios_specific_map[angle_format], angle_format=angle_format)

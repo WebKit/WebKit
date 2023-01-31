@@ -2089,6 +2089,10 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_DRAW_INDIRECT_BUFFER_BINDING";
                 case 0x8F4F:
                     return "GL_VERTEX_BINDING_BUFFER";
+                case 0x8F65:
+                    return "GL_FETCH_PER_SAMPLE_ARM";
+                case 0x8F66:
+                    return "GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM";
                 case 0x8F94:
                     return "GL_R8_SNORM";
                 case 0x8F95:
@@ -3872,6 +3876,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_PRIMITIVE_RESTART_FIXED_INDEX";
                 case 0x8E51:
                     return "GL_SAMPLE_MASK";
+                case 0x8F65:
+                    return "GL_FETCH_PER_SAMPLE_ARM";
                 case 0x92E0:
                     return "GL_DEBUG_OUTPUT";
                 case 0x96A5:
@@ -4897,6 +4903,10 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_MAX_TESS_CONTROL_UNIFORM_BLOCKS";
                 case 0x8E8A:
                     return "GL_MAX_TESS_EVALUATION_UNIFORM_BLOCKS";
+                case 0x8F65:
+                    return "GL_FETCH_PER_SAMPLE_ARM";
+                case 0x8F66:
+                    return "GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM";
                 case 0x90D3:
                     return "GL_SHADER_STORAGE_BUFFER_BINDING";
                 case 0x90D4:

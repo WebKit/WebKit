@@ -3270,6 +3270,14 @@ bool GetQueryParameterInfo(const State &glState,
             *numParams = 1;
             return true;
         }
+        case GL_POLYGON_OFFSET_CLAMP_EXT:
+            if (!extensions.polygonOffsetClampEXT)
+            {
+                return false;
+            }
+            *type      = GL_FLOAT;
+            *numParams = 1;
+            return true;
         case GL_ALIASED_LINE_WIDTH_RANGE:
         case GL_ALIASED_POINT_SIZE_RANGE:
         case GL_DEPTH_RANGE:
@@ -3644,6 +3652,14 @@ bool GetQueryParameterInfo(const State &glState,
     if (extensions.provokingVertexANGLE && pname == GL_PROVOKING_VERTEX_ANGLE)
     {
         *type      = GL_INT;
+        *numParams = 1;
+        return true;
+    }
+
+    if (extensions.shaderFramebufferFetchARM &&
+        (pname == GL_FETCH_PER_SAMPLE_ARM || pname == GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM))
+    {
+        *type      = GL_BOOL;
         *numParams = 1;
         return true;
     }

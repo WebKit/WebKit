@@ -1063,7 +1063,6 @@ void checkForCurrentMemoryAllocations(RendererVk *renderer)
             }
 
             std::stringstream outStream;
-            outStream.imbue(std::locale(renderer->getMemoryAllocationTracker()->getLocale()));
 
             outStream << "Currently allocated size for memory allocation type ("
                       << vk::kMemoryAllocationTypeMessage[i] << "): "
@@ -1098,7 +1097,6 @@ void checkForCurrentMemoryAllocations(RendererVk *renderer)
             }
 
             std::stringstream outStream;
-            outStream.imbue(std::locale(renderer->getMemoryAllocationTracker()->getLocale()));
 
             outStream << "Currently allocated size for memory allocation type ("
                       << vk::kMemoryAllocationTypeMessage[i] << "): "
@@ -1137,7 +1135,6 @@ void logPendingMemoryAllocation(RendererVk *renderer)
     if (allocSize != 0)
     {
         std::stringstream outStream;
-        outStream.imbue(std::locale(renderer->getMemoryAllocationTracker()->getLocale()));
 
         outStream << "Pending allocation size for memory allocation type ("
                   << vk::kMemoryAllocationTypeMessage[ToUnderlying(allocInfo)]
@@ -1177,7 +1174,6 @@ void logMemoryHeapStats(RendererVk *renderer, vk::MemoryLogSeverity severity)
 
     // Log stream for the heap information.
     std::stringstream outStream;
-    outStream.imbue(std::locale(renderer->getMemoryAllocationTracker()->getLocale()));
 
     // VkPhysicalDeviceMemoryProperties2 enables the use of memory budget properties if supported.
     VkPhysicalDeviceMemoryProperties2KHR memoryProperties;
@@ -1324,7 +1320,7 @@ RendererVk::RendererVk()
       mPipelineCacheSizeAtLastSync(0),
       mPipelineCacheInitialized(false),
       mValidationMessageCount(0),
-      mCommandProcessor(this),
+      mCommandProcessor(this, &mCommandQueue),
       mSupportedVulkanPipelineStageMask(0),
       mSupportedVulkanShaderStageMask(0),
       mMemoryAllocationTracker(MemoryAllocationTracker(this))
@@ -1375,10 +1371,8 @@ void RendererVk::onDestroy(vk::Context *context)
     {
         mCommandProcessor.destroy(context);
     }
-    else
-    {
-        mCommandQueue.destroy(context);
-    }
+
+    mCommandQueue.destroy(context);
 
     // mCommandQueue.destroy should already set "last completed" serials to infinite.
     cleanupGarbage();
@@ -2651,6 +2645,8 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     mEnabledFeatures.features.sampleRateShading = mPhysicalDeviceFeatures.sampleRateShading;
     // Used to support depth clears through draw calls.
     mEnabledFeatures.features.depthClamp = mPhysicalDeviceFeatures.depthClamp;
+    // Used to support EXT_polygon_offset_clamp
+    mEnabledFeatures.features.depthBiasClamp = mPhysicalDeviceFeatures.depthBiasClamp;
     // Used to support EXT_clip_cull_distance
     mEnabledFeatures.features.shaderCullDistance = mPhysicalDeviceFeatures.shaderCullDistance;
     // Used to support tessellation Shader:
@@ -2998,13 +2994,11 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     vk::DeviceQueueMap graphicsQueueMap =
         queueFamily.initializeQueueMap(mDevice, enableProtectedContent, 0, queueCount);
 
+    ANGLE_TRY(mCommandQueue.init(displayVk, graphicsQueueMap));
+
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.init(displayVk, graphicsQueueMap));
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.init(displayVk, graphicsQueueMap));
+        ANGLE_TRY(mCommandProcessor.init());
     }
 
 #if defined(ANGLE_SHARED_LIBVULKAN)
@@ -4058,7 +4052,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // http://anglebug.com/7308
     // Flushing mutable textures causes flakes in perf tests using Windows/Intel GPU. Failures are
     // due to lost context/device.
-    ANGLE_FEATURE_CONDITION(&mFeatures, mutableMipmapTextureUpload, !(IsWindows() && isIntel));
+    // http://b/264143971
+    // The mutable texture uploading feature can sometimes result in incorrect rendering of some
+    // textures.
+    ANGLE_FEATURE_CONDITION(&mFeatures, mutableMipmapTextureUpload, false);
 
     // Retain debug info in SPIR-V blob.
     ANGLE_FEATURE_CONDITION(&mFeatures, retainSPIRVDebugInfo, getEnableValidationLayers());
@@ -4894,14 +4891,9 @@ angle::Result RendererVk::finishResourceUse(vk::Context *context, const vk::Reso
 {
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.finishResourceUse(context, use, getMaxFenceWaitTimeNs()));
+        ANGLE_TRY(mCommandProcessor.waitForResourceUseToBeSubmitted(context, use));
     }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.finishResourceUse(context, use, getMaxFenceWaitTimeNs()));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.finishResourceUse(context, use, getMaxFenceWaitTimeNs());
 }
 
 angle::Result RendererVk::finishQueueSerial(vk::Context *context, const QueueSerial &queueSerial)
@@ -4909,15 +4901,9 @@ angle::Result RendererVk::finishQueueSerial(vk::Context *context, const QueueSer
     ASSERT(queueSerial.valid());
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(
-            mCommandProcessor.finishQueueSerial(context, queueSerial, getMaxFenceWaitTimeNs()));
+        ANGLE_TRY(mCommandProcessor.waitForQueueSerialToBeSubmitted(context, queueSerial));
     }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.finishQueueSerial(context, queueSerial, getMaxFenceWaitTimeNs()));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.finishQueueSerial(context, queueSerial, getMaxFenceWaitTimeNs());
 }
 
 angle::Result RendererVk::waitForResourceUseToFinishWithUserTimeout(vk::Context *context,
@@ -4928,47 +4914,23 @@ angle::Result RendererVk::waitForResourceUseToFinishWithUserTimeout(vk::Context 
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::waitForResourceUseToFinishWithUserTimeout");
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.waitForResourceUseToFinishWithUserTimeout(context, use, timeout,
-                                                                              result));
+        ANGLE_TRY(mCommandProcessor.waitForResourceUseToBeSubmitted(context, use));
     }
-    else
-    {
-        ANGLE_TRY(
-            mCommandQueue.waitForResourceUseToFinishWithUserTimeout(context, use, timeout, result));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.waitForResourceUseToFinishWithUserTimeout(context, use, timeout, result);
 }
 
 angle::Result RendererVk::finish(vk::Context *context, bool hasProtectedContent)
 {
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.waitIdle(context, getMaxFenceWaitTimeNs()));
+        ANGLE_TRY(mCommandProcessor.waitForAllWorkToBeSubmitted(context));
     }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.waitIdle(context, getMaxFenceWaitTimeNs()));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.waitIdle(context, getMaxFenceWaitTimeNs());
 }
 
 angle::Result RendererVk::checkCompletedCommands(vk::Context *context)
 {
-    // TODO: https://issuetracker.google.com/169788986 - would be better if we could just wait
-    // for the work we need but that requires QueryHelper to use the actual serial for the
-    // query.
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.checkCompletedCommands(context));
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.checkCompletedCommands(context));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.checkCompletedCommands(context);
 }
 
 angle::Result RendererVk::flushRenderPassCommands(
@@ -5201,9 +5163,7 @@ void RendererVk::releaseQueueSerialIndex(SerialIndex index)
 }
 
 MemoryAllocationTracker::MemoryAllocationTracker(RendererVk *renderer)
-    : mRenderer(renderer),
-      mMemoryAllocationID(0),
-      mLocale(std::locale(std::locale(), new vk::MemoryAllocationLogNumberFormat()))
+    : mRenderer(renderer), mMemoryAllocationID(0)
 {}
 
 void MemoryAllocationTracker::initMemoryTrackers()

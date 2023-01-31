@@ -755,6 +755,7 @@ StateManager11::StateManager11(Renderer11 *renderer)
     mCurRasterState.polygonOffsetFill   = false;
     mCurRasterState.polygonOffsetFactor = 0.0f;
     mCurRasterState.polygonOffsetUnits  = 0.0f;
+    mCurRasterState.polygonOffsetClamp  = 0.0f;
     mCurRasterState.pointDrawMode       = false;
     mCurRasterState.multiSample         = false;
     mCurRasterState.dither              = false;
@@ -1109,7 +1110,8 @@ void StateManager11::syncState(const gl::Context *context,
             {
                 const gl::RasterizerState &rasterState = state.getRasterizerState();
                 if (rasterState.polygonOffsetFactor != mCurRasterState.polygonOffsetFactor ||
-                    rasterState.polygonOffsetUnits != mCurRasterState.polygonOffsetUnits)
+                    rasterState.polygonOffsetUnits != mCurRasterState.polygonOffsetUnits ||
+                    rasterState.polygonOffsetClamp != mCurRasterState.polygonOffsetClamp)
                 {
                     mInternalDirtyBits.set(DIRTY_BIT_RASTERIZER_STATE);
                 }

@@ -55,6 +55,7 @@ RasterizerState::RasterizerState()
     polygonOffsetFill   = false;
     polygonOffsetFactor = 0.0f;
     polygonOffsetUnits  = 0.0f;
+    polygonOffsetClamp  = 0.0f;
     pointDrawMode       = false;
     multiSample         = false;
     dither              = true;

@@ -64,6 +64,10 @@ struct Extensions
     {
         return (primitiveBoundingBoxEXT || primitiveBoundingBoxOES);
     }
+    bool shaderFramebufferFetchAny() const
+    {
+        return (shaderFramebufferFetchARM || shaderFramebufferFetchEXT);
+    }
     bool shaderIoBlocksAny() const { return (shaderIoBlocksEXT || shaderIoBlocksOES); }
     bool textureBorderClampAny() const { return (textureBorderClampEXT || textureBorderClampOES); }
     bool textureBufferAny() const { return (textureBufferEXT || textureBufferOES); }
@@ -378,6 +382,9 @@ struct Extensions
     // GL_EXT_separate_shader_objects
     bool separateShaderObjectsEXT = false;
 
+    // GL_ARM_shader_framebuffer_fetch
+    bool shaderFramebufferFetchARM = false;
+
     // GL_EXT_shader_framebuffer_fetch
     bool shaderFramebufferFetchEXT = false;
 
@@ -668,6 +675,9 @@ struct Extensions
 
     // GL_ANGLE_semaphore_fuchsia
     bool semaphoreFuchsiaANGLE = false;
+
+    // GL_ANGLE_shader_binary
+    bool shaderBinaryANGLE = false;
 
     // GL_ANGLE_shader_pixel_local_storage
     bool shaderPixelLocalStorageANGLE = false;

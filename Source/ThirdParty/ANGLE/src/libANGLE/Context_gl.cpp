@@ -3689,11 +3689,6 @@ void Context::multiDrawElementsIndirectCount(GLenum mode,
     UNIMPLEMENTED();
 }
 
-void Context::polygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::specializeShader(GLuint shader,
                                const GLchar *pEntryPoint,
                                GLuint numSpecializationConstants,

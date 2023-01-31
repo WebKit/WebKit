@@ -2,6 +2,7 @@ src/common/BinaryStream.h
 src/common/CircularBuffer.h
 src/common/Color.h
 src/common/Color.inc
+src/common/CompiledShaderState.h
 src/common/FastVector.h
 src/common/FixedVector.h
 src/common/MemoryBuffer.h
@@ -678,6 +679,8 @@ src/libANGLE/renderer/metal/TransformFeedbackMtl.h
 src/libANGLE/renderer/metal/TransformFeedbackMtl.mm
 src/libANGLE/renderer/metal/VertexArrayMtl.h
 src/libANGLE/renderer/metal/VertexArrayMtl.mm
+src/libANGLE/renderer/metal/blocklayoutMetal.cpp
+src/libANGLE/renderer/metal/blocklayoutMetal.h
 src/libANGLE/renderer/metal/mtl_buffer_manager.h
 src/libANGLE/renderer/metal/mtl_buffer_manager.mm
 src/libANGLE/renderer/metal/mtl_buffer_pool.h
@@ -705,6 +708,8 @@ src/libANGLE/renderer/metal/mtl_state_cache.h
 src/libANGLE/renderer/metal/mtl_state_cache.mm
 src/libANGLE/renderer/metal/mtl_utils.h
 src/libANGLE/renderer/metal/mtl_utils.mm
+src/libANGLE/renderer/metal/renderermtl_utils.cpp
+src/libANGLE/renderer/metal/renderermtl_utils.h
 src/libANGLE/renderer/metal/shaders/constants.h
 src/libANGLE/renderer/metal/shaders/format_autogen.h
 src/libANGLE/renderer/metal/shaders/mtl_default_shaders_src_autogen.inc

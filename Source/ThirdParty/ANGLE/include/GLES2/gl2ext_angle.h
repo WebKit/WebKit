@@ -671,6 +671,14 @@ GL_APICALL void GL_APIENTRY glGetFramebufferPixelLocalStorageParameterivANGLE (G
 
 #endif /* GL_ANGLE_rgbx_internal_format */
 
+#ifndef GL_ANGLE_shader_binary
+#define GL_ANGLE_shader_binary
+
+// General shader binary format
+#define GL_SHADER_BINARY_ANGLE 0x96BB
+
+#endif /* GL_ANGLE_shader_binary */
+
 #ifndef GL_ANGLE_logic_op
 #define GL_ANGLE_logic_op
 

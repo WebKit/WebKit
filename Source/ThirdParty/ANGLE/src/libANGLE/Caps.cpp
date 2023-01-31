@@ -835,7 +835,7 @@ static bool DetermineStencilIndex8Support(const TextureCapsMap &textureCaps)
         GL_STENCIL_INDEX8,
     };
 
-    return GetFormatSupport(textureCaps, requiredFormats, false, false, true, false, false);
+    return GetFormatSupport(textureCaps, requiredFormats, true, false, true, false, false);
 }
 
 void Extensions::setTextureExtensionSupport(const TextureCapsMap &textureCaps)

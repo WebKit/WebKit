@@ -86,6 +86,7 @@
             "R5G6B5_UNORM": "MTLPixelFormatB5G6R5Unorm",
             "R5G5B5A1_UNORM": "MTLPixelFormatA1BGR5Unorm",
             "R4G4B4A4_UNORM": "MTLPixelFormatABGR4Unorm",
+            "D16_UNORM": "MTLPixelFormatDepth16Unorm",
             "PVRTC1_RGB_4BPP_UNORM_BLOCK": "MTLPixelFormatPVRTC_RGB_4BPP",
             "PVRTC1_RGB_2BPP_UNORM_BLOCK": "MTLPixelFormatPVRTC_RGB_2BPP",
             "PVRTC1_RGBA_4BPP_UNORM_BLOCK": "MTLPixelFormatPVRTC_RGBA_4BPP",
@@ -164,6 +165,7 @@
             "ASTC_12x12_UNORM_BLOCK": "MTLPixelFormatASTC_12x12_"
         },
         "map_mac": {
+            "D16_UNORM": "MTLPixelFormatDepth16Unorm",
             "D24_UNORM_S8_UINT": "MTLPixelFormatDepth24Unorm_Stencil8",
             "BC1_RGBA_UNORM_BLOCK": "MTLPixelFormatBC1_RGBA",
             "BC1_RGBA_UNORM_SRGB_BLOCK": "MTLPixelFormatBC1_RGBA_sRGB",
@@ -206,11 +208,9 @@
             "D32_UNORM": "D32_FLOAT"
         },
         "override_mac": {
-            "D16_UNORM": "D32_FLOAT"
         },
         "override_ios": {
-            "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT",
-            "D16_UNORM": "D32_FLOAT"
+            "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT"
         },
          "override_sim": {
             "R5G6B5_UNORM": "R8G8B8A8_UNORM",
@@ -245,8 +245,15 @@
             "EAC_R11G11_UNORM_BLOCK": "R16G16_UNORM",
             "EAC_R11G11_SNORM_BLOCK": "R16G16_SNORM"
         },
-        "d24s8_fallbacks_mac": {
-            "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT"
+        "depth_fallbacks_mac": {
+            "D24_UNORM_S8_UINT": {
+                "format": "D32_FLOAT_S8X24_UINT",
+                "condition": "metalDevice.depth24Stencil8PixelFormatSupported && !display->getFeatures().forceD24S8AsUnsupported.enabled"
+            },
+            "D16_UNORM": {
+                "format": "D32_FLOAT",
+                "condition": "display->supportsAppleGPUFamily(1)"
+            }
         },
         "caps": {
             "MTLPixelFormatA8Unorm":{

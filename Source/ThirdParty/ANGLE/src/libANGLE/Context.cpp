@@ -18,8 +18,10 @@
 
 #include "common/PackedEnums.h"
 #include "common/angle_version_info.h"
+#include "common/hash_utils.h"
 #include "common/matrix_utils.h"
 #include "common/platform.h"
+#include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "common/utilities.h"
 #include "image_util/loadimage.h"
@@ -997,7 +999,7 @@ GLuint Context::createShaderProgramv(ShaderType type, GLsizei count, const GLcha
     {
         Shader *shaderObject = getShader(shaderID);
         ASSERT(shaderObject);
-        shaderObject->setSource(count, strings, nullptr);
+        shaderObject->setSource(this, count, strings, nullptr);
         shaderObject->compile(this);
         const ShaderProgramID programID = PackParam<ShaderProgramID>(createProgram());
         if (programID.value)
@@ -6063,7 +6065,12 @@ void Context::pixelStorei(GLenum pname, GLint param)
 
 void Context::polygonOffset(GLfloat factor, GLfloat units)
 {
-    mState.setPolygonOffsetParams(factor, units);
+    mState.setPolygonOffsetParams(factor, units, 0.0f);
+}
+
+void Context::polygonOffsetClamp(GLfloat factor, GLfloat units, GLfloat clamp)
+{
+    mState.setPolygonOffsetParams(factor, units, clamp);
 }
 
 void Context::sampleCoverage(GLfloat value, GLboolean invert)
@@ -7609,8 +7616,9 @@ void Context::shaderBinary(GLsizei n,
                            const void *binary,
                            GLsizei length)
 {
-    // No binary shader formats are supported.
-    UNIMPLEMENTED();
+    Shader *shaderObject = getShader(*shaders);
+    ASSERT(shaderObject != nullptr);
+    ANGLE_CONTEXT_TRY(shaderObject->loadShaderBinary(this, binary, length));
 }
 
 void Context::bindFragDataLocationIndexed(ShaderProgramID program,
@@ -7650,7 +7658,7 @@ void Context::shaderSource(ShaderProgramID shader,
 {
     Shader *shaderObject = getShader(shader);
     ASSERT(shaderObject);
-    shaderObject->setSource(count, string, length);
+    shaderObject->setSource(this, count, string, length);
 }
 
 void Context::stencilFunc(GLenum func, GLint ref, GLuint mask)

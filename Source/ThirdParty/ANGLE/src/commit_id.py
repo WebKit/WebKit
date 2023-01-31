@@ -13,6 +13,7 @@ import os
 
 usage = """\
 Usage: commit_id.py check                - check if git is present
+       commit_id.py get_git_dirs         - prints work-tree and common git directories
        commit_id.py unpack <ref_file>    - check if <ref_file> exists, and if not
                                            create it based on .git/packed-refs
        commit_id.py position             - print commit position
@@ -24,14 +25,22 @@ def grab_output(command, cwd):
         command, stdout=sp.PIPE, shell=True, cwd=cwd).communicate()[0].strip().decode('utf-8')
 
 
+def get_git_dir(cwd):
+    return grab_output('git rev-parse --git-dir', cwd)
+
+
+def get_git_common_dir(cwd):
+    return grab_output('git rev-parse --git-common-dir', cwd)
+
+
 def get_commit_position(cwd):
     return grab_output('git rev-list HEAD --count', cwd)
 
 
-def does_git_dir_exist(cwd, aosp):
+def does_git_dir_exist(cwd):
     ret = os.path.exists(os.path.join(cwd, '.git', 'HEAD'))
-    # If we're on Android, .git may be a file with a gitdir directive pointing elsewhere.
-    if aosp and not ret and os.path.exists(os.path.join(cwd, '.git')):
+    # .git may be a file with a gitdir directive pointing elsewhere.
+    if not ret and os.path.exists(os.path.join(cwd, '.git')):
         ret = 'true' == grab_output('git rev-parse --is-inside-work-tree', cwd)
     return ret
 
@@ -63,7 +72,7 @@ operation = sys.argv[1]
 aosp_angle_path = os.path.join(os.path.dirname('.'), 'external', 'angle')
 aosp = os.path.exists(aosp_angle_path)
 cwd = aosp_angle_path if aosp else os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
-git_dir_exists = does_git_dir_exist(cwd, aosp)
+git_dir_exists = does_git_dir_exist(cwd)
 
 if operation == 'check':
     if git_dir_exists:
@@ -71,16 +80,21 @@ if operation == 'check':
     else:
         print("0")
     sys.exit(0)
+elif operation == 'get_git_dirs':
+    print(get_git_dir(cwd))
+    print(get_git_common_dir(cwd))
+    sys.exit(0)
 elif operation == 'unpack':
     if len(sys.argv) < 3:
         sys.exit(usage)
 
     ref_file = sys.argv[2]
-    ref_file_full_path = os.path.join(cwd, '.git', ref_file)
+    git_common_dir = get_git_common_dir(cwd)
+    ref_file_full_path = os.path.join(cwd, git_common_dir, ref_file)
     ref_file_exists = os.path.exists(ref_file_full_path)
 
     if not ref_file_exists:
-        packed_refs_full_path = os.path.join(cwd, '.git', 'packed-refs')
+        packed_refs_full_path = os.path.join(cwd, git_common_dir, 'packed-refs')
         unpack_ref(ref_file, ref_file_full_path, packed_refs_full_path)
 
     sys.exit(0)

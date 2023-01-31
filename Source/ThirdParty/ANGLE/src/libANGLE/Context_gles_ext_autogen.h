@@ -75,6 +75,7 @@
                                    GLchar *source);                                                \
     /* GL_APPLE_clip_distance */                                                                   \
     /* GL_ARB_sync */                                                                              \
+    /* GL_ARM_shader_framebuffer_fetch */                                                          \
     /* GL_EXT_EGL_image_array */                                                                   \
     /* GL_EXT_EGL_image_external_wrap_modes */                                                     \
     /* GL_EXT_EGL_image_storage */                                                                 \
@@ -569,6 +570,7 @@
     /* GL_ANGLE_semaphore_fuchsia */                                                               \
     void importSemaphoreZirconHandle(SemaphoreID semaphorePacked, HandleType handleTypePacked,     \
                                      GLuint handle);                                               \
+    /* GL_ANGLE_shader_binary */                                                                   \
     /* GL_ANGLE_shader_pixel_local_storage */                                                      \
     void framebufferMemorylessPixelLocalStorage(GLint plane, GLenum internalformat);               \
     void framebufferTexturePixelLocalStorage(GLint plane, TextureID backingtexturePacked,          \

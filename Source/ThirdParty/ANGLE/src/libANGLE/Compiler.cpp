@@ -135,6 +135,9 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     // GL_EXT_separate_shader_objects
     mResources.EXT_separate_shader_objects = extensions.separateShaderObjectsEXT;
 
+    // GL_ARM_shader_framebuffer_fetch
+    mResources.ARM_shader_framebuffer_fetch = extensions.shaderFramebufferFetchARM;
+
     // GLSL ES 3.0 constants
     mResources.MaxVertexOutputVectors  = caps.maxVertexOutputComponents / 4;
     mResources.MaxFragmentInputVectors = caps.maxFragmentInputComponents / 4;

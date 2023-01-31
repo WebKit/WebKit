@@ -2,9 +2,9 @@
   "src/libANGLE/es3_format_type_combinations.json":
     "d053493ebea62e9baa5a9db40c1d90cf",
   "src/libANGLE/format_map_autogen.cpp":
-    "af8d493c27036b11878a343f09c75235",
+    "2abfe0492ea1168d0d5ebac4e2ea6247",
   "src/libANGLE/format_map_data.json":
-    "2e5db33b6d6b142b569123f614f3ddb7",
+    "128723d1f10800a02c57879b50887e53",
   "src/libANGLE/gen_format_map.py":
     "32b43aedcbad2aa5eaa47052cc8573ac",
   "src/libANGLE/renderer/angle_format.py":
