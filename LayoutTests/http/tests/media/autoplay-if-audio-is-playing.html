@@ -19,11 +19,15 @@ if (window.internals) {
     internals.setMediaElementRestrictions(video1, "RequireUserGestureForVideoRateChange");
     internals.setMediaElementRestrictions(video2, "RequireUserGestureForVideoRateChange");
     internals.setMediaElementRestrictions(video3, "RequireUserGestureForVideoRateChange");
+    internals.setTransientActivationDuration(1);
 }
+
+let resolve;
+const firstTestCompleted = new Promise(r => resolve = r);
 
 promise_test((test) => {
     video3.src = findMediaFile("video", "resources/test-25fps");
-    return video3.play().then(assert_unreached, () => { });
+    return video3.play().then(assert_unreached, resolve);
 }, "Ensuring video is not playing if no user gesture");
 
 var resolveTest, rejectTest;
@@ -32,25 +36,31 @@ promise_test((test) => {
         resolveTest = resolve;
         rejectTest = reject;
     });
-}, "Should not autoplay even when a video is already playing audio");
+}, "Video 2 should be allowed to play after video 1 started with a user gesture");
 
 function doTest()
 {
     video1.src = findMediaFile("video", "resources/test-25fps");
     return video1.play().then(() => {
         video2.src = findMediaFile("video", "resources/test-25fps");
-        video2.play().then(() => rejectTest("video2 did start"), resolveTest);
+        video2.play().then(() => resolveTest("video2 started"), resolveTest);
     });
 }
 
-var x = video1Button.offsetLeft + 5;
-var y = video1Button.offsetTop + 5;
+(async function() {
 
-if (window.eventSender) {
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-}
+    await firstTestCompleted;
+
+    var x = video1Button.offsetLeft + 5;
+    var y = video1Button.offsetTop + 5;
+
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}());
+
          </script>
     </body>
 </html>
