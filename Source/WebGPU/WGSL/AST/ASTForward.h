@@ -36,6 +36,7 @@ class BuiltinAttribute;
 class GroupAttribute;
 class LocationAttribute;
 class StageAttribute;
+class WorkgroupSizeAttribute;
 
 class Decl;
 class FunctionDecl;

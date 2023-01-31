@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,31 @@
 
 #pragma once
 
-#include "ASTArrayAccess.h"
-#include "ASTAssignmentStatement.h"
-#include "ASTAttribute.h"
-#include "ASTBinaryExpression.h"
-#include "ASTBindingAttribute.h"
-#include "ASTBuiltinAttribute.h"
-#include "ASTCallableExpression.h"
-#include "ASTCompoundStatement.h"
-#include "ASTDecl.h"
-#include "ASTExpression.h"
-#include "ASTFunctionDecl.h"
-#include "ASTGlobalDirective.h"
-#include "ASTGroupAttribute.h"
-#include "ASTIdentifierExpression.h"
-#include "ASTIdentityExpression.h"
-#include "ASTLiteralExpressions.h"
-#include "ASTLocationAttribute.h"
 #include "ASTNode.h"
-#include "ASTPointerDereference.h"
-#include "ASTReturnStatement.h"
-#include "ASTShaderModule.h"
-#include "ASTStageAttribute.h"
-#include "ASTStatement.h"
-#include "ASTStructureAccess.h"
-#include "ASTStructureDecl.h"
-#include "ASTTypeDecl.h"
-#include "ASTUnaryExpression.h"
-#include "ASTVariableDecl.h"
-#include "ASTVariableQualifier.h"
-#include "ASTVariableStatement.h"
-#include "ASTWorkgroupSizeAttribute.h"
+
+#include <wtf/UniqueRef.h>
+#include <wtf/UniqueRefVector.h>
+#include <wtf/Vector.h>
+
+namespace WGSL::AST {
+
+class WorkgroupSizeAttribute final : public Attribute {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    WorkgroupSizeAttribute(SourceSpan span, unsigned size)
+        : Attribute(span)
+        , m_size(size)
+    {
+    }
+
+    Kind kind() const override;
+    unsigned size() const { return m_size; }
+
+private:
+    unsigned m_size;
+};
+
+} // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(WorkgroupSizeAttribute)

@@ -47,6 +47,7 @@ public:
     virtual void visit(GroupAttribute&);
     virtual void visit(LocationAttribute&);
     virtual void visit(StageAttribute&);
+    virtual void visit(WorkgroupSizeAttribute&);
 
     // Declaration
     virtual void visit(Decl&);

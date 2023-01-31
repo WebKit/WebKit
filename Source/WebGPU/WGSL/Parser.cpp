@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -232,6 +232,14 @@ Expected<Ref<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         CONSUME_TYPE_NAMED(name, Identifier);
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(BuiltinAttribute, name.m_ident);
+    }
+
+    if (ident.m_ident == "workgroup_size"_s) {
+        CONSUME_TYPE(ParenLeft);
+        // FIXME: should more kinds of literals be accepted here?
+        CONSUME_TYPE_NAMED(id, IntegerLiteralUnsigned);
+        CONSUME_TYPE(ParenRight);
+        RETURN_NODE_REF(WorkgroupSizeAttribute, id.m_literalValue);
     }
 
     // https://gpuweb.github.io/gpuweb/wgsl/#pipeline-stage-attributes

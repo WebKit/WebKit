@@ -43,6 +43,7 @@ public:
         GroupAttribute,
         LocationAttribute,
         StageAttribute,
+        WorkgroupSizeAttribute,
 
         // Decl
         FunctionDecl,

@@ -78,6 +78,9 @@ void Visitor::visit(Attribute& attribute)
     case Node::Kind::StageAttribute:
         checkErrorAndVisit(downcast<StageAttribute>(attribute));
         break;
+    case Node::Kind::WorkgroupSizeAttribute:
+        checkErrorAndVisit(downcast<WorkgroupSizeAttribute>(attribute));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled attribute kind");
     }
@@ -100,6 +103,10 @@ void Visitor::visit(LocationAttribute&)
 }
 
 void Visitor::visit(StageAttribute&)
+{
+}
+
+void Visitor::visit(WorkgroupSizeAttribute&)
 {
 }
 
