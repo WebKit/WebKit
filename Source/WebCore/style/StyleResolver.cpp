@@ -430,8 +430,10 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, HashSet<CSSPropertyID>& inheritedProperties)
 {
+    inheritedProperties.clear();
+
     list.clear();
 
     auto keyframeRules = keyframeRulesForName(list.animationName());
@@ -453,6 +455,12 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
                 if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
                     keyframeValue.setCompositeOperation(*compositeOperation);
+            }
+            for (auto property : keyframeRule->properties()) {
+                if (auto* cssValue = property.value()) {
+                    if (cssValue->isPrimitiveValue() && downcast<CSSPrimitiveValue>(cssValue)->valueID() == CSSValueInherit)
+                        inheritedProperties.add(property.id());
+                }
             }
             list.insert(WTFMove(keyframeValue));
         }
