@@ -57,14 +57,20 @@ void ReadableStreamToSharedBufferSink::enqueue(const Ref<JSC::Uint8Array>& buffe
 
 void ReadableStreamToSharedBufferSink::close()
 {
-    if (m_callback)
-        m_callback(nullptr);
+    if (!m_callback)
+        return;
+
+    auto callback = std::exchange(m_callback, { });
+    callback(nullptr);
 }
 
 void ReadableStreamToSharedBufferSink::error(String&& message)
 {
-    if (auto callback = WTFMove(m_callback))
-        callback(Exception { TypeError, WTFMove(message) });
+    if (!m_callback)
+        return;
+
+    auto callback = std::exchange(m_callback, { });
+    callback(Exception { TypeError, WTFMove(message) });
 }
 
 } // namespace WebCore
