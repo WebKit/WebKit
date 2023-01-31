@@ -30,6 +30,14 @@
 #import "BindGroupLayout.h"
 #import "Device.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <Metal/MTLRenderPipeline_Private.h>
+#else
+@interface MTLRenderPipelineDescriptor ()
+- (void)setSampleMask:(NSUInteger)mask;
+@end
+#endif
+
 namespace WebGPU {
 
 static MTLBlendOperation blendOperation(WGPUBlendOperation operation)
@@ -442,6 +450,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
     mtlRenderPipelineDescriptor.rasterSampleCount = descriptor.multisample.count ?: 1;
     mtlRenderPipelineDescriptor.alphaToCoverageEnabled = descriptor.multisample.alphaToCoverageEnabled;
+    ASSERT([mtlRenderPipelineDescriptor respondsToSelector:@selector(setSampleMask:)]);
+    if (descriptor.multisample.mask != ~static_cast<decltype(descriptor.multisample.mask)>(0))
+        [mtlRenderPipelineDescriptor setSampleMask:descriptor.multisample.mask];
 
     if (descriptor.vertex.bufferCount)
         mtlRenderPipelineDescriptor.vertexDescriptor = createVertexDescriptor(descriptor.vertex);
