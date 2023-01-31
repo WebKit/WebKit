@@ -1550,8 +1550,32 @@ static void jsPDFDocFinalize(JSObjectRef object)
     pdfView->deref();
 }
 
+JSClassRef PDFPlugin::jsPDFDocClass()
+{
+    static const JSStaticFunction jsPDFDocStaticFunctions[] = {
+        { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { 0, 0, 0 },
+    };
+
+    static const JSClassDefinition jsPDFDocClassDefinition = {
+        0,
+        kJSClassAttributeNone,
+        "Doc",
+        0,
+        0,
+        jsPDFDocStaticFunctions,
+        jsPDFDocInitialize, jsPDFDocFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    static JSClassRef jsPDFDocClass = JSClassCreate(&jsPDFDocClassDefinition);
+    return jsPDFDocClass;
+}
+
 JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
+    if (!JSValueIsObjectOfClass(ctx, thisObject, jsPDFDocClass()))
+        return JSValueMakeUndefined(ctx);
+
     auto* pdfPlugin = static_cast<PDFPlugin*>(JSObjectGetPrivate(thisObject));
 
     auto* frame = pdfPlugin->m_frame.get();
@@ -1578,24 +1602,7 @@ FloatSize PDFPlugin::pdfDocumentSizeForPrinting() const
 
 JSObjectRef PDFPlugin::makeJSPDFDoc(JSContextRef ctx)
 {
-    static const JSStaticFunction jsPDFDocStaticFunctions[] = {
-        { "print", jsPDFDocPrint, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { 0, 0, 0 },
-    };
-
-    static const JSClassDefinition jsPDFDocClassDefinition = {
-        0,
-        kJSClassAttributeNone,
-        "Doc",
-        0,
-        0,
-        jsPDFDocStaticFunctions,
-        jsPDFDocInitialize, jsPDFDocFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-
-    static JSClassRef jsPDFDocClass = JSClassCreate(&jsPDFDocClassDefinition);
-
-    return JSObjectMake(ctx, jsPDFDocClass, this);
+    return JSObjectMake(ctx, jsPDFDocClass(), this);
 }
 
 void PDFPlugin::streamDidFinishLoading()
