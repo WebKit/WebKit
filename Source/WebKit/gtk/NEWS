@@ -1,4 +1,13 @@
 ================
+WebKitGTK 2.39.7
+================
+
+What's new in WebKitGTK 2.39.7?
+
+  - Fix the webkit.h public header causing applications to fail to build.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.39.6
 ================
 
