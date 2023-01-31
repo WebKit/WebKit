@@ -389,6 +389,7 @@ struct CGAffineTransform {
 };
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+header: <WebCore/GraphicsContextGLActiveInfo.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader=True] struct WebCore::GraphicsContextGLActiveInfo {
     String name;
     GCGLenum type;

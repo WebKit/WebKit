@@ -80,7 +80,7 @@
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-#include <WebCore/GraphicsContextGL.h>
+#include <WebCore/GraphicsContextGLEnums.h>
 #endif
 
 #if ENABLE(WEBXR)
@@ -601,12 +601,12 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesting> {
+template <> struct EnumTraits<WebCore::GraphicsContextGLSimulatedEventForTesting> {
     using values = EnumValues<
-    WebCore::GraphicsContextGL::SimulatedEventForTesting,
-    WebCore::GraphicsContextGL::SimulatedEventForTesting::ContextChange,
-    WebCore::GraphicsContextGL::SimulatedEventForTesting::GPUStatusFailure,
-    WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout
+    WebCore::GraphicsContextGLSimulatedEventForTesting,
+    WebCore::GraphicsContextGLSimulatedEventForTesting::ContextChange,
+    WebCore::GraphicsContextGLSimulatedEventForTesting::GPUStatusFailure,
+    WebCore::GraphicsContextGLSimulatedEventForTesting::Timeout
     >;
 };
 #endif

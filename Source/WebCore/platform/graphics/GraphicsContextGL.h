@@ -28,7 +28,9 @@
 #if ENABLE(WEBGL)
 
 #include "DestinationColorSpace.h"
+#include "GraphicsContextGLActiveInfo.h"
 #include "GraphicsContextGLAttributes.h"
+#include "GraphicsContextGLEnums.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsTypesGL.h"
 #include "Image.h"
@@ -65,12 +67,6 @@ class GraphicsContextGLCV;
 class MediaPlayer;
 class VideoFrame;
 #endif
-
-struct GraphicsContextGLActiveInfo {
-    String name;
-    GCGLenum type;
-    GCGLint size;
-};
 
 class GraphicsContextGL;
 
@@ -1550,11 +1546,7 @@ public:
     // on the content.
     WEBCORE_EXPORT void markLayerComposited();
 
-    enum class SimulatedEventForTesting {
-        ContextChange,
-        GPUStatusFailure,
-        Timeout
-    };
+    using SimulatedEventForTesting = GraphicsContextGLSimulatedEventForTesting;
     virtual void simulateEventForTesting(SimulatedEventForTesting) = 0;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
