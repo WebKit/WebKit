@@ -1858,17 +1858,16 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             reviewers = [reviewer] if reviewer else []
 
         remote = self.getProperty('remote', DEFAULT_REMOTE)
-        validators = self.VALIDATORS_FOR.get(remote, [])
         lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
-        lower_case_validators = [validator.lower() for validator in validators]
-        if validators and not any([validator in lower_case_reviewers for validator in lower_case_validators]):
-            defer.returnValue(self.fail_build_due_to_no_validators(validators))
+        validators = [validator.lower() for validator in self.VALIDATORS_FOR.get(remote, [])]
+        if validators and not any([validator in lower_case_reviewers for validator in validators]):
+            defer.returnValue(self.fail_build_due_to_no_validators(self.VALIDATORS_FOR.get(remote, [])))
             return
 
-        # Validators are a special case, not all validators are reviewers. If we have a reviewer that is a validator
-        # but NOT a reviewer, remove them
+        # Validators are a special case, not all validators are WebKit reviewers. If we have a reviewer that
+        # is a validator but NOT a WebKit reviewer, remove them
         def filter_out_non_reviewer_validators(candidate):
-            if candidate.lower() not in lower_case_validators:
+            if candidate.lower() not in validators:
                 return True
             return self.is_reviewer(candidate)
         reviewers = list(filter(filter_out_non_reviewer_validators, reviewers))

@@ -5562,7 +5562,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
 
     def test_success_pr_validators_not_reviewer(self):
         self.setupStep(ValidateCommitterAndReviewer())
-        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['geoffreygaren']
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-bug-bridge']
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('remote', 'apple')
