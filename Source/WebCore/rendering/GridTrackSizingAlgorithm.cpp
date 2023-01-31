@@ -1639,9 +1639,6 @@ void GridTrackSizingAlgorithm::run()
 
     if (m_renderGrid->isMasonry(m_direction))
         return;
-    
-    if (m_renderGrid->isMasonry(m_direction))
-        return;
 
     if (m_renderGrid->isSubgrid(m_direction) && copyUsedTrackSizesForSubgrid())
         return;
@@ -1698,6 +1695,9 @@ bool GridTrackSizingAlgorithm::tracksAreWiderThanMinTrackBreadth() const
     // Subgrids inherit their sizing directly from the parent, so may be unrelated
     // to their initial base size.
     if (m_renderGrid->isSubgrid(m_direction))
+        return true;
+
+    if (m_renderGrid->isMasonry(m_direction))
         return true;
 
     const Vector<GridTrack>& allTracks = tracks(m_direction);
