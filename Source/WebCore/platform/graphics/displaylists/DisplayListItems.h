@@ -43,6 +43,7 @@
 #include "SharedBuffer.h"
 #include "SystemImage.h"
 #include <variant>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/TypeCasts.h>
 
@@ -953,7 +954,7 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    using UnderlyingDocumentMarkerLineStyleType = std::underlying_type<DocumentMarkerLineStyle::Mode>::type;
+    using UnderlyingDocumentMarkerLineStyleType = std::underlying_type<DocumentMarkerLineStyleMode>::type;
 
     DrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
         : m_rect(rect)
@@ -968,14 +969,13 @@ public:
         , m_styleShouldUseDarkAppearance(styleShouldUseDarkAppearance)
     {
     }
-
-    bool isValid() const { return isValidEnum<DocumentMarkerLineStyle::Mode>(m_styleMode); }
-
+    
     FloatRect rect() const { return m_rect; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
+    friend struct IPC::ArgumentCoder<DrawDotsForDocumentMarker, void>;
     FloatRect m_rect;
     UnderlyingDocumentMarkerLineStyleType m_styleMode { 0 };
     bool m_styleShouldUseDarkAppearance { false };

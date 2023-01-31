@@ -1688,7 +1688,7 @@ static void paintAttachmentPlaceholderBorder(const RenderAttachment& attachment,
     Color placeholderBorderColor = attachment.style().colorByApplyingColorFilter(attachmentPlaceholderBorderColor);
     context.setStrokeColor(placeholderBorderColor);
     context.setStrokeThickness(attachmentPlaceholderBorderWidth);
-    context.setStrokeStyle(DashedStroke);
+    context.setStrokeStyle(StrokeStyle::DashedStroke);
     context.setLineDash({attachmentPlaceholderBorderDashLength}, 0);
     context.strokePath(borderPath);
 }

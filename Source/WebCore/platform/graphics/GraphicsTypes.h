@@ -79,9 +79,6 @@ enum class BlendMode : uint8_t {
 struct CompositeMode {
     CompositeOperator operation;
     BlendMode blendMode;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<CompositeMode> decode(Decoder&);
 };
 
 inline bool operator==(const CompositeMode& a, const CompositeMode& b)
@@ -94,65 +91,18 @@ inline bool operator!=(const CompositeMode& a, const CompositeMode& b)
     return !(a == b);
 }
 
-template<class Encoder>
-void CompositeMode::encode(Encoder& encoder) const
-{
-    encoder << operation;
-    encoder << blendMode;
-}
-
-template<class Decoder>
-std::optional<CompositeMode> CompositeMode::decode(Decoder& decoder)
-{
-    std::optional<CompositeOperator> operation;
-    decoder >> operation;
-    if (!operation)
-        return std::nullopt;
-
-    std::optional<BlendMode> blendMode;
-    decoder >> blendMode;
-    if (!blendMode)
-        return std::nullopt;
-
-    return { { *operation, *blendMode } };
-}
-
-struct DocumentMarkerLineStyle {
-    enum class Mode : uint8_t {
-        TextCheckingDictationPhraseWithAlternatives,
-        Spelling,
-        Grammar,
-        AutocorrectionReplacement,
-        DictationAlternatives
-    } mode;
-    bool shouldUseDarkAppearance { false };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DocumentMarkerLineStyle> decode(Decoder&);
+enum class DocumentMarkerLineStyleMode : uint8_t {
+    TextCheckingDictationPhraseWithAlternatives,
+    Spelling,
+    Grammar,
+    AutocorrectionReplacement,
+    DictationAlternatives
 };
 
-template<class Encoder>
-void DocumentMarkerLineStyle::encode(Encoder& encoder) const
-{
-    encoder << mode;
-    encoder << shouldUseDarkAppearance;
-}
-
-template<class Decoder>
-std::optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& decoder)
-{
-    std::optional<Mode> mode;
-    decoder >> mode;
-    if (!mode)
-        return std::nullopt;
-
-    std::optional<bool> shouldUseDarkAppearance;
-    decoder >> shouldUseDarkAppearance;
-    if (!shouldUseDarkAppearance)
-        return std::nullopt;
-
-    return { { *mode, *shouldUseDarkAppearance } };
-}
+struct DocumentMarkerLineStyle {
+    DocumentMarkerLineStyleMode mode;
+    bool shouldUseDarkAppearance { false };
+};
 
 // Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.
 // It has different treatment of radii > 8px.
@@ -170,9 +120,6 @@ struct DropShadow {
     bool isVisible() const { return color.isVisible(); }
     bool isBlurred() const { return isVisible() && blurRadius; }
     bool hasOutsets() const { return isBlurred() || (isVisible() && !offset.isZero()); }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<DropShadow> decode(Decoder&);
 };
 
 inline bool operator==(const DropShadow& a, const DropShadow& b)
@@ -183,41 +130,6 @@ inline bool operator==(const DropShadow& a, const DropShadow& b)
 inline bool operator!=(const DropShadow& a, const DropShadow& b)
 {
     return !(a == b);
-}
-
-template<class Encoder>
-void DropShadow::encode(Encoder& encoder) const
-{
-    encoder << offset;
-    encoder << blurRadius;
-    encoder << color;
-    encoder << radiusMode;
-}
-
-template<class Decoder>
-std::optional<DropShadow> DropShadow::decode(Decoder& decoder)
-{
-    std::optional<FloatSize> offset;
-    decoder >> offset;
-    if (!offset)
-        return std::nullopt;
-
-    std::optional<float> blurRadius;
-    decoder >> blurRadius;
-    if (!blurRadius)
-        return std::nullopt;
-
-    std::optional<Color> color;
-    decoder >> color;
-    if (!color)
-        return std::nullopt;
-
-    std::optional<ShadowRadiusMode> radiusMode;
-    decoder >> radiusMode;
-    if (!radiusMode)
-        return std::nullopt;
-
-    return { { *offset, *blurRadius, *color, *radiusMode } };
 }
 
 enum class GradientSpreadMethod : uint8_t {
@@ -252,7 +164,7 @@ enum HorizontalAlignment {
     AlignHCenter
 };
 
-enum StrokeStyle : uint8_t {
+enum class StrokeStyle : uint8_t {
     NoStroke,
     SolidStroke,
     DottedStroke,
@@ -302,120 +214,3 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, TextDrawingMode);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WindRule);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::CompositeOperator> {
-    using values = EnumValues<
-    WebCore::CompositeOperator,
-    WebCore::CompositeOperator::Clear,
-    WebCore::CompositeOperator::Copy,
-    WebCore::CompositeOperator::SourceOver,
-    WebCore::CompositeOperator::SourceIn,
-    WebCore::CompositeOperator::SourceOut,
-    WebCore::CompositeOperator::SourceAtop,
-    WebCore::CompositeOperator::DestinationOver,
-    WebCore::CompositeOperator::DestinationIn,
-    WebCore::CompositeOperator::DestinationOut,
-    WebCore::CompositeOperator::DestinationAtop,
-    WebCore::CompositeOperator::XOR,
-    WebCore::CompositeOperator::PlusDarker,
-    WebCore::CompositeOperator::PlusLighter,
-    WebCore::CompositeOperator::Difference
-    >;
-};
-
-template<> struct EnumTraits<WebCore::BlendMode> {
-    using values = EnumValues<
-    WebCore::BlendMode,
-    WebCore::BlendMode::Normal,
-    WebCore::BlendMode::Multiply,
-    WebCore::BlendMode::Screen,
-    WebCore::BlendMode::Darken,
-    WebCore::BlendMode::Lighten,
-    WebCore::BlendMode::Overlay,
-    WebCore::BlendMode::ColorDodge,
-    WebCore::BlendMode::ColorBurn,
-    WebCore::BlendMode::HardLight,
-    WebCore::BlendMode::SoftLight,
-    WebCore::BlendMode::Difference,
-    WebCore::BlendMode::Exclusion,
-    WebCore::BlendMode::Hue,
-    WebCore::BlendMode::Saturation,
-    WebCore::BlendMode::Color,
-    WebCore::BlendMode::Luminosity,
-    WebCore::BlendMode::PlusDarker,
-    WebCore::BlendMode::PlusLighter
-    >;
-};
-
-template<> struct EnumTraits<WebCore::GradientSpreadMethod> {
-    using values = EnumValues<
-    WebCore::GradientSpreadMethod,
-    WebCore::GradientSpreadMethod::Pad,
-    WebCore::GradientSpreadMethod::Reflect,
-    WebCore::GradientSpreadMethod::Repeat
-    >;
-};
-
-template<> struct EnumTraits<WebCore::InterpolationQuality> {
-    using values = EnumValues<
-    WebCore::InterpolationQuality,
-    WebCore::InterpolationQuality::Default,
-    WebCore::InterpolationQuality::DoNotInterpolate,
-    WebCore::InterpolationQuality::Low,
-    WebCore::InterpolationQuality::Medium,
-    WebCore::InterpolationQuality::High
-    >;
-};
-
-template<> struct EnumTraits<WebCore::LineCap> {
-    using values = EnumValues<
-    WebCore::LineCap,
-    WebCore::LineCap::Butt,
-    WebCore::LineCap::Round,
-    WebCore::LineCap::Square
-    >;
-};
-
-template<> struct EnumTraits<WebCore::LineJoin> {
-    using values = EnumValues<
-    WebCore::LineJoin,
-    WebCore::LineJoin::Miter,
-    WebCore::LineJoin::Round,
-    WebCore::LineJoin::Bevel
-    >;
-};
-
-template<> struct EnumTraits<WebCore::DocumentMarkerLineStyle::Mode> {
-    using values = EnumValues<
-    WebCore::DocumentMarkerLineStyle::Mode,
-    WebCore::DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives,
-    WebCore::DocumentMarkerLineStyle::Mode::Spelling,
-    WebCore::DocumentMarkerLineStyle::Mode::Grammar,
-    WebCore::DocumentMarkerLineStyle::Mode::AutocorrectionReplacement,
-    WebCore::DocumentMarkerLineStyle::Mode::DictationAlternatives
-    >;
-};
-
-template<> struct EnumTraits<WebCore::StrokeStyle> {
-    using values = EnumValues<
-    WebCore::StrokeStyle,
-    WebCore::StrokeStyle::NoStroke,
-    WebCore::StrokeStyle::SolidStroke,
-    WebCore::StrokeStyle::DottedStroke,
-    WebCore::StrokeStyle::DashedStroke,
-    WebCore::StrokeStyle::DoubleStroke,
-    WebCore::StrokeStyle::WavyStroke
-    >;
-};
-
-template<> struct EnumTraits<WebCore::TextDrawingMode> {
-    using values = EnumValues<
-        WebCore::TextDrawingMode,
-        WebCore::TextDrawingMode::Fill,
-        WebCore::TextDrawingMode::Stroke
-    >;
-};
-
-} // namespace WTF

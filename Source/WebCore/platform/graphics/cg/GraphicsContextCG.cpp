@@ -482,7 +482,7 @@ void GraphicsContextCG::drawRect(const FloatRect& rect, float borderThickness)
 
     CGContextFillRect(context, rect);
 
-    if (strokeStyle() != NoStroke) {
+    if (strokeStyle() != StrokeStyle::NoStroke) {
         // We do a fill of four rects to simulate the stroke of a border.
         Color oldFillColor = fillColor();
         if (oldFillColor != strokeColor())
@@ -502,7 +502,7 @@ void GraphicsContextCG::drawRect(const FloatRect& rect, float borderThickness)
 // This is only used to draw borders.
 void GraphicsContextCG::drawLine(const FloatPoint& point1, const FloatPoint& point2)
 {
-    if (strokeStyle() == NoStroke)
+    if (strokeStyle() == StrokeStyle::NoStroke)
         return;
 
     float thickness = strokeThickness();
@@ -515,7 +515,7 @@ void GraphicsContextCG::drawLine(const FloatPoint& point1, const FloatPoint& poi
 
     StrokeStyle strokeStyle = this->strokeStyle();
     float cornerWidth = 0;
-    bool drawsDashedLine = strokeStyle == DottedStroke || strokeStyle == DashedStroke;
+    bool drawsDashedLine = strokeStyle == StrokeStyle::DottedStroke || strokeStyle == StrokeStyle::DashedStroke;
 
     CGContextStateSaver stateSaver(context, drawsDashedLine);
     if (drawsDashedLine) {
@@ -547,7 +547,7 @@ void GraphicsContextCG::drawLine(const FloatPoint& point1, const FloatPoint& poi
     if (shouldAntialias()) {
 #if PLATFORM(IOS_FAMILY)
         // Force antialiasing on for line patterns as they don't look good with it turned off (<rdar://problem/5459772>).
-        CGContextSetShouldAntialias(context, strokeStyle == DottedStroke || strokeStyle == DashedStroke);
+        CGContextSetShouldAntialias(context, strokeStyle == StrokeStyle::DottedStroke || strokeStyle == StrokeStyle::DashedStroke);
 #else
         CGContextSetShouldAntialias(context, false);
 #endif
@@ -608,7 +608,7 @@ void GraphicsContextCG::applyFillPattern()
 static inline bool calculateDrawingMode(const GraphicsContext& context, CGPathDrawingMode& mode)
 {
     bool shouldFill = context.fillBrush().isVisible();
-    bool shouldStroke = context.strokeBrush().isVisible() || context.strokeStyle();
+    bool shouldStroke = context.strokeBrush().isVisible() || (context.strokeStyle() != StrokeStyle::NoStroke);
     bool useEOFill = context.fillRule() == WindRule::EvenOdd;
 
     if (shouldFill) {
@@ -1421,13 +1421,13 @@ void GraphicsContextCG::drawLinesForText(const FloatPoint& point, float thicknes
 
     float dashWidth = 0;
     switch (strokeStyle) {
-    case DottedStroke:
+    case StrokeStyle::DottedStroke:
         dashWidth = bounds.height();
         break;
-    case DashedStroke:
+    case StrokeStyle::DashedStroke:
         dashWidth = 2 * bounds.height();
         break;
-    case SolidStroke:
+    case StrokeStyle::SolidStroke:
     default:
         break;
     }

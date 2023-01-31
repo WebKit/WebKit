@@ -219,7 +219,7 @@ void RenderMathMLMenclose::paint(PaintInfo& info, const LayoutPoint& paintOffset
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
     paintInfo.context().setStrokeThickness(thickness);
-    paintInfo.context().setStrokeStyle(SolidStroke);
+    paintInfo.context().setStrokeStyle(StrokeStyle::SolidStroke);
     paintInfo.context().setStrokeColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
     paintInfo.context().setFillColor(Color::transparentBlack);
     paintInfo.applyTransform(AffineTransform().translate(paintOffset + location()));

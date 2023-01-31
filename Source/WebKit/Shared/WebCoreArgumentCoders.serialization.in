@@ -3092,3 +3092,168 @@ class WebCore::SpeechRecognitionUpdate {
     WebCore::FloatSize m_imageSize;
 };
 #endif
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::CompositeOperator : uint8_t {
+    Clear,
+    Copy,
+    SourceOver,
+    SourceIn,
+    SourceOut,
+    SourceAtop,
+    DestinationOver,
+    DestinationIn,
+    DestinationOut,
+    DestinationAtop,
+    XOR,
+    PlusDarker,
+    PlusLighter,
+    Difference
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::BlendMode : uint8_t {
+    Normal,
+    Multiply,
+    Screen,
+    Darken,
+    Lighten,
+    Overlay,
+    ColorDodge,
+    ColorBurn,
+    HardLight,
+    SoftLight,
+    Difference,
+    Exclusion,
+    Hue,
+    Saturation,
+    Color,
+    Luminosity,
+    PlusDarker,
+    PlusLighter
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::GradientSpreadMethod : uint8_t {
+    Pad,
+    Reflect,
+    Repeat
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::InterpolationQuality : uint8_t {
+    Default,
+    DoNotInterpolate,
+    Low,
+    Medium,
+    High
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::LineCap : uint8_t {
+    Butt,
+    Round,
+    Square
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::LineJoin : uint8_t {
+    Miter,
+    Round,
+    Bevel
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::StrokeStyle : uint8_t {
+    NoStroke,
+    SolidStroke,
+    DottedStroke,
+    DashedStroke,
+    DoubleStroke,
+    WavyStroke,
+};
+
+[OptionSet, AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::TextDrawingMode : uint8_t {
+    Fill,
+    Stroke,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::DecodingMode : uint8_t {
+    Auto,
+    Synchronous,
+    Asynchronous
+};
+
+header: <WebCore/GraphicsTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::CompositeMode {
+    WebCore::CompositeOperator operation;
+    WebCore::BlendMode blendMode;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::DocumentMarkerLineStyleMode : uint8_t {
+    TextCheckingDictationPhraseWithAlternatives,
+    Spelling,
+    Grammar,
+    AutocorrectionReplacement,
+    DictationAlternatives
+};
+
+header: <WebCore/GraphicsTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DocumentMarkerLineStyle {
+    WebCore::DocumentMarkerLineStyleMode mode;
+    bool shouldUseDarkAppearance;
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
+
+header: <WebCore/GraphicsTypes.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DropShadow {
+    WebCore::FloatSize offset;
+    float blurRadius;
+    WebCore::Color color;
+    WebCore::ShadowRadiusMode radiusMode;
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::GenericCueData::Alignment : uint8_t {
+    None,
+    Start,
+    Middle,
+    End
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::GenericCueData::Status : uint8_t {
+    Uninitialized,
+    Partial,
+    Complete
+};
+
+header: <WebCore/InbandGenericCue.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GenericCueData {
+    WebCore::InbandGenericCueIdentifier m_uniqueId;
+    MediaTime m_startTime;
+    MediaTime m_endTime;
+    AtomString m_id;
+    String m_content;
+    String m_fontName;
+    double m_line;
+    double m_position;
+    double m_size;
+    double m_baseFontSize;
+    double m_relativeFontSize;
+    WebCore::Color m_foregroundColor;
+    WebCore::Color m_backgroundColor;
+    WebCore::Color m_highlightColor;
+    WebCore::GenericCueData::Alignment m_align;
+    WebCore::GenericCueData::Status m_status;
+};
+
+header: <WebCore/ImageDecoder.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageDecoderFrameInfo {
+    bool hasAlpha;
+    Seconds duration;
+}
+
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DistantLightSource {
+    float m_azimuth;
+    float m_elevation;
+};
+
+header: <WebCore/DisplayListItems.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDotsForDocumentMarker {
+    WebCore::FloatRect m_rect;
+    uint8_t m_styleMode;
+    bool m_styleShouldUseDarkAppearance;
+};

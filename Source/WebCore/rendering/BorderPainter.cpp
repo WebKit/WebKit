@@ -299,7 +299,7 @@ void BorderPainter::paintOutline(const LayoutPoint& paintOffset, const Vector<La
 
     graphicsContext.setStrokeColor(outlineColor);
     graphicsContext.setStrokeThickness(outlineWidth);
-    graphicsContext.setStrokeStyle(SolidStroke);
+    graphicsContext.setStrokeStyle(StrokeStyle::SolidStroke);
     graphicsContext.strokePath(path);
 
     if (useTransparencyLayer)
@@ -881,7 +881,7 @@ void BorderPainter::drawBoxSideFromPath(const LayoutRect& borderRect, const Path
         // The extra multiplier is so that the clipping mask can antialias
         // the edges to prevent jaggies.
         graphicsContext.setStrokeThickness(drawThickness * 2 * 1.1f);
-        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
+        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? StrokeStyle::DashedStroke : StrokeStyle::DottedStroke);
 
         // If the number of dashes that fit in the path is odd and non-integral then we
         // will have an awkwardly-sized dash at the end of the path. To try to avoid that
@@ -1002,7 +1002,7 @@ void BorderPainter::drawBoxSideFromPath(const LayoutRect& borderRect, const Path
         break;
     }
 
-    graphicsContext.setStrokeStyle(NoStroke);
+    graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
     graphicsContext.setFillColor(color);
     graphicsContext.drawRect(snapRectToDevicePixels(borderRect, document().deviceScaleFactor()));
 }
@@ -1157,7 +1157,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
         graphicsContext.setShouldAntialias(antialias);
         graphicsContext.setStrokeColor(color);
         graphicsContext.setStrokeThickness(thickness);
-        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
+        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? StrokeStyle::DashedStroke : StrokeStyle::DottedStroke);
         graphicsContext.drawLine(roundPointToDevicePixels(LayoutPoint(x1, y1), deviceScaleFactor), roundPointToDevicePixels(LayoutPoint(x2, y2), deviceScaleFactor));
         graphicsContext.setShouldAntialias(wasAntialiased);
         graphicsContext.setStrokeStyle(oldStrokeStyle);
@@ -1169,7 +1169,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
 
         if (!adjacentWidth1 && !adjacentWidth2) {
             StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
-            graphicsContext.setStrokeStyle(NoStroke);
+            graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
             graphicsContext.setFillColor(color);
 
             bool wasAntialiased = graphicsContext.shouldAntialias();
@@ -1310,7 +1310,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
         ASSERT(x2 >= x1);
         ASSERT(y2 >= y1);
         if (!adjacentWidth1 && !adjacentWidth2) {
-            graphicsContext.setStrokeStyle(NoStroke);
+            graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
             graphicsContext.setFillColor(color);
             bool wasAntialiased = graphicsContext.shouldAntialias();
             graphicsContext.setShouldAntialias(antialias);
@@ -1362,7 +1362,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
             break;
         }
 
-        graphicsContext.setStrokeStyle(NoStroke);
+        graphicsContext.setStrokeStyle(StrokeStyle::NoStroke);
         graphicsContext.setFillColor(color);
         bool wasAntialiased = graphicsContext.shouldAntialias();
         graphicsContext.setShouldAntialias(antialias);

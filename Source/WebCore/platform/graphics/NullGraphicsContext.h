@@ -87,7 +87,7 @@ private:
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { }
     void strokeRect(const FloatRect&, float) final { }
     void clipPath(const Path&, WindRule = WindRule::EvenOdd) final { }
-    void drawLinesForText(const FloatPoint&, float, const DashArray&, bool, bool = false, StrokeStyle = SolidStroke) final { }
+    void drawLinesForText(const FloatPoint&, float, const DashArray&, bool, bool = false, StrokeStyle = StrokeStyle::SolidStroke) final { }
     void setLineCap(LineCap) final { }
     void setLineDash(const DashArray&, float) final { }
     void setLineJoin(LineJoin) final { }
