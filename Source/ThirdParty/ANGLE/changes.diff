@@ -1,10 +1,10 @@
 diff --git a/src/common/ANGLEShaderProgramVersion.h b/src/common/ANGLEShaderProgramVersion.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..2e9f6190779a8707914808edff5690830cec77fa
+index 0000000000000000000000000000000000000000..0651119db93a7e63724f62802821333560cfbb87
 --- /dev/null
 +++ b/src/common/ANGLEShaderProgramVersion.h
 @@ -0,0 +1,2 @@
-+#define ANGLE_PROGRAM_VERSION "35c6f5eb4d05c0f68ff77d74edf80ecb"
++#define ANGLE_PROGRAM_VERSION "1a77296ed86d4b3fc71bebb6754d39bf"
 +#define ANGLE_PROGRAM_VERSION_HASH_SIZE 16
 diff --git a/src/common/RingBufferAllocator.h b/src/common/RingBufferAllocator.h
 index 74926f544f8e1d1720450bccec69465436f7c9fa..69927c00992e34caa39f5958790ea2646906da5d 100644
@@ -51,20 +51,6 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
-diff --git a/src/compiler/translator/CodeGen.cpp b/src/compiler/translator/CodeGen.cpp
-index c586780f1ceb813f1690197cdf8543b3d008cb5b..8e09ba5c24968507d2718ce47c7a2574329f3062 100644
---- a/src/compiler/translator/CodeGen.cpp
-+++ b/src/compiler/translator/CodeGen.cpp
-@@ -23,6 +23,9 @@
- #ifdef ANGLE_ENABLE_METAL
- #    include "compiler/translator/TranslatorMetalDirect.h"
- #endif  // ANGLE_ENABLE_METAL
-+#ifdef ANGLE_ENABLE_METAL_SPIRV
-+#    include "compiler/translator/TranslatorMetal.h"
-+#endif  // ANGLE_ENABLE_METAL_SPIRV
- 
- #include "compiler/translator/util.h"
- 
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
 index 233b571b7985ba9d33b245f495725851a12be569..6bd263e0b1ec4137e5b8bb1a6269ce07cc8a6b32 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
@@ -123,18 +109,6 @@ index 648c7190a9382f0ce020839322fae56acfbe40db..9ddc681d320550b171a2916cac8e9a4b
  namespace sh
  {
  
-diff --git a/src/libANGLE/Constants.h b/src/libANGLE/Constants.h
-index 406e6a9d2884e9129eef7058fecc4a5c78a45792..d3c03c1816f7d69bb3e3001e1e6869eb26dbc917 100644
---- a/src/libANGLE/Constants.h
-+++ b/src/libANGLE/Constants.h
-@@ -12,6 +12,7 @@
- #include "common/platform.h"
- 
- #include <stddef.h>
-+#include <stdint.h>
- 
- namespace gl
- {
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
 index b614f911bb46165707b6c6a965c4dd370cba87e7..86e0b539931ca2906b6de3bac22eecf7ae25833a 100644
 --- a/src/libANGLE/Context.cpp
@@ -512,19 +486,6 @@ index f205dbab5a8b12035d63ef7ef72c26c5e4c2d9bf..e6a3c8d90a6f4e7387ec990e82eb13e6
      params.srcStride           = binding.getStride();
      params.srcDefaultAlphaData = convertedFormat.defaultAlpha;
  
-diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
-index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860cd40c00a 100644
---- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
-+++ b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
-@@ -126,7 +126,7 @@ class BufferPool
- 
-     size_t mBuffersAllocated;
-     size_t mMaxBuffers;
--    BufferPoolMemPolicy mMemPolicy;
-+    BufferPoolMemPolicy mMemPolicy = BufferPoolMemPolicy::Auto;
-     bool mAlwaysAllocateNewBuffer;
- };
- 
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
 index 0a44decec8b2df3a9d447438c35bf4c3c1ba6d42..1c055cc1b0f8cdabe6de33292f3b68570622ab02 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
@@ -737,84 +698,6 @@ index 3eaa9a64e79af26faa786102ece3f0bdea84d090..2ecf7b40bd5a2edc3fd9d69841e266b6
 +#endif
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
-diff --git a/src/libANGLE/renderer/metal/mtl_resources.h b/src/libANGLE/renderer/metal/mtl_resources.h
-index 9b10ac07b789a6fc99cbb525e35211e36c8ad15a..c9a0134b9e3ac5baa5c61e0d85286c214e3605a2 100644
---- a/src/libANGLE/renderer/metal/mtl_resources.h
-+++ b/src/libANGLE/renderer/metal/mtl_resources.h
-@@ -365,7 +365,9 @@ class Texture final : public Resource,
-     size_t mEstimatedByteSize = 0;
- };
- 
--class Buffer final : public Resource, public WrappedObject<id<MTLBuffer>>
-+class Buffer final : public Resource,
-+                     public WrappedObject<id<MTLBuffer>>,
-+                     public std::enable_shared_from_this<Buffer>
- {
-   public:
-     static angle::Result MakeBuffer(ContextMtl *context,
-diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 144924035b1586af408e570806cca455396d71bc..f339f1a8290b017d3825c4ae8cbd3983ce845e34 100644
---- a/src/libANGLE/renderer/metal/mtl_resources.mm
-+++ b/src/libANGLE/renderer/metal/mtl_resources.mm
-@@ -35,12 +35,14 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
- // Asynchronously synchronize the content of a resource between GPU memory and its CPU cache.
- // NOTE: This operation doesn't finish immediately upon function's return.
- template <class T>
--void InvokeCPUMemSync(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder, T *resource)
-+void InvokeCPUMemSync(ContextMtl *context,
-+                      mtl::BlitCommandEncoder *blitEncoder,
-+                      const std::shared_ptr<T> &resource)
- {
- #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-     if (blitEncoder)
-     {
--        blitEncoder->synchronizeResource(resource);
-+        blitEncoder->synchronizeResource(resource.get());
- 
-         resource->resetCPUReadMemNeedSync();
-         resource->setCPUReadMemSyncPending(true);
-@@ -49,7 +51,7 @@ void InvokeCPUMemSync(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder,
- }
- 
- template <class T>
--void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
-+void EnsureCPUMemWillBeSynced(ContextMtl *context, const std::shared_ptr<T> &resource)
- {
- #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-     // Make sure GPU & CPU contents are synchronized.
-@@ -529,12 +531,12 @@ Texture::Texture(Texture *original,
- 
- void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
- {
--    InvokeCPUMemSync(context, blitEncoder, this);
-+    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
- }
- 
- void Texture::syncContentIfNeeded(ContextMtl *context)
- {
--    EnsureCPUMemWillBeSynced(context, this);
-+    EnsureCPUMemWillBeSynced(context, shared_from_this());
- }
- 
- bool Texture::isCPUAccessible() const
-@@ -1028,7 +1030,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
- 
- void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
- {
--    InvokeCPUMemSync(context, blitEncoder, this);
-+    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
- }
- 
- const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1049,7 +1051,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
-     {
-         CommandQueue &cmdQueue = context->cmdQueue();
- 
--        EnsureCPUMemWillBeSynced(context, this);
-+        EnsureCPUMemWillBeSynced(context, shared_from_this());
- 
-         if (this->isBeingUsedByGPU(context))
-         {
 diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/renderer/metal/mtl_state_cache.mm
 index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac26c5d99b3 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
@@ -942,36 +825,3 @@ index d1c994959e313fb1f8091ad395d0028126b0e8eb..5f9bf0729de3615c351b3a9d918ee0fd
      AtomicQueueSerial &operator=(const Serial &other)
      {
          mValue.store(other.mValue, std::memory_order_release);
-diff --git a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp
-index 8fe01dba762d07b0f1261fd4cf7934bb2bbb5601..22d0e77101d6c00a446e77db88ee7fdc2ab2573e 100644
---- a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp
-+++ b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.cpp
-@@ -113,12 +113,14 @@ const ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::getVariableBy
-     return mData[shaderType][typeAndIndex.variableType][typeAndIndex.index];
- }
- 
-+#if ANGLE_ENABLE_METAL_SPIRV
- bool ShaderInterfaceVariableInfoMap::hasTransformFeedbackInfo(gl::ShaderType shaderType,
-                                                               uint32_t bufferIndex) const
- {
-     std::string bufferName = rx::SpvGetXfbBufferName(bufferIndex);
-     return hasVariable(shaderType, bufferName);
- }
-+#endif
- 
- void ShaderInterfaceVariableInfoMap::mapIndexedResourceByName(gl::ShaderType shaderType,
-                                                               ShaderVariableType variableType,
-diff --git a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h
-index 1f969fbc1b5adcbdae4108c012633d67d40368d9..eb5ed5729cf874284e6109c924d11537de17aa09 100644
---- a/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h
-+++ b/src/libANGLE/renderer/vulkan/ShaderInterfaceVariableInfoMap.h
-@@ -88,7 +88,9 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
-     bool hasAtomicCounterInfo(gl::ShaderType shaderType) const;
-     const ShaderInterfaceVariableInfo &getAtomicCounterInfo(gl::ShaderType shaderType) const;
-     const ShaderInterfaceVariableInfo &getFramebufferFetchInfo(gl::ShaderType shaderType) const;
-+#if ANGLE_ENABLE_METAL_SPIRV
-     bool hasTransformFeedbackInfo(gl::ShaderType shaderType, uint32_t bufferIndex) const;
-+#endif
-     const ShaderInterfaceVariableInfo &getTransformFeedbackInfo(gl::ShaderType shaderType,
-                                                                 uint32_t bufferIndex) const;
- 

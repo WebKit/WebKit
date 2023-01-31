@@ -365,9 +365,7 @@ class Texture final : public Resource,
     size_t mEstimatedByteSize = 0;
 };
 
-class Buffer final : public Resource,
-                     public WrappedObject<id<MTLBuffer>>,
-                     public std::enable_shared_from_this<Buffer>
+class Buffer final : public Resource, public WrappedObject<id<MTLBuffer>>
 {
   public:
     static angle::Result MakeBuffer(ContextMtl *context,
