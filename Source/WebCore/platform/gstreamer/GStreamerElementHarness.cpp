@@ -251,10 +251,6 @@ GStreamerElementHarness::Stream::Stream(GRefPtr<GstPad>&& pad, RefPtr<GStreamerE
             return stream.m_downstreamHarness->pushBufferFull(buffer);
         return stream.chainBuffer(buffer);
     }),  this, nullptr);
-    gst_pad_set_query_function_full(m_targetPad.get(), reinterpret_cast<GstPadQueryFunction>(+[](GstPad* pad, GstObject* parent, GstQuery* query) -> gboolean {
-        auto& stream = *reinterpret_cast<GStreamerElementHarness::Stream*>(pad->querydata);
-        return stream.sinkQuery(pad, parent, query);
-    }), this, nullptr);
     gst_pad_set_event_function_full(m_targetPad.get(), reinterpret_cast<GstPadEventFunction>(+[](GstPad* pad, GstObject*, GstEvent* event) -> gboolean {
         auto& stream = *reinterpret_cast<GStreamerElementHarness::Stream*>(pad->eventdata);
         return stream.sinkEvent(event);
@@ -314,38 +310,6 @@ GstFlowReturn GStreamerElementHarness::Stream::chainBuffer(GstBuffer* outputBuff
     auto buffer = adoptGRef(outputBuffer);
     m_bufferQueue.prepend(WTFMove(buffer));
     return GST_FLOW_OK;
-}
-
-bool GStreamerElementHarness::Stream::sinkQuery(GstPad* pad, GstObject* parent, GstQuery* query)
-{
-    bool result = TRUE;
-    switch (GST_QUERY_TYPE(query)) {
-    case GST_QUERY_CAPS: {
-        GstCaps* filter = nullptr;
-        GRefPtr<GstCaps> caps;
-        if (m_outputCaps)
-            caps = m_outputCaps;
-        else
-            caps = adoptGRef(gst_pad_get_pad_template_caps(pad));
-
-        if (!caps) {
-            result = gst_pad_query_default(pad, parent, query);
-            break;
-        }
-
-        gst_query_parse_caps(query, &filter);
-        if (filter) {
-            auto intersectedCaps = adoptGRef(gst_caps_intersect_full(filter, caps.get(), GST_CAPS_INTERSECT_FIRST));
-            gst_query_set_caps_result(query, intersectedCaps.get());
-        } else
-            gst_query_set_caps_result(query, caps.get());
-        break;
-    }
-    default:
-        result = gst_pad_query_default(pad, parent, query);
-    }
-
-    return result;
 }
 
 bool GStreamerElementHarness::Stream::sinkEvent(GstEvent* event)

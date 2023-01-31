@@ -58,7 +58,6 @@ public:
         Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&);
 
         GstFlowReturn chainBuffer(GstBuffer*);
-        bool sinkQuery(GstPad*, GstObject*, GstQuery*);
         bool sinkEvent(GstEvent*);
 
         GRefPtr<GstPad> m_pad;
