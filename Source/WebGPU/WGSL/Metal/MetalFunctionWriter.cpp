@@ -71,6 +71,7 @@ public:
     void visit(AST::Float32Literal&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::Int32Literal&) override;
+    void visit(AST::Uint32Literal&) override;
     void visit(AST::StructureAccess&) override;
     void visit(AST::UnaryExpression&) override;
     void visit(AST::BinaryExpression&) override;
@@ -95,6 +96,7 @@ private:
     AST::ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructRole> m_structRole;
+    std::optional<AST::StageAttribute::Stage> m_entryPointStage;
     std::optional<String> m_suffix;
 };
 
@@ -106,12 +108,16 @@ void FunctionDefinitionWriter::visit(AST::ShaderModule& shaderModule)
 void FunctionDefinitionWriter::visit(AST::FunctionDecl& functionDefinition)
 {
     // FIXME: visit return attributes
-    ASSERT(functionDefinition.maybeReturnType());
     for (auto& attribute : functionDefinition.attributes()) {
         checkErrorAndVisit(attribute);
         m_stringBuilder.append(" ");
     }
-    checkErrorAndVisit(*functionDefinition.maybeReturnType());
+
+    if (functionDefinition.maybeReturnType())
+        checkErrorAndVisit(*functionDefinition.maybeReturnType());
+    else
+        m_stringBuilder.append("void");
+
     m_stringBuilder.append(" ", functionDefinition.name(), "(");
     bool first = true;
     for (auto& parameter : functionDefinition.parameters()) {
@@ -131,6 +137,9 @@ void FunctionDefinitionWriter::visit(AST::FunctionDecl& functionDefinition)
         }
         first = false;
     }
+    // Clear the flag set while serializing StageAttribute
+    m_entryPointStage = std::nullopt;
+
     m_stringBuilder.append(")\n");
     m_stringBuilder.append("{\n");
     IndentationScope scope(m_indent);
@@ -147,8 +156,6 @@ void FunctionDefinitionWriter::visit(AST::StructDecl& structDecl)
         IndentationScope scope(m_indent);
         for (auto& member : structDecl.members()) {
             m_stringBuilder.append(m_indent);
-            if (m_structRole == AST::StructRole::ArgumentBuffer)
-                m_stringBuilder.append("const device ");
             visit(member.type());
             m_stringBuilder.append(" ", member.name());
             if (m_suffix.has_value()) {
@@ -198,11 +205,17 @@ void FunctionDefinitionWriter::visit(AST::BuiltinAttribute& builtin)
         return;
     }
 
+    if (builtin.name() == "global_invocation_id"_s) {
+        m_stringBuilder.append("[[thread_position_in_grid]]");
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
 void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 {
+    m_entryPointStage = { stage.stage() };
     switch (stage.stage()) {
     case AST::StageAttribute::Stage::Vertex:
         m_stringBuilder.append("[[vertex]]");
@@ -211,15 +224,18 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
         m_stringBuilder.append("[[fragment]]");
         break;
     case AST::StageAttribute::Stage::Compute:
-        m_stringBuilder.append("[[compute]]");
+        m_stringBuilder.append("[[kernel]]");
         break;
     }
 }
 
 void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
-    auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage;
-    auto bufferIndex = vertexBufferIndexForBindGroup(group.group(), max);
+    unsigned bufferIndex = group.group();
+    if (m_entryPointStage.has_value() && *m_entryPointStage == AST::StageAttribute::Stage::Vertex) {
+        auto max = m_shaderModule.configuration().maxBuffersPlusVertexBuffersForVertexStage;
+        bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
+    }
     m_stringBuilder.append("[[buffer(", bufferIndex, ")]]");
 }
 
@@ -347,6 +363,9 @@ void FunctionDefinitionWriter::visit(AST::StructType& structType)
 
 void FunctionDefinitionWriter::visit(AST::ReferenceType& type)
 {
+    // FIXME: We can't assume this will always be device. The ReferenceType should
+    // have knowledge about the memory region
+    m_stringBuilder.append("device ");
     visit(type.type());
     m_stringBuilder.append("&");
 }
@@ -363,7 +382,7 @@ void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 
 void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& parameter)
 {
-    m_stringBuilder.append("const device ");
+    m_stringBuilder.append("constant ");
     visit(parameter.type());
     m_stringBuilder.append("& ", parameter.name());
     for (auto& attribute : parameter.attributes()) {
@@ -460,6 +479,12 @@ void FunctionDefinitionWriter::visit(AST::AbstractIntLiteral& literal)
 }
 
 void FunctionDefinitionWriter::visit(AST::Int32Literal& literal)
+{
+    // FIXME: this might not serialize all values correctly
+    m_stringBuilder.append(literal.value());
+}
+
+void FunctionDefinitionWriter::visit(AST::Uint32Literal& literal)
 {
     // FIXME: this might not serialize all values correctly
     m_stringBuilder.append(literal.value());
