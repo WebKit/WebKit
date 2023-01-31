@@ -36,7 +36,7 @@ using namespace WebCore;
 
 RefPtr<Icon> WebChromeClient::createIconForFiles(const Vector<String>& filenames)
 {
-    return Icon::createIconForImage(iconForFiles(filenames).get());
+    return Icon::create(iconForFiles(filenames).get());
 }
 
 } // namespace WebKit
