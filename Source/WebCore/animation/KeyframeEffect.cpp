@@ -29,6 +29,7 @@
 #include "Animation.h"
 #include "CSSAnimation.h"
 #include "CSSKeyframeRule.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
@@ -36,6 +37,8 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransition.h"
+#include "CSSValue.h"
+#include "CSSValueKeywords.h"
 #include "ComputedStyleExtractor.h"
 #include "Element.h"
 #include "FontCascade.h"
@@ -57,6 +60,7 @@
 #include "Settings.h"
 #include "StyleAdjuster.h"
 #include "StylePendingResources.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "StyledElement.h"
@@ -838,8 +842,6 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
     // since they can be computed up-front.
     computeMissingKeyframeOffsets(parsedKeyframes);
 
-    m_inheritedProperties.clear();
-
     // 8. For each frame in processed keyframes, perform the following steps:
     for (auto& keyframe : parsedKeyframes) {
         // Let the timing function of frame be the result of parsing the “easing” property on frame using the CSS syntax
@@ -849,12 +851,6 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
         if (timingFunctionResult.hasException())
             return timingFunctionResult.releaseException();
         keyframe.timingFunction = timingFunctionResult.returnValue();
-
-        // FIXME: handle custom properties here.
-        for (auto& [property, value] : keyframe.styleStrings) {
-            if (equalLettersIgnoringASCIICase(value, "inherit"_s))
-                m_inheritedProperties.add(property);
-        }
     }
 
     // 9. Parse each of the values in unused easings using the CSS syntax defined for easing property of the
@@ -883,6 +879,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     KeyframeList keyframeList(m_keyframesName);
     auto& styleResolver = m_target->styleResolver();
 
+    m_inheritedProperties.clear();
     m_containsCSSVariableReferences = false;
 
     for (auto& keyframe : m_parsedKeyframes) {
@@ -906,6 +903,14 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
         auto keyframeRule = StyleRuleKeyframe::create(keyframe.style->immutableCopyIfNeeded());
         if (!m_containsCSSVariableReferences)
             m_containsCSSVariableReferences = keyframeRule->containsCSSVariableReferences();
+
+        for (auto property : keyframeRule->properties()) {
+            if (auto* cssValue = property.value()) {
+                if (cssValue->isPrimitiveValue() && downcast<CSSPrimitiveValue>(cssValue)->valueID() == CSSValueInherit)
+                    m_inheritedProperties.add(property.id());
+            }
+        }
+
         keyframeValue.setStyle(styleResolver.styleForKeyframe(*m_target, elementStyle, resolutionContext, keyframeRule.get(), keyframeValue));
         keyframeList.insert(WTFMove(keyframeValue));
     }
