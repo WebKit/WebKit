@@ -11,5 +11,5 @@ FAIL Color responsive to parent currentColor changes assert_equals: expected "rg
 FAIL Color responsive to repeated parent currentColor changes assert_equals: expected "rgb(102, 17, 51)" but got "rgb(0, 17, 153)"
 PASS Color animations do not expose visited status
 PASS Color animations do not expose parent visited status
-FAIL Color animations respond to inherited changes assert_equals: expected "rgb(70, 120, 120)" but got "rgb(120, 70, 120)"
+PASS Color animations respond to inherited changes
 

@@ -179,6 +179,7 @@ public:
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
     bool containsCSSVariableReferences() const { return m_containsCSSVariableReferences; }
+    bool hasExplicitlyInheritedKeyframeProperty() const { return m_hasExplicitlyInheritedKeyframeProperty; }
 
 private:
     KeyframeEffect(Element*, PseudoId);
@@ -223,6 +224,7 @@ private:
     void checkForMatchingTransformFunctionLists();
     void computeHasImplicitKeyframeForAcceleratedProperty();
     void computeHasKeyframeComposingAcceleratedProperty();
+    void computeHasExplicitlyInheritedKeyframeProperty();
     void abilityToBeAcceleratedDidChange();
 
     // AnimationEffect
@@ -261,6 +263,7 @@ private:
     bool m_hasImplicitKeyframeForAcceleratedProperty { false };
     bool m_hasKeyframeComposingAcceleratedProperty { false };
     bool m_containsCSSVariableReferences { false };
+    bool m_hasExplicitlyInheritedKeyframeProperty { false };
 };
 
 } // namespace WebCore

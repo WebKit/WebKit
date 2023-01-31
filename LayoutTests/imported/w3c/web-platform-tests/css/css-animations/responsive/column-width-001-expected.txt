@@ -1,5 +1,5 @@
 
 PASS column-width responds to font-size changes
 FAIL column-width clamps to 0px assert_equals: expected "0px" but got "20px"
-FAIL column-width responds to inherited changes assert_equals: expected "auto" but got "30px"
+PASS column-width responds to inherited changes
 
