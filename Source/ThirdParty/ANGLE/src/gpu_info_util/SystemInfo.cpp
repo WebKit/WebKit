@@ -243,46 +243,6 @@ bool ParseAMDCatalystDriverVersion(const std::string &content, std::string *vers
     return false;
 }
 
-bool ParseMacMachineModel(const std::string &identifier,
-                          std::string *type,
-                          int32_t *major,
-                          int32_t *minor)
-{
-    size_t numberLoc = identifier.find_first_of("0123456789");
-    if (numberLoc == std::string::npos)
-    {
-        return false;
-    }
-
-    size_t commaLoc = identifier.find(',', numberLoc);
-    if (commaLoc == std::string::npos || commaLoc >= identifier.size())
-    {
-        return false;
-    }
-
-    const char *numberPtr = &identifier[numberLoc];
-    const char *commaPtr  = &identifier[commaLoc + 1];
-    char *endPtr          = nullptr;
-
-    int32_t majorTmp = static_cast<int32_t>(std::strtol(numberPtr, &endPtr, 10));
-    if (endPtr == numberPtr)
-    {
-        return false;
-    }
-
-    int32_t minorTmp = static_cast<int32_t>(std::strtol(commaPtr, &endPtr, 10));
-    if (endPtr == commaPtr)
-    {
-        return false;
-    }
-
-    *major = majorTmp;
-    *minor = minorTmp;
-    *type  = identifier.substr(0, numberLoc);
-
-    return true;
-}
-
 bool CMDeviceIDToDeviceAndVendorID(const std::string &id, uint32_t *vendorId, uint32_t *deviceId)
 {
     unsigned int vendor = 0;

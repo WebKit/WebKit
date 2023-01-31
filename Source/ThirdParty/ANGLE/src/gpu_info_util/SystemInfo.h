@@ -88,7 +88,7 @@ struct SystemInfo
     // Only available on macOS and Android
     std::string machineModelName;
 
-    // Only available on macOS
+    // Only available on macOS and iOS
     std::string machineModelVersion;
 };
 

@@ -72,34 +72,6 @@ TEST(SystemInfoTest, AMDCatalystVersionParsing)
     ASSERT_EQ("42.0.56", version);
 }
 
-// Test Mac machine model parsing
-TEST(SystemInfoTest, MacMachineModelParsing)
-{
-    std::string model;
-    int32_t major = 1, minor = 2;
-
-    // Test on the empty string, that is returned by GetMachineModel on an error
-    EXPECT_FALSE(ParseMacMachineModel("", &model, &major, &minor));
-    EXPECT_EQ(0U, model.length());
-    EXPECT_EQ(1, major);
-    EXPECT_EQ(2, minor);
-
-    // Test on an invalid string
-    EXPECT_FALSE(ParseMacMachineModel("FooBar", &model, &major, &minor));
-
-    // Test on a MacPro model
-    EXPECT_TRUE(ParseMacMachineModel("MacPro4,1", &model, &major, &minor));
-    EXPECT_EQ("MacPro", model);
-    EXPECT_EQ(4, major);
-    EXPECT_EQ(1, minor);
-
-    // Test on a MacBookPro model
-    EXPECT_TRUE(ParseMacMachineModel("MacBookPro6,2", &model, &major, &minor));
-    EXPECT_EQ("MacBookPro", model);
-    EXPECT_EQ(6, major);
-    EXPECT_EQ(2, minor);
-}
-
 // Test Windows CM Device ID parsing
 TEST(SystemInfoTest, CMDeviceIDToDeviceAndVendorID)
 {
