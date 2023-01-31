@@ -35,14 +35,12 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
 // Asynchronously synchronize the content of a resource between GPU memory and its CPU cache.
 // NOTE: This operation doesn't finish immediately upon function's return.
 template <class T>
-void InvokeCPUMemSync(ContextMtl *context,
-                      mtl::BlitCommandEncoder *blitEncoder,
-                      const std::shared_ptr<T> &resource)
+void InvokeCPUMemSync(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder, T *resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     if (blitEncoder)
     {
-        blitEncoder->synchronizeResource(resource.get());
+        blitEncoder->synchronizeResource(resource);
 
         resource->resetCPUReadMemNeedSync();
         resource->setCPUReadMemSyncPending(true);
@@ -51,7 +49,7 @@ void InvokeCPUMemSync(ContextMtl *context,
 }
 
 template <class T>
-void EnsureCPUMemWillBeSynced(ContextMtl *context, const std::shared_ptr<T> &resource)
+void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
     // Make sure GPU & CPU contents are synchronized.
@@ -531,12 +529,12 @@ Texture::Texture(Texture *original,
 
 void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
+    InvokeCPUMemSync(context, blitEncoder, this);
 }
 
 void Texture::syncContentIfNeeded(ContextMtl *context)
 {
-    EnsureCPUMemWillBeSynced(context, shared_from_this());
+    EnsureCPUMemWillBeSynced(context, this);
 }
 
 bool Texture::isCPUAccessible() const
@@ -1030,7 +1028,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
 
 void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
 {
-    InvokeCPUMemSync(context, blitEncoder, shared_from_this());
+    InvokeCPUMemSync(context, blitEncoder, this);
 }
 
 const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
@@ -1051,7 +1049,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
     {
         CommandQueue &cmdQueue = context->cmdQueue();
 
-        EnsureCPUMemWillBeSynced(context, shared_from_this());
+        EnsureCPUMemWillBeSynced(context, this);
 
         if (this->isBeingUsedByGPU(context))
         {

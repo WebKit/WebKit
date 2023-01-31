@@ -126,7 +126,7 @@ class BufferPool
 
     size_t mBuffersAllocated;
     size_t mMaxBuffers;
-    BufferPoolMemPolicy mMemPolicy = BufferPoolMemPolicy::Auto;
+    BufferPoolMemPolicy mMemPolicy;
     bool mAlwaysAllocateNewBuffer;
 };
 
