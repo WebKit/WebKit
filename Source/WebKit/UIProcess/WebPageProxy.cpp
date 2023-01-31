@@ -4466,18 +4466,26 @@ void WebPageProxy::setGapBetweenPages(double gap)
     send(Messages::WebPage::SetGapBetweenPages(gap));
 }
 
+static bool scaleFactorIsValid(double scaleFactor)
+{
+    return scaleFactor > 0 && scaleFactor <= 100;
+}
+
 void WebPageProxy::pageScaleFactorDidChange(double scaleFactor)
 {
+    MESSAGE_CHECK(m_process, scaleFactorIsValid(scaleFactor));
     m_pageScaleFactor = scaleFactor;
 }
 
 void WebPageProxy::pluginScaleFactorDidChange(double pluginScaleFactor)
 {
+    MESSAGE_CHECK(m_process, scaleFactorIsValid(pluginScaleFactor));
     m_pluginScaleFactor = pluginScaleFactor;
 }
 
 void WebPageProxy::pluginZoomFactorDidChange(double pluginZoomFactor)
 {
+    MESSAGE_CHECK(m_process, scaleFactorIsValid(pluginZoomFactor));
     m_pluginZoomFactor = pluginZoomFactor;
 }
 
