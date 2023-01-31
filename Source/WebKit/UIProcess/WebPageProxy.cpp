@@ -8567,6 +8567,7 @@ static Span<const ASCIILiteral> gpuIOKitClasses()
     static constexpr std::array services {
 #if PLATFORM(IOS_FAMILY)
         "AGXDeviceUserClient"_s,
+        "AppleParavirtDeviceUserClient"_s,
         "IOGPU"_s,
         "IOSurfaceRootUserClient"_s,
 #endif

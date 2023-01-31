@@ -167,6 +167,11 @@
             (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AGXDeviceUserClient"))) ;; Used by WebGL
 
+    (allow iokit-open-user-client
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-user-client-class "AppleParavirtDeviceUserClient")))
+
     ;; <rdar://problem/47268166>
     (allow mach-lookup
         (require-all
