@@ -95,6 +95,7 @@ private:
     AST::ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructRole> m_structRole;
+    std::optional<String> m_suffix;
 };
 
 void FunctionDefinitionWriter::visit(AST::ShaderModule& shaderModule)
@@ -150,6 +151,10 @@ void FunctionDefinitionWriter::visit(AST::StructDecl& structDecl)
                 m_stringBuilder.append("const device ");
             visit(member.type());
             m_stringBuilder.append(" ", member.name());
+            if (m_suffix.has_value()) {
+                m_stringBuilder.append(*m_suffix);
+                m_suffix.reset();
+            }
             for (auto &attribute : member.attributes()) {
                 m_stringBuilder.append(" ");
                 visit(attribute);
@@ -253,7 +258,13 @@ void FunctionDefinitionWriter::visit(AST::TypeDecl& type)
 void FunctionDefinitionWriter::visit(AST::ArrayType& type)
 {
     ASSERT(type.maybeElementType());
-    ASSERT(type.maybeElementCount());
+
+    if (!type.maybeElementCount()) {
+        visit(*type.maybeElementType());
+        m_suffix = { "[1]"_s };
+        return;
+    }
+
     m_stringBuilder.append("array<");
     visit(*type.maybeElementType());
     m_stringBuilder.append(", ");
