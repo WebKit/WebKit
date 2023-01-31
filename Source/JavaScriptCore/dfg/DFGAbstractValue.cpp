@@ -50,30 +50,32 @@ void AbstractValue::observeTransitions(const TransitionVector& vector)
 
 void AbstractValue::set(Graph& graph, const FrozenValue& value, StructureClobberState clobberState)
 {
-    if (!!value && value.value().isCell()) {
-        Structure* structure = value.structure();
-        StructureRegistrationResult result;
-        RegisteredStructure registeredStructure = graph.registerStructure(structure, result);
-        if (result == StructureRegisteredAndWatched) {
-            m_structure = registeredStructure;
-            if (clobberState == StructuresAreClobbered) {
-                m_arrayModes = ALL_ARRAY_MODES;
-                m_structure.clobber();
-            } else
-                m_arrayModes = arrayModesFromStructure(structure);
-        } else {
-            m_structure.makeTop();
-            m_arrayModes = ALL_ARRAY_MODES;
-        }
-    } else {
-        m_structure.clear();
-        m_arrayModes = 0;
-    }
-    
     m_type = speculationFromValue(value.value());
-    m_value = value.value();
-    
-    checkConsistency();
+    if (m_type) {
+        if (!!value && value.value().isCell()) {
+            Structure* structure = value.structure();
+            StructureRegistrationResult result;
+            RegisteredStructure registeredStructure = graph.registerStructure(structure, result);
+            if (result == StructureRegisteredAndWatched) {
+                m_structure = registeredStructure;
+                if (clobberState == StructuresAreClobbered) {
+                    m_arrayModes = ALL_ARRAY_MODES;
+                    m_structure.clobber();
+                } else
+                    m_arrayModes = arrayModesFromStructure(structure);
+            } else {
+                m_structure.makeTop();
+                m_arrayModes = ALL_ARRAY_MODES;
+            }
+        } else {
+            m_structure.clear();
+            m_arrayModes = 0;
+        }
+        m_value = value.value();
+        checkConsistency();
+    } else
+        clear();
+
     assertIsRegistered(graph);
 }
 
@@ -85,12 +87,11 @@ void AbstractValue::set(Graph& graph, Structure* structure)
 void AbstractValue::set(Graph& graph, RegisteredStructure structure)
 {
     RELEASE_ASSERT(structure);
-    
+
     m_structure = structure;
     m_arrayModes = arrayModesFromStructure(structure.get());
     m_type = speculationFromStructure(structure.get());
     m_value = JSValue();
-    
     checkConsistency();
     assertIsRegistered(graph);
 }
@@ -101,7 +102,7 @@ void AbstractValue::set(Graph& graph, const RegisteredStructureSet& set)
     m_arrayModes = set.arrayModesFromStructures();
     m_type = set.speculationFromStructures();
     m_value = JSValue();
-    
+
     checkConsistency();
     assertIsRegistered(graph);
 }
@@ -194,7 +195,8 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value, VariableAcce
     }
 
     AbstractValue oldMe = *this;
-    
+
+
     if (isClear()) {
         FrozenValue* frozenValue = graph.freeze(value);
         if (frozenValue->pointsToHeap()) {
@@ -204,20 +206,26 @@ bool AbstractValue::mergeOSREntryValue(Graph& graph, JSValue value, VariableAcce
             m_structure.clear();
             m_arrayModes = 0;
         }
-        
+
         m_type = speculationFromValue(value);
-        m_value = value;
+        if (m_type)
+            m_value = value;
+        else
+            clear();
     } else {
         mergeSpeculation(m_type, speculationFromValue(value));
-        if (!!value && value.isCell()) {
-            RegisteredStructure structure = graph.registerStructure(value.asCell()->structure());
-            mergeArrayModes(m_arrayModes, arrayModesFromStructure(structure.get()));
-            m_structure.merge(RegisteredStructureSet(structure));
-        }
-        if (m_value != value)
-            m_value = JSValue();
+        if (m_type) {
+            if (!!value && value.isCell()) {
+                RegisteredStructure structure = graph.registerStructure(value.asCell()->structure());
+                mergeArrayModes(m_arrayModes, arrayModesFromStructure(structure.get()));
+                m_structure.merge(RegisteredStructureSet(structure));
+            }
+            if (m_value != value)
+                m_value = JSValue();
+        } else
+            clear();
     }
-    
+
     assertIsRegistered(graph);
 
     fixTypeForRepresentation(graph, resultFor(flushFormat), node);

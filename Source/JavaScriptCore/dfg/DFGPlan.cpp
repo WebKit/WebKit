@@ -557,6 +557,13 @@ CompilationResult Plan::finalize()
             return CompilationFailed;
         }
 
+#if USE(JSVALUE32_64)
+        if (Options::useConcurrentJIT()) {
+            for (JSCell* cell : m_weakReferences.references())
+                watchpoints().addLazily(cell);
+        }
+#endif
+
         reallyAdd(m_codeBlock->jitCode()->dfgCommon());
         {
             ConcurrentJSLocker locker(m_codeBlock->m_lock);

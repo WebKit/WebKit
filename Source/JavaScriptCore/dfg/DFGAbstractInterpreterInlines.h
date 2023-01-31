@@ -437,10 +437,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         
     case SetArgumentDefinitely:
     case SetArgumentMaybe:
-        // Assert that the state of arguments has been set. SetArgumentDefinitely/SetArgumentMaybe means
-        // that someone set the argument values out-of-band, and currently this always means setting to a
-        // non-clear value.
-        ASSERT(!m_state.operand(node->operand()).isClear());
+        // SetArgumentDefinitely/SetArgumentMaybe means that someone set the argument values out-of-band
+        // and currently this always means setting to a non-clear value, unless it was a cell and the cell
+        // was found to be dead.
+        if (m_state.operand(node->operand()).isClear())
+            makeBytecodeTopForNode(node);
         break;
 
     case InitializeEntrypointArguments: {
@@ -3689,10 +3690,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case CheckStructureImmediate: {
         // FIXME: This currently can only reason about one structure at a time.
         // https://bugs.webkit.org/show_bug.cgi?id=136988
-        
+
         AbstractValue& value = forNode(node->child1());
         const RegisteredStructureSet& set = node->structureSet();
-        
+
         if (value.value()) {
             if (Structure* structure = jsDynamicCast<Structure*>(value.value())) {
                 if (set.contains(m_graph.registerStructure(structure))) {

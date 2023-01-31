@@ -127,7 +127,7 @@ public:
 
     // We use this abstraction to make it easier to grep for places where we lock cells.
     // to lock a cell you can just do:
-    // Locker locker { cell->cellLocker() };
+    // Locker locker { cell->cellLock() };
     JSCellLock& cellLock() { return *reinterpret_cast<JSCellLock*>(this); }
     
     JSType type() const;
@@ -299,6 +299,10 @@ inline auto subspaceForConcurrently(VM& vm)
 
 #if CPU(X86_64)
 JS_EXPORT_PRIVATE NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCrash(Heap&, const JSCell*);
+#endif
+
+#if USE(JSVALUE32_64)
+bool isLiveConcurrently(JSCell*);
 #endif
 
 } // namespace JSC

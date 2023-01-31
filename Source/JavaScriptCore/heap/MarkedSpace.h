@@ -25,6 +25,7 @@
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "PreciseAllocation.h"
+#include "PreciseAllocationSet.h"
 #include <array>
 #include <wtf/Bag.h>
 #include <wtf/HashSet.h>
@@ -156,7 +157,7 @@ public:
     const Vector<PreciseAllocation*>& preciseAllocations() const { return m_preciseAllocations; }
     unsigned preciseAllocationsNurseryOffset() const { return m_preciseAllocationsNurseryOffset; }
     unsigned preciseAllocationsOffsetForThisCollection() const { return m_preciseAllocationsOffsetForThisCollection; }
-    HashSet<HeapCell*>* preciseAllocationSet() const { return m_preciseAllocationSet.get(); }
+    PreciseAllocationSet* preciseAllocationSet() const { return m_preciseAllocationSet.get(); }
 
     void enablePreciseAllocationTracking();
     
@@ -200,7 +201,7 @@ private:
 
     Vector<Subspace*> m_subspaces;
 
-    std::unique_ptr<HashSet<HeapCell*>> m_preciseAllocationSet;
+    std::unique_ptr<PreciseAllocationSet> m_preciseAllocationSet;
     Vector<PreciseAllocation*> m_preciseAllocations;
     unsigned m_preciseAllocationsNurseryOffset { 0 };
     unsigned m_preciseAllocationsOffsetForThisCollection { 0 };

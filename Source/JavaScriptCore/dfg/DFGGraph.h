@@ -256,7 +256,7 @@ public:
     // fix this when we can allocate on the Compiler thread.
     // https://bugs.webkit.org/show_bug.cgi?id=210627
     FrozenValue* bottomValueMatchingSpeculation(SpeculatedType);
-    
+
     RegisteredStructure registerStructure(Structure* structure)
     {
         StructureRegistrationResult ignored;

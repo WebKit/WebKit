@@ -172,11 +172,14 @@ public:
         size_t backingStorageSize() { return bitwise_cast<uintptr_t>(end()) - bitwise_cast<uintptr_t>(pageStart()); }
         
         bool isAllocated();
-        
+
         bool isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell*);
+        bool isLiveConcurrently(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell*);
+
         inline bool isLiveCell(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const void*);
 
         bool isLive(const HeapCell*);
+        bool isLiveConcurrently(const HeapCell*);
         bool isLiveCell(const void*);
 
         bool isFreeListedCell(const void* target) const;

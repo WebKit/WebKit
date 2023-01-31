@@ -538,6 +538,10 @@ SpeculatedType speculationFromClassInfoInheritance(const ClassInfo* classInfo)
 
 SpeculatedType speculationFromStructure(Structure* structure)
 {
+#if USE(JSVALUE32_64)
+    if (!isLiveConcurrently(structure))
+        return SpecNone;
+#endif
     SpeculatedType filteredResult = SpecNone;
     JSType type = structure->typeInfo().type();
     switch (type) {
@@ -631,6 +635,10 @@ SpeculatedType speculationFromCell(JSCell* cell)
         ASSERT_NOT_REACHED();
         return SpecNone;
     }
+#if USE(JSVALUE32_64)
+    if (!isLiveConcurrently(cell))
+        return SpecNone;
+#endif
     if (cell->isString()) {
         JSString* string = jsCast<JSString*>(cell);
         if (const StringImpl* impl = string->tryGetValueImpl()) {

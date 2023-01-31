@@ -173,6 +173,20 @@ struct AdaptiveStructureWatchpointAdaptor {
     }
 };
 
+#if USE(JSVALUE32_64)
+struct JSCellWatchpointAdaptor {
+    static void add(CodeBlock*, JSCell*, WatchpointCollector&);
+    static bool hasBeenInvalidated(JSCell* cell)
+    {
+        return !isLiveConcurrently(cell);
+    }
+    static void dumpInContext(PrintStream& out, JSCell* cell, DumpContext* context)
+    {
+        out.print(inContext(JSValue(cell), context));
+    }
+};
+#endif
+
 template<typename WatchpointSetType, typename Adaptor = SetPointerAdaptor<WatchpointSetType>>
 class GenericDesiredWatchpoints {
 #if ASSERT_ENABLED
@@ -240,7 +254,10 @@ public:
     void addLazily(SymbolTable*);
     void addLazily(FunctionExecutable*);
     void addLazily(JSArrayBufferView*);
-    
+#if USE(JSVALUE32_64)
+    void addLazily(JSCell*);
+#endif
+
     // It's recommended that you don't call this directly. Use Graph::watchCondition(), which does
     // the required GC magic as well as some other bookkeeping.
     void addLazily(const ObjectPropertyCondition&);
@@ -279,7 +296,11 @@ public:
         return m_adaptiveStructureSets.isWatched(key);
     }
     void dumpInContext(PrintStream&, DumpContext*) const;
-    
+    void dump(PrintStream& out) const
+    {
+        dumpInContext(out, nullptr);
+    }
+
 private:
     GenericDesiredWatchpoints<WatchpointSet*> m_sets;
     GenericDesiredWatchpoints<InlineWatchpointSet*> m_inlineSets;
@@ -287,6 +308,9 @@ private:
     GenericDesiredWatchpoints<FunctionExecutable*, FunctionExecutableAdaptor> m_functionExecutables;
     GenericDesiredWatchpoints<JSArrayBufferView*, ArrayBufferViewWatchpointAdaptor> m_bufferViews;
     GenericDesiredWatchpoints<ObjectPropertyCondition, AdaptiveStructureWatchpointAdaptor> m_adaptiveStructureSets;
+#if USE(JSVALUE32_64)
+    GenericDesiredWatchpoints<JSCell*, JSCellWatchpointAdaptor> m_cellSets;
+#endif
     DesiredGlobalProperties m_globalProperties;
 };
 

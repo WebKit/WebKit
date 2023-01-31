@@ -1,4 +1,4 @@
-//@ skip if $architecture != "arm64" and $architecture != "x86_64"
+//@ skip if $memoryLimited
 
 let s = `
 for (let i = 0; i < 10000; i++) {

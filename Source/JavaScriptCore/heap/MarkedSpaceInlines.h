@@ -43,15 +43,9 @@ template<typename Functor> inline void MarkedSpace::forEachLiveCell(HeapIteratio
 
 template<typename Functor> inline void MarkedSpace::forEachLiveCell(const Functor& functor)
 {
-    BlockIterator end = m_blocks.set().end();
-    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
-        IterationStatus result = (*it)->handle().forEachLiveCell(
-            [&] (size_t, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
-                return functor(cell, kind);
-            });
-        if (result == IterationStatus::Done)
-            return;
-    }
+    if (m_blocks.forEachLiveCell(functor))
+        return;
+
     for (PreciseAllocation* allocation : m_preciseAllocations) {
         if (allocation->isLive()) {
             if (functor(allocation->cell(), allocation->attributes().cellKind) == IterationStatus::Done)
@@ -63,11 +57,9 @@ template<typename Functor> inline void MarkedSpace::forEachLiveCell(const Functo
 template<typename Functor> inline void MarkedSpace::forEachDeadCell(HeapIterationScope&, const Functor& functor)
 {
     ASSERT(isIterating());
-    BlockIterator end = m_blocks.set().end();
-    for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
-        if ((*it)->handle().forEachDeadCell(functor) == IterationStatus::Done)
-            return;
-    }
+    if (m_blocks.forEachDeadCell(functor))
+        return;
+
     for (PreciseAllocation* allocation : m_preciseAllocations) {
         if (!allocation->isLive()) {
             if (functor(allocation->cell(), allocation->attributes().cellKind) == IterationStatus::Done)

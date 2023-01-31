@@ -249,7 +249,7 @@ void VMInspector::edenGC(VM* vm)
 bool VMInspector::isInHeap(Heap* heap, void* ptr)
 {
     MarkedBlock* candidate = MarkedBlock::blockFor(ptr);
-    if (heap->objectSpace().blocks().set().contains(candidate))
+    if (heap->objectSpace().blocks().contains(candidate))
         return true;
     for (PreciseAllocation* allocation : heap->objectSpace().preciseAllocations()) {
         if (allocation->contains(ptr))

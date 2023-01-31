@@ -105,6 +105,22 @@ void AdaptiveStructureWatchpointAdaptor::add(CodeBlock* codeBlock, const ObjectP
     }
 }
 
+#if USE(JSVALUE32_64)
+void JSCellWatchpointAdaptor::add(CodeBlock* codeBlock, JSCell* cell, WatchpointCollector& collector)
+{
+    collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
+        {
+            ConcurrentJSLocker locker(codeBlock->m_lock);
+            watchpoint.initialize(codeBlock);
+        }
+        if (!isLiveConcurrently(cell)) {
+            watchpoint.fire(codeBlock->vm(), StringFireDetail("JSCell is not live."));
+            return;
+        }
+    });
+}
+#endif
+
 DesiredWatchpoints::DesiredWatchpoints() { }
 DesiredWatchpoints::~DesiredWatchpoints() { }
 
@@ -138,6 +154,13 @@ void DesiredWatchpoints::addLazily(const ObjectPropertyCondition& key)
     m_adaptiveStructureSets.addLazily(key);
 }
 
+#if USE(JSVALUE32_64)
+void DesiredWatchpoints::addLazily(JSCell* cell)
+{
+    m_cellSets.addLazily(cell);
+}
+#endif
+
 void DesiredWatchpoints::addLazily(DesiredGlobalProperty&& property)
 {
     m_globalProperties.addLazily(WTFMove(property));
@@ -162,6 +185,9 @@ void DesiredWatchpoints::reallyAdd(CodeBlock* codeBlock, DesiredIdentifiers& ide
         m_functionExecutables.reallyAdd(codeBlock, collector);
         m_bufferViews.reallyAdd(codeBlock, collector);
         m_adaptiveStructureSets.reallyAdd(codeBlock, collector);
+#if USE(JSVALUE32_64)
+        m_cellSets.reallyAdd(codeBlock, collector);
+#endif
         m_globalProperties.reallyAdd(codeBlock, identifiers, collector);
     };
     reallyAdd();
@@ -178,6 +204,9 @@ bool DesiredWatchpoints::areStillValid() const
         && m_symbolTables.areStillValid()
         && m_functionExecutables.areStillValid()
         && m_bufferViews.areStillValid()
+#if USE(JSVALUE32_64)
+        && m_cellSets.areStillValid()
+#endif
         && m_adaptiveStructureSets.areStillValid();
 }
 
@@ -196,6 +225,9 @@ void DesiredWatchpoints::dumpInContext(PrintStream& out, DumpContext* context) c
     out.print(prefix, "    SymbolTables: ", inContext(m_symbolTables, context), "\n");
     out.print(prefix, "    FunctionExecutables: ", inContext(m_functionExecutables, context), "\n");
     out.print(prefix, "    Buffer views: ", inContext(m_bufferViews, context), "\n");
+#if USE(JSVALUE32_64)
+    out.print(prefix, "    Cells: ", inContext(m_cellSets, context), "\n");
+#endif
     out.print(prefix, "    Object property conditions: ", inContext(m_adaptiveStructureSets, context), "\n");
 }
 

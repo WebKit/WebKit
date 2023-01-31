@@ -2309,6 +2309,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 CCallHelpers::TrustedImm32(numberOfParameters),
                 calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + PayloadOffset));
 
+            // FIXME: in 32bit platforms we spend an extra instruction to move the CellTag on the second storeCell unnecessarily
             jit.storeCell(
                 loadedValueGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 

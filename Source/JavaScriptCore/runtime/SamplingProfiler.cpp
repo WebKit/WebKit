@@ -468,8 +468,6 @@ void SamplingProfiler::processUnverifiedStackTraces()
     // This function needs to be called from the JSC execution thread.
     RELEASE_ASSERT(m_lock.isLocked());
 
-    TinyBloomFilter<uintptr_t> filter = m_vm.heap.objectSpace().blocks().filter();
-
     for (UnprocessedStackTrace& unprocessedStackTrace : m_unprocessedStackTraces) {
         m_stackTraces.append(StackTrace());
         StackTrace& stackTrace = m_stackTraces.last();
@@ -533,7 +531,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
 #endif
 
             JSValue callee = calleeBits.asCell();
-            if (!HeapUtil::isValueGCObject(m_vm.heap, filter, callee)) {
+            if (!HeapUtil::isValueGCObject(m_vm.heap, callee)) {
                 if (!alreadyHasExecutable)
                     stackFrame.frameType = FrameType::Unknown;
                 return;
@@ -577,7 +575,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 return;
             }
 
-            RELEASE_ASSERT(HeapUtil::isPointerGCObjectJSCell(m_vm.heap, filter, executable));
+            RELEASE_ASSERT(HeapUtil::isPointerGCObjectJSCell(m_vm.heap, executable));
             stackFrame.frameType = FrameType::Executable;
             stackFrame.executable = executable;
             m_liveCellPointers.add(executable);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,66 @@
 
 #pragma once
 
+#include "HeapCell.h"
 #include <wtf/HashSet.h>
 
-#if ENABLE(DFG_JIT)
+namespace JSC {
 
-namespace JSC { 
+class PreciseAllocationSet {
+    WTF_MAKE_FAST_ALLOCATED;
 
-class CodeBlock;
-class JSCell;
-class JSValue;
-class VM;
-
-namespace DFG {
-
-class CommonData;
-
-class DesiredWeakReferences {
 public:
-    DesiredWeakReferences();
-    DesiredWeakReferences(CodeBlock*);
-    ~DesiredWeakReferences();
-
-    void addLazily(JSCell*);
-    void addLazily(JSValue);
-    bool contains(JSCell*);
-    
-    void reallyAdd(VM&, CommonData*);
-
-    template<typename Visitor> void visitChildren(Visitor&);
-
-    HashSet<JSCell*>& references() { return m_references; }
+    void add(HeapCell*);
+    void remove(HeapCell*);
+    bool contains(HeapCell*);
+    bool isValidValue(HeapCell*);
+    bool isEmpty();
 
 private:
-    CodeBlock* m_codeBlock;
-    HashSet<JSCell*> m_references;
+    HashSet<HeapCell*> m_set;
+#if USE(JSVALUE32_64)
+    Lock m_lock;
+#endif
 };
 
-} } // namespace JSC::DFG
+inline void PreciseAllocationSet::add(HeapCell* cell)
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    m_set.add(cell);
+}
 
-#endif // ENABLE(DFG_JIT)
+inline void PreciseAllocationSet::remove(HeapCell* cell)
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    m_set.remove(cell);
+}
+
+inline bool PreciseAllocationSet::contains(HeapCell* cell)
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    return m_set.contains(cell);
+}
+
+inline bool PreciseAllocationSet::isValidValue(HeapCell* cell)
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    return m_set.isValidValue(cell);
+}
+
+inline bool PreciseAllocationSet::isEmpty()
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    return m_set.isEmpty();
+}
+
+} // namespace JSC

@@ -38,6 +38,9 @@ namespace JSC {
 
 namespace DFG {
 struct ArrayBufferViewWatchpointAdaptor;
+#if USE(JSVALUE32_64)
+struct JSCellWatchpointAdaptor;
+#endif
 }
 
 class VM;
@@ -144,6 +147,9 @@ private:
     friend class WatchpointSet;
     // ArrayBufferViewWatchpointAdaptor can fire watchpoints if it tries to attach a watchpoint to a view but can't allocate the ArrayBuffer.
     friend struct DFG::ArrayBufferViewWatchpointAdaptor;
+#if USE(JSVALUE32_64)
+    friend struct DFG::JSCellWatchpointAdaptor;
+#endif
     void fire(VM&, const FireDetail&);
     template<typename Func>
     void runWithDowncast(const Func&);

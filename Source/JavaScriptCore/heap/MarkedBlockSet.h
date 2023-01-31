@@ -38,28 +38,58 @@ public:
     void add(MarkedBlock*);
     void remove(MarkedBlock*);
 
-    TinyBloomFilter<uintptr_t> filter() const;
-    const HashSet<MarkedBlock*>& set() const;
+    unsigned size();
+    bool contains(MarkedBlock*);
+
+    template<typename Functor> bool forEachLiveCell(const Functor&);
+    template<typename Functor> bool forEachDeadCell(const Functor&);
+
+    template<typename Bits> bool filterRuleOut(Bits);
 
 private:
     void recomputeFilter();
 
     TinyBloomFilter<uintptr_t> m_filter;
     HashSet<MarkedBlock*> m_set;
+#if USE(JSVALUE32_64)
+    Lock m_lock;
+#endif
 };
 
 inline void MarkedBlockSet::add(MarkedBlock* block)
 {
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
     m_filter.add(reinterpret_cast<uintptr_t>(block));
     m_set.add(block);
 }
 
 inline void MarkedBlockSet::remove(MarkedBlock* block)
 {
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
     unsigned oldCapacity = m_set.capacity();
     m_set.remove(block);
     if (m_set.capacity() != oldCapacity) // Indicates we've removed a lot of blocks.
         recomputeFilter();
+}
+
+inline unsigned MarkedBlockSet::size()
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    return m_set.size();
+}
+
+inline bool MarkedBlockSet::contains(MarkedBlock* block)
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    return m_set.contains(block);
 }
 
 inline void MarkedBlockSet::recomputeFilter()
@@ -70,14 +100,42 @@ inline void MarkedBlockSet::recomputeFilter()
     m_filter = filter;
 }
 
-inline TinyBloomFilter<uintptr_t> MarkedBlockSet::filter() const
+template<typename Functor> inline bool MarkedBlockSet::forEachLiveCell(const Functor& functor)
 {
-    return m_filter;
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    auto end = m_set.end();
+    for (auto it = m_set.begin(); it != end; ++it) {
+        IterationStatus result = (*it)->handle().forEachLiveCell(
+            [&](size_t, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                return functor(cell, kind);
+            });
+        if (result == IterationStatus::Done)
+            return true;
+    }
+    return false;
 }
 
-inline const HashSet<MarkedBlock*>& MarkedBlockSet::set() const
+template<typename Functor> inline bool MarkedBlockSet::forEachDeadCell(const Functor& functor)
 {
-    return m_set;
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    auto end = m_set.end();
+    for (auto it = m_set.begin(); it != end; ++it) {
+        if ((*it)->handle().forEachDeadCell(functor) == IterationStatus::Done)
+            return true;
+    }
+    return false;
+}
+
+template<typename Bits> bool MarkedBlockSet::filterRuleOut(Bits bits)
+{
+#if USE(JSVALUE32_64)
+    Locker locker { m_lock };
+#endif
+    return m_filter.ruleOut(bits);
 }
 
 } // namespace JSC

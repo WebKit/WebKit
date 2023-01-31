@@ -2064,6 +2064,7 @@
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F4B323192972213000F1DC82 /* PreciseAllocationSet.h in Headers */ = {isa = PBXBuildFile; fileRef = F4B323182972213000F1DC82 /* PreciseAllocationSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F6D67D4026F902E9006E0349 /* TemporalInstant.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3A26F902E5006E0349 /* TemporalInstant.h */; };
 		F6D67D4226F902E9006E0349 /* TemporalInstantConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3C26F902E7006E0349 /* TemporalInstantConstructor.h */; };
 		F6D67D4426F902E9006E0349 /* TemporalInstantPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3E26F902E8006E0349 /* TemporalInstantPrototype.h */; };
@@ -5654,6 +5655,7 @@
 		E49DC15112EF272200184A1F /* SourceProviderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCache.h; sourceTree = "<group>"; };
 		E49DC15512EF277200184A1F /* SourceProviderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProviderCache.cpp; sourceTree = "<group>"; };
 		F3459D7423973ABD00DCD27A /* InspectorTarget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTarget.cpp; sourceTree = "<group>"; };
+		F4B323182972213000F1DC82 /* PreciseAllocationSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreciseAllocationSet.h; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
 		F68EBB8C0255D4C601FF60F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -6934,6 +6936,7 @@
 				0F9DAA081FD1C3C80079C5B2 /* ParallelSourceAdapter.h */,
 				0F070A451D543A89006E7232 /* PreciseAllocation.cpp */,
 				0F070A461D543A89006E7232 /* PreciseAllocation.h */,
+				F4B323182972213000F1DC82 /* PreciseAllocationSet.h */,
 				0FBB73B61DEF3AAC002C009E /* PreventCollectionScope.h */,
 				0FD0E5EF1E46BF230006AB08 /* RegisterState.h */,
 				0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */,
@@ -11094,6 +11097,7 @@
 				0FE834181A6EF97B00D04847 /* PolymorphicCallStubRoutine.h in Headers */,
 				521131F71F82BF14007CCEEE /* PolyProtoAccessChain.h in Headers */,
 				0F070A4B1D543A98006E7232 /* PreciseAllocation.h in Headers */,
+				F4B323192972213000F1DC82 /* PreciseAllocationSet.h in Headers */,
 				0F98206116BFE38300240D02 /* PreciseJumpTargets.h in Headers */,
 				E3A421431D6F58930007C617 /* PreciseJumpTargetsInlines.h in Headers */,
 				CE20BD07237D3E480046E520 /* PredictionFileCreatingFuzzerAgent.h in Headers */,

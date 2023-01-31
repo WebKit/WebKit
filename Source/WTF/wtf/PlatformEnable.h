@@ -677,11 +677,7 @@
 
 #endif /* !defined(ENABLE_DFG_JIT) && ENABLE(JIT) */
 
-/* Concurrent JS only works on 64-bit platforms because it requires that
-   values get stored to atomically. This is trivially true on 64-bit platforms,
-   but not true at all on 32-bit platforms where values are composed of two
-   separate sub-values. */
-#if ENABLE(JIT) && USE(JSVALUE64)
+#if ENABLE(JIT)
 #define ENABLE_CONCURRENT_JS 1
 #endif
 

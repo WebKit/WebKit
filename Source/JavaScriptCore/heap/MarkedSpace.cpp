@@ -185,7 +185,7 @@ MarkedSpace::MarkedSpace(Heap* heap)
 
 MarkedSpace::~MarkedSpace()
 {
-    ASSERT(!m_blocks.set().size());
+    ASSERT(!m_blocks.size());
 }
 
 void MarkedSpace::freeMemory()
@@ -268,7 +268,7 @@ void MarkedSpace::prepareForAllocation()
 
 void MarkedSpace::enablePreciseAllocationTracking()
 {
-    m_preciseAllocationSet = makeUnique<HashSet<HeapCell*>>();
+    m_preciseAllocationSet = makeUnique<PreciseAllocationSet>();
     for (auto* allocation : m_preciseAllocations)
         m_preciseAllocationSet->add(allocation->cell());
 }

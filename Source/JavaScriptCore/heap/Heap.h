@@ -1191,4 +1191,24 @@ private:
 
 } // namespace GCClient
 
+#if USE(JSVALUE32_64)
+class CellAddressChecker {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CellAddressChecker);
+    CellAddressChecker() = default;
+
+public:
+    static CellAddressChecker& instance();
+
+    void add(Heap*);
+    void remove(Heap*);
+
+    bool isValidCell(JSCell* candidate);
+
+private:
+    HashSet<Heap*> m_heaps;
+    Lock m_lock;
+};
+#endif
+
 } // namespace JSC

@@ -405,16 +405,20 @@ struct AbstractValue {
         } else {
             if (!!m_value && m_value != value)
                 return false;
-        
-            if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
+
+            SpeculatedType type = speculationFromValue(value);
+            if (!type)
                 return false;
-            
+
+            if (mergeSpeculations(m_type, type) != m_type)
+                return false;
+
             if (value.isEmpty()) {
                 ASSERT(m_type & SpecEmpty);
                 return true;
             }
         }
-        
+
         if (!!value && value.isCell()) {
             ASSERT(m_type & SpecCell);
             Structure* structure = value.asCell()->structure();

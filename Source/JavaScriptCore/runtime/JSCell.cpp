@@ -331,4 +331,29 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
 }
 #endif // CPU(X86_64)
 
+#if USE(JSVALUE32_64)
+bool isLiveConcurrently(JSCell* cell)
+{
+    if (!Options::useConcurrentJIT())
+        return true;
+
+    {
+        auto& checker = CellAddressChecker::instance();
+        if (!checker.isValidCell(cell))
+            return false;
+    }
+
+    if (cell->isPreciseAllocation())
+        return cell->preciseAllocation().isLive();
+
+    if (!cell->markedBlock().handle().isFreeListed()
+        && cell->markedBlock().handle().isLiveConcurrently(cell))
+        return true;
+
+    // Either the block is freelisted or it became freelisted while we were calling
+    // .isLive(cell), so the cell is in a dead-but-not-destructed state
+    return !cell->isZapped();
+}
+#endif
+
 } // namespace JSC

@@ -1491,7 +1491,7 @@ FrozenValue* Graph::freeze(JSValue value)
     // part of the weak pointer set. For example, an optimized CodeBlock
     // having a weak pointer to itself will cause it to get collected.
     RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(value));
-    
+
     auto result = m_frozenValueMap.add(JSValue::encode(value), nullptr);
     if (LIKELY(!result.isNewEntry))
         return result.iterator->value;

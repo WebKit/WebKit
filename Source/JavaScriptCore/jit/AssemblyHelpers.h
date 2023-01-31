@@ -155,8 +155,8 @@ public:
 #endif
     }
 
-    template<typename U>
-    void storeCell(JSValueRegs regs, U address)
+    template<typename T>
+    void storeCell(JSValueRegs regs, T address)
     {
 #if USE(JSVALUE64)
         store64(regs.gpr(), address);
@@ -170,12 +170,7 @@ public:
 #if USE(JSVALUE32_64)
     void storeCell(const void* address)
     {
-#if ENABLE(CONCURRENT_JS)
-        if (Options::useConcurrentJIT()) {
-            store32Concurrently(AssemblyHelpers::TrustedImm32(JSValue::CellTag), address);
-            return;
-        }
-#endif
+        static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
         store32(AssemblyHelpers::TrustedImm32(JSValue::CellTag), address);
     }
 #endif

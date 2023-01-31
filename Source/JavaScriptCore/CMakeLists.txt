@@ -796,6 +796,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/MutatorState.h
     heap/PackedCellPtr.h
     heap/PreciseAllocation.h
+    heap/PreciseAllocationSet.h
     heap/RegisterState.h
     heap/RootMarkReason.h
     heap/RunningScope.h

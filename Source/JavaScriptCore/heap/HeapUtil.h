@@ -42,15 +42,12 @@ namespace JSC {
 
 class HeapUtil {
 public:
-    // This function must be run after stopAllocation() is called and 
+    // This function must be run after stopAllocation() is called and
     // before liveness data is cleared to be accurate.
     template<typename Func>
     static void findGCObjectPointersForMarking(
-        Heap& heap, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, TinyBloomFilter<uintptr_t> filter,
-        void* passedPointer, const Func& func)
+        Heap& heap, HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, void* passedPointer, const Func& func)
     {
-        const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
-        
         ASSERT(heap.objectSpace().isMarking());
         static constexpr bool isMarking = true;
         
@@ -86,8 +83,8 @@ public:
             // We may be interested in the last cell of the previous MarkedBlock.
             char* previousPointer = bitwise_cast<char*>(bitwise_cast<uintptr_t>(pointer) - sizeof(IndexingHeader) - 1);
             MarkedBlock* previousCandidate = MarkedBlock::blockFor(previousPointer);
-            if (!filter.ruleOut(bitwise_cast<uintptr_t>(previousCandidate))
-                && set.contains(previousCandidate)
+            if (!heap.objectSpace().blocks().filterRuleOut(bitwise_cast<uintptr_t>(previousCandidate))
+                && heap.objectSpace().blocks().contains(previousCandidate)
                 && mayHaveIndexingHeader(previousCandidate->handle().cellKind())) {
                 previousPointer = static_cast<char*>(previousCandidate->handle().cellAlign(previousPointer));
                 if (previousCandidate->handle().isLiveCell(markingVersion, newlyAllocatedVersion, isMarking, previousPointer))
@@ -95,12 +92,12 @@ public:
             }
         }
     
-        if (filter.ruleOut(bitwise_cast<uintptr_t>(candidate))) {
-            ASSERT(!candidate || !set.contains(candidate));
+        if (heap.objectSpace().blocks().filterRuleOut(bitwise_cast<uintptr_t>(candidate))) {
+            ASSERT(!candidate || !heap.objectSpace().blocks().contains(candidate));
             return;
         }
     
-        if (!set.contains(candidate))
+        if (!heap.objectSpace().blocks().contains(candidate))
             return;
 
         HeapCell::Kind cellKind = candidate->handle().cellKind();
@@ -133,8 +130,8 @@ public:
             && pointer <= alignedPointer + sizeof(IndexingHeader))
             tryPointer(alignedPointer - candidate->cellSize());
     }
-    
-    static bool isPointerGCObjectJSCell(Heap& heap, TinyBloomFilter<uintptr_t> filter, JSCell* pointer)
+
+    static bool isPointerGCObjectJSCell(Heap& heap, JSCell* pointer)
     {
         // It could point to a large allocation.
         if (pointer->isPreciseAllocation()) {
@@ -150,19 +147,17 @@ public:
 #endif
             return set->contains(pointer);
         }
-    
-        const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
-        
+
         MarkedBlock* candidate = MarkedBlock::blockFor(pointer);
-        if (filter.ruleOut(bitwise_cast<uintptr_t>(candidate))) {
-            ASSERT(!candidate || !set.contains(candidate));
+        if (heap.objectSpace().blocks().filterRuleOut(bitwise_cast<uintptr_t>(candidate))) {
+            ASSERT(!candidate || !heap.objectSpace().blocks().contains(candidate));
             return false;
         }
         
         if (!MarkedBlock::isAtomAligned(pointer))
             return false;
         
-        if (!set.contains(candidate))
+        if (!heap.objectSpace().blocks().contains(candidate))
             return false;
         
         if (candidate->handle().cellKind() != HeapCell::JSCell)
@@ -175,13 +170,12 @@ public:
     }
     
     // This does not find the cell if the pointer is pointing at the middle of a JSCell.
-    static bool isValueGCObject(
-        Heap& heap, TinyBloomFilter<uintptr_t> filter, JSValue value)
+    static bool isValueGCObject(Heap& heap, JSValue value)
     {
         ASSERT(heap.objectSpace().preciseAllocationSet());
         if (!value.isCell())
             return false;
-        return isPointerGCObjectJSCell(heap, filter, value.asCell());
+        return isPointerGCObjectJSCell(heap, value.asCell());
     }
 };
 

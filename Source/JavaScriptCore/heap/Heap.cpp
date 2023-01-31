@@ -410,6 +410,13 @@ Heap::Heap(VM& vm, HeapType heapType)
 
     Locker locker { *m_threadLock };
     m_thread = adoptRef(new HeapThread(locker, *this));
+
+#if USE(JSVALUE32_64)
+    if (Options::useConcurrentJIT()) {
+        objectSpace().enablePreciseAllocationTracking();
+        CellAddressChecker::instance().add(this);
+    }
+#endif
 }
 
 #undef INIT_SERVER_ISO_SUBSPACE
@@ -417,6 +424,11 @@ Heap::Heap(VM& vm, HeapType heapType)
 
 Heap::~Heap()
 {
+#if USE(JSVALUE32_64)
+    if (Options::useConcurrentJIT())
+        CellAddressChecker::instance().remove(this);
+#endif
+
     // Scribble m_worldState to make it clear that the heap has already been destroyed if we crash in checkConn
     m_worldState.store(0xbadbeeffu);
 
@@ -3256,5 +3268,48 @@ DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW(moduleProgramExecutableSpace)
 #undef DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW
 
 } // namespace GCClient
+
+#if USE(JSVALUE32_64)
+CellAddressChecker& CellAddressChecker::instance()
+{
+    static CellAddressChecker* manager;
+    static std::once_flag once;
+    std::call_once(once, [] {
+        manager = new CellAddressChecker();
+    });
+    return *manager;
+}
+
+void CellAddressChecker::add(Heap* h)
+{
+    Locker locker { m_lock };
+    m_heaps.add(h);
+}
+
+void CellAddressChecker::remove(Heap* h)
+{
+    Locker locker { m_lock };
+    m_heaps.remove(h);
+}
+
+bool CellAddressChecker::isValidCell(JSCell* pointer)
+{
+    Locker locker { m_lock };
+    for (auto h : m_heaps) {
+        if (PreciseAllocation::isPreciseAllocation(pointer)) {
+            auto* set = h->objectSpace().preciseAllocationSet();
+            ASSERT(set);
+            if (set->contains(pointer))
+                return true;
+        }
+
+        MarkedBlock* candidate = MarkedBlock::blockFor(pointer);
+        if (h->objectSpace().blocks().contains(candidate))
+            return true;
+    }
+
+    return false;
+}
+#endif
 
 } // namespace JSC

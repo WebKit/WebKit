@@ -151,6 +151,11 @@ bool JITPlan::reportCompileTimes() const
         || (Options::reportFTLCompileTimes() && isFTL());
 }
 
+inline bool verboseCompilationEnabled(JITCompilationMode mode = JITCompilationMode::DFG)
+{
+    return Options::verboseCompilation() || Options::dumpGraphAtEachPhase() || Options::logCompilationChanges() || (isFTL(mode) && Options::verboseFTLCompilation());
+}
+
 void JITPlan::compileInThread(JITWorklistThread* thread)
 {
     m_thread = thread;
@@ -164,10 +169,8 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
 
     CompilationScope compilationScope;
 
-#if ENABLE(DFG_JIT)
-    if (DFG::logCompilationChanges(m_mode) || Options::logPhaseTimes())
-        dataLog("DFG(Plan) compiling ", *m_codeBlock, " with ", m_mode, ", instructions size = ", m_codeBlock->instructionsSize(), "\n");
-#endif // ENABLE(DFG_JIT)
+    if (verboseCompilationEnabled(m_mode) || Options::logPhaseTimes())
+        dataLog(m_mode, "(Plan) compiling ", *m_codeBlock, " with ", m_mode, ", instructions size = ", m_codeBlock->instructionsSize(), "\n");
 
     CompilationPath path = compileInThreadImpl();
 

@@ -100,10 +100,10 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
 {
     if (directory()->isAllocated(NoLockingNecessary, this))
         return true;
-    
+
     // We need to do this while holding the lock because marks might be stale. In that case, newly
     // allocated will not yet be valid. Consider this interleaving.
-    // 
+    //
     // One thread is doing this:
     //
     // 1) IsLiveChecksNewlyAllocated: We check if newly allocated is valid. If it is valid, and the bit is
@@ -139,16 +139,16 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
 
     MarkedBlock& block = this->block();
     MarkedBlock::Header& header = block.header();
-    
+
     auto count = header.m_lock.tryOptimisticFencelessRead();
     if (count.value) {
         Dependency fenceBefore = Dependency::fence(count.input);
         MarkedBlock& fencedBlock = *fenceBefore.consume(&block);
         MarkedBlock::Header& fencedHeader = fencedBlock.header();
         MarkedBlock::Handle* fencedThis = fenceBefore.consume(this);
-        
+
         ASSERT_UNUSED(fencedThis, !fencedThis->isFreeListed());
-        
+
         HeapVersion myNewlyAllocatedVersion = fencedHeader.m_newlyAllocatedVersion;
         if (myNewlyAllocatedVersion == newlyAllocatedVersion) {
             bool result = fencedBlock.isNewlyAllocated(cell);
@@ -167,22 +167,36 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
             }
         }
     }
-    
+
+    return isLiveConcurrently(markingVersion, newlyAllocatedVersion, isMarking, cell);
+}
+
+ALWAYS_INLINE bool MarkedBlock::Handle::isLiveConcurrently(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell* cell)
+{
+    if (directory()->isAllocated(NoLockingNecessary, this))
+        return true;
+
+    MarkedBlock& block = this->block();
+    MarkedBlock::Header& header = block.header();
+
     Locker locker { header.m_lock };
 
-    ASSERT(!isFreeListed());
-    
+    // While we were holding the lock, the GC could've mark the block as freelisted, so the
+    // cells are either dead or dead-but-not-destructed
+    if (!isFreeListed())
+        return false;
+
     HeapVersion myNewlyAllocatedVersion = header.m_newlyAllocatedVersion;
     if (myNewlyAllocatedVersion == newlyAllocatedVersion)
         return block.isNewlyAllocated(cell);
-    
+
     if (block.areMarksStale(markingVersion)) {
         if (!isMarking)
             return false;
         if (!block.marksConveyLivenessDuringMarking(markingVersion))
             return false;
     }
-    
+
     return header.m_marks.get(block.atomNumber(cell));
 }
 
@@ -191,6 +205,11 @@ inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, HeapVers
     if (!m_block->isAtom(p))
         return false;
     return isLive(markingVersion, newlyAllocatedVersion, isMarking, static_cast<const HeapCell*>(p));
+}
+
+ALWAYS_INLINE bool MarkedBlock::Handle::isLiveConcurrently(const HeapCell* cell)
+{
+    return isLiveConcurrently(space()->markingVersion(), space()->newlyAllocatedVersion(), space()->isMarking(), cell);
 }
 
 inline bool MarkedBlock::Handle::isLive(const HeapCell* cell)
@@ -343,10 +362,12 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     // otherwise we would lose information on what's currently alive.
     if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
         header.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
-    
+
+    if (sweepMode == SweepToFreeList)
+        setIsFreeListed();
     if (space()->isMarking())
         header.m_lock.unlock();
-    
+
     if (destructionMode == BlockHasDestructorsAndCollectorIsRunning) {
         for (size_t i : deadCells)
             handleDeadCell(i);
@@ -354,7 +375,6 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
 
     if (sweepMode == SweepToFreeList) {
         freeList->initializeList(head, secret, count * cellSize);
-        setIsFreeListed();
     } else if (isEmpty)
         m_directory->setIsEmpty(NoLockingNecessary, this, true);
     if (false)
