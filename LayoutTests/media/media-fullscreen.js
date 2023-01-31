@@ -83,11 +83,6 @@ function canplaythrough()
         testExpected("mediaElement.webkitSupportsPresentationMode", undefined);
         testExpected("mediaElement.webkitDisplayingFullscreen", undefined);
     }
-    
-    // Verify that we get an exception when trying to enter fullscreen since this isn't
-    // called in response to a user gesture.
-    if (movie.type == 'video')
-        testDOMException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
 
     // Click on the button
     runWithKeyDown(clickEnterFullscreenButton);

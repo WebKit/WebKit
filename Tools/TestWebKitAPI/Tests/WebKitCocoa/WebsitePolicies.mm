@@ -30,6 +30,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKMutableDictionary.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
@@ -832,8 +833,8 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirks)
 
 TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto* configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
 
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
@@ -888,9 +889,19 @@ TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
     [webView mouseUpAtPoint:playButtonClickPoint];
     [webView waitForMessage:@"did-play-video1"];
 
-    // Now video2 should not be allowed to autoplay without a user gesture.
+    // Now video2 should be allowed to autoplay without a user gesture because of transient activation.
     [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video2')" completionHandler:nil];
-    [webView waitForMessage:@"did-not-play-video2"];
+    [webView waitForMessage:@"did-play-video2"];
+
+    // Consume the transient activation and video 3 should not be able to play.
+    __block bool ranJS = false;
+    [webView _evaluateJavaScriptWithoutUserGesture:@"window.internals.consumeTransientActivation()" completionHandler:^(id, NSError*) {
+        ranJS = true;
+    }];
+    TestWebKitAPI::Util::run(&ranJS);
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"playVideo('video3')" completionHandler:nil];
+    [webView waitForMessage:@"did-not-play-video3"];
 }
 #endif
 

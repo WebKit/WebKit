@@ -18,8 +18,10 @@
         }
 
         mediaElement = document.createElement('audio');
-        if (window.internals)
+        if (window.internals) {
             internals.setMediaElementRestrictions(mediaElement, "RequireUserGestureForAudioRateChange");
+            internals.setTransientActivationDuration(1);
+        }
 
         var nextTest = tests.shift();
         consoleWrite('');

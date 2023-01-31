@@ -7428,6 +7428,9 @@ bool Document::processingUserGestureForMedia() const
     if (UserGestureIndicator::processingUserGestureForMedia())
         return true;
 
+    if (m_domWindow && m_domWindow->hasTransientActivation())
+        return true;
+
     if (m_userActivatedMediaFinishedPlayingTimestamp + maxIntervalForUserGestureForwardingAfterMediaFinishesPlaying >= MonotonicTime::now())
         return true;
 
