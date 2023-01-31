@@ -1,5 +1,5 @@
 
 PASS row-gap responsive to style changes
 PASS row-gap clamped to 0px on keyframes
-FAIL row-gap responsive to inherited changes assert_equals: expected "80px" but got "normal"
+PASS row-gap responsive to inherited changes
 

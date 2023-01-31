@@ -1013,6 +1013,7 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
     computeSomeKeyframesUseStepsTimingFunction();
     computeHasImplicitKeyframeForAcceleratedProperty();
     computeHasKeyframeComposingAcceleratedProperty();
+    computeHasExplicitlyInheritedKeyframeProperty();
 
     checkForMatchingTransformFunctionLists();
 }
@@ -1600,6 +1601,12 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
 
     for (auto property : properties)
         blendProperty(property);
+
+    // In case one of the animated properties has its value set to "inherit" in one of the keyframes,
+    // let's mark the resulting animated style as having an explicitly inherited property such that
+    // a future style update accounts for this in a future call to TreeResolver::determineResolutionType().
+    if (m_hasExplicitlyInheritedKeyframeProperty)
+        targetStyle.setHasExplicitlyInheritedProperties();
 }
 
 TimingFunction* KeyframeEffect::timingFunctionForBlendingKeyframe(const KeyframeValue& keyframe) const
@@ -2314,6 +2321,20 @@ void KeyframeEffect::computeHasKeyframeComposingAcceleratedProperty()
         }
         return false;
     }();
+}
+
+void KeyframeEffect::computeHasExplicitlyInheritedKeyframeProperty()
+{
+    m_hasExplicitlyInheritedKeyframeProperty = false;
+
+    for (auto& keyframe : m_blendingKeyframes) {
+        if (auto* keyframeStyle = keyframe.style()) {
+            if (keyframeStyle->hasExplicitlyInheritedProperties()) {
+                m_hasExplicitlyInheritedKeyframeProperty = true;
+                return;
+            }
+        }
+    }
 }
 
 void KeyframeEffect::effectStackNoLongerPreventsAcceleration()
