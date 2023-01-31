@@ -1,0 +1,14 @@
+<style>
+    html, body {
+      background-color: lch(0 0 0 / 0.001);
+    }
+  </style>
+  <script>
+    internals.settings.setCaretBrowsingEnabled(true);
+    onload = () => {
+      document.execCommand('SelectAll');
+    };
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  </script>
+  <span>This test passes if it does not crash</span>
