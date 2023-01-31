@@ -129,6 +129,14 @@ private:
 
     void loseTheDevice(WGPUDeviceLostReason);
     void captureFrameIfNeeded() const;
+    auto buildKeyValueReplacements(const auto& stage) const
+    {
+        HashMap<String, decltype(WGPUConstantEntry::value)> keyValueReplacements;
+        for (auto* kvp = stage.constants, *endKvp = kvp + stage.constantCount; kvp != endKvp; ++kvp)
+            keyValueReplacements.set(String::fromUTF8(kvp->key), kvp->value);
+
+        return keyValueReplacements;
+    }
 
     struct Error {
         WGPUErrorType type;

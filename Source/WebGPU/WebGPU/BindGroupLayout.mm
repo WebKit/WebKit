@@ -218,6 +218,32 @@ bool BindGroupLayout::bindingContainsStage(uint32_t bindingIndex, ShaderStage sh
     return containsStage(m_shaderStageForBinding.find(bindingIndex + 1)->value, shaderStage);
 }
 
+#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
+WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructMember *structMember, uint32_t& currentBindingIndex, WGPUShaderStage shaderStage)
+{
+    WGPUBindGroupLayoutEntry entry = { };
+    entry.binding = currentBindingIndex++;
+    entry.visibility = shaderStage;
+    switch (structMember.dataType) {
+    case MTLDataTypeTexture:
+        entry.texture.sampleType = WGPUTextureSampleType_Float;
+        entry.texture.viewDimension = WGPUTextureViewDimension_2D;
+        break;
+    case MTLDataTypeSampler:
+        entry.sampler.type = WGPUSamplerBindingType_Filtering;
+        break;
+    case MTLDataTypePointer:
+        entry.buffer.type = WGPUBufferBindingType_Uniform;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return entry;
+}
+#endif // HAVE(METAL_BUFFER_BINDING_REFLECTION)
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

@@ -55,19 +55,17 @@ void ComputePassEncoder::beginPipelineStatisticsQuery(const QuerySet& querySet, 
 
 void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 {
-    UNUSED_PARAM(x);
-    UNUSED_PARAM(y);
-    UNUSED_PARAM(z);
+    [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    UNUSED_PARAM(indirectBuffer);
-    UNUSED_PARAM(indirectOffset);
+    [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::endPass()
 {
+    [m_computeCommandEncoder endEncoding];
 }
 
 void ComputePassEncoder::endPipelineStatisticsQuery()
@@ -121,15 +119,16 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    UNUSED_PARAM(groupIndex);
-    UNUSED_PARAM(group);
     UNUSED_PARAM(dynamicOffsetCount);
     UNUSED_PARAM(dynamicOffsets);
+    [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];
 }
 
 void ComputePassEncoder::setPipeline(const ComputePipeline& pipeline)
 {
-    UNUSED_PARAM(pipeline);
+    ASSERT(pipeline.computePipelineState());
+    [m_computeCommandEncoder setComputePipelineState:pipeline.computePipelineState()];
+    m_threadsPerThreadgroup = pipeline.threadsPerThreadgroup();
 }
 
 void ComputePassEncoder::setLabel(String&& label)
