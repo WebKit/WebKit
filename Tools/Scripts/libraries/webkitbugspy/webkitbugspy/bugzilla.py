@@ -165,7 +165,7 @@ class Tracker(GenericTracker):
         issue._link = '{}/show_bug.cgi?id={}'.format(self.url, issue.id)
         issue._labels = []
 
-        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version'):
+        if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords'):
             response = requests.get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))
             if response.status_code // 100 == 4 and self._logins_left:
                 self._logins_left -= 1
@@ -198,6 +198,7 @@ class Tracker(GenericTracker):
                 issue._project = response.get('product', '')
                 issue._component = response.get('component', '')
                 issue._version = response.get('version', '')
+                issue._keywords = response.get('keywords', [])
 
             else:
                 sys.stderr.write("Failed to fetch '{}'\n".format(issue.link))

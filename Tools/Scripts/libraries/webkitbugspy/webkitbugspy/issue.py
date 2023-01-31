@@ -72,6 +72,7 @@ class Issue(object):
         self._component = None
         self._version = None
         self._milestone = None
+        self._keywords = None
 
         self.tracker.populate(self, None)
 
@@ -187,6 +188,12 @@ class Issue(object):
         if self._milestone is None:
             self.tracker.populate(self, 'milestone')
         return self._milestone or None
+
+    @property
+    def keywords(self):
+        if self._keywords is None:
+            self.tracker.populate(self, 'keywords')
+        return self._keywords
 
     @property
     def redacted(self):

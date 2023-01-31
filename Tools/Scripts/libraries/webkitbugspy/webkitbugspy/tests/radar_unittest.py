@@ -377,3 +377,8 @@ What version of 'WebKit Text' should the bug be associated with?:
         with mocks.Radar(issues=mocks.ISSUES):
             tracker = radar.Tracker()
             self.assertEqual(tracker.issue(1).milestone, 'October')
+
+    def test_keywords(self):
+        with mocks.Radar(issues=mocks.ISSUES):
+            tracker = radar.Tracker()
+            self.assertEqual(tracker.issue(1).keywords, ['Keyword A'])

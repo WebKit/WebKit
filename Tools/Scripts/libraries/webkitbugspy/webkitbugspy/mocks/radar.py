@@ -117,6 +117,10 @@ class RadarModel(object):
         def __init__(self, name):
             self.name = name
 
+    class Keyword(object):
+        def __init__(self, name):
+            self.name = name
+
     def __init__(self, client, issue):
         from datetime import datetime, timedelta
 
@@ -159,6 +163,9 @@ class RadarModel(object):
             ref = self.client.radar_for_id(reference)
             if ref:
                 yield ref
+
+    def keywords(self):
+        return [self.Keyword(keyword) for keyword in self._issue.get('keywords', [])]
 
     def commit_changes(self):
         self.client.parent.issues[self.id]['comments'] = [
