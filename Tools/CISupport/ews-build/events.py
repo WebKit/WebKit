@@ -191,7 +191,6 @@ class Events(service.BuildbotService):
 
         self.sendDataToEWS(data)
 
-    @defer.inlineCallbacks
     def stepStarted(self, key, step):
         state_string = step.get('state_string')
         if state_string == 'pending':
