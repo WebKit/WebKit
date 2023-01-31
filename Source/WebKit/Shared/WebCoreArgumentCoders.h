@@ -222,13 +222,12 @@ template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
 
 template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
     static void encode(Encoder&, const WebCore::RectEdges<bool>&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::RectEdges<bool>&);
+    static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
 };
 
 #if ENABLE(META_VIEWPORT)
 template<> struct ArgumentCoder<WebCore::ViewportArguments> {
     static void encode(Encoder&, const WebCore::ViewportArguments&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ViewportArguments&);
     static std::optional<WebCore::ViewportArguments> decode(Decoder&);
 };
 #endif
