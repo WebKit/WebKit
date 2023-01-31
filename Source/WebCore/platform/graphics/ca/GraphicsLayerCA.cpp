@@ -4107,10 +4107,15 @@ void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
         m_layer->setBackgroundColor(Color::transparentBlack);
 }
 
+Color GraphicsLayerCA::pageTiledBackingBorderColor() const
+{
+    return SRGBA<uint8_t> { 0, 0, 128, 128 }; // tile cache layer: dark blue
+}
+
 void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
 {
     if (isPageTiledBackingLayer()) {
-        color = SRGBA<uint8_t> { 0, 0, 128, 128 }; // tile cache layer: dark blue
+        color = pageTiledBackingBorderColor();
 #if OS(WINDOWS)
         width = 1.0;
 #else

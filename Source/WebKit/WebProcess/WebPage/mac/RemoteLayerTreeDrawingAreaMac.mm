@@ -63,6 +63,11 @@ std::optional<WebCore::DestinationColorSpace> RemoteLayerTreeDrawingAreaMac::dis
     return m_displayColorSpace;
 }
 
+void RemoteLayerTreeDrawingAreaMac::mainFrameContentSizeChanged(const WebCore::IntSize&)
+{
+    // Do nothing. This is only relevant to DelegatedToNativeScrollView implementations.
+}
+
 void RemoteLayerTreeDrawingAreaMac::applyTransientZoomToPage(double scale, FloatPoint origin)
 {
     auto& frameView = *m_webPage.mainFrameView();
