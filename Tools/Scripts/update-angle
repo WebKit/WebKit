@@ -36,7 +36,7 @@ regenerate_program_version_id() {
     echo "Regenerating ANGLEShaderProgramVersion.h."
     ./src/program_serialize_data_version.py src/common/ANGLEShaderProgramVersion.h.TEMP src/angle_code_affecting_program_serialize.xcfilelist
     echo "Moving ANGLEShaderProgramVersion.h into place"
-    mv src/ANGLEShaderProgramVersion.h.TEMP src/common/ANGLEShaderProgramVersion.h
+    mv src/common/ANGLEShaderProgramVersion.h.TEMP src/common/ANGLEShaderProgramVersion.h
 }
 
 usage() {
