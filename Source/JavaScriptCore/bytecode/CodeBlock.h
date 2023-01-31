@@ -236,6 +236,7 @@ public:
         return reg.offset() >= static_cast<int>(m_numVars);
     }
 
+    HandlerInfo* handlerFor(BytecodeIndex);
     HandlerInfo* handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
     HandlerInfo* handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
     void removeExceptionHandlerForCallSite(DisposableCallSiteIndex);

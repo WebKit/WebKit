@@ -66,8 +66,20 @@ public:
                 {
                     unsigned numSuccessors = block->numSuccessors();
                     if (!numSuccessors) {
-                        m_currentFlags = Operands<NodeFlags>(OperandsLike, m_graph.block(0)->variablesAtHead);
-                        m_currentFlags.fill(0);
+                        // The DFG catch block, unlikely in bytecode, doesn't have predecessor. In order to
+                        // propagate node flags, we need to check exception handlers for possible throw catch
+                        // pattern.
+                        if (HandlerInfo* handler = m_graph.m_codeBlock->handlerFor(block->bytecodeBegin)) {
+                            auto getBytecodeBeginForBlock = [&] (RefPtr<BasicBlock>* basicBlock) -> BytecodeIndex {
+                                return (*basicBlock)->bytecodeBegin;
+                            };
+
+                            RefPtr<BasicBlock>* throwSuccessor = binarySearch<RefPtr<BasicBlock>, BytecodeIndex>(m_graph.m_blocks, m_graph.m_blocks.size(), BytecodeIndex(handler->target), getBytecodeBeginForBlock);
+                            m_currentFlags = m_flagsAtHead[throwSuccessor->get()];
+                        } else {
+                            m_currentFlags = Operands<NodeFlags>(OperandsLike, m_graph.block(0)->variablesAtHead);
+                            m_currentFlags.fill(0);
+                        }
                     } else {
                         m_currentFlags = m_flagsAtHead[block->successor(0)];
                         for (unsigned i = 1; i < numSuccessors; ++i) {
@@ -84,7 +96,7 @@ public:
                 m_allowNestedOverflowingAdditions = block->size() < (1 << 16);
             
                 for (unsigned indexInBlock = block->size(); indexInBlock--;)
-                    propagate(block->at(indexInBlock));
+                    propagate(block, indexInBlock);
 
                 if (m_flagsAtHead[block] != m_currentFlags) {
                     m_flagsAtHead[block] = m_currentFlags;
@@ -219,8 +231,9 @@ private:
     static_assert(!(VariableIsUsed & NodeBytecodeBackPropMask));
     static_assert(VariableIsUsed > NodeBytecodeBackPropMask, "Verify the above doesn't overflow");
     
-    void propagate(Node* node)
+    void propagate(BasicBlock* block, unsigned bytecodeIndex)
     {
+        Node* node = block->at(bytecodeIndex);
         NodeFlags flags = node->flags() & NodeBytecodeBackPropMask;
         
         switch (node->op()) {
@@ -248,7 +261,9 @@ private:
             // For example, a loop where we always add a constant value.
             node->child1()->mergeFlags(flags | NodeBytecodeUsesAsNumber); 
 
-            m_currentFlags.operand(operand) = 0;
+            // Keep flags in catch block for propagation.
+            if (!block->isCatchEntrypoint)
+                m_currentFlags.operand(operand) = 0;
             break;
         }
             

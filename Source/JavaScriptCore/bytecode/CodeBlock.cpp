@@ -1973,6 +1973,13 @@ bool CodeBlock::hasOptimizedReplacement()
 }
 #endif
 
+HandlerInfo* CodeBlock::handlerFor(BytecodeIndex bytecodeIndex)
+{
+    if (bytecodeIndex.offset() >= instructions().size())
+        return nullptr;
+    return handlerForBytecodeIndex(bytecodeIndex, RequiredHandler::AnyHandler);
+}
+
 HandlerInfo* CodeBlock::handlerForBytecodeIndex(BytecodeIndex bytecodeIndex, RequiredHandler requiredHandler)
 {
     RELEASE_ASSERT(bytecodeIndex.offset() < instructions().size());
