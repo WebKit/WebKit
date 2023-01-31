@@ -1583,6 +1583,7 @@
 		93AB9B562575A28B0098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93AB9B51257589110098B10E /* SpeechRecognitionRemoteRealtimeMediaSourceManagerMessageReceiver.cpp */; };
 		93AEC161278F8CD30066666F /* StorageAreaMapIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AEC160278F8CD20066666F /* StorageAreaMapIdentifier.h */; };
 		93B0A67526D5ADCF00AA21E4 /* WebPermissionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */; };
+		93B42F2F29834B2600DF1D45 /* FileSystemSyncAccessHandleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B42F2E29834A4200DF1D45 /* FileSystemSyncAccessHandleInfo.h */; };
 		93B631E527ABA62800443A44 /* IDBStorageConnectionToClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631E427ABA62700443A44 /* IDBStorageConnectionToClient.h */; };
 		93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631E627ABA65C00443A44 /* IDBStorageManager.h */; };
 		93B631ED27ABA6B400443A44 /* IDBStorageRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631EB27ABA6B300443A44 /* IDBStorageRegistry.h */; };
@@ -6184,6 +6185,7 @@
 		93AEC160278F8CD20066666F /* StorageAreaMapIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaMapIdentifier.h; sourceTree = "<group>"; };
 		93B0A67326D5A72E00AA21E4 /* WebPermissionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPermissionController.cpp; sourceTree = "<group>"; };
 		93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPermissionController.h; sourceTree = "<group>"; };
+		93B42F2E29834A4200DF1D45 /* FileSystemSyncAccessHandleInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSystemSyncAccessHandleInfo.h; sourceTree = "<group>"; };
 		93B631E327ABA5F700443A44 /* IDBStorageConnectionToClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IDBStorageConnectionToClient.cpp; sourceTree = "<group>"; };
 		93B631E427ABA62700443A44 /* IDBStorageConnectionToClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBStorageConnectionToClient.h; sourceTree = "<group>"; };
 		93B631E627ABA65C00443A44 /* IDBStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBStorageManager.h; sourceTree = "<group>"; };
@@ -8359,6 +8361,7 @@
 				8CFECE931490F140002AAA32 /* EditorState.cpp */,
 				1AA41AB412C02EC4002BE67B /* EditorState.h */,
 				5C6CED8E2900598000B5D522 /* EditorState.serialization.in */,
+				93B42F2E29834A4200DF1D45 /* FileSystemSyncAccessHandleInfo.h */,
 				C59C4A5718B81174007BDCB6 /* FocusedElementInformation.h */,
 				86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */,
 				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
@@ -15057,6 +15060,7 @@
 				9312BAD626F33C2900FDDF5F /* FileSystemStorageHandle.h in Headers */,
 				935B579A26F51933008B48AC /* FileSystemStorageHandleRegistry.h in Headers */,
 				9312BAD526F33C2600FDDF5F /* FileSystemStorageManager.h in Headers */,
+				93B42F2F29834B2600DF1D45 /* FileSystemSyncAccessHandleInfo.h in Headers */,
 				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,

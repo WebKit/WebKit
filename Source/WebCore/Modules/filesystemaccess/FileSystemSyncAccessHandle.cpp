@@ -33,18 +33,19 @@
 
 namespace WebCore {
 
-Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file)
+Ref<FileSystemSyncAccessHandle> FileSystemSyncAccessHandle::create(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file, uint64_t capacity)
 {
-    auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, WTFMove(file)));
+    auto handle = adoptRef(*new FileSystemSyncAccessHandle(context, source, identifier, WTFMove(file), capacity));
     handle->suspendIfNeeded();
     return handle;
 }
 
-FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file)
+FileSystemSyncAccessHandle::FileSystemSyncAccessHandle(ScriptExecutionContext& context, FileSystemFileHandle& source, FileSystemSyncAccessHandleIdentifier identifier, FileHandle&& file, uint64_t capacity)
     : ActiveDOMObject(&context)
     , m_source(source)
     , m_identifier(identifier)
     , m_file(WTFMove(file))
+    , m_capacity(capacity)
 {
     ASSERT(m_file);
 
@@ -133,7 +134,15 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
         int result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
         if (result == -1)
             return Exception { InvalidStateError, "Failed to write at offset"_s };
+    } else {
+        int result = FileSystem::seekFile(m_file.handle(), 0, FileSystem::FileSeekOrigin::Current);
+        if (result == -1)
+            return Exception { InvalidStateError, "Failed to get offset"_s };
+        options.at = result;
     }
+
+    if (!requestSpaceForWrite(*options.at, buffer.length()))
+        return Exception { QuotaExceededError };
 
     int result = FileSystem::writeToFile(m_file.handle(), buffer.data(), buffer.length());
     if (result == -1)
@@ -156,6 +165,23 @@ void FileSystemSyncAccessHandle::invalidate()
 {
     // Invalidation is initiated by backend.
     closeInternal(ShouldNotifyBackend::No);
+}
+
+bool FileSystemSyncAccessHandle::requestSpaceForWrite(uint64_t writeOffset, uint64_t writeLength)
+{
+    CheckedUint64 newSize = writeOffset;
+    newSize += writeLength;
+    if (newSize.hasOverflowed())
+        return false;
+
+    if (newSize <= m_capacity)
+        return true;
+
+    auto newCapacity = m_source->requestNewCapacityForSyncAccessHandle(m_identifier, (uint64_t)newSize);
+    if (newCapacity)
+        m_capacity = *newCapacity;
+
+    return newSize <= m_capacity;
 }
 
 } // namespace WebCore

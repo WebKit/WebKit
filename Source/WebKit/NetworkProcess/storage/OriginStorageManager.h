@@ -49,7 +49,7 @@ class StorageAreaRegistry;
 enum class UnifiedOriginStorageLevel : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
-class OriginStorageManager {
+class OriginStorageManager : public CanMakeWeakPtr<OriginStorageManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static String originFileIdentifier();
@@ -64,6 +64,7 @@ public:
     const String& path() const { return m_path; }
     QuotaManager& quotaManager();
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&);
+    FileSystemStorageManager* existingFileSystemStorageManager();
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
     LocalStorageManager* existingLocalStorageManager();
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
@@ -90,6 +91,7 @@ public:
 #endif
 
 private:
+    Ref<QuotaManager> createQuotaManager();
     enum class StorageBucketMode : bool;
     class StorageBucket;
     StorageBucket& defaultBucket();

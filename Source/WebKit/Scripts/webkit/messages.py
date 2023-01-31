@@ -354,6 +354,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::DisplayListRecorderFlushIdentifier',
         'WebKit::DownloadID',
         'WebKit::FileSystemStorageError',
+        'WebKit::FileSystemSyncAccessHandleInfo',
         'WebKit::ImageBufferBackendHandle',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',

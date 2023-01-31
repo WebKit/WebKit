@@ -32,9 +32,10 @@
 
 namespace WebKit {
 
-FileSystemStorageManager::FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry& registry)
+FileSystemStorageManager::FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
     : m_path(WTFMove(path))
     , m_registry(registry)
+    , m_quotaCheckFunction(WTFMove(quotaCheckFunction))
 {
     ASSERT(!RunLoop::isMain());
 }
@@ -49,6 +50,18 @@ FileSystemStorageManager::~FileSystemStorageManager()
 bool FileSystemStorageManager::isActive() const
 {
     return !m_handles.isEmpty();
+}
+
+uint64_t FileSystemStorageManager::allocatedUnusedCapacity() const
+{
+    CheckedUint64 result = 0;
+    for (auto& handle : m_handles.values())
+        result += handle->allocatedUnusedCapacity();
+
+    if (result.hasOverflowed())
+        return 0;
+
+    return result;
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageManager::createHandle(IPC::Connection::UniqueID connection, FileSystemStorageHandle::Type type, String&& path, String&& name, bool createIfNecessary)
@@ -178,6 +191,11 @@ void FileSystemStorageManager::close()
     ASSERT(m_handles.isEmpty());
     m_handlesByConnection.clear();
     m_lockMap.clear();
+}
+
+void FileSystemStorageManager::requestSpace(uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_quotaCheckFunction(size, WTFMove(completionHandler));
 }
 
 } // namespace WebKit
