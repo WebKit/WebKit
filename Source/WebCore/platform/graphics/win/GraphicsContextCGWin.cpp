@@ -139,7 +139,7 @@ void GraphicsContextCG::drawFocusRing(const Vector<FloatRect>& rects, float outl
 
 void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    if (style.mode != DocumentMarkerLineStyle::Mode::Spelling && style.mode != DocumentMarkerLineStyle::Mode::Grammar)
+    if (style.mode != DocumentMarkerLineStyleMode::Spelling && style.mode != DocumentMarkerLineStyleMode::Grammar)
         return;
 
     auto point = rect.location();
@@ -165,7 +165,7 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
     static constexpr auto spellingPatternColor = Color::red;
     static constexpr auto grammarPatternColor = Color::darkGreen;
 
-    auto [r, g, b, a] = style.mode == DocumentMarkerLineStyle::Mode::Grammar ? grammarPatternColor.resolved() : spellingPatternColor.resolved();
+    auto [r, g, b, a] = style.mode == DocumentMarkerLineStyleMode::Grammar ? grammarPatternColor.resolved() : spellingPatternColor.resolved();
     CGContextSetRGBStrokeColor(context, r, g, b, a);
 
     CGAffineTransform userToBase = getUserToBaseCTM(context);

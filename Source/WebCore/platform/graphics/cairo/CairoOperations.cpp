@@ -391,14 +391,14 @@ FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContextCairo& plat
 // is refactored as a static public function.
 static float dashedLineCornerWidthForStrokeWidth(float strokeWidth, StrokeStyle strokeStyle, float strokeThickness)
 {
-    return strokeStyle == DottedStroke ? strokeThickness : std::min(2.0f * strokeThickness, std::max(strokeThickness, strokeWidth / 3.0f));
+    return strokeStyle == StrokeStyle::DottedStroke ? strokeThickness : std::min(2.0f * strokeThickness, std::max(strokeThickness, strokeWidth / 3.0f));
 }
 
 // FIXME: Replace once GraphicsContext::dashedLinePatternWidthForStrokeWidth()
 // is refactored as a static public function.
 static float dashedLinePatternWidthForStrokeWidth(float strokeWidth, StrokeStyle strokeStyle, float strokeThickness)
 {
-    return strokeStyle == DottedStroke ? strokeThickness : std::min(3.0f * strokeThickness, std::max(strokeThickness, strokeWidth / 3.0f));
+    return strokeStyle == StrokeStyle::DottedStroke ? strokeThickness : std::min(3.0f * strokeThickness, std::max(strokeThickness, strokeWidth / 3.0f));
 }
 
 // FIXME: Replace once GraphicsContext::dashedLinePatternOffsetForPatternAndStrokeWidth()
@@ -458,20 +458,20 @@ void setStrokeStyle(GraphicsContextCairo& platformContext, StrokeStyle strokeSty
 
     cairo_t* cr = platformContext.cr();
     switch (strokeStyle) {
-    case NoStroke:
+    case StrokeStyle::NoStroke:
         // FIXME: is it the right way to emulate NoStroke?
         cairo_set_line_width(cr, 0);
         break;
-    case SolidStroke:
-    case DoubleStroke:
-    case WavyStroke:
+    case StrokeStyle::SolidStroke:
+    case StrokeStyle::DoubleStroke:
+    case StrokeStyle::WavyStroke:
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=94110 - Needs platform support.
         cairo_set_dash(cr, 0, 0, 0);
         break;
-    case DottedStroke:
+    case StrokeStyle::DottedStroke:
         cairo_set_dash(cr, dotPattern, 2, 0);
         break;
-    case DashedStroke:
+    case StrokeStyle::DashedStroke:
         cairo_set_dash(cr, dashPattern, 2, 0);
         break;
     }
@@ -953,7 +953,7 @@ void drawRect(GraphicsContextCairo& platformContext, const FloatRect& rect, floa
 
     fillRectWithColor(cr, rect, fillColor);
 
-    if (strokeStyle != NoStroke) {
+    if (strokeStyle != StrokeStyle::NoStroke) {
         setSourceRGBAFromColor(cr, strokeColor);
         FloatRect r(rect);
         r.inflate(-.5f);
@@ -974,7 +974,7 @@ void drawLine(GraphicsContextCairo& platformContext, const FloatPoint& point1, c
 
     cairo_t* cairoContext = platformContext.cr();
     float cornerWidth = 0;
-    bool drawsDashedLine = strokeStyle == DottedStroke || strokeStyle == DashedStroke;
+    bool drawsDashedLine = strokeStyle == StrokeStyle::DottedStroke || strokeStyle == StrokeStyle::DashedStroke;
 
     if (drawsDashedLine) {
         cairo_save(cairoContext);
@@ -1050,16 +1050,16 @@ void drawLinesForText(GraphicsContextCairo& platformContext, const FloatPoint& p
 
 void drawDotsForDocumentMarker(GraphicsContextCairo& platformContext, const FloatRect& rect, DocumentMarkerLineStyle style)
 {
-    if (style.mode != DocumentMarkerLineStyle::Mode::Spelling
-        && style.mode != DocumentMarkerLineStyle::Mode::Grammar)
+    if (style.mode != DocumentMarkerLineStyleMode::Spelling
+        && style.mode != DocumentMarkerLineStyleMode::Grammar)
         return;
 
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
 
-    if (style.mode == DocumentMarkerLineStyle::Mode::Spelling)
+    if (style.mode == DocumentMarkerLineStyleMode::Spelling)
         cairo_set_source_rgb(cr, 1, 0, 0);
-    else if (style.mode == DocumentMarkerLineStyle::Mode::Grammar)
+    else if (style.mode == DocumentMarkerLineStyleMode::Grammar)
         cairo_set_source_rgb(cr, 0, 1, 0);
 
     drawErrorUnderline(cr, rect.x(), rect.y(), rect.width(), rect.height());
@@ -1083,7 +1083,7 @@ void drawEllipse(GraphicsContextCairo& platformContext, const FloatRect& rect, c
         cairo_fill_preserve(cr);
     }
 
-    if (strokeStyle != NoStroke) {
+    if (strokeStyle != StrokeStyle::NoStroke) {
         setSourceRGBAFromColor(cr, strokeColor);
         cairo_set_line_width(cr, strokeThickness);
         cairo_stroke(cr);

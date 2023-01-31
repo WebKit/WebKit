@@ -449,7 +449,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
 
     const Vector<SVGLengthValue>& dashes = svgStyle.strokeDashArray();
     if (dashes.isEmpty())
-        context.setStrokeStyle(SolidStroke);
+        context.setStrokeStyle(StrokeStyle::SolidStroke);
     else {
         DashArray dashArray;
         dashArray.reserveInitialCapacity(dashes.size());
@@ -478,7 +478,7 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
         if (canSetLineDash)
             context.setLineDash(dashArray, lengthContext.valueForLength(svgStyle.strokeDashOffset()) * scaleFactor);
         else
-            context.setStrokeStyle(SolidStroke);
+            context.setStrokeStyle(StrokeStyle::SolidStroke);
     }
 }
 

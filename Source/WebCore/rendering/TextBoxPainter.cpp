@@ -758,21 +758,21 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
         bool shouldUseDarkAppearance = m_renderer.useDarkAppearance();
         switch (markedText.type) {
         case MarkedText::SpellingError:
-            return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };
+            return { DocumentMarkerLineStyleMode::Spelling, shouldUseDarkAppearance };
         case MarkedText::GrammarError:
-            return { DocumentMarkerLineStyle::Mode::Grammar, shouldUseDarkAppearance };
+            return { DocumentMarkerLineStyleMode::Grammar, shouldUseDarkAppearance };
         case MarkedText::Correction:
-            return { DocumentMarkerLineStyle::Mode::AutocorrectionReplacement, shouldUseDarkAppearance };
+            return { DocumentMarkerLineStyleMode::AutocorrectionReplacement, shouldUseDarkAppearance };
         case MarkedText::DictationAlternatives:
-            return { DocumentMarkerLineStyle::Mode::DictationAlternatives, shouldUseDarkAppearance };
+            return { DocumentMarkerLineStyleMode::DictationAlternatives, shouldUseDarkAppearance };
 #if PLATFORM(IOS_FAMILY)
         case MarkedText::DictationPhraseWithAlternatives:
             // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS_FAMILY)-guard.
-            return { DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives, shouldUseDarkAppearance };
+            return { DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives, shouldUseDarkAppearance };
 #endif
         default:
             ASSERT_NOT_REACHED();
-            return { DocumentMarkerLineStyle::Mode::Spelling, shouldUseDarkAppearance };
+            return { DocumentMarkerLineStyleMode::Spelling, shouldUseDarkAppearance };
         }
     };
 

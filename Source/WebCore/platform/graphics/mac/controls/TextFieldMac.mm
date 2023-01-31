@@ -66,7 +66,7 @@ void TextFieldMac::draw(GraphicsContext& context, const FloatRoundedRect& border
         strokeRect.inflate(-strokeThickness / 2.0f);
 
         context.setStrokeColor(enabled ? Color::black : Color::darkGray);
-        context.setStrokeStyle(SolidStroke);
+        context.setStrokeStyle(StrokeStyle::SolidStroke);
         context.strokeRect(strokeRect, strokeThickness);
     } else {
         // <rdar://problem/22896977> We adjust the paint rect here to account for how AppKit draws the text

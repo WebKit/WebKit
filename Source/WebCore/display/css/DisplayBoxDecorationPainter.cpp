@@ -347,7 +347,7 @@ void BorderPainter::drawBoxSideFromPath(PaintingContext& paintingContext, const 
         // The extra multiplier is so that the clipping mask can antialias
         // the edges to prevent jaggies.
         paintingContext.context.setStrokeThickness(drawThickness * 2 * 1.1f);
-        paintingContext.context.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
+        paintingContext.context.setStrokeStyle(borderStyle == BorderStyle::Dashed ? StrokeStyle::DashedStroke : StrokeStyle::DottedStroke);
 
         // If the number of dashes that fit in the path is odd and non-integral then we
         // will have an awkwardly-sized dash at the end of the path. To try to avoid that
@@ -460,7 +460,7 @@ void BorderPainter::drawBoxSideFromPath(PaintingContext& paintingContext, const 
         break;
     }
 
-    paintingContext.context.setStrokeStyle(NoStroke);
+    paintingContext.context.setStrokeStyle(StrokeStyle::NoStroke);
     paintingContext.context.setFillColor(color);
     paintingContext.context.drawRect(borderRect);
 }
@@ -609,7 +609,7 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
         paintingContext.context.setShouldAntialias(antialias);
         paintingContext.context.setStrokeColor(color);
         paintingContext.context.setStrokeThickness(thickness);
-        paintingContext.context.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
+        paintingContext.context.setStrokeStyle(borderStyle == BorderStyle::Dashed ? StrokeStyle::DashedStroke : StrokeStyle::DottedStroke);
         paintingContext.context.drawLine({ x1, y1 }, { x2, y2 });
         paintingContext.context.setShouldAntialias(wasAntialiased);
         paintingContext.context.setStrokeStyle(oldStrokeStyle);
@@ -619,7 +619,7 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
         float thirdOfThickness = ceilToDevicePixel(thickness / 3, deviceScaleFactor);
         if (!adjacentWidth1 && !adjacentWidth2) {
             StrokeStyle oldStrokeStyle = paintingContext.context.strokeStyle();
-            paintingContext.context.setStrokeStyle(NoStroke);
+            paintingContext.context.setStrokeStyle(StrokeStyle::NoStroke);
             paintingContext.context.setFillColor(color);
 
             bool wasAntialiased = paintingContext.context.shouldAntialias();
@@ -764,7 +764,7 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
         ASSERT(x2 >= x1);
         ASSERT(y2 >= y1);
         if (!adjacentWidth1 && !adjacentWidth2) {
-            paintingContext.context.setStrokeStyle(NoStroke);
+            paintingContext.context.setStrokeStyle(StrokeStyle::NoStroke);
             paintingContext.context.setFillColor(color);
             bool wasAntialiased = paintingContext.context.shouldAntialias();
             paintingContext.context.setShouldAntialias(antialias);
@@ -816,7 +816,7 @@ void BorderPainter::drawLineForBoxSide(PaintingContext& paintingContext, const F
             break;
         }
 
-        paintingContext.context.setStrokeStyle(NoStroke);
+        paintingContext.context.setStrokeStyle(StrokeStyle::NoStroke);
         paintingContext.context.setFillColor(color);
         bool wasAntialiased = paintingContext.context.shouldAntialias();
         paintingContext.context.setShouldAntialias(antialias);

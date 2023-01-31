@@ -1628,7 +1628,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     auto color = style().visitedDependentColorWithColorFilter(CSSPropertyColor);
     context.setStrokeColor(color);
-    context.setStrokeStyle(SolidStroke);
+    context.setStrokeStyle(StrokeStyle::SolidStroke);
     context.setStrokeThickness(1.0f);
     context.setFillColor(color);
 

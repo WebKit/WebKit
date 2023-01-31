@@ -1092,7 +1092,7 @@ bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintI
     // 1.1) Draw the white background with grey gradient border.
     GraphicsContext& context = paintInfo.context();
     context.setStrokeThickness(0.68f);
-    context.setStrokeStyle(SolidStroke);
+    context.setStrokeStyle(StrokeStyle::SolidStroke);
 
     const float verticalRenderingPosition = rect.y() + verticalOffset;
     auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
@@ -1835,7 +1835,7 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
         if (!useAlternateDesign) {
             context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
             context.setStrokeThickness(checkboxRadioBorderWidth * 2);
-            context.setStrokeStyle(SolidStroke);
+            context.setStrokeStyle(StrokeStyle::SolidStroke);
         }
             
         context.setFillColor(backgroundColor);
@@ -1935,7 +1935,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
         if (!useAlternateDesign) {
             context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
             context.setStrokeThickness(checkboxRadioBorderWidth * 2);
-            context.setStrokeStyle(SolidStroke);
+            context.setStrokeStyle(StrokeStyle::SolidStroke);
         }
         context.setFillColor(backgroundColor);
         context.clipPath(path);
@@ -2332,7 +2332,7 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
     strokeRect.inflate(-strokeThickness / 2.0f);
 
     context.setStrokeThickness(strokeThickness);
-    context.setStrokeStyle(SolidStroke);
+    context.setStrokeStyle(StrokeStyle::SolidStroke);
     context.setStrokeGradient(WTFMove(gradient));
     context.strokeEllipse(strokeRect);
 }
