@@ -118,8 +118,16 @@ void CommandEncoder::finalizeBlitCommandEncoder()
 
 Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return ComputePassEncoder::createInvalid(m_device);
+    if (descriptor.nextInChain)
+        return ComputePassEncoder::createInvalid(m_device);
+
+    MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor computePassDescriptor];
+    computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
+
+    id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
+    computeCommandEncoder.label = fromAPI(descriptor.label);
+
+    return ComputePassEncoder::create(computeCommandEncoder, m_device);
 }
 
 bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor& descriptor) const
@@ -133,7 +141,6 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
 
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
-    UNUSED_PARAM(descriptor);
     if (descriptor.nextInChain)
         return RenderPassEncoder::createInvalid(m_device);
 
