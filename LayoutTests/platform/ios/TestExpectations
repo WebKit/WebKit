@@ -4197,3 +4197,5 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/interpolate.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/entry_point.html [ Skip ]
 http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html [ Skip ]
 http/tests/webgpu/cts.https.html [ Pass ]
+
+webkit.org/b/251417 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
