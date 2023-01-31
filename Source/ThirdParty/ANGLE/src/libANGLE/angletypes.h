@@ -242,6 +242,7 @@ struct RasterizerState final
     bool polygonOffsetFill;
     GLfloat polygonOffsetFactor;
     GLfloat polygonOffsetUnits;
+    GLfloat polygonOffsetClamp;
 
     // pointDrawMode/multiSample are only used in the D3D back-end right now.
     bool pointDrawMode;

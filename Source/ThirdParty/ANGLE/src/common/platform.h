@@ -199,7 +199,7 @@
 #    define ANGLE_WITH_SANITIZER 1
 #endif  // defined(ANGLE_WITH_ASAN) || defined(ANGLE_WITH_TSAN) || defined(ANGLE_WITH_UBSAN)
 
-#include <cstdint>
+#include <stdint.h>
 #if INTPTR_MAX == INT64_MAX
 #    define ANGLE_IS_64_BIT_CPU 1
 #else

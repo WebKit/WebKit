@@ -25,11 +25,13 @@ struct InterfaceBlock;
 struct BlockMemberInfo
 {
     constexpr BlockMemberInfo() = default;
-
+    // This constructor is used by the HLSL backend
     constexpr BlockMemberInfo(int offset, int arrayStride, int matrixStride, bool isRowMajorMatrix)
-        : offset(offset),
+        : type(GL_INVALID_ENUM),
+          offset(offset),
           arrayStride(arrayStride),
           matrixStride(matrixStride),
+          arraySize(-1),
           isRowMajorMatrix(isRowMajorMatrix)
     {}
 
@@ -38,12 +40,46 @@ struct BlockMemberInfo
                               int matrixStride,
                               bool isRowMajorMatrix,
                               int topLevelArrayStride)
-        : offset(offset),
+        : type(GL_INVALID_ENUM),
+          offset(offset),
           arrayStride(arrayStride),
           matrixStride(matrixStride),
+          arraySize(-1),
           isRowMajorMatrix(isRowMajorMatrix),
           topLevelArrayStride(topLevelArrayStride)
     {}
+
+    constexpr BlockMemberInfo(GLenum type,
+                              int offset,
+                              int arrayStride,
+                              int matrixStride,
+                              int arraySize,
+                              bool isRowMajorMatrix)
+        : type(type),
+          offset(offset),
+          arrayStride(arrayStride),
+          matrixStride(matrixStride),
+          arraySize(arraySize),
+          isRowMajorMatrix(isRowMajorMatrix)
+    {}
+
+    constexpr BlockMemberInfo(GLenum type,
+                              int offset,
+                              int arrayStride,
+                              int matrixStride,
+                              int arraySize,
+                              bool isRowMajorMatrix,
+                              int topLevelArrayStride)
+        : type(type),
+          offset(offset),
+          arrayStride(arrayStride),
+          matrixStride(matrixStride),
+          arraySize(arraySize),
+          isRowMajorMatrix(isRowMajorMatrix),
+          topLevelArrayStride(topLevelArrayStride)
+    {}
+
+    GLenum type = GL_INVALID_ENUM;
 
     // A single integer identifying the offset of an active variable.
     int offset = -1;
@@ -55,6 +91,9 @@ struct BlockMemberInfo
     // row-major matrix.
     int matrixStride = -1;
 
+    // A single integer, identifying the length of an array variable.
+    int arraySize = -1;
+
     // A single integer identifying whether an active variable is a row-major matrix.
     bool isRowMajorMatrix = false;
 
@@ -62,6 +101,8 @@ struct BlockMemberInfo
     // storage block member containing the active variable.
     int topLevelArrayStride = -1;
 };
+
+bool operator==(const BlockMemberInfo &lhs, const BlockMemberInfo &rhs);
 
 constexpr size_t ComponentAlignment(size_t numComponents)
 {
@@ -76,17 +117,18 @@ class BlockLayoutEncoder
     BlockLayoutEncoder();
     virtual ~BlockLayoutEncoder() {}
 
-    BlockMemberInfo encodeType(GLenum type,
-                               const std::vector<unsigned int> &arraySizes,
-                               bool isRowMajorMatrix);
+    virtual BlockMemberInfo encodeType(GLenum type,
+                                       const std::vector<unsigned int> &arraySizes,
+                                       bool isRowMajorMatrix);
     // Advance the offset based on struct size and array dimensions.  Size can be calculated with
     // getShaderVariableSize() or equivalent.  |enterAggregateType|/|exitAggregateType| is necessary
     // around this call.
-    BlockMemberInfo encodeArrayOfPreEncodedStructs(size_t size,
-                                                   const std::vector<unsigned int> &arraySizes);
+    virtual BlockMemberInfo encodeArrayOfPreEncodedStructs(
+        size_t size,
+        const std::vector<unsigned int> &arraySizes);
 
-    size_t getCurrentOffset() const;
-    size_t getShaderVariableSize(const ShaderVariable &structVar, bool isRowMajor);
+    virtual size_t getCurrentOffset() const;
+    virtual size_t getShaderVariableSize(const ShaderVariable &structVar, bool isRowMajor);
 
     // Called when entering/exiting a structure variable.
     virtual void enterAggregateType(const ShaderVariable &structVar) = 0;

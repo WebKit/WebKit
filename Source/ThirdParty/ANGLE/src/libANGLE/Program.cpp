@@ -611,18 +611,22 @@ bool IsActiveInterfaceBlock(const sh::InterfaceBlock &interfaceBlock)
 
 void WriteBlockMemberInfo(BinaryOutputStream *stream, const sh::BlockMemberInfo &var)
 {
+    stream->writeInt<GLenum>(var.type);
     stream->writeInt(var.arrayStride);
     stream->writeBool(var.isRowMajorMatrix);
     stream->writeInt(var.matrixStride);
+    stream->writeInt(var.arraySize);
     stream->writeInt(var.offset);
     stream->writeInt(var.topLevelArrayStride);
 }
 
 void LoadBlockMemberInfo(BinaryInputStream *stream, sh::BlockMemberInfo *var)
 {
+    var->type                = stream->readInt<GLenum>();
     var->arrayStride         = stream->readInt<int>();
     var->isRowMajorMatrix    = stream->readBool();
     var->matrixStride        = stream->readInt<int>();
+    var->arraySize           = stream->readInt<int>();
     var->offset              = stream->readInt<int>();
     var->topLevelArrayStride = stream->readInt<int>();
 }

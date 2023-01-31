@@ -461,9 +461,6 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         }
     }
 
-    // It would be nice if we didn't have to expose this for QueryVk::getResult.
-    angle::Result checkCompletedCommands();
-
     angle::Result getCompatibleRenderPass(const vk::RenderPassDesc &desc,
                                           const vk::RenderPass **renderPassOut);
     angle::Result getRenderPassWithOps(const vk::RenderPassDesc &desc,

@@ -731,6 +731,7 @@ template("translator_lib") {
     public_configs += [ ":external_config" ]
 
     deps = [
+      ":angle_common_shader_state",
       ":includes",
       ":preprocessor",
       "$angle_root/src/common/spirv:angle_spirv_headers",
@@ -749,6 +750,7 @@ template("translator_lib") {
     public_deps = [
       ":angle_common",
       ":angle_translator_headers",
+      ":angle_version_info",
     ]
 
     if (is_win) {
@@ -821,8 +823,9 @@ action("angle_commit_id") {
   if (angle_enable_commit_id &&
       exec_script("src/commit_id.py", [ "check" ], "value") == 1) {
     # commit id should depend on angle's HEAD revision
-    inputs = [ ".git/HEAD" ]
-    branch = read_file(".git/HEAD", "string")
+    git_dirs = exec_script("src/commit_id.py", [ "get_git_dirs" ], "list lines")
+    inputs = [ git_dirs[0] + "/HEAD" ]
+    branch = read_file(git_dirs[0] + "/HEAD", "string")
     result = string_split(branch)
     if (result[0] == "ref:") {
       _ref_file = result[1]
@@ -835,7 +838,7 @@ action("angle_commit_id") {
                     _ref_file,
                   ],
                   "")
-      inputs += [ ".git/" + _ref_file ]
+      inputs += [ git_dirs[1] + "/" + _ref_file ]
     }
   }
 
@@ -975,7 +978,6 @@ angle_source_set("libANGLE_headers") {
   }
   public_deps = [
     ":angle_common",
-    ":angle_common_shader_state",
     ":angle_translator_headers",
   ]
   public_configs += [ ":libANGLE_config" ]

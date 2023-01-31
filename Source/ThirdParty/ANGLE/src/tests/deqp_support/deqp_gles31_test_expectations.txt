@@ -122,6 +122,10 @@
 1442 OPENGL : dEQP-GLES31.functional.program_interface_query.uniform_block.referenced_by.* = FAIL
 4933 OPENGL : dEQP-GLES31.functional.texture.texture_buffer.render_modify.as_fragment_texture.mapbuffer_* = FAIL
 5353 NVIDIA OPENGL : dEQP-GLES31.functional.image_load_store.*.atomic.exchange_r32f* = FAIL
+b/266710445 LINUX OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32i_return_value = SKIP
+b/266710445 LINUX OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32ui_return_value = SKIP
+b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32i_return_value = SKIP
+b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.atomic.comp_swap_r32ui_return_value = SKIP
 
 // Slow / timeout on Linux GL
 5197 LINUX OPENGL : dEQP-GLES31.functional.compute.indirect_dispatch.gen_in_compute.large_offset = TIMEOUT

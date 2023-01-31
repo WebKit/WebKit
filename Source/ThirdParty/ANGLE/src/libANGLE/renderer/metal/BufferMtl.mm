@@ -78,8 +78,11 @@ IndexRange IndexConversionBufferMtl::getRangeForConvertedBuffer(size_t count)
 }
 
 // UniformConversionBufferMtl implementation
-UniformConversionBufferMtl::UniformConversionBufferMtl(ContextMtl *context, size_t offsetIn)
+UniformConversionBufferMtl::UniformConversionBufferMtl(ContextMtl *context,
+                                                       std::pair<size_t, size_t> offsetIn,
+                                                       size_t uniformBufferBlockSize)
     : ConversionBufferMtl(context, 0, mtl::kUniformBufferSettingOffsetMinAlignment),
+      uniformBufferBlockSize(uniformBufferBlockSize),
       offset(offsetIn)
 {}
 
@@ -377,17 +380,21 @@ IndexConversionBufferMtl *BufferMtl::getIndexConversionBuffer(ContextMtl *contex
     return &mIndexConversionBuffers.back();
 }
 
-ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context, size_t offset)
+ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
+                                                           std::pair<size_t, size_t> offset,
+                                                           size_t stdSize)
 {
     for (UniformConversionBufferMtl &buffer : mUniformConversionBuffers)
     {
-        if (buffer.offset == offset)
+        if (buffer.offset.first == offset.first)
         {
-            return static_cast<ConversionBufferMtl *>(&buffer);
+            if (buffer.offset.second <= offset.second &&
+                (offset.second - buffer.offset.second) % buffer.uniformBufferBlockSize == 0)
+                return static_cast<ConversionBufferMtl *>(&buffer);
         }
     }
 
-    mUniformConversionBuffers.emplace_back(context, offset);
+    mUniformConversionBuffers.emplace_back(context, offset, stdSize);
     return &mUniformConversionBuffers.back();
 }
 

@@ -139,6 +139,7 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mPolygonOffsetFillEnabled(false),
       mPolygonOffsetFactor(0.0f),
       mPolygonOffsetUnits(0.0f),
+      mPolygonOffsetClamp(0.0f),
       mRasterizerDiscardEnabled(false),
       mLineWidth(1.0f),
       mPrimitiveRestartEnabled(false),
@@ -1656,13 +1657,25 @@ void StateManagerGL::setPolygonOffsetFillEnabled(bool enabled)
     }
 }
 
-void StateManagerGL::setPolygonOffset(float factor, float units)
+void StateManagerGL::setPolygonOffset(float factor, float units, float clamp)
 {
-    if (mPolygonOffsetFactor != factor || mPolygonOffsetUnits != units)
+    if (mPolygonOffsetFactor != factor || mPolygonOffsetUnits != units ||
+        mPolygonOffsetClamp != clamp)
     {
         mPolygonOffsetFactor = factor;
         mPolygonOffsetUnits  = units;
-        mFunctions->polygonOffset(mPolygonOffsetFactor, mPolygonOffsetUnits);
+        mPolygonOffsetClamp  = clamp;
+
+        if (clamp == 0.0f)
+        {
+            mFunctions->polygonOffset(mPolygonOffsetFactor, mPolygonOffsetUnits);
+        }
+        else
+        {
+            ASSERT(mFunctions->polygonOffsetClampEXT);
+            mFunctions->polygonOffsetClampEXT(mPolygonOffsetFactor, mPolygonOffsetUnits,
+                                              mPolygonOffsetClamp);
+        }
 
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_POLYGON_OFFSET);
     }
@@ -1938,7 +1951,8 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
             {
                 const auto &rasterizerState = state.getRasterizerState();
                 setPolygonOffset(rasterizerState.polygonOffsetFactor,
-                                 rasterizerState.polygonOffsetUnits);
+                                 rasterizerState.polygonOffsetUnits,
+                                 rasterizerState.polygonOffsetClamp);
                 break;
             }
             case gl::State::DIRTY_BIT_RASTERIZER_DISCARD_ENABLED:
@@ -2834,6 +2848,16 @@ void StateManagerGL::syncFromNativeContext(const gl::Extensions &extensions,
         mLocalDirtyBits.set(gl::State::DIRTY_BIT_POLYGON_OFFSET);
     }
 
+    if (extensions.polygonOffsetClampEXT)
+    {
+        get(GL_POLYGON_OFFSET_CLAMP_EXT, &state->polygonOffsetClamp);
+        if (mPolygonOffsetClamp != state->polygonOffsetClamp)
+        {
+            mPolygonOffsetClamp = state->polygonOffsetClamp;
+            mLocalDirtyBits.set(gl::State::DIRTY_BIT_POLYGON_OFFSET);
+        }
+    }
+
     get(GL_SAMPLE_COVERAGE_VALUE, &state->sampleCoverageValue);
     get(GL_SAMPLE_COVERAGE_INVERT, &state->sampleCoverageInvert);
     if (mSampleCoverageValue != state->sampleCoverageValue ||
@@ -2924,7 +2948,8 @@ void StateManagerGL::restoreNativeContext(const gl::Extensions &extensions,
 
     setLineWidth(state->lineWidth);
 
-    setPolygonOffset(state->polygonOffsetFactor, state->polygonOffsetUnits);
+    setPolygonOffset(state->polygonOffsetFactor, state->polygonOffsetUnits,
+                     state->polygonOffsetClamp);
 
     setSampleCoverage(state->sampleCoverageValue, state->sampleCoverageInvert);
 

@@ -124,6 +124,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_semaphore](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_semaphore.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_semaphore_fd](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_external_objects_fd.txt) |  |  | &#x2714; | &#x2714; |  | &#x2714; | &#x2714; |
 | [GL_EXT_separate_shader_objects](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_separate_shader_objects.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_ARM_shader_framebuffer_fetch](https://khronos.org/registry/OpenGL/extensions/ARM/ARM_shader_framebuffer_fetch.txt) |  |  |  |  | &#x2714; |  | &#x2714; |
 | [GL_EXT_shader_framebuffer_fetch](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_framebuffer_fetch.txt) |  |  |  |  | &#x2714; |  | &#x2714; |
 | [GL_EXT_shader_framebuffer_fetch_non_coherent](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_framebuffer_fetch_non_coherent.txt) |  |  |  |  | &#x2714; |  |  |
 | [GL_OES_shader_image_atomic](https://khronos.org/registry/OpenGL/extensions/OES/OES_shader_image_atomic.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -227,6 +228,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_robust_fragment_shader_output](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_robust_fragment_shader_output.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_robust_resource_initialization](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_robust_resource_initialization.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_semaphore_fuchsia](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_semaphore_fuchsia.txt) |  |  |  |  |  |  |  |
+| [GL_ANGLE_shader_binary](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_shader_binary.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_shader_pixel_local_storage](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_shader_pixel_local_storage.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_shader_pixel_local_storage_coherent](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_shader_pixel_local_storage.txt) |  |  |  |  |  |  |  |
 | [GL_CHROMIUM_sync_query](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_sync_query.txt) |  |  |  |  |  |  |  |

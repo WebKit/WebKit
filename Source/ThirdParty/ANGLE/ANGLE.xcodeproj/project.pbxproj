@@ -385,8 +385,12 @@
 		3A2C6700292373DC00FEDF46 /* PLSProgramCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A2C66FD292373D400FEDF46 /* PLSProgramCache.h */; };
 		3A2C67012923742600FEDF46 /* ConstantNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66ED29236D4100FEDF46 /* ConstantNames.cpp */; };
 		3A2C67032923766600FEDF46 /* serialize_mock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C67022923766600FEDF46 /* serialize_mock.cpp */; };
+		3A50108F2988C7CC007516AD /* blocklayoutMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A50108D2988C7CC007516AD /* blocklayoutMetal.cpp */; };
+		3A5010902988C7CC007516AD /* blocklayoutMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A50108E2988C7CC007516AD /* blocklayoutMetal.h */; };
 		3A7AA54D28E1319D009E09C2 /* PixelLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7AA54B28E1319D009E09C2 /* PixelLocalStorage.h */; };
 		3A7AA54E28E1319D009E09C2 /* PixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */; };
+		3AD0D2242988C96D0080D728 /* renderermtl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */; };
+		3AD0D2252988C96D0080D728 /* renderermtl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2232988C96D0080D728 /* renderermtl_utils.h */; };
 		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
 		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
@@ -491,7 +495,6 @@
 		DF83E26E2639FD33000825EF /* SplitSequenceOperator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63422826B9900B5BA2C /* SplitSequenceOperator.cpp */; };
 		DF83E26F2639FD33000825EF /* RemoveArrayLengthMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5FA22826B8F00B5BA2C /* RemoveArrayLengthMethod.cpp */; };
 		DF83E2702639FD33000825EF /* PruneEmptyCases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D64A22826B9E00B5BA2C /* PruneEmptyCases.cpp */; };
-		DF83E2712639FD33000825EF /* NameNamelessUniformBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF33284425F6CA9D005FDFC4 /* NameNamelessUniformBuffers.cpp */; };
 		DF83E2732639FD33000825EF /* RewriteCubeMapSamplersAs2DArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30306F52305F5EE002DA972 /* RewriteCubeMapSamplersAs2DArray.cpp */; };
 		DF83E2752639FD33000825EF /* ScalarizeVecAndMatConstructorArgs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D63122826B9900B5BA2C /* ScalarizeVecAndMatConstructorArgs.cpp */; };
 		DF83E2762639FD33000825EF /* RemoveUnreferencedVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D5F522826B8E00B5BA2C /* RemoveUnreferencedVariables.cpp */; };
@@ -1073,8 +1076,12 @@
 		3A2C66FD292373D400FEDF46 /* PLSProgramCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PLSProgramCache.h; sourceTree = "<group>"; };
 		3A2C66FE292373D400FEDF46 /* PLSProgramCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PLSProgramCache.cpp; sourceTree = "<group>"; };
 		3A2C67022923766600FEDF46 /* serialize_mock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = serialize_mock.cpp; path = capture/serialize_mock.cpp; sourceTree = "<group>"; };
+		3A50108D2988C7CC007516AD /* blocklayoutMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = blocklayoutMetal.cpp; sourceTree = "<group>"; };
+		3A50108E2988C7CC007516AD /* blocklayoutMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blocklayoutMetal.h; sourceTree = "<group>"; };
 		3A7AA54B28E1319D009E09C2 /* PixelLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixelLocalStorage.h; path = src/libANGLE/PixelLocalStorage.h; sourceTree = SOURCE_ROOT; };
 		3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixelLocalStorage.cpp; path = src/libANGLE/PixelLocalStorage.cpp; sourceTree = SOURCE_ROOT; };
+		3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderermtl_utils.cpp; sourceTree = "<group>"; };
+		3AD0D2232988C96D0080D728 /* renderermtl_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderermtl_utils.h; sourceTree = "<group>"; };
 		5C1BAA961DFB60FF002906BB /* gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3.h; path = include/GLES3/gl3.h; sourceTree = "<group>"; };
 		5C1BAA971DFB60FF002906BB /* gl3platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3platform.h; path = include/GLES3/gl3platform.h; sourceTree = "<group>"; };
 		5C1BAA981DFB60FF002906BB /* gl31.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl31.h; path = include/GLES3/gl31.h; sourceTree = "<group>"; };
@@ -1637,8 +1644,6 @@
 		FF194FDF27432CC3006A97A3 /* ForcePrecisionQualifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForcePrecisionQualifier.h; sourceTree = "<group>"; };
 		FF2D2F5225C8B14A002FB699 /* FixTypeConstructors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixTypeConstructors.h; sourceTree = "<group>"; };
 		FF2D2F5325C8B14A002FB699 /* FixTypeConstructors.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FixTypeConstructors.cpp; sourceTree = "<group>"; };
-		FF33284325F6CA9D005FDFC4 /* NameNamelessUniformBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameNamelessUniformBuffers.h; sourceTree = "<group>"; };
-		FF33284425F6CA9D005FDFC4 /* NameNamelessUniformBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameNamelessUniformBuffers.cpp; sourceTree = "<group>"; };
 		FF33284725F6CAB9005FDFC4 /* IntroduceVertexIndexID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntroduceVertexIndexID.cpp; sourceTree = "<group>"; };
 		FF33284825F6CAB9005FDFC4 /* IntroduceVertexIndexID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntroduceVertexIndexID.h; sourceTree = "<group>"; };
 		FF3A9FFA2756B7C000BE0397 /* ImageImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageImpl.cpp; sourceTree = "<group>"; };
@@ -2631,8 +2636,6 @@
 				5C55D61F22826B9400B5BA2C /* InitializeVariables.h */,
 				FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */,
 				FF194FDA27432CC2006A97A3 /* MonomorphizeUnsupportedFunctions.h */,
-				FF33284425F6CA9D005FDFC4 /* NameNamelessUniformBuffers.cpp */,
-				FF33284325F6CA9D005FDFC4 /* NameNamelessUniformBuffers.h */,
 				5C55D64A22826B9E00B5BA2C /* PruneEmptyCases.cpp */,
 				5C55D61B22826B9300B5BA2C /* PruneEmptyCases.h */,
 				5C55D61222826B9100B5BA2C /* PruneNoOps.cpp */,
@@ -3008,6 +3011,8 @@
 			isa = PBXGroup;
 			children = (
 				FF81FEA925818D6800894E24 /* shaders */,
+				3A50108D2988C7CC007516AD /* blocklayoutMetal.cpp */,
+				3A50108E2988C7CC007516AD /* blocklayoutMetal.h */,
 				FF81FE9C25818D6800894E24 /* BufferMtl.h */,
 				FF81FE9125818D6800894E24 /* BufferMtl.mm */,
 				FF81FEBD25818D6800894E24 /* CompilerMtl.h */,
@@ -3060,6 +3065,8 @@
 				FF81FE8D25818D6800894E24 /* QueryMtl.mm */,
 				FF81FE8F25818D6800894E24 /* RenderBufferMtl.h */,
 				FF81FE8625818D6800894E24 /* RenderBufferMtl.mm */,
+				3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */,
+				3AD0D2232988C96D0080D728 /* renderermtl_utils.h */,
 				FF81FE9325818D6800894E24 /* RenderTargetMtl.h */,
 				FF81FE9925818D6800894E24 /* RenderTargetMtl.mm */,
 				FF81FE8A25818D6800894E24 /* SamplerMtl.h */,
@@ -3222,6 +3229,7 @@
 				31CD0022249184E700486F27 /* BlitGL.h in Headers */,
 				31CD00A4249184FD00486F27 /* BlobCache.h in Headers */,
 				31CDFFBC249184A700486F27 /* blocklayout.h in Headers */,
+				3A5010902988C7CC007516AD /* blocklayoutMetal.h in Headers */,
 				31CD006E249184FC00486F27 /* Buffer.h in Headers */,
 				31CD001F249184E700486F27 /* BufferGL.h in Headers */,
 				31CD004F249184F400486F27 /* BufferImpl.h in Headers */,
@@ -3489,6 +3497,7 @@
 				31CD000A249184BB00486F27 /* RendererEAGL.h in Headers */,
 				31CD001B249184E700486F27 /* RendererGL.h in Headers */,
 				31CD001E249184E700486F27 /* renderergl_utils.h in Headers */,
+				3AD0D2252988C96D0080D728 /* renderermtl_utils.h in Headers */,
 				A3C49C1B255DF86F005E8DF7 /* ReplaceArrayOfMatrixVarying.h in Headers */,
 				FF62F64D27446DC800AD6EDC /* ReplaceClipCullDistanceVariable.h in Headers */,
 				31CDFFAD249184A100486F27 /* ReplaceShadowingVariables.h in Headers */,
@@ -3766,6 +3775,7 @@
 				DF83E3592639FE92000825EF /* BlitGL.cpp in Sources */,
 				DF83E2EA2639FE17000825EF /* BlobCache.cpp in Sources */,
 				DF83E2BC2639FD83000825EF /* blocklayout.cpp in Sources */,
+				3A50108F2988C7CC007516AD /* blocklayoutMetal.cpp in Sources */,
 				DF83E2F72639FE17000825EF /* Buffer.cpp in Sources */,
 				DF83E3502639FE92000825EF /* BufferGL.cpp in Sources */,
 				DF83E3992639FED4000825EF /* BufferImpl.cpp in Sources */,
@@ -3949,7 +3959,6 @@
 				DF83E3732639FEB8000825EF /* mtl_utils.mm in Sources */,
 				DF83E23A2639FCD5000825EF /* Name.cpp in Sources */,
 				DF83E2442639FCD5000825EF /* NameEmbeddedUniformStructsMetal.cpp in Sources */,
-				DF83E2712639FD33000825EF /* NameNamelessUniformBuffers.cpp in Sources */,
 				DF83E36F2639FE92000825EF /* null_functions.cpp in Sources */,
 				DF83E2DE2639FE17000825EF /* Observer.cpp in Sources */,
 				DF83E2A12639FD83000825EF /* Operator.cpp in Sources */,
@@ -4015,6 +4024,7 @@
 				DF83E3522639FE92000825EF /* RendererEAGL.cpp in Sources */,
 				DF83E3672639FE92000825EF /* RendererGL.cpp in Sources */,
 				DF83E36D2639FE92000825EF /* renderergl_utils.cpp in Sources */,
+				3AD0D2242988C96D0080D728 /* renderermtl_utils.cpp in Sources */,
 				DF83E3842639FEB8000825EF /* RenderTargetMtl.mm in Sources */,
 				DF83E2B42639FD83000825EF /* ReplaceArrayOfMatrixVarying.cpp in Sources */,
 				FF62F64427446DC800AD6EDC /* ReplaceClipCullDistanceVariable.cpp in Sources */,

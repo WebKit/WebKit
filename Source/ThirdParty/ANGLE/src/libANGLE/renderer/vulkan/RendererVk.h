@@ -221,8 +221,6 @@ class MemoryAllocationTracker : angle::NonCopyable
                                VkDeviceSize size,
                                uint32_t memoryTypeIndex);
 
-    std::locale getLocale() { return mLocale; }
-
   private:
     // Pointer to parent renderer object.
     RendererVk *const mRenderer;
@@ -255,9 +253,6 @@ class MemoryAllocationTracker : angle::NonCopyable
     uint64_t mMemoryAllocationID;
     using MemoryAllocInfoMap = angle::HashMap<vk::MemoryAllocInfoMapKey, vk::MemoryAllocationInfo>;
     angle::HashMap<angle::BacktraceInfo, MemoryAllocInfoMap> mMemoryAllocationRecord;
-
-    // Custom locale used for number formatting.
-    std::locale mLocale;
 };
 
 class RendererVk : angle::NonCopyable
@@ -371,38 +366,11 @@ class RendererVk : angle::NonCopyable
 
     ANGLE_INLINE egl::ContextPriority getDriverPriority(egl::ContextPriority priority)
     {
-        if (isAsyncCommandQueueEnabled())
-        {
-            return mCommandProcessor.getDriverPriority(priority);
-        }
-        else
-        {
-            return mCommandQueue.getDriverPriority(priority);
-        }
+        return mCommandQueue.getDriverPriority(priority);
     }
-    ANGLE_INLINE uint32_t getDeviceQueueIndex()
-    {
-        if (isAsyncCommandQueueEnabled())
-        {
-            return mCommandProcessor.getDeviceQueueIndex();
-        }
-        else
-        {
-            return mCommandQueue.getDeviceQueueIndex();
-        }
-    }
+    ANGLE_INLINE uint32_t getDeviceQueueIndex() { return mCommandQueue.getDeviceQueueIndex(); }
 
-    VkQueue getQueue(egl::ContextPriority priority)
-    {
-        if (isAsyncCommandQueueEnabled())
-        {
-            return mCommandProcessor.getQueue(priority);
-        }
-        else
-        {
-            return mCommandQueue.getQueue(priority);
-        }
-    }
+    VkQueue getQueue(egl::ContextPriority priority) { return mCommandQueue.getQueue(priority); }
 
     // This command buffer should be submitted immediately via queueSubmitOneOff.
     angle::Result getCommandBufferOneOff(vk::Context *context,
@@ -522,48 +490,33 @@ class RendererVk : angle::NonCopyable
     {
         if (isAsyncCommandQueueEnabled())
         {
-            return mCommandProcessor.isBusy();
+            return mCommandProcessor.isBusy(this);
         }
         else
         {
-            return mCommandQueue.isBusy();
+            return mCommandQueue.isBusy(this);
         }
     }
 
-    angle::Result ensureNoPendingWork(vk::Context *context)
+    angle::Result waitForQueueSerialToBeSubmitted(vk::Context *context,
+                                                  const QueueSerial &queueSerial)
     {
+        // This is only needed for async submission code path. For immediate submission, it is a nop
+        // since everything is submitted immediately.
         if (isAsyncCommandQueueEnabled())
         {
-            return mCommandProcessor.ensureNoPendingWork(context);
+            return mCommandProcessor.waitForQueueSerialToBeSubmitted(context, queueSerial);
         }
-        else
-        {
-            return mCommandQueue.ensureNoPendingWork(context);
-        }
+        // This queueSerial must have been submitted.
+        ASSERT(!mCommandQueue.hasUnsubmittedUse(vk::ResourceUse(queueSerial)));
+        return angle::Result::Continue;
     }
 
     angle::VulkanPerfCounters getCommandQueuePerfCounters()
     {
-        if (isAsyncCommandQueueEnabled())
-        {
-            return mCommandProcessor.getPerfCounters();
-        }
-        else
-        {
-            return mCommandQueue.getPerfCounters();
-        }
+        return mCommandQueue.getPerfCounters();
     }
-    void resetCommandQueuePerFrameCounters()
-    {
-        if (isAsyncCommandQueueEnabled())
-        {
-            mCommandProcessor.resetPerFramePerfCounters();
-        }
-        else
-        {
-            mCommandQueue.resetPerFramePerfCounters();
-        }
-    }
+    void resetCommandQueuePerFrameCounters() { mCommandQueue.resetPerFramePerfCounters(); }
 
     egl::Display *getDisplay() const { return mDisplay; }
 
@@ -978,10 +931,10 @@ class RendererVk : angle::NonCopyable
     OneOffCommandPool mOneOffCommandPool;
 
     // Synchronous Command Queue
-    vk::ThreadSafeCommandQueue mCommandQueue;
+    vk::CommandQueue mCommandQueue;
 
     // Async Command Queue
-    vk::ThreadSafeCommandProcessor mCommandProcessor;
+    vk::CommandProcessor mCommandProcessor;
 
     // Command buffer pool management.
     vk::CommandBufferRecycler<vk::OutsideRenderPassCommandBuffer,
@@ -1052,14 +1005,7 @@ ANGLE_INLINE void RendererVk::reserveQueueSerials(SerialIndex index,
 
 ANGLE_INLINE bool RendererVk::hasUnfinishedUse(const vk::ResourceUse &use) const
 {
-    if (isAsyncCommandQueueEnabled())
-    {
-        return mCommandProcessor.hasUnfinishedUse(use);
-    }
-    else
-    {
-        return mCommandQueue.hasUnfinishedUse(use);
-    }
+    return mCommandQueue.hasUnfinishedUse(use);
 }
 
 ANGLE_INLINE bool RendererVk::hasUnsubmittedUse(const vk::ResourceUse &use) const
