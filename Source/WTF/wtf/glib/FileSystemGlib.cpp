@@ -193,13 +193,11 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
         return ioStream.leakRef();
     }
 
-    if (mode == FileOpenMode::Read)
+    if (mode == FileOpenMode::Read || mode == FileOpenMode::ReadWrite)
         ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
-    else if (mode == FileOpenMode::Write || mode == FileOpenMode::ReadWrite) {
-        if (g_file_test(filename.data(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
-            ioStream = adoptGRef(g_file_open_readwrite(file.get(), nullptr, nullptr));
-        else
-            ioStream = adoptGRef(g_file_create_readwrite(file.get(), permissionFlag, nullptr, nullptr));
+    else {
+        ASSERT(mode == FileOpenMode::Truncate);
+        ioStream = adoptGRef(g_file_replace_readwrite(file.get(), nullptr, FALSE, permissionFlag, nullptr, nullptr));
     }
 
     return ioStream.leakRef();

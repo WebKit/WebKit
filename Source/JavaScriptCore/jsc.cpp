@@ -1115,7 +1115,7 @@ public:
         });
 
         String filename = cachePath();
-        auto fd = FileSystem::openAndLockFile(filename, FileSystem::FileOpenMode::Write, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
+        auto fd = FileSystem::openAndLockFile(filename, FileSystem::FileOpenMode::ReadWrite, { FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking });
         if (!FileSystem::isHandleValid(fd))
             return;
 
@@ -1828,7 +1828,7 @@ JSC_DEFINE_HOST_FUNCTION(functionWriteFile, (JSGlobalObject* globalObject, CallF
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    auto handle = FileSystem::openFile(fileName, FileSystem::FileOpenMode::Write);
+    auto handle = FileSystem::openFile(fileName, FileSystem::FileOpenMode::Truncate);
     if (!FileSystem::isHandleValid(handle))
         return throwVMError(globalObject, scope, "Could not open file."_s);
 

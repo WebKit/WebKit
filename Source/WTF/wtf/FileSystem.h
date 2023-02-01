@@ -86,7 +86,7 @@ typedef ino_t PlatformFileID;
 
 enum class FileOpenMode {
     Read,
-    Write,
+    Truncate,
     ReadWrite,
 #if OS(DARWIN)
     EventsOnly,

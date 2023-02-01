@@ -464,7 +464,7 @@ void NetworkDataTaskBlob::download()
 
     LOG(NetworkSession, "%p - NetworkDataTaskBlob::download to %s", this, m_pendingDownloadLocation.utf8().data());
 
-    m_downloadFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Write);
+    m_downloadFile = FileSystem::openFile(m_pendingDownloadLocation, FileSystem::FileOpenMode::Truncate);
     if (m_downloadFile == FileSystem::invalidPlatformFileHandle) {
         didFailDownload(cancelledError(m_firstRequest));
         return;
