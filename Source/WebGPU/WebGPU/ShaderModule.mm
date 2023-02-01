@@ -236,9 +236,12 @@ void ShaderModule::setLabel(String&& label)
         m_library.label = label;
 }
 
-id<MTLFunction> ShaderModule::getNamedFunction(const String& name, const HashMap<String, double>& keyValueReplacements) const
+id<MTLFunction> ShaderModule::getNamedFunction(const String& originalName, const HashMap<String, double>& keyValueReplacements) const
 {
+    const auto* information = entryPointInformation(originalName);
+    const String& name = information ? information->mangledName : originalName;
     auto originalFunction = [m_library newFunctionWithName:name];
+
     if (!keyValueReplacements.size())
         return originalFunction;
 
