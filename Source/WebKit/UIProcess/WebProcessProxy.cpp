@@ -1736,7 +1736,7 @@ void WebProcessProxy::processTerminated()
 void WebProcessProxy::logDiagnosticMessageForResourceLimitTermination(const String& limitKey)
 {
     if (pageCount()) {
-        if (auto& page = pages()[0])
+        if (RefPtr page = pages()[0])
             page->logDiagnosticMessage(DiagnosticLoggingKeys::simulatedPageCrashKey(), limitKey, ShouldSample::No);
     }
 }
