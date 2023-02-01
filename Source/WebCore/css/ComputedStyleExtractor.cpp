@@ -977,11 +977,6 @@ static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& s
     return list;
 }
 
-static inline Ref<CSSPrimitiveValue> adjustLengthForZoom(double length, const RenderStyle& style, ComputedStyleExtractor::AdjustPixelValuesForComputedStyle adjust)
-{
-    return adjust == ComputedStyleExtractor::AdjustPixelValuesForComputedStyle::Yes ? zoomAdjustedPixelValue(length, style) : CSSPrimitiveValue::create(length, CSSUnitType::CSS_PX);
-}
-
 static inline Ref<CSSPrimitiveValue> adjustLengthForZoom(const Length& length, const RenderStyle& style, ComputedStyleExtractor::AdjustPixelValuesForComputedStyle adjust)
 {
     return adjust == ComputedStyleExtractor::AdjustPixelValuesForComputedStyle::Yes ? zoomAdjustedPixelValue(length.value(), style) : CSSPrimitiveValue::create(length);

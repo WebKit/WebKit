@@ -220,6 +220,7 @@ void EventRegion::translate(const IntSize& offset)
 #endif
 }
 
+#if ENABLE(TOUCH_ACTION_REGIONS)
 static inline unsigned toIndex(TouchAction touchAction)
 {
     switch (touchAction) {
@@ -260,7 +261,6 @@ static inline TouchAction toTouchAction(unsigned index)
     return TouchAction::Auto;
 }
 
-#if ENABLE(TOUCH_ACTION_REGIONS)
 void EventRegion::uniteTouchActions(const Region& touchRegion, OptionSet<TouchAction> touchActions)
 {
     for (auto touchAction : touchActions) {

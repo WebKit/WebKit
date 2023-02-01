@@ -33,6 +33,7 @@
 #include "CSSValuePool.h"
 #include "EditAction.h"
 #include "EditingStyle.h"
+#include "MutableStyleProperties.h"
 #include "StyleProperties.h"
 
 namespace WebCore {

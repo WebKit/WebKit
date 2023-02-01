@@ -249,9 +249,6 @@
 #define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #endif
 
-// This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
-static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
-
 // This should be greater than tileRevalidationTimeout in TileController.
 static const Seconds nonVisibleProcessGraphicsCleanupDelay { 10_s };
 

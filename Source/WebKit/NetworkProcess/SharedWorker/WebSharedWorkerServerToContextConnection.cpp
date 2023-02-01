@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebSharedWorkerServerToContextConnection.h"
 
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"

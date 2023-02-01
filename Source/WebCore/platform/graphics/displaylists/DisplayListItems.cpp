@@ -42,9 +42,6 @@
 namespace WebCore {
 namespace DisplayList {
 
-// Should match RenderTheme::platformFocusRingWidth()
-static const float platformFocusRingWidth = 3;
-
 void Save::apply(GraphicsContext& context) const
 {
     context.save();

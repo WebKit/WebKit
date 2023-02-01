@@ -33,6 +33,8 @@
 #include "CSSValuePair.h"
 #include "MutableStyleProperties.h"
 #include "Pair.h"
+#include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

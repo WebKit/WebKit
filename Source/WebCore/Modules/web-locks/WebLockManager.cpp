@@ -29,6 +29,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromise.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSWebLockManagerSnapshot.h"
 #include "NavigatorBase.h"
 #include "Page.h"

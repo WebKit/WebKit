@@ -35,6 +35,7 @@
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
+#include "JSDOMPromiseDeferred.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "WindowEventLoop.h"

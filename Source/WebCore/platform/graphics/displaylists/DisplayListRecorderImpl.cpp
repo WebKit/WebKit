@@ -433,15 +433,5 @@ bool RecorderImpl::recordResourceUse(DecomposedGlyphs& decomposedGlyphs)
     return true;
 }
 
-// FIXME: share with ShadowData
-static inline float shadowPaintingExtent(float blurRadius)
-{
-    // Blurring uses a Gaussian function whose std. deviation is m_radius/2, and which in theory
-    // extends to infinity. In 8-bit contexts, however, rounding causes the effect to become
-    // undetectable at around 1.4x the radius.
-    const float radiusExtentMultiplier = 1.4;
-    return ceilf(blurRadius * radiusExtentMultiplier);
-}
-
 } // namespace DisplayList
 } // namespace WebCore

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUAdapter.h"
 
+#include "JSDOMPromiseDeferred.h"
 #include "JSGPUDevice.h"
 
 namespace WebCore {

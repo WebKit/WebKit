@@ -31,6 +31,7 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "FTPDirectoryDocument.h"
+#include "FragmentScriptingPermission.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"

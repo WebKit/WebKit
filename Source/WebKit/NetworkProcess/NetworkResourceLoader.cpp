@@ -790,6 +790,9 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
     };
 
     auto callbackAggregator = CallbackAggregator::create([this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(this);
+#endif
         if (!weakThis)
             return completionHandler();
 

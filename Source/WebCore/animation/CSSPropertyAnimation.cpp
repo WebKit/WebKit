@@ -340,12 +340,6 @@ static inline RefPtr<ShapeValue> blendFunc(ShapeValue* from, ShapeValue* to, con
     return from->blend(*to, context);
 }
 
-static inline RefPtr<FilterOperation> blendFunc(FilterOperation* from, FilterOperation* to, const CSSPropertyBlendingContext& context, bool blendToPassthrough = false)
-{
-    ASSERT(to);
-    return to->blend(from, context, blendToPassthrough);
-}
-
 static inline FilterOperations blendFunc(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
 {
     return from.blend(to, context);

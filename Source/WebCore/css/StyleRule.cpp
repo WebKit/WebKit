@@ -41,7 +41,9 @@
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
 #include "MediaList.h"
+#include "MutableStyleProperties.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRuleImport.h"
 
 namespace WebCore {
