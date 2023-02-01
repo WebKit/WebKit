@@ -6172,15 +6172,10 @@ void Document::setTransformSource(std::unique_ptr<TransformSource> source)
 
 #endif
 
-void Document::setDesignMode(InheritedBool value)
+void Document::setDesignMode(DesignMode value)
 {
     m_designMode = value;
-    for (RefPtr<AbstractFrame> frame = m_frame.get(); frame; frame = frame->tree().traverseNext(m_frame.get())) {
-        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
-        if (!localFrame || !localFrame->document())
-            continue;
-        localFrame->document()->scheduleFullStyleRebuild();
-    }
+    scheduleFullStyleRebuild();
 }
 
 String Document::designMode() const
@@ -6190,23 +6185,8 @@ String Document::designMode() const
 
 void Document::setDesignMode(const String& value)
 {
-    InheritedBool mode;
-    if (equalLettersIgnoringASCIICase(value, "on"_s))
-        mode = on;
-    else if (equalLettersIgnoringASCIICase(value, "off"_s))
-        mode = off;
-    else
-        mode = inherit;
+    DesignMode mode = equalLettersIgnoringASCIICase(value, "on"_s) ? DesignMode::On : DesignMode::Off;
     setDesignMode(mode);
-}
-
-bool Document::inDesignMode() const
-{
-    for (const Document* d = this; d; d = d->parentDocument()) {
-        if (d->m_designMode != inherit)
-            return d->m_designMode;
-    }
-    return false;
 }
 
 Document* Document::parentDocument() const

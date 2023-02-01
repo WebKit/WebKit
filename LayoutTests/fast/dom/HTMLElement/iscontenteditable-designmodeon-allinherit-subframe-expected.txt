@@ -8,5 +8,5 @@ PASS successfullyParsed is true
 TEST COMPLETE
 document.designMode = "on"
 PASS subDocument.getElementById("div").contentEditable is "inherit"
-PASS subDocument.getElementById("div").isContentEditable is true
+PASS subDocument.getElementById("div").isContentEditable is false
 
