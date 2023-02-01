@@ -399,7 +399,9 @@ template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValu
     }
 };
 
-template<typename T, size_t size> struct ArgumentCoder<std::array<T, size>> {
+template<bool triviallyCopyable, typename T, size_t size> struct ArrayArgumentCoder;
+
+template<typename T, size_t size> struct ArrayArgumentCoder<false, T, size> {
     template<typename Encoder, typename U>
     static void encode(Encoder& encoder, U&& array)
     {
@@ -428,6 +430,29 @@ template<typename T, size_t size> struct ArgumentCoder<std::array<T, size>> {
     }
 };
 
+template<typename T, size_t size> struct ArrayArgumentCoder<true, T, size> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const std::array<T, size>& array)
+    {
+        encoder.template encodeSpan(Span { array.data(), array.size() });
+    }
+
+    template<typename Decoder>
+    static std::optional<std::array<T, size>> decode(Decoder& decoder)
+    {
+        auto data = decoder.template decodeSpan<T>(size);
+        if (!data.data())
+            return std::nullopt;
+
+        std::array<T, size> array;
+        static_assert(sizeof(typename decltype(data)::element_type) == sizeof(T));
+        memcpy(array.data(), data.data(), data.size_bytes());
+        return array;
+    }
+};
+
+template<typename T, size_t size> struct ArgumentCoder<std::array<T, size>, void> : ArrayArgumentCoder<std::is_trivially_copyable_v<T>, T, size> { };
+
 template<typename Key, typename T, Key lastValue> struct ArgumentCoder<EnumeratedArray<Key, T, lastValue>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, const EnumeratedArray<Key, T, lastValue>& array)
@@ -447,7 +472,7 @@ template<typename Key, typename T, Key lastValue> struct ArgumentCoder<Enumerate
     }
 };
 
-template<bool fixedSizeElements, typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder;
+template<bool triviallyCopyable, typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder;
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct VectorArgumentCoder<false, T, inlineCapacity, OverflowHandler, minCapacity> {
     template<typename Encoder, typename U>
@@ -496,7 +521,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
     }
 };
 
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct ArgumentCoder<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> : VectorArgumentCoder<std::is_arithmetic<T>::value, T, inlineCapacity, OverflowHandler, minCapacity> { };
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct ArgumentCoder<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> : VectorArgumentCoder<std::is_trivially_copyable_v<T>, T, inlineCapacity, OverflowHandler, minCapacity> { };
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
@@ -751,26 +776,6 @@ template<> struct ArgumentCoder<String> {
 template<> struct ArgumentCoder<StringView> {
     template<typename Encoder>
     static void encode(Encoder&, StringView);
-};
-
-template<> struct ArgumentCoder<SHA1::Digest> {
-    static void encode(Encoder& encoder, const SHA1::Digest& digest)
-    {
-        encoder.encodeSpan(Span { digest.data(), digest.size() });
-    }
-
-    static std::optional<SHA1::Digest> decode(Decoder& decoder)
-    {
-        constexpr size_t size = std::tuple_size_v<SHA1::Digest>;
-        auto data = decoder.template decodeSpan<uint8_t>(size);
-        if (!data.data())
-            return std::nullopt;
-
-        SHA1::Digest digest;
-        static_assert(sizeof(typename decltype(data)::element_type) == 1);
-        memcpy(digest.data(), data.data(), data.size_bytes());
-        return digest;
-    }
 };
 
 template<> struct ArgumentCoder<std::monostate> {
