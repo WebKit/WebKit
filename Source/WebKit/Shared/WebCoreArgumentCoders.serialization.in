@@ -466,7 +466,7 @@ enum class WebCore::ShareDataOriginator : bool
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntRect {
     WebCore::IntPoint location();
-    WebCore::IntSize size();
+    [Validator='WebCore::IntRect { *location, *size }.isValid()'] WebCore::IntSize size();
 }
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntPoint {
