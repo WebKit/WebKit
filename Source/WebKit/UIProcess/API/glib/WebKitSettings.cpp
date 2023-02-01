@@ -1497,12 +1497,8 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * WebKitSettings:hardware-acceleration-policy:
      *
      * The #WebKitHardwareAccelerationPolicy to decide how to enable and disable
-     * hardware acceleration. The value %WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND
-     * enables hardware acceleration only when the web content requests it.
-     * It's possible to enforce hardware acceleration to be always enabled
-     * by using %WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS, or to disable it
-     * completely using %WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER. Note that disabling hardware
-     * acceleration might cause some websites to not render correctly or consume more CPU.
+     * hardware acceleration. Disabling hardware acceleration might
+     * cause some websites to not render correctly or consume more CPU.
      *
      * Note that changing this setting might not be possible if hardware acceleration is not
      * supported by the hardware or the system. In that case, you can get the value to know the
@@ -3706,9 +3702,12 @@ void webkit_settings_set_allow_top_navigation_to_data_urls(WebKitSettings* setti
  */
 WebKitHardwareAccelerationPolicy webkit_settings_get_hardware_acceleration_policy(WebKitSettings* settings)
 {
-    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
 
     WebKitSettingsPrivate* priv = settings->priv;
+#if USE(GTK4)
+    return priv->preferences->acceleratedCompositingEnabled() ? WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS : WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
+#else
     if (!priv->preferences->acceleratedCompositingEnabled())
         return WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER;
 
@@ -3716,6 +3715,7 @@ WebKitHardwareAccelerationPolicy webkit_settings_get_hardware_acceleration_polic
         return WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS;
 
     return WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND;
+#endif
 }
 
 /**
@@ -3761,6 +3761,7 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
             changed = true;
         }
         break;
+#if !USE(GTK4)
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
         if (!priv->preferences->acceleratedCompositingEnabled() && HardwareAccelerationManager::singleton().canUseHardwareAcceleration()) {
             priv->preferences->setAcceleratedCompositingEnabled(true);
@@ -3773,6 +3774,7 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
             changed = true;
         }
         break;
+#endif
     }
 
     if (changed)

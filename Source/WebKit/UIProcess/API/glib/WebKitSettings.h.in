@@ -46,6 +46,17 @@ G_BEGIN_DECLS
 #define WEBKIT_SETTINGS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_SETTINGS, WebKitSettingsClass))
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+/**
+ * WebKitHardwareAccelerationPolicy:
+ * @WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS: Hardware acceleration is always enabled, even for websites not requesting it.
+ * @WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER: Hardware acceleration is always disabled, even for websites requesting it.
+ *
+ * Enum values used for determining the hardware acceleration policy.
+ *
+ * Since: 2.16
+ */
+#else
 /**
  * WebKitHardwareAccelerationPolicy:
  * @WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND: Hardware acceleration is enabled/disabled as request by web contents.
@@ -56,8 +67,11 @@ G_BEGIN_DECLS
  *
  * Since: 2.16
  */
+#endif
 typedef enum {
+#if !USE(GTK4)
     WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
+#endif
     WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS,
     WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER
 } WebKitHardwareAccelerationPolicy;

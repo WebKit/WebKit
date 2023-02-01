@@ -131,8 +131,10 @@ static const char* hardwareAccelerationPolicy(WebKitURISchemeRequest* request)
         return "never";
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS:
         return "always";
+#if !USE(GTK4)
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
         return "on demand";
+#endif
     }
 #endif
     RELEASE_ASSERT_NOT_REACHED();

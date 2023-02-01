@@ -329,16 +329,16 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_cmpstr(nullptr, ==, webkit_settings_get_media_content_types_requiring_hardware_support(settings));
 
 #if PLATFORM(GTK)
-#if !USE(GTK4)
     // Always is the default hardware acceleration policy.
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
+#if !USE(GTK4)
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+#endif
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
-#endif
 
     // Back-forward navigation gesture is disabled by default
     g_assert_false(webkit_settings_get_enable_back_forward_navigation_gestures(settings));
