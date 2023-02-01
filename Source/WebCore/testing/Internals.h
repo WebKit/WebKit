@@ -672,6 +672,7 @@ public:
     void enableMockSpeechSynthesizer();
     void enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement&);
     ExceptionOr<void> setSpeechUtteranceDuration(double);
+    unsigned minimumExpectedVoiceCount();
 #endif
 
 #if ENABLE(MEDIA_STREAM)

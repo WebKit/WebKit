@@ -1556,6 +1556,18 @@ ExceptionOr<void> Internals::setSpeechUtteranceDuration(double duration)
     return { };
 }
 
+unsigned Internals::minimumExpectedVoiceCount()
+{
+    // https://webkit.org/b/250656
+#if PLATFORM(MAC)
+    return 21;
+#elif USE(GLIB)
+    return 4;
+#else
+    return 1;
+#endif
+}
+
 #endif
 
 #if ENABLE(WEB_RTC)

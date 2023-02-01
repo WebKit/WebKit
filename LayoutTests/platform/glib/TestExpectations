@@ -2206,7 +2206,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 
 # Missing WebSpeech implementation
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
-webkit.org/b/250656 fast/speechsynthesis/voices-non-mock.html [ Failure ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]
