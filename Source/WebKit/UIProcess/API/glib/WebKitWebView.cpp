@@ -4091,7 +4091,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
     });
 }
 
-/*
+/**
  * webkit_web_view_run_async_javascript_function_in_world:
  * @web_view: a #WebKitWebView
  * @body: the JavaScript function body
