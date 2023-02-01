@@ -466,6 +466,7 @@ static void webkitWebContextConstructed(GObject* object)
 #if ENABLE(2022_GLIB_API)
     priv->processPool->setSandboxEnabled(true);
 #endif
+    priv->processPool->addSandboxPath(injectedBundleDirectory(), SandboxPermission::ReadOnly);
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))
