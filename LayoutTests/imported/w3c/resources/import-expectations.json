@@ -49,6 +49,7 @@
     "web-platform-tests/cors": "import",
     "web-platform-tests/credential-management": "import",
     "web-platform-tests/css": "skip",
+    "web-platform-tests/css/CSS2/syntax": "import",
     "web-platform-tests/css/WOFF2": "import",
     "web-platform-tests/css/css-align": "import",
     "web-platform-tests/css/css-animations": "import",

@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {html} at (0,0) size 800x50
+    RenderBody {body} at (8,16) size 784x18
+      RenderBlock {p} at (0,0) size 784x18 [color=#008000]
+        RenderText {#text} at (0,0) size 61x18
+          text run at (0,0) width 61: "This text "
+        RenderInline {span} at (0,0) size 44x18
+          RenderText {#text} at (60,0) size 44x18
+            text run at (60,0) width 44: "should"
+        RenderText {#text} at (103,0) size 24x18
+          text run at (103,0) width 24: " be "
+        RenderInline {span} at (0,0) size 36x18
+          RenderText {#text} at (126,0) size 36x18
+            text run at (126,0) width 36: "green"
+        RenderText {#text} at (161,0) size 5x18
+          text run at (161,0) width 5: "."

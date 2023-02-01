@@ -1,0 +1,49 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x346
+  RenderBlock {html} at (0,0) size 800x346
+    RenderBody {body} at (8,16) size 784x322
+      RenderBlock {p} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 140x18
+          text run at (0,0) width 140: "Test passes if there is "
+        RenderInline {strong} at (0,0) size 45x18
+          RenderText {#text} at (139,0) size 45x18
+            text run at (139,0) width 45: "no red"
+        RenderText {#text} at (183,0) size 5x18
+          text run at (183,0) width 5: "."
+      RenderBlock {div} at (0,34) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "13th test FAILED"
+      RenderBlock {div} at (0,58) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "14th test FAILED"
+      RenderBlock {div} at (0,82) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "15th test FAILED"
+      RenderBlock {div} at (0,106) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "16th test FAILED"
+      RenderBlock {div} at (0,130) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "17th test FAILED"
+      RenderBlock {div} at (0,154) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "18th test FAILED"
+      RenderBlock {div} at (0,178) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "19th test FAILED"
+      RenderBlock {div} at (0,202) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "20th test FAILED"
+      RenderBlock {div} at (0,226) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 141x23
+          text run at (0,0) width 141: "21st test FAILED"
+      RenderBlock {div} at (0,250) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 148x23
+          text run at (0,0) width 148: "22nd test FAILED"
+      RenderBlock {div} at (0,274) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 145x23
+          text run at (0,0) width 145: "23rd test FAILED"
+      RenderBlock {div} at (0,298) size 784x24 [color=#FFFFFF]
+        RenderText {#text} at (0,0) size 143x23
+          text run at (0,0) width 143: "24th test FAILED"

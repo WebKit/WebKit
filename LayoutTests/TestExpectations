@@ -6552,3 +6552,9 @@ webkit.org/b/225349 imported/w3c/web-platform-tests/html/canvas/offscreen/reset/
 
 # We only support import-attributes and do not support import-assertions.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions
+
+# WPT CSS2 tests are not valid anymore
+imported/w3c/web-platform-tests/css/CSS2/syntax/counters-010.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/syntax/declarations-009.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/syntax/uri-013.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/CSS2/syntax/malformed-decl-block-001.xht [ ImageOnlyFailure ]
