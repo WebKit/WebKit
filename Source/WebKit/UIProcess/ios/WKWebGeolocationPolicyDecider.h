@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/NSFileManager.h>
+#if PLATFORM(IOS_FAMILY)
 
-#if USE(APPLE_INTERNAL_SDK)
+OBJC_CLASS WKWebView;
 
-#import <Foundation/NSFileManager_NSURLExtras.h>
+namespace WebCore {
+struct SecurityOriginData;
+}
 
-#else
-
-#define WEB_UREAD (00400)
-#define WEB_UWRITE (00200)
-#define WEB_UEXEC (00100)
-
-@interface NSFileManager ()
-- (BOOL)_web_createDirectoryAtPathWithIntermediateDirectories:(NSString *)path attributes:(NSDictionary *)attributes;
-- (BOOL)_web_createFileAtPath:(NSString *)path contents:(NSData *)contents attributes:(NSDictionary *)attributes;
-- (BOOL)_web_removeFileOnlyAtPath:(NSString *)path;
+@protocol WKWebAllowDenyPolicyListener <NSObject>
+- (void)allow;
+- (void)deny;
 @end
 
-#endif
+@interface WKWebGeolocationPolicyDecider : NSObject
++ (instancetype)sharedPolicyDecider;
+
+- (void)decidePolicyForGeolocationRequestFromOrigin:(const WebCore::SecurityOriginData&)securityOrigin requestingURL:(NSURL *)requestingURL view:(WKWebView *)view listener:(id<WKWebAllowDenyPolicyListener>)listener;
+- (void)clearCache;
+
+@end
+
+#endif // PLATFORM(IOS_FAMILY)

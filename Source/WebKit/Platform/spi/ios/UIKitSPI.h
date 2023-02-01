@@ -216,6 +216,7 @@ typedef NS_ENUM(NSInteger, UIPreviewItemType) {
 - (void)_addActionWithTitle:(NSString *)title style:(UIAlertActionStyle)style handler:(void (^)(void))handler;
 - (void)_addActionWithTitle:(NSString *)title style:(UIAlertActionStyle)style handler:(void (^)(void))handler shouldDismissHandler:(BOOL (^)(void))shouldDismissHandler;
 @property (nonatomic) UIAlertControllerStyle preferredStyle;
+@property (nonatomic, assign, setter=_setTitleMaximumLineCount:, getter=_titleMaximumLineCount) NSInteger titleMaximumLineCount;
 @end
 
 WTF_EXTERN_C_BEGIN
