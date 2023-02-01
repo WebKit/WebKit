@@ -50,11 +50,16 @@ typedef struct _WebKitWebHitTestResultClass   WebKitWebHitTestResultClass;
 typedef struct _WebKitWebHitTestResultPrivate WebKitWebHitTestResultPrivate;
 
 struct _WebKitWebHitTestResult {
+#if ENABLE(2022_GLIB_API)
+    GObject parent;
+#else
     WebKitHitTestResult parent;
+#endif
 
     WebKitWebHitTestResultPrivate *priv;
 };
 
+#if !ENABLE(2022_GLIB_API)
 struct _WebKitWebHitTestResultClass {
     WebKitHitTestResultClass parent_class;
 
@@ -63,18 +68,59 @@ struct _WebKitWebHitTestResultClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif // !ENABLE(2022_GLIB_API)
 
 WEBKIT_API GType
-webkit_web_hit_test_result_get_type    (void);
+webkit_web_hit_test_result_get_type             (void);
 
-#if !ENABLE(2022_GLIB_API)
+#if ENABLE(2022_GLIB_API)
+
+WEBKIT_API guint
+webkit_web_hit_test_result_get_context          (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API gboolean
+webkit_web_hit_test_result_context_is_link      (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API gboolean
+webkit_web_hit_test_result_context_is_image     (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API gboolean
+webkit_web_hit_test_result_context_is_media     (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API gboolean
+webkit_web_hit_test_result_context_is_editable  (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API gboolean
+webkit_web_hit_test_result_context_is_selection (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API const gchar *
+webkit_web_hit_test_result_get_link_uri         (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API const gchar *
+webkit_web_hit_test_result_get_link_title       (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API const gchar *
+webkit_web_hit_test_result_get_link_label       (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API const gchar *
+webkit_web_hit_test_result_get_image_uri        (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API const gchar *
+webkit_web_hit_test_result_get_media_uri        (WebKitWebHitTestResult *web_hit_test_result);
+
+WEBKIT_API gboolean
+webkit_web_hit_test_result_context_is_scrollbar (WebKitWebHitTestResult *web_hit_test_result);
+
+#else
+
 WEBKIT_DEPRECATED_FOR(webkit_web_hit_test_result_get_js_node) WebKitDOMNode *
-webkit_web_hit_test_result_get_node    (WebKitWebHitTestResult *hit_test_result);
-#endif
+webkit_web_hit_test_result_get_node             (WebKitWebHitTestResult *hit_test_result);
+
+#endif // ENABLE(2022_GLIB_API)
 
 WEBKIT_API JSCValue *
-webkit_web_hit_test_result_get_js_node (WebKitWebHitTestResult *hit_test_result,
-                                        WebKitScriptWorld      *world);
+webkit_web_hit_test_result_get_js_node          (WebKitWebHitTestResult *web_hit_test_result,
+                                                 WebKitScriptWorld      *world);
 
 G_END_DECLS
 

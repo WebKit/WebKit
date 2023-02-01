@@ -67,6 +67,19 @@ accordingly.
 may directly use `g_object_new()` instead. [ctor@WebKit.WebView.new] and
 [ctor@WebKit.WebView.new_with_related_view] both remain.
 
+## Most types are final
+
+Only two types are now derivable:
+
+- [type@WebView] has been often subclassed to customize its behaviour for an
+  specific application. This possibility has been kept, as it has proved
+  useful in the past.
+- [type@InputMethodContext] is specifically designed in a way that subclassing
+  is required to make use of it.
+
+The rest of the types are no longer derivable; they are defined with the
+`G_TYPE_FLAG_FINAL` flag set. Use composition instead of derivation.
+
 ## Network session API
 
 WebKit now uses a single global network process for all web contexts, and different
