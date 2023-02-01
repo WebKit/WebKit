@@ -90,6 +90,12 @@ void GridTrack::setGrowthLimitCap(std::optional<LayoutUnit> growthLimitCap)
     m_growthLimitCap = growthLimitCap;
 }
 
+const GridTrackSize& GridTrack::cachedTrackSize() const
+{
+    RELEASE_ASSERT(m_cachedTrackSize);
+    return *m_cachedTrackSize;
+}
+
 void GridTrack::setCachedTrackSize(const GridTrackSize& cachedTrackSize)
 {
     m_cachedTrackSize = cachedTrackSize;
