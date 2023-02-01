@@ -4436,8 +4436,18 @@ class RunAPITests(TestWithFailureCount, AddToLogMixin):
             # Workaround for https://github.com/buildbot/buildbot/issues/4906
             string = ''.join(string.splitlines())
             result = json.loads(string)
-        except Exception as ex:
-            self._addToLog('stderr', 'ERROR: unable to parse data, exception: {}'.format(ex))
+        except json.decoder.JSONDecodeError:
+            # Retry after ensuring that json has proper ending
+            print(f'Encountered error while parsing api-tests json, retrying after ensuring that json has proper ending.')
+            if string[-1] != '}':
+                string += '}'
+            try:
+                result = json.loads(string)
+            except Exception as e:
+                print(f'ERROR: unable to parse data, exception: {e}')
+                return []
+        except Exception as e:
+            print(f'ERROR: unexcepted error while parsing data: {e}')
             return []
 
         failures = ([failure.get('name') for failure in result.get('Timedout', [])] +
