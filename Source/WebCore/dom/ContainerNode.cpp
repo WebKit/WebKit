@@ -336,11 +336,14 @@ static inline bool mayHaveDisplayContents(Element *element)
 {
     return element && (element->hasDisplayContents() || element->displayContentsChanged());
 }
-
+static inline bool childNodesMayHaveRenderers(Element *element)
+{
+    return element && element->ancestorCreatedRendererForChildNodes();
+}
 static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     auto childAsElement = dynamicDowncast<Element>(child);
-    if (!child.renderer() && !mayHaveDisplayContents(childAsElement))
+    if (!child.renderer() && !mayHaveDisplayContents(childAsElement) && !childNodesMayHaveRenderers(childAsElement))
         return;
     if (childAsElement)
         RenderTreeUpdater::tearDownRenderers(*childAsElement);

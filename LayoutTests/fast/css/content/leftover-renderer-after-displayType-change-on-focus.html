@@ -1,0 +1,15 @@
+<style>
+.dc, .dc * { display: contents }
+</style>
+<body><p>Pass if no crash</p>
+<span></span>
+<div id="x6" hidden class="dc"><div id="x22"><div> </div></div></div>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  document.body.offsetLeft;
+  x6.classList.remove('dc');
+  x6.focus();
+  document.body.offsetLeft;
+  x22.innerHTML = "";
+</script>

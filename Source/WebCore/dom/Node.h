@@ -517,6 +517,7 @@ public:
     bool m_deletionHasBegun { false };
     mutable bool m_inRemovedLastRefFunction { false };
     bool m_adoptionIsRequired { true };
+    mutable bool m_ancestorCreatedRendererForChildNodes { false };
 #endif
 
     HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> registeredMutationObservers(MutationObserverOptionType, const QualifiedName* attributeName);
@@ -548,6 +549,8 @@ public:
     static int32_t flagIsLink() { return static_cast<int32_t>(NodeFlag::IsLink); }
     static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
+    void setAncestorCreatedRendererForChildNodes(bool) const;
+    bool ancestorCreatedRendererForChildNodes() const;
 
 protected:
     enum class NodeFlag : uint32_t {

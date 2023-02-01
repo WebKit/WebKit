@@ -517,6 +517,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
         return;
     createTextRenderer(text, textUpdate);
     renderingParent().didCreateOrDestroyChildRenderer = true;
+    text.parentNode()->setAncestorCreatedRendererForChildNodes(true);
 }
 
 void RenderTreeUpdater::storePreviousRenderer(Node& node)

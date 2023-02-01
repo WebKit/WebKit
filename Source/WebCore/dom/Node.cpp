@@ -107,6 +107,7 @@ struct SameSizeAsNode : public EventTarget {
     bool deletionHasBegun;
     bool inRemovedLastRefFunction;
     bool adoptionIsRequired;
+    bool ancestorCreatedRendererForChildNodes;
 #endif
     uint32_t refCountAndParentBit;
     uint32_t nodeFlags;
@@ -2632,7 +2633,24 @@ void Node::updateAncestorConnectedSubframeCountForRemoval() const
     for (Node* node = parentOrShadowHostNode(); node; node = node->parentOrShadowHostNode())
         node->decrementConnectedSubframeCount(count);
 }
+void Node::setAncestorCreatedRendererForChildNodes(bool created) const
+{
+#if ASSERT_ENABLED
+    m_ancestorCreatedRendererForChildNodes = created;
+#else
+    UNUSED_PARAM(created);
+#endif
+}
 
+bool Node::ancestorCreatedRendererForChildNodes() const
+{
+#if ASSERT_ENABLED
+    return m_ancestorCreatedRendererForChildNodes;
+#else
+    return false;
+#endif
+    
+}
 void Node::updateAncestorConnectedSubframeCountForInsertion() const
 {
     unsigned count = connectedSubframeCount();
