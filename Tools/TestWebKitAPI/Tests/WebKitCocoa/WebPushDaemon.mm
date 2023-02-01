@@ -529,7 +529,7 @@ public:
         TestWebKitAPI::Util::run(&ready);
     }
 
-    const std::optional<UUID>& dataStoreIdentifier() { return m_dataStoreIdentifier; }
+    std::optional<UUID> dataStoreIdentifier() { return m_dataStoreIdentifier; }
 
     const String& origin() { return m_origin; }
 
@@ -709,7 +709,7 @@ public:
 
 private:
     String m_pushPartition;
-    std::optional<UUID> m_dataStoreIdentifier;
+    Markable<UUID> m_dataStoreIdentifier;
     String m_origin;
     RetainPtr<NSURL> m_url;
     RetainPtr<WKWebsiteDataStore> m_dataStore;

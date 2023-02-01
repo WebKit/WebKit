@@ -117,7 +117,7 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     if (!sessionID)
         return std::nullopt;
     
-    std::optional<std::optional<UUID>> dataStoreIdentifier;
+    std::optional<Markable<UUID>> dataStoreIdentifier;
     decoder >> dataStoreIdentifier;
     if (!dataStoreIdentifier)
         return std::nullopt;

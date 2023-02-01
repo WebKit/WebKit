@@ -38,7 +38,7 @@ struct WebPushDaemonConnectionConfiguration {
     bool useMockBundlesForTesting { false };
     std::optional<Vector<uint8_t>> hostAppAuditTokenData;
     String pushPartitionString;
-    std::optional<UUID> dataStoreIdentifier;
+    Markable<UUID> dataStoreIdentifier;
 };
 
 template<class Encoder>

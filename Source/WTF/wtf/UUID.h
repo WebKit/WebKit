@@ -104,6 +104,11 @@ public:
 
     UInt128 data() const { return m_data; }
 
+    struct MarkableTraits {
+        static bool isEmptyValue(const UUID& uuid) { return !uuid; }
+        static UUID emptyValue() { return UUID { UInt128 { 0 } }; }
+    };
+
 private:
     WTF_EXPORT_PRIVATE UUID();
     friend void add(Hasher&, UUID);

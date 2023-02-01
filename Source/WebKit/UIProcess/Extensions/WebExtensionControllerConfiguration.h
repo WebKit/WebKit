@@ -29,6 +29,7 @@
 
 #include "APIObject.h"
 #include <wtf/Forward.h>
+#include <wtf/Markable.h>
 #include <wtf/UUID.h>
 
 OBJC_CLASS _WKWebExtensionControllerConfiguration;
@@ -65,7 +66,7 @@ public:
 private:
     static String createStorageDirectoryPath(std::optional<UUID> = std::nullopt);
 
-    std::optional<UUID> m_identifier;
+    Markable<UUID> m_identifier;
     String m_storageDirectory;
 };
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/Markable.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/WTFString.h>
@@ -236,7 +237,7 @@ private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
     UnifiedOriginStorageLevel m_unifiedOriginStorageLevel;
-    std::optional<UUID> m_identifier;
+    Markable<UUID> m_identifier;
     String m_baseCacheDirectory;
     String m_baseDataDirectory;
     String m_cacheStorageDirectory;

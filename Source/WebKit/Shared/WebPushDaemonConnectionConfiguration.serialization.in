@@ -25,5 +25,5 @@ header: "WebPushDaemonConnectionConfiguration.h"
     bool useMockBundlesForTesting;
     std::optional<Vector<uint8_t>> hostAppAuditTokenData;
     String pushPartitionString;
-    std::optional<UUID> dataStoreIdentifier;
+    Markable<UUID> dataStoreIdentifier;
 };
