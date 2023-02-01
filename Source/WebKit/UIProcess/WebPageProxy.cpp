@@ -6067,7 +6067,7 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
         if (!m_provisionalPage)
             send(Messages::WebPage::StopLoadingDueToProcessSwap());
         // FIXME: What to do with origin data here?
-        continueNavigationInNewProcess(*navigation, *m_mainFrame, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, WebCore::SecurityOriginData::createOpaque(), existingNetworkResourceLoadIdentifierToResume);
+        continueNavigationInNewProcess(*navigation, *m_mainFrame, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, WebCore::SecurityOriginData(), existingNetworkResourceLoadIdentifierToResume);
         completionHandler(true);
     });
 }

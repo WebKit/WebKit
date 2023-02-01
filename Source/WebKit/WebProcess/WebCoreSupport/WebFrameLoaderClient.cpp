@@ -1098,7 +1098,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
-        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, WebCore::SecurityOriginData::createOpaque()));
+        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, WebCore::SecurityOriginData()));
         if (!sendResult) {
             WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC");
             m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
@@ -1112,7 +1112,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, listenerID, WebCore::SecurityOriginData::createOpaque()))) {
+    if (!webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(m_frame->frameID(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, listenerID, WebCore::SecurityOriginData()))) {
         WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send async IPC");
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
     }

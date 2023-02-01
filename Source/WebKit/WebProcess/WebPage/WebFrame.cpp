@@ -130,7 +130,7 @@ void WebFrame::initWithCoreMainFrame(WebPage& page, Frame& coreFrame, bool recei
 Ref<WebFrame> WebFrame::createSubframe(WebPage& page, WebFrame& parent, const AtomString& frameName, HTMLFrameOwnerElement& ownerElement)
 {
     auto frame = create(page);
-    auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate());
+    auto coreFrame = Frame::create(page.corePage(), &ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), std::nullopt);
     frame->m_coreFrame = coreFrame.get();
 
     ASSERT(!frame->m_frameID);
