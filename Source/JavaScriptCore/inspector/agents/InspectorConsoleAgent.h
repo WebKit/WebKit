@@ -94,6 +94,7 @@ protected:
     HashMap<String, unsigned> m_counts;
     HashMap<String, MonotonicTime> m_times;
     bool m_enabled { false };
+    bool m_isAddingMessageToFrontend { false };
 };
 
 } // namespace Inspector
