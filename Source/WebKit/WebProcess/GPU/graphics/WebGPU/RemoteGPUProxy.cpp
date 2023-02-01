@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
 #include "RemoteAdapterProxy.h"
+#include "RemoteCompositorIntegrationProxy.h"
 #include "RemoteGPU.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
@@ -165,6 +166,17 @@ Ref<PAL::WebGPU::PresentationContext> RemoteGPUProxy::createPresentationContext(
     UNUSED_VARIABLE(sendResult);
 
     return WebGPU::RemotePresentationContextProxy::create(*this, m_convertToBackingContext, identifier);
+}
+
+Ref<PAL::WebGPU::CompositorIntegration> RemoteGPUProxy::createCompositorIntegration()
+{
+    // FIXME: Should we be consulting m_lost?
+
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteGPU::CreateCompositorIntegration(identifier));
+    UNUSED_VARIABLE(sendResult);
+
+    return WebGPU::RemoteCompositorIntegrationProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
 } // namespace WebKit

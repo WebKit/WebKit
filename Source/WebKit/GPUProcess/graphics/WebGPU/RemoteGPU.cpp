@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "RemoteAdapter.h"
+#include "RemoteCompositorIntegration.h"
 #include "RemoteGPUMessages.h"
 #include "RemoteGPUProxyMessages.h"
 #include "RemotePresentationContext.h"
@@ -178,6 +179,16 @@ void RemoteGPU::createPresentationContext(const WebGPU::PresentationContextDescr
     auto presentationContext = m_backing->createPresentationContext(*convertedDescriptor);
     auto remotePresentationContext = RemotePresentationContext::create(presentationContext, m_objectHeap, *m_streamConnection, identifier);
     m_objectHeap->addObject(identifier, remotePresentationContext);
+}
+
+void RemoteGPU::createCompositorIntegration(WebGPUIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    ASSERT(m_backing);
+
+    auto compositorIntegration = m_backing->createCompositorIntegration();
+    auto remoteCompositorIntegration = RemoteCompositorIntegration::create(compositorIntegration, m_objectHeap, *m_streamConnection, identifier);
+    m_objectHeap->addObject(identifier, remoteCompositorIntegration);
 }
 
 } // namespace WebKit

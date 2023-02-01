@@ -133,6 +133,7 @@ private:
 
     std::optional<GPUCanvasConfiguration> m_configuration;
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
+    Ref<GPUCompositorIntegration> m_compositorIntegration;
     Ref<GPUPresentationContext> m_presentationContext;
     RefPtr<GPUTexture> m_currentTexture;
 

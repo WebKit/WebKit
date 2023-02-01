@@ -67,17 +67,18 @@ std::unique_ptr<GPUCanvasContextCocoa> GPUCanvasContextCocoa::create(CanvasBase&
     return std::unique_ptr<GPUCanvasContextCocoa>(new GPUCanvasContextCocoa(canvas, gpu));
 }
 
-static GPUPresentationContextDescriptor presentationContextDescriptor()
+static GPUPresentationContextDescriptor presentationContextDescriptor(GPUCompositorIntegration& compositorIntegration)
 {
     return GPUPresentationContextDescriptor {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250955 Add integration with the compositor here.
+        compositorIntegration,
     };
 }
 
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
-    , m_presentationContext(gpu.createPresentationContext(presentationContextDescriptor()))
+    , m_compositorIntegration(gpu.createCompositorIntegration())
+    , m_presentationContext(gpu.createPresentationContext(presentationContextDescriptor(m_compositorIntegration)))
 {
 }
 
@@ -187,12 +188,10 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GPUCanvasContextCocoa::layerContent
 
 void GPUCanvasContextCocoa::prepareForDisplay()
 {
-#if PLATFORM(COCOA)
     m_presentationContext->prepareForDisplay([protectedThis = Ref { *this }] (auto sendRight) {
         protectedThis->m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(sendRight));
         protectedThis->m_compositingResultsNeedsUpdating = false;
     });
-#endif
     m_currentTexture = nullptr;
 }
 

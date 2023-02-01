@@ -29,6 +29,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUAdapterImpl.h"
+#include "WebGPUCompositorIntegrationImpl.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebGPUPresentationContextDescriptor.h"
 #include "WebGPUPresentationContextImpl.h"
@@ -62,8 +63,11 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
     }).get());
 }
 
-Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationContextDescriptor&)
+Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationContextDescriptor& presentationContextDescriptor)
 {
+    // FIXME: Do something with the presentationContextDescriptor
+    UNUSED_PARAM(presentationContextDescriptor);
+
     WGPUSurfaceDescriptorCocoaCustomSurface cocoaSurface {
         { nullptr, static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking) },
     };
@@ -74,6 +78,11 @@ Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationCo
     };
 
     return PresentationContextImpl::create(wgpuInstanceCreateSurface(m_backing, &surfaceDescriptor), m_convertToBackingContext);
+}
+
+Ref<CompositorIntegration> GPUImpl::createCompositorIntegration()
+{
+    return CompositorIntegrationImpl::create(m_convertToBackingContext);
 }
 
 } // namespace PAL::WebGPU

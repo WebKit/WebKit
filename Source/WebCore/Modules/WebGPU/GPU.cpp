@@ -74,4 +74,9 @@ Ref<GPUPresentationContext> GPU::createPresentationContext(const GPUPresentation
     return GPUPresentationContext::create(m_backing->createPresentationContext(presentationContextDescriptor.convertToBacking()));
 }
 
+Ref<GPUCompositorIntegration> GPU::createCompositorIntegration()
+{
+    return GPUCompositorIntegration::create(m_backing->createCompositorIntegration());
+}
+
 } // namespace WebCore

@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class GPUCompositorIntegration;
 class GPUPresentationContext;
 struct GPUPresentationContextDescriptor;
 
@@ -54,6 +55,8 @@ public:
     GPUTextureFormat getPreferredCanvasFormat();
 
     Ref<GPUPresentationContext> createPresentationContext(const GPUPresentationContextDescriptor&);
+
+    Ref<GPUCompositorIntegration> createCompositorIntegration();
 
 private:
     GPU(Ref<PAL::WebGPU::GPU>&&);
