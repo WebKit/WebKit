@@ -2789,3 +2789,10 @@ webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failu
 
 webkit.org/b/251051 [ BigSur+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
 
+webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
+
+webkit.org/b/251099 [ Ventura+ Debug ] fast/images/avif-image-document.html [ Pass Crash ]
+
+#webkit.org/b/251526 [ Ventura EWS ] 2x AVIF tests are constant failures on EWS only
+[ Ventura ] fast/images/avif-as-image.html [ Pass ImageOnlyFailure Crash ]
+[ Ventura ] fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure Crash ]
