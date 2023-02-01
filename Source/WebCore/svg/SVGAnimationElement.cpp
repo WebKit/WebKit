@@ -572,15 +572,15 @@ void SVGAnimationElement::startedActiveInterval()
         && (hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) && hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) && (keyTimes.size() < 2 || keyTimes.size() != m_keyPoints.size())))
         return;
     if (animationMode == AnimationMode::FromTo)
-        m_animationValid = calculateFromAndToValues(from, to);
+        m_animationValid = setFromAndToValues(from, to);
     else if (animationMode == AnimationMode::To) {
         // For to-animations the from value is the current accumulated value from lower priority animations.
         // The value is not static and is determined during the animation.
-        m_animationValid = calculateFromAndToValues(emptyString(), to);
+        m_animationValid = setFromAndToValues(emptyString(), to);
     } else if (animationMode == AnimationMode::FromBy)
-        m_animationValid = calculateFromAndByValues(from, by);
+        m_animationValid = setFromAndByValues(from, by);
     else if (animationMode == AnimationMode::By)
-        m_animationValid = calculateFromAndByValues(emptyString(), by);
+        m_animationValid = setFromAndByValues(emptyString(), by);
     else if (animationMode == AnimationMode::Values) {
         m_animationValid = m_values.size() >= 1
             && (calcMode == CalcMode::Paced || !hasAttributeWithoutSynchronization(SVGNames::keyTimesAttr) || hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (m_values.size() == keyTimes.size()))
@@ -588,7 +588,7 @@ void SVGAnimationElement::startedActiveInterval()
             && (calcMode != CalcMode::Spline || ((m_keySplines.size() && (m_keySplines.size() == m_values.size() - 1)) || m_keySplines.size() == m_keyPoints.size() - 1))
             && (!hasAttributeWithoutSynchronization(SVGNames::keyPointsAttr) || (keyTimes.size() > 1 && keyTimes.size() == m_keyPoints.size()));
         if (m_animationValid)
-            m_animationValid = calculateToAtEndOfDurationValue(m_values.last());
+            m_animationValid = setToAtEndOfDurationValue(m_values.last());
         if (calcMode == CalcMode::Paced && m_animationValid)
             calculateKeyTimesForCalcModePaced();
     } else if (animationMode == AnimationMode::Path)
@@ -608,7 +608,7 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount)
         String to;
         currentValuesForValuesAnimation(percent, effectivePercent, from, to);
         if (from != m_lastValuesAnimationFrom || to != m_lastValuesAnimationTo) {
-            m_animationValid = calculateFromAndToValues(from, to);
+            m_animationValid = setFromAndToValues(from, to);
             if (!m_animationValid)
                 return;
             m_lastValuesAnimationFrom = from;
