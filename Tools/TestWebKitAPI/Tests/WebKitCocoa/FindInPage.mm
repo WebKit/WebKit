@@ -862,16 +862,19 @@ TEST(WebKit, FindOverlaySPI)
     EXPECT_EQ(overlayCount(webView.get()), 1U);
 }
 
+static bool hasPerformedTextSearchWithQueryString = false;
+
 static void swizzledPerformTextSearchWithQueryString(id, SEL, NSString *, UITextSearchOptions *, id<UITextSearchAggregator> aggregator)
 {
     [aggregator finishedSearching];
+    hasPerformedTextSearchWithQueryString = true;
 }
 
 TEST(WebKit, FindInPDF)
 {
     // Swizzle out the method that performs searching, since PDFHostViewController (a remote view
     // (controller) cannot be created in TestWebKitAPI, and we cannot actually search the PDF.
-    std::unique_ptr<InstanceMethodSwizzler> isInBackgroundSwizzler = makeUnique<InstanceMethodSwizzler>(NSClassFromString(@"WKPDFView"), @selector(performTextSearchWithQueryString:usingOptions:resultAggregator:), reinterpret_cast<IMP>(swizzledPerformTextSearchWithQueryString));
+    std::unique_ptr<InstanceMethodSwizzler> performTextSearchInPDFWithQueryStringSwizzler = makeUnique<InstanceMethodSwizzler>(NSClassFromString(@"WKPDFView"), @selector(performTextSearchWithQueryString:usingOptions:resultAggregator:), reinterpret_cast<IMP>(swizzledPerformTextSearchWithQueryString));
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -881,6 +884,40 @@ TEST(WebKit, FindInPDF)
 
     auto searchOptions = adoptNS([[UITextSearchOptions alloc] init]);
     testPerformTextSearchWithQueryStringInWebView(webView.get(), @"Birthday", searchOptions.get(), 0UL);
+
+    hasPerformedTextSearchWithQueryString = false;
+}
+
+TEST(WebKit, FindInPDFAfterReload)
+{
+    // Swizzle out the method that performs searching, since PDFHostViewController (a remote view
+    // (controller) cannot be created in TestWebKitAPI, and we cannot actually search the PDF.
+    std::unique_ptr<InstanceMethodSwizzler> performTextSearchInPDFWithQueryStringSwizzler = makeUnique<InstanceMethodSwizzler>(NSClassFromString(@"WKPDFView"), @selector(performTextSearchWithQueryString:usingOptions:resultAggregator:), reinterpret_cast<IMP>(swizzledPerformTextSearchWithQueryString));
+
+    auto webView = adoptNS([[FindInPageTestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto searchForText = [&] {
+        NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
+        [webView loadRequest:request];
+        [webView _test_waitForDidFinishNavigation];
+
+        auto *findInteraction = [webView findInteraction];
+        [findInteraction presentFindNavigatorShowingReplace:NO];
+        [webView waitForNextPresentationUpdate];
+
+        auto *findSession = [findInteraction activeFindSession];
+        [findSession performSearchWithQuery:@"Birthday" options:0];
+
+        TestWebKitAPI::Util::run(&hasPerformedTextSearchWithQueryString);
+
+        [findInteraction dismissFindNavigator];
+        [webView waitForNextPresentationUpdate];
+
+        hasPerformedTextSearchWithQueryString = false;
+    };
+
+    searchForText();
+    searchForText();
 }
 
 TEST(WebKit, FindInteractionSupportsTextReplacement)
