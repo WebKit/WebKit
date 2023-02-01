@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function logObjectThatLogsRecursively()
+{
+    var object = {
+        array: [],
+    };
+
+    object.array.__defineGetter__(0,()=>{
+        console.log(object);
+        return object;
+    });
+
+    console.log(object);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("WI.Console.MessageAdded.Recursive");
+
+    suite.addTestCase({
+        name: "WI.Console.MessageAdded.Recursive",
+        description: "Test that logging an object that recursively logs itself does not crash the page's web content process.",
+        async test() {
+            await InspectorTest.evaluateInPage(`logObjectThatLogsRecursively()`);
+            InspectorTest.log("The test passed if evaluating `logObjectThatLogsRecursively` on the page did not crash.")
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Ensure that recursive logging does not crash the page's web content process.</p>
+</body>
+</html>
