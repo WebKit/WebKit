@@ -237,6 +237,8 @@ class TwistedAdditions(object):
         headers = headers or {}
         if 'User-Agent' not in headers:
             headers['User-Agent'] = ['python-twisted/{}'.format(twisted.__version__)]
+        if json and 'Content-Type' not in headers:
+            headers['Content-Type'] = ['application/json']
 
         try:
             proxy = os.getenv('http_proxy') or os.getenv('https_proxy') or os.getenv('HTTP_PROXY') or os.getenv('HTTPS_PROXY')

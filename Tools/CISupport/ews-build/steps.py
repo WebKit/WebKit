@@ -1534,17 +1534,22 @@ class BugzillaMixin(AddToLogMixin):
             return FAILURE
         return SUCCESS
 
+    @defer.inlineCallbacks
     def close_bug(self, bug_id):
-        bug_url = '{}rest/bug/{}'.format(BUG_SERVER_URL, bug_id)
         try:
-            response = requests.put(bug_url, json={'status': 'RESOLVED', 'resolution': 'FIXED', 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            response = yield TwistedAdditions.request(
+                f'{BUG_SERVER_URL}rest/bug/{bug_id}', type=b'PUT',
+                json={'status': 'RESOLVED', 'resolution': 'FIXED', 'Bugzilla_api_key': self.get_bugzilla_api_key()},
+                logger=lambda content: self._addToLog('stdio', content),
+            )
             if response.status_code not in [200, 201]:
-                self._addToLog('stdio', 'Unable to close bug {}. Unexpected response code from bugzilla: {}'.format(bug_id, response.status_code))
-                return FAILURE
+                yield self._addToLog('stdio', f'Unable to close bug {bug_id}. Unexpected response code from bugzilla: {response.status_code}\n')
+                defer.returnValue(FAILURE)
+                return
+            defer.returnValue(SUCCESS)
         except Exception as e:
-            self._addToLog('stdio', 'Error in closing bug {}'.format(bug_id))
-            return FAILURE
-        return SUCCESS
+            yield self._addToLog('stdio', f'Error in closing bug {bug_id}\n    {e}\n')
+            defer.returnValue(FAILURE)
 
     def comment_on_bug(self, bug_id, comment_text):
         bug_comment_url = '{}rest/bug/{}/comment'.format(BUG_SERVER_URL, bug_id)
@@ -2028,11 +2033,9 @@ class CloseBug(buildstep.BuildStep, BugzillaMixin):
     haltOnFailure = False
     bug_id = ''
 
-    def start(self):
+    def run(self):
         self.bug_id = self.getProperty('bug_id', '')
-        rc = self.close_bug(self.bug_id)
-        self.finished(rc)
-        return None
+        return self.close_bug(self.bug_id)
 
     def getResultSummary(self):
         if self.results == SKIPPED:
