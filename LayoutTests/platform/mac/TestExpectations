@@ -2786,4 +2786,3 @@ webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failu
 
 webkit.org/b/251051 [ BigSur+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
 
-webkit.org/b/251312 [ BigSur+ ] fast/loader/stateobjects/popstate-does-not-fire-with-page-cache.html [ Pass Failure ]

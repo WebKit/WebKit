@@ -35,13 +35,13 @@ function onTestWindowLoad(event)
         break;            
     case 2:
         debug('going back to page 1 with new state object');
-        setTimeout(function() {
+        timeoutHandle = setTimeout(function() {
             testWindow.history.back();
             setTimeout(() => {
                 shouldBe("testWindowPopstateFireCount", "1");
                 testWindow.close();
                 finishJSTest();
-            }, 100);
+            }, 20000);
         }, 0);
         break;
     default:
@@ -66,6 +66,7 @@ function onTestWindowPopState(event)
     debug('popstate fired with state ' + event.state);
     testWindowPopstateFireCount++;
     shouldBe("testWindowPopstateFireCount", "1");
+    clearTimeout(timeoutHandle);
     setTimeout(function() {
         testWindow.close();
         finishJSTest();
