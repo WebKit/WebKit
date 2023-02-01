@@ -1,4 +1,5 @@
 # Copyright (C) 2012 Google Inc. All rights reserved.
+# Copyright (C) 2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -185,7 +186,6 @@ my (
     $webdriverSupport,
     $webdriverTouchInteractionsSupport,
     $webdriverWheelInteractionsSupport,
-    $webgl2Support,
     $webglSupport,
     $webXRSupport,
     $wirelessPlaybackTargetSupport,
@@ -540,9 +540,6 @@ my @features = (
 
     { option => "webgl", desc => "Toggle WebGL support",
       define => "ENABLE_WEBGL", value => \$webglSupport },
-
-    { option => "webgl2", desc => "Toggle WebGL2 support",
-      define => "ENABLE_WEBGL2", value => \$webgl2Support },
 
     { option => "webxr", desc => "Toggle WebXR support",
       define => "ENABLE_WEBXR", value => \$webXRSupport },

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2023 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,7 @@
 #include "HTMLCanvasElement.h"
 #include "IntSize.h"
 #include "OffscreenCanvas.h"
+#include "WebGL2RenderingContext.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
 #include "WebGLRenderingContextBase.h"
@@ -42,10 +44,6 @@
 #include "XRWebGLLayerInit.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
-
-#if ENABLE(WEBGL2)
-#include "WebGL2RenderingContext.h"
-#endif
 
 namespace WebCore {
 

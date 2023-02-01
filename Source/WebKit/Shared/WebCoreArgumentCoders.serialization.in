@@ -2009,9 +2009,7 @@ header: <WebCore/GraphicsContextGLAttributes.h>
 header: <WebCore/GraphicsContextGLAttributes.h>
 [CustomHeader] enum class WebCore::GraphicsContextGLWebGLVersion : uint8_t {
     WebGL1,
-#if ENABLE(WEBGL2)
     WebGL2
-#endif
 };
 
 struct WebCore::GraphicsContextGLAttributes {

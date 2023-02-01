@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,11 +97,7 @@ void RemoteGraphicsContextGLProxy::setContextVisibility(bool)
 
 bool RemoteGraphicsContextGLProxy::isGLES2Compliant() const
 {
-#if ENABLE(WEBGL2)
     return contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
-#else
-    return false;
-#endif
 }
 
 void RemoteGraphicsContextGLProxy::markContextChanged()

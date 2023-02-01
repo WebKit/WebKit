@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -126,21 +126,14 @@ enum ImageSmoothingQuality;
     macro(WebGLShader*) \
     macro(WebGLSync*) \
     macro(WebGLTexture*) \
+    macro(WebGLTransformFeedback*) \
     macro(WebGLUniformLocation*) \
+    macro(WebGLVertexArrayObject*) \
+    macro(WebGL2RenderingContext::Uint32List::VariantType&) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL_ARGUMENT
 #else
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL_ARGUMENT(macro)
 #endif // ENABLE(WEBGL)
-
-#if ENABLE(WEBGL2)
-#define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL2_ARGUMENT(macro) \
-    macro(WebGLTransformFeedback*) \
-    macro(WebGL2RenderingContext::Uint32List::VariantType&) \
-    macro(WebGLVertexArrayObject*) \
-// end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL2_ARGUMENT
-#else
-#define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL2_ARGUMENT(macro)
-#endif // ENABLE(WEBGL2)
 
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(macro) \
     macro(CanvasDirection) \
@@ -193,7 +186,6 @@ enum ImageSmoothingQuality;
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_OFFSCREEN_CANVAS_ARGUMENT(macro) \
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_VIDEO_ARGUMENT(macro) \
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL_ARGUMENT(macro) \
-    FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL2_ARGUMENT(macro) \
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_VIDEOFRAME_ARGUMENT(macro) \
 // end of FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT
 

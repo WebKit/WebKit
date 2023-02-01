@@ -3592,7 +3592,7 @@ MaskWebGLStringsEnabled:
   status: stable
   humanReadableName: "Mask WebGL Strings"
   humanReadableDescription: "Mask WebGL Vendor, Renderer, Shader Language Strings"
-  condition: ENABLE(WEBGL) || ENABLE(WEBGL2)
+  condition: ENABLE(WEBGL)
   defaultValue:
     WebKitLegacy:
       default: true
@@ -6644,20 +6644,6 @@ WebCryptoSafeCurvesEnabled:
       default: false
     WebCore:
       default: false
-
-WebGL2Enabled:
-  type: bool
-  status: stable
-  humanReadableName: "WebGL 2.0"
-  humanReadableDescription: "WebGL 2 prototype"
-  condition: ENABLE(WEBGL2)
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 WebGLDraftExtensionsEnabled:
   type: bool

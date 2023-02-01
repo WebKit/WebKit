@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -493,13 +493,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (!scriptExecutionContext)
         return nullptr;
 
-#if ENABLE(WEBGL2)
-    // Note: WebGL 2.0 is only supported with the ANGLE backend.
-    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !scriptExecutionContext->settingsValues().webGL2Enabled)
+    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !scriptExecutionContext->settingsValues().webGLEnabled)
         return nullptr;
-#else
-    UNUSED_PARAM(type);
-#endif
 
     GraphicsClient* graphicsClient = canvas.graphicsClient();
 
@@ -557,11 +552,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     }
 
     std::unique_ptr<WebGLRenderingContextBase> renderingContext;
-#if ENABLE(WEBGL2)
     if (type == WebGLVersion::WebGL2)
         renderingContext = WebGL2RenderingContext::create(canvas, context.releaseNonNull(), attributes);
     else
-#endif
         renderingContext = WebGLRenderingContext::create(canvas, context.releaseNonNull(), attributes);
     renderingContext->suspendIfNeeded();
 
@@ -2142,7 +2135,7 @@ WebGLAny WebGLRenderingContextBase::getBufferParameter(GCGLenum target, GCGLenum
     bool valid = false;
     if (target == GraphicsContextGL::ARRAY_BUFFER || target == GraphicsContextGL::ELEMENT_ARRAY_BUFFER)
         valid = true;
-#if ENABLE(WEBGL2)
+
     if (isWebGL2()) {
         switch (target) {
         case GraphicsContextGL::COPY_READ_BUFFER:
@@ -2154,7 +2147,7 @@ WebGLAny WebGLRenderingContextBase::getBufferParameter(GCGLenum target, GCGLenum
             valid = true;
         }
     }
-#endif
+
     if (!valid) {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getBufferParameter", "invalid target");
         return nullptr;
@@ -2497,7 +2490,6 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getProgramParameter", "KHR_parallel_shader_compile not enabled");
         return nullptr;
     default:
-#if ENABLE(WEBGL2)
         if (isWebGL2()) {
             switch (pname) {
             case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_MODE:
@@ -2508,7 +2500,6 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
                 break;
             }
         }
-#endif // ENABLE(WEBGL2)
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getProgramParameter", "invalid parameter name");
         return nullptr;
     }
@@ -4213,7 +4204,6 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
         }
         break;
     default:
-#if ENABLE(WEBGL2)
         if (!isWebGL1()) {
             switch (format) {
             case GraphicsContextGL::RED:
@@ -4227,9 +4217,7 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
                 synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture format");
                 return false;
             }
-        } else
-#endif
-        {
+        } else {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture format");
             return false;
         }
@@ -4263,7 +4251,6 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
         }
         break;
     default:
-#if ENABLE(WEBGL2)
         if (!isWebGL1()) {
             switch (type) {
             case GraphicsContextGL::BYTE:
@@ -4278,9 +4265,7 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
                 synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture type");
                 return false;
             }
-        } else
-#endif
-        {
+        } else {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture type");
             return false;
         }
@@ -4671,7 +4656,6 @@ void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
         return;
     }
 
-#if ENABLE(WEBGL2)
     // Extend the base useProgram method instead of overriding it in
     // WebGL2RenderingContext to keep the preceding validations in the same order.
     if (isWebGL2()) {
@@ -4681,7 +4665,6 @@ void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
             return;
         }
     }
-#endif
 
     if (m_currentProgram != program) {
         if (m_currentProgram)

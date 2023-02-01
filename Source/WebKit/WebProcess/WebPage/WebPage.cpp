@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -4121,9 +4121,6 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
     Settings::disableGlobalUnstableFeaturesForModernWebKit();
 
     settings.setWebGLEnabled(false);
-#if ENABLE(WEBGL2)
-    settings.setWebGL2Enabled(false);
-#endif
 #if ENABLE(GAMEPAD)
     settings.setGamepadsEnabled(false);
 #endif

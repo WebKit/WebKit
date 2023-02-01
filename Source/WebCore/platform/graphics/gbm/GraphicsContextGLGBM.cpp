@@ -97,9 +97,7 @@ void GraphicsContextGLGBM::prepareForDisplay()
 
 bool GraphicsContextGLGBM::platformInitializeContext()
 {
-#if ENABLE(WEBGL2)
     m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
-#endif
 
     Vector<EGLint> displayAttributes {
         EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,

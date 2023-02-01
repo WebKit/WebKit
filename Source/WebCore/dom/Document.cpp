@@ -352,8 +352,6 @@
 
 #if ENABLE(WEBGL)
 #include "WebGLRenderingContext.h"
-#endif
-#if ENABLE(WEBGL2)
 #include "WebGL2RenderingContext.h"
 #endif
 
@@ -6720,8 +6718,7 @@ std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContext>(*context))
         return RenderingContext { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*context) } };
-#endif
-#if ENABLE(WEBGL2)
+
     if (is<WebGL2RenderingContext>(*context))
         return RenderingContext { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*context) } };
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -951,10 +951,6 @@
 
 #if ENABLE(IOS_TOUCH_EVENTS) && !ENABLE(TOUCH_EVENTS)
 #error "ENABLE(IOS_TOUCH_EVENTS) requires ENABLE(TOUCH_EVENTS)"
-#endif
-
-#if ENABLE(WEBGL2) && !ENABLE(WEBGL)
-#error "ENABLE(WEBGL2) requires ENABLE(WEBGL)"
 #endif
 
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS) && !ENABLE(OFFSCREEN_CANVAS)

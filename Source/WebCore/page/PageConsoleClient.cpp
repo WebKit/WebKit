@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,12 +76,9 @@
 
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
-#include "WebGLRenderingContext.h"
-#endif
-
-#if ENABLE(WEBGL2)
 #include "JSWebGL2RenderingContext.h"
 #include "WebGL2RenderingContext.h"
+#include "WebGLRenderingContext.h"
 #endif
 
 namespace WebCore {
@@ -277,8 +274,6 @@ static CanvasRenderingContext* canvasRenderingContext(JSC::VM& vm, JSC::JSValue 
 #if ENABLE(WEBGL)
     if (auto* context = JSWebGLRenderingContext::toWrapped(vm, target))
         return context;
-#endif
-#if ENABLE(WEBGL2)
     if (auto* context = JSWebGL2RenderingContext::toWrapped(vm, target))
         return context;
 #endif
