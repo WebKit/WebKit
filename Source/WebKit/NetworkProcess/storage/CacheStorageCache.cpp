@@ -356,11 +356,17 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
 
 void CacheStorageCache::removeAllRecords()
 {
+    uint64_t sizeDecreased = 0;
     Vector<CacheStorageRecordInformation> targetRecordInfos;
     for (auto& urlRecords : m_records.values()) {
-        for (auto& record : urlRecords)
+        for (auto& record : urlRecords) {
             targetRecordInfos.append(record);
+            sizeDecreased += record.size;
+        }
     }
+
+    if (m_manager && sizeDecreased)
+        m_manager->sizeDecreased(sizeDecreased);
 
     m_records.clear();
     m_store->deleteRecords(targetRecordInfos, [](auto) { });
