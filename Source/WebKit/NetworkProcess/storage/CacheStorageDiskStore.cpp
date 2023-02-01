@@ -421,7 +421,7 @@ void CacheStorageDiskStore::deleteRecords(const Vector<CacheStorageRecordInforma
         return recordFilePath(recordInfo.key);
     });
 
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = WTFMove(recordFiles), callback = WTFMove(callback)]() mutable {
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = crossThreadCopy(WTFMove(recordFiles)), callback = WTFMove(callback)]() mutable {
         bool result = true;
         for (auto recordFile : recordFiles) {
             FileSystem::deleteFile(recordBlobFilePath(recordFile));
@@ -514,7 +514,7 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
         recordBlobDatas.append(WTFMove(bodyData));
     }
 
-    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = WTFMove(recordFiles), recordDatas = WTFMove(recordDatas), recordBlobDatas = WTFMove(recordBlobDatas), callback = WTFMove(callback)]() mutable {
+    m_ioQueue->dispatch([this, protectedThis = Ref { *this }, recordFiles = crossThreadCopy(WTFMove(recordFiles)), recordDatas = crossThreadCopy(WTFMove(recordDatas)), recordBlobDatas = crossThreadCopy(WTFMove(recordBlobDatas)), callback = WTFMove(callback)]() mutable {
         bool result = true;
         // FIXME: we should probably stop writing and revert changes when result becomes false.
         for (size_t index = 0; index < recordFiles.size(); ++index) {
