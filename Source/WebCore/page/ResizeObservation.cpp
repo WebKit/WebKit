@@ -41,6 +41,7 @@ Ref<ResizeObservation> ResizeObservation::create(Element& target, ResizeObserver
 
 ResizeObservation::ResizeObservation(Element& element, ResizeObserverBoxOptions observedBox)
     : m_target { element }
+    , m_lastObservationSizes { LayoutSize(-1, -1), LayoutSize(-1, -1), LayoutSize(-1, -1) }
     , m_observedBox { observedBox }
 {
 }
