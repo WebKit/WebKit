@@ -312,16 +312,16 @@ PASS Specified <length>+ is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <length># is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <length># is reified CSSUnparsedValue by iterator [styleMap]
 FAIL Registered property with initial value show up on iteration of computedStyleMap assert_true: expected true got false
-FAIL Computed * is reified as CSSUnparsedValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <angle> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <custom-ident> is reified as CSSKeywordValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <image> is reified as CSSImageValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <integer> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <length> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <number> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <percentage> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <resolution> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <time> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed none | thing | THING is reified as CSSKeywordValue by iterator undefined is not an object (evaluating 'result.length')
-FAIL Computed <angle> | <length> is reified as CSSUnitValue by iterator undefined is not an object (evaluating 'result.length')
+PASS Computed * is reified as CSSUnparsedValue by iterator
+PASS Computed <angle> is reified as CSSUnitValue by iterator
+PASS Computed <custom-ident> is reified as CSSKeywordValue by iterator
+FAIL Computed <image> is reified as CSSImageValue by iterator assert_true: expected true got false
+PASS Computed <integer> is reified as CSSUnitValue by iterator
+PASS Computed <length> is reified as CSSUnitValue by iterator
+PASS Computed <number> is reified as CSSUnitValue by iterator
+PASS Computed <percentage> is reified as CSSUnitValue by iterator
+PASS Computed <resolution> is reified as CSSUnitValue by iterator
+PASS Computed <time> is reified as CSSUnitValue by iterator
+PASS Computed none | thing | THING is reified as CSSKeywordValue by iterator
+PASS Computed <angle> | <length> is reified as CSSUnitValue by iterator
 
