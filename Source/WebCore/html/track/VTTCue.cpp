@@ -1338,9 +1338,9 @@ void VTTCue::toJSON(JSON::Object& object) const
     object.setString("vertical"_s, vertical());
     object.setBoolean("snapToLines"_s, snapToLines());
     if (m_linePosition)
-        object.setString("line"_s, autoAtom());
-    else
         object.setDouble("line"_s, *m_linePosition);
+    else
+        object.setString("line"_s, autoAtom());
     if (m_textPosition)
         object.setDouble("position"_s, *m_textPosition);
     else
