@@ -434,6 +434,24 @@ private:
 };
 
 class YarrPatternConstructor {
+    class UnresolvedForwardReference {
+    public:
+        UnresolvedForwardReference(PatternAlternative* alternative, unsigned termIndex)
+            : m_alternative(alternative)
+            , m_termIndex(termIndex)
+        {
+        }
+
+        PatternTerm* term()
+        {
+            return &m_alternative->m_terms[m_termIndex];
+        }
+
+    private:
+        PatternAlternative* m_alternative;
+        unsigned m_termIndex;
+    };
+
 public:
     YarrPatternConstructor(YarrPattern& pattern)
         : m_pattern(pattern)
@@ -657,7 +675,7 @@ public:
         if (shouldTryConvertingForwardReferencesToBackreferences && parenthesisMatchDirection() == Forward) {
             //  There are forward references that could actually be lookbehind back references.
             for (unsigned i = 0; i < m_forwardReferencesInLookbehind.size(); ++i) {
-                auto term = m_forwardReferencesInLookbehind[i];
+                auto term = m_forwardReferencesInLookbehind[i].term();
                 if (term->backReferenceSubpatternId <= m_pattern.m_numSubpatterns) {
                     term->convertToBackreference();
                     m_pattern.m_containsBackreferences = true;
@@ -679,7 +697,7 @@ public:
                 PatternTerm& term = m_alternative->lastTerm();
                 term.backReferenceSubpatternId = subpatternId;
                 term.m_matchDirection = parenthesisMatchDirection();
-                m_forwardReferencesInLookbehind.append(&term);
+                m_forwardReferencesInLookbehind.append(UnresolvedForwardReference(m_alternative, m_alternative->lastTermIndex()));
             }
             return;
         }
@@ -1275,7 +1293,7 @@ private:
     YarrPattern& m_pattern;
     PatternAlternative* m_alternative;
     CharacterClassConstructor m_characterClassConstructor;
-    Vector<PatternTerm*> m_forwardReferencesInLookbehind;
+    Vector<UnresolvedForwardReference> m_forwardReferencesInLookbehind;
     StackCheck m_stackCheck;
     ErrorCode m_error { ErrorCode::NoError };
     bool m_invertCharacterClass;
