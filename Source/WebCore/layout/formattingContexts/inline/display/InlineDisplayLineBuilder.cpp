@@ -40,8 +40,8 @@ InlineDisplayLineBuilder::InlineDisplayLineBuilder(const InlineFormattingContext
 
 InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collectEnclosingLineGeometry(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const InlineRect& lineBoxRect) const
 {
+    auto& rootInlineBox = lineBox.rootInlineBox();
     auto initialEnclosingTopAndBottom = [&]() -> std::tuple<std::optional<InlineLayoutUnit>, std::optional<InlineLayoutUnit>>  {
-        auto& rootInlineBox = lineBox.rootInlineBox();
         if (!lineBox.hasContent() || !rootInlineBox.hasContent())
             return { };
         return {
@@ -50,9 +50,18 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         };
     };
     auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
-    auto scrollableOverflowRect = lineBoxRect;
-    if (lineContent.hangingContent.shouldContributeToScrollableOverflow)
-        scrollableOverflowRect.expandHorizontally(lineContent.hangingContent.width);
+    auto scrollableOverflowRect = [&]() -> InlineRect {
+        auto rect = lineBoxRect;
+        if (lineContent.hangingContent.shouldContributeToScrollableOverflow)
+            rect.expandHorizontally(lineContent.hangingContent.width);
+        if (rootInlineBox.hasContent()) {
+            auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
+            auto rootInlineBoxHorizontalOverflow = rootInlineBoxRect.width() - rect.width();
+            if (rootInlineBoxHorizontalOverflow > 0)
+                root().style().isLeftToRightDirection() ? rect.shiftRightBy(rootInlineBoxHorizontalOverflow) : rect.shiftLeftBy(-rootInlineBoxHorizontalOverflow);
+        }
+        return rect;
+    }();
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
         if (!inlineLevelBox.isAtomicInlineLevelBox() && !inlineLevelBox.isInlineBox() && !inlineLevelBox.isLineBreakBox())
             continue;

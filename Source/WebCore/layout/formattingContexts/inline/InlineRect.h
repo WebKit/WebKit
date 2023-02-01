@@ -62,6 +62,8 @@ public:
     void moveBy(InlineLayoutPoint);
 
     void shiftLeftTo(InlineLayoutUnit);
+    void shiftLeftBy(InlineLayoutUnit);
+    void shiftRightBy(InlineLayoutUnit);
 
     void expand(std::optional<InlineLayoutUnit>, std::optional<InlineLayoutUnit>);
     void expandToContain(const InlineRect&);
@@ -273,6 +275,18 @@ inline void InlineRect::shiftLeftTo(InlineLayoutUnit left)
 {
     ASSERT(m_hasValidLeft);
     m_rect.shiftXEdgeTo(left);
+}
+
+inline void InlineRect::shiftLeftBy(InlineLayoutUnit offset)
+{
+    ASSERT(m_hasValidLeft);
+    m_rect.shiftXEdgeBy(offset);
+}
+
+inline void InlineRect::shiftRightBy(InlineLayoutUnit offset)
+{
+    ASSERT(m_hasValidLeft && m_hasValidWidth);
+    m_rect.shiftMaxXEdgeTo(offset);
 }
 
 inline void InlineRect::expand(std::optional<InlineLayoutUnit> width, std::optional<InlineLayoutUnit> height)
