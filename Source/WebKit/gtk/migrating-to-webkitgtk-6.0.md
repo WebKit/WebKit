@@ -37,6 +37,19 @@ warnings, then it is time to attempt to upgrade to GTK 4 and webkitgtk-6.0.
 This is easier said than done, but [the GTK 4 migration guide](https://docs.gtk.org/gtk4/migrating-3to4.html)
 will help. Good luck.
 
+## Most Types Are Final
+
+Only two types are now derivable:
+
+- [type@WebView] has been often subclassed to customize its behavior for an
+  specific application. This possibility has been kept, as it has proved
+  useful in the past.
+- [type@InputMethodContext] is specifically designed in a way that subclassing
+  is required to make use of it.
+
+The rest of the types are no longer derivable; they are defined with the
+`G_TYPE_FLAG_FINAL` flag set. Use composition instead of derivation.
+
 ## Mandatory Web Process Sandbox
 
 The `webkit_web_context_set_sandbox_enabled()` and `webkit_web_context_get_sandbox_enabled()`
@@ -67,19 +80,6 @@ accordingly.
 may directly use `g_object_new()` instead. [ctor@WebKit.WebView.new] and
 [ctor@WebKit.WebView.new_with_related_view] both remain.
 
-## Most Types Are Final
-
-Only two types are now derivable:
-
-- [type@WebView] has been often subclassed to customize its behavior for an
-  specific application. This possibility has been kept, as it has proved
-  useful in the past.
-- [type@InputMethodContext] is specifically designed in a way that subclassing
-  is required to make use of it.
-
-The rest of the types are no longer derivable; they are defined with the
-`G_TYPE_FLAG_FINAL` flag set. Use composition instead of derivation.
-
 ## Network Session API
 
 WebKit now uses a single global network process for all web contexts, and different
@@ -101,3 +101,11 @@ session capabilities.
 [enum@WebKit.HardwareAccelerationPolicy]. You may still use
 [method@WebKit.Settings.set_hardware_acceleration_policy] to enable or disable
 hardware acceleration.
+
+## Scrollbar Appearance
+
+Because GTK 4 does not contain a foreign drawing API, it is no longer possible
+to draw scrollbars that match arbitrary GTK themes. Accordingly, the
+`webkit_web_context_get_use_system_appearance_for_scrollbars` and
+`webkit_web_context_set_use_system_appearance_for_scrollbars` APIs have been
+removed. WebKit will draw scrollbars that match the Adwaita GTK theme.

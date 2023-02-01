@@ -317,7 +317,7 @@ WEBKIT_API void
 webkit_web_context_send_message_to_all_extensions   (WebKitWebContext              *context,
                                                      WebKitUserMessage             *message);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_API void
 webkit_web_context_set_use_system_appearance_for_scrollbars (WebKitWebContext      *context,
                                                              gboolean               enabled);
