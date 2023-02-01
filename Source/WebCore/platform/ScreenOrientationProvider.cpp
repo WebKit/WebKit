@@ -62,12 +62,12 @@ void ScreenOrientationProvider::removeObserver(Observer& observer)
 void ScreenOrientationProvider::screenOrientationDidChange()
 {
     auto newOrientation = platformCurrentOrientation();
-    if (newOrientation == m_currentOrientation)
+    if (!newOrientation || newOrientation == m_currentOrientation)
         return;
 
-    m_currentOrientation = newOrientation;
+    m_currentOrientation = *newOrientation;
     for (auto& observer : m_observers)
-        observer.screenOrientationDidChange(newOrientation);
+        observer.screenOrientationDidChange(*newOrientation);
 }
 
 ScreenOrientationType ScreenOrientationProvider::currentOrientation()
@@ -75,16 +75,16 @@ ScreenOrientationType ScreenOrientationProvider::currentOrientation()
     if (m_currentOrientation)
         return *m_currentOrientation;
 
-    auto orientation = platformCurrentOrientation();
+    auto orientation = platformCurrentOrientation().value_or(ScreenOrientationType::PortraitPrimary);
     if (!m_observers.isEmptyIgnoringNullReferences())
         m_currentOrientation = orientation;
     return orientation;
 }
 
 #if !PLATFORM(IOS_FAMILY)
-ScreenOrientationType ScreenOrientationProvider::platformCurrentOrientation()
+std::optional<ScreenOrientationType> ScreenOrientationProvider::platformCurrentOrientation()
 {
-    return ScreenOrientationType::PortraitPrimary;
+    return std::nullopt;
 }
 
 void ScreenOrientationProvider::platformStartListeningForChanges()

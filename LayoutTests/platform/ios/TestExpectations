@@ -23,6 +23,7 @@ remote-layer-tree/ios [ Pass ]
 swipe [ Pass ]
 http/tests/swipe [ Pass ]
 
+fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Pass ]
 fast/events/ios [ Pass ]
 fast/events/ios/ipad [ Skip ]
 fast/forms/ios [ Pass ]
