@@ -158,8 +158,12 @@ namespace WebCore {
     String contextMenuItemTagMediaPlay();
     String contextMenuItemTagMediaPause();
     String contextMenuItemTagMediaMute();
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     String contextMenuItemTagPlayAllAnimations();
     String contextMenuItemTagPauseAllAnimations();
+    String contextMenuItemTagPlayAnimation();
+    String contextMenuItemTagPauseAnimation();
+#endif
     WEBCORE_EXPORT String contextMenuItemTagInspectElement();
 #if HAVE(TRANSLATION_UI_SERVICES)
     String contextMenuItemTagTranslate(const String& selectedString);

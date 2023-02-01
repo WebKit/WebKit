@@ -58,9 +58,11 @@ enum class GestureRecognizerState : uint8_t {
     Failed
 };
 
-enum class SheetAction : bool {
+enum class SheetAction : uint8_t {
     Copy,
-    SaveImage
+    SaveImage,
+    PauseAnimation,
+    PlayAnimation
 };
 
 enum SelectionFlags : uint8_t {

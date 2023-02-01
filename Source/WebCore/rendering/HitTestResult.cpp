@@ -839,4 +839,39 @@ void HitTestResult::toggleEnhancedFullscreenForVideo() const
 #endif
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+HTMLImageElement* HitTestResult::imageElement() const
+{
+    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(m_innerNonSharedNode.get()))
+        return imageElement;
+    return nullptr;
+}
+
+bool HitTestResult::isAnimating() const
+{
+    if (auto* imageElement = this->imageElement())
+        return imageElement->allowsAnimation();
+    return false;
+}
+
+void HitTestResult::playAnimation() const
+{
+    setAllowsAnimation(true);
+}
+
+void HitTestResult::pauseAnimation() const
+{
+    setAllowsAnimation(false);
+}
+
+void HitTestResult::setAllowsAnimation(bool allowAnimation) const
+{
+    if (auto* imageElement = this->imageElement()) {
+        imageElement->setAllowsAnimation(allowAnimation);
+        if (auto* renderer = m_innerNonSharedNode->renderer())
+            renderer->repaint();
+    }
+}
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
 } // namespace WebCore

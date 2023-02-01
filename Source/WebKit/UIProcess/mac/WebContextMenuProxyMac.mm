@@ -598,11 +598,19 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagCheckGrammarWithSpelling:
         return _WKMenuItemIdentifierCheckGrammarWithSpelling;
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagPlayAllAnimations:
         return _WKMenuItemIdentifierPlayAllAnimations;
 
     case ContextMenuItemTagPauseAllAnimations:
         return _WKMenuItemIdentifierPauseAllAnimations;
+
+    case ContextMenuItemTagPlayAnimation:
+        return _WKMenuItemIdentifierPlayAnimation;
+
+    case ContextMenuItemTagPauseAnimation:
+        return _WKMenuItemIdentifierPauseAnimation;
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
     default:
         return nil;

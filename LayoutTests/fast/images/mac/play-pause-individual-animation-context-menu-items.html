@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<style>
+#gif {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
+</head>
+<body>
+
+<img id="gif" src="resources/animation.gif" />
+<img id="png" src="resources/animated-red-green-blue-repeat-infinite.png" />
+
+<script>
+description("This test ensures that the 'Play Animation' and 'Pause Animation' context menu items appear and behave correctly when activated.");
+
+var gif = document.getElementById("gif");
+var png = document.getElementById("png");
+window.addEventListener("load", () => {
+  window.jsTestIsAsync = true;
+  if (!window.internals)
+    return;
+  internals.settings.setImageAnimationControlEnabled(true);
+
+  // Verify initial animation play-state.
+  setTimeout(async () => {
+    await shouldBecomeEqual("internals.isImageAnimating(gif)", "true");
+    await shouldBecomeEqual("internals.isImageAnimating(png)", "true");
+
+    debug("Pausing #gif via the context menu item.");
+    eventSender.mouseMoveTo(1, 1);
+    eventSender.contextClick().find(item => item.title === "Pause Animation").click();
+
+    await shouldBecomeEqual("internals.isImageAnimating(gif)", "false");
+    // The animated PNG should still be animating.
+    await shouldBecomeEqual("internals.isImageAnimating(png)", "true");
+
+    debug("Playing #gif via the context menu item.");
+    eventSender.contextClick().find(item => item.title === "Play Animation").click();
+    await shouldBecomeEqual("internals.isImageAnimating(gif)", "true");
+    await shouldBecomeEqual("internals.isImageAnimating(png)", "true");
+
+    internals.settings.setImageAnimationControlEnabled(false);
+    internals.clearMemoryCache();
+    finishJSTest();
+  });
+});
+</script>
+</body>
+</html>

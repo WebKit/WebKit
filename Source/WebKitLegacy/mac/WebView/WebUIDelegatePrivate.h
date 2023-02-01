@@ -116,6 +116,8 @@ enum {
     WebMenuItemTagTranslate,
     WebMenuItemTagPlayAllAnimations,
     WebMenuItemTagPauseAllAnimations,
+    WebMenuItemTagPlayAnimation,
+    WebMenuItemTagPauseAnimation,
 };
 
 // Deprecated; remove when there are no more clients.
