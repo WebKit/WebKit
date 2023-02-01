@@ -26,26 +26,25 @@
 #pragma once
 
 #include "ASTExpression.h"
-
-#include <wtf/text/WTFString.h>
+#include "ASTIdentifier.h"
 
 namespace WGSL::AST {
 
 class IdentifierExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    IdentifierExpression(SourceSpan span, const String& identifier)
+    IdentifierExpression(SourceSpan span, Identifier&& identifier)
         : Expression(span)
-        , m_identifier(identifier)
-    {
-    }
+        , m_identifier(WTFMove(identifier))
+    { }
 
-    Kind kind() const override;
-    const String& identifier() const { return m_identifier; }
+    NodeKind kind() const override;
+
+    Identifier& identifier() { return m_identifier; }
+    const Identifier& identifier() const { return m_identifier; }
 
 private:
-    String m_identifier;
+    Identifier m_identifier;
 };
 
 } // namespace WGSL::AST

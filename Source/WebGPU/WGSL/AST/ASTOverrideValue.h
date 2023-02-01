@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,32 +25,38 @@
 
 #pragma once
 
+#include "ASTAttribute.h"
 #include "ASTExpression.h"
-
-#include <wtf/UniqueRef.h>
+#include "ASTIdentifier.h"
+#include "ASTTypeName.h"
+#include "ASTValue.h"
 
 namespace WGSL::AST {
 
-class ArrayAccess final : public Expression {
+class OverrideValue : public Value {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    ArrayAccess(SourceSpan span, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
-        : Expression(span)
-        , m_base(WTFMove(base))
-        , m_index(WTFMove(index))
-    {
-    }
+    OverrideValue(SourceSpan span, Identifier&& name, TypeName::Ptr typeName, Expression::Ref&& initializer, Attribute::List&& attributes)
+        : Value(span)
+        , m_name(WTFMove(name))
+        , m_typeName(WTFMove(typeName))
+        , m_initializer(WTFMove(initializer))
+        , m_attributes(WTFMove(attributes))
+    { }
 
-    Kind kind() const override;
-    Expression& base() { return m_base.get(); }
-    Expression& index() { return m_index.get(); }
+    NodeKind kind() const override;
+    Attribute::List& attributes() { return m_attributes; }
+    Identifier& name() { return m_name; }
+    TypeName* maybeTypeName() { return m_typeName.get(); }
+    Expression& initializer() { return m_initializer.get(); }
 
 private:
-    UniqueRef<Expression> m_base;
-    UniqueRef<Expression> m_index;
+    Identifier m_name;
+    TypeName::Ptr m_typeName;
+    Expression::Ref m_initializer;
+    Attribute::List m_attributes;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(ArrayAccess)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(OverrideValue)

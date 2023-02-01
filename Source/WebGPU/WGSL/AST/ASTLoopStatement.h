@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,29 @@
 
 #pragma once
 
-#include "ASTNode.h"
-
-#include <wtf/TypeCasts.h>
-#include <wtf/UniqueRefVector.h>
+#include "ASTCompoundStatement.h"
+#include "ASTExpression.h"
 
 namespace WGSL::AST {
 
-class Decl : public Node {
+class LoopStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    using List = UniqueRefVector<Decl>;
+    LoopStatement(SourceSpan span, CompoundStatement::Ref&& body, CompoundStatement::Ref&& continuingBody)
+        : Statement(span)
+        , m_body(WTFMove(body))
+        , m_continuingBody(WTFMove(continuingBody))
+    { }
 
-    Decl(SourceSpan span)
-        : Node(span)
-    {
-    }
+    NodeKind kind() const override;
+    CompoundStatement& body() { return m_body.get(); }
+    CompoundStatement& continuingBody() { return m_continuingBody.get(); }
+
+private:
+    CompoundStatement::Ref m_body;
+    CompoundStatement::Ref m_continuingBody;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Decl)
-static bool isType(const WGSL::AST::Node& node)
-{
-    switch (node.kind()) {
-    case WGSL::AST::Node::Kind::FunctionDecl:
-    case WGSL::AST::Node::Kind::StructDecl:
-    case WGSL::AST::Node::Kind::VariableDecl:
-        return true;
-    default:
-        return false;
-    }
-}
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(LoopStatement)

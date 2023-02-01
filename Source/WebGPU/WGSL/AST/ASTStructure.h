@@ -26,38 +26,13 @@
 #pragma once
 
 #include "ASTAttribute.h"
-#include "ASTDecl.h"
-#include "ASTTypeDecl.h"
-#include "CompilationMessage.h"
+#include "ASTDeclaration.h"
+#include "ASTIdentifier.h"
+#include "ASTStructureMember.h"
 
 namespace WGSL::AST {
 
-class StructMember final : public Node {
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    using List = UniqueRefVector<StructMember>;
-
-    StructMember(SourceSpan span, const String& name, Ref<TypeDecl>&& type, Attribute::List&& attributes)
-        : Node(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
-    {
-    }
-
-    Kind kind() const override;
-    const String& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
-    Attribute::List& attributes() { return m_attributes; }
-
-private:
-    String m_name;
-    Attribute::List m_attributes;
-    Ref<TypeDecl> m_type;
-};
-
-enum class StructRole : uint8_t {
+enum class StructureRole : uint8_t {
     UserDefined,
     VertexInput,
     FragmentInput,
@@ -66,37 +41,35 @@ enum class StructRole : uint8_t {
     ArgumentBuffer,
 };
 
-class StructDecl final : public Decl {
+class Structure final : public Declaration {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    using List = UniqueRefVector<StructDecl>;
+    using Ref = UniqueRef<Structure>;
+    using List = UniqueRefVector<Structure>;
 
-    StructDecl(SourceSpan sourceSpan, const String& name, StructMember::List&& members, Attribute::List&& attributes, StructRole role)
-        : Decl(sourceSpan)
-        , m_role(role)
-        , m_name(name)
+    Structure(SourceSpan span, Identifier&& name, StructureMember::List&& members, Attribute::List&& attributes, StructureRole role)
+        : Declaration(span)
+        , m_name(WTFMove(name))
         , m_attributes(WTFMove(attributes))
         , m_members(WTFMove(members))
-    {
-    }
+        , m_role(role)
+    { }
 
-    Kind kind() const override;
-    StructRole role() const { return m_role; }
-    const String& name() const { return m_name; }
+    NodeKind kind() const override;
+    StructureRole role() const { return m_role; }
+    Identifier& name() { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
-    StructMember::List& members() { return m_members; }
+    StructureMember::List& members() { return m_members; }
 
-    void setRole(StructRole role) { m_role = role; }
+    void setRole(StructureRole role) { m_role = role; }
 
 private:
-    StructRole m_role;
-    String m_name;
+    Identifier m_name;
     Attribute::List m_attributes;
-    StructMember::List m_members;
+    StructureMember::List m_members;
+    StructureRole m_role;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructMember)
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructDecl)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Structure)

@@ -27,40 +27,43 @@
 
 #include "ASTNode.h"
 
-#include <wtf/TypeCasts.h>
-#include <wtf/UniqueRefVector.h>
-
 namespace WGSL::AST {
 
 class Expression : public Node {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
+    using Ref = UniqueRef<Expression>;
+    using Ptr = std::unique_ptr<Expression>;
     using List = UniqueRefVector<Expression>;
 
     Expression(SourceSpan span)
         : Node(span)
-    {
-    }
+    { }
+
+    virtual ~Expression() { }
 };
 
 } // namespace WGSL::AST
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Expression)
-static bool isTypeOf(const WGSL::AST::Node& node)
+static bool isType(const WGSL::AST::Node& node)
 {
     switch (node.kind()) {
-    case WGSL::AST::Node::Kind::AbstractFloatLiteral:
-    case WGSL::AST::Node::Kind::AbstractIntLiteral:
-    case WGSL::AST::Node::Kind::ArrayAccess:
-    case WGSL::AST::Node::Kind::BoolLiteral:
-    case WGSL::AST::Node::Kind::CallableExpression:
-    case WGSL::AST::Node::Kind::Float32Literal:
-    case WGSL::AST::Node::Kind::IdentifierExpression:
-    case WGSL::AST::Node::Kind::Int32Literal:
-    case WGSL::AST::Node::Kind::StructureAccess:
-    case WGSL::AST::Node::Kind::Uint32Literal:
-    case WGSL::AST::Node::Kind::UnaryExpression:
+        // Expressions
+    case WGSL::AST::NodeKind::BinaryExpression:
+    case WGSL::AST::NodeKind::BitcastExpression:
+    case WGSL::AST::NodeKind::IndexAccessExpression:
+    case WGSL::AST::NodeKind::CallExpression:
+    case WGSL::AST::NodeKind::IdentifierExpression:
+    case WGSL::AST::NodeKind::FieldAccessExpression:
+    case WGSL::AST::NodeKind::UnaryExpression:
+        // Literals
+    case WGSL::AST::NodeKind::AbstractFloatLiteral:
+    case WGSL::AST::NodeKind::AbstractIntegerLiteral:
+    case WGSL::AST::NodeKind::BoolLiteral:
+    case WGSL::AST::NodeKind::Float32Literal:
+    case WGSL::AST::NodeKind::Signed32Literal:
+    case WGSL::AST::NodeKind::Unsigned32Literal:
         return true;
     default:
         return false;

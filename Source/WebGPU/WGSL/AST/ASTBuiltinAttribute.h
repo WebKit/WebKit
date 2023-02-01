@@ -26,25 +26,23 @@
 #pragma once
 
 #include "ASTAttribute.h"
-#include <wtf/text/WTFString.h>
+#include "ASTIdentifier.h"
 
 namespace WGSL::AST {
 
 class BuiltinAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    BuiltinAttribute(SourceSpan span, const String& name)
+    BuiltinAttribute(SourceSpan span, Identifier&& name)
         : Attribute(span)
-        , m_name(name)
-    {
-    }
+        , m_name(WTFMove(name))
+    { }
 
-    Kind kind() const override;
-    const String& name() const { return m_name; }
+    NodeKind kind() const override;
+    Identifier& name() { return m_name; }
 
 private:
-    String m_name;
+    Identifier m_name;
 };
 
 } // namespace WGSL::AST

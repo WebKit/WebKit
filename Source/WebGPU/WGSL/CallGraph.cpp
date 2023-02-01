@@ -46,13 +46,13 @@ public:
     CallGraph build();
 
     // FIXME: we also need to visit function calls when we add support for them
-    void visit(AST::FunctionDecl&) override;
+    void visit(AST::Function&) override;
 
 private:
     void initializeMappings();
 
     CallGraph m_callGraph;
-    AST::FunctionDecl* m_currentFunction;
+    AST::Function* m_currentFunction;
 };
 
 CallGraph CallGraphBuilder::build()
@@ -76,8 +76,8 @@ void CallGraphBuilder::initializeMappings()
         }
 
         for (auto& attribute : functionDecl.attributes()) {
-            if (attribute->kind() == AST::Node::Kind::StageAttribute) {
-                auto stage = downcast<AST::StageAttribute>(attribute.get()).stage();
+            if (is<AST::StageAttribute>(attribute)) {
+                auto stage = downcast<AST::StageAttribute>(attribute).stage();
                 m_callGraph.m_entrypoints.append({ functionDecl, stage });
                 break;
             }
@@ -85,7 +85,7 @@ void CallGraphBuilder::initializeMappings()
     }
 }
 
-void CallGraphBuilder::visit(AST::FunctionDecl& functionDecl)
+void CallGraphBuilder::visit(AST::Function& functionDecl)
 {
     m_currentFunction = &functionDecl;
     checkErrorAndVisit(functionDecl.body());

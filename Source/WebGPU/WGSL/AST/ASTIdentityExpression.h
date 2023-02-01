@@ -40,10 +40,9 @@ public:
     IdentityExpression(SourceSpan span, UniqueRef<Expression>&& expression)
         : Expression(span)
         , m_expression(WTFMove(expression))
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     Expression& expression() { return m_expression.get(); }
 
 private:

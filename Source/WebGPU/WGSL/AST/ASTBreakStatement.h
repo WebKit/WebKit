@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +25,23 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include <wtf/text/WTFString.h>
+#pragma once
+
+#include "ASTExpression.h"
+#include "ASTStatement.h"
 
 namespace WGSL::AST {
 
-class GlobalDirective : public Node {
+class BreakStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    using List = UniqueRefVector<GlobalDirective>;
+    BreakStatement(SourceSpan span)
+        : Statement(span)
+    { }
 
-    GlobalDirective(SourceSpan span, const String& name)
-        : Node(span)
-        , m_name(name)
-    {
-    }
-
-    Kind kind() const override { return Kind::GlobalDirective; }
-    const String& name() const { return m_name; }
-
-private:
-    String m_name;
+    NodeKind kind() const override;
 };
 
 } // namespace WGSL::AST
+
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(BreakStatement)

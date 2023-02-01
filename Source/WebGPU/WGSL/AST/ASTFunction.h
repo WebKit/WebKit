@@ -27,83 +27,47 @@
 
 #include "ASTAttribute.h"
 #include "ASTCompoundStatement.h"
-#include "ASTDecl.h"
-#include "ASTTypeDecl.h"
+#include "ASTDeclaration.h"
+#include "ASTParameterValue.h"
+#include "ASTTypeName.h"
 #include "CompilationMessage.h"
 
 #include <wtf/UniqueRefVector.h>
 
 namespace WGSL::AST {
 
-enum class ParameterRole {
-    UserDefined,
-    StageIn,
-    ArgumentBuffer,
-};
-
-class Parameter final : public Node {
+class Function final : public Declaration {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    using List = UniqueRefVector<Parameter>;
+    using List = UniqueRefVector<Function>;
 
-    Parameter(SourceSpan span, const String& name, Ref<TypeDecl>&& type, Attribute::List&& attributes, ParameterRole role)
-        : Node(span)
-        , m_role(role)
-        , m_name(name)
-        , m_type(WTFMove(type))
-        , m_attributes(WTFMove(attributes))
-    {
-    }
-
-    Kind kind() const override;
-    const String& name() const { return m_name; }
-    TypeDecl& type() { return m_type.get(); }
-    Attribute::List& attributes() { return m_attributes; }
-    ParameterRole role() { return m_role; }
-
-private:
-    ParameterRole m_role;
-    String m_name;
-    Ref<TypeDecl> m_type;
-    Attribute::List m_attributes;
-};
-
-class FunctionDecl final : public Decl {
-    WTF_MAKE_FAST_ALLOCATED;
-
-public:
-    using List = UniqueRefVector<FunctionDecl>;
-
-    FunctionDecl(SourceSpan sourceSpan, const String& name, Parameter::List&& parameters, RefPtr<TypeDecl>&& returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
-        : Decl(sourceSpan)
-        , m_name(name)
+    Function(SourceSpan span, Identifier&& name, ParameterValue::List&& parameters, TypeName::Ptr&& returnType, CompoundStatement&& body, Attribute::List&& attributes, Attribute::List&& returnAttributes)
+        : Declaration(span)
+        , m_name(WTFMove(name))
         , m_parameters(WTFMove(parameters))
         , m_attributes(WTFMove(attributes))
         , m_returnAttributes(WTFMove(returnAttributes))
         , m_returnType(WTFMove(returnType))
         , m_body(WTFMove(body))
-    {
-    }
+    { }
 
-    Kind kind() const override;
-    const String& name() const { return m_name; }
-    Parameter::List& parameters() { return m_parameters; }
+    NodeKind kind() const override;
+    Identifier& name() { return m_name; }
+    ParameterValue::List& parameters() { return m_parameters; }
     Attribute::List& attributes() { return m_attributes; }
     Attribute::List& returnAttributes() { return m_returnAttributes; }
-    TypeDecl* maybeReturnType() { return m_returnType.get(); }
+    TypeName* maybeReturnType() { return m_returnType.get(); }
     CompoundStatement& body() { return m_body; }
 
 private:
-    String m_name;
-    Parameter::List m_parameters;
+    Identifier m_name;
+    ParameterValue::List m_parameters;
     Attribute::List m_attributes;
     Attribute::List m_returnAttributes;
-    RefPtr<TypeDecl> m_returnType;
+    TypeName::Ptr m_returnType;
     CompoundStatement m_body;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(Parameter)
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(FunctionDecl)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Function)

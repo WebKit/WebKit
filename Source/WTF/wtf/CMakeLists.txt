@@ -235,6 +235,7 @@ set(WTF_PUBLIC_HEADERS
     RefCountedLeakCounter.h
     RefCounter.h
     RefPtr.h
+    RefVector.h
     ResourceUsage.h
     RetainPtr.h
     RobinHoodHashMap.h

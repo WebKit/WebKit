@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ASTBinaryExpression.h"
 
-#include "ASTExpression.h"
-
-#include <wtf/text/WTFString.h>
+#include <wtf/EnumTraits.h>
+#include <wtf/PrintStream.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WGSL::AST {
 
-class StructureAccess final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    StructureAccess(SourceSpan span, UniqueRef<Expression>&& base, const String& fieldName)
-        : Expression(span)
-        , m_base(WTFMove(base))
-        , m_fieldName(fieldName)
-    {
-    }
+void printInternal(PrintStream& out, BinaryOperation op)
+{
+    constexpr ASCIILiteral binaryOperationNames[] = {
+        "+"_s,
+        "-"_s,
+        "*"_s,
+        "/"_s,
+        "%"_s,
+        "&"_s,
+        "|"_s,
+        "^"_s,
+        "<<"_s,
+        ">>"_s,
+        "=="_s,
+        "!="_s,
+        ">"_s,
+        ">="_s,
+        "<"_s,
+        "<="_s,
+        "&&"_s,
+        "||"_s
+    };
 
-    Kind kind() const override;
-    Expression& base() { return m_base.get(); }
-    const String& fieldName() const { return m_fieldName; }
-
-private:
-    UniqueRef<Expression> m_base;
-    String m_fieldName;
-};
+    out.print(binaryOperationNames[WTF::enumToUnderlyingType(op)]);
+}
 
 } // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(StructureAccess)

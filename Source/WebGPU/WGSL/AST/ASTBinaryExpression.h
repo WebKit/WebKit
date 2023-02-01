@@ -26,35 +26,60 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include <wtf/Forward.h>
 
 namespace WGSL::AST {
 
 enum class BinaryOperation : uint8_t {
     Add,
+    Subtract,
     Multiply,
+    Divide,
+    Modulo,
+
+    And,
+    Or,
+    Xor,
+
+    LeftShift,
+    RightShift,
+
+    Equal,
+    NotEqual,
+    GreaterThan,
+    GreaterEqual,
+    LessThan,
+    LessEqual,
+
+    ShortCircuitAnd,
+    ShortCircuitOr,
 };
-    
-class BinaryExpression final : public Expression {
+
+class BinaryExpression : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BinaryExpression(SourceSpan span, UniqueRef<Expression>&& lhs, UniqueRef<Expression>&& rhs, BinaryOperation operation)
+    using Ref = UniqueRef<Expression>;
+    using List = UniqueRefVector<Expression>;
+
+    BinaryExpression(SourceSpan span, Expression::Ref&& lhs, Expression::Ref&& rhs, BinaryOperation operation)
         : Expression(span)
         , m_lhs(WTFMove(lhs))
         , m_rhs(WTFMove(rhs))
         , m_operation(operation)
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     BinaryOperation operation() const { return m_operation; }
-    Expression& lhs() { return m_lhs.get(); }
-    Expression& rhs() { return m_rhs.get(); }
+    Expression& leftExpression() { return m_lhs.get(); }
+    Expression& rightExpression() { return m_rhs.get(); }
 
 private:
-    UniqueRef<Expression> m_lhs;
-    UniqueRef<Expression> m_rhs;
+    Expression::Ref m_lhs;
+    Expression::Ref m_rhs;
     BinaryOperation m_operation;
 };
+
+void printInternal(PrintStream&, BinaryOperation);
 
 } // namespace WGSL::AST
 

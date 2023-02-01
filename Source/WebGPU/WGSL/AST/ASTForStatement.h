@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,51 +25,35 @@
 
 #pragma once
 
-#include "ASTAttribute.h"
-#include "ASTDecl.h"
+#include "ASTCompoundStatement.h"
 #include "ASTExpression.h"
-#include "ASTTypeDecl.h"
-#include "ASTVariableQualifier.h"
-#include "CompilationMessage.h"
-
-#include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
-class VariableDecl final : public Decl {
+class ForStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    using List = UniqueRefVector<VariableDecl>;
-
-    VariableDecl(SourceSpan span, const String& name, std::unique_ptr<VariableQualifier>&& qualifier, RefPtr<TypeDecl>&& type, std::unique_ptr<Expression>&& initializer, Attribute::List&& attributes)
-        : Decl(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_qualifier(WTFMove(qualifier))
-        , m_type(WTFMove(type))
+    ForStatement(SourceSpan span, Statement::Ptr&& initializer, Expression::Ptr&& test, Statement::Ptr&& update, CompoundStatement::Ref&& body)
+        : Statement(span)
         , m_initializer(WTFMove(initializer))
-    {
-        ASSERT(m_type || m_initializer);
-    }
+        , m_test(WTFMove(test))
+        , m_update(WTFMove(update))
+        , m_body(WTFMove(body))
+    { }
 
-    Kind kind() const override;
-    const String& name() const { return m_name; }
-    Attribute::List& attributes() { return m_attributes; }
-    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
-    TypeDecl* maybeTypeDecl() { return m_type.get(); }
-    Expression* maybeInitializer() { return m_initializer.get(); }
+    NodeKind kind() const override;
+    Statement* maybeInitializer() { return m_initializer.get(); }
+    Expression* maybeTest() { return m_test.get(); }
+    Statement* maybeUpdate() { return m_update.get(); }
+    CompoundStatement& body() { return m_body.get(); }
 
 private:
-    String m_name;
-    Attribute::List m_attributes;
-    // Each of the following may be null
-    // But at least one of type and initializer must be non-null
-    std::unique_ptr<VariableQualifier> m_qualifier;
-    RefPtr<TypeDecl> m_type;
-    std::unique_ptr<Expression> m_initializer;
+    Statement::Ptr m_initializer;
+    Expression::Ptr m_test;
+    Statement::Ptr m_update;
+    CompoundStatement::Ref m_body;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(VariableDecl)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ForStatement)

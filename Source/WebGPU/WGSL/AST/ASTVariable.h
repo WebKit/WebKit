@@ -1,3 +1,4 @@
+\
 /*
  * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
@@ -25,42 +26,49 @@
 
 #pragma once
 
+#include "ASTAttribute.h"
+#include "ASTDeclaration.h"
 #include "ASTExpression.h"
-#include "ASTTypeDecl.h"
-
-#include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
+#include "ASTIdentifier.h"
+#include "ASTTypeName.h"
+#include "ASTVariableQualifier.h"
 
 namespace WGSL::AST {
 
-// A CallableExpression expresses a "function" call, which consists of a target to be called,
-// and a list of arguments. The target does not necesserily have to be a function identifier,
-// but can also be a type, in which the whole call is a type conversion expression. The exact
-// kind of expression can only be resolved during semantic analysis.
-class CallableExpression final : public Expression {
+class Variable final : public Declaration {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    CallableExpression(SourceSpan span, Ref<TypeDecl>&& target, Expression::List&& arguments)
-        : Expression(span)
-        , m_target(WTFMove(target))
-        , m_arguments(WTFMove(arguments))
+    using Ref = UniqueRef<Variable>;
+    using List = UniqueRefVector<Variable>;
+
+    Variable(SourceSpan span, Identifier&& name, VariableQualifier::Ptr&& qualifier, TypeName::Ptr&& type, Expression::Ptr&& initializer, Attribute::List&& attributes)
+        : Declaration(span)
+        , m_name(WTFMove(name))
+        , m_attributes(WTFMove(attributes))
+        , m_qualifier(WTFMove(qualifier))
+        , m_type(WTFMove(type))
+        , m_initializer(WTFMove(initializer))
     {
+        ASSERT(m_type || m_initializer);
     }
 
-    Kind kind() const override;
-    TypeDecl& target() { return m_target.get(); }
-    Expression::List& arguments() { return m_arguments; }
+    NodeKind kind() const override;
+    Identifier& name() { return m_name; }
+    Attribute::List& attributes() { return m_attributes; }
+    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
+    TypeName* maybeTypeName() { return m_type.get(); }
+    Expression* maybeInitializer() { return m_initializer.get(); }
 
 private:
-    // If m_target is a NamedType, it could either be a:
-    //   * Type that does not accept parameters (bool, i32, u32, ...)
-    //   * Identifier that refers to a type alias.
-    //   * Identifier that refers to a function.
-    Ref<TypeDecl> m_target;
-    Expression::List m_arguments;
+    Identifier m_name;
+    Attribute::List m_attributes;
+    // Each of the following may be null
+    // But at least one of type and initializer must be non-null
+    VariableQualifier::Ptr m_qualifier;
+    TypeName::Ptr m_type;
+    Expression::Ptr m_initializer;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(CallableExpression)
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Variable)
