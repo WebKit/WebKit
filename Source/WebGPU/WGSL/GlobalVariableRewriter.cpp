@@ -227,7 +227,7 @@ void RewriteGlobalVariables::insertStructs()
             WTFMove(structName),
             WTFMove(structMembers),
             AST::Attribute::List { },
-            AST::StructureRole::ArgumentBuffer
+            AST::StructureRole::BindGroup
         ));
     }
 }
@@ -243,7 +243,7 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Ind
             AST::Attribute::List {
                 adoptRef(*new AST::GroupAttribute(span, group))
             },
-            AST::ParameterRole::ArgumentBuffer
+            AST::ParameterRole::BindGroup
         ));
     }
 }

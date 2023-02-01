@@ -35,7 +35,7 @@ namespace WGSL::AST {
 enum class ParameterRole : uint8_t {
     UserDefined,
     StageIn,
-    ArgumentBuffer,
+    BindGroup,
 };
 
 class ParameterValue final : public Value {

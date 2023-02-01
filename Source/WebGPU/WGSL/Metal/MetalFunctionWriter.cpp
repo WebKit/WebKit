@@ -132,7 +132,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
             checkErrorAndVisit(parameter);
             m_stringBuilder.append(" [[stage_in]]");
             break;
-        case AST::ParameterRole::ArgumentBuffer:
+        case AST::ParameterRole::BindGroup:
             visitArgumentBufferParameter(parameter);
             break;
         }
@@ -256,7 +256,7 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::FragmentInput:
             m_stringBuilder.append("[[user(loc", location.location(), ")]]");
             return;
-        case AST::StructureRole::ArgumentBuffer:
+        case AST::StructureRole::BindGroup:
             return;
         case AST::StructureRole::VertexInput:
         case AST::StructureRole::ComputeInput:

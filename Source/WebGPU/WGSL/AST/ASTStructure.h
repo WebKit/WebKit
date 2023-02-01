@@ -38,7 +38,7 @@ enum class StructureRole : uint8_t {
     FragmentInput,
     ComputeInput,
     VertexOutput,
-    ArgumentBuffer,
+    BindGroup,
 };
 
 class Structure final : public Declaration {
