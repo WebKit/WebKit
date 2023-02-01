@@ -67,11 +67,11 @@
 
 namespace WebCore {
 
-ScreenOrientationType ScreenOrientationProvider::platformCurrentOrientation()
+std::optional<ScreenOrientationType> ScreenOrientationProvider::platformCurrentOrientation()
 {
     auto window = m_window.get();
     if (!window)
-        return WebCore::ScreenOrientationType::PortraitPrimary;
+        return std::nullopt;
 
     UIWindowScene *scene = window.get().windowScene;
     switch ([scene interfaceOrientation]) {
@@ -106,7 +106,8 @@ void ScreenOrientationProvider::platformStopListeningForChanges()
 void ScreenOrientationProvider::setWindow(UIWindow *window)
 {
     m_window = window;
-    screenOrientationDidChange();
+    if (window)
+        screenOrientationDidChange();
 }
 
 } // namespace WebCore
