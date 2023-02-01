@@ -4198,3 +4198,5 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html [ Skip ]
 http/tests/webgpu/cts.https.html [ Pass ]
 
 webkit.org/b/251417 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
+
+webkit.org/b/251482 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ Pass Failure ]
