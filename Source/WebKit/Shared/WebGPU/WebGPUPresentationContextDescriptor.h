@@ -27,6 +27,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "WebGPUIdentifier.h"
+
 namespace WebKit::WebGPU {
 
 struct PresentationContextDescriptor {
