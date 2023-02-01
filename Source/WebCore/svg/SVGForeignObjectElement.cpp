@@ -113,6 +113,9 @@ bool SVGForeignObjectElement::rendererIsNeeded(const RenderStyle& style)
     // to use parentElement() here. If that changes, this method should be updated to use
     // parentOrShadowHostElement() instead.
     RefPtr ancestor = parentElement();
+    if (!ancestor)
+        return false;
+
     while (ancestor && ancestor->isSVGElement()) {
         if (ancestor->renderer() && ancestor->renderer()->isSVGHiddenContainer())
             return false;
