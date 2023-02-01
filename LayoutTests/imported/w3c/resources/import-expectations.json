@@ -240,6 +240,7 @@
     "web-platform-tests/file-system-access": "import",
     "web-platform-tests/fonts": "import",
     "web-platform-tests/fonts/noto": "import",
+    "web-platform-tests/fs": "import",
     "web-platform-tests/fullscreen": "import",
     "web-platform-tests/gamepad": "import",
     "web-platform-tests/generic-sensor": "skip",

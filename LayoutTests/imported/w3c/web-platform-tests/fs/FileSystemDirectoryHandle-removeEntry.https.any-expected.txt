@@ -10,4 +10,5 @@ PASS removeEntry() with ".." name should fail
 PASS removeEntry() with a path separator should fail.
 FAIL removeEntry() while the file has an open writable fails promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
 FAIL removeEntry() of a directory while a containing file has an open writable fails promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
+FAIL createWritable after removeEntry succeeds but doesnt recreate the file promise_test: Unhandled rejection with value: object "TypeError: handle.createWritable is not a function. (In 'handle.createWritable()', 'handle.createWritable' is undefined)"
 

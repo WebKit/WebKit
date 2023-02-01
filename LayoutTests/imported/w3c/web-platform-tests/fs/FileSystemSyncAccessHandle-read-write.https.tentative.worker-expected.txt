@@ -6,8 +6,10 @@ PASS Test second write that is smaller than the first write
 PASS Test initial write with an offset
 PASS Test overwriting the file at an offset
 PASS Test read at an offset
-FAIL Test read with default options assert_equals: Check that all bytes were read expected 0 but got 24
-FAIL Test write with default options promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test reading at a negative offset fails. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Test writing at a negative offset fails. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+PASS Test read with default options
+PASS Test write with default options
+PASS Test reading at a negative offset fails.
+PASS Test writing at a negative offset fails.
+PASS Test that writing moves the file position cursor
+PASS Test that reading moves the file position cursor
 
