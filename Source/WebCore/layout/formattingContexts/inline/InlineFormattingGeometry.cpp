@@ -322,6 +322,11 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(co
     auto& lines = formattingState.lines();
     auto& boxes = formattingState.boxes();
 
+    if (lines.isEmpty()) {
+        ASSERT(boxes.isEmpty());
+        return contentBoxTopLeft;
+    }
+
     // Block level boxes are placed under the current line as if they were normal inflow block level boxes.
     auto previousDisplayBoxIndexBeforeOutOfFlowBox = previousDisplayBoxIndex(outOfFlowBox, boxes);
     if (!previousDisplayBoxIndexBeforeOutOfFlowBox)
