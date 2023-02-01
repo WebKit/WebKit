@@ -164,6 +164,7 @@ public:
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
     std::optional<FrameIdentifier> mainFrameIdentifier;
+    std::optional<SecurityOriginData> topDocumentSecurityOriginData;
 };
 
 }

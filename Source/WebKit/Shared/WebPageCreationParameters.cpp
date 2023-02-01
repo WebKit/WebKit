@@ -643,11 +643,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.contentSecurityPolicyModeForExtension))
         return std::nullopt;
 
-    std::optional<std::optional<WebCore::FrameIdentifier>> mainFrameIdentifier;
-    decoder >> mainFrameIdentifier;
-    if (!mainFrameIdentifier)
+    if (!decoder.decode(parameters.mainFrameIdentifier))
         return std::nullopt;
-    parameters.mainFrameIdentifier = WTFMove(*mainFrameIdentifier);
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     std::optional<Vector<String>> lookalikeCharacterStrings;
@@ -671,11 +668,8 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     parameters.machBootstrapHandle = WTFMove(*machBootstrapHandle);
 #endif
 
-    std::optional<std::optional<WebCore::SecurityOriginData>> topDocumentSecurityOriginData;
-    decoder >> topDocumentSecurityOriginData;
-    if (!topDocumentSecurityOriginData)
+    if (!decoder.decode(parameters.topDocumentSecurityOriginData))
         return std::nullopt;
-    parameters.topDocumentSecurityOriginData = WTFMove(*topDocumentSecurityOriginData);
 
     return { WTFMove(parameters) };
 }

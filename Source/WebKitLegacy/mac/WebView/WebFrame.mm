@@ -302,7 +302,8 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(page);
 
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
-    auto coreFrame = WebCore::Frame::create(page, ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate());
+    //FIXME:: Chirag - what exactly should be done for legacy flows?
+    auto coreFrame = WebCore::Frame::create(page, ownerElement, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), std::nullopt);
     frame->_private->coreFrame = coreFrame.ptr();
 
     coreFrame.get().tree().setName(name);

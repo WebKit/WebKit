@@ -117,7 +117,7 @@ using NodeQualifier = Function<Node* (const HitTestResult&, Node* terminationNod
 // FIXME: Rename Frame to LocalFrame and AbstractFrame to Frame.
 class Frame final : public AbstractFrame {
 public:
-    WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, UniqueRef<FrameLoaderClient>&&, FrameIdentifier);
+    WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, std::optional<SecurityOriginData>&&);
 
     WEBCORE_EXPORT void init();
 #if PLATFORM(IOS_FAMILY)
@@ -298,7 +298,7 @@ public:
 private:
     friend class NavigationDisabler;
 
-    Frame(Page&, HTMLFrameOwnerElement*, UniqueRef<FrameLoaderClient>&&, FrameIdentifier);
+    Frame(Page&, HTMLFrameOwnerElement*, UniqueRef<FrameLoaderClient>&&, FrameIdentifier, std::optional<SecurityOriginData>&&);
 
     void dropChildren();
 
@@ -352,6 +352,7 @@ private:
     FloatSize m_overrideScreenSize;
 
     UniqueRef<EventHandler> m_eventHandler;
+    std::optional<SecurityOriginData> m_sod;
 };
 
 using LocalFrame = Frame;

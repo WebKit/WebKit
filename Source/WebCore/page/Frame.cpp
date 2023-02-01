@@ -148,7 +148,7 @@ static inline float parentTextZoomFactor(Frame* frame)
     return parent->textZoomFactor();
 }
 
-Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier)
+Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, std::optional<SecurityOriginData>&& sod)
     : AbstractFrame(page, identifier, ownerElement)
     , m_mainFrame(ownerElement ? page.mainFrame() : *this)
     , m_settings(&page.settings())
@@ -158,6 +158,7 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
+    , m_sod(WTFMove(sod))
 {
     ProcessWarming::initializeNames();
     StaticCSSValuePool::init();
@@ -181,10 +182,10 @@ void Frame::init()
     m_loader->init();
 }
 
-Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier)
+Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& client, FrameIdentifier identifier, std::optional<SecurityOriginData>&& sod)
 {
     ASSERT(page);
-    return adoptRef(*new Frame(*page, ownerElement, WTFMove(client), identifier));
+    return adoptRef(*new Frame(*page, ownerElement, WTFMove(client), identifier, WTFMove(sod)));
 }
 
 Frame::~Frame()

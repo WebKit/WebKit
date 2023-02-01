@@ -713,6 +713,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
     pageConfiguration.mainFrameIdentifier = parameters.mainFrameIdentifier;
+    pageConfiguration.topDocumentSecurityOriginData = parameters.topDocumentSecurityOriginData;
     bool receivedMainFrameIdentifierFromUIProcess = !!pageConfiguration.mainFrameIdentifier;
     
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
