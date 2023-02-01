@@ -420,6 +420,7 @@ std::optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime
     // The current time is calculated from the first matching condition from below:
 
     // If the animation's hold time is resolved, the current time is the animation's hold time.
+    UNUSED_PARAM(startTime);
     if (respectHoldTime == RespectHoldTime::Yes && m_holdTime)
         return m_holdTime;
 
