@@ -3336,7 +3336,7 @@ static RefPtr<Element> findFocusDelegateInternal(ContainerNode& target)
 {
     if (auto element = autoFocusDelegate(target))
         return element;
-    for (auto& element : childrenOfType<Element>(target)) {
+    for (auto& element : descendantsOfType<Element>(target)) {
         if (isProgramaticallyFocusable(element))
             return &element;
         if (auto root = shadowRootWithDelegatesFocus(element)) {
