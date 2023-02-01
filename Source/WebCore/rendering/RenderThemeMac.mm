@@ -189,6 +189,9 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
     auto type = renderer.style().effectiveAppearance();
     return type == StyleAppearance::Button
         || type == StyleAppearance::Checkbox
+#if ENABLE(APPLE_PAY)
+        || type == StyleAppearance::ApplePayButton
+#endif
 #if ENABLE(INPUT_TYPE_COLOR)
         || type == StyleAppearance::ColorWell
 #endif

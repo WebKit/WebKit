@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTheme.h"
 
+#include "ApplePayButtonPart.h"
 #include "ButtonPart.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
@@ -71,6 +72,7 @@
 #include "TextFieldPart.h"
 #include "ToggleButtonPart.h"
 #include <wtf/FileSystem.h>
+#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -484,6 +486,19 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
     return StyleAppearance::None;
 }
 
+#if ENABLE(APPLE_PAY)
+static RefPtr<ControlPart> createApplePayButtonPartForRenderer(const RenderObject& renderer)
+{
+    auto& style = renderer.style();
+
+    String locale = style.computedLocale();
+    if (locale.isEmpty())
+        locale = defaultLanguage(ShouldMinimizeLanguages::No);
+
+    return ApplePayButtonPart::create(style.applePayButtonType(), style.applePayButtonStyle(), locale);
+}
+#endif
+
 static RefPtr<ControlPart> createMeterPartForRenderer(const RenderObject& renderer)
 {
     ASSERT(is<RenderMeter>(renderer));
@@ -598,7 +613,7 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
-        break;
+        return createApplePayButtonPartForRenderer(renderer);
 #endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case StyleAppearance::Attachment:

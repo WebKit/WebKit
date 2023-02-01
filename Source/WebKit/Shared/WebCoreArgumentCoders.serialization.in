@@ -2492,6 +2492,14 @@ enum class WebCore::StyleAppearance : uint8_t {
     SliderThumbVertical
 };
 
+#if ENABLE(APPLE_PAY)
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonPart {
+    WebCore::ApplePayButtonType buttonType();
+    WebCore::ApplePayButtonStyle buttonStyle();
+    String locale();
+};
+#endif
+
 [Nested] enum class WebCore::MeterPart::GaugeRegion : uint8_t {
     Optimum,
     Suboptimal,

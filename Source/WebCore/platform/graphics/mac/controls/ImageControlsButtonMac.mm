@@ -28,9 +28,13 @@
 
 #if PLATFORM(MAC) && ENABLE(SERVICE_CONTROLS)
 
+#import "ControlFactoryMac.h"
+#import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "ImageControlsButtonPart.h"
+#import "LocalCurrentGraphicsContext.h"
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
