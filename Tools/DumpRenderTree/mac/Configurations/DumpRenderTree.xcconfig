@@ -30,6 +30,7 @@ OTHER_LDFLAGS_ = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpR
 LD_RUNPATH_SEARCH_PATHS = "@loader_path/.";
 STRIP_STYLE = debugging;
 PRODUCT_NAME = DumpRenderTree;
+PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.DumpRenderTree;
 
 SKIP_INSTALL[sdk=embedded*] = YES;
 
