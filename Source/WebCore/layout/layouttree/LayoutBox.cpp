@@ -41,10 +41,10 @@ namespace Layout {
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
 Box::Box(ElementAttributes&& elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
-    : m_style(WTFMove(style))
-    , m_nodeType(elementAttributes.nodeType)
+    : m_nodeType(elementAttributes.nodeType)
     , m_isAnonymous(static_cast<bool>(elementAttributes.isAnonymous))
     , m_baseTypeFlags(baseTypeFlags.toRaw())
+    , m_style(WTFMove(style))
 {
     if (firstLineStyle)
         ensureRareData().firstLineStyle = WTFMove(firstLineStyle);

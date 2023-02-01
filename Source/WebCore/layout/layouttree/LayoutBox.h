@@ -213,8 +213,6 @@ private:
 
     static RareDataMap& rareDataMap();
 
-    RenderStyle m_style;
-
     NodeType m_nodeType : 4;
     bool m_isAnonymous : 1;
 
@@ -222,6 +220,8 @@ private:
     bool m_hasRareData : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };
     bool m_isFirstChildForIntegration : 1 { false };
+
+    RenderStyle m_style;
 
     CheckedPtr<ElementBox> m_parent;
     
