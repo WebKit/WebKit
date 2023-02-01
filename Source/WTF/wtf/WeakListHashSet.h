@@ -50,6 +50,7 @@ public:
         WeakListHashSetIteratorBase(ListHashSetType& set, IteratorType position)
             : m_set { set }
             , m_position { position }
+            , m_beginPosition { set.m_set.begin() }
             , m_endPosition { set.m_set.end() }
         {
             skipEmptyBuckets();
@@ -58,6 +59,7 @@ public:
         WeakListHashSetIteratorBase(const ListHashSetType& set, IteratorType position)
             : m_set { set }
             , m_position { position }
+            , m_beginPosition { set.m_set.begin() }
             , m_endPosition { set.m_set.end() }
         {
             skipEmptyBuckets();
@@ -76,6 +78,15 @@ public:
             m_set.increaseOperationCountSinceLastCleanup();
         }
 
+        void advanceBackwards()
+        {
+            ASSERT(m_position != m_beginPosition);
+            --m_position;
+            while (m_position != m_beginPosition && !makePeek())
+                --m_position;
+            m_set.increaseOperationCountSinceLastCleanup();
+        }
+
         void skipEmptyBuckets()
         {
             while (m_position != m_endPosition && !makePeek())
@@ -84,6 +95,7 @@ public:
 
         const ListHashSetType& m_set;
         IteratorType m_position;
+        IteratorType m_beginPosition;
         IteratorType m_endPosition;
     };
 
@@ -101,6 +113,12 @@ public:
         WeakListHashSetIterator& operator++()
         {
             Base::advance();
+            return *this;
+        }
+
+        WeakListHashSetIterator& operator--()
+        {
+            Base::advanceBackwards();
             return *this;
         }
 
@@ -126,6 +144,12 @@ public:
         WeakListHashSetConstIterator& operator++()
         {
             Base::advance();
+            return *this;
+        }
+
+        WeakListHashSetIterator& operator--()
+        {
+            Base::advanceBackwards();
             return *this;
         }
 
