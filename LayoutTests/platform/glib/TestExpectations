@@ -328,6 +328,125 @@ webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ Pass ]
 webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ Pass ]
 webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass ]
 
+http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Pass ]
+http/tests/websocket/tests/hybi/extensions.html [ Pass ]
+
+http/wpt/resource-timing/rt-initiatorType-media.html [ Pass ]
+
+imported/mozilla/svg/text/textpath-multiline.svg [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-number.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-align/baseline-rules/grid-item-input-type-text.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/align-content/masonry-align-content-004.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-default.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic1.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited-dynamic2.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-composited.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-dynamic1.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-dynamic2.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-image-document.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/cssom/css-style-attr-decl-block.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-016.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-position/multicol/static-position/vlr-ltr-ltr-in-multicol.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-position/multicol/static-position/vrl-ltr-ltr-in-multicol.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-001.sub.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-position/position-absolute-iframe-print-002.sub.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-pseudo/placeholder-excluded-properties.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-004.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-005.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-and-trailing-spaces-006.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-ui/appearance-menulist-button-002.tentative.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-input-search-text-background-size-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-input-text-background-size-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-background-attachment-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-background-clip-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-background-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-background-image-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-background-origin-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-background-position-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-block-end-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-block-start-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-bottom-left-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-bottom-right-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-bottom-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-end-end-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-end-start-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-image-outset-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-image-repeat-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-image-slice-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-image-source-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-image-width-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-inline-end-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-inline-start-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-left-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-right-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-start-end-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-start-start-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-top-left-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-top-right-radius-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-meter-border-top-style-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-end-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-block-start-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-end-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-inline-start-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-left-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-right-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-top-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-listbox-background-size-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-block-end-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-block-start-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-bottom-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-inline-end-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-inline-start-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-left-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-right-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-top-color-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-background-size-001.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-writing-modes/float-lft-orthog-htb-in-vlr-002.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/float-rgt-orthog-htb-in-vlr-003.xht [ Pass ]
+
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-displacement-negative-scale-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/effect-reference-local-url-with-base-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/filter-effects/fecomposite-non-zero-inoffset-001.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.sub.html [ Pass ]
+imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled-print.sub.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-inherit-rtl.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/drawing-text-to-the-canvas/direction-rtl.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-text-to-the-canvas/canvas.2d.disconnected.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-rotation.html [ Pass ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-list-item.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/legend-list-item-numbering.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe-in-multicol.sub.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/cross-domain-iframe.sub.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/tall-cross-domain-iframe-in-scrolled.sub.html [ Pass ]
+
+imported/w3c/web-platform-tests/quirks/line-height-in-list-item.tentative.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -919,8 +1038,6 @@ imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-x
 
 webkit.org/b/233731 fast/mediastream/getDisplayMedia-size.html [ Failure ]
 
-webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Timeout ]
-
 # Expected to pass when we enable playbin3 by default and update the SDK to GStreamer 1.20.
 webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
 
@@ -937,7 +1054,6 @@ webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
 webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-allowing-play.html [ Slow ]
 
-webkit.org/b/244776 media/media-source/media-source-seek-detach-crash.html [ Crash ]
 webkit.org/b/244776 media/media-source/media-source-unnecessary-seek-seeked.html [ Crash ]
 
 webkit.org/b/245639 media/video-as-img-with-alpha.html [ ImageOnlyFailure ]
@@ -1139,9 +1255,6 @@ webkit.org/b/245952 [ Release ] imported/w3c/web-platform-tests/webcodecs/videoF
 # PageOverlay-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/152908 pageoverlay/overlay-installation.html [ Failure ]
-webkit.org/b/152908 pageoverlay/overlay-large-document-scrolled.html [ Failure ]
-webkit.org/b/152908 pageoverlay/overlay-large-document.html [ Failure ]
 webkit.org/b/168501 pageoverlay/overlay-remove-reinsert-view.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1466,11 +1579,8 @@ webgl/webgl-via-metal-flag-off.html [ Skip ]
 fast/canvas/webgl/draw-elements-out-of-bounds-uint-index.html [ Failure ]
 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
-fast/mediacapturefromelement/CanvasCaptureMediaStream-offscreencanvas.html [ Failure ]
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
-http/wpt/offscreen-canvas/getContext-webgl.html [ Failure ]
 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure ]
@@ -1871,9 +1981,6 @@ imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-conten
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/reset-algorithm-rendering.html [ Pass ]
 
 imported/w3c/web-platform-tests/mathml/presentation-markup/menclose/legacy-menclose-radical-notation.html [ Pass ]
-
-# Failed since added in r270045.
-webkit.org/b/219247 imported/w3c/web-platform-tests/compat/webkit-box-clamp-bottom-border.html [ ImageOnlyFailure ]
 
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Timeout ]
 
@@ -2972,7 +3079,6 @@ webkit.org/b/237108 http/tests/websocket/tests/hybi/simple-wss.html [ Failure ]
 
 webkit.org/b/236298 fast/text/combining-character-sequence-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/text/fallback-font-and-zero-width-glyph.html [ ImageOnlyFailure ]
-webkit.org/b/236298 fast/text/hanging-punctuation-allow-end-basic.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/text/simple-line-layout-with-justified-punctuation.html [ ImageOnlyFailure ]
 
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
