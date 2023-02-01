@@ -26,7 +26,8 @@
 #include "config.h"
 #include "TouchGestureController.h"
 
-#include "WebKitSettings.h"
+#if USE(LIBWPE) && ENABLE(TOUCH_EVENTS)
+
 #include <WebCore/Scrollbar.h>
 
 namespace WebKit {
@@ -164,3 +165,5 @@ TouchGestureController::EventVariant TouchGestureController::handleEvent(const s
 }
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE) && ENABLE(TOUCH_EVENTS)

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(LIBWPE) && ENABLE(TOUCH_EVENTS)
+
 #include "WebWheelEvent.h"
 #include <variant>
 #include <wpe/wpe.h>
@@ -82,3 +84,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(LIBWPE) && ENABLE(TOUCH_EVENTS)

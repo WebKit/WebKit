@@ -107,7 +107,9 @@ public:
     WebKitWebViewAccessible* accessible() const;
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
     WebKit::TouchGestureController& touchGestureController() const { return *m_touchGestureController; }
+#endif
 #if ENABLE(GAMEPAD)
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
@@ -121,7 +123,9 @@ private:
 
     std::unique_ptr<API::ViewClient> m_client;
 
+#if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
+#endif
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;
     WebCore::IntSize m_size;

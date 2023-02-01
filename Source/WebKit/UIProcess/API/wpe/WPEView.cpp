@@ -57,7 +57,9 @@ static Vector<View*>& viewsVector()
 
 View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseConfiguration)
     : m_client(makeUnique<API::ViewClient>())
+#if ENABLE(TOUCH_EVENTS)
     , m_touchGestureController(makeUnique<TouchGestureController>())
+#endif
     , m_pageClient(makeUnique<PageClientImpl>(*this))
     , m_size { 800, 600 }
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
@@ -230,6 +232,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         // handle_touch_event
         [](void* data, struct wpe_input_touch_event* event)
         {
+#if ENABLE(TOUCH_EVENTS)
             auto& view = *reinterpret_cast<View*>(data);
             auto& page = view.page();
 
@@ -267,6 +270,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
             }
 
             page.handleTouchEvent(touchEvent);
+#endif
         },
         // padding
         nullptr,
