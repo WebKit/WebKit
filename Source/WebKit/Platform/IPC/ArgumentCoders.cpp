@@ -99,15 +99,6 @@ void ArgumentCoder<String>::encode<Encoder>(Encoder&, const String&);
 template
 void ArgumentCoder<String>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const String&);
 
-template<typename CharacterType, typename Decoder>
-static inline std::optional<String> decodeStringText(Decoder& decoder, unsigned length)
-{
-    auto data = decoder.template decodeSpan<CharacterType>(length);
-    if (!data.data())
-        return std::nullopt;
-    return std::make_optional<String>(data);
-}
-
 template<typename Decoder>
 WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
 {
@@ -124,9 +115,16 @@ WARN_UNUSED_RETURN std::optional<String> ArgumentCoder<String>::decode(Decoder& 
     if (!is8Bit)
         return std::nullopt;
     
-    if (*is8Bit)
-        return decodeStringText<LChar>(decoder, *length);
-    return decodeStringText<UChar>(decoder, *length);
+    if (*is8Bit) {
+        auto data = decoder.template decodeSpan<LChar>(*length);
+        if (data.data())
+            return String::fromLatin1Span(data);
+    } else {
+        auto data = decoder.template decodeSpan<UChar>(*length);
+        if (data.data())
+            return String::fromSpan(data);
+    }
+    return std::nullopt;
 }
 template
 std::optional<String> ArgumentCoder<String>::decode<Decoder>(Decoder&);

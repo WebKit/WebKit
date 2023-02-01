@@ -787,7 +787,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value) con
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "Failed to format a number."_s);
 #endif
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String::fromSpan(buffer));
 }
 
 // https://tc39.es/ecma402/#sec-formatnumber
@@ -818,7 +818,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, IntlMathematicalV
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "Failed to format a BigInt."_s);
 #endif
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String::fromSpan(buffer));
 }
 
 #if HAVE(ICU_U_NUMBER_RANGE_FORMATTER)
@@ -1553,7 +1553,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
     IntlFieldIterator iterator(*fieldItr.get());
 #endif
 
-    auto resultString = String(WTFMove(result));
+    auto resultString = String::fromSpan(result);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
@@ -1599,7 +1599,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathem
 
     IntlFieldIterator iterator(*fieldItr.get());
 
-    auto resultString = String(WTFMove(result));
+    auto resultString = String::fromSpan(result);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)

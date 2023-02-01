@@ -463,7 +463,7 @@ void DateCache::timeZoneCacheSlow()
         Vector<UChar, 32> canonicalBuffer;
         auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneID.data(), timeZoneID.size(), canonicalBuffer, nullptr);
         if (U_SUCCESS(status))
-            canonical = String(canonicalBuffer);
+            canonical = String::fromSpan(canonicalBuffer);
     }
     if (canonical.isNull() || isUTCEquivalent(canonical))
         canonical = "UTC"_s;

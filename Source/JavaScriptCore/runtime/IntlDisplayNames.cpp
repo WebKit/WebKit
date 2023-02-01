@@ -339,7 +339,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         buffer = vm.intlCache().getFieldDisplayName(m_localeCString.data(), field.value(), style, status);
         if (U_FAILURE(status))
             return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, WTFMove(code));
-        return jsString(vm, String(WTFMove(buffer)));
+        return jsString(vm, String::fromSpan(buffer));
     }
     }
     if (U_FAILURE(status)) {
@@ -349,7 +349,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, String(canonicalCode.data(), canonicalCode.length()));
         return throwTypeError(globalObject, scope, "Failed to query a display name."_s);
     }
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String::fromSpan(buffer));
 }
 
 // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.prototype.resolvedOptions

@@ -258,7 +258,7 @@ String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, doub
         return String();
     }
 
-    return String(result);
+    return String::fromSpan(result);
 }
 
 // https://tc39.es/ecma402/#sec-FormatRelativeTime
@@ -293,7 +293,7 @@ JSValue IntlRelativeTimeFormat::formatToParts(JSGlobalObject* globalObject, doub
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format relative time"_s);
 
-    auto formattedNumber = String(buffer);
+    auto formattedNumber = String::fromSpan(buffer);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)

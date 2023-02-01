@@ -141,7 +141,7 @@ bool HTMLConstructionSite::isFormattingTag(TagName tagName)
 class HTMLTreeBuilder::ExternalCharacterTokenBuffer {
 public:
     explicit ExternalCharacterTokenBuffer(AtomHTMLToken& token)
-        : m_text(token.characters())
+        : m_text(StringView::fromSpan(token.characters()))
         , m_isAll8BitData(token.charactersIsAll8BitData())
     {
         ASSERT(!isEmpty());
@@ -3003,7 +3003,7 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomHTMLToken&& token)
         m_tree.insertComment(WTFMove(token));
         return;
     case HTMLToken::Type::Character: {
-        String characters = token.characters();
+        auto characters = String::fromSpan(token.characters());
         m_tree.insertTextNode(characters);
         if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
             m_framesetOk = false;

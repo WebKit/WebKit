@@ -139,7 +139,7 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
         Vector<UChar, 32> buffer;
         auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, ianaTimeZone, ianaTimeZoneLength, buffer, nullptr);
         ASSERT_UNUSED(status, U_SUCCESS(status));
-        canonical = String(buffer);
+        canonical = String::fromSpan(buffer);
     } while (canonical.isNull());
     uenum_close(timeZones);
 
@@ -1290,7 +1290,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
 
-    return jsString(vm, String(WTFMove(result)));
+    return jsString(vm, String::fromSpan(result));
 }
 
 static ASCIILiteral partTypeString(UDateFormatField field)
@@ -1449,7 +1449,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
         }
     }
 
-    dataLogLnIf(IntlDateTimeFormatInternal::verbose, "interval format pattern:(", String(pattern), "),skeleton:(", String(skeleton), ")");
+    dataLogLnIf(IntlDateTimeFormatInternal::verbose, "interval format pattern:(", StringView::fromSpan(pattern), "),skeleton:(", StringView::fromSpan(skeleton), ")");
 
     // While the pattern is including right HourCycle patterns, UDateIntervalFormat does not follow.
     // We need to enforce HourCycle by setting "hc" extension if it is specified.
@@ -1613,7 +1613,7 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
         return { };
     }
 
-    return jsString(vm, String(WTFMove(buffer)));
+    return jsString(vm, String::fromSpan(buffer));
 #endif
 }
 

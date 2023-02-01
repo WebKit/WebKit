@@ -1430,7 +1430,7 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
         return throwVMTypeError(globalObject, scope, String::fromLatin1(u_errorName(status)));
 
     // 18. Return L.
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String { WTFMove(buffer) })));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, String::fromSpan(buffer))));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLocaleLowerCase, (JSGlobalObject* globalObject, CallFrame* callFrame))

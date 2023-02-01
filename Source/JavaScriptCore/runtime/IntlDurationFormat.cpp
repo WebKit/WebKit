@@ -397,7 +397,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                     return { };
                 }
 
-                return String(WTFMove(buffer));
+                return String::fromSpan(buffer);
             };
 
             auto formatDouble = [&](const String& skeleton) -> std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>> {
@@ -535,7 +535,7 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
 
-    return jsString(vm, String(WTFMove(result)));
+    return jsString(vm, String::fromSpan(result));
 #else
     UNUSED_PARAM(duration);
     return throwTypeError(globalObject, scope, "failed to format list of strings"_s);
