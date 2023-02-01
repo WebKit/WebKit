@@ -58,7 +58,6 @@
 #import "UIDelegate.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "ViewGestureController.h"
-#import "WKApplicationManifestInternal.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
@@ -1963,24 +1962,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
     _minimumViewportInset = minimumViewportInset;
     _maximumViewportInset = maximumViewportInset;
-}
-
-- (void)getApplicationManifestWithCompletionHandler:(void (^)(WKApplicationManifest *))completionHandler
-{
-    THROW_IF_SUSPENDED;
-#if ENABLE(APPLICATION_MANIFEST)
-    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ApplicationManifest>& manifest) {
-        if (manifest) {
-            auto apiManifest = API::ApplicationManifest::create(*manifest);
-            auto wkManifest = adoptNS([[WKApplicationManifest alloc] initWithApplicationManifest:WTFMove(apiManifest)]);
-            completionHandler(wkManifest.get());
-        } else
-            completionHandler(nil);
-    });
-#else
-    if (completionHandler)
-        completionHandler(nil);
-#endif
 }
 
 @end
