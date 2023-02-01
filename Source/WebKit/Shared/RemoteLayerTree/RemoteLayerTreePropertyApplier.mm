@@ -146,7 +146,8 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-static void applyGeometryPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties)
+enum class FlattenPerspectiveTransforms : bool { No, Yes };
+static void applyGeometryPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties, FlattenPerspectiveTransforms flattenPerspectiveTransforms)
 {
     if (properties.changedProperties & LayerChange::PositionChanged) {
         layer.position = CGPointMake(properties.position.x(), properties.position.y());
@@ -161,10 +162,18 @@ static void applyGeometryPropertiesToLayer(CALayer *layer, const RemoteLayerTree
     if (properties.changedProperties & LayerChange::BoundsChanged)
         layer.bounds = properties.bounds;
 
-    if (properties.changedProperties & LayerChange::TransformChanged)
-        layer.transform = properties.transform ? (CATransform3D)*properties.transform.get() : CATransform3DIdentity;
+    if (properties.changedProperties & LayerChange::TransformChanged) {
+        if (properties.transform) {
+            CATransform3D transform = (CATransform3D)*properties.transform.get();
+            if (flattenPerspectiveTransforms == FlattenPerspectiveTransforms::Yes && transform.m43)
+                layer.affineTransform = CATransform3DGetAffineTransform(transform);
+            else
+                layer.transform = transform;
+        } else
+            layer.transform = CATransform3DIdentity;
+    }
 
-    if (properties.changedProperties & LayerChange::SublayerTransformChanged)
+    if (flattenPerspectiveTransforms == FlattenPerspectiveTransforms::No && (properties.changedProperties & LayerChange::SublayerTransformChanged))
         layer.sublayerTransform = properties.sublayerTransform ? (CATransform3D)*properties.sublayerTransform.get() : CATransform3DIdentity;
 
     if (properties.changedProperties & LayerChange::HiddenChanged)
@@ -181,7 +190,7 @@ static void applyGeometryPropertiesToLayer(CALayer *layer, const RemoteLayerTree
 
 void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, RemoteLayerBackingStore::LayerContentsType layerContentsType)
 {
-    applyGeometryPropertiesToLayer(layer, properties);
+    applyGeometryPropertiesToLayer(layer, properties, FlattenPerspectiveTransforms::No);
 
     if (properties.changedProperties & LayerChange::NameChanged)
         layer.name = properties.name;
@@ -300,7 +309,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 
     applyPropertiesToLayer(node.layer(), layerTreeHost, properties, layerContentsType);
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    applyGeometryPropertiesToLayer(node.interactionRegionsLayer(), properties);
+    applyGeometryPropertiesToLayer(node.interactionRegionsLayer(), properties, FlattenPerspectiveTransforms::Yes);
     if (properties.changedProperties & LayerChange::EventRegionChanged)
         updateLayersForInteractionRegions(node.interactionRegionsLayer(), *layerTreeHost, properties);
 #endif

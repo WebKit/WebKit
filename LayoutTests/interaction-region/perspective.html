@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body {
+        margin: 0;
+        perspective: 400px;
+    }
+    section {
+        width: 200px;
+        height: 200px;
+    }
+
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+    <section style="transform: translate3d(10px, -10px, 0)">
+        <h2>2D Transform</h2>
+        <a href="#">This is a link</a>
+    </section>
+
+    <section style="transform: rotateX(90deg); will-change: transform">
+        <h2>Rotate layer</h2>
+        <a href="#">This is a link</a>
+    </section>
+
+    <section style="transform: translate3d(10px, -20px, -120px);">
+        <h2>3D Transform</h2>
+        <a href="#">This is a link</a>
+    </section>
+</div>
+
+</section>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.ensureStablePresentationUpdate();
+    results.textContent = await UIHelper.getCALayerTree();
+    document.getElementById('test').remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

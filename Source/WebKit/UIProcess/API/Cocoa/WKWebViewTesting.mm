@@ -92,6 +92,10 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
         return makeString("[x: ", point.x, " y: ", point.x, "]");
     };
 
+    auto transformToArray = [] (auto t) {
+        return std::array<double, 16> { t.m11, t.m12, t.m13, t.m14, t.m21, t.m22, t.m23, t.m24, t.m31, t.m32, t.m33, t.m34, t.m41, t.m42, t.m43, t.m44 };
+    };
+
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if ([layer valueForKey:@"WKInteractionRegion"])
         ts.dumpProperty("type", "interaction");
@@ -112,6 +116,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
     if (layer.anchorPointZ)
         ts.dumpProperty("layer anchorPointZ", makeString(layer.anchorPointZ));
+
+    if (!CATransform3DIsIdentity(layer.transform))
+        ts.dumpProperty("transform", transformToArray(layer.transform));
+    if (!CATransform3DIsIdentity(layer.sublayerTransform))
+        ts.dumpProperty("sublayer transform", transformToArray(layer.sublayerTransform));
 
     if (traverse && layer.sublayers.count > 0) {
         TextStream::GroupScope scope(ts);
