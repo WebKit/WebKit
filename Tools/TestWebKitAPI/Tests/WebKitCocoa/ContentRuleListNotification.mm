@@ -353,6 +353,42 @@ TEST(ContentRuleList, SupportsRegex)
         EXPECT_FALSE([WKContentRuleList _supportsRegularExpression:regex]);
 }
 
+TEST(ContentRuleList, ParseRuleList)
+{
+    NSArray<NSString *> *passingRuleLists = @[
+        @"[ { \"action\": { \"type\" : \"css-display-none\", \"selector\": \"a[href*='apple.com']\" }, \"trigger\": { \"url-filter\": \".*\" }} ]",
+        @"[ { \"action\": { \"type\" : \"block\" }, \"trigger\": { \"url-filter\": \"webkit.org\" }} ]",
+        @"[ { \"action\": { \"type\" : \"ignore-previous-rules\" }, \"trigger\": { \"url-filter\": \"example.com\" }} ]",
+    ];
+
+    for (NSString *passingRuleList in passingRuleLists) {
+        NSError *parsingError = [WKContentRuleList _parseRuleList:passingRuleList];
+        EXPECT_NULL(parsingError);
+    }
+
+    NSArray<NSString *> *failingRuleLists = @[
+        // Invalid JSON.
+        @"{{ \"action\": { \"type\" : \"css-display-none\", \"selector\": \"a[href*='apple.com']\" }, \"trigger\": { \"url-filter\": \".*\" }}",
+
+        // Top level object not an array.
+        @"{ \"action\": { \"type\" : \"css-display-none\", \"selector\": \"a[href*='apple.com']\" }, \"trigger\": { \"url-filter\": \".*\" }}",
+
+        // No trigger.
+        @"[ { \"action\": { \"type\" : \"block\" }} ]",
+
+        // No action.
+        @"[ { \"trigger\": { \"url-filter\": \"webkit.org\" }} ]",
+
+        // Fake action type.
+        @"[ { \"action\": { \"type\" : \"dance\" }, \"trigger\": { \"url-filter\": \"webkit.org\" }} ]",
+    ];
+
+    for (NSString *failingRuleList in failingRuleLists) {
+        NSError *parsingError = [WKContentRuleList _parseRuleList:failingRuleList];
+        EXPECT_NOT_NULL(parsingError);
+    }
+}
+
 TEST(ContentRuleList, TopFrameChildFrame)
 {
     auto handler = [[TestURLSchemeHandler new] autorelease];
