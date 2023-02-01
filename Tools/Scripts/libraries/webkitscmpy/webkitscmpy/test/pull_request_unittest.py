@@ -1420,7 +1420,7 @@ Reviewed by NOBODY (OOPS!).
 * Source/file.cpp:
 </pre>
 ''',
-            head=dict(ref='eng/pull-request'),
+            head=dict(ref='eng/pull-request', sha='95507e3a1a4a919d1a156abbc279fdf6d24b13f5'),
             base=dict(ref='main'),
             requested_reviews=[dict(login='rreviewer')],
             reviews=[
@@ -1439,6 +1439,7 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(prs[0].number, 1)
             self.assertEqual(prs[0].title, 'Example Change')
             self.assertEqual(prs[0].head, 'eng/pull-request')
+            self.assertEqual(prs[0].hash, '95507e3a1a4a919d1a156abbc279fdf6d24b13f5')
             self.assertEqual(prs[0].base, 'main')
 
     def test_get(self):
@@ -1448,6 +1449,7 @@ Reviewed by NOBODY (OOPS!).
             self.assertTrue(pr.opened)
             self.assertEqual(pr.title, 'Example Change')
             self.assertEqual(pr.head, 'eng/pull-request')
+            self.assertEqual(pr.hash, '95507e3a1a4a919d1a156abbc279fdf6d24b13f5')
             self.assertEqual(pr.base, 'main')
             self.assertEqual(pr.draft, False)
 
@@ -1546,7 +1548,7 @@ Reviewed by NOBODY (OOPS!).
 * Source/file.cpp:
 ```
 ''',
-            fromRef=dict(displayId='eng/pull-request'),
+            fromRef=dict(displayId='eng/pull-request', latestCommit='95507e3a1a4a919d1a156abbc279fdf6d24b13f5'),
             toRef=dict(displayId='main'),
             reviewers=[
                 dict(
@@ -1577,6 +1579,7 @@ Reviewed by NOBODY (OOPS!).
                 self.assertEqual(prs[0].number, 1)
                 self.assertEqual(prs[0].title, 'Example Change')
                 self.assertEqual(prs[0].head, 'eng/pull-request')
+                self.assertEqual(prs[0].hash, '95507e3a1a4a919d1a156abbc279fdf6d24b13f5')
                 self.assertEqual(prs[0].base, 'main')
 
     def test_get(self):
@@ -1586,6 +1589,7 @@ Reviewed by NOBODY (OOPS!).
             self.assertTrue(pr.opened)
             self.assertEqual(pr.title, 'Example Change')
             self.assertEqual(pr.head, 'eng/pull-request')
+            self.assertEqual(pr.hash, '95507e3a1a4a919d1a156abbc279fdf6d24b13f5')
             self.assertEqual(pr.base, 'main')
             self.assertEqual(pr.draft, False)
 
