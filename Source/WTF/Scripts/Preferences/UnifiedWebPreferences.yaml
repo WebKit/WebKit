@@ -320,11 +320,14 @@ AllowWebGLInWorkers:
   condition: ENABLE(WEBGL)
   defaultValue:
     WebKitLegacy:
-      default: true
+      "ENABLE(WEBGL_IN_WORKERS)": true
+      default: false
     WebKit:
-      default: true
+      "ENABLE(WEBGL_IN_WORKERS)": true
+      default: false
     WebCore:
-      default: true
+      "ENABLE(WEBGL_IN_WORKERS)": true
+      default: false
 
 AllowsAirPlayForMediaPlayback:
   type: bool
