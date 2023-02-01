@@ -66,12 +66,6 @@ public:
 
     class Handle {
     public:
-        Handle() = default;
-        Handle(const Handle&) = default;
-        Handle(Handle&&) = default;
-        Handle& operator=(const Handle&) = default;
-        Handle& operator=(Handle&&) = default;
-
         bool isNull() const;
 
         size_t size() const { return m_size; }
@@ -86,11 +80,6 @@ public:
         static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
 #if USE(UNIX_DOMAIN_SOCKETS)
         UnixFileDescriptor releaseHandle();
-#endif
-
-#if PLATFORM(COCOA)
-        explicit Handle(MachSendRight&&, size_t);
-        static std::optional<Handle> create(void* data, size_t, Protection);
 #endif
 
     private:
@@ -143,6 +132,10 @@ public:
     Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
 
 private:
+#if OS(DARWIN)
+    WTF::MachSendRight createSendRight(Protection) const;
+#endif
+
     size_t m_size;
     void* m_data;
 #if PLATFORM(COCOA)
