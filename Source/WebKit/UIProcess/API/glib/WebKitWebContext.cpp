@@ -32,7 +32,6 @@
 #include "WebAutomationSession.h"
 #include "WebKitAutomationSessionPrivate.h"
 #include "WebKitDownloadPrivate.h"
-#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitGeolocationManagerPrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitInjectedBundleClient.h"
@@ -83,6 +82,10 @@
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSession.h"
+#endif
+
+#if !ENABLE(2022_GLIB_API)
+#include "WebKitFaviconDatabasePrivate.h"
 #endif
 
 using namespace WebKit;

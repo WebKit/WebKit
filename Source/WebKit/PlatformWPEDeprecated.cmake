@@ -5,6 +5,7 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 )
 
 list(APPEND WPE_API_HEADER_TEMPLATES
+    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFaviconDatabase.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitMimeInfo.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitPlugin.h.in
 )
