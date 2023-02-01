@@ -171,6 +171,9 @@ Expected<AST::Node::Ref, Error> Parser<Lexer>::parseGlobalDecl()
 {
     START_PARSE();
 
+    while (current().m_type == TokenType::Semicolon)
+        consume();
+
     PARSE(attributes, Attributes);
 
     switch (current().m_type) {
@@ -540,15 +543,13 @@ Expected<UniqueRef<AST::Statement>, Error> Parser<Lexer>::parseStatement()
 {
     START_PARSE();
 
+    while (current().m_type == TokenType::Semicolon)
+        consume();
+
     switch (current().m_type) {
     case TokenType::BraceLeft: {
         PARSE(compoundStmt, CompoundStatement);
         return { makeUniqueRef<AST::CompoundStatement>(WTFMove(compoundStmt)) };
-    }
-    case TokenType::Semicolon: {
-        consume();
-        AST::Statement::List statements;
-        return { makeUniqueRef<AST::CompoundStatement>(CURRENT_SOURCE_SPAN(), WTFMove(statements)) };
     }
     case TokenType::KeywordReturn: {
         PARSE(returnStmt, ReturnStatement);
