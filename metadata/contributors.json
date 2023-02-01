@@ -2588,6 +2588,14 @@
    },
    {
       "emails" : [
+         "sgz@apple.com",
+         "etienne@segonzac.info"
+      ],
+      "github" : "etiennesegonzac",
+      "name" : "Etienne Segonzac"
+   },
+   {
+      "emails" : [
          "eustas@chromium.org"
       ],
       "name" : "Eugene Klyuchnikov",
