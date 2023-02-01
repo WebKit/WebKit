@@ -891,6 +891,8 @@ auto LLIntGenerator::addLocal(Type type, uint32_t count) -> PartialResult
             m_unitializedLocals.append(push(NoConsistencyCheck));
     } else
         m_stackSize += count;
+    if (m_maxStackSize < m_stackSize)
+        m_maxStackSize = m_stackSize;
     return { };
 }
 
