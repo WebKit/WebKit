@@ -1808,3 +1808,5 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canva
 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Skip ]
 
 webkit.org/b/251187 [ Debug ] imported/w3c/web-platform-tests/fetch/api/redirect/redirect-back-to-original-origin.any.html [ Pass Crash ]
+
+webkit.org/b/250046 [ Monterey+ ] svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
