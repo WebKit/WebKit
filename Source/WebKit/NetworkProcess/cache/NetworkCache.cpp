@@ -605,7 +605,7 @@ String Cache::dumpFilePath() const
 
 void Cache::dumpContentsToFile()
 {
-    auto fd = openFile(dumpFilePath(), FileOpenMode::Write);
+    auto fd = openFile(dumpFilePath(), FileOpenMode::Truncate);
     if (!isHandleValid(fd))
         return;
 

@@ -379,7 +379,7 @@ void BlobRegistryImpl::writeBlobToFilePath(const URL& blobURL, const String& pat
     }
 
     blobUtilityQueue().dispatch([path, blobsForWriting = WTFMove(blobsForWriting), completionHandler = WTFMove(completionHandler)]() mutable {
-        bool success = writeFilePathsOrDataBuffersToFile(blobsForWriting.first().filePathsOrDataBuffers, FileSystem::openFile(path, FileSystem::FileOpenMode::Write), path);
+        bool success = writeFilePathsOrDataBuffersToFile(blobsForWriting.first().filePathsOrDataBuffers, FileSystem::openFile(path, FileSystem::FileOpenMode::Truncate), path);
         callOnMainThread([success, completionHandler = WTFMove(completionHandler)]() {
             completionHandler(success);
         });

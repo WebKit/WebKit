@@ -355,7 +355,7 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
     case FileOpenMode::Read:
         pageProtection = PROT_READ;
         break;
-    case FileOpenMode::Write:
+    case FileOpenMode::Truncate:
         pageProtection = PROT_WRITE;
         break;
     case FileOpenMode::ReadWrite:
@@ -526,7 +526,7 @@ std::optional<Salt> readOrMakeSalt(const String& path)
 
     Salt salt = makeSalt();
     FileSystem::makeAllDirectories(FileSystem::parentPath(path));
-    auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Write, FileSystem::FileAccessPermission::User);
+    auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Truncate, FileSystem::FileAccessPermission::User);
     if (!FileSystem::isHandleValid(file))
         return { };
 
@@ -575,15 +575,12 @@ std::optional<Vector<uint8_t>> readEntireFile(const String& path)
 
 int overwriteEntireFile(const String& path, Span<uint8_t> span)
 {
-    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite);
+    auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Truncate);
     auto closeFile = makeScopeExit([&] {
         FileSystem::closeFile(fileHandle);
     });
 
     if (!FileSystem::isHandleValid(fileHandle))
-        return -1;
-
-    if (!FileSystem::truncateFile(fileHandle, 0))
         return -1;
 
     return FileSystem::writeToFile(fileHandle, span.data(), span.size());

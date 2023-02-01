@@ -141,7 +141,7 @@ void CurlCacheManager::saveIndex()
     auto indexFilePath = makeString(m_cacheDir, "index.dat"_s);
 
     FileSystem::deleteFile(indexFilePath);
-    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::FileOpenMode::Write);
+    FileSystem::PlatformFileHandle indexFile = FileSystem::openFile(indexFilePath, FileSystem::FileOpenMode::Truncate);
     if (!FileSystem::isHandleValid(indexFile)) {
         LOG(Network, "Cache Error: Could not open %s for write\n", indexFilePath.latin1().data());
         return;

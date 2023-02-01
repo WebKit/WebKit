@@ -392,7 +392,7 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
 
 static bool writeSandboxDataToCacheFile(const SandboxInfo& info, const Vector<char>& cacheFile)
 {
-    FileHandle file { info.filePath, FileSystem::FileOpenMode::Write, FileSystem::FileLockMode::Exclusive };
+    FileHandle file { info.filePath, FileSystem::FileOpenMode::Truncate, FileSystem::FileLockMode::Exclusive };
     return file.write(cacheFile.data(), cacheFile.size()) == safeCast<int>(cacheFile.size());
 }
 

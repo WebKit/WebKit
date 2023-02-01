@@ -1284,7 +1284,7 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(FragmentedSharedB
         fullPath = FileSystem::pathByAppendingComponent(directory, path);
     } while (FileSystem::parentPath(fullPath) != directory || FileSystem::fileExists(fullPath));
     
-    FileSystem::PlatformFileHandle handle = FileSystem::openFile(fullPath, FileSystem::FileOpenMode::Write);
+    FileSystem::PlatformFileHandle handle = FileSystem::openFile(fullPath, FileSystem::FileOpenMode::Truncate);
     if (!handle)
         return false;
     

@@ -498,17 +498,8 @@ void Engine::writeSizeFile(String&& path, uint64_t size, CompletionHandler<void(
 
     m_ioQueue->dispatch([path = WTFMove(path).isolatedCopy(), size, completionHandler = WTFMove(completionHandler)]() mutable {
         Locker locker { globalSizeFileLock };
-        auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
-
-        if (FileSystem::isHandleValid(fileHandle)) {
-            FileSystem::truncateFile(fileHandle, 0);
-
-            auto value = String::number(size).utf8();
-            FileSystem::writeToFile(fileHandle, value.data(), value.length());
-
-            FileSystem::closeFile(fileHandle);
-        }
-
+        auto value = String::number(size).utf8();
+        FileSystem::overwriteEntireFile(path, Span { reinterpret_cast<uint8_t*>(const_cast<char*>(value.data())), value.length() });
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });
 }
