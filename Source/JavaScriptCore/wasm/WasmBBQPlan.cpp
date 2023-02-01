@@ -244,7 +244,7 @@ void BBQPlan::compileFunction(uint32_t functionIndex)
     }
     m_callees[functionIndex] = WTFMove(bbqCallee);
 
-    if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndex)) {
+    if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
         Locker locker { m_lock };
         TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
         const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
