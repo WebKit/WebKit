@@ -1525,18 +1525,24 @@ class BugzillaMixin(AddToLogMixin):
             yield self._addToLog('stdio', f'Error in removing flags on Patch {patch_id}\n    {e}\n')
             defer.returnValue(FAILURE)
 
+    @defer.inlineCallbacks
     def set_cq_minus_flag_on_patch(self, patch_id):
-        patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
         flags = [{'name': 'commit-queue', 'status': '-'}]
         try:
-            response = requests.put(patch_url, json={'flags': flags, 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            patch_url = f'{BUG_SERVER_URL}rest/bug/attachment/{patch_id}'
+            response = yield TwistedAdditions.request(
+                patch_url, type=b'PUT',
+                json={'flags': flags, 'Bugzilla_api_key': self.get_bugzilla_api_key()},
+                logger=lambda content: self._addToLog('stdio', content),
+            )
             if response.status_code not in [200, 201]:
-                self._addToLog('stdio', 'Unable to set cq- flag on patch {}. Unexpected response code from bugzilla: {}'.format(patch_id, response.status_code))
-                return FAILURE
+                yield self._addToLog('stdio', f'Unable to set cq- flag on patch {patch_id}. Unexpected response code from bugzilla: {response.status_code}')
+                defer.returnValue(FAILURE)
+                return
+            defer.returnValue(SUCCESS)
         except Exception as e:
-            self._addToLog('stdio', 'Error in setting cq- flag on patch {}'.format(patch_id))
-            return FAILURE
-        return SUCCESS
+            yield self._addToLog('stdio', f'Error in setting cq- flag on patch {patch_id}\n    {e}\n')
+            defer.returnValue(FAILURE)
 
     @defer.inlineCallbacks
     def close_bug(self, bug_id):
@@ -1904,17 +1910,17 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
     name = 'set-cq-minus-flag-on-patch'
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         patch_id = self.getProperty('patch_id', '')
         build_finish_summary = self.getProperty('build_finish_summary', None)
 
         rc = SKIPPED
         if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
-            rc = self.set_cq_minus_flag_on_patch(patch_id)
-        self.finished(rc)
+            rc = yield self.set_cq_minus_flag_on_patch(patch_id)
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
-        return None
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
