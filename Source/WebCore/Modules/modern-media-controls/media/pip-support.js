@@ -62,6 +62,11 @@ class PiPSupport extends MediaControllerSupport
 
     syncControl()
     {
+        if (!this.mediaController.layoutTraits?.supportsPiP()) {
+            this.control.enabled = false;
+            return;
+        }
+
         const media = this.mediaController.media;
         if (media.webkitSupportsPresentationMode)
             this.control.enabled = !this.mediaController.isAudio && media.webkitSupportsPresentationMode(PiPMode) && !media.webkitCurrentPlaybackTargetIsWireless;
