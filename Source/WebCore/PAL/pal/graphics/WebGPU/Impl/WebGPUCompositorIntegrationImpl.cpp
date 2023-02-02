@@ -42,20 +42,20 @@ CompositorIntegrationImpl::CompositorIntegrationImpl(ConvertToBackingContext& co
 
 CompositorIntegrationImpl::~CompositorIntegrationImpl() = default;
 
-#if PLATFORM(COCOA)
-Vector<MachSendRight> CompositorIntegrationImpl::getRenderBuffers()
+void CompositorIntegrationImpl::prepareForDisplay()
 {
-    return m_renderBuffers.map([] (const auto& renderBuffer) {
-        return MachSendRight::adopt(IOSurfaceCreateMachPort(renderBuffer.get()));
-    });
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250993 Wait for the results to be fully drawn
+
+    static_cast<PresentationContext*>(m_presentationContext.get())->present();
 }
 
+#if PLATFORM(COCOA)
 static RetainPtr<CFNumberRef> toCFNumber(int x)
 {
     return adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &x));
 }
 
-Vector<RetainPtr<IOSurfaceRef>> CompositorIntegrationImpl::recreateIOSurfaces(const WGPUSwapChainDescriptor& descriptor)
+Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width, int height)
 {
     m_renderBuffers.clear();
 
@@ -63,17 +63,17 @@ Vector<RetainPtr<IOSurfaceRef>> CompositorIntegrationImpl::recreateIOSurfaces(co
         unsigned bytesPerElement = 4;
         unsigned bytesPerPixel = 4;
 
-        size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, descriptor.width * bytesPerPixel);
+        size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
         ASSERT(bytesPerRow);
 
-        size_t totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, descriptor.height * bytesPerRow);
+        size_t totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
         ASSERT(totalBytes);
 
         unsigned pixelFormat = 'BGRA';
 
         auto options = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 8, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-        CFDictionaryAddValue(options.get(), kIOSurfaceWidth, toCFNumber(descriptor.width).get());
-        CFDictionaryAddValue(options.get(), kIOSurfaceHeight, toCFNumber(descriptor.height).get());
+        CFDictionaryAddValue(options.get(), kIOSurfaceWidth, toCFNumber(width).get());
+        CFDictionaryAddValue(options.get(), kIOSurfaceHeight, toCFNumber(height).get());
         CFDictionaryAddValue(options.get(), kIOSurfacePixelFormat, toCFNumber(pixelFormat).get());
         CFDictionaryAddValue(options.get(), kIOSurfaceBytesPerElement, toCFNumber(bytesPerElement).get());
         CFDictionaryAddValue(options.get(), kIOSurfaceBytesPerRow, toCFNumber(bytesPerRow).get());
@@ -86,10 +86,22 @@ Vector<RetainPtr<IOSurfaceRef>> CompositorIntegrationImpl::recreateIOSurfaces(co
         return adoptCF(IOSurfaceCreate(options.get()));
     };
 
+    static_cast<PresentationContext*>(m_presentationContext.get())->unconfigure();
+    m_presentationContext->setSize(width, height);
+
     m_renderBuffers.append(createIOSurface());
     m_renderBuffers.append(createIOSurface());
 
-    return m_renderBuffers;
+    {
+        auto renderBuffers = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 2, &kCFTypeArrayCallBacks));
+        for (auto ioSurface : m_renderBuffers)
+            CFArrayAppendValue(renderBuffers.get(), ioSurface.get());
+        m_renderBuffersWereRecreatedCallback(static_cast<CFArrayRef>(renderBuffers));
+    }
+
+    return m_renderBuffers.map([] (const auto& renderBuffer) {
+        return MachSendRight::adopt(IOSurfaceCreateMachPort(renderBuffer.get()));
+    });
 }
 #endif
 

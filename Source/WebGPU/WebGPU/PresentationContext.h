@@ -58,6 +58,7 @@ public:
     WGPUTextureFormat getPreferredFormat(const Adapter&);
 
     virtual void configure(Device&, const WGPUSwapChainDescriptor&);
+    virtual void unconfigure();
 
     virtual void present();
     virtual Texture* getCurrentTexture(); // FIXME: This should return a Texture&.

@@ -67,6 +67,10 @@ void PresentationContext::configure(Device&, const WGPUSwapChainDescriptor&)
 {
 }
 
+void PresentationContext::unconfigure()
+{
+}
+
 void PresentationContext::present()
 {
 }
@@ -92,7 +96,11 @@ void wgpuSurfaceRelease(WGPUSurface surface)
 
 void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 {
-    WebGPU::fromAPI(swapChain).deref();
+    auto& presentationContext = WebGPU::fromAPI(swapChain);
+
+    presentationContext.unconfigure(); // It doesn't make sense to have multiple swap chains targetting a single surface.
+
+    presentationContext.deref();
 }
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)

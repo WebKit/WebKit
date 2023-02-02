@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemotePresentationContext NotRefCounted Stream {
-    void Configure(WebKit::WebGPU::PresentationConfiguration configuration)
+    void Configure(WebKit::WebGPU::CanvasConfiguration configuration)
     void Unconfigure()
     void GetCurrentTexture(WebKit::WebGPUIdentifier identifier)
     void Present()

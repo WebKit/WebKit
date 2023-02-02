@@ -30,8 +30,8 @@
 
 #include "RemotePresentationContextMessages.h"
 #include "RemoteTextureProxy.h"
+#include "WebGPUCanvasConfiguration.h"
 #include "WebGPUConvertToBackingContext.h"
-#include "WebGPUPresentationConfiguration.h"
 
 namespace WebKit::WebGPU {
 
@@ -44,9 +44,9 @@ RemotePresentationContextProxy::RemotePresentationContextProxy(RemoteGPUProxy& p
 
 RemotePresentationContextProxy::~RemotePresentationContextProxy() = default;
 
-void RemotePresentationContextProxy::configure(const PAL::WebGPU::PresentationConfiguration& presentationConfiguration)
+void RemotePresentationContextProxy::configure(const PAL::WebGPU::CanvasConfiguration& canvasConfiguration)
 {
-    auto convertedConfiguration = m_convertToBackingContext->convertToBacking(presentationConfiguration);
+    auto convertedConfiguration = m_convertToBackingContext->convertToBacking(canvasConfiguration);
     if (!convertedConfiguration) {
         // FIXME: Implement error handling.
         return;

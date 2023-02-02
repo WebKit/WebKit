@@ -29,12 +29,14 @@
 
 #include "WebGPUCompositorIntegration.h"
 
+#include "WebGPUPresentationContextImpl.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/Function.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 #endif
 
@@ -52,9 +54,17 @@ public:
 
     virtual ~CompositorIntegrationImpl();
 
-#if PLATFORM(COCOA)
-    Vector<RetainPtr<IOSurfaceRef>> recreateIOSurfaces(const WGPUSwapChainDescriptor&);
-#endif
+    void setPresentationContext(PresentationContextImpl& presentationContext)
+    {
+        ASSERT(!m_presentationContext);
+        m_presentationContext = &presentationContext;
+    }
+
+    void registerCallbacks(WTF::Function<void(CFArrayRef)>&& renderBuffersWereRecreatedCallback)
+    {
+        ASSERT(!m_renderBuffersWereRecreatedCallback);
+        m_renderBuffersWereRecreatedCallback = WTFMove(renderBuffersWereRecreatedCallback);
+    }
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -66,12 +76,16 @@ private:
     CompositorIntegrationImpl& operator=(const CompositorIntegrationImpl&) = delete;
     CompositorIntegrationImpl& operator=(CompositorIntegrationImpl&&) = delete;
 
+    void prepareForDisplay() override;
+
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> getRenderBuffers() override;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
 
     Vector<RetainPtr<IOSurfaceRef>> m_renderBuffers;
+    WTF::Function<void(CFArrayRef)> m_renderBuffersWereRecreatedCallback;
 #endif
 
+    RefPtr<PresentationContextImpl> m_presentationContext;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

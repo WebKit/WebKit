@@ -78,6 +78,11 @@ void PresentationContextCoreAnimation::configure(Device& device, const WGPUSwapC
     m_layer.device = device.device();
 }
 
+void PresentationContextCoreAnimation::unconfigure()
+{
+    m_configuration = std::nullopt;
+}
+
 auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(CAMetalLayer *layer) -> Configuration::FrameState
 {
     auto label = this->label.utf8();

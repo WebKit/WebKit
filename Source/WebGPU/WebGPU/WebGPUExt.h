@@ -71,8 +71,11 @@ typedef struct WGPUTextureDescriptorViewFormats {
     WGPUTextureFormat const * viewFormats;
 } WGPUTextureDescriptorViewFormats;
 
+typedef void (^WGPURenderBuffersWereRecreatedBlockCallback)(CFArrayRef ioSurfaces);
+typedef void (^WGPUCompositorIntegrationRegisterBlockCallback)(WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreated);
 typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
+    WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
 } WGPUSurfaceDescriptorCocoaCustomSurface;
 
 typedef struct WGPUTextureDescriptorCocoaCustomSurface {

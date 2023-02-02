@@ -28,9 +28,9 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUCanvasConfiguration.h"
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDeviceImpl.h"
-#include "WebGPUPresentationConfiguration.h"
 #include "WebGPUTextureDescriptor.h"
 #include "WebGPUTextureImpl.h"
 #include <WebGPU/WebGPUExt.h>
@@ -61,24 +61,24 @@ IOSurfaceRef PresentationContextImpl::drawingBuffer() const
     return wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(m_backing);
 }
 
-void PresentationContextImpl::configure(const PresentationConfiguration& presentationConfiguration)
+void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     if (m_swapChain)
         wgpuSwapChainRelease(m_swapChain);
 
-    m_format = presentationConfiguration.format;
+    m_format = canvasConfiguration.format;
 
     WGPUSwapChainDescriptor backingDescriptor {
         nullptr,
         nullptr,
-        m_convertToBackingContext->convertTextureUsageFlagsToBacking(presentationConfiguration.usage),
-        m_convertToBackingContext->convertToBacking(presentationConfiguration.format),
-        presentationConfiguration.width,
-        presentationConfiguration.height,
+        m_convertToBackingContext->convertTextureUsageFlagsToBacking(canvasConfiguration.usage),
+        m_convertToBackingContext->convertToBacking(canvasConfiguration.format),
+        m_width,
+        m_height,
         WGPUPresentMode_Immediate,
     };
 
-    m_swapChain = wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(presentationConfiguration.device), m_backing, &backingDescriptor);
+    m_swapChain = wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing, &backingDescriptor);
 }
 
 void PresentationContextImpl::unconfigure()
@@ -87,6 +87,10 @@ void PresentationContextImpl::unconfigure()
         return;
 
     wgpuSwapChainRelease(m_swapChain);
+    
+    m_format = TextureFormat::Bgra8unorm;
+    m_width = 0;
+    m_height = 0;
     m_swapChain = nullptr;
 }
 

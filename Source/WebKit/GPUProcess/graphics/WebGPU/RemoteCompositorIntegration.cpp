@@ -52,11 +52,17 @@ void RemoteCompositorIntegration::stopListeningForIPC()
 }
 
 #if PLATFORM(COCOA)
-void RemoteCompositorIntegration::getRenderBuffers(CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
+void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, CompletionHandler<void(Vector<MachSendRight>&&)>&& callback)
 {
-    callback(m_backing->getRenderBuffers());
+    callback(m_backing->recreateRenderBuffers(width, height));
 }
 #endif
+
+void RemoteCompositorIntegration::prepareForDisplay(CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_backing->prepareForDisplay();
+    completionHandler(true);
+}
 
 } // namespace WebKit
 

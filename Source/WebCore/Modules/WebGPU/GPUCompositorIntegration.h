@@ -42,8 +42,10 @@ public:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> getRenderBuffers() const;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height) const;
 #endif
+
+    void prepareForDisplay();
 
     PAL::WebGPU::CompositorIntegration& backing() { return m_backing; }
     const PAL::WebGPU::CompositorIntegration& backing() const { return m_backing; }
