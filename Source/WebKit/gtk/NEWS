@@ -1,4 +1,31 @@
 ================
+WebKitGTK 2.38.4
+================
+
+What's new in WebKitGTK 2.38.4?
+
+  - Improve GStreamer multimedia playback across the board with improved
+    codec selection logic, better handling of latency, and improving
+    frame discard to avoid audio/video desynchronizationg, among other
+    fixes.
+  - Disable HLS media playback by default, which makes web sites use MSE
+    instead. If needed WEBKIT_GST_ENABLE_HLS_SUPPORT=1 can be set in the
+    environment to enable it back.
+  - Disable threaded rendering in GTK4 builds by default, as it was
+    causing crashes.
+  - Fix MediaSession API not showing artwork images.
+  - Fix MediaSession MPRIS usage when running inside a Flatpak sandbox.
+  - Fix input element controls to correctly scale when applying a zoom
+    factor different than the default.
+  - Fix leakage of Web processes in certain situations.
+  - Fix the injected bundle not being found when running inside a sandbox.
+  - Fix the build with ENABLE_INTROSPECTION when cross-compiling.
+  - FIx the build with ENABLE_WEBGL disabled.
+  - Fix the build with GStreamer-based WebRTC enabled.
+  - Fix the build with USE_GTK4 enabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.38.3
 ================
 
