@@ -430,9 +430,10 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, HashSet<CSSPropertyID>& inheritedProperties)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, HashSet<CSSPropertyID>& inheritedProperties, HashSet<CSSPropertyID>& currentColorProperties)
 {
     inheritedProperties.clear();
+    currentColorProperties.clear();
 
     list.clear();
 
@@ -458,8 +459,13 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             }
             for (auto property : keyframeRule->properties()) {
                 if (auto* cssValue = property.value()) {
-                    if (cssValue->isPrimitiveValue() && downcast<CSSPrimitiveValue>(cssValue)->valueID() == CSSValueInherit)
-                        inheritedProperties.add(property.id());
+                    if (cssValue->isPrimitiveValue()) {
+                        auto valueId = downcast<CSSPrimitiveValue>(*cssValue).valueID();
+                        if (valueId == CSSValueInherit)
+                            inheritedProperties.add(property.id());
+                        else if (valueId == CSSValueCurrentcolor)
+                            currentColorProperties.add(property.id());
+                    }
                 }
             }
             list.insert(WTFMove(keyframeValue));

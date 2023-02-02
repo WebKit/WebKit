@@ -883,6 +883,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     auto& styleResolver = m_target->styleResolver();
 
     m_inheritedProperties.clear();
+    m_currentColorProperties.clear();
     m_containsCSSVariableReferences = false;
 
     for (auto& keyframe : m_parsedKeyframes) {
@@ -909,8 +910,13 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
 
         for (auto property : keyframeRule->properties()) {
             if (auto* cssValue = property.value()) {
-                if (cssValue->isPrimitiveValue() && downcast<CSSPrimitiveValue>(cssValue)->valueID() == CSSValueInherit)
-                    m_inheritedProperties.add(property.id());
+                if (cssValue->isPrimitiveValue()) {
+                    auto valueId = downcast<CSSPrimitiveValue>(*cssValue).valueID();
+                    if (valueId == CSSValueInherit)
+                        m_inheritedProperties.add(property.id());
+                    else if (valueId == CSSValueCurrentcolor)
+                        m_currentColorProperties.add(property.id());
+                }
             }
         }
 
@@ -1055,7 +1061,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     KeyframeList keyframeList(AtomString { backingAnimation.name().string });
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences, m_inheritedProperties);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences, m_inheritedProperties, m_currentColorProperties);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList) {
@@ -2389,6 +2395,16 @@ void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previ
 
     if (hasMotionPath(previousStyle) != hasMotionPath(currentStyle))
         abilityToBeAcceleratedDidChange();
+}
+
+bool KeyframeEffect::hasPropertySetToCurrentColor() const
+{
+    return !m_currentColorProperties.isEmpty();
+}
+
+bool KeyframeEffect::hasColorSetToCurrentColor() const
+{
+    return m_currentColorProperties.contains(CSSPropertyColor);
 }
 
 } // namespace WebCore
