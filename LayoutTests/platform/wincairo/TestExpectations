@@ -2093,11 +2093,8 @@ webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
 webkit.org/b/142087 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink-inherit.html [ ImageOnlyFailure ]
 
 fast/css/before-after-pseudo-element-case-insensitivity.html [ ImageOnlyFailure ]
-fast/css/lang-pseudo-container-query-multiple-document-elements-invalidation.html [ ImageOnlyFailure ]
 fast/dynamic/float-from-empty-line.html [ Failure ]
 fast/events/standalone-image-drag-to-editable.html [ Timeout ]
-fast/gradients/gradient-using-specified-hue-interpolation-method-hsl.html [ ImageOnlyFailure ]
-fast/gradients/gradient-using-specified-hue-interpolation-method-oklch.html [ ImageOnlyFailure ]
 fast/text/crash-complex-text-surrogate.html [ Failure ]
 fast/text/punctuation-break-all-2.html [ ImageOnlyFailure ]
 
