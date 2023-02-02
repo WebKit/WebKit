@@ -239,7 +239,7 @@ class Preferences
   end
 
   # Corresponds to WebFeatureStatus enum cases. "developer" and up require human-readable names.
-  STATUSES = %w{ embedder unstable internal developer testable preview stable shipping }
+  STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
 
   def initializeParsedPreferences(parsedPreferences)
     result = []

@@ -39,7 +39,7 @@
 #   debugging, A/B testing.
 #   ON by default. Some platforms may deviate from default behavior due to
 #   support or needed dependencies.
-# shipping::
+# mature::
 #   Already in general use, with no UI to toggle. Features in this status may be
 #   cleaned up and removed altogether.
 #   ON by default. Some platforms may deviate from default behavior due to
@@ -57,7 +57,7 @@
 # == Embedder Controls ==
 # embedder::
 #   Adjusts WebKit behavior for embedding application needs. Not part of a
-#   web platform feature or a "shipping" feature intended to be always-on.
+#   web platform feature or a "mature" feature intended to be always-on.
 #   ANY default value.
 #
 # == Defaults Overridable ==
@@ -695,7 +695,7 @@ BackspaceKeyNavigationEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 BeaconAPIEnabled:
   type: bool
-  status: shipping
+  status: mature
   humanReadableName: "Beacon API"
   humanReadableDescription: "Beacon API"
   defaultValue:
@@ -2017,7 +2017,7 @@ EditableLinkBehavior:
 
 EmbedElementEnabled:
   type: bool
-  status: shipping
+  status: mature
   humanReadableName: "Embed Element"
   humanReadableDescription: "Embed Element"
   defaultValue:
@@ -2509,7 +2509,7 @@ GraphicsContextFiltersEnabled:
 
 HTTPEquivEnabled:
   type: bool
-  status: shipping
+  status: mature
   humanReadableName: "http-equiv"
   humanReadableDescription: "Enable http-equiv attribute"
   webcoreName: httpEquivEnabled
@@ -3197,7 +3197,7 @@ JavaScriptCanOpenWindowsAutomatically:
 
 JavaScriptEnabled:
   type: bool
-  status: shipping
+  status: mature
   humanReadableName: "JavaScript"
   humanReadableDescription: "Enable JavaScript"
   inspectorOverride: true
@@ -3518,7 +3518,7 @@ LocalFileContentSniffingEnabled:
 
 LocalStorageEnabled:
   type: bool
-  status: shipping
+  status: mature
   humanReadableName: "Local Storage"
   humanReadableDescription: "Enable Local Storage"
   webKitLegacyPreferenceKey: WebKitLocalStorageEnabledPreferenceKey
@@ -6663,7 +6663,7 @@ WebGLDraftExtensionsEnabled:
 
 WebGLEnabled:
   type: bool
-  status: shipping
+  status: mature
   humanReadableName: "WebGL"
   humanReadableDescription: "Enable WebGL"
   defaultValue:
