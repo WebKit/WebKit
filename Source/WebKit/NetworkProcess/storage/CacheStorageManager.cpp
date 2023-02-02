@@ -440,9 +440,9 @@ void CacheStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 
 void CacheStorageManager::removeUnusedCache(WebCore::DOMCacheIdentifier cacheIdentifier)
 {
-    auto cache = m_removedCaches.take(cacheIdentifier);
-    if (cache) {
+    if (auto cache = m_removedCaches.take(cacheIdentifier)) {
         cache->removeAllRecords();
+        m_registry.unregisterCache(cacheIdentifier);
         return;
     }
 
