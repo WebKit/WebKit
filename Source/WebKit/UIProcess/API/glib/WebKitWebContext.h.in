@@ -118,8 +118,10 @@ struct _WebKitWebContextClass {
     GObjectClass parent;
 
     /*< public >*/
+#if !ENABLE(2022_GLIB_API)
     void     (* download_started)                    (WebKitWebContext        *context,
                                                       WebKitDownload          *download);
+#endif
     void     (* initialize_web_extensions)           (WebKitWebContext        *context);
     void     (* initialize_notification_permissions) (WebKitWebContext        *context);
     void     (* automation_started)                  (WebKitWebContext        *context,
