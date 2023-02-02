@@ -1691,7 +1691,7 @@
                 "super"
             ],
             "codegen-properties": {
-                "custom": "Value",
+                "custom": "Inherit|Value",
                 "svg": true,
                 "parser-grammar": "baseline | sub | super | <length-percentage>"
             },

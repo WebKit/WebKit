@@ -139,9 +139,10 @@ public:
     static void applyValueDisplay(BuilderState&, CSSValue&);
     static void applyInheritVerticalAlign(BuilderState&);
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
+    static void applyInheritBaselineShift(BuilderState&);
+    static void applyValueBaselineShift(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
-    static void applyValueBaselineShift(BuilderState&, CSSValue&);
     static void applyValueDirection(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
@@ -1197,6 +1198,14 @@ inline void BuilderCustom::applyValueDisplay(BuilderState& builderState, CSSValu
     DisplayType display = downcast<CSSPrimitiveValue>(value);
     if (isValidDisplayValue(builderState, display))
         builderState.style().setDisplay(display);
+}
+
+inline void BuilderCustom::applyInheritBaselineShift(BuilderState& builderState)
+{
+    auto& svgStyle = builderState.style().accessSVGStyle();
+    auto& svgParentStyle = builderState.parentStyle().svgStyle();
+    svgStyle.setBaselineShift(forwardInheritedValue(svgParentStyle.baselineShift()));
+    svgStyle.setBaselineShiftValue(forwardInheritedValue(svgParentStyle.baselineShiftValue()));
 }
 
 inline void BuilderCustom::applyValueBaselineShift(BuilderState& builderState, CSSValue& value)
