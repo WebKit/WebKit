@@ -3554,18 +3554,14 @@ const URL& Document::urlForBindings() const
             return false;
 
         auto* topDocumentLoader = topDocument().loader();
-        if (!topDocumentLoader || !topDocumentLoader->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled))
+        if (!topDocumentLoader || !topDocumentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled))
             return false;
 
         auto preNavigationURL = loader()->originalRequest().httpReferrer();
         if (preNavigationURL.isEmpty() || RegistrableDomain { URL { preNavigationURL } }.matches(securityOrigin().data()))
             return false;
 
-        auto sourceURL = frame()->script().sourceURL();
-        if (sourceURL && RegistrableDomain { *sourceURL }.matches(securityOrigin().data()))
-            return false;
-
-        return m_hasLoadedThirdPartyScript;
+        return mayBeExecutingThirdPartyScript();
     }();
 
     if (shouldAdjustURL)
@@ -6102,6 +6098,15 @@ void Document::popCurrentScript()
 {
     ASSERT(!m_currentScriptStack.isEmpty());
     m_currentScriptStack.removeLast();
+}
+
+bool Document::mayBeExecutingThirdPartyScript() const
+{
+    if (!m_hasLoadedThirdPartyScript)
+        return false;
+
+    auto sourceURL = currentSourceURL();
+    return sourceURL.isEmpty() || !RegistrableDomain { sourceURL }.matches(securityOrigin().data());
 }
 
 bool Document::shouldDeferAsynchronousScriptsUntilParsingFinishes() const

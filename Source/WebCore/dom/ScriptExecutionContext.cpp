@@ -71,12 +71,15 @@
 #include "WorkerOrWorkletThread.h"
 #include "WorkerThread.h"
 #include "WorkletGlobalScope.h"
+#include <JavaScriptCore/CallFrame.h>
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSPromise.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/StackVisitor.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/Ref.h>
@@ -299,6 +302,35 @@ JSC::ScriptExecutionStatus ScriptExecutionContext::jscScriptExecutionStatus() co
     if (activeDOMObjectsAreStopped())
         return JSC::ScriptExecutionStatus::Stopped;
     return JSC::ScriptExecutionStatus::Running;
+}
+
+URL ScriptExecutionContext::currentSourceURL() const
+{
+    auto* globalObject = this->globalObject();
+    if (!globalObject)
+        return { };
+
+    auto& vm = globalObject->vm();
+    auto* topCallFrame = vm.topCallFrame;
+    if (!topCallFrame)
+        return { };
+
+    URL sourceURL;
+    StackVisitor::visit(topCallFrame, vm, [&sourceURL](auto& visitor) {
+        if (visitor->isNativeFrame())
+            return IterationStatus::Continue;
+
+        auto urlString = visitor->sourceURL();
+        if (urlString.isEmpty())
+            return IterationStatus::Continue;
+
+        sourceURL = URL { WTFMove(urlString) };
+        if (sourceURL.isValid())
+            return IterationStatus::Continue;
+
+        return IterationStatus::Done;
+    });
+    return sourceURL;
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjects(ReasonForSuspension why)
@@ -585,7 +617,7 @@ bool ScriptExecutionContext::hasPendingActivity() const
     return false;
 }
 
-JSC::JSGlobalObject* ScriptExecutionContext::globalObject()
+JSC::JSGlobalObject* ScriptExecutionContext::globalObject() const
 {
     if (is<Document>(*this)) {
         auto frame = downcast<Document>(*this).frame();
