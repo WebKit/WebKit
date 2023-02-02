@@ -56,6 +56,9 @@ WK_DEFAULT_LTO_MODE = $(WK_USER_LTO_MODE_none);
 WK_CCACHE_DIR = $(SRCROOT)/../../Tools/ccache;
 #include "../../../Tools/ccache/ccache.xcconfig"
 
+WK_SCCACHE_DIR = $(SRCROOT)/../../Tools/sccache;
+#include "../../../Tools/sccache/sccache.xcconfig"
+
 WK_WEBKIT_ADDITIONS_PATH = ../../../Internal/WebKit/WebKitAdditions/Additions/WebKit
 WK_WEBKIT_DERIVEDSOURCES_INPUT_XCFILELIST_ADDITIONS = $(WK_WEBKIT_DERIVEDSOURCES_INPUT_XCFILELIST_ADDITIONS_$(USE_INTERNAL_SDK))
 WK_WEBKIT_DERIVEDSOURCES_INPUT_XCFILELIST_ADDITIONS_ =

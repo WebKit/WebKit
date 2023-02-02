@@ -41,3 +41,6 @@ WK_RELOCATABLE_FRAMEWORKS = YES;
 
 WK_CCACHE_DIR = $(SRCROOT)/../ccache;
 #include "../../ccache/ccache.xcconfig"
+
+WK_SCCACHE_DIR = $(SRCROOT)/../sccache;
+#include "../../sccache/sccache.xcconfig"
