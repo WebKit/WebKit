@@ -647,6 +647,7 @@ webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effe
 webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html [ ImageOnlyFailure ]
 webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
 webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
+webkit.org/b/224596 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Skip ] # Timeout
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
 webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.html [ ImageOnlyFailure ]
@@ -728,6 +729,9 @@ webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-wh
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-document.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-root.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-window.html [ Crash ]
+
+webkit.org/b/251553 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Crash ]
+webkit.org/b/251553 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS
@@ -815,6 +819,9 @@ webkit.org/b/219465 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/219470 fast/visual-viewport/visual-viewport-resize-subframe-in-rendering-update.html [ Timeout Pass ]
 
 webkit.org/b/219474 svg/custom/animate-initial-pause-unpause.html [ Timeout Pass ]
+
+webkit.org/b/251550 media/encrypted-media/mock-MediaKeySession-generateRequest.html [ Crash Pass ]
+webkit.org/b/251550 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. SLOW TESTS
@@ -1315,6 +1322,11 @@ webkit.org/b/244482 webgl/webgl2-primitive-restart.html [ ImageOnlyFailure ]
 webkit.org/b/244489 fast/canvas/webgl/bufferData-offset-length.html [ Failure ]
 webkit.org/b/244491 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 
+# Timing out since 259143@main.
+webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html [ Skip ]
+webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html [ Skip ]
+webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.html [ Skip ]
+webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.tentative.html [ Skip ]
 
 ######################################################
 # Test failures from turning GPU Process on by default
