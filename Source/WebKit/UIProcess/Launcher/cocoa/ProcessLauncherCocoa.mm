@@ -123,7 +123,7 @@ void ProcessLauncher::launchProcess()
         xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
     }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     xpc_dictionary_set_string(initializationMessage.get(), "WebKitBundleVersion", [[NSBundle bundleWithIdentifier:@"com.apple.WebKit"].infoDictionary[(__bridge NSString *)kCFBundleVersionKey] UTF8String]);
 #endif
     xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());

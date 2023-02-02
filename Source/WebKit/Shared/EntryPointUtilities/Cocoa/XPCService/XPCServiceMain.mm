@@ -144,7 +144,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void crashDueWebKitFrameworkVersionMismatch()
 {
@@ -175,7 +175,7 @@ int XPCServiceMain(int, const char**)
             return true;
         });
 #endif
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ASAN_ENABLED
         // EXC_RESOURCE on ASAN builds freezes the process for several minutes: rdar://65027596
         if (char *disableFreezingOnExcResource = getenv("DISABLE_FREEZING_ON_EXC_RESOURCE")) {
