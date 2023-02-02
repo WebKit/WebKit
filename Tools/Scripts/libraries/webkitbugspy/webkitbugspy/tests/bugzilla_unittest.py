@@ -510,3 +510,8 @@ What component in 'WebKit' should the bug be associated with?:
         with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = bugzilla.Tracker(self.URL)
             self.assertEqual(tracker.issue(1).milestone, None)
+
+    def test_keywords(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = bugzilla.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).keywords, ['Keyword A'])
