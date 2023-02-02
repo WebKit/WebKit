@@ -42,6 +42,6 @@ enum class FeatureStatus : uint8_t {
     // Enabled by default and ready for general use.
     Stable,
     // Enabled by default and in general use for more than a year.
-    Shipping
+    Mature
 };
 }

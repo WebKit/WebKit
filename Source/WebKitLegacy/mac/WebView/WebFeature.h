@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, WebFeatureStatus) {
     /// Enabled by default and ready for general use.
     WebFeatureStatusStable,
     /// Enabled by default and in general use for more than a year.
-    WebFeatureStatusShipping
+    WebFeatureStatusMature
 };
 
 @interface WebFeature : NSObject
