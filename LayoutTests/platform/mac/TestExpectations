@@ -102,7 +102,6 @@ media/media-source/remoteplayback-from-source-element.html [ Pass ]
 
 # webkit.org/b/240843
 fast/images/animated-heics-draw.html [ Pass ]
-fast/images/animated-heics-verify.html [ Pass ]
 fast/images/heic-as-background-image.html [ Pass ]
 
 # Enabled in rdar://102830993
