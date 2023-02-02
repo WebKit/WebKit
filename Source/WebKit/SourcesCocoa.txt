@@ -575,6 +575,8 @@ UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm @no-unif
 UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm
 UIProcess/WebAuthentication/Cocoa/CcidConnection.mm
 UIProcess/WebAuthentication/Cocoa/CcidService.mm
+UIProcess/WebAuthentication/Cocoa/HidConnection.mm
+UIProcess/WebAuthentication/Cocoa/HidService.mm
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm
 UIProcess/WebAuthentication/Cocoa/LocalConnection.mm
@@ -585,6 +587,7 @@ UIProcess/WebAuthentication/Cocoa/NfcService.mm
 UIProcess/WebAuthentication/Cocoa/WKASCAuthorizationPresenterDelegate.mm
 UIProcess/WebAuthentication/Cocoa/WKNFReaderSessionDelegate.mm
 UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm
+UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm
 
 UIProcess/WebAuthentication/Mock/MockLocalConnection.mm
 UIProcess/WebAuthentication/Mock/MockLocalService.mm

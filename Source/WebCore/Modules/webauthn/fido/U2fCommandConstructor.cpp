@@ -123,8 +123,8 @@ std::optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& cl
 
     if (!isAppId)
         return constructU2fSignCommand(produceRpIdHash(request.rpId), clientDataHash, keyHandle, false);
-    ASSERT(request.extensions && !request.extensions->appid.isNull());
-    return constructU2fSignCommand(produceRpIdHash(request.extensions->appid), clientDataHash, keyHandle, false);
+    ASSERT(request.extensions && request.extensions->appid);
+    return constructU2fSignCommand(produceRpIdHash(*request.extensions->appid), clientDataHash, keyHandle, false);
 }
 
 Vector<uint8_t> constructBogusU2fRegistrationCommand()
@@ -140,7 +140,7 @@ String processGoogleLegacyAppIdSupportExtension(const std::optional<Authenticati
         return String();
     }
 
-    if (!extensions->googleLegacyAppidSupport)
+    if (!extensions->googleLegacyAppidSupport || !*extensions->googleLegacyAppidSupport)
         return String();
     return "https://www.gstatic.com/securitykey/origins.json"_s;
 }

@@ -227,8 +227,8 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
     case ApduResponse::Status::SW_NO_ERROR: {
         RefPtr<AuthenticatorAssertionResponse> response;
         if (m_isAppId) {
-            ASSERT(requestOptions.extensions && !requestOptions.extensions->appid.isNull());
-            response = readU2fSignResponse(requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
+            ASSERT(requestOptions.extensions && requestOptions.extensions->appid);
+            response = readU2fSignResponse(*requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         } else
             response = readU2fSignResponse(requestOptions.rpId, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         if (!response) {
@@ -246,7 +246,7 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     case ApduResponse::Status::SW_WRONG_DATA:
-        if (requestOptions.extensions && !requestOptions.extensions->appid.isNull()) {
+        if (requestOptions.extensions && requestOptions.extensions->appid) {
             if (!m_isAppId) {
                 m_isAppId = true;
                 issueSignCommand(m_nextListIndex - 1);

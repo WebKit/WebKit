@@ -91,8 +91,8 @@ static bool processGoogleLegacyAppIdSupportExtension(const std::optional<Authent
     if (rpId != "google.com"_s)
         return false;
     if (!extensions)
-        return true;
-    return extensions->googleLegacyAppidSupport;
+        return false;
+    return extensions->googleLegacyAppidSupport && *extensions->googleLegacyAppidSupport;
 }
 
 } // namespace AuthenticatorCoordinatorInternal
@@ -229,9 +229,9 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
 
     // Step 8-9.
     // Only FIDO AppID Extension is supported.
-    if (options.extensions && !options.extensions->appid.isNull()) {
+    if (options.extensions && options.extensions->appid) {
         // The following implements https://www.w3.org/TR/webauthn/#sctn-appid-extension as of 4 March 2019.
-        auto appid = processAppIdExtension(callerOrigin, options.extensions->appid);
+        auto appid = processAppIdExtension(callerOrigin, *options.extensions->appid);
         if (!appid) {
             promise.reject(Exception { SecurityError, "The origin of the document is not authorized for the provided App ID."_s });
             return;

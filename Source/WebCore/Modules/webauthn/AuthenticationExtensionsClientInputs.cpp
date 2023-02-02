@@ -50,18 +50,19 @@ std::optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClie
     it = decodedMap.find(cbor::CBORValue("credProps"));
     if (it != decodedMap.end() && it->second.isBool())
         clientInputs.credProps = it->second.getBool();
+
     return clientInputs;
 }
 
 Vector<uint8_t> AuthenticationExtensionsClientInputs::toCBOR() const
 {
     cbor::CBORValue::MapValue clientInputsMap;
-    if (!appid.isEmpty())
-        clientInputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(appid);
+    if (appid)
+        clientInputsMap[cbor::CBORValue("appid")] = cbor::CBORValue(*appid);
     if (googleLegacyAppidSupport)
-        clientInputsMap[cbor::CBORValue("googleLegacyAppidSupport")] = cbor::CBORValue(googleLegacyAppidSupport);
+        clientInputsMap[cbor::CBORValue("googleLegacyAppidSupport")] = cbor::CBORValue(*googleLegacyAppidSupport);
     if (credProps)
-        clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(credProps);
+        clientInputsMap[cbor::CBORValue("credProps")] = cbor::CBORValue(*credProps);
 
     auto clientInputs = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(clientInputsMap)));
     ASSERT(clientInputs);

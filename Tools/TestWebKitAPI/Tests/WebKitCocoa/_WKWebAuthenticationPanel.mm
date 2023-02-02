@@ -33,6 +33,8 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <LocalAuthentication/LocalAuthentication.h>
+#import <WebCore/AuthenticationExtensionsClientInputs.h>
+#import <WebCore/AuthenticationExtensionsClientOutputs.h>
 #import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/ExceptionCode.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
@@ -1511,8 +1513,48 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
     EXPECT_EQ(result.excludeCredentials.size(), 0lu);
     EXPECT_EQ(result.authenticatorSelection, std::nullopt);
     EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
-    EXPECT_TRUE(result.extensions->appid.isNull());
-    EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
+    EXPECT_FALSE(result.extensions->appid.has_value());
+    EXPECT_FALSE(result.extensions->googleLegacyAppidSupport.has_value());
+}
+
+TEST(WebAuthenticationPanel, TestClientInputsCBORMinimum)
+{
+    WebCore::AuthenticationExtensionsClientInputs clientInputs = { ""_s /* appId */, false /* googleLegacyAppidSupport */, false /* credProps */ };
+    auto serializedInputs = clientInputs.toCBOR();
+    auto deserializedInputs = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(WTFMove(serializedInputs));
+    EXPECT_WK_STREQ(*clientInputs.appid, *deserializedInputs->appid);
+    EXPECT_EQ(clientInputs.googleLegacyAppidSupport, deserializedInputs->googleLegacyAppidSupport);
+    EXPECT_EQ(clientInputs.credProps, deserializedInputs->credProps);
+}
+
+TEST(WebAuthenticationPanel, TestClientInputsCBORMaximum)
+{
+    WebCore::AuthenticationExtensionsClientInputs clientInputs = { "testappid"_s /* appid */, true /* googleLegacyAppidSupport */, true /* credProps */ };
+    auto serializedInputs = clientInputs.toCBOR();
+    auto deserializedInputs = WebCore::AuthenticationExtensionsClientInputs::fromCBOR(WTFMove(serializedInputs));
+    EXPECT_WK_STREQ(*clientInputs.appid, *deserializedInputs->appid);
+    EXPECT_EQ(clientInputs.googleLegacyAppidSupport, deserializedInputs->googleLegacyAppidSupport);
+    EXPECT_EQ(clientInputs.credProps, deserializedInputs->credProps);
+}
+
+TEST(WebAuthenticationPanel, TestClientOutputsCBORMinimum)
+{
+    WebCore::AuthenticationExtensionsClientOutputs clientOutputs = { std::nullopt /* appid */, std::nullopt /* credProps */ };
+    auto serializedOutputs = clientOutputs.toCBOR();
+    auto deserializedOutputs = WebCore::AuthenticationExtensionsClientOutputs::fromCBOR(WTFMove(serializedOutputs));
+    EXPECT_EQ(clientOutputs.appid, deserializedOutputs->appid);
+    EXPECT_TRUE(!clientOutputs.credProps);
+    EXPECT_TRUE(!deserializedOutputs->credProps);
+}
+
+
+TEST(WebAuthenticationPanel, TestClientOutputsCBORMaximum)
+{
+    WebCore::AuthenticationExtensionsClientOutputs clientOutputs = { true /* appid */, WebCore::AuthenticationExtensionsClientOutputs::CredentialPropertiesOutput { true /* rk */} /* credProps */ };
+    auto serializedOutputs = clientOutputs.toCBOR();
+    auto deserializedOutputs = WebCore::AuthenticationExtensionsClientOutputs::fromCBOR(WTFMove(serializedOutputs));
+    EXPECT_EQ(clientOutputs.appid, deserializedOutputs->appid);
+    EXPECT_EQ(clientOutputs.credProps->rk, deserializedOutputs->credProps->rk);
 }
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
@@ -1565,7 +1607,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximumDefault)
     EXPECT_EQ(result.authenticatorSelection->userVerification, UserVerificationRequirement::Preferred);
 
     EXPECT_EQ(result.attestation, AttestationConveyancePreference::None);
-    EXPECT_TRUE(result.extensions->appid.isNull());
+    EXPECT_TRUE(result.extensions->appid.has_value());
 }
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
@@ -1858,7 +1900,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMinimun)
     EXPECT_TRUE(result.rpId.isNull());
     EXPECT_EQ(result.allowCredentials.size(), 0lu);
     EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
-    EXPECT_TRUE(result.extensions->appid.isNull());
+    EXPECT_FALSE(result.extensions->appid.has_value());
     EXPECT_EQ(result.extensions->googleLegacyAppidSupport, false);
 }
 
@@ -1884,7 +1926,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximumDefault)
     EXPECT_EQ(memcmp(result.allowCredentials[0].id.data(), identifier, sizeof(identifier)), 0);
 
     EXPECT_EQ(result.userVerification, UserVerificationRequirement::Preferred);
-    EXPECT_TRUE(result.extensions->appid.isNull());
+    EXPECT_FALSE(result.extensions->appid.has_value());
 }
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
@@ -1922,7 +1964,7 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
     EXPECT_EQ(result.allowCredentials[0].transports[2], AuthenticatorTransport::Internal);
 
     EXPECT_EQ(result.userVerification, UserVerificationRequirement::Required);
-    EXPECT_WK_STREQ(result.extensions->appid, "https//www.example.com/fido");
+    EXPECT_WK_STREQ(*result.extensions->appid, "https//www.example.com/fido");
 }
 
 TEST(WebAuthenticationPanel, GetAssertionSPITimeout)

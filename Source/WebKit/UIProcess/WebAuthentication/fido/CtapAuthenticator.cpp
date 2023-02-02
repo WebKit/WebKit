@@ -399,9 +399,11 @@ bool CtapAuthenticator::processGoogleLegacyAppIdSupportExtension()
         ASSERT_NOT_REACHED();
         return false;
     }
-    if (extensions->googleLegacyAppidSupport)
+    if (!extensions->googleLegacyAppidSupport)
+        return false;
+    if (*extensions->googleLegacyAppidSupport)
         tryDowngrade();
-    return extensions->googleLegacyAppidSupport;
+    return *extensions->googleLegacyAppidSupport;
 }
 
 Vector<AuthenticatorTransport> CtapAuthenticator::transports() const

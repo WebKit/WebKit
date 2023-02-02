@@ -901,6 +901,7 @@ static WebCore::AuthenticationExtensionsClientInputs authenticationExtensionsCli
     WebCore::AuthenticationExtensionsClientInputs result;
     result.appid = extensions.appid;
     result.googleLegacyAppidSupport = extensions.googleLegacyAppidSupport;
+    result.credProps = extensions.credProps;
 
     return result;
 }
