@@ -274,26 +274,28 @@ class GitHubMixin(object):
                 last_rejected[reviewer] = max(review_id, last_rejected.get(reviewer, 0))
         defer.returnValue(sorted([reviewer for reviewer, _id in last_approved.items() if _id > last_rejected.get(reviewer, 0)]))
 
+    @defer.inlineCallbacks
     def _is_pr_closed(self, pr_json):
         # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
         if pr_json is False:
-            return 1
+            return defer.returnValue(1)
         if not pr_json or not pr_json.get('state'):
-            self._addToLog('stdio', 'Cannot determine pull request status.\n')
-            return -1
+            yield self._addToLog('stdio', 'Cannot determine pull request status.\n')
+            return defer.returnValue(-1)
         if pr_json.get('state') in self.pr_closed_states:
-            return 1
-        return 0
+            return defer.returnValue(1)
+        return defer.returnValue(0)
 
+    @defer.inlineCallbacks
     def _is_hash_outdated(self, pr_json):
         # If pr_json is "False", we received a 400 family error, which likely means the PR was deleted
         if pr_json is False:
-            return 1
+            return defer.returnValue(1)
         pr_sha = (pr_json or {}).get('head', {}).get('sha', '')
         if not pr_sha:
-            self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')
-            return -1
-        return 0 if pr_sha == self.getProperty('github.head.sha', '?') else 1
+            yield self._addToLog('stdio', 'Cannot determine if hash is outdated or not.\n')
+            return defer.returnValue(-1)
+        return defer.returnValue(0 if pr_sha == self.getProperty('github.head.sha', '?') else 1)
 
     def _is_pr_blocked(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
@@ -1397,15 +1399,16 @@ class BugzillaMixin(AddToLogMixin):
             return -1
         return patch_json.get('bug_id')
 
+    @defer.inlineCallbacks
     def _is_patch_obsolete(self, patch_id):
         patch_json = self.get_patch_json(patch_id)
         if not patch_json:
-            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
-            return -1
+            yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return defer.returnValue(-1)
 
         if str(patch_json.get('id')) != self.getProperty('patch_id', ''):
-            self._addToLog('stdio', 'Fetched patch id {} does not match with requested patch id {}. Unable to validate.\n'.format(patch_json.get('id'), self.getProperty('patch_id', '')))
-            return -1
+            yield self._addToLog('stdio', 'Fetched patch id {} does not match with requested patch id {}. Unable to validate.\n'.format(patch_json.get('id'), self.getProperty('patch_id', '')))
+            return defer.returnValue(-1)
 
         patch_author = patch_json.get('creator')
         self.setProperty('patch_author', patch_author)
@@ -1414,36 +1417,39 @@ class BugzillaMixin(AddToLogMixin):
             self.setProperty('fast_commit_queue', True)
         if self.addURLs:
             self.addURL('Patch by: {}'.format(patch_author), '')
-        return patch_json.get('is_obsolete')
+        return defer.returnValue(patch_json.get('is_obsolete'))
 
+    @defer.inlineCallbacks
     def _is_patch_review_denied(self, patch_id):
         patch_json = self.get_patch_json(patch_id)
         if not patch_json:
-            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
-            return -1
+            yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return defer.returnValue(-1)
 
         for flag in patch_json.get('flags', []):
             if flag.get('name') == 'review' and flag.get('status') == '-':
-                return 1
-        return 0
+                return defer.returnValue(1)
+        return defer.returnValue(0)
 
+    @defer.inlineCallbacks
     def _is_patch_cq_plus(self, patch_id):
         patch_json = self.get_patch_json(patch_id)
         if not patch_json:
-            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
-            return -1
+            yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return defer.returnValue(-1)
 
         for flag in patch_json.get('flags', []):
             if flag.get('name') == 'commit-queue' and flag.get('status') == '+':
                 self.setProperty('patch_committer', flag.get('setter', ''))
-                return 1
-        return 0
+                return defer.returnValue(1)
+        return defer.returnValue(0)
 
+    @defer.inlineCallbacks
     def _does_patch_have_acceptable_review_flag(self, patch_id):
         patch_json = self.get_patch_json(patch_id)
         if not patch_json:
-            self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
-            return -1
+            yield self._addToLog('stdio', 'Unable to fetch patch {}.\n'.format(patch_id))
+            return defer.returnValue(-1)
 
         for flag in patch_json.get('flags', []):
             if flag.get('name') == 'review':
@@ -1453,21 +1459,22 @@ class BugzillaMixin(AddToLogMixin):
                     self.setProperty('reviewer', reviewer)
                     if self.addURLs:
                         self.addURL('Reviewed by: {}'.format(reviewer), '')
-                    return 1
+                    return defer.returnValue(1)
                 if review_status in ['-', '?']:
                     self._addToLog('stdio', 'Patch {} is marked r{}.\n'.format(patch_id, review_status))
-                    return 0
-        return 1  # Patch without review flag is acceptable, since the ChangeLog might have 'Reviewed by' in it.
+                    return defer.returnValue(0)
+        return defer.returnValue(1)  # Patch without review flag is acceptable, since the ChangeLog might have 'Reviewed by' in it.
 
+    @defer.inlineCallbacks
     def _is_bug_closed(self, bug_id):
         if not bug_id:
-            self._addToLog('stdio', 'Skipping bug status validation since bug id is None.\n')
-            return -1
+            yield self._addToLog('stdio', 'Skipping bug status validation since bug id is None.\n')
+            return defer.returnValue(-1)
 
         bug_json = self.get_bug_json(bug_id)
         if not bug_json or not bug_json.get('status'):
-            self._addToLog('stdio', 'Unable to fetch bug {}.\n'.format(bug_id))
-            return -1
+            yield self._addToLog('stdio', 'Unable to fetch bug {}.\n'.format(bug_id))
+            return defer.returnValue(-1)
 
         bug_title = bug_json.get('summary')
         sensitive = bug_json.get('product') == 'Security'
@@ -1478,8 +1485,8 @@ class BugzillaMixin(AddToLogMixin):
         if self.addURLs:
             self.addURL('Bug {} {}'.format(bug_id, bug_title), Bugzilla.bug_url(bug_id))
         if bug_json.get('status') in self.bug_closed_statuses:
-            return 1
-        return 0
+            return defer.returnValue(1)
+        return defer.returnValue(0)
 
     def should_send_email_for_patch(self, patch_id):
         patch_json = self.get_patch_json(patch_id)
@@ -1694,73 +1701,88 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             yield self._addToLog('stdio', f'PR does not have {self.SKIP_EWS_LABEL} label.\n')
         defer.returnValue(SUCCESS)
 
+    @defer.inlineCallbacks
     def validate_bugzilla(self, patch_id):
         bug_id = self.getProperty('bug_id', '') or self.get_bug_id_from_patch(patch_id)
 
-        bug_closed = self._is_bug_closed(bug_id) if self.verifyBugClosed else 0
+        bug_closed = yield self._is_bug_closed(bug_id) if self.verifyBugClosed else 0
         if bug_closed == 1:
-            return self.skip_build('Bug {} is already closed'.format(bug_id))
+            rc = yield self.skip_build('Bug {} is already closed'.format(bug_id))
+            return defer.returnValue(rc)
 
-        obsolete = self._is_patch_obsolete(patch_id) if self.verifyObsolete else 0
+        obsolete = yield self._is_patch_obsolete(patch_id) if self.verifyObsolete else 0
         if obsolete == 1:
-            return self.skip_build('Patch {} is obsolete'.format(patch_id))
+            rc = yield self.skip_build('Patch {} is obsolete'.format(patch_id))
+            return defer.returnValue(rc)
 
-        review_denied = self._is_patch_review_denied(patch_id) if self.verifyReviewDenied else 0
+        review_denied = yield self._is_patch_review_denied(patch_id) if self.verifyReviewDenied else 0
         if review_denied == 1:
-            return self.skip_build('Patch {} is marked r-'.format(patch_id))
+            rc = yield self.skip_build('Patch {} is marked r-'.format(patch_id))
+            return defer.returnValue(rc)
 
-        cq_plus = self._is_patch_cq_plus(patch_id) if self.verifycqplus else 1
+        cq_plus = yield self._is_patch_cq_plus(patch_id) if self.verifycqplus else 1
         if cq_plus != 1:
-            return self.skip_build('Patch {} is not marked cq+.'.format(patch_id))
+            rc = yield self.skip_build('Patch {} is not marked cq+.'.format(patch_id))
+            return defer.returnValue(rc)
 
-        acceptable_review_flag = self._does_patch_have_acceptable_review_flag(patch_id) if self.verifycqplus else 1
+        acceptable_review_flag = yield self._does_patch_have_acceptable_review_flag(patch_id) if self.verifycqplus else 1
         if acceptable_review_flag != 1:
-            return self.skip_build('Patch {} does not have acceptable review flag.'.format(patch_id))
+            rc = yield self.skip_build('Patch {} does not have acceptable review flag.'.format(patch_id))
+            return defer.returnValue(rc)
 
         if obsolete == -1 or review_denied == -1 or bug_closed == -1:
-            return defer.succeed(WARNINGS)
-        return defer.succeed(SUCCESS)
+            return defer.returnValue(WARNINGS)
+        return defer.returnValue(SUCCESS)
 
+    @defer.inlineCallbacks
     def validate_github(self, pr_number):
         if not pr_number:
-            return defer.succeed(FAILURE)
+            return defer.returnValue(FAILURE)
 
         repository_url = self.getProperty('repository', '')
         pr_json = self.get_pr_json(pr_number, repository_url, retry=3)
 
-        pr_closed = self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
+        pr_closed = yield self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
         if pr_closed == 1:
-            return self.skip_build('Pull request {} is already closed'.format(pr_number))
+            rc = yield self.skip_build('Pull request {} is already closed'.format(pr_number))
+            return defer.returnValue(rc)
 
-        obsolete = self._is_hash_outdated(pr_json) if self.verifyObsolete else 0
+        obsolete = yield self._is_hash_outdated(pr_json) if self.verifyObsolete else 0
         if obsolete == 1:
-            return self.skip_build('Hash {} on PR {} is outdated'.format(self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number))
+            rc = yield self.skip_build('Hash {} on PR {} is outdated'.format(self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number))
+            return defer.returnValue(rc)
 
         blocked = self._is_pr_blocked(pr_json) if self.verifyMergeQueue else 0
         if blocked == 1:
-            return self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
+            rc = yield self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
+            return defer.returnValue(rc)
 
         skip_ews = self._does_pr_has_skip_label(pr_json) if self.enableSkipEWSLabel else 0
         if skip_ews == 1:
-            return self.skip_build(f'Skipping as PR {pr_number} has {self.SKIP_EWS_LABEL} label')
+            rc = yield self.skip_build(f'Skipping as PR {pr_number} has {self.SKIP_EWS_LABEL} label')
+            return defer.returnValue(rc)
 
         if self.verifyMergeQueue:
             if not pr_json:
-                self.send_email_for_github_failure()
-                return self.skip_build('Infrastructure issue: unable to check PR status, please contact an admin')
+                yield self.send_email_for_github_failure()
+                rc = yield self.skip_build('Infrastructure issue: unable to check PR status, please contact an admin')
+                return defer.returnValue(rc)
             merge_queue = self._is_pr_in_merge_queue(pr_json)
             if merge_queue == 0:
-                return self.skip_build("PR {} does not have a merge queue label".format(pr_number))
+                rc = yield self.skip_build("PR {} does not have a merge queue label".format(pr_number))
+                return defer.returnValue(rc)
 
         draft = self._is_pr_draft(pr_json) if self.verifyNoDraftForMergeQueue else 0
         if draft == 1:
-            return self.fail_build("PR {} is a draft pull request".format(pr_number))
+            rc = yield self.fail_build("PR {} is a draft pull request".format(pr_number))
+            return defer.returnValue(rc)
 
         if -1 in (obsolete, pr_closed, blocked, draft):
-            return defer.succeed(WARNINGS)
+            return defer.returnValue(WARNINGS)
 
-        return defer.succeed(SUCCESS)
+        return defer.returnValue(SUCCESS)
 
+    @defer.inlineCallbacks
     def send_email_for_github_failure(self):
         try:
             pr_number = self.getProperty('github.number', '')
@@ -1770,11 +1792,11 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             change_author, errors = GitHub.email_for_owners(self.getProperty('owners', []))
             for error in errors:
                 print(error)
-                self._addToLog('stdio', error)
+                yield self._addToLog('stdio', error)
 
             if not change_author:
-                self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
-                return
+                yield self._addToLog('stderr', 'Unable to determine email address for {} from metadata/contributors.json. Skipping sending email.'.format(self.getProperty('owners', [])))
+                return defer.returnValue(None)
 
             builder_name = self.getProperty('buildername', '')
             title = self.getProperty('github.title', '')
@@ -1788,10 +1810,11 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             email_text += ' for <a href="{}">PR #{}: {}</a>.'.format(GitHub.pr_url(pr_number, repository), pr_number, title)
             email_text += '\n\nFull details are available at: {}\n\nChange author: {}'.format(build_url, change_author)
             email_text += '\n\nPlease contact one of the WebKit administrators on Slack or email admin@webkit.org to fix the issue.'
-            self._addToLog('stdio', 'Sending email notification to {}.\nPlease contact an admin to fix the issue.\n'.format(change_author))
+            yield self._addToLog('stdio', 'Sending email notification to {}.\nPlease contact an admin to fix the issue.\n'.format(change_author))
             send_email_to_patch_author(change_author, email_subject, email_text, self.getProperty('github.head.sha', ''))
         except Exception as e:
             print('Error in sending email for github failure: {}'.format(e))
+        return defer.returnValue(None)
 
 
 class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
