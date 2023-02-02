@@ -363,6 +363,10 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
         return;
 #endif
 
+    //  We need the parent to know if we have skipped content or content-visibility root.
+    if (renderer.style().effectiveSkipsContent() && !renderer.parent())
+        return;
+
     m_visibleContentStatusDirty = false;
     m_hasVisibleContent = renderer.style().visibility() == Visibility::Visible;
 }
@@ -1595,7 +1599,12 @@ void RenderLayer::updateDescendantDependentFlags()
         bool hasNotIsolatedBlendingDescendants = false;
 #endif
 
-        for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
+        auto firstLayerChild = [&] () -> RenderLayer* {
+            if (renderer().style().contentVisibility() != ContentVisibility::Visible)
+                return nullptr;
+            return firstChild();
+        }();
+        for (RenderLayer* child = firstLayerChild; child; child = child->nextSibling()) {
             child->updateDescendantDependentFlags();
 
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
@@ -1627,6 +1636,9 @@ void RenderLayer::updateDescendantDependentFlags()
     }
 
     if (m_visibleContentStatusDirty) {
+        //  We need the parent to know if we have skipped content or content-visibility root.
+        if (renderer().style().effectiveSkipsContent() && !renderer().parent())
+            return;
         m_hasVisibleContent = computeHasVisibleContent();
         m_visibleContentStatusDirty = false;
     }
@@ -1639,6 +1651,8 @@ bool RenderLayer::computeHasVisibleContent() const
     if (renderer().document().settings().layerBasedSVGEngineEnabled() && lineageOfType<RenderSVGHiddenContainer>(renderer()).first())
         return false;
 #endif
+    if (renderer().isSkippedContent())
+        return false;
     if (renderer().style().visibility() == Visibility::Visible)
         return true;
 
@@ -3415,7 +3429,7 @@ void RenderLayer::paintList(LayerList layerIterator, GraphicsContext& context, c
     if (layerIterator.begin() == layerIterator.end())
         return;
 
-    if (!hasSelfPaintingLayerDescendant() || renderer().shouldSkipContent())
+    if (!hasSelfPaintingLayerDescendant())
         return;
 
 #if ASSERT_ENABLED
@@ -5344,7 +5358,7 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
     // likely be folded along with the rest.
     if (oldStyle) {
         bool visibilityChanged = oldStyle->visibility() != renderer().style().visibility();
-        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || visibilityChanged) {
+        if (oldStyle->usedZIndex() != renderer().style().usedZIndex() || oldStyle->effectiveSkipsContent() != renderer().style().effectiveSkipsContent() || visibilityChanged) {
             dirtyStackingContextZOrderLists();
             if (isStackingContext())
                 dirtyZOrderLists();
