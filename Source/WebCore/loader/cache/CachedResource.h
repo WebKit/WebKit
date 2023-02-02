@@ -373,13 +373,13 @@ private:
     RefPtr<SecurityOrigin> m_origin;
     AtomString m_initiatorType;
 
+    RedirectChainCacheStatus m_redirectChainCacheStatus;
+
     unsigned m_encodedSize { 0 };
     unsigned m_decodedSize { 0 };
     unsigned m_accessCount { 0 };
     unsigned m_handleCount { 0 };
     unsigned m_preloadCount { 0 };
-
-    RedirectChainCacheStatus m_redirectChainCacheStatus;
 
     Type m_type : bitWidthOfType;
 

@@ -223,10 +223,9 @@ struct ResourceLoaderOptions : public FetchOptions {
 #endif
     Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
-    OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
+
     uint8_t maxRedirectCount { 20 };
-    FetchIdentifier navigationPreloadIdentifier;
-    String nonce;
+    OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
 
     SendCallbackPolicy sendLoadCallbacks : bitWidthOfSendCallbackPolicy;
     ContentSniffingPolicy sniffContent : bitWidthOfContentSniffingPolicy;
@@ -247,6 +246,9 @@ struct ResourceLoaderOptions : public FetchOptions {
     PreflightPolicy preflightPolicy : bitWidthOfPreflightPolicy;
     LoadedFromOpaqueSource loadedFromOpaqueSource : bitWidthOfLoadedFromOpaqueSource;
     LoadedFromPluginElement loadedFromPluginElement : bitWidthOfLoadedFromPluginElement;
+
+    FetchIdentifier navigationPreloadIdentifier;
+    String nonce;
 };
 
 } // namespace WebCore

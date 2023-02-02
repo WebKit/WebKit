@@ -1262,8 +1262,8 @@ header: <WebCore/FrameLoaderTypes.h>
 header: <WebCore/ResourceRequest.h>
 [CustomHeader, Nested] class WebCore::ResourceRequest::RequestData {
     URL m_url;
-    double m_timeoutInterval;
     URL m_firstPartyForCookies;
+    double m_timeoutInterval;
     String m_httpMethod;
     WebCore::HTTPHeaderMap m_httpHeaderFields;
     Vector<String> m_responseContentDispositionEncodingFallbackArray;
@@ -2401,8 +2401,8 @@ struct WebCore::FetchOptions {
     WebCore::FetchOptionsCache cache;
     WebCore::FetchOptionsRedirect redirect;
     WebCore::ReferrerPolicy referrerPolicy;
-    String integrity;
     bool keepAlive;
+    String integrity;
     std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
     std::optional<WebCore::ScriptExecutionContextIdentifier> resultingClientIdentifier;
 }
@@ -2704,8 +2704,8 @@ enum class WebCore::CrossOriginEmbedderPolicyValue : bool
 
 struct WebCore::CrossOriginEmbedderPolicy {
     WebCore::CrossOriginEmbedderPolicyValue value;
-    String reportingEndpoint;
     WebCore::CrossOriginEmbedderPolicyValue reportOnlyValue;
+    String reportingEndpoint;
     String reportOnlyReportingEndpoint;
 };
 

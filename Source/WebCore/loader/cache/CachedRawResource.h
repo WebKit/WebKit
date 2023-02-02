@@ -75,8 +75,6 @@ private:
 #endif
 
     ResourceLoaderIdentifier m_identifier;
-    bool m_allowEncodedDataReplacement;
-    bool m_inIncrementalDataNotify { false };
 
     struct RedirectPair {
     public:
@@ -96,6 +94,9 @@ private:
         RefPtr<const FragmentedSharedBuffer> buffer;
     };
     std::optional<DelayedFinishLoading> m_delayedFinishLoading;
+
+    bool m_allowEncodedDataReplacement { true };
+    bool m_inIncrementalDataNotify { false };
 };
 
 } // namespace WebCore

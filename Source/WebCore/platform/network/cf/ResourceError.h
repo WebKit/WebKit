@@ -46,13 +46,11 @@ class ResourceError : public ResourceErrorBase {
 public:
     ResourceError(Type type = Type::Null)
         : ResourceErrorBase(type)
-        , m_dataIsUpToDate(true)
     {
     }
 
     ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::General, IsSanitized isSanitized = IsSanitized::No)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type, isSanitized)
-        , m_dataIsUpToDate(true)
     {
 #if PLATFORM(COCOA)
         ASSERT(domain != getNSURLErrorDomain());
@@ -97,7 +95,9 @@ private:
 
     void doPlatformIsolatedCopy(const ResourceError&);
 
-    bool m_dataIsUpToDate;
+    bool m_dataIsUpToDate { true };
+    bool m_compromisedNetworkConnectionIntegrity { false };
+
 #if USE(CFURLCONNECTION)
     mutable RetainPtr<CFErrorRef> m_platformError;
 #if PLATFORM(WIN)
@@ -106,7 +106,6 @@ private:
 #else
     mutable RetainPtr<NSError> m_platformError;
 #endif
-    bool m_compromisedNetworkConnectionIntegrity { false };
 };
 
 } // namespace WebCore

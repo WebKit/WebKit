@@ -75,8 +75,8 @@ CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() const &
 {
     return {
         value,
-        reportingEndpoint.isolatedCopy(),
         reportOnlyValue,
+        reportingEndpoint.isolatedCopy(),
         reportOnlyReportingEndpoint.isolatedCopy()
     };
 }
@@ -85,8 +85,8 @@ CrossOriginEmbedderPolicy CrossOriginEmbedderPolicy::isolatedCopy() &&
 {
     return {
         value,
-        WTFMove(reportingEndpoint).isolatedCopy(),
         reportOnlyValue,
+        WTFMove(reportingEndpoint).isolatedCopy(),
         WTFMove(reportOnlyReportingEndpoint).isolatedCopy()
     };
 }
@@ -175,8 +175,8 @@ std::optional<CrossOriginEmbedderPolicy> CrossOriginEmbedderPolicy::decode(WTF::
 
     return { {
         *value,
-        WTFMove(*reportingEndpoint),
         *reportOnlyValue,
+        WTFMove(*reportingEndpoint),
         WTFMove(*reportOnlyReportingEndpoint)
     } };
 }

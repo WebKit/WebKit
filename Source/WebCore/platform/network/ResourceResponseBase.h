@@ -299,6 +299,13 @@ protected:
 
     mutable std::optional<CertificateInfo> m_certificateInfo;
 
+    short m_httpStatusCode { 0 };
+
+    bool m_isNull : 1 { true };
+    unsigned m_initLevel : 3; // Controlled by ResourceResponse.
+    mutable UsedLegacyTLS m_usedLegacyTLS : bitWidthOfUsedLegacyTLS { UsedLegacyTLS::No };
+    mutable WasPrivateRelayed m_wasPrivateRelayed : bitWidthOfWasPrivateRelayed { WasPrivateRelayed::No };
+
 private:
     mutable Markable<Seconds, Seconds::MarkableTraits> m_age;
     mutable Markable<WallTime, WallTime::MarkableTraits> m_date;
@@ -315,17 +322,10 @@ private:
     mutable bool m_haveParsedContentRangeHeader : 1 { false };
     bool m_isRedirected : 1 { false };
     bool m_isRangeRequested : 1 { false };
-protected:
-    bool m_isNull : 1 { true };
-    unsigned m_initLevel : 3; // Controlled by ResourceResponse.
-    mutable UsedLegacyTLS m_usedLegacyTLS : bitWidthOfUsedLegacyTLS { UsedLegacyTLS::No };
-    mutable WasPrivateRelayed m_wasPrivateRelayed : bitWidthOfWasPrivateRelayed { WasPrivateRelayed::No };
-private:
+
     Tainting m_tainting : bitWidthOfTainting { Tainting::Basic };
     Source m_source : bitWidthOfSource { Source::Unknown };
     Type m_type : bitWidthOfType { Type::Default };
-protected:
-    short m_httpStatusCode { 0 };
 };
 
 template<class Encoder, typename>
