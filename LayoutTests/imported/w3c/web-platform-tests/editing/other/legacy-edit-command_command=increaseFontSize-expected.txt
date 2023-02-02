@@ -1,0 +1,12 @@
+abc
+
+
+PASS Wait for load...
+PASS command: "increaseFontSize", param: "undefined"
+PASS execCommand("increaseFontSize", false, undefined)
+PASS queryCommandState("increaseFontSize")
+PASS queryCommandEnabled("increaseFontSize")
+PASS queryCommandIndeterm("increaseFontSize")
+PASS queryCommandValue("increaseFontSize")
+PASS queryCommandSupported("increaseFontSize")
+
