@@ -30,6 +30,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"
 #include "RenderCombineText.h"
+#include "SVGInlineTextBox.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -41,6 +42,9 @@ TextBoxIterator TextBox::nextTextBox() const
 
 LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
 {
+    if (is<SVGInlineTextBox>(legacyInlineBox()))
+        return downcast<SVGInlineTextBox>(*legacyInlineBox()).localSelectionRect(rangeStart, rangeEnd);
+
     bool isCaretCase = rangeStart == rangeEnd;
 
     auto [clampedStart, clampedEnd] = selectableRange().clamp(rangeStart, rangeEnd);
