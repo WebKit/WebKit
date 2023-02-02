@@ -106,6 +106,7 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 
 template<typename T> struct Coder<T, typename std::enable_if_t<std::is_enum_v<T>>> : public IPC::ArgumentCoder<T> { };
 template<typename T> struct Coder<std::optional<T>> : public IPC::ArgumentCoder<std::optional<T>> { };
+template<typename T> struct Coder<Markable<T>> : public IPC::ArgumentCoder<Markable<T>> { };
 template<typename ValueType, typename ErrorType> struct Coder<Expected<ValueType, ErrorType>> : IPC::ArgumentCoder<Expected<ValueType, ErrorType>> { };
 template<typename... Elements> struct Coder<std::tuple<Elements...>> : public IPC::ArgumentCoder<std::tuple<Elements...>> { };
 

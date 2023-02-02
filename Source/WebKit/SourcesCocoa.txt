@@ -306,7 +306,6 @@ UIProcess/API/Cocoa/APIContentRuleListStoreCocoa.mm
 UIProcess/API/Cocoa/APISerializedScriptValueCocoa.mm
 UIProcess/API/Cocoa/LegacyBundleForClass.mm
 UIProcess/API/Cocoa/NSAttributedString.mm
-UIProcess/API/Cocoa/WKApplicationManifest.mm
 UIProcess/API/Cocoa/WKBackForwardList.mm
 UIProcess/API/Cocoa/WKBackForwardListItem.mm
 UIProcess/API/Cocoa/WKBrowsingContextController.mm
@@ -487,7 +486,6 @@ UIProcess/ios/WKContentView.mm @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @no-unify
 UIProcess/ios/WKDeferringGestureRecognizer.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
-UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
 UIProcess/ios/WKImageAnalysisGestureRecognizer.mm
 UIProcess/ios/WKKeyboardScrollingAnimator.mm
@@ -506,6 +504,7 @@ UIProcess/ios/WKTouchActionGestureRecognizer.mm
 UIProcess/ios/WKTextSelectionRect.mm
 UIProcess/ios/WKUSDPreviewView.mm
 UIProcess/ios/WKWebEvent.mm
+UIProcess/ios/WKWebGeolocationPolicyDeciderIOS.mm
 
 UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm
 

@@ -339,6 +339,7 @@ class GitHub(bmocks.GitHub):
                     author=dict(login=candidate['user']['login']),
                     baseRefName=cbase,
                     headRefName=chead,
+                    headRef=dict(target=dict(oid=(candidate.get('head') or {}).get('sha', None))),
                     headRepository=dict(nameWithOwner='{}/{}'.format(candidate['user']['login'], repo_name.split('/')[-1])),
                 )))
 

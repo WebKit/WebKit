@@ -251,7 +251,7 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode, FileAccessPer
         creationDisposition = OPEN_EXISTING;
         shareMode = FILE_SHARE_READ;
         break;
-    case FileOpenMode::Write:
+    case FileOpenMode::Truncate:
         desiredAccess = GENERIC_WRITE;
         creationDisposition = CREATE_ALWAYS;
         break;
@@ -408,7 +408,7 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         pageProtection = PAGE_READONLY;
         desiredAccess = FILE_MAP_READ;
         break;
-    case FileOpenMode::Write:
+    case FileOpenMode::Truncate:
         pageProtection = PAGE_READWRITE;
         desiredAccess = FILE_MAP_WRITE;
         break;

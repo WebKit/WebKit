@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: WebGL: INVALID_VALUE: vertexAttribPointer: bad offset
-CONSOLE MESSAGE: WebGL: INVALID_OPERATION: drawArrays: no buffer is bound to enabled attribute
-PASS: vertexAttribPointer should have an error.
-

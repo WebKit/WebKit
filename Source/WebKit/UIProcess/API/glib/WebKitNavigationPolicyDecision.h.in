@@ -78,8 +78,10 @@ WEBKIT_DEPRECATED_FOR(webkit_navigation_policy_decision_get_navigation_action) W
 webkit_navigation_policy_decision_get_request           (WebKitNavigationPolicyDecision *decision);
 #endif
 
-WEBKIT_API const gchar *
+#if !ENABLE(2022_GLIB_API)
+WEBKIT_DEPRECATED_FOR(webkit_navigation_policy_decision_get_navigation_action) const gchar *
 webkit_navigation_policy_decision_get_frame_name        (WebKitNavigationPolicyDecision *decision);
+#endif
 
 G_END_DECLS
 

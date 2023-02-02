@@ -83,6 +83,13 @@ public:
 
     StyleContentAlignmentData contentAlignment(GridTrackSizingDirection) const;
 
+    // These functions handle the actual implementation of layoutBlock based on if
+    // the grid is a standard grid or a masonry one. While masonry is an extension of grid,
+    // keeping the logic in the same function was leading to a messy amount of if statements being added to handle
+    // specific masonry cases.
+    void layoutGrid(bool);
+    void layoutMasonry(bool);
+
     // Computes the span relative to this RenderGrid, even if the RenderBox is a child
     // of a descendant subgrid.
     GridSpan gridSpanForChild(const RenderBox&, GridTrackSizingDirection) const;

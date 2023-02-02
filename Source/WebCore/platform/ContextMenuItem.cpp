@@ -268,9 +268,16 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemBaseCustomTag:
     case ContextMenuAction::ContextMenuItemLastCustomTag:
     case ContextMenuAction::ContextMenuItemBaseApplicationTag:
+        return true;
     case ContextMenuAction::ContextMenuItemTagPlayAllAnimations:
     case ContextMenuAction::ContextMenuItemTagPauseAllAnimations:
+    case ContextMenuAction::ContextMenuItemTagPlayAnimation:
+    case ContextMenuAction::ContextMenuItemTagPauseAnimation:
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
         return true;
+#else
+        return false;
+#endif
     }
 
     if (action > ContextMenuAction::ContextMenuItemBaseCustomTag && action < ContextMenuAction::ContextMenuItemLastCustomTag)

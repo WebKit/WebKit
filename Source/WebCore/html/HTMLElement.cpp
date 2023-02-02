@@ -69,6 +69,7 @@
 #include "JSHTMLElement.h"
 #include "LabelsNodeList.h"
 #include "MediaControlsHost.h"
+#include "MutableStyleProperties.h"
 #include "NodeTraversal.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"

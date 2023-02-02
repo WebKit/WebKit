@@ -84,6 +84,8 @@ private:
 
     Vector<Ref<ResizeObservation>> m_activeObservations;
     Vector<GCReachableRef<Element>> m_activeObservationTargets;
+    Vector<GCReachableRef<Element>> m_targetsWaitingForFirstObservation;
+
     bool m_hasSkippedObservations { false };
 };
 

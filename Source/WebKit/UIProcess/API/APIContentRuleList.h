@@ -50,6 +50,7 @@ public:
     const WebKit::WebCompiledContentRuleList& compiledRuleList() const { return m_compiledRuleList.get(); }
     
     static bool supportsRegularExpression(const WTF::String&);
+    static std::error_code parseRuleList(const WTF::String&);
 
 private:
     Ref<WebKit::WebCompiledContentRuleList> m_compiledRuleList;

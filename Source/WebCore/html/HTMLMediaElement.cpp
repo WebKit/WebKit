@@ -4255,8 +4255,10 @@ void HTMLMediaElement::setMuted(bool muted)
             }
         }
 
-        if (mutedStateChanged)
+        if (mutedStateChanged) {
             scheduleEvent(eventNames().volumechangeEvent);
+            scheduleUpdateShouldAutoplay();
+        }
 
         updateShouldPlay();
 

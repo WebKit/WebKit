@@ -3,9 +3,6 @@
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
-if (window.internals)
-    window.internals.settings.setWebGL2Enabled(true);
-
 function load() {
     window.contextWebGL2 = document.createElement("canvas").getContext("webgl2");
     window.contextWebGL2.clearColor(0, 0, 1, 0.5); // Half-transparent blue

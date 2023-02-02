@@ -93,14 +93,14 @@ public:
     String filenameExtension();
     String accessibilityDescription();
     std::optional<IntPoint> hotSpot();
-    std::optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::FromImage);
+    std::optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
     bool hasDensityCorrectedSize() { return densityCorrectedSize().has_value(); }
 
     ImageOrientation orientation();
 
     // Image metadata which is calculated from the first ImageFrame.
-    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::FromImage);
-    IntSize sourceSize(ImageOrientation = ImageOrientation::FromImage);
+    WEBCORE_EXPORT IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage);
+    IntSize sourceSize(ImageOrientation = ImageOrientation::Orientation::FromImage);
     IntSize sizeRespectingOrientation();
     Color singlePixelSolidColor();
     SubsamplingLevel maximumSubsamplingLevel();

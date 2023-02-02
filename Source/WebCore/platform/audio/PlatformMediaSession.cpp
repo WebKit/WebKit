@@ -36,8 +36,6 @@
 
 namespace WebCore {
 
-static constexpr Seconds clientDataBufferingTimerThrottleDelay { 100_ms };
-
 String convertEnumerationToString(PlatformMediaSession::State state)
 {
     static const NeverDestroyed<String> values[] = {

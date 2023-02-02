@@ -74,7 +74,7 @@ struct _WebKitHitTestResultPrivate {
     CString mediaURI;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitHitTestResult, webkit_hit_test_result, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitHitTestResult, webkit_hit_test_result, G_TYPE_OBJECT)
 
 static void webkitHitTestResultGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {

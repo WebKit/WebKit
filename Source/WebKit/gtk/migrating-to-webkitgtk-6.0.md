@@ -37,6 +37,19 @@ warnings, then it is time to attempt to upgrade to GTK 4 and webkitgtk-6.0.
 This is easier said than done, but [the GTK 4 migration guide](https://docs.gtk.org/gtk4/migrating-3to4.html)
 will help. Good luck.
 
+## Most Types Are Final
+
+Only two types are now derivable:
+
+- [type@WebView] has been often subclassed to customize its behavior for an
+  specific application. This possibility has been kept, as it has proved
+  useful in the past.
+- [type@InputMethodContext] is specifically designed in a way that subclassing
+  is required to make use of it.
+
+The rest of the types are no longer derivable; they are defined with the
+`G_TYPE_FLAG_FINAL` flag set. Use composition instead of derivation.
+
 ## Mandatory Web Process Sandbox
 
 The `webkit_web_context_set_sandbox_enabled()` and `webkit_web_context_get_sandbox_enabled()`
@@ -60,14 +73,14 @@ enabled. This property was previously disabled by default.
 no longer have a [type@Gdk.Event] parameter. Adjust your signal handlers
 accordingly.
 
-## Changes to WebKitWebView construction
+## Changes to WebKitWebView Construction
 
 `webkit_web_view_new_with_context()`, `webkit_web_view_new_with_settings()`, and
 `webkit_web_view_new_with_user_content_manager()` have all been removed. You
 may directly use `g_object_new()` instead. [ctor@WebKit.WebView.new] and
 [ctor@WebKit.WebView.new_with_related_view] both remain.
 
-## Network session API
+## Network Session API
 
 WebKit now uses a single global network process for all web contexts, and different
 network sessions can be created and used in the same network process. All the networking
@@ -81,3 +94,18 @@ to be used must be passed to the [type@WebKit.WebView] as a construct parameter.
 same [type@WebKit.NetworkSession] object to several web views to use the same session. The only exception
 is automation mode, which uses its own ephemeral session that is configured by the automation
 session capabilities.
+
+## Hardware Acceleration Policy
+
+`WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND` has been removed from
+[enum@WebKit.HardwareAccelerationPolicy]. You may still use
+[method@WebKit.Settings.set_hardware_acceleration_policy] to enable or disable
+hardware acceleration.
+
+## Scrollbar Appearance
+
+Because GTK 4 does not contain a foreign drawing API, it is no longer possible
+to draw scrollbars that match arbitrary GTK themes. Accordingly, the
+`webkit_web_context_get_use_system_appearance_for_scrollbars` and
+`webkit_web_context_set_use_system_appearance_for_scrollbars` APIs have been
+removed. WebKit will draw scrollbars that match the Adwaita GTK theme.

@@ -72,6 +72,8 @@ struct InteractionInformationAtPosition {
     bool isImage { false };
     bool isAttachment { false };
     bool isAnimatedImage { false };
+    bool isAnimating { false };
+    bool canShowAnimationControls { false };
     bool isPausedVideo { false };
     bool isElement { false };
     bool isContentEditable { false };

@@ -266,7 +266,7 @@ protected:
 #endif
 
     PAL::SessionID m_sessionID;
-    std::optional<UUID> m_dataStoreIdentifier;
+    Markable<UUID> m_dataStoreIdentifier;
     Ref<NetworkProcess> m_networkProcess;
     WeakHashSet<NetworkDataTask> m_dataTaskSet;
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)

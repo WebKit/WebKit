@@ -58,6 +58,7 @@
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineTextBox.h"
 #include "Logging.h"
+#include "MutableStyleProperties.h"
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
@@ -94,11 +95,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-static inline LayoutUnit NoXPosForVerticalArrowNavigation()
-{
-    return LayoutUnit::min();
-}
 
 CaretBase::CaretBase(CaretVisibility visibility)
     : m_caretRectNeedsUpdate(true)

@@ -26,8 +26,7 @@
     readonly attribute SVGAnimatedNumber stdDeviationX;
     readonly attribute SVGAnimatedNumber stdDeviationY;
 
-    undefined setStdDeviation(optional unrestricted float stdDeviationX = NaN,
-                         optional unrestricted float stdDeviationY = NaN);
+    undefined setStdDeviation(float stdDeviationX, float stdDeviationY);
 };
 
 SVGFEDropShadowElement includes SVGFilterPrimitiveStandardAttributes;

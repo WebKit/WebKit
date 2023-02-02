@@ -593,10 +593,17 @@ static std::optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
     case ContextMenuItemTagTranslate:
         return WebMenuItemTagTranslate;
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagPlayAllAnimations:
         return WebMenuItemTagPlayAllAnimations;
     case ContextMenuItemTagPauseAllAnimations:
         return WebMenuItemTagPauseAllAnimations;
+    case ContextMenuItemTagPlayAnimation:
+        return WebMenuItemTagPlayAnimation;
+    case ContextMenuItemTagPauseAnimation:
+        return WebMenuItemTagPauseAnimation;
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
         // We just pass these through.
         return static_cast<NSInteger>(action);

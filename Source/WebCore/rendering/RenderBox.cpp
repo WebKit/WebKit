@@ -3249,6 +3249,8 @@ LayoutUnit RenderBox::computeLogicalHeightWithoutLayout() const
 
 std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
+    if (is<RenderReplaced>(this))
+        return computeReplacedLogicalHeightUsing(heightType, height) + borderAndPaddingLogicalHeight();
     if (std::optional<LayoutUnit> logicalHeight = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight))
         return adjustBorderBoxLogicalHeightForBoxSizing(logicalHeight.value());
     return std::nullopt;

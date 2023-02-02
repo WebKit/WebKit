@@ -44,7 +44,7 @@ public:
     bool hasRelativeWidth() const override { return false; }
     bool hasRelativeHeight() const override { return false; }
 
-    FloatSize size(ImageOrientation = ImageOrientation::FromImage) const override { return m_crossfadeSize; }
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override { return m_crossfadeSize; }
 
 private:
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) override;

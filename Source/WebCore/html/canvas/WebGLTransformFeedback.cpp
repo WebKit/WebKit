@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL2)
+#if ENABLE(WEBGL)
 #include "WebGLTransformFeedback.h"
 
 #include "WebCoreOpaqueRoot.h"
@@ -119,4 +119,4 @@ bool WebGLTransformFeedback::validateProgramForResume(WebGLProgram* program) con
 
 }
 
-#endif // ENABLE(WEBGL2)
+#endif // ENABLE(WEBGL)

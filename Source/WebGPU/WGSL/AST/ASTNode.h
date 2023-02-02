@@ -29,72 +29,109 @@
 
 #include <wtf/FastMalloc.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/UniqueRef.h>
+#include <wtf/UniqueRefVector.h>
 
 namespace WGSL::AST {
 
+enum class NodeKind : uint8_t {
+    Unknown,
+
+    // Attribute
+    AlignAttribute,
+    BindingAttribute,
+    BuiltinAttribute,
+    ConstAttribute,
+    GroupAttribute,
+    IdAttribute,
+    InterpolateAttribute,
+    InvariantAttribute,
+    LocationAttribute,
+    SizeAttribute,
+    StageAttribute,
+    WorkgroupSizeAttribute,
+
+    Directive,
+
+    // Expression
+    BinaryExpression,
+    BitcastExpression,
+    CallExpression,
+    FieldAccessExpression,
+    IdentifierExpression,
+    IdentityExpression,
+    IndexAccessExpression,
+    PointerDereferenceExpression,
+    UnaryExpression,
+
+    Function,
+
+    Identifier,
+
+    // Literal
+    AbstractFloatLiteral,
+    AbstractIntegerLiteral,
+    BoolLiteral,
+    Float32Literal,
+    Signed32Literal,
+    Unsigned32Literal,
+
+    ShaderModule,
+
+    // Statement
+    AssignmentStatement,
+    BreakStatement,
+    CallStatement,
+    CompoundAssignmentStatement,
+    CompoundStatement,
+    ContinueStatement,
+    DecrementIncrementStatement,
+    DiscardStatement,
+    ForStatement,
+    IfStatement,
+    LoopStatement,
+    PhonyAssignmentStatement,
+    ReturnStatement,
+    StaticAssertStatement,
+    SwitchStatement,
+    VariableStatement,
+    WhileStatement,
+
+    Structure,
+    StructureMember,
+
+    TypeAlias,
+
+    // TypeName
+    ArrayTypeName,
+    NamedTypeName,
+    ParameterizedTypeName,
+    ReferenceTypeName,
+    StructTypeName,
+
+    // Value
+    ConstantValue,
+    OverrideValue,
+    LetValue,
+    ParameterValue,
+
+    Variable,
+
+    VariableQualifier
+};
+
 class Node {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    enum class Kind : uint8_t {
-        // Attribute
-        BindingAttribute,
-        BuiltinAttribute,
-        GroupAttribute,
-        LocationAttribute,
-        StageAttribute,
-        WorkgroupSizeAttribute,
-
-        // Decl
-        FunctionDecl,
-        StructDecl,
-        VariableDecl,
-
-        GlobalDirective,
-
-        // Expression
-        AbstractFloatLiteral,
-        AbstractIntLiteral,
-        ArrayAccess,
-        BoolLiteral,
-        CallableExpression,
-        Float32Literal,
-        IdentifierExpression,
-        Int32Literal,
-        StructureAccess,
-        Uint32Literal,
-        UnaryExpression,
-        BinaryExpression,
-        PointerDereference,
-        IdentityExpression,
-
-        ShaderModule,
-
-        // Statement
-        AssignmentStatement,
-        CompoundStatement,
-        ReturnStatement,
-        VariableStatement,
-
-        // TypeDecl
-        ArrayType,
-        NamedType,
-        ParameterizedType,
-        StructType,
-        ReferenceType,
-
-        Parameter,
-        StructMember,
-        VariableQualifier,
-    };
+    using Ref = UniqueRef<Node>;
+    using List = UniqueRefVector<Node, 2>;
 
     Node(SourceSpan span)
         : m_span(span)
-    {
-    }
+    { }
     virtual ~Node() = default;
 
-    virtual Kind kind() const = 0;
+    virtual NodeKind kind() const { return NodeKind::Unknown; };
 
     const SourceSpan& span() const { return m_span; }
 
@@ -104,8 +141,8 @@ private:
 
 } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_AST(NodeKind) \
-inline WGSL::AST::Node::Kind WGSL::AST::NodeKind::kind() const { return Kind::NodeKind; } \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::NodeKind) \
-static bool isType(const WGSL::AST::Node& node) { return node.kind() == WGSL::AST::Node::Kind::NodeKind; } \
+#define SPECIALIZE_TYPE_TRAITS_WGSL_AST(Kind) \
+inline WGSL::AST::NodeKind WGSL::AST::Kind::kind() const { return WGSL::AST::NodeKind::Kind; } \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Kind)                           \
+static bool isType(const WGSL::AST::Node& node) { return node.kind() == WGSL::AST::NodeKind::Kind; } \
 SPECIALIZE_TYPE_TRAITS_END()

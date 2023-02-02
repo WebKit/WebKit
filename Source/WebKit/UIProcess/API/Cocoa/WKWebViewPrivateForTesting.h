@@ -79,6 +79,8 @@ struct WKAppPrivacyReportTestingData {
 - (void)_didShowContextMenu;
 - (void)_didDismissContextMenu;
 
+- (BOOL)_shouldBypassGeolocationPromptForTesting;
+
 - (void)_didPresentContactPicker;
 - (void)_didDismissContactPicker;
 - (void)_dismissContactPickerWithContacts:(NSArray *)contacts;

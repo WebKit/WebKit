@@ -37,7 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class UIFindInteraction;
 #endif
 
-@class WKApplicationManifest;
 @class WKBackForwardList;
 @class WKBackForwardListItem;
 @class WKContentWorld;
@@ -664,13 +663,6 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 @discussion The default value is NO.
 */
 @property (nonatomic, setter=setInspectable:) BOOL inspectable NS_SWIFT_NAME(isInspectable) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
-/*!
-@abstract Gets Web Application Manifest data from the WKWebView to be used with UIActivityViewController
-@param completionHandler A block to invoke with the available WKApplicationManifest data.
-The WKApplicationManifest argument to this block may be nil if the web page does not specify the bare minimum Web Application Manifest data.
-*/
-- (void)getApplicationManifestWithCompletionHandler:(void (^)(WKApplicationManifest * _Nullable applicationManifest))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

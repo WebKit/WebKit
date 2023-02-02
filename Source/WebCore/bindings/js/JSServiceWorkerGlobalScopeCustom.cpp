@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 #include "JSServiceWorkerGlobalScope.h"
 
+#include "JSDOMPromiseDeferred.h"
 #include "ServiceWorkerClients.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "WebCoreOpaqueRoot.h"

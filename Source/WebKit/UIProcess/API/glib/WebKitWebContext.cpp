@@ -32,7 +32,6 @@
 #include "WebAutomationSession.h"
 #include "WebKitAutomationSessionPrivate.h"
 #include "WebKitDownloadPrivate.h"
-#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitGeolocationManagerPrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitInjectedBundleClient.h"
@@ -83,6 +82,10 @@
 
 #if ENABLE(2022_GLIB_API)
 #include "WebKitNetworkSession.h"
+#endif
+
+#if !ENABLE(2022_GLIB_API)
+#include "WebKitFaviconDatabasePrivate.h"
 #endif
 
 using namespace WebKit;
@@ -346,14 +349,8 @@ static const char* injectedBundleDirectory()
         return bundleDirectory;
 #endif
 
-#if PLATFORM(GTK)
-    static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit" WEBKITGTK_API_INFIX "gtk-" WEBKITGTK_API_VERSION
-        G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
-    return injectedBundlePath;
-#elif PLATFORM(WPE)
     static const char* injectedBundlePath = PKGLIBDIR G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
     return injectedBundlePath;
-#endif
 }
 
 static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
@@ -469,6 +466,7 @@ static void webkitWebContextConstructed(GObject* object)
 #if ENABLE(2022_GLIB_API)
     priv->processPool->setSandboxEnabled(true);
 #endif
+    priv->processPool->addSandboxPath(injectedBundleDirectory(), SandboxPermission::ReadOnly);
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))

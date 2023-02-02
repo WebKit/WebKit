@@ -40,20 +40,20 @@ public:
     {
     }
 
-    void visit(AST::StructDecl&) override;
-    void visit(AST::NamedType&) override;
+    void visit(AST::Structure&) override;
+    void visit(AST::NamedTypeName&) override;
 
 private:
-    HashMap<String, Ref<AST::TypeDecl>> m_typeContext;
+    HashMap<String, Ref<AST::TypeName>> m_typeContext;
 };
 
 
-void ResolveTypeReferences::visit(AST::StructDecl& structDecl)
+void ResolveTypeReferences::visit(AST::Structure& structure)
 {
-    m_typeContext.add(structDecl.name(), adoptRef(*new AST::StructType(structDecl.span(), structDecl)));
+    m_typeContext.add(structure.name(), adoptRef(*new AST::StructTypeName(structure.span(), structure)));
 }
 
-void ResolveTypeReferences::visit(AST::NamedType& namedType)
+void ResolveTypeReferences::visit(AST::NamedTypeName& namedType)
 {
     auto it = m_typeContext.find(namedType.name());
     if (it != m_typeContext.end())

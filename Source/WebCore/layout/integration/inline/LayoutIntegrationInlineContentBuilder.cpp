@@ -44,7 +44,7 @@ inline static float lineOverflowLogicalWidth(const RenderBlockFlow& flow, Layout
     auto endPadding = flow.hasNonVisibleOverflow() ? flow.paddingEnd() : 0_lu;
     if (!endPadding)
         endPadding = flow.endPaddingWidthForCaret();
-    if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && flow.element()->isRootEditableElement())
+    if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && flow.element()->isRootEditableElement() && flow.style().isLeftToRightDirection())
         endPadding = 1;
     return lineContentLogicalWidth + endPadding;
 }

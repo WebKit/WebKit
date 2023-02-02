@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x60
-        RenderBlock (floating) at (2,3) size 37x74
+        RenderBlock (floating) at (2,3) size 37x73
           RenderText at (0,-13) size 37x108
             text run at (0,-13) width 37: "J"
         RenderText {#text} at (41,40) size 278x19
           text run at (41,40) width 278: "ust an example of first-letter. Short paragraph!"
       RenderBlock {DIV} at (16,76) size 400x160
-        RenderBlock (floating) at (2,3) size 37x74
+        RenderBlock (floating) at (2,3) size 37x73
           RenderText at (0,-13) size 37x108
             text run at (0,-13) width 37: "J"
         RenderText {#text} at (41,40) size 394x119

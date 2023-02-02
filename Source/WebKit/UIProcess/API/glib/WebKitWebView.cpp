@@ -42,7 +42,6 @@
 #include "WebKitEditorStatePrivate.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitError.h"
-#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitFormClient.h"
 #include "WebKitHitTestResultPrivate.h"
 #include "WebKitIconLoadingClient.h"
@@ -86,6 +85,7 @@
 #include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(GTK)
+#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitInputMethodContextImplGtk.h"
 #include "WebKitPointerLockPermissionRequest.h"
 #include "WebKitPrintOperationPrivate.h"
@@ -4091,7 +4091,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
     });
 }
 
-/*
+/**
  * webkit_web_view_run_async_javascript_function_in_world:
  * @web_view: a #WebKitWebView
  * @body: the JavaScript function body

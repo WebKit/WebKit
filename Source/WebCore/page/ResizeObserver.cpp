@@ -82,6 +82,11 @@ void ResizeObserver::observe(Element& target, const ResizeObserverOptions& optio
 
     m_observations.append(ResizeObservation::create(target, options.box));
 
+    // Per the specification, we should dispatch at least one observation for the target. For this reason, we make sure to keep the
+    // target alive until this first observation. This, in turn, will keep the ResizeObserver's JS wrapper alive via
+    // isReachableFromOpaqueRoots(), so the callback stays alive.
+    m_targetsWaitingForFirstObservation.append(target);
+
     if (m_document) {
         m_document->addResizeObserver(*this);
         m_document->scheduleRenderingUpdate(RenderingUpdateStep::ResizeObservations);
@@ -141,6 +146,8 @@ void ResizeObserver::deliverObservations()
     m_activeObservations.clear();
     auto activeObservationTargets = std::exchange(m_activeObservationTargets, { });
 
+    auto targetsWaitingForFirstObservation = std::exchange(m_targetsWaitingForFirstObservation, { });
+
     // FIXME: The JSResizeObserver wrapper should be kept alive as long as the resize observer can fire events.
     ASSERT(m_callback->hasCallback());
     if (!m_callback->hasCallback())
@@ -165,7 +172,7 @@ bool ResizeObserver::isReachableFromOpaqueRoots(JSC::AbstractSlotVisitor& visito
         if (containsWebCoreOpaqueRoot(visitor, target.get()))
             return true;
     }
-    return false;
+    return !m_targetsWaitingForFirstObservation.isEmpty();
 }
 
 bool ResizeObserver::removeTarget(Element& target)
@@ -186,11 +193,15 @@ void ResizeObserver::removeAllTargets()
     }
     m_activeObservationTargets.clear();
     m_activeObservations.clear();
+    m_targetsWaitingForFirstObservation.clear();
     m_observations.clear();
 }
 
 bool ResizeObserver::removeObservation(const Element& target)
 {
+    m_targetsWaitingForFirstObservation.removeFirstMatching([&target](auto& pendingTarget) {
+        return pendingTarget.ptr() == &target;
+    });
     return m_observations.removeFirstMatching([&target](auto& observation) {
         return observation->target() == &target;
     });

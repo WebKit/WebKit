@@ -666,6 +666,9 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
         if (!is<CSSAnimation>(animation()))
             return { };
 
+        if (!m_target || !m_target->isConnected())
+            return { };
+
         auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
         auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal());
         if (!styleScope)
@@ -793,6 +796,17 @@ void KeyframeEffect::keyframesRuleDidChange()
     invalidate();
 }
 
+void KeyframeEffect::customPropertyRegistrationDidChange(const AtomString& customProperty)
+{
+    // If the registration of a custom property is changed, we should recompute keyframes
+    // at the next opportunity as the initial value, inherited value, etc. could have changed.
+    if (!m_blendingKeyframes.properties().contains(customProperty))
+        return;
+
+    clearBlendingKeyframes();
+    invalidate();
+}
+
 ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput)
 {
     Ref protectedDocument { document };
@@ -880,7 +894,9 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     auto& styleResolver = m_target->styleResolver();
 
     m_inheritedProperties.clear();
+    m_currentColorProperties.clear();
     m_containsCSSVariableReferences = false;
+    m_hasRelativeFontWeight = false;
 
     for (auto& keyframe : m_parsedKeyframes) {
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
@@ -906,8 +922,15 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
 
         for (auto property : keyframeRule->properties()) {
             if (auto* cssValue = property.value()) {
-                if (cssValue->isPrimitiveValue() && downcast<CSSPrimitiveValue>(cssValue)->valueID() == CSSValueInherit)
-                    m_inheritedProperties.add(property.id());
+                if (cssValue->isPrimitiveValue()) {
+                    auto valueId = downcast<CSSPrimitiveValue>(*cssValue).valueID();
+                    if (valueId == CSSValueInherit)
+                        m_inheritedProperties.add(property.id());
+                    else if (valueId == CSSValueCurrentcolor)
+                        m_currentColorProperties.add(property.id());
+                    else if (property.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
+                        m_hasRelativeFontWeight = true;
+                }
             }
         }
 
@@ -1052,7 +1075,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     KeyframeList keyframeList(AtomString { backingAnimation.name().string });
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences, m_inheritedProperties);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences, m_hasRelativeFontWeight, m_inheritedProperties, m_currentColorProperties);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList) {
@@ -2383,6 +2406,16 @@ void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previ
 
     if (hasMotionPath(previousStyle) != hasMotionPath(currentStyle))
         abilityToBeAcceleratedDidChange();
+}
+
+bool KeyframeEffect::hasPropertySetToCurrentColor() const
+{
+    return !m_currentColorProperties.isEmpty();
+}
+
+bool KeyframeEffect::hasColorSetToCurrentColor() const
+{
+    return m_currentColorProperties.contains(CSSPropertyColor);
 }
 
 } // namespace WebCore

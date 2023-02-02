@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,11 @@
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderbuffer.h"
+#include "WebGLSampler.h"
 #include "WebGLStateTracker.h"
 #include "WebGLTexture.h"
+#include "WebGLTransformFeedback.h"
+#include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <JavaScriptCore/ConsoleTypes.h>
@@ -54,12 +57,6 @@
 
 #if ENABLE(WEB_CODECS)
 #include "WebCodecsVideoFrame.h"
-#endif
-
-#if ENABLE(WEBGL2)
-#include "WebGLSampler.h"
-#include "WebGLTransformFeedback.h"
-#include "WebGLVertexArrayObject.h"
 #endif
 
 #if ENABLE(WEBXR)

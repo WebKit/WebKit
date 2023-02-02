@@ -209,6 +209,8 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
 
 static void webKitWebAudioSrcConstructed(GObject* object)
 {
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+
     WebKitWebAudioSrc* src = WEBKIT_WEB_AUDIO_SRC(object);
     WebKitWebAudioSrcPrivate* priv = src->priv;
 

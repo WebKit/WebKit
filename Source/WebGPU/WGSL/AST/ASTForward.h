@@ -28,55 +28,85 @@
 namespace WGSL::AST {
 
 class ShaderModule;
-class GlobalDirective;
+class Directive;
 
 class Attribute;
+class AlignAttribute;
 class BindingAttribute;
 class BuiltinAttribute;
+class ConstAttribute;
 class GroupAttribute;
+class IdAttribute;
+class InterpolateAttribute;
+class InvariantAttribute;
 class LocationAttribute;
+class SizeAttribute;
 class StageAttribute;
 class WorkgroupSizeAttribute;
 
-class Decl;
-class FunctionDecl;
-class StructDecl;
-class VariableDecl;
-
 class Expression;
 class AbstractFloatLiteral;
-class AbstractIntLiteral;
-class ArrayAccess;
+class AbstractIntegerLiteral;
+class BinaryExpression;
+class BitcastExpression;
 class BoolLiteral;
-class CallableExpression;
+class CallExpression;
+class FieldAccessExpression;
 class Float32Literal;
 class IdentifierExpression;
-class Int32Literal;
-class StructureAccess;
-class Uint32Literal;
-class UnaryExpression;
-class BinaryExpression;
-class PointerDereference;
 class IdentityExpression;
+class IndexAccessExpression;
+class PointerDereferenceExpression;
+class Signed32Literal;
+class UnaryExpression;
+class Unsigned32Literal;
+
+class Function;
+
+class Identifier;
 
 class Statement;
 class AssignmentStatement;
+class BreakStatement;
+class CompoundAssignmentStatement;
 class CompoundStatement;
+class ContinueStatement;
+class DecrementIncrementStatement;
+class DiscardStatement;
+class ForStatement;
+class IfStatement;
+class LoopStatement;
+class PhonyAssignmentStatement;
 class ReturnStatement;
+class StaticAssertStatement;
+class SwitchStatement;
 class VariableStatement;
+class WhileStatement;
 
-class TypeDecl;
-class ArrayType;
-class NamedType;
-class ParameterizedType;
-class StructType;
-class ReferenceType;
+class Structure;
+class StructureMember;
 
-class Parameter;
-class StructMember;
+class TypeAlias;
+
+class TypeName;
+class ArrayTypeName;
+class NamedTypeName;
+class ParameterizedTypeName;
+class StructTypeName;
+class ReferenceTypeName;
+
+class Value;
+class ConstantValue;
+class OverrideValue;
+class LetValue;
+class ParameterValue;
+
+class Variable;
 class VariableQualifier;
 
 enum class AccessMode : uint8_t;
+enum class ParameterRole : uint8_t;
 enum class StorageClass : uint8_t;
+enum class StructureRole : uint8_t;
 
 } // namespace WGSL::AST

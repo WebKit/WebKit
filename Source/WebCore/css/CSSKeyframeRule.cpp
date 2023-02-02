@@ -28,8 +28,10 @@
 
 #include "CSSKeyframesRule.h"
 #include "CSSParser.h"
+#include "MutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

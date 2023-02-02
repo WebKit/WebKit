@@ -66,6 +66,9 @@ RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::customPropertyValue(const Ato
 unsigned ComputedStylePropertyMapReadOnly::size() const
 {
     // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-size
+
+    ComputedStyleExtractor::updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
+
     auto* style = m_element->computedStyle();
     if (!style)
         return 0;
@@ -77,6 +80,10 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
 {
     // https://drafts.css-houdini.org/css-typed-om-1/#the-stylepropertymap
     Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> values;
+
+    // Ensure custom property counts are correct.
+    ComputedStyleExtractor::updateStyleIfNeededForProperty(m_element.get(), CSSPropertyCustom);
+
     auto* style = m_element->computedStyle();
     if (!style)
         return values;
@@ -85,8 +92,10 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     const auto& nonInheritedCustomProperties = style->nonInheritedCustomProperties();
     const auto& exposedComputedCSSPropertyIDs = m_element->document().exposedComputedCSSPropertyIDs();
     values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
+
+    ComputedStyleExtractor extractor { m_element.ptr() };
     for (auto propertyID : exposedComputedCSSPropertyIDs) {
-        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No, ComputedStyleExtractor::PropertyValueType::Computed);
+        auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No, ComputedStyleExtractor::PropertyValueType::Computed);
         values.uncheckedAppend(makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), propertyID, m_element->document())));
     }
 

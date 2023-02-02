@@ -118,8 +118,10 @@ struct _WebKitWebContextClass {
     GObjectClass parent;
 
     /*< public >*/
+#if !ENABLE(2022_GLIB_API)
     void     (* download_started)                    (WebKitWebContext        *context,
                                                       WebKitDownload          *download);
+#endif
     void     (* initialize_web_extensions)           (WebKitWebContext        *context);
     void     (* initialize_notification_permissions) (WebKitWebContext        *context);
     void     (* automation_started)                  (WebKitWebContext        *context,
@@ -317,7 +319,7 @@ WEBKIT_API void
 webkit_web_context_send_message_to_all_extensions   (WebKitWebContext              *context,
                                                      WebKitUserMessage             *message);
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && !USE(GTK4)
 WEBKIT_API void
 webkit_web_context_set_use_system_appearance_for_scrollbars (WebKitWebContext      *context,
                                                              gboolean               enabled);

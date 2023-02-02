@@ -1239,11 +1239,26 @@ LayoutUnit RenderBlockFlow::collapseMarginsWithChildInfo(RenderBox* child, Rende
     bool childIsSelfCollapsing = child ? child->isSelfCollapsingBlock() : false;
     bool beforeQuirk = child ? hasMarginBeforeQuirk(*child) : false;
     bool afterQuirk = child ? hasMarginAfterQuirk(*child) : false;
+    auto trimChildBlockMargins = [&]() {
+        auto childBlockFlow = dynamicDowncast<RenderBlockFlow>(child);
+        if (childBlockFlow)
+            childBlockFlow->setMaxMarginBeforeValues(0_lu, 0_lu);
+        child->setMarginBefore(0_lu, &style());
+
+        // The margin after for a self collapsing child should also be trimmed so it does not 
+        // influence the margins of the first non collapsing child
+        if (childIsSelfCollapsing) {
+            if (childBlockFlow)
+                childBlockFlow->setMaxMarginAfterValues(0_lu, 0_lu);
+            child->setMarginAfter(0_lu, &style());
+        }
+    };
+    if (marginInfo.atBeforeSideOfBlock() && style().marginTrim().contains(MarginTrimType::BlockStart))
+        trimChildBlockMargins();
 
     // Get the four margin values for the child and cache them.
-    const MarginValues childMargins = child ? marginValuesForChild(*child) : MarginValues(0, 0, 0, 0);
-
-    // Get our max pos and neg top margins.
+    MarginValues childMargins = child ? marginValuesForChild(*child) : MarginValues(0, 0, 0, 0);
+        // Get our max pos and neg top margins.
     LayoutUnit posTop = childMargins.positiveMarginBefore();
     LayoutUnit negTop = childMargins.negativeMarginBefore();
 
@@ -1517,7 +1532,10 @@ void RenderBlockFlow::setCollapsedBottomMargin(const MarginInfo& marginInfo)
     if (marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()) {
         // Update our max pos/neg bottom margins, since we collapsed our bottom margins
         // with our children.
-        setMaxMarginAfterValues(std::max(maxPositiveMarginAfter(), marginInfo.positiveMargin()), std::max(maxNegativeMarginAfter(), marginInfo.negativeMargin()));
+        auto shouldTrimBlockEndMargin = style().marginTrim().contains(MarginTrimType::BlockEnd);
+        auto propagatedPositiveMargin = shouldTrimBlockEndMargin ? 0_lu : marginInfo.positiveMargin();
+        auto propagatedNegativeMargin = shouldTrimBlockEndMargin ? 0_lu : marginInfo.negativeMargin();
+        setMaxMarginAfterValues(std::max(maxPositiveMarginAfter(), propagatedPositiveMargin), std::max(maxNegativeMarginAfter(), propagatedNegativeMargin));
 
         if (!marginInfo.hasMarginAfterQuirk())
             setHasMarginAfterQuirk(false);

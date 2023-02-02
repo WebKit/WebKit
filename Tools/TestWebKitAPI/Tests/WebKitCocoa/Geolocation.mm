@@ -27,15 +27,13 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "ClassMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPI.h"
 #import <CoreLocation/CLLocation.h>
+#import <WebCore/SecurityOriginData.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
-#import <WebKit/WebAllowDenyPolicyListener.h>
 #import <WebKit/_WKGeolocationCoreLocationProvider.h>
 #import <WebKit/_WKGeolocationPosition.h>
 #import <wtf/MainThread.h>
@@ -43,6 +41,19 @@
 #import <wtf/RetainPtr.h>
 
 static bool hasReceivedAlert;
+static bool didShowGeolocationPrompt = false;
+
+@interface TestWKWebViewForGeolocation : TestWKWebView
+- (BOOL)_shouldBypassGeolocationPromptForTesting;
+@end
+
+@implementation TestWKWebViewForGeolocation
+- (BOOL)_shouldBypassGeolocationPromptForTesting
+{
+    didShowGeolocationPrompt = true;
+    return YES;
+}
+@end
 
 @interface TestCoreLocationProvider : NSObject<_WKGeolocationCoreLocationProvider>
 @property (nonatomic) BOOL shouldAuthorizeGeolocation;
@@ -138,29 +149,6 @@ static void expectException(void (^completionHandler)())
 }
 
 @end
-
-@interface FakeWebGeolocationPolicyDecider : NSObject
-- (bool)receivedRequest;
-@end
-@implementation FakeWebGeolocationPolicyDecider {
-    bool _receivedRequest;
-}
-- (bool)receivedRequest
-{
-    return _receivedRequest;
-}
-- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL window:(UIWindow *)window listener:(id<WebAllowDenyPolicyListener>)listener
-{
-    _receivedRequest = true;
-    [listener allow];
-}
-@end
-
-static FakeWebGeolocationPolicyDecider *fakeWebGeolocationPolicyDecider()
-{
-    static NeverDestroyed<RetainPtr<FakeWebGeolocationPolicyDecider>> decider = adoptNS([FakeWebGeolocationPolicyDecider new]);
-    return decider.get().get();
-}
 
 namespace TestWebKitAPI {
 
@@ -298,13 +286,12 @@ TEST(Geolocation, DelegateNotImplemented)
     processPool.get()._coreLocationProvider = coreLocationProvider.get();
     auto config = adoptNS([WKWebViewConfiguration new]);
     config.get().processPool = processPool.get();
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:config.get()]);
-    ClassMethodSwizzler swizzler([UIWebGeolocationPolicyDecider class], @selector(sharedPolicyDecider), reinterpret_cast<IMP>(fakeWebGeolocationPolicyDecider));
-    EXPECT_FALSE(fakeWebGeolocationPolicyDecider().receivedRequest);
+    auto webView = adoptNS([[TestWKWebViewForGeolocation alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:config.get()]);
+    EXPECT_FALSE(didShowGeolocationPrompt);
     [webView loadTestPageNamed:@"GeolocationGetCurrentPositionResult"];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "SUCCESS");
     EXPECT_TRUE(coreLocationProvider.get().authorizationWasRequested);
-    EXPECT_TRUE(fakeWebGeolocationPolicyDecider().receivedRequest);
+    EXPECT_TRUE(didShowGeolocationPrompt);
 }
 
 } // namespace TestWebKitAPI

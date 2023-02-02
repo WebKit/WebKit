@@ -490,9 +490,9 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
     }
 
     unsigned functionImportCount = calleeGroup->functionImportCount();
-    auto makeFunctionWrapper = [&] (uint32_t index) -> JSValue {
+    auto makeFunctionWrapper = [&] (uint32_t functionIndexSpace) -> JSValue {
         // If we already made a wrapper, do not make a new one.
-        JSValue wrapper = m_instance->instance().getFunctionWrapper(index);
+        JSValue wrapper = m_instance->instance().getFunctionWrapper(functionIndexSpace);
 
         if (!wrapper.isNull())
             return wrapper;
@@ -500,35 +500,35 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
         // 1. If e is a closure c:
         //   i. If there is an Exported Function Exotic Object func in funcs whose func.[[Closure]] equals c, then return func.
         //   ii. (Note: At most one wrapper is created for any closure, so func is unique, even if there are multiple occurrances in the list. Moreover, if the item was an import that is already an Exported Function Exotic Object, then the original function object will be found. For imports that are regular JS functions, a new wrapper will be created.)
-        if (index < functionImportCount) {
-            JSObject* functionImport = m_instance->instance().importFunction(index).get();
+        if (functionIndexSpace < functionImportCount) {
+            JSObject* functionImport = m_instance->instance().importFunction(functionIndexSpace).get();
             if (isWebAssemblyHostFunction(functionImport))
                 wrapper = functionImport;
             else {
-                Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(index);
-                wrapper = WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, index, m_instance.get(), typeIndex);
+                Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(functionIndexSpace);
+                wrapper = WebAssemblyWrapperFunction::create(vm, globalObject, globalObject->webAssemblyWrapperFunctionStructure(), functionImport, functionIndexSpace, m_instance.get(), typeIndex);
             }
         } else {
             //   iii. Otherwise:
             //     a. Let func be an Exported Function Exotic Object created from c.
             //     b. Append func to funcs.
             //     c. Return func.
-            Wasm::Callee& jsEntrypointCallee = calleeGroup->jsEntrypointCalleeFromFunctionIndexSpace(index);
-            Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(index);
-            Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(index);
+            Wasm::Callee& jsEntrypointCallee = calleeGroup->jsEntrypointCalleeFromFunctionIndexSpace(functionIndexSpace);
+            Wasm::WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(functionIndexSpace);
+            Wasm::TypeIndex typeIndex = module->typeIndexFromFunctionIndexSpace(functionIndexSpace);
             const auto& signature = Wasm::TypeInformation::getFunctionSignature(typeIndex);
-            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(index), m_instance.get(), jsEntrypointCallee, entrypointLoadLocation, typeIndex);
+            WebAssemblyFunction* function = WebAssemblyFunction::create(vm, globalObject, globalObject->webAssemblyFunctionStructure(), signature.argumentCount(), makeString(functionIndexSpace), m_instance.get(), jsEntrypointCallee, entrypointLoadLocation, typeIndex);
             wrapper = function;
         }
 
         ASSERT(wrapper.isCallable());
-        m_instance->instance().setFunctionWrapper(index, wrapper);
+        m_instance->instance().setFunctionWrapper(functionIndexSpace, wrapper);
 
         return wrapper;
     };
 
-    for (auto index : moduleInformation.referencedFunctions())
-        makeFunctionWrapper(index);
+    for (auto functionIndexSpace : moduleInformation.referencedFunctions())
+        makeFunctionWrapper(functionIndexSpace);
 
     // Globals
     {

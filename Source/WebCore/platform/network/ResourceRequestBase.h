@@ -66,19 +66,19 @@ public:
     struct RequestData {
         RequestData() { }
         
-        RequestData(const URL& url, double timeoutInterval, const URL& firstPartyForCookies, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true)
+        RequestData(const URL& url, const URL& firstPartyForCookies, double timeoutInterval, const String& httpMethod, const HTTPHeaderMap& httpHeaderFields, const Vector<String>& responseContentDispositionEncodingFallbackArray, const ResourceRequestCachePolicy& cachePolicy, const SameSiteDisposition& sameSiteDisposition, const ResourceLoadPriority& priority, const ResourceRequestRequester& requester, bool allowCookies, bool isTopSite, bool isAppInitiated = true)
             : m_url(url)
-            , m_timeoutInterval(timeoutInterval)
             , m_firstPartyForCookies(firstPartyForCookies)
+            , m_timeoutInterval(timeoutInterval)
             , m_httpMethod(httpMethod)
             , m_httpHeaderFields(httpHeaderFields)
             , m_responseContentDispositionEncodingFallbackArray(responseContentDispositionEncodingFallbackArray)
             , m_cachePolicy(cachePolicy)
-            , m_allowCookies(allowCookies)
             , m_sameSiteDisposition(sameSiteDisposition)
-            , m_isTopSite(isTopSite)
             , m_priority(priority)
             , m_requester(requester)
+            , m_isTopSite(isTopSite)
+            , m_allowCookies(allowCookies)
             , m_isAppInitiated(isAppInitiated)
         {
         }
@@ -90,17 +90,17 @@ public:
         }
         
         URL m_url;
-        double m_timeoutInterval { s_defaultTimeoutInterval }; // 0 is a magic value for platform default on platforms that have one.
         URL m_firstPartyForCookies;
+        double m_timeoutInterval { s_defaultTimeoutInterval }; // 0 is a magic value for platform default on platforms that have one.
         String m_httpMethod { "GET"_s };
         HTTPHeaderMap m_httpHeaderFields;
         Vector<String> m_responseContentDispositionEncodingFallbackArray;
         ResourceRequestCachePolicy m_cachePolicy { ResourceRequestCachePolicy::UseProtocolCachePolicy };
-        bool m_allowCookies : 1 { false };
         SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
-        bool m_isTopSite : 1 { false };
         ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
         ResourceRequestRequester m_requester { ResourceRequestRequester::Unspecified };
+        bool m_isTopSite : 1 { false };
+        bool m_allowCookies : 1 { false };
         bool m_isAppInitiated : 1 { true };
     };
 

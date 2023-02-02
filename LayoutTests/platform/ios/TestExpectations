@@ -23,6 +23,7 @@ remote-layer-tree/ios [ Pass ]
 swipe [ Pass ]
 http/tests/swipe [ Pass ]
 
+fast/dom/Orientation/no-orientation-change-event-when-unparenting-view.html [ Pass ]
 fast/events/ios [ Pass ]
 fast/events/ios/ipad [ Skip ]
 fast/forms/ios [ Pass ]
@@ -3889,13 +3890,9 @@ webkit.org/b/251192 [ Release arm64 ] imported/w3c/web-platform-tests/webcodecs/
 
 webkit.org/b/251216 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.sub.tentative.html [ Pass Failure ]
 
-webkit.org/b/251234 imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Failure ]
-
 webkit.org/b/251302 accessibility/ios-simulator/table-cell-ranges.html [ Failure ]
 
 webkit.org/b/251306 http/tests/in-app-browser-privacy/sub-frame-redirect-to-non-app-bound-domain-blocked.html [ Pass Crash ]
-
-webkit.org/b/251312 fast/loader/stateobjects/popstate-does-not-fire-with-page-cache.html [ Pass Failure ]
 
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
@@ -4199,3 +4196,7 @@ http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html [ Skip ]
 http/tests/webgpu/cts.https.html [ Pass ]
 
 webkit.org/b/251417 imported/w3c/web-platform-tests/fetch/metadata/generated/css-font-face.https.sub.tentative.html [ Pass Failure ]
+
+webkit.org/b/251482 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ Pass Failure ]
+
+webkit.org/b/251533 imported/w3c/web-platform-tests/workers/baseurl/alpha/import-in-moduleworker.html [ Pass Timeout ]

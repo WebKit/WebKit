@@ -586,15 +586,6 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
     auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
     connection.matchRegistration(WTFMove(origin), url, WTFMove(callback));
 }
-
-static inline bool areRegistrationsEqual(const std::optional<ServiceWorkerRegistrationData>& a, const std::optional<ServiceWorkerRegistrationData>& b)
-{
-    if (!a)
-        return !b;
-    if (!b)
-        return false;
-    return a->identifier == b->identifier;
-}
 #endif
 
 void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)

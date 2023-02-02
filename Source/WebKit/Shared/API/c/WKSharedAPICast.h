@@ -383,10 +383,16 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagDownloadImageToDisk;
     case WebCore::ContextMenuItemTagCopyImageToClipboard:
         return kWKContextMenuItemTagCopyImageToClipboard;
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case WebCore::ContextMenuItemTagPlayAllAnimations:
         return kWKContextMenuItemTagPlayAllAnimations;
     case WebCore::ContextMenuItemTagPauseAllAnimations:
         return kWKContextMenuItemTagPauseAllAnimations;
+    case WebCore::ContextMenuItemTagPlayAnimation:
+        return kWKContextMenuItemTagPlayAnimation;
+    case WebCore::ContextMenuItemTagPauseAnimation:
+        return kWKContextMenuItemTagPauseAnimation;
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 #if PLATFORM(GTK)
     case WebCore::ContextMenuItemTagCopyImageUrlToClipboard:
         return kWKContextMenuItemTagCopyImageUrlToClipboard;
@@ -591,10 +597,16 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagDownloadImageToDisk;
     case kWKContextMenuItemTagCopyImageToClipboard:
         return WebCore::ContextMenuItemTagCopyImageToClipboard;
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case kWKContextMenuItemTagPlayAllAnimations:
         return WebCore::ContextMenuItemTagPlayAllAnimations;
     case kWKContextMenuItemTagPauseAllAnimations:
         return WebCore::ContextMenuItemTagPauseAllAnimations;
+    case kWKContextMenuItemTagPlayAnimation:
+        return WebCore::ContextMenuItemTagPlayAnimation;
+    case kWKContextMenuItemTagPauseAnimation:
+        return WebCore::ContextMenuItemTagPauseAnimation;
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case kWKContextMenuItemTagOpenFrameInNewWindow:
 #if PLATFORM(GTK)
     case kWKContextMenuItemTagCopyImageUrlToClipboard:

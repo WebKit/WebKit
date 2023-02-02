@@ -27,16 +27,16 @@
 
 #if PLATFORM(MAC)
 
-#import "ControlFactory.h"
+#import "ControlFactoryCocoa.h"
 #import "WebControlView.h"
 
 OBJC_CLASS NSServicesRolloverButtonCell;
 
 namespace WebCore {
 
-class ControlFactoryMac final : public ControlFactory {
+class ControlFactoryMac final : public ControlFactoryCocoa {
 public:
-    using ControlFactory::ControlFactory;
+    using ControlFactoryCocoa::ControlFactoryCocoa;
 
     static ControlFactoryMac& sharedControlFactory();
 

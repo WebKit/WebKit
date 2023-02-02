@@ -38,7 +38,7 @@ public:
     bool hasRelativeHeight() const override { return true; }
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
 
-    FloatSize size(ImageOrientation = ImageOrientation::FromImage) const override { return m_size; }
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override { return m_size; }
 
     // Assume that generated content has no decoded data we need to worry about
     void destroyDecodedData(bool /*destroyAll*/ = true) override { }

@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
       RenderBlock {DIV} at (16,0) size 400x80
-        RenderBlock (floating) at (2,23) size 30x33
+        RenderBlock (floating) at (2,23) size 30x32
           RenderText at (0,-6) size 30x48
             text run at (0,-6) width 30: "A"
         RenderText {#text} at (34,0) size 399x79
@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           text run at (0,60) width 354: "baseline of the A lining up with the baseline of the third line."
       RenderBlock {SPAN} at (0,96) size 784x80
         RenderBlock {DIV} at (368,0) size 400x80
-          RenderBlock (floating) at (368,23) size 30x33
+          RenderBlock (floating) at (368,23) size 30x32
             RenderText at (0,-6) size 30x48
               text run at (0,-6) width 30: "A"
           RenderText {#text} at (11,0) size 399x79

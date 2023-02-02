@@ -492,8 +492,8 @@ inline ImageOrientation BuilderConverter::convertImageOrientation(BuilderState&,
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.valueID() == CSSValueFromImage)
-        return ImageOrientation::FromImage;
-    return ImageOrientation::None;
+        return ImageOrientation::Orientation::FromImage;
+    return ImageOrientation::Orientation::None;
 }
 
 inline TransformOperations BuilderConverter::convertTransform(BuilderState& builderState, const CSSValue& value)

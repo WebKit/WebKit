@@ -101,8 +101,8 @@ private:
     std::unique_ptr<Box> m_firstChild;
     CheckedPtr<Box> m_lastChild;
 
-    std::optional<LayoutUnit> m_baselineForIntegration;
     std::unique_ptr<ReplacedData> m_replacedData;
+    std::optional<LayoutUnit> m_baselineForIntegration;
 };
 
 }

@@ -116,14 +116,14 @@ public:
     virtual bool hasRelativeHeight() const { return false; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
-    virtual FloatSize size(ImageOrientation = ImageOrientation::FromImage) const = 0;
-    virtual FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::FromImage) const { return size(orientation); }
+    virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
+    virtual FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return size(orientation); }
     virtual bool hasDensityCorrectedSize() const { return false; }
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }
     virtual std::optional<IntPoint> hotSpot() const { return std::nullopt; }
-    virtual ImageOrientation orientation() const { return ImageOrientation::FromImage; }
+    virtual ImageOrientation orientation() const { return ImageOrientation::Orientation::FromImage; }
 
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived);
     virtual EncodedDataStatus dataChanged(bool /*allDataReceived*/) { return EncodedDataStatus::Unknown; }

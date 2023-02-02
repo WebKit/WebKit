@@ -64,6 +64,7 @@
 		337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */; };
 		339B7B1127C45EF50072BF9A /* FixedWidthDouble.h in Headers */ = {isa = PBXBuildFile; fileRef = 33479C1C27236F2000B2E1B7 /* FixedWidthDouble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3A1337AA28F915B400F29B73 /* UniqueRefVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1337A928F915B400F29B73 /* UniqueRefVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3A5BCFA3298768E300E0ABB2 /* RefVector.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5BCFA2298768E300E0ABB2 /* RefVector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4427C5AA21F6D6C300A612A4 /* ASCIICType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4427C5A921F6D6C300A612A4 /* ASCIICType.cpp */; };
 		4448265228D18CA600D916E8 /* VectorCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4448265128D18CA600D916E8 /* VectorCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46449E8B2822E5680005A8BC /* WeakHashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 46449E8A2822E5670005A8BC /* WeakHashCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1107,6 +1108,7 @@
 		382029E246C84B0099FD6764 /* ASCIILiteral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASCIILiteral.h; sourceTree = "<group>"; };
 		391BD6BA4D164FD294F9A93D /* StdMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdMap.h; sourceTree = "<group>"; };
 		3A1337A928F915B400F29B73 /* UniqueRefVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueRefVector.h; sourceTree = "<group>"; };
+		3A5BCFA2298768E300E0ABB2 /* RefVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefVector.h; sourceTree = "<group>"; };
 		413FE8F51F8D2EAB00F6D7D7 /* CallbackAggregator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackAggregator.h; sourceTree = "<group>"; };
 		430B47871AAAAC1A001223DA /* StringCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCommon.h; sourceTree = "<group>"; };
 		4427C5A921F6D6C300A612A4 /* ASCIICType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASCIICType.cpp; sourceTree = "<group>"; };
@@ -2246,6 +2248,7 @@
 				A8A47302151A825B004123FF /* RefCountedLeakCounter.h */,
 				86F46F5F1A2840EE00CCBF22 /* RefCounter.h */,
 				A8A47303151A825B004123FF /* RefPtr.h */,
+				3A5BCFA2298768E300E0ABB2 /* RefVector.h */,
 				FE3842342325CC80009DD445 /* ResourceUsage.h */,
 				A8A47305151A825B004123FF /* RetainPtr.h */,
 				E3C583C826127ADD00C57568 /* RobinHoodHashMap.h */,
@@ -3202,6 +3205,7 @@
 				DD3DC8BE27A4BF8E007E5B61 /* RefCountedLeakCounter.h in Headers */,
 				DD3DC8D927A4BF8E007E5B61 /* RefCounter.h in Headers */,
 				DD3DC91D27A4BF8E007E5B61 /* RefPtr.h in Headers */,
+				3A5BCFA3298768E300E0ABB2 /* RefVector.h in Headers */,
 				DD3DC8C727A4BF8E007E5B61 /* ResourceUsage.h in Headers */,
 				DD3DC92127A4BF8E007E5B61 /* RetainPtr.h in Headers */,
 				DD3DC8A427A4BF8E007E5B61 /* RobinHoodHashMap.h in Headers */,

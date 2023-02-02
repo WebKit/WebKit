@@ -25,7 +25,7 @@
 #include <gio/gio.h>
 #include <@API_INCLUDE_PREFIX@/WebKitCookieManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
-#if ENABLE(2022_GLIB_API)
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
 #include <@API_INCLUDE_PREFIX@/WebKitFaviconDatabase.h>
 #endif
 #include <@API_INCLUDE_PREFIX@/WebKitMemoryPressureSettings.h>
@@ -97,7 +97,7 @@ webkit_website_data_manager_get_base_data_directory                   (WebKitWeb
 WEBKIT_API const gchar *
 webkit_website_data_manager_get_base_cache_directory                  (WebKitWebsiteDataManager *manager);
 
-#if ENABLE(2022_GLIB_API)
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
 WEBKIT_API void
 webkit_website_data_manager_set_favicons_enabled                      (WebKitWebsiteDataManager *manager,
                                                                        gboolean                  enabled);

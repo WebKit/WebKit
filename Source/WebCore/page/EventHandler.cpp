@@ -197,10 +197,6 @@ const Seconds fakeMouseMoveShortInterval = { 100_ms };
 const Seconds fakeMouseMoveLongInterval = { 250_ms };
 #endif
 
-// The amount of time to wait for a cursor update on style and layout changes
-// Set to 50Hz, no need to be faster than common screen refresh rate
-static const Seconds cursorUpdateInterval { 20_ms };
-
 const int maximumCursorSize = 128;
 
 #if ENABLE(MOUSE_CURSOR_SCALE)

@@ -31,6 +31,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWindowBase.h"
+#include "MutableStyleProperties.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "Quirks.h"

@@ -3305,27 +3305,27 @@ static ImageOrientation getVideoOrientation(const GstTagList* tagList)
     GUniqueOutPtr<gchar> tag;
     if (!gst_tag_list_get_string(tagList, GST_TAG_IMAGE_ORIENTATION, &tag.outPtr())) {
         GST_DEBUG("No image_orientation tag, applying no rotation.");
-        return ImageOrientation::None;
+        return ImageOrientation::Orientation::None;
     }
 
     GST_DEBUG("Found image_orientation tag: %s", tag.get());
     if (!g_strcmp0(tag.get(), "flip-rotate-0"))
-        return ImageOrientation::OriginTopRight;
+        return ImageOrientation::Orientation::OriginTopRight;
     if (!g_strcmp0(tag.get(), "rotate-180"))
-        return ImageOrientation::OriginBottomRight;
+        return ImageOrientation::Orientation::OriginBottomRight;
     if (!g_strcmp0(tag.get(), "flip-rotate-180"))
-        return ImageOrientation::OriginBottomLeft;
+        return ImageOrientation::Orientation::OriginBottomLeft;
     if (!g_strcmp0(tag.get(), "flip-rotate-270"))
-        return ImageOrientation::OriginLeftTop;
+        return ImageOrientation::Orientation::OriginLeftTop;
     if (!g_strcmp0(tag.get(), "rotate-90"))
-        return ImageOrientation::OriginRightTop;
+        return ImageOrientation::Orientation::OriginRightTop;
     if (!g_strcmp0(tag.get(), "flip-rotate-90"))
-        return ImageOrientation::OriginRightBottom;
+        return ImageOrientation::Orientation::OriginRightBottom;
     if (!g_strcmp0(tag.get(), "rotate-270"))
-        return ImageOrientation::OriginLeftBottom;
+        return ImageOrientation::Orientation::OriginLeftBottom;
 
     // Default rotation.
-    return ImageOrientation::None;
+    return ImageOrientation::Orientation::None;
 }
 
 void MediaPlayerPrivateGStreamer::updateVideoOrientation(const GstTagList* tagList)
@@ -3368,11 +3368,11 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
     auto pad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
     ASSERT(pad);
     auto tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
-    auto orientation = ImageOrientation::None;
+    auto orientation = ImageOrientation::Orientation::None;
     if (tagsEvent) {
         GstTagList* tagList;
         gst_event_parse_tag(tagsEvent.get(), &tagList);
-        orientation = getVideoOrientation(tagList);
+        orientation = getVideoOrientation(tagList).orientation();
     }
 
     setVideoSourceOrientation(orientation);
@@ -3669,20 +3669,20 @@ bool MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation ori
 #if USE(TEXTURE_MAPPER_GL)
 void MediaPlayerPrivateGStreamer::updateTextureMapperFlags()
 {
-    switch (m_videoSourceOrientation) {
-    case ImageOrientation::OriginTopLeft:
+    switch (m_videoSourceOrientation.orientation()) {
+    case ImageOrientation::Orientation::OriginTopLeft:
         m_textureMapperFlags = 0;
         break;
-    case ImageOrientation::OriginRightTop:
+    case ImageOrientation::Orientation::OriginRightTop:
         m_textureMapperFlags = TextureMapperGL::ShouldRotateTexture90;
         break;
-    case ImageOrientation::OriginBottomRight:
+    case ImageOrientation::Orientation::OriginBottomRight:
         m_textureMapperFlags = TextureMapperGL::ShouldRotateTexture180;
         break;
-    case ImageOrientation::OriginLeftBottom:
+    case ImageOrientation::Orientation::OriginLeftBottom:
         m_textureMapperFlags = TextureMapperGL::ShouldRotateTexture270;
         break;
-    case ImageOrientation::OriginBottomLeft:
+    case ImageOrientation::Orientation::OriginBottomLeft:
         m_textureMapperFlags = TextureMapperGL::ShouldFlipTexture;
         break;
     default:

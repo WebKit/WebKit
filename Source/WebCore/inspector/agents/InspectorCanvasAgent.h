@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CanvasBase.h"
+#include "CanvasObserver.h"
 #include "InspectorCanvas.h"
 #include "InspectorCanvasCallTracer.h"
 #include "InspectorWebAgentBase.h"

@@ -1262,8 +1262,8 @@ header: <WebCore/FrameLoaderTypes.h>
 header: <WebCore/ResourceRequest.h>
 [CustomHeader, Nested] class WebCore::ResourceRequest::RequestData {
     URL m_url;
-    double m_timeoutInterval;
     URL m_firstPartyForCookies;
+    double m_timeoutInterval;
     String m_httpMethod;
     WebCore::HTTPHeaderMap m_httpHeaderFields;
     Vector<String> m_responseContentDispositionEncodingFallbackArray;
@@ -2009,9 +2009,7 @@ header: <WebCore/GraphicsContextGLAttributes.h>
 header: <WebCore/GraphicsContextGLAttributes.h>
 [CustomHeader] enum class WebCore::GraphicsContextGLWebGLVersion : uint8_t {
     WebGL1,
-#if ENABLE(WEBGL2)
     WebGL2
-#endif
 };
 
 struct WebCore::GraphicsContextGLAttributes {
@@ -2403,8 +2401,8 @@ struct WebCore::FetchOptions {
     WebCore::FetchOptionsCache cache;
     WebCore::FetchOptionsRedirect redirect;
     WebCore::ReferrerPolicy referrerPolicy;
-    String integrity;
     bool keepAlive;
+    String integrity;
     std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
     std::optional<WebCore::ScriptExecutionContextIdentifier> resultingClientIdentifier;
 }
@@ -2491,6 +2489,14 @@ enum class WebCore::StyleAppearance : uint8_t {
     SliderThumbHorizontal,
     SliderThumbVertical
 };
+
+#if ENABLE(APPLE_PAY)
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonPart {
+    WebCore::ApplePayButtonType buttonType();
+    WebCore::ApplePayButtonStyle buttonStyle();
+    String locale();
+};
+#endif
 
 [Nested] enum class WebCore::MeterPart::GaugeRegion : uint8_t {
     Optimum,
@@ -2698,8 +2704,8 @@ enum class WebCore::CrossOriginEmbedderPolicyValue : bool
 
 struct WebCore::CrossOriginEmbedderPolicy {
     WebCore::CrossOriginEmbedderPolicyValue value;
-    String reportingEndpoint;
     WebCore::CrossOriginEmbedderPolicyValue reportOnlyValue;
+    String reportingEndpoint;
     String reportOnlyReportingEndpoint;
 };
 
@@ -3256,4 +3262,28 @@ header: <WebCore/DisplayListItems.h>
     WebCore::FloatRect m_rect;
     uint8_t m_styleMode;
     bool m_styleShouldUseDarkAppearance;
+};
+
+[Nested] enum class WebCore::ImageOrientation::Orientation : int {
+    FromImage,
+    OriginTopLeft,
+    OriginTopRight,
+    OriginBottomRight,
+    OriginBottomLeft,
+    OriginLeftTop,
+    OriginRightTop,
+    OriginRightBottom,
+    OriginLeftBottom,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageOrientation {
+    WebCore::ImageOrientation::Orientation orientation()
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImagePaintingOptions {
+     WebCore::CompositeOperator m_compositeOperator;
+     WebCore::BlendMode m_blendMode;
+     WebCore::DecodingMode m_decodingMode;
+     WebCore::ImageOrientation m_orientation;
+     WebCore::InterpolationQuality m_interpolationQuality;
 };

@@ -27,10 +27,12 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "WebGPUIdentifier.h"
+
 namespace WebKit::WebGPU {
 
 struct PresentationContextDescriptor {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250955 Add integration with the compositor here.
+    WebGPUIdentifier compositorIntegration;
 };
 
 } // namespace WebKit::WebGPU

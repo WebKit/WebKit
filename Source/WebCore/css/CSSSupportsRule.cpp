@@ -32,6 +32,7 @@
 #include "CSSSupportsRule.h"
 
 #include "CSSStyleSheet.h"
+#include "StyleProperties.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 

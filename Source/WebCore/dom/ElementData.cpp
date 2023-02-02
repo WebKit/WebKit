@@ -29,7 +29,10 @@
 #include "Attr.h"
 #include "Element.h"
 #include "HTMLNames.h"
+#include "ImmutableStyleProperties.h"
+#include "MutableStyleProperties.h"
 #include "StyleProperties.h"
+#include "StylePropertiesInlines.h"
 #include "XMLNames.h"
 
 namespace WebCore {

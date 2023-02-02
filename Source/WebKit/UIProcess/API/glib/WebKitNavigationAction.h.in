@@ -80,6 +80,9 @@ webkit_navigation_action_is_user_gesture     (WebKitNavigationAction *navigation
 WEBKIT_API gboolean
 webkit_navigation_action_is_redirect         (WebKitNavigationAction *navigation);
 
+WEBKIT_API const char *
+webkit_navigation_action_get_frame_name      (WebKitNavigationAction *navigation);
+
 G_END_DECLS
 
 #endif

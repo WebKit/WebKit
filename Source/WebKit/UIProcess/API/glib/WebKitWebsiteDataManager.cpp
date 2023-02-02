@@ -21,7 +21,6 @@
 #include "WebKitWebsiteDataManager.h"
 
 #include "WebKitCookieManagerPrivate.h"
-#include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitInitialize.h"
 #include "WebKitMemoryPressureSettings.h"
 #include "WebKitMemoryPressureSettingsPrivate.h"
@@ -37,6 +36,10 @@
 #include <wtf/FileSystem.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
+
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
+#include "WebKitFaviconDatabasePrivate.h"
+#endif
 
 using namespace WebKit;
 
@@ -95,7 +98,7 @@ struct _WebKitWebsiteDataManagerPrivate {
     CString baseDataDirectory;
     CString baseCacheDirectory;
 
-#if ENABLE(2022_GLIB_API)
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
     GRefPtr<WebKitFaviconDatabase> faviconDatabase;
 #endif
 
@@ -1034,7 +1037,7 @@ void webkit_website_data_manager_set_network_proxy_settings(WebKitWebsiteDataMan
 }
 #endif
 
-#if ENABLE(2022_GLIB_API)
+#if PLATFORM(GTK) && ENABLE(2022_GLIB_API)
 static String webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataManager* manager)
 {
     if (webkit_website_data_manager_is_ephemeral(manager))

@@ -401,7 +401,7 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
                 op == CompositeOperator::SourceOver ? bgLayer.compositeForPainting() : op,
                 bgLayer.blendMode(),
                 m_renderer.decodingModeForImageDraw(*image, m_paintInfo),
-                ImageOrientation::FromImage,
+                ImageOrientation::Orientation::FromImage,
                 m_renderer.chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize)
             };
 

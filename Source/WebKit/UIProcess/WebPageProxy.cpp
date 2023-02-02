@@ -342,13 +342,12 @@
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] WebPageProxy::" fmt, this, m_identifier.toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
 #define WEBPAGEPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i] WebPageProxy::" fmt, this, m_identifier.toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
 
-// Represents the number of wheel events we can hold in the queue before we start pushing them preemptively.
-static const unsigned wheelEventQueueSizeThreshold = 10;
-
 static const Seconds resetRecentCrashCountDelay = 30_s;
 static unsigned maximumWebProcessRelaunchAttempts = 1;
-static const Seconds audibleActivityClearDelay = 10_s;
 static const Seconds tryCloseTimeoutDelay = 50_ms;
+#if USE(RUNNINGBOARD)
+static const Seconds audibleActivityClearDelay = 10_s;
+#endif
 
 using namespace WebCore;
 

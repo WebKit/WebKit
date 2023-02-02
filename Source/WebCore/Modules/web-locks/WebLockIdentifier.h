@@ -24,11 +24,10 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include "ProcessQualified.h"
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
-
-template<typename> class ProcessQualified;
 
 enum WebLockIdentifierType { };
 using WebLockIdentifier = ProcessQualified<ObjectIdentifier<WebLockIdentifierType>>;

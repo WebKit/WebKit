@@ -162,7 +162,8 @@ void LLIntPlan::didCompleteCompilation()
         return;
 
     for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functions.size(); functionIndex++) {
-        if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndex)) {
+        const uint32_t functionIndexSpace = functionIndex + m_moduleInformation->importFunctionCount();
+        if (m_exportedFunctionIndices.contains(functionIndex) || m_moduleInformation->hasReferencedFunction(functionIndexSpace)) {
             TypeIndex typeIndex = m_moduleInformation->internalFunctionTypeIndices[functionIndex];
             const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
             CCallHelpers jit;

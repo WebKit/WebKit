@@ -35,6 +35,7 @@
 #import "WKGeolocationManager.h"
 #import "WKProcessPoolInternal.h"
 #import "WKUIDelegatePrivate.h"
+#import "WKWebGeolocationPolicyDecider.h"
 #import "WKWebViewInternal.h"
 #import "WebFrameProxy.h"
 #import "WebGeolocationManagerProxy.h"
@@ -50,22 +51,14 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/URL.h>
 
-// FIXME: Remove use of WebKit1 from WebKit2
-#import <WebKit/WebAllowDenyPolicyListener.h>
-
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 @interface WKGeolocationProviderIOS (_WKGeolocationCoreLocationListener) <_WKGeolocationCoreLocationListener>
 @end
 
-@interface WKWebAllowDenyPolicyListener : NSObject<WebAllowDenyPolicyListener>
+@interface WKWebAllowDenyPolicyListener : NSObject<WKWebAllowDenyPolicyListener>
 - (id)initWithCompletionHandler:(Function<void(bool)>&&)completionHandler;
-- (void)denyOnlyThisRequest NO_RETURN_DUE_TO_ASSERT;
 @end
-
-namespace WebKit {
-void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin&, const URL&, id<WebAllowDenyPolicyListener>, UIView*);
-};
 
 struct GeolocationRequestData {
     URL url;
@@ -211,7 +204,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     }
 
     auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTFMove(decisionHandler)]);
-    WebKit::decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin::create(request.url).get(), request.url, policyListener.get(), request.view.get());
+    [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:WebCore::SecurityOriginData::fromURL(request.url) requestingURL:request.url view:request.view.get() listener:policyListener.get()];
 }
 
 - (void)geolocationAuthorizationDenied
@@ -262,17 +255,6 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 - (void)deny
 {
     _completionHandler(false);
-}
-
-- (void)denyOnlyThisRequest
-{
-    // The method denyOnlyThisRequest is iAd specific for WebKit1.
-    ASSERT_NOT_REACHED();
-}
-
-- (BOOL)shouldClearCache
-{
-    return NO;
 }
 @end
 

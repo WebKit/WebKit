@@ -262,7 +262,7 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     auto getSubimage = [](CGImageRef image, const FloatSize& imageSize, const FloatRect& subimageRect, const ImagePaintingOptions& options) -> RetainPtr<CGImageRef> {
         auto physicalSubimageRect = subimageRect;
 
-        if (options.orientation() != ImageOrientation::None) {
+        if (options.orientation() != ImageOrientation::Orientation::None) {
             // subimageRect is in logical coordinates. getSubimage() deals with none-oriented
             // image. We need to convert subimageRect to physical image coordinates.
             if (auto transform = options.orientation().transformFromDefault(imageSize).inverse())
@@ -347,7 +347,7 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
     adjustedDestRect.setLocation(FloatPoint::zero());
 
-    if (options.orientation() != ImageOrientation::None) {
+    if (options.orientation() != ImageOrientation::Orientation::None) {
         CGContextConcatCTM(context, options.orientation().transformFromDefault(adjustedDestRect.size()));
 
         // The destination rect will have its width and height already reversed for the orientation of

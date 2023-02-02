@@ -55,7 +55,7 @@ private:
     void computePreferredLogicalWidths(float leadWidth) override;
 
     CounterContent m_counter;
-    CounterNode* m_counterNode { nullptr };
+    CheckedPtr<CounterNode> m_counterNode;
     RenderCounter* m_nextForSameCounter { nullptr };
     friend class CounterNode;
 };

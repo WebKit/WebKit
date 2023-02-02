@@ -479,6 +479,7 @@ String contextMenuItemTagMediaMute()
     return WEB_UI_STRING_WITH_MNEMONIC("Mute", "_Mute", "Media Mute context menu item");
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 String contextMenuItemTagPlayAllAnimations()
 {
     return WEB_UI_STRING("Play All Animations", "Play All Animations context menu item");
@@ -488,6 +489,17 @@ String contextMenuItemTagPauseAllAnimations()
 {
     return WEB_UI_STRING("Pause All Animations", "Pause All Animations context menu item");
 }
+
+String contextMenuItemTagPlayAnimation()
+{
+    return WEB_UI_STRING("Play Animation", "Play animation context menu item");
+}
+
+String contextMenuItemTagPauseAnimation()
+{
+    return WEB_UI_STRING("Pause Animation", "Pause animation context menu item");
+}
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 String contextMenuItemTagInspectElement()
 {

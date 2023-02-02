@@ -155,6 +155,10 @@
 #include <WebCore/TextRecognitionResult.h>
 #endif
 
+#if ENABLE(APPLE_PAY)
+#include <WebCore/ApplePayButtonPart.h>
+#endif
+
 #if USE(APPKIT)
 #include <WebCore/AppKitControlSystemImage.h>
 #endif
@@ -1464,9 +1468,14 @@ void ArgumentCoder<ControlPart>::encode(Encoder& encoder, const ControlPart& par
         break;
 
     case WebCore::StyleAppearance::SearchField:
+        break;
+            
 #if ENABLE(APPLE_PAY)
     case WebCore::StyleAppearance::ApplePayButton:
+        encoder << downcast<WebCore::ApplePayButtonPart>(part);
+        break;
 #endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     case WebCore::StyleAppearance::Attachment:
     case WebCore::StyleAppearance::BorderlessAttachment:
@@ -1556,8 +1565,15 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
         return WebCore::SearchFieldPart::create();
 
 #if ENABLE(APPLE_PAY)
-    case WebCore::StyleAppearance::ApplePayButton:
+    case WebCore::StyleAppearance::ApplePayButton: {
+        std::optional<Ref<WebCore::ApplePayButtonPart>> applePayButtonPart;
+        decoder >> applePayButtonPart;
+        if (applePayButtonPart)
+            return WTFMove(*applePayButtonPart);
+        break;
+    }
 #endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     case WebCore::StyleAppearance::Attachment:
     case WebCore::StyleAppearance::BorderlessAttachment:

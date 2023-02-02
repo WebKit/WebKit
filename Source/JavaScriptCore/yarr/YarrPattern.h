@@ -336,10 +336,15 @@ public:
     {
     }
 
-    PatternTerm& lastTerm()
+    unsigned lastTermIndex()
     {
         ASSERT(m_terms.size());
-        return m_terms[m_terms.size() - 1];
+        return m_terms.size() - 1;
+    }
+
+    PatternTerm& lastTerm()
+    {
+        return m_terms[lastTermIndex()];
     }
     
     void removeLastTerm()

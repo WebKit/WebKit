@@ -1037,7 +1037,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         for line in logging.getvalue():
             if str(DeviceType.from_string('iPhone SE')) in line:
                 self.assertTrue('Skipping 2 tests' in line)
-            elif str(DeviceType.from_string('iPad (5th generation)')) in line:
+            elif str(DeviceType.from_string('iPad (10th generation)')) in line:
                 self.assertTrue('Skipping 1 test' in line)
             elif str(DeviceType.from_string('iPhone 7')) in line:
                 self.assertTrue('Skipping 0 tests' in line)
@@ -1067,7 +1067,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         self.assertEqual(3, len(by_type.keys()))
         self.assertEqual(2, len(by_type[DeviceType.from_string('iPhone 12')]))
-        self.assertEqual(1, len(by_type[DeviceType.from_string('iPad (5th generation)')]))
+        self.assertEqual(1, len(by_type[DeviceType.from_string('iPad (10th generation)')]))
         self.assertEqual(0, len(by_type[DeviceType.from_string('iPhone 7')]))
 
     def test_ipad_test_division(self):
@@ -1085,7 +1085,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             run_webkit_tests.run(port, run_webkit_tests.parse_args(['--debug-rwt-logging', '-n', '--no-build', '--root', '/build'])[0], [], logging_stream=logging)
 
         for line in logging.getvalue():
-            if str(DeviceType.from_string('iPad (5th generation)')) in line:
+            if str(DeviceType.from_string('iPad (10th generation)')) in line:
                 self.assertTrue('Skipping 3 test' in line)
 
     def test_ipad_listing(self):
@@ -1113,7 +1113,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             by_type[current_type].append(line)
 
         self.assertEqual(1, len(by_type.keys()))
-        self.assertEqual(3, len(by_type[DeviceType.from_string('iPad (5th generation)')]))
+        self.assertEqual(3, len(by_type[DeviceType.from_string('iPad (10th generation)')]))
 
 
 class RebaselineTest(unittest.TestCase, StreamTestingMixin):

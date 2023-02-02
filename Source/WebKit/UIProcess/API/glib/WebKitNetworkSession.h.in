@@ -68,7 +68,7 @@ webkit_network_session_get_default                               (void);
 
 WEBKIT_API WebKitNetworkSession *
 webkit_network_session_new                                       (const char                   *data_directory,
-                                                                  const char                   *cache_directrory);
+                                                                  const char                   *cache_directory);
 WEBKIT_API WebKitNetworkSession *
 webkit_network_session_new_ephemeral                             (void);
 

@@ -132,9 +132,6 @@ static const Seconds scrollFrequency { 1000_s / 60. };
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, frameCounter, ("Frame"));
 
-// We prewarm local storage for at most 5 origins in a given page.
-static const unsigned maxlocalStoragePrewarmingCount { 5 };
-
 static inline float parentPageZoomFactor(Frame* frame)
 {
     Frame* parent = dynamicDowncast<LocalFrame>(frame->tree().parent());

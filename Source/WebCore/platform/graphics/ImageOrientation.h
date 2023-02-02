@@ -39,7 +39,7 @@
 namespace WebCore {
 
 struct ImageOrientation {
-    enum Orientation {
+    enum class Orientation : int {
         FromImage         = 0, // Orientation from the image should be respected.
 
         // This range intentionally matches the orientation values from the EXIF spec.
@@ -62,19 +62,39 @@ struct ImageOrientation {
         : m_orientation(orientation)
     {
     }
+    
+    ImageOrientation(int orientation)
+    {
+        RELEASE_ASSERT(isValidOrientation(orientation));
+        m_orientation = static_cast<Orientation>(orientation);
+    }
 
     static Orientation fromEXIFValue(int exifValue)
     {
-        return isValidEXIFOrientation(exifValue) ? static_cast<Orientation>(exifValue) : None;
+        return isValidEXIFOrientation(exifValue) ? static_cast<Orientation>(exifValue) : Orientation::None;
     }
 
-    operator Orientation() const { return m_orientation; }
+    operator int() const { return static_cast<int>(m_orientation); }
+    friend bool operator==(const ImageOrientation& lhs, const ImageOrientation& rhs) { return lhs.m_orientation == rhs.m_orientation; }
+    friend bool operator!=(const ImageOrientation& lhs, const ImageOrientation& rhs) { return lhs.m_orientation != rhs.m_orientation; }
+    friend bool operator==(const ImageOrientation& lhs, const Orientation& rhs) { return lhs.m_orientation == rhs; }
+    friend bool operator!=(const ImageOrientation& lhs, const Orientation& rhs) { return lhs.m_orientation != rhs; }
 
+    Orientation orientation() const { return m_orientation; }
+    
     bool usesWidthAsHeight() const
     {
-        ASSERT(isValidEXIFOrientation(m_orientation));
+        ASSERT(m_orientation != Orientation::FromImage);
         // Values 5 through 8 all flip the width/height.
-        return m_orientation >= OriginLeftTop && m_orientation <= OriginLeftBottom;
+        switch (m_orientation) {
+        case Orientation::OriginLeftTop:
+        case Orientation::OriginRightTop:
+        case Orientation::OriginRightBottom:
+        case Orientation::OriginLeftBottom:
+            return true;
+        default:
+            return false;
+        }
     }
 
     AffineTransform transformFromDefault(const FloatSize& drawnSize) const
@@ -83,24 +103,24 @@ struct ImageOrientation {
         float h = drawnSize.height();
 
         switch (m_orientation) {
-        case FromImage:
+        case Orientation::FromImage:
             ASSERT_NOT_REACHED();
             return AffineTransform();
-        case OriginTopLeft:
+        case Orientation::OriginTopLeft:
             return AffineTransform();
-        case OriginTopRight:
+        case Orientation::OriginTopRight:
             return AffineTransform(-1,  0,  0,  1,  w, 0);
-        case OriginBottomRight:
+        case Orientation::OriginBottomRight:
             return AffineTransform(-1,  0,  0, -1,  w, h);
-        case OriginBottomLeft:
+        case Orientation::OriginBottomLeft:
             return AffineTransform( 1,  0,  0, -1,  0, h);
-        case OriginLeftTop:
+        case Orientation::OriginLeftTop:
             return AffineTransform( 0,  1,  1,  0,  0, 0);
-        case OriginRightTop:
+        case Orientation::OriginRightTop:
             return AffineTransform( 0,  1, -1,  0,  w, 0);
-        case OriginRightBottom:
+        case Orientation::OriginRightBottom:
             return AffineTransform( 0, -1, -1,  0,  w, h);
-        case OriginLeftBottom:
+        case Orientation::OriginLeftBottom:
             return AffineTransform( 0, -1,  1,  0,  0, h);
         }
 
@@ -110,38 +130,38 @@ struct ImageOrientation {
 
     ImageOrientation withFlippedY() const
     {
-        ASSERT(isValidEXIFOrientation(m_orientation));
+        ASSERT(m_orientation != Orientation::FromImage);
 
         switch (m_orientation) {
-        case FromImage:
+        case Orientation::FromImage:
             ASSERT_NOT_REACHED();
-            return None;
-        case OriginTopLeft:
-            return OriginBottomLeft;
-        case OriginTopRight:
-            return OriginBottomRight;
-        case OriginBottomRight:
-            return OriginTopRight;
-        case OriginBottomLeft:
-            return OriginTopLeft;
-        case OriginLeftTop:
-            return OriginLeftBottom;
-        case OriginRightTop:
-            return OriginRightBottom;
-        case OriginRightBottom:
-            return OriginRightTop;
-        case OriginLeftBottom:
-            return OriginLeftTop;
+            return Orientation::None;
+        case Orientation::OriginTopLeft:
+            return Orientation::OriginBottomLeft;
+        case Orientation::OriginTopRight:
+            return Orientation::OriginBottomRight;
+        case Orientation::OriginBottomRight:
+            return Orientation::OriginTopRight;
+        case Orientation::OriginBottomLeft:
+            return Orientation::OriginTopLeft;
+        case Orientation::OriginLeftTop:
+            return Orientation::OriginLeftBottom;
+        case Orientation::OriginRightTop:
+            return Orientation::OriginRightBottom;
+        case Orientation::OriginRightBottom:
+            return Orientation::OriginRightTop;
+        case Orientation::OriginLeftBottom:
+            return Orientation::OriginLeftTop;
         }
 
         ASSERT_NOT_REACHED();
-        return None;
+        return Orientation::None;
     }
 
 private:
-    static const Orientation EXIFFirst = OriginTopLeft;
-    static const Orientation EXIFLast = OriginLeftBottom;
-    static const Orientation First = FromImage;
+    static const Orientation EXIFFirst = Orientation::OriginTopLeft;
+    static const Orientation EXIFLast = Orientation::OriginLeftBottom;
+    static const Orientation First = Orientation::FromImage;
     static const Orientation Last = EXIFLast;
 
     static bool isValidOrientation(int orientation)
@@ -154,26 +174,7 @@ private:
         return orientation >= static_cast<int>(EXIFFirst) && orientation <= static_cast<int>(EXIFLast);
     }
 
-    Orientation m_orientation { None };
+    Orientation m_orientation { Orientation::None };
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ImageOrientation::Orientation> {
-    using values = EnumValues<
-    WebCore::ImageOrientation::Orientation,
-    WebCore::ImageOrientation::Orientation::FromImage,
-    WebCore::ImageOrientation::Orientation::OriginTopLeft,
-    WebCore::ImageOrientation::Orientation::OriginTopRight,
-    WebCore::ImageOrientation::Orientation::OriginBottomRight,
-    WebCore::ImageOrientation::Orientation::OriginBottomLeft,
-    WebCore::ImageOrientation::Orientation::OriginLeftTop,
-    WebCore::ImageOrientation::Orientation::OriginRightTop,
-    WebCore::ImageOrientation::Orientation::OriginRightBottom,
-    WebCore::ImageOrientation::Orientation::OriginLeftBottom
-    >;
-};
-
-} // namespace WTF

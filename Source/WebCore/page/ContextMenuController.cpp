@@ -326,6 +326,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             page->setImageAnimationEnabled(false);
         break;
     }
+    case ContextMenuItemTagPlayAnimation:
+        m_context.hitTestResult().playAnimation();
+        break;
+    case ContextMenuItemTagPauseAnimation:
+        m_context.hitTestResult().pauseAnimation();
+        break;
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case ContextMenuItemTagCopy:
         frame->editor().copy();
@@ -843,8 +849,12 @@ void ContextMenuController::populate()
         contextMenuItemTagMediaPlay());
     ContextMenuItem MediaMute(ActionType, ContextMenuItemTagMediaMute, 
         contextMenuItemTagMediaMute());
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     ContextMenuItem PlayAllAnimations(ActionType, ContextMenuItemTagPlayAllAnimations, contextMenuItemTagPlayAllAnimations());
     ContextMenuItem PauseAllAnimations(ActionType, ContextMenuItemTagPauseAllAnimations, contextMenuItemTagPauseAllAnimations());
+    ContextMenuItem PlayAnimation(ActionType, ContextMenuItemTagPlayAnimation, contextMenuItemTagPlayAnimation());
+    ContextMenuItem PauseAnimation(ActionType, ContextMenuItemTagPauseAnimation, contextMenuItemTagPauseAnimation());
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 #if SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS
     ContextMenuItem ToggleMediaControls(ActionType, ContextMenuItemTagToggleMediaControls,
         contextMenuItemTagHideMediaControls());
@@ -999,6 +1009,16 @@ void ContextMenuController::populate()
                         appendItem(LookUpImageItem, m_contextMenu.get());
 #endif
                 }
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+                if (image && image->isAnimated() && frame->page() && frame->page()->settings().imageAnimationControlEnabled()) {
+                    appendItem(*separatorItem(), m_contextMenu.get());
+                    if (m_context.hitTestResult().isAnimating())
+                        appendItem(PauseAnimation, m_contextMenu.get());
+                    else
+                        appendItem(PlayAnimation, m_contextMenu.get());
+                }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
             }
 #if PLATFORM(GTK)
             appendItem(CopyImageUrlItem, m_contextMenu.get());
@@ -1555,10 +1575,24 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagCopyAudioLinkToClipboard());
             break;
         case ContextMenuItemTagPlayAllAnimations:
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
             item.setTitle(contextMenuItemTagPlayAllAnimations());
+#endif
             break;
         case ContextMenuItemTagPauseAllAnimations:
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
             item.setTitle(contextMenuItemTagPauseAllAnimations());
+#endif
+            break;
+        case ContextMenuItemTagPlayAnimation:
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+            item.setTitle(contextMenuItemTagPlayAnimation());
+#endif
+            break;
+        case ContextMenuItemTagPauseAnimation:
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+            item.setTitle(contextMenuItemTagPauseAnimation());
+#endif
             break;
         case ContextMenuItemTagToggleMediaControls:
 #if SUPPORTS_TOGGLE_SHOW_HIDE_MEDIA_CONTROLS

@@ -145,8 +145,10 @@ static void webkitNetworkSessionConstructed(GObject* object)
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()).setIgnoreTLSErrors(false);
 
+#if PLATFORM(GTK)
     // Enable favicons by default.
     webkit_website_data_manager_set_favicons_enabled(priv->websiteDataManager.get(), TRUE);
+#endif
 }
 
 static void webkit_network_session_class_init(WebKitNetworkSessionClass* sessionClass)
@@ -252,10 +254,10 @@ WebKitNetworkSession* webkit_network_session_get_default()
 /**
  * webkit_network_session_new:
  * @data_directory: (nullable): a base directory for data, or %NULL
- * @cache_directrory: (nullable): a base direfctory for caches, or %NULL
+ * @cache_directory: (nullable): a base directory for caches, or %NULL
  *
  * Creates a new #WebKitNetworkSession with a persistent #WebKitWebsiteDataManager.
- * The parameters @data_directory and @cache_directrory will be used as construct
+ * The parameters @data_directory and @cache_directory will be used as construct
  * properties of the #WebKitWebsiteDataManager of the network session. Note that if
  * %NULL is passed, the default directory will be passed to #WebKitWebsiteDataManager
  * so that webkit_website_data_manager_get_base_data_directory() and

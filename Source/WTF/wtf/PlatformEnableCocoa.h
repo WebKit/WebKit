@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -47,7 +47,7 @@
 #define ENABLE_ACCESSIBILITY_ISOLATED_TREE 1
 #endif
 
-#if !defined(ENABLE_AIRPLAY_PICKER) && !PLATFORM(MAC) && !PLATFORM(MACCATALYST)
+#if !defined(ENABLE_AIRPLAY_PICKER) && !PLATFORM(MAC) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 #define ENABLE_AIRPLAY_PICKER 1
 #endif
 
@@ -702,10 +702,6 @@
 #define ENABLE_WEBGL 1
 #endif
 
-#if !defined(ENABLE_WEBGL2)
-#define ENABLE_WEBGL2 1
-#endif
-
 #if !defined(ENABLE_WEBPROCESS_NSRUNLOOP) && PLATFORM(MAC)
 #define ENABLE_WEBPROCESS_NSRUNLOOP 1
 #endif
@@ -868,3 +864,12 @@
 #if !defined(ENABLE_THREADED_ANIMATION_RESOLUTION)
 #define ENABLE_THREADED_ANIMATION_RESOLUTION 1
 #endif
+
+#if !defined(ENABLE_WEBGL_IN_WORKERS) \
+    && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000) \
+    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000) \
+    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 100000) \
+    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED >= 170000))
+#define ENABLE_WEBGL_IN_WORKERS 1
+#endif
+

@@ -82,7 +82,6 @@ void GridMasonryLayout::collectMasonryItems()
             else
                 m_itemsWithIndefiniteGridAxisPosition.append(child);
         }
-            
     }
 }
 

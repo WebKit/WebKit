@@ -37,60 +37,86 @@ public:
     virtual ~Visitor() = default;
 
     // Shader Module
-    virtual void visit(ShaderModule&);
-    virtual void visit(GlobalDirective&);
+    virtual void visit(AST::ShaderModule&);
+    virtual void visit(AST::Directive&);
 
     // Attribute
-    virtual void visit(Attribute&);
-    virtual void visit(BindingAttribute&);
-    virtual void visit(BuiltinAttribute&);
-    virtual void visit(GroupAttribute&);
-    virtual void visit(LocationAttribute&);
-    virtual void visit(StageAttribute&);
-    virtual void visit(WorkgroupSizeAttribute&);
-
-    // Declaration
-    virtual void visit(Decl&);
-    virtual void visit(FunctionDecl&);
-    virtual void visit(StructDecl&);
-    virtual void visit(VariableDecl&);
+    virtual void visit(AST::Attribute&);
+    virtual void visit(AST::AlignAttribute&);
+    virtual void visit(AST::BindingAttribute&);
+    virtual void visit(AST::BuiltinAttribute&);
+    virtual void visit(AST::ConstAttribute&);
+    virtual void visit(AST::GroupAttribute&);
+    virtual void visit(AST::IdAttribute&);
+    virtual void visit(AST::InterpolateAttribute&);
+    virtual void visit(AST::InvariantAttribute&);
+    virtual void visit(AST::LocationAttribute&);
+    virtual void visit(AST::SizeAttribute&);
+    virtual void visit(AST::StageAttribute&);
+    virtual void visit(AST::WorkgroupSizeAttribute&);
 
     // Expression
-    virtual void visit(Expression&);
-    virtual void visit(AbstractFloatLiteral&);
-    virtual void visit(AbstractIntLiteral&);
-    virtual void visit(ArrayAccess&);
-    virtual void visit(BoolLiteral&);
-    virtual void visit(CallableExpression&);
-    virtual void visit(Float32Literal&);
-    virtual void visit(IdentifierExpression&);
-    virtual void visit(Int32Literal&);
-    virtual void visit(StructureAccess&);
-    virtual void visit(Uint32Literal&);
-    virtual void visit(UnaryExpression&);
-    virtual void visit(BinaryExpression&);
-    virtual void visit(PointerDereference&);
-    virtual void visit(IdentityExpression&);
+    virtual void visit(AST::Expression&);
+    virtual void visit(AST::AbstractFloatLiteral&);
+    virtual void visit(AST::AbstractIntegerLiteral&);
+    virtual void visit(AST::BinaryExpression&);
+    virtual void visit(AST::BitcastExpression&);
+    virtual void visit(AST::BoolLiteral&);
+    virtual void visit(AST::CallExpression&);
+    virtual void visit(AST::FieldAccessExpression&);
+    virtual void visit(AST::Float32Literal&);
+    virtual void visit(AST::IdentifierExpression&);
+    virtual void visit(AST::IdentityExpression&);
+    virtual void visit(AST::IndexAccessExpression&);
+    virtual void visit(AST::PointerDereferenceExpression&);
+    virtual void visit(AST::Signed32Literal&);
+    virtual void visit(AST::UnaryExpression&);
+    virtual void visit(AST::Unsigned32Literal&);
+
+    virtual void visit(AST::Function&);
+
+    virtual void visit(AST::Identifier&);
 
     // Statement
-    virtual void visit(Statement&);
-    virtual void visit(AssignmentStatement&);
-    virtual void visit(CompoundStatement&);
-    virtual void visit(ReturnStatement&);
-    virtual void visit(VariableStatement&);
+    virtual void visit(AST::Statement&);
+    virtual void visit(AST::AssignmentStatement&);
+    virtual void visit(AST::BreakStatement&);
+    virtual void visit(AST::CompoundAssignmentStatement&);
+    virtual void visit(AST::CompoundStatement&);
+    virtual void visit(AST::ContinueStatement&);
+    virtual void visit(AST::DecrementIncrementStatement&);
+    virtual void visit(AST::DiscardStatement&);
+    virtual void visit(AST::ForStatement&);
+    virtual void visit(AST::IfStatement&);
+    virtual void visit(AST::LoopStatement&);
+    virtual void visit(AST::PhonyAssignmentStatement&);
+    virtual void visit(AST::ReturnStatement&);
+    virtual void visit(AST::StaticAssertStatement&);
+    virtual void visit(AST::SwitchStatement&);
+    virtual void visit(AST::VariableStatement&);
+    virtual void visit(AST::WhileStatement&);
+
+    virtual void visit(AST::Structure&);
+    virtual void visit(AST::StructureMember&);
 
     // Types
-    virtual void visit(TypeDecl&);
-    virtual void visit(ArrayType&);
-    virtual void visit(NamedType&);
-    virtual void visit(ParameterizedType&);
-    virtual void visit(StructType&);
-    virtual void visit(ReferenceType&);
+    virtual void visit(AST::TypeName&);
+    virtual void visit(AST::ArrayTypeName&);
+    virtual void visit(AST::NamedTypeName&);
+    virtual void visit(AST::ParameterizedTypeName&);
+    virtual void visit(AST::ReferenceTypeName&);
+    virtual void visit(AST::StructTypeName&);
 
-    virtual void visit(Parameter&);
-    virtual void visit(StructMember&);
-    virtual void visit(VariableQualifier&);
-    
+    // Values
+    virtual void visit(AST::Value&);
+    virtual void visit(AST::ConstantValue&);
+    virtual void visit(AST::OverrideValue&);
+    virtual void visit(AST::LetValue&);
+    virtual void visit(AST::ParameterValue&);
+
+    virtual void visit(AST::Variable&);
+    virtual void visit(AST::VariableQualifier&);
+
     bool hasError() const;
     Expected<void, Error> result();
 

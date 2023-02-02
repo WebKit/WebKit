@@ -154,6 +154,9 @@
 /* Undo action name */
 "Align Right (Undo action name)" = "Align Right";
 
+/* Action authorizing a webpage to access the user’s location. */
+"Allow" = "Allow";
+
 /* Button title in Storage Access API prompt */
 "Allow (cross-site cookie and website data access)" = "Allow";
 
@@ -219,6 +222,9 @@
 
 /* WKWebExtensionErrorUnsupportedManifestVersion description */
 "An unsupported `manifest_version` was specified." = "An unsupported `manifest_version` was specified.";
+
+/* WKWebExtensionContextErrorBaseURLAlreadyInUse description */
+"Another extension context is loaded with the same base URL." = "Another extension context is loaded with the same base URL.";
 
 /* Label for the plain Apple Pay button. */
 "Apple Pay" = "Apple Pay";
@@ -444,6 +450,9 @@
 
 /* Disallow button title in user media prompt */
 "Don’t Allow (usermedia)" = "Don’t Allow";
+
+/* Action denying a webpage access to the user’s location. */
+"Don’t Allow (website location dialog)" = "Don’t Allow";
 
 /* Disallow button title in window and screen sharing prompt */
 "Don’t Allow (window and screen sharing)" = "Don’t Allow";
@@ -895,6 +904,9 @@
 /* Pause All Animations context menu item */
 "Pause All Animations" = "Pause All Animations";
 
+/* Pause animation context menu item */
+"Pause Animation" = "Pause Animation";
+
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
 "Photo Library (file upload action sheet)" = "Photo Library";
 
@@ -906,6 +918,9 @@
 
 /* Play All Animations context menu item */
 "Play All Animations" = "Play All Animations";
+
+/* Play animation context menu item */
+"Play Animation" = "Play Animation";
 
 /* accessibility help text for enter full screen button */
 "Play movie in full screen mode" = "Play movie in full screen mode";
@@ -1228,6 +1243,12 @@
 /* Unwanted software warning */
 "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove." = "This website may try to trick you into installing software that harms your browsing experience, like changing your settings without your permission or showing you unwanted ads. Once installed, it may be difficult to remove.";
 
+/* Message informing the user that the website will have approximate location data */
+"This website will use your approximate location because “%@” currently has access to your approximate location." = "This website will use your approximate location because “%@” currently has access to your approximate location.";
+
+/* Message informing the user that the website will have precise location data */
+"This website will use your precise location because “%@” currently has access to your precise location." = "This website will use your precise location because “%@” currently has access to your precise location.";
+
 /* Informative text for requesting cross-site cookie and website data access. */
 "This will allow “%@” and “%@” to track your activity." = "This will allow “%@” and “%@” to track your activity.";
 
@@ -1278,9 +1299,6 @@
 
 /* Full Screen Deceptive Website Warning Sheet Content Text */
 "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information." = "Typing is not allowed in full screen websites. “%@” may be showing a fake keyboard to trick you into disclosing personal or financial information.";
-
-/* Full Screen Warning Banner Content Text */
-"”%@” is in full screen.\nSwipe down to exit." = "”%@” is in full screen.\nSwipe down to exit.";
 
 /* accessibility role description for a URL field. */
 "URL field" = "URL field";
@@ -1884,6 +1902,12 @@
 
 /* Allow the specified bundle to use Touch ID to sign in to the specified website on this device */
 "“%@” would like to use Touch ID for “%@”." = "“%@” would like to use Touch ID for “%@”.";
+
+/* Prompt for a webpage to request location access. The parameter is the domain for the webpage. */
+"“%@” would like to use your current location." = "“%@” would like to use your current location.";
+
+/* Full Screen Warning Banner Content Text */
+"”%@” is in full screen.\nSwipe down to exit." = "”%@” is in full screen.\nSwipe down to exit.";
 
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";

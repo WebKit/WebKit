@@ -25,25 +25,19 @@
 
 #pragma once
 
-#include "ASTNode.h"
-
-#include <wtf/UniqueRef.h>
-#include <wtf/UniqueRefVector.h>
-#include <wtf/Vector.h>
+#include "ASTAttribute.h"
 
 namespace WGSL::AST {
 
 class WorkgroupSizeAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     WorkgroupSizeAttribute(SourceSpan span, unsigned size)
         : Attribute(span)
         , m_size(size)
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     unsigned size() const { return m_size; }
 
 private:

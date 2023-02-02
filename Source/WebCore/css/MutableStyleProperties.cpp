@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -292,9 +293,10 @@ int MutableStyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
 {
     // Convert here propertyID into an uint16_t to compare it with the metadata's m_propertyID to avoid
     // the compiler converting it to an int multiple times in the loop.
+    auto* properties = m_propertyVector.data();
     uint16_t id = static_cast<uint16_t>(propertyID);
     for (int n = m_propertyVector.size() - 1 ; n >= 0; --n) {
-        if (m_propertyVector.at(n).metadata().m_propertyID == id)
+        if (properties[n].metadata().m_propertyID == id)
             return n;
     }
     return -1;
@@ -302,12 +304,13 @@ int MutableStyleProperties::findPropertyIndex(CSSPropertyID propertyID) const
 
 int MutableStyleProperties::findCustomPropertyIndex(StringView propertyName) const
 {
+    auto* properties = m_propertyVector.data();
     for (int n = m_propertyVector.size() - 1 ; n >= 0; --n) {
-        if (m_propertyVector.at(n).metadata().m_propertyID == CSSPropertyCustom) {
+        if (properties[n].metadata().m_propertyID == CSSPropertyCustom) {
             // We found a custom property. See if the name matches.
-            if (!m_propertyVector.at(n).value())
+            if (!properties[n].value())
                 continue;
-            if (downcast<CSSCustomPropertyValue>(*m_propertyVector.at(n).value()).name() == propertyName)
+            if (downcast<CSSCustomPropertyValue>(*properties[n].value()).name() == propertyName)
                 return n;
         }
     }

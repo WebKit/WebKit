@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WritableStream.h"
 
+#include "JSDOMPromiseDeferred.h"
 #include "JSWritableStream.h"
 #include "JSWritableStreamSink.h"
 

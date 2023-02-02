@@ -28,7 +28,6 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
-#include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -51,7 +50,6 @@ struct _WebKitNavigationPolicyDecisionPrivate {
     }
 
     WebKitNavigationAction* navigationAction;
-    CString frameName;
 };
 
 WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
@@ -65,7 +63,9 @@ enum {
     PROP_MODIFIERS,
     PROP_REQUEST,
 #endif
+#if !ENABLE(2022_GLIB_API)
     PROP_FRAME_NAME,
+#endif
 };
 
 static void webkitNavigationPolicyDecisionGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
@@ -89,9 +89,11 @@ static void webkitNavigationPolicyDecisionGetProperty(GObject* object, guint pro
         g_value_set_object(value, webkit_navigation_action_get_request(decision->priv->navigationAction));
         break;
 #endif
+#if !ENABLE(2022_GLIB_API)
     case PROP_FRAME_NAME:
-        g_value_set_string(value, webkit_navigation_policy_decision_get_frame_name(decision));
+        g_value_set_string(value, webkit_navigation_action_get_frame_name(decision->priv->navigationAction));
         break;
+#endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -189,6 +191,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
                                                       WEBKIT_PARAM_READABLE));
 #endif
 
+#if !ENABLE(2022_GLIB_API)
     /**
      * WebKitNavigationPolicyDecision:frame-name:
      *
@@ -196,6 +199,8 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
      * the name of that frame. For example if the decision was triggered by clicking a
      * link with a target attribute equal to "_blank", this property will contain the
      * value of that attribute. In all other cases, this value will be %NULL.
+     *
+     * Deprecated: 2.40: Use #WebKitNavigationPolicyDecision:navigation-action instead
      */
     g_object_class_install_property(objectClass,
                                     PROP_FRAME_NAME,
@@ -203,6 +208,7 @@ static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyD
                                                       nullptr, nullptr,
                                                       0,
                                                       WEBKIT_PARAM_READABLE));
+#endif
 }
 
 /**
@@ -287,6 +293,7 @@ WebKitURIRequest* webkit_navigation_policy_decision_get_request(WebKitNavigation
 }
 #endif
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_navigation_policy_decision_get_frame_name:
  * @decision: a #WebKitNavigationPolicyDecision
@@ -294,22 +301,20 @@ WebKitURIRequest* webkit_navigation_policy_decision_get_request(WebKitNavigation
  * Gets the value of the #WebKitNavigationPolicyDecision:frame-name property.
  *
  * Returns: The name of the new frame this navigation action targets or %NULL
+ *
+ * Deprecated: 2.40: Use webkit_navigation_policy_decision_get_navigation_action() instead.
  */
 const char* webkit_navigation_policy_decision_get_frame_name(WebKitNavigationPolicyDecision* decision)
 {
     g_return_val_if_fail(WEBKIT_IS_NAVIGATION_POLICY_DECISION(decision), nullptr);
-    // FIXME: frame name should also be moved to WebKitNavigationAction and this method deprecated.
-    return decision->priv->frameName.data();
+    return webkit_navigation_action_get_frame_name(decision->priv->navigationAction);
 }
+#endif
 
 WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener)
 {
     WebKitNavigationPolicyDecision* navigationDecision = WEBKIT_NAVIGATION_POLICY_DECISION(g_object_new(WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, nullptr));
-    // FIXME: frame name should also be moved to WebKitNavigationAction.
-    auto targetFrameName = navigationAction->targetFrameName();
     navigationDecision->priv->navigationAction = webkitNavigationActionCreate(WTFMove(navigationAction));
-    if (targetFrameName)
-        navigationDecision->priv->frameName = targetFrameName->utf8();
     WebKitPolicyDecision* decision = WEBKIT_POLICY_DECISION(navigationDecision);
     webkitPolicyDecisionSetListener(decision, WTFMove(listener));
     return decision;

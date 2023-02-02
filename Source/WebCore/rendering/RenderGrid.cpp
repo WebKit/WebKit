@@ -259,6 +259,138 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
+    // The layoutBlock was handling the layout of both the grid and masonry implementations.
+    // This caused a huge amount of branching code to handle masonry specific cases. Splitting up the code
+    // to layout will simplify both implementations.
+    if (!isMasonry())
+        layoutGrid(relayoutChildren);
+    else
+        layoutMasonry(relayoutChildren);
+}
+
+void RenderGrid::layoutGrid(bool relayoutChildren)
+{
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    {
+        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
+
+        preparePaginationBeforeBlockLayout(relayoutChildren);
+        beginUpdateScrollInfoAfterLayoutTransaction();
+
+        LayoutSize previousSize = size();
+
+        // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() only but it does not work for positioned stuff.
+        // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
+        // FIXME: We might need to cache the hasDefiniteLogicalHeight if the call of RenderBlock::hasDefiniteLogicalHeight() causes a relevant performance regression.
+        bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
+
+        auto aspectRatioBlockSizeDependentGridItems = computeAspectRatioDependentAndBaselineItems();
+
+        resetLogicalHeightBeforeLayoutIfNeeded();
+
+        // Fieldsets need to find their legend and position it inside the border of the object.
+        // The legend then gets skipped during normal layout. The same is true for ruby text.
+        // It doesn't get included in the normal layout process but is instead skipped.
+        layoutExcludedChildren(relayoutChildren);
+
+        updateLogicalWidth();
+
+        LayoutUnit availableSpaceForColumns = availableLogicalWidth();
+        placeItemsOnGrid(availableSpaceForColumns);
+
+        m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
+        performGridItemsPreLayout(m_trackSizingAlgorithm);
+
+        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
+        // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
+        // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
+        // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
+        computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
+
+        // 1.5- Compute Content Distribution offsets for column tracks
+        computeContentPositionAndDistributionOffset(ForColumns, m_trackSizingAlgorithm.freeSpace(ForColumns).value(), nonCollapsedTracks(ForColumns));
+
+        // 2- Next, the track sizing algorithm resolves the sizes of the grid rows,
+        // using the grid column sizes calculated in the previous step.
+        bool shouldRecomputeHeight = false;
+        if (!hasDefiniteLogicalHeight) {
+            computeTrackSizesForIndefiniteSize(m_trackSizingAlgorithm, ForRows);
+            if (shouldApplySizeContainment())
+                shouldRecomputeHeight = true;
+        } else
+            computeTrackSizesForDefiniteSize(ForRows, availableLogicalHeight(ExcludeMarginBorderPadding));
+
+        LayoutUnit trackBasedLogicalHeight = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
+        if (auto size = explicitIntrinsicInnerLogicalSize(ForRows))
+            trackBasedLogicalHeight += size.value();
+        else
+            trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
+
+        if (shouldRecomputeHeight)
+            computeTrackSizesForDefiniteSize(ForRows, trackBasedLogicalHeight);
+
+        setLogicalHeight(trackBasedLogicalHeight);
+
+        updateLogicalHeight();
+
+        // Once grid's indefinite height is resolved, we can compute the
+        // available free space for Content Alignment.
+        if (!hasDefiniteLogicalHeight)
+            m_trackSizingAlgorithm.setFreeSpace(ForRows, logicalHeight() - trackBasedLogicalHeight);
+
+        // 2.5- Compute Content Distribution offsets for rows tracks
+        computeContentPositionAndDistributionOffset(ForRows, m_trackSizingAlgorithm.freeSpace(ForRows).value(), nonCollapsedTracks(ForRows));
+
+        if (!aspectRatioBlockSizeDependentGridItems.isEmpty()) {
+            updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems);
+            updateLogicalWidth();
+        }
+
+        // 3- If the min-content contribution of any grid items have changed based on the row
+        // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
+        // contribution (once only).
+        repeatTracksSizingIfNeeded(availableSpaceForColumns, contentLogicalHeight());
+
+        // Grid container should have the minimum height of a line if it's editable. That does not affect track sizing though.
+        if (hasLineIfEmpty()) {
+            LayoutUnit minHeightForEmptyLine = borderAndPaddingLogicalHeight()
+                + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes)
+                + scrollbarLogicalHeight();
+            setLogicalHeight(std::max(logicalHeight(), minHeightForEmptyLine));
+        }
+
+        layoutGridItems();
+
+        endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+
+        if (size() != previousSize)
+            relayoutChildren = true;
+
+        m_outOfFlowItemColumn.clear();
+        m_outOfFlowItemRow.clear();
+
+        layoutPositionedObjects(relayoutChildren || isDocumentElementRenderer());
+        m_trackSizingAlgorithm.reset();
+
+        computeOverflow(layoutOverflowLogicalBottom(*this));
+    }
+
+    updateLayerTransform();
+
+    // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
+    // we overflow or not.
+    updateScrollInfoAfterLayout();
+
+    repainter.repaintAfterLayout();
+
+    clearNeedsLayout();
+
+    m_trackSizingAlgorithm.clearBaselineItemsCache();
+    m_baselineItemsCached = false;
+}
+
+void RenderGrid::layoutMasonry(bool relayoutChildren)
+{
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || style().isFlippedBlocksWritingMode());
@@ -293,9 +425,9 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         m_trackSizingAlgorithm.setAvailableSpace(ForColumns, availableSpaceForColumns);
         performGridItemsPreLayout(m_trackSizingAlgorithm);
 
-        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the 
-        // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic 
-        // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require 
+        // 1- First, the track sizing algorithm is used to resolve the sizes of the grid columns. At this point the
+        // logical width is always definite as the above call to updateLogicalWidth() properly resolves intrinsic
+        // sizes. We cannot do the same for heights though because many code paths inside updateLogicalHeight() require
         // a previous call to setLogicalHeight() to resolve heights properly (like for positioned items for example).
         computeTrackSizesForDefiniteSize(ForColumns, availableSpaceForColumns);
 
@@ -330,7 +462,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         else {
             if (areMasonryRows())
                 trackBasedLogicalHeight += m_masonryLayout.gridContentSize() + m_masonryLayout.gridGap();
-            else 
+            else
                 trackBasedLogicalHeight += m_trackSizingAlgorithm.computeTrackBasedSize();
         }
         if (shouldRecomputeHeight)
@@ -352,7 +484,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
             updateGridAreaForAspectRatioItems(aspectRatioBlockSizeDependentGridItems);
             updateLogicalWidth();
         }
-
 
         // 3- If the min-content contribution of any grid items have changed based on the row
         // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content

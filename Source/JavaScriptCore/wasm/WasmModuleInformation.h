@@ -99,8 +99,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     }
 
     const FixedBitVector& referencedFunctions() const { return m_referencedFunctions; }
-    bool hasReferencedFunction(unsigned index) const { return m_referencedFunctions.test(index); }
-    void addReferencedFunction(unsigned index) const { m_referencedFunctions.concurrentTestAndSet(index); }
+    bool hasReferencedFunction(unsigned functionIndexSpace) const { return m_referencedFunctions.test(functionIndexSpace); }
+    void addReferencedFunction(unsigned functionIndexSpace) const { m_referencedFunctions.concurrentTestAndSet(functionIndexSpace); }
 
     bool isDeclaredFunction(uint32_t index) const { return m_declaredFunctions.contains(index); }
     void addDeclaredFunction(uint32_t index) { m_declaredFunctions.set(index); }
@@ -139,8 +139,8 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
     }
 
     const FixedBitVector& clobberingTailCalls() const { return m_clobberingTailCalls; }
-    bool callCanClobberInstance(uint32_t index) const { return m_clobberingTailCalls.test(index); }
-    void addClobberingTailCall(uint32_t index) { m_clobberingTailCalls.concurrentTestAndSet(index); }
+    bool callCanClobberInstance(uint32_t functionIndexSpace) const { return m_clobberingTailCalls.test(functionIndexSpace); }
+    void addClobberingTailCall(uint32_t functionIndexSpace) { m_clobberingTailCalls.concurrentTestAndSet(functionIndexSpace); }
 
     Vector<Import> imports;
     Vector<TypeIndex> importFunctionTypeIndices;

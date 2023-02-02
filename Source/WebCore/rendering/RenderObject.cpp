@@ -62,6 +62,7 @@
 #include "RenderLineBreak.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
+#include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
@@ -916,6 +917,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
     bool repaintRectNeedsConverting = false;
     // Issue repaint on the renderer with outline: auto.
     for (const auto* renderer = this; renderer; renderer = renderer->parent()) {
+        const auto* originalRenderer = renderer;
         if (is<RenderMultiColumnSet>(renderer->previousSibling())) {
             auto previousMultiColumnSet = downcast<RenderMultiColumnSet>(renderer->previousSibling());
             auto enclosingMultiColumnFlow = previousMultiColumnSet->multiColumnFlow();
@@ -929,7 +931,7 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
         ASSERT(rendererHasOutlineAutoAncestor
             || renderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On
             || (is<RenderBoxModelObject>(*renderer) && downcast<RenderBoxModelObject>(*renderer).isContinuation()));
-        if (renderer == &repaintContainer && rendererHasOutlineAutoAncestor)
+        if (originalRenderer == &repaintContainer && rendererHasOutlineAutoAncestor)
             repaintRectNeedsConverting = true;
         if (rendererHasOutlineAutoAncestor)
             continue;

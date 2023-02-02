@@ -25,13 +25,12 @@
 
 #pragma once
 
-#include "ASTFunctionDecl.h"
-#include "ASTGlobalDirective.h"
-#include "ASTStructureDecl.h"
-#include "ASTVariableDecl.h"
+#include "ASTDirective.h"
+#include "ASTFunction.h"
+#include "ASTStructure.h"
+#include "ASTVariable.h"
 #include "WGSL.h"
 
-#include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,51 +38,51 @@ namespace WGSL::AST {
 
 class ShaderModule final : Node {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    ShaderModule(SourceSpan span, const String& source, const Configuration& configuration, GlobalDirective::List&& directives, Decl::List&& decls)
+    ShaderModule(SourceSpan span, const String& source, const Configuration& configuration, Directive::List&& directives, Node::List&& decls)
         : Node(span)
         , m_source(source)
         , m_configuration(configuration)
         , m_directives(WTFMove(directives))
     {
         for (size_t i = decls.size(); i > 0; --i) {
-            UniqueRef<Decl> decl = decls.takeLast();
-            if (is<StructDecl>(decl)) {
-                // We want to go from UniqueRef<BaseClass> to UniqueRef<DerivedClass>, but that is not supported by downcast.
-                // So instead we do UniqueRef -> unique_ptr -> raw_pointer -(downcast)-> raw_pointer -> unique_ptr -> UniqueRef...
-                Decl* rawPtr = decl.moveToUniquePtr().release();
-                StructDecl* downcastedRawPtr = downcast<StructDecl>(rawPtr);
-                m_structs.insert(0, makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<StructDecl>(downcastedRawPtr)));
-            } else if (is<VariableDecl>(decl.get())) {
-                Decl* rawPtr = decl.moveToUniquePtr().release();
-                VariableDecl* downcastedRawPtr = downcast<VariableDecl>(rawPtr);
-                m_globalVars.insert(0, makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<VariableDecl>(downcastedRawPtr)));
+            UniqueRef<Node> decl = decls.takeLast();
+            // We want to go from UniqueRef<BaseClass> to UniqueRef<DerivedClass>, but that is not supported by downcast.
+            // So instead we do UniqueRef -> unique_ptr -> raw_pointer -(downcast)-> raw_pointer -> unique_ptr -> UniqueRef...
+            if (is<Function>(decl)) {
+                Node* rawPtr = decl.moveToUniquePtr().release();
+                Function* func = downcast<Function>(rawPtr);
+                m_functions.insert(0, makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<Function>(func)));
+            } else if (is<Structure>(decl)) {
+                Node* rawPtr = decl.moveToUniquePtr().release();
+                Structure* downcastedRawPtr = downcast<Structure>(rawPtr);
+                m_structures.insert(0, makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<Structure>(downcastedRawPtr)));
+            } else if (is<Variable>(decl.get())) {
+                Node* rawPtr = decl.moveToUniquePtr().release();
+                Variable* downcastedRawPtr = downcast<Variable>(rawPtr);
+                m_variables.insert(0, makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<Variable>(downcastedRawPtr)));
             } else {
-                Decl* rawPtr = decl.moveToUniquePtr().release();
-                FunctionDecl* func = downcast<FunctionDecl>(rawPtr);
-                m_functions.insert(0, makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<FunctionDecl>(func)));
+                ASSERT_NOT_REACHED("Invalid ShaderModule node");
             }
         }
     }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
 
     const String& source() const { return m_source; }
     const Configuration& configuration() const { return m_configuration; }
-    GlobalDirective::List& directives() { return m_directives; }
-    StructDecl::List& structs() { return m_structs; }
-    VariableDecl::List& globalVars() { return m_globalVars; }
-    FunctionDecl::List& functions() { return m_functions; }
+    Directive::List& directives() { return m_directives; }
+    Function::List& functions() { return m_functions; }
+    Structure::List& structures() { return m_structures; }
+    Variable::List& variables() { return m_variables; }
 
 private:
     String m_source;
     Configuration m_configuration;
-    GlobalDirective::List m_directives;
-
-    StructDecl::List m_structs;
-    VariableDecl::List m_globalVars;
-    FunctionDecl::List m_functions;
+    Directive::List m_directives;
+    Function::List m_functions;
+    Structure::List m_structures;
+    Variable::List m_variables;
 };
 
 } // namespace WGSL::AST

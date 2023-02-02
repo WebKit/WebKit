@@ -131,8 +131,10 @@ static const char* hardwareAccelerationPolicy(WebKitURISchemeRequest* request)
         return "never";
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS:
         return "always";
+#if !USE(GTK4)
     case WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND:
         return "on demand";
+#endif
     }
 #endif
     RELEASE_ASSERT_NOT_REACHED();
@@ -252,6 +254,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             WPE_MAJOR_VERSION, WPE_MINOR_VERSION, WPE_MICRO_VERSION,
             wpe_get_major_version(), wpe_get_minor_version(), wpe_get_micro_version());
 
+#if WPE_FDO_CHECK_VERSION(1, 6, 1)
         g_string_append_printf(html,
             " <tbody><tr>"
             "  <td><div class=\"titlename\">WPEBackend-fdo version</div></td>"
@@ -259,6 +262,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
             " </tbody></tr>",
             WPE_FDO_MAJOR_VERSION, WPE_FDO_MINOR_VERSION, WPE_FDO_MICRO_VERSION,
             wpe_fdo_get_major_version(), wpe_fdo_get_minor_version(), wpe_fdo_get_micro_version());
+#endif
     }
 #endif
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -493,13 +493,8 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     if (!scriptExecutionContext)
         return nullptr;
 
-#if ENABLE(WEBGL2)
-    // Note: WebGL 2.0 is only supported with the ANGLE backend.
-    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !scriptExecutionContext->settingsValues().webGL2Enabled)
+    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !scriptExecutionContext->settingsValues().webGLEnabled)
         return nullptr;
-#else
-    UNUSED_PARAM(type);
-#endif
 
     GraphicsClient* graphicsClient = canvas.graphicsClient();
 
@@ -557,11 +552,9 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     }
 
     std::unique_ptr<WebGLRenderingContextBase> renderingContext;
-#if ENABLE(WEBGL2)
     if (type == WebGLVersion::WebGL2)
         renderingContext = WebGL2RenderingContext::create(canvas, context.releaseNonNull(), attributes);
     else
-#endif
         renderingContext = WebGLRenderingContext::create(canvas, context.releaseNonNull(), attributes);
     renderingContext->suspendIfNeeded();
 
@@ -2142,7 +2135,7 @@ WebGLAny WebGLRenderingContextBase::getBufferParameter(GCGLenum target, GCGLenum
     bool valid = false;
     if (target == GraphicsContextGL::ARRAY_BUFFER || target == GraphicsContextGL::ELEMENT_ARRAY_BUFFER)
         valid = true;
-#if ENABLE(WEBGL2)
+
     if (isWebGL2()) {
         switch (target) {
         case GraphicsContextGL::COPY_READ_BUFFER:
@@ -2154,7 +2147,7 @@ WebGLAny WebGLRenderingContextBase::getBufferParameter(GCGLenum target, GCGLenum
             valid = true;
         }
     }
-#endif
+
     if (!valid) {
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getBufferParameter", "invalid target");
         return nullptr;
@@ -2497,7 +2490,6 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getProgramParameter", "KHR_parallel_shader_compile not enabled");
         return nullptr;
     default:
-#if ENABLE(WEBGL2)
         if (isWebGL2()) {
             switch (pname) {
             case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_MODE:
@@ -2508,7 +2500,6 @@ WebGLAny WebGLRenderingContextBase::getProgramParameter(WebGLProgram& program, G
                 break;
             }
         }
-#endif // ENABLE(WEBGL2)
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getProgramParameter", "invalid parameter name");
         return nullptr;
     }
@@ -3521,6 +3512,20 @@ IntRect WebGLRenderingContextBase::getTexImageSourceSize(TexImageSource& source)
     return result.returnValue();
 }
 
+#if ENABLE(WEB_CODECS)
+static bool isVideoFrameFormatEligibleToCopy(WebCodecsVideoFrame& frame)
+{
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: We should be able to remove the YUV restriction, see https://bugs.webkit.org/show_bug.cgi?id=251234.
+    auto format = frame.format();
+    return format && (*format == VideoPixelFormat::I420 || *format == VideoPixelFormat::NV12);
+#else
+    UNUSED_PARAM(frame);
+    return true;
+#endif
+}
+#endif // ENABLE(WEB_CODECS)
+
 ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&& source)
 {
     if (isContextLost())
@@ -3637,7 +3642,7 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
         if (!imageForRender)
             return { };
 
-        if (imageForRender->drawsSVGImage() || imageForRender->orientation() != ImageOrientation::None || imageForRender->hasDensityCorrectedSize())
+        if (imageForRender->drawsSVGImage() || imageForRender->orientation() != ImageOrientation::Orientation::None || imageForRender->hasDensityCorrectedSize())
             imageForRender = drawImageIntoBuffer(*imageForRender, image->width(), image->height(), 1, functionName);
 
         if (!imageForRender || !validateTexFunc(functionName, functionType, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), depth, border, format, type, xoffset, yoffset, zoffset))
@@ -3730,8 +3735,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             return { };
 
         auto internalFrame = frame->internalFrame();
+
+        // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
+        // Otherwise, it will fall back to the normal SW path.
+        // FIXME: The current restrictions require that format shoud be RGB or RGBA,
+        // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
         bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, static_cast<int>(internalFrame->presentationSize().width()), static_cast<int>(internalFrame->presentationSize().height()));
-        if (functionID == TexImageFunctionID::TexImage2D && texture && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
+        if (isVideoFrameFormatEligibleToCopy(*frame) && functionID == TexImageFunctionID::TexImage2D && texture && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA) && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
             if (m_context->copyTextureFromVideoFrame(*internalFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
                 return { };
         }
@@ -4061,12 +4071,10 @@ std::optional<GCGLSpan<const GCGLvoid>> WebGLRenderingContextBase::validateTexFu
         return std::nullopt;
     }
 
-    CheckedSize total = srcOffset;
-    total *= pixels ? JSC::elementSize(pixels->getType()) : 0;
-    total += totalBytesRequired;
-    total += skipBytes;
-
-    if (total.hasOverflowed() || !isInBounds<GCGLsizei>(total)) {
+    auto dataLength = CheckedSize { totalBytesRequired } + skipBytes;
+    auto offset = CheckedSize { pixels ? JSC::elementSize(pixels->getType()) : 0 } * srcOffset;
+    auto total = offset + dataLength;
+    if (total.hasOverflowed() || !isInBounds<GCGLsizei>(dataLength)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "image too large");
         return std::nullopt;
     }
@@ -4078,16 +4086,9 @@ std::optional<GCGLSpan<const GCGLvoid>> WebGLRenderingContextBase::validateTexFu
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request");
         return std::nullopt;
     }
-
-    auto data = static_cast<uint8_t*>(pixels->baseAddress());
-    GCGLsizei byteLength = pixels->byteLength();
-    if (srcOffset) {
-        size_t offset = srcOffset * JSC::elementSize(pixels->getType());
-        data += offset;
-        byteLength -= offset;
-    }
-
-    return std::make_optional<GCGLSpan<const GCGLvoid>>(data, byteLength);
+    ASSERT(!offset.hasOverflowed()); // Checked already as part of `total.hasOverflowed()` check.
+    auto data = static_cast<uint8_t*>(pixels->baseAddress()) + offset.value();
+    return std::make_optional<GCGLSpan<const GCGLvoid>>(data, static_cast<GCGLsizei>(dataLength));
 }
 
 bool WebGLRenderingContextBase::validateTexFuncParameters(const char* functionName,
@@ -4213,7 +4214,6 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
         }
         break;
     default:
-#if ENABLE(WEBGL2)
         if (!isWebGL1()) {
             switch (format) {
             case GraphicsContextGL::RED:
@@ -4227,9 +4227,7 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
                 synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture format");
                 return false;
             }
-        } else
-#endif
-        {
+        } else {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture format");
             return false;
         }
@@ -4263,7 +4261,6 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
         }
         break;
     default:
-#if ENABLE(WEBGL2)
         if (!isWebGL1()) {
             switch (type) {
             case GraphicsContextGL::BYTE:
@@ -4278,9 +4275,7 @@ bool WebGLRenderingContextBase::validateTexFuncFormatAndType(const char* functio
                 synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture type");
                 return false;
             }
-        } else
-#endif
-        {
+        } else {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture type");
             return false;
         }
@@ -4671,7 +4666,6 @@ void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
         return;
     }
 
-#if ENABLE(WEBGL2)
     // Extend the base useProgram method instead of overriding it in
     // WebGL2RenderingContext to keep the preceding validations in the same order.
     if (isWebGL2()) {
@@ -4681,7 +4675,6 @@ void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
             return;
         }
     }
-#endif
 
     if (m_currentProgram != program) {
         if (m_currentProgram)

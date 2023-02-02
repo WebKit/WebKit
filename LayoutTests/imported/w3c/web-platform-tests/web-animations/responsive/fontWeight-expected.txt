@@ -1,4 +1,4 @@
 
-FAIL Relative font weight bolder responsive to style changes assert_not_equals: got disallowed value "400"
-FAIL Relative font weight lighter responsive to style changes assert_not_equals: got disallowed value "700"
+PASS Relative font weight bolder responsive to style changes
+PASS Relative font weight lighter responsive to style changes
 

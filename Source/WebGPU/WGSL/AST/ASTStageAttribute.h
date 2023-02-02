@@ -31,7 +31,6 @@ namespace WGSL::AST {
 
 class StageAttribute final : public Attribute {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     enum class Stage : uint8_t {
         Compute,
@@ -42,10 +41,9 @@ public:
     StageAttribute(SourceSpan span, Stage stage)
         : Attribute(span)
         , m_stage(stage)
-    {
-    }
+    { }
 
-    Kind kind() const override;
+    NodeKind kind() const override;
     Stage stage() const { return m_stage; }
 
 private:

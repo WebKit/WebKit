@@ -101,7 +101,7 @@ void SVGAnimateElementBase::resetAnimation()
     m_hasInvalidCSSAttributeType = { };
 }
 
-bool SVGAnimateElementBase::calculateFromAndToValues(const String& fromString, const String& toString)
+bool SVGAnimateElementBase::setFromAndToValues(const String& fromString, const String& toString)
 {
     if (!targetElement())
         return false;
@@ -113,7 +113,7 @@ bool SVGAnimateElementBase::calculateFromAndToValues(const String& fromString, c
     return false;
 }
 
-bool SVGAnimateElementBase::calculateFromAndByValues(const String& fromString, const String& byString)
+bool SVGAnimateElementBase::setFromAndByValues(const String& fromString, const String& byString)
 {
     if (!targetElement())
         return false;
@@ -131,7 +131,7 @@ bool SVGAnimateElementBase::calculateFromAndByValues(const String& fromString, c
     return false;
 }
 
-bool SVGAnimateElementBase::calculateToAtEndOfDurationValue(const String& toAtEndOfDurationString)
+bool SVGAnimateElementBase::setToAtEndOfDurationValue(const String& toAtEndOfDurationString)
 {
     if (!targetElement() || toAtEndOfDurationString.isEmpty())
         return false;

@@ -30,6 +30,7 @@
 #include "CSSToLengthConversionData.h"
 #include "DOMMatrix.h"
 #include "DOMPoint.h"
+#include "MutableStyleProperties.h"
 #include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
 #include "TransformFunctions.h"

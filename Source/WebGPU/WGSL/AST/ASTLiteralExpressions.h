@@ -31,13 +31,11 @@ namespace WGSL::AST {
 
 class BoolLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     BoolLiteral(SourceSpan span, bool value)
         : Expression(span)
         , m_value(value)
-    {
-    }
+    { }
 
     Kind kind() const override;
     bool value() const { return m_value; }
@@ -48,13 +46,11 @@ private:
 
 class Int32Literal final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     Int32Literal(SourceSpan span, int32_t value)
         : Expression(span)
         , m_value(value)
-    {
-    }
+    { }
 
     Kind kind() const override;
     int32_t value() const { return m_value; }
@@ -65,13 +61,11 @@ private:
 
 class Uint32Literal final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     Uint32Literal(SourceSpan span, uint32_t value)
         : Expression(span)
         , m_value(value)
-    {
-    }
+    { }
 
     Kind kind() const override;
     uint32_t value() const { return m_value; }
@@ -82,13 +76,11 @@ private:
 
 class Float32Literal final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     Float32Literal(SourceSpan span, float value)
         : Expression(span)
         , m_value(value)
-    {
-    }
+    { }
 
     Kind kind() const override;
     float value() const { return m_value; }
@@ -101,13 +93,11 @@ private:
 // https://gpuweb.github.io/gpuweb/wgsl/#abstractint
 class AbstractIntLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     AbstractIntLiteral(SourceSpan span, int64_t value)
         : Expression(span)
         , m_value(value)
-    {
-    }
+    { }
 
     Kind kind() const override;
     int64_t value() const { return m_value; }
@@ -121,13 +111,11 @@ private:
 // https://gpuweb.github.io/gpuweb/wgsl/#abstractfloat
 class AbstractFloatLiteral final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
     AbstractFloatLiteral(SourceSpan span, double value)
         : Expression(span)
         , m_value(value)
-    {
-    }
+    { }
 
     Kind kind() const override;
     double value() const { return m_value; }

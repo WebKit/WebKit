@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -133,8 +133,6 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec) const
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContext>(m_context))
         return toJS(exec, globalObject, downcast<WebGLRenderingContext>(m_context));
-#endif
-#if ENABLE(WEBGL2)
     if (is<WebGL2RenderingContext>(m_context))
         return toJS(exec, globalObject, downcast<WebGL2RenderingContext>(m_context));
 #endif
@@ -667,10 +665,6 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     return {{ JSON::Value::create(argument->location()), RecordingSwizzleType::WebGLUniformLocation }};
 }
 
-#endif // ENABLE(WEBGL)
-
-#if ENABLE(WEBGL2)
-
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WebGLVertexArrayObject* argument)
 {
     if (!argument)
@@ -692,7 +686,7 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
     });
 }
 
-#endif // ENABLE(WEBGL2)
+#endif // ENABLE(WEBGL)
 
 static bool shouldSnapshotBitmapRendererAction(const String& name)
 {
@@ -706,9 +700,7 @@ static bool shouldSnapshotWebGLAction(const String& name)
         || name == "drawArrays"_s
         || name == "drawElements"_s;
 }
-#endif
 
-#if ENABLE(WEBGL2)
 static bool shouldSnapshotWebGL2Action(const String& name)
 {
     return name == "clear"_s
@@ -754,8 +746,6 @@ void InspectorCanvas::recordAction(String&& name, InspectorCanvasCallTracer::Pro
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContext>(m_context) && shouldSnapshotWebGLAction(name))
         m_contentChanged = true;
-#endif
-#if ENABLE(WEBGL2)
     else if (is<WebGL2RenderingContext>(m_context) && shouldSnapshotWebGL2Action(name))
         m_contentChanged = true;
 #endif
@@ -882,8 +872,6 @@ Ref<Protocol::Canvas::Canvas> InspectorCanvas::buildObjectForCanvas(bool capture
 #if ENABLE(WEBGL)
         if (is<WebGLRenderingContext>(m_context))
             return Protocol::Canvas::ContextType::WebGL;
-#endif
-#if ENABLE(WEBGL2)
         if (is<WebGL2RenderingContext>(m_context))
             return Protocol::Canvas::ContextType::WebGL2;
 #endif
@@ -938,8 +926,6 @@ Ref<Protocol::Recording::Recording> InspectorCanvas::releaseObjectForRecording()
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContext>(m_context))
         type = Protocol::Recording::Type::CanvasWebGL;
-#endif
-#if ENABLE(WEBGL2)
     else if (is<WebGL2RenderingContext>(m_context))
         type = Protocol::Recording::Type::CanvasWebGL2;
 #endif

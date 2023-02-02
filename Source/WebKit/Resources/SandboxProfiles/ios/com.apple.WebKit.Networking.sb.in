@@ -677,6 +677,7 @@
         SYS_fcntl_nocancel
         SYS_ffsctl
         SYS_fileport_makefd
+        SYS_fileport_makeport
         SYS_fsgetpath
         SYS_fstat64
         SYS_fstat64_extended

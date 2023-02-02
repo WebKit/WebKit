@@ -145,7 +145,6 @@ set(WPE_API_HEADER_TEMPLATES
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitEditingCommands.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitEditorState.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitError.h.in
-    ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFaviconDatabase.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFileChooserRequest.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFindController.h.in
     ${WEBKIT_DIR}/UIProcess/API/glib/WebKitFormSubmissionRequest.h.in
@@ -335,6 +334,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/API/C/glib"
     "${WEBKIT_DIR}/UIProcess/API/C/wpe"
     "${WEBKIT_DIR}/UIProcess/API/glib"
+    "${WEBKIT_DIR}/UIProcess/API/libwpe"
     "${WEBKIT_DIR}/UIProcess/API/wpe"
     "${WEBKIT_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT_DIR}/UIProcess/Inspector/glib"

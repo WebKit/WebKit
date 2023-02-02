@@ -54,7 +54,7 @@ void writeToDisk(std::unique_ptr<KeyedEncoder>&& encoder, String&& path)
     if (!rawData)
         return;
 
-    FileSystem::PlatformFileHandle handle = FileSystem::openAndLockFile(path, FileSystem::FileOpenMode::Write);
+    FileSystem::PlatformFileHandle handle = FileSystem::openAndLockFile(path, FileSystem::FileOpenMode::Truncate);
     if (handle == FileSystem::invalidPlatformFileHandle)
         return;
 

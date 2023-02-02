@@ -41,6 +41,7 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -219,7 +220,7 @@ private:
     WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsInHeadWithPendingSheets;
     WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsInBodyWithPendingSheets;
 
-    ListHashSet<Node*> m_styleSheetCandidateNodes;
+    WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_styleSheetCandidateNodes;
 
     String m_preferredStylesheetSetName;
 

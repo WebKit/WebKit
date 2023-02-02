@@ -21,7 +21,13 @@ layer at (0,0) size 800x600
           text run at (0,0) width 510: "All text should be aligned with the right edge of its container and should not overflow."
       RenderBlock {DIV} at (0,102) size 191x28 [bgcolor=#FFFF00]
         RenderText {#text} at (1,0) size 190x27
-          text run at (1,0) width 190 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
+          text run at (1,0) width 38 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
+          text run at (39,0) width 6 RTL: " "
+          text run at (45,0) width 38 RTL: "\x{5E9}\x{5EA}\x{5D4}"
+          text run at (83,0) width 6 RTL: " "
+          text run at (89,0) width 52 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
+          text run at (141,0) width 6 RTL: " "
+          text run at (147,0) width 44 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA}"
       RenderBlock (anonymous) at (0,130) size 784x82
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (199,67) size 0x19
@@ -34,4 +40,10 @@ layer at (8,158) size 199x62 clip at (9,159) size 197x60
   RenderTextControl {TEXTAREA} at (0,20) size 199x62 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 193x28
       RenderText {#text} at (3,0) size 190x27
-        text run at (3,0) width 190 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} \x{5DE}\x{5D9}\x{5E5}!"
+        text run at (3,0) width 38 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
+        text run at (41,0) width 6 RTL: " "
+        text run at (47,0) width 38 RTL: "\x{5E9}\x{5EA}\x{5D4}"
+        text run at (85,0) width 6 RTL: " "
+        text run at (91,0) width 52 RTL: "\x{5E4}\x{5DC}\x{5E4}\x{5DC}?"
+        text run at (143,0) width 6 RTL: " "
+        text run at (149,0) width 44 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA}"

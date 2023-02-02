@@ -57,7 +57,7 @@ ImageSource::ImageSource(Ref<NativeImage>&& nativeImage)
     m_decodedSize = m_frames[0].frameBytes();
 
     m_size = m_frames[0].size();
-    m_orientation = ImageOrientation(ImageOrientation::None);
+    m_orientation = ImageOrientation(ImageOrientation::Orientation::None);
     m_cachedMetadata.add({ MetadataType::Orientation, MetadataType::Size });
 }
 
@@ -571,7 +571,7 @@ std::optional<IntSize> ImageSource::densityCorrectedSize(ImageOrientation orient
     if (!size)
         return std::nullopt;
 
-    if (orientation == ImageOrientation::FromImage)
+    if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = this->orientation();
 
     return orientation.usesWidthAsHeight() ? std::optional<IntSize>(size.value().transposedSize()) : size;
@@ -595,7 +595,7 @@ IntSize ImageSource::sourceSize(ImageOrientation orientation)
 #endif
         size = firstFrameMetadataCacheIfNeeded(m_size, MetadataType::Size, &ImageFrame::size, ImageFrame::Caching::Metadata, SubsamplingLevel::Default);
     
-    if (orientation == ImageOrientation::FromImage)
+    if (orientation == ImageOrientation::Orientation::FromImage)
         orientation = this->orientation();
 
     return orientation.usesWidthAsHeight() ? size.transposedSize() : size;
@@ -713,7 +713,7 @@ void ImageSource::dump(TextStream& ts)
     ts.dumpProperty("solid-color", singlePixelSolidColor());
 
     ImageOrientation orientation = frameOrientationAtIndex(0);
-    if (orientation != ImageOrientation::None)
+    if (orientation != ImageOrientation::Orientation::None)
         ts.dumpProperty("orientation", orientation);
 }
 

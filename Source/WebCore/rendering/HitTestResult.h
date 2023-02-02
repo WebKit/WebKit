@@ -30,6 +30,7 @@ namespace WebCore {
 
 class Element;
 class Frame;
+class HTMLImageElement;
 class HTMLMediaElement;
 class Image;
 class Node;
@@ -129,6 +130,12 @@ public:
     bool mediaIsInEnhancedFullscreen() const;
     void toggleEnhancedFullscreenForVideo() const;
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void pauseAnimation() const;
+    void playAnimation() const;
+    bool isAnimating() const;
+#endif
+
     WEBCORE_EXPORT bool isDownloadableMedia() const;
     WEBCORE_EXPORT bool isOverTextInsideFormControlElement() const;
 
@@ -152,6 +159,11 @@ private:
     template<typename RectType> HitTestProgress addNodeToListBasedTestResultCommon(Node*, const HitTestRequest&, const HitTestLocation&, const RectType&);
 
     RefPtr<Node> nodeForImageData() const;
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void setAllowsAnimation(bool /* allowAnimation */) const;
+    HTMLImageElement* imageElement() const;
+#endif
 
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement() const;

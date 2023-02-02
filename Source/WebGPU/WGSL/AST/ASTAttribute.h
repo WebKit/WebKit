@@ -28,36 +28,19 @@
 #include "ASTNode.h"
 
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include <wtf/RefVector.h>
 
 namespace WGSL::AST {
 
 class Attribute : public Node, public RefCounted<Attribute> {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    using List = Vector<Ref<Attribute>, 2>;
+    using Ref = WTF::Ref<Attribute>;
+    using List = RefVector<Attribute, 2>;
 
     Attribute(SourceSpan span)
         : Node(span)
-    {
-    }
+    { }
 };
 
 } // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Attribute)
-static bool isType(const WGSL::AST::Node& node)
-{
-    switch (node.kind()) {
-    case WGSL::AST::Node::Kind::BindingAttribute:
-    case WGSL::AST::Node::Kind::BuiltinAttribute:
-    case WGSL::AST::Node::Kind::GroupAttribute:
-    case WGSL::AST::Node::Kind::LocationAttribute:
-    case WGSL::AST::Node::Kind::StageAttribute:
-        return true;
-    default:
-        return false;
-    }
-}
-SPECIALIZE_TYPE_TRAITS_END()

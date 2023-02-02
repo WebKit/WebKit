@@ -26,31 +26,37 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include <wtf/PrintStream.h>
 
 namespace WGSL::AST {
 
 enum class UnaryOperation : uint8_t {
-    Negate
+    AddressOf,
+    Complement,
+    Dereference,
+    Negate,
+    Not,
 };
     
 class UnaryExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    UnaryExpression(SourceSpan span, UniqueRef<Expression>&& expression, UnaryOperation operation)
+    UnaryExpression(SourceSpan span, Expression::Ref&& expression, UnaryOperation operation)
         : Expression(span)
         , m_expression(WTFMove(expression))
         , m_operation(operation)
-    {
-    }
+    { }
 
-    Kind kind() const override;
-    UnaryOperation operation() const { return m_operation; }
+    NodeKind kind() const final;
     Expression& expression() { return m_expression.get(); }
+    UnaryOperation operation() const { return m_operation; }
 
 private:
     UniqueRef<Expression> m_expression;
     UnaryOperation m_operation;
 };
+
+void printInternal(PrintStream&, UnaryOperation);
 
 } // namespace WGSL::AST
 

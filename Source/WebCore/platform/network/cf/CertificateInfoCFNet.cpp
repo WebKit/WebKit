@@ -41,10 +41,13 @@ bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
     auto chain1 = adoptCF(SecTrustCopyCertificateChain(trust1));
     auto chain2 = adoptCF(SecTrustCopyCertificateChain(trust2));
-#endif
-
+    CFIndex count1 = CFArrayGetCount(chain1.get());
+    CFIndex count2 = CFArrayGetCount(chain2.get());
+#else
     CFIndex count1 = SecTrustGetCertificateCount(trust1);
     CFIndex count2 = SecTrustGetCertificateCount(trust2);
+#endif
+
     if (count1 != count2)
         return false;
 
