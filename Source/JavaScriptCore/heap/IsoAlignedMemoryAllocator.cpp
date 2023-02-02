@@ -46,20 +46,12 @@ void IsoAlignedMemoryAllocator::dump(PrintStream& out) const
 
 void* IsoAlignedMemoryAllocator::tryAllocateMemory(size_t size)
 {
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    return m_debugHeap.malloc(size);
-#else
     return FastMalloc::tryMalloc(size);
-#endif
 }
 
 void IsoAlignedMemoryAllocator::freeMemory(void* pointer)
 {
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    m_debugHeap.free(pointer);
-#else
     FastMalloc::free(pointer);
-#endif
 }
 
 void* IsoAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)

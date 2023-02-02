@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
-
-#include "AlignedMemoryAllocator.h"
-#include <wtf/BitVector.h>
-#include <wtf/DebugHeap.h>
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-
+#include "config.h"
+#include "ExecutableMemoryHandle.h"
 
 namespace JSC {
 
-class IsoMemoryAllocatorBase : public AlignedMemoryAllocator {
-public:
-    IsoMemoryAllocatorBase(CString);
-    ~IsoMemoryAllocatorBase() override;
-
-    void* tryAllocateAlignedMemory(size_t alignment, size_t size) final;
-    void freeAlignedMemory(void*) final;
-
-protected:
-    void releaseMemoryFromSubclassDestructor();
-    virtual void* tryMallocBlock() = 0;
-    virtual void freeBlock(void* block) = 0;
-    virtual void commitBlock(void* block) = 0;
-    virtual void decommitBlock(void* block) = 0;
-
-private:
-    Vector<void*> m_blocks;
-    HashMap<void*, unsigned> m_blockIndices;
-    BitVector m_committed;
-    unsigned m_firstUncommitted { 0 };
-    Lock m_lock;
-};
+#if ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ExecutableMemoryHandle);
+#endif
 
 } // namespace JSC
-

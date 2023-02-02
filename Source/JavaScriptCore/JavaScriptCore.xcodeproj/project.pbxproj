@@ -3812,6 +3812,7 @@
 		31770C5227B94CE500308091 /* TemporalPlainDate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporalPlainDate.h; sourceTree = "<group>"; };
 		31770C5327B94CE500308091 /* TemporalPlainDate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDate.cpp; sourceTree = "<group>"; };
 		31770C5427B94CE500308091 /* TemporalPlainDatePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemporalPlainDatePrototype.cpp; sourceTree = "<group>"; };
+		3245DC90298B40B900E2BE0B /* ExecutableMemoryHandle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableMemoryHandle.cpp; sourceTree = "<group>"; };
 		33111B8A2397256500AA34CE /* Scribble.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scribble.h; sourceTree = "<group>"; };
 		33743649224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = B3OptimizeAssociativeExpressionTrees.cpp; path = b3/B3OptimizeAssociativeExpressionTrees.cpp; sourceTree = "<group>"; };
 		3374364A224D79EF00C8C227 /* B3OptimizeAssociativeExpressionTrees.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = B3OptimizeAssociativeExpressionTrees.h; path = b3/B3OptimizeAssociativeExpressionTrees.h; sourceTree = "<group>"; };
@@ -6653,6 +6654,7 @@
 				0FF054F81AC35B4400E5BE57 /* ExecutableAllocationFuzz.h */,
 				A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */,
 				A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */,
+				3245DC90298B40B900E2BE0B /* ExecutableMemoryHandle.cpp */,
 				0F5193F6266C432D00483A2C /* ExecutableMemoryHandle.h */,
 				0F24E53E17EA9F5900ABB217 /* FPRInfo.h */,
 				0F766D2D15A8DCDD008F363E /* GCAwareJITStubRoutine.cpp */,
