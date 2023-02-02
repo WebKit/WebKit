@@ -730,9 +730,6 @@ webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-wh
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-root.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-window.html [ Crash ]
 
-webkit.org/b/251553 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Crash ]
-webkit.org/b/251553 imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
