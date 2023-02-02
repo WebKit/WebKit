@@ -186,7 +186,7 @@ public:
         String transactionDescription = makeString("com.apple.webkit.webpushd:", description(), ":"_s, m_identifier.debugDescription(), ":"_s, m_scope);
         m_transaction = adoptOSObject(os_transaction_create(transactionDescription.utf8().data()));
 
-        RELEASE_LOG(Push, "Started pushServiceRequest %{public}s (%p) for %{public}s, scope = %{private}s", description().characters(), this, m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
+        RELEASE_LOG(Push, "Started pushServiceRequest %{public}s (%p) for %{public}s, scope = %{sensitive}s", description().characters(), this, m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
         startInternal();
     }
 
@@ -208,7 +208,7 @@ protected:
         if constexpr (std::is_constructible_v<bool, ResultType>)
             hasResult = static_cast<bool>(result);
 
-        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with result (hasResult: %d) for %{public}s, scope = %{private}s", description().characters(), this, hasResult, m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
+        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with result (hasResult: %d) for %{public}s, scope = %{sensitive}s", description().characters(), this, hasResult, m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
 
         m_resultHandler(WTFMove(result));
         finish();
@@ -216,7 +216,7 @@ protected:
 
     void reject(WebCore::ExceptionData&& data)
     {
-        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with exception for %{public}s, scope = %{private}s", description().characters(), this, m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
+        RELEASE_LOG(Push, "Finished pushServiceRequest %{public}s (%p) with exception for %{public}s, scope = %{sensitive}s", description().characters(), this, m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
 
         m_resultHandler(makeUnexpected(WTFMove(data)));
         finish();
@@ -304,7 +304,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
                 }
 #endif
 
-                RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{private}s) failed with domain: %{public}s code: %lld)", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data(), error.domain.UTF8String, static_cast<int64_t>(error.code));
+                RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data(), error.domain.UTF8String, static_cast<int64_t>(error.code));
                 reject(WebCore::ExceptionData { WebCore::AbortError, "Failed due to internal service error"_s });
                 return;
             }
@@ -324,7 +324,7 @@ void SubscribeRequest::startImpl(IsRetry isRetry)
 
             m_database.insertRecord(record, [this](auto&& result) mutable {
                 if (!result) {
-                    RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{private}s) failed with database error", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
+                    RELEASE_LOG_ERROR(Push, "PushManager.subscribe(%{public}s, scope: %{sensitive}s) failed with database error", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data());
                     reject(WebCore::ExceptionData { WebCore::AbortError, "Failed due to internal database error"_s });
                     return;
                 }
@@ -401,7 +401,7 @@ void UnsubscribeRequest::startInternal()
 
             auto topic = makePushTopic(m_identifier, m_scope);
             m_connection.unsubscribe(topic, serverVAPIDPublicKey, [this](bool unsubscribed, NSError *error) mutable {
-                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "PushSubscription.unsubscribe(%{public}s scope: %{private}s) failed with domain: %{public}s code: %lld)", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "PushSubscription.unsubscribe(%{public}s scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", m_identifier.debugDescription().utf8().data(), m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
             });
         });
     });
@@ -511,7 +511,7 @@ void PushService::incrementSilentPushCount(const PushSubscriptionSetIdentifier& 
             return;
         }
 
-        RELEASE_LOG(Push, "Removing all subscriptions associated with %{public}s %{private}s since it processed %u silent pushes", identifier.debugDescription().utf8().data(), securityOrigin.utf8().data(), silentPushCount);
+        RELEASE_LOG(Push, "Removing all subscriptions associated with %{public}s %{sensitive}s since it processed %u silent pushes", identifier.debugDescription().utf8().data(), securityOrigin.utf8().data(), silentPushCount);
 
         removeRecordsImpl(identifier, securityOrigin, [handler = WTFMove(handler), silentPushCount](auto&&) mutable {
             handler(silentPushCount);
@@ -541,7 +541,7 @@ void PushService::removeRecordsForSubscriptionSet(const PushSubscriptionSetIdent
 
 void PushService::removeRecordsForSubscriptionSetAndOrigin(const PushSubscriptionSetIdentifier& identifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
 {
-    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s %{private}s", identifier.debugDescription().utf8().data(), securityOrigin.utf8().data());
+    RELEASE_LOG(Push, "Removing push subscriptions associated with %{public}s %{sensitive}s", identifier.debugDescription().utf8().data(), securityOrigin.utf8().data());
     removeRecordsImpl(identifier, securityOrigin, WTFMove(handler));
 }
 
@@ -556,7 +556,7 @@ void PushService::removeRecordsImpl(const PushSubscriptionSetIdentifier& identif
     auto removedRecordsHandler = [this, identifier, securityOrigin, handler = WTFMove(handler)](Vector<RemovedPushRecord>&& removedRecords) mutable {
         for (auto& record : removedRecords) {
             m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
-                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{private}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
             });
         }
 
@@ -680,7 +680,7 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
 
     m_database->getRecordByTopic(topic, [this, message = WTFMove(*messageResult), completionHandler = WTFMove(completionHandler), transaction = WTFMove(transaction)](auto&& recordResult) mutable {
         if (!recordResult) {
-            RELEASE_LOG_ERROR(Push, "Dropping incoming push sent to unknown topic: %{private}s", message.topic.utf8().data());
+            RELEASE_LOG_ERROR(Push, "Dropping incoming push sent to unknown topic: %{sensitive}s", message.topic.utf8().data());
             completionHandler();
             return;
         }
@@ -705,12 +705,12 @@ void PushService::didReceivePushMessage(NSString* topic, NSDictionary* userInfo,
             decryptedPayload = decryptAESGCMPayload(clientKeys, message.serverPublicKey, message.salt, message.encryptedPayload);
 
         if (!decryptedPayload) {
-            RELEASE_LOG_ERROR(Push, "Dropping incoming push due to decryption error for topic %{private}s", message.topic.utf8().data());
+            RELEASE_LOG_ERROR(Push, "Dropping incoming push due to decryption error for topic %{sensitive}s", message.topic.utf8().data());
             completionHandler();
             return;
         }
 
-        RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{private}s", record.subscriptionSetIdentifier.debugDescription().utf8().data(), record.scope.utf8().data());
+        RELEASE_LOG(Push, "Decoded incoming push message for %{public}s %{sensitive}s", record.subscriptionSetIdentifier.debugDescription().utf8().data(), record.scope.utf8().data());
 
         m_incomingPushMessageHandler(record.subscriptionSetIdentifier, WebKit::WebPushMessage { WTFMove(*decryptedPayload), record.subscriptionSetIdentifier.pushPartition, URL { record.scope } });
 
