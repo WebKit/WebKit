@@ -1,11 +1,11 @@
 
 PASS @keyframes works with @property
 PASS @keyframes picks up the latest @property in the document
-FAIL Ongoing animation picks up redeclared custom property assert_equals: expected "rgb(150, 150, 150)" but got "0px"
+PASS Ongoing animation picks up redeclared custom property
 PASS Ongoing animation matches new keyframes against the current registration
-FAIL Ongoing animation picks up redeclared intial value assert_equals: expected "250px" but got "200px"
+PASS Ongoing animation picks up redeclared intial value
 PASS Ongoing animation picks up redeclared inherits flag
-FAIL Ongoing animation picks up redeclared meaning of 'unset' assert_equals: expected "250px" but got "200px"
+PASS Ongoing animation picks up redeclared meaning of 'unset'
 PASS Transitioning from initial value
 PASS Transitioning from specified value
 FAIL Transition triggered by initial value change assert_equals: expected "150px" but got "200px"

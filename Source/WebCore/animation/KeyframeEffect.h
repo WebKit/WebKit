@@ -167,6 +167,7 @@ public:
     bool hasImplicitKeyframes() const;
 
     void keyframesRuleDidChange();
+    void customPropertyRegistrationDidChange(const AtomString&);
 
     bool canBeAccelerated() const;
     bool preventsAcceleration() const;
