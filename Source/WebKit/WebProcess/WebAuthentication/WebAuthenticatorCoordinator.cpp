@@ -96,6 +96,11 @@ void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(
     m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::IsUserVerifyingPlatformAuthenticatorAvailable(origin.data()), WTFMove(handler));
 }
 
+void WebAuthenticatorCoordinator::cancel()
+{
+    m_webPage.send(Messages::WebAuthenticatorCoordinatorProxy::Cancel());
+}
+
 bool WebAuthenticatorCoordinator::processingUserGesture(const Frame& frame, const FrameIdentifier& frameID)
 {
     auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
