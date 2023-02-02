@@ -430,7 +430,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, HashSet<CSSPropertyID>& inheritedProperties, HashSet<CSSPropertyID>& currentColorProperties)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, bool& hasRelativeFontWeight, HashSet<CSSPropertyID>& inheritedProperties, HashSet<CSSPropertyID>& currentColorProperties)
 {
     inheritedProperties.clear();
     currentColorProperties.clear();
@@ -442,6 +442,7 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
         return;
 
     containsCSSVariableReferences = false;
+    hasRelativeFontWeight = false;
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
@@ -465,6 +466,8 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
                             inheritedProperties.add(property.id());
                         else if (valueId == CSSValueCurrentcolor)
                             currentColorProperties.add(property.id());
+                        else if (property.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
+                            hasRelativeFontWeight = true;
                     }
                 }
             }

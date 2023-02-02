@@ -885,6 +885,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     m_inheritedProperties.clear();
     m_currentColorProperties.clear();
     m_containsCSSVariableReferences = false;
+    m_hasRelativeFontWeight = false;
 
     for (auto& keyframe : m_parsedKeyframes) {
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
@@ -916,6 +917,8 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
                         m_inheritedProperties.add(property.id());
                     else if (valueId == CSSValueCurrentcolor)
                         m_currentColorProperties.add(property.id());
+                    else if (property.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
+                        m_hasRelativeFontWeight = true;
                 }
             }
         }
@@ -1061,7 +1064,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     KeyframeList keyframeList(AtomString { backingAnimation.name().string });
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences, m_inheritedProperties, m_currentColorProperties);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences, m_hasRelativeFontWeight, m_inheritedProperties, m_currentColorProperties);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList) {
