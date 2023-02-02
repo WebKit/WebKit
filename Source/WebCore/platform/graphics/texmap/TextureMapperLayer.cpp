@@ -277,7 +277,7 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_layerTransforms.combined);
         if (m_state.contentsRectClipsDescendants)
-            options.textureMapper.beginClip(clipTransform, m_state.contentsClippingRect);
+            options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
         else {
             clipTransform.translate(m_state.boundsOrigin.x(), m_state.boundsOrigin.y());
             options.textureMapper.beginClip(clipTransform, FloatRoundedRect(layerRect()));
