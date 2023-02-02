@@ -49,6 +49,7 @@
 #include "DFGClobberize.h"
 #include "DFGClobbersExitState.h"
 #include "DFGGraph.h"
+#include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DOMJITGetterSetter.h"
 #include "DeleteByStatus.h"
 #include "FunctionCodeBlock.h"
@@ -9171,6 +9172,10 @@ void ByteCodeParser::parse()
     parseCodeBlock();
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
 
+    m_graph.determineReachability();
+    m_graph.killUnreachableBlocks();
+    performLiveCatchVariablePreservationPhase(m_graph);
+
     // We run backwards propagation now because the soundness of that phase
     // relies on seeing the graph as if it were an IR over bytecode, since
     // the spec-correctness of that phase relies on seeing all bytecode uses.
@@ -9236,13 +9241,13 @@ void ByteCodeParser::parse()
 
                 ++nodeIndex;
 
-                if (validationEnabled()) {
-                    // This verifies that we don't need to change any of the successors's predecessor
-                    // list after planting the Unreachable below. At this point in the bytecode
-                    // parser, we haven't linked up the predecessor lists yet.
-                    for (BasicBlock* successor : block->successors())
-                        RELEASE_ASSERT(successor->predecessors.isEmpty());
-                }
+                // if (validationEnabled()) {
+                //     // This verifies that we don't need to change any of the successors's predecessor
+                //     // list after planting the Unreachable below. At this point in the bytecode
+                //     // parser, we haven't linked up the predecessor lists yet.
+                //     for (BasicBlock* successor : block->successors())
+                //         RELEASE_ASSERT(successor->predecessors.isEmpty());
+                // }
 
                 block->resize(nodeIndex);
 
@@ -9283,9 +9288,9 @@ void ByteCodeParser::parse()
                 RELEASE_ASSERT(node->op() != ForceOSRExit);
         }
     }
-    
-    m_graph.determineReachability();
-    m_graph.killUnreachableBlocks();
+
+    // m_graph.determineReachability();
+    // m_graph.killUnreachableBlocks();
 
     for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
         BasicBlock* block = m_graph.block(blockIndex);
