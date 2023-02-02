@@ -666,6 +666,9 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
         if (!is<CSSAnimation>(animation()))
             return { };
 
+        if (!m_target || !m_target->isConnected())
+            return { };
+
         auto& backingAnimation = downcast<CSSAnimation>(*animation()).backingAnimation();
         auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal());
         if (!styleScope)
