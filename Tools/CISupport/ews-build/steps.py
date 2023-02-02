@@ -1843,14 +1843,15 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         return self.fail_build(reason, comment)
 
+    @defer.inlineCallbacks
     def fail_build(self, reason, comment):
         self.setProperty('comment_text', comment)
 
-        self._addToLog('stdio', reason)
+        yield self._addToLog('stdio', reason)
         self.setProperty('build_finish_summary', reason)
         self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest(), SetCommitQueueMinusFlagOnPatch()])
         self.descriptionDone = reason
-        return FAILURE
+        defer.returnValue(FAILURE)
 
     def is_reviewer(self, email):
         contributor = self.contributors.get(email.lower())
@@ -1871,7 +1872,7 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         self.contributors, errors = Contributors.load(use_network=True)
         for error in errors:
             print(error)
-            self._addToLog('stdio', error)
+            yield self._addToLog('stdio', error)
 
         if not self.contributors:
             self.descriptionDone = 'Failed to get contributors information'
@@ -1887,8 +1888,10 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
             committer = self.getProperty('patch_committer', '').lower()
 
         if not self.is_committer(committer):
-            return self.fail_build_due_to_invalid_status(committer, 'committer')
-        self._addToLog('stdio', f'{committer} is a valid commiter.\n')
+            rc = yield self.fail_build_due_to_invalid_status(committer, 'committer')
+            defer.returnValue(rc)
+            return
+        yield self._addToLog('stdio', f'{committer} is a valid commiter.\n')
 
         if pr_number:
             reviewers = yield self.get_reviewers(pr_number, self.getProperty('repository', ''))
@@ -1900,7 +1903,8 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
         lower_case_reviewers = [reviewer.lower() for reviewer in reviewers]
         validators = [validator.lower() for validator in self.VALIDATORS_FOR.get(remote, [])]
         if validators and not any([validator in lower_case_reviewers for validator in validators]):
-            defer.returnValue(self.fail_build_due_to_no_validators(self.VALIDATORS_FOR.get(remote, [])))
+            rc = yield self.fail_build_due_to_no_validators(self.VALIDATORS_FOR.get(remote, []))
+            defer.returnValue(rc)
             return
 
         # Validators are a special case, not all validators are WebKit reviewers. If we have a reviewer that
@@ -1917,15 +1921,17 @@ class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMix
 
         if not reviewers:
             # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
-            self._addToLog('stdio', f'Reviewer not found. Commit message  will be checked for reviewer name in later steps\n')
+            yield self._addToLog('stdio', f'Reviewer not found. Commit message  will be checked for reviewer name in later steps\n')
             self.descriptionDone = 'Validated committer, reviewer not found'
             defer.returnValue(SUCCESS)
             return
 
         for reviewer in reviewers:
             if not self.is_reviewer(reviewer):
-                defer.returnValue(self.fail_build_due_to_invalid_status(reviewer, 'reviewer'))
-            self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
+                rc = yield self.fail_build_due_to_invalid_status(reviewer, 'reviewer')
+                defer.returnValue(rc)
+                return
+            yield self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
         self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])
 
         defer.returnValue(SUCCESS)
