@@ -38,6 +38,7 @@ namespace WebCore {
 
 typedef HashSet<String, ASCIICaseInsensitiveHash> HTTPHeaderSet;
 
+class ResourceResponse;
 enum class HTTPHeaderName;
 
 enum class XSSProtectionDisposition {
@@ -69,6 +70,12 @@ enum class CrossOriginResourcePolicy : uint8_t {
     Invalid
 };
 
+enum class ClearSiteDataValue : uint8_t {
+    Cache = 1 << 0,
+    Cookies = 1 << 1,
+    Storage = 1 << 2,
+};
+
 bool isValidReasonPhrase(const String&);
 bool isValidHTTPHeaderValue(const String&);
 bool isValidAcceptHeaderValue(const String&);
@@ -85,6 +92,7 @@ WEBCORE_EXPORT StringView extractCharsetFromMediaType(StringView);
 XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
 AtomString extractReasonPhraseFromHTTPStatusLine(const String&);
 WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(StringView);
+WEBCORE_EXPORT OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse&);
 
 // -1 could be set to one of the return parameters to indicate the value is not specified.
 WEBCORE_EXPORT bool parseRange(StringView, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength);

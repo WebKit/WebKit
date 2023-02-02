@@ -751,31 +751,17 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
     if (!m_parameters.isClearSiteDataHeaderEnabled)
         return completionHandler();
 
-    auto headerValue = response.httpHeaderField(HTTPHeaderName::ClearSiteData);
-    if (headerValue.isEmpty())
-        return completionHandler();
-
-    if (!WebCore::shouldTreatAsPotentiallyTrustworthy(response.url()))
-        return completionHandler();
-
+    auto clearSiteDataValues = parseClearSiteDataHeader(response);
     OptionSet<WebsiteDataType> typesToRemove;
-    for (auto value : StringView(headerValue).split(',')) {
-        auto trimmedValue = value.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
-        if (trimmedValue == "\"cookies\""_s)
-            typesToRemove.add(WebsiteDataType::Cookies);
-        else if (trimmedValue == "\"cache\""_s)
-            typesToRemove.add({ WebsiteDataType::DiskCache, WebsiteDataType::MemoryCache });
-        else if (trimmedValue == "\"storage\""_s) {
-            typesToRemove.add({ WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::OfflineWebApplicationCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
+    if (clearSiteDataValues.contains(ClearSiteDataValue::Cache))
+        typesToRemove.add({ WebsiteDataType::DiskCache, WebsiteDataType::MemoryCache });
+    if (clearSiteDataValues.contains(ClearSiteDataValue::Cookies))
+        typesToRemove.add(WebsiteDataType::Cookies);
+    if (clearSiteDataValues.contains(ClearSiteDataValue::Storage)) {
+        typesToRemove.add({ WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::OfflineWebApplicationCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
 #if ENABLE(SERVICE_WORKER)
-            typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
+        typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
 #endif
-        } else if (trimmedValue == "\"*\""_s) {
-            typesToRemove.add({ WebsiteDataType::Cookies, WebsiteDataType::DiskCache, WebsiteDataType::MemoryCache, WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::OfflineWebApplicationCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
-#if ENABLE(SERVICE_WORKER)
-            typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
-#endif
-        }
     }
 
     if (!typesToRemove)

@@ -58,6 +58,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLObjectElement.h"
 #include "HTTPHeaderNames.h"
+#include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "HistoryController.h"
 #include "IconLoader.h"
@@ -880,6 +881,9 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
         m_contentSecurityPolicy = nullptr;
     if (m_frame && m_frame->document() && m_frame->document()->settings().crossOriginOpenerPolicyEnabled())
         m_responseCOOP = obtainCrossOriginOpenerPolicy(response);
+    // FIXME: Parse Clear-Site-Data header.
+    if (m_frame->settings().clearSiteDataHTTPHeaderEnabled())
+        m_responseClearSiteDataValues = parseClearSiteDataHeader(response);
 
 #if ENABLE(TRACKING_PREVENTION)
     // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
