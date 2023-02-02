@@ -25,53 +25,12 @@
 
 #pragma once
 
-#include <wtf/HashMap.h>
-
 namespace WGSL {
 
 namespace AST {
-class Identifier;
+class ShaderModule;
 }
 
-template<typename ContextValue>
-class ContextProvider {
-    class Context;
-    friend class ContextScope;
-
-protected:
-    using ContextMap = HashMap<String, ContextValue>;
-
-    class ContextScope {
-    public:
-        ContextScope(ContextProvider*);
-        ~ContextScope();
-
-    private:
-        ContextProvider& m_provider;
-        Context* m_previousContext;
-    };
-
-    ContextProvider();
-
-    const ContextValue& introduceVariable(const AST::Identifier&, const ContextValue&);
-    const ContextValue* readVariable(const AST::Identifier&) const;
-
-private:
-    class Context {
-    public:
-        Context(const Context *const parent);
-
-        const ContextValue* lookup(const AST::Identifier&) const;
-        const ContextValue& add(const AST::Identifier&, const ContextValue&);
-
-    private:
-        const Context* m_parent { nullptr };
-        ContextMap m_map;
-    };
-
-    Context* m_context;
-    Vector<Context> m_contexts;
-    ContextScope m_globalScope;
-};
+void typeCheck(AST::ShaderModule&);
 
 } // namespace WGSL

@@ -179,7 +179,7 @@ class Setting
     # settings that are on by default. Assuming embedder gets split into two
     # categories (off-by-default and on-by-default), only the latter should be
     # considered stable.
-    !@status or %w{ embedder internal stable shipping }.include? @status
+    !@status or %w{ embedder internal stable mature }.include? @status
   end
 end
 

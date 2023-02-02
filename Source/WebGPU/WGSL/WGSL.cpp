@@ -34,6 +34,7 @@
 #include "Parser.h"
 #include "PhaseTimer.h"
 #include "ResolveTypeReferences.h"
+#include "TypeCheck.h"
 
 namespace WGSL {
 
@@ -96,6 +97,8 @@ PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayo
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
 
+        // FIXME: this should run as part of staticCheck
+        RUN_PASS(typeCheck, ast);
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
         RUN_PASS(resolveTypeReferences, ast);
         RUN_PASS(rewriteEntryPoints, callGraph);
