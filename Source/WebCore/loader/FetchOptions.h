@@ -49,9 +49,9 @@ struct FetchOptions {
     using Redirect = FetchOptionsRedirect;
 
     FetchOptions() = default;
-    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, String&&, bool, std::optional<ScriptExecutionContextIdentifier>, std::optional<ScriptExecutionContextIdentifier>);
-    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, integrity.isolatedCopy(), keepAlive, clientIdentifier, resultingClientIdentifier }; }
-    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, WTFMove(integrity).isolatedCopy(), keepAlive, clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, std::optional<ScriptExecutionContextIdentifier>, std::optional<ScriptExecutionContextIdentifier>);
+    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTFMove(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
 
     template<class Encoder> void encodePersistent(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
@@ -62,23 +62,24 @@ struct FetchOptions {
     Cache cache { Cache::Default };
     Redirect redirect { Redirect::Follow };
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
-    String integrity;
     bool keepAlive { false };
+    String integrity;
+    // FIXME: These std::optional<ScriptExecutionContextIdentifier> waste 15 bytes each.
     // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
     std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
     // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
     std::optional<ScriptExecutionContextIdentifier> resultingClientIdentifier;
 };
 
-inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, String&& integrity, bool keepAlive, std::optional<ScriptExecutionContextIdentifier> clientIdentifier, std::optional<ScriptExecutionContextIdentifier> resultingClientIdentifier)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, std::optional<ScriptExecutionContextIdentifier> clientIdentifier, std::optional<ScriptExecutionContextIdentifier> resultingClientIdentifier)
     : destination(destination)
     , mode(mode)
     , credentials(credentials)
     , cache(cache)
     , redirect(redirect)
     , referrerPolicy(referrerPolicy)
-    , integrity(WTFMove(integrity))
     , keepAlive(keepAlive)
+    , integrity(WTFMove(integrity))
     , clientIdentifier(clientIdentifier)
     , resultingClientIdentifier(resultingClientIdentifier)
 {

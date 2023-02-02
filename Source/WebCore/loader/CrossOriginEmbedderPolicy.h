@@ -53,8 +53,8 @@ enum class CrossOriginEmbedderPolicyValue : bool {
 // https://html.spec.whatwg.org/multipage/origin.html#embedder-policy
 struct CrossOriginEmbedderPolicy {
     CrossOriginEmbedderPolicyValue value { CrossOriginEmbedderPolicyValue::UnsafeNone };
-    String reportingEndpoint;
     CrossOriginEmbedderPolicyValue reportOnlyValue { CrossOriginEmbedderPolicyValue::UnsafeNone };
+    String reportingEndpoint;
     String reportOnlyReportingEndpoint;
 
     CrossOriginEmbedderPolicy isolatedCopy() const &;

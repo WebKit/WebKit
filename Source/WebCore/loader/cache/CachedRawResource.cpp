@@ -43,7 +43,6 @@ namespace WebCore {
 
 CachedRawResource::CachedRawResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTFMove(request), type, sessionID, cookieJar)
-    , m_allowEncodedDataReplacement(true)
 {
     ASSERT(isMainOrMediaOrIconOrRawResource());
 }
