@@ -599,7 +599,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
 #if ENABLE(DOM_AUDIO_SESSION)
     , m_audioSessionType { DOMAudioSession::Type::Auto }
 #endif
-    , m_topDocumentSecurityOrigin(SecurityOrigin::createOpaque())
+    , m_topDocumentSecurityOrigin(frame->mainFrameSecurityOrigin())
 {
     addToDocumentsMap();
 
@@ -627,6 +627,8 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
 
     InspectorInstrumentation::addEventListenersToNode(*this);
     setStorageBlockingPolicy(m_settings->storageBlockingPolicy());
+
+    // FIXME: Chirag - if this document happens to be the topDocument(), we need to initialize the securityOrigin correctly
 }
 
 void Document::createNewIdentifier()

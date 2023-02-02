@@ -1434,7 +1434,7 @@ public:
     void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0) final;
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
-    SecurityOrigin& topOrigin() const final { return m_topDocumentSecurityOrigin.get(); }
+    SecurityOrigin& topOrigin() const final { return *m_topDocumentSecurityOrigin; }
     inline ClientOrigin clientOrigin() const;
 
     inline bool isSameOriginAsTopDocument() const;
@@ -2350,7 +2350,7 @@ private:
 #if ENABLE(DOM_AUDIO_SESSION)
     DOMAudioSessionType m_audioSessionType { };
 #endif
-    Ref<SecurityOrigin> m_topDocumentSecurityOrigin;
+    RefPtr<SecurityOrigin> m_topDocumentSecurityOrigin;
 };
 
 Element* eventTargetElementForDocument(Document*);

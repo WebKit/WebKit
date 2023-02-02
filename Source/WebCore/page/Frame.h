@@ -140,6 +140,7 @@ public:
     WEBCORE_EXPORT void willDetachPage();
 
     Frame& mainFrame() const;
+    SecurityOrigin* mainFrameSecurityOrigin() const;
     bool isMainFrame() const { return this == static_cast<void*>(&m_mainFrame); }
 
     Document* document() const;

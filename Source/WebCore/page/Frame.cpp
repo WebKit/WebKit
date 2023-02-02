@@ -1136,6 +1136,13 @@ Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValue
     return dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame());
 }
 
+SecurityOrigin* Frame::mainFrameSecurityOrigin() const
+{
+    if (m_sod)
+        return m_sod->securityOrigin().ptr();
+    return nullptr;
+}
+
 #if ENABLE(DATA_DETECTION)
 
 DataDetectionResultsStorage& Frame::dataDetectionResults()
