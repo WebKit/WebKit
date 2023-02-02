@@ -109,7 +109,9 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
 
     auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage() });
 
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && descriptor.hintCount) {
+    // FIXME: we shouldn't compile early unless hints were passed in. Remove this
+    // once we have wired up the deferred compilation.
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
         if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), descriptor, fromAPI(descriptor.label)))
             return result.releaseNonNull();
     } else {
