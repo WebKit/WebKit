@@ -37,18 +37,15 @@
 
 - (NSString *)_web_capitalizeRFC822HeaderFieldName
 {
-    CFStringRef name = (__bridge CFStringRef)self;
-    NSString *result = nil;
-
-    CFIndex len = CFStringGetLength(name);
+    NSUInteger len = [self length];
     char* charPtr = nullptr;
     UniChar* uniCharPtr = nullptr;
     Boolean useUniCharPtr = FALSE;
     Boolean shouldCapitalize = TRUE;
     Boolean somethingChanged = FALSE;
 
-    for (CFIndex i = 0; i < len; i ++) {
-        UniChar ch = CFStringGetCharacterAtIndex(name, i);
+    for (NSUInteger i = 0; i < len; i ++) {
+        UniChar ch = [self characterAtIndex:position];
         Boolean replace = FALSE;
         if (shouldCapitalize && ch >= 'a' && ch <= 'z') {
             ch = ch + 'A' - 'a';
@@ -60,15 +57,16 @@
         if (replace) {
             if (!somethingChanged) {
                 somethingChanged = TRUE;
-                if (CFStringGetBytes(name, CFRangeMake(0, len), kCFStringEncodingISOLatin1, 0, FALSE, NULL, 0, NULL) == len) {
+                NSRange range = NSMakeRange(0, len);
+                if ([self getBytes:NULL maxLength:0 usedLength:nil encoding:NSISOLatin1StringEncoding options:NSExternalRepresentationEncodingConversion range:range remainingRange:NULL]) {
                     // Can be encoded in ISOLatin1
                     useUniCharPtr = FALSE;
                     charPtr = static_cast<char*>(CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0));
-                    CFStringGetCString(name, charPtr, len+1, kCFStringEncodingISOLatin1);
+                    [self getCString:charPtr maxLength:len + 1 encoding:NSISOLatin1StringEncoding];
                 } else {
                     useUniCharPtr = TRUE;
                     uniCharPtr = static_cast<UniChar*>(CFAllocatorAllocate(kCFAllocatorDefault, len * sizeof(UniChar), 0));
-                    CFStringGetCharacters(name, CFRangeMake(0, len), uniCharPtr);
+                    [self getCharacters:uniCharPtr range:range];
                 }
             }
             if (useUniCharPtr)
@@ -83,13 +81,12 @@
     }
     if (somethingChanged) {
         if (useUniCharPtr)
-            result = adoptCF(CFStringCreateWithCharactersNoCopy(kCFAllocatorDefault, uniCharPtr, len, nullptr)).bridgingAutorelease();
+            return adoptNS([[NSString alloc] initWithCharactersNoCopy:uniCharPtr length:len freeWhenDone:NO]).autorelease();
         else
-            result = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, charPtr, kCFStringEncodingISOLatin1, nullptr)).bridgingAutorelease();
-    } else
-        result = self;
+            return adoptNS([[NSString alloc] initWithBytesNoCopy:charPtr length:len encoding:NSISOLatin1StringEncoding freeWhenDone:NO]).autorelease();
+    }
 
-    return result;
+    return self;
 }
 
 @end
@@ -99,16 +96,17 @@
 - (NSString *)_webkit_guessedMIMETypeForXML
 {
     NSUInteger length = [self length];
-    const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
+    if (!length)
+        return nil;
+    const char* p = static_cast<const char*>([self bytes]);
 
 #define CHANNEL_TAG_LENGTH 7
 
-    const char* p = reinterpret_cast<const char*>(bytes);
-    int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (CHANNEL_TAG_LENGTH - 1);
+    NSUInteger remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (CHANNEL_TAG_LENGTH - 1);
 
     BOOL foundRDF = false;
 
-    while (remaining > 0) {
+    while (true) {
         // Look for a "<".
         const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
         if (!hit)
@@ -136,6 +134,8 @@
             return nil;
 
         // Skip the "<" and continue.
+        if (remaining <= (NSUInteger)((hit + 1) - p))
+            break;
         remaining -= (hit + 1) - p;
         p = hit + 1;
     }
@@ -151,16 +151,19 @@
 #define VCARD_HEADER_LENGTH 11
 #define VCAL_HEADER_LENGTH 15
 
+    NSUInteger length = [self length];
+    if (!length)
+        return nil;
+
     NSString *MIMEType = [self _webkit_guessedMIMETypeForXML];
     if ([MIMEType length])
         return MIMEType;
 
-    NSUInteger length = [self length];
     const char* bytes = static_cast<const char*>([self bytes]);
 
     const char* p = bytes;
-    int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
-    while (remaining > 0) {
+    NSUInteger remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
+    while (true) {
         // Look for a "<".
         const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
         if (!hit)
@@ -175,6 +178,8 @@
         }
 
         // Skip the "<" and continue.
+        if (remaining <= (NSUInteger)((hit + 1) - p))
+            break;
         remaining -= (hit + 1) - p;
         p = hit + 1;
     }
@@ -183,7 +188,7 @@
     // This code could be improved to look for other mime types.
     p = bytes;
     remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (TEXT_HTML_LENGTH - 1);
-    while (remaining > 0) {
+    while (true) {
         // Look for a "t" or "T".
         const char* hit = nullptr;
         const char* lowerhit = static_cast<const char*>(memchr(p, 't', remaining));
@@ -203,6 +208,8 @@
             return @"text/html";
 
         // Skip the "t/T" and continue.
+        if (remaining <= (NSUInteger)((hit + 1) - p))
+            break;
         remaining -= (hit + 1) - p;
         p = hit + 1;
     }
@@ -251,7 +258,7 @@
     return !strncasecmp(bytes, string, [self length]);
 }
 
-static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
+static const UInt8 *_findEOL(const UInt8 *bytes, NSUInteger len)
 {
     // According to the HTTP specification EOL is defined as
     // a CRLF pair. Unfortunately, some servers will use LF
@@ -262,7 +269,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
     //
     // It returns NULL if EOL is not found or it will return
     // a pointer to the first terminating character.
-    for (CFIndex i = 0;  i < len; i++) {
+    for (NSUInteger i = 0;  i < len; i++) {
         UInt8 c = bytes[i];
         if ('\n' == c)
             return bytes + i;
@@ -342,15 +349,15 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
 
 - (BOOL)_web_startsWithBlankLine
 {
-    return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
+    return [self length] > 0 && (static_cast<const char*>([self bytes]))[0] == '\n';
 }
 
 - (NSInteger)_web_locationAfterFirstBlankLine
 {
-    const char *bytes = (const char *)[self bytes];
+    const char *bytes = static_cast<const char*>([self bytes]);
     NSUInteger length = [self length];
 
-    unsigned i;
+    NSUInteger i;
     for (i = 0; i < length - 4; i++) {
 
         //  Support for Acrobat. It sends "\n\n".

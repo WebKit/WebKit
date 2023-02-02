@@ -3259,7 +3259,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     char description[2048];
     formatForDebugger(visiblePositionRange, description, sizeof(description));
 
-    return [NSString stringWithUTF8String:description];
+    return @(description);
 }
 
 - (void)showNodeForTextMarker:(AXTextMarkerRef)textMarker

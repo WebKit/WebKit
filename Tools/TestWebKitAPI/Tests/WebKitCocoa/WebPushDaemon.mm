@@ -275,7 +275,7 @@ TEST(WebPushD, BasicCommunication)
         if (!debugMessage)
             return;
 
-        NSString *nsMessage = [NSString stringWithUTF8String:debugMessage];
+        NSString *nsMessage = @(debugMessage);
 
         // Ignore possible connections/messages from webpushtool
         if ([nsMessage hasPrefix:@"[webpushtool "])

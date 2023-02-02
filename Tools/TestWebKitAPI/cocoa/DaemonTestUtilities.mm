@@ -56,7 +56,7 @@ static RetainPtr<NSURL> currentExecutableLocation()
     buffer.resize(size + 1);
     _NSGetExecutablePath(buffer.data(), &size);
     buffer[size] = '\0';
-    auto pathString = adoptNS([[NSString alloc] initWithUTF8String:buffer.data()]);
+    auto pathString = adoptNS(@(buffer.data());
     return adoptNS([[NSURL alloc] initFileURLWithPath:pathString.get() isDirectory:NO]);
 }
 

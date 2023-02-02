@@ -8408,7 +8408,7 @@ FORWARD(toggleUnderline)
 
     auto nsurlCacheDirectory = adoptCF(_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
     if (!nsurlCacheDirectory)
-        nsurlCacheDirectory = (__bridge CFStringRef)NSHomeDirectory();
+        nsurlCacheDirectory = CFCopyHomeDirectoryURL();
 
     static uint64_t memSize = ramSize() / 1024 / 1024;
 

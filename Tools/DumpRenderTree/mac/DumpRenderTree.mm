@@ -133,7 +133,7 @@ extern "C" {
 
 static RetainPtr<NSString> toNS(const std::string& string)
 {
-    return adoptNS([[NSString alloc] initWithUTF8String:string.c_str()]);
+    return adoptNS(@(string.c_str()]));
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -1046,7 +1046,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
 static void addTestPluginsToPluginSearchPath(const char* executablePath)
 {
 #if !PLATFORM(IOS_FAMILY)
-    NSString *pwd = [[NSString stringWithUTF8String:executablePath] stringByDeletingLastPathComponent];
+    NSString *pwd = [@(executablePath) stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:@[pwd]];
     [[WebPluginDatabase sharedDatabase] refresh];
 #endif
@@ -1148,7 +1148,7 @@ static void prepareConsistentTestingEnvironment()
 #endif
 
     if (webCoreLogging.length())
-        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:webCoreLogging.c_str()] forKey:@"WebCoreLogging"];
+        [[NSUserDefaults standardUserDefaults] setValue:@(webCoreLogging.c_str()) forKey:@"WebCoreLogging"];
 }
 
 const char crashedMessage[] = "#CRASHED\n";
@@ -1200,11 +1200,11 @@ void dumpRenderTree(int argc, const char *argv[])
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"localhost"];
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@"127.0.0.1"];
     for (auto& localhostAlias : localhostAliases)
-        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[NSString stringWithUTF8String:localhostAlias.c_str()]];
+        [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@(localhostAlias.c_str())];
 
     if (allowAnyHTTPSCertificateForAllowedHosts) {
         for (auto& host : allowedHosts)
-            [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[NSString stringWithUTF8String:host.c_str()]];
+            [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:@(host.c_str()];
     }
 
     if (threaded)
@@ -1896,7 +1896,7 @@ static void runTest(const std::string& inputLine)
     auto pathOrURL = command.pathOrURL;
     dumpPixelsForCurrentTest = command.shouldDumpPixels || dumpPixelsForAllTests;
 
-    NSString *pathOrURLString = [NSString stringWithUTF8String:pathOrURL.c_str()];
+    NSString *pathOrURLString = @(pathOrURL.c_str());
     if (!pathOrURLString) {
         fprintf(stderr, "Failed to parse \"%s\" as UTF-8\n", pathOrURL.c_str());
         return;

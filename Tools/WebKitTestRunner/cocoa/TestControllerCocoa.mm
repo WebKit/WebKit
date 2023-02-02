@@ -118,10 +118,10 @@ void TestController::cocoaPlatformInitialize(const Options& options)
         WTFCrash();
     
     if (options.webCoreLogChannels.length())
-        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:options.webCoreLogChannels.c_str()] forKey:@"WebCoreLogging"];
+        [[NSUserDefaults standardUserDefaults] setValue:@(options.webCoreLogChannels.c_str()) forKey:@"WebCoreLogging"];
 
     if (options.webKitLogChannels.length())
-        [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:options.webKitLogChannels.c_str()] forKey:@"WebKit2Logging"];
+        [[NSUserDefaults standardUserDefaults] setValue:@(options.webKitLogChannels.c_str()) forKey:@"WebKit2Logging"];
 }
 
 WKContextRef TestController::platformContext()
@@ -155,7 +155,7 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
         if (!useEphemeralSession)
             configureWebsiteDataStoreTemporaryDirectories((WKWebsiteDataStoreConfigurationRef)websiteDataStoreConfig.get());
         if (standaloneWebApplicationURL.length())
-            [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:[NSString stringWithUTF8String:standaloneWebApplicationURL.c_str()]]];
+            [websiteDataStoreConfig setStandaloneApplicationURL:[NSURL URLWithString:@(standaloneWebApplicationURL.c_str())]];
 #if PLATFORM(IOS_FAMILY)
         if (options.enableInAppBrowserPrivacy())
             [websiteDataStoreConfig setEnableInAppBrowserPrivacyForTesting:YES];
@@ -200,7 +200,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 
     auto applicationManifest = options.applicationManifest();
     if (applicationManifest.length()) {
-        auto manifestPath = [NSString stringWithUTF8String:applicationManifest.c_str()];
+        auto manifestPath = @(applicationManifest.c_str());
         NSString *text = [NSString stringWithContentsOfFile:manifestPath usedEncoding:nullptr error:nullptr];
         [copiedConfiguration _setApplicationManifest:[_WKApplicationManifest applicationManifestFromJSON:text manifestURL:nil documentURL:nil]];
     }
