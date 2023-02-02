@@ -126,6 +126,8 @@
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
 		978A9125298A4E8400B37E5E /* MangleNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9123298A4E8400B37E5E /* MangleNames.cpp */; };
 		978A9126298A4E8400B37E5E /* MangleNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9124298A4E8400B37E5E /* MangleNames.h */; };
+		978A912A298AB60200B37E5E /* ContextProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9129298AB60200B37E5E /* ContextProvider.h */; };
+		978A912C298AB8EE00B37E5E /* ContextProviderInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */; };
 		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
 		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
@@ -330,6 +332,8 @@
 		9789C319297EA105009E9006 /* CallGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallGraph.h; sourceTree = "<group>"; };
 		978A9123298A4E8400B37E5E /* MangleNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MangleNames.cpp; sourceTree = "<group>"; };
 		978A9124298A4E8400B37E5E /* MangleNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MangleNames.h; sourceTree = "<group>"; };
+		978A9129298AB60200B37E5E /* ContextProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextProvider.h; sourceTree = "<group>"; };
+		978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextProviderInlines.h; sourceTree = "<group>"; };
 		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
 		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
@@ -465,6 +469,8 @@
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
+				978A9129298AB60200B37E5E /* ContextProvider.h */,
+				978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */,
 				979240C729769AC00050EA2C /* EntryPointRewriter.cpp */,
 				979240C629769AC00050EA2C /* EntryPointRewriter.h */,
 				97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */,
@@ -688,6 +694,8 @@
 				3A12AEC828FCEEC400C1B975 /* ASTWhileStatement.h in Headers */,
 				3A12AEB228FCE94C00C1B975 /* ASTWorkgroupSizeAttribute.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
+				978A912A298AB60200B37E5E /* ContextProvider.h in Headers */,
+				978A912C298AB8EE00B37E5E /* ContextProviderInlines.h in Headers */,
 				979240C829769AC00050EA2C /* EntryPointRewriter.h in Headers */,
 				97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,

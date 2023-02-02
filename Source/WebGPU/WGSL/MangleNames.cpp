@@ -29,9 +29,8 @@
 #include "AST.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "ContextProviderInlines.h"
 #include "WGSL.h"
-#include <wtf/DataLog.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 namespace WGSL {
@@ -65,7 +64,9 @@ struct MangledName {
     }
 };
 
-class NameManglerVisitor : public AST::Visitor {
+class NameManglerVisitor : public AST::Visitor, public ContextProvider<MangledName> {
+    using ContextProvider = ContextProvider<MangledName>;
+
 public:
     NameManglerVisitor(const CallGraph& callGraph)
         : m_callGraph(callGraph)
@@ -83,59 +84,7 @@ public:
     void visit(AST::NamedTypeName&) override;
 
 private:
-    using NameMap = HashMap<String, MangledName>;
-
-    class Context {
-    public:
-        Context(const Context *const parent)
-            : m_parent(parent)
-        {
-        }
-
-        // FIXME: this should return a reference, all values should be declared
-        const MangledName* lookup(const AST::Identifier& name) const
-        {
-            auto it = m_map.find(name.id());
-            if (it != m_map.end())
-                return &it->value;
-            if (m_parent)
-                return m_parent->lookup(name);
-            return nullptr;
-        }
-
-        const MangledName& add(const AST::Identifier& name, MangledName&& mangledName)
-        {
-            auto result = m_map.add(name.id(), WTFMove(mangledName));
-            ASSERT(result.isNewEntry);
-            return result.iterator->value;
-        }
-
-    private:
-        const Context* m_parent { nullptr };
-        NameMap m_map;
-    };
-
-    friend class ContextScope;
-    class ContextScope {
-    public:
-        ContextScope(NameManglerVisitor* visitor)
-            : m_visitor(*visitor)
-            , m_previousContext(visitor->m_context)
-        {
-            m_visitor.m_contexts.append(Context { m_previousContext });
-            m_visitor.m_context = &m_visitor.m_contexts.last();
-        }
-
-        ~ContextScope()
-        {
-            m_visitor.m_context = m_previousContext;
-            m_visitor.m_contexts.removeLast();
-        }
-
-    private:
-        NameManglerVisitor& m_visitor;
-        Context* m_previousContext;
-    };
+    using NameMap = ContextProvider::ContextMap;
 
     void introduceVariable(AST::Identifier&, MangledName::Kind);
     void readVariable(AST::Identifier&) const;
@@ -146,8 +95,6 @@ private:
     void visitFunctionBody(AST::Function&);
 
     const CallGraph& m_callGraph;
-    Context* m_context { nullptr };
-    Vector<Context> m_contexts;
     HashMap<AST::Structure*, NameMap> m_structFieldMapping;
     uint32_t m_indexPerType[MangledName::numberOfKinds] { 0 };
 };
@@ -155,7 +102,6 @@ private:
 HashMap<String, String> NameManglerVisitor::run()
 {
     HashMap<String, String> entryPointMap;
-    ContextScope moduleScope(this);
 
     for (const auto& entrypoint : m_callGraph.entrypoints()) {
         String originalName = entrypoint.m_function.name();
@@ -245,7 +191,7 @@ void NameManglerVisitor::visit(AST::NamedTypeName& type)
 
 void NameManglerVisitor::introduceVariable(AST::Identifier& name, MangledName::Kind kind)
 {
-    const auto& mangledName = m_context->add(name, makeMangledName(name, kind));
+    const auto& mangledName = ContextProvider::introduceVariable(name, makeMangledName(name, kind));
     name = AST::Identifier::makeWithSpan(name.span(), mangledName.toString());
 }
 
@@ -261,7 +207,7 @@ MangledName NameManglerVisitor::makeMangledName(const String& name, MangledName:
 void NameManglerVisitor::readVariable(AST::Identifier& name) const
 {
     // FIXME: this should be unconditional
-    if (const auto* mangledName = m_context->lookup(name))
+    if (const auto* mangledName = ContextProvider::readVariable(name))
         name = AST::Identifier::makeWithSpan(name.span(), mangledName->toString());
 }
 
