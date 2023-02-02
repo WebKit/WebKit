@@ -189,6 +189,10 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         keyframeValue.setStyle(styleResolver.styleForKeyframe(element, underlyingStyle, { nullptr }, keyframeRule, keyframeValue));
         for (auto property : implicitProperties)
             keyframeValue.addProperty(property);
+        // Step 2 of https://drafts.csswg.org/css-animations-2/#keyframes defines the
+        // default composite property as "replace" for CSS Animations.
+        if (is<CSSAnimation>(effect.animation()))
+            keyframeValue.setCompositeOperation(CompositeOperation::Replace);
         insert(WTFMove(keyframeValue));
     };
 
