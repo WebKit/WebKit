@@ -882,11 +882,13 @@ void WebPageProxy::couldNotRestorePageState()
 
 void WebPageProxy::restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale)
 {
+    MESSAGE_CHECK(scale > 0);
     pageClient().restorePageState(scrollPosition, scrollOrigin, obscuredInsetsOnSave, scale);
 }
 
 void WebPageProxy::restorePageCenterAndScale(std::optional<WebCore::FloatPoint> center, double scale)
 {
+    MESSAGE_CHECK(scale > 0);
     pageClient().restorePageCenterAndScale(center, scale);
 }
 
