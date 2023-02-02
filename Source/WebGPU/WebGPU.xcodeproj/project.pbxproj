@@ -115,7 +115,6 @@
 		3AAE4EB428C56E9A00DA484B /* ASTUnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */; };
 		3AD0D2332988D3C10080D728 /* ASTDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2302988D3C10080D728 /* ASTDeclaration.h */; };
 		3AD0D2342988D3C10080D728 /* ASTIdentityExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2312988D3C10080D728 /* ASTIdentityExpression.h */; };
-		3AD0D2352988D3C10080D728 /* ASTLiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2322988D3C10080D728 /* ASTLiteralExpressions.h */; };
 		3AD0D2372988D3F90080D728 /* API.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2362988D3F90080D728 /* API.h */; };
 		3AD0D23B2988ED8F0080D728 /* ASTUnaryExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D23A2988ED8F0080D728 /* ASTUnaryExpression.cpp */; };
 		3AD0D23E2988F3AB0080D728 /* ASTBinaryExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */; };
@@ -322,7 +321,6 @@
 		3AAE4EB328C56E9A00DA484B /* ASTUnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTUnaryExpression.h; sourceTree = "<group>"; };
 		3AD0D2302988D3C10080D728 /* ASTDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDeclaration.h; sourceTree = "<group>"; };
 		3AD0D2312988D3C10080D728 /* ASTIdentityExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTIdentityExpression.h; sourceTree = "<group>"; };
-		3AD0D2322988D3C10080D728 /* ASTLiteralExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTLiteralExpressions.h; sourceTree = "<group>"; };
 		3AD0D2362988D3F90080D728 /* API.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = API.h; sourceTree = "<group>"; };
 		3AD0D23A2988ED8F0080D728 /* ASTUnaryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTUnaryExpression.cpp; sourceTree = "<group>"; };
 		3AD0D23C2988F3AA0080D728 /* ASTBinaryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTBinaryExpression.cpp; sourceTree = "<group>"; };
@@ -568,7 +566,6 @@
 				3A12AEA928FCE94C00C1B975 /* ASTInterpolateAttribute.h */,
 				3A12AE9C28FCE94B00C1B975 /* ASTInvariantAttribute.h */,
 				3A1A1EFF28FD35E800C5934A /* ASTLetValue.h */,
-				3AD0D2322988D3C10080D728 /* ASTLiteralExpressions.h */,
 				3A12AE9228FCE94A00C1B975 /* ASTLocationAttribute.h */,
 				3A12AE9A28FCE94B00C1B975 /* ASTLoopStatement.h */,
 				33EA185D27BC194F00A1DD52 /* ASTNode.h */,
@@ -670,7 +667,6 @@
 				3A12AEC328FCE94C00C1B975 /* ASTInterpolateAttribute.h in Headers */,
 				3A12AEB628FCE94C00C1B975 /* ASTInvariantAttribute.h in Headers */,
 				3A1A1F0328FD35E800C5934A /* ASTLetValue.h in Headers */,
-				3AD0D2352988D3C10080D728 /* ASTLiteralExpressions.h in Headers */,
 				3A12AEAC28FCE94C00C1B975 /* ASTLocationAttribute.h in Headers */,
 				3A12AEB428FCE94C00C1B975 /* ASTLoopStatement.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
