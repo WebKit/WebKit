@@ -183,7 +183,7 @@ class GitHubMixin(object):
         response = yield TwistedAdditions.request(
             url, type=b'GET',
             headers=headers,
-            logger=self._addToLog,
+            logger=lambda content: self._addToLog('stdio', content),
         )
         if response and response.status_code // 100 != 2:
             yield self._addToLog('stdio', f'Accessed {url} with unexpected status code {response.status_code}.\n')
@@ -352,42 +352,52 @@ class GitHubMixin(object):
             return False
         return True
 
+    @defer.inlineCallbacks
     def remove_labels(self, pr_number, labels=None, repository_url=None):
         labels = labels or []
         if not labels:
-            return True
+            defer.returnValue(True)
+            return
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return False
+            defer.returnValue(False)
+            return
 
         pr_label_url = f'{api_url}/issues/{pr_number}/labels'
-        content = self.fetch_data_from_url_with_authentication_github_old(pr_label_url)
+        content = yield self.fetch_data_from_url_with_authentication_github(pr_label_url)
         if not content:
-            self._addToLog('stdio', "Failed to fetch existing labels, cannot remove labels\n")
-            return True
+            yield self._addToLog('stdio', "Failed to fetch existing labels, cannot remove labels\n")
+            defer.returnValue(True)
+            return
 
         existing_labels = [label.get('name') for label in (content.json() or [])]
         new_labels = list(filter(lambda label: label not in labels, existing_labels))
         if len(existing_labels) == len(new_labels):
-            return True
+            defer.returnValue(True)
+            return
 
         try:
+            headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
-            response = requests.request(
-                'PUT', pr_label_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(labels=new_labels),
+            if username and access_token:
+                auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
+                headers['Authorization'] = ['Basic {}'.format(auth_header)]
+
+            response = yield TwistedAdditions.request(
+                pr_label_url, type=b'PUT', timeout=60,
+                headers=headers, json=dict(labels=new_labels),
+                logger=lambda content: self._addToLog('stdio', content),
             )
             if response.status_code // 100 != 2:
                 for label in labels:
-                    self._addToLog('stdio', f"Unable to remove '{label}' label on PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
-                return False
+                    yield self._addToLog('stdio', f"Unable to remove '{label}' label on PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                defer.returnValue(False)
+                return
+            defer.returnValue(True)
         except Exception as e:
             for label in labels:
-                self._addToLog('stdio', f"Error in removing '{label}' label on PR {pr_number}\n")
-            return False
-        return True
+                yield self._addToLog('stdio', f"Error in removing '{label}' label on PR {pr_number}\n")
+            defer.returnValue(False)
 
     def comment_on_pr(self, pr_number, content, repository_url=None):
         api_url = GitHub.api_url(repository_url)
@@ -1939,6 +1949,7 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
 class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'block-pull-request'
 
+    @defer.inlineCallbacks
     def run(self):
         pr_number = self.getProperty('github.number', '')
         build_finish_summary = self.getProperty('build_finish_summary', None)
@@ -1950,14 +1961,15 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         if self._is_hash_outdated(pr_json) == 0 and CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
             repository_url = self.getProperty('repository', '')
             rc = SUCCESS
+            did_remove_labels = yield self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url)
             if any((
-                not self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.UNSAFE_MERGE_QUEUE_LABEL, self.REQUEST_MERGE_QUEUE_LABEL], repository_url=repository_url),
+                not did_remove_labels,
                 not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
             )):
                 rc = FAILURE
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
-        return rc
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
@@ -2015,13 +2027,13 @@ class RemoveLabelsFromPullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixi
         GitHubMixin.REQUEST_MERGE_QUEUE_LABEL,
     ]
 
+    @defer.inlineCallbacks
     def run(self):
         pr_number = self.getProperty('github.number', '')
 
         repository_url = self.getProperty('repository', '')
-        if not self.remove_labels(pr_number, self.LABELS_TO_REMOVE, repository_url=repository_url):
-            return FAILURE
-        return SUCCESS
+        did_remove_labels = yield self.remove_labels(pr_number, self.LABELS_TO_REMOVE, repository_url=repository_url)
+        defer.returnValue(SUCCESS if did_remove_labels else FAILURE)
 
     def getResultSummary(self):
         if self.results == SUCCESS:
