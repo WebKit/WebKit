@@ -187,8 +187,18 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             return false;
         };
 
+        auto currentColorPropertyChanged = [&]() {
+            // If the "color" property itself is set to "currentcolor" on a keyframe, we always recompute keyframes.
+            if (effect->hasColorSetToCurrentColor())
+                return true;
+            // For all other color-related properties set to "currentcolor" on a keyframe, it's sufficient to check
+            // whether the value "color" resolves to has changed since the last style resolution.
+            return effect->hasPropertySetToCurrentColor() && previousLastStyleChangeEventStyle
+                && previousLastStyleChangeEventStyle->color() != targetStyle.color();
+        };
+
         auto logicalPropertyDidChange = propertyAffectingLogicalPropertiesChanged && effect->animatesDirectionAwareProperty();
-        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged())
+        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged() || currentColorPropertyChanged())
             effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
 
         animation->resolve(targetStyle, resolutionContext);
