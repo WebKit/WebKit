@@ -399,27 +399,34 @@ class GitHubMixin(object):
                 yield self._addToLog('stdio', f"Error in removing '{label}' label on PR {pr_number}\n")
             defer.returnValue(False)
 
+    @defer.inlineCallbacks
     def comment_on_pr(self, pr_number, content, repository_url=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return False
+            defer.returnValue(FAILURE)
+            return
 
         comment_url = f'{api_url}/issues/{pr_number}/comments'
         try:
+            headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
-            response = requests.request(
-                'POST', comment_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=dict(body=content),
+            if username and access_token:
+                auth_header = b64encode(f'{username}:{access_token}'.encode('utf-8')).decode('utf-8')
+                headers['Authorization'] = [f'Basic {auth_header}']
+            response = yield TwistedAdditions.request(
+                comment_url, type=b'POST', timeout=60,
+                headers=headers, json=dict(body=content),
+                logger=lambda content: self._addToLog('stdio', content),
             )
             if response.status_code // 100 != 2:
-                self._addToLog('stdio', f"Failed to post comment to PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
-                return False
+                yield self._addToLog('stdio', f"Failed to post comment to PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                defer.returnValue(FAILURE)
+                return
+
+            defer.returnValue(SUCCESS)
         except Exception as e:
-            self._addToLog('stdio', f"Error in posting comment to PR {pr_number}\n")
-            return False
-        return True
+            yield self._addToLog('stdio', f'Error in posting comment to PR {pr_number}\n    {e}\n')
+            defer.returnValue(FAILURE)
 
     def update_pr(self, pr_number, title, description, base=None, head=None, repository_url=None):
         api_url = GitHub.api_url(repository_url)
@@ -1571,19 +1578,26 @@ class BugzillaMixin(AddToLogMixin):
             yield self._addToLog('stdio', f'Error in closing bug {bug_id}\n    {e}\n')
             defer.returnValue(FAILURE)
 
+    @defer.inlineCallbacks
     def comment_on_bug(self, bug_id, comment_text):
-        bug_comment_url = '{}rest/bug/{}/comment'.format(BUG_SERVER_URL, bug_id)
+        bug_comment_url = f'{BUG_SERVER_URL}rest/bug/{bug_id}/comment'
         if not comment_text:
-            return FAILURE
+            defer.returnValue(FAILURE)
+            return
         try:
-            response = requests.post(bug_comment_url, data={'comment': comment_text, 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            response = yield TwistedAdditions.request(
+                bug_comment_url, type=b'POST',
+                json={'comment': comment_text, 'Bugzilla_api_key': self.get_bugzilla_api_key()},
+                logger=lambda content: self._addToLog('stdio', content),
+            )
             if response.status_code not in [200, 201]:
-                self._addToLog('stdio', 'Unable to comment on bug {}. Unexpected response code from bugzilla: {}'.format(bug_id, response.status_code))
-                return FAILURE
+                yield self._addToLog('stdio', f'Unable to comment on bug {bug_id}. Unexpected response code from bugzilla: {response.status_code}')
+                defer.returnValue(FAILURE)
+                return
+            defer.returnValue(SUCCESS)
         except Exception as e:
-            self._addToLog('stdio', 'Error in commenting on bug {}'.format(bug_id))
-            return FAILURE
-        return SUCCESS
+            yield self._addToLog('stdio', f'Error in commenting on bug {bug_id}\n    {e}\n')
+            defer.returnValue(FAILURE)
 
 
 class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
@@ -2091,10 +2105,10 @@ class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             return
 
         rc = SUCCESS
-        if self.pr_number and not self.comment_on_pr(self.pr_number, self.comment_text, self.getProperty('repository')):
-            rc = FAILURE
-        if self.bug_id and self.comment_on_bug(self.bug_id, self.comment_text) != SUCCESS:
-            rc = FAILURE
+        if self.pr_number:
+            rc = yield self.comment_on_pr(self.pr_number, self.comment_text, self.getProperty('repository'))
+        if self.bug_id:
+            rc = yield self.comment_on_bug(self.bug_id, self.comment_text)
         if not self.pr_number and not self.bug_id:
             yield self._addToLog('stdio', 'No bug or pull request to comment to.\n')
             self.descriptionDone = 'No bug or PR found'
