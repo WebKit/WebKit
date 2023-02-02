@@ -3512,6 +3512,20 @@ IntRect WebGLRenderingContextBase::getTexImageSourceSize(TexImageSource& source)
     return result.returnValue();
 }
 
+#if ENABLE(WEB_CODECS)
+static bool isVideoFrameFormatEligibleToCopy(WebCodecsVideoFrame& frame)
+{
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: We should be able to remove the YUV restriction, see https://bugs.webkit.org/show_bug.cgi?id=251234.
+    auto format = frame.format();
+    return format && (*format == VideoPixelFormat::I420 || *format == VideoPixelFormat::NV12);
+#else
+    UNUSED_PARAM(frame);
+    return true;
+#endif
+}
+#endif // ENABLE(WEB_CODECS)
+
 ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFunctionID functionID, GCGLenum target, GCGLint level, GCGLint internalformat, GCGLint border, GCGLenum format, GCGLenum type, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, const IntRect& inputSourceImageRect, GCGLsizei depth, GCGLint unpackImageHeight, TexImageSource&& source)
 {
     if (isContextLost())
@@ -3721,8 +3735,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSourceHelper(TexImageFuncti
             return { };
 
         auto internalFrame = frame->internalFrame();
+
+        // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
+        // Otherwise, it will fall back to the normal SW path.
+        // FIXME: The current restrictions require that format shoud be RGB or RGBA,
+        // type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
         bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, static_cast<int>(internalFrame->presentationSize().width()), static_cast<int>(internalFrame->presentationSize().height()));
-        if (functionID == TexImageFunctionID::TexImage2D && texture && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
+        if (isVideoFrameFormatEligibleToCopy(*frame) && functionID == TexImageFunctionID::TexImage2D && texture && (format == GraphicsContextGL::RGB || format == GraphicsContextGL::RGBA) && sourceImageRectIsDefault && type == GraphicsContextGL::UNSIGNED_BYTE && !level) {
             if (m_context->copyTextureFromVideoFrame(*internalFrame, texture->object(), target, level, internalformat, format, type, m_unpackPremultiplyAlpha, m_unpackFlipY))
                 return { };
         }

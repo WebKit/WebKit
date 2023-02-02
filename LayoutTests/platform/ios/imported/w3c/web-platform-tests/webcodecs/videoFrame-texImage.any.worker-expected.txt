@@ -1,8 +1,0 @@
-
-FAIL texImage2D with 48x36 srgb VideoFrame. assert_equals: expected 150 but got 151
-PASS texSubImage2D with 48x36 srgb VideoFrame.
-FAIL texImage2D with 480x360 srgb VideoFrame. assert_equals: expected 150 but got 151
-PASS texSubImage2D with 480x360 srgb VideoFrame.
-PASS texImage2D with a closed VideoFrame.
-PASS texSubImage2D with a closed VideoFrame.
-
