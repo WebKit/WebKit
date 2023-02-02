@@ -1508,18 +1508,22 @@ class BugzillaMixin(AddToLogMixin):
             print('Error in reading Bugzilla api key')
             return ''
 
+    @defer.inlineCallbacks
     def remove_flags_on_patch(self, patch_id):
-        patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
         flags = [{'name': 'review', 'status': 'X'}, {'name': 'commit-queue', 'status': 'X'}]
         try:
-            response = requests.put(patch_url, json={'flags': flags, 'Bugzilla_api_key': self.get_bugzilla_api_key()})
+            response = yield TwistedAdditions.request(
+                f'{BUG_SERVER_URL}rest/bug/attachment/{patch_id}', type=b'PUT',
+                json={'flags': flags, 'Bugzilla_api_key': self.get_bugzilla_api_key()},
+                logger=lambda content: self._addToLog('stdio', content),
+            )
             if response.status_code not in [200, 201]:
-                self._addToLog('stdio', 'Unable to remove flags on patch {}. Unexpected response code from bugzilla: {}'.format(patch_id, response.status_code))
-                return FAILURE
+                yield self._addToLog('stdio', f'Unable to remove flags on patch {patch_id}. Unexpected response code from bugzilla: {response.status_code}\n')
+                defer.returnValue(FAILURE)
+            defer.returnValue(SUCCESS)
         except Exception as e:
-            self._addToLog('stdio', 'Error in removing flags on Patch {}'.format(patch_id))
-            return FAILURE
-        return SUCCESS
+            yield self._addToLog('stdio', f'Error in removing flags on Patch {patch_id}\n    {e}\n')
+            defer.returnValue(FAILURE)
 
     def set_cq_minus_flag_on_patch(self, patch_id):
         patch_url = '{}rest/bug/attachment/{}'.format(BUG_SERVER_URL, patch_id)
@@ -1968,17 +1972,17 @@ class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
     flunkOnFailure = False
     haltOnFailure = False
 
-    def start(self):
+    @defer.inlineCallbacks
+    def run(self):
         patch_id = self.getProperty('patch_id', '')
         if not patch_id:
-            self._addToLog('stdio', 'patch_id build property not found.\n')
+            yield self._addToLog('stdio', 'patch_id build property not found.\n')
             self.descriptionDone = 'No patch id found'
-            self.finished(FAILURE)
+            defer.returnValue(FAILURE)
             return None
 
-        rc = self.remove_flags_on_patch(patch_id)
-        self.finished(rc)
-        return None
+        rc = yield self.remove_flags_on_patch(patch_id)
+        defer.returnValue(rc)
 
     def getResultSummary(self):
         if self.results == SKIPPED:
