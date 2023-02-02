@@ -73,7 +73,7 @@ private:
     void destroyDecodedData(bool /*destroyAll*/ = true) override;
 
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
-    FloatSize size(ImageOrientation = ImageOrientation::FromImage) const override;
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const override;
 
     ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) override;
 

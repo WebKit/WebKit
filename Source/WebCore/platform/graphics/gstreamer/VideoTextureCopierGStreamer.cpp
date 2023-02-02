@@ -94,18 +94,18 @@ void VideoTextureCopierGStreamer::updateTextureSpaceMatrix()
 {
     m_textureSpaceMatrix.makeIdentity();
 
-    switch (m_orientation) {
-    case ImageOrientation::OriginTopLeft:
+    switch (m_orientation.orientation()) {
+    case ImageOrientation::Orientation::OriginTopLeft:
         break;
-    case ImageOrientation::OriginRightTop:
+    case ImageOrientation::Orientation::OriginRightTop:
         m_textureSpaceMatrix.rotate(-90);
         m_textureSpaceMatrix.translate(-1, 0);
         break;
-    case ImageOrientation::OriginBottomRight:
+    case ImageOrientation::Orientation::OriginBottomRight:
         m_textureSpaceMatrix.rotate(180);
         m_textureSpaceMatrix.translate(-1, -1);
         break;
-    case ImageOrientation::OriginLeftBottom:
+    case ImageOrientation::Orientation::OriginLeftBottom:
         m_textureSpaceMatrix.rotate(-270);
         m_textureSpaceMatrix.translate(0, -1);
         break;

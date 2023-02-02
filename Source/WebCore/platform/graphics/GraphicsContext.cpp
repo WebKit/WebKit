@@ -613,7 +613,7 @@ void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& d
 
 void GraphicsContext::paintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
 {
-    frame.paintInContext(*this, destination, ImageOrientation::None, shouldDiscardAlpha);
+    frame.paintInContext(*this, destination, ImageOrientation::Orientation::None, shouldDiscardAlpha);
 }
 #endif
 

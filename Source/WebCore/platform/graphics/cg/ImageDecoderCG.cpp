@@ -195,7 +195,7 @@ static ImageOrientation orientationFromProperties(CFDictionaryRef imagePropertie
     ASSERT(imageProperties);
     CFNumberRef orientationProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyOrientation);
     if (!orientationProperty)
-        return ImageOrientation::None;
+        return ImageOrientation::Orientation::None;
     
     int exifValue;
     CFNumberGetValue(orientationProperty, kCFNumberIntType, &exifValue);

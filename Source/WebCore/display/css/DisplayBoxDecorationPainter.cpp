@@ -1242,7 +1242,7 @@ void BoxDecorationPainter::paintFillLayer(PaintingContext& paintingContext, cons
         op == CompositeOperator::SourceOver ? layer.composite() : op,
         layer.blendMode(),
         DecodingMode::Synchronous,
-        ImageOrientation::FromImage,
+        ImageOrientation::Orientation::FromImage,
         InterpolationQuality::Default
     };
 

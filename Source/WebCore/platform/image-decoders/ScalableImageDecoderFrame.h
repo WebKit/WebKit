@@ -82,7 +82,7 @@ private:
     std::unique_ptr<ImageBackingStore> m_backingStore;
     DisposalMethod m_disposalMethod { DisposalMethod::Unspecified };
 
-    ImageOrientation m_orientation { ImageOrientation::None };
+    ImageOrientation m_orientation { ImageOrientation::Orientation::None };
     Seconds m_duration;
     bool m_hasAlpha { true };
 };

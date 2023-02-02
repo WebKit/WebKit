@@ -3329,7 +3329,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return CSSPrimitiveValue::create(CSSValueNoLimit);
         return CSSPrimitiveValue::create(style.hyphenationLimitLines(), CSSUnitType::CSS_NUMBER);
     case CSSPropertyImageOrientation:
-        if (style.imageOrientation() == ImageOrientation::FromImage)
+        if (style.imageOrientation() == ImageOrientation::Orientation::FromImage)
             return CSSPrimitiveValue::create(CSSValueFromImage);
         return CSSPrimitiveValue::create(CSSValueNone);
     case CSSPropertyImageRendering:

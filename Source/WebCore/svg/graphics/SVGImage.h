@@ -48,7 +48,7 @@ public:
     FrameView* frameView() const;
 
     bool isSVGImage() const final { return true; }
-    FloatSize size(ImageOrientation = ImageOrientation::FromImage) const final { return m_intrinsicSize; }
+    FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_intrinsicSize; }
 
     bool renderingTaintsOrigin() const final;
 

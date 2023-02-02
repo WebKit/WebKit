@@ -3263,3 +3263,27 @@ header: <WebCore/DisplayListItems.h>
     uint8_t m_styleMode;
     bool m_styleShouldUseDarkAppearance;
 };
+
+[Nested] enum class WebCore::ImageOrientation::Orientation : int {
+    FromImage,
+    OriginTopLeft,
+    OriginTopRight,
+    OriginBottomRight,
+    OriginBottomLeft,
+    OriginLeftTop,
+    OriginRightTop,
+    OriginRightBottom,
+    OriginLeftBottom,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageOrientation {
+    WebCore::ImageOrientation::Orientation orientation()
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImagePaintingOptions {
+     WebCore::CompositeOperator m_compositeOperator;
+     WebCore::BlendMode m_blendMode;
+     WebCore::DecodingMode m_decodingMode;
+     WebCore::ImageOrientation m_orientation;
+     WebCore::InterpolationQuality m_interpolationQuality;
+};

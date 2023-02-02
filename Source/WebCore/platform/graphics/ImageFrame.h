@@ -98,7 +98,7 @@ private:
     SubsamplingLevel m_subsamplingLevel { SubsamplingLevel::Default };
     DecodingOptions m_decodingOptions;
 
-    ImageOrientation m_orientation { ImageOrientation::None };
+    ImageOrientation m_orientation { ImageOrientation::Orientation::None };
     std::optional<IntSize> m_densityCorrectedSize;
     Seconds m_duration;
     bool m_hasAlpha { true };
