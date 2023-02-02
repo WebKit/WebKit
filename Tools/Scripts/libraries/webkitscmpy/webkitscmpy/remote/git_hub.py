@@ -61,6 +61,7 @@ class GitHub(Scm):
                 body=data.get('body'),
                 author=self.repository.contributors.create((data.get('user') or data.get('author'))['login']),
                 head=(data.get('head') or {}).get('ref', data.get('headRefName')),
+                hash=(data.get('head') or {}).get('sha') or ((data.get('headRef') or {}).get('target') or {}).get('oid'),
                 base=(data.get('base') or {}).get('ref', data.get('baseRefName')),
                 opened=dict(
                     open=True,
@@ -104,6 +105,11 @@ class GitHub(Scm):
           }}
           baseRefName
           headRefName
+          headRef {{
+            target {{
+              oid
+            }}
+          }}
           headRepository {{
             nameWithOwner
           }}

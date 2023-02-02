@@ -48,6 +48,7 @@ class BitBucket(Scm):
                     data['author']['user']['displayName'],
                     data['author']['user'].get('emailAddress', None),
                 ), head=data['fromRef']['displayId'],
+                hash=data['fromRef'].get('latestCommit', None),
                 base=data['toRef']['displayId'],
                 opened=True if data.get('open') else (False if data.get('closed') else None),
                 generator=self,
@@ -120,6 +121,15 @@ class BitBucket(Scm):
             description = PullRequest.create_body(body, commits, linkify=False)
             if description and len(description) > self.BODY_CHAR_LIMIT:
                 raise ValueError('Body length too long. Limit is: {}'.format(self.BODY_CHAR_LIMIT))
+            fromRef = dict(
+                id='refs/heads/{}'.format(head),
+                repository=dict(
+                    slug=self.repository.name,
+                    project=dict(key=self.repository.project),
+                ),
+            )
+            if commits:
+                fromRef['latestCommit'] = commits[0].hash,
             response = requests.post(
                 'https://{domain}/rest/api/1.0/projects/{project}/repos/{name}/pull-requests'.format(
                     domain=self.repository.domain,
@@ -128,13 +138,8 @@ class BitBucket(Scm):
                 ), json=dict(
                     title=title,
                     description=PullRequest.create_body(body, commits, linkify=False),
-                    fromRef=dict(
-                        id='refs/heads/{}'.format(head),
-                        repository=dict(
-                            slug=self.repository.name,
-                            project=dict(key=self.repository.project),
-                        ),
-                    ), toRef=dict(
+                    fromRef=fromRef,
+                    toRef=dict(
                         id='refs/heads/{}'.format(base or self.repository.default_branch),
                         repository=dict(
                             slug=self.repository.name,
