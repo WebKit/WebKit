@@ -534,7 +534,7 @@ def maybe_quote_run_cmd(argv_list, cmd_key):
     new_argv_list = argv_list[0:i]
 
     # Everything after cmd_key gets converted into one argument separated
-    # by spaces. If some of this arguments has an space then quote it.
+    # by spaces. If any of the arguments has a space then quote it.
     command_str = argv_list[i]
     for command_arg in argv_list[i+1:]:
         if ' ' in command_arg:
@@ -546,7 +546,7 @@ def maybe_quote_run_cmd(argv_list, cmd_key):
     return new_argv_list
 
 
-def main():
+def main(args):
 
     conf_sub_dir = os.path.join('Tools', 'yocto')
     targets_conf_sub_path = os.path.join(conf_sub_dir, 'targets.conf')
@@ -564,7 +564,7 @@ def main():
 
     parser = argparse.ArgumentParser('usage: %prog [options]', allow_abbrev=False,
                                     epilog='NOTE: The script "build-webkit" will call this script when the flag "--cross-target" is passed to it. That allows to cross-build WebKit for the target directly with the script build-webkit. '
-                                    'Any environment variables this script recognizes like  WEBKIT_CROSS_WIPE_ON_CHANGE or WEBKIT_CROSS_EXPORT_ENV can be also used with the build-webkit script. '
+                                    'Any environment variables this script recognizes like WEBKIT_CROSS_WIPE_ON_CHANGE or WEBKIT_CROSS_EXPORT_ENV can be also used with the build-webkit script.'
                                     'If you want to know more details check the documentation at: "{doc_path}"'.format(doc_path=os.path.join(conf_sub_dir,'README.md')))
     action = parser.add_argument_group('action')
     run_cmd_key = '--cross-toolchain-run-cmd'
@@ -576,7 +576,7 @@ def main():
                              'If you pass this flag (or you set the environment variable "WEBKIT_CROSS_WIPE_ON_CHANGE" to "0") then it will not wipe it.')
     parser.add_argument('--no-export-default-environment', action='store_true', dest='no_export_environment',
                         help='This tool may export some environment variables defined in "{targets_sub_path}" for the target. '
-                             'This environment variables are usually used to change the default build parameters of the script "build-webkit". '
+                             'These environment variables are usually used to change the default build parameters of the script "build-webkit". '
                              'If you pass this flag (or you set the environment variable "WEBKIT_CROSS_EXPORT_ENV" to "0") then it will not export those.'.format(targets_sub_path=targets_conf_sub_path))
     action.add_argument('--print-available-targets', dest='print_targets', action='store_true',
                         help='Print the available targets (one per line)')
@@ -592,11 +592,11 @@ def main():
                         help='Build the cross toolchain (only if still not built) and then execute \"command\" inside cross environment. '
                              '\033[91mIMPORTANT\033[0m: This argument is the last one, any strings after it, even if separated by spaces or quotes will be considered part of the command to be executed. '
                              'This means that any options this script understands (like --help) will not be recognized by the script if passed after this switch, but instead will be considered part of the command to execute.')
-    options = parser.parse_args(args=maybe_quote_run_cmd(sys.argv[1:], run_cmd_key))
+    options = parser.parse_args(args=maybe_quote_run_cmd(args, run_cmd_key))
     configure_logging(options.log_level)
 
-    # Note: When modifiying this script, take into account that the script 'build-webkit'
-    # uses this script as a wrapper when the option '-cross-target' is passed to 'build-webkit'.
+    # Note: When modifying this script, take into account that the script 'build-webkit'
+    # uses this script as a wrapper when the option '--cross-target' is passed to 'build-webkit'.
     # More specifically, 'build-webkit' calls this script for the following use-cases:
     # 1. --print-available-targets (so it knows which targets are available)
     # 2. --cross-toolchain-run-cmd (to execute cmake and ninja/make inside the cross env)
@@ -651,4 +651,4 @@ def main():
     return retcode
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))
