@@ -123,13 +123,10 @@ private:
     void adjustSearchFieldCancelButtonStyle(RenderStyle&, const Element*) const final;
 
     void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
-    bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
     void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
-    bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
-    bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
 #if ENABLE(DATALIST_ELEMENT)
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
@@ -166,7 +163,6 @@ private:
 
     // Helpers for adjusting appearance and for painting
 
-    void paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell*, const RenderObject&, const PaintInfo&, const FloatRect&);
     void setPopupButtonCellState(const RenderObject&, const IntSize&);
     const IntSize* popupButtonSizes() const;
     const int* popupButtonMargins() const;
@@ -176,12 +172,9 @@ private:
     const IntSize* searchFieldSizes() const;
     const IntSize* cancelButtonSizes() const;
     const IntSize* resultsButtonSizes() const;
-    void setSearchCellState(const RenderObject&, const IntRect&);
     void setSearchFieldSize(RenderStyle&) const;
 
     NSPopUpButtonCell *popupButton() const;
-    NSSearchFieldCell *search() const;
-    NSMenu *searchMenuTemplate() const;
 
 #if ENABLE(SERVICE_CONTROLS)
     IntSize imageControlsButtonSize() const final;
@@ -189,8 +182,6 @@ private:
 #endif
 
     mutable RetainPtr<NSPopUpButtonCell> m_popupButton;
-    mutable RetainPtr<NSSearchFieldCell> m_search;
-    mutable RetainPtr<NSMenu> m_searchMenuTemplate;
 
     bool m_isSliderThumbHorizontalPressed { false };
     bool m_isSliderThumbVerticalPressed { false };

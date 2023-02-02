@@ -39,6 +39,7 @@ class PlatformControl;
 class ProgressBarPart;
 class SearchFieldCancelButtonPart;
 class SearchFieldPart;
+class SearchFieldResultsPart;
 class SliderThumbPart;
 class SliderTrackPart;
 class TextAreaPart;
@@ -70,6 +71,7 @@ public:
     virtual std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) = 0;
+    virtual std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(SearchFieldResultsPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) = 0;
     virtual std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) = 0;

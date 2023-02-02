@@ -104,6 +104,7 @@
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchFieldCancelButtonPart.h>
 #include <WebCore/SearchFieldPart.h>
+#include <WebCore/SearchFieldResultsPart.h>
 #include <WebCore/SearchPopupMenu.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedAttachmentData.h>
@@ -1608,9 +1609,11 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
 #endif
 
     case WebCore::StyleAppearance::SearchFieldDecoration:
+        break;
+
     case WebCore::StyleAppearance::SearchFieldResultsDecoration:
     case WebCore::StyleAppearance::SearchFieldResultsButton:
-        break;
+        return WebCore::SearchFieldResultsPart::create(*type);
 
     case WebCore::StyleAppearance::SearchFieldCancelButton:
         return WebCore::SearchFieldCancelButtonPart::create();
