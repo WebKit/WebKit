@@ -28,9 +28,12 @@
 #include "CSSPropertyParser.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "Document.h"
+#include "Element.h"
+#include "KeyframeEffect.h"
 #include "StyleBuilder.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "WebAnimation.h"
 
 namespace WebCore {
 namespace Style {
@@ -67,8 +70,10 @@ bool CustomPropertyRegistry::registerFromAPI(CSSRegisteredCustomProperty&& prope
         return makeUnique<const CSSRegisteredCustomProperty>(WTFMove(property));
     }).isNewEntry;
 
-    if (success)
+    if (success) {
         m_scope.didChangeStyleSheetEnvironment();
+        notifyAnimationsOfCustomPropertyRegistration(property.name);
+    }
 
     return success;
 }
@@ -129,11 +134,26 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
 
     // Changing property registration may affect computed property values in the cache.
     m_scope.invalidateMatchedDeclarationsCache();
+
+    notifyAnimationsOfCustomPropertyRegistration(property.name);
 }
 
 void CustomPropertyRegistry::clearRegisteredFromStylesheets()
 {
     m_propertiesFromStylesheet.clear();
+}
+
+void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const AtomString& customProperty)
+{
+    auto& document = m_scope.document();
+    for (auto* animation : WebAnimation::instances()) {
+        if (auto* keyframeEffect = dynamicDowncast<KeyframeEffect>(animation->effect())) {
+            if (auto* target = keyframeEffect->target()) {
+                if (&target->document() == &document)
+                    keyframeEffect->customPropertyRegistrationDidChange(customProperty);
+            }
+        }
+    }
 }
 
 }

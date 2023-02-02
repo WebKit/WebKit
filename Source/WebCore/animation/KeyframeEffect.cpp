@@ -796,6 +796,17 @@ void KeyframeEffect::keyframesRuleDidChange()
     invalidate();
 }
 
+void KeyframeEffect::customPropertyRegistrationDidChange(const AtomString& customProperty)
+{
+    // If the registration of a custom property is changed, we should recompute keyframes
+    // at the next opportunity as the initial value, inherited value, etc. could have changed.
+    if (!m_blendingKeyframes.properties().contains(customProperty))
+        return;
+
+    clearBlendingKeyframes();
+    invalidate();
+}
+
 ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobalObject, Document& document, Strong<JSObject>&& keyframesInput)
 {
     Ref protectedDocument { document };

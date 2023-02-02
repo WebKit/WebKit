@@ -46,6 +46,8 @@ public:
     void clearRegisteredFromStylesheets();
 
 private:
+    void notifyAnimationsOfCustomPropertyRegistration(const AtomString&);
+
     Scope& m_scope;
 
     HashMap<AtomString, std::unique_ptr<const CSSRegisteredCustomProperty>> m_propertiesFromAPI;
