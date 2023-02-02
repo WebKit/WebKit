@@ -192,7 +192,7 @@ bool getLineColumnAndSource(VM& vm, Vector<StackFrame>* stackTrace, unsigned& li
         StackFrame& frame = stackTrace->at(i);
         if (frame.hasLineAndColumnInfo()) {
             frame.computeLineAndColumn(line, column);
-            sourceURL = frame.sourceURL(vm);
+            sourceURL = frame.sourceURLStripped(vm);
             return true;
         }
     }

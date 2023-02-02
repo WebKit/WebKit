@@ -51,6 +51,7 @@ public:
     String functionName(VM&) const;
     SourceID sourceID() const;
     String sourceURL(VM&) const;
+    String sourceURLStripped(VM&) const;
     String toString(VM&) const;
 
     bool hasBytecodeIndex() const { return m_bytecodeIndex && !m_isWasmFrame; }

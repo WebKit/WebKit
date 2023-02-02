@@ -64,7 +64,7 @@ WI.DebuggerData = class DebuggerData
 
     scriptsForURL(url)
     {
-        return this._scriptContentIdentifierMap.get(url) || [];
+        return this._scriptContentIdentifierMap.get(WI.urlWithoutUserQueryOrFragment(url)) || [];
     }
 
     // Protected (Called by DebuggerManager)
@@ -79,10 +79,11 @@ WI.DebuggerData = class DebuggerData
         this._scriptIdMap.set(script.id, script);
 
         if (script.contentIdentifier) {
-            let scripts = this._scriptContentIdentifierMap.get(script.contentIdentifier);
+            let url = WI.urlWithoutUserQueryOrFragment(script.contentIdentifier);
+            let scripts = this._scriptContentIdentifierMap.get(url);
             if (!scripts) {
                 scripts = [];
-                this._scriptContentIdentifierMap.set(script.contentIdentifier, scripts);
+                this._scriptContentIdentifierMap.set(url, scripts);
             }
             scripts.push(script);
         }

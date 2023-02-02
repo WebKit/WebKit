@@ -79,6 +79,11 @@ String StackFrame::sourceURL(VM& vm) const
     return emptyString();
 }
 
+String StackFrame::sourceURLStripped(VM& vm) const
+{
+    return URL(sourceURL(vm)).strippedForUseAsReport();
+}
+
 String StackFrame::functionName(VM& vm) const
 {
     if (m_isWasmFrame)
@@ -129,7 +134,7 @@ void StackFrame::computeLineAndColumn(unsigned& line, unsigned& column) const
 String StackFrame::toString(VM& vm) const
 {
     String functionName = this->functionName(vm);
-    String sourceURL = this->sourceURL(vm);
+    String sourceURL = this->sourceURLStripped(vm);
 
     if (sourceURL.isEmpty() || !hasLineAndColumnInfo())
         return makeString(functionName, '@', sourceURL);
