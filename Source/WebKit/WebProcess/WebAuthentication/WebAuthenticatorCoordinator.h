@@ -45,6 +45,7 @@ private:
     void isConditionalMediationAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
     void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
     void resetUserGestureRequirement() final { m_requireUserGesture = false; }
+    void cancel() final;
 
     bool processingUserGesture(const WebCore::Frame&, const WebCore::FrameIdentifier&);
 

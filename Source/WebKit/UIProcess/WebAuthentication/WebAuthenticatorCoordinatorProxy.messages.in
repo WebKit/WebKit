@@ -30,6 +30,7 @@ messages -> WebAuthenticatorCoordinatorProxy NotRefCounted {
     GetAssertion(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, Vector<uint8_t> hash, struct WebCore::PublicKeyCredentialRequestOptions options, enum:uint8_t WebCore::CredentialRequestOptions::MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, bool processingUserGesture) -> (struct WebCore::AuthenticatorResponseData data, enum:uint8_t WebCore::AuthenticatorAttachment attachment, struct WebCore::ExceptionData exception)
     isConditionalMediationAvailable(struct WebCore::SecurityOriginData origin) -> (bool result)
     IsUserVerifyingPlatformAuthenticatorAvailable(struct WebCore::SecurityOriginData origin) -> (bool result)
+    Cancel()
 }
 
 #endif
