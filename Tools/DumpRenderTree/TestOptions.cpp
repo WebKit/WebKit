@@ -171,6 +171,8 @@ const TestFeatures& TestOptions::defaults()
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
             { "UseGPUProcessForWebGLEnabled", false },
 #endif
+            // FIXME: This feature does nothing unless the jscOption "useShadowRealm" is also supplied.
+            { "WebAPIsInShadowRealmEnabled", true },
         };
 #if PLATFORM(WIN)
         features.uint32WebPreferenceFeatures = {

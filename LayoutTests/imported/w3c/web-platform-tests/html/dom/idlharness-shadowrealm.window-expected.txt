@@ -1,5 +1,4 @@
 
-PASS setup
 PASS Partial interface Document: original interface defined
 PASS Partial interface Document: member names are unique
 PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined

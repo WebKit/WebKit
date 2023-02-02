@@ -142,6 +142,8 @@ const TestFeatures& TestOptions::defaults()
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !PLATFORM(WIN)
             { "UseGPUProcessForWebGLEnabled", fullGPUProcessEnabledValue },
 #endif
+            // FIXME: This feature does nothing unless the jscOption "useShadowRealm" is also supplied.
+            { "WebAPIsInShadowRealmEnabled", true },
         };
         features.stringWebPreferenceFeatures = {
             { "CursiveFontFamily", "Apple Chancery" },
