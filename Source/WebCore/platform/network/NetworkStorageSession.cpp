@@ -372,8 +372,11 @@ void NetworkStorageSession::resetAppBoundDomains()
 
 std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const RegistrableDomain& firstParty, std::optional<PageIdentifier> pageID) const
 {
-    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
 #if ENABLE(JS_COOKIE_CHECKING)
+    if (!pageID)
+        return std::nullopt;
+
+    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
     if (domainIterator != m_navigatedToWithLinkDecorationByPrevalentResource.end() && domainIterator->value == firstParty)
         return m_ageCapForClientSideCookiesForLinkDecorationTargetPage;
 
@@ -382,6 +385,7 @@ std::optional<Seconds> NetworkStorageSession::clientSideCookieCap(const Registra
     if (!m_ageCapForClientSideCookies || !pageID || m_navigatedToWithLinkDecorationByPrevalentResource.isEmpty())
         return m_ageCapForClientSideCookies;
 
+    auto domainIterator = m_navigatedToWithLinkDecorationByPrevalentResource.find(*pageID);
     if (domainIterator == m_navigatedToWithLinkDecorationByPrevalentResource.end())
         return m_ageCapForClientSideCookies;
 
