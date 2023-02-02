@@ -78,8 +78,8 @@ private:
 
     String m_name;
     uint64_t m_version { 0 };
-    uint64_t m_maxObjectStoreID { 0 };
     uint64_t m_maxIndexID { 0 };
+    uint64_t m_maxObjectStoreID { 0 };
 
     HashMap<uint64_t, IDBObjectStoreInfo> m_objectStoreMap;
 

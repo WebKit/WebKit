@@ -22,7 +22,7 @@
 
 headers: "APIPageHandle.h"
 
-[Return=Ref, CustomHeader=True] class API::PageHandle {
+[RefCounted, CustomHeader=True] class API::PageHandle {
     WebKit::WebPageProxyIdentifier pageProxyID()
     WebCore::PageIdentifier webPageID()
     bool isAutoconverting()

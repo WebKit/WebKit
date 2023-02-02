@@ -22,6 +22,6 @@
 
 headers: "APIURLRequest.h"
 
-[Return=Ref, CustomHeader=True] class API::URLRequest {
+[RefCounted, CustomHeader=True] class API::URLRequest {
     WebCore::ResourceRequest resourceRequest()
 };

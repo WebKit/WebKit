@@ -149,7 +149,7 @@ class WebCore::IDBDatabaseInfo {
     HashMap<uint64_t, WebCore::IDBObjectStoreInfo> m_objectStoreMap
 }
 
-struct WebCore::IDBKeyRangeData {
+[CustomMemberLayout] struct WebCore::IDBKeyRangeData {
     [ReturnEarlyIfTrue] bool isNull;
 
     WebCore::IDBKeyData lowerKey;
@@ -222,7 +222,7 @@ class WebCore::IDBRequestData {
 }
 
 # FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.
-[LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBDatabaseIdentifier {
+[LegacyPopulateFromEmptyConstructor] class WebCore::IDBDatabaseIdentifier {
     String m_databaseName
     WebCore::ClientOrigin m_origin
     bool m_isTransient
@@ -233,7 +233,7 @@ struct WebCore::IDBDatabaseNameAndVersion {
     uint64_t version;
 }
 
-[LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBResultData {
+[LegacyPopulateFromEmptyConstructor] class WebCore::IDBResultData {
     WebCore::IDBResultType m_type;
     WebCore::IDBResourceIdentifier m_requestIdentifier;
     WebCore::IDBError m_error;
@@ -246,7 +246,7 @@ struct WebCore::IDBDatabaseNameAndVersion {
     uint64_t m_resultInteger;
 }
 
-[LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBKeyData {
+[LegacyPopulateFromEmptyConstructor, CustomMemberLayout] class WebCore::IDBKeyData {
     [ReturnEarlyIfTrue] bool m_isNull;
     WebCore::IndexedDB::KeyType m_type;
     std::variant<Vector<WebCore::IDBKeyData>, String, double, WebCore::ThreadSafeDataBuffer> m_value;
@@ -314,10 +314,10 @@ struct CGAffineTransform {
     WebCore::FloatSize size()
 }
 
-[Return=Ref, CustomHeader=True] class WebCore::LinearTimingFunction {
+[RefCounted, CustomHeader=True] class WebCore::LinearTimingFunction {
 };
 
-[Return=Ref, CustomHeader=True] class WebCore::CubicBezierTimingFunction {
+[RefCounted, CustomHeader=True] class WebCore::CubicBezierTimingFunction {
     WebCore::CubicBezierTimingFunction::TimingFunctionPreset timingFunctionPreset()
     double x1()
     double y1()
@@ -325,19 +325,19 @@ struct CGAffineTransform {
     double y2()
 };
 
-[Return=Ref, CustomHeader=True] class WebCore::StepsTimingFunction {
+[RefCounted, CustomHeader=True] class WebCore::StepsTimingFunction {
     int numberOfSteps()
     std::optional<WebCore::StepsTimingFunction::StepPosition> stepPosition()
 };
 
-[Return=Ref, CustomHeader=True] class WebCore::SpringTimingFunction {
+[RefCounted, CustomHeader=True] class WebCore::SpringTimingFunction {
     double mass()
     double stiffness()
     double damping()
     double initialVelocity()
 };
 
-[LegacyPopulateFrom=EmptyConstructor] struct WebCore::ResourceLoadStatistics {
+[LegacyPopulateFromEmptyConstructor] struct WebCore::ResourceLoadStatistics {
     WebCore::RegistrableDomain registrableDomain;
     WallTime lastSeen;
     bool hadUserInteraction;
@@ -625,13 +625,13 @@ struct WebCore::ApplePayShippingMethod {
 #endif
 }
 
-[Return=Ref] class WebCore::ApplePayError {
+[RefCounted] class WebCore::ApplePayError {
     WebCore::ApplePayErrorCode code()
     std::optional<WebCore::ApplePayErrorContactField> contactField()
     String message()
 }
 
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonSystemImage {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonSystemImage {
     WebCore::ApplePayButtonType m_applePayButtonType
     WebCore::ApplePayButtonStyle m_applePayButtonStyle
     String m_locale
@@ -639,7 +639,7 @@ struct WebCore::ApplePayShippingMethod {
 }
 
 enum class WebCore::ApplePayLogoStyle : bool
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayLogoSystemImage {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayLogoSystemImage {
     WebCore::ApplePayLogoStyle applePayLogoStyle()
 }
 
@@ -878,7 +878,7 @@ struct WebCore::PushSubscriptionData {
 };
 #endif
 
-[Return=Ref] class WebCore::DeprecationReportBody {
+[RefCounted] class WebCore::DeprecationReportBody {
     String id()
     WallTime anticipatedRemoval()
     String message()
@@ -887,13 +887,13 @@ struct WebCore::PushSubscriptionData {
     std::optional<unsigned> columnNumber()
 };
 
-[Return=Ref] class WebCore::Report {
+[RefCounted] class WebCore::Report {
     String type()
     String url()
     RefPtr<WebCore::ReportBody> body()
 };
 
-[Return=Ref] class WebCore::TestReportBody {
+[RefCounted] class WebCore::TestReportBody {
     String message()
 }
 
@@ -945,7 +945,7 @@ struct WebCore::WebLockManagerSnapshot {
 };
 
 #if ENABLE(WEB_AUTHN)
-[LegacyPopulateFrom=EmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
+[LegacyPopulateFromEmptyConstructor] struct WebCore::AuthenticationExtensionsClientInputs {
     String appid;
     bool googleLegacyAppidSupport;
 }
@@ -1099,7 +1099,7 @@ enum class WebCore::RenderingPurpose : uint8_t {
 };
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-[LegacyPopulateFrom=EmptyConstructor] class WebCore::MockContentFilterSettings {
+[LegacyPopulateFromEmptyConstructor] class WebCore::MockContentFilterSettings {
     bool m_enabled;
     WebCore::MockContentFilterSettings::DecisionPoint m_decisionPoint;
     WebCore::MockContentFilterSettings::Decision m_decision;
@@ -1271,9 +1271,9 @@ header: <WebCore/ResourceRequest.h>
     WebCore::ResourceRequestBase::SameSiteDisposition m_sameSiteDisposition;
     WebCore::ResourceLoadPriority m_priority;
     WebCore::ResourceRequestRequester m_requester;
-    bool m_allowCookies;
-    bool m_isTopSite;
-    bool m_isAppInitiated;
+    [BitField] bool m_allowCookies;
+    [BitField] bool m_isTopSite;
+    [BitField] bool m_isAppInitiated;
 };
 
 #if USE(SOUP)
@@ -1442,7 +1442,7 @@ struct WebCore::MediaStreamRequest {
     bool isUserGesturePriviledged;
     WebCore::PageIdentifier pageIdentifier;
 }
-[LegacyPopulateFrom=EmptyConstructor, CustomHeader] class WebCore::MediaTrackConstraintSetMap {
+[LegacyPopulateFromEmptyConstructor, CustomHeader] class WebCore::MediaTrackConstraintSetMap {
     std::optional<WebCore::IntConstraint> m_width;
     std::optional<WebCore::IntConstraint> m_height;
     std::optional<WebCore::IntConstraint> m_sampleRate;
@@ -1651,7 +1651,7 @@ enum class WebCore::PixelFormat : uint8_t {
     WebCore::DestinationColorSpace colorSpace;
 };
 
-[Return=Ref] class WebCore::TextIndicator {
+[RefCounted] class WebCore::TextIndicator {
     WebCore::TextIndicatorData data();
 };
 
@@ -1692,7 +1692,7 @@ class WebCore::DatabaseDetails {
     std::optional<WallTime> modificationTime();
 };
 
-[Return=Ref] class WebCore::DecomposedGlyphs {
+[RefCounted] class WebCore::DecomposedGlyphs {
     WebCore::PositionedGlyphs positionedGlyphs();
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier();
 }
@@ -1896,21 +1896,21 @@ header: <WebCore/KeyboardScroll.h>
     WebCore::ScrollDirection direction;
 };
 
-[Return=Ref] class WebCore::NotificationResources {
+[RefCounted] class WebCore::NotificationResources {
     RefPtr<WebCore::Image> icon();
 };
 
-[Return=Ref] class WebCore::IdentityTransformOperation {
+[RefCounted] class WebCore::IdentityTransformOperation {
 }
 
-[Return=Ref] class WebCore::TranslateTransformOperation {
+[RefCounted] class WebCore::TranslateTransformOperation {
     WebCore::Length x();
     WebCore::Length y();
     WebCore::Length z();
     WebCore::TransformOperation::Type type();
 }
 
-[Return=Ref] class WebCore::RotateTransformOperation {
+[RefCounted] class WebCore::RotateTransformOperation {
     double x();
     double y();
     double z();
@@ -1918,28 +1918,28 @@ header: <WebCore/KeyboardScroll.h>
     WebCore::TransformOperation::Type type();
 }
 
-[Return=Ref] class WebCore::ScaleTransformOperation {
+[RefCounted] class WebCore::ScaleTransformOperation {
     double x();
     double y();
     double z();
     WebCore::TransformOperation::Type type();
 }
 
-[Return=Ref] class WebCore::SkewTransformOperation {
+[RefCounted] class WebCore::SkewTransformOperation {
     double angleX();
     double angleY();
     WebCore::TransformOperation::Type type();
 }
 
-[Return=Ref] class WebCore::PerspectiveTransformOperation {
+[RefCounted] class WebCore::PerspectiveTransformOperation {
     std::optional<WebCore::Length> perspective();
 }
 
-[Return=Ref] class WebCore::MatrixTransformOperation {
+[RefCounted] class WebCore::MatrixTransformOperation {
     WebCore::TransformationMatrix matrix();
 }
 
-[Return=Ref] class WebCore::Matrix3DTransformOperation {
+[RefCounted] class WebCore::Matrix3DTransformOperation {
     WebCore::TransformationMatrix matrix();
 }
 
@@ -1965,7 +1965,7 @@ class WebCore::TransformOperations {
     float angleRadians;
 };
 
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Gradient {
     std::variant<WebCore::Gradient::LinearData, WebCore::Gradient::RadialData, WebCore::Gradient::ConicData> data();
     WebCore::ColorInterpolationMethod colorInterpolationMethod();
     WebCore::GradientSpreadMethod spreadMethod();
@@ -1983,7 +1983,7 @@ class WebCore::TransformOperations {
     WebCore::AffineTransform patternSpaceTransform;
 }
 
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Pattern {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Pattern {
     WebCore::SourceImage tileImage();
     WebCore::Pattern::Parameters parameters();
 }
@@ -2089,31 +2089,31 @@ header: <WebCore/BasicShapes.h>
     WebCore::BasicShapeRadius::Type type();
 }
 
-[Return=Ref, CustomHeader] class WebCore::BasicShapeCircle {
+[RefCounted, CustomHeader] class WebCore::BasicShapeCircle {
     WebCore::BasicShapeCenterCoordinate centerX();
     WebCore::BasicShapeCenterCoordinate centerY();
     WebCore::BasicShapeRadius radius();
 }
 
-[Return=Ref, CustomHeader] class WebCore::BasicShapeEllipse {
+[RefCounted, CustomHeader] class WebCore::BasicShapeEllipse {
     WebCore::BasicShapeCenterCoordinate centerX();
     WebCore::BasicShapeCenterCoordinate centerY();
     WebCore::BasicShapeRadius radiusX();
     WebCore::BasicShapeRadius radiusY();
 }
 
-[Return=Ref, CustomHeader] class WebCore::BasicShapePolygon {
+[RefCounted, CustomHeader] class WebCore::BasicShapePolygon {
     WebCore::WindRule windRule();
     Vector<WebCore::Length> values();
 }
 
-[Return=Ref, CustomHeader] class WebCore::BasicShapePath {
+[RefCounted, CustomHeader] class WebCore::BasicShapePath {
     std::unique_ptr<WebCore::SVGPathByteStream> byteStream();
     float zoom();
     WebCore::WindRule windRule();
 }
 
-[Return=Ref, CustomHeader] class WebCore::BasicShapeInset {
+[RefCounted, CustomHeader] class WebCore::BasicShapeInset {
     WebCore::Length right();
     WebCore::Length top();
     WebCore::Length bottom();
@@ -2145,16 +2145,16 @@ header: <WebCore/RenderStyleConstants.h>
 };
 
 header: <WebCore/PathOperation.h>
-[Return=Ref, CustomHeader] class WebCore::ReferencePathOperation {
+[RefCounted, CustomHeader] class WebCore::ReferencePathOperation {
     std::optional<WebCore::Path> path();
 }
 
-[Return=Ref, CustomHeader] class WebCore::ShapePathOperation {
+[RefCounted, CustomHeader] class WebCore::ShapePathOperation {
     Ref<WebCore::BasicShape> shape();
     WebCore::CSSBoxType referenceBox();
 }
 
-[Return=Ref, CustomHeader] class WebCore::BoxPathOperation {
+[RefCounted, CustomHeader] class WebCore::BoxPathOperation {
     WebCore::Path path();
     WebCore::CSSBoxType referenceBox();
 }
@@ -2167,7 +2167,7 @@ header: <WebCore/PathOperation.h>
     Sides
 };
 
-[Return=Ref, CustomHeader] class WebCore::RayPathOperation {
+[RefCounted, CustomHeader] class WebCore::RayPathOperation {
     float angle();
     WebCore::RayPathOperation::Size size();
     bool isContaining();
@@ -2491,7 +2491,7 @@ enum class WebCore::StyleAppearance : uint8_t {
 };
 
 #if ENABLE(APPLE_PAY)
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonPart {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonPart {
     WebCore::ApplePayButtonType buttonType();
     WebCore::ApplePayButtonStyle buttonStyle();
     String locale();
@@ -2504,19 +2504,19 @@ enum class WebCore::StyleAppearance : uint8_t {
     EvenLessGood
 };
 
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::MeterPart {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::MeterPart {
     WebCore::MeterPart::GaugeRegion gaugeRegion();
     double value();
     double minimum();
     double maximum();
 };
 
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ProgressBarPart {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ProgressBarPart {
     double position();
     Seconds animationStartTime();
 };
 
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderTrackPart {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SliderTrackPart {
     WebCore::StyleAppearance type();
     WebCore::IntSize thumbSize();
     WebCore::IntRect trackBounds();
@@ -2715,7 +2715,7 @@ struct WebCore::SameSiteInfo {
     bool isSafeHTTPMethod;
 };
 
-[Return=Ref] class WebCore::SecurityOrigin {
+[RefCounted] class WebCore::SecurityOrigin {
     WebCore::SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
@@ -2740,7 +2740,7 @@ struct WebCore::CookieRequestHeaderFieldProxy {
     WebCore::IncludeSecureCookies includeSecureCookies;
 };
 
-[Return=Ref] class WebCore::FormData {
+[RefCounted, CustomMemberLayout] class WebCore::FormData {
     bool m_alwaysStream;
     Vector<char> m_boundary;
     Vector<WebCore::FormDataElement> m_elements;
@@ -3093,7 +3093,7 @@ class WebCore::SpeechRecognitionUpdate {
 };
 
 #if USE(SYSTEM_PREVIEW)
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ARKitBadgeSystemImage {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ARKitBadgeSystemImage {
     WebCore::RenderingResourceIdentifier imageIdentifier();
     WebCore::FloatSize m_imageSize;
 };
@@ -3252,7 +3252,7 @@ header: <WebCore/ImageDecoder.h>
     Seconds duration;
 }
 
-[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DistantLightSource {
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DistantLightSource {
     float m_azimuth;
     float m_elevation;
 };

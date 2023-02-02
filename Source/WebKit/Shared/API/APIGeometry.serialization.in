@@ -22,17 +22,17 @@
 
 headers: "APIGeometry.h"
 
-[Return=Ref, CustomHeader=True] class API::Size {
+[RefCounted, CustomHeader=True] class API::Size {
     double size().width
     double size().height
 };
 
-[Return=Ref, CustomHeader=True] class API::Point {
+[RefCounted, CustomHeader=True] class API::Point {
     double point().x
     double point().y
 };
 
-[Return=Ref, CustomHeader=True] class API::Rect {
+[RefCounted, CustomHeader=True] class API::Rect {
     double rect().origin.x
     double rect().origin.y
     double rect().size.width
