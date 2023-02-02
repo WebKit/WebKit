@@ -48,9 +48,9 @@ const Value* ContextProvider<Value>::Context::lookup(const AST::Identifier& name
 }
 
 template<typename Value>
-const Value& ContextProvider<Value>::Context::add(const AST::Identifier& name, Value&& value)
+const Value& ContextProvider<Value>::Context::add(const AST::Identifier& name, const Value& value)
 {
-    auto result = m_map.add(name.id(), WTFMove(value));
+    auto result = m_map.add(name.id(), value);
     ASSERT(result.isNewEntry);
     return result.iterator->value;
 }
@@ -80,9 +80,9 @@ ContextProvider<Value>::ContextProvider()
 }
 
 template<typename Value>
-auto ContextProvider<Value>::introduceVariable(const AST::Identifier& name, Value&& value) -> const Value& 
+auto ContextProvider<Value>::introduceVariable(const AST::Identifier& name, const Value& value) -> const Value&
 {
-    return m_context->add(name, WTFMove(value));
+    return m_context->add(name, value);
 }
 
 template<typename Value>
