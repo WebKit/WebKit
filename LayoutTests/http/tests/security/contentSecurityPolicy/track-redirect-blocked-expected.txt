@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/track.vtt.py because it does not appear in the media-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to load http://localhost:8000/security/contentSecurityPolicy/resources/track.vtt because it does not appear in the media-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
- blockedURI = http://127.0.0.1:8000/resources/redirect.py?code=307&url=http%3A//127.0.0.1%3A8000/resources/redirect.py%3Furl=http%3A//localhost%3A8000/security/contentSecurityPolicy/resources/track.vtt.py
+ blockedURI = http://127.0.0.1:8000/resources/redirect.py?code=307&url=http%3A//127.0.0.1%3A8000/resources/redirect.py%3Furl=http%3A//localhost%3A8000/security/contentSecurityPolicy/resources/track.vtt
 
 

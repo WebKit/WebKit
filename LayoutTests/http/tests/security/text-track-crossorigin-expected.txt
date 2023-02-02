@@ -1,15 +1,13 @@
-CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/security/resources/captions-with-access-control-headers.py from origin http://127.0.0.1:8000. Domains, protocols and ports must match.
-
 CONSOLE MESSAGE: Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. Status code: 200
 CONSOLE MESSAGE: Cross-origin text track load denied by Cross-Origin Resource Sharing policy.
 Tests loading cross-domain <track>.
 
 
 Loading without Access-Control-Allow-Origin header, no "crossorigin" attribute on <video>
-EVENT(error)
-PASS: shouldLoad should be 'false' and is.
+EVENT(load)
+PASS: shouldLoad should be 'true' and is.
 PASS: event.target should be '[object HTMLTrackElement]' and is.
-PASS: trackElement.readyState should be '3' and is.
+PASS: trackElement.readyState should be '2' and is.
 
 
 Loading without Access-Control-Allow-Origin header, setting video.crossorigin to "anonymous"
