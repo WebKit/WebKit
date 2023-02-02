@@ -599,7 +599,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
 #if ENABLE(DOM_AUDIO_SESSION)
     , m_audioSessionType { DOMAudioSession::Type::Auto }
 #endif
-    , m_topDocumentSecurityOrigin(topDocument().securityOrigin())
+    , m_topDocumentSecurityOrigin(SecurityOrigin::createOpaque())
 {
     addToDocumentsMap();
 
