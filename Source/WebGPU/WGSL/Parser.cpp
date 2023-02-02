@@ -40,6 +40,9 @@ namespace WGSL {
 #define CURRENT_SOURCE_SPAN() \
     SourceSpan(_startOfElementPosition, m_lexer.currentPosition())
 
+#define MAKE_NODE_UNIQUE_REF(type, ...) \
+    makeUniqueRef<AST::type>(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__) /* NOLINT */
+
 #define RETURN_NODE(type, ...) \
     do { \
         AST::type astNodeResult(CURRENT_SOURCE_SPAN(), __VA_ARGS__); \
@@ -57,7 +60,7 @@ namespace WGSL {
     return { adoptRef(*new AST::type(CURRENT_SOURCE_SPAN(), __VA_ARGS__)) };
 
 #define RETURN_NODE_UNIQUE_REF(type, ...) \
-    return { makeUniqueRef<AST::type>(CURRENT_SOURCE_SPAN(), __VA_ARGS__) };
+    return { MAKE_NODE_UNIQUE_REF(type, __VA_ARGS__) };
 
 // Passing 0 arguments beyond the type to RETURN_NODE_UNIQUE_REF is invalid because of a stupid limitation of the C preprocessor
 #define RETURN_NODE_UNIQUE_REF_NO_ARGS(type) \
@@ -73,6 +76,12 @@ namespace WGSL {
     if (!name##Expected) \
         return makeUnexpected(name##Expected.error()); \
     auto& name = *name##Expected;
+
+#define PARSE_MOVE(name, element, ...) \
+    auto name##Expected = parse##element(__VA_ARGS__); \
+    if (!name##Expected) \
+        return makeUnexpected(name##Expected.error()); \
+    name = WTFMove(*name##Expected);
 
 // Warning: cannot use the do..while trick because it defines a new identifier named `name`.
 // So do not use after an if/for/while without braces.
@@ -622,28 +631,69 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression(
 }
 
 template<typename Lexer>
+Expected<AST::BinaryOperation, Error> Parser<Lexer>::parseAdditiveOperator()
+{
+    START_PARSE();
+
+    switch (current().m_type) {
+    case TokenType::Minus:
+        consume();
+        return AST::BinaryOperation::Subtract;
+    case TokenType::Plus:
+        consume();
+        return AST::BinaryOperation::Add;
+    default:
+        FAIL("Expected one of + or -"_s);
+    }
+}
+
+template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpression(AST::Expression::Ref&& lhs)
 {
-    // FIXME: fill in
     START_PARSE();
-    if (current().m_type == TokenType::Plus) {
-        consume();
-        PARSE(rhs, UnaryExpression);
-        RETURN_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), AST::BinaryOperation::Add);
+    PARSE_MOVE(lhs, MultiplicativeExpression, WTFMove(lhs));
+
+    while (current().m_type == TokenType::Plus || current().m_type == TokenType::Minus) {
+        PARSE(op, AdditiveOperator);
+        PARSE(unary, UnaryExpression);
+        PARSE(rhs, MultiplicativeExpression, WTFMove(unary));
+        lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
     }
-    return parseMultiplicativeExpression(WTFMove(lhs));
+
+    return WTFMove(lhs);
+}
+
+template<typename Lexer>
+Expected<AST::BinaryOperation, Error> Parser<Lexer>::parseMultiplicativeOperator()
+{
+    START_PARSE();
+    switch (current().m_type) {
+    case TokenType::Modulo:
+        consume();
+        return AST::BinaryOperation::Modulo;
+    case TokenType::Slash:
+        consume();
+        return AST::BinaryOperation::Divide;
+    case TokenType::Star:
+        consume();
+        return AST::BinaryOperation::Multiply;
+    default:
+        FAIL("Expected one of %, / or *"_s);
+    }
 }
 
 template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeExpression(AST::Expression::Ref&& lhs)
 {
-    // FIXME: fill in
     START_PARSE();
-    if (current().m_type == TokenType::Star) {
-        consume();
+    while (current().m_type == TokenType::Modulo
+        || current().m_type == TokenType::Slash
+        || current().m_type == TokenType::Star) {
+        PARSE(op, MultiplicativeOperator)
         PARSE(rhs, UnaryExpression);
-        RETURN_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), AST::BinaryOperation::Multiply);
+        lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
     }
+
     return WTFMove(lhs);
 }
 

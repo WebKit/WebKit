@@ -105,8 +105,10 @@ class Variable;
 class VariableQualifier;
 
 enum class AccessMode : uint8_t;
+enum class BinaryOperation : uint8_t;
 enum class ParameterRole : uint8_t;
 enum class StorageClass : uint8_t;
 enum class StructureRole : uint8_t;
+enum class UnaryOperation : uint8_t;
 
 } // namespace WGSL::AST
