@@ -4061,12 +4061,10 @@ std::optional<GCGLSpan<const GCGLvoid>> WebGLRenderingContextBase::validateTexFu
         return std::nullopt;
     }
 
-    CheckedSize total = srcOffset;
-    total *= pixels ? JSC::elementSize(pixels->getType()) : 0;
-    total += totalBytesRequired;
-    total += skipBytes;
-
-    if (total.hasOverflowed() || !isInBounds<GCGLsizei>(total)) {
+    auto dataLength = CheckedSize { totalBytesRequired } + skipBytes;
+    auto offset = CheckedSize { pixels ? JSC::elementSize(pixels->getType()) : 0 } * srcOffset;
+    auto total = offset + dataLength;
+    if (total.hasOverflowed() || !isInBounds<GCGLsizei>(dataLength)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "image too large");
         return std::nullopt;
     }
@@ -4078,16 +4076,9 @@ std::optional<GCGLSpan<const GCGLvoid>> WebGLRenderingContextBase::validateTexFu
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request");
         return std::nullopt;
     }
-
-    auto data = static_cast<uint8_t*>(pixels->baseAddress());
-    GCGLsizei byteLength = pixels->byteLength();
-    if (srcOffset) {
-        size_t offset = srcOffset * JSC::elementSize(pixels->getType());
-        data += offset;
-        byteLength -= offset;
-    }
-
-    return std::make_optional<GCGLSpan<const GCGLvoid>>(data, byteLength);
+    ASSERT(!offset.hasOverflowed()); // Checked already as part of `total.hasOverflowed()` check.
+    auto data = static_cast<uint8_t*>(pixels->baseAddress()) + offset.value();
+    return std::make_optional<GCGLSpan<const GCGLvoid>>(data, static_cast<GCGLsizei>(dataLength));
 }
 
 bool WebGLRenderingContextBase::validateTexFuncParameters(const char* functionName,
