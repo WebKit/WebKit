@@ -153,7 +153,6 @@ enum class Role {
     ContentInsertion,
     Mark,
     Suggestion,
-    LastDefinedRole,
 };
 
 enum class State : uint64_t {
@@ -235,7 +234,7 @@ enum class CoordinateType {
     ParentCoordinates,
 };
 
-enum ComponentLayer {
+enum class ComponentLayer {
     InvalidLayer,
     BackgroundLayer,
     CanvasLayer,
@@ -256,7 +255,7 @@ enum class ScrollType {
     Anywhere
 };
 
-enum TextBoundaryType {
+enum class TextBoundaryType {
     CharBoundary,
     WordStartBoundary,
     WordEndBoundary,
@@ -266,7 +265,7 @@ enum TextBoundaryType {
     LineEndBoundary
 };
 
-enum TextGranularityType {
+enum class TextGranularityType {
     CharGranularity,
     WordGranularity,
     SentenceGranularity,
@@ -274,7 +273,7 @@ enum TextGranularityType {
     ParagraphGranularity
 };
 
-enum CollectionMatchType {
+enum class CollectionMatchType {
     MatchInvalid,
     MatchAll,
     MatchAny,
@@ -282,7 +281,7 @@ enum CollectionMatchType {
     MatchEmpty
 };
 
-enum CollectionSortOrder {
+enum class CollectionSortOrder {
     SortOrderInvalid,
     SortOrderCanonical,
     SortOrderFlow,

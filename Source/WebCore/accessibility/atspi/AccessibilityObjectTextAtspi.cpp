@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-AccessibilityObjectAtspi::TextGranularity AccessibilityObjectAtspi::atspiBoundaryToTextGranularity(uint32_t boundaryType)
+AccessibilityObjectAtspi::TextGranularity AccessibilityObjectAtspi::atspiBoundaryToTextGranularity(Atspi::TextBoundaryType boundaryType)
 {
     switch (boundaryType) {
     case Atspi::TextBoundaryType::CharBoundary:
@@ -60,7 +60,7 @@ AccessibilityObjectAtspi::TextGranularity AccessibilityObjectAtspi::atspiBoundar
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-AccessibilityObjectAtspi::TextGranularity AccessibilityObjectAtspi::atspiGranularityToTextGranularity(uint32_t boundaryType)
+AccessibilityObjectAtspi::TextGranularity AccessibilityObjectAtspi::atspiGranularityToTextGranularity(Atspi::TextGranularityType boundaryType)
 {
     switch (boundaryType) {
     case Atspi::TextGranularityType::CharGranularity:
@@ -88,7 +88,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             uint32_t granularityType;
             g_variant_get(parameters, "(iu)", &offset, &granularityType);
             int start = 0, end = 0;
-            auto text = atspiObject->textAtOffset(offset, atspiGranularityToTextGranularity(granularityType), start, end);
+            auto text = atspiObject->textAtOffset(offset, atspiGranularityToTextGranularity(static_cast<Atspi::TextGranularityType>(granularityType)), start, end);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(sii)", text.isNull() ? "" : text.data(), start, end));
         } else if (!g_strcmp0(methodName, "GetText")) {
             int start, end;
@@ -106,7 +106,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_textFunctions = {
             uint32_t boundaryType;
             g_variant_get(parameters, "(iu)", &offset, &boundaryType);
             int start = 0, end = 0;
-            auto text = atspiObject->textAtOffset(offset, atspiBoundaryToTextGranularity(boundaryType), start, end);
+            auto text = atspiObject->textAtOffset(offset, atspiBoundaryToTextGranularity(static_cast<Atspi::TextBoundaryType>(boundaryType)), start, end);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(sii)", text.isNull() ? "" : text.data(), start, end));
         } else if (!g_strcmp0(methodName, "GetTextAfterOffset"))
             g_dbus_method_invocation_return_error_literal(invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "");

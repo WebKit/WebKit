@@ -182,8 +182,8 @@ private:
     bool focus() const;
     float opacity() const;
 
-    static TextGranularity atspiBoundaryToTextGranularity(uint32_t);
-    static TextGranularity atspiGranularityToTextGranularity(uint32_t);
+    static TextGranularity atspiBoundaryToTextGranularity(Atspi::TextBoundaryType);
+    static TextGranularity atspiGranularityToTextGranularity(Atspi::TextGranularityType);
     CString text(int, int) const;
     CString textAtOffset(int, TextGranularity, int&, int&) const;
     int characterAtOffset(int) const;
@@ -239,25 +239,25 @@ private:
 
         struct {
             OptionSet<Atspi::State> value;
-            uint16_t type { 0 };
+            Atspi::CollectionMatchType type;
         } states;
 
         struct {
             HashMap<String, Vector<String>> value;
-            uint16_t type { 0 };
+            Atspi::CollectionMatchType type;
         } attributes;
 
         struct {
             Vector<Atspi::Role> value;
-            uint16_t type { 0 };
+            Atspi::CollectionMatchType type;
         } roles;
 
         struct {
             Vector<String> value;
-            uint16_t type { 0 };
+            Atspi::CollectionMatchType type;
         } interfaces;
     };
-    Vector<RefPtr<AccessibilityObjectAtspi>> matches(CollectionMatchRule&, uint32_t sortOrder, uint32_t maxResultCount, bool traverse);
+    Vector<RefPtr<AccessibilityObjectAtspi>> matches(CollectionMatchRule&, Atspi::CollectionSortOrder, uint32_t maxResultCount, bool traverse);
     void addMatchesInCanonicalOrder(Vector<RefPtr<AccessibilityObjectAtspi>>&, CollectionMatchRule&, uint32_t maxResultCount, bool traverse);
 
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
