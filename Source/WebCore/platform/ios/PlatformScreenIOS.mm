@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "DeprecatedGlobalSettings.h"
 #import "Device.h"
 #import "FloatRect.h"
 #import "FloatSize.h"
