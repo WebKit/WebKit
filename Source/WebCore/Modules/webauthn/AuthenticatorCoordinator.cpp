@@ -249,6 +249,14 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         return;
     }
 
+    if (requestOptions.signal) {
+        requestOptions.signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue) {
+            if (!weakThis)
+                return;
+            weakThis->m_client->cancel();
+        });
+    }
+
     auto callback = [weakThis = WeakPtr { *this }, clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(requestOptions.signal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
