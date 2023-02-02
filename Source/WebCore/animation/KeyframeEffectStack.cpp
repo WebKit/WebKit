@@ -197,8 +197,13 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
                 && previousLastStyleChangeEventStyle->color() != targetStyle.color();
         };
 
+        auto fontWeightChanged = [&]() {
+            return effect->hasRelativeFontWeight() && previousLastStyleChangeEventStyle
+                && previousLastStyleChangeEventStyle->fontWeight() != targetStyle.fontWeight();
+        };
+
         auto logicalPropertyDidChange = propertyAffectingLogicalPropertiesChanged && effect->animatesDirectionAwareProperty();
-        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged() || currentColorPropertyChanged())
+        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged() || currentColorPropertyChanged() || fontWeightChanged())
             effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
 
         animation->resolve(targetStyle, resolutionContext);

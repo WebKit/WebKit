@@ -183,6 +183,7 @@ public:
     bool hasExplicitlyInheritedKeyframeProperty() const { return m_hasExplicitlyInheritedKeyframeProperty; }
     bool hasPropertySetToCurrentColor() const;
     bool hasColorSetToCurrentColor() const;
+    bool hasRelativeFontWeight() const { return m_hasRelativeFontWeight; }
 
 private:
     KeyframeEffect(Element*, PseudoId);
@@ -268,6 +269,7 @@ private:
     bool m_hasKeyframeComposingAcceleratedProperty { false };
     bool m_containsCSSVariableReferences { false };
     bool m_hasExplicitlyInheritedKeyframeProperty { false };
+    bool m_hasRelativeFontWeight { false };
 };
 
 } // namespace WebCore
