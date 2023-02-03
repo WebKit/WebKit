@@ -236,14 +236,25 @@ SVGLengthValue SVGLengthValue::blend(const SVGLengthValue& from, const SVGLength
     return { WebCore::blend(fromValue.releaseReturnValue(), toValue, { progress }), to.lengthType() };
 }
 
-SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
+SVGLengthValue SVGLengthValue::fromCSSPrimitiveValue(const CSSPrimitiveValue& value, const CSSToLengthConversionData& conversionData, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
-    // FIXME: This needs to call value.computeLength() so it can correctly resolve non-absolute units (webkit.org/b/204826).
     auto primitiveType = value.primitiveType();
     if (primitiveType == CSSUnitType::CSS_NUMBER && shouldConvertNumberToPxLength == ShouldConvertNumberToPxLength::Yes)
-        primitiveType = CSSUnitType::CSS_PX;
-    SVGLengthType lengthType = primitiveTypeToLengthType(primitiveType);
-    return lengthType == SVGLengthType::Unknown ? SVGLengthValue() : SVGLengthValue(value.floatValue(), lengthType);
+        return { value.floatValue(), SVGLengthType::Pixels };
+
+    auto lengthType = primitiveTypeToLengthType(primitiveType);
+    switch (lengthType) {
+    case SVGLengthType::Unknown:
+        return { };
+    case SVGLengthType::Number:
+    case SVGLengthType::Percentage:
+        return { value.floatValue(), lengthType };
+    default:
+        return { value.computeLength<float>(conversionData), SVGLengthType::Pixels };
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 Ref<CSSPrimitiveValue> SVGLengthValue::toCSSPrimitiveValue(const Element* element) const
