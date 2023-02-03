@@ -42,8 +42,10 @@ public:
     virtual ~CompositorIntegration() = default;
 
 #if PLATFORM(COCOA)
-    virtual Vector<MachSendRight> getRenderBuffers() = 0;
+    virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height) = 0;
 #endif
+
+    virtual void prepareForDisplay() = 0;
 
 protected:
     CompositorIntegration() = default;

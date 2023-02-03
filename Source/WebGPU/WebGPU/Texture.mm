@@ -1373,7 +1373,7 @@ bool Device::validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor& d
     return true;
 }
 
-static MTLTextureUsage usage(WGPUTextureUsageFlags usage)
+MTLTextureUsage Texture::usage(WGPUTextureUsageFlags usage)
 {
     MTLTextureUsage result = MTLTextureUsageUnknown;
     if (usage & WGPUTextureUsage_TextureBinding)
@@ -2046,7 +2046,7 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor new];
 
-    textureDescriptor.usage = usage(descriptor.usage);
+    textureDescriptor.usage = Texture::usage(descriptor.usage);
 
     switch (descriptor.dimension) {
     case WGPUTextureDimension_1D:

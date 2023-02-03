@@ -150,6 +150,7 @@ public:
     virtual WGPUBuffer convertToBacking(const Buffer&) = 0;
     virtual WGPUCommandBuffer convertToBacking(const CommandBuffer&) = 0;
     virtual WGPUCommandEncoder convertToBacking(const CommandEncoder&) = 0;
+    virtual CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) = 0;
     virtual WGPUComputePassEncoder convertToBacking(const ComputePassEncoder&) = 0;
     virtual WGPUComputePipeline convertToBacking(const ComputePipeline&) = 0;
     virtual WGPUDevice convertToBacking(const Device&) = 0;
@@ -166,7 +167,6 @@ public:
     virtual WGPUSurface convertToBacking(const PresentationContext&) = 0;
     virtual WGPUTexture convertToBacking(const Texture&) = 0;
     virtual WGPUTextureView convertToBacking(const TextureView&) = 0;
-    virtual CompositorIntegrationImpl& convertToBacking(CompositorIntegration&) = 0;
 };
 
 } // namespace PAL::WebGPU

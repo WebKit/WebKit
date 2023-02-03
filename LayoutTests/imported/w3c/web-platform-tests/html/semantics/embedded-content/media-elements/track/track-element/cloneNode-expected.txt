@@ -1,7 +1,3 @@
-CONSOLE MESSAGE: Unsafe attempt to load URL javascript:"network error" from origin http://localhost:8800. Domains, protocols and ports must match.
-
-CONSOLE MESSAGE: Unsafe attempt to load URL javascript:"network error" from origin http://localhost:8800. Domains, protocols and ports must match.
-
 
 PASS track element cloneNode, not loaded
 PASS track element cloneNode, loading

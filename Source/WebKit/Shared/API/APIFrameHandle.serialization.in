@@ -22,7 +22,7 @@
 
 headers: "APIFrameHandle.h"
 
-[Return=Ref, CustomHeader=True] class API::FrameHandle {
+[RefCounted, CustomHeader=True] class API::FrameHandle {
     WebCore::FrameIdentifier frameID()
     bool isAutoconverting()
 };

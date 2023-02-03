@@ -38,9 +38,12 @@
 #include "HTTPHeaderNames.h"
 #include "ParsedContentType.h"
 #include "RFC7230.h"
+#include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/OptionSet.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -576,6 +579,31 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
             result = currentValue;
         else if (result != currentValue)
             return XFrameOptionsDisposition::Conflict;
+    }
+    return result;
+}
+
+OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& response)
+{
+    OptionSet<ClearSiteDataValue> result;
+
+    auto headerValue = response.httpHeaderField(HTTPHeaderName::ClearSiteData);
+    if (headerValue.isEmpty())
+        return result;
+
+    if (!WebCore::shouldTreatAsPotentiallyTrustworthy(response.url()))
+        return result;
+
+    for (auto value : StringView(headerValue).split(',')) {
+        auto trimmedValue = value.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
+        if (trimmedValue == "\"cache\""_s)
+            result.add(ClearSiteDataValue::Cache);
+        else if (trimmedValue == "\"cookies\""_s)
+            result.add(ClearSiteDataValue::Cookies);
+        else if (trimmedValue == "\"storage\""_s)
+            result.add(ClearSiteDataValue::Storage);
+        else if (trimmedValue == "\"*\""_s)
+            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::Storage });
     }
     return result;
 }

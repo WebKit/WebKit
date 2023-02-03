@@ -1089,4 +1089,16 @@ void SVGElement::invalidateInstances()
     }
 }
 
+SVGConditionalProcessingAttributes& SVGElement::conditionalProcessingAttributes()
+{
+    return ensureSVGRareData().conditionalProcessingAttributes(*this);
+}
+
+SVGConditionalProcessingAttributes* SVGElement::conditionalProcessingAttributesIfExists() const
+{
+    if (!m_svgRareData)
+        return nullptr;
+    return m_svgRareData->conditionalProcessingAttributesIfExists();
+}
+
 }

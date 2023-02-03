@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-struct GPUPresentationConfiguration;
+struct GPUCanvasConfiguration;
 class GPUTexture;
 
 class GPUPresentationContext : public RefCounted<GPUPresentationContext> {
@@ -47,7 +47,7 @@ public:
         return adoptRef(*new GPUPresentationContext(WTFMove(backing)));
     }
 
-    void configure(const GPUPresentationConfiguration&);
+    void configure(const GPUCanvasConfiguration&);
     void unconfigure();
 
     RefPtr<GPUTexture> getCurrentTexture();

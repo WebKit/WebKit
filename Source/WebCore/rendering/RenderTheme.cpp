@@ -61,6 +61,7 @@
 #include "RenderView.h"
 #include "SearchFieldCancelButtonPart.h"
 #include "SearchFieldPart.h"
+#include "SearchFieldResultsPart.h"
 #include "ShadowPseudoIds.h"
 #include "SliderThumbElement.h"
 #include "SliderThumbPart.h"
@@ -649,9 +650,11 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
 #endif
 
     case StyleAppearance::SearchFieldDecoration:
+        break;
+
     case StyleAppearance::SearchFieldResultsDecoration:
     case StyleAppearance::SearchFieldResultsButton:
-        break;
+        return SearchFieldResultsPart::create(appearance);
 
     case StyleAppearance::SearchFieldCancelButton:
         return SearchFieldCancelButtonPart::create();

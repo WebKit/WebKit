@@ -65,11 +65,18 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
 
 Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationContextDescriptor& presentationContextDescriptor)
 {
-    // FIXME: Do something with the presentationContextDescriptor
-    UNUSED_PARAM(presentationContextDescriptor);
+    auto& compositorIntegration = m_convertToBackingContext->convertToBacking(presentationContextDescriptor.compositorIntegration);
+
+    auto registerCallbacksBlock = BlockPtr<void(WGPURenderBuffersWereRecreatedBlockCallback)>::fromCallable([&](WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreatedCallback) {
+        compositorIntegration.registerCallbacks(BlockPtr<void(CFArrayRef)>(renderBuffersWereRecreatedCallback));
+    });
 
     WGPUSurfaceDescriptorCocoaCustomSurface cocoaSurface {
-        { nullptr, static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking) },
+        {
+            nullptr,
+            static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking),
+        },
+        registerCallbacksBlock.get(),
     };
 
     WGPUSurfaceDescriptor surfaceDescriptor {
@@ -77,7 +84,9 @@ Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationCo
         nullptr,
     };
 
-    return PresentationContextImpl::create(wgpuInstanceCreateSurface(m_backing, &surfaceDescriptor), m_convertToBackingContext);
+    auto result = PresentationContextImpl::create(wgpuInstanceCreateSurface(m_backing, &surfaceDescriptor), m_convertToBackingContext);
+    compositorIntegration.setPresentationContext(result);
+    return result;
 }
 
 Ref<CompositorIntegration> GPUImpl::createCompositorIntegration()

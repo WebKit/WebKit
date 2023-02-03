@@ -79,8 +79,10 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
 #if PLATFORM(COCOA)
-    void getRenderBuffers(CompletionHandler<void(Vector<MachSendRight>&&)>&&);
+    void recreateRenderBuffers(int width, int height, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 #endif
+
+    void prepareForDisplay(CompletionHandler<void(bool)>&&);
 
     Ref<PAL::WebGPU::CompositorIntegration> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

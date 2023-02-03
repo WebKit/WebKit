@@ -94,6 +94,7 @@ class SubresourceLoader;
 class SubstituteResource;
 class UserContentURLPattern;
 
+enum class ClearSiteDataValue : uint8_t;
 enum class ShouldContinue;
 
 using ResourceLoaderMap = HashMap<ResourceLoaderIdentifier, RefPtr<ResourceLoader>>;
@@ -460,6 +461,7 @@ public:
 
     ContentSecurityPolicy* contentSecurityPolicy() const { return m_contentSecurityPolicy.get(); }
     const std::optional<CrossOriginOpenerPolicy>& crossOriginOpenerPolicy() const { return m_responseCOOP; }
+    OptionSet<ClearSiteDataValue> responseClearSiteDataValues() const { return m_responseClearSiteDataValues; }
 
     bool isContinuingLoadAfterProvisionalLoadStarted() const { return m_isContinuingLoadAfterProvisionalLoadStarted; }
     void setIsContinuingLoadAfterProvisionalLoadStarted(bool isContinuingLoadAfterProvisionalLoadStarted) { m_isContinuingLoadAfterProvisionalLoadStarted = isContinuingLoadAfterProvisionalLoadStarted; }
@@ -633,6 +635,7 @@ private:
     bool m_stopRecordingResponses { false };
 
     std::optional<CrossOriginOpenerPolicy> m_responseCOOP;
+    OptionSet<ClearSiteDataValue> m_responseClearSiteDataValues;
     
     typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource>> SubstituteResourceMap;
     SubstituteResourceMap m_pendingSubstituteResources;

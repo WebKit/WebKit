@@ -652,6 +652,7 @@ jit/CallFrameShuffler32_64.cpp
 jit/CallFrameShuffler64.cpp
 jit/ExecutableAllocationFuzz.cpp
 jit/ExecutableAllocator.cpp
+jit/ExecutableMemoryHandle.cpp
 jit/GCAwareJITStubRoutine.cpp
 jit/GPRInfo.cpp
 jit/ICStats.cpp

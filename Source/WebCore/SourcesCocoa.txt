@@ -484,6 +484,7 @@ platform/graphics/mac/controls/ProgressBarMac.mm
 platform/graphics/mac/controls/SearchControlMac.mm
 platform/graphics/mac/controls/SearchFieldCancelButtonMac.mm
 platform/graphics/mac/controls/SearchFieldMac.mm
+platform/graphics/mac/controls/SearchFieldResultsMac.mm
 platform/graphics/mac/controls/SliderThumbMac.mm
 platform/graphics/mac/controls/SliderTrackMac.mm
 platform/graphics/mac/controls/TextAreaMac.mm

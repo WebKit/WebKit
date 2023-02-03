@@ -535,7 +535,6 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUOutOfMemoryError.serialization.in \
 	Shared/WebGPU/WebGPUPipelineDescriptorBase.serialization.in \
 	Shared/WebGPU/WebGPUPipelineLayoutDescriptor.serialization.in \
-	Shared/WebGPU/WebGPUPresentationConfiguration.serialization.in \
 	Shared/WebGPU/WebGPUPresentationContextDescriptor.serialization.in \
 	Shared/WebGPU/WebGPUQuerySetDescriptor.serialization.in \
 	Shared/WebGPU/WebGPURenderBundleDescriptor.serialization.in \

@@ -3995,6 +3995,20 @@ bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(AnimatableProperty pro
     );
 }
 
+static bool syntaxValuesRequireBlendingForAccumulativeIteration(const CSSCustomPropertyValue::SyntaxValue& a, const CSSCustomPropertyValue::SyntaxValue& b, bool isList)
+{
+    return WTF::switchOn(a, [b, isList](const Length& aLength) {
+        ASSERT(std::holds_alternative<Length>(b));
+        return !isList && lengthsRequireBlendingForAccumulativeIteration(aLength, std::get<Length>(b));
+    }, [] (const RefPtr<TransformOperation>&) {
+        return true;
+    }, [] (const StyleColor&) {
+        return true;
+    }, [] (auto&) {
+        return false;
+    });
+}
+
 bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient& client, AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
 {
     return WTF::switchOn(property,
@@ -4007,21 +4021,25 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
             if (!from || !to)
                 return false;
 
-            if (!std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from->value()) || !std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to->value()))
-                return false;
+            if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(from->value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(to->value())) {
+                auto& fromSyntaxValues = std::get<CSSCustomPropertyValue::SyntaxValueList>(from->value()).values;
+                auto& toSyntaxValues = std::get<CSSCustomPropertyValue::SyntaxValueList>(to->value()).values;
+                if (fromSyntaxValues.size() == toSyntaxValues.size()) {
+                    for (size_t i = 0; i < fromSyntaxValues.size(); ++i) {
+                        if (!syntaxValuesRequireBlendingForAccumulativeIteration(fromSyntaxValues[i], toSyntaxValues[i], true))
+                            return false;
+                    }
+                    return true;
+                }
+            }
 
-            auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from->value());
-            auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to->value());
+            if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from->value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to->value())) {
+                auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from->value());
+                auto& toSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(to->value());
+                return syntaxValuesRequireBlendingForAccumulativeIteration(fromSyntaxValue, toSyntaxValue, false);
+            }
 
-            // FIXME: we need to also ensure we blend for iterationComposite for <transform-list>, <filter-value-list> and <shadow>.
-            return WTF::switchOn(fromSyntaxValue, [toSyntaxValue](const Length& fromLength) {
-                ASSERT(std::holds_alternative<Length>(toSyntaxValue));
-                return lengthsRequireBlendingForAccumulativeIteration(fromLength, std::get<Length>(toSyntaxValue) );
-            }, [] (const StyleColor&) {
-                return true;
-            }, [] (auto&) {
-                return false;
-            });
+            return false;
         }
     );
 }

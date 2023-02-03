@@ -164,6 +164,9 @@ public:
     AtomString className() const { return AtomString { m_className->currentValue() }; }
     SVGAnimatedString& classNameAnimated() { return m_className; }
 
+    SVGConditionalProcessingAttributes& conditionalProcessingAttributes();
+    SVGConditionalProcessingAttributes* conditionalProcessingAttributesIfExists() const;
+
 protected:
     SVGElement(const QualifiedName&, Document&, UniqueRef<SVGPropertyRegistry>&&, ConstructionType = CreateSVGElement);
     virtual ~SVGElement();

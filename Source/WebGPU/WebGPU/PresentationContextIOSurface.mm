@@ -27,50 +27,25 @@
 #import "PresentationContextIOSurface.h"
 
 #import "APIConversions.h"
+#import "Texture.h"
+#import "TextureView.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/IOTypesSPI.h>
 
 namespace WebGPU {
 
-static NSDictionary *optionsFor32BitSurface(int width, int height, unsigned pixelFormat)
+Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGPUSurfaceDescriptor& surfaceDescriptor)
 {
-    unsigned bytesPerElement = 4;
-    unsigned bytesPerPixel = 4;
+    auto presentationContextIOSurface = adoptRef(*new PresentationContextIOSurface(surfaceDescriptor));
 
-    size_t bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerPixel);
-    ASSERT(bytesPerRow);
+    ASSERT(surfaceDescriptor.nextInChain);
+    ASSERT(surfaceDescriptor.nextInChain->sType == static_cast<WGPUSType>(WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking));
+    const auto& descriptor = *reinterpret_cast<const WGPUSurfaceDescriptorCocoaCustomSurface*>(surfaceDescriptor.nextInChain);
+    descriptor.compositorIntegrationRegister([presentationContext = presentationContextIOSurface.copyRef()](CFArrayRef ioSurfaces) {
+        presentationContext->renderBuffersWereRecreated(bridge_cast(ioSurfaces));
+    });
 
-    size_t totalBytes = IOSurfaceAlignProperty(kIOSurfaceAllocSize, height * bytesPerRow);
-    ASSERT(totalBytes);
-
-    return @{
-        (id)kIOSurfaceWidth: @(width),
-        (id)kIOSurfaceHeight: @(height),
-        (id)kIOSurfacePixelFormat: @(pixelFormat),
-        (id)kIOSurfaceBytesPerElement: @(bytesPerElement),
-        (id)kIOSurfaceBytesPerRow: @(bytesPerRow),
-        (id)kIOSurfaceAllocSize: @(totalBytes),
-#if PLATFORM(IOS_FAMILY)
-        (id)kIOSurfaceCacheMode: @(kIOMapWriteCombineCache),
-#endif
-        (id)kIOSurfaceElementHeight: @(1)
-    };
-}
-
-static RetainPtr<IOSurfaceRef> createIOSurface(int width, int height)
-{
-    NSDictionary *options = optionsFor32BitSurface(width, height, 'BGRA');
-    return adoptCF(IOSurfaceCreate(bridge_cast(options)));
-}
-
-static RetainPtr<IOSurfaceRef> createSurfaceFromDescriptor(const WGPUSwapChainDescriptor& descriptor)
-{
-    if (descriptor.nextInChain) {
-        // FIXME: We need better error handling.
-        return nullptr;
-    }
-
-    return createIOSurface(descriptor.width, descriptor.height);
+    return presentationContextIOSurface;
 }
 
 PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDescriptor&)
@@ -79,35 +54,96 @@ PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDesc
 
 PresentationContextIOSurface::~PresentationContextIOSurface() = default;
 
-void PresentationContextIOSurface::configure(Device&, const WGPUSwapChainDescriptor& descriptor)
+IOSurface *PresentationContextIOSurface::displayBuffer() const
 {
-    m_displayBuffer = createSurfaceFromDescriptor(descriptor);
-    m_drawingBuffer = createSurfaceFromDescriptor(descriptor);
+    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    size_t index = (m_currentIndex + 1) % m_renderBuffers.size();
+    return m_ioSurfaces[index];
+}
+
+IOSurface *PresentationContextIOSurface::drawingBuffer() const
+{
+    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    return m_ioSurfaces[m_currentIndex];
+}
+
+void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface *> *ioSurfaces)
+{
+    m_ioSurfaces = ioSurfaces;
+    m_renderBuffers.clear();
+}
+
+void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
+{
+    m_renderBuffers.clear();
+    m_currentIndex = 0;
+
+    if (descriptor.nextInChain)
+        return;
+
+    if (descriptor.format != WGPUTextureFormat_BGRA8Unorm)
+        return;
+
+    WGPUTextureDescriptor wgpuTextureDescriptor = {
+        nullptr,
+        descriptor.label,
+        descriptor.usage,
+        WGPUTextureDimension_2D, {
+            descriptor.width,
+            descriptor.height,
+            1,
+        },
+        descriptor.format,
+        1,
+        1,
+        1,
+        &descriptor.format,
+    };
+    WGPUTextureViewDescriptor wgpuTextureViewDescriptor = {
+        nullptr,
+        descriptor.label,
+        descriptor.format,
+        WGPUTextureViewDimension_2D,
+        0,
+        1,
+        0,
+        1,
+        WGPUTextureAspect_All,
+    };
+    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:Texture::pixelFormat(descriptor.format) width:descriptor.width height:descriptor.height mipmapped:NO];
+    textureDescriptor.usage = Texture::usage(descriptor.usage);
+    for (IOSurface *iosurface in m_ioSurfaces) {
+        id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
+        texture.label = fromAPI(descriptor.label);
+        auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(descriptor.format) };
+        m_renderBuffers.append({ Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device), TextureView::create(texture, wgpuTextureViewDescriptor, { { descriptor.width, descriptor.height, 1 } }, device) });
+    }
+    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+}
+
+void PresentationContextIOSurface::unconfigure()
+{
+    m_ioSurfaces = nil;
+    m_renderBuffers.clear();
+    m_currentIndex = 0;
 }
 
 void PresentationContextIOSurface::present()
 {
-    nextDrawable();
+    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
 }
 
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
-    return nullptr;
+    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    return m_renderBuffers[m_currentIndex].texture.ptr();
 }
 
 TextureView* PresentationContextIOSurface::getCurrentTextureView()
 {
-    return nullptr;
-}
-
-RetainPtr<IOSurfaceRef> PresentationContextIOSurface::nextDrawable()
-{
-    // FIXME: wait until a buffer is available
-    auto nextBuffer = m_drawingBuffer;
-    m_drawingBuffer = m_displayBuffer;
-    m_displayBuffer = nextBuffer;
-
-    return m_drawingBuffer;
+    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
+    return m_renderBuffers[m_currentIndex].textureView.ptr();
 }
 
 } // namespace WebGPU
@@ -117,13 +153,13 @@ RetainPtr<IOSurfaceRef> PresentationContextIOSurface::nextDrawable()
 IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface surface)
 {
     if (auto* presentationContextIOSurface = downcast<WebGPU::PresentationContextIOSurface>(&WebGPU::fromAPI(surface)))
-        return presentationContextIOSurface->displayBuffer().get();
+        return bridge_cast(presentationContextIOSurface->displayBuffer());
     return nullptr;
 }
 
 IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface surface)
 {
     if (auto* presentationContextIOSurface = downcast<WebGPU::PresentationContextIOSurface>(&WebGPU::fromAPI(surface)))
-        return presentationContextIOSurface->drawingBuffer().get();
+        return bridge_cast(presentationContextIOSurface->drawingBuffer());
     return nullptr;
 }

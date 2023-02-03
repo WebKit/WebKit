@@ -485,11 +485,6 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
             updateLogicalWidth();
         }
 
-        // 3- If the min-content contribution of any grid items have changed based on the row
-        // sizes calculated in step 2, steps 1 and 2 are repeated with the new min-content
-        // contribution (once only).
-        repeatTracksSizingIfNeeded(availableSpaceForColumns, contentLogicalHeight());
-
         // Grid container should have the minimum height of a line if it's editable. That does not affect track sizing though.
         if (hasLineIfEmpty()) {
             LayoutUnit minHeightForEmptyLine = borderAndPaddingLogicalHeight()
@@ -498,7 +493,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
             setLogicalHeight(std::max(logicalHeight(), minHeightForEmptyLine));
         }
 
-        layoutGridItems();
+        layoutMasonryItems();
 
         endAndCommitUpdateScrollInfoAfterLayoutTransaction();
 
@@ -1288,6 +1283,50 @@ void RenderGrid::updateGridAreaForAspectRatioItems(const Vector<RenderBox*>& aut
 }
 
 void RenderGrid::layoutGridItems()
+{
+    populateGridPositionsForDirection(ForColumns);
+    populateGridPositionsForDirection(ForRows);
+
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (currentGrid().orderIterator().shouldSkipChild(*child)) {
+            if (child->isOutOfFlowPositioned())
+                prepareChildForPositionedLayout(*child);
+            continue;
+        }
+
+        if (is<RenderGrid>(child) && (downcast<RenderGrid>(child)->isSubgridColumns() || downcast<RenderGrid>(child)->isSubgridRows()))
+            child->setNeedsLayout(MarkOnlyThis);
+
+        // Setting the definite grid area's sizes. It may imply that the
+        // item must perform a layout if its area differs from the one
+        // used during the track sizing algorithm.
+        updateGridAreaLogicalSize(*child, gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForColumns), gridAreaBreadthForChildIncludingAlignmentOffsets(*child, ForRows));
+
+        LayoutRect oldChildRect = child->frameRect();
+
+        // Stretching logic might force a child layout, so we need to run it before the layoutIfNeeded
+        // call to avoid unnecessary relayouts. This might imply that child margins, needed to correctly
+        // determine the available space before stretching, are not set yet.
+        applyStretchAlignmentToChildIfNeeded(*child);
+        applySubgridStretchAlignmentToChildIfNeeded(*child);
+
+        child->layoutIfNeeded();
+
+        // We need pending layouts to be done in order to compute auto-margins properly.
+        updateAutoMarginsInColumnAxisIfNeeded(*child);
+        updateAutoMarginsInRowAxisIfNeeded(*child);
+
+        setLogicalPositionForChild(*child);
+
+        // If the child moved, we have to repaint it as well as any floating/positioned
+        // descendants. An exception is if we need a layout. In this case, we know we're going to
+        // repaint ourselves (and the child) anyway.
+        if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+            child->repaintDuringLayoutIfMoved(oldChildRect);
+    }
+}
+
+void RenderGrid::layoutMasonryItems()
 {
     populateGridPositionsForDirection(ForColumns);
     populateGridPositionsForDirection(ForRows);

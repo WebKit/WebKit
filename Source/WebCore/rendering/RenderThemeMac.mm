@@ -71,7 +71,6 @@
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSImageSPI.h>
-#import <pal/spi/mac/NSSearchFieldCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/ObjCRuntimeExtras.h>
@@ -165,6 +164,8 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Style
     case StyleAppearance::PushButton:
     case StyleAppearance::SearchField:
     case StyleAppearance::SearchFieldCancelButton:
+    case StyleAppearance::SearchFieldResultsButton:
+    case StyleAppearance::SearchFieldResultsDecoration:
     case StyleAppearance::SliderThumbHorizontal:
     case StyleAppearance::SliderThumbVertical:
     case StyleAppearance::SliderHorizontal:
@@ -207,6 +208,8 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
         || type == StyleAppearance::Radio
         || type == StyleAppearance::SearchField
         || type == StyleAppearance::SearchFieldCancelButton
+        || type == StyleAppearance::SearchFieldResultsButton
+        || type == StyleAppearance::SearchFieldResultsDecoration
         || type == StyleAppearance::SliderThumbHorizontal
         || type == StyleAppearance::SliderThumbVertical
         || type == StyleAppearance::SliderHorizontal
@@ -772,16 +775,6 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
     }
 }
 
-static FloatPoint convertToPaintingPosition(const RenderBox& inputRenderer, const RenderBox& customButtonRenderer, const FloatPoint& customButtonLocalPosition,
-    const IntPoint& paintOffset)
-{
-    IntPoint offsetFromInputRenderer = roundedIntPoint(customButtonRenderer.localToContainerPoint(customButtonRenderer.contentBoxRect().location(), &inputRenderer));
-    FloatPoint paintingPosition = customButtonLocalPosition;
-    paintingPosition.moveBy(-offsetFromInputRenderer);
-    paintingPosition.moveBy(paintOffset);
-    return paintingPosition;
-}
-
 void RenderThemeMac::updateCheckedState(NSCell* cell, const RenderObject& o)
 {
     bool oldIndeterminate = [cell state] == NSControlStateValueMixed;
@@ -1146,15 +1139,6 @@ void RenderThemeMac::setPopupButtonCellState(const RenderObject& o, const IntSiz
     updatePressedState(popupButton, o);
 }
 
-void RenderThemeMac::paintCellAndSetFocusedElementNeedsRepaintIfNecessary(NSCell* cell, const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance(), renderer.style().effectiveAccentColor());
-    bool shouldDrawFocusRing = isFocused(renderer) && renderer.style().outlineStyleIsAuto() == OutlineIsAuto::On;
-    bool shouldDrawCell = true;
-    if (ThemeMac::drawCellOrFocusRingWithViewIntoContext(cell, paintInfo.context(), rect, documentViewFor(renderer), shouldDrawCell, shouldDrawFocusRing, renderer.page().deviceScaleFactor()))
-        renderer.page().focusController().setFocusedElementNeedsRepaint();
-}
-
 const IntSize* RenderThemeMac::menuListSizes() const
 {
     static const IntSize sizes[4] = { IntSize(9, 0), IntSize(5, 0), IntSize(0, 0), IntSize(13, 0) };
@@ -1175,18 +1159,6 @@ void RenderThemeMac::adjustSliderThumbStyle(RenderStyle& style, const Element* e
 {
     RenderTheme::adjustSliderThumbStyle(style, element);
     style.setBoxShadow(nullptr);
-}
-
-void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
-{
-    NSSearchFieldCell* search = this->search();
-
-    [search setPlaceholderString:@""];
-    [search setControlSize:controlSizeForFont(o.style())];
-
-    // Update the various states we respond to.
-    updateEnabledState(search, o);
-    updateFocusedState(search, &o);
 }
 
 const IntSize* RenderThemeMac::searchFieldSizes() const
@@ -1267,11 +1239,6 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     style.setBoxShadow(nullptr);
 }
 
-bool RenderThemeMac::paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return false;
-}
-
 void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
@@ -1280,100 +1247,12 @@ void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& st
     style.setBoxShadow(nullptr);
 }
 
-bool RenderThemeMac::paintSearchFieldResultsDecorationPart(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& r)
-{
-    if (!box.element())
-        return false;
-    Element* input = box.element()->shadowHost();
-    if (!input)
-        input = box.element();
-    if (!is<RenderBox>(input->renderer()))
-        return false;
-    
-    const RenderBox& inputBox = downcast<RenderBox>(*input->renderer());
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    setSearchCellState(inputBox, r);
-
-    NSSearchFieldCell* search = this->search();
-
-    if ([search searchMenuTemplate] != nil)
-        [search setSearchMenuTemplate:nil];
-
-    FloatRect localBounds = [search searchButtonRectForBounds:NSRect(snappedIntRect(inputBox.borderBoxRect()))];
-    FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
-    localBounds.setLocation(paintingPos);
-
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search searchButtonCell], inputBox, paintInfo, localBounds);
-    [[search searchButtonCell] setControlView:nil];
-    return false;
-}
-
 void RenderThemeMac::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
     style.setWidth(Length(size.width() + resultsArrowWidth, LengthType::Fixed));
     style.setHeight(Length(size.height(), LengthType::Fixed));
     style.setBoxShadow(nullptr);
-}
-
-bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& r)
-{
-    auto adjustedResultButtonRect = [this, &box] (const FloatRect& localBounds) -> FloatRect
-    {
-        IntSize buttonSize = sizeForSystemFont(box.style(), resultsButtonSizes());
-        buttonSize.expand(resultsArrowWidth, 0);
-        FloatSize diff = localBounds.size() - FloatSize(buttonSize);
-        if (!diff.isZero())
-            return localBounds;
-        // Vertically centered and left aligned.
-        FloatRect adjustedLocalBounds = localBounds;
-        adjustedLocalBounds.move(0, floorToDevicePixel(diff.height() / 2, box.document().deviceScaleFactor()));
-        adjustedLocalBounds.setSize(buttonSize);
-        return adjustedLocalBounds;
-    };
-
-    if (!box.element())
-        return false;
-    Element* input = box.element()->shadowHost();
-    if (!input)
-        input = box.element();
-    if (!is<RenderBox>(input->renderer()))
-        return false;
-    
-    const RenderBox& inputBox = downcast<RenderBox>(*input->renderer());
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
-    setSearchCellState(inputBox, r);
-
-    NSSearchFieldCell* search = this->search();
-
-    if (![search searchMenuTemplate])
-        [search setSearchMenuTemplate:searchMenuTemplate()];
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    float zoomLevel = box.style().effectiveZoom();
-
-    FloatRect localBounds = adjustedResultButtonRect([search searchButtonRectForBounds:NSRect(snappedIntRect(inputBox.contentBoxRect()))]);
-    // Adjust position based on the content direction.
-    float adjustedXPosition;
-    if (box.style().direction() == TextDirection::RTL)
-        adjustedXPosition = inputBox.contentBoxRect().maxX() - localBounds.size().width();
-    else
-        adjustedXPosition = inputBox.contentBoxRect().x();
-    localBounds.setX(adjustedXPosition);
-    FloatPoint paintingPos = convertToPaintingPosition(inputBox, box, localBounds.location(), r.location());
-    
-    FloatRect unzoomedRect(paintingPos, localBounds.size());
-    if (zoomLevel != 1.0f) {
-        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.location());
-        paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.location());
-    }
-
-    paintCellAndSetFocusedElementNeedsRepaintIfNecessary([search searchButtonCell], box, paintInfo, unzoomedRect);
-    [[search searchButtonCell] setControlView:nil];
-
-    return false;
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -1411,28 +1290,6 @@ NSPopUpButtonCell* RenderThemeMac::popupButton() const
     }
 
     return m_popupButton.get();
-}
-
-NSSearchFieldCell* RenderThemeMac::search() const
-{
-    if (!m_search) {
-        m_search = adoptNS([[NSSearchFieldCell alloc] initTextCell:@""]);
-        [m_search setBezelStyle:NSTextFieldRoundedBezel];
-        [m_search setBezeled:YES];
-        [m_search setEditable:YES];
-        [m_search setFocusRingType:NSFocusRingTypeExterior];
-        [m_search setCenteredLook:NO];
-    }
-
-    return m_search.get();
-}
-
-NSMenu* RenderThemeMac::searchMenuTemplate() const
-{
-    if (!m_searchMenuTemplate)
-        m_searchMenuTemplate = adoptNS([[NSMenu alloc] initWithTitle:@""]);
-
-    return m_searchMenuTemplate.get();
 }
 
 String RenderThemeMac::fileListNameForWidth(const FileList* fileList, const FontCascade& font, int width, bool multipleFilesAllowed) const

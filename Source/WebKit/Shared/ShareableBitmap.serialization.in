@@ -33,6 +33,6 @@ header: "ShareableBitmap.h"
     [Validator='!WebKit::ShareableBitmap::numBytesForSize(*m_size, *m_configuration).hasOverflowed() && m_handle->size() >= WebKit::ShareableBitmap::numBytesForSize(*m_size, *m_configuration)'] WebKit::ShareableBitmapConfiguration m_configuration;
 }
 
-[Return=Ref, CreateUsing=createReadOnly] class WebKit::ShareableBitmap {
+[RefCounted, CreateUsing=createReadOnly] class WebKit::ShareableBitmap {
     std::optional<WebKit::ShareableBitmapHandle> createReadOnlyHandle()
 }

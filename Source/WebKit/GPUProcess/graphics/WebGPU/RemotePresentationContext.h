@@ -72,7 +72,7 @@ private:
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void configure(const WebGPU::PresentationConfiguration&);
+    void configure(const WebGPU::CanvasConfiguration&);
     void unconfigure();
 
     void getCurrentTexture(WebGPUIdentifier);

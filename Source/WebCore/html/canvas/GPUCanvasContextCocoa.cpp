@@ -28,7 +28,6 @@
 
 #include "GPUAdapter.h"
 #include "GPUCanvasConfiguration.h"
-#include "GPUPresentationConfiguration.h"
 #include "GPUPresentationContext.h"
 #include "GPUPresentationContextDescriptor.h"
 #include "GPUTextureDescriptor.h"
@@ -37,20 +36,6 @@
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
-
-static IntSize getCanvasSizeAsIntSize(const GPUCanvasContext::CanvasType& canvas)
-{
-    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> IntSize {
-        auto scaleFactor = htmlCanvas->document().deviceScaleFactor();
-        return { static_cast<int>(scaleFactor * htmlCanvas->width()), static_cast<int>(scaleFactor * htmlCanvas->height()) };
-    }
-#if ENABLE(OFFSCREEN_CANVAS)
-    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> IntSize {
-        return { static_cast<int>(offscreenCanvas->width()), static_cast<int>(offscreenCanvas->height()) };
-    }
-#endif
-    );
-}
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(GPUCanvasContextCocoa);
 
@@ -74,11 +59,41 @@ static GPUPresentationContextDescriptor presentationContextDescriptor(GPUComposi
     };
 }
 
+static int getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
+{
+    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
+        auto scaleFactor = htmlCanvas->document().deviceScaleFactor();
+        return scaleFactor * htmlCanvas->width();
+    }
+#if ENABLE(OFFSCREEN_CANVAS)
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {
+        return offscreenCanvas->width();
+    }
+#endif
+    );
+}
+
+static int getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
+{
+    return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
+        auto scaleFactor = htmlCanvas->document().deviceScaleFactor();
+        return scaleFactor * htmlCanvas->height();
+    }
+#if ENABLE(OFFSCREEN_CANVAS)
+    , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {
+        return offscreenCanvas->height();
+    }
+#endif
+    );
+}
+
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)
     : GPUCanvasContext(canvas)
     , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create())
     , m_compositorIntegration(gpu.createCompositorIntegration())
     , m_presentationContext(gpu.createPresentationContext(presentationContextDescriptor(m_compositorIntegration)))
+    , m_width(getCanvasWidth(htmlCanvas()))
+    , m_height(getCanvasHeight(htmlCanvas()))
 {
 }
 
@@ -89,9 +104,20 @@ void GPUCanvasContextCocoa::reshape(int width, int height)
 
     m_width = width;
     m_height = height;
-    unconfigurePresentationContextIfNeeded();
 
-    configurePresentationContextIfNeeded();
+    auto configuration = WTFMove(m_configuration);
+    ASSERT(!isConfigured());
+    if (configuration) {
+        GPUCanvasConfiguration canvasConfiguration {
+            configuration->device.ptr(),
+            configuration->format,
+            configuration->usage,
+            configuration->viewFormats,
+            configuration->colorSpace,
+            configuration->compositingAlphaMode,
+        };
+        configure(WTFMove(canvasConfiguration));
+    }
 }
 
 GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
@@ -101,53 +127,49 @@ GPUCanvasContext::CanvasType GPUCanvasContextCocoa::canvas()
 
 void GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& configuration)
 {
-    m_configuration = WTFMove(configuration);
-
-    auto canvasSize = getCanvasSizeAsIntSize(htmlCanvas());
-    reshape(canvasSize.width(), canvasSize.height());
-}
-
-void GPUCanvasContextCocoa::unconfigurePresentationContextIfNeeded()
-{
-    if (!m_presentationContextIsConfigured)
+    if (isConfigured())
         return;
 
-    m_presentationContext->unconfigure();
-    m_presentationContextIsConfigured = false;
-}
+    if (!m_width || !m_height)
+        return; // FIXME: This should probably do something more sensible.
 
-void GPUCanvasContextCocoa::configurePresentationContextIfNeeded()
-{
-    if (m_presentationContextIsConfigured)
+    ASSERT(configuration.device);
+    if (!configuration.device)
         return;
 
-    if (!m_configuration)
-        return;
-
-    GPUPresentationConfiguration configuration = {
-        m_configuration->device, // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250995 This is definitely a UAF
-        m_configuration->format,
-        m_configuration->usage,
-        m_configuration->viewFormats,
-        m_configuration->colorSpace,
-        m_configuration->compositingAlphaMode,
-        static_cast<uint32_t>(m_width), // FIXME: Is it possible for these to be negative?
-        static_cast<uint32_t>(m_height),
-    };
+    auto renderBuffers = m_compositorIntegration->recreateRenderBuffers(m_width, m_height);
+    ASSERT(!renderBuffers.isEmpty());
 
     m_presentationContext->configure(configuration);
-    m_presentationContextIsConfigured = true;
+
+    m_configuration = {
+        *configuration.device,
+        configuration.format,
+        configuration.usage,
+        configuration.viewFormats,
+        configuration.colorSpace,
+        configuration.compositingAlphaMode,
+        WTFMove(renderBuffers),
+        0,
+    };
+}
+
+void GPUCanvasContextCocoa::unconfigure()
+{
+    m_presentationContext->unconfigure();
+    m_configuration = std::nullopt;
+    ASSERT(!isConfigured());
 }
 
 RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
 {
+    if (!isConfigured()) {
+        // FIXME: I think we're supposed to return an invalid texture here.
+        return nullptr;
+    }
+
     if (m_currentTexture)
         return m_currentTexture;
-
-    if (!m_configuration)
-        return nullptr;
-
-    configurePresentationContextIfNeeded();
 
     GPUTextureDescriptor descriptor = {
         { "WebGPU Display texture"_s },
@@ -171,11 +193,6 @@ PixelFormat GPUCanvasContextCocoa::pixelFormat() const
     return PixelFormat::BGRA8;
 }
 
-void GPUCanvasContextCocoa::unconfigure()
-{
-    m_configuration.reset();
-}
-
 DestinationColorSpace GPUCanvasContextCocoa::colorSpace() const
 {
     return DestinationColorSpace::SRGB();
@@ -188,10 +205,16 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GPUCanvasContextCocoa::layerContent
 
 void GPUCanvasContextCocoa::prepareForDisplay()
 {
-    m_presentationContext->prepareForDisplay([protectedThis = Ref { *this }] (auto sendRight) {
-        protectedThis->m_layerContentsDisplayDelegate->setDisplayBuffer(WTFMove(sendRight));
-        protectedThis->m_compositingResultsNeedsUpdating = false;
-    });
+    if (!isConfigured())
+        return;
+
+    ASSERT(m_configuration->frameCount < m_configuration->renderBuffers.size());
+
+    m_compositorIntegration->prepareForDisplay();
+
+    m_layerContentsDisplayDelegate->setDisplayBuffer(m_configuration->renderBuffers[m_configuration->frameCount]);
+    m_compositingResultsNeedsUpdating = false;
+    m_configuration->frameCount = (m_configuration->frameCount + 1) % m_configuration->renderBuffers.size();
     m_currentTexture = nullptr;
 }
 

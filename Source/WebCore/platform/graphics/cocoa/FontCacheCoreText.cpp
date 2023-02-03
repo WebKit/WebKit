@@ -1387,7 +1387,13 @@ void FontCache::prewarmGlobally()
 
 void FontCache::platformReleaseNoncriticalMemory()
 {
+    // FIXME(https://bugs.webkit.org/show_bug.cgi?id=251560): We should be calling invalidate() on all platforms, but this causes a memory regression on iOS.
+#if PLATFORM(MAC)
     invalidate();
+#else
+    m_systemFontDatabaseCoreText.clear();
+    m_fontFamilySpecificationCoreTextCache.clear();
+#endif
 }
 
 }

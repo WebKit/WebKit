@@ -102,7 +102,6 @@ media/media-source/remoteplayback-from-source-element.html [ Pass ]
 
 # webkit.org/b/240843
 fast/images/animated-heics-draw.html [ Pass ]
-fast/images/animated-heics-verify.html [ Pass ]
 fast/images/heic-as-background-image.html [ Pass ]
 
 # Enabled in rdar://102830993
@@ -2796,3 +2795,5 @@ webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Cra
 #webkit.org/b/251526 [ Ventura EWS ] 2x AVIF tests are constant failures on EWS only
 [ Ventura ] fast/images/avif-as-image.html [ Pass ImageOnlyFailure Crash ]
 [ Ventura ] fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure Crash ]
+
+webkit.org/b/251312 [ BigSur+ ] fast/loader/stateobjects/popstate-does-not-fire-with-page-cache.html [ Pass Failure ]

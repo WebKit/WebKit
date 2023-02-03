@@ -25,6 +25,22 @@
 import re
 import sys
 
+# Supported type attributes:
+#
+# AdditionalEncoder - generate serializers for StreamConnectionEncoder in addition to IPC::Encoder.
+# CreateUsing - use a custom function to call instead of the constructor or create.
+# Alias - this type is not a struct or class, but a typedef.
+# Nested - this type is only serialized as a member of its parent, so work around the need for http://wg21.link/P0289 and don't forward declare it in the header.
+# RefCounted - deserializer returns a std::optional<Ref<T>> instead of a std::optional<T>.
+# CustomMemberLayout - member memory layout doesn't match serialization layout, so don't static_assert that the members are in order.
+# LegacyPopulateFromEmptyConstructor - instead of calling a constructor with the members, call the empty constructor then insert the members one at a time.
+# OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
+#
+# Supported member attributes:
+#
+# BitField - work around the need for http://wg21.link/P0572 and don't check that the serialization order matches the memory layout.
+# Nullable - check if the member is truthy before serializing.
+# ReturnEarlyIfTrue - if this member is truthy then don't serialize the other members.
 
 class SerializedType(object):
     def __init__(self, struct_or_class, namespace, name, parent_class_name, members, condition, attributes, other_metadata=None):
@@ -43,18 +59,15 @@ class SerializedType(object):
         self.populate_from_empty_constructor = False
         self.nested = False
         self.members_are_subclasses = False
+        self.custom_member_layout = False
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
                     key, value = attribute.split('=')
                     if key == 'AdditionalEncoder':
                         self.encoders.append(value)
-                    if key == 'Return' and value == 'Ref':
-                        self.return_ref = True
                     if key == 'CreateUsing':
                         self.create_using = value
-                    if key == 'LegacyPopulateFrom' and value == 'EmptyConstructor':
-                        self.populate_from_empty_constructor = True
                     if key == 'Alias':
                         self.alias = value
                 else:
@@ -62,6 +75,10 @@ class SerializedType(object):
                         self.nested = True
                     elif attribute == 'RefCounted':
                         self.return_ref = True
+                    elif attribute == 'CustomMemberLayout':
+                        self.custom_member_layout = True
+                    elif attribute == 'LegacyPopulateFromEmptyConstructor':
+                        self.populate_from_empty_constructor = True
         if other_metadata:
             if other_metadata == 'subclasses':
                 self.members_are_subclasses = True
@@ -84,6 +101,17 @@ class SerializedType(object):
 
     def function_name_for_enum(self):
         return 'isValidEnum'
+
+    def can_assert_member_order_is_correct(self):
+        if self.custom_member_layout:
+            return False
+        for member in self.members:
+            if '()' in member.name:
+                return False
+            if '.' in member.name:
+                return False
+        return True
+
 
 class SerializedEnum(object):
     def __init__(self, namespace, name, underlying_type, valid_values, condition, attributes):
@@ -304,6 +332,18 @@ def check_type_members(type):
         result.append('    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.' + member.name + ')>, ' + member.type + '>);')
         if member.condition is not None:
             result.append('#endif')
+    if type.can_assert_member_order_is_correct():
+        result.append('    static_assert(MembersInCorrectOrder<0')
+        for i in range(len(type.members)):
+            member = type.members[i]
+            if 'BitField' in member.attributes:
+                continue
+            if member.condition is not None:
+                result.append('#if ' + member.condition)
+            result.append('        , offsetof(' + type.namespace_and_name() + ', ' + member.name + ')')
+            if member.condition is not None:
+                result.append('#endif')
+        result.append('    >::value);')
     return result
 
 
@@ -469,6 +509,17 @@ def generate_impl(serialized_types, serialized_enums, headers):
     result.append('#include "config.h"')
     result.append('#include "GeneratedSerializers.h"')
     result.append('')
+    result.append('template<size_t...> struct MembersInCorrectOrder;')
+    result.append('template<size_t onlyOffset> struct MembersInCorrectOrder<onlyOffset> { static constexpr bool value = true; };')
+    result.append('template<size_t firstOffset, size_t secondOffset, size_t... remainingOffsets> struct MembersInCorrectOrder<firstOffset, secondOffset, remainingOffsets...> {')
+    result.append('    static constexpr bool value = firstOffset > secondOffset ? false : MembersInCorrectOrder<secondOffset, remainingOffsets...>::value;')
+    result.append('};')
+    result.append('')
+    # GCC is less generous with its interpretation of "Use of the offsetof macro with a
+    # type other than a standard-layout class is conditionally-supported".
+    result.append('#if COMPILER(GCC)')
+    result.append('IGNORE_WARNINGS_BEGIN("invalid-offsetof")')
+    result.append('#endif')
     for header in headers:
         if header.condition is not None:
             result.append('#if ' + header.condition)
@@ -592,6 +643,10 @@ def generate_impl(serialized_types, serialized_enums, headers):
             result.append('#endif')
     result.append('')
     result.append('} // namespace WTF')
+    result.append('')
+    result.append('#if COMPILER(GCC)')
+    result.append('IGNORE_WARNINGS_END')
+    result.append('#endif')
     result.append('')
     return '\n'.join(result)
 

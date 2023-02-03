@@ -323,9 +323,9 @@ void CacheStorageCache::putRecordsInStore(Vector<CacheStorageRecord>&& records, 
             record.info.insertionTime = existingRecordInfo->insertionTime;
             record.info.url = existingRecordInfo->url;
             record.requestHeadersGuard = existingRecord->requestHeadersGuard;
-            record.request = WTFMove(existingRecord->request);
-            record.options = WTFMove(existingRecord->options);
-            record.referrer = WTFMove(existingRecord->referrer);
+            record.request = existingRecord->request;
+            record.options = existingRecord->options;
+            record.referrer = existingRecord->referrer;
             record.info.updateVaryHeaders(record.request, record.responseData.httpHeaderFields.get(WebCore::HTTPHeaderName::Vary));
             sizeIncreased += record.info.size;
             sizeDecreased += existingRecordInfo->size;

@@ -342,7 +342,6 @@ Shared/WebGPU/WebGPUOrigin3D.cpp
 Shared/WebGPU/WebGPUOutOfMemoryError.cpp
 Shared/WebGPU/WebGPUPipelineDescriptorBase.cpp
 Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp
-Shared/WebGPU/WebGPUPresentationConfiguration.cpp
 Shared/WebGPU/WebGPUPresentationContextDescriptor.cpp
 Shared/WebGPU/WebGPUPrimitiveState.cpp
 Shared/WebGPU/WebGPUProgrammableStage.cpp

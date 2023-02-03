@@ -32,8 +32,8 @@ namespace WebKit {
 class SecItemResponseData {
 public:
     SecItemResponseData(OSStatus code, RetainPtr<CFTypeRef>&& result)
-        : m_resultObject(WTFMove(result))
-        , m_resultCode(code) { }
+        : m_resultCode(code)
+        , m_resultObject(WTFMove(result)) { }
 
     RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
     OSStatus resultCode() const { return m_resultCode; }
@@ -41,8 +41,8 @@ public:
 private:
     friend struct IPC::ArgumentCoder<WebKit::SecItemResponseData, void>;
 
-    RetainPtr<CFTypeRef> m_resultObject;
     OSStatus m_resultCode;
+    RetainPtr<CFTypeRef> m_resultObject;
 };
     
 } // namespace WebKit

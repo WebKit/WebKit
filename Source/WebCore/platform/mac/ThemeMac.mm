@@ -373,40 +373,6 @@ static NSButtonCell *sharedCheckboxCell(const ControlStates& states, const IntSi
     return checkboxCell;
 }
 
-static bool drawCellFocusRingWithFrameAtTime(NSCell *cell, NSRect cellFrame, NSView *controlView, NSTimeInterval timeOffset)
-{
-    CGContextRef cgContext = [[NSGraphicsContext currentContext] CGContext];
-
-    CGContextStateSaver stateSaver(cgContext);
-
-    CGFocusRingStyle focusRingStyle;
-    bool needsRepaint = NSInitializeCGFocusRingStyleForTime(NSFocusRingOnly, &focusRingStyle, timeOffset);
-
-    // We want to respect the CGContext clipping and also not overpaint any
-    // existing focus ring. The way to do this is set accumulate to
-    // -1. According to CoreGraphics, the reasoning for this behavior has been
-    // lost in time.
-    focusRingStyle.accumulate = -1;
-
-    // FIXME: This color should be shared with RenderThemeMac. For now just use the same NSColor color.
-    // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
-    auto color = colorFromCocoaColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
-    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color).get()));
-    CGContextSetStyle(cgContext, style.get());
-
-    CGContextBeginTransparencyLayerWithRect(cgContext, NSRectToCGRect(cellFrame), nullptr);
-    [cell drawFocusRingMaskWithFrame:cellFrame inView:controlView];
-    CGContextEndTransparencyLayer(cgContext);
-
-    return needsRepaint;
-}
-
-static bool drawCellFocusRing(NSCell *cell, NSRect cellFrame, NSView *controlView)
-{
-    drawCellFocusRingWithFrameAtTime(cell, cellFrame, controlView, std::numeric_limits<double>::max());
-    return false;
-}
-
 // Buttons
 
 // Buttons really only constrain height. They respect width.
@@ -545,49 +511,6 @@ void ThemeMac::setUseFormSemanticContext(bool use)
 void ThemeMac::setFocusRingClipRect(const FloatRect& rect)
 {
     focusRingClipRect = rect;
-}
-
-const float buttonFocusRectOutlineWidth = 3.0f;
-
-static inline bool drawCellOrFocusRingIntoRectWithView(NSCell *cell, NSRect rect, NSView *view, bool drawButtonCell, bool drawFocusRing)
-{
-    if (drawButtonCell) {
-        if ([cell isKindOfClass:[NSSliderCell class]]) {
-            // For slider cells, draw only the knob.
-            [(NSSliderCell *)cell drawKnob:rect];
-        } else
-            [cell drawWithFrame:rect inView:view];
-    }
-    if (drawFocusRing)
-        return drawCellFocusRing(cell, rect, view);
-
-    return false;
-}
-
-bool ThemeMac::drawCellOrFocusRingWithViewIntoContext(NSCell *cell, GraphicsContext& context, const FloatRect& rect, NSView *view, bool drawButtonCell, bool drawFocusRing, float deviceScaleFactor)
-{
-    ASSERT(drawButtonCell || drawFocusRing);
-    bool needsRepaint = false;
-    auto platformContext = context.platformContext();
-    auto userCTM = AffineTransform(CGAffineTransformConcat(CGContextGetCTM(platformContext), CGAffineTransformInvert(CGContextGetBaseCTM(platformContext))));
-    bool useImageBuffer = userCTM.xScale() != 1.0 || userCTM.yScale() != 1.0;
-
-    if (useImageBuffer) {
-        NSRect imageBufferDrawRect = NSRect(FloatRect(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth, rect.width(), rect.height()));
-        auto imageBuffer = context.createImageBuffer(rect.size() + 2 * FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth), deviceScaleFactor);
-        if (!imageBuffer)
-            return needsRepaint;
-        {
-            LocalCurrentGraphicsContext localContext(imageBuffer->context());
-            needsRepaint = drawCellOrFocusRingIntoRectWithView(cell, imageBufferDrawRect, view, drawButtonCell, drawFocusRing);
-        }
-        context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect.location() - FloatSize(buttonFocusRectOutlineWidth, buttonFocusRectOutlineWidth));
-        return needsRepaint;
-    }
-    if (drawButtonCell)
-        needsRepaint = drawCellOrFocusRingIntoRectWithView(cell, NSRect(rect), view, drawButtonCell, drawFocusRing);
-    
-    return needsRepaint;
 }
 
 // Theme overrides

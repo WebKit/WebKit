@@ -73,8 +73,10 @@ private:
     }
 
 #if PLATFORM(COCOA)
-    Vector<MachSendRight> getRenderBuffers() override;
+    Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
 #endif
+
+    void prepareForDisplay() override;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

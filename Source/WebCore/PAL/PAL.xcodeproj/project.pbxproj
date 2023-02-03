@@ -42,14 +42,13 @@
 		1C36C52E2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C36C52C2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp */; };
 		1C469C7A27C46E1300DEB594 /* WebGPUShaderModuleCompilationHint.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEF45AA27BB101F00C3A6BC /* WebGPUShaderModuleCompilationHint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */; };
-		1C50DAD429836B4C005FA0A7 /* WebGPUPresentationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DAD329836B16005FA0A7 /* WebGPUPresentationContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1C50DAD82983700C005FA0A7 /* WebGPUPresentationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DAD72983700C005FA0A7 /* WebGPUPresentationConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1C50DADF29837158005FA0A7 /* WebGPUPresentationContextImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C50DADD29837158005FA0A7 /* WebGPUPresentationContextImpl.cpp */; };
-		1C50DAE029837158005FA0A7 /* WebGPUPresentationContextImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DADE29837158005FA0A7 /* WebGPUPresentationContextImpl.h */; };
-		1C50DAE4298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DAE3298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C4F5A18297CB48B005BBEE9 /* WebGPUCompositorIntegrationImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4F5A17297CB46D005BBEE9 /* WebGPUCompositorIntegrationImpl.cpp */; };
 		1C4F5A19297CB48E005BBEE9 /* WebGPUCompositorIntegrationImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4F5A16297CB46C005BBEE9 /* WebGPUCompositorIntegrationImpl.h */; };
 		1C4F5A1B297CB4CA005BBEE9 /* WebGPUCompositorIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4F5A1A297CB4BD005BBEE9 /* WebGPUCompositorIntegration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C50DAD429836B4C005FA0A7 /* WebGPUPresentationContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DAD329836B16005FA0A7 /* WebGPUPresentationContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1C50DADF29837158005FA0A7 /* WebGPUPresentationContextImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C50DADD29837158005FA0A7 /* WebGPUPresentationContextImpl.cpp */; };
+		1C50DAE029837158005FA0A7 /* WebGPUPresentationContextImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DADE29837158005FA0A7 /* WebGPUPresentationContextImpl.h */; };
+		1C50DAE4298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C50DAE3298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C5C57C927571531003B540D /* TextCodecICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BD27571524003B540D /* TextCodecICU.cpp */; };
 		1C5C57CA27571531003B540D /* TextCodecUserDefined.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57B72757151E003B540D /* TextCodecUserDefined.cpp */; };
 		1C5C57CB27571531003B540D /* TextCodecUTF16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57BE27571525003B540D /* TextCodecUTF16.cpp */; };
@@ -705,7 +704,6 @@
 		1C4F5A1A297CB4BD005BBEE9 /* WebGPUCompositorIntegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCompositorIntegration.h; sourceTree = "<group>"; };
 		1C4FAE9628FC83DC00FFE212 /* libavif.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libavif.xcodeproj; path = libavif/libavif.xcodeproj; sourceTree = "<group>"; };
 		1C50DAD329836B16005FA0A7 /* WebGPUPresentationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPresentationContext.h; sourceTree = "<group>"; };
-		1C50DAD72983700C005FA0A7 /* WebGPUPresentationConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPresentationConfiguration.h; sourceTree = "<group>"; };
 		1C50DADD29837158005FA0A7 /* WebGPUPresentationContextImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUPresentationContextImpl.cpp; sourceTree = "<group>"; };
 		1C50DADE29837158005FA0A7 /* WebGPUPresentationContextImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPresentationContextImpl.h; sourceTree = "<group>"; };
 		1C50DAE3298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUPresentationContextDescriptor.h; sourceTree = "<group>"; };
@@ -1529,7 +1527,6 @@
 				1CC5E44D27374947006F6FF4 /* WebGPUPipelineLayoutDescriptor.h */,
 				1CC5E47A27374949006F6FF4 /* WebGPUPowerPreference.h */,
 				1CC5E47D27374949006F6FF4 /* WebGPUPredefinedColorSpace.h */,
-				1C50DAD72983700C005FA0A7 /* WebGPUPresentationConfiguration.h */,
 				1C50DAD329836B16005FA0A7 /* WebGPUPresentationContext.h */,
 				1C50DAE3298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h */,
 				1CC5E46D27374948006F6FF4 /* WebGPUPrimitiveState.h */,
@@ -2036,7 +2033,6 @@
 				DD20DD3527BC90D60093D175 /* WebGPUPipelineLayoutImpl.h in Headers */,
 				DD20DD8827BC90D70093D175 /* WebGPUPowerPreference.h in Headers */,
 				DD20DD8927BC90D70093D175 /* WebGPUPredefinedColorSpace.h in Headers */,
-				1C50DAD82983700C005FA0A7 /* WebGPUPresentationConfiguration.h in Headers */,
 				1C50DAD429836B4C005FA0A7 /* WebGPUPresentationContext.h in Headers */,
 				1C50DAE4298387A5005FA0A7 /* WebGPUPresentationContextDescriptor.h in Headers */,
 				1C50DAE029837158005FA0A7 /* WebGPUPresentationContextImpl.h in Headers */,

@@ -26,14 +26,14 @@
 #include "config.h"
 #include "GPUPresentationContext.h"
 
-#include "GPUPresentationConfiguration.h"
+#include "GPUCanvasConfiguration.h"
 #include "GPUTexture.h"
 
 namespace WebCore {
 
-void GPUPresentationContext::configure(const GPUPresentationConfiguration& presentationConfiguration)
+void GPUPresentationContext::configure(const GPUCanvasConfiguration& canvasConfiguration)
 {
-    m_backing->configure(presentationConfiguration.convertToBacking());
+    m_backing->configure(canvasConfiguration.convertToBacking());
 }
 
 void GPUPresentationContext::unconfigure()

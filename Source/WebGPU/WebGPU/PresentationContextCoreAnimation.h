@@ -44,6 +44,7 @@ public:
     virtual ~PresentationContextCoreAnimation();
 
     void configure(Device&, const WGPUSwapChainDescriptor&) override;
+    void unconfigure() override;
 
     void present() override;
     Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.

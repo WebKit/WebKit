@@ -110,7 +110,6 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h
     graphics/WebGPU/WebGPUPowerPreference.h
     graphics/WebGPU/WebGPUPredefinedColorSpace.h
-    graphics/WebGPU/WebGPUPresentationConfiguration.h
     graphics/WebGPU/WebGPUPresentationContext.h
     graphics/WebGPU/WebGPUPresentationContextDescriptor.h
     graphics/WebGPU/WebGPUPrimitiveState.h

@@ -859,7 +859,6 @@ def headers_for_type(type):
         'WebKit::WebGPU::OutOfMemoryError': ['"WebGPUOutOfMemoryError.h"'],
         'WebKit::WebGPU::PipelineDescriptorBase': ['"WebGPUPipelineDescriptorBase.h"'],
         'WebKit::WebGPU::PipelineLayoutDescriptor': ['"WebGPUPipelineLayoutDescriptor.h"'],
-        'WebKit::WebGPU::PresentationConfiguration': ['"WebGPUPresentationConfiguration.h"'],
         'WebKit::WebGPU::PresentationContextDescriptor': ['"WebGPUPresentationContextDescriptor.h"'],
         'WebKit::WebGPU::PrimitiveState': ['"WebGPUPrimitiveState.h"'],
         'WebKit::WebGPU::ProgrammableStage': ['"WebGPUProgrammableStage.h"'],

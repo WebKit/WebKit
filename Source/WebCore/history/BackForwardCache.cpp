@@ -41,6 +41,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "HTTPParsers.h"
 #include "HistoryController.h"
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "Logging.h"
@@ -268,6 +269,19 @@ static bool canCachePage(Page& page)
     case FrameLoadType::IndexedBackForward: // a multi-item hop in the backforward list
         // Cacheable.
         break;
+    }
+
+    // If this is a same-origin navigation and the navigated-to main resource serves the
+    // `Clear-Site-Data: "cache"` HTTP header, then we shouldn't cache the current page.
+    if (auto* provisionalDocumentLoader = page.mainFrame().loader().provisionalDocumentLoader()) {
+        if (provisionalDocumentLoader->responseClearSiteDataValues().contains(ClearSiteDataValue::Cache)) {
+            if (auto* topDocument = page.mainFrame().document()) {
+                if (topDocument->securityOrigin().isSameOriginAs(SecurityOrigin::create(provisionalDocumentLoader->response().url()))) {
+                    PCLOG("   -`Clear-Site-Data: cache` HTTP header is present");
+                    isCacheable = false;
+                }
+            }
+        }
     }
     
     if (isCacheable)

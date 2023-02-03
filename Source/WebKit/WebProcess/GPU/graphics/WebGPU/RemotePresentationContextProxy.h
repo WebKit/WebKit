@@ -74,7 +74,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void configure(const PAL::WebGPU::PresentationConfiguration&) final;
+    void configure(const PAL::WebGPU::CanvasConfiguration&) final;
     void unconfigure() final;
 
     RefPtr<PAL::WebGPU::Texture> getCurrentTexture() final;

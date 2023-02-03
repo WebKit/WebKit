@@ -61,6 +61,7 @@ private:
     std::unique_ptr<PlatformControl> createPlatformProgressBar(ProgressBarPart&) final;
     std::unique_ptr<PlatformControl> createPlatformSearchField(SearchFieldPart&) final;
     std::unique_ptr<PlatformControl> createPlatformSearchFieldCancelButton(SearchFieldCancelButtonPart&) final;
+    std::unique_ptr<PlatformControl> createPlatformSearchFieldResults(SearchFieldResultsPart&) final;
     std::unique_ptr<PlatformControl> createPlatformSliderThumb(SliderThumbPart&) final;
     std::unique_ptr<PlatformControl> createPlatformSliderTrack(SliderTrackPart&) final;
     std::unique_ptr<PlatformControl> createPlatformTextArea(TextAreaPart&) final;
@@ -74,6 +75,7 @@ private:
     NSLevelIndicatorCell *levelIndicatorCell() const;
     NSPopUpButtonCell *popUpButtonCell() const;
     NSSearchFieldCell *searchFieldCell() const;
+    NSMenu *searchMenuTemplate() const;
     NSSliderCell *sliderCell() const;
     NSTextFieldCell *textFieldCell() const;
 
@@ -89,6 +91,7 @@ private:
     mutable RetainPtr<NSServicesRolloverButtonCell> m_servicesRolloverButtonCell;
 #endif
     mutable RetainPtr<NSSearchFieldCell> m_searchFieldCell;
+    mutable RetainPtr<NSMenu> m_searchMenuTemplate;
     mutable RetainPtr<NSSliderCell> m_sliderCell;
     mutable RetainPtr<NSTextFieldCell> m_textFieldCell;
 };

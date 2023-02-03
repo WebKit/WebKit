@@ -49,6 +49,12 @@ public:
 
     virtual ~PresentationContextImpl();
 
+    void setSize(uint32_t width, uint32_t height)
+    {
+        m_width = width;
+        m_height = height;
+    }
+
     IOSurfaceRef drawingBuffer() const;
 
     WGPUSurface backing() const { return m_backing; }
@@ -63,7 +69,7 @@ private:
     PresentationContextImpl& operator=(const PresentationContextImpl&) = delete;
     PresentationContextImpl& operator=(PresentationContextImpl&&) = delete;
 
-    void configure(const PresentationConfiguration&) final;
+    void configure(const CanvasConfiguration&) final;
     void unconfigure() final;
 
     RefPtr<Texture> getCurrentTexture() final;
@@ -75,6 +81,8 @@ private:
 #endif
 
     TextureFormat m_format { TextureFormat::Bgra8unorm };
+    uint32_t m_width { 0 };
+    uint32_t m_height { 0 };
 
     WGPUSurface m_backing { nullptr };
     WGPUSwapChain m_swapChain { nullptr };

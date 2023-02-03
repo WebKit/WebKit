@@ -1023,11 +1023,11 @@ CSSNestingEnabled:
   humanReadableDescription: "Enable support for CSS nesting https://www.w3.org/TR/css-nesting-1/"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 CSSOMViewScrollingAPIEnabled:
   type: bool

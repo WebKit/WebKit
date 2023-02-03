@@ -277,7 +277,7 @@ GDBusInterfaceVTable AccessibilityRootAtspi::s_componentFunctions = {
             auto rect = rootObject.frameRect(Atspi::CoordinateType::ParentCoordinates);
             g_dbus_method_invocation_return_value(invocation, g_variant_new("((ii))", rect.width(), rect.height()));
         } else if (!g_strcmp0(methodName, "GetLayer"))
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", Atspi::ComponentLayer::WidgetLayer));
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(u)", static_cast<uint32_t>(Atspi::ComponentLayer::WidgetLayer)));
         else if (!g_strcmp0(methodName, "GetMDIZOrder"))
             g_dbus_method_invocation_return_value(invocation, g_variant_new("(n)", 0));
         else if (!g_strcmp0(methodName, "GrabFocus"))

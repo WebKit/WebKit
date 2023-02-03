@@ -49,18 +49,12 @@ protected:
     virtual void commitBlock(void* block) = 0;
     virtual void decommitBlock(void* block) = 0;
 
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-protected:
-    // If breakdown is enabled, we do not ensure Iso-feature. This is totally OK since breakdown is memory bloat debugging feature.
-    WTF::DebugHeap m_debugHeap;
-#else
 private:
     Vector<void*> m_blocks;
     HashMap<void*, unsigned> m_blockIndices;
     BitVector m_committed;
     unsigned m_firstUncommitted { 0 };
     Lock m_lock;
-#endif
 };
 
 } // namespace JSC
