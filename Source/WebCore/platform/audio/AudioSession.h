@@ -112,7 +112,7 @@ public:
     virtual void handleMutedStateChange() { }
 
     virtual void beginInterruption();
-    enum class MayResume { No, Yes };
+    enum class MayResume : bool { No, Yes };
     virtual void endInterruption(MayResume);
 
     virtual void beginInterruptionForTesting() { beginInterruption(); }
@@ -158,11 +158,13 @@ protected:
     static bool s_shouldManageAudioSessionCategory;
 };
 
+enum class AudioSessionRoutingArbitrationError : uint8_t { None, Failed, Cancelled };
+
 class WEBCORE_EXPORT AudioSessionRoutingArbitrationClient : public CanMakeWeakPtr<AudioSessionRoutingArbitrationClient> {
 public:
     virtual ~AudioSessionRoutingArbitrationClient() = default;
+    using RoutingArbitrationError = AudioSessionRoutingArbitrationError;
 
-    enum class RoutingArbitrationError : uint8_t { None, Failed, Cancelled };
     enum class DefaultRouteChanged : bool { No, Yes };
 
     using ArbitrationCallback = CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>;
@@ -181,53 +183,6 @@ WEBCORE_EXPORT String convertEnumerationToString(AudioSessionRoutingArbitrationC
 } // namespace WebCore
 
 namespace WTF {
-template<> struct EnumTraits<WebCore::RouteSharingPolicy> {
-    using values = EnumValues<
-    WebCore::RouteSharingPolicy,
-    WebCore::RouteSharingPolicy::Default,
-    WebCore::RouteSharingPolicy::LongFormAudio,
-    WebCore::RouteSharingPolicy::Independent,
-    WebCore::RouteSharingPolicy::LongFormVideo
-    >;
-};
-
-template <> struct EnumTraits<WebCore::AudioSession::CategoryType> {
-    using values = EnumValues <
-    WebCore::AudioSession::CategoryType,
-    WebCore::AudioSession::CategoryType::None,
-    WebCore::AudioSession::CategoryType::AmbientSound,
-    WebCore::AudioSession::CategoryType::SoloAmbientSound,
-    WebCore::AudioSession::CategoryType::MediaPlayback,
-    WebCore::AudioSession::CategoryType::RecordAudio,
-    WebCore::AudioSession::CategoryType::PlayAndRecord,
-    WebCore::AudioSession::CategoryType::AudioProcessing
-    >;
-};
-
-template <> struct EnumTraits<WebCore::AudioSession::MayResume> {
-    using values = EnumValues <
-    WebCore::AudioSession::MayResume,
-    WebCore::AudioSession::MayResume::No,
-    WebCore::AudioSession::MayResume::Yes
-    >;
-};
-
-template <> struct EnumTraits<WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError> {
-    using values = EnumValues <
-    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError,
-    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError::None,
-    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Failed,
-    WebCore::AudioSessionRoutingArbitrationClient::RoutingArbitrationError::Cancelled
-    >;
-};
-
-template <> struct EnumTraits<WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged> {
-    using values = EnumValues <
-    WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged,
-    WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged::No,
-    WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged::Yes
-    >;
-};
 
 template<typename Type>
 struct LogArgument;

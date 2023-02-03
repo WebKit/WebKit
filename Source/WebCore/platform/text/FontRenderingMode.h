@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -37,15 +36,3 @@ enum class FontRenderingMode : uint8_t {
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::FontRenderingMode> {
-    using values = EnumValues<
-        WebCore::FontRenderingMode,
-        WebCore::FontRenderingMode::Normal,
-        WebCore::FontRenderingMode::Alternate
-    >;
-};
-
-} // namespace WTF

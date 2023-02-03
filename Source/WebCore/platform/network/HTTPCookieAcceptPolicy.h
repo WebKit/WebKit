@@ -34,18 +34,4 @@ enum class HTTPCookieAcceptPolicy : uint8_t {
     ExclusivelyFromMainDocumentDomain = 3,
 };
 
-} // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::HTTPCookieAcceptPolicy> {
-    using values = EnumValues<
-        WebCore::HTTPCookieAcceptPolicy,
-        WebCore::HTTPCookieAcceptPolicy::AlwaysAccept,
-        WebCore::HTTPCookieAcceptPolicy::Never,
-        WebCore::HTTPCookieAcceptPolicy::OnlyFromMainDocumentDomain,
-        WebCore::HTTPCookieAcceptPolicy::ExclusivelyFromMainDocumentDomain
-    >;
-};
-
 }

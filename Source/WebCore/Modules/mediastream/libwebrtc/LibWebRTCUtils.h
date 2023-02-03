@@ -56,7 +56,7 @@ struct RTCRtpParameters;
 struct RTCRtpSendParameters;
 struct RTCRtpTransceiverInit;
 
-enum class RTCPriorityType;
+enum class RTCPriorityType : uint8_t;
 enum class RTCRtpTransceiverDirection;
 
 RTCRtpParameters toRTCRtpParameters(const webrtc::RtpParameters&);

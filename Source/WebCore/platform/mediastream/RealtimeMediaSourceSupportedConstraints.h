@@ -157,28 +157,4 @@ bool RealtimeMediaSourceSupportedConstraints::decode(Decoder& decoder, RealtimeM
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MediaConstraintType> {
-    using values = EnumValues<
-        WebCore::MediaConstraintType,
-        WebCore::MediaConstraintType::Unknown,
-        WebCore::MediaConstraintType::Width,
-        WebCore::MediaConstraintType::Height,
-        WebCore::MediaConstraintType::AspectRatio,
-        WebCore::MediaConstraintType::FrameRate,
-        WebCore::MediaConstraintType::FacingMode,
-        WebCore::MediaConstraintType::Volume,
-        WebCore::MediaConstraintType::SampleRate,
-        WebCore::MediaConstraintType::SampleSize,
-        WebCore::MediaConstraintType::EchoCancellation,
-        WebCore::MediaConstraintType::DeviceId,
-        WebCore::MediaConstraintType::GroupId,
-        WebCore::MediaConstraintType::DisplaySurface,
-        WebCore::MediaConstraintType::LogicalSurface
-    >;
-};
-
-} // namespace WTF
-
 #endif // ENABLE(MEDIA_STREAM)

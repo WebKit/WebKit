@@ -30,6 +30,7 @@
 #include "FloatRect.h"
 #include "InlinePathData.h"
 #include "WindRule.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
@@ -60,8 +61,19 @@ using PlatformPathStorageType = PlatformPathPtr;
 #endif
 #endif
 
+namespace WebCore {
+enum class PathElementType : uint8_t {
+    MoveToPoint, // The points member will contain 1 value.
+    AddLineToPoint, // The points member will contain 1 value.
+    AddQuadCurveToPoint, // The points member will contain 2 values.
+    AddCurveToPoint, // The points member will contain 3 values.
+    CloseSubpath // The points member will contain no values.
+};
+}
+
 namespace WTF {
 class TextStream;
+template<> bool isValidEnum<WebCore::PathElementType, void>(uint8_t);
 }
 
 namespace WebCore {
@@ -78,19 +90,45 @@ class RoundedRect;
 // add... method. For example, a line returns the endpoint, while a cubic returns
 // two tangent points and the endpoint.
 struct PathElement {
-    enum class Type : uint8_t {
-        MoveToPoint, // The points member will contain 1 value.
-        AddLineToPoint, // The points member will contain 1 value.
-        AddQuadCurveToPoint, // The points member will contain 2 values.
-        AddCurveToPoint, // The points member will contain 3 values.
-        CloseSubpath // The points member will contain no values.
-    };
+    using Type = PathElementType;
 
     FloatPoint points[3];
     Type type;
 };
 
 using PathApplierFunction = Function<void(const PathElement&)>;
+
+class EncodedPathElementType {
+public:
+    EncodedPathElementType()
+        : m_type(std::nullopt)
+    {
+    }
+
+    EncodedPathElementType(PathElement::Type type)
+        : m_type(type)
+    {
+        ASSERT(isValidPathElementType());
+    }
+
+    EncodedPathElementType(std::optional<PathElement::Type>&& type)
+        : m_type(WTFMove(type))
+    {
+    }
+
+    bool isEndOfPath() const { return !m_type.has_value(); }
+    bool isValidPathElementType() const { return m_type.has_value(); }
+
+    PathElement::Type type() const
+    {
+        ASSERT(isValidPathElementType());
+        return *m_type;
+    }
+
+private:
+    friend struct IPC::ArgumentCoder<EncodedPathElementType, void>;
+    std::optional<PathElement::Type> m_type;
+};
 
 class Path {
     WTF_MAKE_FAST_ALLOCATED;
@@ -217,56 +255,6 @@ public:
 #endif
 
 private:
-    class EncodedPathElementType {
-    public:
-        EncodedPathElementType()
-            : m_type(endOfPath)
-        {
-        }
-
-        EncodedPathElementType(PathElement::Type type)
-            : m_type(enumToUnderlyingType(type))
-        {
-            ASSERT(isValidPathElementType());
-        }
-
-        bool isEndOfPath() const { return m_type == endOfPath; }
-        bool isValidPathElementType() const { return isValidEnum<PathElement::Type>(m_type); }
-        bool isValid() const { return isValidPathElementType() || isEndOfPath(); }
-
-        PathElement::Type type() const
-        {
-            ASSERT(isValidPathElementType());
-            return static_cast<PathElement::Type>(m_type);
-        }
-
-        template <typename Encoder>
-        void encode(Encoder& encoder)
-        {
-            encoder << m_type;
-        }
-
-        template <typename Decoder>
-        static std::optional<EncodedPathElementType> decode(Decoder& decoder)
-        {
-            EncodedPathElementType type;
-            if (!decoder.decode(type.m_type))
-                return std::nullopt;
-
-            if (!type.isValid())
-                return std::nullopt;
-
-            return type;
-        }
-
-    private:
-        using UnderlyingType = std::underlying_type_t<PathElement::Type>;
-
-        static inline constexpr auto endOfPath = std::numeric_limits<UnderlyingType>::max();
-
-        UnderlyingType m_type;
-    };
-
 #if ENABLE(INLINE_PATH_DATA)
     template<typename DataType> DataType& inlineData();
     std::optional<FloatRect> fastBoundingRectFromInlineData() const;
@@ -457,18 +445,3 @@ inline bool Path::hasInlineData() const
 #endif
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PathElement::Type> {
-    using values = EnumValues<
-        WebCore::PathElement::Type,
-        WebCore::PathElement::Type::MoveToPoint,
-        WebCore::PathElement::Type::AddLineToPoint,
-        WebCore::PathElement::Type::AddQuadCurveToPoint,
-        WebCore::PathElement::Type::AddCurveToPoint,
-        WebCore::PathElement::Type::CloseSubpath
-    >;
-};
-
-} // namespace WTF

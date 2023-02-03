@@ -424,28 +424,3 @@ RefPtr<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetrics
 }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PrivacyStance> {
-    using values = EnumValues<
-        WebCore::PrivacyStance,
-        WebCore::PrivacyStance::Unknown,
-        WebCore::PrivacyStance::NotEligible,
-        WebCore::PrivacyStance::Proxied,
-        WebCore::PrivacyStance::Failed,
-        WebCore::PrivacyStance::Direct
-    >;
-};
-
-template<> struct EnumTraits<WebCore::NetworkLoadPriority> {
-    using values = EnumValues<
-        WebCore::NetworkLoadPriority,
-        WebCore::NetworkLoadPriority::Low,
-        WebCore::NetworkLoadPriority::Medium,
-        WebCore::NetworkLoadPriority::High,
-        WebCore::NetworkLoadPriority::Unknown
-    >;
-};
-
-}
