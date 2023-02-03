@@ -85,7 +85,10 @@ else {
     shouldBe('accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIAColumnCount")', '4');
     shouldBe('accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIARowCount")', '8');
     shouldBeEqualToString('accessibilityController.accessibleElementById("row-header").role', 'AXRole: AXRow');
-    shouldBeEqualToString('accessibilityController.accessibleElementById("header-1").role', 'AXRole: AXCell');
+    if (accessibilityController.platformName == "atspi")
+        shouldBeEqualToString('accessibilityController.accessibleElementById("header-1").role', 'AXRole: AXColumnHeader');
+    else 
+        shouldBeEqualToString('accessibilityController.accessibleElementById("header-1").role', 'AXRole: AXCell');
     shouldBeEqualToString('accessibilityController.accessibleElementById("header-1").sortDirection', 'AXAscendingSortDirection');
 
     shouldBeEqualToString('accessibilityController.accessibleElementById("row-1").role', 'AXRole: AXRow');

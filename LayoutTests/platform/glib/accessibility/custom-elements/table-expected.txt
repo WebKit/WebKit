@@ -9,7 +9,7 @@ PASS accessibilityController.accessibleElementById("table-1").columnCount is 4
 PASS accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIAColumnCount") is 4
 PASS accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIARowCount") is 8
 PASS accessibilityController.accessibleElementById("row-header").role is "AXRole: AXRow"
-FAIL accessibilityController.accessibleElementById("header-1").role should be AXRole: AXCell. Was AXRole: AXColumnHeader.
+PASS accessibilityController.accessibleElementById("header-1").role is "AXRole: AXColumnHeader"
 PASS accessibilityController.accessibleElementById("header-1").sortDirection is "AXAscendingSortDirection"
 PASS accessibilityController.accessibleElementById("row-1").role is "AXRole: AXRow"
 PASS accessibilityController.accessibleElementById("cell1").role is "AXRole: AXCell"
@@ -39,7 +39,6 @@ PASS accessibilityController.accessibleElementById("cell6").numberAttributeValue
 PASS accessibilityController.accessibleElementById("cell6").rowIndexRange() is "{3, 1}"
 PASS accessibilityController.accessibleElementById("cell6").columnIndexRange() is "{0, 3}"
 PASS successfullyParsed is true
-Some tests failed.
 
 TEST COMPLETE
 
