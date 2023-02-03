@@ -54,11 +54,10 @@ void CSSMediaRule::setMediaQueries(MQ::MediaQueryList&& queries)
 
 String CSSMediaRule::cssText() const
 {
-    StringBuilder result;
-    result.append("@media ", conditionText(), " {\n");
-    appendCSSTextForItems(result);
-    result.append('}');
-    return result.toString();
+    StringBuilder builder;
+    builder.append("@media ", conditionText());
+    appendCSSTextForItems(builder);
+    return builder.toString();
 }
 
 String CSSMediaRule::conditionText() const
