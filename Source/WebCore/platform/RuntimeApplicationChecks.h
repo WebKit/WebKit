@@ -144,6 +144,7 @@ bool isMobileStore();
 bool isMoviStarPlus();
 bool isSpringBoard();
 bool isWechat();
+bool isUNIQLOApp();
 
 } // IOSApplication
 
