@@ -153,59 +153,13 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             || targetStyle.transform() != previousStyle.transform();
     }();
 
-    auto fontSizeChanged = previousLastStyleChangeEventStyle && previousLastStyleChangeEventStyle->computedFontSize() != targetStyle.computedFontSize();
-    auto propertyAffectingLogicalPropertiesChanged = previousLastStyleChangeEventStyle && (previousLastStyleChangeEventStyle->direction() != targetStyle.direction() || previousLastStyleChangeEventStyle->writingMode() != targetStyle.writingMode());
-
     auto unanimatedStyle = RenderStyle::clone(targetStyle);
 
     for (const auto& effect : sortedEffects()) {
+        auto keyframeRecomputationReason = effect->recomputeKeyframesIfNecessary(previousLastStyleChangeEventStyle, unanimatedStyle, resolutionContext);
+
         ASSERT(effect->animation());
         auto* animation = effect->animation();
-
-        auto inheritedPropertyChanged = [&]() {
-            // In the rare case where a non-inherted property was set to "inherit" on a keyframe,
-            // we consider that a property set to "inherit" changed without trying to work out whether
-            // the computed value changed.
-            if (effect->hasExplicitlyInheritedKeyframeProperty())
-                return true;
-
-            if (previousLastStyleChangeEventStyle) {
-                for (auto property : effect->inheritedProperties()) {
-                    ASSERT(effect->target());
-                    if (!CSSPropertyAnimation::propertiesEqual(property, *previousLastStyleChangeEventStyle, targetStyle, effect->target()->document()))
-                        return true;
-                }
-            }
-            return false;
-        };
-
-        auto cssVariableChanged = [&]() {
-            if (previousLastStyleChangeEventStyle && effect->containsCSSVariableReferences()) {
-                if (!previousLastStyleChangeEventStyle->customPropertiesEqual(targetStyle))
-                    return true;
-            }
-            return false;
-        };
-
-        auto currentColorPropertyChanged = [&]() {
-            // If the "color" property itself is set to "currentcolor" on a keyframe, we always recompute keyframes.
-            if (effect->hasColorSetToCurrentColor())
-                return true;
-            // For all other color-related properties set to "currentcolor" on a keyframe, it's sufficient to check
-            // whether the value "color" resolves to has changed since the last style resolution.
-            return effect->hasPropertySetToCurrentColor() && previousLastStyleChangeEventStyle
-                && previousLastStyleChangeEventStyle->color() != targetStyle.color();
-        };
-
-        auto fontWeightChanged = [&]() {
-            return effect->hasRelativeFontWeight() && previousLastStyleChangeEventStyle
-                && previousLastStyleChangeEventStyle->fontWeight() != targetStyle.fontWeight();
-        };
-
-        auto logicalPropertyDidChange = propertyAffectingLogicalPropertiesChanged && effect->animatesDirectionAwareProperty();
-        if (logicalPropertyDidChange || fontSizeChanged || inheritedPropertyChanged() || cssVariableChanged() || currentColorPropertyChanged() || fontWeightChanged())
-            effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
-
         animation->resolve(targetStyle, resolutionContext);
 
         if (effect->isRunningAccelerated() || effect->isAboutToRunAccelerated())
@@ -218,7 +172,7 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
             effect->transformRelatedPropertyDidChange();
 
         // If one of the effect's resolved property changed it could affect whether that effect's animation is removed.
-        if (logicalPropertyDidChange) {
+        if (keyframeRecomputationReason && *keyframeRecomputationReason == KeyframeEffect::RecomputationReason::LogicalPropertyChange) {
             ASSERT(animation->timeline());
             animation->timeline()->animationTimingDidChange(*animation);
         }

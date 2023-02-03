@@ -94,17 +94,6 @@ String StyleRuleKeyframe::cssText() const
     return makeString(keyText(), " { }");
 }
 
-bool StyleRuleKeyframe::containsCSSVariableReferences() const
-{
-    for (auto property : m_properties.get()) {
-        if (auto* cssValue = property.value()) {
-            if (cssValue->hasVariableReferences())
-                return true;
-        }
-    }
-    return false;
-}
-
 CSSKeyframeRule::CSSKeyframeRule(StyleRuleKeyframe& keyframe, CSSKeyframesRule* parent)
     : CSSRule(nullptr)
     , m_keyframe(keyframe)

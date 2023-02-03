@@ -28,9 +28,7 @@
 
 #include "Animation.h"
 #include "CSSAnimation.h"
-#include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
-#include "CSSPrimitiveValue.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
@@ -883,11 +881,6 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
     KeyframeList keyframeList(m_keyframesName);
     auto& styleResolver = m_target->styleResolver();
 
-    m_inheritedProperties.clear();
-    m_currentColorProperties.clear();
-    m_containsCSSVariableReferences = false;
-    m_hasRelativeFontWeight = false;
-
     for (auto& keyframe : m_parsedKeyframes) {
         KeyframeValue keyframeValue(keyframe.computedOffset, nullptr);
         keyframeValue.setTimingFunction(keyframe.timingFunction->clone());
@@ -907,30 +900,9 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
         }
 
         auto keyframeRule = StyleRuleKeyframe::create(keyframe.style->immutableCopyIfNeeded());
-        if (!m_containsCSSVariableReferences)
-            m_containsCSSVariableReferences = keyframeRule->containsCSSVariableReferences();
-
-        for (auto property : keyframeRule->properties()) {
-            if (auto* cssValue = property.value()) {
-                if (cssValue->isPrimitiveValue()) {
-                    auto valueId = downcast<CSSPrimitiveValue>(*cssValue).valueID();
-                    if (valueId == CSSValueInherit)
-                        m_inheritedProperties.add(property.id());
-                    else if (valueId == CSSValueCurrentcolor)
-                        m_currentColorProperties.add(property.id());
-                    else if (property.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
-                        m_hasRelativeFontWeight = true;
-                } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
-                    if (customPropertyValue->isCurrentColor())
-                        m_currentColorProperties.add(customPropertyValue->name());
-                    else if (customPropertyValue->isInherit())
-                        m_inheritedProperties.add(customPropertyValue->name());
-                }
-            }
-        }
-
         keyframeValue.setStyle(styleResolver.styleForKeyframe(*m_target, elementStyle, resolutionContext, keyframeRule.get(), keyframeValue));
         keyframeList.insert(WTFMove(keyframeValue));
+        keyframeList.updatePropertiesMetadata(keyframeRule->properties());
     }
 
     setBlendingKeyframes(WTFMove(keyframeList));
@@ -976,21 +948,6 @@ bool KeyframeEffect::animatesProperty(AnimatableProperty property) const
             }
         );
     }) != notFound;
-}
-
-bool KeyframeEffect::animatesDirectionAwareProperty() const
-{
-    if (!m_blendingKeyframes.isEmpty())
-        return m_blendingKeyframes.containsDirectionAwareProperty();
-
-    for (auto& keyframe : m_parsedKeyframes) {
-        for (auto property : keyframe.styleStrings.keys()) {
-            if (CSSProperty::isDirectionAwareProperty(property))
-                return true;
-        }
-    }
-
-    return false;
 }
 
 bool KeyframeEffect::forceLayoutIfNeeded()
@@ -1070,7 +1027,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
 
     KeyframeList keyframeList(AtomString { backingAnimation.name().string });
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList, m_containsCSSVariableReferences, m_hasRelativeFontWeight, m_inheritedProperties, m_currentColorProperties);
+        styleScope->resolver().keyframeStylesForAnimation(*m_target, unanimatedStyle, resolutionContext, keyframeList);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : keyframeList) {
@@ -1783,18 +1740,93 @@ void KeyframeEffect::transformRelatedPropertyDidChange()
     addPendingAcceleratedAction(AcceleratedAction::TransformChange);
 }
 
-void KeyframeEffect::propertyAffectingKeyframeResolutionDidChange(RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
+std::optional<KeyframeEffect::RecomputationReason> KeyframeEffect::recomputeKeyframesIfNecessary(const RenderStyle* previousUnanimatedStyle, const RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
 {
-    switch (m_blendingKeyframesSource) {
-    case BlendingKeyframesSource::CSSTransition:
-        return;
-    case BlendingKeyframesSource::CSSAnimation:
-        computeCSSAnimationBlendingKeyframes(unanimatedStyle, resolutionContext);
-        return;
-    case BlendingKeyframesSource::WebAnimation:
-        clearBlendingKeyframes();
-        return;
+    if (m_blendingKeyframesSource == BlendingKeyframesSource::CSSTransition)
+        return { };
+
+    auto fontSizeChanged = [&]() {
+        return previousUnanimatedStyle && previousUnanimatedStyle->computedFontSize() != unanimatedStyle.computedFontSize();
+    };
+
+    auto fontWeightChanged = [&]() {
+        return m_blendingKeyframes.usesRelativeFontWeight() && previousUnanimatedStyle
+        && previousUnanimatedStyle->fontWeight() != unanimatedStyle.fontWeight();
+    };
+
+    auto cssVariableChanged = [&]() {
+        if (previousUnanimatedStyle && m_blendingKeyframes.hasCSSVariableReferences()) {
+            if (!previousUnanimatedStyle->customPropertiesEqual(unanimatedStyle))
+                return true;
+        }
+        return false;
+    };
+
+    auto propertySetToInheritChanged = [&]() {
+        // In the rare case where a non-inherted property was set to "inherit" on a keyframe,
+        // we consider that a property set to "inherit" changed without trying to work out whether
+        // the computed value changed.
+        if (m_hasExplicitlyInheritedKeyframeProperty)
+            return true;
+
+        if (previousUnanimatedStyle) {
+            for (auto property : m_blendingKeyframes.propertiesSetToInherit()) {
+                ASSERT(m_target);
+                if (!CSSPropertyAnimation::propertiesEqual(property, *previousUnanimatedStyle, unanimatedStyle, m_target->document()))
+                    return true;
+            }
+        }
+        return false;
+    };
+
+    auto propertySetToCurrentColorChanged = [&]() {
+        // If the "color" property itself is set to "currentcolor" on a keyframe, we always recompute keyframes.
+        if (m_blendingKeyframes.hasColorSetToCurrentColor())
+            return true;
+        // For all other color-related properties set to "currentcolor" on a keyframe, it's sufficient to check
+        // whether the value "color" resolves to has changed since the last style resolution.
+        return m_blendingKeyframes.hasPropertySetToCurrentColor() && previousUnanimatedStyle
+        && previousUnanimatedStyle->color() != unanimatedStyle.color();
+    };
+
+    auto logicalPropertyChanged = [&]() {
+        if (!previousUnanimatedStyle)
+            return false;
+
+        if (previousUnanimatedStyle->direction() == unanimatedStyle.direction()
+            && previousUnanimatedStyle->writingMode() == unanimatedStyle.writingMode())
+            return false;
+
+        if (!m_blendingKeyframes.isEmpty())
+            return m_blendingKeyframes.containsDirectionAwareProperty();
+
+        for (auto& keyframe : m_parsedKeyframes) {
+            for (auto property : keyframe.styleStrings.keys()) {
+                if (CSSProperty::isDirectionAwareProperty(property))
+                    return true;
+            }
+        }
+
+        return false;
+    }();
+
+    if (logicalPropertyChanged || fontSizeChanged() || fontWeightChanged() || cssVariableChanged() || propertySetToInheritChanged() || propertySetToCurrentColorChanged()) {
+        switch (m_blendingKeyframesSource) {
+        case BlendingKeyframesSource::CSSTransition:
+            ASSERT_NOT_REACHED();
+            break;
+        case BlendingKeyframesSource::CSSAnimation:
+            computeCSSAnimationBlendingKeyframes(unanimatedStyle, resolutionContext);
+            break;
+        case BlendingKeyframesSource::WebAnimation:
+            clearBlendingKeyframes();
+            break;
+        }
+
+        return logicalPropertyChanged ? KeyframeEffect::RecomputationReason::LogicalPropertyChange : KeyframeEffect::RecomputationReason::Other;
     }
+
+    return { };
 }
 
 void KeyframeEffect::animationWasCanceled()
@@ -2402,16 +2434,6 @@ void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previ
 
     if (hasMotionPath(previousStyle) != hasMotionPath(currentStyle))
         abilityToBeAcceleratedDidChange();
-}
-
-bool KeyframeEffect::hasPropertySetToCurrentColor() const
-{
-    return !m_currentColorProperties.isEmpty();
-}
-
-bool KeyframeEffect::hasColorSetToCurrentColor() const
-{
-    return m_currentColorProperties.contains(CSSPropertyColor);
 }
 
 } // namespace WebCore

@@ -95,7 +95,7 @@ public:
 
     ResolvedStyle styleForElement(const Element&, const ResolutionContext&, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules);
 
-    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&, bool& containsCSSVariableReferences, bool& hasRelativeFontWeight, HashSet<AnimatableProperty>& inheritedProperties, HashSet<AnimatableProperty>& currentColorProperties);
+    void keyframeStylesForAnimation(const Element&, const RenderStyle& elementStyle, const ResolutionContext&, KeyframeList&);
 
     WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(const Element&, const PseudoElementRequest&, const ResolutionContext&);
 
