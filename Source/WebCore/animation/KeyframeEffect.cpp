@@ -923,6 +923,8 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
                 } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
                     if (customPropertyValue->isCurrentColor())
                         m_currentColorProperties.add(customPropertyValue->name());
+                    else if (customPropertyValue->isInherit())
+                        m_inheritedProperties.add(customPropertyValue->name());
                 }
             }
         }

@@ -150,7 +150,7 @@ public:
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<AnimatableProperty>& animatedProperties();
-    const HashSet<CSSPropertyID>& inheritedProperties() const { return m_inheritedProperties; }
+    const HashSet<AnimatableProperty>& inheritedProperties() const { return m_inheritedProperties; }
     bool animatesProperty(AnimatableProperty) const;
     bool animatesDirectionAwareProperty() const;
 
@@ -245,7 +245,7 @@ private:
     AtomString m_keyframesName;
     KeyframeList m_blendingKeyframes { emptyAtom() };
     HashSet<AnimatableProperty> m_animatedProperties;
-    HashSet<CSSPropertyID> m_inheritedProperties;
+    HashSet<AnimatableProperty> m_inheritedProperties;
     HashSet<AnimatableProperty> m_currentColorProperties;
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
