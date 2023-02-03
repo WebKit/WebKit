@@ -2061,7 +2061,8 @@
    },
    {
       "emails" : [
-         "dawn_flores@apple.com, matteo_flores@apple.com"
+         "dawn_flores@apple.com",
+         "matteo_flores@apple.com"
       ],
       "github" : "Smackteo",
       "name" : "Dawn Flores",
