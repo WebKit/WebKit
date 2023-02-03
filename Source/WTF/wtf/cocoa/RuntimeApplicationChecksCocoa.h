@@ -76,6 +76,7 @@ enum class SDKAlignedBehavior {
     NoTypedArrayAPIQuirk,
     NoUnconditionalUniversalSandboxExtension,
     NoWeChatScrollingQuirk,
+    NoUNIQLOLazyIframeLoadingQuirk,
     NullOriginForNonSpecialSchemedURLs,
     ObservesClassProperty,
     PictureInPictureMediaPlayback,
