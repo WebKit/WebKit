@@ -76,7 +76,7 @@ using LayerHostingContextID = uint32_t;
 class ProvisionalPageProxy : public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*);
+    ProvisionalPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, std::unique_ptr<SuspendedPageProxy>, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest&, ProcessSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies*, WebCore::SecurityOriginData&& sod);
     ~ProvisionalPageProxy();
 
     WebPageProxy& page() const { return m_page; }
@@ -162,7 +162,7 @@ private:
     void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID);
 #endif
 
-    void initializeWebPage(RefPtr<API::WebsitePolicies>&&);
+    void initializeWebPage(RefPtr<API::WebsitePolicies>&&, WebCore::SecurityOriginData&&);
     bool validateInput(WebCore::FrameIdentifier, const std::optional<uint64_t>& navigationID = std::nullopt);
 
     WebPageProxy& m_page;

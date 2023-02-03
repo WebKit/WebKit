@@ -64,7 +64,10 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     auto parameters = page.creationParameters(m_process, *drawingArea);
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.mainFrameIdentifier = frame.frameID();
-    parameters.topDocumentSecurityOriginData = WTFMove(topDocumentSecurityOriginData);
+    if (topDocumentSecurityOriginData.isNull() || topDocumentSecurityOriginData.isOpaque())
+        parameters.topDocumentSecurityOriginData = std::nullopt;
+    else
+        parameters.topDocumentSecurityOriginData = WTFMove(topDocumentSecurityOriginData);
     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
 

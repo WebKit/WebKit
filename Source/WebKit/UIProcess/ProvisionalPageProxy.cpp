@@ -59,7 +59,7 @@ using namespace WebCore;
 #define PROVISIONALPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, navigationID=%" PRIu64 "] ProvisionalPageProxy::" fmt, this, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), m_navigationID, ##__VA_ARGS__)
 #define PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", PID=%i, navigationID=%" PRIu64 "] ProvisionalPageProxy::" fmt, this, m_page.identifier().toUInt64(), m_webPageID.toUInt64(), m_process->processIdentifier(), m_navigationID, ##__VA_ARGS__)
 
-ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy> suspendedPage, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest& request, ProcessSwapRequestedByClient processSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies* websitePolicies)
+ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, std::unique_ptr<SuspendedPageProxy> suspendedPage, uint64_t navigationID, bool isServerRedirect, const WebCore::ResourceRequest& request, ProcessSwapRequestedByClient processSwapRequestedByClient, bool isProcessSwappingOnNavigationResponse, API::WebsitePolicies* websitePolicies, WebCore::SecurityOriginData&& sod)
     : m_page(page)
     , m_webPageID(suspendedPage ? suspendedPage->webPageID() : PageIdentifier::generate())
     , m_process(WTFMove(process))
@@ -99,7 +99,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
         m_mainFrame = &suspendedPage->mainFrame();
     }
 
-    initializeWebPage(websitePolicies);
+    initializeWebPage(websitePolicies, WTFMove(sod));
 
     m_page.inspectorController().didCreateProvisionalPage(*this);
 }
@@ -161,12 +161,17 @@ void ProvisionalPageProxy::cancel()
     didFailProvisionalLoadForFrame(m_mainFrame->frameID(), WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL.string(), error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
 }
 
-void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)
+void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies, WebCore::SecurityOriginData&& sod)
 {
     m_drawingArea = m_page.pageClient().createDrawingAreaProxy(m_process);
 
     auto parameters = m_page.creationParameters(m_process, *m_drawingArea, WTFMove(websitePolicies));
     parameters.isProcessSwap = true;
+
+    if (sod.isNull() || sod.isOpaque())
+        parameters.topDocumentSecurityOriginData = std::nullopt;
+    else
+        parameters.topDocumentSecurityOriginData = WTFMove(sod);
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
 
