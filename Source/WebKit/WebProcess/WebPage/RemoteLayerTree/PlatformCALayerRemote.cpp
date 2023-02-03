@@ -229,6 +229,17 @@ void PlatformCALayerRemote::ensureBackingStore()
     updateBackingStore();
 }
 
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+RemoteLayerBackingStore::IncludeDisplayList PlatformCALayerRemote::shouldIncludeDisplayListInBackingStore() const
+{
+    if (!m_context->useCGDisplayListsForDOMRendering())
+        return RemoteLayerBackingStore::IncludeDisplayList::No;
+    if (owner() && owner()->platformCALayerContainsBitmapOnly(this))
+        return RemoteLayerBackingStore::IncludeDisplayList::No;
+    return RemoteLayerBackingStore::IncludeDisplayList::Yes;
+}
+#endif
+
 void PlatformCALayerRemote::updateBackingStore()
 {
     if (!m_properties.backingStore)
@@ -252,8 +263,7 @@ void PlatformCALayerRemote::updateBackingStore()
     parameters.isOpaque = m_properties.opaque;
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    if (m_context->useCGDisplayListsForDOMRendering())
-        parameters.includeDisplayList = RemoteLayerBackingStore::IncludeDisplayList::Yes;
+    parameters.includeDisplayList = shouldIncludeDisplayListInBackingStore();
     if (m_context->useCGDisplayListImageCache())
         parameters.useCGDisplayListImageCache = UseCGDisplayListImageCache::Yes;
 #endif

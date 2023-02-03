@@ -234,6 +234,10 @@ private:
     void updateBackingStore();
     void removeSublayer(PlatformCALayerRemote*);
 
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+    RemoteLayerBackingStore::IncludeDisplayList shouldIncludeDisplayListInBackingStore() const;
+#endif
+
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
     WebCore::LayerPool& layerPool() override;
