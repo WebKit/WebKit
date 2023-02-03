@@ -1,5 +1,5 @@
 
-FAIL Focus controller should treat each slot as a focus scope. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Focus controller should treat each slot as a focus scope. assert_equals: Focus should move forward from nested1/inner-before to nested1/button expected Element node <button id="button"><slot></slot></button> but got Element node <input id="innermost-before"></input>
 
 
 button

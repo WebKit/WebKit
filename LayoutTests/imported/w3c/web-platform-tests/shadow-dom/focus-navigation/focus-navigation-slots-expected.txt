@@ -1,5 +1,5 @@
 
-FAIL Focus should cover assigned elements of an assigned slot, as well as elements that are directly assigned to a slot. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+PASS Focus should cover assigned elements of an assigned slot, as well as elements that are directly assigned to a slot.
 document tree: [i0 -> [x-foo]]
 x-foo's shadow tree: [j1 -> [s1] -> [s2] -> j2 ->[x-bar]]
 x-bar's shadow tree: [k1 -> [s3]]
