@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,40 +42,40 @@ namespace WebCore {
 
 #if CACHE_SUBIMAGES
 
-class SubimageCacheWithTimer {
-    WTF_MAKE_NONCOPYABLE(SubimageCacheWithTimer); WTF_MAKE_FAST_ALLOCATED;
+class CGSubimageCacheWithTimer {
+    WTF_MAKE_NONCOPYABLE(CGSubimageCacheWithTimer); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    struct SubimageCacheEntry {
+    struct CacheEntry {
         RetainPtr<CGImageRef> image;
         RetainPtr<CGImageRef> subimage;
         FloatRect rect;
         MonotonicTime lastAccessTime;
     };
 
-    struct SubimageCacheEntryTraits : HashTraits<SubimageCacheEntry> {
+    struct CacheEntryTraits : HashTraits<CacheEntry> {
         typedef HashTraits<RetainPtr<CGImageRef>> ImageTraits;
 
         static const bool emptyValueIsZero = true;
 
         static const bool hasIsEmptyValueFunction = true;
-        static bool isEmptyValue(const SubimageCacheEntry& value) { return !value.image; }
+        static bool isEmptyValue(const CacheEntry& value) { return !value.image; }
 
-        static void constructDeletedValue(SubimageCacheEntry& slot) { ImageTraits::constructDeletedValue(slot.image); }
-        static bool isDeletedValue(const SubimageCacheEntry& value) { return ImageTraits::isDeletedValue(value.image); }
+        static void constructDeletedValue(CacheEntry& slot) { ImageTraits::constructDeletedValue(slot.image); }
+        static bool isDeletedValue(const CacheEntry& value) { return ImageTraits::isDeletedValue(value.image); }
     };
 
-    struct SubimageCacheHash {
+    struct CacheHash {
         static unsigned hash(CGImageRef image, const FloatRect& rect)
         {
             return pairIntHash(PtrHash<CGImageRef>::hash(image),
                 (static_cast<unsigned>(rect.x()) << 16) | static_cast<unsigned>(rect.y()));
         }
-        static unsigned hash(const SubimageCacheEntry& key)
+        static unsigned hash(const CacheEntry& key)
         {
             return hash(key.image.get(), key.rect);
         }
-        static bool equal(const SubimageCacheEntry& a, const SubimageCacheEntry& b)
+        static bool equal(const CacheEntry& a, const CacheEntry& b)
         {
             return a.image == b.image && a.rect == b.rect;
         }
@@ -87,9 +87,13 @@ public:
     static void clear();
 
 private:
-    typedef HashSet<SubimageCacheEntry, SubimageCacheHash, SubimageCacheEntryTraits> SubimageCacheHashSet;
+    static constexpr Seconds cachePruneDelay { 500_ms };
+    static constexpr Seconds cacheEntryLifetime { 500_ms };
+    static constexpr int maxCacheSize = 300;
 
-    SubimageCacheWithTimer();
+    typedef HashSet<CacheEntry, CacheHash, CacheEntryTraits> CacheHashSet;
+
+    CGSubimageCacheWithTimer();
     void pruneCacheTimerFired();
 
     RetainPtr<CGImageRef> subimage(CGImageRef, const FloatRect&);
@@ -99,12 +103,12 @@ private:
 
     Lock m_lock;
     HashCountedSet<CGImageRef> m_imageCounts WTF_GUARDED_BY_LOCK(m_lock);
-    SubimageCacheHashSet m_cache WTF_GUARDED_BY_LOCK(m_lock);
+    CacheHashSet m_cache WTF_GUARDED_BY_LOCK(m_lock);
     RunLoop::Timer m_timer WTF_GUARDED_BY_LOCK(m_lock);
 
-    static SubimageCacheWithTimer& subimageCache();
+    static CGSubimageCacheWithTimer& subimageCache();
     static bool subimageCacheExists();
-    static SubimageCacheWithTimer* s_cache;
+    static CGSubimageCacheWithTimer* s_cache;
 };
 
 #endif // CACHE_SUBIMAGES

@@ -30,6 +30,7 @@
 #if USE(CG)
 
 #include "AffineTransform.h"
+#include "CGSubimageCacheWithTimer.h"
 #include "DisplayListRecorder.h"
 #include "FloatConversion.h"
 #include "Gradient.h"
@@ -40,7 +41,6 @@
 #include "Path.h"
 #include "Pattern.h"
 #include "ShadowBlur.h"
-#include "SubimageCacheWithTimer.h"
 #include "Timer.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/MathExtras.h>
@@ -270,7 +270,7 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
         }
 
 #if CACHE_SUBIMAGES
-        return SubimageCacheWithTimer::getSubimage(image, physicalSubimageRect);
+        return CGSubimageCacheWithTimer::getSubimage(image, physicalSubimageRect);
 #else
         return adoptCF(CGImageCreateWithImageInRect(image, physicalSubimageRect));
 #endif

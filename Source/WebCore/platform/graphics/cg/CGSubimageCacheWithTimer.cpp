@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,57 +24,52 @@
  */
 
 #include "config.h"
-#include "SubimageCacheWithTimer.h"
+#include "CGSubimageCacheWithTimer.h"
 
 #if USE(CG)
 
-#include <wtf/Vector.h>
-
 #if CACHE_SUBIMAGES
+
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-SubimageCacheWithTimer* SubimageCacheWithTimer::s_cache;
+CGSubimageCacheWithTimer* CGSubimageCacheWithTimer::s_cache;
 
-static const Seconds subimageCachePruneDelay { 500_ms };
-static const Seconds subimageCacheEntryLifetime { 500_ms };
-static const int maxSubimageCacheSize = 300;
-
-RetainPtr<CGImageRef> SubimageCacheWithTimer::getSubimage(CGImageRef image, const FloatRect& rect)
+RetainPtr<CGImageRef> CGSubimageCacheWithTimer::getSubimage(CGImageRef image, const FloatRect& rect)
 {
     return subimageCache().subimage(image, rect);
 }
 
-void SubimageCacheWithTimer::clearImage(CGImageRef image)
+void CGSubimageCacheWithTimer::clearImage(CGImageRef image)
 {
     if (subimageCacheExists())
         subimageCache().clearImageAndSubimages(image);
 }
 
-void SubimageCacheWithTimer::clear()
+void CGSubimageCacheWithTimer::clear()
 {
     if (subimageCacheExists())
         subimageCache().clearAll();
 }
 
-struct SubimageRequest {
+struct CGSubimageRequest {
     CGImageRef image;
     const FloatRect& rect;
-    SubimageRequest(CGImageRef image, const FloatRect& rect) : image(image), rect(rect) { }
 };
 
-struct SubimageCacheAdder {
-    static unsigned hash(const SubimageRequest& value)
+struct CGSubimageCacheAdder {
+    static unsigned hash(const CGSubimageRequest& value)
     {
-        return SubimageCacheWithTimer::SubimageCacheHash::hash(value.image, value.rect);
+        return CGSubimageCacheWithTimer::CacheHash::hash(value.image, value.rect);
     }
 
-    static bool equal(const SubimageCacheWithTimer::SubimageCacheEntry& a, const SubimageRequest& b)
+    static bool equal(const CGSubimageCacheWithTimer::CacheEntry& a, const CGSubimageRequest& b)
     {
         return a.image == b.image && a.rect == b.rect;
     }
 
-    static void translate(SubimageCacheWithTimer::SubimageCacheEntry& entry, const SubimageRequest& request, unsigned /*hashCode*/)
+    static void translate(CGSubimageCacheWithTimer::CacheEntry& entry, const CGSubimageRequest& request, unsigned /*hashCode*/)
     {
         entry.image = request.image;
         entry.subimage = adoptCF(CGImageCreateWithImageInRect(request.image, request.rect));
@@ -82,12 +77,12 @@ struct SubimageCacheAdder {
     }
 };
 
-SubimageCacheWithTimer::SubimageCacheWithTimer()
-    : m_timer(RunLoop::main(), this, &SubimageCacheWithTimer::pruneCacheTimerFired)
+CGSubimageCacheWithTimer::CGSubimageCacheWithTimer()
+    : m_timer(RunLoop::main(), this, &CGSubimageCacheWithTimer::pruneCacheTimerFired)
 {
 }
 
-void SubimageCacheWithTimer::pruneCacheTimerFired()
+void CGSubimageCacheWithTimer::pruneCacheTimerFired()
 {
     Locker locker { m_lock };
     prune();
@@ -97,14 +92,14 @@ void SubimageCacheWithTimer::pruneCacheTimerFired()
     }
 }
 
-void SubimageCacheWithTimer::prune()
+void CGSubimageCacheWithTimer::prune()
 {
     auto now = MonotonicTime::now();
 
-    Vector<SubimageCacheEntry> toBeRemoved;
+    Vector<CacheEntry> toBeRemoved;
 
     for (const auto& entry : m_cache) {
-        if ((now - entry.lastAccessTime) > subimageCacheEntryLifetime)
+        if ((now - entry.lastAccessTime) > CGSubimageCacheWithTimer::cacheEntryLifetime)
             toBeRemoved.append(entry);
     }
 
@@ -114,20 +109,20 @@ void SubimageCacheWithTimer::prune()
     }
 }
 
-RetainPtr<CGImageRef> SubimageCacheWithTimer::subimage(CGImageRef image, const FloatRect& rect)
+RetainPtr<CGImageRef> CGSubimageCacheWithTimer::subimage(CGImageRef image, const FloatRect& rect)
 {
     Locker locker { m_lock };
     if (!m_timer.isActive())
-        m_timer.startRepeating(subimageCachePruneDelay);
+        m_timer.startRepeating(CGSubimageCacheWithTimer::cachePruneDelay);
 
-    if (m_cache.size() == maxSubimageCacheSize) {
-        SubimageCacheEntry entry = *m_cache.begin();
+    if (m_cache.size() == CGSubimageCacheWithTimer::maxCacheSize) {
+        CacheEntry entry = *m_cache.begin();
         m_imageCounts.remove(entry.image.get());
         m_cache.remove(entry);
     }
 
-    ASSERT(m_cache.size() < maxSubimageCacheSize);
-    auto result = m_cache.add<SubimageCacheAdder>(SubimageRequest(image, rect));
+    ASSERT(m_cache.size() < CGSubimageCacheWithTimer::maxCacheSize);
+    auto result = m_cache.add<CGSubimageCacheAdder>(CGSubimageRequest { image, rect });
     if (result.isNewEntry)
         m_imageCounts.add(image);
 
@@ -135,11 +130,11 @@ RetainPtr<CGImageRef> SubimageCacheWithTimer::subimage(CGImageRef image, const F
     return result.iterator->subimage;
 }
 
-void SubimageCacheWithTimer::clearImageAndSubimages(CGImageRef image)
+void CGSubimageCacheWithTimer::clearImageAndSubimages(CGImageRef image)
 {
     Locker locker { m_lock };
     if (m_imageCounts.contains(image)) {
-        Vector<SubimageCacheEntry> toBeRemoved;
+        Vector<CacheEntry> toBeRemoved;
         for (const auto& entry : m_cache) {
             if (entry.image.get() == image)
                 toBeRemoved.append(entry);
@@ -152,29 +147,29 @@ void SubimageCacheWithTimer::clearImageAndSubimages(CGImageRef image)
     }
 }
 
-void SubimageCacheWithTimer::clearAll()
+void CGSubimageCacheWithTimer::clearAll()
 {
     Locker locker { m_lock };
     m_imageCounts.clear();
     m_cache.clear();
 }
 
-SubimageCacheWithTimer& SubimageCacheWithTimer::subimageCache()
+CGSubimageCacheWithTimer& CGSubimageCacheWithTimer::subimageCache()
 {
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
-        s_cache = new SubimageCacheWithTimer;
+        s_cache = new CGSubimageCacheWithTimer;
     });
     return *s_cache;
 }
 
-bool SubimageCacheWithTimer::subimageCacheExists()
+bool CGSubimageCacheWithTimer::subimageCacheExists()
 {
     return !!s_cache;
 }
 
-}
+} // namespace WebCore
 
-#endif
+#endif // CACHE_SUBIMAGES
 
-#endif
+#endif // USE(CG)
