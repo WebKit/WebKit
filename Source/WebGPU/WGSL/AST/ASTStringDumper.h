@@ -100,7 +100,13 @@ private:
     String m_indent;
 };
 
-template<typename T> void dumpNode(PrintStream&, T&);
+template<typename T>
+void dumpNode(PrintStream& out, T& node)
+{
+    StringDumper dumper;
+    dumper.visit(node);
+    out.print(dumper.toString());
+}
 
 MAKE_PRINT_ADAPTOR(ShaderModuleDumper, ShaderModule&, dumpNode);
 

@@ -406,14 +406,6 @@ void StringDumper::visit(VariableQualifier& qualifier)
     m_out.print("<", storageClass[sc], ",", accessMode[am], ">");
 }
 
-template<typename T>
-void dumpNode(PrintStream& out, T& node)
-{
-    StringDumper dumper;
-    dumper.visit(node);
-    out.print(dumper.toString());
-}
-
 void dumpAST(ShaderModule& shaderModule)
 {
     dataLogLn(ShaderModuleDumper(shaderModule));

@@ -129,6 +129,8 @@
 		978A912C298AB8EE00B37E5E /* ContextProviderInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */; };
 		978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A912D298AD3DA00B37E5E /* TypeCheck.h */; };
 		978A9130298AD3DA00B37E5E /* TypeCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A912E298AD3DA00B37E5E /* TypeCheck.cpp */; };
+		978A9133298BBFD300B37E5E /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9131298BBFD300B37E5E /* Types.h */; };
+		978A9134298BBFD300B37E5E /* Types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9132298BBFD300B37E5E /* Types.cpp */; };
 		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
 		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
@@ -336,6 +338,8 @@
 		978A912B298AB8EE00B37E5E /* ContextProviderInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextProviderInlines.h; sourceTree = "<group>"; };
 		978A912D298AD3DA00B37E5E /* TypeCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCheck.h; sourceTree = "<group>"; };
 		978A912E298AD3DA00B37E5E /* TypeCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeCheck.cpp; sourceTree = "<group>"; };
+		978A9131298BBFD300B37E5E /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		978A9132298BBFD300B37E5E /* Types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Types.cpp; sourceTree = "<group>"; };
 		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
 		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
@@ -492,6 +496,8 @@
 				338BB2CD27B6B60200E066AB /* Token.h */,
 				978A912E298AD3DA00B37E5E /* TypeCheck.cpp */,
 				978A912D298AD3DA00B37E5E /* TypeCheck.h */,
+				978A9132298BBFD300B37E5E /* Types.cpp */,
+				978A9131298BBFD300B37E5E /* Types.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
 			);
@@ -711,6 +717,7 @@
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */,
+				978A9133298BBFD300B37E5E /* Types.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -877,6 +884,7 @@
 				979240C4297558F10050EA2C /* ResolveTypeReferences.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
 				978A9130298AD3DA00B37E5E /* TypeCheck.cpp in Sources */,
+				978A9134298BBFD300B37E5E /* Types.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

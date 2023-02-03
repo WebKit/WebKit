@@ -105,6 +105,7 @@ public:
         Mat4x3,
         Mat4x4
     };
+    static constexpr unsigned NumberOfBaseTypes = 12;
 
     ParameterizedTypeName(SourceSpan span, Base base, TypeName::Ref&& elementType)
         : TypeName(span)
