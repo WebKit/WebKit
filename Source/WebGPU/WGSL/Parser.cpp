@@ -617,20 +617,6 @@ Expected<AST::ReturnStatement, Error> Parser<Lexer>::parseReturnStatement()
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseRelationalExpression(AST::Expression::Ref&& lhs)
-{
-    // FIXME: fill in
-    return parseShiftExpression(WTFMove(lhs));
-}
-
-template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression(AST::Expression::Ref&& lhs)
-{
-    // FIXME: fill in
-    return parseAdditiveExpression(WTFMove(lhs));
-}
-
-template<typename Lexer>
 Expected<AST::BinaryOperation, Error> Parser<Lexer>::parseAdditiveOperator()
 {
     START_PARSE();
@@ -645,22 +631,6 @@ Expected<AST::BinaryOperation, Error> Parser<Lexer>::parseAdditiveOperator()
     default:
         FAIL("Expected one of + or -"_s);
     }
-}
-
-template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpression(AST::Expression::Ref&& lhs)
-{
-    START_PARSE();
-    PARSE_MOVE(lhs, MultiplicativeExpression, WTFMove(lhs));
-
-    while (current().m_type == TokenType::Plus || current().m_type == TokenType::Minus) {
-        PARSE(op, AdditiveOperator);
-        PARSE(unary, UnaryExpression);
-        PARSE(rhs, MultiplicativeExpression, WTFMove(unary));
-        lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
-    }
-
-    return WTFMove(lhs);
 }
 
 template<typename Lexer>
@@ -823,14 +793,6 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
     }
 
     FAIL("Expected one of '(', a literal, or an identifier"_s);
-}
-
-template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseExpression()
-{
-    // FIXME: Fill in
-    PARSE(lhs, UnaryExpression);
-    return parseRelationalExpression(WTFMove(lhs));
 }
 
 template<typename Lexer>

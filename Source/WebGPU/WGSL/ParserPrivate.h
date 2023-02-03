@@ -35,6 +35,29 @@
 #include "Lexer.h"
 #include <wtf/Ref.h>
 
+#define CURRENT_SOURCE_SPAN() \
+    SourceSpan(_startOfElementPosition, m_lexer.currentPosition())
+
+#define START_PARSE() \
+    auto _startOfElementPosition = m_lexer.currentPosition();
+
+// Warning: cannot use the do..while trick because it defines a new identifier named `name`.
+// So do not use after an if/for/while without braces.
+#define PARSE(name, element, ...) \
+    auto name##Expected = parse##element(__VA_ARGS__); \
+    if (!name##Expected) \
+        return makeUnexpected(name##Expected.error()); \
+    auto& name = *name##Expected;
+
+#define PARSE_MOVE(name, element, ...) \
+    auto name##Expected = parse##element(__VA_ARGS__); \
+    if (!name##Expected) \
+        return makeUnexpected(name##Expected.error()); \
+    name = WTFMove(*name##Expected);
+
+#define MAKE_NODE_UNIQUE_REF(type, ...) \
+    makeUniqueRef<AST::type>(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__) /* NOLINT */
+
 namespace WGSL {
 
 struct Configuration;
@@ -96,4 +119,48 @@ private:
     Token m_current;
 };
 
+template<typename Lexer>
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseExpression()
+{
+    // FIXME: Fill in
+    PARSE(lhs, UnaryExpression);
+    return parseRelationalExpression(WTFMove(lhs));
+}
+
+template<typename Lexer>
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpression(AST::Expression::Ref&& lhs)
+{
+    START_PARSE();
+    PARSE_MOVE(lhs, MultiplicativeExpression, WTFMove(lhs));
+
+    while (current().m_type == TokenType::Plus || current().m_type == TokenType::Minus) {
+        PARSE(op, AdditiveOperator);
+        PARSE(unary, UnaryExpression);
+        PARSE(rhs, MultiplicativeExpression, WTFMove(unary));
+        lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
+    }
+
+    return WTFMove(lhs);
+}
+
+template<typename Lexer>
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression(AST::Expression::Ref&& lhs)
+{
+    // FIXME: fill in
+    return parseAdditiveExpression(WTFMove(lhs));
+}
+
+template<typename Lexer>
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseRelationalExpression(AST::Expression::Ref&& lhs)
+{
+    // FIXME: fill in
+    return parseShiftExpression(WTFMove(lhs));
+}
+
 } // namespace WGSL
+
+#undef CURRENT_SOURCE_SPAN
+#undef START_PARSE
+#undef PARSE
+#undef PARSE_MOVE
+#undef MAKE_NODE_UNIQUE_REF
