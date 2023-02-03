@@ -8702,8 +8702,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 #if !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
     if (!preferences().useGPUProcessForMediaEnabled()
-        || (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureVideoInUIProcessEnabled())
-        || (!preferences().captureAudioInGPUProcessEnabled() && !preferences().captureAudioInUIProcessEnabled())
+        || !preferences().captureVideoInGPUProcessEnabled()
+        || !preferences().captureAudioInGPUProcessEnabled()
         || !preferences().webRTCPlatformCodecsInGPUProcessEnabled()
         || !preferences().useGPUProcessForCanvasRenderingEnabled()
         || !preferences().useGPUProcessForWebGLEnabled()) {
@@ -8781,11 +8781,11 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
-    parameters.shouldCaptureAudioInUIProcess = preferences().captureAudioInUIProcessEnabled();
+    parameters.shouldCaptureAudioInUIProcess = !preferences().captureAudioInGPUProcessEnabled();
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureAudioInGPUProcess = preferences().captureAudioInGPUProcessEnabled();
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
-    parameters.shouldCaptureVideoInUIProcess = preferences().captureVideoInUIProcessEnabled();
+    parameters.shouldCaptureVideoInUIProcess = !preferences().captureVideoInGPUProcessEnabled();
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldCaptureVideoInGPUProcess = preferences().captureVideoInGPUProcessEnabled();
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.

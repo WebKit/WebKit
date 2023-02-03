@@ -1257,18 +1257,6 @@ CaptureAudioInGPUProcessEnabled:
     WebKit:
       default: WebKit::defaultCaptureAudioInGPUProcessEnabled()
 
-CaptureAudioInUIProcessEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "Capture audio in UI Process"
-  humanReadableDescription: "Enable audio capture in UI Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: WebKit::defaultCaptureAudioInUIProcessEnabled()
-
 CaptureVideoInGPUProcessEnabled:
   type: bool
   status: internal
@@ -1280,18 +1268,6 @@ CaptureVideoInGPUProcessEnabled:
   defaultValue:
     WebKit:
       "ENABLE(GPU_PROCESS_BY_DEFAULT)": true
-      default: false
-
-CaptureVideoInUIProcessEnabled:
-  type: bool
-  status: internal
-  humanReadableName: "Capture video in UI Process"
-  humanReadableDescription: "Enable video capture in UI Process"
-  webcoreBinding: none
-  condition: ENABLE(MEDIA_STREAM)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
       default: false
 
 CaretBrowsingEnabled:

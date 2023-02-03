@@ -148,15 +148,6 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 #endif
 }
 
-bool defaultCaptureAudioInUIProcessEnabled()
-{
-#if PLATFORM(MAC)
-    return !defaultCaptureAudioInGPUProcessEnabled();
-#endif
-
-    return false;
-}
-
 bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 {
 #if PLATFORM(IOS_FAMILY)

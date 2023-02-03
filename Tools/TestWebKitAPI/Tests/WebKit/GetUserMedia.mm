@@ -568,8 +568,6 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
     }
@@ -642,8 +640,6 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
     }
@@ -715,8 +711,6 @@ TEST(WebKit2, CrashGPUProcessWhileCapturingAndCalling)
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"CaptureAudioInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
-        if ([feature.key isEqualToString:@"CaptureAudioInUIProcessEnabled"])
-            [preferences _setEnabled:NO forFeature:feature];
         if ([feature.key isEqualToString:@"CaptureVideoInGPUProcessEnabled"])
             [preferences _setEnabled:YES forFeature:feature];
         if ([feature.key isEqualToString:@"WebRTCPlatformCodecsInGPUProcessEnabled"])

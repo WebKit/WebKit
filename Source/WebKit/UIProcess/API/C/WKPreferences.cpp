@@ -1857,16 +1857,6 @@ bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesRef prefere
     return toImpl(preferencesRef)->punchOutWhiteBackgroundsInDarkMode();
 }
 
-void WKPreferencesSetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCaptureAudioInUIProcessEnabled(flag);
-}
-
-bool WKPreferencesGetCaptureAudioInUIProcessEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->captureAudioInUIProcessEnabled();
-}
-
 void WKPreferencesSetCaptureAudioInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setCaptureAudioInGPUProcessEnabled(flag);
@@ -1875,16 +1865,6 @@ void WKPreferencesSetCaptureAudioInGPUProcessEnabled(WKPreferencesRef preference
 bool WKPreferencesGetCaptureAudioInGPUProcessEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->captureAudioInGPUProcessEnabled();
-}
-
-void WKPreferencesSetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setCaptureVideoInUIProcessEnabled(flag);
-}
-
-bool WKPreferencesGetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->captureVideoInUIProcessEnabled();
 }
 
 void WKPreferencesSetCaptureVideoInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
@@ -2139,6 +2119,24 @@ void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetPaginateDuringLayoutEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetCaptureAudioInUIProcessEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetCaptureAudioInUIProcessEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetCaptureVideoInUIProcessEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetCaptureVideoInUIProcessEnabled(WKPreferencesRef preferencesRef)
 {
     return false;
 }

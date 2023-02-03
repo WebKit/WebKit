@@ -457,7 +457,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (isSafari && mediaDevicesEnabled && !m_defaultPageGroup->preferences().captureAudioInUIProcessEnabled() && !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()) {
+    if (isSafari && mediaDevicesEnabled && !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()) {
         if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
             parameters.audioCaptureExtensionHandle = WTFMove(*handle);
     }

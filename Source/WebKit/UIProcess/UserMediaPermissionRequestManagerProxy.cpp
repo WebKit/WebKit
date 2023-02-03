@@ -265,7 +265,7 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 #if PLATFORM(COCOA)
 static bool doesPageNeedTCCD(const WebPageProxy& page)
 {
-    return (!page.preferences().captureAudioInGPUProcessEnabled() && !page.preferences().captureAudioInUIProcessEnabled()) || !page.preferences().captureVideoInGPUProcessEnabled();
+    return !page.preferences().captureAudioInGPUProcessEnabled() || !page.preferences().captureVideoInGPUProcessEnabled();
 }
 #endif
 
