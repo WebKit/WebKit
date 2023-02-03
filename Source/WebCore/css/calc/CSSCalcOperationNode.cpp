@@ -438,7 +438,7 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createHypot(Vector<Ref<CSSCal
 {
     auto expectedCategory = commonCategory(values);
 
-    if (expectedCategory == CalculationCategory::Other) {
+    if (!expectedCategory || expectedCategory == CalculationCategory::Other) {
         LOG_WITH_STREAM(Calc, stream << "Failed to create hypot node because unable to determine category from " << prettyPrintNodes(values));
         return nullptr;
     }
