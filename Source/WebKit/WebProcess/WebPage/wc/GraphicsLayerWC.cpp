@@ -586,8 +586,10 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
     }
     if (update.changes & WCLayerChange::PlatformLayer) {
         update.hasPlatformLayer = m_platformLayer;
+#if ENABLE(WEBGL)
         if (m_platformLayer)
             update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
+#endif
     }
     m_observer->commitLayerUpateInfo(WTFMove(update));
 }
