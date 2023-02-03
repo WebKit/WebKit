@@ -3287,3 +3287,62 @@ header: <WebCore/DisplayListItems.h>
      WebCore::ImageOrientation m_orientation;
      WebCore::InterpolationQuality m_interpolationQuality;
 };
+
+struct WebCore::CanvasActivityRecord {
+    HashSet<String> textWritten;
+    bool wasDataRead;
+};
+
+header: <WebCore/AttributionSecondsUntilSendData.h>
+[CustomHeader] struct WebCore::PCM::AttributionSecondsUntilSendData {
+    std::optional<Seconds> sourceSeconds;
+    std::optional<Seconds> destinationSeconds;
+};
+
+enum class WebCore::CrossOriginOpenerPolicyValue : uint8_t {
+    UnsafeNone,
+    SameOrigin,
+    SameOriginPlusCOEP,
+    SameOriginAllowPopups
+};
+
+struct WebCore::CrossOriginOpenerPolicy {
+    WebCore::CrossOriginOpenerPolicyValue value;
+    String reportingEndpoint;
+    WebCore::CrossOriginOpenerPolicyValue reportOnlyValue;
+    String reportOnlyReportingEndpoint;
+};
+
+struct WebCore::CustomHeaderFields {
+    Vector<WebCore::HTTPHeaderField> fields;
+    Vector<String> thirdPartyDomains;
+};
+
+[CreateUsing=create] class WebCore::HTTPHeaderField {
+    String name();
+    String value();
+};
+
+struct WebCore::NavigationRequester {
+    URL url;
+    Ref<WebCore::SecurityOrigin> securityOrigin;
+    Ref<WebCore::SecurityOrigin> topOrigin;
+    WebCore::PolicyContainer policyContainer;
+    std::optional<WebCore::GlobalFrameIdentifier> globalFrameIdentifier;
+};
+
+struct WebCore::PolicyContainer {
+    WebCore::ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
+    WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
+    WebCore::CrossOriginOpenerPolicy crossOriginOpenerPolicy;
+    WebCore::ReferrerPolicy referrerPolicy;
+};
+
+[Nested] enum class WebCore::SubstituteData::SessionHistoryVisibility : bool
+
+class WebCore::SubstituteData {
+    RefPtr<WebCore::FragmentedSharedBuffer> content();
+    URL failingURL();
+    WebCore::ResourceResponse response();
+    WebCore::SubstituteData::SessionHistoryVisibility shouldRevealToSessionHistory();
+};

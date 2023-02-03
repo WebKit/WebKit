@@ -41,8 +41,6 @@ struct PolicyContainer {
 
     PolicyContainer isolatedCopy() const & { return { contentSecurityPolicyResponseHeaders.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy(), referrerPolicy }; }
     PolicyContainer isolatedCopy() && { return { WTFMove(contentSecurityPolicyResponseHeaders).isolatedCopy(), WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy }; }
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PolicyContainer> decode(Decoder&);
 };
 
 inline bool operator==(const PolicyContainer& a, const PolicyContainer& b)
@@ -51,43 +49,6 @@ inline bool operator==(const PolicyContainer& a, const PolicyContainer& b)
         && a.crossOriginEmbedderPolicy == b.crossOriginEmbedderPolicy
         && a.crossOriginOpenerPolicy == b.crossOriginOpenerPolicy
         && a.referrerPolicy == b.referrerPolicy;
-}
-
-template<class Encoder>
-void PolicyContainer::encode(Encoder& encoder) const
-{
-    encoder << contentSecurityPolicyResponseHeaders << crossOriginEmbedderPolicy << crossOriginOpenerPolicy << referrerPolicy;
-}
-
-template<class Decoder>
-std::optional<PolicyContainer> PolicyContainer::decode(Decoder& decoder)
-{
-    std::optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicyResponseHeaders;
-    decoder >> contentSecurityPolicyResponseHeaders;
-    if (!contentSecurityPolicyResponseHeaders)
-        return std::nullopt;
-
-    std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
-    decoder >> crossOriginEmbedderPolicy;
-    if (!crossOriginEmbedderPolicy)
-        return std::nullopt;
-
-    std::optional<CrossOriginOpenerPolicy> crossOriginOpenerPolicy;
-    decoder >> crossOriginOpenerPolicy;
-    if (!crossOriginOpenerPolicy)
-        return std::nullopt;
-
-    std::optional<ReferrerPolicy> referrerPolicy;
-    decoder >> referrerPolicy;
-    if (!referrerPolicy)
-        return std::nullopt;
-
-    return {{
-        WTFMove(*contentSecurityPolicyResponseHeaders),
-        WTFMove(*crossOriginEmbedderPolicy),
-        WTFMove(*crossOriginOpenerPolicy),
-        *referrerPolicy
-    }};
 }
 
 WEBCORE_EXPORT void addPolicyContainerHeaders(ResourceResponse&, const PolicyContainer&);
