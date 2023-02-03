@@ -628,7 +628,11 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     InspectorInstrumentation::addEventListenersToNode(*this);
     setStorageBlockingPolicy(m_settings->storageBlockingPolicy());
 
-    // FIXME: Chirag - if this document happens to be the topDocument(), we need to initialize the securityOrigin correctly
+    if (!m_topDocumentSecurityOrigin) {
+        m_topDocumentSecurityOrigin = SecurityContext::securityOrigin();
+        if (frame)
+            frame->setMainFrameSecurityOrigin(*SecurityContext::securityOrigin());
+    }
 }
 
 void Document::createNewIdentifier()

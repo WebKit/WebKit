@@ -148,6 +148,18 @@ static inline float parentTextZoomFactor(Frame* frame)
     return parent->textZoomFactor();
 }
 
+SecurityOrigin* Frame::mainFrameSecurityOrigin() const
+{
+    if (m_sod)
+        return &m_sod->securityOrigin().leakRef();
+    return nullptr;
+}
+
+void Frame::setMainFrameSecurityOrigin(SecurityOrigin& topDocumentSecurityOrigin)
+{
+    m_sod = topDocumentSecurityOrigin.data();
+}
+
 Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, std::optional<SecurityOriginData>&& sod)
     : AbstractFrame(page, identifier, ownerElement)
     , m_mainFrame(ownerElement ? page.mainFrame() : *this)
@@ -1134,13 +1146,6 @@ Frame* Frame::contentFrameFromWindowOrFrameElement(JSContextRef context, JSValue
     if (!jsNode || !is<HTMLFrameOwnerElement>(jsNode->wrapped()))
         return nullptr;
     return dynamicDowncast<LocalFrame>(downcast<HTMLFrameOwnerElement>(jsNode->wrapped()).contentFrame());
-}
-
-SecurityOrigin* Frame::mainFrameSecurityOrigin() const
-{
-    if (m_sod)
-        return m_sod->securityOrigin().ptr();
-    return nullptr;
 }
 
 #if ENABLE(DATA_DETECTION)
