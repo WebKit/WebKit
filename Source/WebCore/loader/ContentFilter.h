@@ -78,7 +78,9 @@ public:
     void setBlockedError(const ResourceError& error) { m_blockedError = error; }
     bool isAllowed() const { return m_state == State::Allowed; }
     bool responseReceived() const { return m_responseReceived; }
-    
+
+    WEBCORE_EXPORT static const URL& blockedPageURL();
+
 private:
     using State = PlatformContentFilter::State;
 
