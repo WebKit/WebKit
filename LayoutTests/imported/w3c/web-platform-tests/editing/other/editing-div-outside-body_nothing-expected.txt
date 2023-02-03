@@ -1,0 +1,14 @@
+
+PASS Waiting for load event
+PASS Test for execCommand("insertText", false, "abc") in "<div>[]<br></div>"
+PASS Test for execCommand("delete", false, undefined) in "<div>abc[]</div>"
+PASS Test for execCommand("forwardDelete", false, undefined) in "<div>[]abc</div>"
+PASS Test for execCommand("insertParagraph", false, undefined) in "<div>ab[]c</div>"
+PASS Test for execCommand("insertLineBreak", false, undefined) in "<div>ab[]c</div>"
+PASS Test for execCommand("bold", false, undefined) in "<div>a[b]c</div>"
+PASS Test for execCommand("italic", false, undefined) in "<div>a[b]c</div>"
+PASS Test for execCommand("createLink", false, "another.html") in "<div>a[b]c</div>"
+PASS Test for execCommand("unlink", false, undefined) in "<div>a[<a href="another.html">b</a>]c</div>"
+PASS Test for execCommand("insertHTML", false, "<hr>") in "<div>a[b]c</div>"
+a
+c

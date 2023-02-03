@@ -1,0 +1,19 @@
+abc
+def
+ghi
+
+FAIL delete at <div style="white-space:pre-line">abc[</div>]def promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div class="preLine">abc[</div>]def promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:pre-line">abc[</div>]def<br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div class="preLine">abc[</div>]def<br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:pre-line">abc[</div>]def<div>ghi</div> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div class="preLine">abc[</div>]def<div>ghi</div> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:pre-line">abc[</div><b>]def</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div class="preLine">abc[</div><b>]def</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:pre-line">abc[</div><b>]def<br>ghi</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div class="preLine">abc[</div><b>]def<br>ghi</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:pre-line">abc[</div><b>]def</b><br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div class="preLine">abc[</div><b>]def</b><br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:pre-line">abc[</div><b>]def<br></b>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div class="preLine">abc[</div><b>]def<br></b>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+

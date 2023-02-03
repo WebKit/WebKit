@@ -1,0 +1,17 @@
+abc
+def
+ghijkl
+
+FAIL delete at <div style="white-space:normal">abc[</div><span style="white-space:nowrap">]def</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span class="nowrap">]def</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span style="white-space:nowrap">]def<br>ghi</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span class="nowrap">]def<br>ghi</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span style="white-space:nowrap"><b>]def<br>ghi</b></span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span class="nowrap"><b>]def<br>ghi</b></span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span style="white-space:nowrap"><b>]def</b><br>ghi</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span class="nowrap"><b>]def</b><br>ghi</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span style="white-space:nowrap"><b>]def<br></b>ghi</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span class="nowrap"><b>]def<br></b>ghi</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span style="white-space:nowrap"><b>]def<br>ghi</b>jkl</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL delete at <div style="white-space:normal">abc[</div><span class="nowrap"><b>]def<br>ghi</b>jkl</span> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+

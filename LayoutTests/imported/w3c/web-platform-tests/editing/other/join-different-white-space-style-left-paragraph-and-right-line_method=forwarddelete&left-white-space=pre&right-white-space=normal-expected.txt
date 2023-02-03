@@ -1,0 +1,19 @@
+abc
+def
+ghi
+
+FAIL forwarddelete at <div style="white-space:pre">abc[]</div>def promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div class="pre">abc[]</div>def promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div style="white-space:pre">abc[]</div>def<br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div class="pre">abc[]</div>def<br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div style="white-space:pre">abc[]</div>def<div>ghi</div> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div class="pre">abc[]</div>def<div>ghi</div> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div style="white-space:pre">abc[]</div><b>def</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div class="pre">abc[]</div><b>def</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div style="white-space:pre">abc[]</div><b>def<br>ghi</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div class="pre">abc[]</div><b>def<br>ghi</b> promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div style="white-space:pre">abc[]</div><b>def</b><br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div class="pre">abc[]</div><b>def</b><br>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div style="white-space:pre">abc[]</div><b>def<br></b>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL forwarddelete at <div class="pre">abc[]</div><b>def<br></b>ghi promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+
