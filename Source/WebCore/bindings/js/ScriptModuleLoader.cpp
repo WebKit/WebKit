@@ -576,7 +576,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
 
         switch (type) {
         case ModuleType::JavaScript:
-            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
+            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), WTFMove(sourceURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() };
             break;
 #if ENABLE(WEBASSEMBLY)
         case ModuleType::WebAssembly:
@@ -584,7 +584,7 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             break;
 #endif
         case ModuleType::JSON:
-            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
+            sourceCode = JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), WTFMove(sourceURL), { }, JSC::SourceProviderSourceType::JSON, loader.scriptFetcher() }.jsSourceCode() };
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

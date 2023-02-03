@@ -71,7 +71,7 @@ public:
             unsigned line;
             unsigned column;
             visitor->computeLineAndColumn(line, column);
-            m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), visitor->sourceID(), line, column));
+            m_frames.append(ScriptCallFrame(visitor->functionName(), visitor->sourceURL(), visitor->preRedirectURL(), visitor->sourceID(), line, column));
 
             m_remainingCapacityForFrameCapture--;
             return IterationStatus::Continue;

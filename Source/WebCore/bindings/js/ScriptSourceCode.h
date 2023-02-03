@@ -51,8 +51,8 @@ public:
     {
     }
 
-    ScriptSourceCode(const ScriptBuffer& source, URL&& url = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
-        : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url }, url.string(), startPosition, sourceType))
+    ScriptSourceCode(const ScriptBuffer& source, URL&& url = URL(), URL&& preRedirectURL = URL(), const TextPosition& startPosition = TextPosition(), JSC::SourceProviderSourceType sourceType = JSC::SourceProviderSourceType::Program)
+        : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url }, url.string(), preRedirectURL.string(), startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }
@@ -70,8 +70,8 @@ public:
     {
     }
 
-    ScriptSourceCode(const ScriptBuffer& source, URL&& url, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
-        : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), startPosition, sourceType))
+    ScriptSourceCode(const ScriptBuffer& source, URL&& url, URL&& preRedirectURL, const TextPosition& startPosition, JSC::SourceProviderSourceType sourceType, Ref<JSC::ScriptFetcher>&& scriptFetcher)
+        : m_provider(ScriptBufferSourceProvider::create(source, JSC::SourceOrigin { url, WTFMove(scriptFetcher) }, url.string(), preRedirectURL.string(), startPosition, sourceType))
         , m_code(m_provider.copyRef(), startPosition.m_line.oneBasedInt(), startPosition.m_column.oneBasedInt())
     {
     }

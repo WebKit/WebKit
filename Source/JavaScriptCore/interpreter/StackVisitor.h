@@ -88,6 +88,7 @@ public:
 
         JS_EXPORT_PRIVATE String functionName() const;
         JS_EXPORT_PRIVATE String sourceURL() const;
+        JS_EXPORT_PRIVATE String preRedirectURL() const;
         JS_EXPORT_PRIVATE String toString() const;
 
         JS_EXPORT_PRIVATE SourceID sourceID();

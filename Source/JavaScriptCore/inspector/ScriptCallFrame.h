@@ -40,11 +40,13 @@ namespace Inspector {
 
 class JS_EXPORT_PRIVATE ScriptCallFrame  {
 public:
-    ScriptCallFrame(const String& functionName, const String& scriptName, JSC::SourceID sourceID, unsigned lineNumber, unsigned column);
+    ScriptCallFrame(const String& functionName, const String& scriptName, JSC::SourceID, unsigned lineNumber, unsigned column);
+    ScriptCallFrame(const String& functionName, const String& scriptName, const String& preRedirectURL, JSC::SourceID, unsigned lineNumber, unsigned column);
     ~ScriptCallFrame();
 
     const String& functionName() const { return m_functionName; }
     const String& sourceURL() const { return m_scriptName; }
+    const String& preRedirectURL() const { return m_preRedirectURL; }
     unsigned lineNumber() const { return m_lineNumber; }
     unsigned columnNumber() const { return m_column; }
     JSC::SourceID sourceID() const { return m_sourceID; }
@@ -59,6 +61,7 @@ public:
 private:
     String m_functionName;
     String m_scriptName;
+    String m_preRedirectURL;
     JSC::SourceID m_sourceID;
     unsigned m_lineNumber;
     unsigned m_column;
