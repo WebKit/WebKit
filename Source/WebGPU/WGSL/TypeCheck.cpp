@@ -38,15 +38,9 @@
 
 namespace WGSL {
 
-class UnificationContext;
-
 static constexpr bool shouldDumpInferredTypes = false;
 
-using SubstituionCallback = std::function<void(Type*)>;
-
 class TypeChecker : public AST::Visitor, public ContextProvider<Type*> {
-    friend class UnificationContext;
-
 public:
     TypeChecker(AST::ShaderModule&);
 
@@ -55,7 +49,6 @@ public:
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
     void visit(AST::Function&) override;
-    void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::Expression&) override;
@@ -67,18 +60,15 @@ public:
 
 private:
     Type* infer(AST::Expression&);
-    Type* variable();
     Type* resolve(AST::TypeName&);
     void inferred(Type*);
     void unify(Type*, Type*);
-    void substitute(Type*, SubstituionCallback&&);
 
     template<typename TypeKind, typename... Arguments>
     Type* allocateType(Arguments&&...);
 
     AST::ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
-    UnificationContext* m_unificationContext { nullptr };
 
     WTF::Vector<std::unique_ptr<Type>> m_types;
     Type* m_abstractInt;
@@ -89,45 +79,6 @@ private:
     Type* m_u32;
     Type* m_f32;
     FixedVector<TypeConstructor> m_typeConstrutors;
-};
-
-class UnificationContext {
-public:
-    UnificationContext(TypeChecker* typeChecker)
-        : m_setForScope(typeChecker->m_unificationContext, this)
-    {
-    }
-
-    ~UnificationContext()
-    {
-        solveConstraints();
-        runSubstitutions();
-    }
-
-    void unify(Type* lhs, Type* rhs)
-    {
-        m_constraints.append({ lhs, rhs });
-    }
-
-    void substitute(Type* type, SubstituionCallback&& callback)
-    {
-        m_substitutions.append({ type, WTFMove(callback) });
-    }
-
-private:
-    void solveConstraints()
-    {
-        // FIXME: implement this
-    }
-
-    void runSubstitutions()
-    {
-        // FIXME: implement this
-    }
-
-    SetForScope<UnificationContext*> m_setForScope;
-    WTF::Vector<std::pair<Type*, Type*>> m_constraints;
-    WTF::Vector<std::pair<Type*, SubstituionCallback>> m_substitutions;
 };
 
 TypeChecker::TypeChecker(AST::ShaderModule& shaderModule)
@@ -187,14 +138,12 @@ void TypeChecker::check()
         visit(function);
 
     for (auto& function : m_shaderModule.functions())
-        visit(function.body());
+        AST::Visitor::visit(function.body());
 }
 
 // Declarations
 void TypeChecker::visit(AST::Structure& structure)
 {
-    UnificationContext declarationContext(this);
-
     // FIXME: allocate and build struct type from struct members
     Type* structType = nullptr;
     ContextProvider::introduceVariable(structure.name(), structType);
@@ -202,32 +151,27 @@ void TypeChecker::visit(AST::Structure& structure)
 
 void TypeChecker::visit(AST::Variable& variable)
 {
-    UnificationContext declarationContext(this);
-
-    auto* result = TypeChecker::variable();
+    Type* result = nullptr;
     if (variable.maybeTypeName())
-        unify(result, resolve(*variable.maybeTypeName()));
-    if (variable.maybeInitializer())
-        unify(result, infer(*variable.maybeInitializer()));
+        result = resolve(*variable.maybeTypeName());
+    if (variable.maybeInitializer()) {
+        auto* initializerType = infer(*variable.maybeInitializer());
+        if (result)
+            unify(result, initializerType);
+        else
+            result = initializerType;
+    }
     ContextProvider::introduceVariable(variable.name(), result);
 }
 
 void TypeChecker::visit(AST::Function& function)
 {
-    UnificationContext declarationContext(this);
-
     // FIXME: allocate and build function type fromp parameters and return type
     Type* functionType = nullptr;
     ContextProvider::introduceVariable(function.name(), functionType);
 }
 
 // Statements
-void TypeChecker::visit(AST::Statement& statement)
-{
-    UnificationContext statementContext(this);
-    AST::Visitor::visit(statement);
-}
-
 void TypeChecker::visit(AST::AssignmentStatement& statement)
 {
     auto* lhs = infer(statement.lhs());
@@ -277,12 +221,10 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
 void TypeChecker::visit(AST::BinaryExpression& binary)
 {
     // FIXME: this needs to resolve overloads, not just unify both types
-    auto* result = variable();
     auto* leftType = infer(binary.leftExpression());
     auto* rightType = infer(binary.rightExpression());
-    unify(result, leftType);
-    unify(result, rightType);
-    inferred(result);
+    unify(leftType, rightType);
+    inferred(leftType);
 }
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
@@ -318,19 +260,11 @@ Type* TypeChecker::infer(AST::Expression& expression)
     }
 
     auto* type = m_inferredType;
-    substitute(type, [&](Type* resolvedType) {
-        // FIXME: store resolved type in the expression
-        UNUSED_PARAM(resolvedType);
-    });
+
+    // FIXME: store resolved type in the expression
     m_inferredType = nullptr;
 
     return type;
-}
-
-Type* TypeChecker::variable()
-{
-    // FIXME: allocate new type variables
-    return nullptr;
 }
 
 Type* TypeChecker::resolve(AST::TypeName& type)
@@ -342,10 +276,8 @@ Type* TypeChecker::resolve(AST::TypeName& type)
     ASSERT(m_inferredType);
 
     auto* inferredType = m_inferredType;
-    substitute(inferredType, [&](Type* resolvedType) {
-        // FIXME: store resolved type in the AST type
-        UNUSED_PARAM(resolvedType);
-    });
+
+    // FIXME: store resolved type in the expression
     m_inferredType = nullptr;
 
     return inferredType;
@@ -359,12 +291,9 @@ void TypeChecker::inferred(Type* type)
 
 void TypeChecker::unify(Type* lhs, Type* rhs)
 {
-    m_unificationContext->unify(lhs, rhs);
-}
-
-void TypeChecker::substitute(Type* type, SubstituionCallback&& callback)
-{
-    m_unificationContext->substitute(type, WTFMove(callback));
+    // FIXME: Implement all the rules and report a type error otherwise
+    if (lhs == rhs)
+        return;
 }
 
 template<typename TypeKind, typename... Arguments>
