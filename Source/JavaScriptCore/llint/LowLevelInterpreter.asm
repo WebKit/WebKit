@@ -2799,6 +2799,14 @@ _wasm_trampoline_wasm_tail_call_wide32:
 _wasm_trampoline_wasm_tail_call_indirect_wide32:
     crash()
 
+end # WEBASSEMBLY and not X86_64_WIN
+
+if X86_64_WIN
+    global _currentStackPointer
+    _currentStackPointer:
+        move sp, r0
+        addp MachineRegisterSize + 32, r0 # Account for return address and shadow stack
+        ret
 end
 
 include? LowLevelInterpreterAdditions
