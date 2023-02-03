@@ -1436,7 +1436,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     _page->restoreFromSessionState(sessionState, true);
 }
 
-- (BOOL)inspectable
+- (BOOL)isInspectable
 {
 #if ENABLE(REMOTE_INSPECTOR)
     // FIXME: <http://webkit.org/b/246237> Local inspection should be controlled by `inspectable` API.
