@@ -244,8 +244,12 @@ ResolvedStyle Resolver::styleForElement(const Element& element, const Resolution
     auto state = State(element, context.parentStyle, context.documentElementStyle);
 
     if (state.parentStyle()) {
-        state.setStyle(RenderStyle::createPtr());
-        state.style()->inheritFrom(*state.parentStyle());
+        state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
+        if (&element == document().documentElement()) {
+            // Initial values for custom properties are inserted to the document element style. Don't overwrite them.
+            state.style()->inheritIgnoringCustomPropertiesFrom(*state.parentStyle());
+        } else
+            state.style()->inheritFrom(*state.parentStyle());
     } else {
         state.setStyle(defaultStyleForElement(&element));
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
@@ -463,7 +467,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(const Element& elem
     auto state = State(element, context.parentStyle, context.documentElementStyle);
 
     if (state.parentStyle()) {
-        state.setStyle(RenderStyle::createPtr());
+        state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
         state.style()->inheritFrom(*state.parentStyle());
     } else {
         state.setStyle(defaultStyleForElement(&element));
@@ -523,7 +527,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
 
 std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* element)
 {
-    auto style = RenderStyle::createPtr();
+    auto style = RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry());
 
     FontCascadeDescription fontDescription;
     fontDescription.setRenderingMode(settings().fontRenderingMode());

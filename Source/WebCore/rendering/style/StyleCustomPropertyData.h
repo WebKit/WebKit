@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-using CustomPropertyValueMap = HashMap<AtomString, RefPtr<CSSCustomPropertyValue>>;
+using CustomPropertyValueMap = HashMap<AtomString, RefPtr<const CSSCustomPropertyValue>>;
 
 class StyleCustomPropertyData : public RefCounted<StyleCustomPropertyData> {
 public:
@@ -52,7 +52,7 @@ public:
 
     bool operator!=(const StyleCustomPropertyData& other) const { return !(*this == other); }
     
-    void setCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&& value)
+    void setCustomPropertyValue(const AtomString& name, Ref<const CSSCustomPropertyValue>&& value)
     {
         values.set(name, WTFMove(value));
     }
