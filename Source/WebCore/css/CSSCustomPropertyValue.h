@@ -96,11 +96,6 @@ public:
         return adoptRef(*new CSSCustomPropertyValue(name, VariantValue { WTFMove(syntaxValueList) }));
     }
 
-    static Ref<CSSCustomPropertyValue> create(const CSSCustomPropertyValue& other)
-    {
-        return adoptRef(*new CSSCustomPropertyValue(other));
-    }
-
     String customCSSText() const;
 
     const AtomString& name() const { return m_name; }
@@ -113,7 +108,8 @@ public:
 
     const VariantValue& value() const { return m_value; }
 
-    Vector<CSSParserToken> tokens() const;
+    const Vector<CSSParserToken>& tokens() const;
+
     bool equals(const CSSCustomPropertyValue&) const;
 
     Ref<const CSSVariableData> asVariableData() const;
@@ -126,17 +122,10 @@ private:
     {
     }
 
-    CSSCustomPropertyValue(const CSSCustomPropertyValue& other)
-        : CSSValue(CustomPropertyClass)
-        , m_name(other.m_name)
-        , m_value(other.m_value)
-        , m_stringValue(other.m_stringValue)
-    {
-    }
-
     const AtomString m_name;
     const VariantValue m_value;
-    mutable String m_stringValue;
+    mutable String m_cachedCSSText;
+    mutable RefPtr<CSSVariableData> m_cachedTokens;
 };
 
 } // namespace WebCore
