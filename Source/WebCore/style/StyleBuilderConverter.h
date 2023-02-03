@@ -1569,9 +1569,9 @@ inline bool BuilderConverter::convertSmoothScrolling(BuilderState&, const CSSVal
     return downcast<CSSPrimitiveValue>(value).valueID() == CSSValueSmooth;
 }
 
-inline SVGLengthValue BuilderConverter::convertSVGLengthValue(BuilderState&, const CSSValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
+inline SVGLengthValue BuilderConverter::convertSVGLengthValue(BuilderState& builderState, const CSSValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
 {
-    return SVGLengthValue::fromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(value), shouldConvertNumberToPxLength);
+    return SVGLengthValue::fromCSSPrimitiveValue(downcast<CSSPrimitiveValue>(value), builderState.cssToLengthConversionData(), shouldConvertNumberToPxLength);
 }
 
 inline Vector<SVGLengthValue> BuilderConverter::convertSVGLengthVector(BuilderState& builderState, const CSSValue& value, ShouldConvertNumberToPxLength shouldConvertNumberToPxLength)
