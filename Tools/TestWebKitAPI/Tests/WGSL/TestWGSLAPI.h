@@ -33,14 +33,6 @@
         } \
     } while (false)
 
-#define EXPECT_EXPRESSION(name, expr) \
-    auto name##Expected = expr; \
-    if (!name##Expected) { \
-        ::TestWGSLAPI::logCompilationError(name##Expected.error()); \
-        return; \
-    } \
-    auto& name = *name##Expected;
-
 namespace WGSL {
 class CompilationMessage;
 }
