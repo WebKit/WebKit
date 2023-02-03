@@ -414,11 +414,9 @@ static InterpolationType interpolationFromString(NSString *string)
     IOHIDDigitizerEventMask eventMask = kIOHIDDigitizerEventTouch;
     if (eventType == HandEventMoved) {
         eventMask &= ~kIOHIDDigitizerEventTouch;
-        eventMask |= kIOHIDDigitizerEventPosition;
-        eventMask |= kIOHIDDigitizerEventAttribute;
+        eventMask |= (kIOHIDDigitizerEventPosition | kIOHIDDigitizerEventAttribute);
     } else if (eventType == HandEventChordChanged) {
-        eventMask |= kIOHIDDigitizerEventPosition;
-        eventMask |= kIOHIDDigitizerEventAttribute;
+        eventMask |= (kIOHIDDigitizerEventPosition | kIOHIDDigitizerEventAttribute);
     } else if (eventType == HandEventTouched || eventType == HandEventCanceled || eventType == HandEventLifted)
         eventMask |= kIOHIDDigitizerEventIdentity;
 

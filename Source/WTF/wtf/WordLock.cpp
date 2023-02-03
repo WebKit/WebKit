@@ -218,9 +218,7 @@ NEVER_INLINE void WordLock::unlockSlow()
     ASSERT(currentWordValue & isQueueLockedBit);
     ASSERT((currentWordValue & ~queueHeadMask) == bitwise_cast<uintptr_t>(queueHead));
     uintptr_t newWordValue = currentWordValue;
-    newWordValue &= ~isLockedBit; // Release the WordLock.
-    newWordValue &= ~isQueueLockedBit; // Release the queue lock.
-    newWordValue &= queueHeadMask; // Clear out the old queue head.
+    newWordValue &= ~(isLockedBit | isQueueLockedBit | queueHeadMask); // Release the WordLock, queue lock, and clear out the old queue head
     newWordValue |= bitwise_cast<uintptr_t>(newQueueHead); // Install new queue head.
     m_word.store(newWordValue);
 

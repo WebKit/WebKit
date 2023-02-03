@@ -291,8 +291,7 @@ private:
         case BitURShift:
         case ArithIMul: {
             flags |= NodeBytecodeUsesAsInt;
-            flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther);
-            flags &= ~NodeBytecodeUsesAsArrayIndex;
+            flags &= ~(NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsArrayIndex);
             node->child1()->mergeFlags(flags);
             node->child2()->mergeFlags(flags);
             break;
@@ -396,8 +395,7 @@ private:
 
         case Inc:
         case Dec: {
-            flags &= ~NodeBytecodeNeedsNegZero;
-            flags &= ~NodeBytecodeUsesAsOther;
+            flags &= ~(NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsOther);
             if (!isWithinPowerOfTwo<32>(node->child1()))
                 flags |= NodeBytecodeUsesAsNumber;
             if (!m_allowNestedOverflowingAdditions)
