@@ -553,6 +553,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #define PUBLIC_LOG_STRING "s"
 #define PRIVATE_LOG_STRING "s"
+#define SENSITIVE_LOG_STRING "s"
 #define RELEASE_LOG(channel, ...) ((void)0)
 #define RELEASE_LOG_ERROR(channel, ...) LOG_ERROR(__VA_ARGS__)
 #define RELEASE_LOG_FAULT(channel, ...) LOG_ERROR(__VA_ARGS__)
@@ -571,6 +572,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #define PUBLIC_LOG_STRING "{public}s"
 #define PRIVATE_LOG_STRING "{private}s"
+#define SENSITIVE_LOG_STRING "{sensitive}s"
 #define RELEASE_LOG(channel, ...) os_log(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
 #define RELEASE_LOG_ERROR(channel, ...) os_log_error(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
 #define RELEASE_LOG_FAULT(channel, ...) os_log_fault(LOG_CHANNEL(channel).osLogChannel, __VA_ARGS__)
@@ -589,6 +591,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #define PUBLIC_LOG_STRING "s"
 #define PRIVATE_LOG_STRING "s"
+#define SENSITIVE_LOG_STRING "s"
 #define SD_JOURNAL_SEND(channel, priority, file, line, function, ...) do { \
     if (LOG_CHANNEL(channel).state != WTFLogChannelState::Off) \
         sd_journal_send_with_location("CODE_FILE=" file, "CODE_LINE=" line, function, "WEBKIT_SUBSYSTEM=%s", LOG_CHANNEL(channel).subsystem, "WEBKIT_CHANNEL=%s", LOG_CHANNEL(channel).name, "PRIORITY=%i", priority, "MESSAGE=" __VA_ARGS__, nullptr); \
@@ -615,6 +618,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 
 #define PUBLIC_LOG_STRING "s"
 #define PRIVATE_LOG_STRING "s"
+#define SENSITIVE_LOG_STRING "s"
 #define LOGF(channel, priority, fmt, ...) do { \
     auto& logChannel = LOG_CHANNEL(channel); \
     if (logChannel.state != WTFLogChannelState::Off) \

@@ -1444,14 +1444,14 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
         ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), WTFMove(registrationURL) };
         auto registration = m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
-            RELEASE_LOG_ERROR(Push, "Cannot process push message: Failed to find SW registration for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            RELEASE_LOG_ERROR(Push, "Cannot process push message: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true);
             return;
         }
 
         auto* worker = registration->activeWorker();
         if (!worker) {
-            RELEASE_LOG_ERROR(Push, "Cannot process push message: No active worker for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            RELEASE_LOG_ERROR(Push, "Cannot process push message: No active worker for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true);
             return;
         }
@@ -1498,14 +1498,14 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
         ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), URL { data.serviceWorkerRegistrationURL } };
         auto registration = m_scopeToRegistrationMap.get(registrationKey);
         if (!registration) {
-            RELEASE_LOG_ERROR(Push, "Cannot process notification event: Failed to find SW registration for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            RELEASE_LOG_ERROR(Push, "Cannot process notification event: Failed to find SW registration for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true);
             return;
         }
 
         auto* worker = registration->activeWorker();
         if (!worker) {
-            RELEASE_LOG_ERROR(Push, "Cannot process notification event: No active worker for scope %" PRIVATE_LOG_STRING, registrationKey.scope().string().utf8().data());
+            RELEASE_LOG_ERROR(Push, "Cannot process notification event: No active worker for scope %" SENSITIVE_LOG_STRING, registrationKey.scope().string().utf8().data());
             callback(true);
             return;
         }
