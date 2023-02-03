@@ -222,7 +222,7 @@ private:
     void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
     void computeCSSTransitionBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
-    void setBlendingKeyframes(KeyframeList&);
+    void setBlendingKeyframes(KeyframeList&&);
     bool isTargetingTransformRelatedProperty() const;
     void checkForMatchingTransformFunctionLists();
     void computeHasImplicitKeyframeForAcceleratedProperty();
