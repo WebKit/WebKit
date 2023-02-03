@@ -60,8 +60,9 @@ void RemoteCompositorIntegration::recreateRenderBuffers(int width, int height, C
 
 void RemoteCompositorIntegration::prepareForDisplay(CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_backing->prepareForDisplay();
-    completionHandler(true);
+    m_backing->prepareForDisplay([completionHandler = WTFMove(completionHandler)]() mutable {
+        completionHandler(true);
+    });
 }
 
 } // namespace WebKit

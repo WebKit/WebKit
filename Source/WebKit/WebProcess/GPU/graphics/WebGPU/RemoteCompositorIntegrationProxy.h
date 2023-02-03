@@ -76,7 +76,7 @@ private:
     Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
 #endif
 
-    void prepareForDisplay() override;
+    void prepareForDisplay(CompletionHandler<void()>&&) override;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

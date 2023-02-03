@@ -45,7 +45,7 @@ public:
     Vector<MachSendRight> recreateRenderBuffers(int width, int height) const;
 #endif
 
-    void prepareForDisplay();
+    void prepareForDisplay(CompletionHandler<void()>&&);
 
     PAL::WebGPU::CompositorIntegration& backing() { return m_backing; }
     const PAL::WebGPU::CompositorIntegration& backing() const { return m_backing; }

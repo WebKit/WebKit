@@ -26,6 +26,7 @@
 #pragma once
 
 #include <optional>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -45,7 +46,7 @@ public:
     virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height) = 0;
 #endif
 
-    virtual void prepareForDisplay() = 0;
+    virtual void prepareForDisplay(CompletionHandler<void()>&&) = 0;
 
 protected:
     CompositorIntegration() = default;

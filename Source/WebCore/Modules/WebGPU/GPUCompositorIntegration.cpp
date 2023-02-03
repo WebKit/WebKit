@@ -35,9 +35,9 @@ Vector<MachSendRight> GPUCompositorIntegration::recreateRenderBuffers(int width,
 }
 #endif
 
-void GPUCompositorIntegration::prepareForDisplay()
+void GPUCompositorIntegration::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
-    m_backing->prepareForDisplay();
+    m_backing->prepareForDisplay(WTFMove(completionHandler));
 }
 
 } // namespace WebCore

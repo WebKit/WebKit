@@ -76,7 +76,7 @@ private:
     CompositorIntegrationImpl& operator=(const CompositorIntegrationImpl&) = delete;
     CompositorIntegrationImpl& operator=(CompositorIntegrationImpl&&) = delete;
 
-    void prepareForDisplay() override;
+    void prepareForDisplay(CompletionHandler<void()>&&) override;
 
 #if PLATFORM(COCOA)
     Vector<MachSendRight> recreateRenderBuffers(int width, int height) override;
