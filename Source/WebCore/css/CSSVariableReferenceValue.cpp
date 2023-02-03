@@ -123,7 +123,7 @@ bool CSSVariableReferenceValue::resolveVariableReference(CSSParserTokenRange ran
         if (functionId == CSSValueEnv)
             return builderState.document().constantProperties().values().get(variableName);
 
-        return builderState.style().customPropertyValue(variableName, builderState.document().customPropertyRegistry());
+        return builderState.style().customPropertyValue(variableName);
     }();
 
     if (!property || property->isInvalid()) {

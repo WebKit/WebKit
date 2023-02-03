@@ -164,7 +164,7 @@ public:
 
     static void applyInitialCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const AtomString& name);
     static void applyInheritCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const AtomString& name);
-    static void applyValueCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, CSSCustomPropertyValue&);
+    static void applyValueCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const CSSCustomPropertyValue&);
 
     static void applyValueColor(BuilderState&, CSSValue&);
 
@@ -2154,7 +2154,7 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
 inline void BuilderCustom::applyInitialCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, const AtomString& name)
 {
     if (registered && registered->initialValue) {
-        applyValueCustomProperty(builderState, registered, const_cast<CSSCustomPropertyValue&>(*registered->initialValue));
+        applyValueCustomProperty(builderState, registered, *registered->initialValue);
         return;
     }
 
@@ -2166,20 +2166,17 @@ inline void BuilderCustom::applyInheritCustomProperty(BuilderState& builderState
 {
     auto* parentValue = builderState.parentStyle().inheritedCustomProperties().get(name);
     if (parentValue && !(registered && !registered->inherits))
-        applyValueCustomProperty(builderState, registered, *parentValue);
+        applyValueCustomProperty(builderState, registered, const_cast<CSSCustomPropertyValue&>(*parentValue));
     else
         applyInitialCustomProperty(builderState, registered, name);
 }
 
-inline void BuilderCustom::applyValueCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, CSSCustomPropertyValue& value)
+inline void BuilderCustom::applyValueCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, const CSSCustomPropertyValue& value)
 {
     ASSERT(value.isResolved());
-    const auto& name = value.name();
 
-    if (!registered || registered->inherits)
-        builderState.style().setInheritedCustomPropertyValue(name, value);
-    else
-        builderState.style().setNonInheritedCustomPropertyValue(name, value);
+    bool isInherited = !registered || registered->inherits;
+    builderState.style().setCustomPropertyValue(value, isInherited);
 }
 
 inline void BuilderCustom::applyInitialContainIntrinsicWidth(BuilderState& builderState)

@@ -8,7 +8,7 @@ PASS Ongoing animation picks up redeclared inherits flag
 PASS Ongoing animation picks up redeclared meaning of 'unset'
 PASS Transitioning from initial value
 PASS Transitioning from specified value
-FAIL Transition triggered by initial value change assert_equals: expected "150px" but got "200px"
+PASS Transition triggered by initial value change
 PASS No transition when changing types
 PASS No transition when removing @property rule
 PASS Unregistered properties referencing animated properties update correctly.

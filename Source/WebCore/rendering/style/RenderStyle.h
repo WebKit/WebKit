@@ -156,6 +156,7 @@ public:
 
     static RenderStyle create();
     static std::unique_ptr<RenderStyle> createPtr();
+    static std::unique_ptr<RenderStyle> createPtrWithRegisteredInitialValues(const Style::CustomPropertyRegistry&);
 
     static RenderStyle clone(const RenderStyle&);
     static RenderStyle cloneIncludingPseudoElements(const RenderStyle&);
@@ -172,6 +173,7 @@ public:
     bool operator!=(const RenderStyle& other) const { return !(*this == other); }
 
     void inheritFrom(const RenderStyle&);
+    void inheritIgnoringCustomPropertiesFrom(const RenderStyle&);
     void fastPathInheritFrom(const RenderStyle&);
     void copyNonInheritedFrom(const RenderStyle&);
     void copyContentFrom(const RenderStyle&);
@@ -198,12 +200,10 @@ public:
 
     const CustomPropertyValueMap& inheritedCustomProperties() const { return m_rareInheritedData->customProperties->values; }
     const CustomPropertyValueMap& nonInheritedCustomProperties() const { return m_rareNonInheritedData->customProperties->values; }
-    const CSSCustomPropertyValue* customPropertyValue(const AtomString&, const Style::CustomPropertyRegistry&) const;
-    const CSSCustomPropertyValue* customPropertyValueWithoutResolvingInitial(const AtomString&) const;
+    const CSSCustomPropertyValue* customPropertyValue(const AtomString&) const;
 
-    void deduplicateInheritedCustomProperties(const RenderStyle&);
-    void setInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
-    void setNonInheritedCustomPropertyValue(const AtomString& name, Ref<CSSCustomPropertyValue>&&);
+    void deduplicateCustomProperties(const RenderStyle&);
+    void setCustomPropertyValue(Ref<const CSSCustomPropertyValue>&&, bool isInherited);
     bool customPropertiesEqual(const RenderStyle&) const;
 
     void setUsesViewportUnits() { m_nonInheritedFlags.usesViewportUnits = true; }

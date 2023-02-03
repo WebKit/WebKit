@@ -311,7 +311,7 @@ PASS Specified <length>+ is reified CSSUnparsedValue by iterator [attributeStyle
 PASS Specified <length>+ is reified CSSUnparsedValue by iterator [styleMap]
 PASS Specified <length># is reified CSSUnparsedValue by iterator [attributeStyleMap]
 PASS Specified <length># is reified CSSUnparsedValue by iterator [styleMap]
-FAIL Registered property with initial value show up on iteration of computedStyleMap assert_true: expected true got false
+PASS Registered property with initial value show up on iteration of computedStyleMap
 PASS Computed * is reified as CSSUnparsedValue by iterator
 PASS Computed <angle> is reified as CSSUnitValue by iterator
 PASS Computed <custom-ident> is reified as CSSKeywordValue by iterator

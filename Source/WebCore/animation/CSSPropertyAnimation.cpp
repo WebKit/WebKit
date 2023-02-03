@@ -3934,15 +3934,11 @@ static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderSty
     return CSSCustomPropertyValue::create(blendingContext.progress < 0.5 ? from : to);
 }
 
-static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const Document* document, const AtomString& customProperty, const RenderStyle& fromStyle, const RenderStyle& toStyle)
+static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const AtomString& customProperty, const RenderStyle& fromStyle, const RenderStyle& toStyle)
 {
-    // FIXME: When would there be no document?
-    if (!document)
-        return { };
-
     return {
-        fromStyle.customPropertyValue(customProperty, document->customPropertyRegistry()),
-        toStyle.customPropertyValue(customProperty, document->customPropertyRegistry())
+        fromStyle.customPropertyValue(customProperty),
+        toStyle.customPropertyValue(customProperty)
     };
 }
 
@@ -3950,14 +3946,12 @@ static void blendCustomProperty(const CSSPropertyBlendingClient& client, const A
 {
     CSSPropertyBlendingContext blendingContext { progress, false, compositeOperation, client, customProperty, iterationCompositeOperation, currentIteration };
 
-    auto [fromValue, toValue] = customPropertyValuesForBlending(client.document(), customProperty, from, to);
+    auto [fromValue, toValue] = customPropertyValuesForBlending(customProperty, from, to);
     if (!fromValue || !toValue)
         return;
 
-    if (client.document()->customPropertyRegistry().isInherited(customProperty))
-        destination.setInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
-    else
-        destination.setNonInheritedCustomPropertyValue(customProperty, blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext));
+    bool isInherited = client.document()->customPropertyRegistry().isInherited(customProperty);
+    destination.setCustomPropertyValue(blendedCSSCustomPropertyValue(from, to, *fromValue, *toValue, blendingContext), isInherited);
 }
 
 void CSSPropertyAnimation::blendProperty(const CSSPropertyBlendingClient& client, AnimatableProperty property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation compositeOperation, IterationCompositeOperation iterationCompositeOperation, double currentIteration)
@@ -4009,7 +4003,7 @@ static bool syntaxValuesRequireBlendingForAccumulativeIteration(const CSSCustomP
     });
 }
 
-bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient& client, AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
+bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, AnimatableProperty property, const RenderStyle& a, const RenderStyle& b)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
@@ -4017,7 +4011,7 @@ bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(cons
                 return wrapper->requiresBlendingForAccumulativeIteration(a, b);
             return false;
         }, [&] (const AtomString& customProperty) {
-            auto [from, to] = customPropertyValuesForBlending(client.document(), customProperty, a, b);
+            auto [from, to] = customPropertyValuesForBlending(customProperty, a, b);
             if (!from || !to)
                 return false;
 
@@ -4055,7 +4049,7 @@ bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(AnimatableProperty p
     );
 }
 
-bool CSSPropertyAnimation::propertiesEqual(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b, const Document& document)
+bool CSSPropertyAnimation::propertiesEqual(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b, const Document&)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
@@ -4063,7 +4057,7 @@ bool CSSPropertyAnimation::propertiesEqual(AnimatableProperty property, const Re
                 return wrapper->equals(a, b);
             return true;
         }, [&] (const AtomString& customProperty) {
-            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a, b);
+            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(customProperty, a, b);
             if (!aCustomPropertyValue && !bCustomPropertyValue)
                 return true;
             if (!aCustomPropertyValue || !bCustomPropertyValue)
@@ -4101,7 +4095,7 @@ static bool typeOfSyntaxValueCanBeInterpolated(const CSSCustomPropertyValue::Syn
     );
 }
 
-bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b, const Document& document)
+bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property, const RenderStyle& a, const RenderStyle& b, const Document&)
 {
     return WTF::switchOn(property,
         [&] (CSSPropertyID propertyId) {
@@ -4109,7 +4103,7 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property
                 return wrapper->canInterpolate(a, b, CompositeOperation::Replace);
             return true;
         }, [&] (const AtomString& customProperty) {
-            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(&document, customProperty, a, b);
+            auto [aCustomPropertyValue, bCustomPropertyValue] = customPropertyValuesForBlending(customProperty, a, b);
             if (!aCustomPropertyValue || !bCustomPropertyValue || aCustomPropertyValue == bCustomPropertyValue)
                 return false;
             auto& aVariantValue = aCustomPropertyValue->value();
