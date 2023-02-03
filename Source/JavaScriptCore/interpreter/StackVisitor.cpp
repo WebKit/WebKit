@@ -331,6 +331,28 @@ String StackVisitor::Frame::sourceURL() const
     return traceLine.isNull() ? emptyString() : traceLine;
 }
 
+String StackVisitor::Frame::preRedirectURL() const
+{
+    String traceLine;
+
+    switch (codeType()) {
+    case CodeType::Eval:
+    case CodeType::Module:
+    case CodeType::Function:
+    case CodeType::Global: {
+        String preRedirectURL = codeBlock()->ownerExecutable()->preRedirectURL();
+        if (!preRedirectURL.isEmpty())
+            traceLine = preRedirectURL.impl();
+        break;
+    }
+    case CodeType::Native:
+    case CodeType::Wasm:
+        break;
+    }
+
+    return traceLine.isNull() ? emptyString() : traceLine;
+}
+
 String StackVisitor::Frame::toString() const
 {
     String functionName = this->functionName();

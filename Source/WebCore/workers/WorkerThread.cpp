@@ -155,7 +155,7 @@ void WorkerThread::evaluateScriptIfNecessary(String& exceptionMessage)
     } else {
         auto parameters = ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, emptyString(), /* isTopLevelModule */ true);
         auto scriptFetcher = WorkerScriptFetcher::create(WTFMove(parameters), globalScope()->credentials(), globalScope()->destination(), globalScope()->referrerPolicy());
-        ScriptSourceCode sourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), { }, JSC::SourceProviderSourceType::Module, scriptFetcher.copyRef());
+        ScriptSourceCode sourceCode(m_startupData->sourceCode, URL(m_startupData->params.scriptURL), { }, { }, JSC::SourceProviderSourceType::Module, scriptFetcher.copyRef());
         sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
         bool success = globalScope()->script()->loadModuleSynchronously(scriptFetcher.get(), sourceCode);
         if (success) {

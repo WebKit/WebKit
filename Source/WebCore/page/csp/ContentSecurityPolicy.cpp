@@ -837,7 +837,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
         auto stack = createScriptCallStack(JSExecState::currentState(), 2);
         auto* callFrame = stack->firstNonNativeCallFrame();
         if (callFrame && callFrame->lineNumber()) {
-            info.sourceFile = createURLForReporting(URL { callFrame->sourceURL() }, effectiveViolatedDirective, usesReportTo);
+            info.sourceFile = createURLForReporting(URL { callFrame->preRedirectURL().isEmpty() ? callFrame->sourceURL() : callFrame->preRedirectURL() }, effectiveViolatedDirective, usesReportTo);
             info.lineNumber = callFrame->lineNumber();
             info.columnNumber = callFrame->columnNumber();
         }

@@ -30,10 +30,11 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringSourceProvider);
 
-SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
+SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL, String&& preRedirectURL, const TextPosition& startPosition, SourceProviderSourceType sourceType)
     : m_sourceType(sourceType)
     , m_sourceOrigin(sourceOrigin)
     , m_sourceURL(WTFMove(sourceURL))
+    , m_preRedirectURL(WTFMove(preRedirectURL))
     , m_startPosition(startPosition)
 {
 }
@@ -53,7 +54,7 @@ void SourceProvider::getID()
 
 #if ENABLE(WEBASSEMBLY)
 BaseWebAssemblySourceProvider::BaseWebAssemblySourceProvider(const SourceOrigin& sourceOrigin, String&& sourceURL)
-    : SourceProvider(sourceOrigin, WTFMove(sourceURL), TextPosition(), SourceProviderSourceType::WebAssembly)
+    : SourceProvider(sourceOrigin, WTFMove(sourceURL), String(), TextPosition(), SourceProviderSourceType::WebAssembly)
 {
 }
 #endif

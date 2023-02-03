@@ -1527,6 +1527,7 @@ public:
     {
         m_sourceOrigin.encode(encoder, sourceProvider.sourceOrigin());
         m_sourceURL.encode(encoder, sourceProvider.sourceURL());
+        m_preRedirectURL.encode(encoder, sourceProvider.preRedirectURL());
         m_sourceURLDirective.encode(encoder, sourceProvider.sourceURLDirective());
         m_sourceMappingURLDirective.encode(encoder, sourceProvider.sourceMappingURLDirective());
         m_startPosition.encode(encoder, sourceProvider.startPosition());
@@ -1541,6 +1542,7 @@ public:
 protected:
     CachedSourceOrigin m_sourceOrigin;
     CachedString m_sourceURL;
+    CachedString m_preRedirectURL;
     CachedString m_sourceURLDirective;
     CachedString m_sourceMappingURLDirective;
     CachedTextPosition m_startPosition;
