@@ -68,10 +68,6 @@
 
 namespace JSC {
 
-namespace JSGenericTypedArrayViewPrototypeFunctionsInternal {
-static constexpr bool verbose = false;
-}
-
 template<typename ViewClass>
 ALWAYS_INLINE bool speciesWatchpointIsValid(JSGlobalObject* globalObject, ViewClass* thisObject)
 {

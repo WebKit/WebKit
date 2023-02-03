@@ -99,7 +99,13 @@ OUTPUT_ALTERNATE_ROOT_PATH_YES_YES = $(DSTROOT)$(ALTERNATE_ROOT_PATH)/$(FULL_PRO
 INSTALLHDRS_SCRIPT_PHASE = YES;
 APPLY_RULES_IN_COPY_HEADERS = $(WK_USE_NEW_BUILD_SYSTEM);
 
-EXCLUDED_SOURCE_FILE_NAMES = $(inherited) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM));
+INCLUDED_SOURCE_FILE_NAMES = $(inherited) $(INCLUDED_SOURCE_FILE_NAMES_UNIFIED_$(WK_NOT_$(WK_NOT_$(WK_USE_UNIFIED_SOURCES))));
+EXCLUDED_SOURCE_FILE_NAMES = $(inherited) $(EXCLUDED_SOURCE_FILE_NAMES_UNIFIED_$(WK_NOT_$(WK_NOT_$(WK_USE_UNIFIED_SOURCES)))) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM));
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = $(inherited) framework.sb;
 // Offset and settings headers are built by separate targets and script phases in the legacy build system, not using build rules.
 EXCLUDED_SOURCE_FILE_NAMES_legacy = *.asm;
+
+WK_USE_UNIFIED_SOURCES = YES;
+EXCLUDED_SOURCE_FILE_NAMES_UNIFIED_YES = *.c *.cpp *.m *.mm;
+INCLUDED_SOURCE_FILE_NAMES_UNIFIED_YES = UnifiedSource* CachedTypes.cpp DFGSpeculativeJIT.cpp DFGSpeculativeJIT32_64.cpp DFGSpeculativeJIT64.cpp FTLLowerDFGToB3.cpp IntlDateTimeFormat.cpp IntlDurationFormat.cpp IntlListFormat.cpp IntlNumberFormat.cpp IntlPluralRules.cpp IntlWorkaround.cpp JSCBuiltins.cpp JSDateMath.cpp LowLevelInterpreter.cpp MacroAssemblerARM64.cpp MacroAssemblerARMv7.cpp MacroAssemblerMIPS.cpp MacroAssemblerRISCV64.cpp MacroAssemblerX86Common.cpp Parser.cpp WasmAirIRGenerator32_64.cpp WasmAirIRGenerator64.cpp ZydisFormatterATT.c ZydisFormatterBase.c ZydisFormatterIntel.c;
+EXCLUDED_SOURCE_FILE_NAMES_UNIFIED_NO = UnifiedSource*;

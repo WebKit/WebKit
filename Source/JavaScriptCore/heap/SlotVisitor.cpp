@@ -348,7 +348,7 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
     
     SetCurrentCellScope currentCellScope(*this, cell);
     
-    if (false) {
+    if ((false)) {
         dataLog("Visiting ", RawPointer(cell));
         if (!m_isFirstVisit)
             dataLog(" (subsequent)");

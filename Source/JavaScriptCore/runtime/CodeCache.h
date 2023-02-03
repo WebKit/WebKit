@@ -54,10 +54,6 @@ class VM;
 
 using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
-namespace CodeCacheInternal {
-static constexpr bool verbose = false;
-} // namespace CodeCacheInternal
-
 struct SourceCodeValue {
     SourceCodeValue()
     {
