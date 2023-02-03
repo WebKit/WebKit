@@ -564,10 +564,6 @@ void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
     // reply from the UIProcess, which would be unsafe.
     connection.setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
 
-#if ENABLE(SEC_ITEM_SHIM)
-    SecItemShimProxy::singleton().initializeConnection(connection);
-#endif
-
 #if HAVE(CVDISPLAYLINK)
     m_displayLinkClient.setConnection(&connection);
 #endif
