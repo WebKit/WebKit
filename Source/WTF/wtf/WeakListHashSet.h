@@ -30,7 +30,8 @@
 
 namespace WTF {
 
-template <typename T, typename WeakPtrImpl = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions assertionsPolicy = EnableWeakPtrThreadingAssertions::Yes>
+// Value will be deleted lazily upon rehash or amortized over time. For manual cleanup, call removeNullReferences().
+template <typename T, typename WeakPtrImpl, EnableWeakPtrThreadingAssertions assertionsPolicy>
 class WeakListHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 public:

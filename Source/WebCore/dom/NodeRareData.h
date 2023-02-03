@@ -31,7 +31,7 @@
 #include <new>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -237,7 +237,7 @@ class NodeMutationObserverData {
     WTF_MAKE_NONCOPYABLE(NodeMutationObserverData); WTF_MAKE_FAST_ALLOCATED;
 public:
     Vector<std::unique_ptr<MutationObserverRegistration>> registry;
-    HashSet<MutationObserverRegistration*> transientRegistry;
+    WeakHashSet<MutationObserverRegistration> transientRegistry;
 
     NodeMutationObserverData() { }
 };
@@ -294,8 +294,8 @@ public:
         return *m_nodeLists;
     }
 
-    NodeMutationObserverData* mutationObserverData() { return m_mutationObserverData.get(); }
-    NodeMutationObserverData& ensureMutationObserverData()
+    NodeMutationObserverData* mutationObserverDataIfExists() { return m_mutationObserverData.get(); }
+    NodeMutationObserverData& mutationObserverData()
     {
         if (!m_mutationObserverData)
             m_mutationObserverData = makeUnique<NodeMutationObserverData>();
