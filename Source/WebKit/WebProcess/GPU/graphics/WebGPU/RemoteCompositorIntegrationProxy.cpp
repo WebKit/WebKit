@@ -55,10 +55,12 @@ Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(in
 }
 #endif
 
-void RemoteCompositorIntegrationProxy::prepareForDisplay()
+void RemoteCompositorIntegrationProxy::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
     auto sendResult = sendSync(Messages::RemoteCompositorIntegration::PrepareForDisplay());
     UNUSED_VARIABLE(sendResult);
+
+    completionHandler();
 }
 
 } // namespace WebKit::WebGPU

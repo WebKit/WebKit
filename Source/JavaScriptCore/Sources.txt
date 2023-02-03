@@ -715,7 +715,7 @@ parser/Lexer.cpp
 parser/ModuleAnalyzer.cpp
 parser/Nodes.cpp
 parser/NodesAnalyzeModule.cpp
-parser/Parser.cpp
+parser/Parser.cpp @no-unify
 parser/ParserArena.cpp
 parser/SourceProvider.cpp
 parser/SourceProviderCache.cpp

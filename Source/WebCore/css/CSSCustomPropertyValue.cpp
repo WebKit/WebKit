@@ -152,4 +152,12 @@ Ref<const CSSVariableData> CSSCustomPropertyValue::asVariableData() const
     });
 }
 
+bool CSSCustomPropertyValue::isCurrentColor() const
+{
+    // FIXME: it's surprising that setting a custom property to "currentcolor"
+    // results in m_value being a CSSVariableReferenceValue rather than a
+    // CSSValueID set to CSSValueCurrentcolor or a StyleValue.
+    return std::holds_alternative<Ref<CSSVariableReferenceValue>>(m_value) && std::get<Ref<CSSVariableReferenceValue>>(m_value)->customCSSText() == "currentcolor"_s;
+}
+
 }

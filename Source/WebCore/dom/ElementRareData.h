@@ -127,18 +127,16 @@ public:
     OptionSet<UseType> useTypes() const
     {
         auto result = NodeRareData::useTypes();
-        if (m_unusualTabIndex)
-            result.add(UseType::TabIndex);
         if (!m_savedLayerScrollPosition.isZero())
             result.add(UseType::ScrollingPosition);
         if (m_computedStyle)
             result.add(UseType::ComputedStyle);
-        if (m_effectiveLang)
-            result.add(UseType::LangEffective);
-        if (m_classList)
-            result.add(UseType::ClassList);
+        if (!m_effectiveLang.isEmpty())
+            result.add(UseType::EffectiveLang);
         if (m_dataset)
             result.add(UseType::Dataset);
+        if (m_classList)
+            result.add(UseType::ClassList);
         if (m_shadowRoot)
             result.add(UseType::ShadowRoot);
         if (m_customElementReactionQueue)
@@ -158,14 +156,14 @@ public:
         if (m_beforePseudoElement || m_afterPseudoElement)
             result.add(UseType::PseudoElements);
         if (m_attributeStyleMap)
-            result.add(UseType::StyleMap);
+            result.add(UseType::AttributeStyleMap);
         if (m_computedStyleMap)
             result.add(UseType::ComputedStyleMap);
         if (m_partList)
             result.add(UseType::PartList);
         if (!m_partNames.isEmpty())
             result.add(UseType::PartNames);
-        if (m_nonce)
+        if (!m_nonce.isEmpty())
             result.add(UseType::Nonce);
         if (!m_explicitlySetAttrElementsMap.isEmpty())
             result.add(UseType::ExplicitlySetAttrElementsMap);

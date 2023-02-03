@@ -143,6 +143,7 @@ WEBCORE_EXPORT bool isPaperIO();
 WEBCORE_EXPORT bool isCrunchyroll();
 bool isWechat();
 WEBCORE_EXPORT bool isLutron();
+bool isUNIQLOApp();
 
 } // IOSApplication
 

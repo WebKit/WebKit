@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "GeometryUtilities.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLAttachmentElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
@@ -85,6 +86,11 @@ static bool shouldAllowElement(const Element& element)
 
 static bool shouldAllowNonPointerCursorForElement(const Element& element)
 {
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (is<HTMLAttachmentElement>(element))
+        return true;
+#endif
+
     if (is<HTMLFormControlElement>(element))
         return true;
 

@@ -27,7 +27,7 @@ messages -> RemoteCompositorIntegration NotRefCounted Stream {
 #if PLATFORM(COCOA)
 void RecreateRenderBuffers(int width, int height) -> (Vector<MachSendRight> renderBuffers) Synchronous NotStreamEncodableReply
 #endif
-void PrepareForDisplay() -> (bool dummy) Synchronous // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250993 Wait for the results to be fully drawn
+void PrepareForDisplay() -> (bool dummy) Synchronous NotStreamEncodableReply // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250993 Wait for the results to be fully drawn
 }
 
 #endif

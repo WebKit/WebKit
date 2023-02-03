@@ -1482,6 +1482,22 @@ bool Quirks::shouldNavigatorPluginsBeEmpty() const
 #endif
 }
 
+// Fix for the UNIQLO app (rdar://104519846).
+bool Quirks::shouldDisableLazyIframeLoadingQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldDisableLazyIframeLoadingQuirk) {
+#if PLATFORM(IOS_FAMILY)
+        m_shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && IOSApplication::isUNIQLOApp();
+#else
+        m_shouldDisableLazyIframeLoadingQuirk = false;
+#endif
+    }
+    return *m_shouldDisableLazyIframeLoadingQuirk;
+}
+
 bool Quirks::shouldDisableLazyImageLoadingQuirk() const
 {
     // Images are displaying as fully grey when loaded lazily in significant percentage of page loads.

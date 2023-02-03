@@ -338,4 +338,59 @@ test_with_at_property({
   });
 }, 'Registered properties referencing animated properties update correctly.');
 
+test_with_at_property({
+  syntax: '"<color>"',
+  inherits: false,
+  initialValue: 'black'
+}, (name) => {
+  with_style_node(`
+    @keyframes test {
+      from { ${name}: currentcolor; }
+      to { ${name}: rgb(200, 200, 200); }
+    }
+    #outer {
+      color: rgb(100, 100, 100);
+    }
+    #div {
+      animation: test 100s -50s linear paused;
+    }
+  `, (style) => {
+    assert_equals(getComputedStyle(div).getPropertyValue(name), 'rgb(150, 150, 150)');
+
+    outer.style.color = 'rgb(50, 50, 50)';
+    assert_equals(getComputedStyle(div).getPropertyValue(name), 'rgb(125, 125, 125)');
+
+    outer.style.color = 'rgb(150, 150, 150)';
+    assert_equals(getComputedStyle(div).getPropertyValue(name), 'rgb(175, 175, 175)');
+
+    outer.style.removeProperty("color");
+  });
+}, 'CSS animation setting "currentColor" for a custom property on a keyframe is responsive to changing "color" on the parent.');
+
+test_with_at_property({
+  syntax: '"<color>"',
+  inherits: false,
+  initialValue: 'black'
+}, (name) => {
+  with_style_node(`
+    #outer {
+      color: rgb(100, 100, 100);
+    }
+  `, () => {
+    const animation = div.animate({ [name]: ["currentcolor", "rgb(200, 200, 200)"]}, 1000);
+    animation.currentTime = 500;
+    animation.pause();
+
+    assert_equals(getComputedStyle(div).getPropertyValue(name), 'rgb(150, 150, 150)');
+
+    outer.style.color = 'rgb(50, 50, 50)';
+    assert_equals(getComputedStyle(div).getPropertyValue(name), 'rgb(125, 125, 125)');
+
+    outer.style.color = 'rgb(150, 150, 150)';
+    assert_equals(getComputedStyle(div).getPropertyValue(name), 'rgb(175, 175, 175)');
+
+    outer.style.removeProperty("color");
+  });
+}, 'JS-originated animation setting "currentColor" for a custom property on a keyframe is responsive to changing "color" on the parent.');
+
 </script>

@@ -31,7 +31,7 @@
 #include <new>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -237,7 +237,7 @@ class NodeMutationObserverData {
     WTF_MAKE_NONCOPYABLE(NodeMutationObserverData); WTF_MAKE_FAST_ALLOCATED;
 public:
     Vector<std::unique_ptr<MutationObserverRegistration>> registry;
-    HashSet<MutationObserverRegistration*> transientRegistry;
+    WeakHashSet<MutationObserverRegistration> transientRegistry;
 
     NodeMutationObserverData() { }
 };
@@ -249,30 +249,31 @@ class NodeRareData {
 public:
 #if defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS
     enum class UseType : uint32_t {
-        NodeList = 1 << 0,
-        MutationObserver = 1 << 1,
-        ManuallyAssignedSlot = 1 << 2,
-        TabIndex = 1 << 3,
-        ScrollingPosition = 1 << 4,
-        ComputedStyle = 1 << 5,
-        Dataset = 1 << 6,
-        ClassList = 1 << 7,
-        ShadowRoot = 1 << 8,
-        CustomElementReactionQueue = 1 << 9,
-        CustomElementDefaultARIA = 1 << 10,
-        AttributeMap = 1 << 11,
-        InteractionObserver = 1 << 12,
-        ResizeObserver = 1 << 13,
-        Animations = 1 << 14,
-        PseudoElements = 1 << 15,
-        StyleMap = 1 << 16,
-        PartList = 1 << 17,
-        PartNames = 1 << 18,
-        Nonce = 1 << 19,
+        TabIndex = 1 << 0,
+        ChildIndex = 1 << 1,
+        NodeList = 1 << 2,
+        MutationObserver = 1 << 3,
+        ManuallyAssignedSlot = 1 << 4,
+        ScrollingPosition = 1 << 5,
+        ComputedStyle = 1 << 6,
+        EffectiveLang = 1 << 7,
+        Dataset = 1 << 8,
+        ClassList = 1 << 9,
+        ShadowRoot = 1 << 10,
+        CustomElementReactionQueue = 1 << 11,
+        CustomElementDefaultARIA = 1 << 12,
+        FormAssociatedCustomElement = 1 << 13,
+        AttributeMap = 1 << 14,
+        InteractionObserver = 1 << 15,
+        ResizeObserver = 1 << 16,
+        Animations = 1 << 17,
+        PseudoElements = 1 << 18,
+        AttributeStyleMap = 1 << 19,
         ComputedStyleMap = 1 << 20,
-        ExplicitlySetAttrElementsMap = 1 << 21,
-        EffectiveLang = 1 << 22,
-        FormAssociatedCustomElement = 1 << 23,
+        PartList = 1 << 21,
+        PartNames = 1 << 22,
+        Nonce = 1 << 23,
+        ExplicitlySetAttrElementsMap = 1 << 24,
     };
 #endif
 
@@ -294,8 +295,8 @@ public:
         return *m_nodeLists;
     }
 
-    NodeMutationObserverData* mutationObserverData() { return m_mutationObserverData.get(); }
-    NodeMutationObserverData& ensureMutationObserverData()
+    NodeMutationObserverData* mutationObserverDataIfExists() { return m_mutationObserverData.get(); }
+    NodeMutationObserverData& mutationObserverData()
     {
         if (!m_mutationObserverData)
             m_mutationObserverData = makeUnique<NodeMutationObserverData>();
@@ -310,6 +311,10 @@ public:
     OptionSet<UseType> useTypes() const
     {
         OptionSet<UseType> result;
+        if (m_unusualTabIndex)
+            result.add(UseType::TabIndex);
+        if (m_childIndex)
+            result.add(UseType::ChildIndex);
         if (m_nodeLists)
             result.add(UseType::NodeList);
         if (m_mutationObserverData)

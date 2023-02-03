@@ -37,7 +37,9 @@ namespace WTF {
 enum class EnableWeakPtrThreadingAssertions : bool { No, Yes };
 template<typename, typename> class WeakPtrFactory;
 
-template<typename, typename, EnableWeakPtrThreadingAssertions> class WeakHashSet;
+template<typename, typename, typename = DefaultWeakPtrImpl> class WeakHashMap;
+template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakHashSet;
+template <typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakListHashSet;
 
 template<typename Derived>
 class WeakPtrImplBase : public ThreadSafeRefCounted<Derived> {
@@ -380,6 +382,9 @@ WeakPtr(const RefPtr<T>& value, EnableWeakPtrThreadingAssertions = EnableWeakPtr
 
 using WTF::CanMakeWeakPtr;
 using WTF::EnableWeakPtrThreadingAssertions;
+using WTF::WeakHashMap;
+using WTF::WeakHashSet;
+using WTF::WeakListHashSet;
 using WTF::WeakPtr;
 using WTF::WeakPtrFactory;
 using WTF::WeakPtrFactoryInitialization;

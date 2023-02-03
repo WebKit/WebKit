@@ -94,7 +94,9 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
     if (UNLIKELY(isDocumentFragmentForInnerOuterHTML())) {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         RELEASE_ASSERT(!connectedSubframeCount() && !hasRareData() && !wrapper());
+#if !DUMP_NODE_STATISTICS
         ASSERT(!weakPtrFactory().isInitialized());
+#endif
         bool hadElementChild = false;
         while (RefPtr<Node> child = m_firstChild) {
             hadElementChild |= is<Element>(*child);

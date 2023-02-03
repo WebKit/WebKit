@@ -181,6 +181,7 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
     case Wasm::TypeKind::Externref:
     case Wasm::TypeKind::Funcref:
         return bitwise_cast<JSValue>(bits);
+    case Wasm::TypeKind::V128:
     default:
         break;
     }
@@ -201,6 +202,8 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
         RELEASE_AND_RETURN(scope, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
     case Wasm::TypeKind::F64:
         RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toNumber(globalObject)));
+    case Wasm::TypeKind::V128:
+        RELEASE_ASSERT_NOT_REACHED();
     default: {
         if (Wasm::isExternref(type)) {
             if (!type.isNullable() && value.isNull())

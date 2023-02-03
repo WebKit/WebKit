@@ -218,12 +218,7 @@ bool Internals::platformSupportsMetal(bool isWebGL2)
     UNUSED_PARAM(isWebGL2);
 
     if (device) {
-#if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-        // A8 devices (iPad Mini 4, iPad Air 2) cannot use WebGL2 via Metal.
-        // This check can be removed once they are no longer supported.
-        if (isWebGL2)
-            return [device supportsFamily:MTLGPUFamilyApple3];
-#elif PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
         // Old Macs, such as MacBookPro11,4 cannot use WebGL via Metal.
         // This check can be removed once they are no longer supported.
         return [device supportsFamily:MTLGPUFamilyMac2];

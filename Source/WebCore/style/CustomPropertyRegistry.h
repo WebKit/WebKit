@@ -29,6 +29,9 @@
 #include <wtf/HashMap.h>
 
 namespace WebCore {
+
+class RenderStyle;
+
 namespace Style {
 
 class Scope;
@@ -45,13 +48,19 @@ public:
     void registerFromStylesheet(const StyleRuleProperty::Descriptor&);
     void clearRegisteredFromStylesheets();
 
+    const RenderStyle& initialValuePrototypeStyle() const;
+
 private:
+    void invalidate(const AtomString&);
     void notifyAnimationsOfCustomPropertyRegistration(const AtomString&);
 
     Scope& m_scope;
 
     HashMap<AtomString, std::unique_ptr<const CSSRegisteredCustomProperty>> m_propertiesFromAPI;
     HashMap<AtomString, std::unique_ptr<const CSSRegisteredCustomProperty>> m_propertiesFromStylesheet;
+
+    mutable std::unique_ptr<RenderStyle> m_initialValuePrototypeStyle;
+    mutable bool m_hasInvalidPrototypeStyle { false };
 };
 
 }

@@ -451,6 +451,12 @@ bool IOSApplication::isWechat()
     return isWechat;
 }
 
+bool IOSApplication::isUNIQLOApp()
+{
+    static bool isUNIQLO = applicationBundleIdentifier().startsWith("com.uniqlo"_s);
+    return isUNIQLO;
+}
+
 bool IOSApplication::isLutron()
 {
     static bool isLutronApp = applicationBundleIsEqualTo("com.lutron.lsb"_s);

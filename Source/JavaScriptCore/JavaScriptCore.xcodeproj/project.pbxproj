@@ -2130,6 +2130,7 @@
 		FE68C6371B90DE040042BCB3 /* MacroAssemblerPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = FE68C6361B90DDD90042BCB3 /* MacroAssemblerPrinter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6F56DE1E64EAD600D17801 /* VMTraps.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6F56DD1E64E92000D17801 /* VMTraps.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE7497E6209001B10003565B /* JSCPtrTag.h in Headers */ = {isa = PBXBuildFile; fileRef = FE7497E5209001B00003565B /* JSCPtrTag.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE770390298CD40F009634C7 /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F0B3A909BB4DC00068FCE3 /* Parser.cpp */; };
 		FE7C41961B97FC4B00F4D598 /* PingPongStackOverflowTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */; };
 		FE80C1971D775CDD008510C0 /* CatchScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE80C1961D775B27008510C0 /* CatchScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE8C0312264A6911001A44AD /* SlowPathFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE8C0311264A6910001A44AD /* SlowPathFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12427,6 +12428,7 @@
 				4BE92D452898522400FA48E1 /* LowLevelInterpreter.cpp in Sources */,
 				4B46940328984FA800512FDF /* MacroAssemblerARM64.cpp in Sources */,
 				4B46940428984FEE00512FDF /* MacroAssemblerX86Common.cpp in Sources */,
+				FE770390298CD40F009634C7 /* Parser.cpp in Sources */,
 				DFBC2CA625E6D5B90081BDD1 /* SymbolStubsForSafariCompatibility.mm in Sources */,
 				E32F713F281B3C6600AFD21D /* UnifiedSource1-c.c in Sources */,
 				536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */,

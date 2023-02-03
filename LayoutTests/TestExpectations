@@ -468,9 +468,6 @@ imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-en
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_anchor_download_allow_downloads.tentative.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-invalid-args.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-event-during-parse.html [ DumpJSConsoleLogInStdErr ]
@@ -6199,3 +6196,18 @@ webkit.org/b/245905 imported/w3c/web-platform-tests/css/css-text/line-breaking/l
 js/dom/Promise-reject-large-string.html [ DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/251624 fast/images/animated-heics-verify.html [ Skip ]
+
+# Import-assertion gets reverted to stage-2.
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/content-type-checking.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/import-css-module-basic.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/integrity.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/load-error-events.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/empty-assertion-clause.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/invalid-type-assertion-error.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/import-assertions/unsupported-assertion.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/charset.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/integrity.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/json-module-service-worker-test.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/load-error-events.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.html [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Skip ]

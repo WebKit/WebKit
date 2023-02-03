@@ -130,18 +130,22 @@ static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& liveNodeSet()
 static const char* stringForRareDataUseType(NodeRareData::UseType useType)
 {
     switch (useType) {
+    case NodeRareData::UseType::TabIndex:
+        return "TabIndex";
+    case NodeRareData::UseType::ChildIndex:
+        return "ChildIndex";
     case NodeRareData::UseType::NodeList:
         return "NodeList";
     case NodeRareData::UseType::MutationObserver:
         return "MutationObserver";
     case NodeRareData::UseType::ManuallyAssignedSlot:
         return "ManuallyAssignedSlot";
-    case NodeRareData::UseType::TabIndex:
-        return "TabIndex";
     case NodeRareData::UseType::ScrollingPosition:
         return "ScrollingPosition";
     case NodeRareData::UseType::ComputedStyle:
         return "ComputedStyle";
+    case NodeRareData::UseType::EffectiveLang:
+        return "EffectiveLang";
     case NodeRareData::UseType::Dataset:
         return "Dataset";
     case NodeRareData::UseType::ClassList:
@@ -152,6 +156,8 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "CustomElementReactionQueue";
     case NodeRareData::UseType::CustomElementDefaultARIA:
         return "CustomElementDefaultARIA";
+    case NodeRareData::UseType::FormAssociatedCustomElement:
+        return "FormAssociatedCustomElement";
     case NodeRareData::UseType::AttributeMap:
         return "AttributeMap";
     case NodeRareData::UseType::InteractionObserver:
@@ -162,8 +168,10 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "Animations";
     case NodeRareData::UseType::PseudoElements:
         return "PseudoElements";
-    case NodeRareData::UseType::StyleMap:
-        return "StyleMap";
+    case NodeRareData::UseType::AttributeStyleMap:
+        return "AttributeStyleMap";
+    case NodeRareData::UseType::ComputedStyleMap:
+        return "ComputedStyleMap";
     case NodeRareData::UseType::PartList:
         return "PartList";
     case NodeRareData::UseType::PartNames:
@@ -202,7 +210,7 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
-    HashMap<uint16_t, size_t> rareDataSingleUseTypeCounts;
+    HashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
     for (auto& node : liveNodeSet()) {
@@ -221,7 +229,7 @@ void Node::dumpStatistics()
                 useTypeCount++;
             }
             if (useTypeCount == 1) {
-                auto result = rareDataSingleUseTypeCounts.add(static_cast<uint16_t>(*useTypes.begin()), 0);
+                auto result = rareDataSingleUseTypeCounts.add(static_cast<uint32_t>(*useTypes.begin()), 0);
                 result.iterator->value++;
             } else
                 mixedRareDataUseCount++;
@@ -383,7 +391,7 @@ Node::Node(Document& document, ConstructionType type)
 
     document.incrementReferencingNodeCount();
 
-#if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
+#if !defined(NDEBUG) || DUMP_NODE_STATISTICS
     trackForDebugging();
 #endif
 }
@@ -456,7 +464,7 @@ void Node::materializeRareData()
 void Node::clearRareData()
 {
     ASSERT(hasRareData());
-    ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
+    ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmptyIgnoringNullReferences());
 
     m_rareDataWithBitfields.setPointer(nullptr);
 }
@@ -2125,7 +2133,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
         }
         if (auto* transientRegistry = transientMutationObserverRegistry()) {
             for (auto& registration : *transientRegistry)
-                newDocument.addMutationObserverTypes(registration->mutationTypes());
+                newDocument.addMutationObserverTypes(registration.mutationTypes());
         }
     } else {
         ASSERT(!mutationObserverRegistry());
@@ -2291,54 +2299,54 @@ Vector<std::unique_ptr<MutationObserverRegistration>>* Node::mutationObserverReg
 {
     if (!hasRareData())
         return nullptr;
-    auto* data = rareData()->mutationObserverData();
+    auto* data = rareData()->mutationObserverDataIfExists();
     if (!data)
         return nullptr;
     return &data->registry;
 }
 
-HashSet<MutationObserverRegistration*>* Node::transientMutationObserverRegistry()
+WeakHashSet<MutationObserverRegistration>* Node::transientMutationObserverRegistry()
 {
     if (!hasRareData())
         return nullptr;
-    auto* data = rareData()->mutationObserverData();
+    auto* data = rareData()->mutationObserverDataIfExists();
     if (!data)
         return nullptr;
     return &data->transientRegistry;
 }
 
-template<typename Registry> static inline void collectMatchingObserversForMutation(HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions>& observers, Registry* registry, Node& target, MutationObserverOptionType type, const QualifiedName* attributeName)
+HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
 {
-    if (!registry)
-        return;
+    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> observers;
+    ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
 
-    for (auto& registration : *registry) {
-        if (registration->shouldReceiveMutationFrom(target, type, attributeName)) {
-            auto deliveryOptions = registration->deliveryOptions();
-            auto result = observers.add(registration->observer(), deliveryOptions);
+    auto collectMatchingObserversForMutation = [&](MutationObserverRegistration& registration) {
+        if (registration.shouldReceiveMutationFrom(*this, type, attributeName)) {
+            auto deliveryOptions = registration.deliveryOptions();
+            auto result = observers.add(registration.observer(), deliveryOptions);
             if (!result.isNewEntry)
                 result.iterator->value.add(deliveryOptions);
         }
-    }
-}
+    };
 
-HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> Node::registeredMutationObservers(MutationObserverOptionType type, const QualifiedName* attributeName)
-{
-    HashMap<Ref<MutationObserver>, MutationRecordDeliveryOptions> result;
-    ASSERT((type == MutationObserverOptionType::Attributes && attributeName) || !attributeName);
-    collectMatchingObserversForMutation(result, mutationObserverRegistry(), *this, type, attributeName);
-    collectMatchingObserversForMutation(result, transientMutationObserverRegistry(), *this, type, attributeName);
-    for (Node* node = parentNode(); node; node = node->parentNode()) {
-        collectMatchingObserversForMutation(result, node->mutationObserverRegistry(), *this, type, attributeName);
-        collectMatchingObserversForMutation(result, node->transientMutationObserverRegistry(), *this, type, attributeName);
+    for (RefPtr node = this; node; node = node->parentNode()) {
+        if (auto* registry = node->mutationObserverRegistry()) {
+            for (auto& registration : *registry)
+                collectMatchingObserversForMutation(*registration);
+        }
+        if (auto* registry = node->transientMutationObserverRegistry()) {
+            for (auto& registration : *registry)
+                collectMatchingObserversForMutation(registration);
+        }
     }
-    return result;
+
+    return observers;
 }
 
 void Node::registerMutationObserver(MutationObserver& observer, MutationObserverOptions options, const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& attributeFilter)
 {
     MutationObserverRegistration* registration = nullptr;
-    auto& registry = ensureRareData().ensureMutationObserverData().registry;
+    auto& registry = ensureRareData().mutationObserverData().registry;
 
     for (auto& candidateRegistration : registry) {
         if (&candidateRegistration->observer() == &observer) {
@@ -2369,7 +2377,7 @@ void Node::unregisterMutationObserver(MutationObserverRegistration& registration
 
 void Node::registerTransientMutationObserver(MutationObserverRegistration& registration)
 {
-    ensureRareData().ensureMutationObserverData().transientRegistry.add(&registration);
+    ensureRareData().mutationObserverData().transientRegistry.add(registration);
 }
 
 void Node::unregisterTransientMutationObserver(MutationObserverRegistration& registration)
@@ -2379,8 +2387,8 @@ void Node::unregisterTransientMutationObserver(MutationObserverRegistration& reg
     if (!transientRegistry)
         return;
 
-    ASSERT(transientRegistry->contains(&registration));
-    transientRegistry->remove(&registration);
+    ASSERT(transientRegistry->contains(registration));
+    transientRegistry->remove(registration);
 }
 
 void Node::notifyMutationObserversNodeWillDetach()
@@ -2394,8 +2402,8 @@ void Node::notifyMutationObserversNodeWillDetach()
                 registration->observedSubtreeNodeWillDetach(*this);
         }
         if (auto* transientRegistry = node->transientMutationObserverRegistry()) {
-            for (auto* registration : *transientRegistry)
-                registration->observedSubtreeNodeWillDetach(*this);
+            for (auto& registration : *transientRegistry)
+                registration.observedSubtreeNodeWillDetach(*this);
         }
     }
 }

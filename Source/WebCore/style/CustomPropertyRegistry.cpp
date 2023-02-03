@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
+#include "RenderStyle.h"
 #include "StyleBuilder.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -40,6 +41,7 @@ namespace Style {
 
 CustomPropertyRegistry::CustomPropertyRegistry(Scope& scope)
     : m_scope(scope)
+    , m_initialValuePrototypeStyle(RenderStyle::createPtr())
 {
 }
 
@@ -71,8 +73,8 @@ bool CustomPropertyRegistry::registerFromAPI(CSSRegisteredCustomProperty&& prope
     }).isNewEntry;
 
     if (success) {
+        invalidate(property.name);
         m_scope.didChangeStyleSheetEnvironment();
-        notifyAnimationsOfCustomPropertyRegistration(property.name);
     }
 
     return success;
@@ -132,15 +134,50 @@ void CustomPropertyRegistry::registerFromStylesheet(const StyleRuleProperty::Des
     // https://drafts.css-houdini.org/css-properties-values-api/#determining-registration
     m_propertiesFromStylesheet.set(property.name, makeUnique<const CSSRegisteredCustomProperty>(WTFMove(property)));
 
-    // Changing property registration may affect computed property values in the cache.
-    m_scope.invalidateMatchedDeclarationsCache();
-
-    notifyAnimationsOfCustomPropertyRegistration(property.name);
+    invalidate(property.name);
 }
 
 void CustomPropertyRegistry::clearRegisteredFromStylesheets()
 {
+    if (m_propertiesFromStylesheet.isEmpty())
+        return;
+
     m_propertiesFromStylesheet.clear();
+    invalidate(nullAtom());
+}
+
+const RenderStyle& CustomPropertyRegistry::initialValuePrototypeStyle() const
+{
+    if (m_hasInvalidPrototypeStyle) {
+        m_hasInvalidPrototypeStyle = false;
+
+        auto oldStyle = std::exchange(m_initialValuePrototypeStyle, RenderStyle::createPtr());
+
+        auto initializeToStyle = [&](auto& map) {
+            for (auto& property : map.values()) {
+                if (property->initialValue && !property->initialValue->isInvalid())
+                    m_initialValuePrototypeStyle->setCustomPropertyValue(*property->initialValue, property->inherits);
+            }
+        };
+
+        initializeToStyle(m_propertiesFromStylesheet);
+        initializeToStyle(m_propertiesFromAPI);
+
+        m_initialValuePrototypeStyle->deduplicateCustomProperties(*oldStyle);
+    }
+
+    return *m_initialValuePrototypeStyle;
+}
+
+void CustomPropertyRegistry::invalidate(const AtomString& customProperty)
+{
+    m_hasInvalidPrototypeStyle = true;
+    // Changing property registration may affect computed property values in the cache.
+    m_scope.invalidateMatchedDeclarationsCache();
+
+    // FIXME: Invalidate all?
+    if (!customProperty.isNull())
+        notifyAnimationsOfCustomPropertyRegistration(customProperty);
 }
 
 void CustomPropertyRegistry::notifyAnimationsOfCustomPropertyRegistration(const AtomString& customProperty)

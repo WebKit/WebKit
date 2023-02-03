@@ -3019,6 +3019,28 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
     return false;
 }
 
+bool RenderLayerBacking::isBitmapOnly() const
+{
+    if (m_owningLayer.hasVisibleBoxDecorationsOrBackground())
+        return false;
+
+    if (is<RenderHTMLCanvas>(renderer()))
+        return true;
+
+    if (is<RenderImage>(renderer())) {
+        auto& imageRenderer = downcast<RenderImage>(renderer());
+        if (auto* cachedImage = imageRenderer.cachedImage()) {
+            if (!cachedImage->hasImage())
+                return false;
+            return is<BitmapImage>(cachedImage->imageForRenderer(&imageRenderer));
+        }
+        return false;
+    }
+
+    return false;
+}
+
+
 bool RenderLayerBacking::isUnscaledBitmapOnly() const
 {
     if (!is<RenderImage>(renderer()) && !is<RenderHTMLCanvas>(renderer()))

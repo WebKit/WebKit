@@ -28,6 +28,7 @@
 
 #include "Animation.h"
 #include "CSSAnimation.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyAnimation.h"
@@ -930,6 +931,9 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
                         m_currentColorProperties.add(property.id());
                     else if (property.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
                         m_hasRelativeFontWeight = true;
+                } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
+                    if (customPropertyValue->isCurrentColor())
+                        m_currentColorProperties.add(customPropertyValue->name());
                 }
             }
         }

@@ -247,7 +247,7 @@ private:
     KeyframeList m_blendingKeyframes { emptyAtom() };
     HashSet<AnimatableProperty> m_animatedProperties;
     HashSet<CSSPropertyID> m_inheritedProperties;
-    HashSet<CSSPropertyID> m_currentColorProperties;
+    HashSet<AnimatableProperty> m_currentColorProperties;
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;

@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "LazyLoadFrameObserver.h"
+#include "Quirks.h"
 #include "RenderIFrame.h"
 #include "ScriptController.h"
 #include "ScriptableDocumentParser.h"
@@ -176,7 +177,7 @@ static bool isFrameLazyLoadable(const Document& document, const AtomString& load
 
 bool HTMLIFrameElement::shouldLoadFrameLazily()
 {
-    if (!m_lazyLoadFrameObserver && document().settings().lazyIframeLoadingEnabled()) {
+    if (!m_lazyLoadFrameObserver && document().settings().lazyIframeLoadingEnabled() && !document().quirks().shouldDisableLazyIframeLoadingQuirk()) {
         if (isFrameLazyLoadable(document(), attributeWithoutSynchronization(HTMLNames::loadingAttr))) {
             auto currentReferrerPolicy = referrerPolicy();
             URL completeURL = document().completeURL(frameURL());

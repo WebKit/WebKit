@@ -105,6 +105,9 @@ JSObject* JSWebAssemblyGlobal::type(JSGlobalObject* globalObject)
     case Wasm::TypeKind::F64:
         valueString = jsNontrivialString(vm, "f64"_s);
         break;
+    case Wasm::TypeKind::V128:
+        valueString = jsNontrivialString(vm, "v128"_s);
+        break;
     default: {
         if (Wasm::isFuncref(valueType))
             valueString = jsNontrivialString(vm, "funcref"_s);

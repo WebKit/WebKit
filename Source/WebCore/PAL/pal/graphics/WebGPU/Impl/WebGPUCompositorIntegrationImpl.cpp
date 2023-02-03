@@ -42,11 +42,12 @@ CompositorIntegrationImpl::CompositorIntegrationImpl(ConvertToBackingContext& co
 
 CompositorIntegrationImpl::~CompositorIntegrationImpl() = default;
 
-void CompositorIntegrationImpl::prepareForDisplay()
+void CompositorIntegrationImpl::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250993 Wait for the results to be fully drawn
-
     static_cast<PresentationContext*>(m_presentationContext.get())->present();
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250993 Wait for the results to be fully drawn
+    completionHandler();
 }
 
 #if PLATFORM(COCOA)

@@ -2724,7 +2724,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& p
     if (!style)
         return nullptr;
 
-    auto* value = style->customPropertyValue(propertyName, styledElement->document().customPropertyRegistry());
+    auto* value = style->customPropertyValue(propertyName);
 
     return const_cast<CSSCustomPropertyValue*>(value);
 }
