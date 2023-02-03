@@ -71,7 +71,7 @@ public:
 
     virtual void platformCALayerLogFilledVisibleFreshTile(unsigned /* blankPixelCount */) { }
 
-    virtual bool platformCALayerContainsBitmapOnly(PlatformCALayer*) const { return false; }
+    virtual bool platformCALayerContainsBitmapOnly(const PlatformCALayer*) const { return false; }
 
 protected:
     virtual ~PlatformCALayerClient() = default;
