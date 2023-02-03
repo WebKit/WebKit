@@ -34,6 +34,7 @@
 #include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
+#include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -110,10 +111,42 @@ ExceptionOr<void> CSSGroupingRule::deleteRule(unsigned index)
     return { };
 }
 
-void CSSGroupingRule::appendCSSTextForItems(StringBuilder& result) const
+void CSSGroupingRule::appendCSSTextForItems(StringBuilder& builder) const
 {
-    for (unsigned i = 0, size = length(); i < size; ++i)
-        result.append("  ", item(i)->cssText(), '\n');
+    builder.append(" {");
+
+    StringBuilder decls;
+    StringBuilder rules;
+    cssTextForDeclsAndRules(decls, rules);
+
+    if (decls.isEmpty() && rules.isEmpty()) {
+        builder.append("\n}");
+        return;
+    }
+
+    if (rules.isEmpty()) {
+        builder.append(' ', static_cast<StringView>(decls), " }");
+        return;
+    }
+    
+    if (decls.isEmpty()) {
+        builder.append(static_cast<StringView>(rules), "\n}");
+        return;
+    }
+
+    builder.append('\n', static_cast<StringView>(decls), static_cast<StringView>(rules), "\n}");
+    return;
+}
+
+void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder&, StringBuilder& rules) const
+{
+    auto& childRules = m_groupRule->childRules();
+
+    for (unsigned index = 0 ; index < childRules.size() ; index++) {
+        auto wrappedRule = item(index);
+        rules.append("\n  ", wrappedRule->cssText());
+    }
+
 }
 
 unsigned CSSGroupingRule::length() const

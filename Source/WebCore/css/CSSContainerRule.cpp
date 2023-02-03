@@ -52,15 +52,9 @@ const StyleRuleContainer& CSSContainerRule::styleRuleContainer() const
 String CSSContainerRule::cssText() const
 {
     StringBuilder builder;
-
     builder.append("@container ");
-
     CQ::serialize(builder, styleRuleContainer().containerQuery());
-
-    builder.append(" {\n");
     appendCSSTextForItems(builder);
-    builder.append('}');
-
     return builder.toString();
 }
 

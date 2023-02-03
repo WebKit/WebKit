@@ -1144,8 +1144,7 @@ void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange
                 auto rule = consumeAtRule(range, RegularRules);
                 if (!rule)
                     break;
-                // FIXME: add @scope
-                if (!rule->isMediaRule() && !rule->isSupportsRule() && !rule->isLayerRule() && !rule->isContainerRule())
+                if (!rule->isGroupRule())
                     break;
                 topContext().m_parsedRules.append(*rule);
             } else {
