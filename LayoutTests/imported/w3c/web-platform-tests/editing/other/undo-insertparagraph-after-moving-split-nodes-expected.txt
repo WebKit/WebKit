@@ -1,7 +1,0 @@
-abcdef
-
-FAIL Undo insertParagraph after moving right node to different paragraph promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
-FAIL Undo insertParagraph after moving left node to different paragraph promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
-FAIL Undo insertParagraph after moving right node into the left node promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
-FAIL Undo insertParagraph after moving left node into the right node promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
-

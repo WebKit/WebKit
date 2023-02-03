@@ -1,9 +1,0 @@
-abc
-
-PASS Testing execCommand with unknown command
-PASS Testing queryCommandEnabled with unknown command
-PASS Testing queryCommandIndeterm with unknown command
-PASS Testing queryCommandState with unknown command
-PASS Testing queryCommandSupported with unknown command
-PASS Testing queryCommandValue with unknown command
-

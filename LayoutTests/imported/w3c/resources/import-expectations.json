@@ -31,7 +31,6 @@
     "css/support": "import",
     "custom-elements": "import",
     "density-size-correction": "import",
-    "editing": "import",
     "encrypted-media": "import",
     "file-system-access": "import",
     "fs": "import",
