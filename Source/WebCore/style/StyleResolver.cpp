@@ -435,19 +435,14 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, bool& hasRelativeFontWeight, HashSet<AnimatableProperty>& inheritedProperties, HashSet<AnimatableProperty>& currentColorProperties)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list)
 {
-    inheritedProperties.clear();
-    currentColorProperties.clear();
-
     list.clear();
 
     auto keyframeRules = keyframeRulesForName(list.animationName());
     if (keyframeRules.isEmpty())
         return;
 
-    containsCSSVariableReferences = false;
-    hasRelativeFontWeight = false;
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
@@ -455,33 +450,14 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
             KeyframeValue keyframeValue(0, nullptr);
             keyframeValue.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), keyframeValue));
             keyframeValue.setKey(key);
-            if (!containsCSSVariableReferences)
-                containsCSSVariableReferences = keyframeRule->containsCSSVariableReferences();
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 keyframeValue.setTimingFunction(TimingFunction::createFromCSSValue(*timingFunctionCSSValue.get()));
             if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {
                 if (auto compositeOperation = toCompositeOperation(*compositeOperationCSSValue))
                     keyframeValue.setCompositeOperation(*compositeOperation);
             }
-            for (auto property : keyframeRule->properties()) {
-                if (auto* cssValue = property.value()) {
-                    if (cssValue->isPrimitiveValue()) {
-                        auto valueId = downcast<CSSPrimitiveValue>(*cssValue).valueID();
-                        if (valueId == CSSValueInherit)
-                            inheritedProperties.add(property.id());
-                        else if (valueId == CSSValueCurrentcolor)
-                            currentColorProperties.add(property.id());
-                        else if (property.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
-                            hasRelativeFontWeight = true;
-                    } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
-                        if (customPropertyValue->isCurrentColor())
-                            currentColorProperties.add(customPropertyValue->name());
-                        else if (customPropertyValue->isInherit())
-                            inheritedProperties.add(customPropertyValue->name());
-                    }
-                }
-            }
             list.insert(WTFMove(keyframeValue));
+            list.updatePropertiesMetadata(keyframeRule->properties());
         }
     }
 }

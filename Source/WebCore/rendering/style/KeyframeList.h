@@ -35,6 +35,7 @@ namespace WebCore {
 
 class KeyframeEffect;
 class RenderStyle;
+class StyleProperties;
 class TimingFunction;
 
 namespace Style {
@@ -84,7 +85,7 @@ public:
     {
     }
     ~KeyframeList();
-        
+
     KeyframeList& operator=(KeyframeList&&) = default;
     bool operator==(const KeyframeList& o) const;
     bool operator!=(const KeyframeList& o) const { return !(*this == o); }
@@ -113,11 +114,22 @@ public:
     auto end() const { return m_keyframes.end(); }
 
     bool usesContainerUnits() const;
+    bool usesRelativeFontWeight() const;
+    bool hasCSSVariableReferences() const;
+    bool hasColorSetToCurrentColor() const;
+    bool hasPropertySetToCurrentColor() const;
+    const HashSet<AnimatableProperty>& propertiesSetToInherit() const;
+
+    void updatePropertiesMetadata(const StyleProperties&);
 
 private:
     AtomString m_animationName;
     Vector<KeyframeValue> m_keyframes; // Kept sorted by key.
     HashSet<AnimatableProperty> m_properties; // The properties being animated.
+    bool m_usesRelativeFontWeight { false };
+    bool m_containsCSSVariableReferences { false };
+    HashSet<AnimatableProperty> m_propertiesSetToInherit;
+    HashSet<AnimatableProperty> m_propertiesSetToCurrentColor;
 };
 
 } // namespace WebCore
