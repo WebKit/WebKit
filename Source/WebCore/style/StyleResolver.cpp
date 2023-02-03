@@ -435,7 +435,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, bool& hasRelativeFontWeight, HashSet<CSSPropertyID>& inheritedProperties, HashSet<AnimatableProperty>& currentColorProperties)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, bool& hasRelativeFontWeight, HashSet<AnimatableProperty>& inheritedProperties, HashSet<AnimatableProperty>& currentColorProperties)
 {
     inheritedProperties.clear();
     currentColorProperties.clear();
@@ -476,6 +476,8 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
                     } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
                         if (customPropertyValue->isCurrentColor())
                             currentColorProperties.add(customPropertyValue->name());
+                        else if (customPropertyValue->isInherit())
+                            inheritedProperties.add(customPropertyValue->name());
                     }
                 }
             }
