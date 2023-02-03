@@ -562,11 +562,6 @@ bool AcceleratedBackingStoreWayland::paint(cairo_t* cr, const IntRect& clipRect)
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    // The compositor renders the texture flipped for gdk_cairo_draw_from_gl, fix that here.
-    cairo_matrix_t transform;
-    cairo_matrix_init(&transform, 1, 0, 0, -1, 0, cairo_image_surface_get_height(m_surface.get()) / m_webPage.deviceScaleFactor());
-    cairo_transform(cr, &transform);
-
     cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
     cairo_set_source_surface(cr, m_surface.get(), 0, 0);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
