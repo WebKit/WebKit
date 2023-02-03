@@ -273,7 +273,7 @@
     JSGlobalContextSetName(m_context, OpaqueJSString::tryCreate(name).get());
 }
 
-- (BOOL)inspectable
+- (BOOL)isInspectable
 {
     return JSGlobalContextIsInspectable(m_context);
 }
