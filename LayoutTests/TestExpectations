@@ -6192,6 +6192,9 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noop
 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_parent [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html?_top [ Skip ]
 
+# CSS nesting unsupported yet
+imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving.html [ ImageOnlyFailure ]
+
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
 fast/text/text-edge-no-half-leading-with-line-height-simple.html [ Skip ]

@@ -2186,6 +2186,7 @@
         "web-platform-tests/css/css-nesting/conditional-properties-ref.html",
         "web-platform-tests/css/css-nesting/conditional-rules-ref.html",
         "web-platform-tests/css/css-nesting/implicit-nesting-ref.html",
+        "web-platform-tests/css/css-nesting/nest-containing-forgiving-ref.html",
         "web-platform-tests/css/css-nesting/nesting-basic-ref.html",
         "web-platform-tests/css/css-pseudo/active-selection-051-ref.html",
         "web-platform-tests/css/css-pseudo/backdrop-animate-002-ref.html",
