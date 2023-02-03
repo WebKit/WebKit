@@ -725,7 +725,7 @@ void Graph::determineReachability()
     }
 }
 
-void Graph::resetReachability()
+void Graph::clearReachability()
 {
     for (BlockIndex blockIndex = m_blocks.size(); blockIndex--;) {
         BasicBlock* block = m_blocks[blockIndex].get();
@@ -734,7 +734,11 @@ void Graph::resetReachability()
         block->isReachable = false;
         block->predecessors.clear();
     }
-    
+}
+
+void Graph::resetReachability()
+{
+    clearReachability();
     determineReachability();
 }
 

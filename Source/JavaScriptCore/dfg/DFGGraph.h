@@ -547,6 +547,7 @@ public:
     void killUnreachableBlocks();
     
     void determineReachability();
+    void clearReachability();
     void resetReachability();
     
     void computeRefCounts();
