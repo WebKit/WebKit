@@ -428,7 +428,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     m_task = [m_sessionWrapper->session dataTaskWithRequest:nsRequest.get()];
 
-    WTFBeginSignpost(m_task.get(), "DataTask", "%" PUBLIC_LOG_STRING "%" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", request.httpMethod(), url.string().ascii().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
+    WTFBeginSignpost(m_task.get(), "DataTask", "%" PUBLIC_LOG_STRING " %" PRIVATE_LOG_STRING " pri: %.2f preconnect: %d", request.httpMethod().utf8().data(), url.string().utf8().data(), toNSURLSessionTaskPriority(request.priority()), parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
 
     switch (parameters.storedCredentialsPolicy) {
     case WebCore::StoredCredentialsPolicy::Use:
