@@ -57,7 +57,7 @@ void GPU::requestAdapter(const std::optional<GPURequestAdapterOptions>& options,
 {
     m_backing->requestAdapter(convertToBacking(options), [promise = WTFMove(promise)] (RefPtr<PAL::WebGPU::Adapter>&& adapter) mutable {
         if (!adapter) {
-            promise.reject(nullptr);
+            promise.resolve(nullptr);
             return;
         }
         promise.resolve(GPUAdapter::create(adapter.releaseNonNull()).ptr());
