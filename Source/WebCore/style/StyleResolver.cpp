@@ -30,6 +30,7 @@
 #include "config.h"
 #include "StyleResolver.h"
 
+#include "CSSCustomPropertyValue.h"
 #include "CSSFontSelector.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
@@ -430,7 +431,7 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, bool& hasRelativeFontWeight, HashSet<CSSPropertyID>& inheritedProperties, HashSet<CSSPropertyID>& currentColorProperties)
+void Resolver::keyframeStylesForAnimation(const Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, KeyframeList& list, bool& containsCSSVariableReferences, bool& hasRelativeFontWeight, HashSet<CSSPropertyID>& inheritedProperties, HashSet<AnimatableProperty>& currentColorProperties)
 {
     inheritedProperties.clear();
     currentColorProperties.clear();
@@ -468,6 +469,9 @@ void Resolver::keyframeStylesForAnimation(const Element& element, const RenderSt
                             currentColorProperties.add(property.id());
                         else if (property.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
                             hasRelativeFontWeight = true;
+                    } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
+                        if (customPropertyValue->isCurrentColor())
+                            currentColorProperties.add(customPropertyValue->name());
                     }
                 }
             }
