@@ -1252,6 +1252,18 @@
    },
    {
       "emails" : [
+         "bharris9@apple.com",
+         "btashawn@hotmail.com"
+      ],
+      "github" : "btashawn",
+      "name" : "Bri Harris",
+      "nicks" : [
+         "bharris9"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "brian.holt@samsung.com"
       ],
       "expertise" : "WebKitGTK, memory leak detection",
