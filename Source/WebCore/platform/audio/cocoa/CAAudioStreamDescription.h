@@ -80,13 +80,13 @@ private:
 template<class Encoder>
 void CAAudioStreamDescription::encode(Encoder& encoder) const
 {
-    encoder.encodeObject(m_streamDescription);
+    encoder << m_streamDescription;
 }
 
 template<class Decoder>
 std::optional<CAAudioStreamDescription> CAAudioStreamDescription::decode(Decoder& decoder)
 {
-    auto asbd = decoder.template decodeObject<AudioStreamBasicDescription>();
+    auto asbd = decoder.template decode<AudioStreamBasicDescription>();
     if (!asbd)
         return std::nullopt;
     return CAAudioStreamDescription { *asbd };

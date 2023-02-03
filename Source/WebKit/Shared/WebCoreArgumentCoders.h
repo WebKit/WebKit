@@ -44,12 +44,15 @@
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
 #include <WebCore/RealtimeMediaSource.h>
+#include <WebCore/RealtimeMediaSourceCapabilities.h>
+#include <WebCore/RectEdges.h>
 #include <WebCore/RenderingMode.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/StoredCredentialsPolicy.h>
+#include <WebCore/ViewportArguments.h>
 #include <WebCore/WorkerType.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
@@ -92,6 +95,8 @@
 #endif
 
 #if PLATFORM(COCOA)
+typedef struct AudioStreamBasicDescription AudioStreamBasicDescription;
+
 #include "ArgumentCodersCF.h"
 #endif
 
@@ -220,16 +225,10 @@ template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
     static std::optional<WebCore::DOMCacheEngine::Record> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
-    static void encode(Encoder&, const WebCore::RectEdges<bool>&);
-    static std::optional<WebCore::RectEdges<bool>> decode(Decoder&);
-};
+template<> struct ArgumentCoder<WebCore::RectEdges<bool>> : TriviallyCopyableArgumentCoder<WebCore::RectEdges<bool>> { };
 
 #if ENABLE(META_VIEWPORT)
-template<> struct ArgumentCoder<WebCore::ViewportArguments> {
-    static void encode(Encoder&, const WebCore::ViewportArguments&);
-    static std::optional<WebCore::ViewportArguments> decode(Decoder&);
-};
+template<> struct ArgumentCoder<WebCore::ViewportArguments> : TriviallyCopyableArgumentCoder<WebCore::ViewportArguments> { };
 #endif
 
 template<> struct ArgumentCoder<WebCore::Length> {
@@ -285,6 +284,11 @@ template<> struct ArgumentCoder<WebCore::ResourceError> {
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     static void encode(Encoder&, const WebCore::KeypressCommand&);
     static std::optional<WebCore::KeypressCommand> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<AudioStreamBasicDescription> {
+    static void encode(Encoder&, const AudioStreamBasicDescription&);
+    static std::optional<AudioStreamBasicDescription> decode(Decoder&);
 };
 
 #endif // PLATFORM(COCOA)
@@ -538,6 +542,12 @@ template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
     static void encode(Encoder&, const RefPtr<WebCore::ReportBody>&);
     static std::optional<RefPtr<WebCore::ReportBody>> decode(Decoder&);
 };
+
+#if ENABLE(MEDIA_STREAM)
+
+template<> struct ArgumentCoder<WebCore::CapabilityValueOrRange::ValueUnion> : TriviallyCopyableArgumentCoder<WebCore::CapabilityValueOrRange::ValueUnion> { };
+
+#endif
 
 } // namespace IPC
 
