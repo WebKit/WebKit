@@ -11702,6 +11702,7 @@ IGNORE_CLANG_WARNINGS_END
                 else
                     arguments.append(ConstrainedValue(lowDouble(m_graph.varArgChild(node, 2 + i)), ValueRep::reg(wasmCallInfo.params[i].location.fpr())));
                 break;
+            case Wasm::TypeKind::V128:
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -11761,6 +11762,7 @@ IGNORE_CLANG_WARNINGS_END
                 patchpoint->resultConstraints = { ValueRep::reg(wasmCallInfo.results[0].location.fpr()) };
                 break;
             }
+            case Wasm::TypeKind::V128:
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
@@ -11848,6 +11850,7 @@ IGNORE_CLANG_WARNINGS_END
                 setJSValue(boxDouble(purifyNaN(patchpoint)));
                 break;
             }
+            case Wasm::TypeKind::V128:
             default:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
