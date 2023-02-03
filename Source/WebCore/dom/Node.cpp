@@ -130,18 +130,22 @@ static WeakHashSet<Node, WeakPtrImplWithEventTargetData>& liveNodeSet()
 static const char* stringForRareDataUseType(NodeRareData::UseType useType)
 {
     switch (useType) {
+    case NodeRareData::UseType::TabIndex:
+        return "TabIndex";
+    case NodeRareData::UseType::ChildIndex:
+        return "ChildIndex";
     case NodeRareData::UseType::NodeList:
         return "NodeList";
     case NodeRareData::UseType::MutationObserver:
         return "MutationObserver";
     case NodeRareData::UseType::ManuallyAssignedSlot:
         return "ManuallyAssignedSlot";
-    case NodeRareData::UseType::TabIndex:
-        return "TabIndex";
     case NodeRareData::UseType::ScrollingPosition:
         return "ScrollingPosition";
     case NodeRareData::UseType::ComputedStyle:
         return "ComputedStyle";
+    case NodeRareData::UseType::EffectiveLang:
+        return "EffectiveLang";
     case NodeRareData::UseType::Dataset:
         return "Dataset";
     case NodeRareData::UseType::ClassList:
@@ -152,6 +156,8 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "CustomElementReactionQueue";
     case NodeRareData::UseType::CustomElementDefaultARIA:
         return "CustomElementDefaultARIA";
+    case NodeRareData::UseType::FormAssociatedCustomElement:
+        return "FormAssociatedCustomElement";
     case NodeRareData::UseType::AttributeMap:
         return "AttributeMap";
     case NodeRareData::UseType::InteractionObserver:
@@ -162,8 +168,10 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "Animations";
     case NodeRareData::UseType::PseudoElements:
         return "PseudoElements";
-    case NodeRareData::UseType::StyleMap:
-        return "StyleMap";
+    case NodeRareData::UseType::AttributeStyleMap:
+        return "AttributeStyleMap";
+    case NodeRareData::UseType::ComputedStyleMap:
+        return "ComputedStyleMap";
     case NodeRareData::UseType::PartList:
         return "PartList";
     case NodeRareData::UseType::PartNames:
@@ -202,7 +210,7 @@ void Node::dumpStatistics()
     size_t elementsWithRareData = 0;
     size_t elementsWithNamedNodeMap = 0;
 
-    HashMap<uint16_t, size_t> rareDataSingleUseTypeCounts;
+    HashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
     for (auto& node : liveNodeSet()) {
@@ -221,7 +229,7 @@ void Node::dumpStatistics()
                 useTypeCount++;
             }
             if (useTypeCount == 1) {
-                auto result = rareDataSingleUseTypeCounts.add(static_cast<uint16_t>(*useTypes.begin()), 0);
+                auto result = rareDataSingleUseTypeCounts.add(static_cast<uint32_t>(*useTypes.begin()), 0);
                 result.iterator->value++;
             } else
                 mixedRareDataUseCount++;
@@ -383,7 +391,7 @@ Node::Node(Document& document, ConstructionType type)
 
     document.incrementReferencingNodeCount();
 
-#if !defined(NDEBUG) || (defined(DUMP_NODE_STATISTICS) && DUMP_NODE_STATISTICS)
+#if !defined(NDEBUG) || DUMP_NODE_STATISTICS
     trackForDebugging();
 #endif
 }
