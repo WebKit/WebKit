@@ -186,7 +186,10 @@ private:
     void repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns, LayoutUnit availableSpaceForRows);
 
     void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&);
+
     void layoutGridItems();
+    void layoutMasonryItems();
+
     void populateGridPositionsForDirection(GridTrackSizingDirection);
 
     LayoutUnit gridAreaBreadthForOutOfFlowChild(const RenderBox&, GridTrackSizingDirection);
