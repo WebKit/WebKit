@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "AppKitSPI.h"
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
@@ -233,6 +234,14 @@ TEST(ContextMenuTests, SharePopoverDoesNotClearSelection)
     }]);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    auto presentingViewSwizzler = InstanceMethodSwizzler {
+        NSMenu.class,
+        @selector(_presentingView),
+        imp_implementationWithBlock([&](NSMenu *) {
+            return webView.get();
+        })
+    };
+
     [webView setForceWindowToBecomeKey:YES];
     [webView synchronouslyLoadHTMLString:@"<body style='font-size: 100px;'>Hello world this is a test</body>"];
     [[webView window] makeFirstResponder:webView.get()];
