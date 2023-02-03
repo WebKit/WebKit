@@ -280,9 +280,9 @@ TEST(WebKit, IFrameWithSameOriginAsMainFramePropagates)
         
         NSString *responseText = nil;
         if ([[task request].URL.absoluteString containsString:@"iframe.html"])
-            responseText = [NSString stringWithUTF8String:iframeBytes];
+            responseText = @(iframeBytes);
         else if ([[task request].URL.absoluteString containsString:@"mainframe.html"])
-            responseText = [NSString stringWithUTF8String:mainFrameBytes];
+            responseText = @(mainFrameBytes);
 
         auto response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:[responseText length] textEncodingName:nil]);
         [task didReceiveResponse:response.get()];

@@ -375,8 +375,7 @@ int64_t PlatformPasteboard::setURL(const PasteboardURL& pasteboardURL)
         return 0;
 
     NSArray *urlWithTitle = @[ @[ urlString ], @[ pasteboardURL.title ] ];
-    NSString *pasteboardType = [NSString stringWithUTF8String:WebURLsWithTitlesPboardType];
-    BOOL didWriteData = [m_pasteboard setPropertyList:urlWithTitle forType:pasteboardType];
+    BOOL didWriteData = [m_pasteboard setPropertyList:urlWithTitle forType:@(WebURLsWithTitlesPboardType)];
     if (!didWriteData)
         return 0;
 

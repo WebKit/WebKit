@@ -59,7 +59,7 @@ void BitmapImage::invalidatePlatformData()
 Ref<Image> Image::loadPlatformResource(const char *name)
 {
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreBundleFinder class]];
-    NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"png"];
+    NSString *imagePath = [bundle pathForResource:@(name) ofType:@"png"];
     NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
         auto image = BitmapImage::create();

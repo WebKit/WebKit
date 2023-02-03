@@ -718,7 +718,7 @@ TEST(URLSchemeHandler, XHRPost)
             EXPECT_FALSE(reached);
             reached = true;
             // The length of this is variable
-            auto *formDataString = [NSString stringWithUTF8String:static_cast<const char*>(task.request.HTTPBody.bytes)];
+            auto *formDataString = @(static_cast<const char*>(task.request.HTTPBody.bytes));
             EXPECT_TRUE([formDataString containsString:@"Content-Disposition: form-data; name=\"foo\""]);
             EXPECT_TRUE([formDataString containsString:@"baz"]);
             EXPECT_TRUE([formDataString containsString:@"WebKitFormBoundary"]);

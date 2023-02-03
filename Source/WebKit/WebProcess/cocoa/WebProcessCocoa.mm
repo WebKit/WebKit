@@ -614,16 +614,14 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
     {
         auto memoryUsageStats = adoptNS([[NSMutableDictionary alloc] init]);
         for (auto& it : PerformanceLogging::memoryUsageStatistics(ShouldIncludeExpensiveComputations::Yes)) {
-            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
-            [memoryUsageStats setObject:@(it.value) forKey:keyString.get()];
+            [memoryUsageStats setObject:@(it.value) forKey:@(it.key)];
         }
         [stateDictionary setObject:memoryUsageStats.get() forKey:@"Memory Usage Stats"];
     }
     {
         auto jsObjectCounts = adoptNS([[NSMutableDictionary alloc] init]);
         for (auto& it : PerformanceLogging::javaScriptObjectCounts()) {
-            auto keyString = adoptNS([[NSString alloc] initWithUTF8String:it.key]);
-            [jsObjectCounts setObject:@(it.value) forKey:keyString.get()];
+            [jsObjectCounts setObject:@(it.value) forKey:@(it.key)];
         }
         [stateDictionary setObject:jsObjectCounts.get() forKey:@"JavaScript Object Counts"];
     }

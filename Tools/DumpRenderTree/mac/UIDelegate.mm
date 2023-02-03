@@ -383,13 +383,13 @@ static NSString *addLeadingSpaceStripTrailingSpaces(NSString *string)
         return;
     }
 
-    NSURL *baseURL = [NSURL URLWithString:[NSString stringWithUTF8String:gTestRunner->testURL().c_str()]];
+    NSURL *baseURL = [NSURL URLWithString:@(gTestRunner->testURL().c_str())];
     auto filePaths = createNSArray(openPanelFiles, [&] (const std::string& filePath) {
-        return [NSURL fileURLWithPath:[NSString stringWithUTF8String:filePath.c_str()] relativeToURL:baseURL].path;
+        return [NSURL fileURLWithPath:@(filePath.c_str()) relativeToURL:baseURL].path;
     });
 
 #if PLATFORM(IOS_FAMILY)
-    NSURL *firstURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:openPanelFiles[0].c_str()] relativeToURL:baseURL];
+    NSURL *firstURL = [NSURL fileURLWithPath:@(openPanelFiles[0].c_str()) relativeToURL:baseURL];
     NSString *displayString = firstURL.lastPathComponent;
     auto& iconData = gTestRunner->openPanelFilesMediaIcon();
     CGImageRef imageRef = nullptr;

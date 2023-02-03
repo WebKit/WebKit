@@ -918,13 +918,13 @@ String WebInspectorUIProxy::inspectorTestPageURL()
 
 DebuggableInfoData WebInspectorUIProxy::infoForLocalDebuggable()
 {
-    NSDictionary *plist = adoptCF(_CFCopySystemVersionDictionary()).bridgingAutorelease();
+    CFDictionaryRef plist = adoptCF(_CFCopySystemVersionDictionary()).autorelease();
 
     DebuggableInfoData result;
     result.debuggableType = Inspector::DebuggableType::WebPage;
     result.targetPlatformName = "macOS"_s;
-    result.targetBuildVersion = plist[static_cast<NSString *>(_kCFSystemVersionBuildVersionKey)];
-    result.targetProductVersion = plist[static_cast<NSString *>(_kCFSystemVersionProductUserVisibleVersionKey)];
+    result.targetBuildVersion = CFDictionaryGetValue(plist, _kCFSystemVersionBuildVersionKey);
+    result.targetProductVersion = CFDictionaryGetValue(plist, _kCFSystemVersionProductUserVisibleVersionKey);
     result.targetIsSimulator = false;
 
     return result;

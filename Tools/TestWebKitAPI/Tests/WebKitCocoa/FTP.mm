@@ -108,7 +108,7 @@ TEST(WKWebView, FTPSubresource)
     setInjectedBundleClient(webView.get());
     
     consoleMessages = [NSMutableArray arrayWithCapacity:2];
-    [webView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:subresourceBytes]];
+    [webView synchronouslyLoadHTMLString:@(subresourceBytes)];
 
     EXPECT_EQ([consoleMessages count], 2u);
     EXPECT_TRUE([consoleMessages.get()[0] isEqualToString:@"FTP URLs are disabled"]);

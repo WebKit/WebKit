@@ -42,7 +42,7 @@ NSString *toNS(WKStringRef string)
     size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
     buffer[stringLength] = '\0';
 
-    return [NSString stringWithUTF8String:buffer.get()];
+    return @(buffer.get());
 }
 
 NSString *toNS(WKRetainPtr<WKStringRef> string)

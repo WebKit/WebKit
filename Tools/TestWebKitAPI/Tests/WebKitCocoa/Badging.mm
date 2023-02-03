@@ -200,7 +200,7 @@ TEST(Badging, APIWindow)
     webView.get().UIDelegate = badgeDelegate.get();
     [webView synchronouslyLoadRequest:server.request("/"_s)];
 
-    NSString *nsCheckForBadgeFunctions = [NSString stringWithUTF8String:checkForBadgeFunctions];
+    NSString *nsCheckForBadgeFunctions = @(checkForBadgeFunctions);
     static bool done = false;
     [webView callAsyncJavaScript:nsCheckForBadgeFunctions arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isEqualToString:@"0 0 0 0 "]);
@@ -245,7 +245,7 @@ TEST(Badging, APIWindow)
     }];
     TestWebKitAPI::Util::run(&done);
 
-    NSString *nsExerciseBadgeFunctions = [NSString stringWithUTF8String:exerciseBadgeFunctions];
+    NSString *nsExerciseBadgeFunctions = @(exerciseBadgeFunctions);
     done = false;
     [webView callAsyncJavaScript:nsExerciseBadgeFunctions arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isEqualToString:@"DONE"]);
@@ -567,7 +567,7 @@ TEST(Badging, ServiceWorkerOverride)
     TestWebKitAPI::Util::run(&workerRunning);
 
     // Confirm that the WKWebView's window object does NOT have the badging functions exposed
-    NSString *nsCheckForBadgeFunctions = [NSString stringWithUTF8String:checkForBadgeFunctions];
+    NSString *nsCheckForBadgeFunctions = @(checkForBadgeFunctions);
     static bool done = false;
     [webView callAsyncJavaScript:nsCheckForBadgeFunctions arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE([result isEqualToString:@"0 0 0 0 "]);
