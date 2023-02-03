@@ -63,7 +63,7 @@ using DecisionPoint = MockContentFilterSettings::DecisionPoint;
     settings.setEnabled(true);
     settings.setDecision(static_cast<Decision>([decoder decodeIntForKey:@"Decision"]));
     settings.setDecisionPoint(static_cast<DecisionPoint>([decoder decodeIntForKey:@"DecisionPoint"]));
-    settings.setBlockedString("blocked"_s);
+    settings.setBlockedString("blocked<img src='about:blank'/><script>document.cookie='key=value';document.cookie</script>"_s);
     return self;
 }
 

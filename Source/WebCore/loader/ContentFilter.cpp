@@ -317,7 +317,7 @@ URL ContentFilter::url()
 #endif
 }
 
-static const URL& blockedPageURL()
+const URL& ContentFilter::blockedPageURL()
 {
     static NeverDestroyed blockedPageURL = [] () -> URL {
         auto webCoreBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebCore"));
