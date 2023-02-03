@@ -38,6 +38,9 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         this._basicPropertyNames = ["font-size", "font-style", "font-weight", "font-stretch"];
 
         this._abortController = new AbortController;
+        this._throttledUpdate = new Throttler(() => { this.update() }, 100);
+        this._debouncedUpdate = new Debouncer(() => { this._skipNextUpdate = false; this.update(); });
+        this._skipNextUpdate = false;
     }
 
     // Public
@@ -46,7 +49,19 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
     {
         super.refresh(significantChange);
 
-        // FIXME: <webkit.org/b/250128> Web Inspector: Font Panel: Avoid needless refresh of FontStyles
+        if (!this._fontStyles || this._fontStyles.significantChangeSinceLastRefresh) {
+            this._throttledUpdate.force();
+            return;
+        }
+
+        this._throttledUpdate.fire();
+    }
+
+    update()
+    {
+        if (this._skipNextUpdate)
+            return;
+
         this._fontStyles?.refresh();
 
         if (!this._fontStyles || this._fontStyles.significantChangeSinceLastRefresh)
@@ -521,6 +536,8 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
 
     _handleFontVariationValueChanged(event)
     {
+        this._skipNextUpdate = true;
+        this._debouncedUpdate.delayForTime(100);
         this._fontStyles.writeFontVariation(event.data.tag, event.data.value);
     }
 };
