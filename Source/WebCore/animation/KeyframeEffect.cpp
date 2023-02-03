@@ -625,7 +625,7 @@ void KeyframeEffect::copyPropertiesFromSource(Ref<KeyframeEffect>&& source)
 
     KeyframeList keyframeList(m_keyframesName);
     keyframeList.copyKeyframes(source->m_blendingKeyframes);
-    setBlendingKeyframes(keyframeList);
+    setBlendingKeyframes(WTFMove(keyframeList));
 }
 
 auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe>
@@ -944,7 +944,7 @@ void KeyframeEffect::updateBlendingKeyframes(RenderStyle& elementStyle, const St
         keyframeList.insert(WTFMove(keyframeValue));
     }
 
-    setBlendingKeyframes(keyframeList);
+    setBlendingKeyframes(WTFMove(keyframeList));
 }
 
 const HashSet<AnimatableProperty>& KeyframeEffect::animatedProperties()
@@ -1029,7 +1029,7 @@ void KeyframeEffect::clearBlendingKeyframes()
     m_blendingKeyframes.clear();
 }
 
-void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
+void KeyframeEffect::setBlendingKeyframes(KeyframeList&& blendingKeyframes)
 {
     CanBeAcceleratedMutationScope mutationScope(this);
 
@@ -1090,7 +1090,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
     }
 
     m_blendingKeyframesSource = BlendingKeyframesSource::CSSAnimation;
-    setBlendingKeyframes(keyframeList);
+    setBlendingKeyframes(WTFMove(keyframeList));
 }
 
 void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle)
@@ -1118,7 +1118,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle& ol
     keyframeList.insert(WTFMove(toKeyframeValue));
 
     m_blendingKeyframesSource = BlendingKeyframesSource::CSSTransition;
-    setBlendingKeyframes(keyframeList);
+    setBlendingKeyframes(WTFMove(keyframeList));
 }
 
 void KeyframeEffect::computedNeedsForcedLayout()
