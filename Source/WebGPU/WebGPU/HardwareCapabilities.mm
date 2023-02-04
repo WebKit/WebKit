@@ -80,7 +80,7 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
 
     // WGPUFeatureName_TextureCompressionETC2 and WGPUFeatureName_TextureCompressionASTC are to be filled in by the caller.
 
-    // FIXME: Determine if WGPUFeatureName_IndirectFirstInstance is supported.
+    features.append(WGPUFeatureName_IndirectFirstInstance);
 
     return features;
 }
