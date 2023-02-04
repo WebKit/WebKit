@@ -777,7 +777,7 @@ static void webkitWebViewConstructed(GObject* object)
 #if ENABLE(2022_GLIB_API)
 #if ENABLE(REMOTE_INSPECTOR)
     if (priv->isControlledByAutomation)
-        priv->networkSession = webkitWebContextGetNetworkSessionForAutomation(priv->context.get());
+        priv->networkSession = webkit_web_context_get_network_session_for_automation(priv->context.get());
 #endif
     if (!priv->networkSession)
         priv->networkSession = webkit_network_session_get_default();

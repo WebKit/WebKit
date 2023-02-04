@@ -303,11 +303,22 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     String sessionID = createVersion4UUIDString();
     // WebKitAutomationSession::automation-started is never emitted if automation is not enabled.
     g_assert_false(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
+#if ENABLE(2022_GLIB_API)
+    // Network session for automation is nullptr if automation is not enabled.
+    g_assert_null(webkit_web_context_get_network_session_for_automation(test->m_webContext.get()));
+#endif
     auto* session = test->requestSession(sessionID.utf8().data());
     g_assert_null(session);
 
     webkit_web_context_set_automation_allowed(test->m_webContext.get(), TRUE);
     g_assert_true(webkit_web_context_is_automation_allowed(test->m_webContext.get()));
+#if ENABLE(2022_GLIB_API)
+    auto* networkSession = webkit_web_context_get_network_session_for_automation(test->m_webContext.get());
+    g_assert_nonnull(networkSession);
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(networkSession));
+    g_assert_true(webkit_network_session_is_ephemeral(networkSession));
+    g_assert_false(networkSession == test->m_networkSession.get());
+#endif
 
     // There can't be more than one context with automation enabled
     GRefPtr<WebKitWebContext> otherContext = adoptGRef(webkit_web_context_new());
@@ -329,6 +340,9 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     auto webView = Test::adoptView(Test::createWebView(test->m_webContext.get()));
     g_assert_false(webkit_web_view_is_controlled_by_automation(webView.get()));
     g_assert_false(test->createTopLevelBrowsingContext(webView.get()));
+#if ENABLE(2022_GLIB_API)
+    g_assert_false(webkit_web_view_get_network_session(webView.get()) == networkSession);
+#endif
 
     // And will work with a proper web view.
     webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
@@ -341,10 +355,7 @@ static void testAutomationSessionRequestSession(AutomationTest* test, gconstpoin
     g_assert_true(webkit_web_view_is_controlled_by_automation(webView.get()));
     g_assert_cmpuint(webkit_web_view_get_automation_presentation_type(webView.get()), ==, WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW);
 #if ENABLE(2022_GLIB_API)
-    // Automation session has its own ephemeral session.
-    auto* networkSession = webkit_web_view_get_network_session(webView.get());
-    g_assert_false(networkSession == test->m_networkSession.get());
-    g_assert_true(webkit_network_session_is_ephemeral(networkSession));
+    g_assert_true(webkit_web_view_get_network_session(webView.get()) == networkSession);
 #endif
     g_assert_true(test->createTopLevelBrowsingContext(webView.get()));
 

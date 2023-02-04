@@ -32,6 +32,9 @@
 #endif
 #include <@API_INCLUDE_PREFIX@/WebKitGeolocationManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitNetworkProxySettings.h>
+#if ENABLE(2022_GLIB_API)
+#include <@API_INCLUDE_PREFIX@/WebKitNetworkSession.h>
+#endif
 #include <@API_INCLUDE_PREFIX@/WebKitSecurityManager.h>
 #include <@API_INCLUDE_PREFIX@/WebKitURISchemeRequest.h>
 #include <@API_INCLUDE_PREFIX@/WebKitUserMessage.h>
@@ -164,6 +167,12 @@ webkit_web_context_is_automation_allowed            (WebKitWebContext           
 WEBKIT_API void
 webkit_web_context_set_automation_allowed           (WebKitWebContext              *context,
                                                      gboolean                       allowed);
+
+#if ENABLE(2022_GLIB_API)
+WEBKIT_API WebKitNetworkSession *
+webkit_web_context_get_network_session_for_automation(WebKitWebContext             *context);
+#endif
+
 WEBKIT_API void
 webkit_web_context_set_cache_model                  (WebKitWebContext              *context,
                                                      WebKitCacheModel               cache_model);
