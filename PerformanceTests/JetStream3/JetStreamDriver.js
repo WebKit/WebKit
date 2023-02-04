@@ -1555,6 +1555,22 @@ let testPlans = [
         ],
         testGroup: SimpleGroup
     },
+    {
+        name: "doxbee-promise",
+        files: [
+            "./simple/doxbee-promise.js",
+        ],
+        benchmarkClass: AsyncBenchmark,
+        testGroup: SimpleGroup,
+    },
+    {
+        name: "doxbee-async",
+        files: [
+            "./simple/doxbee-async.js",
+        ],
+        benchmarkClass: AsyncBenchmark,
+        testGroup: SimpleGroup,
+    },
     // SeaMonster
     {
         name: "ai-astar",

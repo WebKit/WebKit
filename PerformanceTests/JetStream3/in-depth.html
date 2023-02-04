@@ -628,6 +628,25 @@
          Source code: <a href="simple/file-system.js">async-fs.js</a>
         </dd>
 
+        <dt id="doxbee-promise">doxbee-promise</dt>
+        <dd>
+         A typical CRUD method extracted from DoxBee that is called when uploading files. The benchmark emulates a situation where
+         10k requests are being made concurrently to execute some mixed async / sync action with fast I/O response times.
+         Authored by <a href="https://blog.spion.dev/posts/analysis-generators-and-other-async-patterns-node.html">Gorki Kosev</a>,
+         <a href="https://github.com/v8/promise-performance-tests">packed by Benedikt Meurer</a>.
+         Source code: <a href="simple/doxbee-promise.js">doxbee-promise.js</a>
+        </dd>
+
+        <dt id="doxbee-async">doxbee-async</dt>
+        <dd>
+         A typical CRUD method extracted from DoxBee that is called when uploading files. The benchmark emulates a situation where
+         10k requests are being made concurrently to execute some mixed async / sync action with fast I/O response times.
+         Uses async / await instead of plain Promise.
+         Authored by <a href="https://blog.spion.dev/posts/analysis-generators-and-other-async-patterns-node.html">Gorki Kosev</a>,
+         <a href="https://github.com/v8/promise-performance-tests">packed by Benedikt Meurer</a>.
+         Source code: <a href="simple/doxbee-async.js">doxbee-async.js</a>
+        </dd>
+
         <dt id="Air">Air</dt>
         <dd>
          Air is an ES2015 port of the <a href="https://webkit.org/blog/5852/introducing-the-b3-jit-compiler/">WebKit B3 JIT</a>'s <a href="https://trac.webkit.org/changeset/201783">Air::allocateStack phase</a>.
