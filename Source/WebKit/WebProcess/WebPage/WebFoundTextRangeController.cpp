@@ -298,9 +298,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
     for (auto& path : foundFramePaths)
         graphicsContext.fillPath(path);
 
-    if (m_textIndicator) {
-        graphicsContext.setCompositeOperation(WebCore::CompositeOperator::SourceOver);
-
+    if (m_textIndicator && !m_textIndicator->selectionRectInRootViewCoordinates().isEmpty()) {
         auto* indicatorImage = m_textIndicator->contentImage();
         if (!indicatorImage)
             return;
@@ -315,6 +313,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
 
         auto paths = WebCore::PathUtilities::pathsWithShrinkWrappedRects(textRectsInRootViewCoordinates, indicatorRadius);
 
+        graphicsContext.setCompositeOperation(WebCore::CompositeOperator::SourceOver);
         graphicsContext.setFillColor(highlightColor);
         for (const auto& path : paths)
             graphicsContext.fillPath(path);
