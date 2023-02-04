@@ -53,9 +53,9 @@
                    "div {\n  @media screen {\n  &, p > & { color: blue; }\n}\n}");
   });
 
-  // They are not removed from regular rules.
+  //They are removed from regular rules.
   test(() => {
-    assert_becomes("div { & { color: red; } }", "div {\n & { color: red; }\n}");
+    assert_becomes("div { & { color: red; } }", "div { color: red; }");
   });
 
   // Empty rules (confusingly?) serialize different between style rules

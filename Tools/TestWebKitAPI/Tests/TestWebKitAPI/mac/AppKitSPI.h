@@ -34,6 +34,7 @@
 #import <AppKit/NSInspectorBar.h>
 #import <AppKit/NSInspectorBarItemController.h>
 #import <AppKit/NSInspectorBar_Private.h>
+#import <AppKit/NSMenu_Private.h>
 #import <AppKit/NSTextInputClient_Private.h>
 #import <AppKit/NSWindow_Private.h>
 
@@ -93,6 +94,10 @@ NSString * const NSInspectorBarTextAlignmentItemIdentifier = @"NSInspectorBarTex
 @property (readonly) BOOL hasScrolledContentsUnderTitlebar;
 @end
 #endif
+
+@interface NSMenu (SPI)
+@property (readonly) NSView *_presentingView;
+@end
 
 #endif
 

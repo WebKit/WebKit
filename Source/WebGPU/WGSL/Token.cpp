@@ -113,8 +113,6 @@ String toString(TokenType type)
         return "-"_s;
     case TokenType::MinusMinus:
         return "--"_s;
-    case TokenType::Modulo:
-        return "%"_s;
     case TokenType::Plus:
         return "+"_s;
     case TokenType::PlusPlus:
@@ -127,8 +125,6 @@ String toString(TokenType type)
         return ")"_s;
     case TokenType::Semicolon:
         return ";"_s;
-    case TokenType::Slash:
-        return "/"_s;
     case TokenType::Star:
         return "*"_s;
     }

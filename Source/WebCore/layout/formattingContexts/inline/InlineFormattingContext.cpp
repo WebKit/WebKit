@@ -202,19 +202,19 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
     return lineContentRange.end;
 }
 
-static LineBuilder::LineInput::LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfVisibleLines)
+static LineBuilder::LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfVisibleLines)
 {
     // We may have passed the line-clamp line with overflow visible.
     if (maximumNumberOfVisibleLines && numberOfLines < *maximumNumberOfVisibleLines) {
         // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
         auto shouldApplyClampWhenApplicable = *maximumNumberOfVisibleLines - numberOfLines == 1;
         if (shouldApplyClampWhenApplicable)
-            return LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
+            return LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
     }
     // Truncation is in effect when the block container has overflow other than visible.
     if (rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
-    return LineBuilder::LineInput::LineEndingEllipsisPolicy::No;
+        return LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
+    return LineBuilder::LineEndingEllipsisPolicy::No;
 }
 
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
@@ -243,10 +243,10 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
-        auto ellipsisPolicy = lineEndingEllipsisPolicy(rootStyle, numberOfLines, maximumNumberOfVisibleLinesForThisInlineContent);
-        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, ellipsisPolicy }, previousLine);
+        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect }, previousLine);
 
-        auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints, blockLayoutState);
+        auto ellipsisPolicy = lineEndingEllipsisPolicy(rootStyle, numberOfLines, maximumNumberOfVisibleLinesForThisInlineContent);
+        auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints, ellipsisPolicy, blockLayoutState);
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
@@ -457,14 +457,18 @@ void InlineFormattingContext::collectContentIfNeeded()
     formattingState.addInlineItems(inlineItemsBuilder.build());
 }
 
-InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints, const BlockLayoutState& blockLayoutState)
+InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints, LineBuilder::LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const BlockLayoutState& blockLayoutState)
 {
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();
 
     auto lineBox = LineBoxBuilder { *this, lineContent, blockLayoutState }.build(currentLineIndex);
     auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox, constraints);
-    formattingState.addBoxes(InlineDisplayContentBuilder { *this, formattingState }.build(lineContent, lineBox, displayLine, currentLineIndex));
+    auto boxes = InlineDisplayContentBuilder { *this, formattingState }.build(lineContent, lineBox, displayLine, currentLineIndex);
+    if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(lineEndingEllipsisPolicy, displayLine, boxes, lineContent.isLastLineWithInlineContent))
+        displayLine.setEllipsisVisualRect(*ellipsisRect);
+
+    formattingState.addBoxes(WTFMove(boxes));
     formattingState.addLineBox(WTFMove(lineBox));
     formattingState.addLine(displayLine);
 

@@ -81,7 +81,7 @@ static bool isStyleSheetInjectedForURLAtPath(WebViewTest* test, const char* path
     test->waitUntilLoadFinished();
 
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = world ? test->runJavaScriptInWorldAndWaitUntilFinished(kStyleSheetTestScript, world, &error.outPtr())
+    WebKitJavascriptResult* javascriptResult = world ? test->runJavaScriptInWorldAndWaitUntilFinished(kStyleSheetTestScript, world, nullptr, &error.outPtr())
         : test->runJavaScriptAndWaitUntilFinished(kStyleSheetTestScript, &error.outPtr());
     g_assert_nonnull(javascriptResult);
     g_assert_no_error(error.get());
@@ -96,7 +96,7 @@ static bool isScriptInjectedForURLAtPath(WebViewTest* test, const char* path, co
     test->waitUntilLoadFinished();
 
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = world ? test->runJavaScriptInWorldAndWaitUntilFinished(kScriptTestScript, world, &error.outPtr())
+    WebKitJavascriptResult* javascriptResult = world ? test->runJavaScriptInWorldAndWaitUntilFinished(kScriptTestScript, world, nullptr, &error.outPtr())
         : test->runJavaScriptAndWaitUntilFinished(kScriptTestScript, &error.outPtr());
     if (javascriptResult) {
         g_assert_no_error(error.get());
@@ -328,10 +328,7 @@ public:
     {
         GUniquePtr<char> javascriptSnippet(g_strdup_printf("window.webkit.messageHandlers.%s.postMessage(%s);", handlerName, javascriptValueAsText));
         m_waitForScriptRun = true;
-        if (worldName)
-            webkit_web_view_run_javascript_in_world(m_webView, javascriptSnippet.get(), worldName, nullptr, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptFinished), this);
-        else
-            webkit_web_view_run_javascript(m_webView, javascriptSnippet.get(), nullptr, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptFinished), this);
+        webkit_web_view_evaluate_javascript(m_webView, javascriptSnippet.get(), -1, worldName, nullptr, nullptr, reinterpret_cast<GAsyncReadyCallback>(runJavaScriptFinished), this);
         return waitUntilMessageReceived(handlerName);
     }
 
@@ -380,7 +377,7 @@ public:
     {
         g_assert_true(test->m_waitForScriptRun);
         test->m_waitForScriptRun = false;
-        test->m_scriptMessage = webkit_web_view_run_javascript_in_world_finish(WEBKIT_WEB_VIEW(webView), result, &test->m_scriptError.outPtr());
+        test->m_scriptMessage = webkit_web_view_call_async_javascript_function_finish(WEBKIT_WEB_VIEW(webView), result, &test->m_scriptError.outPtr());
         g_main_loop_quit(test->m_mainLoop);
     }
 
@@ -389,7 +386,7 @@ public:
         GUniquePtr<char> javascriptSnippet(g_strdup_printf("var p = window.webkit.messageHandlers.%s.postMessage(%s); await p; return p;", handlerName, javascriptValueAsText));
         m_waitForScriptRun = true;
 
-        webkit_web_view_run_async_javascript_function_in_world(m_webView, javascriptSnippet.get(), nullptr, worldName, nullptr, reinterpret_cast<GAsyncReadyCallback>(runAsyncJavaScriptFinished), this);
+        webkit_web_view_call_async_javascript_function(m_webView, javascriptSnippet.get(), -1, nullptr, worldName, nullptr, nullptr, reinterpret_cast<GAsyncReadyCallback>(runAsyncJavaScriptFinished), this);
 
         return waitUntilPromiseResolved(handlerName, error);
     }
@@ -475,7 +472,7 @@ static void testUserContentManagerScriptMessageInWorldReceived(UserScriptMessage
 
     // Check that the "window.webkit.messageHandlers" namespace doesn't exist in isolated worlds.
     GUniqueOutPtr<GError> error;
-    WebKitJavascriptResult* javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", &error.outPtr());
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", nullptr, &error.outPtr());
     g_assert_null(javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
     test->unregisterHandler("msg");
@@ -483,7 +480,7 @@ static void testUserContentManagerScriptMessageInWorldReceived(UserScriptMessage
     g_assert_true(test->registerHandler("msg", "WebExtensionTestScriptWorld"));
 
     // Check that the "window.webkit.messageHandlers" namespace exists in the world.
-    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", &error.outPtr());
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", nullptr, &error.outPtr());
     g_assert_nonnull(javascriptResult);
     g_assert_no_error(error.get());
     GUniquePtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
@@ -543,7 +540,7 @@ static void testUserContentManagerScriptMessageWithReplyReceived(UserScriptMessa
     g_assert_true(WebViewTest::javascriptResultIsUndefined(javascriptResult));
 
     // Check that the "window.webkit.messageHandlers" namespace doesn't exist in isolated worlds.
-    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", &error.outPtr());
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", nullptr, &error.outPtr());
     g_assert_null(javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
     test->unregisterHandler("msg", nullptr);
@@ -551,7 +548,7 @@ static void testUserContentManagerScriptMessageWithReplyReceived(UserScriptMessa
     g_assert_true(test->registerHandler("msg", "WebExtensionTestScriptWorld", true));
 
     // Check that the "window.webkit.messageHandlers" namespace exists in the world.
-    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", &error.outPtr());
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("window.webkit.messageHandlers ? 'y' : 'n';", "WebExtensionTestScriptWorld", nullptr, &error.outPtr());
     g_assert_nonnull(javascriptResult);
     g_assert_no_error(error.get());
     valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));

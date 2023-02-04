@@ -126,7 +126,8 @@ public:
 
     void animationTimingDidChange();
     void transformRelatedPropertyDidChange();
-    void propertyAffectingKeyframeResolutionDidChange(RenderStyle&, const Style::ResolutionContext&);
+    enum class RecomputationReason : uint8_t { LogicalPropertyChange, Other };
+    std::optional<RecomputationReason> recomputeKeyframesIfNecessary(const RenderStyle* previousUnanimatedStyle, const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
     void applyPendingAcceleratedActions();
 
     void willChangeRenderer();
@@ -150,9 +151,7 @@ public:
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<AnimatableProperty>& animatedProperties();
-    const HashSet<CSSPropertyID>& inheritedProperties() const { return m_inheritedProperties; }
     bool animatesProperty(AnimatableProperty) const;
-    bool animatesDirectionAwareProperty() const;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
     bool computeTransformedExtentViaTransformList(const FloatRect&, const RenderStyle&, LayoutRect&) const;
@@ -178,12 +177,6 @@ public:
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
 
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
-
-    bool containsCSSVariableReferences() const { return m_containsCSSVariableReferences; }
-    bool hasExplicitlyInheritedKeyframeProperty() const { return m_hasExplicitlyInheritedKeyframeProperty; }
-    bool hasPropertySetToCurrentColor() const;
-    bool hasColorSetToCurrentColor() const;
-    bool hasRelativeFontWeight() const { return m_hasRelativeFontWeight; }
 
 private:
     KeyframeEffect(Element*, PseudoId);
@@ -223,7 +216,7 @@ private:
     void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
     void computeCSSTransitionBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
-    void setBlendingKeyframes(KeyframeList&);
+    void setBlendingKeyframes(KeyframeList&&);
     bool isTargetingTransformRelatedProperty() const;
     void checkForMatchingTransformFunctionLists();
     void computeHasImplicitKeyframeForAcceleratedProperty();
@@ -246,8 +239,6 @@ private:
     AtomString m_keyframesName;
     KeyframeList m_blendingKeyframes { emptyAtom() };
     HashSet<AnimatableProperty> m_animatedProperties;
-    HashSet<CSSPropertyID> m_inheritedProperties;
-    HashSet<AnimatableProperty> m_currentColorProperties;
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;
     RefPtr<Element> m_target;
@@ -267,9 +258,7 @@ private:
     bool m_someKeyframesUseStepsTimingFunction { false };
     bool m_hasImplicitKeyframeForAcceleratedProperty { false };
     bool m_hasKeyframeComposingAcceleratedProperty { false };
-    bool m_containsCSSVariableReferences { false };
     bool m_hasExplicitlyInheritedKeyframeProperty { false };
-    bool m_hasRelativeFontWeight { false };
 };
 
 } // namespace WebCore

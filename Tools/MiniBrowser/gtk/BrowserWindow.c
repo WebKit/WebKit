@@ -1516,7 +1516,7 @@ GtkWidget *browser_window_new(GtkWindow *parent, WebKitWebContext *webContext)
 
     window->webContext = g_object_ref(webContext);
 #if GTK_CHECK_VERSION(3, 98, 0)
-    window->networkSession = networkSession ? g_object_ref(networkSession) : NULL;
+    window->networkSession = g_object_ref(networkSession);
 #else
     g_signal_connect(window->webContext, "download-started", G_CALLBACK(downloadStarted), window);
 #endif

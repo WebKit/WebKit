@@ -30,6 +30,7 @@
 #include "GPUProcessConnection.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include <WebCore/VideoFrame.h>
+#include <wtf/ArgumentCoder.h>
 
 namespace IPC {
 class Connection;

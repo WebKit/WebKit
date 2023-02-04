@@ -318,20 +318,8 @@ void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 {
     webContext->priv->processPool->setAutomationSession(nullptr);
     webContext->priv->automationSession = nullptr;
-#if ENABLE(2022_GLIB_API)
-    webContext->priv->automationNetworkSession = nullptr;
-#endif
-}
-
-#if ENABLE(2022_GLIB_API)
-WebKitNetworkSession* webkitWebContextGetNetworkSessionForAutomation(WebKitWebContext* webContext)
-{
-    if (!webContext->priv->automationNetworkSession && webContext->priv->automationClient)
-        webContext->priv->automationNetworkSession = adoptGRef(webkit_network_session_new_ephemeral());
-    return webContext->priv->automationNetworkSession.get();
 }
 #endif
-#endif // ENABLE(REMOTE_INSPECTOR)
 
 WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
@@ -911,6 +899,30 @@ void webkit_web_context_set_automation_allowed(WebKitWebContext* context, gboole
 #endif
 }
 
+#if ENABLE(2022_GLIB_API)
+/**
+ * webkit_web_context_get_network_session_for_automation:
+ * @context: the #WebKitWebContext
+ *
+ * Get the #WebKitNetworkSession used for automation sessions started in @context.
+ *
+ * Returns: (transfer none) (nullable): a #WebKitNetworkSession, or %NULL if automation is not enabled
+ *
+ * Since: 2.40
+ */
+WebKitNetworkSession* webkit_web_context_get_network_session_for_automation(WebKitWebContext* context)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), nullptr);
+
+#if ENABLE(REMOTE_INSPECTOR)
+    if (!context->priv->automationNetworkSession && context->priv->automationClient)
+        context->priv->automationNetworkSession = adoptGRef(webkit_network_session_new_ephemeral());
+    return context->priv->automationNetworkSession.get();
+#else
+    return nullptr;
+#endif
+}
+#endif
 /**
  * webkit_web_context_set_cache_model:
  * @context: the #WebKitWebContext

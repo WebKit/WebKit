@@ -58,7 +58,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             "com.google.webp"_s,
             "org.webmproject.webp"_s,
 #endif
-#if HAVE(AVIF) || USE(AVIF)
+#if HAVE(AVIF)
             "public.avif"_s,
             "public.avis"_s,
 #endif
@@ -78,6 +78,11 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             if (systemSupportedImageTypes.contains(imageType))
                 filtered.add(imageType);
         }
+        // rdar://104940377 Workaround for CGImageSourceCopyTypeIdentifiers not returning AVIF for iOS simulator
+#if HAVE(CG_IMAGE_SOURCE_AVIF_IMAGE_TYPES_BUG)
+        filtered.add("public.avif"_s);
+        filtered.add("public.avis"_s);
+#endif
         return filtered;
     }();
 

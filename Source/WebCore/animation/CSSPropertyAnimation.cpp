@@ -2579,6 +2579,15 @@ public:
     }
 
 private:
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    {
+        if (a.textIndentLine() != b.textIndentLine())
+            return false;
+        if (a.textIndentType() != b.textIndentType())
+            return false;
+        return LengthPropertyWrapper::equals(a, b);
+    }
+
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const final
     {
         if (from.textIndentLine() != to.textIndentLine())
@@ -3914,7 +3923,7 @@ static std::optional<CSSCustomPropertyValue::SyntaxValueList> blendSyntaxValueLi
     return CSSCustomPropertyValue::SyntaxValueList { blendedSyntaxValues, from.separator };
 }
 
-static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
+static Ref<const CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSCustomPropertyValue& from, const CSSCustomPropertyValue& to, const CSSPropertyBlendingContext& blendingContext)
 {
     if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(from.value()) && std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(to.value())) {
         auto& fromSyntaxValue = std::get<CSSCustomPropertyValue::SyntaxValue>(from.value());
@@ -3931,7 +3940,7 @@ static Ref<CSSCustomPropertyValue> blendedCSSCustomPropertyValue(const RenderSty
     }
 
     // Use a discrete interpolation for all other cases.
-    return CSSCustomPropertyValue::create(blendingContext.progress < 0.5 ? from : to);
+    return blendingContext.progress < 0.5 ? from : to;
 }
 
 static std::pair<const CSSCustomPropertyValue*, const CSSCustomPropertyValue*> customPropertyValuesForBlending(const AtomString& customProperty, const RenderStyle& fromStyle, const RenderStyle& toStyle)

@@ -784,7 +784,7 @@ void browser_tab_load_uri(BrowserTab *tab, const char *uri)
         return;
     }
 
-    webkit_web_view_run_javascript(tab->webView, strstr(uri, "javascript:"), NULL, NULL, NULL);
+    webkit_web_view_evaluate_javascript(tab->webView, strstr(uri, "javascript:"), -1, NULL, NULL, NULL, NULL, NULL);
 }
 
 GtkWidget *browser_tab_get_title_widget(BrowserTab *tab)

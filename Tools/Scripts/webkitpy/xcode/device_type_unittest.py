@@ -163,3 +163,8 @@ class DeviceTypeTest(unittest.TestCase):
         self.assertEqual(DeviceType.from_string('iPhone SE (1st generation)').standardized_hardware_type, 'SE')
         self.assertTrue(DeviceType.from_string('iPhone SE') == DeviceType.from_string('iPhone SE (1st generation)'))
         self.assertTrue(DeviceType.from_string('iPhone SE') != DeviceType.from_string('iPhone SE (2nd generation)'))
+
+    def test_watch_standardization(self):
+        self.assertEqual(DeviceType.from_string('Apple Watch Series 5 (44mm)').standardized_hardware_type, 'Series 5 - 44mm')
+        self.assertTrue(DeviceType.from_string('Apple Watch Series 5 (44mm)') == DeviceType.from_string('Apple Watch Series 5 - 44mm'))
+        self.assertTrue(DeviceType.from_string('Apple Watch Series 5 (38mm)') != DeviceType.from_string('Apple Watch Series 5 - 44mm'))

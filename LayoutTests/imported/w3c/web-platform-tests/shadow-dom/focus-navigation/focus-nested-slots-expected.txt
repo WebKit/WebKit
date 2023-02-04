@@ -1,4 +1,7 @@
 one  two  three  four  five
 
-FAIL Verifies that focus order goes in flat tree order with buttons inside nested slots which have a mixture of assigned and unassigned states. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
+FAIL Verifies that focus order goes in flat tree order with buttons inside nested slots which have a mixture of assigned and unassigned states. assert_equals: expected Element node <button id="button2">two</button> but got Element node <body><button id="button1">one</button>
+<span>
+
+  <slot...
 

@@ -902,7 +902,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    RELEASE_LOG(Push, "Sending push message for scope %" PRIVATE_LOG_STRING " to network process to handle", pushMessage->registrationURL.string().utf8().data());
+    RELEASE_LOG(Push, "Sending push message for scope %" SENSITIVE_LOG_STRING " to network process to handle", pushMessage->registrationURL.string().utf8().data());
     _websiteDataStore->networkProcess().processPushMessage(_websiteDataStore->sessionID(), *pushMessage, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         RELEASE_LOG(Push, "Push message processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
@@ -920,7 +920,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    RELEASE_LOG(Push, "Sending persistent notification click from origin %" PRIVATE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
+    RELEASE_LOG(Push, "Sending persistent notification click from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
 
     notificationData->sourceSession = _websiteDataStore->sessionID();
     _websiteDataStore->networkProcess().processNotificationEvent(*notificationData, WebCore::NotificationEventType::Click, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
@@ -940,7 +940,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
     }
 
-    RELEASE_LOG(Push, "Sending persistent notification close from origin %" PRIVATE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
+    RELEASE_LOG(Push, "Sending persistent notification close from origin %" SENSITIVE_LOG_STRING " to network process to handle", notificationData->originString.utf8().data());
 
     _websiteDataStore->networkProcess().processNotificationEvent(*notificationData, WebCore::NotificationEventType::Close, [completionHandler = makeBlockPtr(completionHandler)] (bool wasProcessed) {
         RELEASE_LOG(Push, "Notification close event processing complete. Callback result: %d", wasProcessed);

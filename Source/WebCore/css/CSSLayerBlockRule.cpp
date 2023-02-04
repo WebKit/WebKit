@@ -50,16 +50,13 @@ Ref<CSSLayerBlockRule> CSSLayerBlockRule::create(StyleRuleLayer& rule, CSSStyleS
 
 String CSSLayerBlockRule::cssText() const
 {
-    StringBuilder result;
+    StringBuilder builder;
 
-    result.append("@layer ");
+    builder.append("@layer");
     if (auto name = this->name(); !name.isEmpty())
-        result.append(name, " ");
-    result.append("{\n");
-    appendCSSTextForItems(result);
-    result.append('}');
-
-    return result.toString();
+        builder.append(" ", name);
+    appendCSSTextForItems(builder);
+    return builder.toString();
 }
 
 String CSSLayerBlockRule::name() const

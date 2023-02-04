@@ -28,8 +28,8 @@
 
 #if USE(CG)
 
+#include "CGSubimageCacheWithTimer.h"
 #include "GraphicsContextCG.h"
-#include "SubimageCacheWithTimer.h"
 
 namespace WebCore {
 
@@ -72,7 +72,7 @@ DestinationColorSpace NativeImage::colorSpace() const
 void NativeImage::clearSubimages()
 {
 #if CACHE_SUBIMAGES
-    SubimageCacheWithTimer::clearImage(m_platformImage.get());
+    CGSubimageCacheWithTimer::clearImage(m_platformImage.get());
 #endif
 }
 

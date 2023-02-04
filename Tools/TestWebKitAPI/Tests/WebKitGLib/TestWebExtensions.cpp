@@ -357,8 +357,7 @@ public:
 
     void runJavaScriptAndWaitUntilFormSubmitted(const char* js)
     {
-        webkit_web_view_run_javascript(m_webView, js, nullptr, nullptr, nullptr);
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait(js);
     }
 
     GRefPtr<GDBusProxy> m_proxy;

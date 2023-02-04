@@ -154,6 +154,56 @@ async function dispatchTouchActions(actions, options = { insertPauseAfterPointer
 if (window.test_driver_internal === undefined)
     window.test_driver_internal = { };
 
+// https://w3c.github.io/webdriver/#keyboard-actions
+// FIXME: Add more cases.
+const SeleniumCharCodeToEventSenderKey = {
+    0xE003: { key: 'delete' },
+    0XE004: { key: '\t' },
+    0XE005: { key: 'clear' },
+    0XE006: { key: '\r' },
+    0XE007: { key: '\n' },
+    0xE008: { key: 'leftShift', modifier: 'shiftKey' },
+    0xE009: { key: 'leftControl', modifier: 'ctrlKey' },
+    0xE00A: { key: 'leftAlt', modifier: 'altKey' },
+    0XE00C: { key: 'escape' },
+    0xE00D: { key: ' ' },
+    0XE00E: { key: 'pageUp' },
+    0XE00F: { key: 'pageDown' },
+    0XE010: { key: 'end' },
+    0XE011: { key: 'home' },
+    0xE012: { key: 'leftArrow' },
+    0xE013: { key: 'upArrow' },
+    0xE014: { key: 'rightArrow' },
+    0xE015: { key: 'downArrow' },
+    0XE016: { key: 'insert' },
+    0XE017: { key: 'delete' },
+    0XE018: { key: ';' },
+    0XE019: { key: '=' },
+    0XE031: { key: 'F1' },
+    0XE032: { key: 'F2' },
+    0XE033: { key: 'F3' },
+    0XE034: { key: 'F4' },
+    0XE035: { key: 'F5' },
+    0XE036: { key: 'F6' },
+    0XE037: { key: 'F7' },
+    0XE038: { key: 'F8' },
+    0XE039: { key: 'F9' },
+    0XE03A: { key: 'F10' },
+    0XE03B: { key: 'F11' },
+    0XE03C: { key: 'F12' },
+    0xE03D: { key: 'leftMeta', modifier: 'metaKey' }, // a.k.a. commandKey
+    0xE050: { key: 'rightShift', modifier: 'shiftKey' },
+    0xE051: { key: 'rightControl', modifier: 'ctrlKey' },
+    0xE052: { key: 'rightAlt', modifier: 'altKey' },
+    0xE052: { key: 'rightMeta', modifier: 'metaKey' }, // a.k.a. commandKey
+};
+
+function convertSeleniumKeyCode(key)
+{
+    const code = key.charCodeAt(0);
+    return SeleniumCharCodeToEventSenderKey[code] || { key: key };
+}
+
 /**
  *
  * @param {Element} element
@@ -163,52 +213,6 @@ if (window.test_driver_internal === undefined)
 window.test_driver_internal.send_keys = async function(element, keys)
 {
     element.focus();
-
-    // https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.keys.html
-    // FIXME: Add more cases.
-    const SeleniumCharCodeToEventSenderKey = {
-        0xE003: { key: 'delete' },
-        0XE004: { key: '\t' },
-        0XE005: { key: 'clear' },
-        0XE006: { key: '\r' },
-        0XE007: { key: '\n' },
-        0xE008: { key: 'leftShift', modifier: 'shiftKey' },
-        0xE009: { key: 'leftControl', modifier: 'ctrlKey' },
-        0xE00A: { key: 'leftAlt', modifier: 'altKey' },
-        0XE00C: { key: 'escape' },
-        0xE00D: { key: ' ' },
-        0XE00E: { key: 'pageUp' },
-        0XE00F: { key: 'pageDown' },
-        0XE010: { key: 'end' },
-        0XE011: { key: 'home' },
-        0xE012: { key: 'leftArrow' },
-        0xE013: { key: 'upArrow' },
-        0xE014: { key: 'rightArrow' },
-        0xE015: { key: 'downArrow' },
-        0XE016: { key: 'insert' },
-        0XE017: { key: 'delete' },
-        0XE018: { key: ';' },
-        0XE019: { key: '=' },
-        0XE031: { key: 'F1' },
-        0XE032: { key: 'F2' },
-        0XE033: { key: 'F3' },
-        0XE034: { key: 'F4' },
-        0XE035: { key: 'F5' },
-        0XE036: { key: 'F6' },
-        0XE037: { key: 'F7' },
-        0XE038: { key: 'F8' },
-        0XE039: { key: 'F9' },
-        0XE03A: { key: 'F10' },
-        0XE03B: { key: 'F11' },
-        0XE03C: { key: 'F12' },
-        0xE03D: { key: 'leftMeta', modifier: 'metaKey' },
-    };
-
-    function convertSeleniumKeyCode(key)
-    {
-        const code = key.charCodeAt(0);
-        return SeleniumCharCodeToEventSenderKey[code] || { key: key };
-    }
 
     const keyList = [];
     const modifiers = [];
@@ -266,6 +270,7 @@ window.test_driver_internal.action_sequence = async function(sources)
     // https://w3c.github.io/webdriver/#processing-actions
     let noneSource;
     let pointerSource;
+    let keySource;
     for (let source of sources) {
         switch (source.type) {
         case "none":
@@ -274,9 +279,67 @@ window.test_driver_internal.action_sequence = async function(sources)
         case "pointer":
             pointerSource = source;
             break;
+        case "key":
+            keySource = source;
+            break;
         default:
             throw new Error(`Unknown source type "${source.type}".`);
         }
+    }
+
+    if (keySource && pointerSource)
+        throw new Error("testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources");
+
+    if (keySource) {
+        let modifiersInEffect = [];
+        const events = [];
+        for (const action of keySource.actions) {
+            switch (action.type) {
+            case 'keyDown': {
+                const key = convertSeleniumKeyCode(action.value);
+                if (key.modifier)
+                    modifiersInEffect.push(key.modifier);
+                events.push({type: 'rawKeyDown', arguments: [key.key, modifiersInEffect.slice(0)]});
+                break;
+            }
+            case 'keyUp': {
+                const key = convertSeleniumKeyCode(action.value);
+                if (key.modifier)
+                    modifiersInEffect = modifiersInEffect.filter((modifier) => modifier != key.modifier);
+                events.push({type: 'rawKeyUp', arguments: [key.key, modifiersInEffect.slice(0)]});
+                break;
+            }
+            case 'pause':
+                // FIXME: Use eventSender.leapForward.
+                throw new Error('testdriver-vendor.js for WebKit does not yet support pause key action');
+            default:
+                throw new Error(`Unknown key action type "${action.type}" encountered in testdriver-vendor.js`);
+            }
+        }
+
+        if (noneSource) {
+            let injectedActions = 0;
+            noneSource.actions.forEach((action, index) => {
+                if (action.duration > 0) {
+                    events.splice(index + injectedActions + 1, 0, {type: 'leapForward', arguments: [action.duration]});
+                    injectedActions++;
+                }
+            });
+        }
+
+        if (testRunner.isIOSFamily && testRunner.isWebKit2) {
+            return await new Promise((resolve) => {
+                testRunner.runUIScript(`
+                    const events = JSON.parse('${JSON.stringify(events)}');
+                    for (const event of events)
+                        eventSender[event.type](...event.arguments);`, resolve);
+            });
+        }
+
+        for (const event of events)
+            eventSender[event.type](...event.arguments);
+
+        return;
     }
 
     if (!pointerSource)

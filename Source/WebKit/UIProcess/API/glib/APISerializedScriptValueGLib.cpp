@@ -104,7 +104,7 @@ GRefPtr<JSCValue> SerializedScriptValue::deserialize(WebCore::SerializedScriptVa
 
 static GRefPtr<JSCValue> valueFromGVariant(JSCContext* context, GVariant* variant)
 {
-    if (g_variant_is_container(variant)) {
+    if (g_variant_is_of_type(variant, G_VARIANT_TYPE("a{sv}"))) {
         auto result = adoptGRef(jsc_value_new_object(context, nullptr, nullptr));
         GVariantIter iter;
         g_variant_iter_init(&iter, variant);
@@ -138,7 +138,6 @@ static GRefPtr<JSCValue> valueFromGVariant(JSCContext* context, GVariant* varian
     if (g_variant_is_of_type(variant, G_VARIANT_TYPE_STRING))
         return adoptGRef(jsc_value_new_string(context, g_variant_get_string(variant, nullptr)));
 
-    g_warning("Unhandled %s GVariant for conversion to JSCValue", g_variant_get_type_string(variant));
     return nullptr;
 }
 

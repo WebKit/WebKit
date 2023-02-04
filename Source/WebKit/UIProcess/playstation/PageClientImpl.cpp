@@ -30,6 +30,10 @@
 #include "PlayStationWebView.h"
 #include "WebPageProxy.h"
 
+#if USE(GRAPHICS_LAYER_WC)
+#include "DrawingAreaProxyWC.h"
+#endif
+
 namespace WebKit {
 
 PageClientImpl::PageClientImpl(PlayStationWebView& view)
@@ -40,6 +44,12 @@ PageClientImpl::PageClientImpl(PlayStationWebView& view)
 // PageClient's pure virtual functions
 std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy&)
 {
+#if USE(GRAPHICS_LAYER_WC)
+    if (m_view.page()->preferences().useGPUProcessForDOMRenderingEnabled()
+        || m_view.page()->preferences().useGPUProcessForCanvasRenderingEnabled()
+        || m_view.page()->preferences().useGPUProcessForWebGLEnabled())
+        return makeUnique<DrawingAreaProxyWC>(*m_view.page());
+#endif
     return makeUnique<DrawingAreaProxyCoordinatedGraphics>(*m_view.page());
 }
 
@@ -186,6 +196,13 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&  pa
     notImplemented();
     return { };
 }
+
+#if USE(GRAPHICS_LAYER_WC)
+bool PageClientImpl::usesOffscreenRendering() const
+{
+    return false;
+}
+#endif
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {

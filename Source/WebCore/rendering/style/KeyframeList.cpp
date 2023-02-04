@@ -24,13 +24,17 @@
 
 #include "Animation.h"
 #include "CSSAnimation.h"
+#include "CSSCustomPropertyValue.h"
 #include "CSSKeyframeRule.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
+#include "CSSValue.h"
 #include "CompositeOperation.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "RenderObject.h"
+#include "StyleProperties.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -41,6 +45,10 @@ void KeyframeList::clear()
 {
     m_keyframes.clear();
     m_properties.clear();
+    m_propertiesSetToInherit.clear();
+    m_propertiesSetToCurrentColor.clear();
+    m_usesRelativeFontWeight = false;
+    m_containsCSSVariableReferences = false;
 }
 
 bool KeyframeList::operator==(const KeyframeList& o) const
@@ -248,6 +256,58 @@ void KeyframeList::addProperty(AnimatableProperty property)
 bool KeyframeList::containsProperty(AnimatableProperty property) const
 {
     return m_properties.contains(property);
+}
+
+bool KeyframeList::usesRelativeFontWeight() const
+{
+    return m_usesRelativeFontWeight;
+}
+
+bool KeyframeList::hasCSSVariableReferences() const
+{
+    return m_containsCSSVariableReferences;
+}
+
+bool KeyframeList::hasColorSetToCurrentColor() const
+{
+    return m_propertiesSetToCurrentColor.contains(CSSPropertyColor);
+}
+
+bool KeyframeList::hasPropertySetToCurrentColor() const
+{
+    return !m_propertiesSetToCurrentColor.isEmpty();
+}
+
+const HashSet<AnimatableProperty>& KeyframeList::propertiesSetToInherit() const
+{
+    return m_propertiesSetToInherit;
+}
+
+void KeyframeList::updatePropertiesMetadata(const StyleProperties& properties)
+{
+    for (auto propertyReference : properties) {
+        auto* cssValue = propertyReference.value();
+        if (!cssValue)
+            continue;
+
+        if (!m_containsCSSVariableReferences && cssValue->hasVariableReferences())
+            m_containsCSSVariableReferences = true;
+
+        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(cssValue)) {
+            auto valueId = primitiveValue->valueID();
+            if (valueId == CSSValueInherit)
+                m_propertiesSetToInherit.add(propertyReference.id());
+            else if (valueId == CSSValueCurrentcolor)
+                m_propertiesSetToCurrentColor.add(propertyReference.id());
+            else if (!m_usesRelativeFontWeight && propertyReference.id() == CSSPropertyFontWeight && (valueId == CSSValueBolder || valueId == CSSValueLighter))
+                m_usesRelativeFontWeight = true;
+        } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
+            if (customPropertyValue->isInherit())
+                m_propertiesSetToInherit.add(customPropertyValue->name());
+            else if (customPropertyValue->isCurrentColor())
+                m_propertiesSetToCurrentColor.add(customPropertyValue->name());
+        }
+    }
 }
 
 void KeyframeValue::addProperty(AnimatableProperty property)

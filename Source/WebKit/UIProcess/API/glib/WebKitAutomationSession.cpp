@@ -355,7 +355,7 @@ WebKitAutomationSession* webkitAutomationSessionCreate(WebKitWebContext* webCont
     auto* session = WEBKIT_AUTOMATION_SESSION(g_object_new(WEBKIT_TYPE_AUTOMATION_SESSION, "id", sessionID, nullptr));
     session->priv->webContext = webContext;
 #if ENABLE(2022_GLIB_API)
-    WebKitNetworkSession* networkSession = webkitWebContextGetNetworkSessionForAutomation(webContext);
+    WebKitNetworkSession* networkSession = webkit_web_context_get_network_session_for_automation(webContext);
 #endif
 
     if (capabilities.acceptInsecureCertificates) {

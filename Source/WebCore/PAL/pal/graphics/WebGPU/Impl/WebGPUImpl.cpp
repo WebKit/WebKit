@@ -58,8 +58,11 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
         options.forceFallbackAdapter,
     };
 
-    wgpuInstanceRequestAdapterWithBlock(m_backing, &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus, WGPUAdapter adapter, const char*) mutable {
-        callback(AdapterImpl::create(adapter, convertToBackingContext));
+    wgpuInstanceRequestAdapterWithBlock(m_backing, &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus status, WGPUAdapter adapter, const char*) mutable {
+        if (status == WGPURequestAdapterStatus_Success)
+            callback(AdapterImpl::create(adapter, convertToBackingContext));
+        else
+            callback(nullptr);
     }).get());
 }
 

@@ -1064,12 +1064,14 @@ storage/domstorage/sessionstorage/set-item-synchronous-keydown.html [ Skip ]
 svg/custom/display-none-a-does-not-stop-focus-navigation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-boundary.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/selection-target.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/input-change-event-properties.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/defaultValue-clobbering.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/email-set-value.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/maxlength-number.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/radio-double-activate-pseudo.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-ui/user-select-none-on-input.html [ Skip ]
+imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown
 css3/viewport-percentage-lengths/vh-resize.html [ Skip ]
@@ -1598,6 +1600,29 @@ fast/events/tabindex-focus-blur-all.html [ Failure ]
 
 # Ref-test imported from W3C that is failing because type=image input elements have rounded corners on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.html [ ImageOnlyFailure ]
+
+webkit.org/b/251615 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-uneditable.html [ Failure ]
+
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/delegatesFocus-highlight-sibling.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback-default-tabindex.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-2levels.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-delegatesFocus.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested-fallback.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-nested.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-fallback.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-slot.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-with-tabindex.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots-in-slot.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-web-component-input-type-radio.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-with-delegatesFocus.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-nested-slots.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassignable-slot.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassigned-slot.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-unassignable-slot.html [ Failure ]
+webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-with-negative-index.html [ Failure ]
 
 webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-fraction-003.xht [ ImageOnlyFailure ]
 webkit.org/b/204505 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-shorthand-2.xht [ ImageOnlyFailure ]
@@ -3853,11 +3878,7 @@ svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
 
-# AVIF tests
-webkit.org/b/247831 fast/images/avif-as-image.html [ ImageOnlyFailure ]
-webkit.org/b/247831 fast/images/avif-heif-container-as-image.html [ ImageOnlyFailure ]
-webkit.org/b/247831 fast/images/avif-image-decoding.html [ Failure ]
-webkit.org/b/247831 fast/images/animated-avif.html [ Timeout ]
+webkit.org/b/251219 fast/images/animated-avif.html [ ImageOnlyFailure ]
 
 # MSE isn't supported on iPhone at this time.
 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Failure ]

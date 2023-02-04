@@ -36,10 +36,10 @@
 
 namespace JSC { namespace DFG {
 
-class LiveCatchVariablePreservationPhase : public Phase {
+class LiveCatchVariablePreservationPhase {
 public:
     LiveCatchVariablePreservationPhase(Graph& graph)
-        : Phase(graph, "live catch variable preservation phase")
+        : m_graph(graph)
     {
     }
 
@@ -50,14 +50,17 @@ public:
         if (!m_graph.m_hasExceptionHandlers)
             return false;
 
+        m_graph.determineReachability();
+
         InsertionSet insertionSet(m_graph);
-        if (m_graph.m_hasExceptionHandlers) {
-            for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            if (block->isReachable) {
                 handleBlockForTryCatch(block, insertionSet);
                 insertionSet.execute(block);
             }
         }
 
+        m_graph.clearReachability();
         return true;
     }
 
@@ -221,11 +224,13 @@ public:
         m_graph.m_variableAccessData.append(operand);
         return &m_graph.m_variableAccessData.last();
     }
+
+    Graph& m_graph;
 };
 
 bool performLiveCatchVariablePreservationPhase(Graph& graph)
 {
-    return runPhase<LiveCatchVariablePreservationPhase>(graph);
+    return LiveCatchVariablePreservationPhase(graph).run();
 }
 
 } } // namespace JSC::DFG

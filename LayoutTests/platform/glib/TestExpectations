@@ -799,9 +799,6 @@ webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/font-palette-r
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-add.html [ ImageOnlyFailure ]
 webkit.org/b/230926 imported/w3c/web-platform-tests/css/css-fonts/palette-values-rule-delete.html [ ImageOnlyFailure ]
 
-webkit.org/b/231516 fast/css/calc-parsing.html [ Failure ]
-webkit.org/b/231516 imported/w3c/web-platform-tests/css/css-values/hypot-pow-sqrt-invalid.html [ Failure ]
-
 webkit.org/b/223884 imported/w3c/web-platform-tests/css/css-values/ic-unit-013.html [ ImageOnlyFailure ]
 
 webkit.org/b/233897 imported/w3c/web-platform-tests/css/motion/offset-distance-002.html [ ImageOnlyFailure ]
@@ -2337,7 +2334,6 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix ]
 
 # Missing WebSpeech implementation
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
-webkit.org/b/250656 fast/speechsynthesis/voices-non-mock.html [ Failure ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]

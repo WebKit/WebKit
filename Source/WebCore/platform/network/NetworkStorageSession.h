@@ -318,28 +318,3 @@ WEBCORE_EXPORT RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFS
 #endif
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ThirdPartyCookieBlockingMode> {
-    using values = EnumValues<
-        WebCore::ThirdPartyCookieBlockingMode,
-        WebCore::ThirdPartyCookieBlockingMode::All,
-        WebCore::ThirdPartyCookieBlockingMode::AllExceptBetweenAppBoundDomains,
-        WebCore::ThirdPartyCookieBlockingMode::AllExceptManagedDomains,
-        WebCore::ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction,
-        WebCore::ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FirstPartyWebsiteDataRemovalMode> {
-    using values = EnumValues<
-        WebCore::FirstPartyWebsiteDataRemovalMode,
-        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies,
-        WebCore::FirstPartyWebsiteDataRemovalMode::None,
-        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesLiveOnTestingTimeout,
-        WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookiesReproTestingTimeout
-    >;
-};
-
-}

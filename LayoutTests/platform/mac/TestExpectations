@@ -2797,3 +2797,5 @@ webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Cra
 [ Ventura ] fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure Crash ]
 
 webkit.org/b/251312 [ BigSur+ ] fast/loader/stateobjects/popstate-does-not-fire-with-page-cache.html [ Pass Failure ]
+
+webkit.org/b/251710 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]

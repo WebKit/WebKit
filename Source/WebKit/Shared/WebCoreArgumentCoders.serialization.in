@@ -317,12 +317,29 @@ struct CGAffineTransform {
 [RefCounted, CustomHeader=True] class WebCore::LinearTimingFunction {
 };
 
+[Nested] enum class WebCore::CubicBezierTimingFunction::TimingFunctionPreset : uint8_t {
+    Ease,
+    EaseIn,
+    EaseOut,
+    EaseInOut,
+    Custom
+};
+
 [RefCounted, CustomHeader=True] class WebCore::CubicBezierTimingFunction {
     WebCore::CubicBezierTimingFunction::TimingFunctionPreset timingFunctionPreset()
     double x1()
     double y1()
     double x2()
     double y2()
+};
+
+[Nested] enum class WebCore::StepsTimingFunction::StepPosition : uint8_t {
+    JumpStart,
+    JumpEnd,
+    JumpNone,
+    JumpBoth,
+    Start,
+    End,
 };
 
 [RefCounted, CustomHeader=True] class WebCore::StepsTimingFunction {
@@ -1394,7 +1411,7 @@ header: <WebCore/TextChecking.h>
 
 header: <WebCore/TextChecking.h>
 [CustomHeader] struct WebCore::TextCheckingResult {
-    WebCore::TextCheckingType type;
+    OptionSet<WebCore::TextCheckingType> type;
     WebCore::CharacterRange range;
     Vector<WebCore::GrammarDetail> details;
     String replacement;
@@ -3151,6 +3168,207 @@ class WebCore::SpeechRecognitionUpdate {
     High
 };
 
+header: <WebCore/AudioIOCallback.h>
+[CustomHeader] struct WebCore::AudioIOPosition {
+    Seconds position;
+    MonotonicTime timestamp;
+};
+
+enum class WebCore::VideoFrameRotation : uint16_t {
+    None,
+    UpsideDown,
+    Right,
+    Left,
+};
+
+#if ENABLE(VIDEO) && USE(AVFOUNDATION)
+[RefCounted] class WebCore::VideoFrameCV {
+    MediaTime presentationTime();
+    bool isMirrored();
+    WebCore::VideoFrameRotation rotation();
+    RetainPtr<CVPixelBufferRef> m_pixelBuffer;
+    WebCore::PlatformVideoColorSpace colorSpace();
+};
+#endif
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GradientColorStop {
+    float offset;
+    WebCore::Color color;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::GradientColorStops {
+    Vector<WebCore::GradientColorStop, 2> stops();
+};
+
+struct WebCore::ImageBufferBackendParameters {
+    WebCore::FloatSize logicalSize;
+    float resolutionScale;
+    WebCore::DestinationColorSpace colorSpace
+    WebCore::PixelFormat pixelFormat;
+    WebCore::RenderingPurpose purpose;
+};
+
+enum class WebCore::PreserveResolution : bool;
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::PathElementType : uint8_t {
+    MoveToPoint,
+    AddLineToPoint,
+    AddQuadCurveToPoint,
+    AddCurveToPoint,
+    CloseSubpath
+};
+
+header: <WebCore/Path.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::EncodedPathElementType {
+    std::optional<WebCore::PathElementType> m_type;
+};
+
+class WebCore::ProcessIdentity {
+#if HAVE(TASK_IDENTITY_TOKEN)
+    MachSendRight m_taskIdToken;
+#endif
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::ColorInterpolationColorSpace : uint8_t {
+    HSL,
+    HWB,
+    LCH,
+    Lab,
+    OKLCH,
+    OKLab,
+    SRGB,
+    SRGBLinear,
+    XYZD50,
+    XYZD65
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::HueInterpolationMethod : uint8_t {
+    Shorter,
+    Longer,
+    Increasing,
+    Decreasing
+};
+
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::HSL {
+    WebCore::HueInterpolationMethod hueInterpolationMethod;
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::HWB {
+    WebCore::HueInterpolationMethod hueInterpolationMethod;
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::LCH {
+    WebCore::HueInterpolationMethod hueInterpolationMethod;
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::Lab {
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::OKLCH {
+    WebCore::HueInterpolationMethod hueInterpolationMethod;
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::OKLab {
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::SRGB {
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::SRGBLinear {
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::XYZD50 {
+};
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod::XYZD65 {
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ColorInterpolationMethod {
+    std::variant<WebCore::ColorInterpolationMethod::HSL, WebCore::ColorInterpolationMethod::HWB, WebCore::ColorInterpolationMethod::LCH, WebCore::ColorInterpolationMethod::Lab, WebCore::ColorInterpolationMethod::OKLCH, WebCore::ColorInterpolationMethod::OKLab, WebCore::ColorInterpolationMethod::SRGB, WebCore::ColorInterpolationMethod::SRGBLinear, WebCore::ColorInterpolationMethod::XYZD50, WebCore::ColorInterpolationMethod::XYZD65> colorSpace;
+    WebCore::AlphaPremultiplication alphaPremultiplication;
+};
+
+#if USE(AUDIO_SESSION)
+header: <WebCore/AudioSession.h>
+[CustomHeader] enum class WebCore::RouteSharingPolicy : uint8_t {
+    Default,
+    LongFormAudio,
+    Independent,
+    LongFormVideo
+};
+
+enum class WebCore::AudioSessionCategory : uint8_t {
+    None,
+    AmbientSound,
+    SoloAmbientSound,
+    MediaPlayback,
+    RecordAudio,
+    PlayAndRecord,
+    AudioProcessing,
+};
+
+[Nested] enum class WebCore::AudioSession::MayResume : bool;
+
+enum class WebCore::AudioSessionRoutingArbitrationError : uint8_t {
+    None,
+    Failed,
+    Cancelled
+};
+
+[Nested] enum class WebCore::AudioSessionRoutingArbitrationClient::DefaultRouteChanged : bool;
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA)
+enum class WebCore::CDMKeyStatus : uint8_t {
+    Usable,
+    Expired,
+    Released,
+    OutputRestricted,
+    OutputDownscaled,
+    StatusPending,
+    InternalError
+};
+
+enum class WebCore::CDMMessageType : uint8_t {
+    LicenseRequest,
+    LicenseRenewal,
+    LicenseRelease,
+    IndividualizationRequest
+};
+
+enum class WebCore::CDMRequirement : uint8_t {
+    Required,
+    Optional,
+    NotAllowed
+};
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+enum class WebCore::MediaConstraintType : uint8_t {
+    Unknown,
+    Width,
+    Height,
+    AspectRatio,
+    FrameRate,
+    FacingMode,
+    Volume,
+    SampleRate,
+    SampleSize,
+    EchoCancellation,
+    DeviceId,
+    GroupId,
+    DisplaySurface,
+    LogicalSurface,
+};
+#endif
+
+#if ENABLE(WEB_RTC)
+enum class WebCore::RTCDataChannelState : uint8_t {
+    Connecting,
+    Open,
+    Closing,
+    Closed
+};
+
+enum class WebCore::RTCPriorityType : uint8_t {
+    VeryLow,
+    Low,
+    Medium,
+    High
+};
+#endif
+
 [AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::LineCap : uint8_t {
     Butt,
     Round,
@@ -3286,4 +3504,127 @@ header: <WebCore/DisplayListItems.h>
      WebCore::DecodingMode m_decodingMode;
      WebCore::ImageOrientation m_orientation;
      WebCore::InterpolationQuality m_interpolationQuality;
+};
+
+struct WebCore::CanvasActivityRecord {
+    HashSet<String> textWritten;
+    bool wasDataRead;
+};
+
+header: <WebCore/AttributionSecondsUntilSendData.h>
+[CustomHeader] struct WebCore::PCM::AttributionSecondsUntilSendData {
+    std::optional<Seconds> sourceSeconds;
+    std::optional<Seconds> destinationSeconds;
+};
+
+enum class WebCore::CrossOriginOpenerPolicyValue : uint8_t {
+    UnsafeNone,
+    SameOrigin,
+    SameOriginPlusCOEP,
+    SameOriginAllowPopups
+};
+
+struct WebCore::CrossOriginOpenerPolicy {
+    WebCore::CrossOriginOpenerPolicyValue value;
+    String reportingEndpoint;
+    WebCore::CrossOriginOpenerPolicyValue reportOnlyValue;
+    String reportOnlyReportingEndpoint;
+};
+
+struct WebCore::CustomHeaderFields {
+    Vector<WebCore::HTTPHeaderField> fields;
+    Vector<String> thirdPartyDomains;
+};
+
+[CreateUsing=create] class WebCore::HTTPHeaderField {
+    String name();
+    String value();
+};
+
+struct WebCore::NavigationRequester {
+    URL url;
+    Ref<WebCore::SecurityOrigin> securityOrigin;
+    Ref<WebCore::SecurityOrigin> topOrigin;
+    WebCore::PolicyContainer policyContainer;
+    std::optional<WebCore::GlobalFrameIdentifier> globalFrameIdentifier;
+};
+
+struct WebCore::PolicyContainer {
+    WebCore::ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
+    WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
+    WebCore::CrossOriginOpenerPolicy crossOriginOpenerPolicy;
+    WebCore::ReferrerPolicy referrerPolicy;
+};
+
+[Nested] enum class WebCore::SubstituteData::SessionHistoryVisibility : bool
+
+class WebCore::SubstituteData {
+    RefPtr<WebCore::FragmentedSharedBuffer> content();
+    URL failingURL();
+    WebCore::ResourceResponse response();
+    WebCore::SubstituteData::SessionHistoryVisibility shouldRevealToSessionHistory();
+};
+
+header: <WebCore/HTTPCookieAcceptPolicy.h>
+enum class WebCore::HTTPCookieAcceptPolicy : uint8_t {
+    AlwaysAccept,
+    Never,
+    OnlyFromMainDocumentDomain,
+    ExclusivelyFromMainDocumentDomain,
+};
+
+enum class WebCore::NetworkLoadPriority : uint8_t {
+    Low,
+    Medium,
+    High,
+    Unknown,
+};
+
+enum class WebCore::PrivacyStance : uint8_t {
+    Unknown,
+    NotEligible,
+    Proxied,
+    Failed,
+    Direct,
+    FailedUnreachable,
+};
+
+enum class WebCore::ThirdPartyCookieBlockingMode : uint8_t {
+    All,
+    AllExceptBetweenAppBoundDomains,
+    AllExceptManagedDomains,
+    AllOnSitesWithoutUserInteraction,
+    OnlyAccordingToPerDomainPolicy
+};
+
+enum class WebCore::FirstPartyWebsiteDataRemovalMode : uint8_t {
+    AllButCookies,
+    None,
+    AllButCookiesLiveOnTestingTimeout,
+    AllButCookiesReproTestingTimeout
+};
+
+enum class WebCore::FontRenderingMode : uint8_t {
+    Normal,
+    Alternate
+};
+
+header: <WebCore/DragData.h>
+[OptionSet, CustomHeader] enum class WebCore::DragApplicationFlags : uint8_t {
+    IsModal,
+    IsSource,
+    HasAttachedSheet,
+    IsCopyKeyDown
+};
+
+[OptionSet] enum class WebCore::TextCheckingType : uint8_t {
+    None,
+    Spelling,
+    Grammar,
+    Link,
+    Quote,
+    Dash,
+    Replacement,
+    Correction,
+    ShowCorrectionPanel,
 };

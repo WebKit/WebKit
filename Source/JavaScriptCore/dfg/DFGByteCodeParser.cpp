@@ -49,6 +49,7 @@
 #include "DFGClobberize.h"
 #include "DFGClobbersExitState.h"
 #include "DFGGraph.h"
+#include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DOMJITGetterSetter.h"
 #include "DeleteByStatus.h"
 #include "FunctionCodeBlock.h"
@@ -9186,6 +9187,10 @@ void ByteCodeParser::parse()
     parseCodeBlock();
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
 
+    // We insert catch variable preservation here to show all bytecode
+    // uses to the subsequent backward propagation phase.
+    performLiveCatchVariablePreservationPhase(m_graph);
+
     // We run backwards propagation now because the soundness of that phase
     // relies on seeing the graph as if it were an IR over bytecode, since
     // the spec-correctness of that phase relies on seeing all bytecode uses.
@@ -9298,7 +9303,7 @@ void ByteCodeParser::parse()
                 RELEASE_ASSERT(node->op() != ForceOSRExit);
         }
     }
-    
+
     m_graph.determineReachability();
     m_graph.killUnreachableBlocks();
 

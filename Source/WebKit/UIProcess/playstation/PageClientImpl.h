@@ -109,6 +109,10 @@ private:
     void exitAcceleratedCompositingMode() override;
     void updateAcceleratedCompositingMode(const LayerTreeContext&) override;
 
+#if USE(GRAPHICS_LAYER_WC)
+    bool usesOffscreenRendering() const override;
+#endif
+
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)
     WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;

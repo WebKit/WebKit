@@ -638,29 +638,61 @@ webkit_web_view_get_javascript_global_context        (WebKitWebView             
 #endif
 
 WEBKIT_API void
+webkit_web_view_evaluate_javascript                  (WebKitWebView             *web_view,
+                                                      const char                *script,
+                                                      gssize                     length,
+                                                      const char                *world_name,
+                                                      const char                *source_uri,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback        callback,
+                                                      gpointer                   user_data);
+
+WEBKIT_API WebKitJavascriptResult *
+webkit_web_view_evaluate_javascript_finish           (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
+
+WEBKIT_API void
+webkit_web_view_call_async_javascript_function       (WebKitWebView             *web_view,
+                                                      const char                *body,
+                                                      gssize                     length,
+                                                      GVariant                  *arguments,
+                                                      const char                *world_name,
+                                                      const char                *source_uri,
+                                                      GCancellable              *cancellable,
+                                                      GAsyncReadyCallback        callback,
+                                                      gpointer                   user_data);
+
+WEBKIT_API WebKitJavascriptResult *
+webkit_web_view_call_async_javascript_function_finish(WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
+
+#if !ENABLE(2022_GLIB_API)
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript) void
 webkit_web_view_run_javascript                       (WebKitWebView             *web_view,
                                                       const gchar               *script,
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript_finish) WebKitJavascriptResult *
 webkit_web_view_run_javascript_finish                (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript) void
 webkit_web_view_run_javascript_in_world              (WebKitWebView             *web_view,
                                                       const gchar               *script,
                                                       const gchar               *world_name,
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript_finish) WebKitJavascriptResult *
 webkit_web_view_run_javascript_in_world_finish       (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_view_call_async_javascript_function) void
 webkit_web_view_run_async_javascript_function_in_world (WebKitWebView           *web_view,
                                                         const gchar             *body,
                                                         GVariant                *arguments,
@@ -669,17 +701,18 @@ webkit_web_view_run_async_javascript_function_in_world (WebKitWebView           
                                                         GAsyncReadyCallback      callback,
                                                         gpointer                 user_data);
 
-WEBKIT_API void
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript) void
 webkit_web_view_run_javascript_from_gresource        (WebKitWebView             *web_view,
                                                       const gchar               *resource,
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
 
-WEBKIT_API WebKitJavascriptResult *
+WEBKIT_DEPRECATED_FOR(webkit_web_view_evaluate_javascript_finish) WebKitJavascriptResult *
 webkit_web_view_run_javascript_from_gresource_finish (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
+#endif
 
 WEBKIT_API WebKitWebResource *
 webkit_web_view_get_main_resource                    (WebKitWebView             *web_view);

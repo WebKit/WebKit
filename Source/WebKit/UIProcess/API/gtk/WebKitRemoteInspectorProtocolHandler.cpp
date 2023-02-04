@@ -158,7 +158,7 @@ void RemoteInspectorProtocolHandler::updateTargetList(WebKitWebView* webView)
     GString* script = g_string_new("document.getElementById('targetlist').innerHTML='");
     clientForWebView->appendTargertList(script, RemoteInspectorClient::InspectorType::UI, RemoteInspectorClient::ShouldEscapeSingleQuote::Yes);
     g_string_append(script, "';");
-    webkit_web_view_run_javascript(webView, script->str, nullptr, nullptr, nullptr);
+    webkit_web_view_evaluate_javascript(webView, script->str, script->len, nullptr, nullptr, nullptr, nullptr, nullptr);
     g_string_free(script, TRUE);
 }
 

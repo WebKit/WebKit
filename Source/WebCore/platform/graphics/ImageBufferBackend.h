@@ -30,6 +30,7 @@
 #include "FloatRect.h"
 #include "GraphicsTypesGL.h"
 #include "ImageBufferAllocator.h"
+#include "ImageBufferBackendParameters.h"
 #include "ImagePaintingOptions.h"
 #include "IntRect.h"
 #include "PixelBufferFormat.h"
@@ -56,7 +57,7 @@ class NativeImage;
 class PixelBuffer;
 class ProcessIdentity;
 
-enum class PreserveResolution : uint8_t {
+enum class PreserveResolution : bool {
     No,
     Yes,
 };
@@ -88,16 +89,7 @@ public:
 
 class ImageBufferBackend {
 public:
-    struct Parameters {
-        FloatSize logicalSize;
-        float resolutionScale;
-        DestinationColorSpace colorSpace;
-        PixelFormat pixelFormat;
-        RenderingPurpose purpose;
-
-        template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static std::optional<Parameters> decode(Decoder&);
-    };
+    using Parameters = ImageBufferBackendParameters;
 
     struct Info {
         RenderingMode renderingMode;
@@ -200,55 +192,4 @@ protected:
     Parameters m_parameters;
 };
 
-template<typename Encoder> void ImageBufferBackend::Parameters::encode(Encoder& encoder) const
-{
-    encoder << logicalSize;
-    encoder << resolutionScale;
-    encoder << colorSpace;
-    encoder << pixelFormat;
-    encoder << purpose;
-}
-
-template<typename Decoder> std::optional<ImageBufferBackend::Parameters> ImageBufferBackend::Parameters::decode(Decoder& decoder)
-{
-    std::optional<FloatSize> logicalSize;
-    decoder >> logicalSize;
-    if (!logicalSize)
-        return std::nullopt;
-
-    std::optional<float> resolutionScale;
-    decoder >> resolutionScale;
-    if (!resolutionScale)
-        return std::nullopt;
-
-    std::optional<DestinationColorSpace> colorSpace;
-    decoder >> colorSpace;
-    if (!colorSpace)
-        return std::nullopt;
-
-    std::optional<PixelFormat> pixelFormat;
-    decoder >> pixelFormat;
-    if (!pixelFormat)
-        return std::nullopt;
-
-    std::optional<RenderingPurpose> purpose;
-    decoder >> purpose;
-    if (!purpose)
-        return std::nullopt;
-
-    return { { *logicalSize, *resolutionScale, *colorSpace, *pixelFormat, *purpose } };
-}
-
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PreserveResolution> {
-    using values = EnumValues<
-        WebCore::PreserveResolution,
-        WebCore::PreserveResolution::No,
-        WebCore::PreserveResolution::Yes
-    >;
-};
-
-} // namespace WTF
