@@ -192,7 +192,7 @@ private:
 
 inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSValue& value)
 {
-    builderState.style().setDirection(downcast<CSSPrimitiveValue>(value));
+    builderState.style().setDirection(fromCSSValue<TextDirection>(value));
     builderState.style().setHasExplicitlySetDirection(true);
 }
 
@@ -332,8 +332,8 @@ inline void BuilderCustom::applyInheritVerticalAlign(BuilderState& builderState)
 inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID())
-        builderState.style().setVerticalAlign(primitiveValue);
+    if (primitiveValue.valueID() != CSSValueInvalid)
+        builderState.style().setVerticalAlign(fromCSSValueID<VerticalAlign>(primitiveValue.valueID()));
     else
         builderState.style().setVerticalAlignLength(primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
 }
@@ -774,7 +774,7 @@ inline void BuilderCustom::applyValueListStyleType(BuilderState& builderState, C
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isValueID()) {
-        builderState.style().setListStyleType(primitiveValue);
+        builderState.style().setListStyleType(fromCSSValue<ListStyleType>(primitiveValue));
         builderState.style().setListStyleStringValue(RenderStyle::initialListStyleStringValue());
         return;
     }
@@ -803,10 +803,8 @@ inline void BuilderCustom::applyInitialOutlineStyle(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueOutlineStyle(BuilderState& builderState, CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-
-    builderState.style().setOutlineStyleIsAuto(primitiveValue);
-    builderState.style().setOutlineStyle(primitiveValue);
+    builderState.style().setOutlineStyleIsAuto(fromCSSValue<OutlineIsAuto>(value));
+    builderState.style().setOutlineStyle(fromCSSValue<BorderStyle>(value));
 }
 
 inline void BuilderCustom::applyInitialCaretColor(BuilderState& builderState)
@@ -898,13 +896,13 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setWritingMode(downcast<CSSPrimitiveValue>(value));
+    builderState.setWritingMode(fromCSSValue<WritingMode>(value));
     builderState.style().setHasExplicitlySetWritingMode(true);
 }
 
 inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)
 {
-    builderState.setTextOrientation(downcast<CSSPrimitiveValue>(value));
+    builderState.setTextOrientation(fromCSSValue<TextOrientation>(value));
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -1195,7 +1193,7 @@ inline void BuilderCustom::applyInheritDisplay(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueDisplay(BuilderState& builderState, CSSValue& value)
 {
-    DisplayType display = downcast<CSSPrimitiveValue>(value);
+    auto display = fromCSSValue<DisplayType>(value);
     if (isValidDisplayValue(builderState, display))
         builderState.style().setDisplay(display);
 }
@@ -1342,11 +1340,11 @@ inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderStat
         ASSERT(list.length() == 2);
 
         for (auto& item : list) {
-            CSSPrimitiveValue& value = downcast<CSSPrimitiveValue>(item.get());
-            if (value.valueID() == CSSValueFilled || value.valueID() == CSSValueOpen)
-                builderState.style().setTextEmphasisFill(value);
+            auto valueID = downcast<CSSPrimitiveValue>(item.get()).valueID();
+            if (valueID == CSSValueFilled || valueID == CSSValueOpen)
+                builderState.style().setTextEmphasisFill(fromCSSValueID<TextEmphasisFill>(valueID));
             else
-                builderState.style().setTextEmphasisMark(value);
+                builderState.style().setTextEmphasisMark(fromCSSValueID<TextEmphasisMark>(valueID));
         }
         builderState.style().setTextEmphasisCustomMark(nullAtom());
         return;
@@ -1363,11 +1361,11 @@ inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderStat
     builderState.style().setTextEmphasisCustomMark(nullAtom());
 
     if (primitiveValue.valueID() == CSSValueFilled || primitiveValue.valueID() == CSSValueOpen) {
-        builderState.style().setTextEmphasisFill(primitiveValue);
+        builderState.style().setTextEmphasisFill(fromCSSValue<TextEmphasisFill>(value));
         builderState.style().setTextEmphasisMark(TextEmphasisMark::Auto);
     } else {
         builderState.style().setTextEmphasisFill(TextEmphasisFill::Filled);
-        builderState.style().setTextEmphasisMark(primitiveValue);
+        builderState.style().setTextEmphasisMark(fromCSSValue<TextEmphasisMark>(value));
     }
 }
 
@@ -1459,7 +1457,7 @@ inline void BuilderCustom::applyValueCursor(BuilderState& builderState, CSSValue
 {
     builderState.style().clearCursorList();
     if (is<CSSPrimitiveValue>(value)) {
-        CursorType cursor = downcast<CSSPrimitiveValue>(value);
+        auto cursor = fromCSSValue<CursorType>(value);
         if (builderState.style().cursor() != cursor)
             builderState.style().setCursor(cursor);
         return;
@@ -1474,7 +1472,7 @@ inline void BuilderCustom::applyValueCursor(BuilderState& builderState, CSSValue
             continue;
         }
 
-        builderState.style().setCursor(downcast<CSSPrimitiveValue>(item.get()));
+        builderState.style().setCursor(fromCSSValue<CursorType>(item.get()));
         ASSERT_WITH_MESSAGE(item.ptr() == list.item(list.length() - 1), "Cursor ID fallback should always be last in the list");
         return;
     }

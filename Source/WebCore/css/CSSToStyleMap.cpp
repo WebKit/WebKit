@@ -111,7 +111,7 @@ void CSSToStyleMap::mapFillClip(CSSPropertyID propertyID, FillLayer& layer, cons
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    layer.setClip(downcast<CSSPrimitiveValue>(value));
+    layer.setClip(fromCSSValue<FillBox>(value));
 }
 
 void CSSToStyleMap::mapFillComposite(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -124,7 +124,7 @@ void CSSToStyleMap::mapFillComposite(CSSPropertyID propertyID, FillLayer& layer,
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    layer.setComposite(downcast<CSSPrimitiveValue>(value));
+    layer.setComposite(fromCSSValue<CompositeOperator>(value));
 }
 
 void CSSToStyleMap::mapFillBlendMode(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -137,7 +137,7 @@ void CSSToStyleMap::mapFillBlendMode(CSSPropertyID propertyID, FillLayer& layer,
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    layer.setBlendMode(downcast<CSSPrimitiveValue>(value));
+    layer.setBlendMode(fromCSSValue<BlendMode>(value));
 }
 
 void CSSToStyleMap::mapFillOrigin(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -150,7 +150,7 @@ void CSSToStyleMap::mapFillOrigin(CSSPropertyID propertyID, FillLayer& layer, co
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    layer.setOrigin(downcast<CSSPrimitiveValue>(value));
+    layer.setOrigin(fromCSSValue<FillBox>(value));
 }
 
 void CSSToStyleMap::mapFillImage(CSSPropertyID propertyID, FillLayer& layer, CSSValue& value)
@@ -238,7 +238,7 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer& layer,
 
     layer.setXPosition(length);
     if (pair)
-        layer.setBackgroundXOrigin(*pair->first());
+        layer.setBackgroundXOrigin(fromCSSValue<Edge>(*pair->first()));
 }
 
 void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
@@ -262,7 +262,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer& layer,
     
     layer.setYPosition(length);
     if (pair)
-        layer.setBackgroundYOrigin(*pair->first());
+        layer.setBackgroundYOrigin(fromCSSValue<Edge>(*pair->first()));
 }
 
 void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
