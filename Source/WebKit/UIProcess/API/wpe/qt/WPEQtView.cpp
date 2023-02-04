@@ -406,7 +406,7 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
 {
     GError* error { nullptr };
     std::unique_ptr<JavascriptCallbackData> data(reinterpret_cast<JavascriptCallbackData*>(userData));
-    WebKitJavascriptResult* jsResult = webkit_web_view_run_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
+    WebKitJavascriptResult* jsResult = webkit_web_view_evaluate_javascript_finish(WEBKIT_WEB_VIEW(object), result, &error);
     if (!jsResult) {
         qWarning("Error running javascript: %s", error->message);
         g_error_free(error);
@@ -456,7 +456,8 @@ static void jsAsyncReadyCallback(GObject* object, GAsyncResult* result, gpointer
 void WPEQtView::runJavaScript(const QString& script, const QJSValue& callback)
 {
     std::unique_ptr<JavascriptCallbackData> data = std::make_unique<JavascriptCallbackData>(callback, QPointer<WPEQtView>(this));
-    webkit_web_view_run_javascript(m_webView, script.toUtf8().constData(), nullptr, jsAsyncReadyCallback, data.release());
+    auto utf8Script = script.toUtf8();
+    webkit_web_view_evaluate_javascript(m_webView, utf8Script.constData(), utf8Script.size(), nullptr, nullptr, nullptr, jsAsyncReadyCallback, data.release());
 }
 
 void WPEQtView::mousePressEvent(QMouseEvent* event)

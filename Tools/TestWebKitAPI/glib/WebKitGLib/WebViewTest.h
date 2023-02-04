@@ -74,10 +74,12 @@ public:
 #endif
 
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**, WebKitWebView* = nullptr);
+    WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, gsize, GError**);
     WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
-    WebKitJavascriptResult* runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, GError**);
+    WebKitJavascriptResult* runJavaScriptInWorldAndWaitUntilFinished(const char* javascript, const char* world, const char* sourceURI, GError**);
     WebKitJavascriptResult* runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(const char* body, GVariant* arguments, const char* world, GError**);
     WebKitJavascriptResult* runJavaScriptWithoutForcedUserGesturesAndWaitUntilFinished(const char* javascript, GError**);
+    void runJavaScriptAndWait(const char* javascript);
 
     // Javascript result helpers.
     static char* javascriptResultToCString(WebKitJavascriptResult*);

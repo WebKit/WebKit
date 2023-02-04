@@ -496,8 +496,7 @@ public:
 
         server->addWebSocketHandler(serverWebSocketCallback, this);
         GUniquePtr<char> createWebSocketJS(g_strdup_printf(webSocketTestJSFormat, server->getWebSocketURIForPath("/foo").data()));
-        webkit_web_view_run_javascript(m_webView, createWebSocketJS.get(), nullptr, nullptr, nullptr);
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait(createWebSocketJS.get());
         server->removeWebSocketHandler();
 
         return m_events;

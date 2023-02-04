@@ -387,6 +387,13 @@ static void testWebViewRunAsyncFunctions(WebViewTest* test, gconstpointer)
     g_assert_no_error(error.get());
     g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 42);
 
+    g_variant_dict_init(&dict, nullptr);
+    g_variant_dict_insert(&dict, "count", "(u)", 42);
+    args = g_variant_dict_end(&dict);
+    javascriptResult = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return new Promise((resolve) => { resolve(count); });", args, nullptr, &error.outPtr());
+    g_assert_null(javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_INVALID_PARAMETER);
+
     {
         // Set a value in main world.
         WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("a = 25;", &error.outPtr());
@@ -463,7 +470,7 @@ static void testWebViewRunAsyncFunctions(WebViewTest* test, gconstpointer)
 static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
 {
     static const char* html = "<html><body><a id='WebKitLink' href='http://www.webkitgtk.org/' title='WebKitGTK Title'>WebKitGTK Website</a></body></html>";
-    test->loadHtml(html, 0);
+    test->loadHtml(html, "file:///");
     test->waitUntilLoadFinished();
 
     GUniqueOutPtr<GError> error;
@@ -524,6 +531,31 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     g_assert_no_error(error.get());
     g_assert_true(WebViewTest::javascriptResultIsUndefined(javascriptResult));
 
+    GUniquePtr<char> scriptFile(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "JavaScriptCore", "glib", "script.js", nullptr));
+    GUniqueOutPtr<char> contents;
+    gsize contentsSize;
+    g_assert_true(g_file_get_contents(scriptFile.get(), &contents.outPtr(), &contentsSize, nullptr));
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished(contents.get(), contentsSize, &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("testStringWithNull()", &error.outPtr());
+    g_assert_nonnull(javascriptResult);
+    g_assert_no_error(error.get());
+    auto* value = webkit_javascript_result_get_js_value(javascriptResult);
+    g_assert_true(JSC_IS_VALUE(value));
+    test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(value));
+    g_assert_true(jsc_value_is_string(value));
+    valueString.reset(jsc_value_to_string(value));
+    g_assert_cmpstr(valueString.get(), ==, "String");
+    GRefPtr<GBytes> valueBytes = adoptGRef(jsc_value_to_string_as_bytes(value));
+    GString* expected = g_string_new("String");
+    expected = g_string_append_c(expected, '\0');
+    expected = g_string_append(expected, "With");
+    expected = g_string_append_c(expected, '\0');
+    expected = g_string_append(expected, "Null");
+    GRefPtr<GBytes> expectedBytes = adoptGRef(g_string_free_to_bytes(expected));
+    g_assert_true(g_bytes_equal(valueBytes.get(), expectedBytes.get()));
+
     javascriptResult = test->runJavaScriptFromGResourceAndWaitUntilFinished("/org/webkit/glib/tests/link-title.js", &error.outPtr());
     g_assert_nonnull(javascriptResult);
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
@@ -538,13 +570,19 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("foo();", &error.outPtr());
     g_assert_null(javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_str_has_prefix(error->message, "file:///"));
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("window.document.body", &error.outPtr());
+    g_assert_null(javascriptResult);
+    g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_INVALID_RESULT);
 
     // Values of the main world are not available in the isolated one.
-    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a", "WebExtensionTestScriptWorld", &error.outPtr());
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a", "WebExtensionTestScriptWorld", nullptr, &error.outPtr());
     g_assert_null(javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_str_has_prefix(error->message, "file:///"));
 
-    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a = 50", "WebExtensionTestScriptWorld", &error.outPtr());
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a = 50", "WebExtensionTestScriptWorld", nullptr, &error.outPtr());
     g_assert_nonnull(javascriptResult);
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_javascript_result_get_js_value(javascriptResult)));
     g_assert_no_error(error.get());
@@ -558,9 +596,10 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     g_assert_cmpfloat(WebViewTest::javascriptResultToNumber(javascriptResult), ==, 25);
 
     // Running a script in a world that doesn't exist should fail.
-    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a", "InvalidScriptWorld", &error.outPtr());
+    javascriptResult = test->runJavaScriptInWorldAndWaitUntilFinished("a", "InvalidScriptWorld", "foo:///bar", &error.outPtr());
     g_assert_null(javascriptResult);
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
+    g_assert_true(g_str_has_prefix(error->message, "foo:///bar"));
 
     {
         // Disable JS support and expect an error when attempting to evaluate JS code.
@@ -644,8 +683,7 @@ public:
     void requestFullScreenAndWaitUntilEnteredFullScreen()
     {
         m_event = None;
-        webkit_web_view_run_javascript(m_webView, "document.documentElement.webkitRequestFullScreen();", 0, 0, 0);
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait("document.documentElement.webkitRequestFullScreen();");
     }
 
     static gboolean leaveFullScreenIdle(FullScreenClientTest* test)
@@ -1209,8 +1247,7 @@ public:
     {
         m_event = None;
         m_isExpectingPermissionRequest = true;
-        webkit_web_view_run_javascript(m_webView, "Notification.requestPermission();", nullptr, nullptr, nullptr);
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait("Notification.requestPermission();");
     }
 
     void requestNotificationAndWaitUntilShown(const char* title, const char* body)
@@ -1218,9 +1255,7 @@ public:
         m_event = None;
 
         GUniquePtr<char> jscode(g_strdup_printf("n = new Notification('%s', { body: '%s'});", title, body));
-        webkit_web_view_run_javascript(m_webView, jscode.get(), nullptr, nullptr, nullptr);
-
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait(jscode.get());
     }
 
     void requestNotificationAndWaitUntilShown(const char* title, const char* body, const char* tag)
@@ -1228,9 +1263,7 @@ public:
         m_event = None;
 
         GUniquePtr<char> jscode(g_strdup_printf("n = new Notification('%s', { body: '%s', tag: '%s'});", title, body, tag));
-        webkit_web_view_run_javascript(m_webView, jscode.get(), nullptr, nullptr, nullptr);
-
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait(jscode.get());
     }
 
     void clickNotificationAndWaitUntilClicked()
@@ -1245,8 +1278,7 @@ public:
     void closeNotificationAndWaitUntilClosed()
     {
         m_event = None;
-        webkit_web_view_run_javascript(m_webView, "n.close()", nullptr, nullptr, nullptr);
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait("n.close()");
     }
 
     void closeNotificationAndWaitUntilOnClosed()

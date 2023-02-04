@@ -757,8 +757,7 @@ public:
     {
         m_webSocketRequestReceived = WebSocketServerType::Unknown;
         GUniquePtr<char> createWebSocket(g_strdup_printf("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo").data()));
-        webkit_web_view_run_javascript(m_webView, createWebSocket.get(), nullptr, nullptr, nullptr);
-        g_main_loop_run(m_mainLoop);
+        runJavaScriptAndWait(createWebSocket.get());
         return m_webSocketRequestReceived;
     }
 #endif
