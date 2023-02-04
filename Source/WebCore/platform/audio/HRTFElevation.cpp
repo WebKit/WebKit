@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2014 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,6 +60,15 @@ constexpr float ResponseSampleRate = 44100;
 #endif
 
 #ifdef USE_CONCATENATED_IMPULSE_RESPONSES
+
+// This table maps the index into the elevation table with the corresponding angle. See
+// https://bugs.webkit.org/show_bug.cgi?id=98294#c9 for the elevation angles and their order in the
+// concatenated response.
+const int ElevationIndexTableSize = 10;
+const int ElevationIndexTable[ElevationIndexTableSize] = {
+    0, 15, 30, 45, 60, 75, 90, 315, 330, 345
+};
+
 // Lazily load a concatenated HRTF database for given subject and store it in a
 // local hash table to ensure quick efficient future retrievals.
 static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subjectName)
@@ -147,9 +157,20 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
     if (!bus)
         return false;
 
-    int elevationIndex = positiveElevation / AzimuthSpacing;
-    if (positiveElevation > 90)
-        elevationIndex -= AzimuthSpacing;
+    // Just sequentially search the table to find the correct index.
+    int elevationIndex = -1;
+
+    for (int k = 0; k < ElevationIndexTableSize; k++) {
+        if (ElevationIndexTable[k] == positiveElevation) {
+            elevationIndex = k;
+            break;
+        }
+    }
+
+    bool isElevationIndexGood = (elevationIndex >= 0) && (elevationIndex < ElevationIndexTableSize);
+    ASSERT(isElevationIndexGood);
+    if (!isElevationIndexGood)
+        return false;
 
     // The concatenated impulse response is a bus containing all
     // the elevations per azimuth, for all azimuths by increasing
