@@ -42,6 +42,14 @@ public:
     LineBuilder(InlineFormattingContext&, BlockLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
     LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
+    enum class LineEndingEllipsisPolicy : uint8_t {
+        No,
+        WhenContentOverflowsInInlineDirection,
+        WhenContentOverflowsInBlockDirection,
+        // FIXME: This should be used when we realize the last line of this IFC is where the content is truncated (sibling IFC has more lines).
+        Always
+    };
+
     struct InlineItemRange {
         bool isEmpty() const { return start == end; }
         size_t size() const { return end - start; }
@@ -51,15 +59,6 @@ public:
     struct LineInput {
         InlineItemRange needsLayoutRange;
         InlineRect initialLogicalRect;
-
-        enum class LineEndingEllipsisPolicy : uint8_t {
-            No,
-            WhenContentOverflowsInInlineDirection,
-            WhenContentOverflowsInBlockDirection,
-            // FIXME: This should be used when we realize the last line of this IFC is where the content is truncated (sibling IFC has more lines).
-            Always
-        };
-        LineEndingEllipsisPolicy ellipsisPolicy { LineEndingEllipsisPolicy::No };
     };
     struct PartialContent {
         PartialContent(size_t, std::optional<InlineLayoutUnit>);
@@ -104,7 +103,6 @@ public:
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
         TextDirection inlineBaseDirection { TextDirection::LTR };
-        bool lineNeedsTrailingEllipsis { false };
         const Line::RunList& runs;
     };
     LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
@@ -156,7 +154,7 @@ private:
         std::optional<InlineLayoutUnit> overflowLogicalWidth { };
     };
     CommittedContent placeInlineContent(const InlineItemRange&);
-    InlineItemRange close(const InlineItemRange& needsLayoutRange, LineInput::LineEndingEllipsisPolicy, const CommittedContent&);
+    InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
     InlineLayoutUnit inlineItemWidth(const InlineItem&, InlineLayoutUnit contentLogicalLeft) const;
     bool isLastLineWithInlineContent(const InlineItemRange& lineRange, size_t lastInlineItemIndex, bool hasPartialTrailingContent) const;

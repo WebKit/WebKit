@@ -222,9 +222,6 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto adjustedContentToRender = [&] {
         return text->needsHyphen ? makeString(StringView(content).substring(text->start, text->length), style.hyphenString()) : String();
     };
-    auto isFullyTruncated = lineRun.isTruncated() && !text->partiallyVisibleContent;
-    auto partiallyVisibleContentLength = !isFullyTruncated && text->partiallyVisibleContent ? std::make_optional(text->partiallyVisibleContent->length): std::nullopt;
-
     boxes.append({ m_lineIndex
         , lineRun.isWordSeparator() ? InlineDisplay::Box::Type::WordSeparator : InlineDisplay::Box::Type::Text
         , inlineTextBox
@@ -232,9 +229,8 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         , textRunRect
         , inkOverflow()
         , lineRun.expansion()
-        , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen, partiallyVisibleContentLength }
+        , InlineDisplay::Box::Text { text->start, text->length, content, adjustedContentToRender(), text->needsHyphen }
         , true
-        , isFullyTruncated
         , { }
     });
 }
@@ -299,7 +295,6 @@ void InlineDisplayContentBuilder::appendAtomicInlineLevelDisplayBox(const Line::
         , lineRun.expansion()
         , { }
         , true
-        , lineRun.isTruncated()
     });
     // Note that inline boxes are relative to the line and their top position can be negative.
     // Atomic inline boxes are all set. Their margin/border/content box geometries are already computed. We just have to position them here.
@@ -368,7 +363,6 @@ void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lin
         , { }
         , { }
         , inlineBox.hasContent()
-        , lineRun.isTruncated()
         , isFirstLastBox(inlineBox)
     });
 }
@@ -405,7 +399,6 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
         , { }
         , { }
         , inlineBox.hasContent()
-        , lineRun.isTruncated()
         , isFirstLastBox(inlineBox)
     });
 }

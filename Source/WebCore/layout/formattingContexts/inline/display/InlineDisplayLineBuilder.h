@@ -40,14 +40,14 @@ public:
 
     InlineDisplay::Line build(const LineBuilder::LineContent&, const LineBox&, const ConstraintsForInlineContent&) const;
 
+    static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineBuilder::LineEndingEllipsisPolicy, const InlineDisplay::Line&, DisplayBoxes&, bool isLastLineWithInlineContent);
+
 private:
     struct EnclosingLineGeometry {
         InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom;
         InlineRect scrollableOverflowRect;
     };
     EnclosingLineGeometry collectEnclosingLineGeometry(const LineBuilder::LineContent&, const LineBox&, const InlineRect& lineBoxRect) const;
-    InlineRect flipLogicalLineRectToVisualForWritingMode(const InlineRect&, WritingMode) const;
-    std::optional<FloatRect> trailingEllipsisRect(const LineBuilder::LineContent&, const LineBox&, const FloatRect& lineBoxVisualRect) const;
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
     const Box& root() const { return formattingContext().root(); }

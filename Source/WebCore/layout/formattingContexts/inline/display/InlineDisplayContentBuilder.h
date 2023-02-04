@@ -54,6 +54,7 @@ private:
     void processFloatBoxes(const LineBuilder::LineContent&);
     void collectInkOverflowForInlineBoxes(DisplayBoxes&);
     void collectInkOverflowForTextDecorations(DisplayBoxes&, const InlineDisplay::Line&);
+    void truncateForEllipsisPolicy(LineBuilder::LineEndingEllipsisPolicy, const LineBuilder::LineContent&, const InlineDisplay::Line&, DisplayBoxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);
@@ -77,6 +78,7 @@ private:
     InlineLayoutUnit outsideListMarkerVisualPosition(const ElementBox&, const InlineDisplay::Line&) const;
 
     const ElementBox& root() const { return formattingContext().root(); }
+    const RenderStyle& rootStyle() const { return m_lineIndex ? root().style() : root().firstLineStyle(); }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
     const InlineFormattingGeometry& formattingGeometry() const { return formattingContext().formattingGeometry(); }
     InlineFormattingState& formattingState() const { return m_formattingState; } 

@@ -39,7 +39,7 @@ public:
         float top { 0 };
         float bottom { 0 };
     };
-    Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect);
+    Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isHorizontal);
 
     float left() const { return m_lineBoxRect.x(); }
     float right() const { return m_lineBoxRect.maxX(); }
@@ -67,6 +67,7 @@ public:
     float contentLogicalWidth() const { return m_contentLogicalWidth; }
 
     void moveVertically(float offset) { m_lineBoxRect.move({ { }, offset }); }
+    void setEllipsisVisualRect(const FloatRect& ellipsisVisualRect) { m_ellipsisVisualRect = ellipsisVisualRect; }
 
 private:
     // This is line box geometry (see https://www.w3.org/TR/css-inline-3/#line-box).
@@ -88,7 +89,7 @@ private:
     std::optional<FloatRect> m_ellipsisVisualRect { };
 };
 
-inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect)
+inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxRect, const FloatRect& scrollableOverflow, EnclosingTopAndBottom enclosingLogicalTopAndBottom, float aligmentBaseline, FontBaseline baselineType, float contentLogicalLeft, float contentLogicalLeftIgnoringInlineDirection, float contentLogicalWidth, bool isHorizontal)
     : m_lineBoxRect(lineBoxRect)
     , m_lineBoxLogicalRect(lineBoxLogicalRect)
     , m_scrollableOverflow(scrollableOverflow)
@@ -99,7 +100,6 @@ inline Line::Line(const FloatRect& lineBoxLogicalRect, const FloatRect& lineBoxR
     , m_contentLogicalWidth(contentLogicalWidth)
     , m_baselineType(baselineType)
     , m_isHorizontal(isHorizontal)
-    , m_ellipsisVisualRect(ellipsisVisualRect)
 {
 }
 
