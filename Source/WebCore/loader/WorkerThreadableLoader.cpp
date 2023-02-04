@@ -153,7 +153,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     }
 #endif
     if (!optionsCopy->options.clientIdentifier)
-        optionsCopy->options.clientIdentifier = globalScope.identifier();
+        optionsCopy->options.clientIdentifier = globalScope.identifier().object();
 
     if (is<WorkerGlobalScope>(globalScope))
         InspectorInstrumentation::willSendRequest(downcast<WorkerGlobalScope>(globalScope), m_workerRequestIdentifier, request);
