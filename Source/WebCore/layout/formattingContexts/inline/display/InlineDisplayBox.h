@@ -39,7 +39,7 @@ struct Box {
     struct Text {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
-        Text(size_t position, size_t length, const String& originalContent, String adjustedContentToRender = String(), bool hasHyphen = false, std::optional<size_t> partiallyVisibleContentLength = std::nullopt);
+        Text(size_t position, size_t length, const String& originalContent, String adjustedContentToRender = String(), bool hasHyphen = false);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
@@ -49,6 +49,8 @@ struct Box {
         StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
 
         bool hasHyphen() const { return m_hasHyphen; }
+
+        void setPartiallyVisibleContentLength(size_t truncatedLength) { m_partiallyVisibleContentLength = truncatedLength; }
 
     private:
         friend struct Box;
@@ -77,7 +79,7 @@ struct Box {
         First = 1 << 0,
         Last  = 1 << 1
     };
-    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, bool isFullyTruncated = false, OptionSet<PositionWithinInlineLevelBox> = { });
+    Box(size_t lineIndex, Type, const Layout::Box&, UBiDiLevel, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<Text> = std::nullopt, bool hasContent = true, OptionSet<PositionWithinInlineLevelBox> = { });
 
     bool isText() const { return m_type == Type::Text || isWordSeparator(); }
     bool isWordSeparator() const { return m_type == Type::WordSeparator; }
@@ -124,11 +126,12 @@ struct Box {
         m_unflippedVisualRect.move({ offset, { } });
         m_inkOverflow.move({ offset, { } });
     }
+
     void adjustInkOverflow(const FloatRect& childBorderBox) { return m_inkOverflow.uniteEvenIfEmpty(childBorderBox); }
-    void setLeft(float pysicalLeft)
+    void setLeft(float physicalLeft)
     {
-        auto offset = pysicalLeft - left();
-        m_unflippedVisualRect.setX(pysicalLeft);
+        auto offset = physicalLeft - left();
+        m_unflippedVisualRect.setX(physicalLeft);
         m_inkOverflow.setX(m_inkOverflow.x() + offset);
     }
     void setRight(float physicalRight)
@@ -155,6 +158,7 @@ struct Box {
         m_inkOverflow = inkOverflow;
     }
     void setHasContent() { m_hasContent = true; }
+    void setIsFullyTruncated() { m_isFullyTruncated = true; }
 
     std::optional<Text>& text() { return m_text; }
     const std::optional<Text>& text() const { return m_text; }
@@ -192,7 +196,7 @@ private:
     std::optional<Text> m_text;
 };
 
-inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, bool isFullyTruncated, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
+inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
     : m_lineIndex(lineIndex)
     , m_type(type)
     , m_layoutBox(layoutBox)
@@ -202,16 +206,15 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_hasContent(hasContent)
     , m_isFirstForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
     , m_isLastForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
-    , m_isFullyTruncated(isFullyTruncated)
+    , m_isFullyTruncated(false)
     , m_expansion(expansion)
     , m_text(text)
 {
 }
 
-inline Box::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen, std::optional<size_t> partiallyVisibleContentLength)
+inline Box::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
     : m_start(start)
     , m_length(length)
-    , m_partiallyVisibleContentLength(partiallyVisibleContentLength)
     , m_hasHyphen(hasHyphen)
     , m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)

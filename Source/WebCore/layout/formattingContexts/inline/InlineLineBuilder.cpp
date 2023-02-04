@@ -349,14 +349,12 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
     initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
 
     auto committedContent = placeInlineContent(lineInput.needsLayoutRange);
-    auto committedRange = close(lineInput.needsLayoutRange, lineInput.ellipsisPolicy, committedContent);
+    auto committedRange = close(lineInput.needsLayoutRange, committedContent);
 
     auto isLastLine = isLastLineWithInlineContent(committedRange, lineInput.needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
     auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
     auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
-    auto contentIsTruncatedInBlockDirection = (!isLastLine && lineInput.ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection) || lineInput.ellipsisPolicy == LineBuilder::LineInput::LineEndingEllipsisPolicy::Always;
-    auto lineNeedsTrailingEllipsis = m_line.isContentTruncated() || contentIsTruncatedInBlockDirection;
 
     return { committedRange
         , partialOverflowingContent
@@ -376,7 +374,6 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
         , m_line.nonSpanningInlineLevelBoxCount()
         , computedVisualOrder(m_line)
         , inlineBaseDirection
-        , lineNeedsTrailingEllipsis
         , m_line.runs() };
 }
 
@@ -390,7 +387,7 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     initialize(initialRect, lineConstraints, needsLayoutRange, previousLine);
 
     auto committedContent = placeInlineContent(needsLayoutRange);
-    auto committedRange = close(needsLayoutRange, LineInput::LineEndingEllipsisPolicy::No, committedContent);
+    auto committedRange = close(needsLayoutRange, committedContent);
     auto lineWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
     auto overflow = std::optional<PartialContent> { };
     if (committedContent.partialTrailingContentLength)
@@ -539,7 +536,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
     return { committedItemCount, { } };
 }
 
-LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, LineInput::LineEndingEllipsisPolicy ellipsisPolicy, const CommittedContent& committedContent)
+LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_lineIsConstrainedByFloat);
     auto& rootStyle = this->rootStyle();
@@ -589,41 +586,6 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         lineEndsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
     }
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
-
-    auto handleLineEndingEllipsisPolicy = [&] {
-        switch (ellipsisPolicy) {
-        case LineInput::LineEndingEllipsisPolicy::No:
-            break;
-        case LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
-            if (m_line.contentLogicalWidth() > horizontalAvailableSpace) {
-                auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
-                auto logicalRightForContentWithoutEllipsis = std::max(0.f, horizontalAvailableSpace - ellipsisWidth);
-                m_line.truncate(logicalRightForContentWithoutEllipsis);
-            }
-            break;
-        case LineInput::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
-            if (isLastLine)
-                break;
-            FALLTHROUGH;
-        case LineInput::LineEndingEllipsisPolicy::Always: {
-            auto availableSpaceAfterContent = horizontalAvailableSpace;
-            if (auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine)) {
-                // Alignment may move content within the line box leavnig less (or zero) space for ellipsis (e.g. text-align: right).
-                availableSpaceAfterContent -= contentLogicalLeft;
-            }
-            auto ellipsisWidth = rootStyle.fontCascade().width(TextUtil::ellipsisTextRun());
-            if (m_line.contentLogicalWidth() && m_line.contentLogicalWidth() + ellipsisWidth > availableSpaceAfterContent) {
-                auto logicalRightForContentWithoutEllipsis = std::max(0.f, availableSpaceAfterContent - ellipsisWidth);
-                m_line.truncate(logicalRightForContentWithoutEllipsis);
-            }
-            break;
-        }
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    };
-    handleLineEndingEllipsisPolicy();
     return lineRange;
 }
 
