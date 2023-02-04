@@ -72,7 +72,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!cachePath)
         return true;
 
-    URL cachePathURL([cachePath absoluteURL]);
+    URL cachePathURL(cachePath.absoluteURL);
     if (!cachePathURL.isLocalFile()) {
         createError([NSString stringWithFormat:@"Cache path `%@` is not a local file", static_cast<NSURL *>(cachePathURL)], error);
         return false;
@@ -128,7 +128,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!validateBytecodeCachePath(cachePath, error))
         return nil;
 
-    URL filePathURL([filePath absoluteURL]);
+    URL filePathURL(filePath.absoluteURL);
     if (!filePathURL.isLocalFile())
         return createError([NSString stringWithFormat:@"File path %@ is not a local file", static_cast<NSURL *>(filePathURL)], error);
 
@@ -157,7 +157,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!m_cachePath)
         return;
 
-    String cacheFilename = [m_cachePath path];
+    String cacheFilename = m_cachePath.get().path;
 
     auto fd = FileSystem::openAndLockFile(cacheFilename, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
     if (!FileSystem::isHandleValid(fd))
@@ -197,7 +197,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     Ref<JSC::CachedBytecode> cachedBytecode = JSC::CachedBytecode::create(WTFMove(mappedFile));
 
-    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
+    JSC::VM &vm = *toJS([m_virtualMachine JSContextGroupRef]);
     JSC::SourceCode sourceCode = [self sourceCode];
     JSC::SourceCodeKey key = m_type == kJSScriptTypeProgram ? sourceCodeKeyForSerializedProgram(vm, sourceCode) : sourceCodeKeyForSerializedModule(vm, sourceCode);
     if (isCachedBytecodeStillValid(vm, cachedBytecode.copyRef(), key, m_type == kJSScriptTypeProgram ? JSC::SourceCodeType::ProgramType : JSC::SourceCodeType::ModuleType))
@@ -265,11 +265,11 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (JSC::SourceCode)sourceCode
 {
-    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
+    JSC::VM &vm = *toJS([m_virtualMachine JSContextGroupRef]);
     JSC::JSLockHolder locker(vm);
 
     TextPosition startPosition { };
-    String filename = String { [[self sourceURL] absoluteString] };
+    String filename = String { [self sourceURL].absoluteString };
     URL url = URL({ }, filename);
     auto type = m_type == kJSScriptTypeModule ? JSC::SourceProviderSourceType::Module : JSC::SourceProviderSourceType::Program;
     JSC::SourceOrigin origin(url);
@@ -280,7 +280,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
 - (JSC::JSSourceCode*)jsSourceCode
 {
-    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
+    JSC::VM &vm = *toJS([m_virtualMachine JSContextGroupRef]);
     JSC::JSLockHolder locker(vm);
     JSC::JSSourceCode* jsSourceCode = JSC::JSSourceCode::create(vm, [self sourceCode]);
     return jsSourceCode;
@@ -302,7 +302,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     // or nothing). So, we'll write to a temp file first, and rename the temp
     // file to the cache file only after we've finished writing the whole thing.
 
-    NSString *cachePathString = [m_cachePath path];
+    NSString *cachePathString = m_cachePath.get().path;
     const char* cacheFileName = cachePathString.UTF8String;
     const char* tempFileName = [cachePathString stringByAppendingString:@".tmp"].UTF8String;
     int fd = open(cacheFileName, O_CREAT | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0600);
@@ -327,7 +327,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
 
     JSC::BytecodeCacheError cacheError;
     JSC::SourceCode sourceCode = [self sourceCode];
-    JSC::VM& vm = *toJS([m_virtualMachine JSContextGroupRef]);
+    JSC::VM &vm = *toJS([m_virtualMachine JSContextGroupRef]);
     switch (m_type) {
     case kJSScriptTypeModule:
         m_cachedBytecode = JSC::generateModuleBytecode(vm, sourceCode, tempFD, cacheError);

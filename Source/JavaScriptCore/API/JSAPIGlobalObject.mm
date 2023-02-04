@@ -209,7 +209,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
             return rejectPromise("The JSScript that was provided did not have expected type of kJSScriptTypeModule."_s);
 
         NSURL *sourceURL = [jsScript sourceURL];
-        String oldModuleKey { [sourceURL absoluteString] };
+        String oldModuleKey { sourceURL.absoluteString };
         if (UNLIKELY(Identifier::fromString(vm, oldModuleKey) != moduleKey))
             return rejectPromise(makeString("The same JSScript was provided for two different identifiers, previously: ", oldModuleKey, " and now: ", moduleKey.string()));
 
@@ -222,10 +222,10 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         return encodedJSUndefined();
     });
 
-    [[context moduleLoaderDelegate] context:context fetchModuleForIdentifier:[::JSValue valueWithJSValueRef:toRef(globalObject, key) inContext:context] withResolveHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, resolve) inContext:context] andRejectHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, reject) inContext:context]];
+    [context.moduleLoaderDelegate context:context fetchModuleForIdentifier:[::JSValue valueWithJSValueRef:toRef(globalObject, key) inContext:context] withResolveHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, resolve) inContext:context] andRejectHandler:[::JSValue valueWithJSValueRef:toRef(globalObject, reject) inContext:context]];
     if (context.exception) {
         scope.release();
-        promise->reject(globalObject, toJS(globalObject, [context.exception JSValueRef]));
+        promise->reject(globalObject, toJS(globalObject, (context.exception).JSValueRef));
         context.exception = nil;
     }
     return promise;
@@ -251,7 +251,7 @@ JSValue JSAPIGlobalObject::moduleLoaderEvaluate(JSGlobalObject* globalObject, JS
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
-    id <JSModuleLoaderDelegate> moduleLoaderDelegate = [context moduleLoaderDelegate];
+    id<JSModuleLoaderDelegate> moduleLoaderDelegate = context.moduleLoaderDelegate;
     NSURL *url = nil;
 
     if ([moduleLoaderDelegate respondsToSelector:@selector(willEvaluateModule:)] || [moduleLoaderDelegate respondsToSelector:@selector(didEvaluateModule:)]) {
@@ -279,7 +279,7 @@ JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JS
     VM& vm = this->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Identifier key = Identifier::fromString(vm, String { [[script sourceURL] absoluteString] });
+    Identifier key = Identifier::fromString(vm, String { [script sourceURL].absoluteString });
     JSInternalPromise* promise = importModule(this, key, jsUndefined(), jsUndefined(), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
     auto* result = JSPromise::create(vm, this->promiseStructure());

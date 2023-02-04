@@ -33,7 +33,7 @@
 #import <wtf/text/CString.h>
 
 @interface NSString (WTFNSURLExtras)
-- (BOOL)_web_looksLikeIPAddress;
+@property (nonatomic, readonly) BOOL _web_looksLikeIPAddress;
 @end
 
 namespace WTF {
@@ -59,7 +59,7 @@ RetainPtr<CFURLRef> URL::emptyCFURL()
 
 bool URL::hostIsIPAddress(StringView host)
 {
-    return [host.createNSStringWithoutCopying().get() _web_looksLikeIPAddress];
+    return host.createNSStringWithoutCopying().get()._web_looksLikeIPAddress;
 }
 
 RetainPtr<id> makeNSArrayElement(const URL& vectorElement)

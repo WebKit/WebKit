@@ -45,7 +45,7 @@ static BOOL readIDNAllowedScriptListFile(NSString *filename)
     if (!filename)
         return NO;
 
-    FILE *file = fopen([filename fileSystemRepresentation], "r");
+    FILE *file = fopen(filename.fileSystemRepresentation, "r");
     if (!file)
         return NO;
     
@@ -140,13 +140,13 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
 {
     if (!data)
         return nil;
-    
-    size_t length = [data length];
+
+    size_t length = data.length;
     if (length > 0) {
         // Work around <rdar://4470771>: CFURLCreateAbsoluteURLWithBytes(.., TRUE) doesn't remove non-path components.
         baseURL = URLByTruncatingOneCharacterBeforeComponent(baseURL, kCFURLComponentResourceSpecifier);
 
-        const UInt8 *bytes = static_cast<const UInt8*>([data bytes]);
+        const UInt8 *bytes = static_cast<const UInt8 *>(data.bytes);
 
         // CFURLCreateAbsoluteURLWithBytes would complain to console if we passed a path to it.
         if (bytes[0] == '/' && !baseURL)
@@ -168,9 +168,9 @@ static NSData *dataWithUserTypedString(NSString *string)
 {
     NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
     ASSERT(userTypedData);
-    
-    const UInt8* inBytes = static_cast<const UInt8 *>([userTypedData bytes]);
-    int inLength = [userTypedData length];
+
+    const UInt8 *inBytes = static_cast<const UInt8 *>(userTypedData.bytes);
+    int inLength = userTypedData.length;
     if (!inLength)
         return nil;
 
@@ -317,7 +317,7 @@ NSData *originalURLData(NSURL *URL)
 NSString *userVisibleString(NSURL *URL)
 {
     NSData *data = originalURLData(URL);
-    return URLHelpers::userVisibleURL(CString(static_cast<const char*>([data bytes]), [data length]));
+    return URLHelpers::userVisibleURL(CString(static_cast<const char *>(data.bytes), data.length));
 }
 
 BOOL isUserVisibleURL(NSString *string)
@@ -327,7 +327,7 @@ BOOL isUserVisibleURL(NSString *string)
 
     char buffer[1024];
     auto success = CFStringGetCString(bridge_cast(string), reinterpret_cast<char*>(buffer), sizeof(buffer) - 1, kCFStringEncodingUTF8);
-    auto characters = success ? buffer : [string UTF8String];
+    auto characters = success ? buffer : string.UTF8String;
 
     // Check for control characters, %-escape sequences that are non-ASCII, and xn--: these
     // are the things that might lead the userVisibleString function to actually change the string.

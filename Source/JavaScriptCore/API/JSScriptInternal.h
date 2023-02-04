@@ -44,11 +44,11 @@ class String;
 @interface JSScript(Internal)
 
 - (instancetype)init;
-- (unsigned)hash;
-- (const WTF::String&)source;
-- (RefPtr<JSC::CachedBytecode>)cachedBytecode;
-- (JSC::JSSourceCode*)jsSourceCode;
-- (JSC::SourceCode)sourceCode;
+@property (nonatomic, readonly) unsigned hash;
+@property (nonatomic, readonly) const WTF::String &source;
+@property (nonatomic, readonly) RefPtr<JSC::CachedBytecode> cachedBytecode;
+@property (nonatomic, readonly) JSC::JSSourceCode *_Nonnull jsSourceCode;
+@property (nonatomic, readonly) JSC::SourceCode sourceCode;
 - (BOOL)writeCache:(String&)error;
 
 @end

@@ -175,12 +175,15 @@ void RemoteInspectorXPCConnection::sendMessage(NSString *messageName, NSDictiona
     if (m_closed)
         return;
 
-    auto dictionary = adoptNS([[NSMutableDictionary alloc] init]);
-    [dictionary setObject:messageName forKey:RemoteInspectorXPCConnectionMessageNameKey];
+    CFMutableDictionaryRef dictionary = CFDictionaryCreateMutable(kCFAllocatorDefault, 2, nullptr, nullptr);
+    CFDictionaryAddValue(dictionary, RemoteInspectorXPCConnectionMessageNameKey, (__bridge CFStringRef)messageName);
     if (userInfo)
-        [dictionary setObject:userInfo forKey:RemoteInspectorXPCConnectionUserInfoKey];
+        CFDictionaryAddValue(dictionary, RemoteInspectorXPCConnectionMessageNameKey, (__bridge CFDictionaryRef)userInfo);
 
-    auto xpcDictionary = adoptOSObject(_CFXPCCreateXPCMessageWithCFObject((__bridge CFDictionaryRef)dictionary.get()));
+    auto xpcDictionary = adoptOSObject(_CFXPCCreateXPCMessageWithCFObject(dictionary));
+
+    CFRelease(dictionary);
+
     ASSERT_WITH_MESSAGE(xpcDictionary && xpc_get_type(xpcDictionary.get()) == XPC_TYPE_DICTIONARY, "Unable to serialize xpc message");
     if (!xpcDictionary)
         return;

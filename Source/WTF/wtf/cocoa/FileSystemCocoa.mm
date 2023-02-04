@@ -129,14 +129,14 @@ String openTemporaryFile(StringView prefix, PlatformFileHandle& platformFileHand
 NSString *createTemporaryDirectory(NSString *directoryPrefix)
 {
     NSString *tempDirectory = NSTemporaryDirectory();
-    if (!tempDirectory || ![tempDirectory length])
+    if (!tempDirectory || !tempDirectory.length)
         return nil;
 
-    if (!directoryPrefix || ![directoryPrefix length])
+    if (!directoryPrefix || !directoryPrefix.length)
         return nil;
 
     NSString *tempDirectoryComponent = [directoryPrefix stringByAppendingString:@"-XXXXXXXX"];
-    const char* tempDirectoryCString = [[tempDirectory stringByAppendingPathComponent:tempDirectoryComponent] fileSystemRepresentation];
+    const char *tempDirectoryCString = [tempDirectory stringByAppendingPathComponent:tempDirectoryComponent].fileSystemRepresentation;
     if (!tempDirectoryCString)
         return nil;
 
@@ -235,7 +235,7 @@ bool setExcludedFromBackup(const String& path, bool excluded)
         return false;
 
     NSError *error;
-    if (![[NSURL fileURLWithPath:(NSString *)path isDirectory:YES] setResourceValue:[NSNumber numberWithBool:excluded] forKey:NSURLIsExcludedFromBackupKey error:&error]) {
+    if (![[NSURL fileURLWithPath:(NSString *)path isDirectory:YES] setResourceValue:@(excluded) forKey:NSURLIsExcludedFromBackupKey error:&error]) {
         LOG_ERROR("Cannot exclude path '%s' from backup with error '%@'", path.utf8().data(), error.localizedDescription);
         return false;
     }

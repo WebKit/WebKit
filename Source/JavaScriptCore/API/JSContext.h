@@ -58,6 +58,15 @@ JSC_CLASS_AVAILABLE(macos(10.9), ios(7.0))
 - (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine;
 
 /*!
+@method
+@abstract Create a JSContext in the specified virtual machine and context.
+@param virtualMachine The JSVirtualMachine in which the context will be created.
+@param context JSGlobalContextRef the context will hold.
+@result The new context.
+*/
+- (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine context:(JSGlobalContextRef)context NS_DESIGNATED_INITIALIZER NS_UNAVAILABLE;
+
+/*!
 @methodgroup Evaluating Scripts
 */
 /*!

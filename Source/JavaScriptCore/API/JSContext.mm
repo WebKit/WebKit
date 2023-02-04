@@ -63,9 +63,9 @@
 
 - (void)ensureWrapperMap
 {
-    if (!toJS([self JSGlobalContextRef])->wrapperMap()) {
+    if (!toJS(self.JSGlobalContextRef)->wrapperMap()) {
         // The map will be retained by the GlobalObject in initialization.
-        [[[JSWrapperMap alloc] initWithGlobalContextRef:[self JSGlobalContextRef]] release];
+        [[[JSWrapperMap alloc] initWithGlobalContextRef:self.JSGlobalContextRef] release];
     }
 }
 
@@ -76,12 +76,18 @@
 
 - (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
 {
+    return [self initWithVirtualMachine:virtualMachine context:JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(virtualMachine), 0)];
+}
+
+- (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine context:(JSGlobalContextRef)context
+{
     self = [super init];
     if (!self)
         return nil;
 
+    ASSERT(context);
     m_virtualMachine = virtualMachine;
-    m_context = JSGlobalContextCreateInGroup(getGroupFromVirtualMachine(virtualMachine), 0);
+    m_context = context;
 
     self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
         context.exception = exceptionValue;
@@ -110,7 +116,7 @@
 {
     JSValueRef exceptionValue = nullptr;
     auto scriptJS = OpaqueJSString::tryCreate(script);
-    auto sourceURLJS = OpaqueJSString::tryCreate([sourceURL absoluteString]);
+    auto sourceURLJS = OpaqueJSString::tryCreate(sourceURL.absoluteString);
     JSValueRef result = JSEvaluateScript(m_context, scriptJS.get(), nullptr, sourceURLJS.get(), 0, &exceptionValue);
 
     if (exceptionValue)
@@ -162,7 +168,7 @@
     }
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
-    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, JSC::jsString(vm, String([[script sourceURL] absoluteString])));
+    JSC::JSArray* result = globalObject->moduleLoader()->dependencyKeysIfEvaluated(globalObject, JSC::jsString(vm, String([script sourceURL].absoluteString)));
     if (scope.exception()) {
         JSValueRef exceptionValue = toRef(globalObject, scope.exception()->value());
         scope.clearException();
@@ -329,12 +335,12 @@
 
 - (JSValue *)objectForKeyedSubscript:(id)key
 {
-    return [self globalObject][key];
+    return self.globalObject[key];
 }
 
 - (void)setObject:(id)object forKeyedSubscript:(NSObject <NSCopying> *)key
 {
-    [self globalObject][key] = object;
+    self.globalObject[key] = object;
 }
 
 @end
@@ -343,23 +349,9 @@
 
 - (instancetype)initWithGlobalContextRef:(JSGlobalContextRef)context
 {
-    self = [super init];
-    if (!self)
-        return nil;
-
     JSC::JSGlobalObject* globalObject = toJS(context);
-    m_virtualMachine = [JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalObject->vm())];
-    ASSERT(m_virtualMachine);
-    m_context = JSGlobalContextRetain(context);
-    [self ensureWrapperMap];
 
-    self.exceptionHandler = ^(JSContext *context, JSValue *exceptionValue) {
-        context.exception = exceptionValue;
-    };
-
-    [m_virtualMachine addContext:self forGlobalContextRef:m_context];
-
-    return self;
+    return [self initWithVirtualMachine:[JSVirtualMachine virtualMachineWithContextGroupRef:toRef(&globalObject->vm())] context:JSGlobalContextRetain(context)];
 }
 
 - (void)notifyException:(JSValueRef)exceptionValue

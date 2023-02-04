@@ -132,10 +132,10 @@ static NSMapTable *wrapperCache() WTF_REQUIRES_LOCK(wrapperCacheMutex)
 static id getInternalObjcObject(id object)
 {
     if ([object isKindOfClass:[JSManagedValue class]]) {
-        JSValue* value = [static_cast<JSManagedValue *>(object) value];
+        JSValue *value = static_cast<JSManagedValue *>(object).value;
         if (!value)
             return nil;
-        id temp = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
+        id temp = tryUnwrapObjcObject((value.context).JSGlobalContextRef, value.JSValueRef);
         if (temp)
             return temp;
         return object;
@@ -143,7 +143,7 @@ static id getInternalObjcObject(id object)
     
     if ([object isKindOfClass:[JSValue class]]) {
         JSValue *value = static_cast<JSValue *>(object);
-        object = tryUnwrapObjcObject([value.context JSGlobalContextRef], [value JSValueRef]);
+        object = tryUnwrapObjcObject((value.context).JSGlobalContextRef, value.JSValueRef);
     }
 
     return object;
@@ -221,7 +221,7 @@ static id getInternalObjcObject(id object)
         if (count == 1)
             NSMapRemove(ownedObjects, (__bridge void*)object);
 
-        if (![ownedObjects count]) {
+        if (!ownedObjects.count) {
             [m_externalObjectGraph removeObjectForKey:owner];
             [m_externalRememberedSet removeObjectForKey:owner];
         }

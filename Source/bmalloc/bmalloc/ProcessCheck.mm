@@ -37,13 +37,13 @@ bool gigacageEnabledForProcess()
     // Note that this function is only called once.
     // If we wanted to make it efficient to call more than once, we could memoize the result in a global boolean.
 
-    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    NSString *appName = [NSBundle mainBundle].bundleIdentifier;
     if (appName) {
         bool isWebProcess = [appName hasPrefix:@"com.apple.WebKit.WebContent"];
         return isWebProcess;
     }
 
-    NSString *processName = [[NSProcessInfo processInfo] processName];
+    NSString *processName = [NSProcessInfo processInfo].processName;
     bool isOptInBinary = [processName isEqualToString:@"jsc"]
         || [processName isEqualToString:@"DumpRenderTree"]
         || [processName isEqualToString:@"wasm"]

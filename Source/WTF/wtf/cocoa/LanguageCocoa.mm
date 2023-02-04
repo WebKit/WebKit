@@ -39,14 +39,19 @@ namespace WTF {
 
 size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch)
 {
-    auto matchedLanguages = retainPtr([NSLocale matchedLanguagesFromAvailableLanguages:createNSArray(languageList).get() forPreferredLanguages:@[ static_cast<NSString *>(language) ]]);
-    if (![matchedLanguages count]) {
+    NSArray *matchedLanguages = [NSLocale matchedLanguagesFromAvailableLanguages:createNSArray(languageList).get() forPreferredLanguages:@[static_cast<NSString *>(language)]];
+    if (matchedLanguages.count) {
+#if !__has_feature(objc_arc)
+        [matchedLanguages release];
+#endif
         exactMatch = false;
         return languageList.size();
     }
 
-    String firstMatchedLanguage = [matchedLanguages firstObject];
-
+    String firstMatchedLanguage = matchedLanguages.firstObject;
+#if !__has_feature(objc_arc)
+    [matchedLanguages release];
+#endif
     exactMatch = language == firstMatchedLanguage;
 
     auto index = languageList.find(firstMatchedLanguage);
