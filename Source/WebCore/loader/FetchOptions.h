@@ -49,7 +49,7 @@ struct FetchOptions {
     using Redirect = FetchOptionsRedirect;
 
     FetchOptions() = default;
-    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, std::optional<ScriptExecutionContextIdentifier>, std::optional<ScriptExecutionContextIdentifier>);
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, Markable<UUID>, Markable<UUID>);
     FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
     FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTFMove(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
 
@@ -64,14 +64,11 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     bool keepAlive { false };
     String integrity;
-    // FIXME: These std::optional<ScriptExecutionContextIdentifier> waste 15 bytes each.
-    // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
-    std::optional<ScriptExecutionContextIdentifier> clientIdentifier;
-    // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
-    std::optional<ScriptExecutionContextIdentifier> resultingClientIdentifier;
+    Markable<UUID> clientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
+    Markable<UUID> resultingClientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
 };
 
-inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, std::optional<ScriptExecutionContextIdentifier> clientIdentifier, std::optional<ScriptExecutionContextIdentifier> resultingClientIdentifier)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, Markable<UUID> clientIdentifier, Markable<UUID> resultingClientIdentifier)
     : destination(destination)
     , mode(mode)
     , credentials(credentials)

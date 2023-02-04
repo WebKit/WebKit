@@ -2420,8 +2420,8 @@ struct WebCore::FetchOptions {
     WebCore::ReferrerPolicy referrerPolicy;
     bool keepAlive;
     String integrity;
-    std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
-    std::optional<WebCore::ScriptExecutionContextIdentifier> resultingClientIdentifier;
+    Markable<UUID> clientIdentifier;
+    Markable<UUID> resultingClientIdentifier;
 }
 
 enum class WebCore::FetchHeadersGuard : uint8_t {

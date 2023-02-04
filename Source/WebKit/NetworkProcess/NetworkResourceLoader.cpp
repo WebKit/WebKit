@@ -598,7 +598,7 @@ void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProces
     ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse || m_serviceWorkerFetchTask);
     if (m_serviceWorkerRegistration) {
         if (auto* swConnection = newConnection.swConnection())
-            swConnection->transferServiceWorkerLoadToNewWebProcess(*this, *m_serviceWorkerRegistration);
+            swConnection->transferServiceWorkerLoadToNewWebProcess(*this, *m_serviceWorkerRegistration, m_connection->webProcessIdentifier());
     }
     if (m_workerStart)
         send(Messages::WebResourceLoader::SetWorkerStart { m_workerStart }, coreIdentifier());
