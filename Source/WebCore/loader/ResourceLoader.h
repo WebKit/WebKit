@@ -129,7 +129,7 @@ public:
     ResourceHandle* handle() const { return m_handle.get(); }
     bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
     void setSendCallbackPolicy(SendCallbackPolicy sendLoadCallbacks) { m_options.sendLoadCallbacks = sendLoadCallbacks; }
-    bool shouldSniffContent() const { return m_options.sniffContent == ContentSniffingPolicy::SniffContent; }
+    ContentSniffingPolicy contentSniffingPolicy() const { return m_options.contentSniffingPolicy; }
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy() const { return m_options.contentEncodingSniffingPolicy; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
     WEBCORE_EXPORT bool shouldIncludeCertificateInfo() const;

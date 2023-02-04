@@ -465,8 +465,8 @@ void SpeculativeLoadManager::preconnectForSubresource(const SubresourceInfo& sub
     parameters.webPageID = frameID.webPageID;
     parameters.webFrameID = frameID.frameID;
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
-    parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
-    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
+    parameters.contentSniffingPolicy = ContentSniffingPolicy::Disable;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::DefaultForPlatform;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
     parameters.request = constructRevalidationRequest(subresourceInfo.key(), subresourceInfo, entry);
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;

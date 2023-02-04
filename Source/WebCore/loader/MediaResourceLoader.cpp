@@ -102,7 +102,7 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
     ContentSecurityPolicyImposition contentSecurityPolicyImposition = m_element && m_element->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
     ResourceLoaderOptions loaderOptions {
         SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::DoNotSniffContent,
+        ContentSniffingPolicy::Disable,
         bufferingPolicy,
         StoredCredentialsPolicy::Use,
         ClientCredentialPolicy::MayAskClientForCredentials,

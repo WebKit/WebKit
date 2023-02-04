@@ -64,8 +64,8 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.webPageID = globalFrameID.webPageID;
     parameters.webFrameID = globalFrameID.frameID;
     parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
-    parameters.contentSniffingPolicy = ContentSniffingPolicy::DoNotSniffContent;
-    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
+    parameters.contentSniffingPolicy = ContentSniffingPolicy::Disable;
+    parameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::DefaultForPlatform;
     parameters.request = m_originalRequest;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     parameters.allowPrivacyProxy = allowPrivacyProxy;

@@ -175,7 +175,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
 #if !USE(SOUP2)
     messageFlags |= SOUP_MESSAGE_COLLECT_METRICS;
 #endif
-    if (m_shouldContentSniff == ContentSniffingPolicy::DoNotSniffContent)
+    if (m_shouldContentSniff == ContentSniffingPolicy::Disable)
         soup_message_disable_feature(m_soupMessage.get(), SOUP_TYPE_CONTENT_SNIFFER);
     if (m_user.isEmpty() && m_password.isEmpty() && m_storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse) {
 #if SOUP_CHECK_VERSION(2, 57, 1)
@@ -242,7 +242,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
 #endif
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
     g_signal_connect(m_soupMessage.get(), "starting", G_CALLBACK(startingCallback), this);
-    if (m_shouldContentSniff == ContentSniffingPolicy::SniffContent)
+    if (m_shouldContentSniff == ContentSniffingPolicy::DefaultForPlatform)
         g_signal_connect(m_soupMessage.get(), "content-sniffed", G_CALLBACK(didSniffContentCallback), this);
 }
 

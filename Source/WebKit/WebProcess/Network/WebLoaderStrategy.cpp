@@ -364,8 +364,6 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         }
     }
 
-    ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? ContentSniffingPolicy::SniffContent : ContentSniffingPolicy::DoNotSniffContent;
-    auto contentEncodingSniffingPolicy = resourceLoader.contentEncodingSniffingPolicy();
     StoredCredentialsPolicy storedCredentialsPolicy = resourceLoader.shouldUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d, storedCredentialsPolicy %i", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()), (int)storedCredentialsPolicy);
@@ -380,8 +378,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
 #endif
     loadParameters.request = request;
-    loadParameters.contentSniffingPolicy = contentSniffingPolicy;
-    loadParameters.contentEncodingSniffingPolicy = contentEncodingSniffingPolicy;
+    loadParameters.contentSniffingPolicy = resourceLoader.contentSniffingPolicy();
+    loadParameters.contentEncodingSniffingPolicy = resourceLoader.contentEncodingSniffingPolicy();
     loadParameters.storedCredentialsPolicy = storedCredentialsPolicy;
     // If there is no WebFrame then this resource cannot be authenticated with the client.
     loadParameters.clientCredentialPolicy = (loadParameters.webFrameID && loadParameters.webPageID && resourceLoader.isAllowedToAskUserForCredentials()) ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
@@ -725,8 +723,8 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     loadParameters.networkProcessAuditToken = WebProcess::singleton().ensureNetworkProcessConnection().networkProcessAuditToken();
 #endif
     loadParameters.request = request;
-    loadParameters.contentSniffingPolicy = ContentSniffingPolicy::SniffContent;
-    loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::Default;
+    loadParameters.contentSniffingPolicy = ContentSniffingPolicy::DefaultForPlatform;
+    loadParameters.contentEncodingSniffingPolicy = ContentEncodingSniffingPolicy::DefaultForPlatform;
     loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect(webFrame ? webFrame->coreFrame() : nullptr);

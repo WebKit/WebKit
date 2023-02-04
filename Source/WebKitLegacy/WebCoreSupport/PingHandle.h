@@ -50,8 +50,7 @@ public:
         , m_completionHandler(WTFMove(completionHandler))
     {
         bool defersLoading = false;
-        bool shouldContentSniff = false;
-        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, WebCore::ContentEncodingSniffingPolicy::Default, nullptr, false);
+        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, WebCore::ContentSniffingPolicy::Disable, WebCore::ContentEncodingSniffingPolicy::DefaultForPlatform, nullptr, false);
 
         // If the server never responds, this object will hang around forever.
         // Set a very generous timeout, just in case.

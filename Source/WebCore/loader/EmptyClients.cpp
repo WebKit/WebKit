@@ -396,7 +396,7 @@ private:
     NetworkStorageSession* storageSession() const final { return nullptr; }
 
 #if PLATFORM(COCOA)
-    bool localFileContentSniffingEnabled() const { return false; }
+    ContentSniffingPolicy localFileContentSniffingPolicy() const { return ContentSniffingPolicy::Disable; }
     SchedulePairHashSet* scheduledRunLoopPairs() const { return nullptr; }
     RetainPtr<CFDataRef> sourceApplicationAuditData() const { return nullptr; };
 #endif

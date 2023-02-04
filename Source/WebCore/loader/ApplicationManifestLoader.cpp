@@ -69,7 +69,7 @@ bool ApplicationManifestLoader::startLoading()
     auto credentials = m_useCredentials ? FetchOptions::Credentials::Include : FetchOptions::Credentials::Omit;
     auto options = ResourceLoaderOptions(
         SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::SniffContent,
+        ContentSniffingPolicy::DefaultForPlatform,
         DataBufferingPolicy::BufferData,
         StoredCredentialsPolicy::DoNotUse,
         ClientCredentialPolicy::CannotAskClientForCredentials,
