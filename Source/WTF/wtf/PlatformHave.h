@@ -173,7 +173,7 @@
 #define HAVE_PTHREAD_MAIN_NP 1
 #endif
 
-#if OS(DARWIN) && (CPU(X86_64) || CPU(ARM64))
+#if OS(DARWIN) && (CPU(X86_64) || CPU(ARM64)) && CPU(ADDRESS64)
 #define HAVE_INT128_T 1
 #endif
 
