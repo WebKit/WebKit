@@ -52,7 +52,7 @@ namespace WebKitFontFamilyNames {
 enum class FamilyNamesIndex;
 }
 
-enum class BoxOrient : bool;
+enum class BoxOrient : uint8_t;
 
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When

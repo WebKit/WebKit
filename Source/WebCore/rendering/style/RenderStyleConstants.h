@@ -40,7 +40,7 @@ enum class DumpStyleValues {
 };
 
 static const size_t PrintColorAdjustBits = 1;
-enum class PrintColorAdjust : bool {
+enum class PrintColorAdjust : uint8_t {
     Economy,
     Exact
 };
@@ -183,18 +183,18 @@ private:
     unsigned m_data;
 };
 
-enum class ColumnFill : bool {
+enum class ColumnFill : uint8_t {
     Balance,
     Auto
 };
 
-enum class ColumnSpan : bool {
-    None,
+enum class ColumnSpan : uint8_t {
+    None = 0,
     All
 };
 
-enum class BorderCollapse : bool {
-    Separate,
+enum class BorderCollapse : uint8_t {
+    Separate = 0,
     Collapse
 };
 
@@ -223,8 +223,8 @@ enum class BorderPrecedence : uint8_t {
     Cell
 };
 
-enum class OutlineIsAuto : bool {
-    Off,
+enum class OutlineIsAuto : uint8_t {
+    Off = 0,
     On
 };
 
@@ -253,14 +253,14 @@ enum class UsedFloat : uint8_t {
 
 // Box decoration attributes. Not inherited.
 
-enum class BoxDecorationBreak : bool {
+enum class BoxDecorationBreak : uint8_t {
     Slice,
     Clone
 };
 
 // Box attributes. Not inherited.
 
-enum class BoxSizing : bool {
+enum class BoxSizing : uint8_t {
     ContentBox,
     BorderBox
 };
@@ -306,12 +306,12 @@ enum class UsedClear : uint8_t {
     Both
 };
 
-enum class TableLayoutType : bool {
+enum class TableLayoutType : uint8_t {
     Auto,
     Fixed
 };
 
-enum class TextCombine : bool {
+enum class TextCombine : uint8_t {
     None,
     All
 };
@@ -337,7 +337,7 @@ enum class FillRepeat : uint8_t {
     Space
 };
 
-enum class FillLayerType : bool {
+enum class FillLayerType : uint8_t {
     Background,
     Mask
 };
@@ -402,17 +402,17 @@ enum class BoxAlignment : uint8_t {
     Baseline
 };
 
-enum class BoxOrient : bool {
+enum class BoxOrient : uint8_t {
     Horizontal,
     Vertical
 };
 
-enum class BoxLines : bool {
+enum class BoxLines : uint8_t {
     Single,
     Multiple
 };
 
-enum class BoxDirection : bool {
+enum class BoxDirection : uint8_t {
     Normal,
     Reverse
 };
@@ -456,7 +456,7 @@ enum class OverflowAlignment : uint8_t {
     Safe
 };
 
-enum class ItemPositionType : bool {
+enum class ItemPositionType : uint8_t {
     NonLegacy,
     Legacy
 };
@@ -490,7 +490,7 @@ enum class TextSecurity : uint8_t {
     Square
 };
 
-enum class InputSecurity : bool {
+enum class InputSecurity : uint8_t {
     Auto,
     None
 };
@@ -548,7 +548,7 @@ enum class OverflowWrap : uint8_t {
     Anywhere
 };
 
-enum class NBSPMode : bool {
+enum class NBSPMode : uint8_t {
     Normal,
     Space
 };
@@ -687,9 +687,9 @@ enum class AnimationFillMode : uint8_t {
     Both
 };
 
-enum class AnimationPlayState : bool {
-    Playing,
-    Paused
+enum class AnimationPlayState : uint8_t {
+    Playing = 0x0,
+    Paused = 0x1
 };
 
 enum class WhiteSpace : uint8_t {
@@ -807,7 +807,7 @@ enum class TextEdgeType : uint8_t {
     CJKIdeographicInk
 };
 
-enum class TextZoom : bool {
+enum class TextZoom : uint8_t {
     Normal,
     Reset
 };
@@ -834,13 +834,14 @@ enum class BreakInside : uint8_t {
 };
 
 enum class HangingPunctuation : uint8_t {
+    None      = 0,
     First     = 1 << 0,
     Last      = 1 << 1,
     AllowEnd  = 1 << 2,
     ForceEnd  = 1 << 3
 };
 
-enum class EmptyCell : bool {
+enum class EmptyCell : uint8_t {
     Show,
     Hide
 };
@@ -852,7 +853,7 @@ enum class CaptionSide : uint8_t {
     Right
 };
 
-enum class ListStylePosition : bool {
+enum class ListStylePosition : uint8_t {
     Outside,
     Inside
 };
@@ -908,7 +909,7 @@ enum class CursorType : uint8_t {
 };
 
 #if ENABLE(CURSOR_VISIBILITY)
-enum class CursorVisibility : bool {
+enum class CursorVisibility : uint8_t {
     Auto,
     AutoHide,
 };
@@ -982,7 +983,7 @@ enum class TransformBox : uint8_t {
     ViewBox
 };
 
-enum class LineClamp : bool {
+enum class LineClamp : uint8_t {
     LineCount,
     Percentage
 };
@@ -1000,7 +1001,7 @@ enum class SpeakAs : uint8_t {
     NoPunctuation      = 1 << 3
 };
 
-enum class TextEmphasisFill : bool {
+enum class TextEmphasisFill : uint8_t {
     Filled,
     Open
 };
@@ -1029,8 +1030,8 @@ enum class TextOrientation : uint8_t {
     Sideways
 };
 
-enum class TextOverflow : bool {
-    Clip,
+enum class TextOverflow : uint8_t {
+    Clip = 0,
     Ellipsis
 };
 
@@ -1050,18 +1051,18 @@ enum class ImageRendering : uint8_t {
     Pixelated
 };
 
-enum class ImageResolutionSource : bool {
-    Specified,
+enum class ImageResolutionSource : uint8_t {
+    Specified = 0,
     FromImage
 };
 
-enum class ImageResolutionSnap : bool {
-    None,
+enum class ImageResolutionSnap : uint8_t {
+    None = 0,
     Pixels
 };
 
-enum class Order : bool {
-    Logical,
+enum class Order : uint8_t {
+    Logical = 0,
     Visual
 };
 
@@ -1071,7 +1072,7 @@ enum class ColumnAxis : uint8_t {
     Auto
 };
 
-enum class ColumnProgression : bool {
+enum class ColumnProgression : uint8_t {
     Normal,
     Reverse
 };
@@ -1082,7 +1083,7 @@ enum class LineSnap : uint8_t {
     Contain
 };
 
-enum class LineAlign : bool {
+enum class LineAlign : uint8_t {
     None,
     Edges
 };
@@ -1141,17 +1142,17 @@ static const float maximumAllowedFontSize = std::numeric_limits<unsigned short>:
 static const float maximumAllowedFontSize = 1000000.0f;
 #endif
 
-enum class TextIndentLine : bool {
+enum class TextIndentLine : uint8_t {
     FirstLine,
     EachLine
 };
 
-enum class TextIndentType : bool {
+enum class TextIndentType : uint8_t {
     Normal,
     Hanging
 };
 
-enum class Isolation : bool {
+enum class Isolation : uint8_t {
     Auto,
     Isolate
 };
@@ -1189,7 +1190,7 @@ enum class ScrollSnapAxisAlignType : uint8_t {
     End
 };
 
-enum class ScrollSnapStop : bool {
+enum class ScrollSnapStop : uint8_t {
     Normal,
     Always,
 };
@@ -1225,7 +1226,7 @@ enum class EventListenerRegionType : uint8_t {
     MouseClick      = 1 << 2,
 };
 
-enum class MathStyle : bool {
+enum class MathStyle : uint8_t {
     Normal,
     Compact,
 };

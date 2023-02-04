@@ -548,6 +548,7 @@ TextStream& operator<<(TextStream& ts, GridAutoFlow gridAutoFlow)
 TextStream& operator<<(TextStream& ts, HangingPunctuation punctuation)
 {
     switch (punctuation) {
+    case HangingPunctuation::None: ts << "none"; break;
     case HangingPunctuation::First: ts << "first"; break;
     case HangingPunctuation::Last: ts << "last"; break;
     case HangingPunctuation::AllowEnd: ts << "allow-end"; break;

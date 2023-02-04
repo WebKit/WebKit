@@ -328,7 +328,7 @@ void CSSFontFace::setDisplay(CSSPrimitiveValue& loadingBehaviorValue)
 {
     mutableProperties().setProperty(CSSPropertyFontDisplay, &loadingBehaviorValue);
 
-    auto loadingBehavior = fromCSSValue<FontLoadingBehavior>(loadingBehaviorValue);
+    FontLoadingBehavior loadingBehavior = loadingBehaviorValue;
 
     if (m_loadingBehavior == loadingBehavior)
         return;
