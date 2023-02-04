@@ -11664,7 +11664,7 @@ IGNORE_CLANG_WARNINGS_END
             case Wasm::TypeKind::I64: {
                 // FIXME: We are handling BigInt extraction here. But once BigInt Int64 value is natively represented in DFG / FTL pipeline, we should extract this as a DFG node,
                 // and we should attempt to perform constant-folding etc. And also, we can avoid usign this at all for DFG Int64 value.
-                LValue argument = lowHeapBigInt(m_graph.varArgChild(node, 2 + i));
+                LValue argument = lowCell(m_graph.varArgChild(node, 2 + i));
                 PatchpointValue* patchpoint = m_out.patchpoint(Int64);
                 patchpoint->numGPScratchRegisters = 2;
                 patchpoint->append(ConstrainedValue(argument, ValueRep::SomeLateRegister));
