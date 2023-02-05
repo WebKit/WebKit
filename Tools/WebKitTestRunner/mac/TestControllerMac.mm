@@ -44,6 +44,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <mach-o/dyld.h>
 
+@interface NSMenu ()
+- (id)_menuImpl;
+@end
+
 @interface NSSound ()
 + (void)_setAlertType:(NSUInteger)alertType;
 @end
@@ -66,6 +70,17 @@ void TestController::notifyDone()
 static PlatformWindow wtr_NSApplication_keyWindow(id self, SEL _cmd)
 {
     return WTR::PlatformWebView::keyWindow();
+}
+
+static Class menuImplClass()
+{
+    static dispatch_once_t onceToken;
+    static Class menuImplClass;
+    dispatch_once(&onceToken, ^{
+        auto menu = adoptNS([NSMenu new]);
+        menuImplClass = [[menu _menuImpl] class];
+    });
+    return menuImplClass;
 }
 
 static __weak NSMenu *gCurrentPopUpMenu = nil;
@@ -131,8 +146,8 @@ void TestController::platformInitialize(const Options& options)
 
     static InstanceMethodSwizzler cancelTrackingSwizzler { NSMenu.class, @selector(cancelTracking), reinterpret_cast<IMP>(swizzledCancelTracking) };
     static ClassMethodSwizzler menuPopUpSwizzler { NSMenu.class, @selector(popUpContextMenu:withEvent:forView:), reinterpret_cast<IMP>(swizzledPopUpContextMenu) };
-    static InstanceMethodSwizzler carbonMenuPopUpSwizzler {
-        NSClassFromString(@"NSCarbonMenuImpl"),
+    static InstanceMethodSwizzler menuImplPopUpSwizzler {
+        menuImplClass(),
         NSSelectorFromString(@"popUpMenu:atLocation:width:forView:withSelectedItem:withFont:withFlags:withOptions:"),
         reinterpret_cast<IMP>(swizzledPopUpMenu)
     };
