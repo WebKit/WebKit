@@ -286,7 +286,7 @@ inline void InlineRect::shiftLeftBy(InlineLayoutUnit offset)
 inline void InlineRect::shiftRightBy(InlineLayoutUnit offset)
 {
     ASSERT(m_hasValidLeft && m_hasValidWidth);
-    m_rect.shiftMaxXEdgeTo(offset);
+    m_rect.shiftMaxXEdgeBy(offset);
 }
 
 inline void InlineRect::expand(std::optional<InlineLayoutUnit> width, std::optional<InlineLayoutUnit> height)
