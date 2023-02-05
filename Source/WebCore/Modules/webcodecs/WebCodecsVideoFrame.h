@@ -47,13 +47,17 @@ class ImageBitmap;
 class ImageBuffer;
 class NativeImage;
 class OffscreenCanvas;
+class SVGImageElement;
 class VideoColorSpace;
 
 class WebCodecsVideoFrame : public RefCounted<WebCodecsVideoFrame>, public ContextDestructionObserver {
 public:
     ~WebCodecsVideoFrame();
 
-    using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<ImageBitmap>
+    using CanvasImageSource = std::variant<RefPtr<HTMLImageElement>
+        , RefPtr<SVGImageElement>
+        , RefPtr<HTMLCanvasElement>
+        , RefPtr<ImageBitmap>
         , RefPtr<CSSStyleImageValue>
 #if ENABLE(OFFSCREEN_CANVAS)
         , RefPtr<OffscreenCanvas>
