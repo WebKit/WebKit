@@ -32,6 +32,7 @@
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBuffer.h"
 #include <WebCore/BitmapImage.h>
+#include <WebCore/FEImage.h>
 #include <WebCore/FilterResults.h>
 
 #if USE(SYSTEM_PREVIEW)
@@ -214,7 +215,7 @@ void RemoteDisplayListRecorder::clipPath(const Path& path, WindRule rule)
     handleItem(DisplayList::ClipPath(path, rule));
 }
 
-void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, IPC::FilterReference filterReference)
+void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingResourceIdentifier> sourceImageIdentifier, const FloatRect& sourceImageRect, Ref<Filter> filter)
 {
     RefPtr<ImageBuffer> sourceImage;
 
@@ -225,8 +226,6 @@ void RemoteDisplayListRecorder::drawFilteredImageBuffer(std::optional<RenderingR
             return;
         }
     }
-
-    auto filter = filterReference.takeFilter();
 
     for (auto& effect : filter->effectsOfType(FilterEffect::Type::FEImage)) {
         auto& feImage = downcast<FEImage>(effect.get());

@@ -46,7 +46,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     ClipPath(WebCore::Path path, enum:uint8_t WebCore::WindRule windRule)
     DrawGlyphs(WebCore::DisplayList::DrawGlyphs item)
     DrawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier)
-    DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, IPC::FilterReference filter)
+    DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
     DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatSize imageSize, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
     DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect)

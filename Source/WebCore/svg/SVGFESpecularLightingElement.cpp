@@ -105,7 +105,7 @@ bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect& effect
     if (attrName == SVGNames::specularExponentAttr)
         return feSpecularLighting.setSpecularExponent(specularExponent());
 
-    auto& lightSource = const_cast<LightSource&>(feSpecularLighting.lightSource());
+    auto& lightSource = feSpecularLighting.lightSource().get();
     const SVGFELightElement* lightElement = SVGFELightElement::findLightElement(this);
     ASSERT(lightElement);
 

@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "BufferIdentifierSet.h"
-#include "FilterReference.h"
 #include "GPUConnectionToWebProcess.h"
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
@@ -297,11 +296,9 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
     completionHandler(WTFMove(handle));
 }
 
-void RemoteRenderingBackend::getFilteredImageForImageBuffer(RenderingResourceIdentifier identifier, IPC::FilterReference&& filterReference, CompletionHandler<void(ShareableBitmapHandle&&)>&& completionHandler)
+void RemoteRenderingBackend::getFilteredImageForImageBuffer(RenderingResourceIdentifier identifier, Ref<Filter> filter, CompletionHandler<void(ShareableBitmapHandle&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
-
-    auto filter = filterReference.takeFilter();
 
     ShareableBitmapHandle handle;
     [&]() {

@@ -111,12 +111,16 @@ class Color;
 class ControlPart;
 class SharedBuffer;
 class CSPViolationReportBody;
+class CSSFilter;
 class Credential;
 class Cursor;
 class DatabaseDetails;
 class DragData;
 class DecomposedGlyphs;
 class File;
+class Filter;
+class FilterEffect;
+class FilterFunction;
 class FilterOperation;
 class FilterOperations;
 class FixedPositionViewportConstraints;
@@ -124,6 +128,7 @@ class Font;
 class FontPlatformData;
 class HTTPHeaderMap;
 class KeyframeValueList;
+class LightSource;
 class Notification;
 class NotificationResources;
 class PasteboardCustomData;
@@ -140,6 +145,7 @@ class ScriptBuffer;
 class SerializedScriptValue;
 class FragmentedSharedBuffer;
 class StickyPositionViewportConstraints;
+class SVGFilter;
 class SystemImage;
 class TextCheckingRequestData;
 class TransformOperation;
@@ -475,6 +481,42 @@ template<> struct ArgumentCoder<WebCore::ControlPart> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::ControlPart&);
     static std::optional<Ref<WebCore::ControlPart>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::LightSource> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::LightSource&);
+    static std::optional<Ref<WebCore::LightSource>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::FilterFunction> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::FilterFunction&);
+    static std::optional<Ref<WebCore::FilterFunction>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::FilterEffect> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::FilterEffect&);
+    static std::optional<Ref<WebCore::FilterEffect>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::CSSFilter> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::CSSFilter&);
+    static std::optional<Ref<WebCore::CSSFilter>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::SVGFilter> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::SVGFilter&);
+    static std::optional<Ref<WebCore::SVGFilter>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::Filter> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::Filter&);
+    static std::optional<Ref<WebCore::Filter>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

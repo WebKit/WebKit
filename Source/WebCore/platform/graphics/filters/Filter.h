@@ -101,3 +101,7 @@ template<> struct EnumTraits<WebCore::Filter::ClipOperation> {
 };
 
 } // namespace WTF
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Filter)
+    static bool isType(const WebCore::FilterFunction& function) { return function.isFilter(); }
+SPECIALIZE_TYPE_TRAITS_END()

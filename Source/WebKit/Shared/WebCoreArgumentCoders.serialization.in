@@ -2540,6 +2540,143 @@ enum class WebCore::StyleAppearance : uint8_t {
     Vector<double> tickRatios();
 }
 
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DistantLightSource {
+    float azimuth();
+    float elevation();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::PointLightSource {
+    WebCore::FloatPoint3D position();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SpotLightSource {
+    WebCore::FloatPoint3D position();
+    WebCore::FloatPoint3D direction();
+    float specularExponent();
+    float limitingConeAngle();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEBlend {
+    WebCore::BlendMode blendMode();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEColorMatrix {
+    WebCore::ColorMatrixType type();
+    Vector<float> values();
+};
+
+header: <WebCore/FEComponentTransfer.h>
+[CustomHeader=True, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ComponentTransferFunction {
+    WebCore::ComponentTransferType type;
+    float slope;
+    float intercept;
+    float amplitude;
+    float exponent;
+    float offset;
+    Vector<float> tableValues;
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEComponentTransfer {
+    WebCore::ComponentTransferFunction redFunction();
+    WebCore::ComponentTransferFunction greenFunction();
+    WebCore::ComponentTransferFunction blueFunction();
+    WebCore::ComponentTransferFunction alphaFunction();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEComposite {
+    WebCore::CompositeOperationType operation();
+    float k1();
+    float k2();
+    float k3();
+    float k4();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEConvolveMatrix {
+    WebCore::IntSize kernelSize();
+    float divisor();
+    float bias();
+    WebCore::IntPoint targetOffset();
+    WebCore::EdgeModeType edgeMode();
+    WebCore::FloatPoint kernelUnitLength();
+    bool preserveAlpha();
+    Vector<float> kernel();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEDiffuseLighting {
+    WebCore::Color lightingColor();
+    float surfaceScale();
+    float diffuseConstant();
+    float kernelUnitLengthX();
+    float kernelUnitLengthY();
+    Ref<WebCore::LightSource> lightSource();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEDisplacementMap {
+    WebCore::ChannelSelectorType xChannelSelector();
+    WebCore::ChannelSelectorType yChannelSelector();
+    float scale();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEDropShadow {
+    float stdDeviationX();
+    float stdDeviationY();
+    float dx();
+    float dy();
+    WebCore::Color shadowColor();
+    float shadowOpacity()
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEFlood {
+    WebCore::Color floodColor();
+    float floodOpacity();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEGaussianBlur {
+    float stdDeviationX();
+    float stdDeviationY();
+    WebCore::EdgeModeType edgeMode();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEImage {
+    WebCore::SourceImage sourceImage();
+    WebCore::FloatRect sourceImageRect();
+    WebCore::SVGPreserveAspectRatioValue preserveAspectRatio();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEMerge {
+    unsigned numberOfEffectInputs();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEMorphology {
+    WebCore::MorphologyOperatorType morphologyOperator();
+    float radiusX();
+    float radiusY();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FEOffset {
+    float dx();
+    float dy();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FESpecularLighting {
+    WebCore::Color lightingColor();
+    float surfaceScale();
+    float specularConstant();
+    float specularExponent();
+    float kernelUnitLengthX();
+    float kernelUnitLengthY();
+    Ref<WebCore::LightSource> lightSource();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::FETurbulence {
+    WebCore::TurbulenceType type();
+    float baseFrequencyX();
+    float baseFrequencyY();
+    int numOctaves();
+    float seed();
+    bool stitchTiles();
+};
+
 enum class WebCore::HasInsecureContent : bool
 
 header: <WebCore/ModalContainerTypes.h>
@@ -3469,11 +3606,6 @@ header: <WebCore/ImageDecoder.h>
     bool hasAlpha;
     Seconds duration;
 }
-
-[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DistantLightSource {
-    float m_azimuth;
-    float m_elevation;
-};
 
 header: <WebCore/DisplayListItems.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDotsForDocumentMarker {

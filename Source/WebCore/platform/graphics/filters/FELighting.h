@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,10 +55,7 @@ public:
     float kernelUnitLengthY() const { return m_kernelUnitLengthY; }
     bool setKernelUnitLengthY(float);
 
-    const LightSource& lightSource() const { return m_lightSource.get(); }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder, class ClassName> static std::optional<Ref<ClassName>> decode(Decoder&);
+    Ref<LightSource> lightSource() const { return m_lightSource; }
 
 protected:
     FELighting(Type, const Color& lightingColor, float surfaceScale, float diffuseConstant, float specularConstant, float specularExponent, float kernelUnitLengthX, float kernelUnitLengthY, Ref<LightSource>&&);
@@ -81,94 +78,5 @@ protected:
     float m_kernelUnitLengthY;
     Ref<LightSource> m_lightSource;
 };
-
-template<class Encoder>
-void FELighting::encode(Encoder& encoder) const
-{
-    encoder << m_lightingColor;
-    encoder << m_surfaceScale;
-    encoder << m_diffuseConstant;
-    encoder << m_specularConstant;
-    encoder << m_specularExponent;
-    encoder << m_kernelUnitLengthX;
-    encoder << m_kernelUnitLengthY;
-    
-    encoder << m_lightSource->type();
-    switch (m_lightSource->type()) {
-    case LS_DISTANT:
-        encoder << downcast<DistantLightSource>(m_lightSource.get());
-        break;
-    case LS_POINT:
-        downcast<PointLightSource>(m_lightSource.get()).encode(encoder);
-        break;
-    case LS_SPOT:
-        downcast<SpotLightSource>(m_lightSource.get()).encode(encoder);
-        break;
-    }
-}
-
-template<class Decoder, class ClassName>
-std::optional<Ref<ClassName>> FELighting::decode(Decoder& decoder)
-{
-    std::optional<Color> lightingColor;
-    decoder >> lightingColor;
-    if (!lightingColor)
-        return std::nullopt;
-
-    std::optional<float> surfaceScale;
-    decoder >> surfaceScale;
-    if (!surfaceScale)
-        return std::nullopt;
-
-    std::optional<float> diffuseConstant;
-    decoder >> diffuseConstant;
-    if (!diffuseConstant)
-        return std::nullopt;
-
-    std::optional<float> specularConstant;
-    decoder >> specularConstant;
-    if (!specularConstant)
-        return std::nullopt;
-
-    std::optional<float> specularExponent;
-    decoder >> specularExponent;
-    if (!specularExponent)
-        return std::nullopt;
-
-    std::optional<float> kernelUnitLengthX;
-    decoder >> kernelUnitLengthX;
-    if (!kernelUnitLengthX)
-        return std::nullopt;
-
-    std::optional<float> kernelUnitLengthY;
-    decoder >> kernelUnitLengthY;
-    if (!kernelUnitLengthY)
-        return std::nullopt;
-
-    std::optional<LightType> lightSourceType;
-    decoder >> lightSourceType;
-    if (!lightSourceType)
-        return std::nullopt;
-
-    std::optional<Ref<LightSource>> lightSource;
-    std::optional<Ref<DistantLightSource>> distantLightSource;
-    switch (*lightSourceType) {
-    case LS_DISTANT:
-        decoder >> distantLightSource;
-        lightSource = WTFMove(distantLightSource);
-        break;
-    case LS_POINT:
-        lightSource = PointLightSource::decode(decoder);
-        break;
-    case LS_SPOT:
-        lightSource = SpotLightSource::decode(decoder);
-        break;
-    }
-
-    if (!lightSource)
-        return std::nullopt;
-
-    return ClassName::create(*lightingColor, *surfaceScale, *diffuseConstant, *specularConstant, *specularExponent, *kernelUnitLengthX, *kernelUnitLengthY, WTFMove(*lightSource));
-}
 
 } // namespace WebCore

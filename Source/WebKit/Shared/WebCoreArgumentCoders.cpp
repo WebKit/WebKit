@@ -42,6 +42,7 @@
 #include <WebCore/COEPInheritenceViolationReportBody.h>
 #include <WebCore/CORPViolationReportBody.h>
 #include <WebCore/CSPViolationReportBody.h>
+#include <WebCore/CSSFilter.h>
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
 #include <WebCore/ColorWellPart.h>
@@ -56,11 +57,32 @@
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisplayListItems.h>
+#include <WebCore/DistantLightSource.h>
 #include <WebCore/DragData.h>
 #include <WebCore/EventTrackingRegions.h>
+#include <WebCore/FEBlend.h>
+#include <WebCore/FEColorMatrix.h>
+#include <WebCore/FEComponentTransfer.h>
+#include <WebCore/FEComposite.h>
+#include <WebCore/FEConvolveMatrix.h>
+#include <WebCore/FEDiffuseLighting.h>
+#include <WebCore/FEDisplacementMap.h>
+#include <WebCore/FEDropShadow.h>
+#include <WebCore/FEFlood.h>
+#include <WebCore/FEGaussianBlur.h>
+#include <WebCore/FEImage.h>
+#include <WebCore/FEMerge.h>
+#include <WebCore/FEMorphology.h>
+#include <WebCore/FEOffset.h>
+#include <WebCore/FESpecularLighting.h>
+#include <WebCore/FETile.h>
+#include <WebCore/FETurbulence.h>
 #include <WebCore/FetchOptions.h>
 #include <WebCore/File.h>
 #include <WebCore/FileChooser.h>
+#include <WebCore/Filter.h>
+#include <WebCore/FilterEffect.h>
+#include <WebCore/FilterFunction.h>
 #include <WebCore/FilterOperation.h>
 #include <WebCore/FilterOperations.h>
 #include <WebCore/FloatQuad.h>
@@ -75,6 +97,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/Length.h>
 #include <WebCore/LengthBox.h>
+#include <WebCore/LightSource.h>
 #include <WebCore/Matrix3DTransformOperation.h>
 #include <WebCore/MatrixTransformOperation.h>
 #include <WebCore/MediaSelectionOption.h>
@@ -85,6 +108,7 @@
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PerspectiveTransformOperation.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/PointLightSource.h>
 #include <WebCore/ProgressBarPart.h>
 #include <WebCore/PromisedAttachmentInfo.h>
 #include <WebCore/ProtectionSpace.h>
@@ -97,6 +121,8 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/RotateTransformOperation.h>
+#include <WebCore/SVGFilter.h>
+#include <WebCore/SVGFilterExpressionReference.h>
 #include <WebCore/ScaleTransformOperation.h>
 #include <WebCore/ScriptBuffer.h>
 #include <WebCore/ScriptExecutionContextIdentifier.h>
@@ -117,6 +143,9 @@
 #include <WebCore/SkewTransformOperation.h>
 #include <WebCore/SliderThumbPart.h>
 #include <WebCore/SliderTrackPart.h>
+#include <WebCore/SourceAlpha.h>
+#include <WebCore/SourceGraphic.h>
+#include <WebCore/SpotLightSource.h>
 #include <WebCore/SystemImage.h>
 #include <WebCore/TestReportBody.h>
 #include <WebCore/TextAreaPart.h>
@@ -1625,6 +1654,574 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
 
     ASSERT_NOT_REACHED();
     return std::nullopt;
+}
+
+template<typename Encoder>
+void ArgumentCoder<LightSource>::encode(Encoder& encoder, const LightSource& lightSource)
+{
+    encoder << lightSource.type();
+
+    switch (lightSource.type()) {
+    case LS_DISTANT:
+        encoder << downcast<DistantLightSource>(lightSource);
+        return;
+
+    case LS_POINT:
+        encoder << downcast<PointLightSource>(lightSource);
+        return;
+
+    case LS_SPOT:
+        encoder << downcast<SpotLightSource>(lightSource);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+template
+void ArgumentCoder<LightSource>::encode<Encoder>(Encoder&, const LightSource&);
+template
+void ArgumentCoder<LightSource>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const LightSource&);
+
+std::optional<Ref<LightSource>> ArgumentCoder<LightSource>::decode(Decoder& decoder)
+{
+    std::optional<LightType> lightSourceType;
+    decoder >> lightSourceType;
+    if (!lightSourceType)
+        return std::nullopt;
+
+    switch (*lightSourceType) {
+    case LS_DISTANT: {
+        std::optional<Ref<DistantLightSource>> distantLightSource;
+        decoder >> distantLightSource;
+        if (distantLightSource)
+            return WTFMove(*distantLightSource);
+        break;
+    }
+
+    case LS_POINT: {
+        std::optional<Ref<PointLightSource>> pointLightSource;
+        decoder >> pointLightSource;
+        if (pointLightSource)
+            return WTFMove(*pointLightSource);
+        break;
+    }
+
+    case LS_SPOT: {
+        std::optional<Ref<SpotLightSource>> spotLightSource;
+        decoder >> spotLightSource;
+        if (spotLightSource)
+            return WTFMove(*spotLightSource);
+        break;
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+template<typename Encoder>
+void ArgumentCoder<FilterFunction>::encode(Encoder& encoder, const FilterFunction& function)
+{
+    encoder << function.filterType();
+
+    if (is<SVGFilter>(function)) {
+        encoder << downcast<Filter>(function);
+        return;
+    }
+
+    if (is<FilterEffect>(function)) {
+        encoder << downcast<FilterEffect>(function);
+        return;
+    }
+    
+    ASSERT_NOT_REACHED();
+}
+
+template
+void ArgumentCoder<FilterFunction>::encode<Encoder>(Encoder&, const FilterFunction&);
+template
+void ArgumentCoder<FilterFunction>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const FilterFunction&);
+
+std::optional<Ref<FilterFunction>> ArgumentCoder<FilterFunction>::decode(Decoder& decoder)
+{
+    std::optional<FilterFunction::Type> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    if (*type == FilterFunction::Type::SVGFilter) {
+        std::optional<Ref<Filter>> filter;
+        decoder >> filter;
+        if (filter)
+            return WTFMove(*filter);
+    }
+
+    if (*type >= FilterFunction::Type::FEFirst && *type <= FilterFunction::Type::FELast) {
+        std::optional<Ref<FilterEffect>> effect;
+        decoder >> effect;
+        if (effect)
+            return WTFMove(*effect);
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+template<typename Encoder>
+void ArgumentCoder<FilterEffect>::encode(Encoder& encoder, const FilterEffect& effect)
+{
+    encoder << effect.filterType();
+    encoder << effect.operatingColorSpace();
+
+    switch (effect.filterType()) {
+    case FilterEffect::Type::FEBlend:
+        encoder << downcast<FEBlend>(effect);
+        break;
+
+    case FilterEffect::Type::FEColorMatrix:
+        encoder << downcast<FEColorMatrix>(effect);
+        break;
+
+    case FilterEffect::Type::FEComponentTransfer:
+        encoder << downcast<FEComponentTransfer>(effect);
+        break;
+
+    case FilterEffect::Type::FEComposite:
+        encoder << downcast<FEComposite>(effect);
+        break;
+
+    case FilterEffect::Type::FEConvolveMatrix:
+        encoder << downcast<FEConvolveMatrix>(effect);
+        break;
+
+    case FilterEffect::Type::FEDiffuseLighting:
+        encoder << downcast<FEDiffuseLighting>(effect);
+        break;
+
+    case FilterEffect::Type::FEDisplacementMap:
+        encoder << downcast<FEDisplacementMap>(effect);
+        break;
+
+    case FilterEffect::Type::FEDropShadow:
+        encoder << downcast<FEDropShadow>(effect);
+        break;
+
+    case FilterEffect::Type::FEFlood:
+        encoder << downcast<FEFlood>(effect);
+        break;
+
+    case FilterEffect::Type::FEGaussianBlur:
+        encoder << downcast<FEGaussianBlur>(effect);
+        break;
+
+    case FilterEffect::Type::FEImage:
+        encoder << downcast<FEImage>(effect);
+        break;
+
+    case FilterEffect::Type::FEMerge:
+        encoder << downcast<FEMerge>(effect);
+        break;
+
+    case FilterEffect::Type::FEMorphology:
+        encoder << downcast<FEMorphology>(effect);
+        break;
+
+    case FilterEffect::Type::FEOffset:
+        encoder << downcast<FEOffset>(effect);
+        break;
+
+    case FilterEffect::Type::FESpecularLighting:
+        encoder << downcast<FESpecularLighting>(effect);
+        break;
+
+    case FilterEffect::Type::FETile:
+        break;
+
+    case FilterEffect::Type::FETurbulence:
+        encoder << downcast<FETurbulence>(effect);
+        break;
+
+    case FilterEffect::Type::SourceAlpha:
+    case FilterEffect::Type::SourceGraphic:
+        break;
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+template
+void ArgumentCoder<FilterEffect>::encode<Encoder>(Encoder&, const FilterEffect&);
+template
+void ArgumentCoder<FilterEffect>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const FilterEffect&);
+
+std::optional<Ref<FilterEffect>> ArgumentCoder<FilterEffect>::decode(Decoder& decoder)
+{
+    std::optional<FilterFunction::Type> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    std::optional<DestinationColorSpace> operatingColorSpace;
+    decoder >> operatingColorSpace;
+    if (!operatingColorSpace)
+        return std::nullopt;
+
+    std::optional<Ref<FilterEffect>> effect;
+
+    switch (*type) {
+    case FilterEffect::Type::FEBlend: {
+        std::optional<Ref<FEBlend>> feBlend;
+        decoder >> feBlend;
+        if (feBlend)
+            effect = WTFMove(*feBlend);
+        break;
+    }
+
+    case FilterEffect::Type::FEColorMatrix: {
+        std::optional<Ref<FEColorMatrix>> feColorMatrix;
+        decoder >> feColorMatrix;
+        if (feColorMatrix)
+            effect = WTFMove(*feColorMatrix);
+        break;
+    }
+
+    case FilterEffect::Type::FEComponentTransfer: {
+        std::optional<Ref<FEComponentTransfer>> feComponentTransfer;
+        decoder >> feComponentTransfer;
+        if (feComponentTransfer)
+            effect = WTFMove(*feComponentTransfer);
+        break;
+    }
+
+    case FilterEffect::Type::FEComposite: {
+        std::optional<Ref<FEComposite>> feComposite;
+        decoder >> feComposite;
+        if (feComposite)
+            effect = WTFMove(*feComposite);
+        break;
+    }
+
+    case FilterEffect::Type::FEConvolveMatrix: {
+        std::optional<Ref<FEConvolveMatrix>> feConvolveMatrix;
+        decoder >> feConvolveMatrix;
+        if (feConvolveMatrix)
+            effect = WTFMove(*feConvolveMatrix);
+        break;
+    }
+
+    case FilterEffect::Type::FEDiffuseLighting: {
+        std::optional<Ref<FEDiffuseLighting>> feDiffuseLighting;
+        decoder >> feDiffuseLighting;
+        if (feDiffuseLighting)
+            effect = WTFMove(*feDiffuseLighting);
+        break;
+    }
+
+    case FilterEffect::Type::FEDisplacementMap: {
+        std::optional<Ref<FEDisplacementMap>> feDisplacementMap;
+        decoder >> feDisplacementMap;
+        if (feDisplacementMap)
+            effect = WTFMove(*feDisplacementMap);
+        break;
+    }
+
+    case FilterEffect::Type::FEDropShadow: {
+        std::optional<Ref<FEDropShadow>> feDropShadow;
+        decoder >> feDropShadow;
+        if (feDropShadow)
+            effect = WTFMove(*feDropShadow);
+        break;
+    }
+
+    case FilterEffect::Type::FEFlood: {
+        std::optional<Ref<FEFlood>> feFlood;
+        decoder >> feFlood;
+        if (feFlood)
+            effect = WTFMove(*feFlood);
+        break;
+    }
+
+    case FilterEffect::Type::FEGaussianBlur: {
+        std::optional<Ref<FEGaussianBlur>> feGaussianBlur;
+        decoder >> feGaussianBlur;
+        if (feGaussianBlur)
+            effect = WTFMove(*feGaussianBlur);
+        break;
+    }
+
+    case FilterEffect::Type::FEImage: {
+        std::optional<Ref<FEImage>> feImage;
+        decoder >> feImage;
+        if (feImage)
+            effect = WTFMove(*feImage);
+        break;
+    }
+
+    case FilterEffect::Type::FEMerge: {
+        std::optional<Ref<FEMerge>> feMerge;
+        decoder >> feMerge;
+        if (feMerge)
+            effect = WTFMove(*feMerge);
+        break;
+    }
+
+    case FilterEffect::Type::FEMorphology: {
+        std::optional<Ref<FEMorphology>> feMorphology;
+        decoder >> feMorphology;
+        if (feMorphology)
+            effect = WTFMove(*feMorphology);
+        break;
+    }
+
+    case FilterEffect::Type::FEOffset: {
+        std::optional<Ref<FEOffset>> feOffset;
+        decoder >> feOffset;
+        if (feOffset)
+            effect = WTFMove(*feOffset);
+        break;
+    }
+
+    case FilterEffect::Type::FESpecularLighting: {
+        std::optional<Ref<FESpecularLighting>> feSpecularLighting;
+        decoder >> feSpecularLighting;
+        if (feSpecularLighting)
+            effect = WTFMove(*feSpecularLighting);
+        break;
+    }
+
+    case FilterEffect::Type::FETile:
+        effect = FETile::create();
+        break;
+
+    case FilterEffect::Type::FETurbulence: {
+        std::optional<Ref<FETurbulence>> feTurbulence;
+        decoder >> feTurbulence;
+        if (feTurbulence)
+            effect = WTFMove(*feTurbulence);
+        break;
+    }
+
+    case FilterEffect::Type::SourceAlpha:
+        effect = SourceAlpha::create();
+        break;
+
+    case FilterEffect::Type::SourceGraphic:
+        effect = SourceGraphic::create();
+        break;
+
+    default:
+        break;
+    }
+
+    if (effect) {
+        (*effect)->setOperatingColorSpace(*operatingColorSpace);
+        return effect;
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+template<typename Encoder>
+void ArgumentCoder<CSSFilter>::encode(Encoder& encoder, const CSSFilter& filter)
+{
+    encoder << filter.functions().size();
+    for (auto& function : filter.functions())
+        encoder << function;
+}
+
+template
+void ArgumentCoder<CSSFilter>::encode<Encoder>(Encoder&, const CSSFilter&);
+template
+void ArgumentCoder<CSSFilter>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const CSSFilter&);
+
+std::optional<Ref<CSSFilter>> ArgumentCoder<CSSFilter>::decode(Decoder& decoder)
+{
+    std::optional<size_t> size;
+    decoder >> size;
+    if (!size || !*size)
+        return std::nullopt;
+
+    Vector<Ref<FilterFunction>> functions;
+    functions.reserveInitialCapacity(*size);
+
+    for (size_t i = 0; i < *size; ++i) {
+        std::optional<Ref<FilterFunction>> function;
+
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+
+        functions.uncheckedAppend(WTFMove(*function));
+    }
+
+    auto filter = CSSFilter::create(WTFMove(functions));
+    if (!filter)
+        return std::nullopt;
+
+    return filter.releaseNonNull();
+}
+
+template<typename Encoder>
+void ArgumentCoder<SVGFilter>::encode(Encoder& encoder, const SVGFilter& filter)
+{
+    HashMap<Ref<FilterEffect>, unsigned> indicies;
+    Vector<Ref<FilterEffect>> effects;
+
+    // Get the individual FilterEffects in filter.expression().
+    for (auto& term : filter.expression()) {
+        if (indicies.contains(term.effect))
+            continue;
+        indicies.add(term.effect, effects.size());
+        effects.append(term.effect);
+    }
+
+    // Replace the Ref<FilterEffect> in SVGExpressionTerm with its index in indicies.
+    auto expressionReference = WTF::map(filter.expression(), [&indicies] (auto&& term) -> SVGFilterExpressionNode {
+        ASSERT(indicies.contains(term.effect));
+        unsigned index = indicies.get(term.effect);
+        return { index, term.geometry, term.level };
+    });
+
+    encoder << filter.targetBoundingBox();
+    encoder << filter.primitiveUnits();
+    
+    encoder << effects.size();
+    for (auto& effect : effects)
+        encoder << effect;
+
+    encoder << expressionReference;
+}
+
+template
+void ArgumentCoder<SVGFilter>::encode<Encoder>(Encoder&, const SVGFilter&);
+template
+void ArgumentCoder<SVGFilter>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const SVGFilter&);
+
+std::optional<Ref<SVGFilter>> ArgumentCoder<SVGFilter>::decode(Decoder& decoder)
+{
+    std::optional<FloatRect> targetBoundingBox;
+    decoder >> targetBoundingBox;
+    if (!targetBoundingBox)
+        return std::nullopt;
+
+    std::optional<SVGUnitTypes::SVGUnitType> primitiveUnits;
+    decoder >> primitiveUnits;
+    if (!primitiveUnits)
+        return std::nullopt;
+
+    std::optional<size_t> effectsSize;
+    decoder >> effectsSize;
+    if (!effectsSize || !*effectsSize)
+        return std::nullopt;
+
+    Vector<Ref<FilterEffect>> effects;
+    effects.reserveInitialCapacity(*effectsSize);
+
+    for (size_t i = 0; i < *effectsSize; ++i) {
+        std::optional<Ref<FilterEffect>> effect;
+        decoder >> effect;
+        if (!effect)
+            return std::nullopt;
+        effects.uncheckedAppend(WTFMove(*effect));
+    }
+
+    std::optional<SVGFilterExpressionReference> expressionReference;
+    decoder >> expressionReference;
+    if (!expressionReference || expressionReference->isEmpty())
+        return std::nullopt;
+
+    SVGFilterExpression expression;
+    expression.reserveInitialCapacity(expressionReference->size());
+
+    // Replace the index in ExpressionReferenceTerm with its Ref<FilterEffect> in effects.
+    for (auto& term : *expressionReference) {
+        if (term.index >= effects.size())
+            return std::nullopt;
+        expression.uncheckedAppend({ effects[term.index], term.geometry, term.level });
+    }
+
+    auto filter = WebCore::SVGFilter::create(*targetBoundingBox, *primitiveUnits, WTFMove(expression));
+    if (!filter)
+        return std::nullopt;
+
+    return filter.releaseNonNull();
+}
+
+template<typename Encoder>
+void ArgumentCoder<Filter>::encode(Encoder& encoder, const Filter& filter)
+{
+    encoder << filter.filterType();
+
+    if (is<CSSFilter>(filter))
+        encoder << downcast<CSSFilter>(filter);
+    else
+        encoder << downcast<SVGFilter>(filter);
+
+    encoder << filter.filterRenderingModes();
+    encoder << filter.filterScale();
+    encoder << filter.clipOperation();
+    encoder << filter.filterRegion();
+}
+
+template
+void ArgumentCoder<Filter>::encode<Encoder>(Encoder&, const Filter&);
+template
+void ArgumentCoder<Filter>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Filter&);
+
+std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
+{
+    std::optional<FilterFunction::Type> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    std::optional<Ref<Filter>> filter;
+
+    if (*type == FilterFunction::Type::CSSFilter) {
+        std::optional<Ref<CSSFilter>> cssFilter;
+        decoder >> cssFilter;
+        if (!cssFilter)
+            return std::nullopt;
+
+        filter = WTFMove(*cssFilter);
+    } else {
+        std::optional<Ref<SVGFilter>> svgFilter;
+        decoder >> svgFilter;
+        if (!svgFilter)
+            return std::nullopt;
+        
+        filter = WTFMove(*svgFilter);
+    }
+
+    std::optional<OptionSet<FilterRenderingMode>> filterRenderingModes;
+    decoder >> filterRenderingModes;
+    if (!filterRenderingModes)
+        return std::nullopt;
+
+    std::optional<FloatSize> filterScale;
+    decoder >> filterScale;
+    if (!filterScale)
+        return std::nullopt;
+
+    std::optional<Filter::ClipOperation> clipOperation;
+    decoder >> clipOperation;
+    if (!clipOperation)
+        return std::nullopt;
+
+    std::optional<FloatRect> filterRegion;
+    decoder >> filterRegion;
+    if (!filterRegion)
+        return std::nullopt;
+
+    (*filter)->setFilterRenderingModes(*filterRenderingModes);
+    (*filter)->setFilterScale(*filterScale);
+    (*filter)->setClipOperation(*clipOperation);
+    (*filter)->setFilterRegion(*filterRegion);
+
+    return filter;
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)

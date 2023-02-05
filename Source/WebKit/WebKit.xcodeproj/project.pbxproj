@@ -5783,7 +5783,6 @@
 		7203449B26A6C476000A5F54 /* RenderingUpdateID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingUpdateID.h; sourceTree = "<group>"; };
 		72440D33287CCC0500FADBC4 /* RemoteImageBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBuffer.cpp; sourceTree = "<group>"; };
 		72440D3A287CF58900FADBC4 /* RemoteImageBufferProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteImageBufferProxy.cpp; sourceTree = "<group>"; };
-		7246963A275B7E6700A9156A /* FilterReference.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FilterReference.h; sourceTree = "<group>"; };
 		724DCF21284862FC0026ACF4 /* ImageBufferShareableAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableAllocator.h; sourceTree = "<group>"; };
 		724DCF22284862FC0026ACF4 /* ImageBufferShareableAllocator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableAllocator.cpp; sourceTree = "<group>"; };
 		726D56DD253A64810002EF90 /* RemoteResourceCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteResourceCache.cpp; sourceTree = "<group>"; };
@@ -8835,7 +8834,6 @@
 				BC032D9E10F437D10058C15A /* Decoder.h */,
 				BC032D9F10F437D10058C15A /* Encoder.cpp */,
 				BC032DA010F437D10058C15A /* Encoder.h */,
-				7246963A275B7E6700A9156A /* FilterReference.h */,
 				4151E5C31FBB90A900E47E2D /* FormDataReference.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				A31F60A225CC7DB800AF14F4 /* IPCSemaphore.h */,

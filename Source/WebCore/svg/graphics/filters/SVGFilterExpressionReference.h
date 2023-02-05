@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,44 @@
 
 namespace WebCore {
 
-class FilterEffect;
-
-struct SVGFilterExpressionTerm {
-    Ref<FilterEffect> effect;
+struct SVGFilterExpressionNode {
+    unsigned index;
     std::optional<FilterEffectGeometry> geometry;
     unsigned level;
+    
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<SVGFilterExpressionNode> decode(Decoder&);
 };
 
-using SVGFilterExpression = Vector<SVGFilterExpressionTerm>;
+using SVGFilterExpressionReference = Vector<SVGFilterExpressionNode>;
+
+template<class Encoder>
+void SVGFilterExpressionNode::encode(Encoder& encoder) const
+{
+    encoder << index;
+    encoder << geometry;
+    encoder << level;
+}
+
+template<class Decoder>
+std::optional<SVGFilterExpressionNode> SVGFilterExpressionNode::decode(Decoder& decoder)
+{
+    std::optional<unsigned> index;
+    decoder >> index;
+    if (!index)
+        return std::nullopt;
+
+    std::optional<std::optional<FilterEffectGeometry>> geometry;
+    decoder >> geometry;
+    if (!geometry)
+        return std::nullopt;
+
+    std::optional<unsigned> level;
+    decoder >> level;
+    if (!level)
+        return std::nullopt;
+
+    return SVGFilterExpressionNode { *index, *geometry, *level };
+}
 
 } // namespace WebCore

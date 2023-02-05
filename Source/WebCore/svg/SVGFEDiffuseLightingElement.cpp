@@ -95,7 +95,7 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect& effect,
     if (attrName == SVGNames::diffuseConstantAttr)
         return feDiffuseLighting.setDiffuseConstant(diffuseConstant());
 
-    auto& lightSource = const_cast<LightSource&>(feDiffuseLighting.lightSource());
+    auto& lightSource = feDiffuseLighting.lightSource().get();
     const SVGFELightElement* lightElement = SVGFELightElement::findLightElement(this);
     ASSERT(lightElement);
 
