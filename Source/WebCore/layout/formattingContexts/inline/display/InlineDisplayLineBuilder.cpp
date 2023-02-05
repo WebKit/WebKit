@@ -68,14 +68,17 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
     auto scrollableOverflowRect = [&]() -> InlineRect {
         auto rect = lineBoxRect;
+        auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
+        auto isLeftToRightDirection = root().style().isLeftToRightDirection();
         if (lineContent.hangingContent.shouldContributeToScrollableOverflow)
             rect.expandHorizontally(lineContent.hangingContent.width);
-        if (rootInlineBox.hasContent()) {
-            auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-            auto rootInlineBoxHorizontalOverflow = rootInlineBoxRect.width() - rect.width();
-            if (rootInlineBoxHorizontalOverflow > 0)
-                root().style().isLeftToRightDirection() ? rect.shiftRightBy(rootInlineBoxHorizontalOverflow) : rect.shiftLeftBy(-rootInlineBoxHorizontalOverflow);
+        else if (!isLeftToRightDirection) {
+            // This is to balance hanging RTL trailing content. See LineBoxBuilder::build.
+            rootInlineBoxWidth -= lineContent.hangingContent.width;
         }
+        auto rootInlineBoxHorizontalOverflow = rootInlineBoxWidth - rect.width();
+        if (rootInlineBoxHorizontalOverflow > 0)
+            isLeftToRightDirection ? rect.shiftRightBy(rootInlineBoxHorizontalOverflow) : rect.shiftLeftBy(-rootInlineBoxHorizontalOverflow);
         return rect;
     }();
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {

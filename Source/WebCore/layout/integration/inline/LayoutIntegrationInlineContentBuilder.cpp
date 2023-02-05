@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-inline static float lineOverflowLogicalWidth(const RenderBlockFlow& flow, Layout::InlineLayoutUnit lineContentLogicalWidth)
+inline static float endPaddingQuirkValue(const RenderBlockFlow& flow)
 {
     // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
     auto endPadding = flow.hasNonVisibleOverflow() ? flow.paddingEnd() : 0_lu;
@@ -46,7 +46,7 @@ inline static float lineOverflowLogicalWidth(const RenderBlockFlow& flow, Layout
         endPadding = flow.endPaddingWidthForCaret();
     if (flow.hasNonVisibleOverflow() && !endPadding && flow.element() && flow.element()->isRootEditableElement() && flow.style().isLeftToRightDirection())
         endPadding = 1;
-    return lineContentLogicalWidth + endPadding;
+    return endPadding;
 }
 
 InlineContentBuilder::InlineContentBuilder(const RenderBlockFlow& blockFlow, BoxTree& boxTree)
@@ -85,23 +85,28 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
     auto& lines = inlineFormattingState.lines();
     auto& boxes = inlineContent.boxes;
     size_t boxIndex = 0;
-    inlineContent.lines.reserveInitialCapacity(lines.size());
-
     auto& rootBoxStyle = m_blockFlow.style();
+    inlineContent.lines.reserveInitialCapacity(lines.size());
+    auto isLeftToRightInlineDirection = rootBoxStyle.isLeftToRightDirection();
+    auto isHorizontalWritingMode = rootBoxStyle.isHorizontalWritingMode();
+
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
         auto scrollableOverflowRect = line.scrollableOverflow();
-
         auto adjustOverflowLogicalWidthWithBlockFlowQuirk = [&] {
-            auto isHorizontalWritingMode = rootBoxStyle.isHorizontalWritingMode();
-            auto adjustedOverflowLogicalWidth = lineOverflowLogicalWidth(m_blockFlow, line.contentLogicalWidth());
             auto scrollableOverflowLogicalWidth = isHorizontalWritingMode ? scrollableOverflowRect.width() : scrollableOverflowRect.height();
+            if (!isLeftToRightInlineDirection && line.contentLogicalWidth() > scrollableOverflowLogicalWidth) {
+                // The only time when scrollable overflow here could be shorter than
+                // the content width is when hanging RTL trailing content is applied (and ignored as scrollable overflow. See LineBoxBuilder::build.
+                return;
+            }
+            auto adjustedOverflowLogicalWidth = line.contentLogicalWidth() + endPaddingQuirkValue(m_blockFlow);
             if (adjustedOverflowLogicalWidth > scrollableOverflowLogicalWidth) {
                 auto overflowValue = adjustedOverflowLogicalWidth - scrollableOverflowLogicalWidth;
                 if (isHorizontalWritingMode)
-                    rootBoxStyle.isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxXEdgeBy(overflowValue) : scrollableOverflowRect.shiftXEdgeBy(-overflowValue);
+                    isLeftToRightInlineDirection ? scrollableOverflowRect.shiftMaxXEdgeBy(overflowValue) : scrollableOverflowRect.shiftXEdgeBy(-overflowValue);
                 else
-                    rootBoxStyle.isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxYEdgeBy(overflowValue) : scrollableOverflowRect.shiftYEdgeBy(-overflowValue);
+                    isLeftToRightInlineDirection ? scrollableOverflowRect.shiftMaxYEdgeBy(overflowValue) : scrollableOverflowRect.shiftYEdgeBy(-overflowValue);
             }
         };
         adjustOverflowLogicalWidthWithBlockFlowQuirk();
