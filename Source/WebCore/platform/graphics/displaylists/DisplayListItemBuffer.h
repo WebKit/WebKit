@@ -50,7 +50,7 @@ struct ItemBufferHandle {
     bool operator!() const { return !data; }
 };
 
-using ItemBufferHandles = Vector<ItemBufferHandle, 2>;
+using ItemBufferHandles = Vector<ItemBufferHandle, 0, CrashOnOverflow, 2>;
 
 // An ItemHandle wraps a pointer to an ItemType followed immediately by an item of that type.
 // Each item handle data pointer is aligned to 8 bytes, and the item itself is also aligned
