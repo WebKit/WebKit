@@ -1233,8 +1233,10 @@ public:
     void updateURLForPushOrReplaceState(const URL&);
     void statePopped(Ref<SerializedScriptValue>&&);
 
-    bool processingLoadEvent() const { return m_processingLoadEvent; }
-    bool loadEventFinished() const { return m_loadEventFinished; }
+    enum class LoadEventState : uint8_t { NotDispatched, Processing, Completed };
+    bool processingLoadEvent() const { return m_loadEventState == LoadEventState::Processing; }
+    bool loadEventFinished() const { return m_loadEventState == LoadEventState::Completed; }
+    bool canDispatchLoadEvent() const { return static_cast<unsigned>(m_loadEventState) < static_cast<unsigned>(LoadEventState::Processing); }
 
     bool isContextThread() const final;
     bool isSecureContext() const final;
@@ -2206,12 +2208,11 @@ private:
     DocumentCompatibilityMode m_compatibilityMode { DocumentCompatibilityMode::NoQuirksMode };
     bool m_compatibilityModeLocked { false }; // This is cheaper than making setCompatibilityMode virtual.
 
-    // FIXME: Merge these 2 variables into an enum. Also, FrameLoader::m_didCallImplicitClose
+    // FIXME: Also, FrameLoader::m_didCallImplicitClose
     // is almost a duplication of this data, so that should probably get merged in too.
-    // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadDispatched are roughly the same
+    // FIXME: Document::m_loadEventState and DocumentLoader::m_wasOnloadDispatched are roughly the same
     // and should be merged.
-    bool m_processingLoadEvent { false };
-    bool m_loadEventFinished { false };
+    LoadEventState m_loadEventState { LoadEventState::NotDispatched };
 
     bool m_visuallyOrdered { false };
     bool m_bParsing { false }; // FIXME: rename

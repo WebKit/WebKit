@@ -1,0 +1,4 @@
+
+
+PASS Dispatch 'load' event on iframe only once
+

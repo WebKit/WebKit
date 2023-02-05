@@ -3259,7 +3259,7 @@ void Document::implicitClose()
 {
     RELEASE_ASSERT(!m_inStyleRecalc);
     bool wasLocationChangePending = frame() && frame()->navigationScheduler().locationChangePending();
-    bool doload = !parsing() && m_parser && !m_processingLoadEvent && !wasLocationChangePending;
+    bool doload = !parsing() && m_parser && canDispatchLoadEvent() && !wasLocationChangePending;
     
     if (!doload)
         return;
@@ -3267,8 +3267,8 @@ void Document::implicitClose()
     // Call to dispatchWindowLoadEvent can blow us from underneath.
     Ref<Document> protectedThis(*this);
 
-    m_processingLoadEvent = true;
-
+    m_loadEventState = LoadEventState::Processing;
+    
     ScriptableDocumentParser* parser = scriptableDocumentParser();
     m_wellFormed = parser && parser->wellFormed();
 
@@ -3313,7 +3313,7 @@ void Document::implicitClose()
 
     // An event handler may have removed the frame
     if (!frame()) {
-        m_processingLoadEvent = false;
+        m_loadEventState = LoadEventState::Completed;
         return;
     }
 
@@ -3330,7 +3330,7 @@ void Document::implicitClose()
             view()->layoutContext().layout();
     }
 
-    m_processingLoadEvent = false;
+    m_loadEventState = LoadEventState::Completed;
 
     if (RefPtr fontFaceSet = fontSelector().fontFaceSetIfExists())
         fontFaceSet->documentDidFinishLoading();
@@ -5277,7 +5277,7 @@ void Document::dispatchWindowLoadEvent()
     if (!m_domWindow)
         return;
     m_domWindow->dispatchLoadEvent();
-    m_loadEventFinished = true;
+    m_loadEventState = LoadEventState::Completed;
     m_cachedResourceLoader->documentDidFinishLoadEvent();
 }
 

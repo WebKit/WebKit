@@ -3560,7 +3560,7 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
     m_frame.script().executeJavaScriptURL(url, action.requester() ? action.requester()->securityOrigin.ptr() : nullptr, action.shouldReplaceDocumentIfJavaScriptURL(), didReplaceDocument);
 
     // We need to communicate that a load happened, even if the JavaScript URL execution didn't end up replacing the document.
-    if (auto* document = m_frame.document(); isFirstNavigationInFrame && !didReplaceDocument)
+    if (auto* document = m_frame.document(); isFirstNavigationInFrame && !didReplaceDocument && document->canDispatchLoadEvent())
         document->dispatchWindowLoadEvent();
 
     checkCompleted();
