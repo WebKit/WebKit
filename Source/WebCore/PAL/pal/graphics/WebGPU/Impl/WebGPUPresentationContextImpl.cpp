@@ -49,9 +49,6 @@ PresentationContextImpl::PresentationContextImpl(WGPUSurface surface, ConvertToB
 
 PresentationContextImpl::~PresentationContextImpl()
 {
-    if (m_swapChain)
-        wgpuSwapChainRelease(m_swapChain);
-
     ASSERT(m_backing);
     wgpuSurfaceRelease(m_backing);
 }
@@ -64,7 +61,7 @@ IOSurfaceRef PresentationContextImpl::drawingBuffer() const
 void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     if (m_swapChain)
-        wgpuSwapChainRelease(m_swapChain);
+        m_swapChainWrapper = nullptr;
 
     m_format = canvasConfiguration.format;
 
@@ -78,7 +75,8 @@ void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         WGPUPresentMode_Immediate,
     };
 
-    m_swapChain = wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing, &backingDescriptor);
+    m_swapChainWrapper = SwapChainWrapper::create(wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing, &backingDescriptor));
+    m_swapChain = m_swapChainWrapper->backing();
 }
 
 void PresentationContextImpl::unconfigure()
@@ -86,21 +84,23 @@ void PresentationContextImpl::unconfigure()
     if (!m_swapChain)
         return;
 
-    wgpuSwapChainRelease(m_swapChain);
+    m_swapChainWrapper = nullptr;
     
     m_format = TextureFormat::Bgra8unorm;
     m_width = 0;
     m_height = 0;
     m_swapChain = nullptr;
+    m_currentTexture = nullptr;
 }
 
 RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
 {
-    // FIXME: If m_swapChain is nullptr, return an invalid texture.
+    if (!m_swapChain)
+        return nullptr; // FIXME: This should return an invalid texture instead.
 
     if (!m_currentTexture) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250958 This is wrong; these objects are +0, but our Impl wrappers treat them as +1 objects.
-        m_currentTexture = TextureImpl::create(wgpuSwapChainGetCurrentTexture(m_swapChain), m_format, TextureDimension::_2d, m_convertToBackingContext).ptr();
+        ASSERT(m_swapChainWrapper);
+        m_currentTexture = TextureImpl::create(wgpuSwapChainGetCurrentTexture(m_swapChain), m_format, TextureDimension::_2d, m_convertToBackingContext, *m_swapChainWrapper.copyRef()).ptr();
     }
 
     return m_currentTexture;

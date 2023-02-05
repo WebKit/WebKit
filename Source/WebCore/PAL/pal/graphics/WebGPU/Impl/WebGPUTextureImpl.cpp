@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,9 +44,21 @@ TextureImpl::TextureImpl(WGPUTexture texture, TextureFormat format, TextureDimen
 {
 }
 
+TextureImpl::TextureImpl(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext, Ref<SwapChainWrapper>&& swapChainWrapper)
+    : m_format(format)
+    , m_dimension(dimension)
+    , m_backing(texture)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_swapChainWrapper(WTFMove(swapChainWrapper))
+{
+}
+
 TextureImpl::~TextureImpl()
 {
-    wgpuTextureRelease(m_backing);
+    // For Textures owned by PresentationContexts, the PresentationContext will automatically release the texture when the PresentationContext is released.
+    // m_swapChainWrapper's purpose is just for such textures, to keep the swap chain alive as long as we are alive.
+    if (!m_swapChainWrapper)
+        wgpuTextureRelease(m_backing);
 }
 
 Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescriptor>& descriptor)

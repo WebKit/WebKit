@@ -39,6 +39,8 @@
 		1C19E698273F408B004B17B0 /* WebGPUTextureViewImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C19E696273F408B004B17B0 /* WebGPUTextureViewImpl.cpp */; };
 		1C19E6B5273F85AF004B17B0 /* WebGPUConvertToBackingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C19E6B4273F85AF004B17B0 /* WebGPUConvertToBackingContext.cpp */; };
 		1C19E6BA27405E32004B17B0 /* WebGPUExternalTextureImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C19E6B927405E32004B17B0 /* WebGPUExternalTextureImpl.cpp */; };
+		1C34AEFD298E2C6200C350B8 /* WebGPUSwapChainWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C34AEFB298E2C6200C350B8 /* WebGPUSwapChainWrapper.cpp */; };
+		1C34AEFE298E2C6200C350B8 /* WebGPUSwapChainWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C34AEFC298E2C6200C350B8 /* WebGPUSwapChainWrapper.h */; };
 		1C36C52E2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C36C52C2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp */; };
 		1C469C7A27C46E1300DEB594 /* WebGPUShaderModuleCompilationHint.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEF45AA27BB101F00C3A6BC /* WebGPUShaderModuleCompilationHint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */; };
@@ -67,8 +69,8 @@
 		1C5C57E92757318E003B540D /* TextEncodingRegistryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5C57E82757318D003B540D /* TextEncodingRegistryMac.mm */; };
 		1C77C8C925D7972000635E0C /* CoreTextSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C77C8C725D7972000635E0C /* CoreTextSoftLink.cpp */; };
 		1C77C8CE25D7A4A300635E0C /* OTSVGTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C77C8CD25D7A4A300635E0C /* OTSVGTable.cpp */; };
-		1CB709FC28034EDF00A3A637 /* WebGPUDeviceHolderImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CB709FA28034EDF00A3A637 /* WebGPUDeviceHolderImpl.cpp */; };
-		1CB709FD28034EDF00A3A637 /* WebGPUDeviceHolderImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB709FB28034EDF00A3A637 /* WebGPUDeviceHolderImpl.h */; };
+		1CB709FC28034EDF00A3A637 /* WebGPUDeviceWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CB709FA28034EDF00A3A637 /* WebGPUDeviceWrapper.cpp */; };
+		1CB709FD28034EDF00A3A637 /* WebGPUDeviceWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CB709FB28034EDF00A3A637 /* WebGPUDeviceWrapper.h */; };
 		1CCA5EFF280FABB4008A6F78 /* WebGPUCreateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CCA5EFD280FABB4008A6F78 /* WebGPUCreateImpl.cpp */; };
 		1CCA5F00280FABB4008A6F78 /* WebGPUCreateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCA5EFE280FABB4008A6F78 /* WebGPUCreateImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1D2B413425F05E3500A3F70A /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D2B413225F05E3400A3F70A /* ClockGeneric.cpp */; };
@@ -695,6 +697,8 @@
 		1C19E6B6273F85BC004B17B0 /* WebGPUConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUConvertToBackingContext.h; sourceTree = "<group>"; };
 		1C19E6B927405E32004B17B0 /* WebGPUExternalTextureImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUExternalTextureImpl.cpp; sourceTree = "<group>"; };
 		1C19E6BB27405E3C004B17B0 /* WebGPUExternalTextureImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUExternalTextureImpl.h; sourceTree = "<group>"; };
+		1C34AEFB298E2C6200C350B8 /* WebGPUSwapChainWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUSwapChainWrapper.cpp; sourceTree = "<group>"; };
+		1C34AEFC298E2C6200C350B8 /* WebGPUSwapChainWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwapChainWrapper.h; sourceTree = "<group>"; };
 		1C36C52C2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDowncastConvertToBackingContext.cpp; sourceTree = "<group>"; };
 		1C36C52D2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDowncastConvertToBackingContext.h; sourceTree = "<group>"; };
 		1C4876D61F8D7F4E00CCEEBD /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
@@ -743,8 +747,8 @@
 		1C77C8C825D7972000635E0C /* CoreTextSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextSoftLink.h; sourceTree = "<group>"; };
 		1C77C8CB25D79B6C00635E0C /* OTSVGTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OTSVGTable.h; sourceTree = "<group>"; };
 		1C77C8CD25D7A4A300635E0C /* OTSVGTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OTSVGTable.cpp; sourceTree = "<group>"; };
-		1CB709FA28034EDF00A3A637 /* WebGPUDeviceHolderImpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDeviceHolderImpl.cpp; sourceTree = "<group>"; };
-		1CB709FB28034EDF00A3A637 /* WebGPUDeviceHolderImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDeviceHolderImpl.h; sourceTree = "<group>"; };
+		1CB709FA28034EDF00A3A637 /* WebGPUDeviceWrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGPUDeviceWrapper.cpp; sourceTree = "<group>"; };
+		1CB709FB28034EDF00A3A637 /* WebGPUDeviceWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUDeviceWrapper.h; sourceTree = "<group>"; };
 		1CC3ACE722BD7EB800F360F0 /* MetalSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalSPI.h; sourceTree = "<group>"; };
 		1CC5E4132737492C006F6FF4 /* WebGPUStorageTextureBindingLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUStorageTextureBindingLayout.h; sourceTree = "<group>"; };
 		1CC5E4142737492C006F6FF4 /* WebGPUTextureViewDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUTextureViewDescriptor.h; sourceTree = "<group>"; };
@@ -1340,10 +1344,10 @@
 				1C19E6B6273F85BC004B17B0 /* WebGPUConvertToBackingContext.h */,
 				1CCA5EFD280FABB4008A6F78 /* WebGPUCreateImpl.cpp */,
 				1CCA5EFE280FABB4008A6F78 /* WebGPUCreateImpl.h */,
-				1CB709FA28034EDF00A3A637 /* WebGPUDeviceHolderImpl.cpp */,
-				1CB709FB28034EDF00A3A637 /* WebGPUDeviceHolderImpl.h */,
 				1C19E666273F3FFA004B17B0 /* WebGPUDeviceImpl.cpp */,
 				1C19E6AD273F4245004B17B0 /* WebGPUDeviceImpl.h */,
+				1CB709FA28034EDF00A3A637 /* WebGPUDeviceWrapper.cpp */,
+				1CB709FB28034EDF00A3A637 /* WebGPUDeviceWrapper.h */,
 				1C36C52C2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp */,
 				1C36C52D2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.h */,
 				1C19E6B927405E32004B17B0 /* WebGPUExternalTextureImpl.cpp */,
@@ -1370,6 +1374,8 @@
 				1C19E6A7273F4244004B17B0 /* WebGPUSamplerImpl.h */,
 				1C19E68E273F4071004B17B0 /* WebGPUShaderModuleImpl.cpp */,
 				1C19E6AA273F4245004B17B0 /* WebGPUShaderModuleImpl.h */,
+				1C34AEFB298E2C6200C350B8 /* WebGPUSwapChainWrapper.cpp */,
+				1C34AEFC298E2C6200C350B8 /* WebGPUSwapChainWrapper.h */,
 				1C19E692273F407D004B17B0 /* WebGPUTextureImpl.cpp */,
 				1C19E69F273F4243004B17B0 /* WebGPUTextureImpl.h */,
 				1C19E696273F408B004B17B0 /* WebGPUTextureViewImpl.cpp */,
@@ -1996,10 +2002,10 @@
 				DD20DD6727BC90D70093D175 /* WebGPUDepthStencilState.h in Headers */,
 				DD20DD6827BC90D70093D175 /* WebGPUDevice.h in Headers */,
 				DD20DD6927BC90D70093D175 /* WebGPUDeviceDescriptor.h in Headers */,
-				1CB709FD28034EDF00A3A637 /* WebGPUDeviceHolderImpl.h in Headers */,
 				DD20DD3127BC90D60093D175 /* WebGPUDeviceImpl.h in Headers */,
 				DD20DD6A27BC90D70093D175 /* WebGPUDeviceLostInfo.h in Headers */,
 				DD20DD6B27BC90D70093D175 /* WebGPUDeviceLostReason.h in Headers */,
+				1CB709FD28034EDF00A3A637 /* WebGPUDeviceWrapper.h in Headers */,
 				DD20DD3227BC90D60093D175 /* WebGPUDowncastConvertToBackingContext.h in Headers */,
 				DD20DD6C27BC90D70093D175 /* WebGPUError.h in Headers */,
 				DD20DD6D27BC90D70093D175 /* WebGPUErrorFilter.h in Headers */,
@@ -2080,6 +2086,7 @@
 				DD20DDAA27BC90D70093D175 /* WebGPUStoreOp.h in Headers */,
 				DD20DDAB27BC90D70093D175 /* WebGPUSupportedFeatures.h in Headers */,
 				DD20DDAC27BC90D70093D175 /* WebGPUSupportedLimits.h in Headers */,
+				1C34AEFE298E2C6200C350B8 /* WebGPUSwapChainWrapper.h in Headers */,
 				DD20DDAD27BC90D70093D175 /* WebGPUTexture.h in Headers */,
 				DD20DDAE27BC90D70093D175 /* WebGPUTextureAspect.h in Headers */,
 				DD20DDAF27BC90D70093D175 /* WebGPUTextureBindingLayout.h in Headers */,
@@ -2291,8 +2298,8 @@
 				1C19E664273F3FEE004B17B0 /* WebGPUComputePipelineImpl.cpp in Sources */,
 				1C19E6B5273F85AF004B17B0 /* WebGPUConvertToBackingContext.cpp in Sources */,
 				1CCA5EFF280FABB4008A6F78 /* WebGPUCreateImpl.cpp in Sources */,
-				1CB709FC28034EDF00A3A637 /* WebGPUDeviceHolderImpl.cpp in Sources */,
 				1C19E668273F3FFA004B17B0 /* WebGPUDeviceImpl.cpp in Sources */,
+				1CB709FC28034EDF00A3A637 /* WebGPUDeviceWrapper.cpp in Sources */,
 				1C36C52E2743011A006DA4C1 /* WebGPUDowncastConvertToBackingContext.cpp in Sources */,
 				1C19E6BA27405E32004B17B0 /* WebGPUExternalTextureImpl.cpp in Sources */,
 				1C19E644273F3E5D004B17B0 /* WebGPUImpl.cpp in Sources */,
@@ -2306,6 +2313,7 @@
 				1C19E688273F405D004B17B0 /* WebGPURenderPipelineImpl.cpp in Sources */,
 				1C19E68C273F4069004B17B0 /* WebGPUSamplerImpl.cpp in Sources */,
 				1C19E690273F4072004B17B0 /* WebGPUShaderModuleImpl.cpp in Sources */,
+				1C34AEFD298E2C6200C350B8 /* WebGPUSwapChainWrapper.cpp in Sources */,
 				1C19E694273F407D004B17B0 /* WebGPUTextureImpl.cpp in Sources */,
 				1C19E698273F408B004B17B0 /* WebGPUTextureViewImpl.cpp in Sources */,
 				A10826FA1F576292004772AC /* WebPanel.mm in Sources */,
