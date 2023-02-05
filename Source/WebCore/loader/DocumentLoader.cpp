@@ -881,7 +881,7 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
         m_contentSecurityPolicy = nullptr;
     if (m_frame && m_frame->document() && m_frame->document()->settings().crossOriginOpenerPolicyEnabled())
         m_responseCOOP = obtainCrossOriginOpenerPolicy(response);
-    // FIXME: Parse Clear-Site-Data header.
+
     if (m_frame->settings().clearSiteDataHTTPHeaderEnabled())
         m_responseClearSiteDataValues = parseClearSiteDataHeader(response);
 
