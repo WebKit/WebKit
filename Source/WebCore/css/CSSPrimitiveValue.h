@@ -190,13 +190,6 @@ public:
     CSSBasicShape* shapeValue() const { return primitiveUnitType() != CSSUnitType::CSS_SHAPE ? nullptr : m_value.shape; }
     CSSValueID valueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID ? m_value.valueID : CSSValueInvalid; }
 
-    operator unsigned short() const;
-    operator int() const;
-    operator unsigned() const;
-    operator float() const;
-
-    template<typename T> operator T() const; // Specializations are in CSSPrimitiveValueMappings.h.
-
     String customCSSText() const;
 
     bool equals(const CSSPrimitiveValue&) const;
@@ -415,38 +408,9 @@ inline bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
     return isValueID(value.get(), id);
 }
 
-inline CSSPrimitiveValue::operator unsigned short() const
-{
-    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
-    return value<unsigned short>();
-}
-
-inline CSSPrimitiveValue::operator int() const
-{
-    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
-    return value<int>();
-}
-
-inline CSSPrimitiveValue::operator unsigned() const
-{
-    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
-    return value<unsigned>();
-}
-
-inline CSSPrimitiveValue::operator float() const
-{
-    ASSERT(primitiveType() == CSSUnitType::CSS_NUMBER || primitiveType() == CSSUnitType::CSS_INTEGER);
-    return value<float>();
-}
-
 template<typename ConvertibleType> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const ConvertibleType& value)
 {
     return create(toCSSValueID(value));
-}
-
-template<typename TargetType> inline CSSPrimitiveValue::operator TargetType() const
-{
-    return fromCSSValueID<TargetType>(valueID());
 }
 
 } // namespace WebCore

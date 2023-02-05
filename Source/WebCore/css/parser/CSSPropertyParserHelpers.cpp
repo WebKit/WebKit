@@ -8001,7 +8001,7 @@ RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange& range)
         }
         list->append(ident.releaseNonNull());
     }
-    
+
     return list->length() ? list : nullptr;
 }
     

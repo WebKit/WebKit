@@ -455,7 +455,7 @@ inline OptionSet<TextDecorationLine> BuilderConverter::convertTextDecorationLine
     auto result = RenderStyle::initialTextDecorationLine();
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
-            result.add(downcast<CSSPrimitiveValue>(currentValue.get()));
+            result.add(fromCSSValue<TextDecorationLine>(currentValue.get()));
     }
     return result;
 }
@@ -642,7 +642,7 @@ inline TextAlignMode BuilderConverter::convertTextAlign(BuilderState& builderSta
         return parentStyle.textAlign();
     }
 
-    return primitiveValue;
+    return fromCSSValue<TextAlignMode>(value);
 }
 
 inline TextAlignLast BuilderConverter::convertTextAlignLast(BuilderState& builderState, const CSSValue& value)
@@ -651,7 +651,7 @@ inline TextAlignLast BuilderConverter::convertTextAlignLast(BuilderState& builde
     ASSERT(primitiveValue.isValueID());
 
     if (primitiveValue.valueID() != CSSValueMatchParent)
-        return primitiveValue;
+        return fromCSSValue<TextAlignLast>(value);
 
     auto& parentStyle = builderState.parentStyle();
     if (parentStyle.textAlignLast() == TextAlignLast::Start)
@@ -724,7 +724,7 @@ inline RefPtr<PathOperation> BuilderConverter::convertPathOperation(BuilderState
                 || primitiveValue.valueID() == CSSValueStrokeBox
                 || primitiveValue.valueID() == CSSValueViewBox);
             ASSERT(referenceBox == CSSBoxType::BoxMissing);
-            referenceBox = primitiveValue;
+            referenceBox = fromCSSValue<CSSBoxType>(primitiveValue);
         }
     }
     if (operation)
@@ -745,7 +745,7 @@ inline Resize BuilderConverter::convertResize(BuilderState& builderState, const 
     if (primitiveValue.valueID() == CSSValueAuto)
         resize = builderState.document().settings().textAreasAreResizable() ? Resize::Both : Resize::None;
     else
-        resize = primitiveValue;
+        resize = fromCSSValue<Resize>(value);
 
     return resize;
 }
@@ -798,7 +798,7 @@ inline RefPtr<QuotesData> BuilderConverter::convertQuotes(BuilderState&, const C
 
 inline TextUnderlinePosition BuilderConverter::convertTextUnderlinePosition(BuilderState&, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value);
+    return fromCSSValue<TextUnderlinePosition>(value);
 }
 
 inline TextUnderlineOffset BuilderConverter::convertTextUnderlineOffset(BuilderState& builderState, const CSSValue& value)
@@ -839,7 +839,7 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     auto& reflectValue = downcast<CSSReflectValue>(value);
 
     auto reflection = StyleReflection::create();
-    reflection->setDirection(reflectValue.direction());
+    reflection->setDirection(fromCSSValue<ReflectionDirection>(reflectValue.direction()));
     reflection->setOffset(reflectValue.offset().convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
 
     NinePieceImage mask(NinePieceImage::Type::Mask);
@@ -977,7 +977,7 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
             || primitiveValue.valueID() == CSSValueBorderBox
             || primitiveValue.valueID() == CSSValuePaddingBox
             || primitiveValue.valueID() == CSSValueMarginBox)
-            referenceBox = primitiveValue;
+            referenceBox = fromCSSValue<CSSBoxType>(primitiveValue);
         else {
             ASSERT_NOT_REACHED();
             return nullptr;
@@ -1002,9 +1002,9 @@ inline ScrollSnapType BuilderConverter::convertScrollSnapType(BuilderState&, con
     if (firstValue.valueID() == CSSValueNone)
         return type;
 
-    type.axis = firstValue;
+    type.axis = fromCSSValue<ScrollSnapAxis>(firstValue);
     if (values.length() == 2)
-        type.strictness = downcast<CSSPrimitiveValue>(*values.item(1));
+        type.strictness = fromCSSValue<ScrollSnapStrictness>(*values.item(1));
     else
         type.strictness = ScrollSnapStrictness::Proximity;
 
@@ -1015,17 +1015,17 @@ inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState&, c
 {
     auto& values = downcast<CSSValueList>(value);
     ScrollSnapAlign alignment;
-    alignment.blockAlign = downcast<CSSPrimitiveValue>(*values.item(0));
+    alignment.blockAlign = fromCSSValue<ScrollSnapAxisAlignType>(*values.item(0));
     if (values.length() == 1)
         alignment.inlineAlign = alignment.blockAlign;
     else
-        alignment.inlineAlign = downcast<CSSPrimitiveValue>(*values.item(1));
+        alignment.inlineAlign = fromCSSValue<ScrollSnapAxisAlignType>(*values.item(1));
     return alignment;
 }
 
 inline ScrollSnapStop BuilderConverter::convertScrollSnapStop(BuilderState&, const CSSValue& value)
 {
-    return downcast<CSSPrimitiveValue>(value);
+    return fromCSSValue<ScrollSnapStop>(value);
 }
 
 inline GridLength BuilderConverter::createGridTrackBreadth(const CSSPrimitiveValue& primitiveValue, BuilderState& builderState)
@@ -1540,7 +1540,7 @@ inline StyleColor BuilderConverter::convertTapHighlightColor(BuilderState& build
 inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&, const CSSValue& value)
 {
     if (is<CSSPrimitiveValue>(value))
-        return downcast<CSSPrimitiveValue>(value);
+        return fromCSSValue<TouchAction>(value);
 
     if (is<CSSValueList>(value)) {
         OptionSet<TouchAction> touchActions;
@@ -1549,7 +1549,7 @@ inline OptionSet<TouchAction> BuilderConverter::convertTouchAction(BuilderState&
             auto primitiveValueID = primitiveValue.valueID();
             if (primitiveValueID != CSSValuePanX && primitiveValueID != CSSValuePanY && primitiveValueID != CSSValuePinchZoom)
                 return RenderStyle::initialTouchActions();
-            touchActions.add(primitiveValue);
+            touchActions.add(fromCSSValueID<TouchAction>(primitiveValueID));
         }
         return touchActions;
     }
@@ -1646,17 +1646,17 @@ inline StyleSelfAlignmentData BuilderConverter::convertSelfOrDefaultAlignmentDat
     if (Pair* pairValue = primitiveValue.pairValue()) {
         if (pairValue->first()->valueID() == CSSValueLegacy) {
             alignmentData.setPositionType(ItemPositionType::Legacy);
-            alignmentData.setPosition(*pairValue->second());
+            alignmentData.setPosition(fromCSSValue<ItemPosition>(*pairValue->second()));
         } else if (pairValue->first()->valueID() == CSSValueFirst)
             alignmentData.setPosition(ItemPosition::Baseline);
         else if (pairValue->first()->valueID() == CSSValueLast)
             alignmentData.setPosition(ItemPosition::LastBaseline);
         else {
-            alignmentData.setOverflow(*pairValue->first());
-            alignmentData.setPosition(*pairValue->second());
+            alignmentData.setOverflow(fromCSSValue<OverflowAlignment>(*pairValue->first()));
+            alignmentData.setPosition(fromCSSValue<ItemPosition>(*pairValue->second()));
         }
     } else
-        alignmentData.setPosition(primitiveValue);
+        alignmentData.setPosition(fromCSSValue<ItemPosition>(primitiveValue));
     return alignmentData;
 }
 
@@ -1757,8 +1757,10 @@ inline OptionSet<SpeakAs> BuilderConverter::convertSpeakAs(BuilderState&, const 
 {
     auto result = RenderStyle::initialSpeakAs();
     if (is<CSSValueList>(value)) {
-        for (auto& currentValue : downcast<CSSValueList>(value))
-            result.add(downcast<CSSPrimitiveValue>(currentValue.get()));
+        for (auto& currentValue : downcast<CSSValueList>(value)) {
+            if (!isValueID(currentValue, CSSValueNormal))
+                result.add(fromCSSValue<SpeakAs>(currentValue.get()));
+        }
     }
     return result;
 }
@@ -1768,7 +1770,7 @@ inline OptionSet<HangingPunctuation> BuilderConverter::convertHangingPunctuation
     auto result = RenderStyle::initialHangingPunctuation();
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
-            result.add(downcast<CSSPrimitiveValue>(currentValue.get()));
+            result.add(fromCSSValue<HangingPunctuation>(currentValue.get()));
     }
     return result;
 }

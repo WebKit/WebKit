@@ -74,45 +74,46 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
     if (!selectionStyle || !selectionStyle->style())
          return;
 
-    RefPtr<CSSPrimitiveValue> value = static_pointer_cast<CSSPrimitiveValue>(selectionStyle->style()->getPropertyCSSValue(CSSPropertyTextAlign));
+    auto value = selectionStyle->style()->propertyAsValueID(CSSPropertyTextAlign);
     if (!value)
         return;
         
-    ASCIILiteral newValue;
-    TextAlignMode textAlign = *value;
-    switch (textAlign) {
-    case TextAlignMode::Start:
-    case TextAlignMode::End: {
+    CSSValueID newValue;
+    switch (*value) {
+    case CSSValueStart:
+    case CSSValueEnd:
         switch (direction) {
         case WritingDirection::Natural:
             // no-op
-            break;
+            return;
         case WritingDirection::LeftToRight:
-            newValue = "left"_s;
+            newValue = CSSValueLeft;
             break;
         case WritingDirection::RightToLeft:
-            newValue = "right"_s;
+            newValue = CSSValueRight;
             break;
+        default:
+            ASSERT_NOT_REACHED();
+            return;
         }
         break;
-    }
-    case TextAlignMode::Left:
-    case TextAlignMode::WebKitLeft:
-        newValue = "right"_s;
+    case CSSValueLeft:
+    case CSSValueWebkitLeft:
+        newValue = CSSValueRight;
         break;
-    case TextAlignMode::Right:
-    case TextAlignMode::WebKitRight:
-        newValue = "left"_s;
+    case CSSValueRight:
+    case CSSValueWebkitRight:
+        newValue = CSSValueLeft;
         break;
-    case TextAlignMode::Center:
-    case TextAlignMode::WebKitCenter:
-    case TextAlignMode::Justify:
+    case CSSValueCenter:
+    case CSSValueWebkitCenter:
+    case CSSValueJustify:
         // no-op
-        break;
-    }
-
-    if (newValue.isNull())
         return;
+    default:
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     Element* focusedElement = m_document.focusedElement();
     if (focusedElement && (is<HTMLTextAreaElement>(*focusedElement) || (is<HTMLInputElement>(*focusedElement)
@@ -120,7 +121,7 @@ void Editor::setTextAlignmentForChangedBaseWritingDirection(WritingDirection dir
             || downcast<HTMLInputElement>(*focusedElement).isSearchField())))) {
         if (direction == WritingDirection::Natural)
             return;
-        downcast<HTMLElement>(*focusedElement).setAttributeWithoutSynchronization(alignAttr, newValue);
+        downcast<HTMLElement>(*focusedElement).setAttributeWithoutSynchronization(alignAttr, nameString(newValue));
         m_document.updateStyleIfNeeded();
         return;
     }

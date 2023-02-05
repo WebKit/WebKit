@@ -848,9 +848,8 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
 
     if (auto innerText = innerTextElement()) {
         if (auto* properties = innerText->presentationalHintStyle()) {
-            RefPtr<CSSValue> value = properties->getPropertyCSSValue(CSSPropertyWebkitUserModify);
-            if (is<CSSPrimitiveValue>(value))
-                textBlockStyle.setUserModify(downcast<CSSPrimitiveValue>(*value));
+            if (auto value = properties->propertyAsValueID(CSSPropertyWebkitUserModify))
+                textBlockStyle.setUserModify(fromCSSValueID<UserModify>(*value));
         }
     }
 
