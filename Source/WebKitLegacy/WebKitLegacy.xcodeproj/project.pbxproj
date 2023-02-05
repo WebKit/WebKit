@@ -540,8 +540,6 @@
 		93D437991D57ABEF00AB85EA /* ExceptionHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D436471D57ABEE00AB85EA /* ExceptionHandlers.h */; };
 		93D4379B1D57ABEF00AB85EA /* ObjCEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D436491D57ABEE00AB85EA /* ObjCEventListener.h */; };
 		93D4379D1D57ABEF00AB85EA /* ObjCNodeFilterCondition.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D4364B1D57ABEE00AB85EA /* ObjCNodeFilterCondition.h */; };
-		93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */; };
 		93FDE9330D79CAF30074F029 /* WebHistoryInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */; };
 		9ACC07BC25C85A4700DC6386 /* WebMediaKeySystemClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9ACC07BB25C85A4700DC6386 /* WebMediaKeySystemClient.mm */; };
 		9ACC07BE25C85A5900DC6386 /* WebMediaKeySystemClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07BD25C85A5900DC6386 /* WebMediaKeySystemClient.h */; };
@@ -1360,8 +1358,6 @@
 		93D4364B1D57ABEE00AB85EA /* ObjCNodeFilterCondition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCNodeFilterCondition.h; sourceTree = "<group>"; };
 		93D4364C1D57ABEE00AB85EA /* ObjCNodeFilterCondition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCNodeFilterCondition.mm; sourceTree = "<group>"; };
 		93D623DD051E791F002F47DD /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
-		93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; };
-		93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDashboardRegion.mm; sourceTree = "<group>"; };
 		93FDE9320D79CAF30074F029 /* WebHistoryInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryInternal.h; sourceTree = "<group>"; };
 		9ACC07BB25C85A4700DC6386 /* WebMediaKeySystemClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMediaKeySystemClient.mm; sourceTree = "<group>"; };
 		9ACC07BD25C85A5900DC6386 /* WebMediaKeySystemClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaKeySystemClient.h; sourceTree = "<group>"; };
@@ -1968,8 +1964,6 @@
 				44BB8B131241A022001E3A22 /* WebArchiveInternal.h */,
 				933D659903413FF2008635CE /* WebClipView.h */,
 				933D659A03413FF2008635CE /* WebClipView.mm */,
-				93E2A1A2123B0B3C009FE12A /* WebDashboardRegion.h */,
-				93E2A1A3123B0B3C009FE12A /* WebDashboardRegion.mm */,
 				39446070020F50ED0ECA1767 /* WebDataSource.h */,
 				39446071020F50ED0ECA1767 /* WebDataSource.mm */,
 				658A40950A14853B005E6987 /* WebDataSourceInternal.h */,
@@ -2936,7 +2930,6 @@
 				DDF74C9627EE3CF20011F633 /* WebCoreThreadMessage.h in Headers */,
 				DDF74C9827EE3CF90011F633 /* WebCoreThreadRun.h in Headers */,
 				E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */,
-				93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */,
 				511F3FD70CECC88F00852565 /* WebDatabaseManagerClient.h in Headers */,
 				51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */,
 				511F3FD60CECC88F00852565 /* WebDatabaseManagerPrivate.h in Headers */,
@@ -3501,7 +3494,6 @@
 				A10C1D651820300E0036883A /* WebChromeClientIOS.mm in Sources */,
 				065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */,
 				939810BF0824BF01008DF038 /* WebCoreStatistics.mm in Sources */,
-				93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */,
 				511F3FD50CECC88F00852565 /* WebDatabaseManager.mm in Sources */,
 				511F3FD80CECC88F00852565 /* WebDatabaseManagerClient.mm in Sources */,
 				1AA83F831A5C4AE400026EC6 /* WebDatabaseProvider.cpp in Sources */,

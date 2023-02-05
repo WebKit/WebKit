@@ -50,11 +50,6 @@ JSC::VM& commonVMSlow()
     ASSERT(isMainThread());
     ASSERT(!g_commonVMOrNull);
 
-    // FIXME: Remove this call to ScriptController::initializeMainThread(). The
-    // main thread should have been initialized by a WebKit entrypoint already.
-    // Also, initializeMainThread() does nothing on iOS.
-    ScriptController::initializeMainThread();
-
 #if PLATFORM(IOS_FAMILY)
     RunLoop* runLoop = RunLoop::webIfExists();
 #else

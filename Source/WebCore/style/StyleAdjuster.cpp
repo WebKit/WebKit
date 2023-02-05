@@ -762,12 +762,6 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         if (style.overflowY() == Overflow::Hidden && m_element->attributeWithoutSynchronization(roleAttr) == roleValue)
             style.setOverflowY(Overflow::Auto);
     }
-    if (m_document.quirks().needsYouTubeOverflowScrollQuirk()) {
-        // This turns sidebar scrollable without hover.
-        static MainThreadNeverDestroyed<const AtomString> idValue("guide-inner-content"_s);
-        if (style.overflowY() == Overflow::Hidden && m_element->idForStyleResolution() == idValue)
-            style.setOverflowY(Overflow::Auto);
-    }
     if (m_document.quirks().needsWeChatScrollingQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> class1("tree-select"_s);
         static MainThreadNeverDestroyed<const AtomString> class2("v-tree-select"_s);

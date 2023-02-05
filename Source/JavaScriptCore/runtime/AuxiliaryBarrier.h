@@ -51,11 +51,8 @@ public:
     const T& get() const { return m_value; }
     
     T* slot() { return &m_value; }
-    
+
     explicit operator bool() const { return !!m_value; }
-    
-    template<typename U>
-    void setWithoutBarrier(U&& value) { m_value = std::forward<U>(value); }
 
     T operator->() const { return get(); }
     

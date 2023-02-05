@@ -260,29 +260,14 @@ void WebChromeClientIOS::didEndOverflowScroll()
     [[[webView() _UIKitDelegateForwarder] asyncForwarder] webViewDidEndOverflowScroll:webView()];
 }
 
-void WebChromeClientIOS::suppressFormNotifications() 
-{
-    m_formNotificationSuppressions++;
-}
-
-void WebChromeClientIOS::restoreFormNotifications() 
-{
-    m_formNotificationSuppressions--;
-    ASSERT(m_formNotificationSuppressions >= 0);
-    if (m_formNotificationSuppressions < 0)
-        m_formNotificationSuppressions = 0;
-}
-
 void WebChromeClientIOS::elementDidFocus(WebCore::Element& element, const WebCore::FocusOptions&)
 {
-    if (m_formNotificationSuppressions <= 0)
-        [[webView() _UIKitDelegateForwarder] webView:webView() elementDidFocusNode:kit(&element)];
+    [[webView() _UIKitDelegateForwarder] webView:webView() elementDidFocusNode:kit(&element)];
 }
 
 void WebChromeClientIOS::elementDidBlur(WebCore::Element& element)
 {
-    if (m_formNotificationSuppressions <= 0)
-        [[webView() _UIKitDelegateForwarder] webView:webView() elementDidBlurNode:kit(&element)];
+    [[webView() _UIKitDelegateForwarder] webView:webView() elementDidBlurNode:kit(&element)];
 }
 
 bool WebChromeClientIOS::selectItemWritingDirectionIsNatural()

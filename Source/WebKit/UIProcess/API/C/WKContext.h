@@ -139,14 +139,6 @@ typedef struct WKContextClientV4 {
     WKContextChildProcessDidCrashWithDetailsCallback                    gpuProcessDidCrashWithDetails;
 } WKContextClientV4;
 
-
-// FIXME: Remove these once support for Mavericks has been dropped.
-enum {
-    kWKProcessModelSharedSecondaryProcess = 0,
-    kWKProcessModelMultipleSecondaryProcesses = 1
-};
-typedef uint32_t WKProcessModel;
-
 enum {
     kWKStatisticsOptionsWebContent = 1 << 0,
     kWKStatisticsOptionsNetworking = 1 << 1
@@ -176,9 +168,6 @@ WK_EXPORT void WKContextClearVisitedLinks(WKContextRef contextRef);
 
 WK_EXPORT void WKContextSetCacheModel(WKContextRef context, WKCacheModel cacheModel);
 WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
-
-// FIXME: Move these to WKDeprecatedFunctions.cpp once support for Mavericks has been dropped.
-WK_EXPORT void WKContextSetProcessModel(WKContextRef, WKProcessModel);
 
 WK_EXPORT void WKContextSetMaximumNumberOfProcesses(WKContextRef context, unsigned numberOfProcesses) WK_C_API_DEPRECATED;
 WK_EXPORT unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef context) WK_C_API_DEPRECATED;

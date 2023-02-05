@@ -485,15 +485,11 @@ bool GraphicsContextGLANGLE::readnPixelsImpl(GCGLint x, GCGLint y, GCGLsizei wid
     if (!makeContextCurrent())
         return false;
 
-    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
-    // all previous rendering calls should be done before reading pixels.
-    GL_Flush();
     auto attrs = contextAttributes();
     GCGLenum framebufferTarget = m_isForWebGL2 ? GraphicsContextGL::READ_FRAMEBUFFER : GraphicsContextGL::FRAMEBUFFER;
     if (attrs.antialias && m_state.boundReadFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         GL_BindFramebuffer(framebufferTarget, m_fbo);
-        GL_Flush();
     }
     moveErrorsToSyntheticErrorList();
     GL_ReadnPixelsRobustANGLE(x, y, width, height, format, type, bufSize, length, columns, rows, data);

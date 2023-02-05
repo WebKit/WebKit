@@ -114,11 +114,8 @@ void ApplePushServiceConnection::unsubscribe(const String& topic, const Vector<u
         if (!weakThis)
             return;
 
-        // FIXME: remove this once APS stops calling back on the wrong queue (rdar://88100275).
-        dispatch_async(dispatch_get_main_queue(), ^{
-            auto handler = m_unsubscribeHandlers.take(identifier);
-            handler(success, error);
-        });
+        auto handler = m_unsubscribeHandlers.take(identifier);
+        handler(success, error);
     }).get()];
 }
 

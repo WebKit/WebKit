@@ -32,14 +32,6 @@
 #import <WebKitLegacy/WAKView.h>
 #endif
 
-#if !defined(ENABLE_DASHBOARD_SUPPORT)
-#if !TARGET_OS_IPHONE
-#define ENABLE_DASHBOARD_SUPPORT 1
-#else
-#define ENABLE_DASHBOARD_SUPPORT 0
-#endif
-#endif
-
 #if !defined(ENABLE_FULLSCREEN_API)
 #if !TARGET_OS_IPHONE
 #define ENABLE_FULLSCREEN_API 1
@@ -215,12 +207,6 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (WAKView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments;
 #else
 - (NSView *)webView:(WebView *)webView plugInViewWithArguments:(NSDictionary *)arguments;
-#endif
-
-#if ENABLE_DASHBOARD_SUPPORT
-// FIXME: Remove this method once it is verified no one is dependent on it.
-// regions is an dictionary whose keys are regions label and values are arrays of WebDashboardRegions.
-- (void)webView:(WebView *)webView dashboardRegionsChanged:(NSDictionary *)regions;
 #endif
 
 #if !TARGET_OS_IPHONE

@@ -524,16 +524,6 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             [navigationDelegate webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
         else {
             id<NSSecureCoding> userInfo = nil;
-#if PLATFORM(MAC)
-            // This is only here for binary compatibility with old Safari builds.
-            // FIXME: Remove this after the next public Safari release after 11/16/22.
-            if (MacApplication::isSafari()) {
-                userInfo = @{
-                    @"CanHandleRequest":@(navigationAction->canHandleRequest()),
-                    @"isProcessingUserGesture":@(navigationAction->isProcessingUserGesture())
-                };
-            }
-#endif
             [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView decidePolicyForNavigationAction:wrapper(navigationAction) preferences:wrapper(defaultWebsitePolicies) userInfo:userInfo decisionHandler:makeBlockPtr(WTFMove(decisionHandlerWithPreferencesOrPolicies)).get()];
         }
     } else {

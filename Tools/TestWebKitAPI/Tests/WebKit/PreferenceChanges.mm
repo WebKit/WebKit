@@ -49,12 +49,7 @@ static bool receivedPreferenceNotification = false;
     [super preferenceDidChange:domain key:key encodedValue:encodedValue];
 }
 @end
-
-// FIXME: Remove this pragma once webkit.org/b/221848 is resolved.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-const-variable"
 static const CFStringRef globalDomain = kCFPreferencesAnyApplication;
-#pragma clang diagnostic pop
 static const CFStringRef testDomain = CFSTR("com.apple.avfoundation");
 
 #define TEST_KEY() ((CFStringRef)[NSString stringWithFormat:@"TestWebKitAPI_TestKey_%s", ::testing::UnitTest::GetInstance()->current_test_info()->name()])

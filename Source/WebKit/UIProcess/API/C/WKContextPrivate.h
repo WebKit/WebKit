@@ -70,18 +70,9 @@ WK_EXPORT void WKContextSetIconDatabasePath(WKContextRef context, WKStringRef ic
 
 WK_EXPORT void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef context, WKCertificateInfoRef certificate, WKStringRef host) WK_C_API_DEPRECATED;
 
-// FIXME: This is a workaround for testing purposes only and should be removed once a better
-// solution has been found for testing.
-WK_EXPORT void WKContextDisableProcessTermination(WKContextRef context);
-WK_EXPORT void WKContextEnableProcessTermination(WKContextRef context);
-
 WK_EXPORT void WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled);
 
 WK_EXPORT void WKContextWarmInitialProcess(WKContextRef context);
-
-// FIXME: This function is temporary and useful during the development of the NetworkProcess feature.
-// At some point it should be removed.
-WK_EXPORT void WKContextSetUsesNetworkProcess(WKContextRef, bool);
 
 WK_EXPORT void WKContextTerminateGPUProcess(WKContextRef);
 WK_EXPORT void WKContextTerminateServiceWorkers(WKContextRef);

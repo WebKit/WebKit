@@ -468,7 +468,6 @@ static InputSessionChangeCount nextInputSessionChangeCount()
     RetainPtr<TestMessageHandler> _testHandler;
     RetainPtr<WKUserScript> _onloadScript;
 #if PLATFORM(IOS_FAMILY)
-    std::unique_ptr<ClassMethodSwizzler> _sharedCalloutBarSwizzler;
     InputSessionChangeCount _inputSessionChangeCount;
 #endif
 #if PLATFORM(MAC)
@@ -488,15 +487,6 @@ static InputSessionChangeCount nextInputSessionChangeCount()
     return [self initWithFrame:frame configuration:configuration addToWindow:YES];
 }
 
-#if PLATFORM(IOS_FAMILY)
-
-static UICalloutBar *suppressUICalloutBar()
-{
-    return nil;
-}
-
-#endif
-
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration addToWindow:(BOOL)addToWindow
 {
     self = [super initWithFrame:frame configuration:configuration];
@@ -507,8 +497,6 @@ static UICalloutBar *suppressUICalloutBar()
         [self _setUpTestWindow:frame];
 
 #if PLATFORM(IOS_FAMILY)
-    // FIXME: Remove this workaround once <https://webkit.org/b/175204> is fixed.
-    _sharedCalloutBarSwizzler = makeUnique<ClassMethodSwizzler>([UICalloutBar class], @selector(sharedCalloutBar), reinterpret_cast<IMP>(suppressUICalloutBar));
     _inputSessionChangeCount = 0;
 #endif
 

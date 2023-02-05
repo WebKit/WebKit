@@ -81,11 +81,6 @@ void WebKitInitialize(void)
     WebCore::initializeHTTPConnectionSettingsOnStartup();
 }
 
-void WebKitSetIsClassic(BOOL flag)
-{
-    // FIXME: Remove this once it stops being called.
-}
-
 float WebKitGetMinimumZoomFontSize(void)
 {
     return DEFAULT_VALUE_FOR_MinimumZoomFontSize;
@@ -113,11 +108,6 @@ const char *WebKitPlatformSystemRootDirectory(void)
 #else
     return "/";
 #endif
-}
-
-void WebKitSetBackgroundAndForegroundNotificationNames(NSString *didEnterBackgroundName, NSString *willEnterForegroundName)
-{
-    // FIXME: Remove this function.
 }
 
 void WebKitSetInvalidWebBackgroundTaskIdentifier(WebBackgroundTaskIdentifier taskIdentifier)

@@ -297,18 +297,7 @@ void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<Media
 
     gst_element_post_message(GST_ELEMENT(source), gst_message_new_stream_collection(GST_OBJECT(source), source->priv->collection.get()));
 
-    for (const RefPtr<Stream>& stream: source->priv->streams.values()) {
-        // Workaround: gst_element_add_pad() should already call gst_pad_set_active() if the element is PAUSED or
-        // PLAYING. Unfortunately, as of GStreamer 1.18.2 it does so with the element lock taken, causing a deadlock
-        // in gst_pad_start_task(), who tries to post a `stream-status` message in the element, which also requires
-        // the element lock. Activating the pad beforehand avoids that codepath.
-        // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/210
-        // FIXME: Remove this workaround when the bug gets fixed and versions without the bug are no longer in use.
-        GstState state;
-        gst_element_get_state(GST_ELEMENT(source), &state, nullptr, 0);
-        if (state > GST_STATE_READY)
-            gst_pad_set_active(GST_PAD(stream->pad.get()), true);
-
+    for (const RefPtr<Stream>& stream : source->priv->streams.values()) {
         GST_DEBUG_OBJECT(source, "Adding pad '%s' for stream with name '%s'", GST_OBJECT_NAME(stream->pad.get()), stream->track->trackId().string().utf8().data());
         gst_element_add_pad(GST_ELEMENT(source), GST_PAD(stream->pad.get()));
     }

@@ -191,9 +191,6 @@ class EmptyChromeClient : public ChromeClient {
     void didStartOverflowScroll() final { }
     void didEndOverflowScroll() final { }
 
-    void suppressFormNotifications() final { }
-    void restoreFormNotifications() final { }
-
     void addOrUpdateScrollingLayer(Node*, PlatformLayer*, PlatformLayer*, const IntSize&, bool, bool) final { }
     void removeScrollingLayer(Node*, PlatformLayer*, PlatformLayer*) final { }
 

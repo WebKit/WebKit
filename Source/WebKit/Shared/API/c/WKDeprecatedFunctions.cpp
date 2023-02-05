@@ -40,14 +40,6 @@
 
 // Deprecated functions that should be removed from the framework once nobody uses them.
 
-void WKContextSetUsesNetworkProcess(WKContextRef, bool)
-{
-}
-
-void WKContextSetProcessModel(WKContextRef, WKProcessModel)
-{
-}
-
 void WKPreferencesSetQTKitEnabled(WKPreferencesRef, bool)
 {
 }

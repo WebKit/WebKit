@@ -118,7 +118,6 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebInspector/WebNodeHighlighter.mm
 
     mac/WebView/WebArchive.mm
-    mac/WebView/WebDashboardRegion.mm
     mac/WebView/WebDelegateImplementationCaching.mm
     mac/WebView/WebDeviceOrientation.mm
     mac/WebView/WebDeviceOrientationProviderMock.mm
@@ -551,7 +550,6 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     mac/WebView/WebEditingDelegate.h
     mac/WebView/WebHistoryDelegate.h
     mac/WebView/WebWindowAnimation.h
-    mac/WebView/WebDashboardRegion.h
     mac/WebView/WebHTMLView.h
     mac/WebView/WebIndicateLayer.h
     mac/WebView/WebHTMLRepresentation.h

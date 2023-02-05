@@ -45,11 +45,7 @@ void WebKitSetInvalidWebBackgroundTaskIdentifier(WebBackgroundTaskIdentifier);
 void WebKitSetStartBackgroundTaskBlock(StartBackgroundTaskBlock);
 void WebKitSetEndBackgroundTaskBlock(EndBackgroundTaskBlock);
 
-// This method gives WebKit the notifications to listen to so it knows about app Suspend/Resume
-void WebKitSetBackgroundAndForegroundNotificationNames(NSString *, NSString *);
-
 void WebKitInitialize(void);
-void WebKitSetIsClassic(BOOL);
 float WebKitGetMinimumZoomFontSize(void);
     
 int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length);

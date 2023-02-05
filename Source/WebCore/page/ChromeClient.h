@@ -297,12 +297,6 @@ public:
     virtual void didStartOverflowScroll() = 0;
     virtual void didEndOverflowScroll() = 0;
 
-    // FIXME: Remove this functionality. This functionality was added to workaround an issue (<rdar://problem/5973875>)
-    // where the unconfirmed text in a text area would be removed when a person clicks in the text area before a
-    // suggestion is shown. We should fix this issue in <rdar://problem/5975559>.
-    virtual void suppressFormNotifications() = 0;
-    virtual void restoreFormNotifications() = 0;
-
     virtual void didFlushCompositingLayers() { }
 
     virtual bool fetchCustomFixedPositionLayoutRect(IntRect&) { return false; }

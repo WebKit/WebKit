@@ -181,10 +181,6 @@ private:
     void didEndOverflowScroll() final;
     bool hasStablePageScaleFactor() const final;
 
-    // FIXME: See <rdar://problem/5975559>
-    void suppressFormNotifications() final;
-    void restoreFormNotifications() final;
-
     void addOrUpdateScrollingLayer(WebCore::Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer, const WebCore::IntSize& scrollSize, bool allowHorizontalScrollbar, bool allowVerticalScrollbar) final;
     void removeScrollingLayer(WebCore::Node*, PlatformLayer* scrollingLayer, PlatformLayer* contentsLayer) final;
 

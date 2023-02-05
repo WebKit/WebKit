@@ -457,16 +457,6 @@ void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef, WKCertificateIn
 {
 }
 
-void WKContextDisableProcessTermination(WKContextRef contextRef)
-{
-    WebKit::toImpl(contextRef)->disableProcessTermination();
-}
-
-void WKContextEnableProcessTermination(WKContextRef contextRef)
-{
-    WebKit::toImpl(contextRef)->enableProcessTermination();
-}
-
 void WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
 {
     WebKit::toImpl(contextRef)->setHTTPPipeliningEnabled(enabled);

@@ -197,11 +197,6 @@ ExceptionOr<Ref<Database>> DatabaseManager::openDatabase(Document& document, con
 {
     ASSERT(isMainThread());
 
-    // FIXME: Remove this call to ScriptController::initializeMainThread(). The
-    // main thread should have been initialized by a WebKit entrypoint already.
-    // Also, initializeMainThread() does nothing on iOS.
-    ScriptController::initializeMainThread();
-
     bool setVersionInNewDatabase = !creationCallback;
     auto openResult = openDatabaseBackend(document, name, expectedVersion, displayName, estimatedSize, setVersionInNewDatabase);
     if (openResult.hasException())

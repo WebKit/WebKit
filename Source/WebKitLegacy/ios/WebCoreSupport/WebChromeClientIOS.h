@@ -76,9 +76,6 @@ private:
     void didStartOverflowScroll() final;
     void didEndOverflowScroll() final;
 
-    void suppressFormNotifications() final;
-    void restoreFormNotifications() final;
-
     void elementDidFocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void elementDidBlur(WebCore::Element&) final;
 
@@ -107,8 +104,6 @@ private:
 #if ENABLE(ORIENTATION_EVENTS)
     int deviceOrientation() const final;
 #endif
-
-    int m_formNotificationSuppressions { 0 };
 };
 
 #endif

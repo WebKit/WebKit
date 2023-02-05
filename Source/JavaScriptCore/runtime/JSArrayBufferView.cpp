@@ -168,7 +168,6 @@ JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
 {
     setButterfly(vm, context.butterfly());
     ASSERT(context.vector() == removeArrayPtrTag(context.vector()));
-    m_vector.setWithoutBarrier(context.vector(), m_length);
 }
 
 void JSArrayBufferView::finishCreation(VM& vm)
@@ -322,7 +321,6 @@ ArrayBuffer* JSArrayBufferView::slowDownAndWasteMemory()
     {
         Locker locker { cellLock() };
         butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-        m_vector.setWithoutBarrier(buffer->data(), m_length);
         WTF::storeStoreFence();
         m_mode = WastefulTypedArray; // There is no possibility that FastTypedArray or OversizeTypedArray becomes resizable ones since resizable ones do not start with FastTypedArray or OversizeTypedArray.
     }

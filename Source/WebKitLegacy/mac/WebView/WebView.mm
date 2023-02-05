@@ -3497,30 +3497,6 @@ IGNORE_WARNINGS_END
 
 #endif // PLATFORM(IOS_FAMILY)
 
-#if ENABLE(DASHBOARD_SUPPORT)
-
-// FIXME: Remove these once it is verified no one is dependent on it.
-
-- (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions
-{
-}
-
-- (NSDictionary *)_dashboardRegions
-{
-    return nil;
-}
-
-- (void)_setDashboardBehavior:(WebDashboardBehavior)behavior to:(BOOL)flag
-{
-}
-
-- (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior
-{
-    return NO;
-}
-
-#endif /* ENABLE(DASHBOARD_SUPPORT) */
-
 #if !PLATFORM(IOS_FAMILY)
 + (void)_setUsesTestModeFocusRingColor:(BOOL)f
 {

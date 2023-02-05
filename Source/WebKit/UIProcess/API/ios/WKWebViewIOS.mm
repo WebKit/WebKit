@@ -2010,10 +2010,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_customContentView web_scrollViewDidEndZooming:scrollView withView:view atScale:scale];
 
     ASSERT(scrollView == _scrollView);
-    // FIXME: remove when rdar://problem/36065495 is fixed.
-    // When rotating with two fingers down, UIScrollView can set a bogus content view position.
-    // "Center" is top left because we set the anchorPoint to 0,0.
-    [_contentView setCenter:self.bounds.origin];
 
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
     [_contentView didZoomToScale:scale];

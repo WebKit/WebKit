@@ -4,12 +4,6 @@ if (self.importScripts) {
     self.importScripts('../resources/testharness.js');
 }
 
-
-// FIXME: Remove next line when bug https://bugs.webkit.org/show_bug.cgi?id=167697
-// is fixed. For the moment, so that test may pass, we have to insert a reference
-// to Uint8Array here (otherwise, the private variable cannot be resolved).
-const d = new Uint8Array(1);
-
 test(function() {
     let controller;
 

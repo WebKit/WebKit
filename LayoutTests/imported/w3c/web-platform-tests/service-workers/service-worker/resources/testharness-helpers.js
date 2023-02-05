@@ -96,28 +96,6 @@ function assert_array_objects_equals(actual, expected, description) {
     });
 }
 
-// Asserts that |object| that is an instance of some interface has the attribute
-// |attribute_name| following the conditions specified by WebIDL, but it's
-// acceptable that the attribute |attribute_name| is an own property of the
-// object because we're in the middle of moving the attribute to a prototype
-// chain.  Once we complete the transition to prototype chains,
-// assert_will_be_idl_attribute must be replaced with assert_idl_attribute
-// defined in testharness.js.
-//
-// FIXME: Remove assert_will_be_idl_attribute once we complete the transition
-// of moving the DOM attributes to prototype chains.  (http://crbug.com/43394)
-function assert_will_be_idl_attribute(object, attribute_name, description) {
-  assert_equals(typeof object, "object", description);
-
-  assert_true("hasOwnProperty" in object, description);
-
-  // Do not test if |attribute_name| is not an own property because
-  // |attribute_name| is in the middle of the transition to a prototype
-  // chain.  (http://crbug.com/43394)
-
-  assert_true(attribute_name in object, description);
-}
-
 // Stringifies a DOM object.  This function stringifies not only own properties
 // but also DOM attributes which are on a prototype chain.  Note that
 // JSON.stringify only stringifies own properties.
