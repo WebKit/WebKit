@@ -47,9 +47,8 @@ ComputePipelineImpl::~ComputePipelineImpl()
 
 Ref<BindGroupLayout> ComputePipelineImpl::getBindGroupLayout(uint32_t index)
 {
-    return m_bindGroupLayouts.ensure(index, [this, index] {
-        return BindGroupLayoutImpl::create(wgpuComputePipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
-    }).iterator->value;
+    // "A new GPUBindGroupLayout wrapper is returned each time"
+    return BindGroupLayoutImpl::create(wgpuComputePipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
 }
 
 void ComputePipelineImpl::setLabelInternal(const String& label)

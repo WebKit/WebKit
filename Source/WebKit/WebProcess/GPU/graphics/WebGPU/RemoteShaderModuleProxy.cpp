@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<PAL::We
     auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfo());
     auto [messages] = sendResult.takeReplyOr(Vector<CompilationMessage> { });
 
-    auto backingMessages = messages.map([] (CompilationMessage compilationMessage) {
+    auto backingMessages = messages.map([](CompilationMessage compilationMessage) {
         return PAL::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
     });
     callback(PAL::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));

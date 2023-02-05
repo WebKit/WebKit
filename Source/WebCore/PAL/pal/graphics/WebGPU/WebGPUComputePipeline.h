@@ -46,6 +46,7 @@ public:
         setLabelInternal(m_label);
     }
 
+    // "A new GPUBindGroupLayout wrapper is returned each time"
     virtual Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) = 0;
 
 protected:

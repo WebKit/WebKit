@@ -47,13 +47,12 @@ RemoteRenderPipelineProxy::~RemoteRenderPipelineProxy()
 
 Ref<PAL::WebGPU::BindGroupLayout> RemoteRenderPipelineProxy::getBindGroupLayout(uint32_t index)
 {
-    return m_bindGroupLayouts.ensure(index, [this, index] {
-        auto identifier = WebGPUIdentifier::generate();
-        auto sendResult = send(Messages::RemoteRenderPipeline::GetBindGroupLayout(index, identifier));
-        UNUSED_VARIABLE(sendResult);
+    // "A new GPUBindGroupLayout wrapper is returned each time"
+    auto identifier = WebGPUIdentifier::generate();
+    auto sendResult = send(Messages::RemoteRenderPipeline::GetBindGroupLayout(index, identifier));
+    UNUSED_VARIABLE(sendResult);
 
-        return RemoteBindGroupLayoutProxy::create(m_parent, m_convertToBackingContext, identifier);
-    }).iterator->value;
+    return RemoteBindGroupLayoutProxy::create(m_parent, m_convertToBackingContext, identifier);
 }
 
 void RemoteRenderPipelineProxy::setLabelInternal(const String& label)

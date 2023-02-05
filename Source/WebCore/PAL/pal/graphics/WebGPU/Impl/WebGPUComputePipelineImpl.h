@@ -64,7 +64,6 @@ private:
 
     WGPUComputePipeline m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-    HashMap<uint32_t, Ref<BindGroupLayoutImpl>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupLayouts;
 };
 
 } // namespace PAL::WebGPU

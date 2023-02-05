@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@ public:
 
     ~ComputePipeline();
 
-    BindGroupLayout* getBindGroupLayout(uint32_t groupIndex);
+    RefPtr<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
     void setLabel(String&&);
 
     bool isValid() const { return m_computePipelineState; }

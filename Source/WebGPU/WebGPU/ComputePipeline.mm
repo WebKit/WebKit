@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -224,7 +224,7 @@ ComputePipeline::ComputePipeline(Device& device)
 
 ComputePipeline::~ComputePipeline() = default;
 
-BindGroupLayout* ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
+RefPtr<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     if (m_pipelineLayout)
         return const_cast<BindGroupLayout*>(&m_pipelineLayout->bindGroupLayout(groupIndex));
@@ -255,6 +255,7 @@ BindGroupLayout* ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
     return bindGroupLayout.ptr();
 #else
     UNUSED_PARAM(groupIndex);
+    // FIXME: Return an invalid object instead of nullptr.
     return nullptr;
 #endif
 }
@@ -275,7 +276,7 @@ void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
 
 WGPUBindGroupLayout wgpuComputePipelineGetBindGroupLayout(WGPUComputePipeline computePipeline, uint32_t groupIndex)
 {
-    return WebGPU::fromAPI(computePipeline).getBindGroupLayout(groupIndex);
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(computePipeline).getBindGroupLayout(groupIndex));
 }
 
 void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, const char* label)
