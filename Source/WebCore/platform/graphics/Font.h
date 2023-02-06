@@ -310,7 +310,10 @@ private:
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
 
 #if PLATFORM(COCOA)
-    enum class SupportsFeature {
+    mutable std::optional<PAL::OTSVGTable> m_otSVGTable;
+    mutable std::optional<ComplexColorFormatGlyphs> m_glyphsWithComplexColorFormat; // SVG and sbix
+
+    enum class SupportsFeature : uint8_t {
         No,
         Yes,
         Unknown
@@ -319,8 +322,6 @@ private:
     mutable SupportsFeature m_supportsAllSmallCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsPetiteCaps { SupportsFeature::Unknown };
     mutable SupportsFeature m_supportsAllPetiteCaps { SupportsFeature::Unknown };
-    mutable std::optional<PAL::OTSVGTable> m_otSVGTable;
-    mutable std::optional<ComplexColorFormatGlyphs> m_glyphsWithComplexColorFormat; // SVG and sbix
 #endif
 
 #if PLATFORM(WIN)
@@ -331,12 +332,11 @@ private:
     Glyph m_spaceGlyph { 0 };
     Glyph m_zeroWidthSpaceGlyph { 0 };
 
+    float m_spaceWidth { 0 };
+    float m_syntheticBoldOffset { 0 };
+
     Origin m_origin; // Whether or not we are custom font loaded via @font-face
     Visibility m_visibility; // @font-face's internal timer can cause us to show fonts even when a font is being downloaded.
-
-    float m_spaceWidth { 0 };
-
-    float m_syntheticBoldOffset { 0 };
 
     unsigned m_treatAsFixedPitch : 1;
     unsigned m_isInterstitial : 1; // Whether or not this custom font is the last resort placeholder for a loading font
