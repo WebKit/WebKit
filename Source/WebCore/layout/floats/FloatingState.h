@@ -89,6 +89,8 @@ public:
     // floats to initiate the floating state in the integration codepath (i.e. when the float comes from the parent BFC).
     void setIsLeftToRightDirection(bool isLeftToRightDirection) { m_isLeftToRightDirection = isLeftToRightDirection; }
 
+    void shrinkToFit();
+
 private:
     friend class FloatingContext;
     LayoutState& layoutState() const { return m_layoutState; }

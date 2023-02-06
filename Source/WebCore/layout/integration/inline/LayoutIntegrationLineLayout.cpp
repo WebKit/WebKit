@@ -599,8 +599,9 @@ void LineLayout::constructContent()
         renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft());
     }
 
-    m_inlineFormattingState.shrinkToFit();
     m_inlineFormattingState.resetNestedListMarkerOffsets();
+    m_inlineFormattingState.shrinkToFit();
+    m_blockFormattingState.shrinkToFit();
 }
 
 void LineLayout::updateInlineContentConstraints()
