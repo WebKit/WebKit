@@ -45,7 +45,7 @@ class IOSSimulatorPort(IOSPort):
 
     DEFAULT_DEVICE_TYPES = [
         DeviceType(hardware_family='iPhone', hardware_type='12'),
-        DeviceType(hardware_family='iPad', hardware_type='(5th generation)'),
+        DeviceType(hardware_family='iPad', hardware_type='(10th generation)'),
         DeviceType(hardware_family='iPhone', hardware_type='7'),
     ]
     SDK = apple_additions().get_sdk('iphonesimulator') if apple_additions() else 'iphonesimulator'
@@ -126,7 +126,7 @@ class IPadSimulatorPort(IOSSimulatorPort):
     port_name = 'ipad-simulator'
 
     DEVICE_TYPE = DeviceType(hardware_family='iPad')
-    DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='iPad', hardware_type='(5th generation)')]
+    DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='iPad', hardware_type='(10th generation)')]
 
     def __init__(self, *args, **kwargs):
         super(IPadSimulatorPort, self).__init__(*args, **kwargs)

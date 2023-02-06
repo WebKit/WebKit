@@ -106,8 +106,8 @@ simctl_json_output = """{
      "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad-Air-2"
    },
    {
-     "name" : "iPad (5th generation)",
-     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad--5th-generation-"
+     "name" : "iPad (10th generation)",
+     "identifier" : "com.apple.CoreSimulator.SimDeviceType.iPad--10th-generation-"
    },
    {
      "name" : "iPad Pro (9.7-inch)",
@@ -408,7 +408,7 @@ simctl_json_output = """{
      {
        "state" : "Shutdown",
        "availability" : "(available)",
-       "name" : "iPad (5th generation)",
+       "name" : "iPad (10th generation)",
        "udid" : "1805162F-861B-40CA-8468-8B7DC0922D62"
      },
      {
