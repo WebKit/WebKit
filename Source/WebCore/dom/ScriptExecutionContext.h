@@ -383,8 +383,6 @@ private:
     std::unique_ptr<Vector<std::unique_ptr<PendingException>>> m_pendingExceptions;
     std::unique_ptr<RejectedPromiseTracker> m_rejectedPromiseTracker;
 
-    ReasonForSuspension m_reasonForSuspendingActiveDOMObjects { static_cast<ReasonForSuspension>(-1) };
-
     std::unique_ptr<PublicURLManager> m_publicURLManager;
 
     RefPtr<DatabaseContext> m_databaseContext;
@@ -392,11 +390,6 @@ private:
     int m_circularSequentialID { 0 };
     int m_timerNestingLevel { 0 };
 
-    bool m_activeDOMObjectsAreSuspended { false };
-    bool m_activeDOMObjectsAreStopped { false };
-    bool m_inDispatchErrorEvent { false };
-    mutable bool m_activeDOMObjectAdditionForbidden { false };
-    bool m_willprocessMessageWithMessagePortsSoon { false };
     Vector<CompletionHandler<void()>> m_processMessageWithMessagePortsSoonHandlers;
 
 #if ASSERT_ENABLED
@@ -411,11 +404,18 @@ private:
     String m_domainForCachePartition;
     mutable ScriptExecutionContextIdentifier m_identifier;
 
-    bool m_hasLoggedAuthenticatedEncryptionWarning { false };
-    StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
-
     HashMap<NotificationCallbackIdentifier, CompletionHandler<void()>> m_notificationCallbacks;
     HashSet<Ref<DeferredPromise>> m_deferredPromises;
+
+    StorageBlockingPolicy m_storageBlockingPolicy { StorageBlockingPolicy::AllowAll };
+    ReasonForSuspension m_reasonForSuspendingActiveDOMObjects { static_cast<ReasonForSuspension>(-1) };
+
+    bool m_activeDOMObjectsAreSuspended { false };
+    bool m_activeDOMObjectsAreStopped { false };
+    bool m_inDispatchErrorEvent { false };
+    mutable bool m_activeDOMObjectAdditionForbidden { false };
+    bool m_willprocessMessageWithMessagePortsSoon { false };
+    bool m_hasLoggedAuthenticatedEncryptionWarning { false };
 };
 
 WebCoreOpaqueRoot root(ScriptExecutionContext*);

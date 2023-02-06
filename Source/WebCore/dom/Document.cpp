@@ -567,7 +567,6 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
 #endif
     , m_xmlVersion("1.0"_s)
     , m_constantPropertyMap(makeUnique<ConstantPropertyMap>(*this))
-    , m_documentClasses(documentClasses)
 #if ENABLE(FULLSCREEN_API)
     , m_fullscreenManager { makeUniqueRef<FullscreenManager>(*this) }
 #endif
@@ -587,18 +586,19 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
     , m_socketProvider(page() ? &page()->socketProvider() : nullptr)
-    , m_isSynthesized(constructionFlags & Synthesized)
-    , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
-    , m_latestFocusTrigger { FocusTrigger::Other }
     , m_orientationNotifier(currentOrientation(frame))
     , m_undoManager(UndoManager::create(*this))
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
     , m_whitespaceCache(makeUniqueRef<WhitespaceCache>())
     , m_reportingScope(ReportingScope::create(*this))
+    , m_documentClasses(documentClasses)
+    , m_latestFocusTrigger { FocusTrigger::Other }
 #if ENABLE(DOM_AUDIO_SESSION)
     , m_audioSessionType { DOMAudioSession::Type::Auto }
 #endif
+    , m_isSynthesized(constructionFlags & Synthesized)
+    , m_isNonRenderedPlaceholder(constructionFlags & NonRenderedPlaceholder)
 {
     addToDocumentsMap();
 
