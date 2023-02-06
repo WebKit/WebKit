@@ -3822,10 +3822,10 @@ struct WebCore::ServiceWorkerClientQueryOptions {
 
 struct WebCore::ServiceWorkerData {
     WebCore::ServiceWorkerIdentifier identifier;
+    WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier;
     URL scriptURL;
     WebCore::ServiceWorkerState state;
     WebCore::WorkerType type;
-    WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier;
 };
 
 struct WebCore::ServiceWorkerJobData {
