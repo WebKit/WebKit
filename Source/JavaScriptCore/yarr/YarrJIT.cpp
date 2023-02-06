@@ -4380,16 +4380,20 @@ public:
         RELEASE_ASSERT(!m_containsNestedSubpatterns);
 #endif
 
-        ASSERT(!m_failureReason);
-
-        if (m_usesT2)
-            ASSERT(m_regs.regT2 != MacroAssembler::InvalidGPRReg);
-
         if (UNLIKELY(Options::dumpDisassembly() || Options::dumpRegExpDisassembly()))
             m_disassembler = makeUnique<YarrDisassembler>(this);
 
         if (m_disassembler)
             m_disassembler->setStartOfCode(m_jit.label());
+
+        if (m_failureReason) {
+            m_jit.move(MacroAssembler::TrustedImmPtr((void*)static_cast<size_t>(JSRegExpResult::JITCodeFailure)), m_regs.returnRegister);
+            m_jit.move(MacroAssembler::TrustedImm32(0), m_regs.returnRegister2);
+            return;
+        }
+
+        if (m_usesT2)
+            ASSERT(m_regs.regT2 != MacroAssembler::InvalidGPRReg);
 
         MacroAssembler::Jump hasInput = checkInput();
         generateFailReturn();
