@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2013-2015 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -937,15 +937,15 @@ bool isLogicalEndOfLine(const VisiblePosition& p)
     return p.isNotNull() && p == logicalEndOfLine(p);
 }
 
-static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIterator::LineBoxIterator& lineBox, int lineDirectionPoint)
+static inline LayoutPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIterator::LineBoxIterator& lineBox, LayoutUnit lineDirectionPoint)
 {
     auto& root = lineBox->formattingContextRoot();
     auto absoluteBlockPoint = root.localToAbsolute(FloatPoint()) - toFloatSize(root.scrollPosition());
 
     if (root.isHorizontalWritingMode())
-        return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), contentStartInBlockDirection(*lineBox));
+        return LayoutPoint(lineDirectionPoint - absoluteBlockPoint.x(), contentStartInBlockDirection(*lineBox));
 
-    return IntPoint(contentStartInBlockDirection(*lineBox), lineDirectionPoint - absoluteBlockPoint.y());
+    return LayoutPoint(contentStartInBlockDirection(*lineBox), lineDirectionPoint - absoluteBlockPoint.y());
 }
 
 static Element* rootEditableOrDocumentElement(Node& node, EditableType editableType)
@@ -955,7 +955,7 @@ static Element* rootEditableOrDocumentElement(Node& node, EditableType editableT
     return node.document().documentElement();
 }
 
-VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int lineDirectionPoint, EditableType editableType)
+VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, LayoutUnit lineDirectionPoint, EditableType editableType)
 {
     Position p = visiblePosition.deepEquivalent();
     Node* node = p.deprecatedNode();
@@ -1010,7 +1010,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     return firstPositionInNode(rootElement);
 }
 
-VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lineDirectionPoint, EditableType editableType)
+VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutUnit lineDirectionPoint, EditableType editableType)
 {
     Position p = visiblePosition.deepEquivalent();
     Node* node = p.deprecatedNode();
@@ -1321,7 +1321,7 @@ bool isBlankParagraph(const VisiblePosition& position)
     return isStartOfParagraph(position) && startOfParagraph(position.next()) != startOfParagraph(position);
 }
 
-VisiblePosition previousParagraphPosition(const VisiblePosition& p, int x)
+VisiblePosition previousParagraphPosition(const VisiblePosition& p, LayoutUnit x)
 {
     VisiblePosition pos = p;
     do {
@@ -1333,7 +1333,7 @@ VisiblePosition previousParagraphPosition(const VisiblePosition& p, int x)
     return pos;
 }
 
-VisiblePosition nextParagraphPosition(const VisiblePosition& p, int x)
+VisiblePosition nextParagraphPosition(const VisiblePosition& p, LayoutUnit x)
 {
     VisiblePosition pos = p;
     do {
