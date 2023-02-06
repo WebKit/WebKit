@@ -101,6 +101,16 @@ private:
     unsigned m_hasDocumentSecurityOrigin : 1;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleRareData);
+struct StyleRuleRareData {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleRareData);
+
+    static std::unique_ptr<StyleRuleRareData> createIfNeeded(Vector<Ref<StyleRuleBase>>, CSSSelectorList = { });
+
+    Vector<Ref<StyleRuleBase>> nestedRules;
+    CSSSelectorList resolvedSelectorList;
+};
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
 class StyleRule final : public StyleRuleBase {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRule);
@@ -112,9 +122,9 @@ public:
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }
     const CSSSelectorList& resolvedSelectorList() const
-    { 
-        if (!m_resolvedSelectorList.isEmpty())
-            return m_resolvedSelectorList;
+    {
+        if (m_rareData && !m_rareData->resolvedSelectorList.isEmpty())
+            return m_rareData->resolvedSelectorList;
         return m_selectorList;
     }
 
@@ -139,10 +149,10 @@ public:
 
     static unsigned averageSizeInBytes();
     void setProperties(Ref<StyleProperties>&&);
-    void setNestedRules(Vector<Ref<StyleRuleBase>> nestedRules) { m_nestedRules = nestedRules; }
-    void setResolvedSelectorList(CSSSelectorList&& resolvedSelectorList) const { m_resolvedSelectorList = WTFMove(resolvedSelectorList); }
-    const Vector<Ref<StyleRuleBase>>& nestedRules() const { return m_nestedRules; }
-    void appendNestedRule(Ref<StyleRuleBase> rule) { m_nestedRules.append(rule); }
+    void setNestedRules(Vector<Ref<StyleRuleBase>>);
+    void setResolvedSelectorList(CSSSelectorList&&) const;
+    const Vector<Ref<StyleRuleBase>>& nestedRules() const;
+    void appendNestedRule(Ref<StyleRuleBase>&& rule) { rareData().nestedRules.append(WTFMove(rule)); }
 
 private:
     StyleRule(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
@@ -151,17 +161,18 @@ private:
 
     static Ref<StyleRule> createForSplitting(const Vector<const CSSSelector*>&, Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin);
 
+    StyleRuleRareData& rareData() const;
+
+    bool m_isSplitRule { false };
+    bool m_isLastRuleInSplitRule { false };
+
     mutable Ref<StyleProperties> m_properties;
     CSSSelectorList m_selectorList;
-    mutable CSSSelectorList m_resolvedSelectorList;
-    Vector<Ref<StyleRuleBase>> m_nestedRules;
+    mutable std::unique_ptr<StyleRuleRareData> m_rareData;
 
 #if ENABLE(CSS_SELECTOR_JIT)
     mutable UniqueArray<CompiledSelector> m_compiledSelectors;
 #endif
-
-    bool m_isSplitRule { false };
-    bool m_isLastRuleInSplitRule { false };
 };
 
 class StyleRuleFontFace final : public StyleRuleBase {

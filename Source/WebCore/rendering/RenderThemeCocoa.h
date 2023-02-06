@@ -54,7 +54,6 @@ private:
 
 #if ENABLE(APPLE_PAY)
     void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;
-    bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
 
 #if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)

@@ -44,8 +44,20 @@ LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingCo
 LineBox LineBoxBuilder::build(size_t lineIndex)
 {
     auto& lineContent = this->lineContent();
-    // FIXME: The overflowing hanging content should be part of the ink overflow.  
-    auto lineBox = LineBox { rootBox(), lineContent.contentLogicalLeft, lineContent.contentLogicalWidth - lineContent.hangingContent.width, lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
+    // FIXME: The overflowing hanging content should be part of the ink overflow.
+    auto contentLogicalWidth = [&] {
+        if (lineContent.inlineBaseDirection == TextDirection::LTR)
+            return lineContent.contentLogicalWidth - lineContent.hangingContent.width;
+        // FIXME: Currently clients of the inline iterator interface (editing, selection, DOM etc) can't deal with
+        // hanging content offsets when they affect the rest of the content.
+        // In left-to-right inline direction, hanging content is always trailing hence the width does not impose offset on the rest of the content
+        // while with right-to-left, the hanging content is visually leading (left side of the content) and it does offset the rest of the line.
+        // What's missing is a way to tell that while the content starts at the left side of the (visually leading) hanging content
+        // the root inline box has an offset, the width of the hanging content (essentially decoupling the content and the root inline box visual left).
+        // For now just include the hanging content in the root inline box as if it was not hanging (this is how legacy line layout works).
+        return lineContent.contentLogicalWidth;
+    };
+    auto lineBox = LineBox { rootBox(), lineContent.contentLogicalLeft, contentLogicalWidth(), lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
     constructInlineLevelBoxes(lineBox);
     adjustIdeographicBaselineIfApplicable(lineBox);
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);

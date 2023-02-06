@@ -313,7 +313,7 @@ const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
 enum class EventHandlerRemoval { One, All };
 using EventTargetSet = HashCountedSet<Node*>;
 
-enum class DocumentCompatibilityMode : unsigned char {
+enum class DocumentCompatibilityMode : uint8_t {
     NoQuirksMode = 1,
     QuirksMode = 1 << 1,
     LimitedQuirksMode = 1 << 2
@@ -465,7 +465,7 @@ public:
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     WEBCORE_EXPORT Element* scrollingElement();
 
-    enum ReadyState { Loading, Interactive,  Complete };
+    enum ReadyState : uint8_t { Loading, Interactive,  Complete };
     ReadyState readyState() const { return m_readyState; }
 
     WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
@@ -1094,7 +1094,7 @@ public:
     UndoManager& undoManager() const { return m_undoManager.get(); }
 
     // designMode support
-    enum InheritedBool { off = false, on = true, inherit };    
+    enum InheritedBool : uint8_t { off = false, on = true, inherit };
     void setDesignMode(InheritedBool value);
     bool inDesignMode() const;
     WEBCORE_EXPORT String designMode() const;
@@ -1168,7 +1168,7 @@ public:
 
     void finishedParsing();
 
-    enum BackForwardCacheState { NotInBackForwardCache, AboutToEnterBackForwardCache, InBackForwardCache };
+    enum BackForwardCacheState : uint8_t { NotInBackForwardCache, AboutToEnterBackForwardCache, InBackForwardCache };
 
     BackForwardCacheState backForwardCacheState() const { return m_backForwardCacheState; }
     void setBackForwardCacheState(BackForwardCacheState);
@@ -1624,7 +1624,7 @@ public:
     bool handlingTouchEvent() const { return m_handlingTouchEvent; }
 #endif
 
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
     WEBCORE_EXPORT bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
     WEBCORE_EXPORT void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
     WEBCORE_EXPORT void wasLoadedWithDataTransferFromPrevalentResource();
@@ -1884,8 +1884,6 @@ private:
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
 
-    unsigned m_parserYieldTokenCount { 0 };
-
     // Document URLs.
     URLKeepingBlobAlive m_url; // Document.URL: The URL from which this document was retrieved.
     URL m_creationURL; // https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-creation-url.
@@ -1975,17 +1973,13 @@ private:
     std::unique_ptr<TransformSource> m_transformSource;
     RefPtr<Document> m_transformSourceDocument;
     Timer m_applyPendingXSLTransformsTimer;
-    bool m_hasPendingXSLTransforms { false };
 #endif
 
     String m_xmlEncoding;
     String m_xmlVersion;
-    StandaloneStatus m_xmlStandalone { StandaloneStatus::Unspecified };
-    bool m_hasXMLDeclaration { false };
 
     AtomString m_contentLanguage;
     AtomString m_documentElementLanguage;
-    TextDirection m_documentElementTextDirection;
 
     RefPtr<TextResourceDecoder> m_decoder;
 
@@ -2001,11 +1995,6 @@ private:
     // rendered but before compositing, for the next frame. The set is
     // cleared after they've been called.
     WeakHashSet<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvasesNeedingDisplayPreparation;
-
-#if ENABLE(DARK_MODE_CSS)
-    OptionSet<ColorScheme> m_colorScheme;
-    bool m_allowsColorSchemeTransformations { true };
-#endif
 
     HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
 
@@ -2031,8 +2020,6 @@ private:
 
     std::unique_ptr<SelectorQueryCache> m_selectorQueryCache;
 
-    DocumentClasses m_documentClasses;
-
     RenderPtr<RenderView> m_renderView;
     std::unique_ptr<RenderStyle> m_initialContainingBlockStyle;
 
@@ -2055,7 +2042,6 @@ private:
     Timer m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
-    OptionSet<DisabledAdaptations> m_disabledAdaptations;
 
     DocumentEventTiming m_eventTiming;
 
@@ -2064,15 +2050,6 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<EventTargetSet> m_touchEventTargets;
 #endif
-#if ENABLE(TOUCH_ACTION_REGIONS)
-    bool m_mayHaveElementsWithNonAutoTouchAction { false };
-#endif
-#if ENABLE(EDITABLE_REGION)
-    bool m_mayHaveEditableElements { false };
-#endif
-
-    bool m_mayHaveRenderedSVGForeignObjects { false };
-    bool m_mayHaveRenderedSVGRootElements { false };
 
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 
@@ -2152,11 +2129,85 @@ private:
 
     String m_cachedDOMCookies;
 
-    std::optional<WallTime> m_overrideLastModified;
+    Markable<WallTime, WallTime::MarkableTraits> m_overrideLastModified;
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_associatedFormControls;
-    unsigned m_disabledFieldsetElementsCount { 0 };
 
+    OrientationNotifier m_orientationNotifier;
+    mutable RefPtr<Logger> m_logger;
+    RefPtr<StringCallback> m_consoleMessageListener;
+
+    RefPtr<DocumentTimeline> m_timeline;
+    std::unique_ptr<DocumentTimelinesController> m_timelinesController;
+
+    RefPtr<WindowEventLoop> m_eventLoop;
+    std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;
+
+#if ENABLE(SERVICE_WORKER)
+    RefPtr<SWClientConnection> m_serviceWorkerConnection;
+#endif
+
+#if ENABLE(TRACKING_PREVENTION)
+    RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
+    String m_referrerOverride;
+#endif
+    
+    std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
+
+#if ENABLE(CSS_PAINTING_API)
+    RefPtr<PaintWorklet> m_paintWorklet;
+    HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
+#endif
+
+#if ENABLE(CONTENT_CHANGE_OBSERVER)
+    std::unique_ptr<ContentChangeObserver> m_contentChangeObserver;
+    std::unique_ptr<DOMTimerHoldingTank> m_domTimerHoldingTank;
+#endif
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    WeakPtr<HTMLVideoElement, WeakPtrImplWithEventTargetData> m_pictureInPictureElement;
+#endif
+
+    std::unique_ptr<TextManipulationController> m_textManipulationController;
+
+    Ref<UndoManager> m_undoManager;
+    UniqueRef<Editor> m_editor;
+    UniqueRef<FrameSelection> m_selection;
+    UniqueRef<WhitespaceCache> m_whitespaceCache;
+        
+    String m_fragmentDirective;
+
+    ListHashSet<Ref<Element>> m_topLayerElements;
+
+#if ENABLE(WEB_RTC)
+    RefPtr<RTCNetworkManager> m_rtcNetworkManager;
+#endif
+
+    Vector<Function<void()>> m_whenIsVisibleHandlers;
+
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
+
+    Ref<ReportingScope> m_reportingScope;
+
+    std::unique_ptr<ModalContainerObserver> m_modalContainerObserver;
+    std::unique_ptr<WakeLockManager> m_wakeLockManager;
+    std::unique_ptr<SleepDisabler> m_sleepDisabler;
+
+#if ENABLE(MEDIA_STREAM)
+    String m_idHashSalt;
+    size_t m_activeMediaElementsWithMediaStreamCount { 0 };
+#endif
+
+    struct PendingScrollEventTargetList;
+    std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
+
+    MediaProducerMediaStateFlags m_mediaState;
+
+    unsigned m_writeRecursionDepth { 0 };
+    unsigned m_numberOfRejectedSyncXHRs { 0 };
+    unsigned m_parserYieldTokenCount { 0 };
+
+    unsigned m_disabledFieldsetElementsCount { 0 };
     unsigned m_dataListElementCount { 0 };
 
     unsigned m_listenerTypes { 0 };
@@ -2176,15 +2227,31 @@ private:
     unsigned m_activeParserCount { 0 };
     unsigned m_styleRecalcCount { 0 };
 
-    unsigned m_writeRecursionDepth { 0 };
+    DocumentClasses m_documentClasses;
+
+    TextDirection m_documentElementTextDirection;
 
     InheritedBool m_designMode { inherit };
-    MediaProducerMediaStateFlags m_mediaState;
-    bool m_userHasInteractedWithMediaElement { false };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
     ReadyState m_readyState { Complete };
 
     MutationObserverOptions m_mutationObserverTypes;
+
+    OptionSet<DisabledAdaptations> m_disabledAdaptations;
+
+    FocusTrigger m_latestFocusTrigger { };
+
+#if ENABLE(DOM_AUDIO_SESSION)
+    DOMAudioSessionType m_audioSessionType { };
+#endif
+
+    StandaloneStatus m_xmlStandalone { StandaloneStatus::Unspecified };
+    bool m_hasXMLDeclaration { false };
+
+#if ENABLE(DARK_MODE_CSS)
+    OptionSet<ColorScheme> m_colorScheme;
+    bool m_allowsColorSchemeTransformations { true };
+#endif
 
     bool m_activeParserWasAborted { false };
     bool m_writeRecursionIsTooDeep { false };
@@ -2253,59 +2320,13 @@ private:
 
     bool m_didEnqueueFirstContentfulPaint { false };
 
-#if ASSERT_ENABLED
-    bool m_inHitTesting { false };
-#endif
+    bool m_mayHaveRenderedSVGForeignObjects { false };
+    bool m_mayHaveRenderedSVGRootElements { false };
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION)
-    bool m_isTelephoneNumberParsingAllowed { true };
-#endif
-
-    struct PendingScrollEventTargetList;
-    std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
-
-#if ENABLE(MEDIA_STREAM)
-    String m_idHashSalt;
-    bool m_hasHadCaptureMediaStreamTrack { false };
-    size_t m_activeMediaElementsWithMediaStreamCount { 0 };
-#endif
-
-#if ASSERT_ENABLED
-    bool m_didDispatchViewportPropertiesChanged { false };
-#endif
+    bool m_userHasInteractedWithMediaElement { false };
 
     bool m_updateTitleTaskScheduled { false };
 
-    FocusTrigger m_latestFocusTrigger { };
-
-    OrientationNotifier m_orientationNotifier;
-    mutable RefPtr<Logger> m_logger;
-    RefPtr<StringCallback> m_consoleMessageListener;
-
-    static bool hasEverCreatedAnAXObjectCache;
-
-    RefPtr<DocumentTimeline> m_timeline;
-    std::unique_ptr<DocumentTimelinesController> m_timelinesController;
-
-    RefPtr<WindowEventLoop> m_eventLoop;
-    std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;
-
-#if ENABLE(SERVICE_WORKER)
-    RefPtr<SWClientConnection> m_serviceWorkerConnection;
-#endif
-
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
-    String m_referrerOverride;
-#endif
-    
-    std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
-
-#if ENABLE(CSS_PAINTING_API)
-    RefPtr<PaintWorklet> m_paintWorklet;
-    HashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
-#endif
-    unsigned m_numberOfRejectedSyncXHRs { 0 };
     bool m_isRunningUserScripts { false };
     bool m_shouldPreventEnteringBackForwardCacheForTesting { false };
     bool m_hasLoadedThirdPartyScript { false };
@@ -2314,44 +2335,30 @@ private:
 
     bool m_visibilityHiddenDueToDismissal { false };
 
-    Ref<UndoManager> m_undoManager;
-#if ENABLE(CONTENT_CHANGE_OBSERVER)
-    std::unique_ptr<ContentChangeObserver> m_contentChangeObserver;
-    std::unique_ptr<DOMTimerHoldingTank> m_domTimerHoldingTank;
+#if ENABLE(XSLT)
+    bool m_hasPendingXSLTransforms { false };
 #endif
 
-#if ENABLE(PICTURE_IN_PICTURE_API)
-    WeakPtr<HTMLVideoElement, WeakPtrImplWithEventTargetData> m_pictureInPictureElement;
+#if ENABLE(MEDIA_STREAM)
+    bool m_hasHadCaptureMediaStreamTrack { false };
 #endif
 
-    std::unique_ptr<TextManipulationController> m_textManipulationController;
-
-    UniqueRef<Editor> m_editor;
-    UniqueRef<FrameSelection> m_selection;
-        
-    String m_fragmentDirective;
-
-    ListHashSet<Ref<Element>> m_topLayerElements;
-    UniqueRef<WhitespaceCache> m_whitespaceCache;
-
-#if ENABLE(WEB_RTC)
-    RefPtr<RTCNetworkManager> m_rtcNetworkManager;
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    bool m_mayHaveElementsWithNonAutoTouchAction { false };
+#endif
+#if ENABLE(EDITABLE_REGION)
+    bool m_mayHaveEditableElements { false };
+#endif
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
+    bool m_isTelephoneNumberParsingAllowed { true };
 #endif
 
-    std::unique_ptr<ModalContainerObserver> m_modalContainerObserver;
-
-    Vector<Function<void()>> m_whenIsVisibleHandlers;
-
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
-
-    Ref<ReportingScope> m_reportingScope;
-    std::unique_ptr<WakeLockManager> m_wakeLockManager;
-
-    std::unique_ptr<SleepDisabler> m_sleepDisabler;
-
-#if ENABLE(DOM_AUDIO_SESSION)
-    DOMAudioSessionType m_audioSessionType { };
+#if ASSERT_ENABLED
+    bool m_inHitTesting { false };
+    bool m_didDispatchViewportPropertiesChanged { false };
 #endif
+
+    static bool hasEverCreatedAnAXObjectCache;
 };
 
 Element* eventTargetElementForDocument(Document*);

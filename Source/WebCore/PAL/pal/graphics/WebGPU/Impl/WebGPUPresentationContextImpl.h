@@ -29,6 +29,7 @@
 
 #include "WebGPUIntegralTypes.h"
 #include "WebGPUPresentationContext.h"
+#include "WebGPUSwapChainWrapper.h"
 #include "WebGPUTextureFormat.h"
 #include <IOSurface/IOSurfaceRef.h>
 #include <WebGPU/WebGPU.h>
@@ -87,6 +88,7 @@ private:
     WGPUSurface m_backing { nullptr };
     WGPUSwapChain m_swapChain { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;
+    RefPtr<SwapChainWrapper> m_swapChainWrapper;
     RefPtr<TextureImpl> m_currentTexture;
 };
 

@@ -289,6 +289,17 @@ RenderTheme& RenderTheme::singleton()
     return theme;
 }
 
+bool RenderThemeIOS::canCreateControlPartForRenderer(const RenderObject& renderer) const
+{
+    auto type = renderer.style().effectiveAppearance();
+#if ENABLE(APPLE_PAY)
+    return type == StyleAppearance::ApplePayButton;
+#else
+    UNUSED_PARAM(type);
+    return false;
+#endif
+}
+
 FloatRect RenderThemeIOS::addRoundedBorderClip(const RenderObject& box, GraphicsContext& context, const IntRect& rect)
 {
     // To fix inner border bleeding issues <rdar://problem/9812507>, we clip to the outer border and assert that

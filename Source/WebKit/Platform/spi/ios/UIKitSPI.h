@@ -127,7 +127,6 @@
 #import <UIKit/UIDragPreviewParameters.h>
 #import <UIKit/UIDragPreview_Private.h>
 #import <UIKit/UIDragSession.h>
-#import <UIKit/UIDragging.h>
 #import <UIKit/UIDropInteraction.h>
 #import <UIKit/UIPreviewInteraction.h>
 #import <UIKit/UIURLDragPreviewView.h>

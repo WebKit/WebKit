@@ -25,7 +25,6 @@
 #pragma once
 
 #include "AnimationList.h"
-#include "ApplePayButtonSystemImage.h"
 #include "BorderValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSPrimitiveValue.h"
@@ -82,6 +81,10 @@
 
 #include "StyleGridData.h"
 #include "StyleGridItemData.h"
+
+#if ENABLE(APPLE_PAY)
+#include "ApplePayButtonPart.h"
+#endif
 
 #if ENABLE(TEXT_AUTOSIZING)
 #include "TextSizeAdjustment.h"

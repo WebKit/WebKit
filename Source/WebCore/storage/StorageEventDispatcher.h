@@ -40,7 +40,7 @@ class Storage;
 
 namespace StorageEventDispatcher {
 WEBCORE_EXPORT void dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, Page&, const SecurityOrigin&, const String& url, const Function<bool(Storage&)>& isSourceStorage);
-WEBCORE_EXPORT void dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup&, const SecurityOrigin&, const String& url, const Function<bool(Storage&)>& isSourceStorage);
+WEBCORE_EXPORT void dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup*, const SecurityOrigin&, const String& url, const Function<bool(Storage&)>& isSourceStorage);
 }
 
 } // namespace WebCore

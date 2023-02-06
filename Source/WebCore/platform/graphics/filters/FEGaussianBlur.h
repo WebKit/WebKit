@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -46,9 +46,6 @@ public:
 
     static IntOutsets calculateOutsets(const FloatSize& stdDeviation);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<FEGaussianBlur>> decode(Decoder&);
-
 private:
     FEGaussianBlur(float x, float y, EdgeModeType);
 
@@ -67,35 +64,6 @@ private:
     float m_stdY;
     EdgeModeType m_edgeMode;
 };
-
-template<class Encoder>
-void FEGaussianBlur::encode(Encoder& encoder) const
-{
-    encoder << m_stdX;
-    encoder << m_stdY;
-    encoder << m_edgeMode;
-}
-
-template<class Decoder>
-std::optional<Ref<FEGaussianBlur>> FEGaussianBlur::decode(Decoder& decoder)
-{
-    std::optional<float> stdX;
-    decoder >> stdX;
-    if (!stdX)
-        return std::nullopt;
-
-    std::optional<float> stdY;
-    decoder >> stdY;
-    if (!stdY)
-        return std::nullopt;
-
-    std::optional<EdgeModeType> edgeMode;
-    decoder >> edgeMode;
-    if (!edgeMode)
-        return std::nullopt;
-
-    return FEGaussianBlur::create(*stdX, *stdY, *edgeMode);
-}
 
 } // namespace WebCore
 

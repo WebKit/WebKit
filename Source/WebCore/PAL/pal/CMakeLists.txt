@@ -20,6 +20,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPUComputePipelineImpl.h
     graphics/WebGPU/Impl/WebGPUConvertToBackingContext.h
     graphics/WebGPU/Impl/WebGPUDeviceImpl.h
+    graphics/WebGPU/Impl/WebGPUDeviceWrapper.h
     graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.h
     graphics/WebGPU/Impl/WebGPUExternalTextureImpl.h
     graphics/WebGPU/Impl/WebGPUImpl.h
@@ -33,6 +34,7 @@ set(PAL_PUBLIC_HEADERS
     graphics/WebGPU/Impl/WebGPURenderPipelineImpl.h
     graphics/WebGPU/Impl/WebGPUSamplerImpl.h
     graphics/WebGPU/Impl/WebGPUShaderModuleImpl.h
+    graphics/WebGPU/Impl/WebGPUSwapChainWrapper.h
     graphics/WebGPU/Impl/WebGPUTextureImpl.h
     graphics/WebGPU/Impl/WebGPUTextureViewImpl.h
 
@@ -210,6 +212,7 @@ set(PAL_SOURCES
     graphics/WebGPU/Impl/WebGPUComputePipelineImpl.cpp
     graphics/WebGPU/Impl/WebGPUConvertToBackingContext.cpp
     graphics/WebGPU/Impl/WebGPUDeviceImpl.cpp
+    graphics/WebGPU/Impl/WebGPUDeviceWrapper.cpp
     graphics/WebGPU/Impl/WebGPUDowncastConvertToBackingContext.cpp
     graphics/WebGPU/Impl/WebGPUExternalTextureImpl.cpp
     graphics/WebGPU/Impl/WebGPUImpl.cpp
@@ -223,6 +226,7 @@ set(PAL_SOURCES
     graphics/WebGPU/Impl/WebGPURenderPipelineImpl.cpp
     graphics/WebGPU/Impl/WebGPUSamplerImpl.cpp
     graphics/WebGPU/Impl/WebGPUShaderModuleImpl.cpp
+    graphics/WebGPU/Impl/WebGPUSwapChainWrapper.cpp
     graphics/WebGPU/Impl/WebGPUTextureImpl.cpp
     graphics/WebGPU/Impl/WebGPUTextureViewImpl.cpp
 

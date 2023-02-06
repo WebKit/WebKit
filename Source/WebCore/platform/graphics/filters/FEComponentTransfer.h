@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,9 +47,6 @@ struct ComponentTransferFunction {
     float offset { 0 };
 
     Vector<float> tableValues;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ComponentTransferFunction> decode(Decoder&);
 };
 
 enum class ComponentTransferChannel : uint8_t { Red, Green, Blue, Alpha };
@@ -58,8 +55,8 @@ using ComponentTransferFunctions = EnumeratedArray<ComponentTransferChannel, Com
 
 class FEComponentTransfer : public FilterEffect {
 public:
-    static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
-    WEBCORE_EXPORT static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);
+    WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc);
+    static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);
 
     ComponentTransferFunction redFunction() const { return m_functions[ComponentTransferChannel::Red]; }
     ComponentTransferFunction greenFunction() const { return m_functions[ComponentTransferChannel::Green]; }
@@ -89,76 +86,6 @@ private:
 
     ComponentTransferFunctions m_functions;
 };
-
-template<class Encoder>
-void ComponentTransferFunction::encode(Encoder& encoder) const
-{
-    encoder << type;
-    encoder << slope;
-    encoder << intercept;
-    encoder << amplitude;
-    encoder << exponent;
-    encoder << offset;
-    encoder << tableValues;
-}
-
-template<class Decoder>
-std::optional<ComponentTransferFunction> ComponentTransferFunction::decode(Decoder& decoder)
-{
-    std::optional<ComponentTransferType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    std::optional<float> slope;
-    decoder >> slope;
-    if (!slope)
-        return std::nullopt;
-
-    std::optional<float> intercept;
-    decoder >> intercept;
-    if (!intercept)
-        return std::nullopt;
-
-    std::optional<float> amplitude;
-    decoder >> amplitude;
-    if (!amplitude)
-        return std::nullopt;
-
-    std::optional<float> exponent;
-    decoder >> exponent;
-    if (!exponent)
-        return std::nullopt;
-
-    std::optional<float> offset;
-    decoder >> offset;
-    if (!offset)
-        return std::nullopt;
-
-    std::optional<Vector<float>> tableValues;
-    decoder >> tableValues;
-    if (!tableValues)
-        return std::nullopt;
-
-    return { { *type, *slope, *intercept, *amplitude, *exponent, *offset, WTFMove(*tableValues) } };
-}
-
-template<class Encoder>
-void FEComponentTransfer::encode(Encoder& encoder) const
-{
-    encoder << m_functions;
-}
-
-template<class Decoder>
-std::optional<Ref<FEComponentTransfer>> FEComponentTransfer::decode(Decoder& decoder)
-{
-    std::optional<ComponentTransferFunctions> functions;
-    decoder >> functions;
-    if (!functions)
-        return std::nullopt;
-
-    return FEComponentTransfer::create(WTFMove(*functions));
-}
 
 } // namespace WebCore
 

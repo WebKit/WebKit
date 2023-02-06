@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +37,26 @@
 
 namespace PAL::WebGPU {
 
-QueueImpl::QueueImpl(Ref<DeviceHolderImpl>&& deviceHolder, ConvertToBackingContext& convertToBackingContext)
-    : m_deviceHolder(WTFMove(deviceHolder))
+QueueImpl::QueueImpl(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(queue)
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-QueueImpl::~QueueImpl() = default;
+QueueImpl::QueueImpl(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext, Ref<DeviceWrapper>&& deviceWrapper)
+    : m_backing(queue)
+    , m_convertToBackingContext(convertToBackingContext)
+    , m_deviceWrapper(WTFMove(deviceWrapper))
+{
+}
+
+QueueImpl::~QueueImpl()
+{
+    // For queues owned by devices, the device will automatically release the queue when the device is released.
+    // m_deviceWrapper's purpose is just for such queues, to keep the device alive as long as we are alive.
+    if (!m_deviceWrapper)
+        wgpuQueueRelease(m_backing);
+}
 
 void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBuffers)
 {
@@ -51,12 +64,12 @@ void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBu
         return m_convertToBackingContext->convertToBacking(commandBuffer);
     });
 
-    wgpuQueueSubmit(backing(), backingCommandBuffers.size(), backingCommandBuffers.data());
+    wgpuQueueSubmit(m_backing, backingCommandBuffers.size(), backingCommandBuffers.data());
 }
 
 void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    wgpuQueueOnSubmittedWorkDoneWithBlock(backing(), makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
+    wgpuQueueOnSubmittedWorkDoneWithBlock(m_backing, makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
         callback();
     }).get());
 }
@@ -70,7 +83,7 @@ void QueueImpl::writeBuffer(
     std::optional<Size64> size)
 {
     // FIXME: Use checked arithmetic and check the cast
-    wgpuQueueWriteBuffer(backing(), m_convertToBackingContext->convertToBacking(buffer), bufferOffset, static_cast<const uint8_t*>(source) + dataOffset, static_cast<size_t>(size.value_or(byteLength - dataOffset)));
+    wgpuQueueWriteBuffer(m_backing, m_convertToBackingContext->convertToBacking(buffer), bufferOffset, static_cast<const uint8_t*>(source) + dataOffset, static_cast<size_t>(size.value_or(byteLength - dataOffset)));
 }
 
 void QueueImpl::writeTexture(
@@ -97,7 +110,7 @@ void QueueImpl::writeTexture(
 
     WGPUExtent3D backingSize = m_convertToBackingContext->convertToBacking(size);
 
-    wgpuQueueWriteTexture(backing(), &backingDestination, source, byteLength, &backingDataLayout, &backingSize);
+    wgpuQueueWriteTexture(m_backing, &backingDestination, source, byteLength, &backingDataLayout, &backingSize);
 }
 
 void QueueImpl::copyExternalImageToTexture(
@@ -112,7 +125,7 @@ void QueueImpl::copyExternalImageToTexture(
 
 void QueueImpl::setLabelInternal(const String& label)
 {
-    wgpuQueueSetLabel(backing(), label.utf8().data());
+    wgpuQueueSetLabel(m_backing, label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

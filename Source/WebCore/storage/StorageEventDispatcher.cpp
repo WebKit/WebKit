@@ -74,9 +74,17 @@ void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, con
     });
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup& pageGroup, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage)
+void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, PageGroup* pageGroup, const SecurityOrigin& securityOrigin, const String& url, const Function<bool(Storage&)>& isSourceStorage)
 {
-    auto& pagesInGroup = pageGroup.pages();
+    if (!pageGroup) {
+        Page::forEachPage([&](Page& page) {
+            InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin);
+        });
+        dispatchStorageEvents<StorageType::Local>(key, oldValue, newValue, securityOrigin, url, isSourceStorage, [](auto&) { return true; });
+        return;
+    }
+
+    auto& pagesInGroup = pageGroup->pages();
     for (auto& page : pagesInGroup)
         InspectorInstrumentation::didDispatchDOMStorageEvent(page, key, oldValue, newValue, StorageType::Local, securityOrigin);
     dispatchStorageEvents<StorageType::Local>(key, oldValue, newValue, securityOrigin, url, isSourceStorage, [&](auto& page) {

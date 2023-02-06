@@ -68,14 +68,17 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
     auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
     auto scrollableOverflowRect = [&]() -> InlineRect {
         auto rect = lineBoxRect;
+        auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
+        auto isLeftToRightDirection = root().style().isLeftToRightDirection();
         if (lineContent.hangingContent.shouldContributeToScrollableOverflow)
             rect.expandHorizontally(lineContent.hangingContent.width);
-        if (rootInlineBox.hasContent()) {
-            auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
-            auto rootInlineBoxHorizontalOverflow = rootInlineBoxRect.width() - rect.width();
-            if (rootInlineBoxHorizontalOverflow > 0)
-                root().style().isLeftToRightDirection() ? rect.shiftRightBy(rootInlineBoxHorizontalOverflow) : rect.shiftLeftBy(-rootInlineBoxHorizontalOverflow);
+        else if (!isLeftToRightDirection) {
+            // This is to balance hanging RTL trailing content. See LineBoxBuilder::build.
+            rootInlineBoxWidth -= lineContent.hangingContent.width;
         }
+        auto rootInlineBoxHorizontalOverflow = rootInlineBoxWidth - rect.width();
+        if (rootInlineBoxHorizontalOverflow > 0)
+            isLeftToRightDirection ? rect.shiftRightBy(rootInlineBoxHorizontalOverflow) : rect.shiftLeftBy(-rootInlineBoxHorizontalOverflow);
         return rect;
     }();
     for (auto& inlineLevelBox : lineBox.nonRootInlineLevelBoxes()) {
@@ -121,17 +124,16 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
 {
     auto& rootInlineBox = lineBox.rootInlineBox();
     auto isLeftToRightDirection = lineContent.inlineBaseDirection == TextDirection::LTR;
-    auto lineBoxLogicalWidth = lineBox.logicalRect().width();
+    auto lineBoxLogicalRect = lineBox.logicalRect();
     auto lineBoxVisualLeft = isLeftToRightDirection
-        ? lineContent.lineLogicalTopLeft.x()
-        : InlineLayoutUnit { constraints.visualLeft() + constraints.horizontal().logicalWidth + constraints.horizontal().logicalLeft  } - (lineContent.lineLogicalTopLeft.x() + lineBoxLogicalWidth);
+        ? lineBoxLogicalRect.left()
+        : InlineLayoutUnit { constraints.visualLeft() + constraints.horizontal().logicalWidth + constraints.horizontal().logicalLeft  } - lineBoxLogicalRect.right();
 
     auto rootInlineBoxRect = lineBox.logicalRectForRootInlineBox();
     auto contentVisualOffsetInInlineDirection = isLeftToRightDirection
         ? rootInlineBoxRect.left()
-        : lineBoxLogicalWidth - lineContent.contentLogicalRightIncludingNegativeMargin; // Note that with hanging content lineContent.contentLogicalRight is not the same as rootLineBoxRect.right().
+        : lineBoxLogicalRect.width() - lineContent.contentLogicalRightIncludingNegativeMargin; // Note that with hanging content lineContent.contentLogicalRight is not the same as rootLineBoxRect.right().
 
-    auto lineBoxLogicalRect = InlineRect { lineContent.lineLogicalTopLeft, lineBox.hasContent() ? lineContent.lineLogicalWidth : 0.f, lineBox.logicalRect().height() };
     auto lineBoxVisualRectInInlineDirection = InlineRect { lineBoxLogicalRect.top(), lineBoxVisualLeft, lineBoxLogicalRect.width(), lineBoxLogicalRect.height() };
     auto enclosingLineGeometry = collectEnclosingLineGeometry(lineContent, lineBox, lineBoxVisualRectInInlineDirection);
 

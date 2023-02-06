@@ -47,9 +47,8 @@ RenderPipelineImpl::~RenderPipelineImpl()
 
 Ref<BindGroupLayout> RenderPipelineImpl::getBindGroupLayout(uint32_t index)
 {
-    return m_bindGroupLayouts.ensure(index, [this, index] {
-        return BindGroupLayoutImpl::create(wgpuRenderPipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
-    }).iterator->value;
+    // "A new GPUBindGroupLayout wrapper is returned each time"
+    return BindGroupLayoutImpl::create(wgpuRenderPipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
 }
 
 void RenderPipelineImpl::setLabelInternal(const String& label)

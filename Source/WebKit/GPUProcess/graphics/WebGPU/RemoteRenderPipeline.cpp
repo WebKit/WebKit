@@ -55,15 +55,8 @@ void RemoteRenderPipeline::stopListeningForIPC()
 
 void RemoteRenderPipeline::getBindGroupLayout(uint32_t index, WebGPUIdentifier identifier)
 {
+    // "A new GPUBindGroupLayout wrapper is returned each time"
     auto bindGroupLayout = m_backing->getBindGroupLayout(index);
-    // We're creating a new resource here, because we don't want the GetBindGroupLayout message to be sync.
-    // If the message is async, then the WebGPUIdentifier goes from the Web process to the GPU Process, which
-    // means the Web Process is going to proceed and interact with the bind group layout as-if it has this identifier.
-    // So we need to make sure the bind group layout has this identifier.
-    // Maybe one day we could add the same bind group layout into the ObjectHeap multiple times under multiple identifiers,
-    // but for now let's just create a new RemoteBindGroupLayout object with the expected identifier, just for simplicity.
-    // The Web Process should already be caching these current bind group layout internally, so it's unlikely that we'll
-    // actually run into a problem here.
     auto remoteBindGroupLayout = RemoteBindGroupLayout::create(bindGroupLayout, m_objectHeap, m_streamConnection.copyRef(), identifier);
     m_objectHeap.addObject(identifier, remoteBindGroupLayout);
 }

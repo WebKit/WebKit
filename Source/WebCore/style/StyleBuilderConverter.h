@@ -1757,8 +1757,10 @@ inline OptionSet<SpeakAs> BuilderConverter::convertSpeakAs(BuilderState&, const 
 {
     auto result = RenderStyle::initialSpeakAs();
     if (is<CSSValueList>(value)) {
-        for (auto& currentValue : downcast<CSSValueList>(value))
-            result.add(fromCSSValue<SpeakAs>(currentValue.get()));
+        for (auto& currentValue : downcast<CSSValueList>(value)) {
+            if (!isValueID(currentValue, CSSValueNormal))
+                result.add(fromCSSValue<SpeakAs>(currentValue.get()));
+        }
     }
     return result;
 }

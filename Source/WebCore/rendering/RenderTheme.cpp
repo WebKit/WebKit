@@ -21,7 +21,6 @@
 #include "config.h"
 #include "RenderTheme.h"
 
-#include "ApplePayButtonPart.h"
 #include "ButtonPart.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
@@ -76,6 +75,10 @@
 #include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+
+#if ENABLE(APPLE_PAY)
+#include "ApplePayButtonPart.h"
+#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"

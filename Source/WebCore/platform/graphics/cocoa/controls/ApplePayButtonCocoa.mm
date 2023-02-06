@@ -30,13 +30,64 @@
 
 #import "ApplePayButtonPart.h"
 #import "FloatRoundedRect.h"
-#import "GraphicsContext.h"
+#import "GraphicsContextCG.h"
+#import <pal/cocoa/PassKitSoftLink.h>
 
 namespace WebCore {
 
 ApplePayButtonCocoa::ApplePayButtonCocoa(ApplePayButtonPart& owningPart)
     : PlatformControl(owningPart)
 {
+}
+
+static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
+{
+    switch (type) {
+    case ApplePayButtonType::Plain:
+        return PKPaymentButtonTypePlain;
+    case ApplePayButtonType::Buy:
+        return PKPaymentButtonTypeBuy;
+    case ApplePayButtonType::SetUp:
+        return PKPaymentButtonTypeSetUp;
+    case ApplePayButtonType::Donate:
+        return PKPaymentButtonTypeDonate;
+    case ApplePayButtonType::CheckOut:
+        return PKPaymentButtonTypeCheckout;
+    case ApplePayButtonType::Book:
+        return PKPaymentButtonTypeBook;
+    case ApplePayButtonType::Subscribe:
+        return PKPaymentButtonTypeSubscribe;
+#if HAVE(PASSKIT_NEW_BUTTON_TYPES)
+    case ApplePayButtonType::Reload:
+        return PKPaymentButtonTypeReload;
+    case ApplePayButtonType::AddMoney:
+        return PKPaymentButtonTypeAddMoney;
+    case ApplePayButtonType::TopUp:
+        return PKPaymentButtonTypeTopUp;
+    case ApplePayButtonType::Order:
+        return PKPaymentButtonTypeOrder;
+    case ApplePayButtonType::Rent:
+        return PKPaymentButtonTypeRent;
+    case ApplePayButtonType::Support:
+        return PKPaymentButtonTypeSupport;
+    case ApplePayButtonType::Contribute:
+        return PKPaymentButtonTypeContribute;
+    case ApplePayButtonType::Tip:
+        return PKPaymentButtonTypeTip;
+#endif // HAVE(PASSKIT_NEW_BUTTON_TYPES)
+    }
+}
+
+static PKPaymentButtonStyle toPKPaymentButtonStyle(ApplePayButtonStyle style)
+{
+    switch (style) {
+    case ApplePayButtonStyle::White:
+        return PKPaymentButtonStyleWhite;
+    case ApplePayButtonStyle::WhiteOutline:
+        return PKPaymentButtonStyleWhiteOutline;
+    case ApplePayButtonStyle::Black:
+        return PKPaymentButtonStyleBlack;
+    }
 }
 
 void ApplePayButtonCocoa::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle&)
@@ -48,14 +99,23 @@ void ApplePayButtonCocoa::draw(GraphicsContext& context, const FloatRoundedRect&
         borderRect.radii().bottomRight().maxDimension()
     });
 
-    auto systemImage = ApplePayButtonSystemImage::create(
-        owningApplePayButtonPart().buttonType(),
-        owningApplePayButtonPart().buttonStyle(),
-        owningApplePayButtonPart().locale(),
-        largestCornerRadius
-    );
+    GraphicsContextStateSaver stateSaver(context);
 
-    context.drawSystemImage(systemImage, borderRect.rect());
+    context.setShouldSmoothFonts(true);
+    context.scale(FloatSize(1, -1));
+
+    auto logicalRect = borderRect.rect();
+    const auto& applePayButtonPart = owningApplePayButtonPart();
+    
+    PKDrawApplePayButtonWithCornerRadius(
+        context.platformContext(),
+        CGRectMake(logicalRect.x(), -logicalRect.maxY(), logicalRect.width(), logicalRect.height()),
+        1.0,
+        largestCornerRadius,
+        toPKPaymentButtonType(applePayButtonPart.buttonType()),
+        toPKPaymentButtonStyle(applePayButtonPart.buttonStyle()),
+        applePayButtonPart.locale()
+    );
 }
 
 } // namespace WebCore

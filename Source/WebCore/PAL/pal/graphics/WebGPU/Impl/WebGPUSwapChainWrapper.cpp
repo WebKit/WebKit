@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebGPUSwapChainWrapper.h"
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "WebGPUTextureView.h"
-#include <WebGPU/WebGPU.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
+#include <WebGPU/WebGPUExt.h>
 
 namespace PAL::WebGPU {
 
-class DeviceHolderImpl final : public RefCounted<DeviceHolderImpl> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static Ref<DeviceHolderImpl> create(WGPUDevice device)
-    {
-        return adoptRef(*new DeviceHolderImpl(device));
-    }
+SwapChainWrapper::SwapChainWrapper(WGPUSwapChain swapChain)
+    : m_swapChain(swapChain)
+{
+}
 
-    ~DeviceHolderImpl();
-
-    WGPUDevice backingDevice() { return m_device; }
-    WGPUQueue backingQueue() { return wgpuDeviceGetQueue(m_device); }
-
-private:
-    DeviceHolderImpl(WGPUDevice);
-
-    DeviceHolderImpl(const DeviceHolderImpl&) = delete;
-    DeviceHolderImpl(DeviceHolderImpl&&) = delete;
-    DeviceHolderImpl& operator=(const DeviceHolderImpl&) = delete;
-    DeviceHolderImpl& operator=(DeviceHolderImpl&&) = delete;
-
-    WGPUDevice m_device { nullptr };
-};
+SwapChainWrapper::~SwapChainWrapper()
+{
+    wgpuSwapChainRelease(m_swapChain);
+}
 
 } // namespace PAL::WebGPU
 

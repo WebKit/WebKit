@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "ControlFactoryMac.h"
+#import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "ToggleButtonPart.h"

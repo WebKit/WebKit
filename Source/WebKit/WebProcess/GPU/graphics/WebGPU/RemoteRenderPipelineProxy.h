@@ -81,7 +81,6 @@ private:
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteDeviceProxy> m_parent;
-    HashMap<uint32_t, Ref<RemoteBindGroupLayoutProxy>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupLayouts;
 };
 
 } // namespace WebKit::WebGPU

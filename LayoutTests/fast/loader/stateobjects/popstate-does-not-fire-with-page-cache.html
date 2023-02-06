@@ -53,6 +53,9 @@ function onTestWindowLoad(event)
 function onTestWindowPageShow(event)
 {
     debug("pageshow fired - persisted=" + event.persisted);
+    if (!event.persisted)
+        return;
+
     setTimeout(() => {
         // Should not have fired a popstate event since the navigation wasn't within the same document.
         shouldBe("testWindowPopstateFireCount", "0");

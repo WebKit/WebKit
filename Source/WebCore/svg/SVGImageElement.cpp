@@ -44,6 +44,8 @@ inline SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document& 
     , SVGURIReference(this)
     , m_imageLoader(*this)
 {
+    ASSERT(hasTagName(SVGNames::imageTag));
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         PropertyRegistry::registerProperty<SVGNames::xAttr, &SVGImageElement::m_x>();
@@ -59,7 +61,7 @@ Ref<SVGImageElement> SVGImageElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGImageElement(tagName, document));
 }
 
-bool SVGImageElement::renderingTaintsOrigin() const
+CachedImage* SVGImageElement::cachedImage() const
 {
     const RenderImageResource* resource = nullptr;
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -71,10 +73,19 @@ bool SVGImageElement::renderingTaintsOrigin() const
             resource = &renderer->imageResource();
     }
 
-    if (!resource || !resource->cachedImage())
+    if (!resource)
+        return nullptr;
+
+    return resource->cachedImage();
+}
+
+bool SVGImageElement::renderingTaintsOrigin() const
+{
+    auto cachedImage = this->cachedImage();
+    if (!cachedImage)
         return false;
 
-    auto* image = resource->cachedImage()->image();
+    auto* image = cachedImage->image();
     return image && image->renderingTaintsOrigin();
 }
 

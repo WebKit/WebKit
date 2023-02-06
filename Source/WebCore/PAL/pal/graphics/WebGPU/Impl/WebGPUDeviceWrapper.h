@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebGPUDeviceHolderImpl.h"
+#pragma once
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include <WebGPU/WebGPUExt.h>
+#include "WebGPUTextureView.h"
+#include <WebGPU/WebGPU.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace PAL::WebGPU {
 
-DeviceHolderImpl::DeviceHolderImpl(WGPUDevice device)
-    : m_device(device)
-{
-}
+// The only purpose of DeviceWrapper is to expose a refcounted wrapper around WGPUDevice.
+// We need refcounting in the situation where both the DeviceImpl and the QueueImpl need to keep
+// the same WGPUDevice alive - but WGPUDevices aren't refcounted by themselves.
+class DeviceWrapper final : public RefCounted<DeviceWrapper> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static Ref<DeviceWrapper> create(WGPUDevice device)
+    {
+        return adoptRef(*new DeviceWrapper(device));
+    }
 
-DeviceHolderImpl::~DeviceHolderImpl()
-{
-    wgpuDeviceRelease(m_device);
-}
+    ~DeviceWrapper();
+
+    WGPUDevice backing() { return m_device; }
+
+private:
+    DeviceWrapper(WGPUDevice);
+
+    DeviceWrapper(const DeviceWrapper&) = delete;
+    DeviceWrapper(DeviceWrapper&&) = delete;
+    DeviceWrapper& operator=(const DeviceWrapper&) = delete;
+    DeviceWrapper& operator=(DeviceWrapper&&) = delete;
+
+    WGPUDevice m_device { nullptr };
+};
 
 } // namespace PAL::WebGPU
 

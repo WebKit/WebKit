@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "ApplePayButtonSystemImage.h"
 #include "CSSCalcValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
@@ -46,6 +45,10 @@
 #include "UnicodeBidi.h"
 #include "WritingMode.h"
 #include <wtf/MathExtras.h>
+
+#if ENABLE(APPLE_PAY)
+#include "ApplePayButtonPart.h"
+#endif
 
 namespace WebCore {
 

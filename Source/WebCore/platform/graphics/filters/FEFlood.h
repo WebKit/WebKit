@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2021-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,9 +43,6 @@ public:
     void setOperatingColorSpace(const DestinationColorSpace&) override { }
 #endif
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<FEFlood>> decode(Decoder&);
-
 private:
     FEFlood(const Color& floodColor, float floodOpacity);
 
@@ -60,29 +57,6 @@ private:
     Color m_floodColor;
     float m_floodOpacity;
 };
-
-template<class Encoder>
-void FEFlood::encode(Encoder& encoder) const
-{
-    encoder << m_floodColor;
-    encoder << m_floodOpacity;
-}
-
-template<class Decoder>
-std::optional<Ref<FEFlood>> FEFlood::decode(Decoder& decoder)
-{
-    std::optional<Color> floodColor;
-    decoder >> floodColor;
-    if (!floodColor)
-        return std::nullopt;
-
-    std::optional<float> floodOpacity;
-    decoder >> floodOpacity;
-    if (!floodOpacity)
-        return std::nullopt;
-
-    return FEFlood::create(*floodColor, *floodOpacity);
-}
 
 } // namespace WebCore
 

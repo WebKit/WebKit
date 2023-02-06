@@ -512,7 +512,7 @@ RenderPipeline::RenderPipeline(Device& device)
 
 RenderPipeline::~RenderPipeline() = default;
 
-BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
+RefPtr<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     if (m_pipelineLayout)
         return const_cast<BindGroupLayout*>(&m_pipelineLayout->bindGroupLayout(groupIndex));
@@ -553,6 +553,7 @@ BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
     return bindGroupLayout.ptr();
 #else
     UNUSED_PARAM(groupIndex);
+    // FIXME: Return an invalid object instead of nullptr.
     return nullptr;
 #endif
 }
@@ -589,7 +590,7 @@ void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
-    return WebGPU::fromAPI(renderPipeline).getBindGroupLayout(groupIndex);
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(renderPipeline).getBindGroupLayout(groupIndex));
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* label)

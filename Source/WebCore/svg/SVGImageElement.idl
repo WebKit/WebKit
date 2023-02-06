@@ -24,7 +24,8 @@
  */
 
 [
-    Exposed=Window
+    Exposed=Window,
+    JSGenerateToNativeObject
 ] interface SVGImageElement : SVGGraphicsElement {
     readonly attribute SVGAnimatedLength x;
     readonly attribute SVGAnimatedLength y;

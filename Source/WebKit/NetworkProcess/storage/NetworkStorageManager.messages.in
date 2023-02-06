@@ -42,9 +42,9 @@
     GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
     GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result)
 
-    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier)
-    ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous
-    CancelConnectToStorageArea(WebCore::StorageType type, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin)
+    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier)
+    ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous
+    CancelConnectToStorageArea(WebCore::StorageType type, std::optional<WebKit::StorageNamespaceIdentifier> namespaceIdentifier, struct WebCore::ClientOrigin origin)
     DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier)
     CloneSessionStorageNamespace(WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID)
     SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool hasError, HashMap<String, String> allItems)

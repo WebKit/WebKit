@@ -36,6 +36,7 @@
 #include "Image.h"
 #include "ImageBitmap.h"
 #include "PixelFormat.h"
+#include "SVGImageElement.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashSet.h>
 #include <wtf/IsoMallocInlines.h>
@@ -118,13 +119,9 @@ bool CanvasRenderingContext::taintsOrigin(const CanvasBase* sourceCanvas)
     return false;
 }
 
-bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
+bool CanvasRenderingContext::taintsOrigin(const CachedImage* cachedImage)
 {
-    if (!element || !m_canvas.originClean())
-        return false;
-
-    auto* cachedImage = element->cachedImage();
-    if (!cachedImage)
+    if (!m_canvas.originClean() || !cachedImage)
         return false;
 
     RefPtr image = cachedImage->image();
@@ -144,6 +141,20 @@ bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
     ASSERT(cachedImage->origin());
     ASSERT(m_canvas.securityOrigin()->toString() == cachedImage->origin()->toString());
     return false;
+}
+
+bool CanvasRenderingContext::taintsOrigin(const HTMLImageElement* element)
+{
+    if (!element)
+        return false;
+    return taintsOrigin(element->cachedImage());
+}
+
+bool CanvasRenderingContext::taintsOrigin(const SVGImageElement* element)
+{
+    if (!element)
+        return false;
+    return taintsOrigin(element->cachedImage());
 }
 
 bool CanvasRenderingContext::taintsOrigin(const HTMLVideoElement* video)

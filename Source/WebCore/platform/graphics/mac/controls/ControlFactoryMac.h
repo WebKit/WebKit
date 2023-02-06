@@ -34,6 +34,9 @@ OBJC_CLASS NSServicesRolloverButtonCell;
 
 namespace WebCore {
 
+class FloatRect;
+struct ControlStyle;
+
 class ControlFactoryMac final : public ControlFactoryCocoa {
 public:
     using ControlFactoryCocoa::ControlFactoryCocoa;

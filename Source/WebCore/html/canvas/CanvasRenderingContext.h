@@ -37,13 +37,15 @@
 
 namespace WebCore {
 
+class CSSStyleImageValue;
+class CachedImage;
 class CanvasPattern;
 class DestinationColorSpace;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBitmap;
-class CSSStyleImageValue;
+class SVGImageElement;
 class WebGLObject;
 enum class PixelFormat : uint8_t;
 
@@ -96,7 +98,9 @@ protected:
     explicit CanvasRenderingContext(CanvasBase&);
     bool taintsOrigin(const CanvasPattern*);
     bool taintsOrigin(const CanvasBase*);
+    bool taintsOrigin(const CachedImage*);
     bool taintsOrigin(const HTMLImageElement*);
+    bool taintsOrigin(const SVGImageElement*);
     bool taintsOrigin(const HTMLVideoElement*);
     bool taintsOrigin(const ImageBitmap*);
     bool taintsOrigin(const URL&);

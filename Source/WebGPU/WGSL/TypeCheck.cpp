@@ -46,19 +46,42 @@ public:
 
     void check();
 
+    // Declarations
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
     void visit(AST::Function&) override;
+
+    // Statements
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
+
+    // Expressions
     void visit(AST::Expression&) override;
     void visit(AST::FieldAccessExpression&) override;
     void visit(AST::IndexAccessExpression&) override;
     void visit(AST::BinaryExpression&) override;
     void visit(AST::IdentifierExpression&) override;
+    void visit(AST::CallExpression&) override;
+
+    // Literal Expressions
+    void visit(AST::BoolLiteral&) override;
+    void visit(AST::Signed32Literal&) override;
+    void visit(AST::Float32Literal&) override;
+    void visit(AST::Unsigned32Literal&) override;
+    void visit(AST::AbstractIntegerLiteral&) override;
+    void visit(AST::AbstractFloatLiteral&) override;
+
+    // Types
     void visit(AST::TypeName&) override;
+    void visit(AST::ArrayTypeName&) override;
+    void visit(AST::NamedTypeName&) override;
+    void visit(AST::ParameterizedTypeName&) override;
+    void visit(AST::StructTypeName&) override;
+    void visit(AST::ReferenceTypeName&) override;
 
 private:
+    void visitFunctionBody(AST::Function&);
+
     Type* infer(AST::Expression&);
     Type* resolve(AST::TypeName&);
     void inferred(Type*);
@@ -128,6 +151,8 @@ TypeChecker::TypeChecker(AST::ShaderModule& shaderModule)
 
 void TypeChecker::check()
 {
+    // FIXME: fill in struct fields in a second pass since declarations might be
+    // out of order
     for (auto& structure : m_shaderModule.structures())
         visit(structure);
 
@@ -138,14 +163,13 @@ void TypeChecker::check()
         visit(function);
 
     for (auto& function : m_shaderModule.functions())
-        AST::Visitor::visit(function.body());
+        visitFunctionBody(function);
 }
 
 // Declarations
 void TypeChecker::visit(AST::Structure& structure)
 {
-    // FIXME: allocate and build struct type from struct members
-    Type* structType = nullptr;
+    Type* structType = allocateType<Struct>(structure.name());
     ContextProvider::introduceVariable(structure.name(), structType);
 }
 
@@ -171,6 +195,18 @@ void TypeChecker::visit(AST::Function& function)
     ContextProvider::introduceVariable(function.name(), functionType);
 }
 
+void TypeChecker::visitFunctionBody(AST::Function& function)
+{
+    ContextProvider::ContextScope functionContext(this);
+
+    for (auto& parameter : function.parameters()) {
+        auto* parameterType = resolve(parameter.typeName());
+        ContextProvider::introduceVariable(parameter.name(), parameterType);
+    }
+
+    AST::Visitor::visit(function.body());
+}
+
 // Statements
 void TypeChecker::visit(AST::AssignmentStatement& statement)
 {
@@ -191,18 +227,16 @@ void TypeChecker::visit(AST::ReturnStatement& statement)
 // Expressions
 void TypeChecker::visit(AST::Expression&)
 {
-    // FIXME: remove this function once we start allocating types
-    inferred(m_void);
+    // NOTE: this should never be called directly, only through `resolve`, which
+    // captures the inferred type
+    ASSERT_NOT_REACHED();
 }
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
     auto* structType = infer(access.base());
     // FIXME: implement member lookup once we have a struct type
-    UNUSED_PARAM(structType);
-
-    Type* fieldType = nullptr;
-    inferred(fieldType);
+    inferred(structType);
 }
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
@@ -215,7 +249,7 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
     UNUSED_PARAM(index);
 
     // FIXME: set the inferred type to the array's member type
-    UNUSED_PARAM(arrayType);
+    inferred(arrayType);
 }
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
@@ -230,36 +264,106 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
 {
     auto* const* type = ContextProvider::readVariable(identifier.identifier());
-    // FIXME: this should be unconditional
+    // FIXME: report error about unknown identifier
     ASSERT(type);
-    if (type)
-        inferred(*type);
+    inferred(*type);
+}
+
+void TypeChecker::visit(AST::CallExpression& call)
+{
+    auto* target = resolve(call.target());
+    // FIXME: validate arguments
+    inferred(target);
+}
+
+// Literal Expressions
+void TypeChecker::visit(AST::BoolLiteral&)
+{
+    inferred(m_bool);
+}
+
+void TypeChecker::visit(AST::Signed32Literal&)
+{
+    inferred(m_i32);
+}
+
+void TypeChecker::visit(AST::Float32Literal&)
+{
+    inferred(m_f32);
+}
+
+void TypeChecker::visit(AST::Unsigned32Literal&)
+{
+    inferred(m_u32);
+}
+
+void TypeChecker::visit(AST::AbstractIntegerLiteral&)
+{
+    inferred(m_abstractInt);
+}
+
+void TypeChecker::visit(AST::AbstractFloatLiteral&)
+{
+    inferred(m_abstractFloat);
 }
 
 // Types
 void TypeChecker::visit(AST::TypeName&)
 {
-    // FIXME: remove this function once we start allocating types
+    // NOTE: this should never be called directly, only through `resolve`, which
+    // captures the inferred type
+    ASSERT_NOT_REACHED();
+}
+
+void TypeChecker::visit(AST::ArrayTypeName&)
+{
+    // FIXME: implement this
     inferred(m_void);
+}
+
+void TypeChecker::visit(AST::NamedTypeName& namedType)
+{
+    auto* const* type = ContextProvider::readVariable(namedType.name());
+    // FIXME: report error about unknown type name
+    ASSERT(type);
+    inferred(*type);
+}
+
+void TypeChecker::visit(AST::ParameterizedTypeName&)
+{
+    // FIXME: implement this
+    inferred(m_void);
+}
+
+void TypeChecker::visit(AST::StructTypeName& structType)
+{
+    auto* const* type = ContextProvider::readVariable(structType.structure().name());
+    // FIXME: report error about unknown type name
+    ASSERT(type);
+    inferred(*type);
+}
+
+void TypeChecker::visit(AST::ReferenceTypeName&)
+{
+    // FIXME: we don't yet parse reference types
+    ASSERT_NOT_REACHED();
 }
 
 // Private helpers
 Type* TypeChecker::infer(AST::Expression& expression)
 {
     ASSERT(!m_inferredType);
-    // FIXME: this should call the base class and TypeChecker::visit should assert
-    // that it is never called directly on expressions
-    visit(expression);
+    AST::Visitor::visit(expression);
     ASSERT(m_inferredType);
 
+    auto* type = m_inferredType;
+
     if (shouldDumpInferredTypes) {
-        dataLog("> Type inference: ");
+        dataLog("> Type inference [expression]: ");
         dumpNode(WTF::dataFile(), expression);
         dataLog(" : ");
-        dataLogLn(*m_inferredType);
+        dataLogLn(*type);
     }
-
-    auto* type = m_inferredType;
 
     // FIXME: store resolved type in the expression
     m_inferredType = nullptr;
@@ -272,12 +376,19 @@ Type* TypeChecker::resolve(AST::TypeName& type)
     ASSERT(!m_inferredType);
     // FIXME: this should call the base class and TypeChecker::visit should assert
     // that it is never called directly on types
-    visit(type);
+    AST::Visitor::visit(type);
     ASSERT(m_inferredType);
 
     auto* inferredType = m_inferredType;
 
-    // FIXME: store resolved type in the expression
+    if (shouldDumpInferredTypes) {
+        dataLog("> Type inference [type]: ");
+        dumpNode(WTF::dataFile(), type);
+        dataLog(" : ");
+        dataLogLn(*inferredType);
+    }
+
+    // FIXME: store resolved type in the AST type
     m_inferredType = nullptr;
 
     return inferredType;
