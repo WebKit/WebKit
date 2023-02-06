@@ -2072,278 +2072,6 @@
 		DD8CD363296D03A400C04CA1 /* _WKFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CD360296D03A300C04CA1 /* _WKFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD8CD364296D03A400C04CA1 /* _WKFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CD361296D03A400C04CA1 /* _WKFeatureInternal.h */; };
 		DD8CD365296D097300C04CA1 /* APIFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C21C487A6600A0CA89 /* APIFeature.h */; };
-		DDA0A27C27E55E4D005E086E /* DOMCSSImportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A17C27E55E24005E086E /* DOMCSSImportRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A27D27E55E4D005E086E /* DOMMutationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A17D27E55E24005E086E /* DOMMutationEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A27E27E55E4D005E086E /* DOMText.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A17E27E55E24005E086E /* DOMText.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A27F27E55E4D005E086E /* WebDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A17F27E55E25005E086E /* WebDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28027E55E4D005E086E /* DOMHTMLHRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18027E55E25005E086E /* DOMHTMLHRElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28127E55E4D005E086E /* DOMTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18127E55E25005E086E /* DOMTextEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A28227E55E4D005E086E /* WebNSEventExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18227E55E25005E086E /* WebNSEventExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A28327E55E4D005E086E /* WebPluginContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18327E55E25005E086E /* WebPluginContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28427E55E4D005E086E /* DOMEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18427E55E25005E086E /* DOMEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28527E55E4D005E086E /* WebPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18527E55E26005E086E /* WebPolicyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28627E55E4D005E086E /* WebAutocapitalizeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18627E55E26005E086E /* WebAutocapitalizeTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A28727E55E4D005E086E /* DOMHTMLBRElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18727E55E26005E086E /* DOMHTMLBRElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28827E55E4D005E086E /* WebNSPasteboardExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18827E55E27005E086E /* WebNSPasteboardExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A28927E55E4D005E086E /* WebResourceLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18927E55E27005E086E /* WebResourceLoadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28A27E55E4D005E086E /* DOMHTMLIFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18A27E55E27005E086E /* DOMHTMLIFrameElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28B27E55E4D005E086E /* DOMRangeException.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18B27E55E27005E086E /* DOMRangeException.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28C27E55E4D005E086E /* DOMHTMLLegendElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18C27E55E27005E086E /* DOMHTMLLegendElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28D27E55E4D005E086E /* DOMHTMLHeadElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18D27E55E27005E086E /* DOMHTMLHeadElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A28E27E55E4D005E086E /* WebSecurityOriginPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18E27E55E27005E086E /* WebSecurityOriginPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A28F27E55E4D005E086E /* DOMEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A18F27E55E27005E086E /* DOMEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29027E55E4D005E086E /* DOMNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19027E55E28005E086E /* DOMNodeList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29127E55E4D005E086E /* DOMXPathException.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19127E55E28005E086E /* DOMXPathException.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29227E55E4D005E086E /* WebResource.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19227E55E28005E086E /* WebResource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29327E55E4D005E086E /* WebDatabaseManagerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19327E55E28005E086E /* WebDatabaseManagerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A29427E55E4D005E086E /* WebResourceLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19427E55E28005E086E /* WebResourceLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A29527E55E4D005E086E /* DOMNodeIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19527E55E28005E086E /* DOMNodeIterator.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29627E55E4D005E086E /* WebCoreStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19627E55E29005E086E /* WebCoreStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A29727E55E4D005E086E /* DOMHTMLParamElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19727E55E29005E086E /* DOMHTMLParamElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29827E55E4D005E086E /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19827E55E29005E086E /* WebNSUserDefaultsExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A29927E55E4D005E086E /* WebBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19927E55E29005E086E /* WebBackForwardList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29A27E55E4E005E086E /* DOMAbstractView.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19A27E55E29005E086E /* DOMAbstractView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29B27E55E4E005E086E /* DOMNodeFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19B27E55E29005E086E /* DOMNodeFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29C27E55E4E005E086E /* DOMImplementation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19C27E55E29005E086E /* DOMImplementation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29D27E55E4E005E086E /* WebKitErrorsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19D27E55E2A005E086E /* WebKitErrorsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A29E27E55E4E005E086E /* DOMHTMLScriptElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19E27E55E2A005E086E /* DOMHTMLScriptElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A29F27E55E4E005E086E /* DOMCSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A19F27E55E2A005E086E /* DOMCSSUnknownRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A027E55E4E005E086E /* DOMCSSPageRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A027E55E2A005E086E /* DOMCSSPageRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A127E55E4E005E086E /* DOMTreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A127E55E2A005E086E /* DOMTreeWalker.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A227E55E4E005E086E /* DOMHTMLDirectoryElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A227E55E2A005E086E /* DOMHTMLDirectoryElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A327E55E4E005E086E /* WebDocumentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A327E55E2B005E086E /* WebDocumentPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2A427E55E4E005E086E /* DOMHTMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A427E55E2B005E086E /* DOMHTMLImageElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A527E55E4E005E086E /* DOMHTMLHtmlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A527E55E2B005E086E /* DOMHTMLHtmlElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A627E55E4E005E086E /* WebDataSourcePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A627E55E2B005E086E /* WebDataSourcePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2A727E55E4E005E086E /* DOMHTMLTableColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A727E55E2B005E086E /* DOMHTMLTableColElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A827E55E4E005E086E /* DOMHTMLTableSectionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A827E55E2C005E086E /* DOMHTMLTableSectionElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2A927E55E4E005E086E /* WebGeolocationCoreLocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1A927E55E2C005E086E /* WebGeolocationCoreLocationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2AA27E55E4E005E086E /* DOMHTMLMarqueeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1AA27E55E2C005E086E /* DOMHTMLMarqueeElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2AB27E55E4E005E086E /* WebArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1AB27E55E2C005E086E /* WebArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2AC27E55E4E005E086E /* DOMCSSCharsetRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1AC27E55E2C005E086E /* DOMCSSCharsetRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2AD27E55E4E005E086E /* DOMMediaList.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1AD27E55E2C005E086E /* DOMMediaList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2AE27E55E4E005E086E /* DOMEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1AE27E55E2C005E086E /* DOMEventTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2AF27E55E4E005E086E /* DOMHTMLFrameElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1AF27E55E2D005E086E /* DOMHTMLFrameElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2B027E55E4E005E086E /* DOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B027E55E2D005E086E /* DOMDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2B127E55E4E005E086E /* DOMPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B127E55E2D005E086E /* DOMPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2B227E55E4E005E086E /* WebGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B227E55E2D005E086E /* WebGeolocationPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2B327E55E4E005E086E /* WebNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B327E55E2E005E086E /* WebNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2B427E55E4E005E086E /* WebFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B427E55E2E005E086E /* WebFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2B527E55E4E005E086E /* WebFormDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B527E55E2E005E086E /* WebFormDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2B627E55E4E005E086E /* WebHTMLRepresentationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B627E55E2E005E086E /* WebHTMLRepresentationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2B727E55E4E005E086E /* DOMHTMLMediaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B727E55E2E005E086E /* DOMHTMLMediaElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2B827E55E4E005E086E /* WebUIDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B827E55E2E005E086E /* WebUIDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2B927E55E4E005E086E /* DOMHTMLTableCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1B927E55E2E005E086E /* DOMHTMLTableCellElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2BA27E55E4E005E086E /* DOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1BA27E55E2F005E086E /* DOMException.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2BB27E55E4E005E086E /* WebDeviceOrientationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1BB27E55E2F005E086E /* WebDeviceOrientationProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2BC27E55E4E005E086E /* DOMDocumentFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1BC27E55E2F005E086E /* DOMDocumentFragment.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2BD27E55E4E005E086E /* WebFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1BD27E55E2F005E086E /* WebFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2BE27E55E4E005E086E /* DOM.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1BE27E55E2F005E086E /* DOM.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2BF27E55E4E005E086E /* WebUIDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1BF27E55E30005E086E /* WebUIDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2C027E55E4E005E086E /* DOMDocumentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C027E55E30005E086E /* DOMDocumentPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2C127E55E4E005E086E /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C127E55E30005E086E /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2C227E55E4E005E086E /* WebStringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C227E55E30005E086E /* WebStringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2C327E55E4E005E086E /* DOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C327E55E30005E086E /* DOMElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2C427E55E4E005E086E /* DOMHTMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C427E55E30005E086E /* DOMHTMLOptionElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2C527E55E4E005E086E /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C527E55E31005E086E /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2C627E55E4E005E086E /* DOMHTMLLinkElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C627E55E31005E086E /* DOMHTMLLinkElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2C727E55E4E005E086E /* WebDashboardRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C727E55E31005E086E /* WebDashboardRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2C827E55E4E005E086E /* DOMHTMLLabelElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C827E55E31005E086E /* DOMHTMLLabelElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2C927E55E4E005E086E /* DOMRGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1C927E55E31005E086E /* DOMRGBColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2CA27E55E4E005E086E /* DOMHTML.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1CA27E55E31005E086E /* DOMHTML.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2CB27E55E4E005E086E /* WebPreferenceKeysPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1CB27E55E31005E086E /* WebPreferenceKeysPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2CC27E55E4E005E086E /* DOMHTMLLIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1CC27E55E32005E086E /* DOMHTMLLIElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2CD27E55E4E005E086E /* WebLocalizableStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1CD27E55E32005E086E /* WebLocalizableStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2CE27E55E4E005E086E /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1CE27E55E32005E086E /* DOMTraversal.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2CF27E55E4E005E086E /* WebPluginDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1CF27E55E32005E086E /* WebPluginDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2D027E55E4E005E086E /* DOMHTMLAnchorElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D027E55E33005E086E /* DOMHTMLAnchorElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2D127E55E4E005E086E /* DOMHTMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D127E55E33005E086E /* DOMHTMLDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2D227E55E4E005E086E /* DOMHTMLTextAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D227E55E33005E086E /* DOMHTMLTextAreaElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2D327E55E4E005E086E /* DOMHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D327E55E33005E086E /* DOMHTMLTableCaptionElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2D427E55E4E005E086E /* WebFrameIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D427E55E33005E086E /* WebFrameIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2D527E55E4E005E086E /* DOMNodePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D527E55E33005E086E /* DOMNodePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2D627E55E4E005E086E /* DOMHTMLTitleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D627E55E33005E086E /* DOMHTMLTitleElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2D727E55E4E005E086E /* DOMComment.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D727E55E34005E086E /* DOMComment.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2D827E55E4E005E086E /* WebPDFViewIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D827E55E34005E086E /* WebPDFViewIPhone.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2D927E55E4E005E086E /* WebHistoryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1D927E55E34005E086E /* WebHistoryItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2DA27E55E4E005E086E /* DOMHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1DA27E55E34005E086E /* DOMHTMLOptionsCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2DB27E55E4E005E086E /* DOMHTMLOptGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1DB27E55E34005E086E /* DOMHTMLOptGroupElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2DC27E55E4E005E086E /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1DC27E55E35005E086E /* DOMXPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2DD27E55E4E005E086E /* DOMEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1DD27E55E35005E086E /* DOMEventListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2DE27E55E4E005E086E /* WebHTMLRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1DE27E55E35005E086E /* WebHTMLRepresentation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2DF27E55E4E005E086E /* DOMRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1DF27E55E35005E086E /* DOMRanges.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2E027E55E4E005E086E /* DOMHTMLHeadingElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E027E55E35005E086E /* DOMHTMLHeadingElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2E127E55E4E005E086E /* WebGeolocationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E127E55E36005E086E /* WebGeolocationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2E227E55E4E005E086E /* DOMHTMLMenuElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E227E55E36005E086E /* DOMHTMLMenuElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2E327E55E4E005E086E /* WebScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E327E55E36005E086E /* WebScriptWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2E427E55E4E005E086E /* DOMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E427E55E36005E086E /* DOMFile.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2E527E55E4E005E086E /* DOMNamedNodeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E527E55E36005E086E /* DOMNamedNodeMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2E627E55E4E005E086E /* WebInspectorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E627E55E36005E086E /* WebInspectorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2E727E55E4E005E086E /* DOMCSSValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E727E55E36005E086E /* DOMCSSValueList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2E827E55E4E005E086E /* DOMEventException.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E827E55E36005E086E /* DOMEventException.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2E927E55E4E005E086E /* DOMDocumentFragmentPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1E927E55E37005E086E /* DOMDocumentFragmentPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2EA27E55E4E005E086E /* DOMTimeRanges.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1EA27E55E37005E086E /* DOMTimeRanges.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2EB27E55E4E005E086E /* DOMHTMLDListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1EB27E55E37005E086E /* DOMHTMLDListElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2EC27E55E4E005E086E /* DOMXPathResult.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1EC27E55E37005E086E /* DOMXPathResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2ED27E55E4E005E086E /* WebPolicyDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1ED27E55E38005E086E /* WebPolicyDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2EE27E55E4E005E086E /* DOMDocumentType.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1EE27E55E38005E086E /* DOMDocumentType.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2EF27E55E4E005E086E /* WebKitStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1EF27E55E38005E086E /* WebKitStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2F027E55E4E005E086E /* WebNSStringExtrasIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F027E55E38005E086E /* WebNSStringExtrasIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2F127E55E4E005E086E /* DOMCSSStyleDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F127E55E38005E086E /* DOMCSSStyleDeclaration.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2F227E55E4E005E086E /* DOMHTMLCanvasElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F227E55E38005E086E /* DOMHTMLCanvasElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2F327E55E4E005E086E /* WebNSViewExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F327E55E38005E086E /* WebNSViewExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2F427E55E4E005E086E /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F427E55E39005E086E /* DOMViews.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2F527E55E4E005E086E /* DOMHTMLPreElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F527E55E39005E086E /* DOMHTMLPreElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2F627E55E4E005E086E /* DOMHTMLSelectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F627E55E39005E086E /* DOMHTMLSelectElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2F727E55E4E005E086E /* WebHTMLView.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F727E55E39005E086E /* WebHTMLView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2F827E55E4E005E086E /* DOMHTMLAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F827E55E39005E086E /* DOMHTMLAreaElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2F927E55E4E005E086E /* DOMHTMLStyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1F927E55E3A005E086E /* DOMHTMLStyleElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2FA27E55E4E005E086E /* DOMAttr.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1FA27E55E3A005E086E /* DOMAttr.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2FB27E55E4E005E086E /* WebPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1FB27E55E3A005E086E /* WebPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2FC27E55E4E005E086E /* DOMUIEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1FC27E55E3A005E086E /* DOMUIEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2FD27E55E4E005E086E /* WebVisiblePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1FD27E55E3A005E086E /* WebVisiblePosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A2FE27E55E4E005E086E /* DOMRect.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1FE27E55E3A005E086E /* DOMRect.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A2FF27E55E4E005E086E /* DOMHTMLModElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A1FF27E55E3B005E086E /* DOMHTMLModElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30027E55E4E005E086E /* WebKitErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20027E55E3B005E086E /* WebKitErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30127E55E4E005E086E /* WebFormDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20127E55E3B005E086E /* WebFormDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30227E55E4E005E086E /* WebMIMETypeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20227E55E3B005E086E /* WebMIMETypeRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30327E55E4E005E086E /* DOMCharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20327E55E3B005E086E /* DOMCharacterData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30427E55E4E005E086E /* WebNSStringExtrasIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20427E55E3B005E086E /* WebNSStringExtrasIPhone.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30527E55E4E005E086E /* WebHistoryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20527E55E3B005E086E /* WebHistoryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30627E55E4E005E086E /* DOMHTMLAppletElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20627E55E3B005E086E /* DOMHTMLAppletElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30727E55E4E005E086E /* DOMHTMLBaseElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20727E55E3C005E086E /* DOMHTMLBaseElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30827E55E4E005E086E /* DOMHTMLParagraphElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20827E55E3C005E086E /* DOMHTMLParagraphElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30927E55E4E005E086E /* WebFrameLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20927E55E3C005E086E /* WebFrameLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30A27E55E4E005E086E /* WebJavaScriptTextInputPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20A27E55E3D005E086E /* WebJavaScriptTextInputPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30B27E55E4E005E086E /* DOMHTMLInputElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20B27E55E3D005E086E /* DOMHTMLInputElementPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30C27E55E4E005E086E /* WebEditingDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20C27E55E3D005E086E /* WebEditingDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30D27E55E4E005E086E /* DOMCSSFontFaceRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20D27E55E3D005E086E /* DOMCSSFontFaceRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A30E27E55E4E005E086E /* WebAllowDenyPolicyListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20E27E55E3D005E086E /* WebAllowDenyPolicyListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A30F27E55E4E005E086E /* DOMCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A20F27E55E3D005E086E /* DOMCSSValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A31027E55E4E005E086E /* DOMCore.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21027E55E3D005E086E /* DOMCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A31127E55E4E005E086E /* WebHistoryItemPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21127E55E3D005E086E /* WebHistoryItemPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31227E55E4E005E086E /* WebNSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21227E55E3E005E086E /* WebNSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31327E55E4E005E086E /* WebPluginContainerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21327E55E3E005E086E /* WebPluginContainerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31427E55E4E005E086E /* WebPanelAuthenticationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21427E55E3E005E086E /* WebPanelAuthenticationHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31527E55E4E005E086E /* WebPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21527E55E3E005E086E /* WebPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31627E55E4E005E086E /* DOMHTMLQuoteElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21627E55E3F005E086E /* DOMHTMLQuoteElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A31727E55E4E005E086E /* WebStorageManagerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21727E55E3F005E086E /* WebStorageManagerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31827E55E4E005E086E /* WebView.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21827E55E3F005E086E /* WebView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A31927E55E4E005E086E /* DOMBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21927E55E3F005E086E /* DOMBlob.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A31A27E55E4E005E086E /* WebFixedPositionContent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21A27E55E3F005E086E /* WebFixedPositionContent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31B27E55E4E005E086E /* WebDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21B27E55E3F005E086E /* WebDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A31C27E55E4E005E086E /* WebNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21C27E55E3F005E086E /* WebNotification.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31D27E55E4E005E086E /* WebNSWindowExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21D27E55E3F005E086E /* WebNSWindowExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A31E27E55E4E005E086E /* WebDOMOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21E27E55E40005E086E /* WebDOMOperations.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A31F27E55E4E005E086E /* DOMHTMLFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A21F27E55E40005E086E /* DOMHTMLFormElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32027E55E4E005E086E /* DOMCDATASection.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22027E55E40005E086E /* DOMCDATASection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32127E55E4E005E086E /* DOMHTMLUListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22127E55E40005E086E /* DOMHTMLUListElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32227E55E4E005E086E /* DOMKeyboardEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22227E55E40005E086E /* DOMKeyboardEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32327E55E4E005E086E /* DOMCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22327E55E40005E086E /* DOMCounter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32427E55E4E005E086E /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22427E55E41005E086E /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A32527E55E4E005E086E /* DOMHTMLMapElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22527E55E41005E086E /* DOMHTMLMapElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32727E55E4E005E086E /* WebURLsWithTitles.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22727E55E41005E086E /* WebURLsWithTitles.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A32827E55E4E005E086E /* DOMCSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22827E55E41005E086E /* DOMCSSRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32927E55E4E005E086E /* DOMCSSMediaRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22927E55E42005E086E /* DOMCSSMediaRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32A27E55E4F005E086E /* DOMCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22A27E55E42005E086E /* DOMCSSStyleSheet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32B27E55E4F005E086E /* WebUIKitDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22B27E55E42005E086E /* WebUIKitDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A32C27E55E4F005E086E /* WebPluginViewFactoryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22C27E55E42005E086E /* WebPluginViewFactoryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A32D27E55E4F005E086E /* DOMUIKitExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22D27E55E42005E086E /* DOMUIKitExtensions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A32E27E55E4F005E086E /* DOMExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22E27E55E42005E086E /* DOMExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A32F27E55E4F005E086E /* DOMCSSStyleRule.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A22F27E55E42005E086E /* DOMCSSStyleRule.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A33027E55E4F005E086E /* WebDeviceOrientationProviderMock.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23027E55E43005E086E /* WebDeviceOrientationProviderMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33127E55E4F005E086E /* WebDefaultPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23127E55E43005E086E /* WebDefaultPolicyDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33227E55E4F005E086E /* WebDynamicScrollBarsView.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23227E55E43005E086E /* WebDynamicScrollBarsView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33327E55E4F005E086E /* WebDatabaseQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23327E55E43005E086E /* WebDatabaseQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33427E55E4F005E086E /* WebPDFViewIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23427E55E43005E086E /* WebPDFViewIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33527E55E4F005E086E /* WebPluginPackagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23527E55E43005E086E /* WebPluginPackagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33627E55E4F005E086E /* WebSelectionRect.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23627E55E43005E086E /* WebSelectionRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33727E55E4F005E086E /* WebTextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23727E55E44005E086E /* WebTextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33827E55E4F005E086E /* WebDeviceOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23827E55E44005E086E /* WebDeviceOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33927E55E4F005E086E /* DOMHTMLFieldSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23927E55E44005E086E /* DOMHTMLFieldSetElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A33A27E55E4F005E086E /* WebGeolocationProviderIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23A27E55E44005E086E /* WebGeolocationProviderIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A33B27E55E4F005E086E /* DOMFileList.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23B27E55E44005E086E /* DOMFileList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A33C27E55E4F005E086E /* DOMXPathExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23C27E55E44005E086E /* DOMXPathExpression.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A33D27E55E4F005E086E /* DOMHTMLTableRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23D27E55E44005E086E /* DOMHTMLTableRowElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A33E27E55E4F005E086E /* DOMCSS.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23E27E55E45005E086E /* DOMCSS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A33F27E55E4F005E086E /* WebCache.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A23F27E55E45005E086E /* WebCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34027E55E4F005E086E /* WebFrameIPhone.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24027E55E45005E086E /* WebFrameIPhone.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34127E55E4F005E086E /* DOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24127E55E45005E086E /* DOMNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34227E55E4F005E086E /* WebInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24227E55E45005E086E /* WebInspector.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34327E55E4F005E086E /* DOMHTMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24327E55E45005E086E /* DOMHTMLElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34427E55E4F005E086E /* DOMHTMLVideoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24427E55E45005E086E /* DOMHTMLVideoElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34527E55E4F005E086E /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24527E55E46005E086E /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34627E55E4F005E086E /* DOMHTMLEmbedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24627E55E46005E086E /* DOMHTMLEmbedElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34727E55E4F005E086E /* NSURLDownloadSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24727E55E46005E086E /* NSURLDownloadSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34827E55E4F005E086E /* DOMHTMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24827E55E46005E086E /* DOMHTMLInputElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34927E55E4F005E086E /* DOMHTMLOListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24927E55E46005E086E /* DOMHTMLOListElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34A27E55E4F005E086E /* DOMOverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24A27E55E46005E086E /* DOMOverflowEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34B27E55E4F005E086E /* DOMCSSRuleList.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24B27E55E46005E086E /* DOMCSSRuleList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34C27E55E4F005E086E /* DOMHTMLButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24C27E55E46005E086E /* DOMHTMLButtonElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A34D27E55E4F005E086E /* WebIconDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24D27E55E47005E086E /* WebIconDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34E27E55E4F005E086E /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24E27E55E47005E086E /* WebUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A34F27E55E4F005E086E /* WebViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A24F27E55E47005E086E /* WebViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35027E55E4F005E086E /* WebEditingDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25027E55E47005E086E /* WebEditingDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35127E55E4F005E086E /* DOMStylesheets.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25127E55E47005E086E /* DOMStylesheets.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A35227E55E4F005E086E /* WebCreateFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25227E55E47005E086E /* WebCreateFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35327E55E4F005E086E /* DOMEntityReference.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25327E55E47005E086E /* DOMEntityReference.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A35427E55E4F005E086E /* DOMHTMLFrameSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25427E55E48005E086E /* DOMHTMLFrameSetElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A35527E55E4F005E086E /* DOMStyleSheetList.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25527E55E48005E086E /* DOMStyleSheetList.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A35627E55E4F005E086E /* WebCaretChangeListener.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25627E55E48005E086E /* WebCaretChangeListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35727E55E4F005E086E /* WebFrameLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25727E55E48005E086E /* WebFrameLoadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A35827E55E4F005E086E /* DOMHTMLFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25827E55E48005E086E /* DOMHTMLFontElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A35927E55E4F005E086E /* WebHTMLViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25927E55E48005E086E /* WebHTMLViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35A27E55E4F005E086E /* DOMMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25A27E55E48005E086E /* DOMMediaError.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35B27E55E4F005E086E /* DOMHTMLTextAreaElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25B27E55E49005E086E /* DOMHTMLTextAreaElementPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35C27E55E4F005E086E /* WebQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25C27E55E49005E086E /* WebQuotaManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35D27E55E4F005E086E /* WebFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25D27E55E49005E086E /* WebFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A35E27E55E4F005E086E /* DOMEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25E27E55E49005E086E /* DOMEvents.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A35F27E55E4F005E086E /* WebPluginViewFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A25F27E55E49005E086E /* WebPluginViewFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36027E55E4F005E086E /* WebPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26027E55E49005E086E /* WebPreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36127E55E4F005E086E /* WebFrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26127E55E49005E086E /* WebFrameView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36227E55E4F005E086E /* DOMMouseEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26227E55E4A005E086E /* DOMMouseEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36327E55E4F005E086E /* DOMHTMLBodyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26327E55E4A005E086E /* DOMHTMLBodyElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36427E55E4F005E086E /* WebFrameViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26427E55E4A005E086E /* WebFrameViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A36527E55E4F005E086E /* DOMProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26527E55E4A005E086E /* DOMProgressEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36627E55E4F005E086E /* DOMHTMLMetaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26627E55E4A005E086E /* DOMHTMLMetaElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36727E55E4F005E086E /* DOMHTMLDivElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26727E55E4A005E086E /* DOMHTMLDivElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36827E55E4F005E086E /* WebResourcePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26827E55E4A005E086E /* WebResourcePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A36927E55E4F005E086E /* DOMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26927E55E4A005E086E /* DOMObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36A27E55E4F005E086E /* DOMWheelEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26A27E55E4B005E086E /* DOMWheelEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36B27E55E4F005E086E /* DOMRange.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26B27E55E4B005E086E /* DOMRange.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36C27E55E4F005E086E /* DOMXPathNSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26C27E55E4B005E086E /* DOMXPathNSResolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36D27E55E4F005E086E /* DOMHTMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26D27E55E4B005E086E /* DOMHTMLTableElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36E27E55E4F005E086E /* DOMHTMLBaseFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26E27E55E4B005E086E /* DOMHTMLBaseFontElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A36F27E55E4F005E086E /* WebUIKitSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A26F27E55E4B005E086E /* WebUIKitSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A37027E55E4F005E086E /* WebDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27027E55E4B005E086E /* WebDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A37127E55E4F005E086E /* WebHistory.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27127E55E4C005E086E /* WebHistory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A37227E55E4F005E086E /* DOMHTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27227E55E4C005E086E /* DOMHTMLCollection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A37327E55E4F005E086E /* DOMProcessingInstruction.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27327E55E4C005E086E /* DOMProcessingInstruction.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A37427E55E4F005E086E /* DOMHTMLObjectElement.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27427E55E4C005E086E /* DOMHTMLObjectElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A37527E55E4F005E086E /* WebKitNSStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27527E55E4C005E086E /* WebKitNSStringExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A37627E55E4F005E086E /* DOMCSSPrimitiveValue.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27627E55E4C005E086E /* DOMCSSPrimitiveValue.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A37727E55E4F005E086E /* DOMStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27727E55E4D005E086E /* DOMStyleSheet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A37827E55E4F005E086E /* WebDOMOperationsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27827E55E4D005E086E /* WebDOMOperationsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A37927E55E4F005E086E /* WebPDFViewPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27927E55E4D005E086E /* WebPDFViewPlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A37A27E55E4F005E086E /* WebNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27A27E55E4D005E086E /* WebNSFileManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A37B27E55E4F005E086E /* DOMHTMLElementPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A27B27E55E4D005E086E /* DOMHTMLElementPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A38127E561C4005E086E /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A38027E561C4005E086E /* WebScriptObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A38327E561CA005E086E /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A38227E561CA005E086E /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DDA0A3FD27E66F2F005E086E /* AbstractPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A3FC27E66F2F005E086E /* AbstractPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A3FF27E66F5F005E086E /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A3FE27E66F5E005E086E /* KeyEventCodesIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A40627E66F85005E086E /* WKGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40027E66F83005E086E /* WKGraphics.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A40727E66F85005E086E /* WAKView.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40127E66F84005E086E /* WAKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A40827E66F85005E086E /* WAKWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40227E66F84005E086E /* WAKWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A40927E66F85005E086E /* WKTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40327E66F84005E086E /* WKTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A40A27E66F85005E086E /* WAKResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40427E66F84005E086E /* WAKResponder.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A40B27E66F85005E086E /* WKContentObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40527E66F85005E086E /* WKContentObservation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A40F27E66FB6005E086E /* WebCoreThreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40C27E66FB5005E086E /* WebCoreThreadMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A41027E66FB6005E086E /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40D27E66FB5005E086E /* WebCoreThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A41127E66FB6005E086E /* WebCoreThreadRun.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A40E27E66FB5005E086E /* WebCoreThreadRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A41327E66FD7005E086E /* WebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41227E66FD7005E086E /* WebEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A41527E67001005E086E /* WebItemProviderPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41427E67000005E086E /* WebItemProviderPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A41727E67039005E086E /* WebEventRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41627E67039005E086E /* WebEventRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDA0A41927E672A5005E086E /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41827E672A5005E086E /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41D27E94644005E086E /* WebKitLegacy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */; };
 		DDB04F3F278E55F1008D3678 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
@@ -7175,280 +6903,10 @@
 		DD8CD35F296D03A300C04CA1 /* _WKFeature.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKFeature.mm; sourceTree = "<group>"; };
 		DD8CD360296D03A300C04CA1 /* _WKFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFeature.h; sourceTree = "<group>"; };
 		DD8CD361296D03A400C04CA1 /* _WKFeatureInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFeatureInternal.h; sourceTree = "<group>"; };
-		DDA0A17C27E55E24005E086E /* DOMCSSImportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSImportRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSImportRule.h; sourceTree = "<group>"; };
-		DDA0A17D27E55E24005E086E /* DOMMutationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMMutationEvent.h; path = ../WebKitLegacy/mac/DOM/DOMMutationEvent.h; sourceTree = "<group>"; };
-		DDA0A17E27E55E24005E086E /* DOMText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMText.h; path = ../WebKitLegacy/mac/DOM/DOMText.h; sourceTree = "<group>"; };
-		DDA0A17F27E55E25005E086E /* WebDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDocument.h; path = ../WebKitLegacy/mac/WebView/WebDocument.h; sourceTree = "<group>"; };
-		DDA0A18027E55E25005E086E /* DOMHTMLHRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLHRElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLHRElement.h; sourceTree = "<group>"; };
-		DDA0A18127E55E25005E086E /* DOMTextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMTextEvent.h; path = ../WebKitLegacy/mac/DOM/DOMTextEvent.h; sourceTree = "<group>"; };
-		DDA0A18227E55E25005E086E /* WebNSEventExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSEventExtras.h; path = ../WebKitLegacy/mac/Misc/WebNSEventExtras.h; sourceTree = "<group>"; };
-		DDA0A18327E55E25005E086E /* WebPluginContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPluginContainer.h; path = ../WebKitLegacy/mac/Plugins/WebPluginContainer.h; sourceTree = "<group>"; };
-		DDA0A18427E55E25005E086E /* DOMEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMEntity.h; path = ../WebKitLegacy/mac/DOM/DOMEntity.h; sourceTree = "<group>"; };
-		DDA0A18527E55E26005E086E /* WebPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPolicyDelegate.h; path = ../WebKitLegacy/mac/WebView/WebPolicyDelegate.h; sourceTree = "<group>"; };
-		DDA0A18627E55E26005E086E /* WebAutocapitalizeTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAutocapitalizeTypes.h; path = ../WebKitLegacy/mac/DOM/WebAutocapitalizeTypes.h; sourceTree = "<group>"; };
-		DDA0A18727E55E26005E086E /* DOMHTMLBRElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLBRElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLBRElement.h; sourceTree = "<group>"; };
-		DDA0A18827E55E27005E086E /* WebNSPasteboardExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSPasteboardExtras.h; path = ../WebKitLegacy/mac/Misc/WebNSPasteboardExtras.h; sourceTree = "<group>"; };
-		DDA0A18927E55E27005E086E /* WebResourceLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadDelegate.h; path = ../WebKitLegacy/mac/WebView/WebResourceLoadDelegate.h; sourceTree = "<group>"; };
-		DDA0A18A27E55E27005E086E /* DOMHTMLIFrameElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLIFrameElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLIFrameElement.h; sourceTree = "<group>"; };
-		DDA0A18B27E55E27005E086E /* DOMRangeException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMRangeException.h; path = ../WebKitLegacy/mac/DOM/DOMRangeException.h; sourceTree = "<group>"; };
-		DDA0A18C27E55E27005E086E /* DOMHTMLLegendElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLLegendElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLLegendElement.h; sourceTree = "<group>"; };
-		DDA0A18D27E55E27005E086E /* DOMHTMLHeadElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLHeadElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLHeadElement.h; sourceTree = "<group>"; };
-		DDA0A18E27E55E27005E086E /* WebSecurityOriginPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSecurityOriginPrivate.h; path = ../WebKitLegacy/mac/WebCoreSupport/WebSecurityOriginPrivate.h; sourceTree = "<group>"; };
-		DDA0A18F27E55E27005E086E /* DOMEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMEvent.h; path = ../WebKitLegacy/mac/DOM/DOMEvent.h; sourceTree = "<group>"; };
-		DDA0A19027E55E28005E086E /* DOMNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMNodeList.h; path = ../WebKitLegacy/mac/DOM/DOMNodeList.h; sourceTree = "<group>"; };
-		DDA0A19127E55E28005E086E /* DOMXPathException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMXPathException.h; path = ../WebKitLegacy/mac/DOM/DOMXPathException.h; sourceTree = "<group>"; };
-		DDA0A19227E55E28005E086E /* WebResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResource.h; path = ../WebKitLegacy/mac/WebView/WebResource.h; sourceTree = "<group>"; };
-		DDA0A19327E55E28005E086E /* WebDatabaseManagerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDatabaseManagerPrivate.h; path = ../WebKitLegacy/mac/Storage/WebDatabaseManagerPrivate.h; sourceTree = "<group>"; };
-		DDA0A19427E55E28005E086E /* WebResourceLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourceLoadDelegatePrivate.h; path = ../WebKitLegacy/mac/WebView/WebResourceLoadDelegatePrivate.h; sourceTree = "<group>"; };
-		DDA0A19527E55E28005E086E /* DOMNodeIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMNodeIterator.h; path = ../WebKitLegacy/mac/DOM/DOMNodeIterator.h; sourceTree = "<group>"; };
-		DDA0A19627E55E29005E086E /* WebCoreStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreStatistics.h; path = ../WebKitLegacy/mac/Misc/WebCoreStatistics.h; sourceTree = "<group>"; };
-		DDA0A19727E55E29005E086E /* DOMHTMLParamElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLParamElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLParamElement.h; sourceTree = "<group>"; };
-		DDA0A19827E55E29005E086E /* WebNSUserDefaultsExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSUserDefaultsExtras.h; path = ../WebKitLegacy/mac/Misc/WebNSUserDefaultsExtras.h; sourceTree = "<group>"; };
-		DDA0A19927E55E29005E086E /* WebBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebBackForwardList.h; path = ../WebKitLegacy/mac/History/WebBackForwardList.h; sourceTree = "<group>"; };
-		DDA0A19A27E55E29005E086E /* DOMAbstractView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMAbstractView.h; path = ../WebKitLegacy/mac/DOM/DOMAbstractView.h; sourceTree = "<group>"; };
-		DDA0A19B27E55E29005E086E /* DOMNodeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMNodeFilter.h; path = ../WebKitLegacy/mac/DOM/DOMNodeFilter.h; sourceTree = "<group>"; };
-		DDA0A19C27E55E29005E086E /* DOMImplementation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMImplementation.h; path = ../WebKitLegacy/mac/DOM/DOMImplementation.h; sourceTree = "<group>"; };
-		DDA0A19D27E55E2A005E086E /* WebKitErrorsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitErrorsPrivate.h; path = ../WebKitLegacy/mac/Misc/WebKitErrorsPrivate.h; sourceTree = "<group>"; };
-		DDA0A19E27E55E2A005E086E /* DOMHTMLScriptElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLScriptElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLScriptElement.h; sourceTree = "<group>"; };
-		DDA0A19F27E55E2A005E086E /* DOMCSSUnknownRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSUnknownRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSUnknownRule.h; sourceTree = "<group>"; };
-		DDA0A1A027E55E2A005E086E /* DOMCSSPageRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSPageRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSPageRule.h; sourceTree = "<group>"; };
-		DDA0A1A127E55E2A005E086E /* DOMTreeWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMTreeWalker.h; path = ../WebKitLegacy/mac/DOM/DOMTreeWalker.h; sourceTree = "<group>"; };
-		DDA0A1A227E55E2A005E086E /* DOMHTMLDirectoryElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLDirectoryElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLDirectoryElement.h; sourceTree = "<group>"; };
-		DDA0A1A327E55E2B005E086E /* WebDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDocumentPrivate.h; path = ../WebKitLegacy/mac/WebView/WebDocumentPrivate.h; sourceTree = "<group>"; };
-		DDA0A1A427E55E2B005E086E /* DOMHTMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLImageElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLImageElement.h; sourceTree = "<group>"; };
-		DDA0A1A527E55E2B005E086E /* DOMHTMLHtmlElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLHtmlElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLHtmlElement.h; sourceTree = "<group>"; };
-		DDA0A1A627E55E2B005E086E /* WebDataSourcePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDataSourcePrivate.h; path = ../WebKitLegacy/mac/WebView/WebDataSourcePrivate.h; sourceTree = "<group>"; };
-		DDA0A1A727E55E2B005E086E /* DOMHTMLTableColElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTableColElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTableColElement.h; sourceTree = "<group>"; };
-		DDA0A1A827E55E2C005E086E /* DOMHTMLTableSectionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTableSectionElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTableSectionElement.h; sourceTree = "<group>"; };
-		DDA0A1A927E55E2C005E086E /* WebGeolocationCoreLocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGeolocationCoreLocationProvider.h; path = ../WebKitLegacy/ios/Misc/WebGeolocationCoreLocationProvider.h; sourceTree = "<group>"; };
-		DDA0A1AA27E55E2C005E086E /* DOMHTMLMarqueeElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLMarqueeElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLMarqueeElement.h; sourceTree = "<group>"; };
-		DDA0A1AB27E55E2C005E086E /* WebArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebArchive.h; path = ../WebKitLegacy/mac/WebView/WebArchive.h; sourceTree = "<group>"; };
-		DDA0A1AC27E55E2C005E086E /* DOMCSSCharsetRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSCharsetRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSCharsetRule.h; sourceTree = "<group>"; };
-		DDA0A1AD27E55E2C005E086E /* DOMMediaList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMMediaList.h; path = ../WebKitLegacy/mac/DOM/DOMMediaList.h; sourceTree = "<group>"; };
-		DDA0A1AE27E55E2C005E086E /* DOMEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMEventTarget.h; path = ../WebKitLegacy/mac/DOM/DOMEventTarget.h; sourceTree = "<group>"; };
-		DDA0A1AF27E55E2D005E086E /* DOMHTMLFrameElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLFrameElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLFrameElement.h; sourceTree = "<group>"; };
-		DDA0A1B027E55E2D005E086E /* DOMDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMDocument.h; path = ../WebKitLegacy/mac/DOM/DOMDocument.h; sourceTree = "<group>"; };
-		DDA0A1B127E55E2D005E086E /* DOMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMPrivate.h; path = ../WebKitLegacy/mac/DOM/DOMPrivate.h; sourceTree = "<group>"; };
-		DDA0A1B227E55E2D005E086E /* WebGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGeolocationPosition.h; path = ../WebKitLegacy/mac/WebView/WebGeolocationPosition.h; sourceTree = "<group>"; };
-		DDA0A1B327E55E2E005E086E /* WebNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNavigationData.h; path = ../WebKitLegacy/mac/WebView/WebNavigationData.h; sourceTree = "<group>"; };
-		DDA0A1B427E55E2E005E086E /* WebFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFrame.h; path = ../WebKitLegacy/mac/WebView/WebFrame.h; sourceTree = "<group>"; };
-		DDA0A1B527E55E2E005E086E /* WebFormDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFormDelegate.h; path = ../WebKitLegacy/mac/WebView/WebFormDelegate.h; sourceTree = "<group>"; };
-		DDA0A1B627E55E2E005E086E /* WebHTMLRepresentationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHTMLRepresentationPrivate.h; path = ../WebKitLegacy/mac/WebView/WebHTMLRepresentationPrivate.h; sourceTree = "<group>"; };
-		DDA0A1B727E55E2E005E086E /* DOMHTMLMediaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLMediaElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLMediaElement.h; sourceTree = "<group>"; };
-		DDA0A1B827E55E2E005E086E /* WebUIDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebUIDelegatePrivate.h; path = ../WebKitLegacy/mac/WebView/WebUIDelegatePrivate.h; sourceTree = "<group>"; };
-		DDA0A1B927E55E2E005E086E /* DOMHTMLTableCellElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTableCellElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTableCellElement.h; sourceTree = "<group>"; };
-		DDA0A1BA27E55E2F005E086E /* DOMException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMException.h; path = ../WebKitLegacy/mac/DOM/DOMException.h; sourceTree = "<group>"; };
-		DDA0A1BB27E55E2F005E086E /* WebDeviceOrientationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationProvider.h; path = ../WebKitLegacy/mac/WebView/WebDeviceOrientationProvider.h; sourceTree = "<group>"; };
-		DDA0A1BC27E55E2F005E086E /* DOMDocumentFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMDocumentFragment.h; path = ../WebKitLegacy/mac/DOM/DOMDocumentFragment.h; sourceTree = "<group>"; };
-		DDA0A1BD27E55E2F005E086E /* WebFramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFramePrivate.h; path = ../WebKitLegacy/mac/WebView/WebFramePrivate.h; sourceTree = "<group>"; };
-		DDA0A1BE27E55E2F005E086E /* DOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOM.h; path = ../WebKitLegacy/mac/DOM/DOM.h; sourceTree = "<group>"; };
-		DDA0A1BF27E55E30005E086E /* WebUIDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebUIDelegate.h; path = ../WebKitLegacy/mac/WebView/WebUIDelegate.h; sourceTree = "<group>"; };
-		DDA0A1C027E55E30005E086E /* DOMDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMDocumentPrivate.h; path = ../WebKitLegacy/mac/DOM/DOMDocumentPrivate.h; sourceTree = "<group>"; };
-		DDA0A1C127E55E30005E086E /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptDebugDelegate.h; path = ../WebKitLegacy/mac/WebView/WebScriptDebugDelegate.h; sourceTree = "<group>"; };
-		DDA0A1C227E55E30005E086E /* WebStringTruncator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebStringTruncator.h; path = ../WebKitLegacy/mac/Misc/WebStringTruncator.h; sourceTree = "<group>"; };
-		DDA0A1C327E55E30005E086E /* DOMElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMElement.h; path = ../WebKitLegacy/mac/DOM/DOMElement.h; sourceTree = "<group>"; };
-		DDA0A1C427E55E30005E086E /* DOMHTMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLOptionElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLOptionElement.h; sourceTree = "<group>"; };
-		DDA0A1C527E55E31005E086E /* WebBackForwardListPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebBackForwardListPrivate.h; path = ../WebKitLegacy/mac/History/WebBackForwardListPrivate.h; sourceTree = "<group>"; };
-		DDA0A1C627E55E31005E086E /* DOMHTMLLinkElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLLinkElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLLinkElement.h; sourceTree = "<group>"; };
-		DDA0A1C727E55E31005E086E /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDashboardRegion.h; path = ../WebKitLegacy/mac/WebView/WebDashboardRegion.h; sourceTree = "<group>"; };
-		DDA0A1C827E55E31005E086E /* DOMHTMLLabelElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLLabelElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLLabelElement.h; sourceTree = "<group>"; };
-		DDA0A1C927E55E31005E086E /* DOMRGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMRGBColor.h; path = ../WebKitLegacy/mac/DOM/DOMRGBColor.h; sourceTree = "<group>"; };
-		DDA0A1CA27E55E31005E086E /* DOMHTML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTML.h; path = ../WebKitLegacy/mac/DOM/DOMHTML.h; sourceTree = "<group>"; };
-		DDA0A1CB27E55E31005E086E /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreferenceKeysPrivate.h; path = ../WebKitLegacy/mac/WebView/WebPreferenceKeysPrivate.h; sourceTree = "<group>"; };
-		DDA0A1CC27E55E32005E086E /* DOMHTMLLIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLLIElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLLIElement.h; sourceTree = "<group>"; };
-		DDA0A1CD27E55E32005E086E /* WebLocalizableStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebLocalizableStrings.h; path = ../WebKitLegacy/mac/Misc/WebLocalizableStrings.h; sourceTree = "<group>"; };
-		DDA0A1CE27E55E32005E086E /* DOMTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMTraversal.h; path = ../WebKitLegacy/mac/DOM/DOMTraversal.h; sourceTree = "<group>"; };
-		DDA0A1CF27E55E32005E086E /* WebPluginDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPluginDatabase.h; path = ../WebKitLegacy/mac/Plugins/WebPluginDatabase.h; sourceTree = "<group>"; };
-		DDA0A1D027E55E33005E086E /* DOMHTMLAnchorElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLAnchorElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLAnchorElement.h; sourceTree = "<group>"; };
-		DDA0A1D127E55E33005E086E /* DOMHTMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLDocument.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLDocument.h; sourceTree = "<group>"; };
-		DDA0A1D227E55E33005E086E /* DOMHTMLTextAreaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTextAreaElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTextAreaElement.h; sourceTree = "<group>"; };
-		DDA0A1D327E55E33005E086E /* DOMHTMLTableCaptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTableCaptionElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTableCaptionElement.h; sourceTree = "<group>"; };
-		DDA0A1D427E55E33005E086E /* WebFrameIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFrameIOS.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebFrameIOS.h; sourceTree = "<group>"; };
-		DDA0A1D527E55E33005E086E /* DOMNodePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMNodePrivate.h; path = ../WebKitLegacy/mac/DOM/DOMNodePrivate.h; sourceTree = "<group>"; };
-		DDA0A1D627E55E33005E086E /* DOMHTMLTitleElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTitleElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTitleElement.h; sourceTree = "<group>"; };
-		DDA0A1D727E55E34005E086E /* DOMComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMComment.h; path = ../WebKitLegacy/mac/DOM/DOMComment.h; sourceTree = "<group>"; };
-		DDA0A1D827E55E34005E086E /* WebPDFViewIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPDFViewIPhone.h; path = ../WebKitLegacy/ios/WebView/WebPDFViewIPhone.h; sourceTree = "<group>"; };
-		DDA0A1D927E55E34005E086E /* WebHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHistoryItem.h; path = ../WebKitLegacy/mac/History/WebHistoryItem.h; sourceTree = "<group>"; };
-		DDA0A1DA27E55E34005E086E /* DOMHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLOptionsCollection.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLOptionsCollection.h; sourceTree = "<group>"; };
-		DDA0A1DB27E55E34005E086E /* DOMHTMLOptGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLOptGroupElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLOptGroupElement.h; sourceTree = "<group>"; };
-		DDA0A1DC27E55E35005E086E /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMXPath.h; path = ../WebKitLegacy/mac/DOM/DOMXPath.h; sourceTree = "<group>"; };
-		DDA0A1DD27E55E35005E086E /* DOMEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMEventListener.h; path = ../WebKitLegacy/mac/DOM/DOMEventListener.h; sourceTree = "<group>"; };
-		DDA0A1DE27E55E35005E086E /* WebHTMLRepresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHTMLRepresentation.h; path = ../WebKitLegacy/mac/WebView/WebHTMLRepresentation.h; sourceTree = "<group>"; };
-		DDA0A1DF27E55E35005E086E /* DOMRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMRanges.h; path = ../WebKitLegacy/mac/DOM/DOMRanges.h; sourceTree = "<group>"; };
-		DDA0A1E027E55E35005E086E /* DOMHTMLHeadingElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLHeadingElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLHeadingElement.h; sourceTree = "<group>"; };
-		DDA0A1E127E55E36005E086E /* WebGeolocationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGeolocationPrivate.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebGeolocationPrivate.h; sourceTree = "<group>"; };
-		DDA0A1E227E55E36005E086E /* DOMHTMLMenuElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLMenuElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLMenuElement.h; sourceTree = "<group>"; };
-		DDA0A1E327E55E36005E086E /* WebScriptWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptWorld.h; path = ../WebKitLegacy/mac/WebView/WebScriptWorld.h; sourceTree = "<group>"; };
-		DDA0A1E427E55E36005E086E /* DOMFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMFile.h; path = ../WebKitLegacy/mac/DOM/DOMFile.h; sourceTree = "<group>"; };
-		DDA0A1E527E55E36005E086E /* DOMNamedNodeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMNamedNodeMap.h; path = ../WebKitLegacy/mac/DOM/DOMNamedNodeMap.h; sourceTree = "<group>"; };
-		DDA0A1E627E55E36005E086E /* WebInspectorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspectorPrivate.h; path = ../WebKitLegacy/mac/WebInspector/WebInspectorPrivate.h; sourceTree = "<group>"; };
-		DDA0A1E727E55E36005E086E /* DOMCSSValueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSValueList.h; path = ../WebKitLegacy/mac/DOM/DOMCSSValueList.h; sourceTree = "<group>"; };
-		DDA0A1E827E55E36005E086E /* DOMEventException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMEventException.h; path = ../WebKitLegacy/mac/DOM/DOMEventException.h; sourceTree = "<group>"; };
-		DDA0A1E927E55E37005E086E /* DOMDocumentFragmentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMDocumentFragmentPrivate.h; path = ../WebKitLegacy/mac/DOM/DOMDocumentFragmentPrivate.h; sourceTree = "<group>"; };
-		DDA0A1EA27E55E37005E086E /* DOMTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMTimeRanges.h; path = ../WebKitLegacy/mac/DOM/DOMTimeRanges.h; sourceTree = "<group>"; };
-		DDA0A1EB27E55E37005E086E /* DOMHTMLDListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLDListElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLDListElement.h; sourceTree = "<group>"; };
-		DDA0A1EC27E55E37005E086E /* DOMXPathResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMXPathResult.h; path = ../WebKitLegacy/mac/DOM/DOMXPathResult.h; sourceTree = "<group>"; };
-		DDA0A1ED27E55E38005E086E /* WebPolicyDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPolicyDelegatePrivate.h; path = ../WebKitLegacy/mac/WebView/WebPolicyDelegatePrivate.h; sourceTree = "<group>"; };
-		DDA0A1EE27E55E38005E086E /* DOMDocumentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMDocumentType.h; path = ../WebKitLegacy/mac/DOM/DOMDocumentType.h; sourceTree = "<group>"; };
-		DDA0A1EF27E55E38005E086E /* WebKitStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitStatistics.h; path = ../WebKitLegacy/mac/Misc/WebKitStatistics.h; sourceTree = "<group>"; };
-		DDA0A1F027E55E38005E086E /* WebNSStringExtrasIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSStringExtrasIOS.h; path = ../WebKitLegacy/ios/Misc/WebNSStringExtrasIOS.h; sourceTree = "<group>"; };
-		DDA0A1F127E55E38005E086E /* DOMCSSStyleDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSStyleDeclaration.h; path = ../WebKitLegacy/mac/DOM/DOMCSSStyleDeclaration.h; sourceTree = "<group>"; };
-		DDA0A1F227E55E38005E086E /* DOMHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLCanvasElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLCanvasElement.h; sourceTree = "<group>"; };
-		DDA0A1F327E55E38005E086E /* WebNSViewExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSViewExtras.h; path = ../WebKitLegacy/mac/Misc/WebNSViewExtras.h; sourceTree = "<group>"; };
-		DDA0A1F427E55E39005E086E /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMViews.h; path = ../WebKitLegacy/mac/DOM/DOMViews.h; sourceTree = "<group>"; };
-		DDA0A1F527E55E39005E086E /* DOMHTMLPreElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLPreElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLPreElement.h; sourceTree = "<group>"; };
-		DDA0A1F627E55E39005E086E /* DOMHTMLSelectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLSelectElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLSelectElement.h; sourceTree = "<group>"; };
-		DDA0A1F727E55E39005E086E /* WebHTMLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHTMLView.h; path = ../WebKitLegacy/mac/WebView/WebHTMLView.h; sourceTree = "<group>"; };
-		DDA0A1F827E55E39005E086E /* DOMHTMLAreaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLAreaElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLAreaElement.h; sourceTree = "<group>"; };
-		DDA0A1F927E55E3A005E086E /* DOMHTMLStyleElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLStyleElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLStyleElement.h; sourceTree = "<group>"; };
-		DDA0A1FA27E55E3A005E086E /* DOMAttr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMAttr.h; path = ../WebKitLegacy/mac/DOM/DOMAttr.h; sourceTree = "<group>"; };
-		DDA0A1FB27E55E3A005E086E /* WebPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPlugin.h; path = ../WebKitLegacy/mac/Plugins/WebPlugin.h; sourceTree = "<group>"; };
-		DDA0A1FC27E55E3A005E086E /* DOMUIEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMUIEvent.h; path = ../WebKitLegacy/mac/DOM/DOMUIEvent.h; sourceTree = "<group>"; };
-		DDA0A1FD27E55E3A005E086E /* WebVisiblePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVisiblePosition.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebVisiblePosition.h; sourceTree = "<group>"; };
-		DDA0A1FE27E55E3A005E086E /* DOMRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMRect.h; path = ../WebKitLegacy/mac/DOM/DOMRect.h; sourceTree = "<group>"; };
-		DDA0A1FF27E55E3B005E086E /* DOMHTMLModElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLModElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLModElement.h; sourceTree = "<group>"; };
-		DDA0A20027E55E3B005E086E /* WebKitErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitErrors.h; path = ../WebKitLegacy/mac/Misc/WebKitErrors.h; sourceTree = "<group>"; };
-		DDA0A20127E55E3B005E086E /* WebFormDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFormDelegatePrivate.h; path = ../WebKitLegacy/mac/WebView/WebFormDelegatePrivate.h; sourceTree = "<group>"; };
-		DDA0A20227E55E3B005E086E /* WebMIMETypeRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMIMETypeRegistry.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebMIMETypeRegistry.h; sourceTree = "<group>"; };
-		DDA0A20327E55E3B005E086E /* DOMCharacterData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCharacterData.h; path = ../WebKitLegacy/mac/DOM/DOMCharacterData.h; sourceTree = "<group>"; };
-		DDA0A20427E55E3B005E086E /* WebNSStringExtrasIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSStringExtrasIPhone.h; path = ../WebKitLegacy/ios/Misc/WebNSStringExtrasIPhone.h; sourceTree = "<group>"; };
-		DDA0A20527E55E3B005E086E /* WebHistoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHistoryPrivate.h; path = ../WebKitLegacy/mac/History/WebHistoryPrivate.h; sourceTree = "<group>"; };
-		DDA0A20627E55E3B005E086E /* DOMHTMLAppletElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLAppletElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLAppletElement.h; sourceTree = "<group>"; };
-		DDA0A20727E55E3C005E086E /* DOMHTMLBaseElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLBaseElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLBaseElement.h; sourceTree = "<group>"; };
-		DDA0A20827E55E3C005E086E /* DOMHTMLParagraphElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLParagraphElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLParagraphElement.h; sourceTree = "<group>"; };
-		DDA0A20927E55E3C005E086E /* WebFrameLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFrameLoadDelegatePrivate.h; path = ../WebKitLegacy/mac/WebView/WebFrameLoadDelegatePrivate.h; sourceTree = "<group>"; };
-		DDA0A20A27E55E3D005E086E /* WebJavaScriptTextInputPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebJavaScriptTextInputPanel.h; path = ../WebKitLegacy/mac/WebCoreSupport/WebJavaScriptTextInputPanel.h; sourceTree = "<group>"; };
-		DDA0A20B27E55E3D005E086E /* DOMHTMLInputElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLInputElementPrivate.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLInputElementPrivate.h; sourceTree = "<group>"; };
-		DDA0A20C27E55E3D005E086E /* WebEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEditingDelegate.h; path = ../WebKitLegacy/mac/WebView/WebEditingDelegate.h; sourceTree = "<group>"; };
-		DDA0A20D27E55E3D005E086E /* DOMCSSFontFaceRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSFontFaceRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSFontFaceRule.h; sourceTree = "<group>"; };
-		DDA0A20E27E55E3D005E086E /* WebAllowDenyPolicyListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAllowDenyPolicyListener.h; path = ../WebKitLegacy/mac/WebView/WebAllowDenyPolicyListener.h; sourceTree = "<group>"; };
-		DDA0A20F27E55E3D005E086E /* DOMCSSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSValue.h; path = ../WebKitLegacy/mac/DOM/DOMCSSValue.h; sourceTree = "<group>"; };
-		DDA0A21027E55E3D005E086E /* DOMCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCore.h; path = ../WebKitLegacy/mac/DOM/DOMCore.h; sourceTree = "<group>"; };
-		DDA0A21127E55E3D005E086E /* WebHistoryItemPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHistoryItemPrivate.h; path = ../WebKitLegacy/mac/History/WebHistoryItemPrivate.h; sourceTree = "<group>"; };
-		DDA0A21227E55E3E005E086E /* WebNSURLExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSURLExtras.h; path = ../WebKitLegacy/mac/Misc/WebNSURLExtras.h; sourceTree = "<group>"; };
-		DDA0A21327E55E3E005E086E /* WebPluginContainerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPluginContainerPrivate.h; path = ../WebKitLegacy/mac/Plugins/WebPluginContainerPrivate.h; sourceTree = "<group>"; };
-		DDA0A21427E55E3E005E086E /* WebPanelAuthenticationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPanelAuthenticationHandler.h; path = ../WebKitLegacy/mac/Panels/WebPanelAuthenticationHandler.h; sourceTree = "<group>"; };
-		DDA0A21527E55E3E005E086E /* WebPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreferencesPrivate.h; path = ../WebKitLegacy/mac/WebView/WebPreferencesPrivate.h; sourceTree = "<group>"; };
-		DDA0A21627E55E3F005E086E /* DOMHTMLQuoteElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLQuoteElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLQuoteElement.h; sourceTree = "<group>"; };
-		DDA0A21727E55E3F005E086E /* WebStorageManagerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebStorageManagerPrivate.h; path = ../WebKitLegacy/mac/Storage/WebStorageManagerPrivate.h; sourceTree = "<group>"; };
-		DDA0A21827E55E3F005E086E /* WebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebView.h; path = ../WebKitLegacy/mac/WebView/WebView.h; sourceTree = "<group>"; };
-		DDA0A21927E55E3F005E086E /* DOMBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMBlob.h; path = ../WebKitLegacy/mac/DOM/DOMBlob.h; sourceTree = "<group>"; };
-		DDA0A21A27E55E3F005E086E /* WebFixedPositionContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFixedPositionContent.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebFixedPositionContent.h; sourceTree = "<group>"; };
-		DDA0A21B27E55E3F005E086E /* WebDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDataSource.h; path = ../WebKitLegacy/mac/WebView/WebDataSource.h; sourceTree = "<group>"; };
-		DDA0A21C27E55E3F005E086E /* WebNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNotification.h; path = ../WebKitLegacy/mac/WebView/WebNotification.h; sourceTree = "<group>"; };
-		DDA0A21D27E55E3F005E086E /* WebNSWindowExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSWindowExtras.h; path = ../WebKitLegacy/mac/Misc/WebNSWindowExtras.h; sourceTree = "<group>"; };
-		DDA0A21E27E55E40005E086E /* WebDOMOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDOMOperations.h; path = ../WebKitLegacy/mac/DOM/WebDOMOperations.h; sourceTree = "<group>"; };
-		DDA0A21F27E55E40005E086E /* DOMHTMLFormElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLFormElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLFormElement.h; sourceTree = "<group>"; };
-		DDA0A22027E55E40005E086E /* DOMCDATASection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCDATASection.h; path = ../WebKitLegacy/mac/DOM/DOMCDATASection.h; sourceTree = "<group>"; };
-		DDA0A22127E55E40005E086E /* DOMHTMLUListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLUListElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLUListElement.h; sourceTree = "<group>"; };
-		DDA0A22227E55E40005E086E /* DOMKeyboardEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMKeyboardEvent.h; path = ../WebKitLegacy/mac/DOM/DOMKeyboardEvent.h; sourceTree = "<group>"; };
-		DDA0A22327E55E40005E086E /* DOMCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCounter.h; path = ../WebKitLegacy/mac/DOM/DOMCounter.h; sourceTree = "<group>"; };
-		DDA0A22427E55E41005E086E /* WebNSDataExtrasPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSDataExtrasPrivate.h; path = ../WebKitLegacy/mac/Misc/WebNSDataExtrasPrivate.h; sourceTree = "<group>"; };
-		DDA0A22527E55E41005E086E /* DOMHTMLMapElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLMapElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLMapElement.h; sourceTree = "<group>"; };
-		DDA0A22727E55E41005E086E /* WebURLsWithTitles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebURLsWithTitles.h; path = ../WebKitLegacy/mac/History/WebURLsWithTitles.h; sourceTree = "<group>"; };
-		DDA0A22827E55E41005E086E /* DOMCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSRule.h; sourceTree = "<group>"; };
-		DDA0A22927E55E42005E086E /* DOMCSSMediaRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSMediaRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSMediaRule.h; sourceTree = "<group>"; };
-		DDA0A22A27E55E42005E086E /* DOMCSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSStyleSheet.h; path = ../WebKitLegacy/mac/DOM/DOMCSSStyleSheet.h; sourceTree = "<group>"; };
-		DDA0A22B27E55E42005E086E /* WebUIKitDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebUIKitDelegate.h; path = ../WebKitLegacy/ios/WebView/WebUIKitDelegate.h; sourceTree = "<group>"; };
-		DDA0A22C27E55E42005E086E /* WebPluginViewFactoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPluginViewFactoryPrivate.h; path = ../WebKitLegacy/mac/Plugins/WebPluginViewFactoryPrivate.h; sourceTree = "<group>"; };
-		DDA0A22D27E55E42005E086E /* DOMUIKitExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMUIKitExtensions.h; path = ../WebKitLegacy/mac/DOM/DOMUIKitExtensions.h; sourceTree = "<group>"; };
-		DDA0A22E27E55E42005E086E /* DOMExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMExtensions.h; path = ../WebKitLegacy/mac/DOM/DOMExtensions.h; sourceTree = "<group>"; };
-		DDA0A22F27E55E42005E086E /* DOMCSSStyleRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSStyleRule.h; path = ../WebKitLegacy/mac/DOM/DOMCSSStyleRule.h; sourceTree = "<group>"; };
-		DDA0A23027E55E43005E086E /* WebDeviceOrientationProviderMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationProviderMock.h; path = ../WebKitLegacy/mac/WebView/WebDeviceOrientationProviderMock.h; sourceTree = "<group>"; };
-		DDA0A23127E55E43005E086E /* WebDefaultPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDefaultPolicyDelegate.h; path = ../WebKitLegacy/mac/DefaultDelegates/WebDefaultPolicyDelegate.h; sourceTree = "<group>"; };
-		DDA0A23227E55E43005E086E /* WebDynamicScrollBarsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDynamicScrollBarsView.h; path = ../WebKitLegacy/mac/WebView/WebDynamicScrollBarsView.h; sourceTree = "<group>"; };
-		DDA0A23327E55E43005E086E /* WebDatabaseQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDatabaseQuotaManager.h; path = ../WebKitLegacy/mac/Storage/WebDatabaseQuotaManager.h; sourceTree = "<group>"; };
-		DDA0A23427E55E43005E086E /* WebPDFViewIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPDFViewIOS.h; path = ../WebKitLegacy/ios/WebView/WebPDFViewIOS.h; sourceTree = "<group>"; };
-		DDA0A23527E55E43005E086E /* WebPluginPackagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPluginPackagePrivate.h; path = ../WebKitLegacy/mac/Plugins/WebPluginPackagePrivate.h; sourceTree = "<group>"; };
-		DDA0A23627E55E43005E086E /* WebSelectionRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSelectionRect.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebSelectionRect.h; sourceTree = "<group>"; };
-		DDA0A23727E55E44005E086E /* WebTextIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebTextIterator.h; path = ../WebKitLegacy/mac/WebView/WebTextIterator.h; sourceTree = "<group>"; };
-		DDA0A23827E55E44005E086E /* WebDeviceOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientation.h; path = ../WebKitLegacy/mac/WebView/WebDeviceOrientation.h; sourceTree = "<group>"; };
-		DDA0A23927E55E44005E086E /* DOMHTMLFieldSetElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLFieldSetElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLFieldSetElement.h; sourceTree = "<group>"; };
-		DDA0A23A27E55E44005E086E /* WebGeolocationProviderIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGeolocationProviderIOS.h; path = ../WebKitLegacy/ios/Misc/WebGeolocationProviderIOS.h; sourceTree = "<group>"; };
-		DDA0A23B27E55E44005E086E /* DOMFileList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMFileList.h; path = ../WebKitLegacy/mac/DOM/DOMFileList.h; sourceTree = "<group>"; };
-		DDA0A23C27E55E44005E086E /* DOMXPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMXPathExpression.h; path = ../WebKitLegacy/mac/DOM/DOMXPathExpression.h; sourceTree = "<group>"; };
-		DDA0A23D27E55E44005E086E /* DOMHTMLTableRowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTableRowElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTableRowElement.h; sourceTree = "<group>"; };
-		DDA0A23E27E55E45005E086E /* DOMCSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSS.h; path = ../WebKitLegacy/mac/DOM/DOMCSS.h; sourceTree = "<group>"; };
-		DDA0A23F27E55E45005E086E /* WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCache.h; path = ../WebKitLegacy/mac/Misc/WebCache.h; sourceTree = "<group>"; };
-		DDA0A24027E55E45005E086E /* WebFrameIPhone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFrameIPhone.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebFrameIPhone.h; sourceTree = "<group>"; };
-		DDA0A24127E55E45005E086E /* DOMNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMNode.h; path = ../WebKitLegacy/mac/DOM/DOMNode.h; sourceTree = "<group>"; };
-		DDA0A24227E55E45005E086E /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebInspector.h; path = ../WebKitLegacy/mac/WebInspector/WebInspector.h; sourceTree = "<group>"; };
-		DDA0A24327E55E45005E086E /* DOMHTMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLElement.h; sourceTree = "<group>"; };
-		DDA0A24427E55E45005E086E /* DOMHTMLVideoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLVideoElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLVideoElement.h; sourceTree = "<group>"; };
-		DDA0A24527E55E46005E086E /* WebApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebApplicationCache.h; path = ../WebKitLegacy/mac/WebCoreSupport/WebApplicationCache.h; sourceTree = "<group>"; };
-		DDA0A24627E55E46005E086E /* DOMHTMLEmbedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLEmbedElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLEmbedElement.h; sourceTree = "<group>"; };
-		DDA0A24727E55E46005E086E /* NSURLDownloadSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSURLDownloadSPI.h; path = ../WebKitLegacy/mac/Misc/NSURLDownloadSPI.h; sourceTree = "<group>"; };
-		DDA0A24827E55E46005E086E /* DOMHTMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLInputElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLInputElement.h; sourceTree = "<group>"; };
-		DDA0A24927E55E46005E086E /* DOMHTMLOListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLOListElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLOListElement.h; sourceTree = "<group>"; };
-		DDA0A24A27E55E46005E086E /* DOMOverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMOverflowEvent.h; path = ../WebKitLegacy/mac/DOM/DOMOverflowEvent.h; sourceTree = "<group>"; };
-		DDA0A24B27E55E46005E086E /* DOMCSSRuleList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSRuleList.h; path = ../WebKitLegacy/mac/DOM/DOMCSSRuleList.h; sourceTree = "<group>"; };
-		DDA0A24C27E55E46005E086E /* DOMHTMLButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLButtonElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLButtonElement.h; sourceTree = "<group>"; };
-		DDA0A24D27E55E47005E086E /* WebIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconDatabase.h; path = ../WebKitLegacy/mac/Misc/WebIconDatabase.h; sourceTree = "<group>"; };
-		DDA0A24E27E55E47005E086E /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebUserContentURLPattern.h; path = ../WebKitLegacy/mac/Misc/WebUserContentURLPattern.h; sourceTree = "<group>"; };
-		DDA0A24F27E55E47005E086E /* WebViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebViewPrivate.h; path = ../WebKitLegacy/mac/WebView/WebViewPrivate.h; sourceTree = "<group>"; };
-		DDA0A25027E55E47005E086E /* WebEditingDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEditingDelegatePrivate.h; path = ../WebKitLegacy/mac/WebView/WebEditingDelegatePrivate.h; sourceTree = "<group>"; };
-		DDA0A25127E55E47005E086E /* DOMStylesheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMStylesheets.h; path = ../WebKitLegacy/mac/DOM/DOMStylesheets.h; sourceTree = "<group>"; };
-		DDA0A25227E55E47005E086E /* WebCreateFragmentInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCreateFragmentInternal.h; path = ../WebKitLegacy/mac/WebCoreSupport/WebCreateFragmentInternal.h; sourceTree = "<group>"; };
-		DDA0A25327E55E47005E086E /* DOMEntityReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMEntityReference.h; path = ../WebKitLegacy/mac/DOM/DOMEntityReference.h; sourceTree = "<group>"; };
-		DDA0A25427E55E48005E086E /* DOMHTMLFrameSetElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLFrameSetElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLFrameSetElement.h; sourceTree = "<group>"; };
-		DDA0A25527E55E48005E086E /* DOMStyleSheetList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMStyleSheetList.h; path = ../WebKitLegacy/mac/DOM/DOMStyleSheetList.h; sourceTree = "<group>"; };
-		DDA0A25627E55E48005E086E /* WebCaretChangeListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCaretChangeListener.h; path = ../WebKitLegacy/ios/WebCoreSupport/WebCaretChangeListener.h; sourceTree = "<group>"; };
-		DDA0A25727E55E48005E086E /* WebFrameLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFrameLoadDelegate.h; path = ../WebKitLegacy/mac/WebView/WebFrameLoadDelegate.h; sourceTree = "<group>"; };
-		DDA0A25827E55E48005E086E /* DOMHTMLFontElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLFontElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLFontElement.h; sourceTree = "<group>"; };
-		DDA0A25927E55E48005E086E /* WebHTMLViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHTMLViewPrivate.h; path = ../WebKitLegacy/mac/WebView/WebHTMLViewPrivate.h; sourceTree = "<group>"; };
-		DDA0A25A27E55E48005E086E /* DOMMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMMediaError.h; path = ../WebKitLegacy/mac/DOM/DOMMediaError.h; sourceTree = "<group>"; };
-		DDA0A25B27E55E49005E086E /* DOMHTMLTextAreaElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTextAreaElementPrivate.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTextAreaElementPrivate.h; sourceTree = "<group>"; };
-		DDA0A25C27E55E49005E086E /* WebQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebQuotaManager.h; path = ../WebKitLegacy/mac/Misc/WebQuotaManager.h; sourceTree = "<group>"; };
-		DDA0A25D27E55E49005E086E /* WebFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFeature.h; path = ../WebKitLegacy/mac/WebView/WebFeature.h; sourceTree = "<group>"; };
-		DDA0A25E27E55E49005E086E /* DOMEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMEvents.h; path = ../WebKitLegacy/mac/DOM/DOMEvents.h; sourceTree = "<group>"; };
-		DDA0A25F27E55E49005E086E /* WebPluginViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPluginViewFactory.h; path = ../WebKitLegacy/mac/Plugins/WebPluginViewFactory.h; sourceTree = "<group>"; };
-		DDA0A26027E55E49005E086E /* WebPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreferences.h; path = ../WebKitLegacy/mac/WebView/WebPreferences.h; sourceTree = "<group>"; };
-		DDA0A26127E55E49005E086E /* WebFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFrameView.h; path = ../WebKitLegacy/mac/WebView/WebFrameView.h; sourceTree = "<group>"; };
-		DDA0A26227E55E4A005E086E /* DOMMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMMouseEvent.h; path = ../WebKitLegacy/mac/DOM/DOMMouseEvent.h; sourceTree = "<group>"; };
-		DDA0A26327E55E4A005E086E /* DOMHTMLBodyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLBodyElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLBodyElement.h; sourceTree = "<group>"; };
-		DDA0A26427E55E4A005E086E /* WebFrameViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebFrameViewPrivate.h; path = ../WebKitLegacy/mac/WebView/WebFrameViewPrivate.h; sourceTree = "<group>"; };
-		DDA0A26527E55E4A005E086E /* DOMProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMProgressEvent.h; path = ../WebKitLegacy/mac/DOM/DOMProgressEvent.h; sourceTree = "<group>"; };
-		DDA0A26627E55E4A005E086E /* DOMHTMLMetaElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLMetaElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLMetaElement.h; sourceTree = "<group>"; };
-		DDA0A26727E55E4A005E086E /* DOMHTMLDivElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLDivElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLDivElement.h; sourceTree = "<group>"; };
-		DDA0A26827E55E4A005E086E /* WebResourcePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebResourcePrivate.h; path = ../WebKitLegacy/mac/WebView/WebResourcePrivate.h; sourceTree = "<group>"; };
-		DDA0A26927E55E4A005E086E /* DOMObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMObject.h; path = ../WebKitLegacy/mac/DOM/DOMObject.h; sourceTree = "<group>"; };
-		DDA0A26A27E55E4B005E086E /* DOMWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMWheelEvent.h; path = ../WebKitLegacy/mac/DOM/DOMWheelEvent.h; sourceTree = "<group>"; };
-		DDA0A26B27E55E4B005E086E /* DOMRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMRange.h; path = ../WebKitLegacy/mac/DOM/DOMRange.h; sourceTree = "<group>"; };
-		DDA0A26C27E55E4B005E086E /* DOMXPathNSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMXPathNSResolver.h; path = ../WebKitLegacy/mac/DOM/DOMXPathNSResolver.h; sourceTree = "<group>"; };
-		DDA0A26D27E55E4B005E086E /* DOMHTMLTableElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLTableElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLTableElement.h; sourceTree = "<group>"; };
-		DDA0A26E27E55E4B005E086E /* DOMHTMLBaseFontElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLBaseFontElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLBaseFontElement.h; sourceTree = "<group>"; };
-		DDA0A26F27E55E4B005E086E /* WebUIKitSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebUIKitSupport.h; path = ../WebKitLegacy/ios/Misc/WebUIKitSupport.h; sourceTree = "<group>"; };
-		DDA0A27027E55E4B005E086E /* WebDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDownload.h; path = ../WebKitLegacy/mac/Misc/WebDownload.h; sourceTree = "<group>"; };
-		DDA0A27127E55E4C005E086E /* WebHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebHistory.h; path = ../WebKitLegacy/mac/History/WebHistory.h; sourceTree = "<group>"; };
-		DDA0A27227E55E4C005E086E /* DOMHTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLCollection.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLCollection.h; sourceTree = "<group>"; };
-		DDA0A27327E55E4C005E086E /* DOMProcessingInstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMProcessingInstruction.h; path = ../WebKitLegacy/mac/DOM/DOMProcessingInstruction.h; sourceTree = "<group>"; };
-		DDA0A27427E55E4C005E086E /* DOMHTMLObjectElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLObjectElement.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLObjectElement.h; sourceTree = "<group>"; };
-		DDA0A27527E55E4C005E086E /* WebKitNSStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitNSStringExtras.h; path = ../WebKitLegacy/mac/Misc/WebKitNSStringExtras.h; sourceTree = "<group>"; };
-		DDA0A27627E55E4C005E086E /* DOMCSSPrimitiveValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMCSSPrimitiveValue.h; path = ../WebKitLegacy/mac/DOM/DOMCSSPrimitiveValue.h; sourceTree = "<group>"; };
-		DDA0A27727E55E4D005E086E /* DOMStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMStyleSheet.h; path = ../WebKitLegacy/mac/DOM/DOMStyleSheet.h; sourceTree = "<group>"; };
-		DDA0A27827E55E4D005E086E /* WebDOMOperationsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDOMOperationsPrivate.h; path = ../WebKitLegacy/mac/DOM/WebDOMOperationsPrivate.h; sourceTree = "<group>"; };
-		DDA0A27927E55E4D005E086E /* WebPDFViewPlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPDFViewPlaceholder.h; path = ../WebKitLegacy/ios/WebView/WebPDFViewPlaceholder.h; sourceTree = "<group>"; };
-		DDA0A27A27E55E4D005E086E /* WebNSFileManagerExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebNSFileManagerExtras.h; path = ../WebKitLegacy/mac/Misc/WebNSFileManagerExtras.h; sourceTree = "<group>"; };
-		DDA0A27B27E55E4D005E086E /* DOMHTMLElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLElementPrivate.h; path = ../WebKitLegacy/mac/DOM/DOMHTMLElementPrivate.h; sourceTree = "<group>"; };
-		DDA0A38027E561C4005E086E /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptObject.h; path = ../WebCore/bridge/objc/WebScriptObject.h; sourceTree = "<group>"; };
-		DDA0A38227E561CA005E086E /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitAvailability.h; path = ../WebCore/platform/cocoa/WebKitAvailability.h; sourceTree = "<group>"; };
-		DDA0A3FC27E66F2F005E086E /* AbstractPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractPasteboard.h; path = ../WebCore/platform/ios/AbstractPasteboard.h; sourceTree = "<group>"; };
-		DDA0A3FE27E66F5E005E086E /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIOS.h; path = ../WebCore/platform/ios/KeyEventCodesIOS.h; sourceTree = "<group>"; };
-		DDA0A40027E66F83005E086E /* WKGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKGraphics.h; path = ../WebCore/platform/ios/wak/WKGraphics.h; sourceTree = "<group>"; };
-		DDA0A40127E66F84005E086E /* WAKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKView.h; path = ../WebCore/platform/ios/wak/WAKView.h; sourceTree = "<group>"; };
-		DDA0A40227E66F84005E086E /* WAKWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKWindow.h; path = ../WebCore/platform/ios/wak/WAKWindow.h; sourceTree = "<group>"; };
-		DDA0A40327E66F84005E086E /* WKTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKTypes.h; path = ../WebCore/platform/ios/wak/WKTypes.h; sourceTree = "<group>"; };
-		DDA0A40427E66F84005E086E /* WAKResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKResponder.h; path = ../WebCore/platform/ios/wak/WAKResponder.h; sourceTree = "<group>"; };
-		DDA0A40527E66F85005E086E /* WKContentObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentObservation.h; path = ../WebCore/platform/ios/wak/WKContentObservation.h; sourceTree = "<group>"; };
-		DDA0A40C27E66FB5005E086E /* WebCoreThreadMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadMessage.h; path = ../WebCore/platform/ios/wak/WebCoreThreadMessage.h; sourceTree = "<group>"; };
-		DDA0A40D27E66FB5005E086E /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThread.h; path = ../WebCore/platform/ios/wak/WebCoreThread.h; sourceTree = "<group>"; };
-		DDA0A40E27E66FB5005E086E /* WebCoreThreadRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadRun.h; path = ../WebCore/platform/ios/wak/WebCoreThreadRun.h; sourceTree = "<group>"; };
-		DDA0A41227E66FD7005E086E /* WebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEvent.h; path = ../WebCore/platform/ios/WebEvent.h; sourceTree = "<group>"; };
-		DDA0A41427E67000005E086E /* WebItemProviderPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebItemProviderPasteboard.h; path = ../WebCore/platform/ios/WebItemProviderPasteboard.h; sourceTree = "<group>"; };
-		DDA0A41627E67039005E086E /* WebEventRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEventRegion.h; path = ../WebCore/page/ios/WebEventRegion.h; sourceTree = "<group>"; };
-		DDA0A41827E672A5005E086E /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKAppKitStubs.h; path = ../WebCore/platform/ios/wak/WAKAppKitStubs.h; sourceTree = "<group>"; };
 		DDA0A41D27E94644005E086E /* WebKitLegacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitLegacy.h; sourceTree = "<group>"; };
 		DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AuthenticationServicesCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDC907B6298B43D700ECA4D6 /* MigratedHeaders-output.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = "MigratedHeaders-output.xcfilelist"; sourceTree = "<group>"; };
+		DDC907B7298B43D700ECA4D6 /* MigratedHeaders-input.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = "MigratedHeaders-input.xcfilelist"; sourceTree = "<group>"; };
 		DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SafariServicesSPI.h; sourceTree = "<group>"; };
 		DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF0C5F23252ECB8D00D921DB /* WKDownload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKDownload.mm; sourceTree = "<group>"; };
@@ -8040,6 +7498,8 @@
 				2D7DEBE121269D5F00B9F73C /* SourcesCocoa.txt */,
 				32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */,
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
+				DDC907B7298B43D700ECA4D6 /* MigratedHeaders-input.xcfilelist */,
+				DDC907B6298B43D700ECA4D6 /* MigratedHeaders-output.xcfilelist */,
 				A16E66012581930800EE1749 /* MediaFormatReaderPlugIn */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
@@ -8052,7 +7512,6 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				C0CE73351247F70E00BC0EC4 /* Scripts */,
 				1A4F9769100E7B6600637A18 /* Configurations */,
-				DD66248827E550D20028ED61 /* Migrated Headers */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				5750F3292032D4E300389347 /* Frameworks */,
@@ -14079,285 +13538,6 @@
 			path = ios;
 			sourceTree = "<group>";
 		};
-		DD66248827E550D20028ED61 /* Migrated Headers */ = {
-			isa = PBXGroup;
-			children = (
-				DDA0A3FC27E66F2F005E086E /* AbstractPasteboard.h */,
-				DDA0A1BE27E55E2F005E086E /* DOM.h */,
-				DDA0A19A27E55E29005E086E /* DOMAbstractView.h */,
-				DDA0A1FA27E55E3A005E086E /* DOMAttr.h */,
-				DDA0A21927E55E3F005E086E /* DOMBlob.h */,
-				DDA0A22027E55E40005E086E /* DOMCDATASection.h */,
-				DDA0A20327E55E3B005E086E /* DOMCharacterData.h */,
-				DDA0A1D727E55E34005E086E /* DOMComment.h */,
-				DDA0A21027E55E3D005E086E /* DOMCore.h */,
-				DDA0A22327E55E40005E086E /* DOMCounter.h */,
-				DDA0A23E27E55E45005E086E /* DOMCSS.h */,
-				DDA0A1AC27E55E2C005E086E /* DOMCSSCharsetRule.h */,
-				DDA0A20D27E55E3D005E086E /* DOMCSSFontFaceRule.h */,
-				DDA0A17C27E55E24005E086E /* DOMCSSImportRule.h */,
-				DDA0A22927E55E42005E086E /* DOMCSSMediaRule.h */,
-				DDA0A1A027E55E2A005E086E /* DOMCSSPageRule.h */,
-				DDA0A27627E55E4C005E086E /* DOMCSSPrimitiveValue.h */,
-				DDA0A22827E55E41005E086E /* DOMCSSRule.h */,
-				DDA0A24B27E55E46005E086E /* DOMCSSRuleList.h */,
-				DDA0A1F127E55E38005E086E /* DOMCSSStyleDeclaration.h */,
-				DDA0A22F27E55E42005E086E /* DOMCSSStyleRule.h */,
-				DDA0A22A27E55E42005E086E /* DOMCSSStyleSheet.h */,
-				DDA0A19F27E55E2A005E086E /* DOMCSSUnknownRule.h */,
-				DDA0A20F27E55E3D005E086E /* DOMCSSValue.h */,
-				DDA0A1E727E55E36005E086E /* DOMCSSValueList.h */,
-				DDA0A1B027E55E2D005E086E /* DOMDocument.h */,
-				DDA0A1BC27E55E2F005E086E /* DOMDocumentFragment.h */,
-				DDA0A1E927E55E37005E086E /* DOMDocumentFragmentPrivate.h */,
-				DDA0A1C027E55E30005E086E /* DOMDocumentPrivate.h */,
-				DDA0A1EE27E55E38005E086E /* DOMDocumentType.h */,
-				DDA0A1C327E55E30005E086E /* DOMElement.h */,
-				DDA0A18427E55E25005E086E /* DOMEntity.h */,
-				DDA0A25327E55E47005E086E /* DOMEntityReference.h */,
-				DDA0A18F27E55E27005E086E /* DOMEvent.h */,
-				DDA0A1E827E55E36005E086E /* DOMEventException.h */,
-				DDA0A1DD27E55E35005E086E /* DOMEventListener.h */,
-				DDA0A25E27E55E49005E086E /* DOMEvents.h */,
-				DDA0A1AE27E55E2C005E086E /* DOMEventTarget.h */,
-				DDA0A1BA27E55E2F005E086E /* DOMException.h */,
-				DDA0A22E27E55E42005E086E /* DOMExtensions.h */,
-				DDA0A1E427E55E36005E086E /* DOMFile.h */,
-				DDA0A23B27E55E44005E086E /* DOMFileList.h */,
-				DDA0A1CA27E55E31005E086E /* DOMHTML.h */,
-				DDA0A1D027E55E33005E086E /* DOMHTMLAnchorElement.h */,
-				DDA0A20627E55E3B005E086E /* DOMHTMLAppletElement.h */,
-				DDA0A1F827E55E39005E086E /* DOMHTMLAreaElement.h */,
-				DDA0A20727E55E3C005E086E /* DOMHTMLBaseElement.h */,
-				DDA0A26E27E55E4B005E086E /* DOMHTMLBaseFontElement.h */,
-				DDA0A26327E55E4A005E086E /* DOMHTMLBodyElement.h */,
-				DDA0A18727E55E26005E086E /* DOMHTMLBRElement.h */,
-				DDA0A24C27E55E46005E086E /* DOMHTMLButtonElement.h */,
-				DDA0A1F227E55E38005E086E /* DOMHTMLCanvasElement.h */,
-				DDA0A27227E55E4C005E086E /* DOMHTMLCollection.h */,
-				DDA0A1A227E55E2A005E086E /* DOMHTMLDirectoryElement.h */,
-				DDA0A26727E55E4A005E086E /* DOMHTMLDivElement.h */,
-				DDA0A1EB27E55E37005E086E /* DOMHTMLDListElement.h */,
-				DDA0A1D127E55E33005E086E /* DOMHTMLDocument.h */,
-				DDA0A24327E55E45005E086E /* DOMHTMLElement.h */,
-				DDA0A27B27E55E4D005E086E /* DOMHTMLElementPrivate.h */,
-				DDA0A24627E55E46005E086E /* DOMHTMLEmbedElement.h */,
-				DDA0A23927E55E44005E086E /* DOMHTMLFieldSetElement.h */,
-				DDA0A25827E55E48005E086E /* DOMHTMLFontElement.h */,
-				DDA0A21F27E55E40005E086E /* DOMHTMLFormElement.h */,
-				DDA0A1AF27E55E2D005E086E /* DOMHTMLFrameElement.h */,
-				DDA0A25427E55E48005E086E /* DOMHTMLFrameSetElement.h */,
-				DDA0A18D27E55E27005E086E /* DOMHTMLHeadElement.h */,
-				DDA0A1E027E55E35005E086E /* DOMHTMLHeadingElement.h */,
-				DDA0A18027E55E25005E086E /* DOMHTMLHRElement.h */,
-				DDA0A1A527E55E2B005E086E /* DOMHTMLHtmlElement.h */,
-				DDA0A18A27E55E27005E086E /* DOMHTMLIFrameElement.h */,
-				DDA0A1A427E55E2B005E086E /* DOMHTMLImageElement.h */,
-				DDA0A24827E55E46005E086E /* DOMHTMLInputElement.h */,
-				DDA0A20B27E55E3D005E086E /* DOMHTMLInputElementPrivate.h */,
-				DDA0A1C827E55E31005E086E /* DOMHTMLLabelElement.h */,
-				DDA0A18C27E55E27005E086E /* DOMHTMLLegendElement.h */,
-				DDA0A1CC27E55E32005E086E /* DOMHTMLLIElement.h */,
-				DDA0A1C627E55E31005E086E /* DOMHTMLLinkElement.h */,
-				DDA0A22527E55E41005E086E /* DOMHTMLMapElement.h */,
-				DDA0A1AA27E55E2C005E086E /* DOMHTMLMarqueeElement.h */,
-				DDA0A1B727E55E2E005E086E /* DOMHTMLMediaElement.h */,
-				DDA0A1E227E55E36005E086E /* DOMHTMLMenuElement.h */,
-				DDA0A26627E55E4A005E086E /* DOMHTMLMetaElement.h */,
-				DDA0A1FF27E55E3B005E086E /* DOMHTMLModElement.h */,
-				DDA0A27427E55E4C005E086E /* DOMHTMLObjectElement.h */,
-				DDA0A24927E55E46005E086E /* DOMHTMLOListElement.h */,
-				DDA0A1DB27E55E34005E086E /* DOMHTMLOptGroupElement.h */,
-				DDA0A1C427E55E30005E086E /* DOMHTMLOptionElement.h */,
-				DDA0A1DA27E55E34005E086E /* DOMHTMLOptionsCollection.h */,
-				DDA0A20827E55E3C005E086E /* DOMHTMLParagraphElement.h */,
-				DDA0A19727E55E29005E086E /* DOMHTMLParamElement.h */,
-				DDA0A1F527E55E39005E086E /* DOMHTMLPreElement.h */,
-				DDA0A21627E55E3F005E086E /* DOMHTMLQuoteElement.h */,
-				DDA0A19E27E55E2A005E086E /* DOMHTMLScriptElement.h */,
-				DDA0A1F627E55E39005E086E /* DOMHTMLSelectElement.h */,
-				DDA0A1F927E55E3A005E086E /* DOMHTMLStyleElement.h */,
-				DDA0A1D327E55E33005E086E /* DOMHTMLTableCaptionElement.h */,
-				DDA0A1B927E55E2E005E086E /* DOMHTMLTableCellElement.h */,
-				DDA0A1A727E55E2B005E086E /* DOMHTMLTableColElement.h */,
-				DDA0A26D27E55E4B005E086E /* DOMHTMLTableElement.h */,
-				DDA0A23D27E55E44005E086E /* DOMHTMLTableRowElement.h */,
-				DDA0A1A827E55E2C005E086E /* DOMHTMLTableSectionElement.h */,
-				DDA0A1D227E55E33005E086E /* DOMHTMLTextAreaElement.h */,
-				DDA0A25B27E55E49005E086E /* DOMHTMLTextAreaElementPrivate.h */,
-				DDA0A1D627E55E33005E086E /* DOMHTMLTitleElement.h */,
-				DDA0A22127E55E40005E086E /* DOMHTMLUListElement.h */,
-				DDA0A24427E55E45005E086E /* DOMHTMLVideoElement.h */,
-				DDA0A19C27E55E29005E086E /* DOMImplementation.h */,
-				DDA0A22227E55E40005E086E /* DOMKeyboardEvent.h */,
-				DDA0A25A27E55E48005E086E /* DOMMediaError.h */,
-				DDA0A1AD27E55E2C005E086E /* DOMMediaList.h */,
-				DDA0A26227E55E4A005E086E /* DOMMouseEvent.h */,
-				DDA0A17D27E55E24005E086E /* DOMMutationEvent.h */,
-				DDA0A1E527E55E36005E086E /* DOMNamedNodeMap.h */,
-				DDA0A24127E55E45005E086E /* DOMNode.h */,
-				DDA0A19B27E55E29005E086E /* DOMNodeFilter.h */,
-				DDA0A19527E55E28005E086E /* DOMNodeIterator.h */,
-				DDA0A19027E55E28005E086E /* DOMNodeList.h */,
-				DDA0A1D527E55E33005E086E /* DOMNodePrivate.h */,
-				DDA0A26927E55E4A005E086E /* DOMObject.h */,
-				DDA0A24A27E55E46005E086E /* DOMOverflowEvent.h */,
-				DDA0A1B127E55E2D005E086E /* DOMPrivate.h */,
-				DDA0A27327E55E4C005E086E /* DOMProcessingInstruction.h */,
-				DDA0A26527E55E4A005E086E /* DOMProgressEvent.h */,
-				DDA0A26B27E55E4B005E086E /* DOMRange.h */,
-				DDA0A18B27E55E27005E086E /* DOMRangeException.h */,
-				DDA0A1DF27E55E35005E086E /* DOMRanges.h */,
-				DDA0A1FE27E55E3A005E086E /* DOMRect.h */,
-				DDA0A1C927E55E31005E086E /* DOMRGBColor.h */,
-				DDA0A27727E55E4D005E086E /* DOMStyleSheet.h */,
-				DDA0A25527E55E48005E086E /* DOMStyleSheetList.h */,
-				DDA0A25127E55E47005E086E /* DOMStylesheets.h */,
-				DDA0A17E27E55E24005E086E /* DOMText.h */,
-				DDA0A18127E55E25005E086E /* DOMTextEvent.h */,
-				DDA0A1EA27E55E37005E086E /* DOMTimeRanges.h */,
-				DDA0A1CE27E55E32005E086E /* DOMTraversal.h */,
-				DDA0A1A127E55E2A005E086E /* DOMTreeWalker.h */,
-				DDA0A1FC27E55E3A005E086E /* DOMUIEvent.h */,
-				DDA0A22D27E55E42005E086E /* DOMUIKitExtensions.h */,
-				DDA0A1F427E55E39005E086E /* DOMViews.h */,
-				DDA0A26A27E55E4B005E086E /* DOMWheelEvent.h */,
-				DDA0A1DC27E55E35005E086E /* DOMXPath.h */,
-				DDA0A19127E55E28005E086E /* DOMXPathException.h */,
-				DDA0A23C27E55E44005E086E /* DOMXPathExpression.h */,
-				DDA0A26C27E55E4B005E086E /* DOMXPathNSResolver.h */,
-				DDA0A1EC27E55E37005E086E /* DOMXPathResult.h */,
-				DDA0A3FE27E66F5E005E086E /* KeyEventCodesIOS.h */,
-				DDA0A24727E55E46005E086E /* NSURLDownloadSPI.h */,
-				DDA0A41827E672A5005E086E /* WAKAppKitStubs.h */,
-				DDA0A40427E66F84005E086E /* WAKResponder.h */,
-				DDA0A40127E66F84005E086E /* WAKView.h */,
-				DDA0A40227E66F84005E086E /* WAKWindow.h */,
-				DDA0A20E27E55E3D005E086E /* WebAllowDenyPolicyListener.h */,
-				DDA0A24527E55E46005E086E /* WebApplicationCache.h */,
-				DDA0A1AB27E55E2C005E086E /* WebArchive.h */,
-				DDA0A18627E55E26005E086E /* WebAutocapitalizeTypes.h */,
-				DDA0A19927E55E29005E086E /* WebBackForwardList.h */,
-				DDA0A1C527E55E31005E086E /* WebBackForwardListPrivate.h */,
-				DDA0A23F27E55E45005E086E /* WebCache.h */,
-				DDA0A25627E55E48005E086E /* WebCaretChangeListener.h */,
-				DDA0A19627E55E29005E086E /* WebCoreStatistics.h */,
-				DDA0A40D27E66FB5005E086E /* WebCoreThread.h */,
-				DDA0A40C27E66FB5005E086E /* WebCoreThreadMessage.h */,
-				DDA0A40E27E66FB5005E086E /* WebCoreThreadRun.h */,
-				DDA0A25227E55E47005E086E /* WebCreateFragmentInternal.h */,
-				DDA0A1C727E55E31005E086E /* WebDashboardRegion.h */,
-				DDA0A19327E55E28005E086E /* WebDatabaseManagerPrivate.h */,
-				DDA0A23327E55E43005E086E /* WebDatabaseQuotaManager.h */,
-				DDA0A21B27E55E3F005E086E /* WebDataSource.h */,
-				DDA0A1A627E55E2B005E086E /* WebDataSourcePrivate.h */,
-				DDA0A23127E55E43005E086E /* WebDefaultPolicyDelegate.h */,
-				DDA0A23827E55E44005E086E /* WebDeviceOrientation.h */,
-				DDA0A1BB27E55E2F005E086E /* WebDeviceOrientationProvider.h */,
-				DDA0A23027E55E43005E086E /* WebDeviceOrientationProviderMock.h */,
-				DDA0A17F27E55E25005E086E /* WebDocument.h */,
-				DDA0A1A327E55E2B005E086E /* WebDocumentPrivate.h */,
-				DDA0A21E27E55E40005E086E /* WebDOMOperations.h */,
-				DDA0A27827E55E4D005E086E /* WebDOMOperationsPrivate.h */,
-				DDA0A27027E55E4B005E086E /* WebDownload.h */,
-				DDA0A23227E55E43005E086E /* WebDynamicScrollBarsView.h */,
-				DDA0A20C27E55E3D005E086E /* WebEditingDelegate.h */,
-				DDA0A25027E55E47005E086E /* WebEditingDelegatePrivate.h */,
-				DDA0A41227E66FD7005E086E /* WebEvent.h */,
-				DDA0A41627E67039005E086E /* WebEventRegion.h */,
-				DDA0A25D27E55E49005E086E /* WebFeature.h */,
-				DDA0A21A27E55E3F005E086E /* WebFixedPositionContent.h */,
-				DDA0A1B527E55E2E005E086E /* WebFormDelegate.h */,
-				DDA0A20127E55E3B005E086E /* WebFormDelegatePrivate.h */,
-				DDA0A1B427E55E2E005E086E /* WebFrame.h */,
-				DDA0A1D427E55E33005E086E /* WebFrameIOS.h */,
-				DDA0A24027E55E45005E086E /* WebFrameIPhone.h */,
-				DDA0A25727E55E48005E086E /* WebFrameLoadDelegate.h */,
-				DDA0A20927E55E3C005E086E /* WebFrameLoadDelegatePrivate.h */,
-				DDA0A1BD27E55E2F005E086E /* WebFramePrivate.h */,
-				DDA0A26127E55E49005E086E /* WebFrameView.h */,
-				DDA0A26427E55E4A005E086E /* WebFrameViewPrivate.h */,
-				DDA0A1A927E55E2C005E086E /* WebGeolocationCoreLocationProvider.h */,
-				DDA0A1B227E55E2D005E086E /* WebGeolocationPosition.h */,
-				DDA0A1E127E55E36005E086E /* WebGeolocationPrivate.h */,
-				DDA0A23A27E55E44005E086E /* WebGeolocationProviderIOS.h */,
-				DDA0A27127E55E4C005E086E /* WebHistory.h */,
-				DDA0A1D927E55E34005E086E /* WebHistoryItem.h */,
-				DDA0A21127E55E3D005E086E /* WebHistoryItemPrivate.h */,
-				DDA0A20527E55E3B005E086E /* WebHistoryPrivate.h */,
-				DDA0A1DE27E55E35005E086E /* WebHTMLRepresentation.h */,
-				DDA0A1B627E55E2E005E086E /* WebHTMLRepresentationPrivate.h */,
-				DDA0A1F727E55E39005E086E /* WebHTMLView.h */,
-				DDA0A25927E55E48005E086E /* WebHTMLViewPrivate.h */,
-				DDA0A24D27E55E47005E086E /* WebIconDatabase.h */,
-				DDA0A24227E55E45005E086E /* WebInspector.h */,
-				DDA0A1E627E55E36005E086E /* WebInspectorPrivate.h */,
-				DDA0A41427E67000005E086E /* WebItemProviderPasteboard.h */,
-				DDA0A20A27E55E3D005E086E /* WebJavaScriptTextInputPanel.h */,
-				DDA0A38227E561CA005E086E /* WebKitAvailability.h */,
-				DDA0A20027E55E3B005E086E /* WebKitErrors.h */,
-				DDA0A19D27E55E2A005E086E /* WebKitErrorsPrivate.h */,
-				DDA0A27527E55E4C005E086E /* WebKitNSStringExtras.h */,
-				DDA0A1EF27E55E38005E086E /* WebKitStatistics.h */,
-				DDA0A1CD27E55E32005E086E /* WebLocalizableStrings.h */,
-				DDA0A20227E55E3B005E086E /* WebMIMETypeRegistry.h */,
-				DDA0A1B327E55E2E005E086E /* WebNavigationData.h */,
-				DDA0A21C27E55E3F005E086E /* WebNotification.h */,
-				DDA0A22427E55E41005E086E /* WebNSDataExtrasPrivate.h */,
-				DDA0A18227E55E25005E086E /* WebNSEventExtras.h */,
-				DDA0A27A27E55E4D005E086E /* WebNSFileManagerExtras.h */,
-				DDA0A18827E55E27005E086E /* WebNSPasteboardExtras.h */,
-				DDA0A1F027E55E38005E086E /* WebNSStringExtrasIOS.h */,
-				DDA0A20427E55E3B005E086E /* WebNSStringExtrasIPhone.h */,
-				DDA0A21227E55E3E005E086E /* WebNSURLExtras.h */,
-				DDA0A19827E55E29005E086E /* WebNSUserDefaultsExtras.h */,
-				DDA0A1F327E55E38005E086E /* WebNSViewExtras.h */,
-				DDA0A21D27E55E3F005E086E /* WebNSWindowExtras.h */,
-				DDA0A21427E55E3E005E086E /* WebPanelAuthenticationHandler.h */,
-				DDA0A23427E55E43005E086E /* WebPDFViewIOS.h */,
-				DDA0A1D827E55E34005E086E /* WebPDFViewIPhone.h */,
-				DDA0A27927E55E4D005E086E /* WebPDFViewPlaceholder.h */,
-				DDA0A1FB27E55E3A005E086E /* WebPlugin.h */,
-				DDA0A18327E55E25005E086E /* WebPluginContainer.h */,
-				DDA0A21327E55E3E005E086E /* WebPluginContainerPrivate.h */,
-				DDA0A1CF27E55E32005E086E /* WebPluginDatabase.h */,
-				DDA0A23527E55E43005E086E /* WebPluginPackagePrivate.h */,
-				DDA0A25F27E55E49005E086E /* WebPluginViewFactory.h */,
-				DDA0A22C27E55E42005E086E /* WebPluginViewFactoryPrivate.h */,
-				DDA0A18527E55E26005E086E /* WebPolicyDelegate.h */,
-				DDA0A1ED27E55E38005E086E /* WebPolicyDelegatePrivate.h */,
-				DDA0A1CB27E55E31005E086E /* WebPreferenceKeysPrivate.h */,
-				DDA0A26027E55E49005E086E /* WebPreferences.h */,
-				DDA0A21527E55E3E005E086E /* WebPreferencesPrivate.h */,
-				DDA0A25C27E55E49005E086E /* WebQuotaManager.h */,
-				DDA0A19227E55E28005E086E /* WebResource.h */,
-				DDA0A18927E55E27005E086E /* WebResourceLoadDelegate.h */,
-				DDA0A19427E55E28005E086E /* WebResourceLoadDelegatePrivate.h */,
-				DDA0A26827E55E4A005E086E /* WebResourcePrivate.h */,
-				DDA0A1C127E55E30005E086E /* WebScriptDebugDelegate.h */,
-				DDA0A38027E561C4005E086E /* WebScriptObject.h */,
-				DDA0A1E327E55E36005E086E /* WebScriptWorld.h */,
-				DDA0A18E27E55E27005E086E /* WebSecurityOriginPrivate.h */,
-				DDA0A23627E55E43005E086E /* WebSelectionRect.h */,
-				DDA0A21727E55E3F005E086E /* WebStorageManagerPrivate.h */,
-				DDA0A1C227E55E30005E086E /* WebStringTruncator.h */,
-				DDA0A23727E55E44005E086E /* WebTextIterator.h */,
-				DDA0A1BF27E55E30005E086E /* WebUIDelegate.h */,
-				DDA0A1B827E55E2E005E086E /* WebUIDelegatePrivate.h */,
-				DDA0A22B27E55E42005E086E /* WebUIKitDelegate.h */,
-				DDA0A26F27E55E4B005E086E /* WebUIKitSupport.h */,
-				DDA0A22727E55E41005E086E /* WebURLsWithTitles.h */,
-				DDA0A24E27E55E47005E086E /* WebUserContentURLPattern.h */,
-				DDA0A21827E55E3F005E086E /* WebView.h */,
-				DDA0A24F27E55E47005E086E /* WebViewPrivate.h */,
-				DDA0A1FD27E55E3A005E086E /* WebVisiblePosition.h */,
-				DDA0A40527E66F85005E086E /* WKContentObservation.h */,
-				DDA0A40027E66F83005E086E /* WKGraphics.h */,
-				DDA0A40327E66F84005E086E /* WKTypes.h */,
-			);
-			name = "Migrated Headers";
-			sourceTree = "<group>";
-		};
 		DF84CEE1249AA200009096F6 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
@@ -14713,7 +13893,6 @@
 				41C5379021F15B55008B1FAD /* _WKWebsiteDataStoreDelegate.h in Headers */,
 				A115DC72191D82DA00DA8072 /* _WKWebViewPrintFormatter.h in Headers */,
 				A19DD3C01D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h in Headers */,
-				DDA0A3FD27E66F2F005E086E /* AbstractPasteboard.h in Headers */,
 				A182D5B51BE6BD250087A7CC /* AccessibilityIOS.h in Headers */,
 				E3CAAA442413279900CED2E2 /* AccessibilitySupportSPI.h in Headers */,
 				A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */,
@@ -14883,150 +14062,6 @@
 				83891B6C1A68C30B0030F386 /* DiagnosticLoggingClient.h in Headers */,
 				C18173612058424700DFDA65 /* DisplayLink.h in Headers */,
 				0F189CAC24749F2F00E58D81 /* DisplayLinkObserverID.h in Headers */,
-				DDA0A2BE27E55E4E005E086E /* DOM.h in Headers */,
-				DDA0A29A27E55E4E005E086E /* DOMAbstractView.h in Headers */,
-				DDA0A2FA27E55E4E005E086E /* DOMAttr.h in Headers */,
-				DDA0A31927E55E4E005E086E /* DOMBlob.h in Headers */,
-				DDA0A32027E55E4E005E086E /* DOMCDATASection.h in Headers */,
-				DDA0A30327E55E4E005E086E /* DOMCharacterData.h in Headers */,
-				DDA0A2D727E55E4E005E086E /* DOMComment.h in Headers */,
-				DDA0A31027E55E4E005E086E /* DOMCore.h in Headers */,
-				DDA0A32327E55E4E005E086E /* DOMCounter.h in Headers */,
-				DDA0A33E27E55E4F005E086E /* DOMCSS.h in Headers */,
-				DDA0A2AC27E55E4E005E086E /* DOMCSSCharsetRule.h in Headers */,
-				DDA0A30D27E55E4E005E086E /* DOMCSSFontFaceRule.h in Headers */,
-				DDA0A27C27E55E4D005E086E /* DOMCSSImportRule.h in Headers */,
-				DDA0A32927E55E4E005E086E /* DOMCSSMediaRule.h in Headers */,
-				DDA0A2A027E55E4E005E086E /* DOMCSSPageRule.h in Headers */,
-				DDA0A37627E55E4F005E086E /* DOMCSSPrimitiveValue.h in Headers */,
-				DDA0A32827E55E4E005E086E /* DOMCSSRule.h in Headers */,
-				DDA0A34B27E55E4F005E086E /* DOMCSSRuleList.h in Headers */,
-				DDA0A2F127E55E4E005E086E /* DOMCSSStyleDeclaration.h in Headers */,
-				DDA0A32F27E55E4F005E086E /* DOMCSSStyleRule.h in Headers */,
-				DDA0A32A27E55E4F005E086E /* DOMCSSStyleSheet.h in Headers */,
-				DDA0A29F27E55E4E005E086E /* DOMCSSUnknownRule.h in Headers */,
-				DDA0A30F27E55E4E005E086E /* DOMCSSValue.h in Headers */,
-				DDA0A2E727E55E4E005E086E /* DOMCSSValueList.h in Headers */,
-				DDA0A2B027E55E4E005E086E /* DOMDocument.h in Headers */,
-				DDA0A2BC27E55E4E005E086E /* DOMDocumentFragment.h in Headers */,
-				DDA0A2E927E55E4E005E086E /* DOMDocumentFragmentPrivate.h in Headers */,
-				DDA0A2C027E55E4E005E086E /* DOMDocumentPrivate.h in Headers */,
-				DDA0A2EE27E55E4E005E086E /* DOMDocumentType.h in Headers */,
-				DDA0A2C327E55E4E005E086E /* DOMElement.h in Headers */,
-				DDA0A28427E55E4D005E086E /* DOMEntity.h in Headers */,
-				DDA0A35327E55E4F005E086E /* DOMEntityReference.h in Headers */,
-				DDA0A28F27E55E4D005E086E /* DOMEvent.h in Headers */,
-				DDA0A2E827E55E4E005E086E /* DOMEventException.h in Headers */,
-				DDA0A2DD27E55E4E005E086E /* DOMEventListener.h in Headers */,
-				DDA0A35E27E55E4F005E086E /* DOMEvents.h in Headers */,
-				DDA0A2AE27E55E4E005E086E /* DOMEventTarget.h in Headers */,
-				DDA0A2BA27E55E4E005E086E /* DOMException.h in Headers */,
-				DDA0A32E27E55E4F005E086E /* DOMExtensions.h in Headers */,
-				DDA0A2E427E55E4E005E086E /* DOMFile.h in Headers */,
-				DDA0A33B27E55E4F005E086E /* DOMFileList.h in Headers */,
-				DDA0A2CA27E55E4E005E086E /* DOMHTML.h in Headers */,
-				DDA0A2D027E55E4E005E086E /* DOMHTMLAnchorElement.h in Headers */,
-				DDA0A30627E55E4E005E086E /* DOMHTMLAppletElement.h in Headers */,
-				DDA0A2F827E55E4E005E086E /* DOMHTMLAreaElement.h in Headers */,
-				DDA0A30727E55E4E005E086E /* DOMHTMLBaseElement.h in Headers */,
-				DDA0A36E27E55E4F005E086E /* DOMHTMLBaseFontElement.h in Headers */,
-				DDA0A36327E55E4F005E086E /* DOMHTMLBodyElement.h in Headers */,
-				DDA0A28727E55E4D005E086E /* DOMHTMLBRElement.h in Headers */,
-				DDA0A34C27E55E4F005E086E /* DOMHTMLButtonElement.h in Headers */,
-				DDA0A2F227E55E4E005E086E /* DOMHTMLCanvasElement.h in Headers */,
-				DDA0A37227E55E4F005E086E /* DOMHTMLCollection.h in Headers */,
-				DDA0A2A227E55E4E005E086E /* DOMHTMLDirectoryElement.h in Headers */,
-				DDA0A36727E55E4F005E086E /* DOMHTMLDivElement.h in Headers */,
-				DDA0A2EB27E55E4E005E086E /* DOMHTMLDListElement.h in Headers */,
-				DDA0A2D127E55E4E005E086E /* DOMHTMLDocument.h in Headers */,
-				DDA0A34327E55E4F005E086E /* DOMHTMLElement.h in Headers */,
-				DDA0A37B27E55E4F005E086E /* DOMHTMLElementPrivate.h in Headers */,
-				DDA0A34627E55E4F005E086E /* DOMHTMLEmbedElement.h in Headers */,
-				DDA0A33927E55E4F005E086E /* DOMHTMLFieldSetElement.h in Headers */,
-				DDA0A35827E55E4F005E086E /* DOMHTMLFontElement.h in Headers */,
-				DDA0A31F27E55E4E005E086E /* DOMHTMLFormElement.h in Headers */,
-				DDA0A2AF27E55E4E005E086E /* DOMHTMLFrameElement.h in Headers */,
-				DDA0A35427E55E4F005E086E /* DOMHTMLFrameSetElement.h in Headers */,
-				DDA0A28D27E55E4D005E086E /* DOMHTMLHeadElement.h in Headers */,
-				DDA0A2E027E55E4E005E086E /* DOMHTMLHeadingElement.h in Headers */,
-				DDA0A28027E55E4D005E086E /* DOMHTMLHRElement.h in Headers */,
-				DDA0A2A527E55E4E005E086E /* DOMHTMLHtmlElement.h in Headers */,
-				DDA0A28A27E55E4D005E086E /* DOMHTMLIFrameElement.h in Headers */,
-				DDA0A2A427E55E4E005E086E /* DOMHTMLImageElement.h in Headers */,
-				DDA0A34827E55E4F005E086E /* DOMHTMLInputElement.h in Headers */,
-				DDA0A30B27E55E4E005E086E /* DOMHTMLInputElementPrivate.h in Headers */,
-				DDA0A2C827E55E4E005E086E /* DOMHTMLLabelElement.h in Headers */,
-				DDA0A28C27E55E4D005E086E /* DOMHTMLLegendElement.h in Headers */,
-				DDA0A2CC27E55E4E005E086E /* DOMHTMLLIElement.h in Headers */,
-				DDA0A2C627E55E4E005E086E /* DOMHTMLLinkElement.h in Headers */,
-				DDA0A32527E55E4E005E086E /* DOMHTMLMapElement.h in Headers */,
-				DDA0A2AA27E55E4E005E086E /* DOMHTMLMarqueeElement.h in Headers */,
-				DDA0A2B727E55E4E005E086E /* DOMHTMLMediaElement.h in Headers */,
-				DDA0A2E227E55E4E005E086E /* DOMHTMLMenuElement.h in Headers */,
-				DDA0A36627E55E4F005E086E /* DOMHTMLMetaElement.h in Headers */,
-				DDA0A2FF27E55E4E005E086E /* DOMHTMLModElement.h in Headers */,
-				DDA0A37427E55E4F005E086E /* DOMHTMLObjectElement.h in Headers */,
-				DDA0A34927E55E4F005E086E /* DOMHTMLOListElement.h in Headers */,
-				DDA0A2DB27E55E4E005E086E /* DOMHTMLOptGroupElement.h in Headers */,
-				DDA0A2C427E55E4E005E086E /* DOMHTMLOptionElement.h in Headers */,
-				DDA0A2DA27E55E4E005E086E /* DOMHTMLOptionsCollection.h in Headers */,
-				DDA0A30827E55E4E005E086E /* DOMHTMLParagraphElement.h in Headers */,
-				DDA0A29727E55E4D005E086E /* DOMHTMLParamElement.h in Headers */,
-				DDA0A2F527E55E4E005E086E /* DOMHTMLPreElement.h in Headers */,
-				DDA0A31627E55E4E005E086E /* DOMHTMLQuoteElement.h in Headers */,
-				DDA0A29E27E55E4E005E086E /* DOMHTMLScriptElement.h in Headers */,
-				DDA0A2F627E55E4E005E086E /* DOMHTMLSelectElement.h in Headers */,
-				DDA0A2F927E55E4E005E086E /* DOMHTMLStyleElement.h in Headers */,
-				DDA0A2D327E55E4E005E086E /* DOMHTMLTableCaptionElement.h in Headers */,
-				DDA0A2B927E55E4E005E086E /* DOMHTMLTableCellElement.h in Headers */,
-				DDA0A2A727E55E4E005E086E /* DOMHTMLTableColElement.h in Headers */,
-				DDA0A36D27E55E4F005E086E /* DOMHTMLTableElement.h in Headers */,
-				DDA0A33D27E55E4F005E086E /* DOMHTMLTableRowElement.h in Headers */,
-				DDA0A2A827E55E4E005E086E /* DOMHTMLTableSectionElement.h in Headers */,
-				DDA0A2D227E55E4E005E086E /* DOMHTMLTextAreaElement.h in Headers */,
-				DDA0A35B27E55E4F005E086E /* DOMHTMLTextAreaElementPrivate.h in Headers */,
-				DDA0A2D627E55E4E005E086E /* DOMHTMLTitleElement.h in Headers */,
-				DDA0A32127E55E4E005E086E /* DOMHTMLUListElement.h in Headers */,
-				DDA0A34427E55E4F005E086E /* DOMHTMLVideoElement.h in Headers */,
-				DDA0A29C27E55E4E005E086E /* DOMImplementation.h in Headers */,
-				DDA0A32227E55E4E005E086E /* DOMKeyboardEvent.h in Headers */,
-				DDA0A35A27E55E4F005E086E /* DOMMediaError.h in Headers */,
-				DDA0A2AD27E55E4E005E086E /* DOMMediaList.h in Headers */,
-				DDA0A36227E55E4F005E086E /* DOMMouseEvent.h in Headers */,
-				DDA0A27D27E55E4D005E086E /* DOMMutationEvent.h in Headers */,
-				DDA0A2E527E55E4E005E086E /* DOMNamedNodeMap.h in Headers */,
-				DDA0A34127E55E4F005E086E /* DOMNode.h in Headers */,
-				DDA0A29B27E55E4E005E086E /* DOMNodeFilter.h in Headers */,
-				DDA0A29527E55E4D005E086E /* DOMNodeIterator.h in Headers */,
-				DDA0A29027E55E4D005E086E /* DOMNodeList.h in Headers */,
-				DDA0A2D527E55E4E005E086E /* DOMNodePrivate.h in Headers */,
-				DDA0A36927E55E4F005E086E /* DOMObject.h in Headers */,
-				DDA0A34A27E55E4F005E086E /* DOMOverflowEvent.h in Headers */,
-				DDA0A2B127E55E4E005E086E /* DOMPrivate.h in Headers */,
-				DDA0A37327E55E4F005E086E /* DOMProcessingInstruction.h in Headers */,
-				DDA0A36527E55E4F005E086E /* DOMProgressEvent.h in Headers */,
-				DDA0A36B27E55E4F005E086E /* DOMRange.h in Headers */,
-				DDA0A28B27E55E4D005E086E /* DOMRangeException.h in Headers */,
-				DDA0A2DF27E55E4E005E086E /* DOMRanges.h in Headers */,
-				DDA0A2FE27E55E4E005E086E /* DOMRect.h in Headers */,
-				DDA0A2C927E55E4E005E086E /* DOMRGBColor.h in Headers */,
-				DDA0A37727E55E4F005E086E /* DOMStyleSheet.h in Headers */,
-				DDA0A35527E55E4F005E086E /* DOMStyleSheetList.h in Headers */,
-				DDA0A35127E55E4F005E086E /* DOMStylesheets.h in Headers */,
-				DDA0A27E27E55E4D005E086E /* DOMText.h in Headers */,
-				DDA0A28127E55E4D005E086E /* DOMTextEvent.h in Headers */,
-				DDA0A2EA27E55E4E005E086E /* DOMTimeRanges.h in Headers */,
-				DDA0A2CE27E55E4E005E086E /* DOMTraversal.h in Headers */,
-				DDA0A2A127E55E4E005E086E /* DOMTreeWalker.h in Headers */,
-				DDA0A2FC27E55E4E005E086E /* DOMUIEvent.h in Headers */,
-				DDA0A32D27E55E4F005E086E /* DOMUIKitExtensions.h in Headers */,
-				DDA0A2F427E55E4E005E086E /* DOMViews.h in Headers */,
-				DDA0A36A27E55E4F005E086E /* DOMWheelEvent.h in Headers */,
-				DDA0A2DC27E55E4E005E086E /* DOMXPath.h in Headers */,
-				DDA0A29127E55E4D005E086E /* DOMXPathException.h in Headers */,
-				DDA0A33C27E55E4F005E086E /* DOMXPathExpression.h in Headers */,
-				DDA0A36C27E55E4F005E086E /* DOMXPathNSResolver.h in Headers */,
-				DDA0A2EC27E55E4E005E086E /* DOMXPathResult.h in Headers */,
 				5C1427021C23F84C00D41183 /* Download.h in Headers */,
 				5C1427051C23F84C00D41183 /* DownloadID.h in Headers */,
 				5C1427071C23F84C00D41183 /* DownloadManager.h in Headers */,
@@ -15128,7 +14163,6 @@
 				B61AFA4829510D0F008220B1 /* JSWebExtensionAPIPermissions.h in Headers */,
 				1C5DC46F290B27260061EC62 /* JSWebExtensionWrappable.h in Headers */,
 				1C5DC46E290B27260061EC62 /* JSWebExtensionWrapper.h in Headers */,
-				DDA0A3FF27E66F5F005E086E /* KeyEventCodesIOS.h in Headers */,
 				C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */,
 				51E9049A27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */,
 				BCE0937814FB128C001138D9 /* LayerHostingContext.h in Headers */,
@@ -15256,7 +14290,6 @@
 				1C20936022318CB000026A39 /* NSAttributedString.h in Headers */,
 				1C2184022233872800BAC700 /* NSAttributedStringPrivate.h in Headers */,
 				3754D5451B3A29FD003A4C7F /* NSInvocationSPI.h in Headers */,
-				DDA0A34727E55E4F005E086E /* NSURLDownloadSPI.h in Headers */,
 				41DD72AB2682167300A90C71 /* NWSPI.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
 				93085DCA26E29775000EC6A7 /* OriginStorageManager.h in Headers */,
@@ -15504,20 +14537,12 @@
 				1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */,
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,
 				1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */,
-				DDA0A41927E672A5005E086E /* WAKAppKitStubs.h in Headers */,
-				DDA0A40A27E66F85005E086E /* WAKResponder.h in Headers */,
-				DDA0A40727E66F85005E086E /* WAKView.h in Headers */,
-				DDA0A40827E66F85005E086E /* WAKWindow.h in Headers */,
-				DDA0A30E27E55E4E005E086E /* WebAllowDenyPolicyListener.h in Headers */,
 				CEDA12E3152CD1B300D9E08D /* WebAlternativeTextClient.h in Headers */,
-				DDA0A34527E55E4F005E086E /* WebApplicationCache.h in Headers */,
-				DDA0A2AB27E55E4E005E086E /* WebArchive.h in Headers */,
 				57C6244B234679A400383FE7 /* WebAuthenticationFlags.h in Headers */,
 				577FF7852346ECAA004EDFB9 /* WebAuthenticationPanelClient.h in Headers */,
 				57DCEDB2214C604C0016B847 /* WebAuthenticationRequestData.h in Headers */,
 				57DCEDB3214C60530016B847 /* WebAuthenticatorCoordinatorProxy.h in Headers */,
 				57DCED712142EE6C0016B847 /* WebAuthenticatorCoordinatorProxyMessages.h in Headers */,
-				DDA0A28627E55E4D005E086E /* WebAutocapitalizeTypes.h in Headers */,
 				F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */,
 				990D39F5243BE64800199388 /* WebAutomationDOMWindowObserver.h in Headers */,
 				9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */,
@@ -15528,17 +14553,13 @@
 				1C0A195C1C916E1B00FE0EBB /* WebAutomationSessionProxyScriptSource.h in Headers */,
 				46F9B26323526EF3006FE5FA /* WebBackForwardCacheEntry.h in Headers */,
 				BC72BA1E11E64907001EB4EA /* WebBackForwardList.h in Headers */,
-				DDA0A29927E55E4D005E086E /* WebBackForwardList.h in Headers */,
 				46CE3B1123D8C8490016A96A /* WebBackForwardListCounts.h in Headers */,
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
-				DDA0A2C527E55E4E005E086E /* WebBackForwardListPrivate.h in Headers */,
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
 				512B6792294B8CB8000C0760 /* WebBadgeClient.h in Headers */,
 				46EE2849269E04AC00DD48AB /* WebBroadcastChannelRegistry.h in Headers */,
-				DDA0A33F27E55E4F005E086E /* WebCache.h in Headers */,
 				41897ED11F415D680016FA42 /* WebCacheStorageConnection.h in Headers */,
 				41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */,
-				DDA0A35627E55E4F005E086E /* WebCaretChangeListener.h in Headers */,
 				BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */,
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
 				3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */,
@@ -15566,54 +14587,30 @@
 				330934501315B94D0097A7BC /* WebCookieManager.h in Headers */,
 				330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */,
 				BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */,
-				DDA0A29627E55E4D005E086E /* WebCoreStatistics.h in Headers */,
-				DDA0A41027E66FB6005E086E /* WebCoreThread.h in Headers */,
-				DDA0A40F27E66FB6005E086E /* WebCoreThreadMessage.h in Headers */,
-				DDA0A41127E66FB6005E086E /* WebCoreThreadRun.h in Headers */,
-				DDA0A35227E55E4F005E086E /* WebCreateFragmentInternal.h in Headers */,
 				512F589B12A8838800629530 /* WebCredential.h in Headers */,
-				DDA0A2C727E55E4E005E086E /* WebDashboardRegion.h in Headers */,
-				DDA0A29327E55E4D005E086E /* WebDatabaseManagerPrivate.h in Headers */,
 				1AA83F6D1A5B63FF00026EC6 /* WebDatabaseProvider.h in Headers */,
-				DDA0A33327E55E4F005E086E /* WebDatabaseQuotaManager.h in Headers */,
 				E52CF55220A35C3A00DADA27 /* WebDataListSuggestionPicker.h in Headers */,
 				E568B91F20A3AB2F00E3C856 /* WebDataListSuggestionsDropdown.h in Headers */,
 				E5BEF6822130C48000F31111 /* WebDataListSuggestionsDropdownIOS.h in Headers */,
 				E568B92220A3AC6A00E3C856 /* WebDataListSuggestionsDropdownMac.h in Headers */,
-				DDA0A31B27E55E4E005E086E /* WebDataSource.h in Headers */,
-				DDA0A2A627E55E4E005E086E /* WebDataSourcePrivate.h in Headers */,
 				E55CD1F524CF747D0042DB9C /* WebDateTimeChooser.h in Headers */,
 				E55CD20024D08D8F0042DB9C /* WebDateTimePicker.h in Headers */,
 				E55CD20324D09F1F0042DB9C /* WebDateTimePickerMac.h in Headers */,
-				DDA0A33127E55E4F005E086E /* WebDefaultPolicyDelegate.h in Headers */,
-				DDA0A33827E55E4F005E086E /* WebDeviceOrientation.h in Headers */,
 				46B0524722668D8500265B97 /* WebDeviceOrientationAndMotionAccessController.h in Headers */,
-				DDA0A2BB27E55E4E005E086E /* WebDeviceOrientationProvider.h in Headers */,
-				DDA0A33027E55E4F005E086E /* WebDeviceOrientationProviderMock.h in Headers */,
 				E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */,
 				E3866B0A2399A2D900F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h in Headers */,
 				E3866AE72397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h in Headers */,
 				E3866B082399A2D100F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h in Headers */,
 				CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */,
-				DDA0A27F27E55E4D005E086E /* WebDocument.h in Headers */,
 				1A5B1C5518987EDF004FCF9B /* WebDocumentLoader.h in Headers */,
-				DDA0A2A327E55E4E005E086E /* WebDocumentPrivate.h in Headers */,
-				DDA0A31E27E55E4E005E086E /* WebDOMOperations.h in Headers */,
-				DDA0A37827E55E4F005E086E /* WebDOMOperationsPrivate.h in Headers */,
-				DDA0A37027E55E4F005E086E /* WebDownload.h in Headers */,
 				BC032D7B10F4378D0058C15A /* WebDragClient.h in Headers */,
-				DDA0A33227E55E4F005E086E /* WebDynamicScrollBarsView.h in Headers */,
 				BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */,
-				DDA0A30C27E55E4E005E086E /* WebEditingDelegate.h in Headers */,
-				DDA0A35027E55E4F005E086E /* WebEditingDelegatePrivate.h in Headers */,
 				BC032D7D10F4378D0058C15A /* WebEditorClient.h in Headers */,
 				7AF236211E79A40800438A05 /* WebErrors.h in Headers */,
-				DDA0A41327E66FD7005E086E /* WebEvent.h in Headers */,
 				BC032DB910F4380F0058C15A /* WebEvent.h in Headers */,
 				BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */,
 				BC111B5D112F629800337BAB /* WebEventFactory.h in Headers */,
 				86DD519028EF28E800DF2A58 /* WebEventModifier.h in Headers */,
-				DDA0A41727E67039005E086E /* WebEventRegion.h in Headers */,
 				B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */,
 				1C5DC46D290B271E0061EC62 /* WebExtensionAPIExtension.h in Headers */,
 				1C5DC46C290B271E0061EC62 /* WebExtensionAPINamespace.h in Headers */,
@@ -15635,66 +14632,39 @@
 				1C3BEB512887492F00E66E38 /* WebExtensionControllerProxyMessages.h in Headers */,
 				B6114A8C293AE06800380B1B /* WebExtensionEventListenerType.h in Headers */,
 				1CAB9B8728F746AA00E6C77E /* WebExtensionURLSchemeHandler.h in Headers */,
-				DDA0A35D27E55E4F005E086E /* WebFeature.h in Headers */,
 				9354242C2703BDCB005CA72C /* WebFileSystemStorageConnection.h in Headers */,
 				93E799882756FAC20074008A /* WebFileSystemStorageConnectionMessages.h in Headers */,
 				1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */,
-				DDA0A31A27E55E4E005E086E /* WebFixedPositionContent.h in Headers */,
 				BCE469541214E6CB000B98EB /* WebFormClient.h in Headers */,
-				DDA0A2B527E55E4E005E086E /* WebFormDelegate.h in Headers */,
-				DDA0A30127E55E4E005E086E /* WebFormDelegatePrivate.h in Headers */,
 				BCE469561214E6CB000B98EB /* WebFormSubmissionListenerProxy.h in Headers */,
 				E5227D8427A11261008EAB57 /* WebFoundTextRange.h in Headers */,
 				E55CFD4E279D31E5002F1020 /* WebFoundTextRangeController.h in Headers */,
 				BC032D8D10F437A00058C15A /* WebFrame.h in Headers */,
-				DDA0A2B427E55E4E005E086E /* WebFrame.h in Headers */,
-				DDA0A2D427E55E4E005E086E /* WebFrameIOS.h in Headers */,
-				DDA0A34027E55E4F005E086E /* WebFrameIPhone.h in Headers */,
-				DDA0A35727E55E4F005E086E /* WebFrameLoadDelegate.h in Headers */,
-				DDA0A30927E55E4E005E086E /* WebFrameLoadDelegatePrivate.h in Headers */,
 				BC032D7F10F4378D0058C15A /* WebFrameLoaderClient.h in Headers */,
 				9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */,
 				BCB9F6A01123A84B00A137E0 /* WebFramePolicyListenerProxy.h in Headers */,
-				DDA0A2BD27E55E4E005E086E /* WebFramePrivate.h in Headers */,
 				BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */,
-				DDA0A36127E55E4F005E086E /* WebFrameView.h in Headers */,
-				DDA0A36427E55E4F005E086E /* WebFrameViewPrivate.h in Headers */,
 				515BE1AB1D555AA000DD7C68 /* WebGamepad.h in Headers */,
 				515BE1791D53FE8F00DD7C68 /* WebGamepadProvider.h in Headers */,
 				BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */,
-				DDA0A2A927E55E4E005E086E /* WebGeolocationCoreLocationProvider.h in Headers */,
 				BC0E5FE512D697160012A72A /* WebGeolocationManager.h in Headers */,
 				BC0E606212D6BA910012A72A /* WebGeolocationManagerMessages.h in Headers */,
 				BC54CACB12D64291005C67B0 /* WebGeolocationManagerProxy.h in Headers */,
 				BC0E618312D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h in Headers */,
 				BC0E607312D6BC200012A72A /* WebGeolocationPosition.h in Headers */,
-				DDA0A2B227E55E4E005E086E /* WebGeolocationPosition.h in Headers */,
-				DDA0A2E127E55E4E005E086E /* WebGeolocationPrivate.h in Headers */,
 				BC1BE1F212D54DBD0004A228 /* WebGeolocationProvider.h in Headers */,
-				DDA0A33A27E55E4F005E086E /* WebGeolocationProviderIOS.h in Headers */,
 				2D5036761BCED19F00E20BB3 /* WebGestureEvent.h in Headers */,
 				1CB7464D274380C800F19874 /* WebGPUDowncastConvertToBackingContext.h in Headers */,
-				DDA0A37127E55E4F005E086E /* WebHistory.h in Headers */,
-				DDA0A2D927E55E4E005E086E /* WebHistoryItem.h in Headers */,
-				DDA0A31127E55E4E005E086E /* WebHistoryItemPrivate.h in Headers */,
-				DDA0A30527E55E4E005E086E /* WebHistoryPrivate.h in Headers */,
 				93A88B331BC6E9CD00ABA5C2 /* WebHitTestResultData.h in Headers */,
-				DDA0A2DE27E55E4E005E086E /* WebHTMLRepresentation.h in Headers */,
-				DDA0A2B627E55E4E005E086E /* WebHTMLRepresentationPrivate.h in Headers */,
-				DDA0A2F727E55E4E005E086E /* WebHTMLView.h in Headers */,
-				DDA0A35927E55E4F005E086E /* WebHTMLViewPrivate.h in Headers */,
-				DDA0A34D27E55E4F005E086E /* WebIconDatabase.h in Headers */,
 				F44DFEB21E9E752F0038D196 /* WebIconUtilities.h in Headers */,
 				514129941C6428BB0059E714 /* WebIDBConnectionToServer.h in Headers */,
 				510523741C73D38B007993CB /* WebIDBConnectionToServerMessages.h in Headers */,
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
-				DDA0A34227E55E4F005E086E /* WebInspector.h in Headers */,
 				1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */,
 				BC032D8210F4378D0058C15A /* WebInspectorClient.h in Headers */,
 				FEE43FD31E67B0180077D6D1 /* WebInspectorInterruptDispatcher.h in Headers */,
 				FEDBDCD71E68D20500A59F8F /* WebInspectorInterruptDispatcherMessages.h in Headers */,
 				1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */,
-				DDA0A2E627E55E4E005E086E /* WebInspectorPrivate.h in Headers */,
 				1C891D6619B124FF00BA79DD /* WebInspectorUI.h in Headers */,
 				99B16764252BBE620073140E /* WebInspectorUIExtensionController.h in Headers */,
 				9979659E25310A4900B31AE3 /* WebInspectorUIExtensionControllerMessages.h in Headers */,
@@ -15705,20 +14675,12 @@
 				1CA8B946127C882A00576C2B /* WebInspectorUIProxyMessages.h in Headers */,
 				A55BA82B1BA38E61007CD33D /* WebInspectorUtilities.h in Headers */,
 				2DA944A01884E4F000ED86DB /* WebIOSEventFactory.h in Headers */,
-				DDA0A41527E67001005E086E /* WebItemProviderPasteboard.h in Headers */,
-				DDA0A30A27E55E4E005E086E /* WebJavaScriptTextInputPanel.h in Headers */,
 				1A85E4721E303F3700914599 /* WebKit.apinotes in Headers */,
 				1A6280C51919949F006AD9F9 /* WebKit.h in Headers */,
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
-				DDA0A38327E561CA005E086E /* WebKitAvailability.h in Headers */,
-				DDA0A30027E55E4E005E086E /* WebKitErrors.h in Headers */,
-				DDA0A29D27E55E4E005E086E /* WebKitErrorsPrivate.h in Headers */,
 				DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */,
-				DDA0A37527E55E4F005E086E /* WebKitNSStringExtras.h in Headers */,
 				1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */,
-				DDA0A2EF27E55E4E005E086E /* WebKitStatistics.h in Headers */,
-				DDA0A2CD27E55E4E005E086E /* WebLocalizableStrings.h in Headers */,
 				465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */,
 				CD003A5319D49B5D005ABCE0 /* WebMediaKeyStorageManager.h in Headers */,
 				9ACC07B725C81D3400DC6386 /* WebMediaKeySystemClient.h in Headers */,
@@ -15726,12 +14688,9 @@
 				2D3EF4431917646300034184 /* WebMemoryPressureHandler.h in Headers */,
 				909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */,
 				513FFB91201459C6002596EA /* WebMessagePortChannelProvider.h in Headers */,
-				DDA0A30227E55E4E005E086E /* WebMIMETypeRegistry.h in Headers */,
 				E3816B3E27E2463A005EAFC0 /* WebMockContentFilterManager.h in Headers */,
-				DDA0A2B327E55E4E005E086E /* WebNavigationData.h in Headers */,
 				BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */,
 				7CCCC8FB1A5F50FD008FB0DA /* WebNavigationState.h in Headers */,
-				DDA0A31C27E55E4E005E086E /* WebNotification.h in Headers */,
 				31A2EC49148997C200810D71 /* WebNotification.h in Headers */,
 				310999C7146C9E3D0029DEB9 /* WebNotificationClient.h in Headers */,
 				31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */,
@@ -15739,16 +14698,6 @@
 				31BA924E148831260062EDB5 /* WebNotificationManagerMessages.h in Headers */,
 				31A2EC4B148997C200810D71 /* WebNotificationManagerProxy.h in Headers */,
 				31A2EC4E148997C200810D71 /* WebNotificationProvider.h in Headers */,
-				DDA0A32427E55E4E005E086E /* WebNSDataExtrasPrivate.h in Headers */,
-				DDA0A28227E55E4D005E086E /* WebNSEventExtras.h in Headers */,
-				DDA0A37A27E55E4F005E086E /* WebNSFileManagerExtras.h in Headers */,
-				DDA0A28827E55E4D005E086E /* WebNSPasteboardExtras.h in Headers */,
-				DDA0A2F027E55E4E005E086E /* WebNSStringExtrasIOS.h in Headers */,
-				DDA0A30427E55E4E005E086E /* WebNSStringExtrasIPhone.h in Headers */,
-				DDA0A31227E55E4E005E086E /* WebNSURLExtras.h in Headers */,
-				DDA0A29827E55E4D005E086E /* WebNSUserDefaultsExtras.h in Headers */,
-				DDA0A2F327E55E4E005E086E /* WebNSViewExtras.h in Headers */,
-				DDA0A31D27E55E4E005E086E /* WebNSWindowExtras.h in Headers */,
 				BC857F8512B82D0B00EDEB2E /* WebOpenPanelResultListener.h in Headers */,
 				BC1DFEA412B31F87005DF730 /* WebOpenPanelResultListenerProxy.h in Headers */,
 				BC032D8F10F437A00058C15A /* WebPage.h in Headers */,
@@ -15767,7 +14716,6 @@
 				2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */,
 				46C392292316EC4D008EED9B /* WebPageProxyIdentifier.h in Headers */,
 				BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */,
-				DDA0A31427E55E4E005E086E /* WebPanelAuthenticationHandler.h in Headers */,
 				512127C41908239A00DAF35C /* WebPasteboardOverrides.h in Headers */,
 				7C4694D11A51E36800AD5845 /* WebPasteboardProxy.h in Headers */,
 				7C4694CA1A4B4EA100AD5845 /* WebPasteboardProxyMessages.h in Headers */,
@@ -15775,33 +14723,18 @@
 				1AB1F78C1D1B3355007C9BD1 /* WebPaymentCoordinatorProxy.h in Headers */,
 				A1798B4C222F1BD4000764BD /* WebPaymentCoordinatorProxyCocoa.h in Headers */,
 				1AB1F7991D1B3613007C9BD1 /* WebPaymentCoordinatorProxyMessages.h in Headers */,
-				DDA0A33427E55E4F005E086E /* WebPDFViewIOS.h in Headers */,
-				DDA0A2D827E55E4E005E086E /* WebPDFViewIPhone.h in Headers */,
-				DDA0A37927E55E4F005E086E /* WebPDFViewPlaceholder.h in Headers */,
 				0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */,
 				93B0A67526D5ADCF00AA21E4 /* WebPermissionController.h in Headers */,
 				D952EC7A289C6BFA006C240A /* WebPermissionControllerProxy.h in Headers */,
 				D952EC7E289C9A4C006C240A /* WebPermissionControllerProxyMessages.h in Headers */,
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
-				DDA0A2FB27E55E4E005E086E /* WebPlugin.h in Headers */,
-				DDA0A28327E55E4D005E086E /* WebPluginContainer.h in Headers */,
-				DDA0A31327E55E4E005E086E /* WebPluginContainerPrivate.h in Headers */,
-				DDA0A2CF27E55E4E005E086E /* WebPluginDatabase.h in Headers */,
-				DDA0A33527E55E4F005E086E /* WebPluginPackagePrivate.h in Headers */,
-				DDA0A35F27E55E4F005E086E /* WebPluginViewFactory.h in Headers */,
-				DDA0A32C27E55E4F005E086E /* WebPluginViewFactoryPrivate.h in Headers */,
-				DDA0A28527E55E4D005E086E /* WebPolicyDelegate.h in Headers */,
-				DDA0A2ED27E55E4E005E086E /* WebPolicyDelegatePrivate.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
 				BC574E631267D080006F0F12 /* WebPopupMenuProxy.h in Headers */,
 				BC5750971268F3C6006F0F12 /* WebPopupMenuProxyMac.h in Headers */,
-				DDA0A2CB27E55E4E005E086E /* WebPreferenceKeysPrivate.h in Headers */,
-				DDA0A36027E55E4F005E086E /* WebPreferences.h in Headers */,
 				BCD597FF112B57BE00EC8C23 /* WebPreferences.h in Headers */,
 				7CB100F21FA3858E001729EE /* WebPreferencesDefinitions.h in Headers */,
 				7CB100F31FA3858E001729EE /* WebPreferencesKeys.h in Headers */,
-				DDA0A31527E55E4E005E086E /* WebPreferencesPrivate.h in Headers */,
 				BCD598AC112B7FDF00EC8C23 /* WebPreferencesStore.h in Headers */,
 				A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */,
 				BC032D9710F437AF0058C15A /* WebProcess.h in Headers */,
@@ -15821,29 +14754,19 @@
 				512CD69A2721F0A900F7F8EC /* WebPushDaemonConstants.h in Headers */,
 				517B5F73275E9609002DC22D /* WebPushDaemonMain.h in Headers */,
 				517B5F97275EC5E5002DC22D /* WebPushMessage.h in Headers */,
-				DDA0A35C27E55E4F005E086E /* WebQuotaManager.h in Headers */,
 				5C2397D52949235800BB4E10 /* WebRemoteFrameClient.h in Headers */,
 				461CCCA6231485AA00B659B9 /* WebRemoteObjectRegistry.h in Headers */,
-				DDA0A29227E55E4D005E086E /* WebResource.h in Headers */,
 				A5860E71230F67FC00461AAE /* WebResourceInterceptController.h in Headers */,
-				DDA0A28927E55E4D005E086E /* WebResourceLoadDelegate.h in Headers */,
-				DDA0A29427E55E4D005E086E /* WebResourceLoadDelegatePrivate.h in Headers */,
 				510AFFBA16542048001BA05E /* WebResourceLoader.h in Headers */,
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 				4671FF1F23217EFF001B64C7 /* WebResourceLoadObserver.h in Headers */,
 				7AFBD36321E50F39005DBACB /* WebResourceLoadStatisticsStore.h in Headers */,
-				DDA0A36827E55E4F005E086E /* WebResourcePrivate.h in Headers */,
 				413075B01DE85F580039EC69 /* WebRTCMonitor.h in Headers */,
 				41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */,
 				46DC53C328EB3D99005376B0 /* WebScreenOrientationManager.h in Headers */,
 				46DC53C728EB3DC8005376B0 /* WebScreenOrientationManagerProxy.h in Headers */,
-				DDA0A2C127E55E4E005E086E /* WebScriptDebugDelegate.h in Headers */,
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
-				DDA0A38127E561C4005E086E /* WebScriptObject.h in Headers */,
-				DDA0A2E327E55E4E005E086E /* WebScriptWorld.h in Headers */,
 				D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */,
-				DDA0A28E27E55E4D005E086E /* WebSecurityOriginPrivate.h in Headers */,
-				DDA0A33627E55E4F005E086E /* WebSelectionRect.h in Headers */,
 				51BEB62C1F3A5AD7005029B9 /* WebServiceWorkerProvider.h in Headers */,
 				4656F7BD27ACAA8D00CB3D7C /* WebSharedWorker.h in Headers */,
 				461E1BF2279A0116006AF53B /* WebSharedWorkerContextManagerConnection.h in Headers */,
@@ -15869,10 +14792,8 @@
 				C149380922347104000CD707 /* WebSpeechSynthesisClient.h in Headers */,
 				836034A01ACB34D600626549 /* WebSQLiteDatabaseTracker.h in Headers */,
 				93085DC026E19313000EC6A7 /* WebStorageConnection.h in Headers */,
-				DDA0A31727E55E4E005E086E /* WebStorageManagerPrivate.h in Headers */,
 				1A52C0F81A38CDC70016160A /* WebStorageNamespaceProvider.h in Headers */,
 				93085DBF26E192F9000EC6A7 /* WebStorageProvider.h in Headers */,
-				DDA0A2C227E55E4E005E086E /* WebStringTruncator.h in Headers */,
 				9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */,
 				517A53101F47A86200DCDC0A /* WebSWClientConnectionMessages.h in Headers */,
 				466BC03C1FA266DA002FA9C1 /* WebSWContextManagerConnection.h in Headers */,
@@ -15883,26 +14804,16 @@
 				9356F2DD2152B6F600E6D5DF /* WebSWServerConnection.h in Headers */,
 				517A52D91F43A9DA00DCDC0A /* WebSWServerConnectionMessages.h in Headers */,
 				515262BC1FB9515D0070E579 /* WebSWServerToContextConnectionMessages.h in Headers */,
-				DDA0A33727E55E4F005E086E /* WebTextIterator.h in Headers */,
-				DDA0A2BF27E55E4E005E086E /* WebUIDelegate.h in Headers */,
-				DDA0A2B827E55E4E005E086E /* WebUIDelegatePrivate.h in Headers */,
-				DDA0A32B27E55E4F005E086E /* WebUIKitDelegate.h in Headers */,
-				DDA0A36F27E55E4F005E086E /* WebUIKitSupport.h in Headers */,
 				BCA0EF7F12331E78007D3CFB /* WebUndoStep.h in Headers */,
-				DDA0A32727E55E4E005E086E /* WebURLsWithTitles.h in Headers */,
 				1AAF08AE1926936700B6390C /* WebUserContentController.h in Headers */,
 				7C065F2C1C8CD95F00C2D950 /* WebUserContentControllerDataTypes.h in Headers */,
 				1AAF08B819269E6D00B6390C /* WebUserContentControllerMessages.h in Headers */,
 				1AAF08A2192681D100B6390C /* WebUserContentControllerProxy.h in Headers */,
 				7C361D79192803BD0036A59D /* WebUserContentControllerProxyMessages.h in Headers */,
-				DDA0A34E27E55E4F005E086E /* WebUserContentURLPattern.h in Headers */,
 				15739BBD1B42042D00D258C1 /* WebUserMediaClient.h in Headers */,
 				83EE575C1DB7D61100C74C50 /* WebValidationMessageClient.h in Headers */,
-				DDA0A31827E55E4E005E086E /* WebView.h in Headers */,
 				572FD44322265CE200A1ECC3 /* WebViewDidMoveToWindowObserver.h in Headers */,
 				0FD07E5028A3414700B38C81 /* WebViewImpl.h in Headers */,
-				DDA0A34F27E55E4F005E086E /* WebViewPrivate.h in Headers */,
-				DDA0A2FD27E55E4E005E086E /* WebVisiblePosition.h in Headers */,
 				A7A3D555289395E2008D683D /* WebWorkerClient.h in Headers */,
 				29CD55AA128E294F00133C85 /* WKAccessibilityWebPageObjectBase.h in Headers */,
 				29232DF418B29D6800D0596F /* WKAccessibilityWebPageObjectMac.h in Headers */,
@@ -15982,7 +14893,6 @@
 				BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */,
 				BC4A6297147313A0006C681A /* WKConnectionRef.h in Headers */,
 				E596DD6A251E71D400C275A7 /* WKContactPicker.h in Headers */,
-				DDA0A40B27E66F85005E086E /* WKContentObservation.h in Headers */,
 				5CD286541E7235B10094FDC8 /* WKContentRuleList.h in Headers */,
 				5CD286551E7235B80094FDC8 /* WKContentRuleListInternal.h in Headers */,
 				5C5139DB25927D80009C3E30 /* WKContentRuleListPrivate.h in Headers */,
@@ -16077,7 +14987,6 @@
 				BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */,
 				0FCB4E4F18BBE044000FCFC9 /* WKGeolocationProviderIOS.h in Headers */,
 				BCC8B374125FB69000DE46A4 /* WKGeometry.h in Headers */,
-				DDA0A40627E66F85005E086E /* WKGraphics.h in Headers */,
 				F4DB54E62319E733009E3155 /* WKHighlightLongPressGestureRecognizer.h in Headers */,
 				1A422F8B18B29B5400D8CD96 /* WKHistoryDelegatePrivate.h in Headers */,
 				B62E7312143047B00069EC35 /* WKHitTestResult.h in Headers */,
@@ -16256,7 +15165,6 @@
 				71A676A622C62325007D6295 /* WKTouchActionGestureRecognizer.h in Headers */,
 				BC407608124FF0270068F20A /* WKType.h in Headers */,
 				7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */,
-				DDA0A40927E66F85005E086E /* WKTypes.h in Headers */,
 				1AD8790A18B6C38A006CAFD7 /* WKUIDelegate.h in Headers */,
 				3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */,
 				BC40760A124FF0270068F20A /* WKURL.h in Headers */,
@@ -16550,6 +15458,7 @@
 				1A07D2F51919AA8A00ECDA16 /* Make Frameworks Symbolic Link */,
 				8DC2EF500486A6940098B216 /* Headers */,
 				DDA0A42827EA3435005E086E /* (Legacy) Install Headers */,
+				DDC907B5298B2DE800ECA4D6 /* Migrate WebCore and WebKitLegacy Headers */,
 				2E16B6F42019BC25008996D6 /* Copy Additional Resources */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				372589431C1E496800C92CA9 /* Copy Shims */,
@@ -17639,6 +16548,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" -configuration ${CONFIGURATION} installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyInstallHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" SDK_VARIANT=\"${SDK_VARIANT}\" ARCHS=\"${ARCHS}\" INSTALLHDRS_SCRIPT_PHASE=NO WK_OVERRIDE_FRAMEWORKS_DIR=/ -UseNewBuildSystem=YES\n\n";
+		};
+		DDC907B5298B2DE800ECA4D6 /* Migrate WebCore and WebKitLegacy Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"$(SRCROOT)/MigratedHeaders-input.xcfilelist",
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/migrate-headers.py",
+				"$(SRCROOT)/Scripts/postprocess-header-rule",
+			);
+			name = "Migrate WebCore and WebKitLegacy Headers";
+			outputFileListPaths = (
+				"$(SRCROOT)/MigratedHeaders-output.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SCRIPT_INPUT_FILE_0}\"\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
