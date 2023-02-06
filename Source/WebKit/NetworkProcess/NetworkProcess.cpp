@@ -1714,9 +1714,11 @@ void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, Option
         if (RefPtr cache = session->cache()) {
             Vector<NetworkCache::Key> cacheKeysToDelete;
             String cachePartition = origin.clientOrigin == origin.topOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host);
-            cache->traverse([cache, clearTasksHandler, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
+            bool shouldClearAllEntriesInPartition = origin.clientOrigin == origin.topOrigin;
+            cache->traverse(cachePartition, [cache, clearTasksHandler, shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
                 if (traversalEntry) {
-                    if (SecurityOriginData::fromURL(traversalEntry->entry.response().url()) == origin && equalIgnoringNullity(traversalEntry->entry.key().partition(), cachePartition))
+                    ASSERT_UNUSED(cachePartition, equalIgnoringNullity(traversalEntry->entry.key().partition(), cachePartition));
+                    if (shouldClearAllEntriesInPartition || SecurityOriginData::fromURL(traversalEntry->entry.response().url()) == origin)
                         cacheKeysToDelete.append(traversalEntry->entry.key());
                     return;
                 }

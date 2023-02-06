@@ -175,6 +175,7 @@ public:
         const Storage::RecordInfo& recordInfo;
     };
     void traverse(Function<void(const TraversalEntry*)>&&);
+    void traverse(const String& partition, Function<void(const TraversalEntry*)>&&);
     void remove(const Key&);
     void remove(const WebCore::ResourceRequest&);
     void remove(const Vector<Key>&, Function<void()>&&);

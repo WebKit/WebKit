@@ -598,6 +598,23 @@ void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
     });
 }
 
+void Cache::traverse(const String& partition, Function<void(const TraversalEntry*)>&& traverseHandler)
+{
+    m_storage->traverse(resourceType(), partition, { }, [traverseHandler = WTFMove(traverseHandler)] (const Storage::Record* record, const Storage::RecordInfo& recordInfo) mutable {
+        if (!record) {
+            traverseHandler(nullptr);
+            return;
+        }
+
+        auto entry = Entry::decodeStorageRecord(*record);
+        if (!entry)
+            return;
+
+        TraversalEntry traversalEntry { *entry, recordInfo };
+        traverseHandler(&traversalEntry);
+    });
+}
+
 String Cache::dumpFilePath() const
 {
     return pathByAppendingComponent(m_storage->versionPath(), "dump.json"_s);
