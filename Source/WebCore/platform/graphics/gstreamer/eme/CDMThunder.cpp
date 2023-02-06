@@ -125,8 +125,14 @@ const Vector<String>& CDMFactoryThunder::supportedKeySystems() const
             supportedKeySystems.append(String::fromLatin1(GStreamerEMEUtilities::s_WidevineKeySystem));
         if (opencdm_is_type_supported(GStreamerEMEUtilities::s_ClearKeyKeySystem, emptyString.c_str()) == ERROR_NONE)
             supportedKeySystems.append(String::fromLatin1(GStreamerEMEUtilities::s_ClearKeyKeySystem));
+        if (opencdm_is_type_supported(GStreamerEMEUtilities::s_PlayReadyKeySystems[0], emptyString.c_str()) == ERROR_NONE) {
+            supportedKeySystems.append(String::fromLatin1(GStreamerEMEUtilities::s_PlayReadyKeySystems[0]));
+            supportedKeySystems.append(String::fromLatin1(GStreamerEMEUtilities::s_PlayReadyKeySystems[1]));
+        }
         GST_DEBUG("%zu supported key systems", supportedKeySystems.size());
-    };
+        ASSERT_WITH_MESSAGE(!supportedKeySystems.isEmpty() || !isThunderRanked(), "Thunder is up-ranked as preferred "
+            "decryptor but Thunder is not supporting any encryption system. Is Thunder running? Are the plugins built?");
+    }
     return supportedKeySystems;
 }
 
@@ -440,6 +446,20 @@ void CDMInstanceSessionThunder::keyUpdatedCallback(KeyIDType&& keyID)
     auto keyStatus = status(keyID);
     GST_DEBUG("updated with with key status %s", toString(keyStatus));
     m_doesKeyStoreNeedMerging |= m_keyStore.add(KeyHandle::create(keyStatus, WTFMove(keyID), BoxPtr<OpenCDMSession>(m_session)));
+    auto instance = cdmInstanceThunder();
+    if (instance && GStreamerEMEUtilities::isPlayReadyKeySystem(instance->keySystem())) {
+        // PlayReady corner case hack: It happens that the key ID
+        // required by the stream and reported by the CDM have
+        // different endianness of the 4-2-2 GUID components.
+        RELEASE_ASSERT(keyID.size() >= 8);
+        KeyIDType swappedKeyID(keyID);
+        std::swap(swappedKeyID[0], swappedKeyID[3]);
+        std::swap(swappedKeyID[1], swappedKeyID[2]);
+        std::swap(swappedKeyID[4], swappedKeyID[5]);
+        std::swap(swappedKeyID[6], swappedKeyID[7]);
+        GST_MEMDUMP("updated swapped key", swappedKeyID.data(), swappedKeyID.size());
+        m_doesKeyStoreNeedMerging |= m_keyStore.add(KeyHandle::create(keyStatus, WTFMove(swappedKeyID), BoxPtr<OpenCDMSession>(m_session)));
+    }
 }
 
 void CDMInstanceSessionThunder::keysUpdateDoneCallback()
