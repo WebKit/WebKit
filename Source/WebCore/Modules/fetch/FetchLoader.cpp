@@ -85,7 +85,7 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
 
 void FetchLoader::start(ScriptExecutionContext& context, const FetchRequest& request, const String& initiator)
 {
-    ResourceLoaderOptions resourceLoaderOptions = request.fetchOptions();
+    ResourceLoaderOptions resourceLoaderOptions { request.fetchOptions() };
     resourceLoaderOptions.preflightPolicy = PreflightPolicy::Consider;
     ThreadableLoaderOptions options(resourceLoaderOptions,
         context.shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective,

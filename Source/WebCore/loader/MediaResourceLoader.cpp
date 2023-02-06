@@ -190,7 +190,7 @@ void MediaResource::responseReceived(CachedResource& resource, const ResourceRes
         return;
     }
 
-    m_didPassAccessControlCheck = m_resource->options().mode == FetchOptions::Mode::Cors;
+    m_didPassAccessControlCheck = m_resource->fetchMode() == FetchOptions::Mode::Cors;
     if (m_client)
         m_client->responseReceived(*this, response, [this, protectedThis = Ref { *this }, completionHandler = completionHandlerCaller.release()] (auto shouldContinue) mutable {
             if (completionHandler)

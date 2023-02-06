@@ -33,10 +33,7 @@
 #include "FetchOptionsDestination.h"
 #include "FetchOptionsMode.h"
 #include "FetchOptionsRedirect.h"
-#include "ProcessQualified.h"
 #include "ReferrerPolicy.h"
-#include "ScriptExecutionContextIdentifier.h"
-#include <wtf/Markable.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,12 +46,12 @@ struct FetchOptions {
     using Redirect = FetchOptionsRedirect;
 
     FetchOptions() = default;
-    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&, Markable<UUID>, Markable<UUID>);
-    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
-    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTFMove(integrity).isolatedCopy(), clientIdentifier, resultingClientIdentifier }; }
+    FetchOptions(Destination, Mode, Credentials, Cache, Redirect, ReferrerPolicy, bool, String&&);
+    FetchOptions isolatedCopy() const & { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, integrity.isolatedCopy() }; }
+    FetchOptions isolatedCopy() && { return { destination, mode, credentials, cache, redirect, referrerPolicy, keepAlive, WTFMove(integrity).isolatedCopy() }; }
 
-    template<class Encoder> void encodePersistent(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decodePersistent(Decoder&, FetchOptions&);
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, FetchOptions&);
 
     Destination destination { Destination::EmptyString };
     Mode mode { Mode::NoCors };
@@ -64,11 +61,9 @@ struct FetchOptions {
     ReferrerPolicy referrerPolicy { ReferrerPolicy::EmptyString };
     bool keepAlive { false };
     String integrity;
-    Markable<UUID> clientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
-    Markable<UUID> resultingClientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
 };
 
-inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity, Markable<UUID> clientIdentifier, Markable<UUID> resultingClientIdentifier)
+inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credentials credentials, Cache cache, Redirect redirect, ReferrerPolicy referrerPolicy, bool keepAlive, String&& integrity)
     : destination(destination)
     , mode(mode)
     , credentials(credentials)
@@ -77,9 +72,19 @@ inline FetchOptions::FetchOptions(Destination destination, Mode mode, Credential
     , referrerPolicy(referrerPolicy)
     , keepAlive(keepAlive)
     , integrity(WTFMove(integrity))
-    , clientIdentifier(clientIdentifier)
-    , resultingClientIdentifier(resultingClientIdentifier)
 {
+}
+
+inline bool operator==(const FetchOptions& a, const FetchOptions& b)
+{
+    return a.destination == b.destination
+        && a.mode == b.mode
+        && a.credentials == b.credentials
+        && a.cache == b.cache
+        && a.redirect == b.redirect
+        && a.referrerPolicy == b.referrerPolicy
+        && a.keepAlive == b.keepAlive
+        && a.integrity == b.integrity;
 }
 
 inline bool isPotentialNavigationOrSubresourceRequest(FetchOptions::Destination destination)
@@ -195,7 +200,7 @@ template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Redirect> {
 namespace WebCore {
 
 template<class Encoder>
-inline void FetchOptions::encodePersistent(Encoder& encoder) const
+inline void FetchOptions::encode(Encoder& encoder) const
 {
     // Changes to encoding here should bump NetworkCache Storage format version.
     encoder << destination;
@@ -209,7 +214,7 @@ inline void FetchOptions::encodePersistent(Encoder& encoder) const
 }
 
 template<class Decoder>
-inline bool FetchOptions::decodePersistent(Decoder& decoder, FetchOptions& options)
+inline bool FetchOptions::decode(Decoder& decoder, FetchOptions& options)
 {
     std::optional<FetchOptions::Destination> destination;
     decoder >> destination;

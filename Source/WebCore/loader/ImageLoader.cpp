@@ -221,7 +221,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             newImage = new CachedImage(WTFMove(request), page->sessionID(), &page->cookieJar());
             newImage->setStatus(CachedResource::Pending);
             newImage->setLoading(true);
-            document.cachedResourceLoader().m_documentResources.set(newImage->url().string(), newImage.get());
+            document.cachedResourceLoader().m_documentResources.set(newImage->url().string(), std::make_pair(newImage.get(), makeUnique<ResourceLoaderOptions>(request.options())));
             document.cachedResourceLoader().setAutoLoadImages(autoLoadOtherImages);
         } else {
 #if !LOG_DISABLED

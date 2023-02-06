@@ -70,7 +70,7 @@ private:
     void checkNotify(const NetworkLoadMetrics&) override;
     bool mayTryReplaceEncodedData() const override;
 
-    void load(CachedResourceLoader&) override;
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
     NO_RETURN_DUE_TO_ASSERT void setBodyDataFrom(const CachedResource&) final { ASSERT_NOT_REACHED(); }
 
     void didAddClient(CachedResourceClient&) override;
@@ -85,7 +85,7 @@ private:
     bool m_hasCreatedFontDataWrappingResource;
 
     std::unique_ptr<FontCustomPlatformData> m_fontCustomPlatformData;
-
+    std::unique_ptr<ResourceLoaderOptions> m_loaderOptions;
     friend class MemoryCache;
 };
 

@@ -84,8 +84,7 @@ static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Ty
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, cachedResourceLeakCounter, ("CachedResource"));
 
 CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::SessionID sessionID, const CookieJar* cookieJar)
-    : m_options(request.options())
-    , m_resourceRequest(request.releaseResourceRequest())
+    : m_resourceRequest(request.releaseResourceRequest())
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
     , m_cookieJar(cookieJar)
@@ -105,6 +104,20 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     , m_hasUnknownEncoding(request.isLinkPreload())
     , m_switchingClientsToRevalidatedResource(false)
     , m_ignoreForRequestCount(request.ignoreForRequestCount())
+    , m_shouldSendResourceLoadCallbacks(request.options().sendLoadCallbacks == SendCallbackPolicy::SendCallbacks)
+    , m_allowsCaching(request.options().cachingPolicy == CachingPolicy::AllowCaching)
+    , m_loadedFromOpaqueSource(request.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes)
+    , m_keepAlive(request.options().keepAlive)
+    , m_destination(request.options().destination)
+    , m_mode(request.options().mode)
+    , m_credentials(request.options().credentials)
+    , m_redirect(request.options().redirect)
+    , m_dataBufferingPolicy(request.options().dataBufferingPolicy)
+    , m_storedCredentialsPolicy(request.options().storedCredentialsPolicy)
+#if ENABLE(SERVICE_WORKER)
+    , m_serviceWorkerRegistrationIdentifier(request.options().serviceWorkerRegistrationIdentifier)
+    , m_serviceWorkersMode(request.options().serviceWorkersMode)
+#endif
 {
     ASSERT(m_sessionID.isValid());
 
@@ -116,7 +129,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     // FIXME: We should have a better way of checking for Navigation loads, maybe FetchMode::Options::Navigate.
     ASSERT(m_origin || m_type == Type::MainResource);
 
-    if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), m_options))
+    if (isRequestCrossOrigin(m_origin.get(), m_resourceRequest.url(), request.options()))
         setCrossOrigin();
 }
 
@@ -139,6 +152,14 @@ CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID session
     , m_hasUnknownEncoding(false)
     , m_switchingClientsToRevalidatedResource(false)
     , m_ignoreForRequestCount(false)
+    , m_shouldSendResourceLoadCallbacks(ResourceLoaderOptions().sendLoadCallbacks == SendCallbackPolicy::SendCallbacks)
+    , m_allowsCaching(ResourceLoaderOptions().cachingPolicy == CachingPolicy::AllowCaching)
+    , m_loadedFromOpaqueSource(ResourceLoaderOptions().loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes)
+    , m_dataBufferingPolicy(ResourceLoaderOptions().dataBufferingPolicy)
+    , m_storedCredentialsPolicy(ResourceLoaderOptions().storedCredentialsPolicy)
+#if ENABLE(SERVICE_WORKER)
+    , m_serviceWorkersMode(ResourceLoaderOptions().serviceWorkersMode)
+#endif
 {
     ASSERT(m_sessionID.isValid());
 #ifndef NDEBUG
@@ -171,7 +192,7 @@ void CachedResource::failBeforeStarting()
     error(CachedResource::LoadError);
 }
 
-void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
+void CachedResource::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
     if (!cachedResourceLoader.frame()) {
         CACHEDRESOURCE_RELEASE_LOG("load: No associated frame");
@@ -190,7 +211,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
             break;
         case Document::AboutToEnterBackForwardCache:
             // Beacons are allowed to go through in 'pagehide' event handlers.
-            if (m_options.keepAlive || shouldUsePingLoad(type()))
+            if (options.keepAlive || shouldUsePingLoad(type()))
                 break;
             CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: About to enter back/forward cache", frame);
             failBeforeStarting();
@@ -203,7 +224,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     }
 
     FrameLoader& frameLoader = frame.loader();
-    if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_options.keepAlive && !shouldUsePingLoad(type())) {
+    if (options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !options.keepAlive && !shouldUsePingLoad(type())) {
         while (true) {
             if (frameLoader.state() == FrameState::Provisional)
                 CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Failed security check -- state is provisional", frame);
@@ -244,7 +265,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // Navigation algorithm is setting up the request before sending it to CachedResourceLoader?CachedResource.
     // So no need for extra fields for MainResource.
     if (type() != Type::MainResource) {
-        bool isServiceWorkerNavigationLoad = type() != Type::SVGDocumentResource && m_options.serviceWorkersMode == ServiceWorkersMode::None && (m_options.destination == FetchOptions::Destination::Document || m_options.destination == FetchOptions::Destination::Iframe);
+        bool isServiceWorkerNavigationLoad = type() != Type::SVGDocumentResource && options.serviceWorkersMode == ServiceWorkersMode::None && (options.destination == FetchOptions::Destination::Document || options.destination == FetchOptions::Destination::Iframe);
         frameLoader.updateRequestAndAddExtraFields(m_resourceRequest, IsMainResource::No, FrameLoadType::Standard, ShouldUpdateAppInitiatedValue::Yes, isServiceWorkerNavigationLoad ? FrameLoader::IsServiceWorkerNavigationLoad::Yes : FrameLoader::IsServiceWorkerNavigationLoad::No);
     }
 
@@ -258,21 +279,21 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         m_fragmentIdentifierForRequest = String();
     }
 
-    if (m_options.keepAlive && type() != Type::Ping && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
+    if (options.keepAlive && type() != Type::Ping && !cachedResourceLoader.keepaliveRequestTracker().tryRegisterRequest(*this)) {
         setResourceError({ errorDomainWebKitInternal, 0, request.url(), "Reached maximum amount of queued data of 64Kb for keepalive requests"_s, ResourceError::Type::AccessControl });
         failBeforeStarting();
         return;
     }
 
     // FIXME: Deprecate that code path.
-    if (m_options.keepAlive && shouldUsePingLoad(type()) && platformStrategies()->loaderStrategy()->usePingLoad()) {
+    if (options.keepAlive && shouldUsePingLoad(type()) && platformStrategies()->loaderStrategy()->usePingLoad()) {
         ASSERT(m_originalRequest);
         CachedResourceHandle<CachedResource> protectedThis(this);
 
         auto identifier = ResourceLoaderIdentifier::generate();
         InspectorInstrumentation::willSendRequestOfType(&frame, identifier, frameLoader.activeDocumentLoader(), request, InspectorInstrumentation::LoadType::Beacon);
 
-        platformStrategies()->loaderStrategy()->startPingLoad(frame, request, m_originalRequest->httpHeaderFields(), m_options, m_options.contentSecurityPolicyImposition, [this, protectedThis = WTFMove(protectedThis), protectedFrame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
+        platformStrategies()->loaderStrategy()->startPingLoad(frame, request, m_originalRequest->httpHeaderFields(), options, options.contentSecurityPolicyImposition, [this, protectedThis = WTFMove(protectedThis), protectedFrame = Ref { frame }, identifier] (const ResourceError& error, const ResourceResponse& response) {
             if (!response.isNull())
                 InspectorInstrumentation::didReceiveResourceResponse(protectedFrame, identifier, protectedFrame->loader().activeDocumentLoader(), response, nullptr);
             if (!error.isNull()) {
@@ -288,7 +309,7 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
         return;
     }
 
-    platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), m_options, [this, protectedThis = CachedResourceHandle<CachedResource>(this), frameRef = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) {
+    platformStrategies()->loaderStrategy()->loadResource(frame, *this, WTFMove(request), options, [this, protectedThis = CachedResourceHandle<CachedResource>(this), frameRef = Ref { frame }] (RefPtr<SubresourceLoader>&& loader) {
         m_loader = WTFMove(loader);
         if (!m_loader) {
             RELEASE_LOG(Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::load: Unable to create SubresourceLoader", this, PAGE_ID(frameRef.get()), FRAME_ID(frameRef.get()));
@@ -305,9 +326,9 @@ void CachedResource::loadFrom(const CachedResource& resource)
     ASSERT(type() == resource.type());
     ASSERT(resource.status() == Status::Cached);
 
-    if (isCrossOrigin() && m_options.mode == FetchOptions::Mode::Cors) {
+    if (isCrossOrigin() && m_mode == FetchOptions::Mode::Cors) {
         ASSERT(m_origin);
-        auto accessControlCheckResult = WebCore::passesAccessControlCheck(resource.response(), m_options.storedCredentialsPolicy, *m_origin, &CrossOriginAccessControlCheckDisabler::singleton());
+        auto accessControlCheckResult = WebCore::passesAccessControlCheck(resource.response(), m_storedCredentialsPolicy, *m_origin, &CrossOriginAccessControlCheckDisabler::singleton());
         if (!accessControlCheckResult) {
             setResourceError(ResourceError(String(), 0, url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
             return;
@@ -370,7 +391,7 @@ void CachedResource::cancelLoad()
         return;
 
     auto* documentLoader = (m_loader && m_loader->frame()) ? m_loader->frame()->loader().activeDocumentLoader() : nullptr;
-    if (m_options.keepAlive && (!documentLoader || documentLoader->isStopping()))
+    if (m_keepAlive && (!documentLoader || documentLoader->isStopping()))
         m_error = { };
     else
         setStatus(LoadError);
@@ -387,8 +408,8 @@ void CachedResource::finish()
 
 void CachedResource::setCrossOrigin()
 {
-    ASSERT(m_options.mode != FetchOptions::Mode::SameOrigin);
-    m_responseTainting = (m_options.mode == FetchOptions::Mode::Cors) ? ResourceResponse::Tainting::Cors : ResourceResponse::Tainting::Opaque;
+    ASSERT(m_mode != FetchOptions::Mode::SameOrigin);
+    m_responseTainting = (m_mode == FetchOptions::Mode::Cors) ? ResourceResponse::Tainting::Cors : ResourceResponse::Tainting::Opaque;
 }
 
 bool CachedResource::isCrossOrigin() const

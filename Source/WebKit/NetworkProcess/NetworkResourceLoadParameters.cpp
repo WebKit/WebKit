@@ -66,6 +66,8 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier
     , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep
     , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
+    , Markable<UUID> clientIdentifier
+    , Markable<UUID> resultingClientIdentifier
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
     , URL&& mainDocumentURL
@@ -102,6 +104,8 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
         , serviceWorkerRegistrationIdentifier(serviceWorkerRegistrationIdentifier)
         , httpHeadersToKeep(httpHeadersToKeep)
         , navigationPreloadIdentifier(navigationPreloadIdentifier)
+        , clientIdentifier(clientIdentifier)
+        , resultingClientIdentifier(resultingClientIdentifier)
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
         , mainDocumentURL(WTFMove(mainDocumentURL))

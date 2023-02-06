@@ -28,6 +28,7 @@
 #include "CrossOriginEmbedderPolicy.h"
 #include "ReportBody.h"
 #include "ViolationReportType.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 

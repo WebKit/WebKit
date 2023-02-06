@@ -676,13 +676,13 @@ std::optional<WebCore::ResourceResponse> Coder<WebCore::ResourceResponse>::decod
 
 void Coder<WebCore::FetchOptions>::encode(Encoder& encoder, const WebCore::FetchOptions& instance)
 {
-    instance.encodePersistent(encoder);
+    instance.encode(encoder);
 }
 
 std::optional<WebCore::FetchOptions> Coder<WebCore::FetchOptions>::decode(Decoder& decoder)
 {
     WebCore::FetchOptions options;
-    if (!WebCore::FetchOptions::decodePersistent(decoder, options))
+    if (!WebCore::FetchOptions::decode(decoder, options))
         return std::nullopt;
     return options;
 }

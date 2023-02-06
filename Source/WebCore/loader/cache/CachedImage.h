@@ -85,7 +85,7 @@ public:
 
     bool isManuallyCached() const { return m_isManuallyCached; }
     RevalidationDecision makeRevalidationDecision(CachePolicy) const override;
-    void load(CachedResourceLoader&) override;
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
 
     bool isOriginClean(SecurityOrigin*);
 

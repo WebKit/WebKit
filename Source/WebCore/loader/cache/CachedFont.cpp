@@ -51,12 +51,13 @@ CachedFont::CachedFont(CachedResourceRequest&& request, PAL::SessionID sessionID
     : CachedResource(WTFMove(request), type, sessionID, cookieJar)
     , m_loadInitiated(false)
     , m_hasCreatedFontDataWrappingResource(false)
+    , m_loaderOptions(makeUnique<ResourceLoaderOptions>(request.options()))
 {
 }
 
 CachedFont::~CachedFont() = default;
 
-void CachedFont::load(CachedResourceLoader&)
+void CachedFont::load(CachedResourceLoader&, const ResourceLoaderOptions&)
 {
     // Don't load the file yet.  Wait for an access before triggering the load.
     setLoading(true);
@@ -110,7 +111,8 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader& loader)
 {
     if (!m_loadInitiated) {
         m_loadInitiated = true;
-        CachedResource::load(loader);
+        CachedResource::load(loader, *m_loaderOptions);
+        m_loaderOptions = nullptr;
     }
 }
 

@@ -556,7 +556,7 @@ Storage::Record Cache::encode(const RecordInformation& recordInformation, const 
     encoder << recordInformation.size;
     encoder << record.requestHeadersGuard;
     encoder << record.request;
-    record.options.encodePersistent(encoder);
+    record.options.encode(encoder);
     encoder << record.referrer;
 
     encoder << record.responseHeadersGuard;
@@ -590,7 +590,7 @@ static std::optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::
         return std::nullopt;
     
     FetchOptions options;
-    if (!FetchOptions::decodePersistent(decoder, options))
+    if (!FetchOptions::decode(decoder, options))
         return std::nullopt;
     
     std::optional<String> referrer;

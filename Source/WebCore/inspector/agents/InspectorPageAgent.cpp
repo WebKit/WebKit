@@ -128,7 +128,7 @@ Vector<CachedResource*> InspectorPageAgent::cachedResourcesForFrame(Frame* frame
     Vector<CachedResource*> result;
 
     for (auto& cachedResourceHandle : frame->document()->cachedResourceLoader().allCachedResources().values()) {
-        auto* cachedResource = cachedResourceHandle.get();
+        auto* cachedResource = cachedResourceHandle.first.get();
         if (cachedResource->resourceRequest().hiddenFromInspector())
             continue;
 

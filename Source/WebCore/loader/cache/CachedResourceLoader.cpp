@@ -225,7 +225,10 @@ CachedResource* CachedResourceLoader::cachedResource(const String& resourceURL) 
 CachedResource* CachedResourceLoader::cachedResource(const URL& url) const
 {
     ASSERT(!MemoryCache::shouldRemoveFragmentIdentifier(url));
-    return m_documentResources.get(url.string()).get();
+    auto iterator = m_documentResources.find(url.string());
+    if (iterator == m_documentResources.end())
+        return nullptr;
+    return iterator->value.first.get();
 }
 
 Frame* CachedResourceLoader::frame() const
@@ -288,12 +291,13 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 
     request.removeFragmentIdentifierIfNeeded();
 
+    auto requestOptions = request.options();
     CachedResourceHandle<CachedCSSStyleSheet> userSheet = new CachedCSSStyleSheet(WTFMove(request), page.sessionID(), &page.cookieJar());
 
     if (userSheet->allowsCaching())
         memoryCache.add(*userSheet);
 
-    userSheet->load(*this);
+    userSheet->load(*this, requestOptions);
     return userSheet;
 }
 
@@ -799,10 +803,10 @@ bool CachedResourceLoader::shouldUpdateCachedResourceWithCurrentRequest(const Ca
         break;
     }
 
-    if (resource.options().mode != request.options().mode || !serializedOriginsMatch(request.origin(), resource.origin()))
+    if (resource.fetchMode() != request.options().mode || !serializedOriginsMatch(request.origin(), resource.origin()))
         return true;
 
-    if (resource.options().redirect != request.options().redirect && resource.hasRedirections())
+    if (resource.fetchRedirect() != request.options().redirect && resource.hasRedirections())
         return true;
 
     return false;
@@ -1094,6 +1098,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     auto& cookieJar = page.cookieJar();
 
+    auto requestOptions = request.options();
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
     switch (policy) {
     case Reload:
@@ -1179,7 +1184,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 
     if ((policy != Use || resource->stillNeedsLoad()) && imageLoading == ImageLoading::Immediate) {
-        resource->load(*this);
+        resource->load(*this, requestOptions);
 
         // We don't support immediate loads, but we do support immediate failure.
         if (resource->errorOccurred()) {
@@ -1198,7 +1203,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         m_validatedURLs.add(resource->resourceRequest().url());
 
     ASSERT(resource->url() == url.string());
-    m_documentResources.set(resource->url().string(), resource);
+    m_documentResources.set(resource->url().string(), std::make_pair(resource, makeUnique<ResourceLoaderOptions>(requestOptions)));
 #if ENABLE(TRACKING_PREVENTION)
     frame.loader().client().didLoadFromRegistrableDomain(RegistrableDomain(resource->resourceRequest().url()));
 #endif
@@ -1289,16 +1294,16 @@ static void logResourceRevalidationDecision(CachedResource::RevalidationDecision
 }
 
 #if ENABLE(SERVICE_WORKER)
-static inline bool mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
+static inline bool mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const CachedResource& resource)
 {
     // FIXME: We should validate/specify this behavior.
-    if (options.serviceWorkerRegistrationIdentifier != cachedOptions.serviceWorkerRegistrationIdentifier)
+    if (options.serviceWorkerRegistrationIdentifier != resource.serviceWorkerRegistrationIdentifier())
         return true;
 
-    if (options.serviceWorkersMode == cachedOptions.serviceWorkersMode)
+    if (options.serviceWorkersMode == resource.serviceWorkersMode())
         return false;
 
-    return cachedOptions.mode == FetchOptions::Mode::Navigate || cachedOptions.destination == FetchOptions::Destination::Worker || cachedOptions.destination == FetchOptions::Destination::Sharedworker;
+    return resource.fetchMode() == FetchOptions::Mode::Navigate || resource.fetchDestination() == FetchOptions::Destination::Worker || resource.fetchDestination() == FetchOptions::Destination::Sharedworker;
 }
 #endif
 
@@ -1316,7 +1321,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
 
 #if ENABLE(SERVICE_WORKER)
-    if (mustReloadFromServiceWorkerOptions(cachedResourceRequest.options(), existingResource->options())) {
+    if (mustReloadFromServiceWorkerOptions(cachedResourceRequest.options(), *existingResource)) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker may differ");
         return Reload;
     }
@@ -1409,7 +1414,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // This helps with the case where the server sends back
     // "Access-Control-Allow-Origin: *" all the time, but some of the
     // client's requests are made without CORS and some with.
-    if (existingResource->resourceRequest().allowCookies() != request.allowCookies() || existingResource->options().credentials != cachedResourceRequest.options().credentials) {
+    if (existingResource->resourceRequest().allowCookies() != request.allowCookies() || existingResource->fetchCredentials() != cachedResourceRequest.options().credentials) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to difference in credentials settings.");
         logMemoryCacheResourceRequest(frame(), DiagnosticLoggingKeys::inMemoryCacheKey(), DiagnosticLoggingKeys::unusedReasonCredentialSettingsKey());
         return Reload;
@@ -1528,9 +1533,11 @@ bool CachedResourceLoader::shouldDeferImageLoad(const URL& url) const
 
 void CachedResourceLoader::reloadImagesIfNotDeferred()
 {
-    for (auto& resource : m_documentResources.values()) {
+    for (auto& pair : m_documentResources.values()) {
+        auto& resource = pair.first;
+        // FIXME: This is not correct to pass blank options.
         if (is<CachedImage>(*resource) && resource->stillNeedsLoad() && clientDefersImage(resource->url()) == ImageLoading::Immediate)
-            downcast<CachedImage>(*resource).load(*this);
+            downcast<CachedImage>(*resource).load(*this, *pair.second);
     }
 }
 
@@ -1591,7 +1598,7 @@ void CachedResourceLoader::garbageCollectDocumentResources()
     StringVector resourcesToDelete;
 
     for (auto& resourceEntry : m_documentResources) {
-        auto& resource = *resourceEntry.value;
+        auto& resource = *resourceEntry.value.first;
 
         if (resource.hasOneHandle() && !resource.loader() && !resource.isPreloaded()) {
             resourcesToDelete.append(resourceEntry.key);
@@ -1724,7 +1731,8 @@ Vector<CachedResource*> CachedResourceLoader::visibleResourcesToPrioritize()
 
     Vector<CachedResource*> toPrioritize;
 
-    for (auto& resource : m_documentResources.values()) {
+    for (auto& pair : m_documentResources.values()) {
+        auto& resource = pair.first;
         if (!is<CachedImage>(resource.get()))
             continue;
         auto& cachedImage = downcast<CachedImage>(*resource);

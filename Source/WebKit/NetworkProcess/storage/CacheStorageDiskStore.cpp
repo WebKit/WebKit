@@ -230,7 +230,7 @@ static std::optional<RecordHeader> decodeRecordHeader(Span<const uint8_t> header
         return std::nullopt;
 
     WebCore::FetchOptions options;
-    if (!WebCore::FetchOptions::decodePersistent(decoder, options))
+    if (!WebCore::FetchOptions::decode(decoder, options))
         return std::nullopt;
 
     std::optional<String> referrer;
@@ -444,7 +444,7 @@ static Vector<uint8_t> encodeRecordHeader(CacheStorageRecord&& record)
     encoder << record.info.size;
     encoder << record.requestHeadersGuard;
     encoder << record.request;
-    record.options.encodePersistent(encoder);
+    record.options.encode(encoder);
     encoder << record.referrer;
     encoder << record.responseHeadersGuard;
     encoder << WebCore::ResourceResponse::fromCrossThreadData(WTFMove(record.responseData));

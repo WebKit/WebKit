@@ -110,7 +110,7 @@ public:
     CachedResource(CachedResourceRequest&&, Type, PAL::SessionID, const CookieJar*);
     virtual ~CachedResource();
 
-    virtual void load(CachedResourceLoader&);
+    virtual void load(CachedResourceLoader&, const ResourceLoaderOptions&);
 
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
@@ -247,11 +247,20 @@ public:
     bool errorOccurred() const { return m_status == LoadError || m_status == DecodeError; }
     bool loadFailedOrCanceled() const { return !m_error.isNull(); }
 
-    bool shouldSendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbackPolicy::SendCallbacks; }
-    DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }
+    bool shouldSendResourceLoadCallbacks() const { return m_shouldSendResourceLoadCallbacks; }
+    bool loadedFromOpaqueSource() const { return m_loadedFromOpaqueSource; }
+    bool allowsCaching() const { return m_allowsCaching; }
 
-    bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
-    const ResourceLoaderOptions& options() const { return m_options; }
+    DataBufferingPolicy dataBufferingPolicy() const { return m_dataBufferingPolicy; }
+#if ENABLE(SERVICE_WORKER)
+    Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits>  serviceWorkerRegistrationIdentifier() const { return m_serviceWorkerRegistrationIdentifier; }
+    ServiceWorkersMode serviceWorkersMode() const { return m_serviceWorkersMode; }
+#endif
+    bool fetchKeepAlive() const { return m_keepAlive; }
+    FetchOptionsDestination fetchDestination() const { return m_destination; }
+    FetchOptionsMode fetchMode() const { return m_mode; }
+    FetchOptionsCredentials fetchCredentials() const { return m_credentials; }
+    FetchOptionsRedirect fetchRedirect() const { return m_redirect; }
 
     virtual void destroyDecodedData() { }
 
@@ -312,6 +321,7 @@ protected:
     virtual void didReplaceSharedBufferContents() { }
 
     virtual void setBodyDataFrom(const CachedResource&);
+    void setDataBufferingPolicyOption(DataBufferingPolicy policy) { m_dataBufferingPolicy = policy; }
 
 private:
     class Callback;
@@ -332,7 +342,6 @@ private:
     void failBeforeStarting();
 
 protected:
-    ResourceLoaderOptions m_options;
     ResourceRequest m_resourceRequest;
     ResourceResponse m_response;
 
@@ -395,6 +404,20 @@ private:
     bool m_hasUnknownEncoding : 1;
     bool m_switchingClientsToRevalidatedResource : 1;
     bool m_ignoreForRequestCount : 1;
+    bool m_shouldSendResourceLoadCallbacks : 1;
+    bool m_allowsCaching : 1;
+    bool m_loadedFromOpaqueSource : 1;
+    bool m_keepAlive : 1 { false };
+    FetchOptionsDestination m_destination { FetchOptionsDestination::EmptyString };
+    FetchOptionsMode m_mode { FetchOptionsMode::NoCors };
+    FetchOptionsCredentials m_credentials { FetchOptionsCredentials::Omit };
+    FetchOptionsRedirect m_redirect { FetchOptionsRedirect::Follow };
+    DataBufferingPolicy m_dataBufferingPolicy : bitWidthOfDataBufferingPolicy;
+    StoredCredentialsPolicy m_storedCredentialsPolicy : bitWidthOfStoredCredentialsPolicy;
+#if ENABLE(SERVICE_WORKER)
+    Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits>  m_serviceWorkerRegistrationIdentifier;
+    ServiceWorkersMode m_serviceWorkersMode;
+#endif
 
 #if ASSERT_ENABLED
     bool m_deleted { false };

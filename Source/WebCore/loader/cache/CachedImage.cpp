@@ -96,7 +96,7 @@ CachedImage::~CachedImage()
     clearImage();
 }
 
-void CachedImage::load(CachedResourceLoader& loader)
+void CachedImage::load(CachedResourceLoader& loader, const ResourceLoaderOptions& options)
 {
     m_skippingRevalidationDocument = loader.document();
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
@@ -104,7 +104,7 @@ void CachedImage::load(CachedResourceLoader& loader)
 #endif
 
     if (loader.shouldPerformImageLoad(url()))
-        CachedResource::load(loader);
+        CachedResource::load(loader, options);
     else
         setLoading(false);
 }
@@ -755,7 +755,7 @@ CachedResource::RevalidationDecision CachedImage::makeRevalidationDecision(Cache
 
 bool CachedImage::canSkipRevalidation(const CachedResourceLoader& loader, const CachedResourceRequest& request) const
 {
-    if (options().mode != request.options().mode || options().credentials != request.options().credentials || resourceRequest().allowCookies() != request.resourceRequest().allowCookies())
+    if (fetchMode() != request.options().mode || fetchCredentials() != request.options().credentials || resourceRequest().allowCookies() != request.resourceRequest().allowCookies())
         return false;
 
     // Skip revalidation as per https://html.spec.whatwg.org/#ignore-higher-layer-caching which defines a per-document image list.
