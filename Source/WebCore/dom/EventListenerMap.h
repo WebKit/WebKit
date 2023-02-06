@@ -74,7 +74,7 @@ public:
     Lock& lock() { return m_lock; }
 
 private:
-    Vector<std::pair<AtomString, EventListenerVector>> m_entries;
+    Vector<std::pair<AtomString, EventListenerVector>, 0, CrashOnOverflow, 4> m_entries;
     Lock m_lock;
 };
 
