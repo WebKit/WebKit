@@ -468,6 +468,10 @@ Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Protocol::CSS::RuleMatch
                 // `*::marker` selectors are only applicable to elements with `display: list-item`.
                 if (pseudoId == PseudoId::Marker && element->computedStyle()->display() != DisplayType::ListItem)
                     continue;
+
+                if (pseudoId == PseudoId::Backdrop && !element->isInTopLayer())
+                    continue;
+
                 if (auto protocolPseudoId = protocolValueForPseudoId(pseudoId)) {
                     auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, Style::Resolver::AllCSSRules);
                     if (!matchedRules.isEmpty()) {
