@@ -236,7 +236,7 @@ public:
     const Element* rootAXEditableElement(const Node*);
     bool nodeIsTextControl(const Node*);
 
-    AccessibilityObject* objectForID(const AXID& id) const { return m_objects.get(id); }
+    AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
 
     // Text marker utilities.
@@ -488,6 +488,7 @@ private:
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
 
     AXID getAXID(AccessibilityObject*);
+    AXID generateNewObjectID() const;
 
     void notificationPostTimerFired();
 
