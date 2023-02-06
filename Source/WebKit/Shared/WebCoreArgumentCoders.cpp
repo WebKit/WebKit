@@ -32,7 +32,6 @@
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <WebCore/ARKitBadgeSystemImage.h>
-#include <WebCore/ApplePayButtonSystemImage.h>
 #include <WebCore/ApplePayLogoSystemImage.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationChallenge.h>
@@ -1386,10 +1385,6 @@ void ArgumentCoder<SystemImage>::encode(Encoder& encoder, const SystemImage& sys
 
     switch (systemImage.systemImageType()) {
 #if ENABLE(APPLE_PAY)
-    case SystemImageType::ApplePayButton:
-        encoder << downcast<ApplePayButtonSystemImage>(systemImage);
-        return;
-
     case SystemImageType::ApplePayLogo:
         encoder << downcast<ApplePayLogoSystemImage>(systemImage);
         return;
@@ -1423,14 +1418,6 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
 
     switch (*systemImageType) {
 #if ENABLE(APPLE_PAY)
-    case SystemImageType::ApplePayButton: {
-        std::optional<Ref<ApplePayButtonSystemImage>> image;
-        decoder >> image;
-        if (!image)
-            return std::nullopt;
-        return WTFMove(*image);
-    }
-
     case SystemImageType::ApplePayLogo: {
         std::optional<Ref<ApplePayLogoSystemImage>> image;
         decoder >> image;

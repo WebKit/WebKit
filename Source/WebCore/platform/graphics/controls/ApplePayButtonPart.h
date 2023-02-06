@@ -27,10 +27,35 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayButtonSystemImage.h"
 #include "ControlPart.h"
 
 namespace WebCore {
+
+enum class ApplePayButtonType : uint8_t {
+    Plain,
+    Buy,
+    SetUp,
+    Donate,
+    CheckOut,
+    Book,
+    Subscribe,
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    Reload,
+    AddMoney,
+    TopUp,
+    Order,
+    Rent,
+    Support,
+    Contribute,
+    Tip,
+#endif // ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+};
+
+enum class ApplePayButtonStyle : uint8_t {
+    White,
+    WhiteOutline,
+    Black,
+};
 
 class ApplePayButtonPart : public ControlPart {
 public:

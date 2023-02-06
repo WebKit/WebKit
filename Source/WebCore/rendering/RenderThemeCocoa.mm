@@ -151,26 +151,6 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Eleme
     }
 }
 
-bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
-{
-    auto& style = renderer.style();
-    auto largestCornerRadius = std::max<CGFloat>({
-        floatValueForLength(style.borderTopLeftRadius().height, paintRect.height()),
-        floatValueForLength(style.borderTopLeftRadius().width, paintRect.width()),
-        floatValueForLength(style.borderTopRightRadius().height, paintRect.height()),
-        floatValueForLength(style.borderTopRightRadius().width, paintRect.width()),
-        floatValueForLength(style.borderBottomLeftRadius().height, paintRect.height()),
-        floatValueForLength(style.borderBottomLeftRadius().width, paintRect.width()),
-        floatValueForLength(style.borderBottomRightRadius().height, paintRect.height()),
-        floatValueForLength(style.borderBottomRightRadius().width, paintRect.width())
-    });
-    String locale = style.computedLocale();
-    if (locale.isEmpty())
-        locale = defaultLanguage(ShouldMinimizeLanguages::No);
-    paintInfo.context().drawSystemImage(ApplePayButtonSystemImage::create(style.applePayButtonType(), style.applePayButtonStyle(), locale, largestCornerRadius), paintRect);
-    return false;
-}
-
 #endif // ENABLE(APPLE_PAY)
 
 #if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)

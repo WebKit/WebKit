@@ -29,7 +29,9 @@
 #if PLATFORM(MAC)
 
 #import "ButtonMac.h"
+#import "ButtonPart.h"
 #import "ColorWellMac.h"
+#import "ControlStyle.h"
 #import "ImageControlsButtonMac.h"
 #import "InnerSpinButtonMac.h"
 #import "MenuListButtonMac.h"

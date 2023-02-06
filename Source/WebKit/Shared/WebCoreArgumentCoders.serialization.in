@@ -648,43 +648,9 @@ struct WebCore::ApplePayShippingMethod {
     String message()
 }
 
-[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonSystemImage {
-    WebCore::ApplePayButtonType m_applePayButtonType
-    WebCore::ApplePayButtonStyle m_applePayButtonStyle
-    String m_locale
-    float m_largestCornerRadius
-}
-
 enum class WebCore::ApplePayLogoStyle : bool
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayLogoSystemImage {
     WebCore::ApplePayLogoStyle applePayLogoStyle()
-}
-
-header: <WebCore/ApplePayButtonSystemImage.h>
-enum class WebCore::ApplePayButtonType : uint8_t {
-    Plain,
-    Buy,
-    SetUp,
-    Donate,
-    CheckOut,
-    Book,
-    Subscribe,
-#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
-    Reload,
-    AddMoney,
-    TopUp,
-    Order,
-    Rent,
-    Support,
-    Contribute,
-    Tip,
-#endif
-}
-
-enum class WebCore::ApplePayButtonStyle : uint8_t {
-    White,
-    WhiteOutline,
-    Black,
 }
 
 struct WebCore::ApplePayDetailsUpdateBase {
@@ -2508,6 +2474,33 @@ enum class WebCore::StyleAppearance : uint8_t {
 };
 
 #if ENABLE(APPLE_PAY)
+header: <WebCore/ApplePayButtonPart.h>
+enum class WebCore::ApplePayButtonType : uint8_t {
+    Plain,
+    Buy,
+    SetUp,
+    Donate,
+    CheckOut,
+    Book,
+    Subscribe,
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    Reload,
+    AddMoney,
+    TopUp,
+    Order,
+    Rent,
+    Support,
+    Contribute,
+    Tip,
+#endif
+}
+
+enum class WebCore::ApplePayButtonStyle : uint8_t {
+    White,
+    WhiteOutline,
+    Black,
+}
+
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonPart {
     WebCore::ApplePayButtonType buttonType();
     WebCore::ApplePayButtonStyle buttonStyle();
