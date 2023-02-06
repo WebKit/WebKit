@@ -278,7 +278,7 @@ class MacPort(DarwinPort):
     def reset_preferences(self):
         _log.debug("Resetting persistent preferences")
 
-        for domain in ["DumpRenderTree", "WebKitTestRunner"]:
+        for domain in ["com.apple.WebKit.DumpRenderTree", "com.apple.WebKit.WebKitTestRunner"]:
             try:
                 self._executive.run_command(["defaults", "delete", domain])
             except ScriptError as e:
