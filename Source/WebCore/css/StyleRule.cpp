@@ -53,6 +53,7 @@ struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
 static_assert(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), "StyleRuleBase should stay small");
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleRareData);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);
 
 Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet& parentSheet) const
@@ -209,6 +210,13 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
     return wrapper;
 }
 
+std::unique_ptr<StyleRuleRareData> StyleRuleRareData::createIfNeeded(Vector<Ref<StyleRuleBase>> nestedRules, CSSSelectorList resolvedSelectorList)
+{
+    if (nestedRules.isEmpty() && resolvedSelectorList.isEmpty())
+        return nullptr;
+    return makeUnique<StyleRuleRareData>(StyleRuleRareData { WTFMove(nestedRules), WTFMove(resolvedSelectorList) });
+}
+
 unsigned StyleRule::averageSizeInBytes()
 {
     return sizeof(StyleRule) + sizeof(CSSSelector) + StyleProperties::averageSizeInBytes() + sizeof(Vector<Ref<StyleRuleBase>>);
@@ -218,7 +226,7 @@ StyleRule::StyleRule(Ref<StyleProperties>&& properties, bool hasDocumentSecurity
     : StyleRuleBase(StyleRuleType::Style, hasDocumentSecurityOrigin)
     , m_properties(WTFMove(properties))
     , m_selectorList(WTFMove(selectors))
-    , m_nestedRules(WTFMove(nestedRules))
+    , m_rareData(!nestedRules.isEmpty() ? StyleRuleRareData::createIfNeeded(WTFMove(nestedRules)) : nullptr)
 {
 }
 
@@ -231,12 +239,11 @@ StyleRule::StyleRule(bool hasDocumentSecurityOrigin, CSSSelectorList&& selectors
 
 StyleRule::StyleRule(const StyleRule& o)
     : StyleRuleBase(o)
-    , m_properties(o.properties().mutableCopy())
-    , m_selectorList(o.m_selectorList)
-    , m_resolvedSelectorList(o.m_resolvedSelectorList)
-    , m_nestedRules(o.m_nestedRules)
     , m_isSplitRule(o.m_isSplitRule)
     , m_isLastRuleInSplitRule(o.m_isLastRuleInSplitRule)
+    , m_properties(o.properties().mutableCopy())
+    , m_selectorList(o.m_selectorList)
+    , m_rareData(o.m_rareData ? StyleRuleRareData::createIfNeeded(o.m_rareData->nestedRules, o.m_rareData->resolvedSelectorList) : nullptr)
 {
 }
 
@@ -308,6 +315,44 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
         rules.last()->markAsLastRuleInSplitRule();
 
     return rules;
+}
+
+StyleRuleRareData& StyleRule::rareData() const
+{
+    if (!m_rareData)
+        m_rareData = makeUnique<StyleRuleRareData>();
+    return *m_rareData;
+}
+
+void StyleRule::setNestedRules(Vector<Ref<StyleRuleBase>> nestedRules)
+{
+    if (!m_rareData && nestedRules.isEmpty())
+        return;
+    rareData().nestedRules = WTFMove(nestedRules);
+}
+
+void StyleRule::setResolvedSelectorList(CSSSelectorList&& resolvedSelectorList) const
+{
+    if (!m_rareData && resolvedSelectorList.isEmpty())
+        return;
+    rareData().resolvedSelectorList = WTFMove(resolvedSelectorList);
+}
+
+static const Vector<Ref<StyleRuleBase>>& emptyRuleVector()
+{
+    static LazyNeverDestroyed<Vector<Ref<StyleRuleBase>>> emptyRuleVector;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        emptyRuleVector.construct();
+    });
+    return emptyRuleVector;
+}
+
+const Vector<Ref<StyleRuleBase>>& StyleRule::nestedRules() const
+{
+    if (!m_rareData)
+        return emptyRuleVector();
+    return m_rareData->nestedRules;
 }
 
 StyleRulePage::StyleRulePage(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors)
