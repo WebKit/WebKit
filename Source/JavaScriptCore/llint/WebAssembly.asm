@@ -1708,7 +1708,6 @@ wasmOp(i32_eq, WasmI32Eq, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cieq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1716,7 +1715,6 @@ wasmOp(i32_ne, WasmI32Ne, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cineq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1724,7 +1722,6 @@ wasmOp(i32_lt_s, WasmI32LtS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cilt t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1732,7 +1729,6 @@ wasmOp(i32_le_s, WasmI32LeS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cilteq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1740,7 +1736,6 @@ wasmOp(i32_lt_u, WasmI32LtU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cib t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1748,7 +1743,6 @@ wasmOp(i32_le_u, WasmI32LeU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cibeq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1756,7 +1750,6 @@ wasmOp(i32_gt_s, WasmI32GtS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cigt t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1764,7 +1757,6 @@ wasmOp(i32_ge_s, WasmI32GeS, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cigteq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1772,7 +1764,6 @@ wasmOp(i32_gt_u, WasmI32GtU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     cia t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -1780,7 +1771,6 @@ wasmOp(i32_ge_u, WasmI32GeU, macro(ctx)
     mloadi(ctx, m_lhs, t0)
     mloadi(ctx, m_rhs, t1)
     ciaeq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 

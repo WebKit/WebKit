@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2023 Apple Inc. All rights reserved.
 # Copyright (C) 2021 Igalia S.L. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -452,7 +452,6 @@ wasmOp(i64_eq, WasmI64Eq, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqeq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -460,7 +459,6 @@ wasmOp(i64_ne, WasmI64Ne, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqneq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -468,7 +466,6 @@ wasmOp(i64_lt_s, WasmI64LtS, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqlt t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -476,7 +473,6 @@ wasmOp(i64_le_s, WasmI64LeS, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqlteq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -484,7 +480,6 @@ wasmOp(i64_lt_u, WasmI64LtU, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqb t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -492,7 +487,6 @@ wasmOp(i64_le_u, WasmI64LeU, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqbeq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -500,7 +494,6 @@ wasmOp(i64_gt_s, WasmI64GtS, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqgt t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -508,7 +501,6 @@ wasmOp(i64_ge_s, WasmI64GeS, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqgteq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -516,7 +508,6 @@ wasmOp(i64_gt_u, WasmI64GtU, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqa t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
@@ -524,7 +515,6 @@ wasmOp(i64_ge_u, WasmI64GeU, macro(ctx)
     mloadq(ctx, m_lhs, t0)
     mloadq(ctx, m_rhs, t1)
     cqaeq t0, t1, t2
-    andi 1, t2
     returni(ctx, t2)
 end)
 
