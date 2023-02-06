@@ -86,7 +86,7 @@ static void webProcessTestRunnerFinalize(WebKitWebPage* webPage)
 
 static void windowObjectClearedCallback(WebKitScriptWorld* world, WebKitWebPage* webPage, WebKitFrame* frame, WebKitWebExtension* extension)
 {
-    if (g_strcmp0(webkit_web_page_get_uri(webPage), "webprocess://test"))
+    if (g_strcmp0(webkit_web_page_get_uri(webPage), "webprocess://test") || !webkit_frame_is_main_frame(frame))
         return;
 
     GRefPtr<JSCContext> context = adoptGRef(webkit_frame_get_js_context_for_script_world(frame, world));
