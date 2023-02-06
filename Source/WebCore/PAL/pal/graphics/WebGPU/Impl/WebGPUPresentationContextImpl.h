@@ -56,7 +56,7 @@ public:
         m_height = height;
     }
 
-    IOSurfaceRef drawingBuffer() const;
+    void present();
 
     WGPUSurface backing() const { return m_backing; }
 
@@ -74,12 +74,6 @@ private:
     void unconfigure() final;
 
     RefPtr<Texture> getCurrentTexture() final;
-
-    void present() final;
-
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
-#endif
 
     TextureFormat m_format { TextureFormat::Bgra8unorm };
     uint32_t m_width { 0 };

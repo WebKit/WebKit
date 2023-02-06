@@ -85,18 +85,6 @@ void RemotePresentationContext::getCurrentTexture(WebGPUIdentifier identifier)
     m_objectHeap.addObject(identifier, remoteTexture);
 }
 
-void RemotePresentationContext::present()
-{
-    m_backing->present();
-}
-
-#if PLATFORM(COCOA)
-void RemotePresentationContext::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
-{
-    m_backing->prepareForDisplay(WTFMove(completionHandler));
-}
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

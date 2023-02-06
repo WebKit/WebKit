@@ -46,10 +46,8 @@ typedef void (^WGPUWorkItem)(void);
 typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
 
 typedef enum WGPUSTypeExtended {
-    WGPUSTypeExtended_TextureDescriptorViewFormats = 0x1D5BC57, // Random
     WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
     WGPUSTypeExtended_SurfaceDescriptorCocoaSurfaceBacking = 0x017E9710, // Random
-    WGPUSTypeExtended_TextureDescriptorCocoaSurfaceBacking = 0xCCE4ED61, // Random
     WGPUSTypeExtended_Force32 = 0x7FFFFFFF
 } WGPUSTypeExtended;
 
@@ -65,23 +63,12 @@ typedef struct WGPUInstanceCocoaDescriptor {
     __unsafe_unretained WGPUScheduleWorkBlock scheduleWorkBlock;
 } WGPUInstanceCocoaDescriptor;
 
-typedef struct WGPUTextureDescriptorViewFormats {
-    WGPUChainedStruct chain;
-    uint32_t viewFormatsCount;
-    WGPUTextureFormat const * viewFormats;
-} WGPUTextureDescriptorViewFormats;
-
 typedef void (^WGPURenderBuffersWereRecreatedBlockCallback)(CFArrayRef ioSurfaces);
 typedef void (^WGPUCompositorIntegrationRegisterBlockCallback)(WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreated);
 typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
     WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;
 } WGPUSurfaceDescriptorCocoaCustomSurface;
-
-typedef struct WGPUTextureDescriptorCocoaCustomSurface {
-    WGPUChainedStruct chain;
-    IOSurfaceRef surface;
-} WGPUTextureDescriptorCocoaCustomSurface;
 
 #if !defined(WGPU_SKIP_PROCS)
 
@@ -196,9 +183,6 @@ WGPU_EXPORT void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device
 WGPU_EXPORT void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback);
 WGPU_EXPORT void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlockCallback callback);
 WGPU_EXPORT void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback);
-
-WGPU_EXPORT IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface);
-WGPU_EXPORT IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface);
 
 // FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
 WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain);

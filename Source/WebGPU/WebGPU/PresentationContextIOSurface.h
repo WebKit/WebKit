@@ -45,10 +45,6 @@ public:
     Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.
     TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
 
-    // FIXME: Delete these.
-    IOSurface *displayBuffer() const;
-    IOSurface *drawingBuffer() const;
-
     bool isPresentationContextIOSurface() const override { return true; }
 
 private:
