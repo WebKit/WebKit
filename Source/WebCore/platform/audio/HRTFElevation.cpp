@@ -54,30 +54,31 @@ constexpr size_t ResponseFrameSize = 256;
 // The impulse responses may be resampled to a different sample-rate (depending on the audio hardware) when they are loaded.
 constexpr float ResponseSampleRate = 44100;
 
-#if PLATFORM(COCOA) || USE(GSTREAMER)
-#define USE_CONCATENATED_IMPULSE_RESPONSES
-#endif
+#if USE(CONCATENATED_IMPULSE_RESPONSES)
+static Lock audioBusMapLock;
+static HashMap<String, RefPtr<AudioBus>>& concatenatedImpulseResponsesMap() WTF_REQUIRES_LOCK(audioBusMapLock)
+{
+    static NeverDestroyed<HashMap<String, RefPtr<AudioBus>>> audioBusMap;
+    return audioBusMap;
+}
 
-#ifdef USE_CONCATENATED_IMPULSE_RESPONSES
 // Lazily load a concatenated HRTF database for given subject and store it in a
 // local hash table to ensure quick efficient future retrievals.
-static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subjectName)
+static RefPtr<AudioBus> getConcatenatedImpulseResponsesForSubject(const String& subjectName)
 {
-    typedef HashMap<String, AudioBus*> AudioBusMap;
-    static NeverDestroyed<AudioBusMap> audioBusMap;
-
-    AudioBus* bus;
-    AudioBusMap::iterator iterator = audioBusMap.get().find(subjectName);
-    if (iterator == audioBusMap.get().end()) {
-        auto concatenatedImpulseResponses = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
-        ASSERT(concatenatedImpulseResponses);
-        if (!concatenatedImpulseResponses)
-            return 0;
-
-        bus = concatenatedImpulseResponses.leakRef();
-        audioBusMap.get().set(subjectName, bus);
-    } else
-        bus = iterator->value;
+    RefPtr<AudioBus> bus;
+    {
+        Locker locker { audioBusMapLock };
+        auto& cache = concatenatedImpulseResponsesMap();
+        bus = cache.get(subjectName);
+        if (!bus) {
+            bus = AudioBus::loadPlatformResource(subjectName.utf8().data(), ResponseSampleRate);
+            ASSERT(bus);
+            if (!bus)
+                return nullptr;
+            cache.add(subjectName.isolatedCopy(), bus.copyRef());
+        }
+    }
 
     size_t responseLength = bus->length();
     size_t expectedLength = static_cast<size_t>(TotalNumberOfResponses * ResponseFrameSize);
@@ -86,11 +87,19 @@ static AudioBus* getConcatenatedImpulseResponsesForSubject(const String& subject
     bool isBusGood = responseLength == expectedLength && bus->numberOfChannels() == 2;
     ASSERT(isBusGood);
     if (!isBusGood)
-        return 0;
+        return nullptr;
 
     return bus;
 }
 #endif
+
+void HRTFElevation::clearCache()
+{
+#if USE(CONCATENATED_IMPULSE_RESPONSES)
+    Locker locker { audioBusMapLock };
+    concatenatedImpulseResponsesMap().clear();
+#endif
+}
 
 // Takes advantage of the symmetry and creates a composite version of the two measured versions.  For example, we have both azimuth 30 and -30 degrees
 // where the roles of left and right ears are reversed with respect to each other.
@@ -141,9 +150,8 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
     // It's passed in as an internal ASCII identifier and is an implementation detail.
     int positiveElevation = elevation < 0 ? elevation + 360 : elevation;
 
-#ifdef USE_CONCATENATED_IMPULSE_RESPONSES
-    AudioBus* bus(getConcatenatedImpulseResponsesForSubject(subjectName));
-
+#if USE(CONCATENATED_IMPULSE_RESPONSES)
+    auto bus = getConcatenatedImpulseResponsesForSubject(subjectName);
     if (!bus)
         return false;
 
@@ -166,7 +174,7 @@ bool HRTFElevation::calculateKernelsForAzimuthElevation(int azimuth, int elevati
     // (hardware) sample-rate.
     unsigned startFrame = index * ResponseFrameSize;
     unsigned stopFrame = startFrame + ResponseFrameSize;
-    auto preSampleRateConvertedResponse = AudioBus::createBufferFromRange(bus, startFrame, stopFrame);
+    auto preSampleRateConvertedResponse = AudioBus::createBufferFromRange(bus.get(), startFrame, stopFrame);
     auto response = AudioBus::createBySampleRateConverting(preSampleRateConvertedResponse.get(), false, sampleRate);
     AudioChannel* leftEarImpulseResponse = response->channel(AudioBus::ChannelLeft);
     AudioChannel* rightEarImpulseResponse = response->channel(AudioBus::ChannelRight);
