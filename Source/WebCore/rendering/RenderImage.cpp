@@ -897,11 +897,4 @@ RenderBox* RenderImage::embeddedContentBox() const
     return nullptr;
 }
 
-bool RenderImage::allowsAnimation() const
-{
-    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
-        return imageElement->allowsAnimation();
-    return RenderReplaced::allowsAnimation();
-}
-
 } // namespace WebCore
