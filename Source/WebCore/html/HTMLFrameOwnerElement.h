@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -50,7 +51,7 @@ public:
     // RenderElement when using fallback content.
     RenderWidget* renderWidget() const;
 
-    ExceptionOr<Document&> getSVGDocument() const;
+    Document* getSVGDocument() const;
 
     virtual ScrollbarMode scrollingMode() const { return ScrollbarMode::Auto; }
 

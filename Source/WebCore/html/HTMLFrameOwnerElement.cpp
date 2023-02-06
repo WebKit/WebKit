@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -110,13 +111,12 @@ bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const
     return m_contentFrame && HTMLElement::isKeyboardFocusable(event);
 }
 
-ExceptionOr<Document&> HTMLFrameOwnerElement::getSVGDocument() const
+Document* HTMLFrameOwnerElement::getSVGDocument() const
 {
     auto* document = contentDocument();
     if (is<SVGDocument>(document))
-        return *document;
-    // Spec: http://www.w3.org/TR/SVG/struct.html#InterfaceGetSVGDocument
-    return Exception { NotSupportedError };
+        return document;
+    return nullptr;
 }
 
 void HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition()
