@@ -589,14 +589,28 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
             return std::nullopt;
 
         Vector<T, inlineCapacity, OverflowHandler, minCapacity> vector;
-        vector.reserveInitialCapacity(*size);
+
+        // Calls to reserveInitialCapacity with untrusted large sizes can cause allocator crashes.
+        // Limit allocations from untrusted sources to 1MB.
+        if (LIKELY(*size < 1024 * 1024 / sizeof(T))) {
+            vector.reserveInitialCapacity(*size);
+            for (size_t i = 0; i < *size; ++i) {
+                auto element = decoder.template decode<T>();
+                if (!element)
+                    return std::nullopt;
+                vector.uncheckedAppend(WTFMove(*element));
+            }
+            return vector;
+        }
+
         for (size_t i = 0; i < *size; ++i) {
             std::optional<T> element;
             decoder >> element;
             if (!element)
                 return std::nullopt;
-            vector.uncheckedAppend(WTFMove(*element));
+            vector.append(WTFMove(*element));
         }
+        vector.shrinkToFit();
         return vector;
     }
 };
