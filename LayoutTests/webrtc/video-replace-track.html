@@ -21,9 +21,8 @@ function grabImagePixels()
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    imageData = canvas.getContext('2d').getImageData(20, 20, 2, 2);
-    return imageData.data;
- }
+    return canvas.getContext('2d').getImageData(20, 20, 2, 2);
+}
 
 async function testFrontCameraImage(counter)
 {
@@ -42,7 +41,7 @@ async function testFrontCameraImage(counter)
 
 function isBetween100And200(value)
 {
-     return data[0] > 100 && data[0] < 200;
+     return value > 100 && value < 200;
 }
 
 async function testBackCameraImage(counter)
@@ -52,11 +51,13 @@ async function testBackCameraImage(counter)
 
     data = grabImagePixels();
 
-    if(isBetween100And200(data[0]) && isBetween100And200(data[1]) && isBetween100And200(data[2]))
+    var pixel = getImageDataPixel(data, [0, 0]);
+
+    if(isBetween100And200(pixel[0]) && isBetween100And200(pixel[1]) && isBetween100And200(pixel[2]))
         return;
 
     if (counter >= 20)
-        return Promise.reject("testFrontCameraImage timed out");
+        return Promise.reject("testBackCameraImage timed out");
 
     await waitFor(50);
     return testBackCameraImage(++counter);
