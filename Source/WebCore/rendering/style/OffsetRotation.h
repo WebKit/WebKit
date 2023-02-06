@@ -45,8 +45,8 @@ public:
     bool operator!=(const OffsetRotation& o) const { return !(*this == o); }
 
 private:
-    bool m_hasAuto;
-    float m_angle;
+    float m_angle { 0 };
+    bool m_hasAuto { false };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const OffsetRotation&);

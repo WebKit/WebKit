@@ -38,15 +38,15 @@ public:
     // Style data for Self-Aligment and Default-Alignment properties: align-{self, items}, justify-{self, items}.
     // [ <self-position> && <overflow-position>? ] | [ legacy && [ left | right | center ] ]
     StyleSelfAlignmentData(ItemPosition position, OverflowAlignment overflow, ItemPositionType positionType = ItemPositionType::NonLegacy)
-        : m_position(static_cast<unsigned>(position))
-        , m_positionType(static_cast<unsigned>(positionType))
-        , m_overflow(static_cast<unsigned>(overflow))
+        : m_position(static_cast<uint8_t>(position))
+        , m_positionType(static_cast<uint8_t>(positionType))
+        , m_overflow(static_cast<uint8_t>(overflow))
     {
     }
 
-    void setPosition(ItemPosition position) { m_position = static_cast<unsigned>(position); }
-    void setPositionType(ItemPositionType positionType) { m_positionType = static_cast<unsigned>(positionType); }
-    void setOverflow(OverflowAlignment overflow) { m_overflow = static_cast<unsigned>(overflow); }
+    void setPosition(ItemPosition position) { m_position = static_cast<uint8_t>(position); }
+    void setPositionType(ItemPositionType positionType) { m_positionType = static_cast<uint8_t>(positionType); }
+    void setOverflow(OverflowAlignment overflow) { m_overflow = static_cast<uint8_t>(overflow); }
 
     ItemPosition position() const { return static_cast<ItemPosition>(m_position); }
     ItemPositionType positionType() const { return static_cast<ItemPositionType>(m_positionType); }
@@ -63,9 +63,9 @@ public:
     }
 
 private:
-    unsigned m_position : 4; // ItemPosition
-    unsigned m_positionType: 1; // Whether or not alignment uses the 'legacy' keyword.
-    unsigned m_overflow : 2; // OverflowAlignment
+    uint8_t m_position : 4; // ItemPosition
+    uint8_t m_positionType: 1; // Whether or not alignment uses the 'legacy' keyword.
+    uint8_t m_overflow : 2; // OverflowAlignment
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleSelfAlignmentData&);
