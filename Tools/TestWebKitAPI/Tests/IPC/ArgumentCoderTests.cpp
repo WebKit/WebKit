@@ -664,4 +664,18 @@ REGISTER_TYPED_TEST_SUITE_P(ArgumentCoderSpanTest,
     SimpleSpan, AlignedSpan, AlignedEmptySpan);
 INSTANTIATE_TYPED_TEST_SUITE_P(ArgumentCoderTest, ArgumentCoderSpanTest, EncoderTypes, EncoderTypeNames);
 
+template<typename T> class ArgumentCoderVectorTest : public ArgumentCoderEncoderDecoderTest<T> { };
+TYPED_TEST_SUITE_P(ArgumentCoderVectorTest);
+
+TYPED_TEST_P(ArgumentCoderVectorTest, VectorTooBig)
+{
+    TestFixture::encoder() << Span { std::array<uint8_t, 9> { 255, 255, 255, 255, 255, 255, 255, 255, 255 } };
+    auto optionalVector = TestFixture::createDecoder()->template decode<Vector<String>>();
+    ASSERT_FALSE(optionalVector);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(ArgumentCoderVectorTest,
+    VectorTooBig);
+INSTANTIATE_TYPED_TEST_SUITE_P(ArgumentCoderTest, ArgumentCoderVectorTest, EncoderTypes, EncoderTypeNames);
+
 } // namespace TestWebKitAPI
