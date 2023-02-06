@@ -49,7 +49,7 @@ ALWAYS_INLINE void* currentStackPointer()
     return stackPointer;
 }
 
-#elif !ENABLE(CLOOP) && !ASAN_ENABLED
+#elif !ENABLE(CLOOP) && !ASAN_ENABLED && !(CPU(X86_64) && OS(WINDOWS))
 
 #define USE_ASM_CURRENT_STACK_POINTER 1
 extern "C" WTF_EXPORT_PRIVATE void* currentStackPointer();
