@@ -20,6 +20,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+
 from webkitpy.common.version_name_map import VersionNameMap, INTERNAL_TABLE
 from webkitpy.port.config import apple_additions
 
@@ -27,6 +29,7 @@ from webkitpy.port.config import apple_additions
 # This class is designed to match device types. Because it is used for matching, 'None' is treated as a wild-card.
 class DeviceType(object):
     FIRST_GENERATION = ' (1st generation)'
+    SIZE_RE = re.compile(r'(?P<series>.+ )\((?P<size>\d\d)mm\)')
 
     @classmethod
     def from_string(cls, device_string, version=None):
@@ -108,14 +111,22 @@ class DeviceType(object):
         self._define_software_variant_from_hardware_family()
         self.check_consistency()
 
-    @property
-    def standardized_hardware_type(self):
-        if not self.hardware_type:
+    @classmethod
+    def standardize_hardware_type(cls, hardware_type):
+        if not hardware_type:
             return None
 
-        if self.hardware_type.lower().endswith(self.FIRST_GENERATION):
-            return self.hardware_type[:-len(self.FIRST_GENERATION)]
-        return self.hardware_type
+        if hardware_type.lower().endswith(cls.FIRST_GENERATION):
+            return hardware_type[:-len(cls.FIRST_GENERATION)]
+        size_match = cls.SIZE_RE.match(hardware_type)
+        if size_match:
+            return '{}- {}mm'.format(size_match.group('series'), size_match.group('size'))
+
+        return hardware_type
+
+    @property
+    def standardized_hardware_type(self):
+        return self.standardize_hardware_type(self.hardware_type)
 
     def __str__(self):
         version = None
