@@ -754,12 +754,20 @@ static void webkitWebViewConstructed(GObject* object)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->relatedView) {
+        if (priv->context)
+            g_critical("WebKitWebView web-context property can't be set when releated-view is set too, passed web-context value is ignored.");
         priv->context = webkit_web_view_get_context(priv->relatedView);
 #if ENABLE(2022_GLIB_API)
+        if (priv->networkSession)
+            g_critical("WebKitWebView network-session property can't be set when releated-view is set too, passed network-session value is ignored.");
         priv->networkSession = webkit_web_view_get_network_session(priv->relatedView);
 #else
+        if (priv->isEphemeral)
+            g_critical("WebKitWebView is-ephemeral property can't be set when releated-view is set too, passed is-ephemeral value is ignored.");
         priv->isEphemeral = webkit_web_view_is_ephemeral(priv->relatedView);
 #endif
+        if (priv->isControlledByAutomation)
+            g_critical("WebKitWebView is-controlled-by-automation can't be set when releated-view is set too, passed is-controlled-by-automation value is ignored.");
         priv->isControlledByAutomation = webkit_web_view_is_controlled_by_automation(priv->relatedView);
     } else if (!priv->context)
         priv->context = webkit_web_context_get_default();
@@ -1107,8 +1115,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * WebKitWebView:related-view:
      *
      * The related #WebKitWebView used when creating the view to share the
-     * same web process. This property is not readable because the related
-     * web view is only valid during the object construction.
+     * same web process and network session. This property is not readable
+     * because the related web view is only valid during the object construction.
      *
      * Since: 2.4
      */
@@ -1658,7 +1666,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * navigation action that triggered this signal.
      *
      * The new #WebKitWebView must be related to @web_view, see
-     * webkit_web_view_new_with_related_view() for more details.
+     * #WebKitWebView:related-view for more details.
      *
      * The new #WebKitWebView should not be displayed to the user
      * until the #WebKitWebView::ready-to-show signal is emitted.

@@ -360,6 +360,7 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
 }
 #endif
 
+#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_view_new_with_related_view: (constructor)
  * @web_view: the related #WebKitWebView
@@ -392,7 +393,6 @@ GtkWidget* webkit_web_view_new_with_related_view(WebKitWebView* webView)
         nullptr));
 }
 
-#if !ENABLE(2022_GLIB_API)
 /**
  * webkit_web_view_new_with_settings:
  * @settings: a #WebKitSettings
