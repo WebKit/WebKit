@@ -797,7 +797,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     });
 }
 
-#if HAVE(NETWORK_RESOLUTION_FAILURE_REPORT)
+#if HAVE(NETWORK_RESOLUTION_FAILURE_REPORT) && defined(NW_CONNECTION_HAS_FAILED_RESOLUTION_REPORT)
 
 static NSString *description(nw_interface_type_t type)
 {
@@ -860,7 +860,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
     };
 }
 
-#endif // HAVE(NETWORK_RESOLUTION_FAILURE_REPORT)
+#endif // HAVE(NETWORK_RESOLUTION_FAILURE_REPORT) && defined(NW_CONNECTION_HAS_FAILED_RESOLUTION_REPORT)
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
 {
@@ -874,7 +874,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
             newUserInfo[@"networkTaskMetricsPrivacyStance"] = privacyStanceToString(networkDataTask->networkLoadMetrics().privacyStance);
 #endif
-#if HAVE(NETWORK_RESOLUTION_FAILURE_REPORT)
+#if HAVE(NETWORK_RESOLUTION_FAILURE_REPORT) && defined(NW_CONNECTION_HAS_FAILED_RESOLUTION_REPORT)
             for (NSError *underlyingError in error.underlyingErrors) {
                 if (auto report = extractResolutionReport(underlyingError)) {
                     newUserInfo[@"networkResolutionReport"] = report;
