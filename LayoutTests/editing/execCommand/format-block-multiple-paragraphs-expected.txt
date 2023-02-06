@@ -1,14 +1,16 @@
 This tests ensures formatBlock do not make multiple elements when formatting multiple paragraphs.
 
 Formatting:
+| <#selection-anchor>
 | "\n"
 | <div>
-|   "<#selection-anchor>hello"
+|   "hello"
 | <div>
 |   "world"
 | <div>
-|   "WebKit<#selection-focus>"
+|   "WebKit"
 | "\n"
+| <#selection-focus>
 
 by p yields:
 | "\n"
@@ -21,12 +23,14 @@ by p yields:
 | "\n"
 
 Formatting:
+| <#selection-anchor>
 | "\n"
 | <p>
-|   "<#selection-anchor>hello"
+|   "hello"
 | <p>
-|   "world<#selection-focus>"
+|   "world"
 | "\n"
+| <#selection-focus>
 
 by blockquote yields:
 | "\n"
@@ -37,12 +41,14 @@ by blockquote yields:
 | "\n"
 
 Formatting:
+| <#selection-anchor>
 | "\n"
 | <div>
-|   "<#selection-anchor>hello"
+|   "hello"
 |   <pre>
-|     "world<#selection-focus>"
+|     "world"
 | "\n"
+| <#selection-focus>
 
 by p yields:
 | "\n"
@@ -53,15 +59,17 @@ by p yields:
 | "\n"
 
 Formatting:
+| <#selection-anchor>
 | "\n"
 | <h1>
-|   "<#selection-anchor>hello"
+|   "hello"
 | <div>
 |   <h2>
 |     "world"
 |   <h3>
-|     "WebKit<#selection-focus>"
+|     "WebKit"
 | "\n"
+| <#selection-focus>
 
 by pre yields:
 | "\n"
@@ -162,13 +170,15 @@ by pre yields:
 | "\n"
 
 Formatting:
+| <#selection-anchor>
 | "\n"
 | <ul>
 |   <li>
-|     "<#selection-anchor>hello"
+|     "hello"
 |   <li>
-|     "world<#selection-focus>"
+|     "world"
 | "\n"
+| <#selection-focus>
 
 by blockquote yields:
 | "\n"

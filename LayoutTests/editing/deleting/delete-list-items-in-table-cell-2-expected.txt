@@ -11,7 +11,8 @@ Before:
 |             "a"
 |           <li>
 |             id="li"
-|             "<#selection-caret>|b"
+|             <#selection-caret>
+|             "|b"
 
 After:
 | <table>

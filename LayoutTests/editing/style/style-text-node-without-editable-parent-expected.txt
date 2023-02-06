@@ -6,15 +6,15 @@ bold first:
 | "world WebKit"
 
 bold middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <b>
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 bold last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <b>
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 bold all:
 | <b>
@@ -26,15 +26,15 @@ italic first:
 | "world WebKit"
 
 italic middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <i>
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 italic last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <i>
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 italic all:
 | <i>
@@ -46,15 +46,15 @@ underline first:
 | "world WebKit"
 
 underline middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <u>
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 underline last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <u>
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 underline all:
 | <u>
@@ -66,15 +66,15 @@ strikeThrough first:
 | "world WebKit"
 
 strikeThrough middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <strike>
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 strikeThrough last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <strike>
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 strikeThrough all:
 | <strike>
@@ -87,17 +87,17 @@ foreColor first:
 | "world WebKit"
 
 foreColor middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <font>
 |   color="#0000ff"
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 foreColor last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <font>
 |   color="#0000ff"
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 foreColor all:
 | <font>
@@ -111,17 +111,17 @@ hiliteColor first:
 | "world WebKit"
 
 hiliteColor middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <span>
 |   style="background-color: blue;"
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 hiliteColor last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <span>
 |   style="background-color: blue;"
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 hiliteColor all:
 | <span>
@@ -134,15 +134,15 @@ subscript first:
 | "world WebKit"
 
 subscript middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <sub>
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 subscript last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <sub>
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 subscript all:
 | <sub>
@@ -154,15 +154,15 @@ superscript first:
 | "world WebKit"
 
 superscript middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <sup>
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 superscript last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <sup>
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 superscript all:
 | <sup>
@@ -175,17 +175,17 @@ createLink first:
 | "world WebKit"
 
 createLink middle:
-| "hello, "
+| "hello, <#selection-anchor>"
 | <a>
 |   href="http://webkit.org/"
-|   "<#selection-anchor>world<#selection-focus>"
+|   "world<#selection-focus>"
 | " WebKit"
 
 createLink last:
-| "hello, world"
+| "hello, world<#selection-anchor>"
 | <a>
 |   href="http://webkit.org/"
-|   "<#selection-anchor> WebKit<#selection-focus>"
+|   " WebKit<#selection-focus>"
 
 createLink all:
 | <a>

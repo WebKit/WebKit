@@ -6,7 +6,9 @@ After clicking on the first element (mac):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "<#selection-anchor>First element<#selection-focus>"
+|   <#selection-anchor>
+|   "First element"
+|   <#selection-focus>
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
@@ -37,7 +39,9 @@ After clicking on the second element (mac):
 | <div>
 |   class="select-all"
 |   id="second"
-|   "<#selection-anchor>Second element<#selection-focus>"
+|   <#selection-anchor>
+|   "Second element"
+|   <#selection-focus>
 | "\n"
 
 After shift clicking on the first element (mac):
@@ -58,7 +62,9 @@ After clicking on the first element (windows):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "<#selection-anchor>First element<#selection-focus>"
+|   <#selection-anchor>
+|   "First element"
+|   <#selection-focus>
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
@@ -71,7 +77,8 @@ After shift clicking on the second element (windows):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "<#selection-anchor>First element"
+|   <#selection-anchor>
+|   "First element"
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
@@ -89,7 +96,9 @@ After clicking on the second element (windows):
 | <div>
 |   class="select-all"
 |   id="second"
-|   "<#selection-anchor>Second element<#selection-focus>"
+|   <#selection-anchor>
+|   "Second element"
+|   <#selection-focus>
 | "\n"
 
 After shift clicking on the first element (windows):
@@ -110,7 +119,9 @@ After clicking on the first element (unix):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "<#selection-anchor>First element<#selection-focus>"
+|   <#selection-anchor>
+|   "First element"
+|   <#selection-focus>
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
@@ -123,7 +134,8 @@ After shift clicking on the second element (unix):
 | <div>
 |   class="select-all"
 |   id="first"
-|   "<#selection-anchor>First element"
+|   <#selection-anchor>
+|   "First element"
 | "\nSome other text.\n"
 | <div>
 |   class="select-all"
@@ -141,7 +153,9 @@ After clicking on the second element (unix):
 | <div>
 |   class="select-all"
 |   id="second"
-|   "<#selection-anchor>Second element<#selection-focus>"
+|   <#selection-anchor>
+|   "Second element"
+|   <#selection-focus>
 | "\n"
 
 After shift clicking on the first element (unix):

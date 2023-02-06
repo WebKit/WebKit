@@ -12,9 +12,9 @@ This test ensures WebKit does not ignore the content of hr, datagrid, and object
 |     "world"
 |   " WebKit"
 | <object>
-|   "hello "
+|   "hello <#selection-anchor>"
 |   <b>
-|     "<#selection-anchor>world<#selection-focus>"
+|     "world<#selection-focus>"
 |   " WebKit"
 
 The result below should be identical to the result above:

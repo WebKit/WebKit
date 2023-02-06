@@ -6,8 +6,8 @@ Before bolding:
 |   class="editing"
 |   id="test"
 |   <b>
-|     "a"
-|   "<#selection-anchor>b<#selection-focus>"
+|     "a<#selection-anchor>"
+|   "b<#selection-focus>"
 | "\n"
 
 After bolding:
@@ -16,6 +16,6 @@ After bolding:
 |   class="editing"
 |   id="test"
 |   <b>
-|     "a"
-|     "<#selection-anchor>b<#selection-focus>"
+|     "a<#selection-anchor>"
+|     "b<#selection-focus>"
 | "\n"

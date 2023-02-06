@@ -1,8 +1,9 @@
 This tests moving right and left by word boundary across an object element. WebKit should not hang.
 
 Initial state:
+| <#selection-caret>
 | <div>
-|   "<#selection-caret>Hello %)"
+|   "Hello %)"
 | <div>
 |   <object>
 |     border="1"

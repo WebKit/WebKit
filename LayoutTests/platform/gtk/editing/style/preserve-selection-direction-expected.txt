@@ -15,8 +15,8 @@ Before foreColor 2:
 | "Thi<#selection-focus>s is <#selection-anchor>some sample text"
 
 After foreColor 2:
-| "Thi<#selection-anchor>"
+| "Thi<#selection-focus>"
 | <font>
 |   color="#008000"
-|   "s is <#selection-focus>"
+|   "s is <#selection-anchor>"
 | "some sample text"

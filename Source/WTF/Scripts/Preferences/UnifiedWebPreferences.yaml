@@ -3449,16 +3449,16 @@ LinkSanitizerEnabled:
 
 LiveRangeSelectionEnabled:
   type: bool
-  status: unstable
+  status: testable
   humanReadableName: "Live Ranges in Selection"
   humanReadableDescription: "Live range behavior for ranges in the Selection object"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 LoadDeferringEnabled:
   type: bool

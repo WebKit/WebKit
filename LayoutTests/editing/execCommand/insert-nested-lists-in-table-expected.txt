@@ -60,7 +60,7 @@ After wrapping the table in a list:
 |               <li>
 |                 "Garply"
 |                 <br>
-|     <#selection-focus>
+|       <#selection-focus>
 | "\n"
 
 After inserting a nested list below the outer list:

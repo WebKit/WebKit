@@ -12,7 +12,7 @@ Success: s.containsNode(document.body, true) is true.
 Success: s.containsNode(document.getElementById("console"), false) is false.
 Success: s.containsNode(document.getElementById("console"), true) is false.
 Success: s.containsNode(document.implementation.createDocumentType("name", "", ""), true) is false.
-Success: s.containsNode(span2.firstChild, false) is true.
+Success: s.containsNode(span2.firstChild, false) is false.
 Success: s.containsNode(span2.firstChild, true) is true.
 Success: s.containsNode(span2, false) is false.
 Success: s.containsNode(span2, true) is true.
