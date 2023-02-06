@@ -25,7 +25,6 @@
 
 [
     Conditional=WEBGL,
-    DoNotCheckConstants,
     GenerateIsReachable=ImplWebGLRenderingContext,
     LegacyNoInterfaceObject,
 ] interface WebGLCompressedTextureS3TCsRGB {
