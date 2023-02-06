@@ -33,14 +33,12 @@
 #include "StorageAreaMapMessages.h"
 #include "StorageNamespaceImpl.h"
 #include "WebPage.h"
-#include "WebPageGroupProxy.h"
 #include "WebProcess.h"
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
 #include <WebCore/EventNames.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
-#include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Storage.h>
 #include <WebCore/StorageEventDispatcher.h>
@@ -258,9 +256,7 @@ void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaIm
 {
     ASSERT(isLocalStorage(type()));
 
-    // Namespace IDs for local storage namespaces are currently equivalent to web page group IDs.
-    auto& pageGroup = *WebProcess::singleton().webPageGroup(m_namespace.pageGroupID())->corePageGroup();
-    StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, pageGroup, m_securityOrigin, urlString, [storageAreaImplID](auto& storage) {
+    StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, nullptr, m_securityOrigin, urlString, [storageAreaImplID](auto& storage) {
         return static_cast<StorageAreaImpl&>(storage.area()).identifier() == storageAreaImplID;
     });
 }

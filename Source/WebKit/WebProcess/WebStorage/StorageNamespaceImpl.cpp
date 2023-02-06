@@ -31,10 +31,8 @@
 #include "StorageAreaImpl.h"
 #include "StorageAreaMap.h"
 #include "WebPage.h"
-#include "WebPageGroupProxy.h"
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
-#include <WebCore/PageGroup.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageType.h>
@@ -44,25 +42,25 @@ using namespace WebCore;
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(Identifier identifier, PageIdentifier pageID, const WebCore::SecurityOrigin& topLevelOrigin, unsigned quotaInBytes)
 {
-    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, identifier, pageID, &topLevelOrigin, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Session, pageID, &topLevelOrigin, quotaInBytes, identifier));
 }
 
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(Identifier identifier, unsigned quotaInBytes)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(unsigned quotaInBytes)
 {
-    return adoptRef(*new StorageNamespaceImpl(StorageType::Local, identifier, std::nullopt, nullptr, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Local, std::nullopt, nullptr, quotaInBytes));
 }
 
-Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(Identifier identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
+Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
 {
-    return adoptRef(*new StorageNamespaceImpl(StorageType::TransientLocal, identifier, std::nullopt, &topLevelOrigin, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::TransientLocal, std::nullopt, &topLevelOrigin, quotaInBytes));
 }
 
-StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, Identifier storageNamespaceID, const std::optional<PageIdentifier>& pageIdentifier, const WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)
+StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, const std::optional<PageIdentifier>& pageIdentifier, const WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes, std::optional<Identifier> storageNamespaceID)
     : m_storageType(storageType)
-    , m_storageNamespaceID(storageNamespaceID)
     , m_sessionPageID(pageIdentifier)
     , m_topLevelOrigin(topLevelOrigin)
     , m_quotaInBytes(quotaInBytes)
+    , m_storageNamespaceID(storageNamespaceID)
 {
     ASSERT(storageType == StorageType::Session || !m_sessionPageID);
 }
@@ -90,7 +88,7 @@ Ref<StorageNamespace> StorageNamespaceImpl::copy(Page& newPage)
     ASSERT(m_storageNamespaceID);
     ASSERT(m_storageType == StorageType::Session);
 
-    return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier(), WebPage::fromCorePage(newPage).identifier(), m_topLevelOrigin.get(), m_quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(m_storageType, WebPage::fromCorePage(newPage).identifier(), m_topLevelOrigin.get(), m_quotaInBytes, WebPage::fromCorePage(newPage).sessionStorageNamespaceIdentifier()));
 }
 
 void StorageNamespaceImpl::setSessionIDForTesting(PAL::SessionID)
@@ -102,12 +100,6 @@ PageIdentifier StorageNamespaceImpl::sessionStoragePageID() const
 {
     ASSERT(m_storageType == StorageType::Session);
     return *m_sessionPageID;
-}
-
-PageGroupIdentifier StorageNamespaceImpl::pageGroupID() const
-{
-    ASSERT(m_storageType == StorageType::Local || m_storageType == StorageType::TransientLocal);
-    return makeObjectIdentifier<PageGroupIdentifierType>(m_storageNamespaceID.toUInt64());
 }
 
 } // namespace WebKit

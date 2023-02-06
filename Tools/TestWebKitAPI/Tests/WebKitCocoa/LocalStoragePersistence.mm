@@ -30,6 +30,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -452,6 +453,23 @@ TEST(WKWebView, LocalStorageGroup)
     };
     runTest(true);
     runTest(false);
+}
+
+TEST(WKWebView, LocalStorageDifferentPageGroupSameProcess)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
+    [configuration _setGroupIdentifier:@"testgroupidentifier1"];
+    auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    NSString *htmlString = @"<script>localStorage.setItem('key', 'value')</script>";
+    [webView1 synchronouslyLoadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+
+    [configuration _setGroupIdentifier:@"testgroupidentifier2"];
+    // Ensure two pages use the same web process.
+    [configuration _setRelatedWebView:webView1.get()];
+    auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    // Network process would crash if the second page creates a new StorageArea.
+    [webView2 synchronouslyLoadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
 }
 
 TEST(WKWebView, LocalStorageNoSizeOverflow)

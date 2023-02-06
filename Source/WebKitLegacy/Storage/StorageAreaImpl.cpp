@@ -282,7 +282,7 @@ void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldV
         return storage.frame() == &sourceFrame;
     };
     if (isLocalStorage(m_storageType))
-        StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, page->group(), m_securityOrigin, sourceFrame.document()->url().string(), WTFMove(isSourceStorage));
+        StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, &page->group(), m_securityOrigin, sourceFrame.document()->url().string(), WTFMove(isSourceStorage));
     else
         StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, *page, m_securityOrigin, sourceFrame.document()->url().string(), WTFMove(isSourceStorage));
 }
