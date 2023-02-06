@@ -32,7 +32,7 @@
 
 namespace WGSL::AST {
 
-void printInternal(PrintStream& out, BinaryOperation op)
+ASCIILiteral toString(BinaryOperation op)
 {
     constexpr ASCIILiteral binaryOperationNames[] = {
         "+"_s,
@@ -55,7 +55,12 @@ void printInternal(PrintStream& out, BinaryOperation op)
         "||"_s
     };
 
-    out.print(binaryOperationNames[WTF::enumToUnderlyingType(op)]);
+    return binaryOperationNames[WTF::enumToUnderlyingType(op)];
+}
+
+void printInternal(PrintStream& out, BinaryOperation op)
+{
+    out.print(toString(op));
 }
 
 } // namespace WGSL::AST

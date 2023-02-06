@@ -80,6 +80,7 @@ private:
 };
 
 void printInternal(PrintStream&, BinaryOperation);
+ASCIILiteral toString(BinaryOperation);
 
 } // namespace WGSL::AST
 

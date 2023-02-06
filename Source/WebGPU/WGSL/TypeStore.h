@@ -39,15 +39,16 @@ class TypeStore {
 public:
     TypeStore();
 
-    Type* voidType() const { return m_i32; }
-    Type* boolType() const { return m_i32; }
+    Type* bottomType() const { return m_bottom; }
+    Type* voidType() const { return m_void; }
+    Type* boolType() const { return m_bool; }
 
-    Type* abstractIntType() const { return m_i32; }
+    Type* abstractIntType() const { return m_abstractInt; }
     Type* i32Type() const { return m_i32; }
-    Type* u32Type() const { return m_i32; }
+    Type* u32Type() const { return m_u32; }
 
-    Type* abstractFloatType() const { return m_i32; }
-    Type* f32Type() const { return m_i32; }
+    Type* abstractFloatType() const { return m_abstractFloat; }
+    Type* f32Type() const { return m_f32; }
 
     Type* structType(const AST::Identifier& name);
 
@@ -61,6 +62,7 @@ private:
     WTF::Vector<std::unique_ptr<Type>> m_types;
     FixedVector<TypeConstructor> m_typeConstrutors;
 
+    Type* m_bottom;
     Type* m_abstractInt;
     Type* m_abstractFloat;
     Type* m_void;
