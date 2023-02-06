@@ -63,9 +63,6 @@ struct RequestStorageAccessResult {
     StorageAccessScope scope;
     RegistrableDomain topFrameDomain;
     RegistrableDomain subFrameDomain;
-    
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<RequestStorageAccessResult> decode(Decoder&);
 };
 
 const unsigned maxNumberOfTimesExplicitlyDeniedStorageAccess = 2;
@@ -110,43 +107,6 @@ private:
 
     StorageAccessScope m_storageAccessScope = StorageAccessScope::PerPage;
 };
-
-template<class Encoder>
-void RequestStorageAccessResult::encode(Encoder& encoder) const
-{
-    encoder << wasGranted << promptWasShown << scope << topFrameDomain << subFrameDomain;
-}
-
-template<class Decoder>
-std::optional<RequestStorageAccessResult> RequestStorageAccessResult::decode(Decoder& decoder)
-{
-    std::optional<StorageAccessWasGranted> wasGranted;
-    decoder >> wasGranted;
-    if (!wasGranted)
-        return std::nullopt;
-
-    std::optional<StorageAccessPromptWasShown> promptWasShown;
-    decoder >> promptWasShown;
-    if (!promptWasShown)
-        return std::nullopt;
-
-    std::optional<StorageAccessScope> scope;
-    decoder >> scope;
-    if (!scope)
-        return std::nullopt;
-
-    std::optional<RegistrableDomain> topFrameDomain;
-    decoder >> topFrameDomain;
-    if (!topFrameDomain)
-        return std::nullopt;
-
-    std::optional<RegistrableDomain> subFrameDomain;
-    decoder >> subFrameDomain;
-    if (!subFrameDomain)
-        return std::nullopt;
-
-    return { { WTFMove(*wasGranted), WTFMove(*promptWasShown), WTFMove(*scope), WTFMove(*topFrameDomain), WTFMove(*subFrameDomain) } };
-}
 
 } // namespace WebCore
 

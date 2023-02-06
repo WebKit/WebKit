@@ -226,6 +226,7 @@ void BoxTree::buildTreeForInlineContent()
         };
         appendChild(childLayoutBox(), childRenderer);
     }
+    m_renderers.shrinkToFit();
 }
 
 void BoxTree::buildTreeForFlexContent()
@@ -235,6 +236,7 @@ void BoxTree::buildTreeForFlexContent()
         auto flexItem = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
         appendChild(WTFMove(flexItem), flexItemRenderer);
     }
+    m_renderers.shrinkToFit();
 }
 
 void BoxTree::appendChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer)

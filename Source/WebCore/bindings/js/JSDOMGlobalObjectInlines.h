@@ -28,8 +28,22 @@
 
 #include "DOMConstructors.h"
 #include "JSDOMGlobalObject.h"
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 
 namespace WebCore {
+
+inline JSDOMStructureMap& JSDOMGlobalObject::structures(NoLockingNecessaryTag)
+{
+    ASSERT(!vm().heap.mutatorShouldBeFenced());
+    return m_structures;
+}
+
+inline DOMGuardedObjectSet& JSDOMGlobalObject::guardedObjects(NoLockingNecessaryTag)
+{
+    ASSERT(!vm().heap.mutatorShouldBeFenced());
+    return m_guardedObjects;
+}
 
 template<class ConstructorClass, DOMConstructorID constructorID>
 inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -43,5 +57,21 @@ inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject& gl
     mutableGlobalObject.constructors().array()[static_cast<unsigned>(constructorID)].set(vm, &globalObject, constructor);
     return constructor;
 }
+
+template<class JSClass>
+JSClass* toJSDOMGlobalObject(JSC::VM&, JSC::JSValue value)
+{
+    static_assert(std::is_base_of_v<JSDOMGlobalObject, JSClass>);
+
+    if (auto* object = value.getObject()) {
+        if (object->type() == JSC::PureForwardingProxyType)
+            return JSC::jsDynamicCast<JSClass*>(JSC::jsCast<JSC::JSProxy*>(object)->target());
+        if (object->inherits<JSClass>())
+            return JSC::jsCast<JSClass*>(object);
+    }
+
+    return nullptr;
+}
+
 
 } // namespace WebCore

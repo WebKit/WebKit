@@ -1,0 +1,11 @@
+Tests for the CSS.getMatchedStyleForNode command and the `::backdrop` CSS rule selector.
+
+
+== Running test suite: CSS.getMatchedStyleForNode.BackdropPseudoId
+-- Running test case: CSS.getMatchedStyleForNode.BackdropPseudoId.Dialog
+PASS: Expected no rules entry for selector `*::backdrop` before showing the dialog.
+PASS: Expected exactly 3 rules for selector `*::backdrop` after showing the dialog.
+
+-- Running test case: CSS.getMatchedStyleForNode.BackdropPseudoId.Div
+PASS: Expected no rules entry for selector `*::backdrop`.
+

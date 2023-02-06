@@ -785,6 +785,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/OverflowEvent.h
     dom/PointerEvent.h
     dom/PointerEventTypeNames.h
+    dom/PortIdentifier.h
     dom/Position.h
     dom/ProcessingInstruction.h
     dom/ProgressEvent.h

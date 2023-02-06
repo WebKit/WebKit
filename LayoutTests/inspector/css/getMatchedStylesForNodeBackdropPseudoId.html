@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function openDialog()
+{
+    document.getElementById("test-dialog").showModal();
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("CSS.getMatchedStyleForNode.BackdropPseudoId");
+
+    function addTestCase({name, description, selector, domNodeStylesHandler})
+    {
+        suite.addTestCase({
+            name,
+            description,
+            async test() {
+                let documentNode = await WI.domManager.requestDocument();
+                let nodeId = await documentNode.querySelector(selector);
+                let domNode = WI.domManager.nodeForId(nodeId);
+                InspectorTest.assert(domNode, `Should find DOM Node for selector '${selector}'.`);
+
+                let domNodeStyles = WI.cssManager.stylesForNode(domNode);
+                InspectorTest.assert(domNodeStyles, `Should find CSS Styles for DOM Node.`);
+                await domNodeStyles.refreshIfNeeded();
+
+                await domNodeStylesHandler(domNodeStyles);
+            },
+        });
+    }
+
+    async function openDialog()
+    {
+        
+    }
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.BackdropPseudoId.Dialog",
+        description: "A dialog should have both the User Agent and authored `::backdrop` rules.",
+        selector: "#test-dialog",
+        async domNodeStylesHandler(styles) {
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Backdrop), undefined, "Expected no rules entry for selector `*::backdrop` before showing the dialog.");
+            await InspectorTest.evaluateInPage(`openDialog()`);
+            await styles.refresh();
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Backdrop).matchedRules.length, 3, "Expected exactly 3 rules for selector `*::backdrop` after showing the dialog.");
+        }
+    });
+
+    addTestCase({
+        name: "CSS.getMatchedStyleForNode.BackdropPseudoId.Div",
+        description: "A non-dialog should have no `::backdrop` rules.",
+        selector: "#test-div",
+        async domNodeStylesHandler(styles) {
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Marker), undefined, "Expected no rules entry for selector `*::backdrop`.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    ::backdrop {
+        background-color: red;
+    }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Tests for the CSS.getMatchedStyleForNode command and the `::backdrop` CSS rule selector.</p>
+    <dialog id="test-dialog"></dialog>
+    <div id="test-div"></div>
+</body>
+</html>

@@ -26,14 +26,13 @@
 #include "config.h"
 #include "Types.h"
 
+#include <wtf/StringPrintStream.h>
+
 namespace WGSL {
 
 void printInternal(PrintStream& out, const Type& type)
 {
     WTF::switchOn(type,
-        [&](const Variable& variable) {
-            out.print("type_variable", variable.id);
-        },
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
 #define PRIMITIVE_CASE(kind, name) \
@@ -62,7 +61,23 @@ void printInternal(PrintStream& out, const Type& type)
         [&](const Function&) {
             // FIXME: implement this
             ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) {
+#ifdef NDEBUG
+            RELEASE_ASSERT_NOT_REACHED();
+#else
+            // Bottom is an implementation detail and should never leak, but we
+            // keep the ability to print it in debug to help when dumping types
+            out.print("⊥");
+#endif
         });
+}
+
+String toString(const Type& type)
+{
+    StringPrintStream out;
+    printInternal(out, type);
+    return out.toString();
 }
 
 } // namespace WGSL

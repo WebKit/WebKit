@@ -34,32 +34,6 @@ namespace WebCore {
 struct MessageWithMessagePorts {
     RefPtr<SerializedScriptValue> message;
     Vector<TransferredMessagePort> transferredPorts;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<MessageWithMessagePorts> decode(Decoder&);
 };
-
-
-template<class Encoder>
-void MessageWithMessagePorts::encode(Encoder& encoder) const
-{
-    ASSERT(message);
-    encoder << *message << transferredPorts;
-}
-
-template<class Decoder>
-std::optional<MessageWithMessagePorts> MessageWithMessagePorts::decode(Decoder& decoder)
-{
-    MessageWithMessagePorts result;
-
-    result.message = SerializedScriptValue::decode(decoder);
-    if (!result.message)
-        return std::nullopt;
-
-    if (!decoder.decode(result.transferredPorts))
-        return std::nullopt;
-
-    return result;
-}
 
 } // namespace WebCore

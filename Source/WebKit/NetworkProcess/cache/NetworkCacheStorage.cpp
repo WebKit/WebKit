@@ -969,7 +969,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler,
     m_writeOperationDispatchTimer.startOneShot(m_initialWriteDelay);
 }
 
-void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
+void Storage::traverseWithinRootPath(const String& rootPath, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
 {
     ASSERT(RunLoop::isMain());
     ASSERT(traverseHandler);
@@ -979,8 +979,8 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
     auto& traverseOperation = *traverseOperationPtr;
     m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
 
-    ioQueue().dispatch([this, &traverseOperation] {
-        traverseRecordsFiles(recordsPathIsolatedCopy(), traverseOperation.type, [this, &traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+    ioQueue().dispatch([this, &traverseOperation, rootPath = rootPath.isolatedCopy()] {
+        traverseRecordsFiles(rootPath, traverseOperation.type, [this, &traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             ASSERT(type == traverseOperation.type || traverseOperation.type.isEmpty());
             if (isBlob)
                 return;
@@ -1045,6 +1045,18 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
             m_activeTraverseOperations.remove(&traverseOperation);
         });
     });
+}
+
+void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
+{
+    traverseWithinRootPath(recordsPathIsolatedCopy(), type, flags, WTFMove(traverseHandler));
+}
+
+void Storage::traverse(const String& type, const String& partition, OptionSet<TraverseFlag> flags, TraverseHandler&& traverseHandler)
+{
+    auto partitionHashAsString = Key::partitionToPartitionHashAsString(partition, salt());
+    auto rootPath = FileSystem::pathByAppendingComponent(recordsPathIsolatedCopy(), partitionHashAsString);
+    traverseWithinRootPath(rootPath, type, flags, WTFMove(traverseHandler));
 }
 
 void Storage::setCapacity(size_t capacity)

@@ -29,6 +29,7 @@
 #include "AST.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
+#include "CompilationMessage.h"
 #include "ContextProviderInlines.h"
 #include "TypeStore.h"
 #include "Types.h"
@@ -74,22 +75,30 @@ public:
     void visit(AST::ArrayTypeName&) override;
     void visit(AST::NamedTypeName&) override;
     void visit(AST::ParameterizedTypeName&) override;
-    void visit(AST::StructTypeName&) override;
     void visit(AST::ReferenceTypeName&) override;
 
 private:
     void visitFunctionBody(AST::Function&);
 
+    template<typename... Arguments>
+    void typeError(const SourceSpan&, Arguments&&...);
+
+    enum class InferBottom : bool { No, Yes };
+    template<typename... Arguments>
+    void typeError(InferBottom, const SourceSpan&, Arguments&&...);
+
     Type* infer(AST::Expression&);
     Type* resolve(AST::TypeName&);
     void inferred(Type*);
-    void unify(Type*, Type*);
+    bool unify(Type*, Type*) WARN_UNUSED_RETURN;
+    bool isBottom(Type*) const;
 
     AST::ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
 
     // FIXME: move this into a class that contains the AST
     TypeStore m_types;
+    WTF::Vector<Error> m_errors;
 };
 
 TypeChecker::TypeChecker(AST::ShaderModule& shaderModule)
@@ -117,6 +126,11 @@ void TypeChecker::check()
 
     for (auto& function : m_shaderModule.functions())
         visitFunctionBody(function);
+
+    if (shouldDumpInferredTypes) {
+        for (auto& error : m_errors)
+            dataLogLn(error);
+    }
 }
 
 // Declarations
@@ -133,10 +147,10 @@ void TypeChecker::visit(AST::Variable& variable)
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
         auto* initializerType = infer(*variable.maybeInitializer());
-        if (result)
-            unify(result, initializerType);
-        else
+        if (!result)
             result = initializerType;
+        else if (!unify(result, initializerType))
+            typeError(InferBottom::No, variable.span(), "cannot initialize var of type '", *result, "' with value of type '", *initializerType, "'");
     }
     introduceVariable(variable.name(), result);
 }
@@ -165,7 +179,8 @@ void TypeChecker::visit(AST::AssignmentStatement& statement)
 {
     auto* lhs = infer(statement.lhs());
     auto* rhs = infer(statement.rhs());
-    unify(lhs, rhs);
+    if (!unify(lhs, rhs))
+        typeError(InferBottom::No, statement.span(), "cannot assign value of type '", *rhs, "' to '", *lhs, "'");
 }
 
 void TypeChecker::visit(AST::ReturnStatement& statement)
@@ -210,16 +225,21 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
     // FIXME: this needs to resolve overloads, not just unify both types
     auto* leftType = infer(binary.leftExpression());
     auto* rightType = infer(binary.rightExpression());
-    unify(leftType, rightType);
-    inferred(leftType);
+    if (unify(leftType, rightType))
+        inferred(leftType);
+    else
+        typeError(binary.span(), "no matching overload for operator ", toString(binary.operation()), " (", *leftType, ", ", *rightType, ")");
 }
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
 {
     auto* const* type = readVariable(identifier.identifier());
-    // FIXME: report error about unknown identifier
-    ASSERT(type);
-    inferred(*type);
+    if (type) {
+        inferred(*type);
+        return;
+    }
+
+    typeError(identifier.span(), "unknown identifier: '", identifier.identifier(), "'");
 }
 
 void TypeChecker::visit(AST::CallExpression& call)
@@ -277,23 +297,18 @@ void TypeChecker::visit(AST::ArrayTypeName&)
 void TypeChecker::visit(AST::NamedTypeName& namedType)
 {
     auto* const* type = ContextProvider::readVariable(namedType.name());
-    // FIXME: report error about unknown type name
-    ASSERT(type);
-    inferred(*type);
+    if (type) {
+        inferred(*type);
+        return;
+    }
+
+    typeError(namedType.span(), "unknown type: '", namedType.name(), "'");
 }
 
 void TypeChecker::visit(AST::ParameterizedTypeName&)
 {
     // FIXME: implement this
     inferred(m_types.voidType());
-}
-
-void TypeChecker::visit(AST::StructTypeName& structType)
-{
-    auto* const* type = ContextProvider::readVariable(structType.structure().name());
-    // FIXME: report error about unknown type name
-    ASSERT(type);
-    inferred(*type);
 }
 
 void TypeChecker::visit(AST::ReferenceTypeName&)
@@ -353,11 +368,39 @@ void TypeChecker::inferred(Type* type)
     m_inferredType = type;
 }
 
-void TypeChecker::unify(Type* lhs, Type* rhs)
+bool TypeChecker::unify(Type* lhs, Type* rhs)
 {
-    // FIXME: Implement all the rules and report a type error otherwise
+    if (shouldDumpInferredTypes)
+        dataLogLn("[unify] '", *lhs, "' <", RawPointer(lhs), ">  and '", *rhs, "' <", RawPointer(rhs), ">");
+
     if (lhs == rhs)
-        return;
+        return true;
+
+    // Bottom is only inferred when a type error is reported, so we skip further
+    // checks that are a consequence of an already reported error.
+    if (isBottom(lhs) || isBottom(rhs))
+        return true;
+
+    return false;
+}
+
+bool TypeChecker::isBottom(Type* type) const
+{
+    return type == m_types.bottomType();
+}
+
+template<typename... Arguments>
+void TypeChecker::typeError(const SourceSpan& span, Arguments&&... arguments)
+{
+    typeError(InferBottom::Yes, span, std::forward<Arguments>(arguments)...);
+}
+
+template<typename... Arguments>
+void TypeChecker::typeError(InferBottom inferBottom, const SourceSpan& span, Arguments&&... arguments)
+{
+    m_errors.append({ makeString(std::forward<Arguments>(arguments)...), span });
+    if (inferBottom == InferBottom::Yes)
+        inferred(m_types.bottomType());
 }
 
 void typeCheck(AST::ShaderModule& shaderModule)

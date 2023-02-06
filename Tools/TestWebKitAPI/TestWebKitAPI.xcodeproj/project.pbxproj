@@ -2451,14 +2451,14 @@
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive_Bundle.cpp; sourceTree = "<group>"; };
 		520BCF4B141EB09E00937EA8 /* WebArchive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebArchive.cpp; sourceTree = "<group>"; };
-		521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "web-authentication-get-assertion-hid-internal-uv-pin-fallback.html"; path = "Tests/WebKitCocoa/web-authentication-get-assertion-hid-internal-uv-pin-fallback.html"; sourceTree = "<group>"; };
+		521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid-internal-uv-pin-fallback.html"; sourceTree = "<group>"; };
 		524BBC9B19DF3714002F1AF1 /* file-with-video.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "file-with-video.html"; sourceTree = "<group>"; };
 		524BBC9C19DF377A002F1AF1 /* WKPageIsPlayingAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageIsPlayingAudio.cpp; sourceTree = "<group>"; };
 		524BBCA019E30C63002F1AF1 /* test.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.mp4; sourceTree = "<group>"; };
 		52B8CF9415868CF000281053 /* SetDocumentURI.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = SetDocumentURI.html; sourceTree = "<group>"; };
 		52B8CF9515868CF000281053 /* SetDocumentURI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetDocumentURI.mm; sourceTree = "<group>"; };
-		52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "web-authentication-make-credential-hid-internal-uv.html"; path = "Tests/WebKitCocoa/web-authentication-make-credential-hid-internal-uv.html"; sourceTree = "<group>"; };
-		52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "web-authentication-get-assertion-hid-internal-uv.html"; path = "Tests/WebKitCocoa/web-authentication-get-assertion-hid-internal-uv.html"; sourceTree = "<group>"; };
+		52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-make-credential-hid-internal-uv.html"; sourceTree = "<group>"; };
+		52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "web-authentication-get-assertion-hid-internal-uv.html"; sourceTree = "<group>"; };
 		52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadAlternateHTMLStringWithNonDirectoryURL.cpp; sourceTree = "<group>"; };
 		52D5D6BD21B9F1B20046ABA6 /* RenderingProgress.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgress.mm; sourceTree = "<group>"; };
 		52D5D6BE21B9F1B20046ABA6 /* RenderingProgressPlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgressPlugIn.mm; sourceTree = "<group>"; };
@@ -3633,9 +3633,6 @@
 			isa = PBXGroup;
 			children = (
 				DDF3A82928930475005920CF /* gtest.xcodeproj */,
-				521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */,
-				52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */,
-				52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */,
 				49AEEF682407276F00C87E4C /* Info.plist */,
 				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
@@ -4770,6 +4767,8 @@
 				CD57779B211CE6CE001B371E /* video-with-audio-and-web-audio.html */,
 				CD577798211CDE8F001B371E /* web-audio-only.html */,
 				57663DF22357E45D00E85E09 /* web-authentication-get-assertion-hid-cancel.html */,
+				521D1B7227713E80003900C5 /* web-authentication-get-assertion-hid-internal-uv-pin-fallback.html */,
+				52C8C1392706439000BDF3B7 /* web-authentication-get-assertion-hid-internal-uv.html */,
 				579F1BFF23C92FD300C7D4B4 /* web-authentication-get-assertion-hid-multiple-accounts.html */,
 				577454CF2359B338008E1ED7 /* web-authentication-get-assertion-hid-no-credentials.html */,
 				578DA44B23ECD20300246010 /* web-authentication-get-assertion-hid-pin-auth-blocked-error.html */,
@@ -4783,6 +4782,7 @@
 				57663DE9234EA60B00E85E09 /* web-authentication-get-assertion-nfc.html */,
 				577454D12359BAD5008E1ED7 /* web-authentication-get-assertion-u2f-no-credentials.html */,
 				57C6244F2346C1EC00383FE7 /* web-authentication-get-assertion.html */,
+				52C8C1372706437C00BDF3B7 /* web-authentication-make-credential-hid-internal-uv.html */,
 				578DA44723ECD01300246010 /* web-authentication-make-credential-hid-pin-auth-blocked-error.html */,
 				570D26F323C3CA5500D5CF67 /* web-authentication-make-credential-hid-pin-get-key-agreement-error.html */,
 				5751B289249D5B9900664C2A /* web-authentication-make-credential-hid-pin-get-pin-token-fake-pin-invalid-error-retry.html */,

@@ -30,6 +30,7 @@
 #include "EventTarget.h"
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
 #include "JSWindowProxy.h"

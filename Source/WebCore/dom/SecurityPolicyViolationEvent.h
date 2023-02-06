@@ -31,7 +31,8 @@
 namespace WebCore {
 
 struct SecurityPolicyViolationEventInit : EventInit {
-    SecurityPolicyViolationEventInit() { }
+    SecurityPolicyViolationEventInit() = default;
+    WEBCORE_EXPORT SecurityPolicyViolationEventInit(EventInit&&, String&& documentURI, String&& referrer, String&& blockedURI, String&& violatedDirective, String&& effectiveDirective, String&& originalPolicy, String&& sourceFile, String&& sample, SecurityPolicyViolationEventDisposition, unsigned short statusCode, unsigned lineNumber, unsigned columnNumber);
 
     String documentURI;
     String referrer;
@@ -45,9 +46,6 @@ struct SecurityPolicyViolationEventInit : EventInit {
     unsigned short statusCode { 0 };
     unsigned lineNumber { 0 };
     unsigned columnNumber { 0 };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, SecurityPolicyViolationEventInit&);
 };
 
 class SecurityPolicyViolationEvent final : public Event {
@@ -111,55 +109,5 @@ private:
     unsigned m_lineNumber;
     unsigned m_columnNumber;
 };
-
-template<class Encoder>
-void SecurityPolicyViolationEventInit::encode(Encoder& encoder) const
-{
-    encoder << static_cast<const EventInit&>(*this);
-    encoder << documentURI;
-    encoder << referrer;
-    encoder << blockedURI;
-    encoder << violatedDirective;
-    encoder << effectiveDirective;
-    encoder << originalPolicy;
-    encoder << sourceFile;
-    encoder << sample;
-    encoder << disposition;
-    encoder << statusCode;
-    encoder << lineNumber;
-    encoder << columnNumber;
-}
-
-template<class Decoder>
-bool SecurityPolicyViolationEventInit::decode(Decoder& decoder, SecurityPolicyViolationEventInit& eventInit)
-{
-    if (!decoder.decode(static_cast<EventInit&>(eventInit)))
-        return false;
-    if (!decoder.decode(eventInit.documentURI))
-        return false;
-    if (!decoder.decode(eventInit.referrer))
-        return false;
-    if (!decoder.decode(eventInit.blockedURI))
-        return false;
-    if (!decoder.decode(eventInit.violatedDirective))
-        return false;
-    if (!decoder.decode(eventInit.effectiveDirective))
-        return false;
-    if (!decoder.decode(eventInit.originalPolicy))
-        return false;
-    if (!decoder.decode(eventInit.sourceFile))
-        return false;
-    if (!decoder.decode(eventInit.sample))
-        return false;
-    if (!decoder.decode(eventInit.disposition))
-        return false;
-    if (!decoder.decode(eventInit.statusCode))
-        return false;
-    if (!decoder.decode(eventInit.lineNumber))
-        return false;
-    if (!decoder.decode(eventInit.columnNumber))
-        return false;
-    return true;
-}
 
 } // namespace WebCore

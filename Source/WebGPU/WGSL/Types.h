@@ -31,27 +31,23 @@
 
 namespace WGSL {
 
-struct Variable;
 struct Primitive;
 struct Vector;
 struct Matrix;
 struct Array;
 struct Struct;
 struct Function;
+struct Bottom;
 
 using Type = std::variant<
-    Variable,
     Primitive,
     Vector,
     Matrix,
     Array,
     Struct,
-    Function
+    Function,
+    Bottom
 >;
-
-struct Variable {
-    unsigned id;
-};
 
 #define FOR_EACH_PRIMITIVE_TYPE(f) \
     f(AbstractInt, "<AbstractInt>") \
@@ -96,10 +92,25 @@ struct Struct {
 struct Function {
 };
 
+struct Bottom {
+};
+
 struct TypeConstructor {
     std::function<Type*(Type*)> construct;
 };
 
 void printInternal(PrintStream&, const Type&);
+String toString(const Type&);
 
 } // namespace WGSL
+
+namespace WTF {
+
+template<> class StringTypeAdapter<WGSL::Type, void> : public StringTypeAdapter<String, void> {
+public:
+    StringTypeAdapter(const WGSL::Type& type)
+        : StringTypeAdapter<String, void> { toString(type) }
+    { }
+};
+
+} // namespace WTF

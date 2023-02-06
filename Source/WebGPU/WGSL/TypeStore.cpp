@@ -34,6 +34,7 @@ namespace WGSL {
 TypeStore::TypeStore()
     : m_typeConstrutors(AST::ParameterizedTypeName::NumberOfBaseTypes)
 {
+    m_bottom = allocateType<Bottom>();
     m_abstractInt = allocateType<Primitive>(Primitive::AbstractInt);
     m_abstractFloat = allocateType<Primitive>(Primitive::AbstractFloat);
     m_void = allocateType<Primitive>(Primitive::Void);

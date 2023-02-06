@@ -1455,6 +1455,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     _preferences->setPrivateClickMeasurementEnabled(privateClickMeasurementEnabled);
 }
 
+- (BOOL)_privateClickMeasurementDebugModeEnabled
+{
+    return _preferences->privateClickMeasurementDebugModeEnabled();
+}
+
+- (void)_setPrivateClickMeasurementDebugModeEnabled:(BOOL)enabled
+{
+    _preferences->setPrivateClickMeasurementDebugModeEnabled(enabled);
+}
+
 - (_WKPitchCorrectionAlgorithm)_pitchCorrectionAlgorithm
 {
     return static_cast<_WKPitchCorrectionAlgorithm>(_preferences->pitchCorrectionAlgorithm());

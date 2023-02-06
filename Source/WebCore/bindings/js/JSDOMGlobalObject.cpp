@@ -35,6 +35,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "JSAbortAlgorithm.h"
 #include "JSAbortSignal.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
@@ -59,6 +60,7 @@
 #include "ShadowRealmGlobalScope.h"
 #include "SharedWorkerGlobalScope.h"
 #include "StructuredClone.h"
+#include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"
 #include "WorkerGlobalScope.h"
 #include "WorkletGlobalScope.h"
@@ -101,7 +103,7 @@ JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrappe
     , m_constructors(makeUnique<DOMConstructors>())
     , m_world(WTFMove(world))
     , m_worldIsNormal(m_world->isNormal())
-    , m_builtinInternalFunctions(vm)
+    , m_builtinInternalFunctions(makeUniqueRefWithoutFastMallocCheck<JSBuiltinInternalFunctions>(vm))
     , m_crossOriginFunctionMap(vm)
     , m_crossOriginGetterSetterMap(vm)
 {
@@ -253,7 +255,7 @@ JSC_DEFINE_HOST_FUNCTION(signalAbort, (JSGlobalObject*, CallFrame* callFrame))
 
 SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 {
-    m_builtinInternalFunctions.initialize(*this);
+    m_builtinInternalFunctions->initialize(*this);
 
     auto& builtinNames = WebCore::builtinNames(vm);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
@@ -369,7 +371,7 @@ void JSDOMGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     for (auto& constructor : thisObject->constructors().array())
         visitor.append(constructor);
 
-    thisObject->m_builtinInternalFunctions.visit(visitor);
+    thisObject->m_builtinInternalFunctions->visit(visitor);
 }
 
 DEFINE_VISIT_CHILDREN(JSDOMGlobalObject);

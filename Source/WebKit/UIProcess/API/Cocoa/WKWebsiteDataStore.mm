@@ -430,6 +430,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (void)_setPrivateClickMeasurementDebugModeEnabled:(BOOL)enabled
+{
+    _websiteDataStore->setPrivateClickMeasurementDebugMode(enabled);
+}
+
 - (NSUInteger)_perOriginStorageQuota
 {
     return 0;

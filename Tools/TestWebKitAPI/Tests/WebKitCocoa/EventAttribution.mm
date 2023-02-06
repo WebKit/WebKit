@@ -550,11 +550,11 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
     Vector<String> consoleMessages;
     auto webView = webViewWithOpenInspector(configuration);
     setInjectedBundleClient(webView.get(), consoleMessages);
-    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Debug Mode on.");
-    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:NO];
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:NO];
     while (consoleMessages.size() < 2)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");
@@ -583,7 +583,7 @@ static void setupSKAdNetworkTest(Vector<String>& consoleMessages, id<WKNavigatio
     }
 
     setInjectedBundleClient(webView.get(), consoleMessages);
-    [viewConfiguration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
+    [viewConfiguration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
 
     [webView synchronouslyLoadHTMLString:@"<body>"
         "<a href='https://apps.apple.com/app/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a>"
@@ -636,11 +636,11 @@ TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
     Vector<String> consoleMessages;
     auto webView = webViewWithOpenInspector(configuration);
     setInjectedBundleClient(webView.get(), consoleMessages);
-    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:YES];
     while (consoleMessages.isEmpty())
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Debug Mode on.");
-    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:NO];
+    [configuration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabled:NO];
     while (consoleMessages.size() < 2)
         Util::spinRunLoop();
     EXPECT_WK_STREQ(consoleMessages[1], "[Private Click Measurement] Turned Debug Mode off.");

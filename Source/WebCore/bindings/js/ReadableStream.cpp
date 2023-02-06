@@ -31,6 +31,7 @@
 #include "JSDOMConvertSequences.h"
 #include "JSReadableStreamSink.h"
 #include "JSReadableStreamSource.h"
+#include "WebCoreJSBuiltinInternals.h"
 #include "WebCoreJSClientData.h"
 
 
