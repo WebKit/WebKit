@@ -31,6 +31,7 @@
 
 #include "WebGPUPresentationContextImpl.h"
 #include <WebGPU/WebGPU.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
@@ -60,10 +61,12 @@ public:
         m_presentationContext = &presentationContext;
     }
 
-    void registerCallbacks(WTF::Function<void(CFArrayRef)>&& renderBuffersWereRecreatedCallback)
+    void registerCallbacks(WTF::Function<void(CFArrayRef)>&& renderBuffersWereRecreatedCallback, WTF::Function<void(CompletionHandler<void()>&&)>&& onSubmittedWorkScheduledCallback)
     {
         ASSERT(!m_renderBuffersWereRecreatedCallback);
         m_renderBuffersWereRecreatedCallback = WTFMove(renderBuffersWereRecreatedCallback);
+        ASSERT(!m_onSubmittedWorkScheduledCallback);
+        m_onSubmittedWorkScheduledCallback = WTFMove(onSubmittedWorkScheduledCallback);
     }
 
 private:
@@ -84,6 +87,8 @@ private:
     Vector<RetainPtr<IOSurfaceRef>> m_renderBuffers;
     WTF::Function<void(CFArrayRef)> m_renderBuffersWereRecreatedCallback;
 #endif
+
+    WTF::Function<void(CompletionHandler<void()>&&)> m_onSubmittedWorkScheduledCallback;
 
     RefPtr<PresentationContextImpl> m_presentationContext;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

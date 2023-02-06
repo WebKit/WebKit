@@ -43,6 +43,8 @@ Ref<PresentationContextIOSurface> PresentationContextIOSurface::create(const WGP
     const auto& descriptor = *reinterpret_cast<const WGPUSurfaceDescriptorCocoaCustomSurface*>(surfaceDescriptor.nextInChain);
     descriptor.compositorIntegrationRegister([presentationContext = presentationContextIOSurface.copyRef()](CFArrayRef ioSurfaces) {
         presentationContext->renderBuffersWereRecreated(bridge_cast(ioSurfaces));
+    }, [presentationContext = presentationContextIOSurface.copyRef()](WGPUWorkItem workItem) {
+        presentationContext->onSubmittedWorkScheduled(makeBlockPtr(WTFMove(workItem)));
     });
 
     return presentationContextIOSurface;
@@ -60,6 +62,14 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
     m_renderBuffers.clear();
 }
 
+void PresentationContextIOSurface::onSubmittedWorkScheduled(CompletionHandler<void()>&& completionHandler)
+{
+    if (m_device)
+        m_device->getQueue().onSubmittedWorkScheduled(WTFMove(completionHandler));
+    else
+        completionHandler();
+}
+
 void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChainDescriptor& descriptor)
 {
     m_renderBuffers.clear();
@@ -70,6 +80,8 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
 
     if (descriptor.format != WGPUTextureFormat_BGRA8Unorm)
         return;
+
+    m_device = &device;
 
     WGPUTextureDescriptor wgpuTextureDescriptor = {
         nullptr,
@@ -113,6 +125,7 @@ void PresentationContextIOSurface::unconfigure()
     m_ioSurfaces = nil;
     m_renderBuffers.clear();
     m_currentIndex = 0;
+    m_device = nullptr;
 }
 
 void PresentationContextIOSurface::present()

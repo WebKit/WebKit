@@ -66,12 +66,19 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
     }).get());
 }
 
+static WTF::Function<void(CompletionHandler<void()>&&)> convert(WGPUOnSubmittedWorkScheduledCallback&& onSubmittedWorkScheduledCallback)
+{
+    return [onSubmittedWorkScheduledCallback = makeBlockPtr(WTFMove(onSubmittedWorkScheduledCallback))](CompletionHandler<void()>&& completionHandler) {
+        onSubmittedWorkScheduledCallback(makeBlockPtr(WTFMove(completionHandler)).get());
+    };
+}
+
 Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationContextDescriptor& presentationContextDescriptor)
 {
     auto& compositorIntegration = m_convertToBackingContext->convertToBacking(presentationContextDescriptor.compositorIntegration);
 
-    auto registerCallbacksBlock = BlockPtr<void(WGPURenderBuffersWereRecreatedBlockCallback)>::fromCallable([&](WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreatedCallback) {
-        compositorIntegration.registerCallbacks(BlockPtr<void(CFArrayRef)>(renderBuffersWereRecreatedCallback));
+    auto registerCallbacksBlock = makeBlockPtr([&](WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreatedCallback, WGPUOnSubmittedWorkScheduledCallback onSubmittedWorkScheduledCallback) {
+        compositorIntegration.registerCallbacks(makeBlockPtr(WTFMove(renderBuffersWereRecreatedCallback)), convert(WTFMove(onSubmittedWorkScheduledCallback)));
     });
 
     WGPUSurfaceDescriptorCocoaCustomSurface cocoaSurface {
