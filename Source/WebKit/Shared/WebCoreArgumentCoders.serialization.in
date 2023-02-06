@@ -3846,3 +3846,76 @@ struct WebCore::ServiceWorkerJobData {
 };
 
 #endif //ENABLE(SERVICE_WORKER)
+
+struct WebCore::EventInit {
+    bool bubbles;
+    bool cancelable;
+    bool composed;
+};
+
+struct WebCore::MessageWithMessagePorts {
+    RefPtr<WebCore::SerializedScriptValue> message;
+    Vector<WebCore::TransferredMessagePort> transferredPorts;
+};
+
+enum class WebCore::StorageAccessWasGranted : bool
+
+enum class WebCore::StorageAccessPromptWasShown : bool
+
+enum class WebCore::StorageAccessScope : bool
+
+enum class WebCore::StorageAccessQuickResult : bool
+
+header: <WebCore/DocumentStorageAccess.h>
+[CustomHeader] struct WebCore::RequestStorageAccessResult {
+    WebCore::StorageAccessWasGranted wasGranted;
+    WebCore::StorageAccessPromptWasShown promptWasShown;
+    WebCore::StorageAccessScope scope;
+    WebCore::RegistrableDomain topFrameDomain;
+    WebCore::RegistrableDomain subFrameDomain;
+};
+
+class WebCore::Exception {
+    WebCore::ExceptionCode code();
+    String message();
+};
+
+struct WebCore::ExceptionData {
+    WebCore::ExceptionCode code;
+    String message;
+};
+
+struct WebCore::MessagePortIdentifier {
+    WebCore::ProcessIdentifier processIdentifier;
+    WebCore::PortIdentifier portIdentifier;
+};
+
+header: <WebCore/SecurityPolicyViolationEvent.h>
+[CustomHeader] struct WebCore::SecurityPolicyViolationEventInit : WebCore::EventInit {
+    String documentURI;
+    String referrer;
+    String blockedURI;
+    String violatedDirective;
+    String effectiveDirective;
+    String originalPolicy;
+    String sourceFile;
+    String sample;
+    WebCore::SecurityPolicyViolationEventDisposition disposition;
+    unsigned short statusCode;
+    unsigned lineNumber;
+    unsigned columnNumber;
+};
+
+[RefCounted] class WebCore::CSPViolationReportBody {
+    String documentURL();
+    String referrer();
+    String blockedURL();
+    String effectiveDirective();
+    String originalPolicy();
+    String sourceFile();
+    String sample();
+    WebCore::SecurityPolicyViolationEventDisposition disposition();
+    unsigned short statusCode();
+    unsigned long lineNumber();
+    unsigned long columnNumber();
+};

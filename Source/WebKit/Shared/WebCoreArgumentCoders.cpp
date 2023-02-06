@@ -1096,7 +1096,7 @@ void ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::encode(Encoder& enco
 {
     encoder << !!instance;
     if (instance)
-        encoder << instance->wireBytes();
+        instance->encode(encoder);
 }
 
 std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::decode(Decoder& decoder)
@@ -1109,12 +1109,11 @@ std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCo
     if (!*nonEmpty)
         return nullptr;
 
-    std::optional<Vector<uint8_t>> wireBytes;
-    decoder >> wireBytes;
-    if (!wireBytes)
+    RefPtr<SerializedScriptValue> scriptValue = SerializedScriptValue::decode(decoder);
+    if (!scriptValue)
         return std::nullopt;
 
-    return SerializedScriptValue::createFromWireBytes(WTFMove(*wireBytes));
+    return { scriptValue };
 }
 
 #if ENABLE(SERVICE_WORKER)
@@ -2289,7 +2288,7 @@ void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const 
 
     switch (reportBody->reportBodyType()) {
     case ViolationReportType::ContentSecurityPolicy:
-        downcast<CSPViolationReportBody>(reportBody.get())->encode(encoder);
+        encoder << *downcast<CSPViolationReportBody>(reportBody.get());
         return;
     case ViolationReportType::COEPInheritenceViolation:
         downcast<COEPInheritenceViolationReportBody>(reportBody.get())->encode(encoder);
@@ -2328,8 +2327,11 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
         return std::nullopt;
 
     switch (*reportBodyType) {
-    case ViolationReportType::ContentSecurityPolicy:
-        return CSPViolationReportBody::decode(decoder);
+    case ViolationReportType::ContentSecurityPolicy: {
+        std::optional<RefPtr<CSPViolationReportBody>> cspViolationReportBody;
+        decoder >> cspViolationReportBody;
+        return cspViolationReportBody;
+    }
     case ViolationReportType::COEPInheritenceViolation:
         return COEPInheritenceViolationReportBody::decode(decoder);
     case ViolationReportType::CORPViolation:

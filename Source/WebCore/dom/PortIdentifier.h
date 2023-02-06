@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,11 @@
 
 #pragma once
 
+#include "ProcessIdentifier.h"
+
 namespace WebCore {
 
-struct EventInit {
-    bool bubbles { false };
-    bool cancelable { false };
-    bool composed { false };
-};
+enum PortIdentifierType { };
+using PortIdentifier = ObjectIdentifier<PortIdentifierType>;
 
 }

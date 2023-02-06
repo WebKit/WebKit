@@ -242,6 +242,7 @@ def serialized_identifiers():
         'WebCore::PageIdentifier',
         'WebCore::PlaybackTargetClientContextIdentifier',
         'WebCore::PushSubscriptionIdentifier',
+        'WebCore::PortIdentifier',
         'WebCore::ProcessIdentifier',
         'WebCore::RealtimeMediaSourceIdentifier',
         'WebCore::RenderingResourceIdentifier',
