@@ -30,11 +30,9 @@
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
 #include "ContextProviderInlines.h"
+#include "TypeStore.h"
 #include "Types.h"
 #include <wtf/DataLog.h>
-#include <wtf/FixedVector.h>
-#include <wtf/SetForScope.h>
-#include <wtf/Vector.h>
 
 namespace WGSL {
 
@@ -87,66 +85,21 @@ private:
     void inferred(Type*);
     void unify(Type*, Type*);
 
-    template<typename TypeKind, typename... Arguments>
-    Type* allocateType(Arguments&&...);
-
     AST::ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
 
-    WTF::Vector<std::unique_ptr<Type>> m_types;
-    Type* m_abstractInt;
-    Type* m_abstractFloat;
-    Type* m_void;
-    Type* m_bool;
-    Type* m_i32;
-    Type* m_u32;
-    Type* m_f32;
-    FixedVector<TypeConstructor> m_typeConstrutors;
+    // FIXME: move this into a class that contains the AST
+    TypeStore m_types;
 };
 
 TypeChecker::TypeChecker(AST::ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
-    , m_typeConstrutors(AST::ParameterizedTypeName::NumberOfBaseTypes)
 {
-    m_abstractInt = allocateType<Primitive>(Primitive::AbstractInt);
-    m_abstractFloat = allocateType<Primitive>(Primitive::AbstractFloat);
-    m_void = allocateType<Primitive>(Primitive::Void);
-    m_bool = allocateType<Primitive>(Primitive::Bool);
-    m_i32 = allocateType<Primitive>(Primitive::I32);
-    m_u32 = allocateType<Primitive>(Primitive::U32);
-    m_f32 = allocateType<Primitive>(Primitive::F32);
-
-    ContextProvider::introduceVariable(AST::Identifier::make("void"_s), m_void);
-    ContextProvider::introduceVariable(AST::Identifier::make("bool"_s), m_bool);
-    ContextProvider::introduceVariable(AST::Identifier::make("i32"_s), m_i32);
-    ContextProvider::introduceVariable(AST::Identifier::make("u32"_s), m_u32);
-    ContextProvider::introduceVariable(AST::Identifier::make("f32"_s), m_f32);
-
-#define FOR_EACH_BASE(f) \
-    f(Vec2, Vector, static_cast<uint8_t>(2)) \
-    f(Vec3, Vector, static_cast<uint8_t>(3)) \
-    f(Vec4, Vector, static_cast<uint8_t>(4)) \
-    f(Mat2x2, Matrix, static_cast<uint8_t>(2), static_cast<uint8_t>(2)) \
-    f(Mat2x3, Matrix, static_cast<uint8_t>(2), static_cast<uint8_t>(3)) \
-    f(Mat2x4, Matrix, static_cast<uint8_t>(2), static_cast<uint8_t>(4)) \
-    f(Mat3x2, Matrix, static_cast<uint8_t>(3), static_cast<uint8_t>(2)) \
-    f(Mat3x3, Matrix, static_cast<uint8_t>(3), static_cast<uint8_t>(3)) \
-    f(Mat3x4, Matrix, static_cast<uint8_t>(3), static_cast<uint8_t>(4)) \
-    f(Mat4x2, Matrix, static_cast<uint8_t>(4), static_cast<uint8_t>(2)) \
-    f(Mat4x3, Matrix, static_cast<uint8_t>(4), static_cast<uint8_t>(3)) \
-    f(Mat4x4, Matrix, static_cast<uint8_t>(4), static_cast<uint8_t>(4))
-
-#define DEFINE_TYPE_CONSTRUCTOR(base, type, ...) \
-    m_typeConstrutors[WTF::enumToUnderlyingType(AST::ParameterizedTypeName::Base::base)] = \
-        TypeConstructor { [this](Type* elementType) -> Type* { \
-            /* FIXME: this should be cached */ \
-            return allocateType<type>(elementType, __VA_ARGS__); \
-        } };
-
-    FOR_EACH_BASE(DEFINE_TYPE_CONSTRUCTOR)
-
-#undef DEFINE_TYPE_CONSTRUCTOR
-#undef FOR_EACH_BASE
+    introduceVariable(AST::Identifier::make("void"_s), m_types.voidType());
+    introduceVariable(AST::Identifier::make("bool"_s), m_types.boolType());
+    introduceVariable(AST::Identifier::make("i32"_s), m_types.i32Type());
+    introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
+    introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
 }
 
 void TypeChecker::check()
@@ -169,8 +122,8 @@ void TypeChecker::check()
 // Declarations
 void TypeChecker::visit(AST::Structure& structure)
 {
-    Type* structType = allocateType<Struct>(structure.name());
-    ContextProvider::introduceVariable(structure.name(), structType);
+    Type* structType = m_types.structType(structure.name());
+    introduceVariable(structure.name(), structType);
 }
 
 void TypeChecker::visit(AST::Variable& variable)
@@ -185,14 +138,14 @@ void TypeChecker::visit(AST::Variable& variable)
         else
             result = initializerType;
     }
-    ContextProvider::introduceVariable(variable.name(), result);
+    introduceVariable(variable.name(), result);
 }
 
 void TypeChecker::visit(AST::Function& function)
 {
     // FIXME: allocate and build function type fromp parameters and return type
     Type* functionType = nullptr;
-    ContextProvider::introduceVariable(function.name(), functionType);
+    introduceVariable(function.name(), functionType);
 }
 
 void TypeChecker::visitFunctionBody(AST::Function& function)
@@ -263,7 +216,7 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
 {
-    auto* const* type = ContextProvider::readVariable(identifier.identifier());
+    auto* const* type = readVariable(identifier.identifier());
     // FIXME: report error about unknown identifier
     ASSERT(type);
     inferred(*type);
@@ -279,32 +232,32 @@ void TypeChecker::visit(AST::CallExpression& call)
 // Literal Expressions
 void TypeChecker::visit(AST::BoolLiteral&)
 {
-    inferred(m_bool);
+    inferred(m_types.boolType());
 }
 
 void TypeChecker::visit(AST::Signed32Literal&)
 {
-    inferred(m_i32);
+    inferred(m_types.i32Type());
 }
 
 void TypeChecker::visit(AST::Float32Literal&)
 {
-    inferred(m_f32);
+    inferred(m_types.f32Type());
 }
 
 void TypeChecker::visit(AST::Unsigned32Literal&)
 {
-    inferred(m_u32);
+    inferred(m_types.u32Type());
 }
 
 void TypeChecker::visit(AST::AbstractIntegerLiteral&)
 {
-    inferred(m_abstractInt);
+    inferred(m_types.abstractIntType());
 }
 
 void TypeChecker::visit(AST::AbstractFloatLiteral&)
 {
-    inferred(m_abstractFloat);
+    inferred(m_types.abstractFloatType());
 }
 
 // Types
@@ -318,7 +271,7 @@ void TypeChecker::visit(AST::TypeName&)
 void TypeChecker::visit(AST::ArrayTypeName&)
 {
     // FIXME: implement this
-    inferred(m_void);
+    inferred(m_types.voidType());
 }
 
 void TypeChecker::visit(AST::NamedTypeName& namedType)
@@ -332,7 +285,7 @@ void TypeChecker::visit(AST::NamedTypeName& namedType)
 void TypeChecker::visit(AST::ParameterizedTypeName&)
 {
     // FIXME: implement this
-    inferred(m_void);
+    inferred(m_types.voidType());
 }
 
 void TypeChecker::visit(AST::StructTypeName& structType)
@@ -405,13 +358,6 @@ void TypeChecker::unify(Type* lhs, Type* rhs)
     // FIXME: Implement all the rules and report a type error otherwise
     if (lhs == rhs)
         return;
-}
-
-template<typename TypeKind, typename... Arguments>
-Type* TypeChecker::allocateType(Arguments&&... arguments)
-{
-    m_types.append(std::unique_ptr<Type>(new Type(TypeKind { std::forward<Arguments>(arguments)... })));
-    return m_types.last().get();
 }
 
 void typeCheck(AST::ShaderModule& shaderModule)

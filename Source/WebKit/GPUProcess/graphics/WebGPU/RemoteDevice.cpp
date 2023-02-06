@@ -130,20 +130,6 @@ void RemoteDevice::createTexture(const WebGPU::TextureDescriptor& descriptor, We
     m_objectHeap.addObject(identifier, remoteTexture);
 }
 
-void RemoteDevice::createSurfaceTexture(WebGPUIdentifier presentationContextIdentifier, const WebGPU::TextureDescriptor& descriptor, WebGPUIdentifier identifier)
-{
-    auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
-    if (!convertedDescriptor)
-        return;
-
-    auto presentationContext = m_objectHeap.convertPresentationContextFromBacking(presentationContextIdentifier);
-    ASSERT(presentationContext);
-    auto texture = m_backing->createSurfaceTexture(*convertedDescriptor, *presentationContext);
-    auto remoteTexture = RemoteTexture::create(texture, m_objectHeap, m_streamConnection.copyRef(), identifier);
-    m_objectHeap.addObject(identifier, remoteTexture);
-}
-
 void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, WebGPUIdentifier identifier)
 {
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);

@@ -118,11 +118,6 @@ Ref<GPUTexture> GPUDevice::createTexture(const GPUTextureDescriptor& textureDesc
     return GPUTexture::create(m_backing->createTexture(textureDescriptor.convertToBacking()));
 }
 
-Ref<GPUTexture> GPUDevice::createSurfaceTexture(const GPUTextureDescriptor& textureDescriptor, const GPUPresentationContext& presentationContext)
-{
-    return GPUTexture::create(m_backing->createSurfaceTexture(textureDescriptor.convertToBacking(), presentationContext.backing()));
-}
-
 static PAL::WebGPU::SamplerDescriptor convertToBacking(const std::optional<GPUSamplerDescriptor>& samplerDescriptor)
 {
     if (!samplerDescriptor) {

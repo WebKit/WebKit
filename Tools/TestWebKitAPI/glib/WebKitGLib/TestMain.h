@@ -206,11 +206,12 @@ public:
 
     static WebKitWebView* createWebView(WebKitWebView* relatedView)
     {
-#if PLATFORM(GTK)
-        return WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(relatedView));
-#elif PLATFORM(WPE)
-        return webkit_web_view_new_with_related_view(createWebViewBackend(), relatedView);
+        return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+#if PLATFORM(WPE)
+            "backend", createWebViewBackend(),
 #endif
+            "related-view", relatedView,
+            nullptr));
     }
 
     static WebKitWebView* createWebView(WebKitUserContentManager* contentManager)

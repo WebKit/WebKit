@@ -462,8 +462,12 @@ static void webViewReadyToShow(WebKitWebView *webView, BrowserWindow *window)
 
 static GtkWidget *webViewCreate(WebKitWebView *webView, WebKitNavigationAction *navigation, BrowserWindow *window)
 {
-    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(webView));
-    webkit_web_view_set_settings(newWebView, webkit_web_view_get_settings(webView));
+    WebKitWebView *newWebView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+        "related-view", webView,
+        "settings", webkit_web_view_get_settings(webView),
+        "user-content-manager", webkit_web_view_get_user_content_manager(webView),
+        "website-policies", webkit_web_view_get_website_policies(webView),
+        NULL));
 
 #if GTK_CHECK_VERSION(3, 98, 0)
     GtkWidget *newWindow = browser_window_new(GTK_WINDOW(window), window->webContext, window->networkSession);
@@ -795,7 +799,13 @@ static void openPrivateWindow(GSimpleAction *action, GVariant *parameter, gpoint
 #if GTK_CHECK_VERSION(3, 98, 0)
     WebKitNetworkSession *networkSession = NULL;
     if (!webkit_web_view_is_controlled_by_automation(webView)) {
+        WebKitWebsiteDataManager *manager;
+
         networkSession = webkit_network_session_new_ephemeral();
+
+        manager = webkit_network_session_get_website_data_manager(networkSession);
+        webkit_website_data_manager_set_favicons_enabled(manager, TRUE);
+
         webkit_network_session_set_tls_errors_policy(networkSession, webkit_network_session_get_tls_errors_policy(window->networkSession));
         // FIXME: we need public api to get proxy settings.
     }

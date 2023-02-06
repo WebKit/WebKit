@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,49 @@
 
 #pragma once
 
-#import "PresentationContext.h"
-#import <wtf/Vector.h>
-#import <wtf/spi/cocoa/IOSurfaceSPI.h>
+#include "Types.h"
+#include <wtf/FixedVector.h>
+#include <wtf/Vector.h>
 
-namespace WebGPU {
+namespace WGSL {
 
-class PresentationContextIOSurface : public PresentationContext {
-    WTF_MAKE_FAST_ALLOCATED;
+namespace AST {
+class Identifier;
+}
+
+class TypeStore {
 public:
-    static Ref<PresentationContextIOSurface> create(const WGPUSurfaceDescriptor&);
+    TypeStore();
 
-    virtual ~PresentationContextIOSurface();
+    Type* voidType() const { return m_i32; }
+    Type* boolType() const { return m_i32; }
 
-    void configure(Device&, const WGPUSwapChainDescriptor&) override;
-    void unconfigure() override;
+    Type* abstractIntType() const { return m_i32; }
+    Type* i32Type() const { return m_i32; }
+    Type* u32Type() const { return m_i32; }
 
-    void present() override;
-    Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.
-    TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
+    Type* abstractFloatType() const { return m_i32; }
+    Type* f32Type() const { return m_i32; }
 
-    bool isPresentationContextIOSurface() const override { return true; }
+    Type* structType(const AST::Identifier& name);
 
 private:
-    PresentationContextIOSurface(const WGPUSurfaceDescriptor&);
+    template<typename TypeKind, typename... Arguments>
+    Type* allocateType(Arguments&&...);
 
-    void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
+    template<typename TargetType, typename Base, typename... Arguments>
+    void allocateConstructor(Base, Arguments&&...);
 
-    NSArray<IOSurface *> *m_ioSurfaces { nil };
-    struct RenderBuffer {
-        Ref<Texture> texture;
-        Ref<TextureView> textureView;
-    };
-    Vector<RenderBuffer> m_renderBuffers;
-    size_t m_currentIndex { 0 };
+    WTF::Vector<std::unique_ptr<Type>> m_types;
+    FixedVector<TypeConstructor> m_typeConstrutors;
+
+    Type* m_abstractInt;
+    Type* m_abstractFloat;
+    Type* m_void;
+    Type* m_bool;
+    Type* m_i32;
+    Type* m_u32;
+    Type* m_f32;
 };
 
-} // namespace WebGPU
-
-SPECIALIZE_TYPE_TRAITS_WEBGPU_PRESENTATION_CONTEXT(PresentationContextIOSurface, isPresentationContextIOSurface());
+} // namespace WGSL

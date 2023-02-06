@@ -79,12 +79,6 @@ private:
 
     RefPtr<PAL::WebGPU::Texture> getCurrentTexture() final;
 
-    void present() final;
-
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
-#endif
-
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteGPUProxy> m_parent;

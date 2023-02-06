@@ -85,6 +85,7 @@ static void testWebViewWebContext(WebViewTest* test, gconstpointer)
     g_assert_true(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
 
     // Check that a web context given as construct parameter is ignored if a related view is also provided.
+    Test::removeLogFatalFlag(G_LOG_LEVEL_CRITICAL);
     webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
 #if PLATFORM(WPE)
         "backend", Test::createWebViewBackend(),
@@ -92,6 +93,7 @@ static void testWebViewWebContext(WebViewTest* test, gconstpointer)
         "web-context", webkit_web_context_get_default(),
         "related-view", test->m_webView,
         nullptr));
+    Test::addLogFatalFlag(G_LOG_LEVEL_CRITICAL);
     g_assert_true(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
 }
 
