@@ -479,3 +479,9 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #endif // HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
+
+#if USE(MEDIAPARSERD)
+@interface AVStreamDataParser (SandboxedParsing)
+@property (nonatomic) BOOL preferSandboxedParsing;
+@end
+#endif
