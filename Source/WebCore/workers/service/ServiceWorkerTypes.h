@@ -54,7 +54,7 @@ enum class ServiceWorkerState : uint8_t {
     Redundant,
 };
 
-enum class ServiceWorkerClientFrameType {
+enum class ServiceWorkerClientFrameType : uint8_t {
     Auxiliary,
     TopLevel,
     Nested,
@@ -81,48 +81,5 @@ using ServiceWorkerOrClientData = std::variant<ServiceWorkerData, ServiceWorkerC
 using ServiceWorkerOrClientIdentifier = std::variant<ServiceWorkerIdentifier, ScriptExecutionContextIdentifier>;
 
 } // namespace WebCore
-
-namespace WTF {
-
-template <> struct EnumTraits<WebCore::ServiceWorkerClientFrameType> {
-    using values = EnumValues<
-        WebCore::ServiceWorkerClientFrameType,
-        WebCore::ServiceWorkerClientFrameType::Auxiliary,
-        WebCore::ServiceWorkerClientFrameType::TopLevel,
-        WebCore::ServiceWorkerClientFrameType::Nested,
-        WebCore::ServiceWorkerClientFrameType::None
-    >;
-};
-
-template <> struct EnumTraits<WebCore::ServiceWorkerRegistrationState> {
-    using values = EnumValues<
-        WebCore::ServiceWorkerRegistrationState,
-        WebCore::ServiceWorkerRegistrationState::Installing,
-        WebCore::ServiceWorkerRegistrationState::Waiting,
-        WebCore::ServiceWorkerRegistrationState::Active
-    >;
-};
-
-template <> struct EnumTraits<WebCore::ServiceWorkerState> {
-    using values = EnumValues<
-        WebCore::ServiceWorkerState,
-        WebCore::ServiceWorkerState::Parsed,
-        WebCore::ServiceWorkerState::Installing,
-        WebCore::ServiceWorkerState::Installed,
-        WebCore::ServiceWorkerState::Activating,
-        WebCore::ServiceWorkerState::Activated,
-        WebCore::ServiceWorkerState::Redundant
-    >;
-};
-
-template <> struct EnumTraits<WebCore::ShouldNotifyWhenResolved> {
-    using values = EnumValues<
-        WebCore::ShouldNotifyWhenResolved,
-        WebCore::ShouldNotifyWhenResolved::No,
-        WebCore::ShouldNotifyWhenResolved::Yes
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -3753,3 +3753,96 @@ header: <WebCore/DragData.h>
     Correction,
     ShowCorrectionPanel,
 };
+
+#if ENABLE(SERVICE_WORKER)
+
+enum class WebCore::ServiceWorkerClientType : uint8_t {
+    Window,
+    Worker,
+    Sharedworker,
+    All
+};
+
+enum class WebCore::ServiceWorkerJobType : uint8_t {
+    Register,
+    Unregister,
+    Update,
+};
+
+enum class WebCore::ServiceWorkerRegistrationState : uint8_t {
+    Installing,
+    Waiting,
+    Active,
+};
+
+enum class WebCore::ServiceWorkerState : uint8_t {
+    Parsed,
+    Installing,
+    Installed,
+    Activating,
+    Activated,
+    Redundant,
+};
+
+enum class WebCore::ServiceWorkerClientFrameType : uint8_t {
+    Auxiliary,
+    TopLevel,
+    Nested,
+    None
+};
+
+enum class WebCore::ShouldNotifyWhenResolved : bool
+
+enum class WebCore::ServiceWorkerUpdateViaCache : uint8_t {
+    Imports,
+    All,
+    None,
+};
+
+struct WebCore::ServiceWorkerClientData {
+    WebCore::ScriptExecutionContextIdentifier identifier;
+    WebCore::ServiceWorkerClientType type;
+    WebCore::ServiceWorkerClientFrameType frameType;
+    URL url;
+    URL ownerURL;
+    std::optional<WebCore::PageIdentifier> pageIdentifier;
+    std::optional<WebCore::FrameIdentifier> frameIdentifier;
+    WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
+    bool isVisible;
+    bool isFocused;
+    uint64_t focusOrder;
+    Vector<String> ancestorOrigins;
+};
+
+struct WebCore::ServiceWorkerClientQueryOptions {
+    bool includeUncontrolled;
+    WebCore::ServiceWorkerClientType type;
+
+};
+
+struct WebCore::ServiceWorkerData {
+    WebCore::ServiceWorkerIdentifier identifier;
+    URL scriptURL;
+    WebCore::ServiceWorkerState state;
+    WebCore::WorkerType type;
+    WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier;
+};
+
+struct WebCore::ServiceWorkerJobData {
+    WebCore::ServiceWorkerJobDataIdentifier identifier();
+    URL scriptURL;
+    URL clientCreationURL;
+    WebCore::SecurityOriginData topOrigin;
+    URL scopeURL;
+    WebCore::ServiceWorkerOrClientIdentifier sourceContext;
+    WebCore::WorkerType workerType;
+
+    WebCore::ServiceWorkerJobType type;
+
+    String domainForCachePartition;
+    bool isFromServiceWorkerPage;
+
+    [Validator='( type == WebCore::ServiceWorkerJobType::Register && registrationOptions->has_value()) || (type != WebCore::ServiceWorkerJobType::Register && !registrationOptions->has_value() )'] std::optional<WebCore::ServiceWorkerRegistrationOptions> registrationOptions;
+};
+
+#endif //ENABLE(SERVICE_WORKER)
