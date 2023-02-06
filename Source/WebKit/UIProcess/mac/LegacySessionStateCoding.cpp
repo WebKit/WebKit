@@ -1133,7 +1133,7 @@ bool decodeLegacySessionState(const uint8_t* bytes, size_t size, SessionState& s
     if (size < sizeof(uint32_t))
         return false;
 
-    uint32_t versionNumber = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
+    uint32_t versionNumber = (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
 
     if (versionNumber != sessionStateDataVersion)
         return false;
