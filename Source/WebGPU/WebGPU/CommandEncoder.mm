@@ -104,8 +104,22 @@ CommandEncoder::~CommandEncoder()
 
 void CommandEncoder::ensureBlitCommandEncoder()
 {
-    if (!m_blitCommandEncoder)
-        m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
+    if (m_blitCommandEncoder && m_pendingTimestampWrites.isEmpty())
+        return;
+
+    auto pendingTimestampWrites = std::exchange(m_pendingTimestampWrites, { });
+    if (m_blitCommandEncoder && !pendingTimestampWrites.isEmpty())
+        finalizeBlitCommandEncoder();
+
+    MTLBlitPassDescriptor *descriptor = [MTLBlitPassDescriptor new];
+    ASSERT(pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
+    // FIXME: rdar://91371495 This approach won't actually work; we need to work around this limitation.
+    for (size_t i = 0; i < pendingTimestampWrites.size(); ++i) {
+        const auto& pendingTimestampWrite = pendingTimestampWrites[i];
+        descriptor.sampleBufferAttachments[i].sampleBuffer = pendingTimestampWrite.querySet->counterSampleBuffer();
+        descriptor.sampleBufferAttachments[i].startOfEncoderSampleIndex = pendingTimestampWrite.queryIndex;
+    }
+    m_blitCommandEncoder = [m_commandBuffer blitCommandEncoderWithDescriptor:descriptor];
 }
 
 void CommandEncoder::finalizeBlitCommandEncoder()
@@ -114,6 +128,23 @@ void CommandEncoder::finalizeBlitCommandEncoder()
         [m_blitCommandEncoder endEncoding];
         m_blitCommandEncoder = nil;
     }
+
+    if (!m_pendingTimestampWrites.isEmpty()) {
+        ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
+        ensureBlitCommandEncoder();
+        finalizeBlitCommandEncoder();
+    }
+}
+
+bool CommandEncoder::validateComputePassDescriptor(const WGPUComputePassDescriptor& descriptor) const
+{
+    // FIXME: Implement this according to
+    // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-begincomputepass.
+
+    if (descriptor.timestampWriteCount && !m_device->hasFeature(WGPUFeatureName_TimestampQuery))
+        return false;
+
+    return true;
 }
 
 Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
@@ -121,20 +152,46 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
     if (descriptor.nextInChain)
         return ComputePassEncoder::createInvalid(m_device);
 
-    MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor computePassDescriptor];
+    if (!validateComputePassDescriptor(descriptor))
+        return ComputePassEncoder::createInvalid(m_device);
+
+    finalizeBlitCommandEncoder();
+
+    MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor new];
     computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
+
+    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary) {
+        // FIXME: rdar://91371495 This approach won't actually work; we need to work around this limitation.
+        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
+            const auto& timestampWrite = descriptor.timestampWrites[i];
+            computePassDescriptor.sampleBufferAttachments[i].sampleBuffer = fromAPI(timestampWrite.querySet).counterSampleBuffer();
+            switch (timestampWrite.location) {
+            case WGPUComputePassTimestampLocation_Beginning:
+                computePassDescriptor.sampleBufferAttachments[i].startOfEncoderSampleIndex = timestampWrite.queryIndex;
+                break;
+            case WGPUComputePassTimestampLocation_End:
+                computePassDescriptor.sampleBufferAttachments[i].endOfEncoderSampleIndex = timestampWrite.queryIndex;
+                break;
+            case WGPUComputePassTimestampLocation_Force32:
+                ASSERT_NOT_REACHED();
+                return ComputePassEncoder::createInvalid(m_device);
+            }
+        }
+    }
 
     id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
     computeCommandEncoder.label = fromAPI(descriptor.label);
 
-    return ComputePassEncoder::create(computeCommandEncoder, m_device);
+    return ComputePassEncoder::create(computeCommandEncoder, descriptor, m_device);
 }
 
 bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor& descriptor) const
 {
     // FIXME: Implement this according to
     // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-beginrenderpass.
-    UNUSED_PARAM(descriptor);
+
+    if (descriptor.timestampWriteCount && !m_device->hasFeature(WGPUFeatureName_TimestampQuery))
+        return false;
 
     return true;
 }
@@ -147,10 +204,12 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     if (!validateRenderPassDescriptor(descriptor))
         return RenderPassEncoder::createInvalid(m_device);
 
-    MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor renderPassDescriptor];
+    MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor new];
 
     if (descriptor.colorAttachmentCount > 8)
         return RenderPassEncoder::createInvalid(m_device);
+
+    finalizeBlitCommandEncoder();
 
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
         const auto& attachment = descriptor.colorAttachments[i];
@@ -204,24 +263,28 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         visibilityResultBufferSize = occlusionQuery.visibilityBuffer().length;
     }
 
-    // FIXME: we can only implement a subset of what the WebGPU specification promises, basically
-    // the start and end times of the vertex and fragment stages
-    if (auto* timestampWrites = descriptor.timestampWrites) {
-        ASSERT(descriptor.timestampWriteCount > 0);
-        auto& timestampWrite = descriptor.timestampWrites[0];
-        auto& querySet = fromAPI(timestampWrite.querySet);
-
-        MTLRenderPassSampleBufferAttachmentDescriptor *sampleAttachment = mtlDescriptor.sampleBufferAttachments[0];
-        sampleAttachment.sampleBuffer = querySet.counterSampleBuffer();
-        sampleAttachment.startOfVertexSampleIndex = 0;
-        sampleAttachment.endOfVertexSampleIndex = 1;
-        sampleAttachment.startOfFragmentSampleIndex = 2;
-        sampleAttachment.endOfFragmentSampleIndex = 3;
+    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary) {
+        // FIXME: rdar://91371495 This approach won't actually work; we need to work around this limitation.
+        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
+            const auto& timestampWrite = descriptor.timestampWrites[i];
+            mtlDescriptor.sampleBufferAttachments[i].sampleBuffer = fromAPI(timestampWrite.querySet).counterSampleBuffer();
+            switch (timestampWrite.location) {
+            case WGPURenderPassTimestampLocation_Beginning:
+                mtlDescriptor.sampleBufferAttachments[i].startOfVertexSampleIndex = timestampWrite.queryIndex;
+                break;
+            case WGPURenderPassTimestampLocation_End:
+                mtlDescriptor.sampleBufferAttachments[i].endOfFragmentSampleIndex = timestampWrite.queryIndex;
+                break;
+            case WGPURenderPassTimestampLocation_Force32:
+                ASSERT_NOT_REACHED();
+                return RenderPassEncoder::createInvalid(m_device);
+            }
+        }
     }
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
 
-    return RenderPassEncoder::create(mtlRenderCommandEncoder, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, m_device);
+    return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, m_device);
 }
 
 bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
@@ -961,8 +1024,20 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
 
 void CommandEncoder::writeTimestamp(QuerySet& querySet, uint32_t queryIndex)
 {
-    UNUSED_PARAM(querySet);
-    UNUSED_PARAM(queryIndex);
+    // FIXME: Add validation.
+
+    if (!m_device->hasFeature(WGPUFeatureName_TimestampQuery))
+        return;
+
+    switch (m_device->baseCapabilities().counterSamplingAPI) {
+    case HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary:
+        m_pendingTimestampWrites.append({ querySet, queryIndex });
+        break;
+    case HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary:
+        ensureBlitCommandEncoder();
+        [m_blitCommandEncoder sampleCountersInBuffer:querySet.counterSampleBuffer() atSampleIndex:queryIndex withBarrier:NO];
+        break;
+    }
 }
 
 void CommandEncoder::setLabel(String&& label)

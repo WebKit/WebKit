@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,11 +50,23 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
             statisticCounterSet = counterSet;
     }
 
+    auto counterSamplingAPI = HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary;
+    if ([device supportsCounterSampling:MTLCounterSamplingPointAtBlitBoundary]
+        && [device supportsCounterSampling:MTLCounterSamplingPointAtDispatchBoundary]
+        && [device supportsCounterSampling:MTLCounterSamplingPointAtDrawBoundary])
+        counterSamplingAPI = HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary;
+    else if ([device supportsCounterSampling:MTLCounterSamplingPointAtStageBoundary])
+        counterSamplingAPI = HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary;
+    else
+        timestampCounterSet = nil;
+
     return {
         [device argumentBuffersSupport],
         false, // To be filled in by the caller.
         timestampCounterSet,
         statisticCounterSet,
+        false, // To be filled in by the caller.
+        counterSamplingAPI,
     };
 }
 
@@ -490,12 +502,14 @@ static HardwareCapabilities::BaseCapabilities mergeBaseCapabilities(const Hardwa
     ASSERT(previous.argumentBuffersTier == next.argumentBuffersTier);
     ASSERT(!previous.timestampCounterSet || [previous.timestampCounterSet isEqual:next.timestampCounterSet]);
     ASSERT(!previous.statisticCounterSet || [previous.statisticCounterSet isEqual:next.statisticCounterSet]);
+    ASSERT(previous.counterSamplingAPI == next.counterSamplingAPI);
     return {
         previous.argumentBuffersTier,
         previous.supportsNonPrivateDepthStencilTextures || next.supportsNonPrivateDepthStencilTextures,
         previous.timestampCounterSet,
         previous.statisticCounterSet,
         previous.canPresentRGB10A2PixelFormats || next.canPresentRGB10A2PixelFormats,
+        previous.counterSamplingAPI,
     };
 }
 

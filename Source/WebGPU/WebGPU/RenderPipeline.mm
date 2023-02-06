@@ -327,7 +327,7 @@ static MTLVertexStepFunction stepFunction(WGPUVertexStepMode stepMode)
 
 static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState)
 {
-    MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor vertexDescriptor];
+    MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor new];
 
     for (size_t bufferIndex = 0; bufferIndex < vertexState.bufferCount; ++bufferIndex) {
         auto& buffer = vertexState.buffers[bufferIndex];
