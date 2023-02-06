@@ -693,6 +693,11 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     webkit_network_session_set_itp_enabled(networkSession, enableITP);
 
     if (!automationMode) {
+        WebKitWebsiteDataManager *manager;
+
+        manager = webkit_network_session_get_website_data_manager(networkSession);
+        webkit_website_data_manager_set_favicons_enabled(manager, TRUE);
+
         if (proxy) {
             WebKitNetworkProxySettings *webkitProxySettings = webkit_network_proxy_settings_new(proxy, ignoreHosts);
             webkit_network_session_set_proxy_settings(networkSession, WEBKIT_NETWORK_PROXY_MODE_CUSTOM, webkitProxySettings);
@@ -769,7 +774,7 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
         webkit_cookie_manager_set_persistent_storage(cookieManager, cookiesFile, storageType);
     }
 
-    // Enable the favicon database. In GTK4 API they are enabled by default.
+    // Enable the favicon database.
     webkit_web_context_set_favicon_database_directory(webContext, NULL);
 #endif
 

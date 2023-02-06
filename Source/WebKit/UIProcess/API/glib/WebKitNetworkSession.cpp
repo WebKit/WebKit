@@ -144,11 +144,6 @@ static void webkitNetworkSessionConstructed(GObject* object)
 
     priv->tlsErrorsPolicy = WEBKIT_TLS_ERRORS_POLICY_FAIL;
     webkitWebsiteDataManagerGetDataStore(priv->websiteDataManager.get()).setIgnoreTLSErrors(false);
-
-#if PLATFORM(GTK)
-    // Enable favicons by default.
-    webkit_website_data_manager_set_favicons_enabled(priv->websiteDataManager.get(), TRUE);
-#endif
 }
 
 static void webkit_network_session_class_init(WebKitNetworkSessionClass* sessionClass)

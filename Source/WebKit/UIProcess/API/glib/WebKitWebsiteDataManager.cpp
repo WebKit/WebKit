@@ -1054,8 +1054,8 @@ static String webkitWebsiteDataManagerGetFaviconDatabasePath(WebKitWebsiteDataMa
  * @manager: a #WebKitWebsiteDataManager
  * @enabled: value to set
  *
- * Set whether website icons are enabled. Website icons are enabled by default.
- * When website icons are disabled, the #WebKitFaviconDatabase of @manager is closed
+ * Set whether website icons are enabled. Website icons are disabled by default.
+ * When website icons are disabled, the #WebKitFaviconDatabase of @manager is closed and
  * its reference removed, so webkit_website_data_manager_get_favicon_database() will
  * return %NULL. If website icons are enabled again, a new #WebKitFaviconDatabase will
  * be created.

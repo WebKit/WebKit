@@ -799,7 +799,13 @@ static void openPrivateWindow(GSimpleAction *action, GVariant *parameter, gpoint
 #if GTK_CHECK_VERSION(3, 98, 0)
     WebKitNetworkSession *networkSession = NULL;
     if (!webkit_web_view_is_controlled_by_automation(webView)) {
+        WebKitWebsiteDataManager *manager;
+
         networkSession = webkit_network_session_new_ephemeral();
+
+        manager = webkit_network_session_get_website_data_manager(networkSession);
+        webkit_website_data_manager_set_favicons_enabled(manager, TRUE);
+
         webkit_network_session_set_tls_errors_policy(networkSession, webkit_network_session_get_tls_errors_policy(window->networkSession));
         // FIXME: we need public api to get proxy settings.
     }
