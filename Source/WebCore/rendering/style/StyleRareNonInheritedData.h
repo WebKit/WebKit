@@ -108,6 +108,7 @@ public:
 
     OptionSet<Containment> effectiveContainment() const;
 
+    // This is here to pack in with m_refCount.
     float opacity;
 
     double aspectRatioWidth;
@@ -116,9 +117,6 @@ public:
     std::optional<Length> containIntrinsicWidth;
     std::optional<Length> containIntrinsicHeight;
 
-    OptionSet<Containment> contain;
-
-    float perspective;
     Length perspectiveOriginX;
     Length perspectiveOriginY;
 
@@ -142,12 +140,6 @@ public:
 
     LengthBox scrollMargin { 0, 0, 0, 0 };
     LengthBox scrollPadding { Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto) };
-    ScrollSnapType scrollSnapType;
-    ScrollSnapAlign scrollSnapAlign;
-    ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
-
-    unsigned overscrollBehaviorX : 2; // OverscrollBehavior
-    unsigned overscrollBehaviorY : 2; // OverscrollBehavior
 
     std::unique_ptr<ContentData> content;
     std::unique_ptr<CounterDirectiveMap> counterDirectives;
@@ -172,6 +164,7 @@ public:
     Length shapeMargin;
     float shapeImageThreshold;
 
+    float perspective;
     int order;
 
     RefPtr<PathOperation> clipPath;
@@ -186,9 +179,9 @@ public:
     StyleColor visitedLinkBorderBottomColor;
 
     StyleContentAlignmentData alignContent;
+    StyleContentAlignmentData justifyContent;
     StyleSelfAlignmentData alignItems;
     StyleSelfAlignmentData alignSelf;
-    StyleContentAlignmentData justifyContent;
     StyleSelfAlignmentData justifyItems;
     StyleSelfAlignmentData justifySelf;
 
@@ -200,9 +193,28 @@ public:
     RefPtr<TranslateTransformOperation> translate;
     RefPtr<PathOperation> offsetPath;
 
-    OptionSet<TouchAction> touchActions;
+    Vector<AtomString> containerNames;
 
+    GapLength columnGap;
+    GapLength rowGap;
+
+    Length offsetDistance;
+    LengthPoint offsetPosition;
+    LengthPoint offsetAnchor;
+    OffsetRotation offsetRotate;
+
+    TextDecorationThickness textDecorationThickness;
+
+    OptionSet<TouchAction> touchActions;
     OptionSet<MarginTrimType> marginTrim;
+    OptionSet<Containment> contain;
+
+    ScrollSnapType scrollSnapType;
+    ScrollSnapAlign scrollSnapAlign;
+    ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
+
+    unsigned overscrollBehaviorX : 2; // OverscrollBehavior
+    unsigned overscrollBehaviorY : 2; // OverscrollBehavior
 
     unsigned pageSizeType : 2; // PageSizeType
     unsigned transformStyle3D : 2; // TransformStyle3D
@@ -216,7 +228,6 @@ public:
     unsigned effectiveAppearance : appearanceBitWidth; // EAppearance
 
     unsigned textDecorationStyle : 3; // TextDecorationStyle
-    TextDecorationThickness textDecorationThickness;
 
     unsigned textGroupAlign : 3; // TextGroupAlign
 
@@ -254,16 +265,6 @@ public:
     unsigned leadingTrim : 2; // LeadingTrim
 
     unsigned overflowAnchor : 1; // Scroll Anchoring- OverflowAnchor
-
-    Vector<AtomString> containerNames;
-
-    GapLength columnGap;
-    GapLength rowGap;
-
-    Length offsetDistance;
-    LengthPoint offsetPosition;
-    LengthPoint offsetAnchor;
-    OffsetRotation offsetRotate;
 
 private:
     StyleRareNonInheritedData();

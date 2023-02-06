@@ -45,8 +45,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , aspectRatioHeight(RenderStyle::initialAspectRatioHeight())
     , containIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth())
     , containIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight())
-    , contain(RenderStyle::initialContainment())
-    , perspective(RenderStyle::initialPerspective())
     , perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
     , lineClamp(RenderStyle::initialLineClamp())
@@ -62,32 +60,62 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
 #endif
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
-    , overscrollBehaviorX(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorX()))
-    , overscrollBehaviorY(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorY()))
+    // scrollMargin
+    // scrollPadding
+    // content
+    // counterDirectives
+    // altText
+    // boxShadow
     , willChange(RenderStyle::initialWillChange())
+    // boxReflect
+    // animations
+    // transitions
     , mask(FillLayer::create(FillLayerType::Mask))
     , maskBoxImage(NinePieceImage::Type::Mask)
+    // pageSize
     , objectPosition(RenderStyle::initialObjectPosition())
     , shapeOutside(RenderStyle::initialShapeOutside())
     , shapeMargin(RenderStyle::initialShapeMargin())
     , shapeImageThreshold(RenderStyle::initialShapeImageThreshold())
+    , perspective(RenderStyle::initialPerspective())
     , order(RenderStyle::initialOrder())
     , clipPath(RenderStyle::initialClipPath())
     , textDecorationColor(RenderStyle::initialTextDecorationColor())
+    // visitedLinkTextDecorationColor
     , visitedLinkBackgroundColor(RenderStyle::initialBackgroundColor())
+    // visitedLinkOutlineColor;
+    // visitedLinkBorderLeftColor
+    // visitedLinkBorderRightColor
+    // visitedLinkBorderTopColor
+    // visitedLinkBorderBottomColor
     , alignContent(RenderStyle::initialContentAlignment())
+    , justifyContent(RenderStyle::initialContentAlignment())
     , alignItems(RenderStyle::initialDefaultAlignment())
     , alignSelf(RenderStyle::initialSelfAlignment())
-    , justifyContent(RenderStyle::initialContentAlignment())
     , justifyItems(RenderStyle::initialJustifyItems())
     , justifySelf(RenderStyle::initialSelfAlignment())
     , customProperties(StyleCustomPropertyData::create())
+    // customPaintWatchedProperties
     , rotate(RenderStyle::initialRotate())
     , scale(RenderStyle::initialScale())
     , translate(RenderStyle::initialTranslate())
     , offsetPath(RenderStyle::initialOffsetPath())
+    // containerNames
+    , columnGap(RenderStyle::initialColumnGap())
+    , rowGap(RenderStyle::initialRowGap())
+    , offsetDistance(RenderStyle::initialOffsetDistance())
+    , offsetPosition(RenderStyle::initialOffsetPosition())
+    , offsetAnchor(RenderStyle::initialOffsetAnchor())
+    , offsetRotate(RenderStyle::initialOffsetRotate())
+    , textDecorationThickness(RenderStyle::initialTextDecorationThickness())
     , touchActions(RenderStyle::initialTouchActions())
     , marginTrim(RenderStyle::initialMarginTrim())
+    , contain(RenderStyle::initialContainment())
+    // scrollSnapType
+    // scrollSnapAlign
+    // scrollSnapStop
+    , overscrollBehaviorX(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorX()))
+    , overscrollBehaviorY(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorY()))
     , pageSizeType(PAGE_SIZE_AUTO)
     , transformStyle3D(static_cast<unsigned>(RenderStyle::initialTransformStyle3D()))
     , transformStyleForcedToFlat(false)
@@ -98,7 +126,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , appearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , effectiveAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , textDecorationStyle(static_cast<unsigned>(RenderStyle::initialTextDecorationStyle()))
-    , textDecorationThickness(RenderStyle::initialTextDecorationThickness())
     , textGroupAlign(static_cast<unsigned>(RenderStyle::initialTextGroupAlign()))
     , aspectRatioType(static_cast<unsigned>(RenderStyle::initialAspectRatioType()))
     , contentVisibility(static_cast<unsigned>(RenderStyle::initialContentVisibility()))
@@ -123,12 +150,6 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , containerType(static_cast<unsigned>(RenderStyle::initialContainerType()))
     , leadingTrim(static_cast<unsigned>(RenderStyle::initialLeadingTrim()))
     , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
-    , columnGap(RenderStyle::initialColumnGap())
-    , rowGap(RenderStyle::initialRowGap())
-    , offsetDistance(RenderStyle::initialOffsetDistance())
-    , offsetPosition(RenderStyle::initialOffsetPosition())
-    , offsetAnchor(RenderStyle::initialOffsetAnchor())
-    , offsetRotate(RenderStyle::initialOffsetRotate())
 {
 }
 
@@ -139,8 +160,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , aspectRatioHeight(o.aspectRatioHeight)
     , containIntrinsicWidth(o.containIntrinsicWidth)
     , containIntrinsicHeight(o.containIntrinsicHeight)
-    , contain(o.contain)
-    , perspective(o.perspective)
     , perspectiveOriginX(o.perspectiveOriginX)
     , perspectiveOriginY(o.perspectiveOriginY)
     , lineClamp(o.lineClamp)
@@ -158,11 +177,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , gridItem(o.gridItem)
     , scrollMargin(o.scrollMargin)
     , scrollPadding(o.scrollPadding)
-    , scrollSnapType(o.scrollSnapType)
-    , scrollSnapAlign(o.scrollSnapAlign)
-    , scrollSnapStop(o.scrollSnapStop)
-    , overscrollBehaviorX(o.overscrollBehaviorX)
-    , overscrollBehaviorY(o.overscrollBehaviorY)
     , content(o.content ? o.content->clone() : nullptr)
     , counterDirectives(o.counterDirectives ? makeUnique<CounterDirectiveMap>(*o.counterDirectives) : nullptr)
     , altText(o.altText)
@@ -178,6 +192,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , shapeOutside(o.shapeOutside)
     , shapeMargin(o.shapeMargin)
     , shapeImageThreshold(o.shapeImageThreshold)
+    , perspective(o.perspective)
     , order(o.order)
     , clipPath(o.clipPath)
     , textDecorationColor(o.textDecorationColor)
@@ -189,9 +204,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , visitedLinkBorderTopColor(o.visitedLinkBorderTopColor)
     , visitedLinkBorderBottomColor(o.visitedLinkBorderBottomColor)
     , alignContent(o.alignContent)
+    , justifyContent(o.justifyContent)
     , alignItems(o.alignItems)
     , alignSelf(o.alignSelf)
-    , justifyContent(o.justifyContent)
     , justifyItems(o.justifyItems)
     , justifySelf(o.justifySelf)
     , customProperties(o.customProperties)
@@ -200,8 +215,22 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scale(o.scale)
     , translate(o.translate)
     , offsetPath(o.offsetPath)
+    , containerNames(o.containerNames)
+    , columnGap(o.columnGap)
+    , rowGap(o.rowGap)
+    , offsetDistance(o.offsetDistance)
+    , offsetPosition(o.offsetPosition)
+    , offsetAnchor(o.offsetAnchor)
+    , offsetRotate(o.offsetRotate)
+    , textDecorationThickness(o.textDecorationThickness)
     , touchActions(o.touchActions)
     , marginTrim(o.marginTrim)
+    , contain(o.contain)
+    , scrollSnapType(o.scrollSnapType)
+    , scrollSnapAlign(o.scrollSnapAlign)
+    , scrollSnapStop(o.scrollSnapStop)
+    , overscrollBehaviorX(o.overscrollBehaviorX)
+    , overscrollBehaviorY(o.overscrollBehaviorY)
     , pageSizeType(o.pageSizeType)
     , transformStyle3D(o.transformStyle3D)
     , transformStyleForcedToFlat(o.transformStyleForcedToFlat)
@@ -212,7 +241,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , appearance(o.appearance)
     , effectiveAppearance(o.effectiveAppearance)
     , textDecorationStyle(o.textDecorationStyle)
-    , textDecorationThickness(o.textDecorationThickness)
     , textGroupAlign(o.textGroupAlign)
     , aspectRatioType(o.aspectRatioType)
     , contentVisibility(o.contentVisibility)
@@ -237,13 +265,6 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , containerType(o.containerType)
     , leadingTrim(o.leadingTrim)
     , overflowAnchor(o.overflowAnchor)
-    , containerNames(o.containerNames)
-    , columnGap(o.columnGap)
-    , rowGap(o.rowGap)
-    , offsetDistance(o.offsetDistance)
-    , offsetPosition(o.offsetPosition)
-    , offsetAnchor(o.offsetAnchor)
-    , offsetRotate(o.offsetRotate)
 {
 }
 
@@ -261,8 +282,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && aspectRatioHeight == o.aspectRatioHeight
         && containIntrinsicWidth == o.containIntrinsicWidth
         && containIntrinsicHeight == o.containIntrinsicHeight
-        && contain == o.contain
-        && perspective == o.perspective
         && perspectiveOriginX == o.perspectiveOriginX
         && perspectiveOriginY == o.perspectiveOriginY
         && lineClamp == o.lineClamp
@@ -280,11 +299,6 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && gridItem == o.gridItem
         && scrollMargin == o.scrollMargin
         && scrollPadding == o.scrollPadding
-        && scrollSnapType == o.scrollSnapType
-        && scrollSnapAlign == o.scrollSnapAlign
-        && scrollSnapStop == o.scrollSnapStop
-        && overscrollBehaviorX == o.overscrollBehaviorX
-        && overscrollBehaviorY == o.overscrollBehaviorY
         && contentDataEquivalent(o)
         && arePointingToEqualData(counterDirectives, o.counterDirectives)
         && altText == o.altText
@@ -300,6 +314,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && arePointingToEqualData(shapeOutside, o.shapeOutside)
         && shapeMargin == o.shapeMargin
         && shapeImageThreshold == o.shapeImageThreshold
+        && perspective == o.perspective
         && order == o.order
         && arePointingToEqualData(clipPath, o.clipPath)
         && textDecorationColor == o.textDecorationColor
@@ -311,13 +326,33 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && visitedLinkBorderTopColor == o.visitedLinkBorderTopColor
         && visitedLinkBorderBottomColor == o.visitedLinkBorderBottomColor
         && alignContent == o.alignContent
+        && justifyContent == o.justifyContent
         && alignItems == o.alignItems
         && alignSelf == o.alignSelf
-        && justifyContent == o.justifyContent
         && justifyItems == o.justifyItems
         && justifySelf == o.justifySelf
         && customProperties == o.customProperties
         && customPaintWatchedProperties == o.customPaintWatchedProperties
+        && arePointingToEqualData(rotate, o.rotate)
+        && arePointingToEqualData(scale, o.scale)
+        && arePointingToEqualData(translate, o.translate)
+        && arePointingToEqualData(offsetPath, o.offsetPath)
+        && containerNames == o.containerNames
+        && columnGap == o.columnGap
+        && rowGap == o.rowGap
+        && offsetDistance == o.offsetDistance
+        && offsetPosition == o.offsetPosition
+        && offsetAnchor == o.offsetAnchor
+        && offsetRotate == o.offsetRotate
+        && textDecorationThickness == o.textDecorationThickness
+        && touchActions == o.touchActions
+        && marginTrim == o.marginTrim
+        && contain == o.contain
+        && scrollSnapType == o.scrollSnapType
+        && scrollSnapAlign == o.scrollSnapAlign
+        && scrollSnapStop == o.scrollSnapStop
+        && overscrollBehaviorX == o.overscrollBehaviorX
+        && overscrollBehaviorY == o.overscrollBehaviorY
         && pageSizeType == o.pageSizeType
         && transformStyle3D == o.transformStyle3D
         && transformStyleForcedToFlat == o.transformStyleForcedToFlat
@@ -328,13 +363,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && appearance == o.appearance
         && effectiveAppearance == o.effectiveAppearance
         && textDecorationStyle == o.textDecorationStyle
-        && textDecorationThickness == o.textDecorationThickness
         && textGroupAlign == o.textGroupAlign
-        && arePointingToEqualData(rotate, o.rotate)
-        && arePointingToEqualData(scale, o.scale)
-        && arePointingToEqualData(translate, o.translate)
-        && arePointingToEqualData(offsetPath, o.offsetPath)
-        && touchActions == o.touchActions
 #if ENABLE(CSS_COMPOSITING)
         && effectiveBlendMode == o.effectiveBlendMode
         && isolation == o.isolation
@@ -356,16 +385,8 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && containIntrinsicWidthType == o.containIntrinsicWidthType
         && containIntrinsicHeightType == o.containIntrinsicHeightType
         && containerType == o.containerType
-        && containerNames == o.containerNames
-        && columnGap == o.columnGap
-        && rowGap == o.rowGap
-        && offsetDistance == o.offsetDistance
-        && offsetPosition == o.offsetPosition
-        && offsetAnchor == o.offsetAnchor
-        && offsetRotate == o.offsetRotate
-        && overflowAnchor == o.overflowAnchor
         && leadingTrim == o.leadingTrim
-        && marginTrim == o.marginTrim;
+        && overflowAnchor == o.overflowAnchor;
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& other) const
