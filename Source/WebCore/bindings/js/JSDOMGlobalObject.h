@@ -26,10 +26,7 @@
 
 #pragma once
 
-#include "WebCoreJSBuiltinInternals.h"
-#include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/WeakGCMap.h>
 #include <wtf/Forward.h>
 
@@ -37,6 +34,7 @@ namespace WebCore {
 
 class DOMConstructors;
 class DOMGuardedObject;
+class JSBuiltinInternalFunctions;
 class Event;
 class DOMWrapperWorld;
 class ScriptExecutionContext;
@@ -70,8 +68,8 @@ public:
     const DOMConstructors& constructors() const { ASSERT(!Thread::mayBeGCThread()); return *m_constructors; }
 
     // The following don't require grabbing the gcLock first and should only be called when the Heap says that mutators don't have to be fenced.
-    JSDOMStructureMap& structures(NoLockingNecessaryTag) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!vm().heap.mutatorShouldBeFenced()); return m_structures; }
-    DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!vm().heap.mutatorShouldBeFenced()); return m_guardedObjects; }
+    inline JSDOMStructureMap& structures(NoLockingNecessaryTag);
+    inline DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag);
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -139,11 +137,11 @@ protected:
 
 private:
     void addBuiltinGlobals(JSC::VM&);
-    friend void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject&);
+    friend JSBuiltinInternalFunctions;
 
     using CrossOriginMapKey = std::pair<JSC::JSGlobalObject*, void*>;
 
-    JSBuiltinInternalFunctions m_builtinInternalFunctions;
+    UniqueRef<JSBuiltinInternalFunctions> m_builtinInternalFunctions;
     JSC::WeakGCMap<CrossOriginMapKey, JSC::JSFunction> m_crossOriginFunctionMap;
     JSC::WeakGCMap<CrossOriginMapKey, JSC::GetterSetter> m_crossOriginGetterSetterMap;
 };
@@ -153,18 +151,6 @@ WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::JSGlobalObject&, JSC::
 JSDOMGlobalObject& legacyActiveGlobalObjectForAccessor(JSC::JSGlobalObject&, JSC::CallFrame*);
 
 template<class JSClass>
-JSClass* toJSDOMGlobalObject(JSC::VM&, JSC::JSValue value)
-{
-    static_assert(std::is_base_of_v<JSDOMGlobalObject, JSClass>);
-
-    if (auto* object = value.getObject()) {
-        if (object->type() == JSC::PureForwardingProxyType)
-            return JSC::jsDynamicCast<JSClass*>(JSC::jsCast<JSC::JSProxy*>(object)->target());
-        if (object->inherits<JSClass>())
-            return JSC::jsCast<JSClass*>(object);
-    }
-
-    return nullptr;
-}
+inline JSClass* toJSDOMGlobalObject(JSC::VM&, JSC::JSValue);
 
 } // namespace WebCore
