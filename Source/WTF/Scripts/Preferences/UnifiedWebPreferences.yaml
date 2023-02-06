@@ -2656,7 +2656,7 @@ ImageAnalysisDuringFindInPageEnabled:
 
 ImageAnimationControlEnabled:
   type: bool
-  status: unstable
+  status: preview
   humanReadableName: "Image Animation Control Enabled"
   humanReadableDescription: "Control image animations."
   condition: ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
