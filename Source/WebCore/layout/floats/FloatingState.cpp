@@ -115,5 +115,10 @@ void FloatingState::clear()
     m_positionTypes = { };
 }
 
+void FloatingState::shrinkToFit()
+{
+    m_floats.shrinkToFit();
+}
+
 }
 }
