@@ -83,7 +83,7 @@
 #include <WebCore/SWServer.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
-#include <WebCore/StorageQuotaManager.h>
+#include <WebCore/SecurityPolicy.h>
 #include <WebCore/UserContentURLPattern.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CallbackAggregator.h>
@@ -2762,14 +2762,19 @@ void NetworkProcess::setCORSDisablingPatterns(PageIdentifier pageIdentifier, Vec
     parsedPatterns.reserveInitialCapacity(patterns.size());
     for (auto&& pattern : WTFMove(patterns)) {
         UserContentURLPattern parsedPattern(WTFMove(pattern));
-        if (parsedPattern.isValid())
+        if (parsedPattern.isValid()) {
+            WebCore::SecurityPolicy::allowAccessTo(parsedPattern);
             parsedPatterns.uncheckedAppend(WTFMove(parsedPattern));
+        }
     }
+
     parsedPatterns.shrinkToFit();
+
     if (parsedPatterns.isEmpty()) {
         m_extensionCORSDisablingPatterns.remove(pageIdentifier);
         return;
     }
+
     m_extensionCORSDisablingPatterns.set(pageIdentifier, WTFMove(parsedPatterns));
 }
 
