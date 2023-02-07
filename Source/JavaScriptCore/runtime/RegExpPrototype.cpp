@@ -505,7 +505,6 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
 
     // 11. Let A be ArrayCreate(0).
     // 12. Let lengthA be 0.
-    JSArray* result = constructEmptyArray(globalObject, nullptr);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned resultLength = 0;
 
@@ -522,7 +521,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
 
     // 16. If lim == 0, return A.
     if (!limit)
-        return JSValue::encode(result);
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
 
     // 17. If size == 0, then
     if (input.isEmpty()) {
@@ -530,6 +529,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
         // b. If z is not null, return A.
         // c. Perform ! CreateDataProperty(A, "0", S).
         // d. Return A.
+        JSArray* result = constructEmptyArray(globalObject, nullptr);
         auto matchResult = regexp->match(globalObject, input, 0);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!matchResult) {
@@ -546,6 +546,11 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
     bool regExpIsUnicode = regexp->unicode();
     
     unsigned maxSizeForDirectPath = 100000;
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 1);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
     
     genericSplit(
         globalObject, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
