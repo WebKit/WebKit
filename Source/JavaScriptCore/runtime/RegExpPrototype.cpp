@@ -492,7 +492,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
     // 3. [handled by JS builtin] Let S be ? ToString(string).
     JSString* inputString = callFrame->argument(0).toString(globalObject);
     String input = inputString->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     ASSERT(!input.isNull());
 
     // 4. [handled by JS builtin] Let C be ? SpeciesConstructor(rx, %RegExp%).
@@ -505,14 +505,12 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
 
     // 11. Let A be ArrayCreate(0).
     // 12. Let lengthA be 0.
-    JSArray* result = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned resultLength = 0;
 
     // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).
     JSValue limitValue = callFrame->argument(1);
     unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     // 14. Let size be the number of elements in S.
     unsigned inputSize = input.length();
@@ -522,7 +520,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
 
     // 16. If lim == 0, return A.
     if (!limit)
-        return JSValue::encode(result);
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
 
     // 17. If size == 0, then
     if (input.isEmpty()) {
@@ -530,11 +528,13 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
         // b. If z is not null, return A.
         // c. Perform ! CreateDataProperty(A, "0", S).
         // d. Return A.
+        JSArray* result = constructEmptyArray(globalObject, nullptr);
+        RETURN_IF_EXCEPTION(scope, { });
         auto matchResult = regexp->match(globalObject, input, 0);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         if (!matchResult) {
             result->putDirectIndex(globalObject, 0, inputString);
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            RETURN_IF_EXCEPTION(scope, { });
         }
         return JSValue::encode(result);
     }
@@ -546,6 +546,11 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
     bool regExpIsUnicode = regexp->unicode();
     
     unsigned maxSizeForDirectPath = 100000;
+    JSArray* result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 1);
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return { };
+    }
     
     genericSplit(
         globalObject, regexp, input, inputSize, position, matchPosition, regExpIsSticky, regExpIsUnicode,
@@ -561,7 +566,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
                 return AbortSplit;
             return ContinueSplit;
         });
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (resultLength >= limit)
         return JSValue::encode(result);
@@ -592,11 +597,11 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
                 return AbortSplit;
             return ContinueSplit;
         });
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     
     if (resultLength + dryRunCount > MAX_STORAGE_VECTOR_LENGTH) {
         throwOutOfMemoryError(globalObject, scope);
-        return encodedJSValue();
+        return { };
     }
     
     // OK, we know that if we finish the split, we won't have to OOM.
@@ -615,7 +620,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
                 return AbortSplit;
             return ContinueSplit;
         });
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     if (resultLength >= limit)
         return JSValue::encode(result);
