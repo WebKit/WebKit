@@ -1922,7 +1922,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseBlockStatemen
     // We should treat the first block statement of the function (the body of the function) as the lexical 
     // scope of the function itself, and not the lexical scope of a 'block' statement within the function.
     AutoCleanupLexicalScope lexicalScope;
-    bool shouldPushLexicalScope = m_statementDepth > 0;
+    bool shouldPushLexicalScope = m_statementDepth > 0 || type == BlockType::StaticBlock;
     if (shouldPushLexicalScope) {
         ScopeRef newScope = pushScope();
         newScope->setIsLexicalScope();
@@ -3206,7 +3206,7 @@ parseMethod:
             size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
             currentScope()->pushUsedVariableSet();
             DepthManager statementDepth(&m_statementDepth);
-            m_statementDepth = 1;
+            m_statementDepth = 0;
             failIfFalse(parseBlockStatement(context, BlockType::StaticBlock), "Cannot parse class static block");
             auto* symbolImpl = bitwise_cast<SymbolImpl*>(m_vm.propertyNames->builtinNames().staticInitializerBlockPrivateName().impl());
             ident = &m_parserArena.identifierArena().makeIdentifier(const_cast<VM&>(m_vm), symbolImpl);
