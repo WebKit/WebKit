@@ -192,7 +192,7 @@ void SQLiteStorageArea::startTransactionIfNecessary()
 {
     ASSERT(m_database);
 
-    if (!m_transaction)
+    if (!m_transaction || m_transaction->wasRolledBackBySqlite())
         m_transaction = makeUnique<WebCore::SQLiteTransaction>(*m_database);
 
     if (m_transaction->inProgress())
