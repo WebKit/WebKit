@@ -593,7 +593,7 @@ public:
     static constexpr GPRReg wasmScratchGPR0 = regT5;
     static constexpr GPRReg wasmScratchGPR1 = regT6;
     static constexpr GPRReg wasmContextInstancePointer = regCS0;
-    static constexpr GPRReg wasmBaseMemoryPointer = ARMRegisters::r9;
+    static constexpr GPRReg wasmBaseMemoryPointer = InvalidGPRReg;
     static constexpr GPRReg wasmBoundsCheckingSizeRegister = InvalidGPRReg;
 
     static GPRReg toRegister(unsigned index)

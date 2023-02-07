@@ -325,10 +325,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, Calle
         }
     }
 
-#if CPU(ARM) // ARM has only pins baseMemory
-    if (!!info.memory)
-        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
-#else
+#if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
     if (!!info.memory) {
         GPRReg size = wasmCallingConvention().prologueScratchGPRs[0];
         GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[1];

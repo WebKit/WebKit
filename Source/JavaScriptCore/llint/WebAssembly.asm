@@ -54,7 +54,7 @@ if X86_64 or ARM64 or ARM64E or RISCV64
     const boundsCheckingSize = csr4
 elsif ARMv7
     const wasmInstance = csr0
-    const memoryBase = t7
+    const memoryBase = invalidGPR
     const boundsCheckingSize = invalidGPR
 else
     error
@@ -188,10 +188,6 @@ end
 
             restoreCalleeSavesUsedByWasm()
             restoreCallerPCAndCFR()
-if ARMv7
-            # BBQ pins baseMemory in t7, so reload it just before tiering up.
-            reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
-end
             if ARM64E
                 leap _g_config, ws1
                 jmp JSCConfigGateMapOffset + (constexpr Gate::wasmOSREntry) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
@@ -218,10 +214,6 @@ macro checkSwitchToJITForLoop()
             btpz r1, .recover
             restoreCalleeSavesUsedByWasm()
             restoreCallerPCAndCFR()
-if ARMv7
-            # BBQ pins baseMemory in t7, so reload it just before tiering up.
-            reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
-end
             move r0, a0
             if ARM64E
                 move r1, ws0
@@ -329,8 +321,6 @@ if not ARMv7
     loadp Wasm::Instance::m_cachedMemory[instance], memoryBase
     loadp Wasm::Instance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
     cagedPrimitiveMayBeNull(memoryBase, boundsCheckingSize, scratch1, scratch2) # If boundsCheckingSize is 0, pointer can be a nullptr.
-else
-    loadp Wasm::Instance::m_cachedMemory[instance], memoryBase
 end
 end
 
@@ -376,6 +366,7 @@ macro wasmPrologue()
     # Set up the call frame and check if we should OSR.
     preserveCallerPCAndCFR()
     preserveCalleeSavesUsedByWasm()
+    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
 
     storep wasmInstance, CodeBlock[cfr]
     loadp Callee[cfr], ws0
@@ -451,7 +442,6 @@ end
     storep 0, [ws0, ws1]
     btpnz ws1, .zeroInitializeLocalsLoop
 .zeroInitializeLocalsDone:
-    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
 end
 
 macro forEachVectorArgument(fn)
@@ -746,10 +736,6 @@ macro jump(ctx, target)
 end
 
 macro doReturn()
-if ARMv7
-    # ARMv7 pins baseMemory on BBQ, but not in llint.
-    reloadMemoryRegistersFromInstance(wasmInstance, ws0, ws1)
-end
     restoreCalleeSavesUsedByWasm()
     restoreCallerPCAndCFR()
     if ARM64E
