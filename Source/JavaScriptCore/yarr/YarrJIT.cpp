@@ -3890,14 +3890,21 @@ class YarrGenerator final : public YarrJITInfo {
                 case PatternTerm::Type::DotStarEnclosure:
                     break;
                 case PatternTerm::Type::CharacterClass: {
-                    if (term.quantityType != QuantifierType::FixedCount || term.quantityMaxCount != 1)
+                    if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
                         break;
-                    if (term.inputPosition != index)
+                    if (term.quantityMaxCount != 1)
+                        break;
+                    if (term.inputPosition != cursor)
                         break;
                     auto& characterClass = *term.characterClass;
                     if (term.invert() || characterClass.m_anyCharacter) {
                         bmInfo.setAll(cursor);
-                        ++cursor;
+                        // If this is greedy one-character pattern "a?", we should not increase cursor.
+                        // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
+                        if (term.quantityType == QuantifierType::FixedCount)
+                            ++cursor;
+                        else
+                            bmInfo.shortenLength(cursor + 1);
                         continue;
                     }
                     if (!characterClass.m_rangesUnicode.isEmpty())
@@ -3908,13 +3915,21 @@ class YarrGenerator final : public YarrJITInfo {
                         bmInfo.addRanges(cursor, characterClass.m_ranges);
                     if (!characterClass.m_matches.isEmpty())
                         bmInfo.addCharacters(cursor, characterClass.m_matches);
-                    ++cursor;
+
+                    // If this is greedy one-character pattern "a?", we should not increase cursor.
+                    // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
+                    if (term.quantityType == QuantifierType::FixedCount)
+                        ++cursor;
+                    else
+                        bmInfo.shortenLength(cursor + 1);
                     continue;
                 }
                 case PatternTerm::Type::PatternCharacter: {
-                    if (term.quantityType != QuantifierType::FixedCount || term.quantityMaxCount != 1)
+                    if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
                         break;
-                    if (term.inputPosition != index)
+                    if (term.quantityMaxCount != 1)
+                        break;
+                    if (term.inputPosition != cursor)
                         break;
                     if (U16_LENGTH(term.patternCharacter) != 1 && m_decodeSurrogatePairs)
                         break;
@@ -3926,7 +3941,13 @@ class YarrGenerator final : public YarrJITInfo {
                         bmInfo.set(cursor, toASCIILower(term.patternCharacter));
                     } else
                         bmInfo.set(cursor, term.patternCharacter);
-                    ++cursor;
+
+                    // If this is greedy one-character pattern "a?", we should not increase cursor.
+                    // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
+                    if (term.quantityType == QuantifierType::FixedCount)
+                        ++cursor;
+                    else
+                        bmInfo.shortenLength(cursor + 1);
                     continue;
                 }
                 }
