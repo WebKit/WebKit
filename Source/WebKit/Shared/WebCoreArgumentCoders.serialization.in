@@ -3651,8 +3651,8 @@ enum class WebCore::CrossOriginOpenerPolicyValue : uint8_t {
 
 struct WebCore::CrossOriginOpenerPolicy {
     WebCore::CrossOriginOpenerPolicyValue value;
-    String reportingEndpoint;
     WebCore::CrossOriginOpenerPolicyValue reportOnlyValue;
+    String reportingEndpoint;
     String reportOnlyReportingEndpoint;
 };
 
