@@ -13666,20 +13666,43 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileParseInt()
     {
-        RELEASE_ASSERT(m_node->child1().useKind() == UntypedUse || m_node->child1().useKind() == StringUse);
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         LValue result;
         if (m_node->child2()) {
             LValue radix = lowInt32(m_node->child2());
-            if (m_node->child1().useKind() == UntypedUse)
+            switch (m_node->child1().useKind()) {
+            case UntypedUse:
                 result = vmCall(Int64, operationParseIntGeneric, weakPointer(globalObject), lowJSValue(m_node->child1()), radix);
-            else
+                break;
+            case StringUse:
                 result = vmCall(Int64, operationParseIntString, weakPointer(globalObject), lowString(m_node->child1()), radix);
+                break;
+            case Int32Use:
+                result = vmCall(Int64, operationParseIntInt32, weakPointer(globalObject), lowInt32(m_node->child1()), radix);
+                break;
+            case DoubleRepUse:
+                result = vmCall(Int64, operationParseIntDouble, weakPointer(globalObject), lowDouble(m_node->child1()), radix);
+                break;
+            default:
+                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                break;
+            }
         } else {
-            if (m_node->child1().useKind() == UntypedUse)
-                result = vmCall(Int64, operationParseIntNoRadixGeneric, weakPointer(globalObject), lowJSValue(m_node->child1()));
-            else
+            switch (m_node->child1().useKind()) {
+            case UntypedUse:
+                result = vmCall(Int64, operationParseIntGenericNoRadix, weakPointer(globalObject), lowJSValue(m_node->child1()));
+                break;
+            case StringUse:
                 result = vmCall(Int64, operationParseIntStringNoRadix, weakPointer(globalObject), lowString(m_node->child1()));
+                break;
+            case DoubleRepUse:
+                result = vmCall(Int64, operationParseIntDoubleNoRadix, weakPointer(globalObject), lowDouble(m_node->child1()));
+                break;
+            // Int32Use is converted to Identity.
+            default:
+                DFG_CRASH(m_graph, m_node, "Bad use kind");
+                break;
+            }
         }
         setJSValue(result);
     }

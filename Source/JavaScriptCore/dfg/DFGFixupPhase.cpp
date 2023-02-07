@@ -2807,13 +2807,17 @@ private:
         }
 
         case ParseInt: {
-            if (node->child1()->shouldSpeculateInt32() && !node->child2()) {
-                fixEdge<Int32Use>(node->child1());
-                node->convertToIdentity();
-                break;
-            }
-
-            if (node->child1()->shouldSpeculateString()) {
+            if (node->child1()->shouldSpeculateInt32()) {
+                fixIntOrBooleanEdge(node->child1());
+                if (!node->child2()) {
+                    node->convertToIdentity();
+                    break;
+                }
+                node->clearFlags(NodeMustGenerate);
+            } else if (node->child1()->shouldSpeculateNumber()) {
+                fixEdge<DoubleRepUse>(node->child1());
+                node->clearFlags(NodeMustGenerate);
+            } else if (node->child1()->shouldSpeculateString()) {
                 fixEdge<StringUse>(node->child1());
                 node->clearFlags(NodeMustGenerate);
             }

@@ -1336,13 +1336,19 @@ JSC_DEFINE_JIT_OPERATION(operationRegExpMatchFastGlobalString, EncodedJSValue, (
         })));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationParseIntNoRadixGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue value))
+JSC_DEFINE_JIT_OPERATION(operationParseIntGenericNoRadix, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return toStringView(globalObject, JSValue::decode(value), [&] (StringView view) {
+    JSValue value = JSValue::decode(encodedValue);
+    if (value.isNumber()) {
+        if (auto result = parseIntDouble(value.asNumber()))
+            return parseIntResult(result.value());
+    }
+
+    return toStringView(globalObject, value, [&] (StringView view) {
         // This version is as if radix was undefined. Hence, undefined.toNumber() === 0.
         return parseIntResult(parseInt(view, 0));
     });
@@ -1362,6 +1368,18 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlob
     return parseIntResult(parseInt(viewWithString.view, 0));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlobalObject* globalObject, double value))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    if (auto result = parseIntDouble(value))
+        return parseIntResult(result.value());
+
+    return parseIntResult(parseInt(String::number(value), 0));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObject* globalObject, JSString* string, int32_t radix))
 {
     VM& vm = globalObject->vm();
@@ -1375,17 +1393,49 @@ JSC_DEFINE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObjec
     return parseIntResult(parseInt(viewWithString.view, radix));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationParseIntGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue value, int32_t radix))
+JSC_DEFINE_JIT_OPERATION(operationParseIntGeneric, EncodedJSValue, (JSGlobalObject* globalObject, EncodedJSValue encodedValue, int32_t radix))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return toStringView(globalObject, JSValue::decode(value), [&] (StringView view) {
+    JSValue value = JSValue::decode(encodedValue);
+    if (radix == 10 && value.isNumber()) {
+        if (auto result = parseIntDouble(value.asNumber()))
+            return parseIntResult(result.value());
+    }
+
+    return toStringView(globalObject, value, [&] (StringView view) {
         return parseIntResult(parseInt(view, radix));
     });
 }
-        
+
+JSC_DEFINE_JIT_OPERATION(operationParseIntDouble, EncodedJSValue, (JSGlobalObject* globalObject, double value, int32_t radix))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    if (radix == 10) {
+        if (auto result = parseIntDouble(value))
+            return parseIntResult(result.value());
+    }
+
+    return parseIntResult(parseInt(String::number(value), radix));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationParseIntInt32, EncodedJSValue, (JSGlobalObject* globalObject, int32_t value, int32_t radix))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    if (radix == 10)
+        return JSValue::encode(jsNumber(value));
+
+    return parseIntResult(parseInt(String::number(value), radix));
+}
+
 JSC_DEFINE_JIT_OPERATION(operationRegExpTestString, size_t, (JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* input))
 {
     SuperSamplerScope superSamplerScope(false);
