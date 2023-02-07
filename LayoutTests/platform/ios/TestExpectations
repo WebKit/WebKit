@@ -4221,3 +4221,5 @@ webkit.org/b/251417 imported/w3c/web-platform-tests/fetch/metadata/generated/css
 webkit.org/b/251482 http/wpt/css/css-animations/set-animation-play-state-to-paused-001.html [ Pass Failure ]
 
 webkit.org/b/251533 imported/w3c/web-platform-tests/workers/baseurl/alpha/import-in-moduleworker.html [ Pass Timeout ]
+
+webkit.org/b/251876 editing/selection/selection-scrolling-in-multiple-nested-subframes.html [ Pass Crash ]
