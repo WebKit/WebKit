@@ -68,7 +68,7 @@ def _CheckCommitMessageFormatting(input_api, output_api):
     def _CheckTabInCommit(lines):
         return all([line.find("\t") == -1 for line in lines])
 
-    allowlist_strings = ['Revert "', 'Roll ', 'Reland ', 'Re-land ']
+    allowlist_strings = ['Revert "', 'Roll ', 'Manual roll ', 'Reland ', 'Re-land ']
     summary_linelength_warning_lower_limit = 65
     summary_linelength_warning_upper_limit = 70
     description_linelength_limit = 72

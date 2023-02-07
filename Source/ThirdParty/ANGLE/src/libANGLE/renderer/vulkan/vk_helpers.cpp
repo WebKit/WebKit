@@ -999,6 +999,15 @@ angle::Result InitDynamicDescriptorPool(Context *context,
 
     return angle::Result::Continue;
 }
+
+bool CheckSubpassCommandBufferCount(uint32_t count)
+{
+    // When using angle::SharedRingBufferAllocator we must ensure that allocator is attached and
+    // detached from the same priv::SecondaryCommandBuffer instance.
+    // Custom command buffer (priv::SecondaryCommandBuffer) may contain commands for multiple
+    // subpasses, therefore we do not need multiple buffers.
+    return (count == 1 || !RenderPassCommandBuffer::ExecutesInline());
+}
 }  // anonymous namespace
 
 // This is an arbitrary max. We can change this later if necessary.
@@ -1556,13 +1565,14 @@ angle::Result OutsideRenderPassCommandBufferHelper::initializeCommandBuffer(Cont
 
 angle::Result OutsideRenderPassCommandBufferHelper::reset(Context *context)
 {
-    // Since we may generate and flush multiple outside renderpass commands without submission, they
-    // will use the same queue serials. We do not reset queue serial until we submit to avoid false
-    // positive for barrier needs.
     resetImpl();
 
     // Reset and re-initialize the command buffer
     context->getRenderer()->resetOutsideRenderPassCommandBuffer(std::move(mCommandBuffer));
+
+    // Invalidate the queue serial here. We will get a new queue serial after commands flush.
+    mQueueSerial = QueueSerial();
+
     return initializeCommandBuffer(context);
 }
 
@@ -1718,6 +1728,8 @@ angle::Result RenderPassCommandBufferHelper::reset(Context *context)
     mColorAttachmentsCount             = PackedAttachmentCount(0);
     mDepthStencilAttachmentIndex       = kAttachmentIndexInvalid;
     mImageOptimizeForPresent           = nullptr;
+
+    ASSERT(CheckSubpassCommandBufferCount(getSubpassCommandBufferCount()));
 
     // Reset and re-initialize the command buffers
     for (uint32_t subpass = 0; subpass <= mCurrentSubpass; ++subpass)
@@ -2519,12 +2531,14 @@ void RenderPassCommandBufferHelper::growRenderArea(ContextVk *contextVk,
 
 void RenderPassCommandBufferHelper::attachAllocator(SecondaryCommandMemoryAllocator *allocator)
 {
+    ASSERT(CheckSubpassCommandBufferCount(getSubpassCommandBufferCount()));
     mCommandAllocator.attachAllocator(allocator);
     getCommandBuffer().attachAllocator(mCommandAllocator.getAllocator());
 }
 
 SecondaryCommandMemoryAllocator *RenderPassCommandBufferHelper::detachAllocator()
 {
+    ASSERT(CheckSubpassCommandBufferCount(getSubpassCommandBufferCount()));
     getCommandBuffer().detachAllocator(mCommandAllocator.getAllocator());
     return mCommandAllocator.detachAllocator(getCommandBuffer().empty());
 }
@@ -2657,7 +2671,7 @@ void CommandBufferRecycler<CommandBufferT, CommandBufferHelperT>::recycleCommand
     CommandBufferHelperT **commandBuffer)
 {
     std::unique_lock<std::mutex> lock(mMutex);
-    ASSERT((*commandBuffer)->empty() && !(*commandBuffer)->getAllocator()->hasAllocatorLinks());
+    ASSERT((*commandBuffer)->empty() && !(*commandBuffer)->hasAllocatorLinks());
     (*commandBuffer)->markOpen();
 
     RecycleCommandBufferHelper(device, &mCommandBufferHelperFreeList, commandBuffer,
@@ -6898,12 +6912,21 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
     else
     {
         ASSERT(storageFormat.pixelBytes != 0);
+        const bool stencilOnly = formatInfo.internalFormat == GL_STENCIL_INDEX8;
 
-        if (storageFormat.id == angle::FormatID::D24_UNORM_S8_UINT)
+        if (!stencilOnly && storageFormat.id == angle::FormatID::D24_UNORM_S8_UINT)
         {
-            stencilLoadFunction = angle::LoadX24S8ToS8;
+            switch (type)
+            {
+                case GL_UNSIGNED_INT_24_8:
+                    stencilLoadFunction = angle::LoadX24S8ToS8;
+                    break;
+                case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
+                    stencilLoadFunction = angle::LoadX32S8ToS8;
+                    break;
+            }
         }
-        if (storageFormat.id == angle::FormatID::D32_FLOAT_S8X24_UINT)
+        if (!stencilOnly && storageFormat.id == angle::FormatID::D32_FLOAT_S8X24_UINT)
         {
             // If depth is D32FLOAT_S8, we must pack D32F tightly (no stencil) for CopyBufferToImage
             outputRowPitch = sizeof(float) * glExtents.width;
@@ -6916,12 +6939,11 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
                     loadFunctionInfo.loadFunction = angle::LoadD32ToD32F;
                     stencilLoadFunction           = nullptr;
                     break;
-                case GL_DEPTH32F_STENCIL8:
                 case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
                     loadFunctionInfo.loadFunction = angle::LoadD32FS8X24ToD32F;
                     stencilLoadFunction           = angle::LoadX32S8ToS8;
                     break;
-                case GL_UNSIGNED_INT_24_8_OES:
+                case GL_UNSIGNED_INT_24_8:
                     loadFunctionInfo.loadFunction = angle::LoadD24S8ToD32F;
                     stencilLoadFunction           = angle::LoadX24S8ToS8;
                     break;
@@ -6929,9 +6951,18 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
                     UNREACHABLE();
             }
         }
-        else
+        else if (!stencilOnly)
         {
             outputRowPitch = storageFormat.pixelBytes * glExtents.width;
+        }
+        else
+        {
+            // Some Vulkan implementations do not support S8_UINT, so stencil-only data is
+            // uploaded using one of combined depth-stencil formats there. Since the uploaded
+            // stencil data must be tightly packed, the actual storage format should be ignored
+            // with regards to its load function and output row pitch.
+            loadFunctionInfo.loadFunction = angle::LoadToNative<GLubyte, 1>;
+            outputRowPitch                = glExtents.width;
         }
         outputDepthPitch = outputRowPitch * glExtents.height;
 

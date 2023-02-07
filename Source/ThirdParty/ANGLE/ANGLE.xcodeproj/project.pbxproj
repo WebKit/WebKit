@@ -411,6 +411,7 @@
 		7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */; };
 		7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */; };
 		7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */; };
+		7BDC8C7729925FE500C2BDDF /* mtl_library_cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BDC8C7529925FE200C2BDDF /* mtl_library_cache.mm */; };
 		A3C49BF6255DF6C4005E8DF7 /* compression_utils_portable.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C49BF1255DEDC5005E8DF7 /* compression_utils_portable.h */; };
 		A3C49BFB255DF6E6005E8DF7 /* EGLReusableSync.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE13255DDE0100B73018 /* EGLReusableSync.h */; };
 		A3C49BFC255DF6E6005E8DF7 /* EGLSyncImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C3FE14255DDE0200B73018 /* EGLSyncImpl.h */; };
@@ -1478,6 +1479,8 @@
 		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
 		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
 		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
+		7BDC8C7529925FE200C2BDDF /* mtl_library_cache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_library_cache.mm; sourceTree = "<group>"; };
+		7BDC8C7629925FE200C2BDDF /* mtl_library_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_library_cache.h; sourceTree = "<group>"; };
 		A264F89316974DED006FAA5A /* DiagnosticsBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagnosticsBase.cpp; sourceTree = "<group>"; };
 		A264F89416974DED006FAA5A /* DiagnosticsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticsBase.h; sourceTree = "<group>"; };
 		A264F89516974DED006FAA5A /* DirectiveHandlerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectiveHandlerBase.cpp; sourceTree = "<group>"; };
@@ -3044,6 +3047,8 @@
 				FF81FE9225818D6800894E24 /* mtl_format_table_autogen.mm */,
 				FF81FE8E25818D6800894E24 /* mtl_format_utils.h */,
 				FF81FE8525818D6800894E24 /* mtl_format_utils.mm */,
+				7BDC8C7629925FE200C2BDDF /* mtl_library_cache.h */,
+				7BDC8C7529925FE200C2BDDF /* mtl_library_cache.mm */,
 				3A0EBFB62980B6C1002C72BC /* mtl_msl_utils.h */,
 				3A0EBFB52980B6C1002C72BC /* mtl_msl_utils.mm */,
 				FF81FECA25818D6800894E24 /* mtl_occlusion_query_pool.h */,
@@ -3951,6 +3956,7 @@
 				FF4BB3642769467600994EBF /* mtl_context_device.mm in Sources */,
 				DF83E3872639FEB8000825EF /* mtl_format_table_autogen.mm in Sources */,
 				DF83E3712639FEB8000825EF /* mtl_format_utils.mm in Sources */,
+				7BDC8C7729925FE500C2BDDF /* mtl_library_cache.mm in Sources */,
 				3A0EBFB92980B6C1002C72BC /* mtl_msl_utils.mm in Sources */,
 				DF83E37A2639FEB8000825EF /* mtl_occlusion_query_pool.mm in Sources */,
 				DF83E3792639FEB8000825EF /* mtl_render_utils.mm in Sources */,

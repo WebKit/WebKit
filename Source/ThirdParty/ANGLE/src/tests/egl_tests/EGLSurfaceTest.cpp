@@ -131,30 +131,28 @@ class EGLSurfaceTest : public ANGLETest<>
 
     void initializeSingleContext(EGLContext *context)
     {
+        ASSERT_TRUE(*context == EGL_NO_CONTEXT);
+
         EGLint contextAttibutes[] = {EGL_CONTEXT_CLIENT_VERSION, GetParam().majorVersion, EGL_NONE};
 
         *context = eglCreateContext(mDisplay, mConfig, nullptr, contextAttibutes);
         ASSERT_EGL_SUCCESS();
+        ASSERT_TRUE(*context != EGL_NO_CONTEXT);
     }
 
-    void initializeContext()
+    void initializeMainContext() { initializeSingleContext(&mContext); }
+
+    void initializeAllContexts()
     {
-        // Only initialize the contexts once.
-        if (mContext == EGL_NO_CONTEXT)
-        {
-            initializeSingleContext(&mContext);
-        }
-        if (mSecondContext == EGL_NO_CONTEXT)
-        {
-            initializeSingleContext(&mSecondContext);
-        }
+        initializeSingleContext(&mContext);
+        initializeSingleContext(&mSecondContext);
     }
 
     void initializeWindowSurfaceWithAttribs(EGLConfig config,
                                             const std::vector<EGLint> &additionalAttributes,
                                             EGLenum expectedResult)
     {
-        ASSERT_EQ(mWindowSurface, EGL_NO_SURFACE);
+        ASSERT_TRUE(mWindowSurface == EGL_NO_SURFACE);
 
         EGLint surfaceType = EGL_NONE;
         eglGetConfigAttrib(mDisplay, mConfig, EGL_SURFACE_TYPE, &surfaceType);
@@ -187,6 +185,8 @@ class EGLSurfaceTest : public ANGLETest<>
 
         if (surfaceType & EGL_PBUFFER_BIT)
         {
+            ASSERT_TRUE(mPbufferSurface == EGL_NO_SURFACE);
+
             std::vector<EGLint> pbufferAttributes = additionalAttributes;
 
             // Give pbuffer non-zero dimensions.
@@ -199,8 +199,6 @@ class EGLSurfaceTest : public ANGLETest<>
             mPbufferSurface = eglCreatePbufferSurface(mDisplay, mConfig, pbufferAttributes.data());
             ASSERT_EGL_SUCCESS();
         }
-
-        initializeContext();
     }
 
     void initializeSurface(EGLConfig config)
@@ -376,6 +374,7 @@ class EGLFloatSurfaceTest : public EGLSurfaceTest
         }
 
         initializeSurface(config);
+        initializeMainContext();
 
         eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
         mProgram = createProgram();
@@ -394,7 +393,7 @@ class EGLSingleBufferTest : public ANGLETest<>
     {
         EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
         mDisplay           = eglGetPlatformDisplayEXT(
-                      EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
         ASSERT_TRUE(mDisplay != EGL_NO_DISPLAY);
         ASSERT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
         mMajorVersion = GetParam().majorVersion;
@@ -412,19 +411,19 @@ class EGLSingleBufferTest : public ANGLETest<>
         EGLint count         = 0;
         EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
         EGLint attribs[]     = {
-                EGL_RED_SIZE,
-                8,
-                EGL_GREEN_SIZE,
-                8,
-                EGL_BLUE_SIZE,
-                8,
-                EGL_ALPHA_SIZE,
-                0,
-                EGL_RENDERABLE_TYPE,
-                clientVersion,
-                EGL_SURFACE_TYPE,
-                EGL_WINDOW_BIT | (mutableRenderBuffer ? EGL_MUTABLE_RENDER_BUFFER_BIT_KHR : 0),
-                EGL_NONE};
+            EGL_RED_SIZE,
+            8,
+            EGL_GREEN_SIZE,
+            8,
+            EGL_BLUE_SIZE,
+            8,
+            EGL_ALPHA_SIZE,
+            0,
+            EGL_RENDERABLE_TYPE,
+            clientVersion,
+            EGL_SURFACE_TYPE,
+            EGL_WINDOW_BIT | (mutableRenderBuffer ? EGL_MUTABLE_RENDER_BUFFER_BIT_KHR : 0),
+            EGL_NONE};
 
         result = eglChooseConfig(mDisplay, attribs, config, 1, &count);
         return result && (count > 0);
@@ -432,6 +431,8 @@ class EGLSingleBufferTest : public ANGLETest<>
 
     bool createContext(EGLConfig config, EGLContext *context)
     {
+        EXPECT_TRUE(*context == EGL_NO_CONTEXT);
+
         bool result      = false;
         EGLint attribs[] = {EGL_CONTEXT_MAJOR_VERSION, mMajorVersion, EGL_NONE};
 
@@ -446,6 +447,8 @@ class EGLSingleBufferTest : public ANGLETest<>
                              EGLSurface *surface,
                              EGLint renderBuffer) const
     {
+        EXPECT_TRUE(*surface == EGL_NO_SURFACE);
+
         bool result      = false;
         EGLint attribs[] = {EGL_RENDER_BUFFER, renderBuffer, EGL_NONE};
 
@@ -512,6 +515,7 @@ TEST_P(EGLSurfaceTest, MessageLoopBug)
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
+    initializeMainContext();
 
     runMessageLoopTest(EGL_NO_SURFACE, EGL_NO_CONTEXT);
 }
@@ -531,6 +535,7 @@ TEST_P(EGLSurfaceTest, MessageLoopBugContext)
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
+    initializeAllContexts();
 
     ANGLE_SKIP_TEST_IF(!mPbufferSurface);
     runMessageLoopTest(mPbufferSurface, mSecondContext);
@@ -541,6 +546,7 @@ TEST_P(EGLSurfaceTest, MakeCurrentTwice)
 {
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(false);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -572,6 +578,7 @@ TEST_P(EGLSurfaceTest, SurfaceUseAfterFreeBug)
     ASSERT_NE(surfaceConfig, nullptr);
 
     initializeSurface(surfaceConfig);
+    initializeAllContexts();
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
     ASSERT_NE(mPbufferSurface, EGL_NO_SURFACE);
@@ -614,6 +621,7 @@ TEST_P(EGLSurfaceTest, ResizeWindow)
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
+    initializeMainContext();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
@@ -663,7 +671,7 @@ TEST_P(EGLSurfaceTest, ResizeWindowWithDraw)
 
     initializeDisplay();
     initializeSurfaceWithDefaultConfig(true);
-    initializeContext();
+    initializeMainContext();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
 
     int size      = 64;
@@ -753,7 +761,7 @@ TEST_P(EGLSurfaceTest, ResetNativeWindow)
     }
 
     initializeSurfaceWithDefaultConfig(true);
-    initializeContext();
+    initializeMainContext();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
@@ -794,6 +802,7 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig5650Support)
     }
 
     initializeSurface(config);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -837,6 +846,7 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig4444Support)
     }
 
     initializeSurface(config);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -880,6 +890,7 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig5551Support)
     }
 
     initializeSurface(config);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -922,6 +933,7 @@ TEST_P(EGLSurfaceTest, CreateWithEGLConfig8880Support)
     }
 
     initializeSurface(config);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -971,7 +983,7 @@ TEST_P(EGLSurfaceTest, FixedSizeWindow)
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(EGL_NO_SURFACE, mWindowSurface);
 
-    initializeContext();
+    initializeMainContext();
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext));
     ASSERT_EGL_SUCCESS();
 
@@ -1038,7 +1050,7 @@ TEST_P(EGLSurfaceTest3, MakeCurrentDifferentSurfaces)
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(EGL_NO_SURFACE, secondPbufferSurface);
 
-    initializeContext();
+    initializeMainContext();
 
     // Use the same surface for both draw and read
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, firstPbufferSurface, firstPbufferSurface, mContext));
@@ -1091,7 +1103,7 @@ class EGLSurfaceTestD3D11 : public EGLSurfaceTest
         ASSERT_EGL_TRUE(EGLWindow::FindEGLConfig(mDisplay, configAttributes, &config));
 
         mConfig = config;
-        initializeContext();
+        initializeMainContext();
 
         EGLAttrib device       = 0;
         EGLAttrib newEglDevice = 0;
@@ -1256,7 +1268,7 @@ class EGLSurfaceTestD3D11 : public EGLSurfaceTest
                                                            config, surfaceAttributes);
         ASSERT_EGL_SUCCESS();
 
-        initializeContext();
+        initializeMainContext();
 
         eglMakeCurrent(mDisplay, mPbufferSurface, mPbufferSurface, mContext);
         ASSERT_EGL_SUCCESS();
@@ -1373,7 +1385,7 @@ TEST_P(EGLSurfaceTestD3D11, CreateDirectCompositionSurface)
     ASSERT_EGL_SUCCESS();
 
     mConfig = config;
-    initializeContext();
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mPbufferSurface, mPbufferSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -1427,6 +1439,7 @@ TEST_P(EGLSurfaceTestD3D11, CreateSurfaceWithMSAA)
     }
 
     initializeSurface(config);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -1533,6 +1546,7 @@ TEST_P(EGLSurfaceTest3, BlitBetweenSurfaces)
     ASSERT_NE(mDisplay, EGL_NO_DISPLAY);
 
     initializeSurfaceWithDefaultConfig(true);
+    initializeMainContext();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
     ASSERT_NE(mContext, EGL_NO_CONTEXT);
 
@@ -1583,6 +1597,7 @@ TEST_P(EGLSurfaceTest3, BlitBetweenSurfacesWithDeferredClear)
     ASSERT_NE(mDisplay, EGL_NO_DISPLAY);
 
     initializeSurfaceWithDefaultConfig(true);
+    initializeMainContext();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
     ASSERT_NE(mContext, EGL_NO_CONTEXT);
 
@@ -1669,7 +1684,7 @@ TEST_P(EGLSurfaceTest, RobustResourceInitAndEmulatedAlpha)
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
 
-    initializeSingleContext(&mContext);
+    initializeMainContext();
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(mContext, EGL_NO_CONTEXT);
 
@@ -1709,9 +1724,7 @@ TEST_P(EGLSurfaceTest, RobustResourceInitAndEmulatedAlpha)
     ASSERT_EGL_SUCCESS();
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
 
-    initializeSingleContext(&mContext);
-    ASSERT_EGL_SUCCESS();
-    ASSERT_NE(mContext, EGL_NO_CONTEXT);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -1731,7 +1744,7 @@ TEST_P(EGLSurfaceTest, RobustResourceInitAndEmulatedAlpha)
 
 void EGLSurfaceTest::drawQuadThenTearDown()
 {
-    initializeSingleContext(&mContext);
+    initializeMainContext();
 
     eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
     ASSERT_EGL_SUCCESS();
@@ -1811,8 +1824,7 @@ TEST_P(EGLSurfaceTest, TimestampSurfaceAttribute)
     ASSERT_NE(mConfig, nullptr);
     initializeSurface(mConfig);
     ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
-    initializeContext();
-    ASSERT_NE(mContext, EGL_NO_CONTEXT);
+    initializeMainContext();
 
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";

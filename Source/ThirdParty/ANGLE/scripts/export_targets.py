@@ -255,6 +255,8 @@ IGNORED_INCLUDES = {
     b'my_custom_min.h',
     # https://bugs.chromium.org/p/gn/issues/detail?id=311
     b'spirv/unified1/spirv.hpp11',
+    # crbug.com/1412096 Remove once VVL BUILD.gn is fixed
+    b'valid_param_values.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

@@ -203,6 +203,10 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDrawIndexed-None-06887",
     // http://anglebug.com/7865
     "VUID-VkDescriptorImageInfo-imageView-06711",
+    // http://crbug.com/1412096
+    "VUID-VkImageCreateInfo-pNext-00990",
+    "VUID-VkAttachmentDescription2-stencilStoreOp-parameter",
+    "VUID-VkAttachmentDescription2-storeOp-parameter",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -4094,8 +4098,11 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         &mFeatures, supportsFragmentShaderPixelInterlock,
         mFragmentShaderInterlockFeatures.fragmentShaderPixelInterlock == VK_TRUE);
 
+    // Samsung Vulkan driver crashes in vkCmdClearAttachments() when imageless Framebuffer
+    // is used to begin Secondary Command Buffer before the corresponding vkCmdBeginRenderPass().
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsImagelessFramebuffer,
-                            mImagelessFramebufferFeatures.imagelessFramebuffer == VK_TRUE);
+                            mImagelessFramebufferFeatures.imagelessFramebuffer == VK_TRUE &&
+                                (vk::RenderPassCommandBuffer::ExecutesInline() || !isSamsung));
 
     // The VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_EXT behavior is used by
     // ANGLE, which requires the robustBufferAccess feature to be available.
@@ -4547,10 +4554,10 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::queueSubmitOneOff");
     // Allocate a oneoff submitQueueSerial and generate a serial and then use it and release the
     // index.
-    SerialIndex queueIndex;
-    Serial lastSubmittedSerial;
-    ANGLE_TRY(allocateQueueSerialIndex(&queueIndex, &lastSubmittedSerial));
-    QueueSerial submitQueueSerial(queueIndex, generateQueueSerial(queueIndex));
+    QueueSerial lastSubmittedQueueSerial;
+    ANGLE_TRY(allocateQueueSerialIndex(&lastSubmittedQueueSerial));
+    QueueSerial submitQueueSerial(lastSubmittedQueueSerial.getIndex(),
+                                  generateQueueSerial(lastSubmittedQueueSerial.getIndex()));
 
     if (isAsyncCommandQueueEnabled())
     {
@@ -4566,7 +4573,7 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
     }
 
     // Immediately release the queue index since itis an one off use.
-    releaseQueueSerialIndex(queueIndex);
+    releaseQueueSerialIndex(lastSubmittedQueueSerial.getIndex());
 
     *queueSerialOut = submitQueueSerial;
     if (primary.valid())
@@ -5144,16 +5151,16 @@ VkDeviceSize RendererVk::getPreferedBufferBlockSize(uint32_t memoryTypeIndex) co
     return std::min(heapSize / 64, mPreferredLargeHeapBlockSize);
 }
 
-angle::Result RendererVk::allocateQueueSerialIndex(SerialIndex *indexOut, Serial *serialOut)
+angle::Result RendererVk::allocateQueueSerialIndex(QueueSerial *queueSerialOut)
 {
     SerialIndex index = mQueueSerialIndexAllocator.allocate();
     if (index == kInvalidQueueSerialIndex)
     {
         return angle::Result::Stop;
     }
-    *indexOut  = index;
-    *serialOut = isAsyncCommandQueueEnabled() ? mCommandProcessor.getLastSubmittedSerial(index)
-                                              : mCommandQueue.getLastSubmittedSerial(index);
+    Serial serial   = isAsyncCommandQueueEnabled() ? mCommandProcessor.getLastSubmittedSerial(index)
+                                                   : mCommandQueue.getLastSubmittedSerial(index);
+    *queueSerialOut = QueueSerial(index, serial);
     return angle::Result::Continue;
 }
 

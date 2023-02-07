@@ -498,6 +498,19 @@ class RendererVk : angle::NonCopyable
         }
     }
 
+    angle::Result waitForResourceUseToBeSubmitted(vk::Context *context, const vk::ResourceUse &use)
+    {
+        // This is only needed for async submission code path. For immediate submission, it is a nop
+        // since everything is submitted immediately.
+        if (isAsyncCommandQueueEnabled())
+        {
+            return mCommandProcessor.waitForResourceUseToBeSubmitted(context, use);
+        }
+        // This ResourceUse must have been submitted.
+        ASSERT(!mCommandQueue.hasUnsubmittedUse(use));
+        return angle::Result::Continue;
+    }
+
     angle::Result waitForQueueSerialToBeSubmitted(vk::Context *context,
                                                   const QueueSerial &queueSerial)
     {
@@ -693,7 +706,7 @@ class RendererVk : angle::NonCopyable
         return getFeatures().preferLinearFilterForYUV.enabled ? VK_FILTER_LINEAR : defaultFilter;
     }
 
-    angle::Result allocateQueueSerialIndex(SerialIndex *indexOut, Serial *serialOut);
+    angle::Result allocateQueueSerialIndex(QueueSerial *queueSerialOut);
     size_t getLargestQueueSerialIndexEverAllocated() const
     {
         return mQueueSerialIndexAllocator.getLargestIndexEverAllocated();

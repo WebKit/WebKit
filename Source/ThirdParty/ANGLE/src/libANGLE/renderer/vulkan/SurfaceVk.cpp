@@ -1924,8 +1924,7 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     ANGLE_TRY(computePresentOutOfDate(contextVk, result, presentOutOfDate));
 
     // Now update swapSerial With last submitted queue serial and apply CPU throttle if needed
-    QueueSerial swapSerial =
-        QueueSerial(contextVk->getCurrentQueueSerialIndex(), contextVk->getLastSubmittedSerial());
+    QueueSerial swapSerial = contextVk->getLastSubmittedQueueSerial();
     ANGLE_TRY(throttleCPU(contextVk, swapSerial));
 
     contextVk->resetPerFramePerfCounters();

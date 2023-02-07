@@ -87,7 +87,7 @@ ANGLE_INLINE bool Context::noopDraw(PrimitiveMode mode, GLsizei count) const
 
 ANGLE_INLINE bool Context::noopMultiDraw(GLsizei drawcount) const
 {
-    return (!drawcount || !mStateCache.getCanDraw());
+    return drawcount == 0 || !mStateCache.getCanDraw();
 }
 
 ANGLE_INLINE angle::Result Context::syncDirtyBits(Command command)

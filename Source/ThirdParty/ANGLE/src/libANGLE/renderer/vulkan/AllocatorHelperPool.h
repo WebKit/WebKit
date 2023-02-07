@@ -32,7 +32,7 @@ class DedicatedCommandBlockAllocator
   public:
     DedicatedCommandBlockAllocator() = default;
     void resetAllocator();
-    bool hasAllocatorLinks() { return false; }
+    bool hasAllocatorLinks() const { return false; }
 
     static constexpr size_t kDefaultPoolAllocatorPageSize = 16 * 1024;
     void init()
@@ -91,15 +91,10 @@ class DedicatedCommandBlockPool final
 
     void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
 
-    void allocateNewBlock(size_t blockSize = kBlockSize);
-
     void onNewVariableSizedCommand(const size_t requiredSize,
                                    const size_t allocationSize,
-                                   bool *usesCommandHeaderSizeForOffsetOut,
-                                   uint8_t **ptrOut,
                                    uint8_t **headerOut)
     {
-        ASSERT(*ptrOut == nullptr);
         if (mCurrentBytesRemaining < requiredSize)
         {
             // variable size command can potentially exceed default cmd allocation blockSize
@@ -116,25 +111,18 @@ class DedicatedCommandBlockPool final
             }
         }
 
-        *usesCommandHeaderSizeForOffsetOut = true;
-        *ptrOut                            = mCurrentWritePointer;
-        *headerOut                         = updateHeaderAndAllocatorParams(allocationSize);
+        *headerOut = updateHeaderAndAllocatorParams(allocationSize);
     }
 
-    void onNewCommand(const size_t requiredSize,
-                      const size_t allocationSize,
-                      uint8_t **ptrOut,
-                      uint8_t **header)
+    void onNewCommand(const size_t requiredSize, const size_t allocationSize, uint8_t **headerOut)
     {
-        ASSERT(*ptrOut == nullptr);
         if (mCurrentBytesRemaining < requiredSize)
         {
             ASSERT(requiredSize < kBlockSize);
             allocateNewBlock();
-            *ptrOut = mCurrentWritePointer;
         }
 
-        *header = updateHeaderAndAllocatorParams(allocationSize);
+        *headerOut = updateHeaderAndAllocatorParams(allocationSize);
     }
 
     // Placeholder functions
@@ -143,6 +131,8 @@ class DedicatedCommandBlockPool final
     void detachAllocator(vk::DedicatedCommandMemoryAllocator *destination) {}
 
   private:
+    void allocateNewBlock(size_t blockSize = kBlockSize);
+
     uint8_t *updateHeaderAndAllocatorParams(size_t allocationSize)
     {
         mCurrentBytesRemaining -= allocationSize;

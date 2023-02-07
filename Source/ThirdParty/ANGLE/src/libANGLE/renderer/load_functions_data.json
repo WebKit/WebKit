@@ -258,8 +258,8 @@
       "GL_UNSIGNED_SHORT": "LoadToNative<GLushort, 1>"
     },
     "D32_FLOAT": {
-      "GL_UNSIGNED_SHORT": "LoadUNorm16To32F",
-      "GL_UNSIGNED_INT": "LoadUNorm32To32F"
+      "GL_UNSIGNED_SHORT": "LoadD16ToD32F",
+      "GL_UNSIGNED_INT": "LoadD32ToD32F"
     }
   },
   "GL_RGB32I": {
@@ -394,7 +394,7 @@
       "GL_FLOAT_32_UNSIGNED_INT_24_8_REV": "LoadD32FS8X24ToD32FS8X24"
     },
     "D24_UNORM_S8_UINT": {
-      "GL_FLOAT_32_UNSIGNED_INT_24_8_REV": "LoadD32FS8X24ToD24S8"
+      "GL_FLOAT_32_UNSIGNED_INT_24_8_REV": "LoadD32FS8X24ToS8D24"
     }
   },
   "GL_RG8I": {
@@ -594,7 +594,7 @@
   },
   "GL_DEPTH24_STENCIL8": {
     "D24_UNORM_S8_UINT": {
-      "GL_UNSIGNED_INT_24_8": "LoadR32ToR24G8"
+      "GL_UNSIGNED_INT_24_8": "LoadD24S8ToS8D24"
     },
     "D32_FLOAT_S8X24_UINT": {
       "GL_UNSIGNED_INT_24_8": "LoadD24S8ToD32FS8X24"
@@ -662,6 +662,9 @@
     "S8_UINT": {
       "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 1>"
     },
+    "D24_UNORM_S8_UINT": {
+      "GL_UNSIGNED_BYTE": "LoadS8ToS8X24"
+    },
     "NONE": {
       "GL_UNSIGNED_BYTE": "UnimplementedLoadFunction"
     }
@@ -684,17 +687,17 @@
   },
   "GL_DEPTH_COMPONENT24": {
     "D24_UNORM_X8_UINT": {
-      "GL_UNSIGNED_INT": "LoadR32ToR24G8"
+      "GL_UNSIGNED_INT": "LoadD32ToX8D24"
     },
     "D24_UNORM_S8_UINT": {
-      "GL_UNSIGNED_INT": "LoadR32ToR24G8"
+      "GL_UNSIGNED_INT": "LoadD32ToX8D24"
     },
     "D32_FLOAT_S8X24_UINT": {
       "GL_UNSIGNED_INT_24_8": "LoadD24S8ToD32FS8X24",
       "GL_UNSIGNED_INT": "LoadD32ToD32FX32"
     },
     "D32_FLOAT": {
-      "GL_UNSIGNED_INT": "LoadD24S8ToD32F"
+      "GL_UNSIGNED_INT": "LoadD32ToD32F"
     }
   },
   "GL_R32I": {
@@ -707,7 +710,7 @@
       "GL_UNSIGNED_INT": "LoadD32ToD32F"
     },
     "NONE": {
-      "GL_UNSIGNED_INT": "LoadR32ToR24G8"
+      "GL_UNSIGNED_INT": "LoadD32ToX8D24"
     }
   },
   "GL_R32F": {

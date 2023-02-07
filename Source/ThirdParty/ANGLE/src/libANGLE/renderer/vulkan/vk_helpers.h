@@ -1119,7 +1119,7 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     const QueueSerial &getQueueSerial() const { return mQueueSerial; }
 
-    SecondaryCommandBlockAllocator *getAllocator() { return &mCommandAllocator; }
+    bool hasAllocatorLinks() const { return mCommandAllocator.hasAllocatorLinks(); }
 
     // Dumping the command stream is disabled by default.
     static constexpr bool kEnableCommandStreamDiagnostics = false;
@@ -1446,6 +1446,8 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     void addCommandDiagnostics(ContextVk *contextVk);
 
   private:
+    uint32_t getSubpassCommandBufferCount() const { return mCurrentSubpass + 1; }
+
     angle::Result initializeCommandBuffer(Context *context);
     angle::Result beginRenderPassCommandBuffer(ContextVk *contextVk);
     angle::Result endRenderPassCommandBuffer(ContextVk *contextVk);

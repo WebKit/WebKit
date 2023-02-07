@@ -110,6 +110,7 @@ enum class Feature
     EmulateTransformFeedback,
     EnableAsyncPipelineCacheCompression,
     EnableCaptureLimits,
+    EnableInMemoryMtlLibraryCache,
     EnableMultisampledRenderToTexture,
     EnablePrecisionQualifiers,
     EnablePreRotateSurfaces,

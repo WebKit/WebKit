@@ -34,7 +34,7 @@ RingBufferAllocator &RingBufferAllocator::operator=(RingBufferAllocator &&other)
     mDecaySpeedFactor = other.mDecaySpeedFactor;
 
     ASSERT(other.mOldBuffers.size() == 0);
-    ASSERT(other.mBuffer.getStorageSize() == 0);
+    ASSERT(other.mBuffer.isEmpty());
     other.mBuffer.resetId();
     other.mDataBegin       = nullptr;
     other.mDataEnd         = nullptr;
@@ -55,7 +55,7 @@ void RingBufferAllocator::reset()
     mListener         = nullptr;
     mFragmentReserve  = 0;
     mDecaySpeedFactor = kDefaultDecaySpeedFactor;
-    mMinCapacity      = kMinRingBufferAllocatiorCapacity;
+    mMinCapacity      = kMinRingBufferAllocationCapacity;
     resize(mMinCapacity);
     mOldBuffers.clear();
 }

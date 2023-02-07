@@ -965,13 +965,10 @@ void CommandQueue::destroy(Context *context)
     // Assigns an infinite "last completed" serial to force garbage to delete.
     mLastCompletedSerials.fill(Serial::Infinite());
 
-    mPrimaryCommands.destroy(renderer->getDevice());
-    mPrimaryCommandPool.destroy(renderer->getDevice());
-
-    if (mProtectedPrimaryCommandPool.valid())
+    for (CommandsState &state : mCommandsStateMap)
     {
-        mProtectedPrimaryCommands.destroy(renderer->getDevice());
-        mProtectedPrimaryCommandPool.destroy(renderer->getDevice());
+        state.primaryCommands.destroy(renderer->getDevice());
+        state.primaryCommandPool.destroy(renderer->getDevice());
     }
 
     mFenceRecycler.destroy(context);
@@ -988,12 +985,12 @@ angle::Result CommandQueue::init(Context *context, const DeviceQueueMap &queueMa
     mLastCompletedSerials.fill(kZeroSerial);
 
     // Initialize the command pool now that we know the queue family index.
-    ANGLE_TRY(mPrimaryCommandPool.init(context, false, queueMap.getIndex()));
+    ANGLE_TRY(getCommandPool(false).init(context, false, queueMap.getIndex()));
     mQueueMap = queueMap;
 
     if (queueMap.isProtected())
     {
-        ANGLE_TRY(mProtectedPrimaryCommandPool.init(context, true, queueMap.getIndex()));
+        ANGLE_TRY(getCommandPool(true).init(context, true, queueMap.getIndex()));
     }
 
     return angle::Result::Continue;
@@ -1054,6 +1051,7 @@ angle::Result CommandQueue::submitCommands(
 
     batch.queueSerial           = submitQueueSerial;
     batch.hasProtectedContent   = hasProtectedContent;
+    batch.commandPools          = commandPools;
     batch.commandBuffersToReset = std::move(commandBuffersToReset);
 
     // Don't make a submission if there is nothing to submit.
@@ -1090,18 +1088,8 @@ angle::Result CommandQueue::submitCommands(
         mLastSubmittedSerials.setQueueSerial(submitQueueSerial);
     }
 
-    // Store the primary CommandBuffer and command pool used for secondary CommandBuffers
-    // in the in-flight list.
-    if (hasProtectedContent)
-    {
-        releaseToCommandBatch(hasProtectedContent, std::move(mProtectedPrimaryCommands),
-                              commandPools, &batch);
-    }
-    else
-    {
-        releaseToCommandBatch(hasProtectedContent, std::move(mPrimaryCommands), commandPools,
-                              &batch);
-    }
+    // Store the primary CommandBuffer in the in-flight list.
+    batch.primaryCommands = std::move(commandBuffer);
     mInFlightCommands.emplace_back(scopedBatch.release());
 
     int finishedCount;
@@ -1478,18 +1466,6 @@ angle::Result CommandQueue::retireFinishedCommandsAndCleanupGarbage(Context *con
     renderer->cleanupGarbage();
 
     return angle::Result::Continue;
-}
-
-void CommandQueue::releaseToCommandBatch(bool hasProtectedContent,
-                                         PrimaryCommandBuffer &&commandBuffer,
-                                         SecondaryCommandPools *commandPools,
-                                         CommandBatch *batch)
-{
-    ANGLE_TRACE_EVENT0("gpu.angle", "CommandQueue::releaseToCommandBatch");
-
-    batch->primaryCommands     = std::move(commandBuffer);
-    batch->commandPools        = commandPools;
-    batch->hasProtectedContent = hasProtectedContent;
 }
 
 bool CommandQueue::allInFlightCommandsAreAfterSerials(const Serials &serials)

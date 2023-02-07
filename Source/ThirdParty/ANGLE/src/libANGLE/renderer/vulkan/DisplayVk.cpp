@@ -856,7 +856,7 @@ uint32_t UpdateDescriptorSetsBuilder::flushDescriptorSetUpdates(VkDevice device)
     vkUpdateDescriptorSets(device, static_cast<uint32_t>(mWriteDescriptorSets.size()),
                            mWriteDescriptorSets.data(), 0, nullptr);
 
-    uint32_t retVal = static_cast<uint32_t>(mDescriptorImageInfos.size());
+    uint32_t retVal = static_cast<uint32_t>(mWriteDescriptorSets.size());
 
     mWriteDescriptorSets.clear();
     mDescriptorBufferInfos.clear();

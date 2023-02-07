@@ -393,10 +393,6 @@ class CommandQueue : angle::NonCopyable
                               const Fence *fence,
                               const QueueSerial &submitQueueSerial);
 
-    void releaseToCommandBatch(bool hasProtectedContent,
-                               PrimaryCommandBuffer &&commandBuffer,
-                               SecondaryCommandPools *commandPools,
-                               CommandBatch *batch);
     angle::Result retireFinishedCommands(Context *context, size_t finishedCount);
     angle::Result retireFinishedCommandsAndCleanupGarbage(Context *context, size_t finishedCount);
     angle::Result ensurePrimaryCommandBufferValid(Context *context, bool hasProtectedContent);
@@ -408,39 +404,35 @@ class CommandQueue : angle::NonCopyable
     // For validation only. Should only be called with ASSERT macro.
     bool allInFlightCommandsAreAfterSerials(const Serials &serials);
 
+    struct CommandsState
+    {
+        PrimaryCommandBuffer primaryCommands;
+        // Keeps a free list of reusable primary command buffers.
+        PersistentCommandPool primaryCommandPool;
+    };
+
+    CommandsState &getCommandsState(bool hasProtectedContent)
+    {
+        static_assert(static_cast<CommandContent>(false) == CommandContent::Unprotected, "");
+        static_assert(static_cast<CommandContent>(true) == CommandContent::Protected, "");
+        return mCommandsStateMap[static_cast<CommandContent>(hasProtectedContent)];
+    }
+
     PrimaryCommandBuffer &getCommandBuffer(bool hasProtectedContent)
     {
-        if (hasProtectedContent)
-        {
-            return mProtectedPrimaryCommands;
-        }
-        else
-        {
-            return mPrimaryCommands;
-        }
+        return getCommandsState(hasProtectedContent).primaryCommands;
     }
 
     PersistentCommandPool &getCommandPool(bool hasProtectedContent)
     {
-        if (hasProtectedContent)
-        {
-            return mProtectedPrimaryCommandPool;
-        }
-        else
-        {
-            return mPrimaryCommandPool;
-        }
+        return getCommandsState(hasProtectedContent).primaryCommandPool;
     }
 
     // Protect multi-thread access to mInFlightCommands and other data memebers of this class.
     mutable std::mutex mMutex;
     std::vector<CommandBatch> mInFlightCommands;
 
-    // Keeps a free list of reusable primary command buffers.
-    PrimaryCommandBuffer mPrimaryCommands;
-    PersistentCommandPool mPrimaryCommandPool;
-    PrimaryCommandBuffer mProtectedPrimaryCommands;
-    PersistentCommandPool mProtectedPrimaryCommandPool;
+    angle::PackedEnumMap<CommandContent, CommandsState> mCommandsStateMap;
 
     // Queue serial management.
     AtomicQueueSerialFixedArray mLastSubmittedSerials;
