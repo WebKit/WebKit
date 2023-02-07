@@ -1,9 +1,0 @@
-<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
-<body bgcolor=blue>
-<iframe src="http://localhost:8000/site-isolation/resources/green-background.html" frameborder=0></iframe>
-<script>
-    // FIXME: This should not be necessary. WebKitTestRunner should wait for all frames from all processes to paint before finishing the test.
-    onload = ()=>{ setTimeout(()=>{ testRunner.notifyDone() }, 1000); }
-    testRunner.waitUntilDone();
-</script>
-</body>
