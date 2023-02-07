@@ -43,6 +43,7 @@
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/SWServerDelegate.h>
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -99,7 +100,12 @@ namespace NetworkCache {
 class Cache;
 }
 
-class NetworkSession : public CanMakeWeakPtr<NetworkSession> {
+class NetworkSession
+#if ENABLE(SERVICE_WORKER)
+    : public WebCore::SWServerDelegate {
+#else
+    : public CanMakeWeakPtr<NetworkSession> {
+#endif
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<NetworkSession> create(NetworkProcess&, const NetworkSessionCreationParameters&);
@@ -198,7 +204,6 @@ public:
     void lowMemoryHandler(WTF::Critical);
 
 #if ENABLE(SERVICE_WORKER)
-    void addSoftUpdateLoader(std::unique_ptr<ServiceWorkerSoftUpdateLoader>&& loader) { m_softUpdateLoaders.add(WTFMove(loader)); }
     void removeSoftUpdateLoader(ServiceWorkerSoftUpdateLoader* loader) { m_softUpdateLoaders.remove(loader); }
     void addNavigationPreloaderTask(ServiceWorkerFetchTask&);
     ServiceWorkerFetchTask* navigationPreloaderTaskFromFetchIdentifier(WebCore::FetchIdentifier);
@@ -262,6 +267,13 @@ protected:
 
 #if ENABLE(TRACKING_PREVENTION)
     void forwardResourceLoadStatisticsSettings();
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    void softUpdate(WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&&) final;
+    void createContextConnection(const WebCore::RegistrableDomain&, std::optional<WebCore::ProcessIdentifier>, std::optional<WebCore::ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&) final;
+    void appBoundDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&) final;
+    void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, std::optional<WebCore::ProcessIdentifier>, WebCore::RegistrableDomain&&) final;
 #endif
 
     PAL::SessionID m_sessionID;
