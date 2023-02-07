@@ -26,10 +26,11 @@
 #pragma once
 
 #include "ASTStringDumper.h"
-#include <wtf/DataLog.h>
+#include "Logging.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
@@ -48,7 +49,7 @@ static constexpr bool dumpPhaseTimes = false;
 static inline bool dumpASTIfNeeded(bool shouldDump, AST::ShaderModule& program, const char* message)
 {
     if (UNLIKELY(shouldDump)) {
-        dataLogLn(message);
+        RELEASE_LOG_WITH_STREAM(WGSL, stream << message);
         dumpAST(program);
         return true;
     }
@@ -79,7 +80,7 @@ static inline void logPhaseTimes(PhaseTimes& phaseTimes)
         return;
 
     for (auto& entry : phaseTimes)
-        dataLogLn(entry.first, ": ", entry.second.milliseconds(), " ms");
+        RELEASE_LOG_WITH_STREAM(WGSL, stream << entry.first << ": " << entry.second.milliseconds() << " ms");
 }
 
 class PhaseTimer {

@@ -27,9 +27,10 @@
 #include "MetalCodeGenerator.h"
 
 #include "AST.h"
+#include "Logging.h"
 #include "MetalFunctionWriter.h"
-#include <wtf/DataLog.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WGSL {
 
@@ -51,8 +52,8 @@ static StringView metalCodePrologue()
 static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
 {
     if (dumpMetalCode) {
-        dataLogLn("Generated Metal code:");
-        dataLogLn(stringBuilder.toString());
+        RELEASE_LOG_WITH_STREAM(WGSL, stream << "Generated Metal code:");
+        RELEASE_LOG_WITH_STREAM(WGSL, stream << stringBuilder.toString());
     }
 }
 

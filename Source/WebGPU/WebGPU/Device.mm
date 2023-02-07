@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #import "Buffer.h"
 #import "CommandEncoder.h"
 #import "ComputePipeline.h"
+#import "Logging.h"
 #import "PipelineLayout.h"
 #import "PresentationContext.h"
 #import "QuerySet.h"
@@ -46,6 +47,7 @@
 #import <notify.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/text/TextStream.h>
 
 namespace WebGPU {
 
@@ -92,9 +94,9 @@ private:
 
         NSError *error;
         if (![captureManager startCaptureWithDescriptor:captureDescriptor error:&error])
-            WTFLogAlways("Failed to start GPU frame capture at path %@, error %@", captureDescriptor.outputURL.absoluteString, error);
+            RELEASE_LOG_WITH_STREAM(WebGPU, stream << "Failed to start GPU frame capture at path " << captureDescriptor.outputURL.absoluteString << ", error " << error);
         else
-            WTFLogAlways("Success starting GPU frame capture at path %@", captureDescriptor.outputURL.absoluteString);
+            RELEASE_LOG_WITH_STREAM(WebGPU, stream << "Success starting GPU frame capture at path " << captureDescriptor.outputURL.absoluteString);
     }
 
     static bool captureFirstFrame;

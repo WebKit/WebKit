@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,10 @@
 #include "ASTStringDumper.h"
 
 #include "AST.h"
-#include <wtf/DataLog.h>
+#include "Logging.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/SetForScope.h>
+#include <wtf/text/TextStream.h>
 
 namespace WGSL::AST {
 
@@ -408,7 +409,7 @@ void StringDumper::visit(VariableQualifier& qualifier)
 
 void dumpAST(ShaderModule& shaderModule)
 {
-    dataLogLn(ShaderModuleDumper(shaderModule));
+    RELEASE_LOG_WITH_STREAM(WGSL, stream << shaderModule);
 }
 
 } // namespace WGSL::AST

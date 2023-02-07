@@ -31,9 +31,10 @@
 #include "ASTVisitor.h"
 #include "CompilationMessage.h"
 #include "ContextProviderInlines.h"
+#include "Logging.h"
 #include "TypeStore.h"
 #include "Types.h"
-#include <wtf/DataLog.h>
+#include <wtf/text/TextStream.h>
 
 namespace WGSL {
 
@@ -131,7 +132,7 @@ void TypeChecker::check()
 
     if (shouldDumpInferredTypes) {
         for (auto& error : m_errors)
-            dataLogLn(error);
+            RELEASE_LOG_WITH_STREAM(WGSL, stream << error);
     }
 }
 
@@ -363,12 +364,8 @@ Type* TypeChecker::infer(AST::Expression& expression)
 
     auto* type = m_inferredType;
 
-    if (shouldDumpInferredTypes) {
-        dataLog("> Type inference [expression]: ");
-        dumpNode(WTF::dataFile(), expression);
-        dataLog(" : ");
-        dataLogLn(*type);
-    }
+    if (shouldDumpInferredTypes)
+        RELEASE_LOG_WITH_STREAM(WGSL, stream << "> Type inference [expression]: " << expression << " : " << *type);
 
     // FIXME: store resolved type in the expression
     m_inferredType = nullptr;
@@ -386,12 +383,8 @@ Type* TypeChecker::resolve(AST::TypeName& type)
 
     auto* inferredType = m_inferredType;
 
-    if (shouldDumpInferredTypes) {
-        dataLog("> Type inference [type]: ");
-        dumpNode(WTF::dataFile(), type);
-        dataLog(" : ");
-        dataLogLn(*inferredType);
-    }
+    if (shouldDumpInferredTypes)
+        RELEASE_LOG_WITH_STREAM(WGSL, stream << "> Type inference [expression]: " << type << " : " << *inferredType);
 
     // FIXME: store resolved type in the AST type
     m_inferredType = nullptr;
@@ -408,7 +401,7 @@ void TypeChecker::inferred(Type* type)
 bool TypeChecker::unify(Type* lhs, Type* rhs)
 {
     if (shouldDumpInferredTypes)
-        dataLogLn("[unify] '", *lhs, "' <", RawPointer(lhs), ">  and '", *rhs, "' <", RawPointer(rhs), ">");
+        RELEASE_LOG_WITH_STREAM(WGSL, stream << "[unify] '" << *lhs << "' <" << lhs << ">  and '" << *rhs << "' <" << rhs << ">");
 
     if (lhs == rhs)
         return true;

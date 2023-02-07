@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,9 @@
 
 #import "APIConversions.h"
 #import "Device.h"
+#import "Logging.h"
 #import "PipelineLayout.h"
+#import <wtf/text/TextStream.h>
 
 namespace WebGPU {
 
@@ -71,7 +73,7 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:&error];
     if (error) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", error);
+        RELEASE_LOG_WITH_STREAM(WebGPU, stream << "MSL compilation error: " << error);
     }
     library.label = label;
     return library;
@@ -287,7 +289,7 @@ id<MTLFunction> ShaderModule::getNamedFunction(const String& originalName, const
 
     if (error) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
-        WTFLogAlways("MSL compilation error: %@", error);
+        RELEASE_LOG_WITH_STREAM(WebGPU, stream << "MSL compilation error: " << error);
     }
 
     return result;

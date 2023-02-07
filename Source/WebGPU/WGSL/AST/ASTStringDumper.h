@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,11 @@
 
 #pragma once
 
+#include "ASTNode.h"
 #include "ASTVisitor.h"
+#include <type_traits>
 #include <wtf/StringPrintStream.h>
+#include <wtf/text/TextStream.h>
 
 namespace WGSL::AST {
 
@@ -101,14 +104,12 @@ private:
 };
 
 template<typename T>
-void dumpNode(PrintStream& out, T& node)
+std::enable_if_t<std::is_base_of<Node, T>::value, TextStream&> operator<<(TextStream& ts, const T& node)
 {
     StringDumper dumper;
-    dumper.visit(node);
-    out.print(dumper.toString());
+    dumper.visit(const_cast<T&>(node));
+    return ts << dumper.toString();
 }
-
-MAKE_PRINT_ADAPTOR(ShaderModuleDumper, ShaderModule&, dumpNode);
 
 void dumpAST(ShaderModule&);
 

@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2023 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -4200,6 +4200,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, file_state
                 and not modified_identifier == "LOG_CHANNEL"
                 and not modified_identifier == "WTF_GUARDED_BY_LOCK"
                 and not modified_identifier == "WTF_GUARDED_BY_CAPABILITY"
+                and not modified_identifier == "JOIN_LOG_CHANNEL_WITH_PREFIX"
                 and not modified_identifier.startswith("_AX")
                 and not modified_identifier.find('chrono_literals') >= 0):
                 error(line_number, 'readability/naming/underscores', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")

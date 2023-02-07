@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include "Logging.h"
 #include "SourceSpan.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
@@ -39,8 +41,6 @@ public:
         , m_span(span)
     {
     }
-
-    void dump(PrintStream& out) const;
 
     const String& message() const { return m_message; }
     unsigned lineNumber() const { return m_span.m_line; }
@@ -55,5 +55,10 @@ private:
 
 using Warning = CompilationMessage;
 using Error = CompilationMessage;
+
+inline TextStream& operator<<(TextStream& ts, const CompilationMessage& message)
+{
+    return ts << message.lineNumber() << ":" << message.lineOffset() << ": " << message.message();
+}
 
 } // namespace WGSL

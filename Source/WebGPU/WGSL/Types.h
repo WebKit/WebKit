@@ -27,6 +27,7 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WGSL {
@@ -101,6 +102,11 @@ struct TypeConstructor {
 
 void printInternal(PrintStream&, const Type&);
 String toString(const Type&);
+
+inline TextStream& operator<<(TextStream& ts, const Type& type)
+{
+    return ts << toString(type);
+}
 
 } // namespace WGSL
 

@@ -29,8 +29,10 @@
 #import "APIConversions.h"
 #import "BindGroupLayout.h"
 #import "Device.h"
+#import "Logging.h"
 #import "PipelineLayout.h"
 #import "ShaderModule.h"
+#import <wtf/text/TextStream.h>
 
 namespace WebGPU {
 
@@ -118,7 +120,7 @@ static id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflec
     NSError *error = nil;
     id<MTLFunction> function = [library newFunctionWithDescriptor:functionDescriptor error:&error];
     if (error)
-        WTFLogAlways("Function creation error: %@", error);
+        RELEASE_LOG_WITH_STREAM(WebGPU, stream << "Function creation error: " << error);
     function.label = label;
     return function;
 }
@@ -139,7 +141,7 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     id<MTLComputePipelineState> computePipelineState = [device newComputePipelineStateWithDescriptor:computePipelineDescriptor options:pipelineOptions reflection:reflection error:&error];
 
     if (error)
-        WTFLogAlways("Pipeline state creation error: %@", error);
+        RELEASE_LOG_WITH_STREAM(WebGPU, stream << "Pipeline state creation error: " << error);
     return computePipelineState;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -649,6 +649,15 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_LOG_INFO_IF(isAllowed, channel, ...) do { if (isAllowed) RELEASE_LOG_INFO(channel, __VA_ARGS__); } while (0)
 
 #define RELEASE_LOG_STACKTRACE(channel) WTFReleaseLogStackTrace(&LOG_CHANNEL(channel))
+
+#define RELEASE_LOG_WITH_STREAM(channel, commands) do { \
+        if (LOG_CHANNEL(channel).state != logChannelStateOff) { \
+            WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
+            commands; \
+            RELEASE_LOG(channel, "%s", stream.release().utf8().data()); \
+        } \
+    } while (0)
+
 #endif
 
 /* ALWAYS_LOG */
