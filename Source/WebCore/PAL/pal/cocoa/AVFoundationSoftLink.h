@@ -350,10 +350,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeBui
 #define AVCaptureDeviceTypeBuiltInTripleCamera PAL::get_AVFoundation_AVCaptureDeviceTypeBuiltInTripleCamera()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeDeskViewCamera, NSString *)
 #define AVCaptureDeviceTypeDeskViewCamera PAL::get_AVFoundation_AVCaptureDeviceTypeDeskViewCamera()
-#endif
-
-#if PLATFORM(MAC)
-SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeExternalUnknown, NSString *)
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVCaptureDeviceTypeExternalUnknown, NSString *)
 #define AVCaptureDeviceTypeExternalUnknown PAL::get_AVFoundation_AVCaptureDeviceTypeExternalUnknown()
 #endif
 
