@@ -370,14 +370,14 @@ bool RenderSVGImage::bufferForeground(PaintInfo& paintInfo, const LayoutPoint& p
     repaintBoundingBox.moveBy(paintOffset);
 
     // Invalidate an existing buffer if the scale is not correct.
-    const auto& absoluteTransform = destinationContext.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    const auto& absoluteTransform = destinationContext.getCTM();
 
     auto absoluteTargetRect = enclosingIntRect(absoluteTransform.mapRect(repaintBoundingBox));
     if (m_bufferedForeground) {
         if (absoluteTargetRect.size() != m_bufferedForeground->backendSize())
             m_bufferedForeground = nullptr;
         else {
-            const auto& absoluteTransformBuffer = m_bufferedForeground->context().getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+            const auto& absoluteTransformBuffer = m_bufferedForeground->context().getCTM();
             if (absoluteTransformBuffer != absoluteTransform)
                 m_bufferedForeground = nullptr;
         }

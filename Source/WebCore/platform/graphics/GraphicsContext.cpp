@@ -497,13 +497,13 @@ void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2
 
 FloatSize GraphicsContext::scaleFactor() const
 {
-    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    AffineTransform transform = getCTM();
     return FloatSize(transform.xScale(), transform.yScale());
 }
     
 FloatSize GraphicsContext::scaleFactorForDrawing(const FloatRect& destRect, const FloatRect& srcRect) const
 {
-    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    AffineTransform transform = getCTM();
     auto transformedDestRect = transform.mapRect(destRect);
     return transformedDestRect.size() / srcRect.size();
 }
@@ -546,7 +546,7 @@ FloatRect GraphicsContext::computeLineBoundsAndAntialiasingModeForText(const Flo
     if (printing)
         return FloatRect(origin, FloatSize(rect.width(), thickness));
 
-    AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    AffineTransform transform = getCTM();
     // Just compute scale in x dimension, assuming x and y scales are equal.
     float scale = transform.b() ? std::hypot(transform.a(), transform.b()) : transform.a();
     if (scale < 1.0) {

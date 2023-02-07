@@ -87,9 +87,8 @@ bool GraphicsContextCairo::hasPlatformContext() const
     return true;
 }
 
-AffineTransform GraphicsContextCairo::getCTM(IncludeDeviceScale includeScale) const
+AffineTransform GraphicsContextCairo::getCTM() const
 {
-    UNUSED_PARAM(includeScale);
     return Cairo::State::getCTM(*platformContext());
 }
 

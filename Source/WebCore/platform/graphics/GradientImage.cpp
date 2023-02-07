@@ -62,7 +62,7 @@ void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& d
     m_gradient->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect, spacing);
 
     // Factor in the destination context's scale to generate at the best resolution
-    AffineTransform destContextCTM = destContext.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+    AffineTransform destContextCTM = destContext.getCTM();
     double xScale = fabs(destContextCTM.xScale());
     double yScale = fabs(destContextCTM.yScale());
     AffineTransform adjustedPatternCTM = patternTransform;

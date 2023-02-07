@@ -102,7 +102,8 @@ public:
     void concatCTM(const AffineTransform&) final;
     void setCTM(const AffineTransform&) override;
 
-    AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
+    AffineTransform getCTM() const override;
+    AffineTransform getUserCTM() const override;
 
     void drawFocusRing(const Path&, float outlineWidth, const Color&) final;
     void drawFocusRing(const Vector<FloatRect>&, float outlineOffset, float outlineWidth, const Color&) final;

@@ -92,7 +92,7 @@ public:
     void scale(const FloatSize&) final;
     void concatCTM(const AffineTransform&) final;
     void setCTM(const AffineTransform&) final;
-    AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) const final;
+    AffineTransform getCTM() const final;
 
     void beginTransparencyLayer(float) final;
     void endTransparencyLayer() final;

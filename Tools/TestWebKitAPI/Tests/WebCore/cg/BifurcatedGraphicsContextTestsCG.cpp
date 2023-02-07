@@ -294,8 +294,8 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
 
     ctx.applyDeviceScaleFactor(2);
 
-    auto primaryCTM = primaryContext.getCTM(GraphicsContext::IncludeDeviceScale::DefinitelyIncludeDeviceScale);
-    auto secondaryCTM = secondaryContext.getCTM(GraphicsContext::IncludeDeviceScale::DefinitelyIncludeDeviceScale);
+    auto primaryCTM = primaryContext.getCTM();
+    auto secondaryCTM = secondaryContext.getCTM();
 
     EXPECT_EQ(primaryCTM.xScale(), secondaryCTM.xScale());
     EXPECT_EQ(primaryCTM.yScale(), secondaryCTM.yScale());

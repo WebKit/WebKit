@@ -55,11 +55,6 @@ static void setCGFillColor(CGContextRef context, const Color& color)
     CGContextSetFillColorWithColor(context, cachedCGColor(color).get());
 }
 
-inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
-{
-    return CGAffineTransformConcat(CGContextGetCTM(context), CGAffineTransformInvert(CGContextGetBaseCTM(context)));
-}
-
 static InterpolationQuality coreInterpolationQuality(CGContextRef context)
 {
     switch (CGContextGetInterpolationQuality(context)) {
@@ -570,14 +565,13 @@ void GraphicsContextCG::applyStrokePattern()
     if (!strokePattern())
         return;
 
-    CGContextRef cgContext = platformContext();
-    AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
-
+    auto userToBaseCTM = getUserCTM();
     auto platformPattern = strokePattern()->createPlatformPattern(userToBaseCTM);
     if (!platformPattern)
         return;
 
-    RetainPtr<CGColorSpaceRef> patternSpace = adoptCF(CGColorSpaceCreatePattern(0));
+    auto patternSpace = adoptCF(CGColorSpaceCreatePattern(0));
+    auto cgContext = platformContext();
     CGContextSetStrokeColorSpace(cgContext, patternSpace.get());
 
     const CGFloat patternAlpha = 1;
@@ -589,14 +583,13 @@ void GraphicsContextCG::applyFillPattern()
     if (!fillPattern())
         return;
 
-    CGContextRef cgContext = platformContext();
-    AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
-
+    auto userToBaseCTM = getUserCTM();
     auto platformPattern = fillPattern()->createPlatformPattern(userToBaseCTM);
     if (!platformPattern)
         return;
 
-    RetainPtr<CGColorSpaceRef> patternSpace = adoptCF(CGColorSpaceCreatePattern(nullptr));
+    auto cgContext = platformContext();
+    auto patternSpace = adoptCF(CGColorSpaceCreatePattern(nullptr));
     CGContextSetFillColorSpace(cgContext, patternSpace.get());
 
     const CGFloat patternAlpha = 1;
@@ -1048,7 +1041,7 @@ void GraphicsContextCG::setCGShadow(RenderingMode renderingMode, const FloatSize
     CGContextRef context = platformContext();
 
     if (!shadowsIgnoreTransforms) {
-        CGAffineTransform userToBaseCTM = getUserToBaseCTM(context);
+        CGAffineTransform userToBaseCTM = getUserCTM();
 
         CGFloat A = userToBaseCTM.a * userToBaseCTM.a + userToBaseCTM.b * userToBaseCTM.b;
         CGFloat B = userToBaseCTM.a * userToBaseCTM.c + userToBaseCTM.b * userToBaseCTM.d;
@@ -1337,15 +1330,14 @@ void GraphicsContextCG::setCTM(const AffineTransform& transform)
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
+AffineTransform GraphicsContextCG::getCTM() const
 {
-    // The CTM usually includes the deviceScaleFactor except in WebKit 1 when the
-    // content is non-composited, since the scale factor is integrated at a lower
-    // level. To guarantee the deviceScale is included, we can use this CG API.
-    if (includeScale == DefinitelyIncludeDeviceScale)
-        return CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
+    return CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
+}
 
-    return CGContextGetCTM(platformContext());
+AffineTransform GraphicsContextCG::getUserCTM() const
+{
+    return getCTM() * CGAffineTransformInvert(CGContextGetBaseCTM(platformContext()));
 }
 
 FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode) const

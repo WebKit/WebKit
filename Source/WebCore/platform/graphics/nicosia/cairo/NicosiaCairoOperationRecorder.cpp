@@ -1001,7 +1001,7 @@ void CairoOperationRecorder::setCTM(const AffineTransform& transform)
     state.ctmInverse = inverse.value();
 }
 
-AffineTransform CairoOperationRecorder::getCTM(GraphicsContext::IncludeDeviceScale) const
+AffineTransform CairoOperationRecorder::getCTM() const
 {
     return m_stateStack.last().ctm;
 }
