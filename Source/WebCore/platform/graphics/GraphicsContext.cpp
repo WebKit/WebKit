@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -293,6 +293,18 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destin
 ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
 {
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
+
+    auto result = image.drawCachedSubimage(*this, destination, source, options);
+    if (result != ImageDrawResult::DidNothing)
+        return result;
+
+    ASSERT_IMPLIES(image.mustDrawFromCachedSubimage(*this), image.shouldDrawFromCachedSubimage(*this));
+
+    if (image.mustDrawFromCachedSubimage(*this)) {
+        LOG_ERROR("ERROR ImageDrawResult GraphicsContext::drawImage() cached subimage could not been drawn");
+        return ImageDrawResult::DidNothing;
+    }
+
     return image.draw(*this, destination, source, options);
 }
 

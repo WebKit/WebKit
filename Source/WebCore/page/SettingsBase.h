@@ -39,7 +39,6 @@
 #include "FrameFlattening.h"
 #include "HTMLParserScriptingFlagPolicy.h"
 #include "MediaPlayerEnums.h"
-#include "PDFImageCachingPolicy.h"
 #include "StorageBlockingPolicy.h"
 #include "StorageMap.h"
 #include "TextDirection.h"

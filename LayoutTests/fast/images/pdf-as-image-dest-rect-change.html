@@ -26,7 +26,7 @@
 
                 if (window.internals) {
                     window.image = image;
-                    shouldBe("internals.pdfDocumentCachingCount(window.image)", "1");
+                    shouldBe("internals.imageCachedSubimageCreateCount(window.image)", "1");
                 }
                 finishJSTest();
             }
