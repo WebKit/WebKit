@@ -94,9 +94,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
-    case AvoidanceReason::FlowIsPaginated:
-        stream << "paginated";
-        break;
     case AvoidanceReason::FlowHasLineClamp:
         stream << "-webkit-line-clamp";
         break;
@@ -448,10 +445,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
-
-    // Printing does pagination without a flow thread.
-    if (flow.document().paginated())
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsPaginated, reasons, includeReasons);
 
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
