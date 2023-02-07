@@ -614,6 +614,7 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(unsigned mlineIndex, const GR
         sinkPad = adoptGRef(gst_element_request_pad(m_webrtcBin.get(), padTemplate, padId.utf8().data(), caps.get()));
     }
 
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting msid to %s on sink pad", mediaStreamID.ascii().data());
     if (g_object_class_find_property(G_OBJECT_GET_CLASS(sinkPad.get()), "msid"))
         g_object_set(sinkPad.get(), "msid", mediaStreamID.ascii().data(), nullptr);
 
@@ -777,19 +778,28 @@ void GStreamerMediaEndpoint::addRemoteStream(GstPad* pad)
 
     // Look-up the mediastream ID, using the msid attribute, fall back to pad name if there is no msid.
     const auto* media = gst_sdp_message_get_media(description->sdp, mLineIndex);
-    GUniquePtr<gchar> name(gst_pad_get_name(pad));
-    auto mediaStreamId = String::fromLatin1(name.get());
+    String mediaStreamId;
 
     if (g_object_class_find_property(G_OBJECT_GET_CLASS(pad), "msid")) {
         GUniqueOutPtr<char> msid;
         g_object_get(pad, "msid", &msid.outPtr(), nullptr);
         if (msid)
             mediaStreamId = String::fromLatin1(msid.get());
-    } else if (const char* msidAttribute = gst_sdp_media_get_attribute_val(media, "msid")) {
-        auto components = makeString(msidAttribute).split(' ');
-        if (components.size() == 2)
-            mediaStreamId = components[0];
     }
+
+    if (!mediaStreamId) {
+        if (const char* msidAttribute = gst_sdp_media_get_attribute_val(media, "msid")) {
+            auto components = makeString(msidAttribute).split(' ');
+            if (components.size() == 2)
+                mediaStreamId = components[0];
+        }
+    }
+
+    if (!mediaStreamId) {
+        GUniquePtr<gchar> name(gst_pad_get_name(pad));
+        mediaStreamId = String::fromLatin1(name.get());
+    }
+
     GST_DEBUG_OBJECT(m_pipeline.get(), "msid: %s", mediaStreamId.ascii().data());
 
     GstElement* bin = nullptr;
