@@ -5,7 +5,7 @@ async function helloTriangle() {
     }
     
     const adapter = await navigator.gpu.requestAdapter();
-    const device = await adapter.requestDevice();
+    const device = await adapter.requestDevice({requiredFeatures: ["timestamp-query"]});
     
     /*** Query Set creation ***/
     const timestampQueryCount = 4;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,8 @@ QuerySet::QuerySet(id<MTLCounterSampleBuffer> buffer, Device& device)
     , m_timestampBuffer(buffer)
     , m_queryCount(buffer.sampleCount)
 {
+    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary)
+        m_overrideLocations = Vector<std::optional<OverrideLocation>>(m_queryCount);
 }
 
 QuerySet::QuerySet(Device& device)
@@ -93,6 +95,7 @@ void QuerySet::destroy()
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
     m_timestampBuffer = nil;
+    m_overrideLocations.clear();
 }
 
 void QuerySet::setLabel(String&& label)
@@ -100,20 +103,40 @@ void QuerySet::setLabel(String&& label)
     m_visibilityBuffer.label = label;
 }
 
+void QuerySet::setOverrideLocation(uint32_t myIndex, QuerySet& otherQuerySet, uint32_t otherIndex)
+{
+    ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
+    ASSERT(m_overrideLocations.size() == m_queryCount);
+    ASSERT(myIndex < m_overrideLocations.size());
+
+    m_overrideLocations[myIndex] = { { otherQuerySet, otherIndex } };
+}
+
 Vector<MTLTimestamp> QuerySet::resolveTimestamps() const
 {
     ASSERT(m_timestampBuffer);
 
-    NSData *resolvedData = [m_timestampBuffer resolveCounterRange:NSMakeRange(0, m_queryCount)];
-    ASSERT(resolvedData);
-    Vector<MTLTimestamp> timestamps;
-    size_t timestampCount = resolvedData.length / sizeof(uint64_t);
-    timestamps.resize(timestampCount);
-    auto gpuTimestamps = static_cast<const MTLTimestamp *>(resolvedData.bytes);
-    // FIXME: some devices may require mapping GPU time to CPU time, however
-    // this does not appear to be the case in testing
-    for (size_t i = 0; i < timestampCount; ++i)
-        timestamps[i] = gpuTimestamps[i];
+    Vector<MTLTimestamp> timestamps(m_queryCount);
+
+    // FIXME: This code is wrong for a few reasons:
+    // 1. Not all the m_queryCount values must have been populated by now
+    // 2. The time we're being called is after the command buffer has totally finished, which is too late
+    // 3. There's no need to access the values on the CPU at all; they should stay on the GPU
+    // I'll address these issues in a future patch.
+    //
+    // This code could be made faster by iterating over partitions of the array rather than each element individually,
+    // but I'm going to end up changing this code dramatically in the future to address the above points, so
+    // let's just keep this code simple for now.
+    for (uint32_t i = 0; i < m_queryCount; ++i) {
+        NSData *resolvedData = nil;
+        if (const auto& overrideLocation = m_overrideLocations[i])
+            resolvedData = [overrideLocation->other->m_timestampBuffer resolveCounterRange:NSMakeRange(overrideLocation->otherIndex, 1)];
+        else
+            resolvedData = [m_timestampBuffer resolveCounterRange:NSMakeRange(i, 1)];
+        ASSERT(resolvedData);
+        auto gpuTimestamps = static_cast<const MTLTimestamp*>(resolvedData.bytes);
+        timestamps[i] = *gpuTimestamps;
+    }
 
     return timestamps;
 }

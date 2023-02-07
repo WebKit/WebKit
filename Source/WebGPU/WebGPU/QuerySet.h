@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import <optional>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -61,6 +62,8 @@ public:
 
     bool isValid() const { return m_queryCount > 0; }
 
+    void setOverrideLocation(uint32_t myIndex, QuerySet& otherQuerySet, uint32_t otherIndex);
+
     Device& device() const { return m_device; }
     Vector<MTLTimestamp> resolveTimestamps() const;
     uint32_t queryCount() const { return m_queryCount; }
@@ -77,6 +80,18 @@ private:
     id<MTLBuffer> m_visibilityBuffer { nil };
     id<MTLCounterSampleBuffer> m_timestampBuffer { nil };
     uint32_t m_queryCount { 0 };
+
+    // rdar://91371495 is about how we can't just naively transform PassDescriptor.timestampWrites into MTLComputePassDescriptor.sampleBufferAttachments.
+    // Instead, we can resolve all the information to a dummy counter sample buffer, and then internally remember that the data
+    // is in a different place than where it's supposed to be. That's what this "overrides" vector is: A way to remember, when we resolve the data, that we
+    // should resolve it from our dummy buffer instead of from where it's supposed to be.
+    //
+    // When rdar://91371495 is fixed, we can delete this indirection, and put the data directly where it's supposed to go.
+    struct OverrideLocation {
+        Ref<QuerySet> other;
+        uint32_t otherIndex;
+    };
+    Vector<std::optional<OverrideLocation>> m_overrideLocations;
 };
 
 } // namespace WebGPU

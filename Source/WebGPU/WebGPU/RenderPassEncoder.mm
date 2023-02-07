@@ -125,6 +125,7 @@ void RenderPassEncoder::endPass()
         [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
     [m_renderCommandEncoder endEncoding];
+    m_renderCommandEncoder = nil;
 }
 
 void RenderPassEncoder::endPipelineStatisticsQuery()
