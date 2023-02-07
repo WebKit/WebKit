@@ -79,6 +79,7 @@ public:
 
 private:
     void visitFunctionBody(AST::Function&);
+    void visitStructMembers(AST::Structure&);
 
     template<typename... Arguments>
     void typeError(const SourceSpan&, Arguments&&...);
@@ -92,6 +93,7 @@ private:
     void inferred(Type*);
     bool unify(Type*, Type*) WARN_UNUSED_RETURN;
     bool isBottom(Type*) const;
+    std::optional<unsigned> extractInteger(AST::Expression&);
 
     AST::ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
@@ -288,10 +290,27 @@ void TypeChecker::visit(AST::TypeName&)
     ASSERT_NOT_REACHED();
 }
 
-void TypeChecker::visit(AST::ArrayTypeName&)
+void TypeChecker::visit(AST::ArrayTypeName& array)
 {
-    // FIXME: implement this
-    inferred(m_types.voidType());
+    // FIXME: handle the case where there is no element type
+    ASSERT(array.maybeElementType());
+
+    auto* elementType = resolve(*array.maybeElementType());
+    if (isBottom(elementType)) {
+        inferred(m_types.bottomType());
+        return;
+    }
+
+    std::optional<unsigned> size;
+    if (array.maybeElementCount()) {
+        size = extractInteger(*array.maybeElementCount());
+        if (!size) {
+            typeError(array.span(), "array count must evaluate to a constant integer expression or override variable");
+            return;
+        }
+    }
+
+    inferred(m_types.arrayType(elementType, size));
 }
 
 void TypeChecker::visit(AST::NamedTypeName& namedType)
@@ -305,10 +324,13 @@ void TypeChecker::visit(AST::NamedTypeName& namedType)
     typeError(namedType.span(), "unknown type: '", namedType.name(), "'");
 }
 
-void TypeChecker::visit(AST::ParameterizedTypeName&)
+void TypeChecker::visit(AST::ParameterizedTypeName& type)
 {
-    // FIXME: implement this
-    inferred(m_types.voidType());
+    auto* elementType = resolve(type.elementType());
+    if (isBottom(elementType))
+        inferred(m_types.bottomType());
+    else
+        inferred(m_types.constructType(type.base(), elementType));
 }
 
 void TypeChecker::visit(AST::ReferenceTypeName&)
@@ -318,6 +340,21 @@ void TypeChecker::visit(AST::ReferenceTypeName&)
 }
 
 // Private helpers
+std::optional<unsigned> TypeChecker::extractInteger(AST::Expression& expression)
+{
+    switch (expression.kind()) {
+    case AST::NodeKind::AbstractIntegerLiteral:
+        return { static_cast<unsigned>(downcast<AST::AbstractIntegerLiteral>(expression).value()) };
+    case AST::NodeKind::Unsigned32Literal:
+        return { static_cast<unsigned>(downcast<AST::Unsigned32Literal>(expression).value()) };
+    case AST::NodeKind::Signed32Literal:
+        return { static_cast<unsigned>(downcast<AST::Signed32Literal>(expression).value()) };
+    default:
+        // FIXME: handle constants and overrides
+        return std::nullopt;
+    }
+}
+
 Type* TypeChecker::infer(AST::Expression& expression)
 {
     ASSERT(!m_inferredType);
