@@ -109,8 +109,9 @@ static void webkit_media_common_encryption_decrypt_class_init(WebKitMediaCommonE
 
 static void constructed(GObject* object)
 {
-    GstBaseTransform* base = GST_BASE_TRANSFORM(object);
+    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
 
+    GstBaseTransform* base = GST_BASE_TRANSFORM(object);
     gst_base_transform_set_in_place(base, TRUE);
     gst_base_transform_set_passthrough(base, FALSE);
     gst_base_transform_set_gap_aware(base, FALSE);
@@ -391,7 +392,7 @@ static void attachCDMProxy(WebKitMediaCommonEncryptionDecrypt* self, CDMProxy* p
     WebKitMediaCommonEncryptionDecryptClass* klass = WEBKIT_MEDIA_CENC_DECRYPT_GET_CLASS(self);
 
     Locker locker { priv->lock };
-    GST_ERROR_OBJECT(self, "Attaching CDMProxy %p", proxy);
+    GST_DEBUG_OBJECT(self, "Attaching CDMProxy %p", proxy);
     priv->cdmProxy = proxy;
     klass->cdmProxyAttached(self, priv->cdmProxy);
     priv->condition.notifyOne();
