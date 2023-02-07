@@ -3926,8 +3926,10 @@ void RenderLayer::establishesTopLayerWillChange()
 
 void RenderLayer::establishesTopLayerDidChange()
 {
-    if (auto* parentLayer = renderer().layerParent())
+    if (auto* parentLayer = renderer().layerParent()) {
+        setIsNormalFlowOnly(shouldBeNormalFlowOnly());
         parentLayer->addChild(*this);
+    }
 }
 
 RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
