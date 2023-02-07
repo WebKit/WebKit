@@ -43,7 +43,10 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     m_renderGrid.currentGrid().setupGridForMasonryLayout();
     m_renderGrid.populateExplicitGridAndOrderIterator();
 
-    resizeAndResetRunningPositions(); 
+    resizeAndResetRunningPositions();
+
+    m_renderGrid.populateGridPositionsForDirection(ForColumns);
+    m_renderGrid.populateGridPositionsForDirection(ForRows);
 
     // 2.4 Masonry Layout Algorithm
     addItemsToFirstTrack();
