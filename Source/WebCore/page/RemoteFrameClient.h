@@ -32,6 +32,7 @@ namespace WebCore {
 class RemoteFrameClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    virtual void frameDetached() = 0;
     virtual ~RemoteFrameClient() { }
 };
 

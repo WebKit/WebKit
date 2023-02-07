@@ -57,7 +57,7 @@ public:
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
-    void scheduleInvalidateStyleAndLayerComposition();
+    WEBCORE_EXPORT void scheduleInvalidateStyleAndLayerComposition();
 
     virtual bool canLoadScriptURL(const URL&) const = 0;
 

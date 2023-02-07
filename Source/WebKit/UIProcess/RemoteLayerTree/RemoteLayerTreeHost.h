@@ -96,6 +96,7 @@ private:
     RemoteLayerTreeDrawingAreaProxy* m_drawingArea { nullptr };
     WeakPtr<RemoteLayerTreeNode> m_rootNode;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, std::unique_ptr<RemoteLayerTreeNode>> m_nodes;
+    HashMap<WebCore::LayerHostingContextIdentifier, WebCore::GraphicsLayer::PlatformLayerID> m_hostedLayers;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_overlayRegionIDs;

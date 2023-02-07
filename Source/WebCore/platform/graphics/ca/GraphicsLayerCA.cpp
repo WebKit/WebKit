@@ -375,6 +375,12 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(Ref<WebCore::Model>,
 }
 #endif
 
+Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayerHost(LayerHostingContextIdentifier, PlatformCALayerClient* owner)
+{
+    ASSERT_NOT_REACHED_WITH_MESSAGE("GraphicsLayerCARemote::createPlatformCALayerHost should always be called instead of this, but this symbol is needed to compile WebKitLegacy.");
+    return GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerTypeLayer, owner);
+}
+
 Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
 #if PLATFORM(COCOA)
@@ -491,7 +497,7 @@ String GraphicsLayerCA::debugName() const
 {
 #if ENABLE(TREE_DEBUGGING)
     String caLayerDescription;
-    if (!m_layer->isPlatformCALayerRemote())
+    if (m_layer->type() == PlatformCALayer::Type::Cocoa)
         caLayerDescription = makeString("CALayer(0x", hex(reinterpret_cast<uintptr_t>(m_layer->platformLayer()), Lowercase), ") ");
     return makeString(caLayerDescription, "GraphicsLayer(0x", hex(reinterpret_cast<uintptr_t>(this), Lowercase), ", ", primaryLayerID().object(), ") ", name());
 #else
@@ -1310,6 +1316,15 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
 }
 
+void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifier identifier)
+{
+    m_contentsLayer = createPlatformCALayerHost(identifier, this);
+    m_contentsLayerPurpose = GraphicsLayer::ContentsLayerPurpose::Host;
+    m_contentsDisplayDelegate = nullptr;
+    noteSublayersChanged();
+    noteLayerPropertyChanged(ContentsPlatformLayerChanged);
+}
+
 void GraphicsLayerCA::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate, ContentsLayerPurpose purpose)
 {
     if (m_contentsLayer && delegate == m_contentsDisplayDelegate)
@@ -1405,7 +1420,7 @@ void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
 #if PLATFORM(IOS_FAMILY)
     // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so disable the optimization.
     // See the similar test in computeVisibleAndCoverageRect().
-    if (m_layer->isPlatformCALayerCocoa())
+    if (m_layer->type() == PlatformCALayer::Type::Cocoa)
         commitState.ancestorHadChanges = true;
 #endif
 
@@ -1608,7 +1623,7 @@ GraphicsLayerCA::VisibleAndCoverageRects GraphicsLayerCA::computeVisibleAndCover
     auto boundsOrigin = m_boundsOrigin;
 #if PLATFORM(IOS_FAMILY)
     // In WK1, UIKit may be changing layer bounds behind our back in overflow-scroll layers, so use the layer's origin.
-    if (m_layer->isPlatformCALayerCocoa())
+    if (m_layer->type() == PlatformCALayer::Type::Cocoa)
         boundsOrigin = m_layer->bounds().location();
 #endif
 
@@ -4153,6 +4168,8 @@ const char* GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) co
             return "contents layer (plugin)";
         case ContentsLayerPurpose::Model:
             return "contents layer (model)";
+        case ContentsLayerPurpose::Host:
+            return "contents layer (host)";
         }
     }
     if (&layer == m_contentsShapeMaskLayer.get())

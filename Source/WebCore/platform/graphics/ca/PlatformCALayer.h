@@ -88,6 +88,7 @@ public:
         LayerTypeModelLayer,
 #endif
         LayerTypeCustom,
+        LayerTypeHost,
     };
     enum FilterType { Linear, Nearest, Trilinear };
 
@@ -97,9 +98,17 @@ public:
 
     GraphicsLayer::PlatformLayerID layerID() const { return m_layerID; }
 
-    virtual bool isPlatformCALayerCocoa() const { return false; }
-    virtual bool isPlatformCALayerRemote() const { return false; }
-    virtual bool isPlatformCALayerRemoteCustom() const { return false; }
+    enum class Type : uint8_t {
+#if PLATFORM(WIN)
+        Win,
+#endif
+        Cocoa,
+        Remote,
+        RemoteCustom,
+        RemoteHost,
+        RemoteModel
+    };
+    virtual Type type() const = 0;
 
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
@@ -373,7 +382,8 @@ template<> struct EnumTraits<WebCore::PlatformCALayer::LayerType> {
 #if ENABLE(MODEL_ELEMENT)
         WebCore::PlatformCALayer::LayerType::LayerTypeModelLayer,
 #endif
-        WebCore::PlatformCALayer::LayerType::LayerTypeCustom
+        WebCore::PlatformCALayer::LayerType::LayerTypeCustom,
+        WebCore::PlatformCALayer::LayerType::LayerTypeHost
     >;
 };
 

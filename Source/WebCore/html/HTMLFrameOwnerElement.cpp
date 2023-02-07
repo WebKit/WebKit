@@ -25,6 +25,8 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "RemoteFrame.h"
+#include "RemoteFrameClient.h"
 #include "RenderWidget.h"
 #include "SVGDocument.h"
 #include "SVGElementTypeHelpers.h"
@@ -77,8 +79,8 @@ void HTMLFrameOwnerElement::clearContentFrame()
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
-    if (RefPtr frame = dynamicDowncast<LocalFrame>(m_contentFrame.get())) {
-        frame->loader().frameDetached();
+    if (RefPtr frame = m_contentFrame.get()) {
+        frame->frameDetached();
         frame->disconnectOwnerElement();
     }
 }

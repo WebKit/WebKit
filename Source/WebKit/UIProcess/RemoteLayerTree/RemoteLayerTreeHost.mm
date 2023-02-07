@@ -110,7 +110,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
     if (!rootNode)
         REMOTE_LAYER_TREE_HOST_RELEASE_LOG("%p RemoteLayerTreeHost::updateLayerTree - failed to find root layer with ID %llu", this, transaction.rootLayerID().object().toUInt64());
 
-    if (m_rootNode != rootNode) {
+    if (m_rootNode != rootNode && transaction.isMainFrameProcessTransaction()) {
         m_rootNode = rootNode;
         rootLayerChanged = true;
     }
@@ -135,6 +135,11 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         }
 
         RemoteLayerTreePropertyApplier::applyHierarchyUpdates(*node, properties, m_nodes);
+    }
+
+    if (auto contextHostID = transaction.remoteContextHostIdentifier()) {
+        if (auto* remoteRootNode = nodeForID(m_hostedLayers.get(*contextHostID)))
+            [remoteRootNode->layer() addSublayer:rootNode->layer()];
     }
 
     for (auto& changedLayer : transaction.changedLayerProperties()) {
@@ -208,7 +213,12 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
         m_animationDelegates.remove(animationDelegateIter);
     }
 
-    m_nodes.remove(layerID);
+    if (auto node = m_nodes.take(layerID)) {
+        if (auto hostIdentifier = node->remoteContextHostIdentifier()) {
+            ASSERT(m_hostedLayers.contains(*hostIdentifier));
+            m_hostedLayers.remove(*hostIdentifier);
+        }
+    }
 }
 
 void RemoteLayerTreeHost::animationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, CAAnimation *animation, MonotonicTime startTime)
@@ -306,13 +316,18 @@ void RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::LayerCre
 #endif
 
     m_nodes.add(properties.layerID, WTFMove(node));
+
+    if (properties.hostIdentifier) {
+        ASSERT(!m_hostedLayers.contains(*properties.hostIdentifier));
+        m_hostedLayers.add(*properties.hostIdentifier, properties.layerID);
+    }
 }
 
 #if !PLATFORM(IOS_FAMILY)
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties& properties)
 {
     auto makeWithLayer = [&] (RetainPtr<CALayer>&& layer) {
-        return makeUnique<RemoteLayerTreeNode>(properties.layerID, WTFMove(layer));
+        return makeUnique<RemoteLayerTreeNode>(properties.layerID, properties.hostIdentifier, WTFMove(layer));
     };
 
     switch (properties.type) {
@@ -327,6 +342,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerTypeModelLayer:
 #endif
+    case PlatformCALayer::LayerTypeHost:
     case PlatformCALayer::LayerTypeContentsProvidedLayer: {
         auto layer = RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
         // So that the scrolling thread's performance logging code can find all the tiles, mark this as being a tile.
@@ -353,11 +369,9 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
 
     case PlatformCALayer::LayerTypeShapeLayer:
         return makeWithLayer(adoptNS([[CAShapeLayer alloc] init]));
-            
-    default:
-        ASSERT_NOT_REACHED();
-        return nullptr;
     }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 #endif
 

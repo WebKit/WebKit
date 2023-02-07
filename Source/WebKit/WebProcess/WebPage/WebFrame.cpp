@@ -206,6 +206,11 @@ WebCore::Frame* WebFrame::coreFrame() const
     return dynamicDowncast<LocalFrame>(m_coreFrame.get());
 }
 
+WebCore::RemoteFrame* WebFrame::coreRemoteFrame() const
+{
+    return dynamicDowncast<RemoteFrame>(m_coreFrame.get());
+}
+
 FrameInfoData WebFrame::info() const
 {
     auto* parent = parentFrame();
@@ -266,7 +271,7 @@ void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
         completionHandler();
 }
 
-void WebFrame::didCommitLoadInAnotherProcess()
+void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
 {
     RefPtr coreFrame = m_coreFrame.get();
     if (!coreFrame)
@@ -301,7 +306,7 @@ void WebFrame::didCommitLoadInAnotherProcess()
     coreFrame->disconnectOwnerElement();
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
 
-    auto newFrame = WebCore::RemoteFrame::create(*corePage, m_frameID, ownerElement.get(), WTFMove(client));
+    auto newFrame = WebCore::RemoteFrame::create(*corePage, m_frameID, ownerElement.get(), WTFMove(client), layerHostingContextIdentifier);
     auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
     // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle.
     newFrame->setView(remoteFrameView.ptr());
@@ -312,6 +317,8 @@ void WebFrame::didCommitLoadInAnotherProcess()
     if (ownerElement) {
         // FIXME: This is also done in the WebCore::Frame constructor. Move one to make this more symmetric.
         ownerElement->setContentFrame(*m_coreFrame);
+
+        ownerElement->scheduleInvalidateStyleAndLayerComposition();
     }
 }
 

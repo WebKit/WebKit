@@ -58,6 +58,8 @@ public:
     WEBCORE_EXPORT HTMLFrameOwnerElement* ownerElement() const;
     WEBCORE_EXPORT void disconnectOwnerElement();
 
+    virtual void frameDetached() = 0;
+
 protected:
     AbstractFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*);
     void resetWindowProxy();

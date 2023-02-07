@@ -5430,6 +5430,8 @@
 		5CBC9B8B1C65257300A8FDCF /* NetworkDataTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkDataTaskCocoa.mm; sourceTree = "<group>"; };
 		5CBE908F26D7FB62005A2E95 /* PrivateClickMeasurementDebugInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivateClickMeasurementDebugInfo.h; sourceTree = "<group>"; };
 		5CBE909026D7FB7C005A2E95 /* PrivateClickMeasurementDebugInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurementDebugInfo.cpp; sourceTree = "<group>"; };
+		5CC333A2298487A200C7D77F /* PlatformCALayerRemoteHost.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCALayerRemoteHost.mm; sourceTree = "<group>"; };
+		5CC333A3298487A200C7D77F /* PlatformCALayerRemoteHost.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemoteHost.h; sourceTree = "<group>"; };
 		5CC5DB9121488E16006CB8A8 /* SharedBufferReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedBufferReference.h; sourceTree = "<group>"; };
 		5CC8612728CA81FD0076F563 /* WebsiteDataFetchOption.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsiteDataFetchOption.serialization.in; sourceTree = "<group>"; };
 		5CD286491E722F440094FDC8 /* _WKUserContentFilterPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentFilterPrivate.h; sourceTree = "<group>"; };
@@ -8913,6 +8915,8 @@
 				2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */,
 				2D8710151828415D0018FA01 /* PlatformCALayerRemoteCustom.h */,
 				2D8710141828415D0018FA01 /* PlatformCALayerRemoteCustom.mm */,
+				5CC333A3298487A200C7D77F /* PlatformCALayerRemoteHost.h */,
+				5CC333A2298487A200C7D77F /* PlatformCALayerRemoteHost.mm */,
 				2DC8D39425F2E16500CFCBAB /* PlatformCALayerRemoteModelHosting.h */,
 				2DC8D39325F2E16500CFCBAB /* PlatformCALayerRemoteModelHosting.mm */,
 				2D8949EE182044F600E898AA /* PlatformCALayerRemoteTiledBacking.cpp */,

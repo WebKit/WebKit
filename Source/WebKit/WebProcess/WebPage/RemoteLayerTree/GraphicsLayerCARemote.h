@@ -51,6 +51,7 @@ private:
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(Ref<WebCore::Model>, WebCore::PlatformCALayerClient* owner) override;
 #endif
     Ref<WebCore::PlatformCAAnimation> createPlatformCAAnimation(WebCore::PlatformCAAnimation::AnimationType, const String& keyPath) override;
+    Ref<WebCore::PlatformCALayer> createPlatformCALayerHost(WebCore::LayerHostingContextIdentifier, WebCore::PlatformCALayerClient*) override;
 
     // PlatformCALayerRemote can't currently proxy directly composited image contents, so opt out of this optimization.
     bool shouldDirectlyCompositeImage(WebCore::Image*) const override { return false; }

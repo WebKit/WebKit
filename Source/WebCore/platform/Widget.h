@@ -129,6 +129,7 @@ public:
     void setIsSelected(bool);
 
     virtual bool isFrameView() const { return false; }
+    virtual bool isRemoteFrameView() const { return false; }
     virtual bool isPluginViewBase() const { return false; }
     virtual bool isScrollbar() const { return false; }
     virtual bool isScrollView() const { return false; }

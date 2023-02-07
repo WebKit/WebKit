@@ -30,6 +30,8 @@
 #include "Frame.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
+#include "RemoteFrame.h"
+#include "RemoteFrameView.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerScrollableArea.h"
@@ -453,7 +455,15 @@ bool RenderWidget::requiresAcceleratedCompositing() const
             return view->usesCompositing();
     }
 
+    if (is<RemoteFrameView>(widget()))
+        return true;
+
     return false;
+}
+
+RemoteFrame* RenderWidget::remoteFrame() const
+{
+    return dynamicDowncast<RemoteFrame>(frameOwnerElement().contentFrame());
 }
 
 bool RenderWidget::needsPreferredWidthsRecalculation() const

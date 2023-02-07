@@ -200,6 +200,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << contentSecurityPolicyModeForExtension;
     encoder << mainFrameIdentifier;
+    encoder << layerHostingContextIdentifier;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     encoder << lookalikeCharacterStrings;
@@ -642,6 +643,9 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
 
     if (!decoder.decode(parameters.mainFrameIdentifier))
+        return std::nullopt;
+
+    if (!decoder.decode(parameters.layerHostingContextIdentifier))
         return std::nullopt;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)

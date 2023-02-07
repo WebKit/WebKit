@@ -235,6 +235,7 @@ def serialized_identifiers():
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',
         'WebCore::ImageDecoderIdentifier',
+        'WebCore::LayerHostingContextIdentifier',
         'WebCore::LibWebRTCSocketIdentifier',
         'WebCore::MediaKeySystemRequestIdentifier',
         'WebCore::MediaPlayerIdentifier',

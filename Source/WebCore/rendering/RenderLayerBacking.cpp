@@ -57,6 +57,7 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
+#include "RemoteFrame.h"
 #include "RenderAncestorIterator.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFragmentContainer.h"
@@ -1118,6 +1119,8 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         updateContentsRects();
     }
 #endif
+    else if (auto* remoteFrame = is<RenderWidget>(renderer()) ? downcast<RenderWidget>(renderer()).remoteFrame() : nullptr)
+        m_graphicsLayer->setContentsToPlatformLayerHost(remoteFrame->layerHostingContextIdentifier());
     else if (shouldSetContentsDisplayDelegate()) {
         auto* canvas = downcast<HTMLCanvasElement>(renderer().element());
         if (auto* context = canvas->renderingContext())

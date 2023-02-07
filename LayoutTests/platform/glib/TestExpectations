@@ -2166,6 +2166,9 @@ fast/visual-viewport/ios [ Skip ]
 fast/visual-viewport/watchos [ Skip ]
 fast/zooming/ios [ Skip ]
 
+# Needs site isolation drawing implementation
+http/tests/site-isolation [ Skip ]
+
 # Tests behavior specific to MediaSessionManagerCocoa
 media/audio-session-category.html [ Skip ]
 media/audio-session-category-at-most-recent-playback.html [ Skip ]

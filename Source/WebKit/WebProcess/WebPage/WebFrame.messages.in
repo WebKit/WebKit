@@ -23,6 +23,6 @@
 messages -> WebFrame {
     GetFrameInfo() -> (struct WebKit::FrameInfoData data)
     ContinueWillSubmitForm(WebKit::FormSubmitListenerIdentifier listenerID)
-    DidCommitLoadInAnotherProcess()
+    DidCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier)
     DidFinishLoadInAnotherProcess()
 }

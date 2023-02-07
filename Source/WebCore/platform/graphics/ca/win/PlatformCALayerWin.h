@@ -37,6 +37,8 @@ public:
     
     ~PlatformCALayerWin();
 
+    Type type() const final { return Type::Win; }
+
     void setNeedsDisplayInRect(const FloatRect& dirtyRect) override;
     void setNeedsDisplay() override;
 
