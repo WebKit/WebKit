@@ -1307,14 +1307,14 @@ CaretBrowsingEnabled:
 
 ClearSiteDataHTTPHeaderEnabled:
   type: bool
-  status: testable
+  status: stable
   humanReadableName: "Clear-Site-Data HTTP Header"
   humanReadableDescription: "Enable Clear-Site-Data HTTP Header support"
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
       default: false
 
