@@ -156,7 +156,7 @@ public:
 
     static constexpr bool tierSupportsSIMD = false;
     static constexpr bool generatesB3OriginData = false;
-    static constexpr bool supportsPinnedStateRegisters = false;
+    static constexpr bool supportsPinnedBoundsCheckingSizeRegister = false;
 
     bool useSignalingMemory() const { return false; }
 
@@ -523,9 +523,6 @@ auto AirIRGenerator32::addRefIsNull(ExpressionType value, ExpressionType& result
 
 auto AirIRGenerator32::emitCheckAndPreparePointer(ExpressionType pointer, uint32_t offset, uint32_t sizeOfOperation) -> ExpressionType
 {
-    auto memoryBase = gPtr();
-    append(Move, Arg::addr(instanceValue(), Instance::offsetOfCachedMemory()), memoryBase);
-
     auto result = gPtr();
     append(Move32, pointer, result);
 
@@ -569,7 +566,7 @@ auto AirIRGenerator32::emitCheckAndPreparePointer(ExpressionType pointer, uint32
     }
     }
 
-    append(AddPtr, memoryBase, result);
+    append(AddPtr, Tmp(GPRInfo::wasmBaseMemoryPointer), result);
     return result;
 }
 inline bool isFPLoadOp(LoadOpType op)
