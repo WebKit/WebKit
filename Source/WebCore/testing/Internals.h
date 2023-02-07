@@ -1369,6 +1369,8 @@ public:
     };
     SelectorFilterHashCounts selectorFilterHashCounts(const String& selector);
 
+    bool isVisuallyNonEmpty() const;
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

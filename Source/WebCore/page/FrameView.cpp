@@ -5069,6 +5069,9 @@ void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
             for (auto& resource : resources) {
                 if (resource.value->isLoaded())
                     continue;
+                // ResourceLoadPriority::VeryLow is used for resources that are not needed to render.
+                if (resource.value->loadPriority() == ResourceLoadPriority::VeryLow)
+                    continue;
                 if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::FontResource)
                     return true;
             }
