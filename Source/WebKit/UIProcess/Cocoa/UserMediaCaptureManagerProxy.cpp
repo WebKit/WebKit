@@ -262,16 +262,16 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createMicrophoneSource(const 
     auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
 
     // FIXME: Support multiple microphones simultaneously.
-    if (auto* microphoneSource = perPageSources.microphoneSource.get()) {
-        if (microphoneSource->persistentID() != device.persistentId() && !microphoneSource->isEnded()) {
+    if (perPageSources.microphoneSource) {
+        if (perPageSources.microphoneSource->persistentID() != device.persistentId() && !perPageSources.microphoneSource->isEnded()) {
             RELEASE_LOG_ERROR(WebRTC, "Ending microphone source as new source is using a different device.");
             // FIXME: We should probably fail the capture in a way that shows a specific console log message.
-            microphoneSource->endImmediatly();
+            perPageSources.microphoneSource->endImmediatly();
         }
     }
 
     auto source = sourceOrError.source();
-    perPageSources.microphoneSource = WeakPtr { source.get() };
+    perPageSources.microphoneSource = source.ptr();
     return source;
 }
 
@@ -289,15 +289,15 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const Capt
     auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
     for (auto& cameraSource : perPageSources.cameraSources) {
         // FIXME: Optimize multiple concurrent cameras.
-        if (cameraSource.persistentID() == device.persistentId() && !cameraSource.isEnded()) {
+        if (cameraSource->persistentID() == device.persistentId() && !cameraSource->isEnded()) {
             // We can reuse the source, let's do it.
-            auto source = cameraSource.clone();
+            auto source = cameraSource->clone();
             if (mediaConstraints) {
                 auto error = source->applyConstraints(*mediaConstraints);
                 if (error)
                     return WTFMove(error->message);
             }
-            perPageSources.cameraSources.add(source.get());
+            perPageSources.cameraSources.add(source);
             return source;
         }
     }
@@ -307,11 +307,12 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const Capt
         return sourceOrError;
 
     if (!canCaptureFromMultipleCameras()) {
-        perPageSources.cameraSources.forEach([](auto& source) {
+        auto cameraSources = std::exchange(perPageSources.cameraSources, { });
+        for (auto& source : cameraSources) {
             RELEASE_LOG_ERROR(WebRTC, "Ending camera source as new source is using a different device.");
             // FIXME: We should probably fail the capture in a way that shows a specific console log message.
-            source.endImmediatly();
-        });
+            source->endImmediatly();
+        }
     }
 
     auto source = sourceOrError.source();
@@ -401,9 +402,29 @@ void UserMediaCaptureManagerProxy::stopProducingData(RealtimeMediaSourceIdentifi
         proxy->stop();
 }
 
-void UserMediaCaptureManagerProxy::removeSource(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManagerProxy::removeSource(RealtimeMediaSourceIdentifier id, PageIdentifier pageIdentifier)
 {
-    m_proxies.remove(id);
+    auto proxy = m_proxies.take(id);
+    if (!proxy)
+        return;
+
+    auto iterator = m_pageSources.find(pageIdentifier);
+    if (iterator == m_pageSources.end())
+        return;
+
+    switch (proxy->source().type()) {
+    case RealtimeMediaSource::Type::Audio:
+        if (iterator->value.microphoneSource.get() == &proxy->source()) {
+            iterator->value.microphoneSource = nullptr;
+            if (iterator->value.isEmpty())
+                m_pageSources.remove(iterator);
+        }
+        break;
+    case RealtimeMediaSource::Type::Video:
+        if (iterator->value.cameraSources.remove(proxy->source()) && iterator->value.isEmpty())
+            m_pageSources.remove(iterator);
+        break;
+    }
 }
 
 void UserMediaCaptureManagerProxy::capabilities(RealtimeMediaSourceIdentifier id, CompletionHandler<void(RealtimeMediaSourceCapabilities&&)>&& completionHandler)
