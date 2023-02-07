@@ -258,6 +258,28 @@
 #endif
 }
 
+- (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors
+{
+    EXPECT_FALSE(self.navigationDelegate);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    };
+    self.navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidFinishNavigation];
+
+    self.navigationDelegate = nil;
+
+#if PLATFORM(IOS_FAMILY)
+    __block bool presentationUpdateHappened = false;
+    [self _doAfterNextPresentationUpdateWithoutWaitingForAnimatedResizeForTesting:^{
+        presentationUpdateHappened = true;
+    }];
+    TestWebKitAPI::Util::run(&presentationUpdateHappened);
+#endif
+}
+
 - (void)_test_waitForWebContentProcessDidTerminate
 {
     EXPECT_FALSE(self.navigationDelegate);

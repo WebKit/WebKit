@@ -56,6 +56,7 @@
 - (void)_test_waitForDidFinishNavigation;
 - (void)_test_waitForDidFinishNavigationWithPreferences:(WKWebpagePreferences *)preferences;
 - (void)_test_waitForDidFinishNavigationWithoutPresentationUpdate;
+- (void)_test_waitForDidFinishNavigationWhileIgnoringSSLErrors;
 - (void)_test_waitForDidFailProvisionalNavigation;
 - (void)_test_waitForWebContentProcessDidTerminate;
 @end

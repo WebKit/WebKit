@@ -97,7 +97,7 @@ messages -> NetworkProcessProxy LegacyReceiver {
 
     CookiesDidChange(PAL::SessionID sessionID)
 
-    DeleteWebsiteDataInWebProcessesForOrigin(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, struct WebCore::ClientOrigin origin, PAL::SessionID sessionID) -> ()
+    DeleteWebsiteDataInWebProcessesForOrigin(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, struct WebCore::ClientOrigin origin, PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID) -> ()
 
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     ReportNetworkIssue(WebKit::WebPageProxyIdentifier webPageProxyIdentifier, URL requestURL)
