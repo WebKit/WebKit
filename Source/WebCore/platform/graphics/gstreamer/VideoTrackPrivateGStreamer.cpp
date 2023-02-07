@@ -32,6 +32,7 @@
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
 #include <gst/pbutils/pbutils.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -104,6 +105,18 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
         return;
 
     auto configuration = this->configuration();
+    auto scopeExit = makeScopeExit([&] {
+        setConfiguration(WTFMove(configuration));
+    });
+
+    if (areEncryptedCaps(caps.get())) {
+        if (auto videoResolution = getVideoResolutionFromCaps(caps.get())) {
+            configuration.width = videoResolution->width();
+            configuration.height = videoResolution->height();
+        }
+        return;
+    }
+
     GstVideoInfo info;
     if (gst_video_info_from_caps(&info, caps.get())) {
         if (GST_VIDEO_INFO_FPS_N(&info)) {
@@ -120,8 +133,6 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
     GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
     configuration.codec = String::fromLatin1(codec.get());
 #endif
-
-    setConfiguration(WTFMove(configuration));
 }
 
 VideoTrackPrivate::Kind VideoTrackPrivateGStreamer::kind() const
