@@ -1331,6 +1331,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         TestController::singleton().setAllowStorageQuotaIncrease(booleanValue(messageBody));
         return nullptr;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "SetQuota")) {
+        TestController::singleton().setQuota(uint64Value(messageBody));
+        return nullptr;
+    }
 
     if (WKStringIsEqualToUTF8CString(messageName, "InjectUserScript")) {
         TestController::singleton().injectUserScript(stringValue(messageBody));

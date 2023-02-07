@@ -29,8 +29,10 @@
 @private
     BOOL _shouldAllowRaisingQuota;
     BOOL _shouldAllowAnySSLCertificate;
+    NSUInteger _quota;
 }
 - (instancetype)init;
 - (void)setAllowRaisingQuota:(BOOL)shouldAllowRaisingQuota;
+- (void)setQuota:(NSUInteger)quota;
 - (void)setAllowAnySSLCertificate:(BOOL)shouldAllowAnySSLCertificate;
 @end

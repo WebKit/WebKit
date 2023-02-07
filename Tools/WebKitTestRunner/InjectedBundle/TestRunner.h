@@ -160,6 +160,7 @@ public:
     bool hasDOMCache(JSStringRef origin);
     uint64_t domCacheSize(JSStringRef origin);
     void setAllowStorageQuotaIncrease(bool);
+    void setQuota(uint64_t);
 
     // Failed load condition testing
     void forceImmediateCompletion();

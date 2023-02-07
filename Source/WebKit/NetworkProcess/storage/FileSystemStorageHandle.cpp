@@ -38,6 +38,9 @@ constexpr char pathSeparator = '\\';
 #else
 constexpr char pathSeparator = '/';
 #endif
+constexpr uint64_t defaultInitialCapacity = 1 * MB;
+constexpr uint64_t defaultMaxCapacityForExponentialGrowth = 256 * MB;
+constexpr uint64_t defaultCapacityStep = 128 * MB;
 
 std::unique_ptr<FileSystemStorageHandle> FileSystemStorageHandle::create(FileSystemStorageManager& manager, Type type, String&& path, String&& name)
 {
@@ -295,14 +298,21 @@ void FileSystemStorageHandle::requestNewCapacityForSyncAccessHandle(WebCore::Fil
     if (!isActiveSyncAccessHandle(accessHandleIdentifier))
         return completionHandler(std::nullopt);
 
-    if (newCapacity <= m_activeSyncAccessHandle->capacity)
-        return completionHandler(m_activeSyncAccessHandle->capacity);
+    uint64_t currentCapacity = m_activeSyncAccessHandle->capacity;
+    if (newCapacity <= currentCapacity)
+        return completionHandler(currentCapacity);
 
     if (!m_manager)
         return completionHandler(std::nullopt);
 
-    uint64_t spaceRequested = newCapacity - m_activeSyncAccessHandle->capacity;
-    m_manager->requestSpace(spaceRequested, [this, weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTFMove(completionHandler)](bool granted) mutable {
+    if (newCapacity < defaultInitialCapacity)
+        newCapacity = defaultInitialCapacity;
+    else if (newCapacity < defaultMaxCapacityForExponentialGrowth)
+        newCapacity = pow(2, (int)std::log2(newCapacity) + 1);
+    else
+        newCapacity = defaultCapacityStep * ((newCapacity / defaultCapacityStep) + 1);
+
+    m_manager->requestSpace(newCapacity - currentCapacity, [this, weakThis = WeakPtr { *this }, accessHandleIdentifier, newCapacity, completionHandler = WTFMove(completionHandler)](bool granted) mutable {
         if (!weakThis)
             return completionHandler(std::nullopt);
 

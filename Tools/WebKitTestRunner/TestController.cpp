@@ -1196,6 +1196,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_shouldLogCanAuthenticateAgainstProtectionSpace = false;
 
     setHidden(false);
+    setAllowStorageQuotaIncrease(true);
+    setQuota(40 * KB);
 
     if (!platformResetStateToConsistentValues(options))
         return false;
@@ -3386,6 +3388,11 @@ uint64_t TestController::domCacheSize(WKStringRef origin)
 
 #if !PLATFORM(COCOA)
 void TestController::setAllowStorageQuotaIncrease(bool)
+{
+    // FIXME: To implement.
+}
+
+void TestController::setQuota(uint64_t)
 {
     // FIXME: To implement.
 }

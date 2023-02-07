@@ -4,8 +4,15 @@
 </head>
 <body>
 <script>
-if (window.testRunner)
+// FileSystemSyncAccessHandle requires to hold at least 1 MB space.
+const quota = 1024 * 1024;
+if (window.testRunner) {
+    testRunner.setQuota(quota);
     testRunner.setAllowStorageQuotaIncrease(false);
-worker = startWorker('resources/sync-access-handle-storage-limit.js');</script>
+}
+const worker = startWorker('resources/sync-access-handle-storage-limit.js');
+// worker.postMessage({ name:"quota", quota:quota });
+worker.postMessage(quota);
+</script>
 </body>
 </html>
