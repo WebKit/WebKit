@@ -27,6 +27,8 @@
 #include <stdlib.h>
 
 #include "TestHarness.h"
+
+#include "bmalloc_heap.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_heap.h"
 #include "iso_heap.h"
@@ -37,6 +39,7 @@ using namespace std;
 
 namespace {
 
+// Test single PGM Allocation to ensure basic functionality is working.
 void testPGMSingleAlloc() {
     pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
     pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
@@ -70,7 +73,7 @@ void testPGMSingleAlloc() {
     return;
 }
 
-
+// Testing multiple allocations to ensure numerous allocations are correctly handled.
 void testPGMMultipleAlloc() {
     pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
     pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
@@ -105,6 +108,35 @@ void testPGMMultipleAlloc() {
     pas_heap_lock_unlock();
 }
 
+// Ensure reallocating PGM allocations works correctly.
+void testPGMRealloc() {
+
+    // setup code
+    pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
+    pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
+    pas_physical_memory_transaction transaction;
+    pas_physical_memory_transaction_construct(&transaction);
+
+
+    PAS_UNUSED_PARAM(heap);
+
+    // Realloc the same size
+    void* foo = bmalloc_try_allocate(1024);
+    foo = bmalloc_try_reallocate(foo, 2048, pas_reallocate_free_always);
+    
+
+    // Realloc bigger size
+
+    // Realloc smaller size
+
+    // Realloc size of 0
+
+
+    // exit code
+    pas_heap_lock_unlock();
+}
+
+// Ensure all PGM errors cases are handled.
 void testPGMErrors() {
     pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
     pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
@@ -168,5 +200,6 @@ void testPGMErrors() {
 void addPGMTests() {
     ADD_TEST(testPGMSingleAlloc());
     ADD_TEST(testPGMMultipleAlloc());
+    ADD_TEST(testPGMRealloc());
     ADD_TEST(testPGMErrors());
 }

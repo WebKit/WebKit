@@ -220,7 +220,7 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void)
 
 // Determine whether PGM can be called at runtime.
 // PGM will be called between every 4,000 to 5,000 times an allocation is tried.
-bool pas_probabilistic_guard_malloc_should_call_pgm()
+bool pas_probabilistic_guard_malloc_should_call_pgm(void)
 {
     if (!pas_pgm_can_use)
         return false;
@@ -233,11 +233,11 @@ bool pas_probabilistic_guard_malloc_should_call_pgm()
     return false;
 }
 
-// During Heap creation we want to check whether we should enable PGM
+// During heap creation we want to check whether we should enable PGM.
 // PGM being enabled in the heap config does not mean it will be enabled at runtime.
 // This function will be run once for all heaps (ISO, bmalloc, JIT, etc...), but only those with
 // pgm_enabled config will ultimately be called.
-void pas_probabilistic_malloc_initialize_pgm()
+void pas_probabilistic_malloc_initialize_pgm(void)
 {
     if (!pas_pgm_is_initialized) {
         pas_pgm_is_initialized = true;
@@ -247,7 +247,8 @@ void pas_probabilistic_malloc_initialize_pgm()
             return;
         }
 
-        pas_pgm_random = pas_get_secure_random(4000) + 1000;
+        // PGM will be called between every 4,000 to 5,000 times an allocation is tried.
+        pas_pgm_random = pas_get_secure_random(1000) + 4000;
     }
 }
 
