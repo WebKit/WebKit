@@ -7014,4 +7014,14 @@ Internals::SelectorFilterHashCounts Internals::selectorFilterHashCounts(const St
     return { hashes.ids.size(), hashes.classes.size(), hashes.tags.size(), hashes.attributes.size() };
 }
 
+bool Internals::isVisuallyNonEmpty() const
+{
+    auto* document = contextDocument();
+    if (!document || !document->frame())
+        return false;
+
+    auto* frameView = document->frame()->view();
+    return frameView && frameView->isVisuallyNonEmpty();
+}
+
 } // namespace WebCore
