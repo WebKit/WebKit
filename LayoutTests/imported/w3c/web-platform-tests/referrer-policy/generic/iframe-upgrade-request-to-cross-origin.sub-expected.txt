@@ -1,0 +1,7 @@
+Blocked access to external URL https://www.localhost:9443/referrer-policy/generic/resources/referrer.py
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT If an insecure iframe request is upgraded to https to be cross-origin, referrer policies that consider same-origin-ness should be applied correctly Test timed out
+

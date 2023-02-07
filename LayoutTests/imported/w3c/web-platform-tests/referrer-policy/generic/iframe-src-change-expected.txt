@@ -1,0 +1,3 @@
+
+FAIL Checks that referrerpolicy is respected when an iframe's src changes. assert_equals: expected no HTTP Referer header on src change expected (undefined) undefined but got (string) "http://localhost:8800/referrer-policy/generic/iframe-src-change.html"
+

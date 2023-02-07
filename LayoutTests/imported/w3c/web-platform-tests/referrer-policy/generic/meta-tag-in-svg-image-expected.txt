@@ -1,0 +1,4 @@
+
+
+PASS Meta tag in SVG image loaded via img should be ignored
+

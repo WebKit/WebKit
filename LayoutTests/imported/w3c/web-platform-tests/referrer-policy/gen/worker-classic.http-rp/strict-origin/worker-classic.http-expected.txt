@@ -1,0 +1,4 @@
+
+FAIL Referrer Policy: Expects origin for worker-classic to same-http origin and keep-origin redirection from http context. assert_in_array: document.referrer value "http://localhost:8800/common/security-features/scope/worker.py?policyDeliveries=%5B%7B%22deliveryType%22%3A%22http-rp%22%2C%22key%22%3A%22referrerPolicy%22%2C%22value%22%3A%22strict-origin%22%7D%5D" not in array ["http://localhost:8800/", undefined]
+FAIL Referrer Policy: Expects origin for worker-classic to same-http origin and no-redirect redirection from http context. assert_in_array: document.referrer value "http://localhost:8800/common/security-features/scope/worker.py?policyDeliveries=%5B%7B%22deliveryType%22%3A%22http-rp%22%2C%22key%22%3A%22referrerPolicy%22%2C%22value%22%3A%22strict-origin%22%7D%5D" not in array ["http://localhost:8800/", undefined]
+

@@ -1,0 +1,6 @@
+Referrer Policy: iframes srcdoc correctly inherit the ancestor's referrer policy
+
+
+
+PASS Srcdoc iframe inherits referrer policy from parent on creation.
+

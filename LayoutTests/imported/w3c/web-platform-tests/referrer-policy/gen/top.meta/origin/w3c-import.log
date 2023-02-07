@@ -1,0 +1,27 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/a-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/fetch.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/iframe-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/img-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/script-tag-dynamic-import.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/script-tag.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/sharedworker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/sharedworker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/worker-classic.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/worker-module.http.html
+/LayoutTests/imported/w3c/web-platform-tests/referrer-policy/gen/top.meta/origin/xhr.http.html

@@ -1,0 +1,4 @@
+
+PASS Referrer Policy: iframes with javascript url reuse referrer policy
+PASS Referrer Policy: iframes with javascript url reuse referrer policy 1
+
