@@ -65,8 +65,6 @@ public:
 private:
     WEBCORE_EXPORT SVGImageForContainer(SVGImage*, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL);
 
-    void destroyDecodedData(bool /*destroyAll*/ = true) final { }
-
     SVGImage* m_image;
     const FloatSize m_containerSize;
     const float m_containerZoom;

@@ -59,9 +59,6 @@ public:
     using EditingBehaviorType = WebCore::EditingBehaviorType;
     ExceptionOr<void> setEditingBehavior(EditingBehaviorType);
     
-    using PDFImageCachingPolicy = WebCore::PDFImageCachingPolicy;
-    ExceptionOr<void> setPDFImageCachingPolicy(PDFImageCachingPolicy);
-
     using StorageBlockingPolicy = WebCore::StorageBlockingPolicy;
     ExceptionOr<void> setStorageBlockingPolicy(StorageBlockingPolicy);
     
@@ -150,7 +147,6 @@ private:
         WebCore::StorageBlockingPolicy m_storageBlockingPolicy;
         WebCore::UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
-        WebCore::PDFImageCachingPolicy m_pdfImageCachingPolicy;
         WebCore::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
         WebCore::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
         WebCore::ForcedAccessibilityValue m_forcedPrefersContrastAccessibilityValue;

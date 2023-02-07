@@ -335,14 +335,6 @@ NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk:
     WebCore:
       default: false
 
-PDFImageCachingPolicy:
-  type: uint32_t
-  refinedType: PDFImageCachingPolicy
-  defaultValue:
-    WebCore:
-      PLATFORM(IOS_FAMILY): PDFImageCachingPolicy::BelowMemoryLimit
-      default: PDFImageCachingPolicy::Enabled
-
 PaymentRequestEnabled:
   type: bool
   condition: ENABLE(PAYMENT_REQUEST)
