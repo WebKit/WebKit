@@ -64,7 +64,7 @@ public:
     void setX(LayoutUnit x) { ASSERT(!isInPlacedTree()); m_frameRect.setX(x); }
     void setY(LayoutUnit y) { ASSERT(!isInPlacedTree()); m_frameRect.setY(y); }
     void setWidth(LayoutUnit width) { ASSERT(!isInPlacedTree()); m_frameRect.setWidth(width); }
-    void setHeight(LayoutUnit height) { ASSERT(!isInPlacedTree()); m_frameRect.setHeight(height); }
+    void setHeight(LayoutUnit height) { ASSERT(!isInPlacedTree() || containingBlockHasBlockEndMarginTrim()); m_frameRect.setHeight(height); }
 
     void setMarginOffset(LayoutSize offset) { ASSERT(!isInPlacedTree()); m_marginOffset = offset; }
 
@@ -92,6 +92,10 @@ public:
     void clearOriginatingLine() { m_originatingLine = nullptr; }
     void setOriginatingLine(LegacyRootInlineBox& line) { m_originatingLine = line; }
 
+    bool containingBlockHasBlockEndMarginTrim() const;
+    void setHasTrimmedMargins(bool hasTrimmedMargins) { m_hasTrimmedMargins = hasTrimmedMargins; }
+    bool hasTrimmedMargins() const { return m_hasTrimmedMargins; }
+
     LayoutSize locationOffsetOfBorderBox() const
     {
         ASSERT(isPlaced());
@@ -110,6 +114,7 @@ private:
     unsigned m_paintsFloat : 1;
     unsigned m_isDescendant : 1;
     unsigned m_isPlaced : 1;
+    unsigned m_hasTrimmedMargins : 1;
 #if ASSERT_ENABLED
     unsigned m_isInPlacedTree : 1;
 #endif

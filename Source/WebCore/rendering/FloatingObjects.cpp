@@ -112,6 +112,13 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
     return locationOffsetOfBorderBox() - renderer().locationOffset();
 }
 
+bool FloatingObject::containingBlockHasBlockEndMarginTrim() const
+{
+    if (auto containingBlock = m_renderer->containingBlock())
+        return containingBlock->style().marginTrim().contains(MarginTrimType::BlockEnd);
+    return false;
+}
+
 #if ENABLE(TREE_DEBUGGING)
 
 TextStream& operator<<(TextStream& stream, const FloatingObject& object)

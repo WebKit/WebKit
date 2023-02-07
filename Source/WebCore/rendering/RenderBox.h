@@ -196,6 +196,7 @@ public:
     RenderBox* nextSiblingBox() const;
     RenderBox* nextInFlowSiblingBox() const;
 
+    RenderBlockFlow* blockFormattingContextRoot() const;
     // Visual and layout overflow are in the coordinate space of the box.  This means that they aren't purely physical directions.
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
     // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr,
@@ -705,6 +706,7 @@ public:
     }
 
     bool establishesIndependentFormattingContext() const override;
+    bool createsBlockFormattingContext() const;
 
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);

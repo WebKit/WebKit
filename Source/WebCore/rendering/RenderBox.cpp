@@ -4970,6 +4970,24 @@ bool RenderBox::establishesIndependentFormattingContext() const
     return isGridItem() || RenderElement::establishesIndependentFormattingContext();
 }
 
+bool RenderBox::createsBlockFormattingContext() const
+{
+    const auto& boxStyle = style();
+    if (!boxStyle.isDisplayBlockLevel())
+        return false;
+    auto isBlockWithOverFlowOtherThanVisibleAndClip = [&]() {
+        auto boxOverflowX = effectiveOverflowX();
+        auto boxOverflowY = effectiveOverflowY();
+        return boxOverflowX != Overflow::Visible && boxOverflowX != Overflow::Clip
+            && boxOverflowY != Overflow::Visible && boxOverflowY != Overflow::Clip;
+    };
+    return dynamicDowncast<HTMLHtmlElement>(element()) || isFloatingOrOutOfFlowPositioned() 
+    || isInlineBlockOrInlineTable() || isTableCell() || isTableCaption() || isBlockWithOverFlowOtherThanVisibleAndClip()
+    || boxStyle.display() == DisplayType::FlowRoot || boxStyle.containsLayoutOrPaint()
+    || isFlexItemIncludingDeprecated() || isGridItem() || boxStyle.specifiesColumns()
+    || boxStyle.columnSpan() == ColumnSpan::All;
+}
+
 bool RenderBox::avoidsFloats() const
 {
     return isReplacedOrInlineBlock() || isLegend() || isFieldset() || createsNewFormattingContext();
@@ -5628,6 +5646,16 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
     auto height = style().containIntrinsicHeight();
     ASSERT(height.has_value());
     return std::optional<LayoutUnit> { height->value() };
+}
+
+RenderBlockFlow* RenderBox::blockFormattingContextRoot() const
+{
+    // This method should probably not be called on the initial containing block
+    ASSERT(!is<HTMLHtmlElement>(element()));
+    auto cb = containingBlock();
+    while (cb && !cb->createsBlockFormattingContext())
+        cb = cb->containingBlock();
+    return dynamicDowncast<RenderBlockFlow>(cb);
 }
 
 } // namespace WebCore

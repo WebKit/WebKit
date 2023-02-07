@@ -226,6 +226,8 @@ public:
     LayoutUnit marginOffsetForSelfCollapsingBlock();
 
     bool shouldTrimChildMargin(MarginTrimType, const RenderBox&) const final;
+    void trimFloatBlockEndMargins(LayoutUnit blockFormattingContextInFlowContentHeight);
+    bool shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType, const RenderElement&) const;
 
     void layoutBlockChild(RenderBox& child, MarginInfo&, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void adjustPositionedBlock(RenderBox& child, const MarginInfo&);
@@ -284,6 +286,7 @@ public:
     void removeFloatingObjects();
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
+    void markLayoutNeededOnFloatsWithTrimmedMargins();
 
     const FloatingObjectSet* floatingObjectSet() const { return m_floatingObjects ? &m_floatingObjects->set() : nullptr; }
 
@@ -331,6 +334,7 @@ public:
         else
             floatingObject.setMarginOffset(LayoutSize(logicalBeforeMargin, logicalLeftMargin));
     }
+    void trimMarginForFloat(FloatingObject&, MarginTrimType, LayoutUnit trimAmount = 0);
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
@@ -400,6 +404,7 @@ public:
 
     std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
 
+    LayoutUnit blockFormattingContextInFlowBlockLevelContentHeight() const;
 protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
 
