@@ -29,14 +29,16 @@
 
 namespace WebCore {
 
+enum class NullGraphicsContextPaintInvalidationReasons : uint8_t {
+    None,
+    InvalidatingControlTints,
+    InvalidatingImagesWithAsyncDecodes,
+    DetectingContentfulPaint
+};
+
 class NullGraphicsContext : public GraphicsContext {
 public:
-    enum class PaintInvalidationReasons : uint8_t {
-        None,
-        InvalidatingControlTints,
-        InvalidatingImagesWithAsyncDecodes,
-        DetectingContentfulPaint
-    };
+    using PaintInvalidationReasons = NullGraphicsContextPaintInvalidationReasons;
 
     NullGraphicsContext() = default;
 

@@ -38,6 +38,7 @@
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include "StyleCanvasImage.h"
+#include "RenderElement.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerClient.h"
 #include "WorkerGlobalScope.h"

@@ -242,7 +242,7 @@ void TileController::setVelocity(const VelocityData& velocity)
         setNeedsRevalidateTiles();
 }
 
-void TileController::setScrollability(Scrollability scrollability)
+void TileController::setScrollability(OptionSet<Scrollability> scrollability)
 {
     if (scrollability == m_scrollability)
         return;
@@ -568,10 +568,10 @@ IntSize TileController::computeTileSize()
 
     IntSize tileSize(kDefaultTileSize, kDefaultTileSize);
 
-    if (m_scrollability == NotScrollable) {
+    if (m_scrollability == Scrollability::NotScrollable) {
         IntSize scaledSize = expandedIntSize(boundsWithoutMargin().size() * tileGrid().scale());
         tileSize = scaledSize.constrainedBetween(IntSize(kDefaultTileSize, kDefaultTileSize), maxTileSize);
-    } else if (m_scrollability == VerticallyScrollable)
+    } else if (m_scrollability == Scrollability::VerticallyScrollable)
         tileSize.setWidth(std::min(std::max<int>(ceilf(boundsWithoutMargin().width() * tileGrid().scale()), kDefaultTileSize), maxTileSize.width()));
 
     LOG_WITH_STREAM(Scrolling, stream << "TileController::tileSize newSize=" << tileSize);

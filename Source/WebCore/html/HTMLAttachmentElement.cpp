@@ -45,6 +45,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
+#include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"

@@ -35,6 +35,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ColorBlending.h"
+#include "ContainerNode.h"
 #include "DOMWindow.h"
 #include "DebugPageOverlays.h"
 #include "DocumentInlines.h"
@@ -199,6 +200,7 @@ FrameView::FrameView(Frame& frame)
     , m_delayedScrollToFocusedElementTimer(*this, &FrameView::scrollToFocusedElementTimerFired)
     , m_speculativeTilingEnableTimer(*this, &FrameView::speculativeTilingEnableTimerFired)
     , m_delayedTextFragmentIndicatorTimer(*this, &FrameView::textFragmentIndicatorTimerFired)
+    , m_mediaType(screenAtom())
 {
     init();
 
@@ -1603,6 +1605,21 @@ void FrameView::removeSlowRepaintObject(RenderElement& renderer)
 
     m_slowRepaintObjects = nullptr;
     updateCanBlitOnScrollRecursively();
+}
+
+bool FrameView::hasSlowRepaintObject(const RenderElement& renderer) const
+{
+    return m_slowRepaintObjects && m_slowRepaintObjects->contains(renderer);
+}
+
+bool FrameView::hasSlowRepaintObjects() const
+{
+    return m_slowRepaintObjects && !m_slowRepaintObjects->isEmptyIgnoringNullReferences();
+}
+
+bool FrameView::hasViewportConstrainedObjects() const
+{
+    return m_viewportConstrainedObjects && !m_viewportConstrainedObjects->isEmptyIgnoringNullReferences();
 }
 
 void FrameView::addViewportConstrainedObject(RenderLayerModelObject& object)
@@ -3196,13 +3213,13 @@ void FrameView::addedOrRemovedScrollbar()
     InspectorInstrumentation::didAddOrRemoveScrollbars(*this);
 }
 
-TiledBacking::Scrollability FrameView::computeScrollability() const
+OptionSet<TiledBacking::Scrollability> FrameView::computeScrollability() const
 {
     auto* page = m_frame->page();
 
     // Use smaller square tiles if the Window is not active to facilitate app napping.
     if (!page || !page->isWindowActive())
-        return TiledBacking::HorizontallyScrollable | TiledBacking::VerticallyScrollable;
+        return { TiledBacking::Scrollability::HorizontallyScrollable, TiledBacking::Scrollability::VerticallyScrollable };
 
     bool horizontallyScrollable;
     bool verticallyScrollable;
@@ -3224,12 +3241,12 @@ TiledBacking::Scrollability FrameView::computeScrollability() const
         verticallyScrollable = clippedByAncestorView || verticalScrollbar();
     }
 
-    TiledBacking::Scrollability scrollability = TiledBacking::NotScrollable;
+    OptionSet<TiledBacking::Scrollability> scrollability = TiledBacking::Scrollability::NotScrollable;
     if (horizontallyScrollable)
-        scrollability = TiledBacking::HorizontallyScrollable;
+        scrollability.add(TiledBacking::Scrollability::HorizontallyScrollable);
 
     if (verticallyScrollable)
-        scrollability |= TiledBacking::VerticallyScrollable;
+        scrollability.add(TiledBacking::Scrollability::VerticallyScrollable);
 
     return scrollability;
 }
@@ -5879,6 +5896,11 @@ void FrameView::setScrollPinningBehavior(ScrollPinningBehavior pinning)
 ScrollBehaviorForFixedElements FrameView::scrollBehaviorForFixedElements() const
 {
     return m_frame->settings().backgroundShouldExtendBeyondPage() ? StickToViewportBounds : StickToDocumentBounds;
+}
+
+AbstractFrame& FrameView::frame() const
+{
+    return m_frame;
 }
 
 RenderView* FrameView::renderView() const

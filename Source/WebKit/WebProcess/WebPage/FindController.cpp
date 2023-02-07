@@ -51,6 +51,7 @@
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/Range.h>
+#include <WebCore/RenderObject.h>
 #include <WebCore/SimpleRange.h>
 
 #if PLATFORM(COCOA)

@@ -50,7 +50,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Position.h>
 #include <WebCore/Range.h>
-#include <WebCore/RenderObject.h>
+#include <WebCore/RenderElement.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/Text.h>
 #include <WebCore/VisiblePosition.h>
