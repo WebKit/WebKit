@@ -127,8 +127,7 @@
 ;; AWD
 (allow mach-lookup
     (global-name
-        "com.apple.analyticsd"
-        "com.apple.awdd"))
+        "com.apple.analyticsd"))
 
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
