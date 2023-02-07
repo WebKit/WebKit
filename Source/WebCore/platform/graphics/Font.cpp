@@ -620,14 +620,18 @@ bool Font::canRenderCombiningCharacterSequence(const UChar* characters, size_t l
     return true;
 }
 
-// Don't store the result of this! The hash map is free to rehash at any point, leaving this reference dangling.
-const Path& Font::pathForGlyph(Glyph glyph) const
+Path Font::pathForGlyph(Glyph glyph) const
 {
-    if (const auto& path = m_glyphPathMap.existingMetricsForGlyph(glyph))
-        return *path;
+    if (m_glyphPathMap) {
+        if (const auto& path = m_glyphPathMap->existingMetricsForGlyph(glyph))
+            return *path;
+    }
     auto path = platformPathForGlyph(glyph);
-    m_glyphPathMap.setMetricsForGlyph(glyph, path);
-    return *m_glyphPathMap.existingMetricsForGlyph(glyph);
+    if (!m_glyphPathMap)
+        m_glyphPathMap = makeUnique<GlyphMetricsMap<std::optional<Path>>>();
+
+    m_glyphPathMap->setMetricsForGlyph(glyph, path);
+    return *m_glyphPathMap->existingMetricsForGlyph(glyph);
 }
 
 #if !LOG_DISABLED
