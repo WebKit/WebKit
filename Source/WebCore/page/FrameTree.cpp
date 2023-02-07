@@ -348,6 +348,28 @@ AbstractFrame* FrameTree::traverseNext(const AbstractFrame* stayWithin) const
     return nullptr;
 }
 
+AbstractFrame* FrameTree::traverseNextSkippingChildren(const AbstractFrame* stayWithin) const
+{
+    if (&m_thisFrame == stayWithin)
+        return nullptr;
+    if (auto* sibling = nextSibling())
+        return sibling;
+    return nextAncestorSibling(stayWithin);
+}
+
+AbstractFrame* FrameTree::nextAncestorSibling(const AbstractFrame* stayWithin) const
+{
+    ASSERT(!nextSibling());
+    ASSERT(&m_thisFrame != stayWithin);
+    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->tree().parent()) {
+        if (ancestor == stayWithin)
+            return nullptr;
+        if (auto ancestorSibling = ancestor->tree().nextSibling())
+            return ancestorSibling;
+    }
+    return nullptr;
+}
+
 AbstractFrame* FrameTree::firstRenderedChild() const
 {
     auto* child = firstChild();

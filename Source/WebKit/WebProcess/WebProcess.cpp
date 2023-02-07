@@ -1459,6 +1459,15 @@ void WebProcess::deleteWebsiteDataForOrigin(OptionSet<WebsiteDataType> websiteDa
     completionHandler();
 }
 
+void WebProcess::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame, CompletionHandler<void()>&& completionHandler)
+{
+    for (auto& page : m_pageMap.values()) {
+        if (auto* corePage = page->corePage())
+            corePage->reloadExecutionContextsForOrigin(origin, triggeringFrame);
+    }
+    completionHandler();
+}
+
 void WebProcess::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas, CompletionHandler<void()>&& completionHandler)
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {

@@ -96,6 +96,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaRecorderProvider.h"
 #include "ModelPlayerProvider.h"
+#include "NavigationScheduler.h"
 #include "Navigator.h"
 #include "PageColorSampler.h"
 #include "PageConfiguration.h"
@@ -4186,6 +4187,27 @@ void Page::didFinishScrolling()
 #if USE(APPKIT)
     editorClient().setCaretDecorationVisibility(true);
 #endif
+}
+
+void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
+{
+    if (m_mainFrame->document()->topOrigin().data() != origin.topOrigin)
+        return;
+
+    for (AbstractFrame* frame = &m_mainFrame.get(); frame;) {
+        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame || frame->frameID() == triggeringFrame) {
+            frame = frame->tree().traverseNext();
+            continue;
+        }
+        auto* document = localFrame->document();
+        if (!document || document->securityOrigin().data() != origin.clientOrigin) {
+            frame = frame->tree().traverseNext();
+            continue;
+        }
+        localFrame->navigationScheduler().scheduleRefresh(*document);
+        frame = frame->tree().traverseNextSkippingChildren();
+    }
 }
 
 } // namespace WebCore

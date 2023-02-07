@@ -305,6 +305,7 @@ public:
     void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
 
     void deleteWebsiteDataInWebProcessesForOrigin(OptionSet<WebsiteDataType>, const WebCore::ClientOrigin&, PAL::SessionID, WebPageProxyIdentifier, CompletionHandler<void()>&&);
+    void reloadExecutionContextsForOrigin(const WebCore::ClientOrigin&, PAL::SessionID, std::optional<WebCore::FrameIdentifier> triggeringFrame, CompletionHandler<void()>&&);
 
     void terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType, PAL::SessionID, const WebCore::RegistrableDomain&, WebCore::ProcessIdentifier);
 

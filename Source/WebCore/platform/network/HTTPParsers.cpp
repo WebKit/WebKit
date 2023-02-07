@@ -600,10 +600,12 @@ OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& r
             result.add(ClearSiteDataValue::Cache);
         else if (trimmedValue == "\"cookies\""_s)
             result.add(ClearSiteDataValue::Cookies);
+        else if (trimmedValue == "\"executionContexts\""_s)
+            result.add(ClearSiteDataValue::ExecutionContexts);
         else if (trimmedValue == "\"storage\""_s)
             result.add(ClearSiteDataValue::Storage);
         else if (trimmedValue == "\"*\""_s)
-            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::Storage });
+            result.add({ ClearSiteDataValue::Cache, ClearSiteDataValue::Cookies, ClearSiteDataValue::ExecutionContexts, ClearSiteDataValue::Storage });
     }
     return result;
 }
