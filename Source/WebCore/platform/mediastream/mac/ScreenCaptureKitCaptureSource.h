@@ -61,13 +61,7 @@ public:
     WEBCORE_EXPORT static bool isAvailable();
 
     static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
-    WEBCORE_EXPORT static void screenCaptureDevices(Vector<CaptureDevice>&);
-
-    static void windowCaptureDevices(Vector<CaptureDevice>&);
     static std::optional<CaptureDevice> windowCaptureDeviceWithPersistentID(const String&);
-    WEBCORE_EXPORT static void windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>&);
-
-    static void captureDeviceWithPersistentID(CaptureDevice::DeviceType, uint32_t, CompletionHandler<void(std::optional<CaptureDevice>)>&&);
 
     using Content = std::variant<RetainPtr<SCWindow>, RetainPtr<SCDisplay>>;
     void streamFailedWithError(RetainPtr<NSError>&&, const String&);
@@ -114,7 +108,7 @@ private:
     BlockPtr<void(SCStream *, CMSampleBufferRef)> m_frameAvailableHandler;
     CaptureDevice m_captureDevice;
     uint32_t m_deviceID { 0 };
-    std::optional<IntSize> m_intrinsicSize;
+    mutable std::optional<IntSize> m_intrinsicSize;
 
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };

@@ -55,38 +55,7 @@ DisplayCaptureManagerCocoa& DisplayCaptureManagerCocoa::singleton()
 
 const Vector<CaptureDevice>& DisplayCaptureManagerCocoa::captureDevices()
 {
-    m_devices.clear();
-
-    updateDisplayCaptureDevices();
-    updateWindowCaptureDevices();
-
     return m_devices;
-}
-
-void DisplayCaptureManagerCocoa::updateDisplayCaptureDevices()
-{
-#if PLATFORM(MAC)
-
-#if HAVE(SCREEN_CAPTURE_KIT)
-    if (ScreenCaptureKitCaptureSource::isAvailable()) {
-        ScreenCaptureKitCaptureSource::screenCaptureDevices(m_devices);
-        return;
-    }
-#endif
-
-    CGDisplayStreamScreenCaptureSource::screenCaptureDevices(m_devices);
-
-#elif PLATFORM(IOS)
-    ReplayKitCaptureSource::screenCaptureDevices(m_devices);
-#endif
-}
-
-void DisplayCaptureManagerCocoa::updateWindowCaptureDevices()
-{
-#if HAVE(SCREEN_CAPTURE_KIT)
-    if (ScreenCaptureKitCaptureSource::isAvailable())
-        ScreenCaptureKitCaptureSource::windowCaptureDevices(m_devices);
-#endif
 }
 
 std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
@@ -139,16 +108,6 @@ std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersis
     }
 
     return std::nullopt;
-}
-
-void DisplayCaptureManagerCocoa::windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>& windowDevices)
-{
-#if HAVE(SCREEN_CAPTURE_KIT)
-    if (ScreenCaptureKitCaptureSource::isAvailable())
-        return ScreenCaptureKitCaptureSource::windowDevices(windowDevices);
-#else
-    UNUSED_PARAM(windowDevices);
-#endif
 }
 
 } // namespace WebCore

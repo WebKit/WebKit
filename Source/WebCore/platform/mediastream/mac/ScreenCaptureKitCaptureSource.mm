@@ -42,10 +42,8 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ObjCRuntimeExtras.h>
-#import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/text/StringToIntegerConversion.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/mac/ScreenCaptureKitSoftLink.h>
@@ -154,8 +152,6 @@ namespace WebCore {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-
-static void forEachNSWindow(const Function<bool(NSDictionary *, unsigned, const String&)>&);
 
 bool ScreenCaptureKitCaptureSource::isAvailable()
 {
@@ -441,10 +437,14 @@ void ScreenCaptureKitCaptureSource::startContentStream()
             if (!weakThis)
                 return;
 
-            if (error)
+            if (error) {
                 streamFailedWithError(WTFMove(error), "-[SCStream startCaptureWithFrameHandler:completionHandler:] failed"_s);
-            else
-                ALWAYS_LOG_IF_POSSIBLE(identifier, "stream started");
+                return;
+            }
+
+            m_intrinsicSize = { };
+            configurationChanged();
+            ALWAYS_LOG_IF_POSSIBLE(identifier, "stream started");
         });
     });
 
@@ -458,73 +458,20 @@ IntSize ScreenCaptureKitCaptureSource::intrinsicSize() const
     if (m_intrinsicSize)
         return m_intrinsicSize.value();
 
-    if (m_content) {
-        auto frame = switchOn(m_content.value(),
-            [] (const RetainPtr<SCDisplay> display) -> CGRect {
-                return [display frame];
-            },
-            [] (const RetainPtr<SCWindow> window) -> CGRect {
-                return [window frame];
-            }
-        );
+    if (!m_content)
+        return { 640, 480 };
 
-        return { static_cast<int>(frame.size.width), static_cast<int>(frame.size.height) };
-    }
-#if HAVE(SC_CONTENT_SHARING_SESSION)
-    IntSize size;
-    BinarySemaphore semaphore;
-    [PAL::getSCShareableContentClass() getShareableContentWithCompletionHandler:makeBlockPtr([&size, &semaphore, deviceID = m_deviceID, deviceType = m_captureDevice.type()] (SCShareableContent *shareableContent, NSError *error) mutable {
-        auto scope = makeScopeExit([&semaphore] {
-            semaphore.signal();
-        });
-        if (error) {
-            RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::intrinsicSize getShareableContentWithCompletionHandler failed with error %s", [[error localizedDescription] UTF8String]);
-            return;
+    auto frame = switchOn(m_content.value(),
+        [] (const RetainPtr<SCDisplay> display) -> CGRect {
+            return [display frame];
+        },
+        [] (const RetainPtr<SCWindow> window) -> CGRect {
+            return [window frame];
         }
-        if (deviceType == CaptureDevice::DeviceType::Screen) {
-            [[shareableContent displays] enumerateObjectsUsingBlock:makeBlockPtr([&] (SCDisplay *display, NSUInteger, BOOL *stop) {
-                if (display.displayID == deviceID) {
-                    size = { static_cast<int>(display.width), static_cast<int>(display.height) };
-                    *stop = YES;
-                }
-            }).get()];
-            return;
-        }
-        if (deviceType == CaptureDevice::DeviceType::Window) {
-            [[shareableContent windows] enumerateObjectsUsingBlock:makeBlockPtr([&] (SCWindow *window, NSUInteger, BOOL *stop) {
-                if (window.windowID == deviceID) {
-                    size = { static_cast<int>(window.frame.size.width), static_cast<int>(window.frame.size.height) };
-                    *stop = YES;
-                }
-            }).get()];
-        }
-    }).get()];
-    semaphore.wait();
-    return size;
-#else
-    if (m_captureDevice.type() == CaptureDevice::DeviceType::Screen) {
-        auto displayMode = adoptCF(CGDisplayCopyDisplayMode(m_deviceID));
-        auto screenWidth = CGDisplayModeGetPixelsWide(displayMode.get());
-        auto screenHeight = CGDisplayModeGetPixelsHigh(displayMode.get());
+    );
 
-        return { Checked<int>(screenWidth), Checked<int>(screenHeight) };
-    }
-
-    CGRect bounds = CGRectZero;
-    forEachNSWindow([&] (NSDictionary *windowInfo, unsigned windowID, const String&) mutable {
-        if (windowID != m_deviceID)
-            return false;
-
-        NSDictionary *boundsDict = windowInfo[(__bridge NSString *)kCGWindowBounds];
-        if (![boundsDict isKindOfClass:NSDictionary.class])
-            return false;
-
-        CGRectMakeWithDictionaryRepresentation((CFDictionaryRef)boundsDict, &bounds);
-        return true;
-    });
-
-    return { static_cast<int>(bounds.size.width), static_cast<int>(bounds.size.height) };
-#endif
+    m_intrinsicSize = IntSize(static_cast<int>(frame.size.width), static_cast<int>(frame.size.height));
+    return m_intrinsicSize.value();
 }
 
 void ScreenCaptureKitCaptureSource::updateStreamConfiguration()
@@ -617,7 +564,6 @@ void ScreenCaptureKitCaptureSource::streamDidOutputSampleBuffer(RetainPtr<CMSamp
         return;
     }
 
-    m_intrinsicSize = IntSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(PAL::CMSampleBufferGetFormatDescription(sampleBuffer.get()), true, true));
     m_currentFrame = WTFMove(sampleBuffer);
 }
 
@@ -639,38 +585,6 @@ RealtimeMediaSourceSettings::DisplaySurfaceType ScreenCaptureKitCaptureSource::s
     return m_captureDevice.type() == CaptureDevice::DeviceType::Screen ? RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor : RealtimeMediaSourceSettings::DisplaySurfaceType::Window;
 }
 
-void ScreenCaptureKitCaptureSource::captureDeviceWithPersistentID(CaptureDevice::DeviceType deviceType, uint32_t deviceID, CompletionHandler<void(std::optional<CaptureDevice>)>&& completionHandler)
-{
-    [PAL::getSCShareableContentClass() getShareableContentWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), deviceID, deviceType] (SCShareableContent *shareableContent, NSError *error) mutable {
-        callOnMainRunLoop([shareableContent = RetainPtr { shareableContent }, error = RetainPtr { error }, completionHandler = WTFMove(completionHandler), deviceID, deviceType]() mutable {
-
-            if (error) {
-                RELEASE_LOG_ERROR(WebRTC, "getShareableContentWithCompletionHandler failed with error %s", [[error localizedDescription] UTF8String]);
-                completionHandler(std::nullopt);
-                return;
-            }
-
-            findSharableDevice(WTFMove(shareableContent), deviceType, deviceID, [completionHandler = WTFMove(completionHandler)] (std::optional<Content> content, uint32_t index) mutable {
-                if (!content) {
-                    RELEASE_LOG_ERROR(WebRTC, "capture device not found");
-                    return;
-                }
-
-                auto device = switchOn(content.value(),
-                    [index] (const RetainPtr<SCDisplay> display) -> std::optional<CaptureDevice> {
-                        return CaptureDevice(String::number([display displayID]), CaptureDevice::DeviceType::Screen, makeString("Screen ", index), emptyString(), true);
-                    },
-                    [] (const RetainPtr<SCWindow> window)  -> std::optional<CaptureDevice> {
-                        return CaptureDevice(String::number([window windowID]), CaptureDevice::DeviceType::Window, [window title], emptyString(), true);
-                    }
-                );
-
-                completionHandler(WTFMove(device));
-            });
-        });
-    }).get()];
-}
-
 std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(const String& displayIDString)
 {
     if (!isAvailable()) {
@@ -687,38 +601,6 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceW
     return CaptureDevice(String::number(displayID.value()), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s, emptyString(), true);
 }
 
-void ScreenCaptureKitCaptureSource::screenCaptureDevices(Vector<CaptureDevice>& displays)
-{
-    if (!isAvailable())
-        return;
-
-    uint32_t displayCount = 0;
-    auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
-    if (err) {
-        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::screenCaptureDevices - CGGetActiveDisplayList() returned error %d when trying to get display count", (int)err);
-        return;
-    }
-
-    if (!displayCount) {
-        RELEASE_LOG_ERROR(WebRTC, "CGGetActiveDisplayList() returned a display count of 0");
-        return;
-    }
-
-    Vector<CGDirectDisplayID> activeDisplays(displayCount);
-    err = CGGetActiveDisplayList(displayCount, activeDisplays.data(), &displayCount);
-    if (err) {
-        RELEASE_LOG_ERROR(WebRTC, "ScreenCaptureKitCaptureSource::screenCaptureDevices - CGGetActiveDisplayList() returned error %d when trying to get the active display list", (int)err);
-        return;
-    }
-
-    int count = 0;
-    for (auto displayID : activeDisplays) {
-        CaptureDevice displayDevice(String::number(displayID), CaptureDevice::DeviceType::Screen, makeString("Screen ", String::number(count++)));
-        displayDevice.setEnabled(CGDisplayIDToOpenGLDisplayMask(displayID));
-        displays.append(WTFMove(displayDevice));
-    }
-}
-
 std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceWithPersistentID(const String& windowIDString)
 {
     auto windowID = parseInteger<uint32_t>(windowIDString);
@@ -727,65 +609,9 @@ std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::windowCaptureDeviceW
         return std::nullopt;
     }
 
-    std::optional<CaptureDevice> device;
-    forEachNSWindow([&] (NSDictionary *, unsigned id, const String& windowTitle) mutable {
-        if (id != windowID.value())
-            return false;
-
-        device = CaptureDevice(String::number(windowID.value()), CaptureDevice::DeviceType::Window, windowTitle, emptyString(), true);
-        return true;
-    });
-
-    return device;
+    return CaptureDevice(String::number(windowID.value()), CaptureDevice::DeviceType::Window, emptyString(), emptyString(), true);
 }
 
-void ScreenCaptureKitCaptureSource::windowCaptureDevices(Vector<CaptureDevice>& windows)
-{
-    if (!isAvailable())
-        return;
-
-    forEachNSWindow([&] (NSDictionary *, unsigned windowID, const String& windowTitle) mutable {
-        windows.append({ String::number(windowID), CaptureDevice::DeviceType::Window, windowTitle, emptyString(), true });
-        return false;
-    });
-}
-
-void ScreenCaptureKitCaptureSource::windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>& devices)
-{
-    if (!isAvailable())
-        return;
-
-    forEachNSWindow([&] (NSDictionary *windowInfo, unsigned windowID, const String& windowTitle) mutable {
-        auto *applicationName = (__bridge NSString *)(windowInfo[(__bridge NSString *)kCGWindowOwnerName]);
-        devices.append({ { String::number(windowID), CaptureDevice::DeviceType::Window, windowTitle, emptyString(), true }, applicationName });
-        return false;
-    });
-}
-
-void forEachNSWindow(const Function<bool(NSDictionary *info, unsigned windowID, const String& title)>& predicate)
-{
-    RetainPtr<NSArray> windowList = adoptNS((__bridge NSArray *)CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements, kCGNullWindowID));
-    if (!windowList)
-        return;
-
-    [windowList enumerateObjectsUsingBlock:makeBlockPtr([&] (NSDictionary *windowInfo, NSUInteger, BOOL *stop) {
-        *stop = NO;
-
-        // Menus, the dock, etc have layers greater than 0, skip them.
-        int windowLayer = [(NSNumber *)windowInfo[(__bridge NSString *)kCGWindowLayer] integerValue];
-        if (windowLayer)
-            return;
-
-        // Skip windows that aren't on screen.
-        if (![(NSNumber *)windowInfo[(__bridge NSString *)kCGWindowIsOnscreen] integerValue])
-            return;
-
-        auto *windowTitle = (__bridge NSString *)(windowInfo[(__bridge NSString *)kCGWindowName]);
-        auto windowID = (CGWindowID)[(NSNumber *)windowInfo[(__bridge NSString *)kCGWindowNumber] integerValue];
-        if (predicate(windowInfo, windowID, windowTitle))
-            *stop = YES;
-    }).get()];
-}
 #pragma clang diagnostic pop
 
 } // namespace WebCore

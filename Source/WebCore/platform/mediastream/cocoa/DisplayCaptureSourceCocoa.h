@@ -118,7 +118,6 @@ public:
     static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, String>&&, const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
 
     Seconds elapsedTime();
-    void updateFrameSize();
 
 private:
     DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);
@@ -143,6 +142,7 @@ private:
     void capturerConfigurationChanged() final;
 
     void emitFrame();
+    void updateFrameSize();
 
     UniqueRef<Capturer> m_capturer;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;

@@ -179,7 +179,7 @@ static bool hasInvalidGetDisplayMediaConstraint(const MediaConstraints& constrai
     //     2. If value contains a member which in turn is a dictionary containing a member named either min or
     //        exact, return a promise rejected with a newly created TypeError.
     if (!constraints.isValid)
-        return false;
+        return true;
 
     if (!constraints.advancedConstraints.isEmpty())
         return true;

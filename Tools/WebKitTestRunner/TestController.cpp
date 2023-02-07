@@ -2724,7 +2724,7 @@ void TestController::decidePolicyForUserMediaPermissionRequestIfPossible()
         auto audioDeviceUIDs = adoptWK(WKUserMediaPermissionRequestAudioDeviceUIDs(request));
         auto videoDeviceUIDs = adoptWK(WKUserMediaPermissionRequestVideoDeviceUIDs(request));
 
-        if (!WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
+        if (!WKUserMediaPermissionRequestRequiresDisplayCapture(request) && !WKArrayGetSize(videoDeviceUIDs.get()) && !WKArrayGetSize(audioDeviceUIDs.get())) {
             WKUserMediaPermissionRequestDeny(request, kWKNoConstraints);
             continue;
         }

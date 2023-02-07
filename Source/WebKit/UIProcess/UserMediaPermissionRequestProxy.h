@@ -60,8 +60,8 @@ public:
 
     bool requiresAudioCapture() const { return m_eligibleAudioDevices.size(); }
     bool requiresVideoCapture() const { return !requiresDisplayCapture() && m_eligibleVideoDevices.size(); }
-    bool requiresDisplayCapture() const { return (m_request.type == WebCore::MediaStreamRequest::Type::DisplayMedia || m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio) && m_eligibleVideoDevices.size(); }
-    bool requiresDisplayCaptureWithAudio() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio && m_eligibleVideoDevices.size(); }
+    bool requiresDisplayCapture() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMedia || m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio; }
+    bool requiresDisplayCaptureWithAudio() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMediaWithAudio; }
 
     void setEligibleVideoDeviceUIDs(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleVideoDevices = WTFMove(devices); }
     void setEligibleAudioDeviceUIDs(Vector<WebCore::CaptureDevice>&& devices) { m_eligibleAudioDevices = WTFMove(devices); }

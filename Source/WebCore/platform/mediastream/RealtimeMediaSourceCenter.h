@@ -122,10 +122,9 @@ private:
         CaptureDevice device;
     };
 
-    void getDisplayMediaDevices(const MediaStreamRequest&, MediaDeviceHashSalts&&, Vector<DeviceInfo>&, String&);
     void getUserMediaDevices(const MediaStreamRequest&, MediaDeviceHashSalts&&, Vector<DeviceInfo>& audioDevices, Vector<DeviceInfo>& videoDevices, String&);
     void validateRequestConstraintsAfterEnumeration(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, MediaDeviceHashSalts&&);
-    void enumerateDevices(bool shouldEnumerateCamera, bool shouldEnumerateDisplay, bool shouldEnumerateMicrophone, bool shouldEnumerateSpeakers, CompletionHandler<void()>&&);
+    void enumerateDevices(bool shouldEnumerateCamera, bool shouldEnumerateMicrophone, bool shouldEnumerateSpeakers, CompletionHandler<void()>&&);
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 

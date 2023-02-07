@@ -274,7 +274,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     ALWAYS_LOG(LOGIDENTIFIER, request.userMediaID().toUInt64());
     updateStoredRequests(request);
 
-    if (!UserMediaProcessManager::singleton().willCreateMediaStream(*this, request.hasAudioDevice(), request.hasVideoDevice())) {
+    if (!UserMediaProcessManager::singleton().willCreateMediaStream(*this, request)) {
         denyRequest(request, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure, "Unable to extend sandbox."_s);
         return;
     }
@@ -445,9 +445,6 @@ UserMediaPermissionRequestManagerProxy::RequestAction UserMediaPermissionRequest
     bool requestingCamera = !requestingScreenCapture && request.hasVideoDevice();
     bool requestingMicrophone = request.hasAudioDevice();
 
-    ASSERT(!(requestingScreenCapture && !request.hasVideoDevice()));
-    ASSERT(!(requestingScreenCapture && requestingMicrophone));
-
     if (!request.isUserGesturePriviledged() && wasRequestDenied(request, requestingMicrophone, requestingCamera, requestingScreenCapture))
         return RequestAction::Deny;
 
@@ -586,7 +583,10 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
 
         syncWithWebCorePrefs();
 
-        platformValidateUserMediaRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), WTFMove(deviceHashSaltsForFrame));
+        if (!request->requiresDisplayCapture())
+            platformValidateUserMediaRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), WTFMove(deviceHashSaltsForFrame));
+        else
+            validHandler({ }, { });
     });
 }
 
@@ -608,7 +608,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionInvalidRe
 void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequest(Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, WebCore::MediaDeviceHashSalts&& deviceIdentifierHashSalts)
 {
     ALWAYS_LOG(LOGIDENTIFIER, m_currentUserMediaRequest->userMediaID().toUInt64(), ", video: ", videoDevices.size(), " audio: ", audioDevices.size());
-    if (videoDevices.isEmpty() && audioDevices.isEmpty()) {
+    if (!m_currentUserMediaRequest->requiresDisplayCapture() && videoDevices.isEmpty() && audioDevices.isEmpty()) {
         denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints, emptyString());
         return;
     }
@@ -626,7 +626,7 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
     }
 
     if (action == RequestAction::Grant) {
-        ASSERT(m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMedia && m_currentUserMediaRequest->requestType() != MediaStreamRequest::Type::DisplayMediaWithAudio);
+        ASSERT(!m_currentUserMediaRequest->requiresDisplayCapture());
 
         if (m_page.isViewVisible())
             grantRequest(*m_currentUserMediaRequest);
@@ -634,6 +634,11 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionValidRequ
             m_pregrantedRequests.append(m_currentUserMediaRequest.releaseNonNull());
 
         return;
+    }
+
+    if (m_page.preferences().mockCaptureDevicesEnabled() && m_currentUserMediaRequest->requiresDisplayCapture() && !m_currentUserMediaRequest->hasVideoDevice()) {
+        auto displayDevices = WebCore::RealtimeMediaSourceCenter::singleton().displayCaptureFactory().displayCaptureDeviceManager().captureDevices();
+        m_currentUserMediaRequest->setEligibleVideoDeviceUIDs(WTFMove(displayDevices));
     }
 
     if (m_page.isControlledByAutomation()) {
