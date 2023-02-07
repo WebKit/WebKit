@@ -400,6 +400,7 @@ function ios_family_process_gpu_entitlements()
     plistbuddy add :com.apple.QuartzCore.webkit-limited-types bool YES
     plistbuddy Add :com.apple.developer.coremedia.allow-alternate-video-decoder-selection bool YES
     plistbuddy Add :com.apple.mediaremote.set-playback-state bool YES
+    plistbuddy Add :com.apple.mediaremote.external-artwork-validation bool YES
     plistbuddy Add :com.apple.private.allow-explicit-graphics-priority bool YES
     plistbuddy Add :com.apple.private.coremedia.extensions.audiorecording.allow bool YES
     plistbuddy Add :com.apple.private.gpu-restricted bool YES
