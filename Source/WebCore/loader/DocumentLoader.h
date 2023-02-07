@@ -312,6 +312,8 @@ public:
     bool isLoadingMainResource() const { return m_loadingMainResource; }
     bool isLoadingMultipartContent() const { return m_isLoadingMultipartContent; }
 
+    bool isLoadingInHeadlessMode() const;
+
     void stopLoadingPlugIns();
     void stopLoadingSubresources();
     WEBCORE_EXPORT void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(ResourceLoaderIdentifier, const ResourceResponse&);

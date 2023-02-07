@@ -135,6 +135,15 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/DocumentLoaderAdditions.cpp>
+#else
+namespace WebCore {
+
+bool DocumentLoader::isLoadingInHeadlessMode() const
+{
+    return false;
+}
+
+} // namespace WebCore
 #endif
 
 namespace WebCore {
