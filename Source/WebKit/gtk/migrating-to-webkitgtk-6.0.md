@@ -28,7 +28,12 @@ JavaScriptCore API (e.g. [type@JSC.Context] and [type@JSC.Object]) that is
 available since 2.22. It also includes the entire GObject DOM API (e.g.
 `WebKitDOMDocument`), which has been removed without replacement. Use JavaScript
 to interact with and manipulate the DOM instead, perhaps via
-[method@WebKit.WebView.run_javascript] or [method@JSC.ValueObject.invoke_method].
+[method@WebKit.WebView.evaluate_javascript] or
+[method@WebKit.WebView.call_async_javascript_function] in the UI process, or
+[method@JSC.ValueObject.invoke_method] in the web process.
+
+Run your application with the environment variable `G_ENABLE_DIAGNOSTIC=1` to
+notice use of deprecated signals and properties.
 
 ## Upgrade to GTK 4
 
@@ -75,10 +80,10 @@ accordingly.
 
 ## Changes to WebKitWebView Construction
 
-`webkit_web_view_new_with_context()`, `webkit_web_view_new_with_settings()`, and
-`webkit_web_view_new_with_user_content_manager()` have all been removed. You
-may directly use `g_object_new()` instead. [ctor@WebKit.WebView.new] and
-[ctor@WebKit.WebView.new_with_related_view] both remain.
+`webkit_web_view_new_with_context()`, `webkit_web_view_new_with_settings()`,
+`webkit_web_view_new_with_user_content_manager()`, and
+`webkit_web_view_new_with_related_view()` have all been removed. You
+may directly use `g_object_new()` instead. [ctor@WebKit.WebView.new] remains.
 
 ## Network Session API
 
@@ -88,12 +93,30 @@ APIs have been moved from [type@WebKit.WebContext] and [type@WebKit.WebsiteDataM
 [type@WebKit.NetworkSession]. There's a default global persistent session that you can get with
 [func@WebKit.NetworkSession.get_default]. You can also create new sessions with
 [ctor@WebKit.NetworkSession.new] for persistent sessions and [ctor@WebKit.NetworkSession.new_ephemeral]
-for ephemeral sessions. It's no longer possible to create a [type@WebKit.WebsiteDataManager], it's now
+for ephemeral sessions. It's no longer possible to create a [type@WebKit.WebsiteDataManager]; it's now
 created by the [type@WebKit.NetworkSession] automatically at construction time. The [type@WebKit.NetworkSession]
 to be used must be passed to the [type@WebKit.WebView] as a construct parameter. You can pass the
 same [type@WebKit.NetworkSession] object to several web views to use the same session. The only exception
 is automation mode, which uses its own ephemeral session that is configured by the automation
-session capabilities.
+session capabilities. If you notice that your application uses [type@WebKit.WebContext] or
+[type@WebKit.WebsiteDataManager] APIs that no longer exist, look for replacement APIs
+in [type@WebKit.NetworkSession].
+
+`webkit_web_context_clear_cache()` does not have a direct replacement, but you
+can use [method@WebKit.WebsiteDataManager.clear] to achieve the same effect.
+
+The `WebKitWebContext::download-started` signal has been removed. Use
+[signal@WebKit.NetworkSession::download-started] instead.
+
+## Favicon Database
+
+[type@WebKit.FaviconDatabase] is now owned by [type@WebKit.WebsiteDataManager]
+instead of [type@WebKit.WebContext]. Use
+[method@WebKit.WebsiteDataManager.set_favicons_enabled] to enable the favicon
+database.
+
+There is no replacement for `webkit_web_context_set_favicon_database_directory()`.
+Favicons will be stored in the base cache directory of the website data manager.
 
 ## Hardware Acceleration Policy
 

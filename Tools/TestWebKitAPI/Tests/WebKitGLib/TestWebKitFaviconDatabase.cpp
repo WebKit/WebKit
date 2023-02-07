@@ -43,7 +43,7 @@ public:
 #endif
     {
 #if ENABLE(2022_GLIB_API)
-        // In 2022 API when favicons are disdabled, the database is nullptr.
+        // In 2022 API when favicons are disabled, the database is nullptr.
         g_assert_null(m_database.get());
 #else
         g_assert_true(WEBKIT_IS_FAVICON_DATABASE(m_database.get()));
