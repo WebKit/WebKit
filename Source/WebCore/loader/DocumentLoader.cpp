@@ -2159,7 +2159,7 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 {
     ResourceLoaderOptions mainResourceLoadOptions(
         SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::SniffContent,
+        ContentSniffingPolicy::DefaultForPlatform,
         DataBufferingPolicy::BufferData,
         StoredCredentialsPolicy::Use,
         ClientCredentialPolicy::MayAskClientForCredentials,

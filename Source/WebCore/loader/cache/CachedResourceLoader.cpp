@@ -1746,7 +1746,7 @@ const ResourceLoaderOptions& CachedResourceLoader::defaultCachedResourceOptions(
 {
     static NeverDestroyed<ResourceLoaderOptions> options(
         SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::SniffContent,
+        ContentSniffingPolicy::DefaultForPlatform,
         DataBufferingPolicy::BufferData,
         StoredCredentialsPolicy::Use,
         ClientCredentialPolicy::MayAskClientForCredentials,

@@ -96,7 +96,7 @@ class CurlResourceHandleDelegate;
 
 class ResourceHandle : public RefCounted<ResourceHandle>, public AuthenticationClient {
 public:
-    WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation);
+    WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, ContentSniffingPolicy, ContentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation);
     WEBCORE_EXPORT static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, SecurityOrigin*, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
     WEBCORE_EXPORT virtual ~ResourceHandle();
 
@@ -148,12 +148,11 @@ public:
     static void setClientCertificateInfo(const String&, const String&, const String&);
 #endif
 
-    bool shouldContentSniff() const;
-    static bool shouldContentSniffURL(const URL&);
+    ContentSniffingPolicy contentSniffingPolicy() const;
+    static ContentSniffingPolicy contentSniffingPolicyForURL(const URL&);
+    WEBCORE_EXPORT static void forceContentSniffing();
 
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy() const;
-
-    WEBCORE_EXPORT static void forceContentSniffing();
 
 #if USE(CURL)
     ResourceHandleInternal* getInternal() { return d.get(); }
@@ -210,7 +209,7 @@ public:
     static void registerBuiltinSynchronousLoader(const AtomString& protocol, BuiltinSynchronousLoader);
 
 protected:
-    ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation);
+    ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, ContentSniffingPolicy, ContentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation);
 
 private:
     enum FailureType {
@@ -240,15 +239,15 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, ContentEncodingSniffingPolicy, SchedulingBehavior);
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, ContentSniffingPolicy, ContentEncodingSniffingPolicy, SchedulingBehavior);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, ContentEncodingSniffingPolicy, SchedulingBehavior, NSDictionary *connectionProperties);
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, ContentSniffingPolicy, ContentEncodingSniffingPolicy, SchedulingBehavior, NSDictionary *connectionProperties);
 #endif
 
 #if PLATFORM(COCOA)
-    NSURLRequest *applySniffingPoliciesIfNeeded(NSURLRequest *, bool shouldContentSniff, ContentEncodingSniffingPolicy);
+    NSURLRequest *applySniffingPoliciesIfNeeded(NSURLRequest *, ContentSniffingPolicy, ContentEncodingSniffingPolicy);
 #endif
 
 #if USE(CURL)

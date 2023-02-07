@@ -83,7 +83,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
 
     // ResourceLoaderOptions
     copy.sendLoadCallbacks = this->sendLoadCallbacks;
-    copy.sniffContent = this->sniffContent;
+    copy.contentSniffingPolicy = this->contentSniffingPolicy;
     copy.contentEncodingSniffingPolicy = this->contentEncodingSniffingPolicy;
     copy.dataBufferingPolicy = this->dataBufferingPolicy;
     copy.storedCredentialsPolicy = this->storedCredentialsPolicy;

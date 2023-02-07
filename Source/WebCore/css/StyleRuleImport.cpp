@@ -138,7 +138,7 @@ void StyleRuleImport::requestStyleSheet()
     if (m_parentStyleSheet->isUserStyleSheet()) {
         ResourceLoaderOptions options {
             SendCallbackPolicy::DoNotSendCallbacks,
-            ContentSniffingPolicy::SniffContent,
+            ContentSniffingPolicy::DefaultForPlatform,
             DataBufferingPolicy::BufferData,
             StoredCredentialsPolicy::Use,
             ClientCredentialPolicy::MayAskClientForCredentials,

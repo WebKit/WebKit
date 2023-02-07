@@ -51,11 +51,9 @@ enum class SendCallbackPolicy : uint8_t {
 };
 static constexpr unsigned bitWidthOfSendCallbackPolicy = 1;
 
-// FIXME: These options are named poorly. We only implement force disabling content sniffing, not enabling it,
-// and even that only on some platforms.
 enum class ContentSniffingPolicy : bool {
-    SniffContent,
-    DoNotSniffContent
+    DefaultForPlatform,
+    Disable
 };
 static constexpr unsigned bitWidthOfContentSniffingPolicy = 1;
 
@@ -139,7 +137,7 @@ enum class ApplicationCacheMode : uint8_t {
 static constexpr unsigned bitWidthOfApplicationCacheMode = 1;
 
 enum class ContentEncodingSniffingPolicy : bool {
-    Default,
+    DefaultForPlatform,
     Disable
 };
 static constexpr unsigned bitWidthOfContentEncodingSniffingPolicy = 1;
@@ -172,8 +170,8 @@ struct ResourceLoaderOptions : public FetchOptions {
     ResourceLoaderOptions(FetchOptions options)
         : FetchOptions { WTFMove(options) }
         , sendLoadCallbacks(SendCallbackPolicy::DoNotSendCallbacks)
-        , sniffContent(ContentSniffingPolicy::DoNotSniffContent)
-        , contentEncodingSniffingPolicy(ContentEncodingSniffingPolicy::Default)
+        , contentSniffingPolicy(ContentSniffingPolicy::Disable)
+        , contentEncodingSniffingPolicy(ContentEncodingSniffingPolicy::DefaultForPlatform)
         , dataBufferingPolicy(DataBufferingPolicy::BufferData)
         , storedCredentialsPolicy(StoredCredentialsPolicy::DoNotUse)
         , securityCheck(SecurityCheckPolicy::DoSecurityCheck)
@@ -192,10 +190,10 @@ struct ResourceLoaderOptions : public FetchOptions {
         , loadedFromPluginElement(LoadedFromPluginElement::No)
     { }
 
-    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffContent, DataBufferingPolicy dataBufferingPolicy, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
+    ResourceLoaderOptions(SendCallbackPolicy sendLoadCallbacks, ContentSniffingPolicy sniffingPolicy, DataBufferingPolicy dataBufferingPolicy, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy credentialPolicy, FetchOptions::Credentials credentials, SecurityCheckPolicy securityCheck, FetchOptions::Mode mode, CertificateInfoPolicy certificateInfoPolicy, ContentSecurityPolicyImposition contentSecurityPolicyImposition, DefersLoadingPolicy defersLoadingPolicy, CachingPolicy cachingPolicy)
         : sendLoadCallbacks(sendLoadCallbacks)
-        , sniffContent(sniffContent)
-        , contentEncodingSniffingPolicy(ContentEncodingSniffingPolicy::Default)
+        , contentSniffingPolicy(sniffingPolicy)
+        , contentEncodingSniffingPolicy(ContentEncodingSniffingPolicy::DefaultForPlatform)
         , dataBufferingPolicy(dataBufferingPolicy)
         , storedCredentialsPolicy(storedCredentialsPolicy)
         , securityCheck(securityCheck)
@@ -228,7 +226,7 @@ struct ResourceLoaderOptions : public FetchOptions {
     OptionSet<HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
 
     SendCallbackPolicy sendLoadCallbacks : bitWidthOfSendCallbackPolicy;
-    ContentSniffingPolicy sniffContent : bitWidthOfContentSniffingPolicy;
+    ContentSniffingPolicy contentSniffingPolicy : bitWidthOfContentSniffingPolicy;
     ContentEncodingSniffingPolicy contentEncodingSniffingPolicy : bitWidthOfContentEncodingSniffingPolicy;
     DataBufferingPolicy dataBufferingPolicy : bitWidthOfDataBufferingPolicy;
     StoredCredentialsPolicy storedCredentialsPolicy : bitWidthOfStoredCredentialsPolicy;

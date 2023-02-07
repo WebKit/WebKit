@@ -105,15 +105,15 @@ static bool synchronousWillSendRequestEnabled()
 
 #if PLATFORM(COCOA)
 
-NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *request, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy)
+NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *request, ContentSniffingPolicy contentSniffingPolicy, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy)
 {
 #if !USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
     UNUSED_PARAM(contentEncodingSniffingPolicy);
 #endif
 
-    if (shouldContentSniff
+    if (contentSniffingPolicy == ContentSniffingPolicy::DefaultForPlatform
 #if USE(CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE)
-        && contentEncodingSniffingPolicy == ContentEncodingSniffingPolicy::Default
+        && contentEncodingSniffingPolicy == ContentEncodingSniffingPolicy::DefaultForPlatform
 #endif
         )
         return request;
@@ -125,7 +125,7 @@ NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *reques
         [mutableRequest _setProperty:@YES forKey:(__bridge NSString *)kCFURLRequestContentDecoderSkipURLCheck];
 #endif
 
-    if (!shouldContentSniff)
+    if (contentSniffingPolicy == ContentSniffingPolicy::Disable)
         [mutableRequest _setProperty:@NO forKey:(__bridge NSString *)_kCFURLConnectionPropertyShouldSniff];
 
     return mutableRequest.autorelease();
@@ -134,9 +134,9 @@ NSURLRequest *ResourceHandle::applySniffingPoliciesIfNeeded(NSURLRequest *reques
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, SchedulingBehavior schedulingBehavior)
+void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, ContentSniffingPolicy contentSniffingPolicy, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, SchedulingBehavior schedulingBehavior)
 #else
-void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, SchedulingBehavior schedulingBehavior, NSDictionary *connectionProperties)
+void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, ContentSniffingPolicy contentSniffingPolicy, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, SchedulingBehavior schedulingBehavior, NSDictionary *connectionProperties)
 #endif
 {
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
@@ -168,7 +168,7 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
     }
 
     auto nsRequest = retainPtr(firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody));
-    nsRequest = applySniffingPoliciesIfNeeded(nsRequest.get(), shouldContentSniff, contentEncodingSniffingPolicy);
+    nsRequest = applySniffingPoliciesIfNeeded(nsRequest.get(), contentSniffingPolicy, contentEncodingSniffingPolicy);
 
     if (d->m_storageSession)
         nsRequest = copyRequestWithStorageSession(d->m_storageSession.get(), nsRequest.get());
@@ -247,19 +247,23 @@ bool ResourceHandle::start()
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
     SchedulingBehavior schedulingBehavior = client() && client()->loadingSynchronousXHR() ? SchedulingBehavior::Synchronous : SchedulingBehavior::Asynchronous;
+    
+    auto contentSniffingPolicy = ContentSniffingPolicy::DefaultForPlatform;
+    if (d->m_contentSniffingPolicy == ContentSniffingPolicy::Disable || (d->m_context && d->m_context->localFileContentSniffingPolicy() == ContentSniffingPolicy::Disable))
+        contentSniffingPolicy = ContentSniffingPolicy::Disable;
 
 #if !PLATFORM(IOS_FAMILY)
     createNSURLConnection(
         ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
         shouldUseCredentialStorage,
-        d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
+        contentSniffingPolicy,
         d->m_contentEncodingSniffingPolicy,
         schedulingBehavior);
 #else
     createNSURLConnection(
         ResourceHandle::makeDelegate(shouldUseCredentialStorage, nullptr),
         shouldUseCredentialStorage,
-        d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled(),
+        contentSniffingPolicy,
         d->m_contentEncodingSniffingPolicy,
         schedulingBehavior,
         (NSDictionary *)client()->connectionProperties(this).get());
@@ -361,8 +365,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     client.setAllowStoredCredentials(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
 
     bool defersLoading = false;
-    bool shouldContentSniff = true;
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, ContentEncodingSniffingPolicy::Default, sourceOrigin, false));
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, ContentSniffingPolicy::DefaultForPlatform, ContentEncodingSniffingPolicy::DefaultForPlatform, sourceOrigin, false));
 
     handle->d->m_storageSession = context->storageSession()->platformSession();
 
@@ -372,18 +375,23 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     }
 
     bool shouldUseCredentialStorage = storedCredentialsPolicy == StoredCredentialsPolicy::Use;
+
+    auto contentSniffingPolicy = ContentSniffingPolicy::DefaultForPlatform;
+    if (handle->contentSniffingPolicy() == ContentSniffingPolicy::Disable || (context && context->localFileContentSniffingPolicy() == ContentSniffingPolicy::Disable))
+        contentSniffingPolicy = ContentSniffingPolicy::Disable;
+
 #if !PLATFORM(IOS_FAMILY)
     handle->createNSURLConnection(
         handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue()),
         shouldUseCredentialStorage,
-        handle->shouldContentSniff() || context->localFileContentSniffingEnabled(),
+        contentSniffingPolicy,
         handle->contentEncodingSniffingPolicy(),
         SchedulingBehavior::Synchronous);
 #else
     handle->createNSURLConnection(
         handle->makeDelegate(shouldUseCredentialStorage, &client.messageQueue()), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
         shouldUseCredentialStorage,
-        handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()),
+        contentSniffingPolicy,
         handle->contentEncodingSniffingPolicy(),
         SchedulingBehavior::Synchronous,
         (NSDictionary *)handle->client()->connectionProperties(handle.get()).get());

@@ -44,7 +44,7 @@ private:
     {
     }
 
-    bool localFileContentSniffingEnabled() const override;
+    WebCore::ContentSniffingPolicy localFileContentSniffingPolicy() const override;
     SchedulePairHashSet* scheduledRunLoopPairs() const override;
     RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
     String sourceApplicationIdentifier() const override;

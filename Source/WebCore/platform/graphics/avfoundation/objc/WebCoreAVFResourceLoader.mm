@@ -76,7 +76,7 @@ std::unique_ptr<CachedResourceMediaLoader> CachedResourceMediaLoader::create(Web
     // is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=173498>.
     ResourceLoaderOptions loaderOptions(
         SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::DoNotSniffContent,
+        ContentSniffingPolicy::Disable,
         DataBufferingPolicy::BufferData,
         StoredCredentialsPolicy::DoNotUse,
         ClientCredentialPolicy::CannotAskClientForCredentials,

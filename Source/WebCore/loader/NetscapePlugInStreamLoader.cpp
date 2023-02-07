@@ -46,7 +46,7 @@ namespace WebCore {
 NetscapePlugInStreamLoader::NetscapePlugInStreamLoader(Frame& frame, NetscapePlugInStreamLoaderClient& client)
     : ResourceLoader(frame, ResourceLoaderOptions(
         SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::SniffContent,
+        ContentSniffingPolicy::DefaultForPlatform,
         DataBufferingPolicy::DoNotBufferData,
         StoredCredentialsPolicy::Use,
         ClientCredentialPolicy::MayAskClientForCredentials,

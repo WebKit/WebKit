@@ -74,7 +74,7 @@ void IconLoader::startLoading()
 
     CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(
         SendCallbackPolicy::SendCallbacks,
-        ContentSniffingPolicy::SniffContent,
+        ContentSniffingPolicy::DefaultForPlatform,
         DataBufferingPolicy::BufferData,
         StoredCredentialsPolicy::DoNotUse,
         ClientCredentialPolicy::CannotAskClientForCredentials,

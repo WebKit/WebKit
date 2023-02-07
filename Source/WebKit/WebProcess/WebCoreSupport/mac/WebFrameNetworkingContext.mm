@@ -42,9 +42,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
+ContentSniffingPolicy WebFrameNetworkingContext::localFileContentSniffingPolicy() const
 {
-    return frame() && frame()->settings().localFileContentSniffingEnabled();
+    if (frame() && frame()->settings().localFileContentSniffingEnabled())
+        return ContentSniffingPolicy::DefaultForPlatform;
+    return ContentSniffingPolicy::Disable;
 }
 
 SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const

@@ -77,8 +77,16 @@ void ResourceHandle::registerBuiltinSynchronousLoader(const AtomString& protocol
     builtinResourceHandleSynchronousLoaderMap().add(protocol, loader);
 }
 
-ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
-    : d(makeUnique<ResourceHandleInternal>(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation))
+static ContentSniffingPolicy contentSniffingPolicyGivenURL(ContentSniffingPolicy policy, const URL& url)
+{
+    if (policy == ContentSniffingPolicy::Disable || ResourceHandle::contentSniffingPolicyForURL(url) == ContentSniffingPolicy::Disable)
+        return ContentSniffingPolicy::Disable;
+    
+    return ContentSniffingPolicy::DefaultForPlatform;
+}
+
+ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, ContentSniffingPolicy contentSniffingPolicy, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
+    : d(makeUnique<ResourceHandleInternal>(this, context, request, client, defersLoading, contentSniffingPolicyGivenURL(contentSniffingPolicy, request.url()), contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation))
 {
     if (!request.url().isValid()) {
         scheduleFailure(InvalidURLFailure);
@@ -91,14 +99,14 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
     }
 }
 
-RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
+RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, ContentSniffingPolicy contentSniffingPolicy, ContentEncodingSniffingPolicy contentEncodingSniffingPolicy, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
 {
     if (auto protocol = request.url().protocol().toExistingAtomString(); !protocol.isNull()) {
         if (auto constructor = builtinResourceHandleConstructorMap().get(protocol))
             return constructor(request, client);
     }
 
-    auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff, contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation));
+    auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, contentSniffingPolicy, contentEncodingSniffingPolicy, WTFMove(sourceOrigin), isMainFrameNavigation));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)
         return newHandle;
@@ -265,9 +273,9 @@ void ResourceHandle::setNetworkLoadMetrics(Box<NetworkLoadMetrics>&& metrics)
     d->m_networkLoadMetrics = WTFMove(metrics);
 }
 
-bool ResourceHandle::shouldContentSniff() const
+ContentSniffingPolicy ResourceHandle::contentSniffingPolicy() const
 {
-    return d->m_shouldContentSniff;
+    return d->m_contentSniffingPolicy;
 }
 
 ContentEncodingSniffingPolicy ResourceHandle::contentEncodingSniffingPolicy() const
@@ -275,14 +283,14 @@ ContentEncodingSniffingPolicy ResourceHandle::contentEncodingSniffingPolicy() co
     return d->m_contentEncodingSniffingPolicy;
 }
 
-bool ResourceHandle::shouldContentSniffURL(const URL& url)
+ContentSniffingPolicy ResourceHandle::contentSniffingPolicyForURL(const URL& url)
 {
 #if PLATFORM(COCOA)
     if (shouldForceContentSniffing)
-        return true;
+        return ContentSniffingPolicy::DefaultForPlatform;
 #endif
     // We shouldn't content sniff file URLs as their MIME type should be established via their extension.
-    return !url.protocolIs("file"_s);
+    return url.protocolIs("file"_s) ? ContentSniffingPolicy::Disable : ContentSniffingPolicy::DefaultForPlatform;
 }
 
 void ResourceHandle::forceContentSniffing()
