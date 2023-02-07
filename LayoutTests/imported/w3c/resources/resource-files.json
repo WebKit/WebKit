@@ -2121,6 +2121,7 @@
         "web-platform-tests/css/css-grid/test-plan/index.html",
         "web-platform-tests/css/css-images/image-fit-001.xht",
         "web-platform-tests/css/css-images/image-fit-006.xht",
+        "web-platform-tests/css/css-images/image-set/image-set-resolution-001-ref.html",
         "web-platform-tests/css/css-lists/list-style-type-armenian-002.xht",
         "web-platform-tests/css/css-lists/list-style-type-armenian-003.xht",
         "web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter-ref.html",
