@@ -178,7 +178,7 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
         MTLCounterSampleBufferDescriptor *counterSampleBufferDescriptor = [MTLCounterSampleBufferDescriptor new];
         counterSampleBufferDescriptor.counterSet = m_device->baseCapabilities().timestampCounterSet;
         counterSampleBufferDescriptor.label = @"Dummy compute pass timestamp counter sample buffer";
-        counterSampleBufferDescriptor.storageMode = MTLStorageModeShared; // FIXME: This should be able to be MTLStorageModePrivate.
+        counterSampleBufferDescriptor.storageMode = MTLStorageModePrivate;
         counterSampleBufferDescriptor.sampleCount = 2;
         auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
         // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
@@ -315,7 +315,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         MTLCounterSampleBufferDescriptor *counterSampleBufferDescriptor = [MTLCounterSampleBufferDescriptor new];
         counterSampleBufferDescriptor.counterSet = m_device->baseCapabilities().timestampCounterSet;
         counterSampleBufferDescriptor.label = @"Dummy render pass timestamp counter sample buffer";
-        counterSampleBufferDescriptor.storageMode = MTLStorageModeShared; // FIXME: This should be able to be MTLStorageModePrivate.
+        counterSampleBufferDescriptor.storageMode = MTLStorageModePrivate;
         counterSampleBufferDescriptor.sampleCount = 4;
         auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
         // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
@@ -1073,27 +1073,17 @@ void CommandEncoder::pushDebugGroup(String&& groupLabel)
 
 void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)
 {
+    // FIXME: Validate this properly
     if (querySet.queryCount() < firstQuery + queryCount)
         return;
 
-    auto block = [querySet = Ref { querySet }, firstQuery, queryCount, destination = Ref { destination }, destinationOffset]() {
-        if (querySet->counterSampleBuffer()) {
-            auto timestamps = querySet->resolveTimestamps();
-            memcpy(static_cast<char*>(destination->buffer().contents) + destinationOffset, &timestamps[firstQuery], sizeof(uint64_t) * queryCount);
-            return;
-        }
+    ensureBlitCommandEncoder();
+    if (querySet.queryType() == WGPUQueryType_Occlusion)
+        [m_blitCommandEncoder copyFromBuffer:querySet.visibilityBuffer() sourceOffset:sizeof(uint64_t) * firstQuery toBuffer:destination.buffer() destinationOffset:destinationOffset size:sizeof(uint64_t) * queryCount];
+    else
+        querySet.encodeResolveCommands(m_blitCommandEncoder, firstQuery, queryCount, destination, destinationOffset);
 
-        id<MTLBuffer> visibilityBuffer = querySet->visibilityBuffer();
-        ASSERT(visibilityBuffer.length);
-        memcpy(static_cast<char*>(destination->buffer().contents) + destinationOffset, (char*)visibilityBuffer.contents + sizeof(uint64_t) * firstQuery, sizeof(uint64_t) * queryCount);
-    };
-
-    if (m_commandBuffer) {
-        [m_commandBuffer addCompletedHandler:[device = Ref { m_device }, block = WTFMove(block)](id<MTLCommandBuffer>) mutable {
-            device->instance().scheduleWork(CompletionHandler<void(void)>(WTFMove(block), CompletionHandlerCallThread::AnyThread));
-        }];
-    } else
-        block();
+    // FIXME: Enqueue any compute shaders we need to fixup or quantize the results.
 }
 
 void CommandEncoder::writeTimestamp(QuerySet& querySet, uint32_t queryIndex)

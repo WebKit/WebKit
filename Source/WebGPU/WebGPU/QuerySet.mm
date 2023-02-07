@@ -27,6 +27,7 @@
 #import "QuerySet.h"
 
 #import "APIConversions.h"
+#import "Buffer.h"
 #import "Device.h"
 
 namespace WebGPU {
@@ -53,13 +54,13 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         ASSERT(queryCount == 4);
         MTLCounterSampleBufferDescriptor *descriptor = [MTLCounterSampleBufferDescriptor new];
         descriptor.counterSet = getCounterSet(MTLCommonCounterTimestamp, m_device);
-        descriptor.storageMode = MTLStorageModeShared;
+        descriptor.storageMode = MTLStorageModePrivate;
         descriptor.sampleCount = queryCount;
         auto timestampBuffer = [m_device newCounterSampleBufferWithDescriptor:descriptor error:nil];
         return timestampBuffer ? QuerySet::create(timestampBuffer, *this) : QuerySet::createInvalid(*this);
     }
     case WGPUQueryType_Occlusion:
-        return QuerySet::create(safeCreateBuffer(sizeof(uint64_t) * queryCount, MTLStorageModeShared), *this);
+        return QuerySet::create(safeCreateBuffer(sizeof(uint64_t) * queryCount, MTLStorageModePrivate), *this);
     case WGPUQueryType_PipelineStatistics:
     case WGPUQueryType_Force32:
         ASSERT_NOT_REACHED("unexpected queryType");
@@ -112,33 +113,45 @@ void QuerySet::setOverrideLocation(uint32_t myIndex, QuerySet& otherQuerySet, ui
     m_overrideLocations[myIndex] = { { otherQuerySet, otherIndex } };
 }
 
-Vector<MTLTimestamp> QuerySet::resolveTimestamps() const
+void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset) const
 {
-    ASSERT(m_timestampBuffer);
+    if (!queryCount)
+        return;
 
-    Vector<MTLTimestamp> timestamps(m_queryCount);
+    auto encode = [&](id<MTLCounterSampleBuffer> counterSampleBuffer, uint32_t localFirstQuery, uint32_t localQueryCount) {
+        ASSERT(localQueryCount);
+        [commandEncoder resolveCounters:counterSampleBuffer inRange:NSMakeRange(localFirstQuery, localQueryCount) destinationBuffer:destination.buffer() destinationOffset:destinationOffset + sizeof(MTLCounterResultTimestamp) * (localFirstQuery - firstQuery)];
+    };
 
-    // FIXME: This code is wrong for a few reasons:
-    // 1. Not all the m_queryCount values must have been populated by now
-    // 2. The time we're being called is after the command buffer has totally finished, which is too late
-    // 3. There's no need to access the values on the CPU at all; they should stay on the GPU
-    // I'll address these issues in a future patch.
-    //
-    // This code could be made faster by iterating over partitions of the array rather than each element individually,
-    // but I'm going to end up changing this code dramatically in the future to address the above points, so
-    // let's just keep this code simple for now.
-    for (uint32_t i = 0; i < m_queryCount; ++i) {
-        NSData *resolvedData = nil;
-        if (const auto& overrideLocation = m_overrideLocations[i])
-            resolvedData = [overrideLocation->other->m_timestampBuffer resolveCounterRange:NSMakeRange(overrideLocation->otherIndex, 1)];
-        else
-            resolvedData = [m_timestampBuffer resolveCounterRange:NSMakeRange(i, 1)];
-        ASSERT(resolvedData);
-        auto gpuTimestamps = static_cast<const MTLTimestamp*>(resolvedData.bytes);
-        timestamps[i] = *gpuTimestamps;
+    struct State {
+        const QuerySet* querySet;
+        uint32_t index;
+    };
+
+    auto getState = [&](uint32_t queryIndex) -> State {
+        if (const auto& overrideLocation = m_overrideLocations[queryIndex])
+            return { overrideLocation->other.ptr(), overrideLocation->otherIndex };
+        return { this, queryIndex };
+    };
+
+    auto isSuccessive = [](const State& before, const State& after) {
+        return before.querySet == after.querySet && before.index + 1 == after.index;
+    };
+
+    auto state = getState(firstQuery);
+    auto initialState = state;
+    uint32_t lastBoundary = firstQuery;
+    for (uint32_t i = firstQuery + 1; i < firstQuery + queryCount; ++i) {
+        auto currentState = getState(i);
+        if (isSuccessive(state, currentState)) {
+            state = currentState;
+            continue;
+        }
+        encode(initialState.querySet->counterSampleBuffer(), initialState.index, i - lastBoundary);
+        initialState = currentState;
+        lastBoundary = i;
     }
-
-    return timestamps;
+    encode(state.querySet->counterSampleBuffer(), initialState.index, firstQuery + queryCount - lastBoundary);
 }
 
 WGPUQueryType QuerySet::queryType() const

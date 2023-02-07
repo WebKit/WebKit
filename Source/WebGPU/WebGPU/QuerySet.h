@@ -36,6 +36,7 @@ struct WGPUQuerySetImpl {
 
 namespace WebGPU {
 
+class Buffer;
 class Device;
 
 // https://gpuweb.github.io/gpuweb/#gpuqueryset
@@ -63,9 +64,9 @@ public:
     bool isValid() const { return m_queryCount > 0; }
 
     void setOverrideLocation(uint32_t myIndex, QuerySet& otherQuerySet, uint32_t otherIndex);
+    void encodeResolveCommands(id<MTLBlitCommandEncoder>, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset) const;
 
     Device& device() const { return m_device; }
-    Vector<MTLTimestamp> resolveTimestamps() const;
     uint32_t queryCount() const { return m_queryCount; }
     WGPUQueryType queryType() const;
     id<MTLBuffer> visibilityBuffer() const { return m_visibilityBuffer; }
