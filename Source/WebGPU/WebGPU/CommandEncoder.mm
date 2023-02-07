@@ -146,7 +146,7 @@ bool CommandEncoder::validateComputePassDescriptor(const WGPUComputePassDescript
 
     for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
         const auto& timestampWrite = descriptor.timestampWrites[i];
-        if (timestampWrite.queryIndex >= fromAPI(timestampWrite.querySet).queryCount())
+        if (timestampWrite.queryIndex >= fromAPI(timestampWrite.querySet).count())
             return false;
     }
 
@@ -182,7 +182,7 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
         counterSampleBufferDescriptor.sampleCount = 2;
         auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
         // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
-        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, m_device);
+        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, 2, WGPUQueryType_Timestamp, m_device);
 
         const auto startIndex = 0;
         const auto endIndex = 1;
@@ -229,7 +229,7 @@ bool CommandEncoder::validateRenderPassDescriptor(const WGPURenderPassDescriptor
 
     for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
         const auto& timestampWrite = descriptor.timestampWrites[i];
-        if (timestampWrite.queryIndex >= fromAPI(timestampWrite.querySet).queryCount())
+        if (timestampWrite.queryIndex >= fromAPI(timestampWrite.querySet).count())
             return false;
     }
 
@@ -319,7 +319,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         counterSampleBufferDescriptor.sampleCount = 4;
         auto counterSampleBuffer = [m_device->device() newCounterSampleBufferWithDescriptor:counterSampleBufferDescriptor error:nil];
         // FIXME: We should probably do something sensible if the counter sample buffer failed to be created.
-        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, m_device);
+        auto dummyQuerySet = QuerySet::create(counterSampleBuffer, 4, WGPUQueryType_Timestamp, m_device);
 
         const auto startVertexIndex = 0;
         const auto endVertexIndex = 1;
@@ -1074,14 +1074,28 @@ void CommandEncoder::pushDebugGroup(String&& groupLabel)
 void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)
 {
     // FIXME: Validate this properly
-    if (querySet.queryCount() < firstQuery + queryCount)
+    if (querySet.count() < firstQuery + queryCount)
         return;
 
     ensureBlitCommandEncoder();
-    if (querySet.queryType() == WGPUQueryType_Occlusion)
+    switch (querySet.type()) {
+    case WGPUQueryType_Occlusion: {
         [m_blitCommandEncoder copyFromBuffer:querySet.visibilityBuffer() sourceOffset:sizeof(uint64_t) * firstQuery toBuffer:destination.buffer() destinationOffset:destinationOffset size:sizeof(uint64_t) * queryCount];
-    else
+        break;
+    }
+    case WGPUQueryType_PipelineStatistics: {
+        // FIXME: Implement pipeline statistics
+        ASSERT_NOT_REACHED();
+        break;
+    }
+    case WGPUQueryType_Timestamp: {
         querySet.encodeResolveCommands(m_blitCommandEncoder, firstQuery, queryCount, destination, destinationOffset);
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 
     // FIXME: Enqueue any compute shaders we need to fixup or quantize the results.
 }

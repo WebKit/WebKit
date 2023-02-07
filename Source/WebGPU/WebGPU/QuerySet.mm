@@ -32,56 +32,60 @@
 
 namespace WebGPU {
 
-static id<MTLCounterSet> getCounterSet(MTLCommonCounterSet counterSetName, id<MTLDevice> device)
-{
-    for (id<MTLCounterSet> counterSet in device.counterSets) {
-        if ([counterSetName caseInsensitiveCompare:counterSetName] == NSOrderedSame)
-            return counterSet;
-    }
-
-    return nil;
-}
-
 Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
         return QuerySet::createInvalid(*this);
 
-    auto queryCount = descriptor.count;
 
-    switch (descriptor.type) {
+    auto count = descriptor.count;
+    const char* label = descriptor.label;
+    auto type = descriptor.type;
+
+    switch (type) {
     case WGPUQueryType_Timestamp: {
-        ASSERT(queryCount == 4);
+        if (!std::binary_search(features().begin(), features().end(), WGPUFeatureName_TimestampQuery))
+            return QuerySet::createInvalid(*this);
+
+        ASSERT(baseCapabilities().timestampCounterSet);
         MTLCounterSampleBufferDescriptor *descriptor = [MTLCounterSampleBufferDescriptor new];
-        descriptor.counterSet = getCounterSet(MTLCommonCounterTimestamp, m_device);
+        descriptor.counterSet = baseCapabilities().timestampCounterSet;
+        descriptor.label = fromAPI(label);
         descriptor.storageMode = MTLStorageModePrivate;
-        descriptor.sampleCount = queryCount;
+        descriptor.sampleCount = count;
         auto timestampBuffer = [m_device newCounterSampleBufferWithDescriptor:descriptor error:nil];
-        return timestampBuffer ? QuerySet::create(timestampBuffer, *this) : QuerySet::createInvalid(*this);
+        return timestampBuffer ? QuerySet::create(timestampBuffer, count, type, *this) : QuerySet::createInvalid(*this);
     }
-    case WGPUQueryType_Occlusion:
-        return QuerySet::create(safeCreateBuffer(sizeof(uint64_t) * queryCount, MTLStorageModePrivate), *this);
+    case WGPUQueryType_Occlusion: {
+        auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
+        buffer.label = fromAPI(label);
+        return QuerySet::create(buffer, count, type, *this);
+    }
     case WGPUQueryType_PipelineStatistics:
+        // FIXME: Implement pipeline statistics query sets.
+        return QuerySet::createInvalid(*this);
     case WGPUQueryType_Force32:
         ASSERT_NOT_REACHED("unexpected queryType");
         return QuerySet::createInvalid(*this);
     }
 }
 
-QuerySet::QuerySet(id<MTLBuffer> buffer, Device& device)
+QuerySet::QuerySet(id<MTLBuffer> buffer, uint32_t count, WGPUQueryType type, Device& device)
     : m_device(device)
     , m_visibilityBuffer(buffer)
-    , m_queryCount(buffer.length / sizeof(uint64_t))
+    , m_count(count)
+    , m_type(type)
 {
 }
 
-QuerySet::QuerySet(id<MTLCounterSampleBuffer> buffer, Device& device)
+QuerySet::QuerySet(id<MTLCounterSampleBuffer> buffer, uint32_t count, WGPUQueryType type, Device& device)
     : m_device(device)
     , m_timestampBuffer(buffer)
-    , m_queryCount(buffer.sampleCount)
+    , m_count(count)
+    , m_type(type)
 {
     if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary)
-        m_overrideLocations = Vector<std::optional<OverrideLocation>>(m_queryCount);
+        m_overrideLocations = Vector<std::optional<OverrideLocation>>(m_count);
 }
 
 QuerySet::QuerySet(Device& device)
@@ -102,12 +106,13 @@ void QuerySet::destroy()
 void QuerySet::setLabel(String&& label)
 {
     m_visibilityBuffer.label = label;
+    // MTLCounterSampleBuffer's label property is read-only.
 }
 
 void QuerySet::setOverrideLocation(uint32_t myIndex, QuerySet& otherQuerySet, uint32_t otherIndex)
 {
     ASSERT(m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::StageBoundary);
-    ASSERT(m_overrideLocations.size() == m_queryCount);
+    ASSERT(m_overrideLocations.size() == m_count);
     ASSERT(myIndex < m_overrideLocations.size());
 
     m_overrideLocations[myIndex] = { { otherQuerySet, otherIndex } };
@@ -154,11 +159,6 @@ void QuerySet::encodeResolveCommands(id<MTLBlitCommandEncoder> commandEncoder, u
     encode(state.querySet->counterSampleBuffer(), initialState.index, firstQuery + queryCount - lastBoundary);
 }
 
-WGPUQueryType QuerySet::queryType() const
-{
-    return visibilityBuffer() ? WGPUQueryType_Occlusion : WGPUQueryType_Timestamp;
-}
-
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -180,10 +180,10 @@ void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
 
 uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).queryCount();
+    return WebGPU::fromAPI(querySet).count();
 }
 
 WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).queryType();
+    return WebGPU::fromAPI(querySet).type();
 }

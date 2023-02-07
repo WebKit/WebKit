@@ -2080,7 +2080,7 @@ def check_function_body(filename, file_extension, clean_lines, line_number, clas
         max_index = min(function_line_count, i + 4)
         partial_function_body = ' '.join(function_body_view.trimmed_lines[min_index:max_index])
 
-        if search(r'[^_]ASSERT_NOT_REACHED\(\);\s*(continue|return(\s+[^;]+)?);', partial_function_body) \
+        if search(r'[^_]ASSERT_NOT_REACHED\(\);\s*(continue|return|break(\s+[^;]+)?);', partial_function_body) \
                 or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*#endif)?(\s*})+\s*$', partial_function_body) \
                 or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*completionHandler[^;]+;)?(\s*})+\s*$', partial_function_body) \
                 or search(r'[^_]ASSERT_NOT_REACHED\(\);(\s*[^;]+;)?\s*return(\s+[^;]+)?;', partial_function_body) \
