@@ -1224,7 +1224,6 @@ class CheckChangeRelevance(AnalyzeChange):
         'jsc': jsc_path_regexes,
         'webkitpy': webkitpy_path_regexes,
         'wk1-tests': wk1_path_regexes,
-        'windows': wk1_path_regexes,
     }
 
     def _patch_is_relevant(self, patch, builderName, timeout=30):
@@ -2610,7 +2609,7 @@ class CompileWebKit(shell.Compile, AddToLogMixin):
         architecture = self.getProperty('architecture')
         additionalArguments = self.getProperty('additionalArguments')
 
-        if platform in ['win', 'wincairo']:
+        if platform in ['wincairo']:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived, searchString='error ', includeRelatedLines=False))
         else:
             self.addLogObserver('stdio', BuildLogLineObserver(self.errorReceived))
@@ -2861,7 +2860,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             logs = self.error_logs.get(self.compile_webkit_step)
-            if platform in ['win', 'wincairo']:
+            if platform in ['wincairo']:
                 logs = self.filter_logs_containing_error(logs, searchString='error ')
             else:
                 logs = self.filter_logs_containing_error(logs)
@@ -2892,7 +2891,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
             platform = self.getProperty('platform', '')
             build_url = '{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, self.build._builderid, self.build.number)
             logs = self.error_logs.get(self.compile_webkit_step)
-            if platform in ['win', 'wincairo']:
+            if platform in ['wincairo']:
                 logs = self.filter_logs_containing_error(logs, searchString='error ')
             else:
                 logs = self.filter_logs_containing_error(logs)
@@ -4817,7 +4816,6 @@ class PrintConfiguration(steps.ShellSequence):
     command_list_generic = [['hostname']]
     command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['/bin/sh', '-c', 'echo TimezoneVers: $(cat /usr/share/zoneinfo/+VERSION)'], ['xcodebuild', '-sdk', '-version']]
     command_list_linux = [['df', '-hl'], ['date'], ['uname', '-a'], ['uptime']]
-    command_list_win = [['df', '-hl']]
 
     def __init__(self, **kwargs):
         super().__init__(timeout=60, **kwargs)
@@ -4834,8 +4832,6 @@ class PrintConfiguration(steps.ShellSequence):
             command_list.extend(self.command_list_apple)
         elif platform in ('gtk', 'wpe', 'jsc-only'):
             command_list.extend(self.command_list_linux)
-        elif platform in ('win'):
-            command_list.extend(self.command_list_win)
 
         for command in command_list:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
@@ -5757,16 +5753,3 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
-
-
-class DeleteStaleBuildFiles(shell.ShellCommand):
-    name = 'delete-stale-build-files'
-    description = ['Deleting stale build files']
-    descriptionDone = ['Deleted stale build files']
-    command = ['python3', 'Tools/CISupport/delete-stale-build-files', WithProperties('--platform=%(fullPlatform)s')]
-    haltOnFailure = False
-    flunkOnFailure = False
-    warnOnFailure = False
-
-    def __init__(self, **kwargs):
-        super().__init__(logEnviron=False, timeout=600, **kwargs)

@@ -27,7 +27,7 @@ from buildbot.steps import trigger
 from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Canonicalize, CommitPatch,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild,
-                   DeleteStaleBuildFiles, DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
+                   DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch,
                    MapBranchAlias, RunAPITests, RunBindingsTests, RunBuildWebKitOrgUnitTests, RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS,
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
@@ -49,8 +49,6 @@ class Factory(factory.BuildFactory):
             self.addStep(FindModifiedLayoutTests())
         self.addStep(ValidateChange())
         self.addStep(PrintConfiguration())
-        if platform == 'win':
-            self.addStep(DeleteStaleBuildFiles())
         self.addStep(CleanGitRepo())
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
@@ -248,17 +246,6 @@ class macOSWK1Factory(TestFactory):
 class macOSWK2Factory(TestFactory):
     LayoutTestClass = RunWebKitTests
     willTriggerCrashLogSubmission = True
-
-
-class WindowsFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=triggers, additionalArguments=additionalArguments, checkRelevance=True)
-        self.addStep(KillOldProcesses())
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
-        self.addStep(CompileWebKit(skipUpload=True))
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
-        self.addStep(RunWebKit1Tests())
-        self.addStep(SetBuildSummary())
 
 
 class WinCairoFactory(Factory):
