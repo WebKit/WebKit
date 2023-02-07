@@ -90,7 +90,7 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<ShaderMod
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-PrepareResult prepare(ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
+inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
     PhaseTimes phaseTimes;
     PrepareResult result;
@@ -102,16 +102,9 @@ PrepareResult prepare(ShaderModule& ast, const HashMap<String, PipelineLayout>& 
         RUN_PASS(typeCheck, ast);
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
         RUN_PASS(resolveTypeReferences, ast);
-        RUN_PASS(rewriteEntryPoints, callGraph);
+        RUN_PASS(rewriteEntryPoints, callGraph, result);
         RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
-        RUN_PASS_WITH_RESULT(entryPointMap, mangleNames, callGraph);
-
-        for (const auto& it : entryPointMap) {
-            Reflection::EntryPointInformation information;
-            information.mangledName = it.value;
-            auto addResult = result.entryPoints.add(it.key, WTFMove(information));
-            ASSERT_UNUSED(addResult, addResult.isNewEntry);
-        }
+        RUN_PASS(mangleNames, callGraph, result);
 
         dumpASTAtEndIfNeeded(ast);
 
@@ -126,11 +119,17 @@ PrepareResult prepare(ShaderModule& ast, const HashMap<String, PipelineLayout>& 
     return result;
 }
 
-PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)
+PrepareResult prepare(ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
-    UNUSED_PARAM(entryPointName);
-    UNUSED_PARAM(pipelineLayouts);
-    return { Metal::generateMetalCode(ast), { } };
+    return prepareImpl(ast, pipelineLayouts);
+}
+
+PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayout)
+{
+    HashMap<String, PipelineLayout> pipelineLayouts;
+    if (pipelineLayout.has_value())
+        pipelineLayouts.add(entryPointName, *pipelineLayout);
+    return prepareImpl(ast, pipelineLayouts);
 }
 
 }
