@@ -178,7 +178,6 @@
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsValidToUseWith.h; sourceTree = "<group>"; };
-		1C531A2427BDDF5500CD127E /* Metal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Metal.cpp; sourceTree = "<group>"; };
 		1C582FF727E04131009B40F0 /* CommandsMixin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CommandsMixin.mm; sourceTree = "<group>"; };
 		1C582FF827E04131009B40F0 /* CommandsMixin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandsMixin.h; sourceTree = "<group>"; };
 		1C58301727E16823009B40F0 /* APIConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIConversions.h; sourceTree = "<group>"; };
@@ -432,7 +431,6 @@
 				1C5ACAA0273A426D0095F8D5 /* Instance.h */,
 				1C5ACA92273A41C20095F8D5 /* Instance.mm */,
 				1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */,
-				1C531A2427BDDF5500CD127E /* Metal.cpp */,
 				1C5ACADA273A4E710095F8D5 /* PipelineLayout.h */,
 				1C5ACAE4273A55DD0095F8D5 /* PipelineLayout.mm */,
 				1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */,
