@@ -104,12 +104,6 @@
     { "name": "ews183", "platform": "*" },
     { "name": "ews184", "platform": "ios-simulator-16" },
     { "name": "ews185", "platform": "ios-simulator-16" },
-    { "name": "ews210", "platform": "win" },
-    { "name": "ews211", "platform": "win" },
-    { "name": "ews212", "platform": "win" },
-    { "name": "ews213", "platform": "win" },
-    { "name": "ews214", "platform": "win" },
-    { "name": "ews215", "platform": "win" },
     { "name": "webkit-cq-01", "platform": "mac-bigsur" },
     { "name": "webkit-cq-02", "platform": "mac-bigsur" },
     { "name": "webkit-cq-03", "platform": "mac-bigsur" },
@@ -226,12 +220,6 @@
       "factory": "tvOSBuildFactory", "platform": "tvos-simulator-16",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews168", "ews170"]
-    },
-    {
-      "name": "Windows-EWS", "shortname": "win", "icon": "buildAndTest",
-      "factory": "WindowsFactory", "configuration": "release",
-      "architectures": ["x86_64"], "platform": "win",
-      "workernames": ["ews210", "ews211", "ews212", "ews213", "ews214", "ews215"]
     },
     {
       "name": "WinCairo-EWS", "shortname": "wincairo", "icon": "buildOnly",
@@ -358,7 +346,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
-            "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
+            "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]
     },
     {
@@ -372,7 +360,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
-            "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
+            "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]
     },
     {
