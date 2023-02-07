@@ -30,6 +30,7 @@
 #include "ASTIdentifier.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "ShaderModule.h"
 #include "WGSL.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

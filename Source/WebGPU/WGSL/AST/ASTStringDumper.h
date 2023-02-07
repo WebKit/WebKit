@@ -28,7 +28,11 @@
 #include "ASTVisitor.h"
 #include <wtf/StringPrintStream.h>
 
-namespace WGSL::AST {
+namespace WGSL {
+
+class ShaderModule;
+
+namespace AST {
 
 class StringDumper final : public Visitor {
     friend struct Indent;
@@ -112,4 +116,5 @@ MAKE_PRINT_ADAPTOR(ShaderModuleDumper, ShaderModule&, dumpNode);
 
 void dumpAST(ShaderModule&);
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL

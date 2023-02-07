@@ -27,6 +27,7 @@
 #include "ASTStringDumper.h"
 
 #include "AST.h"
+#include "ShaderModule.h"
 #include <wtf/DataLog.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/SetForScope.h>

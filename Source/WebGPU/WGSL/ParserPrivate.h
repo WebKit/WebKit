@@ -37,22 +37,23 @@
 
 namespace WGSL {
 
-struct Configuration;
+class ShaderModule;
 
 template<typename Lexer>
 class Parser {
 public:
-    Parser(Lexer& lexer)
-        : m_lexer(lexer)
+    Parser(ShaderModule& shaderModule, Lexer& lexer)
+        : m_shaderModule(shaderModule)
+        , m_lexer(lexer)
         , m_current(lexer.lex())
     {
     }
 
-    Expected<AST::ShaderModule, Error> parseShader(const String& source, const Configuration&);
+    Expected<void, Error> parseShader();
 
     // UniqueRef whenever it can return multiple types.
     Expected<AST::Identifier, Error> parseIdentifier();
-    Expected<AST::Node::Ref, Error> parseGlobalDecl();
+    Expected<void, Error> parseGlobalDecl();
     Expected<AST::Attribute::List, Error> parseAttributes();
     Expected<AST::Attribute::Ref, Error> parseAttribute();
     Expected<AST::Structure::Ref, Error> parseStructure(AST::Attribute::List&&);
@@ -90,6 +91,7 @@ private:
 
     Token& current() { return m_current; }
 
+    ShaderModule& m_shaderModule;
     Lexer& m_lexer;
     Token m_current;
 };

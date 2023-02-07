@@ -30,8 +30,8 @@
 
 #include "AST.h"
 #include "Lexer.h"
+#include "ShaderModule.h"
 #include "TestWGSLAPI.h"
-#include "WGSL.h"
 
 #include <wtf/Assertions.h>
 
@@ -69,11 +69,13 @@ static void checkVec4F32Type(WGSL::AST::TypeName& type)
 
 namespace TestWGSLAPI {
 
-inline Expected<WGSL::AST::ShaderModule, WGSL::Error> parse(const String& wgsl)
+inline Expected<WGSL::ShaderModule, WGSL::Error> parse(const String& wgsl)
 {
-    WGSL::Configuration configuration;
-    configuration.maxBuffersPlusVertexBuffersForVertexStage = 8;
-    return WGSL::parseLChar(wgsl, configuration);
+    WGSL::ShaderModule shaderModule(wgsl, { 8 });
+    auto maybeError = WGSL::parse(shaderModule);
+    if (maybeError.has_value())
+        return makeUnexpected(*maybeError);
+    return { WTFMove(shaderModule) };
 }
 
 static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, const Vector<String>& typeNames)
@@ -104,7 +106,7 @@ static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, c
 
 TEST(WGSLParserTests, SourceLifecycle)
 {
-    Expected<WGSL::AST::ShaderModule, WGSL::Error> shader = ([&]() {
+    Expected<WGSL::ShaderModule, WGSL::Error> shader = ([&]() {
         auto source = makeString(
             "@group(0)"_s,
             " "_s,

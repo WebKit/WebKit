@@ -30,6 +30,7 @@
 #include "ASTVisitor.h"
 #include "CallGraph.h"
 #include "ContextProviderInlines.h"
+#include "ShaderModule.h"
 #include "WGSL.h"
 #include <wtf/HashSet.h>
 

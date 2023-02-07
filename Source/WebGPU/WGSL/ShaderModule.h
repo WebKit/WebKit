@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Apple Inc. All rights reserved.
+ * Copyright (c) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,40 @@
 
 #pragma once
 
+#include "ASTDirective.h"
+#include "ASTFunction.h"
+#include "ASTStructure.h"
+#include "ASTVariable.h"
+#include "WGSL.h"
+
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
+
 namespace WGSL {
 
-class ShaderModule;
+class ShaderModule {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ShaderModule(const String& source, const Configuration& configuration)
+        : m_source(source)
+        , m_configuration(configuration)
+    {
+    }
 
-void resolveTypeReferences(ShaderModule&);
+    const String& source() const { return m_source; }
+    const Configuration& configuration() const { return m_configuration; }
+    AST::Directive::List& directives() { return m_directives; }
+    AST::Function::List& functions() { return m_functions; }
+    AST::Structure::List& structures() { return m_structures; }
+    AST::Variable::List& variables() { return m_variables; }
+
+private:
+    String m_source;
+    Configuration m_configuration;
+    AST::Directive::List m_directives;
+    AST::Function::List m_functions;
+    AST::Structure::List m_structures;
+    AST::Variable::List m_variables;
+};
 
 } // namespace WGSL

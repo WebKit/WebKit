@@ -28,12 +28,12 @@
 
 #include "AST.h"
 #include "Parser.h"
+#include "ShaderModule.h"
 #include "TestWGSLAPI.h"
-#include "WGSL.h"
 
 namespace TestWGSLAPI {
 
-static String toString(WGSL::AST::ShaderModule& shaderModule)
+static String toString(WGSL::ShaderModule& shaderModule)
 {
     WGSL::AST::StringDumper dumper;
     dumper.visit(shaderModule);
@@ -42,9 +42,7 @@ static String toString(WGSL::AST::ShaderModule& shaderModule)
 
 TEST(WGSLASTDumperTests, dumpTriangleVert)
 {
-    WGSL::Configuration configuration;
-    configuration.maxBuffersPlusVertexBuffersForVertexStage = 8;
-    auto shader = WGSL::parseLChar(
+    auto source =
         "@vertex\n"
         "fn main(\n"
         "    @builtin(vertex_index) VertexIndex : u32\n"
@@ -55,11 +53,14 @@ TEST(WGSLASTDumperTests, dumpTriangleVert)
         "        vec2<f32>(0.5, -0.5)\n"
         "    );\n\n"
         "    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);\n"
-        "}\n"_s, configuration);
+        "}\n"_s;
+    WGSL::ShaderModule shader(source, { 8 });
+    auto maybeError = WGSL::parse(shader);
 
-    EXPECT_SHADER(shader);
+    EXPECT_FALSE(maybeError.has_value());
+
     EXPECT_EQ(
-        toString(shader.value()),
+        toString(shader),
         "@vertex\n"
         "fn main(\n"
         "    @builtin(vertex_index) VertexIndex: u32\n"

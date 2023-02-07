@@ -29,12 +29,13 @@
 #include "AST.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "ShaderModule.h"
 
 namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(AST::ShaderModule& shaderModule, AST::Function& functionDecl, AST::StageAttribute::Stage stage)
+    EntryPointRewriter(ShaderModule& shaderModule, AST::Function& functionDecl, AST::StageAttribute::Stage stage)
         : m_stage(stage)
         , m_shaderModule(shaderModule)
         , m_functionDecl(functionDecl)
@@ -66,7 +67,7 @@ private:
     void appendBuiltins();
 
     AST::StageAttribute::Stage m_stage;
-    AST::ShaderModule& m_shaderModule;
+    ShaderModule& m_shaderModule;
     AST::Function& m_functionDecl;
 
     const SourceSpan m_emptySourceSpan;

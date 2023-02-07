@@ -31,6 +31,7 @@
 #include "ASTVisitor.h"
 #include "CompilationMessage.h"
 #include "ContextProviderInlines.h"
+#include "ShaderModule.h"
 #include "TypeStore.h"
 #include "Types.h"
 #include <wtf/DataLog.h>
@@ -41,7 +42,7 @@ static constexpr bool shouldDumpInferredTypes = false;
 
 class TypeChecker : public AST::Visitor, public ContextProvider<Type*> {
 public:
-    TypeChecker(AST::ShaderModule&);
+    TypeChecker(ShaderModule&);
 
     void check();
 
@@ -95,7 +96,7 @@ private:
     bool isBottom(Type*) const;
     std::optional<unsigned> extractInteger(AST::Expression&);
 
-    AST::ShaderModule& m_shaderModule;
+    ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
 
     // FIXME: move this into a class that contains the AST
@@ -103,7 +104,7 @@ private:
     WTF::Vector<Error> m_errors;
 };
 
-TypeChecker::TypeChecker(AST::ShaderModule& shaderModule)
+TypeChecker::TypeChecker(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
 {
     introduceVariable(AST::Identifier::make("void"_s), m_types.voidType());
@@ -440,7 +441,7 @@ void TypeChecker::typeError(InferBottom inferBottom, const SourceSpan& span, Arg
         inferred(m_types.bottomType());
 }
 
-void typeCheck(AST::ShaderModule& shaderModule)
+void typeCheck(ShaderModule& shaderModule)
 {
     TypeChecker(shaderModule).check();
 }
