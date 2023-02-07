@@ -25,7 +25,7 @@ function test() {
 }
 
 function mutateSubtree() {
-    getSelection().setBaseAndExtent(document.createElement("div"), 1, elementID6, 81);
+    getSelection().setBaseAndExtent(document.createElement("div"), 0, elementID6, 0);
     elementID4.options.add(elementID5);
     document.execCommand("subscript", false);
     document.execCommand("insertText", false, "1");

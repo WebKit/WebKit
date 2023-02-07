@@ -34,10 +34,11 @@
 
 namespace WebCore {
 
-RemoteFrame::RemoteFrame(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client)
+RemoteFrame::RemoteFrame(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client, LayerHostingContextIdentifier layerHostingContextIdentifier)
     : AbstractFrame(page, frameID, ownerElement)
     , m_window(RemoteDOMWindow::create(*this, GlobalWindowIdentifier { Process::identifier(), WindowIdentifier::generate() }))
     , m_client(WTFMove(client))
+    , m_layerHostingContextIdentifier(layerHostingContextIdentifier)
 {
 }
 
@@ -72,6 +73,11 @@ AbstractFrameView* RemoteFrame::virtualView() const
 void RemoteFrame::setView(RefPtr<RemoteFrameView>&& view)
 {
     m_view = WTFMove(view);
+}
+
+void RemoteFrame::frameDetached()
+{
+    m_client->frameDetached();
 }
 
 } // namespace WebCore

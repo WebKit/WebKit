@@ -68,7 +68,6 @@
 #include "ASTPhonyStatement.h"
 #include "ASTPointerDereference.h"
 #include "ASTReturnStatement.h"
-#include "ASTShaderModule.h"
 #include "ASTSigned32Literal.h"
 #include "ASTSizeAttribute.h"
 #include "ASTStageAttribute.h"

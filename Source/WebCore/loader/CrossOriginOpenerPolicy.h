@@ -54,8 +54,9 @@ enum class COOPDisposition : bool { Reporting , Enforce };
 // https://html.spec.whatwg.org/multipage/origin.html#cross-origin-opener-policy
 struct CrossOriginOpenerPolicy {
     CrossOriginOpenerPolicyValue value { CrossOriginOpenerPolicyValue::UnsafeNone };
-    String reportingEndpoint;
     CrossOriginOpenerPolicyValue reportOnlyValue { CrossOriginOpenerPolicyValue::UnsafeNone };
+
+    String reportingEndpoint;
     String reportOnlyReportingEndpoint;
 
     const String& reportingEndpointForDisposition(COOPDisposition) const;
@@ -79,7 +80,7 @@ inline bool CrossOriginOpenerPolicy::hasReportingEndpoint(COOPDisposition dispos
 
 inline bool operator==(const CrossOriginOpenerPolicy& a, const CrossOriginOpenerPolicy& b)
 {
-    return a.value == b.value && a.reportingEndpoint == b.reportingEndpoint && a.reportOnlyValue == b.reportOnlyValue && a.reportOnlyReportingEndpoint == b.reportOnlyReportingEndpoint;
+    return a.value == b.value && a.reportOnlyValue == b.reportOnlyValue && a.reportingEndpoint == b.reportingEndpoint && a.reportOnlyReportingEndpoint == b.reportOnlyReportingEndpoint;
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-enforcement-result

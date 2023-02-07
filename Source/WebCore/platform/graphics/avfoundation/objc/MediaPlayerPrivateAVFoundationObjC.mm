@@ -3588,7 +3588,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataGroupDidArrive(const RetainPtr<
         // is zero assume the metadata items start at the beginning of the stream.
         double groupStartTime = 0;
         if (auto currentDate = m_avPlayerItem.get().currentDate.timeIntervalSince1970)
-            groupStartTime = groupStartDate - currentDate - currentTime.toDouble();
+            groupStartTime = groupStartDate - (currentDate - currentTime.toDouble());
 
         auto groupCopy = adoptNS([[NSMutableArray alloc] init]);
         for (AVMetadataItem *item in group.items) {

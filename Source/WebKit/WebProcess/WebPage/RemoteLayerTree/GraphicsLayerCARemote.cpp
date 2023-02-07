@@ -29,11 +29,13 @@
 #include "ImageBufferBackendHandleSharing.h"
 #include "PlatformCAAnimationRemote.h"
 #include "PlatformCALayerRemote.h"
+#include "PlatformCALayerRemoteHost.h"
 #include "RemoteLayerTreeContext.h"
 #include "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/RemoteFrame.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -77,6 +79,11 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(Ref<WebCore::M
     return PlatformCALayerRemote::create(model, owner, *m_context);
 }
 #endif
+
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayerHost(WebCore::LayerHostingContextIdentifier identifier, PlatformCALayerClient* owner)
+{
+    return PlatformCALayerRemoteHost::create(identifier, owner, *m_context);
+}
 
 Ref<PlatformCAAnimation> GraphicsLayerCARemote::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
@@ -139,6 +146,5 @@ RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote
 
     return adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier(), primaryLayerID()));
 }
-
 
 } // namespace WebKit

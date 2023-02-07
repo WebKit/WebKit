@@ -33,6 +33,7 @@
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayerClient.h"
+#include "LayerHostingContextIdentifier.h"
 #include "Path.h"
 #include "PlatformLayer.h"
 #include "ProcessIdentifier.h"
@@ -515,12 +516,14 @@ public:
         Canvas,
         BackgroundColor,
         Plugin,
-        Model
+        Model,
+        Host,
     };
 
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
+    virtual void setContentsToPlatformLayerHost(LayerHostingContextIdentifier) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
     WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate();
 #if ENABLE(MODEL_ELEMENT)

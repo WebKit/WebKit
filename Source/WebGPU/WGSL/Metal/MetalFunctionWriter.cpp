@@ -30,10 +30,7 @@
 #include "AST.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
-#include <wtf/DataLog.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/SetForScope.h>
+#include "ShaderModule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {
@@ -42,7 +39,7 @@ namespace Metal {
 
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
-    FunctionDefinitionWriter(AST::ShaderModule& shaderModule, StringBuilder& stringBuilder)
+    FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder)
         : m_stringBuilder(stringBuilder)
         , m_shaderModule(shaderModule)
     {
@@ -52,7 +49,7 @@ public:
 
     using AST::Visitor::visit;
 
-    void visit(AST::ShaderModule&) override;
+    void visit(ShaderModule&) override;
 
     void visit(AST::Attribute&) override;
     void visit(AST::BuiltinAttribute&) override;
@@ -94,14 +91,14 @@ public:
 
 private:
     StringBuilder& m_stringBuilder;
-    AST::ShaderModule& m_shaderModule;
+    ShaderModule& m_shaderModule;
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
     std::optional<AST::StageAttribute::Stage> m_entryPointStage;
     std::optional<String> m_suffix;
 };
 
-void FunctionDefinitionWriter::visit(AST::ShaderModule& shaderModule)
+void FunctionDefinitionWriter::visit(ShaderModule& shaderModule)
 {
     AST::Visitor::visit(shaderModule);
 }
@@ -553,7 +550,7 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
     m_stringBuilder.append(";\n");
 }
 
-RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, AST::ShaderModule& module)
+RenderMetalFunctionEntryPoints emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& module)
 {
     FunctionDefinitionWriter functionDefinitionWriter(module, stringBuilder);
     functionDefinitionWriter.visit(module);

@@ -37,5 +37,5 @@ Inserting hr between "foo" and "bar":
 
 After removing hr:
 | "foo"
-| "bar"
 | <#selection-caret>
+| "bar"

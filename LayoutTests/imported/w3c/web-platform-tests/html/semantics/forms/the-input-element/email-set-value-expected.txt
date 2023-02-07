@@ -1,4 +1,4 @@
 
 
-PASS setValue(sanitizedValue) is reflected in visible text field content
+FAIL setValue(sanitizedValue) is reflected in visible text field content assert_equals: visible value is unsanitized expected " foo@bar   " but got ""
 

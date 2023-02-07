@@ -31,6 +31,8 @@
 
 namespace WebGPU {
 
+class Device;
+
 class PresentationContextIOSurface : public PresentationContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -51,6 +53,7 @@ private:
     PresentationContextIOSurface(const WGPUSurfaceDescriptor&);
 
     void renderBuffersWereRecreated(NSArray<IOSurface *> *renderBuffers);
+    void onSubmittedWorkScheduled(CompletionHandler<void()>&&);
 
     NSArray<IOSurface *> *m_ioSurfaces { nil };
     struct RenderBuffer {
@@ -58,6 +61,7 @@ private:
         Ref<TextureView> textureView;
     };
     Vector<RenderBuffer> m_renderBuffers;
+    RefPtr<Device> m_device;
     size_t m_currentIndex { 0 };
 };
 

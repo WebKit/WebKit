@@ -33,6 +33,8 @@
 
 namespace WGSL {
 
+class ShaderModule;
+
 class CallGraph {
     friend class CallGraphBuilder;
 
@@ -47,18 +49,18 @@ public:
         AST::StageAttribute::Stage m_stage;
     };
 
-    AST::ShaderModule& ast() const { return m_ast; }
+    ShaderModule& ast() const { return m_ast; }
     const Vector<EntryPoint>& entrypoints() const { return m_entrypoints; }
 
 private:
-    CallGraph(AST::ShaderModule&);
+    CallGraph(ShaderModule&);
 
-    AST::ShaderModule& m_ast;
+    ShaderModule& m_ast;
     Vector<EntryPoint> m_entrypoints;
     HashMap<String, AST::Function*> m_functionsByName;
     HashMap<AST::Function*, Vector<Callee>> m_callees;
 };
 
-CallGraph buildCallGraph(AST::ShaderModule&);
+CallGraph buildCallGraph(ShaderModule&);
 
 } // namespace WGSL

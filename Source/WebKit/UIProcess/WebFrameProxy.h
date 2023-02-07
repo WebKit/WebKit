@@ -150,6 +150,8 @@ public:
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
 
+    WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
+
 private:
     WebFrameProxy(WebPageProxy&, WebProcessProxy&, WebCore::FrameIdentifier);
 

@@ -34,6 +34,7 @@
 #include "Parser.h"
 #include "PhaseTimer.h"
 #include "ResolveTypeReferences.h"
+#include "ShaderModule.h"
 #include "TypeCheck.h"
 
 namespace WGSL {
@@ -67,21 +68,21 @@ namespace WGSL {
 
 std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&, const Configuration& configuration)
 {
-    Expected<AST::ShaderModule, Error> parserResult = wgsl.is8Bit() ? parseLChar(wgsl, configuration) : parseUChar(wgsl, configuration);
-    if (!parserResult.has_value()) {
+    auto shaderModule = makeUniqueRef<ShaderModule>(wgsl, configuration);
+    std::optional<Error> error = parse(shaderModule);
+    if (error.has_value()) {
         // FIXME: Add support for returning multiple errors from the parser.
-        return FailedCheck { { parserResult.error() }, { /* warnings */ } };
+        return FailedCheck { { *error }, { /* warnings */ } };
     }
-    UniqueRef<AST::ShaderModule> shader = makeUniqueRef<AST::ShaderModule>(WTFMove(parserResult.value()));
 
     Vector<Warning> warnings { };
     // FIXME: add validation
-    return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shader));
+    return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shaderModule));
 }
 
 SuccessfulCheck::SuccessfulCheck(SuccessfulCheck&&) = default;
 
-SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<AST::ShaderModule>&& shader)
+SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<ShaderModule>&& shader)
     : warnings(WTFMove(messages))
     , ast(WTFMove(shader))
 {
@@ -89,7 +90,7 @@ SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<AST::Shad
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
+inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
     PhaseTimes phaseTimes;
     PrepareResult result;
@@ -101,22 +102,15 @@ PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayo
         RUN_PASS(typeCheck, ast);
         RUN_PASS_WITH_RESULT(callGraph, buildCallGraph, ast);
         RUN_PASS(resolveTypeReferences, ast);
-        RUN_PASS(rewriteEntryPoints, callGraph);
+        RUN_PASS(rewriteEntryPoints, callGraph, result);
         RUN_PASS(rewriteGlobalVariables, callGraph, pipelineLayouts);
-        RUN_PASS_WITH_RESULT(entryPointMap, mangleNames, callGraph);
-
-        for (const auto& it : entryPointMap) {
-            Reflection::EntryPointInformation information;
-            information.mangledName = it.value;
-            auto addResult = result.entryPoints.add(it.key, WTFMove(information));
-            ASSERT_UNUSED(addResult, addResult.isNewEntry);
-        }
+        RUN_PASS(mangleNames, callGraph, result);
 
         dumpASTAtEndIfNeeded(ast);
 
         {
             PhaseTimer phaseTimer("generateMetalCode", phaseTimes);
-            result.msl = Metal::generateMetalCode(ast).metalSource.toString();
+            result.msl = Metal::generateMetalCode(ast);
         }
     }
 
@@ -125,12 +119,17 @@ PrepareResult prepare(AST::ShaderModule& ast, const HashMap<String, PipelineLayo
     return result;
 }
 
-PrepareResult prepare(AST::ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)
+PrepareResult prepare(ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
-    UNUSED_PARAM(entryPointName);
-    UNUSED_PARAM(pipelineLayouts);
-    Metal::RenderMetalCode metalCode = Metal::generateMetalCode(ast);
-    return { metalCode.metalSource.toString(), { } };
+    return prepareImpl(ast, pipelineLayouts);
+}
+
+PrepareResult prepare(ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayout)
+{
+    HashMap<String, PipelineLayout> pipelineLayouts;
+    if (pipelineLayout.has_value())
+        pipelineLayouts.add(entryPointName, *pipelineLayout);
+    return prepareImpl(ast, pipelineLayouts);
 }
 
 }

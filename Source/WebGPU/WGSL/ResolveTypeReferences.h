@@ -27,10 +27,8 @@
 
 namespace WGSL {
 
-namespace AST {
 class ShaderModule;
-}
 
-void resolveTypeReferences(AST::ShaderModule&);
+void resolveTypeReferences(ShaderModule&);
 
 } // namespace WGSL

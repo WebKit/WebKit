@@ -43,6 +43,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/HighlightVisibility.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
@@ -285,6 +286,7 @@ struct WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension { WebCore::ContentSecurityPolicyModeForExtension::None };
 
     std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
+    Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
 
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
     Vector<String> lookalikeCharacterStrings;

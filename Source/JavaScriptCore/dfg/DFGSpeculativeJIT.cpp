@@ -4832,11 +4832,11 @@ void SpeculativeJIT::compileCheckTypeInfoFlags(Node* node)
 
 void SpeculativeJIT::compileParseInt(Node* node)
 {
-    RELEASE_ASSERT(node->child1().useKind() == UntypedUse || node->child1().useKind() == StringUse);
     if (node->child2()) {
         SpeculateInt32Operand radix(this, node->child2());
         GPRReg radixGPR = radix.gpr();
-        if (node->child1().useKind() == UntypedUse) {
+        switch (node->child1().useKind()) {
+        case UntypedUse: {
             JSValueOperand value(this, node->child1());
             JSValueRegs valueRegs = value.jsValueRegs();
 
@@ -4849,6 +4849,67 @@ void SpeculativeJIT::compileParseInt(Node* node)
             return;
         }
 
+        case StringUse: {
+            SpeculateCellOperand value(this, node->child1());
+            GPRReg valueGPR = value.gpr();
+            speculateString(node->child1(), valueGPR);
+
+            flushRegisters();
+            JSValueRegsFlushedCallResult result(this);
+            JSValueRegs resultRegs = result.regs();
+            callOperation(operationParseIntString, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR, radixGPR);
+            exceptionCheck();
+            jsValueResult(resultRegs, node);
+            return;
+        }
+
+        case Int32Use: {
+            SpeculateInt32Operand value(this, node->child1());
+            GPRReg valueGPR = value.gpr();
+
+            flushRegisters();
+            JSValueRegsFlushedCallResult result(this);
+            JSValueRegs resultRegs = result.regs();
+            callOperation(operationParseIntInt32, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR, radixGPR);
+            exceptionCheck();
+            jsValueResult(resultRegs, node);
+            return;
+        }
+
+        case DoubleRepUse: {
+            SpeculateDoubleOperand value(this, node->child1());
+            FPRReg valueFPR = value.fpr();
+
+            flushRegisters();
+            JSValueRegsFlushedCallResult result(this);
+            JSValueRegs resultRegs = result.regs();
+            callOperation(operationParseIntDouble, resultRegs, LinkableConstant::globalObject(*this, node), valueFPR, radixGPR);
+            exceptionCheck();
+            jsValueResult(resultRegs, node);
+            return;
+        }
+
+        default:
+            DFG_CRASH(m_graph, node, "Bad use kind");
+            return;
+        }
+    }
+
+    switch (node->child1().useKind()) {
+    case UntypedUse: {
+        JSValueOperand value(this, node->child1());
+        JSValueRegs valueRegs = value.jsValueRegs();
+
+        flushRegisters();
+        JSValueRegsFlushedCallResult result(this);
+        JSValueRegs resultRegs = result.regs();
+        callOperation(operationParseIntGenericNoRadix, resultRegs, LinkableConstant::globalObject(*this, node), valueRegs);
+        exceptionCheck();
+        jsValueResult(resultRegs, node);
+        return;
+    }
+
+    case StringUse: {
         SpeculateCellOperand value(this, node->child1());
         GPRReg valueGPR = value.gpr();
         speculateString(node->child1(), valueGPR);
@@ -4856,35 +4917,31 @@ void SpeculativeJIT::compileParseInt(Node* node)
         flushRegisters();
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
-        callOperation(operationParseIntString, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR, radixGPR);
+        callOperation(operationParseIntStringNoRadix, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR);
         exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
 
-    if (node->child1().useKind() == UntypedUse) {
-        JSValueOperand value(this, node->child1());
-        JSValueRegs valueRegs = value.jsValueRegs();
+    case DoubleRepUse: {
+        SpeculateDoubleOperand value(this, node->child1());
+        FPRReg valueFPR = value.fpr();
 
         flushRegisters();
         JSValueRegsFlushedCallResult result(this);
         JSValueRegs resultRegs = result.regs();
-        callOperation(operationParseIntNoRadixGeneric, resultRegs, LinkableConstant::globalObject(*this, node), valueRegs);
+        callOperation(operationParseIntDoubleNoRadix, resultRegs, LinkableConstant::globalObject(*this, node), valueFPR);
         exceptionCheck();
         jsValueResult(resultRegs, node);
         return;
     }
 
-    SpeculateCellOperand value(this, node->child1());
-    GPRReg valueGPR = value.gpr();
-    speculateString(node->child1(), valueGPR);
+    // Int32Use is converted to Identity.
 
-    flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    callOperation(operationParseIntStringNoRadix, resultRegs, LinkableConstant::globalObject(*this, node), valueGPR);
-    exceptionCheck();
-    jsValueResult(resultRegs, node);
+    default:
+        DFG_CRASH(m_graph, node, "Bad use kind");
+        return;
+    }
 }
 
 void SpeculativeJIT::compileOverridesHasInstance(Node* node)

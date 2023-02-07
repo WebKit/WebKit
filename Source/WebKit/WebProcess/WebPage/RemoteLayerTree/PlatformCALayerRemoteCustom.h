@@ -53,7 +53,7 @@ private:
     
     void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType) override;
 
-    bool isPlatformCALayerRemoteCustom() const override { return true; }
+    Type type() const final { return Type::RemoteCustom; }
 
     CFTypeRef contents() const override;
     void setContents(CFTypeRef) override;
@@ -64,4 +64,4 @@ private:
 
 } // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebKit::PlatformCALayerRemoteCustom, isPlatformCALayerRemote())
+SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebKit::PlatformCALayerRemoteCustom, type() == WebCore::PlatformCALayer::Type::RemoteCustom)

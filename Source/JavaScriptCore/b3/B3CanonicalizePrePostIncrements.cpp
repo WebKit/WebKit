@@ -34,7 +34,6 @@
 #include "B3PhaseScope.h"
 #include "B3ProcedureInlines.h"
 #include "B3ValueInlines.h"
-#include "B3ValueKeyInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/IndexSet.h>
 #include <wtf/StdLibExtras.h>
@@ -61,7 +60,7 @@ bool canonicalizePrePostIncrements(Procedure& proc)
     HashMap<Value*, Vector<MemoryValue*>> baseToLoads;
     HashMap<MemoryValue*, Value*> preIndexLoadCandidates;
     HashMap<MemoryValue*, Value*> postIndexLoadCandidates;
-    HashMap<ValueKey, Vector<Value*>> baseOffsetToAddresses;
+    HashMap<std::tuple<Value*, int64_t>, Vector<Value*>> baseOffsetToAddresses;
 
     HashMap<Value*, Vector<MemoryValue*>> baseToStores;
     HashMap<MemoryValue*, Value*> postIndexStoreCandidates;
@@ -84,10 +83,10 @@ bool canonicalizePrePostIncrements(Procedure& proc)
                 if (memory->offset()) {
                     if (!Arg::isValidIncrementIndexForm(memory->offset()))
                         return;
-                    ValueKey baseOffsetkey = ValueKey(memory->child(0), static_cast<int64_t>(memory->offset()));
-                    if (!baseOffsetToAddresses.contains(baseOffsetkey))
+                    auto iterator = baseOffsetToAddresses.find(std::tuple { memory->child(0), static_cast<int64_t>(memory->offset()) });
+                    if (iterator == baseOffsetToAddresses.end())
                         return;
-                    for (Value* address : baseOffsetToAddresses.get(baseOffsetkey))
+                    for (Value* address : iterator->value)
                         preIndexLoadCandidates.add(memory, address);
                 } else
                     baseToLoads.add(memory->child(0), Vector<MemoryValue*>()).iterator->value.append(memory);
@@ -130,15 +129,20 @@ bool canonicalizePrePostIncrements(Procedure& proc)
                 if (smallOffset != offset || !Arg::isValidIncrementIndexForm(smallOffset))
                     return;
                 // so far this Add value is a valid address candidate for both prefix and postfix pattern
-                ValueKey baseOffsetkey = ValueKey(left, static_cast<int64_t>(smallOffset));
-                baseOffsetToAddresses.add(baseOffsetkey, Vector<Value*>()).iterator->value.append(value);
-                if (baseToLoads.contains(left)) {
-                    for (MemoryValue* memory : baseToLoads.get(left))
-                        postIndexLoadCandidates.add(memory, value);
+                baseOffsetToAddresses.add(std::tuple { left, static_cast<int64_t>(smallOffset) }, Vector<Value*>()).iterator->value.append(value);
+                {
+                    auto iterator = baseToLoads.find(left);
+                    if (iterator != baseToLoads.end()) {
+                        for (MemoryValue* memory : iterator->value)
+                            postIndexLoadCandidates.add(memory, value);
+                    }
                 }
-                if (baseToStores.contains(left)) {
-                    for (MemoryValue* memory : baseToStores.get(left))
-                        postIndexStoreCandidates.add(memory, value);
+                {
+                    auto iterator = baseToStores.find(left);
+                    if (iterator != baseToStores.end()) {
+                        for (MemoryValue* memory : iterator->value)
+                            postIndexStoreCandidates.add(memory, value);
+                    }
                 }
             };
 

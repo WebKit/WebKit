@@ -1,0 +1,22 @@
+Bug 110979: Selection direction is not preserved when applying styles
+This test verifies that selection direction is preserved when applying styles.
+
+Before foreColor 1:
+| "Thi<#selection-anchor>s is <#selection-focus>some sample text"
+
+After foreColor 1:
+| "Thi<#selection-anchor>"
+| <font>
+|   color="#008000"
+|   "s is <#selection-focus>"
+| "some sample text"
+
+Before foreColor 2:
+| "Thi<#selection-focus>s is <#selection-anchor>some sample text"
+
+After foreColor 2:
+| "Thi<#selection-focus>"
+| <font>
+|   color="#008000"
+|   "s is <#selection-anchor>"
+| "some sample text"

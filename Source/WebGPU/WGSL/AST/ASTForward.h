@@ -27,7 +27,6 @@
 
 namespace WGSL::AST {
 
-class ShaderModule;
 class Directive;
 
 class Attribute;

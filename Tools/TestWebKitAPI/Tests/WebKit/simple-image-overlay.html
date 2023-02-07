@@ -15,7 +15,9 @@ body, html {
 <script>
 function selectImageOverlay()
 {
-    getSelection().selectAllChildren(internals.shadowRoot(document.querySelector("img")).querySelector("div#image-overlay"));
+    const overlay = internals.shadowRoot(document.querySelector("img")).querySelector("div#image-overlay");
+    offset = [...overlay.parentNode.childNodes].indexOf(overlay);
+    internals.setSelectionWithoutValidation(overlay.parentNode, offset, overlay.parentNode, offset + 1);
 }
 
 addEventListener("load", () => {

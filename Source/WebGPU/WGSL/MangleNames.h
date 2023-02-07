@@ -25,12 +25,11 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
-
 namespace WGSL {
 
 class CallGraph;
+struct PrepareResult;
 
-HashMap<String, String> mangleNames(CallGraph&);
+void mangleNames(CallGraph&, PrepareResult&);
 
 } // namespace WGSL

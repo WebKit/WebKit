@@ -56,8 +56,6 @@ public:
     {
     }
 
-    ValueKey(Value* child, int64_t value);
-
     ValueKey(Kind, Type, Value* child);
 
     ValueKey(Kind, Type, Value* left, Value* right);

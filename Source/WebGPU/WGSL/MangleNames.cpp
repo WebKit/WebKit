@@ -30,6 +30,7 @@
 #include "ASTVisitor.h"
 #include "CallGraph.h"
 #include "ContextProviderInlines.h"
+#include "ShaderModule.h"
 #include "WGSL.h"
 #include <wtf/HashSet.h>
 
@@ -68,12 +69,13 @@ class NameManglerVisitor : public AST::Visitor, public ContextProvider<MangledNa
     using ContextProvider = ContextProvider<MangledName>;
 
 public:
-    NameManglerVisitor(const CallGraph& callGraph)
+    NameManglerVisitor(const CallGraph& callGraph, PrepareResult& result)
         : m_callGraph(callGraph)
+        , m_result(result)
     {
     }
 
-    HashMap<String, String> run();
+    void run();
 
     void visit(AST::Function&) override;
     void visit(AST::VariableStatement&) override;
@@ -95,19 +97,19 @@ private:
     void visitFunctionBody(AST::Function&);
 
     const CallGraph& m_callGraph;
+    PrepareResult& m_result;
     HashMap<AST::Structure*, NameMap> m_structFieldMapping;
     uint32_t m_indexPerType[MangledName::numberOfKinds] { 0 };
 };
 
-HashMap<String, String> NameManglerVisitor::run()
+void NameManglerVisitor::run()
 {
-    HashMap<String, String> entryPointMap;
-
     for (const auto& entrypoint : m_callGraph.entrypoints()) {
         String originalName = entrypoint.m_function.name();
         introduceVariable(entrypoint.m_function.name(), MangledName::Function);
-        auto result = entryPointMap.add(originalName, entrypoint.m_function.name());
-        ASSERT_UNUSED(result, result.isNewEntry);
+        auto it = m_result.entryPoints.find(originalName);
+        RELEASE_ASSERT(it != m_result.entryPoints.end());
+        it->value.mangledName = entrypoint.m_function.name();
     }
 
     auto& module = m_callGraph.ast();
@@ -119,8 +121,6 @@ HashMap<String, String> NameManglerVisitor::run()
 
     for (auto& function : module.functions())
         visitFunctionBody(function);
-
-    return entryPointMap;
 }
 
 void NameManglerVisitor::visit(AST::Function& function)
@@ -211,9 +211,9 @@ void NameManglerVisitor::readVariable(AST::Identifier& name) const
         name = AST::Identifier::makeWithSpan(name.span(), mangledName->toString());
 }
 
-HashMap<String, String> mangleNames(CallGraph& callGraph)
+void mangleNames(CallGraph& callGraph, PrepareResult& result)
 {
-    return NameManglerVisitor(callGraph).run();
+    NameManglerVisitor(callGraph, result).run();
 }
 
 } // namespace WGSL

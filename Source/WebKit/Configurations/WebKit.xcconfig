@@ -215,10 +215,11 @@ INCLUDED_MIGRATED_HEADERS_YES_cocoatouch = WebEventRegion.h;
 // ...or when --ios-touch-events was passed to build-webkit manually.
 INCLUDED_MIGRATED_HEADERS_ENABLE_IOS_TOUCH_EVENTS = WebEventRegion.h;
 
-WK_MIGRATED_HEADER_OUTPUT_DIR = $(WK_MIGRATED_HEADER_OUTPUT_DIR_$(WK_COCOA_TOUCH));
-WK_MIGRATED_HEADER_OUTPUT_DIR_ = $(HEADER_OUTPUT_DIR);
-// On non-Mac platforms, all migrated headers go to PrivateHeaders.
-WK_MIGRATED_HEADER_OUTPUT_DIR_cocoatouch = $(HEADER_OUTPUT_DIR:dir)PrivateHeaders;
+// Used in MigratedHeaders-output.xcfilelist to reexport WebKitLegacy headers
+// with platform-specific visibility.
+WK_MAC_PUBLIC_IOS_PRIVATE_HEADERS_DIR = $(WK_MAC_PUBLIC_IOS_PRIVATE_HEADERS_DIR_$(WK_COCOA_TOUCH));
+WK_MAC_PUBLIC_IOS_PRIVATE_HEADERS_DIR_ = $(PUBLIC_HEADERS_FOLDER_PATH);
+WK_MAC_PUBLIC_IOS_PRIVATE_HEADERS_DIR_cocoatouch = $(PRIVATE_HEADERS_FOLDER_PATH);
 
 EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.webpushd.mac.sb com.apple.WebProcess.sb;
 

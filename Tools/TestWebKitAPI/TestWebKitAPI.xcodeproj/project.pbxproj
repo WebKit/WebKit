@@ -1229,6 +1229,7 @@
 		F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */; };
 		F4F405BD1D4C0D1C007A9707 /* skinny-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */; };
 		F4F5BB5221667BAA002D06B9 /* TestFontOptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */; };
+		F4F9AD1C298C73DD00F92EDF /* load-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F9AD13298C715D00F92EDF /* load-image.html */; };
 		F4FA2A4F24D1F05700618A46 /* AttributedSubstringForProposedRange.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2A4E24D1F05700618A46 /* AttributedSubstringForProposedRange.mm */; };
 		F4FA91811E61849B007B8C1D /* WKWebViewMacEditingTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */; };
 		F4FA91831E61857B007B8C1D /* double-click-does-not-select-trailing-space.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4FA91821E618566007B8C1D /* double-click-does-not-select-trailing-space.html */; };
@@ -1697,6 +1698,7 @@
 				A11E7DA024A169F900026745 /* link-with-hover-menu.html in Copy Resources */,
 				3128A81323763FAC00D90D40 /* link-with-image.html in Copy Resources */,
 				378E64791632707400B6C676 /* link-with-title.html in Copy Resources */,
+				F4F9AD1C298C73DD00F92EDF /* load-image.html in Copy Resources */,
 				573255A622139BC700396AE8 /* load-web-archive-1.html in Copy Resources */,
 				573255A722139BC700396AE8 /* load-web-archive-2.html in Copy Resources */,
 				57901FB11CAF142D00ED64F9 /* LoadInvalidURLRequest.html in Copy Resources */,
@@ -3511,6 +3513,7 @@
 		F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "skinny-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
 		F4F5BB5021667BAA002D06B9 /* TestFontOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestFontOptions.h; sourceTree = "<group>"; };
 		F4F5BB5121667BAA002D06B9 /* TestFontOptions.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TestFontOptions.mm; sourceTree = "<group>"; };
+		F4F9AD13298C715D00F92EDF /* load-image.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "load-image.html"; sourceTree = "<group>"; };
 		F4FA282924CD012700618A46 /* FormValidation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FormValidation.mm; sourceTree = "<group>"; };
 		F4FA2A4E24D1F05700618A46 /* AttributedSubstringForProposedRange.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedSubstringForProposedRange.mm; sourceTree = "<group>"; };
 		F4FA917F1E61849B007B8C1D /* WKWebViewMacEditingTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewMacEditingTests.mm; sourceTree = "<group>"; };
@@ -4692,6 +4695,7 @@
 				F41AB99D1EF4692C0083FA08 /* link-and-target-div.html */,
 				F46128D1211E2D2500D9FADB /* link-in-iframe-and-input.html */,
 				3128A81223763F0B00D90D40 /* link-with-image.html */,
+				F4F9AD13298C715D00F92EDF /* load-image.html */,
 				CA7787FE228CEFC700E50463 /* local-storage-process-crashes.html */,
 				9368A25D229EFB3A00A829CA /* local-storage-process-suspends-1.html */,
 				9368A25C229EFB3A00A829CA /* local-storage-process-suspends-2.html */,

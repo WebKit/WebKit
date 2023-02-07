@@ -109,9 +109,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
 
     auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage() });
 
-    // FIXME: we shouldn't compile early unless hints were passed in. Remove this
-    // once we have wired up the deferred compilation.
-    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && descriptor.hintCount) {
         if (auto result = earlyCompileShaderModule(*this, WTFMove(checkResult), descriptor, fromAPI(descriptor.label)))
             return result.releaseNonNull();
     } else {
@@ -300,13 +298,13 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
     return { { } };
 }
 
-WGSL::AST::ShaderModule* ShaderModule::ast() const
+WGSL::ShaderModule* ShaderModule::ast() const
 {
-    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> WGSL::AST::ShaderModule* {
+    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> WGSL::ShaderModule* {
         return successfulCheck.ast.ptr();
-    }, [&](const WGSL::FailedCheck&) -> WGSL::AST::ShaderModule* {
+    }, [&](const WGSL::FailedCheck&) -> WGSL::ShaderModule* {
         return nullptr;
-    }, [](std::monostate) -> WGSL::AST::ShaderModule* {
+    }, [](std::monostate) -> WGSL::ShaderModule* {
         ASSERT_NOT_REACHED();
         return nullptr;
     });

@@ -5,9 +5,7 @@ if (this.importScripts) {
 
 description("This test checks FileSystemSyncAccessHandle returns error when limit is reached");
 
-const quota = 400 * 1024; // Default quota for an origin in TestRunner.
-var accessHandle, fileHandle;
-
+var accessHandle, fileHandle, quota;
 async function test() 
 {
     try {
@@ -27,4 +25,8 @@ async function test()
     }
 }
 
-test();
+addEventListener('message', (event) => {
+    quota = event.data;
+    debug("quota is set to " + quota);
+    test();
+});

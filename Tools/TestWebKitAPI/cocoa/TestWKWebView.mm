@@ -87,6 +87,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self _test_waitForDidFinishNavigation];
 }
 
+- (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request
+{
+    [self loadRequest:request];
+    [self _test_waitForDidFinishNavigationWhileIgnoringSSLErrors];
+}
+
 - (void)synchronouslyLoadHTMLString:(NSString *)html baseURL:(NSURL *)url
 {
     [self loadHTMLString:html baseURL:url];

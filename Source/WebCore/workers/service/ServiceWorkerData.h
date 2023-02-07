@@ -36,10 +36,10 @@ namespace WebCore {
 
 struct ServiceWorkerData {
     ServiceWorkerIdentifier identifier;
+    ServiceWorkerRegistrationIdentifier registrationIdentifier;
     URL scriptURL;
     ServiceWorkerState state;
     WorkerType type;
-    ServiceWorkerRegistrationIdentifier registrationIdentifier;
 
     WEBCORE_EXPORT ServiceWorkerData isolatedCopy() const &;
     WEBCORE_EXPORT ServiceWorkerData isolatedCopy() &&;

@@ -1,0 +1,57 @@
+Test to make sure shadow nodes are not exposed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getSelection().anchorNode is null
+PASS getSelection().anchorOffset is 0
+PASS getSelection().focusNode is null
+PASS getSelection().focusOffset is 0
+PASS getSelection().isCollapsed is true
+PASS getSelection().rangeCount is 0
+PASS getSelection().baseNode is null
+PASS getSelection().baseOffset is 0
+PASS getSelection().extentNode is null
+PASS getSelection().extentOffset is 0
+PASS getSelection().type is 'None'
+
+Add an input element.
+
+FAIL getSelection().anchorNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().anchorOffset should be 1. Was 0.
+FAIL getSelection().focusNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().focusOffset should be 1. Was 0.
+PASS getSelection().isCollapsed is true
+FAIL getSelection().rangeCount should be 1. Was 0.
+FAIL getSelection().getRangeAt(0).startContainer should be [object HTMLParagraphElement]. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().getRangeAt(0).startOffset should be 1. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().getRangeAt(0).endContainer should be [object HTMLParagraphElement]. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().getRangeAt(0).endOffset should be 1. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().baseNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().baseOffset should be 1. Was 0.
+FAIL getSelection().extentNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().extentOffset should be 1. Was 0.
+FAIL getSelection().type should be Range. Was None.
+
+Add a textarea element.
+
+FAIL getSelection().anchorNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().anchorOffset should be 2. Was 0.
+FAIL getSelection().focusNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().focusOffset should be 2. Was 0.
+PASS getSelection().isCollapsed is true
+FAIL getSelection().rangeCount should be 1. Was 0.
+FAIL getSelection().getRangeAt(0).startContainer should be [object HTMLParagraphElement]. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().getRangeAt(0).startOffset should be 2. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().getRangeAt(0).endContainer should be [object HTMLParagraphElement]. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().getRangeAt(0).endOffset should be 2. Threw exception IndexSizeError: The index is not in the allowed range.
+FAIL getSelection().baseNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().baseOffset should be 2. Was 0.
+FAIL getSelection().extentNode should be [object HTMLParagraphElement]. Was null.
+FAIL getSelection().extentOffset should be 2. Was 0.
+FAIL getSelection().type should be Range. Was None.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

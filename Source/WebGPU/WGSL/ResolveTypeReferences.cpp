@@ -28,6 +28,7 @@
 
 #include "AST.h"
 #include "ASTVisitor.h"
+#include "ShaderModule.h"
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 
@@ -60,7 +61,7 @@ void ResolveTypeReferences::visit(AST::NamedTypeName& namedType)
         namedType.resolveTypeReference(it->value.copyRef());
 }
 
-void resolveTypeReferences(AST::ShaderModule& shaderModule)
+void resolveTypeReferences(ShaderModule& shaderModule)
 {
     ResolveTypeReferences().AST::Visitor::visit(shaderModule);
 }

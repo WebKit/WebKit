@@ -49,6 +49,7 @@
 #include "SandboxExtension.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
+#include "ViewSnapshotStore.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageMessages.h"
@@ -1877,11 +1878,11 @@ void NetworkProcessProxy::notifyMediaStreamingActivity(bool activity)
     send(Messages::NetworkProcess::NotifyMediaStreamingActivity(activity), 0);
 }
 
-void NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin(OptionSet<WebsiteDataType> dataTypes, const WebCore::ClientOrigin& origin, PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+void NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin(OptionSet<WebsiteDataType> dataTypes, const WebCore::ClientOrigin& origin, PAL::SessionID sessionID, WebPageProxyIdentifier webPageProxyID, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(Process, "%p - NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin BEGIN", this);
-    auto callbackAggregator = CallbackAggregator::create([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
-        RELEASE_LOG(Process, "%p - NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin END", protectedThis.ptr());
+    RELEASE_LOG(Process, "%p - NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin - webPageProxyID=%" PRIu64 " - BEGIN", this, webPageProxyID.toUInt64());
+    auto callbackAggregator = CallbackAggregator::create([protectedThis = Ref { *this }, webPageProxyID, completionHandler = WTFMove(completionHandler)]() mutable {
+        RELEASE_LOG(Process, "%p - NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin - webPageProxyID=%" PRIu64 " - END", protectedThis.ptr(), webPageProxyID.toUInt64());
         completionHandler();
     });
     RefPtr websiteDataStore = websiteDataStoreFromSessionID(sessionID);
@@ -1890,6 +1891,32 @@ void NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin(OptionSet<Web
     for (auto& process : websiteDataStore->processes()) {
         if (process.canSendMessage() && !process.isDummyProcessProxy())
             process.sendWithAsyncReply(Messages::WebProcess::DeleteWebsiteDataForOrigin(dataTypes, origin), [callbackAggregator] { });
+    }
+    bool shouldClearNavigationSnapshots = dataTypes.contains(WebsiteDataType::MemoryCache) && origin.topOrigin == origin.clientOrigin;
+    if (shouldClearNavigationSnapshots) {
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+        ViewSnapshotStore::singleton().discardSnapshotImagesForOrigin(origin.topOrigin);
+#endif
+        // Since this navigation requested that we clear existing navigation snapshots, we shouldn't
+        // create a snapshot for this navigation either.
+        if (auto page = WebProcessProxy::webPage(webPageProxyID))
+            page->suppressNextAutomaticNavigationSnapshot();
+    }
+}
+
+void NetworkProcessProxy::reloadExecutionContextsForOrigin(const WebCore::ClientOrigin& origin, PAL::SessionID sessionID, std::optional<WebCore::FrameIdentifier> triggeringFrame, CompletionHandler<void()>&& completionHandler)
+{
+    RELEASE_LOG(Process, "%p - NetworkProcessProxy::reloadExecutionContextsForOrigin BEGIN", this);
+    auto callbackAggregator = CallbackAggregator::create([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        RELEASE_LOG(Process, "%p - NetworkProcessProxy::reloadExecutionContextsForOrigin END", protectedThis.ptr());
+        completionHandler();
+    });
+    RefPtr websiteDataStore = websiteDataStoreFromSessionID(sessionID);
+    if (!websiteDataStore)
+        return;
+    for (auto& process : websiteDataStore->processes()) {
+        if (process.canSendMessage() && !process.isDummyProcessProxy())
+            process.sendWithAsyncReply(Messages::WebProcess::ReloadExecutionContextsForOrigin(origin, triggeringFrame), [callbackAggregator] { });
     }
 }
 

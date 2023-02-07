@@ -3,7 +3,8 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -3688,13 +3689,11 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
 
 void RenderBox::computeBlockDirectionMargins(const RenderBlock& containingBlock, LayoutUnit& marginBefore, LayoutUnit& marginAfter) const
 {
-    if (isTableCell()) {
-        // FIXME: Not right if we allow cells to have different directionality than the table.  If we do allow this, though,
-        // we may just do it with an extra anonymous block inside the cell.
-        marginBefore = 0;
-        marginAfter = 0;
-        return;
-    }
+    // First assert that we're not calling this method on box types that don't support margins.
+    ASSERT(!isTableCell());
+    ASSERT(!isTableRow());
+    ASSERT(!isTableSection());
+    ASSERT(!isRenderTableCol());
 
     // Margins are calculated with respect to the logical width of
     // the containing block (8.3)

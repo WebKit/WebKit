@@ -25,24 +25,16 @@
 
 #pragma once
 
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WGSL {
 
-namespace AST {
 class ShaderModule;
-}
 
 namespace Metal {
 
-struct RenderMetalCode {
-    StringBuilder metalSource;
-    String mangledVertexEntryPointName;
-    String mangledFragmentEntryPointName;
-};
-
 // Can't fail. Any failure checks need to be done earlier, in the backend-agnostic part of the compiler.
-RenderMetalCode generateMetalCode(AST::ShaderModule&);
+String generateMetalCode(ShaderModule&);
 
 } // namespace Metal
 } // namespace WGSL

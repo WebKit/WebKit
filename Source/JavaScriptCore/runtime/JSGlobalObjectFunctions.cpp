@@ -517,21 +517,9 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncParseInt, (JSGlobalObject* globalObject, Call
     JSValue value = callFrame->argument(0);
     JSValue radixValue = callFrame->argument(1);
 
-    // Optimized handling for numbers:
-    // If the argument is 0 or a number in range 10^-6 <= n < INT_MAX+1, then parseInt
-    // results in a truncation to integer. In the case of -0, this is converted to 0.
-    //
-    // This is also a truncation for values in the range INT_MAX+1 <= n < 10^21,
-    // however these values cannot be trivially truncated to int since 10^21 exceeds
-    // even the int64_t range. Negative numbers are a little trickier, the case for
-    // values in the range -10^21 < n <= -1 are similar to those for integer, but
-    // values in the range -1 < n <= -10^-6 need to truncate to -0, not 0.
-    static const double tenToTheMinus6 = 0.000001;
-    static const double intMaxPlusOne = 2147483648.0;
-    if (value.isNumber()) {
-        double n = value.asNumber();
-        if (((n < intMaxPlusOne && n >= tenToTheMinus6) || !n) && radixValue.isUndefinedOrNull())
-            return JSValue::encode(jsNumber(static_cast<int32_t>(n)));
+    if (value.isNumber() && radixValue.isUndefinedOrNull()) {
+        if (auto result = parseIntDouble(value.asNumber()))
+            return JSValue::encode(jsNumber(result.value()));
     }
 
     // If ToString throws, we shouldn't call ToInt32.

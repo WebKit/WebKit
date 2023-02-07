@@ -60,7 +60,10 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
     encoder << hostingContextID;
     encoder << hostingDeviceScaleFactor;
     encoder << preservesFlip;
-    
+
+    // PlatformCALayerRemoteHost
+    encoder << hostIdentifier;
+
 #if ENABLE(MODEL_ELEMENT)
     // PlatformCALayerRemoteModelHosting
     encoder << !!model;
@@ -87,7 +90,11 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
     
     if (!decoder.decode(result.preservesFlip))
         return std::nullopt;
-    
+
+    // PlatformCALayerRemoteHost
+    if (!decoder.decode(result.hostIdentifier))
+        return std::nullopt;
+
 #if ENABLE(MODEL_ELEMENT)
     // PlatformCALayerRemoteModelHosting
     bool hasModel;
@@ -574,6 +581,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 {
     encoder << m_rootLayerID;
     encoder << m_createdLayers;
+    encoder << m_remoteContextHostIdentifier;
 
     encoder << static_cast<uint64_t>(m_changedLayers.size());
 
@@ -644,6 +652,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
 
     if (!decoder.decode(result.m_createdLayers))
+        return false;
+
+    if (!decoder.decode(result.m_remoteContextHostIdentifier))
         return false;
 
     uint64_t numChangedLayerProperties;

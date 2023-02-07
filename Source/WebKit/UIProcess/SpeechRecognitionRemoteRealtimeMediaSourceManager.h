@@ -51,6 +51,8 @@ class SpeechRecognitionRemoteRealtimeMediaSourceManager final : public IPC::Mess
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SpeechRecognitionRemoteRealtimeMediaSourceManager(Ref<IPC::Connection>&&);
+    ~SpeechRecognitionRemoteRealtimeMediaSourceManager();
+
     void addSource(SpeechRecognitionRemoteRealtimeMediaSource&, const WebCore::CaptureDevice&);
     void removeSource(SpeechRecognitionRemoteRealtimeMediaSource&);
 
@@ -71,7 +73,7 @@ private:
     uint64_t messageSenderDestinationID() const final;
 
     Ref<IPC::Connection> m_connection;
-    HashMap<WebCore::RealtimeMediaSourceIdentifier, WeakPtr<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
+    HashMap<WebCore::RealtimeMediaSourceIdentifier, Ref<SpeechRecognitionRemoteRealtimeMediaSource>> m_sources;
     HashSet<WebCore::RealtimeMediaSourceIdentifier> m_sourcesNeedingSandboxExtension;
 };
 

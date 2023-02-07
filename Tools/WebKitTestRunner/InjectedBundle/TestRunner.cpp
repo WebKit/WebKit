@@ -2024,6 +2024,11 @@ void TestRunner::setAllowStorageQuotaIncrease(bool willIncrease)
     postSynchronousPageMessage("SetAllowStorageQuotaIncrease", willIncrease);
 }
 
+void TestRunner::setQuota(uint64_t quota)
+{
+    postSynchronousMessage("SetQuota", quota);
+}
+
 void TestRunner::getApplicationManifestThen(JSValueRef callback)
 {
     cacheTestRunnerCallback(GetApplicationManifestCallbackID, callback);

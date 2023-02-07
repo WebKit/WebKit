@@ -76,6 +76,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> ()
     DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
     DeleteWebsiteDataForOrigin(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, struct WebCore::ClientOrigin origin) -> ()
+    ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
     DeleteAllCookies() -> ()
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)

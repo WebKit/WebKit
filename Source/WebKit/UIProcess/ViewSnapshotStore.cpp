@@ -100,6 +100,7 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
     snapshot->setDeviceScaleFactor(webPageProxy.deviceScaleFactor());
     snapshot->setBackgroundColor(webPageProxy.pageExtendedBackgroundColor());
     snapshot->setViewScrollPosition(WebCore::roundedIntPoint(webPageProxy.viewScrollPosition()));
+    snapshot->setOrigin(WebCore::SecurityOriginData::fromURL(URL(item.url())));
 
     item.setSnapshot(WTFMove(snapshot));
 }
@@ -108,6 +109,16 @@ void ViewSnapshotStore::discardSnapshotImages()
 {
     while (!m_snapshotsWithImages.isEmpty())
         m_snapshotsWithImages.first()->clearImage();
+}
+
+void ViewSnapshotStore::discardSnapshotImagesForOrigin(const WebCore::SecurityOriginData& origin)
+{
+    for (auto it = m_snapshotsWithImages.begin(); it != m_snapshotsWithImages.end();) {
+        auto viewSnapshot = *it;
+        ++it;
+        if (viewSnapshot->origin() == origin)
+            viewSnapshot->clearImage();
+    }
 }
 
 ViewSnapshot::~ViewSnapshot()

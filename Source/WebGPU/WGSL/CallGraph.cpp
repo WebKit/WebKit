@@ -28,17 +28,18 @@
 
 #include "AST.h"
 #include "ASTVisitor.h"
+#include "ShaderModule.h"
 
 namespace WGSL {
 
-CallGraph::CallGraph(AST::ShaderModule& shaderModule)
+CallGraph::CallGraph(ShaderModule& shaderModule)
     : m_ast(shaderModule)
 {
 }
 
 class CallGraphBuilder : public AST::Visitor {
 public:
-    CallGraphBuilder(AST::ShaderModule& shaderModule)
+    CallGraphBuilder(ShaderModule& shaderModule)
         : m_callGraph(shaderModule)
     {
     }
@@ -92,7 +93,7 @@ void CallGraphBuilder::visit(AST::Function& functionDecl)
     m_currentFunction = nullptr;
 }
 
-CallGraph buildCallGraph(AST::ShaderModule& shaderModule)
+CallGraph buildCallGraph(ShaderModule& shaderModule)
 {
     return CallGraphBuilder(shaderModule).build();
 }

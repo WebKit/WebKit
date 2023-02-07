@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class RemoteFrame;
+
 class WidgetHierarchyUpdatesSuspensionScope {
 public:
     WidgetHierarchyUpdatesSuspensionScope()
@@ -77,6 +79,8 @@ public:
     WEBCORE_EXPORT IntRect windowClipRect() const;
 
     bool requiresAcceleratedCompositing() const;
+
+    RemoteFrame* remoteFrame() const;
 
     void ref() { ++m_refCount; }
     void deref();

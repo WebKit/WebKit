@@ -4,7 +4,8 @@ Ideally, we would just adjust the selection when an endpoint is removed, for now
 This test creates a selection that ends inside of a node that will be removed.  Then the node is removed.
 
 Before removing node:
-| "\n<#selection-anchor>hello "
+| <#selection-anchor>
+| "\nhello "
 | <span>
 |   id="removeme"
 |   style="color:red;"
@@ -12,6 +13,7 @@ Before removing node:
 | " world!\n"
 
 After removing node:
-| "\n<#selection-anchor>hello "
+| <#selection-anchor>
+| "\nhello "
 | <#selection-focus>
 | " world!\n"

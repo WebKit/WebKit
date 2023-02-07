@@ -40,6 +40,7 @@
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HitTestRequest.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -57,6 +58,7 @@ class Frame;
 class HTMLFrameOwnerElement;
 class IntPoint;
 class IntRect;
+class RemoteFrame;
 }
 
 namespace WebKit {
@@ -86,6 +88,7 @@ public:
 
     static WebFrame* fromCoreFrame(const WebCore::AbstractFrame&);
     WebCore::Frame* coreFrame() const;
+    WebCore::RemoteFrame* coreRemoteFrame() const;
 
     FrameInfoData info() const;
     void getFrameInfo(CompletionHandler<void(FrameInfoData&&)>&&);
@@ -100,7 +103,7 @@ public:
     FormSubmitListenerIdentifier setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(FormSubmitListenerIdentifier);
 
-    void didCommitLoadInAnotherProcess();
+    void didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentifier);
     void didFinishLoadInAnotherProcess();
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });

@@ -155,7 +155,7 @@ auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension
     return actionsStruct;
 }
 
-auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const -> Vector<ActionsFromContentRuleList>
+auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo, const RuleListFilter& ruleListFilter) const -> Vector<ActionsFromContentRuleList>
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeStart = MonotonicTime::now();
@@ -172,8 +172,11 @@ auto ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& re
     actionsVector.reserveInitialCapacity(m_contentExtensions.size());
     ASSERT(!(resourceLoadInfo.getResourceFlags() & ActionConditionMask));
     const ResourceFlags flags = resourceLoadInfo.getResourceFlags() | ActionConditionMask;
-    for (auto& contentExtension : m_contentExtensions.values())
+    for (auto& [identifier, contentExtension] : m_contentExtensions) {
+        if (ruleListFilter(identifier) == ShouldSkipRuleList::Yes)
+            continue;
         actionsVector.uncheckedAppend(actionsFromContentRuleList(contentExtension.get(), urlString, resourceLoadInfo, flags));
+    }
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     MonotonicTime addedTimeEnd = MonotonicTime::now();
     dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart).microseconds(), resourceLoadInfo.resourceURL.string().utf8().data());
@@ -193,7 +196,7 @@ StyleSheetContents* ContentExtensionsBackend::globalDisplayNoneStyleSheet(const 
     return contentExtension ? contentExtension->globalDisplayNoneStyleSheet() : nullptr;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom, const RuleListFilter& ruleListFilter)
 {
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
@@ -217,7 +220,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
         frameURL = url;
 
     ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, resourceType, mainFrameContext };
-    auto actions = actionsForResourceLoad(resourceLoadInfo);
+    auto actions = actionsForResourceLoad(resourceLoadInfo, ruleListFilter);
 
     ContentRuleListResults results;
     if (page.httpsUpgradeEnabled())

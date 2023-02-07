@@ -58,6 +58,7 @@ public:
     WEBCORE_EXPORT bool isDescendantOf(const AbstractFrame* ancestor) const;
     
     WEBCORE_EXPORT AbstractFrame* traverseNext(const AbstractFrame* stayWithin = nullptr) const;
+    AbstractFrame* traverseNextSkippingChildren(const AbstractFrame* stayWithin = nullptr) const;
     // Rendered means being the main frame or having an ownerRenderer. It may not have been parented in the Widget tree yet (see WidgetHierarchyUpdatesSuspensionScope).
     WEBCORE_EXPORT AbstractFrame* traverseNextRendered(const AbstractFrame* stayWithin = nullptr) const;
     WEBCORE_EXPORT AbstractFrame* traverseNext(CanWrap, DidWrap* = nullptr) const;
@@ -86,6 +87,7 @@ public:
 private:
     AbstractFrame* deepFirstChild() const;
     AbstractFrame* deepLastChild() const;
+    AbstractFrame* nextAncestorSibling(const AbstractFrame* stayWithin) const;
 
     bool scopedBy(TreeScope*) const;
     AbstractFrame* scopedChild(unsigned index, TreeScope*) const;

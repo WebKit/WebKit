@@ -34,6 +34,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/WeakPtr.h>
 
@@ -56,6 +57,8 @@ public:
 
     WebProcessProxy& process() { return m_process.get(); }
 
+    WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
@@ -71,6 +74,7 @@ private:
     WebCore::PageIdentifier m_pageID;
     WebPageProxyIdentifier m_webPageID;
     bool m_wasCommitted { false };
+    WebCore::LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 
 } // namespace WebKit

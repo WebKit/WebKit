@@ -47,6 +47,30 @@
 
 namespace IPC {
 
+static bool isSafeToEncodeUserInfo(id value)
+{
+    if ([value isKindOfClass:NSString.class] || [value isKindOfClass:NSURL.class] || [value isKindOfClass:NSNumber.class])
+        return true;
+
+    if (auto array = dynamic_objc_cast<NSArray>(value)) {
+        for (id object in array) {
+            if (!isSafeToEncodeUserInfo(object))
+                return false;
+        }
+        return true;
+    }
+
+    if (auto dictionary = dynamic_objc_cast<NSDictionary>(value)) {
+        for (id innerValue in dictionary.objectEnumerator) {
+            if (!isSafeToEncodeUserInfo(innerValue))
+                return false;
+        }
+        return true;
+    }
+
+    return false;
+}
+
 static void encodeNSError(Encoder& encoder, NSError *nsError)
 {
     String domain = [nsError domain];
@@ -60,7 +84,7 @@ static void encodeNSError(Encoder& encoder, NSError *nsError)
     RetainPtr<CFMutableDictionaryRef> filteredUserInfo = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, userInfo.count, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     [userInfo enumerateKeysAndObjectsUsingBlock:^(id key, id value, BOOL*) {
-        if ([value isKindOfClass:[NSString class]] || [value isKindOfClass:[NSURL class]] || [value isKindOfClass:[NSNumber class]])
+        if (isSafeToEncodeUserInfo(value))
             CFDictionarySetValue(filteredUserInfo.get(), (__bridge CFTypeRef)key, (__bridge CFTypeRef)value);
     }];
 

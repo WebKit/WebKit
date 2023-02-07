@@ -5,6 +5,5 @@ This tests extending the selection backwards at the beginning of a line by sente
 | "\n"
 | <div>
 |   id="target"
-|   <#selection-anchor>
-|   "Here is another one."
+|   "<#selection-anchor>Here is another one."
 | "\n"

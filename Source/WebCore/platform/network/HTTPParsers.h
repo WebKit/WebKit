@@ -73,7 +73,8 @@ enum class CrossOriginResourcePolicy : uint8_t {
 enum class ClearSiteDataValue : uint8_t {
     Cache = 1 << 0,
     Cookies = 1 << 1,
-    Storage = 1 << 2,
+    ExecutionContexts = 1 << 2,
+    Storage = 1 << 3,
 };
 
 bool isValidReasonPhrase(const String&);

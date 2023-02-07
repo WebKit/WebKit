@@ -46,8 +46,7 @@ void CompositorIntegrationImpl::prepareForDisplay(CompletionHandler<void()>&& co
 {
     m_presentationContext->present();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250993 Wait for the results to be fully drawn
-    completionHandler();
+    m_onSubmittedWorkScheduledCallback(WTFMove(completionHandler));
 }
 
 #if PLATFORM(COCOA)

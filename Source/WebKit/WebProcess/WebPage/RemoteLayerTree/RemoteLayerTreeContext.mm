@@ -33,6 +33,7 @@
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteLayerWithRemoteRenderingBackingStoreCollection.h"
+#import "WebFrame.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
@@ -151,6 +152,7 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 
     PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
+    transaction.setRemoteContextHostIdentifier(m_webPage.layerHostingContextIdentifier());
 
     m_currentTransaction = &transaction;
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);

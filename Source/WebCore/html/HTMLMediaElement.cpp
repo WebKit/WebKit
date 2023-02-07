@@ -7826,7 +7826,11 @@ const std::optional<Vector<FourCC>>& HTMLMediaElement::allowedMediaCaptionFormat
 
 void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()
 {
-    if (!m_textTracks || m_bufferedTimeRangesChangedTaskCancellationGroup.hasPendingTask())
+    if (!m_textTracks || m_readyState < HAVE_ENOUGH_DATA || m_bufferedTimeRangesChangedTaskCancellationGroup.hasPendingTask())
+        return;
+
+    auto duration = durationMediaTime();
+    if (!duration.isValid() || duration.toDouble() < 60.)
         return;
 
     auto logSiteIdentifier = LOGIDENTIFIER;

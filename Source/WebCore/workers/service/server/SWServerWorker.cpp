@@ -54,7 +54,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     : m_server(server)
     , m_registrationKey(registration.key())
     , m_registration(registration)
-    , m_data { identifier, scriptURL, ServiceWorkerState::Parsed, type, registration.identifier() }
+    , m_data { identifier, registration.identifier(), scriptURL, ServiceWorkerState::Parsed, type }
     , m_script(script)
     , m_certificateInfo(certificateInfo)
     , m_contentSecurityPolicy(contentSecurityPolicy)

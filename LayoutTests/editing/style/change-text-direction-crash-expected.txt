@@ -8,8 +8,7 @@ MakeTextWritingDirectionLeftToRight:
 |     style="unicode-bidi: embed;"
 |     "<#selection-anchor>a×ªbc"
 | <div>
-|   <#selection-focus>
-|   "baz"
+|   "<#selection-focus>baz"
 
 MakeTextWritingDirectionRightToLeft:
 | "foo"
@@ -19,8 +18,7 @@ MakeTextWritingDirectionRightToLeft:
 |     style="unicode-bidi: embed; direction: rtl;"
 |     "<#selection-anchor>a×ªbc"
 | <div>
-|   <#selection-focus>
-|   "baz"
+|   "<#selection-focus>baz"
 
 MakeTextWritingDirectionNatural:
 | "foo"
@@ -29,5 +27,4 @@ MakeTextWritingDirectionNatural:
 |     id="bar"
 |     "<#selection-anchor>a×ªbc"
 | <div>
-|   <#selection-focus>
-|   "baz"
+|   "<#selection-focus>baz"

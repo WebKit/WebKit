@@ -979,6 +979,15 @@ void AXObjectCache::remove(Widget* view)
     remove(m_widgetObjectMapping.take(view));
 }
 
+AXID AXObjectCache::generateNewObjectID() const
+{
+    AXID axID;
+    do {
+        axID = AXID::generate();
+    } while (!axID.isValid() || m_idsInUse.contains(axID));
+    return axID;
+}
+
 Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const Vector<AXID>& axIDs) const
 {
     ASSERT(isMainThread());
@@ -1002,7 +1011,7 @@ AXID AXObjectCache::getAXID(AccessibilityObject* object)
         return objectID;
     }
 
-    objectID = generateNewID();
+    objectID = generateNewObjectID();
     m_idsInUse.add(objectID);
     object->setObjectID(objectID);
     return objectID;

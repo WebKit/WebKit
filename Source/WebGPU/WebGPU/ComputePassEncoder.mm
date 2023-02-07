@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,10 +34,26 @@
 
 namespace WebGPU {
 
-ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, Device& device)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder, const WGPUComputePassDescriptor& descriptor, Device& device)
     : m_computeCommandEncoder(computeCommandEncoder)
     , m_device(device)
 {
+    if (m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary) {
+        for (uint32_t i = 0; i < descriptor.timestampWriteCount; ++i) {
+            const auto& timestampWrite = descriptor.timestampWrites[i];
+            switch (timestampWrite.location) {
+            case WGPUComputePassTimestampLocation_Beginning:
+                [m_computeCommandEncoder sampleCountersInBuffer:fromAPI(timestampWrite.querySet).counterSampleBuffer() atSampleIndex:timestampWrite.queryIndex withBarrier:NO];
+                break;
+            case WGPUComputePassTimestampLocation_End:
+                m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.queryIndex });
+                break;
+            case WGPUComputePassTimestampLocation_Force32:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    }
 }
 
 ComputePassEncoder::ComputePassEncoder(Device& device)
@@ -66,6 +82,10 @@ void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t
 
 void ComputePassEncoder::endPass()
 {
+    ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
+    for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
+        [m_computeCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
+    m_pendingTimestampWrites.clear();
     [m_computeCommandEncoder endEncoding];
 }
 

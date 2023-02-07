@@ -686,11 +686,6 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     // FIXME: Document when image != img.get().
     Image* image = imageResource().image().get();
 
-#if USE(CG)
-    if (is<PDFDocumentImage>(image))
-        downcast<PDFDocumentImage>(*image).setPdfImageCachingPolicy(settings().pdfImageCachingPolicy());
-#endif
-
     if (is<BitmapImage>(image))
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
@@ -895,13 +890,6 @@ RenderBox* RenderImage::embeddedContentBox() const
         return downcast<SVGImage>(*cachedImage->image()).embeddedContentBox();
 
     return nullptr;
-}
-
-bool RenderImage::allowsAnimation() const
-{
-    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
-        return imageElement->allowsAnimation();
-    return RenderReplaced::allowsAnimation();
 }
 
 } // namespace WebCore

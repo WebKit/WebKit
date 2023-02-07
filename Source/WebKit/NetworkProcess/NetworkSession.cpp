@@ -659,30 +659,7 @@ SWServer& NetworkSession::ensureSWServer()
         // There should already be a registered path for this PAL::SessionID.
         // If there's not, then where did this PAL::SessionID come from?
         ASSERT(m_sessionID.isEphemeral() || !path.isEmpty());
-
-#if ENABLE(APP_BOUND_DOMAINS)
-        auto appBoundDomainsCallback = [this](auto&& completionHandler) {
-            m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { m_sessionID }, WTFMove(completionHandler), 0);
-        };
-#else
-        auto appBoundDomainsCallback = [] (auto&& completionHandler) {
-            completionHandler({ });
-        };
-#endif
-        m_swServer = makeUnique<SWServer>(makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue(), [this](auto&& jobData, bool shouldRefreshCache, auto&& request, auto&& completionHandler) mutable {
-            ServiceWorkerSoftUpdateLoader::start(this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler));
-        }, [this](auto& registrableDomain, std::optional<ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, auto&& completionHandler) {
-            ASSERT(!registrableDomain.isEmpty());
-            m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTFMove(completionHandler)] (auto) mutable {
-                completionHandler();
-            }, 0);
-        }, WTFMove(appBoundDomainsCallback), [this](auto webProcessIdentifier, auto requestingProcessIdentifier, auto&& firstPartyForCookies) {
-            if (requestingProcessIdentifier && (requestingProcessIdentifier != webProcessIdentifier) && !m_networkProcess->allowsFirstPartyForCookies(requestingProcessIdentifier.value(), firstPartyForCookies)) {
-                ASSERT_NOT_REACHED();
-                return;
-            }
-            m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
-        });
+        m_swServer = makeUnique<SWServer>(*this, makeUniqueRef<WebSWOriginStore>(), info.processTerminationDelayEnabled, WTFMove(path), m_sessionID, shouldRunServiceWorkersOnMainThreadForTesting(), m_networkProcess->parentProcessHasServiceWorkerEntitlement(), overrideServiceWorkerRegistrationCountTestingValue());
     }
     return *m_swServer;
 }
@@ -737,5 +714,38 @@ bool NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(const Res
 
     return true;
 }
+
+#if ENABLE(SERVICE_WORKER)
+void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, WebCore::ResourceRequest&& request, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&& completionHandler)
+{
+    m_softUpdateLoaders.add(makeUnique<ServiceWorkerSoftUpdateLoader>(*this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
+}
+
+void NetworkSession::createContextConnection(const WebCore::RegistrableDomain& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(!registrableDomain.isEmpty());
+    m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTFMove(completionHandler)] (auto) mutable {
+        completionHandler();
+    }, 0);
+}
+
+void NetworkSession::appBoundDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+#if ENABLE(APP_BOUND_DOMAINS)
+    m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { m_sessionID }, WTFMove(completionHandler), 0);
+#else
+    completionHandler({ });
+#endif
+}
+
+void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier webProcessIdentifier, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies)
+{
+    if (requestingProcessIdentifier && (requestingProcessIdentifier != webProcessIdentifier) && !m_networkProcess->allowsFirstPartyForCookies(requestingProcessIdentifier.value(), firstPartyForCookies)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_networkProcess->addAllowedFirstPartyForCookies(webProcessIdentifier, WTFMove(firstPartyForCookies), LoadedWebArchive::No, [] { });
+}
+#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

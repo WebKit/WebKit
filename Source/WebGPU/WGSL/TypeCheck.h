@@ -27,10 +27,8 @@
 
 namespace WGSL {
 
-namespace AST {
 class ShaderModule;
-}
 
-void typeCheck(AST::ShaderModule&);
+void typeCheck(ShaderModule&);
 
 } // namespace WGSL

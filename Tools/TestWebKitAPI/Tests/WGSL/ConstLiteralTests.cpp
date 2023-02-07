@@ -27,11 +27,13 @@
 
 #include "AST.h"
 #include "ParserPrivate.h"
+#include "ShaderModule.h"
 
 static Expected<UniqueRef<WGSL::AST::Expression>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
 {
+    WGSL::ShaderModule shaderModule(input, { });
     WGSL::Lexer<LChar> lexer(input);
-    WGSL::Parser parser(lexer);
+    WGSL::Parser parser(shaderModule, lexer);
 
     return parser.parsePrimaryExpression();
 }

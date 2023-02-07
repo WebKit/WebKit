@@ -202,6 +202,26 @@ private:
     return _websitePolicies->contentBlockersEnabled();
 }
 
+- (void)_setDisabledContentRuleListIdentifiers:(NSSet<NSString *> *)identifiers
+{
+    _websitePolicies->setDisabledContentRuleListIdentifiers([&] {
+        HashSet<String> result;
+        result.reserveInitialCapacity(identifiers.count);
+        for (NSString *identifier in identifiers)
+            result.add(identifier);
+        return result;
+    }());
+}
+
+- (NSSet<NSString *> *)_disabledContentRuleListIdentifiers
+{
+    auto identifiers = _websitePolicies->disabledContentRuleListIdentifiers();
+    auto result = adoptNS([[NSMutableSet alloc] initWithCapacity:identifiers.size()]);
+    for (auto& identifier : identifiers)
+        [result addObject:identifier];
+    return result.get();
+}
+
 - (void)_setActiveContentRuleListActionPatterns:(NSDictionary<NSString *, NSSet<NSString *> *> *)patterns
 {
     __block HashMap<String, Vector<String>> map;

@@ -133,11 +133,14 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree transaction:" << layerTreeTransaction.description());
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::commitLayerTree scrolling tree:" << scrollingTreeTransaction.description());
 
-    ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID.next());
-    m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
-    m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
-
-    bool didUpdateEditorState = layerTreeTransaction.hasEditorState() && m_webPageProxy.updateEditorState(layerTreeTransaction.editorState(), WebPageProxy::ShouldMergeVisualEditorState::Yes);
+    bool didUpdateEditorState { false };
+    if (layerTreeTransaction.isMainFrameProcessTransaction()) {
+        ASSERT(layerTreeTransaction.transactionID() == m_lastVisibleTransactionID.next());
+        m_transactionIDForPendingCACommit = layerTreeTransaction.transactionID();
+        m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
+        
+        didUpdateEditorState = layerTreeTransaction.hasEditorState() && m_webPageProxy.updateEditorState(layerTreeTransaction.editorState(), WebPageProxy::ShouldMergeVisualEditorState::Yes);
+    }
 
     if (m_remoteLayerTreeHost->updateLayerTree(layerTreeTransaction)) {
         if (layerTreeTransaction.transactionID() >= m_transactionIDForUnhidingContent)
@@ -147,7 +150,10 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
     }
 
 #if ENABLE(ASYNC_SCROLLING)
-    auto requestedScroll = m_webPageProxy.scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction);
+    std::optional<RequestedScrollData> requestedScroll;
+    // FIXME: Making scrolling trees work with site isolation.
+    if (layerTreeTransaction.isMainFrameProcessTransaction())
+        requestedScroll = m_webPageProxy.scrollingCoordinatorProxy()->commitScrollingTreeState(scrollingTreeTransaction);
 #endif
 
     m_webPageProxy.didCommitLayerTree(layerTreeTransaction);

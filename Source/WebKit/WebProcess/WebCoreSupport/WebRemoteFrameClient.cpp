@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebRemoteFrameClient.h"
 
+#include <WebCore/FrameTree.h>
+#include <WebCore/RemoteFrame.h>
+
 namespace WebKit {
 
 WebRemoteFrameClient::WebRemoteFrameClient(Ref<WebFrame>&& frame, ScopeExit<Function<void()>>&& frameInvalidator)
@@ -35,5 +38,20 @@ WebRemoteFrameClient::WebRemoteFrameClient(Ref<WebFrame>&& frame, ScopeExit<Func
 }
 
 WebRemoteFrameClient::~WebRemoteFrameClient() = default;
+
+void WebRemoteFrameClient::frameDetached()
+{
+    RefPtr coreFrame = m_frame->coreRemoteFrame();
+    if (!coreFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (RefPtr parent = coreFrame->tree().parent()) {
+        coreFrame->tree().detachFromParent();
+        parent->tree().removeChild(*coreFrame);
+    }
+    m_frame->invalidate();
+}
 
 }

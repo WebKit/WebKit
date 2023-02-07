@@ -62,6 +62,19 @@ Type* TypeStore::structType(const AST::Identifier& name)
     return allocateType<Struct>(name);
 }
 
+Type* TypeStore::constructType(AST::ParameterizedTypeName::Base base, Type* elementType)
+{
+    // FIXME: these should be cached
+    auto& typeConstructor = m_typeConstrutors[WTF::enumToUnderlyingType(base)];
+    return typeConstructor.construct(elementType);
+}
+
+Type* TypeStore::arrayType(Type* elementType, std::optional<unsigned> size)
+{
+    // FIXME: these should be cached
+    return allocateType<Array>(elementType, size);
+}
+
 template<typename TypeKind, typename... Arguments>
 Type* TypeStore::allocateType(Arguments&&... arguments)
 {

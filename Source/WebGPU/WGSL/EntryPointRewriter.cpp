@@ -29,20 +29,17 @@
 #include "AST.h"
 #include "ASTVisitor.h"
 #include "CallGraph.h"
+#include "ShaderModule.h"
+#include "WGSL.h"
 
 namespace WGSL {
 
 class EntryPointRewriter {
 public:
-    EntryPointRewriter(AST::ShaderModule& shaderModule, AST::Function& functionDecl, AST::StageAttribute::Stage stage)
-        : m_stage(stage)
-        , m_shaderModule(shaderModule)
-        , m_functionDecl(functionDecl)
-        , m_emptySourceSpan(0, 0, 0, 0)
-    {
-    }
+    EntryPointRewriter(ShaderModule&, AST::Function&, AST::StageAttribute::Stage);
 
     void rewrite();
+    Reflection::EntryPointInformation takeEntryPointInformation();
 
 private:
     struct MemberOrParameter {
@@ -66,8 +63,8 @@ private:
     void appendBuiltins();
 
     AST::StageAttribute::Stage m_stage;
-    AST::ShaderModule& m_shaderModule;
-    AST::Function& m_functionDecl;
+    ShaderModule& m_shaderModule;
+    AST::Function& m_function;
 
     const SourceSpan m_emptySourceSpan;
     Vector<MemberOrParameter> m_builtins;
@@ -75,7 +72,27 @@ private:
     AST::Statement::List m_materializations;
     String m_structTypeName;
     String m_structParameterName;
+    Reflection::EntryPointInformation m_information;
 };
+
+EntryPointRewriter::EntryPointRewriter(ShaderModule& shaderModule, AST::Function& function, AST::StageAttribute::Stage stage)
+    : m_stage(stage)
+    , m_shaderModule(shaderModule)
+    , m_function(function)
+    , m_emptySourceSpan(0, 0, 0, 0)
+{
+    switch (m_stage) {
+    case AST::StageAttribute::Stage::Compute:
+        m_information.typedEntryPoint = Reflection::Compute { 1, 1, 1 };
+        break;
+    case AST::StageAttribute::Stage::Vertex:
+        m_information.typedEntryPoint = Reflection::Vertex { false };
+        break;
+    case AST::StageAttribute::Stage::Fragment:
+        m_information.typedEntryPoint = Reflection::Fragment { };
+        break;
+    }
+}
 
 AST::TypeName& EntryPointRewriter::getResolvedType(AST::TypeName& type)
 {
@@ -89,8 +106,8 @@ AST::TypeName& EntryPointRewriter::getResolvedType(AST::TypeName& type)
 
 void EntryPointRewriter::rewrite()
 {
-    m_structTypeName = makeString("__", m_functionDecl.name(), "_inT");
-    m_structParameterName = makeString("__", m_functionDecl.name(), "_in");
+    m_structTypeName = makeString("__", m_function.name(), "_inT");
+    m_structParameterName = makeString("__", m_function.name(), "_in");
 
     collectParameters();
     checkReturnType();
@@ -105,7 +122,7 @@ void EntryPointRewriter::rewrite()
     appendBuiltins();
 
     // add parameter to builtins: ${structName} : ${structType}
-    m_functionDecl.parameters().append(makeUniqueRef<AST::ParameterValue>(
+    m_function.parameters().append(makeUniqueRef<AST::ParameterValue>(
         m_emptySourceSpan,
         AST::Identifier::make(m_structParameterName),
         adoptRef(*new AST::NamedTypeName(m_emptySourceSpan, AST::Identifier::make(m_structTypeName))),
@@ -114,13 +131,18 @@ void EntryPointRewriter::rewrite()
     ));
 
     while (m_materializations.size())
-        m_functionDecl.body().statements().insert(0, m_materializations.takeLast());
+        m_function.body().statements().insert(0, m_materializations.takeLast());
+}
+
+Reflection::EntryPointInformation EntryPointRewriter::takeEntryPointInformation()
+{
+    return WTFMove(m_information);
 }
 
 void EntryPointRewriter::collectParameters()
 {
-    while (m_functionDecl.parameters().size()) {
-        auto parameter = m_functionDecl.parameters().takeLast();
+    while (m_function.parameters().size()) {
+        auto parameter = m_function.parameters().takeLast();
         Vector<String> path;
         visit(path, MemberOrParameter { parameter->name(), parameter->typeName(), WTFMove(parameter->attributes()) });
     }
@@ -132,7 +154,7 @@ void EntryPointRewriter::checkReturnType()
         return;
 
     // FIXME: we might have to duplicate this struct if it has other uses
-    if (auto* maybeReturnType = m_functionDecl.maybeReturnType()) {
+    if (auto* maybeReturnType = m_function.maybeReturnType()) {
         auto& returnType = getResolvedType(*maybeReturnType);
         if (is<AST::StructTypeName>(returnType)) {
             auto& structDecl = downcast<AST::StructTypeName>(returnType).structure();
@@ -274,7 +296,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 void EntryPointRewriter::appendBuiltins()
 {
     for (auto& data : m_builtins) {
-        m_functionDecl.parameters().append(makeUniqueRef<AST::ParameterValue>(
+        m_function.parameters().append(makeUniqueRef<AST::ParameterValue>(
             m_emptySourceSpan,
             AST::Identifier::make(data.m_name),
             WTFMove(data.m_type),
@@ -284,10 +306,14 @@ void EntryPointRewriter::appendBuiltins()
     }
 }
 
-void rewriteEntryPoints(CallGraph& callGraph)
+void rewriteEntryPoints(CallGraph& callGraph, PrepareResult& result)
 {
-    for (auto& entryPoint : callGraph.entrypoints())
-        EntryPointRewriter(callGraph.ast(), entryPoint.m_function, entryPoint.m_stage).rewrite();
+    for (auto& entryPoint : callGraph.entrypoints()) {
+        EntryPointRewriter rewriter(callGraph.ast(), entryPoint.m_function, entryPoint.m_stage);
+        rewriter.rewrite();
+        auto addResult = result.entryPoints.add(entryPoint.m_function.name().id(), rewriter.takeEntryPointInformation());
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    }
 }
 
 } // namespace WGSL

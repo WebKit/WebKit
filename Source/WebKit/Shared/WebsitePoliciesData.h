@@ -53,7 +53,7 @@ namespace WebKit {
 struct WebsitePoliciesData {
     static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
 
-    bool contentBlockersEnabled { true };
+    WebCore::DisabledContentExtensions disabledContentExtensions;
     HashMap<WTF::String, Vector<WTF::String>> activeContentRuleListActionPatterns;
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };

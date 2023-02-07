@@ -277,8 +277,12 @@ JSC_DECLARE_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, (VM*, JSB
 JSC_DECLARE_JIT_OPERATION(operationJSMapFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationJSSetFindBucket, JSCell*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 
-JSC_DECLARE_JIT_OPERATION(operationParseIntNoRadixGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationParseIntDoubleNoRadix, EncodedJSValue, (JSGlobalObject*, double));
 JSC_DECLARE_JIT_OPERATION(operationParseIntStringNoRadix, EncodedJSValue, (JSGlobalObject*, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationParseIntGenericNoRadix, EncodedJSValue, (JSGlobalObject*, EncodedJSValue));
+
+JSC_DECLARE_JIT_OPERATION(operationParseIntInt32, EncodedJSValue, (JSGlobalObject*, int32_t, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationParseIntDouble, EncodedJSValue, (JSGlobalObject*, double, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationParseIntString, EncodedJSValue, (JSGlobalObject*, JSString*, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationParseIntGeneric, EncodedJSValue, (JSGlobalObject*, EncodedJSValue, int32_t));
 

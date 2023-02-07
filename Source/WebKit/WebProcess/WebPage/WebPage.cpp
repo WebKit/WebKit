@@ -568,6 +568,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_limitsNavigationsToAppBoundDomains(parameters.limitsNavigationsToAppBoundDomains)
 #endif
     , m_lastNavigationWasAppInitiated(parameters.lastNavigationWasAppInitiated)
+    , m_layerHostingContextIdentifier(parameters.layerHostingContextIdentifier)
 #if ENABLE(APP_HIGHLIGHTS)
     , m_appHighlightsVisible(parameters.appHighlightsVisible)
 #endif

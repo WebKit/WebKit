@@ -30,14 +30,18 @@
 
 #include <wtf/Expected.h>
 
-namespace WGSL::AST {
+namespace WGSL {
+
+class ShaderModule;
+
+namespace AST {
 
 class Visitor {
 public:
     virtual ~Visitor() = default;
 
     // Shader Module
-    virtual void visit(AST::ShaderModule&);
+    virtual void visit(ShaderModule&);
     virtual void visit(AST::Directive&);
 
     // Attribute
@@ -143,4 +147,5 @@ private:
     Expected<void, Error> m_expectedError;
 };
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AbstractFrame.h"
+#include "LayerHostingContextIdentifier.h"
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
@@ -39,9 +40,9 @@ class WeakPtrImplWithEventTargetData;
 
 class RemoteFrame final : public AbstractFrame {
 public:
-    static Ref<RemoteFrame> create(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client)
+    static Ref<RemoteFrame> create(Page& page, FrameIdentifier frameID, HTMLFrameOwnerElement* ownerElement, UniqueRef<RemoteFrameClient>&& client, LayerHostingContextIdentifier layerHostingContextIdentifier)
     {
-        return adoptRef(*new RemoteFrame(page, frameID, ownerElement, WTFMove(client)));
+        return adoptRef(*new RemoteFrame(page, frameID, ownerElement, WTFMove(client), layerHostingContextIdentifier));
     }
     ~RemoteFrame();
 
@@ -58,10 +59,13 @@ public:
     RemoteFrameView* view() const { return m_view.get(); }
     WEBCORE_EXPORT void setView(RefPtr<RemoteFrameView>&&);
 
+    LayerHostingContextIdentifier layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
+
 private:
-    WEBCORE_EXPORT explicit RemoteFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, UniqueRef<RemoteFrameClient>&&);
+    WEBCORE_EXPORT explicit RemoteFrame(Page&, FrameIdentifier, HTMLFrameOwnerElement*, UniqueRef<RemoteFrameClient>&&, LayerHostingContextIdentifier);
 
     FrameType frameType() const final { return FrameType::Remote; }
+    void frameDetached() final;
 
     AbstractFrameView* virtualView() const final;
     AbstractDOMWindow* virtualWindow() const final;
@@ -70,6 +74,7 @@ private:
     RefPtr<AbstractFrame> m_opener;
     RefPtr<RemoteFrameView> m_view;
     UniqueRef<RemoteFrameClient> m_client;
+    LayerHostingContextIdentifier m_layerHostingContextIdentifier;
 };
 
 } // namespace WebCore

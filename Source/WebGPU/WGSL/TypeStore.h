@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ASTTypeName.h"
 #include "Types.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
@@ -51,6 +52,8 @@ public:
     Type* f32Type() const { return m_f32; }
 
     Type* structType(const AST::Identifier& name);
+    Type* constructType(AST::ParameterizedTypeName::Base, Type*);
+    Type* arrayType(Type*, std::optional<unsigned>);
 
 private:
     template<typename TypeKind, typename... Arguments>

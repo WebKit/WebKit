@@ -1267,7 +1267,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/MemoryRelease.h
     page/ModalContainerTypes.h
     page/NavigatorIsLoggedIn.h
-    page/PDFImageCachingPolicy.h
     page/Page.h
     page/PageColorSampler.h
     page/PageConfiguration.h
@@ -1582,6 +1581,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/BifurcatedGraphicsContext.h
     platform/graphics/BitmapImage.h
     platform/graphics/ByteArrayPixelBuffer.h
+    platform/graphics/CachedSubimage.h
     platform/graphics/Color.h
     platform/graphics/ColorComponents.h
     platform/graphics/ColorConversion.h
@@ -1692,6 +1692,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/IntRectHash.h
     platform/graphics/IntSize.h
     platform/graphics/IntSizeHash.h
+    platform/graphics/LayerHostingContextIdentifier.h
     platform/graphics/LayerTreeAsTextOptions.h
     platform/graphics/LayoutPoint.h
     platform/graphics/LayoutRect.h
@@ -2239,6 +2240,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/server/RegistrationDatabase.h
     workers/service/server/SWOriginStore.h
     workers/service/server/SWServer.h
+    workers/service/server/SWServerDelegate.h
     workers/service/server/SWServerRegistration.h
     workers/service/server/SWServerToContextConnection.h
     workers/service/server/SWServerWorker.h

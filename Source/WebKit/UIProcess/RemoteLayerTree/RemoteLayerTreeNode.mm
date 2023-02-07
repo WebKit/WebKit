@@ -38,8 +38,9 @@ namespace WebKit {
 
 static NSString *const WKRemoteLayerTreeNodePropertyKey = @"WKRemoteLayerTreeNode";
 
-RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<CALayer> layer)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<CALayer> layer)
     : m_layerID(layerID)
+    , m_remoteContextHostIdentifier(hostIdentifier)
     , m_layer(WTFMove(layer))
 {
     initializeLayer();
@@ -47,8 +48,9 @@ RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID
 }
 
 #if PLATFORM(IOS_FAMILY)
-RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, RetainPtr<UIView> uiView)
+RemoteLayerTreeNode::RemoteLayerTreeNode(WebCore::GraphicsLayer::PlatformLayerID layerID, Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier, RetainPtr<UIView> uiView)
     : m_layerID(layerID)
+    , m_remoteContextHostIdentifier(hostIdentifier)
     , m_layer([uiView.get() layer])
     , m_uiView(WTFMove(uiView))
 {
@@ -64,7 +66,7 @@ RemoteLayerTreeNode::~RemoteLayerTreeNode()
 std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(WebCore::GraphicsLayer::PlatformLayerID layerID)
 {
     RetainPtr<CALayer> layer = adoptNS([[WKCompositingLayer alloc] init]);
-    return makeUnique<RemoteLayerTreeNode>(layerID, WTFMove(layer));
+    return makeUnique<RemoteLayerTreeNode>(layerID, std::nullopt, WTFMove(layer));
 }
 
 void RemoteLayerTreeNode::detachFromParent()

@@ -29,6 +29,7 @@
 #include "AST.h"
 #include "Lexer.h"
 #include "ParserPrivate.h"
+#include "ShaderModule.h"
 
 #include <wtf/text/StringBuilder.h>
 
@@ -102,24 +103,21 @@ namespace WGSL {
     } while (false)
 
 template<typename Lexer>
-Expected<AST::ShaderModule, Error> parse(const String& wgsl, const Configuration& configuration)
+std::optional<Error> parse(ShaderModule& shaderModule)
 {
-    Lexer lexer(wgsl);
-    Parser parser(lexer);
-
-    // FIXME: Add a top-level class so that we don't have to plumb all this
-    // information until we parse the root node
-    return parser.parseShader(wgsl, configuration);
+    Lexer lexer(shaderModule.source());
+    Parser parser(shaderModule, lexer);
+    auto result = parser.parseShader();
+    if (!result.has_value())
+        return result.error();
+    return std::nullopt;
 }
 
-Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl, const Configuration& configuration)
+std::optional<Error> parse(ShaderModule& shaderModule)
 {
-    return parse<Lexer<LChar>>(wgsl, configuration);
-}
-
-Expected<AST::ShaderModule, Error> parseUChar(const String& wgsl, const Configuration& configuration)
-{
-    return parse<Lexer<UChar>>(wgsl, configuration);
+    if (shaderModule.source().is8Bit())
+        return parse<Lexer<LChar>>(shaderModule);
+    return parse<Lexer<UChar>>(shaderModule);
 }
 
 template<typename Lexer>
@@ -140,20 +138,17 @@ void Parser<Lexer>::consume()
 }
 
 template<typename Lexer>
-Expected<AST::ShaderModule, Error> Parser<Lexer>::parseShader(const String& source, const Configuration& configuration)
+Expected<void, Error> Parser<Lexer>::parseShader()
 {
-    START_PARSE();
-
-    AST::Directive::List directives;
     // FIXME: parse directives here.
 
-    AST::Node::List decls;
     while (!m_lexer.isAtEndOfFile()) {
-        PARSE(globalDecl, GlobalDecl)
-        decls.append(WTFMove(globalDecl));
+        auto globalExpected = parseGlobalDecl();
+        if (!globalExpected)
+            return makeUnexpected(globalExpected.error());
     }
 
-    RETURN_NODE(ShaderModule, source, configuration, WTFMove(directives), WTFMove(decls));
+    return { };
 }
 
 template<typename Lexer>
@@ -167,7 +162,7 @@ Expected<AST::Identifier, Error> Parser<Lexer>::parseIdentifier()
 }
 
 template<typename Lexer>
-Expected<AST::Node::Ref, Error> Parser<Lexer>::parseGlobalDecl()
+Expected<void, Error> Parser<Lexer>::parseGlobalDecl()
 {
     START_PARSE();
 
@@ -178,17 +173,20 @@ Expected<AST::Node::Ref, Error> Parser<Lexer>::parseGlobalDecl()
 
     switch (current().m_type) {
     case TokenType::KeywordStruct: {
-        PARSE(structDecl, Structure, WTFMove(attributes));
-        return { WTFMove(structDecl) };
+        PARSE(structure, Structure, WTFMove(attributes));
+        m_shaderModule.structures().append(WTFMove(structure));
+        return { };
     }
     case TokenType::KeywordVar: {
-        PARSE(varDecl, VariableWithAttributes, WTFMove(attributes));
+        PARSE(variable, VariableWithAttributes, WTFMove(attributes));
         CONSUME_TYPE(Semicolon);
-        return { WTFMove(varDecl) };
+        m_shaderModule.variables().append(WTFMove(variable));
+        return { };
     }
     case TokenType::KeywordFn: {
         PARSE(fn, Function, WTFMove(attributes));
-        return { makeUniqueRef<AST::Function>(WTFMove(fn)) };
+        m_shaderModule.functions().append(makeUniqueRef<AST::Function>(WTFMove(fn)));
+        return { };
     }
     default:
         FAIL("Trying to parse a GlobalDecl, expected 'var', 'fn', or 'struct'."_s);

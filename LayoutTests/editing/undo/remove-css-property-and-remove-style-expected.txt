@@ -9,24 +9,30 @@ Unbolding should remove the CSS style and also remove the span:
 | "<#selection-anchor>test<#selection-focus>"
 
 Undo should bring back both the span and style attribute so that "test" is once again bold:
+| <#selection-anchor>
 | <span>
 |   style="font-weight: 900;"
-|   "<#selection-anchor>test<#selection-focus>"
+|   "test"
+| <#selection-focus>
 
 Redo should unbold "test" and there should be no span:
 | "<#selection-anchor>test<#selection-focus>"
 
 Undo once more:
+| <#selection-anchor>
 | <span>
 |   style="font-weight: 900;"
-|   "<#selection-anchor>test<#selection-focus>"
+|   "test"
+| <#selection-focus>
 
 Reset, and added id and title:
+| <#selection-anchor>
 | <span>
 |   id="test_span"
 |   style="font-weight: 900;"
 |   title="hello, world"
-|   "<#selection-anchor>test<#selection-focus>"
+|   "test"
+| <#selection-focus>
 
 Unbolding should remove the CSS style but shouldn't remove the span:
 | <span>
@@ -35,11 +41,13 @@ Unbolding should remove the CSS style but shouldn't remove the span:
 |   "<#selection-anchor>test<#selection-focus>"
 
 Undo should restore the style attribute and "test" should be bold:
+| <#selection-anchor>
 | <span>
 |   id="test_span"
 |   style="font-weight: 900;"
 |   title="hello, world"
-|   "<#selection-anchor>test<#selection-focus>"
+|   "test"
+| <#selection-focus>
 
 Redo should remove the style attribute again:
 | <span>
@@ -48,9 +56,11 @@ Redo should remove the style attribute again:
 |   "<#selection-anchor>test<#selection-focus>"
 
 Reset, and added color:blue:
+| <#selection-anchor>
 | <span>
 |   style="font-weight: 900; color: blue;"
-|   "<#selection-anchor>test<#selection-focus>"
+|   "test"
+| <#selection-focus>
 
 Unbolding should remove the font-weight but shouldn't remove the style attribute:
 | <span>
@@ -58,9 +68,11 @@ Unbolding should remove the font-weight but shouldn't remove the style attribute
 |   "<#selection-anchor>test<#selection-focus>"
 
 Undo should reset the style attribute so that "test" is both bold and blue:
+| <#selection-anchor>
 | <span>
 |   style="font-weight: 900; color: blue;"
-|   "<#selection-anchor>test<#selection-focus>"
+|   "test"
+| <#selection-focus>
 
 Redo should only remove font-weight and leave "test" blue:
 | <span>

@@ -39,6 +39,8 @@ public:
     WebFrame& webFrame() const { return m_frame.get(); }
 
 private:
+    void frameDetached() final;
+
     Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;
 };

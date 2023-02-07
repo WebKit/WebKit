@@ -191,7 +191,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
                 m_properties.children[i] = m_children[i]->layerID();
         }
 
-        if (isPlatformCALayerRemoteCustom()) {
+        if (type() == PlatformCALayer::Type::RemoteCustom) {
             RemoteLayerTreePropertyApplier::applyPropertiesToLayer(platformLayer(), nullptr, m_properties, RemoteLayerBackingStore::LayerContentsType::CAMachPort);
             didCommit();
             return;

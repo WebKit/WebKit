@@ -303,6 +303,7 @@ private:
     void dropChildren();
 
     FrameType frameType() const final { return FrameType::Local; }
+    void frameDetached();
 
     AbstractFrameView* virtualView() const final;
     AbstractDOMWindow* virtualWindow() const final;

@@ -46,7 +46,6 @@ extern "C" __declspec(naked) void currentStackPointer()
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    HIDE_SYMBOL(currentStackPointer) "\n"
     SYMBOL_STRING(currentStackPointer) ":" "\n"
     "movl %esp, %eax" "\n"
     "addl $4, %eax" "\n"
@@ -63,7 +62,6 @@ asm (
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    HIDE_SYMBOL(currentStackPointer) "\n"
     SYMBOL_STRING(currentStackPointer) ":" "\n"
 
     "movq  %rsp, %rax" "\n"
@@ -77,7 +75,6 @@ asm (
     ".text" "\n"
     ".balign 16" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    HIDE_SYMBOL(currentStackPointer) "\n"
     SYMBOL_STRING(currentStackPointer) ":" "\n"
 
     "pacibsp" "\n"
@@ -91,7 +88,6 @@ asm (
     ".text" "\n"
     ".balign 16" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    HIDE_SYMBOL(currentStackPointer) "\n"
     SYMBOL_STRING(currentStackPointer) ":" "\n"
 
     "mov x0, sp" "\n"
@@ -104,7 +100,6 @@ asm (
     ".text" "\n"
     ".align 2" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    HIDE_SYMBOL(currentStackPointer) "\n"
     ".thumb" "\n"
     ".thumb_func " THUMB_FUNC_PARAM(currentStackPointer) "\n"
     SYMBOL_STRING(currentStackPointer) ":" "\n"
@@ -118,7 +113,6 @@ asm (
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    HIDE_SYMBOL(currentStackPointer) "\n"
     SYMBOL_STRING(currentStackPointer) ":" "\n"
     ".set push" "\n"
     ".set noreorder" "\n"
@@ -135,7 +129,6 @@ asm (
 asm (
     ".text" "\n"
     ".globl " SYMBOL_STRING(currentStackPointer) "\n"
-    HIDE_SYMBOL(currentStackPointer) "\n"
     SYMBOL_STRING(currentStackPointer) ":" "\n"
 
      "mv x10, sp" "\n"

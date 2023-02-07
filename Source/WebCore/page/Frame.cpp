@@ -306,6 +306,11 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = false;
 }
 
+void Frame::frameDetached()
+{
+    m_loader->frameDetached();
+}
+
 void Frame::invalidateContentEventRegionsIfNeeded(InvalidateContentEventRegionsReason reason)
 {
     if (!page() || !m_doc || !m_doc->renderView())

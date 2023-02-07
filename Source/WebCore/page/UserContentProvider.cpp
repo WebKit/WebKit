@@ -93,16 +93,49 @@ void UserContentProvider::invalidateInjectedStyleSheetCacheInAllFramesInAllPages
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-static bool contentRuleListsEnabled(const DocumentLoader& documentLoader)
+static DocumentLoader* mainDocumentLoader(DocumentLoader& loader)
 {
-    if (auto frame = documentLoader.frame()) {
+    if (auto frame = loader.frame()) {
         if (frame->isMainFrame())
-            return documentLoader.userContentExtensionsEnabled();
-        if (auto mainDocumentLoader = frame->mainFrame().loader().documentLoader())
-            return mainDocumentLoader->userContentExtensionsEnabled();
+            return &loader;
+        return frame->mainFrame().loader().documentLoader();
+    }
+    return nullptr;
+}
+
+static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilter(DocumentLoader& documentLoader)
+{
+    RefPtr mainLoader = mainDocumentLoader(documentLoader);
+    if (!mainLoader) {
+        return [](const String&) {
+            return ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
+        };
     }
 
-    return true;
+    return std::visit(WTF::makeVisitor([](const HashSet<String>& disabledRuleLists) {
+        return ContentExtensions::ContentExtensionsBackend::RuleListFilter { [&](auto& identifier) {
+            return disabledRuleLists.contains(identifier)
+                ? ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::Yes
+                : ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
+        } };
+    }, [](auto) {
+        return ContentExtensions::ContentExtensionsBackend::RuleListFilter { [](auto&) {
+            return ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
+        } };
+    }), mainLoader->disabledContentExtensions());
+}
+
+static bool contentRuleListsEnabled(DocumentLoader& documentLoader)
+{
+    RefPtr mainLoader = mainDocumentLoader(documentLoader);
+    if (!mainLoader)
+        return true;
+
+    return std::visit(WTF::makeVisitor([](DisabledContentExtensionsMode mode) {
+        return mode == DisabledContentExtensionsMode::None;
+    }, [](auto&) {
+        return true;
+    }), mainLoader->disabledContentExtensions());
 }
 
 static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, const Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
@@ -118,7 +151,7 @@ ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page&
 {
     ContentRuleListResults results;
     if (contentRuleListsEnabled(initiatingDocumentLoader))
-        results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom);
+        results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom, ruleListFilter(initiatingDocumentLoader));
 
     if (resourceType.contains(ContentExtensions::ResourceType::Document))
         sanitizeLookalikeCharactersIfNeeded(results, page, url, initiatingDocumentLoader);

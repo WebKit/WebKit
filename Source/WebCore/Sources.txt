@@ -2105,6 +2105,7 @@ platform/graphics/AnimationFrameRate.cpp
 platform/graphics/BifurcatedGraphicsContext.cpp
 platform/graphics/BitmapImage.cpp
 platform/graphics/ByteArrayPixelBuffer.cpp
+platform/graphics/CachedSubimage.cpp
 platform/graphics/Color.cpp
 platform/graphics/ColorBlending.cpp
 platform/graphics/ColorConversion.cpp

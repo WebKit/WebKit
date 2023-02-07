@@ -764,7 +764,8 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
 #endif
     }
 
-    if (!typesToRemove)
+    bool shouldReloadExecutionContexts = clearSiteDataValues.contains(ClearSiteDataValue::ExecutionContexts);
+    if (!typesToRemove && !shouldReloadExecutionContexts)
         return completionHandler();
 
     LOADER_RELEASE_LOG("processClearSiteDataHeader: BEGIN");
@@ -785,10 +786,18 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
         LOADER_RELEASE_LOG("processClearSiteDataHeader: END");
         completionHandler();
     });
-    m_connection->networkProcess().deleteWebsiteDataForOrigin(sessionID(), typesToRemove, clientOrigin, [callbackAggregator] { });
+    if (typesToRemove)
+        m_connection->networkProcess().deleteWebsiteDataForOrigin(sessionID(), typesToRemove, clientOrigin, [callbackAggregator] { });
 
     if (WebsiteDataStore::computeWebProcessAccessTypeForDataRemoval(typesToRemove, sessionID().isEphemeral()) != WebsiteDataStore::ProcessAccessType::None)
-        m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInWebProcessesForOrigin(typesToRemove, clientOrigin, sessionID()), [callbackAggregator] { });
+        m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::DeleteWebsiteDataInWebProcessesForOrigin(typesToRemove, clientOrigin, sessionID(), m_parameters.webPageProxyID), [callbackAggregator] { });
+
+    if (shouldReloadExecutionContexts) {
+        std::optional<WebCore::FrameIdentifier> triggeringFrame;
+        if (isMainResource())
+            triggeringFrame = frameID();
+        m_connection->networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::ReloadExecutionContextsForOrigin(clientOrigin, sessionID(), triggeringFrame), [callbackAggregator] { });
+    }
 }
 
 static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(const std::optional<CrossOriginOpenerPolicyEnforcementResult>& currentCoopEnforcementResult)

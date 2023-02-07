@@ -64,7 +64,8 @@ typedef struct WGPUInstanceCocoaDescriptor {
 } WGPUInstanceCocoaDescriptor;
 
 typedef void (^WGPURenderBuffersWereRecreatedBlockCallback)(CFArrayRef ioSurfaces);
-typedef void (^WGPUCompositorIntegrationRegisterBlockCallback)(WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreated);
+typedef void (^WGPUOnSubmittedWorkScheduledCallback)(WGPUWorkItem);
+typedef void (^WGPUCompositorIntegrationRegisterBlockCallback)(WGPURenderBuffersWereRecreatedBlockCallback renderBuffersWereRecreated, WGPUOnSubmittedWorkScheduledCallback onSubmittedWorkScheduledCallback);
 typedef struct WGPUSurfaceDescriptorCocoaCustomSurface {
     WGPUChainedStruct chain;
     WGPUCompositorIntegrationRegisterBlockCallback compositorIntegrationRegister;

@@ -261,6 +261,9 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         layerClass = [CALayer class];
         break;
 #endif
+    case LayerTypeHost:
+        layerClass = CALayer.class;
+        break;
     case LayerTypeShapeLayer:
         layerClass = [CAShapeLayer class];
         // fillColor defaults to opaque black.

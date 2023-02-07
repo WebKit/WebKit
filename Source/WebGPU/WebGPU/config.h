@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,8 +29,6 @@
 #include "WebGPUExt.h"
 
 #include <Metal/Metal.h>
-
-// #include <Metal/Metal.hpp>
 
 #include <wtf/Assertions.h>
 

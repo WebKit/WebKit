@@ -1814,7 +1814,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
     loader->setIsRequestFromClientOrUserInput(m_documentLoader->isRequestFromClientOrUserInput());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, InitiatedByMainFrame::Unknown, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
-    loader->setUserContentExtensionsEnabled(!options.contains(ReloadOption::DisableContentBlockers));
+    loader->setDisabledContentExtensions({ options.contains(ReloadOption::DisableContentBlockers) ? DisabledContentExtensionsMode::All : DisabledContentExtensionsMode::None });
     
     ResourceRequest& request = loader->request();
 

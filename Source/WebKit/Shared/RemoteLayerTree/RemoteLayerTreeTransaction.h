@@ -121,7 +121,10 @@ public:
         uint32_t hostingContextID;
         float hostingDeviceScaleFactor;
         bool preservesFlip;
-        
+
+        // FIXME: This could be a variant<CustomData, HostData, ModelData, NoData>.
+        Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
+
 #if ENABLE(MODEL_ELEMENT)
         RefPtr<WebCore::Model> model;
 #endif
@@ -235,6 +238,10 @@ public:
     const LayerPropertiesMap& changedLayerProperties() const { return m_changedLayerProperties; }
     LayerPropertiesMap& changedLayerProperties() { return m_changedLayerProperties; }
 
+    void setRemoteContextHostIdentifier(Markable<WebCore::LayerHostingContextIdentifier> identifier) { m_remoteContextHostIdentifier = identifier; }
+    Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostIdentifier() const { return m_remoteContextHostIdentifier; }
+    bool isMainFrameProcessTransaction() const { return !m_remoteContextHostIdentifier; }
+
     WebCore::IntSize contentsSize() const { return m_contentsSize; }
     void setContentsSize(const WebCore::IntSize& size) { m_contentsSize = size; };
 
@@ -329,6 +336,8 @@ private:
     WebCore::GraphicsLayer::PlatformLayerID m_rootLayerID;
     HashSet<RefPtr<PlatformCALayerRemote>> m_changedLayers; // Only used in the Web process.
     LayerPropertiesMap m_changedLayerProperties; // Only used in the UI process.
+
+    Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostIdentifier;
 
     Vector<LayerCreationProperties> m_createdLayers;
     Vector<WebCore::GraphicsLayer::PlatformLayerID> m_destroyedLayerIDs;

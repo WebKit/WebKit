@@ -67,7 +67,7 @@ public:
     void failApplyConstraintCallbacks(const String& errorMessage);
 
     bool isEnded() const { return m_isEnded; }
-    void end();
+    void end(WebCore::PageIdentifier);
     void startProducingData();
     void stopProducingData();
     void endProducingData();

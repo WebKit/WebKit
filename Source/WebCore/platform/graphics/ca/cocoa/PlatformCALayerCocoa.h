@@ -208,7 +208,7 @@ private:
 
     void commonInit();
 
-    bool isPlatformCALayerCocoa() const override { return true; }
+    Type type() const final { return Type::Cocoa; }
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;
 
@@ -230,4 +230,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebCore::PlatformCALayerCocoa, isPlatformCALayerCocoa())
+SPECIALIZE_TYPE_TRAITS_PLATFORM_CALAYER(WebCore::PlatformCALayerCocoa, type() == WebCore::PlatformCALayer::Type::Cocoa)

@@ -3,31 +3,55 @@
 <head>
 <script src="../../resources/js-test.js"></script>
 </head>
-<body>
-<img src="resources/animation.gif" id="testImage" />
+<body height="2000px">
+<img src="resources/animation.gif" id="gif" />
 <!-- To make this test able to pass in WK1, use this <div style="..."> to setAutodisplay:YES (rdar://42625657 has more details). -->
 <div style="will-change: transform"></div>
 
 <script>
-    description("This test ensures that when image animation is disabled page-wide, individual image animations can still be toggled on and off individually.\n\n");
-    jsTestIsAsync = true;
+window.jsTestIsAsync = true;
+description("This test ensures that when image animation is disabled page-wide, individual image animations can still be toggled on and off individually.\n\n");
+
+async function toggleAnimationPlayState(shouldAnimate) {
+    if (shouldAnimate) {
+        debug("Resuming animation.");
+        internals.resumeImageAnimation(gif);
+        await shouldBecomeEqual("internals.isImageAnimating(gif)", "false");
+    } else {
+        debug("Pausing animation.");
+        internals.pauseImageAnimation(gif);
+        await shouldBecomeEqual("internals.isImageAnimating(gif)", "false");
+    }
+}
+
+var gif = document.getElementById("gif");
+window.onload = async function() {
+    if (!window.internals)
+        return;
     internals.settings.setImageAnimationControlEnabled(true);
 
+    debug("Pausing animations page-wide.");
     internals.setImageAnimationEnabled(false);
-    var image = document.getElementById("testImage");
-    window.onload = function() {
-        shouldBecomeEqual("internals.isImageAnimating(image)", "false", function() {
-            internals.resumeImageAnimation(image);
-            shouldBecomeEqual("internals.isImageAnimating(image)", "true", function() {
-                internals.pauseImageAnimation(image);
-                shouldBecomeEqual("internals.isImageAnimating(image)", "false", function() {
-                    internals.setImageAnimationEnabled(true);
-                    internals.clearMemoryCache();
-                    finishJSTest();
-                });
-            });
-        });
-    };
+    await shouldBecomeEqual("internals.isImageAnimating(gif)", "false");
+
+    await toggleAnimationPlayState(true);
+    await toggleAnimationPlayState(false);
+    await toggleAnimationPlayState(true);
+
+    debug("Scrolling animation off-screen. This should result in it becoming paused.");
+    window.scrollBy(0, 2000);
+    await shouldBecomeEqual("internals.isImageAnimating(gif)", "false");
+
+    debug("Scrolling to make animation visible again.");
+    window.scroll(0, 0);
+    await shouldBecomeEqual("internals.isImageAnimating(gif)", "true");
+
+    internals.setImageAnimationEnabled(true);
+    internals.settings.setImageAnimationControlEnabled(false);
+
+    internals.clearMemoryCache();
+    finishJSTest();
+};
 </script>
 
 </body>

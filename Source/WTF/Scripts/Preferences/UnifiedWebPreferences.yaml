@@ -1667,7 +1667,7 @@ DataDetectorTypes:
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "DataList Element"
   humanReadableDescription: "Enable datalist elements"
   condition: ENABLE(DATALIST_ELEMENT)
@@ -2656,7 +2656,7 @@ ImageAnalysisDuringFindInPageEnabled:
 
 ImageAnimationControlEnabled:
   type: bool
-  status: unstable
+  status: preview
   humanReadableName: "Image Animation Control Enabled"
   humanReadableDescription: "Control image animations."
   condition: ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -3449,16 +3449,16 @@ LinkSanitizerEnabled:
 
 LiveRangeSelectionEnabled:
   type: bool
-  status: unstable
+  status: testable
   humanReadableName: "Live Ranges in Selection"
   humanReadableDescription: "Live range behavior for ranges in the Selection object"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 LoadDeferringEnabled:
   type: bool
@@ -5155,7 +5155,7 @@ SelectTrailingWhitespaceEnabled:
 
 SelectionFlippingEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "Selection Flipping"
   humanReadableDescription: "Enable Selection Flipping"
   webcoreBinding: none
@@ -6103,7 +6103,7 @@ UseGPUProcessForDisplayCapture:
 
 UseGPUProcessForMediaEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "GPU Process: Media"
   humanReadableDescription: "Do all media loading and playback in the GPU Process"
   webcoreBinding: none
@@ -6884,7 +6884,7 @@ WebRTCMediaPipelineAdditionalLoggingEnabled:
 # FIXME: This is not relevant for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 WebRTCPlatformCodecsInGPUProcessEnabled:
   type: bool
-  status: internal
+  status: embedder
   humanReadableName: "GPU Process: WebRTC Platform Codecs"
   humanReadableDescription: "Enable WebRTC Platform Codecs in GPU Process"
   condition: ENABLE(WEB_RTC)
@@ -7115,7 +7115,7 @@ WebXRHandInputModuleEnabled:
 
 WheelEventGesturesBecomeNonBlocking:
   type: bool
-  status: internal
+  status: mature
   humanReadableName: "Wheel Event gestures become non-blocking"
   humanReadableDescription: "preventDefault() is only allowed on the first wheel event in a gesture"
   defaultValue:
