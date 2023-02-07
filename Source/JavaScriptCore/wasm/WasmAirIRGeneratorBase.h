@@ -1251,7 +1251,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::addRefAsNonNull(ExpressionType
 {
     emitThrowOnNullReference(reference, ExceptionType::NullRefAsNonNull);
     result = self().tmpForType(Type { TypeKind::Ref, reference.type().index });
-    append(Move, reference, result);
+    self().emitMoveWithoutTypeCheck(reference, result);
     return { };
 }
 

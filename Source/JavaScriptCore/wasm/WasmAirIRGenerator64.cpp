@@ -676,12 +676,19 @@ private:
         inst.args.append(tmp.tmp());
     }
 
-    void emitMove(const TypedTmp& src, const TypedTmp& dst)
+    // emitMoveWithoutTypeCheck is like emitMove, but does not assert anything
+    // about the wasm types of `src` and `dst` (in no-assert builds, they are the same)
+    void emitMoveWithoutTypeCheck(const TypedTmp& src, const TypedTmp& dst)
     {
         if (src == dst)
             return;
-        ASSERT(isSubtype(src.type(), dst.type()));
         append(moveOpForValueType(src.type()), src, dst);
+    }
+
+    void emitMove(const TypedTmp& src, const TypedTmp& dst)
+    {
+        ASSERT(isSubtype(src.type(), dst.type()));
+        emitMoveWithoutTypeCheck(src, dst);
     }
 
     void emitMove(const ValueLocation& location, const TypedTmp& dest)

@@ -203,6 +203,10 @@ private:
     static B3::Air::Opcode moveOpForValueType(Type);
     void emitLoad(Tmp base, intptr_t offset, const TypedTmp& result);
     void emitStore(const TypedTmp& value, Tmp base, intptr_t offset);
+
+    // emitMoveWithoutTypeCheck is like emitMove, but does not assert anything
+    // about the wasm types of `src` and `dst` (in no-assert builds, they are the same)
+    void emitMoveWithoutTypeCheck(const TypedTmp& src, const TypedTmp& dst);
     void emitMove(const TypedTmp& src, const TypedTmp& dst);
     void emitMove(const ValueLocation&, const TypedTmp& dst);
     void emitMove(const ArgumentLocation&, const TypedTmp& dst);
@@ -469,16 +473,21 @@ void AirIRGenerator32::emitStore(const TypedTmp& value, Tmp base, intptr_t offse
         append(moveOpForValueType(value.type()), value, Arg::addr(base, offset));
 }
 
-void AirIRGenerator32::emitMove(const TypedTmp& src, const TypedTmp& dst)
+void AirIRGenerator32::emitMoveWithoutTypeCheck(const TypedTmp& src, const TypedTmp& dst)
 {
     if (src == dst)
         return;
-    ASSERT(isSubtype(src.type(), dst.type()));
     if (src.isGPPair()) {
         append(Move, src.lo(), dst.lo());
         append(Move, src.hi(), dst.hi());
     } else
         append(moveOpForValueType(src.type()), src, dst);
+}
+
+void AirIRGenerator32::emitMove(const TypedTmp& src, const TypedTmp& dst)
+{
+    ASSERT(isSubtype(src.type(), dst.type()));
+    emitMoveWithoutTypeCheck(src, dst);
 }
 
 void AirIRGenerator32::emitMove(const ValueLocation& location, const TypedTmp& dst)
