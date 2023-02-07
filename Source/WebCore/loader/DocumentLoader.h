@@ -683,7 +683,7 @@ private:
     ScriptExecutionContextIdentifier m_resultingClientId;
 
 #if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
+    std::unique_ptr<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION)

@@ -561,7 +561,7 @@ bool DocumentLoader::setControllingServiceWorkerRegistration(ServiceWorkerRegist
         return false;
 
     ASSERT(!m_gotFirstByte);
-    m_serviceWorkerRegistrationData = WTFMove(data);
+    m_serviceWorkerRegistrationData = makeUnique<ServiceWorkerRegistrationData>(WTFMove(data));
     return true;
 }
 
@@ -908,7 +908,8 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
                 completionHandler();
                 return;
             }
-            m_serviceWorkerRegistrationData = WTFMove(registrationData);
+            if (registrationData)
+                m_serviceWorkerRegistrationData = makeUnique<ServiceWorkerRegistrationData>(WTFMove(*registrationData));
             responseReceived(response, WTFMove(completionHandler));
         });
         return;
@@ -2114,7 +2115,8 @@ void DocumentLoader::startLoadingMainResource()
                     return;
                 }
 
-                m_serviceWorkerRegistrationData = WTFMove(registrationData);
+                if (registrationData)
+                    m_serviceWorkerRegistrationData = makeUnique<ServiceWorkerRegistrationData>(WTFMove(*registrationData));
                 // Prefer existing substitute data (from WKWebView.loadData etc) over service worker fetch.
                 if (this->tryLoadingSubstituteData()) {
                     DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource callback: Load canceled because of substitute data");
