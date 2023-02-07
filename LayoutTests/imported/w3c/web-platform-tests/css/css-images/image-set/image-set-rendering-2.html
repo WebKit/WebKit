@@ -7,7 +7,10 @@
 <meta name="assert" content="image-set rendering">
 <style>
   #test {
-    background-image: image-set(url("/images/green.png") 1x);
+    background-image: image-set(
+      url("/images/green.png") 1x,
+      url("/images/red.png") 2x
+    );
     width: 100px;
     height: 100px;
   }
