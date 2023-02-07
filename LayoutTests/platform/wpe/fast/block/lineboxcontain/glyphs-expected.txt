@@ -4,9 +4,9 @@ layer at (0,0) size 800x272
   RenderBlock {HTML} at (0,0) size 800x272
     RenderBody {BODY} at (8,8) size 784x248
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 493x17
-          text run at (0,0) width 260: "You should see a green rectangle below. "
-          text run at (260,0) width 233: "If you see any red, the test has failed."
+        RenderText {#text} at (0,0) size 491x17
+          text run at (0,0) width 258: "You should see a green rectangle below. "
+          text run at (257,0) width 234: "If you see any red, the test has failed."
       RenderBlock {P} at (0,162) size 784x16 [border: (1px solid #000000)]
         RenderText {#text} at (1,-2) size 275x17
           text run at (1,-2) width 275: "this block should hug the lowercase glyphs."

@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,1) size 571x17
-          text run at (0,1) width 571: "This tests that bidirectional text is correctly rendered in popup controls."
-        RenderBR {BR} at (571,1) size 0x17
-        RenderText {#text} at (0,20) size 780x36
-          text run at (0,20) width 780: "The order of the text below each popup button should match the order of the select's option text,"
+        RenderText {#text} at (0,1) size 569x17
+          text run at (0,1) width 569: "This tests that bidirectional text is correctly rendered in popup controls."
+        RenderBR {BR} at (568,1) size 1x17
+        RenderText {#text} at (0,20) size 779x36
+          text run at (0,20) width 779: "The order of the text below each popup button should match the order of the select's option text,"
           text run at (0,39) width 359: "and the order of the text in the popup menu."
       RenderBlock (anonymous) at (0,73) size 784x50
         RenderText {#text} at (0,1) size 344x17
           text run at (0,1) width 344: "1) direction: rtl; -webkit-rtl-ordering: logical"
-        RenderBR {BR} at (344,1) size 0x17
+        RenderBR {BR} at (343,1) size 1x17
         RenderMenuList {SELECT} at (0,19) size 100x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 98x29
             RenderText at (5,6) size 88x17
@@ -28,7 +28,7 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x17
         RenderText {#text} at (0,19) size 143x17
           text run at (0,19) width 143: "2) text-align: right"
-        RenderBR {BR} at (143,19) size 0x17
+        RenderBR {BR} at (142,19) size 1x17
         RenderMenuList {SELECT} at (0,37) size 200x31 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 198x29
             RenderText at (5,6) size 88x17

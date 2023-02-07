@@ -51,23 +51,23 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 326x17
                   text run at (0,0) width 232: "I should wrap and not have nowrap. "
                   text run at (232,0) width 94: "I really should."
-      RenderTable {TABLE} at (0,326) size 369x24
-        RenderTableSection {TBODY} at (0,0) size 369x24
-          RenderTableRow {TR} at (0,2) size 369x20
-            RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 363x17
+      RenderTable {TABLE} at (0,326) size 368x24
+        RenderTableSection {TBODY} at (0,0) size 368x24
+          RenderTableRow {TR} at (0,2) size 368x20
+            RenderTableCell {TD} at (2,2) size 364x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 362x17
                 text run at (1,1) width 145: "I should have nowrap. "
                 text run at (146,1) width 98: "I really should. "
-                text run at (244,1) width 120: "Definitely. Should."
-      RenderTable {TABLE} at (0,350) size 369x24
-        RenderTableSection {TBODY} at (0,0) size 369x24
-          RenderTableRow {TR} at (0,2) size 369x20
-            RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 363x18
-                RenderText {#text} at (0,0) size 363x17
+                text run at (244,1) width 119: "Definitely. Should."
+      RenderTable {TABLE} at (0,350) size 368x24
+        RenderTableSection {TBODY} at (0,0) size 368x24
+          RenderTableRow {TR} at (0,2) size 368x20
+            RenderTableCell {TD} at (2,2) size 364x20 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 362x18
+                RenderText {#text} at (0,0) size 362x17
                   text run at (0,0) width 145: "I should have nowrap. "
                   text run at (145,0) width 98: "I really should. "
-                  text run at (243,0) width 120: "Definitely. Should."
+                  text run at (243,0) width 119: "Definitely. Should."
 layer at (62,14) size 724x18
   RenderBlock {DIV} at (3,3) size 724x18
 layer at (14,238) size 181x42 clip at (15,239) size 179x40
