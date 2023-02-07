@@ -317,6 +317,7 @@ public:
     uint64_t domCacheSize(WKStringRef origin);
 
     void setAllowStorageQuotaIncrease(bool);
+    void setQuota(uint64_t);
 
     bool didReceiveServerRedirectForProvisionalNavigation() const { return m_didReceiveServerRedirectForProvisionalNavigation; }
     void clearDidReceiveServerRedirectForProvisionalNavigation() { m_didReceiveServerRedirectForProvisionalNavigation = false; }

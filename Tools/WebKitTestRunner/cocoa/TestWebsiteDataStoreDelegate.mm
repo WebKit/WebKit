@@ -36,17 +36,28 @@
 - (instancetype)init
 {
     _shouldAllowRaisingQuota = false;
+    _quota = 40 * KB;
     return self;
 }
 
-- (void)requestStorageSpace:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL quota:(NSUInteger)quota currentSize:(NSUInteger)currentSize spaceRequired:(NSUInteger)spaceRequired decisionHandler:(void (^)(unsigned long long))decisionHandler
+- (void)requestStorageSpace:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL quota:(NSUInteger)currentQuota currentSize:(NSUInteger)currentSize spaceRequired:(NSUInteger)spaceRequired decisionHandler:(void (^)(unsigned long long))decisionHandler
 {
-    decisionHandler(_shouldAllowRaisingQuota ? quota + currentSize + spaceRequired : quota);
+    auto totalSpaceRequired = currentSize + spaceRequired;
+    if (_shouldAllowRaisingQuota || totalSpaceRequired <= _quota)
+        return decisionHandler(totalSpaceRequired);
+
+    // Deny request by not changing quota.
+    decisionHandler(currentQuota);
 }
 
 - (void)setAllowRaisingQuota:(BOOL)shouldAllowRaisingQuota
 {
     _shouldAllowRaisingQuota = shouldAllowRaisingQuota;
+}
+
+- (void)setQuota:(NSUInteger)quota
+{
+    _quota = quota;
 }
 
 - (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential * _Nullable credential))completionHandler
