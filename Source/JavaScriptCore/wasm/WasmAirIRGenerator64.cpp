@@ -96,7 +96,7 @@ public:
 
     static constexpr bool tierSupportsSIMD = true;
     static constexpr bool generatesB3OriginData = true;
-    static constexpr bool supportsPinnedStateRegisters = true;
+    static constexpr bool supportsPinnedBoundsCheckingSizeRegister = true;
 
     void emitMaterializeConstant(Type, uint64_t value, TypedTmp& dest);
     void emitMaterializeConstant(BasicBlock*, Type, uint64_t value, TypedTmp& dest);

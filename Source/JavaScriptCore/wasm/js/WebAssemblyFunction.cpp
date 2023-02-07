@@ -357,7 +357,10 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     jit.move(CCallHelpers::TrustedImmPtr(&instance()->instance()), GPRInfo::wasmContextInstancePointer);
 
-#if !CPU(ARM) // ARM has no pinned registers for Wasm Memory, so no need to set them up
+#if CPU(ARM) // ARM only pins baseMemory
+    if (!!instance()->instance().module().moduleInformation().memory)
+        jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Wasm::Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
+#else
     if (!!instance()->instance().module().moduleInformation().memory) {
         auto mode = instance()->memoryMode();
         if (mode == MemoryMode::Signaling || (mode == MemoryMode::BoundsChecking && instance()->instance().memory()->sharingMode() == MemorySharingMode::Shared)) {
