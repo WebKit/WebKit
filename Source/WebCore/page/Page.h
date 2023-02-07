@@ -669,6 +669,7 @@ public:
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    void updatePlayStateForAllAnimations();
     WEBCORE_EXPORT void setImageAnimationEnabled(bool);
     void addIndividuallyPlayingAnimationElement(HTMLImageElement&);
     void removeIndividuallyPlayingAnimationElement(HTMLImageElement&);
@@ -718,7 +719,6 @@ public:
 
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
-    void updatePlayStateForAllAnimations();
 
     void didFinishLoadingImageForElement(HTMLImageElement&);
 

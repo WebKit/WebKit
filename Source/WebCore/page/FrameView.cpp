@@ -2901,12 +2901,6 @@ void FrameView::resumeVisibleImageAnimations(const IntRect& visibleRect)
         renderView->resumePausedImageAnimationsIfNeeded(visibleRect);
 }
 
-void FrameView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
-{
-    if (auto* renderView = m_frame->contentRenderer())
-        renderView->updatePlayStateForAllAnimations(visibleRect);
-}
-
 void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect)
 {
     if (m_frame->isMainFrame())
@@ -2942,12 +2936,20 @@ void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
     });
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+void FrameView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
+{
+    if (auto* renderView = m_frame->contentRenderer())
+        renderView->updatePlayStateForAllAnimations(visibleRect);
+}
+
 void FrameView::updatePlayStateForAllAnimationsIncludingSubframes()
 {
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
         frameView.updatePlayStateForAllAnimations(visibleRect);
     });
 }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 void FrameView::updateLayerPositionsAfterScrolling()
 {

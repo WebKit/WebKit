@@ -2004,15 +2004,14 @@ void Page::setLoadSchedulingMode(LoadSchedulingMode mode)
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::setImageAnimationEnabled(bool enabled)
 {
-    if (m_imageAnimationEnabled == enabled || !settings().imageAnimationControlEnabled())
+    if (!settings().imageAnimationControlEnabled())
         return;
+
+    // This method overrides any individually set animation play-states (so we need to do work even if `enabled` is
+    // already equal to `m_imageAnimationEnabled` because there may be individually playing or paused images).
     m_imageAnimationEnabled = enabled;
     updatePlayStateForAllAnimations();
-
-    // If the state of isAnyAnimationAllowedToPlay is not affected by the presence of individually playing
-    // animations (because there are none), then we should update it with the new animation enabled state.
-    if (!m_individuallyPlayingAnimationElements.computeSize())
-        chrome().client().isAnyAnimationAllowedToPlayDidChange(enabled);
+    chrome().client().isAnyAnimationAllowedToPlayDidChange(enabled);
 }
 #endif
 
@@ -4124,13 +4123,13 @@ void Page::forceRepaintAllFrames()
     }
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::updatePlayStateForAllAnimations()
 {
     if (auto* view = mainFrame().view())
         view->updatePlayStateForAllAnimationsIncludingSubframes();
 }
 
-#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 void Page::addIndividuallyPlayingAnimationElement(HTMLImageElement& element)
 {
     ASSERT(element.allowsAnimation());

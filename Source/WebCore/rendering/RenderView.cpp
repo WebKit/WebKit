@@ -32,6 +32,7 @@
 #include "HTMLFrameSetElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLImageElement.h"
 #include "HitTestResult.h"
 #include "ImageQualityController.h"
 #include "LayoutInitialContainingBlock.h"
@@ -931,6 +932,7 @@ void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
         m_SVGSVGElementsWithPausedImageAnimation.remove(*svgSvgElement);
 }
 
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 static SVGSVGElement* svgSvgElementFrom(RenderElement& renderElement)
 {
     if (auto* svgSvgElement = dynamicDowncast<SVGSVGElement>(renderElement.element()))
@@ -967,6 +969,12 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
                     addRendererWithPausedImageAnimations(renderElement, *cachedImage);
                 }
             } else if (image && image->isAnimated()) {
+                // Override any individual animation play state that may have been set.
+                if (auto* imageElement = dynamicDowncast<HTMLImageElement>(renderElement.element()))
+                    imageElement->setAllowsAnimation(std::nullopt);
+                else
+                    image->setAllowsAnimation(std::nullopt);
+
                 // Animations of this type require a repaint to be paused or resumed.
                 if (shouldAnimate && hasPausedAnimation) {
                     needsRepaint = true;
@@ -998,6 +1006,7 @@ void RenderView::updatePlayStateForAllAnimations(const IntRect& visibleRect)
         }
     }
 }
+#endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
 RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
 {

@@ -9,21 +9,35 @@
 <div style="will-change: transform"></div>
 
 <script>
-    description("This test ensures that animation play / pause state is updated when the page-wide 'animations disabled' flag changes.\n\n");
-    jsTestIsAsync = true;
-    internals.settings.setImageAnimationControlEnabled(true);
-    var image = document.getElementById("img");
+description("This test ensures that animation play / pause state is updated when the page-wide 'animations disabled' flag changes.\n\n");
+window.jsTestIsAsync = true;
 
+var image = document.getElementById("img");
+window.onload = async function() {
+    if (!window.internals)
+        return;
+    internals.settings.setImageAnimationControlEnabled(true);
+
+    debug("Pausing page-wide animation.");
     internals.setImageAnimationEnabled(false);
-    window.onload = function() {
-        shouldBecomeEqual("internals.isImageAnimating(image)", "false", function() {
-            internals.setImageAnimationEnabled(true);
-            shouldBecomeEqual("internals.isImageAnimating(image)", "true", function() {
-                internals.clearMemoryCache();
-                finishJSTest();
-            });
-        });
-    };
+    await shouldBecomeEqual("internals.isImageAnimating(image)", "false");
+
+    debug("Resuming page-wide image animation.");
+    internals.setImageAnimationEnabled(true);
+    await shouldBecomeEqual("internals.isImageAnimating(image)", "true");
+
+    debug("Pausing GIF individually.");
+    internals.pauseImageAnimation(image);
+    await shouldBecomeEqual("internals.isImageAnimating(image)", "false");
+
+    debug("Resuming page-wide image animation (this should cause the GIF to begin animating again, despite the fact it was previously paused individually).");
+    internals.setImageAnimationEnabled(true);
+    await shouldBecomeEqual("internals.isImageAnimating(image)", "true");
+
+    internals.settings.setImageAnimationControlEnabled(false);
+    internals.clearMemoryCache();
+    finishJSTest();
+};
 </script>
 </body>
 </html>
