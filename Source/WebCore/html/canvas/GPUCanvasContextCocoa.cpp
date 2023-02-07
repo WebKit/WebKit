@@ -171,8 +171,20 @@ RefPtr<GPUTexture> GPUCanvasContextCocoa::getCurrentTexture()
     if (m_currentTexture)
         return m_currentTexture;
 
+    GPUTextureDescriptor descriptor = {
+        { "WebGPU Display texture"_s },
+        GPUExtent3DDict { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 },
+        1 /* mipMapCount */,
+        1 /* sampleCount */,
+        GPUTextureDimension::_2d,
+        m_configuration->format,
+        m_configuration->usage,
+        m_configuration->viewFormats
+    };
+
     markContextChangedAndNotifyCanvasObservers();
-    m_currentTexture = m_presentationContext->getCurrentTexture();
+    // FIXME: This should use PresentationContext::getCurrentTexture() instead.
+    m_currentTexture = m_configuration->device->createSurfaceTexture(descriptor, m_presentationContext);
     return m_currentTexture;
 }
 
@@ -203,7 +215,6 @@ void GPUCanvasContextCocoa::prepareForDisplay()
         m_compositingResultsNeedsUpdating = false;
         m_configuration->frameCount = (m_configuration->frameCount + 1) % m_configuration->renderBuffers.size();
         m_currentTexture = nullptr;
-        m_presentationContext->present();
     });
 }
 

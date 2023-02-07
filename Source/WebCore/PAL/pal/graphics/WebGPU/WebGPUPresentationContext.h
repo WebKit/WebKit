@@ -48,6 +48,12 @@ public:
 
     virtual RefPtr<Texture> getCurrentTexture() = 0;
 
+    virtual void present() = 0;
+
+#if PLATFORM(COCOA)
+    virtual void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) = 0;
+#endif
+
 protected:
     PresentationContext() = default;
 

@@ -97,6 +97,7 @@ public:
 
     Ref<GPUBuffer> createBuffer(const GPUBufferDescriptor&);
     Ref<GPUTexture> createTexture(const GPUTextureDescriptor&);
+    Ref<GPUTexture> createSurfaceTexture(const GPUTextureDescriptor&, const GPUPresentationContext&);
     Ref<GPUSampler> createSampler(const std::optional<GPUSamplerDescriptor>&);
     Ref<GPUExternalTexture> importExternalTexture(const GPUExternalTextureDescriptor&);
 

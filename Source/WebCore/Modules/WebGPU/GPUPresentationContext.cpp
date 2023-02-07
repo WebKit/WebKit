@@ -53,7 +53,15 @@ RefPtr<GPUTexture> GPUPresentationContext::getCurrentTexture()
 
 void GPUPresentationContext::present()
 {
+    m_backing->present();
     m_currentTexture = nullptr;
 }
+
+#if PLATFORM(COCOA)
+void GPUPresentationContext::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
+{
+    m_backing->prepareForDisplay(WTFMove(completionHandler));
+}
+#endif
 
 } // namespace WebCore

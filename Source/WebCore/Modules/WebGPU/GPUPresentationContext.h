@@ -51,7 +51,12 @@ public:
     void unconfigure();
 
     RefPtr<GPUTexture> getCurrentTexture();
+
     void present();
+
+#if PLATFORM(COCOA)
+    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&);
+#endif
 
     PAL::WebGPU::PresentationContext& backing() { return m_backing; }
     const PAL::WebGPU::PresentationContext& backing() const { return m_backing; }

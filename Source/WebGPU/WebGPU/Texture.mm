@@ -1327,6 +1327,52 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
     return true;
 }
 
+bool Device::validateCreateIOSurfaceBackedTexture(const WGPUTextureDescriptor& descriptor, const Vector<WGPUTextureFormat>& viewFormats, IOSurfaceRef backing)
+{
+    if (!isValid())
+        return false;
+
+    if (!backing)
+        return false;
+
+    if (!(descriptor.usage & WGPUTextureUsage_RenderAttachment))
+        return false;
+
+    // Metal only supports binding into BGRA8 and RGBA16Float IOTextures.
+    // FIXME: add support for RGBA16 if necessary.
+    if (descriptor.format != WGPUTextureFormat_BGRA8Unorm)
+        return false;
+    if (IOSurfaceGetPixelFormat(backing) != 'BGRA')
+        return false;
+    // BGRA8 is non-planar, check that the IOSurface is non-planar.
+    if (IOSurfaceGetPlaneCount(backing))
+        return false;
+
+    // Check that the texture is a 2D texture with valid width/height, and has the same dimensions as the IOSurface.
+    if (descriptor.dimension != WGPUTextureDimension_2D)
+        return false;
+    if (!descriptor.size.width || descriptor.size.width != IOSurfaceGetWidth(backing) || descriptor.size.width > limits().maxTextureDimension2D || descriptor.size.width % Texture::texelBlockWidth(descriptor.format))
+        return false;
+    if (!descriptor.size.height || descriptor.size.height != IOSurfaceGetHeight(backing) || descriptor.size.height > limits().maxTextureDimension2D || descriptor.size.height % Texture::texelBlockHeight(descriptor.format))
+        return false;
+    if (descriptor.size.depthOrArrayLayers != 1)
+        return false;
+
+    if (descriptor.mipLevelCount != 1)
+        return false;
+
+    // IOSurface-backed textures do not support multisampling.
+    if (descriptor.sampleCount != 1)
+        return false;
+
+    for (auto viewFormat : viewFormats) {
+        if (!textureViewFormatCompatible(descriptor.format, viewFormat))
+            return false;
+    }
+
+    return true;
+}
+
 MTLTextureUsage Texture::usage(WGPUTextureUsageFlags usage)
 {
     MTLTextureUsage result = MTLTextureUsageUnknown;
@@ -1935,8 +1981,15 @@ std::optional<MTLPixelFormat> Texture::stencilOnlyAspectMetalFormat(WGPUTextureF
     }
 }
 
-static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures)
+static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonPrivateDepthStencilTextures, bool isBackedByIOSurface)
 {
+    // Metal driver requires IOSurface-backed texture to be MTLStorageModeManaged.
+    if (isBackedByIOSurface)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        return MTLStorageModeManaged;
+#else
+        return MTLStorageModeShared;
+#endif
 
     // FIXME: only perform this check if the texture is a depth/stencil texture.
     if (!supportsNonPrivateDepthStencilTextures)
@@ -1954,8 +2007,27 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, bool supportsNonP
 
 Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 {
-    if (descriptor.nextInChain)
-        return Texture::createInvalid(*this);
+    IOSurfaceRef ioSurfaceBacking = nullptr;
+    Vector<WGPUTextureFormat> viewFormats;
+    const auto* current = descriptor.nextInChain;
+    while (current) {
+        bool viewFormatsSpecified = false;
+        if (current->sType == static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorViewFormats) && !viewFormatsSpecified) {
+            if (viewFormatsSpecified)
+                return Texture::createInvalid(*this);
+
+            viewFormatsSpecified = true;
+
+            const auto& descriptorViewFormats = reinterpret_cast<const WGPUTextureDescriptorViewFormats&>(*current);
+            viewFormats = Vector { descriptorViewFormats.viewFormats, descriptorViewFormats.viewFormatsCount };
+        } else if (current->sType == static_cast<WGPUSType>(WGPUSTypeExtended_TextureDescriptorCocoaSurfaceBacking)) {
+            const auto& descriptorIOSurface = reinterpret_cast<const WGPUTextureDescriptorCocoaCustomSurface&>(*current);
+            ioSurfaceBacking = descriptorIOSurface.surface;
+        } else
+            return Texture::createInvalid(*this);
+
+        current = current->next;
+    }
 
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createtexture
 
@@ -1966,9 +2038,8 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
         }
     }
 
-    Vector viewFormats = { descriptor.viewFormats, descriptor.viewFormatCount };
-
-    if (!validateCreateTexture(descriptor, viewFormats)) {
+    bool validationResult = ioSurfaceBacking ? validateCreateIOSurfaceBackedTexture(descriptor, viewFormats, ioSurfaceBacking) : validateCreateTexture(descriptor, viewFormats);
+    if (!validationResult) {
         generateAValidationError("Validation failure."_s);
         return Texture::createInvalid(*this);
     }
@@ -2023,12 +2094,16 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     textureDescriptor.sampleCount = descriptor.sampleCount;
 
-    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures);
+    textureDescriptor.storageMode = storageMode(hasUnifiedMemory(), baseCapabilities().supportsNonPrivateDepthStencilTextures, ioSurfaceBacking);
 
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
     // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
 
-    id<MTLTexture> texture = [m_device newTextureWithDescriptor:textureDescriptor];
+    id<MTLTexture> texture = nil;
+    if (ioSurfaceBacking)
+        texture = [m_device newTextureWithDescriptor:textureDescriptor iosurface:ioSurfaceBacking plane:0];
+    else
+        texture = [m_device newTextureWithDescriptor:textureDescriptor];
 
     if (!texture)
         return Texture::createInvalid(*this);

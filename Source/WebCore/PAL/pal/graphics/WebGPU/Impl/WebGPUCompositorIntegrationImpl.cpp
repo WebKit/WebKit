@@ -44,7 +44,7 @@ CompositorIntegrationImpl::~CompositorIntegrationImpl() = default;
 
 void CompositorIntegrationImpl::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
-    m_presentationContext->present();
+    static_cast<PresentationContext*>(m_presentationContext.get())->present();
 
     m_onSubmittedWorkScheduledCallback(WTFMove(completionHandler));
 }
