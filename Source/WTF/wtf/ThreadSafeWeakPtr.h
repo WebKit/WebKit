@@ -85,17 +85,21 @@ public:
         auto deleteObject = [object] {
             delete static_cast<const T*>(object);
         };
+        if constexpr (destructionThread == DestructionThread::Any)
+            deleteObject();
+        else if constexpr (destructionThread == DestructionThread::Main)
+            ensureOnMainThread(WTFMove(deleteObject));
+        else if constexpr (destructionThread == DestructionThread::MainRunLoop)
+            ensureOnMainRunLoop(WTFMove(deleteObject));
+#if ASSERT_ENABLED
+        // If this fails to compile, there is a missing DestructionThread enum.
         switch (destructionThread) {
         case DestructionThread::Any:
-            deleteObject();
-            break;
         case DestructionThread::Main:
-            ensureOnMainThread(WTFMove(deleteObject));
-            break;
         case DestructionThread::MainRunLoop:
-            ensureOnMainRunLoop(WTFMove(deleteObject));
             break;
         }
+#endif
 
         if (shouldDeleteControlBlock)
             delete this;
