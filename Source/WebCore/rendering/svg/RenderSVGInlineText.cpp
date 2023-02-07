@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2023 Apple Inc.
+ * Copyright (C) 2015 Google Inc.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -69,6 +70,14 @@ static String applySVGWhitespaceRules(const String& string, bool preserveWhiteSp
     newString = makeStringByReplacingAll(newString, '\r', ""_s);
     newString = makeStringByReplacingAll(newString, '\t', ' ');
     return newString;
+}
+
+static float squaredDistanceToClosestPoint(const FloatRect& rect, const FloatPoint& point)
+{
+    FloatPoint closestPoint;
+    closestPoint.setX(std::max(std::min(point.x(), rect.maxX()), rect.x()));
+    closestPoint.setY(std::max(std::min(point.y(), rect.maxY()), rect.y()));
+    return (point - closestPoint).diagonalLengthSquared();
 }
 
 RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
@@ -157,7 +166,8 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
     if (!firstTextBox() || text().isEmpty())
         return createVisiblePosition(0, Affinity::Downstream);
 
-    float baseline = m_scaledFont.metricsOfPrimaryFont().floatAscent();
+    ASSERT(m_scalingFactor);
+    float baseline = m_scaledFont.metricsOfPrimaryFont().floatAscent() / m_scalingFactor;
 
     RenderBlock* containingBlock = this->containingBlock();
     ASSERT(containingBlock);
@@ -183,10 +193,11 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
             if (!fragmentTransform.isIdentity())
                 fragmentRect = fragmentTransform.mapRect(fragmentRect);
 
-            float distance = powf(fragmentRect.x() - absolutePoint.x(), 2) +
-                             powf(fragmentRect.y() + fragmentRect.height() / 2 - absolutePoint.y(), 2);
+            float distance = 0;
+            if (!fragmentRect.contains(absolutePoint))
+                distance = squaredDistanceToClosestPoint(fragmentRect, absolutePoint);
 
-            if (distance < closestDistance) {
+            if (distance <= closestDistance) {
                 closestDistance = distance;
                 closestDistanceBox = box;
                 closestDistanceFragment = &fragment;

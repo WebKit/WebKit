@@ -1,0 +1,8 @@
+This test checks that characters can be selected correctly with collapsed whitespace.
+happy debugging !!
+happy debugging !!
+happy debugging !!
+happy debugging !!
+
+PASS Test for selection with collapsed whitespace
+
