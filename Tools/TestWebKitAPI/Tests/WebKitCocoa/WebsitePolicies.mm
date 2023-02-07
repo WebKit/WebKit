@@ -28,6 +28,7 @@
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
@@ -1719,6 +1720,68 @@ TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeLight)
 
     [webView loadTestPageNamed:@"color-scheme"];
     [webView waitForMessage:@"light-detected"];
+}
+
+TEST(WebpagePreferences, DisableContentRuleListsByIdentifier)
+{
+    [TestProtocol registerWithScheme:@"https"];
+
+    NSString *identifierToDisable = @"org.TestWebKitAPI.Disabled";
+    NSString *identifierToEnable = @"org.TestWebKitAPI.Enabled";
+
+    auto directory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleLists"] isDirectory:YES];
+    auto store = [WKContentRuleListStore storeWithURL:directory];
+
+    auto compileRuleList = [&](NSString *identifier, NSString *source) -> RetainPtr<WKContentRuleList> {
+        __block RetainPtr<WKContentRuleList> result;
+        __block bool done = false;
+        [store compileContentRuleListForIdentifier:identifier encodedContentRuleList:source completionHandler:^(WKContentRuleList *rules, NSError *error) {
+            EXPECT_NULL(error);
+            result = rules;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    };
+
+    constexpr auto contentRulesToDisable = "[{"
+        "\"trigger\": { \"url-filter\": \"^https://bundle-file/400x400-green.png$\" },"
+        "\"action\": { \"type\": \"block\" }"
+        "}]";
+
+    constexpr auto contentRulesToEnable = "[{"
+        "\"trigger\": { \"url-filter\": \"^https://bundle-file/sunset-in-cupertino-200px.png$\" },"
+        "\"action\": { \"type\": \"block\" }"
+        "}]";
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration defaultWebpagePreferences] _setDisabledContentRuleListIdentifiers:[NSSet setWithObject:identifierToDisable]];
+
+    auto rulesToDisable = compileRuleList(identifierToDisable, @(contentRulesToDisable));
+    [[configuration userContentController] addContentRuleList:rulesToDisable.get()];
+
+    auto rulesToEnable = compileRuleList(identifierToEnable, @(contentRulesToEnable));
+    [[configuration userContentController] addContentRuleList:rulesToEnable.get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/load-image.html"]]];
+
+    auto canLoadImage = [webView](NSString *url) {
+        __block BOOL result = false;
+        __block bool done = false;
+        [webView callAsyncJavaScript:@"return canLoadImage(url);" arguments:@{ @"url" : url } inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(NSNumber *loaded, NSError *error) {
+            EXPECT_NOT_NULL(loaded);
+            EXPECT_NULL(error);
+            result = loaded.boolValue;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    };
+
+    EXPECT_TRUE(canLoadImage(@"./400x400-green.png"));
+    EXPECT_FALSE(canLoadImage(@"./sunset-in-cupertino-200px.png"));
+    EXPECT_TRUE(canLoadImage(@"./sunset-in-cupertino-100px.tiff"));
 }
 
 TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeDark)

@@ -36,7 +36,7 @@ namespace WebKit {
 
 void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 {
-    encoder << contentBlockersEnabled;
+    encoder << disabledContentExtensions;
     encoder << activeContentRuleListActionPatterns;
     encoder << autoplayPolicy;
 #if ENABLE(DEVICE_ORIENTATION)
@@ -64,9 +64,9 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 
 std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
 {
-    std::optional<bool> contentBlockersEnabled;
-    decoder >> contentBlockersEnabled;
-    if (!contentBlockersEnabled)
+    std::optional<WebCore::DisabledContentExtensions> disabledContentExtensions;
+    decoder >> disabledContentExtensions;
+    if (!disabledContentExtensions)
         return std::nullopt;
 
     std::optional<HashMap<WTF::String, Vector<WTF::String>>> activeContentRuleListActionPatterns;
@@ -177,7 +177,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         return std::nullopt;
 
     return { {
-        WTFMove(*contentBlockersEnabled),
+        WTFMove(*disabledContentExtensions),
         WTFMove(*activeContentRuleListActionPatterns),
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
@@ -216,9 +216,14 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setDeviceOrientationAndMotionAccessState(websitePolicies.deviceOrientationAndMotionAccessState);
 #endif
 
-    // Only setUserContentExtensionsEnabled if it hasn't already been disabled by reloading without content blockers.
-    if (documentLoader.userContentExtensionsEnabled())
-        documentLoader.setUserContentExtensionsEnabled(websitePolicies.contentBlockersEnabled);
+    // Only disable content blockers if it hasn't already been disabled by reloading without content blockers.
+    bool userContentExtensionsEnabled = std::visit(WTF::makeVisitor([](WebCore::DisabledContentExtensionsMode mode) {
+        return mode == WebCore::DisabledContentExtensionsMode::None;
+    }, [](auto&) {
+        return true;
+    }), documentLoader.disabledContentExtensions());
+    if (userContentExtensionsEnabled)
+        documentLoader.setDisabledContentExtensions(WTFMove(websitePolicies.disabledContentExtensions));
 
     documentLoader.setActiveContentRuleListActionPatterns(websitePolicies.activeContentRuleListActionPatterns);
 

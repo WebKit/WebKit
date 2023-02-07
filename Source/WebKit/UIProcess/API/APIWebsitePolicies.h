@@ -61,9 +61,12 @@ public:
 
     WebKit::WebsitePoliciesData data();
 
-    bool contentBlockersEnabled() const { return m_contentBlockersEnabled; }
-    void setContentBlockersEnabled(bool enabled) { m_contentBlockersEnabled = enabled; }
-    
+    bool contentBlockersEnabled() const;
+    void setContentBlockersEnabled(bool);
+
+    void setDisabledContentRuleListIdentifiers(HashSet<WTF::String>&&);
+    HashSet<WTF::String> disabledContentRuleListIdentifiers() const;
+
     void setActiveContentRuleListActionPatterns(HashMap<WTF::String, Vector<WTF::String>>&& patterns) { m_activeContentRuleListActionPatterns = WTFMove(patterns); }
     const HashMap<WTF::String, Vector<WTF::String>>& activeContentRuleListActionPatterns() const { return m_activeContentRuleListActionPatterns; }
     
@@ -150,7 +153,7 @@ public:
 
 private:
     // FIXME: replace most or all of these members with a WebsitePoliciesData.
-    bool m_contentBlockersEnabled { true };
+    WebCore::DisabledContentExtensions m_disabledContentExtensions { WebCore::DisabledContentExtensionsMode::None };
     HashMap<WTF::String, Vector<WTF::String>> m_activeContentRuleListActionPatterns;
     OptionSet<WebKit::WebsiteAutoplayQuirk> m_allowedAutoplayQuirks;
     WebKit::WebsiteAutoplayPolicy m_autoplayPolicy { WebKit::WebsiteAutoplayPolicy::Default };
