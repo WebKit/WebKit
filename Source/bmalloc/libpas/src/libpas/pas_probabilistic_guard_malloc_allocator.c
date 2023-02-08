@@ -129,8 +129,9 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     value->upper_guard_page          = upper_guard_page;
     value->start_of_data_pages       = result.begin + page_size;
     value->allocation_size_requested = size;
+    value->large_heap                = large_heap;
 
-    pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, key, NULL,&pas_large_utility_free_heap_allocation_config);
+    pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, key, NULL, &pas_large_utility_free_heap_allocation_config);
     PAS_ASSERT(add_result.is_new_entry);
 
     add_result.entry->key = key;
@@ -200,6 +201,26 @@ bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem)
     return (entry && entry->value);
 }
 
+pas_large_map_entry pas_probabilistic_guard_malloc_return_as_large_map_entry(uintptr_t mem)
+{
+    pas_heap_lock_assert_held();
+    static const bool verbose = false;
+
+    pas_large_map_entry ret = {};
+
+    if (verbose)
+        printf("Grabbing PGM allocated size\n");
+
+    pas_ptr_hash_map_entry * entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, (void *) mem);
+    if (entry && entry->value) {
+        pas_pgm_storage* entry_val = (pas_pgm_storage *) entry->value;
+        ret.begin = mem;
+        ret.end = mem + entry_val->size_of_data_pages;
+        ret.heap = entry_val->large_heap;
+    }
+
+    return ret;
+}
 
 #if PAS_COMPILER(CLANG)
 #pragma mark -
@@ -237,7 +258,7 @@ bool pas_probabilistic_guard_malloc_should_call_pgm(void)
 // PGM being enabled in the heap config does not mean it will be enabled at runtime.
 // This function will be run once for all heaps (ISO, bmalloc, JIT, etc...), but only those with
 // pgm_enabled config will ultimately be called.
-void pas_probabilistic_malloc_initialize_pgm(void)
+void pas_probabilistic_guard_malloc_initialize_pgm(void)
 {
     if (!pas_pgm_is_initialized) {
         pas_pgm_is_initialized = true;

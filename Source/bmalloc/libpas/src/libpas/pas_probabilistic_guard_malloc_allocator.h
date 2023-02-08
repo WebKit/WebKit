@@ -46,6 +46,7 @@ struct pas_pgm_storage {
     uintptr_t start_of_data_pages;
     uintptr_t upper_guard_page;
     uintptr_t lower_guard_page;
+    pas_large_heap* large_heap;
 };
 
 // max amount of free memory that can be wasted (1MB)
@@ -73,8 +74,10 @@ size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void);
 
 bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem);
 
-void pas_probabilistic_malloc_initialize_pgm(void);
+void pas_probabilistic_guard_malloc_initialize_pgm(void);
 bool pas_probabilistic_guard_malloc_should_call_pgm(void);
+
+pas_large_map_entry pas_probabilistic_guard_malloc_return_as_large_map_entry(uintptr_t mem);
 
 PAS_END_EXTERN_C;
 

@@ -121,19 +121,35 @@ void testPGMRealloc() {
     PAS_UNUSED_PARAM(heap);
 
     // Realloc the same size
-    void* foo = bmalloc_try_allocate(1024);
-    foo = bmalloc_try_reallocate(foo, 2048, pas_reallocate_free_always);
-    
+    pas_heap_lock_lock();
+    pas_allocation_result foo = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
+    pas_heap_lock_unlock();
+
+    void * res = bmalloc_try_reallocate((void *) foo.begin, 10000000, pas_reallocate_free_always);
 
     // Realloc bigger size
 
+    pas_heap_lock_lock();
+    pas_allocation_result foo2 = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
+    pas_heap_lock_unlock();
+
+    res = bmalloc_try_reallocate((void *) foo2.begin, 20000000, pas_reallocate_free_always);
+
     // Realloc smaller size
+
+    pas_heap_lock_lock();
+    foo = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
+    pas_heap_lock_unlock();
+
+    res = bmalloc_try_reallocate((void *) foo.begin, 05000000, pas_reallocate_free_always);
 
     // Realloc size of 0
 
-
-    // exit code
+    pas_heap_lock_lock();
+    foo = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
     pas_heap_lock_unlock();
+
+    res = bmalloc_try_reallocate((void *) foo.begin, 0, pas_reallocate_free_always);
 }
 
 // Ensure all PGM errors cases are handled.
