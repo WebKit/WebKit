@@ -152,6 +152,24 @@ void Scavenger::schedule(size_t bytes)
     runSoon(lock);
 }
 
+void Scavenger::shutdown()
+{
+    {
+        LockHolder lock(mutex());
+        stopThread(lock);
+    }
+    m_thread.join();
+}
+
+void Scavenger::stopThread(const LockHolder&)
+{
+    RELEASE_BASSERT(m_thread.joinable());
+    RELEASE_BASSERT(m_running);
+
+    m_running = false;
+    m_condition.notify_all();
+}
+
 inline void dumpStats()
 {
     auto dump = [] (auto* string, auto size) {
@@ -315,14 +333,17 @@ void Scavenger::threadRunLoop()
     while (true) {
         if (m_state == State::Sleep) {
             UniqueLockHolder lock(mutex());
-            m_condition.wait(lock, [&]() { return m_state != State::Sleep; });
+            m_condition.wait(lock, [&]() { return !m_running || m_state != State::Sleep; });
         }
         
         if (m_state == State::RunSoon) {
             UniqueLockHolder lock(mutex());
-            m_condition.wait_for(lock, m_waitTime, [&]() { return m_state != State::RunSoon; });
+            m_condition.wait_for(lock, m_waitTime, [&]() { return !m_running || m_state != State::RunSoon; });
         }
-        
+
+        if (!m_running)
+            return;
+
         m_state = State::Sleep;
         
         setSelfQOSClass();

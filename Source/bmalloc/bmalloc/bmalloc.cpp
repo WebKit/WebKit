@@ -233,5 +233,17 @@ void disableScavenger()
 #endif
 }
 
+void shutdownScavenger()
+{
+#if BENABLE(LIBPAS)
+    // This is wrong. We need to shutdown libpath thread also.
+    pas_scavenger_suspend();
+#endif
+#if !BUSE(LIBPAS)
+    if (!DebugHeap::tryGet())
+        Scavenger::get()->shutdown();
+#endif
+}
+
 } } // namespace bmalloc::api
 

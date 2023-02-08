@@ -77,6 +77,7 @@ public:
 
     // Used for debugging only.
     void disable() { m_isEnabled = false; }
+    void shutdown();
 
 private:
     enum class State { Sleep, Run, RunSoon };
@@ -86,9 +87,10 @@ private:
 
     void scheduleIfUnderMemoryPressure(const LockHolder&, size_t bytes);
 
-    BNO_RETURN static void threadEntryPoint(Scavenger*);
-    BNO_RETURN void threadRunLoop();
-    
+    static void threadEntryPoint(Scavenger*);
+    void threadRunLoop();
+    void stopThread(const LockHolder&);
+
     void setSelfQOSClass();
     void setThreadName(const char*);
 
@@ -98,11 +100,12 @@ private:
     size_t m_scavengerBytes { 0 };
     std::chrono::milliseconds m_waitTime;
     bool m_isInMiniMode { false };
-    
+
     Mutex m_scavengingMutex;
     std::condition_variable_any m_condition;
 
     std::thread m_thread;
+    std::atomic<bool> m_running { true };
     std::chrono::steady_clock::time_point m_lastFullScavengeTime { std::chrono::steady_clock::now() };
 
 #if BOS(DARWIN)
