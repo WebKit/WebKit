@@ -42,6 +42,7 @@ void SharedCommandBlockAllocator::attachAllocator(SharedCommandMemoryAllocator *
 SharedCommandMemoryAllocator *SharedCommandBlockAllocator::detachAllocator(
     bool isCommandBufferEmpty)
 {
+    ASSERT(mAllocator);
     if (!isCommandBufferEmpty)
     {
         // Must call reset() after detach from non-empty command buffer (OK to have an empty RP)
@@ -91,22 +92,27 @@ void SharedCommandBlockPool::detachAllocator(SharedCommandMemoryAllocator *desti
     destinationOut = std::move(mAllocator);
 }
 
-uint32_t SharedCommandBlockPool::getCommandSize() const
-{
-    uint32_t result = mFinishedCommandSize;
-    if (mLastCommandBlock)
-    {
-        ASSERT(mAllocator.valid());
-        ASSERT(mAllocator.getPointer() >= mLastCommandBlock);
-        result += static_cast<uint32_t>(mAllocator.getPointer() - mLastCommandBlock);
-    }
-    return result;
-}
-
 void SharedCommandBlockPool::pushNewCommandBlock(uint8_t *block)
 {
     mLastCommandBlock = block;
     mCommandBuffer->pushToCommands(block);
+}
+
+void SharedCommandBlockPool::finishLastCommandBlock()
+{
+    mFinishedCommandSize = getCommandSize();
+    terminateLastCommandBlock();
+    mLastCommandBlock = nullptr;
+}
+
+void SharedCommandBlockPool::onRingBufferNewFragment()
+{
+    pushNewCommandBlock(mAllocator.getPointer());
+}
+
+void SharedCommandBlockPool::onRingBufferFragmentEnd()
+{
+    finishLastCommandBlock();
 }
 
 void SharedCommandBlockPool::getMemoryUsageStats(size_t *usedMemoryOut,

@@ -999,11 +999,11 @@ void RendererVk::ensureCapsInitialized() const
     // Geometry shaders are required for ES 3.2.
     if (mPhysicalDeviceFeatures.geometryShader)
     {
-        // TODO: geometry shader support is incomplete.  http://anglebug.com/3571
-        bool geometryShader = mFeatures.supportsTransformFeedbackExtension.enabled &&
-                              mFeatures.exposeNonConformantExtensionsAndVersions.enabled;
-        mNativeExtensions.geometryShaderEXT = geometryShader;
-        mNativeExtensions.geometryShaderOES = geometryShader;
+        bool geometryShaderEnabled = mFeatures.supportsTransformFeedbackExtension.enabled &&
+                                     (mFeatures.supportsPrimitivesGeneratedQuery.enabled ||
+                                      mFeatures.exposeNonConformantExtensionsAndVersions.enabled);
+        mNativeExtensions.geometryShaderEXT = geometryShaderEnabled;
+        mNativeExtensions.geometryShaderOES = geometryShaderEnabled;
         mNativeCaps.maxFramebufferLayers    = LimitToInt(limitsVk.maxFramebufferLayers);
 
         // Use "undefined" which means APP would have to set gl_Layer identically.
@@ -1032,11 +1032,12 @@ void RendererVk::ensureCapsInitialized() const
     {
         constexpr uint32_t kReservedTessellationDefaultUniformBindingCount = 2;
 
-        // TODO: tessellation shader support is incomplete.  http://anglebug.com/3572
-        mNativeExtensions.tessellationShaderEXT =
+        bool tessellationShaderEnabled =
             mFeatures.supportsTransformFeedbackExtension.enabled &&
-            mFeatures.exposeNonConformantExtensionsAndVersions.enabled;
-        mNativeCaps.maxPatchVertices = LimitToInt(limitsVk.maxTessellationPatchSize);
+            (mFeatures.supportsPrimitivesGeneratedQuery.enabled ||
+             mFeatures.exposeNonConformantExtensionsAndVersions.enabled);
+        mNativeExtensions.tessellationShaderEXT = tessellationShaderEnabled;
+        mNativeCaps.maxPatchVertices            = LimitToInt(limitsVk.maxTessellationPatchSize);
         mNativeCaps.maxTessPatchComponents =
             LimitToInt(limitsVk.maxTessellationControlPerPatchOutputComponents);
         mNativeCaps.maxTessGenLevel = LimitToInt(limitsVk.maxTessellationGenerationLevel);

@@ -10,6 +10,7 @@
 6746 TSAN : *_AsyncCommandQueue* = SKIP
 6804 TSAN : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = SKIP
 7159 TSAN : InstancingTestES3.LargeDivisor/* = SKIP
+8002 TSAN : MultithreadingTest.CreateMultiSharedContextAndDraw/* = SKIP
 
 // Generic
 // Fails in the flush thread when calling eglMakeCurrent.
@@ -757,6 +758,131 @@
 7833 IOS : ShaderBinaryTest.* = SKIP
 7853 IOS : FramebufferExtensionsTest.ColorBufferHalfFloat/ES2_OpenGL = SKIP
 
+// Some Metal tests fail on iOS Intel simulator
+7994 IOS METAL : CopyTextureTestES3.ES3FloatFormats/ES3_Metal = SKIP
+7994 IOS METAL : CopyTextureTestES3.CopySubTextureOffsetNonRenderableFloat/ES3_Metal = SKIP
+7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/ES2_Metal = SKIP
+7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad/ES3_Metal = SKIP
+7994 IOS METAL : CubeMapTextureTest.SampleCoordinateTransformGrad_ES3/ES3_Metal = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/ES2_Metal_NoFixture = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/ES2_Metal_NoFixture_HighPowerGPU = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/ES2_Metal_NoFixture_LowPowerGPU = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/ES3_Metal_NoFixture = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/ES3_Metal_NoFixture_HighPowerGPU = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceId/ES3_Metal_NoFixture_LowPowerGPU = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES2_Metal_NoFixture = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES2_Metal_NoFixture_HighPowerGPU = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES2_Metal_NoFixture_LowPowerGPU = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES3_Metal_NoFixture = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES3_Metal_NoFixture_HighPowerGPU = SKIP
+7994 IOS METAL : EGLDisplaySelectionTestDeviceId.DeviceIdConcurrently/ES3_Metal_NoFixture_LowPowerGPU = SKIP
+7994 IOS METAL : ETC1CompressedTextureTest.ETC1CompressedImageDraws/ES3_Metal = SKIP
+7994 IOS METAL : FramebufferTest_ES3.AttachmentsWithUnequalDimensions/ES3_Metal = SKIP
+7994 IOS METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBellowBaseLevelLOD/ES3_Metal = SKIP
+7994 IOS METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/ES3_Metal = SKIP
+7994 IOS METAL : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithSubImageWithBeyondMaxLevel/ES3_Metal = SKIP
+7994 IOS METAL : FramebufferTest_ES3.RenderSampleDepthTextureWithExcludedLevel/ES3_Metal = SKIP
+7994 IOS METAL : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/ES3_Metal = SKIP
+7994 IOS METAL : GLSLTest.EmbeddedStructUniformArray/ES2_Metal = SKIP
+7994 IOS METAL : GLSLTest.EmbeddedStructUniformArray/ES3_Metal = SKIP
+7994 IOS METAL : KTXCompressedTextureTest.CompressedTexImageETC1/ES2_Metal = SKIP
+7994 IOS METAL : KTXCompressedTextureTest.CompressedTexImageETC1/ES3_Metal = SKIP
+7994 IOS METAL : MaxTextureSizeTest.Render1xTexture/ES2_Metal = SKIP
+7994 IOS METAL : MultisampleTest.AlphaToSampleCoverage/ES2_Metal = SKIP
+7994 IOS METAL : MultisampleTest.AlphaToSampleCoverage/ES2_Metal_NoAllowMultisampleStoreAndResolve = SKIP
+7994 IOS METAL : MultisampleTest.AlphaToSampleCoverage/ES3_Metal = SKIP
+7994 IOS METAL : PixelLocalStorageTest.BlendAndColorMask/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.BlendAndColorMask/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.ClearValues_r32/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.ClearValues_r32/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.Coherency/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.Coherency/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.ForgetBarrier/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.ForgetBarrier/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FragmentReject_depth/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FragmentReject_depth/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FragmentReject_stencil/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FragmentReject_stencil/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FragmentReject_viewport/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FragmentReject_viewport/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FunctionArguments/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.FunctionArguments/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.LoadAfterStore/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.LoadAfterStore/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.LoadOnly/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.LoadOnly/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.LoadOps/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.LoadOps/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.MaxCombinedDrawBuffersAndPLSPlanes/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.MaxCombinedDrawBuffersAndPLSPlanes/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.MemorylessStorage/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.MemorylessStorage/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.MipMapLevels/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.MipMapLevels/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.PLSWithSamplers/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.PLSWithSamplers/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.ProgramCache/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.ProgramCache/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.R32/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.R32/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.RGBA8/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.RGBA8/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PointSpritesTest.PointSizeAboveMaxIsClamped/ES2_Metal = SKIP
+7994 IOS METAL : RobustBufferAccessWebGL2ValidationStateChangeTest.BindZeroSizeBufferThenDeleteBufferBug/ES3_Metal = SKIP
+7994 IOS METAL : SamplerTypeMixTestES3.SamplerTypeMixDraw/ES3_Metal = SKIP
+7994 IOS METAL : ShadowSamplerPlusSampler3DTestES3.ShadowSamplerPlusSampler3DDraw/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleIntegerTest.RGB8UI_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.A32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.A8_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.D16_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.D24_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.D32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.L32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.L8_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.LA32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.LA8_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.R32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.R8_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.RG32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.RG8_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.RGB10_A2_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.RGB32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.RGB8_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.RGBA32F_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.RGBA8_2D/ES3_Metal = SKIP
+7994 IOS METAL : SwizzleTest.SubUpdate/ES3_Metal = SKIP
+7994 IOS METAL : Texture2DDepthTest.DepthTextureES2Compatibility/ES2_Metal = SKIP
+7994 IOS METAL : Texture2DDepthTest.DepthTextureES2Compatibility/ES3_Metal = SKIP
+7994 IOS METAL : Texture2DTest.ManySupersedingTextureUpdates/ES2_Metal = SKIP
+7994 IOS METAL : Texture2DTest.TextureSizeCase1/ES2_Metal = SKIP
+7994 IOS METAL : TextureUploadFormatTest.All/ES3_Metal = SKIP
+7994 IOS METAL : TriangleFanDrawTest.DrawTriangleFanPrimitiveRestartAtBegin/ES3_Metal = SKIP
+7994 IOS METAL : TriangleFanDrawTest.DrawTriangleFanPrimitiveRestartAtBegin/ES3_Metal_ForceBufferGPUStorage = SKIP
+7994 IOS METAL : TriangleFanDrawTest.DrawTriangleFanPrimitiveRestartAtBegin/ES3_Metal_NoHasExplicitMemBarrier_NoHasCheapRenderPass = SKIP
+7994 IOS METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMatrixAndInstanced/ES3_Metal = SKIP
+7994 IOS METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMixStructFloatAndMat4/ES3_Metal = SKIP
+7994 IOS METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMixStructMat4AndFloat/ES3_Metal = SKIP
+7994 IOS METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsStructAndInstancedArray/ES3_Metal = SKIP
+7994 IOS METAL : UniformBlockWithOneLargeArrayMemberTest.SharedSameBufferWithOtherOne/ES3_Metal = SKIP
+7994 IOS METAL : UniformBlockWithOneLargeArrayMemberTest.TwoUniformBlocksInSameProgram/ES3_Metal = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingMatrixAttribLocations/ES2_Metal = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingMatrixAttribLocations/ES3_Metal = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingMatrixAttribLocations/ES3_Metal_HasCheapRenderPass_NoHasExplicitMemBarrier = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingMatrixAttribLocations/ES3_Metal_NoHasExplicitMemBarrier_NoHasCheapRenderPass = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocations/ES2_Metal = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocations/ES3_Metal = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocations/ES3_Metal_HasCheapRenderPass_NoHasExplicitMemBarrier = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocations/ES3_Metal_NoHasExplicitMemBarrier_NoHasCheapRenderPass = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocationsDifferingPrecisions/ES2_Metal = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocationsDifferingPrecisions/ES3_Metal = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocationsDifferingPrecisions/ES3_Metal_HasCheapRenderPass_NoHasExplicitMemBarrier = SKIP
+7994 IOS METAL : VertexAttributeTest.AliasingVectorAttribLocationsDifferingPrecisions/ES3_Metal_NoHasExplicitMemBarrier_NoHasCheapRenderPass = SKIP
+7994 IOS METAL : VertexAttributeTestES3.DrawWithUnalignedData/ES3_Metal = SKIP
+7994 IOS METAL : VertexAttributeTestES3.DrawWithUnalignedData/ES3_Metal_HasCheapRenderPass_NoHasExplicitMemBarrier = SKIP
+7994 IOS METAL : VertexAttributeTestES3.DrawWithUnalignedData/ES3_Metal_NoHasExplicitMemBarrier_NoHasCheapRenderPass = SKIP
+7994 IOS METAL : WebGL2ReadOutsideFramebufferTest.CopyTexSubImage3D/ES2_Metal = SKIP
+7994 IOS METAL : WebGL2ValidationStateChangeTest.MultiAttachmentDrawFramebufferNegativeAPI/ES3_Metal = SKIP
+
 // Test is disabled as it only pertains to desktop GLSL
 6197 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = SKIP
 
@@ -880,11 +1006,12 @@
 
 // Flaky hangs on Linux SwANGLE
 7419 SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchBeforeRenderPass/* = SKIP
-7419 WIN SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchMidRenderPass/* = SKIP
 7419 SWIFTSHADER : MultithreadingTestES3.Thread* = SKIP
 
 // Flaky timeout on Windows SwANGLE
 7900 WIN SWIFTSHADER : InstancingTestES3.LargeDivisor/ES3_Vulkan_SwiftShader/* = SKIP
+7419 WIN SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchMidRenderPass/* = SKIP
+7992 WIN SWIFTSHADER : MultithreadingTestES3.ProgramUseAndDestroyInTwoContexts/* = SKIP
 
 // Timeout with SwiftShader and MAC OpenGL due to large workloads
 7389 SWIFTSHADER : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
@@ -946,13 +1073,6 @@
 5458 ASAN VULKAN SWIFTSHADER : ClipCullDistanceTest.SizeCheckCombined/* = SKIP
 7922 TSAN VULKAN SWIFTSHADER : ClipCullDistanceTest.SizeCheckCombined/* = SKIP
 
-// Slow tests, should appear last in this file
-5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT
-5076 : GLSLTest.VerifyMaxFragmentUniformVectors* = TIMEOUT
-6261 : MultithreadingTest* = TIMEOUT
-// Please do not add expectations below this line,
-// so that TIMEOUT expectations above don't override more precise SKIP expectations
-
 7629 VULKAN : EGLRobustnessTestES3.Context*ResetOnInvalidLocalShaderVariableAccess_ShareGroupAfterProgramCreation/* = SKIP
 
 // EXT_multisample_compatibility exposed for the sake of GLES1, but not implemented on Vulkan
@@ -975,3 +1095,9 @@
 // GL program cache failure with shader images.
 7797 WIN OPENGL : PixelLocalStorageTest.ProgramCache/* = SKIP
 
+// Slow tests, should appear last in this file
+5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT
+5076 : GLSLTest.VerifyMaxFragmentUniformVectors* = TIMEOUT
+6261 : MultithreadingTest* = TIMEOUT
+// Please do not add expectations below this line,
+// so that TIMEOUT expectations above don't override more precise SKIP expectations

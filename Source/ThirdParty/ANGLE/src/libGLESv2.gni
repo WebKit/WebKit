@@ -10,6 +10,7 @@ libangle_common_headers = [
   "src/common/Color.inc",
   "src/common/CompiledShaderState.h",
   "src/common/FastVector.h",
+  "src/common/FixedQueue.h",
   "src/common/FixedVector.h",
   "src/common/MemoryBuffer.h",
   "src/common/Optional.h",

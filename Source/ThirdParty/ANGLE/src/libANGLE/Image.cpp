@@ -138,9 +138,9 @@ bool ImageSibling::isYUV() const
     return mTargetOf.get() && mTargetOf->isYUV();
 }
 
-bool ImageSibling::isCreatedWithAHB() const
+bool ImageSibling::isExternalImageWithoutIndividualSync() const
 {
-    return mTargetOf.get() && mTargetOf->isCreatedWithAHB();
+    return mTargetOf.get() && mTargetOf->isExternalImageWithoutIndividualSync();
 }
 
 bool ImageSibling::hasFrontBufferUsage() const
@@ -295,7 +295,6 @@ ImageState::ImageState(ImageID id,
       size(),
       samples(),
       levelCount(1),
-      sourceType(target),
       colorspace(
           static_cast<EGLenum>(attribs.get(EGL_GL_COLORSPACE, EGL_GL_COLORSPACE_DEFAULT_EXT))),
       hasProtectedContent(static_cast<bool>(attribs.get(EGL_PROTECTED_CONTENT_EXT, EGL_FALSE)))
@@ -337,7 +336,7 @@ void Image::onDestroy(const Display *display)
         mState.source->removeImageSource(this);
 
         // If the source is an external object, delete it
-        if (IsExternalImageTarget(mState.sourceType))
+        if (IsExternalImageTarget(mState.target))
         {
             ExternalImageSibling *externalSibling = rx::GetAs<ExternalImageSibling>(mState.source);
             externalSibling->onDestroy(display);
@@ -379,7 +378,7 @@ angle::Result Image::orphanSibling(const gl::Context *context, ImageSibling *sib
     if (mState.source == sibling)
     {
         // The external source of an image cannot be redefined so it cannot be orphaned.
-        ASSERT(!IsExternalImageTarget(mState.sourceType));
+        ASSERT(!IsExternalImageTarget(mState.target));
 
         // If the sibling is the source, it cannot be a target.
         ASSERT([&] {
@@ -406,17 +405,17 @@ const gl::Format &Image::getFormat() const
 
 bool Image::isRenderable(const gl::Context *context) const
 {
-    if (IsTextureTarget(mState.sourceType))
+    if (IsTextureTarget(mState.target))
     {
         return mState.format.info->textureAttachmentSupport(context->getClientVersion(),
                                                             context->getExtensions());
     }
-    else if (IsRenderbufferTarget(mState.sourceType))
+    else if (IsRenderbufferTarget(mState.target))
     {
         return mState.format.info->renderbufferSupport(context->getClientVersion(),
                                                        context->getExtensions());
     }
-    else if (IsExternalImageTarget(mState.sourceType))
+    else if (IsExternalImageTarget(mState.target))
     {
         ASSERT(mState.source != nullptr);
         return mState.source->isRenderable(context, GL_NONE, gl::ImageIndex());
@@ -428,16 +427,16 @@ bool Image::isRenderable(const gl::Context *context) const
 
 bool Image::isTexturable(const gl::Context *context) const
 {
-    if (IsTextureTarget(mState.sourceType))
+    if (IsTextureTarget(mState.target))
     {
         return mState.format.info->textureSupport(context->getClientVersion(),
                                                   context->getExtensions());
     }
-    else if (IsRenderbufferTarget(mState.sourceType))
+    else if (IsRenderbufferTarget(mState.target))
     {
         return true;
     }
-    else if (IsExternalImageTarget(mState.sourceType))
+    else if (IsExternalImageTarget(mState.target))
     {
         ASSERT(mState.source != nullptr);
         return rx::GetAs<ExternalImageSibling>(mState.source)->isTextureable(context);
@@ -452,9 +451,10 @@ bool Image::isYUV() const
     return mState.yuv;
 }
 
-bool Image::isCreatedWithAHB() const
+bool Image::isExternalImageWithoutIndividualSync() const
 {
-    return mState.target == EGL_NATIVE_BUFFER_ANDROID;
+    // Only Vulkan images are individually synced.
+    return IsExternalImageTarget(mState.target) && mState.target != EGL_VULKAN_IMAGE_ANGLE;
 }
 
 bool Image::hasFrontBufferUsage() const
@@ -515,7 +515,7 @@ rx::ImageImpl *Image::getImplementation() const
 
 Error Image::initialize(const Display *display)
 {
-    if (IsExternalImageTarget(mState.sourceType))
+    if (IsExternalImageTarget(mState.target))
     {
         ExternalImageSibling *externalSibling = rx::GetAs<ExternalImageSibling>(mState.source);
         ANGLE_TRY(externalSibling->initialize(display));
@@ -541,7 +541,7 @@ Error Image::initialize(const Display *display)
         mState.format = gl::Format(nonLinearFormat);
     }
 
-    if (!IsExternalImageTarget(mState.sourceType))
+    if (!IsExternalImageTarget(mState.target))
     {
         // Account for the fact that GL_ANGLE_yuv_internal_format extension maybe enabled,
         // in which case the internal format itself could be YUV.
@@ -551,7 +551,7 @@ Error Image::initialize(const Display *display)
     mState.size    = mState.source->getAttachmentSize(mState.imageIndex);
     mState.samples = mState.source->getAttachmentSamples(mState.imageIndex);
 
-    if (IsTextureTarget(mState.sourceType))
+    if (IsTextureTarget(mState.target))
     {
         mState.size.depth = 1;
     }

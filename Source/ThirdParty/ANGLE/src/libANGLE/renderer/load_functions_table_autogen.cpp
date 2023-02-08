@@ -1767,7 +1767,7 @@ LoadImageFunctionInfo DEPTH24_STENCIL8_to_D24_UNORM_S8_UINT(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_INT_24_8:
-            return LoadImageFunctionInfo(LoadR32ToR24G8, true);
+            return LoadImageFunctionInfo(LoadD24S8ToS8D24, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -1791,7 +1791,7 @@ LoadImageFunctionInfo DEPTH32F_STENCIL8_to_D24_UNORM_S8_UINT(GLenum type)
     switch (type)
     {
         case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
-            return LoadImageFunctionInfo(LoadD32FS8X24ToD24S8, true);
+            return LoadImageFunctionInfo(LoadD32FS8X24ToS8D24, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -1829,9 +1829,9 @@ LoadImageFunctionInfo DEPTH_COMPONENT16_to_D32_FLOAT(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_INT:
-            return LoadImageFunctionInfo(LoadUNorm32To32F, true);
+            return LoadImageFunctionInfo(LoadD32ToD32F, true);
         case GL_UNSIGNED_SHORT:
-            return LoadImageFunctionInfo(LoadUNorm16To32F, true);
+            return LoadImageFunctionInfo(LoadD16ToD32F, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -1843,7 +1843,7 @@ LoadImageFunctionInfo DEPTH_COMPONENT24_to_D24_UNORM_S8_UINT(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_INT:
-            return LoadImageFunctionInfo(LoadR32ToR24G8, true);
+            return LoadImageFunctionInfo(LoadD32ToX8D24, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -1855,7 +1855,7 @@ LoadImageFunctionInfo DEPTH_COMPONENT24_to_D24_UNORM_X8_UINT(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_INT:
-            return LoadImageFunctionInfo(LoadR32ToR24G8, true);
+            return LoadImageFunctionInfo(LoadD32ToX8D24, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -1867,7 +1867,7 @@ LoadImageFunctionInfo DEPTH_COMPONENT24_to_D32_FLOAT(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_INT:
-            return LoadImageFunctionInfo(LoadD24S8ToD32F, true);
+            return LoadImageFunctionInfo(LoadD32ToD32F, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -1917,7 +1917,7 @@ LoadImageFunctionInfo DEPTH_COMPONENT32_OES_to_default(GLenum type)
     switch (type)
     {
         case GL_UNSIGNED_INT:
-            return LoadImageFunctionInfo(LoadR32ToR24G8, true);
+            return LoadImageFunctionInfo(LoadD32ToX8D24, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -3676,6 +3676,18 @@ LoadImageFunctionInfo SRGB8_ALPHA8_to_R8G8B8A8_UNORM_SRGB(GLenum type)
     {
         case GL_UNSIGNED_BYTE:
             return LoadImageFunctionInfo(LoadToNative<GLubyte, 4>, false);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo STENCIL_INDEX8_to_D24_UNORM_S8_UINT(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadS8ToS8X24, true);
         default:
             UNREACHABLE();
             return LoadImageFunctionInfo(UnreachableLoadFunction, true);
@@ -5447,6 +5459,8 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
         {
             switch (angleFormat)
             {
+                case FormatID::D24_UNORM_S8_UINT:
+                    return STENCIL_INDEX8_to_D24_UNORM_S8_UINT;
                 case FormatID::S8_UINT:
                     return STENCIL_INDEX8_to_S8_UINT;
                 default:

@@ -275,6 +275,10 @@ struct FeaturesMtl : FeatureSetBase
         "disableRasterOrderGroups", FeatureCategory::MetalFeatures,
         "Disable raster order groups in order to test pixel local storage memory barriers",
         &members, "http://anglebug.com/7279"};
+
+    FeatureInfo enableInMemoryMtlLibraryCache = {
+        "enableInMemoryMtlLibraryCache", FeatureCategory::MetalFeatures,
+        "Cache MTLLibrary objects in memory.", &members, "http://crbug.com/1385510"};
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

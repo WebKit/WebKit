@@ -16,6 +16,7 @@
 #include "common/debug.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/Display.h"
+#include "libANGLE/Query.h"
 #include "libANGLE/TransformFeedback.h"
 #include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
@@ -1388,12 +1389,15 @@ void ContextMtl::updateExtendedState(const gl::State &glState)
 // Disjoint timer queries
 GLint ContextMtl::getGPUDisjoint()
 {
-    UNIMPLEMENTED();
+    // Implementation currently is not affected by this.
     return 0;
 }
+
 GLint64 ContextMtl::getTimestamp()
 {
-    UNIMPLEMENTED();
+    // Timestamps are currently unsupported. An implementation
+    // strategy is written up in anglebug.com/7828 if they're needed
+    // in the future.
     return 0;
 }
 
@@ -1401,6 +1405,11 @@ GLint64 ContextMtl::getTimestamp()
 angle::Result ContextMtl::onMakeCurrent(const gl::Context *context)
 {
     invalidateState(context);
+    gl::Query *query = mState.getActiveQuery(gl::QueryType::TimeElapsed);
+    if (query)
+    {
+        GetImplAs<QueryMtl>(query)->onContextMakeCurrent(context);
+    }
     return angle::Result::Continue;
 }
 angle::Result ContextMtl::onUnMakeCurrent(const gl::Context *context)
@@ -1411,6 +1420,11 @@ angle::Result ContextMtl::onUnMakeCurrent(const gl::Context *context)
     // to be flushed. This is a temporary fix and we should probably refactor
     // this later. See TODO(anglebug.com/7138)
     flushCommandBuffer(mtl::WaitUntilScheduled);
+    gl::Query *query = mState.getActiveQuery(gl::QueryType::TimeElapsed);
+    if (query)
+    {
+        GetImplAs<QueryMtl>(query)->onContextUnMakeCurrent(context);
+    }
     return angle::Result::Continue;
 }
 
@@ -2928,8 +2942,9 @@ angle::Result ContextMtl::copyTextureSliceLevelToWorkBuffer(
     // Expand the buffer if it is not big enough.
     if (!mWorkBuffer || mWorkBuffer->size() < sizeInBytes)
     {
-        ANGLE_TRY(mtl::Buffer::MakeBufferWithSharedMemOpt(this, true, sizeInBytes, nullptr,
-                                                          &mWorkBuffer));
+        ANGLE_TRY(mtl::Buffer::MakeBufferWithStorageMode(
+            this, mtl::Buffer::getStorageModeForSharedBuffer(this), sizeInBytes, nullptr,
+            &mWorkBuffer));
     }
 
     gl::Rectangle region(0, 0, width, height);

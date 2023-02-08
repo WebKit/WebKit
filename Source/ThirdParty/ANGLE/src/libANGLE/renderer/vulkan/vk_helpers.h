@@ -1119,7 +1119,7 @@ class CommandBufferHelperCommon : angle::NonCopyable
 
     const QueueSerial &getQueueSerial() const { return mQueueSerial; }
 
-    SecondaryCommandBlockAllocator *getAllocator() { return &mCommandAllocator; }
+    bool hasAllocatorLinks() const { return mCommandAllocator.hasAllocatorLinks(); }
 
     // Dumping the command stream is disabled by default.
     static constexpr bool kEnableCommandStreamDiagnostics = false;
@@ -1288,7 +1288,10 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
 
     angle::Result reset(Context *context);
 
-    RenderPassCommandBuffer &getCommandBuffer() { return mCommandBuffers[mCurrentSubpass]; }
+    RenderPassCommandBuffer &getCommandBuffer()
+    {
+        return mCommandBuffers[mCurrentSubpassCommandBufferIndex];
+    }
 
     bool empty() const { return !started(); }
 
@@ -1446,6 +1449,8 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     void addCommandDiagnostics(ContextVk *contextVk);
 
   private:
+    uint32_t getSubpassCommandBufferCount() const { return mCurrentSubpassCommandBufferIndex + 1; }
+
     angle::Result initializeCommandBuffer(Context *context);
     angle::Result beginRenderPassCommandBuffer(ContextVk *contextVk);
     angle::Result endRenderPassCommandBuffer(ContextVk *contextVk);
@@ -1482,7 +1487,7 @@ class RenderPassCommandBufferHelper final : public CommandBufferHelperCommon
     // dynamic.
     static constexpr size_t kMaxSubpassCount = 2;
     std::array<RenderPassCommandBuffer, kMaxSubpassCount> mCommandBuffers;
-    uint32_t mCurrentSubpass;
+    uint32_t mCurrentSubpassCommandBufferIndex;
 
     // RenderPass state
     uint32_t mCounter;
@@ -1740,7 +1745,8 @@ class ImageHelper final : public Resource, public angle::Subject
     angle::Result initMemory(Context *context,
                              bool hasProtectedContent,
                              const MemoryProperties &memoryProperties,
-                             VkMemoryPropertyFlags flags);
+                             VkMemoryPropertyFlags flags,
+                             vk::MemoryAllocationType);
     angle::Result initExternalMemory(Context *context,
                                      const MemoryProperties &memoryProperties,
                                      const VkMemoryRequirements &memoryRequirements,

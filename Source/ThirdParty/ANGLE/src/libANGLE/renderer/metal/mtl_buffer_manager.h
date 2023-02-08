@@ -60,7 +60,11 @@ class BufferManager
 
     static constexpr size_t kMaxStagingBufferSize = 1024 * 1024;
     static constexpr size_t kMaxSizePowerOf2      = 64;
-
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    static constexpr int kNumCachedStorageModes = 2;
+#else
+    static constexpr int kNumCachedStorageModes = 1;
+#endif
     angle::Result queueBlitCopyDataToBuffer(ContextMtl *contextMtl,
                                             const void *srcPtr,
                                             size_t sizeToCopy,
@@ -68,8 +72,8 @@ class BufferManager
                                             mtl::BufferRef &dstMetalBuffer);
 
     angle::Result getBuffer(ContextMtl *contextMtl,
+                            MTLStorageMode storageMode,
                             size_t size,
-                            bool useSharedMem,
                             mtl::BufferRef &bufferRef);
     void returnBuffer(ContextMtl *contextMtl, mtl::BufferRef &bufferRef);
 
@@ -81,7 +85,7 @@ class BufferManager
 
     BufferList mInUseBuffers;
 
-    angle::FixedVector<BufferList, kMaxSizePowerOf2> mFreeBuffers[2];
+    angle::FixedVector<BufferList, kMaxSizePowerOf2> mFreeBuffers[kNumCachedStorageModes];
 #ifdef ANGLE_MTL_TRACK_BUFFER_MEM
     angle::FixedVector<size_t, kMaxSizePowerOf2> mAllocations;
     size_t mTotalMem = 0;

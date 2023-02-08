@@ -131,5 +131,11 @@ void ContextDevice::setOwnerWithIdentity(id<MTLResource> resource) const
     mtl::setOwnerWithIdentity(resource, mOwnershipIdentity);
 #endif
 }
+
+bool ContextDevice::hasUnifiedMemory() const
+{
+    return [get() hasUnifiedMemory];
 }
-}
+
+}  // namespace mtl
+}  // namespace rx

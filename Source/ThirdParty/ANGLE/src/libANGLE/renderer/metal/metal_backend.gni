@@ -62,6 +62,8 @@ metal_backend_sources = [
   "mtl_format_table_autogen.mm",
   "mtl_format_utils.h",
   "mtl_format_utils.mm",
+  "mtl_library_cache.h",
+  "mtl_library_cache.mm",
   "mtl_msl_utils.h",
   "mtl_msl_utils.mm",
   "mtl_occlusion_query_pool.h",
