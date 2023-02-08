@@ -61,6 +61,11 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Re
         m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));
 }
 
+void ResourceTiming::updateExposure(const SecurityOrigin& origin)
+{
+    m_isSameOriginRequest = m_isSameOriginRequest && origin.canRequest(m_url);
+}
+
 Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming() const
 {
     return WTF::map(m_serverTiming, [] (auto& entry) {
