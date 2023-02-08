@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleDeprecatedFlexibleBoxData);
+
 StyleDeprecatedFlexibleBoxData::StyleDeprecatedFlexibleBoxData()
     : flex(RenderStyle::initialBoxFlex())
     , flexGroup(RenderStyle::initialBoxFlexGroup())

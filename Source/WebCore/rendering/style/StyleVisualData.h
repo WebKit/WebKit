@@ -31,7 +31,9 @@
 
 namespace WebCore {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleVisualData);
 class StyleVisualData : public RefCounted<StyleVisualData> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleVisualData);
 public:
     static Ref<StyleVisualData> create() { return adoptRef(*new StyleVisualData); }
     Ref<StyleVisualData> copy() const;
