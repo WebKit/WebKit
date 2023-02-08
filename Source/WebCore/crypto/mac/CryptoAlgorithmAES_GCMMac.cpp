@@ -39,13 +39,10 @@ static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, co
 {
     Vector<uint8_t> cipherText(plainText.size() + desiredTagLengthInBytes); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
-    // tagLength is actual an input <rdar://problem/30660074>
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CCCryptorStatus status = CCCryptorGCM(kCCEncrypt, kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), plainText.data(), plainText.size(), cipherText.data(), tag.data(), &desiredTagLengthInBytes);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    CCCryptorStatus status = CCCryptorGCMOneshotEncrypt(kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), plainText.data(), plainText.size(), cipherText.data(), tag.data(), desiredTagLengthInBytes);
     if (status)
         return Exception { OperationError };
-
+    
     memcpy(cipherText.data() + plainText.size(), tag.data(), desiredTagLengthInBytes);
 
     return WTFMove(cipherText);
@@ -54,17 +51,10 @@ static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, co
 static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
     Vector<uint8_t> plainText(cipherText.size()); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
-    Vector<uint8_t> tag(desiredTagLengthInBytes);
     size_t offset = cipherText.size() - desiredTagLengthInBytes;
-    // tagLength is actual an input <rdar://problem/30660074>
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    CCCryptorStatus status = CCCryptorGCM(kCCDecrypt, kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), cipherText.data(), offset, plainText.data(), tag.data(), &desiredTagLengthInBytes);
-    ALLOW_DEPRECATED_DECLARATIONS_END
-    if (status)
-        return Exception { OperationError };
+    CCCryptorStatus status = CCCryptorGCMOneshotDecrypt(kCCAlgorithmAES, key.data(), key.size(), iv.data(), iv.size(), additionalData.data(), additionalData.size(), cipherText.data(), offset, plainText.data(), cipherText.end() - desiredTagLengthInBytes, desiredTagLengthInBytes);
 
-    // Using a constant time comparison to prevent timing attacks.
-    if (constantTimeMemcmp(tag.data(), cipherText.data() + offset, desiredTagLengthInBytes))
+    if (status)
         return Exception { OperationError };
 
     plainText.shrink(offset);

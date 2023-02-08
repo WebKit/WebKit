@@ -121,7 +121,8 @@ extern "C" CCStatus CCDeriveKey(const CCKDFParametersRef params, CCDigestAlgorit
 extern "C" CCStatus CCKDFParametersCreateHkdf(CCKDFParametersRef *params, const void *salt, size_t saltLen, const void *context, size_t contextLen);
 extern "C" void CCKDFParametersDestroy(CCKDFParametersRef params);
 extern "C" CCCryptorStatus CCCryptorGCM(CCOperation op, CCAlgorithm alg, const void* key, size_t keyLength, const void* iv, size_t ivLen, const void* aData, size_t aDataLen, const void* dataIn, size_t dataInLength, void* dataOut, void* tag, size_t* tagLength);
-extern "C" CCCryptorStatus CCCryptorGCMOneshotDecrypt(CCAlgorithm alg, const void *key, size_t keyLength, const void  *iv, size_t ivLen, const void  *aData, size_t aDataLen, const void *dataIn, size_t dataInLength, void        *dataOut, const void  *tagIn, size_t tagLength);
+extern "C" CCCryptorStatus CCCryptorGCMOneshotEncrypt(CCAlgorithm alg, const void *key, size_t keyLength, const void  *iv, size_t ivLen, const void  *aData, size_t aDataLen, const void *dataIn, size_t dataInLength, void *dataOut, const void *tagIn, size_t tagLength);
+extern "C" CCCryptorStatus CCCryptorGCMOneshotDecrypt(CCAlgorithm alg, const void *key, size_t keyLength, const void  *iv, size_t ivLen, const void  *aData, size_t aDataLen, const void *dataIn, size_t dataInLength, void *dataOut, const void *tagIn, size_t tagLength);
 extern "C" CCCryptorStatus CCRSACryptorCreateFromData(CCRSAKeyType keyType, const uint8_t *modulus, size_t modulusLength, const uint8_t *exponent, size_t exponentLength, const uint8_t *p, size_t pLength, const uint8_t *q, size_t qLength, CCRSACryptorRef *ref);
 
 #endif // !USE(APPLE_INTERNAL_SDK)
