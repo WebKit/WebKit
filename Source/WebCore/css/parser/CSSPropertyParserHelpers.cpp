@@ -4672,10 +4672,8 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext
             return consumeGeneratedImage(range, context);
 
         if (allowedImageTypes.contains(AllowedImageType::ImageSet)) {
-            if (functionId == CSSValueImageSet)
+            if (functionId == CSSValueImageSet || functionId == CSSValueWebkitImageSet)
                 return consumeImageSet(range, context, (allowedImageTypes | AllowedImageType::RawStringAsURL) - AllowedImageType::ImageSet);
-            if (functionId == CSSValueWebkitImageSet)
-                return consumeImageSet(range, context, AllowedImageType::URLFunction);
         }
     }
 
