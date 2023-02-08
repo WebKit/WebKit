@@ -97,7 +97,7 @@ public:
     StructureStubInfo(AccessType accessType, CodeOrigin codeOrigin)
         : codeOrigin(codeOrigin)
         , accessType(accessType)
-        , bufferingCountdown(Options::repatchBufferingCountdown())
+        , bufferingCountdown(Options::initialRepatchBufferingCountdown())
     {
     }
 
