@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBackgroundData);
+
 StyleBackgroundData::StyleBackgroundData()
     : background(FillLayer::create(FillLayerType::Background))
     , color(RenderStyle::initialBackgroundColor())

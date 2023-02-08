@@ -90,6 +90,7 @@ struct SameSizeAsRenderStyle {
 
 static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
 
 RenderStyle& RenderStyle::defaultStyle()
@@ -404,7 +405,7 @@ void RenderStyle::copyPseudoElementsFrom(const RenderStyle& other)
     if (!other.m_cachedPseudoStyles)
         return;
 
-    for (auto& pseudoElementStyle : *other.m_cachedPseudoStyles)
+    for (auto& pseudoElementStyle : other.m_cachedPseudoStyles->styles)
         addCachedPseudoStyle(makeUnique<RenderStyle>(cloneIncludingPseudoElements(*pseudoElementStyle)));
 }
 
@@ -428,7 +429,7 @@ bool RenderStyle::hasUniquePseudoStyle() const
     if (!m_cachedPseudoStyles || styleType() != PseudoId::None)
         return false;
 
-    for (auto& pseudoStyle : *m_cachedPseudoStyles) {
+    for (auto& pseudoStyle : m_cachedPseudoStyles->styles) {
         if (pseudoStyle->unique())
             return true;
     }
@@ -438,10 +439,10 @@ bool RenderStyle::hasUniquePseudoStyle() const
 
 RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
 {
-    if (!m_cachedPseudoStyles || !m_cachedPseudoStyles->size())
+    if (!m_cachedPseudoStyles)
         return nullptr;
 
-    for (auto& pseudoStyle : *m_cachedPseudoStyles) {
+    for (auto& pseudoStyle : m_cachedPseudoStyles->styles) {
         if (pseudoStyle->styleType() == pid)
             return pseudoStyle.get();
     }
@@ -461,7 +462,7 @@ RenderStyle* RenderStyle::addCachedPseudoStyle(std::unique_ptr<RenderStyle> pseu
     if (!m_cachedPseudoStyles)
         m_cachedPseudoStyles = makeUnique<PseudoStyleCache>();
 
-    m_cachedPseudoStyles->append(WTFMove(pseudo));
+    m_cachedPseudoStyles->styles.append(WTFMove(pseudo));
 
     return result;
 }
