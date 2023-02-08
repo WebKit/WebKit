@@ -295,8 +295,10 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
         auto invalidationRuleSets = makeUnique<Vector<InvalidationRuleSet>>();
         invalidationRuleSets->reserveInitialCapacity(invalidationRuleSetMap.size());
 
-        for (auto& invalidationRuleSet : invalidationRuleSetMap.values())
+        for (auto& invalidationRuleSet : invalidationRuleSetMap.values()) {
+            invalidationRuleSet.ruleSet->shrinkToFit();
             invalidationRuleSets->uncheckedAppend(WTFMove(invalidationRuleSet));
+        }
 
         return invalidationRuleSets;
     }).iterator->value.get();
