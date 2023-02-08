@@ -1898,9 +1898,12 @@ void NetworkProcessProxy::deleteWebsiteDataInWebProcessesForOrigin(OptionSet<Web
         ViewSnapshotStore::singleton().discardSnapshotImagesForOrigin(origin.topOrigin);
 #endif
         // Since this navigation requested that we clear existing navigation snapshots, we shouldn't
-        // create a snapshot for this navigation either.
-        if (auto page = WebProcessProxy::webPage(webPageProxyID))
-            page->suppressNextAutomaticNavigationSnapshot();
+        // create a snapshot for this navigation either if it is same-origin.
+        if (auto page = WebProcessProxy::webPage(webPageProxyID)) {
+            bool isSameOriginNavigation = SecurityOriginData::fromURL(URL(page->pageLoadState().url())) == origin.topOrigin;
+            if (isSameOriginNavigation)
+                page->suppressNextAutomaticNavigationSnapshot();
+        }
     }
 }
 

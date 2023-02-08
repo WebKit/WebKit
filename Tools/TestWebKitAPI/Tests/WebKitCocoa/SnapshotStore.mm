@@ -245,4 +245,32 @@ TEST(SnapshotStore, ClearSiteDataHeader)
     EXPECT_FALSE(!!adoptCF([[backForwardList itemAtIndex:-2] _copySnapshotForTesting]));
 }
 
+TEST(SnapshotStore, ClearSiteDataHeaderCrossOrigin)
+{
+    HTTPServer server({
+        { "/index1.html"_s, { "foo"_s } },
+        { "/crossOrigin.html"_s, { "bar"_s } },
+        { "/logout.html"_s, { { { "Content-Type"_s, "text/html"_s }, { "Clear-Site-Data"_s, "\"*\""_s } }, "Logged out."_s } },
+    }, HTTPServer::Protocol::Https);
+
+    auto webView = adoptNS([[SnapshotTestWKWebView alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ClearSiteDataHTTPHeaderEnabled"]) {
+            [[[webView configuration] preferences] _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+
+    auto *backForwardList = [webView backForwardList];
+    [webView synchronouslyLoadRequestPageAndForceRepaint:server.request("/index1.html"_s)];
+    [webView synchronouslyLoadRequestPageAndForceRepaint:server.requestWithLocalhost("/crossOrigin.html"_s)];
+    EXPECT_TRUE(!!adoptCF([backForwardList.backItem _copySnapshotForTesting]));
+
+    [webView synchronouslyLoadRequestPageAndForceRepaint:server.request("/logout.html"_s)];
+    // Shouldn't clear the crossOrigin.html snapshot since it was cross-origin.
+    EXPECT_TRUE(!!adoptCF([backForwardList.backItem _copySnapshotForTesting]));
+    // Should have cleared the index1.html snapshot though since it was same-origin.
+    EXPECT_FALSE(!!adoptCF([[backForwardList itemAtIndex:-2] _copySnapshotForTesting]));
+}
+
 #endif // PLATFORM(MAC)
