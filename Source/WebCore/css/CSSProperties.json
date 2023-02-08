@@ -3789,7 +3789,7 @@
                 },
                 {
                     "getter": "specifiedLineHeight",
-                    "conditional-converter": "LineHeight",
+                    "converter": "LineHeight",
                     "enable-if": "!ENABLE_TEXT_AUTOSIZING",
                     "parser-grammar": "normal | <number [0,inf]> | <length-percentage [0,inf]>",
                     "parser-exported": true
