@@ -681,11 +681,29 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         let target = WI.assumingMainTarget();
+
         let commandArguments = {
             enabled,
             highlightConfig: DOMManager.buildHighlightConfig(),
             showRulers: WI.settings.showRulersDuringElementSelection.value,
         };
+        if (WI.settings.showGridOverlayDuringElementSelection.value) {
+            commandArguments.gridOverlayConfig = {
+                gridColor: WI.DOMNode.defaultLayoutOverlayColor.toProtocol(),
+                showLineNames: WI.settings.gridOverlayShowLineNames.value,
+                showLineNumbers: WI.settings.gridOverlayShowLineNumbers.value,
+                showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
+                showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
+                showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
+            };
+        }
+        if (WI.settings.showFlexOverlayDuringElementSelection.value) {
+            commandArguments.flexOverlayConfig = {
+                flexColor: WI.DOMNode.defaultLayoutOverlayColor.toProtocol(),
+                showOrderNumbers: WI.settings.flexOverlayShowOrderNumbers.value,
+            };
+        }
+
         target.DOMAgent.setInspectModeEnabled.invoke(commandArguments, (error) => {
             if (error) {
                 WI.reportInternalError(error);

@@ -1469,7 +1469,9 @@ localizedStrings["Show changes only for selected node"] = "Show changes only for
 localizedStrings["Show compositing borders"] = "Show compositing borders";
 /* Label for option to toggle the extended lines setting for CSS grid overlays */
 localizedStrings["Show extended lines @ Layout Panel Overlay Options"] = "Extended Grid Lines";
+localizedStrings["Show flexbox overlay"] = "Show flexbox overlay";
 localizedStrings["Show full certificate"] = "Show full certificate";
+localizedStrings["Show grid overlay"] = "Show grid overlay";
 localizedStrings["Show hidden tabs\u2026"] = "Show hidden tabs\u2026";
 /* Settings tab checkbox label for whether the independent styles sidebar should be shown */
 localizedStrings["Show independent Styles sidebar @ Settings Elements Pane"] = "Show independent Styles sidebar";

@@ -289,7 +289,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         }
 
         if (InspectorBackend.hasCommand("DOM.setInspectModeEnabled", "showRulers")) {
-            elementsSettingsView.addSetting(WI.UIString("Element Selection:"), WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
+            let elementSelectionGroup = elementsSettingsView.addGroup(WI.UIString("Element Selection:"));
+            elementSelectionGroup.addSetting(WI.settings.showRulersDuringElementSelection, WI.UIString("Show page rulers and node border lines"));
+            elementSelectionGroup.addSetting(WI.settings.showFlexOverlayDuringElementSelection, WI.UIString("Show grid overlay"));
+            elementSelectionGroup.addSetting(WI.settings.showGridOverlayDuringElementSelection, WI.UIString("Show flexbox overlay"));
 
             elementsSettingsView.addSeparator();
         }

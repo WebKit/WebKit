@@ -222,10 +222,15 @@ public:
 
     // Multiple grid and flex overlays can be active at the same time. These methods
     // will fail if the node is not a grid or if the node has been GC'd.
+
+    void showHighlightGridOverlayForNode(Node&, const InspectorOverlay::Grid::Config&);
+    void hideHighlightGridOverlay();
     Inspector::ErrorStringOr<void> setGridOverlayForNode(Node&, const InspectorOverlay::Grid::Config&);
     Inspector::ErrorStringOr<void> clearGridOverlayForNode(Node&);
     void clearAllGridOverlays();
 
+    void showHighlightFlexOverlayForNode(Node&, const InspectorOverlay::Flex::Config&);
+    void hideHighlightFlexOverlay();
     Inspector::ErrorStringOr<void> setFlexOverlayForNode(Node&, const InspectorOverlay::Flex::Config&);
     Inspector::ErrorStringOr<void> clearFlexOverlayForNode(Node&);
     void clearAllFlexOverlays();
@@ -269,7 +274,10 @@ private:
     Deque<TimeRectPair> m_paintRects;
     Timer m_paintRectUpdateTimer;
 
+    std::optional<InspectorOverlay::Grid> m_highlightGridOverlay;
     Vector<InspectorOverlay::Grid> m_activeGridOverlays;
+
+    std::optional<InspectorOverlay::Flex> m_highlightFlexOverlay;
     Vector<InspectorOverlay::Flex> m_activeFlexOverlays;
 
     bool m_indicating { false };
