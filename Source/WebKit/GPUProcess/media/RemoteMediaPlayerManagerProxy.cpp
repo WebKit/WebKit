@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
@@ -225,4 +225,4 @@ ShareableBitmapHandle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(W
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

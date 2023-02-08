@@ -4273,7 +4273,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if ENABLE(GPU_PROCESS)
     static_cast<WebMediaStrategy&>(platformStrategies()->mediaStrategy()).setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+#if ENABLE(VIDEO)
     WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
+#endif
 #if HAVE(AVASSETREADER)
     WebProcess::singleton().supplement<RemoteImageDecoderAVFManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
 #endif

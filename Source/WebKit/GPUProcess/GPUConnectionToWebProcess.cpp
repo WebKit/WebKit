@@ -243,7 +243,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_gpuProcess(gpuProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_webProcessIdentity(WTFMove(parameters.webProcessIdentity))
+#if ENABLE(VIDEO)
     , m_remoteMediaPlayerManagerProxy(makeUniqueRef<RemoteMediaPlayerManagerProxy>(*this))
+#endif
     , m_sessionID(sessionID)
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
@@ -493,6 +495,7 @@ RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestination
 }
 #endif
 
+#if ENABLE(VIDEO)
 RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManager()
 {
     if (!m_remoteMediaResourceManager)
@@ -500,6 +503,7 @@ RemoteMediaResourceManager& GPUConnectionToWebProcess::remoteMediaResourceManage
 
     return *m_remoteMediaResourceManager;
 }
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManagerProxy()
@@ -754,6 +758,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         return true;
     }
 #endif
+#if ENABLE(VIDEO)
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
@@ -766,6 +771,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         remoteMediaResourceManager().didReceiveMessage(connection, decoder);
         return true;
     }
+#endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManagerProxy::messageReceiverName()) {
         userMediaCaptureManagerProxy().didReceiveMessageFromGPUProcess(connection, decoder);
@@ -869,6 +875,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
 
 bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
+#if ENABLE(VIDEO)
     if (decoder.messageReceiverName() == Messages::RemoteMediaPlayerManagerProxy::messageReceiverName()) {
         remoteMediaPlayerManagerProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
         return true;
@@ -877,6 +884,7 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
         remoteMediaPlayerManagerProxy().didReceiveSyncPlayerMessage(connection, decoder, replyEncoder);
         return true;
     }
+#endif
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {
         cdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);

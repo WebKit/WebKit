@@ -1104,6 +1104,7 @@ bool PageClientImpl::isTextRecognitionInFullscreenVideoEnabled() const
     return [m_contentView isTextRecognitionInFullscreenVideoEnabled];
 }
 
+#if ENABLE(VIDEO)
 void PageClientImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle& bitmapHandle, FloatRect bounds)
 {
     [m_contentView beginTextRecognitionForVideoInElementFullscreen:bitmapHandle bounds:bounds];
@@ -1113,6 +1114,7 @@ void PageClientImpl::cancelTextRecognitionForVideoInElementFullscreen()
 {
     [m_contentView cancelTextRecognitionForVideoInElementFullscreen];
 }
+#endif
 
 bool PageClientImpl::hasResizableWindows() const
 {

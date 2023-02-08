@@ -3304,12 +3304,14 @@ header: <WebCore/AudioIOCallback.h>
     MonotonicTime timestamp;
 };
 
+#if ENABLE(VIDEO)
 enum class WebCore::VideoFrameRotation : uint16_t {
     None,
     UpsideDown,
     Right,
     Left,
 };
+#endif
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 [RefCounted] class WebCore::VideoFrameCV {
@@ -3561,6 +3563,7 @@ header: <WebCore/GraphicsTypes.h>
     WebCore::ShadowRadiusMode radiusMode;
 };
 
+#if ENABLE(VIDEO)
 [Nested, AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::GenericCueData::Alignment : uint8_t {
     None,
     Start,
@@ -3593,6 +3596,7 @@ header: <WebCore/InbandGenericCue.h>
     WebCore::GenericCueData::Alignment m_align;
     WebCore::GenericCueData::Status m_status;
 };
+#endif
 
 header: <WebCore/ImageDecoder.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ImageDecoderFrameInfo {

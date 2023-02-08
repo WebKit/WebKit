@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Connection.h"
 #include "MessageReceiver.h"
@@ -416,4 +416,4 @@ private:
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

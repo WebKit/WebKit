@@ -478,6 +478,7 @@ void RemoteDisplayListRecorder::transformToColorSpace(const WebCore::Destination
     m_imageBuffer->transformToColorSpace(colorSpace);
 }
 
+#if ENABLE(VIDEO)
 void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identifier, const FloatRect& destination)
 {
     m_renderingBackend->performWithMediaPlayerOnMainThread(identifier, [imageBuffer = RefPtr { m_imageBuffer.get() }, destination](MediaPlayer& player) {
@@ -485,6 +486,7 @@ void RemoteDisplayListRecorder::paintFrameForMedia(MediaPlayerIdentifier identif
         imageBuffer->context().paintFrameForMedia(player, destination);
     });
 }
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
 void RemoteDisplayListRecorder::paintVideoFrame(SharedVideoFrame&& frame, const WebCore::FloatRect& destination, bool shouldDiscardAlpha)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "TrackPrivateRemoteConfiguration.h"
 #include <WebCore/AudioTrackPrivate.h>
@@ -58,4 +58,4 @@ struct AudioTrackPrivateRemoteConfiguration : TrackPrivateRemoteConfiguration {
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

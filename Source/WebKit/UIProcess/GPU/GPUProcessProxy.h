@@ -113,7 +113,9 @@ public:
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
 
+#if ENABLE(VIDEO)
     void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
+#endif
 
 private:
     explicit GPUProcessProxy();

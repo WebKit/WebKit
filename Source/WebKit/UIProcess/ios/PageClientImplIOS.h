@@ -307,8 +307,10 @@ private:
     void cancelTextRecognitionForFullscreenVideo(AVPlayerViewController *) final;
     bool isTextRecognitionInFullscreenVideoEnabled() const final;
 
+#if ENABLE(VIDEO)
     void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle&, WebCore::FloatRect) final;
     void cancelTextRecognitionForVideoInElementFullscreen() final;
+#endif
 
     bool hasResizableWindows() const final;
 

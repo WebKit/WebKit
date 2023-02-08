@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaPlayerProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "LayerHostingContext.h"
 #include <WebCore/NotImplemented.h>
@@ -52,4 +52,4 @@ void RemoteMediaPlayerProxy::exitFullscreen(CompletionHandler<void()>&& completi
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaPlayerProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "DataReference.h"
 #include "GPUConnectionToWebProcess.h"
@@ -1210,4 +1210,4 @@ WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

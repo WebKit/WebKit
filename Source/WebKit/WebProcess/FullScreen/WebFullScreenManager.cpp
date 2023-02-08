@@ -96,8 +96,8 @@ void WebFullScreenManager::invalidate()
     clearElement();
 #if ENABLE(VIDEO)
     setMainVideoElement(nullptr);
-#endif
     m_mainVideoElementTextRecognitionTimer.stop();
+#endif
 }
 
 WebCore::Element* WebFullScreenManager::element()

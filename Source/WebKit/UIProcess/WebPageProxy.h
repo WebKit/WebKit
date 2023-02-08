@@ -2144,8 +2144,10 @@ public:
     }
 #endif
 
+#if ENABLE(VIDEO)
     void beginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
     void cancelTextRecognitionForVideoInElementFullScreen();
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     void replaceImageForRemoveBackground(const WebCore::ElementContext&, const Vector<String>& types, const IPC::DataReference&);

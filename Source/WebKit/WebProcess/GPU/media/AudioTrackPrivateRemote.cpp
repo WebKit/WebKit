@@ -27,7 +27,7 @@
 #include "config.h"
 #include "AudioTrackPrivateRemote.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "AudioTrackPrivateRemoteConfiguration.h"
 #include "GPUProcessConnection.h"
@@ -88,4 +88,4 @@ void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfigu
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

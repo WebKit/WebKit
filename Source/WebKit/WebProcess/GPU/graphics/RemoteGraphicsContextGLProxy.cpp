@@ -70,9 +70,15 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 
 }
 
-RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend
+#if ENABLE(VIDEO)
+    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
+#endif
+    )
     : GraphicsContextGL(attributes)
+#if ENABLE(VIDEO)
     , m_videoFrameObjectHeapProxy(WTFMove(videoFrameObjectHeapProxy))
+#endif
 {
     constexpr unsigned connectionBufferSizeLog2 = 21;
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);

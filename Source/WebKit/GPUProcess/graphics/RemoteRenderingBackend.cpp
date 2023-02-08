@@ -521,6 +521,7 @@ void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID rendering
     send(Messages::RemoteRenderingBackendProxy::DidFinalizeRenderingUpdate(renderingUpdateID), m_renderingBackendIdentifier);
 }
 
+#if ENABLE(VIDEO)
 void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdentifier identifier, Function<void(MediaPlayer&)>&& callback)
 {
     callOnMainRunLoopAndWait([&, gpuConnectionToWebProcess = m_gpuConnectionToWebProcess, identifier] {
@@ -528,6 +529,7 @@ void RemoteRenderingBackend::performWithMediaPlayerOnMainThread(MediaPlayerIdent
             callback(*player);
     });
 }
+#endif
 
 void RemoteRenderingBackend::lowMemoryHandler(Critical, Synchronous)
 {

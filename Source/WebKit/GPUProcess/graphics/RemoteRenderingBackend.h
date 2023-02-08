@@ -88,7 +88,9 @@ public:
     void dispatch(Function<void()>&&);
 
     IPC::StreamServerConnection& streamConnection() const { return m_streamConnection.get(); }
+#if ENABLE(VIDEO)
     void performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&);
+#endif
 
     void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 
