@@ -1194,4 +1194,6 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean consumeTransientActivation();
 
     SelectorFilterHashCounts selectorFilterHashCounts(DOMString selector);
+
+    readonly attribute boolean isVisuallyNonEmpty;
 };

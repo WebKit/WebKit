@@ -799,7 +799,7 @@ bool HTMLImageElement::allowsAnimation() const
 }
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-void HTMLImageElement::setAllowsAnimation(bool allowsAnimation)
+void HTMLImageElement::setAllowsAnimation(std::optional<bool> allowsAnimation)
 {
     if (!document().settings().imageAnimationControlEnabled())
         return;
@@ -810,7 +810,7 @@ void HTMLImageElement::setAllowsAnimation(bool allowsAnimation)
             renderer->repaint();
 
         if (auto* page = document().page()) {
-            if (allowsAnimation)
+            if (allowsAnimation.value_or(false))
                 page->addIndividuallyPlayingAnimationElement(*this);
             else
                 page->removeIndividuallyPlayingAnimationElement(*this);

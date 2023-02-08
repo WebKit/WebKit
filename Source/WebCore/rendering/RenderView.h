@@ -180,7 +180,9 @@ public:
     void unregisterForVisibleInViewportCallback(RenderElement&);
 
     void resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect);
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimations(const IntRect& visibleRect);
+#endif
     void addRendererWithPausedImageAnimations(RenderElement&, CachedImage&);
     void removeRendererWithPausedImageAnimations(RenderElement&);
     void removeRendererWithPausedImageAnimations(RenderElement&, CachedImage&);

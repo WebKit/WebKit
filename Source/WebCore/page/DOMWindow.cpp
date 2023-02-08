@@ -1335,6 +1335,16 @@ int DOMWindow::innerWidth() const
     return view->mapFromLayoutToCSSUnits(static_cast<int>(view->unobscuredContentRectIncludingScrollbars().width()));
 }
 
+static bool isLoadingInHeadlessMode(const Page& page)
+{
+    RefPtr document = page.mainFrame().document();
+    if (!document)
+        return false;
+
+    RefPtr loader = document->loader();
+    return loader && loader->isLoadingInHeadlessMode();
+}
+
 int DOMWindow::screenX() const
 {
     RefPtr frame = this->frame();
@@ -1342,7 +1352,7 @@ int DOMWindow::screenX() const
         return 0;
 
     Page* page = frame->page();
-    if (!page)
+    if (!page || isLoadingInHeadlessMode(*page))
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().x());
@@ -1355,7 +1365,7 @@ int DOMWindow::screenY() const
         return 0;
 
     Page* page = frame->page();
-    if (!page)
+    if (!page || isLoadingInHeadlessMode(*page))
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().y());

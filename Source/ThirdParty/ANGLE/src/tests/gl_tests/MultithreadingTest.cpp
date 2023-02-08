@@ -248,7 +248,9 @@ TEST_P(MultithreadingTest, MultiContextClear)
             EXPECT_PIXEL_COLOR_EQ(0, 0, color);
         }
     };
-    runMultithreadedGLTest(testBody, 72);
+    runMultithreadedGLTest(
+        testBody,
+        getEGLWindow()->isFeatureEnabled(Feature::SlowAsyncCommandQueueForTesting) ? 4 : 72);
 }
 
 // Verify that threads can interleave eglDestroyContext and draw calls without
@@ -422,7 +424,9 @@ TEST_P(MultithreadingTest, MultiContextDrawWithSwapBuffers)
             EXPECT_PIXEL_COLOR_EQ(0, 0, color);
         }
     };
-    runMultithreadedGLTest(testBody, 32);
+    runMultithreadedGLTest(
+        testBody,
+        getEGLWindow()->isFeatureEnabled(Feature::SlowAsyncCommandQueueForTesting) ? 4 : 32);
 }
 
 // Test that ANGLE handles multiple threads creating and destroying resources (vertex buffer in this
@@ -476,7 +480,9 @@ TEST_P(MultithreadingTest, MultiContextCreateAndDeleteResources)
         }
         glFinish();
     };
-    runMultithreadedGLTest(testBody, 32);
+    runMultithreadedGLTest(
+        testBody,
+        getEGLWindow()->isFeatureEnabled(Feature::SlowAsyncCommandQueueForTesting) ? 4 : 32);
 }
 
 TEST_P(MultithreadingTest, MultiCreateContext)
@@ -1937,6 +1943,10 @@ ANGLE_INSTANTIATE_TEST(
     ES2_OPENGLES(),
     ES3_OPENGLES(),
     ES3_VULKAN(),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::AsyncCommandQueue),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::AsyncCommandQueue)
+        .enable(Feature::SlowAsyncCommandQueueForTesting),
     ES3_VULKAN_SWIFTSHADER().disable(Feature::PreferMonolithicPipelinesOverLibraries),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferMonolithicPipelinesOverLibraries),
     ES3_VULKAN_SWIFTSHADER()
@@ -1962,6 +1972,10 @@ ANGLE_INSTANTIATE_TEST(
     ES3_OPENGL(),
     ES3_OPENGLES(),
     ES3_VULKAN(),
+    ES3_VULKAN_SWIFTSHADER().enable(Feature::AsyncCommandQueue),
+    ES3_VULKAN_SWIFTSHADER()
+        .enable(Feature::AsyncCommandQueue)
+        .enable(Feature::SlowAsyncCommandQueueForTesting),
     ES3_VULKAN_SWIFTSHADER().disable(Feature::PreferMonolithicPipelinesOverLibraries),
     ES3_VULKAN_SWIFTSHADER().enable(Feature::PreferMonolithicPipelinesOverLibraries),
     ES3_VULKAN_SWIFTSHADER()

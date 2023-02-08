@@ -751,13 +751,15 @@ class GitHub(Scm):
     def files_changed(self, argument=None):
         if not argument:
             return self.modified()
-        commit = self.find(argument, include_log=False, include_identifier=False)
-        if not commit:
-            raise ValueError("'{}' is not an argument recognized by git".format(argument))
+        if not Commit.HASH_RE.match(argument):
+            commit = self.find(argument, include_log=False, include_identifier=False)
+            if not commit:
+                raise ValueError("'{}' is not an argument recognized by git".format(argument))
+            argument = commit.hash
 
         return [
             file.get('filename')
-            for file in self.request('commits/{}'.format(commit.hash)).get('files', [])
+            for file in self.request('commits/{}'.format(argument)).get('files', [])
             if file.get('filename')
         ]
 

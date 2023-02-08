@@ -2328,9 +2328,11 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
 
     switch (*reportBodyType) {
     case ViolationReportType::ContentSecurityPolicy: {
-        std::optional<RefPtr<CSPViolationReportBody>> cspViolationReportBody;
+        std::optional<Ref<CSPViolationReportBody>> cspViolationReportBody;
         decoder >> cspViolationReportBody;
-        return cspViolationReportBody;
+        if (!cspViolationReportBody)
+            return std::nullopt;
+        return WTFMove(*cspViolationReportBody);
     }
     case ViolationReportType::COEPInheritenceViolation:
         return COEPInheritenceViolationReportBody::decode(decoder);

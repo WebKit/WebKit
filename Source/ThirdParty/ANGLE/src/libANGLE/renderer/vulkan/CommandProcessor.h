@@ -16,6 +16,7 @@
 #include <queue>
 #include <thread>
 
+#include "common/FixedQueue.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/vulkan/PersistentCommandPool.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
@@ -27,6 +28,9 @@ class CommandProcessor;
 
 namespace vk
 {
+constexpr size_t kMaxCommandProcessorTasksLimit = 16u;
+constexpr size_t kInFlightCommandsLimit         = 50u;
+
 enum class SubmitPolicy
 {
     AllowDeferred,
@@ -98,8 +102,6 @@ enum class CustomTask
     OneOffQueueSubmit,
     // Execute QueuePresent
     Present,
-    // Exit the command processor thread
-    Exit,
 };
 
 // CommandProcessorTask interface
@@ -109,8 +111,6 @@ class CommandProcessorTask
     CommandProcessorTask() { initTask(); }
 
     void initTask();
-
-    void initTask(CustomTask command) { mTask = command; }
 
     void initOutsideRenderPassProcessCommands(bool hasProtectedContent,
                                               OutsideRenderPassCommandBufferHelper *commandBuffer);
@@ -208,6 +208,9 @@ class CommandProcessorTask
     VkSwapchainPresentFenceInfoEXT mPresentFenceInfo;
     VkFence mPresentFence;
 
+    VkSwapchainPresentModeInfoEXT mPresentModeInfo;
+    VkPresentModeKHR mPresentMode;
+
     // Used by OneOffQueueSubmit
     VkCommandBuffer mOneOffCommandBufferVk;
     const Semaphore *mOneOffWaitSemaphore;
@@ -218,6 +221,8 @@ class CommandProcessorTask
     egl::ContextPriority mPriority;
     bool mHasProtectedContent;
 };
+using CommandProcessorTaskQueue =
+    angle::FixedQueue<CommandProcessorTask, kMaxCommandProcessorTasksLimit>;
 
 struct CommandBatch final : angle::NonCopyable
 {
@@ -237,6 +242,7 @@ struct CommandBatch final : angle::NonCopyable
     QueueSerial queueSerial;
     bool hasProtectedContent;
 };
+using CommandBatchQueue = angle::FixedQueue<CommandBatch, kInFlightCommandsLimit>;
 
 class DeviceQueueMap;
 
@@ -393,10 +399,6 @@ class CommandQueue : angle::NonCopyable
                               const Fence *fence,
                               const QueueSerial &submitQueueSerial);
 
-    void releaseToCommandBatch(bool hasProtectedContent,
-                               PrimaryCommandBuffer &&commandBuffer,
-                               SecondaryCommandPools *commandPools,
-                               CommandBatch *batch);
     angle::Result retireFinishedCommands(Context *context, size_t finishedCount);
     angle::Result retireFinishedCommandsAndCleanupGarbage(Context *context, size_t finishedCount);
     angle::Result ensurePrimaryCommandBufferValid(Context *context, bool hasProtectedContent);
@@ -408,39 +410,35 @@ class CommandQueue : angle::NonCopyable
     // For validation only. Should only be called with ASSERT macro.
     bool allInFlightCommandsAreAfterSerials(const Serials &serials);
 
+    struct CommandsState
+    {
+        PrimaryCommandBuffer primaryCommands;
+        // Keeps a free list of reusable primary command buffers.
+        PersistentCommandPool primaryCommandPool;
+    };
+
+    CommandsState &getCommandsState(bool hasProtectedContent)
+    {
+        static_assert(static_cast<CommandContent>(false) == CommandContent::Unprotected, "");
+        static_assert(static_cast<CommandContent>(true) == CommandContent::Protected, "");
+        return mCommandsStateMap[static_cast<CommandContent>(hasProtectedContent)];
+    }
+
     PrimaryCommandBuffer &getCommandBuffer(bool hasProtectedContent)
     {
-        if (hasProtectedContent)
-        {
-            return mProtectedPrimaryCommands;
-        }
-        else
-        {
-            return mPrimaryCommands;
-        }
+        return getCommandsState(hasProtectedContent).primaryCommands;
     }
 
     PersistentCommandPool &getCommandPool(bool hasProtectedContent)
     {
-        if (hasProtectedContent)
-        {
-            return mProtectedPrimaryCommandPool;
-        }
-        else
-        {
-            return mPrimaryCommandPool;
-        }
+        return getCommandsState(hasProtectedContent).primaryCommandPool;
     }
 
     // Protect multi-thread access to mInFlightCommands and other data memebers of this class.
     mutable std::mutex mMutex;
-    std::vector<CommandBatch> mInFlightCommands;
+    CommandBatchQueue mInFlightCommands;
 
-    // Keeps a free list of reusable primary command buffers.
-    PrimaryCommandBuffer mPrimaryCommands;
-    PersistentCommandPool mPrimaryCommandPool;
-    PrimaryCommandBuffer mProtectedPrimaryCommands;
-    PersistentCommandPool mProtectedPrimaryCommandPool;
+    angle::PackedEnumMap<CommandContent, CommandsState> mCommandsStateMap;
 
     // Queue serial management.
     AtomicQueueSerialFixedArray mLastSubmittedSerials;
@@ -549,7 +547,7 @@ class CommandProcessor : public Context
 
     // Called asynchronously from main thread to queue work that is then processed by the worker
     // thread
-    void queueCommand(CommandProcessorTask &&task);
+    angle::Result queueCommand(CommandProcessorTask &&task);
 
     // Command processor thread, called by processTasks. The loop waits for work to
     // be submitted from a separate thread.
@@ -561,19 +559,14 @@ class CommandProcessor : public Context
     VkResult getLastAndClearPresentResult(VkSwapchainKHR swapchain);
     VkResult present(egl::ContextPriority priority, const VkPresentInfoKHR &presentInfo);
 
-    // The mutex to block submission from context while we wait for mTask to drain. We always take
-    // this lock when we enqueue to mTasks. We will also take lock when we need to wait fort mTasks
-    // to be empty. But we do not take this lock for normal work processing.
+    // The mutex lock that serializes dequeue from mTask and submit to mCommandQueue so that only
+    // one mTasks consumer at a time
     std::mutex mSubmissionMutex;
 
-    std::queue<CommandProcessorTask> mTasks;
+    CommandProcessorTaskQueue mTasks;
     mutable std::mutex mWorkerMutex;
     // Signal worker thread when work is available
     std::condition_variable mWorkAvailableCondition;
-    // Signal main thread when all work completed
-    mutable std::condition_variable mWorkerIdleCondition;
-    // Track worker thread Idle state for assertion purposes
-    bool mWorkerThreadIdle;
     CommandQueue *const mCommandQueue;
 
     // Tracks last serial that was submitted to command processor. Note: this maybe different from
@@ -591,6 +584,7 @@ class CommandProcessor : public Context
 
     // Command queue worker thread.
     std::thread mTaskThread;
+    bool mTaskThreadShouldExit;
 };
 }  // namespace vk
 

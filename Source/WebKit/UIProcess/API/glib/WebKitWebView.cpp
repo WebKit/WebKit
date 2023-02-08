@@ -72,6 +72,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/JSDOMExceptionHandling.h>
+#include <WebCore/RefPtrCairo.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/URLSoup.h>
 #include <glib/gi18n-lib.h>
@@ -92,6 +93,7 @@
 #include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include <WebCore/GUniquePtrGtk.h>
+#include <WebCore/GdkCairoUtilities.h>
 #include <WebCore/RefPtrCairo.h>
 #endif
 
@@ -316,7 +318,11 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitWebInspector> inspector;
 
+#if USE(GTK4)
+    GRefPtr<GdkTexture> favicon;
+#else
     RefPtr<cairo_surface_t> favicon;
+#endif
     GRefPtr<GCancellable> faviconCancellable;
 
     CString faviconURI;
@@ -614,7 +620,11 @@ static void enableBackForwardNavigationGesturesChanged(WebKitSettings* settings,
     webkitWebViewBaseSetEnableBackForwardNavigationGesture(WEBKIT_WEB_VIEW_BASE(webView), enable);
 }
 
+#if USE(GTK4)
+static void webkitWebViewUpdateFavicon(WebKitWebView* webView, GdkTexture* favicon)
+#else
 static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* favicon)
+#endif
 {
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->favicon.get() == favicon)
@@ -630,13 +640,17 @@ static void webkitWebViewCancelFaviconRequest(WebKitWebView* webView)
         return;
 
     g_cancellable_cancel(webView->priv->faviconCancellable.get());
-    webView->priv->faviconCancellable = 0;
+    webView->priv->faviconCancellable = nullptr;
 }
 
 static void gotFaviconCallback(GObject* object, GAsyncResult* result, gpointer userData)
 {
     GUniqueOutPtr<GError> error;
+#if USE(GTK4)
+    GRefPtr<GdkTexture> favicon = adoptGRef(webkit_favicon_database_get_favicon_finish(WEBKIT_FAVICON_DATABASE(object), result, &error.outPtr()));
+#else
     RefPtr<cairo_surface_t> favicon = adoptRef(webkit_favicon_database_get_favicon_finish(WEBKIT_FAVICON_DATABASE(object), result, &error.outPtr()));
+#endif
     if (g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
         return;
 
@@ -962,7 +976,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
 #if PLATFORM(GTK)
     case PROP_FAVICON:
+#if USE(GTK4)
+        g_value_set_object(value, webkit_web_view_get_favicon(webView));
+#else
         g_value_set_pointer(value, webkit_web_view_get_favicon(webView));
+#endif
         break;
 #endif
     case PROP_URI:
@@ -1210,10 +1228,18 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * See webkit_web_view_get_favicon() for more details.
      */
     sObjProperties[PROP_FAVICON] =
+#if USE(GTK4)
+        g_param_spec_object(
+            "favicon",
+            nullptr, nullptr,
+            GDK_TYPE_TEXTURE,
+            WEBKIT_PARAM_READABLE);
+#else
         g_param_spec_pointer(
             "favicon",
             nullptr, nullptr,
             WEBKIT_PARAM_READABLE);
+#endif
 #endif
 
     /**
@@ -3564,10 +3590,14 @@ const gchar* webkit_web_view_get_uri(WebKitWebView* webView)
  * connect to notify::favicon signal of @web_view to be notified when
  * the favicon is available.
  *
- * Returns: (transfer none): a pointer to a #cairo_surface_t with the
- *    favicon or %NULL if there's no icon associated with @web_view.
+ * Returns: (transfer none): the favicon image or %NULL if there's no
+ *    icon associated with @web_view.
  */
+#if USE(GTK4)
+GdkTexture* webkit_web_view_get_favicon(WebKitWebView* webView)
+#else
 cairo_surface_t* webkit_web_view_get_favicon(WebKitWebView* webView)
+#endif
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
     if (webView->priv->activeURI.isNull())
@@ -4851,14 +4881,23 @@ void webkit_web_view_get_snapshot(WebKitWebView* webView, WebKitSnapshotRegion r
  *
  * Finishes an asynchronous operation started with webkit_web_view_get_snapshot().
  *
- * Returns: (transfer full): a #cairo_surface_t with the retrieved snapshot or %NULL in error.
+ * Returns: (transfer full): an image with the retrieved snapshot, or %NULL in case of error.
  */
+#if USE(GTK4)
+GdkTexture* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+#else
 cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+#endif
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-    g_return_val_if_fail(g_task_is_valid(result, webView), 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, webView), nullptr);
 
+#if USE(GTK4)
+    auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
+    return image ? cairoSurfaceToGdkTexture(image.get()).leakRef() : nullptr;
+#else
     return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
+#endif
 }
 #endif
 

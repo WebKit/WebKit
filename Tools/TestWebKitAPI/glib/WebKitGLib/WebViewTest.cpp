@@ -41,8 +41,6 @@ WebViewTest::~WebViewTest()
     platformDestroy();
     if (m_javascriptResult)
         webkit_javascript_result_unref(m_javascriptResult);
-    if (m_surface)
-        cairo_surface_destroy(m_surface);
     s_dbusConnectionPageMap.remove(webkit_web_view_get_page_id(m_webView));
     g_object_unref(m_webView);
     g_main_loop_unref(m_mainLoop);
@@ -439,28 +437,6 @@ bool WebViewTest::javascriptResultIsUndefined(WebKitJavascriptResult* javascript
     g_assert_true(JSC_IS_VALUE(value));
     return jsc_value_is_undefined(value);
 }
-
-#if PLATFORM(GTK)
-static void onSnapshotReady(WebKitWebView* web_view, GAsyncResult* res, WebViewTest* test)
-{
-    GUniqueOutPtr<GError> error;
-    test->m_surface = webkit_web_view_get_snapshot_finish(web_view, res, &error.outPtr());
-    g_assert_true(!test->m_surface || !error.get());
-    if (error)
-        g_assert_error(error.get(), WEBKIT_SNAPSHOT_ERROR, WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE);
-    test->quitMainLoop();
-}
-
-cairo_surface_t* WebViewTest::getSnapshotAndWaitUntilReady(WebKitSnapshotRegion region, WebKitSnapshotOptions options)
-{
-    if (m_surface)
-        cairo_surface_destroy(m_surface);
-    m_surface = 0;
-    webkit_web_view_get_snapshot(m_webView, region, options, 0, reinterpret_cast<GAsyncReadyCallback>(onSnapshotReady), this);
-    g_main_loop_run(m_mainLoop);
-    return m_surface;
-}
-#endif
 
 bool WebViewTest::runWebProcessTest(const char* suiteName, const char* testName, const char* contents, const char* contentType)
 {

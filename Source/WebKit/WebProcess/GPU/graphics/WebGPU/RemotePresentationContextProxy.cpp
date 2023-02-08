@@ -75,6 +75,11 @@ RefPtr<PAL::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture()
     return m_currentTexture;
 }
 
+void RemotePresentationContextProxy::present()
+{
+    m_currentTexture = nullptr;
+}
+
 } // namespace WebKit::WebGPU
 
 #endif // ENABLE(GPU_PROCESS)

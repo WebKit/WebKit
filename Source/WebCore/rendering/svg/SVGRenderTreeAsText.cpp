@@ -35,6 +35,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "NodeRenderStyle.h"
+#include "NullGraphicsContext.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderSVGContainer.h"

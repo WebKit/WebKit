@@ -51,85 +51,6 @@ namespace WebKit {
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 
-static void alertForWindowSelection(WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(std::optional<String>, std::optional<String>)>&& completionHandler)
-{
-    auto webView = page.cocoaView();
-    if (!webView) {
-        completionHandler(std::nullopt, std::nullopt);
-        return;
-    }
-
-    Vector<WebCore::DisplayCaptureManager::WindowCaptureDevice> windowInfo;
-    WebCore::RealtimeMediaSourceCenter::singleton().displayCaptureFactory().displayCaptureDeviceManager().windowDevices(windowInfo);
-    if (windowInfo.isEmpty()) {
-        completionHandler(std::nullopt, std::nullopt);
-        return;
-    }
-
-    std::sort(windowInfo.begin(), windowInfo.end(), [](auto& a, auto& b) {
-        if (a.m_application != b.m_application)
-            return codePointCompareLessThan(a.m_application, b.m_application);
-
-        return codePointCompareLessThan(a.m_device.label(), b.m_device.label());
-    });
-
-    auto alert = adoptNS([[NSAlert alloc] init]);
-    [alert setMessageText:WEB_UI_NSSTRING(@"Choose a window to share", "Message for window sharing prompt")];
-
-    auto popupButton = adoptNS([[NSPopUpButton alloc] initWithFrame:NSMakeRect(10, 0, 290, 36) pullsDown:NO]);
-    auto menu = [popupButton menu];
-    menu.autoenablesItems = NO;
-    String currentApplication;
-    unsigned infoIndex = 0;
-    for (auto& info : windowInfo) {
-        if (info.m_application != currentApplication)    {
-            auto applicationItem = adoptNS([[NSMenuItem alloc] initWithTitle:info.m_application action:nil keyEquivalent:@""]);
-            [applicationItem setEnabled:NO];
-            [menu addItem:applicationItem.get()];
-            currentApplication = info.m_application;
-        }
-
-        auto title = info.m_device.label();
-        auto windowItem = adoptNS([[NSMenuItem alloc] initWithTitle:(!title.isEmpty() ? title : info.m_application) action:nil keyEquivalent:@""]);
-        [windowItem setIndentationLevel:1];
-        [windowItem setRepresentedObject:@(infoIndex++)];
-        [menu addItem:windowItem.get()];
-    }
-    [popupButton selectItem:nil];
-
-    auto menuLabel = adoptNS([[NSTextView alloc] init]);
-    [menuLabel setString:WEB_UI_NSSTRING(@"Window: ", "Label for window sharing menu")];
-    [menuLabel setDrawsBackground:NO];
-    [menuLabel setSelectable:NO];
-    [menuLabel setEditable:NO];
-
-    auto accessoryView = adoptNS([[NSView alloc] initWithFrame:NSMakeRect(0, 0, 300, 40)]);
-    [accessoryView addSubview:popupButton.get()];
-    [accessoryView addSubview:menuLabel.get()];
-    [alert setAccessoryView:accessoryView.get()];
-
-    NSButton *button = [alert addButtonWithTitle:WEB_UI_NSSTRING_KEY(@"Allow", @"Allow (window sharing)", "Allow button title in window sharing prompt")];
-    button.keyEquivalent = @"";
-    button = [alert addButtonWithTitle:WEB_UI_NSSTRING_KEY(@"Don’t Allow", @"Don’t Allow (window sharing)", "Disallow button title in window sharing prompt")];
-    button.keyEquivalent = @"\E";
-
-    [alert beginSheetModalForWindow:[webView window] completionHandler:[popupButton = WTFMove(popupButton), windowInfo, completionBlock = makeBlockPtr(WTFMove(completionHandler))](NSModalResponse returnCode) {
-        if (returnCode != NSAlertFirstButtonReturn) {
-            completionBlock(std::nullopt, std::nullopt);
-            return;
-        }
-
-        NSNumber *infoIndex = [[popupButton selectedItem] representedObject];
-        if (!infoIndex || [infoIndex unsignedIntegerValue] > windowInfo.size()) {
-            completionBlock(std::nullopt, std::nullopt);
-            return;
-        }
-
-        auto info = windowInfo[[infoIndex unsignedIntegerValue]];
-        completionBlock(info.m_device.persistentId(), info.m_device.label());
-    }];
-}
-
 void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, const WebCore::SecurityOriginData& origin, CompletionHandler<void(DisplayCaptureSessionManager::CaptureSessionType)>&& completionHandler)
 {
 
@@ -213,16 +134,7 @@ void DisplayCaptureSessionManager::showWindowPicker(WebPageProxy& page, const We
     }
 #endif
 
-    alertForWindowSelection(page, origin, [completionHandler = WTFMove(completionHandler)] (std::optional<String> windowID, std::optional<String> windowTitle) mutable {
-
-        if (!windowID || !windowTitle) {
-            completionHandler(std::nullopt);
-            return;
-        }
-
-        WebCore::CaptureDevice device = { windowID.value(), WebCore::CaptureDevice::DeviceType::Window, windowTitle.value(), emptyString(), true };
-        completionHandler({ device });
-    });
+    completionHandler(std::nullopt);
 }
 
 void DisplayCaptureSessionManager::showScreenPicker(WebPageProxy& page, const WebCore::SecurityOriginData&, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&& completionHandler)
@@ -246,16 +158,7 @@ void DisplayCaptureSessionManager::showScreenPicker(WebPageProxy& page, const We
     }
 #endif
 
-    callOnMainRunLoop([completionHandler = WTFMove(completionHandler)] () mutable {
-        for (auto& device : WebCore::RealtimeMediaSourceCenter::singleton().displayCaptureFactory().displayCaptureDeviceManager().captureDevices()) {
-            if (device.enabled() && device.type() == WebCore::CaptureDevice::DeviceType::Screen) {
-                completionHandler({ device });
-                return;
-            }
-        }
-
-        completionHandler(std::nullopt);
-    });
+    completionHandler(std::nullopt);
 }
 #endif
 

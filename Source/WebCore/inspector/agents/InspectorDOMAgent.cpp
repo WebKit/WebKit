@@ -151,9 +151,14 @@ static std::optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
     return { makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(*r, *g, *b, convertFloatAlphaTo<uint8_t>(*a)) };
 }
 
-static Color parseConfigColor(const String& fieldName, JSON::Object& configObject)
+static std::optional<Color> parseRequiredConfigColor(const String& fieldName, JSON::Object& configObject)
 {
-    return parseColor(configObject.getObject(fieldName)).value_or(Color::transparentBlack);
+    return parseColor(configObject.getObject(fieldName));
+}
+
+static Color parseOptionalConfigColor(const String& fieldName, JSON::Object& configObject)
+{
+    return parseRequiredConfigColor(fieldName, configObject).value_or(Color::transparentBlack);
 }
 
 static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
@@ -329,10 +334,13 @@ void InspectorDOMAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReaso
     m_inspectedNode = nullptr;
 
     Protocol::ErrorString ignored;
-    setSearchingForNode(ignored, false, nullptr, false);
+    setSearchingForNode(ignored, false, nullptr, nullptr, nullptr, false);
     hideHighlight();
 
+    m_overlay->hideHighlightGridOverlay();
     m_overlay->clearAllGridOverlays();
+
+    m_overlay->hideHighlightFlexOverlay();
     m_overlay->clearAllFlexOverlays();
 
     m_instrumentingAgents.setPersistentDOMAgent(nullptr);
@@ -1198,11 +1206,29 @@ bool InspectorDOMAgent::handleTouchEvent(Node& node)
 {
     if (!m_searchingForNode)
         return false;
+
+    bool shouldInspect = false;
+
     if (m_inspectModeHighlightConfig) {
         m_overlay->highlightNode(&node, *m_inspectModeHighlightConfig);
+        shouldInspect = true;
+    }
+
+    if (m_inspectModeGridOverlayConfig) {
+        m_overlay->showHighlightGridOverlayForNode(node, *m_inspectModeGridOverlayConfig);
+        shouldInspect = true;
+    }
+
+    if (m_inspectModeFlexOverlayConfig) {
+        m_overlay->showHighlightFlexOverlayForNode(node, *m_inspectModeFlexOverlayConfig);
+        shouldInspect = true;
+    }
+
+    if (shouldInspect) {
         inspect(&node);
         return true;
     }
+
     return false;
 }
 
@@ -1210,7 +1236,7 @@ void InspectorDOMAgent::inspect(Node* inspectedNode)
 {
     Protocol::ErrorString ignored;
     RefPtr<Node> node = inspectedNode;
-    setSearchingForNode(ignored, false, nullptr, false);
+    setSearchingForNode(ignored, false, nullptr, nullptr, nullptr, false);
 
     if (!node->isElementNode() && !node->isDocumentNode())
         node = node->parentNode();
@@ -1257,11 +1283,18 @@ void InspectorDOMAgent::highlightMousedOverNode()
     Node* node = m_mousedOverNode.get();
     if (node && node->isTextNode())
         node = node->parentNode();
-    if (node && m_inspectModeHighlightConfig)
+    if (!node)
+        return;
+
+    if (m_inspectModeHighlightConfig)
         m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);
+    if (m_inspectModeGridOverlayConfig)
+        m_overlay->showHighlightGridOverlayForNode(*node, *m_inspectModeGridOverlayConfig);
+    if (m_inspectModeFlexOverlayConfig)
+        m_overlay->showHighlightFlexOverlayForNode(*node, *m_inspectModeFlexOverlayConfig);
 }
 
-void InspectorDOMAgent::setSearchingForNode(Protocol::ErrorString& errorString, bool enabled, RefPtr<JSON::Object>&& highlightInspectorObject, bool showRulers)
+void InspectorDOMAgent::setSearchingForNode(Protocol::ErrorString& errorString, bool enabled, RefPtr<JSON::Object>&& highlightInspectorObject, RefPtr<JSON::Object>&& gridOverlayInspectorObject, RefPtr<JSON::Object>&& flexOverlayInspectorObject, bool showRulers)
 {
     if (m_searchingForNode == enabled)
         return;
@@ -1274,9 +1307,27 @@ void InspectorDOMAgent::setSearchingForNode(Protocol::ErrorString& errorString, 
         m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, WTFMove(highlightInspectorObject));
         if (!m_inspectModeHighlightConfig)
             return;
+
+        if (gridOverlayInspectorObject) {
+            m_inspectModeGridOverlayConfig = gridOverlayConfigFromInspectorObject(errorString, gridOverlayInspectorObject.releaseNonNull());
+            if (!m_inspectModeGridOverlayConfig)
+                return;
+        } else
+            m_inspectModeGridOverlayConfig = std::nullopt;
+
+        if (flexOverlayInspectorObject) {
+            m_inspectModeFlexOverlayConfig = flexOverlayConfigFromInspectorObject(errorString, flexOverlayInspectorObject.releaseNonNull());
+            if (!m_inspectModeFlexOverlayConfig)
+                return;
+        } else
+            m_inspectModeFlexOverlayConfig = std::nullopt;
+
         highlightMousedOverNode();
-    } else
+    } else {
         hideHighlight();
+        m_overlay->hideHighlightGridOverlay();
+        m_overlay->hideHighlightFlexOverlay();
+    }
 
     m_overlay->didSetSearchingForNode(m_searchingForNode);
 
@@ -1293,19 +1344,51 @@ std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highligh
 
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
     highlightConfig->showInfo = highlightInspectorObject->getBoolean(Protocol::DOM::HighlightConfig::showInfoKey).value_or(false);
-    highlightConfig->content = parseConfigColor(Protocol::DOM::HighlightConfig::contentColorKey, *highlightInspectorObject);
-    highlightConfig->padding = parseConfigColor(Protocol::DOM::HighlightConfig::paddingColorKey, *highlightInspectorObject);
-    highlightConfig->border = parseConfigColor(Protocol::DOM::HighlightConfig::borderColorKey, *highlightInspectorObject);
-    highlightConfig->margin = parseConfigColor(Protocol::DOM::HighlightConfig::marginColorKey, *highlightInspectorObject);
+    highlightConfig->content = parseOptionalConfigColor(Protocol::DOM::HighlightConfig::contentColorKey, *highlightInspectorObject);
+    highlightConfig->padding = parseOptionalConfigColor(Protocol::DOM::HighlightConfig::paddingColorKey, *highlightInspectorObject);
+    highlightConfig->border = parseOptionalConfigColor(Protocol::DOM::HighlightConfig::borderColorKey, *highlightInspectorObject);
+    highlightConfig->margin = parseOptionalConfigColor(Protocol::DOM::HighlightConfig::marginColorKey, *highlightInspectorObject);
     return highlightConfig;
 }
 
+std::optional<InspectorOverlay::Grid::Config> InspectorDOMAgent::gridOverlayConfigFromInspectorObject(Inspector::Protocol::ErrorString& errorString, Ref<JSON::Object>&& gridOverlayInspectorObject)
+{
+    auto gridColor = parseRequiredConfigColor(Protocol::DOM::GridOverlayConfig::gridColorKey, gridOverlayInspectorObject);
+    if (!gridColor) {
+        errorString = "Internal error: grid color property of grid overlay configuration parameter is missing"_s;
+        return std::nullopt;
+    }
+
+    InspectorOverlay::Grid::Config gridOverlayConfig;
+    gridOverlayConfig.gridColor = *gridColor;
+    gridOverlayConfig.showLineNames = gridOverlayInspectorObject->getBoolean(Protocol::DOM::GridOverlayConfig::showLineNamesKey).value_or(false);
+    gridOverlayConfig.showLineNumbers = gridOverlayInspectorObject->getBoolean(Protocol::DOM::GridOverlayConfig::showLineNumbersKey).value_or(false);
+    gridOverlayConfig.showExtendedGridLines = gridOverlayInspectorObject->getBoolean(Protocol::DOM::GridOverlayConfig::showExtendedGridLinesKey).value_or(false);
+    gridOverlayConfig.showTrackSizes = gridOverlayInspectorObject->getBoolean(Protocol::DOM::GridOverlayConfig::showTrackSizesKey).value_or(false);
+    gridOverlayConfig.showAreaNames = gridOverlayInspectorObject->getBoolean(Protocol::DOM::GridOverlayConfig::showAreaNamesKey).value_or(false);
+    return gridOverlayConfig;
+}
+
+std::optional<InspectorOverlay::Flex::Config> InspectorDOMAgent::flexOverlayConfigFromInspectorObject(Inspector::Protocol::ErrorString& errorString, Ref<JSON::Object>&& flexOverlayInspectorObject)
+{
+    auto flexColor = parseRequiredConfigColor(Protocol::DOM::FlexOverlayConfig::flexColorKey, flexOverlayInspectorObject);
+    if (!flexColor) {
+        errorString = "Internal error: flex color property of flex overlay configuration parameter is missing"_s;
+        return std::nullopt;
+    }
+
+    InspectorOverlay::Flex::Config flexOverlayConfig;
+    flexOverlayConfig.flexColor = *flexColor;
+    flexOverlayConfig.showOrderNumbers = flexOverlayInspectorObject->getBoolean(Protocol::DOM::FlexOverlayConfig::showOrderNumbersKey).value_or(false);
+    return flexOverlayConfig;
+}
+
 #if PLATFORM(IOS_FAMILY)
-Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig)
+Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig)
 {
     Protocol::ErrorString errorString;
 
-    setSearchingForNode(errorString, enabled, WTFMove(highlightConfig), false);
+    setSearchingForNode(errorString, enabled, WTFMove(highlightConfig), WTFMove(gridOverlayConfig), WTFMove(flexOverlayConfig), false);
 
     if (!!errorString)
         return makeUnexpected(errorString);
@@ -1313,11 +1396,11 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enab
     return { };
 }
 #else
-Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, std::optional<bool>&& showRulers)
+Protocol::ErrorStringOr<void> InspectorDOMAgent::setInspectModeEnabled(bool enabled, RefPtr<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers)
 {
     Protocol::ErrorString errorString;
 
-    setSearchingForNode(errorString, enabled, WTFMove(highlightConfig), showRulers && *showRulers);
+    setSearchingForNode(errorString, enabled, WTFMove(highlightConfig), WTFMove(gridOverlayConfig), WTFMove(flexOverlayConfig), showRulers && *showRulers);
 
     if (!!errorString)
         return makeUnexpected(errorString);
@@ -1530,26 +1613,18 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::hideHighlight()
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Inspector::Protocol::DOM::NodeId nodeId,  Ref<JSON::Object>&& gridColor, std::optional<bool>&& showLineNames, std::optional<bool>&& showLineNumbers, std::optional<bool>&& showExtendedGridLines, std::optional<bool>&& showTrackSizes, std::optional<bool>&& showAreaNames)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Inspector::Protocol::DOM::NodeId nodeId,  Ref<JSON::Object>&& gridOverlayInspectorObject)
 {
     Protocol::ErrorString errorString;
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return makeUnexpected(errorString);
 
-    auto parsedColor = parseColor(WTFMove(gridColor));
-    if (!parsedColor)
-        return makeUnexpected("Invalid color could not be parsed."_s);
+    auto config = gridOverlayConfigFromInspectorObject(errorString, WTFMove(gridOverlayInspectorObject));
+    if (!config)
+        return makeUnexpected(errorString);
 
-    InspectorOverlay::Grid::Config config;
-    config.gridColor = *parsedColor;
-    config.showLineNames = showLineNames.value_or(false);
-    config.showLineNumbers = showLineNumbers.value_or(false);
-    config.showExtendedGridLines = showExtendedGridLines.value_or(false);
-    config.showTrackSizes = showTrackSizes.value_or(false);
-    config.showAreaNames = showAreaNames.value_or(false);
-
-    m_overlay->setGridOverlayForNode(*node, config);
+    m_overlay->setGridOverlayForNode(*node, *config);
 
     return { };
 }
@@ -1570,22 +1645,18 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(std:
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Object>&& flexColor, std::optional<bool>&& showOrderNumbers)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Object>&& flexOverlayInspectorObject)
 {
     Protocol::ErrorString errorString;
     Node* node = assertNode(errorString, nodeId);
     if (!node)
         return makeUnexpected(errorString);
 
-    auto parsedColor = parseColor(WTFMove(flexColor));
-    if (!parsedColor)
-        return makeUnexpected("Invalid color could not be parsed."_s);
+    auto config = flexOverlayConfigFromInspectorObject(errorString, WTFMove(flexOverlayInspectorObject));
+    if (!config)
+        return makeUnexpected(errorString);
 
-    InspectorOverlay::Flex::Config config;
-    config.flexColor = *parsedColor;
-    config.showOrderNumbers = showOrderNumbers.value_or(false);
-
-    m_overlay->setFlexOverlayForNode(*node, config);
+    m_overlay->setFlexOverlayForNode(*node, *config);
 
     return { };
 }

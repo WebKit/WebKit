@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@ class TestGitHub(unittest.TestCase):
             )), dict(
                 type='github',
                 url='https://github.example.com/WebKit/WebKit',
+                hide_title=False,
                 res=['\\Aexample.com/b/(?P<id>\\d+)\\Z']
             ),
         )

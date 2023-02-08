@@ -27,7 +27,11 @@
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+#include <gtk/gtk.h>
+#else
 #include <cairo.h>
+#endif
 #endif
 
 G_BEGIN_DECLS
@@ -63,7 +67,7 @@ struct _WebKitFaviconDatabaseClass {
 
 /**
  * WebKitFaviconDatabaseError:
- * @WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED: The #WebKitFaviconDatabase has not been initialized yet
+ * @WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED: The #WebKitFaviconDatabase is closed
  * @WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND: There is not an icon available for the requested URL
  * @WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_UNKNOWN: There might be an icon for the requested URL, but its data is unknown at the moment
  *
@@ -88,10 +92,18 @@ webkit_favicon_database_get_favicon        (WebKitFaviconDatabase *database,
                                             GCancellable          *cancellable,
                                             GAsyncReadyCallback    callback,
                                             gpointer               user_data);
+
+#if USE(GTK4)
+WEBKIT_API GdkTexture *
+webkit_favicon_database_get_favicon_finish (WebKitFaviconDatabase *database,
+                                            GAsyncResult          *result,
+                                            GError               **error);
+#else
 WEBKIT_API cairo_surface_t *
 webkit_favicon_database_get_favicon_finish (WebKitFaviconDatabase *database,
                                             GAsyncResult          *result,
                                             GError               **error);
+#endif
 #endif
 
 WEBKIT_API gchar *

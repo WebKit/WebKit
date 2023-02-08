@@ -1833,6 +1833,12 @@ webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mim
 
 webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.html [ Pass Failure ]
 
+webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-dpi-rendering-2.html [ ImageOnlyFailure ]
+webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-empty-url-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-first-match-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering-2.html [ ImageOnlyFailure ]
+webkit.org/b/251848 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-unordered-res-rendering.html [ ImageOnlyFailure ]
+
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/background-position-subpixel-at-border.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-8.html [ ImageOnlyFailure ]
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/simple-bg-color.html [ ImageOnlyFailure ]
@@ -2393,3 +2399,6 @@ imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub
 # WebGL in OffscreenCanvas requires the GPUP.
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Skip ]
+
+webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animation-overlap.html [ Pass Timeout ]
+

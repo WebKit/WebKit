@@ -95,9 +95,9 @@ class TestBranch(testing.PathTestCase):
             bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]), mocks.local.Svn(), MockTime:
 
             self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
-            self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
-        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/Example-feature-1'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter issue URL or title of new issue: \nCreated the local development branch 'eng/Example-feature-1'\n")
+            self.assertEqual(local.Git(self.path).branch, 'eng/2')
+        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/2'...\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter issue URL or title of new issue: \nCreated the local development branch 'eng/2'\n")
 
     def test_automatic_radar_cc(self):
         with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA), ''), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
@@ -284,7 +284,7 @@ Created the local development branch 'eng/Area-New-Issue'
                 args=('branch',),
                 path=self.path,
             ))
-            self.assertEqual(local.Git(self.path).branch, 'eng/Area-New-Issue')
+            self.assertEqual(local.Git(self.path).branch, 'eng/4')
 
             issue = radar.Tracker(project='WebKit').issue(4)
             self.assertEqual(issue.title, '[Area] New Issue')
@@ -310,7 +310,7 @@ What version of 'WebKit SVG' should the bug be associated with?:
     4) WebKit Local Build
 : 
 Created 'rdar://4 [Area] New Issue'
-Created the local development branch 'eng/Area-New-Issue'
+Created the local development branch 'eng/4'
 ''',
         )
         self.assertEqual(captured.stderr.getvalue(), '')

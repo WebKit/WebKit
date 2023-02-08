@@ -38,8 +38,6 @@ public:
         CaptureDevice m_device;
         String m_application;
     };
-
-    virtual void windowDevices(Vector<WindowCaptureDevice>&) { }
 };
 
 } // namespace WebCore

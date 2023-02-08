@@ -89,8 +89,6 @@ class SharedCommandBlockPool final : angle::RingBufferAllocateListener
 
     void getMemoryUsageStats(size_t *usedMemoryOut, size_t *allocatedMemoryOut) const;
 
-    void pushNewCommandBlock(uint8_t *block);
-
     void terminateLastCommandBlock()
     {
         if (mLastCommandBlock)
@@ -102,50 +100,47 @@ class SharedCommandBlockPool final : angle::RingBufferAllocateListener
         }
     }
 
-    void finishLastCommandBlock()
-    {
-        mFinishedCommandSize = getCommandSize();
-        terminateLastCommandBlock();
-        mLastCommandBlock = nullptr;
-    }
-
-    // The following is used to give the size of the command buffer in bytes
-    uint32_t getCommandSize() const;
-
     // Initialize the SecondaryCommandBuffer by setting the allocator it will use
     void attachAllocator(SharedCommandMemoryAllocator *source);
     void detachAllocator(SharedCommandMemoryAllocator *destination);
 
-    // Functions derived from RingBufferAllocateListener
-    virtual void onRingBufferNewFragment() override
-    {
-        pushNewCommandBlock(mAllocator.getPointer());
-    }
-
-    virtual void onRingBufferFragmentEnd() override { finishLastCommandBlock(); }
-
     void onNewVariableSizedCommand(const size_t requiredSize,
                                    const size_t allocationSize,
-                                   bool *usesCommandHeaderSizeForOffsetOut,
-                                   uint8_t **ptrOut,
                                    uint8_t **headerOut)
     {
-        *usesCommandHeaderSizeForOffsetOut = false;
-        *headerOut                         = updateHeaderAndAllocatorParams(allocationSize);
+        *headerOut = allocateCommand(allocationSize);
     }
-    void onNewCommand(const size_t requiredSize,
-                      const size_t allocationSize,
-                      uint8_t **ptrOut,
-                      uint8_t **header)
+    void onNewCommand(const size_t requiredSize, const size_t allocationSize, uint8_t **headerOut)
     {
-        *header = updateHeaderAndAllocatorParams(allocationSize);
+        *headerOut = allocateCommand(allocationSize);
     }
 
   private:
-    uint8_t *updateHeaderAndAllocatorParams(size_t allocationSize)
+    uint8_t *allocateCommand(size_t allocationSize)
     {
+        ASSERT(mLastCommandBlock);
         return mAllocator.allocate(static_cast<uint32_t>(allocationSize));
     }
+
+    // The following is used to give the size of the command buffer in bytes
+    uint32_t getCommandSize() const
+    {
+        uint32_t result = mFinishedCommandSize;
+        if (mLastCommandBlock)
+        {
+            ASSERT(mAllocator.valid());
+            ASSERT(mAllocator.getPointer() >= mLastCommandBlock);
+            result += static_cast<uint32_t>(mAllocator.getPointer() - mLastCommandBlock);
+        }
+        return result;
+    }
+
+    void pushNewCommandBlock(uint8_t *block);
+    void finishLastCommandBlock();
+
+    // Functions derived from RingBufferAllocateListener
+    virtual void onRingBufferNewFragment() override;
+    virtual void onRingBufferFragmentEnd() override;
 
     // Using a ring buffer allocator for less memory overhead (observed with enabled async queue)
     RingBufferAllocator mAllocator;

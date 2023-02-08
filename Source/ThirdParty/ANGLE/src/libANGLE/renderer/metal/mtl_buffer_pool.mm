@@ -20,10 +20,8 @@ namespace mtl
 
 // BufferPool implementation.
 BufferPool::BufferPool() : BufferPool(false) {}
+
 BufferPool::BufferPool(bool alwaysAllocNewBuffer)
-    : BufferPool(alwaysAllocNewBuffer, BufferPoolMemPolicy::Auto)
-{}
-BufferPool::BufferPool(bool alwaysAllocNewBuffer, BufferPoolMemPolicy policy)
     : mInitialSize(0),
       mBuffer(nullptr),
       mNextAllocationOffset(0),
@@ -32,9 +30,7 @@ BufferPool::BufferPool(bool alwaysAllocNewBuffer, BufferPoolMemPolicy policy)
       mAlignment(1),
       mBuffersAllocated(0),
       mMaxBuffers(0),
-      mMemPolicy(policy),
       mAlwaysAllocateNewBuffer(alwaysAllocNewBuffer)
-
 {}
 
 angle::Result BufferPool::reset(ContextMtl *contextMtl,
@@ -65,8 +61,7 @@ angle::Result BufferPool::reset(ContextMtl *contextMtl,
                 // If buffer is not used by GPU, re-use it immediately.
                 continue;
             }
-            bool useSharedMem = shouldAllocateInSharedMem(contextMtl);
-            if (IsError(buffer->resetWithSharedMemOpt(contextMtl, useSharedMem, mSize, nullptr)))
+            if (IsError(buffer->reset(contextMtl, storageMode(contextMtl), mSize, nullptr)))
             {
                 mBufferFreeList.clear();
                 mBuffersAllocated = 0;
@@ -110,22 +105,15 @@ void BufferPool::initialize(Context *context,
 
 BufferPool::~BufferPool() {}
 
-bool BufferPool::shouldAllocateInSharedMem(ContextMtl *contextMtl) const
+MTLStorageMode BufferPool::storageMode(ContextMtl *contextMtl) const
 {
-    if (ANGLE_UNLIKELY(contextMtl->getDisplay()->getFeatures().forceBufferGPUStorage.enabled))
+#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+    if (mSize > kSharedMemBufferMaxBufSizeHint)
     {
-        return false;
+        return MTLStorageModeManaged;
     }
-
-    switch (mMemPolicy)
-    {
-        case BufferPoolMemPolicy::AlwaysSharedMem:
-            return true;
-        case BufferPoolMemPolicy::AlwaysGPUMem:
-            return false;
-        default:
-            return mSize <= kSharedMemBufferMaxBufSizeHint;
-    }
+#endif
+    return Buffer::getStorageModeForSharedBuffer(contextMtl);
 }
 
 angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
@@ -158,9 +146,8 @@ angle::Result BufferPool::allocateNewBuffer(ContextMtl *contextMtl)
         return angle::Result::Continue;
     }
 
-    bool useSharedMem = shouldAllocateInSharedMem(contextMtl);
-    ANGLE_TRY(
-        Buffer::MakeBufferWithSharedMemOpt(contextMtl, useSharedMem, mSize, nullptr, &mBuffer));
+    ANGLE_TRY(Buffer::MakeBufferWithStorageMode(contextMtl, storageMode(contextMtl), mSize, nullptr,
+                                                &mBuffer));
 
     ASSERT(mBuffer);
 
@@ -293,7 +280,7 @@ void BufferPool::releaseInFlightBuffers(ContextMtl *contextMtl)
         if (toRelease->size() < mSize
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
             // Also release buffer if it was allocated in different policy
-            || toRelease->useSharedMem() != shouldAllocateInSharedMem(contextMtl)
+            || toRelease->storageMode() != storageMode(contextMtl)
 #endif
         )
         {

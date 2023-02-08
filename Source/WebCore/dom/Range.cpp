@@ -26,6 +26,7 @@
 #include "Range.h"
 
 #include "Comment.h"
+#include "CustomElementReactionQueue.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DocumentFragment.h"
@@ -44,6 +45,7 @@
 #include "ProcessingInstruction.h"
 #include "ScopedEventQueue.h"
 #include "TextIterator.h"
+#include "TypedElementDescendantIterator.h"
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <stdio.h>
@@ -317,95 +319,111 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
         return fragment;
     }
 
-    // Since mutation events can modify the range during the process, the boundary points need to be saved.
-    RangeBoundaryPoint originalStart(m_start);
-    RangeBoundaryPoint originalEnd(m_end);
+    Vector<Ref<Element>> elementsToUpgrade;
+    {
+        CustomElementReactionStack customElementsReactionHoldingTank(commonRoot->document().globalObject());
 
-    // what is the highest node that partially selects the start / end of the range?
-    RefPtr<Node> partialStart = highestAncestorUnderCommonRoot(&originalStart.container(), commonRoot.get());
-    RefPtr<Node> partialEnd = highestAncestorUnderCommonRoot(&originalEnd.container(), commonRoot.get());
+        // Since mutation events can modify the range during the process, the boundary points need to be saved.
+        RangeBoundaryPoint originalStart(m_start);
+        RangeBoundaryPoint originalEnd(m_end);
 
-    // Start and end containers are different.
-    // There are three possibilities here:
-    // 1. Start container == commonRoot (End container must be a descendant)
-    // 2. End container == commonRoot (Start container must be a descendant)
-    // 3. Neither is commonRoot, they are both descendants
-    //
-    // In case 3, we grab everything after the start (up until a direct child
-    // of commonRoot) into leftContents, and everything before the end (up until
-    // a direct child of commonRoot) into rightContents. Then we process all
-    // commonRoot children between leftContents and rightContents
-    //
-    // In case 1 or 2, we skip either processing of leftContents or rightContents,
-    // in which case the last lot of nodes either goes from the first or last
-    // child of commonRoot.
-    //
-    // These are deleted, cloned, or extracted (i.e. both) depending on action.
+        // what is the highest node that partially selects the start / end of the range?
+        RefPtr partialStart = highestAncestorUnderCommonRoot(&originalStart.container(), commonRoot.get());
+        RefPtr partialEnd = highestAncestorUnderCommonRoot(&originalEnd.container(), commonRoot.get());
 
-    // Note that we are verifying that our common root hierarchy is still intact
-    // after any DOM mutation event, at various stages below. See webkit bug 60350.
+        // Start and end containers are different.
+        // There are three possibilities here:
+        // 1. Start container == commonRoot (End container must be a descendant)
+        // 2. End container == commonRoot (Start container must be a descendant)
+        // 3. Neither is commonRoot, they are both descendants
+        //
+        // In case 3, we grab everything after the start (up until a direct child
+        // of commonRoot) into leftContents, and everything before the end (up until
+        // a direct child of commonRoot) into rightContents. Then we process all
+        // commonRoot children between leftContents and rightContents
+        //
+        // In case 1 or 2, we skip either processing of leftContents or rightContents,
+        // in which case the last lot of nodes either goes from the first or last
+        // child of commonRoot.
+        //
+        // These are deleted, cloned, or extracted (i.e. both) depending on action.
 
-    RefPtr<Node> leftContents;
-    if (&originalStart.container() != commonRoot && commonRoot->contains(&originalStart.container())) {
-        auto firstResult = processContentsBetweenOffsets(action, nullptr, &originalStart.container(), originalStart.offset(), originalStart.container().length());
-        auto secondResult = processAncestorsAndTheirSiblings(action, &originalStart.container(), ProcessContentsForward, WTFMove(firstResult), commonRoot.get());
-        // FIXME: A bit peculiar that we silently ignore the exception here, but we do have at least some regression tests that rely on this behavior.
-        if (!secondResult.hasException())
-            leftContents = secondResult.releaseReturnValue();
-    }
+        // Note that we are verifying that our common root hierarchy is still intact
+        // after any DOM mutation event, at various stages below. See webkit bug 60350.
 
-    RefPtr<Node> rightContents;
-    if (&endContainer() != commonRoot && commonRoot->contains(&originalEnd.container())) {
-        auto firstResult = processContentsBetweenOffsets(action, nullptr, &originalEnd.container(), 0, originalEnd.offset());
-        auto secondResult = processAncestorsAndTheirSiblings(action, &originalEnd.container(), ProcessContentsBackward, WTFMove(firstResult), commonRoot.get());
-        // FIXME: A bit peculiar that we silently ignore the exception here, but we do have at least some regression tests that rely on this behavior.
-        if (!secondResult.hasException())
-            rightContents = secondResult.releaseReturnValue();
-    }
+        RefPtr<Node> leftContents;
+        if (&originalStart.container() != commonRoot && commonRoot->contains(originalStart.container())) {
+            auto firstResult = processContentsBetweenOffsets(action, nullptr, &originalStart.container(), originalStart.offset(), originalStart.container().length());
+            auto secondResult = processAncestorsAndTheirSiblings(action, &originalStart.container(), ProcessContentsForward, WTFMove(firstResult), commonRoot.get());
+            // FIXME: A bit peculiar that we silently ignore the exception here, but we do have at least some regression tests that rely on this behavior.
+            if (!secondResult.hasException())
+                leftContents = secondResult.releaseReturnValue();
+        }
 
-    // delete all children of commonRoot between the start and end container
-    RefPtr<Node> processStart = childOfCommonRootBeforeOffset(&originalStart.container(), originalStart.offset(), commonRoot.get());
-    if (processStart && &originalStart.container() != commonRoot) // processStart contains nodes before m_start.
-        processStart = processStart->nextSibling();
-    RefPtr<Node> processEnd = childOfCommonRootBeforeOffset(&originalEnd.container(), originalEnd.offset(), commonRoot.get());
+        RefPtr<Node> rightContents;
+        if (&endContainer() != commonRoot && commonRoot->contains(originalEnd.container())) {
+            auto firstResult = processContentsBetweenOffsets(action, nullptr, &originalEnd.container(), 0, originalEnd.offset());
+            auto secondResult = processAncestorsAndTheirSiblings(action, &originalEnd.container(), ProcessContentsBackward, WTFMove(firstResult), commonRoot.get());
+            // FIXME: A bit peculiar that we silently ignore the exception here, but we do have at least some regression tests that rely on this behavior.
+            if (!secondResult.hasException())
+                rightContents = secondResult.releaseReturnValue();
+        }
 
-    // Collapse the range, making sure that the result is not within a node that was partially selected.
-    if (action == Extract || action == Delete) {
-        if (partialStart && commonRoot->contains(partialStart.get())) {
-            auto result = setStart(*partialStart->parentNode(), partialStart->computeNodeIndex() + 1);
-            if (result.hasException())
-                return result.releaseException();
-        } else if (partialEnd && commonRoot->contains(partialEnd.get())) {
-            auto result = setStart(*partialEnd->parentNode(), partialEnd->computeNodeIndex());
+        // delete all children of commonRoot between the start and end container
+        RefPtr processStart = childOfCommonRootBeforeOffset(&originalStart.container(), originalStart.offset(), commonRoot.get());
+        if (processStart && &originalStart.container() != commonRoot) // processStart contains nodes before m_start.
+            processStart = processStart->nextSibling();
+        RefPtr processEnd = childOfCommonRootBeforeOffset(&originalEnd.container(), originalEnd.offset(), commonRoot.get());
+
+        // Collapse the range, making sure that the result is not within a node that was partially selected.
+        if (action == Extract || action == Delete) {
+            if (partialStart && commonRoot->contains(*partialStart)) {
+                auto result = setStart(*partialStart->parentNode(), partialStart->computeNodeIndex() + 1);
+                if (result.hasException())
+                    return result.releaseException();
+            } else if (partialEnd && commonRoot->contains(*partialEnd)) {
+                auto result = setStart(*partialEnd->parentNode(), partialEnd->computeNodeIndex());
+                if (result.hasException())
+                    return result.releaseException();
+            }
+            collapse(true);
+        }
+
+        // Now add leftContents, stuff in between, and rightContents to the fragment
+        // (or just delete the stuff in between)
+
+        if ((action == Extract || action == Clone) && leftContents) {
+            auto result = fragment->appendChild(*leftContents);
             if (result.hasException())
                 return result.releaseException();
         }
-        collapse(true);
-    }
 
-    // Now add leftContents, stuff in between, and rightContents to the fragment
-    // (or just delete the stuff in between)
+        if (processStart) {
+            Vector<Ref<Node>> nodes;
+            for (Node* node = processStart.get(); node && node != processEnd; node = node->nextSibling())
+                nodes.append(*node);
+            auto result = processNodes(action, nodes, commonRoot.get(), fragment.get());
+            if (result.hasException())
+                return result.releaseException();
+        }
 
-    if ((action == Extract || action == Clone) && leftContents) {
-        auto result = fragment->appendChild(*leftContents);
-        if (result.hasException())
-            return result.releaseException();
-    }
+        if ((action == Extract || action == Clone) && rightContents) {
+            auto result = fragment->appendChild(*rightContents);
+            if (result.hasException())
+                return result.releaseException();
+        }
 
-    if (processStart) {
-        Vector<Ref<Node>> nodes;
-        for (Node* node = processStart.get(); node && node != processEnd; node = node->nextSibling())
-            nodes.append(*node);
-        auto result = processNodes(action, nodes, commonRoot.get(), fragment.get());
-        if (result.hasException())
-            return result.releaseException();
+        HashSet<Ref<Element>> elementSet;
+        for (auto& element : customElementsReactionHoldingTank.takeElements())
+            elementSet.add(element.get());
+        if (!elementSet.isEmpty()) {
+            for (auto& element : descendantsOfType<Element>(*fragment)) {
+                if (elementSet.contains(element))
+                    elementsToUpgrade.append(element);
+            }
+        }
     }
-
-    if ((action == Extract || action == Clone) && rightContents) {
-        auto result = fragment->appendChild(*rightContents);
-        if (result.hasException())
-            return result.releaseException();
-    }
+    CustomElementReactionQueue::enqueueElementsOnAppropriateElementQueue(elementsToUpgrade);
 
     return fragment;
 }

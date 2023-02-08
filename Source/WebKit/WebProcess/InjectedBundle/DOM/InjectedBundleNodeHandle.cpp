@@ -50,7 +50,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Position.h>
 #include <WebCore/Range.h>
-#include <WebCore/RenderObject.h>
+#include <WebCore/RenderElement.h>
 #include <WebCore/SimpleRange.h>
 #include <WebCore/Text.h>
 #include <WebCore/VisiblePosition.h>
@@ -419,24 +419,13 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
     return WebFrame::fromCoreFrame(*frame);
 }
 
-RefPtr<WebFrame> InjectedBundleNodeHandle::htmlFrameElementContentFrame()
-{
-    if (!is<HTMLFrameElement>(m_node))
-        return nullptr;
-
-    auto* frame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameElement>(*m_node).contentFrame());
-    if (!frame)
-        return nullptr;
-
-    return WebFrame::fromCoreFrame(*frame);
-}
-
 RefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
 {
-    if (!is<HTMLIFrameElement>(m_node))
+    auto* iframeElement = dynamicDowncast<HTMLIFrameElement>(m_node.get());
+    if (!iframeElement)
         return nullptr;
 
-    auto* frame = dynamicDowncast<LocalFrame>(downcast<HTMLFrameElement>(*m_node).contentFrame());
+    auto* frame = dynamicDowncast<LocalFrame>(iframeElement->contentFrame());
     if (!frame)
         return nullptr;
 

@@ -318,26 +318,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'Windows-EWS': [
-            'configure-build',
-            'check-change-relevance',
-            'validate-change',
-            'configuration',
-            'delete-stale-build-files',
-            'clean-up-git-repo',
-            'checkout-source',
-            'fetch-branch-references',
-            'checkout-specific-revision',
-            'show-identifier',
-            'apply-patch',
-            'checkout-pull-request',
-            'kill-old-processes',
-            'validate-change',
-            'compile-webkit',
-            'validate-change',
-            'layout-tests',
-            'set-build-summary'
-        ],
         'WinCairo-EWS': [
             'configure-build',
             'validate-change',

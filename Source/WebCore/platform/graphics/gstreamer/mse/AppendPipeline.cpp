@@ -144,6 +144,8 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     if (type.endsWith("mp4"_s) || type.endsWith("aac"_s)) {
         m_demux = makeGStreamerElement("qtdemux", nullptr);
         m_typefind = makeGStreamerElement("identity", nullptr);
+        GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_simple("video/quicktime", "variant", G_TYPE_STRING, "mse-bytestream", NULL));
+        gst_app_src_set_caps(GST_APP_SRC(m_appsrc.get()), caps.get());
     } else if (type.endsWith("webm"_s)) {
         m_demux = makeGStreamerElement("matroskademux", nullptr);
         m_typefind = makeGStreamerElement("identity", nullptr);
@@ -416,7 +418,9 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
     //
     // Because a track presentation time starting at some close to zero, but not exactly zero time can cause unexpected
     // results for applications, we extend the duration of this first sample to the left so that it starts at zero.
-    if (mediaSample->decodeTime() == MediaTime::zeroTime() && mediaSample->presentationTime() > MediaTime::zeroTime() && mediaSample->presentationTime() <= MediaTime(1, 10)) {
+    if (mediaSample->decodeTime() == MediaTime::zeroTime() && mediaSample->presentationTime() > MediaTime::zeroTime()
+        && mediaSample->presentationTime() <= MediaTime(1, 10)
+        && mediaSample->isSync()) {
         GST_DEBUG_OBJECT(pipeline(), "Extending first sample to make it start at PTS=0");
         mediaSample->extendToTheBeginning();
     }

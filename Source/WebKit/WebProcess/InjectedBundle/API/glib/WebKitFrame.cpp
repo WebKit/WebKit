@@ -27,6 +27,7 @@
 #include <JavaScriptCore/JSGlobalObjectInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/ScriptController.h>
 #include <jsc/JSCContextPrivate.h>
@@ -63,10 +64,27 @@ static void webkit_frame_class_init(WebKitFrameClass*)
 {
 }
 
+static CString getURL(WebFrame* webFrame)
+{
+    auto* documentLoader = webFrame->coreFrame()->loader().provisionalDocumentLoader();
+    if (!documentLoader)
+        documentLoader = webFrame->coreFrame()->loader().documentLoader();
+
+    ASSERT(documentLoader);
+
+    if (!documentLoader->unreachableURL().isEmpty())
+        return documentLoader->unreachableURL().string().utf8();
+
+    return documentLoader->url().string().utf8();
+}
+
 WebKitFrame* webkitFrameCreate(WebFrame* webFrame)
 {
     WebKitFrame* frame = WEBKIT_FRAME(g_object_new(WEBKIT_TYPE_FRAME, NULL));
     frame->priv->webFrame = webFrame;
+
+    frame->priv->uri = getURL(webFrame);
+
     return frame;
 }
 
@@ -95,6 +113,14 @@ Vector<GRefPtr<JSCValue>> webkitFrameGetJSCValuesForElementsInWorld(WebKitFrame*
         }
         return jsValue ? jscContextGetOrCreateValue(jsContext.get(), jsValue) : nullptr;
     });
+}
+
+void webkitFrameSetURI(WebKitFrame* frame, const CString& uri)
+{
+    if (frame->priv->uri == uri)
+        return;
+
+    frame->priv->uri = uri;
 }
 
 /**

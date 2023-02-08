@@ -45,7 +45,7 @@ public:
 private:
     struct EnclosingLineGeometry {
         InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom;
-        InlineRect scrollableOverflowRect;
+        InlineRect contentOverflowRect;
     };
     EnclosingLineGeometry collectEnclosingLineGeometry(const LineBuilder::LineContent&, const LineBox&, const InlineRect& lineBoxRect) const;
 

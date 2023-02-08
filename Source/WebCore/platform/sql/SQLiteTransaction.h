@@ -45,7 +45,7 @@ public:
     void stop();
     
     bool inProgress() const { return m_inProgress; }
-    bool wasRolledBackBySqlite() const;
+    WEBCORE_EXPORT bool wasRolledBackBySqlite() const;
 
     SQLiteDatabase& database() const { return m_db; }
 

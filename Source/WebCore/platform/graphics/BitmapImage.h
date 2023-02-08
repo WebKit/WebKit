@@ -140,9 +140,9 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    GdkPixbuf* getGdkPixbuf() override;
+    GRefPtr<GdkPixbuf> gdkPixbuf() override;
 #if USE(GTK4)
-    GdkTexture* gdkTexture() override;
+    GRefPtr<GdkTexture> gdkTexture() override;
 #endif
 #endif
 

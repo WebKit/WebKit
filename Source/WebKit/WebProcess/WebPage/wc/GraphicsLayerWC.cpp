@@ -99,7 +99,7 @@ public:
     void setTopContentInset(float) final { }
     void setVelocity(const VelocityData&) final { }
     void setTileSizeUpdateDelayDisabledForTesting(bool) final { };
-    void setScrollability(Scrollability) final { }
+    void setScrollability(OptionSet<Scrollability>) final { }
     void prepopulateRect(const FloatRect&) final { }
     void setIsInWindow(bool) final { }
     bool isInWindow() const final { return m_isInWindow; }

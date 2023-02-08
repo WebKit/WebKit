@@ -464,7 +464,7 @@ def handle_gn_build_arg_response_file_name(command_arg_list):
     updated_args = command_arg_list[:]
     for index, arg in enumerate(updated_args):
         if arg == '{{response_file_name}}':
-            new_temp_file_name = 'gn_response_file'
+            new_temp_file_name = '$(genDir)/gn_response_file'
             updated_args[index] = new_temp_file_name
     return new_temp_file_name, updated_args
 
@@ -511,7 +511,7 @@ def action_target_to_blueprint(abi, target, build_info):
         target_info['args'])
 
     if new_temporary_gn_response_file:
-        # add the command 'echo $(in) > gn_response_file' to
+        # add the command 'echo $(in) > $(genDir)/gn_response_file' to
         # write $response_file_contents into the new_temporary_gn_response_file.
         cmd = ['echo $(in) >', new_temporary_gn_response_file, '&&', '$(location)'
               ] + gn_action_args_to_blueprint_args(bp_srcs, bp_outputs, updated_args)

@@ -164,7 +164,7 @@ public:
 
     bool allowsAnimation() const;
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
-    WEBCORE_EXPORT void setAllowsAnimation(bool);
+    WEBCORE_EXPORT void setAllowsAnimation(std::optional<bool>);
 #endif
 
 protected:

@@ -338,14 +338,6 @@
         return;
     }
 
-#if PLATFORM(MAC)
-    // FIXME: We should not permanently disable this for iTunes. rdar://problem/19461358
-    if (WebCore::MacApplication::isITunes()) {
-        [self _cancelImmediateAction];
-        return;
-    }
-#endif
-
     if (customClientAnimationController && [customClientAnimationController conformsToProtocol:@protocol(NSImmediateActionAnimationController)])
         [_immediateActionRecognizer setAnimationController:(id <NSImmediateActionAnimationController>)customClientAnimationController];
     else

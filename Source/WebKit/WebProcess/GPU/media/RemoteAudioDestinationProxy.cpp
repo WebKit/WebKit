@@ -49,6 +49,10 @@ namespace WebKit {
 // Allocate a ring buffer large enough to contain 2 seconds of audio.
 constexpr size_t ringBufferSizeInSecond = 2;
 
+#if PLATFORM(COCOA)
+constexpr unsigned maxAudioBufferListSampleCount = 4096;
+#endif
+
 using AudioIOCallback = WebCore::AudioIOCallback;
 
 Ref<RemoteAudioDestinationProxy> RemoteAudioDestinationProxy::create(AudioIOCallback& callback,
@@ -75,7 +79,11 @@ void RemoteAudioDestinationProxy::startRenderingThread()
             if (m_shouldStopThread)
                 break;
 
-            renderQuantum();
+            unsigned frameCount = WebCore::AudioUtilities::renderQuantumSize;
+            while (m_renderSemaphore.waitFor(0_s))
+                frameCount += WebCore::AudioUtilities::renderQuantumSize;
+
+            renderAudio(frameCount);
         } while (!m_shouldStopThread);
     };
     m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive);
@@ -108,7 +116,7 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         m_ringBuffer = WTFMove(ringBuffer);
         m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle) }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
-        m_audioBufferList->setSampleCount(WebCore::AudioUtilities::renderQuantumSize);
+        m_audioBufferList->setSampleCount(maxAudioBufferListSampleCount);
 #endif
 
         startRenderingThread();
@@ -162,29 +170,32 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
     });
 }
 
-void RemoteAudioDestinationProxy::renderQuantum()
+void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
 {
     ASSERT(!isMainRunLoop());
 
 #if PLATFORM(COCOA)
-    auto sampleTime = m_currentFrame / static_cast<double>(m_remoteSampleRate);
-    auto hostTime =  MonotonicTime::fromMachAbsoluteTime(mach_absolute_time());
-    size_t numberOfFrames = WebCore::AudioUtilities::renderQuantumSize;
-    auto* ioData = m_audioBufferList->list();
+    while (frameCount) {
+        auto sampleTime = m_currentFrame / static_cast<double>(m_remoteSampleRate);
+        auto hostTime =  MonotonicTime::fromMachAbsoluteTime(mach_absolute_time());
+        size_t numberOfFrames = std::min(frameCount, maxAudioBufferListSampleCount);
+        frameCount -= numberOfFrames;
+        auto* ioData = m_audioBufferList->list();
 
-    auto* buffers = ioData->mBuffers;
-    auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
+        auto* buffers = ioData->mBuffers;
+        auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
 
-    // Associate the destination data array with the output bus then fill the FIFO.
-    for (UInt32 i = 0; i < numberOfBuffers; ++i) {
-        auto* memory = reinterpret_cast<float*>(buffers[i].mData);
-        size_t channelNumberOfFrames = std::min<size_t>(numberOfFrames, buffers[i].mDataByteSize / sizeof(float));
-        m_outputBus->setChannelMemory(i, memory, channelNumberOfFrames);
+        // Associate the destination data array with the output bus then fill the FIFO.
+        for (UInt32 i = 0; i < numberOfBuffers; ++i) {
+            auto* memory = reinterpret_cast<float*>(buffers[i].mData);
+            size_t channelNumberOfFrames = std::min<size_t>(numberOfFrames, buffers[i].mDataByteSize / sizeof(float));
+            m_outputBus->setChannelMemory(i, memory, channelNumberOfFrames);
+        }
+        size_t framesToRender = pullRendered(numberOfFrames);
+        m_ringBuffer->store(m_audioBufferList->list(), numberOfFrames, m_currentFrame);
+        render(sampleTime, hostTime, framesToRender);
+        m_currentFrame += numberOfFrames;
     }
-    size_t framesToRender = pullRendered(numberOfFrames);
-    m_ringBuffer->store(m_audioBufferList->list(), WebCore::AudioUtilities::renderQuantumSize, m_currentFrame);
-    render(sampleTime, hostTime, framesToRender);
-    m_currentFrame += WebCore::AudioUtilities::renderQuantumSize;
 #endif
 }
 

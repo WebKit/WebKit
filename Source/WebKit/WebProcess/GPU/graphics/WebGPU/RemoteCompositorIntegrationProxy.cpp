@@ -60,6 +60,8 @@ void RemoteCompositorIntegrationProxy::prepareForDisplay(CompletionHandler<void(
     auto sendResult = sendSync(Messages::RemoteCompositorIntegration::PrepareForDisplay());
     UNUSED_VARIABLE(sendResult);
 
+    m_presentationContext->present();
+
     completionHandler();
 }
 

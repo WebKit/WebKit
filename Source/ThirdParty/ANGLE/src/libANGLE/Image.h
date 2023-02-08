@@ -51,7 +51,7 @@ class ImageSibling : public gl::FramebufferAttachmentObject
                       GLenum binding,
                       const gl::ImageIndex &imageIndex) const override;
     bool isYUV() const override;
-    bool isCreatedWithAHB() const override;
+    bool isExternalImageWithoutIndividualSync() const override;
     bool hasFrontBufferUsage() const override;
     bool hasProtectedContent() const override;
 
@@ -148,7 +148,6 @@ struct ImageState : private angle::NonCopyable
     gl::Extents size;
     size_t samples;
     GLuint levelCount;
-    EGLenum sourceType;
     EGLenum colorspace;
     bool hasProtectedContent;
 
@@ -180,7 +179,7 @@ class Image final : public RefCountObject, public LabeledObject
     bool isRenderable(const gl::Context *context) const;
     bool isTexturable(const gl::Context *context) const;
     bool isYUV() const;
-    bool isCreatedWithAHB() const;
+    bool isExternalImageWithoutIndividualSync() const;
     bool hasFrontBufferUsage() const;
     // Returns true only if the eglImage contains a complete cubemap
     bool isCubeMap() const;

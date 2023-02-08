@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Igalia S.L
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,7 @@ typedef uint32_t UserMediaPermissionRequestDenialReason;
 WK_EXPORT void WKUserMediaPermissionRequestAllow(WKUserMediaPermissionRequestRef, WKStringRef audioDeviceUID, WKStringRef videoDeviceUID);
 WK_EXPORT void WKUserMediaPermissionRequestDeny(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestDenialReason);
 
+WK_EXPORT bool WKUserMediaPermissionRequestRequiresDisplayCapture(WKUserMediaPermissionRequestRef);
 WK_EXPORT WKArrayRef WKUserMediaPermissionRequestVideoDeviceUIDs(WKUserMediaPermissionRequestRef);
 WK_EXPORT WKArrayRef WKUserMediaPermissionRequestAudioDeviceUIDs(WKUserMediaPermissionRequestRef);
 

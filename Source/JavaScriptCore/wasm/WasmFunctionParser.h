@@ -2190,8 +2190,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_ADD_TO_CONTEXT(addCall(functionIndex, typeDefinition, args, results));
         RELEASE_ASSERT(calleeSignature.returnCount() == results.size());
 
-        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
-            m_expressionStack.constructAndAppend(calleeSignature.returnType(i), results[i]);
+        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i) {
+            Type returnType = calleeSignature.returnType(i);
+            if (returnType.isV128()) {
+                // We care SIMD only when it is not a tail-call: in tail-call case, return values are not visible to this function.
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+            m_expressionStack.constructAndAppend(returnType, results[i]);
+        }
 
         return { };
     }
@@ -2248,8 +2256,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         WASM_TRY_ADD_TO_CONTEXT(addCallIndirect(tableIndex, typeDefinition, args, results));
 
-        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
-            m_expressionStack.constructAndAppend(calleeSignature.returnType(i), results[i]);
+        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i) {
+            Type returnType = calleeSignature.returnType(i);
+            if (returnType.isV128()) {
+                // We care SIMD only when it is not a tail-call: in tail-call case, return values are not visible to this function.
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+            m_expressionStack.constructAndAppend(returnType, results[i]);
+        }
 
         return { };
     }
@@ -2286,8 +2302,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ResultList results;
         WASM_TRY_ADD_TO_CONTEXT(addCallRef(typeDefinition, args, results));
 
-        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
-            m_expressionStack.constructAndAppend(calleeSignature.returnType(i), results[i]);
+        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i) {
+            Type returnType = calleeSignature.returnType(i);
+            if (returnType.isV128()) {
+                // We care SIMD only when it is not a tail-call: in tail-call case, return values are not visible to this function.
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+            m_expressionStack.constructAndAppend(returnType, results[i]);
+        }
 
         return { };
     }
@@ -2421,8 +2445,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_ADD_TO_CONTEXT(addCatch(exceptionIndex, exceptionSignature, preCatchStack, controlEntry.controlData, results));
 
         RELEASE_ASSERT(exceptionSignature.as<FunctionSignature>()->argumentCount() == results.size());
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i)
-            m_expressionStack.constructAndAppend(exceptionSignature.as<FunctionSignature>()->argumentType(i), results[i]);
+        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
+            Type argumentType = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+            if (argumentType.isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+            m_expressionStack.constructAndAppend(argumentType, results[i]);
+        }
         return { };
     }
 
@@ -2698,8 +2729,15 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         WASM_TRY_ADD_TO_CONTEXT(addCatchToUnreachable(exceptionIndex, exceptionSignature, data.controlData, results));
 
         RELEASE_ASSERT(exceptionSignature.as<FunctionSignature>()->argumentCount() == results.size());
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i)
-            m_expressionStack.constructAndAppend(exceptionSignature.as<FunctionSignature>()->argumentType(i), results[i]);
+        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
+            Type argumentType = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+            if (argumentType.isV128()) {
+                m_context.notifyFunctionUsesSIMD();
+                if (!Context::tierSupportsSIMD)
+                    WASM_TRY_ADD_TO_CONTEXT(addCrash());
+            }
+            m_expressionStack.constructAndAppend(argumentType, results[i]);
+        }
         return { };
     }
 

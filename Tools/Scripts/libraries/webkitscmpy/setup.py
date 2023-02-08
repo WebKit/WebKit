@@ -29,7 +29,7 @@ def readme():
 
 setup(
     name='webkitscmpy',
-    version='5.11.6',
+    version='5.12.2',
     description='Library designed to interact with git and svn repositories.',
     long_description=readme(),
     classifiers=[
@@ -58,7 +58,7 @@ setup(
         'webkitscmpy.test',
     ],
     scripts=['git-webkit'],
-    install_requires=['fasteners', 'inspect2', 'jinja2', 'monotonic', 'webkitcorepy', 'webkitbugspy', 'xmltodict', 'rapidfuzz'],
+    install_requires=['fasteners', 'jinja2', 'monotonic', 'webkitcorepy', 'webkitbugspy', 'xmltodict', 'rapidfuzz'],
     include_package_data=True,
     zip_safe=False,
 )

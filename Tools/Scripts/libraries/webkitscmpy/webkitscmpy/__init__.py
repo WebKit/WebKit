@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(5, 11, 6)
+version = Version(5, 12, 2)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('jinja2', Version(2, 11, 3)))
@@ -54,9 +54,6 @@ AutoInstall.register(Package('monotonic', Version(1, 5)))
 AutoInstall.register(Package('xmltodict', Version(0, 11, 0)))
 AutoInstall.register(Package('markupsafe', Version(1, 1, 1), pypi_name='MarkupSafe'))
 AutoInstall.register(Package('webkitbugspy', Version(0, 8, 0)), local=True)
-
-if sys.version_info < (3, 0):
-    AutoInstall.register(Package('inspect2', Version(0, 1, 2)))
 
 if sys.version_info > (3, 6):
     AutoInstall.register(Package('rapidfuzz', Version(2, 11, 1)))

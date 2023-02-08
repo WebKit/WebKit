@@ -47,6 +47,7 @@ public:
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::Buffer&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandBuffer&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandEncoder&) final;
+    const RemoteCompositorIntegrationProxy& convertToRawBacking(const PAL::WebGPU::CompositorIntegration&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::CompositorIntegration&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePassEncoder&) final;
     WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePipeline&) final;

@@ -111,7 +111,6 @@ public:
     GError** m_javascriptError { nullptr };
     GUniquePtr<char> m_resourceData { nullptr };
     size_t m_resourceDataSize { 0 };
-    cairo_surface_t* m_surface { nullptr };
     bool m_expectedWebProcessCrash { false };
 
 #if PLATFORM(GTK)

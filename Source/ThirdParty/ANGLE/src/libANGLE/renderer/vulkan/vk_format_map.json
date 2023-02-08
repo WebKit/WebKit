@@ -220,7 +220,7 @@
         },
         "D32_UNORM": {
             "buffer": "NONE",
-            "image": ["D24_UNORM_S8_UINT", "D32_FLOAT"]
+            "image": ["D24_UNORM_X8_UINT", "D24_UNORM_S8_UINT", "D32_FLOAT"]
         },
         "ETC1_R8G8B8_UNORM_BLOCK": {
             "buffer": "NONE",

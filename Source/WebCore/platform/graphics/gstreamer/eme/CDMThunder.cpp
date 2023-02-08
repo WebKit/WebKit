@@ -130,8 +130,6 @@ const Vector<String>& CDMFactoryThunder::supportedKeySystems() const
             supportedKeySystems.append(String::fromLatin1(GStreamerEMEUtilities::s_PlayReadyKeySystems[1]));
         }
         GST_DEBUG("%zu supported key systems", supportedKeySystems.size());
-        ASSERT_WITH_MESSAGE(!supportedKeySystems.isEmpty() || !isThunderRanked(), "Thunder is up-ranked as preferred "
-            "decryptor but Thunder is not supporting any encryption system. Is Thunder running? Are the plugins built?");
     }
     return supportedKeySystems;
 }

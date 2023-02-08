@@ -47,7 +47,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
-                   DeleteStaleBuildFiles, DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
+                   DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                    EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub, GitHubMixin,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
@@ -1098,9 +1098,9 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Deleted .git/index.lock')
         return self.runStep()
 
-    def test_success_windows(self):
+    def test_success_ios(self):
         self.setupStep(CleanUpGitIndexLock())
-        self.setProperty('platform', 'win')
+        self.setProperty('platform', 'ios-16')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         timeout=120,
@@ -3837,10 +3837,10 @@ class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
             rc = self.runStep()
         return rc
 
-    def test_relevant_windows_wk1_patch(self):
+    def test_relevant_wk1_patch(self):
         CheckChangeRelevance._get_patch = lambda x: b'Sample patch; file: Source/WebKitLegacy'
         self.setupStep(CheckChangeRelevance())
-        self.setProperty('buildername', 'Windows-EWS')
+        self.setProperty('buildername', 'macOS-BigSur-Release-WK1-Tests-EWS')
         self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
         return self.runStep()
 
@@ -5014,17 +5014,6 @@ class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
         return self.runStep()
 
-    def test_success_win(self):
-        self.setupStep(PrintConfiguration())
-        self.setProperty('platform', 'win')
-
-        self.expectRemoteCommands(
-            ExpectShell(command=['hostname'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-            ExpectShell(command=['df', '-hl'], workdir='wkdir', timeout=60, logEnviron=False) + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Printed configuration')
-        return self.runStep()
-
     def test_failure(self):
         self.setupStep(PrintConfiguration())
         self.setProperty('platform', 'ios-12')
@@ -5760,16 +5749,15 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
 Author: Aakash Jain <aakash_jain@apple.com>
 Date:   Mon Feb 17 15:09:42 2020 +0000
 
-    [ews] add SetBuildSummary step for Windows EWS
+    [ews] add SetBuildSummary step
     https://bugs.webkit.org/show_bug.cgi?id=207556
     
     Reviewed by Jonathan Bedard.
     
     * BuildSlaveSupport/ews-build/factories.py:
-    (WindowsFactory.__init__):
     (GTKBuildAndTestFactory.__init__):
     * BuildSlaveSupport/ews-build/factories_unittest.py:
-    (TestBuildAndTestsFactory.test_windows_factory): Added unit-test.
+    (TestBuildAndTestsFactory): Added unit-test.
     
     
     Canonical link: https://commits.webkit.org/220797@main
@@ -7135,44 +7123,6 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
             self.assertEqual(self.getProperty('bug_id'), '238553')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
-
-
-class TestDeleteStaleBuildFiles(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(DeleteStaleBuildFiles())
-        self.setProperty('fullPlatform', 'win')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/CISupport/delete-stale-build-files', '--platform=win'],
-                        logEnviron=False,
-                        timeout=600,
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Deleted stale build files')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(DeleteStaleBuildFiles())
-        self.setProperty('fullPlatform', 'win')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/CISupport/delete-stale-build-files', '--platform=win'],
-                        logEnviron=False,
-                        timeout=600,
-                        )
-            + ExpectShell.log('stdio', stdout='Unexpected error.')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Deleted stale build files (failure)')
-        return self.runStep()
 
 
 if __name__ == '__main__':

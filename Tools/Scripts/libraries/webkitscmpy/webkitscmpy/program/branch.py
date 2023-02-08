@@ -116,13 +116,13 @@ class Branch(Command):
                 prompt = '{}nter name of new branch (or issue URL): '.format('{}, e'.format(why) if why else 'E')
             args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
 
-        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact:
+        if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact and not Tracker.instance().hide_title:
             issue = Tracker.instance().issue(int(args.issue))
             if issue and issue.title and not issue.redacted:
                 args.issue = cls.to_branch_name(issue.title)
         else:
             issue = Tracker.from_string(args.issue)
-            if issue and issue.title and not redact and not issue.redacted:
+            if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
                 args.issue = cls.to_branch_name(issue.title)
             elif issue:
                 args.issue = str(issue.id)
@@ -139,7 +139,7 @@ class Branch(Command):
                     sys.stderr.write('Failed to create new issue\n')
                     return 1
                 print("Created '{}'".format(issue))
-                if issue and issue.title and not redact and not issue.redacted:
+                if issue and issue.title and not redact and not issue.redacted and not issue.tracker.hide_title:
                     args.issue = cls.to_branch_name(issue.title)
                 elif issue:
                     args.issue = str(issue.id)
@@ -167,8 +167,9 @@ class Branch(Command):
                 rdar = Tracker.from_string(input)
             issue.cc_radar(block=True, radar=rdar)
 
-        if issue and not isinstance(issue.tracker, radar.Tracker):
+        if issue and not issue.tracker.hide_title:
             args._title = issue.title
+        if issue:
             args._bug_urls = Commit.bug_urls(issue)
 
         args.issue = cls.normalize_branch_name(args.issue)

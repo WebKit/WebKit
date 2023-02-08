@@ -158,7 +158,7 @@ private:
     void setTiledScrollingIndicatorPosition(const FloatPoint&) final;
     void setTopContentInset(float) final;
     void setVelocity(const VelocityData&) final;
-    void setScrollability(Scrollability) final;
+    void setScrollability(OptionSet<Scrollability>) final;
     void prepopulateRect(const FloatRect&) final;
     void setIsInWindow(bool) final;
     bool isInWindow() const final { return m_isInWindow; }
@@ -223,7 +223,7 @@ private:
 
     int m_marginSize { kDefaultTileSize };
 
-    Scrollability m_scrollability { HorizontallyScrollable | VerticallyScrollable };
+    OptionSet<Scrollability> m_scrollability { Scrollability::HorizontallyScrollable, Scrollability::VerticallyScrollable };
 
     // m_marginTop and m_marginBottom are the height in pixels of the top and bottom margin tiles. The width
     // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and

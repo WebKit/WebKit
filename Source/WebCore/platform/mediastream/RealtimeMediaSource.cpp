@@ -1019,19 +1019,15 @@ const IntSize RealtimeMediaSource::size() const
     return size;
 }
 
-void RealtimeMediaSource::setIntrinsicSize(const IntSize& size, bool notifyObservers)
+void RealtimeMediaSource::setIntrinsicSize(const IntSize& intrinsicSize, bool notifyObservers)
 {
-    if (m_intrinsicSize == size)
+    if (m_intrinsicSize == intrinsicSize)
         return;
 
-    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, size);
-    
-    auto currentSize = this->size();
-    m_intrinsicSize = size;
-    if (!notifyObservers)
-        return;
+    ALWAYS_LOG_IF(m_logger, LOGIDENTIFIER, intrinsicSize);
 
-    if (currentSize != this->size()) {
+    m_intrinsicSize = intrinsicSize;
+    if (notifyObservers) {
         scheduleDeferredTask([this] {
             notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
         });

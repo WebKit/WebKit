@@ -159,7 +159,7 @@ end)
 wasmOp(ref_as_non_null, WasmRefAsNonNull, macro(ctx)
     mload2i(ctx, m_ref, t1, t0)
     bieq t1, NullTag, .nullRef
-    returni(ctx, t0)
+    return2i(ctx, t1, t0)
 
 .nullRef:
     throwException(NullRefAsNonNull)

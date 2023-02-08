@@ -27,21 +27,13 @@
 #include "AbstractFrameView.h"
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
-#include "ContainerNode.h"
 #include "FrameViewLayoutContext.h"
-#include "GraphicsContext.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
-#include "NullGraphicsContext.h"
 #include "Pagination.h"
 #include "PaintPhase.h"
-#include "RenderElement.h"
-#include "RenderLayerModelObject.h"
 #include "RenderPtr.h"
-#include "ScrollView.h"
 #include "SimpleRange.h"
-#include "StyleColor.h"
-#include "TiledBacking.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -59,10 +51,13 @@ class TextStream;
 namespace WebCore {
 
 class AXObjectCache;
+class AbstractFrame;
+class ContainerNode;
 class Element;
 class EventRegionContext;
 class FloatSize;
 class Frame;
+class GraphicsContext;
 class HTMLFrameOwnerElement;
 class Page;
 class RenderBox;
@@ -77,6 +72,15 @@ class RenderView;
 class RenderWidget;
 class ScrollingCoordinator;
 class ScrollAnchoringController;
+class TiledBacking;
+
+struct ScrollRectToVisibleOptions;
+struct SimpleRange;
+struct VelocityData;
+
+enum class NullGraphicsContextPaintInvalidationReasons : uint8_t;
+enum class StyleColorOptions : uint8_t;
+enum class TiledBackingScrollability : uint8_t;
 
 namespace Display {
 class View;
@@ -103,7 +107,7 @@ public:
     FrameViewType viewType() const final { return FrameViewType::Local; }
 
     // FIXME: This should return Frame. If it were a RemoteFrame, we would have a RemoteFrameView.
-    AbstractFrame& frame() const { return m_frame; }
+    WEBCORE_EXPORT AbstractFrame& frame() const;
 
     WEBCORE_EXPORT RenderView* renderView() const;
 
@@ -331,7 +335,9 @@ public:
 
     void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimationsIncludingSubframes();
+#endif
 
     AtomString mediaType() const;
     WEBCORE_EXPORT void setMediaType(const AtomString&);
@@ -343,16 +349,16 @@ public:
 
     void addSlowRepaintObject(RenderElement&);
     void removeSlowRepaintObject(RenderElement&);
-    bool hasSlowRepaintObject(const RenderElement& renderer) const { return m_slowRepaintObjects && m_slowRepaintObjects->contains(renderer); }
-    bool hasSlowRepaintObjects() const { return m_slowRepaintObjects && !m_slowRepaintObjects->isEmptyIgnoringNullReferences(); }
+    bool hasSlowRepaintObject(const RenderElement& renderer) const;
+    bool hasSlowRepaintObjects() const;
     WeakHashSet<RenderElement>* slowRepaintObjects() const { return m_slowRepaintObjects.get(); }
 
     // Includes fixed- and sticky-position objects.
     void addViewportConstrainedObject(RenderLayerModelObject&);
     void removeViewportConstrainedObject(RenderLayerModelObject&);
     const WeakHashSet<RenderLayerModelObject>* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
-    bool hasViewportConstrainedObjects() const { return m_viewportConstrainedObjects && !m_viewportConstrainedObjects->isEmptyIgnoringNullReferences(); }
-    
+    WEBCORE_EXPORT bool hasViewportConstrainedObjects() const;
+
     float frameScaleFactor() const;
 
     // Functions for querying the current scrolled position, negating the effects of overhang
@@ -649,7 +655,7 @@ public:
     WEBCORE_EXPORT void availableContentSizeChanged(AvailableSizeChangeReason) final;
 
     void updateTiledBackingAdaptiveSizing();
-    TiledBacking::Scrollability computeScrollability() const;
+    OptionSet<TiledBackingScrollability> computeScrollability() const;
 
     void addPaintPendingMilestones(OptionSet<LayoutMilestone>);
     void firePaintRelatedMilestonesIfNeeded();
@@ -735,7 +741,7 @@ private:
     bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect) final;
     void scrollContentsSlowPath(const IntRect& updateRect) final;
 
-    void traverseForPaintInvalidation(NullGraphicsContext::PaintInvalidationReasons);
+    void traverseForPaintInvalidation(NullGraphicsContextPaintInvalidationReasons);
     void repaintSlowRepaintObjects();
 
     bool isVerticalDocument() const final;
@@ -788,7 +794,9 @@ private:
 
     void applyRecursivelyWithVisibleRect(const Function<void(FrameView& frameView, const IntRect& visibleRect)>&);
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimations(const IntRect& visibleRect);
+#endif
     void updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect);
 
     WEBCORE_EXPORT void adjustTiledBackingCoverage();
@@ -946,7 +954,7 @@ private:
     Color m_baseBackgroundColor { Color::white };
     IntSize m_lastViewportSize;
 
-    AtomString m_mediaType { screenAtom() };
+    AtomString m_mediaType;
     AtomString m_mediaTypeWhenNotPrinting;
 
     Vector<FloatRect> m_trackedRepaintRects;

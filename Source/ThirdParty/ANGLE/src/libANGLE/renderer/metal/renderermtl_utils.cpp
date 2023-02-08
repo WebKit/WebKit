@@ -244,7 +244,7 @@ void GetMatrixUniformMetal(GLenum type, GLfloat *dataOut, const GLfloat *source,
         {
             GLfloat *outptr = dataOut + ((col * rows) + row);
             const GLfloat *inptr =
-                transpose ? source + ((row * col) + col) : source + ((col * rowsPerCol) + row);
+                transpose ? source + ((row * columns) + col) : source + ((col * rowsPerCol) + row);
             *outptr = *inptr;
         }
     }

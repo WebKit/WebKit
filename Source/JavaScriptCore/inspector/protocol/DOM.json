@@ -170,6 +170,28 @@
             ]
         },
         {
+            "id": "GridOverlayConfig",
+            "type": "object",
+            "description": "Configuration data for grid overlays.",
+            "properties": [
+                { "name": "gridColor", "$ref": "RGBAColor", "description": "The primary color to use for the grid overlay." },
+                { "name": "showLineNames", "type": "boolean", "optional": true, "description": "Show labels for grid line names. If not specified, the default value is false." },
+                { "name": "showLineNumbers", "type": "boolean", "optional": true, "description": "Show labels for grid line numbers. If not specified, the default value is false." },
+                { "name": "showExtendedGridLines", "type": "boolean", "optional": true, "description": "Show grid lines that extend beyond the bounds of the grid. If not specified, the default value is false." },
+                { "name": "showTrackSizes", "type": "boolean", "optional": true, "description": "Show grid track size information. If not specified, the default value is false." },
+                { "name": "showAreaNames", "type": "boolean", "optional": true, "description": "Show labels for grid area names. If not specified, the default value is false." }
+            ]
+        },
+        {
+            "id": "FlexOverlayConfig",
+            "type": "object",
+            "description": "Configuration data for flex overlays.",
+            "properties": [
+                { "name": "flexColor", "$ref": "RGBAColor", "description": "The primary color to use for the flex overlay." },
+                { "name": "showOrderNumbers", "type": "boolean", "optional": true, "description": "Show labels for flex order. If not specified, the default value is false." }
+            ]
+        },
+        {
             "id": "Styleable",
             "type": "object",
             "properties": [
@@ -425,7 +447,9 @@
             "condition": "defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY",
             "parameters": [
                 { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
-                { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." }
+                { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." },
+                { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "optional": true, "description": "If provided, used to configure a grid overlay shown during element selection. This overrides DOM.showGridOverlay." },
+                { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "optional": true, "description": "If provided, used to configure a flex overlay shown during element selection. This overrides DOM.showFlexOverlay." }
             ]
         },
         {
@@ -435,6 +459,8 @@
             "parameters": [
                 { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." },
+                { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "optional": true, "description": "If provided, used to configure a grid overlay shown during element selection. This overrides DOM.showGridOverlay." },
+                { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "optional": true, "description": "If provided, used to configure a flex overlay shown during element selection. This overrides DOM.showFlexOverlay." },
                 { "name": "showRulers", "type": "boolean", "optional": true, "description": "Whether the rulers should be shown during element selection. This overrides Page.setShowRulers." }
             ]
         },
@@ -510,12 +536,7 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "The node for which a grid overlay should be shown." },
-                { "name": "gridColor", "$ref": "RGBAColor", "description": "The primary color to use for the grid overlay." },
-                { "name": "showLineNames", "type": "boolean", "optional": true, "description": "Show labels for grid line names. If not specified, the default value is false." },
-                { "name": "showLineNumbers", "type": "boolean", "optional": true, "description": "Show labels for grid line numbers. If not specified, the default value is false." },
-                { "name": "showExtendedGridLines", "type": "boolean", "optional": true, "description": "Show grid lines that extend beyond the bounds of the grid. If not specified, the default value is false." },
-                { "name": "showTrackSizes", "type": "boolean", "optional": true, "description": "Show grid track size information. If not specified, the default value is false." },
-                { "name": "showAreaNames", "type": "boolean", "optional": true, "description": "Show labels for grid area names. If not specified, the default value is false." }
+                { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "description": "Configuration options for the grid overlay." }
             ]
         },
         {
@@ -532,8 +553,7 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "The node for which a flex overlay should be shown." },
-                { "name": "flexColor", "$ref": "RGBAColor", "description": "The primary color to use for the flex overlay." },
-                { "name": "showOrderNumbers", "type": "boolean", "optional": true, "description": "Show labels for flex order. If not specified, the default value is false." }
+                { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "description": "Configuration options for the flex overlay." }
             ]
         },
         {

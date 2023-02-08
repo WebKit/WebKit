@@ -353,15 +353,6 @@ static void logError(const String& target, const bool isSecure, const bool isMix
     message.append(".\n");
     document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message.toString());
 }
-
-// FIXME: remove this function when rdar://problem/32137821 is fixed.
-static bool isRequestFromIBooks()
-{
-#if PLATFORM(COCOA)
-    return CocoaApplication::isIBooks();
-#endif
-    return false;
-}
     
 bool Geolocation::shouldBlockGeolocationRequests()
 {
@@ -372,7 +363,7 @@ bool Geolocation::shouldBlockGeolocationRequests()
     bool hasMixedContent = !document()->foundMixedContent().isEmpty();
     bool isLocalOrigin = securityOrigin()->isLocal();
     if (document()->canAccessResource(ScriptExecutionContext::ResourceType::Geolocation) != ScriptExecutionContext::HasResourceAccess::No) {
-        if (isLocalOrigin || (isSecure && !hasMixedContent) || isRequestFromIBooks())
+        if (isLocalOrigin || (isSecure && !hasMixedContent))
             return false;
     }
 

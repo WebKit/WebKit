@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2012, 2017 Igalia S.L.
  *
@@ -43,7 +42,7 @@ public:
 #endif
     {
 #if ENABLE(2022_GLIB_API)
-        // In 2022 API when favicons are disdabled, the database is nullptr.
+        // In 2022 API when favicons are disabled, the database is nullptr.
         g_assert_null(m_database.get());
 #else
         g_assert_true(WEBKIT_IS_FAVICON_DATABASE(m_database.get()));
@@ -54,8 +53,10 @@ public:
 
     ~FaviconDatabaseTest()
     {
+#if !USE(GTK4)
         if (m_favicon)
             cairo_surface_destroy(m_favicon);
+#endif
 
         g_signal_handlers_disconnect_matched(m_database.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
 #if ENABLE(2022_GLIB_API)
@@ -112,7 +113,11 @@ public:
     {
         g_assert_true(test->m_webView == webView);
         test->m_faviconNotificationReceived = true;
+#if USE(GTK4)
+        test->m_favicon = webkit_web_view_get_favicon(webView);
+#else
         test->m_favicon = cairo_surface_reference(webkit_web_view_get_favicon(webView));
+#endif
         if (test->m_loadFinished)
             test->quitMainLoop();
     }
@@ -131,7 +136,11 @@ public:
     static void getFaviconCallback(GObject* sourceObject, GAsyncResult* result, void* data)
     {
         FaviconDatabaseTest* test = static_cast<FaviconDatabaseTest*>(data);
+#if USE(GTK4)
+        test->m_favicon = adoptGRef(webkit_favicon_database_get_favicon_finish(test->m_database.get(), result, &test->m_error.outPtr()));
+#else
         test->m_favicon = webkit_favicon_database_get_favicon_finish(test->m_database.get(), result, &test->m_error.outPtr());
+#endif
         test->quitMainLoop();
     }
 
@@ -145,10 +154,11 @@ public:
 
     void waitUntilLoadFinishedAndFaviconChanged()
     {
-        if (m_favicon) {
+#if !USE(GTK4)
+        if (m_favicon)
             cairo_surface_destroy(m_favicon);
-            m_favicon = nullptr;
-        }
+#endif
+        m_favicon = nullptr;
         m_faviconNotificationReceived = false;
         m_loadFinished = false;
         unsigned long faviconChangedID = g_signal_connect(m_webView, "notify::favicon", G_CALLBACK(viewFaviconChangedCallback), this);
@@ -160,10 +170,11 @@ public:
 
     void getFaviconForPageURIAndWaitUntilReady(const char* pageURI)
     {
-        if (m_favicon) {
+#if !USE(GTK4)
+        if (m_favicon)
             cairo_surface_destroy(m_favicon);
-            m_favicon = nullptr;
-        }
+#endif
+        m_favicon = nullptr;
 
         webkit_favicon_database_get_favicon(m_database.get(), pageURI, 0, getFaviconCallback, this);
         g_main_loop_run(m_mainLoop);
@@ -179,7 +190,11 @@ public:
     }
 
     GRefPtr<WebKitFaviconDatabase> m_database;
+#if USE(GTK4)
+    GRefPtr<GdkTexture> m_favicon;
+#else
     cairo_surface_t* m_favicon { nullptr };
+#endif
     CString m_faviconURI;
     GUniqueOutPtr<GError> m_error;
     bool m_faviconNotificationReceived { false };
@@ -260,11 +275,17 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
 
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
     g_assert_nonnull(test->m_favicon);
+#if USE(GTK4)
+    g_assert_cmpint(gdk_texture_get_width(test->m_favicon.get()), ==, 16);
+    g_assert_cmpint(gdk_texture_get_height(test->m_favicon.get()), ==, 16);
+#else
     g_assert_cmpint(cairo_image_surface_get_width(test->m_favicon), ==, 16);
     g_assert_cmpint(cairo_image_surface_get_height(test->m_favicon), ==, 16);
+#endif
     g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
     g_assert_no_error(test->m_error.get());
 
+#if !USE(GTK4)
     // Check that another page with the same favicon returns the same icon.
     cairo_surface_t* favicon = cairo_surface_reference(test->m_favicon);
     test->loadURI(kServer->getURIForPath("/bar").data());
@@ -278,6 +299,7 @@ static void testFaviconDatabaseGetFavicon(FaviconDatabaseTest* test, gconstpoint
     g_assert_cmpstr(test->m_faviconURI.data(), ==, faviconURI.data());
     g_assert_no_error(test->m_error.get());
     cairo_surface_destroy(favicon);
+#endif
 
     faviconURI = kServer->getURIForPath("/favicon.ico");
     test->loadURI(kServer->getURIForPath("/nofavicon").data());

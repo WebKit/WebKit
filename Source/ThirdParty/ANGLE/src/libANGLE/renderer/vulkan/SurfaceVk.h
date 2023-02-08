@@ -391,6 +391,12 @@ class WindowSurfaceVk : public SurfaceVk
     VkSurfaceTransformFlagBitsKHR mEmulatedPreTransform;
     VkCompositeAlphaFlagBitsKHR mCompositeAlpha;
 
+    // Present modes that are compatible with the current mode.  If mDesiredSwapchainPresentMode is
+    // in this list, mode switch can happen without the need to recreate the swapchain.  Fast
+    // vector's size is 6, as there are currently only 6 possible present modes.
+    static constexpr uint32_t kMaxCompatiblePresentModes = 6;
+    angle::FixedVector<VkPresentModeKHR, kMaxCompatiblePresentModes> mCompatiblePresentModes;
+
     // A circular buffer that stores the serial of the submission fence of the context on every
     // swap. The CPU is throttled by waiting for the 2nd previous serial to finish.  This should
     // normally be a no-op, as the application should pace itself to avoid input lag, and is

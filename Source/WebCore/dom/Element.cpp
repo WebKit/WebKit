@@ -3380,34 +3380,50 @@ static bool isProgramaticallyFocusable(Element& element)
     return element.supportsFocus();
 }
 
-static RefPtr<Element> findFocusDelegateInternal(ContainerNode& target);
-
 // https://html.spec.whatwg.org/multipage/interaction.html#autofocus-delegate
-static RefPtr<Element> autoFocusDelegate(ContainerNode& target)
+static RefPtr<Element> autoFocusDelegate(ContainerNode& target, FocusTrigger trigger)
 {
     for (auto& element : descendantsOfType<Element>(target)) {
         if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
             continue;
         if (auto root = shadowRootWithDelegatesFocus(element)) {
-            if (auto target = findFocusDelegateInternal(*root))
+            if (auto target = Element::findFocusDelegateForTarget(*root, trigger))
                 return target;
         }
-        if (isProgramaticallyFocusable(element))
-            return &element;
+        switch (trigger) {
+        case FocusTrigger::Click:
+            if (element.isMouseFocusable())
+                return &element;
+            break;
+        case FocusTrigger::Other:
+        case FocusTrigger::Bindings:
+            if (isProgramaticallyFocusable(element))
+                return &element;
+            break;
+        }
     }
     return nullptr;
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate
-static RefPtr<Element> findFocusDelegateInternal(ContainerNode& target)
+RefPtr<Element> Element::findFocusDelegateForTarget(ContainerNode& target, FocusTrigger trigger)
 {
-    if (auto element = autoFocusDelegate(target))
+    if (auto element = autoFocusDelegate(target, trigger))
         return element;
     for (auto& element : descendantsOfType<Element>(target)) {
-        if (isProgramaticallyFocusable(element))
-            return &element;
+        switch (trigger) {
+        case FocusTrigger::Click:
+            if (element.isMouseFocusable())
+                return &element;
+            break;
+        case FocusTrigger::Other:
+        case FocusTrigger::Bindings:
+            if (isProgramaticallyFocusable(element))
+                return &element;
+            break;
+        }
         if (auto root = shadowRootWithDelegatesFocus(element)) {
-            if (auto target = findFocusDelegateInternal(*root))
+            if (auto target = findFocusDelegateForTarget(*root, trigger))
                 return target;
         }
     }
@@ -3415,9 +3431,9 @@ static RefPtr<Element> findFocusDelegateInternal(ContainerNode& target)
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#focus-delegate
-RefPtr<Element> Element::findFocusDelegate()
+RefPtr<Element> Element::findFocusDelegate(FocusTrigger trigger)
 {
-    return findFocusDelegateInternal(*this);
+    return findFocusDelegateForTarget(*this, trigger);
 }
 
 void Element::focus(const FocusOptions& options)
@@ -3450,7 +3466,7 @@ void Element::focus(const FocusOptions& options)
             return;
         }
 
-        newTarget = findFocusDelegateInternal(*root);
+        newTarget = findFocusDelegateForTarget(*root, options.trigger);
         if (!newTarget)
             return;
     } else if (!isProgramaticallyFocusable(*newTarget))

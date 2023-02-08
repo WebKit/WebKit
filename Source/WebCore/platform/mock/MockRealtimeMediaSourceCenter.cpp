@@ -489,17 +489,6 @@ DisplayCaptureFactory& MockRealtimeMediaSourceCenter::displayCaptureFactory()
     return factory.get();
 }
 
-void MockRealtimeMediaSourceCenter::MockDisplayCaptureDeviceManager::windowDevices(Vector<DisplayCaptureManager::WindowCaptureDevice>& windowDevices)
-{
-    auto devices = MockRealtimeMediaSourceCenter::displayDevices();
-    for (auto device : devices) {
-        if (!device.enabled() || device.type() != CaptureDevice::DeviceType::Window)
-            continue;
-
-        windowDevices.append({ WTFMove(device), "Mock Application"_s });
-    }
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

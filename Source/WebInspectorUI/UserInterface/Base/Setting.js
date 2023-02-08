@@ -217,6 +217,8 @@ WI.settings = {
     showConsoleMessageTimestamps: new WI.Setting("show-console-message-timestamps", false),
     showCSSPropertySyntaxInDocumentationPopover: new WI.Setting("show-css-property-syntax-in-documentation-popover", false),
     showCanvasPath: new WI.Setting("show-canvas-path", false),
+    showFlexOverlayDuringElementSelection: new WI.Setting("show-grid-overlay-during-element-selection", true),
+    showGridOverlayDuringElementSelection: new WI.Setting("show-flex-overlay-during-element-selection", true),
     showImageGrid: new WI.Setting("show-image-grid", true),
     showInvisibleCharacters: new WI.Setting("show-invisible-characters", !!WI.Setting.migrateValue("show-invalid-characters")),
     showJavaScriptTypeInformation: new WI.Setting("show-javascript-type-information", false),

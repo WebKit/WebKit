@@ -25,8 +25,12 @@
 
 #pragma once
 
+#include <wtf/glib/GRefPtr.h>
+
 namespace WebCore {
 
-GdkPixbuf* cairoSurfaceToGdkPixbuf(cairo_surface_t*);
-
+GRefPtr<GdkPixbuf> cairoSurfaceToGdkPixbuf(cairo_surface_t*);
+#if USE(GTK4)
+GRefPtr<GdkTexture> cairoSurfaceToGdkTexture(cairo_surface_t*);
+#endif
 }

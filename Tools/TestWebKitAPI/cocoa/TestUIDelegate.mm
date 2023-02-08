@@ -58,6 +58,14 @@
         completionHandler(menu);
 }
 
+- (void)_webView:(WKWebView *)webView getWindowFrameWithCompletionHandler:(void (^)(CGRect))completionHandler
+{
+    if (_getWindowFrameWithCompletionHandler)
+        _getWindowFrameWithCompletionHandler(webView, completionHandler);
+    else
+        completionHandler(CGRectZero);
+}
+
 - (void)_focusWebView:(WKWebView *)webView
 {
     if (_focusWebView)

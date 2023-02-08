@@ -81,11 +81,8 @@ WEBCORE_EXPORT bool isWebkitTestRunner();
 
 namespace MacApplication {
 
-WEBCORE_EXPORT bool isAOLInstantMessenger();
 WEBCORE_EXPORT bool isAdobeInstaller();
-WEBCORE_EXPORT bool isAperture();
 WEBCORE_EXPORT bool isAppleMail();
-WEBCORE_EXPORT bool isITunes();
 WEBCORE_EXPORT bool isMicrosoftMessenger();
 WEBCORE_EXPORT bool isMicrosoftMyDay();
 WEBCORE_EXPORT bool isMicrosoftOutlook();

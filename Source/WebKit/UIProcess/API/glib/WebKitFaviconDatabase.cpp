@@ -34,6 +34,7 @@
 #include <wtf/text/CString.h>
 
 #if PLATFORM(GTK)
+#include <WebCore/GdkCairoUtilities.h>
 #include <WebCore/RefPtrCairo.h>
 #endif
 
@@ -206,21 +207,15 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
  *            satisfied or %NULL if you don't care about the result.
  * @user_data: (closure): The data to pass to @callback.
  *
- * Asynchronously obtains a #cairo_surface_t of the favicon.
+ * Asynchronously obtains a favicon image.
  *
- * Asynchronously obtains a #cairo_surface_t of the favicon for the
+ * Asynchronously obtains an image of the favicon for the
  * given page URI. It returns the cached icon if it's in the database
  * asynchronously waiting for the icon to be read from the database.
  *
  * This is an asynchronous method. When the operation is finished, callback will
  * be invoked. You can then call webkit_favicon_database_get_favicon_finish()
  * to get the result of the operation.
- *
- * You must call webkit_web_context_set_favicon_database_directory() for
- * the #WebKitWebContext associated with this #WebKitFaviconDatabase
- * before attempting to use this function; otherwise,
- * webkit_favicon_database_get_favicon_finish() will return
- * %WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED.
  */
 void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const gchar* pageURI, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
@@ -238,19 +233,23 @@ void webkit_favicon_database_get_favicon(WebKitFaviconDatabase* database, const 
  *
  * Finishes an operation started with webkit_favicon_database_get_favicon().
  *
- * Returns: (transfer full): a new reference to a #cairo_surface_t, or
- * %NULL in case of error.
+ * Returns: (transfer full): a new favicon image, or %NULL in case of error.
  */
+#if USE(GTK4)
+GdkTexture* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabase* database, GAsyncResult* result, GError** error)
+#else
 cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabase* database, GAsyncResult* result, GError** error)
+#endif
 {
-    g_return_val_if_fail(WEBKIT_IS_FAVICON_DATABASE(database), 0);
-    g_return_val_if_fail(g_task_is_valid(result, database), 0);
+    g_return_val_if_fail(WEBKIT_IS_FAVICON_DATABASE(database), nullptr);
+    g_return_val_if_fail(g_task_is_valid(result, database), nullptr);
 
-    GTask* task = G_TASK(result);
-    if (auto* icon = g_task_propagate_pointer(task, error))
-        return static_cast<cairo_surface_t*>(icon);
-
-    return nullptr;
+#if USE(GTK4)
+    auto icon = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
+    return icon ? cairoSurfaceToGdkTexture(icon.get()).leakRef() : nullptr;
+#else
+    return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
+#endif
 }
 #endif
 

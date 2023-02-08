@@ -82,11 +82,6 @@
                     { "name": "bot607", "platform": "tvos-16" },
                     { "name": "bot608", "platform": "tvos-simulator-16" },
 
-                    { "name": "bot545", "platform": "win" },
-                    { "name": "bot546", "platform": "win" },
-                    { "name": "bot547", "platform": "win" },
-                    { "name": "bot548", "platform": "win" },
-
                     { "name": "wincairo-debug-build-01", "platform": "wincairo" },
                     { "name": "wincairo-debug-tests-01", "platform": "wincairo" },
                     { "name": "wincairo-debug-tests-02", "platform": "wincairo" },
@@ -424,28 +419,6 @@
                       "name": "Apple-watchOS-Simulator-9-Release-Build", "factory": "BuildFactory",
                       "platform": "watchos-simulator-9", "configuration": "release", "architectures": ["arm64"],
                       "workernames": ["bot672"]
-                    },
-                    {
-                      "name": "Apple-Win-10-Release-Build", "factory": "BuildFactory",
-                      "platform": "win", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["win10-release-tests"],
-                      "workernames": ["bot548"]
-                    },
-                    {
-                      "name": "Apple-Win-10-Debug-Build", "factory": "BuildFactory",
-                      "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["win10-debug-tests"],
-                      "workernames": ["bot547"]
-                    },
-                    {
-                      "name": "Apple-Win-10-Release-Tests", "factory": "TestWebKit1Factory",
-                      "platform": "win", "configuration": "release", "architectures": ["x86_64"],
-                      "workernames": ["bot546"]
-                    },
-                    {
-                      "name": "Apple-Win-10-Debug-Tests", "factory": "TestWebKit1Factory",
-                      "platform": "win", "configuration": "debug", "architectures": ["x86_64"],
-                      "workernames": ["bot545"]
                     },
                     {
                       "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildAndGenerateJSCBundleFactory",
@@ -821,9 +794,6 @@
                     { "type": "PlatformSpecificScheduler", "platform": "watchos-simulator-9", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-watchOS-Simulator-9-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "main", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-Win-10-Release-Build", "Apple-Win-10-Debug-Build"]
-                    },
                     { "type": "Triggerable", "name": "ios-simulator-16-release-arm64-tests-wk2",
                       "builderNames": ["Apple-iOS-16-Simulator-Release-arm64-WK2-Tests"]
                     },
@@ -841,12 +811,6 @@
                     },
                     { "type": "Triggerable", "name": "ipados-simulator-16-debug-tests-wk2",
                       "builderNames": ["Apple-iPadOS-16-Simulator-Debug-WK2-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "win10-release-tests",
-                      "builderNames": ["Apple-Win-10-Release-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "win10-debug-tests",
-                      "builderNames": ["Apple-Win-10-Debug-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests",
                       "builderNames": ["GTK-Linux-64-bit-Release-Tests"]

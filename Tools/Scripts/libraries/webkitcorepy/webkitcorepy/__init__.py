@@ -45,8 +45,9 @@ from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 from webkitcorepy.null_context import NullContext
+from webkitcorepy.filtered_call import filtered_call
 
-version = Version(0, 13, 22)
+version = Version(0, 14, 0)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
@@ -93,5 +94,8 @@ if sys.version_info >= (3, 6):
     AutoInstall.register(Package('keyring', Version(23, 2, 1)))
 else:
     AutoInstall.register(Package('keyring', Version(18, 0, 1)))
+
+if sys.version_info < (3, 0):
+    AutoInstall.register(Package('inspect2', Version(0, 1, 2)))
 
 name = 'webkitcorepy'
