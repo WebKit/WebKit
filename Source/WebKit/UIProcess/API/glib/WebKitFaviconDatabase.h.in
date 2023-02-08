@@ -26,10 +26,12 @@
 #include <glib-object.h>
 #include <@API_INCLUDE_PREFIX@/WebKitDefines.h>
 
+#if PLATFORM(GTK)
 #if USE(GTK4)
 #include <gtk/gtk.h>
 #else
 #include <cairo.h>
+#endif
 #endif
 
 G_BEGIN_DECLS
@@ -83,6 +85,7 @@ webkit_favicon_database_error_quark        (void);
 WEBKIT_API GType
 webkit_favicon_database_get_type           (void);
 
+#if PLATFORM(GTK)
 WEBKIT_API void
 webkit_favicon_database_get_favicon        (WebKitFaviconDatabase *database,
                                             const gchar           *page_uri,
@@ -100,6 +103,7 @@ WEBKIT_API cairo_surface_t *
 webkit_favicon_database_get_favicon_finish (WebKitFaviconDatabase *database,
                                             GAsyncResult          *result,
                                             GError               **error);
+#endif
 #endif
 
 WEBKIT_API gchar *

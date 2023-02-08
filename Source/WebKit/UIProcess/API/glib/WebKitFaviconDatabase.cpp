@@ -22,10 +22,8 @@
 
 #include "IconDatabase.h"
 #include "WebKitFaviconDatabasePrivate.h"
-#include <WebCore/GdkCairoUtilities.h>
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
-#include <WebCore/RefPtrCairo.h>
 #include <WebCore/SharedBuffer.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/FileSystem.h>
@@ -34,6 +32,11 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(GTK)
+#include <WebCore/GdkCairoUtilities.h>
+#include <WebCore/RefPtrCairo.h>
+#endif
 
 using namespace WebKit;
 using namespace WebCore;
@@ -117,6 +120,7 @@ void webkitFaviconDatabaseClose(WebKitFaviconDatabase* database)
     database->priv->iconDatabase = nullptr;
 }
 
+#if PLATFORM(GTK)
 void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase* database, const LinkIcon& icon, const String& pageURL, bool isEphemeral, Function<void(bool)>&& completionHandler)
 {
     if (!webkitFaviconDatabaseIsOpen(database)) {
@@ -152,6 +156,7 @@ void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase* database, con
             g_signal_emit(database.get(), signals[FAVICON_CHANGED], 0, pageURL.utf8().data(), url.utf8().data());
         });
 }
+#endif
 
 /**
  * webkit_favicon_database_error_quark:
@@ -165,6 +170,7 @@ GQuark webkit_favicon_database_error_quark(void)
     return g_quark_from_static_string("WebKitFaviconDatabaseError");
 }
 
+#if PLATFORM(GTK)
 void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, const gchar* pageURI, bool isEphemeral, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
 {
     if (!webkitFaviconDatabaseIsOpen(database)) {
@@ -245,6 +251,7 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
     return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
 #endif
 }
+#endif
 
 /**
  * webkit_favicon_database_get_favicon_uri:
