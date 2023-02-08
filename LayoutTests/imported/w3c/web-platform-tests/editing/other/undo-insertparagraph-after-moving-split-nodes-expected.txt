@@ -1,0 +1,6 @@
+
+PASS Undo insertParagraph after moving right node to different paragraph
+PASS Undo insertParagraph after moving left node to different paragraph
+PASS Undo insertParagraph after moving right node into the left node
+PASS Undo insertParagraph after moving left node into the right node
+

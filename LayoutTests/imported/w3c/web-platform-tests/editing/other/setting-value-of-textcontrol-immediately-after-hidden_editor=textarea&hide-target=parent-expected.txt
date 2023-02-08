@@ -1,0 +1,9 @@
+
+PASS Wait for load event
+PASS <textarea>.value = "new value" (without focus)
+PASS <textarea>.value = "new value" (with focus)
+PASS <textarea>.value = "new value" (after blur)
+PASS <textarea>.setRangeText("new", 0, "default".length) (without focus)
+PASS <textarea>.setRangeText("new", 0, "default".length) (with focus)
+PASS <textarea>.setRangeText("new", 0, "default".length) (after blur)
+

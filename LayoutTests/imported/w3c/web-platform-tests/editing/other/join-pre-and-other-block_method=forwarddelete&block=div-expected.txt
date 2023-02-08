@@ -1,0 +1,56 @@
+abcdef
+ghi
+
+PASS forwarddelete at <pre>abc[]</pre><div>def</div>
+PASS forwarddelete at <pre>abc[]</pre>\n<div>def</div>
+PASS forwarddelete at <div>abc[]</div><pre>def</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre>def</pre>
+PASS forwarddelete at <pre>abc[]</pre><div>def<br>ghi</div>
+PASS forwarddelete at <pre>abc[]</pre>\n<div>def<br>ghi</div>
+PASS forwarddelete at <pre>abc[]</pre><div>def<div>ghi</div></div>
+PASS forwarddelete at <pre>abc[]</pre>\n<div>def<div>ghi</div></div>
+PASS forwarddelete at <div>abc[]</div><pre>def\nghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre>def\nghi</pre>
+PASS forwarddelete at <div>abc[]</div><pre>def<br>ghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre>def<br>ghi</pre>
+PASS forwarddelete at <pre>abc[]</pre><div><b>def</b></div>
+PASS forwarddelete at <pre>abc[]</pre>\n<div><b>def</b></div>
+PASS forwarddelete at <pre>abc[]</pre><div><b>def<br>ghi</b></div>
+PASS forwarddelete at <pre>abc[]</pre>\n<div><b>def<br>ghi</b></div>
+PASS forwarddelete at <div>abc[]</div><pre><b>def\nghi</b></pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def\nghi</b></pre>
+PASS forwarddelete at <div>abc[]</div><pre><b>def<br>ghi</b></pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def<br>ghi</b></pre>
+PASS forwarddelete at <div>abc[]</div><pre><b>def</b>\nghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def</b>\nghi</pre>
+PASS forwarddelete at <div>abc[]</div><pre><b>def</b><br>ghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def</b><br>ghi</pre>
+PASS forwarddelete at <div>abc[]</div><pre><b>def\n</b>ghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def\n</b>ghi</pre>
+PASS forwarddelete at <div>abc[]</div><pre><b>def<br></b>ghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def<br></b>ghi</pre>
+PASS forwarddelete at <div>abc[]</div><pre>\ndef\nghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre>\ndef\nghi</pre>
+PASS forwarddelete at <div>abc[]</div><pre>\n\ndef\nghi</pre>
+PASS forwarddelete at <div>abc[]</div>\n<pre>\n\ndef\nghi</pre>
+PASS forwarddelete at <div>abc[]</div><pre>def</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre>def</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre>def\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre>def\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre>def<br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre>def<br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre><b>def\nghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def\nghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre><b>def<br>ghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def<br>ghi</b></pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre><b>def</b>\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def</b>\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre><b>def</b><br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def</b><br>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre><b>def\n</b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def\n</b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre><b>def<br></b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre><b>def<br></b>ghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div><pre>\ndef\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+PASS forwarddelete at <div>abc[]</div>\n<pre>\ndef\nghi</pre> (with <style>pre { white-space: pre; }</style>)
+
