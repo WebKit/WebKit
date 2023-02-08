@@ -518,4 +518,29 @@ TEST_P(EGLSyncTest, AndroidNativeFence_withFences)
     EXPECT_EGL_TRUE(eglDestroySyncKHR(display, syncWithGeneratedFD));
 }
 
+// Verify that VkSemaphore is not destroyed before used for waiting
+TEST_P(EGLSyncTest, AndroidNativeFence_VkSemaphoreDestroyBug)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension() || !hasGLSyncExtension());
+    ANGLE_SKIP_TEST_IF(!hasAndroidNativeFenceSyncExtension());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    glFinish();  // Ensure no pending commands
+
+    EGLSyncKHR syncWithGeneratedFD =
+        eglCreateSyncKHR(display, EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr);
+    EXPECT_NE(syncWithGeneratedFD, EGL_NO_SYNC_KHR);
+    EXPECT_EGL_TRUE(eglWaitSyncKHR(display, syncWithGeneratedFD, 0));
+    EXPECT_EGL_TRUE(eglDestroySyncKHR(display, syncWithGeneratedFD));
+    glFinish();  // May destroy VkSemaphore if bug is present.
+
+    // Create work to do
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glFinish();  // Will submit destroyed Semaphores.
+}
+
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EGLSyncTest);

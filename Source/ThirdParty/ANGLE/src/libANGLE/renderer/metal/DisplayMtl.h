@@ -16,6 +16,7 @@
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_context_device.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
+#include "libANGLE/renderer/metal/mtl_library_cache.h"
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
@@ -144,6 +145,7 @@ class DisplayMtl : public DisplayImpl
     const mtl::FormatTable &getFormatTable() const { return mFormatTable; }
     mtl::RenderUtils &getUtils() { return mUtils; }
     mtl::StateCache &getStateCache() { return mStateCache; }
+    mtl::LibraryCache &getLibraryCache() { return mLibraryCache; }
     uint32_t getMaxColorTargetBits() { return mMaxColorTargetBits; }
     bool hasFragmentMemoryBarriers() const { return mHasFragmentMemoryBarriers; }
 
@@ -194,6 +196,7 @@ class DisplayMtl : public DisplayImpl
 
     mutable mtl::FormatTable mFormatTable;
     mtl::StateCache mStateCache;
+    mtl::LibraryCache mLibraryCache;
     mtl::RenderUtils mUtils;
 
     // Built-in Shaders

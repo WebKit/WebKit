@@ -307,6 +307,14 @@
                 "Disable raster order groups in order to test pixel local storage memory barriers"
             ],
             "issue": "http://anglebug.com/7279"
+        },
+        {
+            "name": "enable_in_memory_mtl_library_cache",
+            "category": "Features",
+            "description": [
+                "Cache MTLLibrary objects in memory."
+            ],
+            "issue": "http://crbug.com/1385510"
         }
     ]
 }

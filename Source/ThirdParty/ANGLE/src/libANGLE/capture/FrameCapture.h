@@ -783,6 +783,10 @@ class FrameCaptureShared final : angle::NonCopyable
     // Track which Contexts were created and made current at least once before MEC,
     // requiring setup for replay
     std::unordered_set<GLuint> mActiveSecondaryContexts;
+
+    // Invalid call counts per entry point while capture is active and inactive.
+    std::unordered_map<EntryPoint, size_t> mInvalidCallCountsActive;
+    std::unordered_map<EntryPoint, size_t> mInvalidCallCountsInactive;
 };
 
 template <typename CaptureFuncT, typename... ArgsT>

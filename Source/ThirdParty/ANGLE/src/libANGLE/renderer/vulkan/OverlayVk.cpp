@@ -66,7 +66,8 @@ angle::Result OverlayVk::createFont(ContextVk *contextVk)
         VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, gl::LevelIndex(0),
         gl::overlay::kFontMipCount, gl::overlay::kFontCharacters, kNoRobustInit, false));
     ANGLE_TRY(mFontImage.initMemory(contextVk, false, renderer->getMemoryProperties(),
-                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+                                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+                                    vk::MemoryAllocationType::FontImage));
     ANGLE_TRY(mFontImage.initImageView(
         contextVk, gl::TextureType::_2DArray, VK_IMAGE_ASPECT_COLOR_BIT, gl::SwizzleState(),
         &mFontImageView, vk::LevelIndex(0), gl::overlay::kFontMipCount,

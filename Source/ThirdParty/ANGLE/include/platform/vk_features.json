@@ -407,6 +407,14 @@
             "issue": "http://anglebug.com/4324"
         },
         {
+            "name": "slow_async_command_queue_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Artificially slow down async command queue for threading testing"
+            ],
+            "issue": "https://anglebug.com/6574"
+        },
+        {
             "name": "supports_shader_float16",
             "category": "Features",
             "description": [
@@ -1091,7 +1099,7 @@
                 "VkDevice supports the VK_EXT_pipeline_protected_access extension"
             ],
             "issue": "https://anglebug.com/7714"
-	},
+        },
         {
             "name": "supports_mixed_read_write_depth_stencil_layouts",
             "category": "Features",
@@ -1099,7 +1107,7 @@
                 "VkDevice supports the mixed read and write depth/stencil layouts introduced by VK_KHR_maintenance2"
             ],
             "issue": "https://anglebug.com/7899"
-	},
+        },
         {
             "name": "supports_swapchain_maintenance1",
             "category": "Features",
@@ -1107,14 +1115,14 @@
                 "VkDevice supports the VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 extensions"
             ],
             "issue": "https://anglebug.com/7847"
-	},
-	{
+        },
+        {
             "name": "prefer_submit_on_any_samples_passed_query_end",
             "category": "Workarounds",
             "description":["Submit commands to driver when last GL_ANY_SAMPLES_PASSED query is made for performance improvements."],
             "issue": "https://issuetracker.google.com/250706693"
         },
-	{
+        {
             "name": "force_wait_for_submission_to_complete_for_query_result",
             "category": "Workarounds",
             "description":["Force wait for submission to complete before calling getQueryResult(wait)."],

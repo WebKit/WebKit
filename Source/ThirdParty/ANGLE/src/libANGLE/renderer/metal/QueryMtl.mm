@@ -13,7 +13,7 @@
 
 namespace rx
 {
-QueryMtl::QueryMtl(gl::QueryType type) : QueryImpl(type), mTransformFeedbackPrimitivesDrawn(0) {}
+QueryMtl::QueryMtl(gl::QueryType type) : QueryImpl(type) {}
 
 QueryMtl::~QueryMtl() {}
 
@@ -52,6 +52,21 @@ angle::Result QueryMtl::begin(const gl::Context *context)
         case gl::QueryType::TransformFeedbackPrimitivesWritten:
             mTransformFeedbackPrimitivesDrawn = 0;
             break;
+        case gl::QueryType::TimeElapsed:
+        {
+            // End any command buffer being encoded, to get a clean boundary for beginning
+            // measurement.
+            contextMtl->flushCommandBuffer(mtl::NoWait);
+            mtl::CommandQueue &queue = contextMtl->getDisplay()->cmdQueue();
+            if (mTimeElapsedEntry != 0)
+            {
+                queue.deleteTimeElapsedEntry(mTimeElapsedEntry);
+                mTimeElapsedEntry = 0;
+            }
+            mTimeElapsedEntry = queue.allocateTimeElapsedEntry();
+            queue.setActiveTimeElapsedEntry(mTimeElapsedEntry);
+            break;
+        }
         default:
             UNIMPLEMENTED();
             break;
@@ -71,6 +86,14 @@ angle::Result QueryMtl::end(const gl::Context *context)
         case gl::QueryType::TransformFeedbackPrimitivesWritten:
             onTransformFeedbackEnd(context);
             break;
+        case gl::QueryType::TimeElapsed:
+        {
+            // End any command buffer being encoded, to get a clean boundary for ending measurement.
+            contextMtl->flushCommandBuffer(mtl::NoWait);
+            mtl::CommandQueue &queue = contextMtl->getDisplay()->cmdQueue();
+            queue.setActiveTimeElapsedEntry(0);
+            break;
+        }
         default:
             UNIMPLEMENTED();
             break;
@@ -110,6 +133,20 @@ angle::Result QueryMtl::waitAndGetResult(const gl::Context *context, T *params)
         case gl::QueryType::TransformFeedbackPrimitivesWritten:
             *params = static_cast<T>(mTransformFeedbackPrimitivesDrawn);
             break;
+        case gl::QueryType::TimeElapsed:
+        {
+            ASSERT(mTimeElapsedEntry != 0);
+            mtl::CommandQueue &queue = contextMtl->getDisplay()->cmdQueue();
+            if (!queue.isTimeElapsedEntryComplete(mTimeElapsedEntry))
+            {
+                contextMtl->flushCommandBuffer(mtl::WaitUntilFinished);
+            }
+            ASSERT(queue.isTimeElapsedEntryComplete(mTimeElapsedEntry));
+            double nanos    = queue.getTimeElapsedEntryInSeconds(mTimeElapsedEntry) * 1e9;
+            uint64_t result = static_cast<uint64_t>(nanos);
+            *params         = static_cast<T>(result);
+            break;
+        }
         default:
             UNIMPLEMENTED();
             break;
@@ -136,6 +173,10 @@ angle::Result QueryMtl::isResultAvailable(const gl::Context *context, bool *avai
             break;
         case gl::QueryType::TransformFeedbackPrimitivesWritten:
             *available = true;
+            break;
+        case gl::QueryType::TimeElapsed:
+            *available =
+                contextMtl->getDisplay()->cmdQueue().isTimeElapsedEntryComplete(mTimeElapsedEntry);
             break;
         default:
             UNIMPLEMENTED();
@@ -182,4 +223,20 @@ void QueryMtl::onTransformFeedbackEnd(const gl::Context *context)
     }
 }
 
+void QueryMtl::onContextMakeCurrent(const gl::Context *context)
+{
+    // At present this should only be called for time elapsed queries.
+    ASSERT(getType() == gl::QueryType::TimeElapsed);
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    contextMtl->getDisplay()->cmdQueue().setActiveTimeElapsedEntry(mTimeElapsedEntry);
 }
+
+void QueryMtl::onContextUnMakeCurrent(const gl::Context *context)
+{
+    // At present this should only be called for time elapsed queries.
+    ASSERT(getType() == gl::QueryType::TimeElapsed);
+    ContextMtl *contextMtl = mtl::GetImpl(context);
+    contextMtl->getDisplay()->cmdQueue().setActiveTimeElapsedEntry(0);
+}
+
+}  // namespace rx

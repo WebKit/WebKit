@@ -1852,12 +1852,37 @@ class Texture2DTestES31 : public Texture2DTest
   protected:
     Texture2DTestES31() : Texture2DTest() {}
 
-    void TestSampleStencilFromDepthStencil(GLenum format, bool swizzle);
+    void TestSampleWithDepthStencilMode(GLenum format, GLenum mode, bool swizzle);
 };
 
-void Texture2DTestES31::TestSampleStencilFromDepthStencil(GLenum format, bool swizzle)
+void Texture2DTestES31::TestSampleWithDepthStencilMode(GLenum format, GLenum mode, bool swizzle)
 {
     constexpr GLsizei kSize = 4;
+
+    ASSERT(mode == GL_STENCIL_INDEX || mode == GL_DEPTH_COMPONENT);
+
+    bool isStencilMode;
+    GLenum attachment;
+    switch (format)
+    {
+        case GL_DEPTH_COMPONENT16:
+        case GL_DEPTH_COMPONENT24:
+        case GL_DEPTH_COMPONENT32F:
+            attachment    = GL_DEPTH_ATTACHMENT;
+            isStencilMode = false;
+            break;
+        case GL_DEPTH24_STENCIL8:
+        case GL_DEPTH32F_STENCIL8:
+            attachment    = GL_DEPTH_STENCIL_ATTACHMENT;
+            isStencilMode = mode == GL_STENCIL_INDEX;
+            break;
+        case GL_STENCIL_INDEX8:
+            attachment    = GL_STENCIL_ATTACHMENT;
+            isStencilMode = true;
+            break;
+        default:
+            UNREACHABLE();
+    }
 
     // Set up a color texture.
     GLTexture colorTexture;
@@ -1865,13 +1890,13 @@ void Texture2DTestES31::TestSampleStencilFromDepthStencil(GLenum format, bool sw
     glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kSize, kSize);
     ASSERT_GL_NO_ERROR();
 
-    // Set up a depth/stencil texture to be sampled as stencil.
+    // Set up a depth/stencil texture to be sampled as mode.
     GLTexture depthStencilTexture;
     glBindTexture(GL_TEXTURE_2D, depthStencilTexture);
     glTexStorage2D(GL_TEXTURE_2D, 1, format, kSize, kSize);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_STENCIL_INDEX);
+    glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, mode);
     if (swizzle)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_ALPHA);
@@ -1881,23 +1906,32 @@ void Texture2DTestES31::TestSampleStencilFromDepthStencil(GLenum format, bool sw
     }
     ASSERT_GL_NO_ERROR();
 
-    constexpr char kFS[] =
+    constexpr char kStencilFS[] =
         R"(#version 300 es
 precision mediump float;
-uniform highp usampler2D stencilTex;
+uniform highp usampler2D tex;
 out vec4 color;
 void main()
 {
-    color = vec4(texelFetch(stencilTex, ivec2(0, 0), 0)) / 255.0f;
+    color = vec4(texelFetch(tex, ivec2(0, 0), 0)) / 255.0f;
+})";
+
+    constexpr char kDepthFS[] =
+        R"(#version 300 es
+precision mediump float;
+uniform highp sampler2D tex;
+out vec4 color;
+void main()
+{
+    color = texture(tex, vec2(0, 0));
 })";
 
     // Clear stencil to 42.
     GLFramebuffer clearFBO;
     glBindFramebuffer(GL_FRAMEBUFFER, clearFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
-                           depthStencilTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, depthStencilTexture, 0);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
-    glClearDepthf(0.42f);
+    glClearDepthf(0.5);
     glClearStencil(42);
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     ASSERT_GL_NO_ERROR();
@@ -1906,13 +1940,13 @@ void main()
     glBindTexture(GL_TEXTURE_2D, depthStencilTexture);
     EXPECT_GL_ERROR(GL_NO_ERROR);
 
-    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
-    GLint stencilTexLocation = glGetUniformLocation(program, "stencilTex");
-    ASSERT_NE(-1, stencilTexLocation);
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), isStencilMode ? kStencilFS : kDepthFS);
+    GLint texLocation = glGetUniformLocation(program, "tex");
+    ASSERT_NE(-1, texLocation);
     ASSERT_GL_NO_ERROR();
 
     glUseProgram(program);
-    glUniform1i(stencilTexLocation, 0);
+    glUniform1i(texLocation, 0);
 
     GLFramebuffer drawFBO;
     glBindFramebuffer(GL_FRAMEBUFFER, drawFBO);
@@ -1923,8 +1957,16 @@ void main()
     drawQuad(program, essl3_shaders::PositionAttrib(), 0.95f);
     ASSERT_GL_NO_ERROR();
 
-    GLColor expected = swizzle ? GLColor(1, 0, 0, 42) : GLColor(42, 0, 0, 1);
-    EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, expected);
+    if (isStencilMode)
+    {
+        GLColor expected = swizzle ? GLColor(1, 0, 0, 42) : GLColor(42, 0, 0, 1);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, expected);
+    }
+    else
+    {
+        GLColor expected = swizzle ? GLColor(255, 0, 0, 127) : GLColor(127, 0, 0, 255);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, expected, 1);
+    }
 }
 
 TEST_P(Texture2DTest, NegativeAPISubImage)
@@ -2632,6 +2674,77 @@ TEST_P(Texture2DTest, PBOWithMultipleDraws)
     EXPECT_EQ(expected, actual);
 }
 
+// Test that stencil texture uploads work.
+TEST_P(Texture2DTestES3, TexImageWithStencilData)
+{
+    constexpr GLsizei kSize = 4;
+
+    const std::array<std::tuple<GLenum, GLenum, int, int>, 3> testConfigs = {
+        std::make_tuple(GL_DEPTH32F_STENCIL8, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, 8, 4),
+        std::make_tuple(GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8, 4, 0),
+        std::make_tuple(GL_STENCIL_INDEX8, GL_UNSIGNED_BYTE, 1, 0)};
+
+    for (auto testConfig : testConfigs)
+    {
+        const GLenum format     = std::get<0>(testConfig);
+        const GLenum type       = std::get<1>(testConfig);
+        const GLenum typeLength = std::get<2>(testConfig);
+        const GLenum typeOffset = std::get<3>(testConfig);
+
+        ANGLE_SKIP_TEST_IF(format == GL_STENCIL_INDEX8 &&
+                           !IsGLExtensionEnabled("GL_OES_texture_stencil8"));
+
+        // Set up the framebuffer
+        GLTexture colorTexture;
+        glBindTexture(GL_TEXTURE_2D, colorTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
+        ASSERT_GL_NO_ERROR();
+
+        GLTexture depthStencilTexture;
+        glBindTexture(GL_TEXTURE_2D, depthStencilTexture);
+
+        GLubyte pixels[kSize * kSize * 8] = {};
+        for (size_t pixelId = 0; pixelId < kSize * kSize; ++pixelId)
+        {
+            pixels[pixelId * typeLength + typeOffset] = 0xD5;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, format, kSize, kSize, 0,
+                     format == GL_STENCIL_INDEX8 ? GL_STENCIL_INDEX : GL_DEPTH_STENCIL, type,
+                     pixels);
+        ASSERT_GL_NO_ERROR();
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture,
+                               0);
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER,
+            format == GL_STENCIL_INDEX8 ? GL_STENCIL_ATTACHMENT : GL_DEPTH_STENCIL_ATTACHMENT,
+            GL_TEXTURE_2D, depthStencilTexture, 0);
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GL_NO_ERROR();
+
+        // Clear only color.
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+
+        // If stencil is not set to 0xD5, rendering would fail.
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_EQUAL, 0xD5, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        glStencilMask(0xFF);
+
+        // Draw red
+        ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+
+        EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
+    }
+}
+
 // Test that glTexSubImage2D combined with a PBO works properly. PBO has all pixels as red
 // except the middle one being green.
 TEST_P(Texture2DTest, TexStorageWithPBOMiddlePixelDifferent)
@@ -3090,18 +3203,59 @@ TEST_P(Texture2DTestES3, TexImageWithDepthPBO)
     EXPECT_PIXEL_RECT_EQ(0, 0, kSize, kSize, GLColor::red);
 }
 
-// Test that sampling stencil from a DEPTH24_STENCIL8 texture works.
-TEST_P(Texture2DTestES31, TexSampleStencilFromDepth24Stencil8)
+// Test sampling modes with a DEPTH_COMPONENT16 texture.
+TEST_P(Texture2DTestES31, TexSampleModesWithDepth16)
 {
-    TestSampleStencilFromDepthStencil(GL_DEPTH24_STENCIL8, false);
-    TestSampleStencilFromDepthStencil(GL_DEPTH24_STENCIL8, true);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, true);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_STENCIL_INDEX, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT16, GL_STENCIL_INDEX, true);
 }
 
-// Test that sampling stencil from a DEPTH32F_STENCIL8 texture works.
-TEST_P(Texture2DTestES31, TexSampleStencilFromDepth32fStencil8)
+// Test sampling modes with a DEPTH_COMPONENT24 texture.
+TEST_P(Texture2DTestES31, TexSampleModesWithDepth24)
 {
-    TestSampleStencilFromDepthStencil(GL_DEPTH32F_STENCIL8, false);
-    TestSampleStencilFromDepthStencil(GL_DEPTH32F_STENCIL8, true);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, true);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_STENCIL_INDEX, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT24, GL_STENCIL_INDEX, true);
+}
+
+// Test depth sampling with a DEPTH_COMPONENT32F texture.
+TEST_P(Texture2DTestES31, TexSampleModesWithDepth32f)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, true);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_STENCIL_INDEX, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH_COMPONENT32F, GL_STENCIL_INDEX, true);
+}
+
+// Test sampling modes with a DEPTH24_STENCIL8 texture.
+TEST_P(Texture2DTestES31, TexSampleModesWithDepth24Stencil8)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, true);
+    TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_STENCIL_INDEX, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH24_STENCIL8, GL_STENCIL_INDEX, true);
+}
+
+// Test sampling modes with a DEPTH32F_STENCIL8 texture.
+TEST_P(Texture2DTestES31, TexSampleModesWithDepth32fStencil8)
+{
+    TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_DEPTH_COMPONENT, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_DEPTH_COMPONENT, true);
+    TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_STENCIL_INDEX, false);
+    TestSampleWithDepthStencilMode(GL_DEPTH32F_STENCIL8, GL_STENCIL_INDEX, true);
+}
+
+// Test sampling modes with a STENCIL_INDEX8 texture.
+TEST_P(Texture2DTestES31, TexSampleModesWithStencil8)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_texture_stencil8"));
+    TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_DEPTH_COMPONENT, false);
+    TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_DEPTH_COMPONENT, true);
+    TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_STENCIL_INDEX, false);
+    TestSampleWithDepthStencilMode(GL_STENCIL_INDEX8, GL_STENCIL_INDEX, true);
 }
 
 // Test that glTexSubImage2D combined with a PBO works properly when glTexStorage2D has
@@ -3113,9 +3267,6 @@ TEST_P(Texture2DTestES3, TexImageWithStencilPBO)
 
     // http://anglebug.com/5315
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
-
-    // http://anglebug.com/5317
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D());
 
     constexpr GLsizei kSize = 4;
 
@@ -3188,9 +3339,6 @@ TEST_P(Texture2DTestES3, TexImageWithDepthStencilPBO)
 
     // http://anglebug.com/5315
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
-
-    // http://anglebug.com/5317
-    ANGLE_SKIP_TEST_IF(IsWindows() && IsD3D());
 
     constexpr GLsizei kSize = 4;
 
@@ -11140,7 +11288,8 @@ ANGLE_INSTANTIATE_TEST_ES2(SamplerArrayAsFunctionParameterTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3);
 ANGLE_INSTANTIATE_TEST_ES3_AND(Texture2DTestES3,
-                               ES3_VULKAN().enable(Feature::AllocateNonZeroMemory));
+                               ES3_VULKAN().enable(Feature::AllocateNonZeroMemory),
+                               ES3_VULKAN().enable(Feature::ForceFallbackFormat));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES3YUV);
 ANGLE_INSTANTIATE_TEST_ES3_AND(Texture2DTestES3YUV,
@@ -11247,6 +11396,7 @@ ANGLE_INSTANTIATE_TEST_ES3(TextureChangeStorageUploadTest);
 ANGLE_INSTANTIATE_TEST_ES3(ExtraSamplerCubeShadowUseTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Texture2DTestES31);
-ANGLE_INSTANTIATE_TEST_ES31(Texture2DTestES31);
+ANGLE_INSTANTIATE_TEST_ES31_AND(Texture2DTestES31,
+                                ES31_VULKAN().enable(Feature::ForceFallbackFormat));
 
 }  // anonymous namespace

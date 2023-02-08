@@ -988,8 +988,8 @@ void DisplayMtl::initializeExtensions() const
 
     mNativeExtensions.occlusionQueryBooleanEXT = true;
 
-    mNativeExtensions.disjointTimerQueryEXT = false;
-    mNativeCaps.queryCounterBitsTimeElapsed = 0;
+    mNativeExtensions.disjointTimerQueryEXT = true;
+    mNativeCaps.queryCounterBitsTimeElapsed = 64;
     mNativeCaps.queryCounterBitsTimestamp   = 0;
 
     mNativeExtensions.textureFilterAnisotropicEXT = true;
@@ -1254,6 +1254,8 @@ void DisplayMtl::initializeFeatures()
     // Render passes can be rendered without attachments on Apple4 , mac2 hardware.
     ANGLE_FEATURE_CONDITION(&(mFeatures), allowRenderpassWithoutAttachment,
                             supportsEitherGPUFamily(4, 2));
+
+    ANGLE_FEATURE_CONDITION((&mFeatures), enableInMemoryMtlLibraryCache, true);
 
     ApplyFeatureOverrides(&mFeatures, getState());
 }

@@ -971,17 +971,12 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         const size_t allocationSize          = fixedAllocationSize + variableSize;
 
         // Make sure we have enough room to mark follow-on header "Invalid"
-        const size_t requiredSize           = allocationSize + sizeof(CommandHeader);
-        uint8_t *commandPtr                 = nullptr;
-        uint8_t *header                     = nullptr;
-        bool usesCommandHeaderSizeForOffset = false;
+        const size_t requiredSize = allocationSize + sizeof(CommandHeader);
+        uint8_t *header           = nullptr;
 
-        mCommandAllocator.onNewVariableSizedCommand(
-            requiredSize, allocationSize, &usesCommandHeaderSizeForOffset, &commandPtr, &header);
+        mCommandAllocator.onNewVariableSizedCommand(requiredSize, allocationSize, &header);
         StructType *const result = commonInit<StructType>(cmdID, allocationSize, header);
-        *variableDataPtr         = (usesCommandHeaderSizeForOffset)
-                                       ? Offset<uint8_t>(commandPtr, fixedAllocationSize)
-                                       : Offset<uint8_t>(result, sizeof(StructType));
+        *variableDataPtr         = Offset<uint8_t>(header, fixedAllocationSize);
         return result;
     }
 
@@ -995,9 +990,8 @@ class SecondaryCommandBuffer final : angle::NonCopyable
 
         // Make sure we have enough room to mark follow-on header "Invalid"
         const size_t requiredSize = allocationSize + sizeof(CommandHeader);
-        uint8_t *commandPtr       = nullptr;
         uint8_t *header           = nullptr;
-        mCommandAllocator.onNewCommand(requiredSize, allocationSize, &commandPtr, &header);
+        mCommandAllocator.onNewCommand(requiredSize, allocationSize, &header);
 
         return commonInit<StructType>(cmdID, allocationSize, header);
     }

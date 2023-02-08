@@ -7555,8 +7555,21 @@ void FrameCaptureShared::captureCall(gl::Context *context, CallCapture &&inCall,
     }
     else
     {
-        INFO() << "FrameCapture: Not capturing invalid call to "
-               << GetEntryPointName(inCall.entryPoint);
+        const int maxInvalidCallLogs = 3;
+        size_t &callCount = isCaptureActive() ? mInvalidCallCountsActive[inCall.entryPoint]
+                                              : mInvalidCallCountsInactive[inCall.entryPoint];
+        callCount++;
+        if (callCount <= maxInvalidCallLogs)
+        {
+            std::ostringstream msg;
+            msg << "FrameCapture (capture " << (isCaptureActive() ? "active" : "inactive")
+                << "): Not capturing invalid call to " << GetEntryPointName(inCall.entryPoint);
+            if (callCount == maxInvalidCallLogs)
+            {
+                msg << " (will no longer repeat for this entry point)";
+            }
+            INFO() << msg.str();
+        }
     }
 }
 

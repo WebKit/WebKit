@@ -4,7 +4,7 @@
   "src/libANGLE/renderer/vulkan/gen_vk_mandatory_format_support_table.py":
     "ffb3d44c853669c2c260b96b3808fcf3",
   "src/libANGLE/renderer/vulkan/vk_format_map.json":
-    "f3a26a8f4dd2ca8874b73321c38153e6",
+    "7aaf0dffe89edeabb4ad7e7b856dee02",
   "src/libANGLE/renderer/vulkan/vk_mandatory_format_support_data.json":
     "fa2bd54c1bb0ab2cf1d386061a4bc5c5",
   "src/libANGLE/renderer/vulkan/vk_mandatory_format_support_table_autogen.cpp":
