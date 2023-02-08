@@ -1054,7 +1054,7 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
                 // Add the text of the list marker item if necessary.
                 StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
                 if (!listMarkerText.isEmpty())
-                    AXAttributedStringAppendText(attrString.get(), &node, listMarkerText, spellCheck);
+                    AXAttributedStringAppendText(attrString.get(), &node, listMarkerText, false);
                 AXAttributedStringAppendText(attrString.get(), &node, it.text(), spellCheck);
             } else {
                 Node* replacedNode = it.node();
