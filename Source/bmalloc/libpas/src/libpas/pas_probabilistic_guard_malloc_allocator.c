@@ -215,7 +215,7 @@ pas_large_map_entry pas_probabilistic_guard_malloc_return_as_large_map_entry(uin
     if (entry && entry->value) {
         pas_pgm_storage* entry_val = (pas_pgm_storage *) entry->value;
         ret.begin = mem;
-        ret.end = mem + entry_val->size_of_data_pages;
+        ret.end = mem + entry_val->allocation_size_requested;
         ret.heap = entry_val->large_heap;
     }
 
