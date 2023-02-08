@@ -2449,3 +2449,6 @@ imported/w3c/web-platform-tests/geolocation-API/permission.https.html [ WontFix 
 
 # Per-process limit is only for WK2
 http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Skip ]
+
+# Displays blank on WK1
+fullscreen/fullscreen-iframe-navigation.html [ Skip ]
