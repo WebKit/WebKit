@@ -459,6 +459,7 @@ static RetainPtr<WKWebsiteDataStore> createWebsiteDataStoreAndPrepare(NSUUID *uu
 {
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid]);
     auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    EXPECT_TRUE([websiteDataStoreConfiguration.get().identifier isEqual:uuid]);
     pid_t webprocessIdentifier;
     @autoreleasepool {
         auto handler = adoptNS([[TestMessageHandler alloc] init]);
