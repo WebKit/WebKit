@@ -315,14 +315,14 @@ bool CanvasBase::shouldAccelerate(unsigned area) const
 #endif
 }
 
-void CanvasBase::createImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const
+RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const
 {
     auto checkedArea = size().area<RecordOverflow>();
 
     if (checkedArea.hasOverflowed() || checkedArea > maxCanvasArea()) {
         auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea(), ").");
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
-        return;
+        return nullptr;
     }
 
     // Make sure we don't use more pixel memory than the system can support.
@@ -330,12 +330,12 @@ void CanvasBase::createImageBuffer(bool usesDisplayListDrawing, bool avoidBacken
     if (checkedRequestedPixelMemory.hasOverflowed() || checkedRequestedPixelMemory > maxActivePixelMemory()) {
         auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
-        return;
+        return nullptr;
     }
 
     unsigned area = checkedArea.value();
     if (!area)
-        return;
+        return nullptr;
 
     OptionSet<ImageBufferOptions> bufferOptions;
     if (shouldAccelerate(area))
@@ -352,7 +352,7 @@ void CanvasBase::createImageBuffer(bool usesDisplayListDrawing, bool avoidBacken
     ImageBufferCreationContext context = { };
     context.graphicsClient = graphicsClient();
     context.avoidIOSurfaceSizeCheckInWebProcessForTesting = avoidBackendSizeCheckForTesting;
-    setImageBuffer(ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, context));
+    return ImageBuffer::create(size(), RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, bufferOptions, context);
 }
 
 size_t CanvasBase::activePixelMemory()
