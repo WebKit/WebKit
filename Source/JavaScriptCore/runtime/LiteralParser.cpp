@@ -165,16 +165,6 @@ ALWAYS_INLINE JSString* LiteralParser<CharType>::makeJSString(VM& vm, typename L
     return jsString(vm, Identifier::fromString(vm, token->stringToken16, token->stringLength).string());
 }
 
-static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
-static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(UChar)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-}
-
 // 256 Latin-1 codes
 // The JSON RFC 4627 defines a list of allowed characters to be considered
 // insignificant white space: http://www.ietf.org/rfc/rfc4627.txt (2. JSON Grammar).
