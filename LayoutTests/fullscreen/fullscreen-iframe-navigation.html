@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="reftest-wait">
+<head>
+<meta charset="UTF-8">
+<style>
+    .failed {
+        background-color: red;
+    }
+</style>
+</head>
+<body>
+<iframe id="iframe" srcdoc="<button onclick='document.documentElement.requestFullscreen().then(() => (window.location.href=`./resources/fullscreen-iframe-navigation-target.html`))'>Enter fullscreen and navigate</button>"></iframe>
+<script src="../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+<script src="../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+<script>
+    addEventListener("load", async () => {
+        await test_driver.bless("fullscreen", null, iframe.contentWindow);
+        await new Promise(resolve => {
+            addEventListener("fullscreenchange", resolve, { once: true });
+            iframe.contentDocument.documentElement.requestFullscreen();
+        });
+        if (!document.fullscreenElement)
+            document.body.className = "failed";
+        await Promise.all([
+            new Promise(resolve => {
+                addEventListener("message", (e) => {
+                    if (e.data == "loaded")
+                        resolve();
+                }, { once: true });
+                iframe.contentWindow.location.href = "./resources/fullscreen-iframe-navigation-target.html";
+            }),
+            new Promise(resolve => {
+                addEventListener("fullscreenchange", resolve, { once: true });
+            })
+        ]);
+        if (document.fullscreenElement)
+            document.body.className = "failed";
+        document.documentElement.classList.remove("reftest-wait");
+    });
+</script>
+</body>
+</html>
