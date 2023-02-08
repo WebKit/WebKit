@@ -170,6 +170,10 @@
                     "additionalArguments": ["--no-retry-failures"],
                     "workernames": ["bot211"]
                     },
+                    { "name": "Apple-Ventura-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory",
+                    "platform": "mac-ventura", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                    "workernames": ["bot165"]
+                    },
                     { "name": "Apple-Ventura-Debug-Build", "factory": "BuildFactory",
                     "platform": "mac-ventura", "configuration": "debug", "architectures": ["x86_64", "arm64"],
                     "triggers": [
@@ -211,10 +215,6 @@
                           "monterey-release-tests-wk2-accessibility-isolated-tree"
                       ],
                       "workernames": ["bot185", "bot187"]
-                    },
-                    { "name": "Apple-Ventura-AppleSilicon-Release-Test262-Tests", "factory": "Test262Factory",
-                      "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "workernames": ["bot165"]
                     },
                     { "name": "Apple-Monterey-Release-Test262-Tests", "factory": "Test262Factory",
                       "platform": "mac-monterey", "configuration": "release", "architectures": ["x86_64", "arm64"],
