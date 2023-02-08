@@ -26,7 +26,7 @@
 #pragma once
 
 #include "InlineDisplayBox.h"
-#include "LayoutIntegrationLine.h"
+#include "InlineDisplayLine.h"
 #include <wtf/HashMap.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/Vector.h>
@@ -43,6 +43,7 @@ class Box;
 
 namespace InlineDisplay {
 struct Box;
+class Line;
 } 
 
 namespace LayoutIntegration {
@@ -56,7 +57,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     ~InlineContent();
 
     using Boxes = Vector<InlineDisplay::Box>;
-    using Lines = Vector<Line>;
+    using Lines = Vector<InlineDisplay::Line>;
 
     Boxes boxes;
     Lines lines;
@@ -70,7 +71,7 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
     bool hasVisualOverflow() const { return m_hasVisualOverflow; }
     void setHasVisualOverflow() { m_hasVisualOverflow = true; }
     
-    const Line& lineForBox(const InlineDisplay::Box& box) const { return lines[box.lineIndex()]; }
+    const InlineDisplay::Line& lineForBox(const InlineDisplay::Box& box) const { return lines[box.lineIndex()]; }
 
     IteratorRange<const InlineDisplay::Box*> boxesForRect(const LayoutRect&) const;
 

@@ -56,7 +56,7 @@ public:
     float inkOverflowBottom() const { return line().inkOverflow().maxY(); }
 
     bool hasEllipsis() const { return line().hasEllipsis(); }
-    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return line().ellipsisVisualRect(); }
+    FloatRect ellipsisVisualRectIgnoringBlockDirection() const { return *line().ellipsisVisualRect(); }
     TextRun ellipsisText() const { return line().ellipsisText(); }
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const { return !m_lineIndex ? contentLogicalTop() : LineBoxIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLineBox(); }
@@ -121,7 +121,7 @@ private:
     void setAtEnd() { m_lineIndex = lines().size(); }
 
     const LayoutIntegration::InlineContent::Lines& lines() const { return m_inlineContent->lines; }
-    const LayoutIntegration::Line& line() const { return lines()[m_lineIndex]; }
+    const InlineDisplay::Line& line() const { return lines()[m_lineIndex]; }
 
     WeakPtr<const LayoutIntegration::InlineContent> m_inlineContent;
     size_t m_lineIndex { 0 };

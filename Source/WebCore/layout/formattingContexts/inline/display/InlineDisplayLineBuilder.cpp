@@ -66,7 +66,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         };
     };
     auto [enclosingTop, enclosingBottom] = initialEnclosingTopAndBottom();
-    auto scrollableOverflowRect = [&]() -> InlineRect {
+    auto contentOverflowRect = [&]() -> InlineRect {
         auto rect = lineBoxRect;
         auto rootInlineBoxWidth = lineBox.logicalRectForRootInlineBox().width();
         auto isLeftToRightDirection = root().style().isLeftToRightDirection();
@@ -104,7 +104,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
             // Collect scrollable overflow from inline boxes. All other inline level boxes (e.g atomic inline level boxes) stretch the line.
             if (lineBox.hasContent()) {
                 // Empty lines (e.g. continuation pre/post blocks) don't expect scrollbar overflow.
-                scrollableOverflowRect.expandVerticallyToContain(borderBox);
+                contentOverflowRect.expandVerticallyToContain(borderBox);
             }
         } else if (inlineLevelBox.isLineBreakBox()) {
             borderBox = lineBox.logicalBorderBoxForInlineBox(layoutBox, formattingContext().geometryForBox(layoutBox));
@@ -117,7 +117,7 @@ InlineDisplayLineBuilder::EnclosingLineGeometry InlineDisplayLineBuilder::collec
         enclosingTop = std::min(enclosingTop.value_or(adjustedBorderBoxTop), adjustedBorderBoxTop);
         enclosingBottom = std::max(enclosingBottom.value_or(adjustedBorderBoxBottom), adjustedBorderBoxBottom);
     }
-    return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, scrollableOverflowRect };
+    return { { enclosingTop.value_or(lineBoxRect.top()), enclosingBottom.value_or(lineBoxRect.top()) }, contentOverflowRect };
 }
 
 InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, const ConstraintsForInlineContent& constraints) const
@@ -140,13 +140,14 @@ InlineDisplay::Line InlineDisplayLineBuilder::build(const LineBuilder::LineConte
     auto writingMode = root().style().writingMode();
     return InlineDisplay::Line { lineBoxLogicalRect
         , flipLogicalLineRectToVisualForWritingMode(lineBoxVisualRectInInlineDirection, writingMode)
-        , flipLogicalLineRectToVisualForWritingMode(enclosingLineGeometry.scrollableOverflowRect, writingMode)
+        , flipLogicalLineRectToVisualForWritingMode(enclosingLineGeometry.contentOverflowRect, writingMode)
         , enclosingLineGeometry.enclosingTopAndBottom
         , rootInlineBox.logicalTop() + rootInlineBox.ascent()
         , lineBox.baselineType()
         , rootInlineBoxRect.left()
         , contentVisualOffsetInInlineDirection
         , rootInlineBox.logicalWidth()
+        , isLeftToRightDirection
         , lineBox.isHorizontal()
     };
 }

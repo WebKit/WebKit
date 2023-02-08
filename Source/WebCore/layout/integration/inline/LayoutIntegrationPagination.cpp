@@ -122,46 +122,19 @@ static void updateMinimumPageHeight(RenderBlockFlow& flow, const InlineContent& 
 
 static std::unique_ptr<InlineContent> makeAdjustedContent(const InlineContent& inlineContent, Vector<float> adjustments, Vector<bool> isFirstLineAfterPageBreakList)
 {
-    auto moveVertically = [](FloatRect rect, float offset) {
-        rect.move(FloatSize(0, offset));
-        return rect;
-    };
-
-    auto adjustedLine = [&] (auto& line, auto offset, auto isFirstAfterPageBreak) {
-        return Line {
-            line.firstBoxIndex(),
-            line.boxCount(),
-            moveVertically(line.lineBoxLogicalRect(), offset),
-            moveVertically({ FloatPoint { line.lineBoxLeft(), line.lineBoxTop() }, FloatPoint { line.lineBoxRight(), line.lineBoxBottom() } }, offset),
-            line.enclosingContentLogicalTop() + offset,
-            line.enclosingContentLogicalBottom() + offset,
-            moveVertically(line.scrollableOverflow(), offset),
-            moveVertically(line.inkOverflow(), offset),
-            line.baseline(),
-            line.baselineType(),
-            line.contentLogicalLeft(),
-            line.contentLogicalLeftIgnoringInlineDirection(),
-            line.contentLogicalWidth(),
-            line.isHorizontal(),
-            { },
-            isFirstAfterPageBreak
-        };
-    };
-
-    auto adjustedBox = [&](auto& box, auto offset) {
-        auto adjustedBox = box;
-        adjustedBox.moveVertically(offset);
-        return adjustedBox;
-    };
-
     auto adjustedContent = makeUnique<InlineContent>(inlineContent.lineLayout());
-
-    for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex)
-        adjustedContent->lines.append(adjustedLine(inlineContent.lines[lineIndex], adjustments[lineIndex], isFirstLineAfterPageBreakList[lineIndex]));
-
-    for (auto& box : inlineContent.boxes)
-        adjustedContent->boxes.append(adjustedBox(box, adjustments[box.lineIndex()]));
-
+    for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex) {
+        auto adjustedLine = inlineContent.lines[lineIndex];
+        adjustedLine.moveVertically(adjustments[lineIndex]);
+        if (isFirstLineAfterPageBreakList[lineIndex])
+            adjustedLine.setIsFirstAfterPageBreak();
+        adjustedContent->lines.append(adjustedLine);
+    }
+    for (auto& box : inlineContent.boxes) {
+        auto adjustedBox = box;
+        adjustedBox.moveVertically(adjustments[box.lineIndex()]);
+        adjustedContent->boxes.append(adjustedBox);
+    }
     return adjustedContent;
 }
 

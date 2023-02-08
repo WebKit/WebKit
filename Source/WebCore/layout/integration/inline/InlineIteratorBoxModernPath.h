@@ -303,7 +303,7 @@ private:
     void setAtEnd() { m_boxIndex = boxes().size(); }
 
     const LayoutIntegration::InlineContent::Boxes& boxes() const { return m_inlineContent->boxes; }
-    const LayoutIntegration::Line& line() const { return m_inlineContent->lineForBox(box()); }
+    const InlineDisplay::Line& line() const { return m_inlineContent->lineForBox(box()); }
 
     const RenderText& renderText() const { return downcast<RenderText>(renderer()); }
 

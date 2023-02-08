@@ -470,8 +470,7 @@ void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderS
 
 void LineLayout::updateOverflow()
 {
-    auto inlineContentBuilder = InlineContentBuilder { flow(), m_boxTree };
-    inlineContentBuilder.updateLineOverflow(m_inlineFormattingState, *m_inlineContent);
+    InlineContentBuilder { flow(), m_boxTree }.updateLineOverflow(*m_inlineContent);
 }
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
@@ -791,7 +790,7 @@ LayoutUnit LineLayout::lastLinePhysicalBaseline() const
     return physicalBaselineForLine(lastLine);
 }
 
-LayoutUnit LineLayout::physicalBaselineForLine(LayoutIntegration::Line& line) const
+LayoutUnit LineLayout::physicalBaselineForLine(const InlineDisplay::Line& line) const
 {
     switch (rootLayoutBox().style().writingMode()) {
     case WritingMode::TopToBottom:

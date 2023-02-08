@@ -144,7 +144,7 @@ private:
     void releaseCaches();
     std::optional<size_t> lastLineIndexForContentHeight() const;
 
-    LayoutUnit physicalBaselineForLine(LayoutIntegration::Line&) const;
+    LayoutUnit physicalBaselineForLine(const InlineDisplay::Line&) const;
     
     BoxTree m_boxTree;
     WeakPtr<Layout::LayoutState> m_layoutState;

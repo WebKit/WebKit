@@ -1082,6 +1082,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/formattingContexts/inline/InlineTextItem.h
 
     layout/formattingContexts/inline/display/InlineDisplayBox.h
+    layout/formattingContexts/inline/display/InlineDisplayLine.h
 
     layout/formattingContexts/inline/text/TextUtil.h
 
@@ -1098,7 +1099,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/integration/inline/InlineIteratorLogicalOrderTraversal.h
     layout/integration/inline/InlineIteratorTextBox.h
     layout/integration/inline/LayoutIntegrationInlineContent.h
-    layout/integration/inline/LayoutIntegrationLine.h
 
     layout/layouttree/LayoutBox.h
     layout/layouttree/LayoutElementBox.h
