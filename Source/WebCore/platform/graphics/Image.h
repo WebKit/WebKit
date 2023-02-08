@@ -189,7 +189,7 @@ public:
 #if PLATFORM(GTK)
     virtual GRefPtr<GdkPixbuf> gdkPixbuf() { return nullptr; }
 #if USE(GTK4)
-    virtual GrefPtr<GdkTexture> gdkTexture() { return nullptr; }
+    virtual GRefPtr<GdkTexture> gdkTexture() { return nullptr; }
 #endif
 #endif
 
