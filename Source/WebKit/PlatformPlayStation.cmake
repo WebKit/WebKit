@@ -2,6 +2,8 @@ include(Headers.cmake)
 
 set(WebKit_USE_PREFIX_HEADER ON)
 
+WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit -Wno-unused-lambda-capture)
+
 list(APPEND WebProcess_SOURCES
     WebProcess/EntryPoint/playstation/WebProcessMain.cpp
 )
