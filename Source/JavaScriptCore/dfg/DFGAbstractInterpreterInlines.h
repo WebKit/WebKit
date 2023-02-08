@@ -209,7 +209,8 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
         }
     }
 
-    if ((ecmaMode.isStrict() || (valueForNode.m_type && !(valueForNode.m_type & ~SpecObject))) && valueForNode.m_structure.isFinite()) {
+    bool onlyObjects = valueForNode.m_type && !(valueForNode.m_type & ~SpecObject);
+    if ((ecmaMode.isStrict() || onlyObjects) && valueForNode.m_structure.isFinite()) {
         bool allStructuresAreJSScope = !valueForNode.m_structure.isClear();
         bool overridesToThis = false;
         valueForNode.m_structure.forEach([&](RegisteredStructure structure) {
@@ -226,9 +227,13 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
             // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
             allStructuresAreJSScope &= structure->classInfoForCells()->methodTable.toThis == JSScope::info()->methodTable.toThis;
         });
+
+        // This is correct for strict mode even if this can have non objects, since the right semantics is Identity.
         if (!overridesToThis)
             return ToThisResult::Identity;
-        if (allStructuresAreJSScope) {
+
+        // But this folding is available only if input is always an object.
+        if (onlyObjects && allStructuresAreJSScope) {
             if (ecmaMode.isStrict())
                 return ToThisResult::Undefined;
             return ToThisResult::GlobalThis;
