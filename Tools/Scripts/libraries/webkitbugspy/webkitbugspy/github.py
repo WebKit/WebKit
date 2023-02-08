@@ -66,6 +66,7 @@ class Tracker(GenericTracker):
                 result = dict(
                     type='github',
                     url=obj.url,
+                    hide_title=obj.hide_title,
                 )
                 if obj._res[len(Tracker.RE_TEMPLATES):]:
                     result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
@@ -78,9 +79,9 @@ class Tracker(GenericTracker):
             self, url, users=None, res=None,
             component_color=DEFAULT_COMPONENT_COLOR,
             version_color=DEFAULT_VERSION_COLOR,
-            session=None, redact=None,
+            session=None, redact=None, hide_title=None,
     ):
-        super(Tracker, self).__init__(users=users, redact=redact)
+        super(Tracker, self).__init__(users=users, redact=redact, hide_title=hide_title)
 
         self.session = session or requests.Session()
         self.component_color = component_color

@@ -41,6 +41,7 @@ class TestBugzilla(unittest.TestCase):
             )), dict(
                 type='bugzilla',
                 url='https://bugs.example.com',
+                hide_title=False,
                 res=['\\Aexample.com/b/(?P<id>\\d+)\\Z']
             ),
         )
