@@ -57,8 +57,6 @@ public:
     bool standalone() const;
 #endif
 
-    void getStorageUpdates();
-
 #if ENABLE(IOS_TOUCH_EVENTS) && !PLATFORM(MACCATALYST)
     int maxTouchPoints() const { return 5; }
 #else
