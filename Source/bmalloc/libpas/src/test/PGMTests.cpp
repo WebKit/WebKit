@@ -27,6 +27,8 @@
 #include <stdlib.h>
 
 #include "TestHarness.h"
+
+#include "bmalloc_heap.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_heap.h"
 #include "iso_heap.h"
@@ -37,6 +39,7 @@ using namespace std;
 
 namespace {
 
+// Test single PGM Allocation to ensure basic functionality is working.
 void testPGMSingleAlloc() {
     pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
     pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
@@ -70,7 +73,7 @@ void testPGMSingleAlloc() {
     return;
 }
 
-
+// Testing multiple allocations to ensure numerous allocations are correctly handled.
 void testPGMMultipleAlloc() {
     pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
     pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
@@ -105,6 +108,51 @@ void testPGMMultipleAlloc() {
     pas_heap_lock_unlock();
 }
 
+// Ensure reallocating PGM allocations works correctly.
+void testPGMRealloc()
+{
+
+    // setup code
+    pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
+    pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
+    pas_physical_memory_transaction transaction;
+    pas_physical_memory_transaction_construct(&transaction);
+
+    PAS_UNUSED_PARAM(heap);
+
+    // Realloc the same size
+    pas_heap_lock_lock();
+    pas_allocation_result foo = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
+    pas_heap_lock_unlock();
+
+    void* res = bmalloc_try_reallocate((void *) foo.begin, 10000000, pas_reallocate_free_always);
+
+    // Realloc bigger size
+
+    pas_heap_lock_lock();
+    pas_allocation_result foo2 = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
+    pas_heap_lock_unlock();
+
+    res = bmalloc_try_reallocate((void *) foo2.begin, 20000000, pas_reallocate_free_always);
+
+    // Realloc smaller size
+
+    pas_heap_lock_lock();
+    foo = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
+    pas_heap_lock_unlock();
+
+    res = bmalloc_try_reallocate((void *) foo.begin, 05000000, pas_reallocate_free_always);
+
+    // Realloc size of 0
+
+    pas_heap_lock_lock();
+    foo = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, 10000000, &iso_heap_config, &transaction);
+    pas_heap_lock_unlock();
+
+    res = bmalloc_try_reallocate((void *) foo.begin, 0, pas_reallocate_free_always);
+}
+
+// Ensure all PGM errors cases are handled.
 void testPGMErrors() {
     pas_heap_ref heapRef = ISO_HEAP_REF_INITIALIZER_WITH_ALIGNMENT(getpagesize() * 100, getpagesize());
     pas_heap* heap = iso_heap_ref_get_heap(&heapRef);
@@ -168,5 +216,6 @@ void testPGMErrors() {
 void addPGMTests() {
     ADD_TEST(testPGMSingleAlloc());
     ADD_TEST(testPGMMultipleAlloc());
+    ADD_TEST(testPGMRealloc());
     ADD_TEST(testPGMErrors());
 }
