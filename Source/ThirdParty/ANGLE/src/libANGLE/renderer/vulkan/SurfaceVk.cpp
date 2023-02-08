@@ -440,6 +440,15 @@ bool HasAnyOldSwapchains(const std::deque<impl::ImagePresentOperation> &presentH
 
     return false;
 }
+
+bool IsCompatiblePresentMode(vk::PresentMode mode,
+                             VkPresentModeKHR *compatibleModes,
+                             size_t compatibleModesCount)
+{
+    VkPresentModeKHR vkMode              = vk::ConvertPresentModeToVkPresentMode(mode);
+    VkPresentModeKHR *compatibleModesEnd = compatibleModes + compatibleModesCount;
+    return std::find(compatibleModes, compatibleModesEnd, vkMode) != compatibleModesEnd;
+}
 }  // namespace
 
 SurfaceVk::SurfaceVk(const egl::SurfaceState &surfaceState) : SurfaceImpl(surfaceState) {}
@@ -507,8 +516,8 @@ angle::Result OffscreenSurfaceVk::AttachmentImage::initialize(DisplayVk *display
     {
         flags |= VK_MEMORY_PROPERTY_PROTECTED_BIT;
     }
-    ANGLE_TRY(
-        image.initMemory(displayVk, hasProtectedContent, renderer->getMemoryProperties(), flags));
+    ANGLE_TRY(image.initMemory(displayVk, hasProtectedContent, renderer->getMemoryProperties(),
+                               flags, vk::MemoryAllocationType::OffscreenSurfaceAttachmentImage));
 
     imageViews.init(renderer);
 
@@ -1407,6 +1416,56 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         }
     }
 
+    // Get the list of compatible present modes to avoid unnecessary swapchain recreation.
+    VkSwapchainPresentModesCreateInfoEXT compatibleModesInfo = {};
+    if (renderer->getFeatures().supportsSwapchainMaintenance1.enabled)
+    {
+        VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo2 = {};
+        surfaceInfo2.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+        surfaceInfo2.surface = mSurface;
+
+        VkSurfacePresentModeEXT surfacePresentMode = {};
+        surfacePresentMode.sType                   = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_EXT;
+        surfacePresentMode.presentMode             = swapchainInfo.presentMode;
+        vk::AddToPNextChain(&surfaceInfo2, &surfacePresentMode);
+
+        VkSurfaceCapabilities2KHR surfaceCaps2 = {};
+        surfaceCaps2.sType                     = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
+
+        mCompatiblePresentModes.resize(kMaxCompatiblePresentModes);
+
+        VkSurfacePresentModeCompatibilityEXT compatibleModes = {};
+        compatibleModes.sType            = VK_STRUCTURE_TYPE_SURFACE_PRESENT_MODE_COMPATIBILITY_EXT;
+        compatibleModes.presentModeCount = kMaxCompatiblePresentModes;
+        compatibleModes.pPresentModes    = mCompatiblePresentModes.data();
+        vk::AddToPNextChain(&surfaceCaps2, &compatibleModes);
+
+        ANGLE_VK_TRY(context, vkGetPhysicalDeviceSurfaceCapabilities2KHR(
+                                  renderer->getPhysicalDevice(), &surfaceInfo2, &surfaceCaps2));
+
+        mCompatiblePresentModes.resize(compatibleModes.presentModeCount);
+
+        // The implementation must always return the given preesnt mode as compatible with itself.
+        ASSERT(IsCompatiblePresentMode(mDesiredSwapchainPresentMode, mCompatiblePresentModes.data(),
+                                       mCompatiblePresentModes.size()));
+
+        if (compatibleModes.presentModeCount > 1)
+        {
+            compatibleModesInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODES_CREATE_INFO_EXT;
+            compatibleModesInfo.presentModeCount = compatibleModes.presentModeCount;
+            compatibleModesInfo.pPresentModes    = mCompatiblePresentModes.data();
+
+            vk::AddToPNextChain(&swapchainInfo, &compatibleModesInfo);
+        }
+    }
+    else
+    {
+        // Without VK_EXT_swapchain_maintenance1, each present mode can be considered only
+        // compatible with itself.
+        mCompatiblePresentModes.resize(1);
+        mCompatiblePresentModes[0] = swapchainInfo.presentMode;
+    }
+
     // On Android, vkCreateSwapchainKHR destroys lastSwapchain, which is incorrect.  Wait idle in
     // that case as a workaround.
     if (lastSwapchain && renderer->getFeatures().waitIdleBeforeSwapchainRecreation.enabled)
@@ -1414,8 +1473,8 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         ANGLE_TRY(renderer->finish(context, mState.hasProtectedContent()));
     }
 
-    // TODO(syoussefi): Once EGL_SWAP_BEHAVIOR_PRESERVED_BIT is supported, the contents of the old
-    // swapchain need to carry over to the new one.  http://anglebug.com/2942
+    // TODO: Once EGL_SWAP_BEHAVIOR_PRESERVED_BIT is supported, the contents of the old swapchain
+    // need to carry over to the new one.  http://anglebug.com/2942
     VkSwapchainKHR newSwapChain = VK_NULL_HANDLE;
     ANGLE_VK_TRY(context, vkCreateSwapchainKHR(device, &swapchainInfo, nullptr, &newSwapChain));
     mSwapchain            = newSwapChain;
@@ -1466,9 +1525,9 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         ANGLE_TRY(mColorImageMS.initMSAASwapchain(
             context, gl::TextureType::_2D, vkExtents, Is90DegreeRotation(getPreTransform()), format,
             samples, usage, gl::LevelIndex(0), 1, 1, robustInit, mState.hasProtectedContent()));
-        ANGLE_TRY(mColorImageMS.initMemory(context, mState.hasProtectedContent(),
-                                           renderer->getMemoryProperties(),
-                                           VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+        ANGLE_TRY(mColorImageMS.initMemory(
+            context, mState.hasProtectedContent(), renderer->getMemoryProperties(),
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vk::MemoryAllocationType::SwapchainMSAAImage));
 
         // Initialize the color render target with the multisampled targets.  If not multisampled,
         // the render target will be updated to refer to a swapchain image on every acquire.
@@ -1499,9 +1558,10 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         ANGLE_TRY(mDepthStencilImage.init(context, gl::TextureType::_2D, vkExtents, dsFormat,
                                           samples, dsUsage, gl::LevelIndex(0), 1, 1, robustInit,
                                           mState.hasProtectedContent()));
-        ANGLE_TRY(mDepthStencilImage.initMemory(context, mState.hasProtectedContent(),
-                                                renderer->getMemoryProperties(),
-                                                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+        ANGLE_TRY(mDepthStencilImage.initMemory(
+            context, mState.hasProtectedContent(), renderer->getMemoryProperties(),
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            vk::MemoryAllocationType::SwapchainDepthStencilImage));
 
         mDepthStencilRenderTarget.init(&mDepthStencilImage, &mDepthStencilImageViews, nullptr,
                                        nullptr, gl::LevelIndex(0), 0, 1,
@@ -1544,8 +1604,10 @@ angle::Result WindowSurfaceVk::queryAndAdjustSurfaceCaps(ContextVk *contextVk,
 angle::Result WindowSurfaceVk::checkForOutOfDateSwapchain(ContextVk *contextVk,
                                                           bool presentOutOfDate)
 {
-    bool swapIntervalChanged = mSwapchainPresentMode != mDesiredSwapchainPresentMode;
-    presentOutOfDate         = presentOutOfDate || swapIntervalChanged;
+    bool swapIntervalChanged =
+        !IsCompatiblePresentMode(mDesiredSwapchainPresentMode, mCompatiblePresentModes.data(),
+                                 mCompatiblePresentModes.size());
+    presentOutOfDate = presentOutOfDate || swapIntervalChanged;
 
     // If there's no change, early out.
     if (!contextVk->getRenderer()->getFeatures().perFrameWindowSizeQuery.enabled &&
@@ -1873,7 +1935,6 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
         presentRegion.pRectangles = vkRects.data();
 
         presentRegions.sType          = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR;
-        presentRegions.pNext          = presentInfo.pNext;
         presentRegions.swapchainCount = 1;
         presentRegions.pRegions       = &presentRegion;
 
@@ -1881,7 +1942,9 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     }
 
     VkSwapchainPresentFenceInfoEXT presentFenceInfo = {};
+    VkSwapchainPresentModeInfoEXT presentModeInfo   = {};
     vk::Fence presentFence;
+    VkPresentModeKHR presentMode;
     if (contextVk->getFeatures().supportsSwapchainMaintenance1.enabled)
     {
         ANGLE_VK_TRY(contextVk, NewFence(contextVk, &mPresentFenceRecycler, &presentFence));
@@ -1891,6 +1954,22 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
         presentFenceInfo.pFences        = presentFence.ptr();
 
         vk::AddToPNextChain(&presentInfo, &presentFenceInfo);
+
+        // Update the present mode if necessary and possible
+        if (mSwapchainPresentMode != mDesiredSwapchainPresentMode &&
+            IsCompatiblePresentMode(mDesiredSwapchainPresentMode, mCompatiblePresentModes.data(),
+                                    mCompatiblePresentModes.size()))
+        {
+            presentMode = vk::ConvertPresentModeToVkPresentMode(mDesiredSwapchainPresentMode);
+
+            presentModeInfo.sType          = VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_MODE_INFO_EXT;
+            presentModeInfo.swapchainCount = 1;
+            presentModeInfo.pPresentModes  = &presentMode;
+
+            vk::AddToPNextChain(&presentInfo, &presentModeInfo);
+
+            mSwapchainPresentMode = mDesiredSwapchainPresentMode;
+        }
     }
 
     ASSERT(mAcquireImageSemaphore == nullptr);
@@ -1924,8 +2003,7 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     ANGLE_TRY(computePresentOutOfDate(contextVk, result, presentOutOfDate));
 
     // Now update swapSerial With last submitted queue serial and apply CPU throttle if needed
-    QueueSerial swapSerial =
-        QueueSerial(contextVk->getCurrentQueueSerialIndex(), contextVk->getLastSubmittedSerial());
+    QueueSerial swapSerial = contextVk->getLastSubmittedQueueSerial();
     ANGLE_TRY(throttleCPU(contextVk, swapSerial));
 
     contextVk->resetPerFramePerfCounters();
@@ -2648,10 +2726,12 @@ egl::Error WindowSurfaceVk::setAutoRefreshEnabled(bool enabled)
         // have not yet actually switched to single buffer mode.
         mDesiredSwapchainPresentMode = newDesiredSwapchainPresentMode;
 
-        // If auto refresh is updated and we are already in single buffer mode we need to recreate
-        // swapchain. We need the deferAcquireNextImage() call as unlike setRenderBuffer(), the user
-        // does not have to call eglSwapBuffers after setting the auto refresh attribute
-        if (isSharedPresentMode())
+        // If auto refresh is updated and we are already in single buffer mode we may need to
+        // recreate swapchain. We need the deferAcquireNextImage() call as unlike setRenderBuffer(),
+        // the user does not have to call eglSwapBuffers after setting the auto refresh attribute
+        if (isSharedPresentMode() &&
+            !IsCompatiblePresentMode(mDesiredSwapchainPresentMode, mCompatiblePresentModes.data(),
+                                     mCompatiblePresentModes.size()))
         {
             deferAcquireNextImage();
         }

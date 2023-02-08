@@ -320,6 +320,11 @@ struct FeaturesVk : FeatureSetBase
                                      "Use CommandQueue worker thread to dispatch work to GPU.",
                                      &members, "http://anglebug.com/4324"};
 
+    FeatureInfo slowAsyncCommandQueueForTesting = {
+        "slowAsyncCommandQueueForTesting", FeatureCategory::VulkanWorkarounds,
+        "Artificially slow down async command queue for threading testing", &members,
+        "https://anglebug.com/6574"};
+
     FeatureInfo supportsShaderFloat16 = {
         "supportsShaderFloat16", FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_KHR_shader_float16_int8 extension "

@@ -778,6 +778,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         return hasUnsubmittedUse(resource.getResourceUse());
     }
 
+    const QueueSerial &getLastSubmittedQueueSerial() const { return mLastSubmittedQueueSerial; }
+
   private:
     // Dirty bits.
     enum DirtyBitType : size_t
@@ -1453,6 +1455,13 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // We use a single pool for recording commands. We also keep a free list for pool recycling.
     vk::SecondaryCommandPools mCommandPools;
 
+    // Per context queue serial
+    SerialIndex mCurrentQueueSerialIndex;
+    QueueSerial mLastFlushedQueueSerial;
+    QueueSerial mLastSubmittedQueueSerial;
+    // All submitted queue serials over the life time of this context.
+    vk::ResourceUse mSubmittedResourceUse;
+
     // The garbage list for single context use objects. The list will be GPU tracked by next
     // submission queueSerial. Note: Resource based shared object should always be added to
     // renderer's mSharedGarbage.
@@ -1623,8 +1632,7 @@ ANGLE_INLINE angle::Result ContextVk::onVertexAttributeChange(size_t attribIndex
 
 ANGLE_INLINE bool ContextVk::hasUnsubmittedUse(const vk::ResourceUse &use) const
 {
-    return mCurrentQueueSerialIndex != kInvalidQueueSerialIndex &&
-           use > QueueSerial(mCurrentQueueSerialIndex, mLastSubmittedSerial);
+    return mCurrentQueueSerialIndex != kInvalidQueueSerialIndex && use > mLastSubmittedQueueSerial;
 }
 
 ANGLE_INLINE bool UseLineRaster(const ContextVk *contextVk, gl::PrimitiveMode mode)

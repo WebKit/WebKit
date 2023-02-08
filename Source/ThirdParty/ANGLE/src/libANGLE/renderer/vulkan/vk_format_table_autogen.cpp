@@ -893,6 +893,7 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
             mIntendedGLFormat = GL_DEPTH_COMPONENT32_OES;
             {
                 static constexpr ImageFormatInitInfo kInfo[] = {
+                    {angle::FormatID::D24_UNORM_X8_UINT, nullptr},
                     {angle::FormatID::D24_UNORM_S8_UINT, nullptr},
                     {angle::FormatID::D32_FLOAT, nullptr}};
                 initImageFallback(renderer, kInfo, ArraySize(kInfo));

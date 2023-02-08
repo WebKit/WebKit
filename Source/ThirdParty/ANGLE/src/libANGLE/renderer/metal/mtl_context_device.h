@@ -59,6 +59,7 @@ class ContextDevice final : public WrappedObject<id<MTLDevice>>, angle::NonCopya
     AutoObjCPtr<id<MTLSharedEvent>> newSharedEvent() const;
 
     void setOwnerWithIdentity(id<MTLResource> resource) const;
+    bool hasUnifiedMemory() const;
 
   private:
     using ParentClass = WrappedObject<id<MTLDevice>>;

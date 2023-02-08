@@ -3205,7 +3205,8 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
     }
 
     ANGLE_TRY(mImage->initMemory(contextVk, mState.hasProtectedContent(),
-                                 renderer->getMemoryProperties(), flags));
+                                 renderer->getMemoryProperties(), flags,
+                                 vk::MemoryAllocationType::TextureImage));
 
     const uint32_t viewLevelCount =
         mState.getImmutableFormat() ? getMipLevelCount(ImageMipLevels::EnabledLevels) : levelCount;

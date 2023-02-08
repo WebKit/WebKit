@@ -120,6 +120,12 @@ bool AndroidWindow::resize(int width, int height)
     }
     pthread_mutex_unlock(&sInitWindowMutex);
 
+    if (sApp->window == nullptr)
+    {
+        // Note: logging isn't initalized yet but this message shows up in logcat.
+        FATAL() << "Window is NULL (is screen locked? e.g. SplashScreen in logcat)";
+    }
+
     // TODO: figure out a way to set the format as well,
     // which is available only after EGLWindow initialization
     int32_t err = ANativeWindow_setBuffersGeometry(sApp->window, mWidth, mHeight, 0);

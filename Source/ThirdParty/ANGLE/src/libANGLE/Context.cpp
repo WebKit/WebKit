@@ -6909,6 +6909,12 @@ void Context::multiDrawArraysIndirect(PrimitiveMode mode,
                                       GLsizei drawcount,
                                       GLsizei stride)
 {
+    if (noopMultiDraw(drawcount))
+    {
+        ANGLE_CONTEXT_TRY(mImplementation->handleNoopDrawEvent());
+        return;
+    }
+
     ANGLE_CONTEXT_TRY(prepareForDraw(mode));
     ANGLE_CONTEXT_TRY(
         mImplementation->multiDrawArraysIndirect(this, mode, indirect, drawcount, stride));
@@ -6956,6 +6962,12 @@ void Context::multiDrawElementsIndirect(PrimitiveMode mode,
                                         GLsizei drawcount,
                                         GLsizei stride)
 {
+    if (noopMultiDraw(drawcount))
+    {
+        ANGLE_CONTEXT_TRY(mImplementation->handleNoopDrawEvent());
+        return;
+    }
+
     ANGLE_CONTEXT_TRY(prepareForDraw(mode));
     ANGLE_CONTEXT_TRY(
         mImplementation->multiDrawElementsIndirect(this, mode, type, indirect, drawcount, stride));

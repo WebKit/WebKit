@@ -133,7 +133,15 @@ class FramebufferAttachment final
     bool isAttached() const { return mType != GL_NONE; }
     bool isRenderable(const Context *context) const;
     bool isYUV() const;
-    bool isCreatedWithAHB() const;
+    // Checks whether the attachment is an external image such as AHB or dmabuf, where
+    // synchronization is done without individually naming the objects that are involved.  This
+    // excludes Vulkan images (EXT_external_objects) as they are individually listed during
+    // synchronization.
+    //
+    // This function is used to disable optimizations that involve deferring operations, as there is
+    // no efficient way to perform those deferred operations on sync if the specific objects are
+    // unknown.
+    bool isExternalImageWithoutIndividualSync() const;
     bool hasFrontBufferUsage() const;
 
     Renderbuffer *getRenderbuffer() const;
@@ -219,7 +227,7 @@ class FramebufferAttachmentObject : public angle::Subject, public angle::Observe
                               GLenum binding,
                               const ImageIndex &imageIndex) const                          = 0;
     virtual bool isYUV() const                                                             = 0;
-    virtual bool isCreatedWithAHB() const                                                  = 0;
+    virtual bool isExternalImageWithoutIndividualSync() const                              = 0;
     virtual bool hasFrontBufferUsage() const                                               = 0;
     virtual bool hasProtectedContent() const                                               = 0;
 
@@ -298,10 +306,10 @@ inline bool FramebufferAttachment::isYUV() const
     return mResource->isYUV();
 }
 
-inline bool FramebufferAttachment::isCreatedWithAHB() const
+inline bool FramebufferAttachment::isExternalImageWithoutIndividualSync() const
 {
     ASSERT(mResource);
-    return mResource->isCreatedWithAHB();
+    return mResource->isExternalImageWithoutIndividualSync();
 }
 
 inline bool FramebufferAttachment::hasFrontBufferUsage() const

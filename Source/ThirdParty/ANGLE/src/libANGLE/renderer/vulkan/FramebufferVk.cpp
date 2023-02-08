@@ -615,10 +615,10 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
             {
                 // Typically, clears are deferred such that it's impossible to have a render pass
                 // opened without any additional commands recorded on it.  This is not true for some
-                // corner cases, such as with 3D or AHB attachments.  In those cases, a clear can
-                // open a render pass that's otherwise empty, and additional clears can continue to
-                // be accumulated in the render pass loadOps.
-                ASSERT(isAnyAttachment3DWithoutAllLayers || attachmentHasAHB());
+                // corner cases, such as with 3D or external attachments.  In those cases, a clear
+                // can open a render pass that's otherwise empty, and additional clears can continue
+                // to be accumulated in the render pass loadOps.
+                ASSERT(isAnyAttachment3DWithoutAllLayers || hasAnyExternalAttachments());
                 clearWithLoadOp(contextVk);
             }
 
@@ -632,9 +632,10 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
             // clear may later need to be flushed with vkCmdClearColorImage, which cannot partially
             // clear the 3D texture.  In that case, the clears are flushed immediately too.
             //
-            // For imported images such as from AHBs, the clears are not deferred so that they are
+            // For external images such as from AHBs, the clears are not deferred so that they are
             // definitely applied before the application uses them outside of the control of ANGLE.
-            if (clearAnyWithDraw || isAnyAttachment3DWithoutAllLayers || attachmentHasAHB())
+            if (clearAnyWithDraw || isAnyAttachment3DWithoutAllLayers ||
+                hasAnyExternalAttachments())
             {
                 ANGLE_TRY(flushDeferredClears(contextVk));
             }
@@ -1841,8 +1842,9 @@ angle::Result FramebufferVk::updateColorAttachment(const gl::Context *context,
     if (enabledColor)
     {
         mCurrentFramebufferDesc.updateColor(colorIndexGL, renderTarget->getDrawSubresourceSerial());
-        const bool isCreatedWithAHB = mState.getColorAttachments()[colorIndexGL].isCreatedWithAHB();
-        mIsAHBColorAttachments.set(colorIndexGL, isCreatedWithAHB);
+        const bool isExternalImage =
+            mState.getColorAttachments()[colorIndexGL].isExternalImageWithoutIndividualSync();
+        mIsExternalColorAttachments.set(colorIndexGL, isExternalImage);
         mAttachmentHasFrontBufferUsage.set(
             colorIndexGL, mState.getColorAttachments()[colorIndexGL].hasFrontBufferUsage());
     }
