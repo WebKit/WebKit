@@ -549,6 +549,9 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useArrayFromAsync, true, Normal, "Expose the Array.fromAsync.") \
     v(Bool, useArrayGroupMethod, true, Normal, "Expose the group() and groupToMap() methods on Array.") \
     v(Bool, useAtomicsWaitAsync, true, Normal, "Expose the waitAsync() methods on Atomics.") \
+    /* FIXME: Set.prototype.intersection's iterate the other object path needs to have the iteration order of the receiver but we don't have a good way to compare in constant time the relative ordering of two keys. */ \
+    /* https://bugs.webkit.org/show_bug.cgi?id=251869 */ \
+    v(Bool, useSetMethods, false, Normal, "Expose the various Set.prototype methods for handling combinations of sets") \
     v(Bool, useImportAssertion, false, Normal, "Enable import assertion.") \
     v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat.") \
     v(Bool, useResizableArrayBuffer, true, Normal, "Expose ResizableArrayBuffer feature.") \

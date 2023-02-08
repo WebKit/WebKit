@@ -136,4 +136,14 @@ JSC_DEFINE_HOST_FUNCTION(setPrivateFuncSetBucketKey, (JSGlobalObject*, CallFrame
     return JSValue::encode(bucket->key());
 }
 
+JSC_DEFINE_HOST_FUNCTION(setPrivateFuncClone, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ASSERT(jsDynamicCast<JSSet*>(callFrame->argument(0)));
+    JSSet* set = jsCast<JSSet*>(callFrame->uncheckedArgument(0));
+    RELEASE_AND_RETURN(scope, JSValue::encode(set->clone(globalObject, vm, globalObject->setStructure())));
+}
+
 }

@@ -43,6 +43,7 @@ class JSGlobalObject;
     v(setBucketHead, nullptr) \
     v(setBucketNext, nullptr) \
     v(setBucketKey, nullptr) \
+    v(setClone, nullptr) \
     v(setPrototypeDirect, nullptr) \
     v(setPrototypeDirectOrThrow, nullptr) \
     v(copyDataProperties, nullptr) \

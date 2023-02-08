@@ -1500,6 +1500,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setBucketKey)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setBucketKey"_s, setPrivateFuncSetBucketKey, ImplementationVisibility::Private, JSSetBucketKeyIntrinsic));
         });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setClone)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "setClone"_s, setPrivateFuncClone, ImplementationVisibility::Private));
+        });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::importModule)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 0, "importModule"_s, globalFuncImportModule, ImplementationVisibility::Private));
