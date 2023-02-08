@@ -3751,8 +3751,11 @@ void RenderBlockFlow::invalidateLineLayoutPath()
         return;
     case ModernPath: {
         // FIXME: Implement partial invalidation.
-        if (modernLineLayout())
+        if (modernLineLayout()) {
             m_previousModernLineLayoutContentBoxLogicalHeight = modernLineLayout()->contentBoxLogicalHeight();
+            // Since we eagerly remove the display content here, repaints issued between this invalidation (triggered by style change/content mutation) and the subsequent layout would produce empty rects.
+            repaint();
+        }
         auto path = UndeterminedPath;
         if (modernLineLayout() && modernLineLayout()->shouldSwitchToLegacyOnInvalidation())
             path = ForcedLegacyPath;
