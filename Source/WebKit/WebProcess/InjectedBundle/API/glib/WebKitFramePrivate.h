@@ -25,5 +25,6 @@
 
 WebKitFrame* webkitFrameCreate(WebKit::WebFrame*);
 WebKit::WebFrame* webkitFrameGetWebFrame(WebKitFrame*);
+void webkitFrameSetURI(WebKitFrame*, const CString&);
 
 #endif // WebKitFramePrivate_h

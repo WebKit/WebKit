@@ -189,6 +189,11 @@ static void emitURIChanged(GDBusConnection* connection, const char* uri)
 
 static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, WebKitWebExtension* extension)
 {
+    WebKitFrame* frame = webkit_web_page_get_main_frame(webPage);
+    g_assert_true(WEBKIT_IS_FRAME(frame));
+    g_assert_true(webkit_frame_is_main_frame(frame));
+    g_assert_cmpstr(webkit_web_page_get_uri(webPage), ==, webkit_frame_get_uri(frame));
+
     gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
     if (data)
         emitURIChanged(G_DBUS_CONNECTION(data), webkit_web_page_get_uri(webPage));

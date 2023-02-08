@@ -134,15 +134,24 @@ static WebFrameMap& webFrameMap()
     return map;
 }
 
-static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
+static WebKitFrame* webkitFrameGet(WebFrame* webFrame)
 {
     auto wrapperPtr = webFrameMap().get(webFrame);
     if (wrapperPtr)
         return wrapperPtr->webkitFrame();
 
+    return nullptr;
+}
+
+static WebKitFrame* webkitFrameGetOrCreate(WebFrame* webFrame)
+{
+    if (auto* webKitFrame = webkitFrameGet(webFrame))
+        return webKitFrame;
+
     std::unique_ptr<WebKitFrameWrapper> wrapper = makeUnique<WebKitFrameWrapper>(*webFrame);
-    wrapperPtr = wrapper.get();
+    auto wrapperPtr = wrapper.get();
     webFrameMap().set(webFrame, WTFMove(wrapper));
+
     return wrapperPtr->webkitFrame();
 }
 
@@ -185,30 +194,62 @@ private:
 
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader()));
+
+        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader());
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader()));
+
+        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().provisionalDocumentLoader());
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didSameDocumentNavigationForFrame(WebPage&, WebFrame& frame, SameDocumentNavigationType, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, frame.coreFrame()->document()->url().string().utf8());
+
+        const auto uri = frame.coreFrame()->document()->url().string().utf8();
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didCommitLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
     {
-        if (!frame.isMainFrame())
+        auto* webKitFrame = webkitFrameGet(&frame);
+        if (!webKitFrame && !frame.isMainFrame())
             return;
-        webkitWebPageSetURI(m_webPage, getDocumentLoaderURL(frame.coreFrame()->loader().documentLoader()));
+
+        const auto uri = getDocumentLoaderURL(frame.coreFrame()->loader().documentLoader());
+
+        if (webKitFrame)
+            webkitFrameSetURI(webKitFrame, uri);
+
+        if (frame.isMainFrame())
+            webkitWebPageSetURI(m_webPage, uri);
     }
 
     void didFinishDocumentLoadForFrame(WebPage&, WebFrame& frame, RefPtr<API::Object>&) override
