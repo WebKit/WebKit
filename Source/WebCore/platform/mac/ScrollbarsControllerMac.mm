@@ -410,20 +410,15 @@ using WebCore::LogOverlayScrollbars;
 {
     UNUSED_PARAM(scrollerImp);
 
-    if (!_scrollbar) {
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        return [NSAppearance currentAppearance];
-        ALLOW_DEPRECATED_DECLARATIONS_END
-    }
+    if (!_scrollbar)
+        return [NSAppearance currentDrawingAppearance];
 
     // Keep this in sync with FrameView::paintScrollCorner.
     // The base system does not support dark Aqua, so we might get a null result.
     bool useDarkAppearance = _scrollbar->scrollableArea().useDarkAppearanceForScrollbars();
     if (auto *appearance = [NSAppearance appearanceNamed:useDarkAppearance ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua])
         return appearance;
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return [NSAppearance currentAppearance];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    return [NSAppearance currentDrawingAppearance];
 }
 #endif
 

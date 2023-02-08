@@ -91,9 +91,7 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& 
     }
 
     LocalCurrentGraphicsContext localContext(context);
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSAppearance currentAppearance] _drawInRect:logicalRect context:localContext.cgContext() options:@{
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    [[NSAppearance currentDrawingAppearance] _drawInRect:logicalRect context:localContext.cgContext() options:@{
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetButtonLittleArrows,
         (__bridge NSString *)kCUISizeKey: coreUISize,
         (__bridge NSString *)kCUIStateKey: coreUIState,
