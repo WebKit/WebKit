@@ -133,7 +133,7 @@ protected:
 
     void resetGraphicsContextState() const;
 
-    void createImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
+    RefPtr<ImageBuffer> allocateImageBuffer(bool usesDisplayListDrawing, bool avoidBackendSizeCheckForTesting) const;
 
 private:
     virtual void createImageBuffer() const { }
