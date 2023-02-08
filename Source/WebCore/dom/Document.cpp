@@ -1541,9 +1541,6 @@ void Document::setDocumentElementLanguage(const AtomString& language)
         return;
     m_documentElementLanguage = language;
 
-    for (auto& element : std::exchange(m_elementsWithLangAttrMatchingDocumentElement, { }))
-        element.updateEffectiveLangStateAndPropagateToDescendants();
-
     if (m_contentLanguage == language)
         return;
 
@@ -9449,16 +9446,6 @@ void Document::sendReportToEndpoints(const URL& baseURL, const Vector<String>& e
 bool Document::lazyImageLoadingEnabled() const
 {
     return m_settings->lazyImageLoadingEnabled() && !m_quirks->shouldDisableLazyImageLoadingQuirk();
-}
-
-void Document::addElementWithLangAttrMatchingDocumentElement(Element& element)
-{
-    m_elementsWithLangAttrMatchingDocumentElement.add(element);
-}
-
-void Document::removeElementWithLangAttrMatchingDocumentElement(Element& element)
-{
-    m_elementsWithLangAttrMatchingDocumentElement.remove(element);
 }
 
 } // namespace WebCore

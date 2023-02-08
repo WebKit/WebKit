@@ -190,4 +190,24 @@ Attribute* UniqueElementData::findAttributeByName(const QualifiedName& name)
     return nullptr;
 }
 
+const Attribute* ElementData::findLanguageAttribute() const
+{
+    ASSERT(XMLNames::langAttr->localName() == HTMLNames::langAttr->localName());
+
+    const Attribute* attributes = attributeBase();
+    // Spec: xml:lang takes precedence over html:lang -- http://www.w3.org/TR/xhtml1/#C_7
+    const Attribute* languageAttribute = nullptr;
+    for (unsigned i = 0, count = length(); i < count; ++i) {
+        const QualifiedName& name = attributes[i].name();
+        if (name.localName() != HTMLNames::langAttr->localName())
+            continue;
+        if (name.namespaceURI() == XMLNames::langAttr->namespaceURI())
+            return &attributes[i];
+        if (name.namespaceURI() == HTMLNames::langAttr->namespaceURI())
+            languageAttribute = &attributes[i];
+    }
+    return languageAttribute;
 }
+
+}
+
