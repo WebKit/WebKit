@@ -85,6 +85,11 @@ WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::We
     return static_cast<const RemoteCommandEncoderProxy&>(commandEncoder).backing();
 }
 
+const RemoteCompositorIntegrationProxy& DowncastConvertToBackingContext::convertToRawBacking(const PAL::WebGPU::CompositorIntegration& compositorIntegration)
+{
+    return static_cast<const RemoteCompositorIntegrationProxy&>(compositorIntegration);
+}
+
 WebGPUIdentifier DowncastConvertToBackingContext::convertToBacking(const PAL::WebGPU::CompositorIntegration& compositorIntegration)
 {
     return static_cast<const RemoteCompositorIntegrationProxy&>(compositorIntegration).backing();

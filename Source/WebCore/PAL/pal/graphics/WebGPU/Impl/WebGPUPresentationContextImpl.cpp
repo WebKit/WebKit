@@ -53,11 +53,6 @@ PresentationContextImpl::~PresentationContextImpl()
     wgpuSurfaceRelease(m_backing);
 }
 
-IOSurfaceRef PresentationContextImpl::drawingBuffer() const
-{
-    return wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(m_backing);
-}
-
 void PresentationContextImpl::configure(const CanvasConfiguration& canvasConfiguration)
 {
     if (m_swapChain)
@@ -111,18 +106,6 @@ void PresentationContextImpl::present()
     wgpuSwapChainPresent(m_swapChain);
     m_currentTexture = nullptr;
 }
-
-#if PLATFORM(COCOA)
-void PresentationContextImpl::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
-{
-    if (!m_swapChain)
-        return;
-
-    wgpuSwapChainPresent(m_swapChain);
-    auto ioSurface = wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(m_backing);
-    completionHandler(MachSendRight::adopt(IOSurfaceCreateMachPort(ioSurface)));
-}
-#endif
 
 } // namespace PAL::WebGPU
 

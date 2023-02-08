@@ -99,7 +99,6 @@ public:
 
     virtual Ref<Buffer> createBuffer(const BufferDescriptor&) = 0;
     virtual Ref<Texture> createTexture(const TextureDescriptor&) = 0;
-    virtual Ref<Texture> createSurfaceTexture(const TextureDescriptor&, const PresentationContext&) = 0;
     virtual Ref<Sampler> createSampler(const SamplerDescriptor&) = 0;
     virtual Ref<ExternalTexture> importExternalTexture(const ExternalTextureDescriptor&) = 0;
 

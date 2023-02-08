@@ -77,30 +77,8 @@ RefPtr<PAL::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture()
 
 void RemotePresentationContextProxy::present()
 {
-    auto sendResult = send(Messages::RemotePresentationContext::Present());
-    UNUSED_VARIABLE(sendResult);
     m_currentTexture = nullptr;
 }
-
-#if PLATFORM(COCOA)
-void RemotePresentationContextProxy::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
-{
-    MachSendRight emptyResult;
-    auto sendResult = sendSync(Messages::RemotePresentationContext::PrepareForDisplay());
-    if (!sendResult) {
-        completionHandler(WTFMove(emptyResult));
-        return;
-    }
-
-    auto [sendRight] = sendResult.takeReply();
-    if (!sendRight) {
-        completionHandler(WTFMove(emptyResult));
-        return;
-    }
-
-    completionHandler(WTFMove(sendRight));
-}
-#endif
 
 } // namespace WebKit::WebGPU
 

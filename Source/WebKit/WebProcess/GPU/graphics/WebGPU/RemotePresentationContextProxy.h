@@ -50,6 +50,8 @@ public:
     RemoteGPUProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
 
+    void present();
+
 private:
     friend class DowncastConvertToBackingContext;
 
@@ -78,12 +80,6 @@ private:
     void unconfigure() final;
 
     RefPtr<PAL::WebGPU::Texture> getCurrentTexture() final;
-
-    void present() final;
-
-#if PLATFORM(COCOA)
-    void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
-#endif
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

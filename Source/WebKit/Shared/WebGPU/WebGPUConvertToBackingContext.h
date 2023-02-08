@@ -172,6 +172,7 @@ struct CanvasConfiguration;
 struct PrimitiveState;
 struct ProgrammableStage;
 struct QuerySetDescriptor;
+class RemoteCompositorIntegrationProxy;
 struct RenderBundleDescriptor;
 struct RenderBundleEncoderDescriptor;
 struct RenderPassColorAttachment;
@@ -279,6 +280,7 @@ public:
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Buffer&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandBuffer&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandEncoder&) = 0;
+    virtual const RemoteCompositorIntegrationProxy& convertToRawBacking(const PAL::WebGPU::CompositorIntegration&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::CompositorIntegration&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePassEncoder&) = 0;
     virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePipeline&) = 0;

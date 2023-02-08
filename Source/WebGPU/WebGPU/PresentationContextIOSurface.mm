@@ -56,19 +56,6 @@ PresentationContextIOSurface::PresentationContextIOSurface(const WGPUSurfaceDesc
 
 PresentationContextIOSurface::~PresentationContextIOSurface() = default;
 
-IOSurface *PresentationContextIOSurface::displayBuffer() const
-{
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
-    size_t index = (m_currentIndex + 1) % m_renderBuffers.size();
-    return m_ioSurfaces[index];
-}
-
-IOSurface *PresentationContextIOSurface::drawingBuffer() const
-{
-    ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
-    return m_ioSurfaces[m_currentIndex];
-}
-
 void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface *> *ioSurfaces)
 {
     m_ioSurfaces = ioSurfaces;
@@ -162,17 +149,3 @@ TextureView* PresentationContextIOSurface::getCurrentTextureView()
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
-
-IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDisplayBuffer(WGPUSurface surface)
-{
-    if (auto* presentationContextIOSurface = downcast<WebGPU::PresentationContextIOSurface>(&WebGPU::fromAPI(surface)))
-        return bridge_cast(presentationContextIOSurface->displayBuffer());
-    return nullptr;
-}
-
-IOSurfaceRef wgpuSurfaceCocoaCustomSurfaceGetDrawingBuffer(WGPUSurface surface)
-{
-    if (auto* presentationContextIOSurface = downcast<WebGPU::PresentationContextIOSurface>(&WebGPU::fromAPI(surface)))
-        return bridge_cast(presentationContextIOSurface->drawingBuffer());
-    return nullptr;
-}

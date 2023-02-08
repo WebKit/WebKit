@@ -81,7 +81,6 @@ private:
 
     Ref<PAL::WebGPU::Buffer> createBuffer(const PAL::WebGPU::BufferDescriptor&) final;
     Ref<PAL::WebGPU::Texture> createTexture(const PAL::WebGPU::TextureDescriptor&) final;
-    Ref<PAL::WebGPU::Texture> createSurfaceTexture(const PAL::WebGPU::TextureDescriptor&, const PAL::WebGPU::PresentationContext&) final;
     Ref<PAL::WebGPU::Sampler> createSampler(const PAL::WebGPU::SamplerDescriptor&) final;
     Ref<PAL::WebGPU::ExternalTexture> importExternalTexture(const PAL::WebGPU::ExternalTextureDescriptor&) final;
 
