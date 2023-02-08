@@ -22,6 +22,11 @@ PASS lighting-color supports animating as color of hsl()
 PASS lighting-color supports animating as color of #RGBa
 PASS lighting-color supports animating as color of rgba()
 PASS lighting-color supports animating as color of hsla()
+PASS line-height (type: discrete) has testAccumulation function
+PASS line-height: "10px" onto "normal"
+PASS line-height: "normal" onto "10px"
+PASS line-height: "10" onto "normal"
+PASS line-height: "normal" onto "10"
 PASS list-style-image (type: discrete) has testAccumulation function
 PASS list-style-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS list-style-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"

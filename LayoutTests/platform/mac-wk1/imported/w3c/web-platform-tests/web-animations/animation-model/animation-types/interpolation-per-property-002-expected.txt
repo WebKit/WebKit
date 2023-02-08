@@ -26,6 +26,13 @@ PASS lighting-color supports animating as color of hsl()
 PASS lighting-color supports animating as color of #RGBa
 PASS lighting-color supports animating as color of rgba()
 PASS lighting-color supports animating as color of hsla()
+PASS line-height (type: discrete) has testInterpolation function
+PASS line-height uses discrete animation when animating between "normal" and "10px" with linear easing
+PASS line-height uses discrete animation when animating between "normal" and "10px" with effect easing
+PASS line-height uses discrete animation when animating between "normal" and "10px" with keyframe easing
+PASS line-height uses discrete animation when animating between "normal" and "10" with linear easing
+PASS line-height uses discrete animation when animating between "normal" and "10" with effect easing
+PASS line-height uses discrete animation when animating between "normal" and "10" with keyframe easing
 PASS list-style-image (type: discrete) has testInterpolation function
 FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 FAIL list-style-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
