@@ -1,3 +1,4 @@
+//@ skip if $architecture != "arm64" && $architecture != "x86_64" && $architecture != "arm"
 //@ runNoisyTestDefault("--traceBaselineJITExecution=1", "--jitPolicyScale=0")
 
 let x = readFile('throw-from-wasm-catch-in-baseline-JIT-payload.bin', 'binary');

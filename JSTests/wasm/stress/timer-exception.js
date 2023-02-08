@@ -1,3 +1,4 @@
+//@ skip if $architecture != "arm64" && $architecture != "x86_64" && $architecture != "arm"
 //@ runDefault("--watchdog=100", "--watchdog-exception-ok")
 (async function () {
   let bytes = readFile('./resources/large.wasm', 'binary');
