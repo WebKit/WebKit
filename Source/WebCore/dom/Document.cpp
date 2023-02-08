@@ -590,7 +590,6 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_undoManager(UndoManager::create(*this))
     , m_editor(makeUniqueRef<Editor>(*this))
     , m_selection(makeUniqueRef<FrameSelection>(this))
-    , m_whitespaceCache(makeUniqueRef<WhitespaceCache>())
     , m_reportingScope(ReportingScope::create(*this))
     , m_documentClasses(documentClasses)
     , m_latestFocusTrigger { FocusTrigger::Other }

@@ -101,7 +101,6 @@ class Element;
 class HTMLFormElement;
 class HTMLTemplateElement;
 class JSCustomElementInterface;
-class WhitespaceCache;
 
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
@@ -129,7 +128,7 @@ public:
     void insertHTMLBodyElement(AtomHTMLToken&&);
     void insertHTMLFormElement(AtomHTMLToken&&, bool isDemoted = false);
     void insertScriptElement(AtomHTMLToken&&);
-    void insertTextNode(const String&, WhitespaceMode = WhitespaceUnknown);
+    void insertTextNode(const String&);
     void insertForeignElement(AtomHTMLToken&&, const AtomString& namespaceURI);
 
     void insertHTMLHtmlStartTagBeforeHTML(AtomHTMLToken&&);
@@ -239,27 +238,6 @@ private:
     unsigned m_maximumDOMTreeDepth;
 
     bool m_inQuirksMode;
-
-    WhitespaceCache& m_whitespaceCache;
-};
-
-class WhitespaceCache {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WhitespaceCache()
-        : m_atoms(maximumCachedStringLength)
-    {
-    }
-
-    AtomString lookup(const String&, WhitespaceMode);
-
-private:
-    template<WhitespaceMode> uint64_t codeForString(const String&);
-
-    constexpr static uint64_t overflowWhitespaceCode = static_cast<uint64_t>(-1);
-    constexpr static size_t maximumCachedStringLength = 128;
-
-    FixedVector<AtomStringWithCode> m_atoms;
 };
 
 } // namespace WebCore

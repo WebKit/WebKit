@@ -2365,7 +2365,7 @@ void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
 
     processStartTag(WTFMove(aStartToken));
     m_tree.executeQueuedTasks();
-    m_tree.insertTextNode(string, NotAllWhitespace);
+    m_tree.insertTextNode(string);
     processEndTag(WTFMove(aEndToken));
 }
 
@@ -2374,7 +2374,7 @@ void HTMLTreeBuilder::insertPhoneNumberLink(const String& string)
 // 2. Wraps the phone number in a tel: link.
 // 3. Goes back to step 1 if a phone number is found in the rest of the string.
 // 4. Appends the rest of the string as a text node.
-void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string, WhitespaceMode whitespaceMode)
+void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
 {
     ASSERT(TelephoneNumberDetector::isSupported());
 
@@ -2397,7 +2397,7 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string, WhitespaceMode w
 
         ASSERT(scannerPosition + relativeEndPosition < length);
 
-        m_tree.insertTextNode(string.substring(scannerPosition, relativeStartPosition), whitespaceMode);
+        m_tree.insertTextNode(string.substring(scannerPosition, relativeStartPosition));
         insertPhoneNumberLink(string.substring(scannerPosition + relativeStartPosition, relativeEndPosition - relativeStartPosition + 1));
 
         scannerPosition += relativeEndPosition + 1;
@@ -2407,10 +2407,10 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string, WhitespaceMode w
     if (scannerPosition > 0) {
         if (scannerPosition < length) {
             String after = string.substring(scannerPosition, length - scannerPosition);
-            m_tree.insertTextNode(after, whitespaceMode);
+            m_tree.insertTextNode(after);
         }
     } else
-        m_tree.insertTextNode(string, whitespaceMode);
+        m_tree.insertTextNode(string);
 }
 
 // Looks at the ancestors of the element to determine whether we're inside an element which disallows parsing phone numbers.
@@ -2492,7 +2492,7 @@ ReprocessBuffer:
     case InsertionMode::InHead: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(leadingWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForInHead();
@@ -2502,7 +2502,7 @@ ReprocessBuffer:
     case InsertionMode::AfterHead: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(leadingWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForAfterHead();
@@ -2540,7 +2540,7 @@ ReprocessBuffer:
     case InsertionMode::InColumnGroup: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(leadingWhitespace);
         if (buffer.isEmpty())
             return;
         if (!processColgroupEndTagForInColumnGroup()) {
@@ -2563,7 +2563,7 @@ ReprocessBuffer:
     case InsertionMode::InHeadNoscript: {
         String leadingWhitespace = buffer.takeLeadingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(leadingWhitespace);
         if (buffer.isEmpty())
             return;
         defaultForInHeadNoscript();
@@ -2573,7 +2573,7 @@ ReprocessBuffer:
     case InsertionMode::AfterFrameset: {
         String leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty())
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(leadingWhitespace);
         // FIXME: We should generate a parse error if we skipped over any
         // non-whitespace characters.
         break;
@@ -2586,7 +2586,7 @@ ReprocessBuffer:
         String leadingWhitespace = buffer.takeRemainingWhitespace();
         if (!leadingWhitespace.isEmpty()) {
             m_tree.reconstructTheActiveFormattingElements();
-            m_tree.insertTextNode(leadingWhitespace, AllWhitespace);
+            m_tree.insertTextNode(leadingWhitespace);
         }
         // FIXME: We should generate a parse error if we skipped over any
         // non-whitespace characters.
@@ -2598,15 +2598,14 @@ ReprocessBuffer:
 void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuffer& buffer)
 {
     m_tree.reconstructTheActiveFormattingElements();
-    auto whitespaceMode = buffer.isAll8BitData() ? WhitespaceUnknown : NotAllWhitespace;
     String characters = buffer.takeRemaining();
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
     if (!isParsingFragment() && m_tree.isTelephoneNumberParsingEnabled() && shouldParseTelephoneNumbersInNode(m_tree.currentNode()) && TelephoneNumberDetector::isSupported())
-        linkifyPhoneNumbers(characters, whitespaceMode);
+        linkifyPhoneNumbers(characters);
     else
-        m_tree.insertTextNode(characters, whitespaceMode);
+        m_tree.insertTextNode(characters);
 #else
-    m_tree.insertTextNode(characters, whitespaceMode);
+    m_tree.insertTextNode(characters);
 #endif
     if (m_framesetOk && !isAllWhitespaceOrReplacementCharacters(characters))
         m_framesetOk = false;
@@ -2746,7 +2745,7 @@ void HTMLTreeBuilder::defaultForInTableText()
         // FIXME: parse error
         HTMLConstructionSite::RedirectToFosterParentGuard redirecter(m_tree);
         m_tree.reconstructTheActiveFormattingElements();
-        m_tree.insertTextNode(characters, NotAllWhitespace);
+        m_tree.insertTextNode(characters);
         m_framesetOk = false;
         m_insertionMode = m_originalInsertionMode;
         return;

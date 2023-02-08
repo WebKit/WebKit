@@ -228,7 +228,6 @@ class WakeLockManager;
 class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
-class WhitespaceCache;
 class WindowEventLoop;
 class WindowProxy;
 class XPathEvaluator;
@@ -1600,8 +1599,6 @@ public:
 
     HTMLDialogElement* activeModalDialog() const;
 
-    WhitespaceCache& whitespaceCache() { return m_whitespaceCache; }
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
@@ -2173,7 +2170,6 @@ private:
     Ref<UndoManager> m_undoManager;
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
-    UniqueRef<WhitespaceCache> m_whitespaceCache;
         
     String m_fragmentDirective;
 
