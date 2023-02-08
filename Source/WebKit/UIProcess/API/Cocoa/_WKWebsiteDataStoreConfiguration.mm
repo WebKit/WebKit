@@ -716,6 +716,15 @@ static WebKit::UnifiedOriginStorageLevel toUnifiedOriginStorageLevel(_WKUnifiedO
     _configuration->setResourceLoadStatisticsDebugModeEnabled(enabled);
 }
 
+- (NSUUID *)identifier
+{
+    auto currentIdentifier = _configuration->identifier();
+    if (!currentIdentifier)
+        return nullptr;
+
+    return *currentIdentifier;
+}
+
 - (API::Object&)_apiObject
 {
     return *_configuration;

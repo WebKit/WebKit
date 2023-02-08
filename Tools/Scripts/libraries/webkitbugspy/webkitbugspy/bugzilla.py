@@ -165,6 +165,7 @@ class Tracker(GenericTracker):
     def populate(self, issue, member=None):
         issue._link = '{}/show_bug.cgi?id={}'.format(self.url, issue.id)
         issue._labels = []
+        issue._classification = ''  # Bugzilla doesn't have a concept of "classification"
 
         if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'watchers', 'project', 'component', 'version', 'keywords'):
             response = requests.get('{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=False)))

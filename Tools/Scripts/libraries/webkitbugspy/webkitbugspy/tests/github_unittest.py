@@ -415,3 +415,8 @@ Documentation URL: https://docs.github.com/rest/reference/pulls#create-a-pull-re
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
             tracker = github.Tracker(self.URL)
             self.assertEqual(tracker.issue(1).milestone, 'October')
+
+    def test_classification(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES):
+            tracker = github.Tracker(self.URL)
+            self.assertEqual(tracker.issue(1).classification, '')

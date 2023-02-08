@@ -274,10 +274,7 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
         coreUIState = (__bridge NSString *)kCUIStatePressed;
     else
         coreUIState = (__bridge NSString *)kCUIStateActive;
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [[NSAppearance currentAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext options:@{
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    [[NSAppearance currentDrawingAppearance] _drawInRect:NSMakeRect(0, 0, comboBoxSize.width(), comboBoxSize.height()) context:cgContext options:@{
         (__bridge NSString *)kCUIWidgetKey : (__bridge NSString *)kCUIWidgetButtonComboBox,
         (__bridge NSString *)kCUISizeKey : (__bridge NSString *)kCUISizeRegular,
         (__bridge NSString *)kCUIStateKey : coreUIState,

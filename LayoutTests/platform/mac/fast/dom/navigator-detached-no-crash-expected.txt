@@ -8,7 +8,6 @@ navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
-navigator.getStorageUpdates() is OK
 navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
@@ -36,7 +35,6 @@ navigator.clipboard is OK
 navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
-navigator.getStorageUpdates() is OK
 navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK

@@ -265,9 +265,6 @@ Element::~Element()
         if (auto* map = elementRareData()->attributeStyleMap())
             map->clearElement();
     }
-
-    if (hasLangAttrKnownToMatchDocumentElement())
-        document().removeElementWithLangAttrMatchingDocumentElement(*this);
 }
 
 inline ElementRareData& Element::ensureElementRareData()
@@ -2100,14 +2097,31 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
                 Style::Invalidator::invalidateShadowParts(*shadowRoot);
             }
         } else if (name == HTMLNames::langAttr || name.matches(XMLNames::langAttr)) {
-            if (name == HTMLNames::langAttr)
-                setHasLangAttr(!newValue.isNull());
-            else
-                setHasXMLLangAttr(!newValue.isNull());
             if (document().documentElement() == this)
                 document().setDocumentElementLanguage(newValue);
-            else
-                updateEffectiveLangStateAndPropagateToDescendants();
+            else {
+                Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+                AtomString newValue = langFromAttribute();
+                auto setEffectiveLang = [&](Element& element) {
+                    if (!newValue.isNull())
+                        element.ensureElementRareData().setEffectiveLang(newValue);
+                    else if (element.hasRareData())
+                        element.elementRareData()->setEffectiveLang(nullAtom());
+                };
+                setEffectiveLang(*this);
+                for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
+                    auto& element = *it;
+                    if (auto* elementData = element.elementData()) {
+                        if (elementData->findLanguageAttribute()) {
+                            it.traverseNextSkippingChildren();
+                            continue;
+                        }
+                    }
+                    Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
+                    setEffectiveLang(element);
+                    it.traverseNext();
+                }
+            }
         }
     }
 
@@ -2125,23 +2139,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
-}
-
-void Element::updateEffectiveLangStateAndPropagateToDescendants()
-{
-    Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
-    updateEffectiveLangState();
-
-    for (auto it = descendantsOfType<Element>(*this).begin(); it;) {
-        auto& element = *it;
-        if (element.hasLanguageAttribute()) {
-            it.traverseNextSkippingChildren();
-            continue;
-        }
-        Style::PseudoClassChangeInvalidation styleInvalidation(element, CSSSelector::PseudoClassLang, Style::PseudoClassChangeInvalidation::AnyValue);
-        element.updateEffectiveLangStateFromParent();
-        it.traverseNext();
-    }
 }
 
 ExplicitlySetAttrElementsMap& Element::explicitlySetAttrElementsMap()
@@ -2516,56 +2513,6 @@ void Element::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
             }
         }
     }
-
-    if (hasLangAttrKnownToMatchDocumentElement()) {
-        oldDocument.removeElementWithLangAttrMatchingDocumentElement(*this);
-        setEffectiveLangKnownToMatchDocumentElement(false);
-    }
-
-    updateEffectiveLangState();
-}
-
-void Element::updateEffectiveLangStateFromParent()
-{
-    ASSERT(!hasLanguageAttribute());
-
-    auto* parent = parentOrShadowHostElement();
-
-    if (!parent || parent == document().documentElement()) {
-        setEffectiveLangKnownToMatchDocumentElement(parent);
-        if (hasRareData())
-            elementRareData()->setEffectiveLang(nullAtom());
-        return;
-    }
-
-    setEffectiveLangKnownToMatchDocumentElement(parent->effectiveLangKnownToMatchDocumentElement());
-    if (UNLIKELY(parent->hasRareData()) && !parent->elementRareData()->effectiveLang().isNull())
-        ensureElementRareData().setEffectiveLang(parent->elementRareData()->effectiveLang());
-    else if (hasRareData())
-        elementRareData()->setEffectiveLang(nullAtom());
-}
-
-void Element::updateEffectiveLangState()
-{
-    auto& lang = langFromAttribute();
-    if (!lang) {
-        updateEffectiveLangStateFromParent();
-        return;
-    }
-
-    if (lang == document().effectiveDocumentElementLanguage()) {
-        if (hasRareData())
-            elementRareData()->setEffectiveLang(nullAtom());
-        document().addElementWithLangAttrMatchingDocumentElement(*this);
-        setEffectiveLangKnownToMatchDocumentElement(true);
-        return;
-    }
-
-    if (hasLangAttrKnownToMatchDocumentElement())
-        document().removeElementWithLangAttrMatchingDocumentElement(*this);
-
-    setEffectiveLangKnownToMatchDocumentElement(false);
-    ensureElementRareData().setEffectiveLang(lang);
 }
 
 bool Element::hasAttributes() const
@@ -2665,15 +2612,13 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             shadowRoot->hostChildElementDidChange(*this);
     }
 
-    if (!hasEffectiveLangState())
-        updateEffectiveLangStateFromParent();
+    if (auto* parent = parentOrShadowHostElement(); parent && parent != document().documentElement() && UNLIKELY(parent->hasRareData())) {
+        auto& lang = parent->elementRareData()->effectiveLang();
+        if (!lang.isNull() && langFromAttribute().isNull())
+            ensureElementRareData().setEffectiveLang(lang);
+    }
 
     return InsertedIntoAncestorResult::Done;
-}
-
-bool Element::hasEffectiveLangState() const
-{
-    return effectiveLangKnownToMatchDocumentElement() || (UNLIKELY(hasRareData()) && !elementRareData()->effectiveLang().isNull());
 }
 
 void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
@@ -2733,8 +2678,11 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
     document().fullscreenManager().exitRemovedFullscreenElementIfNeeded(*this);
 #endif
 
-    if (!hasEffectiveLangState())
-        updateEffectiveLangStateFromParent();
+    if (UNLIKELY(hasRareData()) && !elementRareData()->effectiveLang().isNull()) {
+        if (auto* parent = parentOrShadowHostElement(); langFromAttribute().isNull()
+            && !(parent && UNLIKELY(parent->hasRareData()) && !parent->elementRareData()->effectiveLang().isNull()))
+            elementRareData()->setEffectiveLang(nullAtom());
+    }
 
     Styleable::fromElement(*this).elementWasRemoved();
 
@@ -4056,26 +4004,22 @@ unsigned Element::rareDataChildIndex() const
     return elementRareData()->childIndex();
 }
 
-const AtomString& Element::effectiveLang() const
+AtomString Element::effectiveLang() const
 {
-    if (effectiveLangKnownToMatchDocumentElement())
-        return document().effectiveDocumentElementLanguage();
-
     if (hasRareData()) {
-        if (auto& lang = elementRareData()->effectiveLang(); !lang.isNull())
+        auto lang = elementRareData()->effectiveLang();
+        if (!lang.isNull())
             return lang;
     }
-
     return isConnected() ? document().effectiveDocumentElementLanguage() : nullAtom();
 }
 
-const AtomString& Element::langFromAttribute() const
+AtomString Element::langFromAttribute() const
 {
-    // Spec: xml:lang takes precedence over html:lang -- http://www.w3.org/TR/xhtml1/#C_7
-    if (hasXMLLangAttr())
-        return getAttribute(XMLNames::langAttr);
-    if (hasLangAttr())
-        return getAttribute(HTMLNames::langAttr);
+    if (auto* data = elementData()) {
+        if (auto* attribute = data->findLanguageAttribute())
+            return attribute->value();
+    }
     return nullAtom();
 }
 

@@ -131,7 +131,7 @@ void WebSocketTask::didReceiveData(WebCore::CurlStreamID, const WebCore::SharedB
         return;
 
     if (!buffer.size()) {
-        didClose(0, { });
+        didClose(WebCore::WebSocketChannel::CloseEventCode::CloseEventCodeAbnormalClosure, { });
         return;
     }
 

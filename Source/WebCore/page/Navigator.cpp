@@ -357,10 +357,6 @@ bool Navigator::standalone() const
 
 #endif
 
-void Navigator::getStorageUpdates()
-{
-}
-
 GPU* Navigator::gpu()
 {
     if (!m_gpuForWebGPU) {

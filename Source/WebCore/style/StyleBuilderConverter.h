@@ -164,7 +164,7 @@ public:
     static StyleContentAlignmentData convertContentAlignmentData(BuilderState&, const CSSValue&);
     static GlyphOrientation convertGlyphOrientation(BuilderState&, const CSSValue&);
     static GlyphOrientation convertGlyphOrientationOrAuto(BuilderState&, const CSSValue&);
-    static std::optional<Length> convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
+    static Length convertLineHeight(BuilderState&, const CSSValue&, float multiplier = 1.f);
     static FontPalette convertFontPalette(BuilderState&, const CSSValue&);
     
     static BreakBetween convertPageBreakBetween(BuilderState&, const CSSValue&);
@@ -1694,7 +1694,7 @@ inline GlyphOrientation BuilderConverter::convertGlyphOrientationOrAuto(BuilderS
     return convertGlyphOrientation(builderState, value);
 }
 
-inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& builderState, const CSSValue& value, float multiplier)
+inline Length BuilderConverter::convertLineHeight(BuilderState& builderState, const CSSValue& value, float multiplier)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     auto valueID = primitiveValue.valueID();
@@ -1728,12 +1728,9 @@ inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& b
         // FIXME: percentage should not be restricted to an integer here.
         return Length((builderState.style().computedFontSize() * primitiveValue.intValue()) / 100, LengthType::Fixed);
     }
-    if (primitiveValue.isNumber())
-        return Length(primitiveValue.doubleValue() * 100.0, LengthType::Percent);
 
-    // FIXME: The parser should only emit the above types, so this should never be reached. We should change the
-    // type of this function to return just a Length (and not an Optional).
-    return std::nullopt;
+    ASSERT(primitiveValue.isNumber());
+    return Length(primitiveValue.doubleValue() * 100.0, LengthType::Percent);
 }
 
 inline FontPalette BuilderConverter::convertFontPalette(BuilderState&, const CSSValue& value)

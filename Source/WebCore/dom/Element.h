@@ -439,11 +439,9 @@ public:
     void setStyleIsAffectedByPreviousSibling() { setStyleFlag(NodeStyleFlag::StyleIsAffectedByPreviousSibling); }
     void setChildIndex(unsigned);
 
-    const AtomString& effectiveLang() const;
-    const AtomString& langFromAttribute() const;
+    AtomString effectiveLang() const;
+    AtomString langFromAttribute() const;
     Locale& locale() const;
-
-    void updateEffectiveLangStateAndPropagateToDescendants();
 
     virtual bool accessKeyAction(bool /*sendToAnyEvent*/) { return false; }
 
@@ -844,22 +842,6 @@ private:
 #if ASSERT_ENABLED
     WEBCORE_EXPORT bool fastAttributeLookupAllowed(const QualifiedName&) const;
 #endif
-
-    bool hasEffectiveLangState() const;
-    void updateEffectiveLangState();
-    void updateEffectiveLangStateFromParent();
-
-    bool hasLangAttr() const { return hasEventTargetFlag(EventTargetFlag::HasLangAttr); }
-    void setHasLangAttr(bool has) { setEventTargetFlag(EventTargetFlag::HasLangAttr, has); }
-
-    bool hasXMLLangAttr() const { return hasEventTargetFlag(EventTargetFlag::HasXMLLangAttr); }
-    void setHasXMLLangAttr(bool has) { setEventTargetFlag(EventTargetFlag::HasXMLLangAttr, has); }
-
-    bool effectiveLangKnownToMatchDocumentElement() const { return hasEventTargetFlag(EventTargetFlag::EffectiveLangKnownToMatchDocumentElement); }
-    void setEffectiveLangKnownToMatchDocumentElement(bool matches) { setEventTargetFlag(EventTargetFlag::EffectiveLangKnownToMatchDocumentElement, matches); }
-
-    bool hasLanguageAttribute() const { return hasLangAttr() || hasXMLLangAttr(); }
-    bool hasLangAttrKnownToMatchDocumentElement() const { return hasLanguageAttribute() && effectiveLangKnownToMatchDocumentElement(); }
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;

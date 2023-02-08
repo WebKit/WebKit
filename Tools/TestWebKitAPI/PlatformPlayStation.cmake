@@ -11,12 +11,16 @@ list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBKIT_LIBRARIES_DIR}/include
 )
 
+WEBKIT_ADD_TARGET_CXX_FLAGS(TestWTF -Wno-unused-function)
+
 list(APPEND TestJavaScriptCore_SOURCES
     ${test_main_SOURCES}
 )
 list(APPEND TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBKIT_LIBRARIES_DIR}/include
 )
+
+WEBKIT_ADD_TARGET_CXX_FLAGS(TestJavaScriptCore -Wno-unused-function)
 
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
@@ -54,6 +58,8 @@ if (ENABLE_WEBKIT)
     list(APPEND TestWebKit_PRIVATE_LIBRARIES
         ${ProcessLauncher_LIBRARY}
     )
+
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-deprecated-declarations)
 endif ()
 
 # Set the debugger working directory for Visual Studio

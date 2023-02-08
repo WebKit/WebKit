@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleVisualData);
+
 StyleVisualData::StyleVisualData()
     : hasClip(false)
     , textDecorationLine(RenderStyle::initialTextDecorationLine().toRaw())

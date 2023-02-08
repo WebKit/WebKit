@@ -736,24 +736,22 @@ inline void BuilderCustom::applyValueLineHeight(BuilderState& builderState, CSSV
         return;
     }
 
-    std::optional<Length> lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
-    if (!lineHeight)
-        return;
+    auto lineHeight = BuilderConverter::convertLineHeight(builderState, value, 1);
 
     Length computedLineHeight;
-    if (lineHeight.value().isNegative())
-        computedLineHeight = lineHeight.value();
+    if (lineHeight.isNegative())
+        computedLineHeight = lineHeight;
     else {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
         auto multiplier = computeLineHeightMultiplierDueToFontSize(builderState.document(), builderState.style(), primitiveValue);
         if (multiplier == 1)
-            computedLineHeight = lineHeight.value();
+            computedLineHeight = lineHeight;
         else
-            computedLineHeight = BuilderConverter::convertLineHeight(builderState, value, multiplier).value();
+            computedLineHeight = BuilderConverter::convertLineHeight(builderState, value, multiplier);
     }
 
     builderState.style().setLineHeight(WTFMove(computedLineHeight));
-    builderState.style().setSpecifiedLineHeight(WTFMove(lineHeight.value()));
+    builderState.style().setSpecifiedLineHeight(WTFMove(lineHeight));
 }
 
 #endif

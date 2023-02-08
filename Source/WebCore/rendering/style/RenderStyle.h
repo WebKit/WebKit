@@ -134,7 +134,12 @@ namespace Style {
 class CustomPropertyRegistry;
 }
 
-using PseudoStyleCache = Vector<std::unique_ptr<RenderStyle>, 4>;
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
+class PseudoStyleCache {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
+public:
+    Vector<std::unique_ptr<RenderStyle>, 4> styles;
+};
 
 template<typename T, typename U> inline bool compareEqual(const T& t, const U& u) { return t == static_cast<const T&>(u); }
 

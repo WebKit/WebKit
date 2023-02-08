@@ -128,6 +128,7 @@ class RadarModel(object):
         self._issue = issue
         self.title = issue['title']
         self.id = issue['id']
+        self.classification = issue.get('classification', 'Other Bug')
         self.createdAt = datetime.utcfromtimestamp(issue['timestamp'] - timedelta(hours=7).seconds)
         self.assignee = self.Person(Radar.transform_user(issue['assignee']))
         self.description = self.CollectionProperty(self, self.DescriptionEntry(issue['description']))

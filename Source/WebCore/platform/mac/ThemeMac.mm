@@ -484,9 +484,7 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& contr
     // Use a fake view.
     static WebCoreThemeView *themeView = [[WebCoreThemeView alloc] init];
     [themeView setFrameSize:NSSizeFromCGSize(scrollView->totalContentsSize())];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [themeView setAppearance:[NSAppearance currentAppearance]];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    [themeView setAppearance:[NSAppearance currentDrawingAppearance]];
 
 #if USE(NSVIEW_SEMANTICCONTEXT)
     if (_useFormSemanticContext)
@@ -680,9 +678,7 @@ bool ThemeMac::userPrefersContrast() const
 
 bool ThemeMac::supportsLargeFormControls()
 {
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    static bool hasSupport = [[NSAppearance currentAppearance] _usesMetricsAppearance];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    static bool hasSupport = [[NSAppearance currentDrawingAppearance] _usesMetricsAppearance];
     return hasSupport;
 }
 
