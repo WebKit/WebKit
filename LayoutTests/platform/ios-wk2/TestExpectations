@@ -2399,3 +2399,6 @@ imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub
 # WebGL in OffscreenCanvas requires the GPUP.
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Skip ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Skip ]
+
+webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animation-overlap.html [ Pass Timeout ]
+
