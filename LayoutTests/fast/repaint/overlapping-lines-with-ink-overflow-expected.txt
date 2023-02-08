@@ -5,5 +5,7 @@ XXX
 (repaint rects
   (rect 50 37 700 66)
   (rect 37 140 66 72)
+  (rect 50 37 700 66)
+  (rect 37 140 66 72)
 )
 
