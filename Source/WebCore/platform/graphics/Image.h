@@ -59,6 +59,7 @@ typedef struct HBITMAP__ *HBITMAP;
 #endif
 
 #if PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
 typedef struct _GdkPixbuf GdkPixbuf;
 #if USE(GTK4)
 typedef struct _GdkTexture GdkTexture;
@@ -186,9 +187,9 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    virtual GdkPixbuf* getGdkPixbuf() { return nullptr; }
+    virtual GRefPtr<GdkPixbuf> gdkPixbuf() { return nullptr; }
 #if USE(GTK4)
-    virtual GdkTexture* gdkTexture() { return nullptr; }
+    virtual GrefPtr<GdkTexture> gdkTexture() { return nullptr; }
 #endif
 #endif
 

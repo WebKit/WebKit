@@ -30,7 +30,6 @@
 #include "SharedBuffer.h"
 #include <cairo.h>
 #include <gdk/gdk.h>
-#include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
@@ -54,7 +53,7 @@ Ref<Image> Image::loadPlatformResource(const char* name)
     return loadImageFromGResource(name);
 }
 
-GdkPixbuf* BitmapImage::getGdkPixbuf()
+GRefPtr<GdkPixbuf> BitmapImage::gdkPixbuf()
 {
     if (auto nativeImage = nativeImageForCurrentFrame()) {
         auto& surface = nativeImage->platformImage();
@@ -64,7 +63,7 @@ GdkPixbuf* BitmapImage::getGdkPixbuf()
 }
 
 #if USE(GTK4)
-GdkTexture* BitmapImage::gdkTexture()
+GRefPtr<GdkTexture> BitmapImage::gdkTexture()
 {
     if (auto nativeImage = nativeImageForCurrentFrame()) {
         auto& surface = nativeImage->platformImage();

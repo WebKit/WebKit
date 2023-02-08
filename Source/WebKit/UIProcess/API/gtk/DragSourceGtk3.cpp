@@ -68,7 +68,7 @@ DragSource::DragSource(GtkWidget* webView)
             break;
         }
         case DragTargetType::Image: {
-            GRefPtr<GdkPixbuf> pixbuf = adoptGRef(drag.m_selectionData->image()->getGdkPixbuf());
+            auto pixbuf = drag.m_selectionData->image()->gdkPixbuf();
             gtk_selection_data_set_pixbuf(data, pixbuf.get());
             break;
         }

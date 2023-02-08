@@ -4894,7 +4894,7 @@ cairo_surface_t* webkit_web_view_get_snapshot_finish(WebKitWebView* webView, GAs
 
 #if USE(GTK4)
     auto image = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
-    return image ? cairoSurfaceToGdkTexture(image.get()) : nullptr;
+    return image ? cairoSurfaceToGdkTexture(image.get()).leakRef() : nullptr;
 #else
     return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
 #endif

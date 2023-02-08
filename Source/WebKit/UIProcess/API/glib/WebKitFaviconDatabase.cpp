@@ -246,7 +246,7 @@ cairo_surface_t* webkit_favicon_database_get_favicon_finish(WebKitFaviconDatabas
 
 #if USE(GTK4)
     auto icon = adoptRef(static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error)));
-    return icon ? cairoSurfaceToGdkTexture(icon.get()) : nullptr;
+    return icon ? cairoSurfaceToGdkTexture(icon.get()).leakRef() : nullptr;
 #else
     return static_cast<cairo_surface_t*>(g_task_propagate_pointer(G_TASK(result), error));
 #endif

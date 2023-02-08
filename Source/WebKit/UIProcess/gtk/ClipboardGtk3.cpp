@@ -199,7 +199,7 @@ void Clipboard::write(WebCore::SelectionData&& selectionData)
                 break;
             case ClipboardTargetType::Image: {
                 if (data.selectionData.hasImage()) {
-                    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(data.selectionData.image()->getGdkPixbuf());
+                    auto pixbuf = data.selectionData.image()->gdkPixbuf();
                     gtk_selection_data_set_pixbuf(selection, pixbuf.get());
                 }
                 break;
