@@ -120,6 +120,9 @@ bool HTMLParserScheduler::shouldYieldBeforeExecutingScript(const ScriptElement* 
     if (UNLIKELY(m_documentHasActiveParserYieldTokens))
         return true;
 
+    if (document->view() && !document->view()->hasEverPainted() && document->view()->isVisuallyNonEmpty())
+        return true;
+
     auto elapsedTime = MonotonicTime::now() - session.startTime;
 
     constexpr auto elapsedTimeLimit = 16_ms;
