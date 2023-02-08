@@ -123,7 +123,7 @@ bool defaultUsePreHTML5ParserQuirks()
     // <https://bugs.webkit.org/show_bug.cgi?id=46134> and
     // <https://bugs.webkit.org/show_bug.cgi?id=46334>.
     static bool isApplicationNeedingParserQuirks = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
-        && (WebCore::MacApplication::isAOLInstantMessenger() || WebCore::MacApplication::isMicrosoftMyDay());
+        && (WebCore::MacApplication::isMicrosoftMyDay());
 
     // Mail.app must continue to display HTML email that contains quirky markup.
     static bool isAppleMail = WebCore::MacApplication::isAppleMail();

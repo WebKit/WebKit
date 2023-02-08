@@ -2844,12 +2844,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     static BOOL needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.equinux.iSale5"), -1, 5.6);
     return needsQuirk;
 }
-
-static bool needsSelfRetainWhileLoadingQuirk()
-{
-    static bool needsQuirk = WebCore::MacApplication::isAperture();
-    return needsQuirk;
-}
 #endif
 
 - (void)_preferencesChangedNotification:(NSNotification *)notification
@@ -3337,9 +3331,6 @@ IGNORE_WARNINGS_END
 
 - (void)_didStartProvisionalLoadForFrame:(WebFrame *)frame
 {
-    if (needsSelfRetainWhileLoadingQuirk())
-        [self retain];
-
     [self _willChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.
@@ -3399,9 +3390,6 @@ IGNORE_WARNINGS_END
 
 - (void)_didFinishLoadForFrame:(WebFrame *)frame
 {
-    if (needsSelfRetainWhileLoadingQuirk())
-        [self performSelector:@selector(release) withObject:nil afterDelay:0];
-
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.
@@ -3413,9 +3401,6 @@ IGNORE_WARNINGS_END
 
 - (void)_didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
-    if (needsSelfRetainWhileLoadingQuirk())
-        [self performSelector:@selector(release) withObject:nil afterDelay:0];
-
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.
@@ -3427,9 +3412,6 @@ IGNORE_WARNINGS_END
 
 - (void)_didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
-    if (needsSelfRetainWhileLoadingQuirk())
-        [self performSelector:@selector(release) withObject:nil afterDelay:0];
-
     [self _didChangeBackForwardKeys];
     if (frame == [self mainFrame]){
         // Force an observer update by sending a will/did.
@@ -7895,11 +7877,6 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
 
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
 {
-#if !PLATFORM(IOS_FAMILY)
-    // FIXME: This quirk is needed due to <rdar://problem/4985321> - We can phase it out once Aperture can adopt the new behavior on their end
-    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])
-        return YES;
-#endif
     return [[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
 }
 
