@@ -60,9 +60,33 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+#if PLATFORM(GTK)
+    cairo_surface_t* takeSnapshotAndWaitUntilReady()
+    {
+        webkit_web_view_get_snapshot(m_webView, WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE, nullptr, [](GObject* source, GAsyncResult* result, gpointer userData) {
+            auto& test = *static_cast<FindControllerTest*>(userData);
+#if USE(GTK4)
+            if (GRefPtr<GdkTexture> snapshot = adoptGRef(webkit_web_view_get_snapshot_finish(WEBKIT_WEB_VIEW(source), result, nullptr))) {
+                test.m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, gdk_texture_get_width(snapshot.get()), gdk_texture_get_height(snapshot.get()));
+                gdk_texture_download(snapshot.get(), cairo_image_surface_get_data(test.m_surface), cairo_image_surface_get_stride(test.m_surface));
+                cairo_surface_mark_dirty(test.m_surface);
+            }
+#else
+            test.m_surface = webkit_web_view_get_snapshot_finish(WEBKIT_WEB_VIEW(source), result, nullptr);
+#endif
+            test.quitMainLoop();
+        }, this);
+        g_main_loop_run(m_mainLoop);
+        return std::exchange(m_surface, nullptr);
+    }
+#endif
+
     GRefPtr<WebKitFindController> m_findController;
     bool m_textFound;
     unsigned m_matchCount;
+#if PLATFORM(GTK)
+    cairo_surface_t* m_surface { nullptr };
+#endif
 
 private:
     bool m_runFindUntilCompletion;
@@ -267,16 +291,14 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
 
     test->showInWindow();
 
-    cairo_surface_t* originalSurface = cairo_surface_reference(
-        test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
+    auto* originalSurface = test->takeSnapshotAndWaitUntilReady();
     g_assert_nonnull(originalSurface);
 
     test->find("testing", WEBKIT_FIND_OPTIONS_NONE, 1);
     test->waitUntilFindFinished();
     g_assert_true(test->m_textFound);
 
-    cairo_surface_t* highlightSurface = cairo_surface_reference(
-        test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
+    auto* highlightSurface = test->takeSnapshotAndWaitUntilReady();
     g_assert_nonnull(highlightSurface);
     g_assert_false(Test::cairoSurfacesEqual(originalSurface, highlightSurface));
 
@@ -284,8 +306,7 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     webkit_find_controller_search_finish(findController);
     webkit_web_view_execute_editing_command(test->m_webView, "Unselect");
 
-    cairo_surface_t* unhighlightSurface = cairo_surface_reference(
-        test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));
+    auto* unhighlightSurface = test->takeSnapshotAndWaitUntilReady();
     g_assert_nonnull(unhighlightSurface);
     g_assert_true(Test::cairoSurfacesEqual(originalSurface, unhighlightSurface));
 

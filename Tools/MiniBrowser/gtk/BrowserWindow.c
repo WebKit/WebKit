@@ -641,24 +641,18 @@ static void updateUriEntryIcon(BrowserWindow *window)
 static void faviconChanged(WebKitWebView *webView, GParamSpec *paramSpec, BrowserWindow *window)
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
-    GdkTexture *favicon = NULL;
+    GdkTexture *favicon = webkit_web_view_get_favicon(webView);
 #else
-    GdkPixbuf *favicon = NULL;
-#endif
     cairo_surface_t *surface = webkit_web_view_get_favicon(webView);
+    GdkPixbuf *favicon = NULL;
 
     if (surface) {
         int width = cairo_image_surface_get_width(surface);
         int height = cairo_image_surface_get_height(surface);
-#if GTK_CHECK_VERSION(3, 98, 0)
-        int stride = cairo_image_surface_get_stride(surface);
-        GBytes *bytes = g_bytes_new(cairo_image_surface_get_data(surface), stride * height);
-        favicon = gdk_memory_texture_new(width, height, GDK_MEMORY_DEFAULT, bytes, stride);
-        g_bytes_unref(bytes);
-#else
+
         favicon = gdk_pixbuf_get_from_surface(surface, 0, 0, width, height);
-#endif
     }
+#endif
 
     if (window->favicon)
         g_object_unref(window->favicon);

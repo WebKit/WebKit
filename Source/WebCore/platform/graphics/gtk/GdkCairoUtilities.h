@@ -28,5 +28,7 @@
 namespace WebCore {
 
 GdkPixbuf* cairoSurfaceToGdkPixbuf(cairo_surface_t*);
-
+#if USE(GTK4)
+GdkTexture* cairoSurfaceToGdkTexture(cairo_surface_t*);
+#endif
 }

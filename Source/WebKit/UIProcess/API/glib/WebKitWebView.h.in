@@ -581,8 +581,13 @@ WEBKIT_API const gchar *
 webkit_web_view_get_uri                              (WebKitWebView             *web_view);
 
 #if PLATFORM(GTK)
+#if USE(GTK4)
+WEBKIT_API GdkTexture *
+webkit_web_view_get_favicon                          (WebKitWebView             *web_view);
+#else
 WEBKIT_API cairo_surface_t *
 webkit_web_view_get_favicon                          (WebKitWebView             *web_view);
+#endif
 #endif
 
 WEBKIT_API const gchar *
@@ -768,11 +773,17 @@ webkit_web_view_get_snapshot                         (WebKitWebView             
                                                       GCancellable              *cancellable,
                                                       GAsyncReadyCallback        callback,
                                                       gpointer                   user_data);
-
+#if USE(GTK4)
+WEBKIT_API GdkTexture *
+webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
+                                                      GAsyncResult              *result,
+                                                      GError                   **error);
+#else
 WEBKIT_API cairo_surface_t *
 webkit_web_view_get_snapshot_finish                  (WebKitWebView             *web_view,
                                                       GAsyncResult              *result,
                                                       GError                   **error);
+#endif
 #endif
 
 WEBKIT_API WebKitUserContentManager *
