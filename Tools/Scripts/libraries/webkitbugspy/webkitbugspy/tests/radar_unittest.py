@@ -382,3 +382,8 @@ What version of 'WebKit Text' should the bug be associated with?:
         with mocks.Radar(issues=mocks.ISSUES):
             tracker = radar.Tracker()
             self.assertEqual(tracker.issue(1).keywords, ['Keyword A'])
+
+    def test_classification(self):
+        with mocks.Radar(issues=mocks.ISSUES):
+            tracker = radar.Tracker()
+            self.assertEqual(tracker.issue(1).classification, 'Other Bug')

@@ -20,7 +20,8 @@
         "type" : "radar",
         "projects" : ["JavaScriptCore", "WebKit"],
         "redact" : {
-            ".*": true
+            "classification:Security": true,
+            "tentpole:.*Security.*": true
         }
     }
 ]

@@ -73,6 +73,7 @@ class Issue(object):
         self._version = None
         self._milestone = None
         self._keywords = None
+        self._classification = None
 
         self.tracker.populate(self, None)
 
@@ -196,10 +197,16 @@ class Issue(object):
         return self._keywords
 
     @property
+    def classification(self):
+        if self._classification is None:
+            self.tracker.populate(self, 'classification')
+        return self._classification
+
+    @property
     def redacted(self):
-        match_string = 'title:{};project:{};component:{};version:{}'.format(
-            self.title or '', self.project or '', self.component or '', self.version or '',
-        )
+        match_string = ''
+        for member in ('title', 'project', 'component', 'version', 'classification'):
+            match_string += ';{}:{}'.format(member, getattr(self, member, ''))
         for key, value in self.tracker._redact.items():
             if key.search(match_string):
                 return self.tracker.Redaction(
