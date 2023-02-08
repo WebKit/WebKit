@@ -57,6 +57,8 @@ public:
     void add(Element&);
     void processQueue(JSC::JSGlobalObject*);
 
+    Vector<GCReachableRef<Element>> takeElements();
+
 private:
     void invokeAll();
 
@@ -98,6 +100,8 @@ public:
 #endif
 
     static void processBackupQueue(CustomElementQueue&);
+
+    static void enqueueElementsOnAppropriateElementQueue(const Vector<Ref<Element>>&);
 
 private:
     static void enqueueElementOnAppropriateElementQueue(Element&);
@@ -176,6 +180,8 @@ public:
             processQueue(m_state);
         s_currentProcessingStack = m_previousProcessingStack;
     }
+
+    Vector<GCReachableRef<Element>> takeElements();
 
 private:
     WEBCORE_EXPORT void processQueue(JSC::JSGlobalObject*);
