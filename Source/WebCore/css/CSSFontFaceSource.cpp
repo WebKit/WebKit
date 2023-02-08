@@ -80,16 +80,6 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, CSSFontSelector& fontSe
 {
     // This may synchronously call fontLoaded().
     m_fontRequest->setClient(this);
-
-    if (status() == Status::Pending && !m_fontRequest->isPending()) {
-        setStatus(Status::Loading);
-        if (!shouldIgnoreFontLoadCompletions()) {
-            if (m_fontRequest->errorOccurred())
-                setStatus(Status::Failure);
-            else
-                setStatus(Status::Success);
-        }
-    }
 }
 
 CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, AtomString fontFaceName, SVGFontFaceElement& fontFace)

@@ -70,6 +70,8 @@ public:
     bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
     bool equals(const CSSFontFaceSrcResourceValue&) const;
 
+    const URL& resolvedURL() const;
+
 private:
     explicit CSSFontFaceSrcResourceValue(ResolvedURL&&, String&& format, LoadedFromOpaqueSource);
 

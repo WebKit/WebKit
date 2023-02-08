@@ -105,6 +105,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     , m_hasUnknownEncoding(request.isLinkPreload())
     , m_switchingClientsToRevalidatedResource(false)
     , m_ignoreForRequestCount(request.ignoreForRequestCount())
+    , m_forceAsync(false)
 {
     ASSERT(m_sessionID.isValid());
 
@@ -543,7 +544,7 @@ bool CachedResource::addClientToSet(CachedResourceClient& client)
     if (allowsCaching() && !hasClients() && inCache())
         MemoryCache::singleton().addToLiveResourcesSize(*this);
 
-    if ((m_type == Type::RawResource || m_type == Type::MainResource) && !m_response.isNull() && !m_proxyResource) {
+    if (((m_type == Type::RawResource || m_type == Type::MainResource) && !m_response.isNull() && !m_proxyResource) || m_forceAsync) {
         // Certain resources (especially XHRs and main resources) do crazy things if an asynchronous load returns
         // synchronously (e.g., scripts may not have set all the state they need to handle the load).
         // Therefore, rather than immediately sending callbacks on a cache hit like other CachedResources,

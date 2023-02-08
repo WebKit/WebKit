@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSFontFaceSrcValue.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 #include "RenderStyleConstants.h"
@@ -111,6 +112,7 @@ public:
     void opportunisticallyStartFontDataURLLoading();
 
     void adoptSource(std::unique_ptr<CSSFontFaceSource>&&);
+    void adoptPendingSource(CSSFontFaceSrcResourceValue&, ScriptExecutionContext*,  bool);
     void sourcesPopulated() { m_sourcesPopulated = true; }
     size_t sourceCount() const { return m_sources.size(); }
 
@@ -160,7 +162,6 @@ public:
 
     void updateStyleIfNeeded();
 
-    bool hasSVGFontFaceSource() const;
     void setErrorState();
 
 private:
@@ -178,6 +179,8 @@ private:
     const StyleProperties& properties() const;
     MutableStyleProperties& mutableProperties();
 
+    bool ensurePendingSourceFlushed(size_t);
+
     Document* document();
 
     const std::variant<Ref<MutableStyleProperties>, Ref<StyleRuleFontFace>> m_propertiesOrCSSConnection;
@@ -187,7 +190,13 @@ private:
     FontFeatureSettings m_featureSettings;
     FontLoadingBehavior m_loadingBehavior { FontLoadingBehavior::Auto };
 
-    Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
+    struct PendingSource {
+        Ref<CSSFontFaceSrcResourceValue> source;
+        WeakPtr<ScriptExecutionContext> scriptExecutionContext;
+        bool isInitiatingElementInUserAgentShadowTree;
+    };
+
+    Vector<std::variant<std::unique_ptr<CSSFontFaceSource>, PendingSource>, 0, CrashOnOverflow, 0> m_sources;
     WeakHashSet<Client> m_clients;
     WeakPtr<FontFace> m_wrapper;
     FontSelectionSpecifiedCapabilities m_fontSelectionCapabilities;
