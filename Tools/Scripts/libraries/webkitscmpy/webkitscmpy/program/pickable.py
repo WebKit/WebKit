@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ class Pickable(Command):
     @classmethod
     def parser(cls, parser, loggers=None, json=True):
         parser.add_argument(
-            'argument', nargs=1,
+            'argument', nargs='+',
             type=str, default=None,
             help='String representation of a commit, branch or range of commits to filter for cherry-pickable commits',
         )
@@ -209,61 +209,79 @@ class Pickable(Command):
             sys.stderr.write("Can only run '{}' on a native Git repository\n".format(cls.name))
             return 1
 
-        reference = args.argument[0]
         if not args.into:
             args.into = repository.default_branch
-        if reference == args.into:
-            sys.stderr.write("Cannot merge '{}' into itself\n".format(args.into))
-            if args.into == repository.default_branch:
-                sys.stderr.write("Specify branch to merge into with the --into flag\n")
-            return 1
+        for reference in args.argument:
+            if reference == args.into:
+                sys.stderr.write("Cannot merge '{}' into itself\n".format(args.into))
+                if args.into == repository.default_branch:
+                    sys.stderr.write("Specify branch to merge into with the --into flag\n")
+                return 1
 
-        branch_point = None
-        if reference in repository.branches:
-            branch_point = repository.merge_base(args.into, reference)
-            reference = '{}..{}'.format(branch_point.hash if branch_point else args.into, reference)
-
-        try:
-            if '..' in reference:
-                if '...' in reference:
-                    sys.stderr.write("'pickable' sub-command only supports '..' notation\n")
-                    return 1
-                references = reference.split('..')
-                if len(references) > 2:
-                    sys.stderr.write('Can only include two references in a range\n')
-                    return 1
-                if not branch_point:
-                    branch_point = repository.merge_base(args.into, references[1])
-                commits = [commit for commit in repository.commits(
-                    begin=dict(argument=references[0]),
-                    end=dict(argument=references[1]),
-                    scopes=args.scopes,
-                )]
-
-            else:
-                if args.scopes:
-                    sys.stderr.write('Scope argument invalid when only one commit specified\n')
-                    return 1
+        tracked = set()
+        commits = []
+        for reference in args.argument:
+            branch_point = None
+            if reference in repository.branches:
                 branch_point = repository.merge_base(args.into, reference)
-                commits = [repository.find(reference, include_log=True)]
+                reference = '{}..{}'.format(branch_point.hash if branch_point else args.into, reference)
 
-        except (local.Scm.Exception, TypeError, ValueError) as exception:
-            # ValueErrors and Scm exceptions usually contain enough information to be displayed
-            # to the user as an error
-            sys.stderr.write(str(exception) + '\n')
-            return 1
+            try:
+                if '..' in reference:
+                    if '...' in reference:
+                        sys.stderr.write("'pickable' sub-command only supports '..' notation\n")
+                        return 1
+                    references = reference.split('..')
+                    if len(references) > 2:
+                        sys.stderr.write('Can only include two references in a range\n')
+                        return 1
+                    if not branch_point:
+                        branch_point = repository.merge_base(args.into, references[1])
+                    candidates = [commit for commit in repository.commits(
+                        begin=dict(argument=references[0]),
+                        end=dict(argument=references[1]),
+                        scopes=args.scopes,
+                    )]
 
-        story = None
-        if branch_point:
-            story = CommitsStory()
-            for commit in repository.commits(begin=dict(argument=branch_point.hash), end=dict(argument=args.into)):
-                story.add(commit)
-                relationships = Trace.relationships(commit, repository)
-                for rel in relationships or []:
-                    if rel.type in Relationship.IDENTITY:
-                        story.add(rel.commit)
+                else:
+                    if args.scopes:
+                        sys.stderr.write('Scope argument invalid when only one commit specified\n')
+                        return 1
+                    branch_point = repository.merge_base(args.into, reference)
+                    candidates = [repository.find(reference, include_log=True)]
 
-        commits = cls.pickable(commits, repository, commits_story=story, excluded=args.excluded)
+            except (local.Scm.Exception, TypeError, ValueError) as exception:
+                # ValueErrors and Scm exceptions usually contain enough information to be displayed
+                # to the user as an error
+                sys.stderr.write(str(exception) + '\n')
+                return 1
+
+            story = None
+            if branch_point:
+                story = CommitsStory()
+                for commit in repository.commits(begin=dict(argument=branch_point.hash), end=dict(argument=args.into)):
+                    story.add(commit)
+                    relationships = Trace.relationships(commit, repository)
+                    for rel in relationships or []:
+                        if rel.type in Relationship.IDENTITY:
+                            story.add(rel.commit)
+
+            unfiltered = cls.pickable(candidates, repository, commits_story=story, excluded=args.excluded)
+            filters = []
+            if args.by:
+                for person in args.by:
+                    filters.append(lambda commit: commit.author == person or person in commit.author.emails or person == commit.author.github)
+            if args.filters:
+                for filter in args.filters:
+                    filters.append(lambda commit: re.search(filter, commit.message))
+            filtered = [
+                commit for commit in unfiltered
+                if commit.hash[:commit.HASH_LABEL_SIZE] not in tracked and (not filters or any([f(commit) for f in filters]))
+            ]
+            for commit in filtered:
+                tracked.add(commit.hash[:commit.HASH_LABEL_SIZE])
+            commits += filtered
+
         if not commits:
             sys.stderr.write("No commits in specified range are 'pickable'\n")
             return 1
