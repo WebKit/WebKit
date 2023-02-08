@@ -318,25 +318,6 @@ bool ensureGStreamerInitialized()
     return isGStreamerInitialized;
 }
 
-#if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
-// WebM does not specify a protection system ID so it can happen that
-// the ClearKey decryptor is chosen instead of the Thunder one for
-// Widevine (and viceversa) which can can create chaos. This is an
-// environment variable to set in run time if we prefer to rank higher
-// Thunder or ClearKey. If we want to run tests with Thunder, we need
-// to set this environment variable to Thunder and that decryptor will
-// be ranked higher when there is no protection system set (as in
-// WebM).
-// FIXME: In https://bugs.webkit.org/show_bug.cgi?id=214826 we say we
-// should migrate to use GST_PLUGIN_FEATURE_RANK but we can't yet
-// because our lowest dependency is 1.16.
-bool isThunderRanked()
-{
-    const char* value = g_getenv("WEBKIT_GST_EME_RANK_PRIORITY");
-    return value && equalIgnoringASCIICase(value, "Thunder"_s);
-}
-#endif
-
 static void registerInternalVideoEncoder()
 {
 #if ENABLE(VIDEO)
@@ -351,17 +332,8 @@ void registerWebKitGStreamerElements()
     std::call_once(onceFlag, [&registryWasUpdated] {
 
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
-        if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty()) {
-            unsigned thunderRank = isThunderRanked() ? 300 : 100;
-            gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + thunderRank, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
-        }
-#ifndef NDEBUG
-        else if (isThunderRanked()) {
-            GST_WARNING("Thunder is up-ranked as preferred decryptor but Thunder is not supporting any encryption system. Is "
-                "Thunder running? Are the plugins built?");
-        }
-#endif
-
+        if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty())
+            gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

@@ -85,9 +85,6 @@ void registerWebKitGStreamerElements();
 void registerWebKitGStreamerVideoEncoder();
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);
-#if ENABLE(THUNDER)
-bool isThunderRanked();
-#endif
 
 inline GstClockTime toGstClockTime(const MediaTime& mediaTime)
 {
