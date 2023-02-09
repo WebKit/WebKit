@@ -423,18 +423,18 @@ void CacheStorageManager::dereference(IPC::Connection::UniqueID connection, WebC
 
 void CacheStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
-    HashSet<WebCore::DOMCacheIdentifier> unusedCacheIdentifers;
+    HashSet<WebCore::DOMCacheIdentifier> unusedCacheIdentifiers;
     for (auto& [identifier, refConnections] : m_cacheRefConnections) {
         refConnections.removeAllMatching([&](auto refConnection) {
             return refConnection == connection;
         });
         if (refConnections.isEmpty()) {
             removeUnusedCache(identifier);
-            unusedCacheIdentifers.add(identifier);
+            unusedCacheIdentifiers.add(identifier);
         }
     }
 
-    for (auto& identifier : unusedCacheIdentifers)
+    for (auto& identifier : unusedCacheIdentifiers)
         m_cacheRefConnections.remove(identifier);
 }
 
