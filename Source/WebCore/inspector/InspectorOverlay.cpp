@@ -95,6 +95,15 @@ static constexpr UChar emSpace = 0x2003;
 
 enum class Flip : bool { No, Yes };
 
+static bool isInNodeList(const Node& node, const NodeList& list)
+{
+    for (unsigned i = 0; i < list.length(); ++i) {
+        if (&node == list.item(i))
+            return true;
+    }
+    return false;
+}
+
 static void truncateWithEllipsis(String& string, size_t length)
 {
     if (string.length() > length)
@@ -421,6 +430,16 @@ void InspectorOverlay::paint(GraphicsContext& context)
             if (auto* node = m_highlightNodeList->item(i)) {
                 auto nodeRulerExclusion = drawNodeHighlight(context, *node);
                 rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
+
+                if (m_nodeGridOverlayConfig) {
+                    if (auto gridHighlightOverlay = buildGridOverlay({ *node, *m_nodeGridOverlayConfig }))
+                        drawGridOverlay(context, *gridHighlightOverlay);
+                }
+
+                if (m_nodeFlexOverlayConfig) {
+                    if (auto flexHighlightOverlay = buildFlexOverlay({ *node, *m_nodeFlexOverlayConfig }))
+                        drawFlexOverlay(context, *flexHighlightOverlay);
+                }
             }
         }
     }
@@ -429,31 +448,39 @@ void InspectorOverlay::paint(GraphicsContext& context)
         auto nodeRulerExclusion = drawNodeHighlight(context, *m_highlightNode);
         rulerExclusion.bounds.unite(nodeRulerExclusion.bounds);
         rulerExclusion.titlePath = nodeRulerExclusion.titlePath;
+
+        if (m_nodeGridOverlayConfig) {
+            if (auto gridHighlightOverlay = buildGridOverlay({ *m_highlightNode, *m_nodeGridOverlayConfig }))
+                drawGridOverlay(context, *gridHighlightOverlay);
+        }
+
+        if (m_nodeFlexOverlayConfig) {
+            if (auto flexHighlightOverlay = buildFlexOverlay({ *m_highlightNode, *m_nodeFlexOverlayConfig }))
+                drawFlexOverlay(context, *flexHighlightOverlay);
+        }
     }
 
     for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays) {
-        if (m_highlightGridOverlay && gridOverlay.gridNode == m_highlightGridOverlay->gridNode)
-            continue;
+        if (m_nodeGridOverlayConfig && gridOverlay.gridNode) {
+            if (m_highlightNodeList && isInNodeList(*gridOverlay.gridNode, *m_highlightNodeList))
+                continue;
+            if (gridOverlay.gridNode == m_highlightNode.get())
+                continue;
+        }
 
         if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay))
             drawGridOverlay(context, *gridHighlightOverlay);
     }
 
-    if (m_highlightGridOverlay) {
-        if (auto gridHighlightOverlay = buildGridOverlay(*m_highlightGridOverlay))
-            drawGridOverlay(context, *gridHighlightOverlay);
-    }
-
     for (const InspectorOverlay::Flex& flexOverlay : m_activeFlexOverlays) {
-        if (m_highlightFlexOverlay && flexOverlay.flexNode == m_highlightFlexOverlay->flexNode)
-            continue;
+        if (m_nodeFlexOverlayConfig && flexOverlay.flexNode) {
+            if (m_highlightNodeList && isInNodeList(*flexOverlay.flexNode, *m_highlightNodeList))
+                continue;
+            if (flexOverlay.flexNode == m_highlightNode.get())
+                continue;
+        }
 
         if (auto flexHighlightOverlay = buildFlexOverlay(flexOverlay))
-            drawFlexOverlay(context, *flexHighlightOverlay);
-    }
-
-    if (m_highlightFlexOverlay) {
-        if (auto flexHighlightOverlay = buildFlexOverlay(*m_highlightFlexOverlay))
             drawFlexOverlay(context, *flexHighlightOverlay);
     }
 
@@ -466,19 +493,43 @@ void InspectorOverlay::paint(GraphicsContext& context)
 
 void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
-    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_highlightGridOverlay && !m_activeGridOverlays.size() && !m_highlightFlexOverlay && !m_activeFlexOverlays.size())
+    if (!m_highlightNode && !m_highlightQuad && !m_highlightNodeList && !m_activeGridOverlays.size() && !m_activeFlexOverlays.size())
         return;
 
+    constexpr bool offsetBoundsByScroll = true;
+
     highlight.type = InspectorOverlay::Highlight::Type::None;
-    if (m_highlightNode)
+    if (m_highlightNode) {
         buildNodeHighlight(*m_highlightNode, m_nodeHighlightConfig, highlight, coordinateSystem);
-    else if (m_highlightNodeList) {
+
+        if (m_nodeGridOverlayConfig) {
+            if (auto gridHighlightOverlay = buildGridOverlay({ *m_highlightNode, *m_nodeGridOverlayConfig }, offsetBoundsByScroll))
+                highlight.gridHighlightOverlays.append(*gridHighlightOverlay);
+        }
+
+        if (m_nodeFlexOverlayConfig) {
+            if (auto flexHighlightOverlay = buildFlexOverlay({ *m_highlightNode, *m_nodeFlexOverlayConfig }))
+                highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
+        }
+    } else if (m_highlightNodeList) {
         highlight.setDataFromConfig(m_nodeHighlightConfig);
         for (unsigned i = 0; i < m_highlightNodeList->length(); ++i) {
+            auto* node = m_highlightNodeList->item(i);
+
             InspectorOverlay::Highlight nodeHighlight;
-            buildNodeHighlight(*(m_highlightNodeList->item(i)), m_nodeHighlightConfig, nodeHighlight, coordinateSystem);
+            buildNodeHighlight(*node, m_nodeHighlightConfig, nodeHighlight, coordinateSystem);
             if (nodeHighlight.type == InspectorOverlay::Highlight::Type::Node)
                 highlight.quads.appendVector(nodeHighlight.quads);
+
+            if (m_nodeGridOverlayConfig) {
+                if (auto gridHighlightOverlay = buildGridOverlay({ *node, *m_nodeGridOverlayConfig }, offsetBoundsByScroll))
+                    highlight.gridHighlightOverlays.append(*gridHighlightOverlay);
+            }
+
+            if (m_nodeFlexOverlayConfig) {
+                if (auto flexHighlightOverlay = buildFlexOverlay({ *node, *m_nodeFlexOverlayConfig }))
+                    highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
+            }
         }
         highlight.type = InspectorOverlay::Highlight::Type::NodeList;
     } else if (m_highlightQuad) {
@@ -486,31 +537,27 @@ void InspectorOverlay::getHighlight(InspectorOverlay::Highlight& highlight, Insp
         buildQuadHighlight(*m_highlightQuad, m_quadHighlightConfig, highlight);
     }
 
-    constexpr bool offsetBoundsByScroll = true;
-
     for (const InspectorOverlay::Grid& gridOverlay : m_activeGridOverlays) {
-        if (m_highlightGridOverlay && gridOverlay.gridNode == m_highlightGridOverlay->gridNode)
-            continue;
+        if (m_nodeGridOverlayConfig && gridOverlay.gridNode) {
+            if (m_highlightNodeList && isInNodeList(*gridOverlay.gridNode, *m_highlightNodeList))
+                continue;
+            if (gridOverlay.gridNode == m_highlightNode.get())
+                continue;
+        }
 
         if (auto gridHighlightOverlay = buildGridOverlay(gridOverlay, offsetBoundsByScroll))
             highlight.gridHighlightOverlays.append(*gridHighlightOverlay);
     }
 
-    if (m_highlightGridOverlay) {
-        if (auto gridHighlightOverlay = buildGridOverlay(*m_highlightGridOverlay, offsetBoundsByScroll))
-            highlight.gridHighlightOverlays.append(*gridHighlightOverlay);
-    }
-
     for (const InspectorOverlay::Flex& flexOverlay : m_activeFlexOverlays) {
-        if (m_highlightFlexOverlay && flexOverlay.flexNode == m_highlightFlexOverlay->flexNode)
-            continue;
+        if (m_nodeFlexOverlayConfig && flexOverlay.flexNode) {
+            if (m_highlightNodeList && isInNodeList(*flexOverlay.flexNode, *m_highlightNodeList))
+                continue;
+            if (flexOverlay.flexNode == m_highlightNode.get())
+                continue;
+        }
 
         if (auto flexHighlightOverlay = buildFlexOverlay(flexOverlay))
-            highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
-    }
-
-    if (m_highlightFlexOverlay) {
-        if (auto flexHighlightOverlay = buildFlexOverlay(*m_highlightFlexOverlay))
             highlight.flexHighlightOverlays.append(*flexHighlightOverlay);
     }
 }
@@ -519,23 +566,33 @@ void InspectorOverlay::hideHighlight()
 {
     m_highlightNode = nullptr;
     m_highlightNodeList = nullptr;
+    m_nodeHighlightConfig = { };
+    m_nodeGridOverlayConfig = std::nullopt;
+    m_nodeFlexOverlayConfig = std::nullopt;
+
     m_highlightQuad = nullptr;
+    m_quadHighlightConfig = { };
+
     update();
 }
 
-void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const InspectorOverlay::Highlight::Config& highlightConfig)
+void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const InspectorOverlay::Highlight::Config& highlightConfig, const std::optional<Grid::Config>& gridOverlayConfig, const std::optional<Flex::Config>& flexOverlayConfig)
 {
-    m_nodeHighlightConfig = highlightConfig;
-    m_highlightNodeList = WTFMove(nodes);
     m_highlightNode = nullptr;
+    m_highlightNodeList = WTFMove(nodes);
+    m_nodeHighlightConfig = highlightConfig;
+    m_nodeGridOverlayConfig = gridOverlayConfig;
+    m_nodeFlexOverlayConfig = flexOverlayConfig;
     update();
 }
 
-void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlight::Config& highlightConfig)
+void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlight::Config& highlightConfig, const std::optional<Grid::Config>& gridOverlayConfig, const std::optional<Flex::Config>& flexOverlayConfig)
 {
-    m_nodeHighlightConfig = highlightConfig;
     m_highlightNode = node;
     m_highlightNodeList = nullptr;
+    m_nodeHighlightConfig = highlightConfig;
+    m_nodeGridOverlayConfig = gridOverlayConfig;
+    m_nodeFlexOverlayConfig = flexOverlayConfig;
     update();
 }
 
@@ -576,9 +633,7 @@ bool InspectorOverlay::shouldShowOverlay() const
     return m_highlightNode
         || m_highlightNodeList
         || m_highlightQuad
-        || m_highlightGridOverlay
         || m_activeGridOverlays.size()
-        || m_highlightFlexOverlay
         || m_activeFlexOverlays.size()
         || m_indicating
         || m_showPaintRects
@@ -650,23 +705,6 @@ bool InspectorOverlay::removeGridOverlayForNode(Node& node)
     });
 }
 
-void InspectorOverlay::showHighlightGridOverlayForNode(Node& node, const InspectorOverlay::Grid::Config& gridOverlayConfig)
-{
-    if (!is<RenderGrid>(node.renderer())) {
-        hideHighlightGridOverlay();
-        return;
-    }
-
-    m_highlightGridOverlay = { node, gridOverlayConfig };
-    update();
-}
-
-void InspectorOverlay::hideHighlightGridOverlay()
-{
-    m_highlightGridOverlay = std::nullopt;
-    update();
-}
-
 ErrorStringOr<void> InspectorOverlay::setGridOverlayForNode(Node& node, const InspectorOverlay::Grid::Config& gridOverlayConfig)
 {
     RenderObject* renderer = node.renderer();
@@ -705,23 +743,6 @@ bool InspectorOverlay::removeFlexOverlayForNode(Node& node)
     return m_activeFlexOverlays.removeAllMatching([&] (const InspectorOverlay::Flex& flexOverlay) {
         return !flexOverlay.flexNode || flexOverlay.flexNode.get() == &node;
     });
-}
-
-void InspectorOverlay::showHighlightFlexOverlayForNode(Node& node, const InspectorOverlay::Flex::Config& flexOverlayConfig)
-{
-    if (!is<RenderFlexibleBox>(node.renderer())) {
-        hideHighlightFlexOverlay();
-        return;
-    }
-
-    m_highlightFlexOverlay = { node, flexOverlayConfig };
-    update();
-}
-
-void InspectorOverlay::hideHighlightFlexOverlay()
-{
-    m_highlightFlexOverlay = std::nullopt;
-    update();
 }
 
 ErrorStringOr<void> InspectorOverlay::setFlexOverlayForNode(Node& node, const InspectorOverlay::Flex::Config& flexOverlayConfig)

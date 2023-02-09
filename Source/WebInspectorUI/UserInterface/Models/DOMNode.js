@@ -633,7 +633,10 @@ WI.DOMNode = class DOMNode extends WI.Object
         }
 
         let target = WI.assumingMainTarget();
-        target.DOMAgent.highlightNode(WI.DOMManager.buildHighlightConfig(mode), this.id);
+        target.DOMAgent.highlightNode.invoke({
+            nodeId: this.id,
+            ...WI.DOMManager.buildHighlightConfigs(mode),
+        });
     }
 
     showLayoutOverlay({color} = {})

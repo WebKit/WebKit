@@ -494,18 +494,22 @@
             "description": "Highlights all DOM nodes that match a given selector. A string containing a CSS selector must be specified.",
             "targetTypes": ["page"],
             "parameters": [
-                { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "selectorString", "type": "string", "description": "A CSS selector for finding matching nodes to highlight." },
-                { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector.  If not provided, the main frame will be used." }
+                { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector.  If not provided, the main frame will be used." },
+                { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
+                { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "optional": true, "description": "If provided, used to configure a grid overlay shown during element selection. This overrides DOM.showGridOverlay." },
+                { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "optional": true, "description": "If provided, used to configure a flex overlay shown during element selection. This overrides DOM.showFlexOverlay." }
             ]
         },
         {
             "name": "highlightNode",
             "description": "Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.",
             "parameters": [
-                { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "Identifier of the node to highlight." },
-                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "optional": true, "description": "JavaScript object id of the node to be highlighted." }
+                { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "optional": true, "description": "JavaScript object id of the node to be highlighted." },
+                { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
+                { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "optional": true, "description": "If provided, used to configure a grid overlay shown during element selection. This overrides DOM.showGridOverlay." },
+                { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "optional": true, "description": "If provided, used to configure a flex overlay shown during element selection. This overrides DOM.showFlexOverlay." }
             ]
         },
         {
@@ -513,7 +517,9 @@
             "description": "Highlights each DOM node in the given list.",
             "parameters": [
                 { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" } },
-                { "name": "highlightConfig", "$ref": "HighlightConfig" }
+                { "name": "highlightConfig", "$ref": "HighlightConfig" },
+                { "name": "gridOverlayConfig", "$ref": "GridOverlayConfig", "optional": true, "description": "If provided, used to configure a grid overlay shown during element selection. This overrides DOM.showGridOverlay." },
+                { "name": "flexOverlayConfig", "$ref": "FlexOverlayConfig", "optional": true, "description": "If provided, used to configure a flex overlay shown during element selection. This overrides DOM.showFlexOverlay." }
             ]
         },
         {
