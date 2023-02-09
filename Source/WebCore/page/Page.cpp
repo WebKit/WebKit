@@ -2780,6 +2780,16 @@ void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animat
     m_currentKeyboardScrollingAnimator = animator;
 }
 
+bool Page::isLoadingInHeadlessMode() const
+{
+    RefPtr document = mainFrame().document();
+    if (!document)
+        return false;
+
+    RefPtr loader = document->loader();
+    return loader && loader->isLoadingInHeadlessMode();
+}
+
 #if ENABLE(REMOTE_INSPECTOR)
 
 bool Page::inspectable() const

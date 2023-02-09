@@ -340,6 +340,7 @@ public:
     void setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
     KeyboardScrollingAnimator* currentKeyboardScrollingAnimator() const { return m_currentKeyboardScrollingAnimator.get(); }
 
+    bool isLoadingInHeadlessMode() const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool inspectable() const;
