@@ -44,6 +44,7 @@ namespace WebKit {
 
 namespace WebGPU {
 class ObjectHeap;
+struct CanvasConfiguration;
 }
 
 class RemotePresentationContext final : public IPC::StreamMessageReceiver {

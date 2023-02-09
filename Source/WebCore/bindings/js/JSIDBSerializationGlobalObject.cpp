@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSIDBSerializationGlobalObject.h"
 
+#include "JSDOMGlobalObjectInlines.h"
 #include "WebCoreJSClientData.h"
 
 namespace WebCore {

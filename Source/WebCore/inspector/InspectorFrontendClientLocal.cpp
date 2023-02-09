@@ -55,6 +55,7 @@
 #include <JavaScriptCore/FrameTracers.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <wtf/Deque.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
