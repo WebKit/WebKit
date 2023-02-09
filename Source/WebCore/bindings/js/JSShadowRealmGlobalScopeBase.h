@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapper.h"
 
 namespace WebCore {

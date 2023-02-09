@@ -1,0 +1,73 @@
+This tests invalidation of :lang selectors when the document element's lang attribute changes and a descendant element is using the 'explicit language matching document element language' optimization
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is ""
+PASS matchedLang(child) is ""
+----
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "en"
+PASS matchedLang(child) is "en"
+----
+PASS matchedLang(container) is "en"
+----
+PASS matchedLang(container) is ""
+----
+PASS matchedLang(container) is "de"
+PASS matchedLang(child) is "de"
+----
+PASS matchedLang(container) is "zh"
+PASS matchedLang(child) is "zh"
+----
+PASS matchedLang(container) is "de"
+----
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

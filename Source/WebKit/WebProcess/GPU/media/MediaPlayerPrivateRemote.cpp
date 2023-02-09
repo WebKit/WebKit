@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MediaPlayerPrivateRemote.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Logging.h"
 #include "RemoteAudioSourceProvider.h"
@@ -1492,4 +1492,4 @@ WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include <wtf/ObjectIdentifier.h>
 
@@ -36,4 +36,4 @@ using RemoteMediaResourceIdentifier = ObjectIdentifier<RemoteMediaResourceIdenti
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

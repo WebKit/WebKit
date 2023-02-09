@@ -48,4 +48,4 @@ struct RemoteMediaPlayerConfiguration {
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS)

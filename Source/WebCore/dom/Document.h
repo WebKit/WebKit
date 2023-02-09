@@ -228,7 +228,6 @@ class WakeLockManager;
 class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
-class WhitespaceCache;
 class WindowEventLoop;
 class WindowProxy;
 class XPathEvaluator;
@@ -492,6 +491,9 @@ public:
     void setDocumentElementLanguage(const AtomString&);
     TextDirection documentElementTextDirection() const { return m_documentElementTextDirection; }
     void setDocumentElementTextDirection(TextDirection textDirection) { m_documentElementTextDirection = textDirection; }
+
+    void addElementWithLangAttrMatchingDocumentElement(Element&);
+    void removeElementWithLangAttrMatchingDocumentElement(Element&);
 
     String xmlEncoding() const { return m_xmlEncoding; }
     String xmlVersion() const { return m_xmlVersion; }
@@ -1600,8 +1602,6 @@ public:
 
     HTMLDialogElement* activeModalDialog() const;
 
-    WhitespaceCache& whitespaceCache() { return m_whitespaceCache; }
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const HTMLImageElement&);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
@@ -1981,6 +1981,8 @@ private:
     AtomString m_contentLanguage;
     AtomString m_documentElementLanguage;
 
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithLangAttrMatchingDocumentElement;
+
     RefPtr<TextResourceDecoder> m_decoder;
 
     HashSet<LiveNodeList*> m_listsInvalidatedAtDocument;
@@ -2173,7 +2175,6 @@ private:
     Ref<UndoManager> m_undoManager;
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
-    UniqueRef<WhitespaceCache> m_whitespaceCache;
         
     String m_fragmentDirective;
 

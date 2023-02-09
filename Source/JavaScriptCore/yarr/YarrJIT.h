@@ -194,6 +194,8 @@ public:
 
     bool isAllSet() const { return m_count == mapSize; }
 
+    void dump(PrintStream&) const;
+
 private:
     Map m_map { };
     BoyerMooreFastCandidates m_charactersFastPath;

@@ -516,8 +516,10 @@ public:
 #endif
     virtual bool isTextRecognitionInFullscreenVideoEnabled() const { return false; }
 
+#if ENABLE(VIDEO)
     virtual void beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle&, WebCore::FloatRect) { }
     virtual void cancelTextRecognitionForVideoInElementFullscreen() { }
+#endif
 
     // Auxiliary Client Creation
 #if ENABLE(FULLSCREEN_API)

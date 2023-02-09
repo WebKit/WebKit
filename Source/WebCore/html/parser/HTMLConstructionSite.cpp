@@ -264,7 +264,6 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserC
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(document.inQuirksMode())
-    , m_whitespaceCache(document.whitespaceCache())
 {
     ASSERT(m_document.isHTMLDocument() || m_document.isXHTMLDocument());
 }
@@ -277,7 +276,6 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(fragment.document().inQuirksMode())
-    , m_whitespaceCache(fragment.document().whitespaceCache())
 {
     ASSERT(m_document.isHTMLDocument() || m_document.isXHTMLDocument());
 }
@@ -660,7 +658,7 @@ static ALWAYS_INLINE unsigned findBreakIndex(const String& string, unsigned curr
     return findBreakIndexSlow(string, currentPosition, proposedBreakIndex);
 }
 
-void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMode whitespaceMode)
+void HTMLConstructionSite::insertTextNode(const String& characters)
 {
     HTMLConstructionSiteTask task(HTMLConstructionSiteTask::Insert);
     task.parent = &currentNode();
@@ -693,8 +691,7 @@ void HTMLConstructionSite::insertTextNode(const String& characters, WhitespaceMo
 
         unsigned substringLength = breakIndex - currentPosition;
         auto substring = characters.substring(currentPosition, substringLength);
-        AtomString substringAtom = m_whitespaceCache.lookup(substring, whitespaceMode);
-        auto textNode = Text::create(task.parent->document(), substringAtom.isNull() ? WTFMove(substring) : substringAtom.releaseString());
+        auto textNode = Text::create(task.parent->document(), WTFMove(substring));
 
         currentPosition += textNode->length();
         ASSERT(currentPosition <= characters.length());
@@ -930,98 +927,4 @@ void HTMLConstructionSite::fosterParent(Ref<Node>&& node)
     m_taskQueue.append(WTFMove(task));
 }
 
-// Compute a 64 bit code that represents a whitespace-only string's contents.
-//
-// The code format is a sequence of four pairs of an 8 bit whitespace character
-// and an 8 bit count of that character. For example, 0x0A_02_20_08 represents
-// two newlines followed by eight space characters.
-//
-// Returns 0 if any non-whitespace characters are found.
-//
-// Returns -1 if the code would overflow due to finding more than four
-// whitespace character runs.
-template<WhitespaceMode whitespaceMode>
-uint64_t WhitespaceCache::codeForString(const String& string)
-{
-    ASSERT(whitespaceMode != NotAllWhitespace);
-    ASSERT(string.is8Bit());
-    ASSERT(!string.isEmpty());
-    ASSERT(string.length() <= maximumCachedStringLength);
-    static_assert(maximumCachedStringLength <= 0xFF, "Code format requires whitespace run length fit in one byte");
-
-    auto startOfRun = string.characters8();
-
-    if constexpr (whitespaceMode == WhitespaceUnknown) {
-        if (!isHTMLSpace(*startOfRun))
-            return 0;
-    }
-
-    LChar currentWhitespaceCharacter = *startOfRun;
-    auto character = startOfRun + 1;
-    auto end = startOfRun + string.length();
-
-    uint64_t code = 0;
-    int runsRemaining = 4;
-
-    for (;;) {
-        while (character != end && *character == currentWhitespaceCharacter)
-            ++character;
-
-        if constexpr (whitespaceMode == WhitespaceUnknown) {
-            if (character != end && !isHTMLSpace(*character))
-                return 0;
-        }
-
-        code <<= 16;
-        code |= (currentWhitespaceCharacter << 8);
-        code |= (character - startOfRun);
-
-        if (character == end)
-            return code;
-
-        if (!--runsRemaining)
-            return overflowWhitespaceCode;
-
-        startOfRun = character;
-        currentWhitespaceCharacter = *character;
-        ++character;
-
-        ASSERT(isHTMLSpace(currentWhitespaceCharacter));
-    }
-
-    return code;
-}
-
-AtomString WhitespaceCache::lookup(const String& string, WhitespaceMode whitespaceMode)
-{
-    if (whitespaceMode == NotAllWhitespace || !string.is8Bit() || string.isEmpty())
-        return AtomString();
-
-    size_t length = string.length();
-    if (length > maximumCachedStringLength)
-        return whitespaceMode == AllWhitespace || isAllWhitespace(string) ? AtomString(string) : AtomString();
-
-    uint64_t code;
-    if (whitespaceMode == AllWhitespace) {
-        code = codeForString<AllWhitespace>(string);
-        ASSERT(code);
-    } else {
-        code = codeForString<WhitespaceUnknown>(string);
-        if (!code)
-            return AtomString();
-    }
-
-    auto& existingAtom = m_atoms[length - 1];
-    if (existingAtom.code == code) {
-        ASSERT(existingAtom.string == string);
-        return existingAtom.string;
-    }
-
-    if (code == overflowWhitespaceCode)
-        return AtomString(string);
-
-    existingAtom = { AtomString { string }, code };
-    return existingAtom.string;
-}
-
-}
+} // namespace WebCore

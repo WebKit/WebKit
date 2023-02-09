@@ -667,8 +667,18 @@ protected:
                 switch (patch->resultConstraints[i].kind()) {
                 case B3::ValueRep::StackArgument: {
                     Arg arg = Arg::callArg(patch->resultConstraints[i].offsetFromSP());
+                    B3::Air::Opcode opcode = moveForType(m_proc.typeAtOffset(patch->type(), i));
+                    Width width = widthForBytes(sizeofType(m_proc.typeAtOffset(patch->type(), i)));
+                    if (arg.isValidForm(opcode, width))
+                        resultMovs.append(Inst(opcode, nullptr, arg, toTmp(results[i])));
+                    else {
+                        auto immTmp = self().gPtr();
+                        auto newPtr = self().gPtr();
+                        resultMovs.append(Inst(Move, nullptr, Arg::bigImm(arg.offset()), immTmp));
+                        resultMovs.append(Inst(Derived::AddPtr, nullptr, Tmp(MacroAssembler::stackPointerRegister), immTmp, newPtr));
+                        resultMovs.append(Inst(opcode, nullptr, Arg::addr(newPtr), toTmp(results[i])));
+                    }
                     inst.args.append(arg);
-                    resultMovs.append(Inst(B3::Air::moveForType(m_proc.typeAtOffset(patch->type(), i)), nullptr, arg, toTmp(results[i])));
                     break;
                 }
                 case B3::ValueRep::Register: {
@@ -710,11 +720,11 @@ protected:
             case B3::ValueRep::StackArgument: {
                 Arg arg = Arg::callArg(tmp.rep.offsetFromSP());
                 B3::Air::Opcode opcode = moveForType(toB3Type(tmp.tmp.type()));
-                if (arg.isValidForm(opcode, pointerWidth()))
+                if (arg.isValidForm(opcode, tmp.tmp.type().width()))
                     append(basicBlock, opcode, tmp.tmp, arg);
                 else {
-                    typename Derived::ExpressionType immTmp = self().gPtr();
-                    typename Derived::ExpressionType newPtr = self().gPtr();
+                    auto immTmp = self().gPtr();
+                    auto newPtr = self().gPtr();
                     append(basicBlock, Move, Arg::bigImm(arg.offset()), immTmp);
                     append(basicBlock, Derived::AddPtr, Tmp(MacroAssembler::stackPointerRegister), immTmp, newPtr);
                     append(basicBlock, opcode, tmp.tmp, Arg::addr(newPtr));

@@ -3737,17 +3737,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #endif
 }
 
-- (NSArray<NSString *> *)_corsDisablingPatterns
-{
-    return createNSArray(_page->corsDisablingPatterns()).autorelease();
-}
-
-- (void)_setCORSDisablingPatterns:(NSArray<NSString *> *)patterns
-{
-    THROW_IF_SUSPENDED;
-    _page->setCORSDisablingPatterns(makeVector<String>(patterns));
-}
-
 - (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler
 {
     THROW_IF_SUSPENDED;

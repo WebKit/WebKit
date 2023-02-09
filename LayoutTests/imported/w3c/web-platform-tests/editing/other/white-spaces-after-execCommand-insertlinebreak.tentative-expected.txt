@@ -1,0 +1,15 @@
+a         
+b
+
+PASS execCommand("insertlinebreak", false, "") at "[]a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;b"
+PASS execCommand("insertlinebreak", false, "") at "a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[]b"
+

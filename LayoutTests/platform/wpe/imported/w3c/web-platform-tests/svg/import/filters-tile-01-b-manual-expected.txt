@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (190,19) size 420x466
       RenderSVGText {text} at (140,11) size 200x18 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 200x17
-          chunk 1 (middle anchor) text run 1 at (140.40,25.00) startOffset 0 endOffset 35 width 199.20: "feTile filter test: a tiled pattern"
+        RenderSVGInlineText {#text} at (0,0) size 199x17
+          chunk 1 (middle anchor) text run 1 at (140.68,25.00) startOffset 0 endOffset 35 width 198.64: "feTile filter test: a tiled pattern"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceFilter {filter} [id="feTileFilter"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
           [feTile]

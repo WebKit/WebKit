@@ -11767,6 +11767,7 @@ void WebPageProxy::decidePolicyForModalContainer(OptionSet<ModalContainerControl
     m_uiClient->decidePolicyForModalContainer(types, WTFMove(completion));
 }
 
+#if ENABLE(VIDEO)
 void WebPageProxy::beginTextRecognitionForVideoInElementFullScreen(MediaPlayerIdentifier identifier, FloatRect bounds)
 {
     if (!pageClient().isTextRecognitionInFullscreenVideoEnabled())
@@ -11800,6 +11801,7 @@ void WebPageProxy::cancelTextRecognitionForVideoInElementFullScreen()
     m_isPerformingTextRecognitionInElementFullScreen = false;
     pageClient().cancelTextRecognitionForVideoInElementFullscreen();
 }
+#endif
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 

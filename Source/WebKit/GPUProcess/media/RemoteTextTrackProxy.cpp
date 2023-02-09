@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RemoteTextTrackProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Connection.h"
 #include "DataReference.h"
@@ -193,4 +193,4 @@ void RemoteTextTrackProxy::parseWebVTTCueData(ISOWebVTTCue&& cueData)
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

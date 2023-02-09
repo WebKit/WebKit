@@ -1984,14 +1984,25 @@ auto AirIRGenerator64::addReturn(const ControlData& data, const Stack& returnVal
         TypedTmp tmp = returnValues[offset + i];
 
         if (rep.isStack()) {
-            append(moveForType(toB3Type(tmp.type())), tmp, Arg::addr(Tmp(GPRInfo::callFrameRegister), rep.offsetFromFP()));
+            Arg arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), rep.offsetFromFP());
+            B3::Air::Opcode opcode = moveForType(toB3Type(tmp.type()));
+            Width width = tmp.type().width();
+            if (arg.isValidForm(opcode, width))
+                append(opcode, tmp, arg);
+            else {
+                auto immTmp = self().gPtr();
+                auto newPtr = self().gPtr();
+                append(Move, Arg::bigImm(arg.offset()), immTmp);
+                append(AddPtr, Tmp(GPRInfo::callFrameRegister), immTmp, newPtr);
+                append(opcode, tmp, Arg::addr(newPtr));
+            }
             continue;
         }
 
         ASSERT(rep.isReg());
         if (data.signature()->as<FunctionSignature>()->returnType(i).isI32())
             append(Move32, tmp, tmp);
-        returnConstraints.append(ConstrainedTmp(tmp, wasmCallInfo.results[i].location));
+        returnConstraints.append(ConstrainedTmp(tmp, rep));
     }
 
     emitPatchpoint(m_currentBlock, patch, ResultList { }, WTFMove(returnConstraints));

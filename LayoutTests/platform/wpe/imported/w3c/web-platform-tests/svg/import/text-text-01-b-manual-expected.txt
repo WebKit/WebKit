@@ -198,8 +198,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (76,38) size 49x8 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 49x7
               chunk 1 text run 1 at (76.00,44.00) startOffset 0 endOffset 17 width 48.20: "lengthAdjust: sAG"
-    RenderSVGContainer {g} at (50,548) size 286x46
-      RenderSVGText {text} at (10,109) size 58x10 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 58x9
+    RenderSVGContainer {g} at (50,548) size 285x46
+      RenderSVGText {text} at (10,109) size 57x10 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 57x9
           chunk 1 text run 1 at (10.00,117.00) startOffset 0 endOffset 16 width 57.00: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (2,2) size 796x596 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=158.00] [height=118.00]

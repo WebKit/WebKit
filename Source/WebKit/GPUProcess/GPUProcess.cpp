@@ -558,6 +558,7 @@ void GPUProcess::processIsStartingToCaptureAudio(GPUConnectionToWebProcess& proc
 }
 #endif
 
+#if ENABLE(VIDEO)
 void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&& completion)
 {
     auto iterator = m_webProcessConnections.find(processIdentifier);
@@ -568,6 +569,7 @@ void GPUProcess::requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier pro
 
     completion(iterator->value->remoteMediaPlayerManagerProxy().bitmapImageForCurrentTime(playerIdentifier));
 }
+#endif
 
 } // namespace WebKit
 

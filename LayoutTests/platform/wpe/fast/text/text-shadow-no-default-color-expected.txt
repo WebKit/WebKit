@@ -1,11 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x567
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 357x17
-          text run at (0,0) width 357: "Test passes if there are two green rectangles on the page."
-      RenderBlock {DIV} at (25,43) size 734x30 [color=#008000]
-        RenderText {#text} at (0,0) size 300x30
-          text run at (0,0) width 300: "FillerText"
+layer at (0,0) size 800x169
+  RenderBlock {html} at (0,0) size 800x169
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 324x21
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 588x14
+          text run at (0,0) width 588: "error on line 19 at column 12: Opening and ending tag mismatch: meta line 8 and head"
+          text run at (587,0) width 1: " "
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 427x21
+          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."

@@ -1268,6 +1268,8 @@ auto SectionParser::parseException() -> PartialResult
         WASM_PARSER_FAIL_IF(!parseVarUInt32(typeNumber), "can't get ", exceptionNumber, "th Exception's type number");
         WASM_PARSER_FAIL_IF(typeNumber >= m_info->typeCount(), exceptionNumber, "th Exception type number is invalid ", typeNumber);
         TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[typeNumber]);
+        auto signature = TypeInformation::getFunctionSignature(typeIndex);
+        WASM_PARSER_FAIL_IF(!signature.returnsVoid(), exceptionNumber, "th Exception type cannot have a non-void return type ", typeNumber);
         m_info->internalExceptionTypeIndices.uncheckedAppend(typeIndex);
     }
 

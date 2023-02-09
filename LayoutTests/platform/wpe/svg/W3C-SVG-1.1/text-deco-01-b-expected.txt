@@ -2,17 +2,17 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (16,8) size 633x460
-      RenderSVGText {text} at (10,5) size 157x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 157x19
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 23 width 156.60: "Test 'text-decoration'."
-      RenderSVGContainer {g} at (40,71) size 609x397
+    RenderSVGContainer {g} at (16,8) size 632x460
+      RenderSVGText {text} at (10,5) size 155x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 155x19
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 23 width 154.80: "Test 'text-decoration'."
+      RenderSVGContainer {g} at (40,71) size 608x397
         RenderSVGText {text} at (25,43) size 122x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 122x27
             chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 11 width 121.80: "Normal text"
-        RenderSVGText {text} at (25,113) size 228x28 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 228x27
-            chunk 1 text run 1 at (25.00,135.00) startOffset 0 endOffset 22 width 227.40: "Text with line-through"
+        RenderSVGText {text} at (25,113) size 225x28 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 225x27
+            chunk 1 text run 1 at (25.00,135.00) startOffset 0 endOffset 22 width 224.74: "Text with line-through"
         RenderSVGText {text} at (25,183) size 161x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 161x27
             chunk 1 text run 1 at (25.00,205.00) startOffset 0 endOffset 15 width 160.20: "Underlined text"
@@ -34,12 +34,12 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (173.20,275.00) startOffset 0 endOffset 1 width 6.60: " "
           RenderSVGTSpan {tspan} at (0,0) size 87x27
             RenderSVGInlineText {#text} at (154,0) size 86x27
-              chunk 1 text run 1 at (179.80,275.00) startOffset 0 endOffset 9 width 85.80: "different"
+              chunk 1 text run 1 at (179.80,275.00) startOffset 0 endOffset 9 width 85.37: "different"
           RenderSVGInlineText {#text} at (240,0) size 7x27
-            chunk 1 text run 1 at (265.60,275.00) startOffset 0 endOffset 1 width 6.60: " "
-          RenderSVGTSpan {tspan} at (0,0) size 117x27
-            RenderSVGInlineText {#text} at (247,0) size 117x27
-              chunk 1 text run 1 at (272.20,275.00) startOffset 0 endOffset 11 width 116.40: "underlining"
+            chunk 1 text run 1 at (265.17,275.00) startOffset 0 endOffset 1 width 6.60: " "
+          RenderSVGTSpan {tspan} at (0,0) size 118x27
+            RenderSVGInlineText {#text} at (246,0) size 117x27
+              chunk 1 text run 1 at (271.77,275.00) startOffset 0 endOffset 11 width 116.40: "underlining"
           RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGText {text} at (10,304) size 269x45 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 269x45

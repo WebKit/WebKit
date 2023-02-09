@@ -28,6 +28,8 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "RemoteImageBuffer.h"
+
 namespace WebKit {
 using namespace WebCore;
 

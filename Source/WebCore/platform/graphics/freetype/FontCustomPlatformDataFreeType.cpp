@@ -59,6 +59,8 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FragmentedS
         reinterpret_cast<cairo_destroy_func_t>(reinterpret_cast<void(*)(void)>(FT_Done_Face)));
 }
 
+FontCustomPlatformData::~FontCustomPlatformData() = default;
+
 static RefPtr<FcPattern> defaultFontconfigOptions()
 {
     // Get some generic default settings from fontconfig for web fonts. Strategy

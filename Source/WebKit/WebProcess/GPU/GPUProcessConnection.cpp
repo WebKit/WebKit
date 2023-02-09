@@ -214,12 +214,12 @@ RemoteVideoFrameObjectHeapProxy& GPUProcessConnection::videoFrameObjectHeapProxy
         m_videoFrameObjectHeapProxy = RemoteVideoFrameObjectHeapProxy::create(*this);
     return *m_videoFrameObjectHeapProxy;
 }
-#endif
 
 RemoteMediaPlayerManager& GPUProcessConnection::mediaPlayerManager()
 {
     return *WebProcess::singleton().supplement<RemoteMediaPlayerManager>();
 }
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
 RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManager()
@@ -232,10 +232,12 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
 
 bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
+#if ENABLE(VIDEO)
     if (decoder.messageReceiverName() == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
         WebProcess::singleton().supplement<RemoteMediaPlayerManager>()->didReceivePlayerMessage(connection, decoder);
         return true;
     }
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (decoder.messageReceiverName() == Messages::UserMediaCaptureManager::messageReceiverName()) {
@@ -324,7 +326,9 @@ bool GPUProcessConnection::waitForDidInitialize()
 
 void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
+#endif
 }
 
 #if ENABLE(ROUTING_ARBITRATION)

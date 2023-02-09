@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "GPUConnectionToWebProcessMessages.h"
 #include "Logging.h"
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteRenderingBackendProxy.h"

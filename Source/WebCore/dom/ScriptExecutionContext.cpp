@@ -316,7 +316,7 @@ URL ScriptExecutionContext::currentSourceURL() const
         return { };
 
     URL sourceURL;
-    StackVisitor::visit(topCallFrame, vm, [&sourceURL](auto& visitor) {
+    JSC::StackVisitor::visit(topCallFrame, vm, [&sourceURL](auto& visitor) {
         if (visitor->isNativeFrame())
             return IterationStatus::Continue;
 

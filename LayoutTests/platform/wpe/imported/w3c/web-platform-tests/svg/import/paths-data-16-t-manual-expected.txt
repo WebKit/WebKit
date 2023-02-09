@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (16,46) size 681x334
-      RenderSVGText {text} at (10,28) size 292x15 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 292x15
-          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 51 width 291.60: "Test relative-ness of implicit lineto path commands"
+      RenderSVGText {text} at (10,28) size 291x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 291x15
+          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 51 width 290.14: "Test relative-ness of implicit lineto path commands"
       RenderSVGContainer {g} at (53,186) size 644x194
         RenderSVGPath {path} at (53,186) size 227x194 [stroke={[type=SOLID] [color=#FF0000] [stroke width=16.00] [line join=ROUND]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 100 120 L 160 220 L 40 220 Z"]
         RenderSVGPath {path} at (470,186) size 227x194 [stroke={[type=SOLID] [color=#FF0000] [stroke width=16.00] [line join=ROUND]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 350 120 L 410 220 L 290 220 Z"]

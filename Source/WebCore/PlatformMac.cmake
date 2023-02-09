@@ -345,7 +345,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/DisplayConfigurationMonitor.cpp
     platform/graphics/mac/FloatPointMac.mm
     platform/graphics/mac/FloatSizeMac.mm
-    platform/graphics/mac/FontCustomPlatformData.cpp
+    platform/graphics/mac/FontCustomPlatformDataMac.cpp
     platform/graphics/mac/GraphicsChecksMac.cpp
     platform/graphics/mac/IconMac.mm
     platform/graphics/mac/ImageMac.mm
@@ -688,7 +688,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/mac/ColorMac.h
     platform/graphics/mac/DisplayConfigurationMonitor.h
-    platform/graphics/mac/FontCustomPlatformData.h
     platform/graphics/mac/GraphicsChecksMac.h
     platform/graphics/mac/ScopedHighPerformanceGPURequest.h
     platform/graphics/mac/SwitchingGPUClient.h

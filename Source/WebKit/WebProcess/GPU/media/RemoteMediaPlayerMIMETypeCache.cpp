@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaPlayerMIMETypeCache.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "Logging.h"
 #include "RemoteMediaPlayerManager.h"
@@ -93,4 +93,4 @@ MediaPlayerEnums::SupportsType RemoteMediaPlayerMIMETypeCache::supportsTypeAndCo
 
 }
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RemoteAudioTrackProxy.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "AudioTrackPrivateRemoteConfiguration.h"
 #include "Connection.h"
@@ -113,4 +113,4 @@ void RemoteAudioTrackProxy::languageChanged(const AtomString&)
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS)
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

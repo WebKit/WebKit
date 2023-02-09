@@ -1,0 +1,11 @@
+foo
+
+PASS Waiting for load...
+PASS Try to apply style from void element child
+PASS Try to apply style by void element child
+PASS Try to apply style in void element child
+PASS Try to remove style from void element child
+PASS Try to remove style from end of void element child
+PASS Try to remove style by void element child
+PASS Try to remove style by start of void element child
+

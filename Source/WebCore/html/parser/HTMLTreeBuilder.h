@@ -111,7 +111,7 @@ private:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
     void insertPhoneNumberLink(const String&);
-    void linkifyPhoneNumbers(const String&, WhitespaceMode);
+    void linkifyPhoneNumbers(const String&);
 #endif
 
     void processToken(AtomHTMLToken&&);

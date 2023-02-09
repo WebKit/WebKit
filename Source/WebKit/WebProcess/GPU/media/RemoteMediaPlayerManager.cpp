@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RemoteMediaPlayerManager.h"
 
-#if ENABLE(GPU_PROCESS)
+#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "MediaPlayerPrivateRemote.h"
 #include "RemoteMediaPlayerConfiguration.h"
@@ -303,4 +303,4 @@ void RemoteMediaPlayerManager::gpuProcessConnectionDidClose(GPUProcessConnection
 
 } // namespace WebKit
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

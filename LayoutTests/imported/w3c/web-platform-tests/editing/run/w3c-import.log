@@ -1,0 +1,58 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/backcolor.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/bold.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/caret-navigation-after-removing-line-break.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/caret-navigation-around-line-break.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/caretnavigation.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/createlink.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/delete-list-items-in-table-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/delete.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/empty-editable-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/first-letter-crossing-engine-boundary-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/fontname.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/fontsize.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/forecolor.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/formatblock.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/forwarddelete.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/hilitecolor.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/indent.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/insert-list-items-in-table-cell.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/inserthorizontalrule.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/inserthtml.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/insertimage.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/insertlinebreak.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/insertorderedlist.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/insertparagraph.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/inserttext.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/insertunorderedlist.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/italic.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/justifycenter.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/justifyfull.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/justifyleft.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/justifyright.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/misc.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/multitest.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/outdent.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/removeformat.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/strikethrough.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/subscript.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/superscript.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/underline.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/undo-redo-after-mutation.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/undo-redo.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/run/unlink.html

@@ -37,6 +37,7 @@
 #include "SharedVideoFrame.h"
 #include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/GCGLSpan.h>
 #include <WebCore/GraphicsContextGL.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/HashMap.h>
@@ -44,7 +45,9 @@
 
 namespace WebKit {
 
+#if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeapProxy;
+#endif
 
 // Web process side implementation of GraphicsContextGL interface. The implementation
 // converts the interface to a sequence of IPC messages and sends the messages to
@@ -54,7 +57,11 @@ class RemoteGraphicsContextGLProxy
     : private IPC::Connection::Client
     , public WebCore::GraphicsContextGL {
 public:
+#if ENABLE(VIDEO)
     static RefPtr<RemoteGraphicsContextGLProxy> create(IPC::Connection&, const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendProxy&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+#else
+    static RefPtr<RemoteGraphicsContextGLProxy> create(IPC::Connection&, const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendProxy&);
+#endif
     ~RemoteGraphicsContextGLProxy();
 
     // IPC::Connection::Client overrides.
@@ -348,7 +355,11 @@ public:
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
 protected:
+#if ENABLE(VIDEO)
     RemoteGraphicsContextGLProxy(IPC::Connection&, SerialFunctionDispatcher&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+#else
+    RemoteGraphicsContextGLProxy(IPC::Connection&, SerialFunctionDispatcher&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
+#endif
 
     bool isContextLost() const { return !m_connection; }
     void markContextLost();
@@ -388,7 +399,9 @@ private:
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
+#if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#endif
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

@@ -8,9 +8,9 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 286x27
           chunk 1 text run 1 at (100.00,40.00) startOffset 0 endOffset 26 width 285.60: "Mouse event handlers test."
       RenderSVGContainer {g} at (33,102) size 712x183 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,140.00)}]
-        RenderSVGText {text} at (-40,-79) size 92x36 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 92x36
-            chunk 1 text run 1 at (-40.00,-50.00) startOffset 0 endOffset 6 width 91.20: "Target"
+        RenderSVGText {text} at (-40,-79) size 88x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 88x36
+            chunk 1 text run 1 at (-40.00,-50.00) startOffset 0 endOffset 6 width 87.68: "Target"
         RenderSVGText {text} at (60,-15) size 327x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 327x27
             chunk 1 text run 1 at (60.00,7.00) startOffset 0 endOffset 32 width 326.40: "Use the target to trigger events"

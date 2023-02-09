@@ -2,17 +2,17 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (33,31) size 661x431
+    RenderSVGContainer {g} at (33,31) size 660x431
       RenderSVGText {text} at (100,18) size 258x28 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 258x27
           chunk 1 text run 1 at (100.00,40.00) startOffset 0 endOffset 26 width 257.40: "Mouse event handlers test."
-      RenderSVGContainer {g} at (33,102) size 661x183 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,140.00)}]
-        RenderSVGText {text} at (-40,-79) size 84x36 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 84x36
-            chunk 1 text run 1 at (-40.00,-50.00) startOffset 0 endOffset 6 width 84.00: "Target"
+      RenderSVGContainer {g} at (33,102) size 660x183 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,140.00)}]
+        RenderSVGText {text} at (-40,-79) size 82x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 82x36
+            chunk 1 text run 1 at (-40.00,-50.00) startOffset 0 endOffset 6 width 81.21: "Target"
         RenderSVGText {text} at (60,-15) size 296x28 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 296x27
-            chunk 1 text run 1 at (60.00,7.00) startOffset 0 endOffset 32 width 295.80: "Use the target to trigger events"
+            chunk 1 text run 1 at (60.00,7.00) startOffset 0 endOffset 32 width 295.37: "Use the target to trigger events"
         RenderSVGContainer {g} at (49,182) size 102x103
           RenderSVGEllipse {circle} at (49,182) size 102x103 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=30.00]
           RenderSVGPath {line} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [x1=-30.00] [y1=0.00] [x2=30.00] [y2=0.00]

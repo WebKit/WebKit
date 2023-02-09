@@ -1,0 +1,73 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/body-should-not-deleted-even-if-empty.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/cefalse-boundaries-deletion.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/cloning-attributes-at-splitting-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-in-child-of-head.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-in-child-of-html.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-in-last-definition-list-item-when-parent-list-is-editing-host.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/delete-in-last-list-item-when-parent-list-is-editing-host.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/delete.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/design-mode-textarea-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/edit-in-textcontrol-immediately-after-hidden.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/editable-state-and-focus-in-shadow-dom-in-designMode.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/editing-around-select-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/editing-div-outside-body.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/editing-style-of-range-around-void-element-child.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/empty-elements-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/exec-command-never-throw-exceptions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/exec-command-with-text-editor.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/exec-command-without-editable-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/extra-text-nodes.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/formatblock-preserving-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/indent-preserving-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insert-list-preserving-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insert-paragraph-in-void-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insert-text-in-void-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insertlinebreak-with-white-space-style.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-head.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insertparagraph-in-child-of-html.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insertparagraph-in-inline-editing-host.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insertparagraph-in-non-splittable-element.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/insertparagraph-with-white-space-style.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/join-different-white-space-style-left-line-and-right-paragraph.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/join-different-white-space-style-left-paragraph-and-right-line.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/join-different-white-space-style-paragraphs.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/join-pre-and-other-block.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/justify-preserving-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/keeping-attributes-at-joining-elements.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/legacy-edit-command.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/link-boundaries-insertion.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/move-inserted-node-from-DOMNodeInserted-during-exec-command-insertHTML.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/non-html-document.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/outdent-preserving-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/recursive-exec-command-calls.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/removing-inline-style-specified-by-parent-block.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/restoration.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/select-all-and-delete-in-html-element-having-contenteditable.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/selectall-in-editinghost.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/selectall-without-focus.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/setting-value-of-textcontrol-immediately-after-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/typing-around-link-element-after-joining-paragraphs.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/typing-around-link-element-at-collapsed-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/typing-around-link-element-at-non-collapsed-selection.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/undo-insertparagraph-after-moving-split-nodes.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/white-spaces-after-execCommand-delete.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/white-spaces-after-execCommand-forwarddelete.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/white-spaces-after-execCommand-insertlinebreak.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/white-spaces-after-execCommand-insertparagraph.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/editing/other/white-spaces-after-execCommand-inserttext.tentative.html

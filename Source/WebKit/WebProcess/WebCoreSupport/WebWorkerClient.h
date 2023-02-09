@@ -49,7 +49,11 @@ public:
     // worker thread of the outer worker, and then transferred to the
     // nested worker.
 #if ENABLE(GPU_PROCESS)
+#if ENABLE(VIDEO)
     WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+#else
+    WebWorkerClient(IPC::Connection&, SerialFunctionDispatcher&, RemoteRenderingBackendCreationParameters&, WebCore::PlatformDisplayID&);
+#endif
 #else
     WebWorkerClient(SerialFunctionDispatcher&, WebCore::PlatformDisplayID&);
 #endif
@@ -74,7 +78,9 @@ private:
     Ref<IPC::Connection> m_connection;
     mutable std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteRenderingBackendCreationParameters m_creationParameters;
+#if ENABLE(VIDEO)
     Ref<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#endif
 #endif
     WebCore::PlatformDisplayID m_displayID;
 };

@@ -949,7 +949,11 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
 {
 #if ENABLE(GPU_PROCESS)
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
-        return RemoteGraphicsContextGLProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), attributes, m_page.ensureRemoteRenderingBackendProxy(), WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
+        return RemoteGraphicsContextGLProxy::create(WebProcess::singleton().ensureGPUProcessConnection().connection(), attributes, m_page.ensureRemoteRenderingBackendProxy()
+#if ENABLE(VIDEO)
+            , WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy()
+#endif
+        );
 #endif
     return WebCore::createWebProcessGraphicsContextGL(attributes);
 }
