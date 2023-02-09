@@ -1594,7 +1594,7 @@ sub determinePortName()
     # Port was not selected via command line, use appropriate default value
 
     if (isAnyWindows()) {
-        $portName = AppleWin;
+        $portName = WinCairo;
     } elsif (isDarwin()) {
         determineXcodeSDKPlatformName();
         if (willUseIOSDeviceSDK() || willUseIOSSimulatorSDK()) {

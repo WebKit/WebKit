@@ -1,26 +1,8 @@
-if (${WTF_PLATFORM_WIN_CAIRO})
-    add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1 -DWEBKIT_EXPORTS=1)
-    list(APPEND WebKitLegacy_SOURCES_Classes
-        win/WebDownloadCURL.cpp
-        win/WebURLAuthenticationChallengeSenderCURL.cpp
-    )
-else ()
-    list(APPEND WebKitLegacy_SOURCES_Classes
-        win/WebDownloadCFNet.cpp
-        win/WebURLAuthenticationChallengeSenderCFNet.cpp
-    )
-    list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
-        Apple::CFNetwork
-        Apple::CoreGraphics
-        Apple::CoreText
-        Apple::QuartzCore
-        Apple::libdispatch
-        LibXml2::LibXml2
-        LibXslt::LibXslt
-        SQLite::SQLite3
-        ZLIB::ZLIB
-    )
-endif ()
+add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1 -DWEBKIT_EXPORTS=1)
+list(APPEND WebKitLegacy_SOURCES_Classes
+    win/WebDownloadCURL.cpp
+    win/WebURLAuthenticationChallengeSenderCURL.cpp
+)
 
 add_custom_command(
     OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitVersion.h
@@ -31,9 +13,6 @@ add_custom_command(
 list(APPEND WebKitLegacy_SOURCES ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitVersion.h)
 
 list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
-    "${CMAKE_BINARY_DIR}/../include/private"
-    "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
-    "${CMAKE_BINARY_DIR}/../include/private/WebCore"
     "${WEBKITLEGACY_DIR}/win"
     "${WEBKITLEGACY_DIR}/win/WebCoreSupport"
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/include"
@@ -367,18 +346,11 @@ function(GENERATE_INTERFACE _infile)
         USES_TERMINAL VERBATIM)
 endfunction()
 
-if (WTF_PLATFORM_WIN_CAIRO)
-    file(WRITE ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
-        "#define __BUILD_NUMBER_MAJOR__ 0\n"
-        "#define __BUILD_NUMBER_MINOR__ 0\n"
-        "#define __BUILD_NUMBER_SHORT__ \"\"\n")
-else ()
-    add_custom_command(
-        OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${WebKitLegacy_DERIVED_SOURCES_DIR}
-        VERBATIM)
-endif ()
+file(WRITE ${WebKitLegacy_DERIVED_SOURCES_DIR}/include/autoversion.h
+    "#define __BUILD_NUMBER_MAJOR__ 0\n"
+    "#define __BUILD_NUMBER_MINOR__ 0\n"
+    "#define __BUILD_NUMBER_SHORT__ \"\"\n"
+)
 
 GENERATE_INTERFACE(win/Interfaces/WebKit.idl)
 GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl)
@@ -411,7 +383,6 @@ add_library(WebKitLegacyGUID STATIC
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/AccessibleText_i.c"
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces/AccessibleText2_i.c"
 )
-set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
 
 list(APPEND WebKitLegacy_LIBRARIES WebKitLegacyGUID)
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
@@ -466,8 +437,4 @@ set(WebKitLegacy_PUBLIC_FRAMEWORK_HEADERS
     win/WebDataSource.h
     win/WebFrame.h
     win/WebKitCOMAPI.h
-)
-
-set(WebKitLegacy_OUTPUT_NAME
-    WebKit${DEBUG_SUFFIX}
 )

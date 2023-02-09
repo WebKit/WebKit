@@ -1,5 +1,3 @@
-include(WebKitCommon)
-
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit")
 
 set(WebKit_PRIVATE_INCLUDE_DIRECTORIES

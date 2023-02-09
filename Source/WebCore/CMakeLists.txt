@@ -1,12 +1,7 @@
-cmake_minimum_required(VERSION 3.16)
-
-include(WebKitCommon)
-include(target/TargetWTF)
-include(target/TargetJavaScriptCore)
-include(WebCoreMacros.cmake)
-include(Headers.cmake)
-
 set_property(DIRECTORY . PROPERTY FOLDER "WebCore")
+
+include(Headers.cmake)
+include(WebCoreMacros.cmake)
 
 add_subdirectory(PAL/pal)
 
@@ -2166,7 +2161,7 @@ set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/watchos-media-controls.css"
 )
 
-if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE" OR WTF_PLATFORM_WIN_CAIRO)
+if (PORT STREQUAL "GTK" OR PORT STREQUAL "WPE" OR PORT STREQUAL "Win")
     list(APPEND MODERN_MEDIA_CONTROLS_STYLE_SHEETS
         "${WEBCORE_DIR}/Modules/modern-media-controls/controls/adwaita-overrides.css"
     )
@@ -2690,10 +2685,4 @@ WEBKIT_LIBRARY(WebCoreTestSupport)
 if (${WebCore_LIBRARY_TYPE} MATCHES "SHARED")
     set_target_properties(WebCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
     install(TARGETS WebCore DESTINATION "${LIB_INSTALL_DIR}")
-endif ()
-
-if (MSVC)
-    set_target_properties(WebCore PROPERTIES
-        COMPILE_PDB_NAME ${WebCore_OUTPUT_NAME}
-    )
 endif ()
