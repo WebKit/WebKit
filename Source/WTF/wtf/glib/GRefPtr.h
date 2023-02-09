@@ -113,10 +113,6 @@ public:
 
     bool operator!() const { return !m_ptr; }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef T* GRefPtr::*UnspecifiedBoolType;
-    operator UnspecifiedBoolType() const { return m_ptr ? &GRefPtr::m_ptr : 0; }
-
     GRefPtr& operator=(const GRefPtr&);
     GRefPtr& operator=(GRefPtr&&);
     GRefPtr& operator=(T*);

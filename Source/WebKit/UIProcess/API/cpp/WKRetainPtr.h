@@ -106,10 +106,6 @@ public:
     PtrType operator->() const { return m_ptr; }
     bool operator!() const { return !m_ptr; }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef PtrType WKRetainPtr::*UnspecifiedBoolType;
-    operator UnspecifiedBoolType() const { return m_ptr ? &WKRetainPtr::m_ptr : 0; }
-
     WKRetainPtr& operator=(const WKRetainPtr&);
     template<typename U> WKRetainPtr& operator=(const WKRetainPtr<U>&);
     WKRetainPtr& operator=(PtrType);

@@ -53,10 +53,6 @@ public:
 
     bool operator!() const { return !m_object; }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef const void* UnspecifiedBoolType;
-    operator UnspecifiedBoolType() const { return m_object ? reinterpret_cast<UnspecifiedBoolType>(&m_object) : 0; }
-
     GDIObject<T>& operator=(std::nullptr_t) { clear(); return *this; }
 
     GDIObject(GDIObject&&);

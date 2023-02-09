@@ -115,11 +115,6 @@ public:
 
     constexpr bool operator!() const { return !m_ptr; }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    // FIXME: Eventually we should remove this; it's an outdated technique and less needed since we have explicit operator bool.
-    typedef CFTypeRef RetainPtr::*UnspecifiedBoolType;
-    operator UnspecifiedBoolType() const { return m_ptr ? &RetainPtr::m_ptr : nullptr; }
-
     RetainPtr& operator=(const RetainPtr&);
     template<typename U> RetainPtr& operator=(const RetainPtr<U>&);
     RetainPtr& operator=(PtrType);

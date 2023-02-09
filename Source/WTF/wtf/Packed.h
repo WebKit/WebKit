@@ -192,9 +192,6 @@ public:
 
     bool operator!() const { return !get(); }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef T* (PackedAlignedPtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType() const { return get() ? &PackedAlignedPtr::m_storage : nullptr; }
     explicit operator bool() const { return get(); }
 
     PackedAlignedPtr& operator=(T* value)

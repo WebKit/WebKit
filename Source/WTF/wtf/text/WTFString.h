@@ -229,13 +229,6 @@ public:
 
     WTF_EXPORT_PRIVATE bool isSafeToSendToAnotherThread() const;
 
-    // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
-    // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString *).
-    typedef struct ImplicitConversionFromWTFStringToBoolDisallowedA* (String::*UnspecifiedBoolTypeA);
-    typedef struct ImplicitConversionFromWTFStringToBoolDisallowedB* (String::*UnspecifiedBoolTypeB);
-    operator UnspecifiedBoolTypeA() const;
-    operator UnspecifiedBoolTypeB() const;
-
 #if USE(CF)
     WTF_EXPORT_PRIVATE String(CFStringRef);
     WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFString() const;

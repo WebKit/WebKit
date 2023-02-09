@@ -105,10 +105,6 @@ public:
 
     bool isHashTableDeletedValue() const { return PtrTraits::isHashTableDeletedValue(m_ptr); }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    using UnspecifiedBoolType = void (CheckedPtr::*)() const;
-    operator UnspecifiedBoolType() const { return m_ptr ? &CheckedPtr::unspecifiedBoolTypeInstance : nullptr; }
-
     ALWAYS_INLINE bool operator!() const { return !PtrTraits::unwrap(m_ptr); }
 
     ALWAYS_INLINE const T* get() const { return PtrTraits::unwrap(m_ptr); }
@@ -178,8 +174,6 @@ public:
 
 private:
     template<typename OtherType, typename OtherPtrTraits> friend class CheckedPtr;
-
-    void unspecifiedBoolTypeInstance() const { }
 
     ALWAYS_INLINE void refIfNotNull()
     {

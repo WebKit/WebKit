@@ -38,10 +38,6 @@ public:
     CachedResource* get() const { return m_resource; }
     
     bool operator!() const { return !m_resource; }
-    
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef CachedResource* CachedResourceHandleBase::*UnspecifiedBoolType;
-    operator UnspecifiedBoolType() const { return m_resource ? &CachedResourceHandleBase::m_resource : 0; }
 
 protected:
     CachedResourceHandleBase();

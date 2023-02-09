@@ -74,10 +74,6 @@ public:
     T** operator&() { ASSERT(!m_ptr); return &m_ptr; }
 
     bool operator!() const { return !m_ptr; }
-    
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef T* (COMPtr::*UnspecifiedBoolType)() const;
-    operator UnspecifiedBoolType() const { return m_ptr ? &COMPtr::get : 0; }
 
     COMPtr& operator=(const COMPtr&);
     COMPtr& operator=(COMPtr&&);

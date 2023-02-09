@@ -86,9 +86,6 @@ public:
 
     bool operator!() const { return !m_value; }
     
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef T* (SignedPtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType() const { return get() ? &SignedPtr::m_value : nullptr; }
     explicit operator bool() const { return get(); }
 
     SignedPtr& operator=(T* value)

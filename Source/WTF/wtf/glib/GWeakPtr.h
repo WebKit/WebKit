@@ -83,10 +83,6 @@ public:
 
     bool operator!() const { return !m_ptr; }
 
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef T* GWeakPtr::*UnspecifiedBoolType;
-    operator UnspecifiedBoolType() const { return m_ptr ? &GWeakPtr::m_ptr : 0; }
-
 private:
     void addWeakPtr()
     {
