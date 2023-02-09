@@ -643,6 +643,7 @@
 		6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7939885B2076EEB60074A2E7 /* BulkDecommit.h in Headers */ = {isa = PBXBuildFile; fileRef = 7939885A2076EEB50074A2E7 /* BulkDecommit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		795AB3C7206E0D340074FE76 /* PhysicalPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B9D3EA129953B0E001C869C /* BAllowProhibitedAPIs.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9D3EA029953B0E001C869C /* BAllowProhibitedAPIs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C571F0122388B840077A3C7 /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C571F0022388B840077A3C7 /* StdLibExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = AD0934321FCF405000E85EB5 /* BCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		AD14AD29202529C400890E3B /* ProcessCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = AD14AD27202529A600890E3B /* ProcessCheck.h */; };
@@ -1317,6 +1318,7 @@
 		6599C5CB1EC3F15900A2F7BB /* AvailableMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AvailableMemory.h; path = bmalloc/AvailableMemory.h; sourceTree = "<group>"; };
 		7939885A2076EEB50074A2E7 /* BulkDecommit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BulkDecommit.h; path = bmalloc/BulkDecommit.h; sourceTree = "<group>"; };
 		795AB3C6206E0D250074FE76 /* PhysicalPageMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PhysicalPageMap.h; path = bmalloc/PhysicalPageMap.h; sourceTree = "<group>"; };
+		7B9D3EA029953B0E001C869C /* BAllowProhibitedAPIs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAllowProhibitedAPIs.h; path = bmalloc/darwin/BAllowProhibitedAPIs.h; sourceTree = "<group>"; };
 		7C571F0022388B840077A3C7 /* StdLibExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = StdLibExtras.h; path = bmalloc/StdLibExtras.h; sourceTree = "<group>"; };
 		AD0934321FCF405000E85EB5 /* BCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCompiler.h; path = bmalloc/BCompiler.h; sourceTree = "<group>"; };
 		AD14AD27202529A600890E3B /* ProcessCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessCheck.h; path = bmalloc/ProcessCheck.h; sourceTree = "<group>"; };
@@ -2117,6 +2119,7 @@
 		4408F2961C9896C40012EC64 /* darwin */ = {
 			isa = PBXGroup;
 			children = (
+				7B9D3EA029953B0E001C869C /* BAllowProhibitedAPIs.h */,
 				52F47248210BA2F500B730BB /* MemoryStatusSPI.h */,
 			);
 			name = darwin;
@@ -2141,6 +2144,7 @@
 				0F7EB84F1F954D4E00F1ABCB /* AllIsoHeapsInlines.h in Headers */,
 				14DD789818F48D4A00950702 /* Allocator.h in Headers */,
 				6599C5CD1EC3F15900A2F7BB /* AvailableMemory.h in Headers */,
+				7B9D3EA129953B0E001C869C /* BAllowProhibitedAPIs.h in Headers */,
 				14DD78C718F48D7500950702 /* BAssert.h in Headers */,
 				AD0934331FCF406D00E85EB5 /* BCompiler.h in Headers */,
 				0F5BF1731F23C5710029D91D /* BExport.h in Headers */,

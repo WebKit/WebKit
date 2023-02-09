@@ -66,6 +66,10 @@
 /* Macros for specifing specific calling conventions. */
 #include <wtf/PlatformCallingConventions.h>
 
+/* Macros for configuring platform headers that subsequent 
+   WTF using code might include.
+  */
+#include <wtf/PlatformMacroOverrides.h>
 
 /* ==== Platform additions: additions to Platform.h from outside the main repository ==== */
 
