@@ -40,7 +40,7 @@ class AXIsolatedTree;
 #endif
 class AXObjectCache;
 
-using AXTreePtr = std::variant<nullptr_t, WeakPtr<AXObjectCache>
+using AXTreePtr = std::variant<std::nullptr_t, WeakPtr<AXObjectCache>
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     , RefPtr<AXIsolatedTree>
 #endif
