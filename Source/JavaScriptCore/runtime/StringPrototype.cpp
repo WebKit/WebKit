@@ -1825,17 +1825,20 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
     if (thisValue.isString() && asString(thisValue)->is8Bit())
         return JSValue::encode(thisValue);
 
-    String string = thisValue.toWTFString(globalObject);
+    JSString* stringValue = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    if (string.is8Bit())
-        return JSValue::encode(thisValue);
+    if (stringValue->is8Bit())
+        return JSValue::encode(stringValue);
+
+    String string = stringValue->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
 
     const UChar* characters = string.characters16();
     unsigned length = string.length();
     auto firstIllFormedIndex = illFormedIndex(characters, length);
     if (!firstIllFormedIndex)
-        return JSValue::encode(thisValue);
+        return JSValue::encode(stringValue);
 
     Vector<UChar> buffer;
     buffer.reserveInitialCapacity(length);
