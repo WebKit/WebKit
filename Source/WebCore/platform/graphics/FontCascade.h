@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CharacterProperties.h"
 #include "DashArray.h"
 #include "Font.h"
 #include "FontCascadeDescription.h"
@@ -263,10 +264,9 @@ public:
     {
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
-        return (character >= nullCharacter && character < space)
-            || (character >= deleteCharacter && character < noBreakSpace)
-            || character == objectReplacementCharacter
-            || u_hasBinaryProperty(character, UCHAR_DEFAULT_IGNORABLE_CODE_POINT);
+        return (character == objectReplacementCharacter
+            || isControlCharacter(character)
+            || isDefaultIgnorableCodePoint(character));
     }
     // FIXME: Callers of treatAsZeroWidthSpace() and treatAsZeroWidthSpaceInComplexScript() should probably be calling isCharacterWhoseGlyphsShouldBeDeletedForTextRendering() instead.
     static bool treatAsZeroWidthSpace(UChar32 c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
