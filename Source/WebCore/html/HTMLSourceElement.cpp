@@ -158,7 +158,7 @@ void HTMLSourceElement::parseAttribute(const QualifiedName& name, const AtomStri
         if (name == mediaAttr)
             m_cachedParsedMediaAttribute = std::nullopt;
         RefPtr parent = parentNode();
-        if (m_shouldCallSourcesChanged)
+        if (m_shouldCallSourcesChanged && parent)
             downcast<HTMLPictureElement>(*parent).sourcesChanged();
     }
 #if ENABLE(MODEL_ELEMENT)
