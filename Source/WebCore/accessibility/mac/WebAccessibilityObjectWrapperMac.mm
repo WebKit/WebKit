@@ -733,15 +733,6 @@ static RetainPtr<AXTextMarkerRef> previousTextMarker(AXObjectCache* cache, const
     return previousMarker ? previousMarker.platformData() : nil;
 }
 
-// FIXME: Remove this method since clients should not need to call this method and should not be exposed in the public interface.
-// Inside WebCore, use WebCore::textMarkerFromVisiblePosition instead.
-- (id)textMarkerForVisiblePosition:(const VisiblePosition&)position
-{
-    ASSERT(isMainThread());
-    auto *backingObject = self.axBackingObject;
-    return backingObject ? (id)textMarkerForVisiblePosition(backingObject->axObjectCache(), position) : nil;
-}
-
 - (RetainPtr<AXTextMarkerRef>)textMarkerForFirstPositionInTextControl:(HTMLTextFormControlElement &)textControl
 {
     ASSERT(isMainThread());
@@ -1078,19 +1069,6 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
         }
 
         return attrString;
-    });
-}
-
-// FIXME: Remove this method since clients should not need to call this method and should not be exposed in the public interface.
-// Inside WebCore, use WebCore::textMarkerRangeFromVisiblePositions instead.
-- (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition
-{
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&startPosition, &endPosition, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
-
-        return (id)textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), startPosition, endPosition);
     });
 }
 

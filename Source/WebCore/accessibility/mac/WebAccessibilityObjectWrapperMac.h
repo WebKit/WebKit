@@ -43,10 +43,6 @@
 
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase
 
-// FIXME: Remove these methods since clients should not need to call them and hence should not be exposed in the public interface.
-// Inside WebCore, use the WebCore homonymous declared below instead.
-- (id)textMarkerRangeFromVisiblePositions:(const WebCore::VisiblePosition&)startPosition endPosition:(const WebCore::VisiblePosition&)endPosition;
-- (id)textMarkerForVisiblePosition:(const WebCore::VisiblePosition&)visiblePos;
 - (RetainPtr<AXTextMarkerRef>)textMarkerForFirstPositionInTextControl:(WebCore::HTMLTextFormControlElement&)textControl;
 
 // When a plugin uses a WebKit control to act as a surrogate view (e.g. PDF use WebKit to create text fields).
