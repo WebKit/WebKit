@@ -37,6 +37,7 @@ from .checkout import Checkout
 from .credentials import Credentials
 from .find import Find, Info
 from .pickable import Pickable
+from .publish import Publish
 from .install_git_lfs import InstallGitLFS
 from .land import Land
 from .log import Log
@@ -91,7 +92,7 @@ def main(
         Clean, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
-        Pickable, CherryPick, Trace, Track, Show,
+        Pickable, CherryPick, Trace, Track, Show, Publish,
     ] + (programs or [])
     if subversion:
         programs.append(SetupGitSvn)
