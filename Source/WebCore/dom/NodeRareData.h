@@ -274,6 +274,7 @@ public:
         PartNames = 1 << 22,
         Nonce = 1 << 23,
         ExplicitlySetAttrElementsMap = 1 << 24,
+        DisplayContentsStyle = 1 << 25,
     };
 #endif
 

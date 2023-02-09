@@ -81,6 +81,9 @@ public:
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
     void setComputedStyle(std::unique_ptr<RenderStyle> computedStyle) { m_computedStyle = WTFMove(computedStyle); }
 
+    RenderStyle* displayContentsStyle() const { return m_displayContentsStyle.get(); }
+    void setDisplayContentsStyle(std::unique_ptr<RenderStyle> style) { m_displayContentsStyle = WTFMove(style); }
+
     const AtomString& effectiveLang() const { return m_effectiveLang; }
     void setEffectiveLang(const AtomString& lang) { m_effectiveLang = lang; }
 
@@ -131,6 +134,8 @@ public:
             result.add(UseType::ScrollingPosition);
         if (m_computedStyle)
             result.add(UseType::ComputedStyle);
+        if (m_displayContentsStyle)
+            result.add(UseType::DisplayContentsStyle);
         if (!m_effectiveLang.isEmpty())
             result.add(UseType::EffectiveLang);
         if (m_dataset)
@@ -174,6 +179,7 @@ public:
 private:
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
+    std::unique_ptr<RenderStyle> m_displayContentsStyle;
 
     AtomString m_effectiveLang;
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
