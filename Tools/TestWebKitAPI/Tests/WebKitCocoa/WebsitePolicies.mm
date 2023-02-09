@@ -1722,7 +1722,7 @@ TEST(WebpagePreferences, UserExplicitlyPrefersColorSchemeLight)
     [webView waitForMessage:@"light-detected"];
 }
 
-TEST(WebpagePreferences, DisableContentRuleListsByIdentifier)
+TEST(WebpagePreferences, ContentRuleListEnablement)
 {
     [TestProtocol registerWithScheme:@"https"];
 
@@ -1755,7 +1755,7 @@ TEST(WebpagePreferences, DisableContentRuleListsByIdentifier)
         "}]";
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration defaultWebpagePreferences] _setDisabledContentRuleListIdentifiers:[NSSet setWithObject:identifierToDisable]];
+    [[configuration defaultWebpagePreferences] _setContentRuleListsEnabled:YES exceptions:[NSSet setWithObject:identifierToDisable]];
 
     auto rulesToDisable = compileRuleList(identifierToDisable, @(contentRulesToDisable));
     [[configuration userContentController] addContentRuleList:rulesToDisable.get()];
@@ -1764,7 +1764,8 @@ TEST(WebpagePreferences, DisableContentRuleListsByIdentifier)
     [[configuration userContentController] addContentRuleList:rulesToEnable.get()];
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/load-image.html"]]];
+    RetainPtr request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/load-image.html"]];
+    [webView synchronouslyLoadRequest:request.get()];
 
     auto canLoadImage = [webView](NSString *url) {
         __block BOOL result = false;
@@ -1778,6 +1779,14 @@ TEST(WebpagePreferences, DisableContentRuleListsByIdentifier)
         TestWebKitAPI::Util::run(&done);
         return result;
     };
+
+    EXPECT_TRUE(canLoadImage(@"./400x400-green.png"));
+    EXPECT_FALSE(canLoadImage(@"./sunset-in-cupertino-200px.png"));
+    EXPECT_TRUE(canLoadImage(@"./sunset-in-cupertino-100px.tiff"));
+
+    auto newPreferences = adoptNS([WKWebpagePreferences new]);
+    [newPreferences _setContentRuleListsEnabled:NO exceptions:[NSSet setWithObject:identifierToEnable]];
+    [webView synchronouslyLoadRequest:request.get() preferences:newPreferences.get()];
 
     EXPECT_TRUE(canLoadImage(@"./400x400-green.png"));
     EXPECT_FALSE(canLoadImage(@"./sunset-in-cupertino-200px.png"));

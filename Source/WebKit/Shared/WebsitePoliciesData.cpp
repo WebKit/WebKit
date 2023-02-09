@@ -36,7 +36,7 @@ namespace WebKit {
 
 void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 {
-    encoder << disabledContentExtensions;
+    encoder << contentExtensionEnablement;
     encoder << activeContentRuleListActionPatterns;
     encoder << autoplayPolicy;
 #if ENABLE(DEVICE_ORIENTATION)
@@ -64,9 +64,9 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
 
 std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& decoder)
 {
-    std::optional<WebCore::DisabledContentExtensions> disabledContentExtensions;
-    decoder >> disabledContentExtensions;
-    if (!disabledContentExtensions)
+    std::optional<WebCore::ContentExtensionEnablement> contentExtensionEnablement;
+    decoder >> contentExtensionEnablement;
+    if (!contentExtensionEnablement)
         return std::nullopt;
 
     std::optional<HashMap<WTF::String, Vector<WTF::String>>> activeContentRuleListActionPatterns;
@@ -177,7 +177,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         return std::nullopt;
 
     return { {
-        WTFMove(*disabledContentExtensions),
+        WTFMove(*contentExtensionEnablement),
         WTFMove(*activeContentRuleListActionPatterns),
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
@@ -217,13 +217,9 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
 #endif
 
     // Only disable content blockers if it hasn't already been disabled by reloading without content blockers.
-    bool userContentExtensionsEnabled = std::visit(WTF::makeVisitor([](WebCore::DisabledContentExtensionsMode mode) {
-        return mode == WebCore::DisabledContentExtensionsMode::None;
-    }, [](auto&) {
-        return true;
-    }), documentLoader.disabledContentExtensions());
-    if (userContentExtensionsEnabled)
-        documentLoader.setDisabledContentExtensions(WTFMove(websitePolicies.disabledContentExtensions));
+    auto& [defaultEnablement, exceptions] = documentLoader.contentExtensionEnablement();
+    if (defaultEnablement == WebCore::ContentExtensionDefaultEnablement::Enabled && exceptions.isEmpty())
+        documentLoader.setContentExtensionEnablement(WTFMove(websitePolicies.contentExtensionEnablement));
 
     documentLoader.setActiveContentRuleListActionPatterns(websitePolicies.activeContentRuleListActionPatterns);
 
