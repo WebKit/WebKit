@@ -30,8 +30,8 @@
 
 #include "AST.h"
 #include "Lexer.h"
-#include "ShaderModule.h"
 #include "TestWGSLAPI.h"
+#include "WGSLShaderModule.h"
 
 #include <wtf/Assertions.h>
 

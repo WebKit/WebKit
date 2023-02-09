@@ -28,8 +28,8 @@
 
 #include "AST.h"
 #include "Parser.h"
-#include "ShaderModule.h"
 #include "TestWGSLAPI.h"
+#include "WGSLShaderModule.h"
 
 namespace TestWGSLAPI {
 
