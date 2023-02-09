@@ -108,7 +108,10 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
     
     // Extract the result as a quaternion
     TransformationMatrix::Decomposed4Type decomp;
-    toT.decompose4(decomp);
+    if (!toT.decompose4(decomp)) {
+        const RotateTransformOperation* usedOperation = context.progress > 0.5 ? this : fromOp;
+        return RotateTransformOperation::create(usedOperation->x(), usedOperation->y(), usedOperation->z(), usedOperation->angle(), TransformOperation::Type::Rotate3D);
+    }
     
     // Convert that to Axis/Angle form
     double x = -decomp.quaternionX;

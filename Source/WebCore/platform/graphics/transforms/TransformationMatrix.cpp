@@ -503,7 +503,8 @@ static bool decompose4(const TransformationMatrix::Matrix4& mat, TransformationM
         // rightHandSide by the inverse. (This is the easiest way, not
         // necessarily the best.)
         TransformationMatrix::Matrix4 inversePerspectiveMatrix, transposedInversePerspectiveMatrix;
-        inverse(perspectiveMatrix, inversePerspectiveMatrix);
+        if (!inverse(perspectiveMatrix, inversePerspectiveMatrix))
+            return false;
         transposeMatrix4(inversePerspectiveMatrix, transposedInversePerspectiveMatrix);
 
         Vector4 perspectivePoint;
