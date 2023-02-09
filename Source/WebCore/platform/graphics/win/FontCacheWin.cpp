@@ -310,7 +310,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         SelectObject(hdc, hfont);
         WCHAR name[LF_FACESIZE];
         GetTextFace(hdc, LF_FACESIZE, name);
-        familyName = String(name);
+        familyName = String(std::data(name));
 
         if (containsCharacter || currentFontContainsCharacter(hdc, characters, length))
             break;

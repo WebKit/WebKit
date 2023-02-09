@@ -73,6 +73,13 @@ public:
 
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
+    // Explicitly deleting these constructors prevents construction of StringView objects with
+    // native string literals by using implicit converting constructors of String and Span types.
+    template<typename CharacterType, size_t N>
+    StringView(CharacterType(&)[N]) = delete;
+    template<typename CharacterType, size_t N>
+    StringView(const CharacterType(&)[N]) = delete;
+
     static StringView empty();
 
     unsigned length() const;

@@ -1111,7 +1111,7 @@ static String findFontFallback(const char* pathOrUrl)
     if (!::PathIsDirectoryW(fullPath))
         return emptyString();
 
-    String pathToCheck = fullPath;
+    String pathToCheck(std::data(fullPath));
     StringView pathToCheckView { pathToCheck };
 
     static const String layoutTests = "LayoutTests"_s;

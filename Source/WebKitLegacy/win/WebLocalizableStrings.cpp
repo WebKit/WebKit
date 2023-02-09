@@ -127,7 +127,7 @@ static void createWebKitBundle()
     if (wcscat_s(pathStr, MAX_PATH, L"\\WebKit.resources"))
         return;
 
-    String bundlePathString(pathStr);
+    String bundlePathString(std::data(pathStr));
     if (!bundlePathString)
         return;
 

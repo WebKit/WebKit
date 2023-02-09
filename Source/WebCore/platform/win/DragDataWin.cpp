@@ -148,7 +148,7 @@ Vector<String> DragData::asFilenames() const
         for (unsigned i = 0; i < numFiles; i++) {
             if (!DragQueryFileW(hdrop, i, filename, std::size(filename)))
                 continue;
-            result.append(filename);
+            result.append(String(std::data(filename)));
         }
 
         // Free up memory from drag

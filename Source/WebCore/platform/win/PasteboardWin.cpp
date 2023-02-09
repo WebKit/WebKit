@@ -385,7 +385,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t>)
         for (UINT i = 0; i < fileCount; i++) {
             if (!DragQueryFileW(hdrop, i, filename, std::size(filename)))
                 continue;
-            reader.readFilename(filename);
+            reader.readFilename(String(std::data(filename)));
         }
 
         GlobalUnlock(medium.hGlobal);
