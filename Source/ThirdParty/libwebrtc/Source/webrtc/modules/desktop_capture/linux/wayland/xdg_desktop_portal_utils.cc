@@ -186,7 +186,7 @@ void TearDownSession(absl::string_view session_handle,
     g_object_unref(cancellable);
   }
 
-  if (proxy) {
+  if (!!proxy) {
     g_object_unref(proxy);
   }
 }

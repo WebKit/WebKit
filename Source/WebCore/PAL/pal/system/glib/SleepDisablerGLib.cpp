@@ -61,7 +61,7 @@ SleepDisablerGLib::SleepDisablerGLib(const String& reason, Type type)
             return;
 
         auto* self = static_cast<SleepDisablerGLib*>(userData);
-        if (proxy) {
+        if (!!proxy) {
             GUniquePtr<char> nameOwner(g_dbus_proxy_get_name_owner(proxy.get()));
             if (nameOwner) {
                 self->m_screenSaverProxy = WTFMove(proxy);

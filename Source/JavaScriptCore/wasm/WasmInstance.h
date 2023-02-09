@@ -106,7 +106,7 @@ public:
     }
     void updateCachedMemory()
     {
-        if (m_memory != nullptr) {
+        if (!!m_memory) {
             // Note: In MemoryMode::BoundsChecking, mappedCapacity() == size().
             // We assert this in the constructor of MemoryHandle.
 #if CPU(ARM)

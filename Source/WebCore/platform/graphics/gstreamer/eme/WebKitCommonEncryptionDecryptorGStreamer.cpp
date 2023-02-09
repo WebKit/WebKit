@@ -373,7 +373,7 @@ static CDMProxy* getCDMProxyFromGstContext(WebKitMediaCommonEncryptionDecrypt* s
         const GValue* value = gst_structure_get_value(gst_context_get_structure(context.get()), "cdm-proxy");
         if (value) {
             proxy = reinterpret_cast<CDMProxy*>(g_value_get_pointer(value));
-            if (proxy) {
+            if (!!proxy) {
                 GST_DEBUG_OBJECT(self, "received a new CDM proxy instance %p, refcount %u", proxy, proxy->refCount());
                 return proxy;
             }
@@ -401,7 +401,7 @@ static gboolean installCDMProxyIfNotAvailable(WebKitMediaCommonEncryptionDecrypt
         gboolean result = FALSE;
 
         CDMProxy* proxy = getCDMProxyFromGstContext(self);
-        if (proxy) {
+        if (!!proxy) {
             attachCDMProxy(self, proxy);
             result = TRUE;
         } else {

@@ -101,11 +101,11 @@ public:
 
     bool hasJITCodeForCall() const
     {
-        return m_jitCodeForCall;
+        return !!m_jitCodeForCall;
     }
     bool hasJITCodeForConstruct() const
     {
-        return m_jitCodeForConstruct;
+        return !!m_jitCodeForConstruct;
     }
 
     // This function has an interesting GC story. Callers of this function are asking us to create a CodeBlock
