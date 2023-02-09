@@ -236,6 +236,7 @@ enum class RenderingUpdateStep : uint32_t {
     VideoFrameCallbacks             = 1 << 15,
     PrepareCanvasesForDisplay       = 1 << 16,
     CaretAnimation                  = 1 << 17,
+    FocusFixup                      = 1 << 18,
 };
 
 enum LookalikeCharacterSanitizationTrigger : uint8_t {

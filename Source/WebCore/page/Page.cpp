@@ -1734,6 +1734,13 @@ void Page::updateRendering()
         document.updateResizeObservations(*this);
     });
 
+    runProcessingStep(RenderingUpdateStep::FocusFixup, [&] (Document& document) {
+        if (RefPtr focusedElement = document.focusedElement()) {
+            if (!focusedElement->isFocusable())
+                document.setFocusedElement(nullptr);
+        }
+    });
+
     runProcessingStep(RenderingUpdateStep::IntersectionObservations, [] (Document& document) {
         document.updateIntersectionObservations();
     });
@@ -3956,6 +3963,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::VideoFrameCallbacks: ts << "VideoFrameCallbacks"; break;
     case RenderingUpdateStep::PrepareCanvasesForDisplay: ts << "PrepareCanvasesForDisplay"; break;
     case RenderingUpdateStep::CaretAnimation: ts << "CaretAnimation"; break;
+    case RenderingUpdateStep::FocusFixup: ts << "FocusFixup"; break;
     }
     return ts;
 }
