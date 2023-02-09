@@ -37,6 +37,7 @@
 #include "InlineItemsBuilder.h"
 #include "InlineLineBox.h"
 #include "InlineLineBoxBuilder.h"
+#include "InlineLineTypes.h"
 #include "InlineTextItem.h"
 #include "LayoutBox.h"
 #include "LayoutContext.h"
@@ -202,22 +203,22 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
     return lineContentRange.end;
 }
 
-static LineBuilder::LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfVisibleLines)
+static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfVisibleLines)
 {
     // We may have passed the line-clamp line with overflow visible.
     if (maximumNumberOfVisibleLines && numberOfLines < *maximumNumberOfVisibleLines) {
         // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
         auto shouldApplyClampWhenApplicable = *maximumNumberOfVisibleLines - numberOfLines == 1;
         if (shouldApplyClampWhenApplicable)
-            return LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
+            return LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
     }
     // Truncation is in effect when the block container has overflow other than visible.
     if (rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
-    return LineBuilder::LineEndingEllipsisPolicy::No;
+        return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
+    return LineEndingEllipsisPolicy::No;
 }
 
-void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
 {
     ASSERT(!needsLayoutRange.isEmpty());
 
@@ -345,7 +346,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
 {
     auto& inlineItems = formattingState().inlineItems();
     auto lineBuilder = LineBuilder { *this, inlineItems, intrinsicWidthMode };
-    auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
+    auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
     auto maximumLineWidth = InlineLayoutUnit { };
     auto maximumFloatWidth = LayoutUnit { };
     auto previousLine = std::optional<LineBuilder::PreviousLine> { };
@@ -457,7 +458,7 @@ void InlineFormattingContext::collectContentIfNeeded()
     formattingState.addInlineItems(inlineItemsBuilder.build());
 }
 
-InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints, LineBuilder::LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const BlockLayoutState& blockLayoutState)
+InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints, LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const BlockLayoutState& blockLayoutState)
 {
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();
@@ -475,7 +476,7 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilde
     return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(formattingState.lines().last().lineBoxRect(), root().style().writingMode());
 }
 
-void InlineFormattingContext::resetGeometryForClampedContent(const LineBuilder::InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft)
+void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft)
 {
     if (needsDisplayContentRange.isEmpty() && overflowingFloats.isEmpty())
         return;

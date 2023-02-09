@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +25,30 @@
 
 #pragma once
 
-#include "InlineDisplayLine.h"
-#include "InlineFormattingContext.h"
-#include "InlineLineBuilder.h"
-
 namespace WebCore {
 namespace Layout {
 
-class LineBox;
+enum class LineEndingEllipsisPolicy : uint8_t {
+    No,
+    WhenContentOverflowsInInlineDirection,
+    WhenContentOverflowsInBlockDirection,
+    // FIXME: This should be used when we realize the last line of this IFC is where the content is truncated (sibling IFC has more lines).
+    Always
+};
 
-class InlineDisplayLineBuilder {
-public:
-    InlineDisplayLineBuilder(const InlineFormattingContext&);
+struct InlineItemRange {
+    bool isEmpty() const { return start == end; }
+    size_t size() const { return end - start; }
+    size_t start { 0 };
+    size_t end { 0 };
+};
 
-    InlineDisplay::Line build(const LineBuilder::LineContent&, const LineBox&, const ConstraintsForInlineContent&) const;
+struct PartialContent {
+    PartialContent(size_t, std::optional<InlineLayoutUnit>);
 
-    static std::optional<FloatRect> trailingEllipsisVisualRectAfterTruncation(LineEndingEllipsisPolicy, const InlineDisplay::Line&, DisplayBoxes&, bool isLastLineWithInlineContent);
-
-private:
-    struct EnclosingLineGeometry {
-        InlineDisplay::Line::EnclosingTopAndBottom enclosingTopAndBottom;
-        InlineRect contentOverflowRect;
-    };
-    EnclosingLineGeometry collectEnclosingLineGeometry(const LineBuilder::LineContent&, const LineBox&, const InlineRect& lineBoxRect) const;
-
-    const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    const Box& root() const { return formattingContext().root(); }
-    LayoutState& layoutState() const { return formattingContext().layoutState(); }
-
-    const InlineFormattingContext& m_inlineFormattingContext;
+    size_t length { 0 };
+    std::optional<InlineLayoutUnit> width { };
 };
 
 }
 }
-

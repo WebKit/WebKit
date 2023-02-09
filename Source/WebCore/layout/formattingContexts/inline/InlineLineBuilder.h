@@ -31,6 +31,7 @@
 #include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
 #include "InlineLine.h"
+#include "InlineLineTypes.h"
 
 namespace WebCore {
 namespace Layout {
@@ -42,29 +43,9 @@ public:
     LineBuilder(InlineFormattingContext&, BlockLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
     LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
-    enum class LineEndingEllipsisPolicy : uint8_t {
-        No,
-        WhenContentOverflowsInInlineDirection,
-        WhenContentOverflowsInBlockDirection,
-        // FIXME: This should be used when we realize the last line of this IFC is where the content is truncated (sibling IFC has more lines).
-        Always
-    };
-
-    struct InlineItemRange {
-        bool isEmpty() const { return start == end; }
-        size_t size() const { return end - start; }
-        size_t start { 0 };
-        size_t end { 0 };
-    };
     struct LineInput {
         InlineItemRange needsLayoutRange;
         InlineRect initialLogicalRect;
-    };
-    struct PartialContent {
-        PartialContent(size_t, std::optional<InlineLayoutUnit>);
-
-        size_t length { 0 };
-        std::optional<InlineLayoutUnit> width { };
     };
     using FloatList = Vector<const InlineItem*>;
     struct PreviousLine {
@@ -119,7 +100,7 @@ private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
     InlineLayoutUnit leadingPunctuationWidthForLineCandiate(size_t firstInlineTextItemIndex, size_t candidateContentStartIndex) const;
     InlineLayoutUnit trailingPunctuationOrStopOrCommaWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t layoutRangeEnd) const;
-    size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
+    size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange) const;
 
     struct UsedConstraints {
         InlineRect logicalRect;
@@ -200,7 +181,7 @@ private:
     bool m_lineIsConstrainedByFloat { false };
 };
 
-inline LineBuilder::PartialContent::PartialContent(size_t length, std::optional<InlineLayoutUnit> width)
+inline PartialContent::PartialContent(size_t length, std::optional<InlineLayoutUnit> width)
     : length(length)
     , width(width)
 {

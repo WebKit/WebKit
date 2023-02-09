@@ -54,7 +54,7 @@ private:
     void processFloatBoxes(const LineBuilder::LineContent&);
     void collectInkOverflowForInlineBoxes(DisplayBoxes&);
     void collectInkOverflowForTextDecorations(DisplayBoxes&, const InlineDisplay::Line&);
-    void truncateForEllipsisPolicy(LineBuilder::LineEndingEllipsisPolicy, const LineBuilder::LineContent&, const InlineDisplay::Line&, DisplayBoxes&);
+    void truncateForEllipsisPolicy(LineEndingEllipsisPolicy, const LineBuilder::LineContent&, const InlineDisplay::Line&, DisplayBoxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, DisplayBoxes&);

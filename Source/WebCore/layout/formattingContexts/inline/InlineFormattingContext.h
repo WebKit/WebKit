@@ -61,7 +61,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    void lineLayout(InlineItems&, const LineBuilder::InlineItemRange&, const ConstraintsForInlineContent&, BlockLayoutState&);
+    void lineLayout(InlineItems&, const InlineItemRange&, const ConstraintsForInlineContent&, BlockLayoutState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, LayoutPoint contentBoxTopLeft);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);
@@ -72,8 +72,8 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect createDisplayContentForLine(const LineBuilder::LineContent&, const ConstraintsForInlineContent&, LineBuilder::LineEndingEllipsisPolicy, const BlockLayoutState&);
-    void resetGeometryForClampedContent(const LineBuilder::InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft);
+    InlineRect createDisplayContentForLine(const LineBuilder::LineContent&, const ConstraintsForInlineContent&, LineEndingEllipsisPolicy, const BlockLayoutState&);
+    void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft);
 
     void invalidateFormattingState();
 
