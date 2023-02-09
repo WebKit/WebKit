@@ -31,7 +31,7 @@
 
 namespace WebGPU {
 
-static bool isPresent(const WGPUBufferBindingLayout& buffer)
+bool BindGroupLayout::isPresent(const WGPUBufferBindingLayout& buffer)
 {
     return buffer.type != WGPUBufferBindingType_Undefined;
 }
@@ -61,7 +61,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     return descriptor;
 }
 
-static bool isPresent(const WGPUSamplerBindingLayout& sampler)
+bool BindGroupLayout::isPresent(const WGPUSamplerBindingLayout& sampler)
 {
     return sampler.type != WGPUSamplerBindingType_Undefined;
 }
@@ -78,7 +78,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     return descriptor;
 }
 
-static bool isPresent(const WGPUTextureBindingLayout& texture)
+bool BindGroupLayout::isPresent(const WGPUTextureBindingLayout& texture)
 {
     return texture.sampleType != WGPUTextureSampleType_Undefined
         && texture.viewDimension != WGPUTextureViewDimension_Undefined;
@@ -96,7 +96,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
     return descriptor;
 }
 
-static bool isPresent(const WGPUStorageTextureBindingLayout& storageTexture)
+bool BindGroupLayout::isPresent(const WGPUStorageTextureBindingLayout& storageTexture)
 {
     return storageTexture.access != WGPUStorageTextureAccess_Undefined
         && storageTexture.format != WGPUTextureFormat_Undefined
@@ -140,6 +140,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     for (size_t i = 0; i < stageCount; ++i)
         arguments[i] = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
 
+    Vector<WGPUBindGroupLayoutEntry> bindGroupLayoutEntries;
+    bindGroupLayoutEntries.resize(descriptor.entryCount);
     for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
         const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
         if (entry.nextInChain)
@@ -148,13 +150,13 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         shaderStageForBinding.add(entry.binding + 1, entry.visibility);
         MTLArgumentDescriptor *descriptor = nil;
 
-        if (isPresent(entry.buffer))
+        if (BindGroupLayout::isPresent(entry.buffer))
             descriptor = createArgumentDescriptor(entry.buffer);
-        else if (isPresent(entry.sampler))
+        else if (BindGroupLayout::isPresent(entry.sampler))
             descriptor = createArgumentDescriptor(entry.sampler);
-        else if (isPresent(entry.texture))
+        else if (BindGroupLayout::isPresent(entry.texture))
             descriptor = createArgumentDescriptor(entry.texture);
-        else if (isPresent(entry.storageTexture))
+        else if (BindGroupLayout::isPresent(entry.storageTexture))
             descriptor = createArgumentDescriptor(entry.storageTexture);
 
         if (!descriptor)
@@ -164,6 +166,8 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             if (containsStage(entry.visibility, stage))
                 addDescriptor(arguments[stage], descriptor);
         }
+
+        bindGroupLayoutEntries[i] = entry;
     }
 
     auto label = fromAPI(descriptor.label);
@@ -175,14 +179,15 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             return BindGroupLayout::createInvalid(*this);
     }
 
-    return BindGroupLayout::create(WTFMove(shaderStageForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2]);
+    return BindGroupLayout::create(WTFMove(shaderStageForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries));
 }
 
-BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
+BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<WGPUBindGroupLayoutEntry>&& bindGroupLayoutEntries)
     : m_shaderStageForBinding(WTFMove(shaderStageForBinding))
     , m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
     , m_computeArgumentEncoder(computeArgumentEncoder)
+    , m_bindGroupLayoutEntries(WTFMove(bindGroupLayoutEntries))
 {
 }
 
@@ -243,6 +248,11 @@ WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructM
     return entry;
 }
 #endif // HAVE(METAL_BUFFER_BINDING_REFLECTION)
+
+const Vector<WGPUBindGroupLayoutEntry>& BindGroupLayout::entries() const
+{
+    return m_bindGroupLayoutEntries;
+}
 
 } // namespace WebGPU
 

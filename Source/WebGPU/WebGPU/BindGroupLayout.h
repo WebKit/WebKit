@@ -29,6 +29,7 @@
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
+#import <wtf/Vector.h>
 
 struct WGPUBindGroupLayoutImpl {
 };
@@ -47,9 +48,9 @@ class Device;
 class BindGroupLayout : public WGPUBindGroupLayoutImpl, public RefCounted<BindGroupLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupLayout> create(HashMap<uint32_t, WGPUShaderStageFlags>&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
+    static Ref<BindGroupLayout> create(HashMap<uint32_t, WGPUShaderStageFlags>&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<WGPUBindGroupLayoutEntry>&& entries)
     {
-        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder));
+        return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, WTFMove(entries)));
     }
     static Ref<BindGroupLayout> createInvalid(Device&)
     {
@@ -73,9 +74,15 @@ public:
 #if HAVE(METAL_BUFFER_BINDING_REFLECTION)
     static WGPUBindGroupLayoutEntry createEntryFromStructMember(MTLStructMember *, uint32_t&, WGPUShaderStage);
 #endif
+    static bool isPresent(const WGPUBufferBindingLayout&);
+    static bool isPresent(const WGPUSamplerBindingLayout&);
+    static bool isPresent(const WGPUTextureBindingLayout&);
+    static bool isPresent(const WGPUStorageTextureBindingLayout&);
+
+    const Vector<WGPUBindGroupLayoutEntry>& entries() const;
 
 private:
-    BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>);
+    BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, Vector<WGPUBindGroupLayoutEntry>&&);
     BindGroupLayout();
 
     const HashMap<uint32_t, WGPUShaderStageFlags> m_shaderStageForBinding;
@@ -83,6 +90,8 @@ private:
     const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
+
+    const Vector<WGPUBindGroupLayoutEntry> m_bindGroupLayoutEntries;
 };
 
 } // namespace WebGPU

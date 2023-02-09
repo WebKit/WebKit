@@ -30,6 +30,8 @@
 #import "Device.h"
 #import "PipelineLayout.h"
 
+#import <WebGPU/WebGPU.h>
+
 namespace WebGPU {
 
 struct ShaderModuleParameters {
@@ -291,11 +293,124 @@ id<MTLFunction> ShaderModule::getNamedFunction(const String& originalName, const
     return result;
 }
 
+static auto wgslBindingType(WGPUBufferBindingType bindingType)
+{
+    switch (bindingType) {
+    case WGPUBufferBindingType_Uniform:
+        return WGSL::BufferBindingType::Uniform;
+    case WGPUBufferBindingType_Storage:
+        return WGSL::BufferBindingType::Storage;
+    case WGPUBufferBindingType_ReadOnlyStorage:
+        return WGSL::BufferBindingType::ReadOnlyStorage;
+    case WGPUBufferBindingType_Undefined:
+    case WGPUBufferBindingType_Force32:
+        ASSERT_NOT_REACHED("Unexpected buffer bindingType");
+        return WGSL::BufferBindingType::Uniform;
+    }
+}
+
+static auto wgslSamplerType(WGPUSamplerBindingType bindingType)
+{
+    switch (bindingType) {
+    case WGPUSamplerBindingType_Filtering:
+        return WGSL::SamplerBindingType::Filtering;
+    case WGPUSamplerBindingType_Comparison:
+        return WGSL::SamplerBindingType::Comparison;
+    case WGPUSamplerBindingType_NonFiltering:
+        return WGSL::SamplerBindingType::NonFiltering;
+    case WGPUSamplerBindingType_Force32:
+    case WGPUSamplerBindingType_Undefined:
+        ASSERT_NOT_REACHED("Unexpected sampler bindingType");
+        return WGSL::SamplerBindingType::Filtering;
+    }
+}
+
+static auto wgslSampleType(WGPUTextureSampleType sampleType)
+{
+    switch (sampleType) {
+    case WGPUTextureSampleType_Sint:
+        return WGSL::TextureSampleType::SignedInt;
+    case WGPUTextureSampleType_Uint:
+        return WGSL::TextureSampleType::UnsignedInt;
+    case WGPUTextureSampleType_Depth:
+        return WGSL::TextureSampleType::Depth;
+    case WGPUTextureSampleType_Float:
+        return WGSL::TextureSampleType::Float;
+    case WGPUTextureSampleType_UnfilterableFloat:
+        return WGSL::TextureSampleType::UnfilterableFloat;
+    case WGPUTextureSampleType_Force32:
+    case WGPUTextureSampleType_Undefined:
+        ASSERT_NOT_REACHED("Unexpected sampleType");
+        return WGSL::TextureSampleType::Float;
+    }
+}
+
+static auto wgslViewDimension(WGPUTextureViewDimension viewDimension)
+{
+    switch (viewDimension) {
+    case WGPUTextureViewDimension_Cube:
+    case WGPUTextureViewDimension_1D:
+        return WGSL::TextureViewDimension::OneDimensional;
+    case WGPUTextureViewDimension_2D:
+        return WGSL::TextureViewDimension::TwoDimensional;
+    case WGPUTextureViewDimension_3D:
+        return WGSL::TextureViewDimension::ThreeDimensional;
+    case WGPUTextureViewDimension_CubeArray:
+        return WGSL::TextureViewDimension::CubeArray;
+    case WGPUTextureViewDimension_2DArray:
+        return WGSL::TextureViewDimension::TwoDimensionalArray;
+    case WGPUTextureViewDimension_Force32:
+    case WGPUTextureViewDimension_Undefined:
+        ASSERT_NOT_REACHED("Unexpected viewDimension");
+        return WGSL::TextureViewDimension::TwoDimensional;
+    }
+}
+
+static decltype(WGSL::BindGroupLayoutEntry::bindingMember) populateBindingMember(const WGPUBindGroupLayoutEntry& entry)
+{
+    if (BindGroupLayout::isPresent(entry.buffer)) {
+        return WGSL::BufferBindingLayout {
+            .type = wgslBindingType(entry.buffer.type),
+            .hasDynamicOffset = entry.buffer.hasDynamicOffset,
+            .minBindingSize = entry.buffer.minBindingSize
+        };
+    } else if (BindGroupLayout::isPresent(entry.sampler)) {
+        return WGSL::SamplerBindingLayout {
+            .type = wgslSamplerType(entry.sampler.type)
+        };
+    } else if (BindGroupLayout::isPresent(entry.texture)) {
+        return WGSL::TextureBindingLayout {
+            .sampleType = wgslSampleType(entry.texture.sampleType),
+            .viewDimension = wgslViewDimension(entry.texture.viewDimension),
+            .multisampled = entry.texture.multisampled
+        };
+    } else {
+        ASSERT(BindGroupLayout::isPresent(entry.storageTexture));
+        return WGSL::StorageTextureBindingLayout {
+            .viewDimension = wgslViewDimension(entry.storageTexture.viewDimension)
+        };
+    }
+}
+
 WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& pipelineLayout)
 {
-    UNUSED_PARAM(pipelineLayout);
-    // FIXME: Implement this
-    return { { } };
+    Vector<WGSL::BindGroupLayout> bindGroupLayouts;
+
+    for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i) {
+        auto& bindGroupLayout = pipelineLayout.bindGroupLayout(i);
+        WGSL::BindGroupLayout wgslBindGroupLayout;
+        for (auto& entry : bindGroupLayout.entries()) {
+            WGSL::BindGroupLayoutEntry wgslEntry;
+            wgslEntry.visibility.fromRaw(entry.visibility);
+            wgslEntry.binding = entry.binding;
+            wgslEntry.bindingMember = populateBindingMember(entry);
+            wgslBindGroupLayout.entries.append(wgslEntry);
+        }
+
+        bindGroupLayouts.append(wgslBindGroupLayout);
+    }
+
+    return { .bindGroupLayouts = bindGroupLayouts };
 }
 
 WGSL::ShaderModule* ShaderModule::ast() const
