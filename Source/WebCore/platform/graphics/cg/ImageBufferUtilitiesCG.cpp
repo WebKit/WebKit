@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,7 +58,7 @@ uint8_t verifyImageBufferIsBigEnough(const void* buffer, size_t bufferSize)
 CFStringRef jpegUTI()
 {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-#if PLATFORM(IOS_FAMILY) || PLATFORM(WIN)
+#if PLATFORM(IOS_FAMILY)
     static const CFStringRef kUTTypeJPEG = CFSTR("public.jpeg");
 #endif
     return kUTTypeJPEG;

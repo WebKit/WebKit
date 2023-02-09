@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -774,10 +774,6 @@ private:
     RefPtr<PlatformMediaResourceLoader> mediaPlayerCreateResourceLoader() override;
     bool mediaPlayerShouldUsePersistentCache() const override;
     const String& mediaPlayerMediaCacheDirectory() const override;
-
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-    GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter() const override;
-#endif
 
     void mediaPlayerActiveSourceBuffersChanged() override;
 

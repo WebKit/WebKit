@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc. All Rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +30,6 @@
 #if PLATFORM(COCOA)
 OBJC_CLASS CALayer;
 using PlatformLayer = CALayer;
-#elif PLATFORM(WIN) && USE(CA)
-typedef struct _CACFLayer PlatformLayer;
 #elif USE(NICOSIA)
 namespace Nicosia {
 class PlatformLayer;

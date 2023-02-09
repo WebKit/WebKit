@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,10 +96,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY) || USE(CFURLCONNECTION)
     virtual RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) { return nullptr; }
-#endif
-
-#if PLATFORM(WIN) && USE(CFURLCONNECTION)
-    virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) { return true; }
 #endif
 };
 

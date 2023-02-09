@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,27 +61,6 @@ bool ResourceRequest::s_httpPipeliningEnabled = false;
 
 typedef void (*CFURLRequestSetContentDispositionEncodingFallbackArrayFunction)(CFMutableURLRequestRef, CFArrayRef);
 typedef CFArrayRef (*CFURLRequestCopyContentDispositionEncodingFallbackArrayFunction)(CFURLRequestRef);
-
-#if PLATFORM(WIN)
-static HMODULE findCFNetworkModule()
-{
-#ifndef DEBUG_ALL
-    return GetModuleHandleA("CFNetwork");
-#else
-    return GetModuleHandleA("CFNetwork_debug");
-#endif
-}
-
-static CFURLRequestSetContentDispositionEncodingFallbackArrayFunction findCFURLRequestSetContentDispositionEncodingFallbackArrayFunction()
-{
-    return reinterpret_cast<CFURLRequestSetContentDispositionEncodingFallbackArrayFunction>(GetProcAddress(findCFNetworkModule(), "_CFURLRequestSetContentDispositionEncodingFallbackArray"));
-}
-
-static CFURLRequestCopyContentDispositionEncodingFallbackArrayFunction findCFURLRequestCopyContentDispositionEncodingFallbackArrayFunction()
-{
-    return reinterpret_cast<CFURLRequestCopyContentDispositionEncodingFallbackArrayFunction>(GetProcAddress(findCFNetworkModule(), "_CFURLRequestCopyContentDispositionEncodingFallbackArray"));
-}
-#endif
 
 static void setContentDispositionEncodingFallbackArray(CFMutableURLRequestRef request, CFArrayRef fallbackArray)
 {
@@ -413,10 +392,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
         return maximumHTTPConnectionCountPerHost;
 
     _CFNetworkHTTPConnectionCacheSetLimit(kHTTPPriorityNumLevels, resourceLoadPriorityCount);
-#if !PLATFORM(WIN)
-    // FIXME: <rdar://problem/9375609> Implement minimum fast lane priority setting on Windows
     _CFNetworkHTTPConnectionCacheSetLimit(kHTTPMinimumFastLanePriority, toPlatformRequestPriority(ResourceLoadPriority::Medium));
-#endif
 
     return unlimitedRequestCount;
 }

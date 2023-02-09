@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,9 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPlayerLayer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSampleBufferAudioRenderer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSampleBufferDisplayLayer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSampleBufferRenderSynchronizer)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechSynthesisVoice)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechSynthesizer)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechUtterance)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVStreamDataParser)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVURLAsset)
 
@@ -78,12 +81,6 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVStreamSession)
 #if PLATFORM(IOS_FAMILY)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioSession)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPersistableContentKeyRequest)
-#endif
-
-#if PLATFORM(COCOA)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechSynthesisVoice)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechSynthesizer)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVSpeechUtterance)
 #endif
 
 #if HAVE(AVAUDIO_ROUTING_ARBITER)
@@ -176,7 +173,6 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaCharacteristicLegible, N
 #define AVMediaCharacteristicLegible PAL::get_AVFoundation_AVMediaCharacteristicLegible()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly, NSString *)
 #define AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly PAL::get_AVFoundation_AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly()
-
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAssetChapterMetadataGroupsDidChangeNotification, NSString *)
 #define AVAssetChapterMetadataGroupsDidChangeNotification PAL::get_AVFoundation_AVAssetChapterMetadataGroupsDidChangeNotification()
@@ -369,12 +365,10 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVOutputContextOutputDevicesDid
 #define AVOutputContextOutputDevicesDidChangeNotification get_AVFoundation_AVOutputContextOutputDevicesDidChangeNotification()
 #endif // HAVE(AVROUTEPICKERVIEW)
 
-#if PLATFORM(COCOA)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioConverter)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioFormat)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioCompressedBuffer)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioPCMBuffer)
-#endif // PLATFORM(COCOA)
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAssetExportPresetHighestQuality, NSString *)
 #define AVAssetExportPresetHighestQuality PAL::get_AVFoundation_AVAssetExportPresetHighestQuality()

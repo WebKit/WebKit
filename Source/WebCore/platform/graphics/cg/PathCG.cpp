@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
  *                     2006, 2008 Rob Buis <buis@kde.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -264,13 +264,7 @@ void Path::transform(const AffineTransform& transform)
         return;
 
     CGAffineTransform transformCG = transform;
-#if PLATFORM(WIN)
-    auto path = adoptCF(CGPathCreateMutable());
-    CGPathAddPath(path.get(), &transformCG, platformPath());
-#else
-    auto path = adoptCF(CGPathCreateMutableCopyByTransformingPath(platformPath(), &transformCG));
-#endif
-    m_path = WTFMove(path);
+    m_path = adoptCF(CGPathCreateMutableCopyByTransformingPath(platformPath(), &transformCG));
     m_copyPathBeforeMutation = false;
     m_inlineData = std::monostate { };
 }

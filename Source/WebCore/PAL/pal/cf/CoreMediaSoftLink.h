@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,11 +38,7 @@
 #define SOFTLINK_AVKIT_FRAMEWORK() SOFT_LINK_FRAMEWORK_OPTIONAL(AVKit)
 #endif
 
-#if PLATFORM(COCOA)
 #define CMSAMPLEBUFFERCALL_NOESCAPE CF_NOESCAPE
-#else
-#define CMSAMPLEBUFFERCALL_NOESCAPE
-#endif
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreMedia)
 
@@ -184,8 +180,6 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTextVerticalLayout_LeftToRight,
 #define kCMTextVerticalLayout_LeftToRight get_CoreMedia_kCMTextVerticalLayout_LeftToRight()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStringRef)
 #define kCMTextVerticalLayout_RightToLeft get_CoreMedia_kCMTextVerticalLayout_RightToLeft()
-
-#if PLATFORM(COCOA)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBlockBufferCreateContiguous, OSStatus, (CFAllocatorRef structureAllocator, CMBlockBufferRef sourceBuffer, CFAllocatorRef blockAllocator, const CMBlockBufferCustomBlockSource* customBlockSource, size_t offsetToData, size_t dataLength, CMBlockBufferFlags flags, CMBlockBufferRef* blockBufferOut), (structureAllocator, sourceBuffer, blockAllocator, customBlockSource, offsetToData, dataLength, flags, blockBufferOut))
 #define CMBlockBufferCreateContiguous softLink_CoreMedia_CMBlockBufferCreateContiguous
@@ -402,8 +396,6 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionExten
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionTransferFunction_sRGB, CFStringRef)
 #define kCMFormatDescriptionTransferFunction_sRGB get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB()
 
-#endif // PLATFORM(COCOA)
-
 #if PLATFORM(MAC)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioDeviceClockCreate, OSStatus, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef* clockOut), (allocator, deviceUID, clockOut))
@@ -416,12 +408,5 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMDerivedObjectCreate, OSStatus, (
 #define CMDerivedObjectCreate softLink_CoreMedia_CMDerivedObjectCreate
 
 #endif // PLATFORM(MAC)
-
-#if PLATFORM(WIN)
-
-SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimeMakeFromDictionary, CMTime, (CFDictionaryRef dict), (dict))
-#define CMTimeMakeFromDictionary softLink_CoreMedia_CMTimeMakeFromDictionary
-
-#endif // PLATFORM(WIN)
 
 #endif // USE(AVFOUNDATION)
