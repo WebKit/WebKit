@@ -4007,7 +4007,8 @@ void GraphicsLayerCA::updateRootRelativeScale()
         if (transform.isIdentityOrTranslation())
             return 1;
         TransformationMatrix::Decomposed2Type decomposeData;
-        transform.decompose2(decomposeData);
+        if (!transform.decompose2(decomposeData))
+            return 1;
         return std::max(std::abs(decomposeData.scaleX), std::abs(decomposeData.scaleY));
     };
 
