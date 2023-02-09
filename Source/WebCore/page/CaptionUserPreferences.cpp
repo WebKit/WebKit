@@ -42,8 +42,7 @@
 #include "UserStyleSheet.h"
 #include "UserStyleSheetTypes.h"
 #include <JavaScriptCore/HeapInlines.h>
-#include <JavaScriptCore/JSCellInlines.h>
-#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <wtf/Language.h>
 #include <wtf/unicode/Collator.h>
 
