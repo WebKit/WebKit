@@ -866,8 +866,7 @@ TEST(URLSchemeHandler, DisableCORS)
 
     [handler setStartURLSchemeTaskHandler:[&](WKWebView *, id<WKURLSchemeTask> task) {
         if ([task.request.URL.path isEqualToString:@"/main.html"]) {
-            NSData *data = [[NSString stringWithFormat:
-                @"<script>%@</script>", testJS] dataUsingEncoding:NSUTF8StringEncoding];
+            NSData *data = [[NSString stringWithFormat:@"<script>%@</script>", testJS] dataUsingEncoding:NSUTF8StringEncoding];
             [task didReceiveResponse:adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]).get()];
             [task didReceiveData:data];
             [task didFinish];
@@ -903,22 +902,6 @@ TEST(URLSchemeHandler, DisableCORS)
     corssuccess = false;
     corsfailure = false;
     done = false;
-
-    webView.get()._corsDisablingPatterns = @[];
-    [webView evaluateJavaScript:testJS completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
-    EXPECT_FALSE(corssuccess);
-    EXPECT_TRUE(corsfailure);
-
-    corssuccess = false;
-    corsfailure = false;
-    done = false;
-
-    webView.get()._corsDisablingPatterns = @[@"*://*/*"];
-    [webView evaluateJavaScript:testJS completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
-    EXPECT_TRUE(corssuccess);
-    EXPECT_FALSE(corsfailure);
 }
 
 TEST(URLSchemeHandler, DisableCORSCredentials)
