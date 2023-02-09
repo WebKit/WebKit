@@ -235,6 +235,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         issue._link = '{}/issues/{}'.format(self.url, issue.id)
         issue._project = self.name
         issue._keywords = []  # We don't yet have a defined idiom for "keywords" in GitHub Issues
+        issue._classification = ''  # We don't yet have a defined idiom for "classification" in GitHub issues
 
         if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description', 'project', 'component', 'version', 'labels', 'milestone'):
             response = self.request(path='issues/{}'.format(issue.id))

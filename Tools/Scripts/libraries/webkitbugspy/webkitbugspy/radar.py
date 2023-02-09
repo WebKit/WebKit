@@ -210,6 +210,9 @@ class Tracker(GenericTracker):
         if member == 'keywords':
             issue._keywords = [kw.name for kw in (radar.keywords() or [])]
 
+        if member == 'classification':
+            issue._classification = radar.classification
+
         if member == 'watchers':
             issue._watchers = []
             for member in radar.cc_memberships.items():
