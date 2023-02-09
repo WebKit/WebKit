@@ -28,11 +28,17 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ServiceWorkerRegistration.h"
+#include "BackgroundFetchInformation.h"
+#include "BackgroundFetchRequest.h"
+#include "FetchRequest.h"
+#include "JSBackgroundFetchRegistration.h"
+#include "SWClientConnection.h"
+#include "ServiceWorkerProvider.h"
 
 namespace WebCore {
 
-BackgroundFetchManager::BackgroundFetchManager(ServiceWorkerRegistration&)
+BackgroundFetchManager::BackgroundFetchManager(ServiceWorkerRegistration& registration)
+    : m_identifier(registration.identifier())
 {
 }
 
@@ -40,19 +46,129 @@ BackgroundFetchManager::~BackgroundFetchManager()
 {
 }
 
-void BackgroundFetchManager::fetch(ScriptExecutionContext&, const String&, Requests&&, BackgroundFetchOptions&&, DOMPromiseDeferred<IDLInterface<BackgroundFetchRegistration>>&& promise)
+static ExceptionOr<Vector<Ref<FetchRequest>>> buildBackgroundFetchRequests(ScriptExecutionContext& context, BackgroundFetchManager::Requests&& backgroundFetchRequests)
 {
-    promise.reject(Exception { NotSupportedError });
+    if (std::holds_alternative<RefPtr<FetchRequest>>(backgroundFetchRequests)) {
+        auto result = FetchRequest::create(context, std::get<RefPtr<FetchRequest>>(backgroundFetchRequests).releaseNonNull(), { });
+        if (result.hasException())
+            return result.releaseException();
+        if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
+            return Exception { TypeError, "Request has no-cors mode"_s };
+        return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
+    }
+
+    if (std::holds_alternative<String>(backgroundFetchRequests)) {
+        auto result = FetchRequest::create(context, WTFMove(std::get<String>(backgroundFetchRequests)), { });
+        if (result.hasException())
+            return result.releaseException();
+        return Vector<Ref<FetchRequest>> { result.releaseReturnValue() };
+    }
+
+    auto& requestInfos = std::get<Vector<BackgroundFetchManager::RequestInfo>>(backgroundFetchRequests);
+    std::optional<Exception> exception;
+    Vector<Ref<FetchRequest>> requests;
+    requests.reserveInitialCapacity(requestInfos.size());
+    for (auto& requestInfo : requestInfos) {
+        auto result = FetchRequest::create(context, WTFMove(requestInfo), { });
+        if (result.hasException())
+            return result.releaseException();
+        if (result.returnValue()->mode() == FetchOptions::Mode::NoCors)
+            return Exception { TypeError, "Request has no-cors mode"_s };
+
+        // FIXME: Add support for readable stream bodies
+        if (result.returnValue()->isReadableStreamBody())
+            return Exception { NotSupportedError, "ReadableStream uploading is not supported"_s };
+
+        requests.uncheckedAppend(result.releaseReturnValue());
+    }
+    return requests;
 }
 
-void BackgroundFetchManager::get(ScriptExecutionContext&, const String&, DOMPromiseDeferred<IDLNullable<IDLInterface<BackgroundFetchRegistration>>>&& promise)
+Ref<BackgroundFetchRegistration> BackgroundFetchManager::backgroundFetchRegistrationInstance(ScriptExecutionContext& context, BackgroundFetchInformation&& data)
 {
-    promise.reject(Exception { NotSupportedError });
+    auto identifier = data.identifier;
+    auto result = m_backgroundFetchRegistrations.ensure(identifier, [&]() mutable {
+        return BackgroundFetchRegistration::create(context, WTFMove(data));
+    });
+
+    auto registration = result.iterator->value;
+    if (!result.isNewEntry)
+        registration->updateInformation(data);
+    return registration;
 }
 
-void BackgroundFetchManager::getIds(ScriptExecutionContext&, DOMPromiseDeferred<IDLSequence<IDLDOMString>>&& promise)
+void BackgroundFetchManager::fetch(ScriptExecutionContext& context, const String& fetchIdentifier, Requests&& backgroundFetchRequests, BackgroundFetchOptions&& options, DOMPromiseDeferred<IDLInterface<BackgroundFetchRegistration>>&& promise)
 {
-    promise.reject(Exception { NotSupportedError });
+    auto generatedRequests = buildBackgroundFetchRequests(context, WTFMove(backgroundFetchRequests));
+    if (generatedRequests.hasException()) {
+        promise.reject(generatedRequests.releaseException());
+        return;
+    }
+
+    if (!generatedRequests.returnValue().size()) {
+        promise.reject(Exception { TypeError, "No requests"_s });
+        return;
+    }
+
+    auto requests = map(generatedRequests.releaseReturnValue(), [](auto&& fetchRequest) -> BackgroundFetchRequest {
+        return { fetchRequest->resourceRequest(), fetchRequest->fetchOptions(), fetchRequest->headers().guard(), fetchRequest->headers().internalHeaders(), fetchRequest->internalRequestReferrer() };
+    });
+    SWClientConnection::fromScriptExecutionContext(context)->startBackgroundFetch(m_identifier, fetchIdentifier, WTFMove(requests), WTFMove(options), [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& result) mutable {
+        if (!weakContext)
+            return;
+        weakContext->postTask([weakThis = WTFMove(weakThis), promise = WTFMove(promise), result = WTFMove(result)](auto& context) mutable {
+            if (!weakThis)
+                return;
+
+            if (result.hasException()) {
+                promise.reject(result.releaseException());
+                return;
+            }
+            if (result.returnValue().identifier.isNull()) {
+                promise.reject(Exception { TypeError, "An internal error occured"_s });
+                return;
+            }
+
+            promise.resolve(weakThis->backgroundFetchRegistrationInstance(context, result.releaseReturnValue()));
+        });
+
+    });
+}
+
+void BackgroundFetchManager::get(ScriptExecutionContext& context, const String& fetchIdentifier, DOMPromiseDeferred<IDLNullable<IDLInterface<BackgroundFetchRegistration>>>&& promise)
+{
+    auto iterator = m_backgroundFetchRegistrations.find(fetchIdentifier);
+    if (iterator == m_backgroundFetchRegistrations.end()) {
+        promise.resolve(nullptr);
+        return;
+    }
+
+    SWClientConnection::fromScriptExecutionContext(context)->backgroundFetchInformation(m_identifier, fetchIdentifier, [weakThis = WeakPtr { *this }, weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& result) mutable {
+        if (!weakContext)
+            return;
+        weakContext->postTask([weakThis = WTFMove(weakThis), promise = WTFMove(promise), result = WTFMove(result)](auto& context) mutable {
+            if (!weakThis)
+                return;
+
+            if (result.hasException()) {
+                promise.reject(result.releaseException());
+                return;
+            }
+
+            RefPtr<BackgroundFetchRegistration> backgroundFetchRegistration;
+            if (!result.returnValue().identifier.isNull())
+                backgroundFetchRegistration = weakThis->backgroundFetchRegistrationInstance(context, result.releaseReturnValue());
+
+            promise.resolve(backgroundFetchRegistration.get());
+        });
+    });
+}
+
+void BackgroundFetchManager::getIds(ScriptExecutionContext& context, DOMPromiseDeferred<IDLSequence<IDLDOMString>>&& promise)
+{
+    SWClientConnection::fromScriptExecutionContext(context)->backgroundFetchIdentifiers(m_identifier, [promise = WTFMove(promise)](auto&& result) mutable {
+        promise.resolve(WTFMove(result));
+    });
 }
 
 } // namespace WebCore

@@ -1,4 +1,4 @@
 
-FAIL BackgroundFetchManager.getIds() does not require an activated worker promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL The BackgroundFetchManager exposes active fetches promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+PASS BackgroundFetchManager.getIds() does not require an activated worker
+FAIL The BackgroundFetchManager exposes active fetches promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

@@ -28,6 +28,10 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchInformation.h"
+#include "BackgroundFetchOptions.h"
+#include "BackgroundFetchRecordInformation.h"
+#include "BackgroundFetchRequest.h"
 #include "ExceptionCode.h"
 #include "ExceptionData.h"
 #include "Logging.h"
@@ -1577,6 +1581,48 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
             callback(contextConnection);
         });
     });
+}
+
+void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&& callback)
+{
+    // FIXME: To implement.
+    callback(makeUnexpected(ExceptionData { NotSupportedError, emptyString() }));
+}
+
+void SWServer::Connection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&& callback)
+{
+    // FIXME: To implement.
+    callback({ });
+}
+
+void SWServer::Connection::backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier, BackgroundFetchIdentifiersCallback&& callback)
+{
+    // FIXME: To implement.
+    callback({ });
+}
+
+void SWServer::Connection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, AbortBackgroundFetchCallback&& callback)
+{
+    // FIXME: To implement.
+    callback(false);
+}
+
+void SWServer::Connection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&& callback)
+{
+    // FIXME: To implement.
+    callback({ });
+}
+
+void SWServer::Connection::retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&& callback)
+{
+    // FIXME: To implement.
+    callback({ });
+}
+
+void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&& callback)
+{
+    // FIXME: To implement.
+    callback({ });
 }
 
 } // namespace WebCore

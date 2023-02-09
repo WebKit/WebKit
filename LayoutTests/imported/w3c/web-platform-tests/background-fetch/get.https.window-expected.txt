@@ -1,5 +1,5 @@
 
-FAIL BackgroundFetchManager.get() does not require an activated worker promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Getting non-existing registrations yields `undefined` promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
-FAIL Getting an existing registration has the expected values promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL BackgroundFetchManager.get() does not require an activated worker assert_equals: expected (undefined) undefined but got (object) null
+FAIL Getting non-existing registrations yields `undefined` assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Getting an existing registration has the expected values promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

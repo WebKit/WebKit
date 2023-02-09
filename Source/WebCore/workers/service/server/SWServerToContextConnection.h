@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchFailureReason.h"
 #include "ExceptionData.h"
 #include "NotificationEventType.h"
 #include "PageIdentifier.h"
@@ -40,6 +41,7 @@
 
 namespace WebCore {
 
+struct BackgroundFetchInformation;
 struct NotificationData;
 class SWServer;
 struct ServiceWorkerClientData;
