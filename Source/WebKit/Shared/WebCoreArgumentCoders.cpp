@@ -111,7 +111,6 @@
 #include <WebCore/ProgressBarPart.h>
 #include <WebCore/PromisedAttachmentInfo.h>
 #include <WebCore/ProtectionSpace.h>
-#include <WebCore/RectEdges.h>
 #include <WebCore/Region.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/Report.h>
@@ -157,7 +156,6 @@
 #include <WebCore/TranslateTransformOperation.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/VelocityData.h>
-#include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
@@ -165,6 +163,7 @@
 
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
+#include <WebCore/CAAudioStreamDescription.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -289,29 +288,6 @@ std::optional<DOMCacheEngine::Record> ArgumentCoder<DOMCacheEngine::Record>::dec
 
     return {{ WTFMove(identifier), WTFMove(updateResponseCounter), WTFMove(requestHeadersGuard), WTFMove(request), WTFMove(options.value()), WTFMove(referrer), WTFMove(responseHeadersGuard), WTFMove(response), WTFMove(responseBody), responseBodySize }};
 }
-
-void ArgumentCoder<RectEdges<bool>>::encode(Encoder& encoder, const RectEdges<bool>& boxEdges)
-{
-    SimpleArgumentCoder<RectEdges<bool>>::encode(encoder, boxEdges);
-}
-    
-std::optional<RectEdges<bool>> ArgumentCoder<RectEdges<bool>>::decode(Decoder& decoder)
-{
-    return SimpleArgumentCoder<RectEdges<bool>>::decode(decoder);
-}
-
-#if ENABLE(META_VIEWPORT)
-void ArgumentCoder<ViewportArguments>::encode(Encoder& encoder, const ViewportArguments& viewportArguments)
-{
-    SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
-}
-
-std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decoder& decoder)
-{
-    return SimpleArgumentCoder<ViewportArguments>::decode(decoder);
-}
-
-#endif // ENABLE(META_VIEWPORT)
 
 void ArgumentCoder<Length>::encode(Encoder& encoder, const Length& length)
 {
@@ -2361,5 +2337,19 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
     ASSERT_NOT_REACHED();
     return std::nullopt;
 }
+
+#if PLATFORM(COCOA)
+
+void ArgumentCoder<AudioStreamBasicDescription>::encode(Encoder& encoder, const AudioStreamBasicDescription& asbd)
+{
+    TriviallyCopyableArgumentCoder<AudioStreamBasicDescription>::encode(encoder, asbd);
+}
+
+std::optional<AudioStreamBasicDescription> ArgumentCoder<AudioStreamBasicDescription>::decode(Decoder& decoder)
+{
+    return TriviallyCopyableArgumentCoder<AudioStreamBasicDescription>::decode(decoder);
+}
+
+#endif
 
 } // namespace IPC

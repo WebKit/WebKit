@@ -80,6 +80,26 @@ template<typename T, typename = void> struct ArgumentCoder {
     }
 };
 
+template<typename T>
+struct TriviallyCopyableArgumentCoder {
+    static_assert(std::is_trivially_copyable_v<T>);
+
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const T& value)
+    {
+        encoder.encodeObject(value);
+    }
+
+    template<typename Decoder>
+    static std::optional<T> decode(Decoder& decoder)
+    {
+        return decoder.template decodeObject<T>();
+    }
+};
+
+template<typename T>
+struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> : TriviallyCopyableArgumentCoder<T> { };
+
 template<>
 struct ArgumentCoder<bool> {
     template<typename Encoder>
@@ -96,21 +116,6 @@ struct ArgumentCoder<bool> {
         if (data && *data <= 1) // This ensures that only the lower bit is set in a boolean for IPC messages
             return !!*data;
         return std::nullopt;
-    }
-};
-
-template<typename T>
-struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, T value)
-    {
-        encoder.encodeObject(value);
-    }
-
-    template<typename Decoder>
-    static std::optional<T> decode(Decoder& decoder)
-    {
-        return decoder.template decodeObject<T>();
     }
 };
 

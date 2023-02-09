@@ -114,19 +114,19 @@ private:
 template<class Encoder>
 void CapabilityValueOrRange::encode(Encoder& encoder) const
 {
-    encoder.encodeObject(m_minOrValue);
-    encoder.encodeObject(m_max);
+    encoder << m_minOrValue;
+    encoder << m_max;
     encoder << m_type;
 }
 
 template<class Decoder>
 bool CapabilityValueOrRange::decode(Decoder& decoder, CapabilityValueOrRange& valueOrRange)
 {
-    auto minOrValue = decoder.template decodeObject<ValueUnion>();
+    auto minOrValue = decoder.template decode<ValueUnion>();
     if (!minOrValue)
         return false;
 
-    auto max = decoder.template decodeObject<ValueUnion>();
+    auto max = decoder.template decode<ValueUnion>();
     if (!max)
         return false;
 

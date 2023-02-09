@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
+#include <wtf/ArgumentCoder.h>
 
 namespace WebKit {
 
@@ -45,5 +45,5 @@ struct TextCheckerState {
 } // namespace WebKit
 
 namespace IPC {
-template<> struct ArgumentCoder<WebKit::TextCheckerState> : SimpleArgumentCoder<WebKit::TextCheckerState> { };
+template<> struct ArgumentCoder<WebKit::TextCheckerState> : TriviallyCopyableArgumentCoder<WebKit::TextCheckerState> { };
 };

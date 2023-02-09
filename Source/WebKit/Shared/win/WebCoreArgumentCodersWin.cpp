@@ -36,16 +36,7 @@ namespace IPC {
 
 using namespace WebCore;
 
-template<> struct ArgumentCoder<LOGFONT> {
-    static void encode(Encoder& encoder, const LOGFONT& logFont)
-    {
-        encoder.encodeObject(logFont);
-    }
-    static std::optional<LOGFONT> decode(Decoder& decoder)
-    {
-        return decoder.decodeObject<LOGFONT>();
-    }
-};
+template<> struct ArgumentCoder<LOGFONT> : TriviallyCopyableArgumentCoder<LOGFONT> { };
 
 void ArgumentCoder<Font>::encodePlatformData(Encoder& encoder, const Font& font)
 {
