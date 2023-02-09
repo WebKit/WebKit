@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -190,19 +191,19 @@ void PageSerializer::serializeFrame(Frame* frame)
         return;
     }
 
-    Vector<Node*> nodes;
-    SerializerMarkupAccumulator accumulator(*this, *document, &nodes);
     PAL::TextEncoding textEncoding(document->charset());
-    CString data;
     if (!textEncoding.isValid()) {
         // FIXME: iframes used as images trigger this. We should deal with them correctly.
         return;
     }
+
+    Vector<Node*> serializedNodes;
+    SerializerMarkupAccumulator accumulator(*this, *document, &serializedNodes);
     String text = accumulator.serializeNodes(*document->documentElement(), SerializedNodes::SubtreeIncludingNode);
     m_resources.append({ url, document->suggestedMIMEType(), SharedBuffer::create(textEncoding.encode(text, PAL::UnencodableHandling::Entities)) });
     m_resourceURLs.add(url);
 
-    for (auto& node : nodes) {
+    for (auto& node : serializedNodes) {
         if (!is<Element>(*node))
             continue;
 
