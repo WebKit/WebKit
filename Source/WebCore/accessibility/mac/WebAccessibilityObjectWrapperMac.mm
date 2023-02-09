@@ -205,6 +205,7 @@ using namespace WebCore;
 #define NSAccessibilityPlaceholderValueAttribute @"AXPlaceholderValue"
 #endif
 
+#define NSAccessibilityTextMarkerIsNullParameterizedAttribute @"AXTextMarkerIsNull"
 #define NSAccessibilityTextMarkerIsValidParameterizedAttribute @"AXTextMarkerIsValid"
 #define NSAccessibilityIndexForTextMarkerParameterizedAttribute @"AXIndexForTextMarker"
 #define NSAccessibilityTextMarkerForIndexParameterizedAttribute @"AXTextMarkerForIndex"
@@ -3643,17 +3644,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         });
     }
 
-    if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute]) {
-        bool result = Accessibility::retrieveValueFromMainThread<bool>([textMarker = retainPtr(textMarker), protectedSelf = retainPtr(self)] () -> bool {
-            auto* backingObject = protectedSelf.get().axBackingObject;
-            if (!backingObject)
-                return false;
+    if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute])
+        return [NSNumber numberWithBool:AXTextMarker(textMarker).isValid()];
 
-            return !visiblePositionForTextMarker(backingObject->axObjectCache(), textMarker.get()).isNull();
-        });
-
-        return [NSNumber numberWithBool:result];
-    }
+    if ([attribute isEqualToString:NSAccessibilityTextMarkerIsNullParameterizedAttribute])
+        return [NSNumber numberWithBool:AXTextMarker(textMarker).isNull()];
 
     if ([attribute isEqualToString:NSAccessibilityIndexForTextMarkerParameterizedAttribute])
         return [NSNumber numberWithInteger:[self _indexForTextMarker:textMarker]];
@@ -3663,7 +3658,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:@"AXUIElementForTextMarker"]) {
         AXTextMarker marker(textMarker);
-        auto* object = marker.object();
+        auto object = marker.object();
         if (!object)
             return nil;
 

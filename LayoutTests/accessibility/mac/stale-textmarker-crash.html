@@ -1,58 +1,46 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<script src="../../resources/accessibility-helper.js"></script>
 <script src="../../resources/js-test.js"></script>
 </head>
-<body id="body" onload="setTimeout('runTest();', 1)">
+<body>
 
-<div id="content">
-<iframe src="data:text/html,<body><input type='search' placeholder=''><input type='search' placeholder=''>"></iframe>
+<div id="content1" role="group">
+<div id="content2">
+<iframe src="data:text/html,
+    <body>
+        <input type='search' id='field' placeholder=''>">
+</iframe>
+</div>
 </div>
 
-<div role="group" id="console"></div>
-
 <script>
+let output = "This tests that using an old text marker that references a removed container node won't crash.\n\n";
+window.jsTestIsAsync = true;
 
-    description("This tests that using an old text marker that references a removed container node won't crash.");
+setTimeout(async () => {
+    // Retrieve a marker for the search field in the iframe.
+    field = null;
+    await waitFor(() => {
+        return field = accessibilityController.accessibleElementById("field");
+    });
+    let range = field.textMarkerRangeForElement(field);
+    marker = field.startTextMarkerForTextMarkerRange(range);
+    output += expect("field.isTextMarkerValid(marker)", "true");
 
-    var cachedMarker1 = 0;
-    var cachedMarker2 = 0;
-    jsTestIsAsync = true;
+    // Remove the iframe and the field inside and then force GC.
+    document.getElementById("content2").innerHTML = "";
+    gc();
 
-    function runTest() {
+    content1 = accessibilityController.accessibleElementById("content1");
+    // Don't crash accessing the text marker that references a stale Node.
+    let index = content1.indexForTextMarker(marker);
+    output += expect("content1.isTextMarkerValid(marker)", "false");
 
-        // Retrieve a marker for the search field in the iframe and cache it.
-        var searchField1 = accessibilityController.accessibleElementById("content").childAtIndex(0).childAtIndex(0).childAtIndex(0);
-        var range1 = searchField1.textMarkerRangeForElement(searchField1);
-        cachedMarker1 = searchField1.startTextMarkerForTextMarkerRange(range1);
-
-        var searchField2 = accessibilityController.accessibleElementById("content").childAtIndex(0).childAtIndex(0).childAtIndex(1);
-        var range2 = searchField2.textMarkerRangeForElement(searchField2);
-        cachedMarker2 = searchField2.startTextMarkerForTextMarkerRange(range2);
-
-        debug("Text marker 1 is valid: " + searchField1.isTextMarkerValid(cachedMarker1));
-        debug("Text marker 2 is valid: " + searchField2.isTextMarkerValid(cachedMarker2));
-
-        // Remove the iframe and the search field inside and then force cleanup.
-        document.getElementById("content").innerHTML = "";
-        gc();
-
-        setTimeout("accessCachedMarker()", "10");
-    }
- 
-    function accessCachedMarker() {
-        var console = accessibilityController.accessibleElementById("console");
-  
-        // Don't crash accessing the text marker that references a stale Node.
-        var index1 = console.indexForTextMarker(cachedMarker1);
-        debug("Text marker 1 is valid: " + console.isTextMarkerValid(cachedMarker1));
-
-        var index2 = console.indexForTextMarker(cachedMarker2);
-        debug("Text marker 2 is valid: " + console.isTextMarkerValid(cachedMarker2));
-
-        finishJSTest();
-    }
-
+    debug(output);
+    finishJSTest();
+}, 0);
 </script>
 </body>
 </html>

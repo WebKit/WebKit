@@ -1609,7 +1609,7 @@ void enumerateDescendants(T& object, bool includeSelf, const F& lambda)
 
 template<typename U> inline void performFunctionOnMainThread(U&& lambda)
 {
-    callOnMainThreadAndWait([&lambda] {
+    callOnMainThreadAndWait([lambda = WTFMove(lambda)] () {
         lambda();
     });
 }

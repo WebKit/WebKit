@@ -595,6 +595,11 @@ int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*)
     return -1;
 }
 
+bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker*)
+{
+    return true;
+}
+
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*)
 {
     return false;

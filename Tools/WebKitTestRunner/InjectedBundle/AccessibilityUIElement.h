@@ -353,6 +353,7 @@ public:
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     int indexForTextMarker(AccessibilityTextMarker*);
     bool isTextMarkerValid(AccessibilityTextMarker*);
+    bool isTextMarkerNull(AccessibilityTextMarker*);
     RefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
     RefPtr<AccessibilityTextMarker> startTextMarker();
     RefPtr<AccessibilityTextMarker> endTextMarker();

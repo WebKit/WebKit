@@ -880,12 +880,21 @@ static JSValueRef indexForTextMarkerCallback(JSContextRef context, JSObjectRef f
     return JSValueMakeNumber(context, toAXElement(thisObject)->indexForTextMarker(marker));
 }
 
-static JSValueRef isTextMarkerValidCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef isTextMarkerNullCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityTextMarker* marker = 0;
+    AccessibilityTextMarker* marker = nullptr;
     if (argumentCount == 1)
         marker = toTextMarker(JSValueToObject(context, arguments[0], exception));
-    
+
+    return JSValueMakeBoolean(context, toAXElement(thisObject)->isTextMarkerNull(marker));
+}
+
+static JSValueRef isTextMarkerValidCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityTextMarker* marker = nullptr;
+    if (argumentCount == 1)
+        marker = toTextMarker(JSValueToObject(context, arguments[0], exception));
+
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isTextMarkerValid(marker));
 }
 
@@ -1842,6 +1851,11 @@ int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*)
     return -1;
 }
 
+bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker*)
+{
+    return true;
+}
+
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*)
 {
     return false;
@@ -2118,6 +2132,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "insertText", insertTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributedStringForTextMarkerRangeContainsAttribute", attributedStringForTextMarkerRangeContainsAttributeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "indexForTextMarker", indexForTextMarkerCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "isTextMarkerNull", isTextMarkerNullCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isTextMarkerValid", isTextMarkerValidCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerRangeForMarkers", textMarkerRangeForMarkersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerForIndex", textMarkerForIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

@@ -255,6 +255,7 @@
     boolean attributedStringForTextMarkerRangeContainsAttribute(DOMString attr, AccessibilityTextMarkerRange range);
     long indexForTextMarker(AccessibilityTextMarker marker);
     boolean isTextMarkerValid(AccessibilityTextMarker marker);
+    boolean isTextMarkerNull(AccessibilityTextMarker marker);
     AccessibilityTextMarker textMarkerForIndex(long textIndex);
     readonly attribute AccessibilityTextMarker startTextMarker;
     readonly attribute AccessibilityTextMarker endTextMarker;
