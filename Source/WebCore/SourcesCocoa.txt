@@ -457,7 +457,7 @@ platform/graphics/mac/ComplexTextControllerCoreText.mm
 platform/graphics/mac/DisplayConfigurationMonitor.cpp
 platform/graphics/mac/FloatPointMac.mm
 platform/graphics/mac/FloatSizeMac.mm
-platform/graphics/mac/FontCustomPlatformData.cpp
+platform/graphics/mac/FontCustomPlatformDataMac.cpp
 platform/graphics/mac/GraphicsChecksMac.cpp
 platform/graphics/mac/IconMac.mm
 platform/graphics/mac/ImageMac.mm
