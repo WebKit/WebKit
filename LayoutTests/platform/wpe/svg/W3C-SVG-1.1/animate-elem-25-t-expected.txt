@@ -2,10 +2,10 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderSVGContainer {g} at (33,45) size 682x317
-      RenderSVGText {text} at (30,27) size 399x16 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 399x16
-          chunk 1 text run 1 at (30.00,40.00) startOffset 0 endOffset 68 width 399.00: "Test animation options for specifying the target attribute/property."
+    RenderSVGContainer {g} at (33,45) size 679x317
+      RenderSVGText {text} at (30,27) size 397x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 397x16
+          chunk 1 text run 1 at (30.00,40.00) startOffset 0 endOffset 68 width 396.45: "Test animation options for specifying the target attribute/property."
       RenderSVGContainer {g} at (33,213) size 679x149 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
         RenderSVGText {text} at (20,151) size 50x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x16

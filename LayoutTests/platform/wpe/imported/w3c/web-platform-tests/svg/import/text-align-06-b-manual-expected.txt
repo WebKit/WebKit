@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (0,12) size 725x491
-      RenderSVGText {text} at (0,7) size 435x41 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 435x41
-          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 434.40: "Test 'baseline-shift' (vertic.)"
+    RenderSVGContainer {g} at (0,12) size 718x491
+      RenderSVGText {text} at (0,7) size 431x41 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 431x41
+          chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 430.41: "Test 'baseline-shift' (vertic.)"
       RenderSVGContainer {g} at (138,100) size 479x403
         RenderSVGContainer {g} at (138,100) size 479x403 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,60.00)}]
           RenderSVGText {text} at (-7,0) size 21x135 contains 1 chunk(s)
@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
               chunk 1 (vertical) text run 1 at (-8.32,80.44) startOffset 0 endOffset 1 height 26.81: "x"
               chunk 1 (vertical) text run 2 at (-8.32,107.25) startOffset 1 endOffset 2 height 26.81: "t"
           RenderSVGText {text} at (52,0) size 35x215 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (21,0) size 14x54
+            RenderSVGInlineText {#text} at (20,0) size 14x54
               chunk 1 (vertical) text run 1 at (71.68,0.00) startOffset 0 endOffset 1 height 26.81: "t"
               chunk 1 (vertical) text run 2 at (71.68,26.81) startOffset 1 endOffset 2 height 26.81: "e"
             RenderSVGTSpan {tspan} at (0,0) size 108x23

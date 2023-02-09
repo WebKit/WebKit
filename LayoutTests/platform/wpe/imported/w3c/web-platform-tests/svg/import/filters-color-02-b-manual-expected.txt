@@ -32,7 +32,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (66,137) size 144x204
         RenderSVGText {text} at (40,82) size 86x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 86x22
-            chunk 1 text run 1 at (40.00,100.00) startOffset 0 endOffset 9 width 85.80: "Reference"
+            chunk 1 text run 1 at (40.00,100.00) startOffset 0 endOffset 9 width 85.44: "Reference"
         RenderSVGText {text} at (40,182) size 63x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 63x22
             chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 7 width 63.00: "Default"

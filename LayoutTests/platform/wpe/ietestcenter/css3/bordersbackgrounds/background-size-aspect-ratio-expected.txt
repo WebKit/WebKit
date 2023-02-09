@@ -1,11 +1,14 @@
-layer at (0,0) size 785x734
-  RenderView at (0,0) size 785x600
-layer at (0,0) size 785x734
-  RenderBlock {HTML} at (0,0) size 785x734
-    RenderBody {BODY} at (8,16) size 769x710
-      RenderBlock {P} at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 727x17
-          text run at (0,0) width 727: "Test passes if there are five unclipped cats in each of the two boxes, and if all the cats on the page are the same size."
-      RenderBlock {DIV} at (0,34) size 96x96
-      RenderBlock {DIV} at (0,130) size 410x160 [border: (5px solid #000000)]
-      RenderBlock {DIV} at (0,300) size 160x410 [border: (5px solid #000000)]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x169
+  RenderBlock {html} at (0,0) size 800x169
+    RenderBlock {parsererror} at (16,16) size 768x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+      RenderBlock {h3} at (18,20) size 732x23
+        RenderText {#text} at (0,0) size 324x21
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {div} at (18,61) size 732x15
+        RenderText {#text} at (0,0) size 315x14
+          text run at (0,0) width 315: "error on line 31 at column 12: Encoding error"
+      RenderBlock {h3} at (18,94) size 732x23
+        RenderText {#text} at (0,0) size 427x21
+          text run at (0,0) width 427: "Below is a rendering of the page up to the first error."

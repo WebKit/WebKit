@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (-141,37) size 141x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 141x16
             chunk 1 (end anchor) text run 1 at (-141.00,50.00) startOffset 0 endOffset 23 width 141.00: "restart=\"whenNotActive\""
-        RenderSVGText {text} at (-85,62) size 85x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 85x16
+        RenderSVGText {text} at (-84,62) size 84x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 84x16
             chunk 1 (end anchor) text run 1 at (-84.00,75.00) startOffset 0 endOffset 15 width 84.00: "restart=\"never\""
         RenderSVGText {text} at (-52,87) size 52x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 52x16
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 24x16
             chunk 1 (middle anchor) text run 1 at (-12.00,0.00) startOffset 0 endOffset 4 width 24.00: "> 5s"
         RenderSVGText {text} at (65,-13) size 30x16 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 31x16
+          RenderSVGInlineText {#text} at (0,0) size 30x16
             chunk 1 (middle anchor) text run 1 at (65.00,0.00) startOffset 0 endOffset 5 width 30.00: "0s-5s"
       RenderSVGContainer {g} at (505,189) size 190x189 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,40.00)}]
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0

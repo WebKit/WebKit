@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 360x17
-          text run at (0,0) width 360: "Test dynamic removal of transformed and reflected video"
+        RenderText {#text} at (0,0) size 359x17
+          text run at (0,0) width 359: "Test dynamic removal of transformed and reflected video"
       RenderBlock (anonymous) at (0,34) size 784x338
         RenderText {#text} at (0,0) size 4x17
           text run at (0,0) width 4: " "

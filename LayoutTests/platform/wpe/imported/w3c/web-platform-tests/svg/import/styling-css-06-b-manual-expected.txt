@@ -7,8 +7,8 @@ layer at (0,0) size 800x600
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGContainer {g} at (83,76) size 619x361
         RenderSVGText {text} at (50,46) size 90x30 contains 1 chunk(s)
-          RenderSVGInline {a} at (0,0) size 91x30
-            RenderSVGInlineText {#text} at (0,0) size 91x30
+          RenderSVGInline {a} at (0,0) size 90x30
+            RenderSVGInlineText {#text} at (0,0) size 90x30
               chunk 1 text run 1 at (50.00,70.00) startOffset 0 endOffset 7 width 90.00: "Visited"
           RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGText {text} at (250,46) size 124x30 contains 1 chunk(s)

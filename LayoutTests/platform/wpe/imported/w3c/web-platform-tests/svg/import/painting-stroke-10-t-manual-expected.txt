@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (16,39) size 509x403
-      RenderSVGText {text} at (10,23) size 297x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 297x21
-          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 37 width 296.40: "Test stroking of zero length subpaths"
+      RenderSVGText {text} at (10,23) size 295x21 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 295x21
+          chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 37 width 294.40: "Test stroking of zero length subpaths"
       RenderSVGContainer {g} at (275,241) size 250x201
         RenderSVGPath {path} at (275,241) size 84x84 [stroke={[type=SOLID] [color=#0000FF] [stroke width=50.00] [line cap=ROUND]}] [data="M 190 170 L 190 170"]
         RenderSVGPath {path} at (441,241) size 84x84 [stroke={[type=SOLID] [color=#0000FF] [stroke width=50.00] [line cap=SQUARE]}] [data="M 290 170 L 290 170"]

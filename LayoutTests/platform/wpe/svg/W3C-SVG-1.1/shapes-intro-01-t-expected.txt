@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (655,257) size 61x103 [stroke={[type=SOLID] [color=#000000]}] [x=394.00] [y=155.00] [width=35.00] [height=60.00]
         RenderSVGRect {rect} at (390,432) size 20x19 [stroke={[type=SOLID] [color=#000000]}] [x=235.00] [y=260.00] [width=10.00] [height=10.00]
       RenderSVGContainer {g} at (8,138) size 766x349
-        RenderSVGText {text} at (5,82) size 28x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 28x9
+        RenderSVGText {text} at (5,82) size 27x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 27x9
             chunk 1 text run 1 at (5.00,90.00) startOffset 0 endOffset 7 width 27.00: "Stroked"
         RenderSVGText {text} at (5,187) size 36x10 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 36x9
@@ -29,7 +29,7 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 55x9
             chunk 1 text run 1 at (130.00,135.00) startOffset 0 endOffset 16 width 54.60: "Zero height rect"
         RenderSVGText {text} at (210,127) size 60x10 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 61x9
+          RenderSVGInlineText {#text} at (0,0) size 60x9
             chunk 1 text run 1 at (210.00,135.00) startOffset 0 endOffset 18 width 60.00: "Zero radius circle"
         RenderSVGText {text} at (315,127) size 71x10 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 71x9

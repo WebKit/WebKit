@@ -217,8 +217,8 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (415.60,210.00) startOffset 0 endOffset 3 width 10.80: "55 "
         RenderSVGInlineText {#text} at (426,210) size 12x9
           chunk 1 text run 1 at (426.40,210.00) startOffset 0 endOffset 5 width 12.00: "     "
-    RenderSVGContainer {g} at (16,518) size 409x60
-      RenderSVGText {text} at (10,311) size 245x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 245x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 244.80: "$Revision: 1.11 $"
+    RenderSVGContainer {g} at (16,518) size 405x60
+      RenderSVGText {text} at (10,311) size 243x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 243x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 242.44: "$Revision: 1.11 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

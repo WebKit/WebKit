@@ -1,4 +1,3 @@
-X
 This tests that native elements and ARIA overrides result in the expected role, subrole and role description.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -8,10 +7,10 @@ a[href]
       AXRole: AXLink
 
 a:not([href])
-      AXRole:
+      Could not get AX element.
 
 abbr:not([title])
-      AXRole:
+      Could not get AX element.
 
 abbr[title]
       AXRole: AXStatic
@@ -26,13 +25,13 @@ aside
       AXRole: AXLandmarkComplementary
 
 audio
-      AXRole:
+      Could not get AX element.
 
 b
-      AXRole:
+      Could not get AX element.
 
 bdo
-      AXRole:
+      Could not get AX element.
 
 blockquote
       AXRole: AXBlockquote
@@ -41,7 +40,7 @@ button
       AXRole: AXButton
 
 canvas
-      AXRole:
+      Could not get AX element.
 
 cite
       AXRole: AXStatic
@@ -71,7 +70,7 @@ div
       AXRole: AXSection
 
 em
-      AXRole:
+      Could not get AX element.
 
 fieldset
       AXRole: AXGroup
@@ -116,16 +115,16 @@ hr
       AXRole: AXSeparator
 
 i
-      AXRole:
+      Could not get AX element.
 
 img:not([src]):not([alt])
-      AXRole:
+      Could not get AX element.
 
 img[alt='']
-      AXRole:
+      Could not get AX element.
 
 img[src]:not([alt])
-      AXRole:
+      Could not get AX element.
 
 img[alt='X']
       AXRole: AXImage
@@ -134,7 +133,7 @@ img[usemap][alt='X']
       AXRole: AXImageMap
 
 img[usemap]:not([alt])
-      AXRole:
+      Could not get AX element.
 
 input[type='button']
       AXRole: AXButton
@@ -161,7 +160,7 @@ input[type='file']
       AXRole: AXButton
 
 input[type='hidden']
-      AXRole:
+      Could not get AX element.
 
 input[type='image']
       AXRole: AXButton
@@ -212,13 +211,13 @@ ins[datetime]
       AXRole: AXInsertion
 
 map
-      AXRole:
+      Could not get AX element.
 
 area
-      AXRole:
+      Could not get AX element.
 
 mark
-      AXRole:
+      Could not get AX element.
 
 math
       AXRole: AXMath
@@ -296,7 +295,7 @@ mi
       AXRole: AXSuperscript
 
 mprescripts
-      AXRole:
+      Could not get AX element.
 
 mi
       AXRole: AXSubscript
@@ -341,10 +340,10 @@ progress
       AXRole: AXProgressIndicator
 
 q
-      AXRole:
+      Could not get AX element.
 
 s
-      AXRole:
+      Could not get AX element.
 
 samp
       AXRole: AXStatic
@@ -365,7 +364,7 @@ option
       AXRole: AXMenuItem
 
 optgroup
-      AXRole:
+      Could not get AX element.
 
 select[multiple]
       AXRole: AXListBox
@@ -377,16 +376,16 @@ optgroup
       AXRole: AXListItem
 
 small
-      AXRole:
+      Could not get AX element.
 
 span:not([onclick])
-      AXRole:
+      Could not get AX element.
 
 span[onclick]
-      AXRole: AXStatic
+      Could not get AX element.
 
 strong
-      AXRole:
+      Could not get AX element.
 
 sub
       AXRole: AXSubscript
@@ -395,7 +394,7 @@ sup
       AXRole: AXSuperscript
 
 svg
-      AXRole:
+      Could not get AX element.
 
 table
       AXRole: AXTable
@@ -404,7 +403,7 @@ caption
       AXRole: AXCaption
 
 thead
-      AXRole:
+      Could not get AX element.
 
 tr
       AXRole: AXRow
@@ -413,7 +412,7 @@ th
       AXRole: AXColumnHeader
 
 tbody
-      AXRole:
+      Could not get AX element.
 
 tr
       AXRole: AXRow
@@ -422,7 +421,7 @@ td
       AXRole: AXCell
 
 tfoot
-      AXRole:
+      Could not get AX element.
 
 tr
       AXRole: AXRow
@@ -449,7 +448,7 @@ var
       AXRole: AXStatic
 
 wbr
-      AXRole:
+      Could not get AX element.
 
 div[role=command]
       AXRole: AXSection
@@ -674,7 +673,7 @@ div[role=grid]
       AXRole: AXTable
 
 div[role=rowgroup]
-      AXRole:
+      Could not get AX element.
 
 div[role=row]
       AXRole: AXRow
@@ -767,7 +766,7 @@ div[role=paragraph]
       AXRole: AXParagraph
 
 div[role=presentation]
-      AXRole:
+      Could not get AX element.
 
 div[role=progressbar]
       AXRole: AXProgressIndicator
@@ -851,7 +850,7 @@ div[role=treeitem]
       AXRole: AXTreeItem
 
 div[role=group]
-      AXRole:
+      Could not get AX element.
 
 div[role=treeitem]
       AXRole: AXTreeItem
@@ -860,7 +859,7 @@ div[role=treegrid]
       AXRole: AXTreeGrid
 
 div[role=rowgroup]
-      AXRole:
+      Could not get AX element.
 
 div[role=row]
       AXRole: AXRow
@@ -874,7 +873,8 @@ div[role=columnheader]
 div[role=gridcell]
       AXRole: AXCell
 
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+X
