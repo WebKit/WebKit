@@ -31,7 +31,7 @@ class TestRadar(unittest.TestCase):
     def test_encoding(self):
         self.assertEqual(
             radar.Tracker.Encoder().default(radar.Tracker(project='WebKit')),
-            dict(type='radar', projects=['WebKit']),
+            dict(hide_title=True, type='radar', projects=['WebKit']),
         )
 
     def test_decoding(self):

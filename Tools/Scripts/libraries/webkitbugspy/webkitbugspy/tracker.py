@@ -89,6 +89,7 @@ class Tracker(object):
 
         unpacked = dict(
             redact=data.get('redact'),
+            hide_title=data.get('hide_title'),
         )
         if data.get('type') in ('bugzilla', 'github'):
             unpacked['url'] = data.get('url')
@@ -120,8 +121,9 @@ class Tracker(object):
             return cls._trackers[0]
         return None
 
-    def __init__(self, users=None, redact=None):
+    def __init__(self, users=None, redact=None, hide_title=None):
         self.users = users or User.Mapping()
+        self.hide_title = False if hide_title is None else hide_title
         if redact is None:
             self._redact = {re.compile('.*'): False}
         elif isinstance(redact, dict):

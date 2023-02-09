@@ -84,7 +84,11 @@ class Tracker(GenericTracker):
         @decorators.hybridmethod
         def default(context, obj):
             if isinstance(obj, Tracker):
-                return dict(type='radar', projects=obj._projects)
+                return dict(
+                    type='radar',
+                    projects=obj._projects,
+                    hide_title=obj.hide_title,
+                )
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
@@ -98,8 +102,9 @@ class Tracker(GenericTracker):
         except ImportError:
             return None
 
-    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None):
-        super(Tracker, self).__init__(users=users, redact=redact)
+    def __init__(self, users=None, authentication=None, project=None, projects=None, redact=None, hide_title=None):
+        hide_title = True if hide_title is None else hide_title
+        super(Tracker, self).__init__(users=users, redact=redact, hide_title=hide_title)
         self._projects = [project] if project else (projects or [])
 
         self.library = self.radarclient()
