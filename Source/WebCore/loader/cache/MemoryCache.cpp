@@ -2,7 +2,8 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
-    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+    Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+    Copyright (C) 2013 Google Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -211,7 +212,7 @@ unsigned MemoryCache::liveCapacity() const
 void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveResources)
 {
     unsigned capacity = shouldDestroyDecodedDataForAllLiveResources ? 0 : liveCapacity();
-    if (capacity && m_liveSize <= capacity)
+    if (!m_liveSize || (capacity && m_liveSize <= capacity))
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
@@ -307,7 +308,7 @@ void MemoryCache::pruneDeadResources()
     LOG(ResourceLoading, "MemoryCache::pruneDeadResources");
 
     unsigned capacity = deadCapacity();
-    if (capacity && m_deadSize <= capacity)
+    if (!m_deadSize || (capacity && m_deadSize <= capacity))
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
