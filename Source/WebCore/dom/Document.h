@@ -492,6 +492,9 @@ public:
     TextDirection documentElementTextDirection() const { return m_documentElementTextDirection; }
     void setDocumentElementTextDirection(TextDirection textDirection) { m_documentElementTextDirection = textDirection; }
 
+    void addElementWithLangAttrMatchingDocumentElement(Element&);
+    void removeElementWithLangAttrMatchingDocumentElement(Element&);
+
     String xmlEncoding() const { return m_xmlEncoding; }
     String xmlVersion() const { return m_xmlVersion; }
     enum class StandaloneStatus : uint8_t { Unspecified, Standalone, NotStandalone };
@@ -1977,6 +1980,8 @@ private:
 
     AtomString m_contentLanguage;
     AtomString m_documentElementLanguage;
+
+    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithLangAttrMatchingDocumentElement;
 
     RefPtr<TextResourceDecoder> m_decoder;
 
