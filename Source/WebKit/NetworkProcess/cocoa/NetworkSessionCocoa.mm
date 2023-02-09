@@ -94,10 +94,6 @@ void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTim
 
 #import "DeviceManagementSoftLink.h"
 
-// FIXME: Remove this soft link once rdar://problem/50109631 is in a build and bots are updated.
-SOFT_LINK_FRAMEWORK(CFNetwork)
-SOFT_LINK_CLASS_OPTIONAL(CFNetwork, _NSHSTSStorage)
-
 using namespace WebKit;
 
 CFStringRef const WebKit2HTTPProxyDefaultsKey = static_cast<CFStringRef>(@"WebKit2HTTPProxy");
@@ -1234,13 +1230,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 _NSHSTSStorage *NetworkSessionCocoa::hstsStorage() const
 {
-#if HAVE(HSTS_STORAGE)
     NSURLSessionConfiguration *configuration = m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration;
-    // FIXME: Remove this respondsToSelector check once rdar://problem/50109631 is in a build and bots are updated.
-    if ([configuration respondsToSelector:@selector(_hstsStorage)])
-        return configuration._hstsStorage;
-#endif
-    return nil;
+    return configuration._hstsStorage;
 }
 
 const String& NetworkSessionCocoa::boundInterfaceIdentifier() const
@@ -1351,14 +1342,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
 
     m_blobRegistry.setFileDirectory(FileSystem::createTemporaryDirectory(@"BlobRegistryFiles"));
 
-#if HAVE(HSTS_STORAGE)
     if (!!parameters.hstsStorageDirectory && !m_sessionID.isEphemeral()) {
         SandboxExtension::consumePermanently(parameters.hstsStorageDirectoryExtensionHandle);
-        // FIXME: Remove this respondsToSelector check once rdar://problem/50109631 is in a build and bots are updated.
-        if ([configuration respondsToSelector:@selector(_hstsStorage)])
-            configuration._hstsStorage = adoptNS([alloc_NSHSTSStorageInstance() initPersistentStoreWithURL:[NSURL fileURLWithPath:parameters.hstsStorageDirectory isDirectory:YES]]).get();
+        configuration._hstsStorage = adoptNS([[_NSHSTSStorage alloc] initPersistentStoreWithURL:[NSURL fileURLWithPath:parameters.hstsStorageDirectory isDirectory:YES]]).get();
     }
-#endif
 
 #if HAVE(NETWORK_LOADER)
     RELEASE_LOG_IF(parameters.useNetworkLoader, NetworkSession, "Using experimental network loader.");
