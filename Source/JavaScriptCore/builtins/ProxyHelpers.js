@@ -32,8 +32,11 @@ function performProxyObjectGet(target, receiver, handler, propertyName)
         @throwTypeError("Proxy has already been revoked. No more operations are allowed to be performed on it");
 
     var trap = handler.get;
-    if (!@isCallable(trap))
+    if (@isUndefinedOrNull(trap))
         return @getByValWithThis(target, receiver, propertyName);
+
+    if (!@isCallable(trap))
+        @throwTypeError("'get' property of a Proxy's handler object should be callable");
 
     var trapResult = trap.@call(handler, target, propertyName, receiver);
 
