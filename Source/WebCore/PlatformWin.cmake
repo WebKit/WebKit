@@ -1,5 +1,6 @@
 add_definitions(/bigobj -D__STDC_CONSTANT_MACROS)
 
+include(platform/Adwaita.cmake)
 include(platform/Cairo.cmake)
 include(platform/Curl.cmake)
 include(platform/ImageDecoders.cmake)
@@ -13,7 +14,6 @@ endif ()
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/win"
     "${WEBCORE_DIR}/page/win"
-    "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/graphics/egl"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
@@ -43,9 +43,6 @@ list(APPEND WebCore_SOURCES
     platform/Cursor.cpp
     platform/LocalizedStrings.cpp
     platform/StaticPasteboard.cpp
-
-    platform/adwaita/ScrollbarThemeAdwaita.cpp
-    platform/adwaita/ThemeAdwaita.cpp
 
     platform/audio/PlatformMediaSessionManager.cpp
 
@@ -131,17 +128,12 @@ list(APPEND WebCore_SOURCES
     platform/win/WidgetWin.cpp
     platform/win/WindowMessageBroadcaster.cpp
     platform/win/WindowsKeyNames.cpp
-
-    rendering/RenderThemeAdwaita.cpp
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/win/AccessibilityObjectWrapperWin.h
 
     page/win/FrameWin.h
-
-    platform/adwaita/ScrollbarThemeAdwaita.h
-    platform/adwaita/ThemeAdwaita.h
 
     platform/graphics/opentype/FontMemoryResource.h
 
@@ -180,17 +172,9 @@ list(APPEND WebCore_LIBRARIES
     usp10
 )
 
-list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/css/themeAdwaita.css
-    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
-)
-set(WebCore_USER_AGENT_SCRIPTS
-    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
-)
-set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/rendering/RenderThemeAdwaita.cpp)
 
-file(GLOB icon_files ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita/*)
-file(COPY ${icon_files}
+
+file(COPY ${ModernMediaControlsImageFiles}
     DESTINATION
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/WebKit.resources/media-controls
 )

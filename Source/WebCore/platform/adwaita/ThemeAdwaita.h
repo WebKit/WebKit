@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(THEME_ADWAITA)
+
 #include "Color.h"
 #include "StyleColor.h"
 #include "Theme.h"
@@ -64,3 +66,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)

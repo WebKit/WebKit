@@ -1,3 +1,31 @@
+list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/platform/adwaita"
+)
+
+list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
+    "platform/SourcesAdwaita.txt"
+)
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/adwaita/ScrollbarThemeAdwaita.h
+    platform/adwaita/ThemeAdwaita.h
+
+    rendering/RenderThemeAdwaita.h
+)
+
+list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WEBCORE_DIR}/css/themeAdwaita.css
+)
+
+list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+)
+
+list(APPEND WebCore_USER_AGENT_SCRIPTS
+    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+)
+
+set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/rendering/RenderThemeAdwaita.cpp)
 
 set(ModernMediaControlsImageFiles
     ${WEBCORE_DIR}/Modules/modern-media-controls/images/adwaita/EnterFullscreen.svg

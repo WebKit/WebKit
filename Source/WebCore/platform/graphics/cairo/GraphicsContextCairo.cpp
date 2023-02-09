@@ -50,7 +50,7 @@
 #include <cairo-win32.h>
 #endif
 
-#if PLATFORM(WPE) || PLATFORM(GTK)
+#if USE(THEME_ADWAITA)
 #include "ThemeAdwaita.h"
 #endif
 
@@ -215,7 +215,7 @@ void GraphicsContextCairo::clipToImageBuffer(ImageBuffer& buffer, const FloatRec
 
 void GraphicsContextCairo::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
-#if PLATFORM(WPE) || PLATFORM(GTK)
+#if USE(THEME_ADWAITA)
     ThemeAdwaita::paintFocus(*this, path, color);
     UNUSED_PARAM(outlineWidth);
     return;
@@ -226,7 +226,7 @@ void GraphicsContextCairo::drawFocusRing(const Path& path, float outlineWidth, c
 
 void GraphicsContextCairo::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-#if PLATFORM(WPE) || PLATFORM(GTK)
+#if USE(THEME_ADWAITA)
     ThemeAdwaita::paintFocus(*this, rects, color);
     UNUSED_PARAM(outlineOffset);
     UNUSED_PARAM(outlineWidth);

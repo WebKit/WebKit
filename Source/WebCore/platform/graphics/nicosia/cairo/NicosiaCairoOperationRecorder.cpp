@@ -41,7 +41,7 @@
 #include <type_traits>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(WPE) || PLATFORM(GTK)
+#if USE(THEME_ADWAITA)
 #include "ThemeAdwaita.h"
 #endif
 
@@ -762,7 +762,7 @@ void CairoOperationRecorder::drawEllipse(const FloatRect& rect)
 
 void CairoOperationRecorder::drawFocusRing(const Path& path, float outlineWidth, const Color& color)
 {
-#if PLATFORM(WPE) || PLATFORM(GTK)
+#if USE(THEME_ADWAITA)
     ThemeAdwaita::paintFocus(*this, path, color);
     UNUSED_PARAM(outlineWidth);
 #else
@@ -786,7 +786,7 @@ void CairoOperationRecorder::drawFocusRing(const Path& path, float outlineWidth,
 
 void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float outlineOffset, float outlineWidth, const Color& color)
 {
-#if PLATFORM(WPE) || PLATFORM(GTK)
+#if USE(THEME_ADWAITA)
     ThemeAdwaita::paintFocus(*this, rects, color);
     UNUSED_PARAM(outlineWidth);
 #else

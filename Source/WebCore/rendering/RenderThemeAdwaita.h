@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if USE(THEME_ADWAITA)
+
 #include "RenderTheme.h"
 
 namespace WebCore {
@@ -106,3 +108,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(THEME_ADWAITA)
