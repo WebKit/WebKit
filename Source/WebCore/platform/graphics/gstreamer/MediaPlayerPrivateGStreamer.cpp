@@ -2169,6 +2169,9 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
     auto classifiers = elementClass.split('/');
 
+    if (g_str_has_prefix(elementName.get(), "urisourcebin") && isMediaSource())
+        g_object_set(element, "use-buffering", FALSE, nullptr);
+
     // Collect processing time metrics for video decoders and converters.
     if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s))
         webkitGstTraceProcessingTimeForElement(element);
