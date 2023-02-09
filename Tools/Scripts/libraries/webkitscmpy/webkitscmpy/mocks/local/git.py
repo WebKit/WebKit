@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -253,12 +253,18 @@ nothing to commit, working tree clean
                     returncode=0,
                 ),
             ), mocks.Subprocess.Route(
+                self.executable, 'branch', '-a', '--merged',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.branch_merged_to(args[4]),
+            ), mocks.Subprocess.Route(
                 self.executable, 'branch', '-a',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(
                     returncode=0,
                     stdout='\n'.join(sorted(['* ' + self.branch] + list(({default_branch} | set(self.commits.keys())) - {self.branch}))) +
-                           '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch) + '\n'.join(['  remotes/{}'.format(name) for name in self.remotes.keys()]) + '\n',
+                           '\nremotes/origin/HEAD -> origin/{}\n'.format(default_branch) + \
+                           '\n'.join(['  remotes/{}'.format(name) for name in self.remotes.keys() if default_branch in name]) + '\n' + \
+                           '\n'.join(['  remotes/{}'.format(name) for name in self.remotes.keys() if default_branch not in name]) + '\n',
                 ),
             ), mocks.Subprocess.Route(
                 self.executable, 'tag',
@@ -733,6 +739,7 @@ nothing to commit, working tree clean
                     return all_commits[head_index - difference]
                 return None
 
+        something = str(something).replace('refs/remotes/', '')
         something = str(something).replace('remotes/', '')
         if '..' in something:
             a, b = something.split('..')
@@ -1321,4 +1328,22 @@ nothing to commit, working tree clean
         return mocks.ProcessCompletion(
             returncode=0,
             stdout='{}\n'.format(base.hash),
+        )
+
+    def branch_merged_to(self, ref):
+        obj = self.find(ref)
+        if not obj:
+            return mocks.ProcessCompletion(
+                returncode=128,
+                stderr='fatal: Not a valid object name {}\n'.format(ref),
+            )
+
+        out = ''
+        for branch, commits in self.commits.items():
+            if commits and commits[-1].hash == obj.hash:
+                out += ' {}\n'.format(branch)
+
+        return mocks.ProcessCompletion(
+            returncode=0,
+            stdout=out or '\n',
         )

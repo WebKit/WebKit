@@ -381,7 +381,7 @@ class PullRequest(Command):
                     sys.stderr.write("Failed to create pull request due to unsuitable remote\n")
                     return 1
             else:
-                source_remote = repository.source_remotes()[1]
+                source_remote = repository.source_remotes()[-1]
                 if args.defaults or Terminal.choose(
                     "Would you like to make a pull request against '{}' instead of '{}'? \n".format(source_remote, original_remote),
                     default='Yes',
