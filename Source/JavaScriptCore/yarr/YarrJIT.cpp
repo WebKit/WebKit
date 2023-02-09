@@ -78,8 +78,8 @@ public:
     unsigned length() const { return m_characters.size(); }
     void shortenLength(unsigned length)
     {
-        ASSERT(length <= this->length());
-        m_characters.shrink(length);
+        if (length <= this->length())
+            m_characters.shrink(length);
     }
 
     void set(unsigned index, UChar32 character)
@@ -109,6 +109,8 @@ public:
 
     std::optional<std::tuple<unsigned, unsigned>> findWorthwhileCharacterSequenceForLookahead() const;
     std::tuple<BoyerMooreBitmap::Map, BoyerMooreFastCandidates> createCandidateBitmap(unsigned begin, unsigned end) const;
+
+    void dump(PrintStream&) const;
 
 private:
     std::tuple<int, unsigned, unsigned> findBestCharacterSequence(unsigned numberOfCandidatesLimit) const;
@@ -182,6 +184,19 @@ std::tuple<BoyerMooreBitmap::Map, BoyerMooreFastCandidates> BoyerMooreInfo::crea
         charactersFastPath.merge(bmBitmap.charactersFastPath());
     }
     return std::tuple { WTFMove(map), WTFMove(charactersFastPath) };
+}
+
+void BoyerMooreInfo::dump(PrintStream& out) const
+{
+    out.println("BoyerMooreInfo size:(", m_characters.size(), ")");
+    unsigned index = 0;
+    for (auto& map : m_characters)
+        out.println("    [", makeString(pad(' ', 3, index++)), "] ", map);
+}
+
+void BoyerMooreBitmap::dump(PrintStream& out) const
+{
+    out.print(m_map);
 }
 
 template<class YarrJITRegs = YarrJITDefaultRegisters>
@@ -2357,6 +2372,7 @@ class YarrGenerator final : public YarrJITInfo {
                             static_assert(BoyerMooreFastCandidates::maxSize == 2);
                             dataLogLnIf(Options::verboseRegExpCompilation(), "Found characters fastpath lookahead ", charactersFastPath, " range:[", beginIndex, ", ", endIndex, ")");
 
+                            JIT_COMMENT(m_jit, "BMSearch characters fastpath lookahead ", charactersFastPath, " range:[", beginIndex, ", ", endIndex, ")");
                             auto loopHead = m_jit.label();
                             readCharacter(op.m_checkedOffset - endIndex + 1, m_regs.regT0);
                             matched.append(m_jit.branch32(MacroAssembler::Equal, m_regs.regT0, MacroAssembler::TrustedImm32(charactersFastPath.at(0))));
@@ -2367,6 +2383,7 @@ class YarrGenerator final : public YarrJITInfo {
                             const auto* pointer = getBoyerMooreBitmap(map);
                             dataLogLnIf(Options::verboseRegExpCompilation(), "Found bitmap lookahead count:(", mapCount, "),range:[", beginIndex, ", ", endIndex, ")");
 
+                            JIT_COMMENT(m_jit, "BMSearch bitmap lookahead count:(", mapCount, "),range:[", beginIndex, ", ", endIndex, ")");
                             m_jit.move(MacroAssembler::TrustedImmPtr(pointer), m_regs.regT1);
                             auto loopHead = m_jit.label();
                             readCharacter(op.m_checkedOffset - endIndex + 1, m_regs.regT0);
@@ -3818,10 +3835,12 @@ class YarrGenerator final : public YarrJITInfo {
         if (disjunction->m_minimumSize && !m_pattern.sticky() && !m_pattern.unicode()) {
             auto bmInfo = BoyerMooreInfo::create(m_charSize, std::min<unsigned>(disjunction->m_minimumSize, BoyerMooreInfo::maxLength));
             if (collectBoyerMooreInfo(disjunction, currentAlternativeIndex, bmInfo.get())) {
+                dataLogLnIf(YarrJITInternal::verbose, bmInfo.get());
                 m_ops.last().m_bmInfo = bmInfo.ptr();
                 m_bmInfos.append(WTFMove(bmInfo));
                 m_usesT2 = true;
-            }
+            } else
+                dataLogLnIf(YarrJITInternal::verbose, "BM collection failed");
         }
 
         do {
@@ -3852,6 +3871,148 @@ class YarrGenerator final : public YarrJITInfo {
         lastOp.m_checkedOffset = 0;
     }
 
+    std::optional<unsigned> collectBoyerMooreInfoFromTerm(PatternTerm& term, unsigned cursor, BoyerMooreInfo& bmInfo)
+    {
+        switch (term.type) {
+        case PatternTerm::Type::AssertionBOL:
+        case PatternTerm::Type::AssertionEOL:
+        case PatternTerm::Type::AssertionWordBoundary:
+            // Conservatively say any assertions just match.
+            return cursor;
+
+        case PatternTerm::Type::BackReference:
+        case PatternTerm::Type::ForwardReference:
+            return std::nullopt;
+
+        case PatternTerm::Type::ParenthesesSubpattern: {
+            // Right now, we only support /(...)/ or /(...)?/ case.
+            PatternDisjunction* disjunction = term.parentheses.disjunction;
+            if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
+                return std::nullopt;
+            if (term.quantityMaxCount != 1)
+                return std::nullopt;
+            if (term.m_matchDirection != MatchDirection::Forward)
+                return std::nullopt;
+            if (term.m_invert)
+                return std::nullopt;
+
+            auto& alternatives = disjunction->m_alternatives;
+            std::optional<unsigned> minimumCursor;
+            for (unsigned i = 0; i < alternatives.size(); ++i) {
+                PatternAlternative* alternative = alternatives[i].get();
+                unsigned alternativeCursor = cursor;
+                for (unsigned index = 0; index < alternative->m_terms.size() && alternativeCursor < bmInfo.length(); ++index) {
+                    PatternTerm& term = alternative->m_terms[index];
+                    std::optional<unsigned> nextCursor = collectBoyerMooreInfoFromTerm(term, alternativeCursor, bmInfo);
+                    if (!nextCursor) {
+                        dataLogLnIf(YarrJITInternal::verbose, "Shortening to ", alternativeCursor);
+                        bmInfo.shortenLength(alternativeCursor);
+                        break;
+                    }
+                    alternativeCursor = nextCursor.value();
+                }
+                if (!minimumCursor)
+                    minimumCursor = alternativeCursor;
+                else if (minimumCursor.value() != alternativeCursor) {
+                    // Alternatives have different size.
+                    // Let's say we have /(aaa|b)c/. Then, we would like to create BM info,
+                    //
+                    //     offset     0 1
+                    //     characters a a
+                    //                b c
+                    //
+                    // And we do not want to create 2, 3, 4 offsets since it changes based on whether we pick "aaa" or "b".
+                    // So, when we encounter (aaa|b), after applying each alternative to BMInfo, we cut BMInfo candidate length
+                    // with the shortest + 1 size, in this case "2".
+                    if (minimumCursor.value() > alternativeCursor)
+                        minimumCursor = alternativeCursor;
+                    dataLogLnIf(YarrJITInternal::verbose, "Shortening to ", minimumCursor.value() + 1);
+                    bmInfo.shortenLength(minimumCursor.value() + 1);
+                }
+            }
+
+            if (term.quantityType == QuantifierType::FixedCount)
+                cursor = minimumCursor.value();
+            else {
+                // Let's see /(aaaa|bbbb)?c/. In this case, we do not update the cursor since "(aaaa|bbbb)" is optional.
+                // And let's shorten the candidate to "1" in this case since we do not want to apply "c" to all possible subsequent cases.
+                dataLogLnIf(YarrJITInternal::verbose, "Shortening to ", cursor + 1);
+                bmInfo.shortenLength(cursor + 1);
+            }
+            return cursor;
+        }
+
+        case PatternTerm::Type::ParentheticalAssertion:
+            return std::nullopt;
+
+        case PatternTerm::Type::DotStarEnclosure:
+            return std::nullopt;
+
+        case PatternTerm::Type::CharacterClass: {
+            if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
+                return std::nullopt;
+            if (term.quantityMaxCount != 1)
+                return std::nullopt;
+            if (term.inputPosition != cursor)
+                return std::nullopt;
+            auto& characterClass = *term.characterClass;
+            if (term.invert() || characterClass.m_anyCharacter) {
+                bmInfo.setAll(cursor);
+                // If this is greedy one-character pattern "a?", we should not increase cursor.
+                // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
+                if (term.quantityType == QuantifierType::FixedCount)
+                    ++cursor;
+                else
+                    bmInfo.shortenLength(cursor + 1);
+                return cursor;
+            }
+            if (!characterClass.m_rangesUnicode.isEmpty())
+                bmInfo.addRanges(cursor, characterClass.m_rangesUnicode);
+            if (!characterClass.m_matchesUnicode.isEmpty())
+                bmInfo.addCharacters(cursor, characterClass.m_matchesUnicode);
+            if (!characterClass.m_ranges.isEmpty())
+                bmInfo.addRanges(cursor, characterClass.m_ranges);
+            if (!characterClass.m_matches.isEmpty())
+                bmInfo.addCharacters(cursor, characterClass.m_matches);
+
+            // If this is greedy one-character pattern "a?", we should not increase cursor.
+            // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
+            if (term.quantityType == QuantifierType::FixedCount)
+                ++cursor;
+            else
+                bmInfo.shortenLength(cursor + 1);
+            return cursor;
+        }
+        case PatternTerm::Type::PatternCharacter: {
+            if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
+                return std::nullopt;
+            if (term.quantityMaxCount != 1)
+                return std::nullopt;
+            if (term.inputPosition != cursor)
+                return std::nullopt;
+            if (U16_LENGTH(term.patternCharacter) != 1 && m_decodeSurrogatePairs)
+                return std::nullopt;
+            // For case-insesitive compares, non-ascii characters that have different
+            // upper & lower case representations are already converted to a character class.
+            ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(term.patternCharacter) || isCanonicallyUnique(term.patternCharacter, m_canonicalMode));
+            if (m_pattern.ignoreCase() && isASCIIAlpha(term.patternCharacter)) {
+                bmInfo.set(cursor, toASCIIUpper(term.patternCharacter));
+                bmInfo.set(cursor, toASCIILower(term.patternCharacter));
+            } else
+                bmInfo.set(cursor, term.patternCharacter);
+
+            // If this is greedy one-character pattern "a?", we should not increase cursor.
+            // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
+            if (term.quantityType == QuantifierType::FixedCount)
+                ++cursor;
+            else
+                bmInfo.shortenLength(cursor + 1);
+            return cursor;
+        }
+        }
+        return std::nullopt;
+    }
+
     bool collectBoyerMooreInfo(PatternDisjunction* disjunction, size_t currentAlternativeIndex, BoyerMooreInfo& bmInfo)
     {
         // If we have a searching pattern /abcdef/, then we can check the 6th character against a set of {a, b, c, d, e, f}.
@@ -3869,8 +4030,6 @@ class YarrGenerator final : public YarrJITInfo {
 
         ASSERT(disjunction->m_minimumSize);
 
-        // FIXME: Support nested disjunctions (e.g. /(?:abc|def|g(?:hi|jk))/).
-        // https://bugs.webkit.org/show_bug.cgi?id=228614
         // FIXME: Support non-fixed-sized lookahead (e.g. /.*abc/ and extract "abc" sequence).
         // https://bugs.webkit.org/show_bug.cgi?id=228612
         auto& alternatives = disjunction->m_alternatives;
@@ -3879,81 +4038,13 @@ class YarrGenerator final : public YarrJITInfo {
             PatternAlternative* alternative = alternatives[currentAlternativeIndex].get();
             for (unsigned index = 0; index < alternative->m_terms.size() && cursor < bmInfo.length(); ++index) {
                 PatternTerm& term = alternative->m_terms[index];
-                switch (term.type) {
-                case PatternTerm::Type::AssertionBOL:
-                case PatternTerm::Type::AssertionEOL:
-                case PatternTerm::Type::AssertionWordBoundary:
-                case PatternTerm::Type::BackReference:
-                case PatternTerm::Type::ForwardReference:
-                case PatternTerm::Type::ParenthesesSubpattern:
-                case PatternTerm::Type::ParentheticalAssertion:
-                case PatternTerm::Type::DotStarEnclosure:
+                std::optional<unsigned> nextCursor = collectBoyerMooreInfoFromTerm(term, cursor, bmInfo);
+                if (!nextCursor) {
+                    dataLogLnIf(YarrJITInternal::verbose, "Shortening to ", cursor);
+                    bmInfo.shortenLength(cursor);
                     break;
-                case PatternTerm::Type::CharacterClass: {
-                    if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
-                        break;
-                    if (term.quantityMaxCount != 1)
-                        break;
-                    if (term.inputPosition != cursor)
-                        break;
-                    auto& characterClass = *term.characterClass;
-                    if (term.invert() || characterClass.m_anyCharacter) {
-                        bmInfo.setAll(cursor);
-                        // If this is greedy one-character pattern "a?", we should not increase cursor.
-                        // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
-                        if (term.quantityType == QuantifierType::FixedCount)
-                            ++cursor;
-                        else
-                            bmInfo.shortenLength(cursor + 1);
-                        continue;
-                    }
-                    if (!characterClass.m_rangesUnicode.isEmpty())
-                        bmInfo.addRanges(cursor, characterClass.m_rangesUnicode);
-                    if (!characterClass.m_matchesUnicode.isEmpty())
-                        bmInfo.addCharacters(cursor, characterClass.m_matchesUnicode);
-                    if (!characterClass.m_ranges.isEmpty())
-                        bmInfo.addRanges(cursor, characterClass.m_ranges);
-                    if (!characterClass.m_matches.isEmpty())
-                        bmInfo.addCharacters(cursor, characterClass.m_matches);
-
-                    // If this is greedy one-character pattern "a?", we should not increase cursor.
-                    // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
-                    if (term.quantityType == QuantifierType::FixedCount)
-                        ++cursor;
-                    else
-                        bmInfo.shortenLength(cursor + 1);
-                    continue;
                 }
-                case PatternTerm::Type::PatternCharacter: {
-                    if (term.quantityType != QuantifierType::FixedCount && term.quantityType != QuantifierType::Greedy)
-                        break;
-                    if (term.quantityMaxCount != 1)
-                        break;
-                    if (term.inputPosition != cursor)
-                        break;
-                    if (U16_LENGTH(term.patternCharacter) != 1 && m_decodeSurrogatePairs)
-                        break;
-                    // For case-insesitive compares, non-ascii characters that have different
-                    // upper & lower case representations are already converted to a character class.
-                    ASSERT(!m_pattern.ignoreCase() || isASCIIAlpha(term.patternCharacter) || isCanonicallyUnique(term.patternCharacter, m_canonicalMode));
-                    if (m_pattern.ignoreCase() && isASCIIAlpha(term.patternCharacter)) {
-                        bmInfo.set(cursor, toASCIIUpper(term.patternCharacter));
-                        bmInfo.set(cursor, toASCIILower(term.patternCharacter));
-                    } else
-                        bmInfo.set(cursor, term.patternCharacter);
-
-                    // If this is greedy one-character pattern "a?", we should not increase cursor.
-                    // If we see greedy pattern, then we cut bmInfo here to avoid possibility explosion.
-                    if (term.quantityType == QuantifierType::FixedCount)
-                        ++cursor;
-                    else
-                        bmInfo.shortenLength(cursor + 1);
-                    continue;
-                }
-                }
-                dataLogLnIf(YarrJITInternal::verbose, "Shortening to ", cursor);
-                bmInfo.shortenLength(cursor);
-                break;
+                cursor = nextCursor.value();
             }
         }
         return bmInfo.length();
