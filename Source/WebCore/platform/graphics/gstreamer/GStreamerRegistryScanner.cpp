@@ -77,12 +77,19 @@ void GStreamerRegistryScanner::getSupportedDecodingTypes(HashSet<String, ASCIICa
 
 GStreamerRegistryScanner::ElementFactories::ElementFactories(OptionSet<ElementFactories::Type> types)
 {
+#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
+    if (types.contains(Type::AudioDecoder))
+        audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);
+    if (types.contains(Type::VideoDecoder))
+        videoDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
+#else
     if (types.contains(Type::AudioDecoder))
         audioDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_MARGINAL);
-    if (types.contains(Type::AudioParser))
-        audioParserFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_NONE);
     if (types.contains(Type::VideoDecoder))
         videoDecoderFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_DECODER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
+#endif
+    if (types.contains(Type::AudioParser))
+        audioParserFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_AUDIO, GST_RANK_NONE);
     if (types.contains(Type::VideoParser))
         videoParserFactories = gst_element_factory_list_get_elements(GST_ELEMENT_FACTORY_TYPE_PARSER | GST_ELEMENT_FACTORY_TYPE_MEDIA_VIDEO, GST_RANK_MARGINAL);
     if (types.contains(Type::Demuxer))
@@ -222,7 +229,11 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
             auto* factory = reinterpret_cast<GstElementFactory*>(factories->data);
             auto metadata = String::fromLatin1(gst_element_factory_get_metadata(factory, GST_ELEMENT_METADATA_KLASS));
             auto components = metadata.split('/');
-            if (components.contains("Hardware"_s)) {
+            if (components.contains("Hardware"_s)
+#if PLATFORM(BCM_NEXUS) || PLATFORM(BROADCOM)
+                || (g_str_has_prefix(GST_OBJECT_NAME(factory), "brcm"))
+#endif
+                ) {
                 isUsingHardware = true;
                 selectedFactory = factory;
                 break;

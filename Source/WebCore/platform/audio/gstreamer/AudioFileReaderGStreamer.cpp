@@ -85,6 +85,25 @@ private:
     bool m_errorOccurred { false };
 };
 
+#if PLATFORM(BCM_NEXUS)
+int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFactory* factory, gpointer)
+{
+    static int GST_AUTOPLUG_SELECT_SKIP;
+    static int GST_AUTOPLUG_SELECT_TRY;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GEnumClass* enumClass = G_ENUM_CLASS(g_type_class_ref(g_type_from_name("GstAutoplugSelectResult")));
+        GEnumValue* value = g_enum_get_value_by_name(enumClass, "GST_AUTOPLUG_SELECT_SKIP");
+        GST_AUTOPLUG_SELECT_SKIP = value->value;
+        value = g_enum_get_value_by_name(enumClass, "GST_AUTOPLUG_SELECT_TRY");
+        GST_AUTOPLUG_SELECT_TRY = value->value;
+        g_type_class_unref(enumClass);
+    });
+
+    return !g_strcmp0(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(factory)), "brcmaudfilter") ? GST_AUTOPLUG_SELECT_SKIP : GST_AUTOPLUG_SELECT_TRY;
+}
+#endif
+
 static void copyGstreamerBuffersToAudioChannel(const GRefPtr<GstBufferList>& buffers, AudioChannel* audioChannel)
 {
     float* destination = audioChannel->mutableData();
@@ -133,6 +152,9 @@ AudioFileReader::~AudioFileReader()
 
     if (m_decodebin) {
         g_signal_handlers_disconnect_matched(m_decodebin.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
+#if PLATFORM(BCM_NEXUS)
+        g_signal_handlers_disconnect_matched(m_decodebin.get(), G_SIGNAL_MATCH_FUNC, 0, 0, nullptr, reinterpret_cast<gpointer>(decodebinAutoplugSelectCallback), nullptr);
+#endif
         m_decodebin = nullptr;
     }
 
@@ -383,6 +405,9 @@ void AudioFileReader::decodeAudioForBusCreation()
     g_object_set(source, "stream", memoryStream.get(), nullptr);
 
     m_decodebin = makeGStreamerElement("decodebin", "decodebin");
+#if PLATFORM(BCM_NEXUS)
+    g_signal_connect(m_decodebin.get(), "autoplug-select", G_CALLBACK(decodebinAutoplugSelectCallback), nullptr);
+#endif
     g_signal_connect_swapped(m_decodebin.get(), "pad-added", G_CALLBACK(decodebinPadAddedCallback), this);
 
     gst_bin_add_many(GST_BIN(m_pipeline.get()), source, m_decodebin.get(), nullptr);
