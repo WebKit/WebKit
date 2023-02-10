@@ -1655,8 +1655,17 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     FloatPoint origin = textOrigin + WebCore::size(glyphBuffer.initialAdvance());
     GlyphToPathTranslator translator(run, glyphBuffer, origin);
     DashArray result;
+
     for (; translator.containsMorePaths(); translator.advance()) {
-        GlyphIterationState info = { FloatPoint(0, 0), FloatPoint(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x() };
+        GlyphIterationState info = {
+            FloatPoint(0, 0),
+            FloatPoint(0, 0),
+            lineExtents.y(),
+            lineExtents.y() + lineExtents.height(),
+            lineExtents.x() + lineExtents.width(),
+            lineExtents.x()
+        };
+
         switch (translator.underlineType()) {
         case GlyphUnderlineType::SkipDescenders: {
             Path path = translator.path();
@@ -1664,15 +1673,15 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
                 findPathIntersections(info, element);
             });
             if (info.minX < info.maxX) {
-                result.append(info.minX - lineExtents.x());
-                result.append(info.maxX - lineExtents.x());
+                result.append(floorf(info.minX - lineExtents.x()));
+                result.append(ceilf(info.maxX - lineExtents.x()));
             }
             break;
         }
         case GlyphUnderlineType::SkipGlyph: {
             std::pair<float, float> extents = translator.extents();
-            result.append(extents.first - lineExtents.x());
-            result.append(extents.second - lineExtents.x());
+            result.append(floorf(extents.first - lineExtents.x()));
+            result.append(ceilf(extents.second - lineExtents.x()));
             break;
         }
         case GlyphUnderlineType::DrawOverGlyph:
