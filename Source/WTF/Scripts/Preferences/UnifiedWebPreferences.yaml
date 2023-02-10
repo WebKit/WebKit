@@ -529,7 +529,7 @@ AriaReflectionForElementReferencesEnabled:
 
 AspectRatioEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "CSS Aspect Ratio"
   humanReadableDescription: "Enable aspect-ratio CSS property"
   defaultValue:
@@ -542,7 +542,7 @@ AspectRatioEnabled:
 
 AspectRatioOfImgFromWidthAndHeightEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Aspect ratio of <img> from width and height"
   humanReadableDescription: "Map HTML attributes width/height to the default aspect ratio of <img>"
   defaultValue:
@@ -556,7 +556,7 @@ AspectRatioOfImgFromWidthAndHeightEnabled:
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Async clipboard API"
   humanReadableDescription: "Enable the async clipboard API"
   defaultValue:
@@ -797,7 +797,7 @@ CSSCascadeLayersEnabled:
 
 CSSColor4:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "CSS Color 4 Color Types"
   humanReadableDescription: "Enable support for CSS Color 4 Color Types"
   defaultValue:
@@ -953,7 +953,7 @@ CSSGradientPremultipliedAlphaInterpolationEnabled:
 
 CSSIndividualTransformPropertiesEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "CSS Individual Transform Properties"
   humanReadableDescription: "Support for the translate, scale and rotate CSS properties"
   defaultValue:
@@ -2209,7 +2209,7 @@ FetchAPIEnabled:
 # enabled.
 FetchAPIKeepAliveEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Fetch API Request KeepAlive"
   humanReadableDescription: "Enable Fetch API Request KeepAlive"
   webcoreBinding: DeprecatedGlobalSettings
@@ -2453,7 +2453,7 @@ GamepadsEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 GenericCueAPIEnabled:
   type: bool
-  status: stable
+  status: mature
   condition: ENABLE(VIDEO)
   humanReadableName: "Generic Text Track Cue API"
   humanReadableDescription: "Enable Generic Text Track Cue API"
@@ -2481,7 +2481,7 @@ GetUserMediaRequiresFocus:
 
 GoogleAntiFlickerOptimizationQuirkEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
   humanReadableDescription: "Quirk to prevent delayed initial painting on sites using Google's Anti-Flicker optimization"
   defaultValue:
@@ -3017,7 +3017,7 @@ InterruptVideoOnPageVisibilityChangeEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 IntersectionObserverEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Intersection Observer"
   humanReadableDescription: "Enable Intersection Observer support"
   defaultValue:
@@ -3851,7 +3851,7 @@ MediaSessionCoordinatorEnabled:
 
 MediaSessionEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Media Session API"
   humanReadableDescription: "Media Session API"
   condition: ENABLE(MEDIA_SESSION)
@@ -4270,7 +4270,7 @@ OffscreenCanvasInWorkersEnabled:
 
 OpusDecoderEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Opus audio decoder"
   humanReadableDescription: "Enable Opus audio decoder"
   condition: ENABLE(OPUS)
@@ -4346,7 +4346,7 @@ PageVisibilityBasedProcessSuppressionEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 PaintTimingEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Paint Timing"
   humanReadableDescription: "Enable PaintTiming API"
   webcoreBinding: DeprecatedGlobalSettings
@@ -4460,7 +4460,7 @@ PerElementSpeakerSelectionEnabled:
 
 PerformanceNavigationTimingAPIEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "PerformanceNavigationTiming"
   humanReadableDescription: "Enable PerformanceNavigationTiming API"
   defaultValue:
@@ -4688,7 +4688,7 @@ ReadableByteStreamAPIEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 ReferrerPolicyAttributeEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Referrer Policy attribute"
   humanReadableDescription: "Enable Referrer Policy attribute"
   defaultValue:
@@ -4702,7 +4702,7 @@ ReferrerPolicyAttributeEnabled:
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 RemotePlaybackEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Remote Playback API"
   humanReadableDescription: "Enable Remote Playback API"
   condition: ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -4863,7 +4863,7 @@ RequiresUserGestureToLoadVideo:
 
 ResizeObserverEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Resize Observer"
   humanReadableDescription: "Enable Resize Observer support"
   defaultValue:
@@ -5592,7 +5592,7 @@ SpeakerSelectionRequiresUserGesture:
 
 SpeechRecognitionEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "SpeechRecognition API"
   humanReadableDescription: "Enable SpeechRecognition of WebSpeech API"
   defaultValue:
@@ -5687,7 +5687,7 @@ StorageAPIEstimateEnabled:
 
 StorageAccessAPIEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Storage Access API"
   humanReadableDescription: "Enable Storage Access API"
   defaultValue:
@@ -5738,7 +5738,7 @@ SuppressesIncrementalRendering:
 
 SyntheticEditingCommandsEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Synthetic Editing Commands"
   humanReadableDescription: "Enable Synthetic Editing Commands"
   defaultValue:
@@ -5889,7 +5889,7 @@ TextRecognitionInVideosEnabled:
 
 ThirdPartyIframeRedirectBlockingEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Block top-level redirects by third-party iframes"
   humanReadableDescription: "Block top-level redirects by third-party iframes"
   defaultValue:
@@ -5964,7 +5964,7 @@ TrackConfigurationEnabled:
 
 TransformStreamAPIEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "TransformStream API"
   humanReadableDescription: "Enable Transform Stream API"
   defaultValue:
@@ -6392,7 +6392,7 @@ VisualTranslationEnabled:
 
 VisualViewportAPIEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Visual Viewport API"
   humanReadableDescription: "Enable Visual Viewport API"
   defaultValue:
@@ -6419,7 +6419,7 @@ VisualViewportEnabled:
 
 VorbisDecoderEnabled:
   type: bool
-  status: stable
+  status: mature
   humanReadableName: "Vorbis audio decoder"
   humanReadableDescription: "Enable Vorbis audio decoder"
   condition: ENABLE(VORBIS)
