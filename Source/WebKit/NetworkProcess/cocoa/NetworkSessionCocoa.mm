@@ -1234,6 +1234,12 @@ _NSHSTSStorage *NetworkSessionCocoa::hstsStorage() const
     return configuration._hstsStorage;
 }
 
+NSURLCredentialStorage *NetworkSessionCocoa::nsCredentialStorage() const
+{
+    NSURLSessionConfiguration *configuration = m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration;
+    return configuration.URLCredentialStorage;
+}
+    
 const String& NetworkSessionCocoa::boundInterfaceIdentifier() const
 {
     return m_boundInterfaceIdentifier;
@@ -1346,6 +1352,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
         SandboxExtension::consumePermanently(parameters.hstsStorageDirectoryExtensionHandle);
         configuration._hstsStorage = adoptNS([[_NSHSTSStorage alloc] initPersistentStoreWithURL:[NSURL fileURLWithPath:parameters.hstsStorageDirectory isDirectory:YES]]).get();
     }
+
+    if (parameters.dataStoreIdentifier && !m_sessionID.isEphemeral())
+        configuration.URLCredentialStorage = adoptNS([[NSURLCredentialStorage alloc] _initWithIdentifier:parameters.dataStoreIdentifier->toString() private:NO]).get();
 
 #if HAVE(NETWORK_LOADER)
     RELEASE_LOG_IF(parameters.useNetworkLoader, NetworkSession, "Using experimental network loader.");

@@ -114,7 +114,6 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(IPC::Connection* c
 
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : m_sessionID(parameters.sessionID)
-    , m_dataStoreIdentifier(parameters.dataStoreIdentifier)
     , m_networkProcess(networkProcess)
 #if ENABLE(TRACKING_PREVENTION)
     , m_resourceLoadStatisticsDirectory(parameters.resourceLoadStatisticsParameters.directory)

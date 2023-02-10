@@ -174,6 +174,10 @@ typedef enum {
 #endif
 @end
 
+@interface NSURLCredentialStorage ()
+- (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
+@end
+
 @interface NSURLConnection ()
 - (id)_initWithRequest:(NSURLRequest *)request delegate:(id)delegate usesCache:(BOOL)usesCacheFlag maxContentLength:(long long)maxContentLength startImmediately:(BOOL)startImmediately connectionProperties:(NSDictionary *)connectionProperties;
 @end
