@@ -40,7 +40,6 @@ WTF_EXTERN_C_BEGIN
 void GSInitialize(void);
 uint64_t GSCurrentEventTimestamp(void);
 CFStringRef GSSystemRootDirectory(void);
-void GSFontInitialize(void);
 void GSFontPurgeFontCache(void);
 
 typedef struct __GSKeyboard* GSKeyboardRef;
