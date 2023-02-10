@@ -1,0 +1,8 @@
+Popover
+
+FAIL The "beforetoggle" event (listener) get properly dispatched for popovers promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL The "beforetoggle" event (attribute) get properly dispatched for popovers promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL The "beforetoggle" event is cancelable for the "opening" transition promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL The "beforetoggle" event is not fired for element removal promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL The "toggle" event is coalesced promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+

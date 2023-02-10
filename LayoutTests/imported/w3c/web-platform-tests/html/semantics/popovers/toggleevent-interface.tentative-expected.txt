@@ -1,0 +1,43 @@
+
+FAIL the event is an instance of ToggleEvent Can't find variable: ToggleEvent
+FAIL the event inherts from Event Can't find variable: ToggleEvent
+FAIL Missing type argument assert_throws_js: First argument (type) is required, so was expecting a TypeError. function "function () {
+    new ToggleEvent();
+  }" threw object "ReferenceError: Can't find variable: ToggleEvent" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL type argument is string Can't find variable: ToggleEvent
+FAIL type argument is null Can't find variable: ToggleEvent
+FAIL event type set to undefined Can't find variable: ToggleEvent
+FAIL oldState has default value of empty string Can't find variable: ToggleEvent
+FAIL oldState is readonly Can't find variable: ToggleEvent
+FAIL newState has default value of empty string Can't find variable: ToggleEvent
+FAIL newState is readonly Can't find variable: ToggleEvent
+FAIL ToggleEventInit argument is null Can't find variable: ToggleEvent
+FAIL ToggleEventInit argument is undefined Can't find variable: ToggleEvent
+FAIL ToggleEventInit argument is empty dictionary Can't find variable: ToggleEvent
+FAIL oldState set to 'sample' Can't find variable: ToggleEvent
+FAIL oldState set to undefined Can't find variable: ToggleEvent
+FAIL oldState set to null Can't find variable: ToggleEvent
+FAIL oldState set to false Can't find variable: ToggleEvent
+FAIL oldState set to true Can't find variable: ToggleEvent
+FAIL oldState set to a number Can't find variable: ToggleEvent
+FAIL oldState set to [] Can't find variable: ToggleEvent
+FAIL oldState set to [1, 2, 3] Can't find variable: ToggleEvent
+FAIL oldState set to an object Can't find variable: ToggleEvent
+FAIL oldState set to an object with a valueOf function Can't find variable: ToggleEvent
+FAIL ToggleEventInit properties set value Can't find variable: ToggleEvent
+FAIL ToggleEventInit properties set value 2 Can't find variable: ToggleEvent
+FAIL ToggleEventInit properties set value 3 Can't find variable: ToggleEvent
+FAIL ToggleEventInit properties set value 4 Can't find variable: ToggleEvent
+FAIL newState set to 'sample' Can't find variable: ToggleEvent
+FAIL newState set to undefined Can't find variable: ToggleEvent
+FAIL newState set to null Can't find variable: ToggleEvent
+FAIL newState set to false Can't find variable: ToggleEvent
+FAIL newState set to true Can't find variable: ToggleEvent
+FAIL newState set to a number Can't find variable: ToggleEvent
+FAIL newState set to [] Can't find variable: ToggleEvent
+FAIL newState set to [1, 2, 3] Can't find variable: ToggleEvent
+FAIL newState set to an object Can't find variable: ToggleEvent
+FAIL newState set to an object with a valueOf function Can't find variable: ToggleEvent
+

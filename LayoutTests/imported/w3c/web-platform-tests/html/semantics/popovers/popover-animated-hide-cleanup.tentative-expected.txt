@@ -1,0 +1,7 @@
+This is a popover
+This is a popover
+
+FAIL Ensure no crashes if running animations are immediately cancelled (document removal) promise_test: Unhandled rejection with value: object "TypeError: popover.showPopover is not a function. (In 'popover.showPopover()', 'popover.showPopover' is undefined)"
+FAIL Ensure no crashes if running animations are immediately cancelled (dialog showModal) promise_test: Unhandled rejection with value: object "TypeError: popover.showPopover is not a function. (In 'popover.showPopover()', 'popover.showPopover' is undefined)"
+FAIL Ensure no crashes if running transitions are immediately cancelled (button click) promise_test: Unhandled rejection with value: object "TypeError: popover.showPopover is not a function. (In 'popover.showPopover()', 'popover.showPopover' is undefined)"
+
