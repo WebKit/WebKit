@@ -87,7 +87,7 @@ public:
     bool setSize(const WebCore::IntSize&, const WebCore::IntSize& scrollOffset = { });
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    // The timeout we use when waiting for a DidUpdateGeometry message.
+    // The timeout we use when waiting for a UpdateGeometry reply.
     static constexpr Seconds didUpdateBackingStoreStateTimeout() { return Seconds::fromMilliseconds(500); }
     virtual void targetRefreshRateDidChange(unsigned) { }
 #endif
@@ -117,8 +117,6 @@ public:
     virtual void hideContentUntilAnyUpdate() { ASSERT_NOT_REACHED(); }
 
     virtual bool hasVisibleContent() const { return true; }
-
-    virtual void willSendUpdateGeometry() { }
 
     virtual void prepareForAppSuspension() { }
 
@@ -155,14 +153,10 @@ private:
     virtual void enterAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void updateAcceleratedCompositingMode(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
     virtual void didFirstLayerFlush(uint64_t /* backingStoreStateID */, const LayerTreeContext&) { }
-#if PLATFORM(COCOA)
-    virtual void didUpdateGeometry() { }
-
 #if PLATFORM(MAC)
     RunLoop::Timer m_viewExposedRectChangedTimer;
     std::optional<WebCore::FloatRect> m_lastSentViewExposedRect;
 #endif // PLATFORM(MAC)
-#endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     virtual void update(uint64_t /* backingStoreStateID */, const UpdateInfo&) { }
