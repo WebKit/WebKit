@@ -3590,6 +3590,20 @@ ManageCaptureStatusBarInGPUProcessEnabled:
     WebCore:
       default: false
 
+ManagedMediaSourceEnabled:
+  type: bool
+  status: unstable
+  humanReadableName: "Managed Media Source API"
+  humanReadableDescription: "Managed Media Source API"
+  condition: ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: WebKit::defaultManagedMediaSourceEnabled()
+    WebCore:
+      default: true
+
 MaskWebGLStringsEnabled:
   type: bool
   status: stable

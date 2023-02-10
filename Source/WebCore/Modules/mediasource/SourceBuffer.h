@@ -57,7 +57,7 @@ class TimeRanges;
 class VideoTrackList;
 class WebCoreOpaqueRoot;
 
-class SourceBuffer final
+class SourceBuffer
     : public RefCounted<SourceBuffer>
     , public ActiveDOMObject
     , public EventTarget
@@ -75,7 +75,7 @@ public:
     using EventTarget::WeakValueType;
     using EventTarget::WeakPtrImplType;
 
-    static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource*);
+    static Ref<SourceBuffer> create(Ref<SourceBufferPrivate>&&, MediaSource&);
     virtual ~SourceBuffer();
 
     bool updating() const { return m_updating; }
@@ -145,9 +145,12 @@ public:
 
     WebCoreOpaqueRoot opaqueRoot();
 
-private:
-    SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource*);
+    virtual bool isManaged() const { return false; }
 
+protected:
+    SourceBuffer(Ref<SourceBufferPrivate>&&, MediaSource&);
+
+private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

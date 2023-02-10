@@ -404,6 +404,8 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/mediasource/AudioTrack+MediaSource.idl
     Modules/mediasource/DOMURL+MediaSource.idl
+    Modules/mediasource/ManagedMediaSource.idl
+    Modules/mediasource/ManagedSourceBuffer.idl
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl

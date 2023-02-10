@@ -253,6 +253,8 @@ namespace WebCore {
     macro(KeyframeEffect) \
     macro(Lock) \
     macro(LockManager) \
+    macro(ManagedMediaSource) \
+    macro(ManagedSourceBuffer) \
     macro(MathMLElement) \
     macro(MathMLMathElement) \
     macro(MediaCapabilities) \

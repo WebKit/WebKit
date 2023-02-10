@@ -169,6 +169,14 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 
 #endif // ENABLE(MEDIA_STREAM)
 
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+bool defaultManagedMediaSourceEnabled()
+{
+    // TBD
+    return false;
+}
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled()
 {
