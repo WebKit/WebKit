@@ -53,10 +53,13 @@ struct InlineItemRange {
     InlineItemPosition end;
 };
 
-struct PartialContent {
-    PartialContent(size_t, std::optional<InlineLayoutUnit>);
+struct PartialInlineItem {
+    PartialInlineItem(InlineItemPosition, std::optional<InlineLayoutUnit>);
 
-    size_t length { 0 };
+    size_t inlineItemIndex() const { return position.index; }
+    size_t length() const { return position.offset; }
+
+    InlineItemPosition position { };
     std::optional<InlineLayoutUnit> width { };
 };
 
@@ -69,6 +72,12 @@ inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosi
 inline InlineItemRange::InlineItemRange(size_t startIndex, size_t endIndex)
     : start { startIndex, { } }
     , end { endIndex, { } }
+{
+}
+
+inline PartialInlineItem::PartialInlineItem(InlineItemPosition inlineItemPosition, std::optional<InlineLayoutUnit> width)
+    : position(inlineItemPosition)
+    , width(width)
 {
 }
 

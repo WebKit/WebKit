@@ -36,6 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
+struct CommittedContent;
 struct LineCandidate;
 
 class LineBuilder {
@@ -51,14 +52,14 @@ public:
     struct PreviousLine {
         bool endsWithLineBreak { false };
         TextDirection inlineBaseDirection { TextDirection::LTR };
-        std::optional<PartialContent> partialOverflowingContent { };
+        std::optional<PartialInlineItem> partialOverflowingContent { };
         FloatList overflowingFloats;
         // Content width measured during line breaking (avoid double-measuring).
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     };
     struct LineContent {
         InlineItemRange inlineItemRange;
-        std::optional<PartialContent> partialOverflowingContent { };
+        std::optional<PartialInlineItem> partialOverflowingContent { };
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth;
         FloatList placedFloats;
         FloatList overflowingFloats;
@@ -91,7 +92,7 @@ public:
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
         InlineLayoutUnit logicalWidth { 0 };
-        std::optional<PartialContent> partialOverflowingContent { };
+        std::optional<PartialInlineItem> partialOverflowingContent { };
         FloatList placedFloats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
@@ -129,11 +130,6 @@ private:
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
-    struct CommittedContent {
-        size_t itemCount { 0 };
-        size_t partialTrailingContentLength { 0 };
-        std::optional<InlineLayoutUnit> overflowLogicalWidth { };
-    };
     CommittedContent placeInlineContent(const InlineItemRange&);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
@@ -180,12 +176,6 @@ private:
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_lineIsConstrainedByFloat { false };
 };
-
-inline PartialContent::PartialContent(size_t length, std::optional<InlineLayoutUnit> width)
-    : length(length)
-    , width(width)
-{
-}
 
 }
 }
