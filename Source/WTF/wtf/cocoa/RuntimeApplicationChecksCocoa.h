@@ -103,6 +103,7 @@ enum class SDKAlignedBehavior {
     WKWebsiteDataStoreInitReturningNil,
     UIBackForwardSkipsHistoryItemsWithoutUserGesture,
     ProgrammaticFocusDuringUserScriptShowsInputViews,
+    UsesGameControllerPhysicalInputProfile,
 
     NumberOfBehaviors
 };
