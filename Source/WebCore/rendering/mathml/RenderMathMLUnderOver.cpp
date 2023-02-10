@@ -290,6 +290,11 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
 {
     ASSERT(needsLayout());
 
+    for (auto& box : childrenOfType<RenderBox>(*this)) {
+        if (box.isOutOfFlowPositioned())
+            box.containingBlock()->insertPositionedObject(box);
+    }
+
     if (!relayoutChildren && simplifiedLayout())
         return;
 
