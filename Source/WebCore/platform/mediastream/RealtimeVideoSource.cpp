@@ -40,7 +40,7 @@
 namespace WebCore {
 
 RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
-    : RealtimeMediaSource(source->captureDevice(), MediaDeviceHashSalts { source->deviceIDHashSalts() }, source->pageIdentifier())
+    : RealtimeMediaSource(source->captureDevice(), MediaDeviceHashSalts { source->websiteSessionHashSalts() }, source->pageIdentifier())
     , m_source(WTFMove(source))
 #if PLATFORM(COCOA)
     , m_shouldUseIOSurface(shouldUseIOSurface)

@@ -75,7 +75,7 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
     if (isEnded() || proxy().isEnded())
         return *this;
 
-    auto source = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), MediaDeviceHashSalts { deviceIDHashSalts() }, manager(), pageIdentifier()));
+    auto source = adoptRef(*new RemoteRealtimeVideoSource(proxy().clone(), MediaDeviceHashSalts { websiteSessionHashSalts() }, manager(), pageIdentifier()));
 
     source->setSettings(RealtimeMediaSourceSettings { settings() });
     source->setCapabilities(RealtimeMediaSourceCapabilities { capabilities() });

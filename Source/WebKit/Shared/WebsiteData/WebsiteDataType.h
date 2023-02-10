@@ -47,7 +47,7 @@ enum class WebsiteDataType : uint32_t {
     ServiceWorkerRegistrations = 1 << 14,
 #endif
     DOMCache = 1 << 15,
-    DeviceIdHashSalt = 1 << 16,
+    WebsiteSessionHashSalt = 1 << 16,
     PrivateClickMeasurements = 1 << 17,
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     AlternativeServices = 1 << 18,
@@ -79,7 +79,7 @@ template<> struct EnumTraits<WebKit::WebsiteDataType> {
         WebKit::WebsiteDataType::ServiceWorkerRegistrations,
 #endif
         WebKit::WebsiteDataType::DOMCache,
-        WebKit::WebsiteDataType::DeviceIdHashSalt,
+        WebKit::WebsiteDataType::WebsiteSessionHashSalt,
         WebKit::WebsiteDataType::PrivateClickMeasurements,
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
         WebKit::WebsiteDataType::AlternativeServices,

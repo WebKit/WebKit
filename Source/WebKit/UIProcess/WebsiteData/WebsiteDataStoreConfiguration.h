@@ -133,8 +133,8 @@ public:
     void setProxyConfiguration(CFDictionaryRef configuration) { m_proxyConfiguration = configuration; }
 #endif
     
-    const String& deviceIdHashSaltsStorageDirectory() const { return m_deviceIdHashSaltsStorageDirectory; }
-    void setDeviceIdHashSaltsStorageDirectory(String&& directory) { m_deviceIdHashSaltsStorageDirectory = WTFMove(directory); }
+    const String& websiteSessionHashSaltsStorageDirectory() const { return m_websiteSessionHashSaltsStorageDirectory; }
+    void setWebsiteSessionHashSaltsStorageDirectory(String&& directory) { m_websiteSessionHashSaltsStorageDirectory = WTFMove(directory); }
 
     const String& cookieStorageFile() const { return m_cookieStorageFile; }
     void setCookieStorageFile(String&& directory) { m_cookieStorageFile = WTFMove(directory); }
@@ -263,7 +263,7 @@ private:
     String m_localStorageDirectory;
     String m_mediaKeysStorageDirectory;
     String m_alternativeServicesDirectory;
-    String m_deviceIdHashSaltsStorageDirectory;
+    String m_websiteSessionHashSaltsStorageDirectory;
     String m_resourceLoadStatisticsDirectory;
     String m_javaScriptConfigurationDirectory;
     String m_cookieStorageFile;

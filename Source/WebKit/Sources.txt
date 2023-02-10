@@ -378,7 +378,6 @@ Shared/XR/XRDeviceProxy.cpp
 
 UIProcess/AuxiliaryProcessProxy.cpp
 UIProcess/BackgroundProcessResponsivenessTimer.cpp
-UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/DrawingAreaProxy.cpp
 UIProcess/FrameLoadState.cpp
 UIProcess/GeolocationPermissionRequestManagerProxy.cpp
@@ -445,6 +444,7 @@ UIProcess/WebProcessProxy.cpp
 UIProcess/WebScreenOrientationManagerProxy.cpp
 UIProcess/WebURLSchemeHandler.cpp
 UIProcess/WebURLSchemeTask.cpp
+UIProcess/WebsiteSessionHashSaltStorage.cpp
 
 UIProcess/API/APIAttachment.cpp
 UIProcess/API/APIContentRuleList.cpp

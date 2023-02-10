@@ -121,7 +121,7 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
 #endif
     case WebsiteDataType::DOMCache:
         return WebsiteDataProcessType::Network;
-    case WebsiteDataType::DeviceIdHashSalt:
+    case WebsiteDataType::WebsiteSessionHashSalt:
         return WebsiteDataProcessType::UI;
     case WebsiteDataType::PrivateClickMeasurements:
         return WebsiteDataProcessType::Network;
