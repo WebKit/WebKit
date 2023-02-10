@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  * Copyright (C) 2012 Company 100 Inc.
  *
@@ -34,11 +34,12 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
-class NativeImage : public ThreadSafeRefCounted<NativeImage>, public CanMakeWeakPtr<NativeImage> {
+class NativeImage final
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NativeImage> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Observer {
