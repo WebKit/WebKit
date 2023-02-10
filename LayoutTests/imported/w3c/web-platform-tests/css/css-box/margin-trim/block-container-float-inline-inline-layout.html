@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="inline should trim inline-start edge for floats that touch the inline-start edge of container and inline-end edge for floats that touch inline-end edge of container">
+<style>
+container {
+    display: block;
+    width: 100px;
+    font-size: 0px;
+    margin-trim: inline;
+}
+item {
+    display: inline-block;
+    width: 50px;
+    height: 100px;
+    background-color: green;
+}
+.floating-left {
+    display: block;
+    width: 25px;
+    float: left;
+    margin-inline-start: 20px;
+}
+.floating-right {
+    display: block;
+    width: 25px;
+    float: right;
+    margin-inline-end: 20px;
+}
+</style>
+</head>
+<body>
+<p>Test passes if there is a filled green square.</p>
+<container>
+    <item class="floating-left"></item>
+    <item></item>
+    <item class="floating-right"></item>
+</container>
+</body>
+</html>

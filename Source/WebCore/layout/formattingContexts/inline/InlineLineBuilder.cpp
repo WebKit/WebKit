@@ -1068,6 +1068,46 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     return initialLetterCapHeightOffset.value_or(0_lu);
 }
 
+bool LineBuilder::placedFloatsContainsLeftPositionedFloat() const
+{
+    ASSERT(floatingState());
+    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
+    for (auto floatItem : m_placedFloats) {
+        if (floatingContext.toFloatItem(floatItem->layoutBox()).isLeftPositioned())
+            return true;
+    }
+    return false;
+}
+
+bool LineBuilder::placedFloatsContainsRightPositionedFloat() const
+{
+    ASSERT(floatingState());
+    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
+    for (auto floatItem : m_placedFloats) {
+        if (floatingContext.toFloatItem(floatItem->layoutBox()).isRightPositioned())
+            return true;
+    }
+    return false;
+
+}
+
+void LineBuilder::trimMarginFromFloatGeometry(BoxGeometry& floatGeometry, MarginTrimType marginTrimType)
+{
+    switch (marginTrimType) {
+    case MarginTrimType::InlineStart:
+        floatGeometry.setHorizontalMargin({ 0_lu, floatGeometry.horizontalMargin().end });
+        return;
+    case MarginTrimType::InlineEnd:
+        floatGeometry.setHorizontalMargin({ floatGeometry.horizontalMargin().start, 0_lu });
+        return;
+    case MarginTrimType::BlockStart:
+        floatGeometry.setVerticalMargin({ 0_lu, floatGeometry.verticalMargin().after });
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstraintApplies lineBoxConstraintApplies)
 {
     if (isInIntrinsicWidthMode()) {
@@ -1078,6 +1118,40 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     auto& floatBox = floatItem.layoutBox();
     ASSERT(formattingState());
     auto& boxGeometry = formattingState()->boxGeometry(floatBox);
+    auto containingBlockMarginTrim = floatBox.parent().style().marginTrim();
+    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
+    auto trimMarginsForPositionedFloat = [&](LayoutPoint& floatPosition) {
+        auto marginStart = boxGeometry.marginStart();
+        auto marginEnd = boxGeometry.marginEnd();
+        if (floatingContext.isFloaingCandidateLogicallyLeftPositioned(floatBox)) {
+            if (containingBlockMarginTrim.contains(MarginTrimType::InlineStart) && floatPosition.x() - marginStart == m_rootHorizontalConstraints->logicalLeft) {
+                floatPosition.moveBy({ -marginStart, 0_lu });
+                trimMarginFromFloatGeometry(boxGeometry, MarginTrimType::InlineStart);
+            }
+            if (containingBlockMarginTrim.contains(MarginTrimType::InlineEnd) && floatPosition.x() + boxGeometry.contentBoxWidth() + marginEnd == m_rootHorizontalConstraints->logicalRight())
+                trimMarginFromFloatGeometry(boxGeometry, MarginTrimType::InlineEnd);
+        } else {
+            if (containingBlockMarginTrim.contains(MarginTrimType::InlineEnd) && floatPosition.x() + boxGeometry.contentBoxWidth() + marginEnd == m_rootHorizontalConstraints->logicalRight()) {
+                floatPosition.moveBy({ marginEnd, 0_lu });
+                trimMarginFromFloatGeometry(boxGeometry, MarginTrimType::InlineEnd);
+            }
+            if (containingBlockMarginTrim.contains(MarginTrimType::InlineStart) && floatPosition.x() - marginStart == m_rootHorizontalConstraints->logicalLeft)
+                trimMarginFromFloatGeometry(boxGeometry, MarginTrimType::InlineStart);
+        }
+        if (containingBlockMarginTrim.contains(MarginTrimType::BlockStart) && floatPosition.y() - boxGeometry.marginBefore() == m_lineLogicalRect.top()) {
+            floatPosition.moveBy({ 0_lu, -boxGeometry.verticalMargin().before });
+            trimMarginFromFloatGeometry(boxGeometry, MarginTrimType::BlockStart);
+        }
+    };
+    auto tryTrimmingFloatInlineMarginsAccordingToConstraints = [&]() {
+        if (!containingBlockMarginTrim.containsAny({ MarginTrimType::InlineStart, MarginTrimType::InlineEnd }))
+            return;    
+        auto intrudingFloats = floatConstraints(m_lineLogicalRect);
+        if (containingBlockMarginTrim.contains(MarginTrimType::InlineStart) && floatingContext.isFloaingCandidateLogicallyLeftPositioned(floatBox) && !intrudingFloats.left && !placedFloatsContainsLeftPositionedFloat())
+            trimMarginFromFloatGeometry(boxGeometry, MarginTrimType::InlineStart);
+        if (containingBlockMarginTrim.contains(MarginTrimType::InlineEnd) && !floatingContext.isFloaingCandidateLogicallyLeftPositioned(floatBox) && !intrudingFloats.right && !placedFloatsContainsRightPositionedFloat())
+            trimMarginFromFloatGeometry(boxGeometry, MarginTrimType::InlineEnd);
+    };
     auto shouldBePlaced = [&] {
         // Floats never terminate the line. If a float does not fit the current line
         // we can still continue placing inline content on the line, but we have to save all the upcoming floats for subsequent lines.
@@ -1091,11 +1165,13 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
             // This is an overflowing float from previous line. Now we need to find a place for it.
             // (which also means that the current line can't have any floats that we couldn't place yet i.e. overflown)
             ASSERT(m_overflowingFloats.isEmpty());
+            tryTrimmingFloatInlineMarginsAccordingToConstraints();
             return true;
         }
         auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineIsConstrainedByFloat;
         if (lineIsConsideredEmpty)
             return true;
+        tryTrimmingFloatInlineMarginsAccordingToConstraints();
         auto availableWidthForFloat = m_lineLogicalRect.width() - m_line.contentLogicalRight() + m_line.trimmableTrailingWidth();
         return availableWidthForFloat >= boxGeometry.marginBoxWidth();
     };
@@ -1112,8 +1188,9 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     boxGeometry.setLogicalTopLeft(staticPosition);
     // Float it.
     ASSERT(m_rootHorizontalConstraints);
-    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
     auto floatingPosition = floatingContext.positionForFloat(floatBox, *m_rootHorizontalConstraints);
+    if (!containingBlockMarginTrim.isEmpty())
+        trimMarginsForPositionedFloat(floatingPosition);
     boxGeometry.setLogicalTopLeft(floatingPosition);
     auto floatBoxItem = floatingContext.toFloatItem(floatBox);
     auto isLogicalLeftPositionedInFloatingState = floatBoxItem.isLeftPositioned();

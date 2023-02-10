@@ -366,8 +366,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             if (renderer.isFloating() && !renderer.parent()->style().isHorizontalWritingMode())
                 return false;
 #endif
-            if (renderer.isFloating() && (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow || !flow.style().marginTrim().isEmpty())) {
-                // Floats inside fragmentation and ones under margin-trim need integration support.
+            if (renderer.isFloating() && flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
+                // Floats inside fragmentation need integration support.
                 return false;
             }
             if (renderer.isOutOfFlowPositioned()) {

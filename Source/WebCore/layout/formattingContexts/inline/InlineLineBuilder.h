@@ -144,6 +144,9 @@ private:
     LayoutUnit adjustGeometryForInitialLetterIfNeeded(const Box& floatBox);
     enum LineBoxConstraintApplies : uint8_t { Yes, No };
     bool tryPlacingFloatBox(const InlineItem&, LineBoxConstraintApplies);
+    bool placedFloatsContainsLeftPositionedFloat() const;
+    bool placedFloatsContainsRightPositionedFloat() const;
+    void trimMarginFromFloatGeometry(BoxGeometry&, MarginTrimType);
     Result handleInlineContent(InlineContentBreaker&, const InlineItemRange& needsLayoutRange, const LineCandidate&);
     std::tuple<InlineRect, bool> lineBoxForCandidateInlineContent(const LineCandidate&) const;
     size_t rebuildLineWithInlineContent(const InlineItemRange& needsLayoutRange, const InlineItem& lastInlineItemToAdd);

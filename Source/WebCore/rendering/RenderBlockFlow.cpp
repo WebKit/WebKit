@@ -4809,6 +4809,7 @@ LayoutUnit RenderBlockFlow::blockFormattingContextInFlowContentHeight() const
         ASSERT(legacyLineLayout());
         return legacyLineLayout()->contentBoxLogicalHeight();
     }
+
     // For block layout we should just be able to check the height of the last in flow box
     auto lastChild = lastInFlowChildBox();
     if (!lastChild)

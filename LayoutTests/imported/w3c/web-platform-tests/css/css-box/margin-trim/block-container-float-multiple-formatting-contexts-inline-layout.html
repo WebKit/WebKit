@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<style>
+container {
+    margin-trim: block;
+    display: flow-root;
+    width: max-content;
+}
+item {
+    display: block;
+    width: 25px;
+    height: 100px;
+    margin-block-end: 50px;
+    float: left;
+}
+span {
+    display: inline-block;
+    width: 25px;
+}
+</style>
+</head>
+<body>
+<p>Test passes if there is a filled green square.</p>
+<container style="background-color: green;">
+<item style="width: 50px;"></item>
+<container>
+    <span></span>
+    <item></item>
+</container>
+</container>
+</body>
+</html>

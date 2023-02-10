@@ -49,6 +49,7 @@ public:
     const FloatingState& floatingState() const { return m_floatingState; }
 
     LayoutPoint positionForFloat(const Box&, const HorizontalConstraints&) const;
+    bool isFloaingCandidateLogicallyLeftPositioned(const Box&) const;
     LayoutPoint positionForNonFloatingFloatAvoider(const Box&) const;
 
     struct PositionWithClearance {
@@ -76,7 +77,6 @@ public:
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
 
-    bool isFloaingCandidateLogicallyLeftPositioned(const Box&) const;
     Clear logicalClear(const Box&) const;
 
     const LayoutState& layoutState() const { return m_floatingState.layoutState(); }
