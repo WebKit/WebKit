@@ -36,11 +36,21 @@ enum class LineEndingEllipsisPolicy : uint8_t {
     Always
 };
 
+struct InlineItemPosition {
+    size_t index { 0 };
+    size_t offset { 0 }; // Note that this is offset relative to the start position of the InlineItem.
+};
+
 struct InlineItemRange {
-    bool isEmpty() const { return start == end; }
-    size_t size() const { return end - start; }
-    size_t start { 0 };
-    size_t end { 0 };
+    InlineItemRange(InlineItemPosition start, InlineItemPosition end);
+    InlineItemRange(size_t startIndex, size_t endIndex);
+
+    size_t startIndex() const { return start.index; }
+    size_t endIndex() const { return end.index; }
+    bool isEmpty() const { return startIndex() == endIndex() && start.offset == end.offset; }
+
+    InlineItemPosition start;
+    InlineItemPosition end;
 };
 
 struct PartialContent {
@@ -49,6 +59,18 @@ struct PartialContent {
     size_t length { 0 };
     std::optional<InlineLayoutUnit> width { };
 };
+
+inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosition end)
+    : start(start)
+    , end(end)
+{
+}
+
+inline InlineItemRange::InlineItemRange(size_t startIndex, size_t endIndex)
+    : start { startIndex, { } }
+    , end { endIndex, { } }
+{
+}
 
 }
 }
