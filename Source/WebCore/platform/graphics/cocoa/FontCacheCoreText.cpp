@@ -410,11 +410,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     bool needsConversion = fontType.variationType == FontType::VariationType::TrueTypeGX;
 
     auto applyVariation = [&](const FontTag& tag, float value) {
-        auto iterator = defaultValues.find(tag);
-        if (iterator == defaultValues.end())
-            return;
-        float valueToApply = clampTo(value, iterator->value.minimumValue, iterator->value.maximumValue);
-        variationsToBeApplied.set(tag, valueToApply);
+        variationsToBeApplied.set(tag, value);
     };
 
     auto applyFeature = [&](const FontTag& tag, int value) {
