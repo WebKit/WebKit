@@ -295,6 +295,12 @@ bool IOSApplication::isWebProcess()
     return isInWebProcess();
 }
 
+bool IOSApplication::isBackboneApp()
+{
+    static bool isBackboneApp = applicationBundleIsEqualTo("com.backbonelabs.backboneapp"_s);
+    return isBackboneApp;
+}
+
 bool IOSApplication::isIBooksStorytime()
 {
     static bool isIBooksStorytime = applicationBundleIsEqualTo("com.apple.TVBooks"_s);
