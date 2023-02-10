@@ -909,7 +909,7 @@ No pre-PR checks to run""")
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created the local development branch 'eng/1'\n"
-            "https://bugs.example.com/show_bug.cgi?id=1 is considered the primary issue for your pull request\n"
+            "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
             "https://bugs.example.com/show_bug.cgi?id=1 is a Bugzilla and is thus redacted\n"
             "Pull request needs to be sent to a secure remote for review\n"
             "Would you like to proceed anyways? \n"
@@ -933,6 +933,81 @@ No pre-PR checks to run""")
                 "Pushing 'eng/1' to 'fork'...",
                 "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/1'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
+            ],
+        )
+
+    def test_github_branch_secondary_redacted(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA, redact={'component:Text': True})]
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn(), MockTerminal.input('y'):
+
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=2\nbugs.example.com/show_bug.cgi?id=1\n'
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(2).comments[-1].content,
+                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
+            )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Scrolling')
+
+        self.maxDiff = None
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "A commit you are uploading references https://bugs.example.com/show_bug.cgi?id=1\n"
+            "https://bugs.example.com/show_bug.cgi?id=1 matches 'component:Text' and is thus redacted\n"
+            "Pull request needs to be sent to a secure remote for review\n"
+            "Would you like to proceed anyways? \n"
+            " (Yes/[No]): \n"
+            "Created 'PR 1 | [Testing] Existing commit'!\n"
+            "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=2\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), 'Error. You do not have access to a secure remote to make a pull request for a redacted issue\n')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                '    Found 1 commit...',
+                'Using committed changes...',
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
+                "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
                 'Syncing PR labels with issue component...',
