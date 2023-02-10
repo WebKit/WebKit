@@ -45,7 +45,7 @@ public:
 private:
     ScrollingTreePositionedNodeNicosia(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
 
     RefPtr<Nicosia::CompositionLayer> m_layer;

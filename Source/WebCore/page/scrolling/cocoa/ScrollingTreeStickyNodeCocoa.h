@@ -43,7 +43,7 @@ public:
 private:
     ScrollingTreeStickyNodeCocoa(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) final;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) final;
     void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
     FloatPoint layerTopLeft() const final;
     CALayer* layer() const final { return m_layer.get(); }

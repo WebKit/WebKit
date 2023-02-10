@@ -49,8 +49,9 @@ ScrollingTreeFrameHostingNode::ScrollingTreeFrameHostingNode(ScrollingTree& scro
 
 ScrollingTreeFrameHostingNode::~ScrollingTreeFrameHostingNode() = default;
 
-void ScrollingTreeFrameHostingNode::commitStateBeforeChildren(const ScrollingStateNode&)
+bool ScrollingTreeFrameHostingNode::commitStateBeforeChildren(const ScrollingStateNode&)
 {
+    return true;
 }
 
 void ScrollingTreeFrameHostingNode::applyLayerPositions()

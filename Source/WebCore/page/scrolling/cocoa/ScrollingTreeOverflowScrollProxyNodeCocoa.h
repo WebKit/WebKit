@@ -39,7 +39,7 @@ public:
 protected:
     WEBCORE_EXPORT ScrollingTreeOverflowScrollProxyNodeCocoa(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
 
     CALayer* layer() const override { return m_layer.get(); }

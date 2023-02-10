@@ -46,13 +46,12 @@ ScrollingTreePositionedNodeCocoa::ScrollingTreePositionedNodeCocoa(ScrollingTree
 
 ScrollingTreePositionedNodeCocoa::~ScrollingTreePositionedNodeCocoa() = default;
 
-void ScrollingTreePositionedNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreePositionedNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStatePositionedNode& positionedStateNode = downcast<ScrollingStatePositionedNode>(stateNode);
-    if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
-        m_layer = static_cast<CALayer*>(positionedStateNode.layer());
+    if (stateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
+        m_layer = static_cast<CALayer*>(stateNode.layer());
 
-    ScrollingTreePositionedNode::commitStateBeforeChildren(stateNode);
+    return ScrollingTreePositionedNode::commitStateBeforeChildren(stateNode);
 }
 
 void ScrollingTreePositionedNodeCocoa::applyLayerPositions()

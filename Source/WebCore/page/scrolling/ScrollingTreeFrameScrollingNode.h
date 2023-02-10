@@ -38,7 +38,7 @@ class WEBCORE_EXPORT ScrollingTreeFrameScrollingNode : public ScrollingTreeScrol
 public:
     virtual ~ScrollingTreeFrameScrollingNode();
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     
     bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }

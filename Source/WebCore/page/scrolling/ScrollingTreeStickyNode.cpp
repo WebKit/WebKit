@@ -53,12 +53,17 @@ ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
     scrollingTree().fixedOrStickyNodeRemoved();
 }
 
-void ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeStickyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    auto& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
+    if (!is<ScrollingStateStickyNode>(stateNode))
+        return false;
+
+    const auto& stickyStateNode = downcast<ScrollingStateStickyNode>(stateNode);
 
     if (stickyStateNode.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
         m_constraints = stickyStateNode.viewportConstraints();
+
+    return true;
 }
 
 void ScrollingTreeStickyNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const

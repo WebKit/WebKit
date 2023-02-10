@@ -45,7 +45,7 @@ private:
 
     CALayer* layer() const final { return m_layer.get(); }
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) final;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) final;
     void applyLayerPositions() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
 
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const final;

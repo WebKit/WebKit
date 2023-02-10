@@ -61,10 +61,16 @@ void ScrollingTreeOverflowScrollingNodeMac::willBeDestroyed()
     delegate().nodeWillBeDestroyed();
 }
 
-void ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeOverflowScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateOverflowScrollingNode>(stateNode))
+        return false;
+
     m_delegate->updateFromStateNode(downcast<ScrollingStateOverflowScrollingNode>(stateNode));
+    return true;
 }
 
 WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
