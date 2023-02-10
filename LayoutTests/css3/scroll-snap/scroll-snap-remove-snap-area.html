@@ -1,0 +1,16 @@
+<style>
+    html {
+      scroll-snap-align: center;
+      scroll-snap-type: x;
+    }
+  </style>
+  <script>
+    onload = () => {
+      document.body.offsetTop;
+      d.style.scrollSnapAlign = '';
+      if (window.testRunner)
+           testRunner.dumpAsText();
+    };
+  </script>
+  <p>This test passes if it does not crash.</p>
+  <div id="d" style="scroll-snap-align: center"></div>  
