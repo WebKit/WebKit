@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,12 @@
 #include "PositionedGlyphs.h"
 #include "RenderingResourceIdentifier.h"
 #include <wtf/HashSet.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
 
-class DecomposedGlyphs : public ThreadSafeRefCounted<DecomposedGlyphs, WTF::DestructionThread::Main>, public CanMakeWeakPtr<DecomposedGlyphs> {
+class DecomposedGlyphs final
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<DecomposedGlyphs, WTF::DestructionThread::Main> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Observer {

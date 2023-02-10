@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,13 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
-class StorageQuotaManager : public ThreadSafeRefCounted<StorageQuotaManager>, public CanMakeWeakPtr<StorageQuotaManager> {
+class StorageQuotaManager final
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<StorageQuotaManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using UsageGetter = Function<uint64_t()>;
