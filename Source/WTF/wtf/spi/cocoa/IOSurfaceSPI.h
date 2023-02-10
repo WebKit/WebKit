@@ -29,11 +29,6 @@
 
 #if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
-// Workaround for <rdar://105279275>.
-#ifndef MSR_USE_SHARED_EVENT
-#define MSR_USE_SHARED_EVENT 0
-#endif
-
 #include <IOSurface/IOSurface.h>
 
 #else
@@ -131,6 +126,13 @@ WTF_EXTERN_C_END
 
 #if HAVE(IOSURFACE_ACCELERATOR)
 #if USE(APPLE_INTERNAL_SDK)
+
+#import <IOSurfaceAccelerator/IOSurfaceAcceleratorTypes.h>
+
+// Workaround for <rdar://105279275>.
+#ifndef MSR_USE_SHARED_EVENT
+#define MSR_USE_SHARED_EVENT 0
+#endif
 
 #import <IOSurfaceAccelerator/IOSurfaceAccelerator.h>
 
