@@ -252,6 +252,9 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     case Wasm::TypeKind::F64:
                         m_instance->instance().setGlobal(import.kindIndex, globalValue->global()->getPrimitive());
                         break;
+                    case Wasm::TypeKind::V128:
+                        m_instance->instance().setGlobal(import.kindIndex, globalValue->global()->getVector());
+                        break;
                     default:
                         if (Wasm::isExternref(declaredGlobalType)) {
                             value = globalValue->global()->get(globalObject);

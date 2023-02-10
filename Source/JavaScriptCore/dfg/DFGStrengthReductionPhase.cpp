@@ -1186,6 +1186,7 @@ private:
                             success = false;
                         break;
                     }
+                    case Wasm::TypeKind::V128:
                     default: {
                         success = false;
                         break;
@@ -1206,6 +1207,7 @@ private:
                     case Wasm::TypeKind::F64: {
                         break;
                     }
+                    case Wasm::TypeKind::V128:
                     default: {
                         success = false;
                         break;
@@ -1266,6 +1268,7 @@ private:
                         m_graph.varArgChild(m_node, 2 + index) = Edge(result, DoubleRepUse);
                         break;
                     }
+                    case Wasm::TypeKind::V128:
                     default:
                         RELEASE_ASSERT_NOT_REACHED();
                     }
@@ -1288,6 +1291,7 @@ private:
                     case Wasm::TypeKind::F64: {
                         break;
                     }
+                    case Wasm::TypeKind::V128:
                     default: {
                         break;
                     }

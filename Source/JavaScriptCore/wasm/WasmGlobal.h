@@ -68,6 +68,7 @@ public:
     Wasm::Mutability mutability() const { return m_mutability; }
     JSValue get(JSGlobalObject*) const;
     uint64_t getPrimitive() const { return m_value.m_primitive; }
+    v128_t getVector() const { return m_value.m_vector; }
     void set(JSGlobalObject*, JSValue);
     DECLARE_VISIT_AGGREGATE;
 

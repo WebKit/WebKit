@@ -334,6 +334,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
             }
             break;
         }
+        case Wasm::TypeKind::V128:
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
