@@ -3305,6 +3305,7 @@ header: <WebCore/AudioIOCallback.h>
 };
 
 #if ENABLE(VIDEO)
+header: <WebCore/VideoFrame.h>
 enum class WebCore::VideoFrameRotation : uint16_t {
     None,
     UpsideDown,

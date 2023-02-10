@@ -54,6 +54,7 @@
 #include "OESTextureHalfFloatLinear.h"
 #include "OESVertexArrayObject.h"
 #include "RenderBox.h"
+#include "WebCodecsVideoFrame.h"
 #include "WebGLBuffer.h"
 #include "WebGLColorBufferFloat.h"
 #include "WebGLCompressedTextureASTC.h"

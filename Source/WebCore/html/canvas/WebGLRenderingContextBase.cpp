@@ -81,6 +81,7 @@
 #include "Page.h"
 #include "RenderBox.h"
 #include "Settings.h"
+#include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebGL2RenderingContext.h"
 #include "WebGLActiveInfo.h"

@@ -37,6 +37,8 @@ namespace WebCore {
 
 class ImageTransferSessionVT;
 
+enum class VideoFrameRotation : uint16_t;
+
 class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource {
 public:
     virtual ~RealtimeVideoCaptureSource();
@@ -45,7 +47,7 @@ public:
 
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
     virtual void generatePresets() = 0;
-    virtual VideoFrame::Rotation videoFrameRotation() const { return VideoFrame::Rotation::None; }
+    virtual VideoFrameRotation videoFrameRotation() const;
 
     double observedFrameRate() const { return m_observedFrameRate; }
     Vector<VideoPresetData> presetsData();

@@ -30,7 +30,6 @@
 #if USE(LIBWEBRTC)
 
 #include "RealtimeIncomingVideoSource.h"
-#include "VideoFrame.h"
 
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 using CVPixelBufferRef = struct __CVBuffer*;
@@ -41,6 +40,8 @@ enum class BufferType;
 
 namespace WebCore {
 
+enum class VideoFrameRotation : uint16_t;
+
 class RealtimeIncomingVideoSourceCocoa final : public RealtimeIncomingVideoSource {
 public:
     static Ref<RealtimeIncomingVideoSourceCocoa> create(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
@@ -49,8 +50,8 @@ private:
     RealtimeIncomingVideoSourceCocoa(rtc::scoped_refptr<webrtc::VideoTrackInterface>&&, String&&);
     RetainPtr<CVPixelBufferRef> pixelBufferFromVideoFrame(const webrtc::VideoFrame&);
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, webrtc::BufferType);
-    RefPtr<VideoFrame> toVideoFrame(const webrtc::VideoFrame&, VideoFrame::Rotation);
-    Ref<VideoFrame> createVideoSampleFromCVPixelBuffer(CVPixelBufferRef, VideoFrame::Rotation, int64_t);
+    RefPtr<VideoFrame> toVideoFrame(const webrtc::VideoFrame&, VideoFrameRotation);
+    Ref<VideoFrame> createVideoSampleFromCVPixelBuffer(CVPixelBufferRef, VideoFrameRotation, int64_t);
 
     // rtc::VideoSinkInterface
     void OnFrame(const webrtc::VideoFrame&) final;

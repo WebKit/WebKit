@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivateAVFoundation.h"
+#include "VideoFrameMetadata.h"
 #include <CoreMedia/CMTime.h>
 #include <wtf/Function.h>
 #include <wtf/Observer.h>

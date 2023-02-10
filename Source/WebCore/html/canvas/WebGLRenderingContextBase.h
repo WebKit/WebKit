@@ -55,10 +55,6 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/Lock.h>
 
-#if ENABLE(WEB_CODECS)
-#include "WebCodecsVideoFrame.h"
-#endif
-
 #if ENABLE(WEBXR)
 #include "JSDOMPromiseDeferredForward.h"
 #endif
@@ -103,6 +99,7 @@ class OESVertexArrayObject;
 #if ENABLE(OFFSCREEN_CANVAS)
 class OffscreenCanvas;
 #endif
+class WebCodecsVideoFrame;
 class WebCoreOpaqueRoot;
 class WebGLActiveInfo;
 class WebGLClipCullDistance;

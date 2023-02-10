@@ -32,12 +32,17 @@
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/MediaTime.h>
 #include <wtf/WorkQueue.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS WebAVSampleBufferStatusChangeListener;
 
+typedef struct __CVBuffer* CVPixelBufferRef;
+
 namespace WebCore {
+
+enum class VideoFrameRotation : uint16_t;
 
 class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer, public CanMakeWeakPtr<LocalSampleBufferDisplayLayer, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -59,7 +64,7 @@ public:
     PlatformLayer* displayLayer();
 
     enum class ShouldUpdateRootLayer { No, Yes };
-    void updateRootLayerBoundsAndPosition(CGRect, VideoFrame::Rotation, ShouldUpdateRootLayer);
+    void updateRootLayerBoundsAndPosition(CGRect, VideoFrameRotation, ShouldUpdateRootLayer);
     void updateRootLayerAffineTransform(CGAffineTransform);
 
     // SampleBufferDisplayLayer.
@@ -73,7 +78,7 @@ public:
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
 
     void updateAffineTransform(CGAffineTransform)  final;
-    void updateBoundsAndPosition(CGRect, VideoFrame::Rotation) final;
+    void updateBoundsAndPosition(CGRect, VideoFrameRotation) final;
 
     void flush() final;
     void flushAndRemoveImage() final;
@@ -90,7 +95,7 @@ private:
     void removeOldVideoFramesFromPendingQueue();
     void addVideoFrameToPendingQueue(Ref<VideoFrame>&&);
     void requestNotificationWhenReadyForVideoData();
-    void setRootLayerBoundsAndPositions(CGRect, VideoFrame::Rotation);
+    void setRootLayerBoundsAndPositions(CGRect, VideoFrameRotation);
 
 #if !RELEASE_LOG_DISABLED
     void onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime);

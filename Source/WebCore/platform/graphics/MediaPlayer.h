@@ -38,8 +38,6 @@
 #include "PlatformTextTrack.h"
 #include "SecurityOriginData.h"
 #include "Timer.h"
-#include "VideoFrame.h"
-#include "VideoFrameMetadata.h"
 #include "VideoPlaybackQualityMetrics.h"
 #include <JavaScriptCore/Forward.h>
 #include <wtf/CompletionHandler.h>
@@ -87,10 +85,12 @@ class PlatformMediaResourceLoader;
 class PlatformTimeRanges;
 class SharedBuffer;
 class TextTrackRepresentation;
+class VideoFrame;
 class VideoTrackPrivate;
 
 struct GraphicsDeviceAdapter;
 struct SecurityOriginData;
+struct VideoFrameMetadata;
 
 struct MediaEngineSupportParameters {
     ContentType type;

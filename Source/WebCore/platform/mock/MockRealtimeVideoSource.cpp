@@ -43,6 +43,7 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "RealtimeVideoSource.h"
+#include "VideoFrame.h"
 #include <math.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -76,6 +77,7 @@ static HashSet<MockRealtimeVideoSource*>& allMockRealtimeVideoSource()
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
+    , m_deviceOrientation { VideoFrame::Rotation::None }
 {
     allMockRealtimeVideoSource().add(this);
 

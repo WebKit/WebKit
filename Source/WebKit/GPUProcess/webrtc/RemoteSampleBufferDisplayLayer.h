@@ -40,6 +40,7 @@
 namespace WebCore {
 class ImageTransferSessionVT;
 class LocalSampleBufferDisplayLayer;
+enum class VideoFrameRotation : uint16_t;
 };
 
 namespace WebKit {
@@ -71,7 +72,7 @@ private:
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
     void updateAffineTransform(CGAffineTransform);
-    void updateBoundsAndPosition(CGRect, WebCore::VideoFrame::Rotation);
+    void updateBoundsAndPosition(CGRect, WebCore::VideoFrameRotation);
     void flush();
     void flushAndRemoveImage();
     void play();

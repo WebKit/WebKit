@@ -84,6 +84,9 @@ void VideoDecoder::createLocalDecoder(const String& codecName, const Config& con
     callback(makeUnexpected("Not supported"_s));
 }
 
+VideoDecoder::VideoDecoder() = default;
+VideoDecoder::~VideoDecoder() = default;
+
 }
 
 #endif // ENABLE(WEB_CODECS)

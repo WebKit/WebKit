@@ -43,6 +43,7 @@
 #include "RealtimeMediaSourceCenter.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
+#include <wtf/MediaTime.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringHash.h>
 

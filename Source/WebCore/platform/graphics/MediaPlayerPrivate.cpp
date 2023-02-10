@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,26 +24,28 @@
  */
 
 #include "config.h"
-#include "RemoteVideoFrameObjectHeap.h"
+#include "MediaPlayerPrivate.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO) && PLATFORM(COCOA)
+#if ENABLE(VIDEO)
 
-#include <WebCore/PixelBufferConformerCV.h>
-#include <WebCore/CoreVideoSoftLink.h>
+#include "VideoFrameMetadata.h"
 
-namespace WebKit {
+namespace WebCore {
 
-RefPtr<WebCore::VideoFrame> RemoteVideoFrameObjectHeap::get(RemoteVideoFrameReadReference&& read)
+MediaPlayerPrivateInterface::MediaPlayerPrivateInterface() = default;
+MediaPlayerPrivateInterface::~MediaPlayerPrivateInterface() = default;
+
+RefPtr<VideoFrame> MediaPlayerPrivateInterface::videoFrameForCurrentTime()
 {
-    return m_heap.retire(WTFMove(read), 0_s);
+    return nullptr;
 }
 
-void RemoteVideoFrameObjectHeap::createPixelConformerIfNeeded()
+std::optional<VideoFrameMetadata> MediaPlayerPrivateInterface::videoFrameMetadata()
 {
-    if (!m_pixelBufferConformer)
-        m_pixelBufferConformer = makeUnique<WebCore::PixelBufferConformerCV>((__bridge CFDictionaryRef)@{ (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32BGRA) });
+    return { };
 }
 
 }
 
 #endif
+
