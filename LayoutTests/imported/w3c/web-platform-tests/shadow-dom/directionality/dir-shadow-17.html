@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>[dir] and shadow slots</title>
+<link rel="author" title="Eric Meyer" href="mailto:emeyer@igalia.com">
+<link rel="help" href="">
+<link rel="match" href="dir-shadow-17-ref.html">
+<style type="text/css">
+body {width: 600px;}
+div {border: 1px solid gray; margin: 1em;}
+</style>
+</head>
+<body>
+
+<p>`dir=auto` on the shadow host, paragraph in the shadow tree</p>
+<div id="host" dir="auto"></div>
+<p id="result">The computed `direction` value for the paragraph is: </p>
+
+<script type="text/javascript">
+  let root = host.attachShadow({mode:"open"});
+  root.innerHTML = `<style>p {width: 50%; border: 1px dotted;}</style><p>paragraph</p>`;
+  result.innerHTML += getComputedStyle(root.querySelector('p')).direction + '.';
+</script>
+
+</body>
+</html>

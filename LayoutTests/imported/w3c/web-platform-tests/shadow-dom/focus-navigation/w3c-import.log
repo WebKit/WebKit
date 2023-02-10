@@ -26,7 +26,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-with-tabindex.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots-in-slot.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots.html
-/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-web-component-input-type-radio.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-web-component-radio.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-with-delegatesFocus.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-nested-slots.html
