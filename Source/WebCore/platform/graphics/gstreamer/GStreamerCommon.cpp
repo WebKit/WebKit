@@ -331,6 +331,13 @@ void registerWebKitGStreamerElements()
     bool registryWasUpdated = false;
     std::call_once(onceFlag, [&registryWasUpdated] {
 
+        // Rank guidelines are as following:
+        // - Use GST_RANK_PRIMARY for elements meant to be auto-plugged and for which we know
+        //   there's no other alternative outside of WebKit.
+        // - Use GST_RANK_PRIMARY+100 for elements meant to be auto-plugged and that we know there
+        //   is an alternative outside of WebKit.
+        // - Use GST_RANK_NONE for elements explicitely created by WebKit (no auto-plugging).
+
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
         if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty())
             gst_element_register(nullptr, "webkitthunder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_THUNDER_DECRYPT);
@@ -342,11 +349,11 @@ void registerWebKitGStreamerElements()
         registerInternalVideoEncoder();
 
 #if ENABLE(MEDIA_SOURCE)
-        gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_MEDIA_SRC);
+        gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_SRC);
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
-        gst_element_register(nullptr, "webkitflitesrc", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_FLITE_SRC);
+        gst_element_register(nullptr, "webkitflitesrc", GST_RANK_NONE, WEBKIT_TYPE_FLITE_SRC);
 #endif
 
 #if ENABLE(VIDEO)
