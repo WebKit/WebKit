@@ -29,9 +29,7 @@
 #include "DOMWrapperWorld.h"
 #include "UserScript.h"
 #include "UserStyleSheet.h"
-#include <JavaScriptCore/HeapInlines.h>
-#include <JavaScriptCore/JSCellInlines.h>
-#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "CompiledContentExtension.h"

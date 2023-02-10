@@ -231,22 +231,22 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
     return truncateLeft.value_or(ellipsisWidth) - ellipsisWidth;
 }
 
-std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(LineBuilder::LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const InlineDisplay::Line& displayLine, DisplayBoxes& displayBoxes, bool isLastLineWithInlineContent)
+std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const InlineDisplay::Line& displayLine, DisplayBoxes& displayBoxes, bool isLastLineWithInlineContent)
 {
     if (displayBoxes.isEmpty())
         return { };
 
     auto contentNeedsEllipsis = [&] {
         switch (lineEndingEllipsisPolicy) {
-        case LineBuilder::LineEndingEllipsisPolicy::No:
+        case LineEndingEllipsisPolicy::No:
             return false;
-        case LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
+        case LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
             return displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width();
-        case LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
+        case LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
             if (isLastLineWithInlineContent)
                 return false;
             FALLTHROUGH;
-        case LineBuilder::LineEndingEllipsisPolicy::Always:
+        case LineEndingEllipsisPolicy::Always:
             return true;
         default:
             ASSERT_NOT_REACHED();
@@ -263,11 +263,11 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
 
     auto contentNeedsTruncation = [&] {
         switch (lineEndingEllipsisPolicy) {
-        case LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
+        case LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection:
             ASSERT(displayLine.contentLogicalWidth() > displayLine.lineBoxLogicalRect().width());
             return true;
-        case LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
-        case LineBuilder::LineEndingEllipsisPolicy::Always:
+        case LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
+        case LineEndingEllipsisPolicy::Always:
             return displayLine.contentLogicalLeft() + displayLine.contentLogicalWidth() + ellipsisWidth > displayLine.lineBoxLogicalRect().maxX();
         default:
             ASSERT_NOT_REACHED();

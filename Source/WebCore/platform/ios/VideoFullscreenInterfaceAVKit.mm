@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -108,23 +108,27 @@ static bool ignoreWatchdogForDebugging = false;
     , AVPictureInPictureControllerDelegate
 #endif
 > {
-    WeakPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
+    ThreadSafeWeakPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
 }
-@property (assign) VideoFullscreenInterfaceAVKit* fullscreenInterface;
+@property (nonatomic, assign /* weak */) RefPtr<VideoFullscreenInterfaceAVKit> fullscreenInterface;
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason;
 @end
 
 @implementation WebAVPlayerViewControllerDelegate
-- (VideoFullscreenInterfaceAVKit*)fullscreenInterface
+- (RefPtr<VideoFullscreenInterfaceAVKit>)fullscreenInterface
 {
     ASSERT(isMainThread());
     return _fullscreenInterface.get();
 }
 
-- (void)setFullscreenInterface:(VideoFullscreenInterfaceAVKit*)fullscreenInterface
+- (void)setFullscreenInterface:(RefPtr<VideoFullscreenInterfaceAVKit>)fullscreenInterface
 {
     ASSERT(isMainThread());
-    _fullscreenInterface = *fullscreenInterface;
+    if (!fullscreenInterface) {
+        _fullscreenInterface = nullptr;
+        return;
+    }
+    _fullscreenInterface = ThreadSafeWeakPtr { *fullscreenInterface };
 }
 
 #if PLATFORM(WATCHOS)
@@ -134,37 +138,37 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 - (void)playerViewControllerWillStartPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->willStartPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->willStartPictureInPicture();
 }
 
 - (void)playerViewControllerDidStartPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->didStartPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->didStartPictureInPicture();
 }
 
 - (void)playerViewController:(AVPlayerViewController *)playerViewController failedToStartPictureInPictureWithError:(NSError *)error
 {
     UNUSED_PARAM(playerViewController);
     UNUSED_PARAM(error);
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->failedToStartPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->failedToStartPictureInPicture();
 }
 
 - (void)playerViewControllerWillStopPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->willStopPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->willStopPictureInPicture();
 }
 
 - (void)playerViewControllerDidStopPictureInPicture:(AVPlayerViewController *)playerViewController
 {
     UNUSED_PARAM(playerViewController);
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->didStopPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->didStopPictureInPicture();
 }
 
 - (BOOL)playerViewControllerShouldAutomaticallyDismissAtPictureInPictureStart:(AVPlayerViewController *)playerViewController
@@ -192,17 +196,17 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
 - (BOOL)playerViewController:(AVPlayerViewController *)playerViewController shouldExitFullScreenWithReason:(AVPlayerViewControllerExitFullScreenReason)reason
 {
     UNUSED_PARAM(playerViewController);
-    if (!self.fullscreenInterface)
-        return YES;
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        return fullscreenInterface->shouldExitFullscreenWithReason(convertToExitFullScreenReason(reason));
 
-    return self.fullscreenInterface->shouldExitFullscreenWithReason(convertToExitFullScreenReason(reason));
+    return YES;
 }
 
 - (void)playerViewController:(AVPlayerViewController *)playerViewController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
 {
     UNUSED_PARAM(playerViewController);
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
 }
 
 #if PLATFORM(WATCHOS)
@@ -221,38 +225,38 @@ IGNORE_WARNINGS_END
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
 {
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->willStartPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->willStartPictureInPicture();
 }
 
 - (void)pictureInPictureControllerDidStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
 {
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->didStartPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->didStartPictureInPicture();
 }
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController failedToStartPictureInPictureWithError:(NSError *)error
 {
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->failedToStartPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->failedToStartPictureInPicture();
 }
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
 {
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->willStopPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->willStopPictureInPicture();
 }
 
 - (void)pictureInPictureControllerDidStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
 {
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->didStopPictureInPicture();
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->didStopPictureInPicture();
 }
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
 {
-    if (self.fullscreenInterface)
-        self.fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
+    if (auto fullscreenInterface = self.fullscreenInterface)
+        fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
 }
 
 #endif
@@ -530,7 +534,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 @implementation WebAVPlayerViewController {
-    VideoFullscreenInterfaceAVKit *_fullscreenInterface;
+    ThreadSafeWeakPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
 #if PLATFORM(WATCHOS)
     RetainPtr<UIViewController> _presentingViewController;
 #endif
@@ -549,7 +553,7 @@ NS_ASSUME_NONNULL_END
     if (!(self = [super init]))
         return nil;
 
-    _fullscreenInterface = interface;
+    _fullscreenInterface = ThreadSafeWeakPtr { *interface };
     _avPlayerViewController = adoptNS([allocAVPlayerViewControllerInstance() initWithPlayerLayerView:interface->playerLayerView()]);
     _avPlayerViewController.get().modalPresentationStyle = UIModalPresentationOverFullScreen;
 #if PLATFORM(WATCHOS)
@@ -602,10 +606,17 @@ NS_ASSUME_NONNULL_END
 - (void)enterFullScreenAnimated:(BOOL)animated completionHandler:(void (^)(BOOL success, NSError * __nullable error))completionHandler
 {
 #if PLATFORM(WATCHOS)
-    _presentingViewController = _fullscreenInterface->presentingViewController();
+    auto fullscreenInterface = _fullscreenInterface.get();
+    if (!fullscreenInterface) {
+        if (completionHandler)
+            completionHandler(NO, nil);
+        return;
+    }
+
+    _presentingViewController = fullscreenInterface->presentingViewController();
 
     _avPlayerViewController.get().view.frame = _presentingViewController.get().view.frame;
-    [_presentingViewController presentViewController:_fullscreenInterface->fullscreenViewController() animated:animated completion:^{
+    [_presentingViewController presentViewController:fullscreenInterface->fullscreenViewController() animated:animated completion:^{
         if (completionHandler)
             completionHandler(YES, nil);
     }];
@@ -694,8 +705,8 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
     _startPictureInPictureTimer = [NSTimer scheduledTimerWithTimeInterval:startPictureInPictureTimeInterval repeats:NO block:^(NSTimer *_Nonnull) {
         [self removeObserver];
         _startPictureInPictureTimer = nil;
-        if (_fullscreenInterface)
-            _fullscreenInterface->failedToStartPictureInPicture();
+        if (auto fullscreenInterface = _fullscreenInterface.get())
+            fullscreenInterface->failedToStartPictureInPicture();
     }];
 
     [self initObserver];

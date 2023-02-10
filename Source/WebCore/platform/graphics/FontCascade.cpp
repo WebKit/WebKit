@@ -24,7 +24,6 @@
 #include "config.h"
 #include "FontCascade.h"
 
-#include "CharacterProperties.h"
 #include "ComplexTextController.h"
 #include "DisplayListRecorderImpl.h"
 #include "FloatRect.h"

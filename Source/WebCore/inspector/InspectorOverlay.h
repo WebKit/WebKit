@@ -201,8 +201,8 @@ public:
     bool shouldShowOverlay() const;
 
     void hideHighlight();
-    void highlightNodeList(RefPtr<NodeList>&&, const Highlight::Config&);
-    void highlightNode(Node*, const Highlight::Config&);
+    void highlightNodeList(RefPtr<NodeList>&&, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt);
+    void highlightNode(Node*, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt);
     void highlightQuad(std::unique_ptr<FloatQuad>, const Highlight::Config&);
 
     void setShowPaintRects(bool);
@@ -223,14 +223,10 @@ public:
     // Multiple grid and flex overlays can be active at the same time. These methods
     // will fail if the node is not a grid or if the node has been GC'd.
 
-    void showHighlightGridOverlayForNode(Node&, const InspectorOverlay::Grid::Config&);
-    void hideHighlightGridOverlay();
     Inspector::ErrorStringOr<void> setGridOverlayForNode(Node&, const InspectorOverlay::Grid::Config&);
     Inspector::ErrorStringOr<void> clearGridOverlayForNode(Node&);
     void clearAllGridOverlays();
 
-    void showHighlightFlexOverlayForNode(Node&, const InspectorOverlay::Flex::Config&);
-    void hideHighlightFlexOverlay();
     Inspector::ErrorStringOr<void> setFlexOverlayForNode(Node&, const InspectorOverlay::Flex::Config&);
     Inspector::ErrorStringOr<void> clearFlexOverlayForNode(Node&);
     void clearAllFlexOverlays();
@@ -267,6 +263,8 @@ private:
     RefPtr<Node> m_highlightNode;
     RefPtr<NodeList> m_highlightNodeList;
     Highlight::Config m_nodeHighlightConfig;
+    std::optional<Grid::Config> m_nodeGridOverlayConfig;
+    std::optional<Flex::Config> m_nodeFlexOverlayConfig;
 
     std::unique_ptr<FloatQuad> m_highlightQuad;
     Highlight::Config m_quadHighlightConfig;
@@ -274,10 +272,7 @@ private:
     Deque<TimeRectPair> m_paintRects;
     Timer m_paintRectUpdateTimer;
 
-    std::optional<InspectorOverlay::Grid> m_highlightGridOverlay;
     Vector<InspectorOverlay::Grid> m_activeGridOverlays;
-
-    std::optional<InspectorOverlay::Flex> m_highlightFlexOverlay;
     Vector<InspectorOverlay::Flex> m_activeFlexOverlays;
 
     bool m_indicating { false };

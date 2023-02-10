@@ -31,9 +31,9 @@
 #include "ASTVisitor.h"
 #include "CompilationMessage.h"
 #include "ContextProviderInlines.h"
-#include "ShaderModule.h"
 #include "TypeStore.h"
 #include "Types.h"
+#include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
 
 namespace WGSL {

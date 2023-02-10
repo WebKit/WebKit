@@ -37,6 +37,7 @@
 #include "InlineItemsBuilder.h"
 #include "InlineLineBox.h"
 #include "InlineLineBoxBuilder.h"
+#include "InlineLineTypes.h"
 #include "InlineTextItem.h"
 #include "LayoutBox.h"
 #include "LayoutContext.h"
@@ -189,35 +190,20 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
 {
     auto lineContentRange = lineContent.inlineItemRange;
     if (!lineContent.partialOverflowingContent.has_value())
-        return lineContentRange.end;
+        return lineContentRange.endIndex();
 
     // When the trailing content is partial, we need to reuse the last InlineTextItem.
-    auto lineLayoutHasAdvancedWithPartialContent = !previousLine || (lineContentRange.end > previousLineLastInlineItemIndex
-        || (previousLine->partialOverflowingContent && previousLine->partialOverflowingContent->length > lineContent.partialOverflowingContent->length));
+    auto lineLayoutHasAdvancedWithPartialContent = !previousLine || (lineContentRange.endIndex() > previousLineLastInlineItemIndex
+        || (previousLine->partialOverflowingContent && previousLine->partialOverflowingContent->length() > lineContent.partialOverflowingContent->length()));
     if (lineLayoutHasAdvancedWithPartialContent)
-        return lineContentRange.end - 1;
+        return lineContentRange.endIndex() - 1;
     // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
     // We certainly lose some content, but we would be busy looping otherwise.
     ASSERT_NOT_REACHED();
-    return lineContentRange.end;
+    return lineContentRange.endIndex();
 }
 
-static LineBuilder::LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfVisibleLines)
-{
-    // We may have passed the line-clamp line with overflow visible.
-    if (maximumNumberOfVisibleLines && numberOfLines < *maximumNumberOfVisibleLines) {
-        // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
-        auto shouldApplyClampWhenApplicable = *maximumNumberOfVisibleLines - numberOfLines == 1;
-        if (shouldApplyClampWhenApplicable)
-            return LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
-    }
-    // Truncation is in effect when the block container has overflow other than visible.
-    if (rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() == TextOverflow::Ellipsis)
-        return LineBuilder::LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
-    return LineBuilder::LineEndingEllipsisPolicy::No;
-}
-
-void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
 {
     ASSERT(!needsLayoutRange.isEmpty());
 
@@ -225,41 +211,30 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     formattingState.boxes().reserveInitialCapacity(formattingState.inlineItems().size());
 
     auto floatingContext = FloatingContext { *this, blockLayoutState.floatingState() };
-    auto& rootStyle = root().style();
-
-    auto maximumNumberOfVisibleLinesForThisInlineContent = [&] () -> std::optional<size_t> {
-        if (auto lineClamp = blockLayoutState.lineClamp())
-            return lineClamp->maximumNumberOfLines - lineClamp->numberOfVisibleLines;
-        return { };
-    }();
-    size_t numberOfLines = 0;
 
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLine = std::optional<LineBuilder::PreviousLine> { };
     auto previousLineLastInlineItemIndex = std::optional<size_t> { };
-    auto firstInlineItemNeedsLayout = needsLayoutRange.start;
+    auto firstInlineItemNeedsLayout = needsLayoutRange.startIndex();
 
     auto lineBuilder = LineBuilder { *this, blockLayoutState, constraints.horizontal(), inlineItems };
     while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
-        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect }, previousLine);
+        auto lineContent = lineBuilder.layoutInlineContent({ { firstInlineItemNeedsLayout, needsLayoutRange.endIndex() }, lineInitialRect }, previousLine);
 
-        auto ellipsisPolicy = lineEndingEllipsisPolicy(rootStyle, numberOfLines, maximumNumberOfVisibleLinesForThisInlineContent);
-        auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints, ellipsisPolicy, blockLayoutState);
+        auto lineLogicalRect = createDisplayContentForLine(lineContent, constraints, blockLayoutState);
         if (lineContent.isLastLineWithInlineContent)
             formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 
         firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
-        auto isLastLine = (firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty());
+        auto isLastLine = (firstInlineItemNeedsLayout == needsLayoutRange.endIndex() && lineContent.overflowingFloats.isEmpty());
         if (isLastLine)
             break;
 
-        if (!lineContent.runs.isEmpty() && lineContent.contentLogicalWidth)
-            ++numberOfLines;
         lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineLogicalRect, floatingContext);
         previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, WTFMove(lineContent.overflowingFloats), lineContent.trailingOverflowingContentWidth };
-        previousLineLastInlineItemIndex = lineContent.inlineItemRange.end;
+        previousLineLastInlineItemIndex = lineContent.inlineItemRange.endIndex();
     }
 }
 
@@ -345,7 +320,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
 {
     auto& inlineItems = formattingState().inlineItems();
     auto lineBuilder = LineBuilder { *this, inlineItems, intrinsicWidthMode };
-    auto layoutRange = LineBuilder::InlineItemRange { 0 , inlineItems.size() };
+    auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
     auto maximumLineWidth = InlineLayoutUnit { };
     auto maximumFloatWidth = LayoutUnit { };
     auto previousLine = std::optional<LineBuilder::PreviousLine> { };
@@ -353,7 +328,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
         auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, previousLine);
         maximumLineWidth = std::max(maximumLineWidth, intrinsicContent.logicalWidth);
 
-        layoutRange.start = !intrinsicContent.partialOverflowingContent ? intrinsicContent.inlineItemRange.end : intrinsicContent.inlineItemRange.end - 1;
+        layoutRange.start.index = !intrinsicContent.partialOverflowingContent ? intrinsicContent.inlineItemRange.endIndex() : intrinsicContent.inlineItemRange.endIndex() - 1;
         previousLine = LineBuilder::PreviousLine { { }, { }, intrinsicContent.partialOverflowingContent, { } };
         // FIXME: Add support for clear.
         for (auto* inlineFloatItem : intrinsicContent.placedFloats)
@@ -457,15 +432,36 @@ void InlineFormattingContext::collectContentIfNeeded()
     formattingState.addInlineItems(inlineItemsBuilder.build());
 }
 
-InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints, LineBuilder::LineEndingEllipsisPolicy lineEndingEllipsisPolicy, const BlockLayoutState& blockLayoutState)
+static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> maximumNumberOfVisibleLines)
+{
+    // We may have passed the line-clamp line with overflow visible.
+    if (maximumNumberOfVisibleLines && numberOfLines < *maximumNumberOfVisibleLines) {
+        // If the next call to layoutInlineContent() won't produce a line with content (e.g. only floats), we'll end up here again.
+        auto shouldApplyClampWhenApplicable = *maximumNumberOfVisibleLines - numberOfLines == 1;
+        if (shouldApplyClampWhenApplicable)
+            return LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
+    }
+    // Truncation is in effect when the block container has overflow other than visible.
+    if (rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() == TextOverflow::Ellipsis)
+        return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
+    return LineEndingEllipsisPolicy::No;
+}
+
+InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilder::LineContent& lineContent, const ConstraintsForInlineContent& constraints, const BlockLayoutState& blockLayoutState)
 {
     auto& formattingState = this->formattingState();
     auto currentLineIndex = formattingState.lines().size();
+    auto maximumNumberOfVisibleLinesForThisInlineContent = [&] () -> std::optional<size_t> {
+        if (auto lineClamp = blockLayoutState.lineClamp())
+            return lineClamp->maximumNumberOfLines - lineClamp->numberOfVisibleLines;
+        return { };
+    }();
 
     auto lineBox = LineBoxBuilder { *this, lineContent, blockLayoutState }.build(currentLineIndex);
     auto displayLine = InlineDisplayLineBuilder { *this }.build(lineContent, lineBox, constraints);
     auto boxes = InlineDisplayContentBuilder { *this, formattingState }.build(lineContent, lineBox, displayLine, currentLineIndex);
-    if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(lineEndingEllipsisPolicy, displayLine, boxes, lineContent.isLastLineWithInlineContent))
+    auto ellipsisPolicy = lineEndingEllipsisPolicy(root().style(), currentLineIndex, maximumNumberOfVisibleLinesForThisInlineContent);
+    if (auto ellipsisRect = InlineDisplayLineBuilder::trailingEllipsisVisualRectAfterTruncation(ellipsisPolicy, displayLine, boxes, lineContent.isLastLineWithInlineContent))
         displayLine.setEllipsisVisualRect(*ellipsisRect);
 
     formattingState.addBoxes(WTFMove(boxes));
@@ -475,13 +471,13 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilde
     return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(formattingState.lines().last().lineBoxRect(), root().style().writingMode());
 }
 
-void InlineFormattingContext::resetGeometryForClampedContent(const LineBuilder::InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft)
+void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::FloatList& overflowingFloats, LayoutPoint topleft)
 {
     if (needsDisplayContentRange.isEmpty() && overflowingFloats.isEmpty())
         return;
 
     auto& inlineItems = formattingState().inlineItems();
-    for (size_t index = needsDisplayContentRange.start; index < needsDisplayContentRange.end; ++index) {
+    for (size_t index = needsDisplayContentRange.startIndex(); index < needsDisplayContentRange.endIndex(); ++index) {
         auto& inlineItem = inlineItems[index];
         auto hasBoxGeometry = inlineItem.isBox() || inlineItem.isFloat() || inlineItem.isHardLineBreak() || inlineItem.isInlineBoxStart();
         if (!hasBoxGeometry)

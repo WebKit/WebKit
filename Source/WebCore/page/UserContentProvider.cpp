@@ -112,30 +112,23 @@ static ContentExtensions::ContentExtensionsBackend::RuleListFilter ruleListFilte
         };
     }
 
-    return std::visit(WTF::makeVisitor([](const HashSet<String>& disabledRuleLists) {
-        return ContentExtensions::ContentExtensionsBackend::RuleListFilter { [&](auto& identifier) {
-            return disabledRuleLists.contains(identifier)
+    auto& exceptions = mainLoader->contentExtensionEnablement().second;
+    switch (mainLoader->contentExtensionEnablement().first) {
+    case ContentExtensionDefaultEnablement::Disabled:
+        return [&](auto& identifier) {
+            return exceptions.contains(identifier)
+                ? ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No
+                : ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::Yes;
+        };
+    case ContentExtensionDefaultEnablement::Enabled:
+        return [&](auto& identifier) {
+            return exceptions.contains(identifier)
                 ? ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::Yes
                 : ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
-        } };
-    }, [](auto) {
-        return ContentExtensions::ContentExtensionsBackend::RuleListFilter { [](auto&) {
-            return ContentExtensions::ContentExtensionsBackend::ShouldSkipRuleList::No;
-        } };
-    }), mainLoader->disabledContentExtensions());
-}
-
-static bool contentRuleListsEnabled(DocumentLoader& documentLoader)
-{
-    RefPtr mainLoader = mainDocumentLoader(documentLoader);
-    if (!mainLoader)
-        return true;
-
-    return std::visit(WTF::makeVisitor([](DisabledContentExtensionsMode mode) {
-        return mode == DisabledContentExtensionsMode::None;
-    }, [](auto&) {
-        return true;
-    }), mainLoader->disabledContentExtensions());
+        };
+    }
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results, const Page& page, const URL& url, const DocumentLoader& initiatingDocumentLoader)
@@ -149,9 +142,7 @@ static void sanitizeLookalikeCharactersIfNeeded(ContentRuleListResults& results,
 
 ContentRuleListResults UserContentProvider::processContentRuleListsForLoad(Page& page, const URL& url, OptionSet<ContentExtensions::ResourceType> resourceType, DocumentLoader& initiatingDocumentLoader, const URL& redirectFrom)
 {
-    ContentRuleListResults results;
-    if (contentRuleListsEnabled(initiatingDocumentLoader))
-        results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom, ruleListFilter(initiatingDocumentLoader));
+    auto results = userContentExtensionBackend().processContentRuleListsForLoad(page, url, resourceType, initiatingDocumentLoader, redirectFrom, ruleListFilter(initiatingDocumentLoader));
 
     if (resourceType.contains(ContentExtensions::ResourceType::Document))
         sanitizeLookalikeCharactersIfNeeded(results, page, url, initiatingDocumentLoader);

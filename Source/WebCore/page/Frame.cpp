@@ -41,6 +41,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
+#include "DocumentLoader.h"
 #include "DocumentTimelinesController.h"
 #include "DocumentType.h"
 #include "Editing.h"
@@ -1044,6 +1045,26 @@ FloatSize Frame::screenSize() const
 {
     if (!m_overrideScreenSize.isEmpty())
         return m_overrideScreenSize;
+
+    auto sizeForHeadlessMode = [&]() -> std::optional<IntSize> {
+        RefPtr document = this->document();
+        if (!document)
+            return std::nullopt;
+
+        RefPtr loader = document->loader();
+        if (!loader || !loader->isLoadingInHeadlessMode())
+            return std::nullopt;
+
+        RefPtr window = this->window();
+        if (!window)
+            return std::nullopt;
+
+        return { { window->innerWidth(), window->innerHeight() } };
+    }();
+
+    if (sizeForHeadlessMode)
+        return *sizeForHeadlessMode;
+
     return screenRect(view()).size();
 }
 

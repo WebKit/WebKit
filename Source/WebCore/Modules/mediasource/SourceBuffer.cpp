@@ -71,17 +71,17 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SourceBuffer);
 
 static const double ExponentialMovingAverageCoefficient = 0.2;
 
-Ref<SourceBuffer> SourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource* source)
+Ref<SourceBuffer> SourceBuffer::create(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource& source)
 {
     auto sourceBuffer = adoptRef(*new SourceBuffer(WTFMove(sourceBufferPrivate), source));
     sourceBuffer->suspendIfNeeded();
     return sourceBuffer;
 }
 
-SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource* source)
-    : ActiveDOMObject(source->scriptExecutionContext())
+SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, MediaSource& source)
+    : ActiveDOMObject(source.scriptExecutionContext())
     , m_private(WTFMove(sourceBufferPrivate))
-    , m_source(source)
+    , m_source(&source)
     , m_opaqueRootProvider([this] { return opaqueRoot(); })
     , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
     , m_appendWindowStart(MediaTime::zeroTime())
@@ -96,7 +96,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     , m_logIdentifier(m_private->sourceBufferLogIdentifier())
 #endif
 {
-    ASSERT(m_source);
     ALWAYS_LOG(LOGIDENTIFIER);
 
     m_private->setClient(this);

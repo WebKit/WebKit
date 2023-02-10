@@ -34,8 +34,8 @@
 #include "Parser.h"
 #include "PhaseTimer.h"
 #include "ResolveTypeReferences.h"
-#include "ShaderModule.h"
 #include "TypeCheck.h"
+#include "WGSLShaderModule.h"
 
 namespace WGSL {
 

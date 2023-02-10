@@ -541,10 +541,7 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
         break;
     }
 
-    if (character >= HiraganaLetterSmallA
-        || u_charType(character) == U_CONTROL_CHAR
-        || (character >= nullCharacter && character < space)
-        || (character >= deleteCharacter && character < noBreakSpace))
+    if (character >= HiraganaLetterSmallA || isControlCharacter(character))
         return false;
 
     return true;
@@ -619,8 +616,7 @@ void WidthIterator::applyCSSVisibilityRules(GlyphBuffer& glyphBuffer, unsigned g
         // https://www.w3.org/TR/css-text-3/#white-space-processing
         // "Control characters (Unicode category Cc)—other than tabs (U+0009), line feeds (U+000A), carriage returns (U+000D) and sequences that form a segment break—must be rendered as a visible glyph"
         // Also, we're omitting NULL (U+0000) from this set because Chrome and Firefox do so and it's needed for compat. See https://github.com/w3c/csswg-drafts/pull/6983.
-        if (characterResponsibleForThisGlyph != nullCharacter
-            && u_charType(characterResponsibleForThisGlyph) == U_CONTROL_CHAR) {
+        if (characterResponsibleForThisGlyph != nullCharacter && isControlCharacter(characterResponsibleForThisGlyph)) {
             // Let's assume that .notdef is visible.
             GlyphBufferGlyph visibleGlyph = 0;
             clobberGlyph(i, visibleGlyph);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Pioneer Research Center USA, Inc.
@@ -112,9 +112,6 @@ public:
 
 #if PLATFORM(WIN)
     WEBCORE_EXPORT FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI, const CreationData* = nullptr);
-#if USE(CORE_TEXT)
-    FontPlatformData(GDIObject<HFONT>, CTFontRef, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
-#endif
 #if USE(CAIRO)
     FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic, const CreationData* = nullptr);
 #endif
@@ -144,12 +141,8 @@ public:
     RetainPtr<CFTypeRef> objectForEqualityCheck() const;
     bool hasCustomTracking() const { return isSystemFont(); }
 
-#if PLATFORM(WIN)
-    CTFontRef ctFont() const { return m_ctFont.get(); }
-#else
     CTFontRef font() const { return m_font.get(); }
     CTFontRef ctFont() const;
-#endif
 #endif
 
 #if PLATFORM(WIN) || PLATFORM(COCOA)
@@ -250,10 +243,6 @@ private:
 
 #if PLATFORM(WIN)
     RefPtr<SharedGDIObject<HFONT>> m_font; // FIXME: Delete this in favor of m_ctFont or m_dwFont or m_scaledFont.
-#if USE(CORE_TEXT)
-    RetainPtr<CGFontRef> m_cgFont; // FIXME: Delete this in favor of m_ctFont.
-    RetainPtr<CTFontRef> m_ctFont;
-#endif
 #elif USE(CORE_TEXT)
     // FIXME: Get rid of one of these. These two fonts are subtly different, and it is not obvious which one to use where.
     RetainPtr<CTFontRef> m_font;

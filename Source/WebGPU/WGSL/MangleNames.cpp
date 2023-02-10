@@ -30,8 +30,8 @@
 #include "ASTVisitor.h"
 #include "CallGraph.h"
 #include "ContextProviderInlines.h"
-#include "ShaderModule.h"
 #include "WGSL.h"
+#include "WGSLShaderModule.h"
 #include <wtf/HashSet.h>
 
 namespace WGSL {

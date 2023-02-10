@@ -412,7 +412,7 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
 void AXIsolatedObject::detachRemoteParts(AccessibilityDetachmentType)
 {
     for (const auto& childID : m_childrenIDs) {
-        if (auto child = tree()->nodeForID(childID))
+        if (RefPtr child = tree()->objectForID(childID))
             child->detachFromParent();
     }
     m_childrenIDs.clear();
@@ -448,7 +448,7 @@ const AXCoreObject::AccessibilityChildrenVector& AXIsolatedObject::children(bool
         m_children.clear();
         m_children.reserveInitialCapacity(m_childrenIDs.size());
         for (const auto& childID : m_childrenIDs) {
-            if (auto child = tree()->nodeForID(childID))
+            if (RefPtr child = tree()->objectForID(childID))
                 m_children.uncheckedAppend(child);
         }
         ASSERT(m_children.size() == m_childrenIDs.size());
@@ -511,7 +511,7 @@ AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsign
         return { };
     });
 
-    return tree()->nodeForID(cellID).get();
+    return tree()->objectForID(cellID).get();
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
@@ -544,10 +544,10 @@ void AXIsolatedObject::insertMathPairs(Vector<std::pair<AXID, AXID>>& isolatedPa
 {
     for (const auto& pair : isolatedPairs) {
         AccessibilityMathMultiscriptPair prescriptPair;
-        if (auto coreObject = tree()->nodeForID(pair.first).get())
-            prescriptPair.first = coreObject;
-        if (auto coreObject = tree()->nodeForID(pair.second).get())
-            prescriptPair.second = coreObject;
+        if (RefPtr coreObject = tree()->objectForID(pair.first))
+            prescriptPair.first = coreObject.get();
+        if (RefPtr coreObject = tree()->objectForID(pair.second))
+            prescriptPair.second = coreObject.get();
         pairs.append(prescriptPair);
     }
 }
@@ -581,7 +581,7 @@ AXCoreObject* AXIsolatedObject::focusedUIElement() const
     
 AXIsolatedObject* AXIsolatedObject::parentObjectUnignored() const
 {
-    return tree()->nodeForID(parent()).get();
+    return tree()->objectForID(parent()).get();
 }
 
 AXCoreObject* AXIsolatedObject::scrollBar(AccessibilityOrientation orientation)
@@ -710,7 +710,7 @@ AXCoreObject* AXIsolatedObject::accessibilityHitTest(const IntPoint& point) cons
         return { };
     });
 
-    return tree()->nodeForID(axID).get();
+    return tree()->objectForID(axID).get();
 }
 
 IntPoint AXIsolatedObject::intPointAttributeValue(AXPropertyName propertyName) const
@@ -730,7 +730,7 @@ AXCoreObject* AXIsolatedObject::objectAttributeValue(AXPropertyName propertyName
         [] (auto&) { return AXID(); }
     );
 
-    return tree()->nodeForID(nodeID).get();
+    return tree()->objectForID(nodeID).get();
 }
 
 PAL::SessionID AXIsolatedObject::sessionIDAttributeValue(AXPropertyName propertyName) const
@@ -935,7 +935,7 @@ void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName
     Vector<AXID> childIDs = vectorAttributeValue<AXID>(propertyName);
     children.reserveCapacity(childIDs.size());
     for (const auto& childID : childIDs) {
-        if (auto object = tree()->nodeForID(childID))
+        if (RefPtr object = tree()->objectForID(childID))
             children.uncheckedAppend(object);
     }
 }

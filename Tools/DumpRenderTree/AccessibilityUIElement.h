@@ -303,8 +303,9 @@ public:
     bool attributedStringForTextMarkerRangeContainsAttribute(JSStringRef, AccessibilityTextMarkerRange*);
     int indexForTextMarker(AccessibilityTextMarker*);
     bool isTextMarkerValid(AccessibilityTextMarker*);
+    bool isTextMarkerNull(AccessibilityTextMarker*);
     AccessibilityTextMarker textMarkerForIndex(int);
-    
+
     void scrollToMakeVisible();
     void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);
     void scrollToGlobalPoint(int x, int y);

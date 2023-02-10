@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,35 @@
 
 #pragma once
 
-#include <CFNetwork/CFNetwork.h>
-#include <pal/spi/cf/CFNetworkConnectionCacheSPI.h>
+#if ENABLE(MANAGED_MEDIA_SOURCE)
 
-#include <CFNetwork/CFHTTPCookiesPriv.h>
-#include <CFNetwork/CFHTTPStream.h>
-#include <CFNetwork/CFProxySupportPriv.h>
-#include <CFNetwork/CFURLCachePriv.h>
-#include <CFNetwork/CFURLConnectionPriv.h>
-#include <CFNetwork/CFURLCredentialStorage.h>
-#include <CFNetwork/CFURLProtocolPriv.h>
-#include <CFNetwork/CFURLRequestPriv.h>
-#include <CFNetwork/CFURLResponsePriv.h>
-#include <CFNetwork/CFURLStorageSession.h>
+#include "MediaSource.h"
 
-WTF_EXTERN_C_BEGIN
+namespace WebCore {
 
-CFN_EXPORT CFStringRef _CFNetworkErrorGetLocalizedDescription(CFIndex);
+class ManagedMediaSource final : public MediaSource {
+    WTF_MAKE_ISO_ALLOCATED(ManagedMediaSource);
+public:
+    static Ref<ManagedMediaSource> create(ScriptExecutionContext&);
+    ~ManagedMediaSource();
 
-extern const CFStringRef _kCFWindowsSSLLocalCert;
-extern const CFStringRef _kCFStreamPropertyWindowsSSLCertInfo;
-extern const CFStringRef _kCFWindowsSSLPeerCert;
+    enum class BufferingPolicy { Low, Medium, High };
+    ExceptionOr<BufferingPolicy> buffering() const;
 
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxy;
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyHost;
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyPort;
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTAdditionalHeaders;
-CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTResponse;
-CFN_EXPORT void _CFHTTPMessageSetResponseURL(CFHTTPMessageRef, CFURLRef);
-CFN_EXPORT void _CFHTTPMessageSetResponseProxyURL(CFHTTPMessageRef, CFURLRef);
+    enum class PreferredQuality { Low, Medium, High };
+    ExceptionOr<PreferredQuality> quality() const;
 
-WTF_EXTERN_C_END
+    static bool isTypeSupported(ScriptExecutionContext&, const String& type);
+
+    bool isManaged() const final { return true; }
+private:
+    explicit ManagedMediaSource(ScriptExecutionContext&);
+};
+
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ManagedMediaSource)
+    static bool isType(const WebCore::MediaSource& mediaSource) { return mediaSource.isManaged(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+#endif

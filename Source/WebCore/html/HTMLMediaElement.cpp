@@ -5601,18 +5601,6 @@ bool HTMLMediaElement::mediaPlayerAcceleratedCompositingEnabled()
     return document().settings().acceleratedCompositingEnabled();
 }
 
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-
-GraphicsDeviceAdapter* HTMLMediaElement::mediaPlayerGraphicsDeviceAdapter() const
-{
-    auto* page = document().page();
-    if (!page)
-        return nullptr;
-    return page->chrome().client().graphicsDeviceAdapter();
-}
-
-#endif
-
 void HTMLMediaElement::scheduleMediaEngineWasUpdated()
 {
     if (m_mediaEngineUpdatedTaskCancellationGroup.hasPendingTask())

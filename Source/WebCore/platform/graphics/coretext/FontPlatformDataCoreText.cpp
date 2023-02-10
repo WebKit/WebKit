@@ -1,7 +1,7 @@
 /*
  * This file is part of the internal font implementation.
  *
- * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,14 +26,9 @@
 #include "Font.h"
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/WTFString.h>
-
-#if PLATFORM(COCOA)
-#include <pal/spi/cf/CoreTextSPI.h>
-#else
-#include <pal/spi/win/CoreTextSPIWin.h>
-#endif
 
 namespace WebCore {
 
@@ -41,11 +36,7 @@ FontPlatformData::FontPlatformData(RetainPtr<CTFontRef>&& font, float size, bool
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode, creationData)
 {
     ASSERT_ARG(font, font);
-#if PLATFORM(WIN)
-    m_ctFont = font;
-#else
     m_font = font;
-#endif
     m_isColorBitmapFont = CTFontGetSymbolicTraits(font.get()) & kCTFontColorGlyphsTrait;
     m_isSystemFont = WebCore::isSystemFont(font.get());
     auto variations = adoptCF(static_cast<CFDictionaryRef>(CTFontCopyAttribute(font.get(), kCTFontVariationAttribute)));
@@ -74,7 +65,6 @@ CTFontRef FontPlatformData::registeredFont() const
     return nullptr;
 }
 
-#if PLATFORM(COCOA)
 inline int mapFontWidthVariantToCTFeatureSelector(FontWidthVariant variant)
 {
     switch (variant) {
@@ -140,7 +130,6 @@ CTFontRef FontPlatformData::ctFont() const
 
     return m_ctFont.get();
 }
-#endif
 
 RetainPtr<CFTypeRef> FontPlatformData::objectForEqualityCheck(CTFontRef ctFont)
 {
@@ -185,7 +174,6 @@ String FontPlatformData::familyName() const
     return { };
 }
 
-#if PLATFORM(COCOA)
 FontPlatformData FontPlatformData::cloneWithSize(const FontPlatformData& source, float size)
 {
     FontPlatformData copy(source);
@@ -200,6 +188,5 @@ void FontPlatformData::updateSize(float size)
     m_font = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, nullptr, nullptr));
     m_ctFont = nullptr;
 }
-#endif
 
 } // namespace WebCore

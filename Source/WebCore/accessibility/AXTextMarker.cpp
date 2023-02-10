@@ -25,6 +25,7 @@
 #include "config.h"
 #include "AXTextMarker.h"
 
+#include "AXLogger.h"
 #include "AXObjectCache.h"
 #include "AXTreeStore.h"
 #include "HTMLInputElement.h"
@@ -108,7 +109,7 @@ AXTextMarker::operator VisiblePosition() const
 {
     ASSERT(isMainThread());
 
-    auto* cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
+    WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
     return cache ? cache->visiblePositionForTextMarkerData(m_data) : VisiblePosition();
 }
 
@@ -123,32 +124,36 @@ AXTextMarker::operator CharacterOffset() const
     // When we are at a line wrap and the VisiblePosition is upstream, it means the text marker is at the end of the previous line.
     // We use the previous CharacterOffset so that it will match the Range.
     if (m_data.affinity == Affinity::Upstream) {
-        if (auto* cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID()))
+        if (WeakPtr cache = AXTreeStore<AXObjectCache>::axObjectCacheForID(m_data.axTreeID()))
             return cache->previousCharacterOffset(result, false);
     }
     return result;
 }
 
-AXCoreObject* AXTextMarker::object() const
+RefPtr<AXCoreObject> AXTextMarker::object() const
 {
     if (isNull())
         return nullptr;
 
-    auto* tree = AXTreeStore<AXObjectCache>::axObjectCacheForID(treeID());
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainThread()) {
+        auto tree = std::get<RefPtr<AXIsolatedTree>>(axTreeForID(treeID()));
+        return tree ? tree->objectForID(objectID()) : nullptr;
+    }
+#endif
+    auto tree = std::get<WeakPtr<AXObjectCache>>(axTreeForID(treeID()));
     return tree ? tree->objectForID(objectID()) : nullptr;
 }
 
 #if ENABLE(TREE_DEBUGGING)
 String AXTextMarker::debugDescription() const
 {
-    if (isNull())
-        return "<null>"_s;
-
     auto separator = ", ";
     return makeString(
         "treeID ", treeID().loggingString()
         , separator, "objectID ", objectID().loggingString()
-        , separator, node()->debugDescription()
+        , separator, isMainThread() ? node()->debugDescription()
+            : makeString("node 0x", hex(reinterpret_cast<uintptr_t>(m_data.node)))
         , separator, "offset ", m_data.offset
         , separator, "AnchorType ", m_data.anchorType
         , separator, "Affinity ", m_data.affinity

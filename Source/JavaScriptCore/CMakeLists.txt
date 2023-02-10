@@ -1,8 +1,3 @@
-cmake_minimum_required(VERSION 3.16)
-
-include(WebKitCommon)
-include(target/TargetWTF)
-
 set_property(DIRECTORY . PROPERTY FOLDER "JavaScriptCore")
 
 list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
@@ -1552,19 +1547,5 @@ endif ()
 
 add_custom_target(JavaScriptCoreSharedScripts DEPENDS ${JavaScriptCore_SCRIPTS})
 add_dependencies(JavaScriptCore JavaScriptCoreSharedScripts ${JavaScriptCore_EXTRA_DEPENDENCIES})
-
-if (USE_VERSION_STAMPER)
-    add_custom_command(
-        TARGET JavaScriptCore
-        PRE_BUILD
-        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${JavaScriptCore_DERIVED_SOURCES_DIR}
-        VERBATIM)
-
-    add_custom_command(
-        TARGET JavaScriptCore
-        POST_BUILD
-        COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/version-stamp.pl ${JavaScriptCore_DERIVED_SOURCES_DIR} $<TARGET_FILE:JavaScriptCore>
-        VERBATIM)
-endif ()
 
 add_subdirectory(shell)

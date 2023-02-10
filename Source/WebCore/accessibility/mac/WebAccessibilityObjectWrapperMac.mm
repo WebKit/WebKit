@@ -205,6 +205,7 @@ using namespace WebCore;
 #define NSAccessibilityPlaceholderValueAttribute @"AXPlaceholderValue"
 #endif
 
+#define NSAccessibilityTextMarkerIsNullParameterizedAttribute @"AXTextMarkerIsNull"
 #define NSAccessibilityTextMarkerIsValidParameterizedAttribute @"AXTextMarkerIsValid"
 #define NSAccessibilityIndexForTextMarkerParameterizedAttribute @"AXIndexForTextMarker"
 #define NSAccessibilityTextMarkerForIndexParameterizedAttribute @"AXTextMarkerForIndex"
@@ -732,15 +733,6 @@ static RetainPtr<AXTextMarkerRef> previousTextMarker(AXObjectCache* cache, const
     return previousMarker ? previousMarker.platformData() : nil;
 }
 
-// FIXME: Remove this method since clients should not need to call this method and should not be exposed in the public interface.
-// Inside WebCore, use WebCore::textMarkerFromVisiblePosition instead.
-- (id)textMarkerForVisiblePosition:(const VisiblePosition&)position
-{
-    ASSERT(isMainThread());
-    auto *backingObject = self.axBackingObject;
-    return backingObject ? (id)textMarkerForVisiblePosition(backingObject->axObjectCache(), position) : nil;
-}
-
 - (RetainPtr<AXTextMarkerRef>)textMarkerForFirstPositionInTextControl:(HTMLTextFormControlElement &)textControl
 {
     ASSERT(isMainThread());
@@ -1077,19 +1069,6 @@ static NSString* nsStringForReplacedNode(Node* replacedNode)
         }
 
         return attrString;
-    });
-}
-
-// FIXME: Remove this method since clients should not need to call this method and should not be exposed in the public interface.
-// Inside WebCore, use WebCore::textMarkerRangeFromVisiblePositions instead.
-- (id)textMarkerRangeFromVisiblePositions:(const VisiblePosition&)startPosition endPosition:(const VisiblePosition&)endPosition
-{
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([&startPosition, &endPosition, protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
-
-        return (id)textMarkerRangeFromVisiblePositions(backingObject->axObjectCache(), startPosition, endPosition);
     });
 }
 
@@ -3643,17 +3622,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         });
     }
 
-    if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute]) {
-        bool result = Accessibility::retrieveValueFromMainThread<bool>([textMarker = retainPtr(textMarker), protectedSelf = retainPtr(self)] () -> bool {
-            auto* backingObject = protectedSelf.get().axBackingObject;
-            if (!backingObject)
-                return false;
+    if ([attribute isEqualToString:NSAccessibilityTextMarkerIsValidParameterizedAttribute])
+        return [NSNumber numberWithBool:AXTextMarker(textMarker).isValid()];
 
-            return !visiblePositionForTextMarker(backingObject->axObjectCache(), textMarker.get()).isNull();
-        });
-
-        return [NSNumber numberWithBool:result];
-    }
+    if ([attribute isEqualToString:NSAccessibilityTextMarkerIsNullParameterizedAttribute])
+        return [NSNumber numberWithBool:AXTextMarker(textMarker).isNull()];
 
     if ([attribute isEqualToString:NSAccessibilityIndexForTextMarkerParameterizedAttribute])
         return [NSNumber numberWithInteger:[self _indexForTextMarker:textMarker]];
@@ -3663,7 +3636,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attribute isEqualToString:@"AXUIElementForTextMarker"]) {
         AXTextMarker marker(textMarker);
-        auto* object = marker.object();
+        auto object = marker.object();
         if (!object)
             return nil;
 

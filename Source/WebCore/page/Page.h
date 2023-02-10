@@ -236,6 +236,7 @@ enum class RenderingUpdateStep : uint32_t {
     VideoFrameCallbacks             = 1 << 15,
     PrepareCanvasesForDisplay       = 1 << 16,
     CaretAnimation                  = 1 << 17,
+    FocusFixup                      = 1 << 18,
 };
 
 enum LookalikeCharacterSanitizationTrigger : uint8_t {
@@ -339,6 +340,7 @@ public:
     void setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
     KeyboardScrollingAnimator* currentKeyboardScrollingAnimator() const { return m_currentKeyboardScrollingAnimator.get(); }
 
+    bool isLoadingInHeadlessMode() const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool inspectable() const;

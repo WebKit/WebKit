@@ -59,9 +59,6 @@ page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 
 platform/UserAgentQuirks.cpp
 
-platform/adwaita/ScrollbarThemeAdwaita.cpp
-platform/adwaita/ThemeAdwaita.cpp
-
 platform/gamepad/libwpe/GamepadLibWPE.cpp
 platform/gamepad/libwpe/GamepadProviderLibWPE.cpp
 
@@ -98,5 +95,3 @@ platform/unix/LoggingUnix.cpp
 platform/wpe/PlatformScreenWPE.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
-
-rendering/RenderThemeAdwaita.cpp

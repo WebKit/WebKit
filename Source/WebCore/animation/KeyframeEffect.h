@@ -235,6 +235,7 @@ private:
     Seconds timeToNextTick(const BasicEffectTiming&) const final;
     bool ticksContinouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
+    bool preventsAnimationReadiness() const final;
 
     AtomString m_keyframesName;
     KeyframeList m_blendingKeyframes { emptyAtom() };

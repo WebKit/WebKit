@@ -67,6 +67,4 @@ WEBKIT_WRAP_EXECUTABLE(MiniBrowser
 WEBKIT_EXECUTABLE(MiniBrowser)
 
 set_target_properties(MiniBrowser PROPERTIES WIN32_EXECUTABLE ON)
-if (${WTF_PLATFORM_WIN_CAIRO})
-    target_compile_definitions(MiniBrowser PRIVATE WIN_CAIRO)
-endif ()
+target_compile_definitions(MiniBrowser PRIVATE WIN_CAIRO)

@@ -1,4 +1,6 @@
 list(APPEND DumpRenderTree_SOURCES
+    cairo/PixelDumpSupportCairo.cpp
+
     win/AccessibilityControllerWin.cpp
     win/AccessibilityUIElementWin.cpp
     win/DRTDataObject.cpp
@@ -22,43 +24,18 @@ list(APPEND DumpRenderTree_SOURCES
     win/WorkQueueItemWin.cpp
 )
 
-set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
+set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT WIN_CAIRO)
 
 list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
+    ${DumpRenderTree_DIR}/cairo
     ${DumpRenderTree_DIR}/win
 )
 
 list(APPEND DumpRenderTree_LIBRARIES
+    Cairo::Cairo
     Comsuppw
     Oleacc
 )
-
-if (${WTF_PLATFORM_WIN_CAIRO})
-    list(APPEND wrapper_DEFINITIONS WIN_CAIRO)
-    list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
-        ${DumpRenderTree_DIR}/cairo
-    )
-    list(APPEND DumpRenderTree_LIBRARIES
-        Cairo::Cairo
-    )
-    list(APPEND DumpRenderTree_SOURCES
-        cairo/PixelDumpSupportCairo.cpp
-    )
-else ()
-    list(APPEND DumpRenderTree_LIBRARIES
-        Apple::CFNetwork
-        Apple::CoreText
-    )
-    list(APPEND DumpRenderTree_PRIVATE_INCLUDE_DIRECTORIES
-        ${DumpRenderTree_DIR}/cg
-    )
-    list(APPEND DumpRenderTree_SOURCES
-        cg/PixelDumpSupportCG.cpp
-    )
-    list(APPEND DumpRenderTree_LIBRARIES
-        Apple::CoreGraphics
-    )
-endif ()
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${MSVC_RUNTIME_LINKER_FLAGS}")
 

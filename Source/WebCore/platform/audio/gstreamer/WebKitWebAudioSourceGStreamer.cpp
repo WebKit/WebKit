@@ -289,7 +289,7 @@ static void webKitWebAudioSrcGetProperty(GObject* object, guint propertyId, GVal
     }
 }
 
-static std::optional<GRefPtr<GstBuffer>> webKitWebAudioSrcAllocateBuffers(WebKitWebAudioSrc* src)
+static GRefPtr<GstBuffer> webKitWebAudioSrcAllocateBuffers(WebKitWebAudioSrc* src)
 {
     WebKitWebAudioSrcPrivate* priv = src->priv;
 
@@ -298,7 +298,7 @@ static std::optional<GRefPtr<GstBuffer>> webKitWebAudioSrcAllocateBuffers(WebKit
     if (!priv->destination || !priv->bus) {
         GST_ELEMENT_ERROR(src, CORE, FAILED, ("Internal WebAudioSrc error"), ("Can't start without destination or bus"));
         gst_task_stop(src->priv->task.get());
-        return std::nullopt;
+        return nullptr;
     }
 
     ASSERT(priv->pool);
@@ -309,13 +309,13 @@ static std::optional<GRefPtr<GstBuffer>> webKitWebAudioSrcAllocateBuffers(WebKit
         // FLUSHING and EOS are not errors.
         if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
             GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
-        return std::nullopt;
+        return nullptr;
     }
 
     ASSERT(buffer);
     ASSERT(priv->caps);
 
-    // attach audio meta on buffer
+    // Attach audio meta on buffer.
     GstAudioInfo info;
     gst_audio_info_from_caps(&info, priv->caps.get());
     gst_buffer_add_audio_meta(buffer.get(), &info, priv->framesToPull, nullptr);
@@ -325,10 +325,10 @@ static std::optional<GRefPtr<GstBuffer>> webKitWebAudioSrcAllocateBuffers(WebKit
     for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++)
         priv->bus->setChannelMemory(channelIndex, reinterpret_cast<float*>(mappedBuffer.data() + channelIndex * priv->bufferSize), priv->framesToPull);
 
-    return std::make_optional(WTFMove(buffer));
+    return buffer;
 }
 
-static void webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>&& element, GRefPtr<GstBuffer>&& buffer)
+static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& element, GRefPtr<GstBuffer>&& buffer)
 {
     auto* src = WEBKIT_WEB_AUDIO_SRC(element.get());
     auto* priv = src->priv;
@@ -398,10 +398,12 @@ static void webKitWebAudioSrcRenderIteration(WebKitWebAudioSrc* src)
     Locker locker { AdoptLock, priv->dispatchToRenderThreadLock };
 
     if (!priv->dispatchToRenderThreadFunction)
-        webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTFMove(*buffer));
+        webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>(GST_ELEMENT_CAST(src)), WTFMove(buffer));
     else {
-        priv->dispatchToRenderThreadFunction([buffer, protectedThis = GRefPtr<GstElement>(GST_ELEMENT_CAST(src))]() mutable {
-            webKitWebAudioSrcRenderAndPushFrames(WTFMove(protectedThis), WTFMove(*buffer));
+        priv->dispatchToRenderThreadFunction([buffer = WTFMove(buffer), protectedThis = GRefPtr<GstElement>(GST_ELEMENT_CAST(src))]() mutable {
+            if (!protectedThis)
+                return;
+            webKitWebAudioSrcRenderAndPushFrames(protectedThis, WTFMove(buffer));
         });
     }
 
@@ -424,6 +426,17 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     case GST_STATE_CHANGE_NULL_TO_READY:
         priv->numberOfSamples = 0;
         break;
+    case GST_STATE_CHANGE_READY_TO_PAUSED: {
+        priv->pool = adoptGRef(gst_buffer_pool_new());
+        GstStructure* config = gst_buffer_pool_get_config(priv->pool.get());
+        gst_buffer_pool_config_set_params(config, nullptr, priv->bufferSize * priv->bus->numberOfChannels(), 0, 0);
+        gst_buffer_pool_set_config(priv->pool.get(), config);
+        if (!gst_buffer_pool_set_active(priv->pool.get(), TRUE))
+            return GST_STATE_CHANGE_FAILURE;
+        if (!gst_task_start(priv->task.get()))
+            return GST_STATE_CHANGE_FAILURE;
+        break;
+    }
     default:
         break;
     }
@@ -435,17 +448,6 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     }
 
     switch (transition) {
-    case GST_STATE_CHANGE_READY_TO_PAUSED: {
-        priv->pool = adoptGRef(gst_buffer_pool_new());
-        GstStructure* config = gst_buffer_pool_get_config(priv->pool.get());
-        gst_buffer_pool_config_set_params(config, nullptr, priv->bufferSize * priv->bus->numberOfChannels(), 0, 0);
-        gst_buffer_pool_set_config(priv->pool.get(), config);
-        if (!gst_buffer_pool_set_active(priv->pool.get(), TRUE))
-            returnValue = GST_STATE_CHANGE_FAILURE;
-        else if (!gst_task_start(priv->task.get()))
-            returnValue = GST_STATE_CHANGE_FAILURE;
-        break;
-    }
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         {
             Locker locker { priv->dispatchLock };

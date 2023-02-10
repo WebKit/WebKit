@@ -31,10 +31,12 @@
 #include "InlineContentBreaker.h"
 #include "InlineFormattingState.h"
 #include "InlineLine.h"
+#include "InlineLineTypes.h"
 
 namespace WebCore {
 namespace Layout {
 
+struct CommittedContent;
 struct LineCandidate;
 
 class LineBuilder {
@@ -42,42 +44,22 @@ public:
     LineBuilder(InlineFormattingContext&, BlockLayoutState&, HorizontalConstraints rootHorizontalConstraints, const InlineItems&, std::optional<IntrinsicWidthMode> = std::nullopt);
     LineBuilder(const InlineFormattingContext&, const InlineItems&, std::optional<IntrinsicWidthMode>);
 
-    enum class LineEndingEllipsisPolicy : uint8_t {
-        No,
-        WhenContentOverflowsInInlineDirection,
-        WhenContentOverflowsInBlockDirection,
-        // FIXME: This should be used when we realize the last line of this IFC is where the content is truncated (sibling IFC has more lines).
-        Always
-    };
-
-    struct InlineItemRange {
-        bool isEmpty() const { return start == end; }
-        size_t size() const { return end - start; }
-        size_t start { 0 };
-        size_t end { 0 };
-    };
     struct LineInput {
         InlineItemRange needsLayoutRange;
         InlineRect initialLogicalRect;
-    };
-    struct PartialContent {
-        PartialContent(size_t, std::optional<InlineLayoutUnit>);
-
-        size_t length { 0 };
-        std::optional<InlineLayoutUnit> width { };
     };
     using FloatList = Vector<const InlineItem*>;
     struct PreviousLine {
         bool endsWithLineBreak { false };
         TextDirection inlineBaseDirection { TextDirection::LTR };
-        std::optional<PartialContent> partialOverflowingContent { };
+        std::optional<PartialInlineItem> partialOverflowingContent { };
         FloatList overflowingFloats;
         // Content width measured during line breaking (avoid double-measuring).
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     };
     struct LineContent {
         InlineItemRange inlineItemRange;
-        std::optional<PartialContent> partialOverflowingContent { };
+        std::optional<PartialInlineItem> partialOverflowingContent { };
         std::optional<InlineLayoutUnit> trailingOverflowingContentWidth;
         FloatList placedFloats;
         FloatList overflowingFloats;
@@ -110,7 +92,7 @@ public:
     struct IntrinsicContent {
         InlineItemRange inlineItemRange;
         InlineLayoutUnit logicalWidth { 0 };
-        std::optional<PartialContent> partialOverflowingContent { };
+        std::optional<PartialInlineItem> partialOverflowingContent { };
         FloatList placedFloats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
@@ -119,7 +101,7 @@ private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
     InlineLayoutUnit leadingPunctuationWidthForLineCandiate(size_t firstInlineTextItemIndex, size_t candidateContentStartIndex) const;
     InlineLayoutUnit trailingPunctuationOrStopOrCommaWidthForLineCandiate(size_t lastInlineTextItemIndex, size_t layoutRangeEnd) const;
-    size_t nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const;
+    size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange) const;
 
     struct UsedConstraints {
         InlineRect logicalRect;
@@ -148,11 +130,6 @@ private:
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
-    struct CommittedContent {
-        size_t itemCount { 0 };
-        size_t partialTrailingContentLength { 0 };
-        std::optional<InlineLayoutUnit> overflowLogicalWidth { };
-    };
     CommittedContent placeInlineContent(const InlineItemRange&);
     InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
 
@@ -199,12 +176,6 @@ private:
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_lineIsConstrainedByFloat { false };
 };
-
-inline LineBuilder::PartialContent::PartialContent(size_t length, std::optional<InlineLayoutUnit> width)
-    : length(length)
-    , width(width)
-{
-}
 
 }
 }

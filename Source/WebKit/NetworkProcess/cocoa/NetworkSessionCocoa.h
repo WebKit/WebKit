@@ -34,6 +34,7 @@ OBJC_CLASS NSOperationQueue;
 OBJC_CLASS WKNetworkSessionDelegate;
 OBJC_CLASS WKNetworkSessionWebSocketDelegate;
 OBJC_CLASS _NSHSTSStorage;
+OBJC_CLASS NSURLCredentialStorage;
 
 #include "DownloadID.h"
 #include "NetworkDataTaskCocoa.h"
@@ -140,6 +141,7 @@ public:
     bool preventsSystemHTTPProxyAuthentication() const { return m_preventsSystemHTTPProxyAuthentication; }
     
     _NSHSTSStorage *hstsStorage() const;
+    NSURLCredentialStorage *nsCredentialStorage() const;
 
     void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&&) override;
 

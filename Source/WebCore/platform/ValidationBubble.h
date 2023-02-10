@@ -106,6 +106,7 @@ private:
     RetainPtr<WebValidationBubbleTapRecognizer> m_tapRecognizer;
     RetainPtr<WebValidationBubbleDelegate> m_popoverDelegate;
     WeakObjCPtr<UIViewController> m_presentingViewController;
+    bool m_startingToPresentViewController { false };
 #elif PLATFORM(GTK)
     GtkWidget* m_popover { nullptr };
     ShouldNotifyFocusEventsCallback m_shouldNotifyFocusEventsCallback { nullptr };

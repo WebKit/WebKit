@@ -38,7 +38,7 @@ WebsitePolicies::WebsitePolicies() = default;
 Ref<WebsitePolicies> WebsitePolicies::copy() const
 {
     auto policies = WebsitePolicies::create();
-    policies->m_disabledContentExtensions = m_disabledContentExtensions;
+    policies->m_contentExtensionEnablement = m_contentExtensionEnablement;
     policies->m_activeContentRuleListActionPatterns = m_activeContentRuleListActionPatterns;
     policies->setAllowedAutoplayQuirks(m_allowedAutoplayQuirks);
     policies->setAutoplayPolicy(m_autoplayPolicy);
@@ -84,30 +84,6 @@ void WebsitePolicies::setUserContentController(RefPtr<WebKit::WebUserContentCont
     m_userContentController = WTFMove(controller);
 }
 
-bool WebsitePolicies::contentBlockersEnabled() const
-{
-    return std::holds_alternative<WebCore::DisabledContentExtensionsMode>(m_disabledContentExtensions)
-        && std::get<WebCore::DisabledContentExtensionsMode>(m_disabledContentExtensions) == WebCore::DisabledContentExtensionsMode::None;
-}
-
-void WebsitePolicies::setContentBlockersEnabled(bool enabled)
-{
-    m_disabledContentExtensions = { enabled ? WebCore::DisabledContentExtensionsMode::None : WebCore::DisabledContentExtensionsMode::All };
-}
-
-void WebsitePolicies::setDisabledContentRuleListIdentifiers(HashSet<WTF::String>&& identifiers)
-{
-    m_disabledContentExtensions = { WTFMove(identifiers) };
-}
-
-HashSet<WTF::String> WebsitePolicies::disabledContentRuleListIdentifiers() const
-{
-    if (!std::holds_alternative<HashSet<WTF::String>>(m_disabledContentExtensions))
-        return { };
-
-    return std::get<HashSet<WTF::String>>(m_disabledContentExtensions);
-}
-
 WebKit::WebsitePoliciesData WebsitePolicies::data()
 {
     Vector<WebCore::CustomHeaderFields> customHeaderFields;
@@ -115,7 +91,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     customHeaderFields.appendVector(this->customHeaderFields());
 
     return {
-        m_disabledContentExtensions,
+        m_contentExtensionEnablement,
         activeContentRuleListActionPatterns(),
         allowedAutoplayQuirks(),
         autoplayPolicy(),

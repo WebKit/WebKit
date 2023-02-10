@@ -29,7 +29,7 @@
 #include "AST.h"
 #include "Lexer.h"
 #include "ParserPrivate.h"
-#include "ShaderModule.h"
+#include "WGSLShaderModule.h"
 
 #include <wtf/text/StringBuilder.h>
 

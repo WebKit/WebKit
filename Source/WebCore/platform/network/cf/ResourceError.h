@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,6 @@
 #include <wtf/RetainPtr.h>
 #if USE(CFURLCONNECTION)
 #include <CoreFoundation/CFStream.h>
-#endif
-#if PLATFORM(WIN)
-#include <windows.h>
-#include <wincrypt.h> // windows.h must be included before wincrypt.h.
 #endif
 
 #if PLATFORM(COCOA)
@@ -100,9 +96,6 @@ private:
 
 #if USE(CFURLCONNECTION)
     mutable RetainPtr<CFErrorRef> m_platformError;
-#if PLATFORM(WIN)
-    RetainPtr<CFDataRef> m_certificate;
-#endif
 #else
     mutable RetainPtr<NSError> m_platformError;
 #endif

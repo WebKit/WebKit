@@ -121,6 +121,7 @@
 		3AE27DB528C1BA480043A8E0 /* ASTVariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
+		9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 9776BE7529957E12002D6D93 /* WGSLShaderModule.h */; };
 		9789C31A297EA105009E9006 /* CallGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9789C318297EA105009E9006 /* CallGraph.cpp */; };
 		978A9125298A4E8400B37E5E /* MangleNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9123298A4E8400B37E5E /* MangleNames.cpp */; };
 		978A9126298A4E8400B37E5E /* MangleNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9124298A4E8400B37E5E /* MangleNames.h */; };
@@ -132,7 +133,6 @@
 		978A9134298BBFD300B37E5E /* Types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9132298BBFD300B37E5E /* Types.cpp */; };
 		978A9137298D40F100B37E5E /* TypeStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A9135298D40F100B37E5E /* TypeStore.h */; };
 		978A9138298D40F100B37E5E /* TypeStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 978A9136298D40F100B37E5E /* TypeStore.cpp */; };
-		978A913A2991360F00B37E5E /* ShaderModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 978A91392991360F00B37E5E /* ShaderModule.h */; };
 		979240B6297018290050EA2C /* MetalCodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B2297018290050EA2C /* MetalCodeGenerator.h */; };
 		979240B7297018290050EA2C /* MetalFunctionWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 979240B3297018290050EA2C /* MetalFunctionWriter.h */; };
 		979240B8297018290050EA2C /* MetalCodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979240B4297018290050EA2C /* MetalCodeGenerator.cpp */; };
@@ -330,6 +330,7 @@
 		3AE27DB428C1BA480043A8E0 /* ASTVariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTVariableStatement.h; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
+		9776BE7529957E12002D6D93 /* WGSLShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WGSLShaderModule.h; sourceTree = "<group>"; };
 		9789C318297EA105009E9006 /* CallGraph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallGraph.cpp; sourceTree = "<group>"; };
 		9789C319297EA105009E9006 /* CallGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallGraph.h; sourceTree = "<group>"; };
 		978A9123298A4E8400B37E5E /* MangleNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MangleNames.cpp; sourceTree = "<group>"; };
@@ -342,7 +343,6 @@
 		978A9132298BBFD300B37E5E /* Types.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Types.cpp; sourceTree = "<group>"; };
 		978A9135298D40F100B37E5E /* TypeStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeStore.h; sourceTree = "<group>"; };
 		978A9136298D40F100B37E5E /* TypeStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeStore.cpp; sourceTree = "<group>"; };
-		978A91392991360F00B37E5E /* ShaderModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderModule.h; sourceTree = "<group>"; };
 		979240B2297018290050EA2C /* MetalCodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalCodeGenerator.h; sourceTree = "<group>"; };
 		979240B3297018290050EA2C /* MetalFunctionWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalFunctionWriter.h; sourceTree = "<group>"; };
 		979240B4297018290050EA2C /* MetalCodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MetalCodeGenerator.cpp; sourceTree = "<group>"; };
@@ -493,7 +493,6 @@
 				979240BC29753B2A0050EA2C /* PhaseTimer.h */,
 				979240C2297558F10050EA2C /* ResolveTypeReferences.cpp */,
 				979240C3297558F10050EA2C /* ResolveTypeReferences.h */,
-				978A91392991360F00B37E5E /* ShaderModule.h */,
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
@@ -505,6 +504,7 @@
 				978A9135298D40F100B37E5E /* TypeStore.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
+				9776BE7529957E12002D6D93 /* WGSLShaderModule.h */,
 			);
 			path = WGSL;
 			sourceTree = "<group>";
@@ -717,13 +717,13 @@
 				66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */,
 				979240C029753B2A0050EA2C /* PhaseTimer.h in Headers */,
 				979240C5297558F10050EA2C /* ResolveTypeReferences.h in Headers */,
-				978A913A2991360F00B37E5E /* ShaderModule.h in Headers */,
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				978A912F298AD3DA00B37E5E /* TypeCheck.h in Headers */,
 				978A9133298BBFD300B37E5E /* Types.h in Headers */,
 				978A9137298D40F100B37E5E /* TypeStore.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
+				9776BE7629957E12002D6D93 /* WGSLShaderModule.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

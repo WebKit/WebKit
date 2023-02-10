@@ -76,6 +76,10 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled();
 bool defaultMediaSourceEnabled();
 #endif
 
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+bool defaultManagedMediaSourceEnabled();
+#endif
+
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 bool defaultMediaSessionCoordinatorEnabled();
 #endif

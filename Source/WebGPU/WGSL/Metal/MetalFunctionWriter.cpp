@@ -30,7 +30,7 @@
 #include "AST.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
-#include "ShaderModule.h"
+#include "WGSLShaderModule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WGSL {

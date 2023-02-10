@@ -27,7 +27,7 @@
 #include "ASTVisitor.h"
 
 #include "AST.h"
-#include "ShaderModule.h"
+#include "WGSLShaderModule.h"
 
 namespace WGSL::AST {
 

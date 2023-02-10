@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,30 +24,42 @@
  */
 
 #include "config.h"
-#include "CertificateCFWin.h"
-#include <wtf/NeverDestroyed.h>
+#include "ManagedMediaSource.h"
+
+#if ENABLE(MANAGED_MEDIA_SOURCE)
 
 namespace WebCore {
 
-static void deallocCertContext(void* ptr, void* info)
+WTF_MAKE_ISO_ALLOCATED_IMPL(ManagedMediaSource);
+
+Ref<ManagedMediaSource> ManagedMediaSource::create(ScriptExecutionContext& context)
 {
-    if (ptr)
-        CertFreeCertificateContext(static_cast<PCCERT_CONTEXT>(ptr));
+    auto mediaSource = adoptRef(*new ManagedMediaSource(context));
+    mediaSource->suspendIfNeeded();
+    return mediaSource;
 }
 
-static RetainPtr<CFAllocatorRef> createCertContextDeallocator()
+ManagedMediaSource::ManagedMediaSource(ScriptExecutionContext& context)
+    : MediaSource(context)
 {
-    CFAllocatorContext allocContext = {
-        0, 0, 0, 0, 0, 0, 0, deallocCertContext, 0
-    };
-    return adoptCF(CFAllocatorCreate(kCFAllocatorDefault, &allocContext));
 }
 
-RetainPtr<CFDataRef> copyCertificateToData(PCCERT_CONTEXT certificate)
+ManagedMediaSource::~ManagedMediaSource() = default;
+
+ExceptionOr<ManagedMediaSource::BufferingPolicy> ManagedMediaSource::buffering() const
 {
-    static NeverDestroyed<RetainPtr<CFAllocatorRef>> certDealloc = createCertContextDeallocator();
-    PCCERT_CONTEXT certificateCopy = CertDuplicateCertificateContext(certificate);
-    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(certificateCopy), sizeof(*certificateCopy), certDealloc.get().get()));
+    return BufferingPolicy::Medium;
 }
 
-} // namespace WebCore
+ExceptionOr<ManagedMediaSource::PreferredQuality> ManagedMediaSource::quality() const
+{
+    return PreferredQuality::High;
+}
+
+bool ManagedMediaSource::isTypeSupported(ScriptExecutionContext& context, const String& type)
+{
+    return MediaSource::isTypeSupported(context, type);
+}
+
+}
+#endif

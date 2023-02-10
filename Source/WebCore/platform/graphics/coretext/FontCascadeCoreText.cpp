@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2022 Apple Inc.
+ * Copyright (C) 2003-2023 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -110,8 +110,6 @@ AffineTransform computeVerticalTextMatrix(const Font& font, const AffineTransfor
     ASSERT_UNUSED(font, font.platformData().orientation() == FontOrientation::Vertical);
     return computeBaseVerticalTextMatrix(previousTextMatrix);
 }
-
-#if !PLATFORM(WIN)
 
 static void fillVectorWithHorizontalGlyphPositions(Vector<CGPoint, 256>& positions, CGContextRef context, const CGSize* advances, unsigned count, const FloatPoint& point)
 {
@@ -463,7 +461,5 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
 
     return Font::systemFallback();
 }
-
-#endif
 
 }

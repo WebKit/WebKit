@@ -63,9 +63,6 @@ page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 
 platform/UserAgentQuirks.cpp
 
-platform/adwaita/ScrollbarThemeAdwaita.cpp
-platform/adwaita/ThemeAdwaita.cpp
-
 platform/gamepad/manette/ManetteGamepad.cpp
 platform/gamepad/manette/ManetteGamepadProvider.cpp
 
@@ -136,5 +133,4 @@ platform/unix/LoggingUnix.cpp
 
 platform/xdg/MIMETypeRegistryXdg.cpp
 
-rendering/RenderThemeAdwaita.cpp
 rendering/RenderThemeGtk.cpp

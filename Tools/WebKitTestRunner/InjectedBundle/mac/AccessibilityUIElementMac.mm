@@ -2164,6 +2164,19 @@ int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker* marker)
     return -1;
 }
 
+bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* textMarker)
+{
+    if (!textMarker)
+        return true;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValueForParameter(@"AXTextMarkerIsNull", textMarker->platformTextMarker());
+    return [value boolValue];
+    END_AX_OBJC_EXCEPTIONS
+
+    return false;
+}
+
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker* textMarker)
 {
     if (!textMarker)

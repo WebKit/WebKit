@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -196,10 +196,6 @@ public:
     virtual bool mediaPlayerAcceleratedCompositingEnabled() { return false; }
 
     virtual void mediaPlayerActiveSourceBuffersChanged() { }
-
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-    virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter() const { return nullptr; }
-#endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     virtual RefPtr<ArrayBuffer> mediaPlayerCachedKeyForKeyId(const String&) const = 0;
@@ -542,10 +538,6 @@ public:
     void acceleratedRenderingStateChanged();
 
     void setShouldMaintainAspectRatio(bool);
-
-#if PLATFORM(WIN) && USE(AVFOUNDATION)
-    GraphicsDeviceAdapter* graphicsDeviceAdapter() const;
-#endif
 
     bool didPassCORSAccessCheck() const;
     bool isCrossOrigin(const SecurityOrigin&) const;

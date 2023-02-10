@@ -201,7 +201,7 @@ CSSSelectorList CSSSelectorParser::consumeCompoundSelectorList(CSSParserTokenRan
     return CSSSelectorList { WTFMove(selectorList) };
 }
 
-static PossiblyQuotedIdentifier consumePossiblyQuotedIdentifer(CSSParserTokenRange& range)
+static PossiblyQuotedIdentifier consumePossiblyQuotedIdentifier(CSSParserTokenRange& range)
 {
     auto& token = range.consumeIncludingWhitespace();
     if (token.type() != IdentToken && token.type() != StringToken)
@@ -215,13 +215,13 @@ static PossiblyQuotedIdentifier consumePossiblyQuotedIdentifer(CSSParserTokenRan
 static FixedVector<PossiblyQuotedIdentifier> consumeLangArgumentList(CSSParserTokenRange& range)
 {
     Vector<PossiblyQuotedIdentifier> list;
-    auto item = consumePossiblyQuotedIdentifer(range);
+    auto item = consumePossiblyQuotedIdentifier(range);
     if (item.isNull())
         return { };
     list.append(WTFMove(item));
     while (!range.atEnd() && range.peek().type() == CommaToken) {
         range.consumeIncludingWhitespace();
-        item = consumePossiblyQuotedIdentifer(range);
+        item = consumePossiblyQuotedIdentifier(range);
         if (item.isNull())
             return { };
         list.append(WTFMove(item));

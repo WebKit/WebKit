@@ -27,7 +27,7 @@
 
 #include "AST.h"
 #include "ParserPrivate.h"
-#include "ShaderModule.h"
+#include "WGSLShaderModule.h"
 
 static Expected<UniqueRef<WGSL::AST::Expression>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
 {

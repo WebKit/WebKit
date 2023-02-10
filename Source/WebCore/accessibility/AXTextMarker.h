@@ -120,10 +120,15 @@ public:
 
     AXID treeID() const { return m_data.axTreeID(); }
     AXID objectID() const { return m_data.axObjectID(); }
-    AXCoreObject* object() const;
+    bool isNull() const { return !treeID().isValid() || !objectID().isValid(); }
+    RefPtr<AXCoreObject> object() const;
+    bool isValid() const { return object(); }
 
-//    TextMarkerData const& data() const { return m_data; }
-    Node* node() const { return m_data.node; }
+    Node* node() const
+    {
+        ASSERT(isMainThread());
+        return m_data.node;
+    }
     bool isIgnored() const { return m_data.ignored; }
 
 #if ENABLE(TREE_DEBUGGING)
@@ -131,7 +136,6 @@ public:
 #endif
 
 private:
-    bool isNull() const { return !treeID().isValid() || !objectID().isValid(); }
     TextMarkerData m_data;
 };
 

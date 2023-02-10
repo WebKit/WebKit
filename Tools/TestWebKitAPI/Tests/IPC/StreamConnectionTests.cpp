@@ -389,8 +389,8 @@ TEST_P(StreamMessageTest, SendAsyncReplyCancel)
     }
     auto cleanup = localReferenceBarrier();
 
-    std::atomic<bool> waiting;
-    BinarySemaphore workQueueWait;
+    static std::atomic<bool> waiting;
+    static BinarySemaphore workQueueWait;
     serverQueue().dispatch([&] {
         waiting = true;
         workQueueWait.wait();

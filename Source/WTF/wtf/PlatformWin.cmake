@@ -68,5 +68,3 @@ if (USE_CF)
 
     list(APPEND WTF_LIBRARIES Apple::CoreFoundation)
 endif ()
-
-set(WTF_OUTPUT_NAME WTF${DEBUG_SUFFIX})

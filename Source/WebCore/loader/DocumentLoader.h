@@ -158,8 +158,8 @@ enum class ColorSchemePreference : uint8_t {
     Dark
 };
 
-enum class DisabledContentExtensionsMode : bool { None, All };
-using DisabledContentExtensions = std::variant<DisabledContentExtensionsMode, HashSet<String>>;
+enum class ContentExtensionDefaultEnablement : bool { Disabled, Enabled };
+using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, HashSet<String>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 class DocumentLoader
@@ -318,8 +318,8 @@ public:
     void stopLoadingSubresources();
     WEBCORE_EXPORT void stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(ResourceLoaderIdentifier, const ResourceResponse&);
 
-    const DisabledContentExtensions& disabledContentExtensions() const { return m_disabledContentExtensions; }
-    void setDisabledContentExtensions(DisabledContentExtensions&& disabledExtensions) { m_disabledContentExtensions = WTFMove(disabledExtensions); }
+    const ContentExtensionEnablement& contentExtensionEnablement() const { return m_contentExtensionEnablement; }
+    void setContentExtensionEnablement(ContentExtensionEnablement&& enablement) { m_contentExtensionEnablement = WTFMove(enablement); }
 
     bool allowsActiveContentRuleListActionsForURL(const String& contentRuleListIdentifier, const URL&) const;
     WEBCORE_EXPORT void setActiveContentRuleListActionPatterns(const HashMap<String, Vector<String>>&);
@@ -680,7 +680,7 @@ private:
     String m_customUserAgentAsSiteSpecificQuirks;
     String m_customNavigatorPlatform;
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
-    DisabledContentExtensions m_disabledContentExtensions { DisabledContentExtensionsMode::None };
+    ContentExtensionEnablement m_contentExtensionEnablement { ContentExtensionDefaultEnablement::Enabled, { } };
 
     ScriptExecutionContextIdentifier m_resultingClientId;
 

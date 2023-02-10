@@ -47,15 +47,15 @@ class ShaderModule;
 struct SuccessfulCheck {
     SuccessfulCheck() = delete;
     SuccessfulCheck(SuccessfulCheck&&);
-    SuccessfulCheck(Vector<Warning>&&, UniqueRef<ShaderModule>&&);
+    SuccessfulCheck(WTF::Vector<Warning>&&, UniqueRef<ShaderModule>&&);
     ~SuccessfulCheck();
-    Vector<Warning> warnings;
+    WTF::Vector<Warning> warnings;
     UniqueRef<ShaderModule> ast;
 };
 
 struct FailedCheck {
-    Vector<Error> errors;
-    Vector<Warning> warnings;
+    WTF::Vector<Error> errors;
+    WTF::Vector<Warning> warnings;
 };
 
 struct SourceMap {
@@ -146,12 +146,12 @@ struct BindGroupLayoutEntry {
 
 struct BindGroupLayout {
     // Metal's [[id(n)]] indices are equal to the index into this vector.
-    Vector<BindGroupLayoutEntry> entries;
+    WTF::Vector<BindGroupLayoutEntry> entries;
 };
 
 struct PipelineLayout {
     // Metal's [[buffer(n)]] indices are equal to the index into this vector.
-    Vector<BindGroupLayout> bindGroupLayouts;
+    WTF::Vector<BindGroupLayout> bindGroupLayouts;
 };
 
 namespace Reflection {

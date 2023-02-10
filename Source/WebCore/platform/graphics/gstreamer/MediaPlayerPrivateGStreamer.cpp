@@ -1211,6 +1211,8 @@ void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState networ
 
 GstElement* MediaPlayerPrivateGStreamer::createAudioSink()
 {
+    // For platform specific audio sinks, they need to be properly upranked so that they get properly autoplugged.
+
     auto role = m_player->isVideoPlayer() ? "video"_s : "music"_s;
     GstElement* audioSink = createPlatformAudioSink(role);
     RELEASE_ASSERT(audioSink);
@@ -2110,6 +2112,9 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
     GUniquePtr<char> elementName(gst_element_get_name(element));
     auto elementClass = makeString(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
     auto classifiers = elementClass.split('/');
+
+    if (g_str_has_prefix(elementName.get(), "urisourcebin") && isMediaSource())
+        g_object_set(element, "use-buffering", FALSE, nullptr);
 
     // Collect processing time metrics for video decoders and converters.
     if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s))
@@ -3734,6 +3739,10 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
         GST_INFO("Disabling hardware-accelerated rendering per user request.");
         return nullptr;
     }
+
+    const char* desiredVideoSink = g_getenv("WEBKIT_GST_CUSTOM_VIDEO_SINK");
+    if (desiredVideoSink)
+        return makeGStreamerElement(desiredVideoSink, nullptr);
 
     if (!webKitGLVideoSinkProbePlatform()) {
         g_warning("WebKit wasn't able to find the GL video sink dependencies. Hardware-accelerated zero-copy video rendering can't be enabled without this plugin.");

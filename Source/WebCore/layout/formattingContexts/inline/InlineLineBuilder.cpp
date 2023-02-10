@@ -38,6 +38,12 @@
 namespace WebCore {
 namespace Layout {
 
+struct CommittedContent {
+    size_t itemCount { 0 };
+    size_t partialTrailingContentLength { 0 };
+    std::optional<InlineLayoutUnit> overflowLogicalWidth { };
+};
+
 static inline StringBuilder toString(const Line::RunList& runs)
 {
     // FIXME: We could try to reuse the content builder in InlineItemsBuilder if this turns out to be a perf bottleneck.
@@ -343,6 +349,14 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
+static std::optional<PartialInlineItem> partialOverflowingContent(const InlineItemRange& committedRange, const CommittedContent& committedContent)
+{
+    if (!committedContent.partialTrailingContentLength || !committedRange.endIndex())
+        return { };
+    auto lastCommittedInlineItemIndex = committedRange.endIndex() - 1;
+    return PartialInlineItem { InlineItemPosition { lastCommittedInlineItemIndex, committedContent.partialTrailingContentLength }, committedContent.overflowLogicalWidth };
+}
+
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
@@ -351,14 +365,14 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
     auto committedContent = placeInlineContent(lineInput.needsLayoutRange);
     auto committedRange = close(lineInput.needsLayoutRange, committedContent);
 
-    auto isLastLine = isLastLineWithInlineContent(committedRange, lineInput.needsLayoutRange.end, committedContent.partialTrailingContentLength);
-    auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
+    auto partialOverflow = partialOverflowingContent(committedRange, committedContent);
+    auto isLastLine = isLastLineWithInlineContent(committedRange, lineInput.needsLayoutRange.endIndex(), committedContent.partialTrailingContentLength);
     auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
     auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
 
     return { committedRange
-        , partialOverflowingContent
-        , partialOverflowingContent ? std::nullopt : committedContent.overflowLogicalWidth
+        , partialOverflow
+        , partialOverflow ? std::nullopt : committedContent.overflowLogicalWidth
         , WTFMove(m_placedFloats)
         , WTFMove(m_overflowingFloats)
         , m_lineIsConstrainedByFloat
@@ -389,10 +403,8 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
     auto lineWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
-    auto overflow = std::optional<PartialContent> { };
-    if (committedContent.partialTrailingContentLength)
-        overflow = { committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth };
-    return { committedRange, lineWidth, overflow, WTFMove(m_placedFloats) };
+    auto partialOverflow = partialOverflowingContent(committedRange, committedContent);
+    return { committedRange, lineWidth, partialOverflow, WTFMove(m_placedFloats) };
 }
 
 void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
@@ -417,7 +429,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
         // <span>first line<br>second line<span>with some more embedding<br> forth line</span></span>
         // We need to make sure that there's an [InlineBoxStart] for every inline box that's present on the current line.
         // We only have to do it on the first run as any subsequent inline content is either at the same/higher nesting level.
-        auto& firstInlineItem = m_inlineItems[needsLayoutRange.start];
+        auto& firstInlineItem = m_inlineItems[needsLayoutRange.startIndex()];
         // Let's treat these spanning inline items as opaque bidi content. They should not change the bidi levels on adjacent content.
         auto bidiLevelForOpaqueInlineItem = InlineItem::opaqueBidiLevel;
         // If the parent is the formatting root, we can stop here. This is root inline box content, there's no nesting inline box from the previous line(s)
@@ -454,17 +466,18 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_lineIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 
     if (previousLine) {
-        if (previousLine->partialOverflowingContent) {
+        if (auto overflowingContent = previousLine->partialOverflowingContent) {
             // Turn previous line's overflow content length into the next line's leading content partial length.
             // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
-            m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[needsLayoutRange.start]).right(previousLine->partialOverflowingContent->length, previousLine->partialOverflowingContent->width);
+            auto leadingInlineItem = downcast<InlineTextItem>(m_inlineItems[overflowingContent->inlineItemIndex()]);
+            m_partialLeadingTextItem = leadingInlineItem.right(overflowingContent->length(), overflowingContent->width);
             ASSERT(!previousLine->trailingOverflowingContentWidth);
         }
         m_overflowingLogicalWidth = previousLine->trailingOverflowingContentWidth;
     }
 }
 
-LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
+CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
 {
     size_t overflowingFloatCount = 0;
     auto placeOverflowingFloatsFromPreviousLine = [&] {
@@ -482,9 +495,9 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
     auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
     auto inlineContentBreaker = InlineContentBreaker { intrinsicWidthMode() };
 
-    auto currentItemIndex = needsLayoutRange.start;
+    auto currentItemIndex = needsLayoutRange.startIndex();
     size_t committedItemCount = 0;
-    while (currentItemIndex < needsLayoutRange.end) {
+    while (currentItemIndex < needsLayoutRange.endIndex()) {
         // 1. Collect the set of runs that we can commit to the line as one entity e.g. <span>text_and_span_start_span_end</span>.
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
@@ -529,25 +542,25 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
                 return { committedItemCount, result.partialTrailingContentLength, result.overflowLogicalWidth };
             }
         }
-        currentItemIndex = needsLayoutRange.start + committedItemCount;
+        currentItemIndex = needsLayoutRange.startIndex() + committedItemCount;
     }
     // Looks like we've run out of runs.
     ASSERT_UNUSED(overflowingFloatCount, committedItemCount || overflowingFloatCount);
     return { committedItemCount, { } };
 }
 
-LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
+InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_lineIsConstrainedByFloat);
     auto& rootStyle = this->rootStyle();
-    auto trailingInlineItemIndex = needsLayoutRange.start + committedContent.itemCount - 1;
-    auto lineRange = InlineItemRange { needsLayoutRange.start, trailingInlineItemIndex + 1 };
-    ASSERT(lineRange.end <= needsLayoutRange.end);
+    auto trailingInlineItemIndex = needsLayoutRange.startIndex() + committedContent.itemCount - 1;
+    auto lineRange = InlineItemRange { needsLayoutRange.startIndex(), trailingInlineItemIndex + 1 };
+    ASSERT(lineRange.endIndex() <= needsLayoutRange.endIndex());
     if (!committedContent.itemCount || committedContent.itemCount == m_placedFloats.size()) {
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
-    auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
+    auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.endIndex(), committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
 
     auto handleTrailingContent = [&] {
@@ -682,16 +695,16 @@ InlineLayoutUnit LineBuilder::trailingPunctuationOrStopOrCommaWidthForLineCandia
 
 void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t currentInlineItemIndex, const InlineItemRange& layoutRange, InlineLayoutUnit currentLogicalRight)
 {
-    ASSERT(currentInlineItemIndex < layoutRange.end);
+    ASSERT(currentInlineItemIndex < layoutRange.endIndex());
     lineCandidate.reset();
     // 1. Simply add any overflow content from the previous line to the candidate content. It's always a text content.
     // 2. Find the next soft wrap position or explicit line break.
     // 3. Collect floats between the inline content.
     auto softWrapOpportunityIndex = nextWrapOpportunity(currentInlineItemIndex, layoutRange);
     // softWrapOpportunityIndex == layoutRange.end means we don't have any wrap opportunity in this content.
-    ASSERT(softWrapOpportunityIndex <= layoutRange.end);
+    ASSERT(softWrapOpportunityIndex <= layoutRange.endIndex());
 
-    auto isLineStart = currentInlineItemIndex == layoutRange.start;
+    auto isLineStart = currentInlineItemIndex == layoutRange.startIndex();
     if (isLineStart && m_partialLeadingTextItem) {
         ASSERT(!m_overflowingLogicalWidth);
         // Handle leading partial content first (overflowing text from the previous line).
@@ -753,7 +766,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto hangingContentWidth = lineCandidate.inlineContent.continuousContent().hangingContentWidth();
         // Do not even try to check for trailing punctuation when the candidate content already has whitespace type of hanging content.
         if (!hangingContentWidth && lastInlineTextItemIndex)
-            hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandiate(*lastInlineTextItemIndex, layoutRange.end);
+            hangingContentWidth += trailingPunctuationOrStopOrCommaWidthForLineCandiate(*lastInlineTextItemIndex, layoutRange.endIndex());
         if (firstInlineTextItemIndex)
             hangingContentWidth += leadingPunctuationWidthForLineCandiate(*firstInlineTextItemIndex, currentInlineItemIndex);
         lineCandidate.inlineContent.setHangingContentWidth(hangingContentWidth);
@@ -761,7 +774,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     setLeadingAndTrailingHangingPunctuation();
 
     auto inlineContentEndsInSoftWrapOpportunity = [&] {
-        if (!softWrapOpportunityIndex || softWrapOpportunityIndex == layoutRange.end) {
+        if (!softWrapOpportunityIndex || softWrapOpportunityIndex == layoutRange.endIndex()) {
             // This candidate inline content ends because the entire content ends and not because there's a soft wrap opportunity.
             return false;
         }
@@ -783,8 +796,8 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             // e.g. "this_is_the_trailing_run<span> <-but_this_space_here_is_the_soft_wrap_opportunity"
             // When there's an inline box start(<span>)/end(</span>) between the trailing and the (next)leading run, while we break before the inline box start (<span>)
             // the actual soft wrap position is after the inline box start (<span>) but in terms of line breaking continuity the inline box start (<span>) and the whitespace run belong together.
-            RELEASE_ASSERT(layoutRange.end <= m_inlineItems.size());
-            for (auto index = softWrapOpportunityIndex; index < layoutRange.end; ++index) {
+            RELEASE_ASSERT(layoutRange.endIndex() <= m_inlineItems.size());
+            for (auto index = softWrapOpportunityIndex; index < layoutRange.endIndex(); ++index) {
                 if (m_inlineItems[index].isInlineBoxStart() || m_inlineItems[index].isInlineBoxEnd())
                     continue;
                 // FIXME: Check if [non-whitespace][inline-box][no-whitespace] content has rules about it.
@@ -803,7 +816,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
     lineCandidate.inlineContent.setHasTrailingSoftWrapOpportunity(inlineContentEndsInSoftWrapOpportunity());
 }
 
-size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::InlineItemRange& layoutRange) const
+size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange) const
 {
     // 1. Find the start candidate by skipping leading non-content items e.g "<span><span>start". Opportunity is after "<span><span>".
     // 2. Find the end candidate by skipping non-content items inbetween e.g. "<span><span>start</span>end". Opportunity is after "</span>".
@@ -814,13 +827,13 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
     // [ex][inline box start][amp-][inline box start][le] (ex<span>amp-<span>ample). Wrap index is at [amp-].
     // [ex-][inline box start][line break][ample] (ex-<span><br>ample). Wrap index is after [br].
     auto previousInlineItemIndex = std::optional<size_t> { };
-    for (auto index = startIndex; index < layoutRange.end; ++index) {
+    for (auto index = startIndex; index < layoutRange.endIndex(); ++index) {
         auto& inlineItem = m_inlineItems[index];
         if (inlineItem.isLineBreak() || inlineItem.isWordBreakOpportunity()) {
             // We always stop at explicit wrapping opportunities e.g. <br>. However the wrap position may be at later position.
             // e.g. <span><span><br></span></span> <- wrap position is after the second </span>
             // but in case of <span><br><span></span></span> <- wrap position is right after <br>.
-            for (++index; index < layoutRange.end && m_inlineItems[index].isInlineBoxEnd(); ++index) { }
+            for (++index; index < layoutRange.endIndex() && m_inlineItems[index].isInlineBoxEnd(); ++index) { }
             return index;
         }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
@@ -834,7 +847,7 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
             // figuring out whether a float (or set of floats) should stay on the line or not (and handle potentially out of order inline items)
             // brings in unnecessary complexity.
             // For now let's always treat a float as a soft wrap opportunity.
-            auto wrappingPosition = index == startIndex ? std::min(index + 1, layoutRange.end) : index;
+            auto wrappingPosition = index == startIndex ? std::min(index + 1, layoutRange.endIndex()) : index;
             return wrappingPosition;
         }
         if (!previousInlineItemIndex) {
@@ -881,7 +894,7 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
         }
         previousInlineItemIndex = index;
     }
-    return layoutRange.end;
+    return layoutRange.endIndex();
 }
 
 static bool shouldDisableHyphenation(const RenderStyle& rootStyle, unsigned successiveHyphenatedLineCount)
@@ -1284,7 +1297,7 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
         if (&m_partialLeadingTextItem.value() == &lastInlineItemToAdd)
             return 1;
     }
-    for (size_t index = layoutRange.start + numberOfInlineItemsOnLine; index < layoutRange.end; ++index) {
+    for (size_t index = layoutRange.startIndex() + numberOfInlineItemsOnLine; index < layoutRange.endIndex(); ++index) {
         auto& inlineItem = m_inlineItems[index];
         if (inlineItem.isFloat()) {
             ++numberOfFloatsInRange;
@@ -1332,14 +1345,14 @@ bool LineBuilder::isLastLineWithInlineContent(const InlineItemRange& lineRange, 
 {
     if (hasPartialTrailingContent)
         return false;
-    if (lineRange.end == lastInlineItemIndex) {
+    if (lineRange.endIndex() == lastInlineItemIndex) {
         // We must have only committed trailing overflowing floats on the line when the range is empty.
         return !lineRange.isEmpty();
     }
     // Omit floats to see if this is the last line with inline content.
     for (auto i = lastInlineItemIndex; i--;) {
         if (!m_inlineItems[i].isFloat())
-            return i == lineRange.end - 1;
+            return i == lineRange.endIndex() - 1;
     }
     // There has to be at least one non-float item.
     ASSERT_NOT_REACHED();

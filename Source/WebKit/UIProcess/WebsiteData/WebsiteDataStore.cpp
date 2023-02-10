@@ -341,7 +341,7 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setCookieStorageFile(FileSystem::pathByAppendingComponent(resolvedCookieDirectory, FileSystem::pathFileName(m_configuration->cookieStorageFile())));
     }
 
-    // Default paths of WebsiteDataStore created with identifer are not under caches or tmp directory,
+    // Default paths of WebsiteDataStore created with identifier are not under caches or tmp directory,
     // so we need to explicitly exclude them from backup.
     if (m_configuration->identifier()) {
         Vector<String> allCacheDirectories = {

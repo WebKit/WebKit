@@ -47,15 +47,14 @@ String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::opti
         if (libraryPath.isEmpty())
             RELEASE_ASSERT_NOT_REACHED();
 
-        String identiferPath = identifier ? identifier->toString() : "Default"_s;
-
+        String identifierPath = identifier ? identifier->toString() : "Default"_s;
         if (processHasContainer()) {
-            defaultStoragePath.get() = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebExtensions"_s, identiferPath });
+            defaultStoragePath.get() = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebExtensions"_s, identifierPath });
             return;
         }
 
         String appDirectoryName = [NSBundle mainBundle].bundleIdentifier ?: [NSProcessInfo processInfo].processName;
-        defaultStoragePath.get() = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, appDirectoryName, "WebExtensions"_s, identiferPath });
+        defaultStoragePath.get() = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, appDirectoryName, "WebExtensions"_s, identifierPath });
     });
 
     return defaultStoragePath.get();

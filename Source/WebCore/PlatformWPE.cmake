@@ -1,3 +1,4 @@
+include(platform/Adwaita.cmake)
 include(platform/Cairo.cmake)
 include(platform/FreeType.cmake)
 include(platform/GCrypt.cmake)
@@ -5,7 +6,6 @@ include(platform/GStreamer.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/Soup.cmake)
 include(platform/TextureMapper.cmake)
-include(PlatformGLib.cmake)
 
 if (USE_EXTERNAL_HOLEPUNCH)
     include(platform/HolePunch.cmake)
@@ -20,7 +20,6 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atspi"
     "${WEBCORE_DIR}/crypto/openssl"
-    "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/audio/glib"
     "${WEBCORE_DIR}/platform/glib"
     "${WEBCORE_DIR}/platform/graphics/egl"
@@ -53,15 +52,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 )
 
 set(CSS_VALUE_PLATFORM_DEFINES "HAVE_OS_DARK_MODE_SUPPORT=1")
-
-list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/css/themeAdwaita.css
-    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
-)
-
-set(WebCore_USER_AGENT_SCRIPTS
-    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
-)
 
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/platform/wpe/RenderThemeWPE.cpp)
 

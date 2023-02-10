@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -218,7 +218,6 @@ void GraphicsContextCG::save()
     // Note: Do not use this function within this class implementation, since we want to avoid the extra
     // save of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextSaveGState(platformContext());
-    m_data->save();
 }
 
 void GraphicsContextCG::restore()
@@ -231,7 +230,6 @@ void GraphicsContextCG::restore()
     // Note: Do not use this function within this class implementation, since we want to avoid the extra
     // restore of the secondary context (in GraphicsContextPlatformPrivateCG.h).
     CGContextRestoreGState(platformContext());
-    m_data->restore();
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
@@ -940,7 +938,6 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
 void GraphicsContextCG::clip(const FloatRect& rect)
 {
     CGContextClipToRect(platformContext(), rect);
-    m_data->clip(rect);
 }
 
 void GraphicsContextCG::clipOut(const FloatRect& rect)
@@ -980,8 +977,6 @@ void GraphicsContextCG::clipPath(const Path& path, WindRule clipRule)
         else
             CGContextClip(context);
     }
-    
-    m_data->clip(path);
 }
 
 IntRect GraphicsContextCG::clipBounds() const
@@ -1015,7 +1010,7 @@ void GraphicsContextCG::endTransparencyLayer()
 
 static void applyShadowOffsetWorkaroundIfNeeded(CGContextRef context, CGFloat& xOffset, CGFloat& yOffset)
 {
-#if PLATFORM(IOS_FAMILY) || PLATFORM(WIN)
+#if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(context);
     UNUSED_PARAM(xOffset);
     UNUSED_PARAM(yOffset);
@@ -1315,35 +1310,30 @@ void GraphicsContextCG::setLineJoin(LineJoin join)
 void GraphicsContextCG::scale(const FloatSize& size)
 {
     CGContextScaleCTM(platformContext(), size.width(), size.height());
-    m_data->scale(size);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::rotate(float angle)
 {
     CGContextRotateCTM(platformContext(), angle);
-    m_data->rotate(angle);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::translate(float x, float y)
 {
     CGContextTranslateCTM(platformContext(), x, y);
-    m_data->translate(x, y);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::concatCTM(const AffineTransform& transform)
 {
     CGContextConcatCTM(platformContext(), transform);
-    m_data->concatCTM(transform);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
 void GraphicsContextCG::setCTM(const AffineTransform& transform)
 {
     CGContextSetCTM(platformContext(), transform);
-    m_data->setCTM(transform);
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 

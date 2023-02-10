@@ -42,6 +42,7 @@
 #include "EventNames.h"
 #include "HTMLMediaElement.h"
 #include "Logging.h"
+#include "ManagedSourceBuffer.h"
 #include "MediaSourcePrivate.h"
 #include "MediaSourceRegistry.h"
 #include "Quirks.h"
@@ -697,7 +698,13 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
         return sourceBufferPrivate.releaseException();
     }
 
-    auto buffer = SourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), this);
+    Ref<SourceBuffer> buffer =
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+        isManaged() ? ManagedSourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), downcast<ManagedMediaSource>(*this)).get() : SourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), *this).get();
+#else
+        SourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), *this);
+#endif
+
     DEBUG_LOG(LOGIDENTIFIER, "created SourceBuffer");
 
     // 6. Set the generate timestamps flag on the new object to the value in the "Generate Timestamps Flag"

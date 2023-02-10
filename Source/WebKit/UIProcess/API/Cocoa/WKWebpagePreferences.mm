@@ -194,32 +194,26 @@ private:
 
 - (void)_setContentBlockersEnabled:(BOOL)contentBlockersEnabled
 {
-    _websitePolicies->setContentBlockersEnabled(contentBlockersEnabled);
+    auto defaultEnablement = contentBlockersEnabled ? WebCore::ContentExtensionDefaultEnablement::Enabled : WebCore::ContentExtensionDefaultEnablement::Disabled;
+    _websitePolicies->setContentExtensionEnablement({ defaultEnablement, { } });
 }
 
 - (BOOL)_contentBlockersEnabled
 {
-    return _websitePolicies->contentBlockersEnabled();
+    // Note that this only reports default state, and ignores exceptions. This should be turned into a no-op and
+    // eventually removed, once no more internal clients rely on it.
+    return _websitePolicies->contentExtensionEnablement().first == WebCore::ContentExtensionDefaultEnablement::Enabled;
 }
 
-- (void)_setDisabledContentRuleListIdentifiers:(NSSet<NSString *> *)identifiers
+- (void)_setContentRuleListsEnabled:(BOOL)enabled exceptions:(NSSet<NSString *> *)identifiers
 {
-    _websitePolicies->setDisabledContentRuleListIdentifiers([&] {
-        HashSet<String> result;
-        result.reserveInitialCapacity(identifiers.count);
-        for (NSString *identifier in identifiers)
-            result.add(identifier);
-        return result;
-    }());
-}
+    HashSet<String> exceptions;
+    exceptions.reserveInitialCapacity(identifiers.count);
+    for (NSString *identifier in identifiers)
+        exceptions.add(identifier);
 
-- (NSSet<NSString *> *)_disabledContentRuleListIdentifiers
-{
-    auto identifiers = _websitePolicies->disabledContentRuleListIdentifiers();
-    auto result = adoptNS([[NSMutableSet alloc] initWithCapacity:identifiers.size()]);
-    for (auto& identifier : identifiers)
-        [result addObject:identifier];
-    return result.get();
+    auto defaultEnablement = enabled ? WebCore::ContentExtensionDefaultEnablement::Enabled : WebCore::ContentExtensionDefaultEnablement::Disabled;
+    _websitePolicies->setContentExtensionEnablement({ defaultEnablement, WTFMove(exceptions) });
 }
 
 - (void)_setActiveContentRuleListActionPatterns:(NSDictionary<NSString *, NSSet<NSString *> *> *)patterns

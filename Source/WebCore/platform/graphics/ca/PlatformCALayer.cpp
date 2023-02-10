@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,15 +36,7 @@
 #include <QuartzCore/CABase.h>
 #include <wtf/text/TextStream.h>
 
-#if PLATFORM(WIN)
-#include <pal/spi/win/CoreTextSPIWin.h>
-#endif
-
 namespace WebCore {
-
-#if COMPILER(MSVC)
-const float PlatformCALayer::webLayerWastedSpaceThreshold = 0.75f;
-#endif
 
 PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformCALayerClient* owner)
     : m_layerType(layerType)

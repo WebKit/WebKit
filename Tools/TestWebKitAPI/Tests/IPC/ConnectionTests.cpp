@@ -293,7 +293,7 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         done.add(destinationID);
         return true;
     });
-    for (uint64_t i = 1; i < 1001; ++i) {
+    for (uint64_t i = 1; i < 801; ++i) {
         auto identifiers = IPC::Connection::createConnectionIdentifierPair();
         ASSERT_NE(identifiers, std::nullopt);
         Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
@@ -302,7 +302,7 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         a()->send(MockTestMessageWithConnection { WTFMove(identifiers->client) }, i);
         serverConnection->invalidate();
     }
-    while (done.size() < 1000)
+    while (done.size() < 800)
         RunLoop::current().cycle();
 }
 

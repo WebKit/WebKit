@@ -174,6 +174,10 @@ typedef enum {
 #endif
 @end
 
+@interface NSURLCredentialStorage ()
+- (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
+@end
+
 @interface NSURLConnection ()
 - (id)_initWithRequest:(NSURLRequest *)request delegate:(id)delegate usesCache:(BOOL)usesCacheFlag maxContentLength:(long long)maxContentLength startImmediately:(BOOL)startImmediately connectionProperties:(NSDictionary *)connectionProperties;
 @end
@@ -239,7 +243,6 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @class _NSHTTPAlternativeServicesStorage;
 #endif
 
-#if HAVE(HSTS_STORAGE)
 @interface _NSHSTSStorage : NSObject
 - (instancetype)initPersistentStoreWithURL:(nullable NSURL*)path;
 - (BOOL)shouldPromoteHostToHTTPS:(NSString *)host;
@@ -247,7 +250,6 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 - (void)resetHSTSForHost:(NSString *)host;
 - (void)resetHSTSHostsSinceDate:(NSDate *)date;
 @end
-#endif
 
 @interface NSURLSessionConfiguration ()
 @property (assign) _TimingDataOptions _timingDataOptions;
@@ -277,9 +279,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (nullable, retain) _NSHTTPAlternativeServicesStorage *_alternativeServicesStorage;
 @property (readwrite, assign) BOOL _allowsHTTP3;
 #endif
-#if HAVE(HSTS_STORAGE)
 @property (nullable, retain) _NSHSTSStorage *_hstsStorage;
-#endif
 #if HAVE(NETWORK_LOADER)
 @property BOOL _usesNWLoader;
 #endif
@@ -462,14 +462,6 @@ CFDataRef _CFNetworkCopyATSContext(void);
 Boolean _CFNetworkSetATSContext(CFDataRef);
 
 Boolean _CFNetworkIsKnownHSTSHostWithSession(CFURLRef, CFURLStorageSessionRef);
-#if !HAVE(HSTS_STORAGE)
-extern const CFStringRef _kCFNetworkHSTSPreloaded;
-CFDictionaryRef _CFNetworkCopyHSTSPolicies(CFURLStorageSessionRef);
-void _CFNetworkResetHSTS(CFURLRef, CFURLStorageSessionRef);
-void _CFNetworkResetHSTSHostsSinceDate(CFURLStorageSessionRef, CFDateRef);
-void _CFNetworkResetHSTSHostsWithSession(CFURLStorageSessionRef);
-#endif
-
 CFDataRef CFHTTPCookieStorageCreateIdentifyingData(CFAllocatorRef inAllocator, CFHTTPCookieStorageRef inStorage);
 CFHTTPCookieStorageRef CFHTTPCookieStorageCreateFromIdentifyingData(CFAllocatorRef inAllocator, CFDataRef inData);
 CFArrayRef _CFHTTPParsedCookiesWithResponseHeaderFields(CFAllocatorRef inAllocator, CFDictionaryRef headerFields, CFURLRef inURL);

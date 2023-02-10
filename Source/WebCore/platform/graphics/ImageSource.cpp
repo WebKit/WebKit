@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,9 +76,9 @@ bool ImageSource::ensureDecoderAvailable(FragmentedSharedBuffer* data)
     if (!isDecoderAvailable())
         return false;
 
-    m_decoder->setEncodedDataStatusChangeCallback([weakThis = WeakPtr { *this }] (auto status) {
-        if (weakThis)
-            weakThis->encodedDataStatusChanged(status);
+    m_decoder->setEncodedDataStatusChangeCallback([weakThis = ThreadSafeWeakPtr { *this }] (auto status) {
+        if (RefPtr strongThis = weakThis.get())
+            strongThis->encodedDataStatusChanged(status);
     });
 
     if (auto expectedContentSize = expectedContentLength())

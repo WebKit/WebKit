@@ -87,25 +87,45 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     // Static
 
-    static buildHighlightConfig(mode)
+    static buildHighlightConfigs(mode)
     {
         mode = mode || "all";
 
-        let highlightConfig = {showInfo: mode === "all"};
+        let commandArguments = {
+            highlightConfig: {showInfo: mode === "all"},
+        };
 
         if (mode === "all" || mode === "content")
-            highlightConfig.contentColor = {r: 111, g: 168, b: 220, a: 0.66};
+            commandArguments.highlightConfig.contentColor = {r: 111, g: 168, b: 220, a: 0.66};
 
         if (mode === "all" || mode === "padding")
-            highlightConfig.paddingColor = {r: 147, g: 196, b: 125, a: 0.66};
+            commandArguments.highlightConfig.paddingColor = {r: 147, g: 196, b: 125, a: 0.66};
 
         if (mode === "all" || mode === "border")
-            highlightConfig.borderColor = {r: 255, g: 229, b: 153, a: 0.66};
+            commandArguments.highlightConfig.borderColor = {r: 255, g: 229, b: 153, a: 0.66};
 
         if (mode === "all" || mode === "margin")
-            highlightConfig.marginColor = {r: 246, g: 178, b: 107, a: 0.66};
+            commandArguments.highlightConfig.marginColor = {r: 246, g: 178, b: 107, a: 0.66};
 
-        return highlightConfig;
+        if (WI.settings.showGridOverlayDuringElementSelection.value) {
+            commandArguments.gridOverlayConfig = {
+                gridColor: WI.DOMNode.defaultLayoutOverlayColor.toProtocol(),
+                showLineNames: WI.settings.gridOverlayShowLineNames.value,
+                showLineNumbers: WI.settings.gridOverlayShowLineNumbers.value,
+                showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
+                showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
+                showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
+            };
+        }
+
+        if (WI.settings.showFlexOverlayDuringElementSelection.value) {
+            commandArguments.flexOverlayConfig = {
+                flexColor: WI.DOMNode.defaultLayoutOverlayColor.toProtocol(),
+                showOrderNumbers: WI.settings.flexOverlayShowOrderNumbers.value,
+            };
+        }
+
+        return commandArguments;
     }
 
     static wrapClientCallback(callback)
@@ -623,10 +643,13 @@ WI.DOMManager = class DOMManager extends WI.Object
         }
 
         let target = WI.assumingMainTarget();
-        target.DOMAgent.highlightNodeList(nodeIds, DOMManager.buildHighlightConfig(mode));
+        target.DOMAgent.highlightNodeList.invoke({
+            nodeIds,
+            ...WI.DOMManager.buildHighlightConfigs(mode),
+        });
     }
 
-    highlightSelector(selectorText, frameId, mode)
+    highlightSelector(selectorString, frameId, mode)
     {
         if (this._hideDOMNodeHighlightTimeout) {
             clearTimeout(this._hideDOMNodeHighlightTimeout);
@@ -634,7 +657,11 @@ WI.DOMManager = class DOMManager extends WI.Object
         }
 
         let target = WI.assumingMainTarget();
-        target.DOMAgent.highlightSelector(DOMManager.buildHighlightConfig(mode), selectorText, frameId);
+        target.DOMAgent.highlightSelector.invoke({
+            selectorString,
+            frameId,
+            ...WI.DOMManager.buildHighlightConfigs(mode),
+        });
     }
 
     highlightRect(rect, usePageCoordinates)
@@ -681,30 +708,11 @@ WI.DOMManager = class DOMManager extends WI.Object
             return;
 
         let target = WI.assumingMainTarget();
-
-        let commandArguments = {
+        target.DOMAgent.setInspectModeEnabled.invoke({
             enabled,
-            highlightConfig: DOMManager.buildHighlightConfig(),
+            ...WI.DOMManager.buildHighlightConfigs(),
             showRulers: WI.settings.showRulersDuringElementSelection.value,
-        };
-        if (WI.settings.showGridOverlayDuringElementSelection.value) {
-            commandArguments.gridOverlayConfig = {
-                gridColor: WI.DOMNode.defaultLayoutOverlayColor.toProtocol(),
-                showLineNames: WI.settings.gridOverlayShowLineNames.value,
-                showLineNumbers: WI.settings.gridOverlayShowLineNumbers.value,
-                showExtendedGridLines: WI.settings.gridOverlayShowExtendedGridLines.value,
-                showTrackSizes: WI.settings.gridOverlayShowTrackSizes.value,
-                showAreaNames: WI.settings.gridOverlayShowAreaNames.value,
-            };
-        }
-        if (WI.settings.showFlexOverlayDuringElementSelection.value) {
-            commandArguments.flexOverlayConfig = {
-                flexColor: WI.DOMNode.defaultLayoutOverlayColor.toProtocol(),
-                showOrderNumbers: WI.settings.flexOverlayShowOrderNumbers.value,
-            };
-        }
-
-        target.DOMAgent.setInspectModeEnabled.invoke(commandArguments, (error) => {
+        }, (error) => {
             if (error) {
                 WI.reportInternalError(error);
                 return;

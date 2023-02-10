@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,14 +33,17 @@
 #include "DisplayListReplayer.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "GraphicsLayerAsyncContentsDisplayDelegateCocoa.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "GraphicsLayerFactory.h"
 #include "Image.h"
 #include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include "Model.h"
+#include "PlatformCAAnimationCocoa.h"
 #include "PlatformCAFilters.h"
 #include "PlatformCALayer.h"
+#include "PlatformCALayerCocoa.h"
 #include "PlatformScreen.h"
 #include "Region.h"
 #include "RotateTransformOperation.h"
@@ -65,22 +68,6 @@
 #if PLATFORM(IOS_FAMILY)
 #include "SystemMemory.h"
 #include "WebCoreThread.h"
-#endif
-
-#if PLATFORM(COCOA)
-#include "GraphicsLayerAsyncContentsDisplayDelegateCocoa.h"
-#include "PlatformCAAnimationCocoa.h"
-#include "PlatformCALayerCocoa.h"
-#endif
-
-#if PLATFORM(WIN)
-#include "PlatformCAAnimationWin.h"
-#include "PlatformCALayerWin.h"
-#endif
-
-#if COMPILER(MSVC)
-// See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
-#pragma warning(disable: 4701)
 #endif
 
 namespace WebCore {
@@ -337,34 +324,22 @@ Ref<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, Graphics
 
 bool GraphicsLayerCA::filtersCanBeComposited(const FilterOperations& filters)
 {
-#if PLATFORM(COCOA)
     return PlatformCALayerCocoa::filtersCanBeComposited(filters);
-#elif PLATFORM(WIN)
-    return PlatformCALayerWin::filtersCanBeComposited(filters);
-#endif
 }
 
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::LayerType layerType, PlatformCALayerClient* owner)
 {
-#if PLATFORM(COCOA)
     auto result = PlatformCALayerCocoa::create(layerType, owner);
     
     if (result->canHaveBackingStore())
         result->setWantsDeepColorBackingStore(screenSupportsExtendedColor());
     
     return result;
-#elif PLATFORM(WIN)
-    return PlatformCALayerWin::create(layerType, owner);
-#endif
 }
     
 Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformLayer* platformLayer, PlatformCALayerClient* owner)
 {
-#if PLATFORM(COCOA)
     return PlatformCALayerCocoa::create(platformLayer, owner);
-#elif PLATFORM(WIN)
-    return PlatformCALayerWin::create(platformLayer, owner);
-#endif
 }
 
 #if ENABLE(MODEL_ELEMENT)
@@ -383,11 +358,7 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayerHost(LayerHostingCont
 
 Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAnimation::AnimationType type, const String& keyPath)
 {
-#if PLATFORM(COCOA)
     return PlatformCAAnimationCocoa::create(type, keyPath);
-#elif PLATFORM(WIN)
-    return PlatformCAAnimationWin::create(type, keyPath);
-#endif
 }
 
 typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::InMemoryDisplayList>>> LayerDisplayListHashMap;

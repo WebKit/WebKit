@@ -87,6 +87,12 @@ static NSString *overrideBundleIdentifier(id, SEL)
     [self _test_waitForDidFinishNavigation];
 }
 
+- (void)synchronouslyLoadRequest:(NSURLRequest *)request preferences:(WKWebpagePreferences *)preferences
+{
+    [self loadRequest:request];
+    [self _test_waitForDidFinishNavigationWithPreferences:preferences];
+}
+
 - (void)synchronouslyLoadRequestIgnoringSSLErrors:(NSURLRequest *)request
 {
     [self loadRequest:request];

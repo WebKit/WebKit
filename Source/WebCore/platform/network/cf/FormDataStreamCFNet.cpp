@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,13 +44,9 @@
 
 static const SInt32 fileNotFoundError = -43;
 
-#if PLATFORM(COCOA)
 extern "C" void CFURLRequestSetHTTPRequestBody(CFMutableURLRequestRef mutableHTTPRequest, CFDataRef httpBody);
 extern "C" void CFURLRequestSetHTTPHeaderFieldValue(CFMutableURLRequestRef mutableHTTPRequest, CFStringRef httpHeaderField, CFStringRef httpHeaderFieldValue);
 extern "C" void CFURLRequestSetHTTPRequestBodyStream(CFMutableURLRequestRef req, CFReadStreamRef bodyStream);
-#elif PLATFORM(WIN)
-#include <CFNetwork/CFURLRequest.h>
-#endif
 
 typedef struct {
     CFIndex version; /* == 1 */
@@ -70,11 +66,7 @@ typedef struct {
     void (*unschedule)(CFReadStreamRef stream, CFRunLoopRef runLoop, CFStringRef runLoopMode, void *info);
 } CFReadStreamCallBacksV1;
 
-#if PLATFORM(WIN)
-#define EXTERN extern "C" __declspec(dllimport)
-#else
 #define EXTERN extern "C"
-#endif
 
 EXTERN void CFReadStreamSignalEvent(CFReadStreamRef stream, CFStreamEventType event, const void *error);
 EXTERN CFReadStreamRef CFReadStreamCreate(CFAllocatorRef alloc, const void *callbacks, void *info);
@@ -244,12 +236,7 @@ static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComp
     bool opened = openNextStream(form);
 
     *openComplete = opened;
-    error->error = opened ? 0 :
-#if PLATFORM(WIN)
-        ENOENT;
-#else
-        fileNotFoundError;
-#endif
+    error->error = opened ? 0 : fileNotFoundError;
     return opened;
 }
 

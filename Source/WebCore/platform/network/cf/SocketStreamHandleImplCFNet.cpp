@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2016 Apple Inc.  All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2009 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,11 +49,6 @@
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(WIN)
-#include "LoaderRunLoopCF.h"
-#include <pal/spi/win/CFNetworkSPIWin.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #include "WebCoreThreadInternal.h"
 #endif
@@ -67,20 +62,13 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 #include <pal/spi/cf/CFNetworkSPI.h>
 #endif
 
-#if PLATFORM(WIN)
-SOFT_LINK_LIBRARY(CFNetwork);
-SOFT_LINK_OPTIONAL(CFNetwork, _CFHTTPMessageSetResponseProxyURL, void, __cdecl, (CFHTTPMessageRef, CFURLRef));
-#endif
-
 WTF_DECLARE_CF_TYPE_TRAIT(CFHTTPMessage);
 
 namespace WebCore {
 
 static inline CFRunLoopRef callbacksRunLoop()
 {
-#if PLATFORM(WIN)
-    return loaderRunLoop();
-#elif PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
     return WebThreadRunLoop();
 #else
     return CFRunLoopGetMain();
@@ -89,11 +77,7 @@ static inline CFRunLoopRef callbacksRunLoop()
 
 static inline auto callbacksRunLoopMode()
 {
-#if PLATFORM(WIN)
-    return kCFRunLoopDefaultMode;
-#else
     return kCFRunLoopCommonModes;
-#endif
 }
 
 SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String& credentialPartition, SourceApplicationAuditToken&& auditData, const StorageSessionProvider* provider, bool acceptInsecureCertificates)
@@ -518,12 +502,7 @@ void SocketStreamHandleImpl::writeStreamCallback(CFWriteStreamRef stream, CFStre
 #if !PLATFORM(IOS_FAMILY)
 static void setResponseProxyURL(CFHTTPMessageRef message, CFURLRef proxyURL)
 {
-#if PLATFORM(WIN)
-    if (_CFHTTPMessageSetResponseProxyURLPtr())
-        _CFHTTPMessageSetResponseProxyURLPtr()(message, proxyURL);
-#else
     _CFHTTPMessageSetResponseProxyURL(message, proxyURL);
-#endif
 }
 #endif
 

@@ -526,12 +526,13 @@ void AXObjectCache::postTextStateChangePlatformNotification(AXCoreObject* object
     }
 }
 
-static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, const VisiblePosition& position)
+static void addTextMarkerFor(NSMutableDictionary *change, AXCoreObject& object, const VisiblePosition& position)
 {
     if (position.isNull())
         return;
-    if (id textMarker = [object.wrapper() textMarkerForVisiblePosition:position])
-        [change setObject:textMarker forKey:NSAccessibilityTextChangeValueStartMarker];
+
+    if (RetainPtr marker = textMarkerForVisiblePosition(object.axObjectCache(), position))
+        [change setObject:(__bridge id)marker.get() forKey:NSAccessibilityTextChangeValueStartMarker];
 }
 
 static void addTextMarkerFor(NSMutableDictionary* change, AXCoreObject& object, HTMLTextFormControlElement& textControl)
