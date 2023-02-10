@@ -130,7 +130,7 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
     for (unsigned i = 0; i < count; i++) {
         objc_property_t property = properties[i];
-        NSString *propertyName = [NSString stringWithUTF8String:property_getName(property)];
+        NSString *propertyName = @(property_getName(property));
         if ([propertyNameFromKeyPath isEqualToString:propertyName]) {
             target = _playerController.get();
             break;

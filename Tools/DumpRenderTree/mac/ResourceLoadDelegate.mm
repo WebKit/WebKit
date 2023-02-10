@@ -168,7 +168,7 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
     NSURL *url = [request URL];
     NSString *host = [url host];
     if (host && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])) {
-        NSString *testURL = [NSString stringWithUTF8String:gTestRunner->testURL().c_str()];
+        NSString *testURL = @(gTestRunner->testURL().c_str());
         NSString *lowercaseTestURL = [testURL lowercaseString];
         NSString *testHost = 0;
         if ([lowercaseTestURL hasPrefix:@"http:"] || [lowercaseTestURL hasPrefix:@"https:"])
@@ -188,11 +188,10 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
     auto newRequest = adoptNS([request mutableCopy]);
     const set<string>& clearHeaders = gTestRunner->willSendRequestClearHeaders();
     for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header) {
-        auto nsHeader = adoptNS([[NSString alloc] initWithUTF8String:header->c_str()]);
-        [newRequest setValue:nil forHTTPHeaderField:nsHeader.get()];
+        [newRequest setValue:nil forHTTPHeaderField:@(header->c_str())];
     }
     if (auto* destination = gTestRunner->redirectionDestinationForURL([[url absoluteString] UTF8String]))
-        [newRequest setURL:[NSURL URLWithString:[NSString stringWithUTF8String:destination]]];
+        [newRequest setURL:[NSURL URLWithString:@(destination)]];
 
     return newRequest.autorelease();
 }

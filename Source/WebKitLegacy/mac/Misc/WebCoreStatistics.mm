@@ -84,7 +84,7 @@ static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<const cha
 {
     auto result = adoptNS([[NSCountedSet alloc] initWithCapacity:set.size()]);
     for (auto& entry : set) {
-        auto key = [NSString stringWithUTF8String:entry.key];
+        NSString *key = @(entry.key);
         for (unsigned i = 0; i < entry.value; ++i)
             [result addObject:key];
     }
