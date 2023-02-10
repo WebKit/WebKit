@@ -205,6 +205,7 @@ MSG kIncompatibleDrawModeAgainstGeometryShader = "Primitive mode is incompatible
 MSG kIncompatibleDrawModeWithTessellationShader = "When tessellation is active the primitive mode must be GL_PATCHES.";
 MSG kIncompatibleDrawModeWithoutTessellationShader = "When tessellation is not active the primitive mode must not be GL_PATCHES.";
 MSG kIncompatibleTextures = "Texture formats are not compatible";
+MSG kInternalErrorFormatNotFound = "Internal error: unknown internal format.";
 MSG kIndexExceedsActiveUniformBlockCount = "Index exceeds active uniform block count.";
 MSG kIndexExceedsMaxActiveUniform = "Index must be less than program active uniform count.";
 MSG kIndexExceedsMaxActiveUniformBlock = "Index must be less than program active uniform block count.";
