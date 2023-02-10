@@ -6153,10 +6153,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
         // If we are in a layer-backed view, we need to manually initialize the geometry for our layer.
         [viewLayer setBounds:NSRectToCGRect([_private->layerHostingView bounds])];
         [viewLayer setAnchorPoint:CGPointMake(0, [self isFlipped] ? 1 : 0)];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        CGPoint layerPosition = NSPointToCGPoint([self convertPointToBase:[_private->layerHostingView frame].origin]);
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        [viewLayer setPosition:layerPosition];
+        [viewLayer setPosition:NSPointToCGPoint([self convertPointToBacking:[_private->layerHostingView frame].origin])];
     }
     
     [_private->layerHostingView setLayer:viewLayer];
