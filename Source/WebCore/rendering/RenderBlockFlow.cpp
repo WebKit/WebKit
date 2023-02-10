@@ -559,7 +559,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         // so we need to go through the floats that this BFC is aware of and check if any of
         // the float's need their block-end margin trimmed
         if (m_floatingObjects && createsBlockFormattingContext())
-            trimFloatBlockEndMargins(blockFormattingContextInFlowBlockLevelContentHeight());
+            trimFloatBlockEndMargins(blockFormattingContextInFlowContentHeight());
 
         // Expand our intrinsic height to encompass floats.
         LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
@@ -4797,9 +4797,18 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
     return true;
 }
 
-LayoutUnit RenderBlockFlow::blockFormattingContextInFlowBlockLevelContentHeight() const
+LayoutUnit RenderBlockFlow::blockFormattingContextInFlowContentHeight() const
 {
     ASSERT(createsBlockFormattingContext());
+
+    if (childrenInline()) {
+        if (lineLayoutPath() == ModernPath) {
+            ASSERT(modernLineLayout());
+            return modernLineLayout()->contentBoxLogicalHeight();
+        }
+        ASSERT(legacyLineLayout());
+        return legacyLineLayout()->contentBoxLogicalHeight();
+    }
     // For block layout we should just be able to check the height of the last in flow box
     auto lastChild = lastInFlowChildBox();
     if (!lastChild)

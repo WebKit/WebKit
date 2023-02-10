@@ -2352,5 +2352,15 @@ const FrameViewLayoutContext& LegacyLineLayout::layoutContext() const
     return m_flow.view().frameView().layoutContext();
 }
 
+LayoutUnit LegacyLineLayout::contentBoxLogicalHeight() const
+{
+    auto firstLine = m_lineBoxes.firstLineBox();
+    auto lastLine = m_lineBoxes.lastLineBox();
+    if (firstLine && lastLine)
+        return LayoutUnit { lastLine->logicalFrameRect().maxY() - firstLine->logicalFrameRect().y() };
+    if (firstLine)
+        return LayoutUnit { firstLine->logicalFrameRect().maxY() };
+    return 0_lu;
+}
 
 }

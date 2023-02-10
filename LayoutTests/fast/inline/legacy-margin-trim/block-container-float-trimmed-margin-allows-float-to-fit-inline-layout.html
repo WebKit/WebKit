@@ -1,0 +1,35 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="float that overflows into another item stays on the same line due to trimmed margin">
+<style>
+container {
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin-trim: inline;
+}
+item {
+    display: block;
+    width: 25px;
+    height: 100px;
+    background-color: green;
+}
+.inline-block-content {
+    display: inline-block;
+    width: 50px;
+}
+</style>
+</head>
+<body>
+<p>Test passes if there is a filled green square.</p>
+<container>
+    <item style="float: left"></item>
+    <item class="inline-block-content"></item>
+    <item style="float: right; margin-inline-end: 150px;"></item>
+</container>
+</body>
+</html>

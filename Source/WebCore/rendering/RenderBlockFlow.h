@@ -404,7 +404,7 @@ public:
 
     std::optional<LayoutUnit> lowestInitialLetterLogicalBottom() const;
 
-    LayoutUnit blockFormattingContextInFlowBlockLevelContentHeight() const;
+    LayoutUnit blockFormattingContextInFlowContentHeight() const;
 protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
 

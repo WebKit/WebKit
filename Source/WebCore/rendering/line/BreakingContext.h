@@ -364,7 +364,14 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
 inline void BreakingContext::handleFloat()
 {
     auto& floatBox = downcast<RenderBox>(*m_current.renderer());
-    const auto& floatingObject = *m_lineBreaker.insertFloatingObject(floatBox);
+    auto& floatingObject = *m_lineBreaker.insertFloatingObject(floatBox);
+    
+    // Check to see if there is anything on the left/right (depending on the position of the float) that this float
+    // would get pushed against. If there is nothing then we can trim the margins for this float
+    if (m_blockStyle.marginTrim().contains(MarginTrimType::InlineStart) && RenderStyle::usedFloat(floatBox) == UsedFloat::Left && m_block.logicalLeftOffsetForLine(m_block.logicalHeight(), DoNotIndentText)  == m_block.logicalLeftOffsetForContent(m_block.logicalHeight()))
+        m_block.trimMarginForFloat(floatingObject, MarginTrimType::InlineStart);
+    else if (m_blockStyle.marginTrim().contains(MarginTrimType::InlineEnd) && RenderStyle::usedFloat(floatBox) == UsedFloat::Right && m_block.logicalRightOffsetForLine(m_block.logicalHeight(), DoNotIndentText) == m_block.logicalRightOffsetForContent(m_block.logicalHeight()))
+        m_block.trimMarginForFloat(floatingObject, MarginTrimType::InlineEnd);
     // check if it fits in the current line.
     // If it does, position it now, otherwise, position
     // it after moving to next line (in clearFloats() func)
