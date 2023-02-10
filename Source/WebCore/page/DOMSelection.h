@@ -40,6 +40,7 @@ namespace WebCore {
 class Node;
 class Position;
 class Range;
+class StaticRange;
 class VisibleSelection;
 
 struct SimpleRange;
@@ -53,6 +54,7 @@ public:
     unsigned baseOffset() const;
     unsigned extentOffset() const;
     String type() const;
+    String direction() const;
     ExceptionOr<void> setBaseAndExtent(Node* baseNode, unsigned baseOffset, Node* extentNode, unsigned extentOffset);
     ExceptionOr<void> setPosition(Node*, unsigned offset);
     void modify(const String& alter, const String& direction, const String& granularity);
@@ -74,6 +76,9 @@ public:
     void removeAllRanges();
     void addRange(Range&);
     ExceptionOr<void> removeRange(Range&);
+
+    Vector<Ref<StaticRange>> getComposedRanges(FixedVector<std::reference_wrapper<ShadowRoot>>&&);
+
     void deleteFromDocument();
     bool containsNode(Node&, bool partlyContained) const;
     ExceptionOr<void> selectAllChildren(Node&);
