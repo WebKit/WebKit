@@ -1304,7 +1304,7 @@ public:
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     static bool isValidAddrForm(Air::Opcode opcode, Int offset, std::optional<Width> width = std::nullopt)
     {
-#if !CPU(ARM_THUM2)
+#if !CPU(ARM_THUMB2)
         UNUSED_PARAM(opcode);
 #endif
         if (isX86())
@@ -1360,6 +1360,22 @@ public:
         return false;
     }
 
+    static bool isValidIndexOp(Air::Opcode opcode)
+    {
+        if (isX86())
+            return true;
+        if (isARM64() || isARM_THUMB2()) {
+            switch (opcode) {
+            case Move:
+            case Move32:
+                return true;
+            default:
+                return false;
+            }
+        }
+        return false;
+    }
+
     template<typename Int, typename = Value::IsLegalOffset<Int>>
     static bool isValidIncrementIndexForm(Int offset)
     {
@@ -1396,7 +1412,7 @@ public:
         case CallArg:
             return isValidAddrForm(opcode, offset(), width);
         case Index:
-            return isValidIndexForm(scale(), offset(), width);
+            return isValidIndexOp(opcode) && isValidIndexForm(scale(), offset(), width);
         case PreIndex:
         case PostIndex:
             return isValidIncrementIndexForm(offset());
