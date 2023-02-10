@@ -2449,4 +2449,12 @@ void KeyframeEffect::lastStyleChangeEventStyleDidChange(const RenderStyle* previ
         abilityToBeAcceleratedDidChange();
 }
 
+bool KeyframeEffect::preventsAnimationReadiness() const
+{
+    // https://drafts.csswg.org/web-animations-1/#ready
+    // An animation cannot be ready if it's associated with a document that does not have a browsing
+    // context since this will prevent the first frame of the animmation from being rendered.
+    return document() && !document()->hasBrowsingContext();
+}
+
 } // namespace WebCore
