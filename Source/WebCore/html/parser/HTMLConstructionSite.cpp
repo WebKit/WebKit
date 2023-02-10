@@ -125,11 +125,6 @@ static inline bool causesFosterParenting(const HTMLStackItem& item)
     }
 }
 
-static inline bool isAllWhitespace(const String& string)
-{
-    return string.isAllSpecialCharacters<isHTMLSpace>();
-}
-
 static inline void insert(HTMLConstructionSiteTask& task)
 {
     if (is<HTMLTemplateElement>(*task.parent)) {
