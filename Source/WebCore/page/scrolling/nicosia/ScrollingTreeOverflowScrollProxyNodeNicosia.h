@@ -41,7 +41,7 @@ public:
 private:
     ScrollingTreeOverflowScrollProxyNodeNicosia(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     void applyLayerPositions() override;
 
     Nicosia::CompositionLayer* layer() const override { return m_layer.get(); }

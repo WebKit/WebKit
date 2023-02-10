@@ -47,7 +47,7 @@ protected:
 
     FloatPoint computeLayerPosition() const;
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
     FixedPositionViewportConstraints m_constraints;

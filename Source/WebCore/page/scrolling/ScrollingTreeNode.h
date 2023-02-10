@@ -70,8 +70,8 @@ public:
     bool isOverflowScrollingNode() const { return nodeType() == ScrollingNodeType::Overflow; }
     bool isOverflowScrollProxyNode() const { return nodeType() == ScrollingNodeType::OverflowProxy; }
 
-    virtual void commitStateBeforeChildren(const ScrollingStateNode&) = 0;
-    virtual void commitStateAfterChildren(const ScrollingStateNode&) { }
+    virtual bool commitStateBeforeChildren(const ScrollingStateNode&) = 0;
+    virtual bool commitStateAfterChildren(const ScrollingStateNode&) { return true; }
     virtual void didCompleteCommitForNode() { }
     
     virtual void willBeDestroyed() { }

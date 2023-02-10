@@ -44,9 +44,12 @@ ScrollingTreePositionedNode::ScrollingTreePositionedNode(ScrollingTree& scrollin
 
 ScrollingTreePositionedNode::~ScrollingTreePositionedNode() = default;
 
-void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStatePositionedNode& positionedStateNode = downcast<ScrollingStatePositionedNode>(stateNode);
+    if (!is<ScrollingStatePositionedNode>(stateNode))
+        return false;
+
+    const auto& positionedStateNode = downcast<ScrollingStatePositionedNode>(stateNode);
 
     if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Property::RelatedOverflowScrollingNodes))
         m_relatedOverflowScrollingNodes = positionedStateNode.relatedOverflowScrollingNodes();
@@ -56,6 +59,8 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
 
     if (!m_relatedOverflowScrollingNodes.isEmpty())
         scrollingTree().activePositionedNodes().add(*this);
+
+    return true;
 }
 
 FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const

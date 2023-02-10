@@ -41,7 +41,7 @@ public:
 private:
     ScrollingTreePositionedNodeCocoa(ScrollingTree&, ScrollingNodeID);
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
 
     void applyLayerPositions() override;
 

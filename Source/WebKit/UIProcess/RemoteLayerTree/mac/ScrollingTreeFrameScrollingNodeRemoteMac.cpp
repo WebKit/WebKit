@@ -49,9 +49,14 @@ Ref<ScrollingTreeFrameScrollingNodeRemoteMac> ScrollingTreeFrameScrollingNodeRem
     return adoptRef(*new ScrollingTreeFrameScrollingNodeRemoteMac(tree, nodeType, nodeID));
 }
 
-void ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+        return false;
+
     const auto& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(stateNode);
     
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer) && horizontalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
@@ -68,6 +73,7 @@ void ScrollingTreeFrameScrollingNodeRemoteMac::commitStateBeforeChildren(const S
     }
 
     m_scrollerPair->updateValues();
+    return true;
 }
 
 void ScrollingTreeFrameScrollingNodeRemoteMac::repositionRelatedLayers()

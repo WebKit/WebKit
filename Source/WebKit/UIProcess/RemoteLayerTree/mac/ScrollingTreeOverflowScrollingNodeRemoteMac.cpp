@@ -50,9 +50,14 @@ ScrollingTreeOverflowScrollingNodeRemoteMac::~ScrollingTreeOverflowScrollingNode
 {
 }
 
-void ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(stateNode);
+    if (!ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateOverflowScrollingNode>(stateNode))
+        return false;
+
     const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer) && horizontalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
@@ -69,6 +74,7 @@ void ScrollingTreeOverflowScrollingNodeRemoteMac::commitStateBeforeChildren(cons
     }
 
     m_scrollerPair->updateValues();
+    return true;
 }
 
 void ScrollingTreeOverflowScrollingNodeRemoteMac::repositionRelatedLayers()

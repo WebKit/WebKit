@@ -48,13 +48,16 @@ ScrollingTreeFixedNodeCocoa::ScrollingTreeFixedNodeCocoa(ScrollingTree& scrollin
 
 ScrollingTreeFixedNodeCocoa::~ScrollingTreeFixedNodeCocoa() = default;
 
-void ScrollingTreeFixedNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFixedNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateFixedNode& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
+    if (!is<ScrollingStateFixedNode>(stateNode))
+        return false;
+
+    const auto& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
     if (fixedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
         m_layer = static_cast<CALayer*>(fixedStateNode.layer());
 
-    ScrollingTreeFixedNode::commitStateBeforeChildren(stateNode);
+    return ScrollingTreeFixedNode::commitStateBeforeChildren(stateNode);
 }
 
 void ScrollingTreeFixedNodeCocoa::applyLayerPositions()

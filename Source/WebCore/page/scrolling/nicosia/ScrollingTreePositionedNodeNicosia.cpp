@@ -49,15 +49,18 @@ ScrollingTreePositionedNodeNicosia::ScrollingTreePositionedNodeNicosia(Scrolling
 
 ScrollingTreePositionedNodeNicosia::~ScrollingTreePositionedNodeNicosia() = default;
 
-void ScrollingTreePositionedNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreePositionedNodeNicosia::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
+    if (!is<ScrollingStatePositionedNode>(stateNode))
+        return false;
+
     const ScrollingStatePositionedNode& positionedStateNode = downcast<ScrollingStatePositionedNode>(stateNode);
     if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
         auto* layer = static_cast<Nicosia::PlatformLayer*>(positionedStateNode.layer());
         m_layer = downcast<Nicosia::CompositionLayer>(layer);
     }
 
-    ScrollingTreePositionedNode::commitStateBeforeChildren(stateNode);
+    return ScrollingTreePositionedNode::commitStateBeforeChildren(stateNode);
 }
 
 void ScrollingTreePositionedNodeNicosia::applyLayerPositions()

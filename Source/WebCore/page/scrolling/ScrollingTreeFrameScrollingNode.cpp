@@ -45,11 +45,15 @@ ScrollingTreeFrameScrollingNode::ScrollingTreeFrameScrollingNode(ScrollingTree& 
 
 ScrollingTreeFrameScrollingNode::~ScrollingTreeFrameScrollingNode() = default;
 
-void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    ScrollingTreeScrollingNode::commitStateBeforeChildren(stateNode);
-    
-    const ScrollingStateFrameScrollingNode& state = downcast<ScrollingStateFrameScrollingNode>(stateNode);
+    if (!ScrollingTreeScrollingNode::commitStateBeforeChildren(stateNode))
+        return false;
+
+    if (!is<ScrollingStateFrameScrollingNode>(stateNode))
+        return false;
+
+    const auto& state = downcast<ScrollingStateFrameScrollingNode>(stateNode);
 
     if (state.hasChangedProperty(ScrollingStateNode::Property::FrameScaleFactor))
         m_frameScaleFactor = state.frameScaleFactor();
@@ -88,6 +92,8 @@ void ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
         // This requires that minLayoutViewportOrigin and maxLayoutViewportOrigin have been updated.
         updateViewportForCurrentScrollPosition({ });
     }
+    
+    return true;
 }
 
 bool ScrollingTreeFrameScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect> overrideLayoutViewport)

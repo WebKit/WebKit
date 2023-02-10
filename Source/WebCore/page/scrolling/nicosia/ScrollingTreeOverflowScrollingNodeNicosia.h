@@ -46,7 +46,7 @@ private:
 
     ScrollingTreeScrollingNodeDelegateNicosia& delegate() const;
 
-    void commitStateBeforeChildren(const ScrollingStateNode&) override;
+    bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     void repositionScrollingLayers() override;
     WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting) override;
 };

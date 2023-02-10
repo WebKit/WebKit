@@ -42,9 +42,12 @@ ScrollingTreeOverflowScrollProxyNode::ScrollingTreeOverflowScrollProxyNode(Scrol
 
 ScrollingTreeOverflowScrollProxyNode::~ScrollingTreeOverflowScrollProxyNode() = default;
 
-void ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateOverflowScrollProxyNode& overflowProxyStateNode = downcast<ScrollingStateOverflowScrollProxyNode>(stateNode);
+    if (!is<ScrollingStateOverflowScrollProxyNode>(stateNode))
+        return false;
+
+    const auto& overflowProxyStateNode = downcast<ScrollingStateOverflowScrollProxyNode>(stateNode);
 
     if (overflowProxyStateNode.hasChangedProperty(ScrollingStateNode::Property::OverflowScrollingNode))
         m_overflowScrollingNodeID = overflowProxyStateNode.overflowScrollingNode();
@@ -57,6 +60,8 @@ void ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
 
         scrollingTree().activeOverflowScrollProxyNodes().add(*this);
     }
+    
+    return true;
 }
 
 FloatSize ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit() const

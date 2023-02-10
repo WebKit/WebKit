@@ -51,11 +51,16 @@ ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
     scrollingTree().fixedOrStickyNodeRemoved();
 }
 
-void ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
+bool ScrollingTreeFixedNode::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
-    const ScrollingStateFixedNode& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
+    if (!is<ScrollingStateFixedNode>(stateNode))
+        return false;
+
+    const auto& fixedStateNode = downcast<ScrollingStateFixedNode>(stateNode);
     if (stateNode.hasChangedProperty(ScrollingStateNode::Property::ViewportConstraints))
         m_constraints = fixedStateNode.viewportConstraints();
+
+    return true;
 }
 
 FloatPoint ScrollingTreeFixedNode::computeLayerPosition() const
