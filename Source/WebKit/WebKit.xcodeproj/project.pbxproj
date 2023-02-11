@@ -13766,7 +13766,6 @@
 				379A873C18BBFF0700588AF2 /* _WKElementActionInternal.h in Headers */,
 				1AD01BC91905D37E00C9C45F /* _WKErrorRecoveryAttempting.h in Headers */,
 				317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */,
-				317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */,
 				DD8CD363296D03A400C04CA1 /* _WKFeature.h in Headers */,
 				DD8CD364296D03A400C04CA1 /* _WKFeatureInternal.h in Headers */,
 				005D158F18E4C4EB00734619 /* _WKFindDelegate.h in Headers */,
