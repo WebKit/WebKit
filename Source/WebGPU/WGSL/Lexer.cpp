@@ -41,6 +41,9 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::EndOfFile);
 
     switch (m_current) {
+    case '%':
+        shift();
+        return makeToken(TokenType::Modulo);
     case '(':
         shift();
         return makeToken(TokenType::ParenLeft);
@@ -83,6 +86,9 @@ Token Lexer<T>::lex()
     case '*':
         shift();
         return makeToken(TokenType::Star);
+    case '/':
+        shift();
+        return makeToken(TokenType::Slash);
     case '.': {
         shift();
         unsigned offset = currentOffset();

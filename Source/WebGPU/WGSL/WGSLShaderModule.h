@@ -39,11 +39,14 @@ namespace WGSL {
 class ShaderModule {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    explicit ShaderModule(const String& source)
+        : ShaderModule(source, { })
+    { }
+    
     ShaderModule(const String& source, const Configuration& configuration)
         : m_source(source)
         , m_configuration(configuration)
-    {
-    }
+    { }
 
     const String& source() const { return m_source; }
     const Configuration& configuration() const { return m_configuration; }

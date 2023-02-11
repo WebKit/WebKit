@@ -138,10 +138,13 @@ TEST(WGSLLexerTests, SpecialTokens)
     checkSingleToken("<"_s, TokenType::LT);
     checkSingleToken("-"_s, TokenType::Minus);
     checkSingleToken("--"_s, TokenType::MinusMinus);
+    checkSingleToken("%"_s, TokenType::Modulo);
     checkSingleToken("."_s, TokenType::Period);
     checkSingleToken("("_s, TokenType::ParenLeft);
     checkSingleToken(")"_s, TokenType::ParenRight);
     checkSingleToken(";"_s, TokenType::Semicolon);
+    checkSingleToken("/"_s, TokenType::Slash);
+    checkSingleToken("*"_s, TokenType::Star);
 }
 
 TEST(WGSLLexerTests, ComputeShader)
