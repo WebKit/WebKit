@@ -2304,13 +2304,6 @@ webkit.org/b/241376 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/
 
 webkit.org/b/242546 media/video-canvas-createPattern.html [ Pass Failure ]
 
-webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-shadow-unshared.html [ Pass Failure ]
-webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-gpu-process-crash.html [ Pass Timeout ]
-webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-scaled-unshared.html [ Pass Failure ]
-webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-colr-unshared.html [ Pass Failure ]
-webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-svg-unshared.html [ Pass Failure ]
-webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-color.html [ Pass Failure ]
-
 webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animation-overlap.html [ Pass Timeout ]
 
 # Skip Compression Stream Tests on WK1
