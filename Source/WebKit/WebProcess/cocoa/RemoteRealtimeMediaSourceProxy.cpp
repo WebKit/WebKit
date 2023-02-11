@@ -131,11 +131,11 @@ void RemoteRealtimeMediaSourceProxy::failApplyConstraintCallbacks(const String& 
         callbacks.takeFirst()(RealtimeMediaSource::ApplyConstraintsError { { }, errorMessage });
 }
 
-void RemoteRealtimeMediaSourceProxy::end(PageIdentifier pageIdentifier)
+void RemoteRealtimeMediaSourceProxy::end()
 {
     ASSERT(!m_isEnded);
     m_isEnded = true;
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::RemoveSource { m_identifier, pageIdentifier }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::RemoveSource { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::whenReady(CompletionHandler<void(String)>&& callback)

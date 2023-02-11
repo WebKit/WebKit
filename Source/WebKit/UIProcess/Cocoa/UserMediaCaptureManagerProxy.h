@@ -87,7 +87,7 @@ private:
     void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints&, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier, CreateSourceCallback&&);
     void startProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void stopProducingData(WebCore::RealtimeMediaSourceIdentifier);
-    void removeSource(WebCore::RealtimeMediaSourceIdentifier, WebCore::PageIdentifier);
+    void removeSource(WebCore::RealtimeMediaSourceIdentifier);
     void capabilities(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);
     void applyConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::MediaConstraints&);
     void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID, WebCore::PageIdentifier);
@@ -105,9 +105,8 @@ private:
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
 
     struct PageSources {
-        bool isEmpty() const { return !microphoneSource && cameraSources.isEmpty(); }
-        RefPtr<WebCore::RealtimeMediaSource> microphoneSource;
-        HashSet<Ref<WebCore::RealtimeMediaSource>> cameraSources;
+        WeakPtr<WebCore::RealtimeMediaSource> microphoneSource;
+        WeakHashSet<WebCore::RealtimeMediaSource> cameraSources;
     };
     HashMap<WebCore::PageIdentifier, PageSources> m_pageSources;
 };
