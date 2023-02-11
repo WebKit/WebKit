@@ -20,37 +20,32 @@
 
 #pragma once
 
-#include "InternalFunction.h"
+#include "JSFunction.h"
 
 namespace JSC {
 
 class StringPrototype;
 class GetterSetter;
 
-class StringConstructor final : public InternalFunction {
+class StringConstructor final : public JSFunction {
 public:
-    typedef InternalFunction Base;
+    using Base = JSFunction;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
-    static StringConstructor* create(VM& vm, Structure* structure, StringPrototype* stringPrototype, GetterSetter*)
-    {
-        StringConstructor* constructor = new (NotNull, allocateCell<StringConstructor>(vm)) StringConstructor(vm, structure);
-        constructor->finishCreation(vm, stringPrototype);
-        return constructor;
-    }
+    static StringConstructor* create(VM&, Structure*, StringPrototype*, GetterSetter*);
 
     DECLARE_INFO;
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
 private:
-    StringConstructor(VM&, Structure*);
+    StringConstructor(VM&, NativeExecutable*, JSGlobalObject*, Structure*);
     void finishCreation(VM&, StringPrototype*);
 };
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(StringConstructor, InternalFunction);
+static_assert(sizeof(StringConstructor) == sizeof(JSFunction), "Allocate StringConstructor in JSFunction IsoSubspace");
 
 JSString* stringFromCharCode(JSGlobalObject*, int32_t);
 JSString* stringConstructor(JSGlobalObject*, JSValue);
