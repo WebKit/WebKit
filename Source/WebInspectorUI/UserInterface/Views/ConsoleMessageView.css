@@ -61,7 +61,6 @@
 
 .console-message-body {
     white-space: pre-wrap;
-    display: flex;
 }
 
 .console-message-body > span {
@@ -314,7 +313,6 @@
 .console-message .timestamp {
     color: var(--text-color-tertiary);
     padding-inline-end: 5px;
-    display: block;
 }
 
 .console-session:not(.timestamps-visible) .console-message .timestamp {
