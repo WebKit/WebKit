@@ -183,10 +183,6 @@ private:
     void willCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, NSCachedURLResponse *, CompletionHandler<void(NSCachedURLResponse *)>&&) const final;
 #endif
 
-#if USE(CFURLCONNECTION)
-    bool shouldCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, const unsigned char*, unsigned long long) final;
-#endif
-
     Ref<FrameNetworkingContext> createNetworkingContext() final;
 
     bool isEmptyFrameLoaderClient() const override;

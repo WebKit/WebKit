@@ -42,6 +42,7 @@
 #include "SocketStreamHandleClient.h"
 #include "StorageSessionProvider.h"
 #include <CFNetwork/CFNetwork.h>
+#include <pal/spi/cf/CFNetworkSPI.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
@@ -53,14 +54,8 @@
 #include "WebCoreThreadInternal.h"
 #endif
 
-#if PLATFORM(COCOA)
 extern "C" const CFStringRef kCFStreamPropertySourceApplication;
 extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
-#endif
-
-#if PLATFORM(COCOA)
-#include <pal/spi/cf/CFNetworkSPI.h>
-#endif
 
 WTF_DECLARE_CF_TYPE_TRAIT(CFHTTPMessage);
 
@@ -97,7 +92,6 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     URL httpsURL { "https://" + m_url.host() };
     m_httpsURL = httpsURL.createCFURL();
 
-#if PLATFORM(COCOA)
     // Don't check for HSTS violation for ephemeral sessions since
     // HSTS state should not transfer between regular and private browsing.
     if (url.protocolIs("ws"_s)
@@ -109,7 +103,6 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
         });
         return;
     }
-#endif
 
     createStreams();
     ASSERT(!m_readStream == !m_writeStream);
@@ -309,14 +302,11 @@ void SocketStreamHandleImpl::createStreams()
     CFReadStreamRef readStream = 0;
     CFWriteStreamRef writeStream = 0;
     CFStreamCreatePairWithSocketToHost(0, host.get(), port(), &readStream, &writeStream);
-#if PLATFORM(COCOA)
-    // <rdar://problem/12855587> _kCFStreamSocketSetNoDelay is not exported on Windows
     CFWriteStreamSetProperty(writeStream, _kCFStreamSocketSetNoDelay, kCFBooleanTrue);
     if (m_auditData.sourceApplicationAuditData && m_auditData.sourceApplicationAuditData.get()) {
         CFReadStreamSetProperty(readStream, kCFStreamPropertySourceApplication, m_auditData.sourceApplicationAuditData.get());
         CFWriteStreamSetProperty(writeStream, kCFStreamPropertySourceApplication, m_auditData.sourceApplicationAuditData.get());
     }
-#endif
 
     m_readStream = adoptCF(readStream);
     m_writeStream = adoptCF(writeStream);
@@ -351,11 +341,7 @@ void SocketStreamHandleImpl::createStreams()
         };
         const void* values[] = {
             host.get(),
-#if PLATFORM(COCOA)
             gLegacyTLSEnabled ? kCFStreamSocketSecurityLevelNegotiatedSSL : kCFStreamSocketSecurityLevelTLSv1_2,
-#else
-            kCFStreamSocketSecurityLevelNegotiatedSSL,
-#endif
             validateCertificateChain
         };
         RetainPtr<CFDictionaryRef> settings = adoptCF(CFDictionaryCreate(0, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

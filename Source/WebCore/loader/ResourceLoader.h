@@ -217,10 +217,6 @@ private:
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<CFDictionaryRef> connectionProperties(ResourceHandle*) override;
 #endif
-#if USE(CFURLCONNECTION)
-    // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
-    bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) override;
-#endif
 
 #if USE(SOUP)
     void loadGResource();

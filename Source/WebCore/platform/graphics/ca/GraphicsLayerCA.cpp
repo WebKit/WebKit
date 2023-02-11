@@ -266,11 +266,7 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
 
 static inline bool supportsAcceleratedFilterAnimations()
 {
-#if PLATFORM(COCOA)
     return true;
-#else
-    return false;
-#endif
 }
 
 static PlatformCALayer::FilterType toPlatformCALayerFilterType(GraphicsLayer::ScalingFilter filter)
@@ -298,12 +294,7 @@ bool GraphicsLayer::supportsLayerType(Type type)
     case Type::TiledBacking:
         return true;
     case Type::Shape:
-#if PLATFORM(COCOA)
-        // FIXME: we can use shaper layers on Windows when PlatformCALayerCocoa::setShapePath() etc are implemented.
         return true;
-#else
-        return false;
-#endif
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -4880,11 +4871,7 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
 
 RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncContentsDisplayDelegate()
 {
-#if PLATFORM(COCOA)
     return adoptRef(new GraphicsLayerAsyncContentsDisplayDelegateCocoa(*this));
-#else
-    return nullptr;
-#endif
 }
 
 } // namespace WebCore

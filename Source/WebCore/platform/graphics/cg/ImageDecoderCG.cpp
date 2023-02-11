@@ -31,7 +31,6 @@
 #include "FourCC.h"
 #include "ImageOrientation.h"
 #include "ImageResolution.h"
-#include "ImageSourceCG.h"
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "Logging.h"
@@ -246,27 +245,6 @@ static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef
         static_cast<ImageResolution::ResolutionUnit>(resolutionUnit)
     });
 }
-
-#if !PLATFORM(COCOA)
-size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, size_t count)
-{
-    SharedBuffer* sharedBuffer = static_cast<SharedBuffer*>(info);
-    size_t sourceSize = sharedBuffer->size();
-    if (position >= sourceSize)
-        return 0;
-    
-    auto* source = sharedBuffer->data() + position;
-    size_t amount = std::min<size_t>(count, sourceSize - position);
-    memcpy(buffer, source, amount);
-    return amount;
-}
-
-void sharedBufferRelease(void* info)
-{
-    FragmentedSharedBuffer* sharedBuffer = static_cast<FragmentedSharedBuffer*>(info);
-    sharedBuffer->deref();
-}
-#endif
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
@@ -666,21 +644,10 @@ void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataRec
     
     auto contiguousData = data.makeContiguous();
     
-#if PLATFORM(COCOA)
     // On Mac the NSData inside the FragmentedSharedBuffer can be secretly appended to without the FragmentedSharedBuffer's knowledge.
     // We use FragmentedSharedBuffer's ability to wrap itself inside CFData to get around this, ensuring that ImageIO is
     // really looking at the FragmentedSharedBuffer.
     CGImageSourceUpdateData(m_nativeDecoder.get(), contiguousData->createCFData().get(), allDataReceived);
-#else
-    // Create a CGDataProvider to wrap the FragmentedSharedBuffer.
-    contiguousData.get().ref();
-    // We use the GetBytesAtPosition callback rather than the GetBytePointer one because FragmentedSharedBuffer
-    // does not provide a way to lock down the byte pointer and guarantee that it won't move, which
-    // is a requirement for using the GetBytePointer callback.
-    CGDataProviderDirectCallbacks providerCallbacks = { 0, 0, 0, sharedBufferGetBytesAtPosition, sharedBufferRelease };
-    RetainPtr<CGDataProviderRef> dataProvider = adoptCF(CGDataProviderCreateDirect(contiguousData.ptr(), data.size(), &providerCallbacks));
-    CGImageSourceUpdateDataProvider(m_nativeDecoder.get(), dataProvider.get(), allDataReceived);
-#endif
     
     m_uti = decodeUTI(contiguousData.get());
 }

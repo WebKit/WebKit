@@ -1084,7 +1084,6 @@ void GraphicsContextCG::clearCGShadow()
     CGContextSetShadowWithColor(platformContext(), CGSizeZero, 0, 0);
 }
 
-#if PLATFORM(COCOA)
 static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>& style)
 {
     if (!style) {
@@ -1130,7 +1129,6 @@ static void setCGStyle(CGContextRef context, const std::optional<GraphicsStyle>&
     if (cgStyle)
         CGContextSetStyle(context, cgStyle.get());
 }
-#endif
 
 void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 {
@@ -1162,9 +1160,7 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             break;
 
         case GraphicsContextState::Change::Style:
-#if PLATFORM(COCOA)
             setCGStyle(context, state.style());
-#endif
             break;
 
         case GraphicsContextState::Change::Alpha:

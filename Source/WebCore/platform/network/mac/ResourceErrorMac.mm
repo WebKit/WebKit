@@ -120,8 +120,8 @@ static RetainPtr<NSError> createNSErrorFromResourceErrorBase(const ResourceError
 
 ResourceError::ResourceError(NSError *nsError)
     : ResourceErrorBase(Type::Null)
-    , m_dataIsUpToDate(false)
     , m_platformError(nsError)
+    , m_dataIsUpToDate(false)
 {
     mapPlatformError();
 }

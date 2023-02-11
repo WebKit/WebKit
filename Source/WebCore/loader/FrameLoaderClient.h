@@ -300,11 +300,6 @@ public:
     virtual NSDictionary *dataDetectionContext() { return nullptr; }
 #endif
 
-#if USE(CFURLCONNECTION)
-    // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
-    virtual bool shouldCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, const unsigned char* data, unsigned long long length) = 0;
-#endif
-
     virtual bool shouldAlwaysUsePluginDocument(const String& /*mimeType*/) const { return false; }
     virtual bool shouldLoadMediaElementURL(const URL&) const { return true; }
 
