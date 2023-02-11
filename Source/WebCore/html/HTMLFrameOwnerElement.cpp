@@ -138,8 +138,7 @@ bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) co
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        // Use creationURL() because url() can be changed via History.replaceState() so it's not reliable.
-        if (equalIgnoringFragmentIdentifier(localFrame->document()->creationURL(), completeURL)) {
+        if (equalIgnoringFragmentIdentifier(localFrame->document()->url(), completeURL)) {
             if (foundOneSelfReference)
                 return true;
             foundOneSelfReference = true;

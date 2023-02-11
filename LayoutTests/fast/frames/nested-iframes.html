@@ -1,0 +1,32 @@
+<div id="container"></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+(async function () {
+const iframeLoaded = (parent, i) =>
+  new Promise((resolve) => {
+   let iframe = parent.ownerDocument.createElement("iframe");
+   iframe.onload = () => {
+     iframe.contentDocument.open();
+     iframe.contentDocument.close();
+     resolve(iframe)
+   }
+  parent.appendChild(iframe);
+});
+
+let parent = document.getElementById("container");;
+for (let i = 0; i < 3; i++) {
+  let iframe = await iframeLoaded(parent, i);
+  let iframeDocument = iframe.contentDocument
+
+  let div = iframeDocument.createElement("div");
+  iframeDocument.body.appendChild(div);
+
+  div.innerText = "nesting level: " + i;
+  parent = div;
+}
+if (window.testRunner)
+    testRunner.notifyDone();
+})();
+</script>
