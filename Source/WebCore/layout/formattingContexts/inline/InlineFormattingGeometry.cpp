@@ -46,7 +46,7 @@ InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext
 
 InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
 {
-    if (!lineContent.inlineItemRange.isEmpty()) {
+    if (!lineContent.committedRange.isEmpty()) {
         // Normally the next line's logical top is the previous line's logical bottom, but when the line ends
         // with the clear property set, the next line needs to clear the existing floats.
         if (lineContent.runs.isEmpty())

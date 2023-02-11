@@ -349,17 +349,6 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-static std::optional<PartialInlineItem> partialOverflowingContent(const InlineItemRange& committedRange, const CommittedContent& committedContent, const InlineItems& inlineItems)
-{
-    if (!committedContent.partialTrailingContentLength || !committedRange.endIndex())
-        return { };
-    auto overflowingInlineItemIndex = committedRange.endIndex() - 1;
-    auto overflowingInlineTextItemLength = downcast<InlineTextItem>(inlineItems[overflowingInlineItemIndex]).length();
-    ASSERT(overflowingInlineTextItemLength > committedContent.partialTrailingContentLength);
-    auto breakingOffset = overflowingInlineTextItemLength - committedContent.partialTrailingContentLength;
-    return PartialInlineItem { InlineItemPosition { overflowingInlineItemIndex, breakingOffset }, committedContent.overflowLogicalWidth };
-}
-
 LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
@@ -368,14 +357,12 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
     auto committedContent = placeInlineContent(lineInput.needsLayoutRange);
     auto committedRange = close(lineInput.needsLayoutRange, committedContent);
 
-    auto partialOverflow = partialOverflowingContent(committedRange, committedContent, m_inlineItems);
     auto isLastLine = isLastLineWithInlineContent(committedRange, lineInput.needsLayoutRange.endIndex(), committedContent.partialTrailingContentLength);
     auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
     auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
 
     return { committedRange
-        , partialOverflow
-        , partialOverflow ? std::nullopt : committedContent.overflowLogicalWidth
+        , committedContent.overflowLogicalWidth
         , WTFMove(m_placedFloats)
         , WTFMove(m_overflowingFloats)
         , m_lineIsConstrainedByFloat
@@ -405,9 +392,8 @@ LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineIt
 
     auto committedContent = placeInlineContent(needsLayoutRange);
     auto committedRange = close(needsLayoutRange, committedContent);
-    auto lineWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
-    auto partialOverflow = partialOverflowingContent(committedRange, committedContent, m_inlineItems);
-    return { committedRange, lineWidth, partialOverflow, WTFMove(m_placedFloats) };
+    auto contentWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
+    return { committedRange, committedContent.overflowLogicalWidth, contentWidth, WTFMove(m_placedFloats) };
 }
 
 void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
@@ -468,18 +454,24 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_lineLogicalRect.expandHorizontally(-m_lineMarginStart);
     m_lineIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 
-    if (previousLine) {
-        if (auto overflowingContent = previousLine->partialOverflowingContent) {
-            // Turn previous line's overflow content into the next line's leading content.
-            // "sp[<-line break->]lit_content" -> break position: 2 -> leading partial content length: 11.
-            auto overflowingInlineTextItem = downcast<InlineTextItem>(m_inlineItems[overflowingContent->inlineItemIndex()]);
-            ASSERT(overflowingInlineTextItem.length() > overflowingContent->endOffset());
-            auto leadingContentLength = overflowingInlineTextItem.length() - overflowingContent->endOffset();
-            m_partialLeadingTextItem = overflowingInlineTextItem.right(leadingContentLength, overflowingContent->width);
-            ASSERT(!previousLine->trailingOverflowingContentWidth);
+    auto initializeLeadingContentFromOverflow = [&] {
+        if (!previousLine || !needsLayoutRange.start.offset)
+            return;
+        auto overflowingInlineItemPosition = needsLayoutRange.start;
+        if (is<InlineTextItem>(m_inlineItems[overflowingInlineItemPosition.index])) {
+            auto& overflowingInlineTextItem = downcast<InlineTextItem>(m_inlineItems[overflowingInlineItemPosition.index]);
+            ASSERT(overflowingInlineItemPosition.offset < overflowingInlineTextItem.length());
+            auto overflowingLength = overflowingInlineTextItem.length() - overflowingInlineItemPosition.offset;
+            if (overflowingLength) {
+                // Turn previous line's overflow content into the next line's leading content.
+                // "sp[<-line break->]lit_content" -> break position: 2 -> leading partial content length: 11.
+                m_partialLeadingTextItem = overflowingInlineTextItem.right(overflowingLength, previousLine->trailingOverflowingContentWidth);
+                return;
+            }
         }
         m_overflowingLogicalWidth = previousLine->trailingOverflowingContentWidth;
-    }
+    };
+    initializeLeadingContentFromOverflow();
 }
 
 CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLayoutRange)
@@ -557,16 +549,23 @@ CommittedContent LineBuilder::placeInlineContent(const InlineItemRange& needsLay
 InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_lineIsConstrainedByFloat);
-    auto& rootStyle = this->rootStyle();
-    auto trailingInlineItemIndex = needsLayoutRange.startIndex() + committedContent.itemCount - 1;
-    auto lineRange = InlineItemRange { needsLayoutRange.startIndex(), trailingInlineItemIndex + 1 };
-    ASSERT(lineRange.endIndex() <= needsLayoutRange.endIndex());
+    auto lineRange = InlineItemRange { needsLayoutRange.start, { needsLayoutRange.startIndex() + committedContent.itemCount, { } } };
     if (!committedContent.itemCount || committedContent.itemCount == m_placedFloats.size()) {
         // Line is empty, we only managed to place float boxes.
         return lineRange;
     }
+
+    if (committedContent.partialTrailingContentLength) {
+        auto trailingInlineItemIndex = lineRange.end.index - 1;
+        auto overflowingInlineTextItemLength = downcast<InlineTextItem>(m_inlineItems[trailingInlineItemIndex]).length();
+        ASSERT(committedContent.partialTrailingContentLength && committedContent.partialTrailingContentLength < overflowingInlineTextItemLength);
+        lineRange.end = { trailingInlineItemIndex, overflowingInlineTextItemLength - committedContent.partialTrailingContentLength };
+    }
+    ASSERT(lineRange.endIndex() <= needsLayoutRange.endIndex());
+
     auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.endIndex(), committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
+    auto& rootStyle = this->rootStyle();
 
     auto handleTrailingContent = [&] {
         auto& quirks = m_inlineFormattingContext.formattingQuirks();

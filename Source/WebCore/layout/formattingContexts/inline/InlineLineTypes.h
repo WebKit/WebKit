@@ -28,6 +28,8 @@
 namespace WebCore {
 namespace Layout {
 
+class InlineItem;
+
 enum class LineEndingEllipsisPolicy : uint8_t {
     No,
     WhenContentOverflowsInInlineDirection,
@@ -39,6 +41,8 @@ enum class LineEndingEllipsisPolicy : uint8_t {
 struct InlineItemPosition {
     size_t index { 0 };
     size_t offset { 0 }; // Note that this is offset relative to the start position of the InlineItem.
+
+    bool operator==(const InlineItemPosition& other) const { return index == other.index && offset == other.offset; }
 };
 
 struct InlineItemRange {
@@ -53,14 +57,12 @@ struct InlineItemRange {
     InlineItemPosition end;
 };
 
-struct PartialInlineItem {
-    PartialInlineItem(InlineItemPosition, std::optional<InlineLayoutUnit>);
-
-    size_t inlineItemIndex() const { return position.index; }
-    size_t endOffset() const { return position.offset; }
-
-    InlineItemPosition position { };
-    std::optional<InlineLayoutUnit> width { };
+struct PreviousLine {
+    // Content width measured during line breaking (avoid double-measuring).
+    std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
+    bool endsWithLineBreak { false };
+    TextDirection inlineBaseDirection { TextDirection::LTR };
+    Vector<const InlineItem*> overflowingFloats;
 };
 
 inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosition end)
@@ -72,12 +74,6 @@ inline InlineItemRange::InlineItemRange(InlineItemPosition start, InlineItemPosi
 inline InlineItemRange::InlineItemRange(size_t startIndex, size_t endIndex)
     : start { startIndex, { } }
     , end { endIndex, { } }
-{
-}
-
-inline PartialInlineItem::PartialInlineItem(InlineItemPosition inlineItemPosition, std::optional<InlineLayoutUnit> width)
-    : position(inlineItemPosition)
-    , width(width)
 {
 }
 
