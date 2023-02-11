@@ -85,11 +85,6 @@
 #include <wtf/PlatformEnableCocoa.h>
 #endif
 
-/* --------- Apple Windows port --------- */
-#if PLATFORM(WIN) && !PLATFORM(WIN_CAIRO)
-#include <wtf/PlatformEnableWinApple.h>
-#endif
-
 /* --------- Windows CAIRO port --------- */
 #if PLATFORM(WIN_CAIRO)
 #include <wtf/PlatformEnableWinCairo.h>

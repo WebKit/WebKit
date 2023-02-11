@@ -203,7 +203,6 @@ set(WTF_PUBLIC_HEADERS
     PlatformEnable.h
     PlatformEnableCocoa.h
     PlatformEnablePlayStation.h
-    PlatformEnableWinApple.h
     PlatformEnableWinCairo.h
     PlatformHave.h
     PlatformLegacy.h
