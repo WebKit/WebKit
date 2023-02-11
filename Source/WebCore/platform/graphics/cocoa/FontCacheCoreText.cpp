@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -968,7 +968,7 @@ void FontCache::platformInvalidate()
     platformShouldEnhanceTextLegibility() = _AXSEnhanceTextLegibilityEnabled();
 }
 
-static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+static RetainPtr<CTFontDescriptorRef> fontDescriptorWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
     std::optional<SystemFontKind> systemDesign;
@@ -991,7 +991,7 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
         auto cascadeList = SystemFontDatabaseCoreText::forCurrentThread().cascadeList(fontDescription, family, *systemDesign, allowUserInstalledFonts);
         if (cascadeList.isEmpty())
             return nullptr;
-        return createFontForInstalledFonts(cascadeList[0].get(), size, allowUserInstalledFonts);
+        return cascadeList[0];
     }
 
     if (family.startsWith("UICTFontTextStyle"_s)) {
@@ -1000,23 +1000,17 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
         auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(family.string().createCFString().get(), contentSizeCategory(), fontDescription.computedLocale().string().createCFString().get()));
         if (traits)
             descriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
-        return createFontForInstalledFonts(descriptor.get(), size, allowUserInstalledFonts);
+        return descriptor;
     }
 
-    if (equalLettersIgnoringASCIICase(family, "-apple-menu"_s)) {
-        auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontMenuItem, size, fontDescription.computedLocale().string().createCFString().get()));
-        return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
-    }
+    if (equalLettersIgnoringASCIICase(family, "-apple-menu"_s))
+        return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMenuItem, size, fontDescription.computedLocale().string().createCFString().get()));
 
-    if (equalLettersIgnoringASCIICase(family, "-apple-status-bar"_s)) {
-        auto result = adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, size, fontDescription.computedLocale().string().createCFString().get()));
-        return createFontForInstalledFonts(result.get(), allowUserInstalledFonts);
-    }
+    if (equalLettersIgnoringASCIICase(family, "-apple-status-bar"_s))
+        return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, fontDescription.computedLocale().string().createCFString().get()));
 
-    if (equalLettersIgnoringASCIICase(family, "lastresort"_s)) {
-        auto lastResort = adoptCF(CTFontDescriptorCreateLastResort());
-        return adoptCF(CTFontCreateWithFontDescriptor(lastResort.get(), size, nullptr));
-    }
+    if (equalLettersIgnoringASCIICase(family, "lastresort"_s))
+        return adoptCF(CTFontDescriptorCreateLastResort());
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers"_s)) {
         int numberSpacingType = kNumberSpacingType;
@@ -1024,8 +1018,7 @@ static RetainPtr<CTFontRef> fontWithFamilySpecialCase(const AtomString& family, 
         auto numberSpacingNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &numberSpacingType));
         auto monospacedNumbersNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &monospacedNumbersSelector));
         auto systemFontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr));
-        auto monospaceFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithFeature(systemFontDescriptor.get(), numberSpacingNumber.get(), monospacedNumbersNumber.get()));
-        return createFontForInstalledFonts(monospaceFontDescriptor.get(), size, allowUserInstalledFonts);
+        return adoptCF(CTFontDescriptorCreateCopyWithFeature(systemFontDescriptor.get(), numberSpacingNumber.get(), monospacedNumbersNumber.get()));
     }
 
     return nullptr;
@@ -1038,8 +1031,10 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
     if (family.isEmpty())
         return nullptr;
 
-    if (auto font = fontWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts()))
+    if (auto fontDescriptor = fontDescriptorWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts())) {
+        auto font = createFontForInstalledFonts(fontDescriptor.get(), size, fontDescription.shouldAllowUserInstalledFonts());
         return preparePlatformFont(font.get(), fontDescription, fontCreationContext, true);
+    }
     auto fontLookup = platformFontLookupWithFamily(fontDatabase, family, fontDescription.fontSelectionRequest());
     return preparePlatformFont(fontLookup.result.get(), fontDescription, fontCreationContext, !fontLookup.createdFromPostScriptName, size);
 }
