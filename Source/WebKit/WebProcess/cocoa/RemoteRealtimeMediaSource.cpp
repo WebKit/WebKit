@@ -111,7 +111,7 @@ void RemoteRealtimeMediaSource::didEnd()
     if (m_proxy.isEnded())
         return;
 
-    m_proxy.end(pageIdentifier());
+    m_proxy.end();
     m_manager.removeSource(identifier());
     m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }

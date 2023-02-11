@@ -164,11 +164,11 @@ private:
 
     void byteCodeCompileIfNecessary(VM*);
 
-    void compile(VM*, Yarr::CharSize);
-    void compileIfNecessary(VM&, Yarr::CharSize);
+    void compile(VM*, Yarr::CharSize, std::optional<StringView> sampleString);
+    void compileIfNecessary(VM&, Yarr::CharSize, std::optional<StringView> sampleString);
 
-    void compileMatchOnly(VM*, Yarr::CharSize);
-    void compileIfNecessaryMatchOnly(VM&, Yarr::CharSize);
+    void compileMatchOnly(VM*, Yarr::CharSize, std::optional<StringView> sampleString);
+    void compileIfNecessaryMatchOnly(VM&, Yarr::CharSize, std::optional<StringView> sampleString);
 
 #if ENABLE(YARR_JIT_DEBUG)
     void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);

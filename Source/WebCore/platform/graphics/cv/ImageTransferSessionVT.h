@@ -41,6 +41,7 @@ class MediaTime;
 
 namespace WebCore {
 
+class VideoFrame;
 enum class VideoFrameRotation : uint16_t;
 
 class ImageTransferSessionVT {

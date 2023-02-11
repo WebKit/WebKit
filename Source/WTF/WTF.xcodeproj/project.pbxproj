@@ -245,7 +245,6 @@
 		DD3DC89B27A4BF8E007E5B61 /* PageAllocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E0151A825B004123FF /* PageAllocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89C27A4BF8E007E5B61 /* ParallelJobs.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472E6151A825B004123FF /* ParallelJobs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89D27A4BF8E007E5B61 /* ReadWriteLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC3C5D1F368A9700F59B6C /* ReadWriteLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC89E27A4BF8E007E5B61 /* PlatformEnableWinApple.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C98CDC823E7AFC80012F232 /* PlatformEnableWinApple.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC89F27A4BF8E007E5B61 /* Platform.h in Headers */ = {isa = PBXBuildFile; fileRef = A876DBD7151816E500DADB95 /* Platform.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8A027A4BF8E007E5B61 /* OSLogPrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 53FC70CE23FB950C005B1990 /* OSLogPrintStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC8A127A4BF8E007E5B61 /* StackShotProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9DAA051FD1C37B0079C5B2 /* StackShotProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1218,7 +1217,6 @@
 		7C595FFC252A96E000E42168 /* StdFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdFilesystem.h; sourceTree = "<group>"; };
 		7C9692941F66306E00267A9E /* KeyValuePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyValuePair.h; sourceTree = "<group>"; };
 		7C98CDC723E7A9B80012F232 /* PlatformEnableCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableCocoa.h; sourceTree = "<group>"; };
-		7C98CDC823E7AFC80012F232 /* PlatformEnableWinApple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableWinApple.h; sourceTree = "<group>"; };
 		7C98CDC923E7AFC80012F232 /* PlatformEnableWinCairo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnableWinCairo.h; sourceTree = "<group>"; };
 		7CBBA07319BB7FDC00BBF025 /* OSObjectPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSObjectPtr.h; sourceTree = "<group>"; };
 		7CD4C26F1E2C82B900929470 /* StringConcatenateNumbers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConcatenateNumbers.h; sourceTree = "<group>"; };
@@ -2207,7 +2205,6 @@
 				7C42307123CE2D8A006E54D0 /* PlatformEnable.h */,
 				7C98CDC723E7A9B80012F232 /* PlatformEnableCocoa.h */,
 				DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */,
-				7C98CDC823E7AFC80012F232 /* PlatformEnableWinApple.h */,
 				7C98CDC923E7AFC80012F232 /* PlatformEnableWinCairo.h */,
 				7C3A45D023CFA883007DE3A6 /* PlatformHave.h */,
 				7C42307423CEB187006E54D0 /* PlatformLegacy.h */,
@@ -3172,7 +3169,6 @@
 				DD3DC93327A4BF8E007E5B61 /* PlatformEnable.h in Headers */,
 				DD3DC91127A4BF8E007E5B61 /* PlatformEnableCocoa.h in Headers */,
 				DD4901E827B4748A00D7E50D /* PlatformEnablePlayStation.h in Headers */,
-				DD3DC89E27A4BF8E007E5B61 /* PlatformEnableWinApple.h in Headers */,
 				DD3DC96327A4BF8E007E5B61 /* PlatformEnableWinCairo.h in Headers */,
 				DD3DC8B927A4BF8E007E5B61 /* PlatformHave.h in Headers */,
 				DD3DC93827A4BF8E007E5B61 /* PlatformLegacy.h in Headers */,

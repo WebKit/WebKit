@@ -554,6 +554,11 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     return adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
 }
 
+static RetainPtr<CTFontRef> preparePlatformFont(CTFontDescriptorRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations, float size)
+{
+    return preparePlatformFont(adoptCF(CTFontCreateWithFontDescriptor(originalFont, size, nullptr)).get(), fontDescription, fontCreationContext, applyWeightWidthSlopeVariations);
+}
+
 RefPtr<Font> FontCache::similarFont(const FontDescription& description, const String& family)
 {
     // Attempt to find an appropriate font using a match based on the presence of keywords in
@@ -884,7 +889,7 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 }
 
 struct FontLookup {
-    RetainPtr<CTFontRef> result;
+    RetainPtr<CTFontDescriptorRef> result;
     bool createdFromPostScriptName { false };
 };
 
@@ -908,7 +913,7 @@ static bool isAllowlistedFamily(const AtomString& family)
     return Allowlist::singleton().allows(family);
 }
 
-static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const AtomString& family, FontSelectionRequest request, float size)
+static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const AtomString& family, FontSelectionRequest request)
 {
     if (!isAllowlistedFamily(family))
         return { nullptr };
@@ -941,15 +946,15 @@ static FontLookup platformFontLookupWithFamily(FontDatabase& fontDatabase, const
             if (const auto* installedFont = findClosestFont(familyFonts, request)) {
                 if (!installedFont->fontDescriptor)
                     return { nullptr };
-                return { adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr)), true };
+                return { installedFont->fontDescriptor.get(), true };
             }
             return { nullptr };
         }
-        return { adoptCF(CTFontCreateWithFontDescriptor(postScriptFont.fontDescriptor.get(), size, nullptr)), true };
+        return { postScriptFont.fontDescriptor.get(), true };
     }
 
     if (const auto* installedFont = findClosestFont(familyFonts, request))
-        return { adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr)), false };
+        return { installedFont->fontDescriptor.get(), false };
 
     return { nullptr };
 }
@@ -1033,11 +1038,10 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
     if (family.isEmpty())
         return nullptr;
 
-    FontLookup fontLookup;
-    fontLookup.result = fontWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts());
-    if (!fontLookup.result)
-        fontLookup = platformFontLookupWithFamily(fontDatabase, family, fontDescription.fontSelectionRequest(), size);
-    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontCreationContext, !fontLookup.createdFromPostScriptName);
+    if (auto font = fontWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts()))
+        return preparePlatformFont(font.get(), fontDescription, fontCreationContext, true);
+    auto fontLookup = platformFontLookupWithFamily(fontDatabase, family, fontDescription.fontSelectionRequest());
+    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontCreationContext, !fontLookup.createdFromPostScriptName, size);
 }
 
 #if PLATFORM(MAC)
