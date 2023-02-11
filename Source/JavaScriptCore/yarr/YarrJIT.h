@@ -437,7 +437,7 @@ enum class JITCompileMode : uint8_t {
     IncludeSubpatterns,
     InlineTest
 };
-void jitCompile(YarrPattern&, StringView patternString, CharSize, VM*, YarrCodeBlock& jitObject, JITCompileMode);
+void jitCompile(YarrPattern&, StringView patternString, CharSize, std::optional<StringView> sampleString, VM*, YarrCodeBlock& jitObject, JITCompileMode);
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
 
