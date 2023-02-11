@@ -44,7 +44,6 @@ using namespace WebCore;
 
 TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy)
     : DrawingAreaProxy(DrawingAreaType::TiledCoreAnimation, webPageProxy)
-    , m_isWaitingForDidUpdateGeometry(false)
 {
 }
 
@@ -190,7 +189,11 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
     ASSERT(!m_isWaitingForDidUpdateGeometry);
 
     willSendUpdateGeometry();
-    m_webPageProxy.send(Messages::DrawingArea::UpdateGeometry(m_size, true /* flushSynchronously */, createFence()), m_identifier);
+    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        weakThis->didUpdateGeometry();
+    }, m_identifier.toUInt64());
 }
 
 void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin)

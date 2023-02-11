@@ -48,6 +48,7 @@
 #include "RenderVideo.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "VideoFrameMetadata.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 

@@ -98,7 +98,7 @@ private:
     void didCompleteRenderingUpdateDisplay() override;
 
     // Message handlers.
-    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort) override;
+    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&&) override;
     void setDeviceScaleFactor(float) override;
     void suspendPainting();
     void resumePainting();

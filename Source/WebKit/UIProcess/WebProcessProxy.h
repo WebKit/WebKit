@@ -357,6 +357,7 @@ public:
     void sendProcessDidResume(ResumeReason) final;
     void didChangeThrottleState(ProcessThrottleState) final;
     ASCIILiteral clientName() const final { return "WebProcess"_s; }
+    String environmentIdentifier() const final;
 
 #if PLATFORM(COCOA)
     enum SandboxExtensionType : uint32_t {
@@ -739,6 +740,7 @@ private:
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
     bool m_isConnectedToHardwareConsole { true };
+    mutable String m_environmentIdentifier;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);

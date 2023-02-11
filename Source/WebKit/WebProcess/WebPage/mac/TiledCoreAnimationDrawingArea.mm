@@ -496,7 +496,7 @@ void TiledCoreAnimationDrawingArea::setExposedContentRect(const FloatRect&)
     ASSERT_NOT_REACHED();
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight& fencePort, CompletionHandler<void()>&& completionHandler)
 {
     m_inUpdateGeometry = true;
 
@@ -530,7 +530,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool
     if (flushSynchronously)
         [CATransaction flush];
 
-    send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+    completionHandler();
 
     m_inUpdateGeometry = false;
 

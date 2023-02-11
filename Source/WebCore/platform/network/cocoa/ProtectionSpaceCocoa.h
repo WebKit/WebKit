@@ -28,10 +28,6 @@
 #include "ProtectionSpaceBase.h"
 #include <wtf/RetainPtr.h>
 
-#if USE(CFURLCONNECTION)
-typedef struct _CFURLProtectionSpace* CFURLProtectionSpaceRef;
-#endif
-
 OBJC_CLASS NSURLProtectionSpace;
 
 namespace WebCore {
@@ -46,9 +42,6 @@ public:
 
     ProtectionSpace(WTF::HashTableDeletedValueType deletedValue) : ProtectionSpaceBase(deletedValue) { }
 
-#if USE(CFURLCONNECTION)
-    explicit ProtectionSpace(CFURLProtectionSpaceRef);
-#endif
     WEBCORE_EXPORT explicit ProtectionSpace(NSURLProtectionSpace *);
 
     static bool platformCompare(const ProtectionSpace& a, const ProtectionSpace& b);
@@ -56,10 +49,6 @@ public:
     bool encodingRequiresPlatformData() const { return m_nsSpace && encodingRequiresPlatformData(m_nsSpace.get()); }
 
     WEBCORE_EXPORT bool receivesCredentialSecurely() const;
-
-#if USE(CFURLCONNECTION)
-    CFURLProtectionSpaceRef cfSpace() const;
-#endif
     WEBCORE_EXPORT NSURLProtectionSpace *nsSpace() const;
 
 private:

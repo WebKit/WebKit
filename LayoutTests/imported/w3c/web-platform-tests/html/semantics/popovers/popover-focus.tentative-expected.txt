@@ -1,0 +1,46 @@
+This is a popover
+
+first button
+This is a popover
+
+This is a popover
+
+button
+This is a popover
+
+autofocus button
+This is a popover with autofocus on a tabindex=0 element
+
+button
+This is a popover
+
+autofocus button  second autofocus button
+This is a popover
+
+autofocus button  second autofocus button
+
+FAIL Popover focus test: default behavior - popover is not focused promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: default behavior - popover is not focused promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Popover corner cases test: default behavior - popover is not focused
+FAIL Popover focus test: autofocus popover promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: autofocus popover promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover corner cases test: autofocus popover promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover focus test: autofocus empty popover promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: autofocus empty popover promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover corner cases test: autofocus empty popover promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover focus test: autofocus popover with button promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: autofocus popover with button promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover corner cases test: autofocus popover with button promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover focus test: autofocus child promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: autofocus child promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover corner cases test: autofocus child promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover focus test: autofocus on tabindex=0 element promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: autofocus on tabindex=0 element promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover corner cases test: autofocus on tabindex=0 element promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover focus test: autofocus multiple children promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: autofocus multiple children promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover corner cases test: autofocus multiple children promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover focus test: autofocus popover and multiple autofocus children promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover button click focus test: autofocus popover and multiple autofocus children promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover corner cases test: autofocus popover and multiple autofocus children promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+

@@ -1614,6 +1614,17 @@ void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
     ASSERT(!m_backgroundToken || !m_foregroundToken);
 }
 
+String WebProcessProxy::environmentIdentifier() const
+{
+    if (m_environmentIdentifier.isEmpty()) {
+        StringBuilder builder;
+        builder.append(clientName());
+        builder.append(processIdentifier());
+        m_environmentIdentifier = builder.toString();
+    }
+    return m_environmentIdentifier;
+}
+
 void WebProcessProxy::updateAudibleMediaAssertions()
 {
     bool hasAudibleWebPage = WTF::anyOf(pages(), [] (auto& page) {

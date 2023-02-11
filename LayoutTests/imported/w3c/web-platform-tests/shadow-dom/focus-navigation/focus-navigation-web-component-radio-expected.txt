@@ -1,0 +1,7 @@
+OUT
+A B
+C D
+OUT
+
+PASS Focus for web component input type elements should be bound by <form> inside shadow DOM
+

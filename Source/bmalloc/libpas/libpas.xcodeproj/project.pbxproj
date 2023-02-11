@@ -2952,7 +2952,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -2968,7 +2968,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -2990,7 +2990,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -3008,7 +3008,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -3030,7 +3030,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -3048,7 +3048,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -3070,7 +3070,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -3088,7 +3088,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -3274,7 +3274,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -3292,7 +3292,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = macosx.internal;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

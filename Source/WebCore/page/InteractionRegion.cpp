@@ -106,15 +106,15 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
 
     auto bounds = region.bounds();
-
     if (bounds.isEmpty())
         return std::nullopt;
 
     auto& mainFrameView = *regionRenderer.document().frame()->mainFrame().view();
-    auto layoutSize = mainFrameView.layoutSize();
+
+    FloatSize frameViewSize = mainFrameView.size();
     // Adding some wiggle room, we use this to avoid extreme cases.
-    layoutSize.scale(1.3, 1.3);
-    auto layoutArea = layoutSize.area();
+    frameViewSize.scale(1.3, 1.3);
+    auto frameViewArea = frameViewSize.area();
 
     auto checkedRegionArea = bounds.area<RecordOverflow>();
     if (checkedRegionArea.hasOverflowed())
@@ -145,7 +145,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
     bool hasPointer = cursorTypeForElement(*element) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*element);
     if (!hasListener || !hasPointer) {
-        bool isOverlay = checkedRegionArea.value() <= layoutArea && renderer.style().specifiedZIndex() > 0;
+        bool isOverlay = checkedRegionArea.value() <= frameViewArea && renderer.style().specifiedZIndex() > 0;
         if (isOverlay) {
             Region boundsRegion;
             boundsRegion.unite(bounds);
@@ -161,7 +161,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
     }
 
-    if (checkedRegionArea.value() > layoutArea / 2)
+    if (checkedRegionArea.value() > frameViewArea / 2)
         return std::nullopt;
 
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();

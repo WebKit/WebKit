@@ -26,11 +26,6 @@ messages -> DrawingAreaProxy NotRefCounted {
     DidFirstLayerFlush(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     DispatchPresentationCallbacksAfterFlushingLayers(Vector<WebKit::CallbackID> callbackIDs);
 
-#if PLATFORM(COCOA)
-    // Used by TiledCoreAnimationDrawingAreaProxy.
-    DidUpdateGeometry()
-#endif
-
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     Update(uint64_t stateID, WebKit::UpdateInfo updateInfo)
     DidUpdateBackingStoreState(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo, WebKit::LayerTreeContext context)

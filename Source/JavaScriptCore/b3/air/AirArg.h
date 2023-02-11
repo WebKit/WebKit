@@ -1327,7 +1327,7 @@ public:
             case Width64:
                 return isValidScaledUImm12<64>(offset);
             case Width128:
-                return false;
+                return isValidScaledUImm12<128>(offset);
             }
         }
 

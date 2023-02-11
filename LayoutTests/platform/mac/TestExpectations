@@ -2623,8 +2623,6 @@ imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFai
 
 editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
 
-webkit.org/b/239791 webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/244932 webanimations/accelerated-overlapping-transform-animations.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
@@ -2646,7 +2644,8 @@ webkit.org/b/242484 fast/css/display-contents-all.html [ Pass ImageOnlyFailure ]
 webkit.org/b/242226 http/tests/media/modern-media-controls/time-control [ Pass Crash ]
 
 webkit.org/b/243515 svg/compositing/svg-poster-circle.html [ Pass ImageOnlyFailure ]
-webkit.org/b/243515 [ Monterey+ ] svg/compositing/outermost-svg-with-border-padding.html [ Pass ImageOnlyFailure ]
+# See also webkit.org/b/252088
+webkit.org/b/243515 svg/compositing/outermost-svg-with-border-padding.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243515 [ Monterey+ ] svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ Pass ImageOnlyFailure ]
 
 # The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.

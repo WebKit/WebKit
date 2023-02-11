@@ -1080,15 +1080,6 @@ void EmptyFrameLoaderClient::willCacheResponse(DocumentLoader*, ResourceLoaderId
 
 #endif
 
-#if USE(CFURLCONNECTION)
-
-bool EmptyFrameLoaderClient::shouldCacheResponse(DocumentLoader*, ResourceLoaderIdentifier, const ResourceResponse&, const unsigned char*, unsigned long long)
-{
-    return true;
-}
-
-#endif
-
 bool EmptyFrameLoaderClient::isEmptyFrameLoaderClient() const
 {
     return true;

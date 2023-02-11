@@ -28,10 +28,6 @@
 #include "ResourceResponseBase.h"
 #include <wtf/RetainPtr.h>
 
-#if USE(CFURLCONNECTION)
-#include <pal/spi/win/CFNetworkSPIWin.h>
-#endif
-
 OBJC_CLASS NSURLResponse;
 
 namespace WebCore {
@@ -49,21 +45,12 @@ public:
         m_initLevel = AllFields;
     }
 
-#if USE(CFURLCONNECTION)
-    ResourceResponse(CFURLResponseRef cfResponse)
-        : m_cfResponse(cfResponse)
-    {
-        m_initLevel = Uninitialized;
-        m_isNull = !cfResponse;
-    }
-#else
     ResourceResponse(NSURLResponse *nsResponse)
         : m_nsResponse(nsResponse)
     {
         m_initLevel = Uninitialized;
         m_isNull = !nsResponse;
     }
-#endif
 
     ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName)
@@ -71,9 +58,7 @@ public:
         m_initLevel = AllFields;
     }
 
-#if PLATFORM(COCOA)
     WEBCORE_EXPORT void disableLazyInitialization();
-#endif
 
     unsigned memoryUsage() const
     {
@@ -87,21 +72,14 @@ public:
          */
     }
 
-#if USE(CFURLCONNECTION)
-    WEBCORE_EXPORT CFURLResponseRef cfURLResponse() const;
-#endif
-#if PLATFORM(COCOA)
     WEBCORE_EXPORT NSURLResponse *nsURLResponse() const;
-#endif
 
 #if USE(QUICK_LOOK)
     bool isQuickLook() const { return m_isQuickLook; }
     void setIsQuickLook(bool isQuickLook) { m_isQuickLook = isQuickLook; }
 #endif
 
-#if PLATFORM(COCOA)
     void initNSURLResponse() const;
-#endif
 
 private:
     friend class ResourceResponseBase;
@@ -112,15 +90,10 @@ private:
 
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
+    mutable RetainPtr<NSURLResponse> m_nsResponse;
+
 #if USE(QUICK_LOOK)
     bool m_isQuickLook { false };
-#endif
-
-#if USE(CFURLCONNECTION)
-    mutable RetainPtr<CFURLResponseRef> m_cfResponse;
-#endif
-#if PLATFORM(COCOA)
-    mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
 };
 

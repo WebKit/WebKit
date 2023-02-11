@@ -52,7 +52,7 @@ namespace Style {
 struct ResolutionContext;
 }
 
-class KeyframeEffect : public AnimationEffect, public CSSPropertyBlendingClient {
+class KeyframeEffect final : public AnimationEffect, public CSSPropertyBlendingClient {
 public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Document&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<std::variant<double, KeyframeEffectOptions>>&&);
     static Ref<KeyframeEffect> create(Ref<KeyframeEffect>&&);
@@ -132,9 +132,9 @@ public:
 
     void willChangeRenderer();
 
-    Document* document() const override;
-    RenderElement* renderer() const override;
-    const RenderStyle& currentStyle() const override;
+    Document* document() const final;
+    RenderElement* renderer() const final;
+    const RenderStyle& currentStyle() const final;
     bool triggersStackingContext() const { return m_triggersStackingContext; }
     bool isRunningAccelerated() const { return m_runningAccelerated == RunningAccelerated::Yes; }
 
@@ -146,7 +146,7 @@ public:
     // direct interpolation based on the function list of any two particular keyframes. The prefix serves as a way to
     // make sure that the results of blend(...) can be made to return the same results as rendered by the hardware
     // animation code.
-    std::optional<unsigned> transformFunctionListPrefix() const override { return (!preventsAcceleration()) ? std::optional<unsigned>(m_transformFunctionListsMatchPrefix) : std::nullopt; }
+    std::optional<unsigned> transformFunctionListPrefix() const final { return (!preventsAcceleration()) ? std::optional<unsigned>(m_transformFunctionListsMatchPrefix) : std::nullopt; }
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
     const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }

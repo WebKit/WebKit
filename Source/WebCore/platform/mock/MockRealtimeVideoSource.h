@@ -46,6 +46,8 @@ namespace WebCore {
 class FloatRect;
 class GraphicsContext;
 
+enum class VideoFrameRotation : uint16_t;
+
 class MockRealtimeVideoSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
     static CaptureSourceOrError create(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const MediaConstraints*, PageIdentifier);
@@ -62,7 +64,7 @@ protected:
 
     Seconds elapsedTime();
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
-    VideoFrame::Rotation videoFrameRotation() const final { return m_deviceOrientation; }
+    VideoFrameRotation videoFrameRotation() const final { return m_deviceOrientation; }
     void generatePresets() override;
 
     IntSize captureSize() const;
@@ -122,7 +124,7 @@ private:
     Color m_fillColor { Color::black };
     MockMediaDevice m_device;
     RefPtr<VideoPreset> m_preset;
-    VideoFrame::Rotation m_deviceOrientation { VideoFrame::Rotation::None };
+    VideoFrameRotation m_deviceOrientation { };
 };
 
 } // namespace WebCore

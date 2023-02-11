@@ -48,6 +48,7 @@
 #include "OESDrawBuffersIndexed.h"
 #include "OESTextureFloatLinear.h"
 #include "RenderBox.h"
+#include "WebCodecsVideoFrame.h"
 #include "WebCoreOpaqueRoot.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"

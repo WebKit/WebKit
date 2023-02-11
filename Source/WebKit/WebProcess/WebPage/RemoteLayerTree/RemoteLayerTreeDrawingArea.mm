@@ -147,13 +147,11 @@ void RemoteLayerTreeDrawingArea::setRootCompositingLayer(GraphicsLayer* rootLaye
     triggerRenderingUpdate();
 }
 
-void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&)
+void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WTF::MachSendRight&, CompletionHandler<void()>&& completionHandler)
 {
     m_webPage.setSize(viewSize);
-
     triggerRenderingUpdate();
-
-    send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+    completionHandler();
 }
 
 bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameView& frameView) const

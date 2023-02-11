@@ -41,6 +41,7 @@
 #include "RoundedRect.h"
 #include "SystemImage.h"
 #include "TextBoxIterator.h"
+#include "VideoFrame.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

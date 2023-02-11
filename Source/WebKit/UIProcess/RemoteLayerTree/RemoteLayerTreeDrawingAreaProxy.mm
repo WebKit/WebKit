@@ -118,7 +118,11 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
 {
     m_lastSentSize = m_size;
     m_isWaitingForDidUpdateGeometry = true;
-    m_webPageProxy.send(Messages::DrawingArea::UpdateGeometry(m_size, false /* flushSynchronously */, MachSendRight()), m_identifier);
+    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, false /* flushSynchronously */, MachSendRight()), [weakThis = WeakPtr { this }] {
+        if (!weakThis)
+            return;
+        weakThis->didUpdateGeometry();
+    }, m_identifier.toUInt64());
 }
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)

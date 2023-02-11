@@ -1,0 +1,61 @@
+Direct DOM children
+
+Ancestor popover
+
+Child popover
+
+Grandchildren
+
+Ancestor popover
+
+Child popover
+
+popovertoggletarget attribute relationship
+
+Ancestor popover
+
+Button
+Child popover
+
+nested popovertoggletarget attribute relationship
+
+Ancestor popover
+
+Button
+Child popover
+
+anchor attribute relationship
+
+Ancestor popover
+
+Child popover
+
+indirect anchor attribute relationship
+
+Ancestor popover
+
+Anchor
+Child popover
+
+This is popover #1
+
+Popover 2  Popover 4
+This is popover #2
+
+Popover 3
+This is popover #3
+
+This is popover #4
+
+Popover 1 This is a dialogCloseDialog
+
+FAIL Direct DOM children The string did not match the expected pattern.
+FAIL Grandchildren The string did not match the expected pattern.
+FAIL popovertoggletarget attribute relationship The string did not match the expected pattern.
+FAIL nested popovertoggletarget attribute relationship The string did not match the expected pattern.
+FAIL anchor attribute relationship The string did not match the expected pattern.
+FAIL indirect anchor attribute relationship The string did not match the expected pattern.
+FAIL more complex nesting, all using anchor ancestry The string did not match the expected pattern.
+FAIL popovers should be closed by dialogs p1.showPopover is not a function. (In 'p1.showPopover()', 'p1.showPopover' is undefined)
+FAIL dialogs should not be closed by popovers p1.showPopover is not a function. (In 'p1.showPopover()', 'p1.showPopover' is undefined)
+

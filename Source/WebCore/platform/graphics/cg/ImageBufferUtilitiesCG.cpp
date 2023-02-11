@@ -31,14 +31,11 @@
 #include "GraphicsContextCG.h"
 #include "MIMETypeRegistry.h"
 #include "PixelBuffer.h"
+#include "UTIUtilities.h"
 #include <ImageIO/ImageIO.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/text/Base64.h>
-
-#if PLATFORM(COCOA)
-#include "UTIUtilities.h"
-#endif
 
 namespace WebCore {
 

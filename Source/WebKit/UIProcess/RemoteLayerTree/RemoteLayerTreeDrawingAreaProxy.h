@@ -76,7 +76,7 @@ private:
     void sizeDidChange() final;
     void deviceScaleFactorDidChange() final;
     void windowKindDidChange() final;
-    void didUpdateGeometry() final;
+    void didUpdateGeometry();
     void attachToProvisionalFrameProcess(WebProcessProxy&) final;
     void startReceivingRemoteLayerTreeDrawingAreaProxyMessages(WebProcessProxy&);
 

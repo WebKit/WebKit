@@ -42,7 +42,6 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
-#include "VideoFrame.h"
 #include "VideoFrameTimeMetadata.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
@@ -72,6 +71,7 @@ class MediaStreamPrivate;
 class OrientationNotifier;
 class PlatformAudioData;
 class RealtimeMediaSourceSettings;
+class VideoFrame;
 
 struct CaptureSourceOrError;
 
@@ -108,7 +108,7 @@ public:
         virtual ~AudioSampleObserver() = default;
 
         // May be called on a background thread.
-        virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
+        virtual void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
     };
     class VideoFrameObserver {
     public:
@@ -270,7 +270,7 @@ protected:
     void initializeEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata);
-    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
+    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
     void forEachObserver(const Function<void(Observer&)>&);
     void forEachVideoFrameObserver(const Function<void(VideoFrameObserver&)>&);

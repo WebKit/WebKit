@@ -1251,7 +1251,12 @@ bool ValidImageDataSize(const Context *context,
     // ...the data would be unpacked from the buffer object such that the memory reads required
     // would exceed the data store size.
     const InternalFormat &formatInfo = GetInternalFormatInfo(format, type);
-    ASSERT(formatInfo.internalFormat != GL_NONE);
+    if (formatInfo.internalFormat == GL_NONE)
+    {
+        UNREACHABLE();
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kInternalErrorFormatNotFound);
+        return false;
+    }
     const Extents size(width, height, depth);
     const auto &unpack = context->getState().getUnpackState();
 

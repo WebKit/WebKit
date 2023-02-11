@@ -107,7 +107,7 @@ bool canUseWebAssemblyFastMemory();
     v(Unsigned, repatchCountForCoolDown, 8, Normal, nullptr) \
     v(Unsigned, initialCoolDownCount, 20, Normal, nullptr) \
     v(Unsigned, repatchBufferingCountdown, 6, Normal, nullptr) \
-    v(Unsigned, initialRepatchBufferingCountdown, 4, Normal, nullptr) \
+    v(Unsigned, initialRepatchBufferingCountdown, 6, Normal, nullptr) \
     \
     v(Bool, dumpGeneratedBytecodes, false, Normal, nullptr) \
     v(Bool, dumpGeneratedWasmBytecodes, false, Normal, nullptr) \

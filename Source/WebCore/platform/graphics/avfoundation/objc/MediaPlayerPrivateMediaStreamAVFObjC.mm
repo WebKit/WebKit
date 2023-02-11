@@ -36,6 +36,7 @@
 #import "MediaSessionManagerCocoa.h"
 #import "MediaStreamPrivate.h"
 #import "PixelBufferConformerCV.h"
+#import "VideoFrame.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateMediaStream.h"
 #import <CoreGraphics/CGAffineTransform.h>
@@ -135,6 +136,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setNativeImageCreator(NativeImageCrea
 
 MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer* player)
     : m_player(player)
+    , m_videoRotation { VideoFrameRotation::None }
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))

@@ -55,7 +55,7 @@ window.onload = async function() {
     firstElement.slot = "first";
     firstElement.id = "first";
 
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(requestAnimationFrame);
 
     // Create another named slot and assign another element to it.
     let secondSlot = shadowRoot.appendChild(document.createElement("slot"));
@@ -71,14 +71,15 @@ window.onload = async function() {
 
     await animation.ready;
 
-    await new Promise(resolve => requestAnimationFrame(resolve));
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
 
     firstElement.remove();
 
     // Wait until animation has progressed some before snapshotting the test result.
     while (animation.currentTime < 100)
-        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(requestAnimationFrame);
 
     if (window.testRunner)
         testRunner.notifyDone();

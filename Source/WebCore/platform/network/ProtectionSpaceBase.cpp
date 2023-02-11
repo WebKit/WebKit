@@ -27,11 +27,6 @@
 
 #include "ProtectionSpace.h"
 
-#if USE(CFURLCONNECTION)
-#include "AuthenticationCF.h"
-#include <CFNetwork/CFURLProtectionSpacePriv.h>
-#endif
-
 namespace WebCore {
  
 // Need to enforce empty, non-null strings due to the pickiness of the String == String operator

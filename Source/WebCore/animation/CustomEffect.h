@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class CustomEffect : public AnimationEffect {
+class CustomEffect final : public AnimationEffect {
 public:
     static ExceptionOr<Ref<CustomEffect>> create(Ref<CustomEffectCallback>&&, std::optional<std::variant<double, EffectTiming>>&&);
     ~CustomEffect() { }

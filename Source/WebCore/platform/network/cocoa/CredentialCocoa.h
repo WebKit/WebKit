@@ -29,10 +29,6 @@
 #include <Security/SecBase.h>
 #include <wtf/RetainPtr.h>
 
-#if USE(CFURLCONNECTION)
-#include <pal/spi/cf/CFNetworkSPI.h>
-#endif
-
 OBJC_CLASS NSURLCredential;
 
 namespace WebCore {
@@ -51,18 +47,12 @@ public:
 
     Credential(const Credential&, CredentialPersistence);
 
-#if USE(CFURLCONNECTION)
-    explicit Credential(CFURLCredentialRef);
-#endif
     WEBCORE_EXPORT explicit Credential(NSURLCredential *);
 
     WEBCORE_EXPORT bool isEmpty() const;
 
     bool encodingRequiresPlatformData() const { return m_nsCredential && encodingRequiresPlatformData(m_nsCredential.get()); }
 
-#if USE(CFURLCONNECTION)
-    CFURLCredentialRef cfCredential() const;
-#endif
     WEBCORE_EXPORT NSURLCredential *nsCredential() const;
 
     static bool platformCompare(const Credential&, const Credential&);

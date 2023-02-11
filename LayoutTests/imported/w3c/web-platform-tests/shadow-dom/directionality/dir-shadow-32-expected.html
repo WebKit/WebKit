@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>[dir] and shadow slots</title>
+<link rel="author" title="Eric Meyer" href="mailto:emeyer@igalia.com">
+<link rel="help" href="">
+<style type="text/css">
+body {width: 600px;}
+div {border: 1px solid gray; margin: 1em; padding: 0.25em;}
+span {border: 1px solid silver;}
+</style>
+</head>
+<body>
+
+<p>`dir=rtl` on the shadow host, span in the shadow tree</p>
+<div id="host" dir="rtl"><span>RTL</span></div>
+<p id="result">The computed `direction` value for the shadow span is: rtl.</p>
+
+</body>
+</html>

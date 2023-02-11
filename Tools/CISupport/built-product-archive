@@ -356,6 +356,8 @@ def extractBuiltProduct(configuration, platform):
 
         # Restore WinCairoRequirements version for test bot use
         if platform == 'wincairo':
+            assert 'WEBKIT_LIBRARIES' in os.environ
+            os.makedirs(os.getenv('WEBKIT_LIBRARIES'), exist_ok=True)
             shutil.copy(os.path.join(_configurationBuildDirectory, 'WebKitRequirementsWin64.zip.config'), os.getenv('WEBKIT_LIBRARIES'))
 
 

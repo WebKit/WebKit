@@ -358,18 +358,26 @@ class PullRequest(Command):
             return 1
 
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
-        issues = commits[0].issues
+        issues = [
+            issue
+            for commit in commits
+            for issue in commit.issues
+        ]
 
         radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
         not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)
         if radar_issue and not_radar and radar_issue.tracker.radarclient():
             not_radar.cc_radar(radar=radar_issue)
+        redacted_issue = None
+        for candidate in issues:
+            if candidate.redacted:
+                redacted_issue = candidate
         issue = issues[0] if issues else None
 
         remote_repo = repository.remote(name=source_remote)
-        if isinstance(remote_repo, remote.GitHub) and issue and issue.redacted and args.remote is None:
-            print('{} is considered the primary issue for your pull request'.format(issue.link))
-            print("{} {}".format(issue.link, issue.redacted))
+        if isinstance(remote_repo, remote.GitHub) and redacted_issue and args.remote is None:
+            print('A commit you are uploading references {}'.format(redacted_issue.link))
+            print("{} {}".format(redacted_issue.link, redacted_issue.redacted))
             print("Pull request needs to be sent to a secure remote for review")
             original_remote = source_remote
             if len(repository.source_remotes()) < 2:

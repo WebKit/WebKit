@@ -28,13 +28,17 @@
 
 #if USE(CG)
 
-#include "ImageSourceCG.h"
 #include "MIMETypeRegistry.h"
-
+#include "UTIUtilities.h"
 #include <ImageIO/ImageIO.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/RobinHoodHashSet.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
 
 namespace WebCore {
 
@@ -119,6 +123,18 @@ bool isSupportedImageType(const String& imageType)
 bool isGIFImageType(StringView imageType)
 {
     return imageType == "com.compuserve.gif"_s;
+}
+
+String MIMETypeForImageType(const String& uti)
+{
+    return MIMETypeFromUTI(uti);
+}
+
+String preferredExtensionForImageType(const String& uti)
+{
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return adoptCF(UTTypeCopyPreferredTagWithClass(uti.createCFString().get(), kUTTagClassFilenameExtension)).get();
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 }

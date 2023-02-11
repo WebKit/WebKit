@@ -57,6 +57,10 @@ class VideoFrame;
 struct WebKitEncodedFrameInfo;
 }
 
+namespace WebCore {
+enum class VideoFrameRotation : uint16_t;
+}
+
 namespace WebKit {
 
 class RemoteVideoFrameObjectHeapProxy;
@@ -180,7 +184,7 @@ private:
 
     Decoder* createDecoderInternal(VideoCodecType, Function<void(Decoder&)>&&);
     Encoder* createEncoderInternal(VideoCodecType, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, Function<void(Encoder&)>&&);
-    template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrame::Rotation, MediaTime, uint32_t);
+    template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, uint32_t);
 
 private:
     HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());

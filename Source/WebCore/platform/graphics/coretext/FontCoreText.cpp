@@ -32,24 +32,20 @@
 #include "FontCache.h"
 #include "FontCascade.h"
 #include "FontDescription.h"
+#include "LocaleCocoa.h"
 #include "Logging.h"
 #include "OpenTypeCG.h"
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <float.h>
+#include <pal/spi/cf/CoreTextSPI.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <unicode/uchar.h>
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/StdLibExtras.h>
 
-#if PLATFORM(COCOA)
-#include "LocaleCocoa.h"
 #include <pal/cf/CoreTextSoftLink.h>
-#include <pal/spi/cf/CoreTextSPI.h>
-#else
-#include <pal/spi/win/CoreTextSPIWin.h>
-#endif
 
 namespace WebCore {
 
