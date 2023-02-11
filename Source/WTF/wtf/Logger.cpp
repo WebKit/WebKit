@@ -38,8 +38,8 @@ Lock loggerObserverLock;
 String Logger::LogSiteIdentifier::toString() const
 {
     if (className)
-        return makeString(className, "::", methodName, '(', hex(objectPtr), ") ");
-    return makeString(methodName, '(', hex(objectPtr), ") ");
+        return makeString(className, "::"_s, methodName, '(', hex(objectPtr), ") "_s);
+    return makeString(methodName, '(', hex(objectPtr), ") "_s);
 }
 
 String LogArgument<const void*>::toString(const void* argument)

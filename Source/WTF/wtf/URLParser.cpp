@@ -2510,7 +2510,7 @@ void URLParser::addNonSpecialDotSlash()
 {
     auto oldPathStart = m_url.m_hostEnd + m_url.m_portLength;
     auto& oldString = m_url.m_string;
-    m_url.m_string = makeString(StringView(oldString).left(oldPathStart + 1), "./", StringView(oldString).substring(oldPathStart + 1));
+    m_url.m_string = makeString(StringView(oldString).left(oldPathStart + 1), "./"_s, StringView(oldString).substring(oldPathStart + 1));
     m_url.m_pathAfterLastSlash += 2;
     m_url.m_pathEnd += 2;
     m_url.m_queryEnd += 2;
