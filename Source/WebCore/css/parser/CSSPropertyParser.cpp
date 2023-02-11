@@ -1866,6 +1866,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
 
     do {
         bool parsedLonghand[10] = { false };
+        bool lastParsedWasPosition = false;
         RefPtr<CSSValue> originValue;
         do {
             bool foundProperty = false;
@@ -1887,14 +1888,18 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                 } else if (property == CSSPropertyBackgroundSize) {
                     if (!consumeSlashIncludingWhitespace(m_range))
                         continue;
+                    if (!lastParsedWasPosition)
+                        return false;
                     value = consumeSingleBackgroundSize(m_range, m_context);
-                    if (!value || !parsedLonghand[i - 1]) // Position must have been parsed in the current layer.
+                    if (!value)
                         return false;
                 } else if (property == CSSPropertyMaskSize) {
                     if (!consumeSlashIncludingWhitespace(m_range))
                         continue;
+                    if (!lastParsedWasPosition)
+                        return false;
                     value = consumeSingleMaskSize(m_range, m_context);
-                    if (!value || !parsedLonghand[i - 1]) // Position must have been parsed in the current layer.
+                    if (!value)
                         return false;
                 } else if (property == CSSPropertyBackgroundPositionY || property == CSSPropertyWebkitMaskPositionY) {
                     continue;
@@ -1907,6 +1912,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                     parsedLonghand[i] = true;
                     foundProperty = true;
                     addBackgroundValue(longhands[i], value.releaseNonNull());
+                    lastParsedWasPosition = valueY;
                     if (valueY) {
                         parsedLonghand[i + 1] = true;
                         addBackgroundValue(longhands[i + 1], valueY.releaseNonNull());
@@ -1917,7 +1923,6 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                 return false;
         } while (!m_range.atEnd() && m_range.peek().type() != CommaToken);
 
-        // FIXME: This will make invalid longhands, see crbug.com/386459
         for (size_t i = 0; i < longhandCount; ++i) {
             CSSPropertyID property = shorthand.properties()[i];
             if (property == CSSPropertyBackgroundColor && !m_range.atEnd()) {
