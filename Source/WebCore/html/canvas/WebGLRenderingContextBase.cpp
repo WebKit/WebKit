@@ -144,6 +144,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(MEDIA_STREAM)
+#include "VideoFrame.h"
+#endif
+
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "OffscreenCanvas.h"
 #endif

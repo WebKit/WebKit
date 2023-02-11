@@ -299,6 +299,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
 #include "MockRealtimeMediaSourceCenter.h"
+#include "VideoFrame.h"
 #endif
 
 #if ENABLE(MEDIA_RECORDER)
