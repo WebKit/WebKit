@@ -3827,6 +3827,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return true;
         }
 
+        case StringConstructorIntrinsic: {
+            insertChecks();
+            if (argumentCountIncludingThis <= 1)
+                setResult(jsConstant(m_vm->smallStrings.emptyString()));
+            else
+                setResult(addToGraph(CallStringConstructor, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+            return true;
+        }
+
 #if ENABLE(WEBASSEMBLY)
         case WasmFunctionIntrinsic: {
             if (callOp != Call)

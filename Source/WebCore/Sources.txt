@@ -1492,6 +1492,7 @@ html/forms/FileIconLoader.cpp
 html/parser/CSSPreloadScanner.cpp
 html/parser/HTMLConstructionSite.cpp
 html/parser/HTMLDocumentParser.cpp
+html/parser/HTMLDocumentParserFastPath.cpp
 html/parser/HTMLElementStack.cpp
 html/parser/HTMLEntityParser.cpp
 html/parser/HTMLEntitySearch.cpp

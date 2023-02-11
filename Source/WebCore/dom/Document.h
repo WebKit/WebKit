@@ -584,6 +584,9 @@ public:
 
     Style::Resolver& userAgentShadowTreeStyleResolver();
 
+    bool isDirAttributeDirty() const { return m_isDirAttributeDirty; }
+    void setIsDirAttributeDirty() { m_isDirAttributeDirty = true; }
+
     CSSFontSelector& fontSelector() { return m_fontSelector; }
     const CSSFontSelector& fontSelector() const { return m_fontSelector; }
 
@@ -1413,6 +1416,7 @@ public:
     Document& ensureTemplateDocument();
     void setTemplateDocumentHost(Document* templateDocumentHost) { m_templateDocumentHost = templateDocumentHost; }
     Document* templateDocumentHost() { return m_templateDocumentHost.get(); }
+    bool isTemplateDocument() const { return !!m_templateDocumentHost; }
 
     Ref<DocumentFragment> documentFragmentForInnerOuterHTML();
 
@@ -2358,6 +2362,7 @@ private:
     bool m_inHitTesting { false };
     bool m_didDispatchViewportPropertiesChanged { false };
 #endif
+    bool m_isDirAttributeDirty { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 };

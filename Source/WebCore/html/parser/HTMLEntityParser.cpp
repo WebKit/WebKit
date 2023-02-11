@@ -146,4 +146,15 @@ size_t decodeNamedEntityToUCharArray(const char* name, UChar result[4])
     return numberOfCodePoints + appendUChar32ToUCharArray(search.mostRecentMatch()->secondValue, result + numberOfCodePoints);
 }
 
+void appendLegalEntityFor(UChar32 character, Vector<UChar>& ouputBuffer)
+{
+    auto legalEntity = HTMLEntityParser::legalEntityFor(character);
+    if (U_IS_BMP(legalEntity)) {
+        ouputBuffer.append(static_cast<UChar>(legalEntity));
+        return;
+    }
+    ouputBuffer.append(U16_LEAD(legalEntity));
+    ouputBuffer.append(U16_TRAIL(legalEntity));
+}
+
 } // namespace WebCore

@@ -1163,6 +1163,16 @@ MacroAssemblerCodeRef<JITThunkPtrTag> numberConstructorCallThunkGenerator(VM& vm
     return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "Number");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> stringConstructorCallThunkGenerator(VM& vm)
+{
+    SpecializedThunkJIT jit(vm, 1);
+    jit.loadJSArgument(0, JSRInfo::jsRegT10);
+    jit.appendFailure(jit.branchIfNotCell(JSRInfo::jsRegT10));
+    jit.appendFailure(jit.branchIfNotString(JSRInfo::jsRegT10.payloadGPR()));
+    jit.returnJSValue(JSRInfo::jsRegT10);
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "String");
+}
+
 MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM& vm)
 {
     SpecializedThunkJIT jit(vm, 1);

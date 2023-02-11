@@ -38,6 +38,7 @@ class HTMLSelectElement : public HTMLFormControlElement, private TypeAheadDataSo
     WTF_MAKE_ISO_ALLOCATED(HTMLSelectElement);
 public:
     static Ref<HTMLSelectElement> create(const QualifiedName&, Document&, HTMLFormElement*);
+    static Ref<HTMLSelectElement> create(Document&);
 
     WEBCORE_EXPORT int selectedIndex() const;
     WEBCORE_EXPORT void setSelectedIndex(int);
