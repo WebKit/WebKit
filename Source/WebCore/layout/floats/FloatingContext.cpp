@@ -215,7 +215,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         auto alignWithContainingBlock = [&]() -> Position {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-            if (isFloaingCandidateLogicallyLeftPositioned(layoutBox))
+            if (isFloatingCandidateLogicallyLeftPositioned(layoutBox))
                 return { horizontalConstraints.logicalLeft + boxGeometry.marginStart() };
             return { horizontalConstraints.logicalRight() - boxGeometry.marginEnd() - boxGeometry.borderBoxWidth() };
         };
@@ -256,7 +256,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     }
     absoluteTopLeft.setY(verticalPositionCandidate);
     auto margins = Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloaingCandidateLogicallyLeftPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloatingCandidateLogicallyLeftPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findAvailablePosition(floatBox, m_floatingState.floats());
     // Convert box coordinates from formatting root back to containing block.
@@ -277,7 +277,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     auto absoluteCoordinates = this->absoluteCoordinates(layoutBox);
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     auto margins = Edges { { boxGeometry.marginStart(), boxGeometry.marginEnd() }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloaingCandidateLogicallyLeftPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isFloatingCandidateLogicallyLeftPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
     auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
@@ -456,7 +456,7 @@ FloatingState::FloatItem FloatingContext::toFloatItem(const Box& floatBox) const
 {
     auto absoluteBoxGeometry = BoxGeometry(formattingContext().geometryForBox(floatBox));
     absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
-    return { floatBox, isFloaingCandidateLogicallyLeftPositioned(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry };
+    return { floatBox, isFloatingCandidateLogicallyLeftPositioned(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry };
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const
@@ -539,7 +539,7 @@ Point FloatingContext::mapPointFromFormattingContextRootToFloatingStateRoot(Poin
     return mappedPosition;
 }
 
-bool FloatingContext::isFloaingCandidateLogicallyLeftPositioned(const Box& floatBox) const
+bool FloatingContext::isFloatingCandidateLogicallyLeftPositioned(const Box& floatBox) const
 {
     // A floating candidate is logically left positioned when:
     // - "float: left" in left-to-right floating state
@@ -562,7 +562,7 @@ bool FloatingContext::isFloaingCandidateLogicallyLeftPositioned(const Box& float
 
 Clear FloatingContext::logicalClear(const Box& clearBox) const
 {
-    // See isFloaingCandidateLogicallyLeftPositioned for details.
+    // See isFloatingCandidateLogicallyLeftPositioned for details.
     ASSERT(clearBox.hasFloatClear());
     auto clearBoxIsInLeftToRightDirection = root().style().isLeftToRightDirection();
     auto clearValue = clearBox.style().clear();
