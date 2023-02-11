@@ -57,7 +57,7 @@ struct PartialInlineItem {
     PartialInlineItem(InlineItemPosition, std::optional<InlineLayoutUnit>);
 
     size_t inlineItemIndex() const { return position.index; }
-    size_t length() const { return position.offset; }
+    size_t endOffset() const { return position.offset; }
 
     InlineItemPosition position { };
     std::optional<InlineLayoutUnit> width { };

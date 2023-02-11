@@ -193,8 +193,9 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
         return lineContentRange.endIndex();
 
     // When the trailing content is partial, we need to reuse the last InlineTextItem.
-    auto lineLayoutHasAdvancedWithPartialContent = !previousLine || (lineContentRange.endIndex() > previousLineLastInlineItemIndex
-        || (previousLine->partialOverflowingContent && previousLine->partialOverflowingContent->length() > lineContent.partialOverflowingContent->length()));
+    auto lineLayoutHasAdvancedWithPartialContent = !previousLine
+        || lineContentRange.endIndex() > previousLineLastInlineItemIndex
+        || (previousLine->partialOverflowingContent && lineContent.partialOverflowingContent->endOffset() > previousLine->partialOverflowingContent->endOffset());
     if (lineLayoutHasAdvancedWithPartialContent)
         return lineContentRange.endIndex() - 1;
     // Move over to the next run if we are stuck on this partial content (when the overflow content length remains the same).
