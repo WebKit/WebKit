@@ -44,6 +44,7 @@
 #include "Editor.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
+#include "EventLoop.h"
 #include "FileChooser.h"
 #include "FileInputType.h"
 #include "FileList.h"
