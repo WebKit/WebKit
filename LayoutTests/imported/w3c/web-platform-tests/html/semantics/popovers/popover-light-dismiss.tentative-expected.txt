@@ -1,26 +1,10 @@
 CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'document.querySelector('#myElement').shadowRoot.querySelector')
-Popover 1 Popover 1 Popover1 anchor (no action) Outside all popovers
-Inside popover 1  Popover 2 Inside popover 1 after button
-Inside popover 2
-Next control after popover1  Popover 3 - button 3
-Inside popover 4
-Inside popover 3
-Inside popover 5  Popover 3 - button 4 - unused
-Inside popover 6
-Bottom of popover6
-Popover 6
-Button Inside popover 8 after button
-Popover8 anchor (no action)
-Popover 1
+Popover 1 Popover 1 Popover1 anchor (no action) Outside all popovers Inside popover 1  Popover 2 Inside popover 1 after button Inside popover 2 Next control after popover1  Popover 3 - button 3 Inside popover 4 Inside popover 3 Inside popover 5  Popover 3 - button 4 - unused Inside popover 6
+Bottom of popover6 Popover 6  Button Inside popover 8 after button Popover8 anchor (no action) Popover 1
 Anchor  Open Popover 2
 Popover 4
 
-Popover 2 (self-anchor-linked)  Open Popover 3  Self-linked invoker
-Popover 3  Open Popover 4
-Open convoluted popover
-Popover 1
-Popover 2
-Popover 3
+Popover 2 (self-anchor-linked)  Open Popover 3  Self-linked invoker Popover 3  Open Popover 4 Open convoluted popover Popover 1 Popover 2 Popover 3
 
 Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'document.querySelector('#myElement').shadowRoot.querySelector')
 

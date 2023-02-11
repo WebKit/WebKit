@@ -1,8 +1,5 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: popover2.showPopover is not a function. (In 'popover2.showPopover()', 'popover2.showPopover' is undefined)
-Popover 1
-Inside popover 2
-This is popover 1
-Popover 2
+Popover 1 Inside popover 2  This is popover 1 Popover 2
 
 Harness Error (FAIL), message = Unhandled rejection: popover2.showPopover is not a function. (In 'popover2.showPopover()', 'popover2.showPopover' is undefined)
 

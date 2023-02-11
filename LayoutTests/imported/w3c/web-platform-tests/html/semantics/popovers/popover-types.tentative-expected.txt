@@ -1,6 +1,4 @@
-Popover
-Async
-Async
+PopoverAsyncAsync
 
 FAIL manuals do not close popovers Can't find variable: auto
 

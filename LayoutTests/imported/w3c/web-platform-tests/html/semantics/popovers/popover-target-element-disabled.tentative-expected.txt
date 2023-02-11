@@ -1,16 +1,6 @@
-toggle popover
-popover
-toggle popover
-popover
-toggle popover
-popover
-toggle popover
-popover
+toggle popover popovertoggle popover popovertoggle popover popovertoggle popover popover
 form
-toggle popover
-popover
-toggle popover
-popover
+toggle popover popovertoggle popover popover
 
 FAIL Disabled popover*target buttons should not affect the popover heirarchy. outerpopover.showPopover is not a function. (In 'outerpopover.showPopover()', 'outerpopover.showPopover' is undefined)
 FAIL Disabling popover*target buttons when popovers are open should still cause all popovers to be closed when the formerly outer popover is closed. outerpopover2.showPopover is not a function. (In 'outerpopover2.showPopover()', 'outerpopover2.showPopover' is undefined)

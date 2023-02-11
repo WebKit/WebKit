@@ -1,5 +1,4 @@
-Toggle Popover 1
-This is popover #1
+Toggle Popover 1 This is popover #1
 
 FAIL Test <button type="button">, t=0, s=0, h=0, Content Attr, with popover=auto promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Test <button type="button">, t=0, s=0, h=0, IDL, with popover=auto promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."

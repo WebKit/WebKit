@@ -3,8 +3,7 @@ Test 2 Popover 1
 Popover 1
 
 Test 2 Popover 2
- Test 3 Popover 2
-Popover 2
+Test 3 Popover 2 Popover 2
 Test 4 Popover 1
 This should not get hidden when popover2 opens.
 

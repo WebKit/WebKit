@@ -1,5 +1,4 @@
-popover1
-popover2
+popover1popover2
 
 FAIL Removing a popover while it is opening and force closing another popover should throw an exception. popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)
 

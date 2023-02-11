@@ -1,5 +1,4 @@
-target
-popover
+target popover
 
 FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerdown, capture: true promise_test: Unhandled rejection with value: object "TypeError: popover.showPopover is not a function. (In 'popover.showPopover()', 'popover.showPopover' is undefined)"
 FAIL Tests the interactions between popover light dismiss and pointer/mouse events. eventName: pointerup, capture: true promise_test: Unhandled rejection with value: object "TypeError: popover.showPopover is not a function. (In 'popover.showPopover()', 'popover.showPopover' is undefined)"

@@ -1016,6 +1016,7 @@ $(PROJECT_DIR)/css/makeSelectorPseudoElementsMap.py
 $(PROJECT_DIR)/css/mathml.css
 $(PROJECT_DIR)/css/mediaControls.css
 $(PROJECT_DIR)/css/plugIns.css
+$(PROJECT_DIR)/css/popover.css
 $(PROJECT_DIR)/css/process-css-properties.py
 $(PROJECT_DIR)/css/process-css-values.py
 $(PROJECT_DIR)/css/quirks.css

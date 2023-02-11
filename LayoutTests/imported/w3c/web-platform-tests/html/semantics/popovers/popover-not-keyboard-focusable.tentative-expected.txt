@@ -1,7 +1,7 @@
 Button 1
 This is a popover without a focusable element
 
-Button 2
+ Button 2
 
 FAIL Popover should not be keyboard focusable promise_test: Unhandled rejection with value: object "TypeError: popover.showPopover is not a function. (In 'popover.showPopover()', 'popover.showPopover' is undefined)"
 

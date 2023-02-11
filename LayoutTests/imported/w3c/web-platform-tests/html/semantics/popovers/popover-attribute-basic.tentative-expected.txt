@@ -1,14 +1,4 @@
-Pop up
-Pop up
-Pop up
-Pop up
-Different element type
-Different element type
-Different element type
-
-Invalid popover value - defaults to popover=manual
-Invalid popover value - defaults to popover=manual
-Invalid popover value - defaults to popover=manual
+Pop upPop upPop upPop upDifferent element typeDifferent element typeDifferent element typeInvalid popover value - defaults to popover=manualInvalid popover value - defaults to popover=manualInvalid popover value - defaults to popover=manual
 Not a popover
 Dialog without popover attribute
 Animated popover
@@ -144,9 +134,9 @@ FAIL A <object popover> element should behave as a popover. assert_equals: A pop
 FAIL A <object> element should *not* behave as a popover. The string did not match the expected pattern.
 FAIL A <ol popover> element should behave as a popover. assert_equals: A popover should start out hidden: Expected this element to be not visible expected false but got true
 FAIL A <ol> element should *not* behave as a popover. The string did not match the expected pattern.
-FAIL A <optgroup popover> element should behave as a popover. assert_equals: A popover should start out hidden: Non-showing popovers should have display:none expected "none" but got "inline"
+FAIL A <optgroup popover> element should behave as a popover. assert_equals: A popover should start out hidden: Non-showing popovers should have display:none expected "none" but got "block"
 FAIL A <optgroup> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
-FAIL A <option popover> element should behave as a popover. assert_equals: A popover should start out hidden: Non-showing popovers should have display:none expected "none" but got "inline"
+FAIL A <option popover> element should behave as a popover. assert_equals: A popover should start out hidden: Non-showing popovers should have display:none expected "none" but got "block"
 FAIL A <option> element should *not* behave as a popover. assert_equals: A non-popover should start out visible: Expected this element to be visible expected true but got false
 FAIL A <output popover> element should behave as a popover. assert_equals: A popover should start out hidden: Expected this element to be not visible expected false but got true
 FAIL A <output> element should *not* behave as a popover. The string did not match the expected pattern.

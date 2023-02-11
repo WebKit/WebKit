@@ -4567,6 +4567,19 @@ PluginsEnabled:
     WebCore:
       default: false
 
+PopoverAttributeEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "HTML popover attribute"
+  humanReadableDescription: "Enable HTML popover attribute support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PreferFasterClickOverDoubleTap:
   type: bool
   status: internal
