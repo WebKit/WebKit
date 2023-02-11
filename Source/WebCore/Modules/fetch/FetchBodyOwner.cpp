@@ -42,6 +42,8 @@
 
 namespace WebCore {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
+
 FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(context)
     , m_body(WTFMove(body))

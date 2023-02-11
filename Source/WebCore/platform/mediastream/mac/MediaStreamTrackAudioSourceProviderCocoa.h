@@ -57,7 +57,7 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
     // RealtimeMediaSource::AudioSampleObserver
-    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
 
     WeakPtr<MediaStreamTrackPrivate> m_captureSource;
     Ref<RealtimeMediaSource> m_source;

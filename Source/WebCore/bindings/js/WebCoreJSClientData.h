@@ -35,9 +35,11 @@ namespace WebCore {
 class ExtendedDOMClientIsoSubspaces;
 class ExtendedDOMIsoSubspaces;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSHeapData);
+
 class JSHeapData {
     WTF_MAKE_NONCOPYABLE(JSHeapData);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSHeapData);
     friend class JSVMClientData;
 public:
     JSHeapData(JSC::Heap&);
@@ -98,9 +100,11 @@ private:
     Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
 };
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSVMClientData);
 
 class JSVMClientData : public JSC::VM::ClientData {
-    WTF_MAKE_NONCOPYABLE(JSVMClientData); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(JSVMClientData);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(JSVMClientData);
     friend class VMWorldIterator;
 
 public:

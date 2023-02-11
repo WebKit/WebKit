@@ -62,6 +62,8 @@
 namespace WebCore {
 using namespace JSC;
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSHeapData);
+
 JSHeapData::JSHeapData(Heap& heap)
     : m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::Args<RuntimeArray>())
     , m_observableArrayHeapCellType(JSC::IsoHeapCellType::Args<JSObservableArray>())
@@ -112,6 +114,8 @@ JSHeapData* JSHeapData::ensureHeapData(Heap& heap)
 }
 
 #define CLIENT_ISO_SUBSPACE_INIT(subspace) subspace(m_heapData->subspace)
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JSVMClientData);
 
 JSVMClientData::JSVMClientData(VM& vm)
     : m_builtinFunctions(vm)

@@ -73,6 +73,8 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
+
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
     , m_layoutState(flow.view().ensureLayoutState())
