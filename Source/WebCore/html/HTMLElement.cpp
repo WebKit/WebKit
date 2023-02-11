@@ -788,7 +788,8 @@ static void setHasDirAutoFlagRecursively(Node* firstNode, bool flag, Node* lastN
 void HTMLElement::childrenChanged(const ChildChange& change)
 {
     StyledElement::childrenChanged(change);
-    adjustDirectionalityIfNeededAfterChildrenChanged(change.previousSiblingElement, change.type);
+    if (UNLIKELY(document().isDirAttributeDirty()))
+        adjustDirectionalityIfNeededAfterChildrenChanged(change.previousSiblingElement, change.type);
 }
 
 bool HTMLElement::hasDirectionAuto() const
@@ -846,6 +847,8 @@ void HTMLElement::dirAttributeChanged(const AtomString& value)
 {
     RefPtr<Element> parent = parentOrShadowHostElement();
     bool isValid = true;
+
+    document().setIsDirAttributeDirty();
 
     auto direction = parseTextDirection(value);
     switch (direction) {

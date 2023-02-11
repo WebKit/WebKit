@@ -39,6 +39,11 @@ public:
         return makeQualifiedName(string);
     }
 
+    ALWAYS_INLINE static QualifiedName makeAttributeQualifiedName(Span<const LChar> string)
+    {
+        return makeQualifiedName(string);
+    }
+
     ALWAYS_INLINE static AtomString makeAttributeValue(Span<const UChar> string)
     {
         return makeAtomString(string);
@@ -73,7 +78,8 @@ private:
         return slot;
     }
 
-    ALWAYS_INLINE static QualifiedName makeQualifiedName(Span<const UChar> string)
+    template<typename CharacterType>
+    ALWAYS_INLINE static QualifiedName makeQualifiedName(Span<const CharacterType> string)
     {
         if (string.empty())
             return nullQName();

@@ -90,6 +90,11 @@ Ref<HTMLSelectElement> HTMLSelectElement::create(const QualifiedName& tagName, D
     return adoptRef(*new HTMLSelectElement(tagName, document, form));
 }
 
+Ref<HTMLSelectElement> HTMLSelectElement::create(Document& document)
+{
+    return adoptRef(*new HTMLSelectElement(selectTag, document, nullptr));
+}
+
 void HTMLSelectElement::didRecalcStyle(Style::Change styleChange)
 {
     // Even though the options didn't necessarily change, we will call setOptionsChangedOnRenderer for its side effect

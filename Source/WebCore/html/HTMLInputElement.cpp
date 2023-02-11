@@ -141,7 +141,7 @@ HTMLInputElement::~HTMLInputElement()
     // a radio button that was in a form. The call to setForm(nullptr) above
     // actually adds the button to the document groups in the latter case.
     // That is inelegant, but harmless since we remove it here.
-    if (isRadioButton())
+    if (m_inputType && isRadioButton())
         treeScope().radioButtonGroups().removeButton(*this);
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1487,6 +1487,9 @@ bool HTMLInputElement::isOutOfRange() const
 
 bool HTMLInputElement::needsSuspensionCallback()
 {
+    if (!m_inputType)
+        return false;
+
     if (m_inputType->shouldResetOnDocumentActivation())
         return true;
 
