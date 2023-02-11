@@ -2,7 +2,7 @@
  * This file is part of the select element renderer in WebCore.
  *
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *               2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -115,8 +115,6 @@ void RenderMenuList::adjustInnerStyle()
     auto& innerStyle = m_innerBlock->mutableStyle();
     innerStyle.setFlexGrow(1);
     innerStyle.setFlexShrink(1);
-    // min-width: 0; is needed for correct shrinking.
-    innerStyle.setMinWidth(Length(0, LengthType::Fixed));
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     // But we only do that for the cases where html.css would otherwise use center.
