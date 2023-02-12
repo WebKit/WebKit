@@ -76,6 +76,7 @@ public:
     Expected<AST::Expression::Ref, Error> parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs);
     Expected<AST::Expression::Ref, Error> parseShiftExpressionPostUnary(AST::Expression::Ref&& lhs);
     Expected<AST::Expression::Ref, Error> parseAdditiveExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Expected<AST::Expression::Ref, Error> parseBitwiseExpressionPostUnary(AST::Expression::Ref&& lhs);
     Expected<AST::Expression::Ref, Error> parseMultiplicativeExpressionPostUnary(AST::Expression::Ref&& lhs);
     Expected<AST::Expression::Ref, Error> parseUnaryExpression();
     Expected<AST::Expression::Ref, Error> parseSingularExpression();

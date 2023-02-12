@@ -44,6 +44,9 @@ Token Lexer<T>::lex()
     case '%':
         shift();
         return makeToken(TokenType::Modulo);
+    case '&':
+        shift();
+        return makeToken(TokenType::And);
     case '(':
         shift();
         return makeToken(TokenType::ParenLeft);
@@ -131,6 +134,12 @@ Token Lexer<T>::lex()
             return makeToken(TokenType::PlusPlus);
         }
         return makeToken(TokenType::Plus);
+    case '^':
+        shift();
+        return makeToken(TokenType::Xor);
+    case '|':
+        shift();
+        return makeToken(TokenType::Or);
     case '0': {
         shift();
         double literalValue = 0;

@@ -134,6 +134,46 @@ static bool canContinueAdditiveExpression(const Token& token)
     }
 }
 
+static bool canContinueBitwiseExpression(const Token& token)
+{
+    switch (token.m_type) {
+    case TokenType::And:
+    case TokenType::Or:
+    case TokenType::Xor:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static AST::BinaryOperation toBinaryOperation(const Token& token)
+{
+    switch (token.m_type) {
+    case TokenType::And:
+        return AST::BinaryOperation::And;
+    case TokenType::GtGt:
+        return AST::BinaryOperation::RightShift;
+    case TokenType::LtLt:
+        return AST::BinaryOperation::LeftShift;
+    case TokenType::Minus:
+        return AST::BinaryOperation::Subtract;
+    case TokenType::Modulo:
+        return AST::BinaryOperation::Modulo;
+    case TokenType::Or:
+        return AST::BinaryOperation::Or;
+    case TokenType::Plus:
+        return AST::BinaryOperation::Add;
+    case TokenType::Slash:
+        return AST::BinaryOperation::Divide;
+    case TokenType::Star:
+        return AST::BinaryOperation::Multiply;
+    case TokenType::Xor:
+        return AST::BinaryOperation::Xor;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 template<typename Lexer>
 std::optional<Error> parse(ShaderModule& shaderModule)
 {
@@ -692,25 +732,28 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpressi
     PARSE_MOVE(lhs, MultiplicativeExpressionPostUnary, WTFMove(lhs));
 
     while (canContinueAdditiveExpression(current())) {
-        auto op = AST::BinaryOperation::Add;
-        switch (current().m_type) {
-        case TokenType::Minus:
-            op = AST::BinaryOperation::Subtract;
-            break;
-
-        case TokenType::Plus:
-            op = AST::BinaryOperation::Add;
-            break;
-
-        default:
-            // parseMultiplicativeExpression handles multiplicative operators so
-            // token should be PLUS or MINUS.
-            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("Expected + or -");
-        }
-
+        // parseMultiplicativeExpression handles multiplicative operators so
+        // token should be PLUS or MINUS.
+        ASSERT(current().m_type == TokenType::Plus || current().m_type == TokenType::Minus);
+        const auto op = toBinaryOperation(current());
         consume();
         PARSE(unary, UnaryExpression);
         PARSE(rhs, MultiplicativeExpressionPostUnary, WTFMove(unary));
+        lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
+    }
+
+    return WTFMove(lhs);
+}
+
+template<typename Lexer>
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseBitwiseExpressionPostUnary(AST::Expression::Ref&& lhs)
+{
+    START_PARSE();
+    const auto op = toBinaryOperation(current());
+    const TokenType continuingToken = current().m_type;
+    while (current().m_type == continuingToken) {
+        consume();
+        PARSE(rhs, UnaryExpression);
         lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
     }
 
@@ -881,6 +924,9 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseExpression()
 {
     // FIXME: Fill in
     PARSE(lhs, UnaryExpression);
+    if (canContinueBitwiseExpression(current()))
+        return parseBitwiseExpressionPostUnary(WTFMove(lhs));
+
     return parseRelationalExpressionPostUnary(WTFMove(lhs));
 }
 

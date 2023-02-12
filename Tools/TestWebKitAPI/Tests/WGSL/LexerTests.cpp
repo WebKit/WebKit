@@ -147,6 +147,9 @@ TEST(WGSLLexerTests, SpecialTokens)
     checkSingleToken(";"_s, TokenType::Semicolon);
     checkSingleToken("/"_s, TokenType::Slash);
     checkSingleToken("*"_s, TokenType::Star);
+    checkSingleToken("&"_s, TokenType::And);
+    checkSingleToken("|"_s, TokenType::Or);
+    checkSingleToken("^"_s, TokenType::Xor);
 }
 
 TEST(WGSLLexerTests, ComputeShader)

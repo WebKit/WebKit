@@ -87,6 +87,8 @@ String toString(TokenType type)
         return "true"_s;
     case TokenType::LiteralFalse:
         return "false"_s;
+    case TokenType::And:
+        return "&"_s;
     case TokenType::Arrow:
         return "->"_s;
     case TokenType::Attribute:
@@ -119,6 +121,8 @@ String toString(TokenType type)
         return "--"_s;
     case TokenType::Modulo:
         return "%"_s;
+    case TokenType::Or:
+        return "|"_s;
     case TokenType::Plus:
         return "+"_s;
     case TokenType::PlusPlus:
@@ -135,6 +139,8 @@ String toString(TokenType type)
         return "/"_s;
     case TokenType::Star:
         return "*"_s;
+    case TokenType::Xor:
+        return "^"_s;
     }
 }
 

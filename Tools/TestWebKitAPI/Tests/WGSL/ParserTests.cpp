@@ -452,6 +452,41 @@ TEST(WGSLParserTests, UnaryExpression)
     }
 }
 
+
+static void testBinaryExpressionXYZ(ASCIILiteral program, const Vector<WGSL::AST::BinaryOperation>& ops, const Vector<String>& ids)
+{
+    EXPECT_EQ(ops.size(), 2u);
+    EXPECT_EQ(ids.size(), 3u);
+
+    EXPECT_EXPRESSION(expression, program);
+    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression.get()));
+    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+
+    auto& complex = is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()) ?
+        binaryExpression.leftExpression() : binaryExpression.rightExpression();
+    auto& simple = is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()) ?
+        binaryExpression.rightExpression() : binaryExpression.leftExpression();
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(simple));
+
+    {
+        auto& binaryExpression2 = downcast<WGSL::AST::BinaryExpression>(complex);
+
+        EXPECT_EQ(binaryExpression2.operation(), ops[0]);
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression()));
+        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression());
+        EXPECT_EQ(lhs.identifier(), ids[0]);
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression()));
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression());
+        EXPECT_EQ(rhs.identifier(), ids[1]);
+    }
+
+    {
+        EXPECT_EQ(binaryExpression.operation(), ops[1]);
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(simple);
+        EXPECT_EQ(rhs.identifier(), ids[2]);
+    }
+}
+
 TEST(WGSLParserTests, BinaryExpression)
 {
     auto shader = parse(
@@ -499,34 +534,17 @@ TEST(WGSLParserTests, BinaryExpression)
 
 TEST(WGSLParserTests, BinaryExpression2)
 {
-    EXPECT_EXPRESSION(expression, R"(x - y + 1)"_s);
-    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression));
-    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+    testBinaryExpressionXYZ("x - y + z"_s,
+        { WGSL::AST::BinaryOperation::Subtract, WGSL::AST::BinaryOperation::Add },
+        { "x"_s, "y"_s, "z"_s });
 
-    {
-        // op: +
-        EXPECT_EQ(binaryExpression.operation(), WGSL::AST::BinaryOperation::Add);
-        // lhs: x - y
-        EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()));
-        // rhs: 1
-        EXPECT_TRUE(is<WGSL::AST::AbstractIntegerLiteral>(binaryExpression.rightExpression()));
-        checkIntLiteral(binaryExpression.rightExpression(), 1);
-    }
+    testBinaryExpressionXYZ("x + y * z"_s,
+        { WGSL::AST::BinaryOperation::Multiply, WGSL::AST::BinaryOperation::Add },
+        { "y"_s, "z"_s, "x"_s });
 
-    {
-        EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()));
-        auto& binaryExpression2 = downcast<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression());
-        // op: -
-        EXPECT_EQ(binaryExpression2.operation(), WGSL::AST::BinaryOperation::Subtract);
-        // lhs: x
-        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression()));
-        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression());
-        EXPECT_EQ(lhs.identifier(), "x"_s);
-        // rhs: y
-        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression()));
-        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression());
-        EXPECT_EQ(rhs.identifier(), "y"_s);
-    }
+    testBinaryExpressionXYZ("x / y + z"_s,
+        { WGSL::AST::BinaryOperation::Divide, WGSL::AST::BinaryOperation::Add },
+        { "x"_s, "y"_s, "z"_s });
 }
 
 TEST(WGSLParserTests, BinaryExpression3)
@@ -562,39 +580,7 @@ TEST(WGSLParserTests, BinaryExpression3)
     }
 }
 
-TEST(WGSLParserTests, BinaryExpression4)
-{
-    EXPECT_EXPRESSION(expression, R"(x / y + z)"_s);
-    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression));
-    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
-
-    {
-        // op: +
-        EXPECT_EQ(binaryExpression.operation(), WGSL::AST::BinaryOperation::Add);
-        // lhs: x * y
-        EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()));
-        // rhs: z
-        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression()));
-        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression());
-        EXPECT_EQ(rhs.identifier(), "z"_s);
-    }
-
-    {
-        EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()));
-        auto& binaryExpression2 = downcast<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression());
-        // op: /
-        EXPECT_EQ(binaryExpression2.operation(), WGSL::AST::BinaryOperation::Divide);
-        // lhs: x
-        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression()));
-        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression());
-        EXPECT_EQ(lhs.identifier(), "x"_s);
-        // rhs: y
-        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression()));
-        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression());
-        EXPECT_EQ(rhs.identifier(), "y"_s);
-    }
-}
-
+// FIXME: Evaluate more complex expressions involving << and forced ().
 TEST(WGSLParserTests, BinaryLeftShiftExpression)
 {
     EXPECT_EXPRESSION(expression, "x << y"_s);
@@ -615,6 +601,7 @@ TEST(WGSLParserTests, BinaryLeftShiftExpression)
     }
 }
 
+// FIXME: Evaluate more complex expressions involving >> and forced ().
 TEST(WGSLParserTests, BinaryRightShiftExpression)
 {
     EXPECT_EXPRESSION(expression, "x >> y"_s);
@@ -633,6 +620,22 @@ TEST(WGSLParserTests, BinaryRightShiftExpression)
         auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression());
         EXPECT_EQ(rhs.identifier(), "y"_s);
     }
+}
+
+// FIXME: Test failing cases, such as, "x & y | z"
+TEST(WGSLParserTests, BinaryBitwiseExpression)
+{
+    testBinaryExpressionXYZ("x & y & z"_s,
+        { WGSL::AST::BinaryOperation::And, WGSL::AST::BinaryOperation::And },
+        { "x"_s, "y"_s, "z"_s });
+
+    testBinaryExpressionXYZ("x | y | z"_s,
+        { WGSL::AST::BinaryOperation::Or, WGSL::AST::BinaryOperation::Or },
+        { "x"_s, "y"_s, "z"_s });
+
+    testBinaryExpressionXYZ("x ^ y ^ z"_s,
+        { WGSL::AST::BinaryOperation::Xor, WGSL::AST::BinaryOperation::Xor },
+        { "x"_s, "y"_s, "z"_s });
 }
 
 #pragma mark -
