@@ -1,3 +1,5 @@
+//@ requireOptions("--useWebAssemblyTailCalls=true")
+//@ skip if $architecture == 'arm'
 import * as assert from "../assert.js";
 import Builder from "../Builder.js";
 
