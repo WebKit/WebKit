@@ -1782,6 +1782,24 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putSetIteratorInternalField(By
     return generator.move(dst, generator.emitPutInternalField(base.get(), index, value.get()));
 }
 
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_superSamplerBegin(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ASSERT(!m_args->m_listNode);
+    generator.emitLoad(dst, jsUndefined());
+    generator.emitSuperSamplerBegin();
+
+    return dst;
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_superSamplerEnd(BytecodeGenerator& generator, RegisterID* dst)
+{
+    ASSERT(!m_args->m_listNode);
+    generator.emitSuperSamplerEnd();
+    generator.emitLoad(dst, jsUndefined());
+
+    return dst;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_tailCallForwardArguments(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;

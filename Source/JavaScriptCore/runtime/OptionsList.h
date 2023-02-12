@@ -465,6 +465,8 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, dumpModuleLoadingState, false, Normal, nullptr) \
     v(Bool, exposeInternalModuleLoader, false, Normal, "expose the internal module loader object to the global space for debugging") \
     \
+    v(Bool, exposePrivateIdentifiers, false, Normal, "Allow non-builtin scripts to use private identifiers. Mostly useful to expose @superSamplerBegin/End intrinsics for profiling") \
+    \
     v(Bool, useSuperSampler, false, Normal, nullptr) \
     \
     v(Bool, useSourceProviderCache, true, Normal, "If false, the parser will not use the source provider cache. It's good to verify everything works when this is false. Because the cache is so successful, it can mask bugs.") \

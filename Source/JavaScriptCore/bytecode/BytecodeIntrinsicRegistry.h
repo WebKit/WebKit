@@ -89,6 +89,8 @@ enum class LinkTimeConstant : int32_t;
     macro(putStringIteratorInternalField) \
     macro(putMapIteratorInternalField) \
     macro(putSetIteratorInternalField) \
+    macro(superSamplerBegin) \
+    macro(superSamplerEnd) \
     macro(toNumber) \
     macro(toString) \
     macro(toPropertyKey) \
