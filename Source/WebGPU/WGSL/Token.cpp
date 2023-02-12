@@ -105,10 +105,14 @@ String toString(TokenType type)
         return ","_s;
     case TokenType::Equal:
         return "="_s;
-    case TokenType::GT:
+    case TokenType::Gt:
         return ">"_s;
-    case TokenType::LT:
+    case TokenType::GtGt:
+        return ">>"_s;
+    case TokenType::Lt:
         return "<"_s;
+    case TokenType::LtLt:
+        return "<<"_s;
     case TokenType::Minus:
         return "-"_s;
     case TokenType::MinusMinus:

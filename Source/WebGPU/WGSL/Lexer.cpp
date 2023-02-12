@@ -76,10 +76,18 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Equal);
     case '>':
         shift();
-        return makeToken(TokenType::GT);
+        if (m_current == '>') {
+            shift();
+            return makeToken(TokenType::GtGt);
+        }
+        return makeToken(TokenType::Gt);
     case '<':
         shift();
-        return makeToken(TokenType::LT);
+        if (m_current == '<') {
+            shift();
+            return makeToken(TokenType::LtLt);
+        }
+        return makeToken(TokenType::Lt);
     case '@':
         shift();
         return makeToken(TokenType::Attribute);
@@ -116,7 +124,6 @@ Token Lexer<T>::lex()
             return makeToken(TokenType::MinusMinus);
         }
         return makeToken(TokenType::Minus);
-        break;
     case '+':
         shift();
         if (m_current == '+') {
@@ -124,7 +131,6 @@ Token Lexer<T>::lex()
             return makeToken(TokenType::PlusPlus);
         }
         return makeToken(TokenType::Plus);
-        break;
     case '0': {
         shift();
         double literalValue = 0;

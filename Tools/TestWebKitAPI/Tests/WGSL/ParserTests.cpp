@@ -595,6 +595,46 @@ TEST(WGSLParserTests, BinaryExpression4)
     }
 }
 
+TEST(WGSLParserTests, BinaryLeftShiftExpression)
+{
+    EXPECT_EXPRESSION(expression, "x << y"_s);
+    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression.get()));
+    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+
+    {
+        // op: <<
+        EXPECT_EQ(binaryExpression.operation(), WGSL::AST::BinaryOperation::LeftShift);
+        // lhs: x
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.leftExpression()));
+        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.leftExpression());
+        EXPECT_EQ(lhs.identifier(), "x"_s);
+        // rhs: y
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression()));
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression());
+        EXPECT_EQ(rhs.identifier(), "y"_s);
+    }
+}
+
+TEST(WGSLParserTests, BinaryRightShiftExpression)
+{
+    EXPECT_EXPRESSION(expression, "x >> y"_s);
+    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression.get()));
+    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+
+    {
+        // op: >>
+        EXPECT_EQ(binaryExpression.operation(), WGSL::AST::BinaryOperation::RightShift);
+        // lhs: x
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.leftExpression()));
+        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.leftExpression());
+        EXPECT_EQ(lhs.identifier(), "x"_s);
+        // rhs: y
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression()));
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression());
+        EXPECT_EQ(rhs.identifier(), "y"_s);
+    }
+}
+
 #pragma mark -
 #pragma mark WebGPU Example Shaders
 

@@ -73,12 +73,10 @@ public:
     Expected<AST::CompoundStatement, Error> parseCompoundStatement();
     Expected<AST::ReturnStatement, Error> parseReturnStatement();
     Expected<AST::Expression::Ref, Error> parseShortCircuitOrExpression();
-    Expected<AST::Expression::Ref, Error> parseRelationalExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::Expression::Ref, Error> parseShiftExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::Expression::Ref, Error> parseAdditiveExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::BinaryOperation, Error> parseAdditiveOperator();
-    Expected<AST::Expression::Ref, Error> parseMultiplicativeExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::BinaryOperation, Error> parseMultiplicativeOperator();
+    Expected<AST::Expression::Ref, Error> parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Expected<AST::Expression::Ref, Error> parseShiftExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Expected<AST::Expression::Ref, Error> parseAdditiveExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Expected<AST::Expression::Ref, Error> parseMultiplicativeExpressionPostUnary(AST::Expression::Ref&& lhs);
     Expected<AST::Expression::Ref, Error> parseUnaryExpression();
     Expected<AST::Expression::Ref, Error> parseSingularExpression();
     Expected<AST::Expression::Ref, Error> parsePostfixExpression(AST::Expression::Ref&& base, SourcePosition startPosition);
