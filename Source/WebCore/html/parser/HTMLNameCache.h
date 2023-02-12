@@ -49,6 +49,11 @@ public:
         return makeAtomString(string);
     }
 
+    ALWAYS_INLINE static AtomString makeAttributeValue(Span<const LChar> string)
+    {
+        return makeAtomString(string);
+    }
+
     ALWAYS_INLINE static void clear()
     {
         // FIXME (webkit.org/b/230019): We should try to find more opportunities to clear this cache without hindering this performance optimization.
@@ -57,7 +62,8 @@ public:
     }
 
 private:
-    ALWAYS_INLINE static AtomString makeAtomString(Span<const UChar> string)
+    template<typename CharacterType>
+    ALWAYS_INLINE static AtomString makeAtomString(Span<const CharacterType> string)
     {
         if (string.empty())
             return emptyAtom();

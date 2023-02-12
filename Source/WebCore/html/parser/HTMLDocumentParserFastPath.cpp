@@ -829,9 +829,9 @@ private:
         // no values have the value set to an empty atom instead.
         AtomString value;
         if (valueSpan.second.empty())
-            value = AtomString(valueSpan.first.data(), static_cast<unsigned>(valueSpan.first.size()));
+            value = HTMLNameCache::makeAttributeValue(valueSpan.first);
         else
-            value = AtomString(valueSpan.second.data(), static_cast<unsigned>(valueSpan.second.size()));
+            value = HTMLNameCache::makeAttributeValue(valueSpan.second);
         if (value.isNull())
             value = emptyAtom();
         return Attribute { WTFMove(name), WTFMove(value) };
