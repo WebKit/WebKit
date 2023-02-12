@@ -556,7 +556,7 @@ private:
     CharSpan scanTagName()
     {
         const Char* start = m_position;
-        while (m_position != m_end && 'a' <= *m_position && *m_position <= 'z')
+        while (m_position != m_end && isASCIILower(*m_position))
             ++m_position;
 
         if (m_position == m_end || !isCharAfterTagNameOrAttribute(*m_position)) {
@@ -565,9 +565,9 @@ private:
             m_position = start;
             while (m_position != m_end) {
                 Char c = *m_position;
-                if ('A' <= c && c <= 'Z')
-                    c = c - ('A' - 'a');
-                else if (!('a' <= c && c <= 'z'))
+                if (isASCIIUpper(c))
+                    c = toASCIILowerUnchecked(c);
+                else if (!isASCIILower(c))
                     break;
                 ++m_position;
                 m_charBuffer.append(c);
@@ -588,7 +588,7 @@ private:
         // input. This path could handle other valid attribute name chars, but they
         // are not as common, so it only looks for lowercase.
         const Char* start = m_position;
-        while (m_position != m_end && *m_position >= 'a' && *m_position <= 'z')
+        while (m_position != m_end && isASCIILower(*m_position))
             ++m_position;
         if (UNLIKELY(m_position == m_end))
             return didFail(HTMLFastPathResult::FailedEndOfInputReached, CharSpan());
@@ -601,8 +601,8 @@ private:
         m_attributeNameBuffer.resize(0);
         // isValidAttributeNameChar() returns false if end of input is reached.
         for (Char c = peekNext(); isValidAttributeNameChar(c); c = peekNext()) {
-            if ('A' <= c && c <= 'Z')
-                c = c - ('A' - 'a');
+            if (isASCIIUpper(c))
+                c = toASCIILowerUnchecked(c);
             m_attributeNameBuffer.append(c);
             ++m_position;
         }
