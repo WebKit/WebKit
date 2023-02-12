@@ -38,16 +38,28 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
     JSC::initialize();
 
     // We cannot use CFIndex here since CFStringGetLength can return values larger than
-    // it can hold.  (<rdar://problem/6806478>)
+    // it can hold on 32-bit systems.  (<rdar://problem/6806478>)
+
+#if CPU(ADDRESS32)
     size_t length = CFStringGetLength(string);
+#else
+    CFIndex length = CFStringGetLength(string);
+#endif
+
     if (!length)
         return &OpaqueJSString::create(reinterpret_cast<const LChar*>(""), 0).leakRef();
 
     Vector<LChar, 1024> lcharBuffer(length);
     CFIndex usedBufferLength;
     CFIndex convertedSize = CFStringGetBytes(string, CFRangeMake(0, length), kCFStringEncodingISOLatin1, 0, false, lcharBuffer.data(), length, &usedBufferLength);
+
+#if CPU(ADDRESS32)
     if (static_cast<size_t>(convertedSize) == length && static_cast<size_t>(usedBufferLength) == length)
         return &OpaqueJSString::create(lcharBuffer.data(), length).leakRef();
+#else
+    if (convertedSize == length && usedBufferLength == length)
+        return &OpaqueJSString::create(lcharBuffer.data(), length).leakRef();
+#endif
 
     Vector<UniChar> buffer(length);
     CFStringGetCharacters(string, CFRangeMake(0, length), buffer.data());
