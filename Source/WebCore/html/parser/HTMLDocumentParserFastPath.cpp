@@ -473,8 +473,7 @@ private:
 
     bool isValidUnquotedAttributeValueChar(Char c)
     {
-        // FIXME: We should probably levegate isASCIIAlphanumeric() here.
-        return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '_' || c == '-';
+        return isASCIIAlphanumeric(c) || c == '_' || c == '-';
     }
 
     // https://html.spec.whatwg.org/#syntax-attribute-name
@@ -482,8 +481,7 @@ private:
     {
         if (c == '=') // Early return for the most common way to end an attribute.
             return false;
-        // FIXME: We should probably levegate isASCIIAlphanumeric() here.
-        return ('a' <= c && c <= 'z') || c == '-' || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9');
+        return isASCIIAlphanumeric(c) || c == '-';
     }
 
     bool isCharAfterTagNameOrAttribute(Char c)
