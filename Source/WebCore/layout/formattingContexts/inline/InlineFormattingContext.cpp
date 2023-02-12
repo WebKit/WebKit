@@ -144,7 +144,7 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     // FIXME: Let the caller pass in the block layout state. 
     auto floatingState = FloatingState { layoutState(), FormattingContext::initialContainingBlock(root()) };
     auto blockLayoutState = BlockLayoutState { floatingState, { } };
-    lineLayout(inlineItems, { 0, inlineItems.size() }, { constraints, { } }, blockLayoutState);
+    lineLayout(inlineItems, { 0, inlineItems.size() }, { }, { constraints, { } }, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes(), { constraints.horizontal().logicalLeft, constraints.logicalTop() });
     InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(formattingState().boxes());
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
@@ -156,7 +156,7 @@ void InlineFormattingContext::layoutInFlowContentForIntegration(const Constraint
     collectContentIfNeeded();
     auto& inlineItems = formattingState().inlineItems();
     auto inlineConstraints = downcast<ConstraintsForInlineContent>(constraints);
-    lineLayout(inlineItems, { 0, inlineItems.size() }, inlineConstraints, blockLayoutState);
+    lineLayout(inlineItems, { 0, inlineItems.size() }, { }, inlineConstraints, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(formattingState().outOfFlowBoxes(), { inlineConstraints.horizontal().logicalLeft, inlineConstraints.logicalTop() });
     InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(formattingState().boxes());
 }
@@ -204,7 +204,7 @@ static InlineItemPosition leadingInlineItemPositionForNextLine(InlineItemPositio
     return { std::min(lineContentEnd.index + 1, layoutRangeEnd.index), { } };
 }
 
-void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const InlineItemRange& needsLayoutRange, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
+void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const InlineItemRange& needsLayoutRange, std::optional<PreviousLine> previousLine, const ConstraintsForInlineContent& constraints, BlockLayoutState& blockLayoutState)
 {
     ASSERT(!needsLayoutRange.isEmpty());
 
@@ -213,7 +213,6 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const InlineI
     formattingState.boxes().reserveInitialCapacity(formattingState.inlineItems().size());
 
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
-    auto previousLine = std::optional<PreviousLine> { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto leadingInlineItemPosition = needsLayoutRange.start;
 
