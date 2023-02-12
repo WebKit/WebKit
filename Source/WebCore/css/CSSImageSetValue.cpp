@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
+#include "MIMETypeRegistry.h"
 #include "StyleBuilderState.h"
 #include "StyleImageSet.h"
 #include <wtf/text/StringBuilder.h>
@@ -39,22 +40,60 @@ Ref<CSSImageSetValue> CSSImageSetValue::create()
     return adoptRef(*new CSSImageSetValue);
 }
 
+Ref<CSSImageSetValue> CSSImageSetValue::create(Vector<CSSImageSetOption>&& options)
+{
+    return adoptRef(*new CSSImageSetValue(WTFMove(options)));
+}
+
 CSSImageSetValue::CSSImageSetValue()
-    : CSSValueList(ImageSetClass, CommaSeparator)
+    : CSSValue(ImageSetClass)
+{
+}
+
+CSSImageSetValue::CSSImageSetValue(Vector<CSSImageSetOption>&& options)
+    : CSSValue(ImageSetClass)
+    , m_options(WTFMove(options))
 {
 }
 
 CSSImageSetValue::~CSSImageSetValue() = default;
 
+bool CSSImageSetValue::equals(const CSSImageSetValue& other) const
+{
+    if (m_options.size() != other.m_options.size())
+        return false;
+
+    for (size_t i = 0; i < m_options.size(); ++i) {
+        const auto& our = m_options[i];
+        const auto& their = other.m_options[i];
+
+        if (!our.image().equals(their.image()))
+            return false;
+
+        if ((our.resolution() && !their.resolution()) || (!our.resolution() && their.resolution()))
+            return false;
+
+        if ((our.resolution() && their.resolution()) && !our.resolution()->equals(*their.resolution()))
+            return false;
+
+        if ((our.type().has_value() && !their.type().has_value()) || (!our.type().has_value() && their.type().has_value()))
+            return false;
+
+        if ((our.type() && their.type()) && (*our.type() != *their.type()))
+            return false;
+    }
+
+    return true;
+}
+
 String CSSImageSetValue::customCSSText() const
 {
     StringBuilder result;
     result.append("image-set(");
-    size_t length = this->length();
-    for (size_t i = 0; i + 1 < length; i += 2) {
+    for (size_t i = 0; i < m_options.size(); ++i) {
         if (i > 0)
             result.append(", ");
-        result.append(item(i)->cssText(), ' ', item(i + 1)->cssText());
+        result.append(m_options[i].cssText());
     }
     result.append(')');
     return result.toString();
@@ -62,20 +101,12 @@ String CSSImageSetValue::customCSSText() const
 
 RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state) const
 {
-    size_t length = this->length();
 
     Vector<ImageWithScale> images;
-    images.reserveInitialCapacity(length / 2);
-
-    for (size_t i = 0; i + 1 < length; i += 2) {
-        auto* imageValue = item(i);
-        auto* scaleFactorValue = item(i + 1);
-
-        ASSERT(is<CSSImageValue>(imageValue) || imageValue->isImageGeneratorValue());
-        ASSERT(is<CSSPrimitiveValue>(scaleFactorValue));
-
-        float scaleFactor = downcast<CSSPrimitiveValue>(scaleFactorValue)->floatValue(CSSUnitType::CSS_DPPX);
-        images.uncheckedAppend({ state.createStyleImage(*imageValue), scaleFactor });
+    for (const auto& option : m_options) {
+        ASSERT(is<CSSImageValue>(option.image()) || option.image().isImageGeneratorValue());
+        float scaleFactor = option.resolution()->floatValue(CSSUnitType::CSS_DPPX);
+        images.append({ state.createStyleImage(option.image()), scaleFactor });
     }
 
     // Sort the images so that they are stored in order from lowest resolution to highest.

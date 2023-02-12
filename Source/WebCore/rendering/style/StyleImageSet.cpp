@@ -57,14 +57,15 @@ bool StyleImageSet::equals(const StyleImageSet& other) const
 
 Ref<CSSValue> StyleImageSet::computedStyleValue(const RenderStyle& style) const
 {
-    auto result = CSSImageSetValue::create();
+    auto options = Vector<CSSImageSetOption>();
 
     for (auto& image : m_images) {
-        result->append(image.image->computedStyleValue(style));
-        result->append(CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX));
+        auto option = CSSImageSetOption(image.image->computedStyleValue(style));
+        option.setResolution(CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX));
+        options.append(WTFMove(option));
     }
 
-    return result;
+    return CSSImageSetValue::create(WTFMove(options));
 }
 
 ImageWithScale StyleImageSet::selectBestFitImage(const Document& document)

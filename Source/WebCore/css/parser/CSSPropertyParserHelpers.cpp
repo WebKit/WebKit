@@ -4425,28 +4425,44 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, const 
     return result;
 }
 
+static auto consumeImageSetResolutionAndType(CSSParserTokenRange& range)
+{
+    struct Result {
+        RefPtr<CSSPrimitiveValue> resolution;
+        String type;
+    };
+
+    return Result {
+        .resolution = consumeResolution(range),
+        .type = String()
+    };
+}
+
 static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<AllowedImageType> allowedImageTypes)
 {
     CSSParserTokenRange rangeCopy = range;
     CSSParserTokenRange args = consumeFunction(rangeCopy);
-    RefPtr<CSSImageSetValue> imageSet = CSSImageSetValue::create();
+    Vector<CSSImageSetOption> options;
     do {
         auto image = consumeImage(args, context, allowedImageTypes);
         if (!image)
             return nullptr;
 
-        imageSet->append(image.releaseNonNull());
+        options.append(CSSImageSetOption { image.releaseNonNull() });
+        auto& option = options.last();
+        auto [resolution, type] = consumeImageSetResolutionAndType(args);
 
-        auto resolution = consumeResolution(args);
-        if (!resolution || resolution->floatValue() <= 0)
+        if (!resolution || resolution->floatValue() <= 0.0)
             return nullptr;
+        option.setResolution(resolution.releaseNonNull());
+        if (!type.isNull())
+            option.setType(WTFMove(type));
 
-        imageSet->append(resolution.releaseNonNull());
     } while (consumeCommaIncludingWhitespace(args));
     if (!args.atEnd())
         return nullptr;
     range = rangeCopy;
-    return imageSet;
+    return CSSImageSetValue::create(WTFMove(options));
 }
 
 static bool isGeneratedImage(CSSValueID id)

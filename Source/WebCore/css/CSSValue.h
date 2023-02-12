@@ -153,6 +153,7 @@ protected:
 
         // Image classes.
         ImageClass,
+        ImageSetClass,
         CursorImageClass,
 
         // Image generator classes.
@@ -213,7 +214,6 @@ protected:
         // is deliberately excluded, since we don't want it exposed to the CSS OM
         // as a list.
         ValueListClass,
-        ImageSetClass,
         GridLineNamesClass,
         GridAutoRepeatClass,
         GridIntegerRepeatClass,
