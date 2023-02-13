@@ -43,3 +43,10 @@ content_files = [
 ]
 
 urlmap_file = "urlmap.js"
+content_files = [
+  "tutorial.md"
+]
+content_images = [
+  "screenshot1.png",
+  "screenshot2.png",
+]
