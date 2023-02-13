@@ -224,7 +224,7 @@ void RewriteGlobalVariables::insertStructs()
         }
 
         m_callGraph.ast().structures().append(makeUniqueRef<AST::Structure>(
-            SourceSpan(0, 0, 0, 0),
+            SourceSpan::empty(),
             WTFMove(structName),
             WTFMove(structMembers),
             AST::Attribute::List { },
