@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange: toDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 11 of #text > DIV > #document-fragment to 11 of #text > DIV > #document-fragment toDOMRange:range from 11 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
