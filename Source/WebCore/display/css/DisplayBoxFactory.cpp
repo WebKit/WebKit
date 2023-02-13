@@ -144,7 +144,7 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
 std::unique_ptr<Box> BoxFactory::displayBoxForTextRun(const InlineDisplay::Box& box, const InlineDisplay::Line& line, const ContainingBlockContext& containingBlockContext) const
 {
     UNUSED_PARAM(line);
-    ASSERT(box.text());
+    ASSERT(box.isTextOrSoftLineBreak());
 
     auto boxRect = LayoutRect { box.left(), box.top(), box.width(), box.height() };
     boxRect.move(containingBlockContext.offsetFromRoot);

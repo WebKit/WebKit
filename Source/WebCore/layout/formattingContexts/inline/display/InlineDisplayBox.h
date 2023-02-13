@@ -36,34 +36,49 @@ namespace InlineDisplay {
 
 struct Box {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+#pragma pack(push, 4)
     struct Text {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
     public:
+        Text() = default;
         Text(size_t position, size_t length, const String& originalContent, String adjustedContentToRender = String(), bool hasHyphen = false);
 
         size_t start() const { return m_start; }
         size_t end() const { return start() + length(); }
         size_t length() const { return m_length; }
-        std::optional<size_t> partiallyVisibleContentLength() const { return m_partiallyVisibleContentLength; }
         StringView originalContent() const { return StringView(m_originalContent).substring(m_start, m_length); }
         StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
 
         bool hasHyphen() const { return m_hasHyphen; }
 
-        void setPartiallyVisibleContentLength(size_t truncatedLength) { m_partiallyVisibleContentLength = truncatedLength; }
+        std::optional<size_t> partiallyVisibleContentLength() const
+        {
+            if (!m_hasPartiallyVisibleContentLength)
+                return { };
+            return m_partiallyVisibleContentLength;
+        }
+
+        void setPartiallyVisibleContentLength(size_t truncatedLength)
+        {
+            m_partiallyVisibleContentLength = truncatedLength;
+            m_hasPartiallyVisibleContentLength = true;
+        }
 
     private:
         friend struct Box;
 
-        size_t m_start { 0 };
-        size_t m_length { 0 };
-        std::optional<size_t> m_partiallyVisibleContentLength { };
-        bool m_hasHyphen { false };
         String m_originalContent;
         String m_adjustedContentToRender;
-    };
 
-    enum class Type {
+        unsigned m_start { 0 };
+        unsigned m_length { 0 };
+        unsigned m_partiallyVisibleContentLength : 30 { };
+        bool m_hasPartiallyVisibleContentLength : 1 { false };
+        bool m_hasHyphen : 1 { false };
+    };
+#pragma pack(pop)
+
+    enum class Type : uint8_t {
         Text,
         WordSeparator,
         Ellipsis,
@@ -75,7 +90,7 @@ struct Box {
         GenericInlineLevelBox
     };
     struct Expansion;
-    enum class PositionWithinInlineLevelBox {
+    enum class PositionWithinInlineLevelBox : uint8_t {
         First = 1 << 0,
         Last  = 1 << 1
     };
@@ -160,14 +175,14 @@ struct Box {
     void setHasContent() { m_hasContent = true; }
     void setIsFullyTruncated() { m_isFullyTruncated = true; }
 
-    std::optional<Text>& text() { return m_text; }
-    const std::optional<Text>& text() const { return m_text; }
+    Text& text() { ASSERT(isTextOrSoftLineBreak()); return m_text; }
+    const Text& text() const { ASSERT(isTextOrSoftLineBreak()); return m_text; }
 
     struct Expansion {
-        ExpansionBehavior behavior = ExpansionBehavior::defaultBehavior();
+        ExpansionBehavior behavior { ExpansionBehavior::defaultBehavior() };
         float horizontalExpansion { 0 };
     };
-    Expansion expansion() const { return m_expansion; }
+    Expansion expansion() const { return { m_expansionBehavior, m_horizontalExpansion }; }
 
     const Layout::Box& layoutBox() const { return m_layoutBox; }
     const RenderStyle& style() const { return !lineIndex() ? layoutBox().firstLineStyle() : layoutBox().style(); }
@@ -182,42 +197,48 @@ struct Box {
     void setIsLastForLayoutBox(bool isLastBox) { m_isLastForLayoutBox = isLastBox; }
 
 private:
-    const size_t m_lineIndex { 0 };
-    const Type m_type { Type::GenericInlineLevelBox };
     CheckedRef<const Layout::Box> m_layoutBox;
-    UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
     FloatRect m_unflippedVisualRect;
     FloatRect m_inkOverflow;
-    bool m_hasContent : 1;
-    bool m_isFirstForLayoutBox : 1;
-    bool m_isLastForLayoutBox : 1;
-    bool m_isFullyTruncated : 1;
-    Expansion m_expansion;
-    std::optional<Text> m_text;
+
+    const unsigned m_lineIndex { 0 };
+
+    float m_horizontalExpansion { 0 };
+    
+    ExpansionBehavior m_expansionBehavior { ExpansionBehavior::defaultBehavior() };
+
+    UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
+    const Type m_type : 4 { Type::GenericInlineLevelBox };
+    bool m_hasContent : 1 { false };
+    bool m_isFirstForLayoutBox : 1 { false };
+    bool m_isLastForLayoutBox : 1 { false };
+    bool m_isFullyTruncated : 1 { false };
+
+    Text m_text;
 };
 
 inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDiLevel bidiLevel, const FloatRect& physicalRect, const FloatRect& inkOverflow, Expansion expansion, std::optional<Text> text, bool hasContent, OptionSet<PositionWithinInlineLevelBox> positionWithinInlineLevelBox)
-    : m_lineIndex(lineIndex)
-    , m_type(type)
-    , m_layoutBox(layoutBox)
-    , m_bidiLevel(bidiLevel)
+    : m_layoutBox(layoutBox)
     , m_unflippedVisualRect(physicalRect)
     , m_inkOverflow(inkOverflow)
+    , m_lineIndex(lineIndex)
+    , m_horizontalExpansion(expansion.horizontalExpansion)
+    , m_expansionBehavior(expansion.behavior)
+    , m_bidiLevel(bidiLevel)
+    , m_type(type)
     , m_hasContent(hasContent)
     , m_isFirstForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
     , m_isLastForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::Last))
-    , m_isFullyTruncated(false)
-    , m_expansion(expansion)
-    , m_text(text)
+    , m_text(text ? WTFMove(*text) : Text { })
 {
 }
 
 inline Box::Text::Text(size_t start, size_t length, const String& originalContent, String adjustedContentToRender, bool hasHyphen)
-    : m_start(start)
+    : m_originalContent(originalContent)
+    , m_adjustedContentToRender(adjustedContentToRender)
+    , m_start(start)
     , m_length(length)
     , m_hasHyphen(hasHyphen)
-    , m_originalContent(originalContent)
-    , m_adjustedContentToRender(adjustedContentToRender)
 {
 }
 

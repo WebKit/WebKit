@@ -175,18 +175,18 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
 
             auto& inlineTextBox = downcast<InlineTextBox>(displayBox.layoutBox());
             auto& textContent = displayBox.text();
-            auto leftSide = TextUtil::breakWord(inlineTextBox, textContent->start(), textContent->length(), width(displayBox), visibleWidth, { }, displayBox.style().fontCascade());
+            auto leftSide = TextUtil::breakWord(inlineTextBox, textContent.start(), textContent.length(), width(displayBox), visibleWidth, { }, displayBox.style().fontCascade());
             if (leftSide.length) {
-                textContent->setPartiallyVisibleContentLength(leftSide.length);
+                textContent.setPartiallyVisibleContentLength(leftSide.length);
                 return isLeftToRightDirection ? left(displayBox) + leftSide.logicalWidth : right(displayBox) - leftSide.logicalWidth;
             }
             if (canFullyTruncate) {
                 displayBox.setIsFullyTruncated();
                 return isLeftToRightDirection ? left(displayBox) : right(displayBox);
             }
-            auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, textContent->start(), textContent->length());
-            auto firstCharacterWidth = TextUtil::width(inlineTextBox, displayBox.style().fontCascade(), textContent->start(), textContent->start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
-            textContent->setPartiallyVisibleContentLength(firstCharacterLength);
+            auto firstCharacterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, textContent.start(), textContent.length());
+            auto firstCharacterWidth = TextUtil::width(inlineTextBox, displayBox.style().fontCascade(), textContent.start(), textContent.start() + firstCharacterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No);
+            textContent.setPartiallyVisibleContentLength(firstCharacterLength);
             return isLeftToRightDirection ? left(displayBox) + firstCharacterWidth : right(displayBox) - firstCharacterWidth;
         }
         if (canFullyTruncate) {
