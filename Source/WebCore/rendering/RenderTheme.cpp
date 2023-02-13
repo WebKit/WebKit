@@ -1966,31 +1966,6 @@ Color RenderTheme::tapHighlightColor()
 
 #endif
 
-// Value chosen by observation. This can be tweaked.
-constexpr double minColorContrastValue = 1.195;
-
-// For transparent or translucent background color, use lightening.
-constexpr float minDisabledColorAlphaValue = 0.5f;
-
-Color RenderTheme::disabledTextColor(const Color& textColor, const Color& backgroundColor) const
-{
-    // The explicit check for black is an optimization for the 99% case (black on white).
-    // This also means that black on black will turn into grey on black when disabled.
-    Color disabledColor;
-    if (equalIgnoringSemanticColor(textColor, Color::black) || backgroundColor.alphaAsFloat() < minDisabledColorAlphaValue || textColor.luminance() < backgroundColor.luminance())
-        disabledColor = textColor.lightened();
-    else
-        disabledColor = textColor.darkened();
-
-    // If there's not very much contrast between the disabled color and the background color,
-    // just leave the text color alone. We don't want to change a good contrast color scheme so that it has really bad contrast.
-    // If the contrast was already poor, then it doesn't do any good to change it to a different poor contrast color scheme.
-    if (contrastRatio(disabledColor, backgroundColor) < minColorContrastValue)
-        return textColor;
-
-    return disabledColor;
-}
-
 // Value chosen to return dark gray for both white on black and black on white.
 constexpr float datePlaceholderColorLightnessAdjustmentFactor = 0.66f;
 

@@ -182,8 +182,6 @@ public:
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    virtual Color disabledTextColor(const Color& textColor, const Color& backgroundColor) const;
-
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
     static void setCustomFocusRingColor(const Color&);
