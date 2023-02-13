@@ -332,6 +332,10 @@ class Driver {
                     return Realm.eval(realm, s);
                 };
                 globalObject.readFile = read;
+            } else if (isSpiderMonkey) {
+                globalObject = newGlobal();
+                globalObject.loadString = globalObject.evaluate;
+                globalObject.readFile = globalObject.readRelativeToScript;
             } else
                 globalObject = runString("");
 
