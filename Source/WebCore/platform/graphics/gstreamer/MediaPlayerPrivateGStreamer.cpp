@@ -926,8 +926,10 @@ static void setSyncOnClock(GstElement *element, bool sync)
 
 void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
 {
+#if !USE(WESTEROS_SINK)
     setSyncOnClock(videoSink(), sync);
     setSyncOnClock(audioSink(), sync);
+#endif
 }
 
 template <typename TrackPrivateType>
