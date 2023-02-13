@@ -611,6 +611,7 @@ template<typename Context>
 template<bool isReachable, typename>
 auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSignMode signMode, B3::Air::Arg optionalRelation) -> PartialResult
 {
+    UNUSED_PARAM(signMode);
     if (!Context::tierSupportsSIMD)
         WASM_TRY_ADD_TO_CONTEXT(addCrash());
     m_context.notifyFunctionUsesSIMD();

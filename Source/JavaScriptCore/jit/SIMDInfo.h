@@ -75,24 +75,43 @@ constexpr v128_t vectorXor(v128_t lhs, v128_t rhs)
 }
 
 enum class SIMDLane : uint8_t {
-    v128,
+    v128 = 0,
     i8x16,
     i16x8,
     i32x4,
     i64x2,
     f32x4,
-    f64x2
+    f64x2,
 };
+static constexpr unsigned bitsOfSIMDLane = 6;
 
 enum class SIMDSignMode : uint8_t {
-    None, 
+    None = 0,
     Signed,
-    Unsigned
+    Unsigned,
 };
+static constexpr unsigned bitsOfSIMDSignMode = 2;
 
 struct SIMDInfo {
-    SIMDLane lane { SIMDLane::v128 };
-    SIMDSignMode signMode { SIMDSignMode::None };
+    SIMDLane lane : bitsOfSIMDLane { SIMDLane::v128 };
+    SIMDSignMode signMode : bitsOfSIMDSignMode { SIMDSignMode::None };
+
+    constexpr SIMDInfo(SIMDLane passedLane, SIMDSignMode passedSignMode)
+        : lane(passedLane)
+        , signMode(passedSignMode)
+    { }
+
+    constexpr SIMDInfo() = default;
+
+    friend bool operator==(const SIMDInfo& lhs, const SIMDInfo& rhs)
+    {
+        return lhs.lane == rhs.lane && lhs.signMode == rhs.signMode;
+    }
+
+    friend bool operator!=(const SIMDInfo& lhs, const SIMDInfo& rhs)
+    {
+        return !(lhs == rhs);
+    }
 };
 
 constexpr uint8_t elementCount(SIMDLane lane)

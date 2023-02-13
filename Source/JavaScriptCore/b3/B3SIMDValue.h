@@ -104,8 +104,7 @@ public:
     SIMDInfo simdInfo() const { return m_simdInfo; }
     SIMDLane simdLane() const { return m_simdInfo.lane; }
     SIMDSignMode signMode() const { return m_simdInfo.signMode; }
-    uint8_t immediate(size_t i) const { return imm.u8x16[i]; }
-    const v128_t& immediate() const { return imm; }
+    uint8_t immediate() const { return m_immediate; }
 
     B3_SPECIALIZE_VALUE_FOR_FINAL_SIZE_FIXED_CHILDREN
 
@@ -116,8 +115,8 @@ protected:
     SIMDValue(Origin origin, Kind kind, Type type, SIMDInfo info, uint8_t imm1, Arguments... arguments)
         : Value(CheckedOpcode, kind, type, static_cast<NumChildren>(sizeof...(arguments)), origin, arguments...)
         , m_simdInfo(info)
+        , m_immediate(imm1)
     {
-        imm.u8x16[0] = imm1;
     }
 
     template<typename... Arguments>
@@ -131,16 +130,8 @@ protected:
     SIMDValue(Origin origin, Kind kind, Type type, SIMDLane simdLane, SIMDSignMode signMode, uint8_t imm1, Arguments... arguments)
         : Value(CheckedOpcode, kind, type, static_cast<NumChildren>(sizeof...(arguments)), origin, arguments...)
         , m_simdInfo { simdLane, signMode }
+        , m_immediate(imm1)
     {
-        imm.u8x16[0] = imm1;
-    }
-
-    template<typename... Arguments>
-    SIMDValue(Origin origin, Kind kind, Type type, SIMDLane simdLane, SIMDSignMode signMode, v128_t imm1, Arguments... arguments)
-        : Value(CheckedOpcode, kind, type, static_cast<NumChildren>(sizeof...(arguments)), origin, arguments...)
-        , m_simdInfo { simdLane, signMode }
-    {
-        imm = imm1;
     }
 
     template<typename... Arguments>
@@ -160,9 +151,8 @@ private:
     friend class Procedure;
     friend class Value;
 
-    SIMDInfo m_simdInfo;
-
-    v128_t imm;
+    SIMDInfo m_simdInfo { };
+    uint8_t m_immediate { 0 };
 };
 
 } } // namespace JSC::B3

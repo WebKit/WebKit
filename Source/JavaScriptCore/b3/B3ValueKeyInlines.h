@@ -57,6 +57,52 @@ inline ValueKey::ValueKey(Kind kind, Type type, Value* a, Value* b, Value* c)
     u.indices[2] = c->index();
 }
 
+inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a)
+    : m_simdInfo(simdInfo)
+    , m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = a ? a->index() : UINT32_MAX;
+}
+
+inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a, Value* b)
+    : m_simdInfo(simdInfo)
+    , m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = a ? a->index() : UINT32_MAX;
+    u.indices[1] = b ? b->index() : UINT32_MAX;
+}
+
+inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a, Value* b, Value* c)
+    : m_simdInfo(simdInfo)
+    , m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = a ? a->index() : UINT32_MAX;
+    u.indices[1] = b ? b->index() : UINT32_MAX;
+    u.indices[2] = c ? c->index() : UINT32_MAX;
+}
+
+inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a, uint8_t immediate)
+    : m_simdInfo(simdInfo)
+    , m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = a ? a->index() : UINT32_MAX;
+    u.indices[1] = immediate;
+}
+
+inline ValueKey::ValueKey(Kind kind, Type type, SIMDInfo simdInfo, Value* a, Value* b, uint8_t immediate)
+    : m_simdInfo(simdInfo)
+    , m_kind(kind)
+    , m_type(type)
+{
+    u.indices[0] = a ? a->index() : UINT32_MAX;
+    u.indices[1] = b ? b->index() : UINT32_MAX;
+    u.indices[2] = immediate;
+}
+
 inline Value* ValueKey::child(Procedure& proc, unsigned index) const
 {
     return proc.values()[index];

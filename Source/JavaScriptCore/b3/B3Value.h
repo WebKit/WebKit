@@ -684,7 +684,7 @@ private:
         case VectorPromote:
         case VectorDemote:
         case VectorBitmask:
-        case VectorAnyTrue: 
+        case VectorAnyTrue:
         case VectorAllTrue:
         case VectorExtaddPairwise:
         case VectorDupElement:

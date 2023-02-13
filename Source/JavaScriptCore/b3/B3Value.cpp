@@ -889,6 +889,75 @@ ValueKey Value::key() const
         return ValueKey(
             SlotBase, type(),
             static_cast<int64_t>(as<SlotBaseValue>()->slot()->index()));
+    case VectorNot:
+    case VectorSplat:
+    case VectorAbs:
+    case VectorNeg:
+    case VectorPopcnt:
+    case VectorCeil:
+    case VectorFloor:
+    case VectorTrunc:
+    case VectorTruncSat:
+    case VectorConvert:
+    case VectorConvertLow:
+    case VectorNearest:
+    case VectorSqrt:
+    case VectorExtendLow:
+    case VectorExtendHigh:
+    case VectorPromote:
+    case VectorDemote:
+    case VectorBitmask:
+    case VectorAnyTrue:
+    case VectorAllTrue:
+    case VectorExtaddPairwise:
+        numChildrenForKind(kind(), 1);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0));
+    case VectorExtractLane:
+    case VectorDupElement:
+        numChildrenForKind(kind(), 1);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), as<SIMDValue>()->immediate());
+    case VectorEqual:
+    case VectorNotEqual:
+    case VectorLessThan:
+    case VectorLessThanOrEqual:
+    case VectorBelow:
+    case VectorBelowOrEqual:
+    case VectorGreaterThan:
+    case VectorGreaterThanOrEqual:
+    case VectorAbove:
+    case VectorAboveOrEqual:
+    case VectorAdd:
+    case VectorSub:
+    case VectorAddSat:
+    case VectorSubSat:
+    case VectorMul:
+    case VectorDotProduct:
+    case VectorDiv:
+    case VectorMin:
+    case VectorMax:
+    case VectorPmin:
+    case VectorPmax:
+    case VectorNarrow:
+    case VectorAnd:
+    case VectorAndnot:
+    case VectorOr:
+    case VectorXor:
+    case VectorShl:
+    case VectorShr:
+    case VectorMulSat:
+    case VectorAvgRound:
+        numChildrenForKind(kind(), 2);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1));
+    case VectorReplaceLane:
+        numChildrenForKind(kind(), 2);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), as<SIMDValue>()->immediate());
+    case VectorBitwiseSelect:
+        numChildrenForKind(kind(), 3);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), child(2));
+    case VectorSwizzle:
+        if (numChildren() == 2)
+            return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), nullptr);
+        return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), child(2));
     default:
         return ValueKey();
     }
