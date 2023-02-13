@@ -701,7 +701,7 @@ public:
     {
     }
 
-    T value(const RenderStyle& style) const
+    virtual T value(const RenderStyle& style) const
     {
         return (style.*m_getter)();
     }
@@ -1246,8 +1246,8 @@ private:
 class PropertyWrapperFontVariationSettings final : public PropertyWrapper<FontVariationSettings> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperFontVariationSettings(CSSPropertyID property, FontVariationSettings (RenderStyle::*getter)() const, void (RenderStyle::*setter)(FontVariationSettings))
-        : PropertyWrapper(property, getter, setter)
+    PropertyWrapperFontVariationSettings()
+        : PropertyWrapper(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings)
     {
     }
 
@@ -1258,6 +1258,11 @@ private:
         if (&a == &b)
             return true;
         return value(a) == value(b);
+    }
+
+    FontVariationSettings value(const RenderStyle& style) const override
+    {
+        return PropertyWrapper::value(style).deduplicated();
     }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
@@ -3385,7 +3390,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperBaselineShift,
         new PropertyWrapper<SVGLengthValue>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
 #if ENABLE(VARIATION_FONTS)
-        new PropertyWrapperFontVariationSettings(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings),
+        new PropertyWrapperFontVariationSettings,
 #endif
         new PropertyWrapperFontSizeAdjust,
         new PropertyWrapperFontWeight,

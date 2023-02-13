@@ -27,6 +27,7 @@
 #pragma once
 
 #include <array>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
@@ -176,6 +177,8 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<FontTaggedSettings<T>> decode(Decoder&);
 
+    FontTaggedSettings<T> deduplicated() const;
+
 private:
     Vector<FontTaggedSetting<T>> m_list;
 };
@@ -212,6 +215,21 @@ std::optional<FontTaggedSettings<T>> FontTaggedSettings<T>::decode(Decoder& deco
 
     FontTaggedSettings result;
     result.m_list = WTFMove(*list);
+    return result;
+}
+
+template <typename T>
+FontTaggedSettings<T> FontTaggedSettings<T>::deduplicated() const
+{
+    HashCountedSet<FontTag, FourCharacterTagHash, FourCharacterTagHashTraits> duplicateTagChecker;
+    for (auto& feature : m_list)
+        duplicateTagChecker.add(feature.tag());
+
+    FontTaggedSettings<T> result;
+    for (auto& feature : m_list) {
+        if (duplicateTagChecker.remove(feature.tag()))
+            result.insert({ feature.tag(), feature.value() });
+    }
     return result;
 }
 
