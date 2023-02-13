@@ -4006,7 +4006,7 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& range, const 
     } else {
         if (!size) {
             if (position)
-                data.gradientBox = WTFMove(*position);
+                data.gradientBox = CSSRadialGradientValue::GradientBox { std::in_place_type<CSSGradientPosition>, WTFMove(*position) };
             else
                 data.gradientBox = std::monostate { };
         } else {
