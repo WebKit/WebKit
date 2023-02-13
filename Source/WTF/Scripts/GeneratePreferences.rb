@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (c) 2017, 2020 Apple Inc. All rights reserved.
+# Copyright (c) 2017-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -213,7 +213,7 @@ class Preference
   
   # Features which should be enabled while running tests
   def testable?
-    %w{ testable preview stable }.include? @status
+    %w{ testable preview stable mature }.include? @status
   end
 end
 
