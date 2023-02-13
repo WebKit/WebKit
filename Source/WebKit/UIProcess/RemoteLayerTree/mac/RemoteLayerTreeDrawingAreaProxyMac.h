@@ -52,7 +52,7 @@ private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
 
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) override;
+    void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) override;
 
     void adjustTransientZoom(double, WebCore::FloatPoint) override;
     void commitTransientZoom(double, WebCore::FloatPoint) override;

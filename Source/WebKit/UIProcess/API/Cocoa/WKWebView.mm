@@ -1266,8 +1266,15 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
 
-    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler](WebKit::CallbackBase::Error error) mutable {
-        if (error != WebKit::CallbackBase::Error::None) {
+    if (!_page->hasRunningProcess() || !_page->drawingArea()) {
+        tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
+        handler(nil, createNSError(WKErrorUnknown).get());
+        return;
+    }
+
+    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler, page = Ref { *_page }] () mutable {
+
+        if (!page->hasRunningProcess()) {
             tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
@@ -1603,7 +1610,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     auto updateBlockCopy = makeBlockPtr(updateBlock);
 
     RetainPtr<WKWebView> strongSelf = self;
-    _page->callAfterNextPresentationUpdate([updateBlockCopy, withoutWaitingForAnimatedResize, strongSelf](WebKit::CallbackBase::Error error) {
+    _page->callAfterNextPresentationUpdate([updateBlockCopy, withoutWaitingForAnimatedResize, strongSelf] {
         if (!updateBlockCopy)
             return;
 

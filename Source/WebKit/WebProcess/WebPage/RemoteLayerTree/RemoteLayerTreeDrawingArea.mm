@@ -51,6 +51,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
 
@@ -359,10 +360,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         m_webPage.didPaintLayers();
 
     auto pageID = m_webPage.identifier();
-    dispatch_async(m_commitQueue.get(), [backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] {
+    dispatch_async(m_commitQueue.get(), makeBlockPtr([backingStoreFlusher = WTFMove(backingStoreFlusher), pageID] () mutable {
         backingStoreFlusher->flush();
 
-        RunLoop::main().dispatch([pageID] {
+        RunLoop::main().dispatch([pageID] () mutable {
             if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
                 if (auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(webPage->drawingArea())) {
                     drawingArea->didCompleteRenderingUpdateDisplay();
@@ -370,7 +371,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
                 }
             }
         });
-    });
+    }).get());
 }
 
 void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplay()
@@ -457,13 +458,13 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     callback();
 }
 
-void RemoteLayerTreeDrawingArea::addTransactionCallbackID(CallbackID callbackID)
+void RemoteLayerTreeDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID callbackID)
 {
     // Assume that if someone is listening for this transaction's completion, that they want it to
     // be a "complete" paint (including images that would normally be asynchronously decoding).
     m_nextRenderingUpdateRequiresSynchronousImageDecoding = true;
 
-    m_pendingCallbackIDs.append(static_cast<RemoteLayerTreeTransaction::TransactionCallbackID>(callbackID));
+    m_pendingCallbackIDs.append(callbackID);
     triggerRenderingUpdate();
 }
 

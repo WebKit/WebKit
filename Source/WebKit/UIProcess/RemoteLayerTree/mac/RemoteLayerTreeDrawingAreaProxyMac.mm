@@ -131,7 +131,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
     observerID = { };
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
+void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
 {
     m_pageScalingLayerID = transaction.pageScalingLayerID();
     if (m_transientZoomScale)

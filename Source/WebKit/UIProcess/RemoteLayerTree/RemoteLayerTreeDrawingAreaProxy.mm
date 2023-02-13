@@ -63,7 +63,6 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& p
 
 RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
 {
-    m_callbacks.invalidate(CallbackBase::Error::OwnerWasInvalidated);
     for (auto& process : m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver)
         process->removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier);
 }
@@ -130,7 +129,7 @@ void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transact
     m_pendingLayerTreeTransactionID = transactionID;
 }
 
-void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
+void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connection, const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
 {
     TraceScope tracingScope(CommitLayerTreeStart, CommitLayerTreeEnd);
 
@@ -161,7 +160,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
 #endif
 
     m_webPageProxy.didCommitLayerTree(layerTreeTransaction);
-    didCommitLayerTree(layerTreeTransaction, scrollingTreeTransaction);
+    didCommitLayerTree(connection, layerTreeTransaction, scrollingTreeTransaction);
 
 #if ENABLE(ASYNC_SCROLLING)
     m_webPageProxy.scrollingCoordinatorProxy()->applyScrollingTreeLayerPositionsAfterCommit();
@@ -200,8 +199,8 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(const RemoteLayerTreeTrans
         m_webPageProxy.didReachLayoutMilestone(milestones);
 
     for (auto& callbackID : layerTreeTransaction.callbackIDs()) {
-        if (auto callback = m_callbacks.take<VoidCallback>(callbackID))
-            callback->performCallback();
+        if (auto callback = connection.takeAsyncReplyHandler(callbackID))
+            callback(nullptr);
     }
 }
 
@@ -386,14 +385,14 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
     }
 }
 
-void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callbackFunction)
+void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(CompletionHandler<void()>&& callbackFunction)
 {
     if (!m_webPageProxy.hasRunningProcess()) {
-        callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
+        callbackFunction();
         return;
     }
 
-    m_webPageProxy.send(Messages::DrawingArea::AddTransactionCallbackID(m_callbacks.put(WTFMove(callbackFunction), m_webPageProxy.process().throttler().backgroundActivity("RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing"_s))), m_identifier);
+    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), WTFMove(callbackFunction), m_identifier.toUInt64());
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()

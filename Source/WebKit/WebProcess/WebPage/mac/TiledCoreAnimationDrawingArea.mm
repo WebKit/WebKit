@@ -308,7 +308,7 @@ void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones()
     m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(std::exchange(m_pendingNewlyReachedPaintingMilestones, { })));
 }
 
-void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callbackID)
+void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID callbackID)
 {
     m_pendingCallbackIDs.append(callbackID);
     triggerRenderingUpdate();

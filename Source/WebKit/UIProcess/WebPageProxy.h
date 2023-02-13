@@ -1731,7 +1731,7 @@ public:
 
     // For testing
     void clearWheelEventTestMonitor();
-    void callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&&);
+    void callAfterNextPresentationUpdate(CompletionHandler<void()>&&);
 
     void didReachLayoutMilestone(OptionSet<WebCore::LayoutMilestone>);
 

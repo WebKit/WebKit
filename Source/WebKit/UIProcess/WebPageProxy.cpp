@@ -4708,7 +4708,7 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
 
     sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] () mutable {
         if (weakThis) {
-            weakThis->callAfterNextPresentationUpdate([callback = WTFMove(callback)] (auto) mutable {
+            weakThis->callAfterNextPresentationUpdate([callback = WTFMove(callback)] () mutable {
                 callback();
             });
         } else
@@ -10416,10 +10416,10 @@ void WebPageProxy::clearWheelEventTestMonitor()
     send(Messages::WebPage::ClearWheelEventTestMonitor());
 }
 
-void WebPageProxy::callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&& callback)
+void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
 {
     if (!hasRunningProcess() || !m_drawingArea) {
-        callback(CallbackBase::Error::OwnerWasInvalidated);
+        callback();
         return;
     }
 

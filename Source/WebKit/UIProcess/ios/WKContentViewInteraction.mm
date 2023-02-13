@@ -5459,7 +5459,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 {
     _ignoreSelectionCommandFadeCount++;
     _page->scheduleFullEditorStateUpdate();
-    _page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] (auto) {
+    _page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] {
         if (auto strongSelf = weakSelf.get())
             strongSelf->_ignoreSelectionCommandFadeCount--;
     });
@@ -9730,7 +9730,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
         page->dragCancelled();
         if (auto completion = protectedSelf->_dragDropInteractionState.takeDragCancelSetDownBlock()) {
-            page->callAfterNextPresentationUpdate([completion, protectedSelf] (WebKit::CallbackBase::Error) {
+            page->callAfterNextPresentationUpdate([completion, protectedSelf] {
                 completion();
                 protectedSelf->_isAnimatingDragCancel = NO;
             });

@@ -53,8 +53,8 @@ private:
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
     void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) override;
-    void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
-    void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) final;
+    void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) final;
+    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) final;
 
     void willSendUpdateGeometry();
 
@@ -77,8 +77,6 @@ private:
 
     // The last maxmium size for size-to-content auto-sizing we sent to the web process.
     WebCore::IntSize m_lastSentSizeToContentAutoSizeMaximumSize;
-
-    CallbackMap m_callbacks;
 };
 
 } // namespace WebKit

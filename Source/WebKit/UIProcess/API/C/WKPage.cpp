@@ -3008,8 +3008,8 @@ void WKPageClearWheelEventTestMonitor(WKPageRef pageRef)
 void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKPagePostPresentationUpdateFunction callback)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->callAfterNextPresentationUpdate([context, callback](WebKit::CallbackBase::Error error) {
-        callback(error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
+    toImpl(pageRef)->callAfterNextPresentationUpdate([context, callback] {
+        callback(nullptr, context);
     });
 }
 
