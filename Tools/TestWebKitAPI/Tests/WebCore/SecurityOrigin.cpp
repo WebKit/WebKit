@@ -29,6 +29,7 @@
 #include "Test.h"
 #include <WebCore/SecurityOrigin.h>
 #include <wtf/FileSystem.h>
+#include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
 
@@ -91,6 +92,8 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     auto o10 = SecurityOrigin::createFromString("x-apple-ql-magic://host"_s);
     auto o11 = SecurityOrigin::createFromString("x-apple-ql-id2://host"_s);
 #endif
+    auto o12 = SecurityOrigin::createOpaque();
+    auto o13 = SecurityOrigin::createOpaque();
 
     EXPECT_EQ(String("http"_s), o1->protocol());
     EXPECT_EQ(String("http"_s), o2->protocol());
@@ -105,6 +108,8 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_EQ(String("x-apple-ql-magic"_s), o10->protocol());
     EXPECT_EQ(String("x-apple-ql-id2"_s), o11->protocol());
 #endif
+    EXPECT_EQ(emptyString(), o12->protocol());
+    EXPECT_EQ(emptyString(), o13->protocol());
 
     EXPECT_EQ(String("example.com"_s), o1->host());
     EXPECT_EQ(String("example.com"_s), o2->host());
@@ -119,6 +124,8 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_EQ(String("host"_s), o10->host());
     EXPECT_EQ(String("host"_s), o11->host());
 #endif
+    EXPECT_EQ(emptyString(), o12->host());
+    EXPECT_EQ(emptyString(), o13->host());
 
     EXPECT_FALSE(o1->port());
     EXPECT_FALSE(o2->port());
@@ -133,6 +140,8 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_FALSE(o10->port());
     EXPECT_FALSE(o11->port());
 #endif
+    EXPECT_FALSE(o12->port());
+    EXPECT_FALSE(o13->port());
 
     EXPECT_EQ("http://example.com"_s, o1->toString());
     EXPECT_EQ("http://example.com"_s, o2->toString());
@@ -147,6 +156,8 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_EQ("x-apple-ql-magic://host"_s, o10->toString());
     EXPECT_EQ("x-apple-ql-id2://host"_s, o11->toString());
 #endif
+    EXPECT_EQ("null"_s, o12->toString());
+    EXPECT_EQ("null"_s, o13->toString());
 
     EXPECT_TRUE(o1->isSameOriginAs(o2.get()));
     EXPECT_TRUE(o1->isSameOriginAs(o3.get()));
@@ -160,6 +171,10 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_FALSE(o1->isSameOriginAs(o10.get()));
     EXPECT_FALSE(o1->isSameOriginAs(o11.get()));
 #endif
+    EXPECT_FALSE(o12->isSameOriginAs(o13.get()));
+
+    EXPECT_TRUE(o12->isOpaque());
+    EXPECT_TRUE(o13->isOpaque());
 }
 
 TEST_F(SecurityOriginTest, SecurityOriginFileBasedConstructors)
@@ -275,4 +290,35 @@ TEST_F(SecurityOriginTest, IsRegistrableDomainSuffix)
     EXPECT_TRUE(comOrigin->isMatchingRegistrableDomainSuffix("com"_s));
 }
 
+TEST_F(SecurityOriginTest, SecurityOriginHash)
+{
+    auto o1 = SecurityOrigin::create("http"_s, "example.com"_s, std::nullopt);
+    auto o2 = SecurityOrigin::create("http"_s, "example.com"_s, std::optional<uint16_t>(80));
+    auto o3 = SecurityOrigin::create(URL { "file:///" + tempFilePath() });
+    auto o4 = SecurityOrigin::createOpaque();
+    auto o5 = SecurityOrigin::createOpaque();
+
+    EXPECT_TRUE(o1->isSameOriginAs(o2.get()));
+    EXPECT_EQ(o1->data(), o2->data());
+
+    HashSet<SecurityOriginData> set;
+    EXPECT_EQ(set.size(), 0u);
+    set.add(o1->data());
+    EXPECT_EQ(set.size(), 1u);
+    set.add(o2->data());
+    EXPECT_EQ(set.size(), 1u);
+    set.add(o3->data());
+    EXPECT_EQ(set.size(), 2u);
+    set.add(o4->data());
+    EXPECT_EQ(set.size(), 3u);
+    set.add(o5->data());
+    EXPECT_EQ(set.size(), 4u);
+
+    EXPECT_TRUE(set.remove(o4->data()));
+    EXPECT_EQ(set.size(), 3u);
+    EXPECT_TRUE(set.contains(o5->data()));
+    EXPECT_FALSE(set.contains(o4->data()));
+    EXPECT_TRUE(set.remove(o2->data()));
+    EXPECT_FALSE(set.contains(o1->data()));
+}
 } // namespace TestWebKitAPI

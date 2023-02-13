@@ -153,7 +153,7 @@ void ProvisionalPageProxy::cancel()
     FrameInfoData frameInfo {
         true, // isMainFrame
         m_request,
-        SecurityOriginData::fromURL(m_request.url()),
+        SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url()),
         { },
         m_mainFrame->frameID(),
         std::nullopt,

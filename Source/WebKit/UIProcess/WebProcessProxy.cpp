@@ -191,7 +191,7 @@ Vector<RefPtr<WebPageProxy>> WebProcessProxy::pages() const
 void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, const Function<void(WebPageProxy&)>& callback)
 {
     for (auto& page : globalPages()) {
-        if (!page || page->sessionID() != sessionID || SecurityOriginData::fromURL(URL { page->currentURL() }) != origin)
+        if (!page || page->sessionID() != sessionID || SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { page->currentURL() }) != origin)
             continue;
         callback(*page);
     }

@@ -678,7 +678,7 @@ void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionR
     // If page navigated, there is no need to call the page client for authorization.
     auto* webFrame = WebFrameProxy::webFrame(m_currentUserMediaRequest->frameID());
 
-    if (!webFrame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(m_currentUserMediaRequest->topLevelDocumentSecurityOrigin())) {
+    if (!webFrame || !protocolHostAndPortAreEqual(URL(m_page.pageLoadState().activeURL()), m_currentUserMediaRequest->topLevelDocumentSecurityOrigin().data().toURL())) {
         denyRequest(*m_currentUserMediaRequest, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints, emptyString());
         return;
     }
@@ -692,7 +692,7 @@ void UserMediaPermissionRequestManagerProxy::decidePolicyForUserMediaPermissionR
 void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier frameIdentifier, const WebCore::SecurityOrigin& requestingOrigin, const WebCore::SecurityOrigin& topOrigin, const WebCore::CaptureDevice& device, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto* frame = WebFrameProxy::webFrame(frameIdentifier);
-    if (!frame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(topOrigin)) {
+    if (!frame || !protocolHostAndPortAreEqual(URL(m_page.pageLoadState().activeURL()), topOrigin.data().toURL())) {
         completionHandler(false);
         return;
     }
@@ -720,7 +720,7 @@ void UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRe
 
 bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForCamera(const ClientOrigin& origin) const
 {
-    if (!SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(origin.topOrigin.securityOrigin().get()))
+    if (!protocolHostAndPortAreEqual(URL(m_page.pageLoadState().activeURL()), origin.topOrigin.toURL()))
         return true;
 
     return !anyOf(m_deniedRequests, [](auto& request) { return request.isVideoDenied; })
@@ -730,7 +730,7 @@ bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForCamera
 
 bool UserMediaPermissionRequestManagerProxy::shouldChangeDeniedToPromptForMicrophone(const ClientOrigin& origin) const
 {
-    if (!SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(origin.topOrigin.securityOrigin().get()))
+    if (!protocolHostAndPortAreEqual(URL(m_page.pageLoadState().activeURL()), origin.topOrigin.toURL()))
         return true;
 
     return !anyOf(m_deniedRequests, [](auto& request) { return request.isAudioDenied; })
@@ -758,7 +758,7 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
 void UserMediaPermissionRequestManagerProxy::getUserMediaPermissionInfo(FrameIdentifier frameID, Ref<SecurityOrigin>&& userMediaDocumentOrigin, Ref<SecurityOrigin>&& topLevelDocumentOrigin, CompletionHandler<void(PermissionInfo)>&& handler)
 {
     auto* webFrame = WebFrameProxy::webFrame(frameID);
-    if (!webFrame || !SecurityOrigin::createFromString(m_page.pageLoadState().activeURL())->isSameSchemeHostPort(topLevelDocumentOrigin.get())) {
+    if (!webFrame || !protocolHostAndPortAreEqual(URL(m_page.pageLoadState().activeURL()), topLevelDocumentOrigin->data().toURL())) {
         handler({ });
         return;
     }

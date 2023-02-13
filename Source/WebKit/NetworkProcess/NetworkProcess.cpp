@@ -1719,7 +1719,7 @@ void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, Option
             cache->traverse(cachePartition, [cache, clearTasksHandler, shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
                 if (traversalEntry) {
                     ASSERT_UNUSED(cachePartition, equalIgnoringNullity(traversalEntry->entry.key().partition(), cachePartition));
-                    if (shouldClearAllEntriesInPartition || SecurityOriginData::fromURL(traversalEntry->entry.response().url()) == origin)
+                    if (shouldClearAllEntriesInPartition || SecurityOriginData::fromURLWithoutStrictOpaqueness(traversalEntry->entry.response().url()) == origin)
                         cacheKeysToDelete.append(traversalEntry->entry.key());
                     return;
                 }
@@ -2404,11 +2404,9 @@ void NetworkProcess::didIncreaseQuota(PAL::SessionID sessionID, ClientOrigin&& o
         session->storageManager().didIncreaseQuota(WTFMove(origin), identifier, newQuota);
 }
 
-void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const URL& oldName, const URL& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, SecurityOriginData&& oldOrigin, SecurityOriginData&& newOrigin, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    auto oldOrigin = WebCore::SecurityOriginData::fromURL(oldName);
-    auto newOrigin = WebCore::SecurityOriginData::fromURL(newName);
 
     if (oldOrigin.isNull() || newOrigin.isNull())
         return;
@@ -2417,14 +2415,13 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
         session->storageManager().moveData(dataTypes, WTFMove(oldOrigin), WTFMove(newOrigin), [aggregator] { });
 }
 
-void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, const URL& origin, const URL& topOrigin, WebsiteDataType dataType, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, ClientOrigin&& origin, WebsiteDataType dataType, CompletionHandler<void(const String&)>&& completionHandler)
 {
     auto* session = networkSession(sessionID);
     if (!session)
         return completionHandler({ });
 
-    auto clientOrigin = WebCore::ClientOrigin { WebCore::SecurityOriginData::fromURL(topOrigin), WebCore::SecurityOriginData::fromURL(origin) };
-    session->storageManager().getOriginDirectory(WTFMove(clientOrigin), dataType, WTFMove(completionHandler));
+    session->storageManager().getOriginDirectory(WTFMove(origin), dataType, WTFMove(completionHandler));
 }
 
 #if ENABLE(SERVICE_WORKER)

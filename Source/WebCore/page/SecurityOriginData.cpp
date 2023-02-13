@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "LegacySchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include <wtf/FileSystem.h>
 #include <wtf/text/CString.h>
@@ -66,9 +67,29 @@ SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
     return document->securityOrigin().data();
 }
 
+SecurityOriginData SecurityOriginData::fromURL(const URL& url)
+{
+    if (shouldTreatAsOpaqueOrigin(url))
+        return createOpaque();
+    return fromURLWithoutStrictOpaqueness(url);
+}
+
+SecurityOriginData SecurityOriginData::fromURLWithoutStrictOpaqueness(const URL& url)
+{
+    if (url.isNull())
+        return SecurityOriginData { };
+    if (url.protocol().isEmpty() && url.host().isEmpty() && !url.port())
+        return createOpaque();
+    return SecurityOriginData {
+        url.protocol().isNull() ? emptyString() : url.protocol().convertToASCIILowercase()
+        , url.host().isNull() ? emptyString() : url.host().convertToASCIILowercase()
+        , url.port()
+    };
+}
+
 Ref<SecurityOrigin> SecurityOriginData::securityOrigin() const
 {
-    return SecurityOrigin::create(protocol.isolatedCopy(), host.isolatedCopy(), port);
+    return SecurityOrigin::create(isolatedCopy());
 }
 
 static const char separatorCharacter = '_';
@@ -127,6 +148,7 @@ SecurityOriginData SecurityOriginData::isolatedCopy() const &
     result.protocol = protocol.isolatedCopy();
     result.host = host.isolatedCopy();
     result.port = port;
+    result.opaqueOriginIdentifier = opaqueOriginIdentifier;
 
     return result;
 }
@@ -138,6 +160,7 @@ SecurityOriginData SecurityOriginData::isolatedCopy() &&
     result.protocol = WTFMove(protocol).isolatedCopy();
     result.host = WTFMove(host).isolatedCopy();
     result.port = port;
+    result.opaqueOriginIdentifier = opaqueOriginIdentifier;
 
     return result;
 }
@@ -149,7 +172,56 @@ bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)
 
     return a.protocol == b.protocol
         && a.host == b.host
-        && a.port == b.port;
+        && a.port == b.port
+        && a.opaqueOriginIdentifier == b.opaqueOriginIdentifier;
+}
+
+static bool schemeRequiresHost(const URL& url)
+{
+    // We expect URLs with these schemes to have authority components. If the
+    // URL lacks an authority component, we get concerned and mark the origin
+    // as opaque.
+    return url.protocolIsInHTTPFamily() || url.protocolIs("ftp"_s);
+}
+
+bool SecurityOriginData::shouldTreatAsOpaqueOrigin(const URL& url)
+{
+    if (!url.isValid())
+        return true;
+
+    // FIXME: Do we need to unwrap the URL further?
+    URL innerURL = SecurityOrigin::shouldUseInnerURL(url) ? SecurityOrigin::extractInnerURL(url) : url;
+    if (!innerURL.isValid())
+        return true;
+
+    // For edge case URLs that were probably misparsed, make sure that the origin is opaque.
+    // This is an additional safety net against bugs in URL parsing, and for network back-ends that parse URLs differently,
+    // and could misinterpret another component for hostname.
+    if (schemeRequiresHost(innerURL) && innerURL.host().isEmpty())
+        return true;
+
+    if (LegacySchemeRegistry::shouldTreatURLSchemeAsNoAccess(innerURL.protocol()))
+        return true;
+
+    // https://url.spec.whatwg.org/#origin with some additions
+    if (url.hasSpecialScheme()
+#if PLATFORM(COCOA)
+        || !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NullOriginForNonSpecialSchemedURLs)
+        || url.protocolIs("applewebdata"_s)
+        || url.protocolIs("x-apple-ql-id"_s)
+        || url.protocolIs("x-apple-ql-id2"_s)
+        || url.protocolIs("x-apple-ql-magic"_s)
+#endif
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        || url.protocolIs("resource"_s)
+#endif
+#if ENABLE(PDFJS)
+        || url.protocolIs("webkit-pdfjs-viewer"_s)
+#endif
+        || url.protocolIs("blob"_s))
+        return false;
+
+    return !LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
 }
 
 } // namespace WebCore
