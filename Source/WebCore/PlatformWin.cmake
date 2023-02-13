@@ -1,4 +1,5 @@
-add_definitions(/bigobj -D__STDC_CONSTANT_MACROS)
+add_compile_options(/bigobj)
+add_definitions(-D__STDC_CONSTANT_MACROS)
 
 include(platform/Adwaita.cmake)
 include(platform/Cairo.cmake)
@@ -22,6 +23,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/mediacapabilities"
     "${WEBCORE_DIR}/platform/network/win"
     "${WEBCORE_DIR}/platform/win"
+    "${WEBCORE_DIR}/platform/win/WebCore.resources"
 )
 
 list(APPEND WebCore_SOURCES
@@ -128,6 +130,8 @@ list(APPEND WebCore_SOURCES
     platform/win/WidgetWin.cpp
     platform/win/WindowMessageBroadcaster.cpp
     platform/win/WindowsKeyNames.cpp
+
+    platform/win/WebCore.resources/WebCore.rc
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS

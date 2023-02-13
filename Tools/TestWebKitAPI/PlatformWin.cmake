@@ -30,8 +30,6 @@ list(APPEND TestWebCore_SOURCES
     Tests/WebCore/win/DIBPixelData.cpp
     Tests/WebCore/win/LinkedFonts.cpp
     Tests/WebCore/win/WebCoreBundle.cpp
-
-    win/TestWebCoreStubs.cpp
 )
 
 list(APPEND TestWebCore_LIBRARIES

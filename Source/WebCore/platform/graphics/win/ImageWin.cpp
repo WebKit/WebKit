@@ -28,17 +28,80 @@
 
 #include "BitmapImage.h"
 #include "SharedBuffer.h"
+#include "WebCoreResources.h"
 
-#if !PLATFORM(WIN_CAIRO)
 // This function loads resources from WebKit
-RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char*);
-#else
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=188175
-RefPtr<WebCore::FragmentedSharedBuffer> loadResourceIntoBuffer(const char*)
+static RefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
 {
-    return nullptr;
+    int idr;
+    // temporary hack to get resource id
+    if (!strcmp(name, "textAreaResizeCorner"))
+        idr = IDR_RESIZE_CORNER;
+    else if (!strcmp(name, "missingImage"))
+        idr = IDR_MISSING_IMAGE;
+    else if (!strcmp(name, "nullPlugin"))
+        idr = IDR_NULL_PLUGIN;
+    else if (!strcmp(name, "panIcon"))
+        idr = IDR_PAN_SCROLL_ICON;
+    else if (!strcmp(name, "panSouthCursor"))
+        idr = IDR_PAN_SOUTH_CURSOR;
+    else if (!strcmp(name, "panNorthCursor"))
+        idr = IDR_PAN_NORTH_CURSOR;
+    else if (!strcmp(name, "panEastCursor"))
+        idr = IDR_PAN_EAST_CURSOR;
+    else if (!strcmp(name, "panWestCursor"))
+        idr = IDR_PAN_WEST_CURSOR;
+    else if (!strcmp(name, "panSouthEastCursor"))
+        idr = IDR_PAN_SOUTH_EAST_CURSOR;
+    else if (!strcmp(name, "panSouthWestCursor"))
+        idr = IDR_PAN_SOUTH_WEST_CURSOR;
+    else if (!strcmp(name, "panNorthEastCursor"))
+        idr = IDR_PAN_NORTH_EAST_CURSOR;
+    else if (!strcmp(name, "panNorthWestCursor"))
+        idr = IDR_PAN_NORTH_WEST_CURSOR;
+    else if (!strcmp(name, "searchMagnifier"))
+        idr = IDR_SEARCH_MAGNIFIER;
+    else if (!strcmp(name, "searchMagnifierResults"))
+        idr = IDR_SEARCH_MAGNIFIER_RESULTS;
+    else if (!strcmp(name, "searchCancel"))
+        idr = IDR_SEARCH_CANCEL;
+    else if (!strcmp(name, "searchCancelPressed"))
+        idr = IDR_SEARCH_CANCEL_PRESSED;
+    else if (!strcmp(name, "zoomInCursor"))
+        idr = IDR_ZOOM_IN_CURSOR;
+    else if (!strcmp(name, "zoomOutCursor"))
+        idr = IDR_ZOOM_OUT_CURSOR;
+    else if (!strcmp(name, "verticalTextCursor"))
+        idr = IDR_VERTICAL_TEXT_CURSOR;
+    else if (!strcmp(name, "fsVideoAudioVolumeHigh"))
+        idr = IDR_FS_VIDEO_AUDIO_VOLUME_HIGH;
+    else if (!strcmp(name, "fsVideoAudioVolumeLow"))
+        idr = IDR_FS_VIDEO_AUDIO_VOLUME_LOW;
+    else if (!strcmp(name, "fsVideoExitFullscreen"))
+        idr = IDR_FS_VIDEO_EXIT_FULLSCREEN;
+    else if (!strcmp(name, "fsVideoPause"))
+        idr = IDR_FS_VIDEO_PAUSE;
+    else if (!strcmp(name, "fsVideoPlay"))
+        idr = IDR_FS_VIDEO_PLAY;
+    else
+        return nullptr;
+
+    HMODULE mod;
+    if (!GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCTSTR)loadResourceIntoBuffer, &mod))
+        return nullptr;
+    HRSRC resInfo = FindResource(mod, MAKEINTRESOURCE(idr), L"PNG");
+    if (!resInfo)
+        return nullptr;
+    HANDLE res = LoadResource(mod, resInfo);
+    if (!res)
+        return nullptr;
+    void* resource = LockResource(res);
+    if (!resource)
+        return nullptr;
+    unsigned size = SizeofResource(mod, resInfo);
+
+    return WebCore::SharedBuffer::create(reinterpret_cast<const char*>(resource), size);
 }
-#endif
 
 namespace WebCore {
 
