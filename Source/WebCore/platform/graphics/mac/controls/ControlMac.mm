@@ -39,6 +39,7 @@
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
+#import <pal/spi/mac/NSViewSPI.h>
 
 namespace WebCore {
 
