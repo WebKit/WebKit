@@ -31,24 +31,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_CONTEXT_MENU            (webkit_context_menu_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_CONTEXT_MENU(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_CONTEXT_MENU, WebKitContextMenu))
 #define WEBKIT_IS_CONTEXT_MENU(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_CONTEXT_MENU))
 #define WEBKIT_CONTEXT_MENU_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_CONTEXT_MENU, WebKitContextMenuClass))
 #define WEBKIT_IS_CONTEXT_MENU_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_CONTEXT_MENU))
 #define WEBKIT_CONTEXT_MENU_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_CONTEXT_MENU, WebKitContextMenuClass))
-
-typedef struct _WebKitContextMenu        WebKitContextMenu;
-typedef struct _WebKitContextMenuClass   WebKitContextMenuClass;
-typedef struct _WebKitContextMenuPrivate WebKitContextMenuPrivate;
-
-typedef struct _WebKitContextMenuItem WebKitContextMenuItem;
-
-struct _WebKitContextMenu {
-    GObject parent;
-
-    /*< private >*/
-    WebKitContextMenuPrivate *priv;
-};
 
 struct _WebKitContextMenuClass {
     GObjectClass parent_class;
@@ -59,9 +47,11 @@ struct _WebKitContextMenuClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_context_menu_get_type             (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitContextMenu, webkit_context_menu, WEBKIT, CONTEXT_MENU, GObject)
+
+typedef struct _WebKitContextMenuItem WebKitContextMenuItem;
 
 WEBKIT_API WebKitContextMenu *
 webkit_context_menu_new                  (void);

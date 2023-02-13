@@ -51,7 +51,7 @@ struct _WebKitResponsePolicyDecisionPrivate {
     GRefPtr<WebKitURIResponse> response;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitResponsePolicyDecision, webkit_response_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitResponsePolicyDecision, webkit_response_policy_decision, WEBKIT_TYPE_POLICY_DECISION, WebKitPolicyDecision)
 
 enum {
     PROP_0,

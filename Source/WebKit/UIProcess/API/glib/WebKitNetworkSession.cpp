@@ -95,7 +95,7 @@ struct _WebKitNetworkSessionPrivate {
     PAL::HysteresisActivity dnsPrefetchHystereris;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE(WebKitNetworkSession, webkit_network_session, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitNetworkSession, webkit_network_session, G_TYPE_OBJECT, GObject)
 
 static void webkitNetworkSessionGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {

@@ -39,6 +39,7 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_HIT_TEST_RESULT            (webkit_web_hit_test_result_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_HIT_TEST_RESULT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_HIT_TEST_RESULT, WebKitWebHitTestResult))
 #define WEBKIT_IS_WEB_HIT_TEST_RESULT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_HIT_TEST_RESULT))
 #define WEBKIT_WEB_HIT_TEST_RESULT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_HIT_TEST_RESULT, WebKitWebHitTestResultClass))
@@ -49,17 +50,6 @@ typedef struct _WebKitWebHitTestResult        WebKitWebHitTestResult;
 typedef struct _WebKitWebHitTestResultClass   WebKitWebHitTestResultClass;
 typedef struct _WebKitWebHitTestResultPrivate WebKitWebHitTestResultPrivate;
 
-struct _WebKitWebHitTestResult {
-#if ENABLE(2022_GLIB_API)
-    GObject parent;
-#else
-    WebKitHitTestResult parent;
-#endif
-
-    WebKitWebHitTestResultPrivate *priv;
-};
-
-#if !ENABLE(2022_GLIB_API)
 struct _WebKitWebHitTestResultClass {
     WebKitHitTestResultClass parent_class;
 
@@ -68,10 +58,11 @@ struct _WebKitWebHitTestResultClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
-#endif // !ENABLE(2022_GLIB_API)
 
-WEBKIT_API GType
-webkit_web_hit_test_result_get_type             (void);
+WEBKIT_DECLARE_TYPE (WebKitWebHitTestResult, webkit_web_hit_test_result, WEBKIT, WEB_HIT_TEST_RESULT, WebKitHitTestResult)
+#else
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebHitTestResult, webkit_web_hit_test_result, WEBKIT, WEB_HIT_TEST_RESULT, GObject)
+#endif
 
 #if ENABLE(2022_GLIB_API)
 

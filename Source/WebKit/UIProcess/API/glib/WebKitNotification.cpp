@@ -60,7 +60,7 @@ struct _WebKitNotificationPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitNotification, webkit_notification, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitNotification, webkit_notification, G_TYPE_OBJECT, GObject)
 
 static void webkitNotificationGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {

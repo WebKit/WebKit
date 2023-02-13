@@ -30,24 +30,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_URI_SCHEME_REQUEST            (webkit_uri_scheme_request_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_URI_SCHEME_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_URI_SCHEME_REQUEST, WebKitURISchemeRequest))
 #define WEBKIT_IS_URI_SCHEME_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_URI_SCHEME_REQUEST))
 #define WEBKIT_URI_SCHEME_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_URI_SCHEME_REQUEST, WebKitURISchemeRequestClass))
 #define WEBKIT_IS_URI_SCHEME_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_URI_SCHEME_REQUEST))
 #define WEBKIT_URI_SCHEME_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_URI_SCHEME_REQUEST, WebKitURISchemeRequestClass))
-
-typedef struct _WebKitURISchemeRequest        WebKitURISchemeRequest;
-typedef struct _WebKitURISchemeRequestClass   WebKitURISchemeRequestClass;
-typedef struct _WebKitURISchemeRequestPrivate WebKitURISchemeRequestPrivate;
-
-typedef struct _WebKitWebView WebKitWebView;
-
-struct _WebKitURISchemeRequest {
-    GObject parent;
-
-    /*< private >*/
-    WebKitURISchemeRequestPrivate *priv;
-};
 
 struct _WebKitURISchemeRequestClass {
     GObjectClass parent_class;
@@ -58,9 +46,11 @@ struct _WebKitURISchemeRequestClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_uri_scheme_request_get_type     (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitURISchemeRequest, webkit_uri_scheme_request, WEBKIT, URI_SCHEME_REQUEST, GObject)
+
+typedef struct _WebKitWebView WebKitWebView;
 
 WEBKIT_API const gchar *
 webkit_uri_scheme_request_get_scheme   (WebKitURISchemeRequest *request);

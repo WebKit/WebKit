@@ -73,7 +73,7 @@ struct _WebKitURISchemeRequestPrivate {
     GUniquePtr<SoupMessageHeaders> headers;
 };
 
-WEBKIT_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT, GObject)
 
 static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass*)
 {

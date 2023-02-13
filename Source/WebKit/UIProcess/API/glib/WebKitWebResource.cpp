@@ -76,7 +76,7 @@ struct _WebKitWebResourcePrivate {
     bool isMainResource;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebResource, webkit_web_resource, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebResource, webkit_web_resource, G_TYPE_OBJECT, GObject)
 
 static guint signals[LAST_SIGNAL] = { 0, };
 

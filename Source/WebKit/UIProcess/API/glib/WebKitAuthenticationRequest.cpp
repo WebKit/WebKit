@@ -77,7 +77,7 @@ struct _WebKitAuthenticationRequestPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitAuthenticationRequest, webkit_authentication_request, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitAuthenticationRequest, webkit_authentication_request, G_TYPE_OBJECT, GObject)
 
 static inline WebKitAuthenticationScheme toWebKitAuthenticationScheme(WebCore::ProtectionSpace::AuthenticationScheme coreScheme)
 {

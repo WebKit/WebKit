@@ -28,29 +28,19 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_NOTIFICATION_PERMISSION_REQUEST            (webkit_notification_permission_request_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_NOTIFICATION_PERMISSION_REQUEST(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_NOTIFICATION_PERMISSION_REQUEST, WebKitNotificationPermissionRequest))
 #define WEBKIT_NOTIFICATION_PERMISSION_REQUEST_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_NOTIFICATION_PERMISSION_REQUEST, WebKitNotificationPermissionRequestClass))
 #define WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_NOTIFICATION_PERMISSION_REQUEST))
 #define WEBKIT_IS_NOTIFICATION_PERMISSION_REQUEST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_NOTIFICATION_PERMISSION_REQUEST))
 #define WEBKIT_NOTIFICATION_PERMISSION_REQUEST_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_NOTIFICATION_PERMISSION_REQUEST, WebKitNotificationPermissionRequestClass))
 
-typedef struct _WebKitNotificationPermissionRequest        WebKitNotificationPermissionRequest;
-typedef struct _WebKitNotificationPermissionRequestClass   WebKitNotificationPermissionRequestClass;
-typedef struct _WebKitNotificationPermissionRequestPrivate WebKitNotificationPermissionRequestPrivate;
-
-struct _WebKitNotificationPermissionRequest {
-    GObject parent;
-
-    /*< private >*/
-    WebKitNotificationPermissionRequestPrivate *priv;
-};
-
 struct _WebKitNotificationPermissionRequestClass {
     GObjectClass parent_class;
 };
+#endif
 
-WEBKIT_API GType
-webkit_notification_permission_request_get_type (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitNotificationPermissionRequest, webkit_notification_permission_request, WEBKIT, NOTIFICATION_PERMISSION_REQUEST, GObject)
 
 G_END_DECLS
 

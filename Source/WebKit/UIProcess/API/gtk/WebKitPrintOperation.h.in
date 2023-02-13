@@ -29,15 +29,25 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_PRINT_OPERATION            (webkit_print_operation_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_PRINT_OPERATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_PRINT_OPERATION, WebKitPrintOperation))
 #define WEBKIT_IS_PRINT_OPERATION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_PRINT_OPERATION))
 #define WEBKIT_PRINT_OPERATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_PRINT_OPERATION, WebKitPrintOperationClass))
 #define WEBKIT_IS_PRINT_OPERATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_PRINT_OPERATION))
 #define WEBKIT_PRINT_OPERATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_PRINT_OPERATION, WebKitPrintOperationClass))
 
-typedef struct _WebKitPrintOperation        WebKitPrintOperation;
-typedef struct _WebKitPrintOperationClass   WebKitPrintOperationClass;
-typedef struct _WebKitPrintOperationPrivate WebKitPrintOperationPrivate;
+struct _WebKitPrintOperationClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitPrintOperation, webkit_print_operation, WEBKIT, PRINT_OPERATION, GObject)
 
 /**
  * WebKitPrintOperationResponse:
@@ -51,26 +61,6 @@ typedef enum {
     WEBKIT_PRINT_OPERATION_RESPONSE_PRINT,
     WEBKIT_PRINT_OPERATION_RESPONSE_CANCEL
 } WebKitPrintOperationResponse;
-
-struct _WebKitPrintOperation {
-    GObject parent;
-
-    /*< private >*/
-    WebKitPrintOperationPrivate *priv;
-};
-
-struct _WebKitPrintOperationClass {
-    GObjectClass parent_class;
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WEBKIT_API GType
-webkit_print_operation_get_type           (void);
 
 WEBKIT_API WebKitPrintOperation *
 webkit_print_operation_new                (WebKitWebView        *web_view);

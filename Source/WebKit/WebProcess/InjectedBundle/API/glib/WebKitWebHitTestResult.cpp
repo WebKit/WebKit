@@ -56,14 +56,6 @@ using namespace WebCore;
  * Since: 2.8
  */
 
-#if !ENABLE(2022_GLIB_API)
-enum {
-    PROP_0,
-
-    PROP_NODE
-};
-#endif
-
 struct _WebKitWebHitTestResultPrivate {
     WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
 
@@ -73,16 +65,16 @@ struct _WebKitWebHitTestResultPrivate {
 };
 
 #if ENABLE(2022_GLIB_API)
-struct _WebKitWebHitTestResultClass {
-    GObjectClass parent;
-};
-
-WEBKIT_DEFINE_FINAL_TYPE(WebKitWebHitTestResult, webkit_web_hit_test_result, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebHitTestResult, webkit_web_hit_test_result, G_TYPE_OBJECT, GObject)
 #else
 WEBKIT_DEFINE_TYPE(WebKitWebHitTestResult, webkit_web_hit_test_result, WEBKIT_TYPE_HIT_TEST_RESULT)
-#endif
 
-#if !ENABLE(2022_GLIB_API)
+enum {
+    PROP_0,
+
+    PROP_NODE
+};
+
 static void webkitWebHitTestResultGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
     WebKitWebHitTestResult* webHitTestResult = WEBKIT_WEB_HIT_TEST_RESULT(object);

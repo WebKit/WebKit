@@ -35,11 +35,25 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEBSITE_DATA_MANAGER            (webkit_website_data_manager_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEBSITE_DATA_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEBSITE_DATA_MANAGER, WebKitWebsiteDataManager))
 #define WEBKIT_IS_WEBSITE_DATA_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEBSITE_DATA_MANAGER))
 #define WEBKIT_WEBSITE_DATA_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEBSITE_DATA_MANAGER, WebKitWebsiteDataManagerClass))
 #define WEBKIT_IS_WEBSITE_DATA_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEBSITE_DATA_MANAGER))
 #define WEBKIT_WEBSITE_DATA_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEBSITE_DATA_MANAGER, WebKitWebsiteDataManagerClass))
+
+struct _WebKitWebsiteDataManagerClass {
+    GObjectClass parent_class;
+
+    /*< private >*/
+    void (*_webkit_reserved0) (void);
+    void (*_webkit_reserved1) (void);
+    void (*_webkit_reserved2) (void);
+    void (*_webkit_reserved3) (void);
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebsiteDataManager, webkit_website_data_manager, WEBKIT, WEBSITE_DATA_MANAGER, GObject)
 
 /**
  * WebKitTLSErrorsPolicy:
@@ -55,30 +69,6 @@ typedef enum {
     WEBKIT_TLS_ERRORS_POLICY_IGNORE,
     WEBKIT_TLS_ERRORS_POLICY_FAIL
 } WebKitTLSErrorsPolicy;
-
-typedef struct _WebKitWebsiteDataManager        WebKitWebsiteDataManager;
-typedef struct _WebKitWebsiteDataManagerClass   WebKitWebsiteDataManagerClass;
-typedef struct _WebKitWebsiteDataManagerPrivate WebKitWebsiteDataManagerPrivate;
-
-struct _WebKitWebsiteDataManager {
-    GObject parent;
-
-    /*< private >*/
-    WebKitWebsiteDataManagerPrivate *priv;
-};
-
-struct _WebKitWebsiteDataManagerClass {
-    GObjectClass parent_class;
-
-    /*< private >*/
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
-};
-
-WEBKIT_API GType
-webkit_website_data_manager_get_type                                  (void);
 
 #if !ENABLE(2022_GLIB_API)
 WEBKIT_API WebKitWebsiteDataManager *

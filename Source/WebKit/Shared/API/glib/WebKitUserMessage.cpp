@@ -56,7 +56,7 @@ struct _WebKitUserMessagePrivate {
     CompletionHandler<void(UserMessage&&)> replyHandler;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitUserMessage, webkit_user_message, G_TYPE_INITIALLY_UNOWNED)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitUserMessage, webkit_user_message, G_TYPE_INITIALLY_UNOWNED, GInitiallyUnowned)
 
 /**
  * webkit_user_message_error_quark:

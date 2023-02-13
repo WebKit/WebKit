@@ -36,24 +36,14 @@
 
 G_BEGIN_DECLS
 
+#define WEBKIT_FAVICON_DATABASE_ERROR           (webkit_favicon_database_error_quark())
 #define WEBKIT_TYPE_FAVICON_DATABASE            (webkit_favicon_database_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_FAVICON_DATABASE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabase))
 #define WEBKIT_IS_FAVICON_DATABASE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_FAVICON_DATABASE))
 #define WEBKIT_FAVICON_DATABASE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabaseClass))
 #define WEBKIT_IS_FAVICON_DATABASE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_FAVICON_DATABASE))
 #define WEBKIT_FAVICON_DATABASE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabaseClass))
-#define WEBKIT_FAVICON_DATABASE_ERROR           (webkit_favicon_database_error_quark())
-
-typedef struct _WebKitFaviconDatabase        WebKitFaviconDatabase;
-typedef struct _WebKitFaviconDatabaseClass   WebKitFaviconDatabaseClass;
-typedef struct _WebKitFaviconDatabasePrivate WebKitFaviconDatabasePrivate;
-
-struct _WebKitFaviconDatabase {
-    GObject parent;
-
-    /*< private >*/
-    WebKitFaviconDatabasePrivate *priv;
-};
 
 struct _WebKitFaviconDatabaseClass {
     GObjectClass parent_class;
@@ -64,6 +54,9 @@ struct _WebKitFaviconDatabaseClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitFaviconDatabase, webkit_favicon_database, WEBKIT, FAVICON_DATABASE, GObject)
 
 /**
  * WebKitFaviconDatabaseError:
@@ -81,9 +74,6 @@ typedef enum {
 
 WEBKIT_API GQuark
 webkit_favicon_database_error_quark        (void);
-
-WEBKIT_API GType
-webkit_favicon_database_get_type           (void);
 
 #if PLATFORM(GTK)
 WEBKIT_API void

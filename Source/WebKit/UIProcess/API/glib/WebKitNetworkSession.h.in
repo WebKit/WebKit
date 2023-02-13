@@ -33,22 +33,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_NETWORK_SESSION            (webkit_network_session_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_NETWORK_SESSION(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_NETWORK_SESSION, WebKitNetworkSession))
 #define WEBKIT_IS_NETWORK_SESSION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_NETWORK_SESSION))
 #define WEBKIT_NETWORK_SESSION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_NETWORK_SESSION, WebKitNetworkSessionClass))
 #define WEBKIT_IS_NETWORK_SESSION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_NETWORK_SESSION))
 #define WEBKIT_NETWORK_SESSION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_NETWORK_SESSION, WebKitNetworkSessionClass))
-
-typedef struct _WebKitNetworkSession        WebKitNetworkSession;
-typedef struct _WebKitNetworkSessionClass   WebKitNetworkSessionClass;
-typedef struct _WebKitNetworkSessionPrivate WebKitNetworkSessionPrivate;
-
-struct _WebKitNetworkSession {
-    GObject parent;
-
-    /*< private >*/
-    WebKitNetworkSessionPrivate *priv;
-};
 
 struct _WebKitNetworkSessionClass {
     GObjectClass parent_class;
@@ -59,9 +49,9 @@ struct _WebKitNetworkSessionClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_network_session_get_type                                  (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitNetworkSession, webkit_network_session, WEBKIT, NETWORK_SESSION, GObject)
 
 WEBKIT_API WebKitNetworkSession *
 webkit_network_session_get_default                               (void);

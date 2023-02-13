@@ -267,6 +267,8 @@ struct _WebKitWebContextPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT, GObject)
+
 std::unique_ptr<WebKitNotificationProvider> s_serviceWorkerNotificationProvider;
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -320,8 +322,6 @@ void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
     webContext->priv->automationSession = nullptr;
 }
 #endif
-
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 #if PLATFORM(GTK)
 #define INJECTED_BUNDLE_FILENAME "libwebkit" WEBKITGTK_API_INFIX "gtkinjectedbundle.so"
