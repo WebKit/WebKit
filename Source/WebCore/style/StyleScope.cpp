@@ -862,6 +862,8 @@ void Scope::invalidateMatchedDeclarationsCache()
 
 void Scope::pendingUpdateTimerFired()
 {
+    auto protectedShadowRoot = RefPtr { m_shadowRoot };
+    auto protectedDocument = Ref { m_document };
     flushPendingUpdate();
 }
 
