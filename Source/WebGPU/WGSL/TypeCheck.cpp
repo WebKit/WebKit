@@ -121,6 +121,9 @@ void TypeChecker::check()
     for (auto& structure : m_shaderModule.structures())
         visit(structure);
 
+    for (auto& structure : m_shaderModule.structures())
+        visitStructMembers(structure);
+
     for (auto& variable : m_shaderModule.variables())
         visit(variable);
 
@@ -141,6 +144,20 @@ void TypeChecker::visit(AST::Structure& structure)
 {
     Type* structType = m_types.structType(structure.name());
     introduceVariable(structure.name(), structType);
+}
+
+void TypeChecker::visitStructMembers(AST::Structure& structure)
+{
+    auto* const* type = readVariable(structure.name());
+    ASSERT(type);
+    ASSERT(std::holds_alternative<Types::Struct>(**type));
+
+    auto& structType = std::get<Types::Struct>(**type);
+    for (auto& member : structure.members()) {
+        auto* memberType = resolve(member.type());
+        auto result = structType.fields.add(member.name().id(), memberType);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
 }
 
 void TypeChecker::visit(AST::Variable& variable)
@@ -205,9 +222,25 @@ void TypeChecker::visit(AST::Expression&)
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    auto* structType = infer(access.base());
-    // FIXME: implement member lookup once we have a struct type
-    inferred(structType);
+    auto* baseType = infer(access.base());
+    if (isBottom(baseType)) {
+        inferred(m_types.bottomType());
+        return;
+    }
+
+    if (std::holds_alternative<Types::Struct>(*baseType)) {
+        auto& structType = std::get<Types::Struct>(*baseType);
+        auto it = structType.fields.find(access.fieldName().id());
+        if (it == structType.fields.end()) {
+            typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
+            return;
+        }
+        inferred(it->value);
+        return;
+    }
+
+    // FIXME: handle vector field accesses
+    typeError(access.span(), "invalid member access expression. Expected vector or struct, got '", *baseType, "'");
 }
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
@@ -403,6 +436,7 @@ Type* TypeChecker::resolve(AST::TypeName& type)
 void TypeChecker::inferred(Type* type)
 {
     ASSERT(type);
+    ASSERT(!m_inferredType);
     m_inferredType = type;
 }
 
