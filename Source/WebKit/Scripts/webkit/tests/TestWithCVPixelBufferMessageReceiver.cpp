@@ -47,12 +47,19 @@ namespace WebKit {
 void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     Ref protectedThis { *this };
+
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::Connection>, TestWithCVPixelBuffer*), TestWithCVPixelBuffer,
 #if USE(AVFOUNDATION)
-    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::name())
-        return IPC::handleMessage<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::sendCVPixelBuffer);
-    if (decoder.messageName() == Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::name())
-        return IPC::handleMessageAsync<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer>(connection, decoder, this, &TestWithCVPixelBuffer::receiveCVPixelBuffer);
+        IPC::MessageHandlerListEntry<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer, &TestWithCVPixelBuffer::receiveCVPixelBuffer>,
 #endif
+#if USE(AVFOUNDATION)
+        IPC::MessageHandlerListEntry<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer, &TestWithCVPixelBuffer::sendCVPixelBuffer>,
+#endif
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)

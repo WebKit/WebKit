@@ -45,22 +45,30 @@ namespace WebKit {
 
 void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
-    if (decoder.messageName() == Messages::TestWithStream::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendString>(connection.connection(), decoder, this, &TestWithStream::sendString);
-    if (decoder.messageName() == Messages::TestWithStream::SendStringAsync::name())
-        return IPC::handleMessageAsync<Messages::TestWithStream::SendStringAsync>(connection.connection(), decoder, this, &TestWithStream::sendStringAsync);
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::StreamServerConnection>, TestWithStream*), TestWithStream,
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithStream::SendMachSendRight::name())
-        return IPC::handleMessage<Messages::TestWithStream::SendMachSendRight>(connection.connection(), decoder, this, &TestWithStream::sendMachSendRight);
+        IPC::MessageHandlerListEntry<Messages::TestWithStream::SendMachSendRight, &TestWithStream::sendMachSendRight>,
 #endif
-    if (decoder.messageName() == Messages::TestWithStream::SendStringSync::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendStringSync>(connection, decoder, this, &TestWithStream::sendStringSync);
+        IPC::MessageHandlerListEntry<Messages::TestWithStream::SendString, &TestWithStream::sendString>,
+        IPC::MessageHandlerListEntry<Messages::TestWithStream::SendStringAsync, &TestWithStream::sendStringAsync>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
+    using SyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::StreamServerConnection>, TestWithStream*), TestWithStream,
 #if PLATFORM(COCOA)
-    if (decoder.messageName() == Messages::TestWithStream::ReceiveMachSendRight::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::ReceiveMachSendRight>(connection, decoder, this, &TestWithStream::receiveMachSendRight);
-    if (decoder.messageName() == Messages::TestWithStream::SendAndReceiveMachSendRight::name())
-        return IPC::handleMessageSynchronous<Messages::TestWithStream::SendAndReceiveMachSendRight>(connection, decoder, this, &TestWithStream::sendAndReceiveMachSendRight);
+        IPC::MessageHandlerListEntry<Messages::TestWithStream::ReceiveMachSendRight, &TestWithStream::receiveMachSendRight>,
 #endif
+#if PLATFORM(COCOA)
+        IPC::MessageHandlerListEntry<Messages::TestWithStream::SendAndReceiveMachSendRight, &TestWithStream::sendAndReceiveMachSendRight>,
+#endif
+        IPC::MessageHandlerListEntry<Messages::TestWithStream::SendStringSync, &TestWithStream::sendStringSync>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(SyncMessageHandlerListType::valid());
+    if (auto handler = SyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)

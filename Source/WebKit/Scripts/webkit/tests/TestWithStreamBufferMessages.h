@@ -46,8 +46,9 @@ class SendStreamBuffer {
 public:
     using Arguments = std::tuple<IPC::StreamConnectionBuffer>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStreamBuffer_SendStreamBuffer; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = false;
 
     explicit SendStreamBuffer(const IPC::StreamConnectionBuffer& stream)
         : m_arguments(stream)

@@ -39,8 +39,19 @@ namespace WebKit {
 
 void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
-    if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name())
-        return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection.connection(), decoder, this, &TestWithStreamBatched::sendString);
+    using AsyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::StreamServerConnection>, TestWithStreamBatched*), TestWithStreamBatched,
+        IPC::MessageHandlerListEntry<Messages::TestWithStreamBatched::SendString, &TestWithStreamBatched::sendString>,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(AsyncMessageHandlerListType::valid());
+    if (auto handler = AsyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
+    using SyncMessageHandlerListType = IPC::MessageHandlerList<bool(*)(IPC::HandleMessageContext<IPC::StreamServerConnection>, TestWithStreamBatched*), TestWithStreamBatched,
+        IPC::MessageHandlerListEntry<void, nullptr>>;
+    static_assert(SyncMessageHandlerListType::valid());
+    if (auto handler = SyncMessageHandlerListType::messageHandler(decoder.messageName()))
+        return std::void_t<>(handler({ connection, decoder }, this));
+
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
 #if ENABLE(IPC_TESTING_API)

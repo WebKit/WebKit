@@ -45,8 +45,9 @@ class SendString {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendString; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendString; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
 
@@ -68,13 +69,14 @@ class SendStringAsync {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringAsync; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringAsync; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = true;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringAsyncReply; }
+    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringAsyncReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<int64_t>;
     explicit SendStringAsync(const String& url)
@@ -95,8 +97,9 @@ class SendStringSync {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringSync; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringSync; }
     static constexpr bool isSync = true;
+    static constexpr bool isAsync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
     static constexpr bool isStreamBatched = false;
@@ -122,8 +125,9 @@ class SendMachSendRight {
 public:
     using Arguments = std::tuple<MachSendRight>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendMachSendRight; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendMachSendRight; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = false;
     static constexpr bool isStreamEncodable = false;
     static constexpr bool isStreamBatched = false;
 
@@ -147,8 +151,9 @@ class ReceiveMachSendRight {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_ReceiveMachSendRight; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_ReceiveMachSendRight; }
     static constexpr bool isSync = true;
+    static constexpr bool isAsync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = false;
     static constexpr bool isStreamBatched = false;
@@ -170,8 +175,9 @@ class SendAndReceiveMachSendRight {
 public:
     using Arguments = std::tuple<MachSendRight>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight; }
     static constexpr bool isSync = true;
+    static constexpr bool isAsync = false;
     static constexpr bool isStreamEncodable = false;
     static constexpr bool isReplyStreamEncodable = false;
     static constexpr bool isStreamBatched = false;

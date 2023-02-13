@@ -217,32 +217,89 @@ template<typename R, typename... MethodArgumentTypes>
 struct MethodSignatureValidation<R(MethodArgumentTypes...) const>
     : MethodSignatureValidation<R(MethodArgumentTypes...)> { };
 
+template<typename T, typename MF>
+struct MethodSignatureValidation<MF T::*> : MethodSignatureValidation<MF> { };
+
 // Main dispatch functions
 
-template<typename MessageType, typename T, typename U, typename MF>
-void handleMessage(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+template<typename ConnectionType>
+struct HandleMessageContext {
+    HandleMessageContext(ConnectionType& connection, Decoder& decoder)
+        : connection(connection)
+        , decoder(decoder)
+    { }
+
+    HandleMessageContext(ConnectionType& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder)
+        : connection(connection)
+        , decoder(decoder)
+        , replyEncoder(WTFMove(replyEncoder))
+    { }
+
+    ConnectionType& connection;
+    Decoder& decoder;
+    std::optional<UniqueRef<Encoder>> replyEncoder;
+};
+
+template<typename MessageType, auto HandlerMethod, typename T>
+auto handleMessage(HandleMessageContext<Connection> context, T* object)
+    -> std::enable_if_t<!MessageType::isAsync && !MessageType::isSync, bool>
 {
-    using ValidationType = MethodSignatureValidation<MF>;
+    using ValidationType = MethodSignatureValidation<decltype(HandlerMethod)>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = context.decoder.decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
-        return;
+        return false;
 
-    logMessage(connection, MessageType::name(), object, *arguments);
+    logMessage(context.connection, MessageType::name(), object, *arguments);
     if constexpr (ValidationType::expectsConnectionArgument)
-        callMemberFunction(object, function, connection, WTFMove(*arguments));
+        callMemberFunction(object, HandlerMethod, context.connection, WTFMove(*arguments));
     else
-        callMemberFunction(object, function, WTFMove(*arguments));
+        callMemberFunction(object, HandlerMethod, WTFMove(*arguments));
+    return true;
 }
 
-template<typename MessageType, typename T, typename U, typename MF>
-bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, T* object, MF U::* function)
+template<typename MessageType, auto HandlerMethod, typename T>
+auto handleMessage(HandleMessageContext<Connection> context, T* object)
+    -> std::enable_if_t<MessageType::isAsync && !MessageType::isSync, bool>
 {
-    using ValidationType = MethodSignatureValidation<MF>;
+    using ValidationType = MethodSignatureValidation<decltype(HandlerMethod)>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = context.decoder.decode<typename MessageType::Arguments>();
+    if (UNLIKELY(!arguments))
+        return false;
+    auto replyID = context.decoder.decode<Connection::AsyncReplyID>();
+    if (UNLIKELY(!replyID))
+        return false;
+
+    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
+    using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
+
+    CompletionHandlerType completionHandler {
+        [replyID = *replyID, connection = Ref { context.connection }] (auto&&... args) mutable {
+            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID.toUInt64());
+            logReply(connection, MessageType::name(), args...);
+            (encoder.get() << ... << std::forward<decltype(args)>(args));
+            connection->sendSyncReply(WTFMove(encoder));
+        }, MessageType::callbackThread };
+
+    logMessage(context.connection, MessageType::name(), object, *arguments);
+    if constexpr (ValidationType::expectsConnectionArgument)
+        callMemberFunction(object, HandlerMethod, context.connection, WTFMove(*arguments), WTFMove(completionHandler));
+    else
+        callMemberFunction(object, HandlerMethod, WTFMove(*arguments), WTFMove(completionHandler));
+    return true;
+}
+
+template<typename MessageType, auto HandlerMethod, typename T>
+auto handleMessage(HandleMessageContext<Connection> context, T* object)
+    -> std::enable_if_t<!MessageType::isAsync && MessageType::isSync, bool>
+{
+    using ValidationType = MethodSignatureValidation<decltype(HandlerMethod)>;
+    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+
+    auto arguments = context.decoder.decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
         return false;
 
@@ -250,74 +307,104 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
     CompletionHandlerType completionHandler(
-        [replyEncoder = WTFMove(replyEncoder), connection = Ref { connection }] (auto&&... args) mutable {
+        [replyEncoder = WTFMove(*context.replyEncoder), connection = Ref { context.connection }] (auto&&... args) mutable {
             logReply(connection, MessageType::name(), args...);
             (replyEncoder.get() << ... << std::forward<decltype(args)>(args));
             connection->sendSyncReply(WTFMove(replyEncoder));
         });
 
-    logMessage(connection, MessageType::name(), object, *arguments);
+    logMessage(context.connection, MessageType::name(), object, *arguments);
     if constexpr (ValidationType::expectsConnectionArgument)
-        callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
+        callMemberFunction(object, HandlerMethod, context.connection, WTFMove(*arguments), WTFMove(completionHandler));
     else
-        callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
+        callMemberFunction(object, HandlerMethod, WTFMove(*arguments), WTFMove(completionHandler));
     return true;
 }
 
-template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageSynchronous(StreamServerConnection& connection, Decoder& decoder, T* object, MF U::* function)
+template<typename MessageType, auto HandlerMethod, typename T>
+auto handleMessage(HandleMessageContext<StreamServerConnection> context, T* object)
+    -> std::enable_if_t<!MessageType::isSync, bool>
 {
-    using ValidationType = MethodSignatureValidation<MF>;
+    return handleMessage<MessageType, HandlerMethod>({ context.connection.connection(), context.decoder }, object);
+}
+
+template<typename MessageType, auto HandlerMethod, typename T>
+auto handleMessage(HandleMessageContext<StreamServerConnection> context, T* object)
+    -> std::enable_if_t<MessageType::isSync, bool>
+{
+    using ValidationType = MethodSignatureValidation<decltype(HandlerMethod)>;
     static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
 
     Connection::SyncRequestID syncRequestID;
-    if (UNLIKELY(!decoder.decode(syncRequestID)))
-        return;
+    if (UNLIKELY(!context.decoder.decode(syncRequestID)))
+        return false;
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
+    auto arguments = context.decoder.decode<typename MessageType::Arguments>();
     if (UNLIKELY(!arguments))
-        return;
+        return false;
 
     static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
     using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
 
-    logMessage(connection.connection(), MessageType::name(), object, *arguments);
-    callMemberFunction(object, function, WTFMove(*arguments),
-        CompletionHandlerType([syncRequestID, connection = Ref { connection }] (auto&&... args) mutable {
+    logMessage(context.connection.connection(), MessageType::name(), object, *arguments);
+    callMemberFunction(object, HandlerMethod, WTFMove(*arguments),
+        CompletionHandlerType([syncRequestID, connection = Ref { context.connection }] (auto&&... args) mutable {
             logReply(connection->connection(), MessageType::name(), args...);
             connection->sendSyncReply<MessageType>(syncRequestID, std::forward<decltype(args)>(args)...);
         }));
+    return true;
 }
 
-template<typename MessageType, typename T, typename U, typename MF>
-void handleMessageAsync(Connection& connection, Decoder& decoder, T* object, MF U::* function)
+template<typename EntryType, auto EntryHandler>
+struct MessageHandlerListEntry
 {
-    using ValidationType = MethodSignatureValidation<MF>;
-    static_assert(std::is_same_v<typename ValidationType::MessageArguments, typename MessageType::Arguments>);
+    using Type = EntryType;
+    static constexpr auto Handler = EntryHandler;
+};
 
-    auto arguments = decoder.decode<typename MessageType::Arguments>();
-    if (UNLIKELY(!arguments))
-        return;
-    auto replyID = decoder.decode<Connection::AsyncReplyID>();
-    if (UNLIKELY(!replyID))
-        return;
+template<typename HandlerType, typename ObjectType, typename IndexSequenceType, typename EntriesTupleType> struct MessageHandlerListEntries;
 
-    static_assert(std::is_same_v<typename ValidationType::CompletionHandlerArguments, typename MessageType::ReplyArguments>);
-    using CompletionHandlerType = typename ValidationType::CompletionHandlerType;
+template<typename HandlerType, typename ObjectType, size_t... Indices, typename... Entries>
+struct MessageHandlerListEntries<HandlerType, ObjectType, std::index_sequence<Indices...>, std::tuple<Entries...>> {
+    static_assert(sizeof...(Indices) > 0);
+    static_assert(sizeof...(Indices) + 1 == sizeof...(Entries));
 
-    CompletionHandlerType completionHandler {
-        [replyID = *replyID, connection = Ref { connection }] (auto&&... args) mutable {
-            auto encoder = makeUniqueRef<Encoder>(MessageType::asyncMessageReplyName(), replyID.toUInt64());
-            logReply(connection, MessageType::name(), args...);
-            (encoder.get() << ... << std::forward<decltype(args)>(args));
-            connection->sendSyncReply(WTFMove(encoder));
-        }, MessageType::callbackThread };
+    template<size_t index> using Entry = typename std::tuple_element_t<index, std::tuple<Entries...>>;
+    static_assert(std::is_same_v<Entry<(sizeof...(Entries) - 1)>, MessageHandlerListEntry<void, nullptr>>);
 
-    logMessage(connection, MessageType::name(), object, *arguments);
-    if constexpr (ValidationType::expectsConnectionArgument)
-        callMemberFunction(object, function, connection, WTFMove(*arguments), WTFMove(completionHandler));
-    else
-        callMemberFunction(object, function, WTFMove(*arguments), WTFMove(completionHandler));
-}
+    static constexpr size_t Base = static_cast<size_t>(Entry<0>::Type::name());
+    static constexpr size_t Size = sizeof...(Indices);
+    using Sequence = std::index_sequence<(static_cast<size_t>(Entry<Indices>::Type::name()) - Base)...>;
+
+    using ArrayType = std::array<HandlerType, Size>;
+    static constexpr ArrayType array { (&handleMessage<typename Entry<Indices>::Type, Entry<Indices>::Handler, ObjectType>)... };
+};
+
+template<typename HandlerType, typename ObjectType>
+struct MessageHandlerListEntries<HandlerType, ObjectType, std::index_sequence<>, std::tuple<MessageHandlerListEntry<void, nullptr>>> {
+    static constexpr size_t Size = 0;
+    using Sequence = std::index_sequence<>;
+};
+
+template<typename HandlerType, typename ObjectType, typename... EntryTypes>
+struct MessageHandlerList {
+    static_assert(sizeof...(EntryTypes) > 0);
+    using Entries = MessageHandlerListEntries<HandlerType, ObjectType, std::make_index_sequence<sizeof...(EntryTypes) - 1>, std::tuple<EntryTypes...>>;
+
+    static constexpr bool valid()
+    {
+        return std::is_same_v<typename Entries::Sequence, std::make_index_sequence<sizeof...(EntryTypes) - 1>>;
+    }
+
+    static ALWAYS_INLINE HandlerType messageHandler(MessageName messageName)
+    {
+        if constexpr (Entries::Size > 0) {
+            size_t index = static_cast<size_t>(messageName) - Entries::Base;
+            if (index < Entries::Size)
+                return Entries::array[index];
+        }
+        return nullptr;
+    }
+};
 
 } // namespace IPC

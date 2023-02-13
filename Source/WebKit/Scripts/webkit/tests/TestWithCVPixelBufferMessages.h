@@ -48,8 +48,9 @@ class SendCVPixelBuffer {
 public:
     using Arguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = false;
 
     explicit SendCVPixelBuffer(const RetainPtr<CVPixelBufferRef>& s0)
         : m_arguments(s0)
@@ -71,10 +72,11 @@ class ReceiveCVPixelBuffer {
 public:
     using Arguments = std::tuple<>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer; }
+    static constexpr IPC::MessageName name() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer; }
     static constexpr bool isSync = false;
+    static constexpr bool isAsync = true;
 
-    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
+    static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply; }
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using ReplyArguments = std::tuple<RetainPtr<CVPixelBufferRef>>;
     const auto& arguments() const
