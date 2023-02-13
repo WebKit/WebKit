@@ -529,8 +529,7 @@
 #define HAVE_DEVICE_MANAGEMENT 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000) || PLATFORM(IOS) || PLATFORM(MACCATALYST)
-// FIXME: This should be enabled on watchOS and tvOS, but there are some build failures.
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000) || PLATFORM(IOS_FAMILY)
 #define HAVE_NSURLSESSION_WEBSOCKET 1
 #endif
 
