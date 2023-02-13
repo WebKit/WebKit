@@ -501,6 +501,19 @@ static ASCIILiteral cssText(CSSRadialGradientValue::ExtentKeyword extent)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+static bool isCenterPosition(const CSSValue& value)
+{
+    if (isValueID(value, CSSValueCenter))
+        return true;
+    auto* number = dynamicDowncast<CSSPrimitiveValue>(value);
+    return number && number->doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;
+}
+
+static bool isCenterPosition(const CSSGradientPosition& position)
+{
+    return isCenterPosition(position.first) && isCenterPosition(position.second);
+}
+
 String CSSRadialGradientValue::customCSSText() const
 {
     StringBuilder result;
@@ -510,7 +523,7 @@ String CSSRadialGradientValue::customCSSText() const
     bool wroteSomething = false;
 
     auto appendPosition = [&](const CSSGradientPosition& position) {
-        if (!position.first->isCenterPosition() || !position.second->isCenterPosition()) {
+        if (!isCenterPosition(position)) {
             if (wroteSomething)
                 result.append(' ');
             result.append("at ");
@@ -809,13 +822,11 @@ String CSSConicGradientValue::customCSSText() const
         wroteSomething = true;
     }
 
-    if (m_data.position) {
-        if (!m_data.position->first->isCenterPosition() || !m_data.position->second->isCenterPosition()) {
-            if (wroteSomething)
-                result.append(' ');
-            result.append("at ", m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
-            wroteSomething = true;
-        }
+    if (m_data.position && !isCenterPosition(*m_data.position)) {
+        if (wroteSomething)
+            result.append(' ');
+        result.append("at ", m_data.position->first->cssText(), ' ', m_data.position->second->cssText());
+        wroteSomething = true;
     }
 
     if (appendColorInterpolationMethod(result, m_colorInterpolationMethod, wroteSomething))

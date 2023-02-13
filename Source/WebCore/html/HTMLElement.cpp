@@ -579,13 +579,12 @@ void HTMLElement::applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttri
 void HTMLElement::addParsedWidthAndHeightToAspectRatioList(double width, double height, MutableStyleProperties& style)
 {
     auto ratioList = CSSValueList::createSlashSeparated();
-    ratioList->append(CSSPrimitiveValue::create(width, CSSUnitType::CSS_NUMBER));
-    ratioList->append(CSSPrimitiveValue::create(height, CSSUnitType::CSS_NUMBER));
+    ratioList->append(CSSPrimitiveValue::create(width));
+    ratioList->append(CSSPrimitiveValue::create(height));
     auto list = CSSValueList::createSpaceSeparated();
     list->append(CSSPrimitiveValue::create(CSSValueAuto));
     list->append(ratioList);
-
-    style.setProperty(CSSPropertyAspectRatio, RefPtr<CSSValue>(WTFMove(list)));
+    style.setProperty(CSSPropertyAspectRatio, WTFMove(list));
 }
 
 void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, MutableStyleProperties& style)

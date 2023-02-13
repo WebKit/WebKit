@@ -74,19 +74,16 @@ String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)
     default:
         break;
     }
-    if (value.isBaseValueList()) {
-        // Longhands set by mask and background shorthands can have comma-separated lists with implicit initial values in them.
-        // We need to serialize those lists with the actual values, not as "initial".
-        // Doing this for all CSSValueList with comma separators is better than checking the property is one of those longhands.
-        // Serializing this way is harmless for other properties; those won't have any implicit initial values.
-        auto& list = downcast<CSSValueList>(value);
-        if (list.separator() == CSSValueList::CommaSeparator) {
-            StringBuilder result;
-            auto separator = ""_s;
-            for (auto& individualValue : list)
-                result.append(std::exchange(separator, ", "_s), serializeLonghandValue(property, individualValue));
-            return result.toString();
-        }
+    // Longhands set by mask and background shorthands can have comma-separated lists with implicit initial values in them.
+    // We need to serialize those lists with the actual values, not as "initial".
+    // Doing this for all CSSValueList with comma separators is better than checking the property is one of those longhands.
+    // Serializing this way is harmless for other properties; those won't have any implicit initial values.
+    if (auto* list = dynamicDowncast<CSSValueList>(value); list && list->separator() == CSSValueList::CommaSeparator) {
+        StringBuilder result;
+        auto separator = ""_s;
+        for (auto& individualValue : *list)
+            result.append(std::exchange(separator, ", "_s), serializeLonghandValue(property, individualValue));
+        return result.toString();
     }
     return value.isImplicitInitialValue() ? initialValueTextForLonghand(property) : value.cssText();
 }
@@ -108,13 +105,11 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
 
 std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) const
 {
-    auto colorValue = getPropertyCSSValue(property);
-    if (!is<CSSPrimitiveValue>(colorValue))
+    auto value = getPropertyCSSValue(property);
+    if (!value)
         return std::nullopt;
-
-    auto& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
-    return primitiveColor.isRGBColor() ? primitiveColor.color()
-        : CSSParser::parseColorWithoutContext(WebCore::serializeLonghandValue(property, *colorValue));
+    return value->isColor() ? value->color()
+        : CSSParser::parseColorWithoutContext(WebCore::serializeLonghandValue(property, *value));
 }
 
 std::optional<CSSValueID> StyleProperties::propertyAsValueID(CSSPropertyID property) const

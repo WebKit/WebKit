@@ -119,7 +119,6 @@ class CursorList;
 class FontCascade;
 class FontMetrics;
 class IntRect;
-class Pair;
 class ShadowData;
 class StyleImage;
 class StyleInheritedData;

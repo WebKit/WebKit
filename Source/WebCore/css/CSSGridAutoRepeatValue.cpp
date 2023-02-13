@@ -31,18 +31,39 @@
 #include "config.h"
 #include "CSSGridAutoRepeatValue.h"
 
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
+CSSGridAutoRepeatValue::CSSGridAutoRepeatValue(bool isAutoFit)
+    : CSSValueContainingVector(GridAutoRepeatClass, SpaceSeparator)
+    , m_isAutoFit(isAutoFit)
+{
+}
+
+Ref<CSSGridAutoRepeatValue> CSSGridAutoRepeatValue::create(CSSValueID id)
+{
+    ASSERT(id == CSSValueAutoFill || id == CSSValueAutoFit);
+    return adoptRef(*new CSSGridAutoRepeatValue(id == CSSValueAutoFit));
+}
+
+CSSValueID CSSGridAutoRepeatValue::autoRepeatID() const
+{
+    return m_isAutoFit ? CSSValueAutoFit : CSSValueAutoFill;
+}
+
 String CSSGridAutoRepeatValue::customCSSText() const
 {
-    return makeString("repeat("_s, nameLiteral(autoRepeatID()), ", "_s, CSSValueList::customCSSText(), ')');
+    StringBuilder result;
+    result.append("repeat("_s, nameLiteral(autoRepeatID()), ", "_s);
+    serializeItems(result);
+    result.append(')');
+    return result.toString();
 }
 
 bool CSSGridAutoRepeatValue::equals(const CSSGridAutoRepeatValue& other) const
 {
-    return m_autoRepeatID == other.m_autoRepeatID && CSSValueList::equals(other);
+    return m_isAutoFit == other.m_isAutoFit && itemsEqual(other);
 }
 
 } // namespace WebCore

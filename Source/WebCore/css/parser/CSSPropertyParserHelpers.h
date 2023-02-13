@@ -37,7 +37,6 @@
 #include "CSSValuePool.h"
 #include "GridArea.h"
 #include "Length.h"
-#include "Pair.h"
 #include "StyleColor.h"
 #include "SystemFontDatabase.h"
 #include <variant>
@@ -145,11 +144,11 @@ enum class PositionSyntax {
 };
 
 struct PositionCoordinates {
-    Ref<CSSPrimitiveValue> x;
-    Ref<CSSPrimitiveValue> y;
+    Ref<CSSValue> x;
+    Ref<CSSValue> y;
 };
 
-RefPtr<CSSPrimitiveValue> consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax);
+RefPtr<CSSValue> consumePosition(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax);
 std::optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk, PositionSyntax, NegativePercentagePolicy = NegativePercentagePolicy::Forbid);
 std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk);
 
@@ -266,7 +265,7 @@ RefPtr<CSSValue> consumeScrollSnapAlign(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextEdge(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, CSSParserMode);
-bool consumeRadii(RefPtr<CSSPrimitiveValue> horizontalRadii[4], RefPtr<CSSPrimitiveValue> verticalRadii[4], CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
+bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, CSSParserMode, bool useLegacyParsing);
 enum class ConsumeRay { Include, Exclude };
 RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, ConsumeRay);
 RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, const CSSParserContext&);
@@ -394,16 +393,10 @@ inline SystemFontDatabase::FontShorthand lowerFontShorthand(CSSValueID valueID)
     return static_cast<SystemFontDatabase::FontShorthand>(valueID - CSSValueCaption);
 }
 
-template<typename... Args>
-Ref<CSSPrimitiveValue> createPrimitiveValuePair(Args&&... args)
-{
-    return CSSPrimitiveValue::create(Pair::create(std::forward<Args>(args)...));
-}
-
 inline void assignOrDowngradeToListAndAppend(RefPtr<CSSValue>& result, Ref<CSSValue>&& value)
 {
     if (result) {
-        if (!result->isBaseValueList()) {
+        if (!is<CSSValueList>(*result)) {
             auto firstValue = result.releaseNonNull();
             result = CSSValueList::createCommaSeparated();
             downcast<CSSValueList>(*result).append(WTFMove(firstValue));

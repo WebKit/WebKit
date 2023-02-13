@@ -141,14 +141,13 @@ ExceptionOr<void> StylePropertyMap::append(Document& document, const AtomString&
     if (!CSSProperty::isListValuedProperty(propertyID))
         return Exception { TypeError, makeString(property, " does not support multiple values"_s) };
 
-    RefPtr<CSSValueList> list;
     auto currentValue = propertyValue(propertyID);
-    if (!currentValue || !is<CSSValueList>(*currentValue)) {
+    RefPtr list = dynamicDowncast<CSSValueList>(currentValue.get());
+    if (!list) {
         list = CSSProperty::createListForProperty(propertyID);
         if (currentValue)
             list->append(currentValue.releaseNonNull());
-    } else
-        list = &downcast<CSSValueList>(*currentValue);
+    }
 
     auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values));
     if (styleValuesOrException.hasException())

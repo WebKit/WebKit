@@ -603,6 +603,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSCounterStyleDescriptors.h
     css/CSSCounterStyleRegistry.h
     css/CSSCounterStyleRule.h
+    css/CSSCounterValue.h
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h
     css/CSSFontPaletteValuesRule.h
@@ -615,6 +616,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSPrimitiveValue.h
     css/CSSPrimitiveValueMappings.h
     css/CSSProperty.h
+    css/CSSQuadValue.h
+    css/CSSRectValue.h
     css/CSSRegisteredCustomProperty.h
     css/CSSRule.h
     css/CSSRuleList.h
@@ -645,7 +648,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/MediaList.h
     css/MediaQueryParserContext.h
     css/MutableStyleProperties.h
+    css/Quad.h
     css/Rect.h
+    css/RectBase.h
     css/ShorthandSerializer.h
     css/StyleColor.h
     css/StyleProperties.h

@@ -29,7 +29,6 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyParser.h"
 #include "CSSSelector.h"
-#include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComputedStyleExtractor.h"

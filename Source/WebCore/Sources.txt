@@ -748,6 +748,7 @@ css/CSSCounterStyle.cpp
 css/CSSCounterStyleDescriptors.cpp
 css/CSSCounterStyleRegistry.cpp
 css/CSSCounterStyleRule.cpp
+css/CSSCounterValue.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
 css/CSSCustomPropertyValue.cpp
@@ -793,7 +794,9 @@ css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
 css/CSSPropertyRule.cpp
 css/CSSPropertySourceData.cpp
+css/CSSQuadValue.cpp
 css/CSSRayValue.cpp
+css/CSSRectValue.cpp
 css/CSSReflectValue.cpp
 css/CSSRegisteredCustomProperty.cpp
 css/CSSRule.cpp

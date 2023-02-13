@@ -34,7 +34,9 @@
 
 #include "CSSFunctionValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSTransformListValue.h"
 #include "CSSValueList.h"
+#include "CalculationValue.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
 #include "PerspectiveTransformOperation.h"
@@ -104,11 +106,11 @@ Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSTo
 
 std::optional<TransformOperations> transformsForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
-    if (!is<CSSValueList>(value))
+    if (!is<CSSTransformListValue>(value))
         return { };
 
     TransformOperations operations;
-    for (auto& currentValue : downcast<CSSValueList>(value)) {
+    for (auto& currentValue : downcast<CSSTransformListValue>(value)) {
         auto transform  = transformForValue(currentValue, conversionData);
         if (!transform)
             return { };

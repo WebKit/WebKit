@@ -53,8 +53,6 @@ enum class CSSUnitType : uint8_t {
     CSS_URI,
     CSS_IDENT,
     CSS_ATTR,
-    CSS_COUNTER,
-    CSS_RECT,
     CSS_RGBCOLOR,
 
     CSS_VW,
@@ -102,18 +100,12 @@ enum class CSSUnitType : uint8_t {
 
     CustomIdent,
 
-    CSS_PAIR,
-    CSS_UNICODE_RANGE,
     CSS_TURN,
     CSS_REMS,
     CSS_CHS,
     CSS_IC,
 
     CSS_COUNTER_NAME,
-
-    CSS_SHAPE,
-
-    CSS_QUAD,
 
     CSS_CALC,
     CSS_CALC_PERCENTAGE_WITH_NUMBER,

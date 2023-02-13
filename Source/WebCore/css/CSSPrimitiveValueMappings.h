@@ -136,11 +136,6 @@ template<> constexpr TYPE fromCSSValueID(CSSValueID value) { \
     return { }; \
 }
 
-template<> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const LineClampValue& value)
-{
-    return create(value.value(), value.isPercentage() ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_INTEGER);
-}
-
 template<> inline LineClampValue fromCSSValue(const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);

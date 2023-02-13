@@ -33,24 +33,15 @@
 
 namespace WebCore {
 
-class CSSBasicShape;
 class CSSCalcValue;
 class CSSToLengthConversionData;
-class CSSUnresolvedColor;
 class Color;
-class DeprecatedCSSOMPrimitiveValue;
 class FontCascadeDescription;
 class FontMetrics;
-class Pair;
-class Quad;
-class RGBColor;
-class Rect;
 class RenderStyle;
 class RenderView;
 
-struct Counter;
 struct Length;
-struct LengthSize;
 
 // Max/min values for CSS, needs to slightly smaller/larger than the true max/min values to allow for rounding without overflowing.
 // Subtract two (rather than one) to allow for values to be converted to float and back without exceeding the LayoutUnit::max.
@@ -83,8 +74,6 @@ public:
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
-    bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
-    bool isCounter() const { return primitiveUnitType() == CSSUnitType::CSS_COUNTER; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
     bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && primitiveType() != CSSUnitType::CSS_REMS && primitiveType() != CSSUnitType::CSS_RLHS); }
@@ -95,16 +84,8 @@ public:
     bool isNumberOrInteger() const { return isNumber() || isInteger(); }
     bool isPercentage() const { return primitiveType() == CSSUnitType::CSS_PERCENTAGE; }
     bool isPx() const { return primitiveType() == CSSUnitType::CSS_PX; }
-    bool isRect() const { return primitiveUnitType() == CSSUnitType::CSS_RECT; }
-    bool isPair() const { return primitiveUnitType() == CSSUnitType::CSS_PAIR; }
-    bool isPropertyID() const { return primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID; }
-    bool isRGBColor() const { return primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR; }
-    bool isShape() const { return primitiveUnitType() == CSSUnitType::CSS_SHAPE; }
-    bool isString() const { return primitiveUnitType() == CSSUnitType::CSS_STRING; }
-    bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY; }
     bool isTime() const { return unitCategory(primitiveUnitType()) == CSSUnitCategory::Time; }
     bool isFrequency() const { return unitCategory(primitiveType()) == CSSUnitCategory::Frequency; }
-    bool isURI() const { return primitiveUnitType() == CSSUnitType::CSS_URI; }
     bool isCalculated() const { return primitiveUnitType() == CSSUnitType::CSS_CALC; }
     bool isCalculatedPercentageWithNumber() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_NUMBER; }
     bool isCalculatedPercentageWithLength() const { return primitiveType() == CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH; }
@@ -113,30 +94,47 @@ public:
     bool isDotsPerCentimeter() const { return primitiveType() == CSSUnitType::CSS_DPCM; }
     bool isX() const { return primitiveType() == CSSUnitType::CSS_X; }
     bool isResolution() const { return unitCategory(primitiveType()) == CSSUnitCategory::Resolution; }
-    bool isUnresolvedColor() const { return primitiveUnitType() == CSSUnitType::CSS_UNRESOLVED_COLOR; }
     bool isViewportPercentageLength() const { return isViewportPercentageLength(primitiveUnitType()); }
-    bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
-    bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
 
-    static inline Ref<CSSPrimitiveValue> create(CSSValueID);
-    static Ref<CSSPrimitiveValue> create(CSSPropertyID);
+    static Ref<CSSPrimitiveValue> create(double);
     static Ref<CSSPrimitiveValue> create(double, CSSUnitType);
-    static Ref<CSSPrimitiveValue> create(const String&, CSSUnitType);
+    static Ref<CSSPrimitiveValue> createInteger(double);
     static Ref<CSSPrimitiveValue> create(const Length&);
     static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
-    static Ref<CSSPrimitiveValue> create(const LengthSize&, const RenderStyle&);
-    static Ref<CSSPrimitiveValue> create(Ref<CSSBasicShape>&&);
-    static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>&&);
-    static Ref<CSSPrimitiveValue> create(Ref<Counter>&&);
-    static Ref<CSSPrimitiveValue> create(Ref<Pair>&&);
-    static Ref<CSSPrimitiveValue> create(Ref<Quad>&&);
-    static Ref<CSSPrimitiveValue> create(Ref<Rect>&&);
-    static Ref<CSSPrimitiveValue> create(Ref<CSSUnresolvedColor>&&);
+    static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>);
 
-    template<typename T> static Ref<CSSPrimitiveValue> create(const T&); // Specializations are in CSSPrimitiveValueMappings.h.
+    static inline Ref<CSSPrimitiveValue> create(CSSValueID);
+    bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
+    CSSValueID valueID() const { return isValueID() ? m_value.valueID : CSSValueInvalid; }
 
-    static Ref<CSSPrimitiveValue> createCustomIdent(const String& value) { return create(value, CSSUnitType::CustomIdent); }
+    static Ref<CSSPrimitiveValue> create(CSSPropertyID);
+    bool isPropertyID() const { return primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID; }
+    CSSPropertyID propertyID() const { return isPropertyID() ? m_value.propertyID : CSSPropertyInvalid; }
+
+    bool isString() const { return primitiveUnitType() == CSSUnitType::CSS_STRING; }
+    static Ref<CSSPrimitiveValue> create(String);
+
+    static Ref<CSSPrimitiveValue> create(CSSUnresolvedColor);
+    bool isUnresolvedColor() const { return primitiveUnitType() == CSSUnitType::CSS_UNRESOLVED_COLOR; }
+    const CSSUnresolvedColor& unresolvedColor() const { ASSERT(isUnresolvedColor()); return *m_value.unresolvedColor; }
+
+    static Ref<CSSPrimitiveValue> createAttr(String);
+    bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
+
+    bool isColor() const { return primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR; }
+    const Color& color() const { ASSERT(isColor()); return *reinterpret_cast<const Color*>(&m_value.colorAsInteger); }
+
+    static Ref<CSSPrimitiveValue> createCounterName(String);
+
+    static Ref<CSSPrimitiveValue> createCustomIdent(String);
+    bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
+
+    static Ref<CSSPrimitiveValue> createFontFamily(String);
+    bool isFontFamily() const { return primitiveUnitType() == CSSUnitType::CSS_FONT_FAMILY; }
+
+    static Ref<CSSPrimitiveValue> createURI(String);
+    bool isURI() const { return primitiveUnitType() == CSSUnitType::CSS_URI; }
 
     static inline CSSPrimitiveValue& implicitInitialValue();
 
@@ -146,7 +144,7 @@ public:
     ExceptionOr<float> getFloatValue(CSSUnitType) const;
 
     double computeDegrees() const;
-    
+
     enum TimeUnit { Seconds, Milliseconds };
     template<typename T, TimeUnit timeUnit> T computeTime() const;
 
@@ -159,14 +157,13 @@ public:
 
     // It's usually wrong to call this; it can trigger type conversion in calc without sufficient context to resolve relative length units.
     double doubleValue() const;
-    
+
     double doubleValueDividingBy100IfPercentage() const;
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
     std::optional<bool> isZero() const;
     std::optional<bool> isPositive() const;
     std::optional<bool> isNegative() const;
-    bool isCenterPosition() const;
 
     template<typename T> inline T value(CSSUnitType type) const { return clampTo<T>(doubleValue(type)); }
     template<typename T> inline T value() const { return clampTo<T>(doubleValue()); }
@@ -179,16 +176,7 @@ public:
 
     WEBCORE_EXPORT String stringValue() const;
 
-    const Color& color() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR); return *reinterpret_cast<const Color*>(&m_value.colorAsInteger); }
-    const CSSUnresolvedColor& unresolvedColor() const { ASSERT(primitiveUnitType() == CSSUnitType::CSS_UNRESOLVED_COLOR); return *m_value.unresolvedColor; }
-    Counter* counterValue() const { return primitiveUnitType() != CSSUnitType::CSS_COUNTER ? nullptr : m_value.counter; }
-    CSSCalcValue* cssCalcValue() const { return primitiveUnitType() != CSSUnitType::CSS_CALC ? nullptr : m_value.calc; }
-    Pair* pairValue() const { return primitiveUnitType() != CSSUnitType::CSS_PAIR ? nullptr : m_value.pair; }
-    CSSPropertyID propertyID() const { return primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID ? m_value.propertyID : CSSPropertyInvalid; }
-    Quad* quadValue() const { return primitiveUnitType() != CSSUnitType::CSS_QUAD ? nullptr : m_value.quad; }
-    Rect* rectValue() const { return primitiveUnitType() != CSSUnitType::CSS_RECT ? nullptr : m_value.rect; }
-    CSSBasicShape* shapeValue() const { return primitiveUnitType() != CSSUnitType::CSS_SHAPE ? nullptr : m_value.shape; }
-    CSSValueID valueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID ? m_value.valueID : CSSValueInvalid; }
+    const CSSCalcValue* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
 
     String customCSSText() const;
 
@@ -202,8 +190,6 @@ public:
     // True if computeNonCalcLengthDouble would produce identical results when resolved against both these styles.
     static bool equalForLengthResolution(const RenderStyle&, const RenderStyle&);
 
-    Ref<DeprecatedCSSOMPrimitiveValue> createDeprecatedCSSOMPrimitiveWrapper(CSSStyleDeclaration&) const;
-
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
 private:
@@ -212,22 +198,16 @@ private:
     friend LazyNeverDestroyed<CSSPrimitiveValue>;
 
     explicit CSSPrimitiveValue(CSSPropertyID);
-    explicit CSSPrimitiveValue(const Color&);
+    explicit CSSPrimitiveValue(Color);
     explicit CSSPrimitiveValue(const Length&);
     CSSPrimitiveValue(const Length&, const RenderStyle&);
-    CSSPrimitiveValue(const LengthSize&, const RenderStyle&);
     CSSPrimitiveValue(const String&, CSSUnitType);
     CSSPrimitiveValue(double, CSSUnitType);
-    explicit CSSPrimitiveValue(Ref<CSSBasicShape>&&);
-    explicit CSSPrimitiveValue(Ref<CSSCalcValue>&&);
-    explicit CSSPrimitiveValue(Ref<Counter>&&);
-    explicit CSSPrimitiveValue(Ref<Pair>&&);
-    explicit CSSPrimitiveValue(Ref<Quad>&&);
-    explicit CSSPrimitiveValue(Ref<Rect>&&);
-    explicit CSSPrimitiveValue(Ref<CSSUnresolvedColor>&&);
+    explicit CSSPrimitiveValue(Ref<CSSCalcValue>);
+    explicit CSSPrimitiveValue(CSSUnresolvedColor);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
-    CSSPrimitiveValue(StaticCSSValueTag, const Color&);
+    CSSPrimitiveValue(StaticCSSValueTag, Color);
     CSSPrimitiveValue(StaticCSSValueTag, double, CSSUnitType);
     enum ImplicitInitialValueTag { ImplicitInitialValue };
     CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
@@ -251,14 +231,9 @@ private:
         CSSValueID valueID;
         double number;
         StringImpl* string;
-        Counter* counter;
-        Rect* rect;
-        Quad* quad;
         uint64_t colorAsInteger;
-        CSSUnresolvedColor* unresolvedColor;
-        Pair* pair;
-        CSSBasicShape* shape;
-        CSSCalcValue* calc;
+        const CSSUnresolvedColor* unresolvedColor;
+        const CSSCalcValue* calc;
     } m_value;
 };
 
@@ -408,9 +383,51 @@ inline bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
     return isValueID(value.get(), id);
 }
 
-template<typename ConvertibleType> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const ConvertibleType& value)
+inline bool CSSValue::isValueID() const
 {
-    return create(toCSSValueID(value));
+    auto* value = dynamicDowncast<CSSPrimitiveValue>(*this);
+    return value && value->isValueID();
+}
+
+inline CSSValueID CSSValue::valueID() const
+{
+    auto* value = dynamicDowncast<CSSPrimitiveValue>(*this);
+    return value ? value->valueID() : CSSValueInvalid;
+}
+
+inline bool CSSValue::isColor() const
+{
+    auto* value = dynamicDowncast<CSSPrimitiveValue>(*this);
+    return value && value->isColor();
+}
+
+inline const Color& CSSValue::color() const
+{
+    return downcast<CSSPrimitiveValue>(*this).color();
+}
+
+inline bool CSSValue::isCustomIdent() const
+{
+    auto* value = dynamicDowncast<CSSPrimitiveValue>(*this);
+    return value && value->isCustomIdent();
+}
+
+inline String CSSValue::customIdent() const
+{
+    ASSERT(isCustomIdent());
+    return downcast<CSSPrimitiveValue>(*this).stringValue();
+}
+
+inline bool CSSValue::isInteger() const
+{
+    auto* value = dynamicDowncast<CSSPrimitiveValue>(*this);
+    return value && value->isInteger();
+}
+
+inline int CSSValue::integer() const
+{
+    ASSERT(isInteger());
+    return downcast<CSSPrimitiveValue>(*this).intValue();
 }
 
 } // namespace WebCore

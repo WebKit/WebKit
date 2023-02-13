@@ -108,7 +108,7 @@ private:
     Ref<StyleRuleCounterStyle> m_counterStyleRule;
 };
 
-CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(RefPtr<CSSValue> system);
+CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue*);
 
 } // namespace WebCore
 
@@ -117,4 +117,3 @@ SPECIALIZE_TYPE_TRAITS_CSS_RULE(CSSCounterStyleRule, StyleRuleType::CounterStyle
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleCounterStyle)
 static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isCounterStyleRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
-

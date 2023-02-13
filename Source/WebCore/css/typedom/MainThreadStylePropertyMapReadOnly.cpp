@@ -33,7 +33,6 @@
 #include "CSSStyleValueFactory.h"
 #include "CSSTokenizer.h"
 #include "CSSUnparsedValue.h"
-#include "CSSValueList.h"
 #include "CSSVariableData.h"
 #include "Document.h"
 #include "PaintWorkletGlobalScope.h"

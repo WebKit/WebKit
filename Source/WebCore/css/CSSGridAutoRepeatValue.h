@@ -30,7 +30,6 @@
 
 #pragma once
 
-#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
 namespace WebCore {
@@ -46,27 +45,19 @@ namespace WebCore {
 // better but the CSSWG has left the door open to allow more than one track in the
 // future. That's why we're using a list, it's prepared for future changes and it also
 // allows us to keep the parsing algorithm almost intact.
-class CSSGridAutoRepeatValue final : public CSSValueList {
+class CSSGridAutoRepeatValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSGridAutoRepeatValue> create(CSSValueID id)
-    {
-        return adoptRef(*new CSSGridAutoRepeatValue(id));
-    }
+    static Ref<CSSGridAutoRepeatValue> create(CSSValueID);
+
+    CSSValueID autoRepeatID() const;
 
     String customCSSText() const;
     bool equals(const CSSGridAutoRepeatValue&) const;
 
-    CSSValueID autoRepeatID() const { return m_autoRepeatID; }
-
 private:
-    CSSGridAutoRepeatValue(CSSValueID id)
-        : CSSValueList(GridAutoRepeatClass, SpaceSeparator)
-        , m_autoRepeatID(id)
-    {
-        ASSERT(id == CSSValueAutoFill || id == CSSValueAutoFit);
-    }
+    explicit CSSGridAutoRepeatValue(bool isAutoFit);
 
-    const CSSValueID m_autoRepeatID;
+    bool m_isAutoFit { false };
 };
 
 } // namespace WebCore

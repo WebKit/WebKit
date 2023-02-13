@@ -68,7 +68,7 @@ public:
         // Do not add new units here; this is deprecated and we shouldn't expose anything not in DOM Level 2 Style.
     };
 
-    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSSPrimitiveValue& value, CSSStyleDeclaration& owner)
+    static Ref<DeprecatedCSSOMPrimitiveValue> create(const CSSValue& value, CSSStyleDeclaration& owner)
     {
         return adoptRef(*new DeprecatedCSSOMPrimitiveValue(value, owner));
     }
@@ -86,18 +86,17 @@ public:
     static ExceptionOr<void> setFloatValue(unsigned short, double) { return Exception { NoModificationAllowedError }; }
     static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { NoModificationAllowedError }; }
 
-    String stringValue() const { return m_value->stringValue(); }
     bool isCSSWideKeyword() const { return WebCore::isCSSWideKeyword(valueID(m_value.get())); }
     static unsigned short cssValueType() { return CSS_PRIMITIVE_VALUE; }
 
 private:
-    DeprecatedCSSOMPrimitiveValue(const CSSPrimitiveValue& value, CSSStyleDeclaration& owner)
+    DeprecatedCSSOMPrimitiveValue(const CSSValue& value, CSSStyleDeclaration& owner)
         : DeprecatedCSSOMValue(ClassType::Primitive, owner)
         , m_value(value)
     {
     }
 
-    Ref<const CSSPrimitiveValue> m_value;
+    Ref<const CSSValue> m_value;
 };
     
 } // namespace WebCore

@@ -32,7 +32,6 @@
 #include "CSSTokenizer.h"
 #include "CSSValuePair.h"
 #include "MutableStyleProperties.h"
-#include "Pair.h"
 #include "StyleProperties.h"
 #include "StylePropertiesInlines.h"
 #include <wtf/text/StringBuilder.h>
@@ -53,22 +52,18 @@ Ref<StyleRuleCounterStyle> StyleRuleCounterStyle::create(const AtomString& name,
     return adoptRef(*new StyleRuleCounterStyle(name, WTFMove(properties), WTFMove(descriptors)));
 }
 
-CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(RefPtr<CSSValue> system)
+CSSCounterStyleDescriptors::System toCounterStyleSystemEnum(const CSSValue* system)
 {
-    if (!system || !system->isPrimitiveValue())
+    if (!system)
         return CSSCounterStyleDescriptors::System::Symbolic;
 
-    auto& primitiveSystemValue = downcast<CSSPrimitiveValue>(*system);
-    ASSERT(primitiveSystemValue.isValueID() || primitiveSystemValue.isPair());
+    ASSERT(system->isValueID() || system->isPair());
     CSSValueID systemKeyword = CSSValueInvalid;
-    if (primitiveSystemValue.isValueID())
-        systemKeyword = primitiveSystemValue.valueID();
-    else if (auto* pair = primitiveSystemValue.pairValue()) {
+    if (system->isValueID())
+        systemKeyword = system->valueID();
+    else if (system->isPair()) {
         // This value must be `fixed` or `extends`, both of which can or must have an additional component.
-        auto firstValue = pair->first();
-        ASSERT(firstValue && firstValue->isValueID());
-        if (firstValue)
-            systemKeyword = firstValue->valueID();
+        systemKeyword = system->first().valueID();
     }
     switch (systemKeyword) {
     case CSSValueCyclic:
@@ -124,7 +119,7 @@ bool StyleRuleCounterStyle::newValueInvalidOrEqual(CSSPropertyID propertyID, con
         // If the attribute being set is `system`, and the new value would change the algorithm used, do nothing
         // and abort these steps.
         // (It's okay to change an aspect of the algorithm, like the first symbol value of a `fixed` system.)
-        return toCounterStyleSystemEnum(currentValue) != toCounterStyleSystemEnum(newValue);
+        return toCounterStyleSystemEnum(currentValue.get()) != toCounterStyleSystemEnum(newValue.get());
     case CSSPropertySymbols:
         symbols = newValue;
         additiveSymbols = m_properties->getPropertyCSSValue(CSSPropertyAdditiveSymbols);
@@ -137,7 +132,7 @@ bool StyleRuleCounterStyle::newValueInvalidOrEqual(CSSPropertyID propertyID, con
         return false;
     }
     auto system = m_properties->getPropertyCSSValue(CSSPropertySystem);
-    return symbolsValidForSystem(toCounterStyleSystemEnum(system), symbols, additiveSymbols);
+    return symbolsValidForSystem(toCounterStyleSystemEnum(system.get()), symbols, additiveSymbols);
 }
 
 StyleRuleCounterStyle::~StyleRuleCounterStyle() = default;

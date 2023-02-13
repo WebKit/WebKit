@@ -41,7 +41,8 @@ class EventRegion;
 class Path;
 class RenderObject;
 class RenderStyle;
-enum class WindRule : uint8_t;
+
+enum class WindRule : bool;
 
 class EventRegionContext {
 public:

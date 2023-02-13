@@ -183,7 +183,7 @@ RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
     if (is2D()) {
         double values[] = { m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f() };
         for (double value : values)
-            result->append(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER));
+            result->append(CSSPrimitiveValue::create(value));
     } else {
         double values[] = {
             m_matrix->m11(), m_matrix->m12(), m_matrix->m13(), m_matrix->m14(),
@@ -192,7 +192,7 @@ RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
             m_matrix->m41(), m_matrix->m42(), m_matrix->m43(), m_matrix->m44()
         };
         for (double value : values)
-            result->append(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER));
+            result->append(CSSPrimitiveValue::create(value));
     }
     return result;
 }

@@ -131,7 +131,7 @@ private:
     
     static double convertToTopLevelValue(double value)
     {
-        if (isnan(value))
+        if (std::isnan(value))
             value = std::numeric_limits<double>::infinity();
         return value;
     }

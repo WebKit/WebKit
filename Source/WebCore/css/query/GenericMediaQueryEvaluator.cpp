@@ -28,7 +28,6 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSToLengthConversionData.h"
-#include "CSSValueList.h"
 
 namespace WebCore {
 namespace MQ {

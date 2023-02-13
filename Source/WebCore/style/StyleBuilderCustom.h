@@ -28,22 +28,22 @@
 
 #include "CSSCounterStyleRegistry.h"
 #include "CSSCounterStyleRule.h"
+#include "CSSCounterValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontValue.h"
 #include "CSSFontVariantAlternatesValue.h"
 #include "CSSGradientValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSRectValue.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSShadowValue.h"
-#include "Counter.h"
 #include "CounterContent.h"
 #include "CursorList.h"
 #include "ElementAncestorIterator.h"
 #include "FontVariantBuilder.h"
 #include "Frame.h"
 #include "HTMLElement.h"
-#include "Rect.h"
 #include "SVGElement.h"
 #include "SVGRenderStyle.h"
 #include "StyleBuilderConverter.h"
@@ -865,17 +865,16 @@ inline void BuilderCustom::applyInheritClip(BuilderState& builderState)
 
 inline void BuilderCustom::applyValueClip(BuilderState& builderState, CSSValue& value)
 {
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (auto* rect = primitiveValue.rectValue()) {
-        auto conversionData = builderState.cssToLengthConversionData();
-        auto top = rect->top()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto right = rect->right()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto bottom = rect->bottom()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
-        auto left = rect->left()->convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+    if (value.isRect()) {
+        auto& conversionData = builderState.cssToLengthConversionData();
+        auto top = value.rect().top().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto right = value.rect().right().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto bottom = value.rect().bottom().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
+        auto left = value.rect().left().convertToLength<FixedIntegerConversion | PercentConversion | AutoConversion>(conversionData);
         builderState.style().setClip(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left));
         builderState.style().setHasClip(true);
     } else {
-        ASSERT(primitiveValue.valueID() == CSSValueAuto);
+        ASSERT(value.valueID() == CSSValueAuto);
         applyInitialClip(builderState);
     }
 }
@@ -951,7 +950,7 @@ inline void BuilderCustom::applyTextOrBoxShadowValue(BuilderState& builderState,
     bool isFirstEntry = true;
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& shadowValue = downcast<CSSShadowValue>(item.get());
-        auto conversionData = builderState.cssToLengthConversionData();
+        auto& conversionData = builderState.cssToLengthConversionData();
         auto x = shadowValue.x->computeLength<Length>(conversionData);
         auto y = shadowValue.y->computeLength<Length>(conversionData);
         auto blur = shadowValue.blur ? shadowValue.blur->computeLength<Length>(conversionData) : Length(0, LengthType::Fixed);
@@ -1400,14 +1399,13 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
         return;
 
     for (auto& item : downcast<CSSValueList>(value)) {
-        Pair* pair = downcast<CSSPrimitiveValue>(item.get()).pairValue();
-        AtomString identifier { pair->first()->stringValue() };
-        int value = pair->second()->intValue();
+        AtomString identifier { downcast<CSSPrimitiveValue>(item->first()).stringValue() };
+        int value = downcast<CSSPrimitiveValue>(item->second()).intValue();
         auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = value;
         else
-            directives.incrementValue = saturatedSum<int>(directives.incrementValue.value_or(0), value);
+            directives.incrementValue = saturatedSum(directives.incrementValue.value_or(0), value);
     }
 }
 
@@ -1586,33 +1584,30 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             continue;
         }
 
-        if (!is<CSSPrimitiveValue>(item))
-            continue;
-
-        auto& contentValue = downcast<CSSPrimitiveValue>(item.get());
-        if (contentValue.isString()) {
-            builderState.style().setContent(contentValue.stringValue().impl(), didSet);
+        auto* primitive = dynamicDowncast<CSSPrimitiveValue>(item.get());
+        if (primitive && primitive->isString()) {
+            builderState.style().setContent(primitive->stringValue().impl(), didSet);
             didSet = true;
-        } else if (contentValue.isAttr()) {
+        } else if (primitive && primitive->isAttr()) {
             // FIXME: Can a namespace be specified for an attr(foo)?
             if (builderState.style().styleType() == PseudoId::None)
                 builderState.style().setHasAttrContent();
             else
                 const_cast<RenderStyle&>(builderState.parentStyle()).setHasAttrContent();
-            QualifiedName attr(nullAtom(), contentValue.stringValue().impl(), nullAtom());
+            QualifiedName attr(nullAtom(), primitive->stringValue().impl(), nullAtom());
             const AtomString& value = builderState.element() ? builderState.element()->getAttribute(attr) : nullAtom();
             builderState.style().setContent(value.isNull() ? emptyAtom() : value.impl(), didSet);
             didSet = true;
             // Register the fact that the attribute value affects the style.
             builderState.registerContentAttribute(attr.localName());
-        } else if (auto* value = contentValue.counterValue()) {
+        } else if (item->isCounter()) {
             // FIXME: counter-style: we probably want to review this for custom counter-style.
-            auto listStyle = fromCSSValueID<ListStyleType>(value->listStyle);
-            auto counter = makeUnique<CounterContent>(value->identifier, listStyle, value->separator);
-            builderState.style().setContent(WTFMove(counter), didSet);
+            auto& counter = downcast<CSSCounterValue>(item.get());
+            auto listStyle = fromCSSValueID<ListStyleType>(counter.listStyle());
+            builderState.style().setContent(makeUnique<CounterContent>(counter.identifier(), listStyle, counter.separator()), didSet);
             didSet = true;
         } else {
-            switch (contentValue.valueID()) {
+            switch (item->valueID()) {
             case CSSValueOpenQuote:
                 builderState.style().setContent(QuoteType::OpenQuote, didSet);
                 didSet = true;
