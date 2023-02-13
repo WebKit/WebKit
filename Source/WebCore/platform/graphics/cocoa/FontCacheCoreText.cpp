@@ -532,19 +532,10 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     // Step 9: font-optical-sizing
     // FIXME: Apply this before font-variation-settings
-    if (forceOpticalSizingOn || textRenderingMode == TextRenderingMode::OptimizeLegibility) {
-#if HAVE(CORETEXT_AUTO_OPTICAL_SIZING)
+    if (forceOpticalSizingOn || textRenderingMode == TextRenderingMode::OptimizeLegibility)
         CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, CFSTR("auto"));
-#else
-        auto size = CTFontGetSize(originalFont);
-        auto sizeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &size));
-        CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, sizeNumber.get());
-#endif
-    } else if (fontOpticalSizing == FontOpticalSizing::Disabled) {
-#if HAVE(CORETEXT_AUTO_OPTICAL_SIZING)
+    else if (fontOpticalSizing == FontOpticalSizing::Disabled)
         CFDictionaryAddValue(attributes.get(), kCTFontOpticalSizeAttribute, CFSTR("none"));
-#endif
-    }
 
     addAttributesForFontPalettes(attributes.get(), fontDescription.fontPalette(), fontCreationContext.fontPaletteValues());
 
