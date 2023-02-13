@@ -26,11 +26,12 @@
 #pragma once
 
 #include "ASTTypeName.h"
-#include "Types.h"
 #include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
 namespace WGSL {
+
+struct Type;
 
 namespace AST {
 class Identifier;
@@ -62,7 +63,11 @@ private:
     template<typename TargetType, typename Base, typename... Arguments>
     void allocateConstructor(Base, Arguments&&...);
 
-    WTF::Vector<std::unique_ptr<Type>> m_types;
+    struct TypeConstructor {
+        std::function<Type*(Type*)> construct;
+    };
+
+    Vector<std::unique_ptr<Type>> m_types;
     FixedVector<TypeConstructor> m_typeConstrutors;
 
     Type* m_bottom;

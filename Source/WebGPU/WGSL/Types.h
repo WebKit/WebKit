@@ -31,23 +31,9 @@
 
 namespace WGSL {
 
-struct Primitive;
-struct Vector;
-struct Matrix;
-struct Array;
-struct Struct;
-struct Function;
-struct Bottom;
+struct Type;
 
-using Type = std::variant<
-    Primitive,
-    Vector,
-    Matrix,
-    Array,
-    Struct,
-    Function,
-    Bottom
->;
+namespace Types {
 
 #define FOR_EACH_PRIMITIVE_TYPE(f) \
     f(AbstractInt, "<AbstractInt>") \
@@ -95,12 +81,29 @@ struct Function {
 struct Bottom {
 };
 
-struct TypeConstructor {
-    std::function<Type*(Type*)> construct;
-};
+} // namespace Types
 
-void printInternal(PrintStream&, const Type&);
-String toString(const Type&);
+struct Type : public std::variant<
+    Types::Primitive,
+    Types::Vector,
+    Types::Matrix,
+    Types::Array,
+    Types::Struct,
+    Types::Function,
+    Types::Bottom
+> {
+    using std::variant<
+        Types::Primitive,
+        Types::Vector,
+        Types::Matrix,
+        Types::Array,
+        Types::Struct,
+        Types::Function,
+        Types::Bottom
+        >::variant;
+    void dump(PrintStream&) const;
+    String toString() const;
+};
 
 } // namespace WGSL
 
@@ -109,7 +112,7 @@ namespace WTF {
 template<> class StringTypeAdapter<WGSL::Type, void> : public StringTypeAdapter<String, void> {
 public:
     StringTypeAdapter(const WGSL::Type& type)
-        : StringTypeAdapter<String, void> { toString(type) }
+        : StringTypeAdapter<String, void> { type.toString() }
     { }
 };
 

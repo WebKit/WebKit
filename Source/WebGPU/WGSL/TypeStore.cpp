@@ -27,9 +27,12 @@
 #include "TypeStore.h"
 
 #include "ASTTypeName.h"
+#include "Types.h"
 #include <wtf/EnumTraits.h>
 
 namespace WGSL {
+
+using namespace Types;
 
 TypeStore::TypeStore()
     : m_typeConstrutors(AST::ParameterizedTypeName::NumberOfBaseTypes)

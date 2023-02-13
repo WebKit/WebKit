@@ -101,7 +101,7 @@ private:
 
     // FIXME: move this into a class that contains the AST
     TypeStore m_types;
-    WTF::Vector<Error> m_errors;
+    Vector<Error> m_errors;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
