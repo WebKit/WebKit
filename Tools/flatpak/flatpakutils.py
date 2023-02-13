@@ -1272,7 +1272,7 @@ class WebkitFlatpak:
                                        self.flathub_repo, arch))
         packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.rust-stable", SDK_BRANCH,
                                        self.flathub_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", SDK_BRANCH,
+        packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", f"{SDK_BRANCH}-extra",
                                        self.flathub_repo, arch))
         return packages
 
