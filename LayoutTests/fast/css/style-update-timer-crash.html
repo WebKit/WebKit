@@ -1,0 +1,46 @@
+<style>
+    *:last-child,*:placeholder-shown { -webkit-clip-path: url(#fontFaceID);}
+    *:empty { -webkit-border-after: #D1C78D; }
+</style>
+
+<script>
+
+function test() {
+    if (window.testRunner)
+        testRunner.dumpAsText()
+    var divElement = document.createElement("div");
+    meterID.addEventListener("DOMNodeRemoved", domNodeRemovedCallback);
+    var insertedElement = animateTransformID.insertAdjacentElement("afterbegin", marqueeID);
+    var screenCTM = symbolID.getScreenCTM();
+    svgID.outerHTML = "A";
+    GCController.collect();
+    document.body.innerHTML = 'PASS if no crash.';
+}
+
+function domNodeRemovedCallback() {
+    svgID.prepend(animateMotionID);
+    range = iframeID.contentDocument.createRange();
+    range.selectNodeContents(animateTransformID);
+    range.surroundContents(document.createElement("meter"));
+}
+</script>
+
+<head>
+</head>
+<body onload="test()">
+<meter id="meterID">
+<marquee id="marqueeID">
+</marquee>
+</meter>
+<svg id="svgID">
+<symbol id="symbolID">
+<font-face id="fontFaceID">
+    <animateTransform id="animateTransformID">
+        <animateMotion id="animateMotionID">
+        </animateMotion>
+    </animateTransform>
+</font-face>
+</svg>
+<iframe id="iframeID">
+</iframe>
+</body>
