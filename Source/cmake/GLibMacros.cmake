@@ -1,4 +1,4 @@
-macro(GENERATE_API_HEADERS _input_header_templates _derived_sources_directory _output_headers)
+macro(GENERATE_GLIB_API_HEADERS _framework _input_header_templates _derived_sources_directory _output_headers)
     foreach (header_template ${${_input_header_templates}})
         get_filename_component(header ${header_template} NAME_WLE)
         add_custom_command(
@@ -11,5 +11,5 @@ macro(GENERATE_API_HEADERS _input_header_templates _derived_sources_directory _o
         unset(header)
     endforeach ()
 
-    list(APPEND WebKit_SOURCES ${${_output_headers}})
+    list(APPEND ${_framework}_SOURCES ${${_output_headers}})
 endmacro()

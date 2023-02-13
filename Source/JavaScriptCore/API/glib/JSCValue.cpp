@@ -59,7 +59,7 @@ struct _JSCValuePrivate {
     JSValueRef jsValue;
 };
 
-WEBKIT_DEFINE_TYPE(JSCValue, jsc_value, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(JSCValue, jsc_value, G_TYPE_OBJECT, GObject)
 
 static void jscValueGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
 {

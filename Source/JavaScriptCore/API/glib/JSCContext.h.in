@@ -34,15 +34,25 @@
 G_BEGIN_DECLS
 
 #define JSC_TYPE_CONTEXT            (jsc_context_get_type())
+
+#if !ENABLE(2022_GLIB_API)
 #define JSC_CONTEXT(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), JSC_TYPE_CONTEXT, JSCContext))
 #define JSC_IS_CONTEXT(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), JSC_TYPE_CONTEXT))
 #define JSC_CONTEXT_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  JSC_TYPE_CONTEXT, JSCContextClass))
 #define JSC_IS_CONTEXT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  JSC_TYPE_CONTEXT))
 #define JSC_CONTEXT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  JSC_TYPE_CONTEXT, JSCContextClass))
 
-typedef struct _JSCContext JSCContext;
-typedef struct _JSCContextClass JSCContextClass;
-typedef struct _JSCContextPrivate JSCContextPrivate;
+struct _JSCContextClass {
+    GObjectClass parent_class;
+
+    void (*_jsc_reserved0) (void);
+    void (*_jsc_reserved1) (void);
+    void (*_jsc_reserved2) (void);
+    void (*_jsc_reserved3) (void);
+};
+#endif
+
+JSC_DECLARE_FINAL_TYPE (JSCContext, jsc_context, JSC, CONTEXT, GObject)
 
 typedef void (* JSCExceptionHandler) (JSCContext   *context,
                                       JSCException *exception,
@@ -61,25 +71,6 @@ typedef enum {
     JSC_CHECK_SYNTAX_RESULT_OUT_OF_MEMORY_ERROR,
     JSC_CHECK_SYNTAX_RESULT_STACK_OVERFLOW_ERROR,
 } JSCCheckSyntaxResult;
-
-struct _JSCContext {
-    GObject parent;
-
-    /*< private >*/
-    JSCContextPrivate *priv;
-};
-
-struct _JSCContextClass {
-    GObjectClass parent_class;
-
-    void (*_jsc_reserved0) (void);
-    void (*_jsc_reserved1) (void);
-    void (*_jsc_reserved2) (void);
-    void (*_jsc_reserved3) (void);
-};
-
-JSC_API GType
-jsc_context_get_type                 (void);
 
 JSC_API JSCContext *
 jsc_context_new                      (void);

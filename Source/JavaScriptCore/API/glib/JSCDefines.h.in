@@ -47,4 +47,22 @@
 #define JSC_DEPRECATED_FOR(f) JSC_API G_DEPRECATED_FOR(f)
 #endif /* !__GI_SCANNER__ */
 
+#if ENABLE(2022_GLIB_API)
+#define JSC_DECLARE_FINAL_TYPE(ModuleObjName, module_obj_name, MODULE, OBJ_NAME, ParentName) \
+    JSC_API G_DECLARE_FINAL_TYPE (ModuleObjName, module_obj_name, MODULE, OBJ_NAME, ParentName)
+#else
+#define JSC_DECLARE_FINAL_TYPE(ModuleObjName, module_obj_name, MODULE, OBJ_NAME, ParentName) \
+    JSC_API GType module_obj_name ## _get_type (void);                     \
+                                                                           \
+    typedef struct _ ## ModuleObjName ModuleObjName;                       \
+    typedef struct _ ## ModuleObjName ## Class ModuleObjName ## Class;     \
+    typedef struct _ ## ModuleObjName ## Private ModuleObjName ## Private; \
+                                                                           \
+    struct _ ## ModuleObjName {                                            \
+        ParentName parent;                                                 \
+        /*< private >*/                                                    \
+        ModuleObjName ## Private *priv;                                    \
+    };
+#endif
+
 #endif /* JSCDefines_h */

@@ -30,15 +30,24 @@
 G_BEGIN_DECLS
 
 #define JSC_TYPE_VALUE            (jsc_value_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define JSC_VALUE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), JSC_TYPE_VALUE, JSCValue))
 #define JSC_IS_VALUE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), JSC_TYPE_VALUE))
 #define JSC_VALUE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  JSC_TYPE_VALUE, JSCValueClass))
 #define JSC_IS_VALUE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  JSC_TYPE_VALUE))
 #define JSC_VALUE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  JSC_TYPE_VALUE, JSCValueClass))
 
-typedef struct _JSCValue JSCValue;
-typedef struct _JSCValueClass JSCValueClass;
-typedef struct _JSCValuePrivate JSCValuePrivate;
+struct _JSCValueClass {
+    GObjectClass parent_class;
+
+    void (*_jsc_reserved0) (void);
+    void (*_jsc_reserved1) (void);
+    void (*_jsc_reserved2) (void);
+    void (*_jsc_reserved3) (void);
+};
+#endif
+
+JSC_DECLARE_FINAL_TYPE (JSCValue, jsc_value, JSC, VALUE, GObject)
 
 typedef struct _JSCClass JSCClass;
 typedef struct _JSCContext JSCContext;
@@ -63,25 +72,6 @@ typedef enum {
     JSC_TYPED_ARRAY_FLOAT32,
     JSC_TYPED_ARRAY_FLOAT64,
 } JSCTypedArrayType;
-
-struct _JSCValue {
-    GObject parent;
-
-    /*< private >*/
-    JSCValuePrivate *priv;
-};
-
-struct _JSCValueClass {
-    GObjectClass parent_class;
-
-    void (*_jsc_reserved0) (void);
-    void (*_jsc_reserved1) (void);
-    void (*_jsc_reserved2) (void);
-    void (*_jsc_reserved3) (void);
-};
-
-JSC_API GType
-jsc_value_get_type                        (void);
 
 JSC_API JSCContext *
 jsc_value_get_context                     (JSCValue             *value);

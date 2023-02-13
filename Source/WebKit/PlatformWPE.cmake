@@ -1,5 +1,5 @@
 include(GNUInstallDirs)
-include(GLib.cmake)
+include(GLibMacros)
 include(InspectorGResources.cmake)
 
 if (ENABLE_PDFJS)
@@ -242,7 +242,7 @@ list(APPEND WebKit_DEPENDENCIES
     webkitwpe-forwarding-headers
 )
 
-GENERATE_API_HEADERS(WPE_API_HEADER_TEMPLATES
+GENERATE_GLIB_API_HEADERS(WebKit WPE_API_HEADER_TEMPLATES
     ${DERIVED_SOURCES_WPE_API_DIR}
     WPE_API_INSTALLED_HEADERS
     "-DWTF_PLATFORM_GTK=0"
@@ -251,7 +251,7 @@ GENERATE_API_HEADERS(WPE_API_HEADER_TEMPLATES
     "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
-GENERATE_API_HEADERS(WPE_WEB_EXTENSION_API_HEADER_TEMPLATES
+GENERATE_GLIB_API_HEADERS(WebKit WPE_WEB_EXTENSION_API_HEADER_TEMPLATES
     ${DERIVED_SOURCES_WPE_API_DIR}
     WPE_WEB_EXTENSION_API_INSTALLED_HEADERS
     "-DWTF_PLATFORM_GTK=0"
@@ -354,6 +354,10 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/wpe"
     "${WEBKIT_DIR}/WebProcess/glib"
     "${WEBKIT_DIR}/WebProcess/soup"
+)
+
+list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+    "${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc"
 )
 
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
@@ -529,17 +533,16 @@ GI_INTROSPECT(WPEJavaScriptCore ${WPE_API_VERSION} jsc/jsc.h
         -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
         -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
     SOURCES
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCAutocleanups.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCClass.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCContext.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCDefines.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCException.h
         ${JAVASCRIPTCORE_DIR}/API/glib/JSCOptions.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCValue.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCVirtualMachine.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/JSCWeakValue.h
-        ${JAVASCRIPTCORE_DIR}/API/glib/jsc.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCClass.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCContext.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCDefines.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCException.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCValue.h
         ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVersion.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVirtualMachine.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCWeakValue.h
+        ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/jsc.h
         ${JAVASCRIPTCORE_DIR}/API/glib
     NO_IMPLICIT_SOURCES
 )

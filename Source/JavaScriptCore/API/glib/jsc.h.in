@@ -32,7 +32,9 @@
 #include <jsc/JSCVirtualMachine.h>
 #include <jsc/JSCWeakValue.h>
 
+#if !ENABLE(2022_GLIB_API)
 #include <jsc/JSCAutocleanups.h>
+#endif
 
 #undef __JSC_H_INSIDE__
 

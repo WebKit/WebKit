@@ -65,17 +65,13 @@ typedef struct _JSCClassPrivate {
     JSC::Weak<JSC::JSObject> prototype;
 } JSCClassPrivate;
 
-struct _JSCClass {
-    GObject parent;
-
-    JSCClassPrivate* priv;
-};
-
+#if !ENABLE(2022_GLIB_API)
 struct _JSCClassClass {
     GObjectClass parent_class;
 };
+#endif
 
-WEBKIT_DEFINE_TYPE(JSCClass, jsc_class, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(JSCClass, jsc_class, G_TYPE_OBJECT, GObject)
 
 class VTableExceptionHandler {
 public:

@@ -31,11 +31,12 @@
 G_BEGIN_DECLS
 
 #define JSC_TYPE_CLASS            (jsc_class_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define JSC_CLASS(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), JSC_TYPE_CLASS, JSCClass))
 #define JSC_IS_CLASS(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), JSC_TYPE_CLASS))
+#endif
 
-typedef struct _JSCClass JSCClass;
-typedef struct _JSCClassClass JSCClassClass;
+JSC_DECLARE_FINAL_TYPE (JSCClass, jsc_class, JSC, CLASS, GObject)
 
 typedef struct _JSCContext JSCContext;
 
@@ -74,9 +75,6 @@ typedef struct {
     void (*_jsc_reserved2) (void);
     void (*_jsc_reserved3) (void);
 } JSCClassVTable;
-
-JSC_API GType
-jsc_class_get_type                 (void);
 
 JSC_API const char *
 jsc_class_get_name                 (JSCClass      *jsc_class);
