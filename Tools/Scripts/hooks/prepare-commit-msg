@@ -11,6 +11,7 @@ SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
 CHERRY_PICKING_RE = re.compile(r'^# You are currently cherry-picking commit (?P<hash>[a-f0-9A-F]+)\.$')
 IDENTIFIER_RE = re.compile(r'(\d+\.)?\d+@\S+')
 PREFER_RADAR = {{ prefer_radar }}
+GIT = os.environ.get('_', 'git')
 
 sys.path.append(SCRIPTS)
 from webkitpy.common.checkout.diff_parser import DiffParser
@@ -182,7 +183,7 @@ def main(file_name=None, source=None, sha=None):
     with open(file_name, 'w') as commit_message_file:
         if sha:
             commit_message_file.write(subprocess.check_output(
-                ['git', 'log', 'HEAD', '-1', '--pretty=format:%B'],
+                [GIT, 'log', 'HEAD', '-1', '--pretty=format:%B'],
                 **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
             ))
         else:
@@ -198,7 +199,7 @@ def main(file_name=None, source=None, sha=None):
                 commit_message_file.write('# {}\n'.format(line))
             commit_message_file.write('\n')
         for line in subprocess.check_output(
-            ['git', 'status'],
+            [GIT, 'status'],
             **(dict(encoding='utf-8') if sys.version_info > (3, 5) else dict())
         ).splitlines():
             commit_message_file.write('# {}\n'.format(line))

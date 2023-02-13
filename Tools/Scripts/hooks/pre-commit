@@ -6,13 +6,14 @@ import sys
 
 LOCATION = r'{{ location }}'
 SCRIPTS = os.path.dirname(os.path.dirname(LOCATION))
+GIT = os.environ.get('_', 'git')
 
 
 def files(staged=True):
     try:
         lines = []
         for line in subprocess.check_output(
-            ['git', 'diff', '--name-only'] + (['--staged'] if staged else []),
+            [GIT, 'diff', '--name-only'] + (['--staged'] if staged else []),
             encoding='utf-8',
         ).splitlines():
             if line:
@@ -33,6 +34,6 @@ for line in staged or unstaged:
 if project_files:
     code = subprocess.run(['perl', os.path.join(SCRIPTS, 'sort-Xcode-project-file')] + project_files).returncode
     if staged:
-        code += subprocess.run(['git', 'add'] + project_files).returncode
+        code += subprocess.run([GIT, 'add'] + project_files).returncode
     sys.exit(code)
 sys.exit(0)
