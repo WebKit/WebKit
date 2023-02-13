@@ -41,6 +41,13 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::EndOfFile);
 
     switch (m_current) {
+    case '!':
+        shift();
+        if (m_current == '=') {
+            shift();
+            return makeToken(TokenType::BangEq);
+        }
+        return makeToken(TokenType::Bang);
     case '%':
         shift();
         return makeToken(TokenType::Modulo);
@@ -76,21 +83,35 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Semicolon);
     case '=':
         shift();
+        if (m_current == '=') {
+            shift();
+            return makeToken(TokenType::EqEq);
+        }
         return makeToken(TokenType::Equal);
     case '>':
         shift();
-        if (m_current == '>') {
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::GtEq);
+        case '>':
             shift();
             return makeToken(TokenType::GtGt);
+        default:
+            return makeToken(TokenType::Gt);
         }
-        return makeToken(TokenType::Gt);
     case '<':
         shift();
-        if (m_current == '<') {
+        switch (m_current) {
+        case '=':
+            shift();
+            return makeToken(TokenType::LtEq);
+        case '<':
             shift();
             return makeToken(TokenType::LtLt);
+        default:
+            return makeToken(TokenType::Lt);
         }
-        return makeToken(TokenType::Lt);
     case '@':
         shift();
         return makeToken(TokenType::Attribute);

@@ -146,13 +146,40 @@ static bool canContinueBitwiseExpression(const Token& token)
     }
 }
 
+static bool canContinueRelationalExpression(const Token& token)
+{
+    switch (token.m_type) {
+    case TokenType::Gt:
+    case TokenType::GtEq:
+    case TokenType::Lt:
+    case TokenType::LtEq:
+    case TokenType::EqEq:
+    case TokenType::BangEq:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static AST::BinaryOperation toBinaryOperation(const Token& token)
 {
     switch (token.m_type) {
     case TokenType::And:
         return AST::BinaryOperation::And;
+    case TokenType::BangEq:
+        return AST::BinaryOperation::NotEqual;
+    case TokenType::EqEq:
+        return AST::BinaryOperation::Equal;
+    case TokenType::Gt:
+        return AST::BinaryOperation::GreaterThan;
+    case TokenType::GtEq:
+        return AST::BinaryOperation::GreaterEqual;
     case TokenType::GtGt:
         return AST::BinaryOperation::RightShift;
+    case TokenType::Lt:
+        return AST::BinaryOperation::LessThan;
+    case TokenType::LtEq:
+        return AST::BinaryOperation::LessEqual;
     case TokenType::LtLt:
         return AST::BinaryOperation::LeftShift;
     case TokenType::Minus:
@@ -696,8 +723,25 @@ Expected<AST::ReturnStatement, Error> Parser<Lexer>::parseReturnStatement()
 template<typename Lexer>
 Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs)
 {
-    // FIXME: fill in
-    return parseShiftExpressionPostUnary(WTFMove(lhs));
+    START_PARSE();
+    PARSE_MOVE(lhs, ShiftExpressionPostUnary, WTFMove(lhs));
+
+    if (canContinueRelationalExpression(current())) {
+        auto op = toBinaryOperation(current());
+        consume();
+        PARSE(rhs, ShiftExpression);
+        lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
+    }
+
+    return WTFMove(lhs);
+}
+
+template<typename Lexer>
+Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression()
+{
+    PARSE(unary, UnaryExpression);
+    PARSE(shift, ShiftExpressionPostUnary, WTFMove(unary));
+    return WTFMove(shift);
 }
 
 template<typename Lexer>
@@ -870,7 +914,12 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
     }
     case TokenType::Identifier: {
         PARSE(ident, Identifier);
-        if (current().m_type == TokenType::Lt || current().m_type == TokenType::ParenLeft) {
+        // FIXME: WGSL grammar has an ambiguity when trying to distinguish the
+        // use of < as either the less-than operator or the beginning of a
+        // template-parameter list. Here we are checking for vector or matrix
+        // type names. Alternatively, those names could be turned into keywords
+        auto typePrefix = AST::ParameterizedTypeName::stringViewToKind(ident.id());
+        if ((typePrefix && current().m_type == TokenType::Lt) || current().m_type == TokenType::ParenLeft) {
             PARSE(type, TypeNameAfterIdentifier, WTFMove(ident), _startOfElementPosition);
             PARSE(arguments, ArgumentExpressionList);
             RETURN_NODE_UNIQUE_REF(CallExpression, WTFMove(type), WTFMove(arguments));

@@ -127,6 +127,8 @@ TEST(WGSLLexerTests, SpecialTokens)
 
     checkSingleToken("->"_s, TokenType::Arrow);
     checkSingleToken("@"_s, TokenType::Attribute);
+    checkSingleToken("!"_s, TokenType::Bang);
+    checkSingleToken("!="_s, TokenType::BangEq);
     checkSingleToken("{"_s, TokenType::BraceLeft);
     checkSingleToken("}"_s, TokenType::BraceRight);
     checkSingleToken("["_s, TokenType::BracketLeft);
@@ -134,9 +136,12 @@ TEST(WGSLLexerTests, SpecialTokens)
     checkSingleToken(":"_s, TokenType::Colon);
     checkSingleToken(","_s, TokenType::Comma);
     checkSingleToken("="_s, TokenType::Equal);
+    checkSingleToken("=="_s, TokenType::EqEq);
     checkSingleToken(">"_s, TokenType::Gt);
+    checkSingleToken(">="_s, TokenType::GtEq);
     checkSingleToken(">>"_s, TokenType::GtGt);
     checkSingleToken("<"_s, TokenType::Lt);
+    checkSingleToken("<="_s, TokenType::LtEq);
     checkSingleToken("<<"_s, TokenType::LtLt);
     checkSingleToken("-"_s, TokenType::Minus);
     checkSingleToken("--"_s, TokenType::MinusMinus);

@@ -93,6 +93,10 @@ String toString(TokenType type)
         return "->"_s;
     case TokenType::Attribute:
         return "@"_s;
+    case TokenType::Bang:
+        return "!"_s;
+    case TokenType::BangEq:
+        return "!="_s;
     case TokenType::BracketLeft:
         return "["_s;
     case TokenType::BracketRight:
@@ -107,12 +111,18 @@ String toString(TokenType type)
         return ","_s;
     case TokenType::Equal:
         return "="_s;
+    case TokenType::EqEq:
+        return "=="_s;
     case TokenType::Gt:
         return ">"_s;
+    case TokenType::GtEq:
+        return ">="_s;
     case TokenType::GtGt:
         return ">>"_s;
     case TokenType::Lt:
         return "<"_s;
+    case TokenType::LtEq:
+        return "<="_s;
     case TokenType::LtLt:
         return "<<"_s;
     case TokenType::Minus:
