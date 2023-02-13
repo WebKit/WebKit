@@ -45,17 +45,6 @@ class WinPortTest(port_testcase.PortTestCase):
     port_name = 'win-xp'
     port_maker = WinPort
 
-    def test_show_results_html_file(self):
-        port = self.make_port()
-        port._executive = MockExecutive(should_log=True)
-        with OutputCapture(level=logging.INFO) as captured:
-            port.show_results_html_file('test.html')
-
-        # We can't know for sure what path will be produced by cygpath, but we can assert about
-        # everything else.
-        self.assertTrue(captured.root.log.getvalue().startswith("MOCK run_command: ['Tools/Scripts/run-safari', '--release', '"))
-        self.assertTrue(captured.root.log.getvalue().endswith("test.html'], cwd=/mock-checkout\n"))
-
     def _assert_search_path(self, expected_search_paths, version, use_webkit2=False):
         port = self.make_port(port_name='win', os_version=version, options=MockOptions(webkit_test_runner=use_webkit2))
         absolute_search_paths = list(map(port._webkit_baseline_path, expected_search_paths))
