@@ -77,19 +77,19 @@ public:
     void setFormAssociatedCustomElement(std::unique_ptr<FormAssociatedCustomElement>&& element) { m_formAssociatedCustomElement = WTFMove(element); }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
-    void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = WTFMove(attributeMap); }
+    void setAttributeMap(std::unique_ptr<NamedNodeMap>&& attributeMap) { m_attributeMap = WTFMove(attributeMap); }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
-    void setComputedStyle(std::unique_ptr<RenderStyle> computedStyle) { m_computedStyle = WTFMove(computedStyle); }
+    void setComputedStyle(std::unique_ptr<RenderStyle>&& computedStyle) { m_computedStyle = WTFMove(computedStyle); }
 
     const AtomString& effectiveLang() const { return m_effectiveLang; }
     void setEffectiveLang(const AtomString& lang) { m_effectiveLang = lang; }
 
     DOMTokenList* classList() const { return m_classList.get(); }
-    void setClassList(std::unique_ptr<DOMTokenList> classList) { m_classList = WTFMove(classList); }
+    void setClassList(std::unique_ptr<DOMTokenList>&& classList) { m_classList = WTFMove(classList); }
 
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
-    void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = WTFMove(dataset); }
+    void setDataset(std::unique_ptr<DatasetDOMStringMap>&& dataset) { m_dataset = WTFMove(dataset); }
 
     IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
     void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
@@ -98,7 +98,7 @@ public:
     ElementAnimationRareData& ensureAnimationRareData(PseudoId);
 
     DOMTokenList* partList() const { return m_partList.get(); }
-    void setPartList(std::unique_ptr<DOMTokenList> partList) { m_partList = WTFMove(partList); }
+    void setPartList(std::unique_ptr<DOMTokenList>&& partList) { m_partList = WTFMove(partList); }
 
     const SpaceSplitString& partNames() const { return m_partNames; }
     void setPartNames(SpaceSplitString&& partNames) { m_partNames = WTFMove(partNames); }
