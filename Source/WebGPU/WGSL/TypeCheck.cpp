@@ -81,6 +81,7 @@ public:
 private:
     void visitFunctionBody(AST::Function&);
     void visitStructMembers(AST::Structure&);
+    void vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
 
     template<typename... Arguments>
     void typeError(const SourceSpan&, Arguments&&...);
@@ -239,7 +240,12 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
         return;
     }
 
-    // FIXME: handle vector field accesses
+    if (std::holds_alternative<Types::Vector>(*baseType)) {
+        auto& vector = std::get<Types::Vector>(*baseType);
+        vectorFieldAccess(vector, access);
+        return;
+    }
+
     typeError(access.span(), "invalid member access expression. Expected vector or struct, got '", *baseType, "'");
 }
 
@@ -387,6 +393,59 @@ std::optional<unsigned> TypeChecker::extractInteger(AST::Expression& expression)
         // FIXME: handle constants and overrides
         return std::nullopt;
     }
+}
+
+void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
+{
+    const auto& fieldName = access.fieldName().id();
+    auto length = fieldName.length();
+
+    const auto& isXYZW = [&](char c) {
+        return c == 'x' || c == 'y' || c == 'z' || c == 'w';
+    };
+    const auto& isRGBA = [&](char c) {
+        return c == 'r' || c == 'g' || c == 'b' || c == 'a';
+    };
+
+    bool hasXYZW = false;
+    bool hasRGBA = false;
+    for (unsigned i = 0; i < length; ++i) {
+        char c = fieldName[i];
+        if (isXYZW(c))
+            hasXYZW = true;
+        else if (isRGBA(c))
+            hasRGBA = true;
+        else {
+            typeError(access.span(), "invalid vector swizzle character");
+            return;
+        }
+    }
+
+    if (hasXYZW && hasRGBA) {
+        typeError(access.span(), "invalid vector swizzle member");
+        return;
+    }
+
+    AST::ParameterizedTypeName::Base base;
+    switch (length) {
+    case 1:
+        inferred(vector.element);
+        return;
+    case 2:
+        base = AST::ParameterizedTypeName::Base::Vec2;
+        break;
+    case 3:
+        base = AST::ParameterizedTypeName::Base::Vec3;
+        break;
+    case 4:
+        base = AST::ParameterizedTypeName::Base::Vec4;
+        break;
+    default:
+        typeError(access.span(), "invalid vector swizzle size");
+        return;
+    }
+
+    inferred(m_types.constructType(base, vector.element));
 }
 
 Type* TypeChecker::infer(AST::Expression& expression)
