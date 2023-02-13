@@ -6377,6 +6377,20 @@ VideoFullscreenRequiresElementFullscreen:
       default: false
     WebCore:
       default: false
+      
+VideoPresentationModeAPIEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
 
 VideoQualityIncludesDisplayCompositingEnabled:
   type: bool
