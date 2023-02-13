@@ -794,7 +794,7 @@ void EmptyFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureCont
 {
 }
 
-void EmptyFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading)
+void EmptyFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading, WillInternallyHandleFailure)
 {
 }
 

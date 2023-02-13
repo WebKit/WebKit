@@ -143,6 +143,38 @@ const String& ResourceError::getCFErrorDomainCFNetwork() const
     return errorDomain.get();
 }
 
+ResourceError::ErrorRecoveryMethod ResourceError::errorRecoveryMethod() const
+{
+    lazyInit();
+
+    if ([m_domain isEqualToString:NSURLErrorDomain]) {
+        switch (m_errorCode) {
+        case NSURLErrorTimedOut:
+        case NSURLErrorCannotFindHost:
+        case NSURLErrorCannotConnectToHost:
+        case NSURLErrorNetworkConnectionLost:
+        case NSURLErrorHTTPTooManyRedirects:
+        case NSURLErrorResourceUnavailable:
+        case NSURLErrorRedirectToNonExistentLocation:
+        case NSURLErrorBadServerResponse:
+        case NSURLErrorZeroByteResource:
+        case NSURLErrorCannotDecodeRawData:
+        case NSURLErrorCannotDecodeContentData:
+        case NSURLErrorCannotParseResponse:
+        case NSURLErrorSecureConnectionFailed:
+        case NSURLErrorServerCertificateHasBadDate:
+        case NSURLErrorServerCertificateUntrusted:
+        case NSURLErrorServerCertificateHasUnknownRoot:
+        case NSURLErrorServerCertificateNotYetValid:
+        case NSURLErrorClientCertificateRejected:
+        case NSURLErrorClientCertificateRequired:
+            if (m_failingURL.protocolIs("https"_s) && (!m_failingURL.port() || WTF::isDefaultPortForProtocol(m_failingURL.port().value(), m_failingURL.protocol())))
+                return ResourceError::ErrorRecoveryMethod::HTTPFallback;
+        }
+    }
+    return ResourceError::ErrorRecoveryMethod::NoRecovery;
+}
+
 void ResourceError::mapPlatformError()
 {
     static_assert(static_cast<NSInteger>(NSURLErrorTimedOut) == static_cast<NSInteger>(kCFURLErrorTimedOut), "NSURLErrorTimedOut needs to equal kCFURLErrorTimedOut");
