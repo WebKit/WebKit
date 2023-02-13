@@ -80,6 +80,7 @@
 #include "TextManipulationController.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
