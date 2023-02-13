@@ -32,9 +32,17 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
 
+#if CPU(ADDRESS64)
+static_assert((UnlinkedMetadataTable::s_maxMetadataAlignment >=
+#define JSC_ALIGNMENT_CHECK(size) size) && (size >=
+FOR_EACH_BYTECODE_METADATA_ALIGNMENT(JSC_ALIGNMENT_CHECK)
+#undef JSC_ALIGNMENT_CHECK
+1));
+#else
 #define JSC_ALIGNMENT_CHECK(size) static_assert(size <= UnlinkedMetadataTable::s_maxMetadataAlignment);
 FOR_EACH_BYTECODE_METADATA_ALIGNMENT(JSC_ALIGNMENT_CHECK)
 #undef JSC_ALIGNMENT_CHECK
+#endif
 
 void UnlinkedMetadataTable::finalize()
 {
@@ -57,8 +65,15 @@ void UnlinkedMetadataTable::finalize()
             }
             buffer[i] = offset; // We align when we access this.
             unsigned alignment = metadataAlignment(static_cast<OpcodeID>(i));
-            offset = roundUpToMultipleOf(alignment, offset);
             ASSERT(alignment <= s_maxMetadataAlignment);
+
+#if CPU(ADDRESS64)
+            // This is only necessary for the first metadata entry, if the buffer
+            // is 4-byte aligned and the entry has an alignment requirement of 8
+            ASSERT(offset == roundUpToMultipleOf(alignment, offset) || offset == s_offset16TableSize);
+#endif
+            offset = roundUpToMultipleOf(alignment, offset);
+
             offset += numberOfEntries * metadataSize(static_cast<OpcodeID>(i));
         }
         buffer[s_offsetTableEntries - 1] = offset;
