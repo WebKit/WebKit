@@ -31,6 +31,7 @@
 #include "KeyframeEffectStack.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
+#include "PopoverData.h"
 #include "PseudoElement.h"
 #include "RenderElement.h"
 #include "ResizeObserver.h"
@@ -123,6 +124,9 @@ public:
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap() { return m_explicitlySetAttrElementsMap; }
 
+    PopoverData* popoverData() { return m_popoverData.get(); }
+    void setPopoverData(std::unique_ptr<PopoverData>&& popoverData) { m_popoverData = WTFMove(popoverData); }
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -167,6 +171,8 @@ public:
             result.add(UseType::Nonce);
         if (!m_explicitlySetAttrElementsMap.isEmpty())
             result.add(UseType::ExplicitlySetAttrElementsMap);
+        if (m_popoverData)
+            result.add(UseType::Popover);
         return result;
     }
 #endif
@@ -203,6 +209,8 @@ private:
     AtomString m_nonce;
 
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
+
+    std::unique_ptr<PopoverData> m_popoverData;
 
     void releasePseudoElement(PseudoElement*);
 };

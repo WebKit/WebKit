@@ -72,6 +72,7 @@ class Locale;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
+class PopoverData;
 class PseudoElement;
 class RenderStyle;
 class RenderTreePosition;
@@ -586,6 +587,8 @@ public:
     WEBCORE_EXPORT void webkitRequestFullscreen();
     virtual void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&);
 #endif
+
+    PopoverData& popoverData();
 
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);

@@ -3,6 +3,6 @@ Invoker      after
 Show popover Hide popover
 
 FAIL Popover focus navigation assert_equals: Hidden popover should be skipped expected Element node <button id="button2">Button2</button> but got Element node <button id="circular2" popovershowtarget="popover4"></but...
-FAIL Circular reference tab navigation promise_test: Unhandled rejection with value: object "TypeError: popover4.hidePopover is not a function. (In 'popover4.hidePopover()', 'popover4.hidePopover' is undefined)"
+FAIL Circular reference tab navigation promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
 FAIL Popover focus returns when popover is hidden by invoker promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 

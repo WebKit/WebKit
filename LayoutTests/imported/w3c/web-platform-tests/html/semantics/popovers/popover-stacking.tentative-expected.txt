@@ -56,6 +56,6 @@ FAIL nested popovertoggletarget attribute relationship The string did not match 
 FAIL anchor attribute relationship The string did not match the expected pattern.
 FAIL indirect anchor attribute relationship The string did not match the expected pattern.
 FAIL more complex nesting, all using anchor ancestry The string did not match the expected pattern.
-FAIL popovers should be closed by dialogs p1.showPopover is not a function. (In 'p1.showPopover()', 'p1.showPopover' is undefined)
-FAIL dialogs should not be closed by popovers p1.showPopover is not a function. (In 'p1.showPopover()', 'p1.showPopover' is undefined)
+FAIL popovers should be closed by dialogs The string did not match the expected pattern.
+FAIL dialogs should not be closed by popovers Element has unexpected visibility state
 

@@ -97,6 +97,7 @@
 #include "PointerCaptureController.h"
 #include "PointerEvent.h"
 #include "PointerLockController.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Quirks.h"
 #include "RenderFragmentedFlow.h"
@@ -2751,6 +2752,14 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 
     if (UNLIKELY(isInTopLayer()))
         removeFromTopLayer();
+}
+
+PopoverData& Element::popoverData()
+{
+    ElementRareData& data = ensureElementRareData();
+    if (!data.popoverData())
+        data.setPopoverData(makeUnique<PopoverData>());
+    return *data.popoverData();
 }
 
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)

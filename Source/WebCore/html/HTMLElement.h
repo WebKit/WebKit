@@ -138,6 +138,12 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<Ref<ElementInternals>> attachInternals();
 
+    ExceptionOr<void> showPopover();
+    ExceptionOr<void> hidePopover();
+    ExceptionOr<void> togglePopover(std::optional<bool> force);
+    const AtomString& popover() const;
+    void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
+
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);
 #endif

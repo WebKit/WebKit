@@ -8,8 +8,8 @@ Test 4 Popover 1
 This should not get hidden when popover2 opens.
 
 
-FAIL Popovers located inside shadow DOM can still be shown popover.showPopover is not a function. (In 'popover.showPopover()', 'popover.showPopover' is undefined)
-FAIL anchor references do not cross shadow boundaries popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)
-FAIL anchor references use the flat tree not the DOM tree promise_test: Unhandled rejection with value: object "TypeError: popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)"
-FAIL The popover stack is preserved across shadow-inclusive ancestors promise_test: Unhandled rejection with value: object "TypeError: popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)"
+FAIL Popovers located inside shadow DOM can still be shown The string did not match the expected pattern.
+FAIL anchor references do not cross shadow boundaries The string did not match the expected pattern.
+FAIL anchor references use the flat tree not the DOM tree promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL The popover stack is preserved across shadow-inclusive ancestors promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 

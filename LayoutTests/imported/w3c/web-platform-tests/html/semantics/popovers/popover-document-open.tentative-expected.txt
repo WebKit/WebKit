@@ -1,4 +1,4 @@
 Popover
 
-FAIL document.open should not break popovers popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)
+FAIL document.open should not break popovers The string did not match the expected pattern.
 

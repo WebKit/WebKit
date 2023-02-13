@@ -274,6 +274,7 @@ public:
         PartNames = 1 << 22,
         Nonce = 1 << 23,
         ExplicitlySetAttrElementsMap = 1 << 24,
+        Popover = 1 << 25,
     };
 #endif
 

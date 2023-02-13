@@ -71,6 +71,7 @@
 #include "MediaControlsHost.h"
 #include "MutableStyleProperties.h"
 #include "NodeTraversal.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
@@ -1209,6 +1210,97 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
 
     queue->setElementInternalsAttached();
     return ElementInternals::create(*this);
+}
+
+static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilityState expectedState)
+{
+    if (!element.hasAttributeWithoutSynchronization(HTMLNames::popoverAttr))
+        return Exception { InvalidStateError, "Element does not have the popover attribute"_s };
+
+    if (!element.isConnected())
+        return Exception { InvalidStateError, "Element is not connected"_s };
+
+    if (element.popoverData().visibilityState() != expectedState)
+        return Exception { InvalidStateError, "Element has unexpected visibility state"_s };
+
+    if (is<HTMLDialogElement>(element) && element.hasAttributeWithoutSynchronization(HTMLNames::openAttr))
+        return Exception { InvalidStateError, "Element is an open <dialog> element"_s };
+
+#if ENABLE(FULLSCREEN_API)
+    if (element.hasFullscreenFlag())
+        return Exception { InvalidStateError, "Element is fullscreen"_s };
+#endif
+
+    return { };
+}
+
+ExceptionOr<void> HTMLElement::showPopover()
+{
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
+        return check.releaseException();
+
+    ASSERT(!isInTopLayer());
+
+    // FIXME: Fire beforetoggle event and re-check popover validity.
+
+    // FIXME: Run auto popover steps.
+
+    if (popover() == autoAtom())
+        popoverData().setPreviouslyFocusedElement(document().focusedElement());
+
+    addToTopLayer();
+
+    popoverData().setVisibilityState(PopoverVisibilityState::Showing);
+
+    // FIXME: Queue popover toggle event task.
+
+    return { };
+}
+
+ExceptionOr<void> HTMLElement::hidePopover()
+{
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
+        return check.releaseException();
+
+    // FIXME: Run auto popover steps.
+
+    // FIXME: Fire beforetoggle event and re-check popover validity.
+
+    removeFromTopLayer();
+
+    popoverData().setVisibilityState(PopoverVisibilityState::Hidden);
+
+    // FIXME: Queue popover toggle event task.
+
+    if (RefPtr element = popoverData().previouslyFocusedElement()) {
+        FocusOptions options;
+        options.preventScroll = true;
+        element->focus(options);
+        popoverData().setPreviouslyFocusedElement(nullptr);
+    }
+
+    return { };
+}
+
+ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
+{
+    if (popoverData().visibilityState() == PopoverVisibilityState::Showing && !force.value_or(false))
+        return hidePopover();
+
+    return showPopover();
+}
+
+const AtomString& HTMLElement::popover() const
+{
+    auto value = attributeWithoutSynchronization(HTMLNames::popoverAttr);
+
+    if (!value)
+        return nullAtom();
+
+    if (value == emptyString() || equalIgnoringASCIICase(value, autoAtom()))
+        return autoAtom();
+
+    return manualAtom();
 }
 
 #if PLATFORM(IOS_FAMILY)

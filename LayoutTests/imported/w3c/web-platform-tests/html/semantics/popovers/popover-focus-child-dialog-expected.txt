@@ -1,7 +1,5 @@
 hello world
 
-Harness Error (FAIL), message = Test named 'Popovers should not initially focus child dialog elements.' specified 2 'cleanup' functions, and 1 failed.
-
-FAIL Popovers should not initially focus child dialog elements. popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)
-NOTRUN Popovers should not initially focus child popover elements.
+FAIL Popovers should not initially focus child dialog elements. The string did not match the expected pattern.
+FAIL Popovers should not initially focus child popover elements. The string did not match the expected pattern.
 
