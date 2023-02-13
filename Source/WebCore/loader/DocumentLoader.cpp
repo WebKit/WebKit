@@ -1749,7 +1749,8 @@ Vector<Ref<ArchiveResource>> DocumentLoader::subresources() const
         return { };
 
     Vector<Ref<ArchiveResource>> subresources;
-    for (auto& handle : m_cachedResourceLoader->allCachedResources().values()) {
+    for (auto& pair : m_cachedResourceLoader->allCachedResources().values()) {
+        auto& handle = pair.first;
         if (auto subresource = this->subresource(handle->url()))
             subresources.append(subresource.releaseNonNull());
     }
@@ -1974,7 +1975,7 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader& loader)
         case Document::AboutToEnterBackForwardCache: {
             // A page about to enter the BackForwardCache should only be able to start ping loads.
             auto* cachedResource = downcast<SubresourceLoader>(loader).cachedResource();
-            ASSERT(cachedResource && (CachedResource::shouldUsePingLoad(cachedResource->type()) || cachedResource->options().keepAlive));
+            ASSERT(cachedResource && (CachedResource::shouldUsePingLoad(cachedResource->type()) || cachedResource->fetchKeepAlive()));
             break;
         }
         case Document::InBackForwardCache:

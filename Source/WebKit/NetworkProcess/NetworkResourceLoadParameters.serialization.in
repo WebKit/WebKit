@@ -97,6 +97,8 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
+    Markable<UUID> clientIdentifier;
+    Markable<UUID> resultingClientIdentifier;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

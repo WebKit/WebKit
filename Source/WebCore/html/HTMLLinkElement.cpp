@@ -418,7 +418,7 @@ void HTMLLinkElement::initializeStyleSheet(Ref<StyleSheetContents>&& styleSheet,
 {
     // FIXME: originClean should be turned to false except if fetch mode is CORS.
     std::optional<bool> originClean;
-    if (cachedStyleSheet.options().mode == FetchOptions::Mode::Cors)
+    if (cachedStyleSheet.fetchMode() == FetchOptions::Mode::Cors)
         originClean = cachedStyleSheet.isCORSSameOrigin();
 
     m_sheet = CSSStyleSheet::create(WTFMove(styleSheet), *this, originClean);

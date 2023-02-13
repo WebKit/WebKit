@@ -399,6 +399,8 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
     if (resourceLoader.options().navigationPreloadIdentifier)
         loadParameters.navigationPreloadIdentifier = resourceLoader.options().navigationPreloadIdentifier;
+    loadParameters.clientIdentifier = resourceLoader.options().clientIdentifier;
+    loadParameters.resultingClientIdentifier = resourceLoader.options().resultingClientIdentifier;
 #endif
 
     auto* document = frame ? frame->document() : nullptr;

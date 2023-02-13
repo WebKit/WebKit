@@ -281,7 +281,7 @@ void CachedRawResource::setDefersLoading(bool defers)
 
 void CachedRawResource::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
 {
-    m_options.dataBufferingPolicy = dataBufferingPolicy;
+    setDataBufferingPolicyOption(dataBufferingPolicy);
 }
 
 static bool shouldIgnoreHeaderForCacheReuse(HTTPHeaderName name)

@@ -39,7 +39,7 @@ KeepaliveRequestTracker::~KeepaliveRequestTracker()
 
 bool KeepaliveRequestTracker::tryRegisterRequest(CachedResource& resource)
 {
-    ASSERT(resource.options().keepAlive);
+    ASSERT(resource.fetchKeepAlive());
     auto body = resource.resourceRequest().httpBody();
     if (!body)
         return true;
@@ -54,7 +54,7 @@ bool KeepaliveRequestTracker::tryRegisterRequest(CachedResource& resource)
 
 void KeepaliveRequestTracker::registerRequest(CachedResource& resource)
 {
-    ASSERT(resource.options().keepAlive);
+    ASSERT(resource.fetchKeepAlive());
     auto body = resource.resourceRequest().httpBody();
     if (!body)
         return;
@@ -83,7 +83,7 @@ void KeepaliveRequestTracker::notifyFinished(CachedResource& resource, const Net
 
 void KeepaliveRequestTracker::unregisterRequest(CachedResource& resource)
 {
-    ASSERT(resource.options().keepAlive);
+    ASSERT(resource.fetchKeepAlive());
 
     m_inflightKeepaliveBytes -= resource.resourceRequest().httpBody()->lengthInBytes();
     ASSERT(m_inflightKeepaliveBytes <= maxInflightKeepaliveBytes);

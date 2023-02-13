@@ -5067,14 +5067,14 @@ void FrameView::checkAndDispatchDidReachVisuallyNonEmptyState()
             if (!resourceLoader.requestCount())
                 return false;
 
-            auto& resources = resourceLoader.allCachedResources();
-            for (auto& resource : resources) {
-                if (resource.value->isLoaded())
+            for (auto& pair : resourceLoader.allCachedResources().values()) {
+                auto& resource = pair.first;
+                if (resource->isLoaded())
                     continue;
                 // ResourceLoadPriority::VeryLow is used for resources that are not needed to render.
-                if (resource.value->loadPriority() == ResourceLoadPriority::VeryLow)
+                if (resource->loadPriority() == ResourceLoadPriority::VeryLow)
                     continue;
-                if (resource.value->type() == CachedResource::Type::CSSStyleSheet || resource.value->type() == CachedResource::Type::FontResource)
+                if (resource->type() == CachedResource::Type::CSSStyleSheet || resource->type() == CachedResource::Type::FontResource)
                     return true;
             }
             return false;

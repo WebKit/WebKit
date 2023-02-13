@@ -2377,8 +2377,6 @@ struct WebCore::FetchOptions {
     WebCore::ReferrerPolicy referrerPolicy;
     bool keepAlive;
     String integrity;
-    Markable<UUID> clientIdentifier;
-    Markable<UUID> resultingClientIdentifier;
 }
 
 enum class WebCore::FetchHeadersGuard : uint8_t {

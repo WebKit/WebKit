@@ -42,7 +42,7 @@ bool ResourceTimingInformation::shouldAddResourceTiming(CachedResource& resource
 {
     return resource.resourceRequest().url().protocolIsInHTTPFamily()
         && !resource.loadFailedOrCanceled()
-        && resource.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No;
+        && !resource.loadedFromOpaqueSource();
 }
 
 void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Document& document, ResourceTiming&& resourceTiming)

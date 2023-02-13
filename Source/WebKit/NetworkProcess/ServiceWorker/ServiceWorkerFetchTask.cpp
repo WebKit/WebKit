@@ -170,7 +170,7 @@ void ServiceWorkerFetchTask::startFetch()
 
     String clientIdentifier;
     if (m_loader.parameters().options.mode != FetchOptions::Mode::Navigate) {
-        if (auto identifier = m_loader.parameters().options.clientIdentifier)
+        if (auto identifier = m_loader.parameters().clientIdentifier)
             clientIdentifier = identifier->toString();
     }
 

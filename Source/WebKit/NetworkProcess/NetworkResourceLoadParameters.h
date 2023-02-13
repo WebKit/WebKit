@@ -36,7 +36,9 @@
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SecurityContext.h>
+#include <wtf/Markable.h>
 #include <wtf/Seconds.h>
+#include <wtf/UUID.h>
 
 namespace IPC {
 class Decoder;
@@ -83,6 +85,8 @@ public:
         , std::optional<WebCore::ServiceWorkerRegistrationIdentifier>
         , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning>
         , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
+        , Markable<UUID>
+        , Markable<UUID>
 #endif
 #if ENABLE(CONTENT_EXTENSIONS)
         , URL&& mainDocumentURL
@@ -129,6 +133,8 @@ public:
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
+    Markable<UUID> clientIdentifier;
+    Markable<UUID> resultingClientIdentifier;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)

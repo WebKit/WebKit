@@ -40,6 +40,8 @@
 #include "StoredCredentialsPolicy.h"
 #include <wtf/EnumTraits.h>
 #include <wtf/HashSet.h>
+#include <wtf/Markable.h>
+#include <wtf/UUID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,7 +61,7 @@ enum class ContentSniffingPolicy : bool {
 };
 static constexpr unsigned bitWidthOfContentSniffingPolicy = 1;
 
-enum class DataBufferingPolicy : uint8_t {
+enum class DataBufferingPolicy : bool {
     BufferData,
     DoNotBufferData
 };
@@ -164,12 +166,14 @@ enum class LoadedFromPluginElement : bool {
 static constexpr unsigned bitWidthOfLoadedFromPluginElement = 1;
 
 struct ResourceLoaderOptions : public FetchOptions {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     ResourceLoaderOptions()
         : ResourceLoaderOptions(FetchOptions())
     {
     }
 
-    ResourceLoaderOptions(FetchOptions options)
+    explicit ResourceLoaderOptions(FetchOptions options)
         : FetchOptions { WTFMove(options) }
         , sendLoadCallbacks(SendCallbackPolicy::DoNotSendCallbacks)
         , sniffContent(ContentSniffingPolicy::DoNotSniffContent)
@@ -212,7 +216,6 @@ struct ResourceLoaderOptions : public FetchOptions {
         , preflightPolicy(PreflightPolicy::Consider)
         , loadedFromOpaqueSource(LoadedFromOpaqueSource::No)
         , loadedFromPluginElement(LoadedFromPluginElement::No)
-
     {
         this->credentials = credentials;
         this->mode = mode;
@@ -249,6 +252,9 @@ struct ResourceLoaderOptions : public FetchOptions {
 
     FetchIdentifier navigationPreloadIdentifier;
     String nonce;
+
+    Markable<UUID> clientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-client
+    Markable<UUID> resultingClientIdentifier; // Identifier of https://fetch.spec.whatwg.org/#concept-request-reserved-client
 };
 
 } // namespace WebCore
