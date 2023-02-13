@@ -406,6 +406,15 @@ macro dispatchOp(size, opcodeName)
     genericDispatchOpJS(dispatch, size, opcodeName)
 end
 
+macro superSamplerBegin(scratch)
+    leap _g_superSamplerCount, scratch
+    addi 1, [scratch]
+end
+
+macro superSamplerEnd(scratch)
+    leap _g_superSamplerCount, scratch
+    subi 1, [scratch]
+end
 
 macro getu(size, opcodeStruct, fieldName, dst)
     size(getuOperandNarrow, getuOperandWide16JS, getuOperandWide32JS, macro (getu)
@@ -2185,8 +2194,6 @@ llintSlowPathOp(put_getter_setter_by_id)
 llintSlowPathOp(put_setter_by_id)
 llintSlowPathOp(put_setter_by_val)
 llintSlowPathOp(set_function_name)
-llintSlowPathOp(super_sampler_begin)
-llintSlowPathOp(super_sampler_end)
 llintSlowPathOp(throw)
 llintSlowPathOp(get_by_id_with_this)
 
@@ -2508,6 +2515,16 @@ llintOp(op_debug, OpDebug, macro (unused, unused, dispatch)
     dispatch()
 end)
 
+
+llintOp(op_super_sampler_begin, OpSuperSamplerBegin, macro (unused, unused, dispatch)
+    superSamplerBegin(t1)
+    dispatch()
+end)
+
+llintOp(op_super_sampler_end, OpSuperSamplerEnd, macro (unused, unused, dispatch)
+    superSamplerEnd(t1)
+    dispatch()
+end)
 
 op(llint_native_call_trampoline, macro ()
     nativeCallTrampoline(NativeExecutable::m_function)

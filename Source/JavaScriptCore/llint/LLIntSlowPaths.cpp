@@ -2314,24 +2314,6 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_super_sampler_begin)
-{
-    // FIXME: It seems like we should be able to do this in asm but llint doesn't seem to like global variables.
-    // See: https://bugs.webkit.org/show_bug.cgi?id=179438
-    UNUSED_PARAM(callFrame);
-    g_superSamplerCount++;
-    LLINT_END_IMPL();
-}
-
-LLINT_SLOW_PATH_DECL(slow_path_super_sampler_end)
-{
-    // FIXME: It seems like we should be able to do this in asm but llint doesn't seem to like global variables.
-    // See: https://bugs.webkit.org/show_bug.cgi?id=179438
-    UNUSED_PARAM(callFrame);
-    g_superSamplerCount--;
-    LLINT_END_IMPL();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_out_of_line_jump_target)
 {
     pc = callFrame->codeBlock()->outOfLineJumpTarget(pc);

@@ -146,8 +146,6 @@ LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_retrieve_and_clear_exception_if_catchable)
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_profile_catch);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_prologue);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_log_shadow_chicken_tail);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_super_sampler_begin);
-LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_super_sampler_end);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_out_of_line_jump_target);
 LLINT_SLOW_PATH_HIDDEN_DECL(slow_path_arityCheck);
 extern "C" SlowPathReturnType llint_throw_stack_overflow_error(VM*, ProtoCallFrame*) REFERENCED_FROM_ASM WTF_INTERNAL;
