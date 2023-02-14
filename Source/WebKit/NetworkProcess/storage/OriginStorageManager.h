@@ -106,7 +106,7 @@ private:
     RefPtr<QuotaManager> m_quotaManager;
     bool m_persisted { false };
     UnifiedOriginStorageLevel m_level;
-    std::optional<WallTime> m_originFileCreationTimestamp;
+    Markable<WallTime> m_originFileCreationTimestamp;
 #if PLATFORM(IOS_FAMILY)
     bool m_includedInBackup { false };
 #endif

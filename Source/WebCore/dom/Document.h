@@ -2135,7 +2135,7 @@ private:
 
     String m_cachedDOMCookies;
 
-    Markable<WallTime, WallTime::MarkableTraits> m_overrideLastModified;
+    Markable<WallTime> m_overrideLastModified;
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_associatedFormControls;
 
