@@ -79,6 +79,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     switch (rule->styleRuleType()) {
     case StyleRuleType::Style:
         return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::StyleWithNesting:
+        return createWrapper<CSSStyleRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Media:
         return createWrapper<CSSMediaRule>(globalObject, WTFMove(rule));
     case StyleRuleType::FontFace:
