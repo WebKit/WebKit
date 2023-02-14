@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class FontCreationContext;
+class UnrealizedCoreTextFont;
 
 struct SynthesisPair {
     explicit SynthesisPair(bool needsSyntheticBold, bool needsSyntheticOblique)
@@ -62,7 +63,7 @@ struct VariationDefaults {
 
 typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef, const FontDescription&, const FontCreationContext&, bool applyWeightWidthSlopeVariations = true);
+RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&&, const FontDescription&, const FontCreationContext&, bool applyWeightWidthSlopeVariations = true);
 enum class ShouldComputePhysicalTraits : bool { No, Yes };
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomString& family, FontSelectionRequest, TextRenderingMode, float size);

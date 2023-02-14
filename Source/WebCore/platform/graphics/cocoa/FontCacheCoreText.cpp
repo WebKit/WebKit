@@ -35,6 +35,7 @@
 #include "FontPaletteValues.h"
 #include "StyleFontSizeFunctions.h"
 #include "SystemFontDatabaseCoreText.h"
+#include "UnrealizedCoreTextFont.h"
 #include <CoreText/SFNTLayoutTypes.h>
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <pal/spi/cocoa/AccessibilitySupportSPI.h>
@@ -354,7 +355,7 @@ static inline bool shouldEnhanceTextLegibility()
     return overrideEnhanceTextLegibility().value_or(platformShouldEnhanceTextLegibility());
 }
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
+static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
 {
     if (!originalFont)
         return originalFont;
@@ -509,9 +510,9 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     return adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
 }
 
-static RetainPtr<CTFontRef> preparePlatformFont(CTFontDescriptorRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations, float size)
+RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&& originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
 {
-    return preparePlatformFont(adoptCF(CTFontCreateWithFontDescriptor(originalFont, size, nullptr)).get(), fontDescription, fontCreationContext, applyWeightWidthSlopeVariations);
+    return preparePlatformFont(originalFont.realize().get(), fontDescription, fontCreationContext, applyWeightWidthSlopeVariations);
 }
 
 RefPtr<Font> FontCache::similarFont(const FontDescription& description, const String& family)
@@ -923,7 +924,7 @@ void FontCache::platformInvalidate()
     platformShouldEnhanceTextLegibility() = _AXSEnhanceTextLegibilityEnabled();
 }
 
-static RetainPtr<CTFontDescriptorRef> fontDescriptorWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
+static std::optional<UnrealizedCoreTextFont> fontDescriptorWithFamilySpecialCase(const AtomString& family, const FontDescription& fontDescription, float size, AllowUserInstalledFonts allowUserInstalledFonts)
 {
     // FIXME: See comment in FontCascadeDescription::effectiveFamilyAt() in FontDescriptionCocoa.cpp
     std::optional<SystemFontKind> systemDesign;
@@ -945,38 +946,50 @@ static RetainPtr<CTFontDescriptorRef> fontDescriptorWithFamilySpecialCase(const 
     if (systemDesign) {
         auto cascadeList = SystemFontDatabaseCoreText::forCurrentThread().cascadeList(fontDescription, family, *systemDesign, allowUserInstalledFonts);
         if (cascadeList.isEmpty())
-            return nullptr;
-        return cascadeList[0];
+            return std::nullopt;
+        return { RetainPtr { cascadeList[0] } };
     }
 
     if (family.startsWith("UICTFontTextStyle"_s)) {
         const auto& request = fontDescription.fontSelectionRequest();
         CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
         auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(family.string().createCFString().get(), contentSizeCategory(), fontDescription.computedLocale().string().createCFString().get()));
-        if (traits)
-            descriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
-        return descriptor;
+        if (traits) {
+            // FIXME: rdar://105369379 As far as I can tell, there's no modification to the attributes dictionary that has the same effect as CTFontDescriptorCreateCopyWithSymbolicTraits(),
+            // because there doesn't seem to be a place to specify the bitmask. That's the reason we're creating the derived CTFontDescriptor here, rather than in UnrealizedCoreTextFont::realize().
+            return { adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits)) };
+        }
+        return { WTFMove(descriptor) };
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-menu"_s))
-        return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMenuItem, size, fontDescription.computedLocale().string().createCFString().get()));
+        return { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontMenuItem, size, fontDescription.computedLocale().string().createCFString().get())) };
 
     if (equalLettersIgnoringASCIICase(family, "-apple-status-bar"_s))
-        return adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, fontDescription.computedLocale().string().createCFString().get()));
+        return { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, fontDescription.computedLocale().string().createCFString().get())) };
 
     if (equalLettersIgnoringASCIICase(family, "lastresort"_s))
-        return adoptCF(CTFontDescriptorCreateLastResort());
+        return { adoptCF(CTFontDescriptorCreateLastResort()) };
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers"_s)) {
-        int numberSpacingType = kNumberSpacingType;
-        int monospacedNumbersSelector = kMonospacedNumbersSelector;
-        auto numberSpacingNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &numberSpacingType));
-        auto monospacedNumbersNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &monospacedNumbersSelector));
-        auto systemFontDescriptor = adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr));
-        return adoptCF(CTFontDescriptorCreateCopyWithFeature(systemFontDescriptor.get(), numberSpacingNumber.get(), monospacedNumbersNumber.get()));
+        auto systemFontDescriptor = UnrealizedCoreTextFont { adoptCF(CTFontDescriptorCreateForUIType(kCTFontUIFontSystem, size, nullptr)) };
+        systemFontDescriptor.modify([](CFMutableDictionaryRef attributes) {
+            int numberSpacingType = kNumberSpacingType;
+            int monospacedNumbersSelector = kMonospacedNumbersSelector;
+            auto numberSpacingNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &numberSpacingType));
+            auto monospacedNumbersNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &monospacedNumbersSelector));
+            CFTypeRef keys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
+            CFTypeRef values[] = { numberSpacingNumber.get(), monospacedNumbersNumber.get() };
+            ASSERT(std::size(keys) == std::size(values));
+            auto settingsDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            CFTypeRef entries[] = { settingsDictionary.get() };
+            auto settingsArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, entries, std::size(entries), &kCFTypeArrayCallBacks));
+            CFDictionaryAddValue(attributes, kCTFontFeatureSettingsAttribute, settingsArray.get());
+        });
+        return systemFontDescriptor;
     }
 
-    return nullptr;
+    return std::nullopt;
 }
 
 static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const AtomString& family, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, float size)
@@ -986,12 +999,17 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
     if (family.isEmpty())
         return nullptr;
 
-    if (auto fontDescriptor = fontDescriptorWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts())) {
-        auto font = createFontForInstalledFonts(fontDescriptor.get(), size, fontDescription.shouldAllowUserInstalledFonts());
-        return preparePlatformFont(font.get(), fontDescription, fontCreationContext, true);
+    if (auto unrealizedFont = fontDescriptorWithFamilySpecialCase(family, fontDescription, size, fontDescription.shouldAllowUserInstalledFonts())) {
+        unrealizedFont->setSize(size);
+        unrealizedFont->modify([&](CFMutableDictionaryRef attributes) {
+            addAttributesForInstalledFonts(attributes, fontDescription.shouldAllowUserInstalledFonts());
+        });
+        return preparePlatformFont(WTFMove(*unrealizedFont), fontDescription, fontCreationContext, true);
     }
     auto fontLookup = platformFontLookupWithFamily(fontDatabase, family, fontDescription.fontSelectionRequest());
-    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontCreationContext, !fontLookup.createdFromPostScriptName, size);
+    UnrealizedCoreTextFont unrealizedFont = { WTFMove(fontLookup.result) };
+    unrealizedFont.setSize(size);
+    return preparePlatformFont(WTFMove(unrealizedFont), fontDescription, fontCreationContext, !fontLookup.createdFromPostScriptName);
 }
 
 #if PLATFORM(MAC)
@@ -1130,7 +1148,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         m_fontNamesRequiringSystemFallbackForPrewarming.add(fullName);
 
     auto result = lookupFallbackFont(platformData.font(), description.weight(), description.computedLocale(), description.shouldAllowUserInstalledFonts(), characters, length);
-    result = preparePlatformFont(result.get(), description, { });
+    result = preparePlatformFont(UnrealizedCoreTextFont { WTFMove(result) }, description, { });
 
     if (!result)
         return lastResortFallbackFont(description);
