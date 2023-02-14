@@ -92,19 +92,19 @@ UnrealizedCoreTextFont::operator bool() const
     });
 }
 
-static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
+static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations)
 {
     // FIXME: Implement this
     UNUSED_PARAM(attributes);
     UNUSED_PARAM(fontDescription);
     UNUSED_PARAM(fontCreationContext);
-    UNUSED_PARAM(applyWeightWidthSlopeVariations);
+    UNUSED_PARAM(applyTraitsVariations);
 }
 
-void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
+void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations)
 {
     modify([&](CFMutableDictionaryRef attributes) {
-        WebCore::modifyFromContext(attributes, fontDescription, fontCreationContext, applyWeightWidthSlopeVariations);
+        WebCore::modifyFromContext(attributes, fontDescription, fontCreationContext, applyTraitsVariations);
     });
 }
 

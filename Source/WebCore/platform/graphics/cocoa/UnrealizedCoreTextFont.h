@@ -62,7 +62,7 @@ public:
 
     operator bool() const;
 
-    void modifyFromContext(const FontDescription&, const FontCreationContext&, bool applyWeightWidthSlopeVariations = true);
+    void modifyFromContext(const FontDescription&, const FontCreationContext&, ApplyTraitsVariations = ApplyTraitsVariations::Yes);
     RetainPtr<CTFontRef> realize() const;
 
 private:
