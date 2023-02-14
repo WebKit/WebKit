@@ -90,7 +90,6 @@ public:
     void setLineJoin(LineJoin) final;
     void setMiterLimit(float) final;
 
-    void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
     void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& = { }) final;
     bool needsCachedNativeImageInvalidationWorkaround(RenderingMode) override;
 
@@ -133,6 +132,7 @@ protected:
 
 private:
     void convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&);
+    void drawNativeImageInternal(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) final;
 
     void clearCGShadow();
 
