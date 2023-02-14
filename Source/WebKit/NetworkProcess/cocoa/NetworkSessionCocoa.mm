@@ -1690,6 +1690,69 @@ void NetworkSessionCocoa::clearCredentials()
 #endif
 }
 
+HashSet<WebCore::SecurityOriginData> NetworkSessionCocoa::originsWithCredentials()
+{
+    NSURLCredentialStorage *credentialStorage = nsCredentialStorage();
+    if (!credentialStorage)
+        return { };
+
+    bool shouldHandleSessionCredentialsOnly = credentialStorage == [NSURLCredentialStorage sharedCredentialStorage];
+    HashSet<WebCore::SecurityOriginData> origins;
+    auto* credentials = [credentialStorage allCredentials];
+    for (NSURLProtectionSpace *space in credentials) {
+        for (NSURLCredential *credential in [credentials[space] allValues]) {
+            if (!shouldHandleSessionCredentialsOnly || credential.persistence == NSURLCredentialPersistenceForSession) {
+                origins.add(WebCore::SecurityOriginData { String(space.protocol), String(space.host), space.port });
+                break;
+            }
+        }
+    }
+    return origins;
+}
+
+void NetworkSessionCocoa::removeCredentialsForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
+{
+    NSURLCredentialStorage *credentialStorage = nsCredentialStorage();
+    if (!credentialStorage)
+        return;
+
+    HashSet<WebCore::SecurityOriginData> originSet;
+    for (auto& origin : origins) {
+        if (!origin.isNull() && !origin.isOpaque())
+            originSet.add(origin);
+    }
+
+    bool shouldHandleSessionCredentialsOnly = credentialStorage == [NSURLCredentialStorage sharedCredentialStorage];
+    auto* credentials = [credentialStorage allCredentials];
+    for (NSURLProtectionSpace *space in credentials) {
+        for (NSURLCredential *credential in [credentials[space] allValues]) {
+            if (shouldHandleSessionCredentialsOnly && credential.persistence != NSURLCredentialPersistenceForSession)
+                continue;
+            auto origin = WebCore::SecurityOriginData { String(space.protocol), String(space.host), space.port };
+            if (originSet.contains(origin))
+                [credentialStorage removeCredential:credential forProtectionSpace:space];
+        }
+    }
+}
+
+void NetworkSessionCocoa::clearCredentials(WallTime modifiedSince)
+{
+    NSURLCredentialStorage *credentialStorage = nsCredentialStorage();
+    if (!credentialStorage)
+        return;
+
+    bool useSharedCredentialStorage = credentialStorage == [NSURLCredentialStorage sharedCredentialStorage];
+    bool shouldHandleSessionCredentialsOnly = useSharedCredentialStorage || (modifiedSince.secondsSinceEpoch().value() > 0.0);
+    auto* credentials = [credentialStorage allCredentials];
+    for (NSURLProtectionSpace *space in credentials) {
+        for (NSURLCredential *credential in [credentials[space] allValues]) {
+            if (shouldHandleSessionCredentialsOnly && credential.persistence != NSURLCredentialPersistenceForSession)
+                continue;
+            [credentialStorage removeCredential:credential forProtectionSpace:space];
+        }
+    }
+}
+
 bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
 {
     const String& host = challenge.protectionSpace().host();

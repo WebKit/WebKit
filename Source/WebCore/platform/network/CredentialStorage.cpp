@@ -187,19 +187,4 @@ void CredentialStorage::clearCredentials()
     m_pathToDefaultProtectionSpaceMap.clear();
 }
 
-#if !PLATFORM(COCOA)
-HashSet<SecurityOriginData> CredentialStorage::originsWithSessionCredentials()
-{
-    return { };
-}
-
-void CredentialStorage::removeSessionCredentialsWithOrigins(const Vector<SecurityOriginData>&)
-{
-}
-
-void CredentialStorage::clearSessionCredentials()
-{
-}
-#endif
-
 } // namespace WebCore

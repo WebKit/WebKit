@@ -1553,9 +1553,10 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
         }
-        auto securityOrigins = WebCore::CredentialStorage::originsWithSessionCredentials();
-        for (auto& securityOrigin : securityOrigins)
-            callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
+        if (session) {
+            for (auto origin : session->originsWithCredentials())
+                callbackAggregator->m_websiteData.entries.append({ origin, WebsiteDataType::Credentials, 0 });
+        }
     }
 
 #if PLATFORM(COCOA) || USE(SOUP)
@@ -1626,9 +1627,10 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (auto* session = storageSession(sessionID))
-            session->credentialStorage().clearCredentials();
-        WebCore::CredentialStorage::clearSessionCredentials();
+        if (auto* storage = storageSession(sessionID))
+            storage->credentialStorage().clearCredentials();
+        if (session)
+            session->clearCredentials(modifiedSince);
     }
 
 #if ENABLE(SERVICE_WORKER)
@@ -1795,11 +1797,12 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (auto* session = storageSession(sessionID)) {
+        if (auto* storage = storageSession(sessionID)) {
             for (auto& originData : originDatas)
-                session->credentialStorage().removeCredentialsWithOrigin(originData);
+                storage->credentialStorage().removeCredentialsWithOrigin(originData);
         }
-        WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originDatas);
+        if (session)
+            session->removeCredentialsForOrigins(originDatas);
     }
 
 #if ENABLE(TRACKING_PREVENTION)
@@ -1946,9 +1949,11 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
                 session->credentialStorage().removeCredentialsWithOrigin(origin);
         }
 
-        auto origins = WebCore::CredentialStorage::originsWithSessionCredentials();
-        auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator->m_domains);
-        WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originsToDelete);
+        if (session) {
+            auto origins = session->originsWithCredentials();
+            auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator->m_domains);
+            session->removeCredentialsForOrigins(originsToDelete);
+        }
     }
     
 #if ENABLE(SERVICE_WORKER)
@@ -2082,6 +2087,11 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
             auto securityOrigins = networkStorageSession->credentialStorage().originsWithCredentials();
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
+        }
+
+        if (session) {
+            for (auto origin : session->originsWithCredentials())
+                callbackAggregator->m_websiteData.entries.append({ origin, WebsiteDataType::Credentials, 0 });
         }
     }
     

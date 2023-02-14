@@ -150,6 +150,10 @@ public:
 private:
     void invalidateAndCancel() override;
     void clearCredentials() override;
+    HashSet<WebCore::SecurityOriginData> originsWithCredentials() final;
+    void removeCredentialsForOrigins(const Vector<WebCore::SecurityOriginData>&) final;
+    void clearCredentials(WallTime) final;
+
     bool shouldLogCookieInformation() const override { return m_shouldLogCookieInformation; }
     SessionWrapper& isolatedSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy, const WebCore::RegistrableDomain&, NavigatingToAppBoundDomain);
 
