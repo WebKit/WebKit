@@ -395,10 +395,6 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
 
     bool needsConversion = fontType.variationType == FontType::VariationType::TrueTypeGX;
 
-    auto applyVariation = [&](const FontTag& tag, float value) {
-        variationsToBeApplied.set(tag, value);
-    };
-
     // Step 1: CoreText handles default features (such as required ligatures).
 
     // Step 2: font-weight, font-stretch, and font-style
@@ -427,12 +423,12 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
             width = denormalizeVariationWidth(width);
             slope = denormalizeSlope(slope);
         }
-        applyVariation({{'w', 'g', 'h', 't'}}, weight);
-        applyVariation({{'w', 'd', 't', 'h'}}, width);
+        variationsToBeApplied.set({ { 'w', 'g', 'h', 't' } }, weight);
+        variationsToBeApplied.set({ { 'w', 'd', 't', 'h' } }, width);
         if (fontStyleAxis == FontStyleAxis::ital)
-            applyVariation({{'i', 't', 'a', 'l'}}, 1);
+            variationsToBeApplied.set({ { 'i', 't', 'a', 'l' } }, 1);
         else
-            applyVariation({{'s', 'l', 'n', 't'}}, slope);
+            variationsToBeApplied.set({ { 's', 'l', 'n', 't' } }, slope);
     }
 
     // FIXME: Implement Step 5: font-named-instance
@@ -473,7 +469,7 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
 
     // Step 12: font-variation-settings
     for (auto& newVariation : variations)
-        applyVariation(newVariation.tag(), newVariation.value());
+        variationsToBeApplied.set(newVariation.tag(), newVariation.value());
 
     auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     if (!featuresToBeApplied.isEmpty()) {
