@@ -203,16 +203,30 @@ GRefPtr<GUri> ResourceRequest::createSoupURI() const
 }
 #endif
 
-ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() const
+void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
 {
-    if (m_httpBody)
-        return ResourceRequestPlatformData { m_requestData, m_httpBody->flattenToString(), m_acceptEncoding, m_redirectCount };
-    return ResourceRequestPlatformData { m_requestData, std::nullopt, m_acceptEncoding, m_redirectCount };
+    // These are things we don't want willSendRequest delegate to mutate or reset.
+    ResourceLoadPriority oldPriority = priority();
+    RefPtr<FormData> oldHTTPBody = httpBody();
+    bool isHiddenFromInspector = hiddenFromInspector();
+    auto oldRequester = requester();
+    auto oldInitiatorIdentifier = initiatorIdentifier();
+    auto oldInspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier();
+
+    *this = delegateProvidedRequest;
+
+    setPriority(oldPriority);
+    setHTTPBody(WTFMove(oldHTTPBody));
+    setHiddenFromInspector(isHiddenFromInspector);
+    setRequester(oldRequester);
+    setInitiatorIdentifier(oldInitiatorIdentifier);
+    if (oldInspectorInitiatorNodeIdentifier)
+        setInspectorInitiatorNodeIdentifier(*oldInspectorInitiatorNodeIdentifier);
 }
 
 ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData requestData)
 {
-    if (std::holds_alternative<ResourceRequestBase::RequestData>(requestData)) 
+    if (std::holds_alternative<ResourceRequestBase::RequestData>(requestData))
         return ResourceRequest(WTFMove(std::get<ResourceRequestBase::RequestData>(requestData)));
     return ResourceRequest(WTFMove(std::get<ResourceRequestPlatformData>(requestData)));
 }
@@ -220,7 +234,7 @@ ResourceRequest ResourceRequest::fromResourceRequestData(ResourceRequestData req
 ResourceRequestData ResourceRequest::getRequestDataToSerialize() const
 {
     if (encodingRequiresPlatformData())
-        return getResourceRequestPlatformData();
+        return ResourceRequestPlatformData { m_requestData, m_acceptEncoding, m_redirectCount };
     return m_requestData;
 }
 

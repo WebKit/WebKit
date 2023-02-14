@@ -1263,7 +1263,6 @@ header: <WebCore/ResourceRequest.h>
 header: <WebCore/ResourceRequest.h>
 [CustomHeader=True] struct WebCore::ResourceRequestPlatformData {
     WebCore::ResourceRequest::RequestData requestData;
-    std::optional<String> flattenedHTTPBody;
     bool acceptEncoding;
     uint16_t redirectCount;
 };
