@@ -947,6 +947,17 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
 
     m_networkLoadMetrics.hasCrossOriginRedirect = m_networkLoadMetrics.hasCrossOriginRedirect || !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url());
 
+    if (m_response.httpStatusCode() == 307 || m_response.httpStatusCode() == 308) {
+        ASSERT(m_lastHTTPMethod == request.httpMethod());
+        auto body = m_firstRequest.httpBody();
+        if (body && !body->isEmpty() && !equalLettersIgnoringASCIICase(m_lastHTTPMethod, "get"_s))
+            request.setHTTPBody(WTFMove(body));
+
+        String originalContentType = m_firstRequest.httpContentType();
+        if (!originalContentType.isEmpty())
+            request.setHTTPHeaderField(WebCore::HTTPHeaderName::ContentType, originalContentType);
+    }
+
     // Clear the user agent to ensure a new one is computed.
     auto userAgent = request.httpUserAgent();
     request.clearHTTPUserAgent();

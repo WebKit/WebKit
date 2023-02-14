@@ -60,7 +60,7 @@ public:
 
     GRefPtr<SoupMessage> createSoupMessage(BlobRegistryImpl&) const;
 
-    void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+    void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest);
 
     bool acceptEncoding() const { return m_acceptEncoding; }
     void setAcceptEncoding(bool acceptEncoding) { m_acceptEncoding = acceptEncoding; }
@@ -99,14 +99,6 @@ template<class Encoder>
 void ResourceRequest::encodeWithPlatformData(Encoder& encoder) const
 {
     encodeBase(encoder);
-
-    // FIXME: Do not encode HTTP message body.
-    // 1. It can be large and thus costly to send across.
-    // 2. It is misleading to provide a body with some requests, while others use body streams, which cannot be serialized at all.
-    encoder << static_cast<bool>(m_httpBody);
-    if (m_httpBody)
-        encoder << m_httpBody->flattenToString();
-
     encoder << static_cast<bool>(m_acceptEncoding);
     encoder << m_redirectCount;
 }
@@ -116,16 +108,6 @@ bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
 {
     if (!decodeBase(decoder))
         return false;
-
-    bool hasHTTPBody;
-    if (!decoder.decode(hasHTTPBody))
-        return false;
-    if (hasHTTPBody) {
-        String httpBody;
-        if (!decoder.decode(httpBody))
-            return false;
-        setHTTPBody(FormData::create(httpBody.utf8()));
-    }
 
     bool acceptEncoding;
     if (!decoder.decode(acceptEncoding))

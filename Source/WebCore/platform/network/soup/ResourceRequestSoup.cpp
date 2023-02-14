@@ -203,6 +203,27 @@ GRefPtr<GUri> ResourceRequest::createSoupURI() const
 }
 #endif
 
+void ResourceRequest::updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest)
+{
+    // These are things we don't want willSendRequest delegate to mutate or reset.
+    ResourceLoadPriority oldPriority = priority();
+    RefPtr<FormData> oldHTTPBody = httpBody();
+    bool isHiddenFromInspector = hiddenFromInspector();
+    auto oldRequester = requester();
+    auto oldInitiatorIdentifier = initiatorIdentifier();
+    auto oldInspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier();
+
+    *this = delegateProvidedRequest;
+
+    setPriority(oldPriority);
+    setHTTPBody(WTFMove(oldHTTPBody));
+    setHiddenFromInspector(isHiddenFromInspector);
+    setRequester(oldRequester);
+    setInitiatorIdentifier(oldInitiatorIdentifier);
+    if (oldInspectorInitiatorNodeIdentifier)
+        setInspectorInitiatorNodeIdentifier(*oldInspectorInitiatorNodeIdentifier);
+}
+
 } // namespace WebCore
 
 #endif // USE(SOUP)
