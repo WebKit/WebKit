@@ -583,7 +583,8 @@ void UserMediaPermissionRequestManagerProxy::processUserMediaPermissionRequest()
 
         syncWithWebCorePrefs();
 
-        if (!request->requiresDisplayCapture())
+        auto& realtimeMediaSourceCenter = RealtimeMediaSourceCenter::singleton();
+        if (realtimeMediaSourceCenter.displayCaptureFactory().displayCaptureDeviceManager().requiresCaptureDevicesEnumeration() || !request->requiresDisplayCapture())
             platformValidateUserMediaRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), WTFMove(deviceHashSaltsForFrame));
         else
             validHandler({ }, { });
