@@ -122,7 +122,7 @@ public:
     virtual void visit(AST::VariableQualifier&);
 
     bool hasError() const;
-    Expected<void, Error> result();
+    Result<void> result();
 
     template<typename T> void checkErrorAndVisit(T& x)
     {
@@ -144,7 +144,7 @@ protected:
     }
 
 private:
-    Expected<void, Error> m_expectedError;
+    Result<void> m_expectedError;
 };
 
 } // namespace AST

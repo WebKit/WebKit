@@ -55,5 +55,7 @@ private:
 
 using Warning = CompilationMessage;
 using Error = CompilationMessage;
+template <typename T>
+using Result = Expected<T, Error>;
 
 } // namespace WGSL

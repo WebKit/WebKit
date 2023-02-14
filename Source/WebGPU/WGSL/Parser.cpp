@@ -253,7 +253,7 @@ std::optional<Error> parse(ShaderModule& shaderModule)
 }
 
 template<typename Lexer>
-Expected<AST::Expression::Ref, Error> parseExpression(const String& source)
+Result<AST::Expression::Ref> parseExpression(const String& source)
 {
     ShaderModule shaderModule(source);
     Lexer lexer(shaderModule.source());
@@ -261,7 +261,7 @@ Expected<AST::Expression::Ref, Error> parseExpression(const String& source)
     return parser.parseExpression();
 }
 
-Expected<AST::Expression::Ref, Error> parseExpression(const String& source)
+Result<AST::Expression::Ref> parseExpression(const String& source)
 {
     if (source.is8Bit())
         return parseExpression<Lexer<LChar>>(source);
@@ -286,7 +286,7 @@ void Parser<Lexer>::consume()
 }
 
 template<typename Lexer>
-Expected<void, Error> Parser<Lexer>::parseShader()
+Result<void> Parser<Lexer>::parseShader()
 {
     // FIXME: parse directives here.
 
@@ -300,7 +300,7 @@ Expected<void, Error> Parser<Lexer>::parseShader()
 }
 
 template<typename Lexer>
-Expected<AST::Identifier, Error> Parser<Lexer>::parseIdentifier()
+Result<AST::Identifier> Parser<Lexer>::parseIdentifier()
 {
     START_PARSE();
 
@@ -310,7 +310,7 @@ Expected<AST::Identifier, Error> Parser<Lexer>::parseIdentifier()
 }
 
 template<typename Lexer>
-Expected<void, Error> Parser<Lexer>::parseGlobalDecl()
+Result<void> Parser<Lexer>::parseGlobalDecl()
 {
     START_PARSE();
 
@@ -342,7 +342,7 @@ Expected<void, Error> Parser<Lexer>::parseGlobalDecl()
 }
 
 template<typename Lexer>
-Expected<AST::Attribute::List, Error> Parser<Lexer>::parseAttributes()
+Result<AST::Attribute::List> Parser<Lexer>::parseAttributes()
 {
     AST::Attribute::List attributes;
 
@@ -355,7 +355,7 @@ Expected<AST::Attribute::List, Error> Parser<Lexer>::parseAttributes()
 }
 
 template<typename Lexer>
-Expected<Ref<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
+Result<Ref<AST::Attribute>> Parser<Lexer>::parseAttribute()
 {
     START_PARSE();
 
@@ -413,7 +413,7 @@ Expected<Ref<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
 }
 
 template<typename Lexer>
-Expected<AST::Structure::Ref, Error> Parser<Lexer>::parseStructure(AST::Attribute::List&& attributes)
+Result<AST::Structure::Ref> Parser<Lexer>::parseStructure(AST::Attribute::List&& attributes)
 {
     START_PARSE();
 
@@ -437,7 +437,7 @@ Expected<AST::Structure::Ref, Error> Parser<Lexer>::parseStructure(AST::Attribut
 }
 
 template<typename Lexer>
-Expected<AST::StructureMember, Error> Parser<Lexer>::parseStructureMember()
+Result<AST::StructureMember> Parser<Lexer>::parseStructureMember()
 {
     START_PARSE();
 
@@ -450,7 +450,7 @@ Expected<AST::StructureMember, Error> Parser<Lexer>::parseStructureMember()
 }
 
 template<typename Lexer>
-Expected<AST::TypeName::Ref, Error> Parser<Lexer>::parseTypeName()
+Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 {
     START_PARSE();
 
@@ -481,7 +481,7 @@ Expected<AST::TypeName::Ref, Error> Parser<Lexer>::parseTypeName()
 }
 
 template<typename Lexer>
-Expected<AST::TypeName::Ref, Error> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition)
+Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition) // NOLINT
 {
     if (auto kind = AST::ParameterizedTypeName::stringViewToKind(name.id())) {
         CONSUME_TYPE(Lt);
@@ -493,7 +493,7 @@ Expected<AST::TypeName::Ref, Error> Parser<Lexer>::parseTypeNameAfterIdentifier(
 }
 
 template<typename Lexer>
-Expected<AST::TypeName::Ref, Error> Parser<Lexer>::parseArrayType()
+Result<AST::TypeName::Ref> Parser<Lexer>::parseArrayType()
 {
     START_PARSE();
 
@@ -528,13 +528,13 @@ Expected<AST::TypeName::Ref, Error> Parser<Lexer>::parseArrayType()
 }
 
 template<typename Lexer>
-Expected<AST::Variable::Ref, Error> Parser<Lexer>::parseVariable()
+Result<AST::Variable::Ref> Parser<Lexer>::parseVariable()
 {
     return parseVariableWithAttributes(AST::Attribute::List { });
 }
 
 template<typename Lexer>
-Expected<AST::Variable::Ref, Error> Parser<Lexer>::parseVariableWithAttributes(AST::Attribute::List&& attributes)
+Result<AST::Variable::Ref> Parser<Lexer>::parseVariableWithAttributes(AST::Attribute::List&& attributes)
 {
     START_PARSE();
 
@@ -566,7 +566,7 @@ Expected<AST::Variable::Ref, Error> Parser<Lexer>::parseVariableWithAttributes(A
 }
 
 template<typename Lexer>
-Expected<AST::VariableQualifier, Error> Parser<Lexer>::parseVariableQualifier()
+Result<AST::VariableQualifier> Parser<Lexer>::parseVariableQualifier()
 {
     START_PARSE();
 
@@ -587,7 +587,7 @@ Expected<AST::VariableQualifier, Error> Parser<Lexer>::parseVariableQualifier()
 }
 
 template<typename Lexer>
-Expected<AST::StorageClass, Error> Parser<Lexer>::parseStorageClass()
+Result<AST::StorageClass> Parser<Lexer>::parseStorageClass()
 {
     START_PARSE();
 
@@ -616,7 +616,7 @@ Expected<AST::StorageClass, Error> Parser<Lexer>::parseStorageClass()
 }
 
 template<typename Lexer>
-Expected<AST::AccessMode, Error> Parser<Lexer>::parseAccessMode()
+Result<AST::AccessMode> Parser<Lexer>::parseAccessMode()
 {
     START_PARSE();
 
@@ -637,7 +637,7 @@ Expected<AST::AccessMode, Error> Parser<Lexer>::parseAccessMode()
 }
 
 template<typename Lexer>
-Expected<AST::Function, Error> Parser<Lexer>::parseFunction(AST::Attribute::List&& attributes)
+Result<AST::Function> Parser<Lexer>::parseFunction(AST::Attribute::List&& attributes)
 {
     START_PARSE();
 
@@ -672,7 +672,7 @@ Expected<AST::Function, Error> Parser<Lexer>::parseFunction(AST::Attribute::List
 }
 
 template<typename Lexer>
-Expected<AST::ParameterValue, Error> Parser<Lexer>::parseParameterValue()
+Result<AST::ParameterValue> Parser<Lexer>::parseParameterValue()
 {
     START_PARSE();
 
@@ -685,7 +685,7 @@ Expected<AST::ParameterValue, Error> Parser<Lexer>::parseParameterValue()
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Statement>, Error> Parser<Lexer>::parseStatement()
+Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
 {
     START_PARSE();
 
@@ -721,7 +721,7 @@ Expected<UniqueRef<AST::Statement>, Error> Parser<Lexer>::parseStatement()
 }
 
 template<typename Lexer>
-Expected<AST::CompoundStatement, Error> Parser<Lexer>::parseCompoundStatement()
+Result<AST::CompoundStatement> Parser<Lexer>::parseCompoundStatement()
 {
     START_PARSE();
 
@@ -739,7 +739,7 @@ Expected<AST::CompoundStatement, Error> Parser<Lexer>::parseCompoundStatement()
 }
 
 template<typename Lexer>
-Expected<AST::ReturnStatement, Error> Parser<Lexer>::parseReturnStatement()
+Result<AST::ReturnStatement> Parser<Lexer>::parseReturnStatement()
 {
     START_PARSE();
 
@@ -754,7 +754,7 @@ Expected<AST::ReturnStatement, Error> Parser<Lexer>::parseReturnStatement()
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs)
+Result<AST::Expression::Ref> Parser<Lexer>::parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs)
 {
     START_PARSE();
     PARSE_MOVE(lhs, ShiftExpressionPostUnary, WTFMove(lhs));
@@ -770,7 +770,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseRelationalExpres
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression()
+Result<AST::Expression::Ref> Parser<Lexer>::parseShiftExpression()
 {
     PARSE(unary, UnaryExpression);
     PARSE(shift, ShiftExpressionPostUnary, WTFMove(unary));
@@ -778,7 +778,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpression(
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpressionPostUnary(AST::Expression::Ref&& lhs)
+Result<AST::Expression::Ref> Parser<Lexer>::parseShiftExpressionPostUnary(AST::Expression::Ref&& lhs)
 {
     if (canContinueAdditiveExpression(current()))
         return parseAdditiveExpressionPostUnary(WTFMove(lhs));
@@ -803,7 +803,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseShiftExpressionP
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpressionPostUnary(AST::Expression::Ref&& lhs)
+Result<AST::Expression::Ref> Parser<Lexer>::parseAdditiveExpressionPostUnary(AST::Expression::Ref&& lhs)
 {
     START_PARSE();
     PARSE_MOVE(lhs, MultiplicativeExpressionPostUnary, WTFMove(lhs));
@@ -823,7 +823,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseAdditiveExpressi
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseBitwiseExpressionPostUnary(AST::Expression::Ref&& lhs)
+Result<AST::Expression::Ref> Parser<Lexer>::parseBitwiseExpressionPostUnary(AST::Expression::Ref&& lhs)
 {
     START_PARSE();
     const auto op = toBinaryOperation(current());
@@ -838,7 +838,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseBitwiseExpressio
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeExpressionPostUnary(AST::Expression::Ref&& lhs)
+Result<AST::Expression::Ref> Parser<Lexer>::parseMultiplicativeExpressionPostUnary(AST::Expression::Ref&& lhs)
 {
     START_PARSE();
     while (canContinueMultiplicativeExpression(current())) {
@@ -869,7 +869,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseMultiplicativeEx
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseUnaryExpression()
+Result<AST::Expression::Ref> Parser<Lexer>::parseUnaryExpression()
 {
     START_PARSE();
 
@@ -884,7 +884,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseUnaryExpression(
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseSingularExpression()
+Result<AST::Expression::Ref> Parser<Lexer>::parseSingularExpression()
 {
     START_PARSE();
     PARSE(base, PrimaryExpression);
@@ -892,7 +892,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseSingularExpressi
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePostfixExpression(UniqueRef<AST::Expression>&& base, SourcePosition startPosition)
+Result<AST::Expression::Ref> Parser<Lexer>::parsePostfixExpression(UniqueRef<AST::Expression>&& base, SourcePosition startPosition)
 {
     START_PARSE();
 
@@ -934,7 +934,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePostfixExpressio
 //   | paren_expression
 //   | bitcast less_than type_decl greater_than paren_expression
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpression()
+Result<AST::Expression::Ref> Parser<Lexer>::parsePrimaryExpression()
 {
     START_PARSE();
 
@@ -1003,7 +1003,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseExpression()
+Result<AST::Expression::Ref> Parser<Lexer>::parseExpression()
 {
     // FIXME: Fill in
     PARSE(lhs, UnaryExpression);
@@ -1014,7 +1014,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseExpression()
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseLHSExpression()
+Result<AST::Expression::Ref> Parser<Lexer>::parseLHSExpression()
 {
     START_PARSE();
 
@@ -1024,7 +1024,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseLHSExpression()
 }
 
 template<typename Lexer>
-Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseCoreLHSExpression()
+Result<AST::Expression::Ref> Parser<Lexer>::parseCoreLHSExpression()
 {
     START_PARSE();
 
@@ -1047,7 +1047,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseCoreLHSExpressio
 }
 
 template<typename Lexer>
-Expected<AST::Expression::List, Error> Parser<Lexer>::parseArgumentExpressionList()
+Result<AST::Expression::List> Parser<Lexer>::parseArgumentExpressionList()
 {
     START_PARSE();
     CONSUME_TYPE(ParenLeft);

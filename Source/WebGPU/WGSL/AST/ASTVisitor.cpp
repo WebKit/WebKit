@@ -36,7 +36,7 @@ bool Visitor::hasError() const
     return !m_expectedError;
 }
 
-Expected<void, Error> Visitor::result()
+Result<void> Visitor::result()
 {
     return m_expectedError;
 }
