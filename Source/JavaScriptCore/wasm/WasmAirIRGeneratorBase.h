@@ -43,6 +43,7 @@
 #include "B3ProcedureInlines.h"
 #include "B3StackmapGenerationParams.h"
 #include "BinarySwitch.h"
+#include "CompilerTimingScope.h"
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
@@ -353,6 +354,8 @@ struct AirIRGeneratorBase {
 
     void finalizeEntrypoints();
 
+    PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
+
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     //             addConstant (in derived classes)
@@ -494,8 +497,8 @@ struct AirIRGeneratorBase {
         // are more convenient to specify as a open range.
         //
         // The top endpoint of the range is always excluded, i.e. this value chooses between:
-        // closedLowerEndopint = true    =>   range === [min, max)
-        // closedLowerEndopint = false   =>   range === (min, max)
+        // closedLowerEndpoint = true    =>   range === [min, max)
+        // closedLowerEndpoint = false   =>   range === (min, max)
         bool closedLowerEndpoint;
     };
 
@@ -1206,6 +1209,12 @@ void AirIRGeneratorBase<Derived, ExpressionType>::forEachLiveValue(Function&& fu
     }
 }
 
+template<typename Derived, typename ExpressionType>
+auto AirIRGeneratorBase<Derived, ExpressionType>::addDrop(ExpressionType) -> PartialResult
+{
+    return { };
+}
+
 template <typename Derived, typename ExpressionType>
 auto AirIRGeneratorBase<Derived, ExpressionType>::addLocal(Type type, uint32_t count) -> PartialResult
 {
@@ -1582,7 +1591,7 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::getGlobal(uint32_t index, Expr
 
     result = tmpForType(type);
 
-    int32_t offset = Instance::offsetOfGlobalPtr(m_numImportFunctions, m_info.tableCount(), index);
+    int32_t offset = Instance::offsetOfGlobalPtr(m_info.importFunctionCount(), m_info.tableCount(), index);
 
     switch (global.bindingMode) {
     case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance:
@@ -3543,6 +3552,8 @@ B3::Origin AirIRGeneratorBase<Derived, ExpressionType>::origin()
 template<typename Generator>
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAirImpl(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
 {
+    CompilerTimingScope totalScope("Air", "Total WASM compilation");
+
     auto result = makeUnique<InternalFunction>();
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();

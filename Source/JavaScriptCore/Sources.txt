@@ -1104,6 +1104,7 @@ tools/VMInspector.cpp
 wasm/WasmAirIRGenerator32_64.cpp @no-unify
 wasm/WasmAirIRGenerator64.cpp @no-unify
 wasm/WasmB3IRGenerator.cpp
+wasm/WasmBBQJIT.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
 wasm/WasmBranchHintsSectionParser.cpp

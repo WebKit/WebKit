@@ -816,6 +816,20 @@ public:
         }
     }
 
+    void rotateRight32(RegisterID src, TrustedImm32 shift_amount, RegisterID dest)
+    {
+        move32IfNeeded(src, dest);
+        rotateRight32(shift_amount, dest);
+    }
+
+    void rotateRight32(RegisterID src, RegisterID shift_amount, RegisterID dest)
+    {
+        ASSERT(shift_amount != dest);
+
+        move32IfNeeded(src, dest);
+        rotateRight32(shift_amount, dest);
+    }
+
     void rotateLeft32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.roll_i8r(imm.m_value, dest);
@@ -833,6 +847,20 @@ public:
             m_assembler.roll_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
+    }
+
+    void rotateLeft32(RegisterID src, TrustedImm32 shift_amount, RegisterID dest)
+    {
+        move32IfNeeded(src, dest);
+        rotateLeft32(shift_amount, dest);
+    }
+
+    void rotateLeft32(RegisterID src, RegisterID shift_amount, RegisterID dest)
+    {
+        ASSERT(shift_amount != dest);
+
+        move32IfNeeded(src, dest);
+        rotateLeft32(shift_amount, dest);
     }
 
     void sub32(RegisterID src, RegisterID dest)

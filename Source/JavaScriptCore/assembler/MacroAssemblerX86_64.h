@@ -611,6 +611,18 @@ public:
         }
     }
 
+    void lshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            lshift64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            lshift64(shiftAmount, dest);
+        }
+    }
+
     void rshift64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.sarq_i8r(imm.m_value, dest);
@@ -634,6 +646,18 @@ public:
     {
         move(src, dest);
         rshift64(imm, dest);
+    }
+
+    void rshift64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            rshift64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            rshift64(shiftAmount, dest);
+        }
     }
 
     void urshift64(TrustedImm32 imm, RegisterID dest)
@@ -667,6 +691,12 @@ public:
         }
     }
 
+    void urshift64(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(src, dest);
+        urshift64(imm, dest);
+    }
+
     void rotateRight64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.rorq_i8r(imm.m_value, dest);
@@ -686,6 +716,24 @@ public:
         }
     }
 
+    void rotateRight64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            rotateRight64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            rotateRight64(shiftAmount, dest);
+        }
+    }
+
+    void rotateRight64(RegisterID src, TrustedImm32 shiftAmount, RegisterID dest)
+    {
+        move(src, dest);
+        rotateRight64(shiftAmount, dest);
+    }
+
     void rotateLeft64(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.rolq_i8r(imm.m_value, dest);
@@ -703,6 +751,24 @@ public:
             m_assembler.rolq_CLr(dest == X86Registers::ecx ? src : dest);
             swap(src, X86Registers::ecx);
         }
+    }
+
+    void rotateLeft64(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        if (shiftAmount == dest) {
+            move(shiftAmount, scratchRegister());
+            move(src, dest);
+            rotateLeft64(scratchRegister(), dest);
+        } else {
+            move(src, dest);
+            rotateLeft64(shiftAmount, dest);
+        }
+    }
+
+    void rotateLeft64(RegisterID src, TrustedImm32 shiftAmount, RegisterID dest)
+    {
+        move(src, dest);
+        rotateLeft64(shiftAmount, dest);
     }
 
     void mul64(RegisterID src, RegisterID dest)

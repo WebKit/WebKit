@@ -259,6 +259,8 @@ public:
     void didPopValueFromStack() { --m_stackSize; }
     void notifyFunctionUsesSIMD() { ASSERT(Options::useWebAssemblySIMD()); m_usesSIMD = true; }
 
+    PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
+
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, int64_t);
@@ -819,6 +821,11 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
     }
 
     return m_results;
+}
+
+auto LLIntGenerator::addDrop(ExpressionType) -> PartialResult
+{
+    return { };
 }
 
 auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialResult

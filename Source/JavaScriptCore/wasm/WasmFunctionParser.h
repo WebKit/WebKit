@@ -83,6 +83,7 @@ struct FunctionParserTypes {
 
         Type type() const { return m_type; }
 
+        ExpressionType& value() { return m_value; }
         ExpressionType value() const { return m_value; }
         operator ExpressionType() const { return m_value; }
 
@@ -128,6 +129,7 @@ public:
     OpType currentOpcode() const { return m_currentOpcode; }
     size_t currentOpcodeStartingOffset() const { return m_currentOpcodeStartingOffset; }
     const TypeDefinition& signature() const { return m_signature; }
+    const Type& typeOfLocal(uint32_t localIndex) const { return m_locals[localIndex]; }
 
     ControlStack& controlStack() { return m_controlStack; }
     Stack& expressionStack() { return m_expressionStack; }
@@ -2096,10 +2098,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
 
         WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't tee_local on empty expression stack");
-        TypedExpression value = m_expressionStack.last();
+        TypedExpression value;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "tee_local");
         WASM_VALIDATOR_FAIL_IF(index >= m_locals.size(), "attempt to tee unknown local ", index, ", the number of locals is ", m_locals.size());
         WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), m_locals[index]), "set_local to type ", value.type(), " expected ", m_locals[index]);
         WASM_TRY_ADD_TO_CONTEXT(setLocal(index, value));
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(getLocal(index, result));
+        m_expressionStack.constructAndAppend(m_locals[index], result);
         return { };
     }
 
@@ -2616,7 +2623,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case Drop: {
         WASM_PARSER_FAIL_IF(!m_expressionStack.size(), "can't drop on empty stack");
-        m_expressionStack.takeLast();
+        WASM_TRY_ADD_TO_CONTEXT(addDrop(m_expressionStack.takeLast()));
         m_context.didPopValueFromStack();
         return { };
     }
