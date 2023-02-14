@@ -149,6 +149,8 @@ String toString(TokenType type)
         return "/"_s;
     case TokenType::Star:
         return "*"_s;
+    case TokenType::Tilde:
+        return "~"_s;
     case TokenType::Xor:
         return "^"_s;
     }

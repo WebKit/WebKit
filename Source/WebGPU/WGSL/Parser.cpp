@@ -111,6 +111,20 @@ namespace WGSL {
         } \
     } while (false)
 
+static bool canBeginUnaryExpression(const Token& token)
+{
+    switch (token.m_type) {
+    case TokenType::And:
+    case TokenType::Tilde:
+    case TokenType::Star:
+    case TokenType::Minus:
+    case TokenType::Bang:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool canContinueMultiplicativeExpression(const Token& token)
 {
     switch (token.m_type) {
@@ -196,6 +210,25 @@ static AST::BinaryOperation toBinaryOperation(const Token& token)
         return AST::BinaryOperation::Multiply;
     case TokenType::Xor:
         return AST::BinaryOperation::Xor;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+static AST::UnaryOperation toUnaryOperation(const Token& token)
+{
+    switch (token.m_type) {
+    case TokenType::And:
+        return AST::UnaryOperation::AddressOf;
+    case TokenType::Tilde:
+        return AST::UnaryOperation::Complement;
+    case TokenType::Star:
+        return AST::UnaryOperation::Dereference;
+    case TokenType::Minus:
+        return AST::UnaryOperation::Negate;
+    case TokenType::Bang:
+        return AST::UnaryOperation::Not;
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -840,10 +873,11 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseUnaryExpression(
 {
     START_PARSE();
 
-    if (current().m_type == TokenType::Minus) {
+    if (canBeginUnaryExpression(current())) {
+        auto op = toUnaryOperation(current());
         consume();
         PARSE(expression, SingularExpression);
-        RETURN_NODE_UNIQUE_REF(UnaryExpression, WTFMove(expression), AST::UnaryOperation::Negate);
+        RETURN_NODE_UNIQUE_REF(UnaryExpression, WTFMove(expression), op);
     }
 
     return parseSingularExpression();

@@ -452,6 +452,27 @@ TEST(WGSLParserTests, UnaryExpression)
     }
 }
 
+static void testUnaryExpressionX(ASCIILiteral program, WGSL::AST::UnaryOperation op)
+{
+    EXPECT_EXPRESSION(expression, program);
+    EXPECT_TRUE(is<WGSL::AST::UnaryExpression>(expression.get()));
+    auto& unaryExpression = downcast<WGSL::AST::UnaryExpression>(expression.get());
+
+    EXPECT_EQ(unaryExpression.operation(), op);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(unaryExpression.expression()));
+    auto& expr = downcast<WGSL::AST::IdentifierExpression>(unaryExpression.expression());
+    EXPECT_EQ(expr.identifier(), "x"_s);
+}
+
+TEST(WGSLParserTests, UnaryExpression2)
+{
+    testUnaryExpressionX("&x"_s, WGSL::AST::UnaryOperation::AddressOf);
+    testUnaryExpressionX("~x"_s, WGSL::AST::UnaryOperation::Complement);
+    testUnaryExpressionX("*x"_s, WGSL::AST::UnaryOperation::Dereference);
+    testUnaryExpressionX("-x"_s, WGSL::AST::UnaryOperation::Negate);
+    testUnaryExpressionX("!x"_s, WGSL::AST::UnaryOperation::Not);
+}
+
 static void testBinaryExpressionXY(ASCIILiteral program, WGSL::AST::BinaryOperation op, const Vector<ASCIILiteral>& ids)
 {
     EXPECT_EQ(ids.size(), 2u);
@@ -469,7 +490,7 @@ static void testBinaryExpressionXY(ASCIILiteral program, WGSL::AST::BinaryOperat
     EXPECT_EQ(rhs.identifier(), ids[1]);
 }
 
-static void testBinaryExpressionXYZ(ASCIILiteral program, const Vector<WGSL::AST::BinaryOperation>& ops, const Vector<String>& ids)
+static void testBinaryExpressionXYZ(ASCIILiteral program, const Vector<WGSL::AST::BinaryOperation>& ops, const Vector<ASCIILiteral>& ids)
 {
     EXPECT_EQ(ops.size(), 2u);
     EXPECT_EQ(ids.size(), 3u);

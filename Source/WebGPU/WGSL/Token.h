@@ -101,6 +101,7 @@ enum class TokenType: uint32_t {
     Semicolon,
     Slash,
     Star,
+    Tilde,
     Xor,
     // FIXME: add all the other special tokens
 };

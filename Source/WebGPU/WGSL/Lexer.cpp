@@ -216,6 +216,9 @@ Token Lexer<T>::lex()
             return makeLiteralToken(TokenType::DecimalFloatLiteral, literalValue);
         return parseIntegerLiteralSuffix(literalValue);
     }
+    case '~':
+        shift();
+        return makeToken(TokenType::Tilde);
     default:
         if (isASCIIDigit(m_current)) {
             std::optional<uint64_t> value = parseDecimalInteger();

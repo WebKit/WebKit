@@ -155,6 +155,7 @@ TEST(WGSLLexerTests, SpecialTokens)
     checkSingleToken("&"_s, TokenType::And);
     checkSingleToken("|"_s, TokenType::Or);
     checkSingleToken("^"_s, TokenType::Xor);
+    checkSingleToken("~"_s, TokenType::Tilde);
 }
 
 TEST(WGSLLexerTests, ComputeShader)
