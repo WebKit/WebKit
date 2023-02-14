@@ -25,11 +25,11 @@ PASS <div contenteditable style="display:block; white-space:pre-line"><p>a[]bc</
 PASS <div contenteditable><p style="display:block; white-space:pre-line">abc[]</p></div> (defaultparagraphseparator: div)
 PASS <div contenteditable><p style="display:block; white-space:pre-line">[]abc</p></div> (defaultparagraphseparator: div)
 PASS <div contenteditable><p style="display:block; white-space:pre-line">a[]bc</p></div> (defaultparagraphseparator: div)
-FAIL <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: div) assert_in_array: A linefeed should be inserted at end value "abc\n&nbsp;" not in array ["abc\n\n", "abc\n<br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="white-space:pre-line; display:inline">[]abc</div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="white-space:pre-line; display:inline">a[]bc</div> (defaultparagraphseparator: div)
-FAIL <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: div) (preserving temporary inline style test) assert_in_array: The new line should be italic value "abc\n<i>def</i>&nbsp;" not in array ["abc\n<i>def</i>", "abc\n<i>def\n</i>", "abc\n<i>def<br></i>", "abc\n<i>def</i>\n", "abc\n<i>def</i><br>"]
-FAIL <div contenteditable style="white-space:pre-line; display:inline"><b>abc[]</b></div> (defaultparagraphseparator: div) (preserving inline style test) assert_in_array: The new line should be bold value "<b>abc\ndef&nbsp;</b>" not in array ["<b>abc\ndef</b>", "<b>abc\ndef\n</b>", "<b>abc\ndef<br></b>", "<b>abc\ndef</b>\n", "<b>abc\ndef</b><br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: div) (preserving temporary inline style test)
+PASS <div contenteditable style="white-space:pre-line; display:inline"><b>abc[]</b></div> (defaultparagraphseparator: div) (preserving inline style test)
 PASS <div contenteditable style="display:inline"><div style="white-space:pre-line">abc[]</div></div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="display:inline"><div style="white-space:pre-line">[]abc</div></div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="display:inline"><div style="white-space:pre-line">a[]bc</div></div> (defaultparagraphseparator: div)
@@ -48,11 +48,11 @@ PASS <div contenteditable style="display:inline; white-space:pre-line"><p>a[]bc<
 PASS <div contenteditable><p style="display:inline; white-space:pre-line">abc[]</p></div> (defaultparagraphseparator: div)
 PASS <div contenteditable><p style="display:inline; white-space:pre-line">[]abc</p></div> (defaultparagraphseparator: div)
 PASS <div contenteditable><p style="display:inline; white-space:pre-line">a[]bc</p></div> (defaultparagraphseparator: div)
-FAIL <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: div) assert_in_array: A linefeed should be inserted at end value "abc\n&nbsp;" not in array ["abc\n\n", "abc\n<br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="white-space:pre-line; display:inline-block">[]abc</div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="white-space:pre-line; display:inline-block">a[]bc</div> (defaultparagraphseparator: div)
-FAIL <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: div) (preserving temporary inline style test) assert_in_array: The new line should be italic value "abc\n<i>def</i>&nbsp;" not in array ["abc\n<i>def</i>", "abc\n<i>def\n</i>", "abc\n<i>def<br></i>", "abc\n<i>def</i>\n", "abc\n<i>def</i><br>"]
-FAIL <div contenteditable style="white-space:pre-line; display:inline-block"><b>abc[]</b></div> (defaultparagraphseparator: div) (preserving inline style test) assert_in_array: The new line should be bold value "<b>abc\ndef&nbsp;</b>" not in array ["<b>abc\ndef</b>", "<b>abc\ndef\n</b>", "<b>abc\ndef<br></b>", "<b>abc\ndef</b>\n", "<b>abc\ndef</b><br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: div) (preserving temporary inline style test)
+PASS <div contenteditable style="white-space:pre-line; display:inline-block"><b>abc[]</b></div> (defaultparagraphseparator: div) (preserving inline style test)
 PASS <div contenteditable style="display:inline-block"><div style="white-space:pre-line">abc[]</div></div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="display:inline-block"><div style="white-space:pre-line">[]abc</div></div> (defaultparagraphseparator: div)
 PASS <div contenteditable style="display:inline-block"><div style="white-space:pre-line">a[]bc</div></div> (defaultparagraphseparator: div)
@@ -94,11 +94,11 @@ PASS <div contenteditable style="display:block; white-space:pre-line"><p>a[]bc</
 PASS <div contenteditable><p style="display:block; white-space:pre-line">abc[]</p></div> (defaultparagraphseparator: p)
 PASS <div contenteditable><p style="display:block; white-space:pre-line">[]abc</p></div> (defaultparagraphseparator: p)
 PASS <div contenteditable><p style="display:block; white-space:pre-line">a[]bc</p></div> (defaultparagraphseparator: p)
-FAIL <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: p) assert_in_array: A linefeed should be inserted at end value "abc\n&nbsp;" not in array ["abc\n\n", "abc\n<br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="white-space:pre-line; display:inline">[]abc</div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="white-space:pre-line; display:inline">a[]bc</div> (defaultparagraphseparator: p)
-FAIL <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: p) (preserving temporary inline style test) assert_in_array: The new line should be italic value "abc\n<i>def</i>&nbsp;" not in array ["abc\n<i>def</i>", "abc\n<i>def\n</i>", "abc\n<i>def<br></i>", "abc\n<i>def</i>\n", "abc\n<i>def</i><br>"]
-FAIL <div contenteditable style="white-space:pre-line; display:inline"><b>abc[]</b></div> (defaultparagraphseparator: p) (preserving inline style test) assert_in_array: The new line should be bold value "<b>abc\ndef&nbsp;</b>" not in array ["<b>abc\ndef</b>", "<b>abc\ndef\n</b>", "<b>abc\ndef<br></b>", "<b>abc\ndef</b>\n", "<b>abc\ndef</b><br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline">abc[]</div> (defaultparagraphseparator: p) (preserving temporary inline style test)
+PASS <div contenteditable style="white-space:pre-line; display:inline"><b>abc[]</b></div> (defaultparagraphseparator: p) (preserving inline style test)
 PASS <div contenteditable style="display:inline"><div style="white-space:pre-line">abc[]</div></div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="display:inline"><div style="white-space:pre-line">[]abc</div></div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="display:inline"><div style="white-space:pre-line">a[]bc</div></div> (defaultparagraphseparator: p)
@@ -117,11 +117,11 @@ PASS <div contenteditable style="display:inline; white-space:pre-line"><p>a[]bc<
 PASS <div contenteditable><p style="display:inline; white-space:pre-line">abc[]</p></div> (defaultparagraphseparator: p)
 PASS <div contenteditable><p style="display:inline; white-space:pre-line">[]abc</p></div> (defaultparagraphseparator: p)
 PASS <div contenteditable><p style="display:inline; white-space:pre-line">a[]bc</p></div> (defaultparagraphseparator: p)
-FAIL <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: p) assert_in_array: A linefeed should be inserted at end value "abc\n&nbsp;" not in array ["abc\n\n", "abc\n<br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="white-space:pre-line; display:inline-block">[]abc</div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="white-space:pre-line; display:inline-block">a[]bc</div> (defaultparagraphseparator: p)
-FAIL <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: p) (preserving temporary inline style test) assert_in_array: The new line should be italic value "abc\n<i>def</i>&nbsp;" not in array ["abc\n<i>def</i>", "abc\n<i>def\n</i>", "abc\n<i>def<br></i>", "abc\n<i>def</i>\n", "abc\n<i>def</i><br>"]
-FAIL <div contenteditable style="white-space:pre-line; display:inline-block"><b>abc[]</b></div> (defaultparagraphseparator: p) (preserving inline style test) assert_in_array: The new line should be bold value "<b>abc\ndef&nbsp;</b>" not in array ["<b>abc\ndef</b>", "<b>abc\ndef\n</b>", "<b>abc\ndef<br></b>", "<b>abc\ndef</b>\n", "<b>abc\ndef</b><br>"]
+PASS <div contenteditable style="white-space:pre-line; display:inline-block">abc[]</div> (defaultparagraphseparator: p) (preserving temporary inline style test)
+PASS <div contenteditable style="white-space:pre-line; display:inline-block"><b>abc[]</b></div> (defaultparagraphseparator: p) (preserving inline style test)
 PASS <div contenteditable style="display:inline-block"><div style="white-space:pre-line">abc[]</div></div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="display:inline-block"><div style="white-space:pre-line">[]abc</div></div> (defaultparagraphseparator: p)
 PASS <div contenteditable style="display:inline-block"><div style="white-space:pre-line">a[]bc</div></div> (defaultparagraphseparator: p)
