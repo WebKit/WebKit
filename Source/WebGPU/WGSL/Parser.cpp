@@ -46,14 +46,7 @@ namespace WGSL {
 
 #define RETURN_NODE(type, ...) \
     do { \
-        AST::type astNodeResult(CURRENT_SOURCE_SPAN(), __VA_ARGS__); \
-        return { WTFMove(astNodeResult) }; \
-    } while (false)
-
-// Passing 0 arguments beyond the type to RETURN_NODE is invalid because of a stupid limitation of the C preprocessor
-#define RETURN_NODE_NO_ARGS(type) \
-    do { \
-        AST::type astNodeResult(CURRENT_SOURCE_SPAN()); \
+        AST::type astNodeResult(CURRENT_SOURCE_SPAN() __VA_OPT__(,) __VA_ARGS__); /* NOLINT */ \
         return { WTFMove(astNodeResult) }; \
     } while (false)
 
@@ -61,11 +54,7 @@ namespace WGSL {
     return { adoptRef(*new AST::type(CURRENT_SOURCE_SPAN(), __VA_ARGS__)) };
 
 #define RETURN_NODE_UNIQUE_REF(type, ...) \
-    return { MAKE_NODE_UNIQUE_REF(type, __VA_ARGS__) };
-
-// Passing 0 arguments beyond the type to RETURN_NODE_UNIQUE_REF is invalid because of a stupid limitation of the C preprocessor
-#define RETURN_NODE_UNIQUE_REF_NO_ARGS(type) \
-    return { makeUniqueRef<AST::type>(CURRENT_SOURCE_SPAN()) };
+    return { MAKE_NODE_UNIQUE_REF(type __VA_OPT__(,) __VA_ARGS__) }; /* NOLINT */
 
 #define FAIL(string) \
     return makeUnexpected(Error(string, CURRENT_SOURCE_SPAN()));
