@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "SecurityOriginData.h"
 #include <wtf/URL.h>
 
 namespace WebCore {
@@ -33,8 +34,7 @@ namespace WebCore {
 class URLKeepingBlobAlive {
 public:
     URLKeepingBlobAlive() = default;
-    URLKeepingBlobAlive(URL&&);
-    URLKeepingBlobAlive(const URL& url) : URLKeepingBlobAlive(URL { url }) { }
+    URLKeepingBlobAlive(const URL&, const SecurityOriginData&);
     ~URLKeepingBlobAlive();
 
     URLKeepingBlobAlive(URLKeepingBlobAlive&&) = default;
@@ -45,8 +45,7 @@ public:
     operator const URL&() const { return m_url; }
     const URL& url() const { return m_url; }
 
-    URLKeepingBlobAlive& operator=(URL&&);
-    URLKeepingBlobAlive& operator=(const URL& url) { return *this = URL { url }; }
+    void clear();
 
     URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() const &;
     URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() &&;
@@ -56,6 +55,7 @@ private:
     void unregisterBlobURLHandleIfNecessary();
 
     URL m_url;
+    SecurityOriginData m_topOrigin;
 };
 
 } // namespace WebCore

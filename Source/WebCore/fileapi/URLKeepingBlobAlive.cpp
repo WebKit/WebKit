@@ -30,14 +30,16 @@
 
 namespace WebCore {
 
-URLKeepingBlobAlive::URLKeepingBlobAlive(URL&& url)
-    : m_url(WTFMove(url))
+URLKeepingBlobAlive::URLKeepingBlobAlive(const URL& url, const SecurityOriginData& topOrigin)
+    : m_url(url)
+    , m_topOrigin(topOrigin)
 {
     registerBlobURLHandleIfNecessary();
 }
 
 URLKeepingBlobAlive::URLKeepingBlobAlive(const URLKeepingBlobAlive& other)
     : m_url(other.m_url)
+    , m_topOrigin(other.m_topOrigin)
 {
     registerBlobURLHandleIfNecessary();
 }
@@ -47,12 +49,11 @@ URLKeepingBlobAlive::~URLKeepingBlobAlive()
     unregisterBlobURLHandleIfNecessary();
 }
 
-URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URL&& url)
+void URLKeepingBlobAlive::clear()
 {
     unregisterBlobURLHandleIfNecessary();
-    m_url = WTFMove(url);
-    registerBlobURLHandleIfNecessary();
-    return *this;
+    m_url = { };
+    m_topOrigin = { };
 }
 
 URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(const URLKeepingBlobAlive& other)
@@ -62,6 +63,7 @@ URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(const URLKeepingBlobAlive& o
 
     unregisterBlobURLHandleIfNecessary();
     m_url = other.m_url;
+    m_topOrigin = other.m_topOrigin;
     registerBlobURLHandleIfNecessary();
     return *this;
 }
@@ -73,6 +75,7 @@ URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URLKeepingBlobAlive&& other)
 
     unregisterBlobURLHandleIfNecessary();
     m_url = std::exchange(other.m_url, URL { });
+    m_topOrigin = std::exchange(other.m_topOrigin, { });
     return *this;
 }
 
@@ -90,12 +93,11 @@ void URLKeepingBlobAlive::unregisterBlobURLHandleIfNecessary()
 
 URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() const &
 {
-    return { m_url.isolatedCopy() };
+    return { m_url.isolatedCopy(), m_topOrigin.isolatedCopy() };
 }
 
 URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() &&
 {
-    return { WTFMove(m_url).isolatedCopy() };
+    return { WTFMove(m_url).isolatedCopy(), WTFMove(m_topOrigin).isolatedCopy() };
 }
-
 } // namespace WebCore

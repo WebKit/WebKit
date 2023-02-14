@@ -376,7 +376,7 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
         URL url = completeURL(entry);
         if (!url.isValid())
             return Exception { SyntaxError };
-        completedURLs.uncheckedAppend(WTFMove(url));
+        completedURLs.uncheckedAppend({ WTFMove(url), m_topOrigin->data() });
     }
 
     FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;

@@ -128,6 +128,18 @@ static bool methodCanHaveBody(const ResourceRequest& request)
     return request.httpMethod() != "GET"_s && request.httpMethod() != "HEAD"_s;
 }
 
+inline FetchRequest::FetchRequest(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
+    : FetchBodyOwner(&context, WTFMove(body), WTFMove(headers))
+    , m_request(WTFMove(request))
+    , m_requestURL({ m_request.url(), context.topOrigin().data() })
+    , m_options(WTFMove(options))
+    , m_referrer(WTFMove(referrer))
+    , m_signal(AbortSignal::create(&context))
+{
+    m_request.setRequester(ResourceRequestRequester::Fetch);
+    updateContentType();
+}
+
 ExceptionOr<void> FetchRequest::initializeOptions(const Init& init)
 {
     ASSERT(scriptExecutionContext());
@@ -171,7 +183,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     m_options.credentials = Credentials::SameOrigin;
     m_referrer = "client"_s;
     m_request.setURL(requestURL);
-    m_requestURL = WTFMove(requestURL);
+    m_requestURL = { WTFMove(requestURL), scriptExecutionContext()->topOrigin().data() };
     m_request.setInitiatorIdentifier(scriptExecutionContext()->resourceRequestIdentifier());
 
     auto optionsResult = initializeOptions(init);
@@ -206,7 +218,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
 ExceptionOr<void> FetchRequest::initializeWith(FetchRequest& input, Init&& init)
 {
     m_request = input.m_request;
-    m_requestURL = m_request.url();
+    m_requestURL = { m_request.url(), scriptExecutionContext()->topOrigin().data() };
 
     m_options = input.m_options;
     m_referrer = input.m_referrer;
@@ -276,7 +288,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 
 ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& context, Info&& input, Init&& init)
 {
-    auto request = adoptRef(*new FetchRequest(&context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
+    auto request = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
     request->suspendIfNeeded();
 
     if (std::holds_alternative<String>(input)) {
@@ -294,7 +306,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& cont
 
 Ref<FetchRequest> FetchRequest::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
 {
-    auto result = adoptRef(*new FetchRequest(&context, WTFMove(body), WTFMove(headers), WTFMove(request), WTFMove(options), WTFMove(referrer)));
+    auto result = adoptRef(*new FetchRequest(context, WTFMove(body), WTFMove(headers), WTFMove(request), WTFMove(options), WTFMove(referrer)));
     result->suspendIfNeeded();
     return result;
 }
@@ -331,7 +343,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
     if (isDisturbedOrLocked())
         return Exception { TypeError, "Body is disturbed or locked"_s };
 
-    auto clone = adoptRef(*new FetchRequest(scriptExecutionContext(), std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
+    auto clone = adoptRef(*new FetchRequest(*scriptExecutionContext(), std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
     clone->suspendIfNeeded();
     clone->cloneBody(*this);
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
@@ -341,7 +353,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone()
 
 void FetchRequest::stop()
 {
-    m_requestURL = URL { };
+    m_requestURL.clear();
     FetchBodyOwner::stop();
 }
 

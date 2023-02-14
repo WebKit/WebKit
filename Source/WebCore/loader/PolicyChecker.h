@@ -91,7 +91,7 @@ public:
 
 private:
     void handleUnimplementablePolicy(const ResourceError&);
-    URLKeepingBlobAlive extendBlobURLLifetimeIfNecessary(const ResourceRequest&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous) const;
+    URLKeepingBlobAlive extendBlobURLLifetimeIfNecessary(const ResourceRequest&, const Document&, PolicyDecisionMode = PolicyDecisionMode::Asynchronous) const;
 
     Frame& m_frame;
 

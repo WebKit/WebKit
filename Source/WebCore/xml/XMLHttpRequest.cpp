@@ -384,7 +384,7 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
 
     auto newURL = url;
     context->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(newURL, ContentSecurityPolicy::InsecureRequestType::Load);
-    m_url = WTFMove(newURL);
+    m_url = { WTFMove(newURL), context->topOrigin().data() };
 
     m_async = async;
 
@@ -595,7 +595,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
 {
     // Only GET request is supported for blob URL.
     if (!m_async && m_url.url().protocolIsBlob() && m_method != "GET"_s) {
-        m_url = URL { };
+        m_url.clear();
         return Exception { NetworkError };
     }
 
@@ -748,7 +748,7 @@ void XMLHttpRequest::clearRequest()
 {
     m_requestHeaders.clear();
     m_requestEntityBody = nullptr;
-    m_url = URL { };
+    m_url.clear();
 }
 
 void XMLHttpRequest::genericError()
@@ -947,7 +947,7 @@ void XMLHttpRequest::didFinishLoading(ResourceLoaderIdentifier, const NetworkLoa
     m_responseBuilder.shrinkToFit();
 
     m_loadingActivity = std::nullopt;
-    m_url = URL { };
+    m_url.clear();
 
     m_sendFlag = false;
     changeState(DONE);

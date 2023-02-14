@@ -41,6 +41,7 @@
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "ThreadableBlobRegistry.h"
 #include "WebCoreOpaqueRoot.h"
@@ -118,6 +119,7 @@ Blob::Blob(UninitializedContructor, ScriptExecutionContext* context, URL&& url, 
     : ActiveDOMObject(context)
     , m_type(WTFMove(type))
     , m_internalURL(WTFMove(url))
+    , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
 }
 
@@ -125,6 +127,7 @@ Blob::Blob(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_size(0)
     , m_internalURL(BlobURL::createInternalURL())
+    , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { }, { });
 }
@@ -164,6 +167,7 @@ Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVa
     , m_type(normalizedContentType(propertyBag.type))
     , m_memoryCost(computeMemoryCost(blobPartVariants))
     , m_internalURL(BlobURL::createInternalURL())
+    , m_topOrigin(context.topOrigin().data())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, buildBlobData(WTFMove(blobPartVariants), propertyBag), m_type);
 }
@@ -174,6 +178,7 @@ Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String
     , m_size(data.size())
     , m_memoryCost(data.size())
     , m_internalURL(BlobURL::createInternalURL())
+    , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
 }
@@ -184,6 +189,7 @@ Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, 
     , m_size(blob.size())
     , m_memoryCost(blob.memoryCost())
     , m_internalURL(BlobURL::createInternalURL())
+    , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
@@ -194,6 +200,7 @@ Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL
     , m_size(size)
     , m_memoryCost(memoryCost)
     , m_internalURL(BlobURL::createInternalURL())
+    , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
     if (fileBackedPath.isEmpty())
         ThreadableBlobRegistry::registerBlobURL(nullptr, { }, m_internalURL, srcURL);
@@ -206,6 +213,7 @@ Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, 
     , m_type(normalizedContentType(type))
     , m_memoryCost(memoryCost)
     , m_internalURL(BlobURL::createInternalURL())
+    , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
     // m_size is not necessarily equal to end - start so we do not initialize it here.
 {
     ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end, m_type);
@@ -405,7 +413,7 @@ const char* Blob::activeDOMObjectName() const
 
 URLKeepingBlobAlive Blob::handle() const
 {
-    return { m_internalURL };
+    return { m_internalURL, m_topOrigin };
 }
 
 WebCoreOpaqueRoot root(Blob* blob)

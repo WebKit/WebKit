@@ -125,7 +125,7 @@ protected:
         : ScheduledNavigation(delay, lockHistory, lockBackForwardList, duringLoad, isLocationChange, initiatingDocument.shouldOpenExternalURLsPolicyToPropagate())
         , m_initiatingDocument { initiatingDocument }
         , m_securityOrigin { securityOrigin }
-        , m_url { url }
+        , m_url { url, initiatingDocument.topOrigin().data() }
         , m_referrer { referrer }
     {
     }
