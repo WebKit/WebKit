@@ -75,6 +75,19 @@ static void checkNextTokensAreBuiltinAttr(WGSL::Lexer<T>& lexer, const String& a
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
 };
 
+TEST(WGSLLexerTests, Comments)
+{
+    using WGSL::TokenType;
+
+    checkSingleToken("// This is line-ending comment.\n"
+        "/* This is a block comment\n"
+        "   that spans lines.\n"
+        "   /* Block comments can nest.\n"
+        "    */\n"
+        "   But all block comments must terminate.\n"
+        "*/"_s, TokenType::EndOfFile);
+}
+
 TEST(WGSLLexerTests, SingleTokens)
 {
     using WGSL::TokenType;

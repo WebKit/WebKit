@@ -71,9 +71,12 @@ private:
         return { WGSL::TokenType::Identifier, m_tokenStartingPosition, currentTokenLength(), WTFMove(identifier) };
     }
 
-    void shift();
-    T peek(unsigned);
-    void skipWhitespace();
+    T shift(unsigned = 1);
+    T peek(unsigned = 0);
+    void newLine();
+    void skipBlockComments();
+    void skipLineComment();
+    void skipWhitespaceAndComments();
 
     // Reads [0-9]+
     std::optional<uint64_t> parseDecimalInteger();

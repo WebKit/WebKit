@@ -33,7 +33,7 @@ namespace WGSL {
 template <typename T>
 Token Lexer<T>::lex()
 {
-    skipWhitespace();
+    skipWhitespaceAndComments();
 
     m_tokenStartingPosition = m_currentPosition;
 
@@ -117,6 +117,7 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Attribute);
     case '*':
         shift();
+        // FIXME: Report unbalanced block comments, such as "this is an unbalanced comment. */"
         return makeToken(TokenType::Star);
     case '/':
         shift();
@@ -308,15 +309,17 @@ Token Lexer<T>::lex()
 }
 
 template <typename T>
-void Lexer<T>::shift()
+T Lexer<T>::shift(unsigned i)
 {
+    T last = m_current;
     // At one point timing showed that setting m_current to 0 unconditionally was faster than an if-else sequence.
     m_current = 0;
-    ++m_code;
-    ++m_currentPosition.m_offset;
-    ++m_currentPosition.m_lineOffset;
+    m_code += i;
+    m_currentPosition.m_offset += i;
+    m_currentPosition.m_lineOffset += i;
     if (LIKELY(m_code < m_codeEnd))
         m_current = *m_code;
+    return last;
 }
 
 template <typename T>
@@ -328,15 +331,67 @@ T Lexer<T>::peek(unsigned i)
 }
 
 template <typename T>
-void Lexer<T>::skipWhitespace()
+void Lexer<T>::newLine()
 {
-    while (isASCIISpace(m_current)) {
-        if (m_current == '\n') {
+    m_currentPosition.m_line += 1;
+    m_currentPosition.m_lineOffset = 0;
+}
+
+template <typename T>
+void Lexer<T>::skipBlockComments()
+{
+    ASSERT(peek(0) == '/' && peek(1) == '*');
+    shift(2);
+
+    T ch = 0;
+    unsigned depth = 1u;
+
+    while ((ch = shift())) {
+        if (ch == '/' && peek() == '*') {
             shift();
-            ++m_currentPosition.m_line;
-            m_currentPosition.m_lineOffset = 0;
+            depth += 1;
+        } else if (ch == '*' && peek() == '/') {
+            shift();
+            depth -= 1;
+            if (!depth) {
+                // This block comment is closed, so for a construction like "/* */ */"
+                // there will be a successfully parsed block comment "/* */"
+                // and " */" will be processed separately.
+                return;
+            }
+        } else if (ch == '\n')
+            newLine();
+    }
+
+    // FIXME: Report unbalanced block comments, such as "/* this is an unbalanced comment."
+}
+
+template <typename T>
+void Lexer<T>::skipLineComment()
+{
+    ASSERT(peek(0) == '/' && peek(1) == '/');
+    // Note that in the case of \r\n this makes the comment end on the \r. It is
+    // fine, as the \n after that is simple whitespace.
+    while (!isAtEndOfFile() && peek() != '\n')
+        shift();
+}
+
+template <typename T>
+void Lexer<T>::skipWhitespaceAndComments()
+{
+    while (!isAtEndOfFile()) {
+        if (isASCIISpace(m_current)) {
+            if (shift() == '\n')
+                newLine();
+        } else if (peek(0) == '/') {
+            if (peek(1) == '/')
+                skipLineComment();
+            else if (peek(1) == '*')
+                skipBlockComments();
+            else
+                break;
         } else
-            shift();
+            break;
     }
 }
 
