@@ -947,7 +947,7 @@ public:
     ////////////////////////////////////////////////////////////////////////////////
     // parameters for shared code
     static constexpr bool generatesB3OriginData = true;
-    static constexpr bool supportsPinnedStateRegisters = true;
+    static constexpr bool supportsPinnedBoundsCheckingSizeRegister = true;
 };
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
@@ -1002,12 +1002,12 @@ AirIRGeneratorBase<Derived, ExpressionType>::AirIRGeneratorBase(const ModuleInfo
     // FIXME we don't really need to pin registers here if there's no memory. It makes wasm -> wasm thunks simpler for now. https://bugs.webkit.org/show_bug.cgi?id=166623
     m_code.pinRegister(GPRInfo::wasmContextInstancePointer);
 
-    if constexpr (Derived::supportsPinnedStateRegisters) {
-        m_code.pinRegister(GPRInfo::wasmBaseMemoryPointer);
+    m_code.pinRegister(GPRInfo::wasmBaseMemoryPointer);
+
+    if constexpr (Derived::supportsPinnedBoundsCheckingSizeRegister) {
         if (mode == MemoryMode::BoundsChecking)
             m_code.pinRegister(GPRInfo::wasmBoundsCheckingSizeRegister);
     } else {
-        ASSERT(InvalidGPRReg == GPRInfo::wasmBaseMemoryPointer);
         ASSERT(InvalidGPRReg == GPRInfo::wasmBoundsCheckingSizeRegister);
     }
 
@@ -1154,10 +1154,11 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(
 {
     restoreWasmContextInstance(block, instance);
 
-    if (!!memory && Derived::supportsPinnedStateRegisters) {
+    if (!!memory) {
         RegisterSetBuilder clobbers;
         clobbers.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
-        clobbers.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
+        if (Derived::supportsPinnedBoundsCheckingSizeRegister)
+            clobbers.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
         clobbers.merge(RegisterSetBuilder::macroClobberedRegisters());
 
         auto* patchpoint = addPatchpoint(B3::Void);
@@ -1171,8 +1172,11 @@ void AirIRGeneratorBase<Derived, ExpressionType>::restoreWebAssemblyGlobalState(
         patchpoint->setGenerator([](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
             GPRReg scratch = params.gpScratch(0);
-            jit.loadPairPtr(params[0].gpr(), CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
-            jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
+            if (Derived::supportsPinnedBoundsCheckingSizeRegister) {
+                jit.loadPairPtr(params[0].gpr(), CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+                jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
+            } else
+                jit.loadPtr(CCallHelpers::Address(params[0].gpr(), Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
         });
 
         emitPatchpoint(block, patchpoint, ExpressionType(), instance);
@@ -3419,14 +3423,15 @@ auto AirIRGeneratorBase<Derived, ExpressionType>::emitIndirectCall(ExpressionTyp
             UNUSED_PARAM(scratch);
             jit.storeWasmContextInstance(calleeInstance);
 
-            if constexpr (Derived::supportsPinnedStateRegisters) {
+            if constexpr (Derived::supportsPinnedBoundsCheckingSizeRegister) {
                 // FIXME: We should support more than one memory size register
                 //   see: https://bugs.webkit.org/show_bug.cgi?id=162952
                 ASSERT(GPRInfo::wasmBoundsCheckingSizeRegister != calleeInstance);
                 ASSERT(GPRInfo::wasmBaseMemoryPointer != calleeInstance);
                 jit.loadPairPtr(calleeInstance, CCallHelpers::TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
                 jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, scratch, /* validateAuth */ true, /* mayBeNull */ false);
-            }
+            } else
+                jit.loadPtr(CCallHelpers::Address(calleeInstance, Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer);
         });
 
         emitPatchpoint(doContextSwitch, patchpoint, ExpressionType(), calleeInstance);
