@@ -13,6 +13,7 @@
 #include "common/CircularBuffer.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
+#include "libANGLE/renderer/vulkan/CommandProcessor.h"
 #include "libANGLE/renderer/vulkan/RenderTargetVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -268,8 +269,6 @@ class WindowSurfaceVk : public SurfaceVk
                                         const SwapchainResolveMode swapchainResolveMode,
                                         vk::MaybeImagelessFramebuffer *framebufferOut);
 
-    const vk::Semaphore *getAndResetAcquireImageSemaphore();
-
     VkSurfaceTransformFlagBitsKHR getPreTransform() const
     {
         if (mEmulatedPreTransform != VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
@@ -353,6 +352,7 @@ class WindowSurfaceVk : public SurfaceVk
     // This method is called when a swapchain image is presented.  It schedules
     // acquireNextSwapchainImage() to be called later.
     void deferAcquireNextImage();
+    void flushAcquireImageSemaphore(const gl::Context *context);
 
     angle::Result computePresentOutOfDate(vk::Context *context,
                                           VkResult result,
@@ -363,6 +363,7 @@ class WindowSurfaceVk : public SurfaceVk
                           EGLint n_rects,
                           const void *pNextChain,
                           bool *presentOutOfDate);
+    void waitPendingPresent() const;
 
     angle::Result cleanUpPresentHistory(vk::Context *context);
 
@@ -383,6 +384,7 @@ class WindowSurfaceVk : public SurfaceVk
     std::vector<vk::PresentMode> mPresentModes;
 
     VkSwapchainKHR mSwapchain;
+    vk::SwapchainStatus mSwapchainStatus;
     // Cached information used to recreate swapchains.
     vk::PresentMode mSwapchainPresentMode;         // Current swapchain mode
     vk::PresentMode mDesiredSwapchainPresentMode;  // Desired mode set through setSwapInterval()

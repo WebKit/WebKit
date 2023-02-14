@@ -375,7 +375,6 @@
 		3A0EBFBA2980B6C1002C72BC /* mtl_msl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBFB62980B6C1002C72BC /* mtl_msl_utils.h */; };
 		3A0EBFBD2980BA41002C72BC /* DeclarePerVertexBlocks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0EBFBB2980BA41002C72BC /* DeclarePerVertexBlocks.cpp */; };
 		3A0EBFBE2980BA41002C72BC /* DeclarePerVertexBlocks.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0EBFBC2980BA41002C72BC /* DeclarePerVertexBlocks.h */; };
-		3A2C66F42923713700FEDF46 /* mtl_buffer_manager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66F2292370EF00FEDF46 /* mtl_buffer_manager.mm */; };
 		3A2C66F5292371B200FEDF46 /* WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66EF29236E7D00FEDF46 /* WorkerThread.cpp */; };
 		3A2C66F6292371E100FEDF46 /* entry_points_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66EE29236E3100FEDF46 /* entry_points_utils.cpp */; };
 		3A2C66FA292372C800FEDF46 /* AstcDecompressorNoOp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2C66F8292372BA00FEDF46 /* AstcDecompressorNoOp.cpp */; };
@@ -1069,8 +1068,6 @@
 		3A2C66EF29236E7D00FEDF46 /* WorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerThread.cpp; sourceTree = "<group>"; };
 		3A2C66F029236E7D00FEDF46 /* WorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerThread.h; sourceTree = "<group>"; };
 		3A2C66F129236F1200FEDF46 /* backtrace_utils_noop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = backtrace_utils_noop.cpp; sourceTree = "<group>"; };
-		3A2C66F2292370EF00FEDF46 /* mtl_buffer_manager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mtl_buffer_manager.mm; sourceTree = "<group>"; };
-		3A2C66F3292370EF00FEDF46 /* mtl_buffer_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mtl_buffer_manager.h; sourceTree = "<group>"; };
 		3A2C66F7292372BA00FEDF46 /* loadimage_paletted.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = loadimage_paletted.cpp; sourceTree = "<group>"; };
 		3A2C66F8292372BA00FEDF46 /* AstcDecompressorNoOp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AstcDecompressorNoOp.cpp; sourceTree = "<group>"; };
 		3A2C66F9292372BA00FEDF46 /* AstcDecompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AstcDecompressor.h; sourceTree = "<group>"; };
@@ -3035,8 +3032,6 @@
 				3154A845266C4AFE00BF33B7 /* ImageMtl.mm */,
 				FF81FEA525818D6800894E24 /* IOSurfaceSurfaceMtl.h */,
 				FF81FE9E25818D6800894E24 /* IOSurfaceSurfaceMtl.mm */,
-				3A2C66F3292370EF00FEDF46 /* mtl_buffer_manager.h */,
-				3A2C66F2292370EF00FEDF46 /* mtl_buffer_manager.mm */,
 				FF81FEC125818D6800894E24 /* mtl_buffer_pool.h */,
 				FF81FEC525818D6800894E24 /* mtl_buffer_pool.mm */,
 				FF81FE9B25818D6800894E24 /* mtl_command_buffer.h */,
@@ -3951,7 +3946,6 @@
 				7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */,
 				DF83E2382639FCD5000825EF /* ModifyStruct.cpp in Sources */,
 				FF194FE927432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp in Sources */,
-				3A2C66F42923713700FEDF46 /* mtl_buffer_manager.mm in Sources */,
 				DF83E3802639FEB8000825EF /* mtl_buffer_pool.mm in Sources */,
 				DF83E3742639FEB8000825EF /* mtl_command_buffer.mm in Sources */,
 				DF83E38B2639FEB8000825EF /* mtl_common.mm in Sources */,

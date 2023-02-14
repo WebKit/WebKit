@@ -365,7 +365,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
 
     VkDevice getDevice() const;
     egl::ContextPriority getPriority() const { return mContextPriority; }
-    bool hasProtectedContent() const { return mState.hasProtectedContent(); }
+    vk::ProtectionType getProtectionType() const { return mProtectionType; }
 
     ANGLE_INLINE const angle::FeaturesVk &getFeatures() const { return mRenderer->getFeatures(); }
 
@@ -1535,9 +1535,12 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // buffer for the outside render pass.
     VkDeviceSize mTotalBufferToImageCopySize;
 
-    // Semaphores that must be waited on in the next submission.
+    // Semaphores that must be flushed before the current commands. Flushed semaphores will be
+    // waited on in the next submission.
     std::vector<VkSemaphore> mWaitSemaphores;
     std::vector<VkPipelineStageFlags> mWaitSemaphoreStageMasks;
+    // Whether this context has wait semaphores (flushed and unflushed) that must be submitted.
+    bool mHasWaitSemaphoresPendingSubmission;
 
     // Hold information from the last gpu clock sync for future gpu-to-cpu timestamp conversions.
     GpuClockSyncInfo mGpuClockSync;
@@ -1553,6 +1556,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     gl::State::DirtyBits mPipelineDirtyBitsMask;
 
     egl::ContextPriority mContextPriority;
+    vk::ProtectionType mProtectionType;
 
     ShareGroupVk *mShareGroupVk;
 

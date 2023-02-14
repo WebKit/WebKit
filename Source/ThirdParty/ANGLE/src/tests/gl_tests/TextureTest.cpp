@@ -7813,22 +7813,35 @@ class Texture2DNorm16TestES3 : public Texture2DTestES3
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextures[0],
                                0);
 
-        glBindTexture(GL_TEXTURE_2D, mTextures[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16_EXT, 1, 1, 0, GL_RGBA, GL_UNSIGNED_SHORT, nullptr);
+        for (int i = 0; i < 2; ++i)
+        {
+            bool isSubImage = i == 1;
+            SCOPED_TRACE("is subimage:" + std::to_string(isSubImage));
+            glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16_EXT, 1, 1, 0, GL_RGBA, GL_UNSIGNED_SHORT,
+                         nullptr);
 
-        glBindTexture(GL_TEXTURE_2D, mTextures[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, internalformat, 1, 1, 0, format, type, imageData);
+            glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+            if (isSubImage)
+            {
+                glTexImage2D(GL_TEXTURE_2D, 0, internalformat, 1, 1, 0, format, type, nullptr);
+                glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, format, type, imageData);
+            }
+            else
+            {
+                glTexImage2D(GL_TEXTURE_2D, 0, internalformat, 1, 1, 0, format, type, imageData);
+            }
+            EXPECT_GL_NO_ERROR();
 
-        EXPECT_GL_NO_ERROR();
+            drawQuad(mProgram, "position", 0.5f);
 
-        drawQuad(mProgram, "position", 0.5f);
+            GLubyte expectedValue =
+                (type == GL_SHORT) ? 0xFF : static_cast<GLubyte>(pixelValue >> 8);
 
-        GLubyte expectedValue = (type == GL_SHORT) ? 0xFF : static_cast<GLubyte>(pixelValue >> 8);
-
-        EXPECT_PIXEL_COLOR_EQ(0, 0,
-                              SliceFormatColor(format, GLColor(expectedValue, expectedValue,
-                                                               expectedValue, expectedValue)));
-
+            EXPECT_PIXEL_COLOR_EQ(0, 0,
+                                  SliceFormatColor(format, GLColor(expectedValue, expectedValue,
+                                                                   expectedValue, expectedValue)));
+        }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         ASSERT_GL_NO_ERROR();

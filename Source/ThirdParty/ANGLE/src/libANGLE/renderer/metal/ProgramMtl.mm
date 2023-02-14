@@ -1736,7 +1736,7 @@ angle::Result ProgramMtl::legalizeUniformBufferOffsets(
             // Has the content of the buffer has changed since last conversion?
             if (conversion->dirty)
             {
-                const uint8_t *srcBytes = bufferMtl->getBufferDataReadOnly(context);
+                const uint8_t *srcBytes = bufferMtl->getClientShadowCopyData(context);
                 srcBytes += srcOffset;
                 size_t sizeToCopy = bufferMtl->size() - srcOffset;
 
@@ -1822,6 +1822,10 @@ angle::Result ProgramMtl::encodeUniformBuffersInfoArgumentBuffer(
         context, bufferEncoder.metalArgBufferEncoder.get().encodedLength, nullptr, &argumentBuffer,
         &argumentBufferOffset));
 
+    // MTLArgumentEncoder is modifying the buffer indirectly on CPU. We need to call map()
+    // so that the buffer's data changes could be flushed to the GPU side later.
+    ANGLE_UNUSED_VARIABLE(argumentBuffer->mapWithOpt(context, /*readonly=*/false, /*noSync=*/true));
+
     [bufferEncoder.metalArgBufferEncoder setArgumentBuffer:argumentBuffer->get()
                                                     offset:argumentBufferOffset];
 
@@ -1858,7 +1862,9 @@ angle::Result ProgramMtl::encodeUniformBuffersInfoArgumentBuffer(
                                                atIndex:actualBufferIdx];
     }
 
-    ANGLE_TRY(bufferEncoder.bufferPool.commit(context));
+    // Flush changes made by MTLArgumentEncoder to GPU.
+    argumentBuffer->unmapAndFlushSubset(context, argumentBufferOffset,
+                                        bufferEncoder.metalArgBufferEncoder.get().encodedLength);
 
     cmdEncoder->setBuffer(shaderType, argumentBuffer, static_cast<uint32_t>(argumentBufferOffset),
                           mtl::kUBOArgumentBufferBindingIndex);

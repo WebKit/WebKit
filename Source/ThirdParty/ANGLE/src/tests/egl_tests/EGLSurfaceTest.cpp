@@ -9,6 +9,7 @@
 
 #include <gtest/gtest.h>
 
+#include <thread>
 #include <vector>
 
 #include "common/Color.h"
@@ -129,11 +130,18 @@ class EGLSurfaceTest : public ANGLETest<>
         ASSERT_EGL_SUCCESS();
     }
 
-    void initializeSingleContext(EGLContext *context)
+    void initializeSingleContext(EGLContext *context, EGLint virtualizationGroup = EGL_DONT_CARE)
     {
         ASSERT_TRUE(*context == EGL_NO_CONTEXT);
 
-        EGLint contextAttibutes[] = {EGL_CONTEXT_CLIENT_VERSION, GetParam().majorVersion, EGL_NONE};
+        EGLint contextAttibutes[] = {EGL_CONTEXT_CLIENT_VERSION, GetParam().majorVersion,
+                                     EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE, virtualizationGroup,
+                                     EGL_NONE};
+
+        if (!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_context_virtualization"))
+        {
+            contextAttibutes[2] = EGL_NONE;
+        }
 
         *context = eglCreateContext(mDisplay, mConfig, nullptr, contextAttibutes);
         ASSERT_EGL_SUCCESS();
@@ -303,6 +311,8 @@ class EGLSurfaceTest : public ANGLETest<>
         // Simple operation to test the FBO is set appropriately
         glClear(GL_COLOR_BUFFER_BIT);
     }
+
+    void runWaitSemaphoreTest(bool useSecondContext);
 
     void drawQuadThenTearDown();
 
@@ -2067,6 +2077,155 @@ TEST_P(EGLAndroidAutoRefreshTest, Basic)
 
     eglDestroyContext(mDisplay, context);
     context = EGL_NO_CONTEXT;
+}
+
+void EGLSurfaceTest::runWaitSemaphoreTest(bool useSecondContext)
+{
+    // Note: This test requires visual inspection for rendering artifacts.
+    // However, absence of artifacts does not guarantee that there is no problem.
+
+    initializeDisplay();
+
+    constexpr int kInitialSize   = 64;
+    constexpr int kWindowWidth   = 1080;
+    constexpr int kWindowWHeight = 1920;
+
+    mOSWindow->resize(kWindowWidth, kWindowWHeight);
+
+    // Initialize an RGBA8 window and pbuffer surface
+    constexpr EGLint kSurfaceAttributes[] = {EGL_RED_SIZE,     8,
+                                             EGL_GREEN_SIZE,   8,
+                                             EGL_BLUE_SIZE,    8,
+                                             EGL_ALPHA_SIZE,   8,
+                                             EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                             EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ASSERT_EGL_TRUE(eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ASSERT_NE(configCount, 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    initializeSurface(surfaceConfig);
+    initializeMainContext();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+    ASSERT_NE(mPbufferSurface, EGL_NO_SURFACE);
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
+
+    if (useSecondContext)
+    {
+        ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
+        initializeSingleContext(&mSecondContext, 0);
+    }
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    GLint posAttrib = glGetAttribLocation(program, essl1_shaders::PositionAttrib());
+    ASSERT_NE(posAttrib, -1);
+    glEnableVertexAttribArray(posAttrib);
+    ASSERT_GL_NO_ERROR();
+
+    GLint colorUniformLocation = glGetUniformLocation(program, essl1_shaders::ColorUniform());
+    ASSERT_NE(colorUniformLocation, -1);
+
+    constexpr int kFrameCount = 60 * 4;  // 4 sec @ 60Hz; 2 sec @ 120Hz;
+    constexpr int kGridW      = 5;
+    constexpr int kGridH      = 5;
+    constexpr int kAnimDiv    = 20;
+
+    for (int frame = 0; frame < kFrameCount; ++frame)
+    {
+        glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        for (int y = 0; y < kGridH; ++y)
+        {
+            // This should force "flushToPrimary()" each line in ANGLE
+            GLuint query;
+            glGenQueries(1, &query);
+            ASSERT_GL_NO_ERROR();
+            glBeginQuery(GL_TIME_ELAPSED_EXT, query);
+            ASSERT_GL_NO_ERROR();
+
+            for (int x = 0; x < kGridW; ++x)
+            {
+                const int xc        = (x + frame / kAnimDiv) % kGridW;
+                const Vector4 color = {(xc + 0.5f) / kGridW, (y + 0.5f) / kGridH, 0.0f, 1.0f};
+
+                const GLfloat x0 = (x + 0.1f) / kGridW * 2.0f - 1.0f;
+                const GLfloat x1 = (x + 0.9f) / kGridW * 2.0f - 1.0f;
+                const GLfloat y0 = (y + 0.1f) / kGridH * 2.0f - 1.0f;
+                const GLfloat y1 = (y + 0.9f) / kGridH * 2.0f - 1.0f;
+
+                std::array<Vector3, 6> vertexData;
+                vertexData[0] = {x0, y1, 0.5f};
+                vertexData[1] = {x0, y0, 0.5f};
+                vertexData[2] = {x1, y1, 0.5f};
+                vertexData[3] = {x1, y1, 0.5f};
+                vertexData[4] = {x0, y0, 0.5f};
+                vertexData[5] = {x1, y0, 0.5f};
+
+                glUniform4f(colorUniformLocation, color.x(), color.y(), color.z(), color.w());
+                glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, vertexData.data());
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                ASSERT_GL_NO_ERROR();
+            }
+
+            glEndQuery(GL_TIME_ELAPSED_EXT);
+            glDeleteQueries(1, &query);
+            ASSERT_GL_NO_ERROR();
+        }
+
+        if (useSecondContext)
+        {
+            std::thread([this] {
+                eglBindAPI(EGL_OPENGL_ES_API);
+                ASSERT_EGL_SUCCESS();
+                eglMakeCurrent(mDisplay, mPbufferSurface, mPbufferSurface, mSecondContext);
+                ASSERT_EGL_SUCCESS();
+                glEnable(GL_SCISSOR_TEST);
+                glScissor(0, 0, 1, 1);
+                glClear(GL_COLOR_BUFFER_BIT);
+                ASSERT_GL_NO_ERROR();
+                eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+                ASSERT_EGL_SUCCESS();
+            }).join();
+        }
+        else
+        {
+            eglMakeCurrent(mDisplay, mPbufferSurface, mPbufferSurface, mContext);
+            ASSERT_EGL_SUCCESS();
+            eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            ASSERT_EGL_SUCCESS();
+            eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+            ASSERT_EGL_SUCCESS();
+        }
+
+        eglSwapBuffers(mDisplay, mWindowSurface);
+    }
+
+    mOSWindow->resize(kInitialSize, kInitialSize);
+}
+
+// Test that there no artifacts because of the bug when wait semaphore could be added after
+// rendering commands. This was possible by switching to Pbuffer surface and submit.
+TEST_P(EGLSurfaceTest, WaitSemaphoreAddedAfterCommands)
+{
+    runWaitSemaphoreTest(false);
+}
+
+// Test that there no artifacts because of the bug when rendering commands could be submitted
+// without adding wait semaphore. This was possible if submit commands from other thread.
+TEST_P(EGLSurfaceTest, CommandsSubmittedWithoutWaitSemaphore)
+{
+    runWaitSemaphoreTest(true);
 }
 
 }  // anonymous namespace

@@ -48,24 +48,26 @@ class EGLProtectedContentTest : public ANGLETest<>
         ASSERT_EGL_SUCCESS() << "Error during test TearDown";
     }
 
-    bool chooseConfig(EGLConfig *config)
+    bool chooseConfig(EGLConfig *config, bool mutableRenderBuffer = false)
     {
         EGLint clientVersion = mMajorVersion == 3 ? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT;
-        EGLint attribs[]     = {EGL_RED_SIZE,
-                                8,
-                                EGL_GREEN_SIZE,
-                                8,
-                                EGL_BLUE_SIZE,
-                                8,
-                                EGL_ALPHA_SIZE,
-                                8,
-                                EGL_RENDERABLE_TYPE,
-                                clientVersion,
-                                EGL_SURFACE_TYPE,
-                                (EGL_PBUFFER_BIT | EGL_WINDOW_BIT),
-                                EGL_BIND_TO_TEXTURE_RGBA,
-                                EGL_TRUE,
-                                EGL_NONE};
+        EGLint attribs[]     = {
+            EGL_RED_SIZE,
+            8,
+            EGL_GREEN_SIZE,
+            8,
+            EGL_BLUE_SIZE,
+            8,
+            EGL_ALPHA_SIZE,
+            8,
+            EGL_RENDERABLE_TYPE,
+            clientVersion,
+            EGL_SURFACE_TYPE,
+            EGL_WINDOW_BIT |
+                (mutableRenderBuffer ? EGL_MUTABLE_RENDER_BUFFER_BIT_KHR : EGL_PBUFFER_BIT),
+            EGL_BIND_TO_TEXTURE_RGBA,
+            EGL_TRUE,
+            EGL_NONE};
 
         EGLint count = 0;
         bool result  = eglChooseConfig(mDisplay, attribs, config, 1, &count);
@@ -326,7 +328,9 @@ class EGLProtectedContentTest : public ANGLETest<>
     }
 
     void pbufferTest(bool isProtectedContext, bool isProtectedSurface);
-    void windowTest(bool isProtectedContext, bool isProtectedSurface);
+    void windowTest(bool isProtectedContext,
+                    bool isProtectedSurface,
+                    bool mutableRenderBuffer = false);
     void textureTest(bool isProtectedContext, bool isProtectedTexture);
     void textureFromImageTest(bool isProtectedContext, bool isProtectedTexture);
     void textureFromPbufferTest(bool isProtectedContext, bool isProtectedTexture);
@@ -409,12 +413,16 @@ TEST_P(EGLProtectedContentTest, UnprotectedContextWithUnprotectedPbufferSurface)
     pbufferTest(false, false);
 }
 
-void EGLProtectedContentTest::windowTest(bool isProtectedContext, bool isProtectedSurface)
+void EGLProtectedContentTest::windowTest(bool isProtectedContext,
+                                         bool isProtectedSurface,
+                                         bool mutableRenderBuffer)
 {
     ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_protected_content"));
+    ANGLE_SKIP_TEST_IF(mutableRenderBuffer &&
+                       !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
 
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    EXPECT_TRUE(chooseConfig(&config));
+    EXPECT_TRUE(chooseConfig(&config, mutableRenderBuffer));
     ANGLE_SKIP_TEST_IF(config == EGL_NO_CONFIG_KHR);
 
     EGLContext context = EGL_NO_CONTEXT;
@@ -431,6 +439,15 @@ void EGLProtectedContentTest::windowTest(bool isProtectedContext, bool isProtect
 
     EXPECT_TRUE(eglMakeCurrent(mDisplay, windowSurface, windowSurface, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    if (mutableRenderBuffer)
+    {
+        EXPECT_TRUE(
+            eglSurfaceAttrib(mDisplay, windowSurface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
+        ASSERT_EGL_SUCCESS() << "eglSurfaceAttrib failed.";
+        eglSwapBuffers(mDisplay, windowSurface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+    }
 
     // Red
     glClearColor(1.0, 0.0, 0.0, 1.0);
@@ -478,6 +495,12 @@ TEST_P(EGLProtectedContentTest, UnprotectedContextWithUnprotectedWindowSurface)
 TEST_P(EGLProtectedContentTest, ProtectedContextWithProtectedWindowSurface)
 {
     windowTest(true, true);
+}
+
+// Protected context with Protected Mutable Render Buffer WindowSurface.
+TEST_P(EGLProtectedContentTest, ProtectedContextWithProtectedMutableRenderBufferWindowSurface)
+{
+    windowTest(true, true, true);
 }
 
 void EGLProtectedContentTest::textureTest(bool isProtectedContext, bool isProtectedTexture)

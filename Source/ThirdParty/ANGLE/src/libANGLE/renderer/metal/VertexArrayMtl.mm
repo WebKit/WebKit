@@ -881,7 +881,7 @@ angle::Result VertexArrayMtl::convertIndexBuffer(const gl::Context *glContext,
     {
         // We shouldn't use GPU to convert when we are in a middle of a render pass.
         ANGLE_TRY(StreamIndexData(contextMtl, &conversion->data,
-                                  idxBuffer->getBufferDataReadOnly(contextMtl) + offsetModulo,
+                                  idxBuffer->getClientShadowCopyData(contextMtl) + offsetModulo,
                                   indexType, indexCount, glState.isPrimitiveRestartEnabled(),
                                   &conversion->convertedBuffer, &conversion->convertedOffset));
     }
@@ -1061,7 +1061,7 @@ angle::Result VertexArrayMtl::convertVertexBufferCPU(ContextMtl *contextMtl,
                                                      ConversionBufferMtl *conversion)
 {
 
-    const uint8_t *srcBytes = srcBuffer->getBufferDataReadOnly(contextMtl);
+    const uint8_t *srcBytes = srcBuffer->getClientShadowCopyData(contextMtl);
     ANGLE_CHECK_GL_ALLOC(contextMtl, srcBytes);
     VertexConversionBufferMtl *vertexConverison =
         static_cast<VertexConversionBufferMtl *>(conversion);

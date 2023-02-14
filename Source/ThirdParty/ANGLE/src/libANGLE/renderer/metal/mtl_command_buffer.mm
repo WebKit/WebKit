@@ -628,11 +628,6 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
         std::memory_order_relaxed);
 }
 
-uint64_t CommandQueue::getNextRenderEncoderSerial()
-{
-    return ++mRenderEncoderCounter;
-}
-
 uint64_t CommandQueue::allocateTimeElapsedEntry()
 {
     std::lock_guard<std::mutex> lg(mLock);
@@ -1252,9 +1247,7 @@ void RenderCommandEncoderStates::reset()
 // RenderCommandEncoder implemtation
 RenderCommandEncoder::RenderCommandEncoder(CommandBuffer *cmdBuffer,
                                            const OcclusionQueryPool &queryPool)
-    : CommandEncoder(cmdBuffer, RENDER),
-      mOcclusionQueryPool(queryPool),
-      mSerial(cmdBuffer->cmdQueue().getNextRenderEncoderSerial())
+    : CommandEncoder(cmdBuffer, RENDER), mOcclusionQueryPool(queryPool)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -1776,7 +1769,6 @@ RenderCommandEncoder &RenderCommandEncoder::setBufferForWrite(gl::ShaderType sha
         return *this;
     }
 
-    buffer->setLastWritingRenderEncoderSerial(mSerial);
     cmdBuffer().setWriteDependency(buffer);
 
     id<MTLBuffer> mtlBuffer = (buffer ? buffer->get() : nil);
@@ -2426,14 +2418,10 @@ BlitCommandEncoder &BlitCommandEncoder::synchronizeResource(Buffer *buffer)
     }
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    if (buffer->get().storageMode == MTLStorageModeManaged)
-    {
-        // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
-        // synchronization
-        cmdBuffer().setReadDependency(buffer);
-
-        [get() synchronizeResource:buffer->get()];
-    }
+    // Only MacOS has separated storage for resource on CPU and GPU and needs explicit
+    // synchronization
+    cmdBuffer().setReadDependency(buffer);
+    [get() synchronizeResource:buffer->get()];
 #endif
     return *this;
 }

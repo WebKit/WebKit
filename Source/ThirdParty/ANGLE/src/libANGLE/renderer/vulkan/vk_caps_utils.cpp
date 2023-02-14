@@ -1116,7 +1116,7 @@ void RendererVk::ensureCapsInitialized() const
     // GL_OVR_multiview*.  Bresenham line emulation does not work with multiview.  There's no
     // limitation in Vulkan to restrict an application to multiview 1.
     mNativeExtensions.multiviewOVR =
-        mMultiviewFeatures.multiview && mFeatures.bresenhamLineRasterization.enabled;
+        mFeatures.supportsMultiview.enabled && mFeatures.bresenhamLineRasterization.enabled;
     mNativeExtensions.multiview2OVR = mNativeExtensions.multiviewOVR;
     mNativeCaps.maxViews            = mMultiviewProperties.maxMultiviewViewCount;
 

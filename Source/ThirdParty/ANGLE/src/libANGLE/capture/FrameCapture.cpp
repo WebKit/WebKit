@@ -2931,6 +2931,7 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
         if (!skipInvalidAttrib &&
             (attrib.format != defaultAttrib.format || attrib.pointer != defaultAttrib.pointer ||
              binding.getStride() != defaultBinding.getStride() ||
+             attrib.bindingIndex != defaultAttrib.bindingIndex ||
              binding.getBuffer().get() != nullptr))
         {
             // Each attribute can pull from a separate buffer, so check the binding

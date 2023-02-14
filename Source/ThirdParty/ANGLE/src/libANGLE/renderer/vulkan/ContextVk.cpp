@@ -882,9 +882,11 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
       mHasAnyCommandsPendingSubmission(false),
       mIsInFramebufferFetchMode(false),
       mTotalBufferToImageCopySize(0),
+      mHasWaitSemaphoresPendingSubmission(false),
       mGpuClockSync{std::numeric_limits<double>::max(), std::numeric_limits<double>::max()},
       mGpuEventTimestampOrigin(0),
       mContextPriority(renderer->getDriverPriority(GetContextPriority(state))),
+      mProtectionType(vk::ConvertProtectionBoolToType(state.hasProtectedContent())),
       mShareGroupVk(vk::GetImpl(state.getShareGroup()))
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::ContextVk");
@@ -1315,10 +1317,10 @@ angle::Result ContextVk::initialize()
     // Assign initial command buffers from queue
     ANGLE_TRY(vk::OutsideRenderPassCommandBuffer::InitializeCommandPool(
         this, &mCommandPools.outsideRenderPassPool, mRenderer->getDeviceQueueIndex(),
-        hasProtectedContent()));
+        getProtectionType()));
     ANGLE_TRY(vk::RenderPassCommandBuffer::InitializeCommandPool(
         this, &mCommandPools.renderPassPool, mRenderer->getDeviceQueueIndex(),
-        hasProtectedContent()));
+        getProtectionType()));
     ANGLE_TRY(mRenderer->getOutsideRenderPassCommandBufferHelper(
         this, &mCommandPools.outsideRenderPassPool, &mOutsideRenderPassCommandsAllocator,
         &mOutsideRenderPassCommands));
@@ -3365,17 +3367,6 @@ void ContextVk::addOverlayUsedBuffersCount(vk::CommandBufferHelperCommon *comman
 
 angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore, Submit submission)
 {
-    if (mCurrentWindowSurface)
-    {
-        const vk::Semaphore *waitSemaphore =
-            mCurrentWindowSurface->getAndResetAcquireImageSemaphore();
-        if (waitSemaphore != nullptr)
-        {
-            addWaitSemaphore(waitSemaphore->getHandle(),
-                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
-        }
-    }
-
     if (vk::CommandBufferHelperCommon::kEnableCommandStreamDiagnostics)
     {
         dumpCommandStreamDiagnostics();
@@ -3390,10 +3381,8 @@ angle::Result ContextVk::submitCommands(const vk::Semaphore *signalSemaphore, Su
 
     ASSERT(mLastFlushedQueueSerial > mLastSubmittedQueueSerial);
 
-    ANGLE_TRY(mRenderer->submitCommands(this, hasProtectedContent(), mContextPriority,
-                                        std::move(mWaitSemaphores),
-                                        std::move(mWaitSemaphoreStageMasks), signalSemaphore,
-                                        &mCommandPools, mLastFlushedQueueSerial));
+    ANGLE_TRY(mRenderer->submitCommands(this, getProtectionType(), mContextPriority,
+                                        signalSemaphore, &mCommandPools, mLastFlushedQueueSerial));
 
     ASSERT(mLastSubmittedQueueSerial < mLastFlushedQueueSerial);
     mLastSubmittedQueueSerial = mLastFlushedQueueSerial;
@@ -3534,7 +3523,7 @@ angle::Result ContextVk::synchronizeCpuGpuTime()
         vk::DeviceScoped<vk::PrimaryCommandBuffer> commandBatch(device);
         vk::PrimaryCommandBuffer &commandBuffer = commandBatch.get();
 
-        ANGLE_TRY(mRenderer->getCommandBufferOneOff(this, hasProtectedContent(), &commandBuffer));
+        ANGLE_TRY(mRenderer->getCommandBufferOneOff(this, getProtectionType(), &commandBuffer));
 
         commandBuffer.setEvent(gpuReady.get().getHandle(), VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT);
         commandBuffer.waitEvents(1, cpuReady.get().ptr(), VK_PIPELINE_STAGE_HOST_BIT,
@@ -3549,9 +3538,9 @@ angle::Result ContextVk::synchronizeCpuGpuTime()
         QueueSerial submitSerial;
         // vkEvent's are externally synchronized, therefore need work to be submitted before calling
         // vkGetEventStatus
-        ANGLE_TRY(mRenderer->queueSubmitOneOff(
-            this, std::move(commandBuffer), hasProtectedContent(), mContextPriority, nullptr, 0,
-            nullptr, vk::SubmitPolicy::EnsureSubmitted, &submitSerial));
+        ANGLE_TRY(mRenderer->queueSubmitOneOff(this, std::move(commandBuffer), getProtectionType(),
+                                               mContextPriority, nullptr, 0, nullptr,
+                                               vk::SubmitPolicy::EnsureSubmitted, &submitSerial));
 
         // Track it with the submitSerial.
         timestampQuery.setQueueSerial(submitSerial);
@@ -6852,7 +6841,7 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore,
         // This is when someone already called flushCommandsAndEndRenderPassWithoutQueueSubmit.
         ASSERT(mLastFlushedQueueSerial > mLastSubmittedQueueSerial);
     }
-    else if (signalSemaphore == nullptr && mWaitSemaphores.empty())
+    else if (signalSemaphore == nullptr && !mHasWaitSemaphoresPendingSubmission)
     {
         // We have nothing to submit.
         return angle::Result::Continue;
@@ -6892,6 +6881,9 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore,
         ANGLE_TRY(traceGpuEvent(&mOutsideRenderPassCommands->getCommandBuffer(),
                                 TRACE_EVENT_PHASE_END, eventName));
     }
+
+    // This will handle any commands that might be recorded above as well as flush any wait
+    // semaphores.
     ANGLE_TRY(flushOutsideRenderPassCommands());
 
     if (mLastFlushedQueueSerial == mLastSubmittedQueueSerial)
@@ -6919,15 +6911,16 @@ angle::Result ContextVk::flushImpl(const vk::Semaphore *signalSemaphore,
         mHasInFlightStreamedVertexBuffers.reset();
     }
 
+    ASSERT(mWaitSemaphores.empty());
+    ASSERT(mWaitSemaphoreStageMasks.empty());
+
     ANGLE_TRY(submitCommands(signalSemaphore, Submit::AllCommands));
 
     ASSERT(mOutsideRenderPassCommands->getQueueSerial() > mLastSubmittedQueueSerial);
 
-    mHasAnyCommandsPendingSubmission = false;
+    mHasAnyCommandsPendingSubmission    = false;
+    mHasWaitSemaphoresPendingSubmission = false;
     onRenderPassFinished(RenderPassClosureReason::AlreadySpecifiedElsewhere);
-
-    ASSERT(mWaitSemaphores.empty());
-    ASSERT(mWaitSemaphoreStageMasks.empty());
 
     if (mGpuEventsEnabled)
     {
@@ -6987,6 +6980,7 @@ void ContextVk::addWaitSemaphore(VkSemaphore semaphore, VkPipelineStageFlags sta
 {
     mWaitSemaphores.push_back(semaphore);
     mWaitSemaphoreStageMasks.push_back(stageMask);
+    mHasWaitSemaphoresPendingSubmission = true;
 }
 
 angle::Result ContextVk::getCompatibleRenderPass(const vk::RenderPassDesc &desc,
@@ -7038,13 +7032,13 @@ angle::Result ContextVk::getTimestamp(uint64_t *timestampOut)
     vk::DeviceScoped<vk::PrimaryCommandBuffer> commandBatch(device);
     vk::PrimaryCommandBuffer &commandBuffer = commandBatch.get();
 
-    ANGLE_TRY(mRenderer->getCommandBufferOneOff(this, hasProtectedContent(), &commandBuffer));
+    ANGLE_TRY(mRenderer->getCommandBufferOneOff(this, getProtectionType(), &commandBuffer));
 
     timestampQuery.writeTimestampToPrimary(this, &commandBuffer);
     ANGLE_VK_TRY(this, commandBuffer.end());
 
     QueueSerial submitQueueSerial;
-    ANGLE_TRY(mRenderer->queueSubmitOneOff(this, std::move(commandBuffer), hasProtectedContent(),
+    ANGLE_TRY(mRenderer->queueSubmitOneOff(this, std::move(commandBuffer), getProtectionType(),
                                            mContextPriority, nullptr, 0, nullptr,
                                            vk::SubmitPolicy::AllowDeferred, &submitQueueSerial));
     // Track it with the submitSerial.
@@ -7243,7 +7237,7 @@ angle::Result ContextVk::flushCommandsAndEndRenderPassWithoutSubmit(RenderPassCl
     ASSERT(mLastFlushedQueueSerial < mRenderPassCommands->getQueueSerial());
     mLastFlushedQueueSerial = mRenderPassCommands->getQueueSerial();
 
-    ANGLE_TRY(mRenderer->flushRenderPassCommands(this, hasProtectedContent(), *renderPass,
+    ANGLE_TRY(mRenderer->flushRenderPassCommands(this, getProtectionType(), *renderPass,
                                                  &mRenderPassCommands));
 
     // We just flushed outSideRenderPassCommands above, and any future use of
@@ -7459,6 +7453,15 @@ angle::Result ContextVk::flushAndSubmitOutsideRenderPassCommands()
 
 angle::Result ContextVk::flushOutsideRenderPassCommands()
 {
+    if (!mWaitSemaphores.empty())
+    {
+        ASSERT(mHasWaitSemaphoresPendingSubmission);
+        ANGLE_TRY(mRenderer->flushWaitSemaphores(getProtectionType(), std::move(mWaitSemaphores),
+                                                 std::move(mWaitSemaphoreStageMasks)));
+    }
+    ASSERT(mWaitSemaphores.empty());
+    ASSERT(mWaitSemaphoreStageMasks.empty());
+
     if (mOutsideRenderPassCommands->empty())
     {
         return angle::Result::Continue;
@@ -7478,8 +7481,8 @@ angle::Result ContextVk::flushOutsideRenderPassCommands()
     ASSERT(mLastFlushedQueueSerial <= mOutsideRenderPassCommands->getQueueSerial());
     mLastFlushedQueueSerial = mOutsideRenderPassCommands->getQueueSerial();
 
-    ANGLE_TRY(mRenderer->flushOutsideRPCommands(this, hasProtectedContent(),
-                                                &mOutsideRenderPassCommands));
+    ANGLE_TRY(
+        mRenderer->flushOutsideRPCommands(this, getProtectionType(), &mOutsideRenderPassCommands));
 
     if (mRenderPassCommands->started() && mOutsideRenderPassSerialFactory.empty())
     {

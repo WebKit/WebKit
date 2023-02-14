@@ -884,7 +884,9 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
     VkInstance instance  = renderer->getInstance();
 
     // flush the pipe.
-    (void)renderer->finish(displayVk, mState.hasProtectedContent());
+    (void)renderer->finish(displayVk);
+
+    waitPendingPresent();
 
     if (mLockBufferHelper.valid())
     {
@@ -1186,11 +1188,17 @@ angle::Result WindowSurfaceVk::getAttachmentRenderTarget(const gl::Context *cont
         ANGLE_VK_TRACE_EVENT_AND_MARKER(contextVk, "First Swap Image Use");
         ANGLE_TRY(doDeferredAcquireNextImage(context, false));
     }
+    if (mAcquireImageSemaphore)
+    {
+        flushAcquireImageSemaphore(context);
+    }
     return SurfaceVk::getAttachmentRenderTarget(context, binding, imageIndex, samples, rtOut);
 }
 
 angle::Result WindowSurfaceVk::recreateSwapchain(ContextVk *contextVk, const gl::Extents &extents)
 {
+    ASSERT(!mSwapchainStatus.isPending);
+
     // If no present operation has been done on the new swapchain, it can be destroyed right away.
     // This means that a new swapchain was created, but before any of its images were presented,
     // it's asked to be recreated.  This can happen for example if vkQueuePresentKHR returns
@@ -1266,7 +1274,7 @@ angle::Result WindowSurfaceVk::recreateSwapchain(ContextVk *contextVk, const gl:
     static constexpr size_t kMaxOldSwapchains = 5;
     if (mOldSwapchains.size() > kMaxOldSwapchains)
     {
-        ANGLE_TRY(contextVk->getRenderer()->finish(contextVk, contextVk->hasProtectedContent()));
+        ANGLE_TRY(contextVk->getRenderer()->finish(contextVk));
         for (SwapchainCleanupData &oldSwapchain : mOldSwapchains)
         {
             oldSwapchain.destroy(contextVk->getDevice(), &mPresentSemaphoreRecycler);
@@ -1470,7 +1478,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     // that case as a workaround.
     if (lastSwapchain && renderer->getFeatures().waitIdleBeforeSwapchainRecreation.enabled)
     {
-        ANGLE_TRY(renderer->finish(context, mState.hasProtectedContent()));
+        ANGLE_TRY(renderer->finish(context));
     }
 
     // TODO: Once EGL_SWAP_BEHAVIOR_PRESERVED_BIT is supported, the contents of the old swapchain
@@ -1743,6 +1751,10 @@ angle::Result WindowSurfaceVk::prepareSwapImpl(const gl::Context *context)
         ANGLE_TRACE_EVENT0("gpu.angle", "Acquire Swap Image Before Swap");
         ANGLE_TRY(doDeferredAcquireNextImage(context, false));
     }
+    if (mAcquireImageSemaphore)
+    {
+        flushAcquireImageSemaphore(context);
+    }
     return angle::Result::Continue;
 }
 
@@ -1974,7 +1986,8 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
 
     ASSERT(mAcquireImageSemaphore == nullptr);
 
-    VkResult result = renderer->queuePresent(contextVk, contextVk->getPriority(), presentInfo);
+    VkResult result =
+        renderer->queuePresent(contextVk, contextVk->getPriority(), presentInfo, &mSwapchainStatus);
 
     // Set FrameNumber for the presented image.
     mSwapchainImages[mCurrentSwapchainImageIndex].mFrameNumber = mFrameCount++;
@@ -2009,6 +2022,15 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     contextVk->resetPerFramePerfCounters();
 
     return angle::Result::Continue;
+}
+
+void WindowSurfaceVk::waitPendingPresent() const
+{
+    std::unique_lock<std::mutex> lock(mSwapchainStatus.mutex);
+    while (mSwapchainStatus.isPending)
+    {
+        mSwapchainStatus.condVar.wait(lock);
+    }
 }
 
 angle::Result WindowSurfaceVk::throttleCPU(ContextVk *contextVk,
@@ -2158,7 +2180,8 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImage(const gl::Context *con
     // TODO(jmadill): Expose in CommandQueueInterface, or manage in CommandQueue. b/172704839
     if (contextVk->getRenderer()->isAsyncCommandQueueEnabled())
     {
-        VkResult result = contextVk->getRenderer()->getLastPresentResult(mSwapchain);
+        waitPendingPresent();
+        VkResult result = mSwapchainStatus.lastPresentResult;
 
         // Now that we have the result from the last present need to determine if it's out of date
         // or not.
@@ -2218,6 +2241,15 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImage(const gl::Context *con
     }
 
     return angle::Result::Continue;
+}
+
+void WindowSurfaceVk::flushAcquireImageSemaphore(const gl::Context *context)
+{
+    ASSERT(mAcquireImageSemaphore);
+    ContextVk *contextVk = vk::GetImpl(context);
+    contextVk->addWaitSemaphore(mAcquireImageSemaphore->getHandle(),
+                                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+    mAcquireImageSemaphore = nullptr;
 }
 
 // This method will either return VK_SUCCESS or VK_ERROR_*.  Thus, it is appropriate to ASSERT that
@@ -2286,8 +2318,9 @@ VkResult WindowSurfaceVk::acquireNextSwapchainImage(vk::Context *context)
     {
         rx::RendererVk *rendererVk = context->getRenderer();
         rx::vk::PrimaryCommandBuffer primaryCommandBuffer;
-        if (rendererVk->getCommandBufferOneOff(context, mState.hasProtectedContent(),
-                                               &primaryCommandBuffer) == angle::Result::Continue)
+        auto protectionType = vk::ConvertProtectionBoolToType(mState.hasProtectedContent());
+        if (rendererVk->getCommandBufferOneOff(context, protectionType, &primaryCommandBuffer) ==
+            angle::Result::Continue)
         {
             // Note return errors is early exit may leave new Image and Swapchain in unknown state.
             image.image.recordWriteBarrierOneOff(context, vk::ImageLayout::SharedPresent,
@@ -2299,8 +2332,9 @@ VkResult WindowSurfaceVk::acquireNextSwapchainImage(vk::Context *context)
             }
             QueueSerial queueSerial;
             if (rendererVk->queueSubmitOneOff(
-                    context, std::move(primaryCommandBuffer), false, egl::ContextPriority::Medium,
-                    acquireImageSemaphore, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, nullptr,
+                    context, std::move(primaryCommandBuffer), protectionType,
+                    egl::ContextPriority::Medium, acquireImageSemaphore,
+                    VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, nullptr,
                     vk::SubmitPolicy::EnsureSubmitted, &queueSerial) != angle::Result::Continue)
             {
                 mDesiredSwapchainPresentMode = vk::PresentMode::FifoKHR;
@@ -2608,13 +2642,6 @@ angle::Result WindowSurfaceVk::getCurrentFramebuffer(
     return angle::Result::Continue;
 }
 
-const vk::Semaphore *WindowSurfaceVk::getAndResetAcquireImageSemaphore()
-{
-    const vk::Semaphore *acquireSemaphore = mAcquireImageSemaphore;
-    mAcquireImageSemaphore                = nullptr;
-    return acquireSemaphore;
-}
-
 angle::Result WindowSurfaceVk::initializeContents(const gl::Context *context,
                                                   GLenum binding,
                                                   const gl::ImageIndex &imageIndex)
@@ -2628,6 +2655,10 @@ angle::Result WindowSurfaceVk::initializeContents(const gl::Context *context,
         // because of dirty-object processing.
         ANGLE_VK_TRACE_EVENT_AND_MARKER(contextVk, "Initialize Swap Image");
         ANGLE_TRY(doDeferredAcquireNextImage(context, false));
+    }
+    if (mAcquireImageSemaphore)
+    {
+        flushAcquireImageSemaphore(context);
     }
 
     ASSERT(mSwapchainImages.size() > 0);
