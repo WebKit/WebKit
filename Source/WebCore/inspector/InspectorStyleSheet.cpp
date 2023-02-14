@@ -87,6 +87,7 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
 {
     switch (styleRuleType) {
     case StyleRuleType::Style:
+    case StyleRuleType::StyleWithNesting:
     case StyleRuleType::Media:
     case StyleRuleType::Supports:
     case StyleRuleType::LayerBlock:

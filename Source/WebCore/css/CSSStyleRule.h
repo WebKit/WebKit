@@ -32,10 +32,12 @@ class DeclaredStylePropertyMap;
 class StylePropertyMap;
 class StyleRuleCSSStyleDeclaration;
 class StyleRule;
+class StyleRuleWithNesting;
 
 class CSSStyleRule final : public CSSRule, public CanMakeWeakPtr<CSSStyleRule> {
 public:
     static Ref<CSSStyleRule> create(StyleRule& rule, CSSStyleSheet* sheet) { return adoptRef(*new CSSStyleRule(rule, sheet)); }
+    static Ref<CSSStyleRule> create(StyleRuleWithNesting& rule, CSSStyleSheet* sheet) { return adoptRef(* new CSSStyleRule(rule, sheet)); };
 
     virtual ~CSSStyleRule();
 
@@ -55,12 +57,14 @@ public:
 
 private:
     CSSStyleRule(StyleRule&, CSSStyleSheet*);
+    CSSStyleRule(StyleRuleWithNesting&, CSSStyleSheet*);
 
     StyleRuleType styleRuleType() const final { return StyleRuleType::Style; }
     String cssText() const final;
     void reattach(StyleRuleBase&) final;
 
     String generateSelectorText() const;
+    Vector<Ref<StyleRuleBase>> nestedRules() const;
 
     Ref<StyleRule> m_styleRule;
     Ref<DeclaredStylePropertyMap> m_styleMap;
