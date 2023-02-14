@@ -1635,7 +1635,6 @@ angle::Result FramebufferMtl::readPixelsImpl(const gl::Context *context,
 
         return result;
     }
-
     if (texture->isBeingUsedByGPU(contextMtl))
     {
         contextMtl->flushCommandBuffer(mtl::WaitUntilFinished);

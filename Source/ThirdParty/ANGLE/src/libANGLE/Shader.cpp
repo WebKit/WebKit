@@ -42,25 +42,20 @@ constexpr uint32_t kShaderCacheIdentifier = 0x12345678;
 constexpr char kShaderDumpPathVarName[]       = "ANGLE_SHADER_DUMP_PATH";
 constexpr char kEShaderDumpPathPropertyName[] = "debug.angle.shader_dump_path";
 
-std::string GetShaderDumpFilePath(ShaderType type, const std::string &mergedSource)
+size_t ComputeShaderHash(const std::string &mergedSource)
 {
-    size_t sourceHash = std::hash<std::string>{}(mergedSource);
+    return std::hash<std::string>{}(mergedSource);
+}
 
-    // Check the environment variable for the path to save and read shader dump files. If it doesn't
-    // exist, default to the temp dir. If that doesn't exist, use the current working directory.
-    std::string shaderDumpDir = angle::GetAndSetEnvironmentVarOrUnCachedAndroidProperty(
-        kShaderDumpPathVarName, kEShaderDumpPathPropertyName);
-    if (shaderDumpDir.empty() || shaderDumpDir.compare("0") == 0)
-    {
-        shaderDumpDir = angle::GetTempDirectory().valueOr("");
-    }
-
+std::string GetShaderDumpFilePath(size_t shaderHash)
+{
     std::stringstream path;
+    std::string shaderDumpDir = GetShaderDumpFileDirectory();
     if (!shaderDumpDir.empty())
     {
         path << shaderDumpDir << "/";
     }
-    path << type << "_" << sourceHash << ".essl";
+    path << shaderHash << ".essl";
 
     return path.str();
 }
@@ -94,6 +89,28 @@ const char *GetShaderTypeString(ShaderType type)
     }
 }
 
+std::string GetShaderDumpFileDirectory()
+{
+    // Check the environment variable for the path to save and read shader dump files.
+    std::string environmentVariableDumpDir =
+        angle::GetAndSetEnvironmentVarOrUnCachedAndroidProperty(kShaderDumpPathVarName,
+                                                                kEShaderDumpPathPropertyName);
+    if (!environmentVariableDumpDir.empty() && environmentVariableDumpDir.compare("0") != 0)
+    {
+        return environmentVariableDumpDir;
+    }
+
+    // Fall back to the temp dir. If that doesn't exist, use the current working directory.
+    return angle::GetTempDirectory().valueOr("");
+}
+
+std::string GetShaderDumpFileName(size_t shaderHash)
+{
+    std::stringstream name;
+    name << shaderHash << ".essl";
+    return name.str();
+}
+
 class [[nodiscard]] ScopedExit final : angle::NonCopyable
 {
   public:
@@ -110,9 +127,7 @@ struct Shader::CompilingState
     ShCompilerInstance shCompilerInstance;
 };
 
-ShaderState::ShaderState(ShaderType shaderType)
-    : mLabel(), mCompiledShaderState(shaderType), mCompileStatus(CompileStatus::NOT_COMPILED)
-{}
+ShaderState::ShaderState(ShaderType shaderType) : mCompiledShaderState(shaderType) {}
 
 ShaderState::~ShaderState() {}
 
@@ -191,12 +206,15 @@ void Shader::setSource(const Context *context,
 
     std::string source = stream.str();
 
+    // Compute the hash based on the original source before any substitutions
+    size_t sourceHash = ComputeShaderHash(source);
+
     const angle::FrontendFeatures &frontendFeatures = context->getFrontendFeatures();
 
     bool substitutedShader = false;
     if (frontendFeatures.enableShaderSubstitution.enabled)
     {
-        std::string subsitutionShaderPath = GetShaderDumpFilePath(mState.getShaderType(), source);
+        std::string subsitutionShaderPath = GetShaderDumpFilePath(sourceHash);
 
         std::string substituteShader;
         if (angle::ReadFileToString(subsitutionShaderPath, &substituteShader))
@@ -211,13 +229,14 @@ void Shader::setSource(const Context *context,
     // back to the file.
     if (frontendFeatures.dumpShaderSource.enabled && !substitutedShader)
     {
-        std::string dumpFile = GetShaderDumpFilePath(mState.getShaderType(), source);
+        std::string dumpFile = GetShaderDumpFilePath(sourceHash);
 
         writeFile(dumpFile.c_str(), source.c_str(), source.length());
         INFO() << "Dumped shader source: " << dumpFile;
     }
 
-    mState.mSource = std::move(source);
+    mState.mSource     = std::move(source);
+    mState.mSourceHash = sourceHash;
 }
 
 int Shader::getInfoLogLength(const Context *context)
@@ -326,6 +345,11 @@ const sh::BinaryBlob &Shader::getCompiledBinary(const Context *context)
 {
     resolveCompile(context);
     return mState.getCompiledBinary();
+}
+
+size_t Shader::getSourceHash() const
+{
+    return mState.mSourceHash;
 }
 
 void Shader::getTranslatedSourceWithDebugInfo(const Context *context,

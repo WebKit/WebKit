@@ -6,7 +6,6 @@
 # Generate commit.h with git commit hash.
 #
 
-import logging
 import subprocess as sp
 import sys
 import os
@@ -113,25 +112,21 @@ commit_id_size = 12
 commit_id = 'unknown hash'
 commit_date = 'unknown date'
 commit_position = '0'
-binary_loading = False
 
 if git_dir_exists:
     try:
         commit_id = grab_output('git rev-parse --short=%d HEAD' % commit_id_size, cwd)
         commit_date = grab_output('git show -s --format=%ci HEAD', cwd)
         commit_position = get_commit_position(cwd)
-        binary_loading = True
     except:
         pass
 
 hfile = open(output_file, 'w')
 
-logging.info('ANGLE hash: {}'.format(commit_id))
 hfile.write('#define ANGLE_COMMIT_HASH "%s"\n' % commit_id)
 hfile.write('#define ANGLE_COMMIT_HASH_SIZE %d\n' % commit_id_size)
 hfile.write('#define ANGLE_COMMIT_DATE "%s"\n' % commit_date)
 hfile.write('#define ANGLE_COMMIT_POSITION %s\n' % commit_position)
-if binary_loading:
-    hfile.write('#define ANGLE_HAS_BINARY_LOADING\n')
+
 
 hfile.close()

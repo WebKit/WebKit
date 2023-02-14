@@ -44,13 +44,4 @@ int GetANGLESHVersion()
 {
     return ANGLE_SH_VERSION;
 }
-
-bool GetANGLEHasBinaryLoading()
-{
-#ifdef ANGLE_HAS_BINARY_LOADING
-    return true;
-#else
-    return false;
-#endif  //  #ifndef ANGLE_HAS_BINARY_LOADING
-}
 }  // namespace angle

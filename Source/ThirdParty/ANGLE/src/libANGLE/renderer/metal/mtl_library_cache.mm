@@ -31,11 +31,13 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         return CreateShaderLibrary(context->getMetalDevice(), source, macros, enableFastMath,
                                    errorOut);
     }
-#if defined(__cpp_lib_generic_unordered_lookup) && __cpp_lib_generic_unordered_lookup >= 201811L
-    auto key = std::tie(source, macros, enableFastMath);
+
+    LibraryKey::LValueTuple lValueKey = std::tie(source, macros, enableFastMath);
+#if ANGLE_HAS_HASH_MAP_GENERIC_LOOKUP
+    const LibraryKey::LValueTuple &key = lValueKey;
 #else
-    Key key(source, macros, enableFastMath);
-#endif
+    LibraryKey key(lValueKey);
+#endif  // ANGLE_HAS_HASH_MAP_GENERIC_LOOKUP
 
     auto iter = mCache.find(key);
     if (iter != mCache.end())
@@ -47,14 +49,25 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         CreateShaderLibrary(context->getMetalDevice(), source, macros, enableFastMath, errorOut);
     if (library)
     {
-        mCache.insert_or_assign(std::move(key), library);
+        mCache.insert_or_assign(LibraryKey(std::move(key)), library);
     }
 
     return library;
 }
 
-template<typename K>
-size_t LibraryCache::KeyCompare::operator()(K &&k) const
+LibraryCache::LibraryKey::LibraryKey(const LValueTuple &fromTuple)
+{
+    source         = std::get<0>(fromTuple);
+    macros         = std::get<1>(fromTuple);
+    enableFastMath = std::get<2>(fromTuple);
+}
+
+LibraryCache::LibraryKey::LValueTuple LibraryCache::LibraryKey::tie() const
+{
+    return std::tie(source, macros, enableFastMath);
+}
+
+size_t LibraryCache::LibraryKeyCompare::operator()(const LibraryKey::LValueTuple &k) const
 {
     size_t hash = std::hash<std::string>()(std::get<0>(k));
     for (const auto &macro : std::get<1>(k))
@@ -66,10 +79,26 @@ size_t LibraryCache::KeyCompare::operator()(K &&k) const
     return hash;
 }
 
-template<typename K1, typename K2>
-bool LibraryCache::KeyCompare::operator()(K1 &&a, K2 &&b) const
+size_t LibraryCache::LibraryKeyCompare::operator()(const LibraryKey &k) const
 {
-    return a == b;
+    return operator()(k.tie());
+}
+
+bool LibraryCache::LibraryKeyCompare::operator()(const LibraryKey &a, const LibraryKey &b) const
+{
+    return a.tie() == b.tie();
+}
+
+bool LibraryCache::LibraryKeyCompare::operator()(const LibraryKey &a,
+                                                 const LibraryKey::LValueTuple &b) const
+{
+    return a.tie() == b;
+}
+
+bool LibraryCache::LibraryKeyCompare::operator()(const LibraryKey::LValueTuple &a,
+                                                 const LibraryKey &b) const
+{
+    return a == b.tie();
 }
 
 }  // namespace mtl

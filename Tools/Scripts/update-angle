@@ -22,6 +22,7 @@ regenerate_changes_diff() {
         ':(exclude)Makefile' \
         ':(exclude)src/empty.cpp' \
         ':(exclude)third_party/zlib/google/compression_utils_portable*' \
+        ':(exclude)third_party/kotlin_stdlib*' \
         ':(exclude)**.DS_Store' \
         ':(exclude)update-angle.sh' \
         ':(exclude)WebKitBuild' \

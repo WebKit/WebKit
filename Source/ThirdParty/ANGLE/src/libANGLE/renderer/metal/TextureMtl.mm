@@ -1877,7 +1877,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
         {
             // NOTE(hqle): packed depth & stencil texture cannot copy from buffer directly, needs
             // to split its depth & stencil data and copy separately.
-            const uint8_t *clientData = unpackBufferMtl->getBufferDataReadOnly(contextMtl);
+            const uint8_t *clientData = unpackBufferMtl->getClientShadowCopyData(contextMtl);
             clientData += offset;
             ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
                                             mtl::kZeroNativeMipLevel, slice, clientData,
@@ -1931,7 +1931,7 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
             mFormat.intendedAngleFormat().isBlock)
         {
             // Unsupported format, use CPU path.
-            const uint8_t *clientData = unpackBufferMtl->getBufferDataReadOnly(contextMtl);
+            const uint8_t *clientData = unpackBufferMtl->getClientShadowCopyData(contextMtl);
             clientData += offset;
             ANGLE_TRY(convertAndSetPerSliceSubImage(context, slice, mtlArea, internalFormat, type,
                                                     pixelsAngleFormat, pixelsRowPitch,

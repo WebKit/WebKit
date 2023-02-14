@@ -17,7 +17,6 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/metal/ProvokingVertexHelper.h"
-#include "libANGLE/renderer/metal/mtl_buffer_manager.h"
 #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
 #include "libANGLE/renderer/metal/mtl_command_buffer.h"
 #include "libANGLE/renderer/metal/mtl_context_device.h"
@@ -370,7 +369,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Will end current command encoder and start new blit command encoder. Unless a blit comamnd
     // encoder is already started.
     mtl::BlitCommandEncoder *getBlitCommandEncoder();
-
     // Will end current command encoder and start new compute command encoder. Unless a compute
     // command encoder is already started.
     mtl::ComputeCommandEncoder *getComputeCommandEncoder();
@@ -383,8 +381,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     // Get the provoking vertex command encoder.
     mtl::ComputeCommandEncoder *getIndexPreprocessingCommandEncoder();
 
-    bool isCurrentRenderEncoderSerial(uint64_t serial);
-
     const mtl::ContextDevice &getMetalDevice() const { return mContextDevice; }
 
     angle::Result copy2DTextureSlice0Level0ToWorkTexture(const mtl::TextureRef &srcTexture);
@@ -394,7 +390,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                                     const mtl::MipmapNativeLevel &mipNativeLevel,
                                                     uint32_t layerIndex);
     const mtl::BufferRef &getWorkBuffer() const { return mWorkBuffer; }
-    mtl::BufferManager &getBufferManager() { return mBufferManager; }
 
     angle::ImageLoadContext getImageLoadContext() const;
 
@@ -609,8 +604,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
     MTLWinding mWinding;
     MTLCullMode mCullMode;
     bool mCullAllPolygons = false;
-
-    mtl::BufferManager mBufferManager;
 
     // Lineloop and TriFan index buffer
     mtl::BufferPool mLineLoopIndexBuffer;

@@ -7117,7 +7117,7 @@ bool ValidateGetTexParameterBase(const Context *context,
             break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
@@ -7860,7 +7860,7 @@ bool ValidateTexParameterBase(const Context *context,
             break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
@@ -8081,7 +8081,7 @@ bool ValidateSamplerParameterBase(const Context *context,
         break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
@@ -8176,7 +8176,7 @@ bool ValidateGetSamplerParameterBase(const Context *context,
             break;
 
         case GL_TEXTURE_BORDER_COLOR:
-            if (!context->getExtensions().textureBorderClampOES &&
+            if (!context->getExtensions().textureBorderClampAny() &&
                 context->getClientVersion() < ES_3_2)
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);

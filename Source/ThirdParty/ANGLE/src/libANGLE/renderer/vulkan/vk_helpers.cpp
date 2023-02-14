@@ -4709,7 +4709,8 @@ angle::Result BufferHelper::initializeNonZeroMemory(Context *context,
         ANGLE_TRY(stagingBuffer.init(context, size, StagingUsage::Both));
 
         PrimaryCommandBuffer commandBuffer;
-        ANGLE_TRY(renderer->getCommandBufferOneOff(context, false, &commandBuffer));
+        ANGLE_TRY(
+            renderer->getCommandBufferOneOff(context, ProtectionType::Unprotected, &commandBuffer));
 
         // Queue a DMA copy.
         VkBufferCopy copyRegion = {};
@@ -4722,7 +4723,8 @@ angle::Result BufferHelper::initializeNonZeroMemory(Context *context,
         ANGLE_VK_TRY(context, commandBuffer.end());
 
         QueueSerial queueSerial;
-        ANGLE_TRY(renderer->queueSubmitOneOff(context, std::move(commandBuffer), false,
+        ANGLE_TRY(renderer->queueSubmitOneOff(context, std::move(commandBuffer),
+                                              ProtectionType::Unprotected,
                                               egl::ContextPriority::Medium, nullptr, 0, nullptr,
                                               vk::SubmitPolicy::AllowDeferred, &queueSerial));
 
@@ -5545,7 +5547,8 @@ angle::Result ImageHelper::initializeNonZeroMemory(Context *context,
     RendererVk *renderer = context->getRenderer();
 
     PrimaryCommandBuffer commandBuffer;
-    ANGLE_TRY(renderer->getCommandBufferOneOff(context, hasProtectedContent, &commandBuffer));
+    auto protectionType = ConvertProtectionBoolToType(hasProtectedContent);
+    ANGLE_TRY(renderer->getCommandBufferOneOff(context, protectionType, &commandBuffer));
 
     // Queue a DMA copy.
     barrierImpl(context, getAspectFlags(), ImageLayout::TransferDst, mCurrentQueueFamilyIndex,
@@ -5628,7 +5631,7 @@ angle::Result ImageHelper::initializeNonZeroMemory(Context *context,
     ANGLE_VK_TRY(context, commandBuffer.end());
 
     QueueSerial queueSerial;
-    ANGLE_TRY(renderer->queueSubmitOneOff(context, std::move(commandBuffer), hasProtectedContent,
+    ANGLE_TRY(renderer->queueSubmitOneOff(context, std::move(commandBuffer), protectionType,
                                           egl::ContextPriority::Medium, nullptr, 0, nullptr,
                                           vk::SubmitPolicy::AllowDeferred, &queueSerial));
 
@@ -8731,7 +8734,8 @@ angle::Result ImageHelper::copySurfaceImageToBuffer(DisplayVk *displayVk,
     region.imageSubresource.mipLevel       = toVkLevel(sourceLevelGL).get();
 
     PrimaryCommandBuffer primaryCommandBuffer;
-    ANGLE_TRY(rendererVk->getCommandBufferOneOff(displayVk, false, &primaryCommandBuffer));
+    ANGLE_TRY(rendererVk->getCommandBufferOneOff(displayVk, ProtectionType::Unprotected,
+                                                 &primaryCommandBuffer));
 
     barrierImpl(displayVk, getAspectFlags(), ImageLayout::TransferSrc, mCurrentQueueFamilyIndex,
                 &primaryCommandBuffer);
@@ -8741,7 +8745,8 @@ angle::Result ImageHelper::copySurfaceImageToBuffer(DisplayVk *displayVk,
     ANGLE_VK_TRY(displayVk, primaryCommandBuffer.end());
 
     QueueSerial submitQueueSerial;
-    ANGLE_TRY(rendererVk->queueSubmitOneOff(displayVk, std::move(primaryCommandBuffer), false,
+    ANGLE_TRY(rendererVk->queueSubmitOneOff(displayVk, std::move(primaryCommandBuffer),
+                                            ProtectionType::Unprotected,
                                             egl::ContextPriority::Medium, nullptr, 0, nullptr,
                                             vk::SubmitPolicy::AllowDeferred, &submitQueueSerial));
 
@@ -8775,7 +8780,8 @@ angle::Result ImageHelper::copyBufferToSurfaceImage(DisplayVk *displayVk,
     region.imageSubresource.mipLevel       = toVkLevel(sourceLevelGL).get();
 
     PrimaryCommandBuffer commandBuffer;
-    ANGLE_TRY(rendererVk->getCommandBufferOneOff(displayVk, false, &commandBuffer));
+    ANGLE_TRY(
+        rendererVk->getCommandBufferOneOff(displayVk, ProtectionType::Unprotected, &commandBuffer));
 
     barrierImpl(displayVk, getAspectFlags(), ImageLayout::TransferDst, mCurrentQueueFamilyIndex,
                 &commandBuffer);
@@ -8785,7 +8791,8 @@ angle::Result ImageHelper::copyBufferToSurfaceImage(DisplayVk *displayVk,
     ANGLE_VK_TRY(displayVk, commandBuffer.end());
 
     QueueSerial submitQueueSerial;
-    ANGLE_TRY(rendererVk->queueSubmitOneOff(displayVk, std::move(commandBuffer), false,
+    ANGLE_TRY(rendererVk->queueSubmitOneOff(displayVk, std::move(commandBuffer),
+                                            ProtectionType::Unprotected,
                                             egl::ContextPriority::Medium, nullptr, 0, nullptr,
                                             vk::SubmitPolicy::AllowDeferred, &submitQueueSerial));
 
@@ -9091,7 +9098,7 @@ angle::Result ImageHelper::readPixelsImpl(ContextVk *contextVk,
     if (isMultisampled)
     {
         ANGLE_TRY(resolvedImage.get().init2DStaging(
-            contextVk, contextVk->hasProtectedContent(), renderer->getMemoryProperties(),
+            contextVk, contextVk->getState().hasProtectedContent(), renderer->getMemoryProperties(),
             gl::Extents(area.width, area.height, 1), mIntendedFormatID, mActualFormatID,
             VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, 1));
     }

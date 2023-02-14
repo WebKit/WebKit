@@ -1009,7 +1009,7 @@
 7419 SWIFTSHADER : MultithreadingTestES3.Thread* = SKIP
 
 // Flaky timeout on Windows SwANGLE
-7900 WIN SWIFTSHADER : InstancingTestES3.LargeDivisor/ES3_Vulkan_SwiftShader/* = SKIP
+7900 WIN SWIFTSHADER : InstancingTestES3.LargeDivisor/* = SKIP
 7419 WIN SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchMidRenderPass/* = SKIP
 7992 WIN SWIFTSHADER : MultithreadingTestES3.ProgramUseAndDestroyInTwoContexts/* = SKIP
 

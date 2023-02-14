@@ -20,13 +20,15 @@ namespace vk
 angle::Result VulkanSecondaryCommandBuffer::InitializeCommandPool(Context *context,
                                                                   CommandPool *pool,
                                                                   uint32_t queueFamilyIndex,
-                                                                  bool hasProtectedContent)
+                                                                  ProtectionType protectionType)
 {
     VkCommandPoolCreateInfo poolInfo = {};
     poolInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.flags                   = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
     poolInfo.queueFamilyIndex        = queueFamilyIndex;
-    if (hasProtectedContent)
+    ASSERT(protectionType == ProtectionType::Unprotected ||
+           protectionType == ProtectionType::Protected);
+    if (protectionType == ProtectionType::Protected)
     {
         poolInfo.flags |= VK_COMMAND_POOL_CREATE_PROTECTED_BIT;
     }

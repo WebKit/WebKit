@@ -245,46 +245,6 @@
             "issue": "http://anglebug.com/7573"
         },
         {
-            "name": "always_use_staged_buffer_updates",
-            "category": "Features",
-            "description": [
-                "Always update buffers by copying the data to a staging buffer and then blitting it to the actual buffer"
-            ],
-            "issue": "http://anglebug.com/7544"
-        },
-        {
-            "name": "use_shadow_buffers_when_appropriate",
-            "category": "Features",
-            "description": [
-                "On some architectures using a shadow buffer can be faster for certain size buffers"
-            ],
-            "issue": "http://anglebug.com/7544"
-        },
-        {
-            "name": "always_use_managed_storage_mode_for_buffers",
-            "category": "Features",
-            "description": [
-                "Metal buffers can be managed, shared, or private. Sometimes managed is fastest"
-            ],
-            "issue": "http://anglebug.com/7544"
-        },
-        {
-            "name": "always_use_shared_storage_mode_for_buffers",
-            "category": "Features",
-            "description": [
-                "Metal buffers can be managed, shared, or private. Sometimes shared is fastest"
-            ],
-            "issue": "http://anglebug.com/7544"
-        },
-        {
-            "name": "prefer_cpu_for_buffersubdata",
-            "category": "Features",
-            "description": [
-                "Makes bufferSubData always update via CPU"
-            ],
-            "issue": "http://anglebug.com/7544"
-        },
-        {
             "name": "disable_programmable_blending",
             "category": "Features",
             "description": [

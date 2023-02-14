@@ -68,6 +68,8 @@ set(metal_backend_sources
     "src/libANGLE/renderer/metal/mtl_format_table_autogen.mm"
     "src/libANGLE/renderer/metal/mtl_format_utils.h"
     "src/libANGLE/renderer/metal/mtl_format_utils.mm"
+    "src/libANGLE/renderer/metal/mtl_library_cache.h"
+    "src/libANGLE/renderer/metal/mtl_library_cache.mm"
     "src/libANGLE/renderer/metal/mtl_msl_utils.h"
     "src/libANGLE/renderer/metal/mtl_msl_utils.mm"
     "src/libANGLE/renderer/metal/mtl_occlusion_query_pool.h"

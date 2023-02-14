@@ -263,15 +263,6 @@ class Context : angle::NonCopyable
 
 class RenderPassDesc;
 
-enum class CommandContent
-{
-    Unprotected = 0,
-    Protected   = 1,
-
-    InvalidEnum = 2,
-    EnumCount   = 2,
-};
-
 #if ANGLE_USE_CUSTOM_VULKAN_OUTSIDE_RENDER_PASS_CMD_BUFFERS
 using OutsideRenderPassCommandBuffer = priv::SecondaryCommandBuffer;
 #else
@@ -1101,8 +1092,8 @@ void InitExternalSemaphoreFdFunctions(VkInstance instance);
 // VK_EXT_external_memory_host
 void InitExternalMemoryHostFunctions(VkInstance instance);
 
-// VK_EXT_external_memory_host
-void InitHostQueryResetFunctions(VkInstance instance);
+// VK_EXT_host_query_reset
+void InitHostQueryResetFunctions(VkDevice instance);
 
 // VK_KHR_external_fence_capabilities
 void InitExternalFenceCapabilitiesFunctions(VkInstance instance);
@@ -1136,6 +1127,14 @@ void InitFragmentShadingRateKHRDeviceFunction(VkDevice device);
 void InitGetPastPresentationTimingGoogleFunction(VkDevice device);
 
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
+
+// Promoted to Vulkan 1.1
+void InitGetPhysicalDeviceProperties2KHRFunctionsFromCore();
+void InitExternalFenceCapabilitiesFunctionsFromCore();
+void InitExternalSemaphoreCapabilitiesFunctionsFromCore();
+void InitSamplerYcbcrKHRFunctionsFromCore();
+void InitGetMemoryRequirements2KHRFunctionsFromCore();
+void InitBindMemory2KHRFunctionsFromCore();
 
 GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, angle::FormatID formatID);
 size_t PackSampleCount(GLint sampleCount);
