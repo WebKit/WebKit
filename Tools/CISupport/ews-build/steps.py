@@ -430,10 +430,11 @@ class GitHubMixin(object):
             yield self._addToLog('stdio', f'Error in posting comment to PR {pr_number}\n    {e}\n')
             defer.returnValue(FAILURE)
 
+    @defer.inlineCallbacks
     def update_pr(self, pr_number, title, description, base=None, head=None, repository_url=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return False
+            return defer.returnValue(False)
 
         pr_info = dict(
             title=title,
@@ -446,20 +447,23 @@ class GitHubMixin(object):
 
         update_url = f'{api_url}/pulls/{pr_number}'
         try:
+            headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
-            response = requests.request(
-                'POST', update_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=pr_info,
+            if username and access_token:
+                auth_header = b64encode(f'{username}:{access_token}'.encode('utf-8')).decode('utf-8')
+                headers['Authorization'] = [f'Basic {auth_header}']
+            response = yield TwistedAdditions.request(
+                update_url, type=b'PATCH', timeout=60,
+                headers=headers, json=pr_info,
+                logger=lambda content: self._addToLog('stdio', content),
             )
             if response.status_code // 100 != 2:
-                self._addToLog('stdio', f"Failed to update PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
-                return False
+                yield self._addToLog('stdio', f"Failed to update PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                return defer.returnValue(False)
+            defer.returnValue(True)
         except Exception as e:
-            self._addToLog('stdio', f"Error in updating PR {pr_number}\n")
-            return False
-        return True
+            yield self._addToLog('stdio', f"Error in updating PR {pr_number}\n    {e}\n")
+            defer.returnValue(False)
 
     def close_pr(self, pr_number, repository_url=None):
         api_url = GitHub.api_url(repository_url)
@@ -5660,7 +5664,7 @@ class PushPullRequestBranch(shell.ShellCommand):
         return not self.doStepIf(step)
 
 
-class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
+class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
     name = 'update-pull-request'
     haltOnFailure = False
     command = ['git', 'log', '-1', '--no-decorate']
@@ -5687,12 +5691,6 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
 
-    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        self.log_observer = BufferLogObserverClass(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-
-        return super().start()
-
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {'step': 'Updated pull request'}
@@ -5717,8 +5715,12 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
                 return True
         return False
 
-    def evaluateCommand(self, cmd):
-        rc = super().evaluateCommand(cmd)
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
 
         loglines = self.log_observer.getStdout().splitlines()
 
@@ -5736,17 +5738,17 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
         user = self.getProperty('github.head.user.login', '')
         head = self.getProperty('github.head.ref', '')
 
-        if not self.update_pr(
+        did_update_pr = yield self.update_pr(
             self.getProperty('github.number'),
             title=title,
             description=description,
             base=self.getProperty('github.base.ref', ''),
             head=f"{user}:{head}" if user and head else None,
             repository_url=self.getProperty('repository', ''),
-        ):
-            return FAILURE
-
-        return rc
+        )
+        if not did_update_pr:
+            return defer.returnValue(FAILURE)
+        return defer.returnValue(rc)
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number')

@@ -6986,7 +6986,7 @@ Canonical link: <a href="https://commits.webkit.org/249006@main">https://commits
 ''',
             )
 
-            return True
+            return defer.succeed(True)
 
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
@@ -7025,6 +7025,7 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
 
+    @defer.inlineCallbacks
     def test_success_gardening(self):
         def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
             self.assertEqual(pr_number, '1234')
@@ -7048,7 +7049,7 @@ Canonical link: <a href="https://commits.webkit.org/249833@main">https://commits
 ''',
             )
 
-            return True
+            return defer.succeed(True)
 
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
@@ -7078,14 +7079,15 @@ Date:   Thu Apr 21 00:25:03 2022 +0000
         )
         self.expectOutcome(result=SUCCESS, state_string='Updated pull request')
         with current_hostname(EWS_BUILD_HOSTNAME):
-            rc = self.runStep()
+            rc = yield self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '239577')
             self.assertEqual(self.getProperty('is_test_gardening'), True)
             return rc
 
+    @defer.inlineCallbacks
     def test_failure(self):
         def update_pr(x, pr_number, title, description, base=None, head=None, repository_url=None):
-            return False
+            return defer.succeed(False)
 
         UpdatePullRequest.update_pr = update_pr
         self.setupStep(UpdatePullRequest())
@@ -7119,7 +7121,7 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to update pull request')
         with current_hostname(EWS_BUILD_HOSTNAME):
-            rc = self.runStep()
+            rc = yield self.runStep()
             self.assertEqual(self.getProperty('bug_id'), '238553')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
