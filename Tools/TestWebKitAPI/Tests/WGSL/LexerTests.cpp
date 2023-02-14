@@ -173,7 +173,7 @@ TEST(WGSLLexerTests, ComputeShader)
         "    x.a = 42;\n"
         "}"_s);
 
-    unsigned lineNumber = 0;
+    unsigned lineNumber = 1;
     // @block struct B {
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
     checkNextTokenIsIdentifier(lexer, "block"_s, lineNumber);
@@ -259,7 +259,7 @@ TEST(WGSLLexerTests, GraphicsShader)
         "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
         "}"_s);
 
-    unsigned lineNumber = 0;
+    unsigned lineNumber = 1;
 
     // @vertex
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
@@ -366,7 +366,7 @@ TEST(WGSLLexerTests, TriangleVert)
         "    return vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), 0.0, 1.0);\n"
         "}\n"_s);
 
-    unsigned lineNumber = 0;
+    unsigned lineNumber = 1;
 
     // @vertex
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
