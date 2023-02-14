@@ -3895,14 +3895,6 @@ webkit.org/b/251306 http/tests/in-app-browser-privacy/sub-frame-redirect-to-non-
 
 webkit.org/b/251312 fast/loader/stateobjects/popstate-does-not-fire-with-page-cache.html [ Pass Failure ]
 
-# webkit.org/b/251394 fast/css-generated-content/ tests are constant text failures
-fast/css-generated-content/initial-letter-basic.html [ Failure ]
-fast/css-generated-content/initial-letter-border-padding.html [ Failure ]
-fast/css-generated-content/initial-letter-clearance.html [ Failure ]
-fast/css-generated-content/initial-letter-descender.html [ Failure ]
-fast/css-generated-content/initial-letter-raised.html [ Failure ]
-fast/css-generated-content/initial-letter-sunken.html [ Failure ]
-
 http/tests/webgpu/webgpu/idl/constants/flags.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.https.html [ Skip ]
 http/tests/webgpu/webgpu/idl/exposed.http.html [ Skip ]
