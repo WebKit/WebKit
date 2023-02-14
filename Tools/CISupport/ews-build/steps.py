@@ -436,14 +436,19 @@ class GitHubMixin(object):
         if not api_url:
             return defer.returnValue(False)
 
-        pr_info = dict(
-            title=title,
-            body=description,
-        )
+        pr_info = {}
+        if title:
+            pr_info['title'] = title
+        if description:
+            pr_info['body'] = description
         if base:
             pr_info['base'] = base
         if head:
             pr_info['head'] = head
+
+        if not pr_info:
+            yield self._addToLog('stdio', f"Not enough details provided to update {pr_number}.\n")
+            return defer.returnValue(False)
 
         update_url = f'{api_url}/pulls/{pr_number}'
         try:
@@ -5720,20 +5725,25 @@ class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
         self.log_observer = BufferLogObserverClass(wantStderr=True)
         self.addLogObserver('stdio', self.log_observer)
 
-        rc = yield super().run()
+        title = None
+        description = None
+        rc = 0
 
-        loglines = self.log_observer.getStdout().splitlines()
+        if not self.setProperty('sensitive', False):
+            rc = yield super().run()
 
-        title = loglines[4][4:].rstrip()
-        description = f'#### {loglines[0].split()[1]}\n<pre>\n'
-        for line in loglines[4:]:
-            description += self.escape_html(line[4:] + '\n')
-        description += '</pre>\n'
+            loglines = self.log_observer.getStdout().splitlines()
 
-        bug_id = self.bug_id_from_log(loglines)
-        if bug_id:
-            self.setProperty('bug_id', bug_id)
-        self.setProperty('is_test_gardening', self.is_test_gardening(loglines))
+            title = loglines[4][4:].rstrip()
+            description = f'#### {loglines[0].split()[1]}\n<pre>\n'
+            for line in loglines[4:]:
+                description += self.escape_html(line[4:] + '\n')
+            description += '</pre>\n'
+
+            bug_id = self.bug_id_from_log(loglines)
+            if bug_id:
+                self.setProperty('bug_id', bug_id)
+            self.setProperty('is_test_gardening', self.is_test_gardening(loglines))
 
         user = self.getProperty('github.head.user.login', '')
         head = self.getProperty('github.head.ref', '')
