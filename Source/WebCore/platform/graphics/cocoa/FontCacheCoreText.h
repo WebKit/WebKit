@@ -63,7 +63,11 @@ struct VariationDefaults {
 
 typedef HashMap<FontTag, VariationDefaults, FourCharacterTagHash, FourCharacterTagHashTraits> VariationDefaultsMap;
 
-RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&&, const FontDescription&, const FontCreationContext&, bool applyWeightWidthSlopeVariations = true);
+enum class ApplyTraitsVariations : bool {
+    No,
+    Yes,
+};
+RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&&, const FontDescription&, const FontCreationContext&, ApplyTraitsVariations = ApplyTraitsVariations::Yes);
 enum class ShouldComputePhysicalTraits : bool { No, Yes };
 SynthesisPair computeNecessarySynthesis(CTFontRef, const FontDescription&, ShouldComputePhysicalTraits = ShouldComputePhysicalTraits::No, bool isPlatformFont = false);
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomString& family, FontSelectionRequest, TextRenderingMode, float size);

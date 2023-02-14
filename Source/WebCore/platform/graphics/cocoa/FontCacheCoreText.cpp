@@ -355,7 +355,7 @@ static inline bool shouldEnhanceTextLegibility()
     return overrideEnhanceTextLegibility().value_or(platformShouldEnhanceTextLegibility());
 }
 
-static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
+static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations)
 {
     if (!originalFont)
         return originalFont;
@@ -399,7 +399,7 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
 
     // Step 2: font-weight, font-stretch, and font-style
     // The system font is somewhat magical. Don't mess with its variations.
-    if (applyWeightWidthSlopeVariations
+    if (applyTraitsVariations == ApplyTraitsVariations::Yes
 #if USE(NON_VARIABLE_SYSTEM_FONT)
         && !fontIsSystemFont(originalFont)
 #endif
@@ -506,9 +506,9 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
     return adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
 }
 
-RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&& originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, bool applyWeightWidthSlopeVariations)
+RetainPtr<CTFontRef> preparePlatformFont(UnrealizedCoreTextFont&& originalFont, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations)
 {
-    return preparePlatformFont(originalFont.realize().get(), fontDescription, fontCreationContext, applyWeightWidthSlopeVariations);
+    return preparePlatformFont(originalFont.realize().get(), fontDescription, fontCreationContext, applyTraitsVariations);
 }
 
 RefPtr<Font> FontCache::similarFont(const FontDescription& description, const String& family)
@@ -1000,12 +1000,13 @@ static RetainPtr<CTFontRef> fontWithFamily(FontDatabase& fontDatabase, const Ato
         unrealizedFont->modify([&](CFMutableDictionaryRef attributes) {
             addAttributesForInstalledFonts(attributes, fontDescription.shouldAllowUserInstalledFonts());
         });
-        return preparePlatformFont(WTFMove(*unrealizedFont), fontDescription, fontCreationContext, true);
+        return preparePlatformFont(WTFMove(*unrealizedFont), fontDescription, fontCreationContext);
     }
     auto fontLookup = platformFontLookupWithFamily(fontDatabase, family, fontDescription.fontSelectionRequest());
     UnrealizedCoreTextFont unrealizedFont = { WTFMove(fontLookup.result) };
     unrealizedFont.setSize(size);
-    return preparePlatformFont(WTFMove(unrealizedFont), fontDescription, fontCreationContext, !fontLookup.createdFromPostScriptName);
+    ApplyTraitsVariations applyTraitsVariations = fontLookup.createdFromPostScriptName ? ApplyTraitsVariations::No : ApplyTraitsVariations::Yes;
+    return preparePlatformFont(WTFMove(unrealizedFont), fontDescription, fontCreationContext, applyTraitsVariations);
 }
 
 #if PLATFORM(MAC)
