@@ -33,6 +33,10 @@ namespace WebKit {
 
 void LoadParameters::encode(IPC::Encoder& encoder) const
 {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    encoder << topPrivatelyControlledDomain;
+    encoder << host;
+#endif
     encoder << navigationID;
     encoder << request;
 
@@ -61,14 +65,21 @@ void LoadParameters::encode(IPC::Encoder& encoder) const
     encoder << existingNetworkResourceLoadIdentifierToResume;
     encoder << isServiceWorkerLoad;
     encoder << sessionHistoryVisibility;
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    encoder << topPrivatelyControlledDomain;
-#endif
     platformEncode(encoder);
 }
 
 bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
 {
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    if (!decoder.decode(data.topPrivatelyControlledDomain))
+        return false;
+
+    if (!decoder.decode(data.host))
+        return false;
+
+    WebCore::setTopPrivatelyControlledDomain(data.host, data.topPrivatelyControlledDomain);
+#endif
+
     if (!decoder.decode(data.navigationID))
         return false;
 
@@ -157,11 +168,6 @@ bool LoadParameters::decode(IPC::Decoder& decoder, LoadParameters& data)
     
     if (!decoder.decode(data.sessionHistoryVisibility))
         return false;
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    if (!decoder.decode(data.topPrivatelyControlledDomain))
-        return false;
-#endif
 
     if (!platformDecode(decoder, data))
         return false;
