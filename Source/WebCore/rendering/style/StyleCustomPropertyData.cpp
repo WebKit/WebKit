@@ -71,20 +71,34 @@ bool StyleCustomPropertyData::operator==(const StyleCustomPropertyData& other) c
 
     for (auto& entry : m_ownValues) {
         auto* otherValue = other.get(entry.key);
-        if (!otherValue || !entry.value->equals(*otherValue))
+        if (!otherValue || !(entry.value == otherValue || entry.value->equals(*otherValue)))
             return false;
     }
 
-    if (m_parentValues) {
-        ASSERT(!m_parentValues->m_parentValues);
-        for (auto& entry : m_parentValues->m_ownValues) {
+    auto compareRemainingValues = [&](auto& remainingValues, auto& compareTo) {
+        for (auto& entry : remainingValues) {
             if (m_ownValues.contains(entry.key))
                 continue;
-            auto* otherValue = other.get(entry.key);
-            if (!otherValue || !entry.value->equals(*otherValue))
+            auto* otherValue = compareTo.get(entry.key);
+            if (!otherValue || !(entry.value == otherValue || entry.value->equals(*otherValue)))
                 return false;
         }
-    }
+        return true;
+    };
+
+    // If neither object has parent values, then the comparison of m_ownValues above is sufficient.
+    if (!m_parentValues && !other.m_parentValues)
+        return true;
+
+    // If both objects have the same parent values, we only need to compare the overridden values in
+    // `other` to those in `this`.
+    if (m_parentValues == other.m_parentValues)
+        return compareRemainingValues(other.m_ownValues, *this);
+
+    // If the objects have different parent values, we need to compare all the non-overridden values
+    // in `this` to those in `other`.
+    if (m_parentValues)
+        return compareRemainingValues(m_parentValues->m_ownValues, other);
 
     return true;
 }
