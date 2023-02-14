@@ -10078,6 +10078,11 @@
             "longname": "CSS Properties and Values API",
             "url": "https://drafts.css-houdini.org/css-properties-values-api"
         },
+        "css-rhythm": {
+            "shortname": "CSS Rhythmic Sizing",
+            "longname": "CSS Rhythmic Sizing",
+            "url": "https://www.w3.org/TR/css-rhythm-1/"
+        },
         "css-round-display": {
             "shortname": "CSS Round Display",
             "longname": "CSS Round Display Module",
