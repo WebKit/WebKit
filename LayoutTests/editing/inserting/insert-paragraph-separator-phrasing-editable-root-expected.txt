@@ -1,0 +1,155 @@
+
+a:
+| <br>
+| <#selection-caret>
+| <br>
+
+abbr:
+| <br>
+| <#selection-caret>
+| <br>
+
+b:
+| <br>
+| <#selection-caret>
+| <br>
+
+bdi:
+| <br>
+| <#selection-caret>
+| <br>
+
+bdo:
+| <br>
+| <#selection-caret>
+| <br>
+
+button:
+| <br>
+| <#selection-caret>
+| <br>
+
+cite:
+| <br>
+| <#selection-caret>
+| <br>
+
+code:
+| <br>
+| <#selection-caret>
+| <br>
+
+data:
+| <br>
+| <#selection-caret>
+| <br>
+
+del:
+| <br>
+| <#selection-caret>
+| <br>
+
+dfn:
+| <br>
+| <#selection-caret>
+| <br>
+
+em:
+| <br>
+| <#selection-caret>
+| <br>
+
+i:
+| <br>
+| <#selection-caret>
+| <br>
+
+ins:
+| <br>
+| <#selection-caret>
+| <br>
+
+kbd:
+| <br>
+| <#selection-caret>
+| <br>
+
+label:
+| <br>
+| <#selection-caret>
+| <br>
+
+link:
+| <br>
+| <#selection-caret>
+| <br>
+
+mark:
+| <br>
+| <#selection-caret>
+| <br>
+
+q:
+| <br>
+| <#selection-caret>
+| <br>
+
+ruby:
+| <br>
+| <#selection-caret>
+| <br>
+
+s:
+| <br>
+| <#selection-caret>
+| <br>
+
+samp:
+| <br>
+| <#selection-caret>
+| <br>
+
+slot:
+| <br>
+| <#selection-caret>
+| <br>
+
+small:
+| <br>
+| <#selection-caret>
+| <br>
+
+span:
+| <br>
+| <#selection-caret>
+| <br>
+
+strong:
+| <br>
+| <#selection-caret>
+| <br>
+
+sub:
+| <br>
+| <#selection-caret>
+| <br>
+
+sup:
+| <br>
+| <#selection-caret>
+| <br>
+
+time:
+| <br>
+| <#selection-caret>
+| <br>
+
+u:
+| <br>
+| <#selection-caret>
+| <br>
+
+var:
+| <br>
+| <#selection-caret>
+| <br>
