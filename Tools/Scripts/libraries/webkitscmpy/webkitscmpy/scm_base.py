@@ -28,7 +28,7 @@ import time
 
 from datetime import datetime
 from logging import NullHandler
-from webkitscmpy import Commit, Contributor, log
+from webkitscmpy import Commit, Contributor, CommitClassifier, log
 
 
 class ScmBase(object):
@@ -50,11 +50,12 @@ class ScmBase(object):
         ts = time.time()
         return int((datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)).total_seconds() * 100 / (60 * 60))
 
-    def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None):
+    def __init__(self, dev_branches=None, prod_branches=None, contributors=None, id=None, classifier=None):
         self.dev_branches = dev_branches or self.DEV_BRANCHES
         self.prod_branches = prod_branches or self.PROD_BRANCHES
         self.path = getattr(self, 'path', None)
         self.contributors = Contributor.Mapping() if contributors is None else contributors
+        self.classifier = CommitClassifier() if classifier is None else classifier
 
         if id and not isinstance(id, six.string_types):
             raise ValueError("Expected 'id' to be a string type, not '{}'".format(type(id)))

@@ -46,7 +46,7 @@ except ImportError:
         "Please install webkitcorepy with `pip install webkitcorepy --extra-index-url <package index URL>`"
     )
 
-version = Version(5, 13, 2)
+version = Version(5, 14, 0)
 
 AutoInstall.register(Package('fasteners', Version(0, 15, 0)))
 AutoInstall.register(Package('jinja2', Version(2, 11, 3)))
@@ -60,6 +60,7 @@ if sys.version_info > (3, 6):
 
 from webkitscmpy.contributor import Contributor
 from webkitscmpy.commit import Commit
+from webkitscmpy.commit_classifier import CommitClassifier
 from webkitscmpy.pull_request import PullRequest
 from webkitscmpy.scm_base import ScmBase
 
