@@ -404,6 +404,11 @@ select, button, meter, progress, input:is([type="button"], [type="submit"], [typ
     writing-mode: horizontal-tb !important;
 }
 
+/* FIXME: Unprefix when https://bugs.webkit.org/show_bug.cgi?id=208677 is fixed. */
+button, meter, progress, select {
+    -webkit-user-select: none;
+}
+
 input, textarea, select, button {
     margin: 0__qem;
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
