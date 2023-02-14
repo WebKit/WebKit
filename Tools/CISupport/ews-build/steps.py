@@ -5065,7 +5065,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
     name = 'determine-landed-identifier'
     descriptionDone = ['Determined landed identifier']
-    command = ['git', 'log', '-1', '--no-decorate']
+    command = ['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]
     CANONICAL_LINK_RE = re.compile(r'\ACanonical link: https://commits\.webkit\.org/(?P<identifier>\d+.?\d*@\S+)\Z')
     haltOnFailure = False
 
@@ -5089,7 +5089,9 @@ class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
 
         loglines = self.log_observer.getStdout().splitlines()
 
-        for line in loglines[4:]:
+        for line in loglines:
+            if not line:
+                continue
             match = self.CANONICAL_LINK_RE.match(line[4:])
             if match:
                 self.identifier = match.group('identifier')
@@ -5099,7 +5101,9 @@ class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
         if not self.identifier:
             yield task.deferLater(reactor, 60, lambda: None)  # It takes time for commits.webkit.org to digest commits
             self.identifier = yield self.identifier_for_hash(landed_hash)
-            if not self.identifier or '@' not in self.identifier:
+            if self.identifier and '@' in self.identifier:
+                rc = SUCCESS
+            else:
                 rc = FAILURE
 
         self.setProperty('comment_text', self.comment_text_for_bug(landed_hash, self.identifier))
@@ -5146,9 +5150,6 @@ class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
         if pr_number:
             comment += f'\n\nReviewed commits have been landed. Closing PR #{pr_number} and removing active labels.'
         return comment
-
-    def hideStepIf(self, results, step):
-        return self.getProperty('sensitive', False)
 
 
 class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):

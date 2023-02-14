@@ -5744,24 +5744,8 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
-                ExpectShell.log('stdio', stdout=''''commit 220797@main (14dbf1155cf56a1dd4d86a847e61af3c3e5d2ca5, r256729)
-Author: Aakash Jain <aakash_jain@apple.com>
-Date:   Mon Feb 17 15:09:42 2020 +0000
-
-    [ews] add SetBuildSummary step
-    https://bugs.webkit.org/show_bug.cgi?id=207556
-    
-    Reviewed by Jonathan Bedard.
-    
-    * BuildSlaveSupport/ews-build/factories.py:
-    (GTKBuildAndTestFactory.__init__):
-    * BuildSlaveSupport/ews-build/factories_unittest.py:
-    (TestBuildAndTestsFactory): Added unit-test.
-    
-    
-    Canonical link: https://commits.webkit.org/220797@main
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@256729 268f45cc-cd09-0410-ab3c-d52691b4dbfc''') +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
+                ExpectShell.log('stdio', stdout='    Canonical link: https://commits.webkit.org/220797@main\n') +
                 0,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
@@ -5782,22 +5766,8 @@ Date:   Mon Feb 17 15:09:42 2020 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
-                ExpectShell.log('stdio', stdout=''''commit 5dc27962b4c5bdfd17d17faa785f70abbb0550ed
-Author: Matteo Flores <matteo_flores@apple.com>
-Date:   Fri Apr 22 21:24:12 2022 +0000
-
-    REBASLINE: [ Monterey ] fast/text/khmer-lao-font.html is a constant text failure
-    
-    https://bugs.webkit.org/show_bug.cgi?id=238917
-    
-    Unreviewed test gardening.
-    
-    * platform/mac-bigsur/fast/text/khmer-lao-font-expected.txt: Copied from LayoutTests/platform/mac/fast/text/khmer-lao-font-expected.txt.
-    * platform/mac/fast/text/khmer-lao-font-expected.txt:
-    
-    Canonical link: https://commits.webkit.org/249903@main
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@293254 268f45cc-cd09-0410-ab3c-d52691b4dbfc''') +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
+                ExpectShell.log('stdio', stdout='    Canonical link: https://commits.webkit.org/249903@main\n') +
                 0,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 249903@main')
@@ -5817,9 +5787,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
             with current_hostname(EWS_BUILD_HOSTNAME):
@@ -5838,9 +5808,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
             with current_hostname(EWS_BUILD_HOSTNAME):
@@ -5859,9 +5829,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=SUCCESS, state_string='Identifier: 220797@main')
             with current_hostname(EWS_BUILD_HOSTNAME):
@@ -5880,9 +5850,9 @@ Date:   Fri Apr 22 21:24:12 2022 +0000
             ExpectShell(workdir='wkdir',
                         timeout=300,
                         logEnviron=False,
-                        command=['git', 'log', '-1', '--no-decorate']) +
+                        command=['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]) +
                 ExpectShell.log('stdio', stdout='') +
-                0,
+                1,
             )
             self.expectOutcome(result=FAILURE, state_string='Failed to determine identifier')
             with current_hostname(EWS_BUILD_HOSTNAME):
