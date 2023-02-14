@@ -1,4 +1,4 @@
-// Copyright (C) 2010-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -56,6 +56,7 @@ PROFILE_DATA_FLAGS_Production_macosx = $(PROFILE_DATA_FLAGS_Production_macosx$(W
 PROFILE_DATA_FLAGS_Production_macosx_MACOS_SINCE_1200 = $(PROFILE_DATA_FLAGS_ENABLED);
 PROFILE_DATA_FLAGS_Production_iphoneos = $(PROFILE_DATA_FLAGS_ENABLED);
 
+// Variables overridden in NetworkService.xcconfig and WebContentService.xcconfig.
 PROFILE_GENERATE_OR_USE_CFLAGS_ENABLE_LLVM_PROFILE_GENERATION = -fprofile-instr-generate -DENABLE_LLVM_PROFILE_GENERATION=1;
 PROFILE_GENERATE_OR_USE_CFLAGS_ = $(PROFILE_DATA_FLAGS);
 PROFILE_GENERATE_OR_USE_CFLAGS = $(PROFILE_GENERATE_OR_USE_CFLAGS_$(ENABLE_LLVM_PROFILE_GENERATION));
@@ -65,6 +66,7 @@ PROFILE_GENERATE_OR_USE_LDFLAGS = $(PROFILE_GENERATE_OR_USE_LDFLAGS_$(ENABLE_LLV
 OTHER_CFLAGS = $(inherited) -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks -D__STDC_WANT_LIB_EXT1__=1 $(PROFILE_GENERATE_OR_USE_CFLAGS) $(WK_LIBCPP_ASSERTIONS_CFLAGS);
 
 // FIXME: This shouldn't be computing path from scratch, the computation should be shared.
+// Overridden in WebContentService.xcconfig.
 OTHER_LDFLAGS_STAGED_FRAMEWORK_PATH = $(OTHER_LDFLAGS_STAGED_FRAMEWORK_PATH_$(USE_STAGING_INSTALL_PATH));
 OTHER_LDFLAGS_STAGED_FRAMEWORK_PATH_YES = -Wl,-dyld_env,DYLD_FRAMEWORK_PATH=$(WK_INSTALL_PATH_PREFIX)/System/Library/StagedFrameworks/Safari,-dyld_env,DYLD_LIBRARY_PATH=$(WK_INSTALL_PATH_PREFIX)/System/Library/StagedFrameworks/Safari;
 OTHER_LDFLAGS_STAGED_FRAMEWORK_PATH_YES[sdk=macosx11*] = -Wl,-dyld_env,DYLD_VERSIONED_FRAMEWORK_PATH=$(WK_INSTALL_PATH_PREFIX)/System/Library/StagedFrameworks/Safari,-dyld_env,DYLD_VERSIONED_LIBRARY_PATH=$(WK_INSTALL_PATH_PREFIX)/System/Library/StagedFrameworks/Safari;
