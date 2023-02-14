@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)
     , m_scope(vm, this, globalObject)
 {
+    RELEASE_ASSERT(m_scope->globalObject() == globalObject); // FIXME make ASSERT
 }
 
 JSCallee::JSCallee(VM& vm, JSScope* scope, Structure* structure)

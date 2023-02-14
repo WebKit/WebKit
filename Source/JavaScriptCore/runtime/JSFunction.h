@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -191,6 +191,7 @@ private:
     static JSFunction* createImpl(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     {
         JSFunction* function = new (NotNull, allocateCell<JSFunction>(vm)) JSFunction(vm, executable, scope, structure);
+        RELEASE_ASSERT(scope->globalObject() == function->globalObject()); // FIXME make ASSERT
         ASSERT(function->structure()->globalObject());
         function->finishCreation(vm);
         return function;

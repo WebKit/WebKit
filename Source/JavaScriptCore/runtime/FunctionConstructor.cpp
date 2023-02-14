@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -199,13 +199,13 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(JSGlobalObject* globalObject
 
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:
-        return JSFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSFunction::create(vm, function, structureGlobalObject->globalScope(), structure);
     case FunctionConstructionMode::Generator:
-        return JSGeneratorFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSGeneratorFunction::create(vm, function, structureGlobalObject->globalScope(), structure);
     case FunctionConstructionMode::Async:
-        return JSAsyncFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSAsyncFunction::create(vm, function, structureGlobalObject->globalScope(), structure);
     case FunctionConstructionMode::AsyncGenerator:
-        return JSAsyncGeneratorFunction::create(vm, function, globalObject->globalScope(), structure);
+        return JSAsyncGeneratorFunction::create(vm, function, structureGlobalObject->globalScope(), structure);
     }
 
     ASSERT_NOT_REACHED();
