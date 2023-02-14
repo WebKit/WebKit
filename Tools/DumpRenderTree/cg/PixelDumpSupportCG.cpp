@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *           (C) 2007 Eric Seidel <eric@webkit.org>
  *
@@ -53,10 +53,6 @@
 
 using namespace std;
 
-#if PLATFORM(WIN)
-static const CFStringRef kUTTypePNG = CFSTR("public.png");
-#endif
-
 static void printPNG(CGImageRef image, const char* checksum, double scaleFactor)
 {
     auto imageData = adoptCF(CFDataCreateMutable(0, 0));
@@ -91,7 +87,6 @@ void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashStri
     // We need to swap the bytes to ensure consistent hashes independently of endianness
     SHA1 sha1;
     unsigned char* bitmapData = static_cast<unsigned char*>(CGBitmapContextGetData(bitmapContext));
-#if PLATFORM(COCOA)
     if ((CGBitmapContextGetBitmapInfo(bitmapContext) & kCGBitmapByteOrderMask) == kCGBitmapByteOrder32Big) {
         for (unsigned row = 0; row < pixelsHigh; row++) {
             uint32_t buffer[pixelsWide];
@@ -100,9 +95,7 @@ void computeSHA1HashStringForBitmapContext(BitmapContext* context, char hashStri
             sha1.addBytes(reinterpret_cast<const uint8_t*>(buffer), 4 * pixelsWide);
             bitmapData += bytesPerRow;
         }
-    } else
-#endif
-    {
+    } else {
         for (unsigned row = 0; row < pixelsHigh; row++) {
             sha1.addBytes(bitmapData, 4 * pixelsWide);
             bitmapData += bytesPerRow;
@@ -122,12 +115,11 @@ void dumpBitmap(BitmapContext* context, const char* checksum)
     printPNG(image.get(), checksum, context->scaleFactor());
 }
 
-#if PLATFORM(COCOA)
-RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes, void*& buffer)
+RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, size_t& rowBytes)
 {
     rowBytes = (4 * pixelsWide + 63) & ~63; // Use a multiple of 64 bytes to improve CG performance
 
-    buffer = calloc(pixelsHigh, rowBytes);
+    UniqueBitmapBuffer buffer { calloc(pixelsHigh, rowBytes), std::free };
     if (!buffer) {
         WTFLogAlways("DumpRenderTree: calloc(%zu, %zu) failed\n", pixelsHigh, rowBytes);
         return nullptr;
@@ -135,14 +127,11 @@ RefPtr<BitmapContext> createBitmapContext(size_t pixelsWide, size_t pixelsHigh, 
     
     // Creating this bitmap in the device color space prevents any color conversion when the image of the web view is drawn into it.
     RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
-    auto context = adoptCF(CGBitmapContextCreate(buffer, pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
+    auto context = adoptCF(CGBitmapContextCreate(buffer.get(), pixelsWide, pixelsHigh, 8, rowBytes, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
     if (!context) {
-        WTFLogAlways("DumpRenderTree: CGBitmapContextCreate(%p, %zu, %zu, 8, %zu, %p, 0x%x) failed\n", buffer, pixelsHigh, pixelsWide, rowBytes, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host));
-        free(buffer);
-        buffer = nullptr;
+        WTFLogAlways("DumpRenderTree: CGBitmapContextCreate(%p, %zu, %zu, 8, %zu, %p, 0x%x) failed\n", buffer.get(), pixelsHigh, pixelsWide, rowBytes, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host));
         return nullptr;
     }
 
-    return BitmapContext::createByAdoptingBitmapAndContext(buffer, WTFMove(context));
+    return BitmapContext::createByAdoptingBitmapAndContext(WTFMove(buffer), WTFMove(context));
 }
-#endif
