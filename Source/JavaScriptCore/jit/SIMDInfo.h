@@ -220,10 +220,10 @@ constexpr unsigned elementByteSize(SIMDLane simdLane)
 
 namespace WTF {
 
-void printInternal(PrintStream& out, JSC::SIMDLane lane);
+JS_EXPORT_PRIVATE void printInternal(PrintStream& out, JSC::SIMDLane);
 
-void printInternal(PrintStream& out, JSC::SIMDSignMode mode);
+JS_EXPORT_PRIVATE void printInternal(PrintStream& out, JSC::SIMDSignMode);
 
-void printInternal(PrintStream& out, JSC::v128_t v);
+JS_EXPORT_PRIVATE void printInternal(PrintStream& out, JSC::v128_t);
 
 } // namespace WTF

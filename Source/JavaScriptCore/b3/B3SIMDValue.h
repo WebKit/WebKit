@@ -92,6 +92,7 @@ public:
         case VectorExtaddPairwise:
         case VectorMulSat:
         case VectorSwizzle:
+        case VectorMulByElement:
         case VectorDotProduct:
             return true;
         default:

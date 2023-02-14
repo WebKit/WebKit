@@ -536,6 +536,7 @@ protected:
         case VectorShr:
         case VectorMulSat:
         case VectorAvgRound:
+        case VectorMulByElement:
             return 2 * sizeof(Value*);
         case Select:
         case AtomicWeakCAS:
@@ -750,6 +751,7 @@ private:
         case VectorShr:
         case VectorMulSat:
         case VectorAvgRound:
+        case VectorMulByElement:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);
             return Two;

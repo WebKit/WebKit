@@ -467,6 +467,7 @@ public:
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
                 VALIDATE(value->child(0)->type() == V128, ("At ", *value));
                 VALIDATE(value->type() == V128, ("At ", *value));
+                VALIDATE(value->asSIMDValue()->immediate() < (16 / elementByteSize(value->asSIMDValue()->simdLane())), ("At ", *value));
                 break;
             case VectorNot:
             case VectorAbs:
@@ -509,6 +510,15 @@ public:
                 VALIDATE(value->child(1)->type() == V128, ("At ", *value));
                 VALIDATE(value->numChildren() == 2 || value->child(2)->type() == V128, ("At ", *value));
                 VALIDATE(value->asSIMDValue()->simdLane() == SIMDLane::i8x16, ("At ", *value));
+                break;
+
+            case VectorMulByElement:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 2, ("At ", *value));
+                VALIDATE(value->child(0)->type() == V128, ("At ", *value));
+                VALIDATE(value->type() == V128, ("At ", *value));
+                VALIDATE(value->asSIMDValue()->simdLane() == SIMDLane::f64x2 || value->asSIMDValue()->simdLane() == SIMDLane::f32x4, ("At ", *value));
+                VALIDATE(value->asSIMDValue()->immediate() < (16 / elementByteSize(value->asSIMDValue()->simdLane())), ("At ", *value));
                 break;
 
             case VectorBitmask:

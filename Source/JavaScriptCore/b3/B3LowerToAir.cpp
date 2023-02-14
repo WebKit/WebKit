@@ -3813,6 +3813,25 @@ private:
             return;
         }
 
+        case B3::VectorMulByElement: {
+            ASSERT(isARM64());
+            SIMDValue* value = m_value->as<SIMDValue>();
+            auto lane = value->simdLane();
+            Air::Opcode op;
+            switch (lane) {
+            case SIMDLane::f32x4:
+                op = VectorMulByElementFloat32;
+                break;
+            case SIMDLane::f64x2:
+                op = VectorMulByElementFloat64;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+            append(op, tmp(value->child(0)), tmp(value->child(1)), Arg::imm(value->immediate()), tmp(value));
+            return;
+        }
+
         case B3::VectorSplat: {
             SIMDValue* value = m_value->as<SIMDValue>();
             SIMDLane lane = value->simdLane();

@@ -2716,6 +2716,30 @@ private:
             break;
         }
 
+        case VectorMul: {
+            if constexpr (isARM64()) {
+                SIMDValue* value = m_value->as<SIMDValue>();
+                Value* left = m_value->child(0);
+                Value* right = m_value->child(1);
+
+                if (!scalarTypeIsFloatingPoint(value->simdInfo().lane))
+                    break;
+
+                auto tryReplaceWithVectorMulByElement = [&] (Value* left, Value* right) -> bool {
+                    if (right->opcode() != VectorDupElement)
+                        return false;
+                    if (elementByteSize(right->as<SIMDValue>()->simdInfo().lane) != elementByteSize(value->simdInfo().lane))
+                        return false;
+                    replaceWithNew<SIMDValue>(value->origin(), VectorMulByElement, B3::V128, value->simdInfo(), right->as<SIMDValue>()->immediate(), left, right->child(0));
+                    return true;
+                };
+
+                if (tryReplaceWithVectorMulByElement(left, right) || tryReplaceWithVectorMulByElement(right, left))
+                    break;
+            }
+            break;
+        }
+
         default:
             break;
         }
