@@ -1615,7 +1615,6 @@ webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-with-tabindex.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots-in-slot.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots.html [ Failure ]
-webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-web-component-input-type-radio.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-with-delegatesFocus.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-nested-slots.html [ Failure ]
@@ -3872,11 +3871,6 @@ imported/w3c/web-platform-tests/websockets/unload-a-document/005.html?wpt_flags=
 
 # The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
 svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
-
-# These tests have similar harness errors and timeouts. See webkit.org/b/244900
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
 
 webkit.org/b/251219 fast/images/animated-avif.html [ ImageOnlyFailure ]
 
