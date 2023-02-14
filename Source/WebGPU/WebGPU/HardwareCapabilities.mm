@@ -93,6 +93,7 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     // WGPUFeatureName_TextureCompressionETC2 and WGPUFeatureName_TextureCompressionASTC are to be filled in by the caller.
 
     features.append(WGPUFeatureName_IndirectFirstInstance);
+    features.append(WGPUFeatureName_RG11B10UfloatRenderable);
 
     return features;
 }
