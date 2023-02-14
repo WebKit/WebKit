@@ -251,15 +251,28 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
 {
-    // FIXME: handle reference index access
-    auto* arrayType = infer(access.base());
+    auto* base = infer(access.base());
     auto* index = infer(access.index());
 
-    // FIXME: unify index with UnionType(i32, u32)
-    UNUSED_PARAM(index);
+    if (isBottom(base)) {
+        inferred(m_types.bottomType());
+        return;
+    }
 
-    // FIXME: set the inferred type to the array's member type
-    inferred(arrayType);
+    if (!unify(index, m_types.i32Type()) && !unify(index, m_types.u32Type()) && !unify(index, m_types.abstractIntType())) {
+        typeError(access.span(), "index must be of type 'i32' or 'u32', found: '", *index, "'");
+        return;
+    }
+
+    if (std::holds_alternative<Types::Array>(*base)) {
+        // FIXME: check bounds if index is constant
+        auto& array = std::get<Types::Array>(*base);
+        inferred(array.element);
+        return;
+    }
+
+    // FIXME: Implement reference and matrix accesses
+    typeError(access.span(), "cannot index type '", *base, "'");
 }
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
