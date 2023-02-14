@@ -54,6 +54,7 @@ enum class LinkTimeConstant : int32_t;
     macro(getStringIteratorInternalField) \
     macro(getMapIteratorInternalField) \
     macro(getSetIteratorInternalField) \
+    macro(getProxyInternalField) \
     macro(idWithProfile) \
     macro(isObject) \
     macro(isCallable) \
@@ -130,6 +131,8 @@ enum class LinkTimeConstant : int32_t;
     macro(promiseFlagsIsFirstResolvingFunctionCalled) \
     macro(promiseFieldFlags) \
     macro(promiseFieldReactionsOrResult) \
+    macro(proxyFieldTarget) \
+    macro(proxyFieldHandler) \
     macro(generatorFieldState) \
     macro(generatorFieldNext) \
     macro(generatorFieldThis) \

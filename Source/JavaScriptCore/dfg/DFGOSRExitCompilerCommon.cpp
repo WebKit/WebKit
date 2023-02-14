@@ -171,7 +171,8 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
         case InlineCallFrame::ConstructVarargs:
             jumpTarget = LLINT_RETURN_LOCATION(op_construct_varargs);
             break;
-        case InlineCallFrame::GetterCall: {
+        case InlineCallFrame::GetterCall:
+        case InlineCallFrame::ProxyObjectLoadCall: {
             if (callInstruction.opcodeID() == op_get_by_id)
                 jumpTarget = LLINT_RETURN_LOCATION(op_get_by_id);
             else if (callInstruction.opcodeID() == op_get_by_val)
@@ -212,7 +213,8 @@ static CodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCodeBlockForCall
         }
 
         case InlineCallFrame::GetterCall:
-        case InlineCallFrame::SetterCall: {
+        case InlineCallFrame::SetterCall:
+        case InlineCallFrame::ProxyObjectLoadCall: {
             StructureStubInfo* stubInfo = baselineCodeBlockForCaller->findStubInfo(CodeOrigin(callBytecodeIndex));
             RELEASE_ASSERT(stubInfo, callInstruction.opcodeID());
             jumpTarget = stubInfo->doneLocation.retagged<JSEntryPtrTag>();

@@ -215,6 +215,7 @@ private:
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
     bool handleDOMJITGetter(Operand result, const GetByVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
     bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus);
+    bool handleProxyObjectLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus, BytecodeIndex osrExitIndex);
 
     template<typename Bytecode>
     void handlePutByVal(Bytecode, BytecodeIndex osrExitIndex);
@@ -1757,7 +1758,8 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
 
     switch (kind) {
     case InlineCallFrame::GetterCall:
-    case InlineCallFrame::SetterCall: {
+    case InlineCallFrame::SetterCall:
+    case InlineCallFrame::ProxyObjectLoadCall: {
         // When inlining getter and setter calls, we setup a stack frame which does not appear in the bytecode.
         // Because Inlining can switch on executable, we could have a graph like this.
         //
@@ -4150,6 +4152,61 @@ bool ByteCodeParser::handleModuleNamespaceLoad(VirtualRegister result, Speculate
     return true;
 }
 
+bool ByteCodeParser::handleProxyObjectLoad(VirtualRegister destination, SpeculatedType prediction, Node* base, GetByStatus getById, BytecodeIndex osrExitIndex)
+{
+    if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+        return false;
+    JSGlobalObject* globalObject = m_inlineStackTop->m_codeBlock->globalObject();
+    auto* function = globalObject->performProxyObjectGetFunctionConcurrently();
+    if (UNLIKELY(!function))
+        return false;
+
+    addToGraph(Check, Edge(base, ProxyObjectUse));
+    Node* functionNode = weakJSConstant(function);
+    Node* propertyNameNode = weakJSConstant(getById.variants()[0].identifier().cell());
+
+    addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getById)), base);
+
+    // Make a call. We don't try to get fancy with using the smallest operand number because
+    // the stack layout phase should compress the stack anyway.
+
+    unsigned numberOfParameters = 0;
+    numberOfParameters++; // |this|
+    numberOfParameters++; // |receiver|
+    numberOfParameters++; // |propertyName|
+    numberOfParameters++; // True return PC.
+
+    // Start with a register offset that corresponds to the last in-use register.
+    int registerOffset = virtualRegisterForLocal(m_inlineStackTop->m_profiledBlock->numCalleeLocals() - 1).offset();
+    registerOffset -= numberOfParameters;
+    registerOffset -= CallFrame::headerSizeInRegisters;
+
+    // Get the alignment right.
+    registerOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -registerOffset);
+
+    ensureLocals(m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).toLocal());
+
+    // Issue SetLocals. This has two effects:
+    // 1) That's how handleCall() sees the arguments.
+    // 2) If we inline then this ensures that the arguments are flushed so that if you use
+    //    the dreaded arguments object on the getter, the right things happen. Well, sort of -
+    //    since we only really care about 'this' in this case. But we're not going to take that
+    //    shortcut.
+    set(virtualRegisterForArgumentIncludingThis(0, registerOffset), base, ImmediateNakedSet);
+    set(virtualRegisterForArgumentIncludingThis(1, registerOffset), base, ImmediateNakedSet); // FIXME: We can extend this to handle arbitrary receiver.
+    set(virtualRegisterForArgumentIncludingThis(2, registerOffset), propertyNameNode, ImmediateNakedSet);
+
+    // We've set some locals, but they are not user-visible. It's still OK to exit from here.
+    m_exitOK = true;
+    addToGraph(ExitOK);
+
+    handleCall(
+        destination, Call, InlineCallFrame::ProxyObjectLoadCall, osrExitIndex,
+        functionNode, numberOfParameters - 1, registerOffset, *getById.variants()[0].callLinkStatus(), prediction);
+
+    return true;
+}
+
 template<typename ChecksFunctor>
 bool ByteCodeParser::handleTypedArrayConstructor(
     Operand result, JSObject* function, int registerOffset,
@@ -4790,11 +4847,20 @@ void ByteCodeParser::handleGetById(
     else
         getById = getByStatus.makesCalls() ? GetByIdDirectFlush : GetByIdDirect;
 
-    if (getById != TryGetById && getByStatus.isModuleNamespace()) {
-        if (handleModuleNamespaceLoad(destination, prediction, base, getByStatus)) {
-            if (UNLIKELY(m_graph.compilation()))
-                m_graph.compilation()->noticeInlinedGetById();
-            return;
+    if (getById != TryGetById) {
+        if (getByStatus.isModuleNamespace()) {
+            if (handleModuleNamespaceLoad(destination, prediction, base, getByStatus)) {
+                if (UNLIKELY(m_graph.compilation()))
+                    m_graph.compilation()->noticeInlinedGetById();
+                return;
+            }
+        }
+        if (getByStatus.isProxyObject()) {
+            if (handleProxyObjectLoad(destination, prediction, base, getByStatus, osrExitIndex)) {
+                if (UNLIKELY(m_graph.compilation()))
+                    m_graph.compilation()->noticeInlinedGetById();
+                return;
+            }
         }
     }
 
