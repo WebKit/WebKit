@@ -343,7 +343,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     if (hasDisplayContents)
         element.storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
     else
-        element.resetComputedStyle();
+        element.clearDisplayContentsStyle();
 
     bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkipsContent());
     if (shouldCreateNewRenderer) {
