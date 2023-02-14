@@ -47,6 +47,7 @@ public:
         }
 
         m_current = (m_code != m_codeEnd) ? *m_code : 0;
+        m_currentPosition = { 1, 0, 0 };
     }
 
     Token lex();
