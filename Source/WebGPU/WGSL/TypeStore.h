@@ -53,15 +53,18 @@ public:
     Type* f32Type() const { return m_f32; }
 
     Type* structType(const AST::Identifier& name);
-    Type* constructType(AST::ParameterizedTypeName::Base, Type*);
     Type* arrayType(Type*, std::optional<unsigned>);
+    Type* vectorType(Type*, uint8_t);
+    Type* matrixType(Type*, uint8_t columns, uint8_t rows);
+
+    Type* constructType(AST::ParameterizedTypeName::Base, Type*);
 
 private:
     template<typename TypeKind, typename... Arguments>
     Type* allocateType(Arguments&&...);
 
-    template<typename TargetType, typename Base, typename... Arguments>
-    void allocateConstructor(Base, Arguments&&...);
+    template<typename TargetConstructor, typename Base, typename... Arguments>
+    void allocateConstructor(TargetConstructor, Base, Arguments&&...);
 
     struct TypeConstructor {
         std::function<Type*(Type*)> construct;

@@ -45,7 +45,7 @@ namespace Types {
     f(Bool, "bool") \
 
 struct Primitive {
-    enum Kind {
+    enum Kind : uint8_t {
 #define PRIMITIVE_KIND(kind, name) kind,
     FOR_EACH_PRIMITIVE_TYPE(PRIMITIVE_KIND)
 #undef PRIMITIVE_KIND

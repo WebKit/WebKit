@@ -31,6 +31,7 @@
 #include "ASTVisitor.h"
 #include "CompilationMessage.h"
 #include "ContextProviderInlines.h"
+#include "Overload.h"
 #include "TypeStore.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
@@ -96,6 +97,7 @@ private:
     bool unify(Type*, Type*) WARN_UNUSED_RETURN;
     bool isBottom(Type*) const;
     std::optional<unsigned> extractInteger(AST::Expression&);
+    Type* chooseOverload(const String&, const WTF::Vector<Type*>&);
 
     ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
@@ -103,6 +105,8 @@ private:
     // FIXME: move this into a class that contains the AST
     TypeStore m_types;
     Vector<Error> m_errors;
+    // FIXME: maybe these should live in the context
+    HashMap<String, WTF::Vector<OverloadCandidate>> m_overloadedOperations;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -113,6 +117,34 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceVariable(AST::Identifier::make("i32"_s), m_types.i32Type());
     introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
     introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
+
+    // FIXME: Add all other overloads
+    // FIXME: we should make this a lot more convenient
+    // operator + [T<:Number](T, T) -> T
+    OverloadCandidate plus1;
+    {
+        TypeVariable T { 0, TypeVariable::Number };
+        plus1.typeVariables.append(T);
+        plus1.parameters.append(T);
+        plus1.parameters.append(T);
+        plus1.result = T;
+    }
+    // operator + [T<:Number, N](vector<T, N>, T) -> vector<T, N>
+    OverloadCandidate plus2;
+    {
+        TypeVariable T { 0, TypeVariable::Number };
+        NumericVariable N { 0 };
+        plus2.typeVariables.append(T);
+        plus2.numericVariables.append(N);
+        plus2.parameters.append(AbstractVector { T, N });
+        plus2.parameters.append(T);
+        plus2.result = AbstractVector { T, N };
+    }
+
+    m_overloadedOperations.add("+"_s, WTF::Vector<OverloadCandidate> ({
+        WTFMove(plus1),
+        WTFMove(plus2),
+    }));
 }
 
 void TypeChecker::check()
@@ -280,8 +312,9 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
     // FIXME: this needs to resolve overloads, not just unify both types
     auto* leftType = infer(binary.leftExpression());
     auto* rightType = infer(binary.rightExpression());
-    if (unify(leftType, rightType))
-        inferred(leftType);
+    auto* result = chooseOverload(toString(binary.operation()), { leftType, rightType });
+    if (result)
+        inferred(result);
     else
         typeError(binary.span(), "no matching overload for operator ", toString(binary.operation()), " (", *leftType, ", ", *rightType, ")");
 }
@@ -459,6 +492,14 @@ void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcces
     }
 
     inferred(m_types.constructType(base, vector.element));
+}
+
+Type* TypeChecker::chooseOverload(const String& operation, const WTF::Vector<Type*>& arguments)
+{
+    auto it = m_overloadedOperations.find(operation);
+    if (it == m_overloadedOperations.end())
+        return nullptr;
+    return resolveOverloads(m_types, it->value, arguments);
 }
 
 Type* TypeChecker::infer(AST::Expression& expression)
