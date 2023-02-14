@@ -50,21 +50,6 @@
 
 namespace WebCore {
 
-static inline void appendTrueTypeFeature(CFMutableArrayRef features, int type, int selector)
-{
-    auto typeNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &type));
-    auto selectorNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &selector));
-    CFTypeRef featureKeys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
-    CFTypeRef featureValues[] = { typeNumber.get(), selectorNumber.get() };
-    auto feature = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureKeys, featureValues, std::size(featureKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    CFArrayAppendValue(features, feature.get());
-}
-
-static inline bool tagEquals(FontTag tag, const char comparison[4])
-{
-    return equalIgnoringASCIICase(tag.data(), comparison, 4);
-}
-
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
 {
     auto featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(feature.tag().data()), feature.tag().size() * sizeof(FontTag::value_type), kCFStringEncodingASCII, false));
@@ -414,17 +399,6 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
         variationsToBeApplied.set(tag, value);
     };
 
-    auto applyFeature = [&](const FontTag& tag, int value) {
-        // AAT doesn't differentiate between liga and clig. We need to make sure they always agree.
-        featuresToBeApplied.set(tag, value);
-        if (fontType.aatShaping) {
-            if (tag == fontFeatureTag("liga"))
-                featuresToBeApplied.set(fontFeatureTag("clig"), value);
-            else if (tag == fontFeatureTag("clig"))
-                featuresToBeApplied.set(fontFeatureTag("liga"), value);
-        }
-    };
-
     // Step 1: CoreText handles default features (such as required ligatures).
 
     // Step 2: font-weight, font-stretch, and font-style
@@ -468,34 +442,34 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
     // Step 7: Consult with font-feature-settings inside @font-face
     if (fontCreationContext.fontFaceFeatures()) {
         for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures())
-            applyFeature(fontFaceFeature.tag(), fontFaceFeature.value());
+            featuresToBeApplied.set(fontFaceFeature.tag(), fontFaceFeature.value());
     }
 
     // FIXME: Move font-optical-sizing handling here. It should be step 9.
 
     // Step 10: Font-variant
     for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings, fontCreationContext.fontFeatureValues()))
-        applyFeature(newFeature.key, newFeature.value);
+        featuresToBeApplied.set(newFeature.key, newFeature.value);
 
     // Step 11: Other properties
     if (textRenderingMode == TextRenderingMode::OptimizeSpeed) {
-        applyFeature(fontFeatureTag("liga"), 0);
-        applyFeature(fontFeatureTag("clig"), 0);
-        applyFeature(fontFeatureTag("dlig"), 0);
-        applyFeature(fontFeatureTag("hlig"), 0);
-        applyFeature(fontFeatureTag("calt"), 0);
+        featuresToBeApplied.set(fontFeatureTag("liga"), 0);
+        featuresToBeApplied.set(fontFeatureTag("clig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("dlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("hlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("calt"), 0);
     }
     if (shouldDisableLigaturesForSpacing) {
-        applyFeature(fontFeatureTag("liga"), 0);
-        applyFeature(fontFeatureTag("clig"), 0);
-        applyFeature(fontFeatureTag("dlig"), 0);
-        applyFeature(fontFeatureTag("hlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("liga"), 0);
+        featuresToBeApplied.set(fontFeatureTag("clig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("dlig"), 0);
+        featuresToBeApplied.set(fontFeatureTag("hlig"), 0);
         // Core Text doesn't disable calt when letter-spacing is applied, so we won't either.
     }
 
     // Step 13: Font-feature-settings
     for (auto& newFeature : features)
-        applyFeature(newFeature.tag(), newFeature.value());
+        featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
     // Step 12: font-variation-settings
     for (auto& newVariation : variations)
@@ -506,16 +480,6 @@ static RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const Fo
         auto featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
         for (auto& p : featuresToBeApplied) {
             auto feature = FontFeature(p.key, p.value);
-
-            // CoreText does not map hlig and hist for TrueType fonts.
-            if (fontType.aatShaping && (tagEquals(feature.tag(), "hlig") || tagEquals(feature.tag(), "hist"))) {
-                if (feature.enabled())
-                    appendTrueTypeFeature(featureArray.get(), kLigaturesType, kHistoricalLigaturesOnSelector);
-                else if (tagEquals(feature.tag(), "hlig"))
-                    appendTrueTypeFeature(featureArray.get(), kLigaturesType, kHistoricalLigaturesOffSelector);
-                continue;
-            }
-
             appendOpenTypeFeature(featureArray.get(), feature);
         }
         CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
