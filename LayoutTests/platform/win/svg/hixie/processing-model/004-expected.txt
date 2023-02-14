@@ -1,7 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x18
-  RenderBlock {svg} at (0,0) size 800x18 [color=#008000]
-    RenderInline {rect} at (0,0) size 0x0
-    RenderText {#text} at (0,0) size 163x18
-      text run at (0,0) width 163: "This line should be green."
