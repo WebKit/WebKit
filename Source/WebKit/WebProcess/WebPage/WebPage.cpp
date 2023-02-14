@@ -1759,10 +1759,6 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     // to all the client to set up any needed state.
     m_loaderClient->willLoadURLRequest(*this, loadParameters.request, WebProcess::singleton().transformHandlesToObjects(loadParameters.userData.object()).get());
 
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    WebCore::setTopPrivatelyControlledDomain(loadParameters.request.url().host().toString(), loadParameters.topPrivatelyControlledDomain);
-#endif
-
     platformDidReceiveLoadParameters(loadParameters);
 
     // Initate the load in WebCore.
