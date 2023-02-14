@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CachedSubimage.h"
 #include "FloatRect.h"
 #include "GraphicsTypes.h"
 #include "Image.h"
@@ -42,6 +43,7 @@ OBJC_CLASS PDFDocument;
 namespace WebCore {
 
 class PDFDocumentImage final : public Image {
+    friend CachedSubimage;
 public:
     static Ref<PDFDocumentImage> create(ImageObserver* observer)
     {
@@ -50,6 +52,9 @@ public:
 #endif
         return adoptRef(*new PDFDocumentImage(observer));
     }
+
+    unsigned cachedSubimageCreateCountForTesting() const { return m_cachedSubimageCreateCountForTesting; }
+    unsigned cachedSubimageDrawCountForTesting() const { return m_cachedSubimageDrawCountForTesting; }
 
 private:
     PDFDocumentImage(ImageObserver*);
@@ -69,7 +74,11 @@ private:
     bool shouldDrawFromCachedSubimage(GraphicsContext&) const override;
     bool mustDrawFromCachedSubimage(GraphicsContext&) const override;
 
-    ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) override;
+    std::unique_ptr<CachedSubimage> createCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
+
+    ImageDrawResult drawPDFDocument(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
+    ImageDrawResult drawFromCachedSubimage(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
+    ImageDrawResult draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& = { }) override;
 
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const override { return false; }
@@ -93,6 +102,10 @@ private:
     FloatRect m_cropBox;
     int m_rotationDegrees { 0 }; // Can only be 0, 90, 180, or 270 degrees.
     bool m_hasPage { false };
+
+    std::unique_ptr<CachedSubimage> m_cachedSubimage;
+    unsigned m_cachedSubimageCreateCountForTesting { 0 };
+    unsigned m_cachedSubimageDrawCountForTesting { 0 };
 };
 
 } // namespace WebCore

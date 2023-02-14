@@ -1028,6 +1028,13 @@ static BitmapImage* bitmapImageFromImageElement(HTMLImageElement& element)
     return dynamicDowncast<BitmapImage>(imageFromImageElement(element));
 }
 
+#if USE(CG)
+static PDFDocumentImage* pdfDocumentImageFromImageElement(HTMLImageElement& element)
+{
+    return dynamicDowncast<PDFDocumentImage>(imageFromImageElement(element));
+}
+#endif
+
 unsigned Internals::imageFrameIndex(HTMLImageElement& element)
 {
     auto* bitmapImage = bitmapImageFromImageElement(element);
@@ -1101,8 +1108,13 @@ unsigned Internals::imageDecodeCount(HTMLImageElement& element)
 
 unsigned Internals::imageCachedSubimageCreateCount(HTMLImageElement& element)
 {
-    auto* image = imageFromImageElement(element);
-    return image ? image->cachedSubimageCreateCountForTesting() : 0;
+#if USE(CG)
+    if (auto* pdfDocumentImage = pdfDocumentImageFromImageElement(element))
+        return pdfDocumentImage->cachedSubimageCreateCountForTesting();
+#else
+    UNUSED_PARAM(element);
+#endif
+    return 0;
 }
 
 unsigned Internals::remoteImagesCountForTesting() const
