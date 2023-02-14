@@ -44,8 +44,10 @@ class JSModuleNamespaceObject;
 class ModuleNamespaceAccessCase;
 class StructureStubInfo;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GetByStatus);
+
 class GetByStatus final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(GetByStatus);
 public:
     enum State : uint8_t {
         // It's uncached so we have no information.

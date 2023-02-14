@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
 
-#include "IsoMemoryAllocatorBase.h"
-#include <wtf/BitVector.h>
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-#include <wtf/DebugHeap.h>
-#endif
+#if ENABLE(JIT)
+#include "JITCodeMap.h"
 
 namespace JSC {
 
-class IsoAlignedMemoryAllocator final : public IsoMemoryAllocatorBase {
-public:
-    using Base = IsoMemoryAllocatorBase;
-
-    IsoAlignedMemoryAllocator(CString);
-    ~IsoAlignedMemoryAllocator() final;
-
-    void dump(PrintStream&) const final;
-
-    void* tryAllocateMemory(size_t) final;
-    void freeMemory(void*) final;
-    void* tryReallocateMemory(void*, size_t) final;
-
-protected:
-    void* tryMallocBlock() final;
-    void freeBlock(void* block) final;
-    void commitBlock(void* block) final;
-    void decommitBlock(void* block) final;
-
-#if ENABLE(MALLOC_HEAP_BREAKDOWN)
-    WTF::DebugHeap m_heap;
-#endif
-};
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(JITCodeMap);
 
 } // namespace JSC
 
+#endif // ENABLE(JIT)

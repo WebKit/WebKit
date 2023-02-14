@@ -40,6 +40,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GetByStatus);
+
 bool GetByStatus::appendVariant(const GetByVariant& variant)
 {
     return appendICStatusVariant(m_variants, variant);

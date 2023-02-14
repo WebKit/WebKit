@@ -34,6 +34,7 @@ namespace JSC {
 class VM;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
 
 class MetadataTable;
 
@@ -52,6 +53,7 @@ struct MetadataStatistics {
 
 
 class UnlinkedMetadataTable : public RefCounted<UnlinkedMetadataTable> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class MetadataTable;
     friend class CachedMetadataTable;

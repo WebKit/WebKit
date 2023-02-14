@@ -39,6 +39,8 @@
 
 namespace JSC {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PutByStatus);
+
 bool PutByStatus::appendVariant(const PutByVariant& variant)
 {
     return appendICStatusVariant(m_variants, variant);

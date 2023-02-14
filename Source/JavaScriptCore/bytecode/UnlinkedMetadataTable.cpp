@@ -31,6 +31,7 @@
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedMetadataTable);
 
 #if CPU(ADDRESS64)
 static_assert((UnlinkedMetadataTable::s_maxMetadataAlignment >=
