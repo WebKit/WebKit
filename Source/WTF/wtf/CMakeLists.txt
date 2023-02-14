@@ -446,6 +446,7 @@ set(WTF_SOURCES
     DataLog.cpp
     DateMath.cpp
     DebugHeap.cpp
+    EmbeddedFixedVector.cpp
     FastBitVector.cpp
     FastFloat.cpp
     FastMalloc.cpp
