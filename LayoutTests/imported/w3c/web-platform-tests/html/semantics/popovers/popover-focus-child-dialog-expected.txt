@@ -1,5 +1,4 @@
-hello world
 
-FAIL Popovers should not initially focus child dialog elements. The string did not match the expected pattern.
-FAIL Popovers should not initially focus child popover elements. The string did not match the expected pattern.
+PASS Popovers should not initially focus child dialog elements.
+PASS Popovers should not initially focus child popover elements.
 

@@ -3,13 +3,11 @@ Test 2 Popover 1
 Popover 1
 
 Test 2 Popover 2
-Test 3 Popover 2 Popover 2
+Popover 2
 Test 4 Popover 1
-This should not get hidden when popover2 opens.
 
-
-FAIL Popovers located inside shadow DOM can still be shown The string did not match the expected pattern.
-FAIL anchor references do not cross shadow boundaries The string did not match the expected pattern.
-FAIL anchor references use the flat tree not the DOM tree promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
-FAIL The popover stack is preserved across shadow-inclusive ancestors promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+PASS Popovers located inside shadow DOM can still be shown
+FAIL anchor references do not cross shadow boundaries assert_false: popover1 open expected false got true
+FAIL anchor references use the flat tree not the DOM tree assert_false: expected false got true
+FAIL The popover stack is preserved across shadow-inclusive ancestors assert_false: expected false got true
 

@@ -391,6 +391,9 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& va
         }
     }
 
+    if (document().settings().popoverAttributeEnabled() && name == popoverAttr)
+        popoverAttributeChanged(value);
+
     auto& eventName = eventNameForEventHandlerAttribute(name);
     if (!eventName.isNull())
         setAttributeEventListener(eventName, name, value);
@@ -1220,7 +1223,7 @@ static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilit
     if (!element.isConnected())
         return Exception { InvalidStateError, "Element is not connected"_s };
 
-    if (element.popoverData().visibilityState() != expectedState)
+    if (element.popoverData()->visibilityState() != expectedState)
         return Exception { InvalidStateError, "Element has unexpected visibility state"_s };
 
     if (is<HTMLDialogElement>(element) && element.hasAttributeWithoutSynchronization(HTMLNames::openAttr))
@@ -1240,17 +1243,22 @@ ExceptionOr<void> HTMLElement::showPopover()
         return check.releaseException();
 
     ASSERT(!isInTopLayer());
+    ASSERT(popoverData());
 
     // FIXME: Fire beforetoggle event and re-check popover validity.
 
     // FIXME: Run auto popover steps.
 
-    if (popover() == autoAtom())
-        popoverData().setPreviouslyFocusedElement(document().focusedElement());
+    if (popoverState() == PopoverState::Auto)
+        popoverData()->setPreviouslyFocusedElement(document().focusedElement());
 
     addToTopLayer();
 
-    popoverData().setVisibilityState(PopoverVisibilityState::Showing);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassOpen, true },
+        { CSSSelector::PseudoClassClosed, false }
+    });
+    popoverData()->setVisibilityState(PopoverVisibilityState::Showing);
 
     // FIXME: Queue popover toggle event task.
 
@@ -1262,21 +1270,27 @@ ExceptionOr<void> HTMLElement::hidePopover()
     if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
         return check.releaseException();
 
+    ASSERT(popoverData());
+
     // FIXME: Run auto popover steps.
 
     // FIXME: Fire beforetoggle event and re-check popover validity.
 
     removeFromTopLayer();
 
-    popoverData().setVisibilityState(PopoverVisibilityState::Hidden);
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassClosed, true },
+        { CSSSelector::PseudoClassOpen, false }
+    });
+    popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);
 
     // FIXME: Queue popover toggle event task.
 
-    if (RefPtr element = popoverData().previouslyFocusedElement()) {
+    if (RefPtr element = popoverData()->previouslyFocusedElement()) {
         FocusOptions options;
         options.preventScroll = true;
         element->focus(options);
-        popoverData().setPreviouslyFocusedElement(nullptr);
+        popoverData()->setPreviouslyFocusedElement(nullptr);
     }
 
     return { };
@@ -1284,23 +1298,58 @@ ExceptionOr<void> HTMLElement::hidePopover()
 
 ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
 {
-    if (popoverData().visibilityState() == PopoverVisibilityState::Showing && !force.value_or(false))
+    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing && !force.value_or(false))
         return hidePopover();
 
     return showPopover();
 }
 
+void HTMLElement::popoverAttributeChanged(const AtomString& value)
+{
+    auto newPopoverState = [](const AtomString& value) -> PopoverState {
+        if (!value || value.isNull())
+            return PopoverState::None;
+
+        if (value == emptyString() || equalIgnoringASCIICase(value, autoAtom()))
+            return PopoverState::Auto;
+
+        return PopoverState::Manual;
+    }(value);
+
+    auto oldPopoverState = popoverState();
+    if (newPopoverState == oldPopoverState)
+        return;
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassOpen, false },
+        { CSSSelector::PseudoClassClosed, newPopoverState != PopoverState::None }
+    });
+
+    if (oldPopoverState != PopoverState::None)
+        hidePopover();
+
+    if (newPopoverState == PopoverState::None)
+        clearPopoverData();
+    else
+        ensurePopoverData().setPopoverState(newPopoverState);
+}
+
 const AtomString& HTMLElement::popover() const
 {
-    auto value = attributeWithoutSynchronization(HTMLNames::popoverAttr);
-
-    if (!value)
+    switch (popoverState()) {
+    case PopoverState::None:
         return nullAtom();
-
-    if (value == emptyString() || equalIgnoringASCIICase(value, autoAtom()))
+    case PopoverState::Auto:
         return autoAtom();
+    case PopoverState::Manual:
+        return manualAtom();
+    }
+    return nullAtom();
+}
 
-    return manualAtom();
+PopoverState HTMLElement::popoverState() const
+{
+    return popoverData() ? popoverData()->popoverState() : PopoverState::None;
 }
 
 #if PLATFORM(IOS_FAMILY)

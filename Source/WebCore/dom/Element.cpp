@@ -2754,12 +2754,23 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         removeFromTopLayer();
 }
 
-PopoverData& Element::popoverData()
+PopoverData* Element::popoverData() const
+{
+    return hasRareData() ? elementRareData()->popoverData() : nullptr;
+}
+
+PopoverData& Element::ensurePopoverData()
 {
     ElementRareData& data = ensureElementRareData();
     if (!data.popoverData())
         data.setPopoverData(makeUnique<PopoverData>());
     return *data.popoverData();
+}
+
+void Element::clearPopoverData()
+{
+    if (hasRareData())
+        elementRareData()->setPopoverData(nullptr);
 }
 
 void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)

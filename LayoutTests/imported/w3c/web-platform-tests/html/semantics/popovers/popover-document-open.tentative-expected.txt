@@ -1,4 +1,3 @@
-Popover
 
-FAIL document.open should not break popovers The string did not match the expected pattern.
+FAIL document.open should not break popovers assert_false: popover1 should have been hidden when it was removed from the document expected false got true
 

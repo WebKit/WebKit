@@ -588,7 +588,9 @@ public:
     virtual void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&);
 #endif
 
-    PopoverData& popoverData();
+    PopoverData* popoverData() const;
+    PopoverData& ensurePopoverData();
+    void clearPopoverData();
 
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);

@@ -1,3 +1,4 @@
+I am a dialog
 
 PASS Ensure no crashes if running animations are immediately cancelled (document removal)
 PASS Ensure no crashes if running animations are immediately cancelled (dialog showModal)

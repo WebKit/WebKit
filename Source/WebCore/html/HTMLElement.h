@@ -45,6 +45,12 @@ struct TextRecognitionResult;
 enum class PageIsEditable : bool;
 enum class EnterKeyHint : uint8_t;
 
+enum class PopoverState : uint8_t {
+    None,
+    Auto,
+    Manual,
+};
+
 #if PLATFORM(IOS_FAMILY)
 enum class SelectionRenderingBehavior : bool;
 #endif
@@ -141,8 +147,11 @@ public:
     ExceptionOr<void> showPopover();
     ExceptionOr<void> hidePopover();
     ExceptionOr<void> togglePopover(std::optional<bool> force);
+
+    PopoverState popoverState() const;
     const AtomString& popover() const;
     void setPopover(const AtomString& value) { setAttributeWithoutSynchronization(HTMLNames::popoverAttr, value); };
+    void popoverAttributeChanged(const AtomString& value);
 
 #if PLATFORM(IOS_FAMILY)
     static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);

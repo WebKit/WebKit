@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Element.h"
+#include "HTMLElement.h"
 
 namespace WebCore {
 
@@ -39,13 +40,17 @@ class PopoverData {
 public:
     PopoverData() = default;
 
+    PopoverState popoverState() { return m_popoverState; }
+    void setPopoverState(PopoverState state) { m_popoverState = state; }
+
     PopoverVisibilityState visibilityState() const { return m_visibilityState; }
-    void setVisibilityState(PopoverVisibilityState visibilityState) { m_visibilityState = visibilityState; }
+    void setVisibilityState(PopoverVisibilityState visibilityState) { m_visibilityState = visibilityState; };
 
     Element* previouslyFocusedElement() const { return m_previouslyFocusedElement.get(); }
     void setPreviouslyFocusedElement(Element* element) { m_previouslyFocusedElement = element; }
 
 private:
+    PopoverState m_popoverState;
     PopoverVisibilityState m_visibilityState;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
 };
