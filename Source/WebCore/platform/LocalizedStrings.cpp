@@ -67,7 +67,7 @@ ALLOW_NONLITERAL_FORMAT_END
 String formatLocalizedString(const char* format, ...)
 {
 #if USE(CF) && PLATFORM(WIN)
-    auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(nullptr, format, kCFStringEncodingUTF8, kCFAllocatorNull));
+    auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, format, kCFStringEncodingUTF8, kCFAllocatorNull));
     va_list arguments;
     va_start(arguments, format);
     auto localizedFormat = copyLocalizedString(cfFormat.get());
@@ -135,7 +135,7 @@ String localizedString(CFStringRef key)
 String localizedString(const char* key)
 {
 #if USE(CF)
-    auto keyString = adoptCF(CFStringCreateWithCStringNoCopy(nullptr, key, kCFStringEncodingUTF8, kCFAllocatorNull));
+    auto keyString = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, key, kCFStringEncodingUTF8, kCFAllocatorNull));
     return copyLocalizedString(keyString.get()).get();
 #else
     return String::fromUTF8(key, strlen(key));
