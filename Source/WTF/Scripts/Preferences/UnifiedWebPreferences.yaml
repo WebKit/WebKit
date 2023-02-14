@@ -1803,11 +1803,11 @@ DeprecateRSAESPKCSWebCryptoEnabled:
   humanReadableDescription: "Enable Deprecation of RSAES-PKCS1-v1_5 Web Crypto"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DeprecationReportingEnabled:
   type: bool
