@@ -182,6 +182,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "RenderSearchField.h"
 #include "RenderTheme.h"
 #include "RenderThemeIOS.h"
 #include "RenderTreeAsText.h"
@@ -2226,6 +2227,24 @@ auto Internals::autoFillButtonType(const HTMLInputElement& element) -> AutoFillB
 auto Internals::lastAutoFillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
 {
     return toInternalsAutoFillButtonType(element.lastAutoFillButtonType());
+}
+
+Vector<String> Internals::recentSearches(const HTMLInputElement& element)
+{
+    if (!element.isSearchField())
+        return { };
+
+    element.document().updateLayoutIgnorePendingStylesheets();
+    auto* renderer = element.renderer();
+    if (!is<RenderSearchField>(renderer))
+        return { };
+
+    Vector<String> result;
+    auto& searchField = downcast<RenderSearchField>(*renderer);
+    for (auto search : searchField.recentSearches())
+        result.append(search.string);
+
+    return result;
 }
 
 ExceptionOr<void> Internals::scrollElementToRect(Element& element, int x, int y, int w, int h)

@@ -478,6 +478,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined setShowAutoFillButton(HTMLInputElement inputElement, AutoFillButtonType autoFillButtonType);
     AutoFillButtonType autoFillButtonType(HTMLInputElement inputElement);
     AutoFillButtonType lastAutoFillButtonType(HTMLInputElement inputElement);
+    sequence<DOMString> recentSearches(HTMLInputElement inputElement);
 
     undefined setCanShowPlaceholder(Element element, boolean canShowPlaceholder);
 

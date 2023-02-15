@@ -167,6 +167,17 @@ LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight,
 
     return lineHeight + nonContentHeight;
 }
+    
+Span<const RecentSearch> RenderSearchField::recentSearches()
+{
+    if (!m_searchPopup)
+        m_searchPopup = page().chrome().createSearchPopupMenu(*this);
+
+    const AtomString& name = autosaveName();
+    m_searchPopup->loadRecentSearches(name, m_recentSearches);
+
+    return m_recentSearches.span();
+}
 
 void RenderSearchField::updateFromElement()
 {
@@ -202,7 +213,7 @@ Visibility RenderSearchField::visibilityForCancelButton() const
 
 const AtomString& RenderSearchField::autosaveName() const
 {
-    return inputElement().attributeWithoutSynchronization(autosaveAttr);
+    return inputElement().attributeWithoutSynchronization(nameAttr);
 }
 
 // PopupMenuClient methods

@@ -130,8 +130,10 @@ fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
 
+# These tests rely on search field style on Mac WK2. 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
 fast/forms/search/search-results-hidden-crash.html [ Skip ]
+fast/forms/search/search-recent-searches.html [ Skip ]
 
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
