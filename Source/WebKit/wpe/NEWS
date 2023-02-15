@@ -1,4 +1,17 @@
 =================
+WPE WebKit 2.38.5
+=================
+
+What's new in WPE WebKit 2.38.5?
+
+  - Fix large memory allocation when uploading content.
+  - Fix scrolling after a history navigation with PSON enabled.
+  - Always update the active URI of WebKitFrame.
+  - Fix the build with the external hole-punch media playback enabled.
+  - Fix the build on Ubuntu 20.04.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.38.4
 =================
 
