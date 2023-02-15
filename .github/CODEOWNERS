@@ -116,6 +116,7 @@
 /Source/WebCore/worklets @cdumez
 /Source/WebCore/xml @cdumez
 /Source/WebCore/page @cdumez
+/Source/WebCore/page/Quirks.* @karlcow
 
 /Source/WebCore/animation @graouts
 
