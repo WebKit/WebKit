@@ -32,6 +32,7 @@
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
  
 namespace WebCore {
@@ -50,7 +51,7 @@ public:
 
     void cancelIfNotFinishing();
     bool isSubresourceLoader() const override;
-    CachedResource* cachedResource() const override { return m_resource; };
+    CachedResource* cachedResource() const override { return m_resource.get(); };
     WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
 
     const SecurityOrigin* origin() const { return m_origin.get(); }
@@ -126,14 +127,14 @@ private:
         RequestCountTracker& operator=(RequestCountTracker&&);
         ~RequestCountTracker();
     private:
-        CachedResourceLoader* m_cachedResourceLoader { nullptr };
-        const CachedResource* m_resource { nullptr };
+        WeakPtr<CachedResourceLoader> m_cachedResourceLoader;
+        WeakPtr<const CachedResource> m_resource;
     };
 
 #if PLATFORM(IOS_FAMILY)
     ResourceRequest m_iOSOriginalRequest;
 #endif
-    CachedResource* m_resource;
+    WeakPtr<CachedResource> m_resource;
     SubresourceLoaderState m_state;
     std::optional<RequestCountTracker> m_requestCountTracker;
     RefPtr<SecurityOrigin> m_origin;

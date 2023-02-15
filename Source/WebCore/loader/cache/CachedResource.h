@@ -62,7 +62,7 @@ enum class CachePolicy : uint8_t;
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
 // This class also does the actual communication with the loader to obtain the resource from the network.
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
-class CachedResource {
+class CachedResource : public CanMakeWeakPtr<CachedResource> {
     WTF_MAKE_NONCOPYABLE(CachedResource);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CachedResource);
     friend class MemoryCache;
