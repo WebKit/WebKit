@@ -62,7 +62,7 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
 namespace WebKit {
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *, bool) { }
+void enableNetworkConnectionIntegrity(NSMutableURLRequest *, OptionSet<WebCore::NetworkConnectionIntegrity>) { }
 }
 #endif
 
@@ -402,13 +402,12 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
 
     auto networkConnectionIntegrityPolicy = parameters.networkConnectionIntegrityPolicy;
-    if (networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled)) {
-        enableNetworkConnectionIntegrity(mutableRequest.get(), NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(request));
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-        if (parameters.isMainFrameNavigation) 
-            configureForNetworkConnectionIntegrity(m_sessionWrapper->session.get());
+    if (networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled) && parameters.isMainFrameNavigation)
+        configureForNetworkConnectionIntegrity(m_sessionWrapper->session.get());
+
+    enableNetworkConnectionIntegrity(mutableRequest.get(), networkConnectionIntegrityPolicy);
 #endif
-    }
 
 #if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
     if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableHosts:)] && networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::FailClosed))
