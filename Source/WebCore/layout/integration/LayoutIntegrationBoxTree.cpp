@@ -266,6 +266,12 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     }
 }
 
+const Layout::Box& BoxTree::insert(const RenderElement&, RenderObject& child)
+{
+    appendChild(createLayoutBox(child), child);
+    return layoutBoxForRenderer(child);
+}
+
 const Layout::ElementBox& BoxTree::rootLayoutBox() const
 {
     return *m_rootRenderer.layoutBox();

@@ -169,6 +169,12 @@ bool LineLayout::canUseForAfterInlineBoxStyleChange(const RenderInline& inlineBo
     return canUseForLineLayoutAfterInlineBoxStyleChange(inlineBox, diff);
 }
 
+bool LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& newChild, const LineLayout& lineLayout)
+{
+    ASSERT(isEnabled());
+    return shouldInvalidateLineLayoutPathAfterContentChangeFor(parent, newChild, lineLayout);
+}
+
 bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
 {
     // FIXME: Support partial invalidation in LFC.
@@ -1097,6 +1103,11 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     }
 
     return false;
+}
+
+void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& child)
+{
+    m_boxTree.insert(parent, child);
 }
 
 void LineLayout::releaseCaches(RenderView& view)

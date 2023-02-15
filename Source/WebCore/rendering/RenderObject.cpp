@@ -1721,8 +1721,16 @@ void RenderObject::willBeDestroyed()
 
 void RenderObject::insertedIntoTree(IsInternalMove)
 {
-    if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
-        container->invalidateLineLayoutPath();
+    if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this)) {
+        auto shouldInvalidateLineLayoutPath = true;
+        if (auto* modernLineLayout = container->modernLineLayout()) {
+            shouldInvalidateLineLayoutPath = LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(*container, *this, *modernLineLayout);
+            if (!shouldInvalidateLineLayoutPath && LayoutIntegration::LineLayout::canUseFor(*container))
+                modernLineLayout->insertedIntoTree(*parent(), *this);
+        }
+        if (shouldInvalidateLineLayoutPath)
+            container->invalidateLineLayoutPath();
+    }
 
     // FIXME: We should ASSERT(isRooted()) here but generated content makes some out-of-order insertion.
     if (!isFloating() && parent()->childrenInline())

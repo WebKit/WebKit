@@ -73,6 +73,7 @@ public:
     static bool canUseFor(const RenderBlockFlow&);
     static bool canUseForAfterStyleChange(const RenderBlockFlow&, StyleDifference);
     static bool canUseForAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
+    static bool shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& newChild, const LineLayout&);
 
     bool shouldSwitchToLegacyOnInvalidation() const;
 
@@ -87,6 +88,9 @@ public:
     void paint(PaintInfo&, const LayoutPoint& paintOffset, const RenderInline* layerRenderer = nullptr);
     bool hitTest(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction, const RenderInline* layerRenderer = nullptr);
     void adjustForPagination();
+
+    // FIXME: Partial content mutation may need to talk to the box tree directly.
+    void insertedIntoTree(const RenderElement& parent, RenderObject& child);
 
     void collectOverflow();
     LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
