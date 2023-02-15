@@ -3486,9 +3486,8 @@ webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-r
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-008.xht [ ImageOnlyFailure ]
 
 # These three tests will be fixed by rdar://80384564.
-editing/selection/ios/change-selection-by-tapping-with-existing-selection.html  [ Pass Failure ]
 editing/selection/preserve-selection-when-clicking-button.html [ Failure ]
-editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Failure ]
+
 
 webkit.org/b/238211 fast/text/text-shadow-ink-overflow-missing.html [ Pass ImageOnlyFailure ]
 
@@ -4223,3 +4222,6 @@ webkit.org/b/251889 imported/w3c/web-platform-tests/content-security-policy/repo
 webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [ Pass Failure ]
 
 webkit.org/b/252191 imported/w3c/web-platform-tests/editing/other/edit-in-textcontrol-immediately-after-hidden.tentative.html [ Skip ]
+
+webkit.org/b/252313 editing/selection/ios/change-selection-by-tapping-with-existing-selection.html [ Timeout ]
+webkit.org/b/252313 editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Timeout ]
