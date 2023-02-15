@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -198,6 +198,112 @@ class TestBranch(testing.PathTestCase):
             captured.stdout.getvalue(),
             "Enter issue URL or title of new issue: \n"
             "Existing radar to CC (leave empty to create new radar): \n"
+            "Created the local development branch 'eng/Example-feature-1'\n",
+        )
+
+    def test_radar_cc_disabled(self):
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '4'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS,
+            users=bmocks.USERS,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [
+            bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+            radar.Tracker(),
+        ]), mocks.local.Svn(), MockTime:
+            project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
+            os.mkdir(os.path.dirname(project_config))
+            with open(project_config, 'w') as f:
+                f.write('[webkitscmpy]\n')
+                f.write('    cc-radar = false\n')
+
+            self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
+
+            issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
+            self.assertEqual(len(issue.references), 1)
+
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Creating the local development branch 'eng/Example-feature-1'...\n",
+        )
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Enter issue URL or title of new issue: \n"
+            "Created the local development branch 'eng/Example-feature-1'\n",
+        )
+
+    def test_radar_cc_disabled_override(self):
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '4'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS,
+            users=bmocks.USERS,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [
+            bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+            radar.Tracker(),
+        ]), mocks.local.Svn(), MockTime:
+            project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
+            os.mkdir(os.path.dirname(project_config))
+            with open(project_config, 'w') as f:
+                f.write('[webkitscmpy]\n')
+                f.write('    cc-radar = false\n')
+
+            self.assertEqual(0, program.main(args=('branch', '-v', '--cc-radar'), path=self.path))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
+
+            issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
+            self.assertEqual(len(issue.references), 2)
+            self.assertEqual(issue.references[0].link, 'rdar://4')
+            self.assertEqual(issue.comments[-1].content, '<rdar://problem/4>')
+
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "CCing Radar WebKit Bug Importer\n"
+            "Creating the local development branch 'eng/Example-feature-1'...\n",
+        )
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Enter issue URL or title of new issue: \n"
+            "Existing radar to CC (leave empty to create new radar): \n"
+            "Created the local development branch 'eng/Example-feature-1'\n",
+        )
+
+    def test_no_cc_radar(self):
+        with MockTerminal.input('{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '4'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS,
+            users=bmocks.USERS,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [
+            bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+            radar.Tracker(),
+        ]), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(args=('branch', '-v', '--no-cc-radar'), path=self.path))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
+
+            issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
+            self.assertEqual(len(issue.references), 1)
+
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Creating the local development branch 'eng/Example-feature-1'...\n",
+        )
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Enter issue URL or title of new issue: \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
 

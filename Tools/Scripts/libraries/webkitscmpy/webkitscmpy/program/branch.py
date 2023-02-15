@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -52,6 +52,18 @@ class Branch(Command):
                  'if a local one does not exist.',
             action=arguments.NoAction,
         )
+
+        if sys.version_info > (3, 0):
+            has_radar = bool(radar.Tracker.radarclient())
+        else:
+            has_radar = bool(radar.Tracker().radarclient())
+        if has_radar:
+            parser.add_argument(
+                '--cc-radar', '--no-cc-radar',
+                dest='cc_radar', default=None,
+                action=arguments.NoAction,
+                help='Explicitly CC (or do not CC) radar.',
+            )
 
     @classmethod
     def normalize_branch_name(cls, name, repository=None):
@@ -156,7 +168,8 @@ class Branch(Command):
             for reference in issue.references
         ])
 
-        if needs_radar:
+        radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
+        if needs_radar and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
             rdar = None
             if not getattr(args, 'defaults', None):
                 sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
