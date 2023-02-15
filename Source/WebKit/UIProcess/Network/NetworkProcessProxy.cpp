@@ -216,7 +216,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     });
 #endif
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
+#if !PLATFORM(COCOA)
     parameters.enablePrivateClickMeasurement = false;
 #endif
 
