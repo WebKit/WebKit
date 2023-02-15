@@ -616,12 +616,28 @@ AsynchronousSpellCheckingEnabled:
 AttachmentElementEnabled:
   type: bool
   status: embedder
+  humanReadableName: "Attachment Element"
+  humanReadableDescription: "Allow the insertion of attachment elements"
   webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(ATTACHMENT_ELEMENT)
   defaultValue:
     WebKitLegacy:
       default: WebKit::defaultAttachmentElementEnabled()
     WebKit:
+      default: false
+
+AttachmentWideLayoutEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Attachment wide-layout styling"
+  humanReadableDescription: "Use horizontal wide-layout attachment style, requires Attachment Element"
+  condition: ENABLE(ATTACHMENT_ELEMENT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 AudioDescriptionsEnabled:

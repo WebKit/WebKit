@@ -135,7 +135,7 @@ void AttachmentLayout::layOutTitle(const RenderAttachment& attachment)
 
 void AttachmentLayout::layOutSubtitle(const RenderAttachment& attachment)
 {
-    auto& subtitleText = attachment.attachmentElement().attributeWithoutSynchronization(HTMLNames::subtitleAttr);
+    String subtitleText = attachment.attachmentElement().attachmentSubtitleForDisplay();
     if (subtitleText.isEmpty())
         return;
     auto subtitleColor = attachment.style().colorByApplyingColorFilter(attachmentSubtitleTextColor);
@@ -276,7 +276,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
     hasProgress = getAttachmentProgress(attachment, progress);
     String title = attachment.attachmentElement().attachmentTitleForDisplay();
     String action = attachment.attachmentElement().attributeWithoutSynchronization(HTMLNames::actionAttr);
-    String subtitle = attachment.attachmentElement().attributeWithoutSynchronization(HTMLNames::subtitleAttr);
+    String subtitle = attachment.attachmentElement().attachmentSubtitleForDisplay();
 
     CGFloat yOffset = 0;
 

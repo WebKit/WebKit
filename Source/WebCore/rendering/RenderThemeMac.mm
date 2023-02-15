@@ -1559,6 +1559,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
         return false;
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
+    HTMLAttachmentElement& element = attachment.attachmentElement();
 
     auto layoutStyle = AttachmentLayoutStyle::NonSelected;
     if (attachment.selectionState() != RenderObject::HighlightState::None && paintInfo.phase != PaintPhase::Selection)
@@ -1566,7 +1567,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     AttachmentLayout layout(attachment, layoutStyle);
 
-    auto& progressString = attachment.attachmentElement().attributeWithoutSynchronization(progressAttr);
+    auto& progressString = element.attributeWithoutSynchronization(progressAttr);
     bool validProgress = false;
     float progress = 0;
     if (!progressString.isEmpty())
@@ -1581,14 +1582,18 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     bool usePlaceholder = validProgress && !progress;
 
-    paintAttachmentIconBackground(attachment, context, layout);
+    if (!element.isImageOnly())
+        paintAttachmentIconBackground(attachment, context, layout);
+
     if (usePlaceholder)
         paintAttachmentIconPlaceholder(attachment, context, layout);
     else
         paintAttachmentIcon(attachment, context, layout);
 
-    paintAttachmentTitleBackground(attachment, context, layout);
-    paintAttachmentText(context, &layout);
+    if (!element.isImageOnly()) {
+        paintAttachmentTitleBackground(attachment, context, layout);
+        paintAttachmentText(context, &layout);
+    }
 
     if (validProgress && progress)
         paintAttachmentProgress(attachment, context, layout, progress);

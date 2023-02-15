@@ -1745,6 +1745,7 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
+    ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css
     ${WEBCORE_DIR}/html/shadow/imageOverlay.css
     ${WEBCORE_DIR}/html/shadow/meterElementShadow.css
 )
