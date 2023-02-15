@@ -66,6 +66,7 @@ extern "C" {
     M(IndexedDB) \
     M(Inspector) \
     M(KeyHandling) \
+    M(Keychain) \
     M(Language) \
     M(Layers) \
     M(Layout) \
