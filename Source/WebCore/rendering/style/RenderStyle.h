@@ -69,6 +69,7 @@
 #include "StyleTransformData.h"
 #include "StyleVisitedLinkColorData.h"
 #include "TextFlags.h"
+#include "TextSpacing.h"
 #include "ThemeTypes.h"
 #include "TouchAction.h"
 #include "TransformOperations.h"
@@ -433,6 +434,8 @@ public:
 
     const Length& wordSpacing() const;
     float letterSpacing() const;
+    TextSpacingTrim textSpacingTrim() const;
+
 
     float zoom() const { return m_nonInheritedData->rareData->zoom; }
     float effectiveZoom() const { return m_rareInheritedData->effectiveZoom; }
@@ -1672,6 +1675,8 @@ public:
 
     void setMathStyle(const MathStyle& v) { SET_VAR(m_rareInheritedData, mathStyle, static_cast<unsigned>(v)); }
 
+    void setTextSpacingTrim(TextSpacingTrim v) { SET_VAR(m_rareInheritedData, textSpacingTrim, v); }
+
     // Initial values for all the properties
     static Overflow initialOverflowX() { return Overflow::Visible; }
     static Overflow initialOverflowY() { return Overflow::Visible; }
@@ -1699,6 +1704,7 @@ public:
     static WritingMode initialWritingMode() { return WritingMode::TopToBottom; }
     static TextCombine initialTextCombine() { return TextCombine::None; }
     static TextOrientation initialTextOrientation() { return TextOrientation::Mixed; }
+    static TextSpacingTrim initialTextSpacingTrim() { return { }; }
     static ObjectFit initialObjectFit() { return ObjectFit::Fill; }
     static LengthPoint initialObjectPosition() { return LengthPoint(Length(50.0f, LengthType::Percent), Length(50.0f, LengthType::Percent)); }
     static EmptyCell initialEmptyCells() { return EmptyCell::Show; }

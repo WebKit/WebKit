@@ -2012,6 +2012,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/TextCheckingRequestIdentifier.h
     platform/text/TextDirection.h
     platform/text/TextFlags.h
+    platform/text/TextSpacing.h
     platform/text/UnicodeBidi.h
     platform/text/WritingMode.h
 

@@ -2004,6 +2004,11 @@ float RenderStyle::letterSpacing() const
     return m_inheritedData->fontCascade.letterSpacing();
 }
 
+TextSpacingTrim RenderStyle::textSpacingTrim() const
+{
+    return m_rareInheritedData->textSpacingTrim;
+}
+
 bool RenderStyle::setFontDescription(FontCascadeDescription&& description)
 {
     if (m_inheritedData->fontCascade.fontDescription() == description)

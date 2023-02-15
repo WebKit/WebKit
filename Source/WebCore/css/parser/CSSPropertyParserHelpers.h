@@ -308,6 +308,7 @@ RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&);
 #endif
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
+RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 

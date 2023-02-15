@@ -284,6 +284,10 @@ PASS text-shadow: shadow list
 PASS text-shadow: mismatched list length (from longer to shorter)
 PASS text-shadow: mismatched list length (from shorter to longer)
 PASS text-shadow: with currentcolor
+PASS text-spacing-trim (type: discrete) has testInterpolation function
+PASS text-spacing-trim uses discrete animation when animating between "auto" and "space-all" with linear easing
+PASS text-spacing-trim uses discrete animation when animating between "auto" and "space-all" with effect easing
+PASS text-spacing-trim uses discrete animation when animating between "auto" and "space-all" with keyframe easing
 PASS text-transform (type: discrete) has testInterpolation function
 PASS text-transform uses discrete animation when animating between "capitalize" and "uppercase" with linear easing
 PASS text-transform uses discrete animation when animating between "capitalize" and "uppercase" with effect easing

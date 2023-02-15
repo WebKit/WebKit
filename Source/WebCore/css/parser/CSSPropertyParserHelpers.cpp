@@ -8356,5 +8356,17 @@ RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange& range, const CSSPa
     return CSSVariableParser::parseDeclarationValue(nullAtom(), range.consumeAll(), context);
 }
 
+RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange& range)
+{
+    // auto | space-all |  trim-all | [ allow-end || space-first ]
+    // FIXME: add remaining values;
+    if (auto value = consumeIdent<CSSValueAuto, CSSValueSpaceAll>(range)) {
+        if (!range.atEnd())
+            return nullptr;
+        return value;
+    }
+    return nullptr;
+}
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -1146,6 +1146,25 @@
                 "non-canonical-url": "https://drafts.csswg.org/css-size-adjust/#adjustment-control"
             }
         },
+        "text-spacing-trim": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "space-all"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextSpacingEnabled",
+                "converter": "TextSpacingTrim",
+                "parser-function": "consumeTextSpacingTrim",
+                "parser-grammar-unused": "auto | space-all | trim-all | [ allow-end || space-first ]",
+                "parser-grammar-unused-reason": "Needs support for '||' groups."
+            },
+            "status": "experimental",
+            "specification": {
+                "category": "css-text",
+                "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
+            }
+        },
         "writing-mode": {
             "inherited": true,
             "values": [

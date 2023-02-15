@@ -65,6 +65,7 @@
 #include "StyleScrollSnapPoints.h"
 #include "StyleTextEdge.h"
 #include "TabSize.h"
+#include "TextSpacing.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
 
@@ -186,7 +187,9 @@ public:
     static Vector<AtomString> convertContainerName(BuilderState&, const CSSValue&);
 
     static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
-    
+
+    static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
+
 private:
     friend class BuilderCustom;
 
@@ -1817,6 +1820,15 @@ inline OptionSet<MarginTrimType> BuilderConverter::convertMarginTrim(BuilderStat
             marginTrim.add(MarginTrimType::InlineEnd);
     }
     return marginTrim;
+}
+
+inline TextSpacingTrim BuilderConverter::convertTextSpacingTrim(BuilderState&, const CSSValue& value)
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueAuto)
+            return { .m_trim = TextSpacingTrim::TrimType::Auto };
+    }
+    return { };
 }
 
 } // namespace Style

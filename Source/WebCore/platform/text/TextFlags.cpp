@@ -28,6 +28,7 @@
 
 #include "FontCascade.h"
 #include "FontFeatureValues.h"
+#include "TextSpacing.h"
 #include <functional>
 #include <numeric>
 #include <wtf/text/TextStream.h>

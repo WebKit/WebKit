@@ -1136,6 +1136,19 @@ CSSTextJustifyEnabled:
     WebCore:
       default: false
 
+CSSTextSpacingEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "CSS text-spacing property"
+  humanReadableDescription: "Enable the property text-spacing, defined in CSS Text 4"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSTextWrapEnabled:
   type: bool
   status: testable

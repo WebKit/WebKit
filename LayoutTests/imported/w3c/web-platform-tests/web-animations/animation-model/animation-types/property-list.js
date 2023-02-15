@@ -1327,6 +1327,12 @@ const gCSSProperties2 = {
       return element;
     }
   },
+  'text-spacing-trim': {
+    // https://svgwg.org/svg2-draft/painting.html#TextRenderingProperty
+    types: [
+      { type: 'discrete', options: [ [ 'auto', 'space-all' ] ] }
+    ]
+  },
   'text-transform': {
     // https://drafts.csswg.org/css-text-3/#propdef-text-transform
     types: [

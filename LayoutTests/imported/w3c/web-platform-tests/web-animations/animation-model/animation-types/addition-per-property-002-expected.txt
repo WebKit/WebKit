@@ -229,6 +229,9 @@ PASS text-rendering: "optimizeLegibility" onto "optimizeSpeed"
 PASS text-rendering: "optimizeSpeed" onto "optimizeLegibility"
 PASS text-shadow (type: textShadowList) has testAddition function
 PASS text-shadow: shadow
+PASS text-spacing-trim (type: discrete) has testAddition function
+PASS text-spacing-trim: "space-all" onto "auto"
+PASS text-spacing-trim: "auto" onto "space-all"
 PASS text-transform (type: discrete) has testAddition function
 PASS text-transform: "uppercase" onto "capitalize"
 PASS text-transform: "capitalize" onto "uppercase"
