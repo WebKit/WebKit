@@ -26,34 +26,50 @@
 #pragma once
 
 #include "ASTExpression.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WGSL::AST {
 
+#define WGSL_AST_BINOP_IMPL \
+    WGSL_AST_BINOP(Add, "+") \
+    WGSL_AST_BINOP(Subtract, "-") \
+    WGSL_AST_BINOP(Multiply, "*") \
+    WGSL_AST_BINOP(Divide, "/") \
+    WGSL_AST_BINOP(Modulo, "%") \
+    WGSL_AST_BINOP(And, "&") \
+    WGSL_AST_BINOP(Or, "|") \
+    WGSL_AST_BINOP(Xor, "^") \
+    WGSL_AST_BINOP(LeftShift, "<<") \
+    WGSL_AST_BINOP(RightShift, ">>") \
+    WGSL_AST_BINOP(Equal, "==") \
+    WGSL_AST_BINOP(NotEqual, "!=") \
+    WGSL_AST_BINOP(GreaterThan, ">") \
+    WGSL_AST_BINOP(GreaterEqual, ">=") \
+    WGSL_AST_BINOP(LessThan, "<") \
+    WGSL_AST_BINOP(LessEqual, "<=") \
+    WGSL_AST_BINOP(ShortCircuitAnd, "&&") \
+    WGSL_AST_BINOP(ShortCircuitOr, "||")
+
 enum class BinaryOperation : uint8_t {
-    Add,
-    Subtract,
-    Multiply,
-    Divide,
-    Modulo,
-
-    And,
-    Or,
-    Xor,
-
-    LeftShift,
-    RightShift,
-
-    Equal,
-    NotEqual,
-    GreaterThan,
-    GreaterEqual,
-    LessThan,
-    LessEqual,
-
-    ShortCircuitAnd,
-    ShortCircuitOr,
+#define WGSL_AST_BINOP(x, y) x,
+    WGSL_AST_BINOP_IMPL
+#undef WGSL_AST_BINOP
 };
+
+constexpr ASCIILiteral toASCIILiteral(BinaryOperation op)
+{
+    constexpr ASCIILiteral binaryOperationNames[] = {
+#define WGSL_AST_BINOP(x, y) y##_s,
+        WGSL_AST_BINOP_IMPL
+#undef WGSL_AST_BINOP
+    };
+
+    return binaryOperationNames[WTF::enumToUnderlyingType(op)];
+}
+
+void printInternal(PrintStream&, BinaryOperation);
 
 class BinaryExpression : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
@@ -78,9 +94,6 @@ private:
     Expression::Ref m_rhs;
     BinaryOperation m_operation;
 };
-
-void printInternal(PrintStream&, BinaryOperation);
-ASCIILiteral toString(BinaryOperation);
 
 } // namespace WGSL::AST
 
