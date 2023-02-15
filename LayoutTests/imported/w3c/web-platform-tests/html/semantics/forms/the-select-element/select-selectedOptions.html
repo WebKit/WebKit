@@ -58,6 +58,30 @@
   <option selected>Three</option>
 </select>
 
+<select multiple id="select-same-object-change-2">
+  <option>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>
+
+<select multiple id="select-same-object-change-2-disconnected">
+  <option>One</option>
+  <option>Two</option>
+  <option>Three</option>
+</select>
+
+<select multiple id="select-same-object-change-3">
+  <option>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>
+
+<select multiple id="select-same-object-change-3-disconnected">
+  <option>One</option>
+  <option>Two</option>
+  <option selected>Three</option>
+</select>
+
 <script>
 "use strict";
 
@@ -138,6 +162,61 @@ test(() => {
   assert_equals(after.length, 2);
 
 }, ".selectedOptions should return the same object after selection changes - [SameObject]");
+
+test(() => {
+  const select = document.getElementById("select-same-object-change-2");
+  const before = select.selectedOptions;
+  assert_equals(before.length, 0);
+
+  select.querySelector("option:nth-of-type(2)").setAttribute("selected", "");
+
+  const after = select.selectedOptions;
+
+  assert_equals(after, before);
+  assert_array_equals(Array.from(after, o => o.text), ["Two"]);
+}, ".selectedOptions should return the same object after selection changes via setAttribute() - [SameObject]");
+
+test(() => {
+  const select = document.getElementById("select-same-object-change-2-disconnected");
+  select.remove();
+  const before = select.selectedOptions;
+  assert_equals(before.length, 0);
+
+  select.querySelector("option:nth-of-type(2)").setAttribute("selected", "");
+
+  const after = select.selectedOptions;
+
+  assert_equals(after, before);
+  assert_array_equals(Array.from(after, o => o.text), ["Two"]);
+}, ".selectedOptions should return the same object after selection changes via setAttribute() on disconnected root - [SameObject]");
+
+test(() => {
+  const select = document.getElementById("select-same-object-change-3");
+  const before = select.selectedOptions;
+  assert_array_equals(Array.from(before, o => o.text), ["Three"]);
+
+  select.querySelector("option:nth-of-type(3)").removeAttribute("selected");
+
+  const after = select.selectedOptions;
+
+  assert_equals(after, before);
+  assert_equals(after.length, 0);
+}, ".selectedOptions should return the same object after selection changes via removeAttribute() - [SameObject]");
+
+test(() => {
+  const select = document.getElementById("select-same-object-change-3-disconnected");
+  select.remove();
+
+  const before = select.selectedOptions;
+  assert_array_equals(Array.from(before, o => o.text), ["Three"]);
+
+  select.querySelector("option:nth-of-type(3)").removeAttribute("selected");
+
+  const after = select.selectedOptions;
+
+  assert_equals(after, before);
+  assert_equals(after.length, 0);
+}, ".selectedOptions should return the same object after selection changes via removeAttribute() on disconnected root - [SameObject]");
 </script>
 </body>
 </html>

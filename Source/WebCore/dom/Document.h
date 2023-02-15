@@ -305,6 +305,7 @@ enum NodeListInvalidationType {
     InvalidateOnForTypeAttrChange,
     InvalidateForFormControls,
     InvalidateOnHRefAttrChange,
+    InvalidateOnSelectedAttrChange,
     InvalidateOnAnyAttrChange,
 };
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
