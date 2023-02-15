@@ -53,7 +53,7 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
         UnrealizedCoreTextFont unrealizedFont = { RetainPtr { m_fontDescriptor } };
         unrealizedFont.setSize(size);
 
-        auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, { });
+        auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, { }, FontTypeForPreparation::SystemFont);
 
         auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, ShouldComputePhysicalTraits::Yes).boldObliquePair();
 
