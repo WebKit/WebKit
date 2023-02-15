@@ -2106,7 +2106,7 @@ private:
         unsigned listStylePosition : 1; // ListStylePosition
         unsigned visibility : 2; // Visibility
         unsigned textAlign : 4; // TextAlignMode
-        unsigned textTransform : 2; // TextTransform
+        unsigned textTransform : 3; // TextTransform
         unsigned textDecorationLines : TextDecorationLineBits;
         unsigned cursor : 6; // CursorType
 #if ENABLE(CURSOR_VISIBILITY)
@@ -2114,7 +2114,7 @@ private:
 #endif
         unsigned direction : 1; // TextDirection
         unsigned whiteSpace : 3; // WhiteSpace
-        // 35 bits
+        // 36 bits
         unsigned borderCollapse : 1; // BorderCollapse
         unsigned boxDirection : 1; // BoxDirection
 
@@ -2124,16 +2124,16 @@ private:
         unsigned pointerEvents : 4; // PointerEvents
         unsigned insideLink : 2; // InsideLink
         unsigned insideDefaultButton : 1;
-        // 46 bits
+        // 47 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
-        // 48 bits
+        // 49 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 53 bits
+        // 54 bits
     };
 
     // This constructor is used to implement the replace operation.

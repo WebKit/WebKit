@@ -30,5 +30,6 @@
  - "capitalize"
  - "uppercase"
  - "lowercase"
+ - "full-size-kana"
 
 

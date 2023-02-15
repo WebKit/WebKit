@@ -576,6 +576,7 @@ rtl
 capitalize
 uppercase
 lowercase
+full-size-kana
 //none
 //
 // CSS_PROP_VISIBILITY:
