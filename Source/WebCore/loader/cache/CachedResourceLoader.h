@@ -75,7 +75,7 @@ enum class FetchMetadataSite : uint8_t { None, SameOrigin, SameSite, CrossSite }
 // RefPtr<CachedResourceLoader> for their lifetime (and will create one if they
 // are initialized without a Frame), so a Document can keep a CachedResourceLoader
 // alive past detach if scripts still reference the Document.
-class CachedResourceLoader : public RefCounted<CachedResourceLoader> {
+class CachedResourceLoader : public RefCounted<CachedResourceLoader>, public CanMakeWeakPtr<CachedResourceLoader> {
     WTF_MAKE_NONCOPYABLE(CachedResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 friend class ImageLoader;
 friend class ResourceCacheValidationSuppressor;
