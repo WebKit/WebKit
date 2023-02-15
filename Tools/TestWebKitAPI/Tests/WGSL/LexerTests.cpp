@@ -166,7 +166,9 @@ TEST(WGSLLexerTests, SpecialTokens)
     checkSingleToken("/"_s, TokenType::Slash);
     checkSingleToken("*"_s, TokenType::Star);
     checkSingleToken("&"_s, TokenType::And);
+    checkSingleToken("&&"_s, TokenType::AndAnd);
     checkSingleToken("|"_s, TokenType::Or);
+    checkSingleToken("||"_s, TokenType::OrOr);
     checkSingleToken("^"_s, TokenType::Xor);
     checkSingleToken("~"_s, TokenType::Tilde);
 }

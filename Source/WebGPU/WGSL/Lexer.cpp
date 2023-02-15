@@ -53,7 +53,13 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Modulo);
     case '&':
         shift();
-        return makeToken(TokenType::And);
+        switch (m_current) {
+        case '&':
+            shift();
+            return makeToken(TokenType::AndAnd);
+        default:
+            return makeToken(TokenType::And);
+        }
     case '(':
         shift();
         return makeToken(TokenType::ParenLeft);
@@ -161,7 +167,13 @@ Token Lexer<T>::lex()
         return makeToken(TokenType::Xor);
     case '|':
         shift();
-        return makeToken(TokenType::Or);
+        switch (m_current) {
+        case '|':
+            shift();
+            return makeToken(TokenType::OrOr);
+        default:
+            return makeToken(TokenType::Or);
+        }
     case '0': {
         shift();
         double literalValue = 0;

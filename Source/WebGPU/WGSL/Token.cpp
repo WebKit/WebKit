@@ -89,6 +89,8 @@ String toString(TokenType type)
         return "false"_s;
     case TokenType::And:
         return "&"_s;
+    case TokenType::AndAnd:
+        return "&&"_s;
     case TokenType::Arrow:
         return "->"_s;
     case TokenType::Attribute:
@@ -133,6 +135,8 @@ String toString(TokenType type)
         return "%"_s;
     case TokenType::Or:
         return "|"_s;
+    case TokenType::OrOr:
+        return "||"_s;
     case TokenType::Plus:
         return "+"_s;
     case TokenType::PlusPlus:

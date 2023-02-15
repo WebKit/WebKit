@@ -71,6 +71,7 @@ enum class TokenType: uint32_t {
     // FIXME: add all the other keywords: see #keyword-summary in the WGSL spec
 
     And,
+    AndAnd,
     Arrow,
     Attribute,
     Bang,
@@ -93,6 +94,7 @@ enum class TokenType: uint32_t {
     MinusMinus,
     Modulo,
     Or,
+    OrOr,
     ParenLeft,
     ParenRight,
     Period,

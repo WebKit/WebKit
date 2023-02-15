@@ -72,7 +72,8 @@ public:
     Result<AST::Statement::Ref> parseStatement();
     Result<AST::CompoundStatement> parseCompoundStatement();
     Result<AST::ReturnStatement> parseReturnStatement();
-    Result<AST::Expression::Ref> parseShortCircuitOrExpression();
+    Result<AST::Expression::Ref> parseShortCircuitExpression(AST::Expression::Ref&&, TokenType, AST::BinaryOperation);
+    Result<AST::Expression::Ref> parseRelationalExpression();
     Result<AST::Expression::Ref> parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs);
     Result<AST::Expression::Ref> parseShiftExpression();
     Result<AST::Expression::Ref> parseShiftExpressionPostUnary(AST::Expression::Ref&& lhs);

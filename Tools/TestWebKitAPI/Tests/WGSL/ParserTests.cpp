@@ -623,6 +623,24 @@ TEST(WGSLParserTests, RelationalExpression)
     testBinaryExpressionXY("x <= y"_s, WGSL::AST::BinaryOperation::LessEqual,    { "x"_s, "y"_s });
 }
 
+// FIXME: Test failing cases, such as, "x && y || z"
+TEST(WGSLParserTest, ShortCircuitAndExpression)
+{
+    testBinaryExpressionXY("x && y"_s, WGSL::AST::BinaryOperation::ShortCircuitAnd, { "x"_s, "y"_s });
+    testBinaryExpressionXYZ("x && y && z"_s,
+        { WGSL::AST::BinaryOperation::ShortCircuitAnd, WGSL::AST::BinaryOperation::ShortCircuitAnd },
+        { "x"_s, "y"_s, "z"_s });
+}
+
+// FIXME: Test failing cases, such as, "x || y && z"
+TEST(WGSLParserTest, ShortCircuitOrExpression)
+{
+    testBinaryExpressionXY("x || y"_s, WGSL::AST::BinaryOperation::ShortCircuitOr, { "x"_s, "y"_s });
+    testBinaryExpressionXYZ("x || y || z"_s,
+        { WGSL::AST::BinaryOperation::ShortCircuitOr, WGSL::AST::BinaryOperation::ShortCircuitOr },
+        { "x"_s, "y"_s, "z"_s });
+}
+
 #pragma mark -
 #pragma mark WebGPU Example Shaders
 

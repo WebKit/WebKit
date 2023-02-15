@@ -164,11 +164,23 @@ static bool canContinueRelationalExpression(const Token& token)
     }
 }
 
+static bool canContinueShortCircuitAndExpression(const Token& token)
+{
+    return token.m_type == TokenType::AndAnd;
+}
+
+static bool canContinueShortCircuitOrExpression(const Token& token)
+{
+    return token.m_type == TokenType::OrOr;
+}
+
 static AST::BinaryOperation toBinaryOperation(const Token& token)
 {
     switch (token.m_type) {
     case TokenType::And:
         return AST::BinaryOperation::And;
+    case TokenType::AndAnd:
+        return AST::BinaryOperation::ShortCircuitAnd;
     case TokenType::BangEq:
         return AST::BinaryOperation::NotEqual;
     case TokenType::EqEq:
@@ -191,6 +203,8 @@ static AST::BinaryOperation toBinaryOperation(const Token& token)
         return AST::BinaryOperation::Modulo;
     case TokenType::Or:
         return AST::BinaryOperation::Or;
+    case TokenType::OrOr:
+        return AST::BinaryOperation::ShortCircuitOr;
     case TokenType::Plus:
         return AST::BinaryOperation::Add;
     case TokenType::Slash:
@@ -743,6 +757,27 @@ Result<AST::ReturnStatement> Parser<Lexer>::parseReturnStatement()
 }
 
 template<typename Lexer>
+Result<AST::Expression::Ref> Parser<Lexer>::parseShortCircuitExpression(AST::Expression::Ref&& lhs, TokenType continuingTok, AST::BinaryOperation op)
+{
+    START_PARSE();
+    while (current().m_type == continuingTok) {
+        consume();
+        PARSE(rhs, RelationalExpression);
+        lhs = MAKE_NODE_UNIQUE_REF(BinaryExpression, WTFMove(lhs), WTFMove(rhs), op);
+    }
+
+    return WTFMove(lhs);
+}
+
+template<typename Lexer>
+Result<AST::Expression::Ref> Parser<Lexer>::parseRelationalExpression()
+{
+    PARSE(unary, UnaryExpression);
+    PARSE(relational, RelationalExpressionPostUnary, WTFMove(unary));
+    return WTFMove(relational);
+}
+
+template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs)
 {
     START_PARSE();
@@ -995,11 +1030,18 @@ template<typename Lexer>
 Result<AST::Expression::Ref> Parser<Lexer>::parseExpression()
 {
     // FIXME: Fill in
-    PARSE(lhs, UnaryExpression);
+    PARSE(unary, UnaryExpression);
     if (canContinueBitwiseExpression(current()))
-        return parseBitwiseExpressionPostUnary(WTFMove(lhs));
+        return parseBitwiseExpressionPostUnary(WTFMove(unary));
 
-    return parseRelationalExpressionPostUnary(WTFMove(lhs));
+    PARSE(relational, RelationalExpressionPostUnary, WTFMove(unary));
+    if (canContinueShortCircuitAndExpression(current())) {
+        PARSE_MOVE(relational, ShortCircuitExpression, WTFMove(relational), TokenType::AndAnd, AST::BinaryOperation::ShortCircuitAnd);
+    } else if (canContinueShortCircuitOrExpression(current())) {
+        PARSE_MOVE(relational, ShortCircuitExpression, WTFMove(relational), TokenType::OrOr, AST::BinaryOperation::ShortCircuitOr);
+    } // NOLINT
+
+    return WTFMove(relational);
 }
 
 template<typename Lexer>
