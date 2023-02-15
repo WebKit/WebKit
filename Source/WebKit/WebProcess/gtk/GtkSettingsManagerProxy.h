@@ -47,6 +47,8 @@ private:
 
     void settingsDidChange(GtkSettingsState&&);
 
+    void applyFontOptions();
+
     GtkSettings* m_settings;
 };
 
