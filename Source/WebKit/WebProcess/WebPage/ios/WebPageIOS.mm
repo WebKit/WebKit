@@ -4306,7 +4306,7 @@ void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& pr
 void WebPage::contentSizeCategoryDidChange(const String& contentSizeCategory)
 {
     setContentSizeCategory(contentSizeCategory);
-    FontCache::invalidateAllFontCaches();
+    FontCache::invalidateAllFontCaches(FontCache::ShouldRunInvalidationCallbacks::Yes);
 }
 
 String WebPage::platformUserAgent(const URL&) const

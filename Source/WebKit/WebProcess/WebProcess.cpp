@@ -907,7 +907,7 @@ void WebProcess::terminate()
 #ifndef NDEBUG
     // These are done in an attempt to reduce LEAK output.
     GCController::singleton().garbageCollectNow();
-    FontCache::invalidateAllFontCaches();
+    FontCache::invalidateAllFontCaches(FontCache::ShouldRunInvalidationCallbacks::No);
     MemoryCache::singleton().setDisabled(true);
 #endif
 

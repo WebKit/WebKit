@@ -546,7 +546,7 @@ ExceptionOr<void> InternalSettings::setShouldMockBoldSystemFontForAccessibility(
 {
     if (!m_page)
         return Exception { InvalidAccessError };
-    FontCache::invalidateAllFontCaches();
+    FontCache::invalidateAllFontCaches(FontCache::ShouldRunInvalidationCallbacks::Yes);
 #if PLATFORM(COCOA)
     setOverrideEnhanceTextLegibility(should);
 #else

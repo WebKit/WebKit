@@ -1076,7 +1076,7 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
         _AXSInvertColorsSetEnabledApp(invertColorsEnabled, appID);
 #endif
     setOverrideEnhanceTextLegibility(preferences.enhanceTextLegibilityOverall);
-    FontCache::invalidateAllFontCaches();
+    FontCache::invalidateAllFontCaches(FontCache::ShouldRunInvalidationCallbacks::Yes);
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     m_imageAnimationEnabled = preferences.imageAnimationEnabled;
     for (auto& page : m_pageMap.values())

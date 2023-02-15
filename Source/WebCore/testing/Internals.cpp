@@ -1907,7 +1907,7 @@ ExceptionOr<void> Internals::setMarkedTextMatchesAreHighlighted(bool flag)
 
 void Internals::invalidateFontCache()
 {
-    FontCache::invalidateAllFontCaches();
+    FontCache::invalidateAllFontCaches(FontCache::ShouldRunInvalidationCallbacks::Yes);
 }
 
 ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
