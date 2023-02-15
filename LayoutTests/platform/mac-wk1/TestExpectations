@@ -2391,6 +2391,8 @@ webkit.org/b/245902 [ Debug ] contentfiltering/allow-media-document.html [ Skip 
 
 webkit.org/b/246653 [ Debug ] media/modern-media-controls/media-documents/click-on-video-should-not-pause.html [ Skip ]
 
+webkit.org/b/252322 media/media-source/media-source-video-renders.html [ Failure ]
+
 # CONSOLE MESSAGE output is nondeterministic and varies from run-to-run
 http/tests/security/basic-auth-subresource.html [ Failure Pass ]
 http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-img-src-star.html [ DumpJSConsoleLogInStdErr ]
