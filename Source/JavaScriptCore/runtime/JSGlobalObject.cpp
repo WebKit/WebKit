@@ -145,6 +145,7 @@
 #include "JSPromise.h"
 #include "JSPromiseConstructor.h"
 #include "JSPromisePrototype.h"
+#include "JSRawJSONObject.h"
 #include "JSRemoteFunction.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
@@ -318,7 +319,7 @@ static JSValue createProxyProperty(VM& vm, JSObject* object)
 static JSValue createJSONProperty(VM& vm, JSObject* object)
 {
     JSGlobalObject* global = jsCast<JSGlobalObject*>(object);
-    return JSONObject::create(vm, JSONObject::createStructure(vm, global, global->objectPrototype()));
+    return JSONObject::create(vm, global, JSONObject::createStructure(vm, global, global->objectPrototype()));
 }
 
 static JSValue createMathProperty(VM& vm, JSObject* object)
@@ -985,6 +986,10 @@ void JSGlobalObject::init(VM& vm)
     m_callbackObjectStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSCallbackObject<JSNonFinalObject>::createStructure(init.vm, init.owner, init.owner->m_objectPrototype.get()));
+        });
+    m_rawJSONObjectStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            init.set(JSRawJSONObject::createStructure(init.vm, init.owner, jsNull()));
         });
 
 #if JSC_OBJC_API_ENABLED

@@ -934,6 +934,7 @@ runtime/JSPromiseConstructor.cpp
 runtime/JSPromisePrototype.cpp
 runtime/JSPropertyNameEnumerator.cpp
 runtime/JSProxy.cpp
+runtime/JSRawJSONObject.cpp
 runtime/JSRemoteFunction.cpp
 runtime/JSRunLoopTimer.cpp
 runtime/JSScope.cpp
