@@ -39,6 +39,7 @@
 #include "Region.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 
