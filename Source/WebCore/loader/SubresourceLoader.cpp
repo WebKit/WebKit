@@ -877,6 +877,7 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
 void SubresourceLoader::releaseResources()
 {
     ASSERT(!reachedTerminalState());
+    m_requestCountTracker = std::nullopt;
 #if PLATFORM(IOS_FAMILY)
     if (m_state != Uninitialized && m_state != CancelledWhileInitializing)
 #else
