@@ -376,8 +376,7 @@ void LogMessage::OutputToDebug(LoggingSeverity severity, const LogLineRef& log_l
   // On the Mac, all stderr output goes to the Console log and causes clutter.
   // So in opt builds, don't log to stderr unless the user specifically sets
   // a preference to do so.
-  CFStringRef key = CFStringCreateWithCString(
-      kCFAllocatorDefault, "logToStdErr", kCFStringEncodingUTF8);
+  CFStringRef key = CFSTR("logToStdErr");
   CFStringRef domain = CFBundleGetIdentifier(CFBundleGetMainBundle());
   if (key != nullptr && domain != nullptr) {
     Boolean exists_and_is_valid;
