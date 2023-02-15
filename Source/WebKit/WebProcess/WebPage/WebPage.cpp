@@ -5771,7 +5771,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
 }
 
 #if PLATFORM(COCOA)
-void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
+void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
     auto& frameView = *m_page->mainFrame().view();
     IntSize snapshotSize;
@@ -5789,9 +5789,21 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>&
     auto originalLayoutViewportOverrideRect = frameView.layoutViewportOverrideRect();
     frameView.setLayoutViewportOverrideRect(LayoutRect(snapshotRect));
     auto originalPaintBehavior = frameView.paintBehavior();
+
     frameView.setPaintBehavior(originalPaintBehavior | PaintBehavior::AnnotateLinks);
 
+    auto originalColor = frameView.baseBackgroundColor();
+    if (allowTransparentBackground) {
+        frameView.setTransparent(true);
+        frameView.setBaseBackgroundColor(Color::transparentBlack);
+    }
+
     auto pdfData = pdfSnapshotAtSize(snapshotRect, snapshotSize, 0);
+
+    if (allowTransparentBackground) {
+        frameView.setTransparent(false);
+        frameView.setBaseBackgroundColor(originalColor);
+    }
 
     frameView.setLayoutViewportOverrideRect(originalLayoutViewportOverrideRect);
     frameView.setPaintBehavior(originalPaintBehavior);

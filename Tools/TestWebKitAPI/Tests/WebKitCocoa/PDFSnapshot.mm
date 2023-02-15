@@ -230,6 +230,31 @@ TEST(PDFSnapshot, InlineLinks)
     Util::run(&didTakeSnapshot);
 }
 
+TEST(PDFSnapshot, AllowTransparentBackground)
+{
+    static bool didTakeSnapshot;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadHTMLString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><svg height=\"210\" width=\"500\"><polygon points=\"200,10 250,190 160,210\" style=\"fill:lime\" /></svg>"];
+
+    auto configuration = adoptNS([[WKPDFConfiguration alloc] init]);
+    [configuration setAllowTransparentBackground:YES];
+
+    [webView createPDFWithConfiguration:configuration.get() completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+        EXPECT_NULL(error);
+        auto document = TestPDFDocument::createFromData(pdfSnapshotData);
+
+        auto page = document->page(0);
+        EXPECT_NE(page, nullptr);
+
+        EXPECT_TRUE(page->colorAtPoint(1, 1) == WebCore::Color::transparentBlack);
+
+        didTakeSnapshot = true;
+    }];
+
+    Util::run(&didTakeSnapshot);
+}
+
 }
 
 #endif // HAVE(PDFKIT)
