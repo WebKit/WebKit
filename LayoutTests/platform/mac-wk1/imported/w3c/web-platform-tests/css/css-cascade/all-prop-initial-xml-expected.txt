@@ -316,8 +316,8 @@ PASS text-orientation
 PASS text-overflow
 PASS text-rendering
 PASS text-shadow
-PASS text-transform
 PASS text-spacing-trim
+PASS text-transform
 PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap
