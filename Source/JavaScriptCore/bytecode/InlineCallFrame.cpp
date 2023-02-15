@@ -118,6 +118,9 @@ void printInternal(PrintStream& out, JSC::InlineCallFrame::Kind kind)
     case JSC::InlineCallFrame::ProxyObjectLoadCall:
         out.print("ProxyObjectLoadCall");
         return;
+    case JSC::InlineCallFrame::BoundFunctionCall:
+        out.print("BoundFunctionCall");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

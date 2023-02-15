@@ -54,6 +54,7 @@ struct InlineCallFrame {
         GetterCall,
         SetterCall,
         ProxyObjectLoadCall,
+        BoundFunctionCall,
     };
     static constexpr unsigned bitWidthOfKind = 4;
 
@@ -65,6 +66,7 @@ struct InlineCallFrame {
         case GetterCall:
         case SetterCall:
         case ProxyObjectLoadCall:
+        case BoundFunctionCall:
             return CallMode::Regular;
         case TailCall:
         case TailCallVarargs:
@@ -112,6 +114,7 @@ struct InlineCallFrame {
         case GetterCall:
         case SetterCall:
         case ProxyObjectLoadCall:
+        case BoundFunctionCall:
             return CodeForCall;
         case Construct:
         case ConstructVarargs:

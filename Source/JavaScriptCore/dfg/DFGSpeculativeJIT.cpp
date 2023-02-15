@@ -9753,8 +9753,11 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
     cellResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileCreateArgumentsButterfly(Node* node)
+void SpeculativeJIT::compileCreateArgumentsButterflyExcludingThis(Node* node)
 {
+    SpeculateCellOperand target(this, node->child1());
+    GPRReg targetGPR = target.gpr();
+
     GPRFlushedCallResult result(this);
     GPRReg resultGPR = result.gpr();
     flushRegisters();
@@ -9762,7 +9765,10 @@ void SpeculativeJIT::compileCreateArgumentsButterfly(Node* node)
     // We set up the arguments ourselves, because we have the whole register file and we can
     // set them up directly into the argument registers.
 
-    // Arguments: 0:JSGlobalObject*, 1:start, 3:length
+    // Arguments: 0:JSGlobalObject*, 1:start, 2:length, 3:target
+
+    // Do the targetGPR first, since it might alias an argument register.
+    setupArgument(3, [&] (GPRReg destGPR) { move(targetGPR, destGPR); });
     setupArgument(2, [&] (GPRReg destGPR) { emitGetLength(node->origin.semantic, destGPR); });
     setupArgument(1, [&] (GPRReg destGPR) { emitGetArgumentStart(node->origin.semantic, destGPR); });
     setupArgument(
@@ -9770,7 +9776,7 @@ void SpeculativeJIT::compileCreateArgumentsButterfly(Node* node)
             loadLinkableConstant(LinkableConstant::globalObject(*this, node), destGPR);
         });
 
-    appendCallSetResult(operationCreateArgumentsButterfly, resultGPR);
+    appendCallSetResult(operationCreateArgumentsButterflyExcludingThis, resultGPR);
     exceptionCheck();
 
     cellResult(resultGPR, node);

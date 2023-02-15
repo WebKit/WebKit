@@ -2193,6 +2193,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionSecurityAssertEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionAsanEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionIsMemoryLimited);
 static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
+static JSC_DECLARE_HOST_FUNCTION(functionUseDFGJIT);
+static JSC_DECLARE_HOST_FUNCTION(functionUseFTLJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionToCacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
@@ -2211,8 +2213,9 @@ static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
 static JSC_DECLARE_HOST_FUNCTION(functionAllowDoubleShape);
 static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 #if PLATFORM(COCOA)
-static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);;
+static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);
 #endif
+static JSC_DECLARE_HOST_FUNCTION(functionAssertFrameAligned);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -3802,6 +3805,18 @@ JSC_DEFINE_HOST_FUNCTION(functionUseJIT, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsBoolean(Options::useJIT()));
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionUseDFGJIT, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(Options::useDFGJIT()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionUseFTLJIT, (JSGlobalObject*, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+    return JSValue::encode(jsBoolean(Options::useFTLJIT()));
+}
+
 JSC_DEFINE_HOST_FUNCTION(functionIsGigacageEnabled, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
@@ -3959,6 +3974,17 @@ JSC_DEFINE_HOST_FUNCTION(functionSetCrashLogMessage, (JSGlobalObject* globalObje
 }
 #endif
 
+JSC_DEFINE_HOST_FUNCTION(functionAssertFrameAligned, (JSGlobalObject*, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+#if CPU(X86_64) || CPU(ARM64)
+    RELEASE_ASSERT(bitwise_cast<uintptr_t>(callFrame) % stackAlignmentBytes() == 0);
+#else
+    UNUSED_PARAM(callFrame);
+#endif
+    return JSValue::encode(jsUndefined());
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4113,6 +4139,8 @@ void JSDollarVM::finishCreation(VM& vm)
 
     addFunction(vm, "isMemoryLimited"_s, functionIsMemoryLimited, 0);
     addFunction(vm, "useJIT"_s, functionUseJIT, 0);
+    addFunction(vm, "useDFGJIT"_s, functionUseDFGJIT, 0);
+    addFunction(vm, "useFTLJIT"_s, functionUseFTLJIT, 0);
     addFunction(vm, "isGigacageEnabled"_s, functionIsGigacageEnabled, 0);
 
     addFunction(vm, "toCacheableDictionary"_s, functionToCacheableDictionary, 1);
@@ -4139,6 +4167,8 @@ void JSDollarVM::finishCreation(VM& vm)
 #if PLATFORM(COCOA)
     addFunction(vm, "setCrashLogMessage"_s, functionSetCrashLogMessage, 1);
 #endif
+
+    addFunction(vm, "assertFrameAligned"_s, functionAssertFrameAligned, 0);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

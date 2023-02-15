@@ -61,8 +61,7 @@ function bind(thisValue)
 {
     "use strict";
 
-    var target = this;
-    if (!@isCallable(target))
+    if (!@isCallable(this))
         @throwTypeError("|this| is not a function inside Function.prototype.bind");
 
     var argumentCount = @argumentCount();
@@ -70,12 +69,12 @@ function bind(thisValue)
     var numBoundArgs = 0;
     if (argumentCount > 1) {
         numBoundArgs = argumentCount - 1;
-        boundArgs = @createArgumentsButterfly();
+        boundArgs = @createArgumentsButterflyExcludingThis(this);
     }
 
     var length = 0;
-    if (@hasOwnLengthProperty(target)) {
-        var lengthValue = target.length;
+    if (@hasOwnLengthProperty(this)) {
+        var lengthValue = this.length;
         if (typeof lengthValue === "number") {
             lengthValue = @toIntegerOrInfinity(lengthValue);
             // Note that we only care about positive lengthValues, however, this comparision
@@ -85,9 +84,9 @@ function bind(thisValue)
         }
     }
 
-    var name = target.name;
+    var name = this.name;
     if (typeof name !== "string")
         name = "";
 
-    return @makeBoundFunction(target, thisValue, boundArgs, length, name);
+    return @makeBoundFunction(this, thisValue, boundArgs, length, name);
 }

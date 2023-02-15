@@ -59,6 +59,7 @@
 #include "InByStatus.h"
 #include "InstanceOfStatus.h"
 #include "JSArrayIterator.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
@@ -202,7 +203,7 @@ private:
     void inlineCall(Node* callTargetNode, Operand result, CallVariant, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks);
     // Handle intrinsic functions. Return true if it succeeded, false if we need to plant a call.
     template<typename ChecksFunctor>
-    bool handleIntrinsicCall(Node* callee, Operand result, CallVariant, Intrinsic, int registerOffset, int argumentCountIncludingThis, NodeType callOp, CodeSpecializationKind, SpeculatedType prediction, const ChecksFunctor& insertChecks);
+    bool handleIntrinsicCall(Node* callee, Operand result, CallVariant, Intrinsic, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, CodeSpecializationKind, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleDOMJITCall(Node* callee, Operand result, const DOMJIT::Signature*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
@@ -1759,7 +1760,8 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVarian
     switch (kind) {
     case InlineCallFrame::GetterCall:
     case InlineCallFrame::SetterCall:
-    case InlineCallFrame::ProxyObjectLoadCall: {
+    case InlineCallFrame::ProxyObjectLoadCall:
+    case InlineCallFrame::BoundFunctionCall: {
         // When inlining getter and setter calls, we setup a stack frame which does not appear in the bytecode.
         // Because Inlining can switch on executable, we could have a graph like this.
         //
@@ -1897,10 +1899,12 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
     VERBOSE_LOG("    Considering callee ", callee, "\n");
 
     bool didInsertChecks = false;
-    auto insertChecksWithAccounting = [&] () {
+    bool didBoundFunctionInlining = false;
+    auto insertChecksWithAccounting = [&] (bool boundFunctionInlining = false) {
         if (needsToCheckCallee)
             emitFunctionChecks(callee, callTargetNode, thisArgument);
         didInsertChecks = true;
+        didBoundFunctionInlining = boundFunctionInlining;
     };
 
     if (kind == InlineCallFrame::TailCall && ByteCodeParser::handleRecursiveTailCall(callTargetNode, callee, registerOffset, argumentCountIncludingThis, insertChecksWithAccounting)) {
@@ -1916,8 +1920,12 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
 
     auto endSpecialCase = [&] () {
         RELEASE_ASSERT(didInsertChecks);
-        addToGraph(Phantom, callTargetNode);
-        emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
+        // Bound function's slots of them are not important. They are dead at OSR exit.
+        // As the same way to the arguments for normal calls, we do not do special things.
+        if (!didBoundFunctionInlining) {
+            addToGraph(Phantom, callTargetNode);
+            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis);
+        }
         inliningBalance--;
         if (continuationBlock) {
             m_currentIndex = osrExitIndex;
@@ -1941,7 +1949,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
 
     Intrinsic intrinsic = callee.intrinsicFor(specializationKind);
     if (intrinsic != NoIntrinsic) {
-        if (handleIntrinsicCall(callTargetNode, result, callee, intrinsic, registerOffset, argumentCountIncludingThis, callOp, specializationKind, prediction, insertChecksWithAccounting)) {
+        if (handleIntrinsicCall(callTargetNode, result, callee, intrinsic, registerOffset, argumentCountIncludingThis, osrExitIndex, callOp, specializationKind, prediction, insertChecksWithAccounting)) {
             endSpecialCase();
             return CallOptimizationResult::Inlined;
         }
@@ -2333,7 +2341,7 @@ void ByteCodeParser::handleMinMax(Operand result, NodeType op, int registerOffse
 }
 
 template<typename ChecksFunctor>
-bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVariant variant, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, NodeType callOp, CodeSpecializationKind kind, SpeculatedType prediction, const ChecksFunctor& insertChecks)
+bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVariant variant, Intrinsic intrinsic, int registerOffset, int argumentCountIncludingThis, BytecodeIndex osrExitIndex, NodeType callOp, CodeSpecializationKind kind, SpeculatedType prediction, const ChecksFunctor& insertChecks)
 {
     VERBOSE_LOG("       The intrinsic is ", intrinsic, "\n");
     UNUSED_PARAM(callOp);
@@ -3863,6 +3871,79 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
         }
 #endif
 
+        case BoundFunctionCallIntrinsic: {
+            JSFunction* function = variant.function();
+            if (!function)
+                return false;
+            JSBoundFunction* boundFunction = jsDynamicCast<JSBoundFunction*>(function);
+            if (!boundFunction)
+                return false;
+
+            insertChecks(true);
+            auto* frozenFunction = m_graph.freeze(function);
+            addToGraph(CheckIsConstant, OpInfo(frozenFunction), Edge(callee, CellUse));
+
+            // Make a call. We don't try to get fancy with using the smallest operand number because
+            // the stack layout phase should compress the stack anyway.
+            //
+            // We do not override the existing stack for this call. We newly allocate stack space and fill it with values
+            // to keep OSR exit correct when we exit in the middle of this stack construction. We exit to the caller side
+            // when we failed to construct this frame. And this is totally OK since we are not clobbering values.
+
+            JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
+
+            unsigned numberOfParameters = argumentCountIncludingThis;
+            numberOfParameters++; // True return PC.
+            numberOfParameters += boundArgs ? boundArgs->length() : 0;
+
+            // Start with a register offset that corresponds to the last in-use register.
+            int newRegisterOffset = virtualRegisterForLocal(m_inlineStackTop->m_profiledBlock->numCalleeLocals() - 1).offset();
+            newRegisterOffset -= numberOfParameters;
+            newRegisterOffset -= CallFrame::headerSizeInRegisters;
+
+            // Get the alignment right.
+            newRegisterOffset = -WTF::roundUpToMultipleOf(stackAlignmentRegisters(), -newRegisterOffset);
+
+            ensureLocals(m_inlineStackTop->remapOperand(VirtualRegister(newRegisterOffset)).toLocal());
+
+            // We first emit all arguments in the graph (since it can involve newly added constants), and then we set all of them.
+            // Once one of set has a check, the subsequent sets' checks need to be hoisted too. If we are interleaving jsConstant addition,
+            // these checks can be hoisted above the constant which needs to be checked.
+            //
+            // Note that if check failed here, we exit to bound function's caller. Since bound function does not have side effect until we actually
+            // call the wrapped function, this is OK.
+            Vector<Node*> arguments;
+            arguments.append(jsConstant(boundFunction->boundThis()));
+            if (boundArgs) {
+                for (unsigned index = 0; index < boundArgs->length(); ++index)
+                    arguments.append(jsConstant(boundArgs->get(index)));
+            }
+
+            if (argumentCountIncludingThis > 1) {
+                for (int index = 1; index < argumentCountIncludingThis; ++index)
+                    arguments.append(get(virtualRegisterForArgumentIncludingThis(index, registerOffset)));
+            }
+
+            // Issue SetLocals. This has two effects:
+            // 1) That's how handleCall() sees the arguments.
+            // 2) If we inline then this ensures that the arguments are flushed so that if you use
+            //    the dreaded arguments object on the call target, the right things happen. Well, sort of -
+            //    since we only really care about 'this' in this case. But we're not going to take that
+            //    shortcut.
+            unsigned currentArgumentIndex = 0;
+            for (Node* argument : arguments)
+                set(virtualRegisterForArgumentIncludingThis(currentArgumentIndex++, newRegisterOffset), argument, ImmediateNakedSet);
+
+            // We've set some locals, but they are not user-visible since they are newly allocated for this inlined call. It's still OK to exit from here.
+            // JSBoundFunction's trampoline does not have user-visible effect. So exiting to the pre-bound function location is OK.
+            m_exitOK = true;
+            addToGraph(ExitOK);
+
+            handleCall(result, Call, InlineCallFrame::BoundFunctionCall, osrExitIndex, jsConstant(boundFunction->targetFunction()), numberOfParameters - 1, newRegisterOffset, CallLinkStatus(CallVariant(boundFunction->targetFunction())), prediction);
+            didSetResult = true;
+            return true;
+        }
+
         default:
             return false;
         }
@@ -4963,7 +5044,11 @@ void ByteCodeParser::handleGetById(
         return;
     }
     
-    Node* getter = addToGraph(GetGetter, loadedValue);
+    Node* getter = nullptr;
+    if (JSValue getterValue = m_graph.tryGetConstantGetter(loadedValue))
+        getter = weakJSConstant(getterValue);
+    else
+        getter = addToGraph(GetGetter, loadedValue);
 
     if (handleIntrinsicGetter(destination, prediction, variant, base,
             [&] () {
@@ -5364,7 +5449,11 @@ void ByteCodeParser::handlePutById(
             return;
         }
         
-        Node* setter = addToGraph(GetSetter, loadedValue);
+        Node* setter = nullptr;
+        if (JSValue setterValue = m_graph.tryGetConstantSetter(loadedValue))
+            setter = weakJSConstant(setterValue);
+        else
+            setter = addToGraph(GetSetter, loadedValue);
         
         // Make a call. We don't try to get fancy with using the smallest operand number because
         // the stack layout phase should compress the stack anyway.
@@ -8430,11 +8519,11 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_create_cloned_arguments);
         }
 
-        case op_create_arguments_butterfly: {
-            auto bytecode = currentInstruction->as<OpCreateArgumentsButterfly>();
+        case op_create_arguments_butterfly_excluding_this: {
+            auto bytecode = currentInstruction->as<OpCreateArgumentsButterflyExcludingThis>();
             noticeArgumentsUse();
-            set(bytecode.m_dst, addToGraph(CreateArgumentsButterfly));
-            NEXT_OPCODE(op_create_arguments_butterfly);
+            set(bytecode.m_dst, addToGraph(CreateArgumentsButterflyExcludingThis, Edge(get(bytecode.m_target), CellUse)));
+            NEXT_OPCODE(op_create_arguments_butterfly_excluding_this);
         }
             
         case op_get_from_arguments: {

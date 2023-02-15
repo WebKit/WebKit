@@ -100,7 +100,7 @@ enum class LinkTimeConstant : int32_t;
     macro(newArrayWithSpecies) \
     macro(newPromise) \
     macro(createPromise) \
-    macro(createArgumentsButterfly) \
+    macro(createArgumentsButterflyExcludingThis) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_SIMPLE_EACH_NAME(macro) \

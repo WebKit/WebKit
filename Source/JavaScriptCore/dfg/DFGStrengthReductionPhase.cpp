@@ -1313,7 +1313,48 @@ private:
                 break;
             }
 #endif
-            
+
+            // We gave up inlining a wrapped function, but still, we can inline bound function's wrapper by extracting it.
+            // This also wipes bound-function thunk call which is suboptimal compared to directly calling a wrapped function here.
+            if (executable->intrinsic() == BoundFunctionCallIntrinsic && function && (m_node->op() == Call || m_node->op() == TailCall || m_node->op() == TailCallInlinedCaller)) {
+                JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(function);
+                if (JSFunction* targetFunction = jsDynamicCast<JSFunction*>(boundFunction->targetFunction())) {
+                    auto* targetExecutable = targetFunction->executable();
+                    JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
+                    if (((boundArgs ? boundArgs->length() : 0) + m_node->numChildren()) <= Options::maximumDirectCallStackSize()) {
+                        if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(targetExecutable)) {
+                            // We need to update m_parameterSlots before we get to the backend, but we don't
+                            // want to do too much of this.
+                            unsigned numAllocatedArgs = static_cast<unsigned>(functionExecutable->parameterCount()) + 1;
+                            if (numAllocatedArgs <= Options::maximumDirectCallStackSize())
+                                m_graph.m_parameterSlots = std::max(m_graph.m_parameterSlots, Graph::parameterSlotsForArgCount(numAllocatedArgs));
+                        }
+
+                        unsigned firstChild = m_graph.m_varArgChildren.size();
+                        m_graph.m_varArgChildren.append(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, targetFunction)); // |callee|.
+                        m_graph.m_varArgChildren.append(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, boundFunction->boundThis())); // |this|
+
+                        JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
+                        if (boundArgs) {
+                            for (unsigned index = 0; index < boundArgs->length(); ++index)
+                                m_graph.m_varArgChildren.append(m_insertionSet.insertConstant(m_nodeIndex, m_node->origin, boundArgs->get(index)));
+                        }
+
+                        // First one is |callee|, second one is |this|.
+                        for (unsigned index = 2; index < m_node->numChildren(); ++index)
+                            m_graph.m_varArgChildren.append(m_graph.child(m_node, index));
+
+                        m_node->children = AdjacencyList(AdjacencyList::Variable, firstChild, m_graph.m_varArgChildren.size() - firstChild);
+                        m_graph.m_parameterSlots = std::max(m_graph.m_parameterSlots, Graph::parameterSlotsForArgCount(m_node->numChildren() - 1));
+
+                        m_graph.m_plan.recordedStatuses().addCallLinkStatus(m_node->origin.semantic, CallLinkStatus(CallVariant(targetExecutable)));
+                        m_node->convertToDirectCall(m_graph.freeze(targetExecutable));
+                        m_changed = true;
+                        break;
+                    }
+                }
+            }
+
             if (FunctionExecutable* functionExecutable = jsDynamicCast<FunctionExecutable*>(executable)) {
                 if (m_node->op() == Construct && functionExecutable->constructAbility() == ConstructAbility::CannotConstruct)
                     break;

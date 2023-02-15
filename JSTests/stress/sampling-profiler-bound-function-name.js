@@ -23,6 +23,12 @@ if (platformSupportsSamplingProfiler()) {
         boundBar();
     }
 
-    runTest(baz, ["foo", "bound foo", "baz"]);
-    runTest(baz, ["bar", "bound bar", "baz"]);
+    // It depends on JIT enablement. But this is OK since this is sampling-profiler's internal data.
+    if ($vm.useDFGJIT()) {
+        runTest(baz, ["foo", "baz"]);
+        runTest(baz, ["bar", "baz"]);
+    } else {
+        runTest(baz, ["foo", "bound foo", "baz"]);
+        runTest(baz, ["bar", "bound bar", "baz"]);
+    }
 }

@@ -53,6 +53,7 @@
 #include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
 #include "JSBigInt.h"
+#include "JSBoundFunction.h"
 #include "JSGenericTypedArrayViewConstructorInlines.h"
 #include "JSGenericTypedArrayViewInlines.h"
 #include "JSImmutableButterfly.h"
@@ -2067,20 +2068,42 @@ JSC_DEFINE_JIT_OPERATION(operationCreateClonedArguments, JSCell*, (JSGlobalObjec
         globalObject, structure, argumentStart, length, callee);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCreateArgumentsButterfly, JSCell*, (JSGlobalObject* globalObject, Register* argumentStart, uint32_t argumentCount))
+JSC_DEFINE_JIT_OPERATION(operationCreateArgumentsButterflyExcludingThis, JSCell*, (JSGlobalObject* globalObject, Register* argumentStart, uint32_t argumentCount, JSCell* target))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
+    ASSERT(argumentCount > 1);
 
-    JSImmutableButterfly* butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), argumentCount);
+    CheckedInt32 totalCount = argumentCount - 1;
+    int32_t additionalCount = 0;
+    JSImmutableButterfly* boundArgs = nullptr;
+    if (target->inherits<JSBoundFunction>()) {
+        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
+        if (boundFunction->canCloneBoundArgs()) {
+            boundArgs = boundFunction->boundArgs();
+            additionalCount = boundArgs ? boundArgs->length() : 0;
+            totalCount += additionalCount;
+            if (totalCount.hasOverflowed()) {
+                throwOutOfMemoryError(globalObject, scope);
+                return nullptr;
+            }
+        }
+    }
+
+    JSImmutableButterfly* butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), totalCount.value());
     if (!butterfly) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
-    for (unsigned index = 0; index < argumentCount; ++index)
-        butterfly->setIndex(vm, index, argumentStart[index].jsValue());
+    if (additionalCount) {
+        ASSERT(boundArgs);
+        for (int32_t index = 0; index < additionalCount; ++index)
+            butterfly->setIndex(vm, index, boundArgs->get(index));
+    }
+    for (unsigned index = 0; index < (argumentCount - 1); ++index)
+        butterfly->setIndex(vm, index + additionalCount, argumentStart[index + 1].jsValue());
     return butterfly;
 }
 

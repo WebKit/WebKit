@@ -2035,10 +2035,12 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_newPromise(JSC::BytecodeGenera
     return finalDestination.get();
 }
 
-RegisterID* BytecodeIntrinsicNode::emit_intrinsic_createArgumentsButterfly(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_createArgumentsButterflyExcludingThis(JSC::BytecodeGenerator& generator, JSC::RegisterID* dst)
 {
-    ASSERT(!m_args->m_listNode);
-    return generator.emitCreateArgumentsButterfly(generator.finalDestination(dst));
+    ArgumentListNode* node = m_args->m_listNode;
+    RefPtr<RegisterID> target = generator.emitNode(node);
+    ASSERT(!node->m_next);
+    return generator.emitCreateArgumentsButterflyExcludingThis(generator.finalDestination(dst), target.get());
 }
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) \

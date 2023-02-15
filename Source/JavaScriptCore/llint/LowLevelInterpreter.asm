@@ -2125,7 +2125,7 @@ macro slowPathOp(opcodeName)
 end
 
 slowPathOp(create_cloned_arguments)
-slowPathOp(create_arguments_butterfly)
+slowPathOp(create_arguments_butterfly_excluding_this)
 slowPathOp(create_direct_arguments)
 slowPathOp(create_lexical_environment)
 slowPathOp(create_rest)

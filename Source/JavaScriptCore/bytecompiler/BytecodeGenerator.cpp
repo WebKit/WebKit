@@ -2978,9 +2978,9 @@ RegisterID* BytecodeGenerator::emitCreateAsyncGenerator(RegisterID* dst, Registe
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitCreateArgumentsButterfly(RegisterID* dst)
+RegisterID* BytecodeGenerator::emitCreateArgumentsButterflyExcludingThis(RegisterID* dst, RegisterID* targetFunction)
 {
-    OpCreateArgumentsButterfly::emit(this, dst);
+    OpCreateArgumentsButterflyExcludingThis::emit(this, dst, targetFunction);
     return dst;
 }
 
