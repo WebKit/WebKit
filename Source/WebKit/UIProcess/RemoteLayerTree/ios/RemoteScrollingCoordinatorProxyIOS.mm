@@ -208,6 +208,9 @@ void RemoteScrollingCoordinatorProxyIOS::establishLayerTreeScrollingRelations(co
 
         for (auto overflowNodeID : positionedNode->relatedOverflowScrollingNodes()) {
             auto* node = scrollingTree()->nodeForID(overflowNodeID);
+            if (!node) // FIXME: This should be treated as invalid and cause a MESSAGE_CHECK: rdar://105481381.
+                continue;
+
             MESSAGE_CHECK(is<ScrollingTreeOverflowScrollingNode>(node));
             auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(node);
             stationaryScrollContainerIDs.append(RemoteLayerTreeNode::layerID(static_cast<CALayer*>(overflowNode->scrollContainerLayer())));
@@ -221,6 +224,9 @@ void RemoteScrollingCoordinatorProxyIOS::establishLayerTreeScrollingRelations(co
 
     for (auto& scrollProxyNode : scrollingTree()->activeOverflowScrollProxyNodes()) {
         auto* node = scrollingTree()->nodeForID(scrollProxyNode->overflowScrollingNodeID());
+        if (!node) // FIXME: This should be treated as invalid and cause a MESSAGE_CHECK: rdar://105481381.
+            continue;
+
         MESSAGE_CHECK(is<ScrollingTreeOverflowScrollingNode>(node));
         auto* overflowNode = downcast<ScrollingTreeOverflowScrollingNode>(node);
 
