@@ -29,6 +29,7 @@
 #include "AnimationList.h"
 #include "ContentData.h"
 #include "FillLayer.h"
+#include "RenderStyle.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleFilterData.h"
 #include "StyleFlexibleBoxData.h"

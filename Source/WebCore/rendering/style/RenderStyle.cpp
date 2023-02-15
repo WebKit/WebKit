@@ -2697,11 +2697,11 @@ void RenderStyle::setCustomPropertyValue(Ref<const CSSCustomPropertyValue>&& val
 {
     auto& name = value->name();
     if (isInherited) {
-        if (auto* existingValue = m_rareInheritedData->customProperties->values.get(name); !existingValue || !existingValue->equals(value.get()))
-            m_rareInheritedData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value));
+        if (auto* existingValue = m_rareInheritedData->customProperties->get(name); !existingValue || !existingValue->equals(value.get()))
+            m_rareInheritedData.access().customProperties.access().set(name, WTFMove(value));
     } else {
-        if (auto* existingValue = m_nonInheritedData->rareData->customProperties->values.get(name); !existingValue || !existingValue->equals(value.get()))
-            m_nonInheritedData.access().rareData.access().customProperties.access().setCustomPropertyValue(name, WTFMove(value));
+        if (auto* existingValue = m_nonInheritedData->rareData->customProperties->get(name); !existingValue || !existingValue->equals(value.get()))
+            m_nonInheritedData.access().rareData.access().customProperties.access().set(name, WTFMove(value));
     }
 }
 

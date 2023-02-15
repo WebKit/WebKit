@@ -27,6 +27,11 @@
 
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
+#include <memory>
+#include <wtf/DataRef.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
