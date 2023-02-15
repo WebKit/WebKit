@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LengthPoint.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
 
@@ -33,6 +34,7 @@ namespace WebCore {
 class AnimationList;
 class ContentData;
 class FillLayer;
+class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
 class StyleFilterData;
 class StyleFlexibleBoxData;
