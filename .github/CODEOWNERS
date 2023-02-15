@@ -111,6 +111,7 @@
 /Source/WebCore/html @cdumez @rniwa
 /Source/WebCore/html/UserActivation.* @marcoscaceres
 /Source/WebCore/loader @cdumez
+/Source/WebCore/page/Quirks.cpp @brentfulgham @karlcow
 /Source/WebCore/workers @cdumez
 /Source/WebCore/worklets @cdumez
 /Source/WebCore/xml @cdumez
@@ -134,12 +135,17 @@
 *ContentExtension* @b-weinstein @xeenon
 *InspectorExtension* @b-weinstein @xeenon
 *WebExtension* @b-weinstein @xeenon
+/Source/WebKit/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in @brentfulgham @pvollan
 /Source/WebKit/NetworkProcess @cdumez
+/Source/WebKit/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in @brentfulgham @pvollan
 /Source/WebKit/Platform @cdumez
+/Source/WebKit/Resources/SandboxProfiles @brentfulgham @pvollan
+/Source/WebKit/Shared/Sandbox @brentfulgham @pvollan
 /Source/WebKit/UIProcess @cdumez
 /Source/WebKit/UIProcess/Extensions @b-weinstein @xeenon
 /Source/WebKit/WebProcess @cdumez
 /Source/WebKit/WebProcess/Extensions @b-weinstein @xeenon
+/Source/WebKit/WebProcess/com.apple.WebProcess.sb.in  @brentfulgham @pvollan
 
 # ================================================================================
 # WebDriver
