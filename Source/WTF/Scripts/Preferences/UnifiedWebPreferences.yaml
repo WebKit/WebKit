@@ -1100,6 +1100,19 @@ CSSRelativeColorSyntaxEnabled:
     WebCore:
       default: true
 
+CSSRhythmicSizingEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "CSS Rhythmic Sizing"
+  humanReadableDescription: "Enable CSS Rhythmic Sizing properties"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSScrollAnchoringEnabled:
   type: bool
   status: testable
