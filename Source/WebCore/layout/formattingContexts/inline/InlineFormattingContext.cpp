@@ -469,7 +469,6 @@ InlineRect InlineFormattingContext::createDisplayContentForLine(const LineBuilde
         displayLine.setEllipsisVisualRect(*ellipsisRect);
 
     formattingState.addBoxes(WTFMove(boxes));
-    formattingState.addLineBox(WTFMove(lineBox));
     formattingState.addLine(displayLine);
 
     return InlineFormattingGeometry::flipVisualRectToLogicalForWritingMode(formattingState.lines().last().lineBoxRect(), root().style().writingMode());
