@@ -1594,14 +1594,12 @@ inline float BuilderConverter::convertOpacity(BuilderState&, const CSSValue& val
     return std::max(0.0f, std::min(1.0f, opacity));
 }
 
-inline String BuilderConverter::convertSVGURIReference(BuilderState& builderState, const CSSValue& value)
+inline String BuilderConverter::convertSVGURIReference(BuilderState&, const CSSValue& value)
 {
-    String s;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     if (primitiveValue.isURI())
-        s = primitiveValue.stringValue();
-
-    return SVGURIReference::fragmentIdentifierFromIRIString(s, builderState.document());
+        return primitiveValue.stringValue();
+    return emptyString();
 }
 
 inline StyleSelfAlignmentData BuilderConverter::convertSelfOrDefaultAlignmentData(BuilderState&, const CSSValue& value)

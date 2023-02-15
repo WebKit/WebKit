@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -84,6 +85,16 @@ Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaint(SVGPaintType paintType, con
     return color;
 }
 
+static RefPtr<CSSValue> svgMarkerValue(const String& marker, const Element* element)
+{
+    if (marker.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+    if (URL(marker).isValid() || !element)
+        return CSSPrimitiveValue::createURI(marker);
+    auto resolvedURL = URL(element->document().baseURL(), marker);
+    return CSSPrimitiveValue::createURI(resolvedURL.string());
+}
+
 RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID)
 {
     if (!m_element)
@@ -136,17 +147,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
     case CSSPropertyKerning:
         return svgStyle.kerning().toCSSPrimitiveValue();
     case CSSPropertyMarkerEnd:
-        if (!svgStyle.markerEndResource().isEmpty())
-            return CSSPrimitiveValue::createURI(makeString('#', svgStyle.markerEndResource()));
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return svgMarkerValue(svgStyle.markerEndResource(), m_element.get());
     case CSSPropertyMarkerMid:
-        if (!svgStyle.markerMidResource().isEmpty())
-            return CSSPrimitiveValue::createURI(makeString('#', svgStyle.markerMidResource()));
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return svgMarkerValue(svgStyle.markerMidResource(), m_element.get());
     case CSSPropertyMarkerStart:
-        if (!svgStyle.markerStartResource().isEmpty())
-            return CSSPrimitiveValue::createURI(makeString('#', svgStyle.markerStartResource()));
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return svgMarkerValue(svgStyle.markerStartResource(), m_element.get());
     case CSSPropertyStroke:
         return adjustSVGPaint(svgStyle.strokePaintType(), svgStyle.strokePaintUri(), createColor(svgStyle.strokePaintColor()));
     case CSSPropertyStrokeDasharray:
