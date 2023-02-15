@@ -1,0 +1,31 @@
+
+Test pause while seeking by:
+
+Start playing the video.
+Seek to the future and, immediately after that, pause the video.
+Verify that the video is paused when seek finishes.
+
+
+++ Playing the video
+
+RUN(video.play())
+EVENT(play)
+
+++ Video started to play, seeking
+
+RUN(video.currentTime = 10)
+
+++ Pausing video before seek finishes
+
+RUN(video.pause())
+EVENT(seeked)
+
+++ Video seeked
+
+
+++ Checking if it was actually paused (time not marching on)
+
+EXPECTED (t - t0 < 0.01 == 'true') OK
+
+END OF TEST
+

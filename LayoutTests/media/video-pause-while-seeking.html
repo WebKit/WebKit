@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+    
+        <script>
+            var t, t0;
+
+            function play()
+            {
+                setTimeout(() => {
+                    consoleWrite("<br><em>++ Video started to play, seeking");
+                    consoleWrite("");
+                    run("video.currentTime = 10");
+                    setTimeout(() => {
+                        consoleWrite("<br><em>++ Pausing video before seek finishes");
+                        consoleWrite("");
+                        run("video.pause()");
+                    }, 1);
+                    waitForEvent("seeked", seeked);
+                },500);
+            }
+    
+            function seeked()
+            {
+                t0 = video.currentTime;
+                consoleWrite("<br><em>++ Video seeked");
+                consoleWrite("");
+                setTimeout(()=>{
+                    t = video.currentTime;
+                    consoleWrite("<br><em>++ Checking if it was actually paused (time not marching on)");
+                    consoleWrite("");
+                    testExpected("t - t0 < 0.01", true);
+                    if (t - t0 >= 0.01) {
+                        consoleWrite("t0: " + t0);
+                        consoleWrite("t: " + t);
+                    }
+                    consoleWrite("");
+                    endTest();
+                }, 500);
+            }
+
+            function start()
+            {
+                findMediaElement();
+                var mediaFile = findMediaFile("video", "content/long-test");
+                video.src = mediaFile;
+
+                consoleWrite("");
+                consoleWrite("<br><em>++ Playing the video");
+                consoleWrite("");
+                run("video.play()");
+                waitForEventOnce('play', play);
+            }
+        </script>
+
+    </head>
+    <body>
+        <video controls></video>
+        <p><b>Test pause while seeking by:</b>
+        <ol>
+            <li>Start playing the video.</li>
+            <li>Seek to the future and, immediately after that, pause the video.</li>
+            <li>Verify that the video is paused when seek finishes.</li>
+        </ol>
+        </p>
+        <script>start()</script>
+    </body>
+</html>
