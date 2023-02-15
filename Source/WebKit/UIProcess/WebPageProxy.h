@@ -216,12 +216,16 @@ class FindMatchesClient;
 class FormClient;
 class FullscreenClient;
 class HistoryClient;
+class HitTestResult;
 class IconLoadingClient;
 class LoaderClient;
 class Navigation;
+class NavigationAction;
 class NavigationClient;
+class NavigationResponse;
 class PolicyClient;
 class ResourceLoadClient;
+class SerializedScriptValue;
 class UIClient;
 class URLRequest;
 }
@@ -350,6 +354,7 @@ typedef HWND PlatformViewWidget;
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
+class CallbackID;
 class DrawingAreaProxy;
 class GamepadData;
 class MediaUsageManager;
@@ -377,6 +382,7 @@ class WebBackForwardListItem;
 class WebContextMenuProxy;
 class WebEditCommandProxy;
 class WebFullScreenManagerProxy;
+class WebInspectorUIProxy;
 class PlaybackSessionManagerProxy;
 class UserMediaPermissionRequestProxy;
 class VideoFullscreenManagerProxy;
@@ -432,6 +438,8 @@ struct WebNavigationDataStore;
 struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
 
+enum class FindDecorationStyle : uint8_t;
+enum class FindOptions : uint16_t;
 enum class TextRecognitionUpdateResult : uint8_t;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
@@ -442,6 +450,7 @@ enum class WebContentMode : uint8_t;
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 using LayerHostingContextID = uint32_t;
 #endif
+using SnapshotOptions = uint32_t;
 
 #if ENABLE(TOUCH_EVENTS)
 struct QueuedTouchEvents {

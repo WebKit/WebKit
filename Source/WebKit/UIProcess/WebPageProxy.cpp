@@ -52,6 +52,7 @@
 #include "APIPolicyClient.h"
 #include "APIResourceLoadClient.h"
 #include "APISecurityOrigin.h"
+#include "APISerializedScriptValue.h"
 #include "APIUIClient.h"
 #include "APIURLRequest.h"
 #include "APIWebsitePolicies.h"

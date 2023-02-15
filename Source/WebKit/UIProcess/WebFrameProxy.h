@@ -27,7 +27,6 @@
 
 #include "APIObject.h"
 #include "FrameLoadState.h"
-#include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "WebFramePolicyListenerProxy.h"

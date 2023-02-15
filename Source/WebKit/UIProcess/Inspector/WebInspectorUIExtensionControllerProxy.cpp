@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR_EXTENSIONS)
 
 #include "APIInspectorExtension.h"
+#include "APISerializedScriptValue.h"
 #include "APIURL.h"
 #include "WebInspectorUIExtensionControllerMessages.h"
 #include "WebInspectorUIExtensionControllerProxyMessages.h"

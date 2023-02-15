@@ -31,6 +31,7 @@
 #include "APIHTTPCookieStore.h"
 #include "APINavigation.h"
 #include "APIOpenPanelParameters.h"
+#include "APIString.h"
 #include "AutomationProtocolObjects.h"
 #include "CoordinateSystem.h"
 #include "WebAutomationSessionMacros.h"

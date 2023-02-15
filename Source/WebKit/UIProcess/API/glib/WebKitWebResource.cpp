@@ -21,6 +21,7 @@
 #include "WebKitWebResource.h"
 
 #include "APIData.h"
+#include "APIURL.h"
 #include "WebFrameProxy.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"

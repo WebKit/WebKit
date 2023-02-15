@@ -26,7 +26,6 @@
 #import "WKErrorPrivate.h"
 
 #import <wtf/RetainPtr.h>
-#import "GenericCallback.h"
 
 RetainPtr<NSError> createNSError(WKErrorCode, NSError* underlyingError = nil);
 NSString *localizedDescriptionForErrorCode(WKErrorCode);

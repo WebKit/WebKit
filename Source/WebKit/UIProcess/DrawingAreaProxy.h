@@ -28,7 +28,6 @@
 
 #include "Connection.h"
 #include "DrawingAreaInfo.h"
-#include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>

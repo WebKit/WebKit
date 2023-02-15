@@ -28,6 +28,7 @@
 
 #include "APIArray.h"
 #include "APINotificationProvider.h"
+#include "APINumber.h"
 #include "APISecurityOrigin.h"
 #include "Logging.h"
 #include "WebNotification.h"
