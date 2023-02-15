@@ -1079,14 +1079,7 @@ void PrintExponent(int exp, char e, Buffer *out) {
 
 template <typename Float, typename Int>
 constexpr bool CanFitMantissa() {
-  return
-#if defined(__clang__) && !defined(__SSE3__)
-      // Workaround for clang bug: https://bugs.llvm.org/show_bug.cgi?id=38289
-      // Casting from long double to uint64_t is miscompiled and drops bits.
-      (!std::is_same<Float, long double>::value ||
-       !std::is_same<Int, uint64_t>::value) &&
-#endif
-      std::numeric_limits<Float>::digits <= std::numeric_limits<Int>::digits;
+  return std::numeric_limits<Float>::digits <= std::numeric_limits<Int>::digits;
 }
 
 template <typename Float>
