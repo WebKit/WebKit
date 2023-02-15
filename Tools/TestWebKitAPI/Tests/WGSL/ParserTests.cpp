@@ -720,6 +720,68 @@ TEST(WGSLParserTests, TriangleVert)
     }
 }
 
+TEST(WGSLParserTests, VectorWithOutComponentType)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() {\n"
+        "    x = vec4(1.0);\n"
+        "}\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    auto& func = shader->functions()[0];
+    EXPECT_EQ(func.body().statements().size(), 1u);
+
+    // x = vec4(1.0);
+    EXPECT_TRUE(is<WGSL::AST::AssignmentStatement>(func.body().statements()[0]));
+    auto& stmt = downcast<WGSL::AST::AssignmentStatement>(func.body().statements()[0]);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(stmt.lhs()));
+    auto& id = downcast<WGSL::AST::IdentifierExpression>(stmt.lhs());
+    EXPECT_EQ(id.identifier(), "x"_s);
+
+    EXPECT_TRUE(is<WGSL::AST::CallExpression>(stmt.rhs()));
+    auto& constructor = downcast<WGSL::AST::CallExpression>(stmt.rhs());
+    EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(constructor.target()));
+    auto& vec4 = downcast<WGSL::AST::NamedTypeName>(constructor.target());
+    EXPECT_EQ(vec4.name().id(), "vec4"_s);
+}
+
+TEST(WGSLParserTests, VectorWithComponentType)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() {\n"
+        "    x = vec4<f32>(1.0);\n"
+        "}\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    auto& func = shader->functions()[0];
+    EXPECT_EQ(func.body().statements().size(), 1u);
+
+    // x = vec4<f32>(1.0);
+    EXPECT_TRUE(is<WGSL::AST::AssignmentStatement>(func.body().statements()[0]));
+    auto& stmt = downcast<WGSL::AST::AssignmentStatement>(func.body().statements()[0]);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(stmt.lhs()));
+    auto& id = downcast<WGSL::AST::IdentifierExpression>(stmt.lhs());
+    EXPECT_EQ(id.identifier(), "x"_s);
+
+    EXPECT_TRUE(is<WGSL::AST::CallExpression>(stmt.rhs()));
+    auto& constructor = downcast<WGSL::AST::CallExpression>(stmt.rhs());
+    EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(constructor.target()));
+    checkVec4F32Type(constructor.target());
+}
+
 TEST(WGSLParserTests, RedFrag)
 {
     auto shader = parse(

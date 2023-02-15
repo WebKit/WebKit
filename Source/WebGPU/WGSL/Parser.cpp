@@ -486,7 +486,8 @@ Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeName()
 template<typename Lexer>
 Result<AST::TypeName::Ref> Parser<Lexer>::parseTypeNameAfterIdentifier(AST::Identifier&& name, SourcePosition _startOfElementPosition) // NOLINT
 {
-    if (auto kind = AST::ParameterizedTypeName::stringViewToKind(name.id())) {
+    auto kind = AST::ParameterizedTypeName::stringViewToKind(name.id());
+    if (kind && current().m_type == TokenType::Lt) {
         CONSUME_TYPE(Lt);
         PARSE(elementType, TypeName);
         CONSUME_TYPE(Gt);
