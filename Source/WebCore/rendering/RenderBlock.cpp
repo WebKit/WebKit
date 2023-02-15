@@ -2349,8 +2349,17 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         // A margin basically has three types: fixed, percentage, and auto (variable).
         // Auto and percentage margins simply become 0 when computing min/max width.
         // Fixed margins can be added in as is.
-        Length startMarginLength = childStyle.marginStartUsing(&styleToUse);
-        Length endMarginLength = childStyle.marginEndUsing(&styleToUse);
+        Length startMarginLength;
+        Length endMarginLength;
+        if (auto blockBox = dynamicDowncast<RenderBlockFlow>(this)) {
+            // Floats inside a block level box may not use their margins in their
+            // intrinsic size contributions if margin-trim is set
+            startMarginLength = blockBox->shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineStart, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginStartUsing(&styleToUse) : Length { 0, LengthType::Fixed };
+            endMarginLength = blockBox->shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginEndUsing(&styleToUse) : Length { 0, LengthType::Fixed };
+        }   else {
+            startMarginLength = childStyle.marginStartUsing(&styleToUse);
+            endMarginLength = childStyle.marginEndUsing(&styleToUse);
+        }
         LayoutUnit margin;
         LayoutUnit marginStart;
         LayoutUnit marginEnd;
