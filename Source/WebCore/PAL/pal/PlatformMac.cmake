@@ -74,7 +74,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/NSAttributedStringSPI.h
     spi/cocoa/NSButtonCellSPI.h
     spi/cocoa/NSCalendarDateSPI.h
-    spi/cocoa/NSColorSPI.h
     spi/cocoa/NSExtensionSPI.h
     spi/cocoa/NSFileManagerSPI.h
     spi/cocoa/NSFileSizeFormatterSPI.h
@@ -114,6 +113,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/mac/NSAppearanceSPI.h
     spi/mac/NSApplicationSPI.h
     spi/mac/NSCellSPI.h
+    spi/mac/NSColorSPI.h
     spi/mac/NSColorWellSPI.h
     spi/mac/NSEventSPI.h
     spi/mac/NSFontSPI.h

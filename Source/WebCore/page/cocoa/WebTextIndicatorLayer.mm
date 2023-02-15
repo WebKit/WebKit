@@ -36,7 +36,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if PLATFORM(MAC)
-#import <pal/spi/cocoa/NSColorSPI.h>
+#import <pal/spi/mac/NSColorSPI.h>
 #endif
 
 constexpr CFTimeInterval bounceWithCrossfadeAnimationDuration = 0.3;
