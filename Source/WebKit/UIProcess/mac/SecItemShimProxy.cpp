@@ -28,6 +28,8 @@
 
 #if ENABLE(SEC_ITEM_SHIM)
 
+#include "Connection.h"
+#include "Logging.h"
 #include "SecItemRequestData.h"
 #include "SecItemResponseData.h"
 #include "SecItemShimProxyMessages.h"
@@ -35,6 +37,23 @@
 #include <Security/SecItem.h>
 
 namespace WebKit {
+
+#define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, &connection, completion)
+
+// We received these dictionaries over IPC so they shouldn't contain any "in-memory" objects (rdar://104253249).
+static bool dictionaryContainsInMemoryObject(CFDictionaryRef dictionary)
+{
+    if (!dictionary)
+        return false;
+
+    // kSecUseItemList is deprecated on iOS 12+.
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    if (CFDictionaryContainsKey(dictionary, kSecUseItemList))
+        return true;
+ALLOW_DEPRECATED_DECLARATIONS_END
+
+    return CFDictionaryContainsKey(dictionary, kSecValueRef);
+}
 
 SecItemShimProxy& SecItemShimProxy::singleton()
 {
@@ -61,8 +80,11 @@ void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
     connection.addMessageReceiver(m_queue.get(), *this, Messages::SecItemShimProxy::messageReceiverName());
 }
 
-void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& response)
+void SecItemShimProxy::secItemRequest(IPC::Connection& connection, const SecItemRequestData& request, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& response)
 {
+    MESSAGE_CHECK_COMPLETION(!dictionaryContainsInMemoryObject(request.query()), connection, response(SecItemResponseData { errSecParam, nullptr }));
+    MESSAGE_CHECK_COMPLETION(!dictionaryContainsInMemoryObject(request.attributesToMatch()), connection, response(SecItemResponseData { errSecParam, nullptr }));
+
     switch (request.type()) {
     case SecItemRequestData::Type::Invalid:
         LOG_ERROR("SecItemShimProxy::secItemRequest received an invalid data request. Please file a bug if you know how you caused this.");
@@ -98,9 +120,9 @@ void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, Complet
     }
 }
 
-void SecItemShimProxy::secItemRequestSync(const SecItemRequestData& data, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& completionHandler)
+void SecItemShimProxy::secItemRequestSync(IPC::Connection& connection, const SecItemRequestData& data, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& completionHandler)
 {
-    secItemRequest(data, WTFMove(completionHandler));
+    secItemRequest(connection, data, WTFMove(completionHandler));
 }
 
 } // namespace WebKit
