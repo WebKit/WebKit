@@ -185,6 +185,7 @@ public:
     FloatRect repaintRectInLocalCoordinates() const override { return borderBoxRect(); }
     FloatRect objectBoundingBox() const override { return borderBoxRect(); }
 
+    const RenderBlockFlow* blockFormattingContextRoot() const;    
     // Note these functions are not equivalent of childrenOfType<RenderBox>
     RenderBox* parentBox() const;
     RenderBox* firstChildBox() const;
@@ -705,6 +706,7 @@ public:
     }
 
     bool establishesIndependentFormattingContext() const override;
+    bool establishesBlockFormattingContext() const;
 
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
