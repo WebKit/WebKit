@@ -4225,3 +4225,7 @@ webkit.org/b/252191 imported/w3c/web-platform-tests/editing/other/edit-in-textco
 
 webkit.org/b/252313 editing/selection/ios/change-selection-by-tapping-with-existing-selection.html [ Timeout ]
 webkit.org/b/252313 editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-handler.html [ Timeout ]
+
+webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-119.html [ ImageOnlyFailure ]
+webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-120.html [ ImageOnlyFailure ]
+webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-121.html [ ImageOnlyFailure ]
