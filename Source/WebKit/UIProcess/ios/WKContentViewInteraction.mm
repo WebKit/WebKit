@@ -1763,6 +1763,12 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         && [uiDelegate _webView:webView touchEventsMustRequireGestureRecognizerToFail:gestureRecognizer];
 }
 
+- (BOOL)_gestureRecognizerCanBePreventedByTouchEvents:(UIGestureRecognizer *)gestureRecognizer
+{
+    id<WKUIDelegatePrivate> uiDelegate = static_cast<id<WKUIDelegatePrivate>>([self.webView UIDelegate]);
+    return [uiDelegate respondsToSelector:@selector(_webView:gestureRecognizerCanBePreventedByTouchEvents:)] && [uiDelegate _webView:self.webView gestureRecognizerCanBePreventedByTouchEvents:gestureRecognizer];
+}
+
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     if (!_page->hasRunningProcess())
@@ -8638,7 +8644,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         view = view.superview;
     }
 
-    if (!gestureIsInstalledOnOrUnderWebView)
+    if (!gestureIsInstalledOnOrUnderWebView && ![self _gestureRecognizerCanBePreventedByTouchEvents:gestureRecognizer])
         return NO;
 
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
