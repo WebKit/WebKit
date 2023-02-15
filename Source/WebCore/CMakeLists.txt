@@ -1049,6 +1049,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/TextEncoderStream.idl
     dom/TextEncoderStreamEncoder.idl
     dom/TextEvent.idl
+    dom/ToggleEvent.idl
     dom/Touch.idl
     dom/TouchEvent.idl
     dom/TouchList.idl

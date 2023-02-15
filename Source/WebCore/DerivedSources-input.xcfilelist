@@ -1197,6 +1197,7 @@ $(PROJECT_DIR)/dom/TextEncoderStream.idl
 $(PROJECT_DIR)/dom/TextEncoderStream.js
 $(PROJECT_DIR)/dom/TextEncoderStreamEncoder.idl
 $(PROJECT_DIR)/dom/TextEvent.idl
+$(PROJECT_DIR)/dom/ToggleEvent.idl
 $(PROJECT_DIR)/dom/Touch.idl
 $(PROJECT_DIR)/dom/TouchEvent.idl
 $(PROJECT_DIR)/dom/TouchList.idl

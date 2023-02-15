@@ -1127,6 +1127,7 @@ dom/TextEncoder.cpp
 dom/TextEncoderStreamEncoder.cpp
 dom/TextEvent.cpp
 dom/TextNodeTraversal.cpp
+dom/ToggleEvent.cpp
 dom/Touch.cpp @no-unify
 dom/TouchEvent.cpp @no-unify
 dom/TouchList.cpp @no-unify
@@ -4118,6 +4119,7 @@ JSTextTrackCueGeneric.cpp
 JSTextTrackCueList.cpp
 JSTextTrackList.cpp
 JSTimeRanges.cpp
+JSToggleEvent.cpp
 JSTrackEvent.cpp
 JSTransferFunction.cpp
 JSTransformStream.cpp

@@ -193,6 +193,10 @@ protected:
 private:
     String nodeName() const final;
 
+    enum class FocusPreviousElement : bool { No, Yes };
+    enum class FireEvents : bool { No, Yes };
+    ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
+
     void mapLanguageAttributeToLocale(const AtomString&, MutableStyleProperties&);
 
     void dirAttributeChanged(const AtomString&);

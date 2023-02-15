@@ -80,6 +80,7 @@
 #include "SimulatedClick.h"
 #include "StyleProperties.h"
 #include "Text.h"
+#include "ToggleEvent.h"
 #include "UserAgentStyleSheets.h"
 #include "XMLNames.h"
 #include "markup.h"
@@ -1243,9 +1244,16 @@ ExceptionOr<void> HTMLElement::showPopover()
         return check.releaseException();
 
     ASSERT(!isInTopLayer());
-    ASSERT(popoverData());
 
-    // FIXME: Fire beforetoggle event and re-check popover validity.
+    auto event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
+    dispatchEvent(event);
+    if (event->defaultPrevented())
+        return { };
+
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
+        return check.releaseException();
+
+    ASSERT(popoverData());
 
     // FIXME: Run auto popover steps.
 
@@ -1265,7 +1273,7 @@ ExceptionOr<void> HTMLElement::showPopover()
     return { };
 }
 
-ExceptionOr<void> HTMLElement::hidePopover()
+ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
 {
     if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
         return check.releaseException();
@@ -1274,7 +1282,17 @@ ExceptionOr<void> HTMLElement::hidePopover()
 
     // FIXME: Run auto popover steps.
 
-    // FIXME: Fire beforetoggle event and re-check popover validity.
+    if (fireEvents == FireEvents::Yes) {
+        auto event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No);
+        dispatchEvent(event);
+        if (event->defaultPrevented())
+            return { };
+    }
+
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
+        return check.releaseException();
+
+    ASSERT(popoverData());
 
     removeFromTopLayer();
 
@@ -1287,13 +1305,20 @@ ExceptionOr<void> HTMLElement::hidePopover()
     // FIXME: Queue popover toggle event task.
 
     if (RefPtr element = popoverData()->previouslyFocusedElement()) {
-        FocusOptions options;
-        options.preventScroll = true;
-        element->focus(options);
+        if (focusPreviousElement == FocusPreviousElement::Yes) {
+            FocusOptions options;
+            options.preventScroll = true;
+            element->focus(options);
+        }
         popoverData()->setPreviouslyFocusedElement(nullptr);
     }
 
     return { };
+}
+
+ExceptionOr<void> HTMLElement::hidePopover()
+{
+    return hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes);
 }
 
 ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
@@ -1326,7 +1351,7 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
     });
 
     if (oldPopoverState != PopoverState::None)
-        hidePopover();
+        hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::No);
 
     if (newPopoverState == PopoverState::None)
         clearPopoverData();
