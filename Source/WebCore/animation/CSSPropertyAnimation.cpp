@@ -3580,6 +3580,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyPerspectiveOrigin,
         CSSPropertyOffset,
         CSSPropertyTextEmphasis,
+        CSSPropertyTextSpacing,
         CSSPropertyFontVariant,
         CSSPropertyFontSynthesis,
         CSSPropertyContainIntrinsicSize

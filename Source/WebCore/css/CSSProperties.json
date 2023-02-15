@@ -1184,6 +1184,21 @@
                 "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
             }
         },
+        "text-spacing": {
+            "inherited": true,
+            "codegen-properties": {
+                "longhands": [
+                    "text-autospace",
+                    "text-spacing-trim"
+                ],
+                "settings-flag": "cssTextSpacingEnabled"
+            },
+            "status": "experimental",
+            "specification": {
+                "category": "css-text",
+                "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
+            }
+        },
         "writing-mode": {
             "inherited": true,
             "values": [
