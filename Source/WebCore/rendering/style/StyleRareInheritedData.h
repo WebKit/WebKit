@@ -210,6 +210,7 @@ public:
     StyleColor tapHighlightColor;
 #endif
     TextSpacingTrim textSpacingTrim;
+    TextAutospace textAutospace;
 
 private:
     StyleRareInheritedData();

@@ -375,6 +375,16 @@ static Ref<CSSPrimitiveValue> textSpacingTrimFromStyle(const RenderStyle& style)
     return CSSPrimitiveValue::create(CSSValueSpaceAll);
 }
 
+static Ref<CSSPrimitiveValue> textAutospaceFromStyle(const RenderStyle& style)
+{
+    // FIXME: add support for remaining values once spec is stable and we are parsing them.
+    auto textAutospace = style.textAutospace();
+    if (textAutospace.isAuto())
+        return CSSPrimitiveValue::create(CSSValueAuto);
+
+    return CSSPrimitiveValue::create(CSSValueNoAutospace);
+}
+
 static Ref<CSSPrimitiveValue> zoomAdjustedPixelValue(double value, const RenderStyle& style)
 {
     return CSSPrimitiveValue::create(adjustFloatForAbsoluteZoom(value, style), CSSUnitType::CSS_PX);
@@ -3567,6 +3577,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForShadow(style.textShadow(), propertyID, style);
     case CSSPropertyTextSpacingTrim:
         return textSpacingTrimFromStyle(style);
+    case CSSPropertyTextAutospace:
+        return textAutospaceFromStyle(style);
     case CSSPropertyTextRendering:
         return createConvertingToCSSValueID(style.fontDescription().textRenderingMode());
     case CSSPropertyTextOverflow:

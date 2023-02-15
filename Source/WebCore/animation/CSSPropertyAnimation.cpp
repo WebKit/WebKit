@@ -3494,6 +3494,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<WordBreak>(CSSPropertyWordBreak, &RenderStyle::wordBreak, &RenderStyle::setWordBreak),
         new DiscretePropertyWrapper<OverflowAnchor>(CSSPropertyOverflowAnchor, &RenderStyle::overflowAnchor, &RenderStyle::setOverflowAnchor),
         new DiscretePropertyWrapper<TextSpacingTrim>(CSSPropertyTextSpacingTrim, &RenderStyle::textSpacingTrim, &RenderStyle::setTextSpacingTrim),
+        new DiscretePropertyWrapper<TextAutospace>(CSSPropertyTextAutospace, &RenderStyle::textAutospace, &RenderStyle::setTextAutospace),
 
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
         new DiscretePropertyWrapper<BoxDecorationBreak>(CSSPropertyWebkitBoxDecorationBreak, &RenderStyle::boxDecorationBreak, &RenderStyle::setBoxDecorationBreak),

@@ -189,6 +189,7 @@ public:
     static OptionSet<MarginTrimType> convertMarginTrim(BuilderState&, const CSSValue&);
 
     static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
+    static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -1825,6 +1826,15 @@ inline TextSpacingTrim BuilderConverter::convertTextSpacingTrim(BuilderState&, c
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (primitiveValue->valueID() == CSSValueAuto)
             return { .m_trim = TextSpacingTrim::TrimType::Auto };
+    }
+    return { };
+}
+
+inline TextAutospace BuilderConverter::convertTextAutospace(BuilderState&, const CSSValue& value)
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        if (primitiveValue->valueID() == CSSValueAuto)
+            return { .m_autoSpace = TextAutospace::TextAutospaceType::Auto };
     }
     return { };
 }

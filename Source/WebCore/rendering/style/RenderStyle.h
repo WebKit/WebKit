@@ -435,6 +435,7 @@ public:
     const Length& wordSpacing() const;
     float letterSpacing() const;
     TextSpacingTrim textSpacingTrim() const;
+    TextAutospace textAutospace() const;
 
 
     float zoom() const { return m_nonInheritedData->rareData->zoom; }
@@ -1676,6 +1677,7 @@ public:
     void setMathStyle(const MathStyle& v) { SET_VAR(m_rareInheritedData, mathStyle, static_cast<unsigned>(v)); }
 
     void setTextSpacingTrim(TextSpacingTrim v) { SET_VAR(m_rareInheritedData, textSpacingTrim, v); }
+    void setTextAutospace(TextAutospace v) { SET_VAR(m_rareInheritedData, textAutospace, v); }
 
     // Initial values for all the properties
     static Overflow initialOverflowX() { return Overflow::Visible; }
@@ -1705,6 +1707,7 @@ public:
     static TextCombine initialTextCombine() { return TextCombine::None; }
     static TextOrientation initialTextOrientation() { return TextOrientation::Mixed; }
     static TextSpacingTrim initialTextSpacingTrim() { return { }; }
+    static TextAutospace initialTextAutospace() { return { }; }
     static ObjectFit initialObjectFit() { return ObjectFit::Fill; }
     static LengthPoint initialObjectPosition() { return LengthPoint(Length(50.0f, LengthType::Percent), Length(50.0f, LengthType::Percent)); }
     static EmptyCell initialEmptyCells() { return EmptyCell::Show; }

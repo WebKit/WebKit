@@ -1658,3 +1658,5 @@ false
 
 // text-spacing-trim
 space-all
+// text-autospace
+no-autospace

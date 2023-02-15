@@ -192,6 +192,9 @@ PASS text-align-last: "start" onto "end"
 PASS text-anchor (type: discrete) has testAddition function
 PASS text-anchor: "end" onto "middle"
 PASS text-anchor: "middle" onto "end"
+PASS text-autospace (type: discrete) has testAddition function
+PASS text-autospace: "no-autospace" onto "auto"
+PASS text-autospace: "auto" onto "no-autospace"
 PASS text-decoration-color (type: color) has testAddition function
 PASS text-decoration-color supports animating as color of rgb() with overflowed  from and to values
 PASS text-decoration-color supports animating as color of #RGB

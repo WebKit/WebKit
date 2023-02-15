@@ -1225,6 +1225,8 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueHorizontalTb;
     case CSSPropertyTextSpacingTrim:
         return CSSValueSpaceAll;
+    case CSSPropertyTextAutospace:
+        return CSSValueNoAutospace;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }

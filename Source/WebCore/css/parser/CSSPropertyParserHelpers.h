@@ -309,6 +309,7 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&);
 #endif
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 

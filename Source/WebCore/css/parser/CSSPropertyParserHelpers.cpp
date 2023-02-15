@@ -8368,5 +8368,17 @@ RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange& range)
     return nullptr;
 }
 
+RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
+{
+    //  normal | auto | no-autospace | [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ]
+    // FIXME: add remaining values;
+    if (auto value = consumeIdent<CSSValueAuto, CSSValueNoAutospace>(range)) {
+        if (!range.atEnd())
+            return nullptr;
+        return value;
+    }
+    return nullptr;
+}
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

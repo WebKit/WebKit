@@ -299,6 +299,7 @@ PASS table-layout
 PASS text-align
 PASS text-align-last
 PASS text-anchor
+PASS text-autospace
 PASS text-combine-upright
 PASS text-decoration-color
 PASS text-decoration-line

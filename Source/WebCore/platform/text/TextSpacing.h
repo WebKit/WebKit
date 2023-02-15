@@ -57,4 +57,30 @@ inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& v
     return ts;
 }
 
+struct TextAutospace {
+enum class TextAutospaceType: uint8_t {
+    Auto = 0,
+    NoAutospace // equivalent to None in text-spacing shorthand
+};
+
+bool isAuto() const { return m_autoSpace == TextAutospaceType::Auto; }
+bool isNoAutospace() const { return m_autoSpace == TextAutospaceType::NoAutospace; }
+bool operator==(const TextAutospace& other) const
+{
+    return m_autoSpace == other.m_autoSpace;
+}
+TextAutospaceType m_autoSpace { TextAutospaceType::NoAutospace };
+};
+
+inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& value)
+{
+    // FIXME: add remaining values;
+    switch (value.m_autoSpace) {
+    case TextAutospace::TextAutospaceType::Auto:
+        return ts << "auto";
+    case TextAutospace::TextAutospaceType::NoAutospace:
+        return ts << "no-autospace";
+    }
+    return ts;
+}
 } // namespace WebCore

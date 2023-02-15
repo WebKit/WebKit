@@ -70,6 +70,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     StyleColorScheme colorScheme;
 #endif
     TextSpacingTrim textSpacingTrim;
+    TextAutospace textAutospace;
 };
 
 static_assert(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsStyleRareInheritedData), "StyleRareInheritedData should bit pack");
@@ -169,6 +170,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
 #endif
     , textSpacingTrim(RenderStyle::initialTextSpacingTrim())
+    , textAutospace(RenderStyle::initialTextAutospace())
 {
 }
 
@@ -275,6 +277,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , tapHighlightColor(o.tapHighlightColor)
 #endif
     , textSpacingTrim(o.textSpacingTrim)
+    , textAutospace(o.textAutospace)
 {
 }
 
@@ -387,7 +390,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage)
         && listStyleStringValue == o.listStyleStringValue
-        && textSpacingTrim == o.textSpacingTrim;
+        && textSpacingTrim == o.textSpacingTrim
+        && textAutospace == o.textAutospace;
 }
 
 bool StyleRareInheritedData::hasColorFilters() const

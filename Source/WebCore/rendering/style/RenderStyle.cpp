@@ -2009,6 +2009,11 @@ TextSpacingTrim RenderStyle::textSpacingTrim() const
     return m_rareInheritedData->textSpacingTrim;
 }
 
+TextAutospace RenderStyle::textAutospace() const
+{
+    return m_rareInheritedData->textAutospace;
+}
+
 bool RenderStyle::setFontDescription(FontCascadeDescription&& description)
 {
     if (m_inheritedData->fontCascade.fontDescription() == description)
