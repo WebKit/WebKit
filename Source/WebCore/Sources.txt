@@ -2603,6 +2603,7 @@ rendering/style/StyleCanvasImage.cpp
 rendering/style/StyleContentAlignmentData.cpp
 rendering/style/StyleCrossfadeImage.cpp
 rendering/style/StyleCursorImage.cpp
+rendering/style/StyleCustomPropertyData.cpp
 rendering/style/StyleDeprecatedFlexibleBoxData.cpp
 rendering/style/StyleFilterData.cpp
 rendering/style/StyleFilterImage.cpp
