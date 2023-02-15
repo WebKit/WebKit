@@ -122,14 +122,13 @@ class ManifestGenerator {
         $platforms = array();
         if ($platform_table) {
             foreach ($platform_table as $platform_row) {
-                if (Database::is_true($platform_row['platform_hidden']))
-                    continue;
                 $id = $platform_row['platform_id'];
                 if (array_key_exists($id, $platform_metrics)) {
                     $platforms[$id] = array(
                         'name' => $platform_row['platform_name'],
                         'metrics' => $platform_metrics[$id]['metrics'],
                         'group' => $platform_row['platform_group'],
+                        'hidden' => Database::is_true($platform_row['platform_hidden']),
                         'lastModified' => $platform_metrics[$id]['last_modified']);
                 }
             }

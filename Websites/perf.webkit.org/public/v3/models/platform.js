@@ -6,6 +6,7 @@ class Platform extends LabeledObject {
         super(id, object);
         this._metrics = object.metrics;
         this._lastModifiedByMetric = object.lastModifiedByMetric;
+        this._isHidden = object.hidden;
         this._containingTests = null;
 
         this.ensureNamedStaticMap('name')[object.name] = this;
@@ -52,6 +53,11 @@ class Platform extends LabeledObject {
     {
         console.assert(metric instanceof Metric);
         return this._lastModifiedByMetric[metric.id()];
+    }
+
+    isHidden()
+    {
+        return this._isHidden;
     }
 
     group() { return this._group; }

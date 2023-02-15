@@ -251,7 +251,7 @@ class ChartsPage extends PageWithHeading {
         }
 
         return metric.platforms().filter(function (platform) {
-            return !existingPlatforms[platform.id()];
+            return !existingPlatforms[platform.id()] && !platform.isHidden();
         });
     }
 

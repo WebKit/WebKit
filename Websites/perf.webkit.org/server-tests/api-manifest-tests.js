@@ -324,6 +324,41 @@ describe('/api/manifest', function () {
         });
     });
 
+    it("should generate manifest with platforms hidden field", async () => {
+        let db = TestServer.database();
+        await Promise.all([
+            db.insert('tests', {id: 1, name: 'SomeTest'}),
+            db.insert('tests', {id: 2, name: 'SomeOtherTest'}),
+            db.insert('tests', {id: 3, name: 'ChildTest', parent: 1}),
+            db.insert('tests', {id: 4, name: 'GrandChild', parent: 3}),
+            db.insert('aggregators', {id: 200, name: 'Total'}),
+            db.insert('test_metrics', {id: 5, test: 1, name: 'Time'}),
+            db.insert('test_metrics', {id: 6, test: 2, name: 'Time', aggregator: 200}),
+            db.insert('test_metrics', {id: 7, test: 2, name: 'Malloc', aggregator: 200}),
+            db.insert('test_metrics', {id: 8, test: 3, name: 'Time'}),
+            db.insert('test_metrics', {id: 9, test: 4, name: 'Time'}),
+            db.insert('platform_groups', {id: 1, name: 'ios'}),
+            db.insert('platform_groups', {id: 2, name: 'mac'}),
+            db.insert('platforms', {id: 23, name: 'iOS 9 iPhone 5s', group: 1, hidden: true}),
+            db.insert('platforms', {id: 46, name: 'Trunk Mavericks', group: 2}),
+            db.insert('test_configurations', {id: 101, metric: 5, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 102, metric: 6, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 103, metric: 7, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 104, metric: 8, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 105, metric: 9, platform: 46, type: 'current'}),
+            db.insert('test_configurations', {id: 106, metric: 5, platform: 23, type: 'current'}),
+            db.insert('test_configurations', {id: 107, metric: 5, platform: 23, type: 'baseline'}),
+        ]);
+        const content = await TestServer.remoteAPI().getJSON('/api/manifest');
+        Manifest._didFetchManifest(content);
+        const ios9iphone5s = Platform.findById(23);
+        const mavericks = Platform.findById(46);
+        assert(ios9iphone5s);
+        assert(mavericks);
+        assert(ios9iphone5s.isHidden());
+        assert(!mavericks.isHidden());
+    });
+
     it("should generate manifest with triggerables", () => {
         let db = TestServer.database();
         return Promise.all([
