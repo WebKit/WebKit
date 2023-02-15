@@ -250,7 +250,7 @@ private:
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes;
     dispatch_once(&onceToken, ^{
-        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeFetchCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeOfflineWebApplicationCache, WKWebsiteDataTypeCookies, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeServiceWorkerRegistrations, WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeFileSystem ]]);
+        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeFetchCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeOfflineWebApplicationCache, WKWebsiteDataTypeCookies, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeServiceWorkerRegistrations, WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeFileSystem, WKWebsiteDataTypeSearchFieldRecentSearches ]]);
     });
 
     return allWebsiteDataTypes.get().get();
@@ -318,7 +318,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         auto *privateTypes = @[
             _WKWebsiteDataTypeHSTSCache,
             _WKWebsiteDataTypeMediaKeys,
-            _WKWebsiteDataTypeSearchFieldRecentSearches,
             _WKWebsiteDataTypeResourceLoadStatistics,
             _WKWebsiteDataTypeCredentials,
             _WKWebsiteDataTypeAdClickAttributions,
