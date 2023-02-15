@@ -338,9 +338,9 @@ PASS font-variation-settings supports animation as float
 PASS font-variation-settings supports animation as float with multiple tags
 PASS font-variation-settings supports animation as float with multiple duplicate tags
 PASS font-variation-settings (type: discrete) has testInterpolation function
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with linear easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "\"wght\" 1.1, \"wdth\" 1"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with effect easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "\"wght\" 1.1, \"wdth\" 1"
-FAIL font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with keyframe easing assert_equals: The value should be "wdth" 1, "wght" 1.1 at 0ms expected "\"wdth\" 1, \"wght\" 1.1" but got "\"wght\" 1.1, \"wdth\" 1"
+PASS font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with linear easing
+PASS font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with effect easing
+PASS font-variation-settings uses discrete animation when animating between ""wdth" 1, "wght" 1.1" and ""wdth" 5" with keyframe easing
 PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with linear easing
 PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with effect easing
 PASS font-variation-settings uses discrete animation when animating between ""wdth" 5" and "normal" with keyframe easing

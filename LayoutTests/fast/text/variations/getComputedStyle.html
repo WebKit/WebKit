@@ -22,7 +22,7 @@
 <script>
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test0')).getPropertyValue('font-variation-settings')", "\"hght\" 400");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test1')).getPropertyValue('font-variation-settings')", "\"hght\" 500");
-shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')", "\"wdth\" 500, \"hght\" 400");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')", "\"hght\" 400, \"wdth\" 500");
 shouldBe("window.getComputedStyle(document.getElementById('test3')).getPropertyValue('font-variation-settings')", "window.getComputedStyle(document.getElementById('test2')).getPropertyValue('font-variation-settings')");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test4')).getPropertyValue('font-variation-settings')", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('test5')).getPropertyValue('font-variation-settings')", "normal");

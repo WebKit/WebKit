@@ -99,12 +99,6 @@ bool FontTaggedSetting<T>::operator==(const FontTaggedSetting<T>& other) const
 }
 
 template <typename T>
-bool FontTaggedSetting<T>::operator<(const FontTaggedSetting<T>& other) const
-{
-    return (m_tag < other.m_tag) || (m_tag == other.m_tag && m_value < other.m_value);
-}
-
-template <typename T>
 template <class Encoder>
 void FontTaggedSetting<T>::encode(Encoder& encoder) const
 {
@@ -177,8 +171,6 @@ public:
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<FontTaggedSettings<T>> decode(Decoder&);
 
-    FontTaggedSettings<T> deduplicated() const;
-
 private:
     Vector<FontTaggedSetting<T>> m_list;
 };
@@ -187,13 +179,15 @@ template <typename T>
 void FontTaggedSettings<T>::insert(FontTaggedSetting<T>&& feature)
 {
     // This vector will almost always have 0 or 1 items in it. Don't bother with the overhead of a binary search or a hash set.
+    // We keep the vector sorted alphabetically and replace any pre-existing value for a given tag.
     size_t i;
     for (i = 0; i < m_list.size(); ++i) {
-        if (!(feature < m_list[i]))
-            break;
+        if (m_list[i].tag() < feature.tag())
+            continue;
+        if (m_list[i].tag() == feature.tag())
+            m_list.remove(i);
+        break;
     }
-    if (i < m_list.size() && feature.tag() == m_list[i].tag())
-        m_list.remove(i);
     m_list.insert(i, WTFMove(feature));
 }
 
@@ -215,21 +209,6 @@ std::optional<FontTaggedSettings<T>> FontTaggedSettings<T>::decode(Decoder& deco
 
     FontTaggedSettings result;
     result.m_list = WTFMove(*list);
-    return result;
-}
-
-template <typename T>
-FontTaggedSettings<T> FontTaggedSettings<T>::deduplicated() const
-{
-    HashCountedSet<FontTag, FourCharacterTagHash, FourCharacterTagHashTraits> duplicateTagChecker;
-    for (auto& feature : m_list)
-        duplicateTagChecker.add(feature.tag());
-
-    FontTaggedSettings<T> result;
-    for (auto& feature : m_list) {
-        if (duplicateTagChecker.remove(feature.tag()))
-            result.insert({ feature.tag(), feature.value() });
-    }
     return result;
 }
 

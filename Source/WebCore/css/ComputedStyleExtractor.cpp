@@ -3207,7 +3207,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     }
 #if ENABLE(VARIATION_FONTS)
     case CSSPropertyFontVariationSettings: {
-        auto variationSettings = style.fontVariationSettings().deduplicated();
+        auto& variationSettings = style.fontDescription().variationSettings();
         if (variationSettings.isEmpty())
             return CSSPrimitiveValue::create(CSSValueNormal);
         auto list = CSSValueList::createCommaSeparated();

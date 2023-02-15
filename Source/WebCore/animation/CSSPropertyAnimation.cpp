@@ -702,7 +702,7 @@ public:
     {
     }
 
-    virtual T value(const RenderStyle& style) const
+    T value(const RenderStyle& style) const
     {
         return (style.*m_getter)();
     }
@@ -1259,11 +1259,6 @@ private:
         if (&a == &b)
             return true;
         return value(a) == value(b);
-    }
-
-    FontVariationSettings value(const RenderStyle& style) const override
-    {
-        return PropertyWrapper::value(style).deduplicated();
     }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
