@@ -24,6 +24,11 @@
 #include "WebKitOptionMenuPrivate.h"
 #include <wtf/glib/WTFGType.h>
 
+#if PLATFORM(GTK)
+#include <WebCore/GRefPtrGtk.h>
+#include <WebCore/GUniquePtrGtk.h>
+#endif
+
 using namespace WebKit;
 
 /**
