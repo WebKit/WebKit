@@ -203,10 +203,10 @@ describe('/api/manifest', function () {
             return TestServer.remoteAPI().getJSON('/api/manifest');
         }).then((content) => {
             assert.deepStrictEqual(content.tests, {
-                "1": {"name": "SomeTest", "parentId": null, "url": null},
-                "2": {"name": "SomeOtherTest", "parentId": null, "url": null},
-                "3": {"name": "ChildTest", "parentId": "1", "url": null},
-                "4": {"name": "GrandChild", "parentId": "3", "url": null},
+                "1": {"name": "SomeTest", "parentId": null, "url": null, hidden: false},
+                "2": {"name": "SomeOtherTest", "parentId": null, "url": null, hidden: false},
+                "3": {"name": "ChildTest", "parentId": "1", "url": null, hidden: false},
+                "4": {"name": "GrandChild", "parentId": "3", "url": null, hidden: false},
             });
 
             assert.deepStrictEqual(content.metrics, {
@@ -324,13 +324,13 @@ describe('/api/manifest', function () {
         });
     });
 
-    it("should generate manifest with platforms hidden field", async () => {
+    it("should generate manifest with platforms and tests hidden field", async () => {
         let db = TestServer.database();
         await Promise.all([
-            db.insert('tests', {id: 1, name: 'SomeTest'}),
+            db.insert('tests', {id: 1, name: 'SomeTest', hidden: true}),
             db.insert('tests', {id: 2, name: 'SomeOtherTest'}),
-            db.insert('tests', {id: 3, name: 'ChildTest', parent: 1}),
-            db.insert('tests', {id: 4, name: 'GrandChild', parent: 3}),
+            db.insert('tests', {id: 3, name: 'ChildTest', parent: 1, hidden: true}),
+            db.insert('tests', {id: 4, name: 'GrandChild', parent: 3, hidden: true}),
             db.insert('aggregators', {id: 200, name: 'Total'}),
             db.insert('test_metrics', {id: 5, test: 1, name: 'Time'}),
             db.insert('test_metrics', {id: 6, test: 2, name: 'Time', aggregator: 200}),
@@ -357,6 +357,15 @@ describe('/api/manifest', function () {
         assert(mavericks);
         assert(ios9iphone5s.isHidden());
         assert(!mavericks.isHidden());
+
+        const someTest = Test.findById(1);
+        const someOtherTest = Test.findById(2);
+        const childTest = Test.findById(3);
+        const grandChildTest = Test.findById(4);
+        assert(someTest.isHidden());
+        assert(childTest.isHidden());
+        assert(grandChildTest.isHidden());
+        assert(!someOtherTest.isHidden());
     });
 
     it("should generate manifest with triggerables", () => {

@@ -218,6 +218,7 @@
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
@@ -5600,7 +5601,7 @@ bool WebPage::hasLocalDataForURL(const URL& url)
         return true;
 
     DocumentLoader* documentLoader = m_page->mainFrame().loader().documentLoader();
-    if (documentLoader && documentLoader->subresource(url))
+    if (documentLoader && documentLoader->subresource(MemoryCache::removeFragmentIdentifierIfNeeded(url)))
         return true;
 
     return false;

@@ -1424,6 +1424,7 @@ html/canvas/CanvasStyle.cpp
 html/canvas/EXTBlendMinMax.cpp
 html/canvas/EXTColorBufferFloat.cpp
 html/canvas/EXTColorBufferHalfFloat.cpp
+html/canvas/EXTDisjointTimerQuery.cpp
 html/canvas/EXTFloatBlend.cpp
 html/canvas/EXTFragDepth.cpp
 html/canvas/EXTShaderTextureLOD.cpp
@@ -1487,6 +1488,7 @@ html/canvas/WebGLSharedObject.cpp
 html/canvas/WebGLStateTracker.cpp
 html/canvas/WebGLSync.cpp
 html/canvas/WebGLTexture.cpp
+html/canvas/WebGLTimerQueryEXT.cpp
 html/canvas/WebGLTransformFeedback.cpp
 html/canvas/WebGLUniformLocation.cpp
 html/canvas/WebGLVertexArrayObject.cpp
@@ -1768,6 +1770,7 @@ loader/cache/CachedFont.cpp
 loader/cache/CachedImage.cpp
 loader/cache/CachedRawResource.cpp
 loader/cache/CachedResource.cpp
+loader/cache/CachedResourceClient.cpp
 loader/cache/CachedResourceHandle.cpp
 loader/cache/CachedResourceLoader.cpp
 loader/cache/CachedResourceRequest.cpp
@@ -3280,6 +3283,7 @@ JSDynamicsCompressorOptions.cpp
 JSEXTBlendMinMax.cpp
 JSEXTColorBufferFloat.cpp
 JSEXTColorBufferHalfFloat.cpp
+JSEXTDisjointTimerQuery.cpp
 JSEXTFloatBlend.cpp
 JSEXTFragDepth.cpp
 JSEXTShaderTextureLOD.cpp
@@ -4251,6 +4255,7 @@ JSWebGLShader.cpp
 JSWebGLShaderPrecisionFormat.cpp
 JSWebGLSync.cpp
 JSWebGLTexture.cpp
+JSWebGLTimerQueryEXT.cpp
 JSWebGLTransformFeedback.cpp
 JSWebGLUniformLocation.cpp
 JSWebGLVertexArrayObject.cpp

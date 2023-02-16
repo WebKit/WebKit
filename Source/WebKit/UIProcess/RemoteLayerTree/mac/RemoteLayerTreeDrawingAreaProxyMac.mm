@@ -37,6 +37,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatPoint.h>
 #import <WebCore/ScrollView.h>
+#import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <wtf/BlockObjCExceptions.h>
 
 namespace WebKit {
@@ -198,8 +199,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
 
     applyTransientZoomToLayer();
 
-    // FIXME: Update the scrolling tree via WebPageProxy::adjustLayersForLayoutViewport() here.
-
+    if (auto* rootNode = dynamicDowncast<ScrollingTreeFrameScrollingNode>(m_webPageProxy.scrollingCoordinatorProxy()->rootNode()))
+        m_webPageProxy.adjustLayersForLayoutViewport(rootNode->currentScrollPosition(), rootNode->layoutViewport(), scale);
+    
     // FIXME: Only send these messages as fast as the web process is responding to them.
     m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
 }

@@ -6772,6 +6772,19 @@ WebGLEnabled:
     WebCore:
       default: false
 
+WebGLTimerQueriesEnabled:
+  type: bool
+  status: developer
+  humanReadableName: "WebGL Timer Queries"
+  humanReadableDescription: "Enable WebGL extensions that provide GPU timer queries"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebGLUsingMetal:
   type: bool
   status: testable

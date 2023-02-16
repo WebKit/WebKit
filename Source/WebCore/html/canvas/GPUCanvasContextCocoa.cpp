@@ -62,8 +62,7 @@ static GPUPresentationContextDescriptor presentationContextDescriptor(GPUComposi
 static int getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
 {
     return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
-        auto scaleFactor = htmlCanvas->document().deviceScaleFactor();
-        return scaleFactor * htmlCanvas->width();
+        return htmlCanvas->width();
     }
 #if ENABLE(OFFSCREEN_CANVAS)
     , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {
@@ -76,8 +75,7 @@ static int getCanvasWidth(const GPUCanvasContext::CanvasType& canvas)
 static int getCanvasHeight(const GPUCanvasContext::CanvasType& canvas)
 {
     return WTF::switchOn(canvas, [](const RefPtr<HTMLCanvasElement>& htmlCanvas) -> int {
-        auto scaleFactor = htmlCanvas->document().deviceScaleFactor();
-        return scaleFactor * htmlCanvas->height();
+        return htmlCanvas->height();
     }
 #if ENABLE(OFFSCREEN_CANVAS)
     , [](const RefPtr<OffscreenCanvas>& offscreenCanvas) -> int {

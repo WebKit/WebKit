@@ -313,6 +313,16 @@ public:
     bool isExtensionEnabled(const String&) override;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
+    PlatformGLObject createQueryEXT() final;
+    void deleteQueryEXT(PlatformGLObject query) final;
+    GCGLboolean isQueryEXT(PlatformGLObject query) final;
+    void beginQueryEXT(GCGLenum target, PlatformGLObject query) final;
+    void endQueryEXT(GCGLenum target) final;
+    void queryCounterEXT(PlatformGLObject query, GCGLenum target) final;
+    GCGLint getQueryiEXT(GCGLenum target, GCGLenum pname) final;
+    GCGLint getQueryObjectiEXT(PlatformGLObject query, GCGLenum pname) final;
+    GCGLuint64 getQueryObjectui64EXT(PlatformGLObject query, GCGLenum pname) final;
+    GCGLint64 getInteger64EXT(GCGLenum pname) final;
     void enableiOES(GCGLenum target, GCGLuint index) final;
     void disableiOES(GCGLenum target, GCGLuint index) final;
     void blendEquationiOES(GCGLuint buf, GCGLenum mode) final;

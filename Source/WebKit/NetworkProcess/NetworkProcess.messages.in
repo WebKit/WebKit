@@ -39,8 +39,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetNetworkProxySettings(PAL::SessionID sessionID, WebCore::CurlProxySettings settings)
 #endif
 
-    ClearCachedCredentials(PAL::SessionID sessionID)
-
     AddWebsiteDataStore(struct WebKit::WebsiteDataStoreParameters websiteDataStoreParameters) AllowedWhenWaitingForSyncReply
     DestroySession(PAL::SessionID sessionID)
 

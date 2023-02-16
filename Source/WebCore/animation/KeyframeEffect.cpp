@@ -1002,6 +1002,8 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList&& blendingKeyframes)
     computeHasExplicitlyInheritedKeyframeProperty();
 
     checkForMatchingTransformFunctionLists();
+
+    updateAcceleratedAnimationIfNecessary();
 }
 
 void KeyframeEffect::checkForMatchingTransformFunctionLists()
@@ -1714,7 +1716,7 @@ void KeyframeEffect::addPendingAcceleratedAction(AcceleratedAction action)
     if (action == AcceleratedAction::Stop)
         m_pendingAcceleratedActions.clear();
     m_pendingAcceleratedActions.append(action);
-    if (action != AcceleratedAction::UpdateTiming && action != AcceleratedAction::TransformChange)
+    if (action != AcceleratedAction::UpdateProperties && action != AcceleratedAction::TransformChange)
         m_lastRecordedAcceleratedAction = action;
     animation()->acceleratedStateDidChange();
 }
@@ -1728,18 +1730,21 @@ void KeyframeEffect::animationDidTick()
 void KeyframeEffect::animationDidChangeTimingProperties()
 {
     computeSomeKeyframesUseStepsTimingFunction();
+    updateAcceleratedAnimationIfNecessary();
+    invalidate();
+}
 
+void KeyframeEffect::updateAcceleratedAnimationIfNecessary()
+{
     if (isRunningAccelerated() || isAboutToRunAccelerated()) {
         if (canBeAccelerated())
-            addPendingAcceleratedAction(AcceleratedAction::UpdateTiming);
+            addPendingAcceleratedAction(AcceleratedAction::UpdateProperties);
         else {
             abilityToBeAcceleratedDidChange();
             addPendingAcceleratedAction(AcceleratedAction::Stop);
         }
     } else if (canBeAccelerated())
         m_runningAccelerated = RunningAccelerated::NotStarted;
-
-    invalidate();
 }
 
 void KeyframeEffect::transformRelatedPropertyDidChange()
@@ -1935,9 +1940,9 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         case AcceleratedAction::Pause:
             renderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
             break;
-        case AcceleratedAction::UpdateTiming:
+        case AcceleratedAction::UpdateProperties:
             m_runningAccelerated = startAnimation();
-            LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " applyPendingAcceleratedActions " << m_blendingKeyframes.animationName() << " UpdateTiming, started accelerated: " << isRunningAccelerated());
+            LOG_WITH_STREAM(Animations, stream << "KeyframeEffect " << this << " applyPendingAcceleratedActions " << m_blendingKeyframes.animationName() << " UpdateProperties, started accelerated: " << isRunningAccelerated());
             if (animation()->playState() == WebAnimation::PlayState::Paused)
                 renderer->animationPaused(timeOffset, m_blendingKeyframes.animationName());
             break;

@@ -252,6 +252,7 @@ UIProcess/API/C/mac/WKFrameMac.cpp
 UIProcess/API/C/mac/WKNotificationPrivateMac.mm
 UIProcess/API/C/mac/WKPagePrivateMac.mm
 UIProcess/API/C/mac/WKProtectionSpaceNS.mm
+UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.mm
 
 UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
 UIProcess/API/Cocoa/_WKAppHighlight.mm

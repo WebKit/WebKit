@@ -40,13 +40,6 @@ set(WebKitLegacy_INTERFACE_DEPENDENCIES WebKitLegacy_CopyHeaders)
 
 WEBKIT_FRAMEWORK_DECLARE(WebKitLegacy)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
-
-if (MSVC)
-    target_precompile_headers(WebKitLegacy PRIVATE win/WebKitPrefix.h)
-    list(APPEND WebKitLegacy_SOURCES win/WebKit.resources/WebKit.rc)
-    add_definitions(/DWEBKIT_EXPORTS /DFRAMEWORK_NAME=WebKitLegacy)
-endif ()
-
 WEBKIT_FRAMEWORK(WebKitLegacy)
 
 WEBKIT_COPY_FILES(WebKitLegacy_CopyHeaders

@@ -1211,7 +1211,7 @@ void CachedResourceLoader::documentDidFinishLoadEvent()
 
     // If m_preloads is not empty here, it's full of link preloads,
     // as speculative preloads were cleared at DCL.
-    if (m_preloads && m_preloads->size() && !m_unusedPreloadsTimer.isActive())
+    if (m_preloads && !m_preloads->isEmptyIgnoringNullReferences() && !m_unusedPreloadsTimer.isActive())
         m_unusedPreloadsTimer.startOneShot(unusedPreloadTimeout);
 }
 
@@ -1655,7 +1655,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::prel
         request.setCharset(m_document->charset());
 
     auto resource = requestResource(type, WTFMove(request), ForPreload::Yes);
-    if (resource && (!m_preloads || !m_preloads->contains(resource.value().get()))) {
+    if (resource && (!m_preloads || !m_preloads->contains(*resource.value().get()))) {
         auto resourceValue = resource.value();
         // Fonts need special treatment since just creating the resource doesn't trigger a load.
         if (type == CachedResource::Type::FontResource)
@@ -1663,8 +1663,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::prel
         resourceValue->increasePreloadCount();
 
         if (!m_preloads)
-            m_preloads = makeUnique<ListHashSet<CachedResource*>>();
-        m_preloads->add(resourceValue.get());
+            m_preloads = makeUnique<WeakListHashSet<CachedResource>>();
+        m_preloads->add(*resourceValue.get());
     }
     return resource;
 }
@@ -1674,9 +1674,9 @@ void CachedResourceLoader::warnUnusedPreloads()
     if (!m_preloads)
         return;
     for (const auto& resource : *m_preloads) {
-        if (resource && resource->isLinkPreload() && resource->preloadResult() == CachedResource::PreloadResult::PreloadNotReferenced && document()) {
+        if (resource.isLinkPreload() && resource.preloadResult() == CachedResource::PreloadResult::PreloadNotReferenced && document()) {
             document()->addConsoleMessage(MessageSource::Other, MessageLevel::Warning,
-                "The resource " + resource->url().string() +
+                "The resource " + resource.url().string() +
                 " was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it wasn't preloaded for nothing.");
         }
     }
@@ -1686,11 +1686,12 @@ bool CachedResourceLoader::isPreloaded(const String& urlString) const
 {
     const URL& url = m_document->completeURL(urlString);
 
-    if (m_preloads) {
-        for (auto& resource : *m_preloads) {
-            if (resource->url() == url)
-                return true;
-        }
+    if (!m_preloads)
+        return false;
+
+    for (auto& resource : *m_preloads) {
+        if (resource.url() == url)
+            return true;
     }
     return false;
 }
@@ -1700,19 +1701,18 @@ void CachedResourceLoader::clearPreloads(ClearPreloadsMode mode)
     if (!m_preloads)
         return;
 
-    std::unique_ptr<ListHashSet<CachedResource*>> remainingLinkPreloads;
-    for (auto* resource : *m_preloads) {
-        ASSERT(resource);
-        if (mode == ClearPreloadsMode::ClearSpeculativePreloads && resource->isLinkPreload()) {
+    std::unique_ptr<WeakListHashSet<CachedResource>> remainingLinkPreloads;
+    for (auto& resource : *m_preloads) {
+        if (mode == ClearPreloadsMode::ClearSpeculativePreloads && resource.isLinkPreload()) {
             if (!remainingLinkPreloads)
-                remainingLinkPreloads = makeUnique<ListHashSet<CachedResource*>>();
+                remainingLinkPreloads = makeUnique<WeakListHashSet<CachedResource>>();
             remainingLinkPreloads->add(resource);
             continue;
         }
-        resource->decreasePreloadCount();
-        bool deleted = resource->deleteIfPossible();
-        if (!deleted && resource->preloadResult() == CachedResource::PreloadResult::PreloadNotReferenced)
-            MemoryCache::singleton().remove(*resource);
+        resource.decreasePreloadCount();
+        bool deleted = resource.deleteIfPossible();
+        if (!deleted && resource.preloadResult() == CachedResource::PreloadResult::PreloadNotReferenced)
+            MemoryCache::singleton().remove(resource);
     }
     m_preloads = WTFMove(remainingLinkPreloads);
 }

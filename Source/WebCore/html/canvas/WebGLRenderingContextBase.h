@@ -44,6 +44,7 @@
 #include "WebGLSampler.h"
 #include "WebGLStateTracker.h"
 #include "WebGLTexture.h"
+#include "WebGLTimerQueryEXT.h"
 #include "WebGLTransformFeedback.h"
 #include "WebGLVertexArrayObject.h"
 #include "WebGLVertexArrayObjectOES.h"
@@ -75,6 +76,7 @@ class ANGLEInstancedArrays;
 class EXTBlendMinMax;
 class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
+class EXTDisjointTimerQuery;
 class EXTFloatBlend;
 class EXTFragDepth;
 class EXTShaderTextureLOD;
@@ -480,6 +482,7 @@ protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
 
+    friend class EXTDisjointTimerQuery;
     friend class EXTTextureCompressionBPTC;
     friend class EXTTextureCompressionRGTC;
     friend class OESDrawBuffersIndexed;
@@ -729,6 +732,7 @@ protected:
     RefPtr<EXTBlendMinMax> m_extBlendMinMax;
     RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
     RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
+    RefPtr<EXTDisjointTimerQuery> m_extDisjointTimerQuery;
     RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<EXTFragDepth> m_extFragDepth;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;
@@ -780,6 +784,7 @@ protected:
     float getFloatParameter(GCGLenum);
     int getIntParameter(GCGLenum);
     unsigned getUnsignedIntParameter(GCGLenum);
+    virtual long long getInt64Parameter(GCGLenum) = 0;
     RefPtr<Float32Array> getWebGLFloatArrayParameter(GCGLenum);
     RefPtr<Int32Array> getWebGLIntArrayParameter(GCGLenum);
 

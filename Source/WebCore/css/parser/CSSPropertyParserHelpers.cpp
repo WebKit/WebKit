@@ -5687,6 +5687,8 @@ RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange& range, const CSSParse
 
 static RefPtr<CSSValue> consumeSingleTransitionPropertyIdent(CSSParserTokenRange& range, const CSSParserToken& token)
 {
+    if (token.id() == CSSValueAll)
+        return consumeIdent(range);
     if (auto property = token.parseAsCSSPropertyID()) {
         range.consumeIncludingWhitespace();
         return CSSPrimitiveValue::create(property);

@@ -103,6 +103,12 @@ static const AtomString& attachmentPreviewIdentifier()
     return identifier;
 }
 
+static const AtomString& attachmentActionIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-action"_s);
+    return identifier;
+}
+
 static const AtomString& attachmentTitleIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-title"_s);
@@ -143,15 +149,21 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     m_innerLegacyAttachment->setIdAttribute(attachmentPreviewIdentifier());
     container->appendChild(*m_innerLegacyAttachment);
 
+    m_elementWithAction = HTMLDivElement::create(document());
+    m_elementWithAction->setIdAttribute(attachmentActionIdentifier());
+    if (const auto& action = attachmentActionForDisplay(); !action.isEmpty())
+        m_elementWithAction->setInnerText(String { action });
+    container->appendChild(*m_elementWithAction);
+
     m_elementWithTitle = HTMLDivElement::create(document());
     m_elementWithTitle->setIdAttribute(attachmentTitleIdentifier());
-    if (String title = attachmentTitleForDisplay(); !title.isEmpty())
+    if (auto title = attachmentTitleForDisplay(); !title.isEmpty())
         m_elementWithTitle->setInnerText(WTFMove(title));
     container->appendChild(*m_elementWithTitle);
 
     m_elementWithSubtitle = HTMLDivElement::create(document());
     m_elementWithSubtitle->setIdAttribute(attachmentSubtitleIdentifier());
-    if (String subtitle = attachmentSubtitleForDisplay(); !subtitle.isEmpty())
+    if (auto subtitle = attachmentSubtitleForDisplay(); !subtitle.isEmpty())
         m_elementWithSubtitle->setInnerText(WTFMove(subtitle));
     container->appendChild(*m_elementWithSubtitle);
 }
@@ -272,12 +284,15 @@ RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr)
+    if (name == actionAttr || name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr)
         invalidateRendering();
 
     HTMLElement::parseAttribute(name, value);
 
-    if (name == titleAttr) {
+    if (name == actionAttr) {
+        if (m_elementWithAction)
+            m_elementWithAction->setInnerText(String(value.string()));
+    } else if (name == titleAttr) {
         if (m_elementWithTitle)
             m_elementWithTitle->setInnerText(String(value.string()));
     } else if (name == subtitleAttr) {
@@ -302,6 +317,14 @@ String HTMLAttachmentElement::attachmentTitle() const
     if (!title.isEmpty())
         return title;
     return m_file ? m_file->name() : String();
+}
+
+const AtomString& HTMLAttachmentElement::attachmentActionForDisplay() const
+{
+    if (m_implementation == Implementation::ImageOnly)
+        return nullAtom();
+
+    return attributeWithoutSynchronization(actionAttr);
 }
 
 String HTMLAttachmentElement::attachmentTitleForDisplay() const

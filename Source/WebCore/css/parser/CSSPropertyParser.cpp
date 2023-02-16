@@ -1232,16 +1232,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     }
 }
 
-// There are many non-animation values this would not correctly handle.
-static Ref<CSSValue> initialCSSValueForAnimationLonghand(CSSPropertyID longhand)
-{
-    return WTF::switchOn(initialValueForLonghand(longhand), [](CSSValueID value) -> Ref<CSSValue> {
-        return CSSPrimitiveValue::create(value);
-    }, [](InitialNumericValue value) -> Ref<CSSValue> {
-        return CSSPrimitiveValue::create(value.number, value.type);
-    });
-}
-
 static bool isValueIDPair(const CSSValue& value, CSSValueID valueID)
 {
     return value.isPair() && isValueID(value.first(), valueID) && isValueID(value.second(), valueID);
@@ -1735,7 +1725,7 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
 
         for (size_t i = 0; i < longhandCount; ++i) {
             if (!parsedLonghand[i])
-                longhands[i]->append(initialCSSValueForAnimationLonghand(shorthand.properties()[i]));
+                longhands[i]->append(Ref { CSSPrimitiveValue::implicitInitialValue() });
             parsedLonghand[i] = false;
         }
     } while (consumeCommaIncludingWhitespace(m_range));

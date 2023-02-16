@@ -32,6 +32,7 @@
 #include "CachedImage.h"
 #include "EXTBlendMinMax.h"
 #include "EXTColorBufferHalfFloat.h"
+#include "EXTDisjointTimerQuery.h"
 #include "EXTFloatBlend.h"
 #include "EXTFragDepth.h"
 #include "EXTShaderTextureLOD.h"
@@ -121,6 +122,11 @@ WebGLRenderingContext::WebGLRenderingContext(CanvasBase& canvas, Ref<GraphicsCon
         return;
 }
 
+WebGLRenderingContext::~WebGLRenderingContext()
+{
+    m_activeQuery = nullptr;
+}
+
 void WebGLRenderingContext::initializeVertexArrayObjects()
 {
     m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(*this, WebGLVertexArrayObjectOES::Type::Default);
@@ -146,6 +152,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     ENABLE_IF_REQUESTED(ANGLEInstancedArrays, m_angleInstancedArrays, "ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTBlendMinMax, m_extBlendMinMax, "EXT_blend_minmax", EXTBlendMinMax::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTColorBufferHalfFloat, m_extColorBufferHalfFloat, "EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context));
+    ENABLE_IF_REQUESTED(EXTDisjointTimerQuery, m_extDisjointTimerQuery, "EXT_disjoint_timer_query", EXTDisjointTimerQuery::supported(*m_context) && scriptExecutionContext()->settingsValues().webGLTimerQueriesEnabled);
     ENABLE_IF_REQUESTED(EXTFloatBlend, m_extFloatBlend, "EXT_float_blend", EXTFloatBlend::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTFragDepth, m_extFragDepth, "EXT_frag_depth", EXTFragDepth::supported(*m_context));
     ENABLE_IF_REQUESTED(EXTShaderTextureLOD, m_extShaderTextureLOD, "EXT_shader_texture_lod", EXTShaderTextureLOD::supported(*m_context));
@@ -193,6 +200,7 @@ std::optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
     APPEND_IF_SUPPORTED("ANGLE_instanced_arrays", ANGLEInstancedArrays::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_blend_minmax", EXTBlendMinMax::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_color_buffer_half_float", EXTColorBufferHalfFloat::supported(*m_context))
+    APPEND_IF_SUPPORTED("EXT_disjoint_timer_query", EXTDisjointTimerQuery::supported(*m_context) && scriptExecutionContext()->settingsValues().webGLTimerQueriesEnabled)
     APPEND_IF_SUPPORTED("EXT_float_blend", EXTFloatBlend::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_frag_depth", EXTFragDepth::supported(*m_context))
     APPEND_IF_SUPPORTED("EXT_shader_texture_lod", EXTShaderTextureLOD::supported(*m_context))
@@ -294,6 +302,11 @@ WebGLAny WebGLRenderingContext::getFramebufferAttachmentParameter(GCGLenum targe
     return nullptr;
 }
 
+long long WebGLRenderingContext::getInt64Parameter(GCGLenum pname)
+{
+    return m_context->getInteger64EXT(pname);
+}
+
 GCGLint WebGLRenderingContext::getMaxDrawBuffers()
 {
     if (!supportsDrawBuffers())
@@ -333,6 +346,14 @@ bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GCGL
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid mode");
         return false;
     }
+}
+
+void WebGLRenderingContext::addMembersToOpaqueRoots(JSC::AbstractSlotVisitor& visitor)
+{
+    WebGLRenderingContextBase::addMembersToOpaqueRoots(visitor);
+
+    Locker locker { objectGraphLock() };
+    addWebCoreOpaqueRoot(visitor, m_activeQuery.get());
 }
 
 } // namespace WebCore

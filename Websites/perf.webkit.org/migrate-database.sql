@@ -10,11 +10,12 @@ IF NOT EXISTS (SELECT NULL FROM pg_type WHERE typname = 'analysis_test_group_rep
 END IF;
 
 ALTER TABLE build_requests ADD COLUMN IF NOT EXISTS request_status_description varchar(1024) DEFAULT NULL;
-ALTER TABLE platforms ADD COLUMN  IF NOT EXISTS platform_group integer REFERENCES platform_groups DEFAULT NULL;
+ALTER TABLE platforms ADD COLUMN IF NOT EXISTS platform_group integer REFERENCES platform_groups DEFAULT NULL;
 ALTER TABLE commits ADD COLUMN IF NOT EXISTS commit_revision_identifier varchar(64) DEFAULT NULL;
 ALTER TABLE analysis_test_groups ADD COLUMN IF NOT EXISTS testgroup_repetition_type analysis_test_group_repetition_type NOT NULL DEFAULT 'alternating';
 ALTER TABLE commits DROP CONSTRAINT IF EXISTS commit_string_identifier_in_repository_must_be_unique;
 ALTER TABLE commits ADD CONSTRAINT commit_string_identifier_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision_identifier);
+ALTER TABLE tests ADD COLUMN IF NOT EXISTS test_hidden boolean NOT NULL DEFAULT FALSE;
 
 IF EXISTS (SELECT NULL FROM information_schema.columns WHERE TABLE_NAME = 'commits' AND COLUMN_NAME = 'commit_order' AND DATA_TYPE = 'integer') THEN
     ALTER TABLE commits ALTER commit_order TYPE bigint;

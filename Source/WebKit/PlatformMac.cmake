@@ -305,6 +305,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/mac/WKInspectorPrivateMac.h
     UIProcess/API/C/mac/WKPagePrivateMac.h
     UIProcess/API/C/mac/WKProtectionSpaceNS.h
+    UIProcess/API/C/mac/WKWebsiteDataStoreRefPrivateMac.h
 
     UIProcess/API/Cocoa/NSAttributedString.h
     UIProcess/API/Cocoa/NSAttributedStringPrivate.h

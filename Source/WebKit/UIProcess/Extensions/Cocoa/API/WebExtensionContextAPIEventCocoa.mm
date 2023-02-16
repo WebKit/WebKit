@@ -36,7 +36,6 @@
 #import "WebExtensionController.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
 
 namespace WebKit {

@@ -202,6 +202,7 @@ static uint32_t tagNameHash(const String& s)
 template<class Char>
 class HTMLFastPathParser {
     using CharSpan = Span<const Char>;
+    using LCharSpan = Span<const LChar>;
     using UCharSpan = Span<const UChar>;
     static_assert(std::is_same_v<Char, UChar> || std::is_same_v<Char, LChar>);
 
@@ -271,7 +272,8 @@ private:
     // Used if the attribute name contains upper case ascii (which must be mapped to lower case).
     // 32 matches that used by HTMLToken::Attribute.
     Vector<Char, 32> m_attributeNameBuffer;
-    Vector<Attribute> m_attributeBuffer;
+    // The inline capacity matches HTMLToken::AttributeList.
+    Vector<Attribute, 10> m_attributeBuffer;
     Vector<StringImpl*> m_attributeNames;
     HTMLFastPathResult m_parseResult { HTMLFastPathResult::Succeeded };
 
@@ -506,7 +508,7 @@ private:
     // `LChar` parser. Therefore, this function returns either a `Span` or a
     // `UCharSpan`. Callers distinguish the two cases by checking if the `Span` is
     // empty, as only one of them can be non-empty.
-    std::pair<CharSpan, UCharSpan> scanText()
+    std::variant<LCharSpan, UCharSpan> scanText()
     {
         const Char* start = m_position;
         while (m_position != m_end && *m_position != '<') {
@@ -514,14 +516,14 @@ private:
             // https://infra.spec.whatwg.org/#normalize-newlines
             if (*m_position == '&' || *m_position == '\r') {
                 m_position = start;
-                return { CharSpan { }, scanEscapedText() };
+                return scanEscapedText();
             }
             if (UNLIKELY(*m_position == '\0'))
-                return didFail(HTMLFastPathResult::FailedContainsNull, std::pair { CharSpan { }, UCharSpan { } } );
+                return didFail(HTMLFastPathResult::FailedContainsNull, LCharSpan { });
 
             ++m_position;
         }
-        return { { start, static_cast<size_t>(m_position - start) }, UCharSpan { } };
+        return Span { start, static_cast<size_t>(m_position - start) };
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a
@@ -607,7 +609,7 @@ private:
         return CharSpan { m_attributeNameBuffer.data(), static_cast<size_t>(m_attributeNameBuffer.size()) };
     }
 
-    std::pair<CharSpan, UCharSpan> scanAttributeValue()
+    std::variant<LCharSpan, UCharSpan> scanAttributeValue()
     {
         CharSpan result;
         skipWhitespace();
@@ -617,24 +619,24 @@ private:
             while (m_position != m_end && peekNext() != quoteChar) {
                 if (peekNext() == '&' || peekNext() == '\r') {
                     m_position = start - 1;
-                    return { CharSpan { }, scanEscapedAttributeValue() };
+                    return scanEscapedAttributeValue();
                 }
                 ++m_position;
             }
             if (m_position == m_end)
-                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, std::pair { CharSpan { }, UCharSpan { } });
+                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, LCharSpan { });
 
             result = CharSpan { start, static_cast<size_t>(m_position - start) };
             if (consumeNext() != quoteChar)
-                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, std::pair { CharSpan { }, UCharSpan { } });
+                return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, LCharSpan { });
         } else {
             while (isValidUnquotedAttributeValueChar(peekNext()))
                 ++m_position;
             result = CharSpan { start, static_cast<size_t>(m_position - start) };
             if (!isCharAfterUnquotedAttribute(peekNext()))
-                return didFail(HTMLFastPathResult::FailedParsingUnquotedAttributeValue, std::pair { CharSpan { }, UCharSpan { } });
+                return didFail(HTMLFastPathResult::FailedParsingUnquotedAttributeValue, LCharSpan { });
         }
-        return { result, UCharSpan { } };
+        return result;
     }
 
     // Slow path for scanning an attribute value. Used for special cases such
@@ -785,20 +787,25 @@ private:
     template<class ParentTag> void parseChildren(ContainerNode& parent)
     {
         while (true) {
-            std::pair<CharSpan, UCharSpan> text = scanText();
+            auto textSpan = scanText();
             if (m_parsingFailed)
                 return;
 
-            ASSERT(text.first.empty() || text.second.empty());
-            if (!text.first.empty()) {
-                if (text.first.size() >= Text::defaultLengthLimit)
-                    return didFail(HTMLFastPathResult::FailedBigText);
-                parent.parserAppendChild(Text::create(m_document, String(text.first.data(), static_cast<unsigned>(text.first.size()))));
-            } else if (!text.second.empty()) {
-                if (text.second.size() >= Text::defaultLengthLimit)
-                    return didFail(HTMLFastPathResult::FailedBigText);
-                parent.parserAppendChild(Text::create(m_document, String(text.second.data(), static_cast<unsigned>(text.second.size()))));
-            }
+            bool exceededLengthLimit = false;
+            auto text = std::visit([&exceededLengthLimit](auto span) -> String {
+                if (span.empty())
+                    return { };
+                if (UNLIKELY(span.size() >= Text::defaultLengthLimit)) {
+                    exceededLengthLimit = true;
+                    return { };
+                }
+                return String(span.data(), span.size());
+            }, textSpan);
+            if (UNLIKELY(exceededLengthLimit))
+                return didFail(HTMLFastPathResult::FailedBigText);
+            if (!text.isNull())
+                parent.parserAppendChild(Text::create(m_document, WTFMove(text)));
+
             if (m_position == m_end)
                 return;
             ASSERT(*m_position == '<');
@@ -818,20 +825,16 @@ private:
         }
     }
 
-    Attribute processAttribute(CharSpan nameSpan, std::pair<CharSpan, UCharSpan> valueSpan)
+    Attribute processAttribute(CharSpan nameSpan, std::variant<LCharSpan, UCharSpan> valueSpan)
     {
         QualifiedName name = HTMLNameCache::makeAttributeQualifiedName(nameSpan);
 
         // The string pointer in |value| is null for attributes with no values, but
         // the null atom is used to represent absence of attributes; attributes with
         // no values have the value set to an empty atom instead.
-        AtomString value;
-        if (valueSpan.second.empty())
-            value = HTMLNameCache::makeAttributeValue(valueSpan.first);
-        else
-            value = HTMLNameCache::makeAttributeValue(valueSpan.second);
-        if (value.isNull())
-            value = emptyAtom();
+        AtomString value = std::visit([](auto span) {
+            return HTMLNameCache::makeAttributeValue(span);
+        }, valueSpan);
         return Attribute { WTFMove(name), WTFMove(value) };
     }
 
@@ -862,7 +865,7 @@ private:
                 return didFail(HTMLFastPathResult::FailedOnAttribute);
             }
             skipWhitespace();
-            std::pair<CharSpan, UCharSpan> attributeValue;
+            std::variant<LCharSpan, UCharSpan> attributeValue;
             if (peekNext() == '=') {
                 ++m_position;
                 attributeValue = scanAttributeValue();
@@ -881,7 +884,7 @@ private:
             return didFail(HTMLFastPathResult::FailedParsingAttributes);
         }
         parent.parserSetAttributes(m_attributeBuffer);
-        m_attributeBuffer.clear();
+        m_attributeBuffer.resize(0);
         m_attributeNames.resize(0);
     }
 
@@ -970,7 +973,7 @@ private:
         // and fails if the the current char is not '/'.
         ASSERT(*m_position == '/');
         ++m_position;
-        CharSpan endtag = scanTagName();
+        auto endtag = scanTagName();
         if (endtag == Tag::tagName) {
             if (consumeNext() != '>')
                 return didFail(HTMLFastPathResult::FailedUnexpectedTagNameCloseState, element);

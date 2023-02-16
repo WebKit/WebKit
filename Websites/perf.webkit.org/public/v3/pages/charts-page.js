@@ -258,7 +258,7 @@ class ChartsPage extends PageWithHeading {
     insertBreakdownPanesAfter(platform, metric, referencePane)
     {
         console.assert(referencePane);
-        var childMetrics = metric.childMetrics();
+        var childMetrics = metric.childMetrics().filter(metric => !metric.test().isHidden());
 
         var index = this._paneList.indexOf(referencePane);
         console.assert(index >= 0);
@@ -273,7 +273,7 @@ class ChartsPage extends PageWithHeading {
 
     canBreakdown(platform, metric)
     {
-        var childMetrics = metric.childMetrics();
+        var childMetrics = metric.childMetrics().filter(metric => !metric.test().isHidden());
         if (!childMetrics.length)
             return false;
 

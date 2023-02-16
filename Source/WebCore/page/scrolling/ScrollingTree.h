@@ -292,14 +292,9 @@ private:
     TreeState m_treeState WTF_GUARDED_BY_LOCK(m_treeStateLock);
 
     struct SwipeState {
-        ScrollPinningBehavior scrollPinningBehavior { DoNotPin };
-        bool rubberBandsAtLeft { true };
-        bool rubberBandsAtRight { true };
-        bool rubberBandsAtTop { true };
-        bool rubberBandsAtBottom { true };
-        
         RectEdges<bool> canRubberBand  { true, true, true, true };
         RectEdges<bool> mainFramePinnedState { true, true, true, true };
+        ScrollPinningBehavior scrollPinningBehavior { DoNotPin };
     };
 
     Lock m_swipeStateLock;

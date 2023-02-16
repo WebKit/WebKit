@@ -142,4 +142,13 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
     notImplemented();
 }
 
+UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
+{
+#if ENABLE(2022_GLIB_API)
+    return UnifiedOriginStorageLevel::Basic;
+#else
+    return UnifiedOriginStorageLevel::None;
+#endif
+}
+
 } // namespace API

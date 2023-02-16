@@ -541,7 +541,7 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     _page->updateVisibleContentRects(visibleContentRectUpdateInfo, sendEvenIfUnchanged);
 
     auto layoutViewport = _page->unconstrainedLayoutViewportRect();
-    _page->adjustLayersForLayoutViewport(layoutViewport);
+    _page->adjustLayersForLayoutViewport(_page->unobscuredContentRect().location(), layoutViewport, _page->displayedContentScale());
 
     _sizeChangedSinceLastVisibleContentRectUpdate = NO;
 

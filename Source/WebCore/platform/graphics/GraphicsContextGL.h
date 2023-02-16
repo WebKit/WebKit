@@ -719,6 +719,15 @@ public:
     // EXT_color_buffer_half_float
     static constexpr GCGLenum FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT = 0x8211;
 
+    // GL_EXT_disjoint_timer_query
+    static constexpr GCGLenum QUERY_COUNTER_BITS_EXT = 0x8864;
+    static constexpr GCGLenum CURRENT_QUERY_EXT = 0x8865;
+    static constexpr GCGLenum QUERY_RESULT_EXT = 0x8866;
+    static constexpr GCGLenum QUERY_RESULT_AVAILABLE_EXT = 0x8867;
+    static constexpr GCGLenum TIME_ELAPSED_EXT = 0x88BF;
+    static constexpr GCGLenum TIMESTAMP_EXT = 0x8E28;
+    static constexpr GCGLenum GPU_DISJOINT_EXT = 0x8FBB;
+
     // EXT_blend_minmax enums
     static constexpr GCGLenum MIN_EXT = 0x8007;
     static constexpr GCGLenum MAX_EXT = 0x8008;
@@ -1467,6 +1476,18 @@ public:
 
     // GL_ARB_draw_buffers / GL_EXT_draw_buffers
     virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
+
+    // GL_EXT_disjoint_timer_query
+    virtual PlatformGLObject createQueryEXT() = 0;
+    virtual void deleteQueryEXT(PlatformGLObject query) = 0;
+    virtual GCGLboolean isQueryEXT(PlatformGLObject query) = 0;
+    virtual void beginQueryEXT(GCGLenum target, PlatformGLObject query) = 0;
+    virtual void endQueryEXT(GCGLenum target) = 0;
+    virtual void queryCounterEXT(PlatformGLObject query, GCGLenum target) = 0;
+    virtual GCGLint getQueryiEXT(GCGLenum target, GCGLenum pname) = 0;
+    virtual GCGLint getQueryObjectiEXT(PlatformGLObject query, GCGLenum pname) = 0;
+    virtual GCGLuint64 getQueryObjectui64EXT(PlatformGLObject query, GCGLenum pname) = 0;
+    virtual GCGLint64 getInteger64EXT(GCGLenum pname) = 0;
 
     // GL_OES_draw_buffers_indexed
     virtual void enableiOES(GCGLenum target, GCGLuint index) = 0;

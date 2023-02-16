@@ -65,13 +65,13 @@ async function test()
         read(accessHandle, totalReadSize, totalWriteSize - totalReadSize, "This is second sentence.");
         read(accessHandle, 0, totalWriteSize, "This is first sentence.This is second sentence.");
 
-        // Wrong offset to read and write.
+        // Invalid offset to read and write.
         totalReadSize = totalWriteSize;
         // File cursor should be updated by last read(), so the next write() should append to file.
         totalWriteSize += write(accessHandle, null, "This is third sentence.");
         read(accessHandle, 0, totalReadSize, "This is first sentence.This is second sentence.");
         read(accessHandle, null, totalWriteSize - totalReadSize, "This is third sentence.");
-        shouldThrow("accessHandle.read(new ArrayBuffer(1), { \"at\" : Number.MAX_SAFE_INTEGER })");
+        shouldNotThrow("accessHandle.read(new ArrayBuffer(1), { \"at\" : Number.MAX_SAFE_INTEGER })");
         shouldThrow("accessHandle.write(new ArrayBuffer(1), { \"at\" : Number.MAX_SAFE_INTEGER })");
 
         debug("test flush():");

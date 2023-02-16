@@ -274,11 +274,17 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
     }
 
     auto isHorizontalWritingMode = formattingContext().root().style().isHorizontalWritingMode();
-    auto leftSideToLogicalTopLeft = [&] (auto& displayBox, auto& line) {
-        return isHorizontalWritingMode ? LayoutPoint(displayBox.left(), line.top()) : LayoutPoint(displayBox.top(), line.left());
+    auto leftSideToLogicalTopLeft = [&] (auto& displayBox, auto& line, bool mayNeedMarginAdjustment = true) {
+        auto marginStart = LayoutUnit { };
+        if (mayNeedMarginAdjustment && displayBox.isNonRootInlineLevelBox())
+            marginStart = formattingContext().geometryForBox(displayBox.layoutBox()).marginStart();
+        return isHorizontalWritingMode ? LayoutPoint(displayBox.left() - marginStart, line.top()) : LayoutPoint(displayBox.top() - marginStart, line.left());
     };
     auto rightSideToLogicalTopLeft = [&] (auto& displayBox, auto& line) {
-        return isHorizontalWritingMode ? LayoutPoint(displayBox.right(), line.top()) : LayoutPoint(displayBox.bottom(), line.left());
+        auto marginEnd = LayoutUnit { };
+        if (displayBox.isNonRootInlineLevelBox())
+            marginEnd = formattingContext().geometryForBox(displayBox.layoutBox()).marginEnd();
+        return isHorizontalWritingMode ? LayoutPoint(displayBox.right() + marginEnd, line.top()) : LayoutPoint(displayBox.bottom() + marginEnd, line.left());
     };
 
     auto previousDisplayBoxIndexBeforeOutOfFlowBox = previousDisplayBoxIndex(outOfFlowBox, boxes);
@@ -297,7 +303,7 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(c
             inlineBoxDisplayBox.moveHorizontally(inlineContentBoxOffset);
         else
             inlineBoxDisplayBox.moveVertically(inlineContentBoxOffset);
-        return leftSideToLogicalTopLeft(inlineBoxDisplayBox, lines[inlineBoxDisplayBox.lineIndex()]);
+        return leftSideToLogicalTopLeft(inlineBoxDisplayBox, lines[inlineBoxDisplayBox.lineIndex()], false);
     }
 
     auto previousBoxOverflows = (isHorizontalWritingMode ? previousDisplayBox.right() > currentLine.right() : previousDisplayBox.bottom() > currentLine.bottom()) || previousDisplayBox.isLineBreakBox();

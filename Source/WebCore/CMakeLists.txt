@@ -1872,6 +1872,7 @@ if (ENABLE_WEBGL)
         html/canvas/EXTBlendMinMax.cpp
         html/canvas/EXTColorBufferFloat.cpp
         html/canvas/EXTColorBufferHalfFloat.cpp
+        html/canvas/EXTDisjointTimerQuery.cpp
         html/canvas/EXTFloatBlend.cpp
         html/canvas/EXTFragDepth.cpp
         html/canvas/EXTShaderTextureLOD.cpp
@@ -1926,6 +1927,7 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLSharedObject.cpp
         html/canvas/WebGLSync.cpp
         html/canvas/WebGLTexture.cpp
+        html/canvas/WebGLTimerQueryEXT.cpp
         html/canvas/WebGLTransformFeedback.cpp
         html/canvas/WebGLUniformLocation.cpp
         html/canvas/WebGLVertexArrayObject.cpp
@@ -1939,6 +1941,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/EXTBlendMinMax.idl
     html/canvas/EXTColorBufferFloat.idl
     html/canvas/EXTColorBufferHalfFloat.idl
+    html/canvas/EXTDisjointTimerQuery.idl
     html/canvas/EXTFloatBlend.idl
     html/canvas/EXTFragDepth.idl
     html/canvas/EXTShaderTextureLOD.idl
@@ -1991,6 +1994,7 @@ list(APPEND WebCore_IDL_FILES
     html/canvas/WebGLShaderPrecisionFormat.idl
     html/canvas/WebGLSync.idl
     html/canvas/WebGLTexture.idl
+    html/canvas/WebGLTimerQueryEXT.idl
     html/canvas/WebGLTransformFeedback.idl
     html/canvas/WebGLUniformLocation.idl
     html/canvas/WebGLVertexArrayObject.idl

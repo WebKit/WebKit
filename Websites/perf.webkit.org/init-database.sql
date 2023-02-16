@@ -138,6 +138,7 @@ CREATE TABLE tests (
     test_name varchar(255) NOT NULL,
     test_parent integer REFERENCES tests ON DELETE CASCADE,
     test_url varchar(1024) DEFAULT NULL,
+    test_hidden boolean NOT NULL DEFAULT FALSE,
     CONSTRAINT parent_test_must_be_unique UNIQUE(test_parent, test_name));
 
 CREATE TABLE test_metrics (

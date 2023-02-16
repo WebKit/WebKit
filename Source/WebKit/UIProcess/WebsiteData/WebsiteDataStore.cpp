@@ -1753,11 +1753,6 @@ void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
     networkProcess().sendSync(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), 0);
 }
 
-void WebsiteDataStore::clearCachedCredentials()
-{
-    networkProcess().send(Messages::NetworkProcess::ClearCachedCredentials(sessionID()), 0);
-}
-
 void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 {
     m_queue->dispatch(WTFMove(function));
@@ -1995,12 +1990,6 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 {
     return false;
 }
-
-UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
-{
-    return UnifiedOriginStorageLevel::None;
-}
-
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)
@@ -2008,6 +1997,11 @@ String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
 {
     // Not implemented.
     return String();
+}
+
+UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
+{
+    return UnifiedOriginStorageLevel::None;
 }
 #endif
 

@@ -299,6 +299,16 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
     void GetTranslatedShaderSourceANGLE(uint32_t arg0) -> (String returnValue) Synchronous
     void DrawBuffersEXT(IPC::ArrayReference<uint32_t> bufs)
+    void CreateQueryEXT() -> (uint32_t returnValue) Synchronous
+    void DeleteQueryEXT(uint32_t query)
+    void IsQueryEXT(uint32_t query) -> (bool returnValue) Synchronous
+    void BeginQueryEXT(uint32_t target, uint32_t query)
+    void EndQueryEXT(uint32_t target)
+    void QueryCounterEXT(uint32_t query, uint32_t target)
+    void GetQueryiEXT(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous
+    void GetQueryObjectiEXT(uint32_t query, uint32_t pname) -> (int32_t returnValue) Synchronous
+    void GetQueryObjectui64EXT(uint32_t query, uint32_t pname) -> (uint64_t returnValue) Synchronous
+    void GetInteger64EXT(uint32_t pname) -> (int64_t returnValue) Synchronous
     void EnableiOES(uint32_t target, uint32_t index)
     void DisableiOES(uint32_t target, uint32_t index)
     void BlendEquationiOES(uint32_t buf, uint32_t mode)

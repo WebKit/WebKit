@@ -94,3 +94,10 @@ inline bool Attribute::matches(const AtomString& prefix, const AtomString& local
 }
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<>
+struct VectorTraits<WebCore::Attribute> : SimpleClassVectorTraits { };
+
+} // namespace WTF

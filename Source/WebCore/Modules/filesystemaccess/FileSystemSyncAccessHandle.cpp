@@ -113,7 +113,7 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::read(BufferSource&& 
         return Exception { InvalidStateError, "AccessHandle is closed"_s };
 
     if (options.at) {
-        int result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
+        auto result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
         if (result == -1)
             return Exception { InvalidStateError, "Failed to read at offset"_s };
     }
@@ -131,11 +131,11 @@ ExceptionOr<unsigned long long> FileSystemSyncAccessHandle::write(BufferSource&&
         return Exception { InvalidStateError, "AccessHandle is closed"_s };
 
     if (options.at) {
-        int result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
+        auto result = FileSystem::seekFile(m_file.handle(), options.at.value(), FileSystem::FileSeekOrigin::Beginning);
         if (result == -1)
             return Exception { InvalidStateError, "Failed to write at offset"_s };
     } else {
-        int result = FileSystem::seekFile(m_file.handle(), 0, FileSystem::FileSeekOrigin::Current);
+        auto result = FileSystem::seekFile(m_file.handle(), 0, FileSystem::FileSeekOrigin::Current);
         if (result == -1)
             return Exception { InvalidStateError, "Failed to get offset"_s };
         options.at = result;

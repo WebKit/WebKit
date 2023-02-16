@@ -291,7 +291,6 @@ public:
     static Vector<WebsiteDataStoreParameters> parametersFromEachWebsiteDataStore();
 
     void flushCookies(CompletionHandler<void()>&&);
-    void clearCachedCredentials();
 
     void setAllowsAnySSLCertificateForWebSocket(bool);
 
