@@ -181,7 +181,7 @@ public:
 private:
     KeyframeEffect(Element*, PseudoId);
 
-    enum class AcceleratedAction : uint8_t { Play, Pause, UpdateTiming, TransformChange, Stop };
+    enum class AcceleratedAction : uint8_t { Play, Pause, UpdateProperties, TransformChange, Stop };
     enum class BlendingKeyframesSource : uint8_t { CSSAnimation, CSSTransition, WebAnimation };
     enum class AcceleratedProperties : uint8_t { None, Some, All };
     enum class RunningAccelerated : uint8_t { NotStarted, Yes, Prevented, Failed };
@@ -223,6 +223,7 @@ private:
     void computeHasKeyframeComposingAcceleratedProperty();
     void computeHasExplicitlyInheritedKeyframeProperty();
     void abilityToBeAcceleratedDidChange();
+    void updateAcceleratedAnimationIfNecessary();
 
     // AnimationEffect
     bool isKeyframeEffect() const final { return true; }
