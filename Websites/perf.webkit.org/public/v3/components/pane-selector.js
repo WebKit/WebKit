@@ -107,6 +107,7 @@ class PaneSelector extends ComponentBase {
             .map(function (metric) { return self._createListItem(metric, metric.label()); });
 
         var testItems = tests
+            .filter(test => !test.isHidden())
             .map(function (test) {
                 var data = test;
                 var label = test.label();

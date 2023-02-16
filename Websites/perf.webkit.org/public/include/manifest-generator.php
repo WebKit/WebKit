@@ -74,6 +74,7 @@ class ManifestGenerator {
                 'name' => $test_row['test_name'],
                 'url' => $test_row['test_url'],
                 'parentId' => $test_row['test_parent'],
+                'hidden' => Database::is_true($test_row['test_hidden']),
             );
         }
         return $tests;
