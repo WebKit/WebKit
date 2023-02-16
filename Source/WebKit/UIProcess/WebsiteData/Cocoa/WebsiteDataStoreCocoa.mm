@@ -420,12 +420,12 @@ String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDire
     return websiteDataDirectoryFileSystemRepresentation("MediaKeys"_s);
 }
 
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String& baseDirectory)
+String WebsiteDataStore::defaultWebsiteSessionHashSaltsStorageDirectory(const String& baseDirectory)
 {
     if (!baseDirectory.isEmpty())
-        return FileSystem::pathByAppendingComponent(baseDirectory, "DeviceIdHashSalts"_s);
+        return FileSystem::pathByAppendingComponent(baseDirectory, "WebsiteSessionHashSalts"_s);
 
-    return websiteDataDirectoryFileSystemRepresentation("DeviceIdHashSalts"_s);
+    return websiteDataDirectoryFileSystemRepresentation("WebsiteSessionHashSalts"_s);
 }
 
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDirectory)

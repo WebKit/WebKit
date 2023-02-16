@@ -140,19 +140,29 @@ static void checkURLArgument(NSURL *url)
 
 - (NSURL *)deviceIdHashSaltsStorageDirectory
 {
-    return [NSURL fileURLWithPath:_configuration->deviceIdHashSaltsStorageDirectory() isDirectory:YES];
+    return self.websiteSessionHashSaltsStorageDirectory;
+}
+
+- (NSURL *)websiteSessionHashSaltsStorageDirectory
+{
+    return [NSURL fileURLWithPath:_configuration->websiteSessionHashSaltsStorageDirectory() isDirectory:YES];
 }
 
 - (void)setDeviceIdHashSaltsStorageDirectory:(NSURL *)url
 {
+    [self setWebsiteSessionHashSaltsStorageDirectory:url];
+}
+
+- (void)setWebsiteSessionHashSaltsStorageDirectory:(NSURL *)url
+{
     if (!_configuration->isPersistent())
-        [NSException raise:NSInvalidArgumentException format:@"Cannot set deviceIdHashSaltsStorageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
+        [NSException raise:NSInvalidArgumentException format:@"Cannot set websiteSessionHashSaltsStorageDirectory on a non-persistent _WKWebsiteDataStoreConfiguration."];
 
     if (_configuration->identifier())
-        [NSException raise:NSGenericException format:@"Cannot set deviceIdHashSaltsStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
+        [NSException raise:NSGenericException format:@"Cannot set websiteSessionHashSaltsStorageDirectory on a _WKWebsiteDataStoreConfiguration created with identifier"];
 
     checkURLArgument(url);
-    _configuration->setDeviceIdHashSaltsStorageDirectory(url.path);
+    _configuration->setWebsiteSessionHashSaltsStorageDirectory(url.path);
 }
 
 - (NSURL *)_webSQLDatabaseDirectory

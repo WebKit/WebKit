@@ -1152,7 +1152,7 @@ const AtomString& RealtimeMediaSource::hashedId() const
     return m_hashedID;
 }
 
-const MediaDeviceHashSalts& RealtimeMediaSource::deviceIDHashSalts() const
+const MediaDeviceHashSalts& RealtimeMediaSource::websiteSessionHashSalts() const
 {
     return m_idHashSalts;
 }

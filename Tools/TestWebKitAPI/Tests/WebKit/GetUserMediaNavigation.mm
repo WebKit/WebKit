@@ -113,7 +113,7 @@ TEST(WebKit, DefaultDeviceIdHashSaltsDirectory)
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    auto *path = [websiteDataStoreConfiguration deviceIdHashSaltsStorageDirectory].path;
+    auto *path = [websiteDataStoreConfiguration websiteSessionHashSaltsStorageDirectory].path;
 
     if ([fileManager fileExistsAtPath:path]) {
         NSError *error = nil;
@@ -146,7 +146,7 @@ TEST(WebKit, DeviceIdHashSaltsDirectory)
     EXPECT_FALSE([fileManager fileExistsAtPath:hashSaltLocation.path]);
     
     auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    [websiteDataStoreConfiguration setDeviceIdHashSaltsStorageDirectory:tempDir];
+    [websiteDataStoreConfiguration setWebsiteSessionHashSaltsStorageDirectory:tempDir];
     
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];

@@ -77,7 +77,7 @@ static bool recordContainsSupportedDataTypes(const WebsiteDataRecord& record)
         WebsiteDataType::IndexedDBDatabases,
         WebsiteDataType::HSTSCache,
         WebsiteDataType::Cookies,
-        WebsiteDataType::DeviceIdHashSalt,
+        WebsiteDataType::WebsiteSessionHashSalt,
         WebsiteDataType::ResourceLoadStatistics,
 #if ENABLE(SERVICE_WORKER)
         WebsiteDataType::ServiceWorkerRegistrations,
@@ -109,7 +109,7 @@ static WebKitWebsiteDataTypes toWebKitWebsiteDataTypes(OptionSet<WebsiteDataType
         returnValue |= WEBKIT_WEBSITE_DATA_HSTS_CACHE;
     if (types.contains(WebsiteDataType::Cookies))
         returnValue |= WEBKIT_WEBSITE_DATA_COOKIES;
-    if (types.contains(WebsiteDataType::DeviceIdHashSalt))
+    if (types.contains(WebsiteDataType::WebsiteSessionHashSalt))
         returnValue |= WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT;
     if (types.contains(WebsiteDataType::ResourceLoadStatistics))
         returnValue |= WEBKIT_WEBSITE_DATA_ITP;

@@ -128,7 +128,7 @@ public:
     virtual Ref<RealtimeMediaSource> clone() { return *this; }
 
     const AtomString& hashedId() const;
-    const MediaDeviceHashSalts& deviceIDHashSalts() const;
+    const MediaDeviceHashSalts& websiteSessionHashSalts() const;
 
     const String& persistentID() const { return m_device.persistentId(); }
 

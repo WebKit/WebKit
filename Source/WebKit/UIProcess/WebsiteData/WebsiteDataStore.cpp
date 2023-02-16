@@ -30,7 +30,6 @@
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
 #include "AuthenticatorManager.h"
-#include "DeviceIdHashSaltStorage.h"
 #include "DownloadProxy.h"
 #include "GPUProcessProxy.h"
 #include "Logging.h"
@@ -51,6 +50,7 @@
 #include "WebsiteData.h"
 #include "WebsiteDataStoreClient.h"
 #include "WebsiteDataStoreParameters.h"
+#include "WebsiteSessionHashSaltStorage.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DatabaseTracker.h>
@@ -131,7 +131,7 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     : m_sessionID(sessionID)
     , m_resolvedConfiguration(WTFMove(configuration))
     , m_configuration(m_resolvedConfiguration->copy())
-    , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
+    , m_websiteSessionHashSaltStorage(WebsiteSessionHashSaltStorage::create(isPersistent() ? m_configuration->websiteSessionHashSaltsStorageDirectory() : String()))
 #if ENABLE(TRACKING_PREVENTION)
     , m_trackingPreventionDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
 #endif
@@ -314,8 +314,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setAlternativeServicesDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->alternativeServicesDirectory()));
     if (!m_configuration->localStorageDirectory().isEmpty())
         m_resolvedConfiguration->setLocalStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->localStorageDirectory()));
-    if (!m_configuration->deviceIdHashSaltsStorageDirectory().isEmpty())
-        m_resolvedConfiguration->setDeviceIdHashSaltsStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->deviceIdHashSaltsStorageDirectory()));
+    if (!m_configuration->websiteSessionHashSaltsStorageDirectory().isEmpty())
+        m_resolvedConfiguration->setWebsiteSessionHashSaltsStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->websiteSessionHashSaltsStorageDirectory()));
     if (!m_configuration->networkCacheDirectory().isEmpty())
         m_resolvedConfiguration->setNetworkCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->networkCacheDirectory()));
     if (!m_configuration->resourceLoadStatisticsDirectory().isEmpty())
@@ -547,11 +547,11 @@ private:
         }
     }
 
-    if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt)) {
-        m_deviceIdHashSaltStorage->getDeviceIdHashSaltOrigins([callbackAggregator](auto&& origins) {
+    if (dataTypes.contains(WebsiteDataType::WebsiteSessionHashSalt)) {
+        m_websiteSessionHashSaltStorage->getWebsiteSessionHashSaltOrigins([callbackAggregator](auto&& origins) {
             WebsiteData websiteData;
             websiteData.entries = WTF::map(origins, [](auto& origin) {
-                return WebsiteData::Entry { origin, WebsiteDataType::DeviceIdHashSalt, 0 };
+                return WebsiteData::Entry { origin, WebsiteDataType::WebsiteSessionHashSalt, 0 };
             });
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
@@ -683,8 +683,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         }
     }
 
-    if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies)))
-        m_deviceIdHashSaltStorage->deleteDeviceIdHashSaltOriginsModifiedSince(modifiedSince, [callbackAggregator] { });
+    if (dataTypes.contains(WebsiteDataType::WebsiteSessionHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies)))
+        m_websiteSessionHashSaltStorage->deleteWebsiteSessionHashSaltOriginsModifiedSince(modifiedSince, [callbackAggregator] { });
 
     if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
         m_queue->dispatch([applicationCacheDirectory = m_configuration->applicationCacheDirectory().isolatedCopy(), applicationCacheFlatFileSubdirectoryName = m_configuration->applicationCacheFlatFileSubdirectoryName().isolatedCopy(), callbackAggregator] {
@@ -790,8 +790,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         }
     }
 
-    if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies))) {
-        m_deviceIdHashSaltStorage->deleteDeviceIdHashSaltForOrigins(origins, [callbackAggregator] { });
+    if (dataTypes.contains(WebsiteDataType::WebsiteSessionHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies))) {
+        m_websiteSessionHashSaltStorage->deleteWebsiteSessionHashSaltForOrigins(origins, [callbackAggregator] { });
     }
 
     if (dataTypes.contains(WebsiteDataType::OfflineWebApplicationCache) && isPersistent()) {
@@ -1998,7 +1998,7 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
+String WebsiteDataStore::defaultWebsiteSessionHashSaltsStorageDirectory(const String&)
 {
     // Not implemented.
     return String();

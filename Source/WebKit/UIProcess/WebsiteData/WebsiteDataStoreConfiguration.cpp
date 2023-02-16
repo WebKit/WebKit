@@ -106,7 +106,7 @@ void WebsiteDataStoreConfiguration::initializePaths()
     setLocalStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory(m_baseDataDirectory));
     setMediaKeysStorageDirectory(WebsiteDataStore::defaultMediaKeysStorageDirectory(m_baseDataDirectory));
     setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory(m_baseDataDirectory));
-    setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(m_baseDataDirectory));
+    setWebsiteSessionHashSaltsStorageDirectory(WebsiteDataStore::defaultWebsiteSessionHashSaltsStorageDirectory(m_baseDataDirectory));
     setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory(m_baseDataDirectory));
 #if PLATFORM(COCOA)
     setCookieStorageFile(WebsiteDataStore::defaultCookieStorageFile(m_baseDataDirectory));
@@ -138,7 +138,7 @@ Ref<WebsiteDataStoreConfiguration> WebsiteDataStoreConfiguration::copy() const
     copy->m_localStorageDirectory = this->m_localStorageDirectory;
     copy->m_mediaKeysStorageDirectory = this->m_mediaKeysStorageDirectory;
     copy->m_alternativeServicesDirectory = this->m_alternativeServicesDirectory;
-    copy->m_deviceIdHashSaltsStorageDirectory = this->m_deviceIdHashSaltsStorageDirectory;
+    copy->m_websiteSessionHashSaltsStorageDirectory = this->m_websiteSessionHashSaltsStorageDirectory;
     copy->m_resourceLoadStatisticsDirectory = this->m_resourceLoadStatisticsDirectory;
     copy->m_javaScriptConfigurationDirectory = this->m_javaScriptConfigurationDirectory;
     copy->m_cookieStorageFile = this->m_cookieStorageFile;

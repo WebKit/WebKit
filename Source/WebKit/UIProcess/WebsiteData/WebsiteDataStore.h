@@ -90,7 +90,6 @@ namespace WebKit {
 class AuthenticatorManager;
 class AuxiliaryProcessProxy;
 class SecKeyProxyStore;
-class DeviceIdHashSaltStorage;
 class DownloadProxy;
 class NetworkProcessProxy;
 class SOAuthorizationCoordinator;
@@ -99,6 +98,7 @@ class WebPageProxy;
 class WebProcessPool;
 class WebProcessProxy;
 class WebResourceLoadStatisticsStore;
+class WebsiteSessionHashSaltStorage;
 enum class CacheModel : uint8_t;
 enum class CallDownloadDidStart : bool;
 enum class UnifiedOriginStorageLevel : uint8_t;
@@ -285,7 +285,7 @@ public:
     void allowSpecificHTTPSCertificateForHost(const WebCore::CertificateInfo&, const String& host);
     void allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo&);
 
-    DeviceIdHashSaltStorage& deviceIdHashSaltStorage() { return m_deviceIdHashSaltStorage.get(); }
+    WebsiteSessionHashSaltStorage& websiteSessionHashSaltStorage() { return m_websiteSessionHashSaltStorage.get(); }
 
     WebsiteDataStoreParameters parameters();
     static Vector<WebsiteDataStoreParameters> parametersFromEachWebsiteDataStore();
@@ -374,7 +374,7 @@ public:
     static String defaultGeneralStorageDirectory(const String& baseDataDirectory = nullString());
     static String defaultMediaCacheDirectory(const String& baseCacheDirectory = nullString());
     static String defaultMediaKeysStorageDirectory(const String& baseDataDirectory = nullString());
-    static String defaultDeviceIdHashSaltsStorageDirectory(const String& baseDataDirectory = nullString());
+    static String defaultWebsiteSessionHashSaltsStorageDirectory(const String& baseDataDirectory = nullString());
     static String defaultJavaScriptConfigurationDirectory(const String& baseDataDirectory = nullString());
 
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
@@ -493,7 +493,7 @@ private:
     Ref<WebsiteDataStoreConfiguration> m_resolvedConfiguration;
     Ref<const WebsiteDataStoreConfiguration> m_configuration;
     bool m_hasResolvedDirectories { false };
-    const Ref<DeviceIdHashSaltStorage> m_deviceIdHashSaltStorage;
+    const Ref<WebsiteSessionHashSaltStorage> m_websiteSessionHashSaltStorage;
 #if PLATFORM(IOS_FAMILY)
     String m_resolvedContainerCachesWebContentDirectory;
     String m_resolvedContainerCachesNetworkingDirectory;

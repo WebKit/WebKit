@@ -1136,7 +1136,7 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
     if (types & WEBKIT_WEBSITE_DATA_COOKIES)
         returnValue.add(WebsiteDataType::Cookies);
     if (types & WEBKIT_WEBSITE_DATA_DEVICE_ID_HASH_SALT)
-        returnValue.add(WebsiteDataType::DeviceIdHashSalt);
+        returnValue.add(WebsiteDataType::WebsiteSessionHashSalt);
     if (types & WEBKIT_WEBSITE_DATA_ITP)
         returnValue.add(WebsiteDataType::ResourceLoadStatistics);
 #if ENABLE(SERVICE_WORKER)
