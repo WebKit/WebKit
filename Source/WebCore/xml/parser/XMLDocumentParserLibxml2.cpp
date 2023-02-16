@@ -406,7 +406,7 @@ static inline void setAttributes(Element* element, Vector<Attribute>& attributeV
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
         element->stripScriptingAttributes(attributeVector);
-    element->parserSetAttributes(attributeVector);
+    element->parserSetAttributes(attributeVector.span());
 }
 
 static void switchToUTF16(xmlParserCtxtPtr ctxt)

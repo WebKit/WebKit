@@ -70,7 +70,7 @@ static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
     return sizeof(ShareableElementData) + sizeof(Attribute) * count;
 }
 
-Ref<ShareableElementData> ShareableElementData::createWithAttributes(const Vector<Attribute>& attributes)
+Ref<ShareableElementData> ShareableElementData::createWithAttributes(Span<const Attribute> attributes)
 {
     void* slot = ShareableElementDataMalloc::malloc(sizeForShareableElementDataWithAttributeCount(attributes.size()));
     return adoptRef(*new (NotNull, slot) ShareableElementData(attributes));
@@ -81,7 +81,7 @@ Ref<UniqueElementData> UniqueElementData::create()
     return adoptRef(*new UniqueElementData);
 }
 
-ShareableElementData::ShareableElementData(const Vector<Attribute>& attributes)
+ShareableElementData::ShareableElementData(Span<const Attribute> attributes)
     : ElementData(attributes.size())
 {
     unsigned attributeArraySize = arraySize();

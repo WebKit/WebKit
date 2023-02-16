@@ -68,7 +68,7 @@ static inline void setAttributes(Element& element, Vector<Attribute>& attributes
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
         element.stripScriptingAttributes(attributes);
-    element.parserSetAttributes(attributes);
+    element.parserSetAttributes(attributes.span());
     element.setHasDuplicateAttribute(hasDuplicateAttribute == HasDuplicateAttribute::Yes);
 }
 

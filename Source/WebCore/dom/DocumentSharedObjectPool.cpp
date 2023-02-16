@@ -59,16 +59,16 @@ ALWAYS_INLINE bool equalAttributes(const uint8_t* a, const uint8_t* b, unsigned 
 }
 #endif
 
-inline bool hasSameAttributes(const Vector<Attribute>& attributes, ShareableElementData& elementData)
+inline bool hasSameAttributes(Span<const Attribute> attributes, ShareableElementData& elementData)
 {
     if (attributes.size() != elementData.length())
         return false;
     return equalAttributes(reinterpret_cast<const uint8_t*>(attributes.data()), reinterpret_cast<const uint8_t*>(elementData.m_attributeArray), attributes.size() * sizeof(Attribute));
 }
 
-Ref<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
+Ref<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(Span<const Attribute> attributes)
 {
-    ASSERT(!attributes.isEmpty());
+    ASSERT(!attributes.empty());
 
     auto& cachedData = m_shareableElementDataCache.add(computeHash(attributes), nullptr).iterator->value;
 

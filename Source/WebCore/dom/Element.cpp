@@ -2464,24 +2464,24 @@ void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
     });
 }
 
-void Element::parserSetAttributes(const Vector<Attribute>& attributeVector)
+void Element::parserSetAttributes(Span<const Attribute> attributes)
 {
     ASSERT(!isConnected());
     ASSERT(!parentNode());
     ASSERT(!m_elementData);
 
-    if (!attributeVector.isEmpty()) {
+    if (attributes.size()) {
         if (document().sharedObjectPool())
-            m_elementData = document().sharedObjectPool()->cachedShareableElementDataWithAttributes(attributeVector);
+            m_elementData = document().sharedObjectPool()->cachedShareableElementDataWithAttributes(attributes);
         else
-            m_elementData = ShareableElementData::createWithAttributes(attributeVector);
+            m_elementData = ShareableElementData::createWithAttributes(attributes);
 
     }
 
     parserDidSetAttributes();
 
-    // Use attributeVector instead of m_elementData because attributeChanged might modify m_elementData.
-    for (const auto& attribute : attributeVector)
+    // Use attributes instead of m_elementData because attributeChanged might modify m_elementData.
+    for (const auto& attribute : attributes)
         attributeChanged(attribute.name(), nullAtom(), attribute.value(), ModifiedDirectly);
 }
 
