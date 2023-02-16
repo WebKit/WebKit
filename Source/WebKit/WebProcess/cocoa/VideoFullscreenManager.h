@@ -31,13 +31,14 @@
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/EventListener.h>
-#include <WebCore/HTMLMediaElementEnums.h>
+#include <WebCore/HTMLVideoElement.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/VideoFullscreenModelVideoElement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashMap.h>
 
 namespace IPC {
 class Connection;
@@ -170,9 +171,9 @@ protected:
 
     void setCurrentlyInFullscreen(VideoFullscreenInterfaceContext&, bool);
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
     Ref<PlaybackSessionManager> m_playbackSessionManager;
-    HashMap<WebCore::HTMLVideoElement*, PlaybackSessionContextIdentifier> m_videoElements;
+    WeakHashMap<WebCore::HTMLVideoElement, PlaybackSessionContextIdentifier, WebCore::WeakPtrImplWithEventTargetData> m_videoElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;

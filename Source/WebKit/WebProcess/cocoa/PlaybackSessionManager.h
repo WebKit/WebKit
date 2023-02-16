@@ -30,7 +30,7 @@
 #include "MessageReceiver.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include <WebCore/EventListener.h>
-#include <WebCore/HTMLMediaElementEnums.h>
+#include <WebCore/HTMLMediaElement.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <WebCore/PlaybackSessionModelMediaElement.h>
@@ -38,6 +38,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashMap.h>
 
 namespace IPC {
 class Connection;
@@ -165,8 +166,8 @@ private:
     void setPlayingOnSecondScreen(PlaybackSessionContextIdentifier, bool value);
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
-    WebPage* m_page;
-    HashMap<WebCore::HTMLMediaElement*, PlaybackSessionContextIdentifier> m_mediaElements;
+    WeakPtr<WebPage> m_page;
+    WeakHashMap<WebCore::HTMLMediaElement, PlaybackSessionContextIdentifier, WebCore::WeakPtrImplWithEventTargetData> m_mediaElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;

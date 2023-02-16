@@ -195,10 +195,11 @@ void VideoFullscreenManager::removeContext(PlaybackSessionContextIdentifier cont
     m_playbackSessionManager->removeClientForContext(contextId);
 
     RefPtr<HTMLVideoElement> videoElement = model->videoElement();
+    RELEASE_ASSERT(videoElement);
     model->setVideoElement(nullptr);
     model->removeClient(*interface);
     interface->invalidate();
-    m_videoElements.remove(videoElement.get());
+    m_videoElements.remove(*videoElement);
     m_contextMap.remove(contextId);
 }
 
@@ -283,7 +284,7 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
     LOG(Fullscreen, "VideoFullscreenManager::enterVideoFullscreenForVideoElement(%p)", this);
 
     auto contextId = m_playbackSessionManager->contextIdForMediaElement(videoElement);
-    auto addResult = m_videoElements.add(&videoElement, contextId);
+    auto addResult = m_videoElements.add(videoElement, contextId);
     UNUSED_PARAM(addResult);
     ASSERT(addResult.iterator->value == contextId);
 
@@ -348,9 +349,9 @@ void VideoFullscreenManager::exitVideoFullscreenForVideoElement(HTMLVideoElement
 {
     LOG(Fullscreen, "VideoFullscreenManager::exitVideoFullscreenForVideoElement(%p)", this);
     ASSERT(m_page);
-    ASSERT(m_videoElements.contains(&videoElement));
+    ASSERT(m_videoElements.contains(videoElement));
 
-    auto contextId = m_videoElements.get(&videoElement);
+    auto contextId = m_videoElements.get(videoElement);
     auto& interface = ensureInterface(contextId);
     if (interface.animationState() != VideoFullscreenInterfaceContext::AnimationType::None) {
         completionHandler(false);
@@ -378,12 +379,12 @@ void VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(HTMLVideo
     LOG(Fullscreen, "VideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(%p)", this);
 
     ASSERT(m_page);
-    ASSERT(m_videoElements.contains(&videoElement));
+    ASSERT(m_videoElements.contains(videoElement));
 
     if (m_videoElementInPictureInPicture == &videoElement)
         m_videoElementInPictureInPicture = nullptr;
 
-    auto contextId = m_videoElements.get(&videoElement);
+    auto contextId = m_videoElements.get(videoElement);
     if (!contextId.isValid()) {
         // We have somehow managed to be asked to exit video fullscreen
         // for a video element which was either never in fullscreen or
