@@ -1995,12 +1995,6 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 {
     return false;
 }
-
-UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
-{
-    return UnifiedOriginStorageLevel::None;
-}
-
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)
@@ -2008,6 +2002,11 @@ String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
 {
     // Not implemented.
     return String();
+}
+
+UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
+{
+    return UnifiedOriginStorageLevel::None;
 }
 #endif
 
