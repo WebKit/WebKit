@@ -114,11 +114,11 @@ private:
 
 private:
     size_t m_lineIndex { 0 };
-    bool m_hasContent { false };
     InlineRect m_logicalRect;
+    bool m_hasContent { false };
+    FontBaseline m_baselineType { AlphabeticBaseline };
     OptionSet<InlineLevelBox::Type> m_boxTypes;
 
-    FontBaseline m_baselineType { AlphabeticBaseline };
     InlineLevelBox m_rootInlineBox;
     InlineLevelBoxList m_nonRootInlineLevelBoxList;
 

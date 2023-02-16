@@ -33,7 +33,7 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 
-enum class LineBoxContain {
+enum class LineBoxContain : uint8_t {
     Block           = 1 << 0,
     Inline          = 1 << 1,
     Font            = 1 << 2,

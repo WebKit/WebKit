@@ -29,6 +29,7 @@
 #include "InlineRect.h"
 #include "LayoutBox.h"
 #include "LayoutUnits.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -48,7 +49,12 @@ public:
     static InlineLevelBox createGenericInlineLevelBox(const Box&, const RenderStyle&, InlineLayoutUnit logicalLeft);
 
     InlineLayoutUnit ascent() const { return m_ascent; }
-    std::optional<InlineLayoutUnit> descent() const { return m_descent; }
+    std::optional<InlineLayoutUnit> descent() const
+    {
+        if (!m_hasDescent)
+            return std::nullopt;
+        return { m_descent };
+    }
     // See https://www.w3.org/TR/css-inline-3/#layout-bounds
     struct LayoutBounds {
         InlineLayoutUnit height() const { return ascent + descent; }
@@ -57,7 +63,12 @@ public:
         InlineLayoutUnit ascent { 0 };
         InlineLayoutUnit descent { 0 };
     };
-    std::optional<LayoutBounds> layoutBounds() const { return m_layoutBounds; }
+    std::optional<LayoutBounds> layoutBounds() const
+    {
+        if (!m_hasLayoutBounds)
+            return std::nullopt;
+        return { m_layoutBounds };
+    }
 
     bool hasContent() const { return m_hasContent; }
     void setHasContent();
@@ -66,26 +77,31 @@ public:
         VerticalAlign type { VerticalAlign::Baseline };
         std::optional<InlineLayoutUnit> baselineOffset;
     };
-    VerticalAlignment verticalAlign() const { return m_style.verticalAlignment; }
+    VerticalAlignment verticalAlign() const
+    {
+        if (m_verticalAlignmentType == VerticalAlign::Length)
+            return { m_verticalAlignmentType, { m_baselineOffset } };
+        return { m_verticalAlignmentType, std::nullopt };
+    }
     bool hasLineBoxRelativeAlignment() const;
 
     InlineLayoutUnit preferredLineHeight() const;
-    bool isPreferredLineHeightFontMetricsBased() const { return m_style.lineHeight.isNegative(); }
+    bool isPreferredLineHeightFontMetricsBased() const { return m_lineHeight.isNegative(); }
 
     bool lineBoxContain() const;
-    bool hasLineBoxContain() const { return m_style.lineBoxContain != RenderStyle::initialLineBoxContain(); }
+    bool hasLineBoxContain() const { return m_lineBoxContain != RenderStyle::initialLineBoxContain(); }
 
-    const FontMetrics& primarymetricsOfPrimaryFont() const { return m_style.primaryFontMetrics; }
-    InlineLayoutUnit fontSize() const { return m_style.primaryFontSize; }
+    const FontMetrics& primarymetricsOfPrimaryFont() const { return m_primaryFontMetrics; }
+    InlineLayoutUnit fontSize() const { return m_primaryFontSize; }
 
     // FIXME: Maybe it's time to subclass inline box types.
-    TextEdge textEdge() const { return m_style.textEdge; }
-    LeadingTrim leadingTrim() const { return m_style.leadingTrim; }
+    TextEdge textEdge() const { return m_textEdge; }
+    LeadingTrim leadingTrim() const { return m_leadingTrim; }
     InlineLayoutUnit inlineBoxContentOffsetForLeadingTrim() const { return m_inlineBoxContentOffsetForLeadingTrim; }
 
-    bool hasAnnotation() const { return hasContent() && m_annotation.has_value(); };
-    std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() && m_annotation->type == Annotation::Type::Above ? std::make_optional(m_annotation->size) : std::nullopt; }
-    std::optional<InlineLayoutUnit> annotationUnder() const { return hasAnnotation() && m_annotation->type == Annotation::Type::Under ? std::make_optional(m_annotation->size) : std::nullopt; }
+    bool hasAnnotation() const { return hasContent() && m_hasAnnotation; };
+    std::optional<InlineLayoutUnit> annotationAbove() const { return hasAnnotation() && annotationType() == AnnotationType::Above ? std::make_optional(m_annotationSize) : std::nullopt; }
+    std::optional<InlineLayoutUnit> annotationUnder() const { return hasAnnotation() && annotationType() == AnnotationType::Under ? std::make_optional(m_annotationSize) : std::nullopt; }
 
     bool isInlineBox() const { return m_type == Type::InlineBox || isRootInlineBox() || isLineSpanningInlineBox(); }
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
@@ -136,45 +152,53 @@ private:
     void setLogicalTop(InlineLayoutUnit logicalTop) { m_logicalRect.setTop(logicalTop >= 0 ? roundToInt(logicalTop) : -roundToInt(-logicalTop)); }
     void setLogicalLeft(InlineLayoutUnit logicalLeft) { m_logicalRect.setLeft(logicalLeft); }
     void setAscent(InlineLayoutUnit ascent) { m_ascent = roundToInt(ascent); }
-    void setDescent(InlineLayoutUnit descent) { m_descent = roundToInt(descent); }
-    void setLayoutBounds(const LayoutBounds& layoutBounds) { m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) }; }
+    void setDescent(InlineLayoutUnit descent)
+    {
+        m_hasDescent = true;
+        m_descent = roundToInt(descent);
+    }
+    void setLayoutBounds(const LayoutBounds& layoutBounds)
+    {
+        m_hasLayoutBounds = true;
+        m_layoutBounds = { InlineLayoutUnit(roundToInt(layoutBounds.ascent)), InlineLayoutUnit(roundToInt(layoutBounds.descent)) };
+    }
     void setInlineBoxContentOffsetForLeadingTrim(InlineLayoutUnit offset) { m_inlineBoxContentOffsetForLeadingTrim = offset; }
 
     void setIsFirstBox() { m_isFirstWithinLayoutBox = true; }
     void setIsLastBox() { m_isLastWithinLayoutBox = true; }
 
 private:
+    enum class AnnotationType : bool { Above, Under };
+    AnnotationType annotationType() const { return static_cast<AnnotationType>(m_annotationType); }
+
     CheckedRef<const Box> m_layoutBox;
     // This is the combination of margin and border boxes. Inline level boxes are vertically aligned using their margin boxes.
     InlineRect m_logicalRect;
-    std::optional<LayoutBounds> m_layoutBounds { };
+    LayoutBounds m_layoutBounds { };
     InlineLayoutUnit m_inlineBoxContentOffsetForLeadingTrim { 0.f };
     InlineLayoutUnit m_ascent { 0 };
-    std::optional<InlineLayoutUnit> m_descent;
-    bool m_hasContent { false };
+    InlineLayoutUnit m_descent;
+    bool m_hasContent : 1;
     // These bits are about whether this inline level box is the first/last generated box of the associated Layout::Box
     // (e.g. always true for atomic inline level boxes, but inline boxes spanning over multiple lines can produce separate first/last boxes).
-    bool m_isFirstWithinLayoutBox { false };
-    bool m_isLastWithinLayoutBox { false };
+    bool m_isFirstWithinLayoutBox : 1;
+    bool m_isLastWithinLayoutBox : 1;
+    bool m_hasAnnotation : 1;
+    bool m_hasLayoutBounds : 1;
+    bool m_hasDescent : 1;
+    bool m_annotationType : 1;
     Type m_type { Type::InlineBox };
+    VerticalAlign m_verticalAlignmentType;
+    WTF::OptionSet<LineBoxContain> m_lineBoxContain;
 
-    struct Style {
-        const FontMetrics& primaryFontMetrics;
-        const Length& lineHeight;
-        TextEdge textEdge;
-        LeadingTrim leadingTrim;
-        WTF::OptionSet<LineBoxContain> lineBoxContain;
-        InlineLayoutUnit primaryFontSize { 0 };
-        VerticalAlignment verticalAlignment { };
-    };
-    Style m_style;
+    InlineLayoutUnit m_baselineOffset;
 
-    struct Annotation {
-        enum class Type : uint8_t { Above, Under };
-        Type type { Type::Above };
-        InlineLayoutUnit size { };
-    };
-    std::optional<Annotation> m_annotation;
+    InlineLayoutUnit m_annotationSize { };
+    const FontMetrics& m_primaryFontMetrics;
+    const Length& m_lineHeight;
+    TextEdge m_textEdge;
+    LeadingTrim m_leadingTrim;
+    InlineLayoutUnit m_primaryFontSize { 0 };
 };
 
 inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, OptionSet<PositionWithinLayoutBox> positionWithinLayoutBox)
@@ -183,11 +207,24 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     , m_isFirstWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::First))
     , m_isLastWithinLayoutBox(positionWithinLayoutBox.contains(PositionWithinLayoutBox::Last))
     , m_type(type)
-    , m_style({ style.fontCascade().metricsOfPrimaryFont(), style.lineHeight(), style.textEdge(), style.leadingTrim(), style.lineBoxContain(), InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()), { } })
+    , m_lineBoxContain(style.lineBoxContain())
+    , m_primaryFontMetrics(style.fontCascade().metricsOfPrimaryFont())
+    , m_lineHeight(style.lineHeight())
+    , m_textEdge(style.textEdge())
+    , m_leadingTrim(style.leadingTrim())
+    , m_primaryFontSize(InlineLayoutUnit(style.fontCascade().fontDescription().computedPixelSize()))
 {
-    m_style.verticalAlignment.type = style.verticalAlign();
-    if (m_style.verticalAlignment.type == VerticalAlign::Length)
-        m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
+    // initialize bit fields
+    m_hasAnnotation = false;
+    m_hasContent = false;
+    m_isFirstWithinLayoutBox = false;
+    m_isLastWithinLayoutBox = false;
+    m_hasLayoutBounds = false;
+    m_hasDescent = false;
+
+    m_verticalAlignmentType = style.verticalAlign();
+    if (m_verticalAlignmentType == VerticalAlign::Length)
+        m_baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
 
     auto setAnnotationIfApplicable = [&] {
         // Generic, non-inline box inline-level content (e.g. replaced elements) can't have annotations.
@@ -209,8 +246,8 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
         }
 
         if (hasAboveTextEmphasis || hasUnderTextEmphasis) {
-            InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
-            m_annotation = { hasAboveTextEmphasis ? Annotation::Type::Above : Annotation::Type::Under, annotationSize };
+            m_annotationType = WTF::enumToUnderlyingType(hasAboveTextEmphasis ? AnnotationType::Above : AnnotationType::Under);
+            m_annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
         }
     };
     setAnnotationIfApplicable();
@@ -228,9 +265,9 @@ inline InlineLayoutUnit InlineLevelBox::preferredLineHeight() const
     if (isPreferredLineHeightFontMetricsBased())
         return primarymetricsOfPrimaryFont().lineSpacing();
 
-    if (m_style.lineHeight.isPercentOrCalculated())
-        return floorf(minimumValueForLength(m_style.lineHeight, fontSize()));
-    return floorf(m_style.lineHeight.value());
+    if (m_lineHeight.isPercentOrCalculated())
+        return floorf(minimumValueForLength(m_lineHeight, fontSize()));
+    return floorf(m_lineHeight.value());
 }
 
 
@@ -268,18 +305,18 @@ inline InlineLevelBox InlineLevelBox::createGenericInlineLevelBox(const Box& lay
 inline bool InlineLevelBox::lineBoxContain() const
 {
     if (isRootInlineBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::InitialLetter, LineBoxContain::Font, LineBoxContain::Glyphs }));
+        return m_lineBoxContain.containsAny({ LineBoxContain::Block, LineBoxContain::Inline }) || (hasContent() && m_lineBoxContain.containsAny({ LineBoxContain::InitialLetter, LineBoxContain::Font, LineBoxContain::Glyphs }));
 
     if (isAtomicInlineLevelBox())
-        return m_style.lineBoxContain.contains(LineBoxContain::Replaced);
+        return m_lineBoxContain.contains(LineBoxContain::Replaced);
 
     if (isInlineBox()) {
         // Either the inline box itself is included or its text content thorugh Glyph and Font.
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+        return m_lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
     }
 
     if (isLineBreakBox())
-        return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
+        return m_lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
 
     return true;
 }
