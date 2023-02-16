@@ -883,7 +883,7 @@ private:
             return didFail(HTMLFastPathResult::FailedParsingAttributes);
         }
         parent.parserSetAttributes(m_attributeBuffer);
-        m_attributeBuffer.clear();
+        m_attributeBuffer.resize(0);
         m_attributeNames.resize(0);
     }
 
