@@ -58,6 +58,7 @@ struct InlineItemRange {
 };
 
 struct PreviousLine {
+    size_t lineIndex { 0 };
     // Content width measured during line breaking (avoid double-measuring).
     std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
     bool endsWithLineBreak { false };
