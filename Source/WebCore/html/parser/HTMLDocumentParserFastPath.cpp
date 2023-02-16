@@ -207,9 +207,10 @@ class HTMLFastPathParser {
 
 public:
     HTMLFastPathParser(CharSpan source, Document& document, DocumentFragment& fragment)
-        : m_source(source)
-        , m_document(document)
+        : m_document(document)
         , m_fragment(fragment)
+        , m_end(source.data() + source.size())
+        , m_position(source.data())
     {
     }
 
@@ -253,12 +254,11 @@ public:
     HTMLFastPathResult parseResult() const { return m_parseResult; }
 
 private:
-    CharSpan m_source;
     Document& m_document;
     DocumentFragment& m_fragment;
 
-    const Char* const m_end { m_source.data() + m_source.size() };
-    const Char* m_position { m_source.data() };
+    const Char* const m_end;
+    const Char* m_position;
 
     bool m_parsingFailed { false };
     bool m_insideOfTagA { false };
