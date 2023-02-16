@@ -1232,13 +1232,18 @@ auto WebProcessProxy::visiblePageToken() const -> VisibleWebPageToken
 void WebProcessProxy::addPreviouslyApprovedFileURL(const URL& url)
 {
     ASSERT(url.isLocalFile());
-    m_previouslyApprovedFilePaths.add(url.fileSystemPath());
+    auto fileSystemPath = url.fileSystemPath();
+    if (!fileSystemPath.isEmpty())
+        m_previouslyApprovedFilePaths.add(fileSystemPath);
 }
 
 bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
 {
     ASSERT(url.isLocalFile());
-    return m_previouslyApprovedFilePaths.contains(url.fileSystemPath());
+    auto fileSystemPath = url.fileSystemPath();
+    if (fileSystemPath.isEmpty())
+        return false;
+    return m_previouslyApprovedFilePaths.contains(fileSystemPath);
 }
 
 RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t identifier)
