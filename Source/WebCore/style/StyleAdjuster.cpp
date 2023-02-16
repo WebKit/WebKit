@@ -2,13 +2,13 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004-2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2006, 2007 Nicholas Shanks (webkit@nickshanks.com)
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007, 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2012, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Google Inc. All rights reserved.
  * Copyright (C) 2014, 2020, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -464,6 +464,44 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         return std::nullopt;
     };
 
+    bool isOverflowClipAndVisible = hasClippedOverflow(style.overflowX()) && hasClippedOverflow(style.overflowY());
+
+    if (!isOverflowClipAndVisible && (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)) {
+        // Tables only support overflow:hidden and overflow:visible and ignore anything else,
+        // see https://drafts.csswg.org/css2/#overflow. As a table is not a block
+        // container box the rules for resolving conflicting x and y values in CSS Overflow Module
+        // Level 3 do not apply. Arguably overflow-x and overflow-y aren't allowed on tables but
+        // all UAs allow it.
+        if (style.overflowX() != Overflow::Hidden)
+            style.setOverflowX(Overflow::Visible);
+        if (style.overflowY() != Overflow::Hidden)
+            style.setOverflowY(Overflow::Visible);
+        // If we are left with conflicting overflow values for the x and y axes on a table then resolve
+        // both to Overflow::Visible. This is interoperable behaviour but is not specced anywhere.
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowY(Overflow::Visible);
+        if (style.overflowY() == Overflow::Visible)
+            style.setOverflowX(Overflow::Visible);
+    } else if (style.overflowX() == Overflow::Visible && style.overflowY() != Overflow::Visible)
+        style.setOverflowX(Overflow::Auto);
+    else if (style.overflowY() == Overflow::Visible && style.overflowX() != Overflow::Visible)
+        style.setOverflowY(Overflow::Auto);
+    else if (!hasClippedOverflow(style.overflowY())) {
+        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
+        // If they aren't, 'clip' and 'visible' is reset.
+        if (style.overflowX() == Overflow::Visible)
+            style.setOverflowX(Overflow::Auto);
+        else if (style.overflowX() == Overflow::Clip)
+            style.setOverflowX(Overflow::Hidden);
+    } else if (!hasClippedOverflow(style.overflowX())) {
+        // Values of 'clip' and 'visible' can only be used with 'clip' and 'visible'.
+        // If they aren't, 'clip' and 'visible' is reset.
+        if (style.overflowY() == Overflow::Visible)
+            style.setOverflowY(Overflow::Auto);
+        else if (style.overflowY() == Overflow::Clip)
+            style.setOverflowY(Overflow::Hidden);
+    }
+
     // If either overflow value is not visible, change to auto. Similarly if either overflow
     // value is not clip, change to hidden.
     // FIXME: Once we implement pagination controls, overflow-x should default to hidden
@@ -479,16 +517,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // Style::createForm_document.
     if ((style.overflowY() == Overflow::PagedX || style.overflowY() == Overflow::PagedY) && !(m_element && (m_element->hasTagName(htmlTag) || m_element->hasTagName(bodyTag))))
         style.setColumnStylesFromPaginationMode(WebCore::paginationModeForRenderStyle(style));
-
-    // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
-    // FIXME: Eventually table sections will support auto and scroll.
-    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
-        || style.display() == DisplayType::TableRowGroup || style.display() == DisplayType::TableRow) {
-        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden)
-            style.setOverflowX(Overflow::Visible);
-        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden)
-            style.setOverflowY(Overflow::Visible);
-    }
 
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     // Touch overflow scrolling creates a stacking context.
