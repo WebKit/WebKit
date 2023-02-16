@@ -1036,9 +1036,9 @@ uint64_t WebProcess::userGestureTokenIdentifier(RefPtr<UserGestureToken> token)
     if (!token || !token->processingUserGesture())
         return 0;
 
-    auto result = m_userGestureTokens.ensure(token.get(), [] { return nextUserGestureTokenIdentifier(); });
+    auto result = m_userGestureTokens.ensure(*token, [] { return nextUserGestureTokenIdentifier(); });
     if (result.isNewEntry) {
-        result.iterator->key->addDestructionObserver([] (UserGestureToken& tokenBeingDestroyed) {
+        result.iterator->key.addDestructionObserver([] (UserGestureToken& tokenBeingDestroyed) {
             WebProcess::singleton().userGestureTokenDestroyed(tokenBeingDestroyed);
         });
     }
@@ -1048,7 +1048,7 @@ uint64_t WebProcess::userGestureTokenIdentifier(RefPtr<UserGestureToken> token)
 
 void WebProcess::userGestureTokenDestroyed(UserGestureToken& token)
 {
-    auto identifier = m_userGestureTokens.take(&token);
+    auto identifier = m_userGestureTokens.take(token);
     parentProcessConnection()->send(Messages::WebProcessProxy::DidDestroyUserGestureToken(identifier), 0);
 }
 
