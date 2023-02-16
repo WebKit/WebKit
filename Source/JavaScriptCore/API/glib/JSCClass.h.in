@@ -74,6 +74,12 @@ typedef struct {
     void (*_jsc_reserved1) (void);
     void (*_jsc_reserved2) (void);
     void (*_jsc_reserved3) (void);
+#if ENABLE(2022_GLIB_API)
+    void (*_jsc_reserved4) (void);
+    void (*_jsc_reserved5) (void);
+    void (*_jsc_reserved6) (void);
+    void (*_jsc_reserved7) (void);
+#endif
 } JSCClassVTable;
 
 JSC_API const char *
