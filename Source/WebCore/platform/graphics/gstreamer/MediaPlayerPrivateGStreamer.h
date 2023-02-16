@@ -494,6 +494,9 @@ private:
     void configureDepayloader(GstElement*);
     void configureVideoDecoder(GstElement*);
     void configureElement(GstElement*);
+#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK)
+    void configureElementPlatformQuirks(GstElement*);
+#endif
 
     void setPlaybinURL(const URL& urlString);
 
