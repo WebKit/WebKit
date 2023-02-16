@@ -1,0 +1,41 @@
+<style>
+.container {
+  position: relative;
+}
+
+.inline_block {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-color: green; 
+}
+
+.not_abs_pos {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background-color: blue;
+}
+</style>
+
+<div class=container>
+  <div class=inline_block style="margin-inline-end: 10px;"></div><div class=not_abs_pos></div>
+</div>
+
+<div class=container>
+  <div class=inline_block style="margin-inline-start: 10px; margin-inline-end: -60px;"></div><div class=not_abs_pos></div>
+</div>
+
+<div class=container>
+  <div class=inline_block></div>
+</div>
+<div class=container style="margin-top: 10px">
+  <div class=not_abs_pos></div>
+</div>
+
+<div class=container>
+  <div class=inline_block></div>
+</div>
+<div class=container>
+  <div class=inline_block style="margin-inline-start: 10px; margin-inline-end: -60px;"></div><div class=not_abs_pos></div>
+</div>
