@@ -1340,6 +1340,68 @@
         assertIsCurrent(workQueue());
         m_context->drawBuffersEXT(makeGCGLSpan(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
     }
+    void createQueryEXT(CompletionHandler<void(uint32_t)>&& completionHandler)
+    {
+        PlatformGLObject returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->createQueryEXT();
+        completionHandler(returnValue);
+    }
+    void deleteQueryEXT(uint32_t query)
+    {
+        assertIsCurrent(workQueue());
+        m_context->deleteQueryEXT(query);
+    }
+    void isQueryEXT(uint32_t query, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        GCGLboolean returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->isQueryEXT(query);
+        completionHandler(static_cast<bool>(returnValue));
+    }
+    void beginQueryEXT(uint32_t target, uint32_t query)
+    {
+        assertIsCurrent(workQueue());
+        m_context->beginQueryEXT(target, query);
+    }
+    void endQueryEXT(uint32_t target)
+    {
+        assertIsCurrent(workQueue());
+        m_context->endQueryEXT(target);
+    }
+    void queryCounterEXT(uint32_t query, uint32_t target)
+    {
+        assertIsCurrent(workQueue());
+        m_context->queryCounterEXT(query, target);
+    }
+    void getQueryiEXT(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
+    {
+        GCGLint returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->getQueryiEXT(target, pname);
+        completionHandler(returnValue);
+    }
+    void getQueryObjectiEXT(uint32_t query, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
+    {
+        GCGLint returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->getQueryObjectiEXT(query, pname);
+        completionHandler(returnValue);
+    }
+    void getQueryObjectui64EXT(uint32_t query, uint32_t pname, CompletionHandler<void(uint64_t)>&& completionHandler)
+    {
+        GCGLuint64 returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->getQueryObjectui64EXT(query, pname);
+        completionHandler(static_cast<uint64_t>(returnValue));
+    }
+    void getInteger64EXT(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
+    {
+        GCGLint64 returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->getInteger64EXT(pname);
+        completionHandler(static_cast<int64_t>(returnValue));
+    }
     void enableiOES(uint32_t target, uint32_t index)
     {
         assertIsCurrent(workQueue());

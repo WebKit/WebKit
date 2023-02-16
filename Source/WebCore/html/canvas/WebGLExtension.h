@@ -61,6 +61,7 @@ public:
         EXTBlendMinMaxName,
         EXTColorBufferFloatName,
         EXTColorBufferHalfFloatName,
+        EXTDisjointTimerQueryName,
         EXTFloatBlendName,
         EXTFragDepthName,
         EXTShaderTextureLODName,

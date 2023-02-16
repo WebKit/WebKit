@@ -819,6 +819,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferFloat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferFloat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferHalfFloat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTColorBufferHalfFloat.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTDisjointTimerQuery.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTDisjointTimerQuery.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFloatBlend.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFloatBlend.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEXTFragDepth.cpp
@@ -2903,6 +2905,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLSync.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLSync.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLTexture.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLTexture.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLTimerQueryEXT.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLTimerQueryEXT.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLTransformFeedback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLTransformFeedback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebGLUniformLocation.cpp

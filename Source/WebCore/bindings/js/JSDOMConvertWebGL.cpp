@@ -33,6 +33,7 @@
 #include "JSEXTBlendMinMax.h"
 #include "JSEXTColorBufferFloat.h"
 #include "JSEXTColorBufferHalfFloat.h"
+#include "JSEXTDisjointTimerQuery.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
 #include "JSEXTShaderTextureLOD.h"
@@ -74,6 +75,7 @@
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
 #include "JSWebGLTexture.h"
+#include "JSWebGLTimerQueryEXT.h"
 #include "JSWebGLTransformFeedback.h"
 #include "JSWebGLVertexArrayObject.h"
 #include "JSWebGLVertexArrayObjectOES.h"
@@ -95,6 +97,8 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         }, [] (unsigned value) -> JSValue {
             return jsNumber(value);
         }, [] (long long value) -> JSValue {
+            return jsNumber(value);
+        }, [] (unsigned long long value) -> JSValue {
             return jsNumber(value);
         }, [] (float value) -> JSValue {
             return jsNumber(purifyNaN(value));
@@ -145,6 +149,9 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         [&] (const RefPtr<WebGLTexture>& texture) {
             return toJS(&lexicalGlobalObject, &globalObject, texture.get());
         },
+        [&] (const RefPtr<WebGLTimerQueryEXT>& query) {
+            return toJS(&lexicalGlobalObject, &globalObject, query.get());
+        },
         [&] (const RefPtr<WebGLVertexArrayObjectOES>& array) {
             return toJS(&lexicalGlobalObject, &globalObject, array.get());
         },
@@ -171,6 +178,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(EXTBlendMinMax)
         TO_JS(EXTColorBufferFloat)
         TO_JS(EXTColorBufferHalfFloat)
+        TO_JS(EXTDisjointTimerQuery)
         TO_JS(EXTFloatBlend)
         TO_JS(EXTFragDepth)
         TO_JS(EXTShaderTextureLOD)

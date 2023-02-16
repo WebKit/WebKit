@@ -2959,6 +2959,96 @@ void GraphicsContextGLANGLE::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
     GL_DrawBuffersEXT(bufs.size(), bufs.data());
 }
 
+PlatformGLObject GraphicsContextGLANGLE::createQueryEXT()
+{
+    if (!makeContextCurrent())
+        return 0;
+
+    GLuint name = 0;
+    GL_GenQueriesEXT(1, &name);
+    return name;
+}
+
+void GraphicsContextGLANGLE::deleteQueryEXT(PlatformGLObject query)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_DeleteQueriesEXT(1, &query);
+}
+
+GCGLboolean GraphicsContextGLANGLE::isQueryEXT(PlatformGLObject query)
+{
+    if (!makeContextCurrent())
+        return GL_FALSE;
+
+    return GL_IsQueryEXT(query);
+}
+
+void GraphicsContextGLANGLE::beginQueryEXT(GCGLenum target, PlatformGLObject query)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_BeginQueryEXT(target, query);
+}
+
+void GraphicsContextGLANGLE::endQueryEXT(GCGLenum target)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_EndQueryEXT(target);
+}
+
+void GraphicsContextGLANGLE::queryCounterEXT(PlatformGLObject query, GCGLenum target)
+{
+    if (!makeContextCurrent())
+        return;
+
+    GL_QueryCounterEXT(query, target);
+}
+
+GCGLint GraphicsContextGLANGLE::getQueryiEXT(GCGLenum target, GCGLenum pname)
+{
+    if (!makeContextCurrent())
+        return 0;
+
+    GLint value = 0;
+    GL_GetQueryivRobustANGLE(target, pname, 1, nullptr, &value);
+    return value;
+}
+
+GCGLint GraphicsContextGLANGLE::getQueryObjectiEXT(PlatformGLObject query, GCGLenum pname)
+{
+    if (!makeContextCurrent())
+        return 0;
+
+    GLint value = 0;
+    GL_GetQueryObjectivRobustANGLE(query, pname, 1, nullptr, &value);
+    return value;
+}
+
+GCGLuint64 GraphicsContextGLANGLE::getQueryObjectui64EXT(PlatformGLObject query, GCGLenum pname)
+{
+    if (!makeContextCurrent())
+        return 0;
+
+    GLuint64 value = 0;
+    GL_GetQueryObjectui64vRobustANGLE(query, pname, 1, nullptr, &value);
+    return value;
+}
+
+GCGLint64 GraphicsContextGLANGLE::getInteger64EXT(GCGLenum pname)
+{
+    if (!makeContextCurrent())
+        return 0;
+
+    GCGLint64 value = 0;
+    GL_GetInteger64vRobustANGLE(pname, 1, nullptr, &value);
+    return value;
+}
+
 void GraphicsContextGLANGLE::enableiOES(GCGLenum target, GCGLuint index)
 {
     if (!makeContextCurrent())

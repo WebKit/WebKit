@@ -2762,6 +2762,128 @@ void RemoteGraphicsContextGLProxy::drawBuffersEXT(GCGLSpan<const GCGLenum> bufs)
     }
 }
 
+PlatformGLObject RemoteGraphicsContextGLProxy::createQueryEXT()
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateQueryEXT());
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return returnValue;
+}
+
+void RemoteGraphicsContextGLProxy::deleteQueryEXT(PlatformGLObject query)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DeleteQueryEXT(query));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
+GCGLboolean RemoteGraphicsContextGLProxy::isQueryEXT(PlatformGLObject query)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::IsQueryEXT(query));
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return static_cast<GCGLboolean>(returnValue);
+}
+
+void RemoteGraphicsContextGLProxy::beginQueryEXT(GCGLenum target, PlatformGLObject query)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::BeginQueryEXT(target, query));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::endQueryEXT(GCGLenum target)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::EndQueryEXT(target));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::queryCounterEXT(PlatformGLObject query, GCGLenum target)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::QueryCounterEXT(query, target));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
+GCGLint RemoteGraphicsContextGLProxy::getQueryiEXT(GCGLenum target, GCGLenum pname)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetQueryiEXT(target, pname));
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return returnValue;
+}
+
+GCGLint RemoteGraphicsContextGLProxy::getQueryObjectiEXT(PlatformGLObject query, GCGLenum pname)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetQueryObjectiEXT(query, pname));
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return returnValue;
+}
+
+GCGLuint64 RemoteGraphicsContextGLProxy::getQueryObjectui64EXT(PlatformGLObject query, GCGLenum pname)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetQueryObjectui64EXT(query, pname));
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return static_cast<GCGLuint64>(returnValue);
+}
+
+GCGLint64 RemoteGraphicsContextGLProxy::getInteger64EXT(GCGLenum pname)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetInteger64EXT(pname));
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return static_cast<GCGLint64>(returnValue);
+}
+
 void RemoteGraphicsContextGLProxy::enableiOES(GCGLenum target, GCGLuint index)
 {
     if (isContextLost())
