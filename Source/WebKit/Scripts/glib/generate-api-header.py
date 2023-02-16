@@ -100,7 +100,7 @@ def main(args):
                 input_data += expand_ifdefs(line)
 
     command = [unifdef, "-x1", "-o%s" % output] + unifdef_args + ["-"]
-    p = subprocess.Popen(command, stdin=subprocess.PIPE, text=True, encoding="utf-8")
+    p = subprocess.Popen(command, stdin=subprocess.PIPE, universal_newlines=True, encoding="utf-8")
     p.communicate(input_data)
 
     # unifdef returns 1 when no changes were made and output file is unmodified.
