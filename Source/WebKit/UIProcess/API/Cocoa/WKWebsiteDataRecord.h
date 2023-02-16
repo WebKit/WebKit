@@ -62,7 +62,7 @@ WK_EXTERN NSString * const WKWebsiteDataTypeServiceWorkerRegistrations WK_API_AV
 /*! @constant WKWebsiteDataTypeFileSystem File system storage. */
 WK_EXTERN NSString * const WKWebsiteDataTypeFileSystem WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
-/*! @constant WKWebsiteDataTypeFileSystem Search field history. */
+/*! @constant WKWebsiteDataTypeSearchFieldRecentSearches Search field history. */
 WK_EXTERN NSString * const WKWebsiteDataTypeSearchFieldRecentSearches WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 /*! A WKWebsiteDataRecord represents website data, grouped by domain name using the public suffix list. */
