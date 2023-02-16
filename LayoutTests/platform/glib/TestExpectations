@@ -2496,6 +2496,10 @@ http/tests/media/track-in-band-hls-metadata-crash.html [ Skip ]
 http/tests/media/track-in-band-hls-metadata.html [ Skip ]
 http/tests/media/video-hls-copy-into-canvas.html [ Skip ]
 http/tests/security/canvas-remote-read-remote-video-hls.html [ Skip ]
+http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html [ Skip ]
+http/tests/media/modern-media-controls/time-control/1-to-10-hours.html [ Skip ]
+http/tests/media/modern-media-controls/time-control/10-hours-or-more.html [ Skip ]
+http/tests/media/modern-media-controls/time-control/less-than-10-minutes.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
