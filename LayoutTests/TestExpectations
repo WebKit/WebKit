@@ -6006,7 +6006,6 @@ imported/w3c/web-platform-tests/css/css-fonts/test_datafont_same_origin.html [ S
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/anchor-inside-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/reading-scroll-forces-anchoring.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-transitions/non-rendered-element-004.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-values/dynamic-viewport-units-rule-cache.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-variables/variable-reference-refresh.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-with-transformation.html [ Skip ]
