@@ -110,18 +110,18 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 #endif
 
-struct SameSizeAsRenderObject {
+struct SameSizeAsRenderObject : CanMakeWeakPtr<SameSizeAsRenderObject> {
     virtual ~SameSizeAsRenderObject() = default; // Allocate vtable pointer.
 #if ASSERT_ENABLED
-    bool weakPtrFactorWasConstructedOnMainThread;
-    HashSet<void*> cachedResourceClientAssociatedResources;
+    WeakHashSet<void*> cachedResourceClientAssociatedResources;
 #endif
-    void* pointers[5];
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> node;
+    void* pointers[3];
+    CheckedPtr<Layout::Box> layoutBox;
 #if ASSERT_ENABLED
     unsigned m_debugBitfields : 2;
 #endif
     unsigned m_bitfields;
-    WeakPtr<Node> m_node;
 };
 
 #if CPU(ADDRESS64)

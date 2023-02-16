@@ -35,8 +35,8 @@
 #include "Timer.h"
 #include <wtf/Expected.h>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/RobinHoodHashSet.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -211,7 +211,7 @@ private:
 
     int m_requestCount { 0 };
 
-    std::unique_ptr<ListHashSet<CachedResource*>> m_preloads;
+    std::unique_ptr<WeakListHashSet<CachedResource>> m_preloads;
     Timer m_unusedPreloadsTimer;
 
     Timer m_garbageCollectDocumentResourcesTimer;
