@@ -2214,13 +2214,13 @@ WI._handleDeviceSettingsTabBarButtonClicked = function(event)
 
         let userAgentValueInput = null;
 
-        const userAgents = [
+        let userAgents = WebKitAdditions.userAgents ?? [
             [
-             { name: WI.UIString("Default"), value: "default" },
-             ],
+                { name: WI.UIString("Default"), value: "default" },
+            ],
             [
-             { name: "Safari 16.0", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
-             ],
+                { name: "Safari 16.0", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
+            ],
             [
                 { name: `Safari ${emDash} iOS 16.0 ${emDash} iPhone`, value: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
                 { name: `Safari ${emDash} iPadOS 16.0 ${emDash} iPad mini`, value: "Mozilla/5.0 (iPad; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
@@ -2239,8 +2239,8 @@ WI._handleDeviceSettingsTabBarButtonClicked = function(event)
                 { name: `Firefox ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0" },
             ],
             [
-             { name: WI.UIString("Other\u2026"), value: "other" },
-             ],
+                { name: WI.UIString("Other\u2026"), value: "other" },
+            ],
         ];
 
         let selectedOptionElement = null;
