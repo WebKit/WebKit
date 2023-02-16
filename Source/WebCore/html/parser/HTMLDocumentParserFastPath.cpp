@@ -272,7 +272,8 @@ private:
     // Used if the attribute name contains upper case ascii (which must be mapped to lower case).
     // 32 matches that used by HTMLToken::Attribute.
     Vector<Char, 32> m_attributeNameBuffer;
-    Vector<Attribute> m_attributeBuffer;
+    // The inline capacity matches HTMLToken::AttributeList.
+    Vector<Attribute, 10> m_attributeBuffer;
     Vector<StringImpl*> m_attributeNames;
     HTMLFastPathResult m_parseResult { HTMLFastPathResult::Succeeded };
 
