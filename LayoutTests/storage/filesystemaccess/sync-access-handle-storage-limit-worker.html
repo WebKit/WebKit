@@ -11,7 +11,6 @@ if (window.testRunner) {
     testRunner.setAllowStorageQuotaIncrease(false);
 }
 const worker = startWorker('resources/sync-access-handle-storage-limit.js');
-// worker.postMessage({ name:"quota", quota:quota });
 worker.postMessage(quota);
 </script>
 </body>
