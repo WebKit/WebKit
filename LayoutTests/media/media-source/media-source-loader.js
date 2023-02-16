@@ -87,6 +87,14 @@ MediaSourceLoader.prototype = {
         return this._mediaData.slice(media.offset, media.offset + media.size);
     },
 
+    mediaSegmentEndTime: function(segmentNumber)
+    {
+        if (!this._manifest || !this._manifest.media || !this._mediaData || segmentNumber >= this._manifest.media.length)
+            return 0;
+        var media = this._manifest.media[segmentNumber];
+        return media.timestamp + media.duration;
+    },
+
     concatenateMediaSegments: function(segmentDataList)
     {
         var totalLength = 0;
