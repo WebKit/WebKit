@@ -456,8 +456,8 @@ static NSMutableArray<NSURL *> *readOnlyAccessPaths()
 {
     [self _loadFromHTMLWithOptions:options contentLoader:^WKNavigation *(WKWebView *webView) {
         auto* textEncodingName = dynamic_objc_cast<NSString>(options[NSTextEncodingNameDocumentOption]);
-        auto characterEncoding = static_cast<NSStringEncoding>(dynamic_objc_cast<NSNumber>(options[NSCharacterEncodingDocumentOption]).unsignedIntegerValue);
         auto* baseURL = dynamic_objc_cast<NSURL>(options[NSBaseURLDocumentOption]);
+        unsigned long characterEncoding = dynamic_objc_cast<NSNumber>(options[NSCharacterEncodingDocumentOption]).unsignedLongValue;
 
         if (characterEncoding && !textEncodingName) {
             auto stringEncoding = CFStringConvertNSStringEncodingToEncoding(characterEncoding);
