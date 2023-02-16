@@ -65,13 +65,9 @@ void Type::dump(PrintStream& out) const
             ASSERT_NOT_REACHED();
         },
         [&](const Bottom&) {
-#ifdef NDEBUG
-            RELEASE_ASSERT_NOT_REACHED();
-#else
             // Bottom is an implementation detail and should never leak, but we
             // keep the ability to print it in debug to help when dumping types
             out.print("⊥");
-#endif
         });
 }
 

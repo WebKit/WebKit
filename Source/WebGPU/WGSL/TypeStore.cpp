@@ -34,6 +34,58 @@ namespace WGSL {
 
 using namespace Types;
 
+// These keys are used so that, for a given type T, we can have keys for all of
+// the following types:
+// vecN<T>, matCxR<T>, array<T, N?>
+//
+// To make sure they never collide, we encode them into a pair<Type*, uint64_t>
+// where the first element of the pair is always T and the second word is used
+// to disambiguate between all the possible types. That's possible because we
+// we only have 3 possibilities for Vector (2, 3, 4), 9 possibilities for Matrix
+// ((2, 3, 4) * (2, 3, 4)) and 2**32 for Array. To avoid collisions, the
+// data is encoded as follows:
+//
+// Vector: size in the least significant byte.
+// Matrix: rows in byte 1 and columns in byte 2
+// Array: 0 for dynamic array or 32-bit size in the upper 32-bits
+struct VectorKey {
+    Type* elementType;
+    uint8_t size;
+
+    uint64_t extra() const { return size; }
+};
+
+struct MatrixKey {
+    Type* elementType;
+    uint8_t columns;
+    uint8_t rows;
+
+    uint64_t extra() const { return (static_cast<uint64_t>(columns) << 8) | rows; }
+};
+
+struct ArrayKey {
+    Type* elementType;
+    std::optional<unsigned> size;
+
+    uint64_t extra() const { return size.has_value() ? static_cast<uint64_t>(*size) << 32 : 0; }
+};
+
+template<typename Key>
+Type* TypeStore::TypeCache::find(const Key& key) const
+{
+    auto it = m_storage.find(std::pair(key.elementType, key.extra()));
+    if (it != m_storage.end())
+        return it->value;
+    return nullptr;
+}
+
+template<typename Key>
+void TypeStore::TypeCache::insert(const Key& key, Type* type)
+{
+    auto it = m_storage.add(std::pair(key.elementType, key.extra()), type);
+    ASSERT_UNUSED(it, it.isNewEntry);
+}
+
 TypeStore::TypeStore()
     : m_typeConstrutors(AST::ParameterizedTypeName::NumberOfBaseTypes)
 {
@@ -67,27 +119,41 @@ Type* TypeStore::structType(const AST::Identifier& name)
 
 Type* TypeStore::constructType(AST::ParameterizedTypeName::Base base, Type* elementType)
 {
-    // FIXME: these should be cached
     auto& typeConstructor = m_typeConstrutors[WTF::enumToUnderlyingType(base)];
     return typeConstructor.construct(elementType);
 }
 
 Type* TypeStore::arrayType(Type* elementType, std::optional<unsigned> size)
 {
-    // FIXME: these should be cached
-    return allocateType<Array>(elementType, size);
+    ArrayKey key { elementType, size };
+    Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Array>(elementType, size);
+    m_cache.insert(key, type);
+    return type;
 }
 
 Type* TypeStore::vectorType(Type* elementType, uint8_t size)
 {
-    // FIXME: these should be cached
-    return allocateType<Vector>(elementType, size);
+    VectorKey key { elementType, size };
+    Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Vector>(elementType, size);
+    m_cache.insert(key, type);
+    return type;
 }
 
 Type* TypeStore::matrixType(Type* elementType, uint8_t columns, uint8_t rows)
 {
-    // FIXME: these should be cached
-    return allocateType<Matrix>(elementType, columns, rows);
+    MatrixKey key { elementType, columns, rows };
+    Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Matrix>(elementType, columns, rows);
+    m_cache.insert(key, type);
+    return type;
 }
 
 template<typename TypeKind, typename... Arguments>
@@ -102,7 +168,6 @@ void TypeStore::allocateConstructor(TargetConstructor constructor, Base base, Ar
 {
     m_typeConstrutors[WTF::enumToUnderlyingType(base)] =
         TypeConstructor { [this, constructor, arguments...](Type* elementType) -> Type* {
-            // FIXME: this should be cached
             return (this->*constructor)(elementType, arguments...);
         } };
 }
