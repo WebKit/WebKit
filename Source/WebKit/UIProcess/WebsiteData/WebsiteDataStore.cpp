@@ -1753,11 +1753,6 @@ void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
     networkProcess().sendSync(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), 0);
 }
 
-void WebsiteDataStore::clearCachedCredentials()
-{
-    networkProcess().send(Messages::NetworkProcess::ClearCachedCredentials(sessionID()), 0);
-}
-
 void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 {
     m_queue->dispatch(WTFMove(function));

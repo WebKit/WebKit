@@ -454,15 +454,6 @@ bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     return result;
 }
 
-void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)
-{
-    if (auto* session = networkSession(sessionID)) {
-        if (auto* storageSession = session->networkStorageSession())
-            storageSession->credentialStorage().clearCredentials();
-        session->clearCredentials();
-    }
-}
-
 void NetworkProcess::addStorageSession(PAL::SessionID sessionID, bool shouldUseTestingNetworkSession, const Vector<uint8_t>& uiProcessCookieStorageIdentifier, const SandboxExtension::Handle& cookieStoragePathExtensionHandle)
 {
     auto addResult = m_networkStorageSessions.add(sessionID, nullptr);
