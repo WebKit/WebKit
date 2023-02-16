@@ -69,6 +69,7 @@ public:
     RefPtr<HTMLImageElement> enclosingImageElement() const;
 
     WEBCORE_EXPORT String attachmentTitle() const;
+    const AtomString& attachmentActionForDisplay() const;
     String attachmentTitleForDisplay() const;
     String attachmentSubtitleForDisplay() const;
     WEBCORE_EXPORT String attachmentType() const;
@@ -118,6 +119,7 @@ private:
     FloatSize m_iconSize;
 
     RefPtr<HTMLAttachmentElement> m_innerLegacyAttachment;
+    RefPtr<HTMLElement> m_elementWithAction;
     RefPtr<HTMLElement> m_elementWithTitle;
     RefPtr<HTMLElement> m_elementWithSubtitle;
 

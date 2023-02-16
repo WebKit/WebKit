@@ -275,7 +275,7 @@ AttachmentLayout::AttachmentLayout(const RenderAttachment& attachment, Attachmen
 
     hasProgress = getAttachmentProgress(attachment, progress);
     String title = attachment.attachmentElement().attachmentTitleForDisplay();
-    String action = attachment.attachmentElement().attributeWithoutSynchronization(HTMLNames::actionAttr);
+    String action = attachment.attachmentElement().attachmentActionForDisplay();
     String subtitle = attachment.attachmentElement().attachmentSubtitleForDisplay();
 
     CGFloat yOffset = 0;
