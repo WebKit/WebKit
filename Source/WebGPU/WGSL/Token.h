@@ -52,6 +52,7 @@ enum class TokenType: uint32_t {
     KeywordArray,
     KeywordFn,
     KeywordFunction,
+    KeywordLet,
     KeywordPrivate,
     KeywordRead,
     KeywordReadWrite,

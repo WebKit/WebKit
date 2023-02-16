@@ -31,6 +31,7 @@
 #include "ASTStatement.h"
 #include "ASTStructure.h"
 #include "ASTTypeName.h"
+#include "ASTValue.h"
 #include "ASTVariable.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
@@ -88,6 +89,7 @@ public:
     Result<AST::Expression::Ref> parseLHSExpression();
     Result<AST::Expression::Ref> parseCoreLHSExpression();
     Result<AST::Expression::List> parseArgumentExpressionList();
+    Result<AST::Value::Ref> parseLetValue();
 
 private:
     Expected<Token, TokenType> consumeType(TokenType);

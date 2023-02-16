@@ -79,6 +79,7 @@ class PhonyAssignmentStatement;
 class ReturnStatement;
 class StaticAssertStatement;
 class SwitchStatement;
+class ValueStatement;
 class VariableStatement;
 class WhileStatement;
 

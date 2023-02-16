@@ -116,22 +116,23 @@ TEST(WGSLLexerTests, KeywordTokens)
     using WGSL::TokenType;
 
     checkSingleToken("array"_s, TokenType::KeywordArray);
+    checkSingleToken("bool"_s, TokenType::KeywordBool);
+    checkSingleToken("f32"_s, TokenType::KeywordF32);
     checkSingleToken("fn"_s, TokenType::KeywordFn);
     checkSingleToken("function"_s, TokenType::KeywordFunction);
+    checkSingleToken("i32"_s, TokenType::KeywordI32);
+    checkSingleToken("let"_s, TokenType::KeywordLet);
     checkSingleToken("private"_s, TokenType::KeywordPrivate);
     checkSingleToken("read"_s, TokenType::KeywordRead);
     checkSingleToken("read_write"_s, TokenType::KeywordReadWrite);
     checkSingleToken("return"_s, TokenType::KeywordReturn);
     checkSingleToken("storage"_s, TokenType::KeywordStorage);
     checkSingleToken("struct"_s, TokenType::KeywordStruct);
+    checkSingleToken("u32"_s, TokenType::KeywordU32);
     checkSingleToken("uniform"_s, TokenType::KeywordUniform);
     checkSingleToken("var"_s, TokenType::KeywordVar);
     checkSingleToken("workgroup"_s, TokenType::KeywordWorkgroup);
     checkSingleToken("write"_s, TokenType::KeywordWrite);
-    checkSingleToken("i32"_s, TokenType::KeywordI32);
-    checkSingleToken("u32"_s, TokenType::KeywordU32);
-    checkSingleToken("f32"_s, TokenType::KeywordF32);
-    checkSingleToken("bool"_s, TokenType::KeywordBool);
 }
 
 TEST(WGSLLexerTests, SpecialTokens)

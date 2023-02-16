@@ -94,6 +94,7 @@ enum class NodeKind : uint8_t {
     ReturnStatement,
     StaticAssertStatement,
     SwitchStatement,
+    ValueStatement,
     VariableStatement,
     WhileStatement,
 

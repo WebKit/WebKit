@@ -291,6 +291,7 @@ Token Lexer<T>::lex()
                 { "i32", TokenType::KeywordI32 },
                 { "i64", TokenType::ReservedWord },
                 { "i8", TokenType::ReservedWord },
+                { "let", TokenType::KeywordLet },
                 { "mat", TokenType::ReservedWord },
                 { "premerge", TokenType::ReservedWord },
                 { "private", TokenType::KeywordPrivate },

@@ -57,6 +57,8 @@ String toString(TokenType type)
         return "fn"_s;
     case TokenType::KeywordFunction:
         return "function"_s;
+    case TokenType::KeywordLet:
+        return "let"_s;
     case TokenType::KeywordPrivate:
         return "private"_s;
     case TokenType::KeywordRead:

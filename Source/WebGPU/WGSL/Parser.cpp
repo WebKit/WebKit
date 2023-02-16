@@ -706,6 +706,11 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         CONSUME_TYPE(Semicolon);
         return { makeUniqueRef<AST::ReturnStatement>(WTFMove(returnStmt)) };
     }
+    case TokenType::KeywordLet: {
+        PARSE(value, LetValue);
+        CONSUME_TYPE(Semicolon);
+        RETURN_NODE_UNIQUE_REF(ValueStatement, WTFMove(value));
+    }
     case TokenType::KeywordVar: {
         PARSE(variable, Variable);
         CONSUME_TYPE(Semicolon);
@@ -1095,6 +1100,26 @@ Result<AST::Expression::List> Parser<Lexer>::parseArgumentExpressionList()
 
     CONSUME_TYPE(ParenRight);
     return { WTFMove(arguments) };
+}
+
+template<typename Lexer>
+Result<AST::Value::Ref> Parser<Lexer>::parseLetValue()
+{
+    START_PARSE();
+    CONSUME_TYPE(KeywordLet);
+    PARSE(name, Identifier);
+
+    AST::TypeName::Ptr maybeType = nullptr;
+    if (current().m_type == TokenType::Colon) {
+        consume();
+        PARSE(TypeName, TypeName);
+        maybeType = WTFMove(TypeName);
+    }
+
+    CONSUME_TYPE(Equal);
+    PARSE(initializer, Expression);
+
+    RETURN_NODE_UNIQUE_REF(LetValue, WTFMove(name), WTFMove(maybeType), WTFMove(initializer));
 }
 
 } // namespace WGSL

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,26 @@
 
 #pragma once
 
-#include "ASTNode.h"
+#include "ASTStatement.h"
+#include "ASTValue.h"
 
 namespace WGSL::AST {
 
-class Value : public Node {
+class ValueStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Ref = UniqueRef<Value>;
-
-    Value(SourceSpan span)
-        : Node(span)
+    ValueStatement(SourceSpan span, Value::Ref&& value)
+        : Statement(span)
+        , m_value(WTFMove(value))
     { }
+
+    NodeKind kind() const override;
+    Value& value() { return m_value.get(); }
+
+private:
+    Value::Ref m_value;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Value)
-static bool isType(const WGSL::AST::Node& node)
-{
-    switch (node.kind()) {
-    case WGSL::AST::NodeKind::ConstantValue:
-    case WGSL::AST::NodeKind::OverrideValue:
-    case WGSL::AST::NodeKind::LetValue:
-    case WGSL::AST::NodeKind::ParameterValue:
-        return true;
-    default:
-        return false;
-    }
-}
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(ValueStatement)

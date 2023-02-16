@@ -316,6 +316,63 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
 #pragma mark -
 #pragma mark Declarations
 
+TEST(WGSLParserTests, LocalLet)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() -> vec4<f32> {\n"
+        "    let x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
+        "    return x;\n"
+        "}"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    {
+        auto& func = shader->functions()[0];
+        // @vertex
+        EXPECT_EQ(func.attributes().size(), 1u);
+        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+
+        // fn main() -> vec4<f32> {
+        EXPECT_EQ(func.name(), "main"_s);
+        EXPECT_TRUE(func.parameters().isEmpty());
+        EXPECT_TRUE(func.returnAttributes().isEmpty());
+        EXPECT_TRUE(func.maybeReturnType());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(func.maybeReturnType()));
+        EXPECT_EQ(func.body().statements().size(), 2u);
+
+        // lex x = vec4<f32>(0.4, 0.4, 0.8, 1.0);
+        EXPECT_TRUE(is<WGSL::AST::ValueStatement>(func.body().statements()[0]));
+        auto& letStmt = downcast<WGSL::AST::ValueStatement>(func.body().statements()[0]);
+        EXPECT_TRUE(is<WGSL::AST::LetValue>(letStmt.value()));
+        auto& let = downcast<WGSL::AST::LetValue>(letStmt.value());
+        EXPECT_EQ(let.name(), "x"_s);
+        EXPECT_EQ(let.maybeTypeName(), nullptr);
+        EXPECT_TRUE(is<WGSL::AST::CallExpression>(let.initializer()));
+        auto& letInitExpr = downcast<WGSL::AST::CallExpression>(let.initializer());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(letInitExpr.target()));
+        EXPECT_EQ(letInitExpr.arguments().size(), 4u);
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[0]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[1]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[2]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[3]));
+
+        // return x;
+        EXPECT_TRUE(is<WGSL::AST::ReturnStatement>(func.body().statements()[1]));
+        auto& retStmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[1]);
+        EXPECT_TRUE(retStmt.maybeExpression());
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(retStmt.maybeExpression()));
+        auto& retExpr = downcast<WGSL::AST::IdentifierExpression>(*retStmt.maybeExpression());
+        EXPECT_EQ(retExpr.identifier(), "x"_s);
+    }
+}
+
 TEST(WGSLParserTests, LocalVariable)
 {
     auto shader = parse(
