@@ -37,6 +37,7 @@
 #import "_WKInspectorPrivateForTesting.h"
 #import "_WKRemoteObjectRegistry.h"
 #import <WebCore/FrameIdentifier.h>
+#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/WTFString.h>
 

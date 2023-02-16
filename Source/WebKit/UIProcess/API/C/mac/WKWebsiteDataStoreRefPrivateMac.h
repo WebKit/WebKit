@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKInspectorPrivate.h"
+#pragma once
 
-#import "WKObject.h"
-#import "WebInspectorUIProxy.h"
-#import <wtf/WeakObjCPtr.h>
+#include <WebKit/WKBase.h>
+#include <sys/types.h>
 
-namespace WebKit {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-template<> struct WrapperTraits<WebInspectorUIProxy> {
-    using WrapperClass = _WKInspector;
-};
+#ifdef __OBJC__
 
+@class WKWebsiteDataStore;
+
+WK_EXPORT WKWebsiteDataStore *WKWebsiteDataStoreGetDataStore(WKWebsiteDataStoreRef);
+
+#endif
+
+#ifdef __cplusplus
 }
-
-@interface _WKInspector () <WKObject> {
-@package
-    API::ObjectStorage<WebKit::WebInspectorUIProxy> _inspector;
-    WeakObjCPtr<id <_WKInspectorDelegate> > _delegate;
-}
-@end
+#endif

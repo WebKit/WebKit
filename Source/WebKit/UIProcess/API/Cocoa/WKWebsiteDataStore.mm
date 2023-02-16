@@ -1020,5 +1020,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 #endif
 }
 
+- (NSUUID *)_identifier
+{
+    auto identifier = _websiteDataStore->configuration().identifier();
+    if (!identifier)
+        return nil;
+
+    return *identifier;
+}
+
+- (NSString *)_webPushPartition
+{
+    return _websiteDataStore->configuration().webPushPartitionString();
+}
 
 @end
