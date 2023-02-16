@@ -27,6 +27,7 @@
 
 #include "ASTTypeName.h"
 #include <wtf/FixedVector.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WGSL {
@@ -60,6 +61,18 @@ public:
     Type* constructType(AST::ParameterizedTypeName::Base, Type*);
 
 private:
+    class TypeCache {
+    public:
+        template<typename Key>
+        Type* find(const Key&) const;
+
+        template<typename Key>
+        void insert(const Key&, Type*);
+
+    private:
+        HashMap<std::pair<Type*, uint64_t>, Type*> m_storage;
+    };
+
     template<typename TypeKind, typename... Arguments>
     Type* allocateType(Arguments&&...);
 
@@ -72,6 +85,7 @@ private:
 
     Vector<std::unique_ptr<Type>> m_types;
     FixedVector<TypeConstructor> m_typeConstrutors;
+    TypeCache m_cache;
 
     Type* m_bottom;
     Type* m_abstractInt;
