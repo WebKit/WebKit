@@ -251,14 +251,6 @@ FloatRect WebPageProxy::unconstrainedLayoutViewportRect() const
     return computeLayoutViewportRect(unobscuredContentRect(), unobscuredContentRectRespectingInputViewBounds(), layoutViewportRect(), displayedContentScale(), FrameView::LayoutViewportConstraint::Unconstrained);
 }
 
-void WebPageProxy::adjustLayersForLayoutViewport(const FloatRect& layoutViewport)
-{
-    if (!m_scrollingCoordinatorProxy)
-        return;
-
-    m_scrollingCoordinatorProxy->viewportChangedViaDelegatedScrolling(unobscuredContentRect().location(), layoutViewport, displayedContentScale());
-}
-
 void WebPageProxy::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID nodeID)
 {
     pageClient().scrollingNodeScrollViewWillStartPanGesture(nodeID);
