@@ -5,15 +5,15 @@ async function helloTriangle() {
     }
 
     const canvas = document.querySelector("canvas");
-    canvas.width = 600;
-    canvas.height = 600;
+    const deviceScaleFactor = window.devicePixelRatio || 1;
+    canvas.width = 600 * deviceScaleFactor;
+    canvas.height = 600 * deviceScaleFactor;
 
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
     
-    const deviceScaleFactor = window.devicePixelRatio || 1;
     const msaaRenderTarget = device.createTexture({
-        size: [ canvas.width * deviceScaleFactor, canvas.height * deviceScaleFactor ],
+        size: [ canvas.width, canvas.height ],
         sampleCount: 4,
         format: 'bgra8unorm',
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
