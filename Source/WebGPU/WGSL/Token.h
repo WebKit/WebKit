@@ -50,6 +50,7 @@ enum class TokenType: uint32_t {
 
     ReservedWord,
     KeywordArray,
+    KeywordConst,
     KeywordFn,
     KeywordFunction,
     KeywordLet,

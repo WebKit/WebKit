@@ -316,6 +316,87 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
 #pragma mark -
 #pragma mark Declarations
 
+TEST(WGSLParserTests, GlobalConstant)
+{
+    auto shader = parse("const x: i32 = 1;\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_EQ(shader->values().size(), 1u);
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_TRUE(shader->functions().isEmpty());
+
+    {
+        // const x: i32 = 1
+        EXPECT_TRUE(is<WGSL::AST::ConstantValue>(shader->values()[0]));
+        auto& constant = downcast<WGSL::AST::ConstantValue>(shader->values()[0]);
+        EXPECT_EQ(constant.name(), "x"_s);
+        EXPECT_TRUE(constant.maybeTypeName());
+        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(*constant.maybeTypeName()));
+        auto& typeName = downcast<WGSL::AST::NamedTypeName>(*constant.maybeTypeName());
+        EXPECT_EQ(typeName.name().id(), "i32"_s);
+        EXPECT_TRUE(is<WGSL::AST::AbstractIntegerLiteral>(constant.initializer()));
+    }
+}
+
+TEST(WGSLParserTests, LocalConstant)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() -> vec4<f32> {\n"
+        "    const x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
+        "    return x;\n"
+        "}"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->values().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    {
+        auto& func = shader->functions()[0];
+        // @vertex
+        EXPECT_EQ(func.attributes().size(), 1u);
+        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+
+        // fn main() -> vec4<f32> {
+        EXPECT_EQ(func.name(), "main"_s);
+        EXPECT_TRUE(func.parameters().isEmpty());
+        EXPECT_TRUE(func.returnAttributes().isEmpty());
+        EXPECT_TRUE(func.maybeReturnType());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(func.maybeReturnType()));
+        EXPECT_EQ(func.body().statements().size(), 2u);
+
+        // lex x = vec4<f32>(0.4, 0.4, 0.8, 1.0);
+        EXPECT_TRUE(is<WGSL::AST::ValueStatement>(func.body().statements()[0]));
+        auto& constantStmt = downcast<WGSL::AST::ValueStatement>(func.body().statements()[0]);
+        EXPECT_TRUE(is<WGSL::AST::ConstantValue>(constantStmt.value()));
+        auto& constant = downcast<WGSL::AST::ConstantValue>(constantStmt.value());
+        EXPECT_EQ(constant.name(), "x"_s);
+        EXPECT_EQ(constant.maybeTypeName(), nullptr);
+        EXPECT_TRUE(is<WGSL::AST::CallExpression>(constant.initializer()));
+        auto& constantInitExpr = downcast<WGSL::AST::CallExpression>(constant.initializer());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(constantInitExpr.target()));
+        EXPECT_EQ(constantInitExpr.arguments().size(), 4u);
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[0]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[1]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[2]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[3]));
+
+        // return x;
+        EXPECT_TRUE(is<WGSL::AST::ReturnStatement>(func.body().statements()[1]));
+        auto& retStmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[1]);
+        EXPECT_TRUE(retStmt.maybeExpression());
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(retStmt.maybeExpression()));
+        auto& retExpr = downcast<WGSL::AST::IdentifierExpression>(*retStmt.maybeExpression());
+        EXPECT_EQ(retExpr.identifier(), "x"_s);
+    }
+}
+
 TEST(WGSLParserTests, LocalLet)
 {
     auto shader = parse(

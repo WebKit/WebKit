@@ -117,6 +117,7 @@ TEST(WGSLLexerTests, KeywordTokens)
 
     checkSingleToken("array"_s, TokenType::KeywordArray);
     checkSingleToken("bool"_s, TokenType::KeywordBool);
+    checkSingleToken("const"_s, TokenType::KeywordConst);
     checkSingleToken("f32"_s, TokenType::KeywordF32);
     checkSingleToken("fn"_s, TokenType::KeywordFn);
     checkSingleToken("function"_s, TokenType::KeywordFunction);

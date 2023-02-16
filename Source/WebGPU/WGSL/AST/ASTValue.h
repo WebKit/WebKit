@@ -27,12 +27,15 @@
 
 #include "ASTNode.h"
 
+#include <wtf/UniqueRefVector.h>
+
 namespace WGSL::AST {
 
 class Value : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using Ref = UniqueRef<Value>;
+    using List = UniqueRefVector<Value>;
 
     Value(SourceSpan span)
         : Node(span)

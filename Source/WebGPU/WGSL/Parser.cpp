@@ -320,6 +320,13 @@ Result<void> Parser<Lexer>::parseGlobalDecl()
     while (current().m_type == TokenType::Semicolon)
         consume();
 
+    if (current().m_type == TokenType::KeywordConst) {
+        PARSE(value, ConstantValue);
+        CONSUME_TYPE(Semicolon);
+        m_shaderModule.values().append(WTFMove(value));
+        return { };
+    }
+
     PARSE(attributes, Attributes);
 
     switch (current().m_type) {
@@ -340,7 +347,7 @@ Result<void> Parser<Lexer>::parseGlobalDecl()
         return { };
     }
     default:
-        FAIL("Trying to parse a GlobalDecl, expected 'var', 'fn', or 'struct'."_s);
+        FAIL("Trying to parse a GlobalDecl, expected 'const', 'var', 'fn', or 'struct'."_s);
     }
 }
 
@@ -700,6 +707,11 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
     case TokenType::BraceLeft: {
         PARSE(compoundStmt, CompoundStatement);
         return { makeUniqueRef<AST::CompoundStatement>(WTFMove(compoundStmt)) };
+    }
+    case TokenType::KeywordConst: {
+        PARSE(value, ConstantValue);
+        CONSUME_TYPE(Semicolon);
+        RETURN_NODE_UNIQUE_REF(ValueStatement, WTFMove(value));
     }
     case TokenType::KeywordReturn: {
         PARSE(returnStmt, ReturnStatement);
@@ -1100,6 +1112,26 @@ Result<AST::Expression::List> Parser<Lexer>::parseArgumentExpressionList()
 
     CONSUME_TYPE(ParenRight);
     return { WTFMove(arguments) };
+}
+
+template<typename Lexer>
+Result<AST::Value::Ref> Parser<Lexer>::parseConstantValue()
+{
+    START_PARSE();
+    CONSUME_TYPE(KeywordConst);
+    PARSE(name, Identifier);
+
+    AST::TypeName::Ptr maybeType = nullptr;
+    if (current().m_type == TokenType::Colon) {
+        consume();
+        PARSE(typeName, TypeName);
+        maybeType = WTFMove(typeName);
+    }
+
+    CONSUME_TYPE(Equal);
+    PARSE(initializer, Expression);
+
+    RETURN_NODE_UNIQUE_REF(ConstantValue, WTFMove(name), WTFMove(maybeType), WTFMove(initializer));
 }
 
 template<typename Lexer>

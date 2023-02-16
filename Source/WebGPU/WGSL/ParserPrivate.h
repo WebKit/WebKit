@@ -89,6 +89,7 @@ public:
     Result<AST::Expression::Ref> parseLHSExpression();
     Result<AST::Expression::Ref> parseCoreLHSExpression();
     Result<AST::Expression::List> parseArgumentExpressionList();
+    Result<AST::Value::Ref> parseConstantValue();
     Result<AST::Value::Ref> parseLetValue();
 
 private:

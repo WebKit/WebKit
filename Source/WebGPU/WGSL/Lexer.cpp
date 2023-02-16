@@ -277,7 +277,7 @@ Token Lexer<T>::lex()
                 { "asm", TokenType::ReservedWord },
                 { "bf16", TokenType::ReservedWord },
                 { "bool", TokenType::KeywordBool },
-                { "const", TokenType::ReservedWord },
+                { "const", TokenType::KeywordConst },
                 { "do", TokenType::ReservedWord },
                 { "enum", TokenType::ReservedWord },
                 { "f16", TokenType::ReservedWord },
