@@ -4779,8 +4779,10 @@ RemotePlaybackEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
       default: true
     WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
       default: true
 
 RemoveBackgroundEnabled:
@@ -7236,6 +7238,20 @@ WindowFocusRestricted:
     WebKit:
       default: true
     WebCore:
+      default: true
+      
+WirelessPlaybackTargetAPIEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
       default: true
 
 ZoomOnDoubleTapWhenRoot:

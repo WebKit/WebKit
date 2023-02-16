@@ -120,6 +120,6 @@ typedef (
 
     VideoPlaybackQuality getVideoPlaybackQuality();
 
-    [Conditional=WIRELESS_PLAYBACK_TARGET] undefined webkitShowPlaybackTargetPicker();
-    [Conditional=WIRELESS_PLAYBACK_TARGET] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
+    [Conditional=WIRELESS_PLAYBACK_TARGET, EnabledBySetting=WirelessPlaybackTargetAPIEnabled] undefined webkitShowPlaybackTargetPicker();
+    [Conditional=WIRELESS_PLAYBACK_TARGET, EnabledBySetting=WirelessPlaybackTargetAPIEnabled] readonly attribute boolean webkitCurrentPlaybackTargetIsWireless;
 };
