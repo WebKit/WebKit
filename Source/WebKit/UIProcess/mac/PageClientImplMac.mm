@@ -72,6 +72,7 @@
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/NotImplemented.h>
+#import <WebCore/PlatformColor.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/SharedBuffer.h>
@@ -1027,9 +1028,9 @@ void PageClientImpl::makeViewBlank(bool makeBlank)
 }
 
 #if HAVE(APP_ACCENT_COLORS)
-WebCore::Color PageClientImpl::accentColor()
+WebCore::PlatformColor PageClientImpl::accentColor()
 {
-    return WebCore::colorFromCocoaColor([NSApp _effectiveAccentColor]);
+    return { [NSApp _effectiveAccentColor] };
 }
 #endif
 

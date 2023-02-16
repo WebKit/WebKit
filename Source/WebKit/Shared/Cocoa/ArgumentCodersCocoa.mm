@@ -46,6 +46,11 @@
 #import <UIKit/UIFontDescriptor.h>
 #endif
 
+#if PLATFORM(MAC)
+#import <WebCore/ColorMac.h>
+#import <pal/spi/mac/NSColorSPI.h>
+#endif
+
 @interface WKSecureCodingArchivingDelegate : NSObject <NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>
 @end
 
@@ -214,6 +219,7 @@ enum class NSType {
     Data,
     Date,
     Dictionary,
+    DynamicColor,
     Font,
     Number,
     SecureCoding,
@@ -232,8 +238,14 @@ static NSType typeFromObject(id object)
     // Specific classes handled.
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
-    if ([object isKindOfClass:[WebCore::CocoaColor class]])
+    if ([object isKindOfClass:[WebCore::CocoaColor class]]) {
+        // FIXME (252410): Add support for encoding dynamic UIColors.
+#if USE(APPKIT)
+        if ([object isKindOfClass:[NSDynamicNamedColor class]])
+            return NSType::DynamicColor;
+#endif
         return NSType::Color;
+    }
     if ([object isKindOfClass:[NSData class]])
         return NSType::Data;
     if ([object isKindOfClass:[NSDate class]])
@@ -336,6 +348,37 @@ static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
     if (!decoder.decode(color))
         return std::nullopt;
     return { cocoaColor(color) };
+}
+
+static inline void encodeDynamicColorInternal(Encoder& encoder, WebCore::CocoaColor *color)
+{
+#if USE(APPKIT)
+    auto [lightColor, darkColor] = lightAndDarkColorsFromNSColor(color);
+
+    encoder << lightColor;
+    encoder << darkColor;
+#else
+    UNUSED_PARAM(encoder);
+    UNUSED_PARAM(color);
+#endif
+}
+
+static inline std::optional<RetainPtr<id>> decodeDynamicColorInternal(Decoder& decoder)
+{
+#if USE(APPKIT)
+    Color lightColor;
+    if (!decoder.decode(lightColor))
+        return std::nullopt;
+
+    Color darkColor;
+    if (!decoder.decode(darkColor))
+        return std::nullopt;
+
+    return { dynamicNSColorFromLightAndDarkColors(lightColor, darkColor) };
+#else
+    UNUSED_PARAM(decoder);
+    return std::nullopt;
+#endif
 }
 
 #pragma mark - NSData
@@ -580,6 +623,9 @@ void encodeObject(Encoder& encoder, id object)
     case NSType::Dictionary:
         encodeDictionaryInternal(encoder, static_cast<NSDictionary *>(object));
         return;
+    case NSType::DynamicColor:
+        encodeDynamicColorInternal(encoder, static_cast<WebCore::CocoaColor *>(object));
+        return;
     case NSType::Font:
         encodeFontInternal(encoder, static_cast<CocoaFont *>(object));
         return;
@@ -630,6 +676,8 @@ std::optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allo
         return decodeColorInternal(decoder);
     case NSType::Dictionary:
         return decodeDictionaryInternal(decoder, allowedClasses);
+    case NSType::DynamicColor:
+        return decodeDynamicColorInternal(decoder);
     case NSType::Font:
         return decodeFontInternal(decoder);
     case NSType::Number:
@@ -665,6 +713,7 @@ template<> struct EnumTraits<IPC::NSType> {
         IPC::NSType::Data,
         IPC::NSType::Date,
         IPC::NSType::Dictionary,
+        IPC::NSType::DynamicColor,
         IPC::NSType::Font,
         IPC::NSType::Number,
         IPC::NSType::SecureCoding,

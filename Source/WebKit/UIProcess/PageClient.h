@@ -119,6 +119,7 @@ enum class ScrollIsAnimated : uint8_t;
 struct AppHighlight;
 struct DataDetectorElementInfo;
 struct DictionaryPopupInfo;
+struct PlatformColor;
 struct TextIndicatorData;
 struct ViewportAttributes;
 struct ShareDataWithParsedURL;
@@ -403,7 +404,7 @@ public:
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
-    virtual WebCore::Color accentColor() = 0;
+    virtual WebCore::PlatformColor accentColor() = 0;
 #endif
 
     virtual bool effectiveAppearanceIsDark() const { return false; }

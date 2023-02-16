@@ -174,7 +174,7 @@ private:
 
     void makeViewBlank(bool) override;
 
-    WebCore::Color accentColor() override;
+    WebCore::PlatformColor accentColor() override;
 
     WebKitWebResourceLoadManager* webResourceLoadManager() override;
 

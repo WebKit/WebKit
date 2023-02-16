@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPKIT)
+#pragma once
 
-#import <AppKit/NSColor.h>
+#include <wtf/RetainPtr.h>
 
-#if USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(COCOA)
+#include "ColorCocoa.h"
+#endif
 
-#import <AppKit/NSColor_Private.h>
-#import <AppKit/NSColor_UserAccent.h>
+namespace WebCore {
 
-#else // USE(APPLE_INTERNAL_SDK)
-
-@interface NSColor ()
-+ (NSColor *)systemRedColor;
-+ (NSColor *)systemGreenColor;
-+ (NSColor *)systemBlueColor;
-+ (NSColor *)systemOrangeColor;
-+ (NSColor *)systemYellowColor;
-+ (NSColor *)systemBrownColor;
-+ (NSColor *)systemPinkColor;
-+ (NSColor *)systemPurpleColor;
-+ (NSColor *)systemGrayColor;
-+ (NSColor *)linkColor;
-+ (NSColor *)findHighlightColor;
-+ (NSColor *)placeholderTextColor;
-+ (NSColor *)containerBorderColor;
-@end
-
-@interface NSCatalogColor : NSColor
-@end
-
-@interface NSDynamicNamedColor : NSCatalogColor
-@end
-
-typedef NS_ENUM(NSInteger, NSUserAccentColor) {
-    NSUserAccentColorRed = 0,
-    NSUserAccentColorOrange,
-    NSUserAccentColorYellow,
-    NSUserAccentColorGreen,
-    NSUserAccentColorBlue,
-    NSUserAccentColorPurple,
-    NSUserAccentColorPink,
-
-    NSUserAccentColorNoColor = -1,
+struct PlatformColor {
+#if PLATFORM(COCOA)
+    RetainPtr<CocoaColor> platformColor;
+#else
+    Color platformColor;
+#endif
 };
 
-extern "C" NSUserAccentColor NSColorGetUserAccentColor(void);
-
-#endif // USE(APPLE_INTERNAL_SDK)
-
-#endif // USE(APPKIT)
+} // namespace WebCore

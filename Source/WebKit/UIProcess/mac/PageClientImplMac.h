@@ -292,7 +292,7 @@ private:
     void takeFocus(WebCore::FocusDirection) override;
 
 #if HAVE(APP_ACCENT_COLORS)
-    WebCore::Color accentColor() override;
+    WebCore::PlatformColor accentColor() override;
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

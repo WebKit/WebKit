@@ -1045,10 +1045,6 @@ public:
 #if PLATFORM(GTK)
     PlatformViewWidget viewWidget();
     bool makeGLContextCurrent();
-
-#if HAVE(APP_ACCENT_COLORS)
-    void accentColorDidChange();
-#endif
 #endif
 
     const std::optional<WebCore::Color>& backgroundColor() const { return m_backgroundColor; }
@@ -1231,6 +1227,10 @@ public:
     void semanticContextDidChange();
 
     WebCore::DestinationColorSpace colorSpace();
+#endif
+
+#if HAVE(APP_ACCENT_COLORS)
+    void accentColorDidChange();
 #endif
 
     void effectiveAppearanceDidChange();

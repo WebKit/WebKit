@@ -268,6 +268,7 @@ struct GlobalWindowIdentifier;
 struct InteractionRegion;
 struct KeypressCommand;
 struct MediaUsageInfo;
+struct PlatformColor;
 struct PromisedAttachmentInfo;
 struct RequestStorageAccessResult;
 struct RunJavaScriptParameters;
@@ -1877,7 +1878,7 @@ private:
 #endif
 
 #if HAVE(APP_ACCENT_COLORS)
-    void setAccentColor(WebCore::Color);
+    void setAccentColor(WebCore::PlatformColor);
 #endif
 
     void setMainFrameIsScrollable(bool);

@@ -121,9 +121,9 @@ void WebPage::showEmojiPicker(Frame& frame)
     sendWithAsyncReply(Messages::WebPageProxy::ShowEmojiPicker(frame.view()->contentsToRootView(frame.selection().absoluteCaretBounds())), WTFMove(completionHandler));
 }
 
-void WebPage::setAccentColor(WebCore::Color color)
+void WebPage::setAccentColor(WebCore::PlatformColor color)
 {
-    static_cast<RenderThemeAdwaita&>(RenderTheme::singleton()).setAccentColor(color);
+    static_cast<RenderThemeAdwaita&>(RenderTheme::singleton()).setAccentColor(color.platformColor);
 }
 
 } // namespace WebKit
