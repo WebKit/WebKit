@@ -38,6 +38,11 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
  */
 @property (nonatomic) CGRect rect NS_REFINED_FOR_SWIFT;
 
+/*! @abstract A Boolean value indicating whether the PDF should allow transparent backgrounds.
+ @discussion The default value is `NO`.
+ */
+@property (nonatomic) BOOL allowTransparentBackground WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 NS_ASSUME_NONNULL_END

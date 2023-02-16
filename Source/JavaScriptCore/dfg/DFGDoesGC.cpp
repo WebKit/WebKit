@@ -270,7 +270,7 @@ bool doesGC(Graph& graph, Node* node)
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
-    case CreateArgumentsButterfly:
+    case CreateArgumentsButterflyExcludingThis:
     case Call:
     case CallDirectEval:
     case CallForwardVarargs:

@@ -31,6 +31,8 @@
 
 namespace JSC {
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HasOwnPropertyCache);
+
 class HasOwnPropertyCache {
     static const uint32_t size = 2 * 1024;
     static_assert(hasOneBitSet(size), "size should be a power of two.");
@@ -52,13 +54,13 @@ public:
     void operator delete(void* cache)
     {
         static_cast<HasOwnPropertyCache*>(cache)->clear();
-        fastFree(cache);
+        HasOwnPropertyCacheMalloc::free(cache);
     }
 
     static HasOwnPropertyCache* create()
     {
         size_t allocationSize = sizeof(Entry) * size;
-        HasOwnPropertyCache* result = static_cast<HasOwnPropertyCache*>(fastMalloc(allocationSize));
+        HasOwnPropertyCache* result = static_cast<HasOwnPropertyCache*>(HasOwnPropertyCacheMalloc::malloc(allocationSize));
         result->clearBuffer();
         return result;
     }

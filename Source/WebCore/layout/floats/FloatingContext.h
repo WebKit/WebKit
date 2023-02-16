@@ -76,7 +76,7 @@ public:
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
 
-    bool isFloaingCandidateLogicallyLeftPositioned(const Box&) const;
+    bool isFloatingCandidateLogicallyLeftPositioned(const Box&) const;
     Clear logicalClear(const Box&) const;
 
     const LayoutState& layoutState() const { return m_floatingState.layoutState(); }

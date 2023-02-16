@@ -1,5 +1,4 @@
-popover1
-popover2
+popover1popover2
 
-FAIL Removing a popover while it is opening and force closing another popover should throw an exception. popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)
+FAIL Removing a popover while it is opening and force closing another popover should throw an exception. assert_throws_dom: popover1's beforetoggle event handler removes popover2 so showPopover should throw. function "() => popover2.showPopover()" did not throw
 

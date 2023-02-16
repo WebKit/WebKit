@@ -496,6 +496,12 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     return canUseForLineLayout(blockContainer);
 }
 
+bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow&, const RenderObject&, const LineLayout&)
+{
+    // FIXME: Add partial support starting with a simple "a new RenderText has been appeared" case.
+    return true;
+}
+
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, StyleDifference)
 {
     return canUseForStyle(renderer, IncludeReasons::First).isEmpty();

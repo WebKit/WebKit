@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "DrawingAreaInfo.h"
 #include "EditorState.h"
-#include "GenericCallback.h"
 #include "PlatformCAAnimationRemote.h"
 #include "RemoteLayerBackingStore.h"
 #include "TransactionID.h"
@@ -316,7 +316,7 @@ public:
     ActivityStateChangeID activityStateChangeID() const { return m_activityStateChangeID; }
     void setActivityStateChangeID(ActivityStateChangeID activityStateChangeID) { m_activityStateChangeID = activityStateChangeID; }
 
-    typedef CallbackID TransactionCallbackID;
+    using TransactionCallbackID = IPC::AsyncReplyID;
     const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
     void setCallbackIDs(Vector<TransactionCallbackID>&& callbackIDs) { m_callbackIDs = WTFMove(callbackIDs); }
 

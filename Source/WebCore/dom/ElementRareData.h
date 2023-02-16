@@ -31,6 +31,7 @@
 #include "KeyframeEffectStack.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
+#include "PopoverData.h"
 #include "PseudoElement.h"
 #include "RenderElement.h"
 #include "ResizeObserver.h"
@@ -76,19 +77,22 @@ public:
     void setFormAssociatedCustomElement(std::unique_ptr<FormAssociatedCustomElement>&& element) { m_formAssociatedCustomElement = WTFMove(element); }
 
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
-    void setAttributeMap(std::unique_ptr<NamedNodeMap> attributeMap) { m_attributeMap = WTFMove(attributeMap); }
+    void setAttributeMap(std::unique_ptr<NamedNodeMap>&& attributeMap) { m_attributeMap = WTFMove(attributeMap); }
 
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
-    void setComputedStyle(std::unique_ptr<RenderStyle> computedStyle) { m_computedStyle = WTFMove(computedStyle); }
+    void setComputedStyle(std::unique_ptr<RenderStyle>&& computedStyle) { m_computedStyle = WTFMove(computedStyle); }
+
+    RenderStyle* displayContentsStyle() const { return m_displayContentsStyle.get(); }
+    void setDisplayContentsStyle(std::unique_ptr<RenderStyle> style) { m_displayContentsStyle = WTFMove(style); }
 
     const AtomString& effectiveLang() const { return m_effectiveLang; }
     void setEffectiveLang(const AtomString& lang) { m_effectiveLang = lang; }
 
     DOMTokenList* classList() const { return m_classList.get(); }
-    void setClassList(std::unique_ptr<DOMTokenList> classList) { m_classList = WTFMove(classList); }
+    void setClassList(std::unique_ptr<DOMTokenList>&& classList) { m_classList = WTFMove(classList); }
 
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
-    void setDataset(std::unique_ptr<DatasetDOMStringMap> dataset) { m_dataset = WTFMove(dataset); }
+    void setDataset(std::unique_ptr<DatasetDOMStringMap>&& dataset) { m_dataset = WTFMove(dataset); }
 
     IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
     void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
@@ -97,7 +101,7 @@ public:
     ElementAnimationRareData& ensureAnimationRareData(PseudoId);
 
     DOMTokenList* partList() const { return m_partList.get(); }
-    void setPartList(std::unique_ptr<DOMTokenList> partList) { m_partList = WTFMove(partList); }
+    void setPartList(std::unique_ptr<DOMTokenList>&& partList) { m_partList = WTFMove(partList); }
 
     const SpaceSplitString& partNames() const { return m_partNames; }
     void setPartNames(SpaceSplitString&& partNames) { m_partNames = WTFMove(partNames); }
@@ -123,6 +127,9 @@ public:
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap() { return m_explicitlySetAttrElementsMap; }
 
+    PopoverData* popoverData() { return m_popoverData.get(); }
+    void setPopoverData(std::unique_ptr<PopoverData>&& popoverData) { m_popoverData = WTFMove(popoverData); }
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -131,6 +138,8 @@ public:
             result.add(UseType::ScrollingPosition);
         if (m_computedStyle)
             result.add(UseType::ComputedStyle);
+        if (m_displayContentsStyle)
+            result.add(UseType::DisplayContentsStyle);
         if (!m_effectiveLang.isEmpty())
             result.add(UseType::EffectiveLang);
         if (m_dataset)
@@ -167,6 +176,8 @@ public:
             result.add(UseType::Nonce);
         if (!m_explicitlySetAttrElementsMap.isEmpty())
             result.add(UseType::ExplicitlySetAttrElementsMap);
+        if (m_popoverData)
+            result.add(UseType::Popover);
         return result;
     }
 #endif
@@ -174,6 +185,7 @@ public:
 private:
     IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
+    std::unique_ptr<RenderStyle> m_displayContentsStyle;
 
     AtomString m_effectiveLang;
     std::unique_ptr<DatasetDOMStringMap> m_dataset;
@@ -203,6 +215,8 @@ private:
     AtomString m_nonce;
 
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
+
+    std::unique_ptr<PopoverData> m_popoverData;
 
     void releasePseudoElement(PseudoElement*);
 };

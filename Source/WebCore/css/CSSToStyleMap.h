@@ -21,16 +21,13 @@
 
 #pragma once
 
-#include "CSSPropertyNames.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class Animation;
 class CSSBorderImageSliceValue;
 class CSSBorderImageWidthValue;
-class CSSPrimitiveValue;
 class CSSValue;
 class FillLayer;
 class LengthBox;
@@ -39,55 +36,55 @@ class Quad;
 class RenderStyle;
 class StyleImage;
 
+enum CSSPropertyID : uint16_t;
+
+struct Length;
+
 namespace Style {
 class BuilderState;
 }
 
 class CSSToStyleMap {
-    WTF_MAKE_NONCOPYABLE(CSSToStyleMap);
-    WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    CSSToStyleMap(Style::BuilderState&);
+    explicit CSSToStyleMap(Style::BuilderState&);
 
-    void mapFillAttachment(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillClip(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillComposite(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillBlendMode(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillOrigin(CSSPropertyID, FillLayer&, const CSSValue&);
+    static void mapFillAttachment(CSSPropertyID, FillLayer&, const CSSValue&);
+    static void mapFillClip(CSSPropertyID, FillLayer&, const CSSValue&);
+    static void mapFillComposite(CSSPropertyID, FillLayer&, const CSSValue&);
+    static void mapFillBlendMode(CSSPropertyID, FillLayer&, const CSSValue&);
+    static void mapFillOrigin(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillImage(CSSPropertyID, FillLayer&, CSSValue&);
-    void mapFillRepeat(CSSPropertyID, FillLayer&, const CSSValue&);
+    static void mapFillRepeat(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillSize(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillXPosition(CSSPropertyID, FillLayer&, const CSSValue&);
     void mapFillYPosition(CSSPropertyID, FillLayer&, const CSSValue&);
-    void mapFillMaskMode(CSSPropertyID, FillLayer&, const CSSValue&);
+    static void mapFillMaskMode(CSSPropertyID, FillLayer&, const CSSValue&);
 
-    void mapAnimationDelay(Animation&, const CSSValue&);
-    void mapAnimationDirection(Animation&, const CSSValue&);
-    void mapAnimationDuration(Animation&, const CSSValue&);
-    void mapAnimationFillMode(Animation&, const CSSValue&);
-    void mapAnimationIterationCount(Animation&, const CSSValue&);
+    static void mapAnimationDelay(Animation&, const CSSValue&);
+    static void mapAnimationDirection(Animation&, const CSSValue&);
+    static void mapAnimationDuration(Animation&, const CSSValue&);
+    static void mapAnimationFillMode(Animation&, const CSSValue&);
+    static void mapAnimationIterationCount(Animation&, const CSSValue&);
     void mapAnimationName(Animation&, const CSSValue&);
-    void mapAnimationPlayState(Animation&, const CSSValue&);
-    void mapAnimationProperty(Animation&, const CSSValue&);
-    void mapAnimationTimingFunction(Animation&, const CSSValue&);
-    void mapAnimationCompositeOperation(Animation&, const CSSValue&);
+    static void mapAnimationPlayState(Animation&, const CSSValue&);
+    static void mapAnimationProperty(Animation&, const CSSValue&);
+    static void mapAnimationTimingFunction(Animation&, const CSSValue&);
+    static void mapAnimationCompositeOperation(Animation&, const CSSValue&);
 
-    void mapNinePieceImage(CSSValue*, NinePieceImage&);
-    void mapNinePieceImageSlice(CSSValue&, NinePieceImage&);
-    void mapNinePieceImageSlice(CSSBorderImageSliceValue&, NinePieceImage&);
-    void mapNinePieceImageWidth(CSSValue&, NinePieceImage&);
-    void mapNinePieceImageWidth(CSSBorderImageWidthValue&, NinePieceImage&);
-    LengthBox mapNinePieceImageQuad(CSSValue&);
-    void mapNinePieceImageRepeat(CSSValue&, NinePieceImage&);
-    void mapNinePieceImageRepeat(CSSPrimitiveValue&, NinePieceImage&);
+    void mapNinePieceImage(const CSSValue*, NinePieceImage&);
+    static void mapNinePieceImageSlice(const CSSValue&, NinePieceImage&);
+    static void mapNinePieceImageSlice(const CSSBorderImageSliceValue&, NinePieceImage&);
+    void mapNinePieceImageWidth(const CSSValue&, NinePieceImage&);
+    void mapNinePieceImageWidth(const CSSBorderImageWidthValue&, NinePieceImage&);
+    LengthBox mapNinePieceImageQuad(const CSSValue&);
+    static void mapNinePieceImageRepeat(const CSSValue&, NinePieceImage&);
 
 private:
     RenderStyle* style() const;
-    RefPtr<StyleImage> styleImage(CSSValue&);
-    LengthBox mapNinePieceImageQuad(Quad&);
+    RefPtr<StyleImage> styleImage(const CSSValue&);
+    LengthBox mapNinePieceImageQuad(const Quad&);
+    Length mapNinePieceImageSide(const CSSValue&);
 
-    // FIXME: This type can merge into BuilderState.
     Style::BuilderState& m_builderState;
 };
 

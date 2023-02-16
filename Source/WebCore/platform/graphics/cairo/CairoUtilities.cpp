@@ -30,7 +30,6 @@
 #if USE(CAIRO)
 
 #include "AffineTransform.h"
-#include "CairoUniquePtr.h"
 #include "Color.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -40,6 +39,7 @@
 #include "Region.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 
@@ -49,13 +49,19 @@
 
 namespace WebCore {
 
-#if USE(CAIRO) && !PLATFORM(GTK)
+static CairoUniquePtr<cairo_font_options_t> s_defaultCairoFontOptions;
+
 const cairo_font_options_t* getDefaultCairoFontOptions()
 {
-    static NeverDestroyed<cairo_font_options_t*> options = cairo_font_options_create();
-    return options;
+    ASSERT(s_defaultCairoFontOptions);
+    return s_defaultCairoFontOptions.get();
 }
-#endif
+
+void setDefaultCairoFontOptions(CairoUniquePtr<cairo_font_options_t>&& options)
+{
+    ASSERT(RunLoop::isMain());
+    s_defaultCairoFontOptions = WTFMove(options);
+}
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)
 {

@@ -27,7 +27,6 @@
 #import "RemoteLayerTreeContext.h"
 
 #import "DrawingArea.h"
-#import "GenericCallback.h"
 #import "GraphicsLayerCARemote.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeDrawingArea.h"

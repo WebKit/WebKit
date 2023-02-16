@@ -27,6 +27,10 @@
 
 #include <wtf/glib/GRefPtr.h>
 
+#if USE(GTK4)
+typedef struct _GdkTexture GdkTexture;
+#endif
+
 namespace WebCore {
 
 GRefPtr<GdkPixbuf> cairoSurfaceToGdkPixbuf(cairo_surface_t*);

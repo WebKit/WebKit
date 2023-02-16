@@ -52,7 +52,7 @@ struct _WebKitNavigationPolicyDecisionPrivate {
     WebKitNavigationAction* navigationAction;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT_TYPE_POLICY_DECISION, WebKitPolicyDecision)
 
 enum {
     PROP_0,

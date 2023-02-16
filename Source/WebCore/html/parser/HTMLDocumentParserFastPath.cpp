@@ -207,9 +207,10 @@ class HTMLFastPathParser {
 
 public:
     HTMLFastPathParser(CharSpan source, Document& document, DocumentFragment& fragment)
-        : m_source(source)
-        , m_document(document)
+        : m_document(document)
         , m_fragment(fragment)
+        , m_end(source.data() + source.size())
+        , m_position(source.data())
     {
     }
 
@@ -253,12 +254,11 @@ public:
     HTMLFastPathResult parseResult() const { return m_parseResult; }
 
 private:
-    CharSpan m_source;
     Document& m_document;
     DocumentFragment& m_fragment;
 
-    const Char* const m_end { m_source.data() + m_source.size() };
-    const Char* m_position { m_source.data() };
+    const Char* const m_end;
+    const Char* m_position;
 
     bool m_parsingFailed { false };
     bool m_insideOfTagA { false };
@@ -473,8 +473,7 @@ private:
 
     bool isValidUnquotedAttributeValueChar(Char c)
     {
-        // FIXME: We should probably levegate isASCIIAlphanumeric() here.
-        return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '_' || c == '-';
+        return isASCIIAlphanumeric(c) || c == '_' || c == '-';
     }
 
     // https://html.spec.whatwg.org/#syntax-attribute-name
@@ -482,8 +481,7 @@ private:
     {
         if (c == '=') // Early return for the most common way to end an attribute.
             return false;
-        // FIXME: We should probably levegate isASCIIAlphanumeric() here.
-        return ('a' <= c && c <= 'z') || c == '-' || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9');
+        return isASCIIAlphanumeric(c) || c == '-';
     }
 
     bool isCharAfterTagNameOrAttribute(Char c)
@@ -556,7 +554,7 @@ private:
     CharSpan scanTagName()
     {
         const Char* start = m_position;
-        while (m_position != m_end && 'a' <= *m_position && *m_position <= 'z')
+        while (m_position != m_end && isASCIILower(*m_position))
             ++m_position;
 
         if (m_position == m_end || !isCharAfterTagNameOrAttribute(*m_position)) {
@@ -565,9 +563,9 @@ private:
             m_position = start;
             while (m_position != m_end) {
                 Char c = *m_position;
-                if ('A' <= c && c <= 'Z')
-                    c = c - ('A' - 'a');
-                else if (!('a' <= c && c <= 'z'))
+                if (isASCIIUpper(c))
+                    c = toASCIILowerUnchecked(c);
+                else if (!isASCIILower(c))
                     break;
                 ++m_position;
                 m_charBuffer.append(c);
@@ -588,7 +586,7 @@ private:
         // input. This path could handle other valid attribute name chars, but they
         // are not as common, so it only looks for lowercase.
         const Char* start = m_position;
-        while (m_position != m_end && *m_position >= 'a' && *m_position <= 'z')
+        while (m_position != m_end && isASCIILower(*m_position))
             ++m_position;
         if (UNLIKELY(m_position == m_end))
             return didFail(HTMLFastPathResult::FailedEndOfInputReached, CharSpan());
@@ -601,8 +599,8 @@ private:
         m_attributeNameBuffer.resize(0);
         // isValidAttributeNameChar() returns false if end of input is reached.
         for (Char c = peekNext(); isValidAttributeNameChar(c); c = peekNext()) {
-            if ('A' <= c && c <= 'Z')
-                c = c - ('A' - 'a');
+            if (isASCIIUpper(c))
+                c = toASCIILowerUnchecked(c);
             m_attributeNameBuffer.append(c);
             ++m_position;
         }
@@ -829,9 +827,9 @@ private:
         // no values have the value set to an empty atom instead.
         AtomString value;
         if (valueSpan.second.empty())
-            value = AtomString(valueSpan.first.data(), static_cast<unsigned>(valueSpan.first.size()));
+            value = HTMLNameCache::makeAttributeValue(valueSpan.first);
         else
-            value = AtomString(valueSpan.second.data(), static_cast<unsigned>(valueSpan.second.size()));
+            value = HTMLNameCache::makeAttributeValue(valueSpan.second);
         if (value.isNull())
             value = emptyAtom();
         return Attribute { WTFMove(name), WTFMove(value) };

@@ -2574,6 +2574,7 @@
 		0F0B83AA14BCF5B900885B4F /* ExpressionRangeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpressionRangeInfo.h; sourceTree = "<group>"; };
 		0F0B83AE14BCF71400885B4F /* CallLinkInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallLinkInfo.cpp; sourceTree = "<group>"; };
 		0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallLinkInfo.h; sourceTree = "<group>"; };
+		0F0C03A92995FB710064230A /* HasOwnPropertyCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HasOwnPropertyCache.cpp; sourceTree = "<group>"; };
 		0F0CAEF91EC4DA6200970D12 /* JSHeapFinalizerPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHeapFinalizerPrivate.cpp; sourceTree = "<group>"; };
 		0F0CAEFA1EC4DA6200970D12 /* JSHeapFinalizerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHeapFinalizerPrivate.h; sourceTree = "<group>"; };
 		0F0CAEFD1EC4DA8500970D12 /* HeapFinalizerCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapFinalizerCallback.cpp; sourceTree = "<group>"; };
@@ -2814,6 +2815,7 @@
 		0F37308E1C0CD68500052BFA /* DisallowMacroScratchRegisterUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowMacroScratchRegisterUsage.h; sourceTree = "<group>"; };
 		0F3730901C0CD70C00052BFA /* AllowMacroScratchRegisterUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllowMacroScratchRegisterUsage.h; sourceTree = "<group>"; };
 		0F3730921C0D67EE00052BFA /* AirUseCounts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirUseCounts.h; path = b3/air/AirUseCounts.h; sourceTree = "<group>"; };
+		0F376F3E2994BD55004CA2F9 /* JITCodeMap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JITCodeMap.cpp; sourceTree = "<group>"; };
 		0F38B00F17CF077F00B144D3 /* LLIntEntrypoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = LLIntEntrypoint.cpp; path = llint/LLIntEntrypoint.cpp; sourceTree = "<group>"; };
 		0F38B01017CF077F00B144D3 /* LLIntEntrypoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LLIntEntrypoint.h; path = llint/LLIntEntrypoint.h; sourceTree = "<group>"; };
 		0F38D2A01D44196600680499 /* AuxiliaryBarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuxiliaryBarrier.h; sourceTree = "<group>"; };
@@ -6681,6 +6683,7 @@
 				86CC85A20EE79B7400288682 /* JITCall.cpp */,
 				0F8F94431667635200D61971 /* JITCode.cpp */,
 				86CCEFDD0F413F8900FD7F9E /* JITCode.h */,
+				0F376F3E2994BD55004CA2F9 /* JITCodeMap.cpp */,
 				FE476FF3207E85D40093CA2D /* JITCodeMap.h */,
 				86D446E825B2124800ECAE75 /* JITCompilation.cpp */,
 				86D446E725B2124800ECAE75 /* JITCompilation.h */,
@@ -7900,6 +7903,7 @@
 				79A0907D1D768465008B889B /* HashMapImpl.cpp */,
 				79A0907E1D768465008B889B /* HashMapImpl.h */,
 				FEF5B4222628A0EE0016E776 /* HashMapImplInlines.h */,
+				0F0C03A92995FB710064230A /* HasOwnPropertyCache.cpp */,
 				79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */,
 				933A349D038AE80F008635CE /* Identifier.cpp */,
 				933A349A038AE7C6008635CE /* Identifier.h */,

@@ -37,6 +37,7 @@
 #include <unicode/uenum.h>
 #include <wtf/Range.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #if HAVE(ICU_U_DATE_INTERVAL_FORMAT_FORMAT_RANGE_TO_PARTS)
@@ -1274,6 +1275,26 @@ JSObject* IntlDateTimeFormat::resolvedOptions(JSGlobalObject* globalObject) cons
     return options;
 }
 
+// ICU 72 uses narrowNoBreakSpace (u202F) and thinSpace (u2009) for the output of Intl.DateTimeFormat.
+// However, a lot of real world code (websites[1], Node.js modules[2] etc.) strongly assumes that this output
+// only contains normal spaces and these code stops working because of parsing failures. As a workaround
+// for this issue, this function replaces narrowNoBreakSpace and thinSpace with normal space.
+// This behavior is aligned to SpiderMonkey[3] and V8[4].
+// [1]: https://bugzilla.mozilla.org/show_bug.cgi?id=1806042
+// [2]: https://github.com/nodejs/node/issues/46123
+// [3]: https://hg.mozilla.org/mozilla-central/rev/40e2c54d5618
+// [4]: https://chromium.googlesource.com/v8/v8/+/bab790f9165f65a44845b4383c8df7c6c32cf4b3
+template<typename Container>
+static void replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(Container& vector)
+{
+    // The key of this replacement is that we are not changing size of string.
+    // This allows us not to adjust offsets reported from formatToParts / formatRangeToParts
+    for (auto& character : vector) {
+        if (character == narrowNoBreakSpace || character == thinSpace)
+            character = space;
+    }
+}
+
 // https://tc39.es/ecma402/#sec-formatdatetime
 JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) const
 {
@@ -1289,6 +1310,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
     auto status = callBufferProducingFunction(udat_format, m_dateFormat.get(), value, result, nullptr);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
 
     return jsString(vm, String(WTFMove(result)));
 }
@@ -1376,6 +1398,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
     status = callBufferProducingFunction(udat_formatForFields, m_dateFormat.get(), value, result, fields.get());
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(result);
 
     JSArray* parts = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), 0);
     if (!parts)
@@ -1603,8 +1626,10 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
+    Vector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
-    return jsString(vm, String(formattedStringPointer, formattedStringLength));
+    return jsString(vm, String(WTFMove(buffer)));
 #else
     Vector<UChar, 32> buffer;
     auto status = callBufferProducingFunction(udtitvfmt_format, dateIntervalFormat, startDate, endDate, buffer, nullptr);
@@ -1612,6 +1637,7 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
     return jsString(vm, String(WTFMove(buffer)));
 #endif
@@ -1716,7 +1742,10 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
-    StringView resultStringView(formattedStringPointer, formattedStringLength);
+    Vector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
+    replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
+
+    StringView resultStringView(buffer.data(), buffer.size());
 
     // We care multiple categories (UFIELD_CATEGORY_DATE and UFIELD_CATEGORY_DATE_INTERVAL_SPAN).
     // So we do not constraint iterator.

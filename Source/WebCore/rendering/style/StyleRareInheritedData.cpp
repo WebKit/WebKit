@@ -69,6 +69,8 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
 #if ENABLE(DARK_MODE_CSS)
     StyleColorScheme colorScheme;
 #endif
+    TextSpacingTrim textSpacingTrim;
+    TextAutospace textAutospace;
 };
 
 static_assert(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsStyleRareInheritedData), "StyleRareInheritedData should bit pack");
@@ -167,6 +169,8 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
 #endif
+    , textSpacingTrim(RenderStyle::initialTextSpacingTrim())
+    , textAutospace(RenderStyle::initialTextAutospace())
 {
 }
 
@@ -272,6 +276,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(o.tapHighlightColor)
 #endif
+    , textSpacingTrim(o.textSpacingTrim)
+    , textAutospace(o.textAutospace)
 {
 }
 
@@ -383,7 +389,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage)
-        && listStyleStringValue == o.listStyleStringValue;
+        && listStyleStringValue == o.listStyleStringValue
+        && textSpacingTrim == o.textSpacingTrim
+        && textAutospace == o.textAutospace;
 }
 
 bool StyleRareInheritedData::hasColorFilters() const

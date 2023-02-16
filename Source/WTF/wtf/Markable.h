@@ -36,6 +36,7 @@
 
 #include <optional>
 #include <type_traits>
+#include <wtf/Hasher.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {
@@ -153,6 +154,11 @@ public:
 private:
     T m_value;
 };
+
+template <typename T, typename Traits> inline void add(Hasher& hasher, const Markable<T, Traits>& value)
+{
+    add(hasher, value.asOptional());
+}
 
 template <typename T, typename Traits> constexpr bool operator==(const Markable<T, Traits>& x, const Markable<T, Traits>& y)
 {

@@ -59,7 +59,7 @@ struct _WebKitEditorStatePrivate {
     unsigned isRedoAvailable : 1;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitEditorState, webkit_editor_state, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitEditorState, webkit_editor_state, G_TYPE_OBJECT, GObject)
 
 static void webkitEditorStateGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {

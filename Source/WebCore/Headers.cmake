@@ -603,6 +603,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSCounterStyleDescriptors.h
     css/CSSCounterStyleRegistry.h
     css/CSSCounterStyleRule.h
+    css/CSSCounterValue.h
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h
     css/CSSFontPaletteValuesRule.h
@@ -615,6 +616,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSPrimitiveValue.h
     css/CSSPrimitiveValueMappings.h
     css/CSSProperty.h
+    css/CSSQuadValue.h
+    css/CSSRectValue.h
     css/CSSRegisteredCustomProperty.h
     css/CSSRule.h
     css/CSSRuleList.h
@@ -645,7 +648,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/MediaList.h
     css/MediaQueryParserContext.h
     css/MutableStyleProperties.h
+    css/Quad.h
     css/Rect.h
+    css/RectBase.h
     css/ShorthandSerializer.h
     css/StyleColor.h
     css/StyleProperties.h
@@ -785,6 +790,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/OverflowEvent.h
     dom/PointerEvent.h
     dom/PointerEventTypeNames.h
+    dom/PopoverData.h
     dom/PortIdentifier.h
     dom/Position.h
     dom/ProcessingInstruction.h
@@ -817,6 +823,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/Text.h
     dom/TextEvent.h
     dom/TextEventInputType.h
+    dom/ToggleEvent.h
     dom/Touch.h
     dom/Traversal.h
     dom/TreeScope.h
@@ -2006,6 +2013,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/text/TextCheckingRequestIdentifier.h
     platform/text/TextDirection.h
     platform/text/TextFlags.h
+    platform/text/TextSpacing.h
     platform/text/UnicodeBidi.h
     platform/text/WritingMode.h
 
@@ -2123,7 +2131,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/StyleImage.h
     rendering/style/StyleInheritedData.h
     rendering/style/StyleMarqueeData.h
+    rendering/style/StyleMiscNonInheritedData.h
     rendering/style/StyleMultiColData.h
+    rendering/style/StyleNonInheritedData.h
     rendering/style/StyleRareInheritedData.h
     rendering/style/StyleRareNonInheritedData.h
     rendering/style/StyleReflection.h
@@ -2132,7 +2142,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/StyleSurroundData.h
     rendering/style/StyleTextEdge.h
     rendering/style/StyleTransformData.h
-    rendering/style/StyleVisualData.h
+    rendering/style/StyleVisitedLinkColorData.h
     rendering/style/TextDecorationThickness.h
     rendering/style/TextSizeAdjustment.h
     rendering/style/TextUnderlineOffset.h

@@ -201,7 +201,7 @@ void WebFullScreenManagerProxy::exitFullScreen()
 
 void WebFullScreenManagerProxy::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
-    m_page.callAfterNextPresentationUpdate([weakThis = WeakPtr { *this }, initialFrame = initialFrame, finalFrame = finalFrame](CallbackBase::Error) {
+    m_page.callAfterNextPresentationUpdate([weakThis = WeakPtr { *this }, initialFrame = initialFrame, finalFrame = finalFrame] {
         if (weakThis)
             weakThis->m_client.beganEnterFullScreen(initialFrame, finalFrame);
     });

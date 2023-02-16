@@ -934,6 +934,11 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
     rebalanceWhitespaceOnTextSubstring(*textNode, position.offsetInContainerNode(), position.offsetInContainerNode());
 }
 
+static bool isWhitespaceForRebalance(Text& textNode, UChar character)
+{
+    return deprecatedIsEditingWhitespace(character) && (character != '\n' || !textNode.renderer() || !textNode.renderer()->style().preserveNewline());
+}
+
 void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, int startOffset, int endOffset)
 {
     String text = textNode.data();
@@ -941,11 +946,11 @@ void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(Text& textNode, in
 
     // Set upstream and downstream to define the extent of the whitespace surrounding text[offset].
     unsigned upstream = std::max(0, startOffset);
-    while (upstream > 0 && deprecatedIsEditingWhitespace(text[upstream - 1]))
+    while (upstream > 0 && isWhitespaceForRebalance(textNode, text[upstream - 1]))
         upstream--;
     
     unsigned downstream = std::max(0, endOffset);
-    while (downstream < text.length() && deprecatedIsEditingWhitespace(text[downstream]))
+    while (downstream < text.length() && isWhitespaceForRebalance(textNode, text[downstream]))
         downstream++;
     
     int length = downstream - upstream;

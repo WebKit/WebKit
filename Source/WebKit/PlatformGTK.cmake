@@ -1,4 +1,4 @@
-include(GLib.cmake)
+include(GLibMacros)
 include(InspectorGResources.cmake)
 
 if (ENABLE_PDFJS)
@@ -203,12 +203,17 @@ set(WebKitWebExtension_HEADER_TEMPLATES
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebEditor.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.h.in
-    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtensionAutocleanups.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebFormManager.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebPage.h.in
     ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/webkit-web-extension.h.in
 )
+
+if (NOT ENABLE_2022_GLIB_API)
+    list(APPEND WebKitGTK_HEADER_TEMPLATES
+        ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitWebExtensionAutocleanups.h.in
+    )
+endif ()
 
 set(WebKitGTK_FAKE_API_HEADERS
     ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkit
@@ -227,6 +232,10 @@ list(INSERT WebKit_INCLUDE_DIRECTORIES 0
     "${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-webextension"
     "${WebKitGTK_DERIVED_SOURCES_DIR}/webkit"
     "${WebKitGTK_DERIVED_SOURCES_DIR}"
+)
+
+list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+    "${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc"
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
@@ -335,7 +344,7 @@ if (ENABLE_MEDIA_STREAM)
     )
 endif ()
 
-GENERATE_API_HEADERS(WebKitGTK_HEADER_TEMPLATES
+GENERATE_GLIB_API_HEADERS(WebKit WebKitGTK_HEADER_TEMPLATES
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit
     WebKitGTK_INSTALLED_HEADERS
     "-DWTF_PLATFORM_GTK=1"
@@ -344,7 +353,7 @@ GENERATE_API_HEADERS(WebKitGTK_HEADER_TEMPLATES
     "-DENABLE_2022_GLIB_API=$<BOOL:${ENABLE_2022_GLIB_API}>"
 )
 
-GENERATE_API_HEADERS(WebKitWebExtension_HEADER_TEMPLATES
+GENERATE_GLIB_API_HEADERS(WebKit WebKitWebExtension_HEADER_TEMPLATES
     ${WebKitGTK_DERIVED_SOURCES_DIR}/webkit
     WebKitWebExtension_INSTALLED_HEADERS
     "-DWTF_PLATFORM_GTK=1"

@@ -130,7 +130,7 @@ struct _WebKitWebExtensionPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitWebExtension, webkit_web_extension, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebExtension, webkit_web_extension, G_TYPE_OBJECT, GObject)
 
 static void webkit_web_extension_class_init(WebKitWebExtensionClass* klass)
 {

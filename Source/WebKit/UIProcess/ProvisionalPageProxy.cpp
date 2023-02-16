@@ -153,12 +153,12 @@ void ProvisionalPageProxy::cancel()
     FrameInfoData frameInfo {
         true, // isMainFrame
         m_request,
-        SecurityOriginData::fromURL(m_request.url()),
+        SecurityOriginData::fromURLWithoutStrictOpaqueness(m_request.url()),
         { },
         m_mainFrame->frameID(),
         std::nullopt,
     };
-    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL.string(), error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
+    didFailProvisionalLoadForFrame(m_mainFrame->frameID(), WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL.string(), error, WebCore::WillContinueLoading::No, UserData { }, WebCore::WillInternallyHandleFailure::No); // Will delete |this|.
 }
 
 void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -290,7 +290,7 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     m_page.didStartProvisionalLoadForFrameShared(m_process.copyRef(), frameID, WTFMove(frameInfo), WTFMove(request), navigationID, WTFMove(url), WTFMove(unreachableURL), userData);
 }
 
-void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData)
+void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const WebCore::ResourceError& error, WebCore::WillContinueLoading willContinueLoading, const UserData& userData, WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
 {
     if (!validateInput(frameID, navigationID))
         return;
@@ -305,7 +305,7 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameI
 
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     MESSAGE_CHECK(m_process, frame);
-    m_page.didFailProvisionalLoadForFrameShared(m_process.copyRef(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData); // May delete |this|.
+    m_page.didFailProvisionalLoadForFrameShared(m_process.copyRef(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData, willInternallyHandleFailure); // May delete |this|.
 }
 
 void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)

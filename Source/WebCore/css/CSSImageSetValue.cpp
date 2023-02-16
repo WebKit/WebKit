@@ -40,20 +40,18 @@ Ref<CSSImageSetValue> CSSImageSetValue::create()
 }
 
 CSSImageSetValue::CSSImageSetValue()
-    : CSSValueList(ImageSetClass, CommaSeparator)
+    : CSSValueContainingVector(ImageSetClass, CommaSeparator)
 {
 }
-
-CSSImageSetValue::~CSSImageSetValue() = default;
 
 String CSSImageSetValue::customCSSText() const
 {
     StringBuilder result;
-    result.append("image-set(");
+    result.append("image-set("_s);
     size_t length = this->length();
     for (size_t i = 0; i + 1 < length; i += 2) {
         if (i > 0)
-            result.append(", ");
+            result.append(", "_s);
         result.append(item(i)->cssText(), ' ', item(i + 1)->cssText());
     }
     result.append(')');

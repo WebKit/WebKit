@@ -26,32 +26,34 @@
 #include "config.h"
 #include "CSSBorderImageSliceValue.h"
 
-#include "Rect.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(Ref<Quad>&& slices, bool fill)
+CSSBorderImageSliceValue::CSSBorderImageSliceValue(Quad slices, bool fill)
     : CSSValue(BorderImageSliceClass)
     , m_slices(WTFMove(slices))
     , m_fill(fill)
 {
 }
 
+CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
+
+Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(Quad slices, bool fill)
+{
+    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slices), fill));
+}
+
 String CSSBorderImageSliceValue::customCSSText() const
 {
-    // Dump the slices first.
-    String text = m_slices->cssText();
-
-    // Now the fill keywords if it is present.
     if (m_fill)
-        return text + " fill";
-    return text;
+        return m_slices.cssText() + " fill";
+    return m_slices.cssText();
 }
 
 bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
 {
-    return m_fill == other.m_fill && m_slices->equals(other.m_slices);
+    return m_fill == other.m_fill && m_slices.equals(other.m_slices);
 }
 
 } // namespace WebCore

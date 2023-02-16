@@ -21,6 +21,7 @@
 #include "WebKitInjectedBundleClient.h"
 
 #include "APIInjectedBundleClient.h"
+#include "APIString.h"
 #include "WebImage.h"
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"

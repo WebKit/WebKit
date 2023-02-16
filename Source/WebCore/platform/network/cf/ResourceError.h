@@ -56,8 +56,10 @@ public:
     WEBCORE_EXPORT operator NSError *() const;
 
     bool compromisedNetworkConnectionIntegrity() const { return m_compromisedNetworkConnectionIntegrity; }
+    WEBCORE_EXPORT ErrorRecoveryMethod errorRecoveryMethod() const;
 
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
+
 
 private:
     friend class ResourceErrorBase;

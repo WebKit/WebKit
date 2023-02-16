@@ -184,7 +184,7 @@ private:
         case CreateDirectArguments:
         case CreateScopedArguments:
         case CreateClonedArguments:
-        case CreateArgumentsButterfly:
+        case CreateArgumentsButterflyExcludingThis:
         case PhantomDirectArguments:
         case PhantomClonedArguments:
         case GetRestLength:

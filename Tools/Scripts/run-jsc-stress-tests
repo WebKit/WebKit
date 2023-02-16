@@ -1907,10 +1907,10 @@ def runWebAssemblySpecTestBase(mode, specHarnessPath, postfix, *optionalTestSpec
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
 
     modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
-    prepareExtraRelativeFiles(modules.map { |f| "../../" + f }, $collection)
+    prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
 
     harness = Dir[WASMTESTS_PATH + (specHarnessPath + "/") + "*.js"].map { |f| File.basename(f) }
-    prepareExtraRelativeFiles(harness.map { |f| ("../../" + specHarnessPath + "/") + f }, $collection)
+    prepareExtraRelativeFiles(harness.map { |f| ("../" + specHarnessPath + "/") + f }, $collection)
 
     specHarnessJsPath = "../" + specHarnessPath + ".js"
     runWithOutputHandler("default-wasm" + (postfix || ''), noisyOutputHandler, specHarnessJsPath, *(FTL_OPTIONS + optionalTestSpecificOptions))
@@ -1944,8 +1944,8 @@ end
 
 def runWebAssemblySIMDSpecTest(mode)
     return if !$isSIMDPlatform
-    runWebAssemblySpecTestBase(mode, "simd-spec-harness", nil, "--useWebAssemblySIMD=true")
-    runWebAssemblySpecTestBase(mode, "simd-spec-harness", "-eager", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
+    runWebAssemblySpecTestBase(mode, "spec-harness", nil, "--useWebAssemblySIMD=true")
+    runWebAssemblySpecTestBase(mode, "spec-harness", "-eager", "--useWebAssemblySIMD=true", "--useBBQJIT=1", "--useWasmLLInt=1", "--wasmLLIntTiersUpToBBQ=1", "--thresholdForOMGOptimizeAfterWarmUp=0", "--thresholdForOMGOptimizeSoon=0")
 end
 
 def runWebAssemblyTailCallSpecTest(mode)

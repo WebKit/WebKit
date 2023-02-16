@@ -76,6 +76,7 @@ StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
+StyleSheetContents* UserAgentStyle::popoverStyleSheet;
 StyleSheetContents* UserAgentStyle::plugInsStyleSheet;
 StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
@@ -232,6 +233,11 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         }
     }
 #endif // ENABLE(MATHML)
+
+    if (!popoverStyleSheet && element.document().settings().popoverAttributeEnabled() && element.hasAttributeWithoutSynchronization(popoverAttr)) {
+        popoverStyleSheet = parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet, sizeof(popoverUserAgentStyleSheet)));
+        addToDefaultStyle(*popoverStyleSheet);
+    }
 
 #if ENABLE(FULLSCREEN_API)
     if (!fullscreenStyleSheet && element.document().fullscreenManager().isFullscreen()) {

@@ -794,6 +794,10 @@ input::placeholder {
     line-height: initial !important;
 }
 
+input:disabled, textarea:disabled {
+    color: color-mix(in hsl, CanvasText 66%, Canvas);
+}
+
 input:is([type="hidden"], [type="image"], [type="file"]) {
     appearance: initial;
     padding: initial;

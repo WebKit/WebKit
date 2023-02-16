@@ -430,36 +430,45 @@ class GitHubMixin(object):
             yield self._addToLog('stdio', f'Error in posting comment to PR {pr_number}\n    {e}\n')
             defer.returnValue(FAILURE)
 
+    @defer.inlineCallbacks
     def update_pr(self, pr_number, title, description, base=None, head=None, repository_url=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return False
+            return defer.returnValue(False)
 
-        pr_info = dict(
-            title=title,
-            body=description,
-        )
+        pr_info = {}
+        if title:
+            pr_info['title'] = title
+        if description:
+            pr_info['body'] = description
         if base:
             pr_info['base'] = base
         if head:
             pr_info['head'] = head
 
+        if not pr_info:
+            yield self._addToLog('stdio', f"Not enough details provided to update {pr_number}.\n")
+            return defer.returnValue(False)
+
         update_url = f'{api_url}/pulls/{pr_number}'
         try:
+            headers = {'Accept': ['application/vnd.github.v3+json']}
             username, access_token = GitHub.credentials(user=GitHub.user_for_queue(self.getProperty('buildername', '')))
-            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
-            response = requests.request(
-                'POST', update_url, timeout=60, auth=auth,
-                headers=dict(Accept='application/vnd.github.v3+json'),
-                json=pr_info,
+            if username and access_token:
+                auth_header = b64encode(f'{username}:{access_token}'.encode('utf-8')).decode('utf-8')
+                headers['Authorization'] = [f'Basic {auth_header}']
+            response = yield TwistedAdditions.request(
+                update_url, type=b'PATCH', timeout=60,
+                headers=headers, json=pr_info,
+                logger=lambda content: self._addToLog('stdio', content),
             )
             if response.status_code // 100 != 2:
-                self._addToLog('stdio', f"Failed to update PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
-                return False
+                yield self._addToLog('stdio', f"Failed to update PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                return defer.returnValue(False)
+            defer.returnValue(True)
         except Exception as e:
-            self._addToLog('stdio', f"Error in updating PR {pr_number}\n")
-            return False
-        return True
+            yield self._addToLog('stdio', f"Error in updating PR {pr_number}\n    {e}\n")
+            defer.returnValue(False)
 
     def close_pr(self, pr_number, repository_url=None):
         api_url = GitHub.api_url(repository_url)
@@ -5056,7 +5065,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
     name = 'determine-landed-identifier'
     descriptionDone = ['Determined landed identifier']
-    command = ['git', 'log', '-1', '--no-decorate']
+    command = ['/bin/sh', '-c', "git log -1 --no-decorate | grep 'Canonical link: https://commits\\.webkit\\.org/'"]
     CANONICAL_LINK_RE = re.compile(r'\ACanonical link: https://commits\.webkit\.org/(?P<identifier>\d+.?\d*@\S+)\Z')
     haltOnFailure = False
 
@@ -5080,7 +5089,9 @@ class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
 
         loglines = self.log_observer.getStdout().splitlines()
 
-        for line in loglines[4:]:
+        for line in loglines:
+            if not line:
+                continue
             match = self.CANONICAL_LINK_RE.match(line[4:])
             if match:
                 self.identifier = match.group('identifier')
@@ -5090,7 +5101,9 @@ class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
         if not self.identifier:
             yield task.deferLater(reactor, 60, lambda: None)  # It takes time for commits.webkit.org to digest commits
             self.identifier = yield self.identifier_for_hash(landed_hash)
-            if not self.identifier or '@' not in self.identifier:
+            if self.identifier and '@' in self.identifier:
+                rc = SUCCESS
+            else:
                 rc = FAILURE
 
         self.setProperty('comment_text', self.comment_text_for_bug(landed_hash, self.identifier))
@@ -5137,9 +5150,6 @@ class DetermineLandedIdentifier(shell.ShellCommandNewStyle):
         if pr_number:
             comment += f'\n\nReviewed commits have been landed. Closing PR #{pr_number} and removing active labels.'
         return comment
-
-    def hideStepIf(self, results, step):
-        return self.getProperty('sensitive', False)
 
 
 class CheckStatusOnEWSQueues(buildstep.BuildStep, BugzillaMixin):
@@ -5660,7 +5670,7 @@ class PushPullRequestBranch(shell.ShellCommand):
         return not self.doStepIf(step)
 
 
-class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
+class UpdatePullRequest(shell.ShellCommandNewStyle, GitHubMixin, AddToLogMixin):
     name = 'update-pull-request'
     haltOnFailure = False
     command = ['git', 'log', '-1', '--no-decorate']
@@ -5687,12 +5697,6 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
     def __init__(self, **kwargs):
         super().__init__(logEnviron=False, timeout=300, **kwargs)
 
-    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        self.log_observer = BufferLogObserverClass(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-
-        return super().start()
-
     def getResultSummary(self):
         if self.results == SUCCESS:
             return {'step': 'Updated pull request'}
@@ -5717,36 +5721,45 @@ class UpdatePullRequest(shell.ShellCommand, GitHubMixin, AddToLogMixin):
                 return True
         return False
 
-    def evaluateCommand(self, cmd):
-        rc = super().evaluateCommand(cmd)
+    @defer.inlineCallbacks
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
 
-        loglines = self.log_observer.getStdout().splitlines()
+        title = None
+        description = None
+        rc = 0
 
-        title = loglines[4][4:].rstrip()
-        description = f'#### {loglines[0].split()[1]}\n<pre>\n'
-        for line in loglines[4:]:
-            description += self.escape_html(line[4:] + '\n')
-        description += '</pre>\n'
+        if not self.setProperty('sensitive', False):
+            rc = yield super().run()
 
-        bug_id = self.bug_id_from_log(loglines)
-        if bug_id:
-            self.setProperty('bug_id', bug_id)
-        self.setProperty('is_test_gardening', self.is_test_gardening(loglines))
+            loglines = self.log_observer.getStdout().splitlines()
+
+            title = loglines[4][4:].rstrip()
+            description = f'#### {loglines[0].split()[1]}\n<pre>\n'
+            for line in loglines[4:]:
+                description += self.escape_html(line[4:] + '\n')
+            description += '</pre>\n'
+
+            bug_id = self.bug_id_from_log(loglines)
+            if bug_id:
+                self.setProperty('bug_id', bug_id)
+            self.setProperty('is_test_gardening', self.is_test_gardening(loglines))
 
         user = self.getProperty('github.head.user.login', '')
         head = self.getProperty('github.head.ref', '')
 
-        if not self.update_pr(
+        did_update_pr = yield self.update_pr(
             self.getProperty('github.number'),
             title=title,
             description=description,
             base=self.getProperty('github.base.ref', ''),
             head=f"{user}:{head}" if user and head else None,
             repository_url=self.getProperty('repository', ''),
-        ):
-            return FAILURE
-
-        return rc
+        )
+        if not did_update_pr:
+            return defer.returnValue(FAILURE)
+        return defer.returnValue(rc)
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME and self.getProperty('github.number')

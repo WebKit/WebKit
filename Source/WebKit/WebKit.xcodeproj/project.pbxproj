@@ -1798,7 +1798,6 @@
 		BC14DF9F120B635F00826C0C /* WKBundleScriptWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14DF9D120B635F00826C0C /* WKBundleScriptWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC14E10A120B905E00826C0C /* InjectedBundlePageFormClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC14E108120B905E00826C0C /* InjectedBundlePageFormClient.h */; };
 		BC177465118B9FF4007D9E9A /* WKPagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC177464118B9FF4007D9E9A /* WKPagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC17753E118BABF0007D9E9A /* GenericCallback.h */; };
 		BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */; };
 		BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1B419711D41D570011E8DD /* WKBundlePagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1BE1DE12D54A410004A228 /* WebGeolocationClient.h */; };
@@ -2695,6 +2694,8 @@
 		00B9661518E24CBA00CE1F88 /* APIFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIFindClient.h; sourceTree = "<group>"; };
 		00B9661718E25AE100CE1F88 /* FindClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindClient.mm; sourceTree = "<group>"; };
 		00B9661818E25AE100CE1F88 /* FindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindClient.h; sourceTree = "<group>"; };
+		0214701A2995D2FE0077AFD6 /* DrawingAreaCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawingAreaCocoa.mm; sourceTree = "<group>"; };
+		0214701B2995D3860077AFD6 /* DrawingArea.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		0237C21428C168D10018A851 /* WebGPUSupportedFeatures.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUSupportedFeatures.serialization.in; sourceTree = "<group>"; };
 		02789EF628D3FC3200F77E40 /* WebGPUBufferBindingLayout.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUBufferBindingLayout.serialization.in; sourceTree = "<group>"; };
 		02789EF728D3FF4800F77E40 /* WebGPUCanvasConfiguration.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebGPUCanvasConfiguration.serialization.in; sourceTree = "<group>"; };
@@ -6314,7 +6315,6 @@
 		BC14E107120B905E00826C0C /* InjectedBundlePageFormClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageFormClient.cpp; sourceTree = "<group>"; };
 		BC14E108120B905E00826C0C /* InjectedBundlePageFormClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageFormClient.h; sourceTree = "<group>"; };
 		BC177464118B9FF4007D9E9A /* WKPagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPagePrivate.h; sourceTree = "<group>"; };
-		BC17753E118BABF0007D9E9A /* GenericCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericCallback.h; sourceTree = "<group>"; };
 		BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessLauncher.h; sourceTree = "<group>"; };
 		BC1B419711D41D570011E8DD /* WKBundlePagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePagePrivate.h; sourceTree = "<group>"; };
 		BC1BE1DE12D54A410004A228 /* WebGeolocationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationClient.h; sourceTree = "<group>"; };
@@ -6461,7 +6461,6 @@
 		BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.xcconfig; sourceTree = "<group>"; };
 		BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.Networking.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingArea.cpp; sourceTree = "<group>"; };
 		BC8452A61162C80900CAB9B5 /* DrawingArea.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingArea.h; sourceTree = "<group>"; };
 		BC857E8512B71EBB00EDEB2E /* WebPageProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageProxyMac.mm; sourceTree = "<group>"; };
 		BC857F8312B82D0B00EDEB2E /* WebOpenPanelResultListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebOpenPanelResultListener.h; sourceTree = "<group>"; };
@@ -8995,6 +8994,7 @@
 		2D29ECCD192F2C2E00984B78 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				0214701A2995D2FE0077AFD6 /* DrawingAreaCocoa.mm */,
 				2D9CD5ED21FA503F0029ACFA /* TextCheckingControllerProxy.h */,
 				2D9CD5EB21FA503F0029ACFA /* TextCheckingControllerProxy.messages.in */,
 				2D9CD5EC21FA503F0029ACFA /* TextCheckingControllerProxy.mm */,
@@ -11842,7 +11842,7 @@
 				2DA944B41884EA2A00ED86DB /* ios */,
 				BC963D6C113DD19500574BE2 /* mac */,
 				2D1551A81F5A95220006E3FE /* RemoteLayerTree */,
-				BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */,
+				0214701B2995D3860077AFD6 /* DrawingArea.cpp */,
 				BC8452A61162C80900CAB9B5 /* DrawingArea.h */,
 				1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */,
 				1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */,
@@ -11935,7 +11935,6 @@
 				1A6422FC12DD08FE00CAAE2C /* DrawingAreaProxy.messages.in */,
 				1AE00D5E1831792100087DD7 /* FrameLoadState.cpp */,
 				1AE00D5F1831792100087DD7 /* FrameLoadState.h */,
-				BC17753E118BABF0007D9E9A /* GenericCallback.h */,
 				9EC532A22447FBAD00215216 /* GeolocationIdentifier.h */,
 				BC06F44912DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp */,
 				BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */,
@@ -13760,7 +13759,6 @@
 				379A873C18BBFF0700588AF2 /* _WKElementActionInternal.h in Headers */,
 				1AD01BC91905D37E00C9C45F /* _WKErrorRecoveryAttempting.h in Headers */,
 				317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */,
-				317FE7CF1C487DBD00A0CA89 /* _WKExperimentalFeature.h in Headers */,
 				DD8CD363296D03A400C04CA1 /* _WKFeature.h in Headers */,
 				DD8CD364296D03A400C04CA1 /* _WKFeatureInternal.h in Headers */,
 				005D158F18E4C4EB00734619 /* _WKFindDelegate.h in Headers */,
@@ -14106,7 +14104,6 @@
 				CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */,
 				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
 				5CAB7DE128B80FE1002282A6 /* GeneratedSerializers.h in Headers */,
-				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				9EC532A32447FBAD00215216 /* GeolocationIdentifier.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
 				BC06F44A12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h in Headers */,

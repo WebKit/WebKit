@@ -550,10 +550,10 @@ void MediaTime::dump(PrintStream& out) const
 
 String MediaTime::toString() const
 {
-    const char* invalid = isInvalid() ? ", invalid" : "";
+    auto invalid = isInvalid() ? ", invalid"_s : ""_s;
     if (hasDoubleValue())
         return makeString('{', toDouble(), invalid, '}');
-    return makeString('{', m_timeValue, '/', m_timeScale, " = ", toDouble(), invalid, '}');
+    return makeString('{', m_timeValue, '/', m_timeScale, " = "_s, toDouble(), invalid, '}');
 }
 
 Ref<JSON::Object> MediaTime::toJSONObject() const

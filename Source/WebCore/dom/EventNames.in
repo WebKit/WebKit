@@ -40,6 +40,7 @@ PromiseRejectionEvent
 PushEvent conditional=SERVICE_WORKER
 PushSubscriptionChangeEvent conditional=SERVICE_WORKER
 SubmitEvent
+ToggleEvent
 TextEvent
 UIEvent
 UIEvents interfaceName=UIEvent
@@ -85,7 +86,7 @@ WebKitMediaKeyNeededEvent conditional=LEGACY_ENCRYPTED_MEDIA
 TrackEvent conditional=VIDEO
 SecurityPolicyViolationEvent
 GestureEvent conditional=IOS_GESTURE_EVENTS|MAC_GESTURE_EVENTS
-WebKitPlaybackTargetAvailabilityEvent conditional=WIRELESS_PLAYBACK_TARGET
+WebKitPlaybackTargetAvailabilityEvent conditional=WIRELESS_PLAYBACK_TARGET_AVAILABILITY_API
 GamepadEvent conditional=GAMEPAD
 OverconstrainedErrorEvent conditional=MEDIA_STREAM
 MediaEncryptedEvent conditional=ENCRYPTED_MEDIA

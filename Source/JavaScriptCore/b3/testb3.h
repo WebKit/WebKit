@@ -1213,5 +1213,7 @@ void testVectorXorAndAllOnesToVectorOrXor();
 void testVectorXorOrAllOnesConstantToVectorAndXor(v128_t);
 void testVectorXorAndAllOnesConstantToVectorOrXor(v128_t);
 void testVectorAndConstantConstant(v128_t, v128_t);
+void testVectorFmulByElementFloat();
+void testVectorFmulByElementDouble();
 
 #endif // ENABLE(B3_JIT)

@@ -72,6 +72,7 @@ class Locale;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
+class PopoverData;
 class PseudoElement;
 class RenderStyle;
 class RenderTreePosition;
@@ -309,7 +310,7 @@ public:
     virtual void parseAttribute(const QualifiedName&, const AtomString&) { }
 
     // Only called by the parser immediately after element construction.
-    void parserSetAttributes(const Vector<Attribute>&);
+    void parserSetAttributes(Span<const Attribute>);
 
     bool isEventHandlerAttribute(const Attribute&) const;
     virtual FormListedElement* asFormListedElement();
@@ -587,6 +588,10 @@ public:
     virtual void requestFullscreen(FullscreenOptions&&, RefPtr<DeferredPromise>&&);
 #endif
 
+    PopoverData* popoverData() const;
+    PopoverData& ensurePopoverData();
+    void clearPopoverData();
+
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);
     bool hasPointerCapture(int32_t);
@@ -684,6 +689,7 @@ public:
 
     bool hasDisplayContents() const;
     void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
+    void clearDisplayContentsStyle();
 
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value);

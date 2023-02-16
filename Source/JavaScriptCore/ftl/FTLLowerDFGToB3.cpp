@@ -1127,8 +1127,8 @@ private:
         case CreateClonedArguments:
             compileCreateClonedArguments();
             break;
-        case CreateArgumentsButterfly:
-            compileCreateArgumentsButterfly();
+        case CreateArgumentsButterflyExcludingThis:
+            compileCreateArgumentsButterflyExcludingThis();
             break;
         case ObjectAssign:
             compileObjectAssign();
@@ -7426,10 +7426,10 @@ IGNORE_CLANG_WARNINGS_END
         setJSValue(result);
     }
 
-    void compileCreateArgumentsButterfly()
+    void compileCreateArgumentsButterflyExcludingThis()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue result = vmCall(Int64, operationCreateArgumentsButterfly, weakPointer(globalObject), getArgumentsStart(), getArgumentsLength().value);
+        LValue result = vmCall(Int64, operationCreateArgumentsButterflyExcludingThis, weakPointer(globalObject), getArgumentsStart(), getArgumentsLength().value, lowCell(m_node->child1()));
         setJSValue(result);
     }
 

@@ -186,7 +186,7 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
 
     auto ancestorOrigins = map(parameters.frameAncestorOrigins, [](auto& origin) { return origin->toString(); });
     ServiceWorkerClientData data { clientIdentifier, clientType, ServiceWorkerClientFrameType::None, request.url(), URL(), parameters.webPageID, parameters.webFrameID, request.isAppInitiated() ? WebCore::LastNavigationWasAppInitiated::Yes : WebCore::LastNavigationWasAppInitiated::No, false, false, 0, WTFMove(ancestorOrigins) };
-    registerServiceWorkerClient(ClientOrigin { registration.key().topOrigin(), SecurityOriginData::fromURL(request.url()) }, WTFMove(data), registration.identifier(), request.httpUserAgent());
+    registerServiceWorkerClient(ClientOrigin { registration.key().topOrigin(), SecurityOriginData::fromURLWithoutStrictOpaqueness(request.url()) }, WTFMove(data), registration.identifier(), request.httpUserAgent());
 }
 
 std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
@@ -204,7 +204,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
 
     std::optional<ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     if (loader.parameters().options.mode == FetchOptions::Mode::Navigate || loader.parameters().options.destination == FetchOptions::Destination::Worker || loader.parameters().options.destination == FetchOptions::Destination::Sharedworker) {
-        auto topOrigin = loader.parameters().isMainFrameNavigation ? SecurityOriginData::fromURL(request.url()) : loader.parameters().topOrigin->data();
+        auto topOrigin = loader.parameters().isMainFrameNavigation ? SecurityOriginData::fromURLWithoutStrictOpaqueness(request.url()) : loader.parameters().topOrigin->data();
         auto* registration = doRegistrationMatching(topOrigin, request.url());
         if (!registration)
             return nullptr;
@@ -409,7 +409,7 @@ void WebSWServerConnection::registerServiceWorkerClient(WebCore::ClientOrigin&& 
     auto& contextOrigin = clientOrigin.clientOrigin;
     if (data.url.protocolIsInHTTPFamily()) {
         // We do not register any sandbox document.
-        if (contextOrigin != SecurityOriginData::fromURL(data.url))
+        if (contextOrigin != SecurityOriginData::fromURLWithoutStrictOpaqueness(data.url))
             return;
     }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F0C03D029981BEB0064230A /* EmbeddedFixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */; };
 		0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30BA8A1E78708E002CA847 /* GlobalVersion.cpp */; };
 		0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F30CB581FCDF133004B5323 /* ConcurrentPtrHashSet.cpp */; };
 		0F3492D722AF431C004F85FC /* TextStreamCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F3492D622AF42F1004F85FC /* TextStreamCocoa.mm */; };
@@ -930,6 +931,7 @@
 /* Begin PBXFileReference section */
 		077CD86A1FD9CFD200828587 /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		077CD86B1FD9CFD300828587 /* LoggerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerHelper.h; sourceTree = "<group>"; };
+		0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmbeddedFixedVector.cpp; sourceTree = "<group>"; };
 		0F0D85B317234CB100338210 /* NoLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NoLock.h; sourceTree = "<group>"; };
 		0F0FCDDD1DD167F900CCAB53 /* LockAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockAlgorithm.h; sourceTree = "<group>"; };
 		0F2AC5601E89F70C0001EE3F /* Range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; };
@@ -2035,6 +2037,7 @@
 				A8A47280151A825A004123FF /* DoublyLinkedList.h */,
 				A8A47297151A825A004123FF /* dtoa.cpp */,
 				A8A47298151A825A004123FF /* dtoa.h */,
+				0F0C03CF29981BEB0064230A /* EmbeddedFixedVector.cpp */,
 				E3538D4C276220880075DA50 /* EmbeddedFixedVector.h */,
 				5338EBA423AB04D100382662 /* EnumClassOperatorOverloads.h */,
 				1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */,
@@ -3701,6 +3704,7 @@
 				A8A473AE151A825B004123FF /* diy-fp.cc in Sources */,
 				A8A473B0151A825B004123FF /* double-conversion.cc in Sources */,
 				A8A473BA151A825B004123FF /* dtoa.cpp in Sources */,
+				0F0C03D029981BEB0064230A /* EmbeddedFixedVector.cpp in Sources */,
 				143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */,
 				50DE35F5215BB01500B979C7 /* ExternalStringImpl.cpp in Sources */,
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,

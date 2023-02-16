@@ -573,6 +573,22 @@ ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 #endif
 }
 
+ALWAYS_INLINE bool matchesOpenPseudoClass(const Element& element)
+{
+    if (auto* popoverData = element.popoverData())
+        return popoverData->visibilityState() == PopoverVisibilityState::Showing;
+
+    return false;
+}
+
+ALWAYS_INLINE bool matchesClosedPseudoClass(const Element& element)
+{
+    if (auto* popoverData = element.popoverData())
+        return popoverData->visibilityState() == PopoverVisibilityState::Hidden;
+
+    return false;
+}
+
 ALWAYS_INLINE bool matchesUserInvalidPseudoClass(const Element& element)
 {
     return element.matchesUserInvalidPseudoClass();

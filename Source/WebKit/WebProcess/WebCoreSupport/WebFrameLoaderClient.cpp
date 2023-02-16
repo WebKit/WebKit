@@ -634,7 +634,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureConten
     webPage->didCommitLoad(m_frame.ptr());
 }
 
-void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error, WillContinueLoading willContinueLoading)
+void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error, WillContinueLoading willContinueLoading, WillInternallyHandleFailure willInternallyHandleFailure)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -672,7 +672,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
 
     // Notify the UIProcess.
     WebCore::Frame* coreFrame = m_frame->coreFrame();
-    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), m_frame->info(), request, navigationID, coreFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), m_frame->info(), request, navigationID, coreFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), willInternallyHandleFailure));
 
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())

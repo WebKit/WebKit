@@ -1,5 +1,6 @@
 {
     "workers":     [
+                    { "name": "bot165", "platform": "mac-ventura" },
                     { "name": "bot211", "platform": "mac-ventura" },
                     { "name": "bot212", "platform": "mac-ventura" },
                     { "name": "bot215", "platform": "mac-ventura" },
@@ -20,7 +21,6 @@
                     { "name": "bot138", "platform": "mac-monterey" },
                     { "name": "bot139", "platform": "mac-monterey" },
                     { "name": "bot141", "platform": "mac-monterey" },
-                    { "name": "bot165", "platform": "mac-monterey" },
                     { "name": "bot179", "platform": "mac-monterey" },
                     { "name": "bot185", "platform": "mac-monterey" },
                     { "name": "bot187", "platform": "mac-monterey" },

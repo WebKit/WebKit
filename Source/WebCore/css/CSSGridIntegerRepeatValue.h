@@ -43,12 +43,9 @@ namespace WebCore {
 //                          [ <line-names>? <track-size> ]+ <line-names>? )
 // <fixed-repeat> = repeat( [ <positive-integer> ],
 //                          [ <line-names>? <fixed-size> ]+ <line-names>? )
-class CSSGridIntegerRepeatValue final : public CSSValueList {
+class CSSGridIntegerRepeatValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSGridIntegerRepeatValue> create(size_t repetitions)
-    {
-        return adoptRef(*new CSSGridIntegerRepeatValue(repetitions));
-    }
+    static Ref<CSSGridIntegerRepeatValue> create(size_t repetitions);
 
     String customCSSText() const;
     bool equals(const CSSGridIntegerRepeatValue&) const;
@@ -56,12 +53,7 @@ public:
     size_t repetitions() const { return m_repetitions; }
 
 private:
-    CSSGridIntegerRepeatValue(size_t repetitions)
-        : CSSValueList(GridIntegerRepeatClass, SpaceSeparator)
-        , m_repetitions(repetitions)
-    {
-        ASSERT(repetitions > 0);
-    }
+    explicit CSSGridIntegerRepeatValue(size_t repetitions);
 
     const size_t m_repetitions;
 };

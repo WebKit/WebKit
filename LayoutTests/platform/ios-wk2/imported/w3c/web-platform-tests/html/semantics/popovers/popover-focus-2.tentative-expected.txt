@@ -1,16 +1,8 @@
-Button1
-Inside1  Nested Invoker 2  Inside2
-Button2  Invoker1  Button3
-Inside3  Nested Invoker 3
-Non-focusable popover
-Button4
-Invoker
-
-after
+Button1  Button2  Invoker1  Button3  Button4
+Invoker  after
 Show popover
-Hide popover
 
-FAIL Popover focus navigation assert_equals: Hidden popover should be skipped expected Element node <button id="button2">Button2</button> but got Element node <button id="circular1" autofocus="" popoverhidetarget="po...
+FAIL Popover focus navigation assert_equals: Hidden popover should be skipped expected Element node <button id="button2">Button2</button> but got Element node <button id="button1">Button1</button>
 FAIL Circular reference tab navigation assert_equals: Step 2 expected Element node <button id="circular1" autofocus="" popoverhidetarget="po... but got Element node <button id="circular0" popovertoggletarget="popover4">Inv...
-FAIL Popover focus returns when popover is hidden by invoker promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Popover focus returns when popover is hidden by invoker assert_true: popover should be invoked by invoker expected true got false
 

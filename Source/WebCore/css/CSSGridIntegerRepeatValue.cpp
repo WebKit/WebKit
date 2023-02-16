@@ -31,18 +31,34 @@
 #include "config.h"
 #include "CSSGridIntegerRepeatValue.h"
 
-#include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
+CSSGridIntegerRepeatValue::CSSGridIntegerRepeatValue(size_t repetitions)
+    : CSSValueContainingVector(GridIntegerRepeatClass, SpaceSeparator)
+    , m_repetitions(repetitions)
+{
+    ASSERT(repetitions);
+}
+
+Ref<CSSGridIntegerRepeatValue> CSSGridIntegerRepeatValue::create(size_t repetitions)
+{
+    return adoptRef(*new CSSGridIntegerRepeatValue(repetitions));
+}
+
 String CSSGridIntegerRepeatValue::customCSSText() const
 {
-    return makeString("repeat("_s, repetitions(), ", "_s, CSSValueList::customCSSText(), ')');
+    StringBuilder result;
+    result.append("repeat("_s, repetitions(), ", "_s);
+    serializeItems(result);
+    result.append(')');
+    return result.toString();
 }
 
 bool CSSGridIntegerRepeatValue::equals(const CSSGridIntegerRepeatValue& other) const
 {
-    return m_repetitions == other.m_repetitions && CSSValueList::equals(other);
+    return m_repetitions == other.m_repetitions && itemsEqual(other);
 }
 
 } // namespace WebCore

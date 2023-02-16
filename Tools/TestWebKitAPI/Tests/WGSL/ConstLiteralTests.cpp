@@ -65,7 +65,7 @@ TEST(WGSLConstLiteralTests, BoolLiteral)
         const auto& intLiteral = downcast<AST::BoolLiteral>(expr.get());
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        EXPECT_EQ(intLiteral.span(), SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(intLiteral.span(), SourceSpan(1, inputLength, inputLength, 0));
     }
 }
 
@@ -89,7 +89,7 @@ TEST(WGSLConstLiteralTests, AbstractIntegerLiteralDecimal)
         const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr.get());
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        EXPECT_EQ(intLiteral.span(), SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(intLiteral.span(), SourceSpan(1, inputLength, inputLength, 0));
     }
 }
 
@@ -113,7 +113,7 @@ TEST(WGSLConstLiteralTests, AbstractIntegerLiteralHex)
         const auto& intLiteral = downcast<AST::AbstractIntegerLiteral>(expr.get());
         EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        EXPECT_EQ(intLiteral.span(), WGSL::SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(intLiteral.span(), WGSL::SourceSpan(1, inputLength, inputLength, 0));
     }
 }
 
@@ -142,7 +142,7 @@ TEST(WGSLConstLiteralTests, AbstractFloatLiteralDec)
         const auto& floatLiteral = downcast<AST::AbstractFloatLiteral>(expr.get());
         EXPECT_EQ(floatLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        EXPECT_EQ(floatLiteral.span(), SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(floatLiteral.span(), SourceSpan(1, inputLength, inputLength, 0));
     }
 }
 

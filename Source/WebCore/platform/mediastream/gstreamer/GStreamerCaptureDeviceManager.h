@@ -84,6 +84,9 @@ public:
 
     void stopSource(const String& persistentID);
 
+    // DisplayCaptureManager interface
+    bool requiresCaptureDevicesEnumeration() const final { return true; }
+
 protected:
     void notifyResponse(GVariant* parameters) { m_currentResponseCallback(parameters); }
 

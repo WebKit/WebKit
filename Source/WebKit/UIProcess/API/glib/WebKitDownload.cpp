@@ -89,7 +89,7 @@ struct _WebKitDownloadPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitDownload, webkit_download, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitDownload, webkit_download, G_TYPE_OBJECT, GObject)
 
 static void webkitDownloadSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {

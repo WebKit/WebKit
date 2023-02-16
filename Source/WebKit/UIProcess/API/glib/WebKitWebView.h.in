@@ -72,17 +72,22 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_VIEW            (webkit_web_view_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_VIEW, WebKitWebView))
 #define WEBKIT_IS_WEB_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_VIEW))
 #define WEBKIT_WEB_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_VIEW, WebKitWebViewClass))
 #define WEBKIT_IS_WEB_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_VIEW))
 #define WEBKIT_WEB_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_VIEW, WebKitWebViewClass))
+#endif
+
+#if PLATFORM(GTK)
+WEBKIT_DECLARE_DERIVABLE_TYPE (WebKitWebView, webkit_web_view, WEBKIT, WEB_VIEW, WebKitWebViewBase)
+#elif PLATFORM(WPE)
+WEBKIT_DECLARE_DERIVABLE_TYPE (WebKitWebView, webkit_web_view, WEBKIT, WEB_VIEW, GObject)
+#else
+#endif
 
 typedef struct _WebKitPrintOperation WebKitPrintOperation;
-
-typedef struct _WebKitWebView        WebKitWebView;
-typedef struct _WebKitWebViewClass   WebKitWebViewClass;
-typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
 
 /**
  * WebKitPolicyDecisionType:
@@ -267,17 +272,6 @@ typedef void (* WebKitFrameDisplayedCallback) (WebKitWebView *web_view,
                                                gpointer       user_data);
 #endif
 
-struct _WebKitWebView {
-#if PLATFORM(GTK)
-    WebKitWebViewBase parent;
-#elif PLATFORM(WPE)
-    GObject parent;
-#endif
-
-    /*< private >*/
-    WebKitWebViewPrivate *priv;
-};
-
 struct _WebKitWebViewClass {
 #if PLATFORM(GTK)
     WebKitWebViewBaseClass parent;
@@ -426,9 +420,6 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved30) (void);
 #endif
 };
-
-WEBKIT_API GType
-webkit_web_view_get_type                             (void);
 
 #if PLATFORM(GTK)
 WEBKIT_API GtkWidget *

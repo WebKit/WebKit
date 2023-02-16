@@ -652,14 +652,14 @@ void CSSCalcOperationNode::combineChildren()
     if (m_children.size() < 2) {
         if (m_children.size() == 1 && isTrigNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
-            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
+            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
         
         if (isExpNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
-            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
+            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
@@ -680,7 +680,7 @@ void CSSCalcOperationNode::combineChildren()
         }
         if (calcOperator() == CalcOperator::Sqrt) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
-            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
+            auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue));
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
@@ -776,7 +776,7 @@ void CSSCalcOperationNode::combineChildren()
 
         if (!didMultiply) {
             if (numberNodeCount) {
-                auto multiplierNode = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(multiplier, CSSUnitType::CSS_NUMBER));
+                auto multiplierNode = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(multiplier));
                 newChildren.uncheckedAppend(WTFMove(multiplierNode));
             }
 
@@ -812,7 +812,7 @@ void CSSCalcOperationNode::combineChildren()
 
     if (calcOperator() == CalcOperator::Pow) {
         auto resolvedValue = doubleValue(m_children[0]->primitiveType());
-        auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, CSSUnitType::CSS_NUMBER));
+        auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue));
         m_children.clear();
         m_children.append(WTFMove(newChild));
     }

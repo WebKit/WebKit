@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Igalia S.L.
+# Copyright (C) 2018-2023 Igalia S.L.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -28,6 +28,7 @@ import logging
 import os
 import tempfile
 import urllib
+from datetime import datetime
 
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
@@ -50,6 +51,7 @@ def parse_args():
     parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark (e.g. PerformanceTests/SunSpider/).')
     parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark (e.g. 5).')
     parser.add_argument('--timeout', dest='timeoutOverride', type=int, help='Number of seconds to wait for the benchmark to finish (e.g. 600).')
+    parser.add_argument('--timestamp', dest='timestamp', type=int, help='Date of when the benchmark was run that will be sent to the performance dashboard server. Format is Unix timestamp (second since epoch). Optional. The server will use as date "now" if not specified.')
     mutual_group = parser.add_mutually_exclusive_group(required=True)
     mutual_group.add_argument('--plan', dest='plan', help='Benchmark plan to run. e.g. speedometer, jetstream')
     mutual_group.add_argument('--allplans', action='store_true', help='Run all available benchmark plans sequentially')
@@ -78,6 +80,10 @@ class BrowserPerfDashRunner(object):
                              'test_id': None,
                              'test_version': None,
                              'test_data': None}
+        if args.timestamp:
+            self._result_data['timestamp'] = args.timestamp
+            date_str = datetime.fromtimestamp(self._result_data['timestamp']).isoformat()
+            _log.info('Will send the benchmark data as if it was generated on date: {date}'.format(date=date_str))
 
     def _parse_config_file(self, config_file):
         if not os.path.isfile(config_file):

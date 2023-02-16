@@ -177,6 +177,14 @@ FunctionsEGL::~FunctionsEGL()
 
 egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType nativeDisplay)
 {
+#define ANGLE_GET_PROC_OR_WARNING(MEMBER, NAME)                \
+    do                                                         \
+    {                                                          \
+        if (!SetPtr(MEMBER, getProcAddress(#NAME)))            \
+        {                                                      \
+            WARN() << "Could not load EGL entry point " #NAME; \
+        }                                                      \
+    } while (0)
 #define ANGLE_GET_PROC_OR_ERROR(MEMBER, NAME)                                           \
     do                                                                                  \
     {                                                                                   \
@@ -244,6 +252,9 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
     {
         return egl::Error(mFnPtrs->getErrorPtr(), "Failed to bind API in system egl");
     }
+
+    vendorString  = queryString(EGL_VENDOR);
+    versionString = queryString(EGL_VERSION);
 
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->getCurrentContextPtr, eglGetCurrentContext);
 
@@ -317,43 +328,12 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
 
     if (hasExtension("EGL_EXT_image_dma_buf_import_modifiers"))
     {
-        std::string eglVendor  = queryString(EGL_VENDOR);
-        std::string eglVersion = queryString(EGL_VERSION);
-
-        if (eglVendor.find("ARM") != std::string::npos &&
-            eglVersion.find("r26p0-01rel0") != std::string::npos)
-        {
-            // https://anglebug.com/7664
-            // Disable EGL_EXT_image_dma_buf_import_modifiers on old Mali drivers
-            mExtensions.erase(
-                std::remove_if(mExtensions.begin(), mExtensions.end(),
-                               [](const std::string &extension) {
-                                   return extension.compare(
-                                              "EGL_EXT_image_dma_buf_import_modifiers") == 0;
-                               }),
-                mExtensions.end());
-        }
-        else
-        {
-            // https://anglebug.com/7664
-            // Some drivers, notably older versions of ANGLE, announce this extension without
-            // implementing the following functions. Fail softly in such cases.
-            if (!SetPtr(&mFnPtrs->queryDmaBufFormatsEXTPtr,
-                        getProcAddress("eglQueryDmaBufFormatsEXT")) ||
-                !SetPtr(&mFnPtrs->queryDmaBufModifiersEXTPtr,
-                        getProcAddress("eglQueryDmaBufModifiersEXT")))
-            {
-                mFnPtrs->queryDmaBufFormatsEXTPtr   = nullptr;
-                mFnPtrs->queryDmaBufModifiersEXTPtr = nullptr;
-                mExtensions.erase(
-                    std::remove_if(mExtensions.begin(), mExtensions.end(),
-                                   [](const std::string &extension) {
-                                       return extension.compare(
-                                                  "EGL_EXT_image_dma_buf_import_modifiers") == 0;
-                                   }),
-                    mExtensions.end());
-            }
-        }
+        // https://anglebug.com/7664
+        // Some drivers, notably older versions of ANGLE, announce this extension without
+        // implementing the following functions. DisplayEGL checks for this case and disables the
+        // extension.
+        ANGLE_GET_PROC_OR_WARNING(&mFnPtrs->queryDmaBufFormatsEXTPtr, eglQueryDmaBufFormatsEXT);
+        ANGLE_GET_PROC_OR_WARNING(&mFnPtrs->queryDmaBufModifiersEXTPtr, eglQueryDmaBufModifiersEXT);
     }
 
     // EGL_EXT_device_query is only advertised in extension string in the
@@ -488,6 +468,12 @@ FunctionsGL *FunctionsEGL::makeFunctionsGL(void) const
 bool FunctionsEGL::hasExtension(const char *extension) const
 {
     return std::find(mExtensions.begin(), mExtensions.end(), extension) != mExtensions.end();
+}
+
+bool FunctionsEGL::hasDmaBufImportModifierFunctions() const
+{
+    return mFnPtrs->queryDmaBufFormatsEXTPtr != nullptr &&
+           mFnPtrs->queryDmaBufModifiersEXTPtr != nullptr;
 }
 
 EGLDisplay FunctionsEGL::getDisplay() const

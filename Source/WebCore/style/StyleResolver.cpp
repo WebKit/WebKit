@@ -53,7 +53,6 @@
 #include "MediaList.h"
 #include "NodeRenderStyle.h"
 #include "PageRuleCollector.h"
-#include "Pair.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
 #include "RenderView.h"

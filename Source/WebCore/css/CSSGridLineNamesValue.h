@@ -34,14 +34,12 @@
 
 namespace WebCore {
 
-class CSSGridLineNamesValue final : public CSSValueList {
+class CSSGridLineNamesValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSGridLineNamesValue> create()
-    {
-        return adoptRef(*new CSSGridLineNamesValue);
-    }
+    static Ref<CSSGridLineNamesValue> create();
 
     String customCSSText() const;
+    bool equals(const CSSGridLineNamesValue& other) const { return itemsEqual(other); }
 
 private:
     CSSGridLineNamesValue();

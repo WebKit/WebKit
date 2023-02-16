@@ -28,8 +28,10 @@
 #include "ASTAttribute.h"
 #include "ASTExpression.h"
 #include "ASTForward.h"
+#include "ASTStatement.h"
 #include "ASTStructure.h"
 #include "ASTTypeName.h"
+#include "ASTValue.h"
 #include "ASTVariable.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
@@ -49,41 +51,47 @@ public:
     {
     }
 
-    Expected<void, Error> parseShader();
+    Result<void> parseShader();
 
-    // UniqueRef whenever it can return multiple types.
-    Expected<AST::Identifier, Error> parseIdentifier();
-    Expected<void, Error> parseGlobalDecl();
-    Expected<AST::Attribute::List, Error> parseAttributes();
-    Expected<AST::Attribute::Ref, Error> parseAttribute();
-    Expected<AST::Structure::Ref, Error> parseStructure(AST::Attribute::List&&);
-    Expected<AST::StructureMember, Error> parseStructureMember();
-    Expected<AST::TypeName::Ref, Error> parseTypeName();
-    Expected<AST::TypeName::Ref, Error> parseTypeNameAfterIdentifier(AST::Identifier&&, SourcePosition start);
-    Expected<AST::TypeName::Ref, Error> parseArrayType();
-    Expected<AST::Variable::Ref, Error> parseVariable();
-    Expected<AST::Variable::Ref, Error> parseVariableWithAttributes(AST::Attribute::List&&);
-    Expected<AST::VariableQualifier, Error> parseVariableQualifier();
-    Expected<AST::StorageClass, Error> parseStorageClass();
-    Expected<AST::AccessMode, Error> parseAccessMode();
-    Expected<AST::Function, Error> parseFunction(AST::Attribute::List&&);
-    Expected<AST::ParameterValue, Error> parseParameterValue();
-    Expected<AST::Statement::Ref, Error> parseStatement();
-    Expected<AST::CompoundStatement, Error> parseCompoundStatement();
-    Expected<AST::ReturnStatement, Error> parseReturnStatement();
-    Expected<AST::Expression::Ref, Error> parseShortCircuitOrExpression();
-    Expected<AST::Expression::Ref, Error> parseRelationalExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::Expression::Ref, Error> parseShiftExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::Expression::Ref, Error> parseAdditiveExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::Expression::Ref, Error> parseMultiplicativeExpression(AST::Expression::Ref&& lhs);
-    Expected<AST::Expression::Ref, Error> parseUnaryExpression();
-    Expected<AST::Expression::Ref, Error> parseSingularExpression();
-    Expected<AST::Expression::Ref, Error> parsePostfixExpression(AST::Expression::Ref&& base, SourcePosition startPosition);
-    Expected<AST::Expression::Ref, Error> parsePrimaryExpression();
-    Expected<AST::Expression::Ref, Error> parseExpression();
-    Expected<AST::Expression::Ref, Error> parseLHSExpression();
-    Expected<AST::Expression::Ref, Error> parseCoreLHSExpression();
-    Expected<AST::Expression::List, Error> parseArgumentExpressionList();
+    // AST::<type>::Ref whenever it can return multiple types.
+    Result<AST::Identifier> parseIdentifier();
+    Result<void> parseGlobalDecl();
+    Result<AST::Attribute::List> parseAttributes();
+    Result<AST::Attribute::Ref> parseAttribute();
+    Result<AST::Structure::Ref> parseStructure(AST::Attribute::List&&);
+    Result<AST::StructureMember> parseStructureMember();
+    Result<AST::TypeName::Ref> parseTypeName();
+    Result<AST::TypeName::Ref> parseTypeNameAfterIdentifier(AST::Identifier&&, SourcePosition start);
+    Result<AST::TypeName::Ref> parseArrayType();
+    Result<AST::Variable::Ref> parseVariable();
+    Result<AST::Variable::Ref> parseVariableWithAttributes(AST::Attribute::List&&);
+    Result<AST::VariableQualifier> parseVariableQualifier();
+    Result<AST::StorageClass> parseStorageClass();
+    Result<AST::AccessMode> parseAccessMode();
+    Result<AST::Function> parseFunction(AST::Attribute::List&&);
+    Result<AST::ParameterValue> parseParameterValue();
+    Result<AST::Statement::Ref> parseStatement();
+    Result<AST::CompoundStatement> parseCompoundStatement();
+    Result<AST::ReturnStatement> parseReturnStatement();
+    Result<AST::Expression::Ref> parseShortCircuitExpression(AST::Expression::Ref&&, TokenType, AST::BinaryOperation);
+    Result<AST::Expression::Ref> parseRelationalExpression();
+    Result<AST::Expression::Ref> parseRelationalExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Result<AST::Expression::Ref> parseShiftExpression();
+    Result<AST::Expression::Ref> parseShiftExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Result<AST::Expression::Ref> parseAdditiveExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Result<AST::Expression::Ref> parseBitwiseExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Result<AST::Expression::Ref> parseMultiplicativeExpressionPostUnary(AST::Expression::Ref&& lhs);
+    Result<AST::Expression::Ref> parseUnaryExpression();
+    Result<AST::Expression::Ref> parseSingularExpression();
+    Result<AST::Expression::Ref> parsePostfixExpression(AST::Expression::Ref&& base, SourcePosition startPosition);
+    Result<AST::Expression::Ref> parsePrimaryExpression();
+    Result<AST::Expression::Ref> parseExpression();
+    Result<AST::Expression::Ref> parseLHSExpression();
+    Result<AST::Expression::Ref> parseCoreLHSExpression();
+    Result<AST::Expression::List> parseArgumentExpressionList();
+    Result<AST::Value::Ref> parseConstantValue();
+    Result<AST::Value::Ref> parseLetValue();
+    Result<AST::Value::Ref> parseOverrideValueWithAttributes(AST::Attribute::List&&);
 
 private:
     Expected<Token, TokenType> consumeType(TokenType);
@@ -95,5 +103,7 @@ private:
     Lexer& m_lexer;
     Token m_current;
 };
+
+Result<AST::Expression::Ref> parseExpression(const String& source);
 
 } // namespace WGSL

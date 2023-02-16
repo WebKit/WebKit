@@ -28,6 +28,7 @@
 
 #if USE(CAIRO)
 
+#include "CairoUniquePtr.h"
 #include "GraphicsTypes.h"
 #include "IntSize.h"
 #include <cairo.h>
@@ -69,9 +70,8 @@ private:
 };
 #endif
 
-#if USE(CAIRO)
 const cairo_font_options_t* getDefaultCairoFontOptions();
-#endif
+void setDefaultCairoFontOptions(CairoUniquePtr<cairo_font_options_t>&&);
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
 void setSourceRGBAFromColor(cairo_t*, const Color&);

@@ -25,32 +25,25 @@
 
 #pragma once
 
-#include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
 namespace WebCore {
 
-class CSSFunctionValue final : public CSSValueList {
-public:
-    static Ref<CSSFunctionValue> create(CSSValueID name)
-    {
-        return adoptRef(*new CSSFunctionValue(name));
-    }
-    
-    String customCSSText() const;
+enum CSSValueID : uint16_t;
 
+class CSSFunctionValue final : public CSSValueContainingVector {
+public:
+    static Ref<CSSFunctionValue> create(CSSValueID name);
+    
     CSSValueID name() const { return m_name; }
 
-    bool equals(const CSSFunctionValue& other) const { return m_name == other.m_name && CSSValueList::equals(other); }
+    String customCSSText() const;
+    bool equals(const CSSFunctionValue& other) const { return m_name == other.m_name && itemsEqual(other); }
 
 private:
-    CSSFunctionValue(CSSValueID name)
-        : CSSValueList(FunctionClass, CommaSeparator)
-        , m_name(name)
-    {
-    }
+    explicit CSSFunctionValue(CSSValueID name);
 
-    CSSValueID m_name { CSSValueInvalid };
+    CSSValueID m_name { };
 };
 
 } // namespace WebCore

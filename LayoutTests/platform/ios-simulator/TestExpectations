@@ -38,10 +38,6 @@ webkit.org/b/235765 webrtc/canvas-to-peer-connection-2d.html [ Failure ]
 webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8.html [ Failure ]
 webkit.org/b/235765 webrtc/canvas-to-peer-connection-vp8-2d.html [ Failure ]
 
-# Simulator doesn't support WebAssembly.
-imported/w3c/web-platform-tests/wasm/wasm_stream_instantiate_test.html  [ Skip ]
-imported/w3c/web-platform-tests/wasm/wasm_stream_compile_test.html  [ Skip ]
-
 # display-p3 canvas and ImageData are not working in the simulator.
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]
 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]

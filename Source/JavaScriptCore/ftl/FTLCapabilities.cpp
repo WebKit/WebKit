@@ -151,7 +151,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CreateDirectArguments:
     case CreateScopedArguments:
     case CreateClonedArguments:
-    case CreateArgumentsButterfly:
+    case CreateArgumentsButterflyExcludingThis:
     case GetFromArguments:
     case PutToArguments:
     case GetArgument:

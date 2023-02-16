@@ -97,12 +97,12 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& newRequ
     checkNavigationPolicy(WTFMove(newRequest), redirectResponse, m_frame.loader().activeDocumentLoader(), { }, WTFMove(function));
 }
 
-URLKeepingBlobAlive FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary(const ResourceRequest& request, PolicyDecisionMode mode) const
+URLKeepingBlobAlive FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary(const ResourceRequest& request, const Document& document, PolicyDecisionMode mode) const
 {
     if (mode != PolicyDecisionMode::Asynchronous || !request.url().protocolIsBlob())
         return { };
 
-    return { request.url() };
+    return { request.url(), document.topOrigin().data() };
 }
 
 void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const ResourceResponse& redirectResponse, DocumentLoader* loader, RefPtr<FormState>&& formState, NavigationPolicyDecisionFunction&& function, PolicyDecisionMode policyDecisionMode)
@@ -192,7 +192,7 @@ void FrameLoader::PolicyChecker::checkNavigationPolicy(ResourceRequest&& request
 
     m_frame.loader().clearProvisionalLoadForPolicyCheck();
 
-    auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, policyDecisionMode);
+    auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, *m_frame.document(), policyDecisionMode);
     bool requestIsJavaScriptURL = request.url().protocolIsJavaScript();
     bool isInitialEmptyDocumentLoad = !m_frame.loader().stateMachine().committedFirstRealDocumentLoad() && request.url().protocolIsAbout() && !substituteData.isValid();
     auto requestIdentifier = PolicyCheckIdentifier::generate();
@@ -270,7 +270,7 @@ void FrameLoader::PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigat
     if (!DOMWindow::allowPopUp(m_frame))
         return function({ }, nullptr, { }, { }, ShouldContinuePolicyCheck::No);
 
-    auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request);
+    auto blobURLLifetimeExtension = extendBlobURLLifetimeIfNecessary(request, *m_frame.document());
 
     auto requestIdentifier = PolicyCheckIdentifier::generate();
     m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState.get(), frameName, requestIdentifier, [frame = Ref { m_frame }, request,

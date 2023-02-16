@@ -250,7 +250,7 @@ private:
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes;
     dispatch_once(&onceToken, ^{
-        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeFetchCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeOfflineWebApplicationCache, WKWebsiteDataTypeCookies, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeServiceWorkerRegistrations, WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeFileSystem ]]);
+        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeFetchCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeOfflineWebApplicationCache, WKWebsiteDataTypeCookies, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeServiceWorkerRegistrations, WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeFileSystem, WKWebsiteDataTypeSearchFieldRecentSearches ]]);
     });
 
     return allWebsiteDataTypes.get().get();
@@ -318,7 +318,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         auto *privateTypes = @[
             _WKWebsiteDataTypeHSTSCache,
             _WKWebsiteDataTypeMediaKeys,
-            _WKWebsiteDataTypeSearchFieldRecentSearches,
             _WKWebsiteDataTypeResourceLoadStatistics,
             _WKWebsiteDataTypeCredentials,
             _WKWebsiteDataTypeAdClickAttributions,
@@ -739,7 +738,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (![dataTypes isSubsetOfSet:supportedTypes])
         [NSException raise:NSInvalidArgumentException format:@"_renameOrigin can only be called with WKWebsiteDataTypeLocalStorage and WKWebsiteDataTypeIndexedDBDatabases right now."];
 
-    _websiteDataStore->renameOriginInWebsiteData(oldName, newName, WebKit::toWebsiteDataTypes(dataTypes), [completionHandler = makeBlockPtr(completionHandler)] {
+    auto oldOrigin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(oldName);
+    auto newOrigin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(newName);
+    _websiteDataStore->renameOriginInWebsiteData(WTFMove(oldOrigin), WTFMove(newOrigin), WebKit::toWebsiteDataTypes(dataTypes), [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }
@@ -1002,7 +1003,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return completionHandler(nil);
 
     auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    _websiteDataStore->originDirectoryForTesting(origin, topOrigin, *websiteDataType, [completionHandlerCopy = WTFMove(completionHandlerCopy)](auto result) {
+    _websiteDataStore->originDirectoryForTesting(WebCore::ClientOrigin { WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(topOrigin), WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(origin) }, *websiteDataType, [completionHandlerCopy = WTFMove(completionHandlerCopy)](auto result) {
         completionHandlerCopy(result);
     });
 }

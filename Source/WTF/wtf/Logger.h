@@ -344,8 +344,8 @@ private:
         UNUSED_PARAM(line);
         UNUSED_PARAM(function);
 #elif ENABLE(JOURNALD_LOG)
-        auto fileString = makeString("CODE_FILE=", file);
-        auto lineString = makeString("CODE_LINE=", line);
+        auto fileString = makeString("CODE_FILE="_s, file);
+        auto lineString = makeString("CODE_LINE="_s, line);
         sd_journal_send_with_location(fileString.utf8().data(), lineString.utf8().data(), function, "WEBKIT_SUBSYSTEM=%s", channel.subsystem, "WEBKIT_CHANNEL=%s", channel.name, "MESSAGE=%s", logMessage.utf8().data(), nullptr);
 #else
         fprintf(stderr, "[%s:%s:-] %s FILE=%s:%d %s\n", channel.subsystem, channel.name, logMessage.utf8().data(), file, line, function);

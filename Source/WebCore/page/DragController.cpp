@@ -1210,7 +1210,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<HTMLAttachmentElement>(element) && m_dragSourceAction.contains(DragSourceAction::Attachment)) {
         auto& attachment = downcast<HTMLAttachmentElement>(element);
-        auto* attachmentRenderer = attachment.renderer();
 
         src.editor().setIgnoreSelectionChanges(true);
         auto previousSelection = src.selection().selection();
@@ -1234,6 +1233,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
         
         if (!dragImage) {
             TextIndicatorData textIndicator;
+            auto* attachmentRenderer = dynamicDowncast<RenderAttachment>(attachment.renderer());
             if (attachmentRenderer)
                 attachmentRenderer->setShouldDrawBorder(false);
             dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src, textIndicator), DragImageAlpha) };

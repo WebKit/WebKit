@@ -44,7 +44,7 @@ end
 
 optparse.parse!
 
-options[:settingsFiles] = ARGV.slice!(0...)
+options[:settingsFiles] = ARGV.shift(ARGV.size)
 if options[:settingsFiles].empty?
   puts optparse
   exit 1

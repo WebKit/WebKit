@@ -191,6 +191,8 @@ struct PossiblyQuotedIdentifier {
             PseudoClassHasAttachment,
 #endif
             PseudoClassModal,
+            PseudoClassOpen,
+            PseudoClassClosed,
             PseudoClassUserInvalid,
             PseudoClassUserValid,
             PseudoClassNestingParent,

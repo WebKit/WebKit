@@ -299,14 +299,16 @@ window.test_driver_internal.action_sequence = async function(sources)
                 const key = convertSeleniumKeyCode(action.value);
                 if (key.modifier)
                     modifiersInEffect.push(key.modifier);
-                events.push({type: 'rawKeyDown', arguments: [key.key, modifiersInEffect.slice(0)]});
+                else
+                    events.push({type: 'rawKeyDown', arguments: [key.key, modifiersInEffect.slice(0)]});
                 break;
             }
             case 'keyUp': {
                 const key = convertSeleniumKeyCode(action.value);
                 if (key.modifier)
                     modifiersInEffect = modifiersInEffect.filter((modifier) => modifier != key.modifier);
-                events.push({type: 'rawKeyUp', arguments: [key.key, modifiersInEffect.slice(0)]});
+                else
+                    events.push({type: 'rawKeyUp', arguments: [key.key, modifiersInEffect.slice(0)]});
                 break;
             }
             case 'pause':

@@ -27,9 +27,12 @@
 #include "TypeStore.h"
 
 #include "ASTTypeName.h"
+#include "Types.h"
 #include <wtf/EnumTraits.h>
 
 namespace WGSL {
+
+using namespace Types;
 
 TypeStore::TypeStore()
     : m_typeConstrutors(AST::ParameterizedTypeName::NumberOfBaseTypes)
@@ -43,18 +46,18 @@ TypeStore::TypeStore()
     m_u32 = allocateType<Primitive>(Primitive::U32);
     m_f32 = allocateType<Primitive>(Primitive::F32);
 
-    allocateConstructor<Vector>(AST::ParameterizedTypeName::Base::Vec2, static_cast<uint8_t>(2));
-    allocateConstructor<Vector>(AST::ParameterizedTypeName::Base::Vec3, static_cast<uint8_t>(3));
-    allocateConstructor<Vector>(AST::ParameterizedTypeName::Base::Vec4, static_cast<uint8_t>(4));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat2x2, static_cast<uint8_t>(2), static_cast<uint8_t>(2));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat2x3, static_cast<uint8_t>(2), static_cast<uint8_t>(3));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat2x4, static_cast<uint8_t>(2), static_cast<uint8_t>(4));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat3x2, static_cast<uint8_t>(3), static_cast<uint8_t>(2));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat3x3, static_cast<uint8_t>(3), static_cast<uint8_t>(3));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat3x4, static_cast<uint8_t>(3), static_cast<uint8_t>(4));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat4x2, static_cast<uint8_t>(4), static_cast<uint8_t>(2));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat4x3, static_cast<uint8_t>(4), static_cast<uint8_t>(3));
-    allocateConstructor<Matrix>(AST::ParameterizedTypeName::Base::Mat4x4, static_cast<uint8_t>(4), static_cast<uint8_t>(4));
+    allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec2, 2);
+    allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec3, 3);
+    allocateConstructor(&TypeStore::vectorType, AST::ParameterizedTypeName::Base::Vec4, 4);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat2x2, 2, 2);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat2x3, 2, 3);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat2x4, 2, 4);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat3x2, 3, 2);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat3x3, 3, 3);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat3x4, 3, 4);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x2, 4, 2);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x3, 4, 3);
+    allocateConstructor(&TypeStore::matrixType, AST::ParameterizedTypeName::Base::Mat4x4, 4, 4);
 }
 
 Type* TypeStore::structType(const AST::Identifier& name)
@@ -75,6 +78,18 @@ Type* TypeStore::arrayType(Type* elementType, std::optional<unsigned> size)
     return allocateType<Array>(elementType, size);
 }
 
+Type* TypeStore::vectorType(Type* elementType, uint8_t size)
+{
+    // FIXME: these should be cached
+    return allocateType<Vector>(elementType, size);
+}
+
+Type* TypeStore::matrixType(Type* elementType, uint8_t columns, uint8_t rows)
+{
+    // FIXME: these should be cached
+    return allocateType<Matrix>(elementType, columns, rows);
+}
+
 template<typename TypeKind, typename... Arguments>
 Type* TypeStore::allocateType(Arguments&&... arguments)
 {
@@ -82,13 +97,13 @@ Type* TypeStore::allocateType(Arguments&&... arguments)
     return m_types.last().get();
 }
 
-template<typename TargetType, typename Base, typename... Arguments>
-void TypeStore::allocateConstructor(Base base, Arguments&&... arguments)
+template<typename TargetConstructor, typename Base, typename... Arguments>
+void TypeStore::allocateConstructor(TargetConstructor constructor, Base base, Arguments&&... arguments)
 {
     m_typeConstrutors[WTF::enumToUnderlyingType(base)] =
-        TypeConstructor { [this, arguments...](Type* elementType) -> Type* {
+        TypeConstructor { [this, constructor, arguments...](Type* elementType) -> Type* {
             // FIXME: this should be cached
-            return allocateType<TargetType>(elementType, arguments...);
+            return (this->*constructor)(elementType, arguments...);
         } };
 }
 

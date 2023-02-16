@@ -30,7 +30,7 @@ from .find import Info
 from .trace import Trace, Relationship, CommitsStory
 from datetime import datetime
 from webkitcorepy import arguments, run, string_utils
-from webkitscmpy import Commit, local
+from webkitscmpy import Commit, local, CommitClassifier
 
 fuzz = None
 
@@ -80,38 +80,8 @@ class Pickable(Command):
     name = 'pickable'
     help = 'List commits in a range which can be cherry-picked'
 
-    DEFAULT_PATTERNS = [
-        'Versioning',
-        'Gardening',
-        'Build-Fix',
-        'Apply-Patch',
-    ]
-    PATTERNS = {
-        'Cherry-pick': [re.compile(r'^[Cc]herry[- ][Pp]ick')],
-        'Versioning': [
-            re.compile(r'^[Vv]ersioning\.?$'),
-            re.compile(r'^Revert "?[Vv]ersioning\.?"?$'),
-        ],
-        'Gardening': [
-            Filters.gardening(r'GARDENING', ratio=85),
-            Filters.gardening(r'gardening', ratio=85),
-            Filters.gardening(r'REBASELINE'),
-            Filters.gardening(r'rebaseline'),
-            Filters.gardening(r'is a constant failure'),
-            Filters.gardening(r'is an almost constant failure'),
-            Filters.gardening('are constant failures'),
-            Filters.gardening('tests consistently failing'),
-        ],
-        'Build-Fix': [
-            re.compile(r'^Apply build[ -]fix'),
-            re.compile(r'^Unreviewed build[ -]fix'),
-        ],
-        'Apply-Patch': [re.compile(r'^Apply patch')],
-        'None': [],
-    }
-
     @classmethod
-    def parser(cls, parser, loggers=None, json=True):
+    def parser(cls, parser, loggers=None, classifier=None, json=True):
         parser.add_argument(
             'argument', nargs='+',
             type=str, default=None,
@@ -132,14 +102,16 @@ class Pickable(Command):
             dest='into',
             default=None,
         )
+        exclude_arguments = ''
+        if classifier and classifier.classes:
+            exclude_arguments = ' In this repository, those arguments are: {}.'.format(string_utils.join([
+                "'{}' ({})".format(klass.name, 'disabled' if klass.pickable else 'enabled')
+                for klass in classifier.classes
+            ]))
         parser.add_argument(
             '--exclude', '-e',
             help='Exclude certain patterns. By default, assumes the string argument is a regex. The program '
-                'will use certain prepared regexes for some string arguments (some of which are enabled by default), '
-                'those arguments are: {}'.format(string_utils.join([
-                    "'{}' ({})".format(pattern, 'enabled' if pattern in cls.DEFAULT_PATTERNS else 'disabled')
-                    for pattern in cls.PATTERNS.keys()
-                ])),
+                 'will use certain prepared regexes for some string arguments (some of which are enabled by default).{}'.format(exclude_arguments),
             action='append',
             dest='excluded',
             default=None,
@@ -173,15 +145,21 @@ class Pickable(Command):
 
         commits_story = commits_story or CommitsStory()
 
-        if excluded is None:
-            excluded = cls.DEFAULT_PATTERNS
-        excluded = list(itertools.chain(
-            *[cls.PATTERNS[arg] if arg in cls.PATTERNS else [re.compile(arg)] for arg in excluded]
-        ))
+        exclusion_candidates = [klass.name for klass in (repository.classifier.classes if repository.classifier else [])]
+        for exclusion in excluded or []:
+            if exclusion not in exclusion_candidates:
+                sys.stderr.write("'{}' is not a commit class in this repository\n".format(exclusion))
+
+        classifier = CommitClassifier()
+        for klass in repository.classifier.classes if repository.classifier else []:
+            if excluded is None and not klass.pickable:
+                classifier.classes.append(klass)
+            elif excluded and klass.name in excluded:
+                classifier.classes.append(klass)
 
         for commit in commits:
             all_commits[str(commit)] = commit
-            if any([ex(commit, repository=repository) if callable(ex) else ex.search(commit.message.splitlines()[0]) for ex in excluded]):
+            if classifier.classify(commit, repository=repository):
                 continue
             if commit in commits_story:
                 continue

@@ -2011,14 +2011,14 @@ String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
 }
 #endif
 
-void WebsiteDataStore::renameOriginInWebsiteData(URL&& oldName, URL&& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
+void WebsiteDataStore::renameOriginInWebsiteData(WebCore::SecurityOriginData&& oldOrigin, WebCore::SecurityOriginData&& newOrigin, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
-    networkProcess().renameOriginInWebsiteData(m_sessionID, oldName, newName, dataTypes, WTFMove(completionHandler));
+    networkProcess().renameOriginInWebsiteData(m_sessionID, oldOrigin, newOrigin, dataTypes, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::originDirectoryForTesting(URL&& origin, URL&& topOrigin, WebsiteDataType type, CompletionHandler<void(const String&)>&& completionHandler)
+void WebsiteDataStore::originDirectoryForTesting(WebCore::ClientOrigin&& origin, WebsiteDataType type, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    networkProcess().websiteDataOriginDirectoryForTesting(m_sessionID, WTFMove(origin), WTFMove(topOrigin), type, WTFMove(completionHandler));
+    networkProcess().websiteDataOriginDirectoryForTesting(m_sessionID, WTFMove(origin), type, WTFMove(completionHandler));
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

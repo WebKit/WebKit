@@ -29,54 +29,37 @@
 
 namespace WebCore {
 
-/**
- * Represents a pair of CSS values.
- */
 class CSSValuePair : public CSSValue {
 public:
-    enum class IdenticalValueEncoding : uint8_t {
-        DoNotCoalesce,
-        Coalesce
-    };
+    static Ref<CSSValuePair> create(Ref<CSSValue>, Ref<CSSValue>);
+    static Ref<CSSValuePair> createNoncoalescing(Ref<CSSValue>, Ref<CSSValue>);
 
-    static Ref<CSSValuePair> create(Ref<CSSValue>&& first, Ref<CSSValue>&& second, ValueSeparator separator)
-    {
-        return adoptRef(*new CSSValuePair(WTFMove(first), WTFMove(second), separator));
-    }
-    static Ref<CSSValuePair> create(Ref<CSSValue>&& first, Ref<CSSValue>&& second, ValueSeparator separator, IdenticalValueEncoding encoding)
-    {
-        return adoptRef(*new CSSValuePair(WTFMove(first), WTFMove(second), separator, encoding));
-    }
-
-    Ref<CSSValue> first() const { return m_first; }
-    Ref<CSSValue> second() const { return m_second; }
+    const CSSValue& first() const { return m_first; }
+    const CSSValue& second() const { return m_second; }
 
     String customCSSText() const;
-    bool equals(const CSSValuePair& other) const;
+    bool equals(const CSSValuePair&) const;
 
 private:
-    explicit CSSValuePair(Ref<CSSValue>&& first, Ref<CSSValue>&& second, ValueSeparator separator)
-        : CSSValue(ValuePairClass)
-        , m_first(WTFMove(first))
-        , m_second(WTFMove(second))
-    {
-        m_valueSeparator = separator;
-    }
+    enum class IdenticalValueSerialization : bool { DoNotCoalesce, Coalesce };
+    CSSValuePair(Ref<CSSValue>, Ref<CSSValue>, IdenticalValueSerialization);
 
-    explicit CSSValuePair(Ref<CSSValue>&& first, Ref<CSSValue>&& second, ValueSeparator separator, IdenticalValueEncoding encoding)
-        : CSSValue(ValuePairClass)
-        , m_encoding(encoding)
-        , m_first(WTFMove(first))
-        , m_second(WTFMove(second))
-    {
-        m_valueSeparator = separator;
-    }
-
-    IdenticalValueEncoding m_encoding { IdenticalValueEncoding::Coalesce };
+    // FIXME: Store coalesce bit in CSSValue to cut down on object size.
+    bool m_coalesceIdenticalValues { true };
     Ref<CSSValue> m_first;
     Ref<CSSValue> m_second;
 };
 
+inline const CSSValue& CSSValue::first() const
+{
+    return downcast<CSSValuePair>(*this).first();
+}
+
+inline const CSSValue& CSSValue::second() const
+{
+    return downcast<CSSValuePair>(*this).second();
+}
+
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSValuePair, isValuePair())
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSValuePair, isPair())

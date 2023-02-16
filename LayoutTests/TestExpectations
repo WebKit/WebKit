@@ -130,8 +130,10 @@ fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 fast/forms/attributed-strings.html [ Skip ]
 fast/scrolling/latching [ Skip ]
 
+# These tests rely on search field style on Mac WK2. 
 fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
 fast/forms/search/search-results-hidden-crash.html [ Skip ]
+fast/forms/search/search-recent-searches.html [ Skip ]
 
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
@@ -674,12 +676,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-s
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-appearance.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-backdrop-appearance.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-hidden-display.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-display.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-open-overflow-display.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-stacking-context.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display.tentative.html [ Skip ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-animated-hide-display.tentative.html [ Skip ]
 webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-animated-hide-finishes.tentative.html [ Skip ]
@@ -819,11 +815,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/image-loading-lazy-slow-aspect-ratio.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/dynamic-content-change-rendering.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-selectmenu-element/selectmenu-option-arbitrary-content-displayed.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-hidden-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-initiallyopen-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-open-overflow-display.tentative.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-popup-element/popup-stacking-context.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/phrasing-content-0/font-element-text-decoration-color/001-x.xhtml [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width.html [ ImageOnlyFailure ]
@@ -2848,12 +2839,8 @@ webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-039.html [ ImageOnlyFailure ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-103.html [ ImageOnlyFailure Pass ]
 webkit.org/b/183258 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-104.html [ ImageOnlyFailure Pass ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-full-size-kana-001.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-capitalize-033.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-full-size-kana-003.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-full-size-kana-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-003.html [ ImageOnlyFailure ]
-webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-full-size-kana-004.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-002.html [ ImageOnlyFailure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
@@ -3552,7 +3539,6 @@ webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properti
 webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-002.html [ Pass Failure ]
 webkit.org/b/203356 imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Timeout ]
-webkit.org/b/203357 imported/w3c/web-platform-tests/css/css-transitions/event-dispatch.tentative.html [ Pass Failure ]
 
 # wpt css-values failures
 webkit.org/b/203581 imported/w3c/web-platform-tests/css/css-values/absolute_length_units.html [ Pass Failure ]
@@ -6012,7 +5998,6 @@ imported/w3c/web-platform-tests/css/css-fonts/test_datafont_same_origin.html [ S
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/anchor-inside-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/reading-scroll-forces-anchoring.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-transitions/non-rendered-element-004.tentative.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-values/dynamic-viewport-units-rule-cache.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-variables/variable-reference-refresh.html [ Skip ]
 imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-with-transformation.html [ Skip ]
@@ -6256,3 +6241,10 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/load-error-events.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/module.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Skip ]
+
+webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-overflowing-float-margins-tirmmed-at-final-position-block-layout.html [ ImageOnlyFailure ]
+
+#Skipping text-spacing tests until the features get implemented.
+imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-computed.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-invalid.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-valid.html [ Skip ]

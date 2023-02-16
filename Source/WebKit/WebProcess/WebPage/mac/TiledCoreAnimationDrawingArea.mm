@@ -308,7 +308,7 @@ void TiledCoreAnimationDrawingArea::sendPendingNewlyReachedPaintingMilestones()
     m_webPage.send(Messages::WebPageProxy::DidReachLayoutMilestone(std::exchange(m_pendingNewlyReachedPaintingMilestones, { })));
 }
 
-void TiledCoreAnimationDrawingArea::addTransactionCallbackID(CallbackID callbackID)
+void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID callbackID)
 {
     m_pendingCallbackIDs.append(callbackID);
     triggerRenderingUpdate();
@@ -718,19 +718,6 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     prepopulateRectForZoom(scale, origin);
 }
 
-static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(ASCIILiteral keyPath)
-{
-    const float transientZoomSnapBackDuration = 0.25;
-
-    RetainPtr<CABasicAnimation> animation = [CABasicAnimation animationWithKeyPath:keyPath.createNSString().get()];
-    [animation setDuration:transientZoomSnapBackDuration];
-    [animation setFillMode:kCAFillModeForwards];
-    [animation setRemovedOnCompletion:false];
-    [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-
-    return animation;
-}
-
 void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin)
 {
     scale *= m_webPage.viewScaleFactor();
@@ -751,6 +738,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     constrainedOrigin.moveBy(-visibleContentRect.location());
     constrainedOrigin = -constrainedOrigin;
 
+    LOG_WITH_STREAM(Scrolling, stream << "TiledCoreAnimationDrawingArea::commitTransientZoom m_transientZoomScale" << m_transientZoomScale << " scale: " << scale << " m_transientZoomOrigin " << m_transientZoomOrigin << " constrainedOrigin " << constrainedOrigin);
     if (m_transientZoomScale == scale && roundedIntPoint(m_transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {
         // We're already at the right scale and position, so we don't need to animate.
         applyTransientZoomToPage(scale, origin);
@@ -761,7 +749,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     transform.translate(constrainedOrigin.x(), constrainedOrigin.y());
     transform.scale(scale);
 
-    RetainPtr<CABasicAnimation> renderViewAnimationCA = transientZoomSnapAnimationForKeyPath("transform"_s);
+    RetainPtr<CABasicAnimation> renderViewAnimationCA = DrawingArea::transientZoomSnapAnimationForKeyPath("transform"_s);
     auto renderViewAnimation = PlatformCAAnimationCocoa::create(renderViewAnimationCA.get());
     renderViewAnimation->setToValue(transform);
 
@@ -788,11 +776,11 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
         FloatRect shadowBounds = shadowLayerBoundsForFrame(frameView, scale);
         RetainPtr<CGPathRef> shadowPath = adoptCF(CGPathCreateWithRect(shadowBounds, NULL));
 
-        RetainPtr<CABasicAnimation> shadowBoundsAnimation = transientZoomSnapAnimationForKeyPath("bounds"_s);
+        RetainPtr<CABasicAnimation> shadowBoundsAnimation = DrawingArea::transientZoomSnapAnimationForKeyPath("bounds"_s);
         [shadowBoundsAnimation setToValue:[NSValue valueWithRect:shadowBounds]];
-        RetainPtr<CABasicAnimation> shadowPositionAnimation = transientZoomSnapAnimationForKeyPath("position"_s);
+        RetainPtr<CABasicAnimation> shadowPositionAnimation = DrawingArea::transientZoomSnapAnimationForKeyPath("position"_s);
         [shadowPositionAnimation setToValue:[NSValue valueWithPoint:shadowLayerPositionForFrame(frameView, constrainedOrigin)]];
-        RetainPtr<CABasicAnimation> shadowPathAnimation = transientZoomSnapAnimationForKeyPath("shadowPath"_s);
+        RetainPtr<CABasicAnimation> shadowPathAnimation = DrawingArea::transientZoomSnapAnimationForKeyPath("shadowPath"_s);
         [shadowPathAnimation setToValue:(__bridge id)shadowPath.get()];
 
         [shadowCALayer addAnimation:shadowBoundsAnimation.get() forKey:@"transientZoomCommitShadowBounds"];

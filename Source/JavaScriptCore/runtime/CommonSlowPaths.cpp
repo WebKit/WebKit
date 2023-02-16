@@ -39,6 +39,7 @@
 #include "IteratorOperations.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncGenerator.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSInternalPromise.h"
@@ -167,16 +168,38 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_cloned_arguments)
     RETURN(ClonedArguments::createWithMachineFrame(globalObject, callFrame, ArgumentsMode::Cloned));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_arguments_butterfly)
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_create_arguments_butterfly_excluding_this)
 {
     BEGIN();
-    auto bytecode = pc->as<OpCreateArgumentsButterfly>();
+    auto bytecode = pc->as<OpCreateArgumentsButterflyExcludingThis>();
+    JSCell* target = GET(bytecode.m_target).jsValue().asCell();
     int32_t argumentCount = callFrame->argumentCount();
-    JSImmutableButterfly* butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), argumentCount);
+    ASSERT(argumentCount > 1);
+
+    CheckedInt32 totalCount = argumentCount - 1;
+    int32_t additionalCount = 0;
+    JSImmutableButterfly* boundArgs = nullptr;
+    if (target->inherits<JSBoundFunction>()) {
+        JSBoundFunction* boundFunction = jsCast<JSBoundFunction*>(target);
+        if (boundFunction->canCloneBoundArgs()) {
+            boundArgs = boundFunction->boundArgs();
+            additionalCount = boundArgs ? boundArgs->length() : 0;
+            totalCount += additionalCount;
+            if (totalCount.hasOverflowed())
+                THROW(createOutOfMemoryError(globalObject));
+        }
+    }
+
+    JSImmutableButterfly* butterfly = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), totalCount.value());
     if (!butterfly)
         THROW(createOutOfMemoryError(globalObject));
-    for (int32_t index = 0; index < argumentCount; ++index)
-        butterfly->setIndex(vm, index, callFrame->uncheckedArgument(index));
+    if (additionalCount) {
+        ASSERT(boundArgs);
+        for (int32_t index = 0; index < additionalCount; ++index)
+            butterfly->setIndex(vm, index, boundArgs->get(index));
+    }
+    for (int32_t index = 0; index < (argumentCount - 1); ++index)
+        butterfly->setIndex(vm, index + additionalCount, callFrame->uncheckedArgument(index + 1));
     RETURN(butterfly);
 }
 

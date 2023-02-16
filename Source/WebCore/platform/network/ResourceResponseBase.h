@@ -308,9 +308,9 @@ protected:
 
 private:
     mutable Markable<Seconds, Seconds::MarkableTraits> m_age;
-    mutable Markable<WallTime, WallTime::MarkableTraits> m_date;
-    mutable Markable<WallTime, WallTime::MarkableTraits> m_expires;
-    mutable Markable<WallTime, WallTime::MarkableTraits> m_lastModified;
+    mutable Markable<WallTime> m_date;
+    mutable Markable<WallTime> m_expires;
+    mutable Markable<WallTime> m_lastModified;
     mutable ParsedContentRange m_contentRange;
     mutable CacheControlDirectives m_cacheControlDirectives;
 

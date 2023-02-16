@@ -1,0 +1,31 @@
+CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'document.querySelector('#myElement').shadowRoot.querySelector')
+Popover 1 Popover 1 Popover1 anchor (no action) Outside all popovers Inside popover 1  Popover 2 Inside popover 1 after button Next control after popover1 Popover 3 - button 3  Inside popover 3 Inside popover 6
+Bottom of popover6 Popover 6  Popover8 anchor (no action) Popover 1
+Anchor  Open Popover 2
+ Open convoluted popover Popover 1
+
+Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'document.querySelector('#myElement').shadowRoot.querySelector')
+
+FAIL Clicking outside a popover will dismiss the popover assert_false: expected false got true
+FAIL Canceling pointer events should not keep clicks from light dismissing popovers assert_false: expected false got true
+FAIL Clicking inside a popover does not close that popover assert_false: expected false got true
+FAIL Popovers close on pointerup, not pointerdown assert_false: expected false got true
+FAIL Synthetic events can't close popovers assert_false: expected false got true
+FAIL Moving focus outside the popover should not dismiss the popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Clicking inside a child popover shouldn't close either popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Clicking inside a parent popover should close child popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+PASS Clicking on invoking element, after using it for activation, shouldn't close its popover
+FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case) assert_true: button2 should activate popover2 expected true got false
+FAIL Clicking on invoking element, after using it for activation, shouldn't close its popover (nested case, not used for invocation) promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Clicking on invoking element, even if it wasn't used for activation, shouldn't close its popover promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Clicking on popovertoggletarget element, even if it wasn't used for activation, should hide it exactly once promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Clicking on anchor element (that isn't an invoking element) shouldn't prevent its popover from being closed promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Dragging from an open popover outside an open popover should leave the popover open promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL A popover inside an invoking element doesn't participate in that invoker's ancestor chain assert_true: invoking element should open popover expected true got false
+FAIL An invoking element that was not used to invoke the popover can still be part of the ancestor chain assert_false: expected false got true
+FAIL Scrolling within a popover should not close the popover promise_test: Unhandled rejection with value: object "Error: Unknown source type "wheel"."
+PASS Moving focus back to the anchor element should not dismiss the popover
+FAIL Ensure circular/convoluted ancestral relationships are functional assert_true: expected true got false
+FAIL Ensure circular/convoluted ancestral relationships are functional, with a direct showPopover() promise_test: Unhandled rejection with value: object "InvalidStateError: Element has unexpected visibility state"
+FAIL Hide the target popover during "hide all popovers until" assert_throws_dom: should throw because the event listener has already hidden the popover function "() => p14.hidePopover()" did not throw
+

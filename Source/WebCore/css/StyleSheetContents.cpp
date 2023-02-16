@@ -497,6 +497,8 @@ bool StyleSheetContents::traverseSubresources(const Function<bool(const CachedRe
         switch (rule.type()) {
         case StyleRuleType::Style:
             return downcast<StyleRule>(rule).properties().traverseSubresources(handler);
+        case StyleRuleType::StyleWithNesting:
+            return downcast<StyleRuleWithNesting>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::FontFace:
             return downcast<StyleRuleFontFace>(rule).properties().traverseSubresources(handler);
         case StyleRuleType::Import:

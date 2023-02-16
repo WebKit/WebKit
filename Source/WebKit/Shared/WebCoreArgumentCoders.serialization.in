@@ -1263,7 +1263,6 @@ header: <WebCore/ResourceRequest.h>
 header: <WebCore/ResourceRequest.h>
 [CustomHeader=True] struct WebCore::ResourceRequestPlatformData {
     WebCore::ResourceRequest::RequestData requestData;
-    std::optional<String> flattenedHTTPBody;
     bool acceptEncoding;
     uint16_t redirectCount;
 };
@@ -1603,12 +1602,6 @@ struct WebCore::DataListSuggestionInformation {
     WebCore::IntRect elementRect;
 };
 #endif
-
-struct WebCore::SecurityOriginData {
-    [Validator='!protocol->isHashTableDeletedValue()'] String protocol;
-    String host;
-    std::optional<uint16_t> port;
-};
 
 struct WebCore::ClientOrigin {
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
@@ -2051,10 +2044,7 @@ class WebCore::SVGPathByteStream {
 }
 
 header: <WebCore/BasicShapes.h>
-[Nested, CustomHeader] enum class WebCore::BasicShapeCenterCoordinate::Direction : uint8_t {
-    TopLeft,
-    BottomRight
-}
+[Nested, CustomHeader] enum class WebCore::BasicShapeCenterCoordinate::Direction : bool
 
 [CustomHeader] class WebCore::BasicShapeCenterCoordinate {
     WebCore::BasicShapeCenterCoordinate::Direction direction();
@@ -2866,7 +2856,6 @@ struct WebCore::SameSiteInfo {
     WebCore::SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
-    Markable<WebCore::OpaqueOriginIdentifier, WebCore::OpaqueOriginIdentifier::MarkableTraits> m_opaqueOriginIdentifier;
     bool m_universalAccess;
     bool m_domainWasSetInDOM;
     bool m_canLoadLocalResources;

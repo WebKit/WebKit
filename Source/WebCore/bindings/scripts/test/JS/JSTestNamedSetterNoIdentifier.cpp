@@ -308,7 +308,7 @@ void JSTestNamedSetterNoIdentifier::analyzeHeap(JSCell* cell, HeapAnalyzer& anal
     auto* thisObject = jsCast<JSTestNamedSetterNoIdentifier*>(cell);
     analyzer.setWrappedObjectForCell(cell, &thisObject->wrapped());
     if (thisObject->scriptExecutionContext())
-        analyzer.setLabelForCell(cell, "url " + thisObject->scriptExecutionContext()->url().string());
+        analyzer.setLabelForCell(cell, "url "_s + thisObject->scriptExecutionContext()->url().string());
     Base::analyzeHeap(cell, analyzer);
 }
 

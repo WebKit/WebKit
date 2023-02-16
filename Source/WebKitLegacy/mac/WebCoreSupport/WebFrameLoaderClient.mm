@@ -702,7 +702,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<WebCore::HasInsec
         CallFrameLoadDelegate(implementations->didCommitLoadForFrameFunc, webView, @selector(webView:didCommitLoadForFrame:), m_webFrame.get());
 }
 
-void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const WebCore::ResourceError& error, WebCore::WillContinueLoading)
+void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const WebCore::ResourceError& error, WebCore::WillContinueLoading, WebCore::WillInternallyHandleFailure)
 {
     m_webFrame->_private->provisionalURL = nullptr;
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -366,7 +366,8 @@ class PullRequest(Command):
 
         radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
         not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)
-        if radar_issue and not_radar and radar_issue.tracker.radarclient():
+        radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
+        if radar_issue and not_radar and radar_issue.tracker.radarclient() and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
             not_radar.cc_radar(radar=radar_issue)
         redacted_issue = None
         for candidate in issues:

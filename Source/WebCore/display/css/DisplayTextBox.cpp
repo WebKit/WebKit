@@ -37,7 +37,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TextBox);
 TextBox::TextBox(Tree& tree, UnadjustedAbsoluteFloatRect borderBox, Style&& displayStyle, const InlineDisplay::Box& box)
     : Box(tree, borderBox, WTFMove(displayStyle), { TypeFlags::TextBox })
     , m_expansion(box.expansion())
-    , m_text(box.text().value())
+    , m_text(box.text())
 {
 }
 

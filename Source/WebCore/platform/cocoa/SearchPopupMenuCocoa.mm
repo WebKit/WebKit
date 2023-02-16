@@ -162,6 +162,7 @@ void saveRecentSearches(const String& name, const Vector<RecentSearch>& searchIt
         [itemsDictionary setObject:adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:items.get(), searchesKey, nil]).get() forKey:name];
     }
 
+    [[NSFileManager defaultManager] createDirectoryAtPath:searchFieldRecentSearchesStorageDirectory() withIntermediateDirectories:YES attributes:nil error: nil];
     [recentSearchesPlist writeToFile:searchFieldRecentSearchesPlistPath() atomically:YES];
 }
 

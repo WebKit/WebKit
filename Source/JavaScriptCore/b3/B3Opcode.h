@@ -347,7 +347,10 @@ enum Opcode : uint8_t {
     // SIMD instructions
     VectorExtractLane,
     VectorReplaceLane,
-    VectorDupElement, // Currently only some architectures support this.
+
+    // Currently only some architectures support this.
+    // FIXME: Expand this to identical instructions for the other architectures as a macro.
+    VectorDupElement,
 
     VectorSplat,
 
@@ -411,6 +414,10 @@ enum Opcode : uint8_t {
     VectorExtaddPairwise,
     VectorMulSat,
     VectorSwizzle,
+
+    // Currently only some architectures support this.
+    // FIXME: Expand this to identical instructions for the other architectures as a macro.
+    VectorMulByElement,
 
     // SSA support, in the style of DFG SSA.
     Upsilon, // This uses the UpsilonValue class.

@@ -1048,6 +1048,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/TextEncoderStream.idl \
     $(WebCore)/dom/TextEncoderStreamEncoder.idl \
     $(WebCore)/dom/TextEvent.idl \
+    $(WebCore)/dom/ToggleEvent.idl \
     $(WebCore)/dom/TreeWalker.idl \
     $(WebCore)/dom/UIEvent.idl \
     $(WebCore)/dom/UIEventInit.idl \
@@ -1870,9 +1871,11 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/mathml.css \
     $(WebCore)/css/mediaControls.css \
     $(WebCore)/css/plugIns.css \
+    $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/svg.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \
+    $(WebCore)/html/shadow/attachmentElementShadow.css \
     $(WebCore)/html/shadow/imageOverlay.css \
     $(WebCore)/html/shadow/meterElementShadow.css \
     ModernMediaControls.css \

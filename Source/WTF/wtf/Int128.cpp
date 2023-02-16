@@ -107,27 +107,6 @@ static UInt128Impl MakeUInt128FromFloat(T v) {
   return MakeUInt128(0, static_cast<uint64_t>(v));
 }
 
-#if COMPILER(CLANG) && !defined(__SSE3__)
-// Workaround for clang bug: https://bugs.llvm.org/show_bug.cgi?id=38289
-// Casting from long double to uint64_t is miscompiled and drops bits.
-// It is more work, so only use when we need the workaround.
-static UInt128Impl MakeUInt128FromFloat(long double v) {
-  // Go 50 bits at a time, that fits in a double
-  static_assert(std::numeric_limits<double>::digits >= 50);
-  static_assert(std::numeric_limits<long double>::digits <= 150);
-  // Undefined behavior if v is not finite or cannot fit into UInt128Impl.
-  assert(std::isfinite(v) && v > -1 && v < std::ldexp(1.0L, 128));
-
-  v = std::ldexp(v, -100);
-  uint64_t w0 = static_cast<uint64_t>(static_cast<double>(std::trunc(v)));
-  v = std::ldexp(v - static_cast<double>(w0), 50);
-  uint64_t w1 = static_cast<uint64_t>(static_cast<double>(std::trunc(v)));
-  v = std::ldexp(v - static_cast<double>(w1), 50);
-  uint64_t w2 = static_cast<uint64_t>(static_cast<double>(std::trunc(v)));
-  return (static_cast<UInt128Impl>(w0) << 100) | (static_cast<UInt128Impl>(w1) << 50) |
-         static_cast<UInt128Impl>(w2);
-}
-#endif  // COMPILER(CLANG) && !__SSE3__
 }  // namespace
 
 UInt128Impl::UInt128Impl(float v) : UInt128Impl(MakeUInt128FromFloat(v)) {}

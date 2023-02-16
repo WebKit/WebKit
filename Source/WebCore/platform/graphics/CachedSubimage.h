@@ -32,16 +32,21 @@
 namespace WebCore {
 
 class GraphicsContext;
-class Image;
 class ImageBuffer;
 struct ImagePaintingOptions;
 
 class CachedSubimage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<CachedSubimage> create(Image&, GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
+    static std::unique_ptr<CachedSubimage> create(GraphicsContext&, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect);
+    static std::unique_ptr<CachedSubimage> createPixelated(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect);
 
     CachedSubimage(Ref<ImageBuffer>&&, const FloatSize& scaleFactor, const FloatRect& destinationRect, const FloatRect& sourceRect);
+
+    ImageBuffer& imageBuffer() const { return m_imageBuffer; }
+    FloatSize scaleFactor() const { return m_scaleFactor; }
+    FloatRect destinationRect() const { return m_destinationRect; }
+    FloatRect sourceRect() const { return m_sourceRect; }
 
     bool canBeUsed(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect) const;
     void draw(GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect);
@@ -52,9 +57,6 @@ public:
     static constexpr float maxArea = maxSide * maxSide;
 
 private:
-    static std::unique_ptr<CachedSubimage> createCachedSubimage(Image&, GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
-    static std::unique_ptr<CachedSubimage> createPixelatedCachedSubimage(Image&, GraphicsContext&, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions&);
-
     Ref<ImageBuffer> m_imageBuffer;
     FloatSize m_scaleFactor;
     FloatRect m_destinationRect;

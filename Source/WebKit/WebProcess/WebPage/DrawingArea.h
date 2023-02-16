@@ -60,6 +60,8 @@ struct ViewportAttributes;
 enum class DelegatedScrollingMode : uint8_t;
 }
 
+OBJC_CLASS CABasicAnimation;
+
 namespace WebKit {
 
 class LayerTreeHost;
@@ -166,6 +168,8 @@ public:
     void prepopulateRectForZoom(double scale, WebCore::FloatPoint origin);
     void setShouldScaleViewToFitDocument(bool);
     void scaleViewToFitDocumentIfNeeded();
+    
+    static RetainPtr<CABasicAnimation> transientZoomSnapAnimationForKeyPath(ASCIILiteral);
 
 protected:
     DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);
@@ -203,7 +207,7 @@ private:
     virtual void setDeviceScaleFactor(float) { }
     virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>) { }
 
-    virtual void addTransactionCallbackID(WebKit::CallbackID) { ASSERT_NOT_REACHED(); }
+    virtual void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) = 0;
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)

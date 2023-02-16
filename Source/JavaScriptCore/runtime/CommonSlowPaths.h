@@ -255,7 +255,7 @@ class CallFrame;
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_direct_arguments);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_scoped_arguments);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_cloned_arguments);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_arguments_butterfly);
+JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_arguments_butterfly_excluding_this);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_create_this);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_enter);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_to_this);

@@ -45,6 +45,7 @@
 #include "APIOpenPanelParameters.h"
 #include "APIPageConfiguration.h"
 #include "APIPolicyClient.h"
+#include "APISerializedScriptValue.h"
 #include "APISessionState.h"
 #include "APIUIClient.h"
 #include "APIWebAuthenticationPanel.h"
@@ -2169,13 +2170,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler(true);
         }
 #endif
-        void decidePolicyForSpeechRecognitionPermissionRequest(WebPageProxy& page, API::SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler) final
-        {
-            if (!m_client.decidePolicyForSpeechRecognitionPermissionRequest)
-                return;
-
-            m_client.decidePolicyForSpeechRecognitionPermissionRequest(toAPI(&page), toAPI(&origin), toAPI(SpeechRecognitionPermissionCallback::create(WTFMove(completionHandler)).ptr()));
-        }
 
         void decidePolicyForMediaKeySystemPermissionRequest(WebPageProxy& page, API::SecurityOrigin& origin, const String& keySystem, CompletionHandler<void(bool)>&& completionHandler) final
         {
@@ -3016,8 +3010,8 @@ void WKPageClearWheelEventTestMonitor(WKPageRef pageRef)
 void WKPageCallAfterNextPresentationUpdate(WKPageRef pageRef, void* context, WKPagePostPresentationUpdateFunction callback)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->callAfterNextPresentationUpdate([context, callback](WebKit::CallbackBase::Error error) {
-        callback(error != WebKit::CallbackBase::Error::None ? toAPI(API::Error::create().ptr()) : 0, context);
+    toImpl(pageRef)->callAfterNextPresentationUpdate([context, callback] {
+        callback(nullptr, context);
     });
 }
 

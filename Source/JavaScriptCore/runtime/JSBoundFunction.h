@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSFunction.h"
+#include "JSImmutableButterfly.h"
 
 namespace JSC {
 
@@ -42,6 +43,8 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags & ~ImplementsDefaultHasInstance;
     static_assert(StructureFlags & ImplementsHasInstance);
 
+    static constexpr unsigned maxNumberOfCloningBoundArguments = 64;
+
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
@@ -52,9 +55,16 @@ public:
     
     static bool customHasInstance(JSObject*, JSGlobalObject*, JSValue);
 
+    // If boundArgs' length is too large, we should not clone boundArgs when wrapping the bound function again.
+    bool canCloneBoundArgs() const
+    {
+        return boundArgsLength() <= JSBoundFunction::maxNumberOfCloningBoundArguments;
+    }
+
     JSObject* targetFunction() { return m_targetFunction.get(); }
     JSValue boundThis() { return m_boundThis.get(); }
     JSImmutableButterfly* boundArgs() { return m_boundArgs.get(); } // DO NOT allow this array to be mutated!
+    unsigned boundArgsLength() const { return m_boundArgs ? m_boundArgs->length() : 0; }
     JSArray* boundArgsCopy(JSGlobalObject*);
     JSString* nameMayBeNull() { return m_nameMayBeNull.get(); }
     String nameString()

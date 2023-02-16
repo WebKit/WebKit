@@ -65,7 +65,7 @@ private:
     void setIsAcceleratedContext(bool) final { }
 #endif
 
-    void drawNativeImage(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) final { }
+    void drawNativeImageInternal(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) final { }
 
     void drawSystemImage(SystemImage&, const FloatRect&) final { };
 

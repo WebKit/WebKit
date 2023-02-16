@@ -101,7 +101,7 @@ struct _WebKitWebPagePrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT, GObject)
 
 static void webFrameDestroyed(WebFrame*);
 

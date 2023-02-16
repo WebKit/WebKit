@@ -265,6 +265,12 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     }
 }
 
+const Layout::Box& BoxTree::insert(const RenderElement&, RenderObject& child)
+{
+    appendChild(createLayoutBox(child), child);
+    return layoutBoxForRenderer(child);
+}
+
 const Layout::ElementBox& BoxTree::rootLayoutBox() const
 {
     return *m_rootRenderer.layoutBox();
@@ -384,7 +390,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
                     runStream << "Generic inline level box";
                 runStream << " at (" << box.left() << "," << box.top() << ") size " << box.width() << "x" << box.height();
                 if (box.isText())
-                    runStream << " run(" << box.text()->start() << ", " << box.text()->end() << ")";
+                    runStream << " run(" << box.text().start() << ", " << box.text().end() << ")";
                 runStream << " renderer->(" << &inlineContent.rendererForLayoutBox(box.layoutBox()) << ")";
                 runStream.nextLine();
             }

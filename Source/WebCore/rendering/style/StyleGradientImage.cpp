@@ -29,13 +29,14 @@
 
 #include "CSSCalcValue.h"
 #include "CSSToLengthConversionData.h"
+#include "CSSValuePair.h"
+#include "CalculationValue.h"
 #include "ColorInterpolation.h"
 #include "ComputedStyleExtractor.h"
 #include "GeneratedImage.h"
 #include "GeometryUtilities.h"
 #include "GradientImage.h"
 #include "NodeRenderStyle.h"
-#include "Pair.h"
 #include "RenderElement.h"
 #include "StyleBuilderState.h"
 
@@ -668,7 +669,7 @@ GradientColorStops StyleGradientImage::computeStops(GradientAdapter& gradientAda
     };
 }
 
-static float positionFromValue(const CSSPrimitiveValue& initialValue, const CSSToLengthConversionData& conversionData, const FloatSize& size, bool isHorizontal)
+static float positionFromValue(const CSSValue& initialValue, const CSSToLengthConversionData& conversionData, const FloatSize& size, bool isHorizontal)
 {
     float origin = 0;
     float sign = 1;
@@ -679,15 +680,15 @@ static float positionFromValue(const CSSPrimitiveValue& initialValue, const CSST
     // In this case the center of the gradient is given relative to an edge in the
     // form of: [ top | bottom | right | left ] [ <percentage> | <length> ].
     if (initialValue.isPair()) {
-        auto originID = initialValue.pairValue()->first()->valueID();
+        auto originID = initialValue.first().valueID();
         if (originID == CSSValueRight || originID == CSSValueBottom) {
             // For right/bottom, the offset is relative to the far edge.
             origin = edgeDistance;
             sign = -1;
         }
-        value = initialValue.pairValue()->second();
+        value = &downcast<CSSPrimitiveValue>(initialValue.second());
     } else {
-        value = &initialValue;
+        value = &downcast<CSSPrimitiveValue>(initialValue);
     }
 
     if (value->isNumber())
@@ -722,7 +723,7 @@ static float positionFromValue(const CSSPrimitiveValue& initialValue, const CSST
 }
 
 // Resolve points/radii to front end values.
-static inline FloatPoint computeEndPoint(const CSSPrimitiveValue& horizontal, const CSSPrimitiveValue& vertical, const CSSToLengthConversionData& conversionData, const FloatSize& size)
+static inline FloatPoint computeEndPoint(const CSSValue& horizontal, const CSSValue& vertical, const CSSToLengthConversionData& conversionData, const FloatSize& size)
 {
     return { positionFromValue(horizontal, conversionData, size, true), positionFromValue(vertical, conversionData, size, false) };
 }

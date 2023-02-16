@@ -5076,6 +5076,16 @@ public:
             m_assembler.vectorMul(dest, left, right, simdInfo.lane);
     }
 
+    void vectorMulByElementFloat32(FPRegisterID left, FPRegisterID right, TrustedImm32 lane, FPRegisterID dest)
+    {
+        m_assembler.vectorFmulByElement(dest, left, right, SIMDLane::f32x4, lane.m_value);
+    }
+
+    void vectorMulByElementFloat64(FPRegisterID left, FPRegisterID right, TrustedImm32 lane, FPRegisterID dest)
+    {
+        m_assembler.vectorFmulByElement(dest, left, right, SIMDLane::f64x2, lane.m_value);
+    }
+
     void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));

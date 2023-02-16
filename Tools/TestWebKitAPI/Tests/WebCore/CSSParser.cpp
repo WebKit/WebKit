@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 
 using namespace WebCore;
 
-static unsigned computeNumberOfTracks(CSSValueList& valueList)
+static unsigned computeNumberOfTracks(CSSValueContainingVector& valueList)
 {
     unsigned numberOfTracks = 0;
     for (const auto& value : valueList) {
@@ -82,8 +82,8 @@ TEST(CSSPropertyParserTest, GridTrackLimits)
         ASSERT_TRUE(parser.parseDeclaration(properties, testCase.input));
         RefPtr<CSSValue> value = properties->getPropertyCSSValue(testCase.propertyID);
 
-        ASSERT_TRUE(value->isValueList());
-        EXPECT_EQ(computeNumberOfTracks(*downcast<CSSValueList>(value.get())), testCase.output);
+        ASSERT_TRUE(is<CSSValueContainingVector>(value.get()));
+        EXPECT_EQ(computeNumberOfTracks(downcast<CSSValueContainingVector>(*value)), testCase.output);
     }
 }
 

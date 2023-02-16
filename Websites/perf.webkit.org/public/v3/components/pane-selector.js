@@ -49,6 +49,8 @@ class PaneSelector extends ComponentBase {
 
             if (currentMetric) {
                 for (var platform of Platform.sortByName(Platform.all())) {
+                    if (platform.isHidden())
+                        continue;
                     if (platform.hasMetric(currentMetric))
                         this._platformItems.push(this._createListItem(platform, platform.label()));
                 }

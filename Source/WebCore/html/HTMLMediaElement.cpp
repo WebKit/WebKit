@@ -6458,8 +6458,10 @@ void HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent(EnqueueBeha
 
     ALWAYS_LOG(LOGIDENTIFIER, "hasTargets = ", hasTargets);
     m_lastTargetAvailabilityEventState = hasTargets;
+#if ENABLE(WIRELESS_PLAYBACK_TARGET_AVAILABILITY_API)
     auto event = WebKitPlaybackTargetAvailabilityEvent::create(eventNames().webkitplaybacktargetavailabilitychangedEvent, hasTargets);
     scheduleEvent(WTFMove(event));
+#endif
     scheduleUpdateMediaState();
 }
 

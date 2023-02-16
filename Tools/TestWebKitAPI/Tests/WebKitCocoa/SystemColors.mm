@@ -31,7 +31,7 @@
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
-#import <pal/spi/cocoa/NSColorSPI.h>
+#import <pal/spi/mac/NSColorSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY)

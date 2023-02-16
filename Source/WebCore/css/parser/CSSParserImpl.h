@@ -153,7 +153,7 @@ private:
     RefPtr<StyleRuleProperty> consumePropertyRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-    RefPtr<StyleRule> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     ParsedPropertyVector consumeDeclarationListInNewNestingContext(CSSParserTokenRange, StyleRuleType);
 
     enum class OnlyDeclarations {

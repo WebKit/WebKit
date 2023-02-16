@@ -325,16 +325,6 @@ static void runWebAuthenticationPanel()
 {
 }
 
-static void decidePolicyForSpeechRecognitionPermissionRequest(WKPageRef, WKSecurityOriginRef, WKSpeechRecognitionPermissionCallbackRef callback)
-{
-    TestController::singleton().completeSpeechRecognitionPermissionCheck(callback);
-}
-
-void TestController::completeSpeechRecognitionPermissionCheck(WKSpeechRecognitionPermissionCallbackRef callback)
-{
-    WKSpeechRecognitionPermissionCallbackComplete(callback, m_isSpeechRecognitionPermissionGranted);
-}
-
 void TestController::setIsSpeechRecognitionPermissionGranted(bool granted)
 {
     m_isSpeechRecognitionPermissionGranted = granted;
@@ -941,7 +931,7 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         0, // requestStorageAccessConfirm
         shouldAllowDeviceOrientationAndMotionAccess,
         runWebAuthenticationPanel,
-        decidePolicyForSpeechRecognitionPermissionRequest,
+        0,
         decidePolicyForMediaKeySystemPermissionRequest,
         nullptr, // requestWebAuthenticationNoGesture
         queryPermission,

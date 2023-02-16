@@ -71,6 +71,7 @@
 #include "MediaControlsHost.h"
 #include "MutableStyleProperties.h"
 #include "NodeTraversal.h"
+#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "RenderElement.h"
 #include "ScriptController.h"
@@ -79,6 +80,7 @@
 #include "SimulatedClick.h"
 #include "StyleProperties.h"
 #include "Text.h"
+#include "ToggleEvent.h"
 #include "UserAgentStyleSheets.h"
 #include "XMLNames.h"
 #include "markup.h"
@@ -390,6 +392,9 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& va
         }
     }
 
+    if (document().settings().popoverAttributeEnabled() && name == popoverAttr)
+        popoverAttributeChanged(value);
+
     auto& eventName = eventNameForEventHandlerAttribute(name);
     if (!eventName.isNull())
         setAttributeEventListener(eventName, name, value);
@@ -579,13 +584,12 @@ void HTMLElement::applyAspectRatioWithoutDimensionalRulesFromWidthAndHeightAttri
 void HTMLElement::addParsedWidthAndHeightToAspectRatioList(double width, double height, MutableStyleProperties& style)
 {
     auto ratioList = CSSValueList::createSlashSeparated();
-    ratioList->append(CSSPrimitiveValue::create(width, CSSUnitType::CSS_NUMBER));
-    ratioList->append(CSSPrimitiveValue::create(height, CSSUnitType::CSS_NUMBER));
+    ratioList->append(CSSPrimitiveValue::create(width));
+    ratioList->append(CSSPrimitiveValue::create(height));
     auto list = CSSValueList::createSpaceSeparated();
     list->append(CSSPrimitiveValue::create(CSSValueAuto));
     list->append(ratioList);
-
-    style.setProperty(CSSPropertyAspectRatio, RefPtr<CSSValue>(WTFMove(list)));
+    style.setProperty(CSSPropertyAspectRatio, WTFMove(list));
 }
 
 void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, MutableStyleProperties& style)
@@ -1210,6 +1214,167 @@ ExceptionOr<Ref<ElementInternals>> HTMLElement::attachInternals()
 
     queue->setElementInternalsAttached();
     return ElementInternals::create(*this);
+}
+
+static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilityState expectedState)
+{
+    if (!element.hasAttributeWithoutSynchronization(HTMLNames::popoverAttr))
+        return Exception { InvalidStateError, "Element does not have the popover attribute"_s };
+
+    if (!element.isConnected())
+        return Exception { InvalidStateError, "Element is not connected"_s };
+
+    if (element.popoverData()->visibilityState() != expectedState)
+        return Exception { InvalidStateError, "Element has unexpected visibility state"_s };
+
+    if (is<HTMLDialogElement>(element) && element.hasAttributeWithoutSynchronization(HTMLNames::openAttr))
+        return Exception { InvalidStateError, "Element is an open <dialog> element"_s };
+
+#if ENABLE(FULLSCREEN_API)
+    if (element.hasFullscreenFlag())
+        return Exception { InvalidStateError, "Element is fullscreen"_s };
+#endif
+
+    return { };
+}
+
+ExceptionOr<void> HTMLElement::showPopover()
+{
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
+        return check.releaseException();
+
+    ASSERT(!isInTopLayer());
+
+    auto event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
+    dispatchEvent(event);
+    if (event->defaultPrevented())
+        return { };
+
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
+        return check.releaseException();
+
+    ASSERT(popoverData());
+
+    // FIXME: Run auto popover steps.
+
+    if (popoverState() == PopoverState::Auto)
+        popoverData()->setPreviouslyFocusedElement(document().focusedElement());
+
+    addToTopLayer();
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassOpen, true },
+        { CSSSelector::PseudoClassClosed, false }
+    });
+    popoverData()->setVisibilityState(PopoverVisibilityState::Showing);
+
+    // FIXME: Queue popover toggle event task.
+
+    return { };
+}
+
+ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+{
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
+        return check.releaseException();
+
+    ASSERT(popoverData());
+
+    // FIXME: Run auto popover steps.
+
+    if (fireEvents == FireEvents::Yes) {
+        auto event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No);
+        dispatchEvent(event);
+        if (event->defaultPrevented())
+            return { };
+    }
+
+    if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
+        return check.releaseException();
+
+    ASSERT(popoverData());
+
+    removeFromTopLayer();
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassClosed, true },
+        { CSSSelector::PseudoClassOpen, false }
+    });
+    popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);
+
+    // FIXME: Queue popover toggle event task.
+
+    if (RefPtr element = popoverData()->previouslyFocusedElement()) {
+        if (focusPreviousElement == FocusPreviousElement::Yes) {
+            FocusOptions options;
+            options.preventScroll = true;
+            element->focus(options);
+        }
+        popoverData()->setPreviouslyFocusedElement(nullptr);
+    }
+
+    return { };
+}
+
+ExceptionOr<void> HTMLElement::hidePopover()
+{
+    return hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes);
+}
+
+ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
+{
+    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing && !force.value_or(false))
+        return hidePopover();
+
+    return showPopover();
+}
+
+void HTMLElement::popoverAttributeChanged(const AtomString& value)
+{
+    auto newPopoverState = [](const AtomString& value) -> PopoverState {
+        if (!value || value.isNull())
+            return PopoverState::None;
+
+        if (value == emptyString() || equalIgnoringASCIICase(value, autoAtom()))
+            return PopoverState::Auto;
+
+        return PopoverState::Manual;
+    }(value);
+
+    auto oldPopoverState = popoverState();
+    if (newPopoverState == oldPopoverState)
+        return;
+
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassOpen, false },
+        { CSSSelector::PseudoClassClosed, newPopoverState != PopoverState::None }
+    });
+
+    if (oldPopoverState != PopoverState::None)
+        hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::No);
+
+    if (newPopoverState == PopoverState::None)
+        clearPopoverData();
+    else
+        ensurePopoverData().setPopoverState(newPopoverState);
+}
+
+const AtomString& HTMLElement::popover() const
+{
+    switch (popoverState()) {
+    case PopoverState::None:
+        return nullAtom();
+    case PopoverState::Auto:
+        return autoAtom();
+    case PopoverState::Manual:
+        return manualAtom();
+    }
+    return nullAtom();
+}
+
+PopoverState HTMLElement::popoverState() const
+{
+    return popoverData() ? popoverData()->popoverState() : PopoverState::None;
 }
 
 #if PLATFORM(IOS_FAMILY)

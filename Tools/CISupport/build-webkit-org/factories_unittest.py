@@ -1774,7 +1774,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
-            'jhbuild',
             'compile-webkit'
         ],
         'WPE-Linux-64-bit-Release-Ubuntu-2004-Build': [
@@ -1786,7 +1785,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
-            'jhbuild',
             'compile-webkit'
         ],
         'WPE-Linux-64-bit-Release-Clang-Build': [

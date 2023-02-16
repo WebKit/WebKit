@@ -52,6 +52,7 @@
 #include "APIPolicyClient.h"
 #include "APIResourceLoadClient.h"
 #include "APISecurityOrigin.h"
+#include "APISerializedScriptValue.h"
 #include "APIUIClient.h"
 #include "APIURLRequest.h"
 #include "APIWebsitePolicies.h"
@@ -1463,6 +1464,11 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
         m_pageLoadState.setPendingAPIRequest(transaction, { navigation.navigationID(), url.string() });
 
     LoadParameters loadParameters;
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    auto host = url.host().toString();
+    loadParameters.topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(host);
+    loadParameters.host = host;
+#endif
     loadParameters.navigationID = navigation.navigationID();
     loadParameters.request = WTFMove(request);
     loadParameters.shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy;
@@ -1475,9 +1481,6 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.effectiveSandboxFlags = navigation.effectiveSandboxFlags();
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     loadParameters.existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume;
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    loadParameters.topPrivatelyControlledDomain = WebCore::topPrivatelyControlledDomain(loadParameters.request.url().host().toString());
-#endif
     maybeInitializeSandboxExtensionHandle(process, url, m_pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
     prepareToLoadWebPage(process, loadParameters);
@@ -3583,7 +3586,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
 
 #if ENABLE(DEVICE_ORIENTATION)
     if (navigation && (!navigation->websitePolicies() || navigation->websitePolicies()->deviceOrientationAndMotionAccessState() == WebCore::DeviceOrientationOrMotionPermissionState::Prompt)) {
-        auto deviceOrientationPermission = websiteDataStore->deviceOrientationAndMotionAccessController().cachedDeviceOrientationPermission(SecurityOriginData::fromURL(navigation->currentRequest().url()));
+        auto deviceOrientationPermission = websiteDataStore->deviceOrientationAndMotionAccessController().cachedDeviceOrientationPermission(SecurityOriginData::fromURLWithoutStrictOpaqueness(navigation->currentRequest().url()));
         if (deviceOrientationPermission != WebCore::DeviceOrientationOrMotionPermissionState::Prompt) {
             if (!navigation->websitePolicies())
                 navigation->setWebsitePolicies(API::WebsitePolicies::create());
@@ -4708,7 +4711,7 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
 
     sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)] () mutable {
         if (weakThis) {
-            weakThis->callAfterNextPresentationUpdate([callback = WTFMove(callback)] (auto) mutable {
+            weakThis->callAfterNextPresentationUpdate([callback = WTFMove(callback)] () mutable {
                 callback();
             });
         } else
@@ -5022,7 +5025,7 @@ void WebPageProxy::didChangeProvisionalURLForFrameShared(Ref<WebProcessProxy>&& 
     frame->didReceiveServerRedirectForProvisionalLoad(url);
 }
 
-void WebPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData)
+void WebPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData, WillInternallyHandleFailure willInternallyHandleFailure)
 {
     RefPtr frame = WebFrameProxy::webFrame(frameID);
     MESSAGE_CHECK(m_process, frame);
@@ -5032,13 +5035,13 @@ void WebPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameID, Frame
         return;
     }
 
-    didFailProvisionalLoadForFrameShared(m_process.copyRef(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData);
+    didFailProvisionalLoadForFrameShared(m_process.copyRef(), *frame, WTFMove(frameInfo), WTFMove(request), navigationID, provisionalURL, error, willContinueLoading, userData, willInternallyHandleFailure);
 }
 
-void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData)
+void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& process, WebFrameProxy& frame, FrameInfoData&& frameInfo, WebCore::ResourceRequest&& request, uint64_t navigationID, const String& provisionalURL, const ResourceError& error, WillContinueLoading willContinueLoading, const UserData& userData, WillInternallyHandleFailure willInternallyHandleFailure)
 {
     LOG(Loading, "(Loading) WebPageProxy %" PRIu64 " in web process pid %i didFailProvisionalLoadForFrame to provisionalURL %s", m_identifier.toUInt64(), process->processIdentifier(), provisionalURL.utf8().data());
-    WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "didFailProvisionalLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d, domain=%s, code=%d, isMainFrame=%d", frame.frameID().object().toUInt64(), frame.isMainFrame(), error.domain().utf8().data(), error.errorCode(), frame.isMainFrame());
+    WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "didFailProvisionalLoadForFrame: frameID=%" PRIu64 ", isMainFrame=%d, domain=%s, code=%d, isMainFrame=%d, willInternallyHandleFailure=%d", frame.frameID().object().toUInt64(), frame.isMainFrame(), error.domain().utf8().data(), error.errorCode(), frame.isMainFrame(), willInternallyHandleFailure == WillInternallyHandleFailure::Yes);
 
     PageClientProtector protector(pageClient());
 
@@ -5071,11 +5074,13 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     ASSERT(!m_failingProvisionalLoadURL);
     m_failingProvisionalLoadURL = provisionalURL;
 
-    if (m_loaderClient)
-        m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, frame, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
-    else {
-        m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
-        m_navigationClient->didFailProvisionalLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
+    if (willInternallyHandleFailure == WillInternallyHandleFailure::No) {
+        if (m_loaderClient)
+            m_loaderClient->didFailProvisionalLoadWithErrorForFrame(*this, frame, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
+        else {
+            m_navigationClient->didFailProvisionalNavigationWithError(*this, FrameInfoData { frameInfo }, navigation.get(), error, process->transformHandlesToObjects(userData.object()).get());
+            m_navigationClient->didFailProvisionalLoadWithErrorForFrame(*this, WTFMove(request), error, WTFMove(frameInfo));
+        }
     }
 
     m_failingProvisionalLoadURL = { };
@@ -5482,7 +5487,7 @@ void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
 #if ENABLE(GPU_PROCESS)
         if (auto* gpuProcess = m_process->processPool().gpuProcess()) {
             if (auto* frame = WebFrameProxy::webFrame(frameID))
-                gpuProcess->updateCaptureOrigin(SecurityOriginData::fromURL(frame->url()), m_process->coreProcessIdentifier());
+                gpuProcess->updateCaptureOrigin(SecurityOriginData::fromURLWithoutStrictOpaqueness(frame->url()), m_process->coreProcessIdentifier());
         }
 #endif
     }
@@ -8972,7 +8977,7 @@ void WebPageProxy::makeStorageSpaceRequest(FrameIdentifier frameID, const String
     MESSAGE_CHECK(m_process, frame);
 
     auto originData = SecurityOriginData::fromDatabaseIdentifier(originIdentifier);
-    if (originData != SecurityOriginData::fromURL(URL { currentURL() })) {
+    if (originData != SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { currentURL() })) {
         completionHandler(currentQuota);
         return;
     }
@@ -9563,13 +9568,13 @@ void WebPageProxy::drawPagesForPrinting(WebFrameProxy* frame, const PrintInfo& p
 #endif
 
 #if PLATFORM(COCOA)
-void WebPageProxy::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& callback)
+void WebPageProxy::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, bool allowTransparentBackground, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& callback)
 {
     if (!hasRunningProcess()) {
         callback({ });
         return;
     }
-    sendWithAsyncReply(Messages::WebPage::DrawToPDF(frameID, rect), WTFMove(callback));
+    sendWithAsyncReply(Messages::WebPage::DrawToPDF(frameID, rect, allowTransparentBackground), WTFMove(callback));
 }
 #endif // PLATFORM(COCOA)
 
@@ -10416,10 +10421,10 @@ void WebPageProxy::clearWheelEventTestMonitor()
     send(Messages::WebPage::ClearWheelEventTestMonitor());
 }
 
-void WebPageProxy::callAfterNextPresentationUpdate(WTF::Function<void (CallbackBase::Error)>&& callback)
+void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
 {
     if (!hasRunningProcess() || !m_drawingArea) {
-        callback(CallbackBase::Error::OwnerWasInvalidated);
+        callback();
         return;
     }
 

@@ -38,6 +38,8 @@ public:
         CaptureDevice m_device;
         String m_application;
     };
+
+    virtual bool requiresCaptureDevicesEnumeration() const { return false; }
 };
 
 } // namespace WebCore

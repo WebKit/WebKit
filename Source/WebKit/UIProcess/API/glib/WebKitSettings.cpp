@@ -104,7 +104,7 @@ struct _WebKitSettingsPrivate {
  * ```
  */
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitSettings, webkit_settings, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitSettings, webkit_settings, G_TYPE_OBJECT, GObject)
 
 enum {
     PROP_0,

@@ -116,6 +116,9 @@ public:
     virtual Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const { return { }; }
     virtual void deleteAlternativeServicesForHostNames(const Vector<String>&) { }
     virtual void clearAlternativeServices(WallTime) { }
+    virtual HashSet<WebCore::SecurityOriginData> originsWithCredentials() { return { }; }
+    virtual void removeCredentialsForOrigins(const Vector<WebCore::SecurityOriginData>&) { }
+    virtual void clearCredentials(WallTime) { }
 
     PAL::SessionID sessionID() const { return m_sessionID; }
     NetworkProcess& networkProcess() { return m_networkProcess; }

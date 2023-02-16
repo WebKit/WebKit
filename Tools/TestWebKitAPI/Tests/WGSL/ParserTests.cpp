@@ -27,6 +27,7 @@
 #include "ASTAttribute.h"
 #include "ASTTypeName.h"
 #include "Parser.h"
+#include "ParserPrivate.h"
 
 #include "AST.h"
 #include "Lexer.h"
@@ -315,6 +316,169 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
 #pragma mark -
 #pragma mark Declarations
 
+TEST(WGSLParserTests, GlobalConstant)
+{
+    auto shader = parse("const x: i32 = 1;\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_EQ(shader->values().size(), 1u);
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_TRUE(shader->functions().isEmpty());
+
+    {
+        // const x: i32 = 1
+        EXPECT_TRUE(is<WGSL::AST::ConstantValue>(shader->values()[0]));
+        auto& constant = downcast<WGSL::AST::ConstantValue>(shader->values()[0]);
+        EXPECT_EQ(constant.name(), "x"_s);
+        EXPECT_TRUE(constant.maybeTypeName());
+        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(*constant.maybeTypeName()));
+        auto& typeName = downcast<WGSL::AST::NamedTypeName>(*constant.maybeTypeName());
+        EXPECT_EQ(typeName.name().id(), "i32"_s);
+        EXPECT_TRUE(is<WGSL::AST::AbstractIntegerLiteral>(constant.initializer()));
+    }
+}
+
+TEST(WGSLParserTests, LocalConstant)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() -> vec4<f32> {\n"
+        "    const x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
+        "    return x;\n"
+        "}"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->values().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    {
+        auto& func = shader->functions()[0];
+        // @vertex
+        EXPECT_EQ(func.attributes().size(), 1u);
+        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+
+        // fn main() -> vec4<f32> {
+        EXPECT_EQ(func.name(), "main"_s);
+        EXPECT_TRUE(func.parameters().isEmpty());
+        EXPECT_TRUE(func.returnAttributes().isEmpty());
+        EXPECT_TRUE(func.maybeReturnType());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(func.maybeReturnType()));
+        EXPECT_EQ(func.body().statements().size(), 2u);
+
+        // lex x = vec4<f32>(0.4, 0.4, 0.8, 1.0);
+        EXPECT_TRUE(is<WGSL::AST::ValueStatement>(func.body().statements()[0]));
+        auto& constantStmt = downcast<WGSL::AST::ValueStatement>(func.body().statements()[0]);
+        EXPECT_TRUE(is<WGSL::AST::ConstantValue>(constantStmt.value()));
+        auto& constant = downcast<WGSL::AST::ConstantValue>(constantStmt.value());
+        EXPECT_EQ(constant.name(), "x"_s);
+        EXPECT_EQ(constant.maybeTypeName(), nullptr);
+        EXPECT_TRUE(is<WGSL::AST::CallExpression>(constant.initializer()));
+        auto& constantInitExpr = downcast<WGSL::AST::CallExpression>(constant.initializer());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(constantInitExpr.target()));
+        EXPECT_EQ(constantInitExpr.arguments().size(), 4u);
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[0]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[1]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[2]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(constantInitExpr.arguments()[3]));
+
+        // return x;
+        EXPECT_TRUE(is<WGSL::AST::ReturnStatement>(func.body().statements()[1]));
+        auto& retStmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[1]);
+        EXPECT_TRUE(retStmt.maybeExpression());
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(retStmt.maybeExpression()));
+        auto& retExpr = downcast<WGSL::AST::IdentifierExpression>(*retStmt.maybeExpression());
+        EXPECT_EQ(retExpr.identifier(), "x"_s);
+    }
+}
+
+TEST(WGSLParserTests, LocalLet)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() -> vec4<f32> {\n"
+        "    let x = vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
+        "    return x;\n"
+        "}"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader.has_value());
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    {
+        auto& func = shader->functions()[0];
+        // @vertex
+        EXPECT_EQ(func.attributes().size(), 1u);
+        EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
+        EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::AST::StageAttribute::Stage::Vertex);
+
+        // fn main() -> vec4<f32> {
+        EXPECT_EQ(func.name(), "main"_s);
+        EXPECT_TRUE(func.parameters().isEmpty());
+        EXPECT_TRUE(func.returnAttributes().isEmpty());
+        EXPECT_TRUE(func.maybeReturnType());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(func.maybeReturnType()));
+        EXPECT_EQ(func.body().statements().size(), 2u);
+
+        // lex x = vec4<f32>(0.4, 0.4, 0.8, 1.0);
+        EXPECT_TRUE(is<WGSL::AST::ValueStatement>(func.body().statements()[0]));
+        auto& letStmt = downcast<WGSL::AST::ValueStatement>(func.body().statements()[0]);
+        EXPECT_TRUE(is<WGSL::AST::LetValue>(letStmt.value()));
+        auto& let = downcast<WGSL::AST::LetValue>(letStmt.value());
+        EXPECT_EQ(let.name(), "x"_s);
+        EXPECT_EQ(let.maybeTypeName(), nullptr);
+        EXPECT_TRUE(is<WGSL::AST::CallExpression>(let.initializer()));
+        auto& letInitExpr = downcast<WGSL::AST::CallExpression>(let.initializer());
+        EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(letInitExpr.target()));
+        EXPECT_EQ(letInitExpr.arguments().size(), 4u);
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[0]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[1]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[2]));
+        EXPECT_TRUE(is<WGSL::AST::AbstractFloatLiteral>(letInitExpr.arguments()[3]));
+
+        // return x;
+        EXPECT_TRUE(is<WGSL::AST::ReturnStatement>(func.body().statements()[1]));
+        auto& retStmt = downcast<WGSL::AST::ReturnStatement>(func.body().statements()[1]);
+        EXPECT_TRUE(retStmt.maybeExpression());
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(retStmt.maybeExpression()));
+        auto& retExpr = downcast<WGSL::AST::IdentifierExpression>(*retStmt.maybeExpression());
+        EXPECT_EQ(retExpr.identifier(), "x"_s);
+    }
+}
+
+TEST(WGSLParserTests, GlobalOverride)
+{
+    auto shader = parse("override x: i32;\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_EQ(shader->values().size(), 1u);
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_TRUE(shader->functions().isEmpty());
+
+    {
+        // override x: i32
+        EXPECT_TRUE(is<WGSL::AST::OverrideValue>(shader->values()[0]));
+        auto& override = downcast<WGSL::AST::OverrideValue>(shader->values()[0]);
+        EXPECT_TRUE(override.attributes().isEmpty());
+        EXPECT_EQ(override.name(), "x"_s);
+        EXPECT_TRUE(override.maybeTypeName());
+        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(*override.maybeTypeName()));
+        auto& typeName = downcast<WGSL::AST::NamedTypeName>(*override.maybeTypeName());
+        EXPECT_EQ(typeName.name().id(), "i32"_s);
+        EXPECT_EQ(override.maybeInitializer(), nullptr);
+    }
+}
+
 TEST(WGSLParserTests, LocalVariable)
 {
     auto shader = parse(
@@ -451,6 +615,78 @@ TEST(WGSLParserTests, UnaryExpression)
     }
 }
 
+static void testUnaryExpressionX(ASCIILiteral program, WGSL::AST::UnaryOperation op)
+{
+    EXPECT_EXPRESSION(expression, program);
+    EXPECT_TRUE(is<WGSL::AST::UnaryExpression>(expression.get()));
+    auto& unaryExpression = downcast<WGSL::AST::UnaryExpression>(expression.get());
+
+    EXPECT_EQ(unaryExpression.operation(), op);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(unaryExpression.expression()));
+    auto& expr = downcast<WGSL::AST::IdentifierExpression>(unaryExpression.expression());
+    EXPECT_EQ(expr.identifier(), "x"_s);
+}
+
+TEST(WGSLParserTests, UnaryExpression2)
+{
+    testUnaryExpressionX("&x"_s, WGSL::AST::UnaryOperation::AddressOf);
+    testUnaryExpressionX("~x"_s, WGSL::AST::UnaryOperation::Complement);
+    testUnaryExpressionX("*x"_s, WGSL::AST::UnaryOperation::Dereference);
+    testUnaryExpressionX("-x"_s, WGSL::AST::UnaryOperation::Negate);
+    testUnaryExpressionX("!x"_s, WGSL::AST::UnaryOperation::Not);
+}
+
+static void testBinaryExpressionXY(ASCIILiteral program, WGSL::AST::BinaryOperation op, const Vector<ASCIILiteral>& ids)
+{
+    EXPECT_EQ(ids.size(), 2u);
+
+    EXPECT_EXPRESSION(expression, program);
+    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression.get()));
+    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+
+    EXPECT_EQ(binaryExpression.operation(), op);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.leftExpression()));
+    auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.leftExpression());
+    EXPECT_EQ(lhs.identifier(), ids[0]);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression()));
+    auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression.rightExpression());
+    EXPECT_EQ(rhs.identifier(), ids[1]);
+}
+
+static void testBinaryExpressionXYZ(ASCIILiteral program, const Vector<WGSL::AST::BinaryOperation>& ops, const Vector<ASCIILiteral>& ids)
+{
+    EXPECT_EQ(ops.size(), 2u);
+    EXPECT_EQ(ids.size(), 3u);
+
+    EXPECT_EXPRESSION(expression, program);
+    EXPECT_TRUE(is<WGSL::AST::BinaryExpression>(expression.get()));
+    auto& binaryExpression = downcast<WGSL::AST::BinaryExpression>(expression.get());
+
+    auto& complex = is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()) ?
+        binaryExpression.leftExpression() : binaryExpression.rightExpression();
+    auto& simple = is<WGSL::AST::BinaryExpression>(binaryExpression.leftExpression()) ?
+        binaryExpression.rightExpression() : binaryExpression.leftExpression();
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(simple));
+
+    {
+        auto& binaryExpression2 = downcast<WGSL::AST::BinaryExpression>(complex);
+
+        EXPECT_EQ(binaryExpression2.operation(), ops[0]);
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression()));
+        auto& lhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.leftExpression());
+        EXPECT_EQ(lhs.identifier(), ids[0]);
+        EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression()));
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(binaryExpression2.rightExpression());
+        EXPECT_EQ(rhs.identifier(), ids[1]);
+    }
+
+    {
+        EXPECT_EQ(binaryExpression.operation(), ops[1]);
+        auto& rhs = downcast<WGSL::AST::IdentifierExpression>(simple);
+        EXPECT_EQ(rhs.identifier(), ids[2]);
+    }
+}
+
 TEST(WGSLParserTests, BinaryExpression)
 {
     auto shader = parse(
@@ -495,6 +731,79 @@ TEST(WGSLParserTests, BinaryExpression)
         EXPECT_EQ(rhs.identifier(), "y"_s);
     }
 }
+
+TEST(WGSLParserTests, BinaryExpression2)
+{
+    testBinaryExpressionXYZ("x - y + z"_s,
+        { WGSL::AST::BinaryOperation::Subtract, WGSL::AST::BinaryOperation::Add },
+        { "x"_s, "y"_s, "z"_s });
+
+    testBinaryExpressionXYZ("x + y * z"_s,
+        { WGSL::AST::BinaryOperation::Multiply, WGSL::AST::BinaryOperation::Add },
+        { "y"_s, "z"_s, "x"_s });
+
+    testBinaryExpressionXYZ("x / y + z"_s,
+        { WGSL::AST::BinaryOperation::Divide, WGSL::AST::BinaryOperation::Add },
+        { "x"_s, "y"_s, "z"_s });
+}
+
+// FIXME: Evaluate more complex expressions involving << and forced ().
+TEST(WGSLParserTests, BinaryLeftShiftExpression)
+{
+    testBinaryExpressionXY("x << y"_s, WGSL::AST::BinaryOperation::LeftShift, { "x"_s, "y"_s });
+}
+
+// FIXME: Evaluate more complex expressions involving >> and forced ().
+TEST(WGSLParserTests, BinaryRightShiftExpression)
+{
+    testBinaryExpressionXY("x >> y"_s, WGSL::AST::BinaryOperation::RightShift, { "x"_s, "y"_s });
+}
+
+// FIXME: Test failing cases, such as, "x & y | z"
+TEST(WGSLParserTests, BinaryBitwiseExpression)
+{
+    testBinaryExpressionXYZ("x & y & z"_s,
+        { WGSL::AST::BinaryOperation::And, WGSL::AST::BinaryOperation::And },
+        { "x"_s, "y"_s, "z"_s });
+
+    testBinaryExpressionXYZ("x | y | z"_s,
+        { WGSL::AST::BinaryOperation::Or, WGSL::AST::BinaryOperation::Or },
+        { "x"_s, "y"_s, "z"_s });
+
+    testBinaryExpressionXYZ("x ^ y ^ z"_s,
+        { WGSL::AST::BinaryOperation::Xor, WGSL::AST::BinaryOperation::Xor },
+        { "x"_s, "y"_s, "z"_s });
+}
+
+// FIXME: Test failing cases, such as, "x < y > z"
+TEST(WGSLParserTests, RelationalExpression)
+{
+    testBinaryExpressionXY("x == y"_s, WGSL::AST::BinaryOperation::Equal,        { "x"_s, "y"_s });
+    testBinaryExpressionXY("x != y"_s, WGSL::AST::BinaryOperation::NotEqual,     { "x"_s, "y"_s });
+    testBinaryExpressionXY("x > y"_s,  WGSL::AST::BinaryOperation::GreaterThan,  { "x"_s, "y"_s });
+    testBinaryExpressionXY("x >= y"_s, WGSL::AST::BinaryOperation::GreaterEqual, { "x"_s, "y"_s });
+    testBinaryExpressionXY("x < y"_s,  WGSL::AST::BinaryOperation::LessThan,     { "x"_s, "y"_s });
+    testBinaryExpressionXY("x <= y"_s, WGSL::AST::BinaryOperation::LessEqual,    { "x"_s, "y"_s });
+}
+
+// FIXME: Test failing cases, such as, "x && y || z"
+TEST(WGSLParserTest, ShortCircuitAndExpression)
+{
+    testBinaryExpressionXY("x && y"_s, WGSL::AST::BinaryOperation::ShortCircuitAnd, { "x"_s, "y"_s });
+    testBinaryExpressionXYZ("x && y && z"_s,
+        { WGSL::AST::BinaryOperation::ShortCircuitAnd, WGSL::AST::BinaryOperation::ShortCircuitAnd },
+        { "x"_s, "y"_s, "z"_s });
+}
+
+// FIXME: Test failing cases, such as, "x || y && z"
+TEST(WGSLParserTest, ShortCircuitOrExpression)
+{
+    testBinaryExpressionXY("x || y"_s, WGSL::AST::BinaryOperation::ShortCircuitOr, { "x"_s, "y"_s });
+    testBinaryExpressionXYZ("x || y || z"_s,
+        { WGSL::AST::BinaryOperation::ShortCircuitOr, WGSL::AST::BinaryOperation::ShortCircuitOr },
+        { "x"_s, "y"_s, "z"_s });
+}
+
 #pragma mark -
 #pragma mark WebGPU Example Shaders
 
@@ -572,6 +881,68 @@ TEST(WGSLParserTests, TriangleVert)
         auto& expr = downcast<WGSL::AST::CallExpression>(*retStmt.maybeExpression());
         EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(expr.target()));
     }
+}
+
+TEST(WGSLParserTests, VectorWithOutComponentType)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() {\n"
+        "    x = vec4(1.0);\n"
+        "}\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    auto& func = shader->functions()[0];
+    EXPECT_EQ(func.body().statements().size(), 1u);
+
+    // x = vec4(1.0);
+    EXPECT_TRUE(is<WGSL::AST::AssignmentStatement>(func.body().statements()[0]));
+    auto& stmt = downcast<WGSL::AST::AssignmentStatement>(func.body().statements()[0]);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(stmt.lhs()));
+    auto& id = downcast<WGSL::AST::IdentifierExpression>(stmt.lhs());
+    EXPECT_EQ(id.identifier(), "x"_s);
+
+    EXPECT_TRUE(is<WGSL::AST::CallExpression>(stmt.rhs()));
+    auto& constructor = downcast<WGSL::AST::CallExpression>(stmt.rhs());
+    EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(constructor.target()));
+    auto& vec4 = downcast<WGSL::AST::NamedTypeName>(constructor.target());
+    EXPECT_EQ(vec4.name().id(), "vec4"_s);
+}
+
+TEST(WGSLParserTests, VectorWithComponentType)
+{
+    auto shader = parse(
+        "@vertex\n"
+        "fn main() {\n"
+        "    x = vec4<f32>(1.0);\n"
+        "}\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_EQ(shader->functions().size(), 1u);
+
+    auto& func = shader->functions()[0];
+    EXPECT_EQ(func.body().statements().size(), 1u);
+
+    // x = vec4<f32>(1.0);
+    EXPECT_TRUE(is<WGSL::AST::AssignmentStatement>(func.body().statements()[0]));
+    auto& stmt = downcast<WGSL::AST::AssignmentStatement>(func.body().statements()[0]);
+    EXPECT_TRUE(is<WGSL::AST::IdentifierExpression>(stmt.lhs()));
+    auto& id = downcast<WGSL::AST::IdentifierExpression>(stmt.lhs());
+    EXPECT_EQ(id.identifier(), "x"_s);
+
+    EXPECT_TRUE(is<WGSL::AST::CallExpression>(stmt.rhs()));
+    auto& constructor = downcast<WGSL::AST::CallExpression>(stmt.rhs());
+    EXPECT_TRUE(is<WGSL::AST::ParameterizedTypeName>(constructor.target()));
+    checkVec4F32Type(constructor.target());
 }
 
 TEST(WGSLParserTests, RedFrag)

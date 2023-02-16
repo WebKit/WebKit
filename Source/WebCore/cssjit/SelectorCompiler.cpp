@@ -128,6 +128,8 @@ static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesVolumeLock
 #if ENABLE(ATTACHMENT_ELEMENT)
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationHasAttachment, bool, (const Element&));
 #endif
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesOpenPseudoClass, bool, (const Element&));
+static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesClosedPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesModalPseudoClass, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserInvalid, bool, (const Element&));
 static JSC_DECLARE_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsUserValid, bool, (const Element&));
@@ -823,6 +825,16 @@ JSC_DEFINE_JIT_OPERATION(operationMatchesLangPseudoClass, bool, (const Element& 
     return matchesLangPseudoClass(element, argumentList);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationMatchesOpenPseudoClass, bool, (const Element& element))
+{
+    return matchesOpenPseudoClass(element);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationMatchesClosedPseudoClass, bool, (const Element& element))
+{
+    return matchesClosedPseudoClass(element);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationMatchesModalPseudoClass, bool, (const Element& element))
 {
     return matchesModalPseudoClass(element);
@@ -976,6 +988,14 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationHasAttachment));
         return FunctionType::SimpleSelectorChecker;
 #endif
+
+    case CSSSelector::PseudoClassOpen:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesOpenPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
+
+    case CSSSelector::PseudoClassClosed:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesClosedPseudoClass));
+        return FunctionType::SimpleSelectorChecker;
 
     case CSSSelector::PseudoClassModal:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesModalPseudoClass));

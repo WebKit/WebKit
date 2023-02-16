@@ -39,10 +39,12 @@ public:
 private:
     RuleSetBuilder(const MQ::MediaQueryEvaluator&);
 
+    void addStyleRule(const StyleRuleWithNesting&);
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
     void addChildRule(RefPtr<StyleRuleBase>);
     void disallowDynamicMediaQueryEvaluationIfNeeded();
+    void addStyleRuleWithSelectorList(const CSSSelectorList&, const StyleRule&);
 
     void registerLayers(const Vector<CascadeLayerName>&);
     void pushCascadeLayer(const CascadeLayerName&);
@@ -51,7 +53,7 @@ private:
     
     void addMutatingRulesToResolver();
     void updateDynamicMediaQueries();
-    void populateStyleRuleResolvedSelectorList(const StyleRule&);
+    void populateStyleRuleResolvedSelectorList(const StyleRuleWithNesting&);
 
     struct MediaQueryCollector {
         ~MediaQueryCollector();

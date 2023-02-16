@@ -1553,9 +1553,10 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
         }
-        auto securityOrigins = WebCore::CredentialStorage::originsWithSessionCredentials();
-        for (auto& securityOrigin : securityOrigins)
-            callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
+        if (session) {
+            for (auto origin : session->originsWithCredentials())
+                callbackAggregator->m_websiteData.entries.append({ origin, WebsiteDataType::Credentials, 0 });
+        }
     }
 
 #if PLATFORM(COCOA) || USE(SOUP)
@@ -1626,9 +1627,10 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (auto* session = storageSession(sessionID))
-            session->credentialStorage().clearCredentials();
-        WebCore::CredentialStorage::clearSessionCredentials();
+        if (auto* storage = storageSession(sessionID))
+            storage->credentialStorage().clearCredentials();
+        if (session)
+            session->clearCredentials(modifiedSince);
     }
 
 #if ENABLE(SERVICE_WORKER)
@@ -1719,7 +1721,7 @@ void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, Option
             cache->traverse(cachePartition, [cache, clearTasksHandler, shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
                 if (traversalEntry) {
                     ASSERT_UNUSED(cachePartition, equalIgnoringNullity(traversalEntry->entry.key().partition(), cachePartition));
-                    if (shouldClearAllEntriesInPartition || SecurityOriginData::fromURL(traversalEntry->entry.response().url()) == origin)
+                    if (shouldClearAllEntriesInPartition || SecurityOriginData::fromURLWithoutStrictOpaqueness(traversalEntry->entry.response().url()) == origin)
                         cacheKeysToDelete.append(traversalEntry->entry.key());
                     return;
                 }
@@ -1795,11 +1797,12 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
-        if (auto* session = storageSession(sessionID)) {
+        if (auto* storage = storageSession(sessionID)) {
             for (auto& originData : originDatas)
-                session->credentialStorage().removeCredentialsWithOrigin(originData);
+                storage->credentialStorage().removeCredentialsWithOrigin(originData);
         }
-        WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originDatas);
+        if (session)
+            session->removeCredentialsForOrigins(originDatas);
     }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
@@ -1946,9 +1949,11 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
                 session->credentialStorage().removeCredentialsWithOrigin(origin);
         }
 
-        auto origins = WebCore::CredentialStorage::originsWithSessionCredentials();
-        auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator->m_domains);
-        WebCore::CredentialStorage::removeSessionCredentialsWithOrigins(originsToDelete);
+        if (session) {
+            auto origins = session->originsWithCredentials();
+            auto originsToDelete = filterForRegistrableDomains(origins, domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator->m_domains);
+            session->removeCredentialsForOrigins(originsToDelete);
+        }
     }
     
 #if ENABLE(SERVICE_WORKER)
@@ -2082,6 +2087,11 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
             auto securityOrigins = networkStorageSession->credentialStorage().originsWithCredentials();
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::Credentials, 0 });
+        }
+
+        if (session) {
+            for (auto origin : session->originsWithCredentials())
+                callbackAggregator->m_websiteData.entries.append({ origin, WebsiteDataType::Credentials, 0 });
         }
     }
     
@@ -2404,11 +2414,9 @@ void NetworkProcess::didIncreaseQuota(PAL::SessionID sessionID, ClientOrigin&& o
         session->storageManager().didIncreaseQuota(WTFMove(origin), identifier, newQuota);
 }
 
-void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const URL& oldName, const URL& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, SecurityOriginData&& oldOrigin, SecurityOriginData&& newOrigin, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    auto oldOrigin = WebCore::SecurityOriginData::fromURL(oldName);
-    auto newOrigin = WebCore::SecurityOriginData::fromURL(newName);
 
     if (oldOrigin.isNull() || newOrigin.isNull())
         return;
@@ -2417,14 +2425,13 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
         session->storageManager().moveData(dataTypes, WTFMove(oldOrigin), WTFMove(newOrigin), [aggregator] { });
 }
 
-void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, const URL& origin, const URL& topOrigin, WebsiteDataType dataType, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, ClientOrigin&& origin, WebsiteDataType dataType, CompletionHandler<void(const String&)>&& completionHandler)
 {
     auto* session = networkSession(sessionID);
     if (!session)
         return completionHandler({ });
 
-    auto clientOrigin = WebCore::ClientOrigin { WebCore::SecurityOriginData::fromURL(topOrigin), WebCore::SecurityOriginData::fromURL(origin) };
-    session->storageManager().getOriginDirectory(WTFMove(clientOrigin), dataType, WTFMove(completionHandler));
+    session->storageManager().getOriginDirectory(WTFMove(origin), dataType, WTFMove(completionHandler));
 }
 
 #if ENABLE(SERVICE_WORKER)

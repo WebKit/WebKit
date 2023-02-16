@@ -46,6 +46,11 @@ struct FeaturesVk : FeatureSetBase
         "The point size range reported from the API is inconsistent with the actual behavior",
         &members, "http://anglebug.com/2970"};
 
+    FeatureInfo supportsDepthClipEnable = {
+        "supportsDepthClipEnable", FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_EXT_depth_clip_enable extension.", &members,
+        "http://anglebug.com/3970"};
+
     FeatureInfo depthClamping = {
         "depthClamping", FeatureCategory::VulkanWorkarounds,
         "The depth value is not clamped to [0,1] for floating point depth buffers.", &members,
@@ -822,6 +827,15 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports the VK_EXT_surface_maintenance1 and VK_EXT_swapchain_maintenance1 "
         "extensions",
         &members, "https://anglebug.com/7847"};
+
+    FeatureInfo supportsGetMemoryRequirements2 = {
+        "supportsGetMemoryRequirements2", FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_KHR_get_memory_requirements2 extension", &members,
+        "https://anglebug.com/4830"};
+
+    FeatureInfo supportsBindMemory2 = {"supportsBindMemory2", FeatureCategory::VulkanFeatures,
+                                       "VkDevice supports the VK_KHR_bind_memory2 extension",
+                                       &members, "https://anglebug.com/4966"};
 
     FeatureInfo preferSubmitOnAnySamplesPassedQueryEnd = {
         "preferSubmitOnAnySamplesPassedQueryEnd", FeatureCategory::VulkanWorkarounds,

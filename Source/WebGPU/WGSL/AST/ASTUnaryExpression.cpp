@@ -26,21 +26,13 @@
 #include "config.h"
 #include "ASTUnaryExpression.h"
 
-#include <wtf/EnumTraits.h>
-#include <wtf/text/ASCIILiteral.h>
+#include <wtf/PrintStream.h>
 
 namespace WGSL::AST {
 
 void printInternal(PrintStream& out, UnaryOperation op)
 {
-    constexpr ASCIILiteral unaryOperationNames[] = {
-        "&"_s,
-        "~"_s,
-        "*"_s,
-        "-"_s,
-        "!"_s
-    };
-
-    out.print(unaryOperationNames[WTF::enumToUnderlyingType(op)]);
+    out.print(toASCIILiteral(op));
 }
+
 } // namespace WGSL::AST

@@ -871,7 +871,7 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
 }
 
 template <typename CharType>
-static RefPtr<CSSValueList> parseSimpleTransformList(const CharType* chars, unsigned length)
+static RefPtr<CSSValue> parseSimpleTransformList(const CharType* chars, unsigned length)
 {
     if (!transformCanLikelyUseFastPath(chars, length))
         return nullptr;

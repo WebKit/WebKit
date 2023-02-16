@@ -73,7 +73,7 @@ private:
     void triggerRenderingUpdate() override;
     void attachViewOverlayGraphicsLayer(WebCore::GraphicsLayer*) override;
 
-    void addTransactionCallbackID(CallbackID) override;
+    void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
     virtual void willCommitLayerTree(RemoteLayerTreeTransaction&) { };
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) final;
@@ -163,7 +163,7 @@ private:
     HashSet<RemoteLayerTreeDisplayRefreshMonitor*>* m_displayRefreshMonitorsToNotify { nullptr };
 
     TransactionID m_currentTransactionID;
-    Vector<RemoteLayerTreeTransaction::TransactionCallbackID> m_pendingCallbackIDs;
+    Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;

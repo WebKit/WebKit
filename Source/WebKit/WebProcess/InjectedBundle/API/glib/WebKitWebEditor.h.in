@@ -29,6 +29,7 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_EDITOR               (webkit_web_editor_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_EDITOR(obj)               (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_EDITOR, WebKitWebEditor))
 #define WEBKIT_IS_WEB_EDITOR(obj)            (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_EDITOR))
 #define WEBKIT_WEB_EDITOR_CLASS(klass)       (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_EDITOR, WebKitWebEditorClass))
@@ -39,21 +40,15 @@ typedef struct _WebKitWebEditor        WebKitWebEditor;
 typedef struct _WebKitWebEditorClass   WebKitWebEditorClass;
 typedef struct _WebKitWebEditorPrivate WebKitWebEditorPrivate;
 
-/* Forward declarations */
-typedef struct _WebKitWebPage          WebKitWebPage;
-
-struct _WebKitWebEditor {
-    GObject parent;
-
-    WebKitWebEditorPrivate *priv;
-};
-
 struct _WebKitWebEditorClass {
     GObjectClass parent_class;
 };
+#endif
 
-WEBKIT_API GType
-webkit_web_editor_get_type (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebEditor, webkit_web_editor, WEBKIT, WEB_EDITOR, GObject)
+
+/* Forward declarations */
+typedef struct _WebKitWebPage          WebKitWebPage;
 
 WEBKIT_API WebKitWebPage *
 webkit_web_editor_get_page (WebKitWebEditor *editor);

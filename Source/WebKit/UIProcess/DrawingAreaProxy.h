@@ -26,8 +26,8 @@
 
 #pragma once
 
+#include "Connection.h"
 #include "DrawingAreaInfo.h"
-#include "GenericCallback.h"
 #include "MessageReceiver.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
@@ -108,7 +108,7 @@ public:
 
     virtual void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) { }
     
-    virtual void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) { ASSERT_NOT_REACHED(); }
+    virtual void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) = 0;
 
     // Hide the content until the currently pending update arrives.
     virtual void hideContentUntilPendingUpdate() { ASSERT_NOT_REACHED(); }
@@ -124,7 +124,7 @@ public:
     virtual WTF::MachSendRight createFence();
 #endif
 
-    virtual void dispatchPresentationCallbacksAfterFlushingLayers(const Vector<CallbackID>&) { }
+    virtual void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) { }
 
     virtual bool shouldCoalesceVisualEditorStateUpdates() const { return false; }
     virtual bool shouldSendWheelEventsToEventDispatcher() const { return false; }

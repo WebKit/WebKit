@@ -1088,7 +1088,7 @@ public:
     void drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
 
-    void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+    void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 
 #if PLATFORM(GTK)
     void drawPagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, WebCore::ResourceError&&)>&&);

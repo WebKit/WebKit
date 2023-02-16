@@ -926,8 +926,10 @@ static void setSyncOnClock(GstElement *element, bool sync)
 
 void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
 {
+#if !USE(WESTEROS_SINK)
     setSyncOnClock(videoSink(), sync);
     setSyncOnClock(audioSink(), sync);
+#endif
 }
 
 template <typename TrackPrivateType>
@@ -2348,7 +2350,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
         // the media element gets a chance to enable its page sleep disabler.
         // Emitting this notification in more cases triggers unwanted code paths
         // and test timeouts.
-        if (stateReallyChanged && (m_oldState != m_currentState) && (m_oldState == GST_STATE_PAUSED && m_currentState == GST_STATE_PLAYING) && !shouldPauseForBuffering) {
+        if (stateReallyChanged && (m_oldState != m_currentState) && (m_oldState == GST_STATE_PAUSED && m_currentState == GST_STATE_PLAYING) && !shouldPauseForBuffering
+            && !m_isSeeking) {
             GST_INFO_OBJECT(pipeline(), "Playback state changed from %s to %s. Notifying the media player client", gst_element_state_get_name(m_oldState), gst_element_state_get_name(m_currentState));
             shouldUpdatePlaybackState = true;
         }

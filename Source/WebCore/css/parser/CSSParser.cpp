@@ -90,18 +90,19 @@ bool CSSParser::parseSupportsCondition(const String& condition)
     return CSSSupportsParser::supportsCondition(parser.tokenizer()->tokenRange(), parser, CSSSupportsParser::ForWindowCSS) == CSSSupportsParser::Supported;
 }
 
+static Color color(const RefPtr<CSSValue>& value)
+{
+    if (!value || !value->isColor())
+        return { };
+    return value->color();
+}
+
 Color CSSParser::parseColor(const String& string, const CSSParserContext& context)
 {
     bool strict = !isQuirksModeBehavior(context.mode);
     if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
         return *color;
-    auto value = parseSingleValue(CSSPropertyColor, string, context);
-    if (!is<CSSPrimitiveValue>(value))
-        return { };
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (!primitiveValue.isRGBColor())
-        return { };
-    return primitiveValue.color();
+    return color(parseSingleValue(CSSPropertyColor, string, context));
 }
 
 Color CSSParser::parseColorWithoutContext(const String& string, bool strict)
@@ -109,13 +110,7 @@ Color CSSParser::parseColorWithoutContext(const String& string, bool strict)
     if (auto color = CSSParserFastPaths::parseSimpleColor(string, strict))
         return *color;
     // FIXME: Unclear why we want to ignore the boolean argument "strict" and always pass strictCSSParserContext here.
-    auto value = parseSingleValue(CSSPropertyColor, string, strictCSSParserContext());
-    if (!is<CSSPrimitiveValue>(value))
-        return { };
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (!primitiveValue.isRGBColor())
-        return { };
-    return primitiveValue.color();
+    return color(parseSingleValue(CSSPropertyColor, string, strictCSSParserContext()));
 }
 
 Color CSSParser::parseSystemColor(StringView string)

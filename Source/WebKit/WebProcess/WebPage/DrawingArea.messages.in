@@ -37,7 +37,7 @@ messages -> DrawingArea NotRefCounted {
     AcceleratedAnimationDidStart(WebCore::GraphicsLayer::PlatformLayerID layerID, String key, MonotonicTime startTime)
     AcceleratedAnimationDidEnd(WebCore::GraphicsLayer::PlatformLayerID layerID, String key)
     
-    AddTransactionCallbackID(WebKit::CallbackID callbackID)
+    DispatchAfterEnsuringDrawing() -> () CallWithReplyID
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)

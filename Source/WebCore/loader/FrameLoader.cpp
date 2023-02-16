@@ -2525,7 +2525,7 @@ CachePolicy FrameLoader::subresourceCachePolicy(const URL& url) const
     return CachePolicy::Verify;
 }
 
-void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocumentLoader, const ResourceError& error)
+void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocumentLoader, const ResourceError& error, WillInternallyHandleFailure willInternallyHandleFailure)
 {
     m_provisionalLoadErrorBeingHandledURL = provisionalDocumentLoader.url();
 
@@ -2543,7 +2543,7 @@ void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocu
     }
 #endif
 
-    m_client->dispatchDidFailProvisionalLoad(error, willContinueLoading);
+    m_client->dispatchDidFailProvisionalLoad(error, willContinueLoading, willInternallyHandleFailure);
 
 #if ENABLE(CONTENT_FILTERING)
     if (contentFilterWillContinueLoading)
@@ -2551,6 +2551,27 @@ void FrameLoader::dispatchDidFailProvisionalLoad(DocumentLoader& provisionalDocu
 #endif
 
     m_provisionalLoadErrorBeingHandledURL = { };
+}
+
+void FrameLoader::handleLoadFailureRecovery(DocumentLoader& documentLoader, const ResourceError& error, bool isHTTPSFirstApplicable)
+{
+    FRAMELOADER_RELEASE_LOG(ResourceLoading, "handleLoadFailureRecovery: errorRecoveryMethod: %hhu, isHTTPSFirstApplicable: %d, isHTTPFallbackInProgress: %d", error.errorRecoveryMethod(), isHTTPSFirstApplicable, isHTTPFallbackInProgress());
+    if (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::NoRecovery || !isHTTPSFirstApplicable || isHTTPFallbackInProgress()) {
+        if (isHTTPFallbackInProgress())
+            setHTTPFallbackInProgress(false);
+        return;
+    }
+
+    ASSERT(documentLoader.request().url().protocolIs("https"_s));
+    ASSERT(error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && isHTTPSFirstApplicable);
+
+    auto request = documentLoader.request();
+    auto url = request.url();
+    url.setProtocol("http"_s);
+    if (url.port() && WTF::isDefaultPortForProtocol(url.port().value(), "https"_s))
+        url.setPort(WTF::defaultPortForProtocol(url.protocol()));
+    setHTTPFallbackInProgress(true);
+    m_frame.navigationScheduler().scheduleRedirect(*m_frame.document(), 0, url, IsMetaRefresh::No);
 }
 
 void FrameLoader::checkLoadCompleteForThisFrame()
@@ -2589,12 +2610,16 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
         }
 
+        bool isHTTPSFirstApplicable = protector->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSFirst) && !protector->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnly) && !isHTTPFallbackInProgress() && (!protector->mainResourceLoader() || !protector->mainResourceLoader()->redirectCount());
+
         // Only reset if we aren't already going to a new provisional item.
         bool shouldReset = !history().provisionalItem();
         if (!protector->isLoadingInAPISense() || protector->isStopping()) {
-            FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Failed provisional load (isTimeout = %d, isCancellation = %d, errorCode = %d)", error.isTimeout(), error.isCancellation(), error.errorCode());
+            FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Failed provisional load (isTimeout = %d, isCancellation = %d, errorCode = %d, httpsFirstApplicable = %d)", error.isTimeout(), error.isCancellation(), error.errorCode(), isHTTPSFirstApplicable);
 
-            dispatchDidFailProvisionalLoad(*protector, error);
+            auto willInternallyHandleFailure = (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::NoRecovery || (error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && (!isHTTPSFirstApplicable || isHTTPFallbackInProgress()))) ? WillInternallyHandleFailure::No : WillInternallyHandleFailure::Yes;
+            dispatchDidFailProvisionalLoad(*protector, error, willInternallyHandleFailure);
+
             ASSERT(!protector->isLoading());
 
             // If we're in the middle of loading multipart data, we need to restore the document loader.
@@ -2615,6 +2640,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             if (Page* page = m_frame.page())
                 page->backForward().setCurrentItem(*item);
         }
+
+        handleLoadFailureRecovery(*protector, error, isHTTPSFirstApplicable);
         return;
     }
         
@@ -2695,6 +2722,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
     }
         
     case FrameState::Complete:
+        setHTTPFallbackInProgress(false);
         m_loadType = FrameLoadType::Standard;
         frameLoadCompleted();
         return;

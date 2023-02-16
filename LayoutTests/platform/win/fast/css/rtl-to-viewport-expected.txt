@@ -1,8 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (696,0) size 104x104
-  RenderBlock {HTML} at (696,0) size 104x104 [border: (2px solid #000000)]
-    RenderBody {BODY} at (10,10) size 84x18
-      RenderText {#text} at (21,0) size 63x18
-        text run at (21,0) width 4 RTL: "."
-        text run at (25,0) width 59: "This is rtl"

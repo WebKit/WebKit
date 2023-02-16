@@ -77,7 +77,13 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
         case WGPUFeatureName_IndirectFirstInstance:
             result.append("indirect-first-instance"_s);
             break;
-        default:
+        case WGPUFeatureName_ShaderF16:
+            result.append("shader-f16"_s);
+            break;
+        case WGPUFeatureName_RG11B10UfloatRenderable:
+            result.append("rg11b10ufloat-renderable"_s);
+            break;
+        case WGPUFeatureName_Force32:
             continue;
         }
     }

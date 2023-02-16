@@ -28,6 +28,7 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_SCRIPT_WORLD            (webkit_script_world_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_SCRIPT_WORLD(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_SCRIPT_WORLD, WebKitScriptWorld))
 #define WEBKIT_IS_SCRIPT_WORLD(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_SCRIPT_WORLD))
 #define WEBKIT_SCRIPT_WORLD_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_SCRIPT_WORLD, WebKitScriptWorldClass))
@@ -38,12 +39,6 @@ typedef struct _WebKitScriptWorld        WebKitScriptWorld;
 typedef struct _WebKitScriptWorldClass   WebKitScriptWorldClass;
 typedef struct _WebKitScriptWorldPrivate WebKitScriptWorldPrivate;
 
-struct _WebKitScriptWorld {
-    GObject parent;
-
-    WebKitScriptWorldPrivate *priv;
-};
-
 struct _WebKitScriptWorldClass {
     GObjectClass parent_class;
 
@@ -52,9 +47,9 @@ struct _WebKitScriptWorldClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_script_world_get_type      (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitScriptWorld, webkit_script_world, WEBKIT, SCRIPT_WORLD, GObject )
 
 WEBKIT_API WebKitScriptWorld *
 webkit_script_world_get_default   (void);

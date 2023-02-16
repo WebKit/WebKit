@@ -37,9 +37,11 @@
 #include "PseudoElement.h"
 #include "RenderDescendantIterator.h"
 #include "RenderInline.h"
+#include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderSVGResource.h"
+#include "RenderStyleConstants.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderView.h"
 #include "SVGElement.h"
@@ -343,7 +345,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     if (hasDisplayContents)
         element.storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
     else
-        element.resetComputedStyle();
+        element.clearDisplayContentsStyle();
 
     bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkipsContent());
     if (shouldCreateNewRenderer) {
@@ -609,6 +611,16 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 
             GeneratedContent::removeBeforePseudoElement(element, builder);
             GeneratedContent::removeAfterPseudoElement(element, builder);
+
+            if (!is<PseudoElement>(element)) {
+                // ::before and ::after cannot have a ::marker pseudo-element addressable via
+                // CSS selectors, and as such cannot possibly have animations on them. Additionally,
+                // we cannot create a Styleable with a PseudoElement.
+                if (auto* renderListItem = dynamicDowncast<RenderListItem>(element.renderer())) {
+                    if (renderListItem->markerRenderer())
+                        Styleable(element, PseudoId::Marker).cancelDeclarativeAnimations();
+                }
+            }
 
             if (auto* renderer = element.renderer()) {
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer);

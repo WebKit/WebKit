@@ -144,6 +144,8 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "ScrollingPosition";
     case NodeRareData::UseType::ComputedStyle:
         return "ComputedStyle";
+    case NodeRareData::UseType::DisplayContentsStyle:
+        return "DisplayContentsStyle";
     case NodeRareData::UseType::EffectiveLang:
         return "EffectiveLang";
     case NodeRareData::UseType::Dataset:

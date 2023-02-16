@@ -1712,6 +1712,32 @@ public:
         insn(0b01101110001000001111110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
     }
 
+    static uint32_t encodeLaneAndIndexToHLM(SIMDLane lane, uint32_t laneIndex)
+    {
+        switch (elementByteSize(lane)) {
+        case 1:
+            RELEASE_ASSERT_NOT_REACHED();
+        case 2:
+            RELEASE_ASSERT_NOT_REACHED();
+        case 4:
+            ASSERT(laneIndex < 4);
+            return (((laneIndex & 0b10) >> 1) << 11) | ((laneIndex & 0b01) << 21);
+        case 8:
+            ASSERT(laneIndex < 2);
+            return laneIndex << 11;
+        case 16:
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        return 0;
+    }
+
+    ALWAYS_INLINE void vectorFmulByElement(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane, uint32_t laneIndex)
+    {
+        // https://developer.arm.com/documentation/dui0801/g/A64-SIMD-Vector-Instructions/FMUL--vector--by-element-
+        insn(0b010'01111'1000'0000'1001'0'0'00000'00000 | (sizeForFloatingPointSIMDOp(lane) << 22) | encodeLaneAndIndexToHLM(lane, laneIndex) | (vm << 16) | (vn << 5) | vd);
+    }
+
     ALWAYS_INLINE void umax(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
     {
         insn(0b01101110001000000110010000000000 | (sizeForIntegralSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);

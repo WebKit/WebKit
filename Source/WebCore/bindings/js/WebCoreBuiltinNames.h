@@ -400,6 +400,7 @@ namespace WebCore {
     macro(TextEncoderStreamEncoder) \
     macro(TextTrackCue) \
     macro(TextTrackCueGeneric) \
+    macro(ToggleEvent) \
     macro(TransformStream) \
     macro(TransformStreamDefaultController) \
     macro(UndoItem) \

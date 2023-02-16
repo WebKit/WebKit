@@ -36,7 +36,7 @@ bool Visitor::hasError() const
     return !m_expectedError;
 }
 
-Expected<void, Error> Visitor::result()
+Result<void> Visitor::result()
 {
     return m_expectedError;
 }
@@ -542,7 +542,7 @@ void Visitor::visit(AST::OverrideValue& overrideValue)
         checkErrorAndVisit(attribute);
     checkErrorAndVisit(overrideValue.name());
     maybeCheckErrorAndVisit(overrideValue.maybeTypeName());
-    checkErrorAndVisit(overrideValue.initializer());
+    maybeCheckErrorAndVisit(overrideValue.maybeInitializer());
 }
 
 void Visitor::visit(AST::LetValue& letValue)

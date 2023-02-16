@@ -48,8 +48,13 @@
 
     [EnabledBySetting=FormAssociatedCustomElementsEnabled] ElementInternals attachInternals();
 
-    // Experimental: https://github.com/WICG/inert/blob/master/README.md
     [CEReactions, Reflect, EnabledBySetting=InertAttributeEnabled] attribute boolean inert;
+
+    // The popover API
+    [EnabledBySetting=PopoverAttributeEnabled] undefined showPopover();
+    [EnabledBySetting=PopoverAttributeEnabled] undefined hidePopover();
+    [EnabledBySetting=PopoverAttributeEnabled] undefined togglePopover(optional boolean force);
+    [CEReactions, EnabledBySetting=PopoverAttributeEnabled] attribute [AtomString] DOMString? popover;
 
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).
     [CEReactions] attribute [LegacyNullToEmptyString] DOMString outerText;

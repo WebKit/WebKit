@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "CachedSubimage.h"
 #include "Color.h"
 #include "DecodingOptions.h"
 #include "FloatRect.h"
@@ -135,7 +134,7 @@ public:
     virtual String filenameExtension() const { return String(); } // null string if unknown
     virtual String accessibilityDescription() const { return String(); } // null string if unknown
 
-    virtual void destroyDecodedData(bool destroyAll = true);
+    virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
 
     FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
     const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }
@@ -159,9 +158,6 @@ public:
     URL sourceURL() const;
     WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
-
-    unsigned cachedSubimageCreateCountForTesting() const { return m_cachedSubimageCreateCountForTesting; }
-    unsigned cachedSubimageDrawCountForTesting() const { return m_cachedSubimageDrawCountForTesting; }
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
@@ -212,7 +208,6 @@ protected:
     virtual bool shouldDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual bool mustDrawFromCachedSubimage(GraphicsContext&) const { return false; }
     virtual ImageDrawResult draw(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) = 0;
-    ImageDrawResult drawCachedSubimage(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const ImagePaintingOptions& = { });
     ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatPoint& srcPoint, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& = { });
     ImageDrawResult drawTiled(GraphicsContext&, const FloatRect& dstRect, const FloatRect& srcRect, const FloatSize& tileScaleFactor, TileRule hRule, TileRule vRule, const ImagePaintingOptions& = { });
 
@@ -226,10 +221,6 @@ private:
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };
     std::unique_ptr<Timer> m_animationStartTimer;
-
-    std::unique_ptr<CachedSubimage> m_cachedSubimage;
-    unsigned m_cachedSubimageCreateCountForTesting { 0 };
-    unsigned m_cachedSubimageDrawCountForTesting { 0 };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);

@@ -49,18 +49,9 @@ public:
         InlineRect initialLogicalRect;
     };
     using FloatList = Vector<const InlineItem*>;
-    struct PreviousLine {
-        bool endsWithLineBreak { false };
-        TextDirection inlineBaseDirection { TextDirection::LTR };
-        std::optional<PartialInlineItem> partialOverflowingContent { };
-        FloatList overflowingFloats;
-        // Content width measured during line breaking (avoid double-measuring).
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-    };
     struct LineContent {
-        InlineItemRange inlineItemRange;
-        std::optional<PartialInlineItem> partialOverflowingContent { };
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth;
+        InlineItemRange committedRange;
+        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
         FloatList placedFloats;
         FloatList overflowingFloats;
         bool hasIntrusiveFloat { false };
@@ -90,9 +81,9 @@ public:
     LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
     struct IntrinsicContent {
-        InlineItemRange inlineItemRange;
-        InlineLayoutUnit logicalWidth { 0 };
-        std::optional<PartialInlineItem> partialOverflowingContent { };
+        InlineItemRange committedRange;
+        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
+        InlineLayoutUnit contentLogicalWidth { 0 };
         FloatList placedFloats;
     };
     IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);

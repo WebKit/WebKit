@@ -213,8 +213,14 @@ bool pas_large_heap_try_deallocate(uintptr_t begin,
     
     map_entry = pas_large_map_take(begin);
     
-    if (pas_large_map_entry_is_empty(map_entry))
+    if (pas_large_map_entry_is_empty(map_entry)) {
+        if (heap_config->pgm_enabled && pas_probabilistic_guard_malloc_check_exists(begin)) {
+            pas_probabilistic_guard_malloc_deallocate((void *) begin);
+            return true;
+        }
+
         return false;
+    }
     
     PAS_ASSERT(pas_heap_config_kind_get_config(
                    pas_heap_for_large_heap(map_entry.heap)->config_kind)

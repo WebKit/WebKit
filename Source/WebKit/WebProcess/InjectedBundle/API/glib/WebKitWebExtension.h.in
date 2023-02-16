@@ -30,6 +30,7 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_WEB_EXTENSION            (webkit_web_extension_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_WEB_EXTENSION(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_WEB_EXTENSION, WebKitWebExtension))
 #define WEBKIT_IS_WEB_EXTENSION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_WEB_EXTENSION))
 #define WEBKIT_WEB_EXTENSION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_WEB_EXTENSION, WebKitWebExtensionClass))
@@ -39,6 +40,13 @@ G_BEGIN_DECLS
 typedef struct _WebKitWebExtension        WebKitWebExtension;
 typedef struct _WebKitWebExtensionClass   WebKitWebExtensionClass;
 typedef struct _WebKitWebExtensionPrivate WebKitWebExtensionPrivate;
+
+struct _WebKitWebExtensionClass {
+    GObjectClass parent_class;
+};
+#endif
+
+WEBKIT_DECLARE_FINAL_TYPE (WebKitWebExtension, webkit_web_extension, WEBKIT, WEB_EXTENSION, GObject)
 
 /**
  * WebKitWebExtensionInitializeFunction:
@@ -63,19 +71,6 @@ typedef void (* WebKitWebExtensionInitializeFunction) (WebKitWebExtension *exten
  */
 typedef void (* WebKitWebExtensionInitializeWithUserDataFunction) (WebKitWebExtension *extension,
                                                                    const GVariant     *user_data);
-
-struct _WebKitWebExtension {
-    GObject parent;
-
-    WebKitWebExtensionPrivate *priv;
-};
-
-struct _WebKitWebExtensionClass {
-    GObjectClass parent_class;
-};
-
-WEBKIT_API GType
-webkit_web_extension_get_type                       (void);
 
 WEBKIT_API WebKitWebPage *
 webkit_web_extension_get_page                       (WebKitWebExtension *extension,

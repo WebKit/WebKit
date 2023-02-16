@@ -1615,7 +1615,6 @@ webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-with-tabindex.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots-in-slot.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots.html [ Failure ]
-webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-web-component-input-type-radio.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-with-delegatesFocus.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-nested-slots.html [ Failure ]
@@ -3873,11 +3872,6 @@ imported/w3c/web-platform-tests/websockets/unload-a-document/005.html?wpt_flags=
 # The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
 svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
 
-# These tests have similar harness errors and timeouts. See webkit.org/b/244900
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
-[ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
-
 webkit.org/b/251219 fast/images/animated-avif.html [ ImageOnlyFailure ]
 
 # MSE isn't supported on iPhone at this time.
@@ -4227,3 +4221,9 @@ webkit.org/b/251876 editing/selection/selection-scrolling-in-multiple-nested-sub
 webkit.org/b/251889 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-ancestors.https.sub.html [ Pass Crash ]
 
 webkit.org/b/251875 fast/dynamic/create-renderer-for-whitespace-only-text.html [ Pass Failure ]
+
+webkit.org/b/252191 imported/w3c/web-platform-tests/editing/other/edit-in-textcontrol-immediately-after-hidden.tentative.html [ Skip ]
+
+webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-119.html [ ImageOnlyFailure ]
+webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-120.html [ ImageOnlyFailure ]
+webkit.org/b/252317 imported/w3c/web-platform-tests/css/css-counter-styles/devanagari/css3-counter-styles-121.html [ ImageOnlyFailure ]

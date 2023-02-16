@@ -136,11 +136,6 @@ template<> constexpr TYPE fromCSSValueID(CSSValueID value) { \
     return { }; \
 }
 
-template<> inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(const LineClampValue& value)
-{
-    return create(value.value(), value.isPercentage() ? CSSUnitType::CSS_PERCENTAGE : CSSUnitType::CSS_INTEGER);
-}
-
 template<> inline LineClampValue fromCSSValue(const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -1187,7 +1182,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #define TYPE TextTransform
-#define FOR_EACH(CASE) CASE(Capitalize) CASE(Uppercase) CASE(Lowercase) CASE(None)
+#define FOR_EACH(CASE) CASE(Capitalize) CASE(Uppercase) CASE(Lowercase) CASE(FullSizeKana) CASE(None)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

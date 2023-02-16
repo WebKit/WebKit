@@ -26,7 +26,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, MessageReceiver, Message
+from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, CALL_WITH_REPLY_ID_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
@@ -315,6 +315,7 @@ def types_that_cannot_be_forward_declared():
     return frozenset([
         'CVPixelBufferRef',
         'GCGLint',
+        'IPC::AsyncReplyID',
         'IPC::DataReference',
         'IPC::FontReference',
         'IPC::Semaphore',
@@ -498,6 +499,8 @@ def async_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
         dispatch_function += 'Async'
+    if message.has_attribute(CALL_WITH_REPLY_ID_ATTRIBUTE):
+        dispatch_function += 'WithReplyID'
 
     connection = 'connection'
     if receiver.has_attribute(STREAM_ATTRIBUTE):
@@ -605,6 +608,7 @@ def headers_for_type(type):
         'Inspector::ExtensionError': ['"InspectorExtensionTypes.h"'],
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
         'Inspector::InspectorTargetType': ['<JavaScriptCore/InspectorTarget.h>'],
+        'IPC::AsyncReplyID': ['"Connection.h"'],
         'IPC::Semaphore': ['"IPCSemaphore.h"'],
         'JSC::MessageLevel': ['<JavaScriptCore/ConsoleTypes.h>'],
         'JSC::MessageSource': ['<JavaScriptCore/ConsoleTypes.h>'],
@@ -787,6 +791,7 @@ def headers_for_type(type):
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
         'WebCore::WheelEventProcessingSteps': ['<WebCore/ScrollingCoordinatorTypes.h>'],
         'WebCore::WillContinueLoading': ['<WebCore/FrameLoaderTypes.h>'],
+        'WebCore::WillInternallyHandleFailure': ['<WebCore/FrameLoaderTypes.h>'],
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::AllowOverwrite': ['"DownloadID.h"'],
         'WebKit::AppPrivacyReportTestingData': ['"AppPrivacyReport.h"'],

@@ -75,6 +75,19 @@ static void checkNextTokensAreBuiltinAttr(WGSL::Lexer<T>& lexer, const String& a
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
 };
 
+TEST(WGSLLexerTests, Comments)
+{
+    using WGSL::TokenType;
+
+    checkSingleToken("// This is line-ending comment.\n"
+        "/* This is a block comment\n"
+        "   that spans lines.\n"
+        "   /* Block comments can nest.\n"
+        "    */\n"
+        "   But all block comments must terminate.\n"
+        "*/"_s, TokenType::EndOfFile);
+}
+
 TEST(WGSLLexerTests, SingleTokens)
 {
     using WGSL::TokenType;
@@ -103,22 +116,25 @@ TEST(WGSLLexerTests, KeywordTokens)
     using WGSL::TokenType;
 
     checkSingleToken("array"_s, TokenType::KeywordArray);
+    checkSingleToken("bool"_s, TokenType::KeywordBool);
+    checkSingleToken("const"_s, TokenType::KeywordConst);
+    checkSingleToken("f32"_s, TokenType::KeywordF32);
     checkSingleToken("fn"_s, TokenType::KeywordFn);
     checkSingleToken("function"_s, TokenType::KeywordFunction);
+    checkSingleToken("i32"_s, TokenType::KeywordI32);
+    checkSingleToken("let"_s, TokenType::KeywordLet);
+    checkSingleToken("override"_s, TokenType::KeywordOverride);
     checkSingleToken("private"_s, TokenType::KeywordPrivate);
     checkSingleToken("read"_s, TokenType::KeywordRead);
     checkSingleToken("read_write"_s, TokenType::KeywordReadWrite);
     checkSingleToken("return"_s, TokenType::KeywordReturn);
     checkSingleToken("storage"_s, TokenType::KeywordStorage);
     checkSingleToken("struct"_s, TokenType::KeywordStruct);
+    checkSingleToken("u32"_s, TokenType::KeywordU32);
     checkSingleToken("uniform"_s, TokenType::KeywordUniform);
     checkSingleToken("var"_s, TokenType::KeywordVar);
     checkSingleToken("workgroup"_s, TokenType::KeywordWorkgroup);
     checkSingleToken("write"_s, TokenType::KeywordWrite);
-    checkSingleToken("i32"_s, TokenType::KeywordI32);
-    checkSingleToken("u32"_s, TokenType::KeywordU32);
-    checkSingleToken("f32"_s, TokenType::KeywordF32);
-    checkSingleToken("bool"_s, TokenType::KeywordBool);
 }
 
 TEST(WGSLLexerTests, SpecialTokens)
@@ -127,6 +143,8 @@ TEST(WGSLLexerTests, SpecialTokens)
 
     checkSingleToken("->"_s, TokenType::Arrow);
     checkSingleToken("@"_s, TokenType::Attribute);
+    checkSingleToken("!"_s, TokenType::Bang);
+    checkSingleToken("!="_s, TokenType::BangEq);
     checkSingleToken("{"_s, TokenType::BraceLeft);
     checkSingleToken("}"_s, TokenType::BraceRight);
     checkSingleToken("["_s, TokenType::BracketLeft);
@@ -134,14 +152,28 @@ TEST(WGSLLexerTests, SpecialTokens)
     checkSingleToken(":"_s, TokenType::Colon);
     checkSingleToken(","_s, TokenType::Comma);
     checkSingleToken("="_s, TokenType::Equal);
-    checkSingleToken(">"_s, TokenType::GT);
-    checkSingleToken("<"_s, TokenType::LT);
+    checkSingleToken("=="_s, TokenType::EqEq);
+    checkSingleToken(">"_s, TokenType::Gt);
+    checkSingleToken(">="_s, TokenType::GtEq);
+    checkSingleToken(">>"_s, TokenType::GtGt);
+    checkSingleToken("<"_s, TokenType::Lt);
+    checkSingleToken("<="_s, TokenType::LtEq);
+    checkSingleToken("<<"_s, TokenType::LtLt);
     checkSingleToken("-"_s, TokenType::Minus);
     checkSingleToken("--"_s, TokenType::MinusMinus);
+    checkSingleToken("%"_s, TokenType::Modulo);
     checkSingleToken("."_s, TokenType::Period);
     checkSingleToken("("_s, TokenType::ParenLeft);
     checkSingleToken(")"_s, TokenType::ParenRight);
     checkSingleToken(";"_s, TokenType::Semicolon);
+    checkSingleToken("/"_s, TokenType::Slash);
+    checkSingleToken("*"_s, TokenType::Star);
+    checkSingleToken("&"_s, TokenType::And);
+    checkSingleToken("&&"_s, TokenType::AndAnd);
+    checkSingleToken("|"_s, TokenType::Or);
+    checkSingleToken("||"_s, TokenType::OrOr);
+    checkSingleToken("^"_s, TokenType::Xor);
+    checkSingleToken("~"_s, TokenType::Tilde);
 }
 
 TEST(WGSLLexerTests, ComputeShader)
@@ -159,7 +191,7 @@ TEST(WGSLLexerTests, ComputeShader)
         "    x.a = 42;\n"
         "}"_s);
 
-    unsigned lineNumber = 0;
+    unsigned lineNumber = 1;
     // @block struct B {
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
     checkNextTokenIsIdentifier(lexer, "block"_s, lineNumber);
@@ -194,11 +226,11 @@ TEST(WGSLLexerTests, ComputeShader)
     // var<storage, read_write> x: B;
     ++lineNumber;
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordVar, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordStorage, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordReadWrite, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIsIdentifier(lexer, "x"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Colon, lineNumber);
     checkNextTokenIsIdentifier(lexer, "B"_s, lineNumber);
@@ -245,7 +277,7 @@ TEST(WGSLLexerTests, GraphicsShader)
         "    return vec4<f32>(0.4, 0.4, 0.8, 1.0);\n"
         "}"_s);
 
-    unsigned lineNumber = 0;
+    unsigned lineNumber = 1;
 
     // @vertex
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
@@ -264,9 +296,9 @@ TEST(WGSLLexerTests, GraphicsShader)
     checkNextTokenIsIdentifier(lexer, "x"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Colon, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Arrow, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
@@ -275,9 +307,9 @@ TEST(WGSLLexerTests, GraphicsShader)
     checkNextTokenIsIdentifier(lexer, "position"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::BraceLeft, lineNumber);
 
     // return x;
@@ -308,18 +340,18 @@ TEST(WGSLLexerTests, GraphicsShader)
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenRight, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::BraceLeft, lineNumber);
 
     // return vec4<f32>(0.4, 0.4, 0.8, 1.0);
     ++lineNumber;
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordReturn, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.4, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
@@ -352,7 +384,7 @@ TEST(WGSLLexerTests, TriangleVert)
         "    return vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), 0.0, 1.0);\n"
         "}\n"_s);
 
-    unsigned lineNumber = 0;
+    unsigned lineNumber = 1;
 
     // @vertex
     checkNextTokenIs(lexer, WGSL::TokenType::Attribute, lineNumber);
@@ -377,9 +409,9 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIs(lexer, WGSL::TokenType::Arrow, lineNumber);
     checkNextTokensAreBuiltinAttr(lexer, "position"_s, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::BraceLeft, lineNumber);
 
     ++lineNumber;
@@ -388,22 +420,22 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIsIdentifier(lexer, "pos"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Equal, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordArray, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec2"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::IntegerLiteral, 3, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
 
     ++lineNumber;
     //        vec2<f32>(0.0, 0.5),
     checkNextTokenIsIdentifier(lexer, "vec2"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.0, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
@@ -414,9 +446,9 @@ TEST(WGSLLexerTests, TriangleVert)
     ++lineNumber;
     //        vec2<f32>(-0.5, -0.5),
     checkNextTokenIsIdentifier(lexer, "vec2"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Minus, lineNumber);
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.5, lineNumber);
@@ -429,9 +461,9 @@ TEST(WGSLLexerTests, TriangleVert)
     ++lineNumber;
     //        vec2<f32>(0.5, -0.5)
     checkNextTokenIsIdentifier(lexer, "vec2"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);
@@ -448,9 +480,9 @@ TEST(WGSLLexerTests, TriangleVert)
     //    return vec4<f32>(pos[VertexIndex] + vec2<f32>(0.5, 0.5), 0.0, 1.0);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordReturn, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec4"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
     checkNextTokenIsIdentifier(lexer, "pos"_s, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::BracketLeft, lineNumber);
@@ -458,9 +490,9 @@ TEST(WGSLLexerTests, TriangleVert)
     checkNextTokenIs(lexer, WGSL::TokenType::BracketRight, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Plus, lineNumber);
     checkNextTokenIsIdentifier(lexer, "vec2"_s, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::LT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Lt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::KeywordF32, lineNumber);
-    checkNextTokenIs(lexer, WGSL::TokenType::GT, lineNumber);
+    checkNextTokenIs(lexer, WGSL::TokenType::Gt, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::ParenLeft, lineNumber);
     checkNextTokenIsLiteral(lexer, WGSL::TokenType::DecimalFloatLiteral, 0.5, lineNumber);
     checkNextTokenIs(lexer, WGSL::TokenType::Comma, lineNumber);

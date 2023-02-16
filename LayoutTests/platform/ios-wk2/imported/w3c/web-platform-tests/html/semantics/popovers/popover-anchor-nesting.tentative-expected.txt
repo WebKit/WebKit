@@ -1,0 +1,4 @@
+Popover 1 Inside popover 2   Popover 2
+
+FAIL Nested popovers (inside anchor elements) do not affect light dismiss assert_false: expected false got true
+

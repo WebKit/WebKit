@@ -28,12 +28,14 @@
 
 #if PLATFORM(MAC)
 
+#import "DrawingArea.h"
 #import "DrawingAreaMessages.h"
 #import "RemoteScrollingCoordinatorProxyMac.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/FloatPoint.h>
 #import <WebCore/ScrollView.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -129,7 +131,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLin
     observerID = { };
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
+void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction& transaction, const RemoteScrollingCoordinatorTransaction&)
 {
     m_pageScalingLayerID = transaction.pageScalingLayerID();
     if (m_transientZoomScale)
@@ -206,12 +208,39 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
 {
     LOG_WITH_STREAM(ViewGestures, stream << "RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom - scale " << scale << " origin " << origin);
 
-    m_transientZoomScale = { };
-    m_transientZoomOrigin = { };
+    auto transientZoomScale = std::exchange(m_transientZoomScale, { });
+    auto transientZoomOrigin = std::exchange(m_transientZoomOrigin, { });
     
-    // FIXME: Need to constrain the last scale and origin and do a "bounce back" animation if necessary (see TiledCoreAnimationDrawingArea).
-    m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
-    m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
+    if (transientZoomScale == scale && roundedIntPoint(*transientZoomOrigin) == roundedIntPoint(origin)) {
+        // We're already at the right scale and position, so we don't need to animate.
+        m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
+        m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
+        return;
+    }
+    // TODO: Need to perform origin constraining here like in TiledCoreAnimationDrawingArea
+    TransformationMatrix transform;
+    transform.translate(origin.x(), origin.y());
+    transform.scale(scale);
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    [CATransaction begin];
+    CALayer *layerForPageScale = remoteLayerTreeHost().layerForID(m_pageScalingLayerID);
+    RetainPtr<CABasicAnimation> renderViewAnimationCA = DrawingArea::transientZoomSnapAnimationForKeyPath("transform"_s);
+    NSValue *transformValue = [NSValue valueWithCATransform3D:transform];
+    [renderViewAnimationCA setToValue:transformValue];
+    
+    [CATransaction setCompletionBlock:[layerForPageScale, this, scale, origin, transform] () {
+        layerForPageScale.transform = transform;
+        [layerForPageScale removeAnimationForKey:transientAnimationKey];
+        [layerForPageScale removeAnimationForKey:@"transientZoomCommit"];
+        m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
+        m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
+    }];
+
+    [layerForPageScale addAnimation:renderViewAnimationCA.get() forKey:@"transientZoomCommit"];
+    [CATransaction commit];
+    if (layerForPageScale && renderViewAnimationCA) { }
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()

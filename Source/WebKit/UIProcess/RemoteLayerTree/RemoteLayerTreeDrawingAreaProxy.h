@@ -82,7 +82,7 @@ private:
 
     // For now, all callbacks are called before committing changes, because that's what the only client requires.
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
-    void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) final;
+    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) final;
     
     virtual void scheduleDisplayRefreshCallbacks() { }
     virtual void pauseDisplayRefreshCallbacks() { }
@@ -107,8 +107,8 @@ private:
     // Message handlers
     virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
     void willCommitLayerTree(TransactionID);
-    void commitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
-    virtual void didCommitLayerTree(const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
+    void commitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
+    virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
 
     void asyncSetLayerContents(WebCore::GraphicsLayer::PlatformLayerID, ImageBufferBackendHandle&&);
 
@@ -131,7 +131,6 @@ private:
     TransactionID m_transactionIDForUnhidingContent;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 
-    CallbackMap m_callbacks;
     Vector<Ref<WebProcessProxy>> m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver;
 };
 

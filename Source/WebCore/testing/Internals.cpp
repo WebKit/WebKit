@@ -182,6 +182,7 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "RenderSearchField.h"
 #include "RenderTheme.h"
 #include "RenderThemeIOS.h"
 #include "RenderTreeAsText.h"
@@ -299,6 +300,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
 #include "MockRealtimeMediaSourceCenter.h"
+#include "VideoFrame.h"
 #endif
 
 #if ENABLE(MEDIA_RECORDER)
@@ -1027,6 +1029,13 @@ static BitmapImage* bitmapImageFromImageElement(HTMLImageElement& element)
     return dynamicDowncast<BitmapImage>(imageFromImageElement(element));
 }
 
+#if USE(CG)
+static PDFDocumentImage* pdfDocumentImageFromImageElement(HTMLImageElement& element)
+{
+    return dynamicDowncast<PDFDocumentImage>(imageFromImageElement(element));
+}
+#endif
+
 unsigned Internals::imageFrameIndex(HTMLImageElement& element)
 {
     auto* bitmapImage = bitmapImageFromImageElement(element);
@@ -1100,8 +1109,13 @@ unsigned Internals::imageDecodeCount(HTMLImageElement& element)
 
 unsigned Internals::imageCachedSubimageCreateCount(HTMLImageElement& element)
 {
-    auto* image = imageFromImageElement(element);
-    return image ? image->cachedSubimageCreateCountForTesting() : 0;
+#if USE(CG)
+    if (auto* pdfDocumentImage = pdfDocumentImageFromImageElement(element))
+        return pdfDocumentImage->cachedSubimageCreateCountForTesting();
+#else
+    UNUSED_PARAM(element);
+#endif
+    return 0;
 }
 
 unsigned Internals::remoteImagesCountForTesting() const
@@ -2213,6 +2227,24 @@ auto Internals::autoFillButtonType(const HTMLInputElement& element) -> AutoFillB
 auto Internals::lastAutoFillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
 {
     return toInternalsAutoFillButtonType(element.lastAutoFillButtonType());
+}
+
+Vector<String> Internals::recentSearches(const HTMLInputElement& element)
+{
+    if (!element.isSearchField())
+        return { };
+
+    element.document().updateLayoutIgnorePendingStylesheets();
+    auto* renderer = element.renderer();
+    if (!is<RenderSearchField>(renderer))
+        return { };
+
+    Vector<String> result;
+    auto& searchField = downcast<RenderSearchField>(*renderer);
+    for (auto search : searchField.recentSearches())
+        result.append(search.string);
+
+    return result;
 }
 
 ExceptionOr<void> Internals::scrollElementToRect(Element& element, int x, int y, int w, int h)

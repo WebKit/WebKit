@@ -289,6 +289,7 @@ enum VMIdentifierType { };
 using VMIdentifier = ObjectIdentifier<VMIdentifierType>;
 
 class VM : public ThreadSafeRefCounted<VM>, public DoublyLinkedListNode<VM> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(VM);
 public:
     // WebCore has a one-to-one mapping of threads to VMs;
     // create() should only be called once

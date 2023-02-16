@@ -67,7 +67,6 @@ public:
 
     void wrapForTesting(UniqueRef<Encoder>&&);
 
-    void encodeFixedLengthData(const uint8_t* data, size_t, size_t alignment);
     template<typename T, size_t Extent>
     void encodeSpan(const Span<T, Extent>&);
     template<typename T>
@@ -113,9 +112,15 @@ private:
 };
 
 template<typename T, size_t Extent>
-inline void Encoder::encodeSpan(const Span<T, Extent>& data)
+inline void Encoder::encodeSpan(const Span<T, Extent>& span)
 {
-    encodeFixedLengthData(reinterpret_cast<const uint8_t*>(data.data()), data.size_bytes(), alignof(T));
+    auto* data = reinterpret_cast<const uint8_t*>(span.data());
+    size_t size = span.size_bytes();
+    constexpr size_t alignment = alignof(T);
+    ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
+
+    uint8_t* buffer = grow(alignment, size);
+    memcpy(buffer, data, size);
 }
 
 template<typename T>

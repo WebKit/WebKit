@@ -1,3 +1,0 @@
-This test focuses a form, them scrolls to the bottom of the page. Then text is entered in the form, and we check to make sure the page has scrolled so that the input is visible again.
-FAIL: page has failed to scroll when entering text into a form that is offscreen.
-

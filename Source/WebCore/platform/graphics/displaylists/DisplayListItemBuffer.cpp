@@ -700,7 +700,16 @@ void ItemBuffer::clear()
 
 void ItemBuffer::shrinkToFit()
 {
+    if (m_writableBuffer) {
+        if (m_allocatedBuffers.last() == m_writableBuffer.data) {
+            m_writableBuffer.data = static_cast<uint8_t*>(fastRealloc(m_writableBuffer.data, m_writtenNumberOfBytes));
+            m_writableBuffer.capacity = m_writtenNumberOfBytes;
+            m_allocatedBuffers.last() = m_writableBuffer.data;
+        } else
+            ASSERT(!m_allocatedBuffers.contains(m_writableBuffer.data));
+    }
     m_allocatedBuffers.shrinkToFit();
+    m_readOnlyBuffers.shrinkToFit();
 }
 
 DidChangeItemBuffer ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)

@@ -28,7 +28,7 @@
 
 #if USE(CG)
 
-#include "CachedSubimage.h"
+#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
 #include <CoreGraphics/CGContext.h>
@@ -106,7 +106,31 @@ bool PDFDocumentImage::mustDrawFromCachedSubimage(GraphicsContext& context) cons
     return !context.hasPlatformContext();
 }
 
-ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+std::unique_ptr<CachedSubimage> PDFDocumentImage::createCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+{
+    ASSERT(shouldDrawFromCachedSubimage(context));
+
+    if (auto cachedSubimage = CachedSubimage::create(context, size(), destinationRect, sourceRect)) {
+        auto result = drawPDFDocument(cachedSubimage->imageBuffer().context(), cachedSubimage->destinationRect(), cachedSubimage->sourceRect(), options);
+        if (result != ImageDrawResult::DidDraw)
+            return nullptr;
+        return cachedSubimage;
+    }
+
+    if (!mustDrawFromCachedSubimage(context))
+        return nullptr;
+
+    if (auto cachedSubimage = CachedSubimage::createPixelated(context, destinationRect, sourceRect)) {
+        auto result = drawPDFDocument(cachedSubimage->imageBuffer().context(), cachedSubimage->destinationRect(), cachedSubimage->sourceRect(), options);
+        if (result != ImageDrawResult::DidDraw)
+            return nullptr;
+        return cachedSubimage;
+    }
+
+    return nullptr;
+}
+
+ImageDrawResult PDFDocumentImage::drawPDFDocument(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
 {
     ASSERT(context.hasPlatformContext());
 
@@ -136,10 +160,53 @@ ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect
     return ImageDrawResult::DidDraw;
 }
 
-void PDFDocumentImage::destroyDecodedData(bool destroyAll)
+ImageDrawResult PDFDocumentImage::drawFromCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
 {
+    if (!shouldDrawFromCachedSubimage(context))
+        return ImageDrawResult::DidNothing;
+
+    auto clippedDestinationRect = intersection(context.clipBounds(), destinationRect);
+    if (clippedDestinationRect.isEmpty())
+        return ImageDrawResult::DidDraw;
+
+    auto clippedSourceRect = mapRect(clippedDestinationRect, destinationRect, sourceRect);
+
+    // Reset the currect CachedSubimage if it can't be reused for the current drawing.
+    if (m_cachedSubimage && !m_cachedSubimage->canBeUsed(context, clippedDestinationRect, clippedSourceRect))
+        m_cachedSubimage = nullptr;
+
+    if (!m_cachedSubimage) {
+        m_cachedSubimage = createCachedSubimage(context, clippedDestinationRect, clippedSourceRect, options);
+        if (m_cachedSubimage)
+            ++m_cachedSubimageCreateCountForTesting;
+    }
+
+    if (!m_cachedSubimage)
+        return ImageDrawResult::DidNothing;
+
+    m_cachedSubimage->draw(context, clippedDestinationRect, clippedSourceRect);
+    ++m_cachedSubimageDrawCountForTesting;
+    return ImageDrawResult::DidDraw;
+}
+
+ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& options)
+{
+    auto result = drawFromCachedSubimage(context, destination, source, options);
+    if (result != ImageDrawResult::DidNothing)
+        return result;
+
+    if (mustDrawFromCachedSubimage(context)) {
+        LOG_ERROR("ERROR ImageDrawResult GraphicsContext::drawImage() cached subimage could not been drawn");
+        return ImageDrawResult::DidNothing;
+    }
+
+    return drawPDFDocument(context, destination, source, options);
+}
+
+void PDFDocumentImage::destroyDecodedData(bool)
+{
+    m_cachedSubimage = nullptr;
     decodedSizeChanged(0);
-    Image::destroyDecodedData(destroyAll);
 }
 
 #if !USE(PDFKIT_FOR_PDFDOCUMENTIMAGE)

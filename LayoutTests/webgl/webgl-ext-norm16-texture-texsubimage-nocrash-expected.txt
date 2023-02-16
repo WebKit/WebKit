@@ -1,4 +1,4 @@
-Test that texSubImage3D does not crash on with EXT_norm16_texture.
+Test that texSubImage does not crash on with EXT_norm16_texture.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

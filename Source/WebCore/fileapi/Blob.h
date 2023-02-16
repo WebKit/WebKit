@@ -36,6 +36,7 @@
 #include "FileReaderLoader.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
+#include "SecurityOriginData.h"
 #include "URLKeepingBlobAlive.h"
 #include "URLRegistry.h"
 #include <variant>
@@ -155,6 +156,7 @@ private:
     // as an identifier for this blob. The internal URL is never used to source the blob's content
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
     URL m_internalURL;
+    SecurityOriginData m_topOrigin;
 
     HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };

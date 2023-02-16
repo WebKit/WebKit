@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,9 @@
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
+#import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
+#import <pal/spi/mac/NSViewSPI.h>
 
 namespace WebCore {
 
@@ -176,7 +178,76 @@ void ControlMac::updateCellStates(const FloatRect&, const ControlStyle& style)
     [WebControlWindow setHasKeyAppearance:style.states.contains(ControlStyle::State::WindowActive)];
 }
 
-static void drawFocusRing(NSRect cellFrame, NSCell *cell, NSView *view)
+static bool supportsViewlessCells()
+{
+    static std::optional<BOOL> supportsViewlessCells;
+    if (!supportsViewlessCells)
+        supportsViewlessCells = [NSCell instancesRespondToSelector:@selector(_setFallbackBackingScaleFactor:)];
+    return *supportsViewlessCells;
+}
+
+// FIXME: rdar://105194487 - Remove flipping the coordinates.
+static bool shouldFlipContext(const ControlPart& owningPart)
+{
+    // Don't flip the context if we are just drawing an image.
+    return owningPart.type() != StyleAppearance::Checkbox
+        && owningPart.type() != StyleAppearance::SearchFieldResultsButton
+        && owningPart.type() != StyleAppearance::SearchFieldResultsDecoration;
+}
+
+static void applyViewlessCellSettings(float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
+{
+    ASSERT(supportsViewlessCells());
+
+    [cell _setFallbackBackingScaleFactor:deviceScaleFactor];
+
+#if USE(NSVIEW_SEMANTICCONTEXT)
+    if (style.states.contains(ControlStyle::State::FormSemanticContext))
+        [cell _setFallbackSemanticContext:NSViewSemanticContextForm];
+#else
+    UNUSED_PARAM(style);
+#endif
+}
+
+static void drawViewlessCell(const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, bool flipContext)
+{
+    CGContextRef cgContext = [[NSGraphicsContext currentContext] CGContext];
+    CGContextStateSaver stateSaver(cgContext);
+
+    applyViewlessCellSettings(deviceScaleFactor, style, cell);
+
+    auto adjustedRect = rect;
+
+    // FIXME: rdar://105194487 - Remove flipping the coordinates.
+    if (flipContext) {
+        // Move the coordinates origin to topleft of rect.
+        CGContextTranslateCTM(cgContext, adjustedRect.x(), adjustedRect.y());
+        adjustedRect.setLocation(FloatPoint::zero());
+
+        // Flip the coordinates.
+        CGContextTranslateCTM(cgContext, 0, adjustedRect.height());
+        CGContextScaleCTM(cgContext, 1, -1);
+    }
+
+    // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawWithFrame].
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    [cell drawWithFrame:adjustedRect inView:nil];
+#pragma clang diagnostic pop
+}
+
+static void drawCellInView(const FloatRect& rect, NSCell *cell, NSView *view)
+{
+    [cell drawWithFrame:rect inView:view];
+    [cell setControlView:nil];
+}
+
+static void drawCellFocusRingInView(const FloatRect& rect, NSCell *cell, NSView *view)
+{
+    [cell drawFocusRingMaskWithFrame:rect inView:view];
+}
+
+static void drawCellFocusRing(const FloatRect& rect, NSCell *cell, NSView *view)
 {
     CGContextRef cgContext = [[NSGraphicsContext currentContext] CGContext];
 
@@ -194,30 +265,32 @@ static void drawFocusRing(NSRect cellFrame, NSCell *cell, NSView *view)
     // FIXME: This color should be shared with RenderThemeMac. For now just use the same NSColor color.
     // The color is expected to be opaque, since CoreGraphics will apply opacity when drawing (because opacity is normally animated).
     auto color = colorFromCocoaColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
-    auto style = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color).get()));
-    CGContextSetStyle(cgContext, style.get());
+    auto cgStyle = adoptCF(CGStyleCreateFocusRingWithColor(&focusRingStyle, cachedCGColor(color).get()));
+    CGContextSetStyle(cgContext, cgStyle.get());
 
-    CGContextBeginTransparencyLayerWithRect(cgContext, NSRectToCGRect(cellFrame), nullptr);
-    [cell drawFocusRingMaskWithFrame:cellFrame inView:view];
+    CGContextBeginTransparencyLayerWithRect(cgContext, rect, nullptr);
+
+    // FIXME: rdar://105249508 - Needs to call viewless version of drawCellFocusRing().
+    drawCellFocusRingInView(rect, cell, view);
     CGContextEndTransparencyLayer(cgContext);
 }
 
-static void drawCellOrFocusRing(GraphicsContext& context, const FloatRect& rect, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
+void ControlMac::drawCellOrFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
 {
     LocalCurrentGraphicsContext localContext(context);
 
     if (drawCell) {
-        if ([cell isKindOfClass:[NSSliderCell class]]) {
-            // For slider cells, draw only the knob.
+        // For slider cells, draw only the knob.
+        if ([cell isKindOfClass:[NSSliderCell class]])
             [(NSSliderCell *)cell drawKnob:rect];
-        } else {
-            [cell drawWithFrame:rect inView:view];
-            [cell setControlView:nil];
-        }
+        else if (supportsViewlessCells())
+            drawViewlessCell(rect, deviceScaleFactor, style, cell, shouldFlipContext(m_owningPart));
+        else
+            drawCellInView(rect, cell, view);
     }
 
     if (style.states.contains(ControlStyle::State::Focused))
-        drawFocusRing(rect, cell, view);
+        drawCellFocusRing(rect, cell, view);
 }
 
 void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
@@ -227,7 +300,7 @@ void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float
     bool useImageBuffer = userCTM.xScale() != 1.0 || userCTM.yScale() != 1.0;
 
     if (!useImageBuffer) {
-        drawCellOrFocusRing(context, rect, style, cell, view, drawCell);
+        drawCellOrFocusRing(context, rect, deviceScaleFactor, style, cell, view, drawCell);
         return;
     }
 
@@ -241,7 +314,7 @@ void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float
     if (!imageBuffer)
         return;
 
-    drawCellOrFocusRing(imageBuffer->context(), cellDrawingRect, style, cell, view, drawCell);
+    drawCellOrFocusRing(imageBuffer->context(), cellDrawingRect, deviceScaleFactor, style, cell, view, drawCell);
     context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect.location() - focusRingPadding);
 }
 

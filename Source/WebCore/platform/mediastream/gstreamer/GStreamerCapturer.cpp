@@ -202,14 +202,7 @@ void GStreamerCapturer::play()
 void GStreamerCapturer::stop()
 {
     ASSERT(m_pipeline);
-
     GST_INFO_OBJECT(pipeline(), "Tearing down!");
-
-    // Make sure to remove sync handler before tearing down, avoiding
-    // possible deadlocks.
-    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(pipeline())));
-    gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
-
     gst_element_set_state(pipeline(), GST_STATE_NULL);
 }
 

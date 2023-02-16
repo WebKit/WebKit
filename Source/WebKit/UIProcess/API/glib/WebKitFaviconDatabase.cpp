@@ -69,7 +69,7 @@ struct _WebKitFaviconDatabasePrivate {
     RefPtr<IconDatabase> iconDatabase;
 };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitFaviconDatabase, webkit_favicon_database, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitFaviconDatabase, webkit_favicon_database, G_TYPE_OBJECT, GObject)
 
 static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* faviconDatabaseClass)
 {

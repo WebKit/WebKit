@@ -3994,9 +3994,9 @@ static bool parentLayerIsDOMParent(const RenderLayer& layer)
 {
     if (!layer.parent())
         return false;
-    if (!layer.renderer().element() || !layer.renderer().element()->parentElement())
+    if (!layer.renderer().element() || !layer.renderer().element()->parentElementInComposedTree())
         return false;
-    return layer.parent()->renderer().element() == layer.renderer().element()->parentElement();
+    return layer.parent()->renderer().element() == layer.renderer().element()->parentElementInComposedTree();
 }
 
 static bool isHitCandidateLegacy(const RenderLayer* hitLayer, bool canDepthSort, double* zOffset, const HitTestingTransformState* transformState)

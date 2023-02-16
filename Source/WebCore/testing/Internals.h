@@ -355,6 +355,7 @@ public:
     void setShowAutoFillButton(HTMLInputElement&, AutoFillButtonType);
     AutoFillButtonType autoFillButtonType(const HTMLInputElement&);
     AutoFillButtonType lastAutoFillButtonType(const HTMLInputElement&);
+    Vector<String> recentSearches(const HTMLInputElement&);
     ExceptionOr<void> scrollElementToRect(Element&, int x, int y, int w, int h);
 
     ExceptionOr<String> autofillFieldName(Element&);

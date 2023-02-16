@@ -41,8 +41,7 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionCall, (JSGlobalObject* globalObj
 
     MarkedArgumentBuffer args;
     if (boundArgs) {
-        // Starts with 1 since the first one is |this|.
-        for (unsigned i = 1; i < boundArgs->length(); ++i)
+        for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->get(i));
     }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
@@ -70,8 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionCall, (JSGlobalObject* globalObject, CallF
 
     MarkedArgumentBuffer args;
     if (boundArgs) {
-        // Starts with 1 since the first one is |this|.
-        for (unsigned i = 1; i < boundArgs->length(); ++i)
+        for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->get(i));
     }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
@@ -95,8 +93,7 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionConstruct, (JSGlobalObject* glob
 
     MarkedArgumentBuffer args;
     if (boundArgs) {
-        // Starts with 1 since the first one is |this|.
-        for (unsigned i = 1; i < boundArgs->length(); ++i)
+        for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->get(i));
     }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
@@ -123,8 +120,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
 
     MarkedArgumentBuffer args;
     if (boundArgs) {
-        // Starts with 1 since the first one is |this|.
-        for (unsigned i = 1; i < boundArgs->length(); ++i)
+        for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->get(i));
     }
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
@@ -234,8 +230,7 @@ JSArray* JSBoundFunction::boundArgsCopy(JSGlobalObject* globalObject)
     JSArray* result = constructEmptyArray(this->globalObject(), nullptr);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (m_boundArgs) {
-        // Starts with 1 since the first one is bound |this|.
-        for (unsigned i = 1; i < m_boundArgs->length(); ++i) {
+        for (unsigned i = 0; i < m_boundArgs->length(); ++i) {
             result->push(globalObject, m_boundArgs->get(i));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }

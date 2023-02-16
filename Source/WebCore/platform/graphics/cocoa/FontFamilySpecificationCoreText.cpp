@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "FontFamilySpecificationCoreTextCache.h"
 #include "FontSelector.h"
 #include "StyleFontSizeFunctions.h"
+#include "UnrealizedCoreTextFont.h"
 #include <pal/spi/cf/CoreTextSPI.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
@@ -49,10 +50,10 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 {
     auto size = fontDescription.computedSize();
     auto& originalPlatformData = FontFamilySpecificationCoreTextCache::forCurrentThread().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&]() {
+        UnrealizedCoreTextFont unrealizedFont = { RetainPtr { m_fontDescriptor } };
+        unrealizedFont.setSize(size);
 
-        auto font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
-
-        font = preparePlatformFont(font.get(), fontDescription, { });
+        auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, { }, FontTypeForPreparation::SystemFont);
 
         auto [syntheticBold, syntheticOblique] = computeNecessarySynthesis(font.get(), fontDescription, ShouldComputePhysicalTraits::Yes).boldObliquePair();
 

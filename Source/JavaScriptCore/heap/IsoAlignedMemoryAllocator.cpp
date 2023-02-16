@@ -31,6 +31,9 @@ namespace JSC {
 
 IsoAlignedMemoryAllocator::IsoAlignedMemoryAllocator(CString name)
     : Base(name)
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    , m_heap(makeString("IsoAlignedAllocator ", name.data()).utf8().data())
+#endif
 {
 }
 
@@ -46,12 +49,20 @@ void IsoAlignedMemoryAllocator::dump(PrintStream& out) const
 
 void* IsoAlignedMemoryAllocator::tryAllocateMemory(size_t size)
 {
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    return m_heap.malloc(size);
+#else
     return FastMalloc::tryMalloc(size);
+#endif
 }
 
 void IsoAlignedMemoryAllocator::freeMemory(void* pointer)
 {
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    return m_heap.free(pointer);
+#else
     FastMalloc::free(pointer);
+#endif
 }
 
 void* IsoAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
@@ -62,12 +73,20 @@ void* IsoAlignedMemoryAllocator::tryReallocateMemory(void*, size_t)
 
 void* IsoAlignedMemoryAllocator::tryMallocBlock()
 {
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    return m_heap.memalign(MarkedBlock::blockSize, MarkedBlock::blockSize, true);
+#else
     return tryFastAlignedMalloc(MarkedBlock::blockSize, MarkedBlock::blockSize);
+#endif
 }
 
 void IsoAlignedMemoryAllocator::freeBlock(void* block)
 {
+#if ENABLE(MALLOC_HEAP_BREAKDOWN)
+    m_heap.free(block);
+#else
     fastAlignedFree(block);
+#endif
 }
 
 void IsoAlignedMemoryAllocator::commitBlock(void* block)

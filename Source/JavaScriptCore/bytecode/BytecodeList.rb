@@ -85,6 +85,7 @@ begin_section :Bytecode,
     op_prefix: "op_",
     preserve_order: true
 
+# Ops with checkpoint must come first
 op :tail_call_varargs,
     args: {
         dst: VirtualRegister,
@@ -207,6 +208,8 @@ op :iterator_open,
         getNext: nil,
     }
 
+# Opcodes with metadata come next, in decreasing order of metadata alignment requirements
+# Alignment: 8
 op :set_private_brand, args: {
         base: VirtualRegister,
         brand: VirtualRegister,
@@ -241,17 +244,6 @@ op :put_by_id,
         structureChain: WriteBarrierBase[StructureChain],
     }
 
-op :put_by_val,
-    args: {
-        base: VirtualRegister,
-        property: VirtualRegister,
-        value: VirtualRegister,
-        ecmaMode: ECMAMode,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
-    }
-
 op :construct,
     args: {
         dst: VirtualRegister,
@@ -263,17 +255,6 @@ op :construct,
         callLinkInfo: BaselineCallLinkInfo,
         arrayProfile: ArrayProfile,
         profile: ValueProfile,
-    }
-
-op :put_by_val_direct,
-    args: {
-        base: VirtualRegister,
-        property: VirtualRegister,
-        value: VirtualRegister,
-        ecmaMode: ECMAMode,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
     }
 
 op_group :ValueProfiledBinaryOp,
@@ -500,22 +481,6 @@ op :get_by_val_with_this,
         seenIdentifiers: GetByValHistory,
     }
 
-op :enumerator_next,
-    args: {
-        # out
-        propertyName: VirtualRegister,
-        # in/out
-        mode: VirtualRegister, # Will always be a JS UInt32 representing a JSForInMode.
-        index: VirtualRegister, # Gets reset to zero every time mode changes.
-        # in
-        base: VirtualRegister,
-        enumerator: VirtualRegister,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
-        enumeratorMetadata: EnumeratorMetadata,
-    }
-
 op :enumerator_get_by_val,
     args: {
         dst: VirtualRegister,
@@ -527,34 +492,6 @@ op :enumerator_get_by_val,
     },
     metadata: {
         profile: ValueProfile,
-        arrayProfile: ArrayProfile,
-        enumeratorMetadata: EnumeratorMetadata,
-    }
-
-op :enumerator_in_by_val,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        mode: VirtualRegister,
-        propertyName: VirtualRegister,
-        index: VirtualRegister,
-        enumerator: VirtualRegister,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
-        enumeratorMetadata: EnumeratorMetadata,
-    }
-
-op :enumerator_has_own_property,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        mode: VirtualRegister,
-        propertyName: VirtualRegister,
-        index: VirtualRegister,
-        enumerator: VirtualRegister,
-    },
-    metadata: {
         arrayProfile: ArrayProfile,
         enumeratorMetadata: EnumeratorMetadata,
     }
@@ -578,16 +515,6 @@ op :get_prototype_of,
     },
     metadata: {
         profile: ValueProfile,
-    }
-
-op :jneq_ptr,
-    args: {
-        value: VirtualRegister,
-        specialPointer: VirtualRegister,
-        targetLabel: BoundLabel,
-    },
-    metadata: {
-        hasJumped: bool,
     }
 
 op :get_internal_field,
@@ -776,16 +703,6 @@ op :to_this,
         profile: ValueProfile,
     }
 
-op :in_by_val,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        property: VirtualRegister,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
-    }
-
 op :new_array,
     args: {
         dst: VirtualRegister,
@@ -797,6 +714,96 @@ op :new_array,
         arrayAllocationProfile: ArrayAllocationProfile,
     }
 
+
+# Alignment: 4
+op :put_by_val,
+    args: {
+        base: VirtualRegister,
+        property: VirtualRegister,
+        value: VirtualRegister,
+        ecmaMode: ECMAMode,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+    }
+
+op :put_by_val_direct,
+    args: {
+        base: VirtualRegister,
+        property: VirtualRegister,
+        value: VirtualRegister,
+        ecmaMode: ECMAMode,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+    }
+
+op :in_by_val,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+    }
+
+op :enumerator_next,
+    args: {
+        # out
+        propertyName: VirtualRegister,
+        # in/out
+        mode: VirtualRegister, # Will always be a JS UInt32 representing a JSForInMode.
+        index: VirtualRegister, # Gets reset to zero every time mode changes.
+        # in
+        base: VirtualRegister,
+        enumerator: VirtualRegister,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+        enumeratorMetadata: EnumeratorMetadata,
+    }
+
+op :enumerator_in_by_val,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        mode: VirtualRegister,
+        propertyName: VirtualRegister,
+        index: VirtualRegister,
+        enumerator: VirtualRegister,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+        enumeratorMetadata: EnumeratorMetadata,
+    }
+
+op :enumerator_has_own_property,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        mode: VirtualRegister,
+        propertyName: VirtualRegister,
+        index: VirtualRegister,
+        enumerator: VirtualRegister,
+    },
+    metadata: {
+        arrayProfile: ArrayProfile,
+        enumeratorMetadata: EnumeratorMetadata,
+    }
+
+# Alignment: 1
+op :jneq_ptr,
+    args: {
+        value: VirtualRegister,
+        specialPointer: VirtualRegister,
+        targetLabel: BoundLabel,
+    },
+    metadata: {
+        hasJumped: bool,
+    }
+
+# Opcodes without metadata are last
 op :in_by_id,
     args: {
         dst: VirtualRegister,
@@ -1187,9 +1194,10 @@ op :create_cloned_arguments,
         dst: VirtualRegister,
     }
 
-op :create_arguments_butterfly,
+op :create_arguments_butterfly_excluding_this,
     args: {
         dst: VirtualRegister,
+        target: VirtualRegister,
     }
 
 op :new_promise,

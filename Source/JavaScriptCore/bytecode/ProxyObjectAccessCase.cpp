@@ -93,7 +93,7 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
 
     callLinkInfo->setUpCall(CallLinkInfo::Call, scratchGPR);
 
-    unsigned numberOfParameters = 5;
+    unsigned numberOfParameters = 3;
 
     unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
     ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
@@ -109,31 +109,18 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
 
     jit.store32(CCallHelpers::TrustedImm32(numberOfParameters), calleeFrame.withOffset(CallFrameSlot::argumentCountIncludingThis * sizeof(Register) + PayloadOffset));
 
-    jit.storeTrustedValue(jsUndefined(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
+    jit.storeCell(baseGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(0).offset() * sizeof(Register)));
 
-    jit.loadPtr(CCallHelpers::Address(baseGPR, ProxyObject::offsetOfTarget()), scratchGPR);
-    jit.storeCell(scratchGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
-
-    jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
-
-#if USE(JSVALUE32_64)
-    jit.load32(CCallHelpers::Address(baseGPR, ProxyObject::offsetOfHandler() + TagOffset), scratchGPR);
-    jit.store32(scratchGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register) + TagOffset));
-    jit.load32(CCallHelpers::Address(baseGPR, ProxyObject::offsetOfHandler() + PayloadOffset), scratchGPR);
-    jit.store32(scratchGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register) + PayloadOffset));
-#else
-    jit.loadValue(CCallHelpers::Address(baseGPR, ProxyObject::offsetOfHandler()), JSValueRegs { scratchGPR });
-    jit.storeValue(JSValueRegs { scratchGPR }, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register)));
-#endif
+    jit.storeCell(thisGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
 
     if (!stubInfo.hasConstantIdentifier) {
         RELEASE_ASSERT(identifier());
         GPRReg propertyGPR = stubInfo.propertyGPR();
-        jit.storeCell(propertyGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(4).offset() * sizeof(Register)));
+        jit.storeCell(propertyGPR, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
     } else
-        jit.storeTrustedValue(identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(4).offset() * sizeof(Register)));
+        jit.storeTrustedValue(identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
 
-    jit.move(CCallHelpers::TrustedImmPtr(globalObject->linkTimeConstant(LinkTimeConstant::performProxyObjectGet)), scratchGPR);
+    jit.move(CCallHelpers::TrustedImmPtr(globalObject->performProxyObjectGetFunction()), scratchGPR);
     jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
     auto slowCase = CallLinkInfo::emitFastPath(jit, callLinkInfo, scratchGPR, scratchGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2);

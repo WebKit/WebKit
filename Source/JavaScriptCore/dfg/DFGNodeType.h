@@ -466,7 +466,7 @@ namespace JSC { namespace DFG {
     macro(CreateScopedArguments, NodeResultJS) \
     macro(CreateClonedArguments, NodeResultJS) \
     macro(PhantomClonedArguments, NodeResultJS | NodeMustGenerate) \
-    macro(CreateArgumentsButterfly, NodeResultJS) \
+    macro(CreateArgumentsButterflyExcludingThis, NodeResultJS) \
     macro(GetFromArguments, NodeResultJS) \
     macro(PutToArguments, NodeMustGenerate) \
     macro(GetArgument, NodeResultJS) \

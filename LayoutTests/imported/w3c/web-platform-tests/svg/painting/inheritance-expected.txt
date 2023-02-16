@@ -22,11 +22,11 @@ PASS Property stroke-dasharray inherits
 PASS Property stroke-dashoffset has initial value 0px
 PASS Property stroke-dashoffset inherits
 PASS Property marker-start has initial value none
-FAIL Property marker-start inherits assert_equals: expected "url(\"https://example/com/diagram.svg#marker\")" but got "none"
+PASS Property marker-start inherits
 PASS Property marker-mid has initial value none
-FAIL Property marker-mid inherits assert_equals: expected "url(\"https://example/com/diagram.svg#marker\")" but got "none"
+PASS Property marker-mid inherits
 PASS Property marker-end has initial value none
-FAIL Property marker-end inherits assert_equals: expected "url(\"https://example/com/diagram.svg#marker\")" but got "none"
+PASS Property marker-end inherits
 PASS Property paint-order has initial value normal
 FAIL Property paint-order inherits assert_equals: expected "markers stroke" but got "normal"
 PASS Property color-interpolation has initial value srgb

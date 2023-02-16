@@ -80,6 +80,7 @@
 #include "ASTUnaryExpression.h"
 #include "ASTUnsigned32Literal.h"
 #include "ASTValue.h"
+#include "ASTValueStatement.h"
 #include "ASTVariable.h"
 #include "ASTVariableQualifier.h"
 #include "ASTVariableStatement.h"

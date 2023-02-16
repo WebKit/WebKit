@@ -28,6 +28,7 @@
 #include "ASTDirective.h"
 #include "ASTFunction.h"
 #include "ASTStructure.h"
+#include "ASTValue.h"
 #include "ASTVariable.h"
 #include "WGSL.h"
 
@@ -39,17 +40,21 @@ namespace WGSL {
 class ShaderModule {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    explicit ShaderModule(const String& source)
+        : ShaderModule(source, { })
+    { }
+    
     ShaderModule(const String& source, const Configuration& configuration)
         : m_source(source)
         , m_configuration(configuration)
-    {
-    }
+    { }
 
     const String& source() const { return m_source; }
     const Configuration& configuration() const { return m_configuration; }
     AST::Directive::List& directives() { return m_directives; }
     AST::Function::List& functions() { return m_functions; }
     AST::Structure::List& structures() { return m_structures; }
+    AST::Value::List& values() { return m_values; }
     AST::Variable::List& variables() { return m_variables; }
 
 private:
@@ -58,6 +63,7 @@ private:
     AST::Directive::List m_directives;
     AST::Function::List m_functions;
     AST::Structure::List m_structures;
+    AST::Value::List m_values;
     AST::Variable::List m_variables;
 };
 

@@ -107,7 +107,7 @@ private:
     std::optional<WebCore::DestinationColorSpace> displayColorSpace() const override;
     void addFence(const WTF::MachSendRight&) override;
 
-    void addTransactionCallbackID(CallbackID) override;
+    void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) final;
 
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
     void sendDidFirstLayerFlushIfNeeded();
@@ -162,7 +162,7 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
 
     OptionSet<WebCore::LayoutMilestone> m_pendingNewlyReachedPaintingMilestones;
-    Vector<CallbackID> m_pendingCallbackIDs;
+    Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;
 
     std::unique_ptr<WebCore::RunLoopObserver> m_renderingUpdateRunLoopObserver;
     std::unique_ptr<WebCore::RunLoopObserver> m_postRenderingUpdateRunLoopObserver;

@@ -31,6 +31,10 @@
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <WebCore/CairoUtilities.h>
+#endif
+
 using namespace WebCore;
 
 namespace TestWebKitAPI {
@@ -41,6 +45,9 @@ public:
     {
         JSC::initialize();
         WTF::initializeMainThread();
+#if PLATFORM(GTK) || PLATFORM(WPE)
+        setDefaultCairoFontOptions(CairoUniquePtr<cairo_font_options_t>(cairo_font_options_create()));
+#endif
     }
 };
 

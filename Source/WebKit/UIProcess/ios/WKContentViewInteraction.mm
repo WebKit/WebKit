@@ -1763,6 +1763,12 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         && [uiDelegate _webView:webView touchEventsMustRequireGestureRecognizerToFail:gestureRecognizer];
 }
 
+- (BOOL)_gestureRecognizerCanBePreventedByTouchEvents:(UIGestureRecognizer *)gestureRecognizer
+{
+    id<WKUIDelegatePrivate> uiDelegate = static_cast<id<WKUIDelegatePrivate>>([self.webView UIDelegate]);
+    return [uiDelegate respondsToSelector:@selector(_webView:gestureRecognizerCanBePreventedByTouchEvents:)] && [uiDelegate _webView:self.webView gestureRecognizerCanBePreventedByTouchEvents:gestureRecognizer];
+}
+
 - (void)_webTouchEventsRecognized:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer
 {
     if (!_page->hasRunningProcess())
@@ -2493,7 +2499,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement())
         return _focusedElementInformation.interactionRect;
 
-    if (!_page->editorState().visualData->selectionClipRect.isEmpty())
+    if (_page->editorState().hasVisualData() && !_page->editorState().visualData->selectionClipRect.isEmpty())
         return _page->editorState().visualData->selectionClipRect;
 
     return CGRectNull;
@@ -5459,7 +5465,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 {
     _ignoreSelectionCommandFadeCount++;
     _page->scheduleFullEditorStateUpdate();
-    _page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] (auto) {
+    _page->callAfterNextPresentationUpdate([weakSelf = WeakObjCPtr<WKContentView>(self)] {
         if (auto strongSelf = weakSelf.get())
             strongSelf->_ignoreSelectionCommandFadeCount--;
     });
@@ -8638,7 +8644,7 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         view = view.superview;
     }
 
-    if (!gestureIsInstalledOnOrUnderWebView)
+    if (!gestureIsInstalledOnOrUnderWebView && ![self _gestureRecognizerCanBePreventedByTouchEvents:gestureRecognizer])
         return NO;
 
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
@@ -9730,7 +9736,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
         page->dragCancelled();
         if (auto completion = protectedSelf->_dragDropInteractionState.takeDragCancelSetDownBlock()) {
-            page->callAfterNextPresentationUpdate([completion, protectedSelf] (WebKit::CallbackBase::Error) {
+            page->callAfterNextPresentationUpdate([completion, protectedSelf] {
                 completion();
                 protectedSelf->_isAnimatingDragCancel = NO;
             });

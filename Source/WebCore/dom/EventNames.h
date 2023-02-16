@@ -67,6 +67,7 @@ namespace WebCore {
     macro(beforeload) \
     macro(beforepaste) \
     macro(beforeprint) \
+    macro(beforetoggle) \
     macro(beforeunload) \
     macro(beginEvent) \
     macro(blocked) \

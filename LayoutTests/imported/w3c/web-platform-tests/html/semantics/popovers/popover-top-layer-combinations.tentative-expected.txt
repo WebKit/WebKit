@@ -1,8 +1,8 @@
 Visible button
 
-FAIL Popover combination: Popover Dialog promise_test: Unhandled rejection with value: object "TypeError: ex.showPopover is not a function. (In 'ex.showPopover()', 'ex.showPopover' is undefined)"
-FAIL Popover combination: Open Non-modal Popover Dialog assert_throws_dom: Calling showPopover on an already-showing element should throw InvalidStateError function "() => ex.showPopover()" threw object "TypeError: ex.showPopover is not a function. (In 'ex.showPopover()', 'ex.showPopover' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
-FAIL Popover combination: Fullscreen Popover promise_test: Unhandled rejection with value: object "TypeError: ex.showPopover is not a function. (In 'ex.showPopover()', 'ex.showPopover' is undefined)"
-FAIL Popover combination: Fullscreen Popover Dialog promise_test: Unhandled rejection with value: object "TypeError: ex.showPopover is not a function. (In 'ex.showPopover()', 'ex.showPopover' is undefined)"
-FAIL Popover combination: Fullscreen Open Non-modal Popover Dialog assert_throws_dom: Calling showPopover on an already-showing element should throw InvalidStateError function "() => ex.showPopover()" threw object "TypeError: ex.showPopover is not a function. (In 'ex.showPopover()', 'ex.showPopover' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL Popover combination: Popover Dialog assert_throws_dom: Calling showModal() on an already-showing Popover should throw InvalidStateError function "() => ex.showModal()" did not throw
+FAIL Popover combination: Open Non-modal Popover Dialog assert_throws_dom: Calling showModal() on an already-showing Popover should throw InvalidStateError function "() => ex.showModal()" did not throw
+FAIL Popover combination: Fullscreen Popover assert_false: requestFullscreen() should not succeed when the element is an already-showing Popover expected false got true
+FAIL Popover combination: Fullscreen Popover Dialog assert_throws_dom: Calling showModal() on an already-showing Popover should throw InvalidStateError function "() => ex.showModal()" did not throw
+FAIL Popover combination: Fullscreen Open Non-modal Popover Dialog assert_throws_dom: Calling showModal() on an already-showing Popover should throw InvalidStateError function "() => ex.showModal()" did not throw
 

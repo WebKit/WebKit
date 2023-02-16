@@ -36,7 +36,6 @@
 #import "CoreTextHelpers.h"
 #import "FontInfo.h"
 #import "FullscreenClient.h"
-#import "GenericCallback.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
 #import "NativeWebGestureEvent.h"

@@ -32,6 +32,10 @@
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
+namespace API {
+class Array;
+}
+
 namespace WebKit {
 
 struct BackForwardListState;

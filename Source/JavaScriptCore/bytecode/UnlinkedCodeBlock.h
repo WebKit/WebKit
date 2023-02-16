@@ -76,6 +76,8 @@ class CachedCodeBlock;
 typedef unsigned UnlinkedArrayAllocationProfile;
 typedef unsigned UnlinkedObjectAllocationProfile;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(UnlinkedCodeBlock_RareData);
+
 struct UnlinkedStringJumpTable {
     struct OffsetLocation {
         int32_t m_branchOffset;
@@ -455,7 +457,7 @@ private:
 
 public:
     struct RareData {
-        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(UnlinkedCodeBlock_RareData);
 
         size_t sizeInBytes(const AbstractLocker&) const;
 

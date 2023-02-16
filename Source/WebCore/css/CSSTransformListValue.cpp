@@ -34,8 +34,13 @@
 namespace WebCore {
 
 CSSTransformListValue::CSSTransformListValue()
-    : CSSValueList(TransformListClass, SpaceSeparator)
+    : CSSValueContainingVector(TransformListClass, SpaceSeparator)
 {
+}
+
+Ref<CSSTransformListValue> CSSTransformListValue::create()
+{
+    return adoptRef(*new CSSTransformListValue);
 }
 
 }

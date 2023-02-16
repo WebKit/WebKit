@@ -165,9 +165,6 @@ class WinPort(ApplePort):
             return '--64-bit'
         return None
 
-    def show_results_html_file(self, results_filename):
-        self._run_script('run-safari', [abspath_to_uri(SystemHost.get_default().platform, results_filename)])
-
     def _build_path(self, *comps):
         """Returns the full path to the test driver (DumpRenderTree)."""
         root_directory = self.get_option('_cached_root') or self.get_option('root')
@@ -206,7 +203,7 @@ class WinPort(ApplePort):
     def _path_to_default_image_diff(self):
         return self._build_path('ImageDiff.exe')
 
-    API_TEST_BINARY_NAMES = ['TestWTF.exe', 'TestWebCore.exe', 'TestWebKitLegacy.exe']
+    API_TEST_BINARY_NAMES = ['TestWTF.exe', 'TestWebCore.exe', 'TestWebKit.exe']
 
     def path_to_api_test_binaries(self):
         return {binary.split('.')[0]: self._build_path(binary) for binary in self.API_TEST_BINARY_NAMES}

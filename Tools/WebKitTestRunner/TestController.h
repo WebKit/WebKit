@@ -384,7 +384,6 @@ public:
 
     WKURLRef currentTestURL() const;
 
-    void completeSpeechRecognitionPermissionCheck(WKSpeechRecognitionPermissionCallbackRef);
     void setIsSpeechRecognitionPermissionGranted(bool);
 
     void completeMediaKeySystemPermissionCheck(WKMediaKeySystemPermissionCallbackRef);

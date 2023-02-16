@@ -60,6 +60,7 @@ static BOOL _hasKeyAppearance;
     return _hasKeyAppearance;
 }
 
+// FIXME: rdar://105250168 - Remove this code once viewless NSCell drawing is complete.
 - (BOOL)_needsToResetDragMargins
 {
     return false;

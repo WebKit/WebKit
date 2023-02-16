@@ -31,22 +31,12 @@
 G_BEGIN_DECLS
 
 #define WEBKIT_TYPE_NAVIGATION_POLICY_DECISION            (webkit_navigation_policy_decision_get_type())
+#if !ENABLE(2022_GLIB_API)
 #define WEBKIT_NAVIGATION_POLICY_DECISION(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, WebKitNavigationPolicyDecision))
 #define WEBKIT_NAVIGATION_POLICY_DECISION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),  WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, WebKitNavigationPolicyDecisionClass))
 #define WEBKIT_IS_NAVIGATION_POLICY_DECISION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), WEBKIT_TYPE_NAVIGATION_POLICY_DECISION))
 #define WEBKIT_IS_NAVIGATION_POLICY_DECISION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_NAVIGATION_POLICY_DECISION))
 #define WEBKIT_NAVIGATION_POLICY_DECISION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, WebKitNavigationPolicyDecisionClass))
-
-typedef struct _WebKitNavigationPolicyDecision        WebKitNavigationPolicyDecision;
-typedef struct _WebKitNavigationPolicyDecisionClass   WebKitNavigationPolicyDecisionClass;
-typedef struct _WebKitNavigationPolicyDecisionPrivate WebKitNavigationPolicyDecisionPrivate;
-
-struct _WebKitNavigationPolicyDecision {
-    WebKitPolicyDecision parent;
-
-    /*< private >*/
-    WebKitNavigationPolicyDecisionPrivate *priv;
-};
 
 struct _WebKitNavigationPolicyDecisionClass {
     WebKitPolicyDecisionClass parent_class;
@@ -57,9 +47,9 @@ struct _WebKitNavigationPolicyDecisionClass {
     void (*_webkit_reserved2) (void);
     void (*_webkit_reserved3) (void);
 };
+#endif
 
-WEBKIT_API GType
-webkit_navigation_policy_decision_get_type            (void);
+WEBKIT_DECLARE_FINAL_TYPE (WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT, NAVIGATION_POLICY_DECISION, WebKitPolicyDecision)
 
 WEBKIT_API WebKitNavigationAction *
 webkit_navigation_policy_decision_get_navigation_action (WebKitNavigationPolicyDecision *decision);

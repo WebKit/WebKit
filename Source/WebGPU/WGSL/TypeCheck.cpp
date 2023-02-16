@@ -31,6 +31,7 @@
 #include "ASTVisitor.h"
 #include "CompilationMessage.h"
 #include "ContextProviderInlines.h"
+#include "Overload.h"
 #include "TypeStore.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
@@ -81,6 +82,7 @@ public:
 private:
     void visitFunctionBody(AST::Function&);
     void visitStructMembers(AST::Structure&);
+    void vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
 
     template<typename... Arguments>
     void typeError(const SourceSpan&, Arguments&&...);
@@ -95,13 +97,16 @@ private:
     bool unify(Type*, Type*) WARN_UNUSED_RETURN;
     bool isBottom(Type*) const;
     std::optional<unsigned> extractInteger(AST::Expression&);
+    Type* chooseOverload(const String&, const WTF::Vector<Type*>&);
 
     ShaderModule& m_shaderModule;
     Type* m_inferredType { nullptr };
 
     // FIXME: move this into a class that contains the AST
     TypeStore m_types;
-    WTF::Vector<Error> m_errors;
+    Vector<Error> m_errors;
+    // FIXME: maybe these should live in the context
+    HashMap<String, WTF::Vector<OverloadCandidate>> m_overloadedOperations;
 };
 
 TypeChecker::TypeChecker(ShaderModule& shaderModule)
@@ -112,6 +117,34 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceVariable(AST::Identifier::make("i32"_s), m_types.i32Type());
     introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
     introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
+
+    // FIXME: Add all other overloads
+    // FIXME: we should make this a lot more convenient
+    // operator + [T<:Number](T, T) -> T
+    OverloadCandidate plus1;
+    {
+        TypeVariable T { 0, TypeVariable::Number };
+        plus1.typeVariables.append(T);
+        plus1.parameters.append(T);
+        plus1.parameters.append(T);
+        plus1.result = T;
+    }
+    // operator + [T<:Number, N](vector<T, N>, T) -> vector<T, N>
+    OverloadCandidate plus2;
+    {
+        TypeVariable T { 0, TypeVariable::Number };
+        NumericVariable N { 0 };
+        plus2.typeVariables.append(T);
+        plus2.numericVariables.append(N);
+        plus2.parameters.append(AbstractVector { T, N });
+        plus2.parameters.append(T);
+        plus2.result = AbstractVector { T, N };
+    }
+
+    m_overloadedOperations.add("+"_s, WTF::Vector<OverloadCandidate> ({
+        WTFMove(plus1),
+        WTFMove(plus2),
+    }));
 }
 
 void TypeChecker::check()
@@ -120,6 +153,9 @@ void TypeChecker::check()
     // out of order
     for (auto& structure : m_shaderModule.structures())
         visit(structure);
+
+    for (auto& structure : m_shaderModule.structures())
+        visitStructMembers(structure);
 
     for (auto& variable : m_shaderModule.variables())
         visit(variable);
@@ -141,6 +177,20 @@ void TypeChecker::visit(AST::Structure& structure)
 {
     Type* structType = m_types.structType(structure.name());
     introduceVariable(structure.name(), structType);
+}
+
+void TypeChecker::visitStructMembers(AST::Structure& structure)
+{
+    auto* const* type = readVariable(structure.name());
+    ASSERT(type);
+    ASSERT(std::holds_alternative<Types::Struct>(**type));
+
+    auto& structType = std::get<Types::Struct>(**type);
+    for (auto& member : structure.members()) {
+        auto* memberType = resolve(member.type());
+        auto result = structType.fields.add(member.name().id(), memberType);
+        ASSERT_UNUSED(result, result.isNewEntry);
+    }
 }
 
 void TypeChecker::visit(AST::Variable& variable)
@@ -205,22 +255,56 @@ void TypeChecker::visit(AST::Expression&)
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    auto* structType = infer(access.base());
-    // FIXME: implement member lookup once we have a struct type
-    inferred(structType);
+    auto* baseType = infer(access.base());
+    if (isBottom(baseType)) {
+        inferred(m_types.bottomType());
+        return;
+    }
+
+    if (std::holds_alternative<Types::Struct>(*baseType)) {
+        auto& structType = std::get<Types::Struct>(*baseType);
+        auto it = structType.fields.find(access.fieldName().id());
+        if (it == structType.fields.end()) {
+            typeError(access.span(), "struct '", *baseType, "' does not have a member called '", access.fieldName(), "'");
+            return;
+        }
+        inferred(it->value);
+        return;
+    }
+
+    if (std::holds_alternative<Types::Vector>(*baseType)) {
+        auto& vector = std::get<Types::Vector>(*baseType);
+        vectorFieldAccess(vector, access);
+        return;
+    }
+
+    typeError(access.span(), "invalid member access expression. Expected vector or struct, got '", *baseType, "'");
 }
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
 {
-    // FIXME: handle reference index access
-    auto* arrayType = infer(access.base());
+    auto* base = infer(access.base());
     auto* index = infer(access.index());
 
-    // FIXME: unify index with UnionType(i32, u32)
-    UNUSED_PARAM(index);
+    if (isBottom(base)) {
+        inferred(m_types.bottomType());
+        return;
+    }
 
-    // FIXME: set the inferred type to the array's member type
-    inferred(arrayType);
+    if (!unify(index, m_types.i32Type()) && !unify(index, m_types.u32Type()) && !unify(index, m_types.abstractIntType())) {
+        typeError(access.span(), "index must be of type 'i32' or 'u32', found: '", *index, "'");
+        return;
+    }
+
+    if (std::holds_alternative<Types::Array>(*base)) {
+        // FIXME: check bounds if index is constant
+        auto& array = std::get<Types::Array>(*base);
+        inferred(array.element);
+        return;
+    }
+
+    // FIXME: Implement reference and matrix accesses
+    typeError(access.span(), "cannot index type '", *base, "'");
 }
 
 void TypeChecker::visit(AST::BinaryExpression& binary)
@@ -228,8 +312,9 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
     // FIXME: this needs to resolve overloads, not just unify both types
     auto* leftType = infer(binary.leftExpression());
     auto* rightType = infer(binary.rightExpression());
-    if (unify(leftType, rightType))
-        inferred(leftType);
+    auto* result = chooseOverload(toString(binary.operation()), { leftType, rightType });
+    if (result)
+        inferred(result);
     else
         typeError(binary.span(), "no matching overload for operator ", toString(binary.operation()), " (", *leftType, ", ", *rightType, ")");
 }
@@ -356,6 +441,67 @@ std::optional<unsigned> TypeChecker::extractInteger(AST::Expression& expression)
     }
 }
 
+void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
+{
+    const auto& fieldName = access.fieldName().id();
+    auto length = fieldName.length();
+
+    const auto& isXYZW = [&](char c) {
+        return c == 'x' || c == 'y' || c == 'z' || c == 'w';
+    };
+    const auto& isRGBA = [&](char c) {
+        return c == 'r' || c == 'g' || c == 'b' || c == 'a';
+    };
+
+    bool hasXYZW = false;
+    bool hasRGBA = false;
+    for (unsigned i = 0; i < length; ++i) {
+        char c = fieldName[i];
+        if (isXYZW(c))
+            hasXYZW = true;
+        else if (isRGBA(c))
+            hasRGBA = true;
+        else {
+            typeError(access.span(), "invalid vector swizzle character");
+            return;
+        }
+    }
+
+    if (hasXYZW && hasRGBA) {
+        typeError(access.span(), "invalid vector swizzle member");
+        return;
+    }
+
+    AST::ParameterizedTypeName::Base base;
+    switch (length) {
+    case 1:
+        inferred(vector.element);
+        return;
+    case 2:
+        base = AST::ParameterizedTypeName::Base::Vec2;
+        break;
+    case 3:
+        base = AST::ParameterizedTypeName::Base::Vec3;
+        break;
+    case 4:
+        base = AST::ParameterizedTypeName::Base::Vec4;
+        break;
+    default:
+        typeError(access.span(), "invalid vector swizzle size");
+        return;
+    }
+
+    inferred(m_types.constructType(base, vector.element));
+}
+
+Type* TypeChecker::chooseOverload(const String& operation, const WTF::Vector<Type*>& arguments)
+{
+    auto it = m_overloadedOperations.find(operation);
+    if (it == m_overloadedOperations.end())
+        return nullptr;
+    return resolveOverloads(m_types, it->value, arguments);
+}
+
 Type* TypeChecker::infer(AST::Expression& expression)
 {
     ASSERT(!m_inferredType);
@@ -403,6 +549,7 @@ Type* TypeChecker::resolve(AST::TypeName& type)
 void TypeChecker::inferred(Type* type)
 {
     ASSERT(type);
+    ASSERT(!m_inferredType);
     m_inferredType = type;
 }
 

@@ -88,7 +88,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
     }
 
     if (box.isText()) {
-        auto hasVisibleDamage = box.text()->length() && box.isVisible() && hasDamage(box); 
+        auto hasVisibleDamage = box.text().length() && box.isVisible() && hasDamage(box); 
         if (!hasVisibleDamage)
             return;
 

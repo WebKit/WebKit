@@ -204,7 +204,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     }
 
     auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTFMove(decisionHandler)]);
-    [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:WebCore::SecurityOriginData::fromURL(request.url) requestingURL:request.url view:request.view.get() listener:policyListener.get()];
+    [[WKWebGeolocationPolicyDecider sharedPolicyDecider] decidePolicyForGeolocationRequestFromOrigin:WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(request.url) requestingURL:request.url view:request.view.get() listener:policyListener.get()];
 }
 
 - (void)geolocationAuthorizationDenied

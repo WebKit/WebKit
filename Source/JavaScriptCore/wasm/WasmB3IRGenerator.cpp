@@ -49,6 +49,7 @@
 #include "B3VariableValue.h"
 #include "B3WasmAddressValue.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "CompilerTimingScope.h"
 #include "FunctionAllowlist.h"
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArray.h"
@@ -522,6 +523,7 @@ public:
         return { };
     }
 
+    PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addLocal(Type, uint32_t);
     ExpressionType addConstant(Type, uint64_t);
@@ -1203,6 +1205,11 @@ auto B3IRGenerator::addLocal(Type type, uint32_t count) -> PartialResult
             m_currentBlock->appendNew<VariableValue>(m_proc, Set, Origin(), local, constant(toB3Type(type), val, Origin()));
         }
     }
+    return { };
+}
+
+auto B3IRGenerator::addDrop(ExpressionType) -> PartialResult
+{
     return { };
 }
 
@@ -4282,6 +4289,8 @@ static bool shouldDumpIRFor(uint32_t functionIndex)
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileB3(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, CompilationMode compilationMode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, uint32_t loopIndexForOSREntry, TierUpCount* tierUp)
 {
+    CompilerTimingScope totalScope("B3", "Total WASM compilation");
+
     auto result = makeUnique<InternalFunction>();
 
     compilationContext.wasmEntrypointJIT = makeUnique<CCallHelpers>();

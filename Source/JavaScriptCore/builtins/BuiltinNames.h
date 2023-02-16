@@ -89,7 +89,6 @@ namespace JSC {
     macro(starNamespace) \
     macro(keys) \
     macro(values) \
-    macro(get) \
     macro(set) \
     macro(clear) \
     macro(context) \

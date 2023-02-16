@@ -30,7 +30,6 @@
 #include "AffineTransform.h"
 #include "BitmapImage.h"
 #include "DeprecatedGlobalSettings.h"
-#include "GeometryUtilities.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
 #include "Length.h"
@@ -155,36 +154,6 @@ void Image::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const 
 
     if (imageObserver())
         imageObserver()->didDraw(*this);
-}
-
-ImageDrawResult Image::drawCachedSubimage(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
-{
-    // This image does not support CachedSubimage drawing.
-    if (!shouldDrawFromCachedSubimage(context))
-        return ImageDrawResult::DidNothing;
-
-    auto clippedDestinationRect = intersection(context.clipBounds(), destinationRect);
-    if (clippedDestinationRect.isEmpty())
-        return ImageDrawResult::DidDraw;
-
-    auto clippedSourceRect = mapRect(clippedDestinationRect, destinationRect, sourceRect);
-
-    // Reset the currect CachedSubimage if it can't be reused for the current drawing.
-    if (m_cachedSubimage && !m_cachedSubimage->canBeUsed(context, clippedDestinationRect, clippedSourceRect))
-        m_cachedSubimage = nullptr;
-
-    if (!m_cachedSubimage) {
-        m_cachedSubimage = CachedSubimage::create(*this, context, clippedDestinationRect, clippedSourceRect, options);
-        if (m_cachedSubimage)
-            ++m_cachedSubimageCreateCountForTesting;
-    }
-
-    if (!m_cachedSubimage)
-        return ImageDrawResult::DidNothing;
-
-    m_cachedSubimage->draw(context, clippedDestinationRect, clippedSourceRect);
-    ++m_cachedSubimageDrawCountForTesting;
-    return ImageDrawResult::DidDraw;
 }
 
 ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -384,11 +353,6 @@ void Image::startAnimationAsynchronously()
     if (m_animationStartTimer->isActive())
         return;
     m_animationStartTimer->startOneShot(0_s);
-}
-
-void Image::destroyDecodedData(bool)
-{
-    m_cachedSubimage = nullptr;
 }
 
 DestinationColorSpace Image::colorSpace()

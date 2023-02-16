@@ -35,10 +35,13 @@
 #include "IntrinsicGetterAccessCase.h"
 #include "ModuleNamespaceAccessCase.h"
 #include "PolymorphicAccess.h"
+#include "ProxyObjectAccessCase.h"
 #include "StructureStubInfo.h"
 #include <wtf/ListDump.h>
 
 namespace JSC {
+
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(GetByStatus);
 
 bool GetByStatus::appendVariant(const GetByVariant& variant)
 {
@@ -199,6 +202,12 @@ GetByStatus::GetByStatus(const ModuleNamespaceAccessCase& accessCase)
 {
 }
 
+GetByStatus::GetByStatus(const ProxyObjectAccessCase&)
+    : m_state(ProxyObject)
+    , m_wasSeenInJIT(true)
+{
+}
+
 GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
     const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CallLinkStatus::ExitSiteData callExitSiteData)
 {
@@ -242,6 +251,15 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
             switch (access.type()) {
             case AccessCase::ModuleNamespaceLoad:
                 return GetByStatus(access.as<ModuleNamespaceAccessCase>());
+            case AccessCase::ProxyObjectLoad: {
+                auto& accessCase = access.as<ProxyObjectAccessCase>();
+                auto status = GetByStatus(accessCase);
+                auto callLinkStatus = makeUnique<CallLinkStatus>();
+                if (CallLinkInfo* callLinkInfo = accessCase.callLinkInfo())
+                    *callLinkStatus = CallLinkStatus::computeFor(locker, profiledBlock, *callLinkInfo, callExitSiteData);
+                status.appendVariant(GetByVariant(accessCase.identifier(), { }, invalidOffset, { }, WTFMove(callLinkStatus)));
+                return status;
+            }
             default:
                 break;
             }
@@ -461,6 +479,7 @@ bool GetByStatus::makesCalls() const
                 return true;
         }
         return false;
+    case ProxyObject:
     case MakesCalls:
     case ObservedSlowPathAndMakesCalls:
         return true;
@@ -496,6 +515,7 @@ void GetByStatus::merge(const GetByStatus& other)
         
     case Simple:
     case Custom:
+    case ProxyObject:
         if (m_state != other.m_state)
             return mergeSlow();
         
@@ -599,6 +619,9 @@ void GetByStatus::dump(PrintStream& out) const
         break;
     case ModuleNamespace:
         out.print("ModuleNamespace");
+        break;
+    case ProxyObject:
+        out.print("ProxyObject");
         break;
     case LikelyTakesSlowPath:
         out.print("LikelyTakesSlowPath");

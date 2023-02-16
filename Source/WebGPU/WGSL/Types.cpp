@@ -30,9 +30,11 @@
 
 namespace WGSL {
 
-void printInternal(PrintStream& out, const Type& type)
+using namespace Types;
+
+void Type::dump(PrintStream& out) const
 {
-    WTF::switchOn(type,
+    WTF::switchOn(*this,
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
 #define PRIMITIVE_CASE(kind, name) \
@@ -73,10 +75,10 @@ void printInternal(PrintStream& out, const Type& type)
         });
 }
 
-String toString(const Type& type)
+String Type::toString() const
 {
     StringPrintStream out;
-    printInternal(out, type);
+    dump(out);
     return out.toString();
 }
 

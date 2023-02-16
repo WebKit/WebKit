@@ -1690,6 +1690,69 @@ void NetworkSessionCocoa::clearCredentials()
 #endif
 }
 
+HashSet<WebCore::SecurityOriginData> NetworkSessionCocoa::originsWithCredentials()
+{
+    NSURLCredentialStorage *credentialStorage = nsCredentialStorage();
+    if (!credentialStorage)
+        return { };
+
+    bool shouldHandleSessionCredentialsOnly = credentialStorage == [NSURLCredentialStorage sharedCredentialStorage];
+    HashSet<WebCore::SecurityOriginData> origins;
+    auto* credentials = [credentialStorage allCredentials];
+    for (NSURLProtectionSpace *space in credentials) {
+        for (NSURLCredential *credential in [credentials[space] allValues]) {
+            if (!shouldHandleSessionCredentialsOnly || credential.persistence == NSURLCredentialPersistenceForSession) {
+                origins.add(WebCore::SecurityOriginData { String(space.protocol), String(space.host), space.port });
+                break;
+            }
+        }
+    }
+    return origins;
+}
+
+void NetworkSessionCocoa::removeCredentialsForOrigins(const Vector<WebCore::SecurityOriginData>& origins)
+{
+    NSURLCredentialStorage *credentialStorage = nsCredentialStorage();
+    if (!credentialStorage)
+        return;
+
+    HashSet<WebCore::SecurityOriginData> originSet;
+    for (auto& origin : origins) {
+        if (!origin.isNull() && !origin.isOpaque())
+            originSet.add(origin);
+    }
+
+    bool shouldHandleSessionCredentialsOnly = credentialStorage == [NSURLCredentialStorage sharedCredentialStorage];
+    auto* credentials = [credentialStorage allCredentials];
+    for (NSURLProtectionSpace *space in credentials) {
+        for (NSURLCredential *credential in [credentials[space] allValues]) {
+            if (shouldHandleSessionCredentialsOnly && credential.persistence != NSURLCredentialPersistenceForSession)
+                continue;
+            auto origin = WebCore::SecurityOriginData { String(space.protocol), String(space.host), space.port };
+            if (originSet.contains(origin))
+                [credentialStorage removeCredential:credential forProtectionSpace:space];
+        }
+    }
+}
+
+void NetworkSessionCocoa::clearCredentials(WallTime modifiedSince)
+{
+    NSURLCredentialStorage *credentialStorage = nsCredentialStorage();
+    if (!credentialStorage)
+        return;
+
+    bool useSharedCredentialStorage = credentialStorage == [NSURLCredentialStorage sharedCredentialStorage];
+    bool shouldHandleSessionCredentialsOnly = useSharedCredentialStorage || (modifiedSince.secondsSinceEpoch().value() > 0.0);
+    auto* credentials = [credentialStorage allCredentials];
+    for (NSURLProtectionSpace *space in credentials) {
+        for (NSURLCredential *credential in [credentials[space] allValues]) {
+            if (shouldHandleSessionCredentialsOnly && credential.persistence != NSURLCredentialPersistenceForSession)
+                continue;
+            [credentialStorage removeCredential:credential forProtectionSpace:space];
+        }
+    }
+}
+
 bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
 {
     const String& host = challenge.protectionSpace().host();
@@ -1823,14 +1886,14 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
             ensureMutableRequest()._privacyProxyFailClosedForUnreachableNonMainHosts = YES;
     }
 
-    if (networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled))
-        enableNetworkConnectionIntegrity(ensureMutableRequest(), needsAdditionalNetworkConnectionIntegritySettings(request));
+    enableNetworkConnectionIntegrity(ensureMutableRequest(), networkConnectionIntegrityPolicy);
 
     auto& sessionSet = sessionSetForPage(webPageProxyID);
     RetainPtr task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
     
-    // Although the WebSocket protocol allows full 64-bit lengths, Chrome and Firefox limit the length to 2^63 - 1
-    task.get().maximumMessageSize = 0x7FFFFFFFFFFFFFFFull;
+    // Although the WebSocket protocol allows full 64-bit lengths, Chrome and Firefox limit the length to 2^63 - 1.
+    // Use NSIntegerMax instead of 2^63 - 1 for 32-bit systems.
+    task.get().maximumMessageSize = NSIntegerMax;
 
     return makeUnique<WebSocketTask>(channel, webPageProxyID, sessionSet, request, clientOrigin, WTFMove(task));
 }

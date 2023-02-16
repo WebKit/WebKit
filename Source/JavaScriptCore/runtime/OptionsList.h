@@ -443,7 +443,7 @@ bool canUseWebAssemblyFastMemory();
     v(Unsigned, maxB3TailDupBlockSize, 3, Normal, nullptr) \
     v(Unsigned, maxB3TailDupBlockSuccessors, 3, Normal, nullptr) \
     v(Bool, useB3HoistLoopInvariantValues, false, Normal, nullptr) \
-    v(Bool, useB3CanonicalizePrePostIncrements, true, Normal, nullptr) \
+    v(Bool, useB3CanonicalizePrePostIncrements, false, Normal, nullptr) \
     \
     v(Bool, useDollarVM, false, Restricted, "installs the $vm debugging tool in global objects") \
     v(OptionString, functionOverrides, nullptr, Restricted, "file with debugging overrides for function bodies") \
@@ -464,6 +464,8 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, dumpModuleRecord, false, Normal, nullptr) \
     v(Bool, dumpModuleLoadingState, false, Normal, nullptr) \
     v(Bool, exposeInternalModuleLoader, false, Normal, "expose the internal module loader object to the global space for debugging") \
+    \
+    v(Bool, exposePrivateIdentifiers, false, Normal, "Allow non-builtin scripts to use private identifiers. Mostly useful to expose @superSamplerBegin/End intrinsics for profiling") \
     \
     v(Bool, useSuperSampler, false, Normal, nullptr) \
     \
@@ -493,7 +495,10 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, crashIfWebAssemblyCantFastMemory, false, Normal, "If true, we will crash if we can't obtain fast memory for wasm.") \
     v(Bool, crashOnFailedWebAssemblyValidate, false, Normal, "If true, we will crash if we can't validate a wasm module instead of throwing an exception.") \
     v(Unsigned, maxNumWebAssemblyFastMemories, 4, Normal, nullptr) \
-    v(Bool, wasmBBQUsesAir, true, Normal, nullptr) \
+    v(Bool, useSinglePassBBQJIT, false, Normal, "If true, BBQ will use the new single-pass WebAssembly baseline JIT as its compilation backend.") \
+    v(Bool, wasmBBQUsesAir, true, Normal, "If true, BBQ will use Air as its compilation backend.") \
+    v(Bool, verboseBBQJITAllocation, false, Normal, "Logs extra information about register allocation during BBQ JIT") \
+    v(Bool, verboseBBQJITInstructions, false, Normal, "Logs instruction information during BBQ JIT") \
     v(Bool, useWasmLLInt, true, Normal, nullptr) \
     v(Bool, useBBQJIT, true, Normal, "allows the BBQ JIT to be used if true") \
     v(Bool, useOMGJIT, true, Normal, "allows the OMG JIT to be used if true") \

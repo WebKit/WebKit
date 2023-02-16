@@ -47,6 +47,7 @@
 #include "InterpreterInlines.h"
 #include "JITCode.h"
 #include "JSArrayInlines.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSLexicalEnvironment.h"

@@ -73,7 +73,7 @@ struct _WebKitAutomationSessionPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-WEBKIT_DEFINE_FINAL_TYPE_IN_2022_API(WebKitAutomationSession, webkit_automation_session, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(WebKitAutomationSession, webkit_automation_session, G_TYPE_OBJECT, GObject)
 
 class AutomationSessionClient final : public API::AutomationSessionClient {
     WTF_MAKE_FAST_ALLOCATED;

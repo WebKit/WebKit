@@ -766,11 +766,11 @@ static bool isRenderableFormat(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth24PlusStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
+    case WGPUTextureFormat_RG11B10Ufloat:
         return true;
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RGBA8Snorm:
-    case WGPUTextureFormat_RG11B10Ufloat:
     case WGPUTextureFormat_RGB9E5Ufloat:
     case WGPUTextureFormat_BC1RGBAUnorm:
     case WGPUTextureFormat_BC1RGBAUnormSrgb:

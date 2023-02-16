@@ -88,7 +88,7 @@ public:
     void setNavigationPreloadIdentifier(FetchIdentifier identifier) { m_navigationPreloadIdentifier = identifier; }
 
 private:
-    FetchRequest(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
+    FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
 
     ExceptionOr<void> initializeOptions(const Init&);
     ExceptionOr<void> initializeWith(FetchRequest&, Init&&);
@@ -106,18 +106,6 @@ private:
     Ref<AbortSignal> m_signal;
     FetchIdentifier m_navigationPreloadIdentifier;
 };
-
-inline FetchRequest::FetchRequest(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
-    : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
-    , m_request(WTFMove(request))
-    , m_requestURL(m_request.url())
-    , m_options(WTFMove(options))
-    , m_referrer(WTFMove(referrer))
-    , m_signal(AbortSignal::create(context))
-{
-    m_request.setRequester(ResourceRequestRequester::Fetch);
-    updateContentType();
-}
 
 WebCoreOpaqueRoot root(FetchRequest*);
 

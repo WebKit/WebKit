@@ -221,7 +221,7 @@ void Recorder::drawImageBuffer(ImageBuffer& imageBuffer, const FloatRect& destRe
     recordDrawImageBuffer(imageBuffer, destRect, srcRect, options);
 }
 
-void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
+void Recorder::drawNativeImageInternal(NativeImage& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     appendStateChangeItemIfNecessary();
     recordResourceUse(image);

@@ -93,7 +93,7 @@ struct _JSCContextPrivate {
     Vector<JSCContextExceptionHandler> exceptionHandlers;
 };
 
-WEBKIT_DEFINE_TYPE(JSCContext, jsc_context, G_TYPE_OBJECT)
+WEBKIT_DEFINE_FINAL_TYPE(JSCContext, jsc_context, G_TYPE_OBJECT, GObject)
 
 static void jscContextSetVirtualMachine(JSCContext* context, GRefPtr<JSCVirtualMachine>&& vm)
 {

@@ -31,19 +31,6 @@
 
 namespace WebCore {
 
-std::unique_ptr<CachedSubimage> CachedSubimage::create(Image& image, GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
-{
-    ASSERT(image.shouldDrawFromCachedSubimage(context));
-
-    if (auto cachedSubimage = createCachedSubimage(image, context, destinationRect, sourceRect, options))
-        return cachedSubimage;
-
-    if (!image.mustDrawFromCachedSubimage(context))
-        return nullptr;
-
-    return createPixelatedCachedSubimage(image, context, destinationRect, sourceRect, options);
-}
-
 static FloatRect calculateCachedSubimageSourceRect(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const FloatRect& imageRect)
 {
     auto scaleFactor = destinationRect.size() / sourceRect.size();
@@ -64,9 +51,9 @@ static FloatRect calculateCachedSubimageSourceRect(GraphicsContext& context, con
     return cachedSubimageSourceRect;
 }
 
-std::unique_ptr<CachedSubimage> CachedSubimage::createCachedSubimage(Image& image, GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+std::unique_ptr<CachedSubimage> CachedSubimage::create(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect)
 {
-    auto cachedSubimageSourceRect = calculateCachedSubimageSourceRect(context, destinationRect, sourceRect, FloatRect { { }, image.size() });
+    auto cachedSubimageSourceRect = calculateCachedSubimageSourceRect(context, destinationRect, sourceRect, FloatRect { { }, imageSize });
     if (!(roundedIntRect(cachedSubimageSourceRect) == roundedIntRect(sourceRect) || cachedSubimageSourceRect.contains(sourceRect)))
         return nullptr;
 
@@ -76,21 +63,13 @@ std::unique_ptr<CachedSubimage> CachedSubimage::createCachedSubimage(Image& imag
     if (!imageBuffer)
         return nullptr;
 
-    auto result = image.draw(imageBuffer->context(), cachedSubimageDestinationRect, cachedSubimageSourceRect, options);
-    if (result != ImageDrawResult::DidDraw)
-        return nullptr;
-
     return makeUnique<CachedSubimage>(imageBuffer.releaseNonNull(), context.scaleFactor(), cachedSubimageDestinationRect, cachedSubimageSourceRect);
 }
 
-std::unique_ptr<CachedSubimage> CachedSubimage::createPixelatedCachedSubimage(Image& image, GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
+std::unique_ptr<CachedSubimage> CachedSubimage::createPixelated(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect)
 {
     auto imageBuffer = context.createScaledImageBuffer(destinationRect, context.scaleFactor(), DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated, RenderingMethod::Local);
     if (!imageBuffer)
-        return nullptr;
-
-    auto result = image.draw(imageBuffer->context(), destinationRect, sourceRect, options);
-    if (result != ImageDrawResult::DidDraw)
         return nullptr;
 
     return makeUnique<CachedSubimage>(imageBuffer.releaseNonNull(), context.scaleFactor(), destinationRect, sourceRect);

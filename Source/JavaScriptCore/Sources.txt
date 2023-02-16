@@ -665,6 +665,7 @@ jit/JITBitOrGenerator.cpp
 jit/JITBitXorGenerator.cpp
 jit/JITCall.cpp
 jit/JITCode.cpp
+jit/JITCodeMap.cpp
 jit/JITCompilation.cpp
 jit/JITCompilationKey.cpp
 jit/JITCompilationMode.cpp
@@ -834,6 +835,7 @@ runtime/GetPutInfo.cpp
 runtime/GetterSetter.cpp
 runtime/GlobalExecutable.cpp
 runtime/HashMapImpl.cpp
+runtime/HasOwnPropertyCache.cpp
 runtime/Identifier.cpp
 runtime/ImportMap.cpp
 runtime/IndexingType.cpp
@@ -1102,6 +1104,7 @@ tools/VMInspector.cpp
 wasm/WasmAirIRGenerator32_64.cpp @no-unify
 wasm/WasmAirIRGenerator64.cpp @no-unify
 wasm/WasmB3IRGenerator.cpp
+wasm/WasmBBQJIT.cpp
 wasm/WasmBBQPlan.cpp
 wasm/WasmBinding.cpp
 wasm/WasmBranchHintsSectionParser.cpp

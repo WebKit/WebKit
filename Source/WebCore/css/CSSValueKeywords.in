@@ -576,6 +576,7 @@ rtl
 capitalize
 uppercase
 lowercase
+full-size-kana
 //none
 //
 // CSS_PROP_VISIBILITY:
@@ -1655,3 +1656,8 @@ only
 // inherits
 true
 false
+
+// text-spacing-trim
+space-all
+// text-autospace
+no-autospace

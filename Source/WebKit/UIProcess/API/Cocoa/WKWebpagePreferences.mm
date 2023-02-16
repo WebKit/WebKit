@@ -602,13 +602,19 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
 - (BOOL)_networkConnectionIntegrityEnabled
 {
-    return _websitePolicies->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::Enabled);
+    return _websitePolicies->networkConnectionIntegrityPolicy().containsAll({
+        WebCore::NetworkConnectionIntegrity::Enabled,
+        WebCore::NetworkConnectionIntegrity::EnhancedTelemetry,
+        WebCore::NetworkConnectionIntegrity::RequestValidation,
+    });
 }
 
 - (void)_setNetworkConnectionIntegrityEnabled:(BOOL)enabled
 {
     auto webCorePolicy = _websitePolicies->networkConnectionIntegrityPolicy();
     webCorePolicy.set(WebCore::NetworkConnectionIntegrity::Enabled, enabled);
+    webCorePolicy.set(WebCore::NetworkConnectionIntegrity::EnhancedTelemetry, enabled);
+    webCorePolicy.set(WebCore::NetworkConnectionIntegrity::RequestValidation, enabled);
     _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
 }
 
@@ -638,6 +644,9 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
     if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::EnhancedTelemetry))
         policy |= _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry;
 
+    if (webCorePolicy.contains(WebCore::NetworkConnectionIntegrity::RequestValidation))
+        policy |= _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation;
+
     return policy;
 }
 
@@ -665,6 +674,9 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 
     if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry)
         webCorePolicy.add(WebCore::NetworkConnectionIntegrity::EnhancedTelemetry);
+
+    if (networkConnectionIntegrityPolicy & _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation)
+        webCorePolicy.add(WebCore::NetworkConnectionIntegrity::RequestValidation);
 
     _websitePolicies->setNetworkConnectionIntegrityPolicy(webCorePolicy);
 }

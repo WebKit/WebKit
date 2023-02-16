@@ -47,10 +47,11 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParsing.h"
 #include "CSSTokenizer.h"
+#include "CSSTransformListValue.h"
+#include "CSSValuePair.h"
 #include "CSSVariableParser.h"
 #include "CSSVariableReferenceValue.h"
 #include "FontFace.h"
-#include "Pair.h"
 #include "ParsingUtilities.h"
 #include "Rect.h"
 #include "StyleBuilder.h"
@@ -61,12 +62,6 @@
 #include "TransformFunctions.h"
 #include <memory>
 #include <wtf/text/StringBuilder.h>
-
-// FIXME-NEWPARSER: CSSPrimitiveValue is a large class that holds many unrelated objects,
-// switching behavior on the type of the object it is holding.
-// Since CSSValue is already a class hierarchy, this adds an unnecessary second level to the hierarchy that complicates code.
-// So we need to remove the various behaviors from CSSPrimitiveValue and split them into separate subclasses of CSSValue.
-// FIXME-NEWPARSER: Replace Pair and Rect with actual CSSValue subclasses (CSSValuePair and CSSQuadValue).
 
 namespace WebCore {
 
@@ -450,13 +445,11 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     if (!value)
         return nullptr;
 
-    auto resolveSyntaxValue = [&](const CSSValue& value, CSSCustomPropertySyntax::Type syntaxType) -> std::optional<CSSCustomPropertyValue::SyntaxValue> {
-        auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
-
+    auto resolveSyntaxValue = [&, syntaxType = syntaxType](const CSSValue& value) -> std::optional<CSSCustomPropertyValue::SyntaxValue> {
         switch (syntaxType) {
         case CSSCustomPropertySyntax::Type::LengthPercentage:
         case CSSCustomPropertySyntax::Type::Length: {
-            auto length = Style::BuilderConverter::convertLength(builderState, *primitiveValue);
+            auto length = Style::BuilderConverter::convertLength(builderState, downcast<CSSPrimitiveValue>(value));
             return { WTFMove(length) };
         }
         case CSSCustomPropertySyntax::Type::Percentage:
@@ -465,12 +458,12 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         case CSSCustomPropertySyntax::Type::Angle:
         case CSSCustomPropertySyntax::Type::Time:
         case CSSCustomPropertySyntax::Type::Resolution: {
-            auto canonicalUnit = canonicalUnitTypeForUnitType(primitiveValue->primitiveType());
-            auto doubleValue = primitiveValue->doubleValue(canonicalUnit);
+            auto canonicalUnit = canonicalUnitTypeForUnitType(downcast<CSSPrimitiveValue>(value).primitiveType());
+            auto doubleValue = downcast<CSSPrimitiveValue>(value).doubleValue(canonicalUnit);
             return { CSSCustomPropertyValue::NumericSyntaxValue { doubleValue, canonicalUnit } };
         }
         case CSSCustomPropertySyntax::Type::Color: {
-            auto color = builderState.colorFromPrimitiveValue(*primitiveValue, Style::ForVisitedLink::No);
+            auto color = builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value), Style::ForVisitedLink::No);
             return { color };
         }
         case CSSCustomPropertySyntax::Type::Image: {
@@ -480,11 +473,11 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
             return { WTFMove(styleImage) };
         }
         case CSSCustomPropertySyntax::Type::URL: {
-            auto url = m_context.completeURL(primitiveValue->stringValue());
+            auto url = m_context.completeURL(downcast<CSSPrimitiveValue>(value).stringValue());
             return { url.resolvedURL };
         }
         case CSSCustomPropertySyntax::Type::CustomIdent:
-            return { primitiveValue->stringValue() };
+            return { downcast<CSSPrimitiveValue>(value).stringValue() };
 
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
@@ -498,10 +491,11 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         return { };
     };
 
-    if (auto* valueList = dynamicDowncast<CSSValueList>(value.get())) {
-        auto syntaxValueList = CSSCustomPropertyValue::SyntaxValueList { { }, valueList->separator() };
-        for (auto& listValue : *valueList) {
-            auto syntaxValue = resolveSyntaxValue(listValue, syntaxType);
+    if (is<CSSValueList>(value.get()) || is<CSSTransformListValue>(value.get())) {
+        auto& valueList = downcast<CSSValueContainingVector>(*value);
+        auto syntaxValueList = CSSCustomPropertyValue::SyntaxValueList { { }, valueList.separator() };
+        for (auto& listValue : valueList) {
+            auto syntaxValue = resolveSyntaxValue(listValue);
             if (!syntaxValue)
                 return nullptr;
             syntaxValueList.values.append(WTFMove(*syntaxValue));
@@ -509,11 +503,9 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
         return CSSCustomPropertyValue::createForSyntaxValueList(name, WTFMove(syntaxValueList));
     };
 
-
-    auto syntaxValue = resolveSyntaxValue(*value, syntaxType);
+    auto syntaxValue = resolveSyntaxValue(*value);
     if (!syntaxValue)
         return nullptr;
-
     return CSSCustomPropertyValue::createForSyntaxValue(name, WTFMove(*syntaxValue));
 }
 
@@ -1231,6 +1223,10 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueAll;
     case CSSPropertyWritingMode:
         return CSSValueHorizontalTb;
+    case CSSPropertyTextSpacingTrim:
+        return CSSValueSpaceAll;
+    case CSSPropertyTextAutospace:
+        return CSSValueNoAutospace;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -1244,6 +1240,11 @@ static Ref<CSSValue> initialCSSValueForAnimationLonghand(CSSPropertyID longhand)
     }, [](InitialNumericValue value) -> Ref<CSSValue> {
         return CSSPrimitiveValue::create(value.number, value.type);
     });
+}
+
+static bool isValueIDPair(const CSSValue& value, CSSValueID valueID)
+{
+    return value.isPair() && isValueID(value.first(), valueID) && isValueID(value.second(), valueID);
 }
 
 static bool isNumber(const CSSPrimitiveValue& value, double number, CSSUnitType type)
@@ -1261,24 +1262,6 @@ static bool isNumber(const CSSValue& value, double number, CSSUnitType type)
     return isNumber(dynamicDowncast<CSSPrimitiveValue>(value), number, type);
 }
 
-static const Pair* pairValue(const CSSValue& value)
-{
-    auto primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
-    return primitiveValue ? primitiveValue->pairValue() : nullptr;
-}
-
-static const Quad* quadValue(const CSSValue& value)
-{
-    auto primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
-    return primitiveValue ? primitiveValue->quadValue() : nullptr;
-}
-
-static bool isValueIDPair(const CSSValue& value, CSSValueID valueID)
-{
-    auto pair = pairValue(value);
-    return pair && isValueID(pair->first(), valueID) && isValueID(pair->second(), valueID);
-}
-
 static bool isNumber(const RectBase& quad, double number, CSSUnitType type)
 {
     return isNumber(quad.top(), number, type)
@@ -1287,14 +1270,9 @@ static bool isNumber(const RectBase& quad, double number, CSSUnitType type)
         && isNumber(quad.left(), number, type);
 }
 
-static bool isNumber(const RectBase* quad, double number, CSSUnitType type)
-{
-    return quad && isNumber(*quad, number, type);
-}
-
 static bool isNumericQuad(const CSSValue& value, double number, CSSUnitType type)
 {
-    return isNumber(quadValue(value), number, type);
+    return value.isQuad() && isNumber(value.quad(), number, type);
 }
 
 bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
@@ -1317,13 +1295,13 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
         break;
     case CSSPropertyBorderImageSlice:
         if (auto sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value)) {
-            if (!sliceValue->m_fill && isNumber(sliceValue->slices(), 100, CSSUnitType::CSS_PERCENTAGE))
+            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 100, CSSUnitType::CSS_PERCENTAGE))
                 return true;
         }
         break;
     case CSSPropertyBorderImageWidth:
         if (auto widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value)) {
-            if (!widthValue->m_overridesBorderWidths && isNumber(widthValue->widths(), 1, CSSUnitType::CSS_NUMBER))
+            if (!widthValue->overridesBorderWidths() && isNumber(widthValue->widths(), 1, CSSUnitType::CSS_NUMBER))
                 return true;
         }
         break;
@@ -1471,8 +1449,8 @@ bool CSSPropertyParser::consumeFlex(bool important)
 
     if (!m_range.atEnd())
         return false;
-    addProperty(CSSPropertyFlexGrow, CSSPropertyFlex, CSSPrimitiveValue::create(clampTo<float>(flexGrow), CSSUnitType::CSS_NUMBER), important);
-    addProperty(CSSPropertyFlexShrink, CSSPropertyFlex, CSSPrimitiveValue::create(clampTo<float>(flexShrink), CSSUnitType::CSS_NUMBER), important);
+    addProperty(CSSPropertyFlexGrow, CSSPropertyFlex, CSSPrimitiveValue::create(clampTo<float>(flexGrow)), important);
+    addProperty(CSSPropertyFlexShrink, CSSPropertyFlex, CSSPrimitiveValue::create(clampTo<float>(flexShrink)), important);
     addProperty(CSSPropertyFlexBasis, CSSPropertyFlex, flexBasis.releaseNonNull(), important);
     return true;
 }
@@ -1866,6 +1844,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
 
     do {
         bool parsedLonghand[10] = { false };
+        bool lastParsedWasPosition = false;
         RefPtr<CSSValue> originValue;
         do {
             bool foundProperty = false;
@@ -1887,14 +1866,18 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                 } else if (property == CSSPropertyBackgroundSize) {
                     if (!consumeSlashIncludingWhitespace(m_range))
                         continue;
+                    if (!lastParsedWasPosition)
+                        return false;
                     value = consumeSingleBackgroundSize(m_range, m_context);
-                    if (!value || !parsedLonghand[i - 1]) // Position must have been parsed in the current layer.
+                    if (!value)
                         return false;
                 } else if (property == CSSPropertyMaskSize) {
                     if (!consumeSlashIncludingWhitespace(m_range))
                         continue;
+                    if (!lastParsedWasPosition)
+                        return false;
                     value = consumeSingleMaskSize(m_range, m_context);
-                    if (!value || !parsedLonghand[i - 1]) // Position must have been parsed in the current layer.
+                    if (!value)
                         return false;
                 } else if (property == CSSPropertyBackgroundPositionY || property == CSSPropertyWebkitMaskPositionY) {
                     continue;
@@ -1907,6 +1890,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                     parsedLonghand[i] = true;
                     foundProperty = true;
                     addBackgroundValue(longhands[i], value.releaseNonNull());
+                    lastParsedWasPosition = valueY;
                     if (valueY) {
                         parsedLonghand[i + 1] = true;
                         addBackgroundValue(longhands[i + 1], valueY.releaseNonNull());
@@ -1917,7 +1901,6 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
                 return false;
         } while (!m_range.atEnd() && m_range.peek().type() != CommaToken);
 
-        // FIXME: This will make invalid longhands, see crbug.com/386459
         for (size_t i = 0; i < longhandCount; ++i) {
             CSSPropertyID property = shorthand.properties()[i];
             if (property == CSSPropertyBackgroundColor && !m_range.atEnd()) {
@@ -2658,14 +2641,14 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeListStyleShorthand(important);
     case CSSPropertyBorderRadius:
     case CSSPropertyWebkitBorderRadius: {
-        RefPtr<CSSPrimitiveValue> horizontalRadii[4];
-        RefPtr<CSSPrimitiveValue> verticalRadii[4];
+        std::array<RefPtr<CSSValue>, 4> horizontalRadii;
+        std::array<RefPtr<CSSValue>, 4> verticalRadii;
         if (!consumeRadii(horizontalRadii, verticalRadii, m_range, m_context.mode, property == CSSPropertyWebkitBorderRadius))
             return false;
-        addProperty(CSSPropertyBorderTopLeftRadius, CSSPropertyBorderRadius, createPrimitiveValuePair(horizontalRadii[0].releaseNonNull(), verticalRadii[0].releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce), important);
-        addProperty(CSSPropertyBorderTopRightRadius, CSSPropertyBorderRadius, createPrimitiveValuePair(horizontalRadii[1].releaseNonNull(), verticalRadii[1].releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce), important);
-        addProperty(CSSPropertyBorderBottomRightRadius, CSSPropertyBorderRadius, createPrimitiveValuePair(horizontalRadii[2].releaseNonNull(), verticalRadii[2].releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce), important);
-        addProperty(CSSPropertyBorderBottomLeftRadius, CSSPropertyBorderRadius, createPrimitiveValuePair(horizontalRadii[3].releaseNonNull(), verticalRadii[3].releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce), important);
+        addProperty(CSSPropertyBorderTopLeftRadius, CSSPropertyBorderRadius, CSSValuePair::create(horizontalRadii[0].releaseNonNull(), verticalRadii[0].releaseNonNull()), important);
+        addProperty(CSSPropertyBorderTopRightRadius, CSSPropertyBorderRadius, CSSValuePair::create(horizontalRadii[1].releaseNonNull(), verticalRadii[1].releaseNonNull()), important);
+        addProperty(CSSPropertyBorderBottomRightRadius, CSSPropertyBorderRadius, CSSValuePair::create(horizontalRadii[2].releaseNonNull(), verticalRadii[2].releaseNonNull()), important);
+        addProperty(CSSPropertyBorderBottomLeftRadius, CSSPropertyBorderRadius, CSSValuePair::create(horizontalRadii[3].releaseNonNull(), verticalRadii[3].releaseNonNull()), important);
         return true;
     }
     case CSSPropertyBorderColor:

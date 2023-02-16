@@ -69,6 +69,10 @@
 #include <gtk/gtk.h>
 #endif
 
+#if PLATFORM(WPE)
+#include <WebCore/CairoUtilities.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -157,6 +161,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if PLATFORM(GTK)
     GtkSettingsManagerProxy::singleton().applySettings(WTFMove(parameters.gtkSettings));
+#endif
+
+#if PLATFORM(WPE)
+    setDefaultCairoFontOptions(CairoUniquePtr<cairo_font_options_t>(cairo_font_options_create()));
 #endif
 
 }

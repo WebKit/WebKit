@@ -36,7 +36,7 @@ namespace WGSL::AST {
 class OverrideValue : public Value {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OverrideValue(SourceSpan span, Identifier&& name, TypeName::Ptr typeName, Expression::Ref&& initializer, Attribute::List&& attributes)
+    OverrideValue(SourceSpan span, Identifier&& name, TypeName::Ptr typeName, Expression::Ptr&& initializer, Attribute::List&& attributes)
         : Value(span)
         , m_name(WTFMove(name))
         , m_typeName(WTFMove(typeName))
@@ -48,12 +48,12 @@ public:
     Attribute::List& attributes() { return m_attributes; }
     Identifier& name() { return m_name; }
     TypeName* maybeTypeName() { return m_typeName.get(); }
-    Expression& initializer() { return m_initializer.get(); }
+    Expression* maybeInitializer() { return m_initializer.get(); }
 
 private:
     Identifier m_name;
     TypeName::Ptr m_typeName;
-    Expression::Ref m_initializer;
+    Expression::Ptr m_initializer;
     Attribute::List m_attributes;
 };
 

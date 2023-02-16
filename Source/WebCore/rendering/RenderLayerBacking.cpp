@@ -2279,9 +2279,9 @@ static bool ancestorLayerIsDOMParent(RenderLayer& layer, const RenderLayer* comp
 {
     if (!compositingAncestor)
         return false;
-    if (!layer.renderer().element() || !layer.renderer().element()->parentElement())
+    if (!layer.renderer().element() || !layer.renderer().element()->parentElementInComposedTree())
         return false;
-    return compositingAncestor->renderer().element() == layer.renderer().element()->parentElement();
+    return compositingAncestor->renderer().element() == layer.renderer().element()->parentElementInComposedTree();
 }
 
 static bool ancestorLayerWillCombineTransform(const RenderLayer* compositingAncestor)

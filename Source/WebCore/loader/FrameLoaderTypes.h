@@ -71,6 +71,7 @@ enum class FrameLoadType : uint8_t {
 
 enum class IsMetaRefresh : bool { No, Yes };
 enum class WillContinueLoading : bool { No, Yes };
+enum class WillInternallyHandleFailure : bool { No, Yes };
 
 enum LocalPolicyCheckIdentifierType { };
 using LocalPolicyCheckIdentifier = ObjectIdentifier<LocalPolicyCheckIdentifierType>;

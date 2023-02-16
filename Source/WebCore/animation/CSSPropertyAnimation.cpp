@@ -66,6 +66,7 @@
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "TabSize.h"
+#include "TextSpacing.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
@@ -1246,8 +1247,8 @@ private:
 class PropertyWrapperFontVariationSettings final : public PropertyWrapper<FontVariationSettings> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PropertyWrapperFontVariationSettings(CSSPropertyID property, FontVariationSettings (RenderStyle::*getter)() const, void (RenderStyle::*setter)(FontVariationSettings))
-        : PropertyWrapper(property, getter, setter)
+    PropertyWrapperFontVariationSettings()
+        : PropertyWrapper(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings)
     {
     }
 
@@ -3385,7 +3386,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperBaselineShift,
         new PropertyWrapper<SVGLengthValue>(CSSPropertyKerning, &RenderStyle::kerning, &RenderStyle::setKerning),
 #if ENABLE(VARIATION_FONTS)
-        new PropertyWrapperFontVariationSettings(CSSPropertyFontVariationSettings, &RenderStyle::fontVariationSettings, &RenderStyle::setFontVariationSettings),
+        new PropertyWrapperFontVariationSettings,
 #endif
         new PropertyWrapperFontSizeAdjust,
         new PropertyWrapperFontWeight,
@@ -3492,6 +3493,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<WhiteSpace>(CSSPropertyWhiteSpace, &RenderStyle::whiteSpace, &RenderStyle::setWhiteSpace),
         new DiscretePropertyWrapper<WordBreak>(CSSPropertyWordBreak, &RenderStyle::wordBreak, &RenderStyle::setWordBreak),
         new DiscretePropertyWrapper<OverflowAnchor>(CSSPropertyOverflowAnchor, &RenderStyle::overflowAnchor, &RenderStyle::setOverflowAnchor),
+        new DiscretePropertyWrapper<TextSpacingTrim>(CSSPropertyTextSpacingTrim, &RenderStyle::textSpacingTrim, &RenderStyle::setTextSpacingTrim),
+        new DiscretePropertyWrapper<TextAutospace>(CSSPropertyTextAutospace, &RenderStyle::textAutospace, &RenderStyle::setTextAutospace),
 
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
         new DiscretePropertyWrapper<BoxDecorationBreak>(CSSPropertyWebkitBoxDecorationBreak, &RenderStyle::boxDecorationBreak, &RenderStyle::setBoxDecorationBreak),

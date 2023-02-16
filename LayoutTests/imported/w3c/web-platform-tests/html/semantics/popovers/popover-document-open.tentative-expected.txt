@@ -1,4 +1,3 @@
-Popover
 
-FAIL document.open should not break popovers popover1.showPopover is not a function. (In 'popover1.showPopover()', 'popover1.showPopover' is undefined)
+FAIL document.open should not break popovers assert_false: popover1 should have been hidden when it was removed from the document expected false got true
 

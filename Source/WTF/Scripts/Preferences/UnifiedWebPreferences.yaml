@@ -616,12 +616,28 @@ AsynchronousSpellCheckingEnabled:
 AttachmentElementEnabled:
   type: bool
   status: embedder
+  humanReadableName: "Attachment Element"
+  humanReadableDescription: "Allow the insertion of attachment elements"
   webcoreBinding: DeprecatedGlobalSettings
   condition: ENABLE(ATTACHMENT_ELEMENT)
   defaultValue:
     WebKitLegacy:
       default: WebKit::defaultAttachmentElementEnabled()
     WebKit:
+      default: false
+
+AttachmentWideLayoutEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Attachment wide-layout styling"
+  humanReadableDescription: "Use horizontal wide-layout attachment style, requires Attachment Element"
+  condition: ENABLE(ATTACHMENT_ELEMENT)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
       default: false
 
 AudioDescriptionsEnabled:
@@ -1084,6 +1100,19 @@ CSSRelativeColorSyntaxEnabled:
     WebCore:
       default: true
 
+CSSRhythmicSizingEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "CSS Rhythmic Sizing"
+  humanReadableDescription: "Enable CSS Rhythmic Sizing properties"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSScrollAnchoringEnabled:
   type: bool
   status: testable
@@ -1128,6 +1157,19 @@ CSSTextJustifyEnabled:
   status: testable
   humanReadableName: "CSS text-justify property"
   humanReadableDescription: "Enable the property text-justify, defined in CSS Text 3"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CSSTextSpacingEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "CSS text-spacing property"
+  humanReadableDescription: "Enable the property text-spacing, defined in CSS Text 4"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1803,11 +1845,11 @@ DeprecateRSAESPKCSWebCryptoEnabled:
   humanReadableDescription: "Enable Deprecation of RSAES-PKCS1-v1_5 Web Crypto"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 DeprecationReportingEnabled:
   type: bool
@@ -2193,7 +2235,7 @@ FasterClicksEnabled:
 
 FetchAPIEnabled:
   type: bool
-  status: embedder
+  status: mature
   humanReadableName: "Fetch API"
   humanReadableDescription: "Fetch API"
   defaultValue:
@@ -2209,7 +2251,7 @@ FetchAPIEnabled:
 # enabled.
 FetchAPIKeepAliveEnabled:
   type: bool
-  status: mature
+  status: stable
   humanReadableName: "Fetch API Request KeepAlive"
   humanReadableDescription: "Enable Fetch API Request KeepAlive"
   webcoreBinding: DeprecatedGlobalSettings
@@ -4567,6 +4609,19 @@ PluginsEnabled:
     WebCore:
       default: false
 
+PopoverAttributeEnabled:
+  type: bool
+  status: testable
+  humanReadableName: "HTML popover attribute"
+  humanReadableDescription: "Enable HTML popover attribute support"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PreferFasterClickOverDoubleTap:
   type: bool
   status: internal
@@ -4724,8 +4779,10 @@ RemotePlaybackEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
       default: true
     WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
       default: true
 
 RemoveBackgroundEnabled:
@@ -6364,6 +6421,20 @@ VideoFullscreenRequiresElementFullscreen:
       default: false
     WebCore:
       default: false
+      
+VideoPresentationModeAPIEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
 
 VideoQualityIncludesDisplayCompositingEnabled:
   type: bool
@@ -7167,6 +7238,20 @@ WindowFocusRestricted:
     WebKit:
       default: true
     WebCore:
+      default: true
+      
+WirelessPlaybackTargetAPIEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebKit:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      default: true
+    WebCore:
+      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
       default: true
 
 ZoomOnDoubleTapWhenRoot:

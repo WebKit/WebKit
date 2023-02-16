@@ -450,9 +450,8 @@ static Color cssValueToColor(CSSValue* colorValue)
     if (!is<CSSPrimitiveValue>(colorValue))
         return Color::transparentBlack;
     
-    CSSPrimitiveValue& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
-    if (primitiveColor.isRGBColor())
-        return primitiveColor.color();
+    if (colorValue->isColor())
+        return colorValue->color();
     
     return CSSParser::parseColorWithoutContext(colorValue->cssText());
 }
@@ -600,16 +599,15 @@ Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() con
 
     Ref<MutableStyleProperties> style = m_mutableStyle ? m_mutableStyle->mutableCopy() : MutableStyleProperties::create();
 
-    Ref<CSSValueList> valueList = CSSValueList::createSpaceSeparated();
+    CSSValueListBuilder valueList;
     if (underlineChange() == TextDecorationChange::Add)
-        valueList->append(CSSPrimitiveValue::create(CSSValueUnderline));
+        valueList.append(CSSPrimitiveValue::create(CSSValueUnderline));
     if (strikeThroughChange() == TextDecorationChange::Add)
-        valueList->append(CSSPrimitiveValue::create(CSSValueLineThrough));
-
-    if (valueList->length())
-        style->setProperty(CSSPropertyTextDecorationLine, valueList.ptr());
-    else
+        valueList.append(CSSPrimitiveValue::create(CSSValueLineThrough));
+    if (valueList.isEmpty())
         style->setProperty(CSSPropertyTextDecorationLine, CSSPrimitiveValue::create(CSSValueNone));
+    else
+        style->setProperty(CSSPropertyTextDecorationLine, CSSValueList::createSpaceSeparated(WTFMove(valueList)));
 
     return style;
 }
@@ -1951,12 +1949,7 @@ static bool isTransparentColorValue(CSSValue* value)
 {
     if (!value)
         return true;
-    if (!is<CSSPrimitiveValue>(*value))
-        return false;
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (primitiveValue.isRGBColor())
-        return !primitiveValue.color().isVisible();
-    return primitiveValue.valueID() == CSSValueTransparent;
+    return value->isColor() ? !value->color().isVisible() : value->valueID() == CSSValueTransparent;
 }
 
 bool hasTransparentBackgroundColor(StyleProperties* style)
@@ -1967,10 +1960,9 @@ bool hasTransparentBackgroundColor(StyleProperties* style)
 RefPtr<CSSValue> backgroundColorInEffect(Node* node)
 {
     for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
-        if (auto value = ComputedStyleExtractor(ancestor).propertyValue(CSSPropertyBackgroundColor)) {
-            if (!isTransparentColorValue(value.get()))
-                return value;
-        }
+        auto value = ComputedStyleExtractor(ancestor).propertyValue(CSSPropertyBackgroundColor);
+        if (!isTransparentColorValue(value.get()))
+            return value;
     }
     return nullptr;
 }

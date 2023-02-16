@@ -285,6 +285,8 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendStringAsync>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringSync:
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendStringSync>(globalObject, decoder);
+    case MessageName::TestWithStream_CallWithIdentifier:
+        return jsValueForDecodedMessage<MessageName::TestWithStream_CallWithIdentifier>(globalObject, decoder);
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_SendMachSendRight:
         return jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(globalObject, decoder);
@@ -366,6 +368,8 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringAsync>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringSync:
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringSync>(globalObject, decoder);
+    case MessageName::TestWithStream_CallWithIdentifier:
+        return jsValueForDecodedMessageReply<MessageName::TestWithStream_CallWithIdentifier>(globalObject, decoder);
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_ReceiveMachSendRight:
         return jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveMachSendRight>(globalObject, decoder);
@@ -838,6 +842,8 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> {
             { "url", "String", nullptr, false },
         };
+    case MessageName::TestWithStream_CallWithIdentifier:
+        return Vector<ArgumentDescription> { };
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_SendMachSendRight:
         return Vector<ArgumentDescription> {
@@ -964,6 +970,8 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
         return Vector<ArgumentDescription> {
             { "returnValue", "int64_t", nullptr, false },
         };
+    case MessageName::TestWithStream_CallWithIdentifier:
+        return Vector<ArgumentDescription> { };
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_ReceiveMachSendRight:
         return Vector<ArgumentDescription> {

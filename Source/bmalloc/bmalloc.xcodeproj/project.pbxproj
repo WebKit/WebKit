@@ -635,7 +635,7 @@
 		2CE2AE3327596DEB00D02BBC /* pas_segregated_deallocation_logging_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CE2AE2C27596DEB00D02BBC /* pas_segregated_deallocation_logging_mode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2CE2AE5D2769928300D02BBC /* pas_compact_tagged_void_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CE2AE512769928200D02BBC /* pas_compact_tagged_void_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2CE2AE632769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2AE572769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.c */; };
-		2CE2AE642769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CE2AE582769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.h */; };
+		2CE2AE642769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CE2AE582769928300D02BBC /* pas_probabilistic_guard_malloc_allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4426E2801C838EE0008EB042 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4426E27E1C838EE0008EB042 /* Logging.cpp */; };
 		4426E2811C838EE0008EB042 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 4426E27F1C838EE0008EB042 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52F47249210BA30200B730BB /* MemoryStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 52F47248210BA2F500B730BB /* MemoryStatusSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
