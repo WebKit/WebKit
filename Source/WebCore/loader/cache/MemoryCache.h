@@ -98,7 +98,7 @@ public:
     void remove(CachedResource&);
 
     static bool shouldRemoveFragmentIdentifier(const URL&);
-    static URL removeFragmentIdentifierIfNeeded(const URL&);
+    WEBCORE_EXPORT static URL removeFragmentIdentifierIfNeeded(const URL&);
 
     void revalidationSucceeded(CachedResource& revalidatingResource, const ResourceResponse&);
     void revalidationFailed(CachedResource& revalidatingResource);
