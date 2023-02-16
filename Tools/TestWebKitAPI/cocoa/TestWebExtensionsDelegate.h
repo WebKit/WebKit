@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,18 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-messages -> WebExtensionContextProxy {
-    // Permissions support
-    DispatchPermissionsEvent(WebKit::WebExtensionEventListenerType type, HashSet<String> permissions, HashSet<String> origins)
+#import <WebKit/WebKit.h>
 
-    // webNavigation support
-    DispatchWebNavigationOnBeforeNavigateEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnCommittedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnDOMContentLoadedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnCompletedEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
-    DispatchWebNavigationOnErrorOccurredEvent(WebKit::WebPageProxyIdentifier pageID, WebCore::FrameIdentifier frameID, URL targetURL)
+#import <WebKit/_WKWebExtensionControllerDelegate.h>
+#import <WebKit/_WKWebExtensionMatchPattern.h>
+#import <WebKit/_WKWebExtensionPermission.h>
+#import <WebKit/_WKWebExtensionTab.h>
 
-}
+@interface TestWebExtensionsDelegate : NSObject <_WKWebExtensionControllerDelegate>
+
+@property (nonatomic, copy) void (^promptForPermissions)(id<_WKWebExtensionTab>, NSSet<NSString *> *, void (^)(NSSet<_WKWebExtensionPermission> *));
+@property (nonatomic, copy) void (^promptForPermissionMatchPatterns)(id<_WKWebExtensionTab>, NSSet<_WKWebExtensionMatchPattern *> *, void (^)(NSSet<_WKWebExtensionMatchPattern *> *));
+
+@end
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

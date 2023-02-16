@@ -247,7 +247,7 @@ void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentif
         if (!context->hasPermission(targetURL))
             continue;
 
-        context->fireEvents(listenerTypes, [context, pageID, frameID, targetURL] {
+        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
             context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnBeforeNavigate, Messages::WebExtensionContextProxy::DispatchWebNavigationOnBeforeNavigateEvent(pageID, frameID, targetURL));
         });
     }
@@ -262,7 +262,7 @@ void WebExtensionController::didCommitLoadForFrame(WebPageProxyIdentifier pageID
         if (!context->hasPermission(frameURL))
             continue;
 
-        context->fireEvents(listenerTypes, [context, pageID, frameID, frameURL] {
+        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
             context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnCommitted, Messages::WebExtensionContextProxy::DispatchWebNavigationOnCommittedEvent(pageID, frameID, frameURL));
             context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnDOMContentLoaded, Messages::WebExtensionContextProxy::DispatchWebNavigationOnDOMContentLoadedEvent(pageID, frameID, frameURL));
         });
@@ -278,7 +278,7 @@ void WebExtensionController::didFinishLoadForFrame(WebPageProxyIdentifier pageID
         if (!context->hasPermission(frameURL))
             continue;
 
-        context->fireEvents(listenerTypes, [context, pageID, frameID, frameURL] {
+        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
             context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnCompleted, Messages::WebExtensionContextProxy::DispatchWebNavigationOnCompletedEvent(pageID, frameID, frameURL));
         });
     }
@@ -293,7 +293,7 @@ void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, 
         if (!context->hasPermission(frameURL))
             continue;
 
-        context->fireEvents(listenerTypes, [context, pageID, frameID, frameURL] {
+        context->wakeUpBackgroundContentIfNecessaryToFireEvents(listenerTypes, [&] {
             context->sendToProcessesForEvent(WebExtensionEventListenerType::WebNavigationOnErrorOccurred, Messages::WebExtensionContextProxy::DispatchWebNavigationOnErrorOccurredEvent(pageID, frameID, frameURL));
         });
     }
