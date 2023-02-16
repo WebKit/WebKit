@@ -25,16 +25,59 @@
 #pragma once
 
 #include "GenericMediaQueryTypes.h"
+#include <wtf/EnumTraits.h>
+#include <wtf/PackedRefPtr.h>
 
 namespace WebCore {
 namespace MQ {
 
 enum class Prefix : bool { Not, Only };
 
-struct MediaQuery {
-    std::optional<Prefix> prefix;
-    AtomString mediaType;
-    std::optional<Condition> condition { };
+class MediaQuery {
+public:
+    MediaQuery(std::optional<Prefix> prefix, const AtomString& mediaType, std::optional<Condition>&& condition = std::nullopt)
+        : m_mediaType(mediaType.impl())
+    {
+        m_hasPrefix = prefix.has_value();
+        if (m_hasPrefix)
+            m_prefix = WTF::enumToUnderlyingType(*prefix);
+
+        m_hasCondition = condition.has_value();
+        if (m_hasCondition) {
+            m_logicalOperator = WTF::enumToUnderlyingType(condition->logicalOperator);
+            m_conditionQueries = WTFMove(condition->queries);
+        }
+    }
+
+    AtomString mediaType() const { return m_mediaType.get(); }
+    bool hasCondition() const { return m_hasCondition; }
+
+    std::optional<Prefix> prefix() const
+    {
+        if (!m_hasPrefix)
+            return std::nullopt;
+        return { static_cast<Prefix>(m_prefix) };
+    }
+
+    const Vector<QueryInParens>& conditionQueries() const
+    {
+        ASSERT(m_hasCondition);
+        return m_conditionQueries;
+    }
+
+    LogicalOperator logicalOperator() const
+    {
+        ASSERT(m_hasCondition);
+        return static_cast<LogicalOperator>(m_logicalOperator);
+    }
+
+private:
+    Vector<QueryInParens> m_conditionQueries;
+    PackedRefPtr<AtomStringImpl> m_mediaType;
+    unsigned m_logicalOperator : 2;
+    bool m_prefix : 1;
+    bool m_hasPrefix : 1;
+    bool m_hasCondition : 1;
 };
 
 using MediaQueryList = Vector<MediaQuery>;
@@ -53,8 +96,10 @@ enum class MediaQueryDynamicDependency : uint8_t  {
 template<typename TraverseFunction>
 void traverseFeatures(const MediaQuery& query, TraverseFunction&& function)
 {
-    if (query.condition)
-        traverseFeatures(*query.condition, function);
+    if (query.hasCondition()) {
+        for (auto& queryInParens : query.conditionQueries())
+            traverseFeatures(queryInParens, function);
+    }
 }
 
 template<typename TraverseFunction>

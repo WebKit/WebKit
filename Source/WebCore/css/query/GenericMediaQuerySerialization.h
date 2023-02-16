@@ -32,6 +32,7 @@ namespace MQ {
 
 void serialize(StringBuilder&, const Feature&);
 void serialize(StringBuilder&, const Condition&);
+void serialize(StringBuilder&, LogicalOperator, const Vector<QueryInParens>&);
 
 }
 }

@@ -124,6 +124,7 @@ std::optional<Condition> GenericMediaQueryParser<ConcreteParser>::consumeConditi
         range.consumeWhitespace();
     }
 
+    condition.queries.shrinkToFit();
     return condition;
 }
 

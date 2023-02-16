@@ -33,7 +33,7 @@ class RenderStyle;
 class WeakPtrImplWithEventTargetData;
 
 namespace MQ {
-struct MediaQuery;
+class MediaQuery;
 using MediaQueryList = Vector<MediaQuery>;
 }
 

@@ -64,13 +64,13 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryList& list) const
 
 bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
 {
-    bool isNegated = query.prefix && *query.prefix == Prefix::Not;
+    bool isNegated = query.prefix() && *query.prefix() == Prefix::Not;
 
     if (!evaluateMediaType(query))
         return isNegated;
 
     auto result = [&] {
-        if (!query.condition)
+        if (!query.hasCondition())
             return EvaluationResult::True;
 
         if (!m_document || !m_rootElementStyle)
@@ -88,7 +88,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
         defaultStyle.fontCascade().update();
 
         FeatureEvaluationContext context { *m_document, { *m_rootElementStyle, &defaultStyle, nullptr, m_document->renderView() }, nullptr };
-        return evaluateCondition(*query.condition, context);
+        return evaluateCondition(query.logicalOperator(), query.conditionQueries(), context);
     }();
 
     switch (result) {
@@ -106,11 +106,11 @@ bool MediaQueryEvaluator::evaluate(const MediaQuery& query) const
 
 bool MediaQueryEvaluator::evaluateMediaType(const MediaQuery& query) const
 {
-    if (query.mediaType.isEmpty())
+    if (query.mediaType().isEmpty())
         return true;
-    if (query.mediaType == allAtom())
+    if (query.mediaType() == allAtom())
         return true;
-    return query.mediaType == m_mediaType;
+    return query.mediaType() == m_mediaType;
 };
 
 OptionSet<MediaQueryDynamicDependency> MediaQueryEvaluator::collectDynamicDependencies(const MediaQueryList& queries) const

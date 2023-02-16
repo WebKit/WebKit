@@ -74,7 +74,7 @@ std::optional<MediaQuery> MediaQueryParser::parseCondition(CSSParserTokenRange r
     if (!condition)
         return { };
 
-    return MediaQuery { { }, { }, condition };
+    return MediaQuery { { }, { }, WTFMove(condition) };
 }
 
 MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& range)
@@ -118,7 +118,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     if (auto condition = consumeCondition(range)) {
         if (!range.atEnd())
             return { };
-        return MediaQuery { { }, { }, condition };
+        return MediaQuery { { }, { }, WTFMove(condition) };
     }
 
     range = rangeCopy;
@@ -180,7 +180,7 @@ std::optional<MediaQuery> MediaQueryParser::consumeMediaQuery(CSSParserTokenRang
     if (condition->logicalOperator == LogicalOperator::Or)
         return { };
 
-    return MediaQuery { prefix, mediaType, condition };
+    return MediaQuery { prefix, mediaType, WTFMove(condition) };
 }
 
 const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& name) const
@@ -206,8 +206,8 @@ void serialize(StringBuilder& builder, const MediaQueryList& list)
 
 void serialize(StringBuilder& builder, const MediaQuery& query)
 {
-    if (query.prefix) {
-        switch (*query.prefix) {
+    if (query.prefix()) {
+        switch (*query.prefix()) {
         case Prefix::Not:
             builder.append("not ");
             break;
@@ -217,14 +217,14 @@ void serialize(StringBuilder& builder, const MediaQuery& query)
         }
     }
 
-    if (!query.mediaType.isEmpty() && (!query.condition || query.prefix || query.mediaType != allAtom())) {
-        serializeIdentifier(query.mediaType, builder);
-        if (query.condition)
+    if (!query.mediaType().isEmpty() && (!query.hasCondition() || query.prefix() || query.mediaType() != allAtom())) {
+        serializeIdentifier(query.mediaType(), builder);
+        if (query.hasCondition())
             builder.append(" and ");
     }
 
-    if (query.condition)
-        serialize(builder, *query.condition);
+    if (query.hasCondition())
+        serialize(builder, query.logicalOperator(), query.conditionQueries());
 }
 
 }

@@ -48,6 +48,7 @@ class GenericMediaQueryEvaluator {
 public:
     EvaluationResult evaluateQueryInParens(const QueryInParens&, const FeatureEvaluationContext&) const;
     EvaluationResult evaluateCondition(const Condition&, const FeatureEvaluationContext&) const;
+    EvaluationResult evaluateCondition(LogicalOperator, const Vector<QueryInParens>&, const FeatureEvaluationContext&) const;
     EvaluationResult evaluateFeature(const Feature&, const FeatureEvaluationContext&) const;
 
 private:
@@ -69,17 +70,23 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateQueryInP
 template<typename ConcreteEvaluator>
 EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateCondition(const Condition& condition, const FeatureEvaluationContext& context) const
 {
-    if (condition.queries.isEmpty())
+    return evaluateCondition(condition.logicalOperator, condition.queries, context);
+}
+
+template<typename ConcreteEvaluator>
+EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateCondition(LogicalOperator logicalOperator, const Vector<QueryInParens>& queries, const FeatureEvaluationContext& context) const
+{
+    if (queries.isEmpty())
         return EvaluationResult::Unknown;
 
-    switch (condition.logicalOperator) {
+    switch (logicalOperator) {
     case LogicalOperator::Not:
-        return !concreteEvaluator().evaluateQueryInParens(condition.queries.first(), context);
+        return !concreteEvaluator().evaluateQueryInParens(queries.first(), context);
 
     // Kleene 3-valued logic.
     case LogicalOperator::And: {
         auto result = EvaluationResult::True;
-        for (auto& query : condition.queries) {
+        for (auto& query : queries) {
             auto queryResult = concreteEvaluator().evaluateQueryInParens(query, context);
             if (queryResult == EvaluationResult::False)
                 return EvaluationResult::False;
@@ -91,7 +98,7 @@ EvaluationResult GenericMediaQueryEvaluator<ConcreteEvaluator>::evaluateConditio
 
     case LogicalOperator::Or: {
         auto result = EvaluationResult::False;
-        for (auto& query : condition.queries) {
+        for (auto& query : queries) {
             auto queryResult = concreteEvaluator().evaluateQueryInParens(query, context);
             if (queryResult == EvaluationResult::True)
                 return EvaluationResult::True;

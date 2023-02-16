@@ -30,7 +30,7 @@ class MediaList;
 class StyleRuleMedia;
 
 namespace MQ {
-struct MediaQuery;
+class MediaQuery;
 using MediaQueryList = Vector<MediaQuery>;
 }
 

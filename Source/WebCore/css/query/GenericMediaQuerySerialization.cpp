@@ -47,15 +47,20 @@ static void serialize(StringBuilder& builder, const QueryInParens& queryInParens
 
 void serialize(StringBuilder& builder, const Condition& condition)
 {
-    if (condition.queries.size() == 1 && condition.logicalOperator == LogicalOperator::Not) {
+    serialize(builder, condition.logicalOperator, condition.queries);
+}
+
+void serialize(StringBuilder& builder, LogicalOperator logicalOperator, const Vector<QueryInParens>& queries)
+{
+    if (queries.size() == 1 && logicalOperator == LogicalOperator::Not) {
         builder.append("not ");
-        serialize(builder, condition.queries.first());
+        serialize(builder, queries.first());
         return;
     }
 
-    for (auto& query : condition.queries) {
-        if (&query != &condition.queries.first())
-            builder.append(condition.logicalOperator == LogicalOperator::And ? " and " : " or ");
+    for (auto& query : queries) {
+        if (&query != &queries.first())
+            builder.append(logicalOperator == LogicalOperator::And ? " and " : " or ");
         serialize(builder, query);
     }
 }
