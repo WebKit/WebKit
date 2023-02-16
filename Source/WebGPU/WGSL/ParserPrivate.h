@@ -91,6 +91,7 @@ public:
     Result<AST::Expression::List> parseArgumentExpressionList();
     Result<AST::Value::Ref> parseConstantValue();
     Result<AST::Value::Ref> parseLetValue();
+    Result<AST::Value::Ref> parseOverrideValueWithAttributes(AST::Attribute::List&&);
 
 private:
     Expected<Token, TokenType> consumeType(TokenType);

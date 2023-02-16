@@ -542,7 +542,7 @@ void Visitor::visit(AST::OverrideValue& overrideValue)
         checkErrorAndVisit(attribute);
     checkErrorAndVisit(overrideValue.name());
     maybeCheckErrorAndVisit(overrideValue.maybeTypeName());
-    checkErrorAndVisit(overrideValue.initializer());
+    maybeCheckErrorAndVisit(overrideValue.maybeInitializer());
 }
 
 void Visitor::visit(AST::LetValue& letValue)

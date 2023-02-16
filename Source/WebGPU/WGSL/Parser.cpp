@@ -330,6 +330,12 @@ Result<void> Parser<Lexer>::parseGlobalDecl()
     PARSE(attributes, Attributes);
 
     switch (current().m_type) {
+    case TokenType::KeywordOverride: {
+        PARSE(value, OverrideValueWithAttributes, WTFMove(attributes));
+        m_shaderModule.values().append(WTFMove(value));
+        CONSUME_TYPE(Semicolon);
+        return { };
+    }
     case TokenType::KeywordStruct: {
         PARSE(structure, Structure, WTFMove(attributes));
         m_shaderModule.structures().append(WTFMove(structure));
@@ -347,7 +353,7 @@ Result<void> Parser<Lexer>::parseGlobalDecl()
         return { };
     }
     default:
-        FAIL("Trying to parse a GlobalDecl, expected 'const', 'var', 'fn', or 'struct'."_s);
+        FAIL("Trying to parse a GlobalDecl, expected 'const', 'fn', 'override', 'struct' or 'var'."_s);
     }
 }
 
@@ -1152,6 +1158,30 @@ Result<AST::Value::Ref> Parser<Lexer>::parseLetValue()
     PARSE(initializer, Expression);
 
     RETURN_NODE_UNIQUE_REF(LetValue, WTFMove(name), WTFMove(maybeType), WTFMove(initializer));
+}
+
+template<typename Lexer>
+Result<AST::Value::Ref> Parser<Lexer>::parseOverrideValueWithAttributes(AST::Attribute::List&& attributes)
+{
+    START_PARSE();
+    CONSUME_TYPE(KeywordOverride);
+    PARSE(name, Identifier);
+
+    AST::TypeName::Ptr maybeType = nullptr;
+    if (current().m_type == TokenType::Colon) {
+        consume();
+        PARSE(TypeName, TypeName);
+        maybeType = WTFMove(TypeName);
+    }
+
+    std::unique_ptr<AST::Expression> maybeInitializer = nullptr;
+    if (current().m_type == TokenType::Equal) {
+        consume();
+        PARSE(initializerExpr, Expression);
+        maybeInitializer = initializerExpr.moveToUniquePtr();
+    }
+
+    RETURN_NODE_UNIQUE_REF(OverrideValue, WTFMove(name), WTFMove(maybeType), WTFMove(maybeInitializer), WTFMove(attributes));
 }
 
 } // namespace WGSL

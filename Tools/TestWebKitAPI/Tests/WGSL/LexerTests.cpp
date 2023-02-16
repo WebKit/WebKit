@@ -123,6 +123,7 @@ TEST(WGSLLexerTests, KeywordTokens)
     checkSingleToken("function"_s, TokenType::KeywordFunction);
     checkSingleToken("i32"_s, TokenType::KeywordI32);
     checkSingleToken("let"_s, TokenType::KeywordLet);
+    checkSingleToken("override"_s, TokenType::KeywordOverride);
     checkSingleToken("private"_s, TokenType::KeywordPrivate);
     checkSingleToken("read"_s, TokenType::KeywordRead);
     checkSingleToken("read_write"_s, TokenType::KeywordReadWrite);

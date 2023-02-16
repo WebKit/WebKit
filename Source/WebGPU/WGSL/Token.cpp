@@ -61,6 +61,8 @@ String toString(TokenType type)
         return "function"_s;
     case TokenType::KeywordLet:
         return "let"_s;
+    case TokenType::KeywordOverride:
+        return "override"_s;
     case TokenType::KeywordPrivate:
         return "private"_s;
     case TokenType::KeywordRead:

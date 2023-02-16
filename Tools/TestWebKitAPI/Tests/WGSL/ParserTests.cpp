@@ -454,6 +454,31 @@ TEST(WGSLParserTests, LocalLet)
     }
 }
 
+TEST(WGSLParserTests, GlobalOverride)
+{
+    auto shader = parse("override x: i32;\n"_s);
+
+    EXPECT_SHADER(shader);
+    EXPECT_TRUE(shader->directives().isEmpty());
+    EXPECT_TRUE(shader->structures().isEmpty());
+    EXPECT_EQ(shader->values().size(), 1u);
+    EXPECT_TRUE(shader->variables().isEmpty());
+    EXPECT_TRUE(shader->functions().isEmpty());
+
+    {
+        // override x: i32
+        EXPECT_TRUE(is<WGSL::AST::OverrideValue>(shader->values()[0]));
+        auto& override = downcast<WGSL::AST::OverrideValue>(shader->values()[0]);
+        EXPECT_TRUE(override.attributes().isEmpty());
+        EXPECT_EQ(override.name(), "x"_s);
+        EXPECT_TRUE(override.maybeTypeName());
+        EXPECT_TRUE(is<WGSL::AST::NamedTypeName>(*override.maybeTypeName()));
+        auto& typeName = downcast<WGSL::AST::NamedTypeName>(*override.maybeTypeName());
+        EXPECT_EQ(typeName.name().id(), "i32"_s);
+        EXPECT_EQ(override.maybeInitializer(), nullptr);
+    }
+}
+
 TEST(WGSLParserTests, LocalVariable)
 {
     auto shader = parse(

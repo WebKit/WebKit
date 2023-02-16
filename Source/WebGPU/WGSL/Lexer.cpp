@@ -293,6 +293,7 @@ Token Lexer<T>::lex()
                 { "i8", TokenType::ReservedWord },
                 { "let", TokenType::KeywordLet },
                 { "mat", TokenType::ReservedWord },
+                { "override", TokenType::KeywordOverride },
                 { "premerge", TokenType::ReservedWord },
                 { "private", TokenType::KeywordPrivate },
                 { "read", TokenType::KeywordRead },
