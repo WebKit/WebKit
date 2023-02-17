@@ -112,9 +112,6 @@ WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const
     if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
         return WheelEventHandlingResult::unhandled(processingSteps);
 
-    if (m_scrollingTree->willWheelEventStartSwipeGesture(wheelEvent))
-        return WheelEventHandlingResult::unhandled();
-
     m_scrollingTree->willProcessWheelEvent();
 
     auto filteredEvent = filteredWheelEvent(wheelEvent);
