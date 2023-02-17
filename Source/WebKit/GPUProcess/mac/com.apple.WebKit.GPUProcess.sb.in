@@ -635,7 +635,6 @@
     "com.apple.DownloadAssessment"
     "com.apple.HIToolbox"
     "com.apple.LaunchServices"
-    "com.apple.MultitouchSupport" ;; FIXME: Remove when <rdar://problem/13011633> is fixed.
     "com.apple.ServicesMenu.Services" ;; Needed for NSAttributedString <rdar://problem/10844321>
     "com.apple.ViewBridge" ;; Needed for Input elements.
     "com.apple.WebFoundation"
