@@ -29,7 +29,7 @@
 #import "SyntheticBackingScaleFactorWindow.h"
 #import "Test.h"
 #import <WebKit/WKBrowsingContextController.h>
-#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -68,9 +68,12 @@ TEST(WebKit, GetBackingScaleFactor)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("GetBackingScaleFactorTest"));
     setInjectedBundleClient(context.get());
-    auto pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("GetBackingScaleFactorPageGroup").get()));
-    auto view = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) contextRef:context.get() pageGroupRef:pageGroup.get()]);
-    [[view browsingContextController] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().processPool = (WKProcessPool *)context.get();
+
+    auto view = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [view loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
 
     RetainPtr<SyntheticBackingScaleFactorWindow> window1 = createWindow();
     [window1.get() setBackingScaleFactor:1];
@@ -90,7 +93,7 @@ TEST(WebKit, GetBackingScaleFactor)
     messageReceived = false;
     EXPECT_EQ(2, backingScaleFactor);
 
-    WKPageSetCustomBackingScaleFactor(view.get().pageRef, 3);
+    WKPageSetCustomBackingScaleFactor(view.get()._pageRefForTransitionToWKWebView, 3);
     WKContextPostMessageToInjectedBundle(context.get(), Util::toWK("GetBackingScaleFactor").get(), 0);
     Util::run(&messageReceived);
     messageReceived = false;

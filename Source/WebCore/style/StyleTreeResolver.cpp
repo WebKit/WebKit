@@ -609,8 +609,11 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
             return { WTFMove(resolvedStyle.style), animationImpact };
 
         if (resolvedStyle.matchResult) {
+            auto animatedStyleBeforeCascadeApplication = RenderStyle::clonePtr(*animatedStyle);
             // The cascade may override animated properties and have dependencies to them.
             applyCascadeAfterAnimation(*animatedStyle, animatedProperties, *resolvedStyle.matchResult, element, resolutionContext);
+            ASSERT(styleable.keyframeEffectStack());
+            styleable.keyframeEffectStack()->didApplyCascade(*animatedStyleBeforeCascadeApplication, *animatedStyle, animatedProperties, document);
         }
 
         Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);

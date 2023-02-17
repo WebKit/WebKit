@@ -79,7 +79,7 @@ class ResourceRequest;
 struct NotificationData;
 struct PluginInfo;
 struct PrewarmInformation;
-struct SecurityOriginData;
+class SecurityOriginData;
 enum class PermissionName : uint8_t;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
 using FramesPerSecond = unsigned;

@@ -78,7 +78,7 @@ enum class StorageAccessWasGranted : bool;
 enum class StoredCredentialsPolicy : uint8_t;
 struct ClientOrigin;
 struct NotificationData;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

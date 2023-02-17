@@ -210,7 +210,7 @@ void InspectorDatabaseAgent::didOpenDatabase(Database& database)
         return;
     }
 
-    auto resource = InspectorDatabaseResource::create(database, database.securityOrigin().host, database.stringIdentifierIsolatedCopy(), database.expectedVersionIsolatedCopy());
+    auto resource = InspectorDatabaseResource::create(database, database.securityOrigin().host(), database.stringIdentifierIsolatedCopy(), database.expectedVersionIsolatedCopy());
     m_resources.add(resource->id(), resource.ptr());
     resource->bind(*m_frontendDispatcher);
 }

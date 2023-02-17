@@ -210,6 +210,16 @@ template<typename T> struct CrossThreadCopierBase<false, false, std::optional<T>
     }
 };
 
+// Default specialization for Markable of CrossThreadCopyable class.
+template<typename T, typename U> struct CrossThreadCopierBase<false, false, Markable<T, U>> {
+    template<typename V> static Markable<T, U> copy(V&& source)
+    {
+        if (!source)
+            return std::nullopt;
+        return CrossThreadCopier<T>::copy(std::forward<V>(source).value());
+    }
+};
+
 // Default specialization for std::variant of CrossThreadCopyable classes.
 template<typename... Types> struct CrossThreadCopierBase<false, false, std::variant<Types...>> {
     using Type = std::variant<Types...>;

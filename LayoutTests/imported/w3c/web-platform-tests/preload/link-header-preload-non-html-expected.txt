@@ -1,0 +1,7 @@
+
+PASS XHTML documents should respect preload Link headers
+PASS plain text documents should respect preload Link headers
+PASS image documents should respect preload Link headers
+PASS media documents should respect preload Link headers
+PASS invalid image documents should respect preload Link headers
+

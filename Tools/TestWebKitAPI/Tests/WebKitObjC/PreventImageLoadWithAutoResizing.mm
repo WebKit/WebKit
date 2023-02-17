@@ -31,7 +31,7 @@
 #import "PlatformWebView.h"
 #import "Test.h"
 #import "TestBrowsingContextLoadDelegate.h"
-#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 static bool testFinished = false;
@@ -43,12 +43,12 @@ TEST(WebKit, PreventImageLoadWithAutoResizingTest)
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DenyWillSendRequestTest"));
     PlatformWebView webView(context.get());
 
-    webView.platformView().minimumSizeForAutoLayout = NSMakeSize(400, 300);
-    auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+    [webView.platformView() _setMinimumLayoutWidth:400];
+    auto loadDelegate = adoptNS([[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKWebView *sender) {
         testFinished = true;
     }]);
-    webView.platformView().browsingContextController.loadDelegate = loadDelegate.get();
-    [webView.platformView().browsingContextController loadHTMLString:@"<html><body style='background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFZJREFUeF59z4EJADEIQ1F36k7u5E7ZKXeUQPACJ3wK7UNokVxVk9kHnQH7bY9hbDyDhNXgjpRLqFlo4M2GgfyJHhjq8V4agfrgPQX3JtJQGbofmCHgA/nAKks+JAjFAAAAAElFTkSuQmCC);'></body></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
+    webView.platformView().navigationDelegate = loadDelegate.get();
+    [webView.platformView() loadHTMLString:@"<html><body style='background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFZJREFUeF59z4EJADEIQ1F36k7u5E7ZKXeUQPACJ3wK7UNokVxVk9kHnQH7bY9hbDyDhNXgjpRLqFlo4M2GgfyJHhjq8V4agfrgPQX3JtJQGbofmCHgA/nAKks+JAjFAAAAAElFTkSuQmCC);'></body></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
 
     Util::run(&testFinished);
 }

@@ -72,7 +72,7 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, Fra
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
 {
-    auto origin = API::SecurityOrigin::create(data.frameInfo.securityOrigin.protocol, data.frameInfo.securityOrigin.host, data.frameInfo.securityOrigin.port);
+    auto origin = API::SecurityOrigin::create(data.frameInfo.securityOrigin.protocol(), data.frameInfo.securityOrigin.host(), data.frameInfo.securityOrigin.port());
 
     CompletionHandler<void(bool)> afterConsent = [this, data = WTFMove(data), handler = WTFMove(handler)] (bool result) mutable {
         auto& authenticatorManager = m_webPageProxy.websiteDataStore().authenticatorManager();

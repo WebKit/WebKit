@@ -76,6 +76,7 @@ public:
     using RelationalCondition = MacroAssembler::RelationalCondition;
     using ResultCondition = MacroAssembler::ResultCondition;
     using DoubleCondition = MacroAssembler::DoubleCondition;
+    using StatusCondition = MacroAssembler::StatusCondition;
     using Jump = MacroAssembler::Jump;
     using JumpList = MacroAssembler::JumpList;
     using DataLabelPtr = MacroAssembler::DataLabelPtr;
@@ -1136,9 +1137,7 @@ public:
 
         gprSetBuilder.remove(GPRInfo::wasmBaseMemoryPointer);
         gprSetBuilder.remove(GPRInfo::wasmContextInstancePointer);
-
-        if (mode == MemoryMode::BoundsChecking)
-            gprSetBuilder.remove(GPRInfo:: wasmBoundsCheckingSizeRegister);
+        gprSetBuilder.remove(GPRInfo::wasmBoundsCheckingSizeRegister); // Even though MemoryMode::Signaling does not use it, this makes the code simpler, and anyway right now all callee-saves are excluded from gprSetBuilder.
 
         RegisterSetBuilder fprSetBuilder = RegisterSetBuilder::allFPRs();
 
@@ -1677,7 +1676,7 @@ public:
             emitMove(Value::fromI64(static_cast<int64_t>(static_cast<uint64_t>(sizeOfOperation) + offset - 1)), Location::fromGPR(m_scratchGPR));
             m_jit.add64(pointerLocation.asGPR(), m_scratchGPR);
 
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo:: wasmBoundsCheckingSizeRegister));
+            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
             break;
         }
 
@@ -1711,7 +1710,7 @@ public:
         return Location::fromGPR(m_scratchGPR);
     }
 
-    inline uint32_t sizeOfLoadOp(LoadOpType op)
+    static inline uint32_t sizeOfLoadOp(LoadOpType op)
     {
         switch (op) {
         case LoadOpType::I32Load8S:
@@ -1736,7 +1735,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    inline TypeKind typeOfLoadOp(LoadOpType op)
+    static inline TypeKind typeOfLoadOp(LoadOpType op)
     {
         switch (op) {
         case LoadOpType::I32Load8S:
@@ -2070,13 +2069,995 @@ public:
 
     // Atomics
 
-    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType, Type, ExpressionType, ExpressionType&, uint32_t) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType, Type, ExpressionType, ExpressionType, uint32_t) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType&, uint32_t) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType, Type, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType, ExpressionType, ExpressionType, ExpressionType&, uint32_t) BBQ_STUB
-    PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t) BBQ_STUB
+    static inline Width accessWidth(ExtAtomicOpType op)
+    {
+        return static_cast<Width>(memoryLog2Alignment(op));
+    }
+
+    static inline uint32_t sizeOfAtomicOpMemoryAccess(ExtAtomicOpType op)
+    {
+        return bytesForWidth(accessWidth(op));
+    }
+
+    void emitSanitizeAtomicResult(ExtAtomicOpType op, TypeKind resultType, GPRReg source, GPRReg dest)
+    {
+        switch (resultType) {
+        case TypeKind::I64: {
+            switch (accessWidth(op)) {
+            case Width8:
+                m_jit.zeroExtend8To32(source, dest);
+                return;
+            case Width16:
+                m_jit.zeroExtend16To32(source, dest);
+                return;
+            case Width32:
+                m_jit.zeroExtend32ToWord(source, dest);
+                return;
+            case Width64:
+                m_jit.move(source, dest);
+                return;
+            case Width128:
+                RELEASE_ASSERT_NOT_REACHED();
+                return;
+            }
+            return;
+        }
+        case TypeKind::I32:
+            switch (accessWidth(op)) {
+            case Width8:
+                m_jit.zeroExtend8To32(source, dest);
+                return;
+            case Width16:
+                m_jit.zeroExtend16To32(source, dest);
+                return;
+            case Width32:
+            case Width64:
+                m_jit.move(source, dest);
+                return;
+            case Width128:
+                RELEASE_ASSERT_NOT_REACHED();
+                return;
+            }
+            return;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    void emitSanitizeAtomicResult(ExtAtomicOpType op, TypeKind resultType, GPRReg result)
+    {
+        emitSanitizeAtomicResult(op, resultType, result, result);
+    }
+
+    template<typename Functor>
+    void emitAtomicOpGeneric(ExtAtomicOpType op, Address address, GPRReg oldGPR, GPRReg scratchGPR, const Functor& functor)
+    {
+        Width accessWidth = this->accessWidth(op);
+
+        // We need a CAS loop or a LL/SC loop. Using prepare/attempt jargon, we want:
+        //
+        // Block #reloop:
+        //     Prepare
+        //     Operation
+        //     Attempt
+        //   Successors: Then:#done, Else:#reloop
+        // Block #done:
+        //     Move oldValue, result
+
+        // Prepare
+        auto reloopLabel = m_jit.label();
+        switch (accessWidth) {
+        case Width8:
+#if CPU(ARM64)
+            m_jit.loadLinkAcq8(address, oldGPR);
+#else
+            m_jit.load8SignedExtendTo32(address, oldGPR);
+#endif
+            break;
+        case Width16:
+#if CPU(ARM64)
+            m_jit.loadLinkAcq16(address, oldGPR);
+#else
+            m_jit.load16SignedExtendTo32(address, oldGPR);
+#endif
+            break;
+        case Width32:
+#if CPU(ARM64)
+            m_jit.loadLinkAcq32(address, oldGPR);
+#else
+            m_jit.load32(address, oldGPR);
+#endif
+            break;
+        case Width64:
+#if CPU(ARM64)
+            m_jit.loadLinkAcq64(address, oldGPR);
+#else
+            m_jit.load64(address, oldGPR);
+#endif
+            break;
+        case Width128:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+
+        // Operation
+        functor(oldGPR, scratchGPR);
+
+#if CPU(X86_64)
+        switch (accessWidth) {
+        case Width8:
+            m_jit.branchAtomicStrongCAS8(StatusCondition::Failure, oldGPR, scratchGPR, address).linkTo(reloopLabel, &m_jit);
+            break;
+        case Width16:
+            m_jit.branchAtomicStrongCAS16(StatusCondition::Failure, oldGPR, scratchGPR, address).linkTo(reloopLabel, &m_jit);
+            break;
+        case Width32:
+            m_jit.branchAtomicStrongCAS32(StatusCondition::Failure, oldGPR, scratchGPR, address).linkTo(reloopLabel, &m_jit);
+            break;
+        case Width64:
+            m_jit.branchAtomicStrongCAS64(StatusCondition::Failure, oldGPR, scratchGPR, address).linkTo(reloopLabel, &m_jit);
+            break;
+        case Width128:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+#elif CPU(ARM64)
+        switch (accessWidth) {
+        case Width8:
+            m_jit.storeCondRel8(scratchGPR, address, scratchGPR);
+            break;
+        case Width16:
+            m_jit.storeCondRel16(scratchGPR, address, scratchGPR);
+            break;
+        case Width32:
+            m_jit.storeCondRel32(scratchGPR, address, scratchGPR);
+            break;
+        case Width64:
+            m_jit.storeCondRel64(scratchGPR, address, scratchGPR);
+            break;
+        case Width128:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        m_jit.branchTest32(ResultCondition::NonZero, scratchGPR).linkTo(reloopLabel, &m_jit);
+#endif
+    }
+
+    Value WARN_UNUSED_RETURN emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint32_t offset)
+    {
+        ASSERT(pointer.isGPR());
+
+        // For Atomic access, we need SimpleAddress (offset = 0).
+        if (offset)
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(offset)), pointer.asGPR());
+        Address address = Address(pointer.asGPR());
+
+        if (accessWidth(loadOp) != Width8)
+            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(loadOp) - 1)));
+
+        Value result = topValue(valueType.kind);
+        Location resultLocation = allocate(result);
+
+        if (!(isARM64_LSE() || isX86_64())) {
+            ScratchScope<1, 0> scratches(*this);
+            emitAtomicOpGeneric(loadOp, address, resultLocation.asGPR(), scratches.gpr(0), [&](GPRReg oldGPR, GPRReg newGPR) {
+                emitSanitizeAtomicResult(loadOp, canonicalWidth(accessWidth(loadOp)) == Width64 ? TypeKind::I64 : TypeKind::I32, oldGPR, newGPR);
+            });
+            emitSanitizeAtomicResult(loadOp, valueType.kind, resultLocation.asGPR());
+            return result;
+        }
+
+        m_jit.move(TrustedImm32(0), resultLocation.asGPR());
+        switch (loadOp) {
+        case ExtAtomicOpType::I32AtomicLoad: {
+#if CPU(ARM64)
+            m_jit.atomicXchgAdd32(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+            m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicLoad: {
+#if CPU(ARM64)
+            m_jit.atomicXchgAdd64(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+            m_jit.atomicXchgAdd64(resultLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I32AtomicLoad8U: {
+#if CPU(ARM64)
+            m_jit.atomicXchgAdd8(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+            m_jit.atomicXchgAdd8(resultLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I32AtomicLoad16U: {
+#if CPU(ARM64)
+            m_jit.atomicXchgAdd16(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+            m_jit.atomicXchgAdd16(resultLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicLoad8U: {
+#if CPU(ARM64)
+            m_jit.atomicXchgAdd8(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+            m_jit.atomicXchgAdd8(resultLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicLoad16U: {
+#if CPU(ARM64)
+            m_jit.atomicXchgAdd16(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+            m_jit.atomicXchgAdd16(resultLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicLoad32U: {
+#if CPU(ARM64)
+            m_jit.atomicXchgAdd32(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+            m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
+#endif
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        emitSanitizeAtomicResult(loadOp, valueType.kind, resultLocation.asGPR());
+
+        return result;
+    }
+
+    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t offset)
+    {
+        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(loadOp)))) {
+            // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435
+            emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
+            consume(pointer);
+            result = valueType.isI64() ? Value::fromI64(0) : Value::fromI32(0);
+        } else
+            result = emitAtomicLoadOp(loadOp, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(loadOp)), offset);
+
+        LOG_INSTRUCTION(makeString(loadOp), pointer, offset, RESULT(result));
+
+        return { };
+    }
+
+    void emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value value, uint32_t offset)
+    {
+        ASSERT(pointer.isGPR());
+
+        // For Atomic access, we need SimpleAddress (offset = 0).
+        if (offset)
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(offset)), pointer.asGPR());
+        Address address = Address(pointer.asGPR());
+
+        if (accessWidth(storeOp) != Width8)
+            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(storeOp) - 1)));
+
+        GPRReg scratch1GPR = InvalidGPRReg;
+        GPRReg scratch2GPR = InvalidGPRReg;
+        Location valueLocation;
+        if (value.isConst()) {
+            ScratchScope<3, 0> scratches(*this);
+            valueLocation = Location::fromGPR(scratches.gpr(0));
+            emitMoveConst(value, valueLocation);
+            scratch1GPR = scratches.gpr(1);
+            scratch2GPR = scratches.gpr(2);
+        } else {
+            ScratchScope<2, 0> scratches(*this);
+            valueLocation = loadIfNecessary(value);
+            scratch1GPR = scratches.gpr(0);
+            scratch2GPR = scratches.gpr(1);
+        }
+        ASSERT(valueLocation.isRegister());
+
+        consume(value);
+
+        if (!(isARM64_LSE() || isX86_64())) {
+            emitAtomicOpGeneric(storeOp, address, scratch1GPR, scratch2GPR, [&](GPRReg, GPRReg newGPR) {
+                m_jit.move(valueLocation.asGPR(), newGPR);
+            });
+            return;
+        }
+
+        switch (storeOp) {
+        case ExtAtomicOpType::I32AtomicStore: {
+#if CPU(ARM64)
+            m_jit.atomicXchg32(valueLocation.asGPR(), address, scratch1GPR);
+#else
+            m_jit.store32(valueLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicStore: {
+#if CPU(ARM64)
+            m_jit.atomicXchg64(valueLocation.asGPR(), address, scratch1GPR);
+#else
+            m_jit.store64(valueLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I32AtomicStore8U: {
+#if CPU(ARM64)
+            m_jit.atomicXchg8(valueLocation.asGPR(), address, scratch1GPR);
+#else
+            m_jit.store8(valueLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I32AtomicStore16U: {
+#if CPU(ARM64)
+            m_jit.atomicXchg16(valueLocation.asGPR(), address, scratch1GPR);
+#else
+            m_jit.store16(valueLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicStore8U: {
+#if CPU(ARM64)
+            m_jit.atomicXchg8(valueLocation.asGPR(), address, scratch1GPR);
+#else
+            m_jit.store8(valueLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicStore16U: {
+#if CPU(ARM64)
+            m_jit.atomicXchg16(valueLocation.asGPR(), address, scratch1GPR);
+#else
+            m_jit.store16(valueLocation.asGPR(), address);
+#endif
+            break;
+        }
+        case ExtAtomicOpType::I64AtomicStore32U: {
+#if CPU(ARM64)
+            m_jit.atomicXchg32(valueLocation.asGPR(), address, scratch1GPR);
+#else
+            m_jit.store32(valueLocation.asGPR(), address);
+#endif
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t offset)
+    {
+        Location valueLocation = locationOf(value);
+        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(storeOp)))) {
+            // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435
+            emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
+            consume(pointer);
+            consume(value);
+        } else
+            emitAtomicStoreOp(storeOp, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(storeOp)), value, offset);
+
+        LOG_INSTRUCTION(makeString(storeOp), pointer, offset, value, valueLocation);
+
+        return { };
+    }
+
+    Value emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueType, Location pointer, Value value, uint32_t uoffset)
+    {
+        ASSERT(pointer.isGPR());
+
+        // For Atomic access, we need SimpleAddress (offset = 0).
+        if (uoffset)
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
+        Address address = Address(pointer.asGPR());
+
+        if (accessWidth(op) != Width8)
+            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
+
+        Value result = topValue(valueType.kind);
+        Location resultLocation = allocate(result);
+
+        GPRReg scratchGPR = InvalidGPRReg;
+        Location valueLocation;
+        if (value.isConst()) {
+            ScratchScope<2, 0> scratches(*this);
+            valueLocation = Location::fromGPR(scratches.gpr(0));
+            emitMoveConst(value, valueLocation);
+            scratchGPR = scratches.gpr(1);
+        } else {
+            ScratchScope<1, 0> scratches(*this);
+            valueLocation = loadIfNecessary(value);
+            scratchGPR = scratches.gpr(0);
+        }
+        ASSERT(valueLocation.isRegister());
+        consume(value);
+
+        switch (op) {
+        case ExtAtomicOpType::I32AtomicRmw8AddU:
+        case ExtAtomicOpType::I32AtomicRmw16AddU:
+        case ExtAtomicOpType::I32AtomicRmwAdd:
+        case ExtAtomicOpType::I64AtomicRmw8AddU:
+        case ExtAtomicOpType::I64AtomicRmw16AddU:
+        case ExtAtomicOpType::I64AtomicRmw32AddU:
+        case ExtAtomicOpType::I64AtomicRmwAdd:
+            if (isX86() || isARM64_LSE()) {
+                switch (accessWidth(op)) {
+                case Width8:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd8(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchgAdd8(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width16:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd16(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchgAdd16(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width32:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd32(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width64:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd64(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchgAdd64(resultLocation.asGPR(), address);
+#endif
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                emitSanitizeAtomicResult(op, valueType.kind, resultLocation.asGPR());
+                return result;
+            }
+            break;
+        case ExtAtomicOpType::I32AtomicRmw8SubU:
+        case ExtAtomicOpType::I32AtomicRmw16SubU:
+        case ExtAtomicOpType::I32AtomicRmwSub:
+        case ExtAtomicOpType::I64AtomicRmw8SubU:
+        case ExtAtomicOpType::I64AtomicRmw16SubU:
+        case ExtAtomicOpType::I64AtomicRmw32SubU:
+        case ExtAtomicOpType::I64AtomicRmwSub:
+            if (isX86() || isARM64_LSE()) {
+                m_jit.move(valueLocation.asGPR(), scratchGPR);
+                if (valueType.isI64())
+                    m_jit.neg64(scratchGPR);
+                else
+                    m_jit.neg32(scratchGPR);
+
+                switch (accessWidth(op)) {
+                case Width8:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd8(scratchGPR, address, resultLocation.asGPR());
+#else
+                    m_jit.move(scratchGPR, resultLocation.asGPR());
+                    m_jit.atomicXchgAdd8(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width16:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd16(scratchGPR, address, resultLocation.asGPR());
+#else
+                    m_jit.move(scratchGPR, resultLocation.asGPR());
+                    m_jit.atomicXchgAdd16(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width32:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd32(scratchGPR, address, resultLocation.asGPR());
+#else
+                    m_jit.move(scratchGPR, resultLocation.asGPR());
+                    m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width64:
+#if CPU(ARM64)
+                    m_jit.atomicXchgAdd64(scratchGPR, address, resultLocation.asGPR());
+#else
+                    m_jit.move(scratchGPR, resultLocation.asGPR());
+                    m_jit.atomicXchgAdd64(resultLocation.asGPR(), address);
+#endif
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                emitSanitizeAtomicResult(op, valueType.kind, resultLocation.asGPR());
+                return result;
+            }
+            break;
+        case ExtAtomicOpType::I32AtomicRmw8AndU:
+        case ExtAtomicOpType::I32AtomicRmw16AndU:
+        case ExtAtomicOpType::I32AtomicRmwAnd:
+        case ExtAtomicOpType::I64AtomicRmw8AndU:
+        case ExtAtomicOpType::I64AtomicRmw16AndU:
+        case ExtAtomicOpType::I64AtomicRmw32AndU:
+        case ExtAtomicOpType::I64AtomicRmwAnd:
+#if CPU(ARM64)
+            if (isARM64_LSE()) {
+                m_jit.move(valueLocation.asGPR(), scratchGPR);
+                if (valueType.isI64())
+                    m_jit.not64(scratchGPR);
+                else
+                    m_jit.not32(scratchGPR);
+
+                switch (accessWidth(op)) {
+                case Width8:
+                    m_jit.atomicXchgClear8(scratchGPR, address, resultLocation.asGPR());
+                    break;
+                case Width16:
+                    m_jit.atomicXchgClear16(scratchGPR, address, resultLocation.asGPR());
+                    break;
+                case Width32:
+                    m_jit.atomicXchgClear32(scratchGPR, address, resultLocation.asGPR());
+                    break;
+                case Width64:
+                    m_jit.atomicXchgClear64(scratchGPR, address, resultLocation.asGPR());
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                emitSanitizeAtomicResult(op, valueType.kind, resultLocation.asGPR());
+                return result;
+            }
+#endif
+            break;
+        case ExtAtomicOpType::I32AtomicRmw8OrU:
+        case ExtAtomicOpType::I32AtomicRmw16OrU:
+        case ExtAtomicOpType::I32AtomicRmwOr:
+        case ExtAtomicOpType::I64AtomicRmw8OrU:
+        case ExtAtomicOpType::I64AtomicRmw16OrU:
+        case ExtAtomicOpType::I64AtomicRmw32OrU:
+        case ExtAtomicOpType::I64AtomicRmwOr:
+#if CPU(ARM64)
+            if (isARM64_LSE()) {
+                switch (accessWidth(op)) {
+                case Width8:
+                    m_jit.atomicXchgOr8(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                case Width16:
+                    m_jit.atomicXchgOr16(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                case Width32:
+                    m_jit.atomicXchgOr32(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                case Width64:
+                    m_jit.atomicXchgOr64(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                emitSanitizeAtomicResult(op, valueType.kind, resultLocation.asGPR());
+                return result;
+            }
+#endif
+            break;
+        case ExtAtomicOpType::I32AtomicRmw8XorU:
+        case ExtAtomicOpType::I32AtomicRmw16XorU:
+        case ExtAtomicOpType::I32AtomicRmwXor:
+        case ExtAtomicOpType::I64AtomicRmw8XorU:
+        case ExtAtomicOpType::I64AtomicRmw16XorU:
+        case ExtAtomicOpType::I64AtomicRmw32XorU:
+        case ExtAtomicOpType::I64AtomicRmwXor:
+#if CPU(ARM64)
+            if (isARM64_LSE()) {
+                switch (accessWidth(op)) {
+                case Width8:
+                    m_jit.atomicXchgXor8(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                case Width16:
+                    m_jit.atomicXchgXor16(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                case Width32:
+                    m_jit.atomicXchgXor32(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                case Width64:
+                    m_jit.atomicXchgXor64(valueLocation.asGPR(), address, resultLocation.asGPR());
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                emitSanitizeAtomicResult(op, valueType.kind, resultLocation.asGPR());
+                return result;
+            }
+#endif
+            break;
+        case ExtAtomicOpType::I32AtomicRmw8XchgU:
+        case ExtAtomicOpType::I32AtomicRmw16XchgU:
+        case ExtAtomicOpType::I32AtomicRmwXchg:
+        case ExtAtomicOpType::I64AtomicRmw8XchgU:
+        case ExtAtomicOpType::I64AtomicRmw16XchgU:
+        case ExtAtomicOpType::I64AtomicRmw32XchgU:
+        case ExtAtomicOpType::I64AtomicRmwXchg:
+            if (isX86() || isARM64_LSE()) {
+                switch (accessWidth(op)) {
+                case Width8:
+#if CPU(ARM64)
+                    m_jit.atomicXchg8(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchg8(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width16:
+#if CPU(ARM64)
+                    m_jit.atomicXchg16(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchg16(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width32:
+#if CPU(ARM64)
+                    m_jit.atomicXchg32(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchg32(resultLocation.asGPR(), address);
+#endif
+                    break;
+                case Width64:
+#if CPU(ARM64)
+                    m_jit.atomicXchg64(valueLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                    m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.atomicXchg64(resultLocation.asGPR(), address);
+#endif
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                emitSanitizeAtomicResult(op, valueType.kind, resultLocation.asGPR());
+                return result;
+            }
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        emitAtomicOpGeneric(op, address, resultLocation.asGPR(), scratchGPR, [&](GPRReg oldGPR, GPRReg newGPR) {
+            switch (op) {
+            case ExtAtomicOpType::I32AtomicRmw16AddU:
+            case ExtAtomicOpType::I32AtomicRmw8AddU:
+            case ExtAtomicOpType::I32AtomicRmwAdd:
+                m_jit.add32(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I64AtomicRmw8AddU:
+            case ExtAtomicOpType::I64AtomicRmw16AddU:
+            case ExtAtomicOpType::I64AtomicRmw32AddU:
+            case ExtAtomicOpType::I64AtomicRmwAdd:
+                m_jit.add64(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I32AtomicRmw8SubU:
+            case ExtAtomicOpType::I32AtomicRmw16SubU:
+            case ExtAtomicOpType::I32AtomicRmwSub:
+                m_jit.sub32(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I64AtomicRmw8SubU:
+            case ExtAtomicOpType::I64AtomicRmw16SubU:
+            case ExtAtomicOpType::I64AtomicRmw32SubU:
+            case ExtAtomicOpType::I64AtomicRmwSub:
+                m_jit.sub64(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I32AtomicRmw8AndU:
+            case ExtAtomicOpType::I32AtomicRmw16AndU:
+            case ExtAtomicOpType::I32AtomicRmwAnd:
+                m_jit.and32(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I64AtomicRmw8AndU:
+            case ExtAtomicOpType::I64AtomicRmw16AndU:
+            case ExtAtomicOpType::I64AtomicRmw32AndU:
+            case ExtAtomicOpType::I64AtomicRmwAnd:
+                m_jit.and64(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I32AtomicRmw8OrU:
+            case ExtAtomicOpType::I32AtomicRmw16OrU:
+            case ExtAtomicOpType::I32AtomicRmwOr:
+                m_jit.or32(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I64AtomicRmw8OrU:
+            case ExtAtomicOpType::I64AtomicRmw16OrU:
+            case ExtAtomicOpType::I64AtomicRmw32OrU:
+            case ExtAtomicOpType::I64AtomicRmwOr:
+                m_jit.or64(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I32AtomicRmw8XorU:
+            case ExtAtomicOpType::I32AtomicRmw16XorU:
+            case ExtAtomicOpType::I32AtomicRmwXor:
+                m_jit.xor32(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I64AtomicRmw8XorU:
+            case ExtAtomicOpType::I64AtomicRmw16XorU:
+            case ExtAtomicOpType::I64AtomicRmw32XorU:
+            case ExtAtomicOpType::I64AtomicRmwXor:
+                m_jit.xor64(oldGPR, valueLocation.asGPR(), newGPR);
+                break;
+            case ExtAtomicOpType::I32AtomicRmw8XchgU:
+            case ExtAtomicOpType::I32AtomicRmw16XchgU:
+            case ExtAtomicOpType::I32AtomicRmwXchg:
+            case ExtAtomicOpType::I64AtomicRmw8XchgU:
+            case ExtAtomicOpType::I64AtomicRmw16XchgU:
+            case ExtAtomicOpType::I64AtomicRmw32XchgU:
+            case ExtAtomicOpType::I64AtomicRmwXchg:
+                emitSanitizeAtomicResult(op, valueType.kind, valueLocation.asGPR(), newGPR);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        });
+        emitSanitizeAtomicResult(op, valueType.kind, resultLocation.asGPR());
+        return result;
+    }
+
+    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset)
+    {
+        Location valueLocation = locationOf(value);
+        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+            // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+            // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+            emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
+            consume(pointer);
+            consume(value);
+            result = valueType.isI64() ? Value::fromI64(0) : Value::fromI32(0);
+        } else
+            result = emitAtomicBinaryRMWOp(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), value, offset);
+
+        LOG_INSTRUCTION(makeString(op), pointer, offset, value, valueLocation, RESULT(result));
+
+        return { };
+    }
+
+    Value WARN_UNUSED_RETURN emitAtomicCompareExchange(ExtAtomicOpType op, Type valueType, Location pointer, Value expected, Value value, uint32_t uoffset)
+    {
+        ASSERT(pointer.isGPR());
+
+        // For Atomic access, we need SimpleAddress (offset = 0).
+        if (uoffset)
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
+        Address address = Address(pointer.asGPR());
+        Width valueWidth = widthForType(toB3Type(valueType));
+        Width accessWidth = Wasm::accessWidth(op);
+
+        if (accessWidth != Width8)
+            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
+
+        Value result = topValue(expected.type());
+        Location resultLocation = allocate(result);
+
+        ScratchScope<1, 0> scratches(*this);
+        GPRReg scratchGPR = scratches.gpr(0);
+
+        // FIXME: We should have a better way to write this.
+        Location valueLocation;
+        Location expectedLocation;
+        if (value.isConst()) {
+            if (expected.isConst()) {
+                ScratchScope<2, 0> scratches(*this);
+                valueLocation = Location::fromGPR(scratches.gpr(0));
+                expectedLocation = Location::fromGPR(scratches.gpr(1));
+                emitMoveConst(value, valueLocation);
+                emitMoveConst(expected, expectedLocation);
+            } else {
+                ScratchScope<1, 0> scratches(*this);
+                valueLocation = Location::fromGPR(scratches.gpr(0));
+                emitMoveConst(value, valueLocation);
+                expectedLocation = loadIfNecessary(expected);
+            }
+        } else {
+            valueLocation = loadIfNecessary(value);
+            if (expected.isConst()) {
+                ScratchScope<1, 0> scratches(*this);
+                expectedLocation = Location::fromGPR(scratches.gpr(0));
+                emitMoveConst(expected, expectedLocation);
+            } else
+                expectedLocation = loadIfNecessary(expected);
+        }
+
+        ASSERT(valueLocation.isRegister());
+        ASSERT(expectedLocation.isRegister());
+
+        consume(value);
+        consume(expected);
+
+        auto emitStrongCAS = [&](GPRReg expectedGPR, GPRReg valueGPR, GPRReg resultGPR) {
+            if (isX86_64() || isARM64_LSE()) {
+                m_jit.move(expectedGPR, resultGPR);
+                switch (accessWidth) {
+                case Width8:
+                    m_jit.atomicStrongCAS8(resultGPR, valueGPR, address);
+                    break;
+                case Width16:
+                    m_jit.atomicStrongCAS16(resultGPR, valueGPR, address);
+                    break;
+                case Width32:
+                    m_jit.atomicStrongCAS32(resultGPR, valueGPR, address);
+                    break;
+                case Width64:
+                    m_jit.atomicStrongCAS64(resultGPR, valueGPR, address);
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                    break;
+                }
+                return;
+            }
+
+            m_jit.move(expectedGPR, resultGPR);
+            switch (accessWidth) {
+            case Width8:
+                m_jit.atomicStrongCAS8(StatusCondition::Success, resultGPR, valueGPR, address, scratchGPR);
+                break;
+            case Width16:
+                m_jit.atomicStrongCAS16(StatusCondition::Success, resultGPR, valueGPR, address, scratchGPR);
+                break;
+            case Width32:
+                m_jit.atomicStrongCAS32(StatusCondition::Success, resultGPR, valueGPR, address, scratchGPR);
+                break;
+            case Width64:
+                m_jit.atomicStrongCAS64(StatusCondition::Success, resultGPR, valueGPR, address, scratchGPR);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        };
+
+        if (valueWidth == accessWidth) {
+            emitStrongCAS(expectedLocation.asGPR(), valueLocation.asGPR(), resultLocation.asGPR());
+            emitSanitizeAtomicResult(op, expected.type(), resultLocation.asGPR());
+            return result;
+        }
+
+        emitSanitizeAtomicResult(op, expected.type(), expectedLocation.asGPR(), scratchGPR);
+
+        Jump failure;
+        switch (valueWidth) {
+        case Width8:
+        case Width16:
+        case Width32:
+            failure = m_jit.branch32(RelationalCondition::NotEqual, expectedLocation.asGPR(), scratchGPR);
+            break;
+        case Width64:
+            failure = m_jit.branch64(RelationalCondition::NotEqual, expectedLocation.asGPR(), scratchGPR);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+
+        emitStrongCAS(expectedLocation.asGPR(), valueLocation.asGPR(), resultLocation.asGPR());
+        auto done = m_jit.jump();
+
+        failure.link(&m_jit);
+        if (isARM64_LSE() || isX86_64()) {
+            m_jit.move(TrustedImm32(0), resultLocation.asGPR());
+            switch (accessWidth) {
+            case Width8:
+#if CPU(ARM64)
+                m_jit.atomicXchgAdd8(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                m_jit.atomicXchgAdd8(resultLocation.asGPR(), address);
+#endif
+                break;
+            case Width16:
+#if CPU(ARM64)
+                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
+#endif
+                break;
+            case Width32:
+#if CPU(ARM64)
+                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                m_jit.atomicXchgAdd32(resultLocation.asGPR(), address);
+#endif
+                break;
+            case Width64:
+#if CPU(ARM64)
+                m_jit.atomicXchgAdd64(resultLocation.asGPR(), address, resultLocation.asGPR());
+#else
+                m_jit.atomicXchgAdd64(resultLocation.asGPR(), address);
+#endif
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+        } else {
+            emitAtomicOpGeneric(op, address, resultLocation.asGPR(), scratchGPR, [&](GPRReg oldGPR, GPRReg newGPR) {
+                emitSanitizeAtomicResult(op, canonicalWidth(accessWidth) == Width64 ? TypeKind::I64 : TypeKind::I32, oldGPR, newGPR);
+            });
+        }
+
+        done.link(&m_jit);
+        emitSanitizeAtomicResult(op, expected.type(), resultLocation.asGPR());
+
+        return result;
+    }
+
+    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset)
+    {
+        Location valueLocation = locationOf(value);
+        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+            // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
+            // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
+            emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
+            consume(pointer);
+            consume(expected);
+            consume(value);
+            result = valueType.isI64() ? Value::fromI64(0) : Value::fromI32(0);
+        } else
+            result = emitAtomicCompareExchange(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), expected, value, offset);
+
+        LOG_INSTRUCTION(makeString(op), pointer, expected, value, valueLocation, offset, RESULT(result));
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset)
+    {
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            pointer,
+            Value::fromI32(offset),
+            value,
+            timeout
+        };
+
+        if (op == ExtAtomicOpType::MemoryAtomicWait32)
+            emitCCall(&operationMemoryAtomicWait32, arguments, TypeKind::I32, result);
+        else
+            emitCCall(&operationMemoryAtomicWait64, arguments, TypeKind::I32, result);
+        Location resultLocation = allocate(result);
+
+        LOG_INSTRUCTION(makeString(op), pointer, value, timeout, offset, RESULT(result));
+
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t offset)
+    {
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            pointer,
+            Value::fromI32(offset),
+            count
+        };
+        emitCCall(&operationMemoryAtomicNotify, arguments, TypeKind::I32, result);
+        Location resultLocation = allocate(result);
+
+        LOG_INSTRUCTION(makeString(op), pointer, count, offset, RESULT(result));
+
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN atomicFence(ExtAtomicOpType, uint8_t)
+    {
+        m_jit.memoryFence();
+        return { };
+    }
 
     // Saturated truncation.
 
@@ -5136,12 +6117,10 @@ public:
     void restoreWebAssemblyGlobalState()
     {
         restoreWebAssemblyContextInstance();
-        if (m_mode == MemoryMode::BoundsChecking) {
-            m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister);
-            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
-        } else {
-            m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, m_dataScratchGPR);
-            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, m_dataScratchGPR, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        // FIXME: We should just store these registers on stack and load them.
+        if (!!m_info.memory) {
+            m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
         }
     }
 
@@ -5265,13 +6244,50 @@ public:
         m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(taggedFunctionPtr)), m_scratchGPR);
         m_jit.call(m_scratchGPR, OperationPtrTag);
 
-        // Push return value(s) onto the stack
-        Vector<Value, 8> returnedValues;
-        returnValuesFromCall(returnedValues, *functionType->as<FunctionSignature>(), callInfo);
+        // FIXME: Probably we should make CCall more lower level, and we should bind the result to Value separately.
+        result = Value::fromTemp(returnType, m_parser->expressionStack().size());
+        Location resultLocation;
+        switch (returnType) {
+        case TypeKind::I32:
+        case TypeKind::I31ref:
+        case TypeKind::I64:
+        case TypeKind::Ref:
+        case TypeKind::RefNull:
+        case TypeKind::Arrayref:
+        case TypeKind::Structref:
+        case TypeKind::Funcref:
+        case TypeKind::Externref:
+        case TypeKind::Rec:
+        case TypeKind::Sub:
+        case TypeKind::Array:
+        case TypeKind::Struct:
+        case TypeKind::Func: {
+            resultLocation = Location::fromGPR(GPRInfo::returnValueGPR);
+            break;
+        }
+        case TypeKind::F32:
+        case TypeKind::F64:
+        case TypeKind::V128: {
+            resultLocation = Location::fromFPR(FPRInfo::returnValueFPR);
+            break;
+        }
+        case TypeKind::Void:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
 
-        // TODO: Handle returning multiple values from a C call
-        ASSERT(returnedValues.size() == 1);
-        result = returnedValues[0];
+        RegisterBinding& currentBinding = resultLocation.isGPR() ? m_gprBindings[resultLocation.asGPR()] : m_fprBindings[resultLocation.asFPR()];
+        if (currentBinding.isScratch()) {
+            // FIXME: This is a total hack and could cause problems. We assume scratch registers (allocated by a ScratchScope)
+            // will never be live across a call. So far, this is probably true, but it's fragile. Probably the fix here is to
+            // exclude all possible return value registers from ScratchScope so we can guarantee there's never any interference.
+            currentBinding = RegisterBinding::none();
+            if (resultLocation.isGPR())
+                m_gprSet.add(resultLocation.asGPR(), Width::Width64);
+            else
+                m_fprSet.add(resultLocation.asFPR(), Width::Width64);
+        }
+        bind(result, resultLocation);
     }
 
     PartialResult WARN_UNUSED_RETURN addCall(unsigned functionIndex, const TypeDefinition& signature, Vector<Value>& arguments, ResultList& results, CallType callType = CallType::Call)
@@ -5328,15 +6344,15 @@ public:
         // Do a context switch if needed.
         Jump isSameInstance = m_jit.branchPtr(RelationalCondition::Equal, calleeInstance, GPRInfo::wasmContextInstancePointer);
         // TODO: Handle this case for targets that don't support pinned state registers.
-        m_jit.loadPairPtr(calleeInstance, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister);
-        m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        m_jit.loadPairPtr(calleeInstance, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+        m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
         isSameInstance.link(&m_jit);
 
         // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
         m_jit.storePtr(jsCalleeAnchor, Location::fromArgumentLocation(wasmCalleeInfo.thisArgument).asAddress());
 
         // Safe to use across saveValues/passParameters since neither clobber the scratch GPR.
-        m_jit.loadPtr(Address(calleeCode), m_scratchGPR); 
+        m_jit.loadPtr(Address(calleeCode), m_scratchGPR);
         saveValuesAcrossCall(wasmCalleeInfo);
         passParametersToCall(arguments, wasmCalleeInfo);
         m_jit.call(m_scratchGPR, WasmEntryPtrTag);

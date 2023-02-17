@@ -432,8 +432,8 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                     if (!allowsWebsiteDataRecordsForAllOrigins)
                         continue;
 
-                    String hostString = entry.origin.host.isEmpty() ? emptyString() : makeString(" ", entry.origin.host);
-                    displayName = makeString(entry.origin.protocol, hostString);
+                    String hostString = entry.origin.host().isEmpty() ? emptyString() : makeString(" ", entry.origin.host());
+                    displayName = makeString(entry.origin.protocol(), hostString);
                 }
 
                 auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;

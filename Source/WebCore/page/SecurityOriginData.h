@@ -1,5 +1,5 @@
  /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015, 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,29 +36,33 @@ namespace WebCore {
 class Frame;
 class SecurityOrigin;
 
-struct SecurityOriginData {
-    enum OpaqueOriginIdentifierType { };
-    using OpaqueOriginIdentifier = ProcessQualified<ObjectIdentifier<OpaqueOriginIdentifierType>>;
-    using MarkableOpaqueOriginIdentifier = Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits>;
+enum OpaqueOriginIdentifierType { };
+using OpaqueOriginIdentifier = ObjectIdentifier<OpaqueOriginIdentifierType>;
+
+class SecurityOriginData {
+public:
+    struct Tuple {
+        String protocol;
+        String host;
+        std::optional<uint16_t> port;
+
+        bool operator==(const Tuple& other) const { return protocol == other.protocol && host == other.host && port == other.port; }
+        Tuple isolatedCopy() const & { return { protocol.isolatedCopy(), host.isolatedCopy(), port }; }
+        Tuple isolatedCopy() && { return { WTFMove(protocol).isolatedCopy(), WTFMove(host).isolatedCopy(), port }; }
+    };
 
     SecurityOriginData() = default;
     SecurityOriginData(const String& protocol, const String& host, std::optional<uint16_t> port)
-        : protocol(protocol)
-        , host(host)
-        , port(port)
+        : m_data { Tuple { protocol, host, port } }
     {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!isHashTableDeletedValue());
     }
-    explicit SecurityOriginData(OpaqueOriginIdentifier opaqueOriginIdentifier)
-        : protocol(emptyString())
-        , host(emptyString())
-        , opaqueOriginIdentifier(opaqueOriginIdentifier)
-    {
-    }
+    explicit SecurityOriginData(ProcessQualified<OpaqueOriginIdentifier> opaqueOriginIdentifier)
+        : m_data(opaqueOriginIdentifier) { }
+    explicit SecurityOriginData(std::variant<Tuple, ProcessQualified<OpaqueOriginIdentifier>>&& data)
+        : m_data(WTFMove(data)) { }
     SecurityOriginData(WTF::HashTableDeletedValueType)
-        : protocol(WTF::HashTableDeletedValue)
-    {
-    }
+        : m_data { Tuple { WTF::HashTableDeletedValue, { }, { } } } { }
     
     WEBCORE_EXPORT static SecurityOriginData fromFrame(Frame*);
     WEBCORE_EXPORT static SecurityOriginData fromURL(const URL&);
@@ -66,7 +70,7 @@ struct SecurityOriginData {
 
     static SecurityOriginData createOpaque()
     {
-        return SecurityOriginData { OpaqueOriginIdentifier::generateThreadSafe() };
+        return SecurityOriginData { ProcessQualified<OpaqueOriginIdentifier>::generateThreadSafe() };
     }
 
     WEBCORE_EXPORT Ref<SecurityOrigin> securityOrigin() const;
@@ -74,11 +78,47 @@ struct SecurityOriginData {
     // FIXME <rdar://9018386>: We should be sending more state across the wire than just the protocol,
     // host, and port.
 
-    String protocol;
-    String host;
-    std::optional<uint16_t> port;
-    MarkableOpaqueOriginIdentifier opaqueOriginIdentifier;
-
+    const String& protocol() const
+    {
+        return switchOn(m_data, [] (const Tuple& tuple) -> const String& {
+            return tuple.protocol;
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) -> const String& {
+            return emptyString();
+        });
+    }
+    const String& host() const
+    {
+        return switchOn(m_data, [] (const Tuple& tuple) -> const String&  {
+            return tuple.host;
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) -> const String& {
+            return emptyString();
+        });
+    }
+    std::optional<uint16_t> port() const
+    {
+        return switchOn(m_data, [] (const Tuple& tuple) -> std::optional<uint16_t> {
+            return tuple.port;
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) -> std::optional<uint16_t> {
+            return std::nullopt;
+        });
+    }
+    void setPort(std::optional<uint16_t> port)
+    {
+        switchOn(m_data, [port] (Tuple& tuple) {
+            tuple.port = port;
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) {
+            ASSERT_NOT_REACHED();
+        });
+    }
+    std::optional<ProcessQualified<OpaqueOriginIdentifier>> opaqueOriginIdentifier() const
+    {
+        return switchOn(m_data, [] (const Tuple&) {
+            return std::optional<ProcessQualified<OpaqueOriginIdentifier>> { };
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>& identifier) -> std::optional<ProcessQualified<OpaqueOriginIdentifier>> {
+            return identifier;
+        });
+    }
+    
     WEBCORE_EXPORT SecurityOriginData isolatedCopy() const &;
     WEBCORE_EXPORT SecurityOriginData isolatedCopy() &&;
 
@@ -89,16 +129,24 @@ struct SecurityOriginData {
 
     bool isNull() const
     {
-        return protocol.isNull() && host.isNull() && port == std::nullopt;
+        return switchOn(m_data, [] (const Tuple& tuple) {
+            return tuple.protocol.isNull() && tuple.host.isNull() && tuple.port == std::nullopt;
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) {
+            return false;
+        });
     }
     bool isOpaque() const
     {
-        return !!opaqueOriginIdentifier;
+        return std::holds_alternative<ProcessQualified<OpaqueOriginIdentifier>>(m_data);
     }
 
     bool isHashTableDeletedValue() const
     {
-        return protocol.isHashTableDeletedValue();
+        return switchOn(m_data, [] (const Tuple& tuple) {
+            return tuple.protocol.isHashTableDeletedValue();
+        }, [] (const ProcessQualified<OpaqueOriginIdentifier>&) {
+            return false;
+        });
     }
     
     WEBCORE_EXPORT String toString() const;
@@ -110,52 +158,23 @@ struct SecurityOriginData {
 #endif
 
     static bool shouldTreatAsOpaqueOrigin(const URL&);
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SecurityOriginData> decode(Decoder&);
+    
+    const std::variant<Tuple, ProcessQualified<OpaqueOriginIdentifier>>& data() const { return m_data; }
+private:
+    std::variant<Tuple, ProcessQualified<OpaqueOriginIdentifier>> m_data;
 };
-
-template<class Encoder>
-void SecurityOriginData::encode(Encoder& encoder) const
-{
-    encoder << opaqueOriginIdentifier;
-    if (opaqueOriginIdentifier)
-        return;
-    encoder << protocol << host << port;
-}
-
-template<class Decoder>
-std::optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
-{
-    std::optional<SecurityOriginData::MarkableOpaqueOriginIdentifier> opaqueOriginIdentifier;
-    decoder >> opaqueOriginIdentifier;
-    if (!opaqueOriginIdentifier)
-        return std::nullopt;
-    if (*opaqueOriginIdentifier)
-        return SecurityOriginData(**opaqueOriginIdentifier);
-    std::optional<String> protocol;
-    decoder >> protocol;
-    if (!protocol)
-        return std::nullopt;
-    if (protocol->isHashTableDeletedValue())
-        return std::nullopt;
-    std::optional<String> host;
-    decoder >> host;
-    if (!host)
-        return std::nullopt;
-    std::optional<std::optional<uint16_t>> port;
-    decoder >> port;
-    if (!port)
-        return std::nullopt;
-    return SecurityOriginData(WTFMove(*protocol), WTFMove(*host), *port);
-}
 
 WEBCORE_EXPORT bool operator==(const SecurityOriginData&, const SecurityOriginData&);
 inline bool operator!=(const SecurityOriginData& first, const SecurityOriginData& second) { return !(first == second); }
 
 inline void add(Hasher& hasher, const SecurityOriginData& data)
 {
-    add(hasher, data.protocol, data.host, data.port, data.opaqueOriginIdentifier);
+    add(hasher, data.data());
+}
+
+inline void add(Hasher& hasher, const SecurityOriginData::Tuple& tuple)
+{
+    add(hasher, tuple.protocol, tuple.host, tuple.port);
 }
 
 struct SecurityOriginDataHashTraits : SimpleClassHashTraits<SecurityOriginData> {

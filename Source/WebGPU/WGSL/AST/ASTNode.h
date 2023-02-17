@@ -65,6 +65,7 @@ enum class NodeKind : uint8_t {
     UnaryExpression,
 
     Function,
+    Parameter,
 
     Identifier,
 
@@ -94,7 +95,6 @@ enum class NodeKind : uint8_t {
     ReturnStatement,
     StaticAssertStatement,
     SwitchStatement,
-    ValueStatement,
     VariableStatement,
     WhileStatement,
 
@@ -109,12 +109,6 @@ enum class NodeKind : uint8_t {
     ParameterizedTypeName,
     ReferenceTypeName,
     StructTypeName,
-
-    // Value
-    ConstantValue,
-    OverrideValue,
-    LetValue,
-    ParameterValue,
 
     Variable,
 

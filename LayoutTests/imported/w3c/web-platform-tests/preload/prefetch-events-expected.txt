@@ -1,0 +1,11 @@
+
+FAIL Prefetch should fire the load event assert_equals: expected "load" but got "timeout"
+FAIL Cross-origin prefetch should fire the load event assert_equals: expected "load" but got "timeout"
+FAIL Prefetch should fire the load event for 404 assert_equals: expected "load" but got "timeout"
+FAIL Prefetch should fire the load event for 404 (cross-origin) assert_equals: expected "load" but got "timeout"
+FAIL Prefetch should fire the load event for 500 assert_equals: expected "load" but got "timeout"
+FAIL Cross-origin prefetch should fire the load event for 500 assert_equals: expected "load" but got "timeout"
+FAIL Prefetch should fire the error event for network errors assert_equals: expected "error" but got "timeout"
+PASS Prefetch should do nothing with an empty href
+PASS Prefetch should do nothing with an invalid href
+

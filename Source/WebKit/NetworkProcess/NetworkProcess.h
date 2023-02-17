@@ -95,7 +95,7 @@ enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
 struct ClientOrigin;
 struct MessageWithMessagePorts;
-struct SecurityOriginData;
+class SecurityOriginData;
 struct SoupNetworkProxySettings;
 }
 

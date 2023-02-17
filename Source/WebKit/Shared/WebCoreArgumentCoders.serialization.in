@@ -3919,3 +3919,13 @@ header: <WebCore/SecurityPolicyViolationEvent.h>
     unsigned long lineNumber();
     unsigned long columnNumber();
 };
+
+class WebCore::SecurityOriginData {
+    std::variant<WebCore::SecurityOriginData::Tuple, WebCore::ProcessQualified<WebCore::OpaqueOriginIdentifier>> data();
+};
+
+[Nested] class WebCore::SecurityOriginData::Tuple {
+    [Validator='!protocol->isHashTableDeletedValue()'] String protocol;
+    String host;
+    std::optional<uint16_t> port;
+};

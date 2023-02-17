@@ -79,7 +79,7 @@ static NSString *getToken(const WebCore::SecurityOriginData& securityOrigin, NSU
 {
     if ([requestingURL isFileURL])
         return [requestingURL path];
-    return securityOrigin.host;
+    return securityOrigin.host();
 }
 
 struct PermissionRequest {

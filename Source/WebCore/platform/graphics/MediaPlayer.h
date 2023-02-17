@@ -89,7 +89,7 @@ class VideoFrame;
 class VideoTrackPrivate;
 
 struct GraphicsDeviceAdapter;
-struct SecurityOriginData;
+class SecurityOriginData;
 struct VideoFrameMetadata;
 
 struct MediaEngineSupportParameters {

@@ -38,7 +38,7 @@
 #endif
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace PlatformXR {

@@ -2606,3 +2606,6 @@ storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
 storage/indexeddb/modern/get-keyrange.html [ Failure ]
 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
+
+# Needs site isolation drawing implementation
+http/tests/site-isolation [ Skip ]

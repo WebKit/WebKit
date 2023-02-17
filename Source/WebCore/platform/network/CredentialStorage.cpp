@@ -91,11 +91,11 @@ void CredentialStorage::removeCredentialsWithOrigin(const SecurityOriginData& or
     Vector<std::pair<String, ProtectionSpace>> keysToRemove;
     for (auto& keyValuePair : m_protectionSpaceToCredentialMap) {
         auto& protectionSpace = keyValuePair.key.second;
-        if (protectionSpace.host() == origin.host
-            && ((origin.port && protectionSpace.port() == *origin.port)
-                || (!origin.port && protectionSpace.port() == 80))
-            && ((protectionSpace.serverType() == ProtectionSpace::ServerType::HTTP && origin.protocol == "http"_s)
-                || (protectionSpace.serverType() == ProtectionSpace::ServerType::HTTPS && origin.protocol == "https"_s)))
+        if (protectionSpace.host() == origin.host()
+            && ((origin.port() && protectionSpace.port() == *origin.port())
+                || (!origin.port() && protectionSpace.port() == 80))
+            && ((protectionSpace.serverType() == ProtectionSpace::ServerType::HTTP && origin.protocol() == "http"_s)
+                || (protectionSpace.serverType() == ProtectionSpace::ServerType::HTTPS && origin.protocol() == "https"_s)))
             keysToRemove.append(keyValuePair.key);
     }
     for (auto& key : keysToRemove)

@@ -118,12 +118,14 @@ TEST(WebKit, MSEIsPlayingAudio)
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
     WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("MSEIsPlayingAudioPageGroup").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetMediaSourceEnabled(preferences, true);
-    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
 
     PlatformWebView webView(context.get(), pageGroup.get());
     setUpClients(webView.page());
+
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    auto* preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetMediaSourceEnabled(preferences, true);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(preferences, true);
 
     WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("file-with-mse", "html"));
     didFinishLoad = false;

@@ -54,7 +54,7 @@ class CaptureDevice;
 class NowPlayingManager;
 struct MockMediaDevice;
 struct ScreenProperties;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

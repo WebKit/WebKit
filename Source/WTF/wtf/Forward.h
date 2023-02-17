@@ -71,6 +71,7 @@ template<typename Key, typename, Key> class EnumeratedArray;
 template<typename> class FixedVector;
 template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
+template<typename T, typename Traits = typename T::MarkableTraits> class Markable;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
 template<typename> class ObjectIdentifier;
 template<typename> class OptionSet;

@@ -1,0 +1,7 @@
+
+FAIL same origin document prefetch without 'as' should be consumed assert_equals: expected 1 but got 2
+PASS same-site different-origin document prefetch without 'as' should be consumed
+FAIL different-site document prefetch without 'as' should not be consumed assert_equals: expected 2 but got 1
+FAIL different-site document prefetch with 'as=document' should not be consumed assert_equals: expected 2 but got 1
+FAIL Document prefetch should send the exact Accept header as navigation assert_equals: expected "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" but got "*/*"
+

@@ -35,9 +35,9 @@ messages -> WebSWServerConnection NotRefCounted {
 
     DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 
-    MatchRegistration(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    WhenRegistrationReady(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
-    GetRegistrations(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
+    MatchRegistration(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    WhenRegistrationReady(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    GetRegistrations(WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
     RegisterServiceWorkerClient(struct WebCore::ClientOrigin clientOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
 

@@ -67,6 +67,9 @@ public:
     void addInvalidCSSAnimationName(const String&);
 
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
+    void didApplyCascade(const RenderStyle& styleBeforeCascade, const RenderStyle& styleAfterCascade, const HashSet<AnimatableProperty>, const Document&);
+
+    const HashSet<AnimatableProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
 
 private:
     void ensureEffectsAreSorted();
@@ -76,6 +79,7 @@ private:
 
     Vector<WeakPtr<KeyframeEffect>> m_effects;
     HashSet<String> m_invalidCSSAnimationNames;
+    HashSet<AnimatableProperty> m_acceleratedPropertiesOverriddenByCascade;
     RefPtr<const AnimationList> m_cssAnimationList;
     bool m_isSorted { true };
 };

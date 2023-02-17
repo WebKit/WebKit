@@ -82,10 +82,10 @@ public:
     void setDomainFromDOM(const String& newDomain);
     bool domainWasSetInDOM() const { return m_domainWasSetInDOM; }
 
-    const String& protocol() const { return m_data.protocol; }
-    const String& host() const { return m_data.host; }
+    const String& protocol() const { return m_data.protocol(); }
+    const String& host() const { return m_data.host(); }
     const String& domain() const { return m_domain; }
-    std::optional<uint16_t> port() const { return m_data.port; }
+    std::optional<uint16_t> port() const { return m_data.port(); }
 
     static bool shouldIgnoreHost(const URL&);
 
@@ -230,7 +230,7 @@ private:
 
     // This method checks that the scheme for this origin is an HTTP-family
     // scheme, e.g. HTTP and HTTPS.
-    bool isHTTPFamily() const { return m_data.protocol == "http"_s || m_data.protocol == "https"_s; }
+    bool isHTTPFamily() const { return m_data.protocol() == "http"_s || m_data.protocol() == "https"_s; }
     
     enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;

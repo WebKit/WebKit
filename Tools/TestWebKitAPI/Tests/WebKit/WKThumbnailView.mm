@@ -33,7 +33,7 @@
 #import "PlatformWebView.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
-#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKThumbnailView.h>
 #import <wtf/RetainPtr.h>
 
@@ -87,7 +87,7 @@ TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
-    WKView *wkView = webView.platformView();
+    WKWebView *wkView = webView.platformView();
     setPageLoaderClient(webView.page());
     WKPageSetCustomBackingScaleFactor(webView.page(), 1);
 
@@ -96,7 +96,7 @@ TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKView:wkView]);
+    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:wkView]);
 
     RetainPtr<SnapshotSizeObserver> observer = adoptNS([[SnapshotSizeObserver alloc] init]);
 
@@ -133,7 +133,7 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSize)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
     PlatformWebView webView(context.get());
-    WKView *wkView = webView.platformView();
+    WKWebView *wkView = webView.platformView();
     setPageLoaderClient(webView.page());
     WKPageSetCustomBackingScaleFactor(webView.page(), 1);
 
@@ -142,7 +142,7 @@ TEST(WebKit, WKThumbnailViewMaximumSnapshotSize)
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKView:wkView]);
+    RetainPtr<_WKThumbnailView> thumbnailView = adoptNS([[_WKThumbnailView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) fromWKWebView:wkView]);
 
     RetainPtr<SnapshotSizeObserver> observer = adoptNS([[SnapshotSizeObserver alloc] init]);
 

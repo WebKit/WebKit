@@ -60,7 +60,7 @@ namespace WebCore {
 class RegistrableDomain;
 class ResourceRequest;
 struct FontAttributes;
-struct SecurityOriginData;
+class SecurityOriginData;
 struct WindowFeatures;
 }
 

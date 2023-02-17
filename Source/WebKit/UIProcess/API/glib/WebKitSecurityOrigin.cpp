@@ -171,11 +171,11 @@ const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    if (origin->securityOriginData.protocol.isEmpty())
+    if (origin->securityOriginData.protocol().isEmpty())
         return nullptr;
 
     if (origin->protocol.isNull())
-        origin->protocol = origin->securityOriginData.protocol.utf8();
+        origin->protocol = origin->securityOriginData.protocol().utf8();
     return origin->protocol.data();
 }
 
@@ -196,11 +196,11 @@ const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, nullptr);
 
-    if (origin->securityOriginData.host.isEmpty())
+    if (origin->securityOriginData.host().isEmpty())
         return nullptr;
 
     if (origin->host.isNull())
-        origin->host = origin->securityOriginData.host.utf8();
+        origin->host = origin->securityOriginData.host().utf8();
     return origin->host.data();
 }
 
@@ -224,7 +224,7 @@ guint16 webkit_security_origin_get_port(WebKitSecurityOrigin* origin)
 {
     g_return_val_if_fail(origin, 0);
 
-    return origin->securityOriginData.port.value_or(0);
+    return origin->securityOriginData.port().value_or(0);
 }
 
 #if !ENABLE(2022_GLIB_API)

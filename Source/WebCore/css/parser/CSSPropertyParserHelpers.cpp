@@ -5322,8 +5322,8 @@ RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
 
     auto parseSomethingWithoutError = [&range, &result]() {
         bool hasParsedSomething = false;
-        auto parseAndSetArgument = [&range, &hasParsedSomething] (std::optional<String>& value) {
-            if (value)
+        auto parseAndSetArgument = [&range, &hasParsedSomething] (String& value) {
+            if (!value.isNull())
                 return false;
 
             CSSParserTokenRange args = consumeFunction(range);

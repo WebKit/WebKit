@@ -38,7 +38,7 @@ enum class PermissionState : uint8_t;
 class Page;
 class PermissionObserver;
 struct ClientOrigin;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 class PermissionController : public ThreadSafeRefCounted<PermissionController> {
 public:

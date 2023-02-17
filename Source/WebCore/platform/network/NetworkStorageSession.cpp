@@ -475,7 +475,7 @@ void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, Completion
     // FIXME: Stop ignoring origin.topOrigin.
     notImplemented();
 
-    deleteCookiesForHostnames(Vector { origin.clientOrigin.host }, WTFMove(completionHandler));
+    deleteCookiesForHostnames(Vector { origin.clientOrigin.host() }, WTFMove(completionHandler));
 }
 #endif
 

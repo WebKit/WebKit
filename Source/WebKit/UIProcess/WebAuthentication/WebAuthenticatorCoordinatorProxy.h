@@ -39,7 +39,7 @@ struct ExceptionData;
 struct PublicKeyCredentialCreationOptions;
 struct AuthenticatorResponseData;
 struct PublicKeyCredentialRequestOptions;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)

@@ -42,7 +42,7 @@ class ResourceResponse;
 class ScriptExecutionContext;
 
 struct ReportingClient;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 // https://html.spec.whatwg.org/multipage/origin.html#embedder-policy-value
 enum class CrossOriginEmbedderPolicyValue : bool {

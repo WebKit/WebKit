@@ -63,7 +63,7 @@ enum class IncludeHttpOnlyCookies : bool;
 enum class NetworkConnectionIntegrity : uint8_t;
 enum class ShouldSample : bool;
 struct ClientOrigin;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WTF {
@@ -111,7 +111,6 @@ public:
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();
-    virtual void clearCredentials() { };
     virtual bool shouldLogCookieInformation() const { return false; }
     virtual Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const { return { }; }
     virtual void deleteAlternativeServicesForHostNames(const Vector<String>&) { }

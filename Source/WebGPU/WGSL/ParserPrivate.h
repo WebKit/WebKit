@@ -31,7 +31,6 @@
 #include "ASTStatement.h"
 #include "ASTStructure.h"
 #include "ASTTypeName.h"
-#include "ASTValue.h"
 #include "ASTVariable.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
@@ -69,7 +68,7 @@ public:
     Result<AST::StorageClass> parseStorageClass();
     Result<AST::AccessMode> parseAccessMode();
     Result<AST::Function> parseFunction(AST::Attribute::List&&);
-    Result<AST::ParameterValue> parseParameterValue();
+    Result<AST::Parameter> parseParameter();
     Result<AST::Statement::Ref> parseStatement();
     Result<AST::CompoundStatement> parseCompoundStatement();
     Result<AST::ReturnStatement> parseReturnStatement();
@@ -89,12 +88,11 @@ public:
     Result<AST::Expression::Ref> parseLHSExpression();
     Result<AST::Expression::Ref> parseCoreLHSExpression();
     Result<AST::Expression::List> parseArgumentExpressionList();
-    Result<AST::Value::Ref> parseConstantValue();
-    Result<AST::Value::Ref> parseLetValue();
-    Result<AST::Value::Ref> parseOverrideValueWithAttributes(AST::Attribute::List&&);
 
 private:
     Expected<Token, TokenType> consumeType(TokenType);
+    template<TokenType... TTs> Expected<Token, TokenType> consumeTypes();
+
     void consume();
 
     Token& current() { return m_current; }

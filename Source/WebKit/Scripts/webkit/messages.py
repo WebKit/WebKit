@@ -240,6 +240,7 @@ def serialized_identifiers():
         'WebCore::MediaKeySystemRequestIdentifier',
         'WebCore::MediaPlayerIdentifier',
         'WebCore::MediaSessionIdentifier',
+        'WebCore::OpaqueOriginIdentifier',
         'WebCore::PageIdentifier',
         'WebCore::PlaybackTargetClientContextIdentifier',
         'WebCore::PushSubscriptionIdentifier',
@@ -380,6 +381,11 @@ def conditions_for_header(header):
     conditions = {
         '"InputMethodState.h"': ["PLATFORM(GTK)", "PLATFORM(WPE)"],
         '"GestureTypes.h"': ["PLATFORM(IOS_FAMILY)"],
+        '"RemoteCDMIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)"],
+        '"RemoteCDMInstanceIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)"],
+        '"RemoteCDMInstanceSessionIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)"],
+        '"RemoteLegacyCDMIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)"],
+        '"RemoteLegacyCDMSessionIdentifier.h"': ["ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)"],
         '"SharedCARingBuffer.h"': ["PLATFORM(COCOA)"],
         '"WCContentBufferIdentifier.h"': ["USE(GRAPHICS_LAYER_WC)"],
         '"WCLayerTreeHostIdentifier.h"': ["USE(GRAPHICS_LAYER_WC)"],
@@ -735,6 +741,7 @@ def headers_for_type(type):
         'WebCore::MouseEventPolicy': ['<WebCore/DocumentLoader.h>'],
         'WebCore::MoveData': ['<WebCore/InlinePathData.h>'],
         'WebCore::NetworkTransactionInformation': ['<WebCore/NetworkLoadInformation.h>'],
+        'WebCore::OpaqueOriginIdentifier': ['<WebCore/SecurityOriginData.h>'],
         'WebCore::PasteboardCustomData': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardImage': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardURL': ['<WebCore/Pasteboard.h>'],
@@ -1372,11 +1379,34 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result.append('\n')
     result.append('Vector<ASCIILiteral> serializedIdentifiers()\n')
     result.append('{\n')
+
+    identifier_headers = {}
     for identifier in serialized_identifiers():
-        result.append('    static_assert(sizeof(uint64_t) == sizeof(' + identifier + '));\n')
+        assert(len(headers_for_type(identifier)) == 1)
+        identifier_headers[identifier] = headers_for_type(identifier)[0]
+
+    for identifier in serialized_identifiers():
+        conditions = conditions_for_header(identifier_headers[identifier])
+        statement = '    static_assert(sizeof(uint64_t) == sizeof(' + identifier + '));\n'
+        if conditions and None not in conditions:
+            result.append('#if %s\n' % ' || '.join(sorted(set(conditions))))
+            result.append(statement)
+            result.append('#endif\n')
+        else:
+            result.append(statement)
+
     result.append('    return {\n')
+
     for identifier in serialized_identifiers():
-        result.append('        "' + identifier + '"_s,\n')
+        conditions = conditions_for_header(identifier_headers[identifier])
+        statement = '        "' + identifier + '"_s,\n'
+        if conditions and None not in conditions:
+            result.append('#if %s\n' % ' || '.join(sorted(set(conditions))))
+            result.append(statement)
+            result.append('#endif\n')
+        else:
+            result.append(statement)
+
     result.append('    };\n')
     result.append('}\n')
 

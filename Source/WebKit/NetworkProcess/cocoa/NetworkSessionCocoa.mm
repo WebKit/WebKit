@@ -1675,21 +1675,6 @@ void NetworkSessionCocoa::invalidateAndCancel()
         invalidateAndCancelSessionSet(sessionSet.get());
 }
 
-void NetworkSessionCocoa::clearCredentials()
-{
-#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
-    ASSERT(m_dataTaskMapWithCredentials.isEmpty());
-    ASSERT(m_dataTaskMapWithoutState.isEmpty());
-    ASSERT(m_downloadMap.isEmpty());
-    // FIXME: Use resetWithCompletionHandler instead.
-    m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
-    m_statelessSession = [NSURLSession sessionWithConfiguration:m_statelessSession.get().configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
-    for (auto& entry : m_isolatedSessions.values())
-        entry.session = [NSURLSession sessionWithConfiguration:entry.session.get().configuration delegate:static_cast<id>(entry.delegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
-    m_appBoundSession.session = [NSURLSession sessionWithConfiguration:m_appBoundSession.session.get().configuration delegate:static_cast<id>(m_appBoundSession.delegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
-#endif
-}
-
 HashSet<WebCore::SecurityOriginData> NetworkSessionCocoa::originsWithCredentials()
 {
     NSURLCredentialStorage *credentialStorage = nsCredentialStorage();
@@ -1780,10 +1765,6 @@ static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposi
 #else
         UNUSED_PARAM(taskIdentifier);
 #endif
-#if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
-        UNUSED_PARAM(sessionID);
-        UNUSED_PARAM(authenticationChallenge);
-#else
         if (credential.persistence() == WebCore::CredentialPersistenceForSession && authenticationChallenge.protectionSpace().isPasswordBased()) {
             WebCore::Credential nonPersistentCredential(credential.user(), credential.password(), WebCore::CredentialPersistenceNone);
             URL urlToStore;
@@ -1797,7 +1778,6 @@ static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposi
             completionHandler(disposition, nonPersistentCredential);
             return;
         }
-#endif
         completionHandler(disposition, credential);
     };
 }
@@ -1881,7 +1861,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
         ensureMutableRequest()._prohibitPrivacyProxy = YES;
 #endif
 
-    if (hadMainFrameMainResourcePrivateRelayed || request.url().host() == clientOrigin.topOrigin.host) {
+    if (hadMainFrameMainResourcePrivateRelayed || request.url().host() == clientOrigin.topOrigin.host()) {
         if ([NSMutableURLRequest instancesRespondToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableNonMainHosts:)])
             ensureMutableRequest()._privacyProxyFailClosedForUnreachableNonMainHosts = YES;
     }

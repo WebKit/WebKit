@@ -48,8 +48,6 @@ protected:
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
     bool originAtBottomLeftCorner() const override;
-
-    static RetainPtr<CGColorSpaceRef> contextColorSpace(const GraphicsContext&);
 };
 
 } // namespace WebCore

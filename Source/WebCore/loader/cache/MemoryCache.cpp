@@ -519,7 +519,7 @@ void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin)
 
 void MemoryCache::removeResourcesWithOrigin(const ClientOrigin& origin)
 {
-    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host);
+    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host());
     removeResourcesWithOrigin(origin.clientOrigin.securityOrigin(), cachePartition);
 }
 

@@ -122,6 +122,12 @@ class PullRequest(Command):
             help='Disable automatic bug creation and updates',
             action=arguments.NoAction,
         )
+        parser.add_argument(
+            '--security', '--redacted',
+            dest='redact', action='store_true',
+            default=False,
+            help='Force the a PR onto a secure remote, regardless of the current branch and issue state.',
+        )
 
     @classmethod
     def create_commit(cls, args, repository, **kwargs):
@@ -191,6 +197,14 @@ class PullRequest(Command):
 
     @classmethod
     def pull_request_branch_point(cls, repository, args, **kwargs):
+        if args.redact and len(repository.source_remotes()) <= 1:
+            sys.stderr.write('No secure remotes found in the current checkout\n')
+            return None
+        if args.redact and repository.source_remotes()[0] == args.remote:
+            sys.stderr.write("'{}' is not a secure remote\n".format(args.remote))
+            sys.stderr.write("'--remote={}' is incompatible with '--redacted'\n".format(args.remote))
+            return None
+
         branch_point = Branch.branch_point(repository)
         source_remote = args.remote
         if not source_remote:
@@ -222,6 +236,9 @@ class PullRequest(Command):
                 args.remote = source_remote
         if not source_remote:
             source_remote = repository.default_remote
+        if args.redact and source_remote == repository.default_remote:
+            source_remote = repository.source_remotes()[-1]
+            args.remote = source_remote
 
         if repository.branch is None or repository.branch in repository.DEFAULT_BRANCHES or \
                 repository.PROD_BRANCHES.match(repository.branch) or \

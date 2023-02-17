@@ -632,9 +632,9 @@ std::optional<WebCore::ClientOrigin> Coder<WebCore::ClientOrigin>::decode(Decode
 
 void Coder<WebCore::SecurityOriginData>::encode(Encoder& encoder, const WebCore::SecurityOriginData& instance)
 {
-    encoder << instance.protocol;
-    encoder << instance.host;
-    encoder << instance.port;
+    encoder << instance.protocol();
+    encoder << instance.host();
+    encoder << instance.port();
 }
 
 std::optional<WebCore::SecurityOriginData> Coder<WebCore::SecurityOriginData>::decode(Decoder& decoder)
