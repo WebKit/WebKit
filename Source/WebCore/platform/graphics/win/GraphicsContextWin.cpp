@@ -26,10 +26,6 @@
 #include "config.h"
 #include "GraphicsContext.h"
 
-#if USE(CG)
-#include "GraphicsContextPlatformPrivateCG.h"
-#endif
-
 #include "AffineTransform.h"
 #include "BitmapInfo.h"
 #include "TransformationMatrix.h"

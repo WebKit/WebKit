@@ -103,7 +103,9 @@ typedef struct _CARenderContext CARenderContext;
 + (void)setAllowsCGSConnections:(BOOL)flag;
 #endif
 
+@property uint32_t displayMask;
 #if PLATFORM(MAC)
+@property uint64_t GPURegistryID;
 @property uint32_t commitPriority;
 @property BOOL colorMatchUntaggedContent;
 #endif

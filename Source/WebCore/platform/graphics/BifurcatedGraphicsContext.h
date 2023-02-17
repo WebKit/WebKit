@@ -77,10 +77,7 @@ public:
     void strokeEllipse(const FloatRect& ellipse) final;
 
 #if USE(CG)
-    void setIsCALayerContext(bool) final;
     bool isCALayerContext() const final;
-
-    void setIsAcceleratedContext(bool) final;
 #endif
 
     RenderingMode renderingMode() const final;

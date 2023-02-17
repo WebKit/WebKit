@@ -49,7 +49,6 @@ public:
 
 private:
 #if USE(CG)
-    void setIsCALayerContext(bool) final { }
     bool isCALayerContext() const final { return false; }
 #endif
 
@@ -60,10 +59,6 @@ private:
     bool detectingContentfulPaint() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::DetectingContentfulPaint; }
 
     void didUpdateState(GraphicsContextState&) final { }
-
-#if USE(CG)
-    void setIsAcceleratedContext(bool) final { }
-#endif
 
     void drawNativeImageInternal(NativeImage&, const FloatSize&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&) final { }
 
