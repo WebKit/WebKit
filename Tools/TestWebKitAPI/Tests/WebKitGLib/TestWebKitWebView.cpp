@@ -1328,7 +1328,11 @@ public:
         initializeWebView();
         g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequestCallback), this);
         g_signal_connect(m_webView, "show-notification", G_CALLBACK(showNotificationCallback), this);
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "notifications");
+#else
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "notifications", nullptr);
+#endif
         g_signal_connect(m_userContentManager.get(), "script-message-received::notifications", G_CALLBACK(notificationsMessageReceivedCallback), this);
     }
 
@@ -1336,7 +1340,12 @@ public:
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
         g_signal_handlers_disconnect_matched(m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "notifications");
+#else
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "notifications", nullptr);
+#endif
     }
 
     bool hasPermission()

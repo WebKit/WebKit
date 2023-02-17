@@ -446,13 +446,21 @@ public:
 
     WebSocketTest()
     {
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "event");
+#else
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "event", nullptr);
+#endif
         g_signal_connect(m_userContentManager.get(), "script-message-received::event", G_CALLBACK(webSocketTestResultCallback), this);
     }
 
     virtual ~WebSocketTest()
     {
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "event");
+#else
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "event", nullptr);
+#endif
         g_signal_handlers_disconnect_by_data(m_userContentManager.get(), this);
     }
 

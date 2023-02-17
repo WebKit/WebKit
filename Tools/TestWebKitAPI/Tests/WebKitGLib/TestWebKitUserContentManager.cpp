@@ -281,14 +281,22 @@ public:
     {
         if (async)
             return webkit_user_content_manager_register_script_message_handler_with_reply(m_userContentManager.get(), handlerName, worldName);
+#if ENABLE(2022_GLIB_API)
+        return webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), handlerName, worldName);
+#else
         return worldName ? webkit_user_content_manager_register_script_message_handler_in_world(m_userContentManager.get(), handlerName, worldName)
             : webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), handlerName);
+#endif
     }
 
     void unregisterHandler(const char* handlerName, const char* worldName = nullptr)
     {
+#if !ENABLE(2022_GLIB_API)
         return worldName ? webkit_user_content_manager_unregister_script_message_handler_in_world(m_userContentManager.get(), handlerName, worldName)
             : webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), handlerName);
+#else
+        return webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), handlerName, worldName);
+#endif
     }
 
     static void scriptMessageReceived(WebKitUserContentManager* userContentManager, WebKitJavascriptResult* jsResult, UserScriptMessageTest* test)

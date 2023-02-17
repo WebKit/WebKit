@@ -644,7 +644,11 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     GUniquePtr<char> xhr(g_strdup_printf("var xhr = new XMLHttpRequest; xhr.open(\"GET\", \"%s\"); xhr.onreadystatechange = ()=> { if (xhr.readyState == 4) { setTimeout(() => { window.webkit.messageHandlers.xhr.postMessage('DONE'); }, 0)} }; xhr.onerror = () => { window.webkit.messageHandlers.xhr.postMessage('ERROR'); }; xhr.send();", jsonURL.get()));
 
     WebKitJavascriptResult* xhrMessage = nullptr;
+#if !ENABLE(2022_GLIB_API)
     webkit_user_content_manager_register_script_message_handler(test->m_userContentManager.get(), "xhr");
+#else
+    webkit_user_content_manager_register_script_message_handler(test->m_userContentManager.get(), "xhr", nullptr);
+#endif
     g_signal_connect(test->m_userContentManager.get(), "script-message-received::xhr", G_CALLBACK(xhrMessageReceivedCallback), &xhrMessage);
 
     auto waitUntilXHRDone = [&]() -> bool {
@@ -690,7 +694,11 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
     g_assert_false(waitUntilXHRDone());
 
     g_signal_handlers_disconnect_matched(test->m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, &xhrMessage);
+#if !ENABLE(2022_GLIB_API)
     webkit_user_content_manager_unregister_script_message_handler(test->m_userContentManager.get(), "xhr");
+#else
+    webkit_user_content_manager_unregister_script_message_handler(test->m_userContentManager.get(), "xhr", nullptr);
+#endif
 
     webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), FALSE);
 }

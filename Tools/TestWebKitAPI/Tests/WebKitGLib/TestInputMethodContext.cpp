@@ -275,13 +275,21 @@ public:
         webkit_web_view_set_input_method_context(m_webView, WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
         g_assert_true(webkit_web_view_get_input_method_context(m_webView) == WEBKIT_INPUT_METHOD_CONTEXT(m_context.get()));
 
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "imEvent");
+#else
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "imEvent", nullptr);
+#endif
         g_signal_connect(m_userContentManager.get(), "script-message-received::imEvent", G_CALLBACK(imEventCallback), this);
     }
 
     ~InputMethodTest()
     {
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "imEvent");
+#else
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "imEvent", nullptr);
+#endif
         g_signal_handlers_disconnect_by_data(m_userContentManager.get(), this);
     }
 
