@@ -196,7 +196,7 @@ static IsPersistent defaultDataStoreIsPersistent()
     // GTK and WPE ports require explicit configuration of a WebsiteDataStore. All default storage
     // locations are relative to the base directories configured by the
     // WebsiteDataStoreConfiguration. The default data store should (probably?) only be used for
-    // prewarmed processes, and should certainly never be allowed to store anything on disk.
+    // prewarmed processes and C API tests, and should certainly never be allowed to store anything on disk.
     return IsPersistent::No;
 #else
     // Other ports allow general use of the default WebsiteDataStore, and so need to persist data.
@@ -211,7 +211,9 @@ Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
     if (globalDatasStore)
         return Ref { *globalDatasStore };
 
-    auto newDataStore = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(defaultDataStoreIsPersistent()), PAL::SessionID::defaultSessionID()));
+    auto isPersistent = defaultDataStoreIsPersistent();
+    auto newDataStore = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(isPersistent),
+        isPersistent == IsPersistent::Yes ? PAL::SessionID::defaultSessionID() : PAL::SessionID::generateEphemeralSessionID()));
     globalDatasStore = newDataStore.get();
     protectedDefaultDataStore() = newDataStore.get();
 
