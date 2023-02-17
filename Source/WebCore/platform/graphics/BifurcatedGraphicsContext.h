@@ -43,6 +43,8 @@ public:
     bool hasPlatformContext() const;
     PlatformGraphicsContext* platformContext() const final;
 
+    const DestinationColorSpace& colorSpace() const final;
+
     void save() final;
     void restore() final;
 

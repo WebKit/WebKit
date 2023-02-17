@@ -211,6 +211,27 @@ CGContextRef GraphicsContextCG::platformContext() const
     return m_data->m_cgContext.get();
 }
 
+const DestinationColorSpace& GraphicsContextCG::colorSpace() const
+{
+    if (m_colorSpace)
+        return *m_colorSpace;
+
+    auto context = platformContext();
+    RetainPtr<CGColorSpaceRef> colorSpace;
+
+    // FIXME: Need to handle kCGContextTypePDF.
+    if (CGContextGetType(context) == kCGContextTypeIOSurface)
+        colorSpace = adoptCF(CGIOSurfaceContextGetColorSpace(context));
+    else if (CGContextGetType(context) == kCGContextTypeBitmap)
+        colorSpace = adoptCF(CGBitmapContextGetColorSpace(context));
+    else
+        colorSpace = adoptCF(CGContextCopyDeviceColorSpace(context));
+
+    // FIXME: Need to ASSERT(colorSpace). For now fall back to sRGB if colorSpace is nil.
+    m_colorSpace = colorSpace ? DestinationColorSpace(colorSpace) : DestinationColorSpace::SRGB();
+    return *m_colorSpace;
+}
+
 void GraphicsContextCG::save()
 {
     GraphicsContext::save();
