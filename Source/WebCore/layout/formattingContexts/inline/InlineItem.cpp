@@ -33,14 +33,15 @@ namespace Layout {
 
 struct SameSizeAsInlineItem {
     void* layoutBox;
-    uint8_t enum1;
-    uint8_t enum2;
-    bool widthBool;
-    bool softHyphenBool;
-    bool isWordSeparator;
-    InlineLayoutUnit width;
-    unsigned start;
+    float width;
     unsigned length;
+    unsigned start;
+    uint8_t bidiLevel;
+    uint8_t type : 3;
+    uint8_t textItemType : 2;
+    bool widthBool : 1;
+    bool softHyphenBool : 1;
+    bool isWordSeparator : 1;
 };
 
 static_assert(sizeof(InlineItem) == sizeof(SameSizeAsInlineItem));
