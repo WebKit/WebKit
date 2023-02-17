@@ -3762,29 +3762,6 @@ webkit.org/b/248100 imported/w3c/web-platform-tests/css/css-masking/clip-path-sv
 
 imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.html [ ImageOnlyFailure ]
 
-# webkit.org/b/252416 [ iOS16 EWS ] multiple crashes seen since updating to most recent customer shipping version of Xcode
-editing/deleting/smart-delete-002.html [ Pass Crash ]
-editing/deleting/smart-delete-004.html [ Pass Crash ]
-editing/deleting/smart-delete-paragraph-002.html [ Pass Crash ]
-editing/deleting/smart-editing-disabled-win.html [ Pass Crash ]
-editing/pasteboard/smart-paste-002.html [ Pass Crash ]
-editing/pasteboard/smart-paste-004.html [ Pass Crash ]
-editing/pasteboard/smart-paste-006.html [ Pass Crash ]
-editing/pasteboard/smart-paste-008.html [ Pass Crash ]
-editing/pasteboard/smart-paste-paragraph-003.html [ Pass Crash ]
-editing/pasteboard/style-from-rules.html [ Pass Crash ]
-editing/selection/doubleclick-whitespace-crash.html [ Pass Crash ]
-editing/selection/ios/selection-handle-clamping-in-iframe.html [ Pass Crash ]
-editing/deleting/smart-delete-003.html [ Pass Crash ]
-editing/deleting/smart-delete-paragraph-005.html [ Pass Crash ]
-editing/pasteboard/smart-paste-003-trailing-whitespace.html [ Pass Crash ]
-editing/pasteboard/smart-paste-005.html [ Pass Crash ]
-editing/pasteboard/smart-paste-paragraph-004.html [ Pass Crash ]
-editing/selection/doubleclick-whitespace-img-crash.html [ Pass Crash ]
-editing/selection/ios/selection-handles-in-iframe.html [ Pass Crash ]
-platform/ipad/media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Crash ]
-
-
 # These tests have similar image failures, rounded edges issues. See webkit.org/b/244046
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-menulist-button-border-top-right-radius-001.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-block-end-color-001.html [ Pass ImageOnlyFailure ]
