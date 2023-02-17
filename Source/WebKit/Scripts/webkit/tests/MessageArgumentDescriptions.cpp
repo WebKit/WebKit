@@ -48,11 +48,21 @@
 #include "RemoteAudioDestinationIdentifier.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMIdentifier.h"
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceIdentifier.h"
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionIdentifier.h"
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "RemoteLegacyCDMIdentifier.h"
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "RemoteLegacyCDMSessionIdentifier.h"
+#endif
 #include "RemoteMediaResourceIdentifier.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
@@ -435,11 +445,21 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioDestinationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioHardwareListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioSessionIdentifier));
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteCDMIdentifier));
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteCDMInstanceIdentifier));
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteCDMInstanceSessionIdentifier));
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMIdentifier));
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMSessionIdentifier));
+#endif
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaResourceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSerializedImageBufferIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteVideoFrameIdentifier));
@@ -516,11 +536,21 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteAudioDestinationIdentifier"_s,
         "WebKit::RemoteAudioHardwareListenerIdentifier"_s,
         "WebKit::RemoteAudioSessionIdentifier"_s,
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
         "WebKit::RemoteCDMIdentifier"_s,
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
         "WebKit::RemoteCDMInstanceIdentifier"_s,
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
         "WebKit::RemoteCDMInstanceSessionIdentifier"_s,
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
         "WebKit::RemoteLegacyCDMIdentifier"_s,
+#endif
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
         "WebKit::RemoteLegacyCDMSessionIdentifier"_s,
+#endif
         "WebKit::RemoteMediaResourceIdentifier"_s,
         "WebKit::RemoteSerializedImageBufferIdentifier"_s,
         "WebKit::RemoteVideoFrameIdentifier"_s,
