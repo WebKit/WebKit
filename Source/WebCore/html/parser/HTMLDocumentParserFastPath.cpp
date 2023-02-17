@@ -142,14 +142,32 @@ static uint32_t tagNameHash(const String& s)
     return (s[0] + 17 * s[s.length() - 1]) & 63;
 }
 
-template<typename CharacterType> static bool isQuoteCharacter(CharacterType c)
+template<typename CharacterType> static inline bool isQuoteCharacter(CharacterType c)
 {
     return c == '"' || c == '\'';
 }
 
-template<typename CharacterType> bool isValidUnquotedAttributeValueChar(CharacterType c)
+template<typename CharacterType> static inline bool isValidUnquotedAttributeValueChar(CharacterType c)
 {
     return isASCIIAlphanumeric(c) || c == '_' || c == '-';
+}
+
+// https://html.spec.whatwg.org/#syntax-attribute-name
+template<typename CharacterType> static inline bool isValidAttributeNameChar(CharacterType c)
+{
+    if (c == '=') // Early return for the most common way to end an attribute.
+        return false;
+    return isASCIIAlphanumeric(c) || c == '-';
+}
+
+template<typename CharacterType> static inline bool isCharAfterTagNameOrAttribute(CharacterType c)
+{
+    return c == ' ' || c == '>' || isHTMLSpace(c) || c == '/';
+}
+
+template<typename CharacterType> static inline bool isCharAfterUnquotedAttribute(CharacterType c)
+{
+    return c == ' ' || c == '>' || isHTMLSpace(c);
 }
 
 #define FOR_EACH_SUPPORTED_TAG(APPLY) \
@@ -481,24 +499,6 @@ private:
         parseChildren<ParentTag>(m_fragment);
         if (m_parsingBuffer.hasCharactersRemaining())
             didFail(HTMLFastPathResult::FailedDidntReachEndOfInput);
-    }
-
-    // https://html.spec.whatwg.org/#syntax-attribute-name
-    bool isValidAttributeNameChar(Char c)
-    {
-        if (c == '=') // Early return for the most common way to end an attribute.
-            return false;
-        return isASCIIAlphanumeric(c) || c == '-';
-    }
-
-    bool isCharAfterTagNameOrAttribute(Char c)
-    {
-        return c == ' ' || c == '>' || isHTMLSpace(c) || c == '/';
-    }
-
-    bool isCharAfterUnquotedAttribute(Char c)
-    {
-        return c == ' ' || c == '>' || isHTMLSpace(c);
     }
 
     // We first try to scan text as an unmodified subsequence of the input.
