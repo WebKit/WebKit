@@ -31,7 +31,6 @@
 #include "AnimationList.h"
 #include "AnimationTimeline.h"
 #include "CSSAnimation.h"
-#include "CSSCustomPropertyValue.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
 #include "CommonAtomStrings.h"
@@ -45,7 +44,6 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderStyle.h"
-#include "StyleCustomPropertyData.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
@@ -665,6 +663,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
     compileTransitionPropertiesInStyle(newStyle, transitionProperties, transitionPropertiesContainAll);
 
     if (transitionPropertiesContainAll) {
+        // FIXME: this does not deal with custom properties.
         auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
         for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
             std::optional<bool> isShorthand;
@@ -673,25 +672,6 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
                 continue;
             updateCSSTransitionsForStyleableAndProperty(*this, property, currentStyle, newStyle, generationTime);
         }
-
-        HashSet<AtomString> animatableCustomProperties;
-        auto gatherAnimatableCustomProperties = [&](const StyleCustomPropertyData& customPropertyData) {
-            customPropertyData.forEach([&](auto& customPropertyAndValuePair) {
-                auto [customProperty, customPropertyValue] = customPropertyAndValuePair;
-                if (!customPropertyValue)
-                    return;
-                auto& variantValue = customPropertyValue->value();
-                if (std::holds_alternative<CSSCustomPropertyValue::SyntaxValue>(variantValue)
-                    || std::holds_alternative<CSSCustomPropertyValue::SyntaxValueList>(variantValue))
-                    animatableCustomProperties.add(customProperty);
-            });
-        };
-        gatherAnimatableCustomProperties(currentStyle.inheritedCustomProperties());
-        gatherAnimatableCustomProperties(currentStyle.nonInheritedCustomProperties());
-        gatherAnimatableCustomProperties(newStyle.inheritedCustomProperties());
-        gatherAnimatableCustomProperties(newStyle.nonInheritedCustomProperties());
-        for (auto& customProperty : animatableCustomProperties)
-            updateCSSTransitionsForStyleableAndProperty(*this, customProperty, currentStyle, newStyle, generationTime);
         return;
     }
 
