@@ -74,6 +74,11 @@ private:
     {
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
+    template<typename T, typename C>
+    WARN_UNUSED_RETURN IPC::StreamClientConnection::AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler)
+    {
+        return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
+    }
 
     Ref<PAL::WebGPU::Queue> queue() final;
 
