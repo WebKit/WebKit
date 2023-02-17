@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC)
 
-#import <WebKit/WKViewPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebView.h>
 
 namespace TestWebKitAPI {
@@ -39,9 +39,9 @@ namespace TestWebKitAPI {
     return compareJSResult(script, [actualResult UTF8String], expectedResult);
 }
 
-::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKView *view, const char* script, const char* expectedResult)
+::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKWebView *view, const char* script, const char* expectedResult)
 {
-    return runJSTest(viewExpr, scriptExpr, expectedResultExpr, [view pageRef], script, expectedResult);
+    return runJSTest(viewExpr, scriptExpr, expectedResultExpr, [view _pageRefForTransitionToWKWebView], script, expectedResult);
 }
 
 } // namespace TestWebKitAPI

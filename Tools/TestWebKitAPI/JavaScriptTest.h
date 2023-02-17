@@ -26,8 +26,8 @@
 #pragma once
 
 #if PLATFORM(COCOA)
-OBJC_CLASS WKView;
 OBJC_CLASS WebView;
+OBJC_CLASS WKWebView;
 #endif
 #include <WebKit/WKBase.h>
 
@@ -44,7 +44,7 @@ namespace TestWebKitAPI {
 
 #if PLATFORM(COCOA)
 ::testing::AssertionResult runJSTest(const char* webViewExpr, const char* scriptExpr, const char* expectedResultExpr, WebView *, const char* script, const char* expectedResult);
-::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKView *, const char* script, const char* expectedResult);
+::testing::AssertionResult runJSTest(const char* viewExpr, const char* scriptExpr, const char* expectedResultExpr, WKWebView *, const char* script, const char* expectedResult);
 #endif
 
 } // namespace TestWebKitAPI

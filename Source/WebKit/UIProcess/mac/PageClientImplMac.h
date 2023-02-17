@@ -35,7 +35,6 @@
 #include <wtf/Forward.h>
 
 @class WKEditorUndoTarget;
-@class WKView;
 
 namespace WebCore {
 class AlternativeTextUIController;
