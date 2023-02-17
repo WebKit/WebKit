@@ -1854,7 +1854,7 @@ static void clearShouldBreakAtLineToAvoidWidowIfNeeded(RenderBlockFlow& blockFlo
     blockFlow.setDidBreakAtLineToAvoidWidow();
 }
 
-void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineBox, LayoutUnit& delta, bool& overflowsFragment, RenderFragmentedFlow* fragmentedFlow)
+void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineBox, LayoutUnit& delta, RenderFragmentedFlow* fragmentedFlow)
 {
     // FIXME: For now we paginate using line overflow. This ensures that lines don't overlap at all when we
     // put a strut between them for pagination purposes. However, this really isn't the desired rendering, since
@@ -1875,7 +1875,6 @@ void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineB
     // FIXME: Another problem with simply moving lines is that the available line width may change (because of floats).
     // Technically if the location we move the line to has a different line width than our old position, then we need to dirty the
     // line and all following lines.
-    overflowsFragment = false;
     LayoutRect logicalVisualOverflow = lineBox->logicalVisualOverflowRect(lineBox->lineTop(), lineBox->lineBottom());
     LayoutUnit logicalOffset = std::min(lineBox->lineBoxTop(), logicalVisualOverflow.y());
     LayoutUnit logicalBottom = std::max(lineBox->lineBoxBottom(), logicalVisualOverflow.maxY());
@@ -1916,7 +1915,6 @@ void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineB
     }
     
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
-    overflowsFragment = (lineHeight > remainingLogicalHeight);
 
     int lineIndex = legacyLineLayout()->lineCountUntil(lineBox);
     if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)) {
@@ -1929,8 +1927,6 @@ void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineB
             // Split the top margin in order to avoid splitting the visible part of the line.
             remainingLogicalHeight -= std::min(lineHeight - pageLogicalHeight, std::max<LayoutUnit>(0, logicalVisualOverflow.y() - lineBox->lineBoxTop()));
         }
-        LayoutUnit remainingLogicalHeightAtNewOffset = pageRemainingLogicalHeightForOffset(logicalOffset + remainingLogicalHeight, ExcludePageBoundary);
-        overflowsFragment = (lineHeight > remainingLogicalHeightAtNewOffset);
         LayoutUnit totalLogicalHeight = lineHeight + std::max<LayoutUnit>(0, logicalOffset);
         LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
         setPageBreak(logicalOffset, lineHeight - remainingLogicalHeight);

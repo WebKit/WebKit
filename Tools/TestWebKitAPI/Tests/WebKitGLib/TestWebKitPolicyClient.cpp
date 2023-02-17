@@ -110,7 +110,11 @@ public:
         : LoadTrackingTest()
     {
         g_signal_connect(m_webView, "decide-policy", G_CALLBACK(decidePolicyCallback), this);
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "testHandler");
+#else
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "testHandler", nullptr);
+#endif
         g_signal_connect(m_userContentManager.get(), "script-message-received::testHandler", G_CALLBACK(testHandlerMessageReceivedCallback), this);
     }
 

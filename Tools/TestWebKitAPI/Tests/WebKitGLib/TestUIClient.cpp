@@ -350,8 +350,13 @@ public:
         g_signal_connect(m_webView, "mouse-target-changed", G_CALLBACK(mouseTargetChanged), this);
         g_signal_connect(m_webView, "permission-request", G_CALLBACK(permissionRequested), this);
         g_signal_connect(m_webView, "query-permission-state", G_CALLBACK(queryPermissionStateCallback), this);
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "permission");
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "queryPermission");
+#else
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "permission", nullptr);
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "queryPermission", nullptr);
+#endif
         g_signal_connect(m_userContentManager.get(), "script-message-received::permission", G_CALLBACK(permissionResultMessageReceivedCallback), this);
         g_signal_connect(m_userContentManager.get(), "script-message-received::queryPermission", G_CALLBACK(queryPermissionResultMessageReceivedCallback), this);
     }
@@ -360,8 +365,14 @@ public:
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
         g_signal_handlers_disconnect_matched(m_userContentManager.get(), G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "permission");
         webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "queryPermission");
+#else
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "permission", nullptr);
+        webkit_user_content_manager_unregister_script_message_handler(m_userContentManager.get(), "queryPermission", nullptr);
+#endif
     }
 
     static void tryWebViewCloseCallback(UIClientTest* test)

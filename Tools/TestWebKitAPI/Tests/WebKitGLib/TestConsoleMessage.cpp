@@ -63,7 +63,11 @@ public:
 
     ConsoleMessageTest()
     {
+#if !ENABLE(2022_GLIB_API)
         webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "console");
+#else
+        webkit_user_content_manager_register_script_message_handler(m_userContentManager.get(), "console", nullptr);
+#endif
         g_signal_connect(m_userContentManager.get(), "script-message-received::console", G_CALLBACK(consoleMessageReceivedCallback), this);
     }
 

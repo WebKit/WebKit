@@ -79,6 +79,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
     copy->m_memoryPressureHandlerConfiguration = this->m_memoryPressureHandlerConfiguration;
+    copy->m_disableFontHintingForTesting = this->m_disableFontHintingForTesting;
 #endif
 #if HAVE(AUDIT_TOKEN)
     copy->m_presentingApplicationProcessToken = this->m_presentingApplicationProcessToken;

@@ -109,6 +109,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.memoryPressureHandlerConfiguration = m_configuration->memoryPressureHandlerConfiguration();
 
+    parameters.disableFontHintingForTesting = m_configuration->disableFontHintingForTesting();
+
     GApplication* app = g_application_get_default();
     if (app)
         parameters.applicationID = String::fromLatin1(g_application_get_application_id(app));
