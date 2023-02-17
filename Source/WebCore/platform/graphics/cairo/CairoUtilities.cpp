@@ -39,7 +39,6 @@
 #include "Region.h"
 #include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
 
@@ -49,18 +48,36 @@
 
 namespace WebCore {
 
-static CairoUniquePtr<cairo_font_options_t> s_defaultCairoFontOptions;
+static NeverDestroyed<cairo_font_options_t*> s_defaultCairoFontOptions = cairo_font_options_create();
 
 const cairo_font_options_t* getDefaultCairoFontOptions()
 {
-    ASSERT(s_defaultCairoFontOptions);
-    return s_defaultCairoFontOptions.get();
+    return s_defaultCairoFontOptions;
 }
 
-void setDefaultCairoFontOptions(CairoUniquePtr<cairo_font_options_t>&& options)
+static bool s_disableCairoFontHintingForTesting = false;
+
+void disableCairoFontHintingForTesting()
 {
-    ASSERT(RunLoop::isMain());
-    s_defaultCairoFontOptions = WTFMove(options);
+    cairo_font_options_set_hint_metrics(s_defaultCairoFontOptions, CAIRO_HINT_METRICS_ON);
+    cairo_font_options_set_hint_style(s_defaultCairoFontOptions, CAIRO_HINT_STYLE_NONE);
+
+    s_disableCairoFontHintingForTesting = true;
+}
+
+void setDefaultCairoHintOptions(cairo_hint_metrics_t hintMetrics, cairo_hint_style_t hintStyle)
+{
+    if (s_disableCairoFontHintingForTesting)
+        return;
+
+    cairo_font_options_set_hint_metrics(s_defaultCairoFontOptions, hintMetrics);
+    cairo_font_options_set_hint_style(s_defaultCairoFontOptions, hintStyle);
+}
+
+void setDefaultCairoAntialiasOptions(cairo_antialias_t antialias, cairo_subpixel_order_t subpixelOrder)
+{
+    cairo_font_options_set_antialias(s_defaultCairoFontOptions, antialias);
+    cairo_font_options_set_subpixel_order(s_defaultCairoFontOptions, subpixelOrder);
 }
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr)

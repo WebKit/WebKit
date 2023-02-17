@@ -47,7 +47,8 @@ private:
 
     void settingsDidChange(GtkSettingsState&&);
 
-    void applyFontOptions();
+    void applyHintingSettings();
+    void applyAntialiasSettings();
 
     GtkSettings* m_settings;
 };

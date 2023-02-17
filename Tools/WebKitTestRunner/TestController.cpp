@@ -102,6 +102,10 @@
 #include <WebKit/WKPagePrivateMac.h>
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+#include <WebKit/WKContextConfigurationGlib.h>
+#endif
+
 #if PLATFORM(WIN)
 #include <direct.h>
 #define getcwd _getcwd
@@ -649,6 +653,10 @@ WKRetainPtr<WKContextConfigurationRef> TestController::generateContextConfigurat
     }
 
     WKContextConfigurationSetShouldConfigureJSCForTesting(configuration.get(), true);
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    WKContextConfigurationSetDisableFontHintingForTesting(configuration.get(), true);
+#endif
 
     return configuration;
 }

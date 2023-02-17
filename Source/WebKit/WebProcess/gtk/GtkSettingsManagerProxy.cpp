@@ -63,27 +63,35 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
     if (state.fontName)
         g_object_set(m_settings, "gtk-font-name", state.fontName->utf8().data(), nullptr);
 
-    bool fontOptionsDidChange = false;
-
-    if (state.xftAntialias) {
-        g_object_set(m_settings, "gtk-xft-antialias", *state.xftAntialias, nullptr);
-        fontOptionsDidChange = true;
-    }
+    bool hintingSettingsDidChange = false;
 
     if (state.xftHinting) {
         g_object_set(m_settings, "gtk-xft-hinting", *state.xftHinting, nullptr);
-        fontOptionsDidChange = true;
+        hintingSettingsDidChange = true;
     }
 
     if (state.xftHintStyle) {
         g_object_set(m_settings, "gtk-xft-hintstyle", state.xftHintStyle->utf8().data(), nullptr);
-        fontOptionsDidChange = true;
+        hintingSettingsDidChange = true;
+    }
+
+    if (hintingSettingsDidChange)
+        applyHintingSettings();
+
+    bool antialiasSettingsDidChagne = false;
+
+    if (state.xftAntialias) {
+        g_object_set(m_settings, "gtk-xft-antialias", *state.xftAntialias, nullptr);
+        antialiasSettingsDidChagne = true;
     }
 
     if (state.xftRGBA) {
         g_object_set(m_settings, "gtk-xft-rgba", state.xftRGBA->utf8().data(), nullptr);
-        fontOptionsDidChange = true;
+        antialiasSettingsDidChagne = true;
     }
+
+    if (antialiasSettingsDidChagne)
+        applyAntialiasSettings();
 
     if (state.xftDPI)
         g_object_set(m_settings, "gtk-xft-dpi", *state.xftDPI, nullptr);
@@ -99,26 +107,19 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 
     if (state.overlayScrolling)
         g_object_set(m_settings, "gtk-overlay-scrolling", *state.overlayScrolling, nullptr);
-    
-    if (fontOptionsDidChange)
-        applyFontOptions();
 }
 
-void GtkSettingsManagerProxy::applyFontOptions()
+void GtkSettingsManagerProxy::applyHintingSettings()
 {
-    auto fontOptions = CairoUniquePtr<cairo_font_options_t>(cairo_font_options_create());
-
-    gint antialias, hinting;
+    gint hinting;
     GUniqueOutPtr<char> hintStyleString;
-    GUniqueOutPtr<char> rgbaString;
+    
     g_object_get(m_settings,
-        "gtk-xft-antialias", &antialias,
         "gtk-xft-hinting", &hinting,
         "gtk-xft-hintstyle", &hintStyleString.outPtr(),
-        "gtk-xft-rgba", &rgbaString.outPtr(),
         nullptr);
 
-    cairo_font_options_set_hint_metrics(fontOptions.get(), CAIRO_HINT_METRICS_ON);
+    cairo_hint_metrics_t hintMetrics = CAIRO_HINT_METRICS_ON;
 
     cairo_hint_style_t hintStyle = CAIRO_HINT_STYLE_DEFAULT;
     switch (hinting) {
@@ -138,7 +139,19 @@ void GtkSettingsManagerProxy::applyFontOptions()
         }
         break;
     }
-    cairo_font_options_set_hint_style(fontOptions.get(), hintStyle);
+
+    setDefaultCairoHintOptions(hintMetrics, hintStyle);
+}
+
+void GtkSettingsManagerProxy::applyAntialiasSettings()
+{
+    gint antialias;
+    GUniqueOutPtr<char> rgbaString;
+
+    g_object_get(m_settings,
+        "gtk-xft-antialias", &antialias,
+        "gtk-xft-rgba", &rgbaString.outPtr(),
+        nullptr);
 
     cairo_subpixel_order_t subpixelOrder = CAIRO_SUBPIXEL_ORDER_DEFAULT;
     if (rgbaString) {
@@ -151,7 +164,6 @@ void GtkSettingsManagerProxy::applyFontOptions()
         else if (!strcmp(rgbaString.get(), "vbgr"))
             subpixelOrder = CAIRO_SUBPIXEL_ORDER_VBGR;
     }
-    cairo_font_options_set_subpixel_order(fontOptions.get(), subpixelOrder);
 
     cairo_antialias_t antialiasMode = CAIRO_ANTIALIAS_DEFAULT;
     switch (antialias) {
@@ -165,9 +177,8 @@ void GtkSettingsManagerProxy::applyFontOptions()
             antialiasMode = CAIRO_ANTIALIAS_GRAY;
         break;
     }
-    cairo_font_options_set_antialias(fontOptions.get(), antialiasMode);
 
-    setDefaultCairoFontOptions(WTFMove(fontOptions));
+    setDefaultCairoAntialiasOptions(antialiasMode, subpixelOrder);
 }
 
 } // namespace WebKit
