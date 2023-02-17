@@ -132,7 +132,10 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
     bool allowPrivacyProxy { true };
     if (auto* frame = m_document ? m_document->frame() : nullptr) {
-        if (auto* mainFrameDocumentLoader = frame->mainFrame().document() ? frame->mainFrame().document()->loader() : nullptr) {
+        auto* mainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+        if (!mainFrame)
+            return ConnectStatus::KO; 
+        if (auto* mainFrameDocumentLoader = mainFrame->document() ? mainFrame->document()->loader() : nullptr) {
             allowPrivacyProxy = mainFrameDocumentLoader->allowPrivacyProxy();
             networkConnectionIntegrityPolicy = mainFrameDocumentLoader->networkConnectionIntegrityPolicy();
         }

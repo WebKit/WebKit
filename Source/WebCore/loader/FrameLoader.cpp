@@ -2886,12 +2886,13 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 String FrameLoader::userAgent(const URL& url) const
 {
     String userAgent;
-
-    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
-        if (m_frame.settings().needsSiteSpecificQuirks())
-            userAgent = documentLoader->customUserAgentAsSiteSpecificQuirks();
-        if (userAgent.isEmpty())
-            userAgent = documentLoader->customUserAgent();
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame())) {
+        if (auto* documentLoader = localFrame->loader().activeDocumentLoader()) {
+            if (m_frame.settings().needsSiteSpecificQuirks())
+                userAgent = documentLoader->customUserAgentAsSiteSpecificQuirks();
+            if (userAgent.isEmpty())
+                userAgent = documentLoader->customUserAgent();
+        }
     }
 
     InspectorInstrumentation::applyUserAgentOverride(m_frame, userAgent);
@@ -2904,10 +2905,12 @@ String FrameLoader::userAgent(const URL& url) const
 
 String FrameLoader::navigatorPlatform() const
 {
-    if (auto* documentLoader = m_frame.mainFrame().loader().activeDocumentLoader()) {
-        auto& customNavigatorPlatform = documentLoader->customNavigatorPlatform();
-        if (!customNavigatorPlatform.isEmpty())
-            return customNavigatorPlatform;
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame())) {
+        if (auto* documentLoader = localFrame->loader().activeDocumentLoader()) {
+            auto& customNavigatorPlatform = documentLoader->customNavigatorPlatform();
+            if (!customNavigatorPlatform.isEmpty())
+                return customNavigatorPlatform;
+        }
     }
     return String();
 }
@@ -3088,8 +3091,12 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
         request.setResponseContentDispositionEncodingFallbackArray("UTF-8"_s, m_frame.document()->encoding(), m_frame.settings().defaultTextEncodingName());
     }
 
-    if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes && m_frame.mainFrame().loader().documentLoader())
-        request.setIsAppInitiated(m_frame.mainFrame().loader().documentLoader()->lastNavigationWasAppInitiated());
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame());
+    if (!localFrame)
+        return;
+
+    if (shouldUpdate == ShouldUpdateAppInitiatedValue::Yes && localFrame->loader().documentLoader())
+        request.setIsAppInitiated(localFrame->loader().documentLoader()->lastNavigationWasAppInitiated());
 }
 
 void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content, IsMetaRefresh isMetaRefresh)
@@ -3238,7 +3245,8 @@ ResourceLoaderIdentifier FrameLoader::loadResourceSynchronously(const ResourceRe
         initialRequest.setHTTPReferrer(referrer);
     addHTTPOriginIfNeeded(initialRequest, outgoingOrigin());
 
-    initialRequest.setFirstPartyForCookies(m_frame.mainFrame().loader().documentLoader()->request().url());
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame()))
+        initialRequest.setFirstPartyForCookies(localFrame->loader().documentLoader()->request().url());
     
     updateRequestAndAddExtraFields(initialRequest, IsMainResource::No);
 
@@ -3648,8 +3656,10 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         // we only do this when punting a navigation for the target frame or top-level frame.  
         if ((isTargetItem || m_frame.isMainFrame()) && isBackForwardLoadType(policyChecker().loadType())) {
             if (Page* page = m_frame.page()) {
-                if (HistoryItem* resetItem = m_frame.mainFrame().loader().history().currentItem())
-                    page->backForward().setCurrentItem(*resetItem);
+                if (auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame())) {
+                    if (HistoryItem* resetItem = localFrame->loader().history().currentItem())
+                        page->backForward().setCurrentItem(*resetItem);
+                }
             }
         }
         return;
@@ -3985,8 +3995,10 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, HistoryItem* from
     bool isFormSubmission = false;
     Event* event = nullptr;
 
-    if (auto* documentLoader = m_frame.mainFrame().loader().documentLoader())
-        request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame())) {
+        if (auto* documentLoader = localFrame->loader().documentLoader())
+            request.setIsAppInitiated(documentLoader->lastNavigationWasAppInitiated());
+    }
 
     // If this was a repost that failed the page cache, we might try to repost the form.
     NavigationAction action;
@@ -4253,8 +4265,10 @@ NetworkingContext* FrameLoader::networkingContext() const
 
 void FrameLoader::loadProgressingStatusChanged()
 {
-    if (auto* view = m_frame.mainFrame().view())
-        view->loadProgressingStatusChanged();
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(m_frame.mainFrame())) {
+        if (auto* view = localFrame->view())
+            view->loadProgressingStatusChanged();
+    }
 }
 
 void FrameLoader::completePageTransitionIfNeeded()

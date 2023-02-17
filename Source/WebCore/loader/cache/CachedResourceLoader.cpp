@@ -1051,9 +1051,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         bool sameOriginRequest = false;
         auto requestedOrigin = SecurityOrigin::create(url);
         if (type == CachedResource::Type::MainResource) {
+            auto* localMainFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
             if (frame.isMainFrame())
                 sameOriginRequest = true;
-            else if (auto* topDocument = frame.mainFrame().document())
+            else if (auto* topDocument = localMainFrame ? localMainFrame->document() : nullptr)
                 sameOriginRequest = topDocument->securityOrigin().isSameSchemeHostPort(requestedOrigin.get());
         } else if (document()) {
             sameOriginRequest = document()->topOrigin().isSameSchemeHostPort(requestedOrigin.get())

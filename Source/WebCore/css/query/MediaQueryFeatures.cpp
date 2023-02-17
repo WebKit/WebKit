@@ -248,7 +248,9 @@ const FeatureSchema& color()
     static MainThreadNeverDestroyed<IntegerSchema> schema {
         "color"_s,
         [](auto& context) {
-            return screenDepthPerComponent(context.document.frame()->mainFrame().view());
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(context.document.frame()->mainFrame()))
+                return screenDepthPerComponent(localFrame->view()); 
+            return 8;
         }
     };
     return schema;
@@ -264,8 +266,10 @@ const FeatureSchema& colorGamut()
 
             // FIXME: At some point we should start detecting displays that support more colors.
             MatchingIdentifiers identifiers { CSSValueSRGB };
-            if (screenSupportsExtendedColor(frame.mainFrame().view()))
-                identifiers.append(CSSValueP3);
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame())) {
+                if (screenSupportsExtendedColor(localFrame->view()))
+                    identifiers.append(CSSValueP3);
+            }
             return identifiers;
         }
     };
@@ -286,8 +290,11 @@ const FeatureSchema& deviceAspectRatio()
     static MainThreadNeverDestroyed<RatioSchema> schema {
         "device-aspect-ratio"_s,
         [](auto& context) {
-            auto screenSize = context.document.frame()->mainFrame().screenSize();
-            return FloatSize { screenSize.width(), screenSize.height() };
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(context.document.frame()->mainFrame())) {
+                auto screenSize = localFrame->screenSize();
+                return FloatSize { screenSize.width(), screenSize.height() };
+            }
+            return FloatSize { 0.0f, 0.0f };
         }
     };
     return schema;
@@ -298,7 +305,9 @@ const FeatureSchema& deviceHeight()
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "device-height"_s,
         [](auto& context) {
-            return LayoutUnit { context.document.frame()->mainFrame().screenSize().height() };
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(context.document.frame()->mainFrame()))
+                return LayoutUnit { localFrame->screenSize().height() };
+            return LayoutUnit { 0.0f };
         }
     };
     return schema;
@@ -320,7 +329,9 @@ const FeatureSchema& deviceWidth()
     static MainThreadNeverDestroyed<LengthSchema> schema {
         "device-width"_s,
         [](auto& context) {
-            return LayoutUnit { context.document.frame()->mainFrame().screenSize().width() };
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(context.document.frame()->mainFrame()))
+                return LayoutUnit { localFrame->screenSize().width() };
+            return LayoutUnit { 0.0f };
         }
     };
     return schema;
@@ -338,7 +349,9 @@ const FeatureSchema& dynamicRange()
                     return true;
                 if (frame.settings().forcedSupportsHighDynamicRangeValue() == ForcedAccessibilityValue::Off)
                     return false;
-                return screenSupportsHighDynamicRange(frame.mainFrame().view());
+                if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame()))
+                    return screenSupportsHighDynamicRange(localFrame->view());
+                return false;
             }();
 
             MatchingIdentifiers identifiers { CSSValueStandard };
@@ -425,16 +438,19 @@ const FeatureSchema& monochrome()
     static MainThreadNeverDestroyed<IntegerSchema> schema {
         "monochrome"_s,
         [](auto& context) {
+            auto& frame = *context.document.frame();
+            auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
             bool isMonochrome = [&] {
-                auto& frame = *context.document.frame();
                 if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::On)
                     return true;
                 if (frame.settings().forcedDisplayIsMonochromeAccessibilityValue() == ForcedAccessibilityValue::Off)
                     return false;
-                return screenIsMonochrome(frame.mainFrame().view());
+                if (localFrame)
+                    return screenIsMonochrome(localFrame->view());
+                return false;
             }();
 
-            return isMonochrome ? screenDepthPerComponent(context.document.frame()->mainFrame().view()) : 0;
+            return isMonochrome && localFrame ? screenDepthPerComponent(localFrame->view()) : 0;
         }
     };
     return schema;

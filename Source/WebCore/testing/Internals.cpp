@@ -1983,7 +1983,12 @@ ExceptionOr<void> Internals::scrollBySimulatingWheelEvent(Element& element, doub
     ScrollableArea* scrollableArea;
 
     if (&element == document->scrollingElementForAPI()) {
-        FrameView* frameView = box.frame().mainFrame().view();
+
+        auto* localFrame = dynamicDowncast<LocalFrame>(box.frame().mainFrame());
+        if (!localFrame)
+            return Exception { InvalidAccessError };
+
+        FrameView* frameView = localFrame->view();
         if (!frameView || !frameView->isScrollable())
             return Exception { InvalidAccessError };
 

@@ -1031,7 +1031,10 @@ std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBou
     auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
         return std::nullopt;
-    return fromCoreFrame(localFrame->mainFrame())->isNavigatingToAppBoundDomain();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(localFrame->mainFrame());
+    if (!localMainFrame)
+        return std::nullopt;
+    return fromCoreFrame(*localMainFrame)->isNavigatingToAppBoundDomain();
 }
 #endif
 

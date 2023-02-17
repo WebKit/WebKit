@@ -1628,7 +1628,10 @@ static bool allowExecutionWhenDisabledCopyCut(Frame&, EditorCommandSource source
 
 static bool allowExecutionWhenDisabledPaste(Frame& frame, EditorCommandSource)
 {
-    if (frame.mainFrame().loader().shouldSuppressTextInputFromEditing())
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame());
+    if (!localFrame)
+        return false;
+    if (localFrame->loader().shouldSuppressTextInputFromEditing())
         return false;
     return true;
 }

@@ -211,8 +211,10 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             && frame->isMainFrame()
             && resourceType == ResourceType::Document)
             mainDocumentURL = url;
-        else if (auto* mainDocument = frame->mainFrame().document())
-            mainDocumentURL = mainDocument->url();
+        else if (auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame())) {
+            if (auto* mainDocument = localFrame->document())
+                mainDocumentURL = mainDocument->url();
+        }
     }
     if (currentDocument)
         frameURL = currentDocument->url();
