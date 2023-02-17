@@ -94,23 +94,19 @@ enum class HTMLFastPathResult {
     FailedCssPseudoDirEnabledAndDirAttributeDirty
 };
 
-template<class Char, size_t n> static bool operator==(Span<const Char> span, const char (&s)[n])
+template<class Char> static bool operator==(Span<const Char> span, ASCIILiteral s)
 {
-    if (span.size() != n - 1)
+    if (span.size() != s.length())
         return false;
 
-    for (size_t i = 0; i < n - 1; ++i) {
-        if (span[i] != s[i])
-            return false;
-    }
-    return true;
+    return WTF::equal(span.data(), s.characters8(), span.size());
 }
 
 #if ASSERT_ENABLED
-template<size_t n> static constexpr bool onlyContainsLowercaseASCIILetters(const char (&s)[n])
+static constexpr bool onlyContainsLowercaseASCIILetters(ASCIILiteral s)
 {
-    for (size_t i = 0; i < n - 1; ++i) {
-        if (s[i] < 'a' || s[i] > 'z')
+    for (size_t i = 0; i < s.length(); ++i) {
+        if (!isASCIILower(s[i]))
             return false;
     }
     return true;
@@ -122,17 +118,16 @@ template<size_t n> static constexpr bool onlyContainsLowercaseASCIILetters(const
 // integer range to allow for compact switch jump-tables. If adding support for a new tag results
 // in a collision, then pick a new function that minimizes the number of operations and results
 // in a dense integer range.
-template<size_t n> static constexpr uint32_t tagNameHash(const char (&s)[n])
+static constexpr uint32_t tagNameHash(ASCIILiteral s)
 {
     // The fast-path parser only scans for letters in tagNames.
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(onlyContainsLowercaseASCIILetters<n>(s));
-    ASSERT_UNDER_CONSTEXPR_CONTEXT(s[n - 1] == '\0');
+    ASSERT_UNDER_CONSTEXPR_CONTEXT(onlyContainsLowercaseASCIILetters(s));
     // This function is called with null-termined string, which should be used in the hash
     // implementation, hence the -2.
-    return (s[0] + 17 * s[n - 2]) & 63;
+    return (s[0] + 17 * s[s.length() - 1]) & 63;
 }
 
-template<class Char> static uint32_t tagNameHash(Span<const Char> s)
+template<class Char> static constexpr uint32_t tagNameHash(Span<const Char> s)
 {
     return (s[0] + 17 * s[s.size() - 1]) & 63;
 }
@@ -260,7 +255,7 @@ public:
         switch (tagNameHash(contextTag.localName())) {
 #define TAG_CASE(TagName, TagClassName)                                                                      \
         case tagNameHash(TagInfo::TagClassName::tagName):                                                    \
-            ASSERT(HTMLNames::TagName##Tag->localName().string().ascii() == TagInfo::TagClassName::tagName); \
+            ASSERT(HTMLNames::TagName##Tag->localName() == TagInfo::TagClassName::tagName); \
             if constexpr (!TagInfo::TagClassName::isVoid) {                                                  \
                 /* The hash function won't return collisions for the supported tags, but this function */    \
                 /* takes potentially unsupported tags, which may collide. Protect against that by */         \
@@ -358,7 +353,7 @@ private:
         };
 
         struct A : ContainerTag<HTMLAnchorElement, PermittedParents::FlowContent> {
-            static constexpr const char tagName[] = "a";
+            static constexpr ASCIILiteral tagName = "a"_s;
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -371,7 +366,7 @@ private:
         };
 
         struct AWithPhrasingContent : ContainsPhrasingContentTag<HTMLAnchorElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "a";
+            static constexpr ASCIILiteral tagName = "a"_s;
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -384,7 +379,7 @@ private:
         };
 
         struct B : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "b";
+            static constexpr ASCIILiteral tagName = "b"_s;
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -393,19 +388,19 @@ private:
         };
 
         struct Br : VoidTag<HTMLBRElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "br";
+            static constexpr ASCIILiteral tagName = "br"_s;
         };
 
         struct Button : ContainsPhrasingContentTag<HTMLButtonElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "button";
+            static constexpr ASCIILiteral tagName = "button"_s;
         };
 
         struct Div : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
-            static constexpr const char tagName[] = "div";
+            static constexpr ASCIILiteral tagName = "div"_s;
         };
 
         struct Footer : ContainerTag<HTMLDivElement, PermittedParents::FlowContent> {
-            static constexpr const char tagName[] = "footer";
+            static constexpr ASCIILiteral tagName = "footer"_s;
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -414,7 +409,7 @@ private:
         };
 
         struct I : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "i";
+            static constexpr ASCIILiteral tagName = "i"_s;
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -423,7 +418,7 @@ private:
         };
 
         struct Input : VoidTag<HTMLInputElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "input";
+            static constexpr ASCIILiteral tagName = "input"_s;
 
             static Ref<HTMLInputElement> create(Document& document)
             {
@@ -432,15 +427,15 @@ private:
         };
 
         struct Li : ContainerTag<HTMLLIElement, PermittedParents::Special> {
-            static constexpr const char tagName[] = "li";
+            static constexpr ASCIILiteral tagName = "li"_s;
         };
 
         struct Label : ContainsPhrasingContentTag<HTMLLabelElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "label";
+            static constexpr ASCIILiteral tagName = "label"_s;
         };
 
         struct Option : ContainerTag<HTMLOptionElement, PermittedParents::Special> {
-            static constexpr const char tagName[] = "option";
+            static constexpr ASCIILiteral tagName = "option"_s;
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -450,7 +445,7 @@ private:
         };
 
         struct Ol : ContainerTag<HTMLOListElement, PermittedParents::FlowContent> {
-            static constexpr const char tagName[] = "ol";
+            static constexpr ASCIILiteral tagName = "ol"_s;
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -459,11 +454,11 @@ private:
         };
 
         struct P : ContainsPhrasingContentTag<HTMLParagraphElement, PermittedParents::FlowContent> {
-            static constexpr const char tagName[] = "p";
+            static constexpr ASCIILiteral tagName = "p"_s;
         };
 
         struct Select : ContainerTag<HTMLSelectElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "select";
+            static constexpr ASCIILiteral tagName = "select"_s;
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -472,11 +467,11 @@ private:
         };
 
         struct Span : ContainsPhrasingContentTag<HTMLSpanElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "span";
+            static constexpr ASCIILiteral tagName = "span"_s;
         };
 
         struct Strong : ContainsPhrasingContentTag<HTMLElement, PermittedParents::PhrasingOrFlowContent> {
-            static constexpr const char tagName[] = "strong";
+            static constexpr ASCIILiteral tagName = "strong"_s;
 
             static Ref<HTMLElement> create(Document& document)
             {
@@ -485,7 +480,7 @@ private:
         };
 
         struct Ul : ContainerTag<HTMLUListElement, PermittedParents::FlowContent> {
-            static constexpr const char tagName[] = "ul";
+            static constexpr ASCIILiteral tagName = "ul"_s;
 
             static RefPtr<Element> parseChild(HTMLFastPathParser& self)
             {
@@ -726,13 +721,13 @@ private:
             }
             appendLegalEntityFor(result, out);
             // Handle the most common named references.
-        } else if (reference == "amp")
+        } else if (reference == "amp"_s)
             out.append('&');
-        else if (reference == "lt")
+        else if (reference == "lt"_s)
             out.append('<');
-        else if (reference == "gt")
+        else if (reference == "gt"_s)
             out.append('>');
-        else if (reference == "nbsp")
+        else if (reference == "nbsp"_s)
             out.append(0xa0);
         else {
             // This handles uncommon named references.
