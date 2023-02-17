@@ -74,7 +74,6 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::traits() { return nullptr; }
 int AccessibilityUIElement::elementTextPosition() { return 0; }
 int AccessibilityUIElement::elementTextLength() { return 0; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForSelection() { return nullptr; }
-JSValueRef AccessibilityUIElement::elementsForRange(unsigned, unsigned) { return nullptr; }
 void AccessibilityUIElement::increaseTextSelection() { }
 void AccessibilityUIElement::decreaseTextSelection() { }
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::linkedElement() { return nullptr; }

@@ -2210,8 +2210,8 @@ static RenderObject* rendererForView(WAKView* view)
     if ([markers count] != 2)
         return nil;
 
-    WebAccessibilityTextMarker* startMarker = [markers objectAtIndex:0];
-    WebAccessibilityTextMarker* endMarker = [markers objectAtIndex:1];
+    WebAccessibilityTextMarker *startMarker = [markers objectAtIndex:0];
+    WebAccessibilityTextMarker *endMarker = [markers objectAtIndex:1];
     if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
         return nil;
 
@@ -2331,11 +2331,11 @@ static RenderObject* rendererForView(WAKView* view)
 {
     if (!startMarker || !endMarker)
         return nil;
-    
-    NSArray* array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:attributed];
+
+    NSArray *array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:attributed];
     Class returnClass = attributed ? [NSMutableAttributedString class] : [NSMutableString class];
     auto returnValue = adoptNS([(NSString *)[returnClass alloc] init]);
-    
+
     const unichar attachmentChar = NSAttachmentCharacter;
     NSInteger count = [array count];
     for (NSInteger k = 0; k < count; ++k) {
@@ -2343,10 +2343,10 @@ static RenderObject* rendererForView(WAKView* view)
 
         if (attributed && [object isKindOfClass:[WebAccessibilityObjectWrapper class]])
             object = adoptNS([[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentChar length:1] attributes:@{ UIAccessibilityTokenAttachment : object.get() }]);
-        
+
         if (![object isKindOfClass:returnClass])
             continue;
-        
+
         if (attributed)
             [(NSMutableAttributedString *)returnValue.get() appendAttributedString:object.get()];
         else
@@ -2439,27 +2439,6 @@ static RenderObject* rendererForView(WAKView* view)
         return NO;
 
     return self.axBackingObject->insertText(text);
-}
-
-// A convenience method for getting the accessibility objects of a NSRange. Currently used only by DRT.
-- (NSArray *)elementsForRange:(NSRange)range
-{
-    if (![self _prepareAccessibilityCall])
-        return nil;
-    
-    WebAccessibilityTextMarker* startMarker = [self textMarkerForPosition:range.location];
-    WebAccessibilityTextMarker* endMarker = [self textMarkerForPosition:NSMaxRange(range)];
-    if (!startMarker || !endMarker)
-        return nil;
-    
-    NSArray* array = [self arrayOfTextForTextMarkers:@[startMarker, endMarker] attributed:NO];
-    NSMutableArray* elements = [NSMutableArray array];
-    for (id element in array) {
-        if (![element isKindOfClass:[AccessibilityObjectWrapper class]])
-            continue;
-        [elements addObject:element];
-    }
-    return elements;
 }
 
 - (NSString *)selectionRangeString

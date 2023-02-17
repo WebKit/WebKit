@@ -54,7 +54,6 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)stringForRange:(NSRange)range;
 - (NSAttributedString *)attributedStringForRange:(NSRange)range;
 - (NSAttributedString *)attributedStringForElement;
-- (NSArray *)elementsForRange:(NSRange)range;
 - (NSString *)selectionRangeString;
 - (BOOL)accessibilityInsertText:(NSString *)text;
 - (CGPoint)accessibilityClickPoint;
@@ -414,15 +413,6 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigne
     return false;
 }
 
-
-void AccessibilityUIElement::elementsForRange(unsigned location, unsigned length, Vector<AccessibilityUIElement>& elements)
-{ 
-    NSArray *elementsForRange = [m_element elementsForRange:NSMakeRange(location, length)];
-    for (id object in elementsForRange) {
-        AccessibilityUIElement element = AccessibilityUIElement(object);
-        elements.append(element);
-    }
-}
 
 static void _CGPathEnumerationIteration(void *info, const CGPathElement *element)
 {
