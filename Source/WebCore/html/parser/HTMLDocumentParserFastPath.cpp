@@ -738,13 +738,9 @@ private:
             // This handles uncommon named references.
             String inputString { reference.data(), static_cast<unsigned>(reference.size()) };
             SegmentedString inputSegmented { inputString };
-            StringBuilder entity;
             bool notEnoughCharacters = false;
-            if (!consumeHTMLEntity(inputSegmented, entity, notEnoughCharacters) || notEnoughCharacters)
+            if (!consumeHTMLEntity(inputSegmented, out, notEnoughCharacters) || notEnoughCharacters)
                 return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-
-            for (unsigned i = 0; i < entity.length(); ++i)
-                out.append(entity[i]);
         }
     }
 
