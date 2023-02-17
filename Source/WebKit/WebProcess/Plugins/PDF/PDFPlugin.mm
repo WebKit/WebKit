@@ -444,7 +444,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)updateScrollPosition:(CGPoint)newPosition
 {
-    _pdfPlugin->notifyScrollPositionChanged(WebCore::IntPoint(newPosition));
+    // This can be called from the secondary accessibility thread when VoiceOver is enabled,
+    // so dispatch to the main runloop to allow safe access to main-thread-only timers downstream of
+    // notifyScrollPositionChanged (avoiding a crash). The timer causing the crash at the time of
+    // this change was ScrollbarsControllerMac::m_sendContentAreaScrolledTimer.
+    callOnMainRunLoop([protectedPlugin = Ref { *_pdfPlugin }, newPosition] {
+        protectedPlugin->notifyScrollPositionChanged(WebCore::IntPoint(newPosition));
+    });
 }
 
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types

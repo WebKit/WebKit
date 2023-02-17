@@ -1451,6 +1451,7 @@ accessibility/parent-delete.html [ Failure ]
 # Skip because the embedded plugin never resolves in WK1, resulting in a timeout.
 accessibility/mac/basic-embed-pdf-accessibility.html [ Skip ]
 accessibility/mac/iframe-pdf.html [ Skip ]
+accessibility/mac/scrolling-in-pdf-crash.html [ Skip ]
 
 # rdar://problem/26478296
 svg/hixie/text/003.html [ Failure ]
