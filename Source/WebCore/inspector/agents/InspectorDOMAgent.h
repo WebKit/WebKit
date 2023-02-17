@@ -144,9 +144,18 @@ public:
     Inspector::Protocol::ErrorStringOr<void> hideHighlight();
     Inspector::Protocol::ErrorStringOr<void> highlightRect(int x, int y, int width, int height, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
     Inspector::Protocol::ErrorStringOr<void> highlightQuad(Ref<JSON::Array>&& quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, std::optional<bool>&& usePageCoordinates);
+#if PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> highlightSelector(const String& selectorString, const Inspector::Protocol::Network::FrameId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
+#endif
+    Inspector::Protocol::ErrorStringOr<void> highlightSelector(const String& selectorString, const Inspector::Protocol::Network::FrameId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
+#if PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&&, const Inspector::Protocol::Runtime::RemoteObjectId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
+#endif
+    Inspector::Protocol::ErrorStringOr<void> highlightNode(std::optional<Inspector::Protocol::DOM::NodeId>&&, const Inspector::Protocol::Runtime::RemoteObjectId&, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
+#if PLATFORM(IOS_FAMILY)
     Inspector::Protocol::ErrorStringOr<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig);
+#endif
+    Inspector::Protocol::ErrorStringOr<void> highlightNodeList(Ref<JSON::Array>&& nodeIds, Ref<JSON::Object>&& highlightConfig, RefPtr<JSON::Object>&& gridOverlayConfig, RefPtr<JSON::Object>&& flexOverlayConfig, std::optional<bool>&& showRulers);
     Inspector::Protocol::ErrorStringOr<void> highlightFrame(const Inspector::Protocol::Network::FrameId&, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor);
     Inspector::Protocol::ErrorStringOr<void> showGridOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& gridOverlayConfig);
     Inspector::Protocol::ErrorStringOr<void> hideGridOverlay(std::optional<Inspector::Protocol::DOM::NodeId>&&);
@@ -343,6 +352,7 @@ private:
     Inspector::Protocol::DOM::EventListenerId m_lastEventListenerId { 1 };
 
     bool m_searchingForNode { false };
+    bool m_inspectModeShowRulers { false };
     bool m_suppressAttributeModifiedEvent { false };
     bool m_suppressEventListenerChangedEvent { false };
     bool m_documentRequested { false };

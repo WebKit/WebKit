@@ -125,6 +125,9 @@ WI.DOMManager = class DOMManager extends WI.Object
             };
         }
 
+        if (WI.settings.showRulersDuringElementSelection.value)
+            commandArguments.showRulers = true;
+
         return commandArguments;
     }
 
@@ -711,7 +714,6 @@ WI.DOMManager = class DOMManager extends WI.Object
         target.DOMAgent.setInspectModeEnabled.invoke({
             enabled,
             ...WI.DOMManager.buildHighlightConfigs(),
-            showRulers: WI.settings.showRulersDuringElementSelection.value,
         }, (error) => {
             if (error) {
                 WI.reportInternalError(error);

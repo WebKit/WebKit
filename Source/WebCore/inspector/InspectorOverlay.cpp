@@ -487,7 +487,7 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!m_paintRects.isEmpty())
         drawPaintRects(context, m_paintRects);
 
-    if (m_showRulers || m_showRulersDuringElementSelection)
+    if (m_showRulers || m_showRulersForNodeHighlight)
         drawRulers(context, rulerExclusion);
 }
 
@@ -569,6 +569,7 @@ void InspectorOverlay::hideHighlight()
     m_nodeHighlightConfig = { };
     m_nodeGridOverlayConfig = std::nullopt;
     m_nodeFlexOverlayConfig = std::nullopt;
+    m_showRulersForNodeHighlight = false;
 
     m_highlightQuad = nullptr;
     m_quadHighlightConfig = { };
@@ -576,23 +577,25 @@ void InspectorOverlay::hideHighlight()
     update();
 }
 
-void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const InspectorOverlay::Highlight::Config& highlightConfig, const std::optional<Grid::Config>& gridOverlayConfig, const std::optional<Flex::Config>& flexOverlayConfig)
+void InspectorOverlay::highlightNodeList(RefPtr<NodeList>&& nodes, const InspectorOverlay::Highlight::Config& highlightConfig, const std::optional<Grid::Config>& gridOverlayConfig, const std::optional<Flex::Config>& flexOverlayConfig, bool showRulers)
 {
     m_highlightNode = nullptr;
     m_highlightNodeList = WTFMove(nodes);
     m_nodeHighlightConfig = highlightConfig;
     m_nodeGridOverlayConfig = gridOverlayConfig;
     m_nodeFlexOverlayConfig = flexOverlayConfig;
+    m_showRulersForNodeHighlight = showRulers;
     update();
 }
 
-void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlight::Config& highlightConfig, const std::optional<Grid::Config>& gridOverlayConfig, const std::optional<Flex::Config>& flexOverlayConfig)
+void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlight::Config& highlightConfig, const std::optional<Grid::Config>& gridOverlayConfig, const std::optional<Flex::Config>& flexOverlayConfig, bool showRulers)
 {
     m_highlightNode = node;
     m_highlightNodeList = nullptr;
     m_nodeHighlightConfig = highlightConfig;
     m_nodeGridOverlayConfig = gridOverlayConfig;
     m_nodeFlexOverlayConfig = flexOverlayConfig;
+    m_showRulersForNodeHighlight = showRulers;
     update();
 }
 
@@ -628,8 +631,6 @@ void InspectorOverlay::setIndicating(bool indicating)
 
 bool InspectorOverlay::shouldShowOverlay() const
 {
-    // Don't show the overlay when m_showRulersDuringElementSelection is true, as it's only supposed
-    // to have an effect when element selection is active (e.g. a node is hovered).
     return m_highlightNode
         || m_highlightNodeList
         || m_highlightQuad
@@ -801,7 +802,7 @@ InspectorOverlay::RulerExclusion InspectorOverlay::drawNodeHighlight(GraphicsCon
     if (m_nodeHighlightConfig.showInfo)
         drawShapeHighlight(context, node, rulerExclusion.bounds);
 
-    if (m_showRulers || m_showRulersDuringElementSelection)
+    if (m_showRulers || m_showRulersForNodeHighlight)
         drawBounds(context, rulerExclusion.bounds);
 
     // Ensure that the title information is drawn after the bounds.
@@ -824,7 +825,7 @@ InspectorOverlay::RulerExclusion InspectorOverlay::drawQuadHighlight(GraphicsCon
     if (highlight.quads.size() >= 1) {
         drawOutlinedQuad(context, highlight.quads[0], highlight.contentColor, highlight.contentOutlineColor, rulerExclusion.bounds);
 
-        if (m_showRulers || m_showRulersDuringElementSelection)
+        if (m_showRulers || m_showRulersForNodeHighlight)
             drawBounds(context, rulerExclusion.bounds);
     }
 
@@ -1243,7 +1244,7 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
 
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
-    if (m_showRulers || m_showRulersDuringElementSelection)
+    if (m_showRulers || m_showRulersForNodeHighlight)
         contentInset.expand(rulerSize, rulerSize);
 
     auto expectedLabelSize = InspectorOverlayLabel::expectedSize(labelContents, InspectorOverlayLabel::Arrow::Direction::Up);
