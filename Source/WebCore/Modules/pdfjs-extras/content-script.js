@@ -52,7 +52,7 @@ const PDFJSContentScript = {
     },
 
     open(data) {
-        PDFViewerApplication.open(data);
+        PDFViewerApplication.open({ data });
     },
 
     init() {

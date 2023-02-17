@@ -80,6 +80,7 @@ class ResourceRequest;
 class SecurityOrigin;
 class LocalWebLockRegistry;
 class PrivateClickMeasurement;
+struct RecentSearch;
 
 struct MockWebAuthenticationConfiguration;
 struct NotificationData;
@@ -276,6 +277,7 @@ public:
     const String& resolvedResourceLoadStatisticsDirectory() const { return m_resolvedConfiguration->resourceLoadStatisticsDirectory(); }
     const String& resolvedHSTSStorageDirectory() const { return m_resolvedConfiguration->hstsStorageDirectory(); }
     const String& resolvedGeneralStorageDirectory() const { return m_resolvedConfiguration->generalStorageDirectory(); }
+    const String& resolvedSearchFieldHistoryDirectory() const { return m_resolvedConfiguration->searchFieldHistoryDirectory(); }
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     const String& resolvedModelElementCacheDirectory() const { return m_resolvedConfiguration->modelElementCacheDirectory(); }
 #endif
@@ -354,6 +356,7 @@ public:
     static void removeDataStoreWithIdentifier(const UUID& identifier, CompletionHandler<void(const String&)>&&);
     static String defaultWebsiteDataStoreDirectory(const UUID& identifier);
     static String defaultCookieStorageFile(const String& baseDataDirectory = nullString());
+    static String defaultSearchFieldHistoryDirectory(const String& baseDataDirectory = nullString());
 #endif
     static String defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory = nullString());
     static String defaultLocalStorageDirectory(const String& baseDataDirectory = nullString());
@@ -434,6 +437,9 @@ public:
     void download(const DownloadProxy&, const String& suggestedFilename);
     void resumeDownload(const DownloadProxy&, const API::Data&, const String& path, CallDownloadDidStart);
 
+    void saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>&);
+    void loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -446,9 +452,8 @@ private:
 
     void platformInitialize();
     void platformDestroy();
-    static void platformRemoveRecentSearches(WallTime);
-
     void platformSetNetworkParameters(WebsiteDataStoreParameters&);
+    void removeRecentSearches(WallTime, CompletionHandler<void()>&&);
 
     WebsiteDataStore();
 

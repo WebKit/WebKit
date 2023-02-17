@@ -4142,10 +4142,9 @@ private:
             return;
         case B3::VectorBitwiseSelect: {
             SIMDValue* value = m_value->as<SIMDValue>();
-            auto resultTmp = m_code.newTmp(FP);
+            auto resultTmp = tmp(value);
             append(MoveVector, tmp(value->child(2)), resultTmp);
             append(Air::VectorBitwiseSelect, tmp(value->child(0)), tmp(value->child(1)), resultTmp);
-            append(MoveVector, resultTmp, tmp(value));
             return;
         }
         case B3::VectorExtaddPairwise:

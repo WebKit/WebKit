@@ -50,7 +50,8 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 {
     auto size = fontDescription.computedSize();
     auto& originalPlatformData = FontFamilySpecificationCoreTextCache::forCurrentThread().ensure(FontFamilySpecificationKey(m_fontDescriptor.get(), fontDescription), [&]() {
-        UnrealizedCoreTextFont unrealizedFont = { RetainPtr { m_fontDescriptor } };
+        // FIXME: Stop creating this unnecessary CTFont once rdar://problem/105508842 is fixed.
+        UnrealizedCoreTextFont unrealizedFont = { adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr)) };
         unrealizedFont.setSize(size);
 
         auto font = preparePlatformFont(WTFMove(unrealizedFont), fontDescription, { }, FontTypeForPreparation::SystemFont);

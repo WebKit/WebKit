@@ -243,11 +243,6 @@ void WebsiteDataStore::platformDestroy()
     dataStores().remove(this);
 }
 
-void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
-{
-    WebCore::removeRecentlyModifiedRecentSearches(oldestTimeToRemove);
-}
-
 static String defaultWebsiteDataStoreRootDirectory()
 {
     static dispatch_once_t onceToken;
@@ -298,6 +293,14 @@ String WebsiteDataStore::defaultCookieStorageFile(const String& baseDirectory)
         return { };
 
     return FileSystem::pathByAppendingComponents(baseDirectory, { "Cookies"_s, "Cookies.binarycookies"_s });
+}
+
+String WebsiteDataStore::defaultSearchFieldHistoryDirectory(const String& baseDirectory)
+{
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "SearchHistory"_s);
+
+    return websiteDataDirectoryFileSystemRepresentation("SearchHistory"_s);
 }
 
 String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseDirectory)
@@ -916,5 +919,30 @@ void WebsiteDataStore::setBackupExclusionPeriodForTesting(Seconds period, Comple
 }
 
 #endif
+
+void WebsiteDataStore::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)
+{
+    m_queue->dispatch([name = name.isolatedCopy(), searchItems = crossThreadCopy(searchItems), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()] {
+        WebCore::saveRecentSearchesToFile(name, searchItems, directory);
+    });
+}
+
+void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+{
+    m_queue->dispatch([name = name.isolatedCopy(), completionHandler = WTFMove(completionHandler), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy()]() mutable {
+        auto result = WebCore::loadRecentSearchesFromFile(name, directory);
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result = crossThreadCopy(result)]() mutable {
+            completionHandler(WTFMove(result));
+        });
+    });
+}
+
+void WebsiteDataStore::removeRecentSearches(WallTime oldestTimeToRemove, CompletionHandler<void()>&& completionHandler)
+{
+    m_queue->dispatch([time = oldestTimeToRemove.isolatedCopy(), directory = resolvedSearchFieldHistoryDirectory().isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        WebCore::removeRecentlyModifiedRecentSearchesFromFile(time, directory);
+        RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
 
 }

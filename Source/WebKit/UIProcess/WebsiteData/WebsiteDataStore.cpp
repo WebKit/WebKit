@@ -196,7 +196,7 @@ static IsPersistent defaultDataStoreIsPersistent()
     // GTK and WPE ports require explicit configuration of a WebsiteDataStore. All default storage
     // locations are relative to the base directories configured by the
     // WebsiteDataStoreConfiguration. The default data store should (probably?) only be used for
-    // prewarmed processes, and should certainly never be allowed to store anything on disk.
+    // prewarmed processes and C API tests, and should certainly never be allowed to store anything on disk.
     return IsPersistent::No;
 #else
     // Other ports allow general use of the default WebsiteDataStore, and so need to persist data.
@@ -211,7 +211,9 @@ Ref<WebsiteDataStore> WebsiteDataStore::defaultDataStore()
     if (globalDatasStore)
         return Ref { *globalDatasStore };
 
-    auto newDataStore = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(defaultDataStoreIsPersistent()), PAL::SessionID::defaultSessionID()));
+    auto isPersistent = defaultDataStoreIsPersistent();
+    auto newDataStore = adoptRef(new WebsiteDataStore(WebsiteDataStoreConfiguration::create(isPersistent),
+        isPersistent == IsPersistent::Yes ? PAL::SessionID::defaultSessionID() : PAL::SessionID::generateEphemeralSessionID()));
     globalDatasStore = newDataStore.get();
     protectedDefaultDataStore() = newDataStore.get();
 
@@ -334,6 +336,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     if (!m_configuration->modelElementCacheDirectory().isEmpty())
         m_resolvedConfiguration->setModelElementCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->modelElementCacheDirectory()));
 #endif
+    if (!m_configuration->searchFieldHistoryDirectory().isEmpty())
+        m_resolvedConfiguration->setSearchFieldHistoryDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->searchFieldHistoryDirectory()));
 
     // Resolve file paths.
     if (!m_configuration->cookieStorageFile().isEmpty()) {
@@ -699,11 +703,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         });
     }
 
-    if (dataTypes.contains(WebsiteDataType::SearchFieldRecentSearches) && isPersistent()) {
-        m_queue->dispatch([modifiedSince, callbackAggregator] {
-            platformRemoveRecentSearches(modifiedSince);
-        });
-    }
+    if (dataTypes.contains(WebsiteDataType::SearchFieldRecentSearches) && isPersistent())
+        removeRecentSearches(modifiedSince, [callbackAggregator] { });
 
 #if ENABLE(TRACKING_PREVENTION)
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
@@ -1990,6 +1991,21 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 {
     return false;
 }
+
+void WebsiteDataStore::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>&)
+{
+}
+
+void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+void WebsiteDataStore::removeRecentSearches(WallTime, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)

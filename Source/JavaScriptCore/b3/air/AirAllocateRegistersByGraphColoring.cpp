@@ -1943,13 +1943,17 @@ private:
         unspillableTmps.ensureSize(arraySize);
         for (unsigned i = AbsoluteTmpMapper<bank>::lastMachineRegisterIndex() + 1; i < ranges.size(); ++i) {
             Range& range = ranges[i];
-            if (range.last - range.first <= 1 && range.count > range.admitStackCount)
+            if (range.last - range.first <= 1 && range.count > range.admitStackCount) {
+                dataLogLnIf(traceDebug, "Add unspillable tmp due to range: ", AbsoluteTmpMapper<bank>::tmpFromAbsoluteIndex(i));
                 unspillableTmps.quickSet(i);
+            }
         }
 
         m_code.forEachFastTmp([&](Tmp tmp) {
-            if (tmp.bank() == bank)
+            if (tmp.bank() == bank) {
+                dataLogLnIf(traceDebug, "Add unspillable tmp since it is FastTmp: ", tmp);
                 unspillableTmps.quickSet(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
+            }
         });
 
         return unspillableTmps;
@@ -2023,6 +2027,7 @@ private:
         HashMap<Tmp, StackSlot*> stackSlots;
         for (Tmp tmp : allocator.spilledTmps()) {
             // All the spilled values become unspillable.
+            dataLogLnIf(traceDebug, "Add unspillable tmp due to spill: ", tmp);
             unspillableTmps.set(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
 
             // Allocate stack slot for each spilled value.
@@ -2150,6 +2155,7 @@ private:
                     RELEASE_ASSERT(instBank == bank);
                     
                     Tmp tmp = m_code.newTmp(bank);
+                    dataLogLnIf(traceDebug, "Add unspillable tmp (scratch) since we introduce it during spill: ", tmp);
                     unspillableTmps.set(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
                     inst.args.append(tmp);
                     RELEASE_ASSERT(inst.args.size() == 3);
@@ -2198,7 +2204,9 @@ private:
                         break;
                     }
 
-                    tmp = m_code.newTmp(bank);
+                    auto newTmp = m_code.newTmp(bank);
+                    dataLogLnIf(traceDebug, "Add unspillable tmp since we introduce it during spill (2): ", tmp, " -> ", newTmp);
+                    tmp = newTmp;
                     unspillableTmps.set(AbsoluteTmpMapper<bank>::absoluteIndex(tmp));
                     
                     if (role == Arg::Scratch)

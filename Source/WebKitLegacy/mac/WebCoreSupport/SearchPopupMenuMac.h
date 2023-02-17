@@ -41,6 +41,7 @@ public:
 
 private:
     RefPtr<PopupMenuMac> m_popup;
+    String m_directory;
 };
 
 

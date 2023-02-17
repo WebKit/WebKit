@@ -137,11 +137,6 @@ String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const Stri
     return FileSystem::pathByAppendingComponent(baseDataDirectory.isNull() ? defaultBaseDataDirectory() : baseDataDirectory, directoryName);
 }
 
-void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
-{
-    notImplemented();
-}
-
 UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
 {
 #if ENABLE(2022_GLIB_API)

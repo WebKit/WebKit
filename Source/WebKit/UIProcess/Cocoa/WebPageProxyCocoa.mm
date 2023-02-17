@@ -178,14 +178,14 @@ void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::
 {
     MESSAGE_CHECK(!name.isNull());
 
-    WebCore::saveRecentSearches(name, searchItems);
+    m_websiteDataStore->saveRecentSearches(name, searchItems);
 }
 
 void WebPageProxy::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
 {
     MESSAGE_CHECK_COMPLETION(!name.isNull(), completionHandler({ }));
 
-    completionHandler(WebCore::loadRecentSearches(name));
+    m_websiteDataStore->loadRecentSearches(name, WTFMove(completionHandler));
 }
 
 void WebPageProxy::grantAccessToCurrentPasteboardData(const String& pasteboardName)
