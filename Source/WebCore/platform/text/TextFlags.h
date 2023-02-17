@@ -194,12 +194,12 @@ struct FontVariantAlternatesValues {
         return !(*this == other);
     }
 
-    std::optional<String> stylistic;
+    String stylistic;
     Vector<String> styleset;
     Vector<String> characterVariant;
-    std::optional<String> swash;
-    std::optional<String> ornaments;
-    std::optional<String> annotation;
+    String swash;
+    String ornaments;
+    String annotation;
     bool historicalForms = false;
 
     friend void add(Hasher&, const FontVariantAlternatesValues&);
