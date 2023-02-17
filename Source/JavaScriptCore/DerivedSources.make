@@ -307,6 +307,7 @@ INSPECTOR_DOMAINS := \
     $(JavaScriptCore)/inspector/protocol/IndexedDB.json \
     $(JavaScriptCore)/inspector/protocol/Inspector.json \
     $(JavaScriptCore)/inspector/protocol/LayerTree.json \
+	$(JavaScriptCore)/inspector/protocol/Media.json \
     $(JavaScriptCore)/inspector/protocol/Memory.json \
     $(JavaScriptCore)/inspector/protocol/Network.json \
     $(JavaScriptCore)/inspector/protocol/Page.json \

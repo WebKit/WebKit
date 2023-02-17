@@ -41,6 +41,7 @@ WI.loaded = function()
     InspectorBackend.registerHeapDispatcher(WI.HeapObserver);
     InspectorBackend.registerInspectorDispatcher(WI.InspectorObserver);
     InspectorBackend.registerLayerTreeDispatcher(WI.LayerTreeObserver);
+    InspectorBackend.registerMediaDispatcher(WI.MediaObserver);
     InspectorBackend.registerMemoryDispatcher(WI.MemoryObserver);
     InspectorBackend.registerNetworkDispatcher(WI.NetworkObserver);
     InspectorBackend.registerPageDispatcher(WI.PageObserver);
@@ -73,6 +74,7 @@ WI.loaded = function()
         WI.domDebuggerManager = new WI.DOMDebuggerManager,
         WI.canvasManager = new WI.CanvasManager,
         WI.animationManager = new WI.AnimationManager,
+        WI.mediaManager = new WI.MediaManager,
     ];
 
     // Register for events.
@@ -102,6 +104,7 @@ WI.contentLoaded = function()
     WI.domStorageManager.enable();
     WI.heapManager.enable();
     WI.indexedDBManager.enable();
+    WI.mediaManager.enable();
     WI.memoryManager.enable();
     WI.timelineManager.enable();
 
@@ -204,6 +207,7 @@ WI.updateFindString = () => {};
     makeAgentGetter("IndexedDB");
     makeAgentGetter("Inspector");
     makeAgentGetter("LayerTree");
+    makeAgentGetter("Media");
     makeAgentGetter("Memory");
     makeAgentGetter("Network");
     makeAgentGetter("Page");

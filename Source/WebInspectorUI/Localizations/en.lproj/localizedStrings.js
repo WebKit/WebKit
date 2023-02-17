@@ -149,6 +149,7 @@ localizedStrings["All Exceptions @ JavaScript Breakpoint"] = "All Exceptions";
 /* Break (pause) on all intervals */
 localizedStrings["All Intervals @ Event Breakpoint"] = "All Intervals";
 localizedStrings["All Layers"] = "All Layers";
+localizedStrings["All Media Players"] = "All Media Players";
 /* Break (pause) on all microtasks */
 localizedStrings["All Microtasks @ JavaScript Breakpoint"] = "All Microtasks";
 /* Property value for `font-variant-capitals: all-petite-caps`. */
@@ -212,6 +213,7 @@ localizedStrings["Attribute"] = "Attribute";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified */
 localizedStrings["Attribute Modified @ DOM Breakpoint"] = "Attribute Modified";
 localizedStrings["Attributes"] = "Attributes";
+localizedStrings["Audio"] = "Audio";
 localizedStrings["Audit"] = "Audit";
 localizedStrings["Audit Error: %s"] = "Audit Error: %s";
 /* Name of Audit Tab */
@@ -414,6 +416,7 @@ localizedStrings["Console opened at %s"] = "Console opened at %s";
 localizedStrings["Console prompt"] = "Console prompt";
 localizedStrings["Containing"] = "Containing";
 localizedStrings["Content Security Policy violation of directive: %s"] = "Content Security Policy violation of directive: %s";
+localizedStrings["Content Type"] = "Content Type";
 /* Property value for `font-variant-ligatures: contextual`. */
 localizedStrings["Contextual Alternates @ Font Details Sidebar Property Value"] = "Contextual Alternates";
 localizedStrings["Continuation Frame"] = "Continuation Frame";
@@ -625,6 +628,7 @@ localizedStrings["Element overlaps other compositing element"] = "Element overla
 localizedStrings["Elements"] = "Elements";
 /* Name of Elements Tab */
 localizedStrings["Elements Tab Name"] = "Elements";
+localizedStrings["Empty"] = "Empty";
 /* Checkbox shown in the Console to cause future evaluations as though they are in response to user interaction. */
 localizedStrings["Emulate User Gesture @ Console"] = "Emulate User Gesture";
 /* Checkbox shown when configuring log/evaluate/probe breakpoint actions to cause it to be evaluated as though it was in response to user interaction. */
@@ -650,6 +654,7 @@ localizedStrings["Enabled Timelines @ Timelines Tab"] = "Enabled Timelines";
 localizedStrings["Encoded"] = "Encoded";
 localizedStrings["Encoding"] = "Encoding";
 localizedStrings["Energy Impact"] = "Energy Impact";
+localizedStrings["Engine"] = "Engine";
 localizedStrings["Ensure aria-hidden=\u0022%s\u0022 is not used."] = "Ensure aria-hidden=\u0022%s\u0022 is not used.";
 localizedStrings["Ensure that \u201C%s\u201D is spelled correctly."] = "Ensure that \u201C%s\u201D is spelled correctly.";
 localizedStrings["Ensure that buttons have accessible labels for assistive technology."] = "Ensure that buttons have accessible labels for assistive technology.";
@@ -962,6 +967,7 @@ localizedStrings["Log Canvas Context"] = "Log Canvas Context";
 localizedStrings["Log Element"] = "Log Element";
 localizedStrings["Log Frame Text"] = "Log Frame Text";
 localizedStrings["Log Frame Value"] = "Log Frame Value";
+localizedStrings["Log MediaPlayer"] = "Log MediaPlayer";
 localizedStrings["Log Message"] = "Log Message";
 /* Log (print) DOM node to Console */
 localizedStrings["Log Node"] = "Log Node";
@@ -997,6 +1003,11 @@ localizedStrings["Media & Animations"] = "Media & Animations";
 localizedStrings["Media Element"] = "Media Element";
 localizedStrings["Media Event"] = "Media Event";
 localizedStrings["Media Logging:"] = "Media Logging:";
+localizedStrings["Media Player Details"] = "Media Player Details";
+localizedStrings["Media Player Events"] = "Media Player Events";
+localizedStrings["Media Players"] = "Media Players";
+/* Name of Media Tab */
+localizedStrings["Media Tab Name"] = "Media";
 localizedStrings["MediaSource"] = "MediaSource";
 /* Medium network request priority */
 localizedStrings["Medium @ Network Priority"] = "Medium";
@@ -1423,6 +1434,7 @@ localizedStrings["Selected Element"] = "Selected Element";
 localizedStrings["Selected Frame"] = "Selected Frame";
 localizedStrings["Selected Item"] = "Selected Item";
 localizedStrings["Selected Items"] = "Selected Items";
+localizedStrings["Selected Media Player"] = "Selected Media Player";
 /* Selected DOM node */
 localizedStrings["Selected Node"] = "Selected Node";
 localizedStrings["Selected Symbol"] = "Selected Symbol";
@@ -1734,6 +1746,7 @@ localizedStrings["Ungrouped @ Computed Style variables grouping mode"] = "Ungrou
 localizedStrings["Unicase @ Font Details Sidebar Property Value"] = "Unicase";
 localizedStrings["Unique"] = "Unique";
 localizedStrings["Unknown Location"] = "Unknown Location";
+localizedStrings["Unknown Type"] = "Unknown Type";
 localizedStrings["Unknown error"] = "Unknown error";
 localizedStrings["Unknown node"] = "Unknown node";
 /* Title of icon indicating that the selected audit is not able to be run (i.e. unsupported). */
@@ -1765,6 +1778,7 @@ localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
 /* Energy Impact: Very High */
 localizedStrings["Very High @ Timeline Energy Impact"] = "Very High";
+localizedStrings["Video"] = "Video";
 localizedStrings["View Image"] = "View Image";
 localizedStrings["View Recording"] = "View Recording";
 localizedStrings["View Shader"] = "View Shader";

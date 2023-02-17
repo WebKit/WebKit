@@ -1303,6 +1303,24 @@ void InspectorInstrumentation::didFireObserverCallbackImpl(InstrumentingAgents& 
         timelineAgent->didFireObserverCallback();
 }
 
+void InspectorInstrumentation::didCreateMediaPlayerImpl(InstrumentingAgents& instrumentingAgents, HTMLMediaElement& mediaElement)
+{
+    if (auto* mediaAgent = instrumentingAgents.enabledMediaAgent())
+        mediaAgent->didCreateMediaPlayer(mediaElement);
+}
+
+void InspectorInstrumentation::didDestroyMediaPlayerImpl(InstrumentingAgents& instrumentingAgents, HTMLMediaElement& mediaElement)
+{
+    if (auto* mediaAgent = instrumentingAgents.enabledMediaAgent())
+        mediaAgent->didDestroyMediaPlayer(mediaElement);
+}
+
+void InspectorInstrumentation::didUpdateMediaPlayerImpl(InstrumentingAgents& instrumentingAgents, HTMLMediaElement& mediaElement, const String& event)
+{
+    if (auto* mediaAgent = instrumentingAgents.enabledMediaAgent())
+        mediaAgent->didUpdateMediaPlayer(mediaElement, event);
+}
+
 void InspectorInstrumentation::registerInstrumentingAgents(InstrumentingAgents& instrumentingAgents)
 {
     if (!s_instrumentingAgentsSet)

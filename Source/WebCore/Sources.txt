@@ -1573,6 +1573,7 @@ inspector/InspectorHistory.cpp
 inspector/InspectorInstrumentation.cpp
 inspector/InspectorInstrumentationPublic.cpp
 inspector/InspectorInstrumentationWebKit.cpp
+inspector/InspectorMediaPlayer.cpp
 inspector/InspectorNodeFinder.cpp
 inspector/InspectorOverlay.cpp
 inspector/InspectorOverlayLabel.cpp
@@ -1598,6 +1599,7 @@ inspector/agents/InspectorDOMStorageAgent.cpp
 inspector/agents/InspectorDatabaseAgent.cpp
 inspector/agents/InspectorIndexedDBAgent.cpp
 inspector/agents/InspectorLayerTreeAgent.cpp
+inspector/agents/InspectorMediaAgent.cpp
 inspector/agents/InspectorMemoryAgent.cpp
 inspector/agents/InspectorNetworkAgent.cpp
 inspector/agents/InspectorPageAgent.cpp

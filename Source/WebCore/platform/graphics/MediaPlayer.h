@@ -71,6 +71,7 @@ class DestinationColorSpace;
 class GraphicsContextGL;
 class GraphicsContext;
 class InbandTextTrackPrivate;
+class InspectorMediaPlayer;
 class LegacyCDM;
 class LegacyCDMSession;
 class LegacyCDMSessionClient;
@@ -571,6 +572,7 @@ public:
 
     String referrer() const;
     String userAgent() const;
+    URL url() const { return m_url; }
 
     String engineDescription() const;
     long platformErrorCode() const;
@@ -705,6 +707,7 @@ public:
     bool requiresRemotePlayback() const { return m_requiresRemotePlayback; }
 
 private:
+    friend class InspectorMediaPlayer;
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
 

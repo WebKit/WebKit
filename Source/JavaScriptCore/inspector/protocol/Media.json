@@ -1,0 +1,123 @@
+{
+    "domain": "Media",
+    "description": "Media domain allows tracking of media elements that have an associated media player. Tracks media elements in the DOM and elements created in JS.",
+    "condition": "defined(ENABLE_VIDEO) && ENABLE_VIDEO",
+    "debuggableTypes": ["page", "web-page"],
+    "targetTypes": ["page"],
+    "types": [
+        {
+            "id": "MediaPlayerId",
+            "type": "string",
+            "description": "Unique media player identifier."
+        },
+        {
+            "id": "MediaPlayer",
+            "type": "object",
+            "description": "Information about a media player.",
+            "properties": [
+                { "name": "playerId", "$ref": "MediaPlayerId", "description": "Media player identifier." },
+                { "name": "originUrl", "type": "string", "description": "Origin url." },
+                { "name": "contentType", "type": "string", "description": "Resource content type." },
+                { "name": "duration", "type": "any", "description": "Media time representing the duration of the content." },
+                { "name": "engine", "type": "string", "description": "The internal engine behind the media player." }
+            ]
+        },
+        {
+            "id": "MediaPlayerEvent",
+            "type": "string",
+            "enum": [
+                "abort",
+                "canplay",
+                "canplaythrough",
+                "durationchange",
+                "emptied",
+                "ended",
+                "error",
+                "loadeddata",
+                "loadedmetadata",
+                "loadstart",
+                "pause",
+                "play",
+                "playing",
+                "progress",
+                "ratechange",
+                "resize",
+                "seeked",
+                "seeking",
+                "stalled",
+                "suspend",
+                "timeupdate",
+                "volumechange",
+                "waiting"
+            ],
+            "description": "Possible events emitted from a media player."
+        }
+    ],
+    "commands": [
+        {
+            "name": "enable",
+            "description": "Enables media inspection."
+        },
+        {
+            "name": "disable",
+            "description": "Disables media inspection."
+        },
+        {
+            "name": "requestNode",
+            "description": "Gets the NodeId for the player node with the given MediaPlayerId.",
+            "parameters": [
+                { "name": "playerId", "$ref": "MediaPlayerId", "description": "Media player identifier." }
+            ],
+            "returns": [
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Node identifier for given media player." }
+            ]
+        },
+        {
+            "name": "resolveElement",
+            "description": "Resolves JavaScript media element for a given playerId.",
+            "parameters": [
+                { "name": "playerId", "$ref": "MediaPlayerId", "description": "Canvas identifier." },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
+            ],
+            "returns": [
+                { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given media player." }
+            ]
+        },
+        {
+            "name": "play",
+            "description": "Plays the given media player.",
+            "parameters": [
+                { "name": "playerId", "$ref": "MediaPlayerId", "description": "Media player identifier." }
+            ]
+        },
+        {
+            "name": "pause",
+            "description": "Pauses the given media player.",
+            "parameters": [
+                { "name": "playerId", "$ref": "MediaPlayerId", "description": "Media player identifier." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "playerAdded",
+            "parameters": [
+                { "name": "player", "$ref": "MediaPlayer", "description": "Media player object." }
+            ]
+        },
+        {
+            "name": "playerRemoved",
+            "parameters": [
+                { "name": "playerId", "$ref": "MediaPlayerId", "description": "Removed media player identifier." }
+            ]
+        },
+        {
+            "name": "playerUpdated",
+            "parameters": [
+                { "name": "player", "$ref": "MediaPlayer", "description": "Media player object." },
+                { "name": "event", "$ref": "MediaPlayerEvent", "description": "Media player event." },
+                { "name": "data", "type": "any", "optional": true, "description": "Media player event data." }
+            ]
+        }
+    ]
+}

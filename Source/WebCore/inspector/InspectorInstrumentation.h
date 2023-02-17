@@ -316,6 +316,10 @@ public:
     static void didCreateWebAnimation(WebAnimation&);
     static void willDestroyWebAnimation(WebAnimation&);
 
+    static void didCreateMediaPlayer(Document*, HTMLMediaElement&);
+    static void didDestroyMediaPlayer(Document*, HTMLMediaElement&);
+    static void didUpdateMediaPlayer(Document*, HTMLMediaElement&, const String&);
+    
     static void networkStateChanged(Page&);
     static void updateApplicationCacheStatus(Frame*);
 
@@ -525,6 +529,10 @@ private:
     static void didCreateWebAnimationImpl(InstrumentingAgents&, WebAnimation&);
     static void willDestroyWebAnimationImpl(InstrumentingAgents&, WebAnimation&);
 
+    static void didCreateMediaPlayerImpl(InstrumentingAgents&, HTMLMediaElement&);
+    static void didDestroyMediaPlayerImpl(InstrumentingAgents&, HTMLMediaElement&);
+    static void didUpdateMediaPlayerImpl(InstrumentingAgents&, HTMLMediaElement&, const String&);
+    
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
 
@@ -1552,6 +1560,27 @@ inline void InspectorInstrumentation::willDestroyWebAnimation(WebAnimation& anim
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(animation.scriptExecutionContext()))
         willDestroyWebAnimationImpl(*agents, animation);
+}
+
+inline void InspectorInstrumentation::didCreateMediaPlayer(Document* document, HTMLMediaElement& mediaElement)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(document))
+        didCreateMediaPlayerImpl(*agents, mediaElement);
+}
+
+inline void InspectorInstrumentation::didDestroyMediaPlayer(Document* document, HTMLMediaElement& mediaElement)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(document))
+        didDestroyMediaPlayerImpl(*agents, mediaElement);
+}
+
+inline void InspectorInstrumentation::didUpdateMediaPlayer(Document* document, HTMLMediaElement& mediaElement, const String& event)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(document))
+        didUpdateMediaPlayerImpl(*agents, mediaElement, event);
 }
 
 inline void InspectorInstrumentation::networkStateChanged(Page& page)

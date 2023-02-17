@@ -489,6 +489,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #endif
 {
     allMediaElements().add(this);
+    InspectorInstrumentation::didCreateMediaPlayer(&document, *this);
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -563,6 +564,8 @@ void HTMLMediaElement::initializeMediaSession()
 HTMLMediaElement::~HTMLMediaElement()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+    
+    InspectorInstrumentation::didDestroyMediaPlayer(&document(), *this);
 
     beginIgnoringTrackDisplayUpdateRequests();
 
@@ -992,6 +995,8 @@ void HTMLMediaElement::scheduleEvent(const AtomString& eventName)
 
 void HTMLMediaElement::scheduleEvent(Ref<Event>&& event)
 {
+    if (m_player)
+        InspectorInstrumentation::didUpdateMediaPlayer(&document(), *this, event->type().string());
     queueCancellableTaskToDispatchEvent(*this, TaskSource::MediaElement, m_asyncEventsCancellationGroup, WTFMove(event));
 }
 

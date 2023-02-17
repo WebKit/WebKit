@@ -82,6 +82,8 @@ WI.loaded = function()
         InspectorBackend.registerInspectorDispatcher(WI.InspectorObserver);
     if (InspectorBackend.registerLayerTreeDispatcher)
         InspectorBackend.registerLayerTreeDispatcher(WI.LayerTreeObserver);
+    if (InspectorBackend.registerMediaDispatcher)
+        InspectorBackend.registerMediaDispatcher(WI.MediaObserver);
     if (InspectorBackend.registerMemoryDispatcher)
         InspectorBackend.registerMemoryDispatcher(WI.MemoryObserver);
     if (InspectorBackend.registerNetworkDispatcher)
@@ -130,6 +132,7 @@ WI.loaded = function()
         WI.domDebuggerManager = new WI.DOMDebuggerManager,
         WI.canvasManager = new WI.CanvasManager,
         WI.animationManager = new WI.AnimationManager,
+        WI.mediaManager = new WI.MediaManager,
     ];
 
     // Register for events.
@@ -159,6 +162,7 @@ WI.loaded = function()
         WI.GraphicsTabContentView.Type,
         WI.LayersTabContentView.Type,
         WI.AuditTabContentView.Type,
+        WI.MediaTabContentView.Type,
     ]);
     WI._selectedTabIndexSetting = new WI.Setting("selected-tab-index", 0);
 
@@ -503,6 +507,7 @@ WI.contentLoaded = function()
         WI.ConsoleTabContentView,
         WI.SearchTabContentView,
         WI.SettingsTabContentView,
+        WI.MediaTabContentView,
     ];
 
     WI._knownTabClassesByType = new Map;
@@ -1420,6 +1425,9 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         || representedObject instanceof WI.AnimationCollection
         || representedObject instanceof WI.Animation)
         return WI.GraphicsTabContentView;
+
+    if (representedObject instanceof WI.MediaPlayer)
+        return WI.MediaTabContentView;
 
     return null;
 };
