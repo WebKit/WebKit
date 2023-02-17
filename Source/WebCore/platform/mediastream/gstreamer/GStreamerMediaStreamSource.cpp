@@ -635,24 +635,46 @@ static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element,
 {
     GST_DEBUG_OBJECT(element, "%s", gst_state_change_get_name(transition));
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(element);
-    GstStateChangeReturn result = GST_ELEMENT_CLASS(webkit_media_stream_src_parent_class)->change_state(element, transition);
+    GstStateChangeReturn result;
+    bool noPreroll = false;
 
     switch (transition) {
-    case GST_STATE_CHANGE_READY_TO_PAUSED: {
+    case GST_STATE_CHANGE_NULL_TO_READY: {
         auto locker = GstObjectLocker(self);
         for (auto& item : self->priv->sources)
             item->startObserving();
-        result = GST_STATE_CHANGE_NO_PREROLL;
         break;
     }
-    case GST_STATE_CHANGE_PAUSED_TO_READY: {
-        auto locker = GstObjectLocker(self);
-        gst_flow_combiner_reset(self->priv->flowCombiner.get());
+    case GST_STATE_CHANGE_READY_TO_PAUSED: {
+        noPreroll = true;
         break;
     }
     default:
         break;
     }
+
+    result = GST_ELEMENT_CLASS(webkit_media_stream_src_parent_class)->change_state(element, transition);
+    if (result == GST_STATE_CHANGE_FAILURE)
+        return result;
+
+    switch (transition) {
+    case GST_STATE_CHANGE_PAUSED_TO_READY: {
+        auto locker = GstObjectLocker(self);
+        gst_flow_combiner_reset(self->priv->flowCombiner.get());
+        break;
+    }
+    case GST_STATE_CHANGE_READY_TO_NULL: {
+        auto locker = GstObjectLocker(self);
+        for (auto& item : self->priv->sources)
+            item->stopObserving();
+        break;
+    }
+    default:
+        break;
+    }
+
+    if (noPreroll && result == GST_STATE_CHANGE_SUCCESS)
+        result = GST_STATE_CHANGE_NO_PREROLL;
 
     return result;
 }
