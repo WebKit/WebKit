@@ -175,6 +175,7 @@ public:
     void effectStackNoLongerAllowsAcceleration();
 
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
+    void acceleratedPropertiesOverriddenByCascadeDidChange();
 
     static String CSSPropertyIDToIDLAttributeName(CSSPropertyID);
 
@@ -222,6 +223,7 @@ private:
     void computeHasImplicitKeyframeForAcceleratedProperty();
     void computeHasKeyframeComposingAcceleratedProperty();
     void computeHasExplicitlyInheritedKeyframeProperty();
+    void computeHasAcceleratedPropertyOverriddenByCascadeProperty();
     void abilityToBeAcceleratedDidChange();
 
     // AnimationEffect
@@ -260,6 +262,7 @@ private:
     bool m_hasImplicitKeyframeForAcceleratedProperty { false };
     bool m_hasKeyframeComposingAcceleratedProperty { false };
     bool m_hasExplicitlyInheritedKeyframeProperty { false };
+    bool m_hasAcceleratedPropertyOverriddenByCascadeProperty { false };
 };
 
 } // namespace WebCore

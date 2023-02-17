@@ -1000,6 +1000,7 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList&& blendingKeyframes)
     computeHasImplicitKeyframeForAcceleratedProperty();
     computeHasKeyframeComposingAcceleratedProperty();
     computeHasExplicitlyInheritedKeyframeProperty();
+    computeHasAcceleratedPropertyOverriddenByCascadeProperty();
 
     checkForMatchingTransformFunctionLists();
 }
@@ -1636,6 +1637,9 @@ bool KeyframeEffect::canBeAccelerated() const
         return false;
 
     if (m_hasKeyframeComposingAcceleratedProperty)
+        return false;
+
+    if (m_hasAcceleratedPropertyOverriddenByCascadeProperty)
         return false;
 
     return true;
@@ -2398,6 +2402,20 @@ void KeyframeEffect::computeHasExplicitlyInheritedKeyframeProperty()
     }
 }
 
+void KeyframeEffect::computeHasAcceleratedPropertyOverriddenByCascadeProperty()
+{
+    if (!m_inTargetEffectStack)
+        return;
+
+    ASSERT(m_target);
+    auto* effectStack = m_target->keyframeEffectStack(m_pseudoId);
+    if (!effectStack)
+        return;
+
+    auto relevantAcceleratedPropertiesOverriddenByCascade = effectStack->acceleratedPropertiesOverriddenByCascade().intersectionWith(animatedProperties());
+    m_hasAcceleratedPropertyOverriddenByCascadeProperty = !relevantAcceleratedPropertiesOverriddenByCascade.isEmpty();
+}
+
 void KeyframeEffect::effectStackNoLongerPreventsAcceleration()
 {
     if (m_runningAccelerated == RunningAccelerated::Failed)
@@ -2422,6 +2440,12 @@ void KeyframeEffect::abilityToBeAcceleratedDidChange()
     ASSERT(m_target);
     if (auto* effectStack = m_target->keyframeEffectStack(m_pseudoId))
         effectStack->effectAbilityToBeAcceleratedDidChange(*this);
+}
+
+void KeyframeEffect::acceleratedPropertiesOverriddenByCascadeDidChange()
+{
+    CanBeAcceleratedMutationScope mutationScope(this);
+    computeHasAcceleratedPropertyOverriddenByCascadeProperty();
 }
 
 KeyframeEffect::CanBeAcceleratedMutationScope::CanBeAcceleratedMutationScope(KeyframeEffect* effect)
