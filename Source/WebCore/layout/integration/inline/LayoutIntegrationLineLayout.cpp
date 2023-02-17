@@ -468,9 +468,10 @@ void LineLayout::updateInlineContentDimensions()
 
 void LineLayout::updateStyle(const RenderBoxModelObject& renderer, const RenderStyle& oldStyle)
 {
-    auto invalidation = Layout::InlineInvalidation { ensureLineDamage() };
-    invalidation.styleChanged(m_boxTree.layoutBoxForRenderer(renderer), oldStyle);
-
+    if (m_inlineContent) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+        invalidation.styleChanged(m_boxTree.layoutBoxForRenderer(renderer), oldStyle);
+    }
     m_boxTree.updateStyle(renderer);
 }
 
@@ -1107,7 +1108,11 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
 void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& child)
 {
-    m_boxTree.insert(parent, child);
+    auto& childLayoutBox = m_boxTree.insert(parent, child);
+    if (m_inlineContent && is<Layout::InlineTextBox>(childLayoutBox)) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+        invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox), { }, { });
+    }
 }
 
 void LineLayout::releaseCaches(RenderView& view)
