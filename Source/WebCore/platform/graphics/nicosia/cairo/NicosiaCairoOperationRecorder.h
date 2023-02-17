@@ -88,7 +88,7 @@ private:
     void scale(const WebCore::FloatSize&) override;
     void concatCTM(const WebCore::AffineTransform&) override;
     void setCTM(const WebCore::AffineTransform&) override;
-    WebCore::AffineTransform getCTM(WebCore::GraphicsContext::IncludeDeviceScale) const override;
+    WebCore::AffineTransform getCTM() const override;
 
     void beginTransparencyLayer(float) override;
     void endTransparencyLayer() override;

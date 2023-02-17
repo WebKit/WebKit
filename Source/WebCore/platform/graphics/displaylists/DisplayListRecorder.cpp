@@ -313,9 +313,16 @@ void Recorder::setCTM(const AffineTransform& transform)
     recordSetCTM(transform);
 }
 
-AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale) const
+AffineTransform Recorder::getCTM() const
 {
     return currentState().ctm;
+}
+
+AffineTransform Recorder::getUserCTM() const
+{
+    auto ctm = currentState().ctm;
+    ctm.scale(1 / m_initialScale);
+    return ctm;
 }
 
 void Recorder::beginTransparencyLayer(float opacity)

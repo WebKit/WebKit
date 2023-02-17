@@ -100,7 +100,7 @@ private:
     void translate(float, float) final { }
     void concatCTM(const AffineTransform&) final { }
     void setCTM(const AffineTransform&) final { }
-    AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const final { return { }; }
+    AffineTransform getCTM() const final { return { }; }
     void clearRect(const FloatRect&) final { }
     void clip(const FloatRect&) final { }
     void clipOut(const FloatRect&) final { }

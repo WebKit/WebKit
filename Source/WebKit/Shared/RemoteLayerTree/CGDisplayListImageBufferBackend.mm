@@ -74,9 +74,9 @@ public:
         GraphicsContextCG::setCTM(m_inverseImmutableBaseTransform * transform);
     }
 
-    WebCore::AffineTransform getCTM(IncludeDeviceScale includeDeviceScale) const final
+    WebCore::AffineTransform getCTM() const final
     {
-        return m_immutableBaseTransform * GraphicsContextCG::getCTM(includeDeviceScale);
+        return m_immutableBaseTransform * GraphicsContextCG::getCTM();
     }
 
     WebCore::FloatRect roundToDevicePixels(const WebCore::FloatRect& rect, RoundingMode = RoundAllSides) const final

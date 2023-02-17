@@ -340,8 +340,8 @@ public:
     virtual void concatCTM(const AffineTransform&) = 0;
     virtual void setCTM(const AffineTransform&) = 0;
 
-    enum IncludeDeviceScale { DefinitelyIncludeDeviceScale, PossiblyIncludeDeviceScale };
-    virtual AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const = 0;
+    virtual AffineTransform getCTM() const = 0;
+    virtual AffineTransform getUserCTM() const { return getCTM(); }
 
     // This function applies the device scale factor to the context, making the context capable of
     // acting as a base-level context for a HiDPI environment.

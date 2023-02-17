@@ -444,9 +444,14 @@ void BifurcatedGraphicsContext::setCTM(const AffineTransform& transform)
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-AffineTransform BifurcatedGraphicsContext::getCTM(IncludeDeviceScale includeDeviceScale) const
+AffineTransform BifurcatedGraphicsContext::getCTM() const
 {
-    return m_primaryContext.getCTM(includeDeviceScale);
+    return m_primaryContext.getCTM();
+}
+
+AffineTransform BifurcatedGraphicsContext::getUserCTM() const
+{
+    return m_primaryContext.getUserCTM();
 }
 
 void BifurcatedGraphicsContext::drawFocusRing(const Path& path, float outlineWidth, const Color& color)

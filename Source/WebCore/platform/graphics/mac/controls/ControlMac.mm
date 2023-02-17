@@ -295,8 +295,7 @@ void ControlMac::drawCellOrFocusRing(GraphicsContext& context, const FloatRect& 
 
 void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
 {
-    auto platformContext = context.platformContext();
-    auto userCTM = AffineTransform(CGAffineTransformConcat(CGContextGetCTM(platformContext), CGAffineTransformInvert(CGContextGetBaseCTM(platformContext))));
+    auto userCTM = context.getUserCTM();
     bool useImageBuffer = userCTM.xScale() != 1.0 || userCTM.yScale() != 1.0;
 
     if (!useImageBuffer) {
