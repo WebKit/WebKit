@@ -89,7 +89,6 @@ void WebsiteDataStoreConfiguration::initializePaths()
 {
     setApplicationCacheDirectory(WebsiteDataStore::defaultApplicationCacheDirectory(m_baseCacheDirectory));
     setCacheStorageDirectory(WebsiteDataStore::defaultCacheStorageDirectory(m_baseCacheDirectory));
-    setGeneralStorageDirectory(WebsiteDataStore::defaultGeneralStorageDirectory(m_baseCacheDirectory));
     setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory(m_baseCacheDirectory));
     setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory(m_baseCacheDirectory));
 #if USE(GLIB) || PLATFORM(COCOA)
@@ -108,6 +107,7 @@ void WebsiteDataStoreConfiguration::initializePaths()
     setResourceLoadStatisticsDirectory(WebsiteDataStore::defaultResourceLoadStatisticsDirectory(m_baseDataDirectory));
     setDeviceIdHashSaltsStorageDirectory(WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(m_baseDataDirectory));
     setJavaScriptConfigurationDirectory(WebsiteDataStore::defaultJavaScriptConfigurationDirectory(m_baseDataDirectory));
+    setGeneralStorageDirectory(WebsiteDataStore::defaultGeneralStorageDirectory(m_baseDataDirectory));
 #if PLATFORM(COCOA)
     setCookieStorageFile(WebsiteDataStore::defaultCookieStorageFile(m_baseDataDirectory));
 #endif
