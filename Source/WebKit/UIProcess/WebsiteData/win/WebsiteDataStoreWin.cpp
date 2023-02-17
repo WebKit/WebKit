@@ -41,11 +41,6 @@ void WebsiteDataStore::platformDestroy()
     notImplemented();
 }
 
-void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
-{
-    notImplemented();
-}
-
 String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseCacheDirectory)
 {
     return cacheDirectoryFileSystemRepresentation("ApplicationCache"_s, baseCacheDirectory);

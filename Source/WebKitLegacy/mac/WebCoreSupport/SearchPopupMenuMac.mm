@@ -21,11 +21,23 @@
 #import "SearchPopupMenuMac.h"
 
 #import "PopupMenuMac.h"
+#import <wtf/FileSystem.h>
 #import <wtf/text/AtomString.h>
+
+static String defaultSearchFieldRecentSearchesStorageDirectory()
+{
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+    if (!appName)
+        appName = [[NSProcessInfo processInfo] processName];
+
+    return [[NSHomeDirectory() stringByAppendingPathComponent:@"Library/WebKit"] stringByAppendingPathComponent:appName];
+}
 
 SearchPopupMenuMac::SearchPopupMenuMac(WebCore::PopupMenuClient* client)
     : m_popup(adoptRef(new PopupMenuMac(client)))
+    , m_directory(defaultSearchFieldRecentSearchesStorageDirectory())
 {
+    FileSystem::makeAllDirectories(m_directory);
 }
 
 SearchPopupMenuMac::~SearchPopupMenuMac()
@@ -44,10 +56,10 @@ bool SearchPopupMenuMac::enabled()
 
 void SearchPopupMenuMac::saveRecentSearches(const AtomString& name, const Vector<WebCore::RecentSearch>& searchItems)
 {
-    WebCore::saveRecentSearches(name, searchItems);
+    WebCore::saveRecentSearchesToFile(name, searchItems, m_directory);
 }
 
 void SearchPopupMenuMac::loadRecentSearches(const AtomString& name, Vector<WebCore::RecentSearch>& searchItems)
 {
-    searchItems = WebCore::loadRecentSearches(name);
+    searchItems = WebCore::loadRecentSearchesFromFile(name, m_directory);
 }

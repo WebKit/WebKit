@@ -336,6 +336,8 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
     if (!m_configuration->modelElementCacheDirectory().isEmpty())
         m_resolvedConfiguration->setModelElementCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->modelElementCacheDirectory()));
 #endif
+    if (!m_configuration->searchFieldHistoryDirectory().isEmpty())
+        m_resolvedConfiguration->setSearchFieldHistoryDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->searchFieldHistoryDirectory()));
 
     // Resolve file paths.
     if (!m_configuration->cookieStorageFile().isEmpty()) {
@@ -701,11 +703,8 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
         });
     }
 
-    if (dataTypes.contains(WebsiteDataType::SearchFieldRecentSearches) && isPersistent()) {
-        m_queue->dispatch([modifiedSince, callbackAggregator] {
-            platformRemoveRecentSearches(modifiedSince);
-        });
-    }
+    if (dataTypes.contains(WebsiteDataType::SearchFieldRecentSearches) && isPersistent())
+        removeRecentSearches(modifiedSince, [callbackAggregator] { });
 
 #if ENABLE(TRACKING_PREVENTION)
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
@@ -1992,6 +1991,21 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 {
     return false;
 }
+
+void WebsiteDataStore::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>&)
+{
+}
+
+void WebsiteDataStore::loadRecentSearches(const String& name, CompletionHandler<void(Vector<WebCore::RecentSearch>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
+void WebsiteDataStore::removeRecentSearches(WallTime, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)
