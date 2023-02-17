@@ -1137,9 +1137,7 @@ public:
 
         gprSetBuilder.remove(GPRInfo::wasmBaseMemoryPointer);
         gprSetBuilder.remove(GPRInfo::wasmContextInstancePointer);
-
-        if (mode == MemoryMode::BoundsChecking)
-            gprSetBuilder.remove(GPRInfo:: wasmBoundsCheckingSizeRegister);
+        gprSetBuilder.remove(GPRInfo::wasmBoundsCheckingSizeRegister); // Even though MemoryMode::Signaling does not use it, this makes the code simpler, and anyway right now all callee-saves are excluded from gprSetBuilder.
 
         RegisterSetBuilder fprSetBuilder = RegisterSetBuilder::allFPRs();
 
@@ -1678,7 +1676,7 @@ public:
             emitMove(Value::fromI64(static_cast<int64_t>(static_cast<uint64_t>(sizeOfOperation) + offset - 1)), Location::fromGPR(m_scratchGPR));
             m_jit.add64(pointerLocation.asGPR(), m_scratchGPR);
 
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo:: wasmBoundsCheckingSizeRegister));
+            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
             break;
         }
 
@@ -6119,12 +6117,10 @@ public:
     void restoreWebAssemblyGlobalState()
     {
         restoreWebAssemblyContextInstance();
-        if (m_mode == MemoryMode::BoundsChecking) {
-            m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister);
-            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
-        } else {
-            m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, m_dataScratchGPR);
-            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, m_dataScratchGPR, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        // FIXME: We should just store these registers on stack and load them.
+        if (!!m_info.memory) {
+            m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+            m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
         }
     }
 
@@ -6348,15 +6344,15 @@ public:
         // Do a context switch if needed.
         Jump isSameInstance = m_jit.branchPtr(RelationalCondition::Equal, calleeInstance, GPRInfo::wasmContextInstancePointer);
         // TODO: Handle this case for targets that don't support pinned state registers.
-        m_jit.loadPairPtr(calleeInstance, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister);
-        m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo:: wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        m_jit.loadPairPtr(calleeInstance, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
+        m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
         isSameInstance.link(&m_jit);
 
         // Since this can switch instance, we need to keep JSWebAssemblyInstance anchored in the stack.
         m_jit.storePtr(jsCalleeAnchor, Location::fromArgumentLocation(wasmCalleeInfo.thisArgument).asAddress());
 
         // Safe to use across saveValues/passParameters since neither clobber the scratch GPR.
-        m_jit.loadPtr(Address(calleeCode), m_scratchGPR); 
+        m_jit.loadPtr(Address(calleeCode), m_scratchGPR);
         saveValuesAcrossCall(wasmCalleeInfo);
         passParametersToCall(arguments, wasmCalleeInfo);
         m_jit.call(m_scratchGPR, WasmEntryPtrTag);
