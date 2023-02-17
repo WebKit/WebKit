@@ -137,9 +137,10 @@ bool RemoteLayerTreeHost::updateLayerTree(const RemoteLayerTreeTransaction& tran
         RemoteLayerTreePropertyApplier::applyHierarchyUpdates(*node, properties, m_nodes);
     }
 
-    if (auto contextHostID = transaction.remoteContextHostIdentifier()) {
-        m_hostedLayers.set(*contextHostID, rootNode->layerID());
-        if (auto* remoteRootNode = nodeForID(m_hostingLayers.get(*contextHostID)))
+    if (auto contextHostedID = transaction.remoteContextHostedIdentifier()) {
+        m_hostedLayers.set(*contextHostedID, rootNode->layerID());
+        rootNode->setRemoteContextHostedIdentifier(*contextHostedID);
+        if (auto* remoteRootNode = nodeForID(m_hostingLayers.get(*contextHostedID)))
             [remoteRootNode->layer() addSublayer:rootNode->layer()];
     }
 
@@ -215,11 +216,10 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::GraphicsLayer::PlatformLay
     }
 
     if (auto node = m_nodes.take(layerID)) {
-        if (auto hostIdentifier = node->remoteContextHostIdentifier()) {
-            ASSERT(m_hostingLayers.contains(*hostIdentifier));
-            m_hostingLayers.remove(*hostIdentifier);
-            m_hostedLayers.remove(*hostIdentifier);
-        }
+        if (auto hostingIdentifier = node->remoteContextHostingIdentifier())
+            m_hostingLayers.remove(*hostingIdentifier);
+        if (auto hostedIdentifier = node->remoteContextHostedIdentifier())
+            m_hostedLayers.remove(*hostedIdentifier);
     }
 }
 

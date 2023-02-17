@@ -192,7 +192,7 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
         if (!weakThis)
             return;
         weakThis->didUpdateGeometry();
-    }, m_identifier.toUInt64());
+    }, m_identifier);
 }
 
 void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin)

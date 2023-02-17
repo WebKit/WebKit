@@ -2283,6 +2283,8 @@ private:
     void didFinishProgress();
     void setNetworkRequestsInProgress(bool);
 
+    void updateRemoteFrameSize(WebCore::FrameIdentifier, WebCore::IntSize);
+
     void didDestroyNavigation(uint64_t navigationID);
 
     void decidePolicyForNavigationAction(Ref<WebProcessProxy>&&, WebCore::PageIdentifier, WebFrameProxy&, FrameInfoData&&, uint64_t navigationID, NavigationActionData&&, FrameInfoData&& originatingFrameInfo,

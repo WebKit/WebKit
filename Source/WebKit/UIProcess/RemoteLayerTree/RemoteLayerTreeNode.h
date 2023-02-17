@@ -83,13 +83,16 @@ public:
     void setScrollingNodeID(WebCore::ScrollingNodeID nodeID) { m_scrollingNodeID = nodeID; }
 #endif
 
-    Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostIdentifier() const { return m_remoteContextHostIdentifier; }
+    Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostingIdentifier() const { return m_remoteContextHostingIdentifier; }
+    Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier() const { return m_remoteContextHostedIdentifier; }
+    void setRemoteContextHostedIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_remoteContextHostedIdentifier = identifier; }
 
 private:
     void initializeLayer();
 
     WebCore::GraphicsLayer::PlatformLayerID m_layerID;
-    Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostIdentifier;
+    Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostingIdentifier;
+    Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
 
     RetainPtr<CALayer> m_layer;
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

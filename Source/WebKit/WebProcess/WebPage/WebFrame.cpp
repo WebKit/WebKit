@@ -952,6 +952,13 @@ String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
     return String();
 }
 
+void WebFrame::updateRemoteFrameSize(WebCore::IntSize size)
+{
+    // FIXME: This should probably be a WebFrameProxy message, but WebFrameProxy::commitProvisionalFrame currently removes the parent frame's process as a message receiver.
+    if (m_page)
+        m_page->send(Messages::WebPageProxy::UpdateRemoteFrameSize(m_frameID, size));
+}
+
 void WebFrame::setTextDirection(const String& direction)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());

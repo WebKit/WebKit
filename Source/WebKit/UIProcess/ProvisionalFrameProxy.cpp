@@ -65,13 +65,6 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProces
     auto parameters = page.creationParameters(m_process, *drawingArea);
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.topContentInset = 0;
-    parameters.viewSize = { 300, 150 }; // FIXME: Get the real size from the parent process.
-#if ENABLE(META_VIEWPORT)
-    // FIXME: This is incorrect, but needed to make the root layer the right size in the basic-iframe.html layout test.
-    // Investigate whether iframes think their viewport size is just the size of the iframe.
-    // and maybe update viewportConfigurationViewSize as well if needed.
-    parameters.viewportConfigurationViewLayoutSize = { 300, 150 };
-#endif
     parameters.layerHostingContextIdentifier = m_layerHostingContextIdentifier;
     parameters.mainFrameIdentifier = frame.frameID();
     m_process->send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);

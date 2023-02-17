@@ -177,6 +177,7 @@ public:
     String mimeTypeForResourceWithURL(const URL&) const;
 
     void setTextDirection(const String&);
+    void updateRemoteFrameSize(WebCore::IntSize);
 
     void documentLoaderDetached(uint64_t navigationID);
 

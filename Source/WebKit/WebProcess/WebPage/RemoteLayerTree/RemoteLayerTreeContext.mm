@@ -151,7 +151,7 @@ void RemoteLayerTreeContext::buildTransaction(RemoteLayerTreeTransaction& transa
 
     PlatformCALayerRemote& rootLayerRemote = downcast<PlatformCALayerRemote>(rootLayer);
     transaction.setRootLayerID(rootLayerRemote.layerID());
-    transaction.setRemoteContextHostIdentifier(m_webPage.layerHostingContextIdentifier());
+    transaction.setRemoteContextHostedIdentifier(m_webPage.layerHostingContextIdentifier());
 
     m_currentTransaction = &transaction;
     rootLayerRemote.recursiveBuildTransaction(*this, transaction);
