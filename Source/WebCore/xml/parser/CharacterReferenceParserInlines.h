@@ -35,12 +35,16 @@ inline void unconsumeCharacters(SegmentedString& source, StringBuilder& consumed
     source.pushBack(consumedCharacters.toString());
 }
 
-template <typename ParserFunctions>
-bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCharacter, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
+template<typename T> void appendCharacterTo(T& output, UChar32 c)
+{
+    output.appendCharacter(c);
+}
+
+template <typename ParserFunctions, typename DecodedIdentityType>
+bool consumeCharacterReference(SegmentedString& source, DecodedIdentityType& decodedCharacter, bool& notEnoughCharacters, UChar additionalAllowedCharacter)
 {
     ASSERT(!additionalAllowedCharacter || additionalAllowedCharacter == '"' || additionalAllowedCharacter == '\'' || additionalAllowedCharacter == '>');
     ASSERT(!notEnoughCharacters);
-    ASSERT(decodedCharacter.isEmpty());
     
     enum {
         Initial,
@@ -109,11 +113,11 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
+                appendCharacterTo(decodedCharacter, ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
+                appendCharacterTo(decodedCharacter, ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);
@@ -127,11 +131,11 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
+                appendCharacterTo(decodedCharacter, ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
+                appendCharacterTo(decodedCharacter, ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);

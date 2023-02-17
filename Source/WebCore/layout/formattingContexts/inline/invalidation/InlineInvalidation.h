@@ -31,15 +31,21 @@ namespace WebCore {
 
 class RenderStyle;
 
+namespace InlineDisplay {
+struct Box;
+}
+
 namespace Layout {
 
 class Box;
 class InlineDamage;
 class InlineTextBox;
+class InlineFormattingState;
 
 class InlineInvalidation {
 public:
-    InlineInvalidation(InlineDamage&);
+    // FIXME: InlineFormattingState should be able to provide all the content for invalidation (i.e. omit any display content).
+    InlineInvalidation(InlineDamage&, const InlineFormattingState&, const Vector<InlineDisplay::Box>&);
 
     void styleChanged(const Box&, const RenderStyle& oldStyle);
 
@@ -53,6 +59,8 @@ public:
 
 private:
     InlineDamage& m_inlineDamage;
+    const InlineFormattingState& m_inlineFormattingState;
+    const Vector<InlineDisplay::Box>& m_displayBoxes;
 };
 
 }

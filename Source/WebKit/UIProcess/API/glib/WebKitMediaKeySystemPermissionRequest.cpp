@@ -25,6 +25,10 @@
 #include "WebKitPermissionRequest.h"
 #include <wtf/glib/WTFGType.h>
 
+#if !ENABLE(2022_GLIB_API)
+typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
+#endif
+
 using namespace WebKit;
 
 /**
@@ -44,7 +48,7 @@ using namespace WebKit;
  * requested CDM, unless it is already present on the host system.
  */
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitMediaKeySystemPermissionRequestPrivate {
     RefPtr<MediaKeySystemPermissionRequest> request;
@@ -84,7 +88,7 @@ static void webkitMediaKeySystemPermissionRequestDeny(WebKitPermissionRequest* r
     priv->madeDecision = true;
 }
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface* iface)
 {
     iface->allow = webkitMediaKeySystemPermissionRequestAllow;
     iface->deny = webkitMediaKeySystemPermissionRequestDeny;

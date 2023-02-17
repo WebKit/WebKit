@@ -771,9 +771,6 @@ crypto/subtle/rsa-indexeddb.html [ Skip ] # Timeout
 http/tests/appcache [ Skip ]
 http/tests/blink/sendbeacon [ Skip ]
 
-# fails because of conversion to epoch behavior specific to Mac
-http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
-
 # needs more investigation
 http/tests/cache/iframe-304-crash.html [ Failure ]
 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
@@ -896,7 +893,6 @@ http/tests/security/cookies/third-party-cookie-blocking-redirect.html [ Pass ]
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html [ Pass ]
 http/tests/security/cookies/third-party-cookie-blocking-xslt.xml [ Pass ]
 
-http/tests/ssl/curl/certificate-and-authentication.html [ Pass ]
 http/tests/ssl/media-stream [ Skip ]
 
 [ Debug ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
@@ -929,7 +925,6 @@ http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 http/tests/xmlhttprequest/cache-override.html [ Pass Failure ]
 http/tests/xmlhttprequest/cookies.html [ Pass Failure ]
 http/tests/xmlhttprequest/cross-origin-authorization.html [ Pass Failure ]
-http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Pass Failure ]
 http/tests/xmlhttprequest/range-test.html [ Pass Failure ]
@@ -956,12 +951,10 @@ webkit.org/b/192406 http/tests/inspector/network/resource-security-connection.ht
 webkit.org/b/191498 http/tests/inspector/network/resource-security-certificate.html [ Pass ]
 webkit.org/b/191498 http/tests/inspector/network/getSerializedCertificate.html [ Pass ]
 
-http/wpt/service-workers/cors-preflight-star.any-serviceworker.html [ Failure ]
 http/wpt/service-workers/fetchEvent.https.html [ Pass Failure ]
 http/wpt/service-workers/mac/throttleable.https.html [ Failure ]
 http/wpt/service-workers/service-worker-networkprocess-crash.html [ Pass Failure ]
 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
-http/wpt/service-workers/update-service-worker.https.html [ Failure ]
 http/wpt/service-workers/service-worker-spinning-message.https.html [ Pass Failure ]
 
 #///////////////////////////////////////////////////////////////////////////////
@@ -1118,7 +1111,7 @@ fast/dom/Window/slow-unload-handler.html [ Skip ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ Failure ]
 
 # TODO HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
-fast/dom/timer-throttling-hidden-page.html [ Failure ]
+fast/dom/timer-throttling-hidden-page.html [ Skip ] # Timeout
 
 # This test is dependent on DRT being able to open windows.
 fast/dom/Window/new-window-opener.html [ Pass Failure ]
@@ -1136,8 +1129,6 @@ webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame
 
 [ Release ] fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 [ Debug ] fast/dom/HTMLDocument/hasFocus.html [ Skip ]
-
-webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
 
 fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 
@@ -1225,7 +1216,6 @@ editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure ]
 editing/pasteboard/emacs-killring-alternating-append-prepend.html [ Failure ]
 editing/pasteboard/emacs-killring-backward-delete-prepend.html [ Failure ]
-editing/pasteboard/file-drag-to-editable.html [ Failure ]
 editing/pasteboard/file-input-files-access.html [ Failure ]
 editing/pasteboard/files-during-page-drags.html [ Failure ]
 editing/pasteboard/image-in-iframe.html [ Failure ]
@@ -1777,7 +1767,7 @@ fast/events/dblclick-event-getModifierState.html [ Failure ]
 fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Skip ] # File Upload Test
 fast/events/drag-and-drop-autoscroll.html [ Skip ] # Crash
 fast/events/drag-and-drop-move-not-copy.html [ Skip ] # Crash
-fast/events/drag-customData.html [ Failure ]
+fast/events/drag-customData.html [ Skip ]
 fast/events/drag-in-frames.html [ Failure ]
 fast/events/drag-select-when-zoomed-with-header.html [ Failure ]
 fast/events/drag-select-when-zoomed.html [ Failure ]
@@ -1829,7 +1819,6 @@ fast/events/wheel/wheel-event-outside-body.html [ Skip ] # Crash
 fast/events/wheel/wheelevent-basic.html [ Failure ]
 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
-fast/harness/render-tree-as-text-options.html [ Failure ]
 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 fast/html/details-marker-style-mixed.html [ Missing ]
 fast/html/details-writing-mode-mixed.html [ Missing ]
@@ -1972,11 +1961,8 @@ http/tests/cookies/document-cookie-multiple-cookies.html [ Failure ]
 http/tests/css/css-image-loading.html [ Pass Failure ]
 http/tests/misc/form-post-textplain-cross-site.html [ Failure ]
 http/tests/misc/form-post-textplain.html [ Failure ]
-http/tests/misc/form-submit-file-cross-site-redirect.html [ Timeout ]
 http/tests/misc/gamepads-insecure.html [ Failure ]
 http/tests/misc/large-js-program.py [ Skip ] # Timeout
-http/tests/misc/webtiming-one-redirect.py [ Failure ]
-http/tests/misc/webtiming-two-redirects.py [ Failure ]
 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Timeout ]
 http/tests/xmlhttprequest/access-control-basic-allow-list-request-headers.html [ Failure ]
 http/tests/xmlhttprequest/chunked-progress-event-expectedLength.html [ Failure Timeout ]
@@ -2021,7 +2007,7 @@ webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
-webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
+webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout Failure Pass
 webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
 webgl/webgl-oom-paint-document-no-crash.html [ Skip ]
@@ -2037,14 +2023,11 @@ fast/text/whitespace-with-zero-width-space-in-between.html [ ImageOnlyFailure ]
 
 fast/text/preserved-white-space-with-word-spacing.html [ ImageOnlyFailure ]
 
-fast/css/contain-invalidate-if-disabled.html [ Failure ]
-
 fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 
 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
 fast/gradients/conic-gradient-alpha-unpremultiplied.html [ ImageOnlyFailure ]
-fast/text/hanging-punctuation-last-rtl.html [ ImageOnlyFailure ]
 fast/text/simple-bidi-word-spacing.html [ ImageOnlyFailure ]
 fast/text/word-spacing-rtl.html [ ImageOnlyFailure ]
 
@@ -2061,9 +2044,8 @@ fast/text/rtl-pre-wrap-hanging-offset.html [ ImageOnlyFailure ]
 fast/text/synthetic-bold-percentage-word-spacing.html [ ImageOnlyFailure ]
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
 
-http/tests/misc/ftp-eplf-directory.py [ Failure ]
+http/tests/misc/ftp-eplf-directory.py [ Skip ]
 
-http/tests/websocket/tests/hybi/close-and-server-script-exception.html [ Failure ]
 webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
 webgl/lose-context-after-context-lost.html [ Failure ]
 webgl/max-active-contexts-gc.html [ Failure ]
@@ -2416,7 +2398,6 @@ css3/filters/effect-brightness-clamping-hw.html [ Failure ]
 css3/filters/effect-brightness-clamping.html [ Failure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
-css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
 css3/filters/reference-filter-color-space.html [ ImageOnlyFailure ]
 
 fast/transforms/rotated-transform-affects-scrolling-1.html [ Failure ]
@@ -2442,7 +2423,6 @@ fast/text/initial-advance-selected-text.html [ ImageOnlyFailure ]
 fast/text/simple-line-layout-line-box-contain-glyphs.html [ ImageOnlyFailure ]
 
 editing/selection/user-select-all-with-shift-live-range.html [ Failure ]
-imported/w3c/web-platform-tests/cookies/path/default.html [ Failure ]
 
 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 transforms/3d/point-mapping/3d-point-mapping-2.html [ Failure ]
@@ -2584,3 +2564,45 @@ fast/text/simple-line-layout-fallback-space-glyph.html [ ImageOnlyFailure ]
 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 fast/text/user-installed-canvas.html [ ImageOnlyFailure ]
 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
+
+fast/css/accent-color/checkbox.html [ Pass ]
+fast/css/accent-color/progress.html [ Pass ]
+fast/css/accent-color/radio.html [ Pass ]
+fast/css/accent-color/range.html [ Pass ]
+fast/css/accent-color/text.html [ Pass ]
+
+webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ Pass ]
+webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ Pass ]
+webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass ]
+
+editing/pasteboard/data-transfer-items-drag-drop-string.html [ Timeout ]
+editing/selection/drag-to-contenteditable-iframe.html [ Timeout ]
+fast/events/drag-and-drop-link-containing-block.html [ Timeout ]
+fast/events/drag-and-drop-link-fast-multiple-times-does-not-crash.html [ Timeout ]
+fast/events/drag-and-drop-subframe-dataTransfer.html [ Timeout ]
+fast/events/drop-handler-should-not-stop-navigate.html [ Timeout ]
+fast/events/only-valid-drop-targets-receive-file-drop.html [ Timeout ]
+fast/events/page-visibility-iframe-delete-test.html [ Timeout ]
+fast/events/page-visibility-onvisibilitychange.html [ Timeout ]
+fast/events/page-visibility-transition-test.html [ Timeout ]
+fast/events/wheel/wheel-event-destroys-frame.html [ Timeout ]
+fast/text/install-font-style-recalc.html [ Timeout ]
+http/tests/cache/disk-cache/disk-cache-media-small.html [ Timeout ]
+http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.html [ Timeout ]
+http/tests/websocket/tests/hybi/multiple-connections-limit.html [ Timeout ]
+http/tests/workers/service/service-worker-resource-timing.https.html [ Timeout ]
+http/wpt/service-workers/navigation-timing.https.html [ Timeout ]
+streams/readable-stream-lock-after-worker-terminates-crash.html [ Timeout ]
+webgl/2.0.y/conformance2/state/gl-object-get-calls.html [ Skip ] # Timeout
+webgl/many-contexts.html [ Skip ] # Timeout
+webgl/pending/conformance/glsl/misc/swizzle-as-lvalue.html [ Skip ] # Timeout
+
+http/tests/misc/form-submit-file-cross-site-redirect.html [ Failure ]
+http/tests/ssl/curl/certificate-and-authentication.html [ Failure ]
+js/date-timeClip-large-values.html [ Failure ]
+storage/indexeddb/modern/date-basic-private.html [ Failure ]
+storage/indexeddb/modern/date-basic.html [ Failure ]
+storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
+storage/indexeddb/modern/get-keyrange.html [ Failure ]
+storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
+storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]

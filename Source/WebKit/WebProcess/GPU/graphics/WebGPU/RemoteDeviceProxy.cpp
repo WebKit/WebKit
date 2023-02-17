@@ -308,19 +308,20 @@ void RemoteDeviceProxy::pushErrorScope(PAL::WebGPU::ErrorFilter errorFilter)
 
 void RemoteDeviceProxy::popErrorScope(CompletionHandler<void(std::optional<PAL::WebGPU::Error>&&)>&& callback)
 {
-    auto sendResult = sendSync(Messages::RemoteDevice::PopErrorScope());
-    auto [error] = sendResult.takeReplyOr(std::nullopt);
+    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::PopErrorScope(), [callback = WTFMove(callback)](auto error) mutable {
+        if (!error) {
+            callback(std::nullopt);
+            return;
+        }
 
-    if (!error) {
-        callback(std::nullopt);
-        return;
-    }
-
-    WTF::switchOn(WTFMove(*error), [&] (OutOfMemoryError&& outOfMemoryError) {
-        callback({ PAL::WebGPU::OutOfMemoryError::create() });
-    }, [&] (ValidationError&& validationError) {
-        callback({ PAL::WebGPU::ValidationError::create(WTFMove(validationError.message)) });
+        WTF::switchOn(WTFMove(*error), [&] (OutOfMemoryError&& outOfMemoryError) {
+            callback({ PAL::WebGPU::OutOfMemoryError::create() });
+        }, [&] (ValidationError&& validationError) {
+            callback({ PAL::WebGPU::ValidationError::create(WTFMove(validationError.message)) });
+        });
     });
+
+    UNUSED_PARAM(sendResult);
 }
 
 void RemoteDeviceProxy::setLabelInternal(const String& label)

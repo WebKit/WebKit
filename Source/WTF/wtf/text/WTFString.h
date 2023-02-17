@@ -145,6 +145,8 @@ public:
 
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
+    size_t find(LChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
+    size_t find(char character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
 
     size_t find(StringView) const;
     size_t find(StringView, unsigned start) const;

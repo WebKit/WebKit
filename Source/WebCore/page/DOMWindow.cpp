@@ -1261,7 +1261,11 @@ int DOMWindow::outerHeight() const
         return innerHeight();
 
 #if PLATFORM(IOS_FAMILY)
-    RefPtr view = frame->isMainFrame() ? frame->view() : frame->mainFrame().view();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    if (!localFrame)
+        return 0;
+
+    RefPtr view = frame->isMainFrame() ? frame->view() : localFrame->view();
     if (!view)
         return 0;
 
@@ -1285,7 +1289,11 @@ int DOMWindow::outerWidth() const
         return innerWidth();
 
 #if PLATFORM(IOS_FAMILY)
-    RefPtr view = frame->isMainFrame() ? frame->view() : frame->mainFrame().view();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    if (!localFrame)
+        return 0;
+
+    RefPtr view = frame->isMainFrame() ? frame->view() : localFrame->view();
     if (!view)
         return 0;
 
@@ -1988,7 +1996,11 @@ bool DOMWindow::isSameSecurityOriginAsMainFrame() const
     if (frame->isMainFrame())
         return true;
 
-    Document* mainFrameDocument = frame->mainFrame().document();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    if (!localFrame)
+        return false;
+
+    Document* mainFrameDocument = localFrame->document();
 
     if (mainFrameDocument && document()->securityOrigin().isSameOriginDomain(mainFrameDocument->securityOrigin()))
         return true;
@@ -2648,7 +2660,12 @@ ExceptionOr<RefPtr<WindowProxy>> DOMWindow::open(DOMWindow& activeWindow, DOMWin
 #if ENABLE(CONTENT_EXTENSIONS)
     auto* page = firstFrame->page();
     RefPtr firstFrameDocument = firstFrame->document();
-    RefPtr mainFrameDocument = firstFrame->mainFrame().document();
+
+    auto* localFrame = dynamicDowncast<LocalFrame>(firstFrame->mainFrame());
+    if (!localFrame)
+        return RefPtr<WindowProxy> { nullptr };
+
+    RefPtr mainFrameDocument = localFrame->document();
     RefPtr mainFrameDocumentLoader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
     if (firstFrameDocument && page && mainFrameDocumentLoader) {
         auto results = page->userContentProvider().processContentRuleListsForLoad(*page, firstFrameDocument->completeURL(urlString), ContentExtensions::ResourceType::Popup, *mainFrameDocumentLoader);

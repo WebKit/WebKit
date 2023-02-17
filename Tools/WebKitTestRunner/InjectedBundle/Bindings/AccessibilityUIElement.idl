@@ -286,7 +286,6 @@
     readonly attribute long elementTextPosition;
     readonly attribute long elementTextLength;
     readonly attribute DOMString stringForSelection;
-    object elementsForRange(unsigned long location, unsigned long length);
     undefined increaseTextSelection();
     undefined decreaseTextSelection();
     AccessibilityUIElement linkedElement();

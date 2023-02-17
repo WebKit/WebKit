@@ -41,7 +41,7 @@ class Element;
 
 enum class ParserContentPolicy : uint8_t;
 
-bool tryFastParsingHTMLFragment(const String& source, Document&, Ref<DocumentFragment>&, Element& contextElement, OptionSet<ParserContentPolicy>);
+bool tryFastParsingHTMLFragment(const String& source, Document&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>);
 
 } // namespace WebCore
 

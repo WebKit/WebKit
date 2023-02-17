@@ -184,21 +184,23 @@ void CachedResource::load(CachedResourceLoader& cachedResourceLoader)
     // We query the top document because new frames may be created in pagehide event handlers
     // and their backForwardCacheState will not reflect the fact that they are about to enter page
     // cache.
-    if (auto* topDocument = frame.mainFrame().document()) {
-        switch (topDocument->backForwardCacheState()) {
-        case Document::NotInBackForwardCache:
-            break;
-        case Document::AboutToEnterBackForwardCache:
-            // Beacons are allowed to go through in 'pagehide' event handlers.
-            if (m_options.keepAlive || shouldUsePingLoad(type()))
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame())) {
+        if (auto* topDocument = localFrame->document()) {
+            switch (topDocument->backForwardCacheState()) {
+            case Document::NotInBackForwardCache:
                 break;
-            CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: About to enter back/forward cache", frame);
-            failBeforeStarting();
-            return;
-        case Document::InBackForwardCache:
-            CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Already in back/forward cache", frame);
-            failBeforeStarting();
-            return;
+            case Document::AboutToEnterBackForwardCache:
+                // Beacons are allowed to go through in 'pagehide' event handlers.
+                if (m_options.keepAlive || shouldUsePingLoad(type()))
+                    break;
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: About to enter back/forward cache", frame);
+                failBeforeStarting();
+                return;
+            case Document::InBackForwardCache:
+                CACHEDRESOURCE_RELEASE_LOG_WITH_FRAME("load: Already in back/forward cache", frame);
+                failBeforeStarting();
+                return;
+            }
         }
     }
 

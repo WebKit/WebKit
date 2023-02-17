@@ -210,7 +210,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::minimumScrollPosition() const
 {
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(FloatPoint(), toFloatSize(scrollOrigin()));
     
-    if (isRootNode() && scrollingTree().scrollPinningBehavior() == PinToBottom)
+    if (isRootNode() && scrollingTree().scrollPinningBehavior() == ScrollPinningBehavior::PinToBottom)
         position.setY(maximumScrollPosition().y());
 
     return position;
@@ -221,7 +221,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition() const
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(FloatPoint(totalContentsSizeForRubberBand() - scrollableAreaSize()), toFloatSize(scrollOrigin()));
     position = position.expandedTo(FloatPoint());
 
-    if (isRootNode() && scrollingTree().scrollPinningBehavior() == PinToTop)
+    if (isRootNode() && scrollingTree().scrollPinningBehavior() == ScrollPinningBehavior::PinToTop)
         position.setY(minimumScrollPosition().y());
 
     return position;

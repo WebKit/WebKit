@@ -54,4 +54,9 @@ void WebRemoteFrameClient::frameDetached()
     m_frame->invalidate();
 }
 
+void WebRemoteFrameClient::sizeDidChange(WebCore::IntSize size)
+{
+    m_frame->updateRemoteFrameSize(size);
+}
+
 }

@@ -201,8 +201,8 @@ public:
     bool shouldShowOverlay() const;
 
     void hideHighlight();
-    void highlightNodeList(RefPtr<NodeList>&&, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt);
-    void highlightNode(Node*, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt);
+    void highlightNodeList(RefPtr<NodeList>&&, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt, bool showRulers = false);
+    void highlightNode(Node*, const Highlight::Config&, const std::optional<Grid::Config>& = std::nullopt, const std::optional<Flex::Config>& = std::nullopt, bool showRulers = false);
     void highlightQuad(std::unique_ptr<FloatQuad>, const Highlight::Config&);
 
     void setShowPaintRects(bool);
@@ -210,7 +210,6 @@ public:
     unsigned paintRectCount() const { return m_paintRects.size(); }
 
     void setShowRulers(bool);
-    void setShowRulersDuringElementSelection(bool enabled) { m_showRulersDuringElementSelection = enabled; }
 
     Node* highlightedNode() const;
     unsigned gridOverlayCount() const { return m_activeGridOverlays.size(); }
@@ -278,7 +277,7 @@ private:
     bool m_indicating { false };
     bool m_showPaintRects { false };
     bool m_showRulers { false };
-    bool m_showRulersDuringElementSelection { false };
+    bool m_showRulersForNodeHighlight { false };
 };
 
 #if PLATFORM(IOS_FAMILY)

@@ -581,7 +581,7 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 {
     encoder << m_rootLayerID;
     encoder << m_createdLayers;
-    encoder << m_remoteContextHostIdentifier;
+    encoder << m_remoteContextHostedIdentifier;
 
     encoder << static_cast<uint64_t>(m_changedLayers.size());
 
@@ -654,7 +654,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_createdLayers))
         return false;
 
-    if (!decoder.decode(result.m_remoteContextHostIdentifier))
+    if (!decoder.decode(result.m_remoteContextHostedIdentifier))
         return false;
 
     uint64_t numChangedLayerProperties;

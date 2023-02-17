@@ -126,7 +126,9 @@ private:
     RetainPtr<CALayer> m_exposedRectIndicatorLayer;
 
     TransactionID m_pendingLayerTreeTransactionID;
+#if ASSERT_ENABLED
     TransactionID m_lastVisibleTransactionID;
+#endif
     TransactionID m_transactionIDForPendingCACommit;
     TransactionID m_transactionIDForUnhidingContent;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };

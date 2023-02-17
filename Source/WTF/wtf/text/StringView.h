@@ -153,6 +153,8 @@ public:
     SplitResult splitAllowingEmptyEntries(UChar) const;
 
     size_t find(UChar, unsigned start = 0) const;
+    size_t find(LChar, unsigned start = 0) const;
+    ALWAYS_INLINE size_t find(char c, unsigned start = 0) const { return find(static_cast<LChar>(c), start); }
     template<typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, UChar>>* = nullptr>
     size_t find(CodeUnitMatchFunction&&, unsigned start = 0) const;
     ALWAYS_INLINE size_t find(ASCIILiteral literal, unsigned start = 0) const { return find(literal.characters8(), literal.length(), start); }
@@ -645,6 +647,13 @@ inline String StringView::toStringWithoutCopying() const
 }
 
 inline size_t StringView::find(UChar character, unsigned start) const
+{
+    if (is8Bit())
+        return WTF::find(characters8(), m_length, character, start);
+    return WTF::find(characters16(), m_length, character, start);
+}
+
+inline size_t StringView::find(LChar character, unsigned start) const
 {
     if (is8Bit())
         return WTF::find(characters8(), m_length, character, start);

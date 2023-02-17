@@ -643,7 +643,10 @@ WI.initializeTarget = function(target)
 
         // COMPATIBILITY (iOS 13.4): Page.setShowRulers was removed.
         if (target.hasCommand("Page.setShowRulers") && WI.settings.showRulers.value)
-            target.PageAgent.setShowRulers(true);
+            target.PageAgent.setShowRulers(true).catch((error) => {
+                // FIXME <rdar://105244623> iOS platforms without a matching legacy protocol definition will fall back to the local macOS protocol definition.
+                console.error(error);
+            });
     }
 };
 

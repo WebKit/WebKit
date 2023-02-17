@@ -109,7 +109,11 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (bounds.isEmpty())
         return std::nullopt;
 
-    auto& mainFrameView = *regionRenderer.document().frame()->mainFrame().view();
+    auto* localFrame = dynamicDowncast<LocalFrame>(regionRenderer.document().frame()->mainFrame());
+    if (!localFrame)
+        return std::nullopt;
+
+    auto& mainFrameView = *localFrame->view();
 
     FloatSize frameViewSize = mainFrameView.size();
     // Adding some wiggle room, we use this to avoid extreme cases.

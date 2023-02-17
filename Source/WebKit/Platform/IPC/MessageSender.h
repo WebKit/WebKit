@@ -88,6 +88,12 @@ public:
         return sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID(), sendOptions);
     }
 
+    template<typename T, typename C, typename U>
+    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, OptionSet<SendOption> sendOptions = { })
+    {
+        return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions);
+    }
+
     template<typename T, typename C>
     AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
     {

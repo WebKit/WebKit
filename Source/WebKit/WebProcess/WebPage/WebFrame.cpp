@@ -952,6 +952,13 @@ String WebFrame::mimeTypeForResourceWithURL(const URL& url) const
     return String();
 }
 
+void WebFrame::updateRemoteFrameSize(WebCore::IntSize size)
+{
+    // FIXME: This should probably be a WebFrameProxy message, but WebFrameProxy::commitProvisionalFrame currently removes the parent frame's process as a message receiver.
+    if (m_page)
+        m_page->send(Messages::WebPageProxy::UpdateRemoteFrameSize(m_frameID, size));
+}
+
 void WebFrame::setTextDirection(const String& direction)
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
@@ -1024,7 +1031,10 @@ std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBou
     auto* localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame)
         return std::nullopt;
-    return fromCoreFrame(localFrame->mainFrame())->isNavigatingToAppBoundDomain();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(localFrame->mainFrame());
+    if (!localMainFrame)
+        return std::nullopt;
+    return fromCoreFrame(*localMainFrame)->isNavigatingToAppBoundDomain();
 }
 #endif
 

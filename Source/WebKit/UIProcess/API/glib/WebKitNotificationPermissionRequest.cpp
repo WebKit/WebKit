@@ -25,6 +25,10 @@
 #include "WebKitPermissionRequest.h"
 #include <wtf/glib/WTFGType.h>
 
+#if !ENABLE(2022_GLIB_API)
+typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
+#endif
+
 using namespace WebKit;
 
 /**
@@ -43,7 +47,7 @@ using namespace WebKit;
  * Since: 2.8
  */
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitNotificationPermissionRequestPrivate {
     RefPtr<NotificationPermissionRequest> request;
@@ -82,7 +86,7 @@ static void webkitNotificationPermissionRequestDeny(WebKitPermissionRequest* req
     priv->madeDecision = true;
 }
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface* iface)
 {
     iface->allow = webkitNotificationPermissionRequestAllow;
     iface->deny = webkitNotificationPermissionRequestDeny;

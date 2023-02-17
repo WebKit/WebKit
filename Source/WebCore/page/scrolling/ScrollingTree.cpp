@@ -97,7 +97,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
         // Event regions are affected by page scale, so no need to map through scale.
         bool isSynchronousDispatchRegion = m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Wheel, roundedPosition) == TrackingType::Synchronous
             || m_treeState.eventTrackingRegions.trackingTypeForPoint(EventTrackingRegions::EventType::Mousewheel, roundedPosition) == TrackingType::Synchronous;
-        LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::determineWheelEventProcessing: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
+        LOG_WITH_STREAM(Scrolling, stream << "\nScrollingTree::computeWheelProcessingSteps: wheelEvent " << wheelEvent << " mapped to content point " << position << ", in non-fast region " << isSynchronousDispatchRegion);
 
         if (isSynchronousDispatchRegion)
             return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
@@ -135,7 +135,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
 
     m_latchingController.receivedWheelEvent(wheelEvent, processingSteps, m_allowLatching);
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::determineWheelEventProcessing: processingSteps " << processingSteps);
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::determineWheelEventProcessing: " << wheelEvent << " processingSteps " << processingSteps);
 
     return processingSteps;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -71,6 +71,30 @@
         return WebFeatureStatusStable;
     case API::FeatureStatus::Mature:
         return WebFeatureStatusMature;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+- (WebFeatureCategory)category
+{
+    switch (_wrappedFeature->category()) {
+    case API::FeatureCategory::None:
+        return WebFeatureCategoryNone;
+    case API::FeatureCategory::CSS:
+        return WebFeatureCategoryCSS;
+    case API::FeatureCategory::DOM:
+        return WebFeatureCategoryDOM;
+    case API::FeatureCategory::Javascript:
+        return WebFeatureCategoryJavascript;
+    case API::FeatureCategory::Media:
+        return WebFeatureCategoryMedia;
+    case API::FeatureCategory::Networking:
+        return WebFeatureCategoryNetworking;
+    case API::FeatureCategory::Privacy:
+        return WebFeatureCategoryPrivacy;
+    case API::FeatureCategory::Security:
+        return WebFeatureCategorySecurity;
     default:
         ASSERT_NOT_REACHED();
     }

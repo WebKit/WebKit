@@ -149,6 +149,8 @@ public:
 
     void getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&&);
 
+    void updateRemoteFrameSize(WebCore::IntSize);
+
     WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
 
 private:

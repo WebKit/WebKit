@@ -73,7 +73,6 @@ FileSystemStorageHandle::FileSystemStorageHandle(FileSystemStorageManager& manag
     , m_path(WTFMove(path))
     , m_name(WTFMove(name))
 {
-    WTFLogAlways("sihuil: [%p]FileSystemStorageHandle::FileSystemStorageHandle m_path[%s]", this, m_path.utf8().data());
     ASSERT(!m_path.isEmpty());
 }
 

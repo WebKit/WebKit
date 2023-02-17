@@ -3046,11 +3046,17 @@ void WebPageProxy::dispatchWheelEventWithoutScrolling(const WebWheelEvent& event
 void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 {
     WheelEventHandlingResult handlingResult;
+
+    auto rubberBandableEdges = rubberBandableEdgesRespectingHistorySwipe();
+
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (m_scrollingCoordinatorProxy) {
-        handlingResult = m_scrollingCoordinatorProxy->handleWheelEvent(platform(event));
-        if (!handlingResult.needsMainThreadProcessing())
+        handlingResult = m_scrollingCoordinatorProxy->handleWheelEvent(platform(event), rubberBandableEdges);
+        if (!handlingResult.needsMainThreadProcessing()) {
+            if (!handlingResult.wasHandled)
+                wheelEventWasNotHandled(event);
             return;
+        }
     }
 #else
     handlingResult.steps = WheelEventProcessingSteps::MainThreadForScrolling;
@@ -3068,7 +3074,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
 
     if (wheelEventCoalescer().shouldDispatchEvent(event, handlingResult.steps)) {
         auto eventAndSteps = wheelEventCoalescer().nextEventToDispatch();
-        sendWheelEvent(eventAndSteps->event, eventAndSteps->processingSteps);
+        sendWheelEvent(eventAndSteps->event, eventAndSteps->processingSteps, rubberBandableEdges);
     }
 }
 
@@ -3098,7 +3104,7 @@ void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
 #endif
 }
 
-void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
+void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps, RectEdges<bool> rubberBandableEdges)
 {
 #if HAVE(CVDISPLAYLINK)
     m_wheelEventActivityHysteresis.impulse();
@@ -3107,12 +3113,6 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore:
     auto* connection = messageSenderConnection();
     if (!connection)
         return;
-
-    auto rubberBandableEdges = this->rubberBandableEdges();
-    if (shouldUseImplicitRubberBandControl()) {
-        rubberBandableEdges.setLeft(!m_backForwardList->backItem());
-        rubberBandableEdges.setRight(!m_backForwardList->forwardItem());
-    }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     if (event.momentumPhase() == WebWheelEvent::PhaseBegan && m_scrollingAccelerationCurve != m_lastSentScrollingAccelerationCurve) {
@@ -3129,6 +3129,12 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WebCore:
     // Manually ping the web process to check for responsiveness since our wheel
     // event will dispatch to a non-main thread, which always responds.
     m_process->isResponsiveWithLazyStop();
+}
+
+void WebPageProxy::wheelEventWasNotHandled(const NativeWebWheelEvent& event)
+{
+    m_uiClient->didNotHandleWheelEvent(this, event);
+    pageClient().wheelEventWasNotHandledByWebCore(event);
 }
 
 WebWheelEventCoalescer& WebPageProxy::wheelEventCoalescer()
@@ -4326,6 +4332,17 @@ void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
     send(Messages::WebPage::SetSuppressScrollbarAnimations(suppressAnimations));
 }
 
+WebCore::RectEdges<bool> WebPageProxy::rubberBandableEdgesRespectingHistorySwipe() const
+{
+    auto rubberBandableEdges = this->rubberBandableEdges();
+    if (shouldUseImplicitRubberBandControl()) {
+        rubberBandableEdges.setLeft(!m_backForwardList->backItem());
+        rubberBandableEdges.setRight(!m_backForwardList->forwardItem());
+    }
+
+    return rubberBandableEdges;
+}
+
 void WebPageProxy::setRubberBandsAtLeft(bool rubberBandsAtLeft)
 {
     m_rubberBandableEdges.setLeft(rubberBandsAtLeft);
@@ -4828,6 +4845,12 @@ void WebPageProxy::setNetworkRequestsInProgress(bool networkRequestsInProgress)
 {
     auto transaction = m_pageLoadState.transaction();
     m_pageLoadState.setNetworkRequestsInProgress(transaction, networkRequestsInProgress);
+}
+
+void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize size)
+{
+    if (RefPtr frame = WebFrameProxy::webFrame(frameID))
+        frame->updateRemoteFrameSize(size);
 }
 
 void WebPageProxy::preconnectTo(const URL& url, const String& userAgent)
@@ -7875,13 +7898,11 @@ void WebPageProxy::didReceiveEvent(WebEventType eventType, bool handled)
         auto oldestProcessedEvent = wheelEventCoalescer().takeOldestEventBeingProcessed();
 
         // FIXME: Dispatch additional events to the didNotHandleWheelEvent client function.
-        if (!handled) {
-            m_uiClient->didNotHandleWheelEvent(this, oldestProcessedEvent);
-            pageClient().wheelEventWasNotHandledByWebCore(oldestProcessedEvent);
-        }
+        if (!handled)
+            wheelEventWasNotHandled(oldestProcessedEvent);
 
         if (auto eventToSend = wheelEventCoalescer().nextEventToDispatch())
-            sendWheelEvent(eventToSend->event, eventToSend->processingSteps);
+            sendWheelEvent(eventToSend->event, eventToSend->processingSteps, rubberBandableEdgesRespectingHistorySwipe());
         else if (auto* automationSession = process().processPool().automationSession())
             automationSession->wheelEventsFlushedForPage(*this);
         break;

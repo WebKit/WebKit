@@ -27,12 +27,21 @@
 #include "RemoteFrameView.h"
 
 #include "RemoteFrame.h"
+#include "RemoteFrameClient.h"
 
 namespace WebCore {
 
 RemoteFrameView::RemoteFrameView(RemoteFrame& frame)
     : m_frame(frame)
 {
+}
+
+void RemoteFrameView::setFrameRect(const IntRect& newRect)
+{
+    IntRect oldRect = frameRect();
+    if (newRect.size() != oldRect.size())
+        m_frame->client().sizeDidChange(newRect.size());
+    AbstractFrameView::setFrameRect(newRect);
 }
 
 // FIXME: Implement all the stubs below.

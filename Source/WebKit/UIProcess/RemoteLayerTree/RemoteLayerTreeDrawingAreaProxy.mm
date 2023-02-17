@@ -31,6 +31,8 @@
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
+#import "SubframePageProxy.h"
+#import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
@@ -40,6 +42,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/CallbackAggregator.h>
 #import <wtf/MachSendRight.h>
 #import <wtf/SystemTracing.h>
 
@@ -121,7 +124,7 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
         if (!weakThis)
             return;
         weakThis->didUpdateGeometry();
-    }, m_identifier.toUInt64());
+    }, m_identifier);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::willCommitLayerTree(TransactionID transactionID)
@@ -187,7 +190,9 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
 
     m_webPageProxy.layerTreeCommitComplete();
 
-    if (std::exchange(m_didUpdateMessageState, NeedsDidUpdate) == MissedCommit)
+    if (!layerTreeTransaction.isMainFrameProcessTransaction())
+        connection.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+    else if (std::exchange(m_didUpdateMessageState, NeedsDidUpdate) == MissedCommit)
         didRefreshDisplay();
 
     scheduleDisplayRefreshCallbacks();
@@ -357,7 +362,9 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay()
     // if we find API to do so, but for now we will make extra buffers if need be.
     m_webPageProxy.send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
 
+#if ASSERT_ENABLED
     m_lastVisibleTransactionID = m_transactionIDForPendingCACommit;
+#endif
 
     m_webPageProxy.didUpdateActivityState();
 }
@@ -392,7 +399,10 @@ void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(CompletionHan
         return;
     }
 
-    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), WTFMove(callbackFunction), m_identifier.toUInt64());
+    auto aggregator = CallbackAggregator::create(WTFMove(callbackFunction));
+    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, m_identifier);
+    for (auto& process : m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver)
+        process->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, m_identifier);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()

@@ -335,8 +335,10 @@ void ScrollingCoordinator::updateSynchronousScrollingReasons(FrameView& frameVie
         newSynchronousScrollingReasons.add(SynchronousScrollingReason::HasNonLayerViewportConstrainedObjects);
 
     auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(localFrame->mainFrame()); 
     if (localFrame
-        && localFrame->mainFrame().document()
+        && localMainFrame
+        && localMainFrame->document()
         && localFrame->document()->isImageDocument())
         newSynchronousScrollingReasons.add(SynchronousScrollingReason::IsImageDocument);
 

@@ -1199,7 +1199,11 @@ Frame* AccessibilityObject::mainFrame() const
     if (!frame)
         return nullptr;
     
-    return &frame->mainFrame();
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
+    if (!localFrame)
+        return nullptr;
+
+    return localFrame;
 }
 
 Document* AccessibilityObject::topDocument() const

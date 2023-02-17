@@ -389,7 +389,6 @@ public:
     int elementTextPosition();
     int elementTextLength();
     JSRetainPtr<JSStringRef> stringForSelection();
-    JSValueRef elementsForRange(unsigned location, unsigned length);
     void increaseTextSelection();
     void decreaseTextSelection();
     RefPtr<AccessibilityUIElement> linkedElement();
