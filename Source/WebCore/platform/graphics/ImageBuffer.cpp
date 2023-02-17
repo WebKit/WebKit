@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,6 +83,17 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         imageBuffer = create<UnacceleratedImageBufferBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
 
     return imageBuffer;
+}
+
+template<typename BackendType, typename ImageBufferType, typename... Arguments>
+RefPtr<ImageBufferType> ImageBuffer::create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose, Arguments&&... arguments)
+{
+    auto parameters = ImageBufferBackend::Parameters { size, 1, context.colorSpace(), PixelFormat::BGRA8, purpose };
+    auto backend = BackendType::create(parameters, { nullptr });
+    if (!backend)
+        return nullptr;
+    auto backendInfo = populateBackendInfo<BackendType>(parameters);
+    return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
 }
 
 ImageBuffer::ImageBuffer(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)

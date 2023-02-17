@@ -48,7 +48,7 @@ namespace WebKit {
 using namespace WebCore;
 
 RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteImageBufferProxy& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : DisplayList::Recorder({ }, initialClip, initialCTM, DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
+    : DisplayList::Recorder({ }, initialClip, initialCTM, imageBuffer.colorSpace(), DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
     , m_destinationBufferIdentifier(imageBuffer.renderingResourceIdentifier())
     , m_imageBuffer(imageBuffer)
     , m_renderingBackend(renderingBackend)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008-2009 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,8 @@ public:
 
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
+
+    virtual const DestinationColorSpace& colorSpace() const { return DestinationColorSpace::SRGB(); }
 
     virtual bool paintingDisabled() const { return false; }
     virtual bool performingPaintInvalidation() const { return false; }
