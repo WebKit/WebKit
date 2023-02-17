@@ -1445,7 +1445,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, V
         patchpoint->effects.writesPinned = true;
         // We pessimistically assume we're calling something with BoundsChecking memory.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobber(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
+        patchpoint->clobber(RegisterSetBuilder::wasmPinnedRegisters());
         patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
         patchpoint->append(calleeInstance, ValueRep::SomeRegister);
         patchpoint->numGPScratchRegisters = 1;
@@ -1514,7 +1514,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, V
             // because the wasm->wasm thunk unconditionally overrides the size registers.
             // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
             // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
-            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
+            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
 
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
             patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -4029,7 +4029,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
+            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
             patchpoint->setGenerator([this, handle, returnType, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 if (isTailCall)

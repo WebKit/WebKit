@@ -209,7 +209,7 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet stubUnavailableRegisters(); // The union of callee saves and special registers.
     JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
 #if ENABLE(WEBASSEMBLY)
-    JS_EXPORT_PRIVATE static RegisterSet wasmPinnedRegisters(MemoryMode);
+    JS_EXPORT_PRIVATE static RegisterSet wasmPinnedRegisters();
 #endif
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForJSCall(RegisterSetBuilder live);
     JS_EXPORT_PRIVATE static RegisterSetBuilder registersToSaveForCCall(RegisterSetBuilder live);
