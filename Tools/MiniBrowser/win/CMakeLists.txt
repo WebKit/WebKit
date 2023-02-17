@@ -24,25 +24,6 @@ set(MiniBrowser_FRAMEWORKS
     WebCore
 )
 
-if (USE_CF)
-    list(APPEND MiniBrowser_PRIVATE_LIBRARIES
-        Apple::CoreFoundation
-    )
-endif ()
-
-if (ENABLE_WEBKIT_LEGACY)
-    list(APPEND MiniBrowser_PRIVATE_DEFINITIONS ENABLE_WEBKIT_LEGACY)
-    list(APPEND MiniBrowser_SOURCES
-        AccessibilityDelegate.cpp
-        MiniBrowserWebHost.cpp
-        PrintWebUIDelegate.cpp
-        ResourceLoadDelegate.cpp
-        WebDownloadDelegate.cpp
-        WebKitLegacyBrowserWindow.cpp
-    )
-    list(APPEND MiniBrowser_FRAMEWORKS WebKitLegacy)
-endif ()
-
 if (ENABLE_WEBKIT)
     list(APPEND MiniBrowser_PRIVATE_DEFINITIONS ENABLE_WEBKIT)
     list(APPEND MiniBrowser_SOURCES
