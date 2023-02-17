@@ -1190,6 +1190,7 @@ public:
 
     WebCore::RectEdges<bool> pinnedState() const { return m_mainFramePinnedState; }
 
+    WebCore::RectEdges<bool> rubberBandableEdgesRespectingHistorySwipe() const;
     WebCore::RectEdges<bool> rubberBandableEdges() const { return m_rubberBandableEdges; }
     void setRubberBandableEdges(WebCore::RectEdges<bool> edges) { m_rubberBandableEdges = edges; }
     void setRubberBandsAtLeft(bool);
@@ -2597,7 +2598,8 @@ private:
 
     void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
 
-    void sendWheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
+    void sendWheelEvent(const WebWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>, WebCore::RectEdges<bool> rubberBandableEdges);
+    void wheelEventWasNotHandled(const NativeWebWheelEvent&);
 
     WebWheelEventCoalescer& wheelEventCoalescer();
 

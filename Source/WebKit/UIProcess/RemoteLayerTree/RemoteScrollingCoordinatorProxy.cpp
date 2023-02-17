@@ -97,10 +97,15 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
     return std::exchange(m_requestedScroll, { });
 }
 
-WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
+WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
     if (!m_scrollingTree)
         return WheelEventHandlingResult::unhandled();
+
+    // Replicate the hack in EventDispatcher::internalWheelEvent(). We could pass rubberBandableEdges all the way through the
+    // WebProcess and back via the ScrollingTree, but we only ever need to consult it here.
+    if (wheelEvent.phase() == PlatformWheelEventPhase::Began)
+        m_scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
     auto processingSteps = m_scrollingTree->determineWheelEventProcessing(wheelEvent);
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::handleWheelEvent " << wheelEvent << " - steps " << processingSteps);
