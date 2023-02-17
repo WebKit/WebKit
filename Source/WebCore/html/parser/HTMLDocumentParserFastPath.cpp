@@ -53,11 +53,13 @@
 #include "HTMLSelectElement.h"
 #include "HTMLSpanElement.h"
 #include "HTMLUListElement.h"
+#include "ParsingUtilities.h"
 #include "QualifiedName.h"
 #include "Settings.h"
 #include <wtf/Span.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
@@ -140,6 +142,16 @@ static uint32_t tagNameHash(const String& s)
     return (s[0] + 17 * s[s.length() - 1]) & 63;
 }
 
+template<typename CharacterType> static bool isQuoteCharacter(CharacterType c)
+{
+    return c == '"' || c == '\'';
+}
+
+template<typename CharacterType> bool isValidUnquotedAttributeValueChar(CharacterType c)
+{
+    return isASCIIAlphanumeric(c) || c == '_' || c == '-';
+}
+
 #define FOR_EACH_SUPPORTED_TAG(APPLY) \
     APPLY(a, A)                       \
     APPLY(b, B)                       \
@@ -210,8 +222,7 @@ public:
     HTMLFastPathParser(CharSpan source, Document& document, DocumentFragment& fragment)
         : m_document(document)
         , m_fragment(fragment)
-        , m_end(source.data() + source.size())
-        , m_position(source.data())
+        , m_parsingBuffer(source.data(), source.size())
     {
     }
 
@@ -258,8 +269,7 @@ private:
     Document& m_document;
     DocumentFragment& m_fragment;
 
-    const Char* const m_end;
-    const Char* m_position;
+    StringParsingBuffer<Char> m_parsingBuffer;
 
     bool m_parsingFailed { false };
     bool m_insideOfTagA { false };
@@ -469,13 +479,8 @@ private:
     template<class ParentTag> void parseCompleteInput()
     {
         parseChildren<ParentTag>(m_fragment);
-        if (m_position != m_end)
+        if (m_parsingBuffer.hasCharactersRemaining())
             didFail(HTMLFastPathResult::FailedDidntReachEndOfInput);
-    }
-
-    bool isValidUnquotedAttributeValueChar(Char c)
-    {
-        return isASCIIAlphanumeric(c) || c == '_' || c == '-';
     }
 
     // https://html.spec.whatwg.org/#syntax-attribute-name
@@ -496,34 +501,27 @@ private:
         return c == ' ' || c == '>' || isHTMLSpace(c);
     }
 
-    void skipWhitespace()
-    {
-        while (m_position != m_end && isHTMLSpace(*m_position))
-            ++m_position;
-    }
-
     // We first try to scan text as an unmodified subsequence of the input.
     // However, if there are escape sequences, we have to copy the text to a
     // separate buffer and we might go outside of `Char` range if we are in an
-    // `LChar` parser. Therefore, this function returns either a `Span` or a
-    // `UCharSpan`. Callers distinguish the two cases by checking if the `Span` is
-    // empty, as only one of them can be non-empty.
+    // `LChar` parser. Therefore, this function returns either a `LCharSpan` or a
+    // `UCharSpan`.
     std::variant<LCharSpan, UCharSpan> scanText()
     {
-        const Char* start = m_position;
-        while (m_position != m_end && *m_position != '<') {
+        auto* start = m_parsingBuffer.position();
+        while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != '<') {
             // '&' indicates escape sequences, '\r' might require
             // https://infra.spec.whatwg.org/#normalize-newlines
-            if (*m_position == '&' || *m_position == '\r') {
-                m_position = start;
+            if (*m_parsingBuffer == '&' || *m_parsingBuffer == '\r') {
+                m_parsingBuffer.setPosition(start);
                 return scanEscapedText();
             }
-            if (UNLIKELY(*m_position == '\0'))
+            if (UNLIKELY(*m_parsingBuffer == '\0'))
                 return didFail(HTMLFastPathResult::FailedContainsNull, LCharSpan { });
 
-            ++m_position;
+            m_parsingBuffer.advance();
         }
-        return Span { start, static_cast<size_t>(m_position - start) };
+        return Span { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
     }
 
     // Slow-path of `scanText()`, which supports escape sequences by copying to a
@@ -531,23 +529,21 @@ private:
     UCharSpan scanEscapedText()
     {
         m_ucharBuffer.resize(0);
-        while (m_position != m_end && *m_position != '<') {
-            if (*m_position == '&') {
+        while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != '<') {
+            if (*m_parsingBuffer == '&') {
                 scanHTMLCharacterReference(m_ucharBuffer);
                 if (m_parsingFailed)
                     return UCharSpan { };
-            } else if (*m_position == '\r') {
+            } else if (*m_parsingBuffer == '\r') {
                 // Normalize "\r\n" to "\n" according to https://infra.spec.whatwg.org/#normalize-newlines.
-                if (m_position + 1 != m_end && m_position[1] == '\n')
-                    ++m_position;
+                m_parsingBuffer.advance();
+                if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer == '\n')
+                    m_parsingBuffer.advance();
                 m_ucharBuffer.append('\n');
-                ++m_position;
-            } else if (UNLIKELY(*m_position == '\0'))
+            } else if (UNLIKELY(*m_parsingBuffer == '\0'))
                 return didFail(HTMLFastPathResult::FailedContainsNull, UCharSpan { });
-            else {
-                m_ucharBuffer.append(*m_position);
-                ++m_position;
-            }
+            else
+                m_ucharBuffer.append(m_parsingBuffer.consume());
         }
         return { m_ucharBuffer.data(), m_ucharBuffer.size() };
     }
@@ -555,30 +551,29 @@ private:
     // Scan a tagName and convert to lowercase if necessary.
     CharSpan scanTagName()
     {
-        const Char* start = m_position;
-        while (m_position != m_end && isASCIILower(*m_position))
-            ++m_position;
+        auto* start = m_parsingBuffer.position();
+        skipWhile<isASCIILower>(m_parsingBuffer);
 
-        if (m_position == m_end || !isCharAfterTagNameOrAttribute(*m_position)) {
+        if (m_parsingBuffer.atEnd() || !isCharAfterTagNameOrAttribute(*m_parsingBuffer)) {
             // Try parsing a case-insensitive tagName.
             m_charBuffer.resize(0);
-            m_position = start;
-            while (m_position != m_end) {
-                Char c = *m_position;
+            m_parsingBuffer.setPosition(start);
+            while (m_parsingBuffer.hasCharactersRemaining()) {
+                auto c = *m_parsingBuffer;
                 if (isASCIIUpper(c))
                     c = toASCIILowerUnchecked(c);
                 else if (!isASCIILower(c))
                     break;
-                ++m_position;
+                m_parsingBuffer.advance();
                 m_charBuffer.append(c);
             }
-            if (m_position == m_end || !isCharAfterTagNameOrAttribute(*m_position))
+            if (m_parsingBuffer.atEnd() || !isCharAfterTagNameOrAttribute(*m_parsingBuffer))
                 return didFail(HTMLFastPathResult::FailedParsingTagName, CharSpan { });
-            skipWhitespace();
+            skipWhile<isHTMLSpace>(m_parsingBuffer);
             return CharSpan { m_charBuffer.data(), m_charBuffer.size() };
         }
-        CharSpan result { start, static_cast<size_t>(m_position - start) };
-        skipWhitespace();
+        CharSpan result { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+        skipWhile<isHTMLSpace>(m_parsingBuffer);
         return result;
     }
 
@@ -587,53 +582,53 @@ private:
         // First look for all lower case. This path doesn't require any mapping of
         // input. This path could handle other valid attribute name chars, but they
         // are not as common, so it only looks for lowercase.
-        const Char* start = m_position;
-        while (m_position != m_end && isASCIILower(*m_position))
-            ++m_position;
-        if (UNLIKELY(m_position == m_end))
-            return didFail(HTMLFastPathResult::FailedEndOfInputReached, CharSpan());
-        if (!isValidAttributeNameChar(*m_position))
-            return CharSpan { start, static_cast<size_t>(m_position - start) };
+        auto* start = m_parsingBuffer.position();
+        skipWhile<isASCIILower>(m_parsingBuffer);
+        if (UNLIKELY(m_parsingBuffer.atEnd()))
+            return didFail(HTMLFastPathResult::FailedEndOfInputReached, CharSpan { });
+        if (!isValidAttributeNameChar(*m_parsingBuffer))
+            return CharSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
 
         // At this point name does not contain lowercase. It may contain upper-case,
         // which requires mapping. Assume it does.
-        m_position = start;
+        m_parsingBuffer.setPosition(start);
         m_attributeNameBuffer.resize(0);
+
         // isValidAttributeNameChar() returns false if end of input is reached.
-        for (Char c = peekNext(); isValidAttributeNameChar(c); c = peekNext()) {
+        do {
+            auto c = m_parsingBuffer.consume();
             if (isASCIIUpper(c))
                 c = toASCIILowerUnchecked(c);
             m_attributeNameBuffer.append(c);
-            ++m_position;
-        }
+        } while (m_parsingBuffer.hasCharactersRemaining() && isValidAttributeNameChar(*m_parsingBuffer));
+
         return CharSpan { m_attributeNameBuffer.data(), static_cast<size_t>(m_attributeNameBuffer.size()) };
     }
 
     std::variant<LCharSpan, UCharSpan> scanAttributeValue()
     {
         CharSpan result;
-        skipWhitespace();
-        const Char* start = m_position;
-        if (Char quoteChar = peekNext(); quoteChar == '"' || quoteChar == '\'') {
-            start = ++m_position;
-            while (m_position != m_end && peekNext() != quoteChar) {
-                if (peekNext() == '&' || peekNext() == '\r') {
-                    m_position = start - 1;
+        skipWhile<isHTMLSpace>(m_parsingBuffer);
+        auto* start = m_parsingBuffer.position();
+        if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
+            Char quoteChar = m_parsingBuffer.consume();
+            start = m_parsingBuffer.position();
+            for (; m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != quoteChar; m_parsingBuffer.advance()) {
+                if (*m_parsingBuffer == '&' || *m_parsingBuffer == '\r') {
+                    m_parsingBuffer.setPosition(start - 1);
                     return scanEscapedAttributeValue();
                 }
-                ++m_position;
             }
-            if (m_position == m_end)
+            if (m_parsingBuffer.atEnd())
                 return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, LCharSpan { });
 
-            result = CharSpan { start, static_cast<size_t>(m_position - start) };
-            if (consumeNext() != quoteChar)
+            result = CharSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+            if (m_parsingBuffer.consume() != quoteChar)
                 return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, LCharSpan { });
         } else {
-            while (isValidUnquotedAttributeValueChar(peekNext()))
-                ++m_position;
-            result = CharSpan { start, static_cast<size_t>(m_position - start) };
-            if (!isCharAfterUnquotedAttribute(peekNext()))
+            skipWhile<isValidUnquotedAttributeValueChar>(m_parsingBuffer);
+            result = CharSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+            if (m_parsingBuffer.atEnd() || !isCharAfterUnquotedAttribute(*m_parsingBuffer))
                 return didFail(HTMLFastPathResult::FailedParsingUnquotedAttributeValue, LCharSpan { });
         }
         return result;
@@ -644,32 +639,34 @@ private:
     UCharSpan scanEscapedAttributeValue()
     {
         CharSpan result;
-        skipWhitespace();
+        skipWhile<isHTMLSpace>(m_parsingBuffer);
         m_ucharBuffer.resize(0);
-        const Char* start = m_position;
-        if (Char quoteChar = peekNext(); quoteChar == '"' || quoteChar == '\'') {
-            start = ++m_position;
-            while (m_position != m_end && peekNext() != quoteChar) {
+        auto* start = m_parsingBuffer.position();
+        if (m_parsingBuffer.hasCharactersRemaining() && isQuoteCharacter(*m_parsingBuffer)) {
+            UChar quoteChar = m_parsingBuffer.consume();
+            start = m_parsingBuffer.position();
+            while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != quoteChar) {
                 if (m_parsingFailed)
                     return UCharSpan { };
-                if (peekNext() == '&')
+                Char c = *m_parsingBuffer;
+                if (c == '&')
                     scanHTMLCharacterReference(m_ucharBuffer);
-                else if (peekNext() == '\r') {
+                else if (c == '\r') {
+                    m_parsingBuffer.advance();
                     // Normalize "\r\n" to "\n" according to https://infra.spec.whatwg.org/#normalize-newlines.
-                    if (m_position + 1 != m_end && m_position[1] == '\n')
-                        ++m_position;
+                    if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer == '\n')
+                        m_parsingBuffer.advance();
                     m_ucharBuffer.append('\n');
-                    ++m_position;
                 } else {
-                    m_ucharBuffer.append(*m_position);
-                    ++m_position;
+                    m_ucharBuffer.append(c);
+                    m_parsingBuffer.advance();
                 }
             }
-            if (m_position == m_end)
+            if (m_parsingBuffer.atEnd())
                 return didFail(HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, UCharSpan { });
 
-            result = CharSpan { start, static_cast<size_t>(m_position - start) };
-            if (consumeNext() != quoteChar)
+            result = CharSpan { start, static_cast<size_t>(m_parsingBuffer.position() - start) };
+            if (m_parsingBuffer.consume() != quoteChar)
                 return didFail( HTMLFastPathResult::FailedParsingQuotedEscapedAttributeValue, UCharSpan { });
         } else
             return didFail(HTMLFastPathResult::FailedParsingUnquotedEscapedAttributeValue, UCharSpan { });
@@ -678,19 +675,19 @@ private:
 
     void scanHTMLCharacterReference(Vector<UChar>& out)
     {
-        ASSERT(*m_position == '&');
-        ++m_position;
-        const Char* start = m_position;
+        ASSERT(*m_parsingBuffer == '&');
+        m_parsingBuffer.advance();
+        auto* start = m_parsingBuffer.position();
         while (true) {
             // A rather arbitrary constant to prevent unbounded lookahead in the case of ill-formed input.
             constexpr int maxLength = 20;
-            if (m_position == m_end || m_position - start > maxLength || UNLIKELY(*m_position == '\0'))
+            if (m_parsingBuffer.atEnd() || m_parsingBuffer.position() - start > maxLength || UNLIKELY(*m_parsingBuffer == '\0'))
                 return didFail(HTMLFastPathResult::FailedParsingCharacterReference);
-            if (consumeNext() == ';')
+            if (m_parsingBuffer.consume() == ';')
                 break;
         }
 
-        CharSpan reference = CharSpan { start, static_cast<size_t>(m_position - start) - 1 };
+        CharSpan reference { start, static_cast<size_t>(m_parsingBuffer.position() - start) - 1 };
         // There are no valid character references shorter than that. The check protects the indexed accesses below.
         constexpr size_t minLength = 2;
         if (reference.size() < minLength)
@@ -700,7 +697,7 @@ private:
             UChar32 result = 0;
             if (reference[1] == 'x' || reference[1] == 'X') {
                 for (size_t i = 2; i < reference.size(); ++i) {
-                    Char c = reference[i];
+                    auto c = reference[i];
                     result *= 16;
                     if (c >= '0' && c <= '9')
                         result += c - '0';
@@ -716,7 +713,7 @@ private:
                 }
             } else {
                 for (size_t i = 1; i < reference.size(); ++i) {
-                    Char c = reference[i];
+                    auto c = reference[i];
                     result *= 10;
                     if (c >= '0' && c <= '9')
                         result += c - '0';
@@ -767,23 +764,6 @@ private:
         return returnValue;
     }
 
-    Char peekNext()
-    {
-        ASSERT(m_position <= m_end);
-        if (m_position == m_end) {
-            didFail(HTMLFastPathResult::FailedEndOfInputReached);
-            return '\0';
-        }
-        return *m_position;
-    }
-
-    Char consumeNext()
-    {
-        if (m_position == m_end)
-            return didFail(HTMLFastPathResult::FailedEndOfInputReached, '\0');
-        return *(m_position++);
-    }
-
     template<class ParentTag> void parseChildren(ContainerNode& parent)
     {
         while (true) {
@@ -806,11 +786,11 @@ private:
             if (!text.isNull())
                 parent.parserAppendChild(Text::create(m_document, WTFMove(text)));
 
-            if (m_position == m_end)
+            if (m_parsingBuffer.atEnd())
                 return;
-            ASSERT(*m_position == '<');
-            ++m_position;
-            if (peekNext() == '/') {
+            ASSERT(*m_parsingBuffer == '<');
+            m_parsingBuffer.advance();
+            if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer == '/') {
                 // We assume that we found the closing tag. The tagName will be checked by the caller `parseContainerElement()`.
                 return;
             }
@@ -827,12 +807,8 @@ private:
 
     Attribute processAttribute(CharSpan nameSpan, std::variant<LCharSpan, UCharSpan> valueSpan)
     {
-        QualifiedName name = HTMLNameCache::makeAttributeQualifiedName(nameSpan);
-
-        // The string pointer in |value| is null for attributes with no values, but
-        // the null atom is used to represent absence of attributes; attributes with
-        // no values have the value set to an empty atom instead.
-        AtomString value = std::visit([](auto span) {
+        auto name = HTMLNameCache::makeAttributeQualifiedName(nameSpan);
+        auto value = std::visit([](auto span) {
             return HTMLNameCache::makeAttributeValue(span);
         }, valueSpan);
         return Attribute { WTFMove(name), WTFMove(value) };
@@ -843,18 +819,20 @@ private:
         ASSERT(m_attributeBuffer.isEmpty());
         ASSERT(m_attributeNames.isEmpty());
         while (true) {
-            CharSpan attributeName = scanAttributeName();
+            auto attributeName = scanAttributeName();
             if (attributeName.empty()) {
-                if (peekNext() == '>') {
-                    ++m_position;
-                    break;
-                }
-                if (peekNext() == '/') {
-                    ++m_position;
-                    skipWhitespace();
-                    if (consumeNext() != '>')
-                        return didFail(HTMLFastPathResult::FailedParsingAttributes);
-                    break;
+                if (m_parsingBuffer.hasCharactersRemaining()) {
+                    if (*m_parsingBuffer == '>') {
+                        m_parsingBuffer.advance();
+                        break;
+                    }
+                    if (*m_parsingBuffer == '/') {
+                        m_parsingBuffer.advance();
+                        skipWhile<isHTMLSpace>(m_parsingBuffer);
+                        if (m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != '>')
+                            return didFail(HTMLFastPathResult::FailedParsingAttributes);
+                        break;
+                    }
                 }
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             }
@@ -864,20 +842,19 @@ private:
                 // fails. For example, an image's onload event.
                 return didFail(HTMLFastPathResult::FailedOnAttribute);
             }
-            skipWhitespace();
+            skipWhile<isHTMLSpace>(m_parsingBuffer);
             std::variant<LCharSpan, UCharSpan> attributeValue;
-            if (peekNext() == '=') {
-                ++m_position;
+            if (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer == '=') {
+                m_parsingBuffer.advance();
                 attributeValue = scanAttributeValue();
-                skipWhitespace();
+                skipWhile<isHTMLSpace>(m_parsingBuffer);
             }
-            Attribute attribute = processAttribute(attributeName, attributeValue);
+            auto attribute = processAttribute(attributeName, attributeValue);
             m_attributeBuffer.append(attribute);
             if (attribute.name() == HTMLNames::isAttr)
                 return didFail(HTMLFastPathResult::FailedParsingAttributes);
             m_attributeNames.append(attribute.localName().impl());
         }
-        // FIXME: Consider using a HashSet instead of std::sort + std::adjacent_find.
         std::sort(m_attributeNames.begin(), m_attributeNames.end());
         if (std::adjacent_find(m_attributeNames.begin(), m_attributeNames.end()) != m_attributeNames.end()) {
             // Found duplicate attributes. We would have to ignore repeated attributes, but leave this to the general parser instead.
@@ -908,7 +885,7 @@ private:
 
     template<bool nonPhrasingContent> RefPtr<Element> parseElement()
     {
-        CharSpan tagName = scanTagName();
+        auto tagName = scanTagName();
         if (tagName.empty())
             return didFail(HTMLFastPathResult::FailedParsingElement, nullptr);
 
@@ -966,16 +943,16 @@ private:
         if (m_parsingFailed)
             return WTFMove(element);
         parseChildren<Tag>(element);
-        if (m_parsingFailed || m_position == m_end)
+        if (m_parsingFailed || m_parsingBuffer.atEnd())
             return didFail(HTMLFastPathResult::FailedEndOfInputReachedForContainer, element);
 
         // parseChildren<Tag>(element) stops after the (hopefully) closing tag's `<`
         // and fails if the the current char is not '/'.
-        ASSERT(*m_position == '/');
-        ++m_position;
+        ASSERT(*m_parsingBuffer == '/');
+        m_parsingBuffer.advance();
         auto endtag = scanTagName();
         if (endtag == Tag::tagName) {
-            if (consumeNext() != '>')
+            if (m_parsingBuffer.atEnd() || m_parsingBuffer.consume() != '>')
                 return didFail(HTMLFastPathResult::FailedUnexpectedTagNameCloseState, element);
         } else
             return didFail(HTMLFastPathResult::FailedEndTagNameMismatch, element);
@@ -1011,7 +988,7 @@ static bool canUseFastPath(Document& document, Element& contextElement, OptionSe
 template<class Char>
 static bool tryFastParsingHTMLFragmentImpl(const Span<const Char>& source, Document& document, Ref<DocumentFragment>& fragment, Element& contextElement)
 {
-    HTMLFastPathParser<Char> parser { source, document, fragment };
+    HTMLFastPathParser parser { source, document, fragment };
     bool success = parser.parse(contextElement);
     // The direction attribute may change as a result of parsing. Check again.
     if (document.isDirAttributeDirty() && document.settings().dirPseudoEnabled())
