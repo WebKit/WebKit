@@ -176,7 +176,7 @@ void BBQPlan::work(CompilationEffort effort)
 
     dataLogLnIf(shouldDumpDisassemblyFor(CompilationMode::BBQMode), "Generated BBQ code for WebAssembly BBQ function[", m_functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     dumpDisassembly(context, linkBuffer);
-    bool shouldDumpDisassemblyDuringFinalize = Options::useSinglePassBBQJIT() && Options::dumpWasmDisassembly();
+    bool shouldDumpDisassemblyDuringFinalize = Options::useSinglePassBBQJIT() && (JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWasmDisassembly());
     if (!Options::useSinglePassBBQJIT() && context.procedure && context.procedure->shouldDumpIR())
         shouldDumpDisassemblyDuringFinalize = true;
     function->entrypoint.compilation = makeUnique<Compilation>(
@@ -320,7 +320,7 @@ void BBQPlan::didCompleteCompilation()
 
             dataLogLnIf(Options::dumpDisassembly(), "Generated BBQ code for WebAssembly BBQ function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
             dumpDisassembly(context, linkBuffer);
-            bool shouldDumpDisassemblyDuringFinalize = Options::useSinglePassBBQJIT() && Options::dumpWasmDisassembly();
+            bool shouldDumpDisassemblyDuringFinalize = Options::useSinglePassBBQJIT() && (JSC::Options::asyncDisassembly() || JSC::Options::dumpDisassembly() || Options::dumpWasmDisassembly());
             function->entrypoint.compilation = makeUnique<Compilation>(
                 FINALIZE_CODE_IF(shouldDumpDisassemblyDuringFinalize, linkBuffer, JITCompilationPtrTag, "WebAssembly BBQ function[%i] %s name %s", functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
                 WTFMove(context.wasmEntrypointByproducts));

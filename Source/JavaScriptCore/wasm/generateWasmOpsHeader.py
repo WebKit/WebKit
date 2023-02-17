@@ -517,6 +517,20 @@ inline const char* makeString(OpType op)
 }
 #undef CREATE_CASE
 
+#define CREATE_CASE(name, ...) case ExtAtomicOpType::name: return #name;
+inline const char* makeString(ExtAtomicOpType op)
+{
+    switch (op) {
+    FOR_EACH_WASM_EXT_ATOMIC_LOAD_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_STORE_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_BINARY_RMW_OP(CREATE_CASE)
+    FOR_EACH_WASM_EXT_ATOMIC_OTHER_OP(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return nullptr;
+}
+#undef CREATE_CASE
+
 } } // namespace JSC::Wasm
 
 namespace WTF {
@@ -527,6 +541,11 @@ inline void printInternal(PrintStream& out, JSC::Wasm::TypeKind kind)
 }
 
 inline void printInternal(PrintStream& out, JSC::Wasm::OpType op)
+{
+    out.print(JSC::Wasm::makeString(op));
+}
+
+inline void printInternal(PrintStream& out, JSC::Wasm::ExtAtomicOpType op)
 {
     out.print(JSC::Wasm::makeString(op));
 }
