@@ -52,13 +52,13 @@ void InlineInvalidation::textInserted(const InlineTextBox&, std::optional<size_t
         return m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 
     // FIXME: This only covers the append case yet.
-    auto rootInlineBoxIndexOnDamagedLine = [&] {
+    auto rootInlineBoxIndexOnDamagedLine = [&]() -> size_t {
         for (auto index = m_displayBoxes.size(); index--;) {
             if (m_displayBoxes[index].isRootInlineBox())
                 return index;
         }
         ASSERT_NOT_REACHED();
-        return 0ul;
+        return 0;
     };
     auto damagedRootInlineBoxIndex = rootInlineBoxIndexOnDamagedLine();
     auto leadingInlineItemPositionOnDamagedLine = [&]() -> std::optional<InlineItemPosition> {
