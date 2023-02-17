@@ -66,8 +66,6 @@ private:
 #endif
 
     bool supportsAsyncScrolling() const override;
-    void registerScrollingTree() override;
-    void unregisterScrollingTree() override;
 
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
