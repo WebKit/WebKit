@@ -35,7 +35,6 @@
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPreferencesKeys.h"
-#include "WebProcess.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
@@ -301,18 +300,6 @@ void DrawingAreaCoordinatedGraphics::didChangeViewportAttributes(ViewportAttribu
 bool DrawingAreaCoordinatedGraphics::supportsAsyncScrolling() const
 {
     return m_supportsAsyncScrolling;
-}
-
-void DrawingAreaCoordinatedGraphics::registerScrollingTree()
-{
-    if (m_supportsAsyncScrolling)
-        WebProcess::singleton().eventDispatcher().addScrollingTreeForPage(m_webPage);
-}
-
-void DrawingAreaCoordinatedGraphics::unregisterScrollingTree()
-{
-    if (m_supportsAsyncScrolling)
-        WebProcess::singleton().eventDispatcher().removeScrollingTreeForPage(m_webPage);
 }
 
 GraphicsLayerFactory* DrawingAreaCoordinatedGraphics::graphicsLayerFactory()
