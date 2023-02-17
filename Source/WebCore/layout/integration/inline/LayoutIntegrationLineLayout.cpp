@@ -528,8 +528,12 @@ void LineLayout::layout()
     prepareLayoutState();
     prepareFloatingState();
 
-    // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.
-    clearInlineContent();
+    // FIXME: Partial layout should not rely on inline display content, but instead InlineFormattingState
+    // should retain all the pieces of data required -and then we can destroy damaged content here instead of after
+    // layout in constructContent.
+    auto isPartialLayout = m_lineDamage && m_lineDamage->contentPosition();
+    if (!isPartialLayout)
+        clearInlineContent();
     ASSERT(m_inlineContentConstraints);
     auto intrusiveInitialLetterBottom = [&]() -> std::optional<LayoutUnit> {
         if (auto lowestInitialLetterLogicalBottom = flow().lowestInitialLetterLogicalBottom())
