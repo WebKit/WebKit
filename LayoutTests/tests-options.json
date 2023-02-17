@@ -683,6 +683,45 @@
     "imported/w3c/pointerlock/pointerlock_shadow.html": [
         "slow"
     ],
+    "imported/w3c/preload/link-header-modulepreload.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/link-header-preload-non-html.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/onerror-event.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/onload-event.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preconnect-onerror-event.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preconnect.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/prefetch-events.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preload-connect-to-doc.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preload-error.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preload-referrer-policy.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preload-time-to-fetch.https.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preload-type-match.html": [
+        "slow"
+    ],
+    "imported/w3c/preload/preload-with-type.html": [
+        "slow"
+    ],
     "imported/w3c/quirks/hashless-hex-color/limited-quirks.html": [
         "slow"
     ],

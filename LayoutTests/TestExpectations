@@ -579,6 +579,26 @@ imported/w3c/web-platform-tests/reporting/document-reporting-named-endpoints.htt
 imported/w3c/web-platform-tests/reporting/document-reporting-override-endpoint.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/reporting/document-reporting-path-absolute.https.sub.html [ Skip ]
 
+# Skip preload tests that timeout
+imported/w3c/web-platform-tests/preload/link-header-modulepreload.html [ Skip ]
+imported/w3c/web-platform-tests/preload/modulepreload.html [ Skip ]
+imported/w3c/web-platform-tests/preload/preconnect-onerror-event.html [ Skip ]
+imported/w3c/web-platform-tests/preload/preconnect.html [ Skip ]
+imported/w3c/web-platform-tests/preload/prefetch-events.html [ Skip ]
+
+imported/w3c/web-platform-tests/preload/dynamic-adding-preload-nonce.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/preload/preload-default-csp.sub.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/preload/preload-strict-dynamic.sub.html [ DumpJSConsoleLogInStdErr ]
+
+imported/w3c/web-platform-tests/preload/preload-error.sub.html [ Pass Failure ]
+
+# Skip tests whose output change every run.
+imported/w3c/web-platform-tests/preload/preload-resource-match.https.html [ Skip ]
+imported/w3c/web-platform-tests/preload/preload-xhr.html [ Skip ]
+imported/w3c/web-platform-tests/preload/subresource-integrity-font.html [ Skip ]
+imported/w3c/web-platform-tests/preload/subresource-integrity.html [ Skip ]
+
 fast/files/file-reader-back-forward-cache.html [ DumpJSConsoleLogInStdErr ]
 fast/history/page-cache-createImageBitmap.html [ DumpJSConsoleLogInStdErr ]
 http/tests/navigation/page-cache-xhr-in-loading-iframe.html [ DumpJSConsoleLogInStdErr ]

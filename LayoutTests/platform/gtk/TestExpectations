@@ -1886,6 +1886,18 @@ imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-ord
 # WebGL on GTK renders pixels with opacity slightly differently
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 
+# Failing preload tests
+imported/w3c/web-platform-tests/preload/link-header-preload-nonce.html [ Failure ]
+imported/w3c/web-platform-tests/preload/onerror-event.html [ Failure ]
+imported/w3c/web-platform-tests/preload/prefetch-headers.html [ Failure ]
+imported/w3c/web-platform-tests/preload/prefetch-types.html [ Failure ]
+imported/w3c/web-platform-tests/preload/preload-csp.sub.html [ Failure ]
+imported/w3c/web-platform-tests/preload/preload-default-csp.sub.html [ Failure ]
+imported/w3c/web-platform-tests/preload/preload-dynamic-csp.html [ Failure ]
+imported/w3c/web-platform-tests/preload/preload-font-crossorigin.html [ Failure ]
+imported/w3c/web-platform-tests/preload/preload-time-to-fetch.https.html [ Failure ]
+imported/w3c/web-platform-tests/preload/preload-type-match.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

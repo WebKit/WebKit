@@ -42,6 +42,7 @@
     "paint-timing/resources": "import",
     "paint-timing/resources/": "import",
     "permissions": "import",
+    "preload": "import",
     "resources/testharness.js": "import",
     "shadow-dom": "import",
     "streams": "import",

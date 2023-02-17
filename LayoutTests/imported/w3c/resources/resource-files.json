@@ -598,6 +598,8 @@
         "html/syntax/xmldecl/support/zero-around-label.htm",
         "intersection-observer/observer-in-iframe.html",
         "permissions/feature-policy-permissions-query.html",
+        "preload/avoid-prefetching-on-text-plain-inner.html",
+        "preload/preload-in-data-doc-ref.html",
         "shadow-dom/crashtests/move-to-new-tree-1343016.html",
         "shadow-dom/declarative/support/declarative-child-frame.html",
         "shadow-dom/directionality-001-ref.html",

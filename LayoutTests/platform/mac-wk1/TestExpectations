@@ -1839,6 +1839,12 @@ webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure ]
 
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
+imported/w3c/web-platform-tests/preload/prefetch-accept.html [ Skip ]
+imported/w3c/web-platform-tests/preload/prefetch-cache.html [ Skip ]
+imported/w3c/web-platform-tests/preload/prefetch-document.html [ Skip ]
+imported/w3c/web-platform-tests/preload/prefetch-headers.html [ Skip ]
+imported/w3c/web-platform-tests/preload/prefetch-types.html [ Skip ]
+imported/w3c/web-platform-tests/preload/preload-in-data-doc.html [ Skip ]
 
 webkit.org/b/208384 imported/w3c/web-platform-tests/requestidlecallback/callback-timeout-when-busy.html [ Pass Failure ]
 

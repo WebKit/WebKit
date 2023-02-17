@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+
+PASS <crossorigin="anonymous"> Same-origin with correct sha256 hash.
+PASS <crossorigin="anonymous"> Same-origin with correct sha384 hash.
+PASS <crossorigin="anonymous"> Same-origin with correct sha512 hash.
+PASS <crossorigin="anonymous"> Same-origin with empty integrity.
+PASS <crossorigin="anonymous"> Same-origin with no integrity.
+FAIL <crossorigin="anonymous"> Same-origin with incorrect hash. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin="anonymous"> Same-origin with correct sha256 hash, options.
+PASS <crossorigin="anonymous"> Same-origin with unknown algorithm only.
+PASS <crossorigin="anonymous"> Same-origin with multiple sha256 hashes, including correct.
+PASS <crossorigin="anonymous"> Same-origin with multiple sha256 hashes, including unknown algorithm.
+PASS <crossorigin="anonymous"> Same-origin with sha256 mismatch, sha512 match.
+FAIL <crossorigin="anonymous"> Same-origin with sha256 match, sha512 mismatch. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Same-origin, not CORS request, with correct sha256 hash. assert_equals: /fonts/CanvasTest.ttf?1e1cf7df-a0d3-4e8b-95fd-503697a77c45 expected 2 but got 1
+FAIL Same-origin, not CORS request, with incorrect sha256 hash. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin="anonymous"> Cross-origin with correct sha256 hash, ACAO: *.
+FAIL <crossorigin="anonymous"> Cross-origin with incorrect sha256 hash, ACAO: *. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL <crossorigin="anonymous"> Cross-origin with correct sha256 hash, with CORS-ineligible resource. assert_equals: http://127.0.0.1:8800/fonts/CanvasTest.ttf?58482b46-d545-4ff4-aedb-8c10d184ee7f expected 1 but got 0
+FAIL Cross-origin, not CORS request, with correct sha256. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+FAIL Cross-origin, not CORS request, with incorrect sha256. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+PASS <crossorigin="anonymous"> Cross-origin with empty integrity.
+FAIL Cross-origin, not CORS request, with empty integrity. assert_equals: http://127.0.0.1:8800/fonts/CanvasTest.ttf?01b3f83f-4233-4529-a74f-1115c22c3e2b&pipe=header(Access-Control-Allow-Origin,*) expected 2 but got 1
+FAIL <crossorigin="use-credentials"> Cross-origin with correct sha256 hash, CORS-eligible. assert_equals: http://127.0.0.1:8800/fonts/CanvasTest.ttf?541190e7-67ae-425e-bd43-7d7b3f27deb4&pipe=header(Access-Control-Allow-Credentials,true)|header(Access-Control-Allow-Origin,http://localhost:8800) expected 2 but got 1
+FAIL <crossorigin="use-credentials"> Cross-origin with incorrect sha256 hash, CORS-eligible. assert_unreached: Invalid preload load succeeded. Reached unreachable code
+

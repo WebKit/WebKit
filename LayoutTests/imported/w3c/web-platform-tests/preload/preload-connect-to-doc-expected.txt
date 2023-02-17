@@ -1,0 +1,7 @@
+
+PASS preload link should be fetched when attached a shadow DOM
+PASS preload link should note fetched when detached from a shadow DOM
+PASS preload links only work for documents within browsing contexts
+PASS preload links from DocumentFragment only work when attached
+PASS preload links only work when attached to the document
+
