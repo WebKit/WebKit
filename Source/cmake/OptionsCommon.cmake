@@ -159,6 +159,12 @@ if (CXX_COMPILER_SUPPORTS_GSPLIT_DWARF AND LD_SUPPORTS_SPLIT_DEBUG)
   set(ENABLE_DEBUG_FISSION_DEFAULT ON)
 endif ()
 
+if (ENABLE_DEBUG_FISSION_DEFAULT AND SCCACHE_FOUND AND COMPILER_IS_CLANG AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    # https://github.com/mozilla/sccache/issues/1593
+    message("The SCCache clang backend doesn't support split-dwarf for non-debug builds yet. Keeping default value of DEBUG_FISSION to OFF.")
+    set(ENABLE_DEBUG_FISSION_DEFAULT OFF)
+endif ()
+
 option(DEBUG_FISSION "Use Debug Fission support" ${ENABLE_DEBUG_FISSION_DEFAULT})
 
 if (DEBUG_FISSION)
