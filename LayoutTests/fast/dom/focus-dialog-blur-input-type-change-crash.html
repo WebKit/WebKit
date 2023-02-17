@@ -1,0 +1,21 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function main() {
+    input.focus();
+    input.stepUp(1);
+    document.body.innerHTML = 'PASS';
+}
+function inputFocus() {
+    x1.show();
+}
+function dialogChange() {
+    x1.close();
+    input.type = "range";
+}
+</script>
+<body onload="main()">
+<dialog id="x1" tabindex="0" onfocus="dialogChange()" onblur="dialogChange()">
+</dialog>
+<input id="input" onfocusin="inputFocus()" type="time">

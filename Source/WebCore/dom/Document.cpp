@@ -4855,7 +4855,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
     }
 
     auto isNewElementFocusable = [&] {
-        if (!newFocusedElement)
+        if (!newFocusedElement || !newFocusedElement->isConnected())
             return false;
         // Resolving isFocusable() may require matching :focus-within as if the focus was already on the new element.
         newFocusedElement->setHasTentativeFocus(true);
