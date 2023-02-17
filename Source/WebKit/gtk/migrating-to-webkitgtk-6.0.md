@@ -91,7 +91,7 @@ WebKit now uses a single global network process for all web contexts, and differ
 network sessions can be created and used in the same network process. All the networking
 APIs have been moved from [type@WebKit.WebContext] and [type@WebKit.WebsiteDataManager] to the new class
 [type@WebKit.NetworkSession]. There's a default global persistent session that you can get with
-[func@WebKit.NetworkSession.get_default]. You can also create new sessions with
+[id@webkit_network_session_get_default]. You can also create new sessions with
 [ctor@WebKit.NetworkSession.new] for persistent sessions and [ctor@WebKit.NetworkSession.new_ephemeral]
 for ephemeral sessions. It's no longer possible to create a [type@WebKit.WebsiteDataManager]; it's now
 created by the [type@WebKit.NetworkSession] automatically at construction time. The [type@WebKit.NetworkSession]
