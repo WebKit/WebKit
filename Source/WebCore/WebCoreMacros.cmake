@@ -140,21 +140,25 @@ function(GENERATE_BINDINGS target)
         list(APPEND gen_sources ${arg_DESTINATION}/JS${_name}.cpp)
         list(APPEND gen_headers ${arg_DESTINATION}/JS${_name}.h)
     endforeach ()
+
     set(${arg_OUTPUT_SOURCE} ${${arg_OUTPUT_SOURCE}} ${gen_sources} PARENT_SCOPE)
+
     set(act_args)
     if (SHOW_BINDINGS_GENERATION_PROGRESS)
         list(APPEND args --showProgress)
-    endif ()
-    list(APPEND act_args BYPRODUCTS ${gen_sources} ${gen_headers})
-    if (SHOW_BINDINGS_GENERATION_PROGRESS)
         list(APPEND act_args USES_TERMINAL)
     endif ()
-    add_custom_target(${target}
+
+    add_custom_command(
+        OUTPUT ${gen_headers} ${gen_sources} ${arg_PP_EXTRA_OUTPUT}
         COMMAND ${PERL_EXECUTABLE} ${binding_generator} ${args}
-        DEPENDS ${arg_INPUT_FILES} ${arg_PP_INPUT_FILES}
+        DEPENDS ${arg_IDL_INCLUDES} ${arg_INPUT_FILES} ${arg_PP_INPUT_FILES} ${common_generator_dependencies}
         WORKING_DIRECTORY ${arg_BASE_DIR}
-        COMMENT "Generate bindings (${target})"
         VERBATIM ${act_args})
+
+    add_custom_target(${target}
+        DEPENDS ${gen_headers} ${gen_sources} ${arg_PP_EXTRA_OUTPUT}
+        COMMENT "Generate bindings (${target})")
 endfunction()
 
 
