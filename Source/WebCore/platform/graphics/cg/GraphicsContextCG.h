@@ -41,6 +41,8 @@ public:
     bool hasPlatformContext() const final;
     CGContextRef platformContext() const final;
 
+    const DestinationColorSpace& colorSpace() const final;
+
     void save() final;
     void restore() final;
 
@@ -137,6 +139,7 @@ private:
     void clearCGShadow();
 
     GraphicsContextPlatformPrivate* m_data { nullptr };
+    mutable std::optional<DestinationColorSpace> m_colorSpace;
 };
 
 CGAffineTransform getUserToBaseCTM(CGContextRef);

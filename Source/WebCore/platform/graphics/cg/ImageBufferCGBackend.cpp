@@ -62,16 +62,6 @@ unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
     return CheckedUint32(backendSize.width()) * 4;
 }
 
-RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const GraphicsContext& context)
-{
-    CGContextRef cgContext = context.platformContext();
-
-    if (CGContextGetType(cgContext) == kCGContextTypeBitmap)
-        return CGBitmapContextGetColorSpace(cgContext);
-    
-    return adoptCF(CGContextCopyDeviceColorSpace(cgContext));
-}
-
 void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatRect& destRect)
 {
     auto nativeImage = copyNativeImage(DontCopyBackingStore);
