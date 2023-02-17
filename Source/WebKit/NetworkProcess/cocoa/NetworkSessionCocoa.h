@@ -149,7 +149,6 @@ public:
 
 private:
     void invalidateAndCancel() override;
-    void clearCredentials() override;
     HashSet<WebCore::SecurityOriginData> originsWithCredentials() final;
     void removeCredentialsForOrigins(const Vector<WebCore::SecurityOriginData>&) final;
     void clearCredentials(WallTime) final;

@@ -88,12 +88,10 @@ void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried
 #endif
 }
 
-#if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
 static void applyBasicAuthorizationHeader(WebCore::ResourceRequest& request, const WebCore::Credential& credential)
 {
     request.setHTTPHeaderField(WebCore::HTTPHeaderName::Authorization, credential.serializationForBasicAuthorizationHeader());
 }
-#endif
 
 static float toNSURLSessionTaskPriority(WebCore::ResourceLoadPriority priority)
 {
@@ -359,22 +357,18 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         request.removeCredentials();
         url = request.url();
     
-#if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
         if (auto* storageSession = m_session->networkStorageSession()) {
             if (m_user.isEmpty() && m_password.isEmpty())
                 m_initialCredential = storageSession->credentialStorage().get(m_partition, url);
             else
                 storageSession->credentialStorage().set(m_partition, WebCore::Credential(m_user, m_password, WebCore::CredentialPersistenceNone), url);
         }
-#endif
     }
 
-#if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     if (!m_initialCredential.isEmpty() && !request.hasHTTPHeaderField(WebCore::HTTPHeaderName::Authorization)) {
         // FIXME: Support Digest authentication, and Proxy-Authorization.
         applyBasicAuthorizationHeader(request, m_initialCredential);
     }
-#endif
 
     bool shouldBlockCookies = false;
 #if ENABLE(TRACKING_PREVENTION)
@@ -605,7 +599,6 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         request.clearHTTPOrigin();
 
     } else {
-#if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
         // Only consider applying authentication credentials if this is actually a redirect and the redirect
         // URL didn't include credentials of its own.
         if (m_user.isEmpty() && m_password.isEmpty() && !redirectResponse.isNull()) {
@@ -616,7 +609,6 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
                 // FIXME: Support Digest authentication, and Proxy-Authorization.
                 applyBasicAuthorizationHeader(request, m_initialCredential);
             }
-#endif
         }
     }
 
@@ -688,7 +680,6 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
         return true;
     }
 
-#if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     if (m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use) {
         if (!m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
             // The stored credential wasn't accepted, stop using it.
@@ -712,7 +703,6 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
             }
         }
     }
-#endif
 
     if (!challenge.proposedCredential().isEmpty() && !challenge.previousFailureCount()) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, challenge.proposedCredential());

@@ -111,7 +111,6 @@ public:
     virtual ~NetworkSession();
 
     virtual void invalidateAndCancel();
-    virtual void clearCredentials() { };
     virtual bool shouldLogCookieInformation() const { return false; }
     virtual Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const { return { }; }
     virtual void deleteAlternativeServicesForHostNames(const Vector<String>&) { }
