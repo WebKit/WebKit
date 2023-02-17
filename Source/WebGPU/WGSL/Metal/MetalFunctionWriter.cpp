@@ -86,8 +86,8 @@ public:
     void visit(AST::ReferenceTypeName&) override;
     void visit(AST::StructTypeName&) override;
 
-    void visit(AST::ParameterValue&) override;
-    void visitArgumentBufferParameter(AST::ParameterValue&);
+    void visit(AST::Parameter&) override;
+    void visitArgumentBufferParameter(AST::Parameter&);
 
 private:
     StringBuilder& m_stringBuilder;
@@ -363,7 +363,7 @@ void FunctionDefinitionWriter::visit(AST::StructTypeName& structType)
     m_stringBuilder.append(structType.structure().name());
 }
 
-void FunctionDefinitionWriter::visit(AST::ParameterValue& parameter)
+void FunctionDefinitionWriter::visit(AST::Parameter& parameter)
 {
     visit(parameter.typeName());
     m_stringBuilder.append(" ", parameter.name());
@@ -373,7 +373,7 @@ void FunctionDefinitionWriter::visit(AST::ParameterValue& parameter)
     }
 }
 
-void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::ParameterValue& parameter)
+void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& parameter)
 {
     m_stringBuilder.append("constant ");
     visit(parameter.typeName());

@@ -120,7 +120,7 @@ void EntryPointRewriter::rewrite()
     appendBuiltins();
 
     // add parameter to builtins: ${structName} : ${structType}
-    m_function.parameters().append(makeUniqueRef<AST::ParameterValue>(
+    m_function.parameters().append(makeUniqueRef<AST::Parameter>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structParameterName),
         adoptRef(*new AST::NamedTypeName(SourceSpan::empty(), AST::Identifier::make(m_structTypeName))),
@@ -215,6 +215,7 @@ void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& da
             SourceSpan::empty(),
             makeUniqueRef<AST::Variable>(
                 SourceSpan::empty(),
+                AST::VariableFlavor::Var,
                 AST::Identifier::make(data.m_name),
                 nullptr, // TODO: do we need a VariableQualifier?
                 data.m_type.copyRef(),
@@ -252,6 +253,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
             SourceSpan::empty(),
             makeUniqueRef<AST::Variable>(
                 SourceSpan::empty(),
+                AST::VariableFlavor::Var,
                 AST::Identifier::make(data.m_name),
                 nullptr,
                 &type,
@@ -294,7 +296,7 @@ void EntryPointRewriter::visit(Vector<String>& path, MemberOrParameter&& data)
 void EntryPointRewriter::appendBuiltins()
 {
     for (auto& data : m_builtins) {
-        m_function.parameters().append(makeUniqueRef<AST::ParameterValue>(
+        m_function.parameters().append(makeUniqueRef<AST::Parameter>(
             SourceSpan::empty(),
             AST::Identifier::make(data.m_name),
             WTFMove(data.m_type),

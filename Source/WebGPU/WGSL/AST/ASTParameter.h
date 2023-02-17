@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,44 @@
 
 #pragma once
 
-#include "ASTNode.h"
-
-#include <wtf/UniqueRefVector.h>
+#include "ASTAttribute.h"
+#include "ASTIdentifier.h"
+#include "ASTTypeName.h"
 
 namespace WGSL::AST {
 
-class Value : public Node {
+enum class ParameterRole : uint8_t {
+    UserDefined,
+    StageIn,
+    BindGroup,
+};
+
+class Parameter final : public Node {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using Ref = UniqueRef<Value>;
-    using List = UniqueRefVector<Value>;
+    using List = UniqueRefVector<Parameter>;
 
-    Value(SourceSpan span)
+    Parameter(SourceSpan span, Identifier&& name, TypeName::Ref&& typeName, Attribute::List&& attributes, ParameterRole role)
         : Node(span)
+        , m_role(role)
+        , m_name(WTFMove(name))
+        , m_typeName(WTFMove(typeName))
+        , m_attributes(WTFMove(attributes))
     { }
+
+    NodeKind kind() const override;
+    Identifier& name() { return m_name; }
+    TypeName& typeName() { return m_typeName.get(); }
+    Attribute::List& attributes() { return m_attributes; }
+    ParameterRole role() { return m_role; }
+
+private:
+    ParameterRole m_role;
+    Identifier m_name;
+    TypeName::Ref m_typeName;
+    Attribute::List m_attributes;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::Value)
-static bool isType(const WGSL::AST::Node& node)
-{
-    switch (node.kind()) {
-    case WGSL::AST::NodeKind::ConstantValue:
-    case WGSL::AST::NodeKind::OverrideValue:
-    case WGSL::AST::NodeKind::LetValue:
-    case WGSL::AST::NodeKind::ParameterValue:
-        return true;
-    default:
-        return false;
-    }
-}
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WGSL_AST(Parameter)

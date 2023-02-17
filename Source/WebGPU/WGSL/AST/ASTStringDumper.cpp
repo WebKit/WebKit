@@ -376,7 +376,7 @@ void StringDumper::visit(StructTypeName& type)
     m_out.print(type.structure().name());
 }
 
-void StringDumper::visit(ParameterValue& parameter)
+void StringDumper::visit(Parameter& parameter)
 {
     m_out.print(m_indent);
     if (!parameter.attributes().isEmpty()) {

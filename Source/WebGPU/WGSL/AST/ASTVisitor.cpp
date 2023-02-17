@@ -286,6 +286,13 @@ void Visitor::visit(AST::Function& function)
     checkErrorAndVisit(function.body());
 }
 
+void Visitor::visit(AST::Parameter& parameterValue)
+{
+    for (auto& attribute : parameterValue.attributes())
+        checkErrorAndVisit(attribute);
+    checkErrorAndVisit(parameterValue.typeName());
+}
+
 // Identifier
 
 void Visitor::visit(AST::Identifier&)
@@ -505,58 +512,6 @@ void Visitor::visit(AST::ReferenceTypeName& referenceTypeName)
 
 void Visitor::visit(AST::StructTypeName&)
 {
-}
-
-// Values
-
-void Visitor::visit(AST::Value& value)
-{
-    switch (value.kind()) {
-    case AST::NodeKind::ConstantValue:
-        checkErrorAndVisit(downcast<AST::ConstantValue>(value));
-        break;
-    case AST::NodeKind::OverrideValue:
-        checkErrorAndVisit(downcast<AST::OverrideValue>(value));
-        break;
-    case AST::NodeKind::LetValue:
-        checkErrorAndVisit(downcast<AST::LetValue>(value));
-        break;
-    case AST::NodeKind::ParameterValue:
-        checkErrorAndVisit(downcast<AST::ParameterValue>(value));
-        break;
-    default:
-        ASSERT_NOT_REACHED("Unhandled Value");
-    }
-}
-
-void Visitor::visit(AST::ConstantValue& constantValue)
-{
-    checkErrorAndVisit(constantValue.name());
-    maybeCheckErrorAndVisit(constantValue.maybeTypeName());
-    checkErrorAndVisit(constantValue.initializer());
-}
-
-void Visitor::visit(AST::OverrideValue& overrideValue)
-{
-    for (auto& attribute : overrideValue.attributes())
-        checkErrorAndVisit(attribute);
-    checkErrorAndVisit(overrideValue.name());
-    maybeCheckErrorAndVisit(overrideValue.maybeTypeName());
-    maybeCheckErrorAndVisit(overrideValue.maybeInitializer());
-}
-
-void Visitor::visit(AST::LetValue& letValue)
-{
-    checkErrorAndVisit(letValue.name());
-    maybeCheckErrorAndVisit(letValue.maybeTypeName());
-    checkErrorAndVisit(letValue.initializer());
-}
-
-void Visitor::visit(AST::ParameterValue& parameterValue)
-{
-    for (auto& attribute : parameterValue.attributes())
-        checkErrorAndVisit(attribute);
-    checkErrorAndVisit(parameterValue.typeName());
 }
 
 // Variable

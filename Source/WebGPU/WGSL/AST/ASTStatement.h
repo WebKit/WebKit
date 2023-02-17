@@ -64,7 +64,6 @@ static bool isType(const WGSL::AST::Node& node)
     case WGSL::AST::NodeKind::ReturnStatement:
     case WGSL::AST::NodeKind::StaticAssertStatement:
     case WGSL::AST::NodeKind::SwitchStatement:
-    case WGSL::AST::NodeKind::ValueStatement:
     case WGSL::AST::NodeKind::VariableStatement:
     case WGSL::AST::NodeKind::WhileStatement:
         return true;

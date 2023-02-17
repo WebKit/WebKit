@@ -1,4 +1,3 @@
-\
 /*
  * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
@@ -35,24 +34,37 @@
 
 namespace WGSL::AST {
 
+enum class VariableFlavor : uint8_t {
+    Const,
+    Let,
+    Override,
+    Var,
+};
+
 class Variable final : public Declaration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using Ref = UniqueRef<Variable>;
     using List = UniqueRefVector<Variable>;
 
-    Variable(SourceSpan span, Identifier&& name, VariableQualifier::Ptr&& qualifier, TypeName::Ptr&& type, Expression::Ptr&& initializer, Attribute::List&& attributes)
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, TypeName::Ptr&& type, Expression::Ptr&& initializer)
+        : Variable(span, flavor, WTFMove(name), { }, WTFMove(type), WTFMove(initializer), { })
+    { }
+
+    Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, VariableQualifier::Ptr&& qualifier, TypeName::Ptr&& type, Expression::Ptr&& initializer, Attribute::List&& attributes)
         : Declaration(span)
         , m_name(WTFMove(name))
         , m_attributes(WTFMove(attributes))
         , m_qualifier(WTFMove(qualifier))
         , m_type(WTFMove(type))
         , m_initializer(WTFMove(initializer))
+        , m_flavor(flavor)
     {
         ASSERT(m_type || m_initializer);
     }
 
     NodeKind kind() const override;
+    VariableFlavor flavor() const { return m_flavor; };
     Identifier& name() { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
@@ -67,6 +79,7 @@ private:
     VariableQualifier::Ptr m_qualifier;
     TypeName::Ptr m_type;
     Expression::Ptr m_initializer;
+    VariableFlavor m_flavor;
 };
 
 } // namespace WGSL::AST
