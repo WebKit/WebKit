@@ -41,7 +41,11 @@
  * Since: 2.28
  */
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
+#if !ENABLE(2022_GLIB_API)
+typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
+#endif
+
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitPointerLockPermissionRequestPrivate {
     GRefPtr<WebKitWebView> webView;
@@ -80,7 +84,7 @@ static void webkitPointerLockPermissionRequestDeny(WebKitPermissionRequest* requ
     priv->madeDecision = true;
 }
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface* iface)
 {
     iface->allow = webkitPointerLockPermissionRequestAllow;
     iface->deny = webkitPointerLockPermissionRequestDeny;
