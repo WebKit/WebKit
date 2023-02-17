@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Copyright (c) 2017-2020 Apple Inc. All rights reserved.
+# Copyright (c) 2017-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -81,6 +81,7 @@ class Setting
   attr_accessor :options
   attr_accessor :type
   attr_accessor :status
+  attr_accessor :category
   attr_accessor :defaultValues
   attr_accessor :excludeFromInternalSettings
   attr_accessor :condition

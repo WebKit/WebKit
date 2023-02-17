@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 
 @interface WebFeature (Internal)
 
-- (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name status:(WebFeatureStatus)status details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden;
+- (instancetype)initWithKey:(NSString *)key preferenceKey:(NSString *)preferenceKey name:(NSString *)name status:(WebFeatureStatus)status category:(WebFeatureCategory)category details:(NSString *)details defaultValue:(BOOL)defaultValue hidden:(BOOL)hidden;
 
 @end
 

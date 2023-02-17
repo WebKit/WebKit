@@ -81,6 +81,7 @@ class Preference
   attr_accessor :type
   attr_accessor :refinedType
   attr_accessor :status
+  attr_accessor :category
   attr_accessor :defaultsOverridable
   attr_accessor :humanReadableName
   attr_accessor :humanReadableDescription
@@ -96,6 +97,7 @@ class Preference
     @type = opts["type"]
     @refinedType = opts["refinedType"]
     @status = opts["status"]
+    @category = opts["category"] || "none"
     @defaultsOverridable = opts["defaultsOverridable"] || false
     @humanReadableName = (opts["humanReadableName"] || "")
     if not humanReadableName.start_with? "WebKitAdditions"
@@ -148,8 +150,24 @@ class Preference
     "WebFeatureStatus" + @status.capitalize
   end
 
+  def webFeatureCategory
+    if %w{ css dom }.include?(@category)
+      "WebFeatureCategory" + @category.upcase
+    else
+      "WebFeatureCategory" + @category.capitalize
+    end
+  end
+
   def apiStatus
     "API::FeatureStatus::" + @status.capitalize
+  end
+
+  def apiCategory
+      if %w{ css dom }.include?(@category)
+        "API::FeatureCategory::" + @category.upcase
+      else
+        "API::FeatureCategory::" + @category.capitalize
+      end
   end
 
   # WebKitLegacy specific helpers.
@@ -241,6 +259,9 @@ class Preferences
   # Corresponds to WebFeatureStatus enum cases. "developer" and up require human-readable names.
   STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
 
+  # Corresponds to WebFeatureCategory enum cases.
+  CATEGORIES = %w{ css dom javascript media networking privacy security }
+
   def initializeParsedPreferences(parsedPreferences)
     result = []
     failed = false
@@ -264,6 +285,16 @@ class Preferences
           next if failed
         elsif webcoreSettingOnly and @frontend != "WebCore"
           next
+        end
+
+        if %w{ developer testable preview stable }.include?(status)
+            reject.call "Preference #{name} has no category, which is required." if !options["category"]
+            next if failed
+            category = options["category"]
+            if !CATEGORIES.include?(category)
+              reject.call "Preference #{name}\'s category \"#{category}\" is not one of the known categories: #{CATEGORIES}"
+              next
+            end
         end
 
         if options["defaultValue"].include?(@frontend)
