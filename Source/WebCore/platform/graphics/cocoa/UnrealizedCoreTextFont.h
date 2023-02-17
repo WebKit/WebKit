@@ -62,7 +62,8 @@ public:
 
     operator bool() const;
 
-    void modifyFromContext(const FontDescription&, const FontCreationContext&, ApplyTraitsVariations = ApplyTraitsVariations::Yes);
+    void modifyFromContext(const FontDescription&, const FontCreationContext&, FontTypeForPreparation = FontTypeForPreparation::NonSystemFont, ApplyTraitsVariations = ApplyTraitsVariations::Yes, bool shouldEnhanceTextLegibility = false);
+
     RetainPtr<CTFontRef> realize() const;
 
 private:
@@ -70,6 +71,13 @@ private:
 
     std::variant<RetainPtr<CTFontRef>, RetainPtr<CTFontDescriptorRef>> m_baseFont;
     RetainPtr<CFMutableDictionaryRef> m_attributes { adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)) };
+
+    ApplyTraitsVariations m_applyTraitsVariations { ApplyTraitsVariations::Yes };
+    float m_weight { 0 };
+    float m_width { 0 };
+    float m_slope { 0 };
+    FontStyleAxis m_fontStyleAxis { FontStyleAxis::slnt };
+    FontVariationSettings m_variationSettings;
 };
 
 } // namespace WebCore
