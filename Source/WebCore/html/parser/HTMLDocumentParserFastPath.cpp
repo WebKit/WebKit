@@ -986,19 +986,19 @@ static bool canUseFastPath(Document& document, Element& contextElement, OptionSe
 }
 
 template<class Char>
-static bool tryFastParsingHTMLFragmentImpl(const Span<const Char>& source, Document& document, Ref<DocumentFragment>& fragment, Element& contextElement)
+static bool tryFastParsingHTMLFragmentImpl(const Span<const Char>& source, Document& document, DocumentFragment& fragment, Element& contextElement)
 {
     HTMLFastPathParser parser { source, document, fragment };
     bool success = parser.parse(contextElement);
     // The direction attribute may change as a result of parsing. Check again.
     if (document.isDirAttributeDirty() && document.settings().dirPseudoEnabled())
         success = false;
-    if (!success)
-        fragment = DocumentFragment::create(document);
+    if (!success && fragment.hasChildNodes())
+        fragment.removeChildren();
     return success;
 }
 
-bool tryFastParsingHTMLFragment(const String& source, Document& document, Ref<DocumentFragment>& fragment, Element& contextElement, OptionSet<ParserContentPolicy> policy)
+bool tryFastParsingHTMLFragment(const String& source, Document& document, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> policy)
 {
     if (!canUseFastPath(document, contextElement, policy))
         return false;
