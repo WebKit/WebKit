@@ -546,13 +546,31 @@ void LineLayout::layout()
 
 void LineLayout::constructContent()
 {
-    if (!m_inlineFormattingState.lines().isEmpty()) {
+    auto destroyDamagedContent = [&] {
+        if (!m_inlineContent || !m_lineDamage || !m_lineDamage->contentPosition())
+            return;
+        auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
+        if (damagedLineIndex >= m_inlineContent->lines.size()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        auto& damangedLine = m_inlineContent->lines[damagedLineIndex];
+        m_inlineContent->boxes.remove(damangedLine.firstBoxIndex(), damangedLine.boxCount());
+        m_inlineContent->lines.remove(damagedLineIndex);
+    };
+    destroyDamagedContent();
+
+    auto constructFreshlyLaidOutContent = [&] {
+        if (m_inlineFormattingState.lines().isEmpty())
+            return;
+
         InlineContentBuilder { flow(), m_boxTree }.build(m_inlineFormattingState, ensureInlineContent());
         ASSERT(m_inlineContent);
         m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
         m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
         m_inlineContent->shrinkToFit();
-    }
+    };
+    constructFreshlyLaidOutContent();
 
     auto& blockFlow = flow();
     auto& rootStyle = blockFlow.style();

@@ -52,7 +52,7 @@ public:
     Type type() const { return m_damageType; }
     // FIXME: Add support for damage range with multiple, different damage types.
     struct ContentPosition {
-        size_t line { 0 };
+        size_t lineIndex { 0 };
         InlineItemPosition inlineItemPosition { };
     };
     std::optional<ContentPosition> contentPosition() const { return m_contentPosition; }
