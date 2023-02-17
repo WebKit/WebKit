@@ -25,6 +25,10 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 
+#if !ENABLE(2022_GLIB_API)
+typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
+#endif
+
 using namespace WebKit;
 
 /**
@@ -49,7 +53,7 @@ enum {
     PROP_IS_FOR_VIDEO_DEVICE
 };
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitUserMediaPermissionRequestPrivate {
     RefPtr<UserMediaPermissionRequestProxy> request;
@@ -95,7 +99,7 @@ static void webkitUserMediaPermissionRequestDeny(WebKitPermissionRequest* reques
     priv->request->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
 }
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface* iface)
 {
     iface->allow = webkitUserMediaPermissionRequestAllow;
     iface->deny = webkitUserMediaPermissionRequestDeny;

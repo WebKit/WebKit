@@ -25,6 +25,10 @@
 #include "WebKitPermissionRequest.h"
 #include <wtf/glib/WTFGType.h>
 
+#if !ENABLE(2022_GLIB_API)
+typedef WebKitPermissionRequestIface WebKitPermissionRequestInterface;
+#endif
+
 using namespace WebKit;
 
 /**
@@ -57,7 +61,7 @@ using namespace WebKit;
  * does not match the name of a valid `.desktop` file.
  */
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface*);
 
 struct _WebKitGeolocationPermissionRequestPrivate {
     RefPtr<GeolocationPermissionRequest> request;
@@ -96,7 +100,7 @@ static void webkitGeolocationPermissionRequestDeny(WebKitPermissionRequest* requ
     priv->madeDecision = true;
 }
 
-static void webkit_permission_request_interface_init(WebKitPermissionRequestIface* iface)
+static void webkit_permission_request_interface_init(WebKitPermissionRequestInterface* iface)
 {
     iface->allow = webkitGeolocationPermissionRequestAllow;
     iface->deny = webkitGeolocationPermissionRequestDeny;
