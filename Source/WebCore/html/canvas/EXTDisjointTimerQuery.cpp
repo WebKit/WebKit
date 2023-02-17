@@ -249,7 +249,7 @@ WebGLAny EXTDisjointTimerQuery::getQueryObjectEXT(WebGLTimerQueryEXT& query, GCG
     case GraphicsContextGL::QUERY_RESULT_EXT:
         if (!query.isResultAvailable())
             return 0;
-        return context->graphicsContextGL()->getQueryObjectui64EXT(query.object(), pname);
+        return static_cast<unsigned long long>(context->graphicsContextGL()->getQueryObjectui64EXT(query.object(), pname));
     case GraphicsContextGL::QUERY_RESULT_AVAILABLE_EXT:
         if (!query.isResultAvailable())
             return false;
