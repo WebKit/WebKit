@@ -7138,9 +7138,9 @@ void WebPage::stopExtendingIncrementalRenderingSuppression(unsigned token)
     m_page->mainFrame().view()->setVisualUpdatesAllowedByClient(!shouldExtendIncrementalRenderingSuppression());
 }
     
-void WebPage::setScrollPinningBehavior(uint32_t pinning)
+void WebPage::setScrollPinningBehavior(WebCore::ScrollPinningBehavior pinning)
 {
-    m_scrollPinningBehavior = static_cast<ScrollPinningBehavior>(pinning);
+    m_scrollPinningBehavior = pinning;
     m_page->mainFrame().view()->setScrollPinningBehavior(m_scrollPinningBehavior);
 }
 

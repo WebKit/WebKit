@@ -759,6 +759,7 @@ def headers_for_type(type):
         'WebCore::SameSiteStrictEnforcementEnabled': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::ScriptExecutionContextIdentifier': ['<WebCore/ProcessQualified.h>', '<WebCore/ScriptExecutionContextIdentifier.h>', '<wtf/ObjectIdentifier.h>'],
         'WebCore::ScrollGranularity': ['<WebCore/ScrollTypes.h>'],
+        'WebCore::ScrollPinningBehavior': ['<WebCore/ScrollTypes.h>'],
         'WebCore::SecurityPolicyViolationEventInit': ['<WebCore/SecurityPolicyViolationEvent.h>'],
         'WebCore::SelectionDirection': ['<WebCore/VisibleSelection.h>'],
         'WebCore::SelectionGeometry': ['"EditorState.h"'],

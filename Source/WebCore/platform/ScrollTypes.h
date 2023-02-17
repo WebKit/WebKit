@@ -298,7 +298,7 @@ enum ScrollbarOverlayStyle: uint8_t {
     ScrollbarOverlayStyleLight
 };
 
-enum ScrollPinningBehavior : uint8_t {
+enum class ScrollPinningBehavior : uint8_t {
     DoNotPin,
     PinToTop,
     PinToBottom
@@ -393,15 +393,6 @@ template<> struct EnumTraits<WebCore::ScrollIsAnimated> {
         WebCore::ScrollIsAnimated,
         WebCore::ScrollIsAnimated::No,
         WebCore::ScrollIsAnimated::Yes
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ScrollPinningBehavior> {
-    using values = EnumValues<
-        WebCore::ScrollPinningBehavior,
-        WebCore::ScrollPinningBehavior::DoNotPin,
-        WebCore::ScrollPinningBehavior::PinToTop,
-        WebCore::ScrollPinningBehavior::PinToBottom
     >;
 };
 

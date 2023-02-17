@@ -294,7 +294,7 @@ private:
     struct SwipeState {
         RectEdges<bool> canRubberBand  { true, true, true, true };
         RectEdges<bool> mainFramePinnedState { true, true, true, true };
-        ScrollPinningBehavior scrollPinningBehavior { DoNotPin };
+        ScrollPinningBehavior scrollPinningBehavior { ScrollPinningBehavior::DoNotPin };
     };
 
     Lock m_swipeStateLock;

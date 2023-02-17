@@ -1180,6 +1180,12 @@ enum class WebCore::OverscrollBehavior : uint8_t {
     None
 };
 
+enum class WebCore::ScrollPinningBehavior : uint8_t {
+    DoNotPin,
+    PinToTop,
+    PinToBottom
+};
+
 struct WebCore::ExceptionDetails {
     String message;
     int lineNumber;

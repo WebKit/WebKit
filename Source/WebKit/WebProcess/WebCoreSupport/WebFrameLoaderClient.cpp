@@ -1658,7 +1658,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     webPage->corePage()->setDelegatesScaling(drawingArea->usesDelegatedPageScaling());
 #endif
 
-    if (webPage->scrollPinningBehavior() != DoNotPin)
+    if (webPage->scrollPinningBehavior() != ScrollPinningBehavior::DoNotPin)
         view->setScrollPinningBehavior(webPage->scrollPinningBehavior());
 
 #if USE(COORDINATED_GRAPHICS)

@@ -2043,7 +2043,7 @@ ScrollPosition FrameView::minimumScrollPosition() const
 {
     ScrollPosition minimumPosition = ScrollView::minimumScrollPosition();
 
-    if (m_frame->isMainFrame() && m_scrollPinningBehavior == PinToBottom)
+    if (m_frame->isMainFrame() && m_scrollPinningBehavior == ScrollPinningBehavior::PinToBottom)
         minimumPosition.setY(maximumScrollPosition().y());
     
     return minimumPosition;
@@ -2053,7 +2053,7 @@ ScrollPosition FrameView::maximumScrollPosition() const
 {
     ScrollPosition maximumPosition = ScrollView::maximumScrollPosition();
 
-    if (m_frame->isMainFrame() && m_scrollPinningBehavior == PinToTop)
+    if (m_frame->isMainFrame() && m_scrollPinningBehavior == ScrollPinningBehavior::PinToTop)
         maximumPosition.setY(minimumScrollPosition().y());
     
     return maximumPosition;
@@ -2065,7 +2065,7 @@ ScrollPosition FrameView::unscaledMinimumScrollPosition() const
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
         ScrollPosition minimumPosition = unscaledDocumentRect.location();
 
-        if (m_frame->isMainFrame() && m_scrollPinningBehavior == PinToBottom)
+        if (m_frame->isMainFrame() && m_scrollPinningBehavior == ScrollPinningBehavior::PinToBottom)
             minimumPosition.setY(unscaledMaximumScrollPosition().y());
 
         return minimumPosition;
@@ -2080,7 +2080,7 @@ ScrollPosition FrameView::unscaledMaximumScrollPosition() const
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
         unscaledDocumentRect.expand(0, headerHeight() + footerHeight());
         ScrollPosition maximumPosition = ScrollPosition(unscaledDocumentRect.maxXMaxYCorner() - visibleSize()).expandedTo({ 0, 0 });
-        if (m_frame->isMainFrame() && m_scrollPinningBehavior == PinToTop)
+        if (m_frame->isMainFrame() && m_scrollPinningBehavior == ScrollPinningBehavior::PinToTop)
             maximumPosition.setY(unscaledMinimumScrollPosition().y());
 
         return maximumPosition;

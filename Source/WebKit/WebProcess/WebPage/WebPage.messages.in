@@ -529,7 +529,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     WillStartUserTriggeredZooming();
 #endif
 
-    SetScrollPinningBehavior(uint32_t pinning)
+    SetScrollPinningBehavior(enum:uint8_t WebCore::ScrollPinningBehavior pinning)
     SetScrollbarOverlayStyle(std::optional<uint32_t> scrollbarStyle)
 
     GetBytecodeProfile() -> (String string)

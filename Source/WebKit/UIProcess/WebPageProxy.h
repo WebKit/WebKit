@@ -3207,7 +3207,7 @@ private:
     HiddenPageThrottlingAutoIncreasesCounter::Token m_hiddenPageDOMTimerThrottlingAutoIncreasesCount;
     VisibleWebPageToken m_visiblePageToken;
         
-    WebCore::ScrollPinningBehavior m_scrollPinningBehavior { WebCore::DoNotPin };
+    WebCore::ScrollPinningBehavior m_scrollPinningBehavior { WebCore::ScrollPinningBehavior::DoNotPin };
     std::optional<WebCore::ScrollbarOverlayStyle> m_scrollbarOverlayStyle;
 
     ActivityStateChangeID m_currentActivityStateChangeID { ActivityStateChangeAsynchronous };
