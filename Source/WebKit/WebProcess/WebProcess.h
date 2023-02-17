@@ -104,7 +104,7 @@ struct MessageWithMessagePorts;
 struct MockMediaDevice;
 struct PluginInfo;
 struct PrewarmInformation;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 #if ENABLE(SERVICE_WORKER)
 struct ServiceWorkerContextData;

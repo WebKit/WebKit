@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2015, 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,12 +39,15 @@ namespace WebCore {
 
 String SecurityOriginData::toString() const
 {
+    auto protocol = this->protocol();
     if (protocol == "file"_s)
         return "file://"_s;
 
+    auto host = this->host();
     if (protocol.isEmpty() && host.isEmpty())
         return { };
 
+    auto port = this->port();
     if (!port)
         return makeString(protocol, "://", host);
     return makeString(protocol, "://", host, ':', static_cast<uint32_t>(*port));
@@ -101,10 +104,11 @@ String SecurityOriginData::databaseIdentifier() const
     // string because of a bug in how we handled the scheme for file URLs.
     // Now that we've fixed that bug, we produce this string for compatibility
     // with existing persistent state.
+    auto protocol = this->protocol();
     if (equalLettersIgnoringASCIICase(protocol, "file"_s))
         return "file__0"_s;
 
-    return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host), separatorCharacter, port.value_or(0));
+    return makeString(protocol, separatorCharacter, FileSystem::encodeForFileName(host()), separatorCharacter, port().value_or(0));
 }
 
 std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(StringView databaseIdentifier)
@@ -143,26 +147,12 @@ std::optional<SecurityOriginData> SecurityOriginData::fromDatabaseIdentifier(Str
 
 SecurityOriginData SecurityOriginData::isolatedCopy() const &
 {
-    SecurityOriginData result;
-
-    result.protocol = protocol.isolatedCopy();
-    result.host = host.isolatedCopy();
-    result.port = port;
-    result.opaqueOriginIdentifier = opaqueOriginIdentifier;
-
-    return result;
+    return SecurityOriginData { crossThreadCopy(m_data) };
 }
 
 SecurityOriginData SecurityOriginData::isolatedCopy() &&
 {
-    SecurityOriginData result;
-
-    result.protocol = WTFMove(protocol).isolatedCopy();
-    result.host = WTFMove(host).isolatedCopy();
-    result.port = port;
-    result.opaqueOriginIdentifier = opaqueOriginIdentifier;
-
-    return result;
+    return SecurityOriginData { crossThreadCopy(WTFMove(m_data)) };
 }
 
 bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)
@@ -170,10 +160,7 @@ bool operator==(const SecurityOriginData& a, const SecurityOriginData& b)
     if (&a == &b)
         return true;
 
-    return a.protocol == b.protocol
-        && a.host == b.host
-        && a.port == b.port
-        && a.opaqueOriginIdentifier == b.opaqueOriginIdentifier;
+    return a.data() == b.data();
 }
 
 static bool schemeRequiresHost(const URL& url)

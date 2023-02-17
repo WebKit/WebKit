@@ -222,7 +222,7 @@ void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registrat
 {
     LOG(ServiceWorker, "Adding registration live for %s", registration->key().loggingString().utf8().data());
 
-    if (!m_scopeToRegistrationMap.contains(registration->key()) && !allowLoopbackIPAddress(registration->key().topOrigin().host))
+    if (!m_scopeToRegistrationMap.contains(registration->key()) && !allowLoopbackIPAddress(registration->key().topOrigin().host()))
         m_uniqueRegistrationCount++;
 
     if (registration->serviceWorkerPageIdentifier())
@@ -247,7 +247,7 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
     auto it = m_scopeToRegistrationMap.find(registration->key());
     if (it != m_scopeToRegistrationMap.end() && it->value == registration.get()) {
         m_scopeToRegistrationMap.remove(it);
-        if (!SecurityOrigin::isLocalHostOrLoopbackIPAddress(registration->key().topOrigin().host))
+        if (!SecurityOrigin::isLocalHostOrLoopbackIPAddress(registration->key().topOrigin().host()))
             m_uniqueRegistrationCount--;
     }
 
@@ -1266,7 +1266,7 @@ void SWServer::handleLowMemoryWarning()
 
 void SWServer::removeFromScopeToRegistrationMap(const ServiceWorkerRegistrationKey& key)
 {
-    if (m_scopeToRegistrationMap.contains(key) && !allowLoopbackIPAddress(key.topOrigin().host))
+    if (m_scopeToRegistrationMap.contains(key) && !allowLoopbackIPAddress(key.topOrigin().host()))
         m_uniqueRegistrationCount--;
 
     m_scopeToRegistrationMap.remove(key);

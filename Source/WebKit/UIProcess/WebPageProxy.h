@@ -321,7 +321,7 @@ struct MediaUsageInfo;
 struct MockWebAuthenticationConfiguration;
 struct PermissionDescriptor;
 struct PrewarmInformation;
-struct SecurityOriginData;
+class SecurityOriginData;
 struct ShareData;
 struct SpeechRecognitionError;
 struct TextAlternativeWithRange;

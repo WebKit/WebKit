@@ -51,7 +51,7 @@ class DOMWindow;
 class Navigator;
 class ScriptExecutionContext;
 class WebXRSession;
-struct SecurityOriginData;
+class SecurityOriginData;
 struct XRSessionInit;
 
 class WebXRSystem final : public RefCounted<WebXRSystem>, public EventTarget, public ActiveDOMObject {

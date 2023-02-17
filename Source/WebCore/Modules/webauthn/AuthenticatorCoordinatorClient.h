@@ -48,7 +48,7 @@ enum class MediationRequirement : uint8_t;
 struct AuthenticatorResponseData;
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;

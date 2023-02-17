@@ -32,7 +32,7 @@
 
 namespace WebCore {
 struct ClientOrigin;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

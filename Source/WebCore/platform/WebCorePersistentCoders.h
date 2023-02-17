@@ -43,7 +43,7 @@ struct CrossOriginEmbedderPolicy;
 struct FetchOptions;
 struct ImportedScriptAttributes;
 struct NavigationPreloadState;
-struct SecurityOriginData;
+class SecurityOriginData;
 
 }
 

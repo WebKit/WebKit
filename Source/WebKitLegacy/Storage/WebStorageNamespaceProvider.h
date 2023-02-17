@@ -29,7 +29,7 @@
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

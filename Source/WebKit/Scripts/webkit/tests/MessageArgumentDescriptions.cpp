@@ -96,6 +96,7 @@
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerIdentifier.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/SharedWorkerIdentifier.h>
@@ -402,6 +403,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaKeySystemRequestIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaPlayerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::MediaSessionIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::OpaqueOriginIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PageIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PlaybackTargetClientContextIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::PushSubscriptionIdentifier));
@@ -485,6 +487,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::MediaKeySystemRequestIdentifier"_s,
         "WebCore::MediaPlayerIdentifier"_s,
         "WebCore::MediaSessionIdentifier"_s,
+        "WebCore::OpaqueOriginIdentifier"_s,
         "WebCore::PageIdentifier"_s,
         "WebCore::PlaybackTargetClientContextIdentifier"_s,
         "WebCore::PushSubscriptionIdentifier"_s,

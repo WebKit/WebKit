@@ -1707,7 +1707,7 @@ void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, Option
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
         if (RefPtr cache = session->cache()) {
             Vector<NetworkCache::Key> cacheKeysToDelete;
-            String cachePartition = origin.clientOrigin == origin.topOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host);
+            String cachePartition = origin.clientOrigin == origin.topOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host());
             bool shouldClearAllEntriesInPartition = origin.clientOrigin == origin.topOrigin;
             cache->traverse(cachePartition, [cache, clearTasksHandler, shouldClearAllEntriesInPartition, origin = origin.clientOrigin, cachePartition, cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
                 if (traversalEntry) {
@@ -1754,14 +1754,16 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     if (websiteDataTypes.contains(WebsiteDataType::AlternativeServices) && session) {
-        auto hosts = originDatas.map([](auto& originData) { return originData.host; });
+        auto hosts = originDatas.map([](auto& originData) {
+            return originData.host();
+        });
         session->deleteAlternativeServicesForHostNames(hosts);
     }
 #endif
 
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements) && session) {
         for (auto& originData : originDatas)
-            session->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host), [clearTasksHandler] { });
+            session->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host()), [clearTasksHandler] { });
     }
 
 #if ENABLE(SERVICE_WORKER)
@@ -1811,7 +1813,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     if (session) {
         HashSet<WebCore::RegistrableDomain> domainsToDeleteNetworkDataFor;
         for (auto& originData : originDatas)
-            domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(originData.host));
+            domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(originData.host()));
         for (auto& cookieHostName : cookieHostNames)
             domainsToDeleteNetworkDataFor.add(WebCore::RegistrableDomain::uncheckedCreateFromHost(cookieHostName));
         for (auto& cacheHostName : HSTSCacheHostNames)
@@ -1839,7 +1841,7 @@ static Vector<WebCore::SecurityOriginData> filterForRegistrableDomains(const Has
 {
     Vector<SecurityOriginData> originsDeleted;
     for (const auto& origin : origins) {
-        auto domain = RegistrableDomain::uncheckedCreateFromHost(origin.host);
+        auto domain = RegistrableDomain::uncheckedCreateFromHost(origin.host());
         if (!domainsToDelete.contains(domain))
             continue;
         originsDeleted.append(origin);
@@ -1952,9 +1954,9 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
     if (clearServiceWorkers && session && session->hasServiceWorkerDatabasePath()) {
         session->ensureSWServer().getOriginsWithRegistrations([domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator, session = WeakPtr { *session }](const HashSet<SecurityOriginData>& securityOrigins) mutable {
             for (auto& securityOrigin : securityOrigins) {
-                if (!domainsToDeleteAllScriptWrittenStorageFor.contains(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host)))
+                if (!domainsToDeleteAllScriptWrittenStorageFor.contains(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host())))
                     continue;
-                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host));
+                callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host()));
                 if (session) {
                     session->ensureSWServer().clear(securityOrigin, [callbackAggregator] { });
 
@@ -1977,10 +1979,10 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
 
                 Vector<SecurityOriginData> entriesToDelete;
                 for (auto& entry : entries) {
-                    if (!domainsToDeleteAllScriptWrittenStorageFor.contains(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host)))
+                    if (!domainsToDeleteAllScriptWrittenStorageFor.contains(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host())))
                         continue;
                     entriesToDelete.append(entry.origin);
-                    callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
+                    callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host()));
                 }
                 clearDiskCacheEntries(session->cache(), entriesToDelete, [callbackAggregator] { });
             });
@@ -2042,7 +2044,7 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
                     domains.add(RegistrableDomain::uncheckedCreateFromHost(hostnameWithHSTS));
 
                 for (const auto& entry : websiteData.entries)
-                    domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host));
+                    domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host()));
 
                 completionHandler(WTFMove(domains));
             });

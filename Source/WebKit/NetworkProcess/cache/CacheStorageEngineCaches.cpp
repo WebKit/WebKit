@@ -100,12 +100,12 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
 void Caches::storeOrigin(CompletionCallback&& completionHandler)
 {
     WTF::Persistence::Encoder encoder;
-    encoder << m_origin.topOrigin.protocol;
-    encoder << m_origin.topOrigin.host;
-    encoder << m_origin.topOrigin.port;
-    encoder << m_origin.clientOrigin.protocol;
-    encoder << m_origin.clientOrigin.host;
-    encoder << m_origin.clientOrigin.port;
+    encoder << m_origin.topOrigin.protocol();
+    encoder << m_origin.topOrigin.host();
+    encoder << m_origin.topOrigin.port();
+    encoder << m_origin.clientOrigin.protocol();
+    encoder << m_origin.clientOrigin.host();
+    encoder << m_origin.clientOrigin.port();
     m_engine->writeFile(cachesOriginFilename(m_rootPath), Data { encoder.buffer(), encoder.bufferSize() }, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (std::optional<Error>&& error) mutable {
         completionHandler(WTFMove(error));
     });

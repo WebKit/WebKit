@@ -33,7 +33,7 @@
 #include <WebCore/PlatformXR.h>
 
 namespace WebCore {
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WebKit {

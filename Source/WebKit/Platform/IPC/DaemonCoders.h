@@ -39,7 +39,7 @@ struct ExceptionData;
 class CertificateInfo;
 struct PushSubscriptionData;
 class PrivateClickMeasurement;
-struct SecurityOriginData;
+class SecurityOriginData;
 class RegistrableDomain;
 namespace PCM {
 struct AttributionTimeToSendData;

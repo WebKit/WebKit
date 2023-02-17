@@ -63,7 +63,7 @@ enum class IncludeHttpOnlyCookies : bool;
 enum class NetworkConnectionIntegrity : uint8_t;
 enum class ShouldSample : bool;
 struct ClientOrigin;
-struct SecurityOriginData;
+class SecurityOriginData;
 }
 
 namespace WTF {
