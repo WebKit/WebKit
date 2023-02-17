@@ -569,7 +569,7 @@ class webkit_ipc_msg(object):
         for a in out_args:
             ipc_out_args += [cpp_arg(webkit_ipc_types[a.type], a.name)]
             if a.type.is_dynamic_span():
-                ipc_in_args += [cpp_arg(get_cpp_type("uint64_t"), f"{a.name}Size")]
+                ipc_in_args += [cpp_arg(get_cpp_type("size_t"), f"{a.name}Size")]
         self.in_args = cpp_arg_list(ipc_in_args)
         self.out_args = cpp_arg_list(ipc_out_args)
 
@@ -814,10 +814,10 @@ class webkit_ipc_cpp_impl(object):
             self.out_exprs += [webkit_ipc_convert_expr(e, webkit_ipc_value_type)]
         elif a.type.is_dynamic_span():
             assert(isinstance(a.type, cpp_type_container))
-            size_arg = cpp_arg(get_cpp_type("uint64_t"), f"{a.name}Size")
+            size_arg = cpp_arg(get_cpp_type("size_t"), f"{a.name}Size")
             self.args.args += [size_arg]
             store_arg = cpp_arg(webkit_ipc_get_span_store_type(a.type), a.name)
-            self.pre_call_stmts += [f"{str(store_arg.type)} {str(store_arg.name)}(static_cast<size_t>({a.name}Size), 0);"]
+            self.pre_call_stmts += [f"{str(store_arg.type)} {str(store_arg.name)}({a.name}Size, 0);"]
             self.in_exprs += [cpp_expr(store_arg.type, f"{store_arg.name}")]
             webkit_ipc_type = webkit_ipc_types[a.type]
             self.out_exprs += [webkit_ipc_convert_expr(cpp_expr(store_arg.type, store_arg.name), webkit_ipc_type)]

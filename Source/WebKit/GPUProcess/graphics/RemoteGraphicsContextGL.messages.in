@@ -119,13 +119,13 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetAttribLocation(uint32_t arg0, String name) -> (int32_t returnValue) Synchronous
     void GetBufferParameteri(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous
     void GetString(uint32_t name) -> (String returnValue) Synchronous
-    void GetFloatv(uint32_t pname, uint64_t valueSize) -> (IPC::ArrayReference<float> value) Synchronous
-    void GetIntegerv(uint32_t pname, uint64_t valueSize) -> (IPC::ArrayReference<int32_t> value) Synchronous
+    void GetFloatv(uint32_t pname, size_t valueSize) -> (IPC::ArrayReference<float> value) Synchronous
+    void GetIntegerv(uint32_t pname, size_t valueSize) -> (IPC::ArrayReference<int32_t> value) Synchronous
     void GetIntegeri_v(uint32_t pname, uint32_t index) -> (IPC::ArrayReference<int32_t, 4> value) Synchronous
     void GetInteger64(uint32_t pname) -> (int64_t returnValue) Synchronous
     void GetInteger64i(uint32_t pname, uint32_t index) -> (int64_t returnValue) Synchronous
     void GetProgrami(uint32_t program, uint32_t pname) -> (int32_t returnValue) Synchronous
-    void GetBooleanv(uint32_t pname, uint64_t valueSize) -> (IPC::ArrayReference<bool> value) Synchronous
+    void GetBooleanv(uint32_t pname, size_t valueSize) -> (IPC::ArrayReference<bool> value) Synchronous
     void GetFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname) -> (int32_t returnValue) Synchronous
     void GetProgramInfoLog(uint32_t arg0) -> (String returnValue) Synchronous
     void GetRenderbufferParameteri(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous
@@ -135,9 +135,9 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetShaderSource(uint32_t arg0) -> (String returnValue) Synchronous
     void GetTexParameterf(uint32_t target, uint32_t pname) -> (float returnValue) Synchronous
     void GetTexParameteri(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous
-    void GetUniformfv(uint32_t program, int32_t location, uint64_t valueSize) -> (IPC::ArrayReference<float> value) Synchronous
-    void GetUniformiv(uint32_t program, int32_t location, uint64_t valueSize) -> (IPC::ArrayReference<int32_t> value) Synchronous
-    void GetUniformuiv(uint32_t program, int32_t location, uint64_t valueSize) -> (IPC::ArrayReference<uint32_t> value) Synchronous
+    void GetUniformfv(uint32_t program, int32_t location, size_t valueSize) -> (IPC::ArrayReference<float> value) Synchronous
+    void GetUniformiv(uint32_t program, int32_t location, size_t valueSize) -> (IPC::ArrayReference<int32_t> value) Synchronous
+    void GetUniformuiv(uint32_t program, int32_t location, size_t valueSize) -> (IPC::ArrayReference<uint32_t> value) Synchronous
     void GetUniformLocation(uint32_t arg0, String name) -> (int32_t returnValue) Synchronous
     void GetVertexAttribOffset(uint32_t index, uint32_t pname) -> (uint64_t returnValue) Synchronous
     void Hint(uint32_t target, uint32_t mode)
@@ -214,7 +214,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void IsVertexArray(uint32_t arg0) -> (bool returnValue) Synchronous
     void BindVertexArray(uint32_t arg0)
     void CopyBufferSubData(uint32_t readTarget, uint32_t writeTarget, uint64_t readOffset, uint64_t writeOffset, uint64_t arg4)
-    void GetBufferSubData(uint32_t target, uint64_t offset, uint64_t dataSize) -> (IPC::ArrayReference<uint8_t> data) Synchronous
+    void GetBufferSubData(uint32_t target, uint64_t offset, size_t dataSize) -> (IPC::ArrayReference<uint8_t> data) Synchronous
     void BlitFramebuffer(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
     void FramebufferTextureLayer(uint32_t target, uint32_t attachment, uint32_t texture, int32_t level, int32_t layer)
     void InvalidateFramebuffer(uint32_t target, IPC::ArrayReference<uint32_t> attachments)
@@ -296,7 +296,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetUniformBlockIndex(uint32_t program, String uniformBlockName) -> (uint32_t returnValue) Synchronous
     void GetActiveUniformBlockName(uint32_t program, uint32_t uniformBlockIndex) -> (String returnValue) Synchronous
     void UniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)
-    void GetActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
+    void GetActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, size_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
     void GetTranslatedShaderSourceANGLE(uint32_t arg0) -> (String returnValue) Synchronous
     void DrawBuffersEXT(IPC::ArrayReference<uint32_t> bufs)
     void CreateQueryEXT() -> (uint32_t returnValue) Synchronous
@@ -319,7 +319,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void DrawArraysInstancedBaseInstanceANGLE(uint32_t mode, int32_t first, int32_t count, int32_t instanceCount, uint32_t baseInstance)
     void DrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, int32_t count, uint32_t type, uint64_t offset, int32_t instanceCount, int32_t baseVertex, uint32_t baseInstance)
     void ProvokingVertexANGLE(uint32_t provokeMode)
-    void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
+    void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
     void PaintRenderingResultsToPixelBuffer() -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
 }
