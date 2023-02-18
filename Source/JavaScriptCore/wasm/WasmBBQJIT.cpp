@@ -1692,7 +1692,6 @@ public:
             break;
         }
 
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         case MemoryMode::Signaling: {
             // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
             // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
@@ -1712,7 +1711,6 @@ public:
             }
             break;
         }
-#endif
         }
 
 #if CPU(ARM64)

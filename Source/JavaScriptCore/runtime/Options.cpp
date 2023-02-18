@@ -464,7 +464,7 @@ static void overrideDefaults()
     Options::usePollingTraps() = true;
 #endif
 
-#if !ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+#if !ENABLE(WEBASSEMBLY)
     Options::useWebAssemblyFastMemory() = false;
     Options::useWasmFaultSignalHandler() = false;
 #endif
@@ -736,7 +736,7 @@ void Options::notifyOptionsChanged()
     if (Options::verboseVerifyGC())
         Options::verifyGC() = true;
 
-#if ASAN_ENABLED && OS(LINUX) && ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+#if ASAN_ENABLED && OS(LINUX)
     if (Options::useWasmFaultSignalHandler()) {
         const char* asanOptions = getenv("ASAN_OPTIONS");
         bool okToUseWebAssemblyFastMemory = asanOptions

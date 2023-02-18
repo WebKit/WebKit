@@ -48,7 +48,6 @@ namespace JSC {
 // FIXME: Give up some of the cached fast memories if the GC determines it's easy to get them back, and they haven't been used in a while. https://bugs.webkit.org/show_bug.cgi?id=170773
 // FIXME: Limit slow memory size. https://bugs.webkit.org/show_bug.cgi?id=170825
 
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 size_t BufferMemoryHandle::fastMappedRedzoneBytes()
 {
     return static_cast<size_t>(PageCount::pageSize) * Options::webAssemblyFastMemoryRedzonePages();
@@ -61,7 +60,6 @@ size_t BufferMemoryHandle::fastMappedBytes()
     // support fast memory.
     return MAX_ARRAY_BUFFER_SIZE + fastMappedRedzoneBytes();
 }
-#endif
 
 ASCIILiteral BufferMemoryResult::toString(Kind kind)
 {
@@ -82,7 +80,6 @@ void BufferMemoryResult::dump(PrintStream& out) const
     out.print("{basePtr = ", RawPointer(basePtr), ", kind = ", toString(kind), "}");
 }
 
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
 BufferMemoryResult BufferMemoryManager::tryAllocateFastMemory()
 {
     BufferMemoryResult result = [&] {
@@ -116,7 +113,6 @@ void BufferMemoryManager::freeFastMemory(void* basePtr)
 
     dataLogLnIf(Options::logWebAssemblyMemory(), "Freed virtual; state: ", *this);
 }
-#endif
 
 BufferMemoryResult BufferMemoryManager::tryAllocateGrowableBoundsCheckingMemory(size_t mappedCapacity)
 {
@@ -151,13 +147,11 @@ bool BufferMemoryManager::isInGrowableOrFastMemory(void* address)
 {
     // NOTE: This can be called from a signal handler, but only after we proved that we're in JIT code or WasmLLInt code.
     Locker locker { m_lock };
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     for (void* memory : m_fastMemories) {
         char* start = static_cast<char*>(memory);
         if (start <= address && address <= start + BufferMemoryHandle::fastMappedBytes())
             return true;
     }
-#endif
     uintptr_t addressValue = bitwise_cast<uintptr_t>(address);
     auto iterator = std::upper_bound(m_growableBoundsCheckingMemories.begin(), m_growableBoundsCheckingMemories.end(), std::make_pair(addressValue, 0),
         [](std::pair<uintptr_t, size_t> a, std::pair<uintptr_t, size_t> b) {
@@ -205,11 +199,7 @@ void BufferMemoryManager::freePhysicalBytes(size_t bytes)
 
 void BufferMemoryManager::dump(PrintStream& out) const
 {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     out.print("fast memories =  ", m_fastMemories.size(), "/", m_maxFastMemoryCount, ", bytes = ", m_physicalBytes, "/", memoryLimit());
-#else
-    out.print("fast memories = N.A., bytes = ", m_physicalBytes, "/", memoryLimit());
-#endif
 }
 
 BufferMemoryManager& BufferMemoryManager::singleton()
@@ -234,7 +224,7 @@ BufferMemoryHandle::BufferMemoryHandle(void* memory, size_t size, size_t mappedC
     if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking)
         ASSERT(mappedCapacity == size);
     else {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
+#if ENABLE(WEBASSEMBLY)
         Wasm::activateSignalingMemory();
 #endif
     }
@@ -264,7 +254,6 @@ BufferMemoryHandle::~BufferMemoryHandle()
         BufferMemoryManager::singleton().freePhysicalBytes(m_size);
         switch (m_mode) {
         case MemoryMode::Signaling: {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
             // nullBasePointer's zero-sized memory is not used for MemoryMode::Signaling.
             constexpr bool readable = true;
             constexpr bool writable = true;
@@ -277,7 +266,6 @@ BufferMemoryHandle::~BufferMemoryHandle()
                 RELEASE_ASSERT_NOT_REACHED();
             }
             BufferMemoryManager::singleton().freeFastMemory(memory);
-#endif
             break;
         }
         case MemoryMode::BoundsChecking: {

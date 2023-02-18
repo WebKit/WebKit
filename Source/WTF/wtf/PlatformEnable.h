@@ -736,10 +736,6 @@
 #define ENABLE_SAMPLING_PROFILER 1
 #endif
 
-#if ENABLE(WEBASSEMBLY) && HAVE(MACHINE_CONTEXT)
-#define ENABLE_WEBASSEMBLY_SIGNALING_MEMORY 1
-#endif
-
 /* Counts uses of write barriers using sampling counters. Be sure to also
    set ENABLE_SAMPLING_COUNTERS to 1. */
 #if !defined(ENABLE_WRITE_BARRIER_PROFILING)
