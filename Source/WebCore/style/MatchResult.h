@@ -97,7 +97,7 @@ inline void add(Hasher& hasher, const MatchedProperties& matchedProperties)
 
 inline void add(Hasher& hasher, const MatchResult& matchResult)
 {
-    add(hasher, matchResult.userAgentDeclarations, matchResult.userDeclarations, matchResult.authorDeclarations);
+    add(hasher, matchResult.isCacheable, matchResult.userAgentDeclarations, matchResult.userDeclarations, matchResult.authorDeclarations);
 }
 
 }
