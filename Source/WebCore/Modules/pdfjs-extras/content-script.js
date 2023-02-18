@@ -56,9 +56,11 @@ const PDFJSContentScript = {
     },
 
     init() {
-        this.overrideSettings();
-        PDFViewerApplication.eventBus.on("pagesinit", () => {
-            this.autoResize();
+        PDFViewerApplication.initializedPromise.then(() => {
+            this.overrideSettings();
+            PDFViewerApplication.eventBus.on("pagesinit", () => {
+                this.autoResize();
+            });
         });
 
         window.addEventListener("message", (event) => {
