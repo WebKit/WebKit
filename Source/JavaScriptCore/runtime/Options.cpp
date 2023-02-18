@@ -751,6 +751,10 @@ void Options::notifyOptionsChanged()
     if (!Options::useWasmFaultSignalHandler())
         Options::useWebAssemblyFastMemory() = false;
 
+#if CPU(ADDRESS32)
+    Options::useWebAssemblyFastMemory() = false;
+#endif
+
     // Do range checks where needed and make corrections to the options:
     ASSERT(Options::thresholdForOptimizeAfterLongWarmUp() >= Options::thresholdForOptimizeAfterWarmUp());
     ASSERT(Options::thresholdForOptimizeAfterWarmUp() >= 0);
