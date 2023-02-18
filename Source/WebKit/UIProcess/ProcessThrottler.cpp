@@ -38,6 +38,7 @@
 namespace WebKit {
     
 static const Seconds processSuspensionTimeout { 20_s };
+static const Seconds removeAllAssertionsTimeout { 8_min };
 
 static uint64_t generatePrepareToSuspendRequestID()
 {
@@ -48,6 +49,7 @@ static uint64_t generatePrepareToSuspendRequestID()
 ProcessThrottler::ProcessThrottler(ProcessThrottlerClient& process, bool shouldTakeUIBackgroundAssertion)
     : m_process(process)
     , m_prepareToSuspendTimeoutTimer(RunLoop::main(), this, &ProcessThrottler::prepareToSuspendTimeoutTimerFired)
+    , m_removeAllAssertionsTimer(RunLoop::main(), this, &ProcessThrottler::removeAllAssertionsTimerFired)
     , m_shouldTakeUIBackgroundAssertion(shouldTakeUIBackgroundAssertion)
 {
 }
@@ -146,7 +148,7 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
     return makeString(m_process.clientName(), " ", typeString, " Assertion");
 }
 
-std::optional<ProcessAssertionType> ProcessThrottler::assertionTypeForState(ProcessThrottleState state)
+ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleState state)
 {
     switch (state) {
     case ProcessThrottleState::Foreground:
@@ -154,7 +156,7 @@ std::optional<ProcessAssertionType> ProcessThrottler::assertionTypeForState(Proc
     case ProcessThrottleState::Background:
         return ProcessAssertionType::Background;
     case ProcessThrottleState::Suspended:
-        return m_shouldTakeSuspendedAssertion ? std::optional(ProcessAssertionType::Suspended) : std::nullopt;
+        return ProcessAssertionType::Suspended;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -165,13 +167,7 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
     m_state = newState;
     m_process.didChangeThrottleState(newState);
 
-    ProcessAssertionType newType;
-    if (auto assertionType = assertionTypeForState(newState))
-        newType = assertionType.value();
-    else {
-        m_assertion = nullptr;
-        return;
-    }
+    ProcessAssertionType newType = assertionTypeForState(newState);
 
     if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
@@ -209,6 +205,7 @@ void ProcessThrottler::updateThrottleStateIfNeeded()
                 PROCESSTHROTTLER_RELEASE_LOG("updateThrottleStateIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64, *m_pendingRequestToSuspendID);
             m_process.sendProcessDidResume(expectedThrottleState() == ProcessThrottleState::Foreground ? ProcessThrottlerClient::ResumeReason::ForegroundActivity : ProcessThrottlerClient::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
+            m_removeAllAssertionsTimer.stop();
         }
     } else {
         // If the process is currently runnable but will be suspended then first give it a chance to complete what it was doing
@@ -216,6 +213,7 @@ void ProcessThrottler::updateThrottleStateIfNeeded()
         // in the background for too long.
         if (m_state != ProcessThrottleState::Suspended) {
             m_prepareToSuspendTimeoutTimer.startOneShot(processSuspensionTimeout);
+            m_removeAllAssertionsTimer.startOneShot(removeAllAssertionsTimeout);
             sendPrepareToSuspendIPC(IsSuspensionImminent::No);
             return;
         }
@@ -239,6 +237,14 @@ void ProcessThrottler::prepareToSuspendTimeoutTimerFired()
     PROCESSTHROTTLER_RELEASE_LOG("prepareToSuspendTimeoutTimerFired: Updating process assertion to allow suspension");
     RELEASE_ASSERT(m_pendingRequestToSuspendID);
     updateThrottleStateNow();
+}
+
+void ProcessThrottler::removeAllAssertionsTimerFired()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("removeAllAssertionsTimerFired: Removing all process assertions");
+    RELEASE_ASSERT(m_assertion && m_assertion->type() == ProcessAssertionType::Suspended);
+    if (!m_shouldTakeSuspendedAssertion)
+        m_assertion = nullptr;
 }
     
 void ProcessThrottler::processReadyToSuspend()
@@ -319,10 +325,14 @@ void ProcessThrottler::setAllowsActivities(bool allow)
 
 void ProcessThrottler::setShouldTakeSuspendedAssertion(bool shouldTakeSuspendedAssertion)
 {
-    const bool shouldUpdateAssertion = m_shouldTakeSuspendedAssertion != shouldTakeSuspendedAssertion;
     m_shouldTakeSuspendedAssertion = shouldTakeSuspendedAssertion;
-    if (shouldUpdateAssertion && m_state == ProcessThrottleState::Suspended)
-        setThrottleState(ProcessThrottleState::Suspended);
+}
+
+void ProcessThrottler::delaySuspension()
+{
+    PROCESSTHROTTLER_RELEASE_LOG("delaySuspension");
+    if (m_removeAllAssertionsTimer.isActive())
+        m_removeAllAssertionsTimer.startOneShot(removeAllAssertionsTimeout);
 }
 
 ProcessThrottler::TimedActivity::TimedActivity(Seconds timeout, ProcessThrottler::ActivityVariant&& activity)

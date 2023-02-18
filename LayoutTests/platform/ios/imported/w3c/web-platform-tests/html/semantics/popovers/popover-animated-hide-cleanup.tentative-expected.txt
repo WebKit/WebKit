@@ -1,0 +1,5 @@
+
+PASS Ensure no crashes if running animations are immediately cancelled (document removal)
+PASS Ensure no crashes if running animations are immediately cancelled (dialog showModal)
+PASS Ensure no crashes if running transitions are immediately cancelled (button click)
+

@@ -1348,6 +1348,100 @@ TEST(WebKit, RemoveStaleWebSQLData)
     EXPECT_FALSE([fileManager fileExistsAtPath:customWebSQLDirectory.path]);
 }
 
+TEST(WKWebsiteDataStore, FetchDiskCacheDataFromDifferentStores)
+{
+    TestWebKitAPI::HTTPServer server([] (TestWebKitAPI::Connection connection) {
+        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+            constexpr auto response =
+            "HTTP/1.1 200 OK\r\n"
+            "Cache-Control: max-age=1000000\r\n"
+            "Content-Length: 6\r\n\r\n"
+            "Hello!"_s;
+            connection.send(response);
+        });
+    });
+    auto uuid = adoptNS([[NSUUID alloc] initWithUUIDString:@"68753a44-4d6f-1226-9c60-0050e4c00067"]);
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithIdentifier:uuid.get()]);
+    auto customWebsiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    // Clear data before test.
+    auto types = [NSSet setWithObject:WKWebsiteDataTypeDiskCache];
+    done = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
+        [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+            EXPECT_EQ([records count], 0u);
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [customWebsiteDataStore.get() removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
+        [customWebsiteDataStore.get() fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+            EXPECT_EQ([records count], 0u);
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Create view with default store.
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+
+    static bool cached = false;
+    while (!cached) {
+        done = false;
+        [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+            if ([records count]) {
+                EXPECT_EQ([records count], 1u);
+                EXPECT_WK_STREQ([[records firstObject] displayName], @"127.0.0.1");
+                cached = true;
+            }
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    }
+
+    done = false;
+    [customWebsiteDataStore.get() fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        EXPECT_EQ([records count], 0u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Create view with custom store.
+    [configuration setWebsiteDataStore:customWebsiteDataStore.get()];
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView2 synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/", server.port()]]]];
+    cached = false;
+    while (!cached) {
+        done = false;
+        [customWebsiteDataStore.get() fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+            if ([records count]) {
+                EXPECT_EQ([records count], 1u);
+                EXPECT_WK_STREQ([[records firstObject] displayName], @"127.0.0.1");
+                cached = true;
+            }
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    }
+
+    done = false;
+    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        EXPECT_EQ([records count], 0u);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(WKWebsiteDataStoreConfiguration, InitWithIdentifier)
 {
     NSString *htmlString = @"<script> \

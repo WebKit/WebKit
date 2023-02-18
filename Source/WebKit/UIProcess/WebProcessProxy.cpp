@@ -340,7 +340,7 @@ WebProcessProxy::~WebProcessProxy()
     WebPasteboardProxy::singleton().removeWebProcessProxy(*this);
 
 #if HAVE(CVDISPLAYLINK)
-    processPool().stopDisplayLinks(*this);
+    processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
@@ -576,7 +576,7 @@ void WebProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 #if HAVE(CVDISPLAYLINK)
     m_displayLinkClient.setConnection(nullptr);
-    processPool().stopDisplayLinks(*this);
+    processPool().displayLinks().stopDisplayLinks(m_displayLinkClient);
 #endif
 }
 

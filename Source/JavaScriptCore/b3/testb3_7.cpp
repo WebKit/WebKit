@@ -1228,7 +1228,7 @@ void testFastTLSLoad()
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, pointerType(), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1248,7 +1248,7 @@ void testFastTLSStore()
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->numGPScratchRegisters = 1;
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1401,7 +1401,7 @@ void testShuffleDoesntTrashCalleeSaves()
             continue;
         ++i;
         PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->resultConstraints = { ValueRep::reg(reg.gpr()) };
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1421,7 +1421,7 @@ void testShuffleDoesntTrashCalleeSaves()
     Value* arg8 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(7 % GPRInfo::numberOfArgumentRegisters));
 
     PatchpointValue* ptr = root->appendNew<PatchpointValue>(proc, Int64, Origin());
-    ptr->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    ptr->clobber(RegisterSetBuilder::macroClobberedGPRs());
     ptr->resultConstraints = { ValueRep::reg(GPRInfo::regCS0) };
     ptr->appendSomeRegister(arg1);
     ptr->setGenerator(
@@ -1453,7 +1453,7 @@ void testShuffleDoesntTrashCalleeSaves()
         constNumber, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
 
     PatchpointValue* voidPatch = unlikely->appendNew<PatchpointValue>(proc, Void, Origin());
-    voidPatch->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    voidPatch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     for (Value* v : patches)
         voidPatch->appendSomeRegister(v);
     voidPatch->appendSomeRegister(arg1);
@@ -1592,7 +1592,7 @@ static void testSimpleTuplePair(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1613,7 +1613,7 @@ static void testSimpleTuplePairUnused(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64, Double }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeRegister };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1635,7 +1635,7 @@ static void testSimpleTuplePairStack(unsigned first, int64_t second)
     BasicBlock* root = proc.addBlock();
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, proc.addTuple({ Int32, Int64 }), Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1712,7 +1712,7 @@ static void tailDupedTuplePair(unsigned first, double second)
 
     Value* test = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, tupleType, Origin());
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::stackArgument(0) };
     patchpoint->setGenerator([&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -1771,7 +1771,7 @@ static void tuplePairVariableLoop(unsigned first, uint64_t second)
         Value* first = body->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
         Value* second = body->appendNew<ExtractValue>(proc, Origin(), Int64, tuple, 1);
         PatchpointValue* patchpoint = body->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegister });
         patchpoint->append({ second, ValueRep::SomeRegister });
         patchpoint->resultConstraints = { ValueRep::SomeEarlyRegister, ValueRep::stackArgument(0) };
@@ -1840,7 +1840,7 @@ static void tupleNestedLoop(int32_t first, double second)
         Value* second = outerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
         Value* third = outerLoop->appendNew<VariableValue>(proc, B3::Get, Origin(), tookInner);
         PatchpointValue* patchpoint = outerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ third, ValueRep::SomeRegisterWithClobber });
@@ -1862,7 +1862,7 @@ static void tupleNestedLoop(int32_t first, double second)
         Value* first = innerLoop->appendNew<ExtractValue>(proc, Origin(), Int32, tuple, 0);
         Value* second = innerLoop->appendNew<ExtractValue>(proc, Origin(), Double, tuple, 1);
         PatchpointValue* patchpoint = innerLoop->appendNew<PatchpointValue>(proc, tupleType, Origin());
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->append({ first, ValueRep::SomeRegisterWithClobber });
         patchpoint->append({ second, ValueRep::SomeRegisterWithClobber });
         patchpoint->resultConstraints = { ValueRep::SomeRegister, ValueRep::SomeRegister, ValueRep::SomeEarlyRegister };

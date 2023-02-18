@@ -30,6 +30,7 @@
 #include "PolicyDecision.h"
 #include "ShareableResource.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebsiteData.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ResourceResponse.h>
@@ -149,6 +150,7 @@ enum class CacheOption : uint8_t {
 
 class Cache : public RefCounted<Cache> {
 public:
+    ~Cache();
     static RefPtr<Cache> open(NetworkProcess&, const String& cachePath, OptionSet<CacheOption>, PAL::SessionID);
 
     size_t capacity() const;
@@ -206,8 +208,9 @@ public:
     NetworkProcess& networkProcess() { return m_networkProcess.get(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     const String& storageDirectory() const { return m_storageDirectory; }
-
-    ~Cache();
+    void fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&&);
+    void deleteData(const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
+    void deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDomain>&, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&);
 
 private:
     Cache(NetworkProcess&, const String& storageDirectory, Ref<Storage>&&, OptionSet<CacheOption>, PAL::SessionID);

@@ -537,6 +537,7 @@ CallData ProxyObject::getCallData(JSCell* cell)
     if (proxy->m_isCallable) {
         callData.type = CallData::Type::Native;
         callData.native.function = performProxyCall;
+        callData.native.isBoundFunction = false;
     }
     return callData;
 }
@@ -588,6 +589,7 @@ CallData ProxyObject::getConstructData(JSCell* cell)
     if (proxy->m_isConstructible) {
         constructData.type = CallData::Type::Native;
         constructData.native.function = performProxyConstruct;
+        constructData.native.isBoundFunction = false;
     }
     return constructData;
 }

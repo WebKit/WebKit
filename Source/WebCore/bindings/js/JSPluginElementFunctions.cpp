@@ -150,6 +150,7 @@ CallData pluginElementCustomGetCallData(JSHTMLElement* element)
     if (instance && instance->supportsInvokeDefaultMethod()) {
         callData.type = CallData::Type::Native;
         callData.native.function = callPlugin;
+        callData.native.isBoundFunction = false;
     }
 
     return callData;

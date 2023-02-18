@@ -79,23 +79,95 @@ InlineItemsBuilder::InlineItemsBuilder(const ElementBox& formattingContextRoot, 
 {
 }
 
-InlineItems InlineItemsBuilder::build()
+void InlineItemsBuilder::build(InlineItemPosition startPosition)
 {
     InlineItems inlineItems;
-    collectInlineItems(inlineItems);
-    if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering())
+    collectInlineItems(inlineItems, startPosition);
+    if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering()) {
+        // FIXME: Add support for partial, yet paragraph level bidi content handling.
+        ASSERT(!startPosition);
         breakAndComputeBidiLevels(inlineItems);
+    }
     computeInlineTextItemWidths(inlineItems);
-    return inlineItems;
+
+    auto appendNewInlineItems = [&] {
+        if (!startPosition)
+            return m_formattingState.addInlineItems(WTFMove(inlineItems));
+        // Let's first remove the dirty inline items if there are any.
+        auto& currentInlineItems = m_formattingState.inlineItems();
+        if (startPosition.index >= currentInlineItems.size()) {
+            ASSERT_NOT_REACHED();
+            return m_formattingState.addInlineItems(WTFMove(inlineItems));
+        }
+        auto& lastCleanLayoutBox = currentInlineItems[startPosition.index].layoutBox();
+        auto firstDirtyInlineItemIndex = std::optional<size_t> { };
+        for (auto index = startPosition.index; index < currentInlineItems.size(); ++index) {
+            if (&currentInlineItems[index].layoutBox() != &lastCleanLayoutBox) {
+                firstDirtyInlineItemIndex = index;
+                break;
+            }
+        }
+        if (firstDirtyInlineItemIndex)
+            currentInlineItems.remove(*firstDirtyInlineItemIndex, currentInlineItems.size() - *firstDirtyInlineItemIndex);
+        m_formattingState.addInlineItems(WTFMove(inlineItems));
+    };
+    appendNewInlineItems();
 }
 
-void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
+void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItemPosition startPosition)
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
     ASSERT(root().hasInFlowOrFloatingChild());
     Vector<const Box*> layoutQueue;
-    layoutQueue.append(root().firstChild());
+
+    auto initializeLayoutQueue = [&] {
+        layoutQueue.append(root().firstChild());
+        if (!startPosition)
+            return;
+        // FIXME: This only works well with append case. Insert should not need to process trailing content.
+
+        // For partial layout we need to build the layout queue up to the point where the new content is in order
+        // to be able to produce non-content type of trailing inline items.
+        // e.g <div><span<span>text</span></span> produces
+        // [inline box start][inline box start][text][inline box end][inline box end]
+        // and inserting new content after text
+        // <div><span><span>text more_text</span></span> should produce
+        // [inline box start][inline box start][text][ ][more_text][inline box end][inline box end]
+        // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
+        auto& currentInlineItems = m_formattingState.inlineItems();
+        if (startPosition.index >= currentInlineItems.size()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        auto& lastCleanLayoutBox = currentInlineItems[startPosition.index].layoutBox();
+        while (!layoutQueue.isEmpty()) {
+            while (true) {
+                auto& layoutBox = *layoutQueue.last();
+                if (layoutBox.establishesFormattingContext() || !is<ElementBox>(layoutBox) || !downcast<ElementBox>(layoutBox).hasChild())
+                    break;
+                layoutQueue.append(downcast<ElementBox>(layoutBox).firstChild());
+                if (&layoutBox == &lastCleanLayoutBox)
+                    return;
+            }
+
+            auto nextLayoutBoxIsNewContent = false;
+            while (!layoutQueue.isEmpty()) {
+                auto& layoutBox = *layoutQueue.takeLast();
+                nextLayoutBoxIsNewContent = nextLayoutBoxIsNewContent || &layoutBox == &lastCleanLayoutBox;
+                if (auto* nextSibling = layoutBox.nextSibling()) {
+                    layoutQueue.append(nextSibling);
+                    if (nextLayoutBoxIsNewContent)
+                        return;
+                    break;
+                }
+            }
+        }
+        ASSERT_NOT_REACHED();
+        layoutQueue.append(root().firstChild());
+    };
+    initializeLayoutQueue();
+
     while (!layoutQueue.isEmpty()) {
         while (true) {
             auto& layoutBox = *layoutQueue.last();

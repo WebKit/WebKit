@@ -61,6 +61,7 @@ CallData JSHTMLAllCollection::getCallData(JSCell*)
     CallData callData;
     callData.type = CallData::Type::Native;
     callData.native.function = callJSHTMLAllCollection;
+    callData.native.isBoundFunction = false;
     return callData;
 }
 

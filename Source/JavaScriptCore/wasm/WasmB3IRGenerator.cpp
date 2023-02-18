@@ -965,7 +965,7 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Callee& callee, Proc
         B3::PatchpointValue* stackOverflowCheck = m_currentBlock->appendNew<B3::PatchpointValue>(m_proc, Void, Origin());
         stackOverflowCheck->appendSomeRegister(instanceValue());
         stackOverflowCheck->appendSomeRegister(framePointer());
-        stackOverflowCheck->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        stackOverflowCheck->clobber(RegisterSetBuilder::macroClobberedGPRs());
         stackOverflowCheck->numGPScratchRegisters = 2;
         stackOverflowCheck->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             const Checked<int32_t> wasmFrameSize = params.proc().frameSize();
@@ -1069,7 +1069,7 @@ void B3IRGenerator::reloadMemoryRegistersFromInstance(const MemoryInformation& m
         RegisterSet clobbers;
         clobbers.add(GPRInfo::wasmBaseMemoryPointer, IgnoreVectors);
         clobbers.add(GPRInfo::wasmBoundsCheckingSizeRegister, IgnoreVectors);
-        clobbers.merge(RegisterSetBuilder::macroClobberedRegisters());
+        clobbers.merge(RegisterSetBuilder::macroClobberedGPRs());
 
         B3::PatchpointValue* patchpoint = block->appendNew<B3::PatchpointValue>(m_proc, B3::Void, origin());
         Effects effects = Effects::none();
@@ -1445,8 +1445,8 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, V
         patchpoint->effects.writesPinned = true;
         // We pessimistically assume we're calling something with BoundsChecking memory.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-        patchpoint->clobber(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::wasmPinnedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
         patchpoint->append(calleeInstance, ValueRep::SomeRegister);
         patchpoint->numGPScratchRegisters = 1;
 
@@ -1514,7 +1514,7 @@ auto B3IRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, V
             // because the wasm->wasm thunk unconditionally overrides the size registers.
             // FIXME: We should not have to do this, but the wasm->wasm stub assumes it can
             // use all the pinned registers as scratch: https://bugs.webkit.org/show_bug.cgi?id=172181
-            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
+            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
 
             patchpoint->append(calleeCode, ValueRep::SomeRegister);
             patchpoint->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -2544,7 +2544,7 @@ auto B3IRGenerator::truncSaturated(Ext1OpType op, ExpressionType argVar, Express
             patchpoint->append(signBitConstant, ValueRep::SomeRegister);
             patchpoint->numFPScratchRegisters = 1;
         }
-        patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+        patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     }
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         switch (op) {
@@ -3286,7 +3286,7 @@ void B3IRGenerator::emitEntryTierUpCheck()
     effects.reads = B3::HeapRange::top();
     effects.writes = B3::HeapRange::top();
     patch->effects = effects;
-    patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
 
     patch->append(countDownLocation, ValueRep::SomeRegister);
     patch->setGenerator([=, this] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -3356,7 +3356,7 @@ void B3IRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Stack& enclosi
     effects.exitsSideways = true;
     patch->effects = effects;
 
-    patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     RegisterSet clobberLate;
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     patch->clobberLate(clobberLate);
@@ -3638,7 +3638,7 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
 
     PatchpointValue* result = m_currentBlock->appendNew<PatchpointValue>(m_proc, m_proc.addTuple({ pointerType(), pointerType() }), origin());
     result->effects.exitsSideways = true;
-    result->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    result->clobber(RegisterSetBuilder::macroClobberedGPRs());
     auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     result->clobberLate(clobberLate);
@@ -3863,7 +3863,7 @@ B3::PatchpointValue* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Valu
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(returnType, origin());
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patchpointFunctor(patchpoint, exceptionHandle);
     patchpoint->appendVector(constrainedPatchArgs);
@@ -3961,7 +3961,7 @@ B3::PatchpointValue* B3IRGenerator::createTailCallPatchpoint(BasicBlock* block, 
     clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
     patchpoint->clobber(clobbers);
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
 
     patchpointFunctor(patchpoint, nullptr);
     patchpoint->appendVector(WTFMove(constrainedArguments));
@@ -4029,7 +4029,7 @@ auto B3IRGenerator::addCall(uint32_t functionIndex, const TypeDefinition& signat
             // We need to clobber all potential pinned registers since we might be leaving the instance.
             // We pessimistically assume we could be calling to something that is bounds checking.
             // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
-            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters(MemoryMode::BoundsChecking));
+            patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
             patchpoint->setGenerator([this, handle, returnType, isTailCall, tailCallStackOffsetFromFP](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
                 if (isTailCall)
@@ -4544,7 +4544,7 @@ auto B3IRGenerator::addF64ConvertUI64(ExpressionType argVar, ExpressionType& res
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Double, origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -4565,7 +4565,7 @@ auto B3IRGenerator::addF32ConvertUI64(ExpressionType argVar, ExpressionType& res
     PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Float, origin());
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->append(ConstrainedValue(arg, ValueRep::SomeRegister));
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -4775,7 +4775,7 @@ auto B3IRGenerator::addI64TruncUF64(ExpressionType argVar, ExpressionType& resul
         patchpoint->append(signBitConstant, ValueRep::SomeRegister);
         patchpoint->numFPScratchRegisters = 1;
     }
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         FPRReg scratch = InvalidFPRReg;
@@ -4841,7 +4841,7 @@ auto B3IRGenerator::addI64TruncUF32(ExpressionType argVar, ExpressionType& resul
         patchpoint->append(signBitConstant, ValueRep::SomeRegister);
         patchpoint->numFPScratchRegisters = 1;
     }
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         FPRReg scratch = InvalidFPRReg;

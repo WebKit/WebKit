@@ -28,6 +28,7 @@
 
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
+#include "CachedCall.h"
 #include "CodeBlock.h"
 #include "ControlFlowProfiler.h"
 #include "DOMAttributeGetterSetter.h"
@@ -36,6 +37,7 @@
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
+#include "InterpreterInlines.h"
 #include "JITSizeStatistics.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
@@ -391,6 +393,7 @@ public:
         CallData constructData;
         constructData.type = CallData::Type::Native;
         constructData.native.function = callHostFunctionAsConstructor;
+        constructData.native.isBoundFunction = false;
         return constructData;
     }
 
@@ -2216,6 +2219,8 @@ static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);
 #endif
 static JSC_DECLARE_HOST_FUNCTION(functionAssertFrameAligned);
+static JSC_DECLARE_HOST_FUNCTION(functionCallFromCPP);
+static JSC_DECLARE_HOST_FUNCTION(functionCachedCallFromCPP);
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -3985,6 +3990,72 @@ JSC_DEFINE_HOST_FUNCTION(functionAssertFrameAligned, (JSGlobalObject*, CallFrame
     return JSValue::encode(jsUndefined());
 }
 
+JSC_DEFINE_HOST_FUNCTION(functionCallFromCPP, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue callback = callFrame->argument(0);
+    auto callData = JSC::getCallData(callback);
+    if (callData.type == CallData::Type::None)
+        return JSValue::encode(jsUndefined());
+    auto* callbackObject = jsCast<JSObject*>(callback);
+
+    int32_t count = callFrame->argument(1).toInt32(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (count < 0)
+        return JSValue::encode(jsUndefined());
+
+    MarkedArgumentBuffer arguments;
+    for (unsigned i = 2; i < callFrame->argumentCount(); ++i)
+        arguments.append(callFrame->argument(i));
+    ASSERT(!arguments.hasOverflowed());
+    RETURN_IF_EXCEPTION(scope, { });
+
+    for (int32_t i = 0; i < count; ++i) {
+        call(globalObject, callbackObject, callData, jsNull(), arguments);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionCachedCallFromCPP, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue callback = callFrame->argument(0);
+    auto callData = JSC::getCallData(callback);
+    if (callData.type != CallData::Type::JS)
+        return JSValue::encode(jsUndefined());
+    auto* callbackObject = jsCast<JSFunction*>(callback);
+
+    int32_t count = callFrame->argument(1).toInt32(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (count < 0)
+        return JSValue::encode(jsUndefined());
+
+    CachedCall cachedCall(globalObject, callbackObject, callFrame->argumentCount() - 2);
+    RETURN_IF_EXCEPTION(scope, { });
+    cachedCall.clearArguments();
+    for (unsigned i = 2; i < callFrame->argumentCount(); ++i)
+        cachedCall.appendArgument(callFrame->argument(i));
+    cachedCall.setThis(jsNull());
+
+    if (UNLIKELY(cachedCall.hasOverflowedArguments()))
+        return JSValue::encode(jsUndefined());
+
+    for (int32_t i = 0; i < count; ++i) {
+        cachedCall.call();
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+
+    return JSValue::encode(jsUndefined());
+}
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -4169,6 +4240,9 @@ void JSDollarVM::finishCreation(VM& vm)
 #endif
 
     addFunction(vm, "assertFrameAligned"_s, functionAssertFrameAligned, 0);
+
+    addFunction(vm, "callFromCPP"_s, functionCallFromCPP, 2);
+    addFunction(vm, "cachedCallFromCPP"_s, functionCachedCallFromCPP, 2);
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

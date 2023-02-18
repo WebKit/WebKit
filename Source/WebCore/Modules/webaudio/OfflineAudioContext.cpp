@@ -50,6 +50,8 @@ OfflineAudioContext::OfflineAudioContext(Document& document, const OfflineAudioC
 {
     if (!renderTarget())
         document.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, makeString("Failed to construct internal AudioBuffer with ", options.numberOfChannels, " channel(s), a sample rate of ", options.sampleRate, " and a length of ", options.length, "."));
+    else if (noiseInjectionPolicy() == NoiseInjectionPolicy::Minimal)
+        renderTarget()->setNeedsAdditionalNoise();
 }
 
 ExceptionOr<Ref<OfflineAudioContext>> OfflineAudioContext::create(ScriptExecutionContext& context, const OfflineAudioContextOptions& options)

@@ -56,8 +56,10 @@ size_t BufferMemoryHandle::fastMappedRedzoneBytes()
 
 size_t BufferMemoryHandle::fastMappedBytes()
 {
-    static_assert(sizeof(uint64_t) == sizeof(size_t), "We rely on allowing the maximum size of Memory we map to be 2^32 + redzone which is larger than fits in a 32-bit integer that we'd pass to mprotect if this didn't hold.");
-    return (static_cast<size_t>(1) << 32) + fastMappedRedzoneBytes();
+    // MAX_ARRAY_BUFFER_SIZE is 4GB on 64bit and 2GB on 32bit platforms.
+    // This code should never be called in 32bit platforms they don't
+    // support fast memory.
+    return MAX_ARRAY_BUFFER_SIZE + fastMappedRedzoneBytes();
 }
 #endif
 

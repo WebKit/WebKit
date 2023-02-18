@@ -73,6 +73,7 @@ CallData JSCallbackConstructor::getConstructData(JSCell*)
     CallData constructData;
     constructData.type = CallData::Type::Native;
     constructData.native.function = constructJSCallbackConstructor;
+    constructData.native.isBoundFunction = false;
     return constructData;
 }
 

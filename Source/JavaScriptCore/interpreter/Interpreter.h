@@ -31,6 +31,7 @@
 
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
+#include "NativeFunction.h"
 #include "Opcode.h"
 #include <variant>
 #include <wtf/HashMap.h>
@@ -63,6 +64,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     class Exception;
     class FunctionExecutable;
     class VM;
+    class JSBoundFunction;
     class JSFunction;
     class JSGlobalObject;
     class JSModuleEnvironment;
@@ -160,6 +162,8 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         CallFrameClosure prepareForRepeatCall(FunctionExecutable*, ProtoCallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*, const ArgList&);
 
         JSValue executeCachedCall(CallFrameClosure&);
+        JSValue executeBoundCall(VM&, JSBoundFunction*, const ArgList&);
+        JSValue executeCallImpl(VM&, JSObject*, const CallData&, JSValue, const ArgList&);
 
         inline VM& vm();
 #if ENABLE(C_LOOP)

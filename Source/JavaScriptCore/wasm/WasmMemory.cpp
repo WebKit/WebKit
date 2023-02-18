@@ -163,6 +163,9 @@ RefPtr<Memory> Memory::tryCreate(VM& vm, PageCount initial, PageCount maximum, M
 #if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
     char* fastMemory = nullptr;
     if (Options::useWebAssemblyFastMemory()) {
+#if CPU(ADDRESS32)
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("32-bit platforms don't support fast memory.");
+#endif
         tryAllocate(vm,
             [&] () -> BufferMemoryResult::Kind {
                 auto result = BufferMemoryManager::singleton().tryAllocateFastMemory();
@@ -260,11 +263,12 @@ bool Memory::addressIsInGrowableOrFastMemory(void* address)
 Expected<PageCount, GrowFailReason> Memory::growShared(VM& vm, PageCount delta)
 {
 #if !ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
-    // Shared memory requires signaling memory which is not available on ARMv7 or others
-    // yet. In order to get more of the test suite to run, we can still use
-    // a shared mmeory by using bounds checking, but we cannot grow it safely
-    // in case it's used by multiple threads. Once the signal handler are
-    // available, this can be relaxed.
+    // Shared memory requires signaling memory. In order to get more
+    // of the test suite to run when the feature is not available, we
+    // can still use a shared mmeory by using bounds checking, but we
+    // cannot grow it safely in case it's used by multiple
+    // threads. Once the signal handler are available, this can be
+    // relaxed.
     return makeUnexpected(GrowFailReason::GrowSharedUnavailable);
 #endif
 

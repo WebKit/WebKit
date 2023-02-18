@@ -540,8 +540,22 @@ void LineLayout::layout()
             return { *lowestInitialLetterLogicalBottom - m_inlineContentConstraints->logicalTop() };
         return { };
     };
+    auto inlineContentConstraints = [&]() -> Layout::ConstraintsForInlineContent {
+        if (!isPartialLayout || !m_inlineContent)
+            return *m_inlineContentConstraints;
+        auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
+        if (!damagedLineIndex)
+            return *m_inlineContentConstraints;
+        if (damagedLineIndex >= m_inlineContent->lines.size()) {
+            ASSERT_NOT_REACHED();
+            return *m_inlineContentConstraints;
+        }
+        auto partialContentTop = LayoutUnit { m_inlineContent->lines[damagedLineIndex - 1].lineBoxLogicalRect().maxY() };
+        auto constraintsForInFlowContent = Layout::ConstraintsForInFlowContent { m_inlineContentConstraints->horizontal(), partialContentTop };
+        return { constraintsForInFlowContent, m_inlineContentConstraints->visualLeft() };
+    };
     auto blockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.floatingState(), lineClamp(flow()), leadingTrim(flow()), intrusiveInitialLetterBottom() };
-    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(*m_inlineContentConstraints, blockLayoutState);
+    Layout::InlineFormattingContext { rootLayoutBox, m_inlineFormattingState, m_lineDamage.get() }.layoutInFlowContentForIntegration(inlineContentConstraints(), blockLayoutState);
 
     constructContent();
 
