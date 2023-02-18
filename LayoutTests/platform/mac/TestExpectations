@@ -1917,6 +1917,9 @@ webkit.org/b/219448 [ Debug ] webgl/2.0.0/conformance/rendering/multisample-corr
 # <rdar://problem/60780398> REGRESSION: (258729?) imported/w3c/web-platform-tests/websockets/opening-handshake/003.html is failing.
 [ BigSur+ ] imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
 
+# rdar://105516334 ([ EWS Mac ] media/video-playback-quality.html is a flaky failure)
+media/video-playback-quality.html [ Pass Failure ]
+
 # <rdar://problem/66351394> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
 
