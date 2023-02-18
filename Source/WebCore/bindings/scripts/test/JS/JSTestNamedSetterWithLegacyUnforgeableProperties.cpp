@@ -151,6 +151,13 @@ JSTestNamedSetterWithLegacyUnforgeableProperties::JSTestNamedSetterWithLegacyUnf
 {
 }
 
+JSTestNamedSetterWithLegacyUnforgeableProperties* JSTestNamedSetterWithLegacyUnforgeableProperties::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&& impl)
+{
+    JSTestNamedSetterWithLegacyUnforgeableProperties* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithLegacyUnforgeableProperties>(globalObject->vm())) JSTestNamedSetterWithLegacyUnforgeableProperties(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedSetterWithLegacyUnforgeableProperties::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

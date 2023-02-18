@@ -31,13 +31,7 @@ class JSSharedWorkerGlobalScope : public JSWorkerGlobalScope {
 public:
     using Base = JSWorkerGlobalScope;
     using DOMWrapped = SharedWorkerGlobalScope;
-    static JSSharedWorkerGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<SharedWorkerGlobalScope>&& impl, JSC::JSProxy* proxy)
-    {
-        JSSharedWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSSharedWorkerGlobalScope>(vm)) JSSharedWorkerGlobalScope(vm, structure, WTFMove(impl));
-        ptr->finishCreation(vm, proxy);
-        return ptr;
-    }
-
+    static JSSharedWorkerGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<SharedWorkerGlobalScope>&& impl, JSC::JSProxy* proxy);
 
     DECLARE_INFO;
 

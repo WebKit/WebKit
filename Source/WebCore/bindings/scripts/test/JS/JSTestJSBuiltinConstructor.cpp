@@ -137,6 +137,13 @@ const ClassInfo JSTestJSBuiltinConstructor::s_info = { "TestJSBuiltinConstructor
 JSTestJSBuiltinConstructor::JSTestJSBuiltinConstructor(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMObject(structure, globalObject) { }
 
+JSTestJSBuiltinConstructor* JSTestJSBuiltinConstructor::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+{
+    JSTestJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructor>(globalObject->vm())) JSTestJSBuiltinConstructor(structure, *globalObject);
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestJSBuiltinConstructor::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

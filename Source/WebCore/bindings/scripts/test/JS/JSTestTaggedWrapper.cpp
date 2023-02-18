@@ -123,6 +123,13 @@ JSTestTaggedWrapper::JSTestTaggedWrapper(Structure* structure, JSDOMGlobalObject
 {
 }
 
+JSTestTaggedWrapper* JSTestTaggedWrapper::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTaggedWrapper>&& impl)
+{
+    JSTestTaggedWrapper* ptr = new (NotNull, JSC::allocateCell<JSTestTaggedWrapper>(globalObject->vm())) JSTestTaggedWrapper(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestTaggedWrapper::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

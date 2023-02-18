@@ -580,6 +580,13 @@ JSTestDOMJIT::JSTestDOMJIT(Structure* structure, JSDOMGlobalObject& globalObject
 {
 }
 
+JSTestDOMJIT* JSTestDOMJIT::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDOMJIT>&& impl)
+{
+    JSTestDOMJIT* ptr = new (NotNull, JSC::allocateCell<JSTestDOMJIT>(globalObject->vm())) JSTestDOMJIT(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestDOMJIT::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

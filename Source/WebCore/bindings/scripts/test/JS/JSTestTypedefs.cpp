@@ -248,6 +248,13 @@ JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject& globalOb
 {
 }
 
+JSTestTypedefs* JSTestTypedefs::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestTypedefs>&& impl)
+{
+    JSTestTypedefs* ptr = new (NotNull, JSC::allocateCell<JSTestTypedefs>(globalObject->vm())) JSTestTypedefs(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestTypedefs::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

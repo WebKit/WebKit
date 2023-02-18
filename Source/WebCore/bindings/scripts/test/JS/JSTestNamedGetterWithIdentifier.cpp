@@ -131,6 +131,13 @@ JSTestNamedGetterWithIdentifier::JSTestNamedGetterWithIdentifier(Structure* stru
 {
 }
 
+JSTestNamedGetterWithIdentifier* JSTestNamedGetterWithIdentifier::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedGetterWithIdentifier>&& impl)
+{
+    JSTestNamedGetterWithIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedGetterWithIdentifier>(globalObject->vm())) JSTestNamedGetterWithIdentifier(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedGetterWithIdentifier::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

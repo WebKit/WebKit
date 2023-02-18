@@ -127,6 +127,13 @@ JSTestException::JSTestException(Structure* structure, JSDOMGlobalObject& global
 {
 }
 
+JSTestException* JSTestException::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
+{
+    JSTestException* ptr = new (NotNull, JSC::allocateCell<JSTestException>(globalObject->vm())) JSTestException(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestException::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

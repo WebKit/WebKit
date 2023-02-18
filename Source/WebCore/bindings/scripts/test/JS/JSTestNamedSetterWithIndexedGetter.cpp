@@ -137,6 +137,13 @@ JSTestNamedSetterWithIndexedGetter::JSTestNamedSetterWithIndexedGetter(Structure
 {
 }
 
+JSTestNamedSetterWithIndexedGetter* JSTestNamedSetterWithIndexedGetter::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterWithIndexedGetter>&& impl)
+{
+    JSTestNamedSetterWithIndexedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterWithIndexedGetter>(globalObject->vm())) JSTestNamedSetterWithIndexedGetter(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedSetterWithIndexedGetter::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

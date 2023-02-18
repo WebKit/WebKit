@@ -30,13 +30,7 @@ class JSTestDefaultToJSONInherit : public JSTestDefaultToJSON {
 public:
     using Base = JSTestDefaultToJSON;
     using DOMWrapped = TestDefaultToJSONInherit;
-    static JSTestDefaultToJSONInherit* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInherit>&& impl)
-    {
-        JSTestDefaultToJSONInherit* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInherit>(globalObject->vm())) JSTestDefaultToJSONInherit(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestDefaultToJSONInherit* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInherit>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
 

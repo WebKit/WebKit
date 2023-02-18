@@ -125,6 +125,13 @@ JSTestNamedSetterThrowingException::JSTestNamedSetterThrowingException(Structure
 {
 }
 
+JSTestNamedSetterThrowingException* JSTestNamedSetterThrowingException::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterThrowingException>&& impl)
+{
+    JSTestNamedSetterThrowingException* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterThrowingException>(globalObject->vm())) JSTestNamedSetterThrowingException(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedSetterThrowingException::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

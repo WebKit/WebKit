@@ -134,6 +134,13 @@ JSTestStringifierReadWriteAttribute::JSTestStringifierReadWriteAttribute(Structu
 {
 }
 
+JSTestStringifierReadWriteAttribute* JSTestStringifierReadWriteAttribute::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierReadWriteAttribute>&& impl)
+{
+    JSTestStringifierReadWriteAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierReadWriteAttribute>(globalObject->vm())) JSTestStringifierReadWriteAttribute(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestStringifierReadWriteAttribute::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

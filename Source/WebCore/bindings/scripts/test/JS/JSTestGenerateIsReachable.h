@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestGenerateIsReachable : public JSDOMWrapper<TestGenerateIsReachable> {
 public:
     using Base = JSDOMWrapper<TestGenerateIsReachable>;
-    static JSTestGenerateIsReachable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl)
-    {
-        JSTestGenerateIsReachable* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateIsReachable>(globalObject->vm())) JSTestGenerateIsReachable(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestGenerateIsReachable* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateIsReachable>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestGenerateIsReachable* toWrapped(JSC::VM&, JSC::JSValue);

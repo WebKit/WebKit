@@ -158,6 +158,13 @@ JSTestDefaultToJSONFilteredByExposed::JSTestDefaultToJSONFilteredByExposed(Struc
 {
 }
 
+JSTestDefaultToJSONFilteredByExposed* JSTestDefaultToJSONFilteredByExposed::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl)
+{
+    JSTestDefaultToJSONFilteredByExposed* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONFilteredByExposed>(globalObject->vm())) JSTestDefaultToJSONFilteredByExposed(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestDefaultToJSONFilteredByExposed::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

@@ -242,6 +242,13 @@ JSTestNode::JSTestNode(Structure* structure, JSDOMGlobalObject& globalObject, Re
 {
 }
 
+JSTestNode* JSTestNode::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNode>&& impl)
+{
+    JSTestNode* ptr = new (NotNull, JSC::allocateCell<JSTestNode>(globalObject->vm())) JSTestNode(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNode::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

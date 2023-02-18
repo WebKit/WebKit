@@ -145,6 +145,13 @@ JSWorkerGlobalScope::JSWorkerGlobalScope(VM& vm, Structure* structure, Ref<Worke
 {
 }
 
+JSWorkerGlobalScope* JSWorkerGlobalScope::create(JSC::VM& vm, JSC::Structure* structure, Ref<WorkerGlobalScope>&& impl, JSC::JSProxy* proxy)
+{
+    JSWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSWorkerGlobalScope>(vm)) JSWorkerGlobalScope(vm, structure, WTFMove(impl));
+    ptr->finishCreation(vm, proxy);
+    return ptr;
+}
+
 void JSWorkerGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 {
     Base::finishCreation(vm, proxy);

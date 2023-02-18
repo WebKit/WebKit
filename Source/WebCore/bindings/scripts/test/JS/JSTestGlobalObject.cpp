@@ -674,6 +674,13 @@ JSTestGlobalObject::JSTestGlobalObject(Structure* structure, JSDOMGlobalObject& 
 {
 }
 
+JSTestGlobalObject* JSTestGlobalObject::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGlobalObject>&& impl)
+{
+    JSTestGlobalObject* ptr = new (NotNull, JSC::allocateCell<JSTestGlobalObject>(globalObject->vm())) JSTestGlobalObject(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestGlobalObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

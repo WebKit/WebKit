@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestLegacyOverrideBuiltIns : public JSDOMWrapper<TestLegacyOverrideBuiltIns> {
 public:
     using Base = JSDOMWrapper<TestLegacyOverrideBuiltIns>;
-    static JSTestLegacyOverrideBuiltIns* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl)
-    {
-        JSTestLegacyOverrideBuiltIns* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyOverrideBuiltIns>(globalObject->vm())) JSTestLegacyOverrideBuiltIns(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestLegacyOverrideBuiltIns* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyOverrideBuiltIns>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestLegacyOverrideBuiltIns* toWrapped(JSC::VM&, JSC::JSValue);

@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestSetLike : public JSDOMWrapper<TestSetLike> {
 public:
     using Base = JSDOMWrapper<TestSetLike>;
-    static JSTestSetLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLike>&& impl)
-    {
-        JSTestSetLike* ptr = new (NotNull, JSC::allocateCell<JSTestSetLike>(globalObject->vm())) JSTestSetLike(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestSetLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLike>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestSetLike* toWrapped(JSC::VM&, JSC::JSValue);

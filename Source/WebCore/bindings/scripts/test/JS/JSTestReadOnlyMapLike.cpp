@@ -147,6 +147,13 @@ JSTestReadOnlyMapLike::JSTestReadOnlyMapLike(Structure* structure, JSDOMGlobalOb
 {
 }
 
+JSTestReadOnlyMapLike* JSTestReadOnlyMapLike::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReadOnlyMapLike>&& impl)
+{
+    JSTestReadOnlyMapLike* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlyMapLike>(globalObject->vm())) JSTestReadOnlyMapLike(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestReadOnlyMapLike::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

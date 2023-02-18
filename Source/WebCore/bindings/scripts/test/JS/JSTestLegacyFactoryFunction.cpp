@@ -180,6 +180,13 @@ JSTestLegacyFactoryFunction::JSTestLegacyFactoryFunction(Structure* structure, J
 {
 }
 
+JSTestLegacyFactoryFunction* JSTestLegacyFactoryFunction::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestLegacyFactoryFunction>&& impl)
+{
+    JSTestLegacyFactoryFunction* ptr = new (NotNull, JSC::allocateCell<JSTestLegacyFactoryFunction>(globalObject->vm())) JSTestLegacyFactoryFunction(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestLegacyFactoryFunction::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestReadOnlyMapLike : public JSDOMWrapper<TestReadOnlyMapLike> {
 public:
     using Base = JSDOMWrapper<TestReadOnlyMapLike>;
-    static JSTestReadOnlyMapLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReadOnlyMapLike>&& impl)
-    {
-        JSTestReadOnlyMapLike* ptr = new (NotNull, JSC::allocateCell<JSTestReadOnlyMapLike>(globalObject->vm())) JSTestReadOnlyMapLike(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestReadOnlyMapLike* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReadOnlyMapLike>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestReadOnlyMapLike* toWrapped(JSC::VM&, JSC::JSValue);

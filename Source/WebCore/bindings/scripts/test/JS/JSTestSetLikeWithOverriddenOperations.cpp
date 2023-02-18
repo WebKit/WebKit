@@ -155,6 +155,13 @@ JSTestSetLikeWithOverriddenOperations::JSTestSetLikeWithOverriddenOperations(Str
 {
 }
 
+JSTestSetLikeWithOverriddenOperations* JSTestSetLikeWithOverriddenOperations::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestSetLikeWithOverriddenOperations>&& impl)
+{
+    JSTestSetLikeWithOverriddenOperations* ptr = new (NotNull, JSC::allocateCell<JSTestSetLikeWithOverriddenOperations>(globalObject->vm())) JSTestSetLikeWithOverriddenOperations(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestSetLikeWithOverriddenOperations::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

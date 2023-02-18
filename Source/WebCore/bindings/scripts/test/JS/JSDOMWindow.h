@@ -33,13 +33,7 @@ class JSDOMWindow : public JSEventTarget {
 public:
     using Base = JSEventTarget;
     using DOMWrapped = DOMWindow;
-    static JSDOMWindow* create(JSC::VM& vm, JSC::Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
-    {
-        JSDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSDOMWindow>(vm)) JSDOMWindow(vm, structure, WTFMove(impl), proxy);
-        ptr->finishCreation(vm, proxy);
-        return ptr;
-    }
-
+    static JSDOMWindow* create(JSC::VM& vm, JSC::Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy);
     static DOMWindow* toWrapped(JSC::VM&, JSC::JSValue);
 
     DECLARE_INFO;

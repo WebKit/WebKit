@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestStringifierNamedOperation : public JSDOMWrapper<TestStringifierNamedOperation> {
 public:
     using Base = JSDOMWrapper<TestStringifierNamedOperation>;
-    static JSTestStringifierNamedOperation* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierNamedOperation>&& impl)
-    {
-        JSTestStringifierNamedOperation* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierNamedOperation>(globalObject->vm())) JSTestStringifierNamedOperation(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestStringifierNamedOperation* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierNamedOperation>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestStringifierNamedOperation* toWrapped(JSC::VM&, JSC::JSValue);

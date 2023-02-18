@@ -159,6 +159,13 @@ JSTestCEReactions::JSTestCEReactions(Structure* structure, JSDOMGlobalObject& gl
 {
 }
 
+JSTestCEReactions* JSTestCEReactions::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCEReactions>&& impl)
+{
+    JSTestCEReactions* ptr = new (NotNull, JSC::allocateCell<JSTestCEReactions>(globalObject->vm())) JSTestCEReactions(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestCEReactions::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

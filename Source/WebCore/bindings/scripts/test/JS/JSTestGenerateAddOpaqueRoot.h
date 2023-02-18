@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestGenerateAddOpaqueRoot : public JSDOMWrapper<TestGenerateAddOpaqueRoot> {
 public:
     using Base = JSDOMWrapper<TestGenerateAddOpaqueRoot>;
-    static JSTestGenerateAddOpaqueRoot* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl)
-    {
-        JSTestGenerateAddOpaqueRoot* ptr = new (NotNull, JSC::allocateCell<JSTestGenerateAddOpaqueRoot>(globalObject->vm())) JSTestGenerateAddOpaqueRoot(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestGenerateAddOpaqueRoot* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestGenerateAddOpaqueRoot* toWrapped(JSC::VM&, JSC::JSValue);

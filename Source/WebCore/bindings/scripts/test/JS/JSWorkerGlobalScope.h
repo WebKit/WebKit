@@ -31,13 +31,7 @@ class JSWorkerGlobalScope : public JSEventTarget {
 public:
     using Base = JSEventTarget;
     using DOMWrapped = WorkerGlobalScope;
-    static JSWorkerGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<WorkerGlobalScope>&& impl, JSC::JSProxy* proxy)
-    {
-        JSWorkerGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSWorkerGlobalScope>(vm)) JSWorkerGlobalScope(vm, structure, WTFMove(impl));
-        ptr->finishCreation(vm, proxy);
-        return ptr;
-    }
-
+    static JSWorkerGlobalScope* create(JSC::VM& vm, JSC::Structure* structure, Ref<WorkerGlobalScope>&& impl, JSC::JSProxy* proxy);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static WorkerGlobalScope* toWrapped(JSC::VM&, JSC::JSValue);

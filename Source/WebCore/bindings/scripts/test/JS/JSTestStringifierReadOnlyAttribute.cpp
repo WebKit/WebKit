@@ -133,6 +133,13 @@ JSTestStringifierReadOnlyAttribute::JSTestStringifierReadOnlyAttribute(Structure
 {
 }
 
+JSTestStringifierReadOnlyAttribute* JSTestStringifierReadOnlyAttribute::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierReadOnlyAttribute>&& impl)
+{
+    JSTestStringifierReadOnlyAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierReadOnlyAttribute>(globalObject->vm())) JSTestStringifierReadOnlyAttribute(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestStringifierReadOnlyAttribute::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

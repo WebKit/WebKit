@@ -135,6 +135,13 @@ JSTestDelegateToSharedSyntheticAttribute::JSTestDelegateToSharedSyntheticAttribu
 {
 }
 
+JSTestDelegateToSharedSyntheticAttribute* JSTestDelegateToSharedSyntheticAttribute::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
+{
+    JSTestDelegateToSharedSyntheticAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestDelegateToSharedSyntheticAttribute>(globalObject->vm())) JSTestDelegateToSharedSyntheticAttribute(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestDelegateToSharedSyntheticAttribute::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

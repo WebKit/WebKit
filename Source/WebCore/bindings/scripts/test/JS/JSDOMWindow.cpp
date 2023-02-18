@@ -193,6 +193,13 @@ JSDOMWindow::JSDOMWindow(VM& vm, Structure* structure, Ref<DOMWindow>&& impl, JS
 {
 }
 
+JSDOMWindow* JSDOMWindow::create(JSC::VM& vm, JSC::Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
+{
+    JSDOMWindow* ptr = new (NotNull, JSC::allocateCell<JSDOMWindow>(vm)) JSDOMWindow(vm, structure, WTFMove(impl), proxy);
+    ptr->finishCreation(vm, proxy);
+    return ptr;
+}
+
 void JSDOMWindow::finishCreation(VM& vm, JSWindowProxy* proxy)
 {
     Base::finishCreation(vm, proxy);

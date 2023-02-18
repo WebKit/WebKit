@@ -27,13 +27,7 @@ namespace WebCore {
 class JSTestJSBuiltinConstructor : public JSDOMObject {
 public:
     using Base = JSDOMObject;
-    static JSTestJSBuiltinConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
-    {
-        JSTestJSBuiltinConstructor* ptr = new (NotNull, JSC::allocateCell<JSTestJSBuiltinConstructor>(globalObject->vm())) JSTestJSBuiltinConstructor(structure, *globalObject);
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestJSBuiltinConstructor* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static void destroy(JSC::JSCell*);

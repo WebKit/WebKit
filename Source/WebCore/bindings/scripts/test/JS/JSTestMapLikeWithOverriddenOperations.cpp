@@ -157,6 +157,13 @@ JSTestMapLikeWithOverriddenOperations::JSTestMapLikeWithOverriddenOperations(Str
 {
 }
 
+JSTestMapLikeWithOverriddenOperations* JSTestMapLikeWithOverriddenOperations::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMapLikeWithOverriddenOperations>&& impl)
+{
+    JSTestMapLikeWithOverriddenOperations* ptr = new (NotNull, JSC::allocateCell<JSTestMapLikeWithOverriddenOperations>(globalObject->vm())) JSTestMapLikeWithOverriddenOperations(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestMapLikeWithOverriddenOperations::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

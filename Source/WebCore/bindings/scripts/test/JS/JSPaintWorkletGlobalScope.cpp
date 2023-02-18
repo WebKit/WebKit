@@ -119,6 +119,13 @@ JSPaintWorkletGlobalScope::JSPaintWorkletGlobalScope(VM& vm, Structure* structur
 {
 }
 
+JSPaintWorkletGlobalScope* JSPaintWorkletGlobalScope::create(JSC::VM& vm, JSC::Structure* structure, Ref<PaintWorkletGlobalScope>&& impl, JSC::JSProxy* proxy)
+{
+    JSPaintWorkletGlobalScope* ptr = new (NotNull, JSC::allocateCell<JSPaintWorkletGlobalScope>(vm)) JSPaintWorkletGlobalScope(vm, structure, WTFMove(impl));
+    ptr->finishCreation(vm, proxy);
+    return ptr;
+}
+
 void JSPaintWorkletGlobalScope::finishCreation(VM& vm, JSProxy* proxy)
 {
     Base::finishCreation(vm, proxy);

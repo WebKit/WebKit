@@ -180,6 +180,13 @@ JSTestCallTracer::JSTestCallTracer(Structure* structure, JSDOMGlobalObject& glob
 {
 }
 
+JSTestCallTracer* JSTestCallTracer::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCallTracer>&& impl)
+{
+    JSTestCallTracer* ptr = new (NotNull, JSC::allocateCell<JSTestCallTracer>(globalObject->vm())) JSTestCallTracer(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestCallTracer::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

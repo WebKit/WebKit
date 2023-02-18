@@ -29,13 +29,7 @@ namespace WebCore {
 class JSTestDelegateToSharedSyntheticAttribute : public JSDOMWrapper<TestDelegateToSharedSyntheticAttribute> {
 public:
     using Base = JSDOMWrapper<TestDelegateToSharedSyntheticAttribute>;
-    static JSTestDelegateToSharedSyntheticAttribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
-    {
-        JSTestDelegateToSharedSyntheticAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestDelegateToSharedSyntheticAttribute>(globalObject->vm())) JSTestDelegateToSharedSyntheticAttribute(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSTestDelegateToSharedSyntheticAttribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestDelegateToSharedSyntheticAttribute* toWrapped(JSC::VM&, JSC::JSValue);

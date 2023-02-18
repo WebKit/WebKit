@@ -123,6 +123,13 @@ JSTestReportExtraMemoryCost::JSTestReportExtraMemoryCost(Structure* structure, J
 {
 }
 
+JSTestReportExtraMemoryCost* JSTestReportExtraMemoryCost::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestReportExtraMemoryCost>&& impl)
+{
+    JSTestReportExtraMemoryCost* ptr = new (NotNull, JSC::allocateCell<JSTestReportExtraMemoryCost>(globalObject->vm())) JSTestReportExtraMemoryCost(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestReportExtraMemoryCost::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

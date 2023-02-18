@@ -126,6 +126,13 @@ JSTestNamedDeleterWithIndexedGetter::JSTestNamedDeleterWithIndexedGetter(Structu
 {
 }
 
+JSTestNamedDeleterWithIndexedGetter* JSTestNamedDeleterWithIndexedGetter::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedDeleterWithIndexedGetter>&& impl)
+{
+    JSTestNamedDeleterWithIndexedGetter* ptr = new (NotNull, JSC::allocateCell<JSTestNamedDeleterWithIndexedGetter>(globalObject->vm())) JSTestNamedDeleterWithIndexedGetter(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedDeleterWithIndexedGetter::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

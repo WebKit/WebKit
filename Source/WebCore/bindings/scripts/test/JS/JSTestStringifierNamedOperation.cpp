@@ -132,6 +132,13 @@ JSTestStringifierNamedOperation::JSTestStringifierNamedOperation(Structure* stru
 {
 }
 
+JSTestStringifierNamedOperation* JSTestStringifierNamedOperation::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierNamedOperation>&& impl)
+{
+    JSTestStringifierNamedOperation* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierNamedOperation>(globalObject->vm())) JSTestStringifierNamedOperation(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestStringifierNamedOperation::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

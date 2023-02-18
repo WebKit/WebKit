@@ -139,6 +139,13 @@ JSTestAsyncKeyValueIterable::JSTestAsyncKeyValueIterable(Structure* structure, J
 {
 }
 
+JSTestAsyncKeyValueIterable* JSTestAsyncKeyValueIterable::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestAsyncKeyValueIterable>&& impl)
+{
+    JSTestAsyncKeyValueIterable* ptr = new (NotNull, JSC::allocateCell<JSTestAsyncKeyValueIterable>(globalObject->vm())) JSTestAsyncKeyValueIterable(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestAsyncKeyValueIterable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

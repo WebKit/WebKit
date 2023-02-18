@@ -140,6 +140,13 @@ JSTestIterable::JSTestIterable(Structure* structure, JSDOMGlobalObject& globalOb
 {
 }
 
+JSTestIterable* JSTestIterable::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestIterable>&& impl)
+{
+    JSTestIterable* ptr = new (NotNull, JSC::allocateCell<JSTestIterable>(globalObject->vm())) JSTestIterable(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestIterable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

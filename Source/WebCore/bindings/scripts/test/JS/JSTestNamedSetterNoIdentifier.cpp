@@ -125,6 +125,13 @@ JSTestNamedSetterNoIdentifier::JSTestNamedSetterNoIdentifier(Structure* structur
 {
 }
 
+JSTestNamedSetterNoIdentifier* JSTestNamedSetterNoIdentifier::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestNamedSetterNoIdentifier>&& impl)
+{
+    JSTestNamedSetterNoIdentifier* ptr = new (NotNull, JSC::allocateCell<JSTestNamedSetterNoIdentifier>(globalObject->vm())) JSTestNamedSetterNoIdentifier(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestNamedSetterNoIdentifier::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

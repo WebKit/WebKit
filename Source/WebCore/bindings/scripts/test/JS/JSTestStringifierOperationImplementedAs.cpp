@@ -132,6 +132,13 @@ JSTestStringifierOperationImplementedAs::JSTestStringifierOperationImplementedAs
 {
 }
 
+JSTestStringifierOperationImplementedAs* JSTestStringifierOperationImplementedAs::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestStringifierOperationImplementedAs>&& impl)
+{
+    JSTestStringifierOperationImplementedAs* ptr = new (NotNull, JSC::allocateCell<JSTestStringifierOperationImplementedAs>(globalObject->vm())) JSTestStringifierOperationImplementedAs(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestStringifierOperationImplementedAs::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

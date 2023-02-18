@@ -138,6 +138,13 @@ JSTestAsyncIterable::JSTestAsyncIterable(Structure* structure, JSDOMGlobalObject
 {
 }
 
+JSTestAsyncIterable* JSTestAsyncIterable::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestAsyncIterable>&& impl)
+{
+    JSTestAsyncIterable* ptr = new (NotNull, JSC::allocateCell<JSTestAsyncIterable>(globalObject->vm())) JSTestAsyncIterable(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestAsyncIterable::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

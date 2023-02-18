@@ -243,6 +243,13 @@ JSTestEnabledBySetting::JSTestEnabledBySetting(Structure* structure, JSDOMGlobal
 {
 }
 
+JSTestEnabledBySetting* JSTestEnabledBySetting::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestEnabledBySetting>&& impl)
+{
+    JSTestEnabledBySetting* ptr = new (NotNull, JSC::allocateCell<JSTestEnabledBySetting>(globalObject->vm())) JSTestEnabledBySetting(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestEnabledBySetting::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

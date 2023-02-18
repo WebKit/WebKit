@@ -153,6 +153,13 @@ JSTestMapLike::JSTestMapLike(Structure* structure, JSDOMGlobalObject& globalObje
 {
 }
 
+JSTestMapLike* JSTestMapLike::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestMapLike>&& impl)
+{
+    JSTestMapLike* ptr = new (NotNull, JSC::allocateCell<JSTestMapLike>(globalObject->vm())) JSTestMapLike(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestMapLike::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

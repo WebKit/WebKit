@@ -153,6 +153,13 @@ JSTestDefaultToJSONInheritFinal::JSTestDefaultToJSONInheritFinal(Structure* stru
 {
 }
 
+JSTestDefaultToJSONInheritFinal* JSTestDefaultToJSONInheritFinal::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDefaultToJSONInheritFinal>&& impl)
+{
+    JSTestDefaultToJSONInheritFinal* ptr = new (NotNull, JSC::allocateCell<JSTestDefaultToJSONInheritFinal>(globalObject->vm())) JSTestDefaultToJSONInheritFinal(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestDefaultToJSONInheritFinal::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

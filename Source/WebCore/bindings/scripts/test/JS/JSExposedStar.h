@@ -30,13 +30,7 @@ class JSExposedStar : public JSEventTarget {
 public:
     using Base = JSEventTarget;
     using DOMWrapped = ExposedStar;
-    static JSExposedStar* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<ExposedStar>&& impl)
-    {
-        JSExposedStar* ptr = new (NotNull, JSC::allocateCell<JSExposedStar>(globalObject->vm())) JSExposedStar(structure, *globalObject, WTFMove(impl));
-        ptr->finishCreation(globalObject->vm());
-        return ptr;
-    }
-
+    static JSExposedStar* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<ExposedStar>&& impl);
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static ExposedStar* toWrapped(JSC::VM&, JSC::JSValue);

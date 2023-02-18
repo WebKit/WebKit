@@ -457,6 +457,13 @@ JSTestConditionalIncludes::JSTestConditionalIncludes(Structure* structure, JSDOM
 {
 }
 
+JSTestConditionalIncludes* JSTestConditionalIncludes::create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestConditionalIncludes>&& impl)
+{
+    JSTestConditionalIncludes* ptr = new (NotNull, JSC::allocateCell<JSTestConditionalIncludes>(globalObject->vm())) JSTestConditionalIncludes(structure, *globalObject, WTFMove(impl));
+    ptr->finishCreation(globalObject->vm());
+    return ptr;
+}
+
 void JSTestConditionalIncludes::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
