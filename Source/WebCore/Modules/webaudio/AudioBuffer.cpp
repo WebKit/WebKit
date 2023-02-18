@@ -151,6 +151,7 @@ void AudioBuffer::releaseMemory()
     Locker locker { m_channelsLock };
     m_channels = { };
     m_channelWrappers = { };
+    m_needsAdditionalNoise = false;
 }
 
 ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalObject, unsigned channelIndex)
@@ -303,6 +304,7 @@ bool AudioBuffer::copyTo(AudioBuffer& other) const
     for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex)
         memcpy(other.rawChannelData(channelIndex), m_channels[channelIndex]->data(), length() * sizeof(float));
 
+    other.m_needsAdditionalNoise = m_needsAdditionalNoise;
     return true;
 }
 

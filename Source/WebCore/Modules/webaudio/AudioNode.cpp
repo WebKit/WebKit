@@ -712,6 +712,11 @@ const BaseAudioContext& AudioNode::context() const
     });
 }
 
+NoiseInjectionPolicy AudioNode::noiseInjectionPolicy() const
+{
+    return context().noiseInjectionPolicy();
+}
+
 #if DEBUG_AUDIONODE_REFERENCES
 
 bool AudioNode::s_isNodeCountInitialized = false;

@@ -32,6 +32,7 @@
 #include "AudioIOCallback.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferredForward.h"
+#include "NoiseInjectionPolicy.h"
 #include "OscillatorType.h"
 #include "PeriodicWaveConstraints.h"
 #include <atomic>
@@ -231,6 +232,8 @@ public:
     void addAudioParamDescriptors(const String& processorName, Vector<AudioParamDescriptor>&&);
     const MemoryCompactRobinHoodHashMap<String, Vector<AudioParamDescriptor>>& parameterDescriptorMap() const { return m_parameterDescriptorMap; }
 
+    NoiseInjectionPolicy noiseInjectionPolicy() const { return m_noiseInjectionPolicy; }
+
 protected:
     explicit BaseAudioContext(Document&);
 
@@ -368,6 +371,7 @@ private:
     bool m_isAudioThreadFinished { false };
     bool m_automaticPullNodesNeedUpdating { false };
     bool m_hasFinishedAudioSourceNodes { false };
+    NoiseInjectionPolicy m_noiseInjectionPolicy { NoiseInjectionPolicy::None };
 };
 
 } // WebCore

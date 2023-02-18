@@ -86,6 +86,8 @@ public:
     
     bool topologyMatches(const AudioBuffer&) const;
 
+    void setNeedsAdditionalNoise() { m_needsAdditionalNoise = true; }
+
 private:
     AudioBuffer(unsigned numberOfChannels, size_t length, float sampleRate, LegacyPreventDetaching = LegacyPreventDetaching::No);
     explicit AudioBuffer(AudioBus&);
@@ -104,6 +106,7 @@ private:
     FixedVector<JSValueInWrappedObject> m_channelWrappers;
     bool m_isDetachable { true };
     mutable Lock m_channelsLock;
+    bool m_needsAdditionalNoise { false };
 };
 
 WebCoreOpaqueRoot root(AudioBuffer*);
