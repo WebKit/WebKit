@@ -3266,12 +3266,12 @@ public:
         Jump belowMin = operandType == Types::F32
             ? m_jit.branchFloat(minCondition, operandLocation.asFPR(), minFloat.asFPR())
             : m_jit.branchDouble(minCondition, operandLocation.asFPR(), minFloat.asFPR());
-        addExceptionLateLinkTask(ExceptionType::IntegerOverflow, belowMin);
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTrunc, belowMin);
 
         Jump aboveMax = operandType == Types::F32
             ? m_jit.branchFloat(DoubleCondition::DoubleGreaterThanOrEqualOrUnordered, operandLocation.asFPR(), maxFloat.asFPR())
             : m_jit.branchDouble(DoubleCondition::DoubleGreaterThanOrEqualOrUnordered, operandLocation.asFPR(), maxFloat.asFPR());
-        addExceptionLateLinkTask(ExceptionType::IntegerOverflow, aboveMax);
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTrunc, aboveMax);
 
         truncInBounds(kind, operandLocation, resultLocation);
 
