@@ -1,8 +1,8 @@
-layer at (0,0) size 785x4336
+layer at (0,0) size 785x4338
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x4336
-  RenderBlock {HTML} at (0,0) size 785x4337
-    RenderBody {BODY} at (8,8) size 769x4321
+layer at (0,0) size 785x4338
+  RenderBlock {HTML} at (0,0) size 785x4338
+    RenderBody {BODY} at (8,8) size 769x4322
       RenderTable {TABLE} at (0,0) size 39x584 [bgcolor=#0000FF] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 37x582
           RenderTableRow {TR} at (0,2) size 37x115
@@ -111,18 +111,18 @@ layer at (0,0) size 785x4336
                 text run at (2,2) width 24: "200"
       RenderBlock (anonymous) at (0,2476) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderTable {TABLE} at (0,2494) size 61x199 [bgcolor=#FFA500] [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 59x197
-          RenderTableRow {TR} at (0,2) size 59x193
-            RenderTableCell {TD} at (2,87) size 33x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,1) size 29x19
+      RenderTable {TABLE} at (0,2494) size 61x200 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 59x198
+          RenderTableRow {TR} at (0,2) size 59x194
+            RenderTableCell {TD} at (2,88) size 33x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 29x17
                 text run at (2,2) width 29: "50%"
-            RenderTableCell {TD} at (37,87) size 20x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,1) size 16x19
+            RenderTableCell {TD} at (37,88) size 20x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 16x17
                 text run at (2,2) width 16: "20"
-      RenderBlock (anonymous) at (0,2692) size 769x19
+      RenderBlock (anonymous) at (0,2694) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderTable {TABLE} at (0,2710) size 39x585 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,2712) size 39x584 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 37x582
           RenderTableRow {TR} at (0,2) size 37x500
             RenderTableCell {TD} at (2,241) size 33x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
@@ -132,9 +132,9 @@ layer at (0,0) size 785x4336
             RenderTableCell {TD} at (2,531) size 33x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 29x17
                 text run at (2,2) width 29: "80%"
-      RenderBlock (anonymous) at (0,3294) size 769x19
+      RenderBlock (anonymous) at (0,3296) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderTable {TABLE} at (0,3312) size 103x585 [bgcolor=#FF0000] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,3314) size 103x584 [bgcolor=#FF0000] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 101x582
           RenderTableRow {TR} at (0,2) size 101x40
             RenderTableCell {TD} at (2,259) size 31x22 [border: (1px inset #808080)] [r=0 c=0 rs=2 cs=1]
@@ -157,9 +157,9 @@ layer at (0,0) size 785x4336
             RenderTableCell {TD} at (35,549) size 31x22 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x17
                 text run at (2,2) width 27: "auto"
-      RenderBlock (anonymous) at (0,3896) size 769x19
+      RenderBlock (anonymous) at (0,3898) size 769x18
         RenderBR {BR} at (0,0) size 0x17
-      RenderTable {TABLE} at (0,3914) size 53x407 [bgcolor=#FFA500] [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,3916) size 53x406 [bgcolor=#FFA500] [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 51x404
           RenderTableRow {TR} at (0,2) size 51x400
             RenderTableCell {TD} at (2,2) size 47x400 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

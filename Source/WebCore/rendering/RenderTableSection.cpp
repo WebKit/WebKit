@@ -4,7 +4,8 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -430,13 +431,18 @@ void RenderTableSection::distributeRemainingExtraLogicalHeight(LayoutUnit& extra
     if (extraLogicalHeight <= 0 || !m_rowPos[totalRows])
         return;
 
-    // FIXME: m_rowPos[totalRows] - m_rowPos[0] is the total rows' size.
-    LayoutUnit totalRowSize = m_rowPos[totalRows];
     LayoutUnit totalLogicalHeightAdded;
     LayoutUnit previousRowPosition = m_rowPos[0];
+    float totalRowSize = m_rowPos[totalRows] - previousRowPosition;
+    if (!totalRowSize) {
+        // It prevents division by '0' to avoid 'ASSERTION FAILED: !firstBody() || !extraLogicalHeight'.
+        LayoutUnit extraLogicalHeight;
+        return;
+    }        
     for (unsigned r = 0; r < totalRows; r++) {
         // weight with the original height
-        totalLogicalHeightAdded += extraLogicalHeight * (m_rowPos[r + 1] - previousRowPosition) / totalRowSize;
+        float heightToAdd = extraLogicalHeight * (m_rowPos[r + 1] - previousRowPosition) / totalRowSize;
+        totalLogicalHeightAdded = std::min<int>(totalLogicalHeightAdded + std::ceil(heightToAdd), extraLogicalHeight);
         previousRowPosition = m_rowPos[r + 1];
         m_rowPos[r + 1] += totalLogicalHeightAdded;
     }
