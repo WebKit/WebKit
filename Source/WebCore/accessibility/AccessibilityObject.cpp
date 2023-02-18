@@ -2920,8 +2920,14 @@ void AccessibilityObject::setFocused(bool focus)
         // Legacy WebKit1 case.
         if (frameView->platformWidget())
             page->chrome().client().makeFirstResponder((NSResponder *)frameView->platformWidget());
+#endif
+#if PLATFORM(MAC)
         else
             page->chrome().client().assistiveTechnologyMakeFirstResponder();
+        // WebChromeClient::assistiveTechnologyMakeFirstResponder (the WebKit2 codepath) is intentionally
+        // not called on iOS because stealing first-respondership causes issues such as:
+        //   1. VoiceOver Speak Screen focus erroneously jumping to the top of the page when encountering an embedded WKWebView
+        //   2. Third-party apps relying on WebKit to not steal first-respondership (https://bugs.webkit.org/show_bug.cgi?id=249976)
 #endif
     }
 }
