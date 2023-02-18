@@ -36,10 +36,10 @@ class InlineTextBox;
 class InlineItemsBuilder {
 public:
     InlineItemsBuilder(const ElementBox& formattingContextRoot, InlineFormattingState&);
-    InlineItems build();
+    void build(InlineItemPosition startPosition);
 
 private:
-    void collectInlineItems(InlineItems&);
+    void collectInlineItems(InlineItems&, InlineItemPosition startPosition);
     void breakAndComputeBidiLevels(InlineItems&);
     void computeInlineTextItemWidths(InlineItems&);
 
