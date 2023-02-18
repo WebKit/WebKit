@@ -294,6 +294,7 @@ CallData JSFunction::getCallData(JSCell* cell)
     if (thisObject->isHostFunction()) {
         callData.type = CallData::Type::Native;
         callData.native.function = thisObject->nativeFunction();
+        callData.native.isBoundFunction = thisObject->inherits<JSBoundFunction>();
     } else {
         callData.type = CallData::Type::JS;
         callData.js.functionExecutable = thisObject->jsExecutable();
@@ -468,6 +469,7 @@ CallData JSFunction::getConstructData(JSCell* cell)
         if (thisObject->nativeConstructor() != callHostFunctionAsConstructor) {
             constructData.type = CallData::Type::Native;
             constructData.native.function = thisObject->nativeConstructor();
+            constructData.native.isBoundFunction = thisObject->inherits<JSBoundFunction>();
         }
     } else {
         FunctionExecutable* functionExecutable = thisObject->jsExecutable();

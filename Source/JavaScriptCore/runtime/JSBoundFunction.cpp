@@ -40,6 +40,7 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionCall, (JSGlobalObject* globalObj
     JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
 
     MarkedArgumentBuffer args;
+    args.ensureCapacity((boundArgs ? boundArgs->length() : 0) + callFrame->argumentCount());
     if (boundArgs) {
         for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->get(i));
@@ -68,6 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionCall, (JSGlobalObject* globalObject, CallF
     JSImmutableButterfly* boundArgs = boundFunction->boundArgs();
 
     MarkedArgumentBuffer args;
+    args.ensureCapacity((boundArgs ? boundArgs->length() : 0) + callFrame->argumentCount());
     if (boundArgs) {
         for (unsigned i = 0; i < boundArgs->length(); ++i)
             args.append(boundArgs->get(i));

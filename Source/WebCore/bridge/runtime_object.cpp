@@ -258,6 +258,7 @@ CallData RuntimeObject::getCallData(JSCell* cell)
     if (thisObject->m_instance && thisObject->m_instance->supportsInvokeDefaultMethod()) {
         callData.type = CallData::Type::Native;
         callData.native.function = callRuntimeObject;
+        callData.native.isBoundFunction = false;
     }
 
     return callData;
@@ -285,6 +286,7 @@ CallData RuntimeObject::getConstructData(JSCell* cell)
     if (thisObject->m_instance && thisObject->m_instance->supportsConstruct()) {
         constructData.type = CallData::Type::Native;
         constructData.native.function = callRuntimeConstructor;
+        constructData.native.isBoundFunction = false;
     }
 
     return constructData;

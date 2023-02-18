@@ -299,6 +299,7 @@ CallData ObjcFallbackObjectImp::getCallData(JSCell* cell)
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]) {
         callData.type = CallData::Type::Native;
         callData.native.function = callObjCFallbackObject;
+        callData.native.isBoundFunction = false;
     }
 
     return callData;
