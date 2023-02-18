@@ -35,57 +35,83 @@ class MessageSender {
 public:
     virtual ~MessageSender();
 
-    template<typename T> bool send(T&& message, OptionSet<SendOption> sendOptions = { })
+    template<typename T, typename... ArgumentTypes>
+    bool send(Connection::AsyncMessageOptions messageOptions, ArgumentTypes&&... arguments)
     {
-        return send(WTFMove(message), messageSenderDestinationID(), sendOptions);
+        static_assert(!T::isSync);
+        static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
+
+        auto encoder = makeUniqueRef<Encoder>(T::name(), messageOptions.destinationID());
+        (encoder.get() << ... << std::forward<ArgumentTypes>(arguments));
+        return sendMessage(WTFMove(encoder), messageOptions.sendOptions());
     }
 
-    template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
+    template<typename T>
+    auto send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        static_assert(!T::isSync, "Message is sync!");
-
-        auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
-        encoder.get() << message.arguments();
-        return sendMessage(WTFMove(encoder), sendOptions);
+        return std::apply([&](auto&&... arguments) {
+            return send<T>({ destinationID, sendOptions }, arguments...);
+        }, message.arguments());
     }
 
     template<typename T, typename U>
-    bool send(T&& message, ObjectIdentifier<U> destinationID, OptionSet<SendOption> sendOptions = { })
+    auto send(T&& message, ObjectIdentifier<U> destinationID, OptionSet<SendOption> sendOptions = { })
     {
         return send(WTFMove(message), destinationID.toUInt64(), sendOptions);
     }
 
-    template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
-
     template<typename T>
-    SendSyncResult<T> sendSync(T&& message, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    auto send(T&& message, OptionSet<SendOption> sendOptions = { })
     {
-        static_assert(T::isSync, "Message is not sync!");
-
-        return sendSync(std::forward<T>(message), messageSenderDestinationID(), timeout, sendSyncOptions);
+        return send(WTFMove(message), messageSenderDestinationID(), sendOptions);
     }
 
-    template<typename T>
-    SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
+    template<typename T, typename... ArgumentTypes>
+    SendSyncResult<T> sendSync(Connection::SyncMessageOptions messageOptions, ArgumentTypes&&... arguments)
     {
-        if (auto* connection = messageSenderConnection())
-            return connection->sendSync(WTFMove(message), destinationID, timeout, sendSyncOptions);
+        static_assert(T::isSync);
+        static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
 
+        if (auto* connection = messageSenderConnection())
+            return connection->sendSync<T>(messageOptions, std::forward<ArgumentTypes>(arguments)...);
         return { };
     }
 
-    template<typename T, typename U>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    template<typename T>
+    auto sendSync(T&& message, uint64_t destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
     {
-        return sendSync<T>(std::forward<T>(message), destinationID.toUInt64(), timeout, sendSyncOptions);
+        return std::apply([&](auto&&... arguments) {
+            return sendSync<T>({ destinationID, timeout, sendSyncOptions }, arguments...);
+        }, message.arguments());
+    }
+
+    template<typename T, typename U>
+    auto sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    {
+        return sendSync(WTFMove(message), destinationID.toUInt64(), timeout, sendSyncOptions);
+    }
+
+    template<typename T>
+    auto sendSync(T&& message, Timeout timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { })
+    {
+        return sendSync(WTFMove(message), messageSenderDestinationID(), timeout, sendSyncOptions);
     }
 
     using AsyncReplyID = Connection::AsyncReplyID;
-
-    template<typename T, typename C>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption> sendOptions = { })
+    template<typename T, typename C, typename... ArgumentTypes>
+    AsyncReplyID sendWithAsyncReply(Connection::AsyncMessageOptions messageOptions, C&& completionHandler, ArgumentTypes&&... arguments)
     {
-        return sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID(), sendOptions);
+        static_assert(!T::isSync);
+        static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
+
+        auto encoder = makeUniqueRef<Encoder>(T::name(), messageOptions.destinationID());
+        (encoder.get() << ... << std::forward<ArgumentTypes>(arguments));
+        auto asyncHandler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
+        auto replyID = asyncHandler.replyID;
+        if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(asyncHandler), messageOptions.sendOptions()))
+            return replyID;
+        return { };
     }
 
     template<typename T, typename C, typename U>
@@ -95,17 +121,17 @@ public:
     }
 
     template<typename T, typename C>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
+    auto sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        static_assert(!T::isSync, "Async message expected");
+        return std::apply([&](auto&&... arguments) {
+            return sendWithAsyncReply<T>({ destinationID, sendOptions }, WTFMove(completionHandler), arguments...);
+        }, message.arguments());
+    }
 
-        auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
-        encoder.get() << WTFMove(message).arguments();
-        auto asyncHandler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
-        auto replyID = asyncHandler.replyID;
-        if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(asyncHandler), sendOptions))
-            return replyID;
-        return { };
+    template<typename T, typename C>
+    auto sendWithAsyncReply(T&& message, C&& completionHandler, OptionSet<SendOption> sendOptions = { })
+    {
+        return sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler), messageSenderDestinationID(), sendOptions);
     }
 
     virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>);

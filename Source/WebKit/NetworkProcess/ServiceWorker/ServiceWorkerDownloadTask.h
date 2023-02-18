@@ -87,7 +87,7 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    template<typename Message> bool sendToServiceWorker(Message&&);
+    template<typename T, typename... ArgumentTypes> bool sendToServiceWorker(ArgumentTypes&&...);
     void didFailDownload(std::optional<WebCore::ResourceError>&& = { });
     void close();
 

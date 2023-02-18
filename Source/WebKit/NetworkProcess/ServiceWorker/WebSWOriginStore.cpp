@@ -62,7 +62,7 @@ void WebSWOriginStore::importComplete()
 {
     m_isImported = true;
     for (auto& connection : m_webSWServerConnections)
-        connection.send(Messages::WebSWClientConnection::SetSWOriginTableIsImported());
+        connection.send<Messages::WebSWClientConnection::SetSWOriginTableIsImported>({ });
 }
 
 void WebSWOriginStore::registerSWServerConnection(WebSWServerConnection& connection)
@@ -73,7 +73,7 @@ void WebSWOriginStore::registerSWServerConnection(WebSWServerConnection& connect
         sendStoreHandle(connection);
 
     if (m_isImported)
-        connection.send(Messages::WebSWClientConnection::SetSWOriginTableIsImported());
+        connection.send<Messages::WebSWClientConnection::SetSWOriginTableIsImported>({ });
 }
 
 void WebSWOriginStore::unregisterSWServerConnection(WebSWServerConnection& connection)
@@ -86,7 +86,7 @@ void WebSWOriginStore::sendStoreHandle(WebSWServerConnection& connection)
     auto handle = m_store.createSharedMemoryHandle();
     if (!handle)
         return;
-    connection.send(Messages::WebSWClientConnection::SetSWOriginTableSharedMemory(*handle));
+    connection.send<Messages::WebSWClientConnection::SetSWOriginTableSharedMemory>({ }, WTFMove(*handle));
 }
 
 void WebSWOriginStore::didInvalidateSharedMemory()

@@ -97,32 +97,32 @@ void WebSWServerToContextConnection::skipWaiting(uint64_t requestIdentifier, Ser
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
         worker->skipWaiting();
 
-    send(Messages::WebSWContextManagerConnection::SkipWaitingCompleted { requestIdentifier });
+    send<Messages::WebSWContextManagerConnection::SkipWaitingCompleted>(IPC::Connection::AsyncMessageOptions { }, requestIdentifier);
 }
 
 void WebSWServerToContextConnection::close()
 {
-    send(Messages::WebSWContextManagerConnection::Close { });
+    send<Messages::WebSWContextManagerConnection::Close>({ });
 }
 
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent, WorkerThreadMode workerThreadMode)
 {
-    send(Messages::WebSWContextManagerConnection::InstallServiceWorker { contextData, workerData, userAgent, workerThreadMode });
+    send<Messages::WebSWContextManagerConnection::InstallServiceWorker>({ }, contextData, workerData, userAgent, workerThreadMode);
 }
 
 void WebSWServerToContextConnection::updateAppInitiatedValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
 {
-    send(Messages::WebSWContextManagerConnection::UpdateAppInitiatedValue(serviceWorkerIdentifier, lastNavigationWasAppInitiated));
+    send<Messages::WebSWContextManagerConnection::UpdateAppInitiatedValue>({ }, serviceWorkerIdentifier, lastNavigationWasAppInitiated);
 }
 
 void WebSWServerToContextConnection::fireInstallEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    send(Messages::WebSWContextManagerConnection::FireInstallEvent(serviceWorkerIdentifier));
+    send<Messages::WebSWContextManagerConnection::FireInstallEvent>(IPC::Connection::AsyncMessageOptions { }, serviceWorkerIdentifier);
 }
 
 void WebSWServerToContextConnection::fireActivateEvent(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    send(Messages::WebSWContextManagerConnection::FireActivateEvent(serviceWorkerIdentifier));
+    send<Messages::WebSWContextManagerConnection::FireActivateEvent>(IPC::Connection::AsyncMessageOptions { }, serviceWorkerIdentifier);
 }
 
 void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier serviceWorkerIdentifier, const std::optional<Vector<uint8_t>>& data, CompletionHandler<void(bool)>&& callback)
@@ -133,12 +133,12 @@ void WebSWServerToContextConnection::firePushEvent(ServiceWorkerIdentifier servi
     std::optional<IPC::DataReference> ipcData;
     if (data)
         ipcData = IPC::DataReference { data->data(), data->size() };
-    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FirePushEvent(serviceWorkerIdentifier, ipcData), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed) mutable {
+    sendWithAsyncReply<Messages::WebSWContextManagerConnection::FirePushEvent>({ }, [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](bool wasProcessed) mutable {
         if (weakThis && !--weakThis->m_processingFunctionalEventCount)
-            weakThis->m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing { weakThis->webProcessIdentifier() }, 0);
+            weakThis->m_connection.networkProcess().parentProcessConnection()->send<Messages::NetworkProcessProxy::EndServiceWorkerBackgroundProcessing>({ }, weakThis->webProcessIdentifier());
 
         callback(wasProcessed);
-    });
+    }, serviceWorkerIdentifier, ipcData);
 }
 
 void WebSWServerToContextConnection::fireNotificationEvent(ServiceWorkerIdentifier serviceWorkerIdentifier, const NotificationData& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
@@ -146,7 +146,7 @@ void WebSWServerToContextConnection::fireNotificationEvent(ServiceWorkerIdentifi
     if (!m_processingFunctionalEventCount++)
         m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::StartServiceWorkerBackgroundProcessing { webProcessIdentifier() }, 0);
 
-    sendWithAsyncReply(Messages::WebSWContextManagerConnection::FireNotificationEvent { serviceWorkerIdentifier, data, eventType }, [weakThis = WeakPtr { *this }, eventType, callback = WTFMove(callback)](bool wasProcessed) mutable {
+    sendWithAsyncReply<Messages::WebSWContextManagerConnection::FireNotificationEvent>({ }, [weakThis = WeakPtr { *this }, eventType, callback = WTFMove(callback)](bool wasProcessed) mutable {
         if (!weakThis)
             return callback(wasProcessed);
 
@@ -161,12 +161,12 @@ void WebSWServerToContextConnection::fireNotificationEvent(ServiceWorkerIdentifi
         }
 
         callback(wasProcessed);
-    });
+    }, serviceWorkerIdentifier, data, eventType);
 }
 
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
-    send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
+    send<Messages::WebSWContextManagerConnection::TerminateWorker>(IPC::Connection::AsyncMessageOptions { }, serviceWorkerIdentifier);
 }
 
 void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, const ScriptBuffer& script, const MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>& importedScripts)
@@ -180,7 +180,7 @@ void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifie
             importedScriptsToSend.add(pair.key, pair.value);
     }
     if (scriptToSend || !importedScriptsToSend.isEmpty())
-        send(Messages::WebSWContextManagerConnection::DidSaveScriptsToDisk { serviceWorkerIdentifier, scriptToSend, importedScriptsToSend });
+        send<Messages::WebSWContextManagerConnection::DidSaveScriptsToDisk>({ }, serviceWorkerIdentifier, scriptToSend, importedScriptsToSend);
 #else
     UNUSED_PARAM(script);
     UNUSED_PARAM(importedScripts);
@@ -226,7 +226,7 @@ void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier
 
 void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>& clientsData)
 {
-    send(Messages::WebSWContextManagerConnection::MatchAllCompleted { requestIdentifier, clientsData });
+    send<Messages::WebSWContextManagerConnection::MatchAllCompleted>({ }, requestIdentifier, clientsData);
 }
 
 void WebSWServerToContextConnection::connectionIsNoLongerNeeded()
@@ -237,7 +237,7 @@ void WebSWServerToContextConnection::connectionIsNoLongerNeeded()
 void WebSWServerToContextConnection::setThrottleState(bool isThrottleable)
 {
     m_isThrottleable = isThrottleable;
-    send(Messages::WebSWContextManagerConnection::SetThrottleState { isThrottleable });
+    send<Messages::WebSWContextManagerConnection::SetThrottleState>({ }, isThrottleable);
 }
 
 void WebSWServerToContextConnection::startFetch(ServiceWorkerFetchTask& task)

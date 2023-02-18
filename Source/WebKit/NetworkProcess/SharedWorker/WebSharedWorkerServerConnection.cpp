@@ -118,19 +118,19 @@ void WebSharedWorkerServerConnection::resumeForBackForwardCache(WebCore::SharedW
 void WebSharedWorkerServerConnection::fetchScriptInClient(const WebSharedWorker& sharedWorker, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, CompletionHandler<void(WebCore::WorkerFetchResult&&, WebCore::WorkerInitializationData&&)>&& completionHandler)
 {
     CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    sendWithAsyncReply(Messages::WebSharedWorkerObjectConnection::FetchScriptInClient { sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions() }, WTFMove(completionHandler));
+    sendWithAsyncReply<Messages::WebSharedWorkerObjectConnection::FetchScriptInClient>({ }, WTFMove(completionHandler), sharedWorker.url(), sharedWorkerObjectIdentifier, sharedWorker.workerOptions());
 }
 
 void WebSharedWorkerServerConnection::notifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const WebCore::ResourceError& error)
 {
     CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", success=%d", sharedWorkerObjectIdentifier.toString().utf8().data(), error.isNull());
-    send(Messages::WebSharedWorkerObjectConnection::NotifyWorkerObjectOfLoadCompletion { sharedWorkerObjectIdentifier, error });
+    send<Messages::WebSharedWorkerObjectConnection::NotifyWorkerObjectOfLoadCompletion>({ }, sharedWorkerObjectIdentifier, error);
 }
 
 void WebSharedWorkerServerConnection::postExceptionToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
     CONNECTION_RELEASE_LOG_ERROR("postExceptionToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING, sharedWorkerObjectIdentifier.toString().utf8().data());
-    send(Messages::WebSharedWorkerObjectConnection::PostExceptionToWorkerObject { sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL });
+    send<Messages::WebSharedWorkerObjectConnection::PostExceptionToWorkerObject>({ }, sharedWorkerObjectIdentifier, errorMessage, lineNumber, columnNumber, sourceURL);
 }
 
 #undef CONNECTION_RELEASE_LOG

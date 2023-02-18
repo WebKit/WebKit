@@ -148,7 +148,8 @@ private:
     IPC::Connection* messageSenderConnection() const final { return m_contentConnection.ptr(); }
     uint64_t messageSenderDestinationID() const final { return 0; }
     
-    template<typename U> static void sendToContextProcess(WebCore::SWServerToContextConnection&, U&& message);
+    template<typename T, typename... ArgumentTypes>
+    static void sendToContextProcess(WebCore::SWServerToContextConnection&, ArgumentTypes&&...);
 
     Ref<IPC::Connection> m_contentConnection;
     Ref<NetworkProcess> m_networkProcess;
