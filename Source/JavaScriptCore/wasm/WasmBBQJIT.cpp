@@ -1367,7 +1367,7 @@ public:
 
         LOG_INSTRUCTION("TableSet", tableIndex, index, value);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest64(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -1391,7 +1391,7 @@ public:
 
         LOG_INSTRUCTION("TableInit", tableIndex, dstOffset, srcOffset, length);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest64(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -1450,7 +1450,7 @@ public:
 
         LOG_INSTRUCTION("TableFill", tableIndex, fill, offset, count);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest64(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -1472,7 +1472,7 @@ public:
 
         LOG_INSTRUCTION("TableCopy", dstTableIndex, srcTableIndex, dstOffset, srcOffset, length);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest64(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -2022,7 +2022,7 @@ public:
         emitCCall(&operationWasmMemoryFill, arguments, TypeKind::I32, shouldThrow);
         Location shouldThrowLocation = allocate(shouldThrow);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryFill", dstAddress, targetValue, count);
 
@@ -2043,7 +2043,7 @@ public:
         emitCCall(&operationWasmMemoryCopy, arguments, TypeKind::I32, shouldThrow);
         Location shouldThrowLocation = allocate(shouldThrow);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryCopy", dstAddress, srcAddress, count);
 
@@ -2065,7 +2065,7 @@ public:
         emitCCall(&operationWasmMemoryInit, arguments, TypeKind::I32, shouldThrow);
         Location shouldThrowLocation = allocate(shouldThrow);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryInit", dataSegmentIndex, dstAddress, srcAddress, length);
 
@@ -3871,11 +3871,11 @@ public:
         addExceptionLateLinkTask(ExceptionType::DivisionByZero, isZero);
         if constexpr (isSigned) {
             if constexpr (is32)
-                m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), Imm32(-1), scratches.gpr(0));
+                m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), scratches.gpr(0));
             else
                 m_jit.compare64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), scratches.gpr(0));
             if constexpr (is32)
-                m_jit.compare32(RelationalCondition::Equal, lhsLocation.asGPR(), Imm32(std::numeric_limits<int32_t>::min()), scratches.gpr(1));
+                m_jit.compare32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()), scratches.gpr(1));
             else {
                 m_jit.move(TrustedImm64(std::numeric_limits<int64_t>::min()), scratches.gpr(1));
                 m_jit.compare64(RelationalCondition::Equal, lhsLocation.asGPR(), scratches.gpr(1), scratches.gpr(1));
@@ -3956,7 +3956,7 @@ public:
                 // Check for INT_MIN / -1 case, and throw an IntegerOverflow exception if it occurs
                 if (!IsMod && isSigned) {
                     Jump jump = is32
-                        ? m_jit.branch32(RelationalCondition::Equal, lhsLocation.asGPR(), Imm32(std::numeric_limits<int32_t>::min()))
+                        ? m_jit.branch32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()))
                         : m_jit.branch64(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm64(std::numeric_limits<int64_t>::min()));
                     addExceptionLateLinkTask(ExceptionType::IntegerOverflow, jump);
                 }
@@ -3991,8 +3991,8 @@ public:
 
                     if constexpr (isSigned) {
                         Jump isNonNegative = is32
-                            ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), Imm32(0))
-                            : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), Imm64(0));
+                            ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0))
+                            : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm64(0));
                         if constexpr (is32)
                             m_jit.neg32(m_scratchGPR, m_scratchGPR);
                         else
@@ -4005,8 +4005,8 @@ public:
 
                 if constexpr (isSigned) {
                     Jump isNonNegative = is32
-                        ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), Imm32(0))
-                        : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), Imm64(0));
+                        ? m_jit.branch32(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm32(0))
+                        : m_jit.branch64(RelationalCondition::GreaterThanOrEqual, lhsLocation.asGPR(), TrustedImm64(0));
                     if constexpr (is32)
                         m_jit.add32(Imm32(1), lhsLocation.asGPR(), lhsLocation.asGPR());
                     else
@@ -4043,7 +4043,7 @@ public:
             }
             if (isSigned && !IsMod && dividend == std::numeric_limits<IntType>::min()) {
                 Jump isNegativeOne = is32
-                    ? m_jit.branch32(RelationalCondition::Equal, rhsLocation.asGPR(), Imm32(-1))
+                    ? m_jit.branch32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1))
                     : m_jit.branch64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm64(-1));
                 addExceptionLateLinkTask(ExceptionType::IntegerOverflow, isNegativeOne);
                 checkedForNegativeOne = true;
@@ -4064,11 +4064,11 @@ public:
         ScratchScope<1, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
         if (isSigned && !IsMod && !checkedForNegativeOne) {
             if constexpr (is32)
-                m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), Imm32(-1), m_scratchGPR);
+                m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), m_scratchGPR);
             else
                 m_jit.compare64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), m_scratchGPR);
             if constexpr (is32)
-                m_jit.compare32(RelationalCondition::Equal, lhsLocation.asGPR(), Imm32(std::numeric_limits<int32_t>::min()), scratches.gpr(0));
+                m_jit.compare32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()), scratches.gpr(0));
             else {
                 m_jit.move(TrustedImm64(std::numeric_limits<int64_t>::min()), scratches.gpr(0));
                 m_jit.compare64(RelationalCondition::Equal, lhsLocation.asGPR(), scratches.gpr(0), scratches.gpr(0));
@@ -5791,8 +5791,6 @@ public:
             linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
         });
 
-        emitEntryTierUpCheck();
-
         // Zero all locals that aren't initialized by arguments.
         // This is kind of icky...we can evaluate replacing this a memset() or a tracker for which
         // locals have been initialized.
@@ -5840,6 +5838,9 @@ public:
 
         for (size_t i = 0; i < m_functionSignature->argumentCount(); i ++)
             m_topLevel.touch(i); // Ensure arguments are flushed to persistent locations when this block ends.
+
+        // This clobbers argumentGPR0 and argumentGPR1. So call it after flushing arguments.
+        emitEntryTierUpCheck();
 
         return m_topLevel;
     }
@@ -8319,8 +8320,7 @@ private:
     Location allocateStack(Value value)
     {
         // Align stack for value size.
-        WTF::roundUpToMultipleOf(value.size(), m_frameSize);
-
+        m_frameSize = WTF::roundUpToMultipleOf(value.size(), m_frameSize);
         m_frameSize += value.size();
         return Location::fromStack(-m_frameSize);
     }

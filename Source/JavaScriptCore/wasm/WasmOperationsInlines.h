@@ -235,7 +235,7 @@ inline bool tableSet(Instance* instance, unsigned tableIndex, uint32_t index, En
     return true;
 }
 
-inline size_t tableInit(Instance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length)
+inline bool tableInit(Instance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length)
 {
     ASSERT(elementIndex < instance->module().moduleInformation().elementCount());
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
@@ -260,7 +260,7 @@ inline size_t tableInit(Instance* instance, unsigned elementIndex, unsigned tabl
     return true;
 }
 
-inline size_t tableFill(Instance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count)
+inline bool tableFill(Instance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count)
 {
     ASSERT(tableIndex < instance->module().moduleInformation().tableCount());
 
@@ -290,7 +290,7 @@ inline size_t tableGrow(Instance* instance, unsigned tableIndex, EncodedJSValue 
     return oldSize;
 }
 
-inline size_t tableCopy(Instance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length)
+inline bool tableCopy(Instance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length)
 {
     ASSERT(dstTableIndex < instance->module().moduleInformation().tableCount());
     ASSERT(srcTableIndex < instance->module().moduleInformation().tableCount());
@@ -349,18 +349,18 @@ inline int32_t growMemory(Instance* instance, int32_t delta)
     return grown.value().pageCount();
 }
 
-inline size_t memoryInit(Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length)
+inline bool memoryInit(Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length)
 {
     ASSERT(dataSegmentIndex < instance->module().moduleInformation().dataSegmentsCount());
     return instance->memoryInit(dstAddress, srcAddress, length, dataSegmentIndex);
 }
 
-inline size_t memoryFill(Instance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count)
+inline bool memoryFill(Instance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count)
 {
     return instance->memory()->fill(dstAddress, static_cast<uint8_t>(targetValue), count);
 }
 
-inline size_t memoryCopy(Instance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count)
+inline bool memoryCopy(Instance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count)
 {
     return instance->memory()->copy(dstAddress, srcAddress, count);
 }

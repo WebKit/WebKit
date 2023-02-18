@@ -718,14 +718,14 @@ JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (Instance* instance, int3
     return growMemory(instance, delta);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmMemoryFill, size_t, (Instance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count))
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryFill, UCPUStrictInt32, (Instance* instance, uint32_t dstAddress, uint32_t targetValue, uint32_t count))
 {
-    return memoryFill(instance, dstAddress, targetValue, count);
+    return toUCPUStrictInt32(memoryFill(instance, dstAddress, targetValue, count));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmMemoryCopy, size_t, (Instance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count))
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryCopy, UCPUStrictInt32, (Instance* instance, uint32_t dstAddress, uint32_t srcAddress, uint32_t count))
 {
-    return memoryCopy(instance, dstAddress, srcAddress, count);
+    return toUCPUStrictInt32(memoryCopy(instance, dstAddress, srcAddress, count));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance* instance, unsigned tableIndex, int32_t signedIndex))
@@ -733,14 +733,14 @@ JSC_DEFINE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance
     return tableGet(instance, tableIndex, signedIndex);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, uint32_t, (Instance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
+JSC_DEFINE_JIT_OPERATION(operationSetWasmTableElement, UCPUStrictInt32, (Instance* instance, unsigned tableIndex, uint32_t signedIndex, EncodedJSValue encValue))
 {
-    return tableSet(instance, tableIndex, signedIndex, encValue);
+    return toUCPUStrictInt32(tableSet(instance, tableIndex, signedIndex, encValue));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableInit, size_t, (Instance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableInit, UCPUStrictInt32, (Instance* instance, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length))
 {
-    return tableInit(instance, elementIndex, tableIndex, dstOffset, srcOffset, length);
+    return toUCPUStrictInt32(tableInit(instance, elementIndex, tableIndex, dstOffset, srcOffset, length));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmElemDrop, void, (Instance* instance, unsigned elementIndex))
@@ -753,14 +753,14 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance* instance, u
     return tableGrow(instance, tableIndex, fill, delta);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, size_t, (Instance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableFill, UCPUStrictInt32, (Instance* instance, unsigned tableIndex, uint32_t offset, EncodedJSValue fill, uint32_t count))
 {
-    return tableFill(instance, tableIndex, offset, fill, count);
+    return toUCPUStrictInt32(tableFill(instance, tableIndex, offset, fill, count));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, size_t, (Instance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
+JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, UCPUStrictInt32, (Instance* instance, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length))
 {
-    return tableCopy(instance, dstTableIndex, srcTableIndex, dstOffset, srcOffset, length);
+    return toUCPUStrictInt32(tableCopy(instance, dstTableIndex, srcTableIndex, dstOffset, srcOffset, length));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance* instance, uint32_t index))
@@ -819,9 +819,9 @@ JSC_DEFINE_JIT_OPERATION(operationMemoryAtomicNotify, int32_t, (Instance* instan
     return memoryAtomicNotify(instance, base, offset, countValue);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmMemoryInit, size_t, (Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length))
+JSC_DEFINE_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (Instance* instance, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length))
 {
-    return memoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length);
+    return toUCPUStrictInt32(memoryInit(instance, dataSegmentIndex, dstAddress, srcAddress, length));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmDataDrop, void, (Instance* instance, unsigned dataSegmentIndex))

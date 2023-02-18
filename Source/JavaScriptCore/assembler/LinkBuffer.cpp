@@ -474,7 +474,7 @@ void LinkBuffer::allocate(MacroAssembler& macroAssembler, JITCompilationEffort e
 
 void LinkBuffer::linkComments(MacroAssembler& assembler)
 {
-    if (LIKELY(!Options::dumpDisassembly()) || !m_executableMemory)
+    if (LIKELY(!Options::needDisassemblySupport()) || !m_executableMemory)
         return;
     AssemblyCommentRegistry::CommentMap map;
     for (const auto& [label, str] : assembler.m_comments) {
