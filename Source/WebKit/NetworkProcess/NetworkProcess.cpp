@@ -1478,37 +1478,6 @@ void NetworkProcess::setSessionIsControlledByAutomation(PAL::SessionID sessionID
         m_sessionsControlledByAutomation.remove(sessionID);
 }
 
-static void fetchDiskCacheEntries(NetworkCache::Cache* cache, PAL::SessionID sessionID, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(Vector<WebsiteData::Entry>)>&& completionHandler)
-{
-    if (!cache) {
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] () mutable {
-            completionHandler({ });
-        });
-        return;
-    }
-    
-    HashMap<SecurityOriginData, uint64_t> originsAndSizes;
-    cache->traverse([fetchOptions, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
-        if (!traversalEntry) {
-            auto entries = WTF::map(originsAndSizes, [](auto& originAndSize) {
-                return WebsiteData::Entry { originAndSize.key, WebsiteDataType::DiskCache, originAndSize.value };
-            });
-
-            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), entries = WTFMove(entries)] () mutable {
-                completionHandler(entries);
-            });
-
-            return;
-        }
-
-        auto url = traversalEntry->entry.response().url();
-        auto result = originsAndSizes.add({url.protocol().toString(), url.host().toString(), url.port()}, 0);
-
-        if (fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes))
-            result.iterator->value += traversalEntry->entry.sourceStorageRecord().header.size() + traversalEntry->recordInfo.bodySize;
-    });
-}
-
 void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(WebsiteData&&)>&& completionHandler)
 {
     RELEASE_LOG(Storage, "NetworkProcess::fetchWebsiteData started to fetch data for session %" PRIu64, sessionID.toUInt64());
@@ -1563,12 +1532,12 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         });
     }
 #endif
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        forEachNetworkSession([sessionID, fetchOptions, &callbackAggregator](auto& session) {
-            fetchDiskCacheEntries(session.cache(), sessionID, fetchOptions, [callbackAggregator](auto entries) mutable {
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
+        if (auto* cache = session->cache()) {
+            cache->fetchData(fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator](auto entries) mutable {
                 callbackAggregator->m_websiteData.entries.appendVector(entries);
             });
-        });
+        }
     }
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
@@ -1652,8 +1621,10 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache))
         CrossOriginPreflightResultCache::singleton().clear();
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
-        clearDiskCache(modifiedSince, [clearTasksHandler] { });
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
+        if (auto cache = session->cache())
+            cache->clear(modifiedSince, [clearTasksHandler] { });
+    }
 
     if (websiteDataTypes.contains(WebsiteDataType::PrivateClickMeasurements) && session)
         session->clearPrivateClickMeasurement([clearTasksHandler] { });
@@ -1665,30 +1636,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
     if (NetworkStorageManager::canHandleTypes(websiteDataTypes) && session)
         session->storageManager().deleteDataModifiedSince(websiteDataTypes, modifiedSince, [clearTasksHandler] { });
-}
-
-static void clearDiskCacheEntries(NetworkCache::Cache* cache, const Vector<SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
-{
-    if (!cache) {
-        RunLoop::main().dispatch(WTFMove(completionHandler));
-        return;
-    }
-
-    HashSet<RefPtr<SecurityOrigin>> originsToDelete;
-    for (auto& origin : origins)
-        originsToDelete.add(origin.securityOrigin());
-
-    Vector<NetworkCache::Key> cacheKeysToDelete;
-    cache->traverse([cache, completionHandler = WTFMove(completionHandler), originsToDelete = WTFMove(originsToDelete), cacheKeysToDelete = WTFMove(cacheKeysToDelete)](auto* traversalEntry) mutable {
-        if (traversalEntry) {
-            if (originsToDelete.contains(SecurityOrigin::create(traversalEntry->entry.response().url())))
-                cacheKeysToDelete.append(traversalEntry->entry.key());
-            return;
-        }
-
-        cache->remove(cacheKeysToDelete, WTFMove(completionHandler));
-        return;
-    });
 }
 
 void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
@@ -1783,10 +1730,9 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache))
         CrossOriginPreflightResultCache::singleton().clear();
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral()) {
-        forEachNetworkSession([originDatas, &clearTasksHandler](auto& session) {
-            clearDiskCacheEntries(session.cache(), originDatas, [clearTasksHandler] { });
-        });
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
+        if (auto cache = session->cache())
+            cache->deleteData(originDatas, [clearTasksHandler] { });
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::Credentials)) {
@@ -1969,24 +1915,13 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
     }
 #endif
 
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        forEachNetworkSession([sessionID, fetchOptions, &domainsToDeleteAllScriptWrittenStorageFor, &callbackAggregator](auto& session) {
-            /* hack: gcc 8.4 will segfault if the WeakPtr is instantiated within the lambda captures */
-            auto ws = WeakPtr { session };
-            fetchDiskCacheEntries(session.cache(), sessionID, fetchOptions, [domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator, session = WTFMove(ws)](auto entries) mutable {
-                if (!session)
-                    return;
-
-                Vector<SecurityOriginData> entriesToDelete;
-                for (auto& entry : entries) {
-                    if (!domainsToDeleteAllScriptWrittenStorageFor.contains(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host())))
-                        continue;
-                    entriesToDelete.append(entry.origin);
-                    callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(entry.origin.host()));
-                }
-                clearDiskCacheEntries(session->cache(), entriesToDelete, [callbackAggregator] { });
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
+        if (auto cache = session->cache()) {
+            cache->deleteDataForRegistrableDomains(domainsToDeleteAllScriptWrittenStorageFor, [callbackAggregator](auto&& deletedDomains) mutable {
+                for (auto domain : deletedDomains)
+                    callbackAggregator->m_domains.add(WTFMove(domain));
             });
-        });
+        }
     }
 
     if (NetworkStorageManager::canHandleTypes(websiteDataTypes) && session) {
@@ -2024,9 +1959,6 @@ void NetworkProcess::deleteCookiesForTesting(PAL::SessionID sessionID, Registrab
 void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
 {
     auto* session = networkSession(sessionID);
-
-    OptionSet<WebsiteDataFetchOption> fetchOptions = WebsiteDataFetchOption::DoNotCreateProcesses;
-    
     struct CallbackAggregator final : public ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
             : m_completionHandler(WTFMove(completionHandler))
@@ -2097,12 +2029,12 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
     }
 #endif
     
-    if (websiteDataTypes.contains(WebsiteDataType::DiskCache)) {
-        forEachNetworkSession([sessionID, fetchOptions, &callbackAggregator](auto& session) {
-            fetchDiskCacheEntries(session.cache(), sessionID, fetchOptions, [callbackAggregator](auto entries) mutable {
+    if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
+        if (auto cache = session->cache()) {
+            cache->fetchData(false, [callbackAggregator](auto entries) mutable {
                 callbackAggregator->m_websiteData.entries.appendVector(entries);
             });
-        });
+        }
     }
 
     if (session) {

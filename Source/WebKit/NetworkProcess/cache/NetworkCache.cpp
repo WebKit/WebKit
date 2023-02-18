@@ -37,6 +37,7 @@
 #include <WebCore/HTTPHeaderNames.h>
 #include <WebCore/LowPowerModeNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
@@ -715,5 +716,67 @@ void Cache::storeData(const DataKey& dataKey, const uint8_t* data, size_t size)
     m_storage->store(record, { });
 }
 
+void Cache::fetchData(bool shouldComputeSize, CompletionHandler<void(Vector<WebsiteData::Entry>&&)>&& completionHandler)
+{
+    HashMap<WebCore::SecurityOriginData, uint64_t> originsAndSizes;
+    traverse([protectedThis = Ref { *this }, shouldComputeSize, completionHandler = WTFMove(completionHandler), originsAndSizes = WTFMove(originsAndSizes)](auto* traversalEntry) mutable {
+        if (traversalEntry) {
+            auto url = traversalEntry->entry.response().url();
+            auto result = originsAndSizes.add({ url.protocol().toString(), url.host().toString(), url.port() }, 0);
+            if (shouldComputeSize)
+                result.iterator->value += traversalEntry->entry.sourceStorageRecord().header.size() + traversalEntry->recordInfo.bodySize;
+            return;
+        }
+
+        auto entries = WTF::map(originsAndSizes, [](auto& originAndSize) {
+            return WebsiteData::Entry { originAndSize.key, WebsiteDataType::DiskCache, originAndSize.value };
+        });
+        completionHandler(WTFMove(entries));
+    });
 }
+
+void Cache::deleteData(const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
+{
+    HashSet<WebCore::SecurityOriginData> originSet;
+    for (auto& origin : origins)
+        originSet.add(origin);
+
+    Vector<NetworkCache::Key> keysToDelete;
+    traverse([this, protectedThis = Ref { *this }, originSet = WTFMove(originSet), completionHandler = WTFMove(completionHandler), keysToDelete = WTFMove(keysToDelete)](auto* traversalEntry) mutable {
+        if (traversalEntry) {
+            auto origin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(traversalEntry->entry.response().url());
+            if (originSet.contains(origin))
+                keysToDelete.append(traversalEntry->entry.key());
+            return;
+        }
+
+        remove(keysToDelete, WTFMove(completionHandler));
+    });
 }
+
+void Cache::deleteDataForRegistrableDomains(const Vector<WebCore::RegistrableDomain>& domains, CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
+{
+    HashSet<WebCore::RegistrableDomain> domainSet;
+    for (auto& domain : domains)
+        domainSet.add(domain);
+
+    Vector<NetworkCache::Key> keysToDelete;
+    HashSet<WebCore::RegistrableDomain> domainsDeleted;
+    traverse([this, protectedThis = Ref { *this }, domainSet = WTFMove(domainSet), completionHandler = WTFMove(completionHandler), keysToDelete = WTFMove(keysToDelete), domainsDeleted = WTFMove(domainsDeleted)](auto* traversalEntry) mutable {
+        if (traversalEntry) {
+            auto domain = WebCore::RegistrableDomain { traversalEntry->entry.response().url() };
+            if (domainSet.contains(domain)) {
+                keysToDelete.append(traversalEntry->entry.key());
+                domainsDeleted.add(domain);
+            }
+            return;
+        }
+
+        remove(keysToDelete, [completionHandler = WTFMove(completionHandler), domainsDeleted = WTFMove(domainsDeleted)]() mutable {
+            completionHandler(WTFMove(domainsDeleted));
+        });
+    });
+}
+
+} // namespace NetworkCache
+} // namespace WebKit
