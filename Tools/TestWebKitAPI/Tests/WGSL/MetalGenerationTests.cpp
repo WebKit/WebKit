@@ -73,7 +73,7 @@ fn main(@builtin(position) position : vec4<f32>,
         @builtin(sample_index) sample_index : u32,
         @builtin(sample_mask) sample_mask : u32) {
     let foo : vec4<f32> = position;
-    let bar : u32 = (sample_index + sample_mask);
+    let bar : u32 = (sample_index - sample_mask);
 })"_s, "main"_s);
 
     EXPECT_TRUE(mslSource.has_value());
@@ -84,7 +84,7 @@ using namespace metal;
 [[fragment]] void function0(unsigned parameter0 [[sample_mask]], unsigned parameter1 [[sample_id]], vec<float, 4> parameter2 [[position]])
 {
     vec<float, 4> local0 = parameter2;
-    unsigned local1 = parameter1 + parameter0;
+    unsigned local1 = parameter1 - parameter0;
 }
 
 )"_s);
