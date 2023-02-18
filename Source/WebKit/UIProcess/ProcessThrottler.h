@@ -142,6 +142,7 @@ public:
     bool shouldBeRunnable() const { return m_foregroundActivities.size() || m_backgroundActivities.size(); }
     void setAllowsActivities(bool);
     void setShouldTakeSuspendedAssertion(bool);
+    void delaySuspension();
 
 private:
     friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
@@ -152,6 +153,7 @@ private:
     void setAssertionType(ProcessAssertionType);
     void setThrottleState(ProcessThrottleState);
     void prepareToSuspendTimeoutTimerFired();
+    void removeAllAssertionsTimerFired();
     void sendPrepareToSuspendIPC(IsSuspensionImminent);
     void processReadyToSuspend();
 
@@ -161,7 +163,7 @@ private:
     void removeActivity(BackgroundActivity&);
     void invalidateAllActivities();
     String assertionName(ProcessAssertionType) const;
-    std::optional<ProcessAssertionType> assertionTypeForState(ProcessThrottleState);
+    ProcessAssertionType assertionTypeForState(ProcessThrottleState);
 
     void uiAssertionWillExpireImminently();
     void assertionWasInvalidated();
@@ -172,6 +174,7 @@ private:
     ProcessID m_processIdentifier { 0 };
     RefPtr<ProcessAssertion> m_assertion;
     RunLoop::Timer m_prepareToSuspendTimeoutTimer;
+    RunLoop::Timer m_removeAllAssertionsTimer;
     HashSet<ForegroundActivity*> m_foregroundActivities;
     HashSet<BackgroundActivity*> m_backgroundActivities;
     std::optional<uint64_t> m_pendingRequestToSuspendID;

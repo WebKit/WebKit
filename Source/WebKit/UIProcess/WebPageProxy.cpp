@@ -5550,6 +5550,8 @@ void WebPageProxy::didReceiveTitleForFrame(FrameIdentifier frameID, const String
     
     m_pageLoadState.commitChanges();
 
+    process().throttler().delaySuspension();
+
 #if ENABLE(REMOTE_INSPECTOR)
     if (frame->isMainFrame())
         remoteInspectorInformationDidChange();
@@ -9329,6 +9331,7 @@ void WebPageProxy::requestNotificationPermission(const String& originString, Com
 void WebPageProxy::showNotification(IPC::Connection& connection, const WebCore::NotificationData& notificationData, RefPtr<WebCore::NotificationResources>&& notificationResources)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->show(this, connection, notificationData, WTFMove(notificationResources));
+    m_process->throttler().delaySuspension();
 }
 
 void WebPageProxy::cancelNotification(const UUID& notificationID)
