@@ -1,4 +1,4 @@
 
 
-FAIL Transitioning font-size on root affects rem units assert_equals: expected "25px" but got "24px"
+PASS Transitioning font-size on root affects rem units
 
