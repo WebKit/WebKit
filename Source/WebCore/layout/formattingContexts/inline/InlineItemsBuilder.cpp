@@ -90,14 +90,14 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     }
     computeInlineTextItemWidths(inlineItems);
 
-    auto appendNewInlineItems = [&] {
+    auto adjustInlineFormattingStateWithNewInlineItems = [&] {
         if (!startPosition)
-            return m_formattingState.addInlineItems(WTFMove(inlineItems));
+            return m_formattingState.setInlineItems(WTFMove(inlineItems));
         // Let's first remove the dirty inline items if there are any.
         auto& currentInlineItems = m_formattingState.inlineItems();
         if (startPosition.index >= currentInlineItems.size()) {
             ASSERT_NOT_REACHED();
-            return m_formattingState.addInlineItems(WTFMove(inlineItems));
+            return m_formattingState.setInlineItems(WTFMove(inlineItems));
         }
         auto& lastCleanLayoutBox = currentInlineItems[startPosition.index].layoutBox();
         auto firstDirtyInlineItemIndex = std::optional<size_t> { };
@@ -109,9 +109,9 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         }
         if (firstDirtyInlineItemIndex)
             currentInlineItems.remove(*firstDirtyInlineItemIndex, currentInlineItems.size() - *firstDirtyInlineItemIndex);
-        m_formattingState.addInlineItems(WTFMove(inlineItems));
+        m_formattingState.appendInlineItems(WTFMove(inlineItems));
     };
-    appendNewInlineItems();
+    adjustInlineFormattingStateWithNewInlineItems();
 }
 
 void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItemPosition startPosition)

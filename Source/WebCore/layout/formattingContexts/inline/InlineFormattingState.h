@@ -48,7 +48,8 @@ public:
 
     InlineItems& inlineItems() { return m_inlineItems; }
     const InlineItems& inlineItems() const { return m_inlineItems; }
-    void addInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
+    void setInlineItems(InlineItems&& inlineItems) { m_inlineItems = WTFMove(inlineItems); }
+    void appendInlineItems(InlineItems&& inlineItems) { m_inlineItems.appendVector(WTFMove(inlineItems)); }
 
     const DisplayLines& lines() const { return m_displayLines; }
     DisplayLines& lines() { return m_displayLines; }
@@ -65,7 +66,6 @@ public:
     InlineLayoutUnit clearGapBeforeFirstLine() const { return m_clearGapBeforeFirstLine; }
 
     void clearInlineItems() { m_inlineItems.clear(); }
-    void clearLineAndBoxes();
     void shrinkToFit();
 
     void addNestedListMarkerOffset(const ElementBox& listMarkerBox, LayoutUnit offset) { m_nestedListMarkerOffset.add(&listMarkerBox, offset); }
@@ -87,14 +87,6 @@ inline void InlineFormattingState::setClearGapAfterLastLine(InlineLayoutUnit ver
 {
     ASSERT(verticalGap >= 0);
     m_clearGapAfterLastLine = verticalGap;
-}
-
-inline void InlineFormattingState::clearLineAndBoxes()
-{
-    m_displayBoxes.clear();
-    m_displayLines.clear();
-    m_clearGapBeforeFirstLine = { };
-    m_clearGapAfterLastLine = { };
 }
 
 inline void InlineFormattingState::shrinkToFit()

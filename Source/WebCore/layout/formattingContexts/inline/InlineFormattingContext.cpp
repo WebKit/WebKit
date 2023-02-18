@@ -88,7 +88,6 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Start] -> inline formatting context -> formatting root(" << &root() << ")");
     ASSERT(root().hasInFlowOrFloatingChild());
 
-    invalidateFormattingState();
     auto* layoutBox = root().firstInFlowOrFloatingChild();
     // 1. Visit each inline box and partially compute their geometry (margins, padding and borders).
     // 2. Collect the inline items (flatten the the layout tree) and place them on lines in bidirectional order. 
@@ -139,6 +138,9 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     }
 
     auto& inlineFormattingState = formattingState();
+    inlineFormattingState.clearInlineItems();
+    inlineFormattingState.boxes().clear();
+    inlineFormattingState.lines().clear();
     auto needsLayoutStartPosition = !m_lineDamage || !m_lineDamage->contentPosition() ? InlineItemPosition() : m_lineDamage->contentPosition()->inlineItemPosition;
     auto needsInlineItemsUpdate = inlineFormattingState.inlineItems().isEmpty() || m_lineDamage;
     if (needsInlineItemsUpdate)
@@ -149,8 +151,6 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     auto& inlineItems = inlineFormattingState.inlineItems();
     auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItems.size(), 0 } };
 
-    if (!needsLayoutRange.start)
-        inlineFormattingState.boxes().reserveInitialCapacity(inlineItems.size());
     auto previousLine = [&]() -> std::optional<PreviousLine> {
         auto& displayLines = inlineFormattingState.lines();
         auto& displayBoxes = inlineFormattingState.boxes();
@@ -168,8 +168,6 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
 
 void InlineFormattingContext::layoutInFlowContentForIntegration(const ConstraintsForInFlowContent& constraints, BlockLayoutState& blockLayoutState)
 {
-    invalidateFormattingState();
-
     auto& inlineFormattingState = formattingState();
     auto needsLayoutStartPosition = !m_lineDamage || !m_lineDamage->contentPosition() ? InlineItemPosition() : m_lineDamage->contentPosition()->inlineItemPosition;
     auto needsInlineItemsUpdate = inlineFormattingState.inlineItems().isEmpty() || m_lineDamage;
@@ -519,30 +517,6 @@ void InlineFormattingContext::resetGeometryForClampedContent(const InlineItemRan
         boxGeometry.setLogicalTopLeft(topleft);
         boxGeometry.setContentBoxHeight({ });
         boxGeometry.setContentBoxWidth({ });
-    }
-}
-
-void InlineFormattingContext::invalidateFormattingState()
-{
-    if (!m_lineDamage) {
-        // Non-empty formatting state with no damage means we are trying to layout a clean tree.
-        // FIXME: Add ASSERT(formattingState().inlineItems().isEmpty()) when all the codepaths are covered.
-        formattingState().clearLineAndBoxes();
-        return;
-    }
-    // FIXME: Lines and boxes are moved out to under Integration::InlineContent in the integration codepath, so clearLineAndBoxes is no-op.
-    switch (m_lineDamage->type()) {
-    case InlineDamage::Type::NeedsContentUpdateAndLineLayout:
-        formattingState().clearInlineItems();
-        FALLTHROUGH;
-    case InlineDamage::Type::NeedsLineLayout:
-        formattingState().clearLineAndBoxes();
-        break;
-    case InlineDamage::Type::NeedsVerticalAdjustment:
-    case InlineDamage::Type::NeedsHorizontalAdjustment:
-    default:
-        ASSERT_NOT_IMPLEMENTED_YET();
-        break;
     }
 }
 
