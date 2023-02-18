@@ -26,7 +26,6 @@
 #include "config.h"
 #include "NativeImage.h"
 
-#include "GraphicsContext.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -48,11 +47,6 @@ NativeImage::~NativeImage()
 {
     for (auto observer : m_observers)
         observer->releaseNativeImage(m_renderingResourceIdentifier);
-}
-
-void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, const ImagePaintingOptions& options)
-{
-    context.drawNativeImageInternal(*this, imageSize, destinationRect, sourceRect, options);
 }
 
 } // namespace WebCore
