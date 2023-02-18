@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSPropertyParser.h"
 
+#include "CSSBackgroundRepeatValue.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSComputedStyleDeclaration.h"
@@ -1270,6 +1271,13 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
     if (value.isImplicitInitialValue())
         return true;
     switch (longhand) {
+    case CSSPropertyBackgroundRepeat:
+    case CSSPropertyMaskRepeat:
+        if (auto repeatValue = dynamicDowncast<CSSBackgroundRepeatValue>(value)) {
+            if (repeatValue->xValue() == CSSValueRepeat && repeatValue->yValue() == CSSValueRepeat)
+                return true;
+        }
+        break;
     case CSSPropertyBackgroundSize:
     case CSSPropertyMaskSize:
         if (isValueIDPair(value, CSSValueAuto))

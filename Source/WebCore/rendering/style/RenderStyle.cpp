@@ -1196,7 +1196,7 @@ inline static bool changedCustomPaintWatchedProperty(const RenderStyle& a, const
 
     if (UNLIKELY(!propertiesA.isEmpty() || !propertiesB.isEmpty())) {
         // FIXME: We should not need to use ComputedStyleExtractor here.
-        ComputedStyleExtractor extractor((Element*) nullptr);
+        ComputedStyleExtractor extractor;
 
         for (auto& watchPropertiesMap : { propertiesA, propertiesB }) {
             for (auto& name : watchPropertiesMap) {

@@ -757,7 +757,7 @@ ColorInterpolation SVGElement::colorInterpolation() const
         return renderer->style().svgStyle().colorInterpolationFilters();
 
     // Try to determine the property value from the computed style.
-    if (auto value = ComputedStyleExtractor(const_cast<SVGElement*>(this)).propertyValue(CSSPropertyColorInterpolationFilters, ComputedStyleExtractor::UpdateLayout::No))
+    if (auto value = ComputedStyleExtractor(const_cast<SVGElement&>(*this), { SuppressStyleUpdate }).propertyValue(CSSPropertyColorInterpolationFilters))
         return fromCSSValue<ColorInterpolation>(*value);
 
     return ColorInterpolation::Auto;

@@ -36,6 +36,7 @@
 #include "CSSStyleImageValue.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
+#include "ComputedStyleExtractor.h"
 #include "CustomPaintCanvas.h"
 #include "GraphicsContext.h"
 #include "HashMapStylePropertyMapReadOnly.h"
@@ -63,7 +64,7 @@ CustomPaintImage::~CustomPaintImage() = default;
 
 static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element& element)
 {
-    ComputedStyleExtractor extractor(&element);
+    ComputedStyleExtractor extractor(element, { SuppressStyleUpdate, ProduceResolvedValues });
 
     if (isCustomPropertyName(name))
         return extractor.customPropertyValue(name);
@@ -72,7 +73,7 @@ static RefPtr<CSSValue> extractComputedProperty(const AtomString& name, Element&
     if (!propertyID)
         return nullptr;
 
-    return extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
+    return extractor.propertyValue(propertyID);
 }
 
 ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, const FloatSize& destSize)

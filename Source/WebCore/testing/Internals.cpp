@@ -1329,8 +1329,7 @@ void Internals::incrementFrequentPaintCounter(Element& element)
 
 Ref<CSSComputedStyleDeclaration> Internals::computedStyleIncludingVisitedInfo(Element& element) const
 {
-    bool allowVisitedStyle = true;
-    return CSSComputedStyleDeclaration::create(element, allowVisitedStyle);
+    return CSSComputedStyleDeclaration::createAllowingVisitedLinkColoring(element);
 }
 
 Node* Internals::ensureUserAgentShadowRoot(Element& host)

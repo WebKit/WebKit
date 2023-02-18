@@ -34,6 +34,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
+#include "ComputedStyleExtractor.h"
 #include "FontSelectionValueInlines.h"
 #include "Quad.h"
 #include "StylePropertiesInlines.h"
@@ -41,11 +42,13 @@
 
 namespace WebCore {
 
-constexpr unsigned maxShorthandLength = 17; // FIXME: Generate this from CSSProperties.json.
+constexpr unsigned maxShorthandLengthExcludingAll = 17; // FIXME: Generate this from CSSProperties.json.
+
+enum class ShortestRepresentation : bool { No, Yes };
 
 class ShorthandSerializer {
 public:
-    explicit ShorthandSerializer(const StyleProperties&, CSSPropertyID shorthandID);
+    template<typename PropertiesType> explicit ShorthandSerializer(const PropertiesType&, CSSPropertyID shorthandID, ShortestRepresentation);
     String serialize();
 
 private:
@@ -94,6 +97,7 @@ private:
 
     bool subsequentLonghandsHaveInitialValues(unsigned index) const;
 
+    bool commonSerializationChecks(const ComputedStyleExtractor&);
     bool commonSerializationChecks(const StyleProperties&);
 
     String serializeLonghands() const;
@@ -124,15 +128,17 @@ private:
     String serializePageBreak() const;
 
     StylePropertyShorthand m_shorthand;
-    RefPtr<CSSValue> m_longhandValues[maxShorthandLength];
+    RefPtr<CSSValue> m_longhandValues[maxShorthandLengthExcludingAll];
     String m_result;
     bool m_gridTemplateAreasWasSetFromShorthand { false };
     bool m_commonSerializationChecksSuppliedResult { false };
+    bool m_useShortestRepresentation { false };
 };
 
-inline ShorthandSerializer::ShorthandSerializer(const StyleProperties& properties, CSSPropertyID shorthandID)
+template<typename PropertiesType> inline ShorthandSerializer::ShorthandSerializer(const PropertiesType& properties, CSSPropertyID shorthandID, ShortestRepresentation shortest)
     : m_shorthand(shorthandForProperty(shorthandID))
     , m_commonSerializationChecksSuppliedResult(commonSerializationChecks(properties))
+    , m_useShortestRepresentation(shortest != ShortestRepresentation::No)
 {
 }
 
@@ -183,16 +189,29 @@ bool ShorthandSerializer::subsequentLonghandsHaveInitialValues(unsigned startInd
     return true;
 }
 
+bool ShorthandSerializer::commonSerializationChecks(const ComputedStyleExtractor& properties)
+{
+    ASSERT(length());
+
+    if (m_shorthand.id() == CSSPropertyAll)
+        return false;
+
+    ASSERT(length() <= maxShorthandLengthExcludingAll);
+    for (unsigned i = 0; i < length(); ++i)
+        m_longhandValues[i] = properties.propertyValue(longhandProperty(i));
+
+    return false;
+}
+
 bool ShorthandSerializer::commonSerializationChecks(const StyleProperties& properties)
 {
     ASSERT(length());
-    ASSERT(length() <= maxShorthandLength || m_shorthand.id() == CSSPropertyAll);
+    ASSERT(length() <= maxShorthandLengthExcludingAll || m_shorthand.id() == CSSPropertyAll);
 
     std::optional<CSSValueID> specialKeyword;
     bool allSpecialKeywords = true;
     std::optional<bool> importance;
     std::optional<CSSPendingSubstitutionValue*> firstValueFromShorthand;
-    String commonValue;
     for (unsigned i = 0; i < length(); ++i) {
         auto longhand = longhandProperty(i);
 
@@ -207,7 +226,7 @@ bool ShorthandSerializer::commonSerializationChecks(const StyleProperties& prope
             return true;
         importance = isImportant;
 
-        // Record one bit of data besides the property values that's needed for serializatin.
+        // Record one bit of data besides the property values that's needed for serialization.
         // FIXME: Remove this.
         if (longhand == CSSPropertyGridTemplateAreas && property.toCSSProperty().isSetFromShorthand())
             m_gridTemplateAreasWasSetFromShorthand = true;
@@ -468,17 +487,18 @@ String ShorthandSerializer::serializeQuad() const
 
 class LayerValues {
 public:
-    explicit LayerValues(const StylePropertyShorthand& shorthand)
+    LayerValues(const StylePropertyShorthand& shorthand, bool useShortestRepresentation)
         : m_shorthand(shorthand)
+        , m_useShortestRepresentation(useShortestRepresentation)
     {
-        ASSERT(m_shorthand.length() <= maxShorthandLength);
+        ASSERT(m_shorthand.length() <= maxShorthandLengthExcludingAll);
     }
 
     void set(unsigned index, CSSValue* value, bool skipSerializing = false)
     {
         ASSERT(index < m_shorthand.length());
-        m_skipSerializing[index] = skipSerializing
-            || !value || isInitialValueForLonghand(m_shorthand.properties()[index], *value);
+        m_skipSerializing[index] = skipSerializing || !value
+            || (m_useShortestRepresentation && isInitialValueForLonghand(m_shorthand.properties()[index], *value));
         m_values[index] = value;
     }
 
@@ -547,8 +567,9 @@ public:
 
 private:
     const StylePropertyShorthand& m_shorthand;
-    bool m_skipSerializing[maxShorthandLength] { };
-    RefPtr<CSSValue> m_values[maxShorthandLength];
+    bool m_skipSerializing[maxShorthandLengthExcludingAll] { };
+    RefPtr<CSSValue> m_values[maxShorthandLengthExcludingAll];
+    bool m_useShortestRepresentation { };
 };
 
 String ShorthandSerializer::serializeLayered() const
@@ -561,7 +582,7 @@ String ShorthandSerializer::serializeLayered() const
 
     StringBuilder result;
     for (size_t i = 0; i < numLayers; i++) {
-        LayerValues layerValues { m_shorthand };
+        LayerValues layerValues { m_shorthand, m_useShortestRepresentation };
 
         for (unsigned j = 0; j < length(); j++) {
             auto& value = longhandValue(j);
@@ -572,6 +593,11 @@ String ShorthandSerializer::serializeLayered() const
                 auto singletonLayer = longhandProperty(j) == CSSPropertyBackgroundColor ? numLayers - 1 : 0;
                 layerValues.set(j, &value, i != singletonLayer);
             }
+        }
+
+        if (!m_useShortestRepresentation) {
+            layerValues.serialize(result);
+            continue;
         }
 
         for (unsigned j = 0; j < length(); j++) {
@@ -1158,9 +1184,19 @@ String ShorthandSerializer::serializePageBreak() const
     }
 }
 
+String serializeShorthandValue(const ComputedStyleExtractor& properties, CSSPropertyID shorthand)
+{
+    return ShorthandSerializer(properties, shorthand, ShortestRepresentation::Yes).serialize();
+}
+
 String serializeShorthandValue(const StyleProperties& properties, CSSPropertyID shorthand)
 {
-    return ShorthandSerializer(properties, shorthand).serialize();
+    return ShorthandSerializer(properties, shorthand, ShortestRepresentation::Yes).serialize();
+}
+
+String serializeShorthandValueWithoutShortestRepresentationRule(const ComputedStyleExtractor& properties, CSSPropertyID shorthand)
+{
+    return ShorthandSerializer(properties, shorthand, ShortestRepresentation::No).serialize();
 }
 
 }

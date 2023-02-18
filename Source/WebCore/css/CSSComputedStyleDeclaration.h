@@ -21,22 +21,22 @@
 #pragma once
 
 #include "CSSStyleDeclaration.h"
-#include "ComputedStyleExtractor.h"
 #include "RenderStyleConstants.h"
-#include <wtf/FixedVector.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class ComputedStyleExtractor;
 class Element;
 class MutableStyleProperties;
+
+enum ComputedStyleExtractorOption : uint8_t;
 
 class CSSComputedStyleDeclaration final : public CSSStyleDeclaration {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
 public:
-    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, bool allowVisitedStyle = false, StringView pseudoElementName = StringView { });
+    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> create(Element&, StringView pseudoElementName);
+    WEBCORE_EXPORT static Ref<CSSComputedStyleDeclaration> createAllowingVisitedLinkColoring(Element&);
     virtual ~CSSComputedStyleDeclaration();
 
     WEBCORE_EXPORT void ref() final;
@@ -45,9 +45,8 @@ public:
     String getPropertyValue(CSSPropertyID) const;
 
 private:
-    CSSComputedStyleDeclaration(Element&, bool allowVisitedStyle, StringView);
+    CSSComputedStyleDeclaration(Element&, PseudoId, OptionSet<ComputedStyleExtractorOption>);
 
-    // CSSOM functions. Don't make these public.
     CSSRule* parentRule() const final;
     CSSRule* cssRules() const final;
     unsigned length() const final;
@@ -64,15 +63,15 @@ private:
     String getPropertyValueInternal(CSSPropertyID) final;
     ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
     Ref<MutableStyleProperties> copyProperties() const final;
-
-    RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, ComputedStyleExtractor::UpdateLayout = ComputedStyleExtractor::UpdateLayout::Yes) const;
-
+    RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
     const Settings* settings() const final;
-    const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs() const;
 
-    mutable Ref<Element> m_element;
-    PseudoId m_pseudoElementSpecifier;
-    bool m_allowVisitedStyle;
+    const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs() const;
+    ComputedStyleExtractor extractor() const;
+
+    Ref<Element> m_element;
+    PseudoId m_pseudoElementSpecifier { };
+    OptionSet<ComputedStyleExtractorOption> m_options;
     unsigned m_refCount { 1 };
 };
 

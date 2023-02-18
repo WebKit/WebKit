@@ -39,7 +39,6 @@
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ColorBlending.h"
-#include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CounterDirectives.h"
 #include "CustomPropertyRegistry.h"

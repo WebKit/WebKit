@@ -655,7 +655,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
     auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
     auto& elementStyle = lastStyleChangeEventStyle ? *lastStyleChangeEventStyle : currentStyle();
 
-    ComputedStyleExtractor computedStyleExtractor { target, false, m_pseudoId };
+    ComputedStyleExtractor computedStyleExtractor { target, m_pseudoId };
 
     KeyframeList computedKeyframeList(m_blendingKeyframes.animationName());
     computedKeyframeList.copyKeyframes(m_blendingKeyframes);
@@ -727,7 +727,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
                 }
             }
             if (styleString.isEmpty()) {
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId))
                     styleString = cssValue->cssText();
             }
             computedKeyframe.styleStrings.set(cssPropertyId, styleString);

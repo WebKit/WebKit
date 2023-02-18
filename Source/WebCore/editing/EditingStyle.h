@@ -44,7 +44,6 @@ class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValue;
-class ComputedStyleExtractor;
 class Document;
 class Element;
 class HTMLElement;

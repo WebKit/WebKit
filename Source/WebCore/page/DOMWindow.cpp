@@ -1639,7 +1639,7 @@ StyleMedia& DOMWindow::styleMedia()
 
 Ref<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element& element, const String& pseudoElt) const
 {
-    return CSSComputedStyleDeclaration::create(element, false, pseudoElt);
+    return CSSComputedStyleDeclaration::create(element, pseudoElt);
 }
 
 RefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String& pseudoElement, bool authorOnly) const

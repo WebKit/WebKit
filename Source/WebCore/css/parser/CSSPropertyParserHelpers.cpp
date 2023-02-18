@@ -7183,20 +7183,11 @@ template<CSSPropertyID property> RefPtr<CSSValue> consumeBackgroundSize(CSSParse
 
     RefPtr<CSSPrimitiveValue> vertical;
     if (!range.atEnd()) {
-        vertical = consumeIdent<CSSValueAuto>(range);
-        if (!vertical)
+        if (!consumeIdentRaw<CSSValueAuto>(range))
             vertical = consumeLengthOrPercent(range, mode, ValueRange::NonNegative, UnitlessQuirk::Allow);
     }
-    if (!vertical) {
-        if constexpr (property == CSSPropertyWebkitBackgroundSize) {
-            // Legacy syntax: "-webkit-background-size: 10px" is equivalent to "background-size: 10px 10px".
-            vertical = horizontal;
-        } else if constexpr (property == CSSPropertyBackgroundSize) {
-            vertical = CSSPrimitiveValue::create(CSSValueAuto);
-        } else if constexpr (property == CSSPropertyMaskSize) {
-            return horizontal;
-        }
-    }
+    if (!vertical)
+        return horizontal;
 
     if (shouldCoalesce)
         return CSSValuePair::create(horizontal.releaseNonNull(), vertical.releaseNonNull());

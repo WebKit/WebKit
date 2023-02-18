@@ -36,6 +36,7 @@
 #include "RenderBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderStyle.h"
+#include "ShorthandSerializer.h"
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 #include "StyleScope.h"
@@ -45,23 +46,33 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSComputedStyleDeclaration);
 
-CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool allowVisitedStyle, StringView pseudoElementName)
+CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, PseudoId pseudoElementSpecifier, OptionSet<ComputedStyleExtractorOption> options)
     : m_element(element)
-    , m_allowVisitedStyle(allowVisitedStyle)
+    , m_pseudoElementSpecifier(pseudoElementSpecifier)
+    , m_options(options)
+{
+}
+
+CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration() = default;
+
+// The returned object should actually contain the "resolved values"
+// rather then the "computed values" (despite the name saying otherwise).
+// https://drafts.csswg.org/cssom/#resolved-values
+
+Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::create(Element& element, StringView pseudoElementName)
 {
     StringView name = pseudoElementName;
     if (name.startsWith(':'))
         name = name.substring(1);
     if (name.startsWith(':'))
         name = name.substring(1);
-    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name));
+    auto pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name));
+    return adoptRef(*new CSSComputedStyleDeclaration(element, pseudoElementSpecifier, { ProduceResolvedValues }));
 }
 
-CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration() = default;
-
-Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::create(Element& element, bool allowVisitedStyle, StringView pseudoElementName)
+Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::createAllowingVisitedLinkColoring(Element& element)
 {
-    return adoptRef(*new CSSComputedStyleDeclaration(element, allowVisitedStyle, pseudoElementName));
+    return adoptRef(*new CSSComputedStyleDeclaration(element, { }, { AllowVisitedLinkColoring, ProduceResolvedValues }));
 }
 
 void CSSComputedStyleDeclaration::ref()
@@ -86,21 +97,19 @@ ExceptionOr<void> CSSComputedStyleDeclaration::setCssText(const String&)
     return Exception { NoModificationAllowedError };
 }
 
-// In CSS 2.1 the returned object should actually contain the "used values"
-// rather then the "computed values" (despite the name saying otherwise).
-//
-// See;
-// http://www.w3.org/TR/CSS21/cascade.html#used-value
-// http://www.w3.org/TR/DOM-Level-2-Style/css.html#CSS-CSSStyleDeclaration
-// https://developer.mozilla.org/en-US/docs/Web/API/Window/getComputedStyle#Notes
-RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, ComputedStyleExtractor::UpdateLayout updateLayout) const
+ComputedStyleExtractor CSSComputedStyleDeclaration::extractor() const
 {
-    return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).propertyValue(propertyID, updateLayout);
+    return { m_element, m_pseudoElementSpecifier, m_options };
+}
+
+RefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID) const
+{
+    return extractor().propertyValue(propertyID);
 }
 
 Ref<MutableStyleProperties> CSSComputedStyleDeclaration::copyProperties() const
 {
-    return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).copyProperties();
+    return extractor().copyProperties();
 }
 
 const Settings* CSSComputedStyleDeclaration::settings() const
@@ -115,6 +124,9 @@ const FixedVector<CSSPropertyID>& CSSComputedStyleDeclaration::exposedComputedCS
 
 String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) const
 {
+    if (isShorthand(propertyID) && !ComputedStyleExtractor::shouldUseLegacyShorthandSerialization(propertyID))
+        return serializeShorthandValue(extractor(), propertyID);
+
     auto value = getPropertyCSSValue(propertyID);
     if (!value)
         return emptyString(); // FIXME: Should this be null instead, as it is in StyleProperties::getPropertyValue?
@@ -170,7 +182,7 @@ CSSRule* CSSComputedStyleDeclaration::cssRules() const
 RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
     if (isCustomPropertyName(propertyName)) {
-        auto value = ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(AtomString { propertyName });
+        auto value = extractor().customPropertyValue(AtomString { propertyName });
         if (!value)
             return nullptr;
         return value->createDeprecatedCSSOMWrapper(*this);
@@ -188,7 +200,7 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)
 {
     if (isCustomPropertyName(propertyName))
-        return ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyText(AtomString { propertyName });
+        return extractor().customPropertyText(AtomString { propertyName });
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
     if (!propertyID)

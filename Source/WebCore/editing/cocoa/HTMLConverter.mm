@@ -36,6 +36,7 @@
 #import "ColorMac.h"
 #import "CommonAtomStrings.h"
 #import "ComposedTreeIterator.h"
+#import "ComputedStyleExtractor.h"
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "Editing.h"
@@ -251,21 +252,20 @@ static const CGFloat minimumFontSize = 1;
 class HTMLConverterCaches {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    String propertyValueForNode(Node&, CSSPropertyID );
-    bool floatPropertyValueForNode(Node&, CSSPropertyID, float&);
-    Color colorPropertyValueForNode(Node&, CSSPropertyID);
+    static String propertyValueForNode(Node&, CSSPropertyID);
+    static bool floatPropertyValueForNode(Node&, CSSPropertyID, float&);
+    static Color colorPropertyValueForNode(Node&, CSSPropertyID);
 
-    bool isBlockElement(Element&);
-    bool elementHasOwnBackgroundColor(Element&);
+    static bool isBlockElement(Element&);
+    static bool elementHasOwnBackgroundColor(Element&);
 
-    RefPtr<CSSValue> computedStylePropertyForElement(Element&, CSSPropertyID);
-    RefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
+    static RefPtr<CSSValue> computedStylePropertyForElement(Element&, CSSPropertyID);
+    static RefPtr<CSSValue> inlineStylePropertyForElement(Element&, CSSPropertyID);
 
     Node* cacheAncestorsOfStartToBeConverted(const Position&, const Position&);
     bool isAncestorsOfStartToBeConverted(Node& node) const { return m_ancestorsUnderCommonAncestor.contains(&node); }
 
 private:
-    HashMap<Element*, std::unique_ptr<ComputedStyleExtractor>> m_computedStyles;
     HashSet<Ref<Node>> m_ancestorsUnderCommonAncestor;
 };
 
@@ -538,12 +538,7 @@ RefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& e
 {
     if (propertyId == CSSPropertyInvalid)
         return nullptr;
-
-    auto result = m_computedStyles.add(&element, nullptr);
-    if (result.isNewEntry)
-        result.iterator->value = makeUnique<ComputedStyleExtractor>(&element, true);
-    ComputedStyleExtractor& computedStyle = *result.iterator->value;
-    return computedStyle.propertyValue(propertyId);
+    return ComputedStyleExtractor(element, { AllowVisitedLinkColoring, ProduceResolvedValues }).propertyValue(propertyId);
 }
 
 RefPtr<CSSValue> HTMLConverterCaches::inlineStylePropertyForElement(Element& element, CSSPropertyID propertyId)

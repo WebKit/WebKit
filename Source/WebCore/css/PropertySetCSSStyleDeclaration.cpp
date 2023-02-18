@@ -212,10 +212,7 @@ String PropertySetCSSStyleDeclaration::getPropertyValue(const String& propertyNa
     if (isCustomPropertyName(propertyName))
         return m_propertySet->getCustomPropertyValue(propertyName);
 
-    CSSPropertyID propertyID = cssPropertyID(propertyName);
-    if (!isExposed(propertyID))
-        return String();
-    return getPropertyValueInternal(propertyID);
+    return getPropertyValueInternal(cssPropertyID(propertyName));
 }
 
 String PropertySetCSSStyleDeclaration::getPropertyPriority(const String& propertyName)
