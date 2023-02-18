@@ -104,7 +104,7 @@ DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::exisingDisplayLink()
     if (!m_displayID)
         return nullptr;
     
-    return m_webPageProxy.process().processPool().displayLinks().displayLinkForDisplay(*m_displayID);
+    return m_webPageProxy.process().processPool().displayLinks().existingDisplayLinkForDisplay(*m_displayID);
 }
 
 DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::ensureDisplayLink()
@@ -112,13 +112,7 @@ DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::ensureDisplayLink()
     ASSERT(m_displayID);
 
     auto& displayLinks = m_webPageProxy.process().processPool().displayLinks();
-    auto* displayLink = displayLinks.displayLinkForDisplay(*m_displayID);
-    if (!displayLink) {
-        auto newDisplayLink = makeUnique<DisplayLink>(*m_displayID);
-        displayLink = newDisplayLink.get();
-        displayLinks.add(WTFMove(newDisplayLink));
-    }
-    return *displayLink;
+    return displayLinks.displayLinkForDisplay(*m_displayID);
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::removeObserver(std::optional<DisplayLinkObserverID>& observerID)

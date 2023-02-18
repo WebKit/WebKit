@@ -2024,7 +2024,7 @@ void WebViewImpl::windowDidChangeScreen()
 {
     NSWindow *window = m_targetWindowForMovePreparation ? m_targetWindowForMovePreparation.get() : [m_view window];
     auto displayID = WebCore::displayID(window.screen);
-    auto framesPerSecond = m_page->process().processPool().nominalFramesPerSecondForDisplay(displayID);
+    auto framesPerSecond = m_page->process().nominalFramesPerSecondForDisplay(displayID);
     m_page->windowScreenDidChange(displayID, framesPerSecond);
 }
 

@@ -907,64 +907,6 @@ bool WebProcessPool::isURLKnownHSTSHost(const String& urlString) const
     return _CFNetworkIsKnownHSTSHostWithSession(url.get(), nullptr);
 }
 
-#if HAVE(CVDISPLAYLINK)
-
-std::optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID displayID)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        return displayLink->nominalFramesPerSecond();
-
-    // Note that this creates a DisplayLink with no observers, but it's highly likely that we'll soon call startDisplayLink() for it.
-    auto displayLink = makeUnique<DisplayLink>(displayID);
-    auto frameRate = displayLink->nominalFramesPerSecond();
-    m_displayLinks.add(WTFMove(displayLink));
-    return frameRate;
-}
-
-void WebProcessPool::startDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
-        displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
-        return;
-    }
-
-    auto displayLink = makeUnique<DisplayLink>(displayID);
-    displayLink->addObserver(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
-    m_displayLinks.add(WTFMove(displayLink));
-}
-
-void WebProcessPool::stopDisplayLink(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->removeObserver(processProxy.displayLinkClient(), observerID);
-}
-
-void WebProcessPool::stopDisplayLinks(WebProcessProxy& processProxy)
-{
-    for (auto& displayLink : m_displayLinks.displayLinks())
-        displayLink->removeClient(processProxy.displayLinkClient());
-}
-
-void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(WebProcessProxy& processProxy, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
-{
-    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] WebProcessPool::setDisplayLinkPreferredFramesPerSecond - display " << displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
-
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID))
-        displayLink->setObserverPreferredFramesPerSecond(processProxy.displayLinkClient(), observerID, preferredFramesPerSecond);
-}
-
-void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(WebProcessProxy& processProxy, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
-{
-    if (auto* displayLink = m_displayLinks.displayLinkForDisplay(displayID)) {
-        if (wantsFullSpeedUpdates)
-            displayLink->incrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
-        else
-            displayLink->decrementFullSpeedRequestClientCount(processProxy.displayLinkClient());
-    }
-}
-
-#endif // HAVE(CVDISPLAYLINK)
-
 // FIXME: Deprecated. Left here until a final decision is made.
 void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)
 {
@@ -1200,7 +1142,7 @@ void WebProcessPool::displayPropertiesChanged(const WebCore::ScreenProperties& s
     sendToAllProcesses(Messages::WebProcess::SetScreenProperties(screenProperties));
     sendToAllProcesses(Messages::WebProcess::DisplayConfigurationChanged(displayID, flags));
 
-    if (auto* displayLink = displayLinks().displayLinkForDisplay(displayID))
+    if (auto* displayLink = displayLinks().existingDisplayLinkForDisplay(displayID))
         displayLink->displayPropertiesChanged();
 
 #if ENABLE(GPU_PROCESS)
