@@ -1603,45 +1603,39 @@ public:
         }
     }
 
-    void emitWriteBarrier(RegisterID cell, RegisterID instanceCell)
+    void emitWriteBarrier(GPRReg cellGPR)
     {
-        ScratchScope<3, 0> scratches(*this);
-        auto vm = scratches.gpr(0);
-        auto cellState = scratches.gpr(1);
-        auto threshold = scratches.gpr(2);
+        GPRReg vmGPR;
+        GPRReg cellStateGPR;
+        {
+            ScratchScope<2, 0> scratches(*this);
+            vmGPR = scratches.gpr(0);
+            cellStateGPR = scratches.gpr(1);
+        }
 
-        m_jit.loadPtr(Address(instanceCell, JSWebAssemblyInstance::offsetOfVM()), vm);
-        m_jit.load8(Address(cell, JSCell::cellStateOffset()), cellState);
-        m_jit.load32(Address(vm, VM::offsetOfHeapBarrierThreshold()), threshold);
-        Jump noFenceCheck = m_jit.branch32(RelationalCondition::Above, cellState, threshold);
+        // We must flush everything first. Jumping over flush (emitCCall) is wrong since paths need to get merged.
+        flushRegisters();
+
+        m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), vmGPR);
+        m_jit.load8(Address(cellGPR, JSCell::cellStateOffset()), cellStateGPR);
+        auto noFenceCheck = m_jit.branch32(RelationalCondition::Above, cellStateGPR, Address(vmGPR, VM::offsetOfHeapBarrierThreshold()));
 
         // Fence check path
-        m_jit.load8(Address(vm, VM::offsetOfHeapMutatorShouldBeFenced()), threshold);
-        Jump toSlowPath = m_jit.branchTest32(ResultCondition::Zero, threshold, threshold);
+        auto toSlowPath = m_jit.branchTest8(ResultCondition::Zero, Address(vmGPR, VM::offsetOfHeapMutatorShouldBeFenced()));
 
         // Fence path
         m_jit.memoryFence();
-        m_jit.load8(Address(cell, JSCell::cellStateOffset()), cellState);
-        Jump belowBlackThreshold = m_jit.branch32(RelationalCondition::Above, cellState, Imm32(blackThreshold));
+        Jump belowBlackThreshold = m_jit.branch8(RelationalCondition::Above, Address(cellGPR, JSCell::cellStateOffset()), TrustedImm32(blackThreshold));
 
         // Slow path
         toSlowPath.link(&m_jit);
-        Vector<Value, 8> arguments = {
-            Value::pinned(TypeKind::Externref, Location::fromGPR(cellState)),
-            Value::pinned(TypeKind::Externref, Location::fromGPR(vm))
-        };
-        scratches.unbindEarly(); // Prevents interference between scratch registers and return values.
-        emitCCall(&operationWasmWriteBarrierSlowPath, arguments);
+        m_jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
+        m_jit.setupArguments<decltype(operationWasmWriteBarrierSlowPath)>(cellGPR, vmGPR);
+        m_jit.callOperation(operationWasmWriteBarrierSlowPath);
 
         // Continuation
         noFenceCheck.link(&m_jit);
         belowBlackThreshold.link(&m_jit);
-    }
-
-    void emitWriteBarrierForJSWrapper()
-    {
-        m_jit.load64(Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), m_scratchGPR);
-        emitWriteBarrier(m_scratchGPR, m_scratchGPR);
     }
 
     PartialResult WARN_UNUSED_RETURN setGlobal(uint32_t index, Value value)
@@ -1654,16 +1648,20 @@ public:
         switch (global.bindingMode) {
         case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {
             emitMove(value, Location::fromGlobal(offset));
-            if (isRefType(type))
-                emitWriteBarrierForJSWrapper();
+            if (isRefType(type)) {
+                m_jit.load64(Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfOwner()), m_scratchGPR);
+                emitWriteBarrier(m_scratchGPR);
+            }
             break;
         }
         case Wasm::GlobalInformation::BindingMode::Portable: {
             ASSERT(global.mutability == Wasm::Mutability::Mutable);
             m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, offset), m_scratchGPR);
             emitStoreOp(storeOpForTypeKind(type.kind), Location::fromGPR(m_scratchGPR), value, 0);
-            if (isRefType(type))
-                emitWriteBarrierForJSWrapper();
+            if (isRefType(type)) {
+                m_jit.loadPtr(Address(m_scratchGPR, Wasm::Global::offsetOfOwner() - Wasm::Global::offsetOfValue()), m_scratchGPR);
+                emitWriteBarrier(m_scratchGPR);
+            }
             break;
         }
         }
@@ -6142,6 +6140,20 @@ public:
         if (!!m_info.memory) {
             m_jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, TrustedImm32(Instance::offsetOfCachedMemory()), GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister);
             m_jit.cageConditionallyAndUntag(Gigacage::Primitive, GPRInfo::wasmBaseMemoryPointer, GPRInfo::wasmBoundsCheckingSizeRegister, m_dataScratchGPR, /* validateAuth */ true, /* mayBeNull */ false);
+        }
+    }
+
+    void flushRegisters()
+    {
+        // Just flush everything.
+        for (RegisterBinding& binding : m_gprBindings) {
+            if (!binding.toValue().isNone())
+                flushValue(binding.toValue());
+        }
+
+        for (RegisterBinding& binding : m_fprBindings) {
+            if (!binding.toValue().isNone())
+                flushValue(binding.toValue());
         }
     }
 
