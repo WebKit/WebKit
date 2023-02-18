@@ -2155,6 +2155,7 @@
 		FEC579782310954C00BCA83F /* IntegrityInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC579772310954B00BCA83F /* IntegrityInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FECB8B271D25BB85006F2463 /* FunctionOverridesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FECB8B251D25BB6E006F2463 /* FunctionOverridesTest.cpp */; };
 		FED287B215EC9A5700DA8161 /* LLIntOpcode.h in Headers */ = {isa = PBXBuildFile; fileRef = FED287B115EC9A5700DA8161 /* LLIntOpcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FED5FA3429A0859C00798A7F /* WasmBBQJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = FED5FA3229A0859C00798A7F /* WasmBBQJIT.h */; };
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF040511AAE662D00BD28B0 /* CompareAndSwapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */; };
 		FEF49AAB1EB9484B00653BDB /* MultithreadedMultiVMExecutionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF49AA91EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.cpp */; };
@@ -5851,6 +5852,9 @@
 		FECB8B261D25BB6E006F2463 /* FunctionOverridesTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionOverridesTest.h; path = API/tests/FunctionOverridesTest.h; sourceTree = "<group>"; };
 		FECB8B291D25CABB006F2463 /* testapi-function-overrides.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = "testapi-function-overrides.js"; path = "API/tests/testapi-function-overrides.js"; sourceTree = "<group>"; };
 		FED287B115EC9A5700DA8161 /* LLIntOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntOpcode.h; path = llint/LLIntOpcode.h; sourceTree = "<group>"; };
+		FED5FA3229A0859C00798A7F /* WasmBBQJIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmBBQJIT.h; sourceTree = "<group>"; };
+		FED5FA3329A0859C00798A7F /* WasmBBQJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmBBQJIT.cpp; sourceTree = "<group>"; };
+		FED5FA3629A085BD00798A7F /* wasm.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = wasm.json; sourceTree = "<group>"; };
 		FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Watchdog.cpp; sourceTree = "<group>"; };
 		FED94F2C171E3E2300BE77A4 /* Watchdog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watchdog.h; sourceTree = "<group>"; };
 		FEDA50D41B97F442009A3B4F /* PingPongStackOverflowTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PingPongStackOverflowTest.cpp; path = API/tests/PingPongStackOverflowTest.cpp; sourceTree = "<group>"; };
@@ -7482,12 +7486,15 @@
 			isa = PBXGroup;
 			children = (
 				AD2FCB8A1DB5840000B3E736 /* js */,
+				FED5FA3629A085BD00798A7F /* wasm.json */,
 				52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */,
 				467DC2EE2906EE3600726988 /* WasmAirIRGenerator32_64.cpp */,
 				467DC2EC2906EE3600726988 /* WasmAirIRGenerator64.cpp */,
 				467DC2ED2906EE3600726988 /* WasmAirIRGeneratorBase.h */,
 				53F40E8E1D5902820099A1B6 /* WasmB3IRGenerator.cpp */,
 				53F40E921D5A4AB30099A1B6 /* WasmB3IRGenerator.h */,
+				FED5FA3329A0859C00798A7F /* WasmBBQJIT.cpp */,
+				FED5FA3229A0859C00798A7F /* WasmBBQJIT.h */,
 				53CA73071EA533D80076049D /* WasmBBQPlan.cpp */,
 				53CA73081EA533D80076049D /* WasmBBQPlan.h */,
 				AD4B1DF71DF244D70071AE32 /* WasmBinding.cpp */,
@@ -11394,6 +11401,7 @@
 				52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */,
 				467DC2F02906EE3600726988 /* WasmAirIRGeneratorBase.h in Headers */,
 				53F40E931D5A4AB30099A1B6 /* WasmB3IRGenerator.h in Headers */,
+				FED5FA3429A0859C00798A7F /* WasmBBQJIT.h in Headers */,
 				53CA730A1EA533D80076049D /* WasmBBQPlan.h in Headers */,
 				AD4B1DFA1DF244E20071AE32 /* WasmBinding.h in Headers */,
 				37AAC094279F1C0500D64842 /* WasmBranchHints.h in Headers */,
