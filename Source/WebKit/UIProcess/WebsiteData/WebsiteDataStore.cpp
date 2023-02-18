@@ -1969,21 +1969,143 @@ void WebsiteDataStore::resetStoragePersistedState(CompletionHandler<void()>&& co
 }
 
 #if !PLATFORM(COCOA)
-String WebsiteDataStore::defaultMediaCacheDirectory(const String&)
+String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseCacheDirectory)
 {
-    // FIXME: Implement. https://bugs.webkit.org/show_bug.cgi?id=156369 and https://bugs.webkit.org/show_bug.cgi?id=156370
-    return String();
+    // CacheStorage is really data, not cache, as its lifetime should be controlled by web clients.
+    // https://w3c.github.io/ServiceWorker/#cache-lifetimes
+    //
+    // Keep using baseCacheDirectory for now for compatibility, to avoid leaking existing storage.
+    // Soon, it will be migrated to GeneralStorageDirectory.
+    return cacheDirectoryFileSystemRepresentation("CacheStorage"_s, baseCacheDirectory);
 }
 
-String WebsiteDataStore::defaultAlternativeServicesDirectory(const String&)
+String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDataDirectory)
 {
-    // FIXME: Implement.
-    return String();
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("storage"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("Storage"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseCacheDirectory)
+{
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return cacheDirectoryFileSystemRepresentation("WebKitCache"_s, baseCacheDirectory);
+#else
+    return cacheDirectoryFileSystemRepresentation("NetworkCache"_s, baseCacheDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseCacheDirectory)
+{
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return cacheDirectoryFileSystemRepresentation("applications"_s, baseCacheDirectory);
+#else
+    return cacheDirectoryFileSystemRepresentation("ApplicationCache"_s, baseCacheDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultMediaCacheDirectory(const String& baseCacheDirectory)
+{
+    return cacheDirectoryFileSystemRepresentation("MediaCache"_s, baseCacheDirectory);
+}
+
+String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION)
+    return websiteDataDirectoryFileSystemRepresentation("indexeddb"_s, baseDataDirectory);
+#elif USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation(String::fromUTF8("databases" G_DIR_SEPARATOR_S "indexeddb"), baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("serviceworkers"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("ServiceWorkers"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION)
+    return websiteDataDirectoryFileSystemRepresentation("websql"_s, baseDataDirectory);
+#elif USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("databases"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultHSTSStorageDirectory(const String& baseCacheDirectory)
+{
+#if USE(GLIB) && ENABLE(2022_GLIB_API)
+    // Bug: HSTS storage goes in the data directory when baseCacheDirectory is not specified, but
+    // it should go in the cache directory. Do not fix this because it would cause the old HSTS
+    // cache to be leaked on disk.
+    return websiteDataDirectoryFileSystemRepresentation(""_s, baseCacheDirectory);
+#else
+    return cacheDirectoryFileSystemRepresentation("HSTS"_s, baseCacheDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION)
+    return websiteDataDirectoryFileSystemRepresentation("local"_s, baseDataDirectory);
+#elif USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("localstorage"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("LocalStorage"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("mediakeys"_s, baseDataDirectory);
+#elif OS(WINDOWS)
+    return websiteDataDirectoryFileSystemRepresentation("MediaKeyStorage"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("MediaKeys"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultAlternativeServicesDirectory(const String& baseCacheDirectory)
+{
+    return cacheDirectoryFileSystemRepresentation("AlternativeServices"_s, baseCacheDirectory);
+}
+
+String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String& baseDataDirectory)
+{
+#if USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("deviceidhashsalts"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("DeviceIdHashSalts"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("itp"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics"_s, baseDataDirectory);
+#endif
 }
 
 String WebsiteDataStore::defaultJavaScriptConfigurationDirectory(const String&)
 {
-    // FIXME: Implement.
+    // FIXME: This is currently only used on Cocoa ports. If implementing, note that it should not
+    // use websiteDataDirectoryFileSystemRepresentation or cacheDirectoryFileSystemRepresentation
+    // because it is not data or cache. It is a config file. We need to add a third type of
+    // directory configDirectoryFileSystemRepresentation, and the parameter to this function should
+    // be renamed accordingly.
     return String();
 }
 
@@ -2007,19 +2129,6 @@ void WebsiteDataStore::removeRecentSearches(WallTime, CompletionHandler<void()>&
 }
 
 #endif // !PLATFORM(COCOA)
-
-#if !USE(GLIB) && !PLATFORM(COCOA)
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String&)
-{
-    // Not implemented.
-    return String();
-}
-
-UnifiedOriginStorageLevel WebsiteDataStore::defaultUnifiedOriginStorageLevel()
-{
-    return UnifiedOriginStorageLevel::None;
-}
-#endif
 
 void WebsiteDataStore::renameOriginInWebsiteData(WebCore::SecurityOriginData&& oldOrigin, WebCore::SecurityOriginData&& newOrigin, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {

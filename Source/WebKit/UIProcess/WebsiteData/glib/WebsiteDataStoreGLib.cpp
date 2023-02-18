@@ -28,69 +28,8 @@
 
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
-
-String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseCacheDirectory)
-{
-    return cacheDirectoryFileSystemRepresentation("applications"_s, baseCacheDirectory);
-}
-
-String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseCacheDirectory)
-{
-    return cacheDirectoryFileSystemRepresentation("WebKitCache"_s, baseCacheDirectory);
-}
-
-String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseCacheDirectory)
-{
-    return cacheDirectoryFileSystemRepresentation("CacheStorage"_s, baseCacheDirectory);
-}
-
-String WebsiteDataStore::defaultHSTSStorageDirectory(const String& baseCacheDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation(""_s, baseCacheDirectory);
-}
-
-String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("storage"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation(String::fromUTF8("databases" G_DIR_SEPARATOR_S "indexeddb"), baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("serviceworkers"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("localstorage"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("mediakeys"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("deviceidhashsalts"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("databases"_s, baseDataDirectory);
-}
-
-String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory)
-{
-    return websiteDataDirectoryFileSystemRepresentation("itp"_s, baseDataDirectory);
-}
 
 static String programName()
 {

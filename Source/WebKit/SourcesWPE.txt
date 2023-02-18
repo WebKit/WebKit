@@ -215,7 +215,6 @@ UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 UIProcess/glib/WebPageProxyGLib.cpp
 UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
-UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
 
 UIProcess/gstreamer/WebPageProxyGStreamer.cpp
 
@@ -232,6 +231,7 @@ UIProcess/Launcher/libwpe/ProcessProviderLibWPE.cpp
 
 UIProcess/Notifications/glib/NotificationService.cpp
 
+UIProcess/WebsiteData/glib/WebsiteDataStoreGLib.cpp
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 UIProcess/WebsiteData/unix/WebsiteDataStoreUnix.cpp
 
