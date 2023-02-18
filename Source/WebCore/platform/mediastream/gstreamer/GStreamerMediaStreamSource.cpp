@@ -679,6 +679,21 @@ static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element,
     return result;
 }
 
+static gboolean webkitMediaStreamSrcQuery(GstElement* element, GstQuery* query)
+{
+    gboolean result = GST_ELEMENT_CLASS(parent_class)->query(element, query);
+
+    if (GST_QUERY_TYPE(query) != GST_QUERY_SCHEDULING)
+        return result;
+
+    GstSchedulingFlags flags;
+    int minSize, maxSize, align;
+
+    gst_query_parse_scheduling(query, &flags, &minSize, &maxSize, &align);
+    gst_query_set_scheduling(query, static_cast<GstSchedulingFlags>(flags | GST_SCHEDULING_FLAG_BANDWIDTH_LIMITED), minSize, maxSize, align);
+    return TRUE;
+}
+
 static void webkit_media_stream_src_class_init(WebKitMediaStreamSrcClass* klass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
@@ -693,6 +708,8 @@ static void webkit_media_stream_src_class_init(WebKitMediaStreamSrcClass* klass)
         TRUE, static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 
     gstElementClass->change_state = GST_DEBUG_FUNCPTR(webkitMediaStreamSrcChangeState);
+    gstElementClass->query = GST_DEBUG_FUNCPTR(webkitMediaStreamSrcQuery);
+
     gst_element_class_add_pad_template(gstElementClass, gst_static_pad_template_get(&videoSrcTemplate));
     gst_element_class_add_pad_template(gstElementClass, gst_static_pad_template_get(&audioSrcTemplate));
 }
