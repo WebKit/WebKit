@@ -403,7 +403,7 @@ public:
             return m_f64;
         }
 
-        ALWAYS_INLINE intptr_t asRef() const
+        ALWAYS_INLINE EncodedJSValue asRef() const
         {
             ASSERT(m_kind == Const);
             return m_ref;
@@ -470,7 +470,7 @@ public:
             return val;
         }
 
-        ALWAYS_INLINE static Value fromRef(TypeKind refType, intptr_t ref)
+        ALWAYS_INLINE static Value fromRef(TypeKind refType, EncodedJSValue ref)
         {
             Value val;
             val.m_kind = Const;
@@ -533,7 +533,7 @@ public:
             case TypeKind::Externref:
             case TypeKind::Array:
             case TypeKind::Arrayref:
-                return sizeof(void*); // Assume pointer-size for all of these...come back to this.
+                return sizeof(EncodedJSValue);
             case TypeKind::Void:
                 return 0;
             }
@@ -585,7 +585,7 @@ public:
             double m_f64;
             LocalOrTempIndex m_index;
             Location m_pinned;
-            intptr_t m_ref;
+            EncodedJSValue m_ref;
         };
 
         Kind m_kind;
@@ -1244,7 +1244,7 @@ public:
         case TypeKind::Arrayref:
         case TypeKind::Funcref:
         case TypeKind::Externref:
-            result = Value::fromRef(type.kind, static_cast<uintptr_t>(value));
+            result = Value::fromRef(type.kind, static_cast<EncodedJSValue>(value));
             LOG_INSTRUCTION("RefConst", makeString(type.kind), RESULT(result));
             break;
         default:
@@ -1279,52 +1279,6 @@ public:
     Value instanceValue()
     {
         return Value::pinned(TypeKind::I64, Location::fromGPR(GPRInfo::wasmContextInstancePointer));
-    }
-
-    // References
-
-    PartialResult WARN_UNUSED_RETURN addRefIsNull(Value value, Value& result)
-    {
-        Location valueLocation = loadIfNecessary(value);
-        ASSERT(valueLocation.isGPR());
-        consume(value);
-
-        result = topValue(TypeKind::I32);
-        Location resultLocation = allocate(result);
-        ASSERT(resultLocation.isGPR());
-        m_jit.move(TrustedImm64(JSValue::encode(jsNull())), m_scratchGPR);
-        m_jit.compare64(RelationalCondition::Equal, m_scratchGPR, valueLocation.asGPR(), resultLocation.asGPR());
-
-        return { };
-    }
-
-    PartialResult WARN_UNUSED_RETURN addRefAsNonNull(Value value, Value& result)
-    {
-        m_jit.move(TrustedImm64(JSValue::encode(jsNull())), m_scratchGPR);
-        Location valueLocation = loadIfNecessary(value);
-        ASSERT(valueLocation.isGPR());
-        consume(value);
-
-        result = topValue(TypeKind::Ref);
-        Location resultLocation = allocate(result);
-        addExceptionLateLinkTask(ExceptionType::NullRefAsNonNull, m_jit.branch64(RelationalCondition::Equal, m_scratchGPR, valueLocation.asGPR()));
-        m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
-
-        return { };
-    }
-
-    PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, Value& result)
-    {
-        // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
-        TypeKind returnType = Options::useWebAssemblyTypedFunctionReferences() ? TypeKind::Ref : TypeKind::Funcref;
-
-        Vector<Value, 8> arguments = {
-            instanceValue(),
-            Value::fromI32(index)
-        };
-        emitCCall(&operationWasmRefFunc, arguments, returnType, result);
-
-        return { };
     }
 
     // Tables
@@ -5717,6 +5671,55 @@ public:
         return truncTrapping(OpType::I64TruncUF64, operand, result, Types::I64, Types::F64);
     }
 
+    // References
+
+    PartialResult WARN_UNUSED_RETURN addRefIsNull(Value operand, Value& result)
+    {
+        EMIT_UNARY(
+            "RefIsNull", TypeKind::I32,
+            BLOCK(Value::fromI32(operand.asRef() == JSValue::encode(jsNull()))),
+            BLOCK(
+                ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
+                m_jit.compare64(RelationalCondition::Equal, operandLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull()))), resultLocation.asGPR());
+            )
+        );
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addRefAsNonNull(Value value, Value& result)
+    {
+        Location valueLocation;
+        if (value.isConst()) {
+            valueLocation = Location::fromGPR(m_scratchGPR);
+            emitMoveConst(value, valueLocation);
+        } else
+            valueLocation = loadIfNecessary(value);
+        ASSERT(valueLocation.isGPR());
+        consume(value);
+
+        result = topValue(TypeKind::Ref);
+        Location resultLocation = allocate(result);
+        ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
+        addExceptionLateLinkTask(ExceptionType::NullRefAsNonNull, m_jit.branch64(RelationalCondition::Equal, valueLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull())))));
+        m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addRefFunc(uint32_t index, Value& result)
+    {
+        // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
+        TypeKind returnType = Options::useWebAssemblyTypedFunctionReferences() ? TypeKind::Ref : TypeKind::Funcref;
+
+        Vector<Value, 8> arguments = {
+            instanceValue(),
+            Value::fromI32(index)
+        };
+        emitCCall(&operationWasmRefFunc, arguments, returnType, result);
+
+        return { };
+    }
+
 #undef BLOCK
 #undef EMIT_BINARY
 #undef EMIT_UNARY
@@ -5813,18 +5816,20 @@ public:
                 emitStoreConst(Value::fromF64(0), m_locals[i]);
                 break;
             case TypeKind::I64:
-            case TypeKind::Ref:
-            case TypeKind::Structref:
             case TypeKind::Struct:
             case TypeKind::Rec:
-            case TypeKind::Funcref:
-            case TypeKind::Externref:
             case TypeKind::Func:
             case TypeKind::Array:
-            case TypeKind::Arrayref:
             case TypeKind::Sub:
-            case TypeKind::RefNull:
                 emitStoreConst(Value::fromI64(0), m_locals[i]);
+                break;
+            case TypeKind::Externref:
+            case TypeKind::Funcref:
+            case TypeKind::Ref:
+            case TypeKind::RefNull:
+            case TypeKind::Structref:
+            case TypeKind::Arrayref:
+                emitStoreConst(Value::fromI64(bitwise_cast<uint64_t>(JSValue::encode(jsNull()))), m_locals[i]);
                 break;
             case TypeKind::V128: {
                 m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR);
@@ -6397,14 +6402,13 @@ public:
         Location calleeIndexLocation;
         RegisterID calleeInstance, calleeCode, jsCalleeAnchor;
 
-        if (!calleeIndex.isConst())
-            calleeIndexLocation = loadIfNecessary(calleeIndex);
-
         {
-            ScratchScope<4, 0> scratches(*this);
+            ScratchScope<3, 0> scratches(*this);
 
             if (calleeIndex.isConst())
                 emitMoveConst(calleeIndex, calleeIndexLocation = Location::fromGPR(scratches.gpr(2)));
+            else
+                calleeIndexLocation = loadIfNecessary(calleeIndex);
 
             RegisterID callableFunctionBufferLength = scratches.gpr(0);
             RegisterID callableFunctionBuffer = scratches.gpr(1);
@@ -6456,10 +6460,7 @@ public:
             m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
 
             addExceptionLateLinkTask(ExceptionType::NullTableEntry, m_jit.branchTestPtr(ResultCondition::Zero, calleeSignatureIndex, calleeSignatureIndex));
-
-            RegisterID expectedSignatureIndex = scratches.gpr(3); // This is the only use of the fourth GPR scratch - can we elide this somehow?
-            m_jit.move(TrustedImmPtr(TypeInformation::get(originalSignature)), expectedSignatureIndex);
-            addExceptionLateLinkTask(ExceptionType::NullTableEntry, m_jit.branchPtr(RelationalCondition::NotEqual, calleeSignatureIndex, expectedSignatureIndex));
+            addExceptionLateLinkTask(ExceptionType::BadSignature, m_jit.branchPtr(RelationalCondition::NotEqual, calleeSignatureIndex, TrustedImmPtr(TypeInformation::get(originalSignature))));
         }
 
         emitIndirectCall("CallIndirect", calleeIndex, calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, callType);
@@ -7540,7 +7541,7 @@ private:
         case TypeKind::Structref:
         case TypeKind::RefNull:
         case TypeKind::Externref:
-            m_jit.storePtr(TrustedImmPtr(constant.asRef()), loc.asAddress());
+            m_jit.store64(TrustedImm64(constant.asRef()), loc.asAddress());
             break;
         case TypeKind::I64:
         case TypeKind::F64:
@@ -7578,7 +7579,7 @@ private:
         case TypeKind::Structref:
         case TypeKind::RefNull:
         case TypeKind::Externref:
-            m_jit.move(TrustedImmPtr(constant.asRef()), loc.asGPR());
+            m_jit.move(TrustedImm64(constant.asRef()), loc.asGPR());
             break;
         case TypeKind::F32:
             m_jit.move(Imm32(constant.asI32()), m_dataScratchGPR);
