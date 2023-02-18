@@ -1689,8 +1689,8 @@ public:
         case MemoryMode::BoundsChecking: {
             // We're not using signal handling only when the memory is not shared.
             // Regardless of signaling, we must check that no memory access exceeds the current memory size.
-            emitMove(Value::fromI64(static_cast<int64_t>(static_cast<uint64_t>(sizeOfOperation) + offset - 1)), Location::fromGPR(m_scratchGPR));
-            m_jit.add64(pointerLocation.asGPR(), m_scratchGPR);
+            m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), m_scratchGPR);
+            m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + offset - 1), m_scratchGPR);
 
             addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
             break;
@@ -1710,9 +1710,8 @@ public:
             // any access equal to or greater than 4GiB will trap, no need to add the redzone.
             if (offset >= Memory::fastMappedRedzoneBytes()) {
                 uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
-                emitMove(Value::fromI64(static_cast<int64_t>(static_cast<uint64_t>(sizeOfOperation) + offset - 1)), Location::fromGPR(m_scratchGPR));
-                m_jit.add64(pointerLocation.asGPR(), m_scratchGPR);
-
+                m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), m_scratchGPR);
+                m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + offset - 1), m_scratchGPR);
                 addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, TrustedImm64(static_cast<int64_t>(maximum))));
             }
             break;
@@ -1720,8 +1719,13 @@ public:
 #endif
         }
 
+#if CPU(ARM64)
+        m_jit.addZeroExtend64(GPRInfo::wasmBaseMemoryPointer, pointerLocation.asGPR(), m_scratchGPR);
+#else
         m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), m_scratchGPR);
         m_jit.addPtr(GPRInfo::wasmBaseMemoryPointer, m_scratchGPR);
+#endif
+
         consume(pointer);
         return Location::fromGPR(m_scratchGPR);
     }
