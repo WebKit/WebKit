@@ -151,8 +151,16 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
 
     if (!needsLayoutRange.start)
         inlineFormattingState.boxes().reserveInitialCapacity(inlineItems.size());
-
-    lineLayout(inlineItems, needsLayoutRange, { }, { constraints, { } }, blockLayoutState);
+    auto previousLine = [&]() -> std::optional<PreviousLine> {
+        auto& displayLines = inlineFormattingState.lines();
+        auto& displayBoxes = inlineFormattingState.boxes();
+        if (displayLines.isEmpty() || displayBoxes.isEmpty())
+            return { };
+        auto& lastDisplayBox = displayBoxes.last();
+        auto lastLineIndex = displayLines.size() - 1; 
+        return PreviousLine { lastLineIndex, { }, lastDisplayBox.isLineBreak(), lastDisplayBox.style().direction(), { } };
+    };
+    lineLayout(inlineItems, needsLayoutRange, previousLine(), { constraints, { } }, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), { constraints.horizontal().logicalLeft, constraints.logicalTop() });
     InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(inlineFormattingState.boxes());
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[End] -> inline formatting context -> formatting root(" << &root() << ")");
@@ -172,9 +180,18 @@ void InlineFormattingContext::layoutInFlowContentForIntegration(const Constraint
     auto needsLayoutRange = InlineItemRange { needsLayoutStartPosition, { inlineItems.size(), 0 } };
     if (!needsLayoutRange.start)
         inlineFormattingState.boxes().reserveInitialCapacity(inlineItems.size());
+    auto previousLine = [&]() -> std::optional<PreviousLine> {
+        if (!needsLayoutStartPosition)
+            return { };
+        if (!m_lineDamage || !m_lineDamage->contentPosition())
+            return { };
+        auto lastLineIndex = m_lineDamage->contentPosition()->lineIndex - 1;
+        // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
+        return PreviousLine { lastLineIndex, { }, { }, { }, { } };
+    };
 
     auto inlineConstraints = downcast<ConstraintsForInlineContent>(constraints);
-    lineLayout(inlineItems, needsLayoutRange, { }, inlineConstraints, blockLayoutState);
+    lineLayout(inlineItems, needsLayoutRange, previousLine(), inlineConstraints, blockLayoutState);
     computeStaticPositionForOutOfFlowContent(inlineFormattingState.outOfFlowBoxes(), { inlineConstraints.horizontal().logicalLeft, inlineConstraints.logicalTop() });
     InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(inlineFormattingState.boxes());
 }
