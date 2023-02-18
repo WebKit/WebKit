@@ -40,6 +40,7 @@
 #include "WebGLContextAttributes.h"
 #include "WebGLFramebuffer.h"
 #include "WebGLProgram.h"
+#include "WebGLQuery.h"
 #include "WebGLRenderbuffer.h"
 #include "WebGLSampler.h"
 #include "WebGLStateTracker.h"
@@ -77,6 +78,7 @@ class EXTBlendMinMax;
 class EXTColorBufferFloat;
 class EXTColorBufferHalfFloat;
 class EXTDisjointTimerQuery;
+class EXTDisjointTimerQueryWebGL2;
 class EXTFloatBlend;
 class EXTFragDepth;
 class EXTShaderTextureLOD;
@@ -483,6 +485,7 @@ protected:
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
 
     friend class EXTDisjointTimerQuery;
+    friend class EXTDisjointTimerQueryWebGL2;
     friend class EXTTextureCompressionBPTC;
     friend class EXTTextureCompressionRGTC;
     friend class OESDrawBuffersIndexed;
@@ -733,6 +736,7 @@ protected:
     RefPtr<EXTColorBufferFloat> m_extColorBufferFloat;
     RefPtr<EXTColorBufferHalfFloat> m_extColorBufferHalfFloat;
     RefPtr<EXTDisjointTimerQuery> m_extDisjointTimerQuery;
+    RefPtr<EXTDisjointTimerQueryWebGL2> m_extDisjointTimerQueryWebGL2;
     RefPtr<EXTFloatBlend> m_extFloatBlend;
     RefPtr<EXTFragDepth> m_extFragDepth;
     RefPtr<EXTShaderTextureLOD> m_extShaderTextureLOD;

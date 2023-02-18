@@ -420,7 +420,7 @@ typedef (ImageBitmap or ImageData or HTMLImageElement or HTMLCanvasElement
     GLboolean isQuery(WebGLQuery? query);
     undefined beginQuery(GLenum target, WebGLQuery query);
     undefined endQuery(GLenum target);
-    WebGLQuery? getQuery(GLenum target, GLenum pname);
+    [OverrideIDLType=IDLWebGLAny] any getQuery(GLenum target, GLenum pname);
     [OverrideIDLType=IDLWebGLAny] any getQueryParameter(WebGLQuery query, GLenum pname);
 
     // Sampler Objects.

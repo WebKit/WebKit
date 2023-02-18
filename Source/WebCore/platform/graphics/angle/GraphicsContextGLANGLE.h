@@ -270,7 +270,7 @@ public:
     GCGLboolean isQuery(PlatformGLObject query) final;
     void beginQuery(GCGLenum target, PlatformGLObject query) final;
     void endQuery(GCGLenum target) final;
-    PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) final;
+    GCGLint getQuery(GCGLenum target, GCGLenum pname) final;
     GCGLuint getQueryObjectui(PlatformGLObject query, GCGLenum pname) final;
     PlatformGLObject createSampler() final;
     void deleteSampler(PlatformGLObject sampler) final;

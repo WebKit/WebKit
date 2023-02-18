@@ -263,7 +263,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void IsQuery(uint32_t query) -> (bool returnValue) Synchronous
     void BeginQuery(uint32_t target, uint32_t query)
     void EndQuery(uint32_t target)
-    void GetQuery(uint32_t target, uint32_t pname) -> (uint32_t returnValue) Synchronous
+    void GetQuery(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous
     void GetQueryObjectui(uint32_t query, uint32_t pname) -> (uint32_t returnValue) Synchronous
     void CreateSampler() -> (uint32_t returnValue) Synchronous
     void DeleteSampler(uint32_t sampler)
