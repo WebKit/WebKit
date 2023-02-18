@@ -140,6 +140,23 @@ public:
         }
     }
 
+    template<typename ArgumentsTupleType, typename F>
+    WARN_UNUSED_RETURN bool decodeArguments(const F& functor)
+    {
+        auto decodeImpl =
+            [&](auto&& recurse, auto&&... arguments) {
+                constexpr size_t index = sizeof...(arguments);
+                static_assert(index <= std::tuple_size_v<ArgumentsTupleType>);
+
+                if constexpr (index < std::tuple_size_v<ArgumentsTupleType>) {
+                    auto argument = decode<std::tuple_element_t<index, ArgumentsTupleType>>();
+                    return argument.has_value() && recurse(recurse, std::forward<decltype(arguments)>(arguments)..., WTFMove(argument));
+                } else
+                    return functor(*std::forward<decltype(arguments)>(arguments)...);
+            };
+        return decodeImpl(decodeImpl);
+    }
+
     std::optional<Attachment> takeLastAttachment();
 
     static constexpr bool isIPCDecoder = true;
