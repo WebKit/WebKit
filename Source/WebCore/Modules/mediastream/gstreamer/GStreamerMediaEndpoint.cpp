@@ -469,6 +469,8 @@ struct SetDescriptionCallData {
     Function<void(const GstSDPMessage&)> successCallback;
     Function<void(const GError*)> failureCallback;
     GUniqueOutPtr<GstSDPMessage> message;
+    const char* typeString;
+    GRefPtr<GstElement> webrtcBin;
 };
 
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(SetDescriptionCallData)
@@ -501,6 +503,8 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
     auto* data = createSetDescriptionCallData();
     data->successCallback = WTFMove(successCallback);
     data->failureCallback = WTFMove(failureCallback);
+    data->typeString = typeString;
+    data->webrtcBin = m_webrtcBin;
     gst_sdp_message_copy(message.get(), &data->message.outPtr());
 
 #ifndef GST_DISABLE_GST_DEBUG
@@ -515,12 +519,13 @@ void GStreamerMediaEndpoint::setDescription(const RTCSessionDescription* descrip
         auto promise = adoptGRef(rawPromise);
         auto result = gst_promise_wait(promise.get());
         const auto* reply = gst_promise_get_reply(promise.get());
+        GST_DEBUG_OBJECT(data->webrtcBin.get(), "%s description reply: %u %" GST_PTR_FORMAT, data->typeString, result, reply);
         if (result != GST_PROMISE_RESULT_REPLIED || (reply && gst_structure_has_field(reply, "error"))) {
             std::optional<GUniquePtr<GError>> errorHolder;
             if (reply) {
                 GUniqueOutPtr<GError> error;
                 gst_structure_get(reply, "error", G_TYPE_ERROR, &error.outPtr(), nullptr);
-                GST_ERROR("Unable to set description, error: %s", error->message);
+                GST_ERROR_OBJECT(data->webrtcBin.get(), "Unable to set description, error: %s", error->message);
                 errorHolder = GUniquePtr<GError>(error.release());
             }
             callOnMainThread([error = WTFMove(errorHolder), failureCallback = WTFMove(data->failureCallback)] {
@@ -1184,14 +1189,16 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
         if (isStopped())
             return;
 
+        String mid;
         GUniqueOutPtr<GstWebRTCSessionDescription> description;
         g_object_get(m_webrtcBin.get(), "local-description", &description.outPtr(), nullptr);
-        if (!description)
-            return;
+        if (description) {
+            if (const auto* media = gst_sdp_message_get_media(description->sdp, sdpMLineIndex))
+                mid = makeString(gst_sdp_media_get_attribute_val(media, "mid"));
+        }
 
-        const auto* media = gst_sdp_message_get_media(description->sdp, sdpMLineIndex);
-        auto mid = media ? makeString(gst_sdp_media_get_attribute_val(media, "mid")) : emptyString();
         auto descriptions = descriptionsFromWebRTCBin(m_webrtcBin.get());
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Notifying ICE candidate: %s", sdp.ascii().data());
         m_peerConnectionBackend.newICECandidate(WTFMove(sdp), WTFMove(mid), sdpMLineIndex, { }, WTFMove(descriptions));
     });
 }
