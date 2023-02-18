@@ -68,7 +68,7 @@ const WasmCallingConvention& wasmCallingConvention()
 
         RegisterSetBuilder scratch = RegisterSetBuilder::allGPRs();
         scratch.exclude(RegisterSetBuilder::vmCalleeSaveRegisters().includeWholeRegisterWidth());
-        scratch.exclude(RegisterSetBuilder::macroClobberedRegisters());
+        scratch.exclude(RegisterSetBuilder::macroClobberedGPRs());
         scratch.exclude(RegisterSetBuilder::reservedHardwareRegisters());
         scratch.exclude(RegisterSetBuilder::stackRegisters());
         for (JSValueRegs jsr : jsrArgumentRegisters) {

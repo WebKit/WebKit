@@ -962,7 +962,7 @@ void testWasmAddressDoesNotCSE()
 
     PatchpointValue* patchpoint = b->appendNew<PatchpointValue>(proc, Void, Origin());
     patchpoint->effects = Effects::forCall();
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobber(RegisterSetBuilder(pinnedGPR));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {

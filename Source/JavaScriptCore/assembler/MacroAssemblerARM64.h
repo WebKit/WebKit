@@ -49,6 +49,8 @@ public:
 
     static constexpr RegisterID InvalidGPRReg = ARM64Registers::InvalidGPRReg;
 
+    static constexpr ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
+
     RegisterID scratchRegister()
     {
         RELEASE_ASSERT(m_allowScratchRegister);
@@ -56,7 +58,6 @@ public:
     }
 
 protected:
-    static constexpr ARM64Registers::FPRegisterID fpTempRegister = ARM64Registers::q31;
     static constexpr Assembler::SetFlags S = Assembler::S;
     static constexpr int64_t maskHalfWord0 = 0xffffl;
     static constexpr int64_t maskHalfWord1 = 0xffff0000l;

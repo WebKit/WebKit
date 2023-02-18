@@ -942,7 +942,7 @@ Tmp AirIRGenerator32::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
     Vector<B3::Type> resultTypes { B3::pointerType(), B3::Int32, B3::Int32 };
     B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple(WTFMove(resultTypes)));
     patch->effects.exitsSideways = true;
-    patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     auto clobberLate = RegisterSetBuilder::registersToSaveForCCall(RegisterSetBuilder::allScalarRegisters());
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     clobberLate.add(GPRInfo::argumentGPR1, IgnoreVectors);
@@ -1199,7 +1199,7 @@ auto AirIRGenerator32::emitCallPatchpoint(BasicBlock*block, B3::Type returnType,
     auto* patchpoint = addPatchpoint(returnType);
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(RegisterSetBuilder::allScalarRegisters()));
 
     ASSERT(wasmCalleeInfo.params.size() == tmpArgs.size());
@@ -2002,7 +2002,7 @@ auto AirIRGenerator32::addF32ConvertUI32(ExpressionType arg, ExpressionType& res
     result = f32();
     auto* patchpoint = addPatchpoint(B3::Float);
     patchpoint->effects = B3::Effects::none();
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.convertUInt32ToFloat(params[1].gpr(), params[0].fpr());
@@ -2016,7 +2016,7 @@ auto AirIRGenerator32::addF64ConvertUI32(ExpressionType arg, ExpressionType& res
     result = f64();
     auto* patchpoint = addPatchpoint(B3::Float);
     patchpoint->effects = B3::Effects::none();
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.convertUInt32ToDouble(params[1].gpr(), params[0].fpr());

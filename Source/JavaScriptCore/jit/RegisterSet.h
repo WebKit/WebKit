@@ -197,7 +197,8 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet allScalarRegisters();
     JS_EXPORT_PRIVATE static RegisterSet stackRegisters();
     JS_EXPORT_PRIVATE static RegisterSet reservedHardwareRegisters();
-    JS_EXPORT_PRIVATE static RegisterSet macroClobberedRegisters();
+    JS_EXPORT_PRIVATE static RegisterSet macroClobberedGPRs();
+    JS_EXPORT_PRIVATE static RegisterSet macroClobberedFPRs();
     JS_EXPORT_PRIVATE static RegisterSet runtimeTagRegisters();
     JS_EXPORT_PRIVATE static RegisterSet specialRegisters(); // The union of stack, reserved hardware, and runtime registers.
     JS_EXPORT_PRIVATE static RegisterSet calleeSaveRegisters();

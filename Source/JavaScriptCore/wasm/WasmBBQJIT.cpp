@@ -1148,32 +1148,30 @@ public:
     {
         RegisterSetBuilder gprSetBuilder = RegisterSetBuilder::allGPRs();
         gprSetBuilder.exclude(RegisterSetBuilder::specialRegisters());
-        gprSetBuilder.exclude(RegisterSetBuilder::macroClobberedRegisters());
-
-        gprSetBuilder.remove(GPRInfo::wasmBaseMemoryPointer);
-        gprSetBuilder.remove(GPRInfo::wasmContextInstancePointer);
-        gprSetBuilder.remove(GPRInfo::wasmBoundsCheckingSizeRegister); // Even though MemoryMode::Signaling does not use it, this makes the code simpler, and anyway right now all callee-saves are excluded from gprSetBuilder.
+        gprSetBuilder.exclude(RegisterSetBuilder::macroClobberedGPRs());
+        gprSetBuilder.exclude(RegisterSetBuilder::wasmPinnedRegisters());
+        // TODO: handle callee-saved registers better.
+        gprSetBuilder.exclude(RegisterSetBuilder::vmCalleeSaveRegisters());
 
         RegisterSetBuilder fprSetBuilder = RegisterSetBuilder::allFPRs();
-
-        RegisterSetBuilder callerSaveGprs = gprSetBuilder, callerSaveFprs = fprSetBuilder;
-        callerSaveGprs.exclude(RegisterSetBuilder::vmCalleeSaveRegisters());
-        RegisterSetBuilder::vmCalleeSaveRegisters().forEach([&](Reg reg) {
-            callerSaveFprs.remove(reg);
+        RegisterSetBuilder::macroClobberedFPRs().forEach([&](Reg reg) {
+            fprSetBuilder.remove(reg);
         });
+        // TODO: handle callee-saved registers better.
+        RegisterSetBuilder::vmCalleeSaveRegisters().forEach([&](Reg reg) {
+            fprSetBuilder.remove(reg);
+        });
+
+        RegisterSetBuilder callerSaveGprs = gprSetBuilder;
+        RegisterSetBuilder callerSaveFprs = fprSetBuilder;
 
         // TODO: Handle vectors
         for (Reg reg : callerSaveFprs.buildAndValidate())
             m_scratchFPR = reg.fpr(); // Grab last caller-save fpr for scratch register.
+
         gprSetBuilder.remove(m_scratchGPR);
         gprSetBuilder.remove(m_dataScratchGPR);
         fprSetBuilder.remove(m_scratchFPR);
-
-        // TODO: handle callee-saved registers better.
-        gprSetBuilder.exclude(RegisterSetBuilder::vmCalleeSaveRegisters());
-        RegisterSetBuilder::vmCalleeSaveRegisters().forEach([&](Reg reg) {
-            fprSetBuilder.remove(reg);
-        });
 
         m_gprSet = m_validGPRs = gprSetBuilder.buildAndValidate();
         m_fprSet = m_validFPRs = fprSetBuilder.buildAndValidate();

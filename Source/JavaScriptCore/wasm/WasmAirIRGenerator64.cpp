@@ -1937,7 +1937,7 @@ Tmp AirIRGenerator64::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
 
     B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple({ B3::pointerType(), B3::pointerType() }));
     patch->effects.exitsSideways = true;
-    patch->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patch->clobber(RegisterSetBuilder::macroClobberedGPRs());
     auto clobberLate = RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters());
     clobberLate.add(GPRInfo::argumentGPR0, IgnoreVectors);
     patch->clobberLate(clobberLate);
@@ -2067,7 +2067,7 @@ auto AirIRGenerator64::emitCallPatchpoint(BasicBlock* block, B3::Type returnType
     auto* patchpoint = addPatchpoint(returnType);
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->clobberLate(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
 
     size_t offset = patchArgs.size();
@@ -2160,7 +2160,7 @@ auto AirIRGenerator64::emitTailCallPatchpoint(BasicBlock* block, const Checked<i
     clobbers.merge(RegisterSetBuilder::calleeSaveRegisters());
     clobbers.exclude(RegisterSetBuilder::stackRegisters());
     patchpoint->clobber(clobbers);
-    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobberEarly(RegisterSetBuilder::macroClobberedGPRs());
 
     for (unsigned i = 0; i < tmpArgs.size(); ++i) {
         TypedTmp tmp = tmpArgs[i];
@@ -2431,7 +2431,7 @@ auto AirIRGenerator64::addF64ConvertUI64(ExpressionType arg, ExpressionType& res
     patchpoint->effects = B3::Effects::none();
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -2451,7 +2451,7 @@ auto AirIRGenerator64::addF32ConvertUI64(ExpressionType arg, ExpressionType& res
     patchpoint->effects = B3::Effects::none();
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+    patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
     patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -2521,7 +2521,7 @@ auto AirIRGenerator64::addUncheckedFloatingPointTruncation(FloatingPointTruncati
         switch (kind) {
         case FloatingPointTruncationKind::F32ToU64: {
             auto signBitConstant = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
             patchpoint->numFPScratchRegisters = 1;
             emitPatchpoint(
                 m_currentBlock, patchpoint,
@@ -2532,7 +2532,7 @@ auto AirIRGenerator64::addUncheckedFloatingPointTruncation(FloatingPointTruncati
         }
         case FloatingPointTruncationKind::F64ToU64: {
             auto signBitConstant = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-            patchpoint->clobber(RegisterSetBuilder::macroClobberedRegisters());
+            patchpoint->clobber(RegisterSetBuilder::macroClobberedGPRs());
             patchpoint->numFPScratchRegisters = 1;
             emitPatchpoint(
                 m_currentBlock, patchpoint,
