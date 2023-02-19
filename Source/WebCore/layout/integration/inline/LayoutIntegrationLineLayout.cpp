@@ -559,6 +559,10 @@ void LineLayout::layout()
 
     constructContent();
 
+    auto adjustments = adjustContent();
+
+    updateRenderTreePositions(adjustments);
+
     m_lineDamage = { };
 }
 
@@ -583,27 +587,71 @@ void LineLayout::constructContent()
             return;
 
         InlineContentBuilder { flow(), m_boxTree }.build(m_inlineFormattingState, ensureInlineContent());
-        ASSERT(m_inlineContent);
+
         m_inlineContent->clearGapBeforeFirstLine = m_inlineFormattingState.clearGapBeforeFirstLine();
         m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();
         m_inlineContent->shrinkToFit();
     };
     constructFreshlyLaidOutContent();
 
+    m_inlineFormattingState.resetNestedListMarkerOffsets();
+    m_inlineFormattingState.shrinkToFit();
+    m_blockFormattingState.shrinkToFit();
+}
+
+void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments)
+{
+    if (!m_inlineContent)
+        return;
+
     auto& blockFlow = flow();
     auto& rootStyle = blockFlow.style();
     auto isLeftToRightFloatingStateInlineDirection = m_blockFormattingState.floatingState().isLeftToRightDirection();
     auto isHorizontalWritingMode = rootStyle.isHorizontalWritingMode();
     auto isFlippedBlocksWritingMode = rootStyle.isFlippedBlocksWritingMode();
-    for (auto& renderObject : m_boxTree.renderers()) {
-        auto& layoutBox = *renderObject->layoutBox();
-        
-        bool needsRenderTreePositioning = layoutBox.isAtomicInlineLevelBox() || layoutBox.isFloatingPositioned() || layoutBox.isOutOfFlowPositioned();
-        if (!needsRenderTreePositioning)
+    for (auto& box : m_inlineContent->boxes) {
+        if (box.isInlineBox() || box.isText())
             continue;
 
-        auto& renderer = downcast<RenderBox>(*renderObject);
+        auto& layoutBox = box.layoutBox();
+
+        if (!layoutBox.isAtomicInlineLevelBox())
+            continue;
+
+        auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
+
+        auto logicalOffset = lineAdjustments.isEmpty() ? LayoutSize { } : LayoutSize { 0_lu, lineAdjustments[box.lineIndex()].offset };
+
+        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft() + logicalOffset);
+    }
+
+    // FIXME: Loop through the floating state?
+    for (auto& renderObject : m_boxTree.renderers()) {
+        auto& layoutBox = *renderObject->layoutBox();
+        if (!layoutBox.isFloatingPositioned() && !layoutBox.isOutOfFlowPositioned())
+            continue;
+
+        auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+        auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
+
+        if (layoutBox.isFloatingPositioned()) {
+            // FIXME: Adjust floats for pagination.
+            auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
+
+            ASSERT(m_inlineContentConstraints);
+            auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
+            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(isHorizontalWritingMode, isLeftToRightFloatingStateInlineDirection, rootBorderBoxWidth);
+            auto visualMarginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(visualGeometry) };
+            floatingObject.setFrameRect(visualMarginBoxRect);
+
+            auto marginLeft = !isFlippedBlocksWritingMode ? visualGeometry.marginStart() : visualGeometry.marginEnd();
+            auto marginTop = visualGeometry.marginBefore();
+            floatingObject.setMarginOffset({ marginLeft, marginTop });
+            floatingObject.setIsPlaced(true);
+
+            renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft());
+        }
 
         if (layoutBox.isOutOfFlowPositioned()) {
             ASSERT(renderer.layer());
@@ -620,30 +668,8 @@ void LineLayout::constructContent()
                 renderer.setChildNeedsLayout(MarkOnlyThis);
             continue;
         }
-
-        if (layoutBox.isFloatingPositioned()) {
-            auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
-
-            ASSERT(m_inlineContentConstraints);
-            auto rootBorderBoxWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
-            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(isHorizontalWritingMode, isLeftToRightFloatingStateInlineDirection, rootBorderBoxWidth);
-            auto visualMarginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(visualGeometry) };
-            floatingObject.setFrameRect(visualMarginBoxRect);
-
-            auto marginLeft = !isFlippedBlocksWritingMode ? visualGeometry.marginStart() : visualGeometry.marginEnd();
-            auto marginTop = visualGeometry.marginBefore();
-            floatingObject.setMarginOffset({ marginLeft, marginTop });
-            floatingObject.setIsPlaced(true);
-
-            renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft());
-            continue;
-        }
-        renderer.setLocation(Layout::BoxGeometry::borderBoxRect(logicalGeometry).topLeft());
     }
 
-    m_inlineFormattingState.resetNestedListMarkerOffsets();
-    m_inlineFormattingState.shrinkToFit();
-    m_blockFormattingState.shrinkToFit();
 }
 
 void LineLayout::updateInlineContentConstraints()
@@ -875,18 +901,17 @@ LayoutUnit LineLayout::lastLineLogicalBaseline() const
     }
 }
 
-void LineLayout::adjustForPagination()
+Vector<LineAdjustment> LineLayout::adjustContent()
 {
     if (!m_inlineContent)
-        return;
+        return { };
 
-    auto paginedInlineContent = adjustLinePositionsForPagination(*m_inlineContent, flow());
-    if (!paginedInlineContent) {
-        m_isPaginatedContent = false;
-        return;
-    }
-    m_isPaginatedContent = true;
-    m_inlineContent = WTFMove(paginedInlineContent);
+    auto adjustments = computeAdjustmentsForPagination(*m_inlineContent, flow());
+
+    adjustLinePositionsForPagination(*m_inlineContent, adjustments);
+    m_isPaginatedContent = !adjustments.isEmpty();
+
+    return adjustments;
 }
 
 void LineLayout::collectOverflow()

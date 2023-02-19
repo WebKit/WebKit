@@ -3959,9 +3959,6 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
 
     layoutFormattingContextLineLayout.layout();
 
-    if (layoutState.isPaginated())
-        layoutFormattingContextLineLayout.adjustForPagination();
-
     auto newBorderBoxBottom = computeBorderBoxBottom();
 
     auto updateRepaintTopAndBottomIfNeeded = [&] {

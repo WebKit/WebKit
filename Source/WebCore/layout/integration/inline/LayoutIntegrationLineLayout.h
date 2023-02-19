@@ -58,6 +58,7 @@ class InlineDamage;
 namespace LayoutIntegration {
 
 struct InlineContent;
+struct LineAdjustment;
 
 class LineLayout : public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
@@ -135,6 +136,9 @@ private:
     void prepareLayoutState();
     void prepareFloatingState();
     void constructContent();
+    Vector<LineAdjustment> adjustContent();
+    void updateRenderTreePositions(const Vector<LineAdjustment>&);
+
     InlineContent& ensureInlineContent();
     void updateLayoutBoxDimensions(const RenderBox&);
 
