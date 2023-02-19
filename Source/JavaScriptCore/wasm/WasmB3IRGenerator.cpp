@@ -1797,7 +1797,6 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(Value* pointer, uint32_t
     }
 
     case MemoryMode::Signaling: {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
         // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
         // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
@@ -1812,7 +1811,6 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(Value* pointer, uint32_t
             size_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
             m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), pointer, sizeOfOperation + offset - 1, maximum);
         }
-#endif
         break;
     }
     }

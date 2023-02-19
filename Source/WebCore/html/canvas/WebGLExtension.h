@@ -62,6 +62,7 @@ public:
         EXTColorBufferFloatName,
         EXTColorBufferHalfFloatName,
         EXTDisjointTimerQueryName,
+        EXTDisjointTimerQueryWebGL2Name,
         EXTFloatBlendName,
         EXTFragDepthName,
         EXTShaderTextureLODName,

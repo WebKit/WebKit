@@ -2684,14 +2684,14 @@ GCGLboolean GraphicsContextGLANGLE::isQuery(PlatformGLObject query)
     return GL_IsQuery(query);
 }
 
-PlatformGLObject GraphicsContextGLANGLE::getQuery(GCGLenum target, GCGLenum pname)
+GCGLint GraphicsContextGLANGLE::getQuery(GCGLenum target, GCGLenum pname)
 {
     if (!makeContextCurrent())
         return 0;
 
-    GLint value;
+    GLint value = 0;
     GL_GetQueryiv(target, pname, &value);
-    return static_cast<PlatformGLObject>(value);
+    return value;
 }
 
 PlatformGLObject GraphicsContextGLANGLE::createSampler()

@@ -41,6 +41,7 @@ class JSDOMGlobalObject;
 class WebGLBuffer;
 class WebGLFramebuffer;
 class WebGLProgram;
+class WebGLQuery;
 class WebGLRenderbuffer;
 class WebGLSampler;
 class WebGLTexture;
@@ -68,6 +69,7 @@ using WebGLAny = std::variant<
     RefPtr<WebGLBuffer>,
     RefPtr<WebGLFramebuffer>,
     RefPtr<WebGLProgram>,
+    RefPtr<WebGLQuery>,
     RefPtr<WebGLRenderbuffer>,
     RefPtr<WebGLSampler>,
     RefPtr<WebGLTexture>,

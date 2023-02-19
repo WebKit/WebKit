@@ -362,12 +362,10 @@ public:
     static String defaultLocalStorageDirectory(const String& baseDataDirectory = nullString());
     static String defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory = nullString());
     static String defaultNetworkCacheDirectory(const String& baseCacheDirectory = nullString());
-    static String defaultAlternativeServicesDirectory(const String& baseDataDirectory = nullString());
+    static String defaultAlternativeServicesDirectory(const String& baseCacheDirectory = nullString());
     static String defaultApplicationCacheDirectory(const String& baseCacheDirectory = nullString());
     static String defaultWebSQLDatabaseDirectory(const String& baseDataDirectory = nullString());
-#if USE(GLIB) || PLATFORM(COCOA)
     static String defaultHSTSStorageDirectory(const String& baseCacheDirectory = nullString());
-#endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     static String defaultModelElementCacheDirectory(const String& baseCacheDirectory = nullString());
 #endif

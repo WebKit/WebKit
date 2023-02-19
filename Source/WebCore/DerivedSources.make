@@ -1202,6 +1202,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/EXTColorBufferFloat.idl \
     $(WebCore)/html/canvas/EXTColorBufferHalfFloat.idl \
     $(WebCore)/html/canvas/EXTDisjointTimerQuery.idl \
+    $(WebCore)/html/canvas/EXTDisjointTimerQueryWebGL2.idl \
     $(WebCore)/html/canvas/EXTFloatBlend.idl \
     $(WebCore)/html/canvas/EXTFragDepth.idl \
     $(WebCore)/html/canvas/EXTShaderTextureLOD.idl \

@@ -2328,7 +2328,7 @@ void RemoteGraphicsContextGLProxy::endQuery(GCGLenum target)
     }
 }
 
-PlatformGLObject RemoteGraphicsContextGLProxy::getQuery(GCGLenum target, GCGLenum pname)
+GCGLint RemoteGraphicsContextGLProxy::getQuery(GCGLenum target, GCGLenum pname)
 {
     if (isContextLost())
         return { };

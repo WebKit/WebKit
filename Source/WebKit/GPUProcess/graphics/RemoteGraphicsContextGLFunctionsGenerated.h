@@ -1122,9 +1122,9 @@
         assertIsCurrent(workQueue());
         m_context->endQuery(target);
     }
-    void getQuery(uint32_t target, uint32_t pname, CompletionHandler<void(uint32_t)>&& completionHandler)
+    void getQuery(uint32_t target, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
-        PlatformGLObject returnValue = { };
+        GCGLint returnValue = { };
         assertIsCurrent(workQueue());
         returnValue = m_context->getQuery(target, pname);
         completionHandler(returnValue);

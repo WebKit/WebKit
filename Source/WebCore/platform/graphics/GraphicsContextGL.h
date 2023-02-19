@@ -1407,7 +1407,7 @@ public:
     virtual GCGLboolean isQuery(PlatformGLObject query) = 0;
     virtual void beginQuery(GCGLenum target, PlatformGLObject query) = 0;
     virtual void endQuery(GCGLenum target) = 0;
-    virtual PlatformGLObject getQuery(GCGLenum target, GCGLenum pname) = 0;
+    virtual GCGLint getQuery(GCGLenum target, GCGLenum pname) = 0;
     // getQueryParameter
     virtual GCGLuint getQueryObjectui(PlatformGLObject query, GCGLenum pname) = 0;
 

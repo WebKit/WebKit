@@ -988,7 +988,6 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
     }
 
     case MemoryMode::Signaling: {
-#if ENABLE(WEBASSEMBLY_SIGNALING_MEMORY)
         // We've virtually mapped 4GiB+redzone for this memory. Only the user-allocated pages are addressable, contiguously in range [0, current],
         // and everything above is mapped PROT_NONE. We don't need to perform any explicit bounds check in the 4GiB range because WebAssembly register
         // memory accesses are 32-bit. However WebAssembly register + offset accesses perform the addition in 64-bit which can push an access above
@@ -1018,7 +1017,6 @@ inline AirIRGenerator64::ExpressionType AirIRGenerator64::emitCheckAndPreparePoi
                 this->emitThrowException(jit, ExceptionType::OutOfBoundsMemoryAccess);
             });
         }
-#endif
         break;
     }
     }

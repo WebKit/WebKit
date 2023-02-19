@@ -34,6 +34,7 @@
 #include "JSEXTColorBufferFloat.h"
 #include "JSEXTColorBufferHalfFloat.h"
 #include "JSEXTDisjointTimerQuery.h"
+#include "JSEXTDisjointTimerQueryWebGL2.h"
 #include "JSEXTFloatBlend.h"
 #include "JSEXTFragDepth.h"
 #include "JSEXTShaderTextureLOD.h"
@@ -72,6 +73,7 @@
 #include "JSWebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 #include "JSWebGLProgram.h"
 #include "JSWebGLProvokingVertex.h"
+#include "JSWebGLQuery.h"
 #include "JSWebGLRenderbuffer.h"
 #include "JSWebGLSampler.h"
 #include "JSWebGLTexture.h"
@@ -155,6 +157,9 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         [&] (const RefPtr<WebGLVertexArrayObjectOES>& array) {
             return toJS(&lexicalGlobalObject, &globalObject, array.get());
         },
+        [&] (const RefPtr<WebGLQuery>& query) {
+            return toJS(&lexicalGlobalObject, &globalObject, query.get());
+        },
         [&] (const RefPtr<WebGLSampler>& sampler) {
             return toJS(&lexicalGlobalObject, &globalObject, sampler.get());
         },
@@ -179,6 +184,7 @@ JSValue convertToJSValue(JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject&
         TO_JS(EXTColorBufferFloat)
         TO_JS(EXTColorBufferHalfFloat)
         TO_JS(EXTDisjointTimerQuery)
+        TO_JS(EXTDisjointTimerQueryWebGL2)
         TO_JS(EXTFloatBlend)
         TO_JS(EXTFragDepth)
         TO_JS(EXTShaderTextureLOD)

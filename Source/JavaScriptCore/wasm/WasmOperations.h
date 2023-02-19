@@ -69,23 +69,23 @@ JSC_DECLARE_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell*, VM*
 JSC_DECLARE_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t));
 JSC_DECLARE_JIT_OPERATION(operationPopcount64, uint64_t, (int64_t));
 JSC_DECLARE_JIT_OPERATION(operationGrowMemory, int32_t, (Instance*, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationWasmMemoryFill, size_t, (Instance*, uint32_t dstAddress, uint32_t targetValue, uint32_t count));
-JSC_DECLARE_JIT_OPERATION(operationWasmMemoryCopy, size_t, (Instance*, uint32_t dstAddress, uint32_t srcAddress, uint32_t count));
+JSC_DECLARE_JIT_OPERATION(operationWasmMemoryFill, UCPUStrictInt32, (Instance*, uint32_t dstAddress, uint32_t targetValue, uint32_t count));
+JSC_DECLARE_JIT_OPERATION(operationWasmMemoryCopy, UCPUStrictInt32, (Instance*, uint32_t dstAddress, uint32_t srcAddress, uint32_t count));
 
 JSC_DECLARE_JIT_OPERATION(operationGetWasmTableElement, EncodedJSValue, (Instance*, unsigned, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationSetWasmTableElement, uint32_t, (Instance*, unsigned, uint32_t, EncodedJSValue encValue));
+JSC_DECLARE_JIT_OPERATION(operationSetWasmTableElement, UCPUStrictInt32, (Instance*, unsigned, uint32_t, EncodedJSValue encValue));
 JSC_DECLARE_JIT_OPERATION(operationWasmRefFunc, EncodedJSValue, (Instance*, uint32_t));
-JSC_DECLARE_JIT_OPERATION(operationWasmTableInit, size_t, (Instance*, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length));
+JSC_DECLARE_JIT_OPERATION(operationWasmTableInit, UCPUStrictInt32, (Instance*, unsigned elementIndex, unsigned tableIndex, uint32_t dstOffset, uint32_t srcOffset, uint32_t length));
 JSC_DECLARE_JIT_OPERATION(operationWasmElemDrop, void, (Instance*, unsigned elementIndex));
 JSC_DECLARE_JIT_OPERATION(operationWasmTableGrow, int32_t, (Instance*, unsigned, EncodedJSValue fill, uint32_t delta));
-JSC_DECLARE_JIT_OPERATION(operationWasmTableFill, size_t, (Instance*, unsigned, uint32_t offset, EncodedJSValue fill, uint32_t count));
-JSC_DECLARE_JIT_OPERATION(operationWasmTableCopy, size_t, (Instance*, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length));
+JSC_DECLARE_JIT_OPERATION(operationWasmTableFill, UCPUStrictInt32, (Instance*, unsigned, uint32_t offset, EncodedJSValue fill, uint32_t count));
+JSC_DECLARE_JIT_OPERATION(operationWasmTableCopy, UCPUStrictInt32, (Instance*, unsigned dstTableIndex, unsigned srcTableIndex, int32_t dstOffset, int32_t srcOffset, int32_t length));
 JSC_DECLARE_JIT_OPERATION(operationGetWasmTableSize, int32_t, (Instance*, unsigned));
 
 JSC_DECLARE_JIT_OPERATION(operationMemoryAtomicWait32, int32_t, (Instance* instance, unsigned base, unsigned offset, int32_t value, int64_t timeout));
 JSC_DECLARE_JIT_OPERATION(operationMemoryAtomicWait64, int32_t, (Instance* instance, unsigned base, unsigned offset, int64_t value, int64_t timeout));
 JSC_DECLARE_JIT_OPERATION(operationMemoryAtomicNotify, int32_t, (Instance*, unsigned, unsigned, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationWasmMemoryInit, size_t, (Instance*, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length));
+JSC_DECLARE_JIT_OPERATION(operationWasmMemoryInit, UCPUStrictInt32, (Instance*, unsigned dataSegmentIndex, uint32_t dstAddress, uint32_t srcAddress, uint32_t length));
 JSC_DECLARE_JIT_OPERATION(operationWasmDataDrop, void, (Instance*, unsigned dataSegmentIndex));
 
 JSC_DECLARE_JIT_OPERATION(operationWasmStructNew, EncodedJSValue, (Instance*, uint32_t, bool, uint64_t*));

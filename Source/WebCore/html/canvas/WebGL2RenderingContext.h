@@ -203,7 +203,7 @@ public:
     GCGLboolean isQuery(WebGLQuery*);
     void beginQuery(GCGLenum target, WebGLQuery&);
     void endQuery(GCGLenum target);
-    RefPtr<WebGLQuery> getQuery(GCGLenum target, GCGLenum pname);
+    WebGLAny getQuery(GCGLenum target, GCGLenum pname);
     WebGLAny getQueryParameter(WebGLQuery&, GCGLenum pname);
     
     // Sampler objects
@@ -308,7 +308,7 @@ private:
     WebGLFramebuffer* getReadFramebufferBinding() final;
     void restoreCurrentFramebuffer() final;
     bool validateNonDefaultFramebufferAttachment(const char* functionName, GCGLenum attachment);
-    enum ActiveQueryKey { SamplesPassed = 0, PrimitivesWritten = 1, NumKeys = 2 };
+    enum ActiveQueryKey { SamplesPassed = 0, PrimitivesWritten = 1, TimeElapsed = 2, NumKeys = 3 };
     std::optional<ActiveQueryKey> validateQueryTarget(const char* functionName, GCGLenum target);
     void renderbufferStorageImpl(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, const char* functionName) final;
     void renderbufferStorageHelper(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height);

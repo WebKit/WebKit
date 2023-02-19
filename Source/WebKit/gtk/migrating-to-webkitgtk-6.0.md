@@ -132,3 +132,11 @@ to draw scrollbars that match arbitrary GTK themes. Accordingly, the
 `webkit_web_context_get_use_system_appearance_for_scrollbars` and
 `webkit_web_context_set_use_system_appearance_for_scrollbars` APIs have been
 removed. WebKit will draw scrollbars that match the Adwaita GTK theme.
+
+## User Script Message Handlers
+
+`webkit_user_content_manager_register_script_message_handler_in_world()` and
+`webkit_user_content_manager_unregister_script_message_handler_in_world()` have
+been removed. Instead, [method@WebKit.UserContentManager.register_script_message_handler]
+and [method@WebKit.UserContentManager.unregister_script_message_handler] have
+gained parameters to specify the script world to use.
