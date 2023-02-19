@@ -188,13 +188,6 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
     internalWheelEvent(pageID, wheelEvent, rubberBandableEdges, WheelEventOrigin::UIProcess);
 }
 
-#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-void EventDispatcher::setScrollingAccelerationCurve(PageIdentifier pageID, std::optional<ScrollingAccelerationCurve> curve)
-{
-    m_momentumEventDispatcher->setScrollingAccelerationCurve(pageID, curve);
-}
-#endif
-
 #if ENABLE(MAC_GESTURE_EVENTS)
 void EventDispatcher::gestureEvent(PageIdentifier pageID, const WebKit::WebGestureEvent& gestureEvent)
 {
@@ -341,5 +334,27 @@ void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplay
     UNUSED_PARAM(displayID);
 #endif
 }
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER)
+void EventDispatcher::setScrollingAccelerationCurve(PageIdentifier pageID, std::optional<ScrollingAccelerationCurve> curve)
+{
+    m_momentumEventDispatcher->setScrollingAccelerationCurve(pageID, curve);
+}
+
+void EventDispatcher::handleSyntheticWheelEvent(WebCore::PageIdentifier pageIdentifier, const WebWheelEvent& event, WebCore::RectEdges<bool> rubberBandableEdges)
+{
+    internalWheelEvent(pageIdentifier, event, rubberBandableEdges, WheelEventOrigin::MomentumEventDispatcher);
+}
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+void EventDispatcher::flushMomentumEventLoggingSoon()
+{
+    // FIXME: Nothing keeps this alive.
+    queue().dispatchAfter(1_s, [this] {
+        m_momentumEventDispatcher->flushLog();
+    });
+}
+#endif
+#endif // ENABLE(MOMENTUM_EVENT_DISPATCHER)
 
 } // namespace WebKit
