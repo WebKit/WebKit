@@ -93,6 +93,8 @@ public:
     LineBoxIterator next() const;
     LineBoxIterator previous() const;
 
+    size_t lineIndex() const;
+
 private:
     friend class LineBoxIterator;
 
@@ -312,6 +314,13 @@ inline bool LineBox::isFirstAfterPageBreak() const
 inline bool LineBox::isFirst() const
 {
     return !previous();
+}
+
+inline size_t LineBox::lineIndex() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.lineIndex();
+    });
 }
 
 }

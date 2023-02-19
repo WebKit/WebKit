@@ -73,6 +73,8 @@ public:
     RenderFragmentContainer* containingFragment() const { return nullptr; }
     bool isFirstAfterPageBreak() const { return line().isFirstAfterPageBreak(); }
 
+    size_t lineIndex() const { return m_lineIndex; }
+
     void traverseNext()
     {
         ASSERT(!atEnd());

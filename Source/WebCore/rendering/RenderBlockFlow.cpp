@@ -1814,28 +1814,25 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
     return result;
 }
 
-static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderStyle, LegacyRootInlineBox& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
+static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderStyle, const InlineIterator::LineBoxIterator& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // We may require a certain minimum number of lines per page in order to satisfy
     // orphans and widows, and that may affect the minimum page height.
     unsigned lineCount = std::max<unsigned>(renderStyle.hasAutoOrphans() ? 1 : renderStyle.orphans(), renderStyle.hasAutoWidows() ? 1 : renderStyle.widows());
     if (lineCount > 1) {
-        LegacyRootInlineBox* line = &lastLine;
-        for (unsigned i = 1; i < lineCount && line->prevRootBox(); i++)
-            line = line->prevRootBox();
+        auto line = lastLine;
+        for (unsigned i = 1; i < lineCount && line->previous(); i++)
+            line = line->previous();
 
         // FIXME: Paginating using line overflow isn't all fine. See FIXME in
         // adjustLinePositionForPagination() for more details.
-        LayoutRect overflow = line->logicalVisualOverflowRect(line->lineTop(), line->lineBottom());
-        lineTop = std::min(line->lineBoxTop(), overflow.y());
+        lineTop = std::min(line->logicalTop(), line->inkOverflowTop());
     }
     return lineBottom - lineTop;
 }
 
-static inline bool needsAppleMailPaginationQuirk(LegacyRootInlineBox& lineBox)
+static inline bool needsAppleMailPaginationQuirk(const RenderBlockFlow& renderer)
 {
-    auto& renderer = lineBox.renderer();
-
     if (!renderer.settings().appleMailPaginationQuirkEnabled())
         return false;
 
@@ -1853,7 +1850,17 @@ static void clearShouldBreakAtLineToAvoidWidowIfNeeded(RenderBlockFlow& blockFlo
     blockFlow.setDidBreakAtLineToAvoidWidow();
 }
 
-void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineBox, LayoutUnit& delta, RenderFragmentedFlow* fragmentedFlow)
+void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* rootInlineBox, LayoutUnit& delta)
+{
+    auto adjustment = computeLineAdjustmentForPagination(rootInlineBox, delta);
+
+    rootInlineBox->setPaginationStrut(adjustment.paginationStrut);
+    rootInlineBox->setIsFirstAfterPageBreak(adjustment.isFirstAfterPageBreak);
+
+    delta += adjustment.paginationStrut;
+}
+
+RenderBlockFlow::LineAdjustment RenderBlockFlow::computeLineAdjustmentForPagination(const InlineIterator::LineBoxIterator& lineBox, LayoutUnit delta)
 {
     // FIXME: For now we paginate using line overflow. This ensures that lines don't overlap at all when we
     // put a strut between them for pagination purposes. However, this really isn't the desired rendering, since
@@ -1874,15 +1881,32 @@ void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineB
     // FIXME: Another problem with simply moving lines is that the available line width may change (because of floats).
     // Technically if the location we move the line to has a different line width than our old position, then we need to dirty the
     // line and all following lines.
-    LayoutRect logicalVisualOverflow = lineBox->logicalVisualOverflowRect(lineBox->lineTop(), lineBox->lineBottom());
-    LayoutUnit logicalOffset = std::min(lineBox->lineBoxTop(), logicalVisualOverflow.y());
-    LayoutUnit logicalBottom = std::max(lineBox->lineBoxBottom(), logicalVisualOverflow.maxY());
-    LayoutUnit lineHeight = logicalBottom - logicalOffset;
-    updateMinimumPageHeight(logicalOffset, calculateMinimumPageHeight(style(), *lineBox, logicalOffset, logicalBottom));
+    auto computeLeafBoxTopAndBottom = [&] {
+        auto lineTop = LayoutUnit::max();
+        auto lineBottom = LayoutUnit::min();
+        for (auto box = lineBox->firstLeafBox(); box; box.traverseNextOnLine()) {
+            if (box->logicalTop() < lineTop)
+                lineTop = box->logicalTop();
+            if (box->logicalBottom() > lineBottom)
+                lineBottom = box->logicalBottom();
+        }
+        return std::pair { lineTop, lineBottom };
+    };
+
+    auto logicalOverflowTop = LayoutUnit { lineBox->inkOverflowTop() };
+    auto logicalOverflowBottom = LayoutUnit { lineBox->inkOverflowBottom() };
+    auto logicalOverflowHeight = logicalOverflowBottom - logicalOverflowTop;
+    auto logicalTop = LayoutUnit { lineBox->logicalTop() };
+    auto logicalOffset = std::min(logicalTop, logicalOverflowTop);
+    auto logicalBottom = std::max(LayoutUnit { lineBox->logicalBottom() }, logicalOverflowBottom);
+    auto lineHeight = logicalBottom - logicalOffset;
+
+    updateMinimumPageHeight(logicalOffset, calculateMinimumPageHeight(style(), lineBox, logicalOffset, logicalBottom));
     logicalOffset += delta;
-    lineBox->setPaginationStrut(0);
-    lineBox->setIsFirstAfterPageBreak(false);
+
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
+
+    auto* fragmentedFlow = enclosingFragmentedFlow();
     bool hasUniformPageLogicalHeight = !fragmentedFlow || fragmentedFlow->fragmentsHaveUniformLogicalHeight();
     // If lineHeight is greater than pageLogicalHeight, but logicalVisualOverflow.height() still fits, we are
     // still going to add a strut, so that the visible overflow fits on a single page.
@@ -1891,68 +1915,72 @@ void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineB
         // From here, the fix is not straightforward because it's not easy to always determine when the current line is the first in the page.
         // With no valid page height, we can't possibly accommodate the widow rules.
         clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
-        return;
+        return { };
     }
 
-    if (hasUniformPageLogicalHeight && logicalVisualOverflow.height() > pageLogicalHeight) {
+    if (hasUniformPageLogicalHeight && logicalOverflowHeight > pageLogicalHeight) {
         // We are so tall that we are bigger than a page. Before we give up and just leave the line where it is, try drilling into the
         // line and computing a new height that excludes anything we consider "blank space". We will discard margins, descent, and even overflow. If we are
         // able to fit with the blank space and overflow excluded, we will give the line its own page with the highest non-blank element being aligned with the
         // top of the page.
         // FIXME: We are still honoring gigantic margins, which does leave open the possibility of blank pages caused by this heuristic. It remains to be seen whether or not
         // this will be a real-world issue. For now we don't try to deal with this problem.
-        logicalOffset = static_cast<float>(intMaxForLayoutUnit);
-        logicalBottom = static_cast<float>(intMinForLayoutUnit);
-        lineBox->computeReplacedAndTextLineTopAndBottom(logicalOffset, logicalBottom);
+        std::tie(logicalOffset, logicalBottom) = computeLeafBoxTopAndBottom();
         lineHeight = logicalBottom - logicalOffset;
-        if (logicalOffset == intMaxForLayoutUnit || lineHeight > pageLogicalHeight) {
+        if (logicalOffset == LayoutUnit::max() || lineHeight > pageLogicalHeight) {
             // Give up. We're genuinely too big even after excluding blank space and overflow.
             clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
-            return;
+            return { };
         }
         pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     }
     
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
 
-    int lineIndex = legacyLineLayout()->lineCountUntil(lineBox);
-    if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)) {
-        if (lineBreakToAvoidWidow() == lineIndex)
+    int lineNumber = lineBox->lineIndex() + 1;
+    if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineNumber)) {
+        if (lineBreakToAvoidWidow() == lineNumber)
             clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
         // If we have a non-uniform page height, then we have to shift further possibly.
         if (!hasUniformPageLogicalHeight && !pushToNextPageWithMinimumLogicalHeight(remainingLogicalHeight, logicalOffset, lineHeight))
-            return;
+            return { };
         if (lineHeight > pageLogicalHeight) {
             // Split the top margin in order to avoid splitting the visible part of the line.
-            remainingLogicalHeight -= std::min(lineHeight - pageLogicalHeight, std::max<LayoutUnit>(0, logicalVisualOverflow.y() - lineBox->lineBoxTop()));
+            remainingLogicalHeight -= std::min(lineHeight - pageLogicalHeight, std::max(0_lu, logicalOverflowTop - logicalTop));
         }
         LayoutUnit totalLogicalHeight = lineHeight + std::max<LayoutUnit>(0, logicalOffset);
         LayoutUnit pageLogicalHeightAtNewOffset = hasUniformPageLogicalHeight ? pageLogicalHeight : pageLogicalHeightForOffset(logicalOffset + remainingLogicalHeight);
+
         setPageBreak(logicalOffset, lineHeight - remainingLogicalHeight);
-        if (((lineBox == firstRootBox() && totalLogicalHeight < pageLogicalHeightAtNewOffset) || (!style().hasAutoOrphans() && style().orphans() >= lineIndex))
-            && !isOutOfFlowPositioned() && !isTableCell()) {
-            auto firstRootBox = this->firstRootBox();
-            if (!firstRootBox) {
-                setPaginationStrut(remainingLogicalHeight + logicalOffset);
-                return;
-            }
-            auto firstRootBoxOverflowRect = firstRootBox->logicalVisualOverflowRect(firstRootBox->lineTop(), firstRootBox->lineBottom());
-            auto firstLineUpperOverhang = std::max(-firstRootBoxOverflowRect.y(), 0_lu);
-            if (needsAppleMailPaginationQuirk(*lineBox))
-                return;
+
+        bool avoidFirstLinePageBreak = lineBox->isFirst() && totalLogicalHeight < pageLogicalHeightAtNewOffset;
+        bool affectedByOrphans = !style().hasAutoOrphans() && style().orphans() >= lineNumber;
+
+        if ((avoidFirstLinePageBreak || affectedByOrphans) && !isOutOfFlowPositioned() && !isTableCell()) {
+            if (needsAppleMailPaginationQuirk(*this))
+                return { };
+
+            auto firstLineBox = InlineIterator::firstLineBoxFor(*this);
+            auto firstLineBoxOverflowTop = LayoutUnit { firstLineBox ? firstLineBox->inkOverflowTop() : 0 };
+            auto firstLineUpperOverhang = std::max(-firstLineBoxOverflowTop, 0_lu);
             setPaginationStrut(remainingLogicalHeight + logicalOffset + firstLineUpperOverhang);
-        } else {
-            delta += remainingLogicalHeight;
-            lineBox->setPaginationStrut(remainingLogicalHeight);
-            lineBox->setIsFirstAfterPageBreak(true);
+
+            return { };
         }
-    } else if (remainingLogicalHeight == pageLogicalHeight) {
-        // We're at the very top of a page or column.
-        if (lineBox != firstRootBox())
-            lineBox->setIsFirstAfterPageBreak(true);
-        if (lineBox != firstRootBox() || offsetFromLogicalTopOfFirstPage())
-            setPageBreak(logicalOffset, lineHeight);
+
+        return { remainingLogicalHeight, true };
     }
+
+    if (remainingLogicalHeight == pageLogicalHeight) {
+        // We're at the very top of a page or column.
+        bool isFirstLine = lineBox->isFirst();
+        if (!isFirstLine || offsetFromLogicalTopOfFirstPage())
+            setPageBreak(logicalOffset, lineHeight);
+
+        return { 0_lu, !isFirstLine };
+    }
+
+    return { };
 }
 
 void RenderBlockFlow::setBreakAtLineToAvoidWidow(int lineToBreak)

@@ -77,6 +77,16 @@ public:
     RenderFragmentContainer* containingFragment() const { return m_rootInlineBox->containingFragment(); }
     bool isFirstAfterPageBreak() const { return m_rootInlineBox->isFirstAfterPageBreak(); }
 
+    size_t lineIndex() const
+    {
+        size_t count = 0;
+        for (auto* box = formattingContextRoot().firstRootBox(); box && box != m_rootInlineBox; box = box->nextRootBox())
+            ++count;
+
+        return count;
+    }
+
+
     void traverseNext()
     {
         m_rootInlineBox = m_rootInlineBox->nextRootBox();
