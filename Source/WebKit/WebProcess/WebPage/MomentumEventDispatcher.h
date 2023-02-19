@@ -48,13 +48,23 @@ using PlatformDisplayID = uint32_t;
 
 namespace WebKit {
 
-class EventDispatcher;
-
 class MomentumEventDispatcher {
     WTF_MAKE_NONCOPYABLE(MomentumEventDispatcher);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MomentumEventDispatcher(EventDispatcher&);
+    class Client {
+    friend class MomentumEventDispatcher;
+    public:
+        virtual ~Client() = default;
+
+    private:
+        virtual void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) = 0;
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+        virtual void flushMomentumEventLoggingSoon() = 0;
+#endif
+    };
+
+    MomentumEventDispatcher(Client&);
     ~MomentumEventDispatcher();
 
     bool handleWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
@@ -64,6 +74,10 @@ public:
     void displayWasRefreshed(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&);
 
     void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
+
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+    void flushLog();
+#endif
 
 private:
     void didStartMomentumPhase(WebCore::PageIdentifier, const WebWheelEvent&);
@@ -96,7 +110,6 @@ private:
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     void pushLogEntry(uint32_t generatedPhase, uint32_t eventPhase);
-    void flushLog();
 
     WebCore::FloatSize m_lastActivePhaseDelta;
 
@@ -158,7 +171,7 @@ private:
 
     HashMap<WebCore::PageIdentifier, DisplayProperties> m_displayProperties;
     HashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves;
-    EventDispatcher& m_dispatcher;
+    Client& m_client;
 };
 
 } // namespace WebKit

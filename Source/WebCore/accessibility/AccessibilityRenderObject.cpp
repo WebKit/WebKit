@@ -685,12 +685,6 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
                 if (frame->document() != nodeDocument)
                     return { };
 
-                // Renderers referenced by accessibility objects could get destroyed if TextIterator ends up triggering
-                // a style update or layout here. See also AXObjectCache::deferTextChangedIfNeeded().
-                if (nodeDocument->childNeedsStyleRecalc())
-                    return { };
-                ASSERT_WITH_SECURITY_IMPLICATION(!nodeDocument->view()->layoutContext().isInRenderTreeLayout());
-
                 return plainText(*textRange, textIteratorBehaviorForTextRange());
             }
         }
