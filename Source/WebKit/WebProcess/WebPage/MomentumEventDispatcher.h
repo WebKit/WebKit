@@ -29,7 +29,6 @@
 
 #define ENABLE_MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING 0
 
-#include "DisplayLinkObserverID.h"
 #include "ScrollingAccelerationCurve.h"
 #include "WebWheelEvent.h"
 #include <WebCore/FloatSize.h>
@@ -59,6 +58,10 @@ public:
 
     private:
         virtual void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) = 0;
+        
+        virtual void startDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID) = 0;
+        virtual void stopDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID) = 0;
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
         virtual void flushMomentumEventLoggingSoon() = 0;
 #endif
@@ -166,8 +169,6 @@ private:
         WebCore::FloatSize carryOffset;
 #endif
     } m_currentGesture;
-
-    DisplayLinkObserverID m_observerID;
 
     HashMap<WebCore::PageIdentifier, DisplayProperties> m_displayProperties;
     HashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves;

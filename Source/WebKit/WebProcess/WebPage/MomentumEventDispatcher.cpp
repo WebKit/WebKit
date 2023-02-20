@@ -29,9 +29,6 @@
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
 
 #include "Logging.h"
-#include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
-#include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/Scrollbar.h>
 #include <wtf/SystemTracing.h>
 
@@ -43,8 +40,7 @@ static constexpr WebCore::FramesPerSecond idealCurveFrameRate = 60;
 static constexpr Seconds idealCurveFrameInterval = 1_s / idealCurveFrameRate;
 
 MomentumEventDispatcher::MomentumEventDispatcher(Client& client)
-    : m_observerID(DisplayLinkObserverID::generate())
-    , m_client(client)
+    : m_client(client)
 {
 }
 
@@ -284,7 +280,7 @@ void MomentumEventDispatcher::startDisplayLink()
     }
 
     // FIXME: Switch down to lower-than-full-speed frame rates for the tail end of the curve.
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayProperties->displayID, WebCore::FullSpeedFramesPerSecond), 0);
+    m_client.startDisplayWasRefreshedCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher starting display link for display %d", displayProperties->displayID);
 #endif
@@ -298,7 +294,7 @@ void MomentumEventDispatcher::stopDisplayLink()
         return;
     }
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayProperties->displayID), 0);
+    m_client.stopDisplayWasRefreshedCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher stopping display link for display %d", displayProperties->displayID);
 #endif
