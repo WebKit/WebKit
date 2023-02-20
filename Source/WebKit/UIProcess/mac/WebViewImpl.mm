@@ -4624,6 +4624,8 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
         NSMarkedClauseSegmentAttributeName,
         NSTextAlternativesAttributeName,
         NSTextInsertionUndoableAttributeName,
+        NSBackgroundColorAttributeName,
+        NSForegroundColorAttributeName,
     ];
     // NSText also supports the following attributes, but it's
     // hard to tell which are really required for text input to

@@ -63,6 +63,7 @@ protected:
     void paintForegroundAndDecorations();
     void paintCompositionBackground();
     void paintCompositionUnderlines();
+    void paintCompositionForeground();
     void paintPlatformDocumentMarkers();
 
     enum class BackgroundStyle { Normal, Rounded };
