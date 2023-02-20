@@ -74,7 +74,7 @@ bool TestWithSuperclass::didReceiveSyncMessage(IPC::Connection& connection, IPC:
     if (connection.ignoreInvalidMessageForTesting())
         return false;
 #endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), static_cast<uint64_t>(decoder.destinationID()));
     return false;
 }
 

@@ -288,7 +288,7 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { handle->leakSendRight() });
         MockConnectionClient mockClientClient;
         clientConnection->open(mockClientClient);
-        EXPECT_TRUE(mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << destinationID;
+        EXPECT_TRUE(mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << static_cast<uint64_t>(destinationID);
         clientConnection->invalidate();
         done.add(destinationID);
         return true;
@@ -450,7 +450,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
     dispatchAndWait(runLoop, [&] {
         ASSERT_TRUE(openB());
         for (uint64_t i = 100u; i < 160u; ++i) {
-            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t value) {
+            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (UInt128 value) {
                 if (!value)
                     WTFLogAlways("GOT: %llu", j);
                 EXPECT_GE(value, 100u);
@@ -492,7 +492,7 @@ TEST_P(ConnectionRunLoopTest, DISABLED_RunLoopSendAsyncOnAnotherRunLoopDispatche
     auto otherRunLoop = createRunLoop(RUN_LOOP_NAME);
     otherRunLoop->dispatch([&] {
         for (uint64_t i = 100u; i < 160u; ++i) {
-            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&] (uint64_t value) {
+            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&] (UInt128 value) {
                 EXPECT_GE(value, 100u);
                 // These should be dispatched on `runLoop` above, which does not make much sense.
                 replies.add(value);
@@ -533,7 +533,7 @@ TEST_P(ConnectionRunLoopTest, InvalidSendWithAsyncReplyDispatchesCancelHandlerOn
     runLoop->dispatch([&] {
         ASSERT_TRUE(openB());
         b()->invalidate();
-        b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&] (uint64_t value) {
+        b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&] (UInt128 value) {
             reply = value;
             }, 77);
         // Halt the runloop for a proof that the async replies are not processed on

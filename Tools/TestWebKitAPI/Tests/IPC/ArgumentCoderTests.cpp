@@ -68,7 +68,7 @@ public:
     }
 
     IPC::Encoder& encoder() const { return *m_encoder; }
-    size_t headerSize() const { return 16; }
+    size_t headerSize() const { return 24; }
     size_t encoderSize() const { return m_encoder->bufferSize(); }
 
     std::unique_ptr<IPC::Decoder> createDecoder() const

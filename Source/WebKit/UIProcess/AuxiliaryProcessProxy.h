@@ -60,14 +60,15 @@ public:
 
     virtual ProcessThrottler& throttler() = 0;
 
-    template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
+    template<typename T> bool send(T&& message, UInt128 destinationID, OptionSet<IPC::SendOption> sendOptions = { });
 
     template<typename T> using SendSyncResult = IPC::Connection::SendSyncResult<T>;
-    template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
+    template<typename T> SendSyncResult<T> sendSync(T&& message, UInt128 destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
 
     enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
+
     using AsyncReplyID = IPC::Connection::AsyncReplyID;
-    template<typename T, typename C> AsyncReplyID sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    template<typename T, typename C> AsyncReplyID sendWithAsyncReply(T&&, C&&, UInt128 destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
     template<typename T, typename C, typename U>
     AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
@@ -104,8 +105,8 @@ public:
     }
 
     void addMessageReceiver(IPC::ReceiverName, IPC::MessageReceiver&);
-    void addMessageReceiver(IPC::ReceiverName, uint64_t destinationID, IPC::MessageReceiver&);
-    void removeMessageReceiver(IPC::ReceiverName, uint64_t destinationID);
+    void addMessageReceiver(IPC::ReceiverName, UInt128 destinationID, IPC::MessageReceiver&);
+    void removeMessageReceiver(IPC::ReceiverName, UInt128 destinationID);
     void removeMessageReceiver(IPC::ReceiverName);
     
     template <typename T>
@@ -223,7 +224,7 @@ private:
 };
 
 template<typename T>
-bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
+bool AuxiliaryProcessProxy::send(T&& message, UInt128 destinationID, OptionSet<IPC::SendOption> sendOptions)
 {
     static_assert(!T::isSync, "Async message expected");
 
@@ -234,7 +235,7 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 }
 
 template<typename T>
-AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& message, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
+AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& message, UInt128 destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
 {
     static_assert(T::isSync, "Sync message expected");
 
@@ -247,7 +248,7 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
 }
 
 template<typename T, typename C>
-AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, UInt128 destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     static_assert(!T::isSync, "Async message expected");
 

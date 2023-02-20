@@ -1418,7 +1418,7 @@ void WebProcessPool::addMessageReceiver(IPC::ReceiverName messageReceiverName, I
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, messageReceiver);
 }
 
-void WebProcessPool::addMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID, IPC::MessageReceiver& messageReceiver)
+void WebProcessPool::addMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID, IPC::MessageReceiver& messageReceiver)
 {
     m_messageReceiverMap.addMessageReceiver(messageReceiverName, destinationID, messageReceiver);
 }
@@ -1428,7 +1428,7 @@ void WebProcessPool::removeMessageReceiver(IPC::ReceiverName messageReceiverName
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName);
 }
 
-void WebProcessPool::removeMessageReceiver(IPC::ReceiverName messageReceiverName, uint64_t destinationID)
+void WebProcessPool::removeMessageReceiver(IPC::ReceiverName messageReceiverName, UInt128 destinationID)
 {
     m_messageReceiverMap.removeMessageReceiver(messageReceiverName, destinationID);
 }

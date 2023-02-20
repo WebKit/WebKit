@@ -62,7 +62,7 @@ TEST_P(MessageSenderTest, SendAsyncAfterInvalidateCancelsAllAsyncReplies)
     {
         HashSet<uint64_t> replies;
         for (uint64_t i = 100u; i < 160u; ++i) {
-            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t value) {
+            b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (UInt128 value) {
                 EXPECT_EQ(value, 0u) << j;
                 if (!value)
                     replies.add(j);
@@ -77,7 +77,7 @@ TEST_P(MessageSenderTest, SendAsyncAfterInvalidateCancelsAllAsyncReplies)
         SimpleMessageSender sender { b() };
         HashSet<uint64_t> replies;
         for (uint64_t i = 100u; i < 160u; ++i) {
-            sender.sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t value) {
+            sender.sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (UInt128 value) {
                 EXPECT_EQ(value, 0u) << j;
                 if (!value)
                     replies.add(j);

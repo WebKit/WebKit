@@ -43,7 +43,7 @@ std::optional<T> copyViaEncoder(const T& o)
 
 struct MessageInfo {
     IPC::MessageName messageName;
-    uint64_t destinationID;
+    UInt128 destinationID;
 };
 
 struct MockTestMessage1 {
@@ -59,7 +59,7 @@ struct MockTestMessageWithAsyncReply1 {
     // If WebPage_GetBytecodeProfileReply is removed, just use another one.
     static constexpr IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::WebPage_GetBytecodeProfileReply; }
     std::tuple<> arguments() { return { }; }
-    using ReplyArguments = std::tuple<uint64_t>;
+    using ReplyArguments = std::tuple<UInt128>;
 };
 
 class MockConnectionClient final : public IPC::Connection::Client {
