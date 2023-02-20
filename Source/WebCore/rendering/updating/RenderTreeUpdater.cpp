@@ -48,6 +48,7 @@
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include "TextManipulationController.h"
+#include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
 
 #include "FrameView.h"
@@ -346,6 +347,18 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         element.storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(elementUpdateStyle)));
     else
         element.clearDisplayContentsStyle();
+
+    if (!hasDisplayContents && !elementUpdateStyle.hasAutoLengthContainIntrinsicSize())
+        element.clearLastRememberedSize();
+    auto scopeExit = makeScopeExit([&] {
+        if (!hasDisplayContents) {
+            auto* box = element.renderBox();
+            if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->shouldSkipContent())
+                m_document.observeForContainIntrinsicSize(element);
+            else
+                m_document.unobserveForContainIntrinsicSize(element);
+        }
+    });
 
     bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkipsContent());
     if (shouldCreateNewRenderer) {

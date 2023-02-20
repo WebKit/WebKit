@@ -608,6 +608,7 @@ public:
     ContainIntrinsicSizeType containIntrinsicHeightType() const { return static_cast<ContainIntrinsicSizeType>(m_nonInheritedData->rareData->containIntrinsicHeightType); }
     std::optional<Length> containIntrinsicWidth() const { return m_nonInheritedData->rareData->containIntrinsicWidth; }
     std::optional<Length> containIntrinsicHeight() const { return m_nonInheritedData->rareData->containIntrinsicHeight; }
+    bool hasAutoLengthContainIntrinsicSize() const { return containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndLength || containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndLength; }
 
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_nonInheritedData->miscData->deprecatedFlexibleBox->align); }
     BoxDirection boxDirection() const { return static_cast<BoxDirection>(m_inheritedFlags.boxDirection); }
