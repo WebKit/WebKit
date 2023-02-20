@@ -65,6 +65,9 @@ def main():
     parser.add_argument('-t', '--target-path', dest='target_path', action='store',
         help='Path to the target')
 
+    parser.add_argument('-s', '--skip-nested', dest='skip_nested', default=False, action='store_true',
+        help='Do not traverse nested classes and structs')
+
     args = parser.parse_args()
     build_dir = webkit_build_dir()
 
@@ -80,7 +83,7 @@ def main():
         target_path = os.path.join(build_dir, args.config, args.framework + ".framework", args.framework);
     
     lldb_instance = LLDBDebuggerInstance(target_path, args.arch)
-    class_layout = lldb_instance.layout_for_classname(args.classname)
+    class_layout = lldb_instance.layout_for_classname(args.classname, args.skip_nested)
     class_layout.dump()
 
 
