@@ -5736,13 +5736,13 @@ public:
         Jump tierUp = m_jit.branchAdd32(CCallHelpers::PositiveOrZero, TrustedImm32(TierUpCount::functionEntryIncrement()), Address(m_scratchGPR));
         MacroAssembler::Label tierUpResume = m_jit.label();
         auto functionIndex = m_functionIndex;
-        addLatePath([tierUp, tierUpResume, functionIndex](BBQJIT&, CCallHelpers& jit) {
+        addLatePath([tierUp, tierUpResume, functionIndex](BBQJIT& generator, CCallHelpers& jit) {
             tierUp.link(&jit);
             jit.move(TrustedImm32(functionIndex), GPRInfo::argumentGPR1);
             MacroAssembler::Call call = jit.nearCall();
             jit.jump(tierUpResume);
 
-            bool isSIMD = false; // TODO: Support SIMD
+            bool isSIMD = generator.m_isSIMD;
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
                 MacroAssembler::repatchNearCall(linkBuffer.locationOfNearCall<NoPtrTag>(call), CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(triggerOMGEntryTierUpThunkGenerator(isSIMD)).code()));
             });
@@ -6492,7 +6492,9 @@ public:
     // SIMD
 
     void notifyFunctionUsesSIMD()
-    { }
+    {
+        m_isSIMD = true;
+    }
 
     PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result)
     {
@@ -8364,6 +8366,7 @@ private:
     int m_localStorage { 0 }; // Stack offset pointing to the local with the lowest address.
     constexpr static int tempSlotSize { 16 }; // Size of the stack slot for a stack temporary. Currently the size of the largest possible temporary (a v128).
     int m_blockCount;
+    bool m_isSIMD { false }; // Whether the function we are compiling uses SIMD instructions or not.
 
     RegisterID m_scratchGPR { GPRInfo::nonPreservedNonArgumentGPR0 }; // Scratch registers to hold temporaries in operations.
     FPRegisterID m_scratchFPR;
