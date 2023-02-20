@@ -198,6 +198,8 @@ public:
             || type() == Type::RawResource;
     }
 
+    void setAsyncLoad() { m_forceAsync = true; }
+
     void setIgnoreForRequestCount(bool ignoreForRequestCount) { m_ignoreForRequestCount = ignoreForRequestCount; }
 
     unsigned accessCount() const { return m_accessCount; }
@@ -395,6 +397,7 @@ private:
     bool m_hasUnknownEncoding : 1;
     bool m_switchingClientsToRevalidatedResource : 1 { false };
     bool m_ignoreForRequestCount : 1;
+    bool m_forceAsync : 1;
 
 #if ASSERT_ENABLED
     bool m_deleted { false };

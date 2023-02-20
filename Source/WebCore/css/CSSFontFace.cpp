@@ -36,6 +36,7 @@
 #include "CSSValue.h"
 #include "CSSValueList.h"
 #include "CachedFont.h"
+#include "CachedFontLoadRequest.h"
 #include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
@@ -70,8 +71,12 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
                 fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, local->fontFaceName(), *local->svgFontFaceElement()));
         } else {
             if (allowDownloading) {
-                if (auto request = downcast<CSSFontFaceSrcResourceValue>(src.get()).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
-                    fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(request))));
+                if (is<Document>(context))
+                    fontFace.adoptPendingSource(downcast<CSSFontFaceSrcResourceValue>(src.get()), context, isInitiatingElementInUserAgentShadowTree);
+                else {
+                    if (auto request = downcast<CSSFontFaceSrcResourceValue>(src.get()).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
+                        fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(request))));
+                }
             }
         }
     }
@@ -450,7 +455,9 @@ bool CSSFontFace::computeFailureState() const
     if (status() == Status::Failure)
         return true;
     for (auto& source : m_sources) {
-        if (source->status() != CSSFontFaceSource::Status::Failure)
+        if (!std::holds_alternative<std::unique_ptr<CSSFontFaceSource>>(source))
+            return false;
+        if (std::get<std::unique_ptr<CSSFontFaceSource>>(source)->status() != CSSFontFaceSource::Status::Failure)
             return false;
     }
     return true;
@@ -513,6 +520,14 @@ void CSSFontFace::setWrapper(FontFace& newWrapper)
 void CSSFontFace::adoptSource(std::unique_ptr<CSSFontFaceSource>&& source)
 {
     m_sources.append(WTFMove(source));
+
+    // We should never add sources in the middle of loading.
+    ASSERT(!m_sourcesPopulated);
+}
+
+void CSSFontFace::adoptPendingSource(CSSFontFaceSrcResourceValue& source, ScriptExecutionContext* context, bool isInitiatingElementInUserAgentShadowTree)
+{
+    m_sources.append(PendingSource { source, context, isInitiatingElementInUserAgentShadowTree });
 
     // We should never add sources in the middle of loading.
     ASSERT(!m_sourcesPopulated);
@@ -613,8 +628,37 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource&)
 void CSSFontFace::opportunisticallyStartFontDataURLLoading()
 {
     // We don't want to go crazy here and blow the cache. Usually these data URLs are the first item in the src: list, so let's just check that one.
-    if (!m_sources.isEmpty())
-        m_sources[0]->opportunisticallyStartFontDataURLLoading();
+    if (m_sources.isEmpty())
+        return;
+
+    if (std::holds_alternative<PendingSource>(m_sources[0])) {
+        auto& url = std::get<PendingSource>(m_sources[0]).source->resolvedURL();
+        if (url.protocolIsData() && url.string().length() < MB)
+            ensurePendingSourceFlushed(0);
+    }
+
+    if (std::holds_alternative<std::unique_ptr<CSSFontFaceSource>>(m_sources[0]))
+        std::get<std::unique_ptr<CSSFontFaceSource>>(m_sources[0])->opportunisticallyStartFontDataURLLoading();
+}
+
+bool CSSFontFace::ensurePendingSourceFlushed(size_t i)
+{
+    if (std::holds_alternative<std::unique_ptr<CSSFontFaceSource>>(m_sources[i]))
+        return true;
+
+    auto& pendingSource = std::get<PendingSource>(m_sources[i]);
+
+    auto* context = pendingSource.scriptExecutionContext.get();
+    if (!context)
+        return false;
+
+    if (auto request = pendingSource.source->fontLoadRequest(*context, pendingSource.isInitiatingElementInUserAgentShadowTree)) {
+        if (auto* cachedRequest = dynamicDowncast<CachedFontLoadRequest>(request.get()))
+            cachedRequest->cachedFont().setAsyncLoad();
+        m_sources[i] = makeUnique<CSSFontFaceSource>(*this, *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(request)));
+        return true;
+    }
+    return false;
 }
 
 size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
@@ -624,7 +668,9 @@ size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
 
     size_t i;
     for (i = 0; i < m_sources.size(); ++i) {
-        auto& source = m_sources[i];
+        if (!ensurePendingSourceFlushed(i))
+            continue;
+        auto& source = std::get<std::unique_ptr<CSSFontFaceSource>>(m_sources[i]);
 
         if (source->status() == CSSFontFaceSource::Status::Pending) {
             ASSERT(m_status == Status::Pending || m_status == Status::Loading || m_status == Status::TimedOut);
@@ -711,7 +757,10 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
         return nullptr;
 
     for (size_t i = startIndex; i < m_sources.size(); ++i) {
-        auto& source = m_sources[i];
+        if (!ensurePendingSourceFlushed(i))
+            continue;
+        auto& source = std::get<std::unique_ptr<CSSFontFaceSource>>(m_sources[i]);
+
         if (source->status() == CSSFontFaceSource::Status::Pending && (policy == ExternalResourceDownloadPolicy::Allow || !source->requiresExternalResource()))
             source->load(document());
 
@@ -745,16 +794,6 @@ void CSSFontFace::updateStyleIfNeeded()
     iterateClients(m_clients, [&](Client& client) {
         client.updateStyleIfNeeded(*this);
     });
-}
-
-bool CSSFontFace::hasSVGFontFaceSource() const
-{
-    size_t size = m_sources.size();
-    for (size_t i = 0; i < size; i++) {
-        if (m_sources[i]->isSVGFontFaceSource())
-            return true;
-    }
-    return false;
 }
 
 void CSSFontFace::setErrorState()

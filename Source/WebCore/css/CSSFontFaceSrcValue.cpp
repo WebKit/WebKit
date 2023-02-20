@@ -127,4 +127,9 @@ bool CSSFontFaceSrcResourceValue::equals(const CSSFontFaceSrcResourceValue& othe
     return m_location.specifiedURLString == m_location.specifiedURLString && m_format == other.m_format;
 }
 
+const URL& CSSFontFaceSrcResourceValue::resolvedURL() const
+{
+    return m_location.resolvedURL;
+}
+
 }
