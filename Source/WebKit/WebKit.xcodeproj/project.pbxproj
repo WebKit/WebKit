@@ -4540,6 +4540,10 @@
 		41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LibWebRTCCodecsProxy.mm; sourceTree = "<group>"; };
 		41E242DE26E0C8D6009A8C64 /* NetworkRTCUtilitiesCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkRTCUtilitiesCocoa.h; sourceTree = "<group>"; };
 		41E242DF26E0C904009A8C64 /* NetworkRTCUtilitiesCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCUtilitiesCocoa.mm; sourceTree = "<group>"; };
+		41E4C3EF29A3DD5B00EA6B3A /* BackgroundFetchMemoryStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundFetchMemoryStore.h; sourceTree = "<group>"; };
+		41E4C3F029A3DD5B00EA6B3A /* BackgroundFetchMemoryStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundFetchMemoryStore.cpp; sourceTree = "<group>"; };
+		41E4C3F429A3E38800EA6B3A /* BackgroundFetchLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundFetchLoad.h; sourceTree = "<group>"; };
+		41E4C3F529A3E38900EA6B3A /* BackgroundFetchLoad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundFetchLoad.cpp; sourceTree = "<group>"; };
 		41E67A8C25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeAudioSource.h; sourceTree = "<group>"; };
 		41E67A8D25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeAudioSource.cpp; sourceTree = "<group>"; };
 		41EB4D3A274CE04500A9272B /* ServiceWorkerNavigationPreloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNavigationPreloader.h; sourceTree = "<group>"; };
@@ -10393,6 +10397,8 @@
 				468386652763FA1B00CF9182 /* SharedWorker */,
 				93085DC226E1BB65000EC6A7 /* storage */,
 				413075971DE84ED70039EC69 /* webrtc */,
+				41E4C3F529A3E38900EA6B3A /* BackgroundFetchLoad.cpp */,
+				41E4C3F429A3E38800EA6B3A /* BackgroundFetchLoad.h */,
 				5C826D6E26D58A16008AEC91 /* DatabaseUtilities.cpp */,
 				5C826D6F26D58A16008AEC91 /* DatabaseUtilities.h */,
 				53F3CAA5206C443E0086490E /* NetworkActivityTracker.cpp */,
@@ -11425,6 +11431,8 @@
 		93085DC226E1BB65000EC6A7 /* storage */ = {
 			isa = PBXGroup;
 			children = (
+				41E4C3F029A3DD5B00EA6B3A /* BackgroundFetchMemoryStore.cpp */,
+				41E4C3EF29A3DD5B00EA6B3A /* BackgroundFetchMemoryStore.h */,
 				935BF7FB2936BF1A00B41326 /* CacheStorageCache.cpp */,
 				935BF7F22936BF1700B41326 /* CacheStorageCache.h */,
 				934CF814294B884B00304F7D /* CacheStorageDiskStore.cpp */,

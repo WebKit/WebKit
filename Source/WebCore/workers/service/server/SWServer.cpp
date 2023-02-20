@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchEngine.h"
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchOptions.h"
 #include "BackgroundFetchRecordInformation.h"
@@ -258,6 +259,8 @@ void SWServer::removeRegistration(ServiceWorkerRegistrationIdentifier registrati
     m_originStore->remove(registration->key().topOrigin());
     if (m_registrationStore)
         m_registrationStore->removeRegistration(registration->key());
+
+    backgroundFetchEngine().remove(*registration);
 }
 
 Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL)
@@ -1540,6 +1543,36 @@ void SWServer::processNotificationEvent(NotificationData&& data, NotificationEve
     });
 }
 
+void SWServer::fireBackgroundFetchEvent(SWServerRegistration& registration, BackgroundFetchInformation&& info)
+{
+    RefPtr worker = registration.activeWorker();
+    if (!worker) {
+        RELEASE_LOG_ERROR(ServiceWorker, "Cannot process background fetch update message: No active worker for scope %" PRIVATE_LOG_STRING, registration.key().scope().string().utf8().data());
+        return;
+    }
+
+    fireFunctionalEvent(registration, [weakThis = WeakPtr { *this }, worker = worker.releaseNonNull(), info = WTFMove(info)](auto&& connectionOrStatus) mutable {
+        if (!connectionOrStatus.has_value())
+            return;
+
+        auto serviceWorkerIdentifier = worker->identifier();
+
+        worker->incrementFunctionalEventCounter();
+        auto terminateWorkerTimer = makeUnique<Timer>([worker] {
+            RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a background fetch event");
+            worker->decrementFunctionalEventCounter();
+        });
+        terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
+        connectionOrStatus.value()->fireBackgroundFetchEvent(serviceWorkerIdentifier, info, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+            RELEASE_LOG_ERROR_IF(!succeeded, ServiceWorker, "Background fetch event was not successfully handled");
+            if (terminateWorkerTimer->isActive()) {
+                worker->decrementFunctionalEventCounter();
+                terminateWorkerTimer->stop();
+            }
+        });
+    });
+}
+
 // https://w3c.github.io/ServiceWorker/#fire-functional-event-algorithm, just for push right now.
 void SWServer::fireFunctionalEvent(SWServerRegistration& registration, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&& callback)
 {
@@ -1583,46 +1616,76 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
     });
 }
 
-void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&& callback)
+BackgroundFetchEngine& SWServer::backgroundFetchEngine()
 {
-    // FIXME: To implement.
-    callback(makeUnexpected(ExceptionData { NotSupportedError, emptyString() }));
+    if (!m_backgroundFetchEngine)
+        m_backgroundFetchEngine = makeUnique<BackgroundFetchEngine>(*this);
+    return *m_backgroundFetchEngine;
 }
 
-void SWServer::Connection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&& callback)
+void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, BackgroundFetchEngine::ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    // FIXME: To implement.
-    callback({ });
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
+        return;
+    }
+
+    server().backgroundFetchEngine().startBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(requests), WTFMove(options), WTFMove(callback));
 }
 
-void SWServer::Connection::backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier, BackgroundFetchIdentifiersCallback&& callback)
+void SWServer::Connection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, BackgroundFetchEngine::ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    // FIXME: To implement.
-    callback({ });
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
+        return;
+    }
+
+    server().backgroundFetchEngine().backgroundFetchInformation(*registration, backgroundFetchIdentifier, WTFMove(callback));
 }
 
-void SWServer::Connection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, AbortBackgroundFetchCallback&& callback)
+void SWServer::Connection::backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier registrationIdentifier, BackgroundFetchEngine::BackgroundFetchIdentifiersCallback&& callback)
 {
-    // FIXME: To implement.
-    callback(false);
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback({ });
+        return;
+    }
+
+    server().backgroundFetchEngine().backgroundFetchIdentifiers(*registration, WTFMove(callback));
 }
 
-void SWServer::Connection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&& callback)
+void SWServer::Connection::abortBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, BackgroundFetchEngine::AbortBackgroundFetchCallback&& callback)
 {
-    // FIXME: To implement.
-    callback({ });
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(false);
+        return;
+    }
+
+    server().backgroundFetchEngine().abortBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(callback));
 }
 
-void SWServer::Connection::retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&& callback)
+void SWServer::Connection::matchBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, RetrieveRecordsOptions&& options, BackgroundFetchEngine::MatchBackgroundFetchCallback&& callback)
 {
-    // FIXME: To implement.
-    callback({ });
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback({ });
+        return;
+    }
+
+    server().backgroundFetchEngine().matchBackgroundFetch(*registration, backgroundFetchIdentifier, WTFMove(options), WTFMove(callback));
 }
 
-void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&& callback)
+void SWServer::Connection::retrieveRecordResponse(BackgroundFetchRecordIdentifier recordIdentifier, BackgroundFetchEngine::RetrieveRecordResponseCallback&& callback)
 {
-    // FIXME: To implement.
-    callback({ });
+    server().backgroundFetchEngine().retrieveRecordResponse(recordIdentifier, WTFMove(callback));
+}
+
+void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdentifier recordIdentifier, BackgroundFetchEngine::RetrieveRecordResponseBodyCallback&& callback)
+{
+    server().backgroundFetchEngine().retrieveRecordResponseBody(recordIdentifier, WTFMove(callback));
 }
 
 } // namespace WebCore

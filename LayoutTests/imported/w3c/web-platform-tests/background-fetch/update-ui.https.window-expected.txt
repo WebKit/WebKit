@@ -1,5 +1,7 @@
 
-FAIL Background Fetch updateUI resolves promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Background Fetch updateUI called twice fails promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL Background Fetch updateUI fails when event is not active promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Background Fetch updateUI resolves Test timed out
+NOTRUN Background Fetch updateUI called twice fails
+NOTRUN Background Fetch updateUI fails when event is not active
 

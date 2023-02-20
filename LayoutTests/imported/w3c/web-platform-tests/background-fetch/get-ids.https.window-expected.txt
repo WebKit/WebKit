@@ -1,4 +1,4 @@
 
 PASS BackgroundFetchManager.getIds() does not require an activated worker
-FAIL The BackgroundFetchManager exposes active fetches promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS The BackgroundFetchManager exposes active fetches
 

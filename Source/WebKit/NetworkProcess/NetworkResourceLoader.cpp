@@ -27,6 +27,7 @@
 #include "NetworkResourceLoader.h"
 
 #include "FormDataReference.h"
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkCacheSpeculativeLoadManager.h"

@@ -322,6 +322,20 @@ void WebSWContextManagerConnection::fireNotificationEvent(ServiceWorkerIdentifie
     });
 }
 
+void WebSWContextManagerConnection::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
+{
+    assertIsCurrent(m_queue.get());
+
+    auto inQueueCallback = [queue = m_queue, callback = WTFMove(callback)](bool result) mutable {
+        queue->dispatch([result, callback = WTFMove(callback)]() mutable {
+            callback(result);
+        });
+    };
+    callOnMainRunLoop([identifier, info = WTFMove(info), callback = WTFMove(inQueueCallback)]() mutable {
+        SWContextManager::singleton().fireBackgroundFetchEvent(identifier, WTFMove(info), WTFMove(callback));
+    });
+}
+
 void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
 {
     assertIsCurrent(m_queue.get());

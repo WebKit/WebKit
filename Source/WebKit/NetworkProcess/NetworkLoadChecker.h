@@ -104,6 +104,9 @@ public:
 
     void enableContentExtensionsCheck() { m_checkContentExtensions = true; }
 
+    RefPtr<WebCore::SecurityOrigin> origin() const { return m_origin; }
+    RefPtr<WebCore::SecurityOrigin> topOrigin() const { return m_topOrigin; }
+
 private:
     WebCore::ContentSecurityPolicy* contentSecurityPolicy();
     bool isChecking() const { return !!m_corsPreflightChecker; }

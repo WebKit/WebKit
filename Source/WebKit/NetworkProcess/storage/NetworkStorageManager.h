@@ -51,6 +51,7 @@ class SharedFileHandle;
 }
 
 namespace WebCore {
+class BackgroundFetchStore;
 class IDBCursorInfo;
 class IDBKeyData;
 class IDBIndexInfo;
@@ -109,6 +110,10 @@ public:
 #if PLATFORM(IOS_FAMILY)
     void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
 #endif
+
+#if ENABLE(SERVICE_WORKER)
+    Ref<WebCore::BackgroundFetchStore> createBackgroundFetchStore();
+#endif // ENABLE(SERVICE_WORKER)
 
 private:
     NetworkStorageManager(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, UnifiedOriginStorageLevel);

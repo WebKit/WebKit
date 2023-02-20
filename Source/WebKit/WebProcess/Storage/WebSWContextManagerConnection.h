@@ -37,6 +37,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/BackgroundFetchFailureReason.h>
 #include <WebCore/SWContextManager.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerTypes.h>
@@ -108,6 +109,7 @@ private:
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
     void firePushEvent(WebCore::ServiceWorkerIdentifier, const std::optional<IPC::DataReference>&, CompletionHandler<void(bool)>&&);
     void fireNotificationEvent(WebCore::ServiceWorkerIdentifier, WebCore::NotificationData&&, WebCore::NotificationEventType, CompletionHandler<void(bool)>&&);
+    void fireBackgroundFetchEvent(WebCore::ServiceWorkerIdentifier, WebCore::BackgroundFetchInformation&&, CompletionHandler<void(bool)>&&);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, HashMap<URL, WebCore::ScriptBuffer>&& importedScripts);

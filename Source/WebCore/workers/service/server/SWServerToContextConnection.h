@@ -71,6 +71,7 @@ public:
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
     virtual void firePushEvent(ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&&) = 0;
     virtual void fireNotificationEvent(ServiceWorkerIdentifier, const NotificationData&, NotificationEventType, CompletionHandler<void(bool)>&&) = 0;
+    virtual void fireBackgroundFetchEvent(ServiceWorkerIdentifier, const BackgroundFetchInformation&, CompletionHandler<void(bool)>&&) = 0;
     virtual ProcessIdentifier webProcessIdentifier() const = 0;
 
     // Messages back from the SW host process

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkStorageManager.h"
 
+#include "BackgroundFetchMemoryStore.h"
 #include "CacheStorageCache.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageRegistry.h"
@@ -1320,6 +1321,13 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
     builder.append("]}");
     callback(builder.toString());
 }
+
+#if ENABLE(SERVICE_WORKER)
+Ref<WebCore::BackgroundFetchStore> NetworkStorageManager::createBackgroundFetchStore()
+{
+    return BackgroundFetchMemoryStore::create();
+}
+#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit
 
