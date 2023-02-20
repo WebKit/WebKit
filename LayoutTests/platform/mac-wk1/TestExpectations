@@ -2396,6 +2396,13 @@ webkit.org/b/245902 [ Debug ] contentfiltering/allow-media-document.html [ Skip 
 
 webkit.org/b/246653 [ Debug ] media/modern-media-controls/media-documents/click-on-video-should-not-pause.html [ Skip ]
 
+# webkit.org/b/252582 5 x editing/mac/attributed-string tests are constant failures
+editing/mac/attributed-string/attributed-string-across-shadow-boundaries-1.html [ Failure ]
+editing/mac/attributed-string/attributed-string-across-shadow-boundaries-2.html [ Failure ]
+editing/mac/attributed-string/attributed-string-across-shadow-boundaries-3.html [ Failure ]
+editing/mac/attributed-string/attributed-string-across-shadow-boundaries-4.html [ Failure ]
+editing/mac/attributed-string/attributed-string-across-shadow-boundaries-5.html [ Failure ]
+
 # CONSOLE MESSAGE output is nondeterministic and varies from run-to-run
 http/tests/security/basic-auth-subresource.html [ Failure Pass ]
 http/tests/security/contentSecurityPolicy/image-with-https-url-allowed-by-csp-img-src-star.html [ DumpJSConsoleLogInStdErr ]
