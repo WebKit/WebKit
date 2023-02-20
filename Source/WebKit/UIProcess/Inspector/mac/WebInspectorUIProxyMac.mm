@@ -36,6 +36,7 @@
 #import "WKInspectorPrivateMac.h"
 #import "WKInspectorViewController.h"
 #import "WKObject.h"
+#import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebInspectorUIMessages.h"
 #import "WebPageGroup.h"

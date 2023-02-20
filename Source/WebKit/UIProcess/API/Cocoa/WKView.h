@@ -39,7 +39,24 @@
 @class WKProcessGroup;
 @class WKViewData;
 
-// FIXME: Remove this file once rdar://105559864 and rdar://105560420 and rdar://105560497 are complete.
-// Note: rdar://105011969 tracks additional use of this file, but those are unused test utilities that are never built.
+WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKWebView", macos(10.10, 10.14.4), ios(8.0, 12.2))
+@interface WKView : NSView <NSTextInputClient> {
+@private
+    WKViewData *_data;
+    WK_UNUSED_INSTANCE_VARIABLE unsigned _unused;
+}
+
+- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup;
+- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+@property(readonly) WKBrowsingContextController *browsingContextController;
+#pragma clang diagnostic pop
+
+@property BOOL drawsBackground;
+@property BOOL drawsTransparentBackground;
+
+@end
 
 #endif

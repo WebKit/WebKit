@@ -30,6 +30,8 @@
 
 #import "ImageOptions.h"
 #import "WKAPICast.h"
+#import <WebKit/WKView.h>
+#import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -43,6 +45,9 @@
 // FIXME: We should switch to the low-resolution scale if a view we have high-resolution tiles for repaints.
 
 @implementation _WKThumbnailView {
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    RetainPtr<WKView> _wkView;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<WKWebView> _wkWebView;
     NakedPtr<WebKit::WebPageProxy> _webPageProxy;
 
@@ -69,6 +74,21 @@
     
     return self;
 }
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+- (instancetype)initWithFrame:(NSRect)frame fromWKView:(WKView *)wkView
+{
+    if (!(self = [self initWithFrame:frame]))
+        return nil;
+
+    _wkView = wkView;
+    _webPageProxy = WebKit::toImpl([_wkView pageRef]);
+    _originalMayStartMediaWhenInWindow = _webPageProxy->mayStartMediaWhenInWindow();
+    _originalSourceViewIsInWindow = !![_wkView window];
+
+    return self;
+}
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (instancetype)initWithFrame:(NSRect)frame fromWKWebView:(WKWebView *)webView
 {
@@ -148,9 +168,14 @@
 - (void)_viewWasUnparented
 {
     if (!_exclusivelyUsesSnapshot) {
-        ASSERT(_wkWebView);
-        [_wkWebView _setThumbnailView:nil];
-        [_wkWebView _setIgnoresAllEvents:NO];
+        if (_wkView) {
+            [_wkView _setThumbnailView:nil];
+            [_wkView _setIgnoresAllEvents:NO];
+        } else {
+            ASSERT(_wkWebView);
+            [_wkWebView _setThumbnailView:nil];
+            [_wkWebView _setIgnoresAllEvents:NO];
+        }
         _webPageProxy->setMayStartMediaWhenInWindow(_originalMayStartMediaWhenInWindow);
     }
 
@@ -163,6 +188,8 @@
 
 - (void)_viewWasParented
 {
+    if (_wkView && [_wkView _thumbnailView])
+        return;
     if (_wkWebView && [_wkWebView _thumbnailView])
         return;
 
@@ -172,9 +199,14 @@
     [self _requestSnapshotIfNeeded];
 
     if (!_exclusivelyUsesSnapshot) {
-        ASSERT(_wkWebView);
-        [_wkWebView _setThumbnailView:self];
-        [_wkWebView _setIgnoresAllEvents:YES];
+        if (_wkView) {
+            [_wkView _setThumbnailView:self];
+            [_wkView _setIgnoresAllEvents:YES];
+        } else {
+            ASSERT(_wkWebView);
+            [_wkWebView _setThumbnailView:self];
+            [_wkWebView _setIgnoresAllEvents:YES];
+        }
     }
 }
 
