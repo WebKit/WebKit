@@ -260,7 +260,7 @@ class Preferences
   STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
 
   # Corresponds to WebFeatureCategory enum cases.
-  CATEGORIES = %w{ css dom javascript media networking privacy security }
+  CATEGORIES = %w{ animation css dom javascript media networking privacy security }
 
   def initializeParsedPreferences(parsedPreferences)
     result = []

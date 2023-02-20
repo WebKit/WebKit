@@ -6190,6 +6190,7 @@ ThirdPartyIframeRedirectBlockingEnabled:
 ThreadedAnimationResolutionEnabled:
   type: bool
   status: unstable
+  category: animation
   humanReadableName: "Threaded animation resolution"
   humanReadableDescription: "Run accelerated animations on a separate thread"
   condition: ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -6786,7 +6787,7 @@ WebAPIsInShadowRealmEnabled:
 WebAnimationsCompositeOperationsEnabled:
   type: bool
   status: stable
-  category: dom
+  category: animation
   humanReadableName: "Web Animations composite operations"
   humanReadableDescription: "Support for the CompositeOperation enum and properties consuming it"
   defaultValue:
@@ -6800,7 +6801,7 @@ WebAnimationsCompositeOperationsEnabled:
 WebAnimationsCustomEffectsEnabled:
   type: bool
   status: testable
-  category: dom
+  category: animation
   humanReadableName: "Web Animations custom effects"
   humanReadableDescription: "Support for the CustomEffect interface"
   defaultValue:
@@ -6814,7 +6815,7 @@ WebAnimationsCustomEffectsEnabled:
 WebAnimationsCustomFrameRateEnabled:
   type: bool
   status: testable
-  category: dom
+  category: animation
   humanReadableName: "Web Animations custom frame rate"
   humanReadableDescription: "Support for specifying a custom frame rate for Web Animations"
   defaultValue:
@@ -6828,7 +6829,7 @@ WebAnimationsCustomFrameRateEnabled:
 WebAnimationsIterationCompositeEnabled:
   type: bool
   status: stable
-  category: dom
+  category: animation
   humanReadableName: "Web Animations iteration composite"
   humanReadableDescription: "Support for the KeyframeEffect.iterationComposite property"
   defaultValue:
@@ -6842,7 +6843,7 @@ WebAnimationsIterationCompositeEnabled:
 WebAnimationsMutableTimelinesEnabled:
   type: bool
   status: stable
-  category: dom
+  category: animation
   humanReadableName: "Web Animations mutable timelines"
   humanReadableDescription: "Support for setting the timeline property of an Animation object"
   defaultValue:

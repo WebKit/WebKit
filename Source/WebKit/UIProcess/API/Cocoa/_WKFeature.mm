@@ -81,6 +81,8 @@
     switch (_wrappedFeature->category()) {
     case API::FeatureCategory::None:
         return WebFeatureCategoryNone;
+    case API::FeatureCategory::Animation:
+        return WebFeatureCategoryAnimation;
     case API::FeatureCategory::CSS:
         return WebFeatureCategoryCSS;
     case API::FeatureCategory::DOM:

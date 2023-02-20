@@ -56,6 +56,7 @@ typedef NS_ENUM(NSUInteger, WebFeatureStatus) {
  */
 typedef NS_ENUM(NSUInteger, WebFeatureCategory) {
     WebFeatureCategoryNone,
+    WebFeatureCategoryAnimation,
     WebFeatureCategoryCSS,
     WebFeatureCategoryDOM,
     WebFeatureCategoryJavascript,
