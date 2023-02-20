@@ -36,7 +36,6 @@
 #include "JSCPtrTag.h"
 #include "LLIntData.h"
 #include "Options.h"
-#include "SigillCrashAnalyzer.h"
 #include "StructureAlignedMemoryAllocator.h"
 #include "SuperSampler.h"
 #include "VMTraps.h"
@@ -101,9 +100,6 @@ void initialize()
 #endif
 
         JITOperationList::populatePointersInJavaScriptCore();
-
-        if (Options::useSigillCrashAnalyzer())
-            enableSigillCrashAnalyzer();
 
         AssemblyCommentRegistry::initialize();
         LLInt::initialize();

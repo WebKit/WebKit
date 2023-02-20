@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -237,10 +237,6 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
     if (id == maxSingleAllocationSizeID)
         return true;
 #endif
-#if OS(DARWIN)
-    if (id == useSigillCrashAnalyzerID)
-        return true;
-#endif
 #if ENABLE(ASSEMBLER) && OS(LINUX)
     if (id == logJITCodeForPerfID)
         return true;
@@ -456,10 +452,6 @@ static void overrideDefaults()
     Options::mediumHeapRAMFraction() = 0.9;
 #endif
 
-#if ENABLE(SIGILL_CRASH_ANALYZER)
-    Options::useSigillCrashAnalyzer() = true;
-#endif
-
 #if !ENABLE(SIGNAL_BASED_VM_TRAPS)
     Options::usePollingTraps() = true;
 #endif
@@ -492,7 +484,6 @@ static inline void disableAllJITOptions()
     Options::useRegExpJIT() = false;
     Options::useJITCage() = false;
     Options::useConcurrentJIT() = false;
-    Options::useSigillCrashAnalyzer() = false;
 
     Options::useWebAssembly() = false;
 

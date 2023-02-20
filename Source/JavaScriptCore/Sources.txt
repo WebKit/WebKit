@@ -1098,7 +1098,6 @@ tools/FunctionOverrides.cpp
 tools/HeapVerifier.cpp
 tools/Integrity.cpp
 tools/JSDollarVM.cpp
-tools/SigillCrashAnalyzer.cpp
 tools/VMInspector.cpp
 
 wasm/WasmAirIRGenerator32_64.cpp @no-unify
