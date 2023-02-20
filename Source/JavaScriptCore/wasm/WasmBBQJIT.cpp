@@ -5729,6 +5729,9 @@ public:
         if (!m_tierUp)
             return;
 
+        clobber(GPRInfo::argumentGPR0);
+        clobber(GPRInfo::argumentGPR1);
+
         m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(&m_tierUp->m_counter)), m_scratchGPR);
         Jump tierUp = m_jit.branchAdd32(CCallHelpers::PositiveOrZero, TrustedImm32(TierUpCount::functionEntryIncrement()), Address(m_scratchGPR));
         MacroAssembler::Label tierUpResume = m_jit.label();
@@ -5778,9 +5781,8 @@ public:
         m_frameSizeLabel = m_jit.moveWithPatch(TrustedImmPtr(nullptr), m_scratchGPR);
 
         // Because we compile in a single pass, we always need to pessimistically check for stack underflow/overflow.
-        ScratchScope<1, 0> scratches(*this);
-        m_jit.subPtr(GPRInfo::callFrameRegister, m_scratchGPR, MacroAssembler::stackPointerRegister);
-        m_jit.move(MacroAssembler::stackPointerRegister, m_scratchGPR);
+        ASSERT(m_scratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
+        m_jit.subPtr(GPRInfo::callFrameRegister, m_scratchGPR, m_scratchGPR);
         MacroAssembler::JumpList underflow;
         underflow.append(m_jit.branchPtr(CCallHelpers::Above, m_scratchGPR, GPRInfo::callFrameRegister));
         m_jit.addLinkTask([underflow] (LinkBuffer& linkBuffer) {
@@ -5788,11 +5790,12 @@ public:
         });
 
         MacroAssembler::JumpList overflow;
-        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), scratches.gpr(0));
-        overflow.append(m_jit.branchPtr(CCallHelpers::Below, m_scratchGPR, CCallHelpers::Address(scratches.gpr(0), VM::offsetOfSoftStackLimit())));
+        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonArgumentGPR1);
+        overflow.append(m_jit.branchPtr(CCallHelpers::Below, m_scratchGPR, CCallHelpers::Address(GPRInfo::nonPreservedNonArgumentGPR1, VM::offsetOfSoftStackLimit())));
         m_jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
             linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
         });
+        m_jit.move(m_scratchGPR, MacroAssembler::stackPointerRegister);
 
         // Zero all locals that aren't initialized by arguments.
         // This is kind of icky...we can evaluate replacing this a memset() or a tracker for which
