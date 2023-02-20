@@ -906,11 +906,16 @@ Vector<LineAdjustment> LineLayout::adjustContent()
     if (!m_inlineContent)
         return { };
 
-    auto adjustments = computeAdjustmentsForPagination(*m_inlineContent, flow());
+    auto& layoutState = *flow().view().frameView().layoutContext().layoutState();
 
-    adjustLinePositionsForPagination(*m_inlineContent, adjustments);
+    Vector<LineAdjustment> adjustments;
+
+    if (layoutState.isPaginated()) {
+        adjustments = computeAdjustmentsForPagination(*m_inlineContent, flow());
+        adjustLinePositionsForPagination(*m_inlineContent, adjustments);
+    }
+
     m_isPaginatedContent = !adjustments.isEmpty();
-
     return adjustments;
 }
 

@@ -552,11 +552,11 @@ public:
     // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
     void adjustLinePositionForPagination(LegacyRootInlineBox*, LayoutUnit& deltaOffset);
 
-    struct LineAdjustment {
-        LayoutUnit paginationStrut { 0_lu };
+    struct LinePaginationAdjustment {
+        LayoutUnit strut { 0_lu };
         bool isFirstAfterPageBreak { false };
     };
-    LineAdjustment computeLineAdjustmentForPagination(const InlineIterator::LineBoxIterator&, LayoutUnit deltaOffset);
+    LinePaginationAdjustment computeLineAdjustmentForPagination(const InlineIterator::LineBoxIterator&, LayoutUnit deltaOffset);
     bool relayoutForPagination();
 
     bool hasRareBlockFlowData() const { return m_rareBlockFlowData.get(); }

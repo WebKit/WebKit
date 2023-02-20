@@ -131,6 +131,8 @@ private:
 
 WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
+LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
+
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 
 // -----------------------------------------------

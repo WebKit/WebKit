@@ -1854,13 +1854,13 @@ void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* rootI
 {
     auto adjustment = computeLineAdjustmentForPagination(rootInlineBox, delta);
 
-    rootInlineBox->setPaginationStrut(adjustment.paginationStrut);
+    rootInlineBox->setPaginationStrut(adjustment.strut);
     rootInlineBox->setIsFirstAfterPageBreak(adjustment.isFirstAfterPageBreak);
 
-    delta += adjustment.paginationStrut;
+    delta += adjustment.strut;
 }
 
-RenderBlockFlow::LineAdjustment RenderBlockFlow::computeLineAdjustmentForPagination(const InlineIterator::LineBoxIterator& lineBox, LayoutUnit delta)
+RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustmentForPagination(const InlineIterator::LineBoxIterator& lineBox, LayoutUnit delta)
 {
     // FIXME: For now we paginate using line overflow. This ensures that lines don't overlap at all when we
     // put a strut between them for pagination purposes. However, this really isn't the desired rendering, since
