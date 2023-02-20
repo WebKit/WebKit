@@ -123,7 +123,7 @@ static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes
         auto* renderer = keyframeEffect.renderer();
 
         // Synthesize CSS style declarations for each keyframe so the frontend can display them.
-        ComputedStyleExtractor computedStyleExtractor(target, false, target->pseudoId());
+        ComputedStyleExtractor computedStyleExtractor(*target, target->pseudoId());
 
         for (size_t i = 0; i < blendingKeyframes.size(); ++i) {
             auto& blendingKeyframe = blendingKeyframes[i];

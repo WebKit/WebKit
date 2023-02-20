@@ -38,6 +38,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "ColorSerialization.h"
+#include "ComputedStyleExtractor.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementInlines.h"
@@ -119,7 +120,7 @@ static inline bool isEditingProperty(int id)
     return false;
 }
 
-static Ref<MutableStyleProperties> copyPropertiesFromComputedStyle(ComputedStyleExtractor& computedStyle, EditingStyle::PropertiesToInclude propertiesToInclude)
+static Ref<MutableStyleProperties> copyPropertiesFromComputedStyle(const ComputedStyleExtractor& computedStyle, EditingStyle::PropertiesToInclude propertiesToInclude)
 {
     switch (propertiesToInclude) {
     case EditingStyle::OnlyEditingInheritableProperties:

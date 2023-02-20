@@ -96,15 +96,15 @@ testComputed("-webkit-mask-source-type", "", "alpha");
 // test mask-repeat
 testInner("-webkit-mask", "repeat-x", "repeat-x");
 testInner("-webkit-mask", "repeat-y", "repeat-y");
-testInner("-webkit-mask", "repeat", "repeat");
+testInner("-webkit-mask", "repeat", "none");
 testInner("-webkit-mask", "space", "space");
 testInner("-webkit-mask", "no-repeat", "no-repeat");
 testInner("-webkit-mask", "repeat space", "repeat space");
 testInner("-webkit-mask", "repeat round", "repeat round");
 testInner("-webkit-mask", "repeat no-repeat", "repeat-x");
 testInner("-webkit-mask", "repeat space, repeat-x", "repeat space, repeat-x");
-testInner("-webkit-mask", "repeat none", "repeat");
-testInner("-webkit-mask", "none repeat", "repeat");
+testInner("-webkit-mask", "repeat none", "none");
+testInner("-webkit-mask", "none repeat", "none");
 
 // test mask-origin / mask-clip
 testInner("-webkit-mask", "padding-box", "padding-box");

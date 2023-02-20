@@ -28,10 +28,14 @@
 
 namespace WebCore {
 
+class ComputedStyleExtractor;
 class StyleProperties;
 
 enum CSSPropertyID : uint16_t;
 
+String serializeShorthandValue(const ComputedStyleExtractor&, CSSPropertyID);
 String serializeShorthandValue(const StyleProperties&, CSSPropertyID);
+
+String serializeShorthandValueWithoutShortestRepresentationRule(const ComputedStyleExtractor&, CSSPropertyID);
 
 }

@@ -30,6 +30,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSParser.h"
 #include "CSSValuePool.h"
+#include "ComputedStyleExtractor.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -560,7 +561,6 @@ static RefPtr<Node> highestEmbeddingAncestor(Node* startNode, Node* enclosingNod
         if (currentNode->isHTMLElement() && toIdentifier(ComputedStyleExtractor(currentNode.get()).propertyValue(CSSPropertyUnicodeBidi)) == CSSValueEmbed)
             return currentNode;
     }
-
     return nullptr;
 }
 

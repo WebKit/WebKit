@@ -34,6 +34,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSStyleDeclaration.h"
 #include "CommonAtomStrings.h"
+#include "ComputedStyleExtractor.h"
 #include "DOMWrapperWorld.h"
 #include "DataTransfer.h"
 #include "Document.h"

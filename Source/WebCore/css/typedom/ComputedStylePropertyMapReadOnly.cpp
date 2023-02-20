@@ -26,12 +26,12 @@
 #include "config.h"
 #include "ComputedStylePropertyMapReadOnly.h"
 
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyParser.h"
+#include "ComputedStyleExtractor.h"
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
-#include "StylePropertyShorthand.h"
+#include "ShorthandSerializer.h"
 #include "StyleScope.h"
 #include <wtf/KeyValuePair.h>
 
@@ -49,18 +49,20 @@ ComputedStylePropertyMapReadOnly::ComputedStylePropertyMapReadOnly(Element& elem
 
 RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::propertyValue(CSSPropertyID propertyID) const
 {
-    return ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::Yes, ComputedStyleExtractor::PropertyValueType::Computed);
+    return ComputedStyleExtractor(m_element).propertyValue(propertyID);
 }
 
 String ComputedStylePropertyMapReadOnly::shorthandPropertySerialization(CSSPropertyID propertyID) const
 {
+    if (isShorthand(propertyID) && !ComputedStyleExtractor::shouldUseLegacyShorthandSerialization(propertyID))
+        return serializeShorthandValueWithoutShortestRepresentationRule(ComputedStyleExtractor(m_element), propertyID);
     auto value = propertyValue(propertyID);
     return value ? value->cssText() : String();
 }
 
 RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::customPropertyValue(const AtomString& property) const
 {
-    return ComputedStyleExtractor(m_element.ptr()).customPropertyValue(property);
+    return ComputedStyleExtractor(m_element).customPropertyValue(property);
 }
 
 unsigned ComputedStylePropertyMapReadOnly::size() const
@@ -93,9 +95,9 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     const auto& exposedComputedCSSPropertyIDs = m_element->document().exposedComputedCSSPropertyIDs();
     values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
 
-    ComputedStyleExtractor extractor { m_element.ptr() };
+    ComputedStyleExtractor extractor { m_element, { SuppressStyleUpdate } };
     for (auto propertyID : exposedComputedCSSPropertyIDs) {
-        auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No, ComputedStyleExtractor::PropertyValueType::Computed);
+        auto value = extractor.propertyValue(propertyID);
         values.uncheckedAppend(makeKeyValuePair(nameString(propertyID), StylePropertyMapReadOnly::reifyValueToVector(WTFMove(value), propertyID, m_element->document())));
     }
 

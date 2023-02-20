@@ -92,15 +92,15 @@ testComputed("mask-mode", "", "match-source");
 // test mask-repeat
 testInner("mask", "repeat-x", "repeat-x");
 testInner("mask", "repeat-y", "repeat-y");
-testInner("mask", "repeat", "repeat");
+testInner("mask", "repeat", "none");
 testInner("mask", "space", "space");
 testInner("mask", "no-repeat", "no-repeat");
 testInner("mask", "repeat space", "repeat space");
 testInner("mask", "repeat round", "repeat round");
 testInner("mask", "repeat no-repeat", "repeat-x");
 testInner("mask", "repeat space, repeat-x", "repeat space, repeat-x");
-testInner("mask", "repeat none", "repeat");
-testInner("mask", "none repeat", "repeat");
+testInner("mask", "repeat none", "none");
+testInner("mask", "none repeat", "none");
 
 // test mask-origin / mask-clip
 testInner("mask", "padding-box", "padding-box");
@@ -139,75 +139,75 @@ testInner("mask", "none border-box content-box right 0px center / auto repeat-x"
 
 // test mask-position
 testComputed("mask", "top left", "none");
-testComputed("mask", "bottom right", "none");
-testComputed("mask", "left bottom", "none");
-testComputed("mask", "right top", "none");
-testComputed("mask", "center", "none");
-testComputed("mask", "none top", "none");
-testComputed("mask", "none bottom", "none");
-testComputed("mask", "none right", "none");
-testComputed("mask", "none top right", "none");
-testComputed("mask", "none bottom left", "none");
-testComputed("mask", "none right", "none");
-testComputed("mask", "none left", "none");
-testComputed("mask", "center 50%", "none");
-testComputed("mask", "50px 50%", "none");
-testComputed("mask", "center left", "none");
-testComputed("mask", "top center", "none");
-testComputed("mask", "left 10px top 15px", "none");
-testComputed("mask", "left 10% top 30%", "none");
-testComputed("mask", "right top 15px", "none");
-testComputed("mask", "left 10px center", "none");
-testComputed("mask", "center top 20px", "none");
-testComputed("mask", "center left 30px", "none");
-testComputed("mask", "left 20% top", "none");
-testComputed("mask", "center center", "none");
+testComputed("mask", "bottom right", "100% 100%");
+testComputed("mask", "left bottom", "100%");
+testComputed("mask", "right top", "100%");
+testComputed("mask", "center", "50% 50%");
+testComputed("mask", "none top", "50%");
+testComputed("mask", "none bottom", "50% 100%")
+testComputed("mask", "none right", "100% 50%")
+testComputed("mask", "none top right", "100%")
+testComputed("mask", "none bottom left", "100%")
+testComputed("mask", "none right", "100% 50%")
+testComputed("mask", "none left", "50%")
+testComputed("mask", "center 50%", "50% 50%")
+testComputed("mask", "50px 50%", "50px 50%")
+testComputed("mask", "center left", "50%")
+testComputed("mask", "top center", "50%")
+testComputed("mask", "left 10px top 15px", "10px 15px")
+testComputed("mask", "left 10% top 30%", "10% 30%")
+testComputed("mask", "right top 15px", "100% 15px")
+testComputed("mask", "left 10px center", "10px 50%")
+testComputed("mask", "center top 20px", "50% 20px")
+testComputed("mask", "center left 30px", "30px 50%")
+testComputed("mask", "left 20% top", "20%")
+testComputed("mask", "center center", "50% 50%")
 
 // test mask-repeat
-testComputed("mask", "repeat-x", "none");
-testComputed("mask", "repeat-y", "none");
+testComputed("mask", "repeat-x", "repeat-x");
+testComputed("mask", "repeat-y", "repeat-y");
 testComputed("mask", "repeat", "none");
-testComputed("mask", "space", "none");
-testComputed("mask", "no-repeat", "none");
-testComputed("mask", "repeat space", "none");
-testComputed("mask", "repeat round", "none");
-testComputed("mask", "repeat no-repeat", "none");
+testComputed("mask", "space", "space")
+testComputed("mask", "no-repeat", "no-repeat")
+testComputed("mask", "repeat space", "repeat space")
+testComputed("mask", "repeat round", "repeat round")
+testComputed("mask", "repeat no-repeat", "repeat-x");
 testComputed("mask", "repeat none", "none");
 testComputed("mask", "none repeat", "none");
 
 // test mask-origin / mask-clip
-testComputed("mask", "padding-box", "none");
+testComputed("mask", "padding-box", "padding-box");
 testComputed("mask", "border-box", "none");
-testComputed("mask", "content-box", "none");
-testComputed("mask", "padding-box none", "none");
-testComputed("mask", "none padding-box", "none");
-testComputed("mask", "padding-box content-box", "none");
-testComputed("mask", "content-box content-box", "none");
-testComputed("mask", "padding-box border-box", "none");
-testComputed("mask", "padding-box border-box none", "none");
-testComputed("mask", "none padding-box border-box", "none");
+testComputed("mask", "content-box", "content-box")
+testComputed("mask", "padding-box none", "padding-box")
+testComputed("mask", "none padding-box", "padding-box")
+testComputed("mask", "padding-box content-box", "padding-box content-box")
+testComputed("mask", "content-box content-box", "content-box")
+testComputed("mask", "padding-box border-box", "padding-box border-box")
+testComputed("mask", "padding-box border-box none", "padding-box border-box")
+testComputed("mask", "none padding-box border-box", "padding-box border-box")
 
 // test mask-size
 testComputed("mask", "none left top / auto", "none");
 testComputed("mask", "none left top / auto auto", "none");
-testComputed("mask", "none left top / 100%", "none");
-testComputed("mask", "none left top / 0%", "none");
-testComputed("mask", "none left top / auto 0%", "none");
-testComputed("mask", "none left top / cover", "none");
-testComputed("mask", "none left top / contain", "none");
-testComputed("mask", "none left 20px top 10px / contain", "none");
-testComputed("mask", "none left 20px top / contain", "none");
+testComputed("mask", "none left top / 100%", "0% 0% / 100%")
+testComputed("mask", "none left top / 0%", "0% 0% / 0%")
+testComputed("mask", "none left top / auto 0%", "0% 0% / auto 0%")
+testComputed("mask", "none left top / cover", "0% 0% / cover")
+testComputed("mask", "none left top / contain", "0% 0% / contain")
+testComputed("mask", "none left 20px top 10px / contain", "20px 10px / contain")
+testComputed("mask", "none left 20px top / contain", "20px 0% / contain")
 
 // combinations
-testComputed("mask", "none padding-box content-box", "none");
-testComputed("mask", "none padding-box", "none");
-testComputed("mask", "none top", "none");
-testComputed("mask", "none center right 20px", "none");
+testComputed("mask", "none padding-box content-box", "padding-box content-box");
+testComputed("mask", "none padding-box", "padding-box");
+testComputed("mask", "none top", "50%");
+testComputed("mask", "none center right 20px", "right 20px 50%");
 testComputed("mask", "none border-box left top", "none");
-testComputed("mask", "none border-box left top 20px", "none");
-testComputed("mask", "none border-box content-box left top repeat-x", "none");
-testComputed("mask", "none border-box content-box left top / auto repeat-x", "none");
-testComputed("mask", "none border-box content-box right 0px center / auto repeat-x", "none");
+testComputed("mask", "none border-box left top 20px", "20px")
+testComputed("mask", "none border-box content-box left top repeat-x", "repeat-x border-box content-box")
+testComputed("mask", "none border-box content-box left top / auto repeat-x", "repeat-x border-box content-box")
+testComputed("mask", "none border-box content-box right 0px center / auto repeat-x", "right 0px 50% repeat-x border-box content-box")
 
 // negative tests
 negativeTest("mask", "top none left");

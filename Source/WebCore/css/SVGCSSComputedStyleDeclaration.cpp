@@ -26,6 +26,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "ComputedStyleExtractor.h"
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
@@ -95,7 +96,7 @@ static RefPtr<CSSValue> svgMarkerValue(const String& marker, const Element* elem
     return CSSPrimitiveValue::createURI(resolvedURL.string());
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID)
+RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID) const
 {
     if (!m_element)
         return nullptr;

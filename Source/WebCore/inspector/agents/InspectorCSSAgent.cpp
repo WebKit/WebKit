@@ -532,7 +532,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::CSS::CSSComputedStylePropert
     if (!element->isConnected())
         return makeUnexpected("Element for given nodeId was not connected to DOM tree."_s);
 
-    auto computedStyleInfo = CSSComputedStyleDeclaration::create(*element, true);
+    auto computedStyleInfo = CSSComputedStyleDeclaration::createAllowingVisitedLinkColoring(*element);
     auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), WTFMove(computedStyleInfo), nullptr);
     return inspectorStyle->buildArrayForComputedStyle();
 }
