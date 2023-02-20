@@ -129,6 +129,9 @@ FloatRect screenAvailableRect(Widget* widget)
 
 float screenPPIFactor()
 {
+    if (auto data = screenData(primaryScreenDisplayID()))
+        return data->scaleFactor;
+
     static float ppiFactor;
 
     static dispatch_once_t onceToken;
