@@ -348,7 +348,7 @@ private:
     MonotonicTime m_lastDecodedAccessTime; // Used as a "thrash guard" in the cache
     PAL::SessionID m_sessionID;
     RefPtr<const CookieJar> m_cookieJar;
-    WallTime m_responseTimestamp;
+    WallTime m_responseTimestamp { WallTime::now() };
     ResourceLoaderIdentifier m_identifierForLoadWithoutResourceLoader;
 
     WeakHashMap<CachedResourceClient, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
@@ -384,16 +384,16 @@ private:
     Type m_type : bitWidthOfType;
 
     PreloadResult m_preloadResult : bitWidthOfPreloadResult;
-    ResourceResponse::Tainting m_responseTainting : ResourceResponse::bitWidthOfTainting;
+    ResourceResponse::Tainting m_responseTainting : ResourceResponse::bitWidthOfTainting { ResourceResponse::Tainting::Basic };
     ResourceLoadPriority m_loadPriority : bitWidthOfResourceLoadPriority;
 
     Status m_status : bitWidthOfStatus;
-    bool m_requestedFromNetworkingLayer : 1;
-    bool m_inCache : 1;
-    bool m_loading : 1;
+    bool m_requestedFromNetworkingLayer : 1 { false };
+    bool m_inCache : 1 { false };
+    bool m_loading : 1 { false };
     bool m_isLinkPreload : 1;
     bool m_hasUnknownEncoding : 1;
-    bool m_switchingClientsToRevalidatedResource : 1;
+    bool m_switchingClientsToRevalidatedResource : 1 { false };
     bool m_ignoreForRequestCount : 1;
 
 #if ASSERT_ENABLED
