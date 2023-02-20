@@ -13729,6 +13729,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A6280C51919949F006AD9F9 /* WebKit.h in Headers */,
+				1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */,
 				37A5E01418BBF93F000A081E /* _WKActivatedElementInfo.h in Headers */,
 				379A873618BBFA4300588AF2 /* _WKActivatedElementInfoInternal.h in Headers */,
 				449316A325DC7DC400AA66DE /* _WKAppHighlight.h in Headers */,
@@ -14682,11 +14684,9 @@
 				A55BA82B1BA38E61007CD33D /* WebInspectorUtilities.h in Headers */,
 				2DA944A01884E4F000ED86DB /* WebIOSEventFactory.h in Headers */,
 				1A85E4721E303F3700914599 /* WebKit.apinotes in Headers */,
-				1A6280C51919949F006AD9F9 /* WebKit.h in Headers */,
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
 				DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */,
-				1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */,
 				465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */,
 				CD003A5319D49B5D005ABCE0 /* WebMediaKeyStorageManager.h in Headers */,
 				9ACC07B725C81D3400DC6386 /* WebMediaKeySystemClient.h in Headers */,
