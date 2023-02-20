@@ -1624,7 +1624,7 @@ public:
     }
 
     // Memory
-    inline Location emitCheckAndPreparePointer(Value pointer, uint32_t offset, uint32_t sizeOfOperation)
+    inline Location emitCheckAndPreparePointer(Value pointer, uint32_t uoffset, uint32_t sizeOfOperation)
     {
         ScratchScope<1, 0> scratches(*this);
         Location pointerLocation;
@@ -1640,7 +1640,7 @@ public:
             // We're not using signal handling only when the memory is not shared.
             // Regardless of signaling, we must check that no memory access exceeds the current memory size.
             m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), m_scratchGPR);
-            m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + offset - 1), m_scratchGPR);
+            m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + uoffset - 1), m_scratchGPR);
 
             addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
             break;
@@ -1657,10 +1657,10 @@ public:
             // PROT_NONE region, but it's better if we use a smaller immediate because it can codegens better. We know that anything equal to or greater
             // than the declared 'maximum' will trap, so we can compare against that number. If there was no declared 'maximum' then we still know that
             // any access equal to or greater than 4GiB will trap, no need to add the redzone.
-            if (offset >= Memory::fastMappedRedzoneBytes()) {
+            if (uoffset >= Memory::fastMappedRedzoneBytes()) {
                 uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
                 m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), m_scratchGPR);
-                m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + offset - 1), m_scratchGPR);
+                m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + uoffset - 1), m_scratchGPR);
                 addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, TrustedImm64(static_cast<int64_t>(maximum))));
             }
             break;
@@ -1729,21 +1729,20 @@ public:
         }
     }
 
-    Address materializePointer(Location pointerLocation, uint32_t offset)
+    Address materializePointer(Location pointerLocation, uint32_t uoffset)
     {
-        Address address = Address(pointerLocation.asGPR(), static_cast<int32_t>(offset));
-        if (!B3::Air::Arg::isValidAddrForm(B3::Air::Move, offset, Width::Width128)) {
-            m_jit.add64(TrustedImm64(static_cast<int64_t>(offset)), pointerLocation.asGPR());
+        if (static_cast<uint64_t>(uoffset) > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) || !B3::Air::Arg::isValidAddrForm(B3::Air::Move, uoffset, Width::Width128)) {
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointerLocation.asGPR());
             return Address(pointerLocation.asGPR());
         }
-        return address;
+        return Address(pointerLocation.asGPR(), static_cast<int32_t>(uoffset));
     }
 
-    Value WARN_UNUSED_RETURN emitLoadOp(LoadOpType loadOp, Location pointer, uint32_t offset)
+    Value WARN_UNUSED_RETURN emitLoadOp(LoadOpType loadOp, Location pointer, uint32_t uoffset)
     {
         ASSERT(pointer.isGPR());
 
-        Address address = materializePointer(pointer, offset);
+        Address address = materializePointer(pointer, uoffset);
         Value result = topValue(typeOfLoadOp(loadOp));
         Location resultLocation = allocate(result);
 
@@ -1806,9 +1805,9 @@ public:
         "I64Load8S", "I64Load8U", "I64Load16S", "I64Load16U", "I64Load32S", "I64Load32U"
     };
 
-    PartialResult WARN_UNUSED_RETURN load(LoadOpType loadOp, Value pointer, Value& result, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN load(LoadOpType loadOp, Value pointer, Value& result, uint32_t uoffset)
     {
-        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfLoadOp(loadOp)))) {
+        if (UNLIKELY(sumOverflows<uint32_t>(uoffset, sizeOfLoadOp(loadOp)))) {
             // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435
             emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
             consume(pointer);
@@ -1839,9 +1838,9 @@ public:
                 break;
             }
         } else
-            result = emitLoadOp(loadOp, emitCheckAndPreparePointer(pointer, offset, sizeOfLoadOp(loadOp)), offset);
+            result = emitLoadOp(loadOp, emitCheckAndPreparePointer(pointer, uoffset, sizeOfLoadOp(loadOp)), uoffset);
 
-        LOG_INSTRUCTION(LOAD_OP_NAMES[(unsigned)loadOp - (unsigned)I32Load], pointer, offset, RESULT(result));
+        LOG_INSTRUCTION(LOAD_OP_NAMES[(unsigned)loadOp - (unsigned)I32Load], pointer, uoffset, RESULT(result));
 
         return { };
     }
@@ -1866,11 +1865,11 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void emitStoreOp(StoreOpType storeOp, Location pointer, Value value, uint32_t offset)
+    void emitStoreOp(StoreOpType storeOp, Location pointer, Value value, uint32_t uoffset)
     {
         ASSERT(pointer.isGPR());
 
-        Address address = materializePointer(pointer, offset);
+        Address address = materializePointer(pointer, uoffset);
         Location valueLocation;
         if (value.isConst() && value.isFloat()) {
             ScratchScope<0, 1> scratches(*this);
@@ -1917,18 +1916,18 @@ public:
         "I64Store8", "I64Store16", "I64Store32",
     };
 
-    PartialResult WARN_UNUSED_RETURN store(StoreOpType storeOp, Value pointer, Value value, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN store(StoreOpType storeOp, Value pointer, Value value, uint32_t uoffset)
     {
         Location valueLocation = locationOf(value);
-        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfStoreOp(storeOp)))) {
+        if (UNLIKELY(sumOverflows<uint32_t>(uoffset, sizeOfStoreOp(storeOp)))) {
             // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435
             emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
             consume(pointer);
             consume(value);
         } else
-            emitStoreOp(storeOp, emitCheckAndPreparePointer(pointer, offset, sizeOfStoreOp(storeOp)), value, offset);
+            emitStoreOp(storeOp, emitCheckAndPreparePointer(pointer, uoffset, sizeOfStoreOp(storeOp)), value, uoffset);
 
-        LOG_INSTRUCTION(STORE_OP_NAMES[(unsigned)storeOp - (unsigned)I32Store], pointer, offset, value, valueLocation);
+        LOG_INSTRUCTION(STORE_OP_NAMES[(unsigned)storeOp - (unsigned)I32Store], pointer, uoffset, value, valueLocation);
 
         return { };
     }
@@ -2189,13 +2188,13 @@ public:
 #endif
     }
 
-    Value WARN_UNUSED_RETURN emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint32_t offset)
+    Value WARN_UNUSED_RETURN emitAtomicLoadOp(ExtAtomicOpType loadOp, Type valueType, Location pointer, uint32_t uoffset)
     {
         ASSERT(pointer.isGPR());
 
-        // For Atomic access, we need SimpleAddress (offset = 0).
-        if (offset)
-            m_jit.add64(TrustedImm64(static_cast<int64_t>(offset)), pointer.asGPR());
+        // For Atomic access, we need SimpleAddress (uoffset = 0).
+        if (uoffset)
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
         Address address = Address(pointer.asGPR());
 
         if (accessWidth(loadOp) != Width8)
@@ -2281,28 +2280,28 @@ public:
         return result;
     }
 
-    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN atomicLoad(ExtAtomicOpType loadOp, Type valueType, ExpressionType pointer, ExpressionType& result, uint32_t uoffset)
     {
-        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(loadOp)))) {
+        if (UNLIKELY(sumOverflows<uint32_t>(uoffset, sizeOfAtomicOpMemoryAccess(loadOp)))) {
             // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435
             emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
             consume(pointer);
             result = valueType.isI64() ? Value::fromI64(0) : Value::fromI32(0);
         } else
-            result = emitAtomicLoadOp(loadOp, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(loadOp)), offset);
+            result = emitAtomicLoadOp(loadOp, valueType, emitCheckAndPreparePointer(pointer, uoffset, sizeOfAtomicOpMemoryAccess(loadOp)), uoffset);
 
-        LOG_INSTRUCTION(makeString(loadOp), pointer, offset, RESULT(result));
+        LOG_INSTRUCTION(makeString(loadOp), pointer, uoffset, RESULT(result));
 
         return { };
     }
 
-    void emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value value, uint32_t offset)
+    void emitAtomicStoreOp(ExtAtomicOpType storeOp, Type, Location pointer, Value value, uint32_t uoffset)
     {
         ASSERT(pointer.isGPR());
 
-        // For Atomic access, we need SimpleAddress (offset = 0).
-        if (offset)
-            m_jit.add64(TrustedImm64(static_cast<int64_t>(offset)), pointer.asGPR());
+        // For Atomic access, we need SimpleAddress (uoffset = 0).
+        if (uoffset)
+            m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
         Address address = Address(pointer.asGPR());
 
         if (accessWidth(storeOp) != Width8)
@@ -2397,18 +2396,18 @@ public:
         }
     }
 
-    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN atomicStore(ExtAtomicOpType storeOp, Type valueType, ExpressionType pointer, ExpressionType value, uint32_t uoffset)
     {
         Location valueLocation = locationOf(value);
-        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(storeOp)))) {
+        if (UNLIKELY(sumOverflows<uint32_t>(uoffset, sizeOfAtomicOpMemoryAccess(storeOp)))) {
             // FIXME: Same issue as in AirIRGenerator::load(): https://bugs.webkit.org/show_bug.cgi?id=166435
             emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
             consume(pointer);
             consume(value);
         } else
-            emitAtomicStoreOp(storeOp, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(storeOp)), value, offset);
+            emitAtomicStoreOp(storeOp, valueType, emitCheckAndPreparePointer(pointer, uoffset, sizeOfAtomicOpMemoryAccess(storeOp)), value, uoffset);
 
-        LOG_INSTRUCTION(makeString(storeOp), pointer, offset, value, valueLocation);
+        LOG_INSTRUCTION(makeString(storeOp), pointer, uoffset, value, valueLocation);
 
         return { };
     }
@@ -2417,7 +2416,7 @@ public:
     {
         ASSERT(pointer.isGPR());
 
-        // For Atomic access, we need SimpleAddress (offset = 0).
+        // For Atomic access, we need SimpleAddress (uoffset = 0).
         if (uoffset)
             m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
         Address address = Address(pointer.asGPR());
@@ -2776,10 +2775,10 @@ public:
         return result;
     }
 
-    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN atomicBinaryRMW(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType value, ExpressionType& result, uint32_t uoffset)
     {
         Location valueLocation = locationOf(value);
-        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+        if (UNLIKELY(sumOverflows<uint32_t>(uoffset, sizeOfAtomicOpMemoryAccess(op)))) {
             // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
             // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
             emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
@@ -2787,9 +2786,9 @@ public:
             consume(value);
             result = valueType.isI64() ? Value::fromI64(0) : Value::fromI32(0);
         } else
-            result = emitAtomicBinaryRMWOp(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), value, offset);
+            result = emitAtomicBinaryRMWOp(op, valueType, emitCheckAndPreparePointer(pointer, uoffset, sizeOfAtomicOpMemoryAccess(op)), value, uoffset);
 
-        LOG_INSTRUCTION(makeString(op), pointer, offset, value, valueLocation, RESULT(result));
+        LOG_INSTRUCTION(makeString(op), pointer, uoffset, value, valueLocation, RESULT(result));
 
         return { };
     }
@@ -2798,7 +2797,7 @@ public:
     {
         ASSERT(pointer.isGPR());
 
-        // For Atomic access, we need SimpleAddress (offset = 0).
+        // For Atomic access, we need SimpleAddress (uoffset = 0).
         if (uoffset)
             m_jit.add64(TrustedImm64(static_cast<int64_t>(uoffset)), pointer.asGPR());
         Address address = Address(pointer.asGPR());
@@ -2963,10 +2962,10 @@ public:
         return result;
     }
 
-    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN atomicCompareExchange(ExtAtomicOpType op, Type valueType, ExpressionType pointer, ExpressionType expected, ExpressionType value, ExpressionType& result, uint32_t uoffset)
     {
         Location valueLocation = locationOf(value);
-        if (UNLIKELY(sumOverflows<uint32_t>(offset, sizeOfAtomicOpMemoryAccess(op)))) {
+        if (UNLIKELY(sumOverflows<uint32_t>(uoffset, sizeOfAtomicOpMemoryAccess(op)))) {
             // FIXME: Even though this is provably out of bounds, it's not a validation error, so we have to handle it
             // as a runtime exception. However, this may change: https://bugs.webkit.org/show_bug.cgi?id=166435
             emitThrowException(ExceptionType::OutOfBoundsMemoryAccess);
@@ -2975,19 +2974,19 @@ public:
             consume(value);
             result = valueType.isI64() ? Value::fromI64(0) : Value::fromI32(0);
         } else
-            result = emitAtomicCompareExchange(op, valueType, emitCheckAndPreparePointer(pointer, offset, sizeOfAtomicOpMemoryAccess(op)), expected, value, offset);
+            result = emitAtomicCompareExchange(op, valueType, emitCheckAndPreparePointer(pointer, uoffset, sizeOfAtomicOpMemoryAccess(op)), expected, value, uoffset);
 
-        LOG_INSTRUCTION(makeString(op), pointer, expected, value, valueLocation, offset, RESULT(result));
+        LOG_INSTRUCTION(makeString(op), pointer, expected, value, valueLocation, uoffset, RESULT(result));
 
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN atomicWait(ExtAtomicOpType op, ExpressionType pointer, ExpressionType value, ExpressionType timeout, ExpressionType& result, uint32_t uoffset)
     {
         Vector<Value, 8> arguments = {
             instanceValue(),
             pointer,
-            Value::fromI32(offset),
+            Value::fromI32(uoffset),
             value,
             timeout
         };
@@ -2998,24 +2997,24 @@ public:
             emitCCall(&operationMemoryAtomicWait64, arguments, TypeKind::I32, result);
         Location resultLocation = allocate(result);
 
-        LOG_INSTRUCTION(makeString(op), pointer, value, timeout, offset, RESULT(result));
+        LOG_INSTRUCTION(makeString(op), pointer, value, timeout, uoffset, RESULT(result));
 
         addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN atomicNotify(ExtAtomicOpType op, ExpressionType pointer, ExpressionType count, ExpressionType& result, uint32_t uoffset)
     {
         Vector<Value, 8> arguments = {
             instanceValue(),
             pointer,
-            Value::fromI32(offset),
+            Value::fromI32(uoffset),
             count
         };
         emitCCall(&operationMemoryAtomicNotify, arguments, TypeKind::I32, result);
         Location resultLocation = allocate(result);
 
-        LOG_INSTRUCTION(makeString(op), pointer, count, offset, RESULT(result));
+        LOG_INSTRUCTION(makeString(op), pointer, count, uoffset, RESULT(result));
 
         addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
         return { };
@@ -6496,26 +6495,26 @@ public:
         m_isSIMD = true;
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t offset, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addSIMDLoad(ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, offset);
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Address address = materializePointer(pointerLocation, uoffset);
         result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
         m_jit.loadVector(address, resultLocation.asFPR());
-        LOG_INSTRUCTION("V128Load", pointer, pointerLocation, offset, RESULT(result));
+        LOG_INSTRUCTION("V128Load", pointer, pointerLocation, uoffset, RESULT(result));
 
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t offset)
+    PartialResult WARN_UNUSED_RETURN addSIMDStore(ExpressionType value, ExpressionType pointer, uint32_t uoffset)
     {
         Location valueLocation = loadIfNecessary(value);
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width::Width128));
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
         consume(value);
-        Address address = materializePointer(pointerLocation, offset);
+        Address address = materializePointer(pointerLocation, uoffset);
         m_jit.storeVector(valueLocation.asFPR(), address);
-        LOG_INSTRUCTION("V128Store", pointer, pointerLocation, offset, value, valueLocation);
+        LOG_INSTRUCTION("V128Store", pointer, pointerLocation, uoffset, value, valueLocation);
 
         return { };
     }
@@ -6701,15 +6700,15 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType pointer, uint32_t offset, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadSplat(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, offset);
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Address address = materializePointer(pointerLocation, uoffset);
 
         result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
 
-        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, offset, RESULT(result));
+        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
 
         switch (op) {
 #if CPU(X86_64)
@@ -6737,10 +6736,10 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDLoadLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t offset, uint8_t lane, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t lane, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, offset);
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Address address = materializePointer(pointerLocation, uoffset);
 
         Location vectorLocation = loadIfNecessary(vector);
         consume(vector);
@@ -6748,7 +6747,7 @@ public:
         result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
 
-        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, offset, RESULT(result));
+        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
 
         m_jit.move(vectorLocation.asFPR(), resultLocation.asFPR());
         switch (op) {
@@ -6771,15 +6770,15 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDStoreLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t offset, uint8_t lane)
+    PartialResult WARN_UNUSED_RETURN addSIMDStoreLane(SIMDLaneOperation op, ExpressionType pointer, ExpressionType vector, uint32_t uoffset, uint8_t lane)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, offset);
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Address address = materializePointer(pointerLocation, uoffset);
 
         Location vectorLocation = loadIfNecessary(vector);
         consume(vector);
 
-        LOG_INSTRUCTION("Vector", op, vector, vectorLocation, pointer, pointerLocation, offset);
+        LOG_INSTRUCTION("Vector", op, vector, vectorLocation, pointer, pointerLocation, uoffset);
 
         switch (op) {
         case SIMDLaneOperation::StoreLane8:
@@ -6801,7 +6800,7 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDLoadExtend(SIMDLaneOperation op, ExpressionType pointer, uint32_t offset, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadExtend(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
         SIMDLane lane;
         SIMDSignMode signMode;
@@ -6835,13 +6834,13 @@ public:
             RELEASE_ASSERT_NOT_REACHED();
         }
 
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, offset);
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Address address = materializePointer(pointerLocation, uoffset);
 
         result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
 
-        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, offset, RESULT(result));
+        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
 
         m_jit.loadDouble(address, resultLocation.asFPR());
         m_jit.vectorExtendLow(SIMDInfo { lane, signMode }, resultLocation.asFPR(), resultLocation.asFPR());
@@ -6849,15 +6848,15 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointer, uint32_t offset, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointer, uint32_t uoffset, ExpressionType& result)
     {
-        Location pointerLocation = emitCheckAndPreparePointer(pointer, offset, bytesForWidth(Width::Width128));
-        Address address = materializePointer(pointerLocation, offset);
+        Location pointerLocation = emitCheckAndPreparePointer(pointer, uoffset, bytesForWidth(Width::Width128));
+        Address address = materializePointer(pointerLocation, uoffset);
 
         result = topValue(TypeKind::V128);
         Location resultLocation = allocate(result);
 
-        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, offset, RESULT(result));
+        LOG_INSTRUCTION("Vector", op, pointer, pointerLocation, uoffset, RESULT(result));
 
         if (op == SIMDLaneOperation::LoadPad32)
             m_jit.loadFloat(address, resultLocation.asFPR());
