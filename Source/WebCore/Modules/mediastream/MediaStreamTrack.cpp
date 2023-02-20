@@ -276,7 +276,7 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.deviceId = settings.deviceId();
     if (settings.supportsGroupId())
         result.groupId = settings.groupId();
-    if (settings.supportsDisplaySurface() && settings.displaySurface() != RealtimeMediaSourceSettings::DisplaySurfaceType::Invalid)
+    if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
 
     // FIXME: shouldn't this include logicalSurface?
@@ -324,7 +324,7 @@ static LongRange capabilityIntRange(const CapabilityValueOrRange& value)
     return range;
 }
 
-static Vector<String> capabilityStringVector(const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& modes)
+static Vector<String> capabilityStringVector(const Vector<VideoFacingMode>& modes)
 {
     return modes.map([](auto& mode) {
         return RealtimeMediaSourceSettings::facingMode(mode);
@@ -369,7 +369,7 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
         result.groupId = capabilities.groupId();
 
     auto settings = m_private->settings();
-    if (settings.supportsDisplaySurface() && settings.displaySurface() != RealtimeMediaSourceSettings::DisplaySurfaceType::Invalid)
+    if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
 
     return result;

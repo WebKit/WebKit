@@ -249,6 +249,7 @@ def serialized_identifiers():
         'WebCore::RealtimeMediaSourceIdentifier',
         'WebCore::RenderingResourceIdentifier',
         'WebCore::ResourceLoaderIdentifier',
+        'WebCore::RTCDataChannelLocalIdentifier',
         'WebCore::SWServerConnectionIdentifier',
         'WebCore::ServiceWorkerIdentifier',
         'WebCore::ServiceWorkerJobIdentifier',

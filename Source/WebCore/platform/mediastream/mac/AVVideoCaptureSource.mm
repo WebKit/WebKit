@@ -241,11 +241,11 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
 
     RealtimeMediaSourceSettings settings;
     if ([device() position] == AVCaptureDevicePositionFront)
-        settings.setFacingMode(RealtimeMediaSourceSettings::User);
+        settings.setFacingMode(VideoFacingMode::User);
     else if ([device() position] == AVCaptureDevicePositionBack)
-        settings.setFacingMode(RealtimeMediaSourceSettings::Environment);
+        settings.setFacingMode(VideoFacingMode::Environment);
     else
-        settings.setFacingMode(RealtimeMediaSourceSettings::Unknown);
+        settings.setFacingMode(VideoFacingMode::Unknown);
 
     settings.setLabel(name());
     settings.setFrameRate(frameRate());
@@ -283,9 +283,9 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
 
     AVCaptureDevice *videoDevice = device();
     if ([videoDevice position] == AVCaptureDevicePositionFront)
-        capabilities.addFacingMode(RealtimeMediaSourceSettings::User);
+        capabilities.addFacingMode(VideoFacingMode::User);
     if ([videoDevice position] == AVCaptureDevicePositionBack)
-        capabilities.addFacingMode(RealtimeMediaSourceSettings::Environment);
+        capabilities.addFacingMode(VideoFacingMode::Environment);
 
     updateCapabilities(capabilities);
 

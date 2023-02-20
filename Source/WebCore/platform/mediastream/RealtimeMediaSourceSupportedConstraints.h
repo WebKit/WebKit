@@ -58,6 +58,23 @@ public:
     RealtimeMediaSourceSupportedConstraints()
     {
     }
+    
+    RealtimeMediaSourceSupportedConstraints(bool supportsWidth, bool supportsHeight, bool supportsAspectRatio, bool supportsFrameRate, bool supportsFacingMode, bool supportsVolume, bool supportsSampleRate, bool supportsSampleSize, bool supportsEchoCancellation, bool supportsDeviceId, bool supportsGroupId, bool supportsDisplaySurface, bool supportsLogicalSurface)
+        : m_supportsWidth(supportsWidth)
+        , m_supportsHeight(supportsHeight)
+        , m_supportsAspectRatio(supportsAspectRatio)
+        , m_supportsFrameRate(supportsFrameRate)
+        , m_supportsFacingMode(supportsFacingMode)
+        , m_supportsVolume(supportsVolume)
+        , m_supportsSampleRate(supportsSampleRate)
+        , m_supportsSampleSize(supportsSampleSize)
+        , m_supportsEchoCancellation(supportsEchoCancellation)
+        , m_supportsDeviceId(supportsDeviceId)
+        , m_supportsGroupId(supportsGroupId)
+        , m_supportsDisplaySurface(supportsDisplaySurface)
+        , m_supportsLogicalSurface(supportsLogicalSurface)
+    {
+    }
 
     bool supportsWidth() const { return m_supportsWidth; }
     void setSupportsWidth(bool value) { m_supportsWidth = value; }
@@ -100,9 +117,6 @@ public:
 
     bool supportsConstraint(MediaConstraintType) const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, RealtimeMediaSourceSupportedConstraints&);
-
 private:
     bool m_supportsWidth { false };
     bool m_supportsHeight { false };
@@ -118,42 +132,6 @@ private:
     bool m_supportsDisplaySurface { false };
     bool m_supportsLogicalSurface { false };
 };
-
-template<class Encoder>
-void RealtimeMediaSourceSupportedConstraints::encode(Encoder& encoder) const
-{
-    encoder << m_supportsWidth
-        << m_supportsHeight
-        << m_supportsAspectRatio
-        << m_supportsFrameRate
-        << m_supportsFacingMode
-        << m_supportsVolume
-        << m_supportsSampleRate
-        << m_supportsSampleSize
-        << m_supportsEchoCancellation
-        << m_supportsDeviceId
-        << m_supportsGroupId
-        << m_supportsDisplaySurface
-        << m_supportsLogicalSurface;
-}
-
-template<class Decoder>
-bool RealtimeMediaSourceSupportedConstraints::decode(Decoder& decoder, RealtimeMediaSourceSupportedConstraints& constraints)
-{
-    return decoder.decode(constraints.m_supportsWidth)
-        && decoder.decode(constraints.m_supportsHeight)
-        && decoder.decode(constraints.m_supportsAspectRatio)
-        && decoder.decode(constraints.m_supportsFrameRate)
-        && decoder.decode(constraints.m_supportsFacingMode)
-        && decoder.decode(constraints.m_supportsVolume)
-        && decoder.decode(constraints.m_supportsSampleRate)
-        && decoder.decode(constraints.m_supportsSampleSize)
-        && decoder.decode(constraints.m_supportsEchoCancellation)
-        && decoder.decode(constraints.m_supportsDeviceId)
-        && decoder.decode(constraints.m_supportsGroupId)
-        && decoder.decode(constraints.m_supportsDisplaySurface)
-        && decoder.decode(constraints.m_supportsLogicalSurface);
-}
 
 } // namespace WebCore
 

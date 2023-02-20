@@ -178,8 +178,8 @@ public:
     double aspectRatio() const { return m_aspectRatio; }
     void setAspectRatio(double);
 
-    RealtimeMediaSourceSettings::VideoFacingMode facingMode() const { return m_facingMode; }
-    void setFacingMode(RealtimeMediaSourceSettings::VideoFacingMode);
+    VideoFacingMode facingMode() const { return m_facingMode; }
+    void setFacingMode(VideoFacingMode);
 
     double volume() const { return m_volume; }
     void setVolume(double);
@@ -329,7 +329,7 @@ private:
     double m_sampleRate { 0 };
     double m_sampleSize { 0 };
     double m_fitnessScore { 0 };
-    RealtimeMediaSourceSettings::VideoFacingMode m_facingMode { RealtimeMediaSourceSettings::User};
+    VideoFacingMode m_facingMode { VideoFacingMode::User };
 
     bool m_muted { false };
     bool m_pendingSettingsDidChangeNotification { false };

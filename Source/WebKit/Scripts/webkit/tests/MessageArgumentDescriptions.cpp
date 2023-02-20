@@ -103,6 +103,7 @@
 #include <WebCore/PortIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
+#include <WebCore/RTCDataChannelLocalIdentifier.h>
 #include <WebCore/RealtimeMediaSourceIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
@@ -422,6 +423,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebCore::RealtimeMediaSourceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::RenderingResourceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ResourceLoaderIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::RTCDataChannelLocalIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::SWServerConnectionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ServiceWorkerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::ServiceWorkerJobIdentifier));
@@ -516,6 +518,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::RealtimeMediaSourceIdentifier"_s,
         "WebCore::RenderingResourceIdentifier"_s,
         "WebCore::ResourceLoaderIdentifier"_s,
+        "WebCore::RTCDataChannelLocalIdentifier"_s,
         "WebCore::SWServerConnectionIdentifier"_s,
         "WebCore::ServiceWorkerIdentifier"_s,
         "WebCore::ServiceWorkerJobIdentifier"_s,

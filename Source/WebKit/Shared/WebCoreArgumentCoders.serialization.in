@@ -3463,25 +3463,6 @@ enum class WebCore::CDMRequirement : uint8_t {
 };
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-enum class WebCore::MediaConstraintType : uint8_t {
-    Unknown,
-    Width,
-    Height,
-    AspectRatio,
-    FrameRate,
-    FacingMode,
-    Volume,
-    SampleRate,
-    SampleSize,
-    EchoCancellation,
-    DeviceId,
-    GroupId,
-    DisplaySurface,
-    LogicalSurface,
-};
-#endif
-
 #if ENABLE(WEB_RTC)
 enum class WebCore::RTCDataChannelState : uint8_t {
     Connecting,
@@ -3930,3 +3911,182 @@ class WebCore::SecurityOriginData {
     String host;
     std::optional<uint16_t> port;
 };
+
+#if ENABLE(MEDIA_STREAM)
+
+[Nested] enum class WebCore::MediaConstraint::DataType : uint8_t {
+    None,
+    Integer,
+    Double,
+    Boolean,
+    String
+};
+
+enum class WebCore::MediaConstraintType : uint8_t {
+    Unknown,
+    Width,
+    Height,
+    AspectRatio,
+    FrameRate,
+    FacingMode,
+    Volume,
+    SampleRate,
+    SampleSize,
+    EchoCancellation,
+    DeviceId,
+    GroupId,
+    DisplaySurface,
+    LogicalSurface,
+};
+
+header: <WebCore/MediaConstraints.h>
+[CustomHeader] class WebCore::MediaConstraint {
+    String name();
+    WebCore::MediaConstraintType constraintType();
+    WebCore::MediaConstraint::DataType dataType();
+};
+
+[CustomHeader] class WebCore::IntConstraint : WebCore::MediaConstraint {
+    std::optional<int> m_min;
+    std::optional<int> m_max;
+    std::optional<int> m_exact;
+    std::optional<int> m_ideal;
+};
+
+[CustomHeader] class WebCore::DoubleConstraint : WebCore::MediaConstraint {
+    std::optional<double> m_min;
+    std::optional<double> m_max;
+    std::optional<double> m_exact;
+    std::optional<double> m_ideal;
+};
+
+[CustomHeader] class WebCore::BooleanConstraint : WebCore::MediaConstraint {
+    std::optional<bool> m_exact;
+    std::optional<bool> m_ideal;
+};
+
+[CustomHeader] class WebCore::StringConstraint : WebCore::MediaConstraint {
+    Vector<String> m_exact;
+    Vector<String> m_ideal;
+};
+
+header: <WebCore/VideoPreset.h>
+[CustomHeader] struct WebCore::FrameRateRange {
+    double minimum;
+    double maximum;
+};
+
+[CustomHeader] struct WebCore::VideoPresetData {
+    WebCore::IntSize size;
+    Vector<WebCore::FrameRateRange> frameRateRanges;
+};
+
+class WebCore::RealtimeMediaSourceSupportedConstraints {
+    bool supportsWidth();
+    bool supportsHeight();
+    bool supportsAspectRatio();
+    bool supportsFrameRate();
+    bool supportsFacingMode();
+    bool supportsVolume();
+    bool supportsSampleRate();
+    bool supportsSampleSize();
+    bool supportsEchoCancellation();
+    bool supportsDeviceId();
+    bool supportsGroupId();
+    bool supportsDisplaySurface();
+    bool supportsLogicalSurface();
+};
+
+enum class WebCore::VideoFacingMode : uint8_t {
+    Unknown,
+    User,
+    Environment,
+    Left,
+    Right
+};
+
+enum class WebCore::DisplaySurfaceType : uint8_t {
+    Monitor,
+    Window,
+    Application,
+    Browser,
+    Invalid,
+};
+
+class WebCore::RealtimeMediaSourceSettings {
+    uint32_t width();
+    uint32_t height();
+    float aspectRatio();
+    float frameRate();
+    WebCore::VideoFacingMode facingMode();
+    double volume();
+    uint32_t sampleRate();
+    uint32_t sampleSize();
+    bool echoCancellation();
+    AtomString deviceId();
+    AtomString groupId();
+    AtomString label();
+    WebCore::DisplaySurfaceType displaySurface();
+    bool logicalSurface();
+    WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
+};
+
+[Nested] enum class WebCore::CaptureDevice::DeviceType : uint8_t {
+    Unknown,
+    Microphone,
+    Speaker,
+    Camera,
+    Screen,
+    Window,
+    SystemAudio
+};
+
+class WebCore::CaptureDevice {
+    String persistentId();
+    WebCore::CaptureDevice::DeviceType type();
+    String label();
+    String groupId();
+    bool enabled();
+    bool isDefault();
+    bool isMockDevice();
+    bool isEphemeral();
+};
+
+[Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : bool
+
+class WebCore::RealtimeMediaSourceCapabilities {
+    WebCore::CapabilityValueOrRange width();
+    WebCore::CapabilityValueOrRange height();
+    WebCore::CapabilityValueOrRange aspectRatio();
+    WebCore::CapabilityValueOrRange frameRate();
+    Vector<WebCore::VideoFacingMode> facingMode();
+    WebCore::CapabilityValueOrRange volume();
+    WebCore::CapabilityValueOrRange sampleRate();
+    WebCore::CapabilityValueOrRange sampleSize();
+    WebCore::RealtimeMediaSourceCapabilities::EchoCancellation echoCancellation();
+    AtomString deviceId();
+    AtomString groupId();
+    WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
+};
+
+#endif
+
+#if ENABLE(WEB_RTC)
+
+header: <WebCore/RTCDataChannelHandler.h>
+[CustomHeader] struct WebCore::RTCDataChannelInit {
+    std::optional<bool> ordered;
+    std::optional<unsigned short> maxPacketLifeTime;
+    std::optional<unsigned short> maxRetransmits;
+    String protocol;
+    std::optional<bool> negotiated;
+    std::optional<unsigned short> id;
+    WebCore::RTCPriorityType priority;
+};
+
+struct WebCore::RTCDataChannelIdentifier {
+    WebCore::ProcessIdentifier processIdentifier;
+    WebCore::RTCDataChannelLocalIdentifier channelIdentifier;
+};
+
+#endif // ENABLE(WEB_RTC)

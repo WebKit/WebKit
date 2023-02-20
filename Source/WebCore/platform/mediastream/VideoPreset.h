@@ -37,64 +37,14 @@ namespace WebCore {
 struct FrameRateRange {
     double minimum;
     double maximum;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FrameRateRange> decode(Decoder&);
 };
 
-template<class Encoder>
-void FrameRateRange::encode(Encoder& encoder) const
-{
-    encoder << minimum;
-    encoder << maximum;
-}
-
-template <class Decoder>
-std::optional<FrameRateRange> FrameRateRange::decode(Decoder& decoder)
-{
-    std::optional<double> minimum;
-    decoder >> minimum;
-    if (!minimum)
-        return std::nullopt;
-
-    std::optional<double> maximum;
-    decoder >> maximum;
-    if (!maximum)
-        return std::nullopt;
-
-    return FrameRateRange { *minimum, *maximum };
-}
 
 struct VideoPresetData {
     IntSize size;
     Vector<FrameRateRange> frameRateRanges;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<VideoPresetData> decode(Decoder&);
 };
 
-template<class Encoder>
-void VideoPresetData::encode(Encoder& encoder) const
-{
-    encoder << size;
-    encoder << frameRateRanges;
-}
-
-template <class Decoder>
-std::optional<VideoPresetData> VideoPresetData::decode(Decoder& decoder)
-{
-    std::optional<IntSize> size;
-    decoder >> size;
-    if (!size)
-        return std::nullopt;
-
-    std::optional<Vector<FrameRateRange>> frameRateRanges;
-    decoder >> frameRateRanges;
-    if (!frameRateRanges)
-        return std::nullopt;
-
-    return VideoPresetData { *size, *frameRateRanges };
-}
 
 class VideoPreset : public RefCounted<VideoPreset> {
 public:
