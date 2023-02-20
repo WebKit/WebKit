@@ -49,21 +49,6 @@
 #endif
 #endif // __OBJC__
 
-#ifdef BUILDING_WITH_CMAKE
-#ifndef JSC_API_AVAILABLE
-#define JSC_API_AVAILABLE(...)
-#endif
-#ifndef JSC_CLASS_AVAILABLE
-#define JSC_CLASS_AVAILABLE(...) JS_EXPORT
-#endif
-#ifndef JSC_API_DEPRECATED
-#define JSC_API_DEPRECATED(...)
-#endif
-#ifndef JSC_API_DEPRECATED_WITH_REPLACEMENT
-#define JSC_API_DEPRECATED_WITH_REPLACEMENT(...)
-#endif
-#endif // BUILDING_WITH_CMAKE
-
 #endif // PLATFORM(COCOA)
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
