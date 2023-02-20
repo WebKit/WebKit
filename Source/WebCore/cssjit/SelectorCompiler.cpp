@@ -278,7 +278,7 @@ struct SelectorFragment {
     // FIXME: the large stack allocation caused by the inline capacity causes memory inefficiency. We should dump
     // the min/max/average of the vectors and pick better inline capacity.
     const CSSSelector* tagNameSelector = nullptr;
-    const AtomString* id = nullptr;
+    const AtomStringImpl* id = nullptr;
     Vector<TextDirection> dirList;
     Vector<const FixedVector<PossiblyQuotedIdentifier>*> languageArgumentsList;
     Vector<const AtomStringImpl*, 8> classNames;
@@ -395,7 +395,7 @@ private:
     void generateElementAttributeValueExactMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity);
     void generateElementAttributeFunctionCallValueMatching(Assembler::JumpList& failureCases, Assembler::RegisterID currentAttributeAddress, const AtomString& expectedValue, AttributeCaseSensitivity valueCaseSensitivity, CodePtr<JSC::OperationPtrTag> caseSensitiveTest, CodePtr<JSC::OperationPtrTag> caseInsensitiveTest);
     void generateElementHasTagName(Assembler::JumpList& failureCases, const CSSSelector& tagMatchingSelector);
-    void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomString& idToMatch);
+    void generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomStringImpl* idToMatch);
     void generateElementHasClasses(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const Vector<const AtomStringImpl*, 8>& classNames);
     void generateElementIsLink(Assembler::JumpList& failureCases);
     void generateElementIsNthChild(Assembler::JumpList& failureCases, const SelectorFragment&);
@@ -1257,17 +1257,17 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
                 fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         case CSSSelector::Id: {
-            const AtomString& id = selector->value();
+            auto* id = selector->valueImpl();
             if (fragment->id) {
-                if (id != *fragment->id)
+                if (id != fragment->id)
                     return FunctionType::CannotMatchAnything;
             } else
-                fragment->id = &(selector->value());
+                fragment->id = id;
             fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         }
         case CSSSelector::Class:
-            fragment->classNames.append(selector->value().impl());
+            fragment->classNames.append(selector->valueImpl());
             fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         case CSSSelector::PseudoClass: {
@@ -3024,7 +3024,7 @@ void SelectorCodeGenerator::generateElementDataMatching(Assembler::JumpList& fai
     failureCases.append(m_assembler.branchTestPtr(Assembler::Zero, elementDataAddress));
 
     if (fragment.id)
-        generateElementHasId(failureCases, elementDataAddress, *fragment.id);
+        generateElementHasId(failureCases, elementDataAddress, fragment.id);
     if (!fragment.classNames.isEmpty())
         generateElementHasClasses(failureCases, elementDataAddress, fragment.classNames);
     if (!fragment.attributes.isEmpty())
@@ -3895,11 +3895,11 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
     }
 }
 
-void SelectorCodeGenerator::generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomString& idToMatch)
+void SelectorCodeGenerator::generateElementHasId(Assembler::JumpList& failureCases, const LocalRegister& elementDataAddress, const AtomStringImpl* idToMatch)
 {
     // Compare the pointers of the AtomStringImpl from idForStyleResolution with the reference idToMatch.
     LocalRegister idToMatchRegister(m_registerAllocator);
-    m_assembler.move(Assembler::TrustedImmPtr(idToMatch.impl()), idToMatchRegister);
+    m_assembler.move(Assembler::TrustedImmPtr(idToMatch), idToMatchRegister);
     failureCases.append(m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(elementDataAddress, ElementData::idForStyleResolutionMemoryOffset()), idToMatchRegister));
 }
 

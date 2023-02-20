@@ -1187,17 +1187,14 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
                 auto lastSelector = parserSelector->leftmostSimpleSelector()->selector();
                 ASSERT(lastSelector);
                 bool isLastInSelectorList = lastSelector->isLastInSelectorList();
-                lastSelector->setNotLastInTagHistory();
-                lastSelector->setNotLastInSelectorList();
+                lastSelector->setIsLastInTagHistory(false);
+                lastSelector->setIsLastInSelectorList(false);
                 CSSSelector parentIsSelector;
                 parentIsSelector.setMatch(CSSSelector::Match::PseudoClass);
                 parentIsSelector.setPseudoClassType(CSSSelector::PseudoClassType::PseudoClassIs);
                 parentIsSelector.setSelectorList(makeUnique<CSSSelectorList>(*parentResolvedSelectorList));
-                parentIsSelector.setLastInTagHistory();
-                if (isLastInSelectorList)
-                    parentIsSelector.setLastInSelectorList();
-                else
-                    parentIsSelector.setNotLastInSelectorList();
+                parentIsSelector.setIsLastInTagHistory();
+                parentIsSelector.setIsLastInSelectorList(isLastInSelectorList);
 
                 auto uniqueParentIsSelector = makeUnique<CSSParserSelector>(parentIsSelector);
                 parserSelector->appendTagHistory(CSSSelector::RelationType::DescendantSpace, WTFMove(uniqueParentIsSelector));

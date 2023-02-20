@@ -46,8 +46,15 @@ namespace WebCore {
 using namespace HTMLNames;
 
 struct SameSizeAsCSSSelector {
-    unsigned flags;
+#if CPU(ADDRESS64)
     void* unionPointer;
+#else
+    void* unionPointer;
+    uint16_t flags;
+#endif
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    unsigned flag : 1;
+#endif
 };
 
 static_assert(CSSSelector::RelationType::Subselector == 0, "Subselector must be 0 for consumeCombinator.");
@@ -55,32 +62,43 @@ static_assert(sizeof(CSSSelector) == sizeof(SameSizeAsCSSSelector), "CSSSelector
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSSelectorRareData);
 
-CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
-    : m_relation(DescendantSpace)
-    , m_match(Tag)
-    , m_tagIsForNamespaceRule(tagIsForNamespaceRule)
+CSSSelector::CSSSelector()
 {
+    setRelation(DescendantSpace);
+    setMatch(Unknown);
+    setIsFirstInTagHistory();
+    setIsLastInTagHistory();
+}
+
+CSSSelector::CSSSelector(const QualifiedName& tagQName, bool tagIsForNamespaceRule)
+{
+    setRelation(DescendantSpace);
+    setMatch(Tag);
+    setIsFirstInTagHistory();
+    setIsLastInTagHistory();
+    setTagIsForNamespaceRule(tagIsForNamespaceRule);
+
     const AtomString& tagLocalName = tagQName.localName();
     const AtomString tagLocalNameASCIILowercase = tagLocalName.convertToASCIILowercase();
 
     if (tagLocalName == tagLocalNameASCIILowercase) {
-        m_data.tagQName = tagQName.impl();
-        m_data.tagQName->ref();
+        setTagQNamePointer(tagQName.impl());
+        tagQNamePointer()->ref();
     } else {
-        m_data.nameWithCase = adoptRef(new NameWithCase(tagQName, tagLocalNameASCIILowercase)).leakRef();
-        m_hasNameWithCase = true;
+        setNameWithCasePointer(adoptRef(new NameWithCase(tagQName, tagLocalNameASCIILowercase)).leakRef());
+        setHasNameWithCase();
     }
 }
 
 void CSSSelector::createRareData()
 {
     ASSERT(match() != Tag);
-    ASSERT(!m_hasNameWithCase);
-    if (m_hasRareData)
+    ASSERT(!hasNameWithCase());
+    if (hasRareData())
         return;
     // Move the value to the rare data stucture.
-    m_data.rareData = &RareData::create(adoptRef(m_data.value)).leakRef();
-    m_hasRareData = true;
+    setRareDataPointer(&RareData::create(adoptRef(valuePointer())).leakRef());
+    setHasRareData();
 }
 
 struct SelectorSpecificity {
@@ -329,7 +347,7 @@ bool CSSSelector::operator==(const CSSSelector& other) const
             || sel1->relation() != sel2->relation()
             || sel1->match() != sel2->match()
             || sel1->value() != sel2->value()
-            || sel1->m_pseudoType != sel2->m_pseudoType
+            || sel1->pseudoType() != sel2->pseudoType()
             || sel1->argument() != sel2->argument()) {
             return false;
         }
@@ -416,7 +434,7 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 {
     StringBuilder builder;
 
-    if (match() == CSSSelector::Tag && !m_tagIsForNamespaceRule) {
+    if (match() == CSSSelector::Tag && !tagIsForNamespaceRule()) {
         if (tagQName().prefix().isNull())
             builder.append(tagQName().localName());
         else
@@ -881,52 +899,52 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 void CSSSelector::setAttribute(const QualifiedName& value, bool convertToLowercase, AttributeMatchType matchType)
 {
     createRareData();
-    m_data.rareData->attribute = value;
-    m_data.rareData->attributeCanonicalLocalName = convertToLowercase ? value.localName().convertToASCIILowercase() : value.localName();
-    m_caseInsensitiveAttributeValueMatching = matchType == CaseInsensitive;
+    rareDataPointer()->attribute = value;
+    rareDataPointer()->attributeCanonicalLocalName = convertToLowercase ? value.localName().convertToASCIILowercase() : value.localName();
+    setCaseInsensitiveAttributeValueMatching(matchType == CaseInsensitive);
 }
     
 void CSSSelector::setArgument(const AtomString& value)
 {
     createRareData();
-    m_data.rareData->argument = value;
+    rareDataPointer()->argument = value;
 }
 
 void CSSSelector::setArgumentList(FixedVector<PossiblyQuotedIdentifier> argumentList)
 {
     createRareData();
-    m_data.rareData->argumentList = WTFMove(argumentList);
+    rareDataPointer()->argumentList = WTFMove(argumentList);
 }
 
 void CSSSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selectorList)
 {
     createRareData();
-    m_data.rareData->selectorList = WTFMove(selectorList);
+    rareDataPointer()->selectorList = WTFMove(selectorList);
 }
 
 void CSSSelector::setNth(int a, int b)
 {
     createRareData();
-    m_data.rareData->a = a;
-    m_data.rareData->b = b;
+    rareDataPointer()->a = a;
+    rareDataPointer()->b = b;
 }
 
 bool CSSSelector::matchNth(int count) const
 {
-    ASSERT(m_hasRareData);
-    return m_data.rareData->matchNth(count);
+    ASSERT(hasRareData());
+    return rareDataPointer()->matchNth(count);
 }
 
 int CSSSelector::nthA() const
 {
-    ASSERT(m_hasRareData);
-    return m_data.rareData->a;
+    ASSERT(hasRareData());
+    return rareDataPointer()->a;
 }
 
 int CSSSelector::nthB() const
 {
-    ASSERT(m_hasRareData);
-    return m_data.rareData->b;
+    ASSERT(hasRareData());
+    return rareDataPointer()->b;
 }
 
 CSSSelector::RareData::RareData(AtomString&& value)
@@ -937,7 +955,8 @@ CSSSelector::RareData::RareData(AtomString&& value)
 }
 
 CSSSelector::RareData::RareData(const RareData& other)
-    : matchingValue(other.matchingValue)
+    : pseudoType(other.pseudoType)
+    , matchingValue(other.matchingValue)
     , serializingValue(other.serializingValue)
     , a(other.a)
     , b(other.b)
@@ -952,7 +971,7 @@ CSSSelector::RareData::RareData(const RareData& other)
 
 auto CSSSelector::RareData::deepCopy() const -> Ref<RareData> 
 {
-    return adoptRef(*new RareData (*this));
+    return adoptRef(*new RareData(*this));
 }
 
 CSSSelector::RareData::~RareData() = default;
@@ -972,32 +991,16 @@ bool CSSSelector::RareData::matchNth(int count)
 }
 
 CSSSelector::CSSSelector(const CSSSelector& other)
-    : m_relation(other.m_relation)
-    , m_match(other.m_match)
-    , m_pseudoType(other.m_pseudoType)
-    , m_isLastInSelectorList(other.m_isLastInSelectorList)
-    , m_isFirstInTagHistory(other.m_isFirstInTagHistory)
-    , m_isLastInTagHistory(other.m_isLastInTagHistory)
-    , m_hasRareData(other.m_hasRareData)
-    , m_hasNameWithCase(other.m_hasNameWithCase)
-    , m_isForPage(other.m_isForPage)
-    , m_tagIsForNamespaceRule(other.m_tagIsForNamespaceRule)
-    , m_caseInsensitiveAttributeValueMatching(other.m_caseInsensitiveAttributeValueMatching)
+    : m_dataWithFlags(other.m_dataWithFlags)
 {
-    if (other.m_hasRareData) {
-        auto copied = other.m_data.rareData->deepCopy(); 
-        m_data.rareData = &copied.leakRef();
-        m_data.rareData->ref();
-    } else if (other.m_hasNameWithCase) {
-        m_data.nameWithCase = other.m_data.nameWithCase;
-        m_data.nameWithCase->ref();
-    } else if (other.match() == Tag) {
-        m_data.tagQName = other.m_data.tagQName;
-        m_data.tagQName->ref();
-    } else if (other.m_data.value) {
-        m_data.value = other.m_data.value;
-        m_data.value->ref();
-    }
+    if (other.hasRareData())
+        setRareDataPointer(&other.rareDataPointer()->deepCopy().leakRef());
+    else if (other.hasNameWithCase())
+        nameWithCasePointer()->ref();
+    else if (other.match() == Tag)
+        tagQNamePointer()->ref();
+    else if (other.valuePointer())
+        valuePointer()->ref();
 }
 
 void CSSSelector::visitAllSimpleSelectors(auto& apply) const

@@ -147,7 +147,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             idSelector = selector;
             break;
         case CSSSelector::Class: {
-            auto& className = selector->value();
+            auto className = selector->value();
             if (!classSelector) {
                 classSelector = selector;
                 classBucketSize = rulesCountForName(m_classRules, className);
