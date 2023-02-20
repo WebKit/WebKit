@@ -253,7 +253,7 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
     // FIXME: Consider a non-recursive algorithm for walking this tree of dependencies.
     if (auto* asList = dynamicDowncast<CSSValueContainingVector>(*this)) {
         for (auto& listValue : *asList)
-            listValue->collectComputedStyleDependencies(dependencies);
+            listValue.collectComputedStyleDependencies(dependencies);
         return;
     }
     if (auto* asPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*this))

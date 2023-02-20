@@ -85,7 +85,7 @@ void CSSToStyleMap::mapFillAttachment(CSSPropertyID propertyID, FillLayer& layer
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
+    switch (value.valueID()) {
     case CSSValueFixed:
         layer.setAttachment(FillAttachment::FixedBackground);
         break;
@@ -152,7 +152,7 @@ void CSSToStyleMap::mapFillOrigin(CSSPropertyID propertyID, FillLayer& layer, co
     layer.setOrigin(fromCSSValue<FillBox>(value));
 }
 
-void CSSToStyleMap::mapFillImage(CSSPropertyID propertyID, FillLayer& layer, CSSValue& value)
+void CSSToStyleMap::mapFillImage(CSSPropertyID propertyID, FillLayer& layer, const CSSValue& value)
 {
     if (treatAsInitialValue(value, propertyID)) {
         layer.setImage(FillLayer::initialFillImage(layer.type()));
@@ -261,7 +261,7 @@ void CSSToStyleMap::mapFillMaskMode(CSSPropertyID propertyID, FillLayer& layer, 
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
+    switch (value.valueID()) {
     case CSSValueAlpha:
         maskMode = MaskMode::Alpha;
         break;
@@ -305,7 +305,7 @@ void CSSToStyleMap::mapAnimationDirection(Animation& layer, const CSSValue& valu
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
+    switch (value.valueID()) {
     case CSSValueNormal:
         layer.setDirection(Animation::AnimationDirectionNormal);
         break;
@@ -347,7 +347,7 @@ void CSSToStyleMap::mapAnimationFillMode(Animation& layer, const CSSValue& value
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    switch (downcast<CSSPrimitiveValue>(value).valueID()) {
+    switch (value.valueID()) {
     case CSSValueNone:
         layer.setFillMode(AnimationFillMode::None);
         break;
@@ -409,7 +409,7 @@ void CSSToStyleMap::mapAnimationPlayState(Animation& layer, const CSSValue& valu
     if (!is<CSSPrimitiveValue>(value))
         return;
 
-    AnimationPlayState playState = (downcast<CSSPrimitiveValue>(value).valueID() == CSSValuePaused) ? AnimationPlayState::Paused : AnimationPlayState::Playing;
+    AnimationPlayState playState = (value.valueID() == CSSValuePaused) ? AnimationPlayState::Paused : AnimationPlayState::Playing;
     layer.setPlayState(playState);
 }
 
@@ -468,11 +468,11 @@ void CSSToStyleMap::mapNinePieceImage(const CSSValue* value, NinePieceImage& ima
     auto& borderImage = downcast<CSSValueList>(*value);
 
     for (auto& current : borderImage) {
-        if (current->isImage())
+        if (current.isImage())
             image.setImage(styleImage(current));
-        else if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(current.get()))
+        else if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(current))
             mapNinePieceImageSlice(*imageSlice, image);
-        else if (auto* slashList = dynamicDowncast<CSSValueList>(current.get())) {
+        else if (auto* slashList = dynamicDowncast<CSSValueList>(current)) {
             // Map in the image slices.
             if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(slashList->item(0)))
                 mapNinePieceImageSlice(*imageSlice, image);
@@ -484,7 +484,7 @@ void CSSToStyleMap::mapNinePieceImage(const CSSValue* value, NinePieceImage& ima
             // Map in the outset.
             if (slashList->item(2))
                 image.setOutset(mapNinePieceImageQuad(*slashList->item(2)));
-        } else if (current->isPair()) {
+        } else if (current.isPair()) {
             // Set the appropriate rules for stretch/round/repeat of the slices.
             mapNinePieceImageRepeat(current, image);
         }

@@ -55,7 +55,7 @@ ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSSFunctionVa
 {
     auto makeMatrix = [&](const Function<Ref<CSSTransformComponent>(Vector<double>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSTransformComponent>> {
         Vector<double> components;
-        for (auto componentCSSValue : cssFunctionValue) {
+        for (auto& componentCSSValue : cssFunctionValue) {
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
@@ -179,22 +179,23 @@ void CSSMatrixComponent::setMatrix(Ref<DOMMatrix>&& matrix)
 
 RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
 {
-    auto result = CSSFunctionValue::create(is2D() ? CSSValueMatrix : CSSValueMatrix3d);
     if (is2D()) {
         double values[] = { m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f() };
+        CSSValueListBuilder arguments;
         for (double value : values)
-            result->append(CSSPrimitiveValue::create(value));
-    } else {
-        double values[] = {
-            m_matrix->m11(), m_matrix->m12(), m_matrix->m13(), m_matrix->m14(),
-            m_matrix->m21(), m_matrix->m22(), m_matrix->m23(), m_matrix->m24(),
-            m_matrix->m31(), m_matrix->m32(), m_matrix->m33(), m_matrix->m34(),
-            m_matrix->m41(), m_matrix->m42(), m_matrix->m43(), m_matrix->m44()
-        };
-        for (double value : values)
-            result->append(CSSPrimitiveValue::create(value));
+            arguments.append(CSSPrimitiveValue::create(value));
+        return CSSFunctionValue::create(CSSValueMatrix, WTFMove(arguments));
     }
-    return result;
+    double values[] = {
+        m_matrix->m11(), m_matrix->m12(), m_matrix->m13(), m_matrix->m14(),
+        m_matrix->m21(), m_matrix->m22(), m_matrix->m23(), m_matrix->m24(),
+        m_matrix->m31(), m_matrix->m32(), m_matrix->m33(), m_matrix->m34(),
+        m_matrix->m41(), m_matrix->m42(), m_matrix->m43(), m_matrix->m44()
+    };
+    CSSValueListBuilder arguments;
+    for (double value : values)
+        arguments.append(CSSPrimitiveValue::create(value));
+    return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
 }
 
 } // namespace WebCore

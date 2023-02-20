@@ -36,13 +36,13 @@ namespace WebCore {
 
 class CSSSubgridValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSSubgridValue> create();
+    static Ref<CSSSubgridValue> create(CSSValueListBuilder);
 
     String customCSSText() const;
     bool equals(const CSSSubgridValue& other) const { return itemsEqual(other); }
 
 private:
-    CSSSubgridValue();
+    explicit CSSSubgridValue(CSSValueListBuilder);
 };
 
 } // namespace WebCore

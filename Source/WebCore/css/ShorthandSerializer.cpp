@@ -474,7 +474,7 @@ public:
         ASSERT(m_shorthand.length() <= maxShorthandLength);
     }
 
-    void set(unsigned index, CSSValue* value, bool skipSerializing = false)
+    void set(unsigned index, const CSSValue* value, bool skipSerializing = false)
     {
         ASSERT(index < m_shorthand.length());
         m_skipSerializing[index] = skipSerializing
@@ -548,19 +548,19 @@ public:
 private:
     const StylePropertyShorthand& m_shorthand;
     bool m_skipSerializing[maxShorthandLength] { };
-    RefPtr<CSSValue> m_values[maxShorthandLength];
+    RefPtr<const CSSValue> m_values[maxShorthandLength];
 };
 
 String ShorthandSerializer::serializeLayered() const
 {
-    size_t numLayers = 1;
+    unsigned numLayers = 1;
     for (auto& value : longhandValues()) {
         if (is<CSSValueList>(value))
             numLayers = std::max(downcast<CSSValueList>(value).length(), numLayers);
     }
 
     StringBuilder result;
-    for (size_t i = 0; i < numLayers; i++) {
+    for (unsigned i = 0; i < numLayers; i++) {
         LayerValues layerValues { m_shorthand };
 
         for (unsigned j = 0; j < length(); j++) {
@@ -1088,12 +1088,12 @@ String ShorthandSerializer::serializeGridTemplate() const
     for (auto& currentValue : downcast<CSSValueList>(longhandValue(rowsIndex))) {
         if (!result.isEmpty())
             result.append(' ');
-        if (auto lineNames = dynamicDowncast<CSSGridLineNamesValue>(currentValue.get()))
+        if (auto lineNames = dynamicDowncast<CSSGridLineNamesValue>(currentValue))
             result.append(lineNames->customCSSText());
         else {
             result.append('"', areasValue->stringForRow(row), '"');
             if (!isValueID(currentValue, CSSValueAuto))
-                result.append(' ', currentValue->cssText());
+                result.append(' ', currentValue.cssText());
             row++;
         }
     }

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "CSSGridLineNamesValue.h"
 
+#include "CSSMarkup.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -39,19 +40,25 @@ String CSSGridLineNamesValue::customCSSText() const
 {
     StringBuilder result;
     result.append('[');
-    serializeItems(result);
+    bool first = true;
+    for (auto& name : m_names) {
+        if (!std::exchange(first, false))
+            result.append(' ');
+        serializeIdentifier(name, result);
+    }
     result.append(']');
     return result.toString();
 }
 
-CSSGridLineNamesValue::CSSGridLineNamesValue()
-    : CSSValueContainingVector(GridLineNamesClass, SpaceSeparator)
+CSSGridLineNamesValue::CSSGridLineNamesValue(Span<const String> names)
+    : CSSValue(GridLineNamesClass)
+    , m_names(names.begin(), names.end())
 {
 }
 
-Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::create()
+Ref<CSSGridLineNamesValue> CSSGridLineNamesValue::create(Span<const String> names)
 {
-    return adoptRef(*new CSSGridLineNamesValue);
+    return adoptRef(*new CSSGridLineNamesValue(names));
 }
 
 }

@@ -43,10 +43,10 @@ static CSSCounterStyleDescriptors::Ranges translateRangeFromStyleProperties(cons
     auto& list = downcast<CSSValueList>(*ranges);
     CSSCounterStyleDescriptors::Ranges result;
     for (auto& rangeValue : list) {
-        if (!rangeValue->isPair())
+        if (!rangeValue.isPair())
             return { };
-        auto& low = downcast<CSSPrimitiveValue>(rangeValue->first());
-        auto& high = downcast<CSSPrimitiveValue>(rangeValue->second());
+        auto& low = downcast<CSSPrimitiveValue>(rangeValue.first());
+        auto& high = downcast<CSSPrimitiveValue>(rangeValue.second());
         int convertedLow { std::numeric_limits<int>::min() };
         int convertedHigh { std::numeric_limits<int>::max() };
         if (low.isInteger())
@@ -112,7 +112,7 @@ static Vector<CSSCounterStyleDescriptors::Symbol> translateSymbolsFromStylePrope
     Vector<CSSCounterStyleDescriptors::Symbol> result;
     auto& list = downcast<CSSValueList>(*symbolsValues);
     for (auto& symbolValue : list) {
-        auto symbolString = symbolToString(&symbolValue.get());
+        auto symbolString = symbolToString(&symbolValue);
         if (!symbolString.isNull())
             result.append((symbolString));
     }

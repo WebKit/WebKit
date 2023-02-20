@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-Ref<CSSImageSetValue> CSSImageSetValue::create()
+Ref<CSSImageSetValue> CSSImageSetValue::create(CSSValueListBuilder builder)
 {
-    return adoptRef(*new CSSImageSetValue);
+    return adoptRef(*new CSSImageSetValue(WTFMove(builder)));
 }
 
-CSSImageSetValue::CSSImageSetValue()
-    : CSSValueContainingVector(ImageSetClass, CommaSeparator)
+CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
+    : CSSValueContainingVector(ImageSetClass, CommaSeparator, WTFMove(builder))
 {
 }
 

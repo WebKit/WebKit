@@ -36,13 +36,15 @@ namespace WebCore {
 
 class CSSTransformListValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSTransformListValue> create();
+    static Ref<CSSTransformListValue> create(CSSValueListBuilder);
+    static Ref<CSSTransformListValue> create(Ref<CSSValue>);
 
     String customCSSText() const { return serializeItems(); }
     bool equals(const CSSTransformListValue& other) const { return itemsEqual(other); }
 
 private:
-    CSSTransformListValue();
+    explicit CSSTransformListValue(CSSValueListBuilder);
+    explicit CSSTransformListValue(Ref<CSSValue>);
 };
 
 } // namespace WebCore

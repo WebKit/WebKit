@@ -112,9 +112,7 @@ RefPtr<CSSValue> CSSSkewX::toCSSValue() const
     auto ax = m_ax->toCSSValue();
     if (!ax)
         return nullptr;
-    auto result = CSSFunctionValue::create(CSSValueSkewX);
-    result->append(ax.releaseNonNull());
-    return result;
+    return CSSFunctionValue::create(CSSValueSkewX, ax.releaseNonNull());
 }
 
 } // namespace WebCore

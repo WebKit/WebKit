@@ -1402,14 +1402,14 @@ void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* 
         }
     }
 
-    bool needMatchesRangesSeperator = false;
+    bool needMatchesRangesSeparator = false;
 
     auto dumpMatches = [&] (const char* prefix, Vector<UChar32> matches) {
         size_t matchesSize = matches.size();
         if (matchesSize) {
-            if (needMatchesRangesSeperator)
+            if (needMatchesRangesSeparator)
                 out.print(",");
-            needMatchesRangesSeperator = true;
+            needMatchesRangesSeparator = true;
 
             out.print(prefix, ":(");
             for (size_t i = 0; i < matchesSize; ++i) {
@@ -1424,9 +1424,9 @@ void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* 
     auto dumpRanges = [&] (const char* prefix, Vector<CharacterRange> ranges) {
         size_t rangeSize = ranges.size();
         if (rangeSize) {
-            if (needMatchesRangesSeperator)
+            if (needMatchesRangesSeparator)
                 out.print(",");
-            needMatchesRangesSeperator = true;
+            needMatchesRangesSeparator = true;
 
             out.print(prefix, " ranges:(");
             for (size_t i = 0; i < rangeSize; ++i) {

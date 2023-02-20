@@ -78,8 +78,6 @@ public:
 
     CSSValue* value() const { return m_value.get(); }
 
-    void wrapValueInCommaSeparatedList();
-
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
     static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
@@ -91,7 +89,6 @@ public:
     static bool isColorProperty(CSSPropertyID);
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
-    static Ref<CSSValueList> createListForProperty(CSSPropertyID);
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }

@@ -1426,7 +1426,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
         if (is<CSSGridAutoRepeatValue>(currentValue)) {
             // Auto-repeated values will be looped through until no more values were used in layout based on the expected track count.
             while (trackSizes.size() < expectedTrackCount) {
-                for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue.get())) {
+                for (auto& autoRepeatValue : downcast<CSSValueList>(currentValue)) {
                     handleValueIgnoringLineNames(autoRepeatValue);
                     if (trackSizes.size() >= expectedTrackCount)
                         break;
@@ -1436,9 +1436,9 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
         }
 
         if (is<CSSGridIntegerRepeatValue>(currentValue)) {
-            size_t repetitions = downcast<CSSGridIntegerRepeatValue>(currentValue.get()).repetitions();
+            size_t repetitions = downcast<CSSGridIntegerRepeatValue>(currentValue).repetitions();
             for (size_t i = 0; i < repetitions; ++i) {
-                for (auto& integerRepeatValue : downcast<CSSValueList>(currentValue.get()))
+                for (auto& integerRepeatValue : downcast<CSSValueList>(currentValue))
                     handleValueIgnoringLineNames(integerRepeatValue);
             }
             continue;

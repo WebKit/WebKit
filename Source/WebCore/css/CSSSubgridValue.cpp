@@ -45,14 +45,14 @@ String CSSSubgridValue::customCSSText() const
     return result.toString();
 }
 
-CSSSubgridValue::CSSSubgridValue()
-    : CSSValueContainingVector(SubgridClass, SpaceSeparator)
+CSSSubgridValue::CSSSubgridValue(CSSValueListBuilder builder)
+    : CSSValueContainingVector(SubgridClass, SpaceSeparator, WTFMove(builder))
 {
 }
 
-Ref<CSSSubgridValue> CSSSubgridValue::create()
+Ref<CSSSubgridValue> CSSSubgridValue::create(CSSValueListBuilder builder)
 {
-    return adoptRef(*new CSSSubgridValue);
+    return adoptRef(*new CSSSubgridValue(WTFMove(builder)));
 }
 
 }

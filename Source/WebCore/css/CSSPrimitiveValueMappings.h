@@ -54,7 +54,7 @@ namespace WebCore {
 
 template<typename TargetType> TargetType fromCSSValue(const CSSValue& value)
 {
-    return fromCSSValueID<TargetType>(downcast<CSSPrimitiveValue>(value).valueID());
+    return fromCSSValueID<TargetType>(value.valueID());
 }
 
 class TypeDeducingCSSValueMapper {

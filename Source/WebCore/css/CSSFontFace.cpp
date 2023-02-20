@@ -63,14 +63,14 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
     bool allowDownloading = context && (context->settingsValues().downloadableBinaryFontAllowedTypes != DownloadableBinaryFontAllowedTypes::None);
     for (auto& src : srcList) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
-        if (auto local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src.get())) {
+        if (auto local = dynamicDowncast<CSSFontFaceSrcLocalValue>(src)) {
             if (!local->svgFontFaceElement())
                 fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, local->fontFaceName()));
             else if (allowDownloading)
                 fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, local->fontFaceName(), *local->svgFontFaceElement()));
         } else {
             if (allowDownloading) {
-                if (auto request = downcast<CSSFontFaceSrcResourceValue>(src.get()).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
+                if (auto request = downcast<CSSFontFaceSrcResourceValue>(const_cast<CSSValue&>(src)).fontLoadRequest(*context, isInitiatingElementInUserAgentShadowTree))
                     fontFace.adoptSource(makeUnique<CSSFontFaceSource>(fontFace, *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(request))));
             }
         }
@@ -283,7 +283,7 @@ void CSSFontFace::setUnicodeRange(CSSValueList& list)
     ranges.reserveInitialCapacity(list.length());
 
     for (auto& rangeValue : list) {
-        auto& range = downcast<CSSUnicodeRangeValue>(rangeValue.get());
+        auto& range = downcast<CSSUnicodeRangeValue>(rangeValue);
         ranges.uncheckedAppend({ range.from(), range.to() });
     }
 
@@ -309,7 +309,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     if (is<CSSValueList>(featureSettings)) {
         auto& list = downcast<CSSValueList>(featureSettings);
         for (auto& rangeValue : list) {
-            auto& feature = downcast<CSSFontFeatureValue>(rangeValue.get());
+            auto& feature = downcast<CSSFontFeatureValue>(rangeValue);
             settings.insert({ feature.tag(), feature.value() });
         }
     }
