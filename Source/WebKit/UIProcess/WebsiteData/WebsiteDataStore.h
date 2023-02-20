@@ -330,7 +330,7 @@ public:
     VirtualAuthenticatorManager& virtualAuthenticatorManager();
 #endif
 
-    const WebsiteDataStoreConfiguration& configuration() { return m_configuration.get(); }
+    const WebsiteDataStoreConfiguration& configuration() const { return m_configuration.get(); }
 
     WebsiteDataStoreClient& client() { return m_client.get(); }
     void setClient(UniqueRef<WebsiteDataStoreClient>&& client) { m_client = WTFMove(client); }

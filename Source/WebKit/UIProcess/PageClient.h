@@ -79,6 +79,9 @@ OBJC_CLASS UIScrollEvent;
 OBJC_CLASS UIScrollView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
+#if USE(APPKIT)
+OBJC_CLASS WKView;
+#endif
 #endif
 
 namespace API {

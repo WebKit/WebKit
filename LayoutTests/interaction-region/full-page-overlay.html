@@ -1,0 +1,42 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=0.5">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            background-color: purple;
+        }
+
+        .spacer {
+            height: 2000px;
+        }
+    </style>
+</head>
+<body>
+<div class="overlay"></div>
+<div class="spacer"></div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = async function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

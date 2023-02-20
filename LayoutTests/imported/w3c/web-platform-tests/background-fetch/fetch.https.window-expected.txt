@@ -1,0 +1,18 @@
+
+FAIL Background Fetch requires an activated Service Worker promise_rejects_js: fetch() must reject on pending and installing workers function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Argument verification is done for BackgroundFetchManager.fetch() promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL IDs must be unique among active Background Fetch registrations promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Empty URL is OK. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Requests with PUT method require CORS Preflight and succeed. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Requests with text/json content type require CORS Preflight and succeed. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Using Background Fetch to successfully fetch a single resource promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Registration object gets updated values when a background fetch completes. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Background Fetch that exceeds the quota throws a QuotaExceededError promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Fetches can have requests with duplicate URLs promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL recordsAvailable is false after onbackgroundfetchsuccess finishes execution. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Using Background Fetch to fetch a non-existent resource should fail. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Fetches with mixed content should fail. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Responses failing CORS checks are not leaked promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+

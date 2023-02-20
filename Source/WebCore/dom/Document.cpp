@@ -202,6 +202,7 @@
 #include "ReportingScope.h"
 #include "RequestAnimationFrameCallback.h"
 #include "ResizeObserver.h"
+#include "ResizeObserverEntry.h"
 #include "ResourceLoadObserver.h"
 #include "RuntimeApplicationChecks.h"
 #include "SVGDocumentExtensions.h"
@@ -382,6 +383,30 @@ public:
 };
 
 static const Seconds intersectionObserversInitialUpdateDelay { 2000_ms };
+
+static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry>>& entries, ResizeObserver& observer)
+{
+    for (auto& entry : entries) {
+        if (auto* target = entry->target()) {
+            if (!target->isConnected()) {
+                observer.unobserve(*target);
+                target->clearLastRememberedSize();
+                continue;
+            }
+
+            auto* box = target->renderBox();
+            if (!box) {
+                observer.unobserve(*target);
+                continue;
+            }
+            ASSERT(!box->shouldSkipContent());
+            ASSERT(box->style().hasAutoLengthContainIntrinsicSize());
+
+            auto contentBoxSize = entry->contentBoxSize().at(0);
+            target->setLastRememberedSize(ResizeObserverSize::create(contentBoxSize->inlineSize(), contentBoxSize->blockSize()));
+        }
+    }
+}
 
 // https://www.w3.org/TR/xml/#NT-NameStartChar
 // NameStartChar       ::=       ":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
@@ -8464,9 +8489,21 @@ size_t Document::gatherResizeObservations(size_t deeperThan)
     return minDepth;
 }
 
+size_t Document::gatherResizeObservationsForContainIntrinsicSize()
+{
+    if (!m_resizeObserverForContainIntrinsicSize)
+        return ResizeObserver::maxElementDepth();
+
+    LOG_WITH_STREAM(ResizeObserver, stream << "Document " << *this << " gatherResizeObservationsForContainIntrinsicSize");
+    return m_resizeObserverForContainIntrinsicSize->gatherObservations(0);
+}
+
 void Document::deliverResizeObservations()
 {
     LOG_WITH_STREAM(ResizeObserver, stream << "Document " << *this << " deliverResizeObservations");
+    if (m_resizeObserverForContainIntrinsicSize)
+        m_resizeObserverForContainIntrinsicSize->deliverObservations();
+
     auto observersToNotify = m_resizeObservers;
     for (const auto& observer : observersToNotify) {
         if (!observer || !observer->hasActiveObservations())
@@ -8492,14 +8529,17 @@ void Document::setHasSkippedResizeObservations(bool skipped)
 
 void Document::updateResizeObservations(Page& page)
 {
-    if (!hasResizeObservers())
+    if (!hasResizeObservers() && !m_resizeObserverForContainIntrinsicSize)
         return;
 
     // We need layout the whole frame tree here. Because ResizeObserver could observe element in other frame,
     // and it could change other frame in deliverResizeObservations().
     page.layoutIfNeeded();
 
-    // Start check resize obervers;
+    // Start check resize observers;
+    if (gatherResizeObservationsForContainIntrinsicSize() != ResizeObserver::maxElementDepth())
+        deliverResizeObservations();
+
     for (size_t depth = gatherResizeObservations(0); depth != ResizeObserver::maxElementDepth(); depth = gatherResizeObservations(depth)) {
         deliverResizeObservations();
         page.layoutIfNeeded();
@@ -9464,6 +9504,33 @@ void Document::addElementWithLangAttrMatchingDocumentElement(Element& element)
 void Document::removeElementWithLangAttrMatchingDocumentElement(Element& element)
 {
     m_elementsWithLangAttrMatchingDocumentElement.remove(element);
+}
+
+RefPtr<ResizeObserver> Document::ensureResizeObserverForContainIntrinsicSize()
+{
+    if (!m_resizeObserverForContainIntrinsicSize)
+        m_resizeObserverForContainIntrinsicSize = ResizeObserver::createNativeObserver(*this, CallbackForContainIntrinsicSize);
+    return m_resizeObserverForContainIntrinsicSize;
+}
+
+void Document::observeForContainIntrinsicSize(Element& element)
+{
+    auto ro = ensureResizeObserverForContainIntrinsicSize();
+    ro->observe(element);
+}
+
+void Document::unobserveForContainIntrinsicSize(Element& element)
+{
+    if (!m_resizeObserverForContainIntrinsicSize)
+        return;
+    m_resizeObserverForContainIntrinsicSize->unobserve(element);
+}
+
+void Document::resetObservationSizeForContainIntrinsicSize(Element& target)
+{
+    if (!m_resizeObserverForContainIntrinsicSize)
+        return;
+    m_resizeObserverForContainIntrinsicSize->resetObservationSize(target);
 }
 
 } // namespace WebCore

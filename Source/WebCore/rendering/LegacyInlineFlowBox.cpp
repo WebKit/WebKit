@@ -1297,20 +1297,6 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
     return result;
 }
 
-void LegacyInlineFlowBox::computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, LayoutUnit& lineBottom) const
-{
-    for (const auto* box = firstChild(); box; box = box->nextOnLine()) {
-        if (is<LegacyInlineFlowBox>(*box))
-            downcast<LegacyInlineFlowBox>(*box).computeReplacedAndTextLineTopAndBottom(lineTop, lineBottom);
-        else {
-            if (box->logicalTop() < lineTop)
-                lineTop = box->logicalTop();
-            if (box->logicalBottom() > lineBottom)
-                lineBottom = box->logicalBottom();
-        }
-    }
-}
-
 #if ENABLE(TREE_DEBUGGING)
 
 const char* LegacyInlineFlowBox::boxName() const

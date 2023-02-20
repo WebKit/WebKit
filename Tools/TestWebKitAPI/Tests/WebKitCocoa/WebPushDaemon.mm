@@ -453,9 +453,10 @@ self.addEventListener("notificationclick", () => {
 class WebPushDTestWebView {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebPushDTestWebView(const String& pushPartition, const std::optional<UUID>& dataStoreIdentifier)
+    WebPushDTestWebView(const String& pushPartition, const std::optional<UUID>& dataStoreIdentifier, WKProcessPool *processPool, TestNotificationProvider& notificationProvider)
         : m_pushPartition(pushPartition)
         , m_dataStoreIdentifier(dataStoreIdentifier)
+        , m_notificationProvider(notificationProvider)
     {
         m_origin = "https://example.com"_s;
         m_url = adoptNS([[NSURL alloc] initWithString:@"https://example.com/"]);
@@ -502,27 +503,26 @@ public:
         }];
         Util::run(&done);
 
-        m_configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        m_configuration.get().websiteDataStore = m_dataStore.get();
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration setProcessPool:processPool];
+        [configuration setWebsiteDataStore:m_dataStore.get()];
 
-        auto userContentController = m_configuration.get().userContentController;
+        auto userContentController = [configuration userContentController];
         [userContentController addScriptMessageHandler:m_testMessageHandler.get() name:@"test"];
 
-        [m_configuration.get().preferences _setPushAPIEnabled:YES];
+        [[configuration preferences] _setPushAPIEnabled:YES];
+        m_notificationProvider.setPermission(m_origin, true);
 
-        m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [[m_configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
-        m_notificationProvider->setPermission(m_origin, true);
+        m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
-        m_webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:m_configuration.get()]);
+        auto uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
+        [m_webView setUIDelegate:uiDelegate.get()];
 
-        m_uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
-        [m_webView setUIDelegate:m_uiDelegate.get()];
-
-        m_navigationDelegate = adoptNS([TestNavigationDelegate new]);
-        m_navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+        navigationDelegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
             completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
         };
-        [m_webView setNavigationDelegate:m_navigationDelegate.get()];
+        [m_webView setNavigationDelegate:navigationDelegate.get()];
 
         [m_webView loadRequest:[NSURLRequest requestWithURL:m_url.get()]];
 
@@ -596,12 +596,12 @@ public:
 
     void resetPermission()
     {
-        m_notificationProvider->resetPermission(m_origin);
+        m_notificationProvider.resetPermission(m_origin);
     }
 
     void setPermission(bool value)
     {
-        m_notificationProvider->setPermission(m_origin, value);
+        m_notificationProvider.setPermission(m_origin, value);
     }
 
     void injectPushMessage(NSDictionary *apsUserInfo)
@@ -659,13 +659,22 @@ public:
         return pushMessageProcessedResult;
     }
 
+    void expectDataStoreIdentifierSetOnLastNotification()
+    {
+        auto identifier = m_notificationProvider.lastNotificationDataStoreIdentifier();
+        if (m_dataStoreIdentifier)
+            EXPECT_WK_STREQ(m_dataStoreIdentifier->toString().utf8().data(), identifier);
+        else
+            EXPECT_NULL(identifier);
+    }
+
     void simulateNotificationClick()
     {
         __block bool gotNotificationClick = false;
         [m_testMessageHandler addMessage:@"Received: notificationclick" withHandler:^{
             gotNotificationClick = true;
         }];
-        ASSERT_TRUE(m_notificationProvider->simulateNotificationClick());
+        ASSERT_TRUE(m_notificationProvider.simulateNotificationClick());
         TestWebKitAPI::Util::run(&gotNotificationClick);
     }
 
@@ -713,13 +722,10 @@ private:
     String m_origin;
     RetainPtr<NSURL> m_url;
     RetainPtr<WKWebsiteDataStore> m_dataStore;
-    RetainPtr<WKWebViewConfiguration> m_configuration;
     RetainPtr<TestMessageHandler> m_testMessageHandler;
     std::unique_ptr<TestWebKitAPI::HTTPServer> m_server;
-    std::unique_ptr<TestWebKitAPI::TestNotificationProvider> m_notificationProvider;
+    TestNotificationProvider& m_notificationProvider;
     RetainPtr<WKWebView> m_webView;
-    RetainPtr<id<WKUIDelegatePrivate>> m_uiDelegate;
-    RetainPtr<TestNavigationDelegate> m_navigationDelegate;
 };
 
 class WebPushDTest : public ::testing::Test {
@@ -731,19 +737,24 @@ public:
 
     void SetUp() override
     {
-        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt);
+        auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+        auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+        m_notificationProvider = makeUnique<TestWebKitAPI::TestNotificationProvider>(Vector<WKNotificationManagerRef> { [processPool _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+
+        auto webView = makeUniqueRef<WebPushDTestWebView>(emptyString(), std::nullopt, processPool.get(), *m_notificationProvider);
         m_webViews.append(WTFMove(webView));
 
-        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s));
+        auto webViewWithIdentifier1 = makeUniqueRef<WebPushDTestWebView>(emptyString(), UUID::parse("0bf5053b-164c-4b7d-8179-832e6bf158df"_s), processPool.get(), *m_notificationProvider);
         m_webViews.append(WTFMove(webViewWithIdentifier1));
 
-        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s));
+        auto webViewWithIdentifier2 = makeUniqueRef<WebPushDTestWebView>(emptyString(), UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider);
         m_webViews.append(WTFMove(webViewWithIdentifier2));
 
-        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt);
+        auto webViewWithPartition = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, std::nullopt, processPool.get(), *m_notificationProvider);
         m_webViews.append(WTFMove(webViewWithPartition));
 
-        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s));
+        auto webViewWithPartitionAndIdentifier = makeUniqueRef<WebPushDTestWebView>("testPartition"_s, UUID::parse("940e7729-738e-439f-a366-1a8719e23b2d"_s), processPool.get(), *m_notificationProvider);
         m_webViews.append(WTFMove(webViewWithPartitionAndIdentifier));
     }
 
@@ -770,6 +781,7 @@ public:
 
 protected:
     RetainPtr<NSURL> m_tempDirectory;
+    std::unique_ptr<TestWebKitAPI::TestNotificationProvider> m_notificationProvider;
     Vector<UniqueRef<WebPushDTestWebView>> m_webViews;
 };
 
@@ -1100,8 +1112,10 @@ public:
         }
 
         int i = 0;
-        for (auto& v : webViews())
+        for (auto& v : webViews()) {
             v->expectDecryptedMessage(expectedMessage, rawMessages[i++].get());
+            v->expectDataStoreIdentifierSetOnLastNotification();
+        }
     }
 };
 

@@ -1,0 +1,10 @@
+
+FAIL https: fetch should register ok promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL loopback IPv4 http: fetch should register ok promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL loopback IPv6 http: fetch should register ok promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL localhost http: fetch should register ok promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL wss: fetch should reject promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL file: fetch should reject promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL data: fetch should reject promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL unknown scheme fetch should reject promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+

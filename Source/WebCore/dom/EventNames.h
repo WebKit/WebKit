@@ -61,6 +61,10 @@ namespace WebCore {
     macro(audiostart) \
     macro(autocomplete) \
     macro(autocompleteerror) \
+    macro(backgroundfetchsuccess) \
+    macro(backgroundfetchfail) \
+    macro(backgroundfetchabort) \
+    macro(backgroundfetchclick) \
     macro(beforecopy) \
     macro(beforecut) \
     macro(beforeinput) \

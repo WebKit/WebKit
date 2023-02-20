@@ -1555,6 +1555,19 @@ JS_BINDING_IDLS := \
     $(WebCore)/workers/service/ServiceWorkerRegistration.idl \
     $(WebCore)/workers/service/ServiceWorkerUpdateViaCache.idl \
     $(WebCore)/workers/service/ServiceWorkerWindowClient.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchEvent.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchEventInit.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchFailureReason.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchManager.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchOptions.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchRecord.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchRegistration.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchResult.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchUIOptions.idl \
+    $(WebCore)/workers/service/background-fetch/BackgroundFetchUpdateUIEvent.idl \
+    $(WebCore)/workers/service/background-fetch/ImageResource.idl \
+    $(WebCore)/workers/service/background-fetch/ServiceWorkerGlobalScope+BackgroundFetchAPI.idl \
+    $(WebCore)/workers/service/background-fetch/ServiceWorkerRegistration+BackgroundFetchAPI.idl \
     $(WebCore)/workers/shared/SharedWorker.idl \
     $(WebCore)/workers/shared/SharedWorkerGlobalScope.idl \
     $(WebCore)/worklets/PaintWorkletGlobalScope.idl \

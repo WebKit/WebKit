@@ -2249,7 +2249,7 @@ void WebsiteDataStore::showServiceWorkerNotification(IPC::Connection& connection
     if (m_client->showNotification(notificationData))
         return;
 
-    WebNotificationManagerProxy::sharedServiceWorkerManager().show(nullptr, connection, notificationData, nullptr);
+    WebNotificationManagerProxy::sharedServiceWorkerManager().show(*this, connection, notificationData, nullptr);
 }
 
 void WebsiteDataStore::cancelServiceWorkerNotification(const UUID& notificationID)

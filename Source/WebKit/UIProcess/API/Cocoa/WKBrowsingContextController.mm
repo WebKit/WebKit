@@ -52,6 +52,7 @@
 #import "WKSharedAPICast.h"
 #import "WKURLRequestNS.h"
 #import "WKURLResponseNS.h"
+#import "WKViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
 #import "WebProtectionSpace.h"

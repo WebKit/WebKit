@@ -117,7 +117,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     FloatSize frameViewSize = mainFrameView.size();
     // Adding some wiggle room, we use this to avoid extreme cases.
-    frameViewSize.scale(1.3, 1.3);
+    auto scale = 1 / mainFrameView.visibleContentScaleFactor() + 0.2;
+    frameViewSize.scale(scale, scale);
     auto frameViewArea = frameViewSize.area();
 
     auto checkedRegionArea = bounds.area<RecordOverflow>();
@@ -149,7 +150,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
     bool hasPointer = cursorTypeForElement(*element) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*element);
     if (!hasListener || !hasPointer) {
-        bool isOverlay = checkedRegionArea.value() <= frameViewArea && renderer.style().specifiedZIndex() > 0;
+        bool isOverlay = checkedRegionArea.value() <= frameViewArea && (renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned());
         if (isOverlay) {
             Region boundsRegion;
             boundsRegion.unite(bounds);

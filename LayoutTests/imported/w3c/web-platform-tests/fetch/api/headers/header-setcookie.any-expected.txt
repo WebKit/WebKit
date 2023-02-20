@@ -1,0 +1,26 @@
+
+PASS Headers.prototype.get combines set-cookie headers in order
+PASS Headers iterator does not combine set-cookie headers
+PASS Headers iterator does not special case set-cookie2 headers
+PASS Headers iterator does not combine set-cookie & set-cookie2 headers
+PASS Headers iterator preserves set-cookie ordering
+PASS Headers iterator preserves per header ordering, but sorts keys alphabetically
+PASS Headers iterator preserves per header ordering, but sorts keys alphabetically (and ignores value ordering)
+PASS Headers iterator is correctly updated with set-cookie changes
+PASS Headers iterator is correctly updated with set-cookie changes #2
+PASS Headers.prototype.has works for set-cookie
+PASS Headers.prototype.append works for set-cookie
+PASS Headers.prototype.set works for set-cookie
+PASS Headers.prototype.delete works for set-cookie
+PASS Headers.prototype.getSetCookie with no headers present
+PASS Headers.prototype.getSetCookie with one header
+PASS Headers.prototype.getSetCookie with one header created from an object
+PASS Headers.prototype.getSetCookie with multiple headers
+PASS Headers.prototype.getSetCookie with an empty header
+PASS Headers.prototype.getSetCookie with two equal headers
+PASS Headers.prototype.getSetCookie ignores set-cookie2 headers
+PASS Headers.prototype.getSetCookie preserves header ordering
+PASS Adding Set-Cookie headers normalizes their value
+PASS Adding invalid Set-Cookie headers throws
+PASS Set-Cookie is a forbidden response header
+

@@ -617,10 +617,21 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
         highlights.reserveInitialCapacity(highlightDataArray->size());
         for (auto dictionary : highlightDataArray->elementsOfType<API::Dictionary>()) {
             auto startOffset = static_cast<API::UInt64*>(dictionary->get("from"_s))->value();
+
+            std::optional<WebCore::Color> backgroundHighlightColor;
+            std::optional<WebCore::Color> foregroundHighlightColor;
+
+            if (auto backgroundColor = dictionary->get("color"_s))
+                backgroundHighlightColor = WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(backgroundColor)->string());
+
+            if (auto foregroundColor = dictionary->get("foregroundColor"_s))
+                foregroundHighlightColor = WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(foregroundColor)->string());
+
             highlights.uncheckedAppend({
                 static_cast<unsigned>(startOffset),
                 static_cast<unsigned>(startOffset + static_cast<API::UInt64*>(dictionary->get("length"_s))->value()),
-                WebCore::CSSParser::parseColorWithoutContext(static_cast<API::String*>(dictionary->get("color"_s))->string())
+                backgroundHighlightColor,
+                foregroundHighlightColor
             });
         }
     }

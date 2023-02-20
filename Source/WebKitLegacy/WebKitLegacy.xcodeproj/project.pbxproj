@@ -2674,6 +2674,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9398101B0824BF01008DF038 /* WebKit.h in Headers */,
 				DDF74C8227EE3CAE0011F633 /* AbstractPasteboard.h in Headers */,
 				1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */,
 				1A60519217502A5D00BC62F5 /* BinaryPropertyList.h in Headers */,
@@ -3026,7 +3027,6 @@
 				DDF74C9C27EE3D050011F633 /* WebItemProviderPasteboard.h in Headers */,
 				939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */,
 				37D1DCA81065928C0068F7EF /* WebJSPDFDoc.h in Headers */,
-				9398101B0824BF01008DF038 /* WebKit.h in Headers */,
 				DDF74C7E27EE3C740011F633 /* WebKitAvailability.h in Headers */,
 				9398101C0824BF01008DF038 /* WebKitErrors.h in Headers */,
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,

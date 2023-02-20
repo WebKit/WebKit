@@ -21,6 +21,7 @@ class CustomElement extends HTMLElement {
         internals.ariaDescribedByElements = Array.from(document.querySelectorAll('.note'));
         internals.ariaDetailsElements = Array.from(document.querySelectorAll('.details'));
         internals.ariaErrorMessageElements = Array.from(document.querySelectorAll('.error'));
+        internals.ariaInvalid = true;
         shouldBe('internals.ariaDescribedByElements.length', '2');
         shouldBe('internals.ariaDescribedByElements[0]', 'document.querySelectorAll(".note")[0]');
         shouldBe('internals.ariaDescribedByElements[1]', 'document.querySelectorAll(".note")[1]');

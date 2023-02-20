@@ -1527,6 +1527,11 @@ public:
     void setHasSkippedResizeObservations(bool);
     void updateResizeObservations(Page&);
 
+    size_t gatherResizeObservationsForContainIntrinsicSize();
+    void observeForContainIntrinsicSize(Element&);
+    void unobserveForContainIntrinsicSize(Element&);
+    void resetObservationSizeForContainIntrinsicSize(Element&);
+
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
@@ -1876,6 +1881,8 @@ private:
     NotificationClient* notificationClient() final;
 
     void updateSleepDisablerIfNeeded();
+
+    RefPtr<ResizeObserver> ensureResizeObserverForContainIntrinsicSize();
 
     const Ref<const Settings> m_settings;
 
@@ -2365,6 +2372,8 @@ private:
     bool m_isDirAttributeDirty { false };
 
     static bool hasEverCreatedAnAXObjectCache;
+
+    RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
 };
 
 Element* eventTargetElementForDocument(Document*);

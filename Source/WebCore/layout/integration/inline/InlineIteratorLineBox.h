@@ -93,6 +93,8 @@ public:
     LineBoxIterator next() const;
     LineBoxIterator previous() const;
 
+    size_t lineIndex() const;
+
 private:
     friend class LineBoxIterator;
 
@@ -129,6 +131,8 @@ private:
 
 WEBCORE_EXPORT LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
 LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
+LineBoxIterator lineBoxFor(const LayoutIntegration::InlineContent&, size_t lineIndex);
+
 LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 
 // -----------------------------------------------
@@ -312,6 +316,13 @@ inline bool LineBox::isFirstAfterPageBreak() const
 inline bool LineBox::isFirst() const
 {
     return !previous();
+}
+
+inline size_t LineBox::lineIndex() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.lineIndex();
+    });
 }
 
 }

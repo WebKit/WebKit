@@ -3020,7 +3020,8 @@ struct WebCore::FontShadow {
 struct WebCore::CompositionHighlight {
     unsigned startOffset;
     unsigned endOffset;
-    WebCore::Color color;
+    std::optional<WebCore::Color> backgroundColor;
+    std::optional<WebCore::Color> foregroundColor;
 };
 
 header: <WebCore/FontAttributeChanges.h>

@@ -53,6 +53,11 @@ void ResizeObservation::updateObservationSize(const BoxSizes& boxSizes)
     m_lastObservationSizes = boxSizes;
 }
 
+void ResizeObservation::resetObservationSize()
+{
+    m_lastObservationSizes = { LayoutSize(-1, -1), LayoutSize(-1, -1), LayoutSize(-1, -1) };
+}
+
 auto ResizeObservation::computeObservedSizes() const -> std::optional<BoxSizes>
 {
     if (m_target->isSVGElement()) {

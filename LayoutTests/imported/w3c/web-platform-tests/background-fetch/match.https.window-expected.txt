@@ -1,0 +1,7 @@
+
+FAIL Matching to a single request should work promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Matching to a non-existing request should work promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Matching multiple times on the same request works as expected. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Access to active fetches is supported. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Match with query options. promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+

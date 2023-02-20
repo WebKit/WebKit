@@ -175,6 +175,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/fetch/FetchBodyConsumer.h
     Modules/fetch/FetchBodySource.h
     Modules/fetch/FetchHeaders.h
+    Modules/fetch/FetchHeadersGuard.h
     Modules/fetch/FetchIdentifier.h
     Modules/fetch/FetchLoader.h
     Modules/fetch/FetchLoaderClient.h
@@ -2242,6 +2243,16 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/ServiceWorkerRegistrationOptions.h
     workers/service/ServiceWorkerTypes.h
     workers/service/ServiceWorkerUpdateViaCache.h
+
+    workers/service/background-fetch/BackgroundFetchFailureReason.h
+    workers/service/background-fetch/BackgroundFetchInformation.h
+    workers/service/background-fetch/BackgroundFetchOptions.h
+    workers/service/background-fetch/BackgroundFetchRecordIdentifier.h
+    workers/service/background-fetch/BackgroundFetchRecordInformation.h
+    workers/service/background-fetch/BackgroundFetchRequest.h
+    workers/service/background-fetch/BackgroundFetchResult.h
+    workers/service/background-fetch/BackgroundFetchUIOptions.h
+    workers/service/background-fetch/ImageResource.h
 
     workers/service/context/SWContextManager.h
     workers/service/context/ServiceWorkerDebuggable.h

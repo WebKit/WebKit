@@ -186,6 +186,7 @@
 #endif
 
 #import <pal/cocoa/VisionKitCoreSoftLink.h>
+#import <pal/cocoa/TranslationUIServicesSoftLink.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/ios/QuickLookSoftLink.h>
 
@@ -4080,8 +4081,13 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return UIKeyboardEnabledInputModesAllowChineseTransliterationForText([self selectedText]);
     }
 
-    if (action == @selector(_translate:))
+#if HAVE(TRANSLATION_UI_SERVICES)
+    if (action == @selector(_translate:)) {
+        if (!PAL::isTranslationUIServicesFrameworkAvailable() || ![PAL::getLTUITranslationViewControllerClass() isAvailable])
+            return NO;
         return !editorState.isInPasswordField && editorState.selectionIsRange;
+    }
+#endif // HAVE(TRANSLATION_UI_SERVICES)
 
     if (action == @selector(select:)) {
         // Disable select in password fields so that you can't see word boundaries.
@@ -5646,10 +5652,15 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
         if (!attributes[NSMarkedClauseSegmentAttributeName])
             return;
 
-        WebCore::Color highlightColor { WebCore::CompositionHighlight::defaultCompositionFillColor };
-        if (UIColor *uiColor = attributes[NSBackgroundColorAttributeName])
-            highlightColor = WebCore::colorFromCocoaColor(uiColor);
-        highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), highlightColor });
+        WebCore::Color backgroundHighlightColor { WebCore::CompositionHighlight::defaultCompositionFillColor };
+        if (UIColor *backgroundColor = attributes[NSBackgroundColorAttributeName])
+            backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor);
+
+        std::optional<WebCore::Color> foregroundHighlightColor;
+        if (UIColor *foregroundColor = attributes[NSForegroundColorAttributeName])
+            foregroundHighlightColor = WebCore::colorFromCocoaColor(foregroundColor);
+
+        highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
     }];
 
     std::sort(highlights.begin(), highlights.end(), [](auto& a, auto& b) {
@@ -5663,7 +5674,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     Vector<WebCore::CompositionHighlight> mergedHighlights;
     mergedHighlights.reserveInitialCapacity(highlights.size());
     for (auto& highlight : highlights) {
-        if (mergedHighlights.isEmpty() || mergedHighlights.last().color != highlight.color)
+        if (mergedHighlights.isEmpty() || mergedHighlights.last().backgroundColor != highlight.backgroundColor || mergedHighlights.last().foregroundColor != highlight.foregroundColor)
             mergedHighlights.append(highlight);
         else
             mergedHighlights.last().endOffset = highlight.endOffset;

@@ -380,7 +380,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::Pre;
     if (is<HTMLDetailsElement>(node()))
         return AccessibilityRole::Details;
-    if (is<HTMLSummaryElement>(node()))
+    if (auto* summaryElement = dynamicDowncast<HTMLSummaryElement>(node()); summaryElement && summaryElement->isActiveSummary())
         return AccessibilityRole::Summary;
 
     // http://rawgit.com/w3c/aria/master/html-aam/html-aam.html

@@ -1485,7 +1485,7 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
                 layoutState.marginInfo().setAtBeforeSideOfBlock(false);
 
                 if (paginated)
-                    m_flow.adjustLinePositionForPagination(lineBox, adjustment, layoutState.fragmentedFlow());
+                    m_flow.adjustLinePositionForPagination(lineBox, adjustment);
                 if (adjustment) {
                     IndentTextOrNot shouldIndentText = layoutState.lineInfo().isFirstLine() ? IndentText : DoNotIndentText;
                     LayoutUnit oldLineWidth = m_flow.availableLogicalWidthForLine(oldLogicalHeight, shouldIndentText);
@@ -1649,7 +1649,7 @@ void LegacyLineLayout::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                 line->attachLine();
                 if (paginated) {
                     delta -= line->paginationStrut();
-                    m_flow.adjustLinePositionForPagination(line, delta, layoutState.fragmentedFlow());
+                    m_flow.adjustLinePositionForPagination(line, delta);
                 }
                 if (delta) {
                     layoutState.updateRepaintRangeFromBox(line, delta);
@@ -1885,7 +1885,7 @@ LegacyRootInlineBox* LegacyLineLayout::determineStartPosition(LineLayoutState& l
                     break;
                 }
                 paginationDelta -= currentLine->paginationStrut();
-                m_flow.adjustLinePositionForPagination(currentLine, paginationDelta, layoutState.fragmentedFlow());
+                m_flow.adjustLinePositionForPagination(currentLine, paginationDelta);
                 if (paginationDelta) {
                     if (m_flow.containsFloats() || !floats.isEmpty()) {
                         // FIXME: Do better eventually. For now if we ever shift because of pagination and floats are present just go to a full layout.
@@ -2067,7 +2067,7 @@ bool LegacyLineLayout::checkPaginationAndFloatsAtEndLine(LineLayoutState& layout
                 // strut yet.
                 LayoutUnit oldPaginationStrut = lineBox->paginationStrut();
                 lineDelta -= oldPaginationStrut;
-                m_flow.adjustLinePositionForPagination(lineBox, lineDelta, layoutState.fragmentedFlow());
+                m_flow.adjustLinePositionForPagination(lineBox, lineDelta);
                 lineBox->setPaginationStrut(oldPaginationStrut);
             }
             if (lineWidthForPaginatedLineChanged(lineBox, lineDelta, layoutState.fragmentedFlow()))

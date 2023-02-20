@@ -23,6 +23,7 @@ RSYNC_ARGS ?= -vz
 
 FLATPAK_RUNTIMES_REPO = $(CACHEDIR)/flatpak-runtimes-repo
 FLATPAK_PLATFORM_EXTENSIONS_REPO = $(CACHEDIR)/flatpak-platform-extensions-repo
+FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO = $(CACHEDIR)/flatpak-platform-extensions-extra-repo
 EXPORT_REPO = $(REPO)
 
 EXPORT_REFS = $(shell [ -d "$(EXPORT_REPO)" ] && $(OSTREE) refs --repo $(EXPORT_REPO))
@@ -48,7 +49,7 @@ fetch-junctions:
 
 track:
 	$(BST) $(BST_ARGS) $(_BST_ARGS) track freedesktop-sdk.bst
-	$(BST) $(BST_ARGS) $(_BST_ARGS) track flatpak-runtimes.bst flatpak-platform-extensions.bst --deps=all
+	$(BST) $(BST_ARGS) $(_BST_ARGS) track flatpak-runtimes.bst flatpak-platform-extensions.bst flatpak-platform-extensions-extra.bst --deps=all
 .PHONY: track
 
 
@@ -117,6 +118,28 @@ CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_REPO):
 	rm -rf $(FLATPAK_PLATFORM_EXTENSIONS_REPO)
 .PHONY: CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_REPO)
 clean: CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_REPO)
+
+BUILD-flatpak-platform-extensions-extra: elements/**/*.bst
+	$(BST) $(BST_ARGS) $(_BST_ARGS) build flatpak-platform-extensions-extra.bst
+.PHONY: BUILD-flatpak-platform-extensions-extra
+
+CHECK-flatpak-platform-extensions-extra: | fetch-junctions
+	$(BST) $(BST_ARGS) $(_BST_ARGS) show flatpak-platform-extensions-extra.bst
+.PHONY: CHECK-flatpak-platform-extensions-extra
+check: CHECK-flatpak-platform-extensions-extra
+
+$(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO): BUILD-flatpak-platform-extensions-extra | $(CACHEDIR)
+	$(BST) $(BST_ARGS) $(_BST_ARGS) checkout --hardlinks --force flatpak-platform-extensions-extra.bst $@
+
+EXPORT-$(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO): $(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO) | $(EXPORT_REPO)
+	$(OSTREE) pull-local --repo=$| $<
+.PHONY: EXPORT-$(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO)
+export: EXPORT-$(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO)
+
+CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO):
+	rm -rf $(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO)
+.PHONY: CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO)
+clean: CLEAN-$(FLATPAK_PLATFORM_EXTENSIONS_EXTRA_REPO)
 
 pull-repo:
 	./ostree-releng-scripts/rsync-repos --rsync-opts="${RSYNC_ARGS}" --src ${RSYNC_HOST}:${RSYNC_REMOTE_DIR}/ --dest ${REPO}

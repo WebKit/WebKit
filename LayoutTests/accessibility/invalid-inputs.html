@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<label for="lowercase">Only use lowercase here</label>
+<input id="pattern-input" name="lowercase" type="text" value="foo" pattern="[a-z]+">
+
+<label for="age">Age: (50+ only)</label>
+<input id="number-input" name="age" type="number" value="50" min="50">
+
+<script>
+var output = "This test ensures we consider inputs to be invalid when they are rendered as such.\n\n";
+
+function expectInvalid(id, expectedValue) {
+    output += expect(`accessibilityController.accessibleElementById("${id}").stringAttributeValue("AXInvalid")`, `"${expectedValue}"`);
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    expectInvalid("pattern-input", false);
+    expectInvalid("number-input", false);
+
+    output += "\nMaking inputs invalid.\n";
+
+    var gotPatternInputNotification = false;
+    var gotNumberInputNotification = false;
+    accessibilityController.addNotificationListener((axElement, notification) => {
+        if (notification !== "AXInvalidStatusChanged")
+            return;
+
+        if (axElement.domIdentifier === "pattern-input")
+            gotPatternInputNotification = true;
+        else if (axElement.domIdentifier === "number-input")
+            gotNumberInputNotification = true;
+
+        if (gotNumberInputNotification && gotPatternInputNotification) {
+            accessibilityController.removeNotificationListener();
+
+            expectInvalid("pattern-input", true);
+            expectInvalid("number-input", true);
+
+            debug(output);
+            finishJSTest();
+        }
+    });
+
+    document.getElementById("pattern-input").value = "ABC";
+    document.getElementById("number-input").value = 5;
+}
+</script>
+</body>
+</html>
+
