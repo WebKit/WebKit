@@ -1225,9 +1225,6 @@ imported/w3c/web-platform-tests/fetch/metadata/redirect/ [ Skip ]
 
 # These tests have unreliable ordering and are flakey
 
-# Not supported
-imported/w3c/web-platform-tests/background-fetch [ Skip ]
-
 # This is a resources folder.
 http/tests/workers/service/other_resources [ Skip ]
 

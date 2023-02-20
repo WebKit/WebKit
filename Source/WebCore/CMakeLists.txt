@@ -181,6 +181,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/websockets"
     "${WEBCORE_DIR}/workers"
     "${WEBCORE_DIR}/workers/service"
+    "${WEBCORE_DIR}/workers/service/background-fetch"
     "${WEBCORE_DIR}/workers/service/context"
     "${WEBCORE_DIR}/workers/service/server"
     "${WEBCORE_DIR}/workers/shared"
@@ -1350,6 +1351,20 @@ set(WebCore_NON_SVG_IDL_FILES
     workers/service/ServiceWorkerRegistration.idl
     workers/service/ServiceWorkerUpdateViaCache.idl
     workers/service/ServiceWorkerWindowClient.idl
+
+    workers/service/background-fetch/BackgroundFetchEvent.idl
+    workers/service/background-fetch/BackgroundFetchEventInit.idl
+    workers/service/background-fetch/BackgroundFetchFailureReason.idl
+    workers/service/background-fetch/BackgroundFetchManager.idl
+    workers/service/background-fetch/BackgroundFetchOptions.idl
+    workers/service/background-fetch/BackgroundFetchRecord.idl
+    workers/service/background-fetch/BackgroundFetchRegistration.idl
+    workers/service/background-fetch/BackgroundFetchResult.idl
+    workers/service/background-fetch/BackgroundFetchUIOptions.idl
+    workers/service/background-fetch/BackgroundFetchUpdateUIEvent.idl
+    workers/service/background-fetch/ImageResource.idl
+    workers/service/background-fetch/ServiceWorkerGlobalScope+BackgroundFetchAPI.idl
+    workers/service/background-fetch/ServiceWorkerRegistration+BackgroundFetchAPI.idl
 
     workers/shared/SharedWorker.idl
     workers/shared/SharedWorkerGlobalScope.idl

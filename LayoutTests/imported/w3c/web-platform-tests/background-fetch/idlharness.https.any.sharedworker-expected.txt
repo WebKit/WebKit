@@ -1,0 +1,47 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface ServiceWorkerGlobalScope: original interface defined
+PASS Partial interface ServiceWorkerGlobalScope: member names are unique
+PASS Partial interface ServiceWorkerRegistration: original interface defined
+PASS Partial interface ServiceWorkerRegistration: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+PASS BackgroundFetchManager interface: existence and properties of interface object
+PASS BackgroundFetchManager interface object length
+PASS BackgroundFetchManager interface object name
+PASS BackgroundFetchManager interface: existence and properties of interface prototype object
+PASS BackgroundFetchManager interface: existence and properties of interface prototype object's "constructor" property
+PASS BackgroundFetchManager interface: existence and properties of interface prototype object's @@unscopables property
+PASS BackgroundFetchManager interface: operation fetch(DOMString, (RequestInfo or sequence<RequestInfo>), optional BackgroundFetchOptions)
+PASS BackgroundFetchManager interface: operation get(DOMString)
+PASS BackgroundFetchManager interface: operation getIds()
+PASS BackgroundFetchRegistration interface: existence and properties of interface object
+PASS BackgroundFetchRegistration interface object length
+PASS BackgroundFetchRegistration interface object name
+PASS BackgroundFetchRegistration interface: existence and properties of interface prototype object
+PASS BackgroundFetchRegistration interface: existence and properties of interface prototype object's "constructor" property
+PASS BackgroundFetchRegistration interface: existence and properties of interface prototype object's @@unscopables property
+PASS BackgroundFetchRegistration interface: attribute id
+PASS BackgroundFetchRegistration interface: attribute uploadTotal
+PASS BackgroundFetchRegistration interface: attribute uploaded
+PASS BackgroundFetchRegistration interface: attribute downloadTotal
+PASS BackgroundFetchRegistration interface: attribute downloaded
+PASS BackgroundFetchRegistration interface: attribute result
+PASS BackgroundFetchRegistration interface: attribute failureReason
+PASS BackgroundFetchRegistration interface: attribute recordsAvailable
+PASS BackgroundFetchRegistration interface: attribute onprogress
+PASS BackgroundFetchRegistration interface: operation abort()
+PASS BackgroundFetchRegistration interface: operation match(RequestInfo, optional CacheQueryOptions)
+PASS BackgroundFetchRegistration interface: operation matchAll(optional RequestInfo, optional CacheQueryOptions)
+PASS BackgroundFetchRecord interface: existence and properties of interface object
+PASS BackgroundFetchRecord interface object length
+PASS BackgroundFetchRecord interface object name
+PASS BackgroundFetchRecord interface: existence and properties of interface prototype object
+PASS BackgroundFetchRecord interface: existence and properties of interface prototype object's "constructor" property
+PASS BackgroundFetchRecord interface: existence and properties of interface prototype object's @@unscopables property
+PASS BackgroundFetchRecord interface: attribute request
+PASS BackgroundFetchRecord interface: attribute responseReady
+PASS BackgroundFetchEvent interface: existence and properties of interface object
+FAIL BackgroundFetchUpdateUIEvent interface: existence and properties of interface object assert_false: expected false got true
+PASS ServiceWorkerRegistration interface: attribute backgroundFetch
+

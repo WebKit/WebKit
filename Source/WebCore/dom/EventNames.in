@@ -6,6 +6,8 @@ Event
 Events interfaceName=Event
 HTMLEvents interfaceName=Event
 AnimationPlaybackEvent
+BackgroundFetchEvent conditional=SERVICE_WORKER
+BackgroundFetchUpdateUIEvent conditional=SERVICE_WORKER
 BeforeLoadEvent interfaceName=Event
 BeforeUnloadEvent
 ClipboardEvent

@@ -1,0 +1,3 @@
+
+FAIL fetch blocked by CSP should reject promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+

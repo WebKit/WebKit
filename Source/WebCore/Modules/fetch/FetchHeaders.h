@@ -29,6 +29,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "FetchHeadersGuard.h"
 #include "HTTPHeaderMap.h"
 #include <variant>
 #include <wtf/HashTraits.h>
@@ -37,14 +38,6 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
-
-enum class FetchHeadersGuard : uint8_t {
-    None,
-    Immutable,
-    Request,
-    RequestNoCors,
-    Response
-};
 
 class FetchHeaders : public RefCounted<FetchHeaders> {
 public:
@@ -117,18 +110,3 @@ inline void FetchHeaders::setGuard(Guard guard)
 }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraitsForPersistence<WebCore::FetchHeaders::Guard> {
-    using values = EnumValues<
-    WebCore::FetchHeaders::Guard,
-    WebCore::FetchHeaders::Guard::None,
-    WebCore::FetchHeaders::Guard::Immutable,
-    WebCore::FetchHeaders::Guard::Request,
-    WebCore::FetchHeaders::Guard::RequestNoCors,
-    WebCore::FetchHeaders::Guard::Response
-    >;
-};
-
-}
