@@ -1,13 +1,13 @@
-Please enter a start time for the meeting:
 This verifies the exposure of aria-errormessage.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: errorMessages.length === 2
+PASS: errorMessages[0].domIdentifier === 'errorMessage1'
+PASS: errorMessages[1].domIdentifier === 'errorMessage2'
 
+Changing #startTime aria-invalid to be false.
+PASS: axStartTime.errorMessageElements() === undefined
 
-PASS errorMessages.length is 2
-PASS errorMessages[0].domIdentifier is 'errorMessage1'
-PASS errorMessages[1].domIdentifier is 'errorMessage2'
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+Please enter a start time for the meeting:

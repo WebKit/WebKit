@@ -1939,7 +1939,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
 
 - (NSArray *)accessibilityErrorMessageElements
 {
-    if (![self _prepareAccessibilityCall])
+    if (![self _prepareAccessibilityCall] || self.axBackingObject->invalidStatus() == "false"_s)
         return nil;
     return accessibleElementsForObjects(self.axBackingObject->errorMessageObjects());
 }

@@ -2614,8 +2614,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityRelativeFrameAttribute])
         return [NSValue valueWithRect:(NSRect)backingObject->relativeFrame()];
 
-    if ([attributeName isEqualToString:@"AXErrorMessageElements"])
+    if ([attributeName isEqualToString:@"AXErrorMessageElements"]) {
+        // Only expose error messages for objects in an invalid state.
+        // https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage
+        if (backingObject->invalidStatus() == "false"_s)
+            return nil;
         return makeNSArray(backingObject->errorMessageObjects());
+    }
 
     // Multi-selectable
     if ([attributeName isEqualToString:NSAccessibilityIsMultiSelectableAttribute])
