@@ -357,22 +357,13 @@
 #import <WebCore/PlaybackSessionModelMediaElement.h>
 #endif
 
-#if HAVE(TRANSLATION_UI_SERVICES)
-#import <TranslationUIServices/LTUITranslationViewController.h>
-
-@interface LTUITranslationViewController (Staging_77660675)
-@property (nonatomic, copy) void(^replacementHandler)(NSAttributedString *);
-@end
-
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
-SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
 #import <pal/ios/UIKitSoftLink.h>
 #endif
+
+#import <pal/cocoa/TranslationUIServicesSoftLink.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/ManagedConfigurationSoftLink.h>
@@ -9596,7 +9587,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 
 + (BOOL)_canHandleContextMenuTranslation
 {
-    return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
+    return PAL::isTranslationUIServicesFrameworkAvailable() && [PAL::getLTUITranslationViewControllerClass() isAvailable];
 }
 
 - (void)_handleContextMenuTranslation:(const WebCore::TranslationContextMenuInfo&)info
@@ -9606,7 +9597,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
         return;
     }
 
-    auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
+    auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstance() init]);
     [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text]).get()];
     if (info.mode == WebCore::TranslationContextMenuMode::Editable && [translationViewController respondsToSelector:@selector(setReplacementHandler:)]) {
         [translationViewController setIsSourceEditable:YES];
