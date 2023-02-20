@@ -272,10 +272,8 @@ RegisterID* ResolveNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
     generator.emitExpressionInfo(divot, m_start, divot);
     RefPtr<RegisterID> scope = generator.emitResolveScope(dst, var);
     RegisterID* finalDest = generator.finalDestination(dst);
-    RefPtr<RegisterID> uncheckedResult = generator.newTemporary();
-    generator.emitGetFromScope(uncheckedResult.get(), scope.get(), var, ThrowIfNotFound);
-    generator.emitTDZCheckIfNecessary(var, uncheckedResult.get(), nullptr);
-    generator.move(finalDest, uncheckedResult.get());
+    generator.emitGetFromScope(finalDest, scope.get(), var, ThrowIfNotFound);
+    generator.emitTDZCheckIfNecessary(var, finalDest, nullptr);
     generator.emitProfileType(finalDest, var, m_position, m_position + m_ident.length());
     return finalDest;
 }
