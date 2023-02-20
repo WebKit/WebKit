@@ -333,8 +333,10 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         return reasons;
     }
 
-    if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow && !is<RenderInline>(child))
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+    if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
+        if (child.isFloating() || child.isOutOfFlowPositioned())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
+    }
 
     if (is<RenderLineBreak>(child))
         return reasons;
