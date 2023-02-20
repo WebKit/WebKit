@@ -124,6 +124,8 @@ class BuildFactory(Factory):
         self.addStep(KillOldProcesses())
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
+        elif platform == 'wpe':
+            self.addStep(InstallWpeDependencies())
         self.addStep(ValidateChange(addURLs=False))
         self.addStep(CompileWebKit(skipUpload=self.skipUpload))
         if platform == 'gtk':
@@ -143,6 +145,8 @@ class TestFactory(Factory):
         Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggered_by=triggered_by, additionalArguments=additionalArguments, checkRelevance=checkRelevance)
         if platform == 'gtk':
             self.addStep(InstallGtkDependencies())
+        elif platform == 'wpe':
+            self.addStep(InstallWpeDependencies())
         self.getProduct()
         if self.willTriggerCrashLogSubmission:
             self.addStep(WaitForCrashCollection())
@@ -264,13 +268,12 @@ class GTKTestsFactory(TestFactory):
     LayoutTestClass = RunWebKitTestsRedTree
 
 
-class WPEFactory(Factory):
-    def __init__(self, platform, configuration=None, architectures=None, triggers=None, additionalArguments=None, **kwargs):
-        Factory.__init__(self, platform=platform, configuration=configuration, architectures=architectures, buildOnly=True, triggers=triggers, additionalArguments=additionalArguments)
-        self.addStep(KillOldProcesses())
-        self.addStep(InstallWpeDependencies())
-        self.addStep(ValidateChange(verifyBugClosed=False, addURLs=False))
-        self.addStep(CompileWebKit(skipUpload=True))
+class WPEBuildFactory(BuildFactory):
+    pass
+
+
+class WPETestsFactory(TestFactory):
+    LayoutTestClass = RunWebKitTestsRedTree
 
 
 class ServicesFactory(Factory):

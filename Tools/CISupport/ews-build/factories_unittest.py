@@ -333,7 +333,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
-        'WPE-EWS': [
+        'WPE-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -348,6 +348,26 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jhbuild',
             'validate-change',
             'compile-webkit'
+        ],
+        'WPE-WK2-Tests-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'jhbuild',
+            'download-built-product',
+            'extract-built-product',
+            'kill-old-processes',
+            'find-modified-layout-tests',
+            'run-layout-tests-in-stress-mode',
+            'layout-tests',
+            'set-build-summary'
         ],
         'JSC-Tests-arm64-EWS': [
             'configure-build',

@@ -36,7 +36,7 @@ from twisted.internet import defer
 
 from factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
                        GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, StressTestFactory,
-                       StyleFactory, TestFactory, tvOSBuildFactory, WPEFactory, WebKitPerlFactory, WebKitPyFactory,
+                       StyleFactory, TestFactory, tvOSBuildFactory, WPEBuildFactory, WPETestsFactory, WebKitPerlFactory, WebKitPyFactory,
                        WinCairoFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory,
                        macOSBuildFactory, macOSBuildOnlyFactory, macOSWK1Factory, macOSWK2Factory, ServicesFactory,
                        UnsafeMergeQueueFactory, WatchListFactory, watchOSBuildFactory)
