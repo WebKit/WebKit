@@ -112,7 +112,7 @@ void add(Hasher& hasher, const FontVariantAlternatesValues& key)
 
 void add(Hasher& hasher, const FontVariantAlternates& key)
 {
-    add(hasher, key.m_val.index());
+    add(hasher, !!key.m_values);
     if (!key.isNormal())
         add(hasher, key.values());
 }
