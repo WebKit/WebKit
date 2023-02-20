@@ -749,6 +749,7 @@ Total elements to be tested: 122.
     label:
     role:
     focused: false
+    invalid: true
     required: true
 
 <input>

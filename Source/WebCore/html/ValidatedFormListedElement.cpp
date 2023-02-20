@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ValidatedFormListedElement.h"
 
+#include "AXObjectCache.h"
 #include "ControlStates.h"
 #include "ElementAncestorIterator.h"
 #include "Event.h"
@@ -271,6 +272,9 @@ void ValidatedFormListedElement::updateValidity()
                     form->removeInvalidFormControlIfNeeded(element);
             }
         }
+
+        if (auto* cache = element.document().existingAXObjectCache())
+            cache->onValidityChange(element);
     }
 
     // Updates only if this control already has a validation message.

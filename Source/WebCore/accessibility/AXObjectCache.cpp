@@ -1464,6 +1464,11 @@ void AXObjectCache::onTitleChange(Document& document)
     postNotification(get(&document), nullptr, AXTextChanged);
 }
 
+void AXObjectCache::onValidityChange(Element& element)
+{
+    postNotification(get(&element), nullptr, AXInvalidStatusChanged);
+}
+
 #ifndef NDEBUG
 void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
 {
