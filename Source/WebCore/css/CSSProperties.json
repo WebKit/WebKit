@@ -8454,7 +8454,9 @@
             "values": [
                 "auto",
                 "under",
-                "from-font"
+                "from-font",
+                "left",
+                "right"
             ],
             "codegen-properties": {
                 "aliases": [
@@ -8463,11 +8465,11 @@
                 "parser-grammar": "<<values>>",
                 "parser-grammar-unused": "auto | [ [ under | from-font ] || [ left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
-                "comment": "Grammar is 'auto | [ [ under | from-font ] || [ left | right ] ]', but we only support 'auto | under | from-font'."
+                "comment": ""
             },
             "specification": {
                 "category": "css-text-decor",
-                "url": "https://www.w3.org/TR/css-text-decor-3/#text-underline-position-property"
+                "url": "https://www.w3.org/TR/css-text-decor-4/#text-underline-position-property"
             }
         },
         "text-underline-offset": {

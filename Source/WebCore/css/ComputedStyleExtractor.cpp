@@ -3536,8 +3536,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return renderTextDecorationSkipToCSSValue(style.textDecorationSkipInk());
     case CSSPropertyTextDecorationSkipInk:
         return createConvertingToCSSValueID(style.textDecorationSkipInk());
-    case CSSPropertyTextUnderlinePosition:
-        return createConvertingToCSSValueID(style.textUnderlinePosition());
+    case CSSPropertyTextUnderlinePosition: {
+        auto list = CSSValueList::createSpaceSeparated();
+
+        for (auto &x : style.textUnderlinePosition())
+            list->append(createConvertingToCSSValueID(x));
+
+        return list;
+    }
     case CSSPropertyTextUnderlineOffset:
         return textUnderlineOffsetToCSSValue(style.textUnderlineOffset());
     case CSSPropertyTextDecorationThickness:

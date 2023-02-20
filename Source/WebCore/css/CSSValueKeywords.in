@@ -802,6 +802,13 @@ max-content
 fit-content
 -webkit-fit-content
 
+// text-underline-position
+// auto
+// under
+// left
+// right
+// from-font
+
 //
 // CSS_PROP_TEXT_OVERFLOW
 //
