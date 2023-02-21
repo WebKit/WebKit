@@ -80,6 +80,9 @@
 
 - (IBAction)showHideWebInspector:(id)sender;
 
+- (IBAction)toggleMainThreadStalls:(id)sender;
+- (BOOL)mainThreadStallsEnabled;
+
 - (void)didChangeSettings;
 - (BOOL)webViewFillsWindow;
 - (void)setWebViewFillsWindow:(BOOL)fillWindow;

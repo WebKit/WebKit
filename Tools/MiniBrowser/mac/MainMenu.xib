@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="16085" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -584,22 +584,19 @@
                                                     <menuItem title="Paragraph" enabled="NO" id="PX7-T3-iSU">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
-                                                    <menuItem id="fYp-sh-nqB">
-                                                        <string key="title">    Default</string>
+                                                    <menuItem title="    Default" id="fYp-sh-nqB">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeBaseWritingDirectionNatural:" target="-1" id="z9r-Q0-zcU"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem id="7Kh-vB-DZW">
-                                                        <string key="title">    Left to Right</string>
+                                                    <menuItem title="    Left to Right" id="7Kh-vB-DZW">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeBaseWritingDirectionLeftToRight:" target="-1" id="By6-Xc-sQg"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem id="Efq-zm-Iex">
-                                                        <string key="title">    Right to Left</string>
+                                                    <menuItem title="    Right to Left" id="Efq-zm-Iex">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeBaseWritingDirectionRightToLeft:" target="-1" id="J4w-YN-dtS"/>
@@ -609,22 +606,19 @@
                                                     <menuItem title="Selection" enabled="NO" id="hEQ-Jh-r5g">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
-                                                    <menuItem id="m9Q-d8-VVx">
-                                                        <string key="title">    Default</string>
+                                                    <menuItem title="    Default" id="m9Q-d8-VVx">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeTextWritingDirectionNatural:" target="-1" id="Ilo-c7-jCj"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem id="5Ym-OR-TV9">
-                                                        <string key="title">    Left to Right</string>
+                                                    <menuItem title="    Left to Right" id="5Ym-OR-TV9">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeTextWritingDirectionLeftToRight:" target="-1" id="9ca-bt-cYl"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem id="blA-MU-vkf">
-                                                        <string key="title">    Right to Left</string>
+                                                    <menuItem title="    Right to Left" id="blA-MU-vkf">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="makeTextWritingDirectionRightToLeft:" target="-1" id="0FR-dP-o2G"/>
@@ -809,6 +803,12 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleFullWindowWebView:" target="-1" id="X6E-15-0lw"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Main Thread Stalls" id="K3K-tr-Gix">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleMainThreadStalls:" target="-1" id="djY-Q4-9vO"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="553"/>
