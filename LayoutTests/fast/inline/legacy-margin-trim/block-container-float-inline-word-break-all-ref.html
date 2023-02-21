@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="inline margins should be trimmed for floats that have margin edges adjacent to respective side">
+<style>
+container {
+    display: block;
+    width: 100px;
+    border: solid blue;
+    word-break: break-all;
+}
+item {
+    display: block;
+    width: 50px;
+    height: 50px;
+    background-color: green;
+}
+.floating-right {
+    float: right;
+}
+.floating-left {
+  float: left;
+}
+</style>
+</head>
+<body>
+<container>
+<item class="floating-right"></item>
+inline margins should be trimmed for 
+<item class="floating-left"></item>
+floats that have margin edgesadjacent to respective side
+</container>
+</body>
+</html>

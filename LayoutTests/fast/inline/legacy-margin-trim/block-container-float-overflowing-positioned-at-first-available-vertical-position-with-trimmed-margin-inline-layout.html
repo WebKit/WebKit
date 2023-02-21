@@ -1,0 +1,46 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<title>margin-trim: block-container-float-overflowing-positioned-at-first-available-vertical-position-with-trimmed-margin</title>
+<meta name="assert" content="The final float (blue) should be able to get positioned right under the text with its trimmed margin">
+<link rel="match" href="block-container-float-overflowing-positioned-at-first-available-vertical-position-with-trimmed-margin-inline-layout-ref.html">
+<style>
+container {
+    display: block;
+    width: 200px;
+    margin-trim: inline;
+    line-height: 30px;
+}
+item {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background-color: green;
+}
+.tall {
+    height: 75px;
+}
+.floating-left {
+    display: block;
+    float: left;
+    background-color: blue;
+    margin-inline-start: 110px;
+}
+.floating-right {
+    display: block;
+    float: right;
+    background-color: red;
+}
+</style>
+</head>
+<body>
+<container>
+    blue below the text
+    <item class="tall"></item>
+    <item id="blue"></item>
+</container>
+</body>
+</html>

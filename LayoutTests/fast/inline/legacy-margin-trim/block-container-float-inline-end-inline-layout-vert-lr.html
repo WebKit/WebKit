@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<title>margin-trim: block-container-float-inline-end-inline-layout-vert-lr</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="inline-end should be trimmed for float in block container that touches container inline-end edge with inline content present">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square-only.html">
+<style>
+container {
+    display: block;
+    inline-size: 100px;
+    font-size: 0px;
+    margin-trim: inline-end;
+    writing-mode: vertical-lr;
+}
+item {
+    display: inline-block;
+    inline-size: 50px;
+    block-size: 100px;
+    background-color: green;
+}
+.floating {
+    margin-inline-end: 30px;
+    float: right;
+}
+</style>
+</head>
+<body>
+<p>Test passes if there is a filled green square.</p>
+<container>
+    <item class="floating"></item>
+    <item></item>
+</container>
+</body>
+</html>

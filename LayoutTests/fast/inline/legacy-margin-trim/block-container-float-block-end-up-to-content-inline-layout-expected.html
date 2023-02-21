@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<style>
+container {
+    display: flow-root;
+    width: 100px;
+    border: 20px solid black;
+    padding-top: 55px;
+    font-size: 80px;
+}
+.inline-block-content {
+    display: inline-block;
+    background-color: green;
+}
+.floating {
+    float: right; 
+    background-color: red;
+}
+</style>
+</head>
+<body>
+<container>
+  <div class="inline-block-content" style="width: 80px; height: 30px;"></div>
+  <div class="inline-block-content" style="width: 30px; height: 30px;"></div>
+  <div class="floating" style="width: 30px; height: 30px;"></div>
+  <div class="inline-block-content" style="width: 30px; height: 40px;"></div>
+  <div class="floating" style="width: 30px; height: 30px;"></div>
+</container>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<title>margin-trim: block-container-float-inline-start-with-intruding-floats</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="inline-start should be trimmed for float in block container that touches container inline-start edge with inline content present">
+<link rel="match" href="block-container-float-inline-start-with-intruding-floats-ref.html">
+<style>
+container {
+    display: block;
+    width: 80px;
+    margin-trim: inline-start;
+}
+item {
+    display: block;
+    width: 50px;
+    height: 50px;
+    background-color: green;
+}
+.floating {
+    display: block;
+    float: left;
+}
+</style>
+</head>
+<body>
+<container>
+  <item></item>
+  <item class="floating" style="background-color: red;"></item>
+</container>
+<container>
+<item class="floating" style="margin-inline-start: 25px;"></item>
+</container>
+</body>
+</html>

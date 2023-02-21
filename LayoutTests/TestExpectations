@@ -6264,6 +6264,9 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/js
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/valid-content-type.html [ Skip ]
 
 webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-overflowing-float-margins-tirmmed-at-final-position-block-layout.html [ ImageOnlyFailure ]
+# This test is not being rendered correctly on MiniBrowser but WKTR shows them as passing. Skipping until this is investigated
+webkit.org/b/252638 imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-float-inline-word-break-all.html [ Skip ]
+webkit.org/b/252638 fast/inline/legacy-margin-trim/block-container-float-inline-word-break-all.html [ Skip ]
 
 #Skipping text-spacing tests until the features get implemented.
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-computed.html [ Skip ]

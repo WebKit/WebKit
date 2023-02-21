@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="inline-end should be trimmed for float in block container that touches container inline-end edge with inline content present">
+<style>
+container {
+    display: block;
+}
+item {
+    display: block;
+    width: 50px;
+    height: 100px;
+    background-color: green;
+}
+.floating {
+    display: block;
+    float: right;
+}
+span {
+  border: 10px solid red;
+  margin-inline: 20px;
+}
+</style>
+</head>
+<body>
+<container>
+    <span>
+      inline content in span
+      <item class="floating"></item>
+    </span>
+</container>
+</body>
+</html>

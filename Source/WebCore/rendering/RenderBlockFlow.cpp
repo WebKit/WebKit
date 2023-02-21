@@ -539,7 +539,7 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
         // so we need to go through the floats that this BFC is aware of and check if any of
         // the float's need their block-end margin trimmed
         if (m_floatingObjects && establishesBlockFormattingContext())
-            trimFloatBlockEndMargins(blockFormattingContextInFlowBlockLevelContentHeight());
+            trimFloatBlockEndMargins(blockFormattingContextInFlowContentHeight());
 
         // Expand our intrinsic height to encompass floats.
         LayoutUnit toAdd = borderAndPaddingAfter() + scrollbarLogicalHeight();
@@ -4552,8 +4552,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                     if (!child->isFloating())
                         lastText = nullptr;
                     LayoutUnit margins;
-                    Length startMargin = childStyle.marginStartUsing(&style());
-                    Length endMargin = childStyle.marginEndUsing(&style());
+                    Length startMargin = shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineStart, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginStartUsing(&style()) : Length(0, LengthType::Fixed); 
+                    Length endMargin = shouldChildInlineMarginContributeToContainerIntrinsicSize(MarginTrimType::InlineEnd, *dynamicDowncast<RenderElement>(child)) ? childStyle.marginEndUsing(&style()) : Length(0, LengthType::Fixed);
                     if (startMargin.isFixed())
                         margins += LayoutUnit::fromFloatCeil(startMargin.value());
                     if (endMargin.isFixed())
@@ -4828,9 +4828,18 @@ bool RenderBlockFlow::tryComputePreferredWidthsUsingModernPath(LayoutUnit& minLo
     return true;
 }
 
-LayoutUnit RenderBlockFlow::blockFormattingContextInFlowBlockLevelContentHeight() const
+LayoutUnit RenderBlockFlow::blockFormattingContextInFlowContentHeight() const
 {
     ASSERT(establishesBlockFormattingContext());
+
+    if (childrenInline()) {
+        if (lineLayoutPath() == ModernPath) {
+            ASSERT(modernLineLayout());
+            return modernLineLayout()->contentBoxLogicalHeight();
+        }
+        ASSERT(legacyLineLayout());
+        return legacyLineLayout()->contentBoxLogicalHeight();
+    }
     // For block layout we should just be able to check the height of the last in flow box
     auto lastChild = lastInFlowChildBox();
     if (!lastChild)

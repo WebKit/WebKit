@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>margin-trim: block-container-float-inline-end-nested-within-span</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="inline-end should be trimmed for float in block container that touches container inline-end edge with inline content present">
+<link rel="match" href="block-container-float-inline-end-nested-within-span-ref.html">
+<style>
+container {
+    display: block;
+    margin-trim: inline-end;
+}
+item {
+    display: block;
+    width: 50px;
+    height: 100px;
+    background-color: green;
+}
+.floating {
+    display: block;
+    float: right;
+    margin-inline-end: 30px;
+}
+span {
+  border: 10px solid red;
+  margin-inline: 20px;
+}
+</style>
+</head>
+<body>
+<container>
+    <span>
+      inline content in span
+      <item class="floating"></item>
+    </span>
+</container>
+</body>
+</html>

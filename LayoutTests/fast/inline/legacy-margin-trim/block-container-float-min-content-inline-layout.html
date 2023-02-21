@@ -1,0 +1,37 @@
+<!-- webkit-test-runner [ InlineFormattingContextIntegrationEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<title>margin-trim: block-container-float-min-content-inline-layout</title>
+<link rel="author" title="Sammy Gill" href="mailto:sammy.gill@apple.com">
+<link rel="help" href="https://drafts.csswg.org/css-box-4/#margin-trim-block">
+<meta name="assert" content="floats should not contribute trimmed margins for container intrinsic sizing">
+<link rel="match" href="/css/reference/ref-filled-green-100px-square-only.html">
+<style>
+container {
+    display: block;
+    width: min-content;
+    font-size: 0px;
+    margin-trim: inline;
+    background-color: green;
+}
+item {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+}
+.floating {
+    display: block;
+    float: left;
+    margin-inline: 30px;
+}
+</style>
+</head>
+<body>
+<p>Test passes if there is a filled green square.</p>
+<container>
+    <item></item>
+    <item class="floating"></item>
+</container>
+</body>
+</html>

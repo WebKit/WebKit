@@ -204,6 +204,9 @@ private:
     
     bool m_hangsAtEnd { false };
 
+    bool m_hasLeftPositionedFloat { false };
+    bool m_hasRightPOsitionedFloat { false };
+
     LineWhitespaceCollapsingState& m_lineWhitespaceCollapsingState;
 
     TrailingObjects m_trailingObjects;
@@ -364,12 +367,36 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
 inline void BreakingContext::handleFloat()
 {
     auto& floatBox = downcast<RenderBox>(*m_current.renderer());
-    const auto& floatingObject = *m_lineBreaker.insertFloatingObject(floatBox);
+    auto& floatingObject = *m_lineBreaker.insertFloatingObject(floatBox);
+
+    auto wouldFitWithTrimmedMargin = [&](MarginTrimType marginTrimType) {
+        auto widthWitoutMargin = floatingObject.width();
+        widthWitoutMargin -= marginTrimType == MarginTrimType::InlineStart ? floatBox.marginStart(&m_blockStyle) : floatBox.marginEnd(&m_blockStyle);
+        return m_width.fitsOnLineExcludingTrailingWhitespace(widthWitoutMargin.toFloat());
+    };
+    auto hasFloatsOnSideAtVerticalPosition = [&](UsedFloat floatPosition) {
+        return (floatPosition == UsedFloat::Left) ? m_block.logicalLeftOffsetForLine(m_block.logicalHeight(), DoNotIndentText)  != m_block.logicalLeftOffsetForContent(m_block.logicalHeight()) :  m_block.logicalRightOffsetForLine(m_block.logicalHeight(), DoNotIndentText) != m_block.logicalRightOffsetForContent(m_block.logicalHeight());
+    };
+
+    // There are a couple of scenarios in which we can trim a float's margins early
+    // 1.) If the line is empty OR
+    // 2.) There are no intruding floats or floats we have already we posiioned on that side AND
+    //     there is enough space on the line for that float with its trimmed margin
+    if (m_blockStyle.marginTrim().contains(MarginTrimType::InlineStart) && RenderStyle::usedFloat(floatBox) == UsedFloat::Left && !m_hasLeftPositionedFloat && !hasFloatsOnSideAtVerticalPosition(UsedFloat::Left) && wouldFitWithTrimmedMargin(MarginTrimType::InlineStart))
+        m_block.trimMarginForFloat(floatingObject, MarginTrimType::InlineStart);
+    else if (m_blockStyle.marginTrim().contains(MarginTrimType::InlineEnd) && RenderStyle::usedFloat(floatBox) == UsedFloat::Right && !m_hasRightPOsitionedFloat && !hasFloatsOnSideAtVerticalPosition(UsedFloat::Right) && wouldFitWithTrimmedMargin(MarginTrimType::InlineEnd))
+        m_block.trimMarginForFloat(floatingObject, MarginTrimType::InlineEnd);
     // check if it fits in the current line.
     // If it does, position it now, otherwise, position
     // it after moving to next line (in clearFloats() func)
     if (m_floatsFitOnLine && m_width.fitsOnLineExcludingTrailingWhitespace(m_block.logicalWidthForFloat(floatingObject))) {
         m_lineBreaker.positionNewFloatOnLine(floatingObject, m_lastFloatFromPreviousLine, m_lineInfo, m_width);
+
+        if (RenderStyle::usedFloat(floatBox) == UsedFloat::Left)
+            m_hasLeftPositionedFloat = true;
+        else
+            m_hasRightPOsitionedFloat = true;
+
         if (m_lineBreak.renderer() == m_current.renderer()) {
             ASSERT(!m_lineBreak.offset());
             m_lineBreak.increment();

@@ -72,6 +72,7 @@ public:
 
     size_t lineCount() const;
     size_t lineCountUntil(const LegacyRootInlineBox*) const;
+    LayoutUnit contentBoxLogicalHeight() const;
 
     static void appendRunsForObject(BidiRunList<BidiRun>*, int start, int end, RenderObject&, InlineBidiResolver&);
     static void updateLogicalWidthForAlignment(RenderBlockFlow&, const TextAlignMode&, const LegacyRootInlineBox*, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
