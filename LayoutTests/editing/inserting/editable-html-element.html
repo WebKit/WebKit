@@ -3,7 +3,6 @@
 if (window.testRunner)
      testRunner.dumpEditingCallbacks();
 </script>
-
 <script>
 function runTest() {
     var s = window.getSelection();
@@ -15,8 +14,11 @@ function runTest() {
     s.modify("move", "forward", "line");
     s.modify("move", "forward", "line");
     s.modify("move", "forward", "line");
-    document.execCommand("InsertParagraph"); 
+    document.execCommand("InsertParagraph");
+    document.querySelectorAll('script').forEach((script) => script.remove());
 }
+onload = runTest;
 </script>
-<body id="test" onLoad="runTest();"></body>
+<script src="../../resources/dump-as-markup.js"></script>
+<body id="test"></body>
 </html>
