@@ -38,6 +38,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakHashSet.h>
 
 namespace IPC {
 class Connection;
@@ -166,7 +167,7 @@ private:
     void sendRemoteCommand(PlaybackSessionContextIdentifier, WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
 
     WebPage* m_page;
-    HashMap<WebCore::HTMLMediaElement*, PlaybackSessionContextIdentifier> m_mediaElements;
+    WeakHashSet<WebCore::HTMLMediaElement, WebCore::WeakPtrImplWithEventTargetData> m_mediaElements;
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashCountedSet<PlaybackSessionContextIdentifier> m_clientCounts;

@@ -32,10 +32,12 @@
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteLayerTreeTransaction.h"
 #import "RemoteLayerWithRemoteRenderingBackingStoreCollection.h"
+#import "VideoFullscreenManager.h"
 #import "WebFrame.h"
 #import "WebPage.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/HTMLMediaElementIdentifier.h>
 #import <WebCore/Page.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
@@ -116,10 +118,37 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
     m_livePlatformLayers.add(layerID, &layer);
 }
 
+#if HAVE(AVKIT)
+void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type, WebCore::HTMLVideoElement& videoElement)
+{
+    GraphicsLayer::PlatformLayerID layerID = layer.layerID();
+
+    RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
+    creationProperties.playerIdentifier = videoElement.identifier();
+    creationProperties.initialSize = videoElement.videoInlineSize();
+    creationProperties.naturalSize = videoElement.naturalSize();
+    layer.populateCreationProperties(creationProperties, *this, type);
+
+    m_webPage.videoFullscreenManager().setupRemoteLayerHosting(videoElement);
+    m_videoLayers.add(layerID, videoElement.identifier());
+
+    m_createdLayers.add(layerID, WTFMove(creationProperties));
+    m_livePlatformLayers.add(layerID, &layer);
+}
+#endif
+
 void RemoteLayerTreeContext::layerWillLeaveContext(PlatformCALayerRemote& layer)
 {
     ASSERT(layer.layerID());
     GraphicsLayer::PlatformLayerID layerID = layer.layerID();
+
+#if HAVE(AVKIT)
+    auto videoLayerIter = m_videoLayers.find(layerID);
+    if (videoLayerIter != m_videoLayers.end()) {
+        m_webPage.videoFullscreenManager().willRemoveLayerForID(videoLayerIter->value);
+        m_videoLayers.remove(videoLayerIter);
+    }
+#endif
 
     m_createdLayers.remove(layerID);
     m_livePlatformLayers.remove(layerID);

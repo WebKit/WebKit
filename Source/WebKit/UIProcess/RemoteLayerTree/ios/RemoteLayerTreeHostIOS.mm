@@ -31,8 +31,10 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "UIKitSPI.h"
+#import "VideoFullscreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <UIKit/UIScrollView.h>
+#import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_IOS)
@@ -69,19 +71,20 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return makeWithView(adoptNS([[WKTransformView alloc] init]));
 
     case PlatformCALayer::LayerTypeCustom:
-    case PlatformCALayer::LayerTypeAVPlayerLayer:
-        if (!m_isDebugLayerTreeHost) {
-            auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero
-                pid:m_drawingArea->page().processIdentifier() contextID:properties.hostingContextID]);
-            if (properties.type == PlatformCALayer::LayerTypeAVPlayerLayer) {
-                // Invert the scale transform added in the WebProcess to fix <rdar://problem/18316542>.
-                float inverseScale = 1 / properties.hostingDeviceScaleFactor;
-                [[view layer] setTransform:CATransform3DMakeScale(inverseScale, inverseScale, 1)];
-            }
-            return makeWithView(WTFMove(view));
-        }
-        return makeWithView(adoptNS([[WKCompositingView alloc] init]));
+    case PlatformCALayer::LayerTypeAVPlayerLayer: {
+        if (m_isDebugLayerTreeHost)
+            return makeWithView(adoptNS([[WKCompositingView alloc] init]));
 
+#if HAVE(AVKIT)
+        if (properties.playerIdentifier && properties.initialSize && properties.naturalSize) {
+            if (auto videoManager = m_drawingArea->page().videoFullscreenManager())
+                return makeWithView(videoManager->createViewWithID(*properties.playerIdentifier, properties.hostingContextID, *properties.initialSize, *properties.naturalSize, properties.hostingDeviceScaleFactor));
+        }
+#endif
+
+        auto view = adoptNS([[WKUIRemoteView alloc] initWithFrame:CGRectZero pid:m_drawingArea->page().processIdentifier() contextID:properties.hostingContextID]);
+        return makeWithView(WTFMove(view));
+    }
     case PlatformCALayer::LayerTypeShapeLayer:
         return makeWithView(adoptNS([[WKShapeView alloc] init]));
 

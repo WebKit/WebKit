@@ -43,10 +43,10 @@
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
-#include "HTMLMediaElement.h"
 #include "HTMLModelElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLVideoElement.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "LayerAncestorClippingStack.h"
@@ -1123,8 +1123,11 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 #if ENABLE(VIDEO)
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
-        auto* mediaElement = downcast<HTMLMediaElement>(renderer().element());
-        m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
+        auto& videoElement = downcast<HTMLVideoElement>(*renderer().element());
+        if (m_graphicsLayer->layerMode() == GraphicsLayer::LayerMode::PlatformLayer)
+            m_graphicsLayer->setContentsToPlatformLayer(videoElement.platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
+        else
+            m_graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
         updateContentsRects();
     }
 #endif

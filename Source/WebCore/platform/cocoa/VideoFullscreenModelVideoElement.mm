@@ -192,6 +192,12 @@ void VideoFullscreenModelVideoElement::setVideoLayerFrame(FloatRect rect)
         m_videoElement->setVideoFullscreenFrame(rect);
 }
 
+void VideoFullscreenModelVideoElement::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
+{
+    if (m_videoElement)
+        m_videoElement->setVideoInlineSizeFenced(size, fence);
+}
+
 void VideoFullscreenModelVideoElement::setVideoLayerGravity(MediaPlayer::VideoGravity gravity)
 {
     if (m_videoElement)

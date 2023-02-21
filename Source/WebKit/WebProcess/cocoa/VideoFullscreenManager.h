@@ -122,6 +122,9 @@ public:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    void setupRemoteLayerHosting(WebCore::HTMLVideoElement&);
+    void willRemoveLayerForID(PlaybackSessionContextIdentifier);
+
     // Interface to WebChromeClient
     bool canEnterVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;

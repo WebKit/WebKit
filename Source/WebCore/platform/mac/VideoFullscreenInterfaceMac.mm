@@ -37,6 +37,7 @@
 #import "VideoFullscreenModel.h"
 #import "WebPlaybackControlsManager.h"
 #import <AVFoundation/AVTime.h>
+#import <WebCore/WebAVPlayerLayer.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/PIPSPI.h>
@@ -201,6 +202,8 @@ enum class PIPState {
 
     _videoViewContainer = adoptNS([[WebVideoViewContainer alloc] initWithFrame:frame]);
     [_videoViewContainer setVideoViewContainerDelegate:self];
+    [_videoViewContainer setWantsLayer:YES];
+    [videoView.layer removeFromSuperlayer];
     [_videoViewContainer addSubview:videoView];
     videoView.frame = [_videoViewContainer bounds];
     videoView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;

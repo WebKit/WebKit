@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PlaybackSessionContextIdentifier.h"
 #include "RemoteLayerTreeNode.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/PlatformCALayer.h>
@@ -99,6 +100,9 @@ private:
     HashMap<WebCore::LayerHostingContextIdentifier, WebCore::GraphicsLayer::PlatformLayerID> m_hostingLayers;
     HashMap<WebCore::LayerHostingContextIdentifier, WebCore::GraphicsLayer::PlatformLayerID> m_hostedLayers;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, RetainPtr<WKAnimationDelegate>> m_animationDelegates;
+#if HAVE(AVKIT)
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlaybackSessionContextIdentifier> m_videoLayers;
+#endif
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::GraphicsLayer::PlatformLayerID> m_overlayRegionIDs;
 #endif

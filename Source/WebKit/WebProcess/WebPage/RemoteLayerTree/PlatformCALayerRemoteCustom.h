@@ -36,6 +36,9 @@ class PlatformCALayerRemoteCustom final : public PlatformCALayerRemote {
     friend class PlatformCALayerRemote;
 public:
     static Ref<PlatformCALayerRemote> create(PlatformLayer *, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
+#if HAVE(AVKIT)
+    static Ref<PlatformCALayerRemote> create(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+#endif
 
     virtual ~PlatformCALayerRemoteCustom();
 
@@ -48,6 +51,7 @@ public:
 
 private:
     PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType, PlatformLayer *, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
+    PlatformCALayerRemoteCustom(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
 
     Ref<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
     
