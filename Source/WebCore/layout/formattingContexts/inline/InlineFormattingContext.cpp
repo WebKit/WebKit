@@ -196,13 +196,17 @@ void InlineFormattingContext::layoutInFlowContentForIntegration(const Constraint
 
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraintsForIntegration()
 {
-    if (formattingState().intrinsicWidthConstraints())
-        return *formattingState().intrinsicWidthConstraints();
+    auto& inlineFormattingState = formattingState();
+    if (m_lineDamage)
+        inlineFormattingState.resetIntrinsicWidthConstraints();
+
+    if (auto intrinsicWidthConstraints = inlineFormattingState.intrinsicWidthConstraints())
+        return *intrinsicWidthConstraints;
 
     auto needsLayoutStartPosition = !m_lineDamage || !m_lineDamage->contentPosition() ? InlineItemPosition() : m_lineDamage->contentPosition()->inlineItemPosition;
-    auto needsInlineItemsUpdate = formattingState().inlineItems().isEmpty() || m_lineDamage;
+    auto needsInlineItemsUpdate = inlineFormattingState.inlineItems().isEmpty() || m_lineDamage;
     if (needsInlineItemsUpdate)
-        InlineItemsBuilder { root(), formattingState() }.build(needsLayoutStartPosition);
+        InlineItemsBuilder { root(), inlineFormattingState }.build(needsLayoutStartPosition);
 
     auto constraints = IntrinsicWidthConstraints {
         ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum)),
