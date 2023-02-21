@@ -45,18 +45,6 @@ bool operator==(const TextSpacingTrim& other) const
 TrimType m_trim { TrimType::SpaceAll };
 };
 
-inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& value)
-{
-    // FIXME: add remaining values;
-    switch (value.m_trim) {
-    case TextSpacingTrim::TrimType::Auto:
-        return ts << "auto";
-    case TextSpacingTrim::TrimType::SpaceAll:
-        return ts << "space-all";
-    }
-    return ts;
-}
-
 struct TextAutospace {
 enum class TextAutospaceType: uint8_t {
     Auto = 0,
@@ -71,6 +59,18 @@ bool operator==(const TextAutospace& other) const
 }
 TextAutospaceType m_autoSpace { TextAutospaceType::NoAutospace };
 };
+
+inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextSpacingTrim& value)
+{
+    // FIXME: add remaining values;
+    switch (value.m_trim) {
+    case TextSpacingTrim::TrimType::Auto:
+        return ts << "auto";
+    case TextSpacingTrim::TrimType::SpaceAll:
+        return ts << "space-all";
+    }
+    return ts;
+}
 
 inline WTF::TextStream& operator<<(WTF::TextStream& ts, const TextAutospace& value)
 {

@@ -118,6 +118,7 @@ private:
 
     bool consumeFont(bool important);
     bool consumeTextDecorationSkip(bool important);
+    bool consumeTextSpacing(bool important);
     bool consumeFontVariantShorthand(bool important);
     bool consumeFontSynthesis(bool important);
 

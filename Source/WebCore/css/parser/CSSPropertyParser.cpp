@@ -762,6 +762,103 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     return true;
 }
 
+bool CSSPropertyParser::consumeTextSpacing(bool important)
+{
+    // text-spacing: auto | none | <text-space-autospace> || <text-spacing-trim>
+    // text-autospace: auto | no-autospace
+    // text-spacing-trim: auto | space-all
+    // FIXME: parse remaining values once spec is stable.
+
+    // Part I : auto | none
+    auto firstValue = consumeIdent<CSSValueNone, CSSValueAuto>(m_range);
+    if (firstValue && m_range.atEnd()) {
+        if (firstValue->valueID() == CSSValueAuto) {
+            addProperty(CSSPropertyTextAutospace, CSSPropertyTextSpacing, firstValue.releaseNonNull(), important);
+            addProperty(CSSPropertyTextSpacingTrim, CSSPropertyTextSpacing, CSSPrimitiveValue::create(CSSValueAuto), important);
+        } else if (firstValue->valueID() == CSSValueNone) {
+            addProperty(CSSPropertyTextAutospace, CSSPropertyTextSpacing, CSSPrimitiveValue::create(CSSValueNoAutospace), important);
+            addProperty(CSSPropertyTextSpacingTrim, CSSPropertyTextSpacing, CSSPrimitiveValue::create(CSSValueSpaceAll), important);
+        }
+        // FIXME: add support for CSSValueNormal as firstValue here.
+        return true;
+    }
+    // part II (longhands): <text-space-autospace> || <text-spacing-trim> (with fist token = auto or none)
+    if (firstValue && !m_range.atEnd()) {
+        // first-value = auto | none
+        auto nextID = m_range.peek().id();
+        if (firstValue->valueID() == CSSValueNone)
+            return false; // none can just appear alone.
+        if (firstValue->valueID() == CSSValueAuto) {
+        // Here, we have to identify to which longhand the firstValue belongs, since it can appear on both.
+            if (CSSPropertyParserHelpers::isValueIDUniqueToTextSpacingTrimLonghand(nextID)) {
+                // auto belongs to the other longhand
+                addProperty(CSSPropertyTextAutospace, CSSPropertyTextSpacing, firstValue.releaseNonNull(), important);
+                auto remainingValues = CSSPropertyParserHelpers::consumeTextSpacingTrim(m_range);
+                ASSERT(remainingValues);
+                addProperty(CSSPropertyTextSpacingTrim, CSSPropertyTextSpacing, WTFMove(remainingValues), important);
+                return true;
+            }
+            if (CSSPropertyParserHelpers::isValueIDUniqueToTextAutospaceLonghand(nextID)) {
+                // auto belongs to the other longhand
+                addProperty(CSSPropertyTextSpacingTrim, CSSPropertyTextSpacing, firstValue.releaseNonNull(), important);
+                auto remainingValues = CSSPropertyParserHelpers::consumeTextAutospace(m_range);
+                ASSERT(remainingValues);
+                addProperty(CSSPropertyTextAutospace, CSSPropertyTextSpacing, WTFMove(remainingValues), important);
+                return true;
+            }
+            return false;
+        }
+        // FIXME: add support for CSSValueNormal as firstValue here.
+    }
+
+    // part II (longhands): <text-space-autospace> || <text-spacing-trim> (with fist token != auto or none)
+    // From here, we know that first value is is not auto | none . Let's split the range in two subranges, one for each longhand consumer.
+    auto firstID = m_range.peek().id();
+    auto it = m_range;
+    bool isFirtValueFromTextSpacingTrimLongHand { false };
+    if (CSSPropertyParserHelpers::isValueIDUniqueToTextSpacingTrimLonghand(firstID)) {
+        isFirtValueFromTextSpacingTrimLongHand = true;
+        while (!it.atEnd() && CSSPropertyParserHelpers::isValueIDUniqueToTextSpacingTrimLonghand(it.peek().id()))
+            it.consumeIncludingWhitespace();
+        auto longhandRange = m_range.makeSubRange(m_range.begin(), it.begin());
+        auto value = CSSPropertyParserHelpers::consumeTextSpacingTrim(longhandRange);
+        if (!value)
+            return false;
+        addProperty(CSSPropertyTextSpacingTrim, CSSPropertyTextSpacing, WTFMove(value), important);
+    } else if (CSSPropertyParserHelpers::isValueIDUniqueToTextAutospaceLonghand(firstID)) {
+        isFirtValueFromTextSpacingTrimLongHand = false;
+        while (!it.atEnd() && CSSPropertyParserHelpers::isValueIDUniqueToTextAutospaceLonghand(it.peek().id()))
+            it.consumeIncludingWhitespace();
+        auto longhandRange = m_range.makeSubRange(m_range.begin(), it.begin());
+        auto value = CSSPropertyParserHelpers::consumeTextAutospace(longhandRange);
+        if (!value)
+            return false;
+        addProperty(CSSPropertyTextAutospace, CSSPropertyTextSpacing, WTFMove(value), important);
+    } else
+        return false;
+
+    // from here, the first value is for sure consumed, we need to parse the second longhand
+    auto secondLonghandRange = m_range.makeSubRange(it.begin(), m_range.end());
+    if (secondLonghandRange.atEnd())
+        return true;
+    if (isFirtValueFromTextSpacingTrimLongHand) {
+        // consume remaining as text-autospace
+        auto remainingValues = CSSPropertyParserHelpers::consumeTextAutospace(secondLonghandRange);
+        if (remainingValues) {
+            addProperty(CSSPropertyTextAutospace, CSSPropertyTextSpacing, WTFMove(remainingValues), important);
+            return true;
+        }
+    } else {
+        // consume remaining as text-spacing-trim
+        auto remainingValues = CSSPropertyParserHelpers::consumeTextSpacingTrim(secondLonghandRange);
+        if (remainingValues) {
+            addProperty(CSSPropertyTextSpacingTrim, CSSPropertyTextSpacing, WTFMove(remainingValues), important);
+            return true;
+        }
+    }
+    return secondLonghandRange.atEnd();
+}
+
 bool CSSPropertyParser::consumeFontSynthesis(bool important)
 {
     // none | [ weight || style || small-caps ]
@@ -2544,6 +2641,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         addProperty(CSSPropertyTextDecorationLine, property, line.releaseNonNull(), important);
         return true;
     }
+    case CSSPropertyTextSpacing:
+        return consumeTextSpacing(important);
     case CSSPropertyWebkitTextDecoration:
         // FIXME-NEWPARSER: We need to unprefix -line/-style/-color ASAP and get rid
         // of -webkit-text-decoration completely.

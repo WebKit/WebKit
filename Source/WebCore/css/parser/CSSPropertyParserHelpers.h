@@ -39,6 +39,7 @@
 #include "Length.h"
 #include "StyleColor.h"
 #include "SystemFontDatabase.h"
+#include <unordered_set>
 #include <variant>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
@@ -421,6 +422,18 @@ RefPtr<CSSValueList> consumeCommaSeparatedListWithoutSingleValueOptimization(CSS
         list.append(value.releaseNonNull());
     } while (consumeCommaIncludingWhitespace(range));
     return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+inline bool isValueIDUniqueToTextSpacingTrimLonghand(CSSValueID id)
+{
+    // FIXME: add remaining values when specification is stable and we are parsing them.
+    return id == CSSValueSpaceAll;
+}
+
+inline bool isValueIDUniqueToTextAutospaceLonghand(CSSValueID id)
+{
+    // FIXME: add remaining values when specification is stable and we are parsing them.
+    return id == CSSValueNoAutospace;
 }
 
 } // namespace CSSPropertyParserHelpers

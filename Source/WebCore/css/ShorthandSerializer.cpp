@@ -122,6 +122,7 @@ private:
     String serializeGridTemplate() const;
     String serializeOffset() const;
     String serializePageBreak() const;
+    String serializeTextSpacing() const;
 
     StylePropertyShorthand m_shorthand;
     RefPtr<CSSValue> m_longhandValues[maxShorthandLength];
@@ -378,6 +379,8 @@ String ShorthandSerializer::serialize()
     case CSSPropertyWebkitPerspective:
     case CSSPropertyWebkitTextOrientation:
         return serializeLonghandValue(0);
+    case CSSPropertyTextSpacing:
+        return serializeTextSpacing();
     case CSSPropertyTransformOrigin:
         return serializeLonghandsOmittingTrailingInitialValue();
     case CSSPropertyWebkitColumnBreakAfter:
@@ -915,6 +918,22 @@ String ShorthandSerializer::serializeFont() const
         sizeSeparator, serializeLonghandValue(sizeIndex),
         lineHeightSeparator, lineHeight,
         ' ', serializeLonghandValue(familyIndex));
+}
+
+String ShorthandSerializer::serializeTextSpacing() const
+{
+    auto autospaceValueID = longhandValueID(longhandIndex(0, CSSPropertyTextAutospace));
+    auto trimValueID = longhandValueID(longhandIndex(1, CSSPropertyTextSpacingTrim));
+    if (autospaceValueID == CSSValueAuto && trimValueID == CSSValueAuto)
+        return nameString(CSSValueAuto);
+    if (autospaceValueID == CSSValueNoAutospace && trimValueID == CSSValueSpaceAll)
+        return nameString(CSSValueNone);
+    // FIXME: add support for CSSValueNormal serialization when we are parsing this value.
+    return makeString(
+        serializeLonghandValue(longhandIndex(0, CSSPropertyTextAutospace)),
+        ' ',
+        serializeLonghandValue(longhandIndex(1, CSSPropertyTextSpacingTrim))
+    );
 }
 
 String ShorthandSerializer::serializeFontSynthesis() const

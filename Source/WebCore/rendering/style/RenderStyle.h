@@ -437,10 +437,9 @@ public:
     TextSpacingTrim textSpacingTrim() const;
     TextAutospace textAutospace() const;
 
-
     float zoom() const { return m_nonInheritedData->rareData->zoom; }
     float effectiveZoom() const { return m_rareInheritedData->effectiveZoom; }
-    
+
     TextZoom textZoom() const { return static_cast<TextZoom>(m_rareInheritedData->textZoom); }
 
     TextDirection direction() const { return static_cast<TextDirection>(m_inheritedFlags.direction); }
