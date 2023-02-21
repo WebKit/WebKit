@@ -221,9 +221,9 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
 
     // FIXME: Need to handle kCGContextTypePDF.
     if (CGContextGetType(context) == kCGContextTypeIOSurface)
-        colorSpace = adoptCF(CGIOSurfaceContextGetColorSpace(context));
+        colorSpace = CGIOSurfaceContextGetColorSpace(context);
     else if (CGContextGetType(context) == kCGContextTypeBitmap)
-        colorSpace = adoptCF(CGBitmapContextGetColorSpace(context));
+        colorSpace = CGBitmapContextGetColorSpace(context);
     else
         colorSpace = adoptCF(CGContextCopyDeviceColorSpace(context));
 
