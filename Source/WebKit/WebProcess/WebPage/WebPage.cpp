@@ -945,10 +945,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
-#endif
-
 #if HAVE(SANDBOX_STATE_FLAGS)
     if (!m_page->settings().offlineWebApplicationCacheEnabled()) {
         // This call is not meant to actually read a preference, but is only here to trigger a sandbox rule in the
@@ -963,10 +959,16 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         sandbox_enable_state_flag("EnableExperimentalSandbox", *auditToken);
 #if USE(APPLE_INTERNAL_SDK)
     uint64_t bootTime = mach_boottime_usec();
-    if (!(bootTime & 0x7) || isRunningTest(WebCore::applicationBundleIdentifier())) {
+    bool experimentalSandboxWithProbability = !(bootTime & 0x7u) || isRunningTest(WebCore::applicationBundleIdentifier());
+    experimentalSandboxWithProbability &= parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxWithProbabilityEnabledKey());
+    if (experimentalSandboxWithProbability) {
         // Set sandbox state variable with probability of 1/8.
         sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
     }
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    if (!(experimentalSandbox || experimentalSandboxWithProbability))
+        SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
+#endif
 #endif // USE(APPLE_INTERNAL_SDK)
 
     if (WebProcess::singleton().isLockdownModeEnabled())

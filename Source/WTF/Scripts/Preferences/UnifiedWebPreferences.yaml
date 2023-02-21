@@ -2234,6 +2234,18 @@ ExperimentalSandboxEnabled:
     WebKit:
       default: false
 
+ExperimentalSandboxWithProbabilityEnabled:
+  type: bool
+  status: internal
+  category: security
+  humanReadableName: "Enable experimental sandbox features with probability"
+  humanReadableDescription: "Enable experimental sandbox features with probability"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 ExposeSpeakersEnabled:
   type: bool
