@@ -419,7 +419,7 @@ public:
     OptionSet<TextDecorationLine> textDecorationLine() const { return OptionSet<TextDecorationLine>::fromRaw(m_nonInheritedFlags.textDecorationLine); }
     TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(m_nonInheritedData->rareData->textDecorationStyle); }
     TextDecorationSkipInk textDecorationSkipInk() const { return static_cast<TextDecorationSkipInk>(m_rareInheritedData->textDecorationSkipInk); }
-    TextUnderlinePosition textUnderlinePosition() const { return static_cast<TextUnderlinePosition>(m_rareInheritedData->textUnderlinePosition); }
+    Vector<TextUnderlinePosition> textUnderlinePosition() const { return static_cast<Vector<TextUnderlinePosition>>(m_rareInheritedData->textUnderlinePosition); }
     TextUnderlineOffset textUnderlineOffset() const { return m_rareInheritedData->textUnderlineOffset; }
     TextDecorationThickness textDecorationThickness() const { return m_nonInheritedData->rareData->textDecorationThickness; }
 
@@ -1753,7 +1753,7 @@ public:
     static OptionSet<TextDecorationLine> initialTextDecorationLine() { return OptionSet<TextDecorationLine> { }; }
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyle::Solid; }
     static TextDecorationSkipInk initialTextDecorationSkipInk() { return TextDecorationSkipInk::Auto; }
-    static TextUnderlinePosition initialTextUnderlinePosition() { return TextUnderlinePosition::Auto; }
+    static Vector<TextUnderlinePosition> initialTextUnderlinePosition() { return Vector<TextUnderlinePosition> { }; }
     static TextUnderlineOffset initialTextUnderlineOffset() { return TextUnderlineOffset::createWithAuto(); }
     static TextDecorationThickness initialTextDecorationThickness() { return TextDecorationThickness::createWithAuto(); }
     static float initialZoom() { return 1.0f; }

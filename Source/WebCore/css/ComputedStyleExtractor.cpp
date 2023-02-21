@@ -3539,8 +3539,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextUnderlinePosition: {
         auto list = CSSValueList::createSpaceSeparated();
 
-        for (auto &x : style.textUnderlinePosition())
-            list->append(createConvertingToCSSValueID(x));
+        for (auto &x : style.textUnderlinePosition()) {
+            if (x == TextUnderlinePosition::Auto)
+                list->append(CSSPrimitiveValue::create(CSSValueAuto));
+            else if (x == TextUnderlinePosition::Left)
+                list->append(CSSPrimitiveValue::create(CSSValueLeft));
+            else if (x == TextUnderlinePosition::Right)
+                list->append(CSSPrimitiveValue::create(CSSValueRight));
+            else if (x == TextUnderlinePosition::Under)
+                list->append(CSSPrimitiveValue::create(CSSValueUnder));
+            else if (x == TextUnderlinePosition::FromFont)
+                list->append(CSSPrimitiveValue::create(CSSValueFromFont));
+        }
 
         return list;
     }
