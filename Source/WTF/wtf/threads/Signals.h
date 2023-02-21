@@ -173,7 +173,17 @@ using WTF::SignalAction;
 using WTF::SignalHandler;
 using WTF::addSignalHandler;
 using WTF::activateSignalHandlersFor;
-using WTF::initializeSignalHandling;
-using WTF::disableSignalHandling;
+
+#else // not OS(UNIX)
+
+namespace WTF {
+
+inline void initializeSignalHandling() { }
+inline void disableSignalHandling() { }
+
+} // namespace WTF
 
 #endif // OS(UNIX)
+
+using WTF::initializeSignalHandling;
+using WTF::disableSignalHandling;
