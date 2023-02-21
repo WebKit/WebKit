@@ -42,7 +42,7 @@ class GstSpeechSynthesisWrapper {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GstSpeechSynthesisWrapper);
 public:
-    explicit GstSpeechSynthesisWrapper(Ref<PlatformSpeechSynthesizer>);
+    explicit GstSpeechSynthesisWrapper(Ref<PlatformSpeechSynthesizer>&&);
     ~GstSpeechSynthesisWrapper();
 
     void pause();
@@ -62,7 +62,7 @@ private:
     GRefPtr<GstElement> m_pitchElement;
 };
 
-GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(Ref<PlatformSpeechSynthesizer> synthesizer)
+GstSpeechSynthesisWrapper::GstSpeechSynthesisWrapper(Ref<PlatformSpeechSynthesizer>&& synthesizer)
     : m_platformSynthesizer(synthesizer)
 {
     ensureGStreamerInitialized();
