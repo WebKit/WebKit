@@ -34,14 +34,12 @@ class IDBKey;
 
 struct IDBKeyRangeData {
     IDBKeyRangeData()
-        : isNull(true)
     {
     }
 
     static IDBKeyRangeData allKeys()
     {
         IDBKeyRangeData result;
-        result.isNull = false;
         result.lowerKey = IDBKeyData::minimum();
         result.upperKey = IDBKeyData::maximum();
         return result;
@@ -51,9 +49,8 @@ struct IDBKeyRangeData {
     IDBKeyRangeData(const IDBKeyData&);
 
     IDBKeyRangeData(IDBKeyRange* keyRange)
-        : isNull(!keyRange)
     {
-        if (isNull)
+        if (!keyRange)
             return;
 
         lowerKey = keyRange->lower();
@@ -62,18 +59,15 @@ struct IDBKeyRangeData {
         upperOpen = keyRange->upperOpen();
     }
 
-    IDBKeyRangeData(bool isNull, IDBKeyData&& lowerKey, IDBKeyData&& upperKey, bool lowerOpen, bool upperOpen)
+    IDBKeyRangeData(IDBKeyData&& lowerKey, IDBKeyData&& upperKey, bool lowerOpen, bool upperOpen)
         : lowerKey(WTFMove(lowerKey))
         , upperKey(WTFMove(upperKey))
         , lowerOpen(WTFMove(lowerOpen))
         , upperOpen(WTFMove(upperOpen))
-        , isNull(isNull)
     {
     }
 
     WEBCORE_EXPORT IDBKeyRangeData isolatedCopy() const;
-
-    WEBCORE_EXPORT RefPtr<IDBKeyRange> maybeCreateIDBKeyRange() const;
 
     WEBCORE_EXPORT bool isExactlyOneKey() const;
     bool containsKey(const IDBKeyData&) const;
@@ -85,7 +79,7 @@ struct IDBKeyRangeData {
     bool lowerOpen { false };
     bool upperOpen { false };
 
-    bool isNull;
+    bool isNull() const { return lowerKey.isNull() && upperKey.isNull(); };
 
 #if !LOG_DISABLED
     String loggingString() const;

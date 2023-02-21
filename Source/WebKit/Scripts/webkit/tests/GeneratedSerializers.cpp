@@ -160,8 +160,6 @@ void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namesp
         , offsetof(Namespace::OtherClass, dataDetectorResults)
     >::value);
     encoder << instance.isNull;
-    if (instance.isNull)
-        return;
     encoder << instance.a;
     encoder << instance.b;
     encoder << instance.dataDetectorResults;
@@ -172,8 +170,6 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
     auto isNull = decoder.decode<bool>();
     if (!isNull)
         return std::nullopt;
-    if (*isNull)
-        return { Namespace::OtherClass { } };
 
     auto a = decoder.decode<int>();
     if (!a)
@@ -276,8 +272,6 @@ void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder
 #endif
     >::value);
     encoder << instance.m_isNull;
-    if (instance.m_isNull)
-        return;
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     encoder << instance.m_type;
 #endif
@@ -291,8 +285,6 @@ std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::Empt
     auto m_isNull = decoder.decode<bool>();
     if (!m_isNull)
         return std::nullopt;
-    if (*m_isNull)
-        return { Namespace::EmptyConstructorNullable { } };
 
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     auto m_type = decoder.decode<MemberType>();

@@ -149,9 +149,7 @@ class WebCore::IDBDatabaseInfo {
     HashMap<uint64_t, WebCore::IDBObjectStoreInfo> m_objectStoreMap
 }
 
-[CustomMemberLayout] struct WebCore::IDBKeyRangeData {
-    [ReturnEarlyIfTrue] bool isNull;
-
+struct WebCore::IDBKeyRangeData {
     WebCore::IDBKeyData lowerKey;
     WebCore::IDBKeyData upperKey;
 
