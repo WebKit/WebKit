@@ -4154,3 +4154,40 @@ struct WebCore::RTCDataChannelIdentifier {
 };
 
 #endif // ENABLE(WEB_RTC)
+
+header: <WebCore/SVGFilterExpressionReference.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SVGFilterExpressionNode {
+    unsigned index;
+    std::optional<WebCore::FilterEffectGeometry> geometry;
+    unsigned level;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SVGPreserveAspectRatioValue {
+    WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType m_align;
+    WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType m_meetOrSlice;
+};
+
+#if ENABLE(CONTENT_EXTENSIONS)
+
+[Nested] struct WebCore::ContentRuleListResults::Result {
+    bool blockedLoad;
+    bool madeHTTPS;
+    bool blockedCookies;
+    bool modifiedHeaders;
+    bool redirected;
+    Vector<String> notifications;
+};
+
+[Nested] struct WebCore::ContentRuleListResults::Summary {
+    bool blockedLoad;
+    bool madeHTTPS;
+    bool blockedCookies;
+    bool hasNotifications;
+};
+
+struct WebCore::ContentRuleListResults {
+    WebCore::ContentRuleListResults::Summary summary;
+    Vector<std::pair<String, WebCore::ContentRuleListResults::Result>> results;
+};
+
+#endif
