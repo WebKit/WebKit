@@ -3098,6 +3098,59 @@ header: <WebCore/TextManipulationController.h>
     WebCore::TextManipulationControllerManipulationFailure::Type type;
 };
 
+#if ENABLE(SERVICE_WORKER)
+struct WebCore::BackgroundFetchInformation {
+    WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier;
+    String identifier;
+    uint64_t uploadTotal;
+    uint64_t uploaded;
+    uint64_t downloadTotal;
+    uint64_t downloaded;
+    WebCore::BackgroundFetchResult result;
+    WebCore::BackgroundFetchFailureReason failureReason;
+    bool recordsAvailable;
+};
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+struct WebCore::BackgroundFetchRequest {
+    WebCore::ResourceRequest internalRequest;
+    WebCore::FetchOptions options;
+    WebCore::FetchHeadersGuard guard;
+    WebCore::HTTPHeaderMap httpHeaders;
+    String referrer;
+};
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+struct WebCore::BackgroundFetchRecordInformation {
+    WebCore::BackgroundFetchRecordIdentifier identifier;
+    WebCore::ResourceRequest internalRequest;
+    WebCore::FetchOptions options;
+    WebCore::FetchHeadersGuard guard;
+    WebCore::HTTPHeaderMap httpHeaders;
+    String referrer;
+};
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+struct WebCore::BackgroundFetchOptions {
+    Vector<WebCore::ImageResource> icons;
+    String title;
+    uint64_t downloadTotal;
+};
+#endif
+
+
+#if ENABLE(SERVICE_WORKER)
+struct WebCore::ImageResource {
+    String src;
+    String sizes;
+    String type;
+    String label;
+};
+#endif // ENABLE(SERVICE_WORKER)
+
 using WebCore::SharedStringHash = uint32_t
 
 struct WebCore::FourCC {

@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RetrieveRecordResponseBodyCallbackIdentifier.h"
 #include "ServiceWorkerFetchTask.h"
 #include <WebCore/ExceptionOr.h>
 #include <WebCore/FetchIdentifier.h>
@@ -121,6 +122,7 @@ private:
     void postMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, const WebCore::MessageWithMessagePorts&, WebCore::ServiceWorkerIdentifier sourceServiceWorkerIdentifier, const String& sourceOrigin) final;
 
     void contextConnectionCreated(WebCore::SWServerToContextConnection&) final;
+    void updateBackgroundFetchRegistration(const WebCore::BackgroundFetchInformation&) final;
 
     bool isThrottleable() const { return m_isThrottleable; }
     bool hasMatchingClient(const WebCore::RegistrableDomain&) const;
@@ -142,6 +144,8 @@ private:
     void setNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier, String&&, ExceptionOrVoidCallback&&);
     using ExceptionOrNavigationPreloadStateCallback = CompletionHandler<void(Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData>&&)>;
     void getNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrNavigationPreloadStateCallback&&);
+
+    void retrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallbackIdentifier);
 
     URL clientURLFromIdentifier(WebCore::ServiceWorkerOrClientIdentifier);
 

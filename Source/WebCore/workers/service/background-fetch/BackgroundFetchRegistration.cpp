@@ -32,7 +32,11 @@
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
 #include "EventNames.h"
+#include "FetchRequest.h"
+#include "FetchResponse.h"
+#include "JSBackgroundFetchRecord.h"
 #include "RetrieveRecordsOptions.h"
+#include "SWClientConnection.h"
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerRegistrationBackgroundFetchAPI.h"
 #include <wtf/IsoMallocInlines.h>
@@ -40,6 +44,15 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(BackgroundFetchRegistration);
+
+void BackgroundFetchRegistration::updateIfExisting(ScriptExecutionContext& context, const BackgroundFetchInformation& information)
+{
+    RefPtr container = context.serviceWorkerContainer();
+    RefPtr registration = container ? container->registration(information.registrationIdentifier) : nullptr;
+    RefPtr manager = registration ? ServiceWorkerRegistrationBackgroundFetchAPI::backgroundFetchIfCreated(*registration) : nullptr;
+    if (auto backgroundFetchRegistration = manager ? manager->existingBackgroundFetchRegistration(information.identifier) : nullptr)
+        backgroundFetchRegistration->updateInformation(information);
+}
 
 Ref<BackgroundFetchRegistration> BackgroundFetchRegistration::create(ScriptExecutionContext& context, BackgroundFetchInformation&& information)
 {
@@ -58,19 +71,102 @@ BackgroundFetchRegistration::~BackgroundFetchRegistration()
 {
 }
 
-void BackgroundFetchRegistration::abort(ScriptExecutionContext&, DOMPromiseDeferred<IDLBoolean>&& promise)
+void BackgroundFetchRegistration::abort(ScriptExecutionContext& context, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    promise.reject(Exception { NotSupportedError });
+    SWClientConnection::fromScriptExecutionContext(context)->abortBackgroundFetch(registrationIdentifier(), id(), [promise = WTFMove(promise)](auto&& result) mutable {
+        promise.resolve(result);
+    });
 }
 
-void BackgroundFetchRegistration::match(ScriptExecutionContext&, RequestInfo&&, const CacheQueryOptions&, DOMPromiseDeferred<IDLInterface<BackgroundFetchRecord>>&& promise)
+static ExceptionOr<ResourceRequest> requestFromInfo(ScriptExecutionContext& context, std::optional<BackgroundFetchRegistration::RequestInfo>&& info)
 {
-    promise.reject(Exception { NotSupportedError });
+    if (!info)
+        return ResourceRequest { };
+
+    ResourceRequest resourceRequest;
+    auto requestOrException = FetchRequest::create(context, WTFMove(*info), { });
+    if (requestOrException.hasException())
+        return requestOrException.releaseException();
+
+    return requestOrException.releaseReturnValue()->resourceRequest();
 }
 
-void BackgroundFetchRegistration::matchAll(ScriptExecutionContext&, std::optional<RequestInfo>&&, const CacheQueryOptions&, DOMPromiseDeferred<IDLSequence<IDLInterface<BackgroundFetchRecord>>>&& promise)
+static Ref<BackgroundFetchRecord> createRecord(ScriptExecutionContext& context, BackgroundFetchRecordInformation&& information)
 {
-    promise.reject(Exception { NotSupportedError });
+    auto recordIdentifier = information.identifier;
+    auto record = BackgroundFetchRecord::create(context, WTFMove(information));
+    SWClientConnection::fromScriptExecutionContext(context)->retrieveRecordResponse(recordIdentifier, [weakContext = WeakPtr { context }, record](auto&& result) {
+        if (!weakContext)
+            return;
+
+        if (result.hasException()) {
+            record->settleResponseReadyPromise(result.releaseException());
+            return;
+        }
+
+        auto response = FetchResponse::create(weakContext.get(), { }, FetchHeaders::Guard::Immutable, { });
+        response->setReceivedInternalResponse(result.releaseReturnValue(), FetchOptions::Credentials::Omit);
+        // FIXME: get the body.
+        record->settleResponseReadyPromise(WTFMove(response));
+    });
+    return record;
+}
+
+void BackgroundFetchRegistration::match(ScriptExecutionContext& context, RequestInfo&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLInterface<BackgroundFetchRecord>>&& promise)
+{
+    if (!recordsAvailable()) {
+        promise.reject(Exception { InvalidStateError, "Records are not available"_s });
+        return;
+    }
+
+    auto requestOrException = requestFromInfo(context, WTFMove(info));
+    if (requestOrException.hasException()) {
+        promise.reject(requestOrException.releaseException());
+        return;
+    }
+
+    bool shouldRetrieveResponses = false;
+    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
+
+    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTFMove(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& results) mutable {
+        if (!weakContext)
+            return;
+
+        if (!results.size()) {
+            promise.reject(Exception { TypeError, "No matching record"_s });
+            return;
+        }
+
+        promise.resolve(createRecord(*weakContext, WTFMove(results[0])));
+    });
+}
+
+void BackgroundFetchRegistration::matchAll(ScriptExecutionContext& context, std::optional<RequestInfo>&& info, const CacheQueryOptions& options, DOMPromiseDeferred<IDLSequence<IDLInterface<BackgroundFetchRecord>>>&& promise)
+{
+    if (!recordsAvailable()) {
+        promise.reject(Exception { InvalidStateError, "Records are not available"_s });
+        return;
+    }
+
+    auto requestOrException = requestFromInfo(context, WTFMove(info));
+    if (requestOrException.hasException()) {
+        promise.reject(requestOrException.releaseException());
+        return;
+    }
+
+    bool shouldRetrieveResponses = false;
+    RetrieveRecordsOptions retrieveOptions { requestOrException.releaseReturnValue(), context.crossOriginEmbedderPolicy(), *context.securityOrigin(), options.ignoreSearch, options.ignoreMethod, options.ignoreVary, shouldRetrieveResponses };
+
+    SWClientConnection::fromScriptExecutionContext(context)->matchBackgroundFetch(registrationIdentifier(), id(), WTFMove(retrieveOptions), [weakContext = WeakPtr { context }, promise = WTFMove(promise)](auto&& results) mutable {
+        if (!weakContext)
+            return;
+
+        auto records = WTF::map(results, [&weakContext](auto& result) {
+            return createRecord(*weakContext, WTFMove(result));
+        });
+
+        promise.resolve(WTFMove(records));
+    });
 }
 
 void BackgroundFetchRegistration::updateInformation(const BackgroundFetchInformation& information)

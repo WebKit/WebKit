@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "BackgroundFetchRecordIdentifier.h"
 #include "ExceptionOr.h"
 #include "NavigationPreloadState.h"
 #include "NotificationData.h"
@@ -42,6 +43,7 @@
 namespace WebCore {
 
 class ResourceError;
+class ResourceResponse;
 class SecurityOrigin;
 class ScriptExecutionContext;
 class SerializedScriptValue;
@@ -50,10 +52,16 @@ class ServiceWorkerRegistration;
 enum class ServiceWorkerRegistrationState : uint8_t;
 enum class ServiceWorkerState : uint8_t;
 enum class ShouldNotifyWhenResolved : bool;
+struct BackgroundFetchInformation;
+struct BackgroundFetchOptions;
+struct BackgroundFetchRecordInformation;
+struct BackgroundFetchRequest;
+struct CacheQueryOptions;
 struct ClientOrigin;
 struct ExceptionData;
 struct MessageWithMessagePorts;
 struct NotificationData;
+struct RetrieveRecordsOptions;
 struct ServiceWorkerClientData;
 struct ServiceWorkerData;
 struct ServiceWorkerRegistrationData;
@@ -62,6 +70,8 @@ struct WorkerFetchResult;
 class SWClientConnection : public RefCounted<SWClientConnection> {
 public:
     WEBCORE_EXPORT virtual ~SWClientConnection();
+
+    static Ref<SWClientConnection> fromScriptExecutionContext(ScriptExecutionContext&);
 
     using RegistrationCallback = CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>;
     virtual void matchRegistration(SecurityOriginData&& topOrigin, const URL& clientURL, RegistrationCallback&&) = 0;
@@ -118,6 +128,20 @@ public:
     WEBCORE_EXPORT void registerServiceWorkerClients();
     bool isClosed() const { return m_isClosed; }
 
+    using ExceptionOrBackgroundFetchInformationCallback = CompletionHandler<void(ExceptionOr<BackgroundFetchInformation>&&)>;
+    virtual void startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
+    virtual void backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&&) = 0;
+    using BackgroundFetchIdentifiersCallback = CompletionHandler<void(Vector<String>&&)>;
+    virtual void backgroundFetchIdentifiers(ServiceWorkerRegistrationIdentifier, BackgroundFetchIdentifiersCallback&&) = 0;
+    using AbortBackgroundFetchCallback = CompletionHandler<void(bool)>;
+    virtual void abortBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, AbortBackgroundFetchCallback&&) = 0;
+    using MatchBackgroundFetchCallback = CompletionHandler<void(Vector<BackgroundFetchRecordInformation>&&)>;
+    virtual void matchBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, RetrieveRecordsOptions&&, MatchBackgroundFetchCallback&&) = 0;
+    using RetrieveRecordResponseCallback = CompletionHandler<void(ExceptionOr<ResourceResponse>&&)>;
+    virtual void retrieveRecordResponse(BackgroundFetchRecordIdentifier, RetrieveRecordResponseCallback&&) = 0;
+    using RetrieveRecordResponseBodyCallback = Function<void(Expected<RefPtr<SharedBuffer>, ResourceError>&&)>;
+    virtual void retrieveRecordResponseBody(BackgroundFetchRecordIdentifier, RetrieveRecordResponseBodyCallback&&) = 0;
+
 protected:
     WEBCORE_EXPORT SWClientConnection();
 
@@ -131,6 +155,7 @@ protected:
     WEBCORE_EXPORT void setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier, WallTime);
     WEBCORE_EXPORT void setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier, ServiceWorkerUpdateViaCache);
     WEBCORE_EXPORT void notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, ServiceWorkerData&& newController);
+    WEBCORE_EXPORT void updateBackgroundFetchRegistration(const BackgroundFetchInformation&);
 
     WEBCORE_EXPORT void clearPendingJobs();
     void setIsClosed() { m_isClosed = true; }

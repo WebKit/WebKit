@@ -50,6 +50,8 @@ public:
     static Ref<BackgroundFetchRegistration> create(ScriptExecutionContext&, BackgroundFetchInformation&&);
     ~BackgroundFetchRegistration();
 
+    static void updateIfExisting(ScriptExecutionContext&, const BackgroundFetchInformation&);
+
     const String& id() const { return m_information.identifier; }
     uint64_t uploadTotal() const { return m_information.uploadTotal; }
     uint64_t uploaded() const { return m_information.uploaded; }

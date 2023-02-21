@@ -1,5 +1,5 @@
 
-FAIL Background Fetch updateUI resolves promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
-FAIL Background Fetch updateUI called twice fails promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
-FAIL Background Fetch updateUI fails when event is not active promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "background-fetch"."
+FAIL Background Fetch updateUI resolves promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Background Fetch updateUI called twice fails promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Background Fetch updateUI fails when event is not active promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 
