@@ -60,7 +60,7 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "SecondMemberType"_s,
                 "secondMemberName"_s
             }, {
-                "RetainPtr<CFTypeRef>"_s,
+                "std::optional<RetainPtr<CFTypeRef>>"_s,
                 "nullableTestMember"_s
             }
         } },
@@ -165,7 +165,7 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         } },
         { "NullableSoftLinkedMember"_s, {
             {
-                "RetainPtr<DDActionContext>"_s,
+                "std::optional<RetainPtr<DDActionContext>>"_s,
                 "firstMember"_s
             }, {
                 "RetainPtr<DDActionContext>"_s,
