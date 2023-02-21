@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WasmBBQJIT.h"
 
+#include "BinarySwitch.h"
 #include "BytecodeStructs.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationMode.h"
@@ -873,6 +874,11 @@ public:
         void addBranch(Jump jump)
         {
             m_branchList.append(jump);
+        }
+
+        void addBranch(const JumpList& jumpList)
+        {
+            m_branchList.append(jumpList);
         }
 
         void linkJumps(MacroAssembler::AbstractMacroAssemblerType* masm)
@@ -6024,11 +6030,21 @@ public:
             return { };
         }
 
-        for (size_t i = 0; i < targets.size(); i ++) {
-            Jump branch = m_jit.branch32(RelationalCondition::Equal, Imm32(i), m_scratchGPR);
-            targets[i]->addBranch(branch);
+        Vector<int64_t> cases;
+        cases.reserveInitialCapacity(targets.size());
+        for (size_t i = 0; i < targets.size(); ++i)
+            cases.uncheckedAppend(i);
+
+        BinarySwitch binarySwitch(m_scratchGPR, cases, BinarySwitch::Int32);
+        while (binarySwitch.advance(m_jit)) {
+            unsigned value = binarySwitch.caseValue();
+            unsigned index = binarySwitch.caseIndex();
+            ASSERT_UNUSED(value, value == index);
+            ASSERT(index < targets.size());
+            targets[index]->addBranch(m_jit.jump());
         }
-        defaultTarget.addBranch(m_jit.jump()); // Fall through to default case with a direct jump.
+
+        defaultTarget.addBranch(binarySwitch.fallThrough());
 
         return { };
     }
