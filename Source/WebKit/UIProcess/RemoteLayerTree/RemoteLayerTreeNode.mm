@@ -71,14 +71,15 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeNode::createWithPlainLayer(W
 
 void RemoteLayerTreeNode::detachFromParent()
 {
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [interactionRegionsLayer() removeFromSuperlayer];
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     if (auto view = uiView()) {
         [view removeFromSuperview];
         return;
     }
-#endif
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    [interactionRegionsLayer() removeFromSuperlayer];
 #endif
     [layer() removeFromSuperlayer];
 }
@@ -94,6 +95,7 @@ void RemoteLayerTreeNode::initializeLayer()
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     m_interactionRegionsLayer = adoptNS([[CALayer alloc] init]);
     [m_interactionRegionsLayer setName:@"InteractionRegions Container"];
+    [m_interactionRegionsLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 #endif
 }
 
