@@ -914,6 +914,7 @@ void InlineDisplayContentBuilder::computeIsFirstIsLastBoxForInlineContent(Displa
     }
 
     HashMap<const Box*, size_t> lastDisplayBoxForLayoutBoxIndexes;
+    lastDisplayBoxForLayoutBoxIndexes.reserveInitialCapacity(boxes.size() - 1);
 
     ASSERT(boxes[0].isRootInlineBox());
     boxes[0].setIsFirstForLayoutBox(true);
