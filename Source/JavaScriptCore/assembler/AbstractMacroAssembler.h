@@ -426,9 +426,7 @@ public:
         friend class Watchpoint;
 
     public:
-        Label()
-        {
-        }
+        Label() = default;
 
         Label(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
