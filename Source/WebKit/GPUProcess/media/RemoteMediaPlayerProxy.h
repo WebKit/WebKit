@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,11 +103,12 @@ class RemoteVideoFrameObjectHeap;
 class RemoteVideoTrackProxy;
 
 class RemoteMediaPlayerProxy final
-    : public WebCore::MediaPlayerClient
+    : public RefCounted<RemoteMediaPlayerProxy>
+    , public WebCore::MediaPlayerClient
     , public IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
+    static Ref<RemoteMediaPlayerProxy> create(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
     ~RemoteMediaPlayerProxy();
 
     WebCore::MediaPlayerIdentifier identifier() const { return m_id; }
@@ -228,6 +229,8 @@ public:
     TrackPrivateRemoteIdentifier addRemoteTextTrackProxy(WebCore::InbandTextTrackPrivate&);
 
 private:
+    RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy&, WebCore::MediaPlayerIdentifier, Ref<IPC::Connection>&&, WebCore::MediaPlayerEnums::MediaEngineIdentifier, RemoteMediaPlayerProxyConfiguration&&, RemoteVideoFrameObjectHeap&, const WebCore::ProcessIdentity&);
+
     // MediaPlayerClient
     void mediaPlayerCharacteristicChanged() final;
     void mediaPlayerRenderingModeChanged() final;
