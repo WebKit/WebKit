@@ -877,14 +877,12 @@ public:
 
         void linkJumps(MacroAssembler::AbstractMacroAssemblerType* masm)
         {
-            for (const Jump& jump : m_branchList)
-                jump.link(masm);
+            m_branchList.link(masm);
         }
 
         void linkJumpsTo(MacroAssembler::Label label, MacroAssembler::AbstractMacroAssemblerType* masm)
         {
-            for (const Jump& jump : m_branchList)
-                jump.linkTo(label, masm);
+            m_branchList.linkTo(label, masm);
         }
 
         void linkIfBranch(MacroAssembler::AbstractMacroAssemblerType* masm)
@@ -967,7 +965,7 @@ public:
         CatchKind m_catchKind;
         Vector<Location, 2> m_arguments; // List of input locations to write values into when entering this block.
         Vector<Location, 2> m_results; // List of result locations to write values into when exiting this block.
-        Vector<Jump, 2> m_branchList; // List of branch control info for branches targeting the end of this block.
+        JumpList m_branchList; // List of branch control info for branches targeting the end of this block.
         MacroAssembler::Label m_loopLabel;
         MacroAssembler::Jump m_ifBranch;
         LocalOrTempIndex m_enclosedHeight; // Height of enclosed expression stack, used as the base for all temporary locations.
@@ -1165,10 +1163,6 @@ public:
         RegisterSetBuilder callerSaveGprs = gprSetBuilder;
         RegisterSetBuilder callerSaveFprs = fprSetBuilder;
 
-        // TODO: Handle vectors
-        for (Reg reg : callerSaveFprs.buildAndValidate())
-            m_scratchFPR = reg.fpr(); // Grab last caller-save fpr for scratch register.
-
         gprSetBuilder.remove(m_scratchGPR);
         gprSetBuilder.remove(m_dataScratchGPR);
         fprSetBuilder.remove(m_scratchFPR);
@@ -1299,7 +1293,7 @@ public:
 
         LOG_INSTRUCTION("TableGet", tableIndex, index, RESULT(result));
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest64(ResultCondition::Zero, resultLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest64(ResultCondition::Zero, resultLocation.asGPR()));
         return { };
     }
 
@@ -1321,7 +1315,7 @@ public:
 
         LOG_INSTRUCTION("TableSet", tableIndex, index, value);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -1345,7 +1339,7 @@ public:
 
         LOG_INSTRUCTION("TableInit", tableIndex, dstOffset, srcOffset, length);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -1404,7 +1398,7 @@ public:
 
         LOG_INSTRUCTION("TableFill", tableIndex, fill, offset, count);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -1426,7 +1420,7 @@ public:
 
         LOG_INSTRUCTION("TableCopy", dstTableIndex, srcTableIndex, dstOffset, srcOffset, length);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsTableAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
         return { };
     }
 
@@ -1635,14 +1629,15 @@ public:
             pointerLocation = loadIfNecessary(pointer);
         ASSERT(pointerLocation.isGPR());
 
+        uint64_t boundary = static_cast<uint64_t>(sizeOfOperation) + uoffset - 1;
         switch (m_mode) {
         case MemoryMode::BoundsChecking: {
             // We're not using signal handling only when the memory is not shared.
             // Regardless of signaling, we must check that no memory access exceeds the current memory size.
             m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), m_scratchGPR);
-            m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + uoffset - 1), m_scratchGPR);
-
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
+            if (boundary)
+                m_jit.add64(TrustedImm64(boundary), m_scratchGPR);
+            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, GPRInfo::wasmBoundsCheckingSizeRegister));
             break;
         }
 
@@ -1660,8 +1655,9 @@ public:
             if (uoffset >= Memory::fastMappedRedzoneBytes()) {
                 uint64_t maximum = m_info.memory.maximum() ? m_info.memory.maximum().bytes() : std::numeric_limits<uint32_t>::max();
                 m_jit.zeroExtend32ToWord(pointerLocation.asGPR(), m_scratchGPR);
-                m_jit.add64(TrustedImm64(static_cast<uint64_t>(sizeOfOperation) + uoffset - 1), m_scratchGPR);
-                addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, TrustedImm64(static_cast<int64_t>(maximum))));
+                if (boundary)
+                    m_jit.add64(TrustedImm64(boundary), m_scratchGPR);
+                throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch64(RelationalCondition::AboveOrEqual, m_scratchGPR, TrustedImm64(static_cast<int64_t>(maximum))));
             }
             break;
         }
@@ -1975,7 +1971,7 @@ public:
         emitCCall(&operationWasmMemoryFill, arguments, TypeKind::I32, shouldThrow);
         Location shouldThrowLocation = allocate(shouldThrow);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryFill", dstAddress, targetValue, count);
 
@@ -1996,7 +1992,7 @@ public:
         emitCCall(&operationWasmMemoryCopy, arguments, TypeKind::I32, shouldThrow);
         Location shouldThrowLocation = allocate(shouldThrow);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryCopy", dstAddress, srcAddress, count);
 
@@ -2018,7 +2014,7 @@ public:
         emitCCall(&operationWasmMemoryInit, arguments, TypeKind::I32, shouldThrow);
         Location shouldThrowLocation = allocate(shouldThrow);
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
 
         LOG_INSTRUCTION("MemoryInit", dataSegmentIndex, dstAddress, srcAddress, length);
 
@@ -2198,7 +2194,7 @@ public:
         Address address = Address(pointer.asGPR());
 
         if (accessWidth(loadOp) != Width8)
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(loadOp) - 1)));
+            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(loadOp) - 1)));
 
         Value result = topValue(valueType.kind);
         Location resultLocation = allocate(result);
@@ -2305,7 +2301,7 @@ public:
         Address address = Address(pointer.asGPR());
 
         if (accessWidth(storeOp) != Width8)
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(storeOp) - 1)));
+            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(storeOp) - 1)));
 
         GPRReg scratch1GPR = InvalidGPRReg;
         GPRReg scratch2GPR = InvalidGPRReg;
@@ -2422,7 +2418,7 @@ public:
         Address address = Address(pointer.asGPR());
 
         if (accessWidth(op) != Width8)
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
+            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
 
         Value result = topValue(valueType.kind);
         Location resultLocation = allocate(result);
@@ -2805,7 +2801,7 @@ public:
         Width accessWidth = Wasm::accessWidth(op);
 
         if (accessWidth != Width8)
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
+            throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branchTest64(ResultCondition::NonZero, pointer.asGPR(), TrustedImm64(sizeOfAtomicOpMemoryAccess(op) - 1)));
 
         Value result = topValue(expected.type());
         Location resultLocation = allocate(result);
@@ -2999,7 +2995,7 @@ public:
 
         LOG_INSTRUCTION(makeString(op), pointer, value, timeout, uoffset, RESULT(result));
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
+        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
         return { };
     }
 
@@ -3016,7 +3012,7 @@ public:
 
         LOG_INSTRUCTION(makeString(op), pointer, count, uoffset, RESULT(result));
 
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
+        throwExceptionIf(ExceptionType::OutOfBoundsMemoryAccess, m_jit.branch32(RelationalCondition::LessThan, resultLocation.asGPR(), TrustedImm32(0)));
         return { };
     }
 
@@ -3207,12 +3203,12 @@ public:
         Jump belowMin = operandType == Types::F32
             ? m_jit.branchFloat(minCondition, operandLocation.asFPR(), minFloat.asFPR())
             : m_jit.branchDouble(minCondition, operandLocation.asFPR(), minFloat.asFPR());
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTrunc, belowMin);
+        throwExceptionIf(ExceptionType::OutOfBoundsTrunc, belowMin);
 
         Jump aboveMax = operandType == Types::F32
             ? m_jit.branchFloat(DoubleCondition::DoubleGreaterThanOrEqualOrUnordered, operandLocation.asFPR(), maxFloat.asFPR())
             : m_jit.branchDouble(DoubleCondition::DoubleGreaterThanOrEqualOrUnordered, operandLocation.asFPR(), maxFloat.asFPR());
-        addExceptionLateLinkTask(ExceptionType::OutOfBoundsTrunc, aboveMax);
+        throwExceptionIf(ExceptionType::OutOfBoundsTrunc, aboveMax);
 
         truncInBounds(kind, operandLocation, resultLocation, scratches.fpr(0), scratches.fpr(1));
 
@@ -3752,12 +3748,9 @@ public:
         });
     }
 
-    void addExceptionLateLinkTask(ExceptionType type, Jump jump)
+    void throwExceptionIf(ExceptionType type, Jump jump)
     {
-        addLatePath([type, jump] (BBQJIT& generator, CCallHelpers& jit) {
-            jump.link(&jit);
-            generator.emitThrowException(type);
-        });
+        m_exceptions[static_cast<unsigned>(type)].append(jump);
     }
 
 #if CPU(X86_64)
@@ -3811,7 +3804,7 @@ public:
         Jump isZero = is32
             ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
             : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
-        addExceptionLateLinkTask(ExceptionType::DivisionByZero, isZero);
+        throwExceptionIf(ExceptionType::DivisionByZero, isZero);
         if constexpr (isSigned) {
             if constexpr (is32)
                 m_jit.compare32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1), scratches.gpr(0));
@@ -3834,7 +3827,7 @@ public:
                 toEnd = m_jit.jump();
             } else {
                 Jump isNegativeOne = m_jit.branchTest64(ResultCondition::NonZero, scratches.gpr(1));
-                addExceptionLateLinkTask(ExceptionType::IntegerOverflow, isNegativeOne);
+                throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
             }
         }
 
@@ -3901,7 +3894,7 @@ public:
                     Jump jump = is32
                         ? m_jit.branch32(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm32(std::numeric_limits<int32_t>::min()))
                         : m_jit.branch64(RelationalCondition::Equal, lhsLocation.asGPR(), TrustedImm64(std::numeric_limits<int64_t>::min()));
-                    addExceptionLateLinkTask(ExceptionType::IntegerOverflow, jump);
+                    throwExceptionIf(ExceptionType::IntegerOverflow, jump);
                 }
 
                 if constexpr (IsMod) {
@@ -3974,7 +3967,7 @@ public:
             Jump isZero = is32
                 ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
                 : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
-            addExceptionLateLinkTask(ExceptionType::DivisionByZero, isZero);
+            throwExceptionIf(ExceptionType::DivisionByZero, isZero);
             checkedForZero = true;
 
             if (!dividend) {
@@ -3988,7 +3981,7 @@ public:
                 Jump isNegativeOne = is32
                     ? m_jit.branch32(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm32(-1))
                     : m_jit.branch64(RelationalCondition::Equal, rhsLocation.asGPR(), TrustedImm64(-1));
-                addExceptionLateLinkTask(ExceptionType::IntegerOverflow, isNegativeOne);
+                throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
                 checkedForNegativeOne = true;
             }
 
@@ -4001,7 +3994,7 @@ public:
             Jump isZero = is32
                 ? m_jit.branchTest32(ResultCondition::Zero, rhsLocation.asGPR())
                 : m_jit.branchTest64(ResultCondition::Zero, rhsLocation.asGPR());
-            addExceptionLateLinkTask(ExceptionType::DivisionByZero, isZero);
+            throwExceptionIf(ExceptionType::DivisionByZero, isZero);
         }
 
         ScratchScope<1, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
@@ -4018,7 +4011,7 @@ public:
             }
             m_jit.and64(m_scratchGPR, scratches.gpr(0), m_scratchGPR);
             Jump isNegativeOne = m_jit.branchTest64(ResultCondition::NonZero, m_scratchGPR);
-            addExceptionLateLinkTask(ExceptionType::IntegerOverflow, isNegativeOne);
+            throwExceptionIf(ExceptionType::IntegerOverflow, isNegativeOne);
         }
 
         RegisterID divResult = IsMod ? scratches.gpr(0) : resultLocation.asGPR();
@@ -5689,7 +5682,7 @@ public:
         result = topValue(TypeKind::Ref);
         Location resultLocation = allocate(result);
         ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
-        addExceptionLateLinkTask(ExceptionType::NullRefAsNonNull, m_jit.branch64(RelationalCondition::Equal, valueLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull())))));
+        throwExceptionIf(ExceptionType::NullRefAsNonNull, m_jit.branch64(RelationalCondition::Equal, valueLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull())))));
         m_jit.move(valueLocation.asGPR(), resultLocation.asGPR());
 
         return { };
@@ -6106,6 +6099,15 @@ public:
 
         for (const auto& latePath : m_latePaths)
             latePath->run(*this, m_jit);
+
+        for (unsigned i = 0; i < numberOfExceptionTypes; ++i) {
+            auto& jumps = m_exceptions[i];
+            if (!jumps.empty()) {
+                jumps.link(&jit);
+                emitThrowException(static_cast<ExceptionType>(i));
+            }
+        }
+
         return { };
     }
 
@@ -6426,7 +6428,7 @@ public:
             consume(calleeIndex);
 
             // Check the index we are looking for is valid.
-            addExceptionLateLinkTask(ExceptionType::OutOfBoundsCallIndirect, m_jit.branch32(RelationalCondition::AboveOrEqual, calleeIndexLocation.asGPR(), callableFunctionBufferLength));
+            throwExceptionIf(ExceptionType::OutOfBoundsCallIndirect, m_jit.branch32(RelationalCondition::AboveOrEqual, calleeIndexLocation.asGPR(), callableFunctionBufferLength));
 
             // Neither callableFunctionBuffer nor callableFunctionBufferLength are used before any of these
             // are def'd below, so we can reuse the registers and save some pressure.
@@ -6451,8 +6453,8 @@ public:
             m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfValue()), jsCalleeAnchor);
             m_jit.loadPtr(Address(calleeSignatureIndex, FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
 
-            addExceptionLateLinkTask(ExceptionType::NullTableEntry, m_jit.branchTestPtr(ResultCondition::Zero, calleeSignatureIndex, calleeSignatureIndex));
-            addExceptionLateLinkTask(ExceptionType::BadSignature, m_jit.branchPtr(RelationalCondition::NotEqual, calleeSignatureIndex, TrustedImmPtr(TypeInformation::get(originalSignature))));
+            throwExceptionIf(ExceptionType::NullTableEntry, m_jit.branchTestPtr(ResultCondition::Zero, calleeSignatureIndex, calleeSignatureIndex));
+            throwExceptionIf(ExceptionType::BadSignature, m_jit.branchPtr(RelationalCondition::NotEqual, calleeSignatureIndex, TrustedImmPtr(TypeInformation::get(originalSignature))));
         }
 
         emitIndirectCall("CallIndirect", calleeIndex, calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, callType);
@@ -8358,7 +8360,7 @@ private:
     bool m_isSIMD { false }; // Whether the function we are compiling uses SIMD instructions or not.
 
     RegisterID m_scratchGPR { GPRInfo::nonPreservedNonArgumentGPR0 }; // Scratch registers to hold temporaries in operations.
-    FPRegisterID m_scratchFPR;
+    FPRegisterID m_scratchFPR { FPRInfo::nonPreservedNonArgumentFPR0 };
     RegisterID m_dataScratchGPR { GPRInfo::wasmScratchGPR0 }; // Used specifically as a temporary for complex moves.
 
 #if CPU(X86) || CPU(X86_64)
@@ -8372,6 +8374,8 @@ private:
     RegisterSet m_callerSaves;
 
     InternalFunction* m_compilation;
+
+    std::array<JumpList, numberOfExceptionTypes> m_exceptions { };
 };
 
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext& compilationContext, Callee& callee, const FunctionData& function, const TypeDefinition& signature, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, const ModuleInformation& info, MemoryMode mode, uint32_t functionIndex, std::optional<bool> hasExceptionHandlers, TierUpCount* tierUp)
