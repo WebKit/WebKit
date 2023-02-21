@@ -46,7 +46,7 @@ struct FloatMarkableTraits {
 
     constexpr static float emptyValue()
     {
-        return NAN;
+        return std::numeric_limits<float>::quiet_NaN();
     }
 };
 
