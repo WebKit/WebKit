@@ -86,7 +86,7 @@ enum class AvoidanceReason : uint64_t {
     // Unused                                    = 1LLU  << 44,
     // Unused                                    = 1LLU  << 45,
     // Unused                                    = 1LLU  << 46,
-    MultiColumnFlowIsNotTopLevel                 = 1LLU  << 47,
+    MultiColumnFlowHasVerticalWritingMode        = 1LLU  << 47,
     MultiColumnFlowHasColumnSpanner              = 1LLU  << 48,
     MultiColumnFlowVerticalAlign                 = 1LLU  << 49,
     MultiColumnFlowIsFloating                    = 1LLU  << 50,

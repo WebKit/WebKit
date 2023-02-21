@@ -99,7 +99,7 @@ public:
     LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
-    bool isPaginated() const { return m_isPaginatedContent; }
+    bool isPaginated() const;
     LayoutUnit contentBoxLogicalHeight() const;
     size_t lineCount() const;
     bool hasVisualOverflow() const;
@@ -164,7 +164,6 @@ private:
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;
-    bool m_isPaginatedContent { false };
 };
 
 }

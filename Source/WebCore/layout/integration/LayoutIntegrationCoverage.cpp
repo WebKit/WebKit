@@ -115,8 +115,8 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::FlowTextIsSVGInlineText:
         stream << "SVGInlineText";
         break;
-    case AvoidanceReason::MultiColumnFlowIsNotTopLevel:
-        stream << "non top level column";
+    case AvoidanceReason::MultiColumnFlowHasVerticalWritingMode:
+        stream << "column has vertical writing mode";
         break;
     case AvoidanceReason::MultiColumnFlowHasColumnSpanner:
         stream << "column has spanner";
@@ -434,8 +434,8 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         if (!is<RenderMultiColumnFlow>(fragmentedFlow))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideANonMultiColumnThread, reasons, includeReasons);
         auto& columnThread = downcast<RenderMultiColumnFlow>(*fragmentedFlow);
-        if (columnThread.parent() != &flow.view() || !flow.style().isHorizontalWritingMode())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsNotTopLevel, reasons, includeReasons);
+        if (!flow.style().isHorizontalWritingMode())
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasVerticalWritingMode, reasons, includeReasons);
         if (columnThread.hasColumnSpanner())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasColumnSpanner, reasons, includeReasons);
         auto& style = flow.style();

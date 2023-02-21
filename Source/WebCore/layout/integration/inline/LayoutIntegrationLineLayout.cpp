@@ -809,6 +809,11 @@ std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
     return lines.size() - 1;
 }
 
+bool LineLayout::isPaginated() const
+{
+    return m_inlineContent && m_inlineContent->isPaginated;
+}
+
 LayoutUnit LineLayout::contentBoxLogicalHeight() const
 {
     if (!m_inlineContent)
@@ -818,10 +823,12 @@ LayoutUnit LineLayout::contentBoxLogicalHeight() const
     if (!lastLineIndex)
         return { };
 
-    auto& lines = m_inlineContent->lines;
-    auto& firstLine = lines[0];
-    auto& lastLine = lines[*lastLineIndex];
-    return LayoutUnit { m_inlineContent->clearGapBeforeFirstLine + (lastLine.lineBoxLogicalRect().maxY() - firstLine.lineBoxLogicalRect().y()) + m_inlineContent->clearGapAfterLastLine };
+    auto& firstLine = m_inlineContent->lines[0];
+    auto& lastLine = m_inlineContent->lines[*lastLineIndex];
+
+    auto lineBoxHeight = lastLine.lineBoxLogicalRect().maxY() - firstLine.lineBoxLogicalRect().y();
+    auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
+    return LayoutUnit { lineBoxHeight + additionalHeight };
 }
 
 size_t LineLayout::lineCount() const
@@ -909,15 +916,12 @@ Vector<LineAdjustment> LineLayout::adjustContent()
         return { };
 
     auto& layoutState = *flow().view().frameView().layoutContext().layoutState();
+    if (!layoutState.isPaginated())
+        return { };
 
-    Vector<LineAdjustment> adjustments;
+    auto adjustments = computeAdjustmentsForPagination(*m_inlineContent, flow());
+    adjustLinePositionsForPagination(*m_inlineContent, adjustments);
 
-    if (layoutState.isPaginated()) {
-        adjustments = computeAdjustmentsForPagination(*m_inlineContent, flow());
-        adjustLinePositionsForPagination(*m_inlineContent, adjustments);
-    }
-
-    m_isPaginatedContent = !adjustments.isEmpty();
     return adjustments;
 }
 

@@ -64,6 +64,9 @@ struct InlineContent : public CanMakeWeakPtr<InlineContent> {
 
     float clearGapBeforeFirstLine { 0 };
     float clearGapAfterLastLine { 0 };
+    float firstLinePaginationOffset { 0 };
+
+    bool isPaginated { false };
     bool hasMultilinePaintOverlap { false };
 
     bool hasContent() const;
