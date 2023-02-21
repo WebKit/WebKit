@@ -571,11 +571,19 @@ void LineLayout::layout()
 void LineLayout::constructContent()
 {
     auto destroyDamagedContent = [&] {
-        if (!m_inlineContent || !m_lineDamage || !m_lineDamage->contentPosition())
+        if (!m_inlineContent || !m_lineDamage)
+            return;
+        m_inlineContent->releaseCaches();
+        if (!m_lineDamage->contentPosition())
             return;
         auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
         if (damagedLineIndex >= m_inlineContent->lines.size()) {
             ASSERT_NOT_REACHED();
+            return;
+        }
+        if (!damagedLineIndex) {
+            m_inlineContent->boxes.clear();
+            m_inlineContent->lines.clear();
             return;
         }
         auto& damangedLine = m_inlineContent->lines[damagedLineIndex];
@@ -1184,7 +1192,9 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
     if (m_inlineContent && is<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
         invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox), { }, { });
+        return;
     }
+    ASSERT_NOT_IMPLEMENTED_YET();
 }
 
 void LineLayout::releaseCaches(RenderView& view)
