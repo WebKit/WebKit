@@ -855,7 +855,6 @@ void SWServer::contextConnectionCreated(SWServerToContextConnection& contextConn
 
     auto pendingContextDatas = m_pendingContextDatas.take(contextConnection.registrableDomain());
     for (auto& data : pendingContextDatas) {
-        // FIXME: Add a check that the process this firstPartyForCookies came from was allowed to use it as a firstPartyForCookies.
         m_delegate->addAllowedFirstPartyForCookies(contextConnection.webProcessIdentifier(), requestingProcessIdentifier, data.registration.key.firstPartyForCookies());
         installContextData(data);
     }
