@@ -312,7 +312,7 @@ void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const Dis
     ASSERT(!RunLoop::isMain());
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->displayWasRefreshed(displayID, displayUpdate);
+    m_momentumEventDispatcher->displayWasRefreshed(displayID);
 #endif
 
     notifyScrollingTreesDisplayWasRefreshed(displayID);

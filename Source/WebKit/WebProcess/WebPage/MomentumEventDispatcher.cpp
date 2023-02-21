@@ -54,8 +54,8 @@ bool MomentumEventDispatcher::eventShouldStartSyntheticMomentumPhase(WebCore::Pa
     if (event.momentumPhase() != WebWheelEvent::PhaseBegan)
         return false;
 
-    auto curveIterator = m_accelerationCurves.find(pageIdentifier);
-    if (curveIterator == m_accelerationCurves.end() || !curveIterator->value) {
+    auto curveIterator = scrollingAccelerationCurveForPage(pageIdentifier);
+    if (!curveIterator) {
         RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher not using synthetic momentum phase: no acceleration curve");
         return false;
     }
@@ -211,12 +211,7 @@ void MomentumEventDispatcher::didStartMomentumPhase(WebCore::PageIdentifier page
     m_currentGesture.currentOffset = { };
     m_currentGesture.startTime = MonotonicTime::now();
     m_currentGesture.displayNominalFrameRate = displayProperties->nominalFrameRate;
-    m_currentGesture.accelerationCurve = [&] () -> std::optional<ScrollingAccelerationCurve> {
-        auto curveIterator = m_accelerationCurves.find(m_currentGesture.pageIdentifier);
-        if (curveIterator == m_accelerationCurves.end())
-            return { };
-        return curveIterator->value;
-    }();
+    m_currentGesture.accelerationCurve = scrollingAccelerationCurveForPage(m_currentGesture.pageIdentifier);
 
     startDisplayLink();
 
@@ -253,6 +248,7 @@ void MomentumEventDispatcher::didEndMomentumPhase()
 
 void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentifier pageIdentifier, std::optional<ScrollingAccelerationCurve> curve)
 {
+    Locker locker { m_accelerationCurvesLock };
     m_accelerationCurves.set(pageIdentifier, curve);
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
@@ -260,6 +256,16 @@ void MomentumEventDispatcher::setScrollingAccelerationCurve(WebCore::PageIdentif
     stream << curve;
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher set curve %" PUBLIC_LOG_STRING, stream.release().utf8().data());
 #endif
+}
+
+std::optional<ScrollingAccelerationCurve> MomentumEventDispatcher::scrollingAccelerationCurveForPage(WebCore::PageIdentifier pageIdentifier) const
+{
+    Locker locker { m_accelerationCurvesLock };
+
+    auto curveIterator = m_accelerationCurves.find(pageIdentifier);
+    if (curveIterator == m_accelerationCurves.end())
+        return { };
+    return curveIterator->value;
 }
 
 std::optional<MomentumEventDispatcher::DisplayProperties> MomentumEventDispatcher::displayProperties(WebCore::PageIdentifier pageIdentifier) const
@@ -338,7 +344,7 @@ std::optional<WebCore::FloatSize> MomentumEventDispatcher::consumeDeltaForCurren
     return delta;
 }
 
-void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID displayID, const WebCore::DisplayUpdate&)
+void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID displayID)
 {
     if (!m_currentGesture.active)
         return;
