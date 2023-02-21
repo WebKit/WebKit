@@ -5099,6 +5099,17 @@
    },
    {
       "emails" : [
+         "m_finkel@apple.com",
+         "sysrqb@apple.com"
+      ],
+      "github" : "sysrqb",
+      "name" : "Matthew Finkel",
+      "nicks" : [
+         "sysrqb"
+      ]
+   },
+   {
+      "emails" : [
          "mmirman@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",
