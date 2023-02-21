@@ -6196,7 +6196,7 @@ public:
     void returnValuesFromCall(Vector<Value, N>& results, const FunctionSignature& functionType, const CallInformation& callInfo)
     {
         for (size_t i = 0; i < callInfo.results.size(); i ++) {
-            Value result = Value::fromTemp(functionType.returnType(i).kind, m_parser->expressionStack().size() + i);
+            Value result = Value::fromTemp(functionType.returnType(i).kind, currentControlData().enclosedHeight() + m_parser->expressionStack().size() + i);
             Location returnLocation = Location::fromArgumentLocation(callInfo.results[i]);
             if (returnLocation.isRegister()) {
                 RegisterBinding& currentBinding = returnLocation.isGPR() ? m_gprBindings[returnLocation.asGPR()] : m_fprBindings[returnLocation.asFPR()];
@@ -6272,7 +6272,7 @@ public:
         m_jit.call(m_scratchGPR, OperationPtrTag);
 
         // FIXME: Probably we should make CCall more lower level, and we should bind the result to Value separately.
-        result = Value::fromTemp(returnType, m_parser->expressionStack().size());
+        result = Value::fromTemp(returnType, currentControlData().enclosedHeight() + m_parser->expressionStack().size());
         Location resultLocation;
         switch (returnType) {
         case TypeKind::I32:
