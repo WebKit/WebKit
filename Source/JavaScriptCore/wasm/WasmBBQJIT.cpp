@@ -3139,7 +3139,7 @@ public:
         return FloatingPointRange { min, max, closedLowerEndpoint };
     }
 
-    void truncInBounds(TruncationKind truncationKind, Location operandLocation, Location resultLocation)
+    void truncInBounds(TruncationKind truncationKind, Location operandLocation, Location resultLocation, FPRReg scratch1FPR, FPRReg scratch2FPR)
     {
         switch (truncationKind) {
         case TruncationKind::I32TruncF32S:
@@ -3160,28 +3160,16 @@ public:
         case TruncationKind::I64TruncF64S:
             m_jit.truncateDoubleToInt64(operandLocation.asFPR(), resultLocation.asGPR());
             break;
-#if CPU(X86_64)
-        // x86_64 truncation to Uint64 requires extra parameters.
         case TruncationKind::I64TruncF32U: {
-            ScratchScope<0, 2> scratches(*this);
-            emitMoveConst(Value::fromF32(static_cast<float>(std::numeric_limits<int64_t>::min())), Location::fromFPR(scratches.fpr(1)));
-            m_jit.truncateFloatToUint64(operandLocation.asFPR(), resultLocation.asGPR(), scratches.fpr(0), scratches.fpr(1));
+            emitMoveConst(Value::fromF32(static_cast<float>(std::numeric_limits<int64_t>::min())), Location::fromFPR(scratch2FPR));
+            m_jit.truncateFloatToUint64(operandLocation.asFPR(), resultLocation.asGPR(), scratch1FPR, scratch2FPR);
             break;
         }
         case TruncationKind::I64TruncF64U: {
-            ScratchScope<0, 2> scratches(*this);
-            emitMoveConst(Value::fromF64(static_cast<double>(std::numeric_limits<int64_t>::min())), Location::fromFPR(scratches.fpr(1)));
-            m_jit.truncateDoubleToUint64(operandLocation.asFPR(), resultLocation.asGPR(), scratches.fpr(0), scratches.fpr(1));
+            emitMoveConst(Value::fromF64(static_cast<double>(std::numeric_limits<int64_t>::min())), Location::fromFPR(scratch2FPR));
+            m_jit.truncateDoubleToUint64(operandLocation.asFPR(), resultLocation.asGPR(), scratch1FPR, scratch2FPR);
             break;
         }
-#else
-        case TruncationKind::I64TruncF32U:
-            m_jit.truncateFloatToUint64(operandLocation.asFPR(), resultLocation.asGPR());
-            break;
-        case TruncationKind::I64TruncF64U:
-            m_jit.truncateDoubleToUint64(operandLocation.asFPR(), resultLocation.asGPR());
-            break;
-#endif
         }
     }
 
@@ -3226,7 +3214,7 @@ public:
             : m_jit.branchDouble(DoubleCondition::DoubleGreaterThanOrEqualOrUnordered, operandLocation.asFPR(), maxFloat.asFPR());
         addExceptionLateLinkTask(ExceptionType::OutOfBoundsTrunc, aboveMax);
 
-        truncInBounds(kind, operandLocation, resultLocation);
+        truncInBounds(kind, operandLocation, resultLocation, scratches.fpr(0), scratches.fpr(1));
 
         return { };
     }
@@ -3296,7 +3284,7 @@ public:
             : m_jit.branchDouble(DoubleCondition::DoubleGreaterThanOrEqualOrUnordered, operandLocation.asFPR(), maxFloat.asFPR());
 
         // In-bounds case. Emit normal truncation instructions.
-        truncInBounds(kind, operandLocation, resultLocation);
+        truncInBounds(kind, operandLocation, resultLocation, scratches.fpr(0), scratches.fpr(1));
 
         Jump afterInBounds = m_jit.jump();
 
@@ -3307,18 +3295,20 @@ public:
         // that if the above-minimum-range check fails; otherwise, we need to check
         // for NaN since it also will fail the above-minimum-range-check
         if (!minResult) {
-            returnType == Types::I32
-                ? m_jit.xor32(resultLocation.asGPR(), resultLocation.asGPR(), resultLocation.asGPR())
-                : m_jit.xor64(resultLocation.asGPR(), resultLocation.asGPR(), resultLocation.asGPR());
+            if (returnType == Types::I32)
+                m_jit.move(TrustedImm32(0), resultLocation.asGPR());
+            else
+                m_jit.move(TrustedImm64(0), resultLocation.asGPR());
         } else {
             Jump isNotNaN = operandType == Types::F32
                 ? m_jit.branchFloat(DoubleCondition::DoubleEqualAndOrdered, operandLocation.asFPR(), operandLocation.asFPR())
                 : m_jit.branchDouble(DoubleCondition::DoubleEqualAndOrdered, operandLocation.asFPR(), operandLocation.asFPR());
 
             // NaN case. Set result to zero.
-            returnType == Types::I32
-                ? m_jit.xor32(resultLocation.asGPR(), resultLocation.asGPR(), resultLocation.asGPR())
-                : m_jit.xor64(resultLocation.asGPR(), resultLocation.asGPR(), resultLocation.asGPR());
+            if (returnType == Types::I32)
+                m_jit.move(TrustedImm32(0), resultLocation.asGPR());
+            else
+                m_jit.move(TrustedImm64(0), resultLocation.asGPR());
             Jump afterNaN = m_jit.jump();
 
             // Non-NaN case. Set result to the minimum value.
@@ -4824,7 +4814,7 @@ public:
             ),
             BLOCK(
                 ImmHelpers::immLocation(lhsLocation, rhsLocation) = Location::fromGPR(m_scratchGPR);
-                emitMoveConst(ImmHelpers::imm(lhs, rhs), ImmHelpers::immLocation(lhsLocation, rhsLocation));
+                emitMoveConst(ImmHelpers::imm(lhs, rhs), Location::fromGPR(m_scratchGPR));
                 m_jit.compare64(condition, lhsLocation.asGPR(), rhsLocation.asGPR(), resultLocation.asGPR());
             )
         )
