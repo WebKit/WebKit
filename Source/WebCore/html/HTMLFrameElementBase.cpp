@@ -91,6 +91,8 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (m_frameURL.isEmpty())
         m_frameURL = AtomString { aboutBlankURL().string() };
 
+    // FIXME: This should delay the navigation to m_frameURL but shouldn't delay the creation
+    // of the Frame object or the load of the intially empty document.
     if (shouldLoadFrameLazily())
         return;
 
