@@ -711,7 +711,7 @@ void NavigationState::NavigationClient::didCancelClientRedirect(WebPageProxy& pa
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidCancelClientRedirect:m_navigationState->m_webView];
 }
 
-static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, const FrameInfoData& frameInfo, NSError *originalError)
+static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, const FrameInfoData& frameInfo, NSError *originalError, bool isHTTPSOnlyError = false)
 {
     auto frameHandle = API::FrameHandle::create(frameInfo.frameID ? *frameInfo.frameID : FrameIdentifier { });
 
@@ -721,6 +721,11 @@ static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, c
 
     if (NSDictionary *originalUserInfo = originalError.userInfo)
         [userInfo addEntriesFromDictionary:originalUserInfo];
+
+    if (isHTTPSOnlyError) {
+        RELEASE_LOG(Loading, "NavigationState: Including HTTPS Only HTTP fallback signal.");
+        [userInfo setValue:@"HTTPSOnlyHTTPFallback" forKey:@"errorRecoveryMethod"];
+    }
 
     return adoptNS([[NSError alloc] initWithDomain:originalError.domain code:originalError.code userInfo:userInfo.get()]);
 }
@@ -734,7 +739,9 @@ void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(We
     if (!navigationDelegate)
         return;
 
-    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState->m_webView, frameInfo, error);
+    bool isHTTPSOnlyEnabled = navigation && navigation->websitePolicies() && navigation->websitePolicies()->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::HTTPSOnly) && !navigation->websitePolicies()->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain);
+    bool isHTTPSOnlyError = isHTTPSOnlyEnabled && error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && frameInfo.isMainFrame;
+    auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState->m_webView, frameInfo, error, isHTTPSOnlyError);
 
     if (frameInfo.isMainFrame) {
         // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the back/forward cache.
