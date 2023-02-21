@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-messages -> RemoteMediaPlayerProxy NotRefCounted {
+messages -> RemoteMediaPlayerProxy {
     PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, enum:uint8_t WebCore::DynamicRangeMode mode)
 
     Load(URL url, std::optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem, bool requiresRemotePlayback) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)

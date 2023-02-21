@@ -286,7 +286,7 @@ void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
 
 std::optional<DestinationColorSpace> HTMLVideoElement::colorSpace() const
 {
-    RefPtr<MediaPlayer> player = HTMLMediaElement::player();
+    auto player = this->player();
     if (!player)
         return std::nullopt;
 
@@ -335,10 +335,11 @@ bool HTMLVideoElement::shouldGetNativeImageForCanvasDrawing() const
 
 RefPtr<NativeImage> HTMLVideoElement::nativeImageForCurrentTime()
 {
-    if (!player())
+    auto player = this->player();
+    if (!player)
         return nullptr;
 
-    return player()->nativeImageForCurrentTime();
+    return player->nativeImageForCurrentTime();
 }
 
 ExceptionOr<void> HTMLVideoElement::webkitEnterFullscreen()
