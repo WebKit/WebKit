@@ -266,6 +266,7 @@ def serialized_identifiers():
         'WebKit::AuthenticationChallengeIdentifier',
         'WebKit::ContentWorldIdentifier',
         'WebKit::DataTaskIdentifier',
+        'WebKit::DownloadID',
         'WebKit::FormSubmitListenerIdentifier',
         'WebKit::GeolocationIdentifier',
         'WebKit::GraphicsContextGLIdentifier',

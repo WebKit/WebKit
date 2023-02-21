@@ -5819,6 +5819,17 @@
 		86AA5253293676AA0065399E /* RevealItem.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RevealItem.serialization.in; sourceTree = "<group>"; };
 		86AA526F293798D60065399E /* WebIDBResult.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebIDBResult.serialization.in; sourceTree = "<group>"; };
 		86AE2A9628D61EDD007F5A1C /* WebCoreArgumentCodersCocoa.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebCoreArgumentCodersCocoa.serialization.in; sourceTree = "<group>"; };
+		86BAAFD529A3CD160013F9A9 /* WebAutocorrectionContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = WebAutocorrectionContext.serialization.in; path = ios/WebAutocorrectionContext.serialization.in; sourceTree = "<group>"; };
+		86BAAFD629A3D1ED0013F9A9 /* PDFContextMenuItem.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PDFContextMenuItem.serialization.in; sourceTree = "<group>"; };
+		86BAAFD729A3D29B0013F9A9 /* CallbackID.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CallbackID.serialization.in; sourceTree = "<group>"; };
+		86BAAFD829A3D4040013F9A9 /* FileSystemSyncAccessHandleInfo.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = FileSystemSyncAccessHandleInfo.serialization.in; sourceTree = "<group>"; };
+		86D1967229A4E25F0083B077 /* PolicyDecision.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PolicyDecision.serialization.in; sourceTree = "<group>"; };
+		86D1967329A4E4950083B077 /* WebsitePoliciesData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebsitePoliciesData.serialization.in; sourceTree = "<group>"; };
+		86D1967429A4E5C80083B077 /* WebProcessDataStoreParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebProcessDataStoreParameters.serialization.in; sourceTree = "<group>"; };
+		86D1967529A4E6D30083B077 /* BufferIdentifierSet.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = BufferIdentifierSet.serialization.in; sourceTree = "<group>"; };
+		86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PrepareBackingStoreBuffersData.serialization.in; sourceTree = "<group>"; };
+		86D1967729A4E90E0083B077 /* RemoteAudioSessionConfiguration.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteAudioSessionConfiguration.serialization.in; sourceTree = "<group>"; };
+		86D1967829A4EA230083B077 /* RemoteCDMConfiguration.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteCDMConfiguration.serialization.in; sourceTree = "<group>"; };
 		86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusedElementInformation.serialization.in; sourceTree = "<group>"; };
 		86DA60CA28EB11830044FE4D /* InteractionInformationAtPosition.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationAtPosition.serialization.in; path = ios/InteractionInformationAtPosition.serialization.in; sourceTree = "<group>"; };
 		86DD518B28EF028500DF2A58 /* TextFlags.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = TextFlags.serialization.in; sourceTree = "<group>"; };
@@ -7328,6 +7339,7 @@
 				CDBB49F4240D8AC60017C292 /* RemoteAudioSession.h */,
 				CDD5356F240DD34300F7B8C4 /* RemoteAudioSession.messages.in */,
 				CDBB49FC240D9A720017C292 /* RemoteAudioSessionConfiguration.h */,
+				86D1967729A4E90E0083B077 /* RemoteAudioSessionConfiguration.serialization.in */,
 				CDBB49FB240D974A0017C292 /* RemoteAudioSessionIdentifier.h */,
 				412FF91625373F9D001DF036 /* RemoteAudioSourceProvider.cpp */,
 				412FF91725373F9D001DF036 /* RemoteAudioSourceProvider.h */,
@@ -7337,6 +7349,7 @@
 				CDAC20BF23FC2F750021DEE3 /* RemoteCDM.cpp */,
 				CDAC20BA23FC2F740021DEE3 /* RemoteCDM.h */,
 				CDAC20B823FC2F730021DEE3 /* RemoteCDMConfiguration.h */,
+				86D1967829A4EA230083B077 /* RemoteCDMConfiguration.serialization.in */,
 				CDAC20B923FC2F730021DEE3 /* RemoteCDMFactory.cpp */,
 				CDAC20C023FC2F750021DEE3 /* RemoteCDMFactory.h */,
 				CDAC20C223FC2F750021DEE3 /* RemoteCDMIdentifier.h */,
@@ -7806,6 +7819,7 @@
 				BCF18637167D071E00A1A85A /* CacheModel.cpp */,
 				BC3065F91259344E00E71278 /* CacheModel.h */,
 				9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */,
+				86BAAFD729A3D29B0013F9A9 /* CallbackID.serialization.in */,
 				CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */,
 				5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */,
 				5106D7BF18BDBE73000AB166 /* ContextMenuContextData.cpp */,
@@ -7825,6 +7839,7 @@
 				1AA41AB412C02EC4002BE67B /* EditorState.h */,
 				5C6CED8E2900598000B5D522 /* EditorState.serialization.in */,
 				93B42F2E29834A4200DF1D45 /* FileSystemSyncAccessHandleInfo.h */,
+				86BAAFD829A3D4040013F9A9 /* FileSystemSyncAccessHandleInfo.serialization.in */,
 				C59C4A5718B81174007BDCB6 /* FocusedElementInformation.h */,
 				86DA60C628EAE9C00044FE4D /* FocusedElementInformation.serialization.in */,
 				BCE81D8A1319F7EF00241910 /* FontInfo.cpp */,
@@ -7879,6 +7894,7 @@
 				BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */,
 				F4BE0D7627AAE1CB005F0323 /* PlaybackSessionContextIdentifier.h */,
 				49ECA41B23FCA4860023358D /* PolicyDecision.h */,
+				86D1967229A4E25F0083B077 /* PolicyDecision.serialization.in */,
 				E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */,
 				E1CC1B8E12D7EADF00625838 /* PrintInfo.h */,
 				5C05FDF227AB4FA5003A2487 /* PrivateRelayed.h */,
@@ -8016,6 +8032,7 @@
 				BC306823125A6B9400E71278 /* WebProcessCreationParameters.cpp */,
 				BC306822125A6B9400E71278 /* WebProcessCreationParameters.h */,
 				467E43E72243FF6D00B13924 /* WebProcessDataStoreParameters.h */,
+				86D1967429A4E5C80083B077 /* WebProcessDataStoreParameters.serialization.in */,
 				517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */,
 				5CA133EE28F61C4100541DAE /* WebPushDaemonConnectionConfiguration.serialization.in */,
 				512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */,
@@ -8030,6 +8047,7 @@
 				F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */,
 				5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */,
 				5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */,
+				86D1967329A4E4950083B077 /* WebsitePoliciesData.serialization.in */,
 				0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */,
 				71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */,
 				8360349D1ACB34D600626549 /* WebSQLiteDatabaseTracker.cpp */,
@@ -9397,6 +9415,7 @@
 				E38A1FBE23A5511400D2374F /* UserInterfaceIdiom.h */,
 				E38A1FBF23A551BF00D2374F /* UserInterfaceIdiom.mm */,
 				F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */,
+				86BAAFD529A3CD160013F9A9 /* WebAutocorrectionContext.serialization.in */,
 				F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */,
 				F42D634022A0EFD300D2FB3A /* WebAutocorrectionData.mm */,
 				2DA944991884E4F000ED86DB /* WebIOSEventFactory.h */,
@@ -10729,6 +10748,7 @@
 				727A7F3324078527004D2931 /* cocoa */,
 				1CB7461927436DE300F19874 /* WebGPU */,
 				0F86361B27BDC2B6006E6D52 /* BufferIdentifierSet.h */,
+				86D1967529A4E6D30083B077 /* BufferIdentifierSet.serialization.in */,
 				7B0DF7DC29090ACA001C2701 /* DisplayListRecorderFlushIdentifier.h */,
 				7B64C0B6254C5C250006B4AF /* GraphicsContextGLIdentifier.h */,
 				727A7F39240788F1004D2931 /* ImageBufferBackendHandle.h */,
@@ -10737,6 +10757,7 @@
 				727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */,
 				727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */,
 				0F65956C27E10C2C00EE874B /* PrepareBackingStoreBuffersData.h */,
+				86D1967629A4E7B50083B077 /* PrepareBackingStoreBuffersData.serialization.in */,
 				F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */,
 				F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */,
 				7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */,
@@ -12455,6 +12476,7 @@
 				C574A57F12E66681002DFE98 /* PasteboardTypes.h */,
 				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
 				C1E123B920A11572002646F4 /* PDFContextMenu.h */,
+				86BAAFD629A3D1ED0013F9A9 /* PDFContextMenuItem.serialization.in */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
 				2D65D194274B8E73009C4101 /* ScrollingAccelerationCurveMac.mm */,
 				51D1304F1382EAC000351EDD /* SecItemRequestData.cpp */,

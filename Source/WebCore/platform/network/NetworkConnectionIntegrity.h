@@ -39,21 +39,3 @@ enum class NetworkConnectionIntegrity : uint8_t {
 };
 
 }
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::NetworkConnectionIntegrity> {
-    using values = EnumValues<
-        WebCore::NetworkConnectionIntegrity,
-        WebCore::NetworkConnectionIntegrity::Enabled,
-        WebCore::NetworkConnectionIntegrity::HTTPSFirst,
-        WebCore::NetworkConnectionIntegrity::HTTPSOnly,
-        WebCore::NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain,
-        WebCore::NetworkConnectionIntegrity::FailClosed,
-        WebCore::NetworkConnectionIntegrity::WebSearchContent,
-        WebCore::NetworkConnectionIntegrity::EnhancedTelemetry,
-        WebCore::NetworkConnectionIntegrity::RequestValidation
-    >;
-};
-
-} // namespace WTF

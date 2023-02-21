@@ -4191,3 +4191,79 @@ struct WebCore::ContentRuleListResults {
 };
 
 #endif
+
+enum class WebCore::PolicyAction : uint8_t {
+    Use,
+    Download,
+    Ignore,
+    StopAllLoads
+};
+
+[OptionSet] enum class WebCore::ReloadOption : uint8_t {
+    ExpiredOnly,
+    FromOrigin,
+    DisableContentBlockers
+};
+
+enum class WebCore::FrameLoadType : uint8_t {
+    Standard,
+    Back,
+    Forward,
+    IndexedBackForward,
+    Reload,
+    Same,
+    RedirectWithLockedBackForwardList,
+    Replace,
+    ReloadFromOrigin,
+    ReloadExpiredOnly
+};
+
+enum class WebCore::NavigationType : uint8_t {
+    LinkClicked,
+    FormSubmitted,
+    BackForward,
+    Reload,
+    FormResubmitted,
+    Other
+};
+
+enum class WebCore::BrowsingContextGroupSwitchDecision : uint8_t {
+    StayInGroup,
+    NewSharedGroup,
+    NewIsolatedGroup,
+};
+
+enum class WebCore::ShouldOpenExternalURLsPolicy : uint8_t {
+    ShouldNotAllow,
+    ShouldAllowExternalSchemesButNotAppLinks,
+    ShouldAllow,
+};
+
+header: <WebCore/DocumentLoader.h>
+[CustomHeader] enum class WebCore::MouseEventPolicy : uint8_t {
+    Default,
+#if ENABLE(IOS_TOUCH_EVENTS)
+    SynthesizeTouchEvents,
+#endif
+};
+
+enum class WebCore::ColorSchemePreference : uint8_t {
+    NoPreference,
+    Light,
+    Dark
+};
+
+enum class WebCore::ModalContainerObservationPolicy : bool
+
+enum class WebCore::AllowsContentJavaScript : bool
+
+[OptionSet] enum class WebCore::NetworkConnectionIntegrity : uint8_t {
+    Enabled,
+    HTTPSFirst,
+    HTTPSOnly,
+    HTTPSOnlyExplicitlyBypassedForDomain,
+    FailClosed,
+    WebSearchContent,
+    EnhancedTelemetry,
+    RequestValidation,
+};

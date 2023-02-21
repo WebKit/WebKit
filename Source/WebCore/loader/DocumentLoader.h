@@ -836,34 +836,3 @@ inline void DocumentLoader::didTellClientAboutLoad(const String& url)
 }
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MouseEventPolicy> {
-    using values = EnumValues<
-        WebCore::MouseEventPolicy,
-        WebCore::MouseEventPolicy::Default
-#if ENABLE(IOS_TOUCH_EVENTS)
-        , WebCore::MouseEventPolicy::SynthesizeTouchEvents
-#endif
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ModalContainerObservationPolicy> {
-    using values = EnumValues<
-        WebCore::ModalContainerObservationPolicy,
-        WebCore::ModalContainerObservationPolicy::Disabled,
-        WebCore::ModalContainerObservationPolicy::Prompt
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ColorSchemePreference> {
-    using values = EnumValues<
-        WebCore::ColorSchemePreference,
-        WebCore::ColorSchemePreference::NoPreference,
-        WebCore::ColorSchemePreference::Light,
-        WebCore::ColorSchemePreference::Dark
-    >;
-};
-
-} // namespace WTF

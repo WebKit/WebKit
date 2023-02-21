@@ -30,6 +30,7 @@
 #include "AudioMediaStreamTrackRendererInternalUnitIdentifier.h"
 #include "ContentWorldShared.h"
 #include "DataTaskIdentifier.h"
+#include "DownloadID.h"
 #include "GeolocationIdentifier.h"
 #include "GraphicsContextGLIdentifier.h"
 #include "IPCConnectionTesterIdentifier.h"
@@ -69,6 +70,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "RenderingUpdateID.h"
+#include "RetrieveRecordResponseBodyCallbackIdentifier.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
@@ -84,6 +86,7 @@
 #include "WebGPUIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
+#include <WebCore/BackgroundFetchRecordIdentifier.h>
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/DOMCacheIdentifier.h>
 #include <WebCore/DictationContext.h>
@@ -400,6 +403,7 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 
 Vector<ASCIILiteral> serializedIdentifiers()
 {
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::BackgroundFetchRecordIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DOMCacheIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DictationContext));
@@ -439,6 +443,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::AuthenticationChallengeIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::ContentWorldIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::DataTaskIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::DownloadID));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::FormSubmitListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GeolocationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::GraphicsContextGLIdentifier));
@@ -478,6 +483,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteRemoteCommandListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingBackendIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingUpdateID));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::RetrieveRecordResponseBodyCallbackIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::SampleBufferDisplayLayerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaImplIdentifier));
@@ -495,6 +501,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
+        "WebCore::BackgroundFetchRecordIdentifier"_s,
         "WebCore::BroadcastChannelIdentifier"_s,
         "WebCore::DOMCacheIdentifier"_s,
         "WebCore::DictationContext"_s,
@@ -534,6 +541,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::AuthenticationChallengeIdentifier"_s,
         "WebKit::ContentWorldIdentifier"_s,
         "WebKit::DataTaskIdentifier"_s,
+        "WebKit::DownloadID"_s,
         "WebKit::FormSubmitListenerIdentifier"_s,
         "WebKit::GeolocationIdentifier"_s,
         "WebKit::GraphicsContextGLIdentifier"_s,
@@ -573,6 +581,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
         "WebKit::RenderingBackendIdentifier"_s,
         "WebKit::RenderingUpdateID"_s,
+        "WebKit::RetrieveRecordResponseBodyCallbackIdentifier"_s,
         "WebKit::SampleBufferDisplayLayerIdentifier"_s,
         "WebKit::StorageAreaIdentifier"_s,
         "WebKit::StorageAreaImplIdentifier"_s,
