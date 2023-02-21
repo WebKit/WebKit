@@ -2155,6 +2155,7 @@ platform/graphics/FontGenericFamilies.cpp
 platform/graphics/FontPlatformData.cpp
 platform/graphics/FontRanges.cpp
 platform/graphics/FontSelectionAlgorithm.cpp
+platform/graphics/FontSelector.cpp
 platform/graphics/FontTaggedSettings.cpp
 platform/graphics/FourCC.cpp
 platform/graphics/GeneratedImage.cpp

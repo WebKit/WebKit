@@ -60,8 +60,10 @@ namespace LayoutIntegration {
 struct InlineContent;
 struct LineAdjustment;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
+
 class LineLayout : public CanMakeCheckedPtr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
 public:
     LineLayout(RenderBlockFlow&);
     ~LineLayout();
