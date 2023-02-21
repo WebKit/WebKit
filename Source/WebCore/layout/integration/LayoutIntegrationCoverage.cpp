@@ -88,9 +88,6 @@ namespace LayoutIntegration {
 static void printReason(AvoidanceReason reason, TextStream& stream)
 {
     switch (reason) {
-    case AvoidanceReason::FlowIsInsideANonMultiColumnThread:
-        stream << "flow is inside a non-multicolumn container";
-        break;
     case AvoidanceReason::ContentIsRuby:
         stream << "ruby";
         break;
@@ -117,9 +114,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::MultiColumnFlowHasVerticalWritingMode:
         stream << "column has vertical writing mode";
-        break;
-    case AvoidanceReason::MultiColumnFlowHasColumnSpanner:
-        stream << "column has spanner";
         break;
     case AvoidanceReason::MultiColumnFlowVerticalAlign:
         stream << "column with vertical-align != baseline";
@@ -430,15 +424,9 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     if (!establishesInlineFormattingContext())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowDoesNotEstablishInlineFormattingContext, reasons, includeReasons);
     if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
-        auto* fragmentedFlow = flow.enclosingFragmentedFlow();
-        if (!is<RenderMultiColumnFlow>(fragmentedFlow))
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideANonMultiColumnThread, reasons, includeReasons);
-        auto& columnThread = downcast<RenderMultiColumnFlow>(*fragmentedFlow);
-        if (!flow.style().isHorizontalWritingMode())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasVerticalWritingMode, reasons, includeReasons);
-        if (columnThread.hasColumnSpanner())
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasColumnSpanner, reasons, includeReasons);
         auto& style = flow.style();
+        if (!style.isHorizontalWritingMode())
+            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasVerticalWritingMode, reasons, includeReasons);
         if (style.verticalAlign() != VerticalAlign::Baseline)
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowVerticalAlign, reasons, includeReasons);
         if (style.isFloating())
