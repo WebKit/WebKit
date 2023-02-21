@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "WasmMachineThreads.h"
 #include "Watchdog.h"
 #include <wtf/SystemTracing.h>
+#include <wtf/WTFConfig.h>
 
 namespace JSC {
 
@@ -47,12 +48,10 @@ VMEntryScope::VMEntryScope(VM& vm, JSGlobalObject* globalObject)
         if (UNLIKELY(!thread.isJSThread())) {
             Thread::registerJSThread(thread);
 
-#if ENABLE(WEBASSEMBLY)
-                if (Wasm::isSupported())
-                    Wasm::startTrackingCurrentThread();
-#endif
-
+            if (Wasm::isSupported())
+                Wasm::startTrackingCurrentThread();
 #if HAVE(MACH_EXCEPTIONS)
+            if (g_wtfConfig.signalHandlers.initState == WTF::SignalHandlers::InitState::AddedHandlers)
                 registerThreadForMachExceptionHandling(thread);
 #endif
         }

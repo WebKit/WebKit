@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3644,11 +3644,7 @@ JSC_DEFINE_HOST_FUNCTION(functionParseCount, (JSGlobalObject*, CallFrame*))
 JSC_DEFINE_HOST_FUNCTION(functionIsWasmSupported, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
-#if ENABLE(WEBASSEMBLY)
     return JSValue::encode(jsBoolean(Wasm::isSupported()));
-#else
-    return JSValue::encode(jsBoolean(false));
-#endif
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionMake16BitStringIfPossible, (JSGlobalObject* globalObject, CallFrame* callFrame))
