@@ -138,7 +138,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 
 @property (nonatomic, setter=_setAVFoundationEnabled:) BOOL _avFoundationEnabled WK_API_AVAILABLE(macos(10.10), ios(12.0));
 
-+ (NSArray<_WKFeature *> *)_features WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (NSArray<_WKFeature *> *)_features WK_API_AVAILABLE(macos(13.3), ios(16.4));
 - (BOOL)_isEnabledForFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
 - (void)_setEnabled:(BOOL)value forFeature:(_WKFeature *)feature WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
@@ -182,12 +182,12 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setNotificationsEnabled:) BOOL _notificationsEnabled WK_API_AVAILABLE(macos(10.13.4), ios(16.0));
 @property (nonatomic, setter=_setPushAPIEnabled:) BOOL _pushAPIEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, setter=_setModelDocumentEnabled:) BOOL _modelDocumentEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
-@property (nonatomic, setter=_setInteractionRegionMinimumCornerRadius:) double _interactionRegionMinimumCornerRadius WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setInteractionRegionInlinePadding:) double _interactionRegionInlinePadding WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setRequiresFullscreenToLockScreenOrientation:) BOOL _requiresFullscreenToLockScreenOrientation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setMediaPreferredFullscreenWidth:) double _mediaPreferredFullscreenWidth WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setAppBadgeEnabled:) BOOL _appBadgeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setClientBadgeEnabled:) BOOL _clientBadgeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setInteractionRegionMinimumCornerRadius:) double _interactionRegionMinimumCornerRadius WK_API_AVAILABLE(macos(13.3), ios(16.4));
+@property (nonatomic, setter=_setInteractionRegionInlinePadding:) double _interactionRegionInlinePadding WK_API_AVAILABLE(macos(13.3), ios(16.4));
+@property (nonatomic, setter=_setRequiresFullscreenToLockScreenOrientation:) BOOL _requiresFullscreenToLockScreenOrientation WK_API_AVAILABLE(macos(13.3), ios(16.4));
+@property (nonatomic, setter=_setMediaPreferredFullscreenWidth:) double _mediaPreferredFullscreenWidth WK_API_AVAILABLE(macos(13.3), ios(16.4));
+@property (nonatomic, setter=_setAppBadgeEnabled:) BOOL _appBadgeEnabled WK_API_AVAILABLE(macos(13.3), ios(16.4));
+@property (nonatomic, setter=_setClientBadgeEnabled:) BOOL _clientBadgeEnabled WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macos(10.13.4));
@@ -238,7 +238,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @interface WKPreferences (WKPrivateDeprecated)
 
 @property (nonatomic, setter=_setRequestAnimationFrameEnabled:) BOOL _requestAnimationFrameEnabled WK_API_DEPRECATED("requestAnimationFrame is always enabled", macos(10.15.4, 13.0), ios(13.4, 16.0));
-@property (nonatomic, setter=_setSubpixelAntialiasedLayerTextEnabled:) BOOL _subpixelAntialiasedLayerTextEnabled WK_API_DEPRECATED("Subpixel antialiased text is no longer supported", macos(10.12, WK_MAC_TBA), ios(10.0, WK_IOS_TBA));
+@property (nonatomic, setter=_setSubpixelAntialiasedLayerTextEnabled:) BOOL _subpixelAntialiasedLayerTextEnabled WK_API_DEPRECATED("Subpixel antialiased text is no longer supported", macos(10.12, 13.3), ios(10.0, 16.4));
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setSubpixelCSSOMElementMetricsEnabled:) BOOL _subpixelCSSOMElementMetricsEnabled WK_API_DEPRECATED("Subpixel CSSOM element metrics are no longer supported", macos(10.13.4, 10.15));
 #endif
