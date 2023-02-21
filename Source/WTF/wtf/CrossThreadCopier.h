@@ -220,6 +220,10 @@ template<typename T, typename U> struct CrossThreadCopierBase<false, false, Mark
     }
 };
 
+template<> struct CrossThreadCopierBase<false, false, std::nullptr_t> {
+    static std::nullptr_t copy(std::nullptr_t) { return nullptr; }
+};
+
 // Default specialization for std::variant of CrossThreadCopyable classes.
 template<typename... Types> struct CrossThreadCopierBase<false, false, std::variant<Types...>> {
     using Type = std::variant<Types...>;

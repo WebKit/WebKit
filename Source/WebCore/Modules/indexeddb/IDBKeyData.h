@@ -27,7 +27,6 @@
 
 #include "IDBKey.h"
 #include <variant>
-#include <wtf/ArgumentCoder.h>
 #include <wtf/Hasher.h>
 #include <wtf/StdSet.h>
 #include <wtf/text/StringHash.h>
@@ -40,30 +39,34 @@ class KeyedEncoder;
 class IDBKeyData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IDBKeyData()
-        : m_type(IndexedDB::KeyType::Invalid)
-        , m_isNull(true)
-    {
-    }
-
-    WEBCORE_EXPORT IDBKeyData(const IDBKey*);
+    struct Date {
+        double value { 0.0 };
+        Date isolatedCopy() const { return { value }; }
+    };
+    struct Min { Min isolatedCopy() const { return { }; } };
+    struct Max { Max isolatedCopy() const { return { }; } };
+    struct Invalid { Invalid isolatedCopy() const { return { }; } };
+    using ValueVariant = std::variant<std::nullptr_t, Invalid, Vector<IDBKeyData>, String, double, Date, ThreadSafeDataBuffer, Min, Max>;
 
     enum IsolatedCopyTag { IsolatedCopy };
+
+    IDBKeyData() = default;
+    IDBKeyData(ValueVariant&& value)
+        : m_value(WTFMove(value)) { }
     IDBKeyData(const IDBKeyData&, IsolatedCopyTag);
+    WEBCORE_EXPORT IDBKeyData(const IDBKey*);
 
     static IDBKeyData minimum()
     {
         IDBKeyData result;
-        result.m_type = IndexedDB::KeyType::Min;
-        result.m_isNull = false;
+        result.m_value = Min { };
         return result;
     }
 
     static IDBKeyData maximum()
     {
         IDBKeyData result;
-        result.m_type = IndexedDB::KeyType::Max;
-        result.m_isNull = false;
+        result.m_value = Max { };
         return result;
     }
 
@@ -90,9 +93,9 @@ public:
     WEBCORE_EXPORT String loggingString() const;
 #endif
 
-    bool isNull() const { return m_isNull; }
+    bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_value); }
     bool isValid() const;
-    IndexedDB::KeyType type() const { return m_type; }
+    IndexedDB::KeyType type() const;
 
     bool operator<(const IDBKeyData&) const;
     bool operator>(const IDBKeyData& other) const
@@ -118,47 +121,38 @@ public:
 
     String string() const
     {
-        ASSERT(m_type == IndexedDB::KeyType::String);
         return std::get<String>(m_value);
     }
 
     double date() const
     {
-        ASSERT(m_type == IndexedDB::KeyType::Date);
-        return std::get<double>(m_value);
+        return std::get<Date>(m_value).value;
     }
 
     double number() const
     {
-        ASSERT(m_type == IndexedDB::KeyType::Number);
         return std::get<double>(m_value);
     }
 
     const ThreadSafeDataBuffer& binary() const
     {
-        ASSERT(m_type == IndexedDB::KeyType::Binary);
         return std::get<ThreadSafeDataBuffer>(m_value);
     }
 
     const Vector<IDBKeyData>& array() const
     {
-        ASSERT(m_type == IndexedDB::KeyType::Array);
         return std::get<Vector<IDBKeyData>>(m_value);
     }
 
     size_t size() const;
 
+    const ValueVariant& value() const { return m_value; };
+
 private:
     friend struct IDBKeyDataHashTraits;
-    friend struct IPC::ArgumentCoder<IDBKeyData, void>;
 
-    static void isolatedCopy(const IDBKeyData& source, IDBKeyData& destination);
-
-    IndexedDB::KeyType m_type;
-    bool m_isNull { false };
     bool m_isDeletedValue { false };
-
-    std::variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
+    ValueVariant m_value;
 };
 
 inline void add(Hasher& hasher, const IDBKeyData& keyData)

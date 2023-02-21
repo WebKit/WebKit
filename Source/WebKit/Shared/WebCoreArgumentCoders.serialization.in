@@ -246,10 +246,21 @@ struct WebCore::IDBDatabaseNameAndVersion {
     uint64_t m_resultInteger;
 }
 
-[LegacyPopulateFromEmptyConstructor, CustomMemberLayout] class WebCore::IDBKeyData {
-    [ReturnEarlyIfTrue] bool m_isNull;
-    WebCore::IndexedDB::KeyType m_type;
-    std::variant<Vector<WebCore::IDBKeyData>, String, double, WebCore::ThreadSafeDataBuffer> m_value;
+class WebCore::IDBKeyData {
+    std::variant<std::nullptr_t, WebCore::IDBKeyData::Invalid, Vector<WebCore::IDBKeyData>, String, double, WebCore::IDBKeyData::Date, WebCore::ThreadSafeDataBuffer, WebCore::IDBKeyData::Min, WebCore::IDBKeyData::Max> value()
+}
+
+[Nested] struct WebCore::IDBKeyData::Invalid {
+}
+
+[Nested] struct WebCore::IDBKeyData::Min {
+}
+
+[Nested] struct WebCore::IDBKeyData::Max {
+}
+
+[Nested] struct WebCore::IDBKeyData::Date {
+    double value
 }
 
 enum class WebCore::IndexedDB::KeyType : int8_t {
