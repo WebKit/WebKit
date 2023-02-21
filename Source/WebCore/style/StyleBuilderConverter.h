@@ -191,6 +191,8 @@ public:
     static TextSpacingTrim convertTextSpacingTrim(BuilderState&, const CSSValue&);
     static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
+    static std::optional<Length> convertBlockStepSize(BuilderState&, const CSSValue&);
+    
 private:
     friend class BuilderCustom;
 
@@ -1829,6 +1831,13 @@ inline TextAutospace BuilderConverter::convertTextAutospace(BuilderState&, const
             return { .m_autoSpace = TextAutospace::TextAutospaceType::Auto };
     }
     return { };
+}
+
+inline std::optional<Length> BuilderConverter::convertBlockStepSize(BuilderState& builderState, const CSSValue& value)
+{
+    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
+        return { };
+    return convertLength(builderState, value);
 }
 
 } // namespace Style

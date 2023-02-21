@@ -2846,6 +2846,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             list.append(createSingleAxisPositionValueForLayer(propertyID, *currLayer, style));
         return CSSValueList::createCommaSeparated(WTFMove(list));
     }
+    case CSSPropertyBlockStepSize: {
+        auto blockStepSize = style.blockStepSize();
+        if (!blockStepSize)
+            return CSSPrimitiveValue::create(CSSValueNone);
+        return zoomAdjustedPixelValueForLength(*blockStepSize, style);
+    }
     case CSSPropertyBorderCollapse:
         if (style.borderCollapse() == BorderCollapse::Collapse)
             return CSSPrimitiveValue::create(CSSValueCollapse);

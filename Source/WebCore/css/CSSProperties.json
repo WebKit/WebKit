@@ -323,6 +323,17 @@
                 "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
             }
         },
+        "block-step-size": {
+            "codegen-properties": {
+                "settings-flag": "cssRhythmicSizingEnabled",
+                "converter": "BlockStepSize",
+                "parser-grammar": "none | <length [0,inf]>"
+            },
+            "specification": {
+                "category": "css-rhythm",
+                "url": "https://drafts.csswg.org/css-rhythm/#block-step-size"
+            }
+        },
         "caret-color": {
             "inherited": true,
             "values": [
