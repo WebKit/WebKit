@@ -3879,6 +3879,9 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             if (!boundFunction)
                 return false;
 
+            // FIXME: Fix bound function calls with tail call.
+            return false;
+
             insertChecks(true);
             auto* frozenFunction = m_graph.freeze(function);
             addToGraph(CheckIsConstant, OpInfo(frozenFunction), Edge(callee, CellUse));
