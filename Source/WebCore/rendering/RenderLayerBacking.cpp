@@ -43,10 +43,10 @@
 #include "HTMLBodyElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLIFrameElement.h"
-#include "HTMLMediaElement.h"
 #include "HTMLModelElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
+#include "HTMLVideoElement.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "LayerAncestorClippingStack.h"
@@ -80,6 +80,10 @@
 #include "TiledBacking.h"
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
+
+#if ENABLE(FULLSCREEN_API)
+#include "FullscreenManager.h"
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
@@ -218,6 +222,11 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
             return false;
 
         if (!is<RenderBox>(renderer))
+            return false;
+
+        // Only use background layers on the fullscreen element's backdrop.
+        auto* fullscreenElement = renderer.document().fullscreenManager().fullscreenElement();
+        if (!fullscreenElement || !fullscreenElement->renderer() || fullscreenElement->renderer()->backdropRenderer() != &renderer)
             return false;
 
         auto rendererRect = downcast<RenderBox>(renderer).frameRect();
@@ -1114,8 +1123,11 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     }
 #if ENABLE(VIDEO)
     else if (is<RenderVideo>(renderer()) && downcast<RenderVideo>(renderer()).shouldDisplayVideo()) {
-        auto* mediaElement = downcast<HTMLMediaElement>(renderer().element());
-        m_graphicsLayer->setContentsToPlatformLayer(mediaElement->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
+        auto& videoElement = downcast<HTMLVideoElement>(*renderer().element());
+        if (m_graphicsLayer->layerMode() == GraphicsLayer::LayerMode::PlatformLayer)
+            m_graphicsLayer->setContentsToPlatformLayer(videoElement.platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
+        else
+            m_graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
         updateContentsRects();
     }
 #endif

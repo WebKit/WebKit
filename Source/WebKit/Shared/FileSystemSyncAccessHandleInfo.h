@@ -34,33 +34,6 @@ struct FileSystemSyncAccessHandleInfo {
     WebCore::FileSystemSyncAccessHandleIdentifier identifier;
     IPC::SharedFileHandle handle;
     uint64_t capacity { 0 };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<FileSystemSyncAccessHandleInfo> decode(Decoder&);
 };
-
-template<class Encoder> void FileSystemSyncAccessHandleInfo::encode(Encoder& encoder) const
-{
-    encoder << identifier;
-    encoder << handle;
-    encoder << capacity;
-}
-
-template<class Decoder> std::optional<FileSystemSyncAccessHandleInfo> FileSystemSyncAccessHandleInfo::decode(Decoder& decoder)
-{
-    WebCore::FileSystemSyncAccessHandleIdentifier identifier;
-    if (!decoder.decode(identifier))
-        return std::nullopt;
-
-    IPC::SharedFileHandle handle;
-    if (!decoder.decode(handle))
-        return std::nullopt;
-
-    uint64_t capacity;
-    if (!decoder.decode(capacity))
-        return std::nullopt;
-
-    return FileSystemSyncAccessHandleInfo { identifier, WTFMove(handle), capacity };
-}
 
 } // namespace WebKit

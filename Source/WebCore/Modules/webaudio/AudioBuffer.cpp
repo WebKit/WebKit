@@ -35,6 +35,7 @@
 
 #include "AudioContext.h"
 #include "AudioFileReader.h"
+#include "AudioUtilities.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
@@ -160,6 +161,8 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
     if (channelIndex >= m_channelWrappers.size())
         return Exception { IndexSizeError, "Index must be less than number of channels."_s };
 
+    applyNoiseIfNeeded();
+
     auto& channelData = m_channels[channelIndex];
     auto constructJSArray = [&] {
         constexpr bool isResizableOrGrowableShared = false;
@@ -218,6 +221,8 @@ ExceptionOr<void> AudioBuffer::copyFromChannel(Ref<Float32Array>&& destination, 
     if (bufferOffset >= dataLength)
         return { };
     
+    applyNoiseIfNeeded();
+
     size_t count = dataLength - bufferOffset;
     count = std::min(destination.get().length(), count);
     
@@ -256,6 +261,7 @@ ExceptionOr<void> AudioBuffer::copyToChannel(Ref<Float32Array>&& source, unsigne
     ASSERT(dst);
     
     memmove(dst + bufferOffset, src, count * sizeof(*dst));
+    m_needsAdditionalNoise = false;
     return { };
 }
 
@@ -263,6 +269,8 @@ void AudioBuffer::zero()
 {
     for (auto& channel : m_channels)
         channel->zeroFill();
+
+    m_needsAdditionalNoise = false;
 }
 
 size_t AudioBuffer::memoryCost() const
@@ -320,6 +328,17 @@ Ref<AudioBuffer> AudioBuffer::clone(ShouldCopyChannelData shouldCopyChannelData)
 WebCoreOpaqueRoot root(AudioBuffer* buffer)
 {
     return WebCoreOpaqueRoot { buffer };
+}
+
+void AudioBuffer::applyNoiseIfNeeded()
+{
+    if (!m_needsAdditionalNoise)
+        return;
+
+    for (auto& channel : m_channels)
+        AudioUtilities::applyNoise(channel->data(), channel->length(), 0.001);
+
+    m_needsAdditionalNoise = false;
 }
 
 } // namespace WebCore

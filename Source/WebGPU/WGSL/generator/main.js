@@ -15,6 +15,7 @@ class ConstrainedVariable {
 
     dump(out, counter) {
         out.line(`TypeVariable ${this.variable.name} { ${counter.typeId()}, TypeVariable::${this.constraint} };`)
+        out.line(`candidate.typeVariables.append(${this.variable.name});`)
     }
 }
 
@@ -29,6 +30,7 @@ class TypeVariable {
 
     dump(out, counter) {
         out.line(`TypeVariable ${this.name} { ${counter.typeId()} };`)
+        out.line(`candidate.typeVariables.append(${this.name});`)
     }
 
     toCpp() {
@@ -47,6 +49,8 @@ class NumericVariable {
 
     dump(out, counter) {
         out.line(`NumericVariable ${this.name} { ${counter.numericId()} };`)
+        out.line(`candidate.numericVariables.append(${this.name});`)
+
     }
 
     toCpp() {
@@ -70,7 +74,8 @@ class AbstractType {
 }
 
 class FunctionType {
-    constructor(variables, parameters, result) {
+    constructor(name, variables, parameters, result) {
+        this.name = name
         this.variables = variables
         this.parameters = parameters
         this.result = result
@@ -89,7 +94,7 @@ class FunctionType {
 
         out.line('([&]() -> OverloadCandidate {')
         out.indent(() => {
-            out.line(`// #{name} :: ${this.toString()}`)
+            out.line(`// ${this.toString()}`)
             out.line('OverloadCandidate candidate;')
             this.variables.forEach(v => v.dump(out, counter))
             this.parameters.forEach(p => {
@@ -144,7 +149,7 @@ class DSL {
 
         // helpers
         this.context.type = (name, variables, parameters, result) => {
-            const type = new FunctionType(variables, parameters, result)
+            const type = new FunctionType(name, variables, parameters, result)
             let declarations = this.declarations[name]
             if (!declarations)
                 declarations = this.declarations[name] = []

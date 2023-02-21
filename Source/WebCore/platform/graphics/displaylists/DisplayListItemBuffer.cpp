@@ -664,6 +664,9 @@ ItemBuffer& ItemBuffer::operator=(ItemBuffer&& other)
     return *this;
 }
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DisplayListItemBufferHandle);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DisplayListItemBufferHandle);
+
 ItemBufferHandle ItemBuffer::createItemBuffer(size_t capacity)
 {
     if (m_writingClient) {
@@ -674,7 +677,7 @@ ItemBufferHandle ItemBuffer::createItemBuffer(size_t capacity)
     constexpr size_t defaultItemBufferCapacity = 1 << 10;
 
     auto newBufferCapacity = std::max(capacity, defaultItemBufferCapacity);
-    auto* buffer = static_cast<uint8_t*>(fastMalloc(newBufferCapacity));
+    auto* buffer = static_cast<uint8_t*>(DisplayListItemBufferHandleMalloc::malloc(newBufferCapacity));
     m_allocatedBuffers.append(buffer);
     return { ItemBufferIdentifier::generate(), buffer, newBufferCapacity };
 }
@@ -691,7 +694,7 @@ void ItemBuffer::forEachItemBuffer(Function<void(const ItemBufferHandle&)>&& map
 void ItemBuffer::clear()
 {
     for (auto* buffer : std::exchange(m_allocatedBuffers, { }))
-        fastFree(buffer);
+        DisplayListItemBufferHandleMalloc::free(buffer);
 
     m_readOnlyBuffers.clear();
     m_writableBuffer = { };

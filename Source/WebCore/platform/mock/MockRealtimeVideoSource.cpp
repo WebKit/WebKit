@@ -172,7 +172,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
         settings.setFacingMode(facingMode());
         settings.setDeviceId(hashedId());
     } else {
-        settings.setDisplaySurface(mockScreen() ? RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor : RealtimeMediaSourceSettings::DisplaySurfaceType::Window);
+        settings.setDisplaySurface(mockScreen() ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window);
         settings.setLogicalSurface(false);
     }
     settings.setDeviceId(hashedId());
@@ -396,19 +396,19 @@ void MockRealtimeVideoSource::drawText(GraphicsContext& context)
 
         const char* camera;
         switch (facingMode()) {
-        case RealtimeMediaSourceSettings::User:
+        case VideoFacingMode::User:
             camera = "User facing";
             break;
-        case RealtimeMediaSourceSettings::Environment:
+        case VideoFacingMode::Environment:
             camera = "Environment facing";
             break;
-        case RealtimeMediaSourceSettings::Left:
+        case VideoFacingMode::Left:
             camera = "Left facing";
             break;
-        case RealtimeMediaSourceSettings::Right:
+        case VideoFacingMode::Right:
             camera = "Right facing";
             break;
-        case RealtimeMediaSourceSettings::Unknown:
+        case VideoFacingMode::Unknown:
             camera = "Unknown";
             break;
         }

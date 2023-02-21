@@ -49,8 +49,13 @@ ScrollingTreePositionedNodeCocoa::~ScrollingTreePositionedNodeCocoa() = default;
 void ScrollingTreePositionedNodeCocoa::commitStateBeforeChildren(const ScrollingStateNode& stateNode)
 {
     const ScrollingStatePositionedNode& positionedStateNode = downcast<ScrollingStatePositionedNode>(stateNode);
-    if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer))
+    if (positionedStateNode.hasChangedProperty(ScrollingStateNode::Property::Layer)) {
         m_layer = static_cast<CALayer*>(positionedStateNode.layer());
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        m_interactionRegionsLayer = static_cast<CALayer*>(positionedStateNode.interactionRegionsLayer());
+#endif
+    }
+
 
     ScrollingTreePositionedNode::commitStateBeforeChildren(stateNode);
 }
@@ -63,6 +68,9 @@ void ScrollingTreePositionedNodeCocoa::applyLayerPositions()
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
 
     [m_layer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    [m_interactionRegionsLayer _web_setLayerTopLeftPosition:layerPosition - m_constraints.alignmentOffset()];
+#endif
 }
 
 } // namespace WebCore

@@ -73,6 +73,8 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
+
 LineLayout::LineLayout(RenderBlockFlow& flow)
     : m_boxTree(flow)
     , m_layoutState(flow.view().ensureLayoutState())
@@ -482,7 +484,7 @@ void LineLayout::updateOverflow()
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
-    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, nullptr };
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), m_inlineFormattingState, m_lineDamage.get() };
     auto constraints = inlineFormattingContext.computedIntrinsicWidthConstraintsForIntegration();
 
     return { constraints.minimum, constraints.maximum };
@@ -569,11 +571,19 @@ void LineLayout::layout()
 void LineLayout::constructContent()
 {
     auto destroyDamagedContent = [&] {
-        if (!m_inlineContent || !m_lineDamage || !m_lineDamage->contentPosition())
+        if (!m_inlineContent || !m_lineDamage)
+            return;
+        m_inlineContent->releaseCaches();
+        if (!m_lineDamage->contentPosition())
             return;
         auto damagedLineIndex = m_lineDamage->contentPosition()->lineIndex;
         if (damagedLineIndex >= m_inlineContent->lines.size()) {
             ASSERT_NOT_REACHED();
+            return;
+        }
+        if (!damagedLineIndex) {
+            m_inlineContent->boxes.clear();
+            m_inlineContent->lines.clear();
             return;
         }
         auto& damangedLine = m_inlineContent->lines[damagedLineIndex];
@@ -807,6 +817,11 @@ std::optional<size_t> LineLayout::lastLineIndexForContentHeight() const
     return lines.size() - 1;
 }
 
+bool LineLayout::isPaginated() const
+{
+    return m_inlineContent && m_inlineContent->isPaginated;
+}
+
 LayoutUnit LineLayout::contentBoxLogicalHeight() const
 {
     if (!m_inlineContent)
@@ -816,10 +831,12 @@ LayoutUnit LineLayout::contentBoxLogicalHeight() const
     if (!lastLineIndex)
         return { };
 
-    auto& lines = m_inlineContent->lines;
-    auto& firstLine = lines[0];
-    auto& lastLine = lines[*lastLineIndex];
-    return LayoutUnit { m_inlineContent->clearGapBeforeFirstLine + (lastLine.lineBoxLogicalRect().maxY() - firstLine.lineBoxLogicalRect().y()) + m_inlineContent->clearGapAfterLastLine };
+    auto& firstLine = m_inlineContent->lines[0];
+    auto& lastLine = m_inlineContent->lines[*lastLineIndex];
+
+    auto lineBoxHeight = lastLine.lineBoxLogicalRect().maxY() - firstLine.lineBoxLogicalRect().y();
+    auto additionalHeight = m_inlineContent->firstLinePaginationOffset + m_inlineContent->clearGapBeforeFirstLine + m_inlineContent->clearGapAfterLastLine;
+    return LayoutUnit { lineBoxHeight + additionalHeight };
 }
 
 size_t LineLayout::lineCount() const
@@ -907,15 +924,12 @@ Vector<LineAdjustment> LineLayout::adjustContent()
         return { };
 
     auto& layoutState = *flow().view().frameView().layoutContext().layoutState();
+    if (!layoutState.isPaginated())
+        return { };
 
-    Vector<LineAdjustment> adjustments;
+    auto adjustments = computeAdjustmentsForPagination(*m_inlineContent, flow());
+    adjustLinePositionsForPagination(*m_inlineContent, adjustments);
 
-    if (layoutState.isPaginated()) {
-        adjustments = computeAdjustmentsForPagination(*m_inlineContent, flow());
-        adjustLinePositionsForPagination(*m_inlineContent, adjustments);
-    }
-
-    m_isPaginatedContent = !adjustments.isEmpty();
     return adjustments;
 }
 
@@ -1178,7 +1192,9 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
     if (m_inlineContent && is<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
         invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox), { }, { });
+        return;
     }
+    ASSERT_NOT_IMPLEMENTED_YET();
 }
 
 void LineLayout::releaseCaches(RenderView& view)

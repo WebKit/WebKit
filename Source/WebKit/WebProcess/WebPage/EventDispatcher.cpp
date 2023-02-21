@@ -61,6 +61,7 @@ EventDispatcher::EventDispatcher()
     , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     , m_momentumEventDispatcher(WTF::makeUnique<MomentumEventDispatcher>(*this))
+    , m_observerID(DisplayLinkObserverID::generate())
 #endif
 {
 }
@@ -311,7 +312,7 @@ void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const Dis
     ASSERT(!RunLoop::isMain());
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->displayWasRefreshed(displayID, displayUpdate);
+    m_momentumEventDispatcher->displayWasRefreshed(displayID);
 #endif
 
     notifyScrollingTreesDisplayWasRefreshed(displayID);
@@ -344,6 +345,16 @@ void EventDispatcher::setScrollingAccelerationCurve(PageIdentifier pageID, std::
 void EventDispatcher::handleSyntheticWheelEvent(WebCore::PageIdentifier pageIdentifier, const WebWheelEvent& event, WebCore::RectEdges<bool> rubberBandableEdges)
 {
     internalWheelEvent(pageIdentifier, event, rubberBandableEdges, WheelEventOrigin::MomentumEventDispatcher);
+}
+
+void EventDispatcher::startDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID displayID)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond), 0);
+}
+
+void EventDispatcher::stopDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID displayID)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID), 0);
 }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)

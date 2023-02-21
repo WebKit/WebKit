@@ -580,9 +580,9 @@ CaptureDevice::DeviceType ScreenCaptureKitCaptureSource::deviceType() const
     return m_captureDevice.type();
 }
 
-RealtimeMediaSourceSettings::DisplaySurfaceType ScreenCaptureKitCaptureSource::surfaceType() const
+DisplaySurfaceType ScreenCaptureKitCaptureSource::surfaceType() const
 {
-    return m_captureDevice.type() == CaptureDevice::DeviceType::Screen ? RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor : RealtimeMediaSourceSettings::DisplaySurfaceType::Window;
+    return m_captureDevice.type() == CaptureDevice::DeviceType::Screen ? DisplaySurfaceType::Monitor : DisplaySurfaceType::Window;
 }
 
 std::optional<CaptureDevice> ScreenCaptureKitCaptureSource::screenCaptureDeviceWithPersistentID(const String& displayIDString)

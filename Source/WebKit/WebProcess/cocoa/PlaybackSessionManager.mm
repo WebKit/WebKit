@@ -227,7 +227,8 @@ void PlaybackSessionManager::removeContext(PlaybackSessionContextIdentifier cont
     model->setMediaElement(nullptr);
     model->removeClient(*interface);
     interface->invalidate();
-    m_mediaElements.remove(mediaElement.get());
+    if (mediaElement)
+        m_mediaElements.remove(*mediaElement);
     m_contextMap.remove(contextId);
 }
 
@@ -245,28 +246,18 @@ void PlaybackSessionManager::removeClientForContext(PlaybackSessionContextIdenti
 
 void PlaybackSessionManager::setUpPlaybackControlsManager(WebCore::HTMLMediaElement& mediaElement)
 {
-    auto foundIterator = m_mediaElements.find(&mediaElement);
-    if (foundIterator != m_mediaElements.end()) {
-        auto contextId = foundIterator->value;
-        if (m_controlsManagerContextId == contextId)
-            return;
-
-        auto previousContextId = m_controlsManagerContextId;
-        m_controlsManagerContextId = contextId;
-        if (previousContextId)
-            removeClientForContext(previousContextId);
-    } else {
-        auto contextId = m_mediaElements.ensure(&mediaElement, [&] {
-            return PlaybackSessionContextIdentifier::generate();
-        }).iterator->value;
-
-        auto previousContextId = m_controlsManagerContextId;
-        m_controlsManagerContextId = contextId;
-        if (previousContextId)
-            removeClientForContext(previousContextId);
-
+    auto contextId = mediaElement.identifier();
+    auto result = m_mediaElements.add(mediaElement);
+    if (result.isNewEntry)
         ensureModel(contextId).setMediaElement(&mediaElement);
-    }
+
+    if (m_controlsManagerContextId == contextId)
+        return;
+
+    auto previousContextId = m_controlsManagerContextId;
+    m_controlsManagerContextId = contextId;
+    if (previousContextId)
+        removeClientForContext(previousContextId);
 
     addClientForContext(m_controlsManagerContextId);
 
@@ -300,10 +291,7 @@ void PlaybackSessionManager::mediaEngineChanged()
 
 PlaybackSessionContextIdentifier PlaybackSessionManager::contextIdForMediaElement(WebCore::HTMLMediaElement& mediaElement)
 {
-    auto addResult = m_mediaElements.ensure(&mediaElement, [&] {
-        return PlaybackSessionContextIdentifier::generate();
-    });
-    auto contextId = addResult.iterator->value;
+    auto contextId = mediaElement.identifier();
     ensureModel(contextId).setMediaElement(&mediaElement);
     return contextId;
 }

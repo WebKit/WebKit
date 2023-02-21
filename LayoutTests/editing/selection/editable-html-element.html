@@ -3,7 +3,6 @@
 if (window.testRunner)
      testRunner.dumpEditingCallbacks();
 </script>
-
 <script>
 function runTest() {
     var s = window.getSelection();
@@ -12,9 +11,13 @@ function runTest() {
     e.focus();
     document.execCommand("InsertText", false, "\t");
     document.execCommand("InsertText", false, "This tests to see where the selection is set when an html element is focused.");
-    document.execCommand("InsertHTML", false, "<br>We set it inside the body because we don't want to allow editing outside the body.  This test also does some editing to make sure it happens in the body.");
+    document.execCommand("InsertHTML", false, "<br>We set it inside the body because we don't want to allow editing outside the body.<br>This test also does some editing to make sure it happens in the body.");
+
+    document.querySelectorAll('script').forEach((script) => script.remove());
 }
+onload = runTest;
 </script>
-<body onLoad="runTest();">
+<script src="../../resources/dump-as-markup.js"></script>
+<body>
 </body>
 </html>

@@ -31,11 +31,24 @@
 #include "TextFlags.h"
 #include "WebKitFontFamilyNames.h"
 #include <unicode/uscript.h>
+#include <wtf/Markable.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 using namespace WebKitFontFamilyNames;
+
+struct FloatMarkableTraits {
+    constexpr static bool isEmptyValue(float value)
+    {
+        return value != value;
+    }
+
+    constexpr static float emptyValue()
+    {
+        return std::numeric_limits<float>::quiet_NaN();
+    }
+};
 
 class FontDescription {
 public:
@@ -163,7 +176,7 @@ private:
     AtomString m_specifiedLocale;
 
     FontSelectionRequest m_fontSelectionRequest;
-    std::optional<float> m_sizeAdjust; // Size adjust for font-size-adjust
+    Markable<float, FloatMarkableTraits> m_sizeAdjust; // Size adjust for font-size-adjust
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
     unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.

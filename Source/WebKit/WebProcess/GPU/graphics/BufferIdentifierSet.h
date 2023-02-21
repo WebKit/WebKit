@@ -35,40 +35,7 @@ struct BufferIdentifierSet {
     std::optional<WebCore::RenderingResourceIdentifier> front;
     std::optional<WebCore::RenderingResourceIdentifier> back;
     std::optional<WebCore::RenderingResourceIdentifier> secondaryBack;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<BufferIdentifierSet> decode(Decoder&);
 };
-
-
-template<class Encoder>
-void BufferIdentifierSet::encode(Encoder& encoder) const
-{
-    encoder << front;
-    encoder << back;
-    encoder << secondaryBack;
-}
-
-template<class Decoder>
-std::optional<BufferIdentifierSet> BufferIdentifierSet::decode(Decoder& decoder)
-{
-    std::optional<std::optional<WebCore::RenderingResourceIdentifier>> frontIdentifier;
-    decoder >> frontIdentifier;
-    if (!frontIdentifier)
-        return std::nullopt;
-
-    std::optional<std::optional<WebCore::RenderingResourceIdentifier>> backIdentifier;
-    decoder >> backIdentifier;
-    if (!backIdentifier)
-        return std::nullopt;
-
-    std::optional<std::optional<WebCore::RenderingResourceIdentifier>> secondaryBackIdentifier;
-    decoder >> secondaryBackIdentifier;
-    if (!secondaryBackIdentifier)
-        return std::nullopt;
-
-    return BufferIdentifierSet { *frontIdentifier, *backIdentifier, *secondaryBackIdentifier };
-}
 
 } // namespace WebKit
 

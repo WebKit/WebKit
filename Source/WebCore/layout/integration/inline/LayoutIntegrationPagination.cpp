@@ -89,6 +89,8 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
     if (adjustments.isEmpty())
         return;
 
+    inlineContent.isPaginated = true;
+
     for (size_t lineIndex = 0; lineIndex < inlineContent.lines.size(); ++lineIndex) {
         auto& line = inlineContent.lines[lineIndex];
         auto& adjustment = adjustments[lineIndex];
@@ -98,6 +100,8 @@ void adjustLinePositionsForPagination(InlineContent& inlineContent, const Vector
     }
     for (auto& box : inlineContent.boxes)
         box.moveVertically(adjustments[box.lineIndex()].offset);
+
+    inlineContent.firstLinePaginationOffset = adjustments[0].offset;
 }
 
 }

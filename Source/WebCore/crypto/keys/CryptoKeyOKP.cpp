@@ -194,19 +194,7 @@ bool CryptoKeyOKP::isValidOKPAlgorithm(CryptoAlgorithmIdentifier algorithm)
 
 auto CryptoKeyOKP::algorithm() const -> KeyAlgorithm
 {
-    CryptoEcKeyAlgorithm result;
-    result.name = CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier());
-
-    switch (m_curve) {
-    case NamedCurve::X25519:
-        result.namedCurve = X25519;
-        break;
-    case NamedCurve::Ed25519:
-        result.namedCurve = Ed25519;
-        break;
-    }
-
-    return result;
+    return CryptoKeyAlgorithm { CryptoAlgorithmRegistry::singleton().name(algorithmIdentifier()) };
 }
 
 #if !PLATFORM(COCOA)

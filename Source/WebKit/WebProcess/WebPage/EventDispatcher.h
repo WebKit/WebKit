@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DisplayLinkObserverID.h"
 #include "MessageReceiver.h"
 #include "MomentumEventDispatcher.h"
 #include "WebEvent.h"
@@ -132,6 +133,9 @@ private:
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     // EventDispatcher::Client
     void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) override;
+    void startDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID) override;
+    void stopDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID) override;
+
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     void flushMomentumEventLoggingSoon() override;
 #endif
@@ -153,6 +157,7 @@ private:
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     std::unique_ptr<MomentumEventDispatcher> m_momentumEventDispatcher;
+    DisplayLinkObserverID m_observerID;
 #endif
 };
 

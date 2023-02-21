@@ -20,10 +20,21 @@
     { "name": "igalia11-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia12-gtk-wk2-ews", "platform": "gtk" },
     { "name": "igalia13-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia14-gtk-wk2-ews", "platform": "gtk" },
+    { "name": "igalia15-gtk-wk2-ews", "platform": "gtk" },
     { "name": "aperez-gtk-ews", "platform": "gtk" },
     { "name": "csaavedra-gtk-ews", "platform": "gtk" },
     { "name": "igalia-wpe-ews", "platform": "wpe" },
     { "name": "igalia2-wpe-ews", "platform": "wpe" },
+    { "name": "igalia3-wpe-ews", "platform": "wpe" },
+    { "name": "igalia4-wpe-ews", "platform": "wpe" },
+    { "name": "igalia5-wpe-ews", "platform": "wpe" },
+    { "name": "igalia6-wpe-ews", "platform": "wpe" },
+    { "name": "igalia7-wpe-ews", "platform": "wpe" },
+    { "name": "igalia8-wpe-ews", "platform": "wpe" },
+    { "name": "igalia9-wpe-ews", "platform": "wpe" },
+    { "name": "igalia10-wpe-ews", "platform": "wpe" },
+    { "name": "igalia11-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
     { "name": "wincairo-ews-001", "platform": "wincairo" },
     { "name": "wincairo-ews-002", "platform": "wincairo" },
@@ -228,10 +239,18 @@
       "workernames": ["wincairo-ews-001", "wincairo-ews-002", "wincairo-ews-003", "wincairo-ews-004"]
     },
     {
-      "name": "WPE-EWS", "shortname": "wpe", "icon": "buildOnly",
-      "factory": "WPEFactory", "platform": "wpe",
+      "name": "WPE-Build-EWS", "shortname": "wpe", "icon": "buildOnly",
+      "factory": "WPEBuildFactory", "platform": "wpe",
       "configuration": "release", "architectures": ["x86_64"],
-      "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews"]
+      "triggers": ["wpe-wk2-tests-ews"],
+      "workernames": ["aperez-wpe-ews", "igalia-wpe-ews", "igalia2-wpe-ews", "igalia3-wpe-ews"]
+    },
+    {
+      "name": "WPE-WK2-Tests-EWS", "shortname": "wpe-wk2", "icon": "testOnly",
+      "factory": "WPETestsFactory", "platform": "wpe",
+      "configuration": "release", "architectures": ["x86_64"],
+      "triggered_by": ["wpe-build-ews"],
+      "workernames": ["igalia4-wpe-ews", "igalia5-wpe-ews", "igalia6-wpe-ews", "igalia7-wpe-ews", "igalia8-wpe-ews", "igalia9-wpe-ews", "igalia10-wpe-ews", "igalia11-wpe-ews"]
     },
     {
       "name": "JSC-Tests-EWS", "shortname": "jsc", "icon": "buildAndTest",
@@ -312,7 +331,7 @@
       "factory": "APITestsFactory", "platform": "gtk",
       "configuration": "release", "architectures": ["x86_64"],
       "triggered_by": ["gtk-build-ews"],
-      "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews"]
+      "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "igalia14-gtk-wk2-ews", "igalia15-gtk-wk2-ews"]
     },
     {
       "name": "Services-EWS", "shortname": "services", "icon": "testOnly",
@@ -346,7 +365,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
-            "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
+            "watchOS-9-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]
     },
     {
@@ -360,7 +379,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-AppleSilicon-Ventura-Debug-Build-EWS", "macOS-BigSur-Release-Build-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-16-Build-EWS", "tvOS-16-Simulator-Build-EWS", "watchOS-9-Build-EWS",
-            "watchOS-9-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
+            "watchOS-9-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS"
       ]
     },
     {
@@ -422,6 +441,14 @@
     {
       "type": "Triggerable", "name": "gtk-wk2-tests-ews",
       "builderNames": ["GTK-WK2-Tests-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "wpe-build-ews",
+      "builderNames": ["WPE-Build-EWS"]
+    },
+    {
+      "type": "Triggerable", "name": "wpe-wk2-tests-ews",
+      "builderNames": ["WPE-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "jsc-tests-mipsel-tests-ews",

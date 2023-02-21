@@ -64,6 +64,10 @@ enum class ExceptionType : uint32_t {
 #undef MAKE_ENUM
 };
 
+#define JSC_COUNT_EXCEPTION_TYPES(name, message) + 1
+static constexpr unsigned numberOfExceptionTypes = 0 FOR_EACH_EXCEPTION(JSC_COUNT_EXCEPTION_TYPES);
+#undef JSC_COUNT_EXCEPTION_TYPES
+
 ALWAYS_INLINE ASCIILiteral errorMessageForExceptionType(ExceptionType type)
 {
     switch (type) {

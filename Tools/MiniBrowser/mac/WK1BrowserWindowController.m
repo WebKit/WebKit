@@ -175,6 +175,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         menuItem.state = _webView.alwaysShowHorizontalScroller ? NSControlStateValueOn : NSControlStateValueOff;
     else if (action == @selector(toggleAlwaysShowsVerticalScroller:))
         menuItem.state = _webView.alwaysShowVerticalScroller ? NSControlStateValueOn : NSControlStateValueOff;
+    else if (action == @selector(toggleMainThreadStalls:))
+        menuItem.state = self.mainThreadStallsEnabled ? NSControlStateValueOn : NSControlStateValueOff;
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _viewScaleFactor], [self pageScaleForMenuItemTag:[menuItem tag]])];

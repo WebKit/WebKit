@@ -234,7 +234,7 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
     auto value = styleDeclaration->getPropertyCSSValue(CSSPropertyTransform);
 
     // Check for a "none" or empty transform. In these cases we can use the default identity matrix.
-    if (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).valueID() == CSSValueNone))
+    if (!value || (is<CSSPrimitiveValue>(*value) && value->valueID() == CSSValueNone))
         return AbstractMatrix { };
 
     auto operations = transformsForValue(*value, { });

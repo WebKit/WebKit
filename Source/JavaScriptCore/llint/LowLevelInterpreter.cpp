@@ -39,6 +39,7 @@
 #include "LLIntData.h"
 #include "LLIntSlowPaths.h"
 #include "JSCInlines.h"
+#include "SuperSampler.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 

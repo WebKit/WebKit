@@ -34,9 +34,60 @@ CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparato
 
 CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparator separator, CSSValueListBuilder values)
     : CSSValue(type)
-    , m_values(WTFMove(values))
+    , m_size(values.size())
 {
     m_valueSeparator = separator;
+
+    RELEASE_ASSERT(values.size() <= std::numeric_limits<unsigned>::max());
+    unsigned maxInlineSize = m_inlineStorage.size();
+    if (m_size <= maxInlineSize) {
+        for (unsigned i = 0; i < m_size; ++i)
+            m_inlineStorage[i] = &values[i].leakRef();
+    } else {
+        for (unsigned i = 0; i < maxInlineSize; ++i)
+            m_inlineStorage[i] = &values[i].leakRef();
+        m_additionalStorage = static_cast<const CSSValue**>(fastMalloc(sizeof(const CSSValue*) * (m_size - maxInlineSize)));
+        for (unsigned i = maxInlineSize; i < m_size; ++i)
+            m_additionalStorage[i - maxInlineSize] = &values[i].leakRef();
+    }
+}
+
+CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparator separator, Ref<CSSValue> value)
+    : CSSValue(type)
+    , m_size(1)
+{
+    m_valueSeparator = separator;
+    m_inlineStorage[0] = &value.leakRef();
+}
+
+CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2)
+    : CSSValue(type)
+    , m_size(2)
+{
+    m_valueSeparator = separator;
+    m_inlineStorage[0] = &value1.leakRef();
+    m_inlineStorage[1] = &value2.leakRef();
+}
+
+CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3)
+    : CSSValue(type)
+    , m_size(3)
+{
+    m_valueSeparator = separator;
+    m_inlineStorage[0] = &value1.leakRef();
+    m_inlineStorage[1] = &value2.leakRef();
+    m_inlineStorage[2] = &value3.leakRef();
+}
+
+CSSValueContainingVector::CSSValueContainingVector(ClassType type, ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3, Ref<CSSValue> value4)
+    : CSSValue(type)
+    , m_size(4)
+{
+    m_valueSeparator = separator;
+    m_inlineStorage[0] = &value1.leakRef();
+    m_inlineStorage[1] = &value2.leakRef();
+    m_inlineStorage[2] = &value3.leakRef();
+    m_inlineStorage[3] = &value4.leakRef();
 }
 
 CSSValueList::CSSValueList(ValueSeparator separator)
@@ -49,19 +100,24 @@ CSSValueList::CSSValueList(ValueSeparator separator, CSSValueListBuilder values)
 {
 }
 
-Ref<CSSValueList> CSSValueList::createCommaSeparated()
+CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value)
+    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value))
 {
-    return adoptRef(*new CSSValueList(CommaSeparator));
 }
 
-Ref<CSSValueList> CSSValueList::createSpaceSeparated()
+CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2)
+    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value1), WTFMove(value2))
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator));
 }
 
-Ref<CSSValueList> CSSValueList::createSlashSeparated()
+CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3)
+    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value1), WTFMove(value2), WTFMove(value3))
 {
-    return adoptRef(*new CSSValueList(SlashSeparator));
+}
+
+CSSValueList::CSSValueList(ValueSeparator separator, Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3, Ref<CSSValue> value4)
+    : CSSValueContainingVector(ValueListClass, separator, WTFMove(value1), WTFMove(value2), WTFMove(value3), WTFMove(value4))
+{
 }
 
 Ref<CSSValueList> CSSValueList::createCommaSeparated(CSSValueListBuilder values)
@@ -69,9 +125,9 @@ Ref<CSSValueList> CSSValueList::createCommaSeparated(CSSValueListBuilder values)
     return adoptRef(*new CSSValueList(CommaSeparator, WTFMove(values)));
 }
 
-Ref<CSSValueList> CSSValueList::createSpaceSeparated(CSSValueListBuilder values)
+Ref<CSSValueList> CSSValueList::createCommaSeparated(Ref<CSSValue> value)
 {
-    return adoptRef(*new CSSValueList(SpaceSeparator, WTFMove(values)));
+    return adoptRef(*new CSSValueList(CommaSeparator, WTFMove(value)));
 }
 
 Ref<CSSValueList> CSSValueList::createSlashSeparated(CSSValueListBuilder values)
@@ -79,24 +135,65 @@ Ref<CSSValueList> CSSValueList::createSlashSeparated(CSSValueListBuilder values)
     return adoptRef(*new CSSValueList(SlashSeparator, WTFMove(values)));
 }
 
-bool CSSValueContainingVector::removeAll(CSSValue& value)
+Ref<CSSValueList> CSSValueList::createSlashSeparated(Ref<CSSValue> value)
 {
-    return m_values.removeAllMatching([&value](auto& current) {
-        return current->equals(value);
-    }) > 0;
+    return adoptRef(*new CSSValueList(SlashSeparator, WTFMove(value)));
 }
 
-bool CSSValueContainingVector::removeAll(CSSValueID value)
+Ref<CSSValueList> CSSValueList::createSlashSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2)
 {
-    return m_values.removeAllMatching([value](auto& current) {
-        return WebCore::isValueID(current, value);
-    }) > 0;
+    return adoptRef(*new CSSValueList(SlashSeparator, WTFMove(value1), WTFMove(value2)));
+}
+
+Ref<CSSValueList> CSSValueList::createSpaceSeparated()
+{
+    return adoptRef(*new CSSValueList(SpaceSeparator));
+}
+
+Ref<CSSValueList> CSSValueList::createSpaceSeparated(CSSValueListBuilder values)
+{
+    return adoptRef(*new CSSValueList(SpaceSeparator, WTFMove(values)));
+}
+
+Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value)
+{
+    return adoptRef(*new CSSValueList(SpaceSeparator, WTFMove(value)));
+}
+
+Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2)
+{
+    return adoptRef(*new CSSValueList(SpaceSeparator, WTFMove(value1), WTFMove(value2)));
+}
+
+Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3)
+{
+    return adoptRef(*new CSSValueList(SpaceSeparator, WTFMove(value1), WTFMove(value2), WTFMove(value3)));
+}
+
+Ref<CSSValueList> CSSValueList::createSpaceSeparated(Ref<CSSValue> value1, Ref<CSSValue> value2, Ref<CSSValue> value3, Ref<CSSValue> value4)
+{
+    return adoptRef(*new CSSValueList(SpaceSeparator, WTFMove(value1), WTFMove(value2), WTFMove(value3), WTFMove(value4)));
+}
+
+Ref<CSSValueList> CSSValueList::create(UChar separator, CSSValueListBuilder builder)
+{
+    switch (separator) {
+    case ',':
+        return createCommaSeparated(WTFMove(builder));
+    case '/':
+        return createSlashSeparated(WTFMove(builder));
+    case ' ':
+        return createSpaceSeparated(WTFMove(builder));
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 bool CSSValueContainingVector::hasValue(CSSValue& otherValue) const
 {
-    for (auto& value : m_values) {
-        if (value->equals(otherValue))
+    for (auto& value : *this) {
+        if (value.equals(otherValue))
             return true;
     }
     return false;
@@ -104,24 +201,28 @@ bool CSSValueContainingVector::hasValue(CSSValue& otherValue) const
 
 bool CSSValueContainingVector::hasValue(CSSValueID otherValue) const
 {
-    for (auto& value : m_values) {
+    for (auto& value : *this) {
         if (WebCore::isValueID(value, otherValue))
             return true;
     }
     return false;
 }
 
-Ref<CSSValueList> CSSValueList::copy()
+CSSValueListBuilder CSSValueContainingVector::copyValues() const
 {
-    return adoptRef(*new CSSValueList(separator(), values()));
+    CSSValueListBuilder builder;
+    builder.reserveInitialCapacity(size());
+    for (auto& value : *this)
+        builder.uncheckedAppend(const_cast<CSSValue&>(value));
+    return builder;
 }
 
 void CSSValueContainingVector::serializeItems(StringBuilder& builder) const
 {
     auto prefix = ""_s;
     auto separator = separatorCSSText();
-    for (auto& value : values())
-        builder.append(std::exchange(prefix, separator), value.get().cssText());
+    for (auto& value : *this)
+        builder.append(std::exchange(prefix, separator), value.cssText());
 }
 
 String CSSValueContainingVector::serializeItems() const
@@ -138,11 +239,11 @@ String CSSValueList::customCSSText() const
 
 bool CSSValueContainingVector::itemsEqual(const CSSValueContainingVector& other) const
 {
-    unsigned size = m_values.size();
-    if (size != other.m_values.size())
+    unsigned size = this->size();
+    if (size != other.size())
         return false;
     for (unsigned i = 0; i < size; ++i) {
-        if (!m_values[i].get().equals(other.m_values[i]))
+        if (!(*this)[i].equals(other[i]))
             return false;
     }
     return true;
@@ -155,13 +256,13 @@ bool CSSValueList::equals(const CSSValueList& other) const
 
 bool CSSValueContainingVector::containsSingleEqualItem(const CSSValue& other) const
 {
-    return m_values.size() == 1 && m_values[0].get().equals(other);
+    return size() == 1 && (*this)[0].equals(other);
 }
 
 bool CSSValueContainingVector::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
     for (auto& value : *this) {
-        if (value.get().traverseSubresources(handler))
+        if (value.traverseSubresources(handler))
             return true;
     }
     return false;

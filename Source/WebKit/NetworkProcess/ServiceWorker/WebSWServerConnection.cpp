@@ -38,6 +38,7 @@
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
 #include "RemoteWorkerType.h"
+#include "SharedBufferReference.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessMessages.h"
@@ -117,12 +118,12 @@ void WebSWServerConnection::resolveUnregistrationJobInClient(ServiceWorkerJobIde
             completionHandler(unregistrationResult);
             return;
         }
-        
+
         auto scopeURL = registrationKey.scope();
         session()->notificationManager().unsubscribeFromPushService(WTFMove(scopeURL), std::nullopt, [completionHandler = WTFMove(completionHandler), unregistrationResult](auto&&) mutable {
             completionHandler(unregistrationResult);
         });
-        
+
 #else
         completionHandler(unregistrationResult);
 #endif
@@ -175,6 +176,7 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
         clientType = ServiceWorkerClientType::Window;
 
     ScriptExecutionContextIdentifier clientIdentifier { *parameters.options.resultingClientIdentifier, webProcessIdentifier };
+
     // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
     // We register the service worker client using the identifier provided by DocumentLoader and notify DocumentLoader about it.
     // If notification is successful, DocumentLoader is responsible to unregister the service worker client as needed.
@@ -282,7 +284,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
 #endif
             if (!task)
                 return;
-            
+
             if (!weakThis) {
                 task->cannotHandle();
                 return;
@@ -704,6 +706,24 @@ std::optional<SWServer::GatheredClientData> WebSWServerConnection::gatherClientD
         return { };
 
     return server().gatherClientData(iterator->value, clientIdentifier);
+}
+
+void WebSWServerConnection::updateBackgroundFetchRegistration(const WebCore::BackgroundFetchInformation& information)
+{
+    send(Messages::WebSWClientConnection::UpdateBackgroundFetchRegistration(information));
+}
+
+void WebSWServerConnection::retrieveRecordResponseBody(WebCore::BackgroundFetchRecordIdentifier recordIdentifier, RetrieveRecordResponseBodyCallbackIdentifier callbackIdentifier)
+{
+    SWServer::Connection::retrieveRecordResponseBody(recordIdentifier, [weakThis = WeakPtr { *this }, callbackIdentifier](auto&& result) {
+        if (!weakThis)
+            return;
+        if (!result.has_value()) {
+            weakThis->send(Messages::WebSWClientConnection::NotifyRecordResponseBodyEnd(callbackIdentifier, result.error()));
+            return;
+        }
+        weakThis->send(Messages::WebSWClientConnection::NotifyRecordResponseBodyChunk(callbackIdentifier, IPC::SharedBufferReference(WTFMove(result.value()))));
+    });
 }
 
 } // namespace WebKit

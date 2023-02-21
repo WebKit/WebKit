@@ -112,9 +112,9 @@ RefPtr<CSSValue> CSSSkewY::toCSSValue() const
     auto ay = m_ay->toCSSValue();
     if (!ay)
         return nullptr;
-    auto result = CSSFunctionValue::create(CSSValueSkewY);
-    result->append(ay.releaseNonNull());
-    return result;
+    CSSValueListBuilder arguments;
+    arguments.append(ay.releaseNonNull());
+    return CSSFunctionValue::create(CSSValueSkewY, WTFMove(arguments));
 }
 
 } // namespace WebCore

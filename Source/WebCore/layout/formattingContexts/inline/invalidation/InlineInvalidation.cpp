@@ -27,6 +27,7 @@
 #include "InlineInvalidation.h"
 
 #include "InlineDamage.h"
+#include <wtf/Range.h>
 
 namespace WebCore {
 namespace Layout {
@@ -46,54 +47,82 @@ void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& o
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 }
 
+static std::optional<InlineItemPosition> leadingInlineItemPositionOnDamagedLine(const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
+{
+    auto leadingContentDisplayBox = [&]() -> const InlineDisplay::Box* {
+        // FIXME: This only covers the append case yet.
+        auto rootInlineBoxIndexOnDamagedLine = [&]() -> size_t {
+            for (auto index = displayBoxes.size(); index--;) {
+                if (displayBoxes[index].isRootInlineBox())
+                    return index;
+            }
+            ASSERT_NOT_REACHED();
+            return 0;
+        };
+        auto firstContentDisplayBoxIndex = rootInlineBoxIndexOnDamagedLine() + 1;
+        for (; firstContentDisplayBoxIndex < displayBoxes.size(); ++firstContentDisplayBoxIndex) {
+            auto& displayBox = displayBoxes[firstContentDisplayBoxIndex];
+            ASSERT(!displayBox.isRootInlineBox());
+            if (!displayBox.isNonRootInlineBox() || displayBox.isFirstForLayoutBox())
+                return &displayBox;
+        }
+        return nullptr;
+    }();
+
+    if (!leadingContentDisplayBox) {
+        // This is a completely empty line (e.g. <div><span> </span></div> where the whitespce is collapsed).
+        return { };
+    }
+
+    for (size_t index = inlineItems.size(); index--;) {
+        if (&inlineItems[index].layoutBox() == &leadingContentDisplayBox->layoutBox() && !inlineItems[index].isInlineBoxEnd()) {
+            // This is our last InlineItem associated with this layout box. Let's find out
+            // which previous InlineItem is at the beginning of the damaged line.
+            // Only text content may produce multiple (content type of) InlineItems for a layout box.
+            auto leadingInlineItemPosition = [&]() -> std::optional<InlineItemPosition> {
+                if (!leadingContentDisplayBox->isTextOrSoftLineBreak())
+                    return InlineItemPosition { index, 0 };
+                auto startOffset = leadingContentDisplayBox->text().start();
+                while (true) {
+                    auto inlineTextItemRange = [&]() -> WTF::Range<unsigned> {
+                        if (is<InlineTextItem>(inlineItems[index])) {
+                            auto& inlineTextItem = downcast<InlineTextItem>(inlineItems[index]);
+                            return { inlineTextItem.start(), inlineTextItem.end() };
+                        }
+                        if (is<InlineSoftLineBreakItem>(inlineItems[index])) {
+                            auto startPosition = downcast<InlineSoftLineBreakItem>(inlineItems[index]).position();
+                            return { startPosition, startPosition + 1 };
+                        }
+                        ASSERT_NOT_REACHED();
+                        return { };
+                    };
+                    auto textRange = inlineTextItemRange();
+                    if (textRange.begin() <= startOffset && textRange.end() > startOffset)
+                        return InlineItemPosition { index, startOffset - textRange.begin() };
+                    if (!index--)
+                        break;
+                }
+                return { };
+            };
+            return leadingInlineItemPosition();
+        }
+    }
+    return { };
+}
+
 void InlineInvalidation::textInserted(const InlineTextBox&, std::optional<size_t>, std::optional<size_t>)
 {
     if (m_displayBoxes.isEmpty())
         return m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 
-    // FIXME: This only covers the append case yet.
-    auto rootInlineBoxIndexOnDamagedLine = [&]() -> size_t {
-        for (auto index = m_displayBoxes.size(); index--;) {
-            if (m_displayBoxes[index].isRootInlineBox())
-                return index;
-        }
-        ASSERT_NOT_REACHED();
-        return 0;
-    };
-    auto damagedRootInlineBoxIndex = rootInlineBoxIndexOnDamagedLine();
-    auto leadingInlineItemPositionOnDamagedLine = [&]() -> std::optional<InlineItemPosition> {
-        auto leadingContentDisplayBoxIndex = damagedRootInlineBoxIndex + 1; 
-        if (leadingContentDisplayBoxIndex == m_displayBoxes.size() || m_displayBoxes[leadingContentDisplayBoxIndex].isRootInlineBox()) {
+    if (auto damagedLeadingInlineItemPosition = leadingInlineItemPositionOnDamagedLine(m_inlineFormattingState.inlineItems(), m_displayBoxes)) {
+        auto damagedLineIndex = m_displayBoxes[damagedLeadingInlineItemPosition->index].lineIndex();
+        if (damagedLineIndex && !*damagedLeadingInlineItemPosition) {
             ASSERT_NOT_REACHED();
-            return { };
+            damagedLineIndex = 0;
         }
-        auto& leadingContentDisplayBox = m_displayBoxes[leadingContentDisplayBoxIndex];
-        auto& inlineItems = m_inlineFormattingState.inlineItems();
-        for (size_t index = inlineItems.size(); index--;) {
-            if (&inlineItems[index].layoutBox() == &leadingContentDisplayBox.layoutBox()) {
-                // This is our last InlineItem associated with this layout box. Let's find out
-                // which previous InlineItem is at the beginning of the damaged line.
-                // Only text content may produce multiple (content type of) InlineItems for a layout box.
-                auto leadingInlineItemPosition = [&]() -> std::optional<InlineItemPosition> {
-                    if (!leadingContentDisplayBox.isText())
-                        return InlineItemPosition { index, 0 };
-                    auto startOffset = leadingContentDisplayBox.text().start();
-                    while (true) {
-                        auto& inlineTextItem = downcast<InlineTextItem>(inlineItems[index]);
-                        if (inlineTextItem.start() <= startOffset && inlineTextItem.end() > startOffset)
-                            return InlineItemPosition { index, startOffset - inlineTextItem.start() };
-                        if (!index--)
-                            break;
-                    }
-                    return { };
-                };
-                return leadingInlineItemPosition();
-            }
-        }
-        return { };
-    };
-    if (auto damagedLeadingInlineItemPosition = leadingInlineItemPositionOnDamagedLine())
-        m_inlineDamage.setDamagedPosition({ m_displayBoxes[damagedRootInlineBoxIndex].lineIndex(), *damagedLeadingInlineItemPosition });
+        m_inlineDamage.setDamagedPosition({ damagedLineIndex, *damagedLeadingInlineItemPosition });
+    }
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 }
 

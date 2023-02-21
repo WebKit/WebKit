@@ -78,7 +78,7 @@ public:
         virtual void stop() = 0;
         virtual DisplayFrameType generateFrame() = 0;
         virtual CaptureDevice::DeviceType deviceType() const = 0;
-        virtual RealtimeMediaSourceSettings::DisplaySurfaceType surfaceType() const = 0;
+        virtual DisplaySurfaceType surfaceType() const = 0;
         virtual void commitConfiguration(const RealtimeMediaSourceSettings&) = 0;
         virtual IntSize intrinsicSize() const = 0;
 

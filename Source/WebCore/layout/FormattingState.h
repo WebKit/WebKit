@@ -47,6 +47,7 @@ public:
     void clearIntrinsicWidthConstraints(const Box&);
 
     void setIntrinsicWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
+    void resetIntrinsicWidthConstraints() { m_intrinsicWidthConstraints = { }; }
     std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraints() const { return m_intrinsicWidthConstraints; }
 
     bool isBlockFormattingState() const { return m_type == Type::Block; }

@@ -51,10 +51,10 @@ static const CGFloat layerCornerRadius = 12;
 static const CGFloat layerGrayComponent = 0;
 static const CGFloat layerAlpha = 0.75;
 static const CGFloat layerImageScale = 1.5;
-static const CGFloat layerSeperatorControllerSize = 1.5;
+static const CGFloat layerSeparatorControllerSize = 1.5;
 static const CGFloat layerControllerHorizontalMargin = 10.0;
 static const CGFloat layerImageVerticalMargin = 12.0;
-static const CGFloat layerSeperatorVerticalMargin = 10.0;
+static const CGFloat layerSeparatorVerticalMargin = 10.0;
 static const CGFloat controlLayerNormalAlpha = 0.75;
 static const CGFloat controlLayerDownAlpha = 0.45;
 
@@ -62,7 +62,7 @@ static NSString * const PDFHUDZoomInControl = @"plus.magnifyingglass";
 static NSString * const PDFHUDZoomOutControl = @"minus.magnifyingglass";
 static NSString * const PDFHUDLaunchPreviewControl = @"preview";
 static NSString * const PDFHUDSavePDFControl = @"arrow.down.circle";
-static NSString * const PDFHUDSeperatorControl = @"PDFHUDSeperatorControl";
+static NSString * const PDFHUDSeparatorControl = @"PDFHUDSeparatorControl";
 
 static const CGFloat layerFadeInTimeInterval = 0.25;
 static const CGFloat layerFadeOutTimeInterval = 0.5;
@@ -73,7 +73,7 @@ static NSArray<NSString *> *controlArray()
     return @[
         PDFHUDZoomOutControl,
         PDFHUDZoomInControl,
-        PDFHUDSeperatorControl,
+        PDFHUDSeparatorControl,
         PDFHUDLaunchPreviewControl,
         PDFHUDSavePDFControl
     ];
@@ -179,7 +179,7 @@ static NSArray<NSString *> *controlArray()
 - (void)mouseDown:(NSEvent *)event
 {
     _activeControl = [self _controlForEvent:event];
-    if ([_activeControl isEqualToString:PDFHUDSeperatorControl])
+    if ([_activeControl isEqualToString:PDFHUDSeparatorControl])
         _activeControl = nil;
     if (_activeControl) {
         // Update rendering to highlight it..
@@ -284,10 +284,10 @@ static NSArray<NSString *> *controlArray()
         CGFloat controllerWidth = 0.0;
         CGFloat controllerHeight = 0.0;
 
-        if ([controlName isEqualToString:PDFHUDSeperatorControl]) {
-            dy = layerSeperatorVerticalMargin;
-            controllerWidth = layerSeperatorControllerSize;
-            controllerHeight = minIconImageHeight + (2.0 * layerImageVerticalMargin) - (2.0 * layerSeperatorVerticalMargin);
+        if ([controlName isEqualToString:PDFHUDSeparatorControl]) {
+            dy = layerSeparatorVerticalMargin;
+            controllerWidth = layerSeparatorControllerSize;
+            controllerHeight = minIconImageHeight + (2.0 * layerImageVerticalMargin) - (2.0 * layerSeparatorVerticalMargin);
             
             [controlLayer setBackgroundColor:[[NSColor lightGrayColor] CGColor]];
         } else {

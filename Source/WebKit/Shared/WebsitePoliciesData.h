@@ -77,9 +77,6 @@ struct WebsitePoliciesData {
     OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
     bool allowPrivacyProxy { true };
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

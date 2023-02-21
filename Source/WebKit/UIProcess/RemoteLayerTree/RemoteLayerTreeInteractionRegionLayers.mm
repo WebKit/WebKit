@@ -152,7 +152,8 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
                 setInteractionRegionOcclusion(interactionRegionLayer.get());
 
                 if (applyBackgroundColorForDebugging) {
-                    [interactionRegionLayer setBackgroundColor:cachedCGColor({ WebCore::SRGBA<float>(1, 0, 0, .1) }).get()];
+                    [interactionRegionLayer setBorderColor:cachedCGColor({ WebCore::SRGBA<float>(1, 0, 0, .2) }).get()];
+                    [interactionRegionLayer setBorderWidth:6];
                     [interactionRegionLayer setName:@"Occlusion"];
                 }
 

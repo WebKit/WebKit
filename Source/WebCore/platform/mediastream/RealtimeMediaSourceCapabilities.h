@@ -147,6 +147,27 @@ public:
         : m_supportedConstraints(supportedConstraints)
     {
     }
+    
+    enum class EchoCancellation : bool {
+        ReadOnly = 0,
+        ReadWrite = 1,
+    };
+    
+    RealtimeMediaSourceCapabilities(CapabilityValueOrRange&& width, CapabilityValueOrRange&& height, CapabilityValueOrRange&& aspectRatio, CapabilityValueOrRange&& frameRate, Vector<VideoFacingMode>&& facingMode, CapabilityValueOrRange&& volume, CapabilityValueOrRange&& sampleRate, CapabilityValueOrRange&& sampleSize, EchoCancellation&& echoCancellation, AtomString&& deviceId, AtomString&& groupId, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+        : m_width(WTFMove(width))
+        , m_height(WTFMove(height))
+        , m_aspectRatio(WTFMove(aspectRatio))
+        , m_frameRate(WTFMove(frameRate))
+        , m_facingMode(WTFMove(facingMode))
+        , m_volume(WTFMove(volume))
+        , m_sampleRate(WTFMove(sampleRate))
+        , m_sampleSize(WTFMove(sampleSize))
+        , m_echoCancellation(WTFMove(echoCancellation))
+        , m_deviceId(WTFMove(deviceId))
+        , m_groupId(WTFMove(groupId))
+        , m_supportedConstraints(WTFMove(supportedConstraints))
+    {
+    }
 
     ~RealtimeMediaSourceCapabilities() = default;
 
@@ -169,8 +190,8 @@ public:
     void setFrameRate(const CapabilityValueOrRange& frameRate) { m_frameRate = frameRate; }
 
     bool supportsFacingMode() const { return m_supportedConstraints.supportsFacingMode(); }
-    const Vector<RealtimeMediaSourceSettings::VideoFacingMode>& facingMode() const { return m_facingMode; }
-    void addFacingMode(RealtimeMediaSourceSettings::VideoFacingMode mode) { m_facingMode.append(mode); }
+    const Vector<VideoFacingMode>& facingMode() const { return m_facingMode; }
+    void addFacingMode(VideoFacingMode mode) { m_facingMode.append(mode); }
 
     bool supportsAspectRatio() const { return m_supportedConstraints.supportsAspectRatio(); }
     const CapabilityValueOrRange& aspectRatio() const { return m_aspectRatio; }
@@ -188,10 +209,6 @@ public:
     const CapabilityValueOrRange& sampleSize() const { return m_sampleSize; }
     void setSampleSize(const CapabilityValueOrRange& sampleSize) { m_sampleSize = sampleSize; }
 
-    enum class EchoCancellation : bool {
-        ReadOnly = 0,
-        ReadWrite = 1,
-    };
     bool supportsEchoCancellation() const { return m_supportedConstraints.supportsEchoCancellation(); }
     EchoCancellation echoCancellation() const { return m_echoCancellation; }
     void setEchoCancellation(EchoCancellation echoCancellation) { m_echoCancellation = echoCancellation; }
@@ -207,15 +224,12 @@ public:
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() const { return m_supportedConstraints; }
     void setSupportedConstraints(const RealtimeMediaSourceSupportedConstraints& constraints) { m_supportedConstraints = constraints; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, RealtimeMediaSourceCapabilities&);
-
 private:
     CapabilityValueOrRange m_width;
     CapabilityValueOrRange m_height;
     CapabilityValueOrRange m_aspectRatio;
     CapabilityValueOrRange m_frameRate;
-    Vector<RealtimeMediaSourceSettings::VideoFacingMode> m_facingMode;
+    Vector<VideoFacingMode> m_facingMode;
     CapabilityValueOrRange m_volume;
     CapabilityValueOrRange m_sampleRate;
     CapabilityValueOrRange m_sampleSize;
@@ -225,40 +239,6 @@ private:
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };
-
-template<class Encoder>
-void RealtimeMediaSourceCapabilities::encode(Encoder& encoder) const
-{
-    encoder << m_width
-        << m_height
-        << m_aspectRatio
-        << m_frameRate
-        << m_facingMode
-        << m_volume
-        << m_sampleRate
-        << m_sampleSize
-        << m_deviceId
-        << m_groupId
-        << m_supportedConstraints
-        << m_echoCancellation;
-}
-
-template<class Decoder>
-bool RealtimeMediaSourceCapabilities::decode(Decoder& decoder, RealtimeMediaSourceCapabilities& capabilities)
-{
-    return decoder.decode(capabilities.m_width)
-        && decoder.decode(capabilities.m_height)
-        && decoder.decode(capabilities.m_aspectRatio)
-        && decoder.decode(capabilities.m_frameRate)
-        && decoder.decode(capabilities.m_facingMode)
-        && decoder.decode(capabilities.m_volume)
-        && decoder.decode(capabilities.m_sampleRate)
-        && decoder.decode(capabilities.m_sampleSize)
-        && decoder.decode(capabilities.m_deviceId)
-        && decoder.decode(capabilities.m_groupId)
-        && decoder.decode(capabilities.m_supportedConstraints)
-        && decoder.decode(capabilities.m_echoCancellation);
-}
 
 } // namespace WebCore
 

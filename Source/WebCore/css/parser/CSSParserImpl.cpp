@@ -816,7 +816,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     if (auto overrideColorsValue = properties->getPropertyCSSValue(CSSPropertyOverrideColors)) {
         const auto& list = downcast<CSSValueList>(*overrideColorsValue);
         for (const auto& item : list) {
-            const auto& pair = downcast<CSSFontPaletteValuesOverrideColorsValue>(item.get());
+            const auto& pair = downcast<CSSFontPaletteValuesOverrideColorsValue>(item);
             if (!pair.key().isInteger())
                 continue;
             unsigned key = pair.key().value<unsigned>();
@@ -1015,7 +1015,7 @@ RefPtr<StyleRuleProperty> CSSParserImpl::consumePropertyRule(CSSParserTokenRange
             propertyDescriptor.syntax = downcast<CSSPrimitiveValue>(*property.value()).stringValue();
             continue;
         case CSSPropertyInherits:
-            propertyDescriptor.inherits = downcast<CSSPrimitiveValue>(*property.value()).valueID() == CSSValueTrue;
+            propertyDescriptor.inherits = property.value()->valueID() == CSSValueTrue;
             break;
         case CSSPropertyInitialValue:
             propertyDescriptor.initialValue = downcast<CSSCustomPropertyValue>(*property.value()).asVariableData();

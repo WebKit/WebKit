@@ -476,16 +476,20 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
+	Shared/CallbackID.serialization.in \
 	Shared/EditorState.serialization.in \
 	Shared/Extensions/WebExtensionEventListenerType.serialization.in \
+	Shared/FileSystemSyncAccessHandleInfo.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
 	Shared/FrameInfoData.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
 	Shared/ios/InteractionInformationAtPosition.serialization.in \
+	Shared/ios/WebAutocorrectionContext.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
 	Shared/Model.serialization.in \
 	Shared/PALArgumentCoders.serialization.in \
 	Shared/Pasteboard.serialization.in \
+	Shared/PolicyDecision.serialization.in \
 	Shared/SameDocumentNavigationType.serialization.in \
 	Shared/SessionState.serialization.in \
 	Shared/ShareableBitmap.serialization.in \
@@ -498,12 +502,15 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
 	Shared/WebPopupItem.serialization.in \
+	Shared/WebProcessDataStoreParameters.serialization.in \
 	Shared/WebPushDaemonConnectionConfiguration.serialization.in \
 	Shared/WebPushMessage.serialization.in \
+	Shared/WebsitePoliciesData.serialization.in \
 	Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in \
 	Shared/ApplePay/PaymentSetupConfiguration.serialization.in \
 	Shared/Databases/IndexedDB/WebIDBResult.serialization.in \
 	Shared/RemoteLayerTree/RemoteLayerTree.serialization.in \
+	Shared/mac/PDFContextMenuItem.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
 	Shared/mac/WebHitTestResultPlatformData.serialization.in \
@@ -575,6 +582,10 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUBlendComponent.serialization.in \
 	Shared/WebGPU/WebGPUBindGroupEntry.serialization.in \
 	Shared/XR/XRSystem.serialization.in \
+	WebProcess/GPU/graphics/BufferIdentifierSet.serialization.in \
+	WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.serialization.in \
+	WebProcess/GPU/media/RemoteCDMConfiguration.serialization.in \
+	WebProcess/GPU/media/RemoteAudioSessionConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerConfiguration.serialization.in \
 	WebProcess/GPU/media/RemoteMediaPlayerState.serialization.in \
 #

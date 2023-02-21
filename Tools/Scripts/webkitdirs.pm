@@ -2611,11 +2611,6 @@ sub cmakeCachePath()
     return File::Spec->catdir(productDirForCMake(), "CMakeCache.txt");
 }
 
-sub cmakeFilesPath()
-{
-    return File::Spec->catdir(productDirForCMake(), "CMakeFiles");
-}
-
 sub shouldRemoveCMakeCache(@)
 {
     # For this check, ignore all arguments that do not begin with a dash. These
@@ -2689,9 +2684,7 @@ sub removeCMakeCache(@)
     my (@buildArgs) = @_;
     if (shouldRemoveCMakeCache(@buildArgs)) {
         my $cmakeCache = cmakeCachePath();
-        my $cmakeFiles = cmakeFilesPath();
         unlink($cmakeCache) if -e $cmakeCache;
-        rmtree($cmakeFiles) if -d $cmakeFiles;
     }
 }
 

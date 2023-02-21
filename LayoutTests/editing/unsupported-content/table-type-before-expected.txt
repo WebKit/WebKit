@@ -1,0 +1,61 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+| "\n"
+| <div>
+|   class="editing"
+|   id="test"
+|   "\n"
+|   "xxx<#selection-caret>"
+|   <table>
+|     border="1"
+|     "\n"
+|     <tbody>
+|       <tr>
+|         "\n"
+|         <td>
+|           "1"
+|         "\n"
+|         <td>
+|           "2"
+|         "\n"
+|         <td>
+|           "3"
+|         "\n"
+|       "\n"
+|       <tr>
+|         "\n"
+|         <td>
+|           "4"
+|         "\n"
+|         <td>
+|           "5"
+|         "\n"
+|         <td>
+|           "6"
+|         "\n"
+|       "\n"
+|       <tr>
+|         "\n"
+|         <td>
+|           "7"
+|         "\n"
+|         <td>
+|           "8"
+|         "\n"
+|         <td>
+|           "9"
+|         "\n"
+|       "\n"
+|   "\n"
+| "\n"

@@ -1271,7 +1271,9 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
 
     auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
     if (!delegate) {
-        request.doDefaultAction();
+        ensureOnMainRunLoop([protectedRequest = Ref { request }]() {
+            protectedRequest->doDefaultAction();
+        });
         return;
     }
 
@@ -1280,7 +1282,9 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     bool respondsToRequestDisplayCapturePermissionForOrigin = [delegate respondsToSelector:@selector(_webView:requestDisplayCapturePermissionForOrigin:initiatedByFrame:withSystemAudio:decisionHandler:)];
 
     if (!respondsToRequestMediaCapturePermission && !respondsToRequestUserMediaAuthorizationForDevices && !respondsToRequestDisplayCapturePermissionForOrigin) {
-        request.doDefaultAction();
+        ensureOnMainRunLoop([protectedRequest = Ref { request }]() {
+            protectedRequest->doDefaultAction();
+        });
         return;
     }
 
@@ -1336,7 +1340,9 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
     }
 
     if (!respondsToRequestUserMediaAuthorizationForDevices) {
-        request.doDefaultAction();
+        ensureOnMainRunLoop([protectedRequest = Ref { request }]() {
+            protectedRequest->doDefaultAction();
+        });
         return;
     }
 

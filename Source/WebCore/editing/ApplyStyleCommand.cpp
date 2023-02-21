@@ -59,11 +59,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static int toIdentifier(RefPtr<CSSValue>&& value)
-{
-    return is<CSSPrimitiveValue>(value) ? downcast<CSSPrimitiveValue>(*value).valueID() : 0;
-}
-
 static String& styleSpanClassString()
 {
     static NeverDestroyed<String> styleSpanClassString = String::fromLatin1(AppleStyleSpanClass);
@@ -481,7 +476,7 @@ RefPtr<HTMLElement> ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node,
     RefPtr<Node> nextHighestAncestorWithUnicodeBidi;
     int highestAncestorUnicodeBidi = 0;
     for (auto ancestor = RefPtr { node->parentNode() }; ancestor != block; ancestor = ancestor->parentNode()) {
-        int unicodeBidi = toIdentifier(ComputedStyleExtractor(ancestor.get()).propertyValue(CSSPropertyUnicodeBidi));
+        int unicodeBidi = valueID(ComputedStyleExtractor(ancestor.get()).propertyValue(CSSPropertyUnicodeBidi).get());
         if (unicodeBidi && unicodeBidi != CSSValueNormal) {
             highestAncestorUnicodeBidi = unicodeBidi;
             nextHighestAncestorWithUnicodeBidi = highestAncestorWithUnicodeBidi;
@@ -531,7 +526,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             continue;
 
         StyledElement& element = downcast<StyledElement>(*ancestor);
-        int unicodeBidi = toIdentifier(ComputedStyleExtractor(&element).propertyValue(CSSPropertyUnicodeBidi));
+        int unicodeBidi = valueID(ComputedStyleExtractor(&element).propertyValue(CSSPropertyUnicodeBidi).get());
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -557,7 +552,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 static RefPtr<Node> highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 {
     for (RefPtr currentNode = startNode; currentNode && currentNode != enclosingNode; currentNode = currentNode->parentNode()) {
-        if (currentNode->isHTMLElement() && toIdentifier(ComputedStyleExtractor(currentNode.get()).propertyValue(CSSPropertyUnicodeBidi)) == CSSValueEmbed)
+        if (currentNode->isHTMLElement() && valueID(ComputedStyleExtractor(currentNode.get()).propertyValue(CSSPropertyUnicodeBidi).get()) == CSSValueEmbed)
             return currentNode;
     }
 

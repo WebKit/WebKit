@@ -642,6 +642,8 @@ static void faviconChanged(WebKitWebView *webView, GParamSpec *paramSpec, Browse
 {
 #if GTK_CHECK_VERSION(3, 98, 0)
     GdkTexture *favicon = webkit_web_view_get_favicon(webView);
+    if (favicon)
+        g_object_ref(favicon);
 #else
     cairo_surface_t *surface = webkit_web_view_get_favicon(webView);
     GdkPixbuf *favicon = NULL;

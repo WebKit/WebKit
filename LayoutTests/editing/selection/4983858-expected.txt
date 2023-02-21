@@ -1,0 +1,10 @@
+| <html>
+|   <head>
+|   <body>
+|     contenteditable="true"
+|     "This tests for a bug where selecting a word would select the line break and word before it.  Only the word in the paragraph below should be selected:"
+|     "\n"
+|     "\n"
+|     <div>
+|       "<#selection-focus>foo<#selection-anchor>"
+|     "\n"

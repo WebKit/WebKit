@@ -2459,7 +2459,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-width-005.html
 imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/orthogonal-writing-mode-shrink-to-fit.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/with-custom-layout-on-same-element.https.html
-imported/w3c/web-platform-tests/css/css-multicol/zero-column-width-layout.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-children-height-003.html [ Skip ] # times out
 
 webkit.org/b/148884 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html [ Pass Failure ]
@@ -3364,6 +3363,8 @@ webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Skip ]
 [ Debug ] fast/multicol/crash-in-vertical-writing-mode.html [ Skip ]
 
 webkit.org/b/202805 [ Debug ] fast/multicol/fragflow-gains-new-in-flow-descendant-crash.html [ Skip ]
+
+webkit.org/b/252597 fast/multicol/split-in-top-margin.html [ ImageOnlyFailure ]
 
 # This newly imported test crashes in debug and flakily times out.
 webkit.org/b/189917 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/document-write/contentType.window.html [ Skip ]

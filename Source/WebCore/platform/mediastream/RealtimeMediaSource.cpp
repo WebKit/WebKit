@@ -1069,7 +1069,7 @@ void RealtimeMediaSource::setAspectRatio(double ratio)
     notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::AspectRatio });
 }
 
-void RealtimeMediaSource::setFacingMode(RealtimeMediaSourceSettings::VideoFacingMode mode)
+void RealtimeMediaSource::setFacingMode(VideoFacingMode mode)
 {
     if (m_facingMode == mode)
         return;

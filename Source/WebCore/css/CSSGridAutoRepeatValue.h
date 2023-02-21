@@ -47,7 +47,7 @@ namespace WebCore {
 // allows us to keep the parsing algorithm almost intact.
 class CSSGridAutoRepeatValue final : public CSSValueContainingVector {
 public:
-    static Ref<CSSGridAutoRepeatValue> create(CSSValueID);
+    static Ref<CSSGridAutoRepeatValue> create(CSSValueID, CSSValueListBuilder);
 
     CSSValueID autoRepeatID() const;
 
@@ -55,7 +55,7 @@ public:
     bool equals(const CSSGridAutoRepeatValue&) const;
 
 private:
-    explicit CSSGridAutoRepeatValue(bool isAutoFit);
+    explicit CSSGridAutoRepeatValue(bool isAutoFit, CSSValueListBuilder);
 
     bool m_isAutoFit { false };
 };

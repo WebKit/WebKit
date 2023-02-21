@@ -58,7 +58,13 @@ OBJC_CLASS NSArray;
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
 
+namespace WTF {
+class MachSendRight;
+}
+
 namespace WebCore {
+
+using LayerHostingContextID = uint32_t;
 
 enum class AudioSessionCategory : uint8_t;
 enum class DynamicRangeMode : uint8_t;
@@ -338,6 +344,10 @@ public:
     void videoFullscreenStandbyChanged();
     bool isVideoFullscreenStandby() const;
 #endif
+
+    LayerHostingContextID hostingContextID() const;
+    FloatSize videoInlineSize() const;
+    void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);
 
 #if PLATFORM(IOS_FAMILY)
     NSArray *timedMetadata() const;

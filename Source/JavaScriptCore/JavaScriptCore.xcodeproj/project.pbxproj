@@ -2096,7 +2096,6 @@
 		FE287D02252FB2E800D723F9 /* VerifierSlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = FE287D01252FB2E800D723F9 /* VerifierSlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE2A87601F02381600EB31B2 /* MinimumReservedZoneSize.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2A875F1F02381600EB31B2 /* MinimumReservedZoneSize.h */; };
 		FE2CC9302756B2B9003F5AB8 /* HeapSubspaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = FE2CC92F2756B2B9003F5AB8 /* HeapSubspaceTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE3022D71E42857300BAC493 /* VMInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3022D51E42856700BAC493 /* VMInspector.h */; };
 		FE336B5325DB497D0098F034 /* MarkingConstraintExecutorPair.h in Headers */ = {isa = PBXBuildFile; fileRef = FE336B5225DB497D0098F034 /* MarkingConstraintExecutorPair.h */; };
 		FE3422121D6B81C30032BE88 /* ThrowScope.h in Headers */ = {isa = PBXBuildFile; fileRef = FE3422111D6B818C0032BE88 /* ThrowScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5745,8 +5744,6 @@
 		FE2BD66E25C0DC8200999D3B /* VerifierSlotVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VerifierSlotVisitor.cpp; sourceTree = "<group>"; };
 		FE2CC92F2756B2B9003F5AB8 /* HeapSubspaceTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapSubspaceTypes.h; sourceTree = "<group>"; };
 		FE2E6A7A1D6EA5FE0060F896 /* ThrowScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThrowScope.cpp; sourceTree = "<group>"; };
-		FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SigillCrashAnalyzer.cpp; sourceTree = "<group>"; };
-		FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SigillCrashAnalyzer.h; sourceTree = "<group>"; };
 		FE3022D41E42856700BAC493 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE3022D51E42856700BAC493 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
 		FE336B5225DB497D0098F034 /* MarkingConstraintExecutorPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkingConstraintExecutorPair.h; sourceTree = "<group>"; };
@@ -8562,8 +8559,6 @@
 				FE384EE11ADDB7AD0055DE2C /* JSDollarVM.cpp */,
 				FE384EE21ADDB7AD0055DE2C /* JSDollarVM.h */,
 				86B5822C14D22F5F00A9C306 /* ProfileTreeNode.h */,
-				FE3022D01E3D739600BAC493 /* SigillCrashAnalyzer.cpp */,
-				FE3022D11E3D739600BAC493 /* SigillCrashAnalyzer.h */,
 				86B5826A14D35D5100A9C306 /* TieredMMapArray.h */,
 				FE3022D41E42856700BAC493 /* VMInspector.cpp */,
 				FE3022D51E42856700BAC493 /* VMInspector.h */,
@@ -11234,7 +11229,6 @@
 				8602960226FB552D0078EB62 /* ShadowRealmConstructor.h in Headers */,
 				8602960426FB552D0078EB62 /* ShadowRealmObject.h in Headers */,
 				8602960526FB552D0078EB62 /* ShadowRealmPrototype.h in Headers */,
-				FE3022D31E3D73A500BAC493 /* SigillCrashAnalyzer.h in Headers */,
 				4BC18E5628FDE6C800ECD68D /* SIMDInfo.h in Headers */,
 				E379B59029834EC5007C4C0E /* SIMDShuffle.h in Headers */,
 				0F4D8C781FCA3CFA001D32AC /* SimpleMarkingConstraint.h in Headers */,

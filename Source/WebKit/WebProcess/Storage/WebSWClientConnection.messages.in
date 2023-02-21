@@ -31,8 +31,9 @@ messages -> WebSWClientConnection {
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum:uint8_t WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
     SetRegistrationLastUpdateTime(WebCore::ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
-    SetRegistrationUpdateViaCache(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerUpdateViaCache updateViaCache);
+    SetRegistrationUpdateViaCache(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum:uint8_t WebCore::ServiceWorkerUpdateViaCache updateViaCache)
     NotifyClientsOfControllerChange(HashSet<WebCore::ScriptExecutionContextIdentifier> contextIdentifiers, struct WebCore::ServiceWorkerData newController)
+    UpdateBackgroundFetchRegistration(struct WebCore::BackgroundFetchInformation information)
 
     SetSWOriginTableIsImported()
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
@@ -41,6 +42,9 @@ messages -> WebSWClientConnection {
     SetServiceWorkerClientIsControlled(WebCore::ScriptExecutionContextIdentifier workerIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)
 
     FocusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier) -> (std::optional<WebCore::ServiceWorkerClientData> result)
+
+    NotifyRecordResponseBodyChunk(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, IPC::SharedBufferReference data);
+    NotifyRecordResponseBodyEnd(WebKit::RetrieveRecordResponseBodyCallbackIdentifier identifier, WebCore::ResourceError error);
 }
 
 #endif // ENABLE(SERVICE_WORKER)

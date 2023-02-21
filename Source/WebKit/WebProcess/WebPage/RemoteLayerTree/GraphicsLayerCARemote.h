@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/GraphicsLayerCA.h>
+#include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/PlatformLayer.h>
 
 namespace WebKit {
@@ -41,7 +42,8 @@ public:
 
     void moveToContext(RemoteLayerTreeContext&);
     void clearContext() { m_context = nullptr; }
-
+    LayerMode layerMode() const final;
+    
 private:
     bool isGraphicsLayerCARemote() const override { return true; }
 
@@ -49,6 +51,9 @@ private:
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(PlatformLayer*, WebCore::PlatformCALayerClient* owner) override;
 #if ENABLE(MODEL_ELEMENT)
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(Ref<WebCore::Model>, WebCore::PlatformCALayerClient* owner) override;
+#endif
+#if ENABLE(AVKIT)
+    Ref<WebCore::PlatformCALayer> createPlatformVideoLayer(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner) override;
 #endif
     Ref<WebCore::PlatformCAAnimation> createPlatformCAAnimation(WebCore::PlatformCAAnimation::AnimationType, const String& keyPath) override;
     Ref<WebCore::PlatformCALayer> createPlatformCALayerHost(WebCore::LayerHostingContextIdentifier, WebCore::PlatformCALayerClient*) override;

@@ -38,78 +38,13 @@ struct PrepareBackingStoreBuffersInputData {
     BufferIdentifierSet bufferSet;
     bool supportsPartialRepaint { true };
     bool hasEmptyDirtyRegion { true };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PrepareBackingStoreBuffersInputData> decode(Decoder&);
 };
-
-template<class Encoder>
-void PrepareBackingStoreBuffersInputData::encode(Encoder& encoder) const
-{
-    encoder << bufferSet;
-    encoder << supportsPartialRepaint;
-    encoder << hasEmptyDirtyRegion;
-}
-
-template<class Decoder>
-std::optional<PrepareBackingStoreBuffersInputData> PrepareBackingStoreBuffersInputData::decode(Decoder& decoder)
-{
-    std::optional<BufferIdentifierSet> bufferSet;
-    decoder >> bufferSet;
-    if (!bufferSet)
-        return std::nullopt;
-
-    std::optional<bool> supportsPartialRepaint;
-    decoder >> supportsPartialRepaint;
-    if (!supportsPartialRepaint)
-        return std::nullopt;
-
-    std::optional<bool> hasEmptyDirtyRegion;
-    decoder >> hasEmptyDirtyRegion;
-    if (!hasEmptyDirtyRegion)
-        return std::nullopt;
-
-    return PrepareBackingStoreBuffersInputData { WTFMove(*bufferSet), *supportsPartialRepaint, *hasEmptyDirtyRegion };
-}
-
 
 struct PrepareBackingStoreBuffersOutputData {
     BufferIdentifierSet bufferSet;
     std::optional<ImageBufferBackendHandle> frontBufferHandle;
     SwapBuffersDisplayRequirement displayRequirement { SwapBuffersDisplayRequirement::NeedsNoDisplay };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PrepareBackingStoreBuffersOutputData> decode(Decoder&);
 };
-
-template<class Encoder>
-void PrepareBackingStoreBuffersOutputData::encode(Encoder& encoder) const
-{
-    encoder << bufferSet;
-    encoder << frontBufferHandle;
-    encoder << displayRequirement;
-}
-
-template<class Decoder>
-std::optional<PrepareBackingStoreBuffersOutputData> PrepareBackingStoreBuffersOutputData::decode(Decoder& decoder)
-{
-    std::optional<BufferIdentifierSet> bufferSet;
-    decoder >> bufferSet;
-    if (!bufferSet)
-        return std::nullopt;
-
-    std::optional<std::optional<ImageBufferBackendHandle>> bufferHandle;
-    decoder >> bufferHandle;
-    if (!bufferHandle)
-        return std::nullopt;
-
-    std::optional<SwapBuffersDisplayRequirement> displayRequirement;
-    decoder >> displayRequirement;
-    if (!displayRequirement)
-        return std::nullopt;
-
-    return PrepareBackingStoreBuffersOutputData { WTFMove(*bufferSet), WTFMove(*bufferHandle), *displayRequirement };
-}
 
 } // namespace WebKit
 

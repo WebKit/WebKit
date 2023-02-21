@@ -265,9 +265,13 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     }
 }
 
-const Layout::Box& BoxTree::insert(const RenderElement&, RenderObject& child)
+const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child)
 {
+    UNUSED_PARAM(parent);
+
     appendChild(createLayoutBox(child), child);
+    if (!m_boxToRendererMap.isEmpty())
+        m_boxToRendererMap.add(*child.layoutBox(), child);
     return layoutBoxForRenderer(child);
 }
 

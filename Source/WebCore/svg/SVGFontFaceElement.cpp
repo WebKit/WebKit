@@ -273,9 +273,7 @@ void SVGFontFaceElement::rebuildFontFace()
 
     if (describesParentFont) {
         m_fontElement = downcast<SVGFontElement>(parentNode());
-
-        list = CSSValueList::createCommaSeparated();
-        list->append(CSSFontFaceSrcLocalValue::create(AtomString { fontFamily() }));
+        list = CSSValueList::createCommaSeparated(CSSFontFaceSrcLocalValue::create(AtomString { fontFamily() }));
     } else {
         m_fontElement = nullptr;
         if (srcElement)
@@ -292,7 +290,7 @@ void SVGFontFaceElement::rebuildFontFace()
         // Traverse parsed CSS values and associate CSSFontFaceSrcLocalValue elements with ourselves.
         if (auto* srcList = downcast<CSSValueList>(m_fontFaceRule->properties().getPropertyCSSValue(CSSPropertySrc).get())) {
             for (auto& item : *srcList)
-                downcast<CSSFontFaceSrcLocalValue>(item.get()).setSVGFontFaceElement(*this);
+                downcast<CSSFontFaceSrcLocalValue>(const_cast<CSSValue&>(item)).setSVGFontFaceElement(*this);
         }
     }
 

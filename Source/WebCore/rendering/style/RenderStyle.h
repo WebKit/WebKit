@@ -2052,6 +2052,10 @@ public:
     void setOverflowAnchor(OverflowAnchor a) { SET_NESTED_VAR(m_nonInheritedData, rareData, overflowAnchor, static_cast<unsigned>(a)); }
     static OverflowAnchor initialOverflowAnchor() { return OverflowAnchor::Auto; }
 
+    static std::optional<Length> initialBlockStepSize() { return { }; }
+    std::optional<Length> blockStepSize() const { return m_nonInheritedData->rareData->blockStepSize; } 
+    void setBlockStepSize(std::optional<Length> length) { SET_NESTED_VAR(m_nonInheritedData, rareData, blockStepSize, length); } 
+
 private:
     struct NonInheritedFlags {
         bool operator==(const NonInheritedFlags&) const;

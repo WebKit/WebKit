@@ -82,6 +82,10 @@ public:
     virtual void videoFullscreenStandbyChanged() { }
 #endif
 
+    virtual LayerHostingContextID hostingContextID() const { return 0; }
+    virtual FloatSize videoInlineSize() const { return { }; }
+    virtual void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&) { }
+
 #if PLATFORM(IOS_FAMILY)
     virtual NSArray *timedMetadata() const { return nil; }
     virtual String accessLog() const { return emptyString(); }

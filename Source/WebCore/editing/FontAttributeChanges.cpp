@@ -94,13 +94,11 @@ static RefPtr<CSSValueList> cssValueListForShadow(const FontShadow& shadow)
     if (shadow.offset.isZero() && !shadow.blurRadius)
         return nullptr;
 
-    auto list = CSSValueList::createCommaSeparated();
     auto width = CSSPrimitiveValue::create(shadow.offset.width(), CSSUnitType::CSS_PX);
     auto height = CSSPrimitiveValue::create(shadow.offset.height(), CSSUnitType::CSS_PX);
     auto blurRadius = CSSPrimitiveValue::create(shadow.blurRadius, CSSUnitType::CSS_PX);
     auto color = CSSValuePool::singleton().createColorValue(shadow.color);
-    list->prepend(CSSShadowValue::create(WTFMove(width), WTFMove(height), WTFMove(blurRadius), { }, { }, WTFMove(color)));
-    return list.ptr();
+    return CSSValueList::createCommaSeparated(CSSShadowValue::create(WTFMove(width), WTFMove(height), WTFMove(blurRadius), { }, { }, WTFMove(color)));
 }
 
 FontAttributeChanges::FontAttributeChanges(std::optional<VerticalAlignChange>&& verticalAlign, std::optional<Color>&& backgroundColor, std::optional<Color>&& foregroundColor, std::optional<FontShadow>&& shadow, std::optional<bool>&& strikeThrough, std::optional<bool>&& underline, FontChanges&& fontChanges)

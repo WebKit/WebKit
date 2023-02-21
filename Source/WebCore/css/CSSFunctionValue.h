@@ -33,15 +33,25 @@ enum CSSValueID : uint16_t;
 
 class CSSFunctionValue final : public CSSValueContainingVector {
 public:
+    static Ref<CSSFunctionValue> create(CSSValueID name, CSSValueListBuilder arguments);
     static Ref<CSSFunctionValue> create(CSSValueID name);
-    
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> argument);
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> firstArgument, Ref<CSSValue> secondArgument);
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> firstArgument, Ref<CSSValue> secondArgument, Ref<CSSValue> thirdArgument);
+    static Ref<CSSFunctionValue> create(CSSValueID name, Ref<CSSValue> firstArgument, Ref<CSSValue> secondArgument, Ref<CSSValue> thirdArgument, Ref<CSSValue> fourthArgument);
+
     CSSValueID name() const { return m_name; }
 
     String customCSSText() const;
     bool equals(const CSSFunctionValue& other) const { return m_name == other.m_name && itemsEqual(other); }
 
 private:
+    CSSFunctionValue(CSSValueID name, CSSValueListBuilder);
     explicit CSSFunctionValue(CSSValueID name);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
+    CSSFunctionValue(CSSValueID name, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>, Ref<CSSValue>);
 
     CSSValueID m_name { };
 };

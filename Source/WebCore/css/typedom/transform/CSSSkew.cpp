@@ -59,7 +59,7 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(CSSFunctionValue& cssFunctionValue)
     }
 
     Vector<Ref<CSSNumericValue>> components;
-    for (auto componentCSSValue : cssFunctionValue) {
+    for (auto& componentCSSValue : cssFunctionValue) {
         auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
         if (valueOrException.hasException())
             return valueOrException.releaseException();
@@ -139,12 +139,9 @@ RefPtr<CSSValue> CSSSkew::toCSSValue() const
     auto ay = m_ay->toCSSValue();
     if (!ax || !ay)
         return nullptr;
-
-    auto result = CSSFunctionValue::create(CSSValueSkew);
-    result->append(ax.releaseNonNull());
-    if (!is<CSSUnitValue>(m_ay.get()) || downcast<CSSUnitValue>(m_ay.get()).value())
-        result->append(ay.releaseNonNull());
-    return result;
+    if (is<CSSUnitValue>(m_ay.get()) && !downcast<CSSUnitValue>(m_ay.get()).value())
+        return CSSFunctionValue::create(CSSValueSkew, ax.releaseNonNull());
+    return CSSFunctionValue::create(CSSValueSkew, ax.releaseNonNull(), ay.releaseNonNull());
 }
 
 } // namespace WebCore

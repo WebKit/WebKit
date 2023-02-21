@@ -45,7 +45,7 @@ public:
 private:
     DeprecatedCSSOMValueList(const CSSValueContainingVector& values, CSSStyleDeclaration& owner)
         : DeprecatedCSSOMValue(ClassType::List, owner)
-        , m_values(WTF::map(values, [&](auto& value) { return value->createDeprecatedCSSOMWrapper(owner); }))
+        , m_values(WTF::map(values, [&](auto& value) { return value.createDeprecatedCSSOMWrapper(owner); }))
     {
         m_valueSeparator = values.separator();
     }

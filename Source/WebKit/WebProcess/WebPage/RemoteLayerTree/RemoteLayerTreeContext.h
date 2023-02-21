@@ -28,7 +28,9 @@
 #include "LayerTreeContext.h"
 #include "RemoteLayerBackingStoreCollection.h"
 #include "RemoteLayerTreeTransaction.h"
+#include <WebCore/FloatSize.h>
 #include <WebCore/GraphicsLayerFactory.h>
+#include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/LayerPool.h>
 #include <WebCore/PlatformCALayer.h>
 #include <wtf/Vector.h>
@@ -47,6 +49,9 @@ public:
     ~RemoteLayerTreeContext();
 
     void layerDidEnterContext(PlatformCALayerRemote&, WebCore::PlatformCALayer::LayerType);
+#if HAVE(AVKIT)
+    void layerDidEnterContext(PlatformCALayerRemote&, WebCore::PlatformCALayer::LayerType, WebCore::HTMLVideoElement&);
+#endif
     void layerWillLeaveContext(PlatformCALayerRemote&);
 
     void graphicsLayerDidEnterContext(GraphicsLayerCARemote&);
@@ -91,6 +96,8 @@ public:
     bool canShowWhileLocked() const;
 #endif
 
+    WebPage& webPage() { return m_webPage; }
+
 private:
     // WebCore::GraphicsLayerFactory
     Ref<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayer::Type, WebCore::GraphicsLayerClient&) override;
@@ -102,6 +109,9 @@ private:
 
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_livePlatformLayers;
     HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlatformCALayerRemote*> m_layersWithAnimations;
+#if HAVE(AVKIT)
+    HashMap<WebCore::GraphicsLayer::PlatformLayerID, PlaybackSessionContextIdentifier> m_videoLayers;
+#endif
 
     HashSet<GraphicsLayerCARemote*> m_liveGraphicsLayers;
 

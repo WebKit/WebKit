@@ -44,27 +44,4 @@ CSSPropertyID StylePropertyMetadata::shorthandID() const
     return shorthands[m_indexInShorthandsVector].id();
 }
 
-void CSSProperty::wrapValueInCommaSeparatedList()
-{
-    auto list = CSSValueList::createCommaSeparated();
-    list.get().append(m_value.releaseNonNull());
-    m_value = WTFMove(list);
-}
-
-Ref<CSSValueList> CSSProperty::createListForProperty(CSSPropertyID propertyID)
-{
-    switch (listValuedPropertySeparator(propertyID)) {
-    case ' ':
-        return CSSValueList::createSpaceSeparated();
-    case ',':
-        return CSSValueList::createCommaSeparated();
-    case '/':
-        return CSSValueList::createSlashSeparated();
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return CSSValueList::createCommaSeparated();
-}
-
 } // namespace WebCore

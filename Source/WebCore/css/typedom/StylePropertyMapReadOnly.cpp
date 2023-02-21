@@ -79,8 +79,8 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPt
     auto& valueList = downcast<CSSValueList>(*value);
     Vector<RefPtr<CSSStyleValue>> result;
     result.reserveInitialCapacity(valueList.length());
-    for (const auto& cssValue : valueList)
-        result.uncheckedAppend(StylePropertyMapReadOnly::reifyValue(cssValue.copyRef(), propertyID, document));
+    for (auto& item : valueList)
+        result.uncheckedAppend(StylePropertyMapReadOnly::reifyValue(Ref { const_cast<CSSValue&>(item) }, propertyID, document));
     return result;
 }
 

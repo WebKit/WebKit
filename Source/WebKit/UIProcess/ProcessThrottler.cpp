@@ -165,7 +165,6 @@ ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleStat
 void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
 {
     m_state = newState;
-    m_process.didChangeThrottleState(newState);
 
     ProcessAssertionType newType = assertionTypeForState(newState);
 
@@ -190,6 +189,8 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
         if (weakThis)
             weakThis->assertionWasInvalidated();
     });
+
+    m_process.didChangeThrottleState(newState);
 }
     
 void ProcessThrottler::updateThrottleStateIfNeeded()

@@ -35,21 +35,28 @@
 
 namespace WebCore {
 
+enum class VideoFacingMode : uint8_t {
+    Unknown,
+    User,
+    Environment,
+    Left,
+    Right
+};
+
+enum class DisplaySurfaceType : uint8_t {
+    Monitor,
+    Window,
+    Application,
+    Browser,
+    Invalid,
+};
+
 class RealtimeMediaSourceSettings {
 public:
-    enum VideoFacingMode { Unknown, User, Environment, Left, Right };
-    enum class DisplaySurfaceType {
-        Monitor,
-        Window,
-        Application,
-        Browser,
-        Invalid,
-    };
-
-    static String facingMode(RealtimeMediaSourceSettings::VideoFacingMode);
-    static RealtimeMediaSourceSettings::VideoFacingMode videoFacingModeEnum(const String&);
-    static String displaySurface(RealtimeMediaSourceSettings::DisplaySurfaceType);
-
+    static String facingMode(VideoFacingMode);
+    static VideoFacingMode videoFacingModeEnum(const String&);
+    static String displaySurface(DisplaySurfaceType);
+    
     enum Flag {
         Width = 1 << 0,
         Height = 1 << 1,
@@ -72,6 +79,24 @@ public:
     WEBCORE_EXPORT OptionSet<RealtimeMediaSourceSettings::Flag> difference(const RealtimeMediaSourceSettings&) const;
 
     explicit RealtimeMediaSourceSettings() = default;
+    RealtimeMediaSourceSettings(uint32_t width, uint32_t height, float aspectRatio, float frameRate, VideoFacingMode facingMode, double volume, uint32_t sampleRate, uint32_t sampleSize, bool echoCancellation, AtomString&& deviceId, AtomString&& groupId, AtomString&& label, DisplaySurfaceType displaySurface, bool logicalSurface, RealtimeMediaSourceSupportedConstraints&& supportedConstraints)
+        : m_width(width)
+        , m_height(height)
+        , m_aspectRatio(aspectRatio)
+        , m_frameRate(frameRate)
+        , m_facingMode(facingMode)
+        , m_volume(volume)
+        , m_sampleRate(sampleRate)
+        , m_sampleSize(sampleSize)
+        , m_echoCancellation(echoCancellation)
+        , m_deviceId(WTFMove(deviceId))
+        , m_groupId(WTFMove(groupId))
+        , m_label(WTFMove(label))
+        , m_displaySurface(displaySurface)
+        , m_logicalSurface(logicalSurface)
+        , m_supportedConstraints(WTFMove(supportedConstraints))
+    {
+    }
 
     bool supportsWidth() const { return m_supportedConstraints.supportsWidth(); }
     uint32_t width() const { return m_width; }
@@ -131,9 +156,6 @@ public:
     const AtomString& label() const { return m_label; }
     void setLabel(const AtomString& label) { m_label = label; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, RealtimeMediaSourceSettings&);
-
     static String convertFlagsToString(const OptionSet<RealtimeMediaSourceSettings::Flag>);
 
 private:
@@ -141,7 +163,7 @@ private:
     uint32_t m_height { 0 };
     float m_aspectRatio { 0 };
     float m_frameRate { 0 };
-    VideoFacingMode m_facingMode { Unknown };
+    VideoFacingMode m_facingMode { VideoFacingMode::Unknown };
     double m_volume { 0 };
     uint32_t m_sampleRate { 0 };
     uint32_t m_sampleSize { 0 };
@@ -157,80 +179,18 @@ private:
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 };
 
-template<class Encoder>
-void RealtimeMediaSourceSettings::encode(Encoder& encoder) const
-{
-    encoder << m_width
-        << m_height
-        << m_aspectRatio
-        << m_frameRate
-        << m_volume
-        << m_sampleRate
-        << m_sampleSize
-        << m_echoCancellation
-        << m_deviceId
-        << m_groupId
-        << m_displaySurface
-        << m_logicalSurface
-        << m_label
-        << m_supportedConstraints;
-    encoder << m_facingMode;
-}
-
-template<class Decoder>
-bool RealtimeMediaSourceSettings::decode(Decoder& decoder, RealtimeMediaSourceSettings& settings)
-{
-    return decoder.decode(settings.m_width)
-        && decoder.decode(settings.m_height)
-        && decoder.decode(settings.m_aspectRatio)
-        && decoder.decode(settings.m_frameRate)
-        && decoder.decode(settings.m_volume)
-        && decoder.decode(settings.m_sampleRate)
-        && decoder.decode(settings.m_sampleSize)
-        && decoder.decode(settings.m_echoCancellation)
-        && decoder.decode(settings.m_deviceId)
-        && decoder.decode(settings.m_groupId)
-        && decoder.decode(settings.m_displaySurface)
-        && decoder.decode(settings.m_logicalSurface)
-        && decoder.decode(settings.m_label)
-        && decoder.decode(settings.m_supportedConstraints)
-        && decoder.decode(settings.m_facingMode);
-}
-
-String convertEnumerationToString(RealtimeMediaSourceSettings::VideoFacingMode);
+String convertEnumerationToString(VideoFacingMode);
 
 } // namespace WebCore
 
 namespace WTF {
 
-template <> struct EnumTraits<WebCore::RealtimeMediaSourceSettings::VideoFacingMode> {
-    using values = EnumValues<
-        WebCore::RealtimeMediaSourceSettings::VideoFacingMode,
-        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Unknown,
-        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::User,
-        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Environment,
-        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Left,
-        WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Right
-    >;
-};
-
-template <> struct EnumTraits<WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType> {
-    using values = EnumValues<
-        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType,
-        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor,
-        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Window,
-        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Application,
-        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Browser,
-        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Invalid
-    >;
-};
-
 template<typename Type>
 struct LogArgument;
 
 template <>
-struct LogArgument<WebCore::RealtimeMediaSourceSettings::VideoFacingMode> {
-    static String toString(const WebCore::RealtimeMediaSourceSettings::VideoFacingMode mode)
+struct LogArgument<WebCore::VideoFacingMode> {
+    static String toString(const WebCore::VideoFacingMode mode)
     {
         return convertEnumerationToString(mode);
     }

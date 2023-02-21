@@ -125,7 +125,7 @@ void TiledCoreAnimationDrawingArea::sendDidFirstLayerFlushIfNeeded()
         if (!weakThis || !m_layerHostingContext)
             return;
         LayerTreeContext layerTreeContext;
-        layerTreeContext.contextID = m_layerHostingContext->contextID();
+        layerTreeContext.contextID = m_layerHostingContext->cachedContextID();
         send(Messages::DrawingAreaProxy::DidFirstLayerFlush(0, layerTreeContext));
     } forPhase:kCATransactionPhasePostCommit];
 }
@@ -137,7 +137,7 @@ void TiledCoreAnimationDrawingArea::sendEnterAcceleratedCompositingModeIfNeeded(
     m_needsSendEnterAcceleratedCompositingMode = false;
 
     LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = m_layerHostingContext->contextID();
+    layerTreeContext.contextID = m_layerHostingContext->cachedContextID();
     send(Messages::DrawingAreaProxy::EnterAcceleratedCompositingMode(0, layerTreeContext));
 }
 
@@ -548,7 +548,7 @@ void TiledCoreAnimationDrawingArea::setLayerHostingMode(LayerHostingMode)
 
     // Finally, inform the UIProcess that the context has changed.
     LayerTreeContext layerTreeContext;
-    layerTreeContext.contextID = m_layerHostingContext->contextID();
+    layerTreeContext.contextID = m_layerHostingContext->cachedContextID();
     send(Messages::DrawingAreaProxy::UpdateAcceleratedCompositingMode(0, layerTreeContext));
 }
 
