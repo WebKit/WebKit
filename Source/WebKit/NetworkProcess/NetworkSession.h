@@ -60,7 +60,7 @@ class ResourceRequest;
 class ResourceError;
 class SWServer;
 enum class IncludeHttpOnlyCookies : bool;
-enum class NetworkConnectionIntegrity : uint8_t;
+enum class NetworkConnectionIntegrity : uint16_t;
 enum class ShouldSample : bool;
 struct ClientOrigin;
 class SecurityOriginData;

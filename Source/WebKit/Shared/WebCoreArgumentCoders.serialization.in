@@ -4255,7 +4255,7 @@ enum class WebCore::ModalContainerObservationPolicy : bool
 
 enum class WebCore::AllowsContentJavaScript : bool
 
-[OptionSet] enum class WebCore::NetworkConnectionIntegrity : uint8_t {
+[OptionSet] enum class WebCore::NetworkConnectionIntegrity : uint16_t {
     Enabled,
     HTTPSFirst,
     HTTPSOnly,
@@ -4264,4 +4264,5 @@ enum class WebCore::AllowsContentJavaScript : bool
     WebSearchContent,
     EnhancedTelemetry,
     RequestValidation,
+    SanitizeLookalikeCharacters,
 };
