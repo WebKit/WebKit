@@ -665,7 +665,10 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
         for i in range(len(type.members)):
             if i == 0:
                 result.append('            {')
-            result.append('                "' + type.members[i].type + '"_s,')
+            if 'Nullable' in type.members[i].attributes:
+                result.append('                "std::optional<' + type.members[i].type + '>"_s,')
+            else:
+                result.append('                "' + type.members[i].type + '"_s,')
             result.append('                "' + type.members[i].name + '"_s')
             if i == len(type.members) - 1:
                 result.append('            }')
