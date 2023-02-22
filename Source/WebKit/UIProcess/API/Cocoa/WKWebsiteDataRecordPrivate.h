@@ -39,10 +39,6 @@ WK_EXTERN NSString * const _WKWebsiteDataTypeAdClickAttributions WK_API_AVAILABL
 WK_EXTERN NSString * const _WKWebsiteDataTypePrivateClickMeasurements WK_API_AVAILABLE(macos(12.0), ios(15.0));
 WK_EXTERN NSString * const _WKWebsiteDataTypeAlternativeServices WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-#if !TARGET_OS_IPHONE
-WK_EXTERN NSString * const _WKWebsiteDataTypePlugInData WK_API_AVAILABLE(macos(10.11));
-#endif
-
 @interface WKWebsiteDataRecord (WKPrivate)
 
 @property (nullable, nonatomic, readonly) _WKWebsiteDataSize *_dataSize;

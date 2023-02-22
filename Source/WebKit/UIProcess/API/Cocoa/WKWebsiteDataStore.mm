@@ -323,9 +323,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
             _WKWebsiteDataTypeAdClickAttributions,
             _WKWebsiteDataTypePrivateClickMeasurements,
             _WKWebsiteDataTypeAlternativeServices
-#if !TARGET_OS_IPHONE
-            , _WKWebsiteDataTypePlugInData
-#endif
         ];
 
         allWebsiteDataTypes.get() = [[self allWebsiteDataTypes] setByAddingObjectsFromArray:privateTypes];
