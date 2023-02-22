@@ -5543,8 +5543,12 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!canvas)
         return;
 
-    if (!isContextLost())
+    if (!isContextLost()) {
         canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
+        // Notify the render layer to reconfigure the structure of the backing. This causes the backing to
+        // start using the new layer contents display delegate from the new context.
+        notifyCanvasContentChanged();
+    }
 }
 
 void WebGLRenderingContextBase::simulateEventForTesting(SimulatedEventForTesting event)
