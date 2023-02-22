@@ -223,7 +223,7 @@ void DisplayRefreshMonitor::displayDidRefresh(const DisplayUpdate& displayUpdate
         setIsPreviousFrameDone(true);
     }
 
-    DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(*this);
+    DisplayRefreshMonitorManager::sharedManager().displayMonitorDisplayDidRefresh(*this);
 }
 
 }

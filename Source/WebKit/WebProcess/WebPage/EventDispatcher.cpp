@@ -295,7 +295,7 @@ void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEventType ev
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::DidReceiveEvent(eventType, didHandleEvent), pageID);
 }
 
-void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID displayID)
+void EventDispatcher::notifyScrollingTreesDisplayDidRefresh(PlatformDisplayID displayID)
 {
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     Locker locker { m_scrollingTreesLock };
@@ -305,23 +305,23 @@ void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID 
 }
 
 #if HAVE(CVDISPLAYLINK)
-void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
+void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
 {
     tracePoint(DisplayRefreshDispatchingToMainThread, displayID, sendToMainThread);
 
     ASSERT(!RunLoop::isMain());
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->displayWasRefreshed(displayID);
+    m_momentumEventDispatcher->displayDidRefresh(displayID);
 #endif
 
-    notifyScrollingTreesDisplayWasRefreshed(displayID);
+    notifyScrollingTreesDisplayDidRefresh(displayID);
 
     if (!sendToMainThread)
         return;
 
     RunLoop::main().dispatch([displayID, displayUpdate]() {
-        DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID, displayUpdate);
+        DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(displayID, displayUpdate);
     });
 }
 #endif
@@ -347,12 +347,12 @@ void EventDispatcher::handleSyntheticWheelEvent(WebCore::PageIdentifier pageIden
     internalWheelEvent(pageIdentifier, event, rubberBandableEdges, WheelEventOrigin::MomentumEventDispatcher);
 }
 
-void EventDispatcher::startDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID displayID)
+void EventDispatcher::startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID displayID)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond), 0);
 }
 
-void EventDispatcher::stopDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID displayID)
+void EventDispatcher::stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID displayID)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID), 0);
 }

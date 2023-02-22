@@ -85,7 +85,7 @@ bool DisplayRefreshMonitorManager::scheduleAnimation(DisplayRefreshMonitorClient
     return false;
 }
 
-void DisplayRefreshMonitorManager::displayDidRefresh(DisplayRefreshMonitor&)
+void DisplayRefreshMonitorManager::displayMonitorDisplayDidRefresh(DisplayRefreshMonitor&)
 {
     // Maybe we should remove monitors that haven't been active for some time.
 }
@@ -110,7 +110,7 @@ std::optional<FramesPerSecond> DisplayRefreshMonitorManager::nominalFramesPerSec
     return std::nullopt;
 }
 
-void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate)
+void DisplayRefreshMonitorManager::displayDidRefresh(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate)
 {
     auto* monitor = monitorForDisplayID(displayID);
     if (monitor)

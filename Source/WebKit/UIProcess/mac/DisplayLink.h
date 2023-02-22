@@ -71,7 +71,7 @@ public:
 
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
-    void notifyObserversDisplayWasRefreshed();
+    void notifyObserversDisplayDidRefresh();
 
     bool removeInfoForClientIfUnused(Client&) WTF_REQUIRES_LOCK(m_clientsLock);
 

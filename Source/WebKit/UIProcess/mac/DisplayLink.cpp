@@ -213,11 +213,11 @@ void DisplayLink::setObserverPreferredFramesPerSecond(Client& client, DisplayLin
 
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
-    static_cast<DisplayLink*>(data)->notifyObserversDisplayWasRefreshed();
+    static_cast<DisplayLink*>(data)->notifyObserversDisplayDidRefresh();
     return kCVReturnSuccess;
 }
 
-void DisplayLink::notifyObserversDisplayWasRefreshed()
+void DisplayLink::notifyObserversDisplayDidRefresh()
 {
     ASSERT(!RunLoop::isMain());
 

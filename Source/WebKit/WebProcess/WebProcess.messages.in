@@ -189,7 +189,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    DisplayWasRefreshed(uint32_t displayID, struct WebCore::DisplayUpdate update)
+    DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update)
 #endif
 
 #if PLATFORM(MAC)

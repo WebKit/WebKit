@@ -88,7 +88,7 @@ public:
 
     void initializeConnection(IPC::Connection&);
 
-    void notifyScrollingTreesDisplayWasRefreshed(WebCore::PlatformDisplayID);
+    void notifyScrollingTreesDisplayDidRefresh(WebCore::PlatformDisplayID);
 
 private:
     // IPC::MessageReceiver overrides.
@@ -123,7 +123,7 @@ private:
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);
 
 #if PLATFORM(MAC)
-    void displayWasRefreshed(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
+    void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
 #endif
 
 #if ENABLE(SCROLLING_THREAD)
@@ -133,8 +133,8 @@ private:
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     // EventDispatcher::Client
     void handleSyntheticWheelEvent(WebCore::PageIdentifier, const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges) override;
-    void startDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID) override;
-    void stopDisplayWasRefreshedCallbacks(WebCore::PlatformDisplayID) override;
+    void startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) override;
+    void stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID) override;
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     void flushMomentumEventLoggingSoon() override;

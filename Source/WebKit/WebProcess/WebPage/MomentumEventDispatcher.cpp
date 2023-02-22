@@ -286,7 +286,7 @@ void MomentumEventDispatcher::startDisplayLink()
     }
 
     // FIXME: Switch down to lower-than-full-speed frame rates for the tail end of the curve.
-    m_client.startDisplayWasRefreshedCallbacks(displayProperties->displayID);
+    m_client.startDisplayDidRefreshCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher starting display link for display %d", displayProperties->displayID);
 #endif
@@ -300,7 +300,7 @@ void MomentumEventDispatcher::stopDisplayLink()
         return;
     }
 
-    m_client.stopDisplayWasRefreshedCallbacks(displayProperties->displayID);
+    m_client.stopDisplayDidRefreshCallbacks(displayProperties->displayID);
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
     RELEASE_LOG(ScrollAnimations, "MomentumEventDispatcher stopping display link for display %d", displayProperties->displayID);
 #endif
@@ -344,7 +344,7 @@ std::optional<WebCore::FloatSize> MomentumEventDispatcher::consumeDeltaForCurren
     return delta;
 }
 
-void MomentumEventDispatcher::displayWasRefreshed(WebCore::PlatformDisplayID displayID)
+void MomentumEventDispatcher::displayDidRefresh(WebCore::PlatformDisplayID displayID)
 {
     if (!m_currentGesture.active)
         return;
