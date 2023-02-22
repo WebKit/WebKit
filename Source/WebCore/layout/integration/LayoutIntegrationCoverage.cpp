@@ -115,9 +115,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::MultiColumnFlowHasVerticalWritingMode:
         stream << "column has vertical writing mode";
         break;
-    case AvoidanceReason::MultiColumnFlowVerticalAlign:
-        stream << "column with vertical-align != baseline";
-        break;
     case AvoidanceReason::MultiColumnFlowIsFloating:
         stream << "column with floating objects";
         break;
@@ -427,8 +424,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         auto& style = flow.style();
         if (!style.isHorizontalWritingMode())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasVerticalWritingMode, reasons, includeReasons);
-        if (style.verticalAlign() != VerticalAlign::Baseline)
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowVerticalAlign, reasons, includeReasons);
         if (style.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
