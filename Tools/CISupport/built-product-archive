@@ -133,11 +133,14 @@ def createZipFromList(listToZip, configuration, excludePatterns=None):
             raise
 
     if sys.platform.startswith('linux'):
-        zipCommand = ['zip', '-y', '-r', archiveFile] + listToZip
+        zipCommand = ['zip', '-y', '-r', archiveFile, '-@']
         if excludePatterns:
             for excludePattern in excludePatterns:
                 zipCommand += ['-x', excludePattern]
-        return subprocess.call(zipCommand, cwd=_configurationBuildDirectory)
+        # listToZip can be very large, so we pass it via stdin (see zip manpage)
+        # to avoid a potential issue hitting the ARG_MAX limit.
+        zipSubprocess = subprocess.run(zipCommand, cwd=_configurationBuildDirectory, input='\n'.join(listToZip).encode())
+        return zipSubprocess.returncode
 
     raise NotImplementedError('Unsupported platform: {platform}'.format(platform=sys.platform))
 
@@ -212,14 +215,15 @@ def createZip(directoryToZip, configuration, excludePatterns=None, embedParentDi
                 zipCommand += ['-x', excludePattern]
         return subprocess.call(zipCommand, cwd=directoryToZip)
 
-
-def dirContainsdwo(directory):
-    sourcedir = os.path.join(_configurationBuildDirectory, directory)
-    for root, dirs, files in os.walk(sourcedir, topdown=False):
-        for name in files:
-            if name.endswith(".dwo"):
-                return True
-    return False
+def listRecursiveFilesInDirWithSuffix(directory, suffix):
+    listFiles = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(suffix):
+                realAbsolutePath = os.path.join(root, file)
+                realRelativePath = realAbsolutePath[len(directory)+1:]
+                listFiles.append(realRelativePath)
+    return listFiles
 
 MINIFIED_EXCLUDED_PATTERNS = ('*.a', '*.dSYM', 'DerivedSources')
 
@@ -311,14 +315,10 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         if platform == 'gtk':
             contents.extend([os.path.join('install', directory) for directory in ['include', os.path.join('lib', 'pkgconfig')]])
 
-        # When debug fission is enabled the directories below contain dwo files
-        # with the debug information needed to generate backtraces with GDB.
-        for objectDir in ['Tools', 'Source']:
-            if dirContainsdwo(objectDir):
-                contents.append(objectDir)
+        # When debug fission is enabled the dwo files have information needed to generate backtraces with GDB.
+        contents.extend(listRecursiveFilesInDirWithSuffix(_configurationBuildDirectory, '.dwo'))
 
-        if createZipFromList(contents, configuration, excludePatterns=['*.o', '*.a']):
-            return 1
+        return createZipFromList(contents, configuration, excludePatterns=['*.o', '*.a'])
 
 def unzipArchive(directoryToExtractTo, configuration):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
