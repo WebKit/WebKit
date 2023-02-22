@@ -135,7 +135,6 @@ public:
     InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName)
         : m_parent(parent)
         , m_track(track)
-        , m_trackEnabled(track.enabled())
         , m_padName(padName)
     {
         static uint64_t audioCounter = 0;
@@ -243,12 +242,13 @@ public:
         });
     }
 
-    void pushSample(GstSample* sample)
+    void pushSample(GstSample* sample, const char* logMessage)
     {
         ASSERT(m_src);
         if (!m_src || !m_isObserving)
             return;
 
+        GST_TRACE_OBJECT(m_src.get(), "%s", logMessage);
         auto* parent = WEBKIT_MEDIA_STREAM_SRC(m_parent);
         webkitMediaStreamSrcEnsureStreamCollectionPosted(parent);
 
@@ -302,7 +302,6 @@ public:
 
     void trackEnabledChanged(MediaStreamTrackPrivate&) final
     {
-        m_trackEnabled.store(m_track.enabled());
         GST_INFO_OBJECT(m_src.get(), "Track enabled: %s", boolForPrinting(m_track.enabled()));
         if (m_track.isVideo()) {
             m_enoughData = false;
@@ -352,15 +351,10 @@ public:
         if (!m_configuredSize.isEmpty() && m_lastKnownSize != m_configuredSize) {
             GST_DEBUG_OBJECT(m_src.get(), "Video size changed from %dx%d to %dx%d", m_lastKnownSize.width(), m_lastKnownSize.height(), m_configuredSize.width(), m_configuredSize.height());
             m_lastKnownSize = m_configuredSize;
-            updateBlackFrame();
         }
 
-        if (!m_blackFrame)
-            updateBlackFrame();
-
-        if (m_trackEnabled.load()) {
-            GST_TRACE_OBJECT(m_src.get(), "Pushing video frame from enabled track");
-            pushSample(gstSample);
+        if (m_track.enabled()) {
+            pushSample(gstSample, "Pushing video frame from enabled track");
             return;
         }
 
@@ -374,26 +368,12 @@ public:
 
         const auto& data = static_cast<const GStreamerAudioData&>(audioData);
         auto sample = data.getSample();
-        if (m_trackEnabled.load()) {
-            GST_TRACE_OBJECT(m_src.get(), "Pushing audio sample from enabled track");
-            pushSample(sample.get());
+        if (m_track.enabled()) {
+            pushSample(sample.get(), "Pushing audio sample from enabled track");
             return;
         }
 
-        if (!m_silentSample) {
-            DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-            auto size = gst_buffer_get_size(gst_sample_get_buffer(sample.get()));
-            auto buffer = adoptGRef(gst_buffer_new_and_alloc(size));
-            GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
-            GstAudioInfo info;
-            gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_F32LE, 44100, 1, nullptr);
-            webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
-            auto caps = adoptGRef(gst_audio_info_to_caps(&info));
-            m_silentSample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-        }
-
-        GST_TRACE_OBJECT(m_src.get(), "Pushing audio silence from disabled track");
-        pushSample(m_silentSample.get());
+        pushSilentSample();
     }
 
     Lock* eosLocker() { return &m_eosLock; }
@@ -428,17 +408,21 @@ private:
         gst_element_send_event(m_src.get(), gst_event_new_flush_stop(FALSE));
     }
 
-    void updateBlackFrame()
+    void pushBlackFrame()
     {
-        GST_DEBUG_OBJECT(m_src.get(), "Updating black video frame");
         auto width = m_lastKnownSize.width() ? m_lastKnownSize.width() : 320;
         auto height = m_lastKnownSize.height() ? m_lastKnownSize.height() : 240;
-        auto caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
+        if (!m_blackFrameCaps)
+            m_blackFrameCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, "I420", "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
+        else
+            gst_caps_set_simple(m_blackFrameCaps.get(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr);
 
         GstVideoInfo info;
-        gst_video_info_from_caps(&info, caps.get());
+        gst_video_info_from_caps(&info, m_blackFrameCaps.get());
 
-        auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
+        VideoFrameTimeMetadata metadata;
+        metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
+        auto buffer = adoptGRef(webkitGstBufferSetVideoFrameTimeMetadata(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr), metadata));
         {
             GstMappedBuffer data(buffer, GST_MAP_WRITE);
             auto yOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 1);
@@ -446,25 +430,34 @@ private:
             memset(data.data() + yOffset, 128, data.size() - yOffset);
         }
         gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, width, height, 3, info.offset, info.stride);
-        m_blackFrame = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
+        GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = gst_element_get_current_running_time(m_parent);
+        auto sample = adoptGRef(gst_sample_new(buffer.get(), m_blackFrameCaps.get(), nullptr, nullptr));
+        pushSample(sample.get(), "Pushing black video frame");
     }
 
-    void pushBlackFrame()
+    void pushSilentSample()
     {
-        GST_TRACE_OBJECT(m_src.get(), "Pushing black video frame");
-        VideoFrameTimeMetadata metadata;
-        metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-        auto* buffer = webkitGstBufferSetVideoFrameTimeMetadata(gst_sample_get_buffer(m_blackFrame.get()), metadata);
-        GST_BUFFER_DTS(buffer) = GST_BUFFER_PTS(buffer) = gst_element_get_current_running_time(m_parent);
-        // TODO: Use gst_sample_set_buffer() after bumping GStreamer dependency to 1.16.
-        auto* caps = gst_sample_get_caps(m_blackFrame.get());
-        m_blackFrame = adoptGRef(gst_sample_new(buffer, caps, nullptr, nullptr));
-        pushSample(m_blackFrame.get());
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+        if (!m_silentSampleCaps) {
+            GstAudioInfo info;
+            gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_F32LE, 44100, 1, nullptr);
+            m_silentSampleCaps = adoptGRef(gst_audio_info_to_caps(&info));
+        }
+
+        auto buffer = adoptGRef(gst_buffer_new_and_alloc(512));
+        GST_BUFFER_DTS(buffer.get()) = GST_BUFFER_PTS(buffer.get()) = gst_element_get_current_running_time(m_parent);
+        GstAudioInfo info;
+        gst_audio_info_from_caps(&info, m_silentSampleCaps.get());
+        {
+            GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
+            webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
+        }
+        auto sample = adoptGRef(gst_sample_new(buffer.get(), m_silentSampleCaps.get(), nullptr, nullptr));
+        pushSample(sample.get(), "Pushing audio silence from disabled track");
     }
 
     GstElement* m_parent { nullptr };
     MediaStreamTrackPrivate& m_track;
-    Atomic<bool> m_trackEnabled;
     GRefPtr<GstElement> m_src;
     GstClockTime m_firstBufferPts { GST_CLOCK_TIME_NONE };
     bool m_enoughData { false };
@@ -475,8 +468,8 @@ private:
     RefPtr<VideoTrackPrivateMediaStream> m_videoTrack;
     IntSize m_configuredSize;
     IntSize m_lastKnownSize;
-    GRefPtr<GstSample> m_blackFrame;
-    GRefPtr<GstSample> m_silentSample;
+    GRefPtr<GstCaps> m_blackFrameCaps;
+    GRefPtr<GstCaps> m_silentSampleCaps;
     VideoFrame::Rotation m_videoRotation { VideoFrame::Rotation::None };
     bool m_videoMirrored { false };
 

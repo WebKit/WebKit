@@ -115,7 +115,7 @@ bool RealtimeOutgoingAudioSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     auto preEncoderSinkPad = adoptGRef(gst_element_get_static_pad(m_preEncoderQueue.get(), "sink"));
     if (!gst_pad_is_linked(preEncoderSinkPad.get()))
-        gst_element_link_many(m_outgoingSource.get(), m_valve.get(), m_audioconvert.get(), m_audioresample.get(), m_preEncoderQueue.get(), nullptr);
+        gst_element_link_many(m_outgoingSource.get(), m_audioconvert.get(), m_audioresample.get(), m_preEncoderQueue.get(), nullptr);
 
     gst_element_link_many(m_preEncoderQueue.get(), m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
     gst_bin_sync_children_states(GST_BIN_CAST(m_bin.get()));

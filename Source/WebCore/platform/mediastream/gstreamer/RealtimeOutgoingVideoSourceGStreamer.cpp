@@ -47,15 +47,7 @@ RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer(const
     gst_element_set_name(m_bin.get(), makeString("outgoing-video-source-", sourceCounter.exchangeAdd(1)).ascii().data());
 
     m_stats.reset(gst_structure_new_empty("webrtc-outgoing-video-stats"));
-    auto holder = createRealtimeOutgoingVideoSourceHolder();
-    holder->source = this;
-    auto pad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
-    gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_BUFFER, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
-        auto* holder = static_cast<RealtimeOutgoingVideoSourceHolder*>(userData);
-        auto* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
-        holder->source->updateStats(buffer);
-        return GST_PAD_PROBE_OK;
-    }, holder, reinterpret_cast<GDestroyNotify>(destroyRealtimeOutgoingVideoSourceHolder));
+    startUpdatingStats();
 
     m_videoConvert = makeGStreamerElement("videoconvert", nullptr);
 
@@ -85,6 +77,11 @@ void RealtimeOutgoingVideoSourceGStreamer::updateStats(GstBuffer*)
     }
 
     gst_structure_set(m_stats.get(), "frames-sent", G_TYPE_UINT64, framesSent, "frames-encoded", G_TYPE_UINT64, framesSent, nullptr);
+}
+
+void RealtimeOutgoingVideoSourceGStreamer::teardown()
+{
+    stopUpdatingStats();
 }
 
 bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>& caps)
@@ -147,7 +144,7 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     auto encoderSinkPad = adoptGRef(gst_element_get_static_pad(m_encoder.get(), "sink"));
     if (!gst_pad_is_linked(encoderSinkPad.get()))
-        gst_element_link_many(m_outgoingSource.get(), m_valve.get(), m_videoFlip.get(), m_videoConvert.get(), m_preEncoderQueue.get(), m_encoder.get(), nullptr);
+        gst_element_link_many(m_outgoingSource.get(), m_videoFlip.get(), m_videoConvert.get(), m_preEncoderQueue.get(), m_encoder.get(), nullptr);
 
     gst_element_link_many(m_encoder.get(), m_payloader.get(), m_postEncoderQueue.get(), nullptr);
     gst_bin_sync_children_states(GST_BIN_CAST(m_bin.get()));
@@ -168,6 +165,40 @@ void RealtimeOutgoingVideoSourceGStreamer::codecPreferencesChanged(const GRefPtr
     gst_element_set_locked_state(m_bin.get(), FALSE);
     gst_element_sync_state_with_parent(m_bin.get());
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(m_bin.get()), GST_DEBUG_GRAPH_SHOW_ALL, "outgoing-video-new-codec-prefs");
+}
+
+void RealtimeOutgoingVideoSourceGStreamer::startUpdatingStats()
+{
+    GST_DEBUG_OBJECT(m_bin.get(), "Starting buffer monitoring for stats gathering");
+    auto holder = createRealtimeOutgoingVideoSourceHolder();
+    holder->source = this;
+    auto pad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
+    m_statsPadProbeId = gst_pad_add_probe(pad.get(), GST_PAD_PROBE_TYPE_BUFFER, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        auto* holder = static_cast<RealtimeOutgoingVideoSourceHolder*>(userData);
+        auto* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
+        holder->source->updateStats(buffer);
+        return GST_PAD_PROBE_OK;
+    }, holder, reinterpret_cast<GDestroyNotify>(destroyRealtimeOutgoingVideoSourceHolder));
+}
+
+void RealtimeOutgoingVideoSourceGStreamer::stopUpdatingStats()
+{
+    if (!m_statsPadProbeId)
+        return;
+
+    GST_DEBUG_OBJECT(m_bin.get(), "Stopping buffer monitoring for stats gathering");
+    auto binSrcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
+    gst_pad_remove_probe(binSrcPad.get(), m_statsPadProbeId);
+    m_statsPadProbeId = 0;
+}
+
+void RealtimeOutgoingVideoSourceGStreamer::sourceEnabledChanged()
+{
+    RealtimeOutgoingMediaSourceGStreamer::sourceEnabledChanged();
+    if (m_enabled)
+        startUpdatingStats();
+    else
+        stopUpdatingStats();
 }
 
 } // namespace WebCore

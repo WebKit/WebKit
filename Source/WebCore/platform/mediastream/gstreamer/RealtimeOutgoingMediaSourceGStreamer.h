@@ -51,11 +51,13 @@ public:
     GRefPtr<GstElement> bin() const { return m_bin; }
 
     virtual bool setPayloadType(const GRefPtr<GstCaps>&) { return false; }
+    virtual void teardown() { }
 
 protected:
     explicit RealtimeOutgoingMediaSourceGStreamer(const String& mediaStreamId, MediaStreamTrack&);
 
     void initializeFromTrack();
+    virtual void sourceEnabledChanged();
 
     String m_mediaStreamId;
     String m_trackId;
@@ -80,7 +82,6 @@ protected:
 
 private:
     void sourceMutedChanged();
-    void sourceEnabledChanged();
 
     virtual RTCRtpCapabilities rtpCapabilities() const = 0;
     virtual void codecPreferencesChanged(const GRefPtr<GstCaps>&) { }

@@ -33,11 +33,14 @@ public:
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 
     bool setPayloadType(const GRefPtr<GstCaps>&) final;
+    void teardown() final;
 
     const GstStructure* stats() const { return m_stats.get(); }
 
 protected:
     explicit RealtimeOutgoingVideoSourceGStreamer(const String& mediaStreamId, MediaStreamTrack&);
+
+    void sourceEnabledChanged() final;
 
     bool m_shouldApplyRotation { false };
 
@@ -45,11 +48,16 @@ private:
     void codecPreferencesChanged(const GRefPtr<GstCaps>&) final;
     RTCRtpCapabilities rtpCapabilities() const final;
 
+    void startUpdatingStats();
+    void stopUpdatingStats();
+
     void updateStats(GstBuffer*);
 
     GRefPtr<GstElement> m_videoConvert;
     GRefPtr<GstElement> m_videoFlip;
     GUniquePtr<GstStructure> m_stats;
+
+    unsigned long m_statsPadProbeId { 0 };
 };
 
 } // namespace WebCore
