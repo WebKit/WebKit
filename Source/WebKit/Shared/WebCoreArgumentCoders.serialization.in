@@ -2975,17 +2975,27 @@ header: <WebCore/ScrollingStateNode.h>
 };
 
 #if ENABLE(ENCRYPTED_MEDIA)
+
 enum class WebCore::CDMEncryptionScheme : bool
+
 struct WebCore::CDMMediaCapability {
     String contentType;
     String robustness;
     std::optional<WebCore::CDMEncryptionScheme> encryptionScheme;
 };
+
 enum class WebCore::CDMSessionType : uint8_t {
     Temporary,
     PersistentUsageRecord,
     PersistentLicense
 };
+
+struct WebCore::CDMRestrictions {
+    bool distinctiveIdentifierDenied;
+    bool persistentStateDenied;
+    HashSet<WebCore::CDMSessionType, IntHash<WebCore::CDMSessionType>, WTF::StrongEnumHashTraits<WebCore::CDMSessionType>> deniedSessionTypes;
+}
+
 #endif
 
 struct WebCore::MediaSelectionOption {
@@ -4132,6 +4142,83 @@ class WebCore::RealtimeMediaSourceCapabilities {
 
 #endif
 
+enum class WebCore::PlatformVideoColorPrimaries : uint8_t {
+    Bt709,
+    Bt470bg,
+    Smpte170m,
+    Bt470m,
+    Smpte240m,
+    Film,
+    Bt2020,
+    SmpteSt4281,
+    SmpteRp431,
+    SmpteEg432,
+    JedecP22Phosphors,
+    Unspecified,
+};
+
+enum class WebCore::PlatformVideoTransferCharacteristics : uint8_t {
+    Bt709,
+    Smpte170m,
+    Iec6196621,
+    Gamma22curve,
+    Gamma28curve,
+    Smpte240m,
+    Linear,
+    Log,
+    LogSqrt,
+    Iec6196624,
+    Bt1361ExtendedColourGamut,
+    Bt2020_10bit,
+    Bt2020_12bit,
+    SmpteSt2084,
+    SmpteSt4281,
+    AribStdB67Hlg,
+    Unspecified
+};
+
+enum class WebCore::PlatformVideoMatrixCoefficients : uint8_t {
+    Rgb,
+    Bt709,
+    Bt470bg,
+    Smpte170m,
+    Smpte240m,
+    Fcc,
+    YCgCo,
+    Bt2020NonconstantLuminance,
+    Bt2020ConstantLuminance,
+    Unspecified,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PlatformVideoColorSpace {
+    std::optional<WebCore::PlatformVideoColorPrimaries> primaries;
+    std::optional<WebCore::PlatformVideoTransferCharacteristics> transfer;
+    std::optional<WebCore::PlatformVideoMatrixCoefficients> matrix;
+    std::optional<bool> fullRange;
+};
+
+#if ENABLE(VIDEO)
+
+struct WebCore::PlatformTrackConfiguration {
+    String codec;
+};
+
+struct WebCore::PlatformAudioTrackConfiguration : WebCore::PlatformTrackConfiguration {
+    uint32_t sampleRate;
+    uint32_t numberOfChannels;
+    uint64_t bitrate;
+};
+
+struct WebCore::PlatformVideoTrackConfiguration : WebCore::PlatformTrackConfiguration {
+    uint32_t width;
+    uint32_t height;
+    WebCore::PlatformVideoColorSpace colorSpace;
+    double framerate;
+    uint64_t bitrate;
+};
+
+#endif
+
 #if ENABLE(WEB_RTC)
 
 header: <WebCore/RTCDataChannelHandler.h>
@@ -4296,4 +4383,8 @@ enum class WebCore::COEPDisposition : bool;
   WebCore::CORPViolationReportBody,
   WebCore::DeprecationReportBody
   WebCore::TestReportBody
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceImage {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
 }

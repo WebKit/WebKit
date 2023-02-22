@@ -50,29 +50,10 @@ public:
     RenderingResourceIdentifier imageIdentifier() const;
     IntSize size() const;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SourceImage> decode(Decoder&);
-
 private:
     ImageVariant m_imageVariant;
     mutable std::optional<ImageVariant> m_transformedImageVariant;
 };
 
-template<class Encoder>
-void SourceImage::encode(Encoder& encoder) const
-{
-    encoder << imageIdentifier();
-}
-
-template<class Decoder>
-std::optional<SourceImage> SourceImage::decode(Decoder& decoder)
-{
-    std::optional<RenderingResourceIdentifier> imageIdentifier;
-    decoder >> imageIdentifier;
-    if (!imageIdentifier)
-        return std::nullopt;
-
-    return SourceImage(*imageIdentifier);
-}
 
 } // namespace WebCore
