@@ -525,7 +525,7 @@ private:
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    std::optional<unsigned> scaleForShl(Value* shl, Int offset, std::optional<Width> width = std::nullopt)
+    std::optional<unsigned> scaleForShl(Air::Opcode opcode, Value* shl, Int offset, std::optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
             return std::nullopt;
@@ -542,7 +542,7 @@ private:
         if (!isRepresentableAs<int32_t>(bigScale))
             return std::nullopt;
         unsigned scale = static_cast<int32_t>(bigScale);
-        if (!Arg::isValidIndexForm(scale, offset, width))
+        if (!Arg::isValidIndexForm(opcode, scale, offset, width))
             return std::nullopt;
         return scale;
     }
@@ -571,7 +571,7 @@ private:
             Value* right = address->child(1);
 
             auto tryIndex = [&] (Value* index, Value* base) -> Arg {
-                std::optional<unsigned> scale = scaleForShl(index, offset, width);
+                std::optional<unsigned> scale = scaleForShl(Air::Move, index, offset, width);
                 if (!scale)
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
@@ -585,7 +585,7 @@ private:
                 return result;
 
             if (m_locked.contains(left) || m_locked.contains(right)
-                || !Arg::isValidIndexForm(1, offset, width))
+                || !Arg::isValidIndexForm(Air::Move, 1, offset, width))
                 return fallback();
             
             return indexArg(tmp(left), right, 1, offset);
@@ -598,7 +598,7 @@ private:
             // amount is greater than 1, then there isn't really anything smart that we could do here.
             // We avoid using baseless indexes because their encoding isn't particularly efficient.
             if (m_locked.contains(left) || !address->child(1)->isInt32(1)
-                || !Arg::isValidIndexForm(1, offset, width))
+                || !Arg::isValidIndexForm(Air::Move, 1, offset, width))
                 return fallback();
 
             return indexArg(tmp(left), left, 1, offset);
@@ -613,7 +613,7 @@ private:
         case WasmAddress: {
             WasmAddressValue* wasmAddress = address->as<WasmAddressValue>();
             Value* pointer = wasmAddress->child(0);
-            if (!Arg::isValidIndexForm(1, offset, width) || m_locked.contains(pointer))
+            if (!Arg::isValidIndexForm(Air::Move, 1, offset, width) || m_locked.contains(pointer))
                 return fallback();
 
             // FIXME: We should support ARM64 LDR 32-bit addressing, which will
@@ -2325,7 +2325,7 @@ private:
         }
         
         auto tryShl = [&] (Value* shl, Value* other) -> bool {
-            std::optional<unsigned> scale = scaleForShl(shl, offset);
+            std::optional<unsigned> scale = scaleForShl(leaOpcode, shl, offset);
             if (!scale)
                 return false;
             if (!canBeInternal(shl))
