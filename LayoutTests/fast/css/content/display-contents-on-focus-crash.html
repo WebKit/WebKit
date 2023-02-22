@@ -1,0 +1,24 @@
+<style>
+dfn:focus-within { display: contents }
+html { mask-image: url(about:)}
+</style>
+
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+function main() {
+  input.setCustomValidity("foo");
+  input.reportValidity();
+}
+</script>
+
+</style>
+<body onload="main()">
+  <dfn>
+    <textarea autofocus>
+    </textarea>
+  </dfn>
+  <input id="input">
+  <p>This test passes if it doesn't crash.</p>
+</body>
