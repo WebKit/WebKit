@@ -1219,25 +1219,11 @@ sub XcodeOptions
         push @options, ("-workspace", $workspace) if $workspace;
     }
     push @options, ("-configuration", $configuration);
-    if ($asanIsEnabled) {
-        my $xcconfig = $ubsanIsEnabled ? "asan+ubsan.xcconfig" : "asan.xcconfig";
-        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", $xcconfig));
-        my $asanIgnorePath = File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "webkit-asan-ignore.txt");
-        push @options, "ASAN_IGNORE=$asanIgnorePath" if -e $asanIgnorePath;
-    } elsif ($tsanIsEnabled) {
-        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "tsan.xcconfig"));
-    } elsif (ubsanIsEnabled) {
-        push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "ubsan.xcconfig"));
-    }
+    push @options, ("ENABLE_ADDRESS_SANITIZER=YES") if $asanIsEnabled;
+    push @options, ("ENABLE_THREAD_SANITIZER=YES") if $tsanIsEnabled;
+    push @options, ("ENABLE_UNDEFINED_BEHAVIOR_SANITIZER=YES") if $ubsanIsEnabled;
     push @options, XcodeCoverageSupportOptions() if $coverageIsEnabled;
-    if ($forceOptimizationLevel) {
-        if ($asanIsEnabled || $tsanIsEnabled || $ubsanIsEnabled) {
-            # Command-line Xcode variable won't override that same varible set in a command-line xcconfig file.
-            push @options, "WK_FORCE_OPTIMIZATION_LEVEL=$forceOptimizationLevel";
-        } else {
-            push @options, "GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel";
-        }
-    }
+    push @options, "GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel" if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;

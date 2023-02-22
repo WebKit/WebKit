@@ -23,11 +23,39 @@
 
 #include? "../../Internal/Configurations/HaveInternalSDK.xcconfig"
 #include? "<DEVELOPER_DIR>/AppleInternal/XcodeConfig/PlatformSupport.xcconfig"
+#include "Sanitizers.xcconfig"
 #include "SDKVariant.xcconfig"
 #include "WebKitProjectPaths.xcconfig"
 #include "WebKitTargetConditionals.xcconfig"
 
-// Add $(WK_LIBCPP_ASSERTIONS_CFLAGS) to OTHER_CFLAGS in target xcconfig files.
+// Prefix Definitions
+//
+// WK_COMMON_ prefix is used to define variables in CommonBase.xcconfig
+// that may be used in project xcconfig files when $(inherited) is not
+// used.
+// Examples: WK_COMMON_OTHER_{CFLAGS,CPLUSPLUSFLAGS,LDFLAGS}.
+//
+// WK_DEFAULT_ prefix is used in Base.xcconfig project files for
+// single-value variables that may be overridden in CommonBase.xcconfig.
+// Example: WK_DEFAULT_GCC_OPTIMIZATION_LEVEL.
+
+GCC_OPTIMIZATION_LEVEL = $(WK_GCC_OPTIMIZATION_LEVEL_SANITIZER_OVERRIDE_$(WK_ANY_SANITIZER_ENABLED));
+WK_GCC_OPTIMIZATION_LEVEL_SANITIZER_OVERRIDE_NO = $(WK_DEFAULT_GCC_OPTIMIZATION_LEVEL);
+WK_GCC_OPTIMIZATION_LEVEL_SANITIZER_OVERRIDE_YES = $(WK_SANITIZER_GCC_OPTIMIZATION_LEVEL);
+
+WK_COMMON_OTHER_CFLAGS = $(WK_SANITIZER_OTHER_CFLAGS);
+OTHER_CFLAGS = $(inherited) $(WK_COMMON_OTHER_CFLAGS);
+
+WK_COMMON_OTHER_CPLUSPLUSFLAGS = $(WK_LIBCPP_ASSERTIONS_CFLAGS) $(WK_SANITIZER_OTHER_CPLUSPLUSFLAGS);
+OTHER_CPLUSPLUSFLAGS = $(inherited) $(WK_COMMON_OTHER_CPLUSPLUSFLAGS);
+
+WK_COMMON_OTHER_LDFLAGS = $(WK_SANITIZER_OTHER_LDFLAGS);
+OTHER_LDFLAGS = $(inherited) $(WK_COMMON_OTHER_LDFLAGS);
+
+// FIXME: Change to add WARNING_CFLAGS (like OTHER_CFLAGS), update Base.xcconfig files
+// to use WK_EXTRA_WARNING_CFLAGS, and update check-webkit-style to add checks.
+WK_COMMON_WARNING_CFLAGS = -Wall -Wconditional-uninitialized -Wextra -Wformat=2 -Wundef;
+
 WK_LIBCPP_ASSERTIONS_CFLAGS = $(WK_LIBCPP_ASSERTIONS_CFLAGS_$(WK_PLATFORM_NAME));
 WK_LIBCPP_ASSERTIONS_CFLAGS_iphoneos = $(WK_LIBCPP_ASSERTIONS_CFLAGS$(WK_IOS_17));
 WK_LIBCPP_ASSERTIONS_CFLAGS_iphonesimulator = $(WK_LIBCPP_ASSERTIONS_CFLAGS$(WK_IOS_17));
@@ -40,5 +68,3 @@ WK_LIBCPP_ASSERTIONS_CFLAGS_TVOS_SINCE_17 = -D_LIBCPP_ENABLE_ASSERTIONS=1;
 WK_LIBCPP_ASSERTIONS_CFLAGS_watchos = $(WK_LIBCPP_ASSERTIONS_CFLAGS$(WK_WATCHOS_10));
 WK_LIBCPP_ASSERTIONS_CFLAGS_watchsimulator = $(WK_LIBCPP_ASSERTIONS_CFLAGS$(WK_WATCHOS_10));
 WK_LIBCPP_ASSERTIONS_CFLAGS_WATCHOS_SINCE_10 = -D_LIBCPP_ENABLE_ASSERTIONS=1;
-
-WK_COMMON_WARNING_CFLAGS = -Wall -Wconditional-uninitialized -Wextra -Wformat=2 -Wundef;

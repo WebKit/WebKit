@@ -96,10 +96,10 @@ DEBUG_DEFINES[config=Debug] = ;
 
 EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a;
 
-GCC_OPTIMIZATION_LEVEL[sdk=iphone*] = 3;
-GCC_OPTIMIZATION_LEVEL[sdk=iphone*][config=Debug] = 0;
-GCC_OPTIMIZATION_LEVEL[sdk=macosx*] = 2;
-GCC_OPTIMIZATION_LEVEL[sdk=macosx*][config=Debug] = 0;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[sdk=iphone*] = 3;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[sdk=iphone*][config=Debug] = 0;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[sdk=macosx*] = 2;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[sdk=macosx*][config=Debug] = 0;
 
 STRIP_INSTALLED_PRODUCT = YES;
 STRIP_INSTALLED_PRODUCT[config=Debug] = NO;

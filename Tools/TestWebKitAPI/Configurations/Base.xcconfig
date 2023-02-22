@@ -82,7 +82,7 @@ WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter -Wno-undef;
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;
 
-GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SUPPORTS_MACCATALYST = YES;

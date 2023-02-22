@@ -74,7 +74,7 @@ WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 DEBUG_DEFINES = NDEBUG;
 DEBUG_DEFINES[config=Debug] = ;
 
-GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
+WK_DEFAULT_GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 
 SDKROOT = macosx.internal;
 
@@ -85,7 +85,6 @@ SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator
 SUPPORTS_MACCATALYST = YES;
 
 OTHER_CFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
-OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
 FRAMEWORK_SEARCH_PATHS = $(WK_PRIVATE_FRAMEWORK_STUBS_DIR) $(WK_QUOTED_OVERRIDE_FRAMEWORKS_DIR) $(inherited);
 

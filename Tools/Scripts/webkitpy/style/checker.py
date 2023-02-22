@@ -38,6 +38,7 @@ import re
 from webkitpy.common.host import Host
 from webkitpy.common.system.logutils import configure_logging as _configure_logging
 from webkitpy.port.config import apple_additions
+from webkitpy.style.checkers.basexcconfig import BaseXcconfigChecker
 from webkitpy.style.checkers.common import categories as CommonCategories
 from webkitpy.style.checkers.common import CarriageReturnChecker
 from webkitpy.style.checkers.contributors import ContributorsChecker
@@ -476,6 +477,7 @@ def _all_categories():
     categories = categories.union(ChangeLogChecker.categories)
     categories = categories.union(PNGChecker.categories)
     categories = categories.union(FeatureDefinesChecker.categories)
+    categories = categories.union(BaseXcconfigChecker.categories)
     categories = categories.union(XcodeSchemeChecker.categories)
 
     # FIXME: Consider adding all of the pep8 categories.  Since they
@@ -630,7 +632,7 @@ class FileType:
     XCODEPROJ = 10
     CMAKE = 11
     FEATUREDEFINES = 12
-    SDKVARIANT = 13
+    BASE_XCCONFIG = 13
     XCSCHEME = 14
 
 
@@ -731,6 +733,10 @@ class CheckerDispatcher(object):
             return FileType.TEXT
         elif os.path.basename(file_path) == "FeatureDefines.xcconfig":
             return FileType.FEATUREDEFINES
+        elif os.path.basename(file_path) == "Base.xcconfig":
+            return FileType.BASE_XCCONFIG
+        elif os.path.basename(file_path) == "General.xcconfig":  # gtest is different.
+            return FileType.BASE_XCCONFIG
         else:
             return FileType.NONE
 
@@ -804,6 +810,8 @@ class CheckerDispatcher(object):
             checker = WatchListChecker(file_path, handle_style_error)
         elif file_type == FileType.FEATUREDEFINES:
             checker = FeatureDefinesChecker(file_path, handle_style_error)
+        elif file_type == FileType.BASE_XCCONFIG:
+            checker = BaseXcconfigChecker(file_path, handle_style_error)
         else:
             raise ValueError('Invalid file type "%(file_type)s": the only valid file types '
                              "are %(NONE)s, %(CPP)s, and %(TEXT)s."

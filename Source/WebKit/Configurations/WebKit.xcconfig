@@ -179,13 +179,13 @@ FRAMEWORK_AND_LIBRARY_LDFLAGS = -lobjc -framework CFNetwork -framework CoreAudio
 UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTISt9exception -Wl,-unexported_symbol -Wl,__ZTSSt9bad_alloc -Wl,-unexported_symbol -Wl,__ZTSSt9exception -Wl,-unexported_symbol -Wl,__ZdlPvS_ -Wl,-unexported_symbol -Wl,__ZnwmPv -Wl,-unexported_symbol -Wl,__Znwm -Wl,-unexported_symbol -Wl,__ZTVNSt3__117bad_function_callE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_13basic_istreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE0_NS_14basic_iostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE16_NS_13basic_ostreamIcS2_EE -Wl,-unexported_symbol -Wl,__ZTTNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTVNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE -Wl,-unexported_symbol -Wl,__ZTCNSt3__118basic_stringstreamIcNS_11char_traitsIcEENS_9allocatorIcEEEE8_NS_13basic_ostreamIcS2_EE;
 
 WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS = -Xlinker -no_inits;
-WK_NO_STATIC_INITIALIZERS = $(WK_NO_STATIC_INITIALIZERS_$(CONFIGURATION)_$(ENABLE_ANY_SANITIZER)_$(ENABLE_LLVM_PROFILE_GENERATION));
+WK_NO_STATIC_INITIALIZERS = $(WK_NO_STATIC_INITIALIZERS_$(CONFIGURATION)_$(WK_ANY_SANITIZER_ENABLED)_$(ENABLE_LLVM_PROFILE_GENERATION));
 WK_NO_STATIC_INITIALIZERS_Release__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Release_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Production__ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 WK_NO_STATIC_INITIALIZERS_Production_NO_ = $(WK_ERROR_WHEN_LINKING_WITH_STATIC_INITIALIZERS);
 
-OTHER_LDFLAGS = $(inherited) -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(UNEXPORTED_SYMBOL_LDFLAGS) $(ASAN_OTHER_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
+OTHER_LDFLAGS = $(inherited) -iframework $(SDK_DIR)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(UNEXPORTED_SYMBOL_LDFLAGS) $(FRAMEWORK_AND_LIBRARY_LDFLAGS) $(WK_RELOCATABLE_FRAMEWORK_LDFLAGS) $(SOURCE_VERSION_LDFLAGS) $(PROFILE_GENERATE_OR_USE_LDFLAGS) $(WK_NO_STATIC_INITIALIZERS);
 
 REEXPORTED_FRAMEWORK_NAMES = WebKitLegacy;
 REEXPORTED_FRAMEWORK_NAMES[sdk=macosx*] = $(inherited) WebCore;
