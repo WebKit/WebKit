@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteShaderModule NotRefCounted Stream {
-    void CompilationInfo() -> (Vector<WebKit::WebGPU::CompilationMessage> messages) Synchronous
+    void CompilationInfo() -> (Vector<WebKit::WebGPU::CompilationMessage> messages)
     void SetLabel(String label)
 }
 
