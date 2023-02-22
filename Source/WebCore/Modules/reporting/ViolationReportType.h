@@ -41,20 +41,3 @@ enum class ViolationReportType : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ViolationReportType> {
-    using values = EnumValues<
-    WebCore::ViolationReportType,
-    WebCore::ViolationReportType::COEPInheritenceViolation,
-    WebCore::ViolationReportType::CORPViolation,
-    WebCore::ViolationReportType::ContentSecurityPolicy,
-    WebCore::ViolationReportType::CrossOriginOpenerPolicy,
-    WebCore::ViolationReportType::Deprecation,
-    WebCore::ViolationReportType::StandardReportingAPIViolation,
-    WebCore::ViolationReportType::Test
-    >;
-};
-
-} // namespace WTF

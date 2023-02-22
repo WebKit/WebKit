@@ -4266,3 +4266,35 @@ enum class WebCore::AllowsContentJavaScript : bool
     RequestValidation,
     SanitizeLookalikeCharacters,
 };
+
+enum class WebCore::ViolationReportType : uint8_t {
+    COEPInheritenceViolation,
+    CORPViolation,
+    ContentSecurityPolicy,
+    CrossOriginOpenerPolicy,
+    Deprecation,
+    StandardReportingAPIViolation,
+    Test
+};
+
+enum class WebCore::COEPDisposition : bool;
+
+[RefCounted] class WebCore::COEPInheritenceViolationReportBody {
+    WebCore::COEPDisposition m_disposition;
+    URL m_blockedURL;
+    String m_type;
+};
+
+[RefCounted] class WebCore::CORPViolationReportBody {
+    WebCore::COEPDisposition m_disposition;
+    URL m_blockedURL;
+    WebCore::FetchOptionsDestination m_destination;
+};
+
+[RefCounted] class WebCore::ReportBody subclasses {
+  WebCore::CSPViolationReportBody,
+  WebCore::COEPInheritenceViolationReportBody,
+  WebCore::CORPViolationReportBody,
+  WebCore::DeprecationReportBody
+  WebCore::TestReportBody
+}

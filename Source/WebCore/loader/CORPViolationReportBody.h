@@ -29,6 +29,7 @@
 #include "FetchOptions.h"
 #include "ReportBody.h"
 #include "ViolationReportType.h"
+#include <wtf/ArgumentCoder.h>
 
 namespace WebCore {
 
@@ -42,43 +43,14 @@ public:
     const String& blockedURL() const { return m_blockedURL.string(); }
     FetchOptions::Destination destination() const { return m_destination; }
 
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<RefPtr<CORPViolationReportBody>> decode(Decoder&);
-
 private:
+    friend struct IPC::ArgumentCoder<CORPViolationReportBody, void>;
     CORPViolationReportBody(COEPDisposition, const URL& blockedURL, FetchOptions::Destination);
 
     COEPDisposition m_disposition;
     URL m_blockedURL;
     FetchOptions::Destination m_destination;
 };
-
-template<typename Encoder>
-void CORPViolationReportBody::encode(Encoder& encoder) const
-{
-    encoder << m_disposition << m_blockedURL << m_destination;
-}
-
-template<typename Decoder>
-std::optional<RefPtr<CORPViolationReportBody>> CORPViolationReportBody::decode(Decoder& decoder)
-{
-    std::optional<COEPDisposition> disposition;
-    decoder >> disposition;
-    if (!disposition)
-        return std::nullopt;
-
-    std::optional<URL> blockedURL;
-    decoder >> blockedURL;
-    if (!blockedURL)
-        return std::nullopt;
-
-    std::optional<FetchOptions::Destination> destination;
-    decoder >> destination;
-    if (!destination)
-        return std::nullopt;
-
-    return CORPViolationReportBody::create(*disposition, WTFMove(*blockedURL), *destination);
-}
 
 } // namespace WebCore
 
