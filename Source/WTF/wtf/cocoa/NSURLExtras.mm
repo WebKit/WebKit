@@ -198,7 +198,7 @@ static NSData *dataWithUserTypedString(NSString *string)
     return [NSData dataWithBytesNoCopy:outBytes length:outLength]; // adopts outBytes
 }
 
-NSURL *URLWithUserTypedString(NSString *string, NSURL *)
+NSURL *URLWithUserTypedString(NSString *string)
 {
     if (!string)
         return nil;
@@ -213,7 +213,7 @@ NSURL *URLWithUserTypedString(NSString *string, NSURL *)
         return nil;
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=186057
-    // We should be able to use url.createCFURL instead of using directly CFURL parsing routines.
+    // We should be able to use url.createCFURL instead of directly using CFURL parsing routines.
     NSData *data = dataWithUserTypedString(mappedString);
     if (!data)
         return [NSURL URLWithString:@""];

@@ -33,7 +33,7 @@
 namespace WTF {
 
 WTF_EXPORT_PRIVATE NSString *userVisibleString(NSURL *);
-WTF_EXPORT_PRIVATE NSURL *URLWithUserTypedString(NSString *, NSURL *ignored = nil); // Return value of nil means error.
+WTF_EXPORT_PRIVATE NSURL *URLWithUserTypedString(NSString *); // Return value of nil means error.
 WTF_EXPORT_PRIVATE NSURL *URLByRemovingUserInfo(NSURL *);
 WTF_EXPORT_PRIVATE NSString *decodeHostName(NSString *); // Return value of nil means error.
 WTF_EXPORT_PRIVATE NSString *encodeHostName(NSString *); // Return value of nil means error.
