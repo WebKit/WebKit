@@ -928,8 +928,10 @@ bool HTMLInputElement::appendFormData(DOMFormData& formData)
 
 void HTMLInputElement::reset()
 {
-    if (m_inputType->storesValueSeparateFromAttribute())
+    if (m_inputType->storesValueSeparateFromAttribute()) {
         setValue({ });
+        updateValidity();
+    }
 
     setAutoFilled(false);
     setAutoFilledAndViewable(false);
