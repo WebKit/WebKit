@@ -44,6 +44,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
