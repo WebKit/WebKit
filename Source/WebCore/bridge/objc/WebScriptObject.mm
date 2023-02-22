@@ -496,10 +496,8 @@ static void getListFromNSArray(JSC::JSGlobalObject* lexicalGlobalObject, NSArray
 
 - (NSString *)stringRepresentation
 {
-    if (![self _isSafeScript]) {
-        // This is a workaround for a gcc 3.3 internal compiler error.
-        return @"Undefined";
-    }
+    if (![self _isSafeScript])
+        return nil;
 
     JSC::JSGlobalObject* lexicalGlobalObject = [self _rootObject]->globalObject();
     JSLockHolder lock(lexicalGlobalObject);

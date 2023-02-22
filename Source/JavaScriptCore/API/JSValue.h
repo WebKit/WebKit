@@ -188,7 +188,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 + (JSValue *)valueWithUndefinedInContext:(JSContext *)context;
 
 /*!
-@methodgroup Converting to Objective-C Types
+@group Converting to Objective-C Types
 @discussion When converting between JavaScript values and Objective-C objects a copy is
  performed. Values of types listed below are copied to the corresponding
  types on conversion in each direction. For NSDictionaries, entries in the
@@ -234,13 +234,13 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  into a JavaScript value according to the above conversion.
 */
 /*!
-@method
+@property
 @abstract Convert this JSValue to an Objective-C object.
-@discussion The JSValue is converted to an Objective-C object according 
+@discussion The JSValue is converted to an Objective-C object according
  to the conversion rules specified above.
 @result The Objective-C representation of this JSValue.
 */
-- (id)toObject;
+@property (nonatomic, readonly, strong) id toObject;
 
 /*!
 @method
@@ -252,71 +252,71 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 - (id)toObjectOfClass:(Class)expectedClass;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a boolean.
-@discussion The JSValue is converted to a boolean according to the rules specified 
+@discussion The JSValue is converted to a boolean according to the rules specified
  by the JavaScript language.
 @result The boolean result of the conversion.
 */
-- (BOOL)toBool;
+@property (nonatomic, readonly) BOOL toBool;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a double.
-@discussion The JSValue is converted to a number according to the rules specified 
+@discussion The JSValue is converted to a number according to the rules specified
  by the JavaScript language.
 @result The double result of the conversion.
 */
-- (double)toDouble;
+@property (nonatomic, readonly) double toDouble;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to an <code>int32_t</code>.
-@discussion The JSValue is converted to an integer according to the rules specified 
+@discussion The JSValue is converted to an integer according to the rules specified
  by the JavaScript language.
 @result The <code>int32_t</code> result of the conversion.
 */
-- (int32_t)toInt32;
+@property (nonatomic, readonly) int32_t toInt32;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a <code>uint32_t</code>.
-@discussion The JSValue is converted to an integer according to the rules specified 
+@discussion The JSValue is converted to an integer according to the rules specified
  by the JavaScript language.
 @result The <code>uint32_t</code> result of the conversion.
 */
-- (uint32_t)toUInt32;
+@property (nonatomic, readonly) uint32_t toUInt32;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a NSNumber.
-@discussion If the JSValue represents a boolean, a NSNumber value of YES or NO 
- will be returned. For all other types the value will be converted to a number according 
+@discussion If the JSValue represents a boolean, a NSNumber value of YES or NO
+ will be returned. For all other types the value will be converted to a number according
  to the rules specified by the JavaScript language.
 @result The NSNumber result of the conversion.
 */
-- (NSNumber *)toNumber;
+@property (nonatomic, readonly, copy) NSNumber *toNumber;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a NSString.
-@discussion The JSValue is converted to a string according to the rules specified 
+@discussion The JSValue is converted to a string according to the rules specified
  by the JavaScript language.
 @result The NSString containing the result of the conversion.
 */
-- (NSString *)toString;
+@property (nonatomic, readonly, copy) NSString *toString;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a NSDate.
-@discussion The value is converted to a number representing a time interval 
+@discussion The value is converted to a number representing a time interval
  since 1970 which is then used to create a new NSDate instance.
 @result The NSDate created using the converted time interval.
 */
-- (NSDate *)toDate;
+@property (nonatomic, readonly, copy) NSDate *toDate;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a NSArray.
 @discussion If the value is <code>null</code> or <code>undefined</code> then <code>nil</code> is returned.
  If the value is not an object then a JavaScript TypeError will be thrown.
@@ -324,13 +324,13 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
  integer, and an NSArray of this size is allocated. Properties corresponding
  to indices within the array bounds will be copied to the array, with
  JSValues converted to equivalent Objective-C objects as specified.
-@result The NSArray containing the recursively converted contents of the 
+@result The NSArray containing the recursively converted contents of the
  converted JavaScript array.
 */
-- (NSArray *)toArray;
+@property (nonatomic, readonly, copy) NSArray *toArray;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a NSDictionary.
 @discussion If the value is <code>null</code> or <code>undefined</code> then <code>nil</code> is returned.
  If the value is not an object then a JavaScript TypeError will be thrown.
@@ -339,7 +339,7 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @result The NSDictionary containing the recursively converted contents of
  the converted JavaScript object.
 */
-- (NSDictionary *)toDictionary;
+@property (nonatomic, readonly, copy) NSDictionary *toDictionary;
 
 /*!
 @functiongroup Checking JavaScript Types
@@ -506,40 +506,40 @@ Create a JSValue from a CGRect.
 + (JSValue *)valueWithSize:(CGSize)size inContext:(JSContext *)context;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a CGPoint.
 @discussion Reads the properties named <code>x</code> and <code>y</code> from
  this JSValue, and converts the results to double.
 @result The new CGPoint.
 */
-- (CGPoint)toPoint;
+@property (nonatomic, readonly) CGPoint toPoint;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to an NSRange.
 @discussion Reads the properties named <code>location</code> and
  <code>length</code> from this JSValue and converts the results to double.
 @result The new NSRange.
 */
-- (NSRange)toRange;
+@property (nonatomic, readonly) NSRange toRange;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a CGRect.
-@discussion Reads the properties named <code>x</code>, <code>y</code>, 
+@discussion Reads the properties named <code>x</code>, <code>y</code>,
  <code>width</code>, and <code>height</code> from this JSValue and converts the results to double.
 @result The new CGRect.
 */
-- (CGRect)toRect;
+@property (nonatomic, readonly) CGRect toRect;
 
 /*!
-@method
+@property
 @abstract Convert a JSValue to a CGSize.
 @discussion Reads the properties named <code>width</code> and
  <code>height</code> from this JSValue and converts the results to double.
 @result The new CGSize.
 */
-- (CGSize)toSize;
+@property (nonatomic, readonly) CGSize toSize;
 
 @end
 
@@ -567,7 +567,7 @@ typedef id JSValueProperty;
 /*!
  @method
  @abstract Set a property on a JSValue.
- @discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. Starting with macOS 10.15 and iOS 13, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS 10.15 and iOS 13, 'property' was expected to be an NSString *.
+ @discussion Corresponds to the JavaScript operation <code>object[property] = value</code>. Starting with macOS 10.15 and iOS 13, 'property' can be any 'id' and will be converted to a JSValue using the conversion rules of <code>valueWithObject:inContext:</code>. Prior to macOS 10.15 and m_wrappedObject = [static_cast<id>(wrappedObject) retain];, 'property' was expected to be an NSString *.
  */
 - (void)setValue:(id)value forProperty:(JSValueProperty)property;
 

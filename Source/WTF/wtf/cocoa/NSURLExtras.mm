@@ -45,7 +45,7 @@ static BOOL readIDNAllowedScriptListFile(NSString *filename)
     if (!filename)
         return NO;
 
-    FILE *file = fopen([filename fileSystemRepresentation], "r");
+    FILE* file = fopen(filename.fileSystemRepresentation, "r");
     if (!file)
         return NO;
     
@@ -140,13 +140,13 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
 {
     if (!data)
         return nil;
-    
-    size_t length = [data length];
-    if (length > 0) {
+
+    NSUInteger length = data.length;
+    if (length) {
         // Work around <rdar://4470771>: CFURLCreateAbsoluteURLWithBytes(.., TRUE) doesn't remove non-path components.
         baseURL = URLByTruncatingOneCharacterBeforeComponent(baseURL, kCFURLComponentResourceSpecifier);
 
-        const UInt8 *bytes = static_cast<const UInt8*>([data bytes]);
+        const UInt8 *bytes = static_cast<const UInt8*>(data.bytes);
 
         // CFURLCreateAbsoluteURLWithBytes would complain to console if we passed a path to it.
         if (bytes[0] == '/' && !baseURL)
@@ -156,9 +156,9 @@ NSURL *URLWithData(NSData *data, NSURL *baseURL)
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
         // onto using ISO Latin 1 in those cases.
-        auto result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, (__bridge CFURLRef)baseURL, YES));
+        auto result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, (CFIndex)length, kCFStringEncodingUTF8, (__bridge CFURLRef)baseURL, YES));
         if (!result)
-            result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingISOLatin1, (__bridge CFURLRef)baseURL, YES));
+            result = adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, (CFIndex)length, kCFStringEncodingISOLatin1, (__bridge CFURLRef)baseURL, YES));
         return result.bridgingAutorelease();
     }
     return [NSURL URLWithString:@""];
@@ -168,21 +168,21 @@ static NSData *dataWithUserTypedString(NSString *string)
 {
     NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
     ASSERT(userTypedData);
-    
-    const UInt8* inBytes = static_cast<const UInt8 *>([userTypedData bytes]);
-    int inLength = [userTypedData length];
+
+    const UInt8 *inBytes = static_cast<const UInt8 *>(userTypedData.bytes);
+    NSUInteger inLength = userTypedData.length;
     if (!inLength)
         return nil;
 
-    CheckedInt32 mallocLength = inLength;
-    mallocLength *= 3; // large enough to %-escape every character
+    CheckedSize mallocLength = inLength;
+    mallocLength *= (size_t)3; // large enough to %-escape every character
     if (mallocLength.hasOverflowed())
         return nil;
     
     char* outBytes = static_cast<char *>(malloc(mallocLength));
     char* p = outBytes;
-    int outLength = 0;
-    for (int i = 0; i < inLength; i++) {
+    NSUInteger outLength = 0;
+    for (NSUInteger i = 0; i < inLength; i++) {
         UInt8 c = inBytes[i];
         if (c <= 0x20 || c >= 0x7f) {
             *p++ = '%';
@@ -194,7 +194,7 @@ static NSData *dataWithUserTypedString(NSString *string)
             outLength++;
         }
     }
-    
+
     return [NSData dataWithBytesNoCopy:outBytes length:outLength]; // adopts outBytes
 }
 
@@ -317,7 +317,7 @@ NSData *originalURLData(NSURL *URL)
 NSString *userVisibleString(NSURL *URL)
 {
     NSData *data = originalURLData(URL);
-    return URLHelpers::userVisibleURL(CString(static_cast<const char*>([data bytes]), [data length]));
+    return URLHelpers::userVisibleURL(CString(static_cast<const char*>(data.bytes), data.length));
 }
 
 BOOL isUserVisibleURL(NSString *string)
@@ -326,8 +326,8 @@ BOOL isUserVisibleURL(NSString *string)
     // This function is used to optimize all the most common cases where we don't need the userVisibleString algorithm.
 
     char buffer[1024];
-    auto success = CFStringGetCString(bridge_cast(string), reinterpret_cast<char*>(buffer), sizeof(buffer) - 1, kCFStringEncodingUTF8);
-    auto characters = success ? buffer : [string UTF8String];
+    auto success = CFStringGetCString(bridge_cast(string), buffer, sizeof(buffer) - 1, kCFStringEncodingUTF8);
+    auto characters = success ? buffer : string.UTF8String;
 
     // Check for control characters, %-escape sequences that are non-ASCII, and xn--: these
     // are the things that might lead the userVisibleString function to actually change the string.

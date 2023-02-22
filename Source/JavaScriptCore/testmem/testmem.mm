@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
         iterations = iters;
     }
 
-    NSString *path = [NSString stringWithUTF8String:argv[1]];
+    NSString *path = @(argv[1]);
     NSString *script = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     if (!script) {
         printf("Can't open file: %s\n", argv[1]);

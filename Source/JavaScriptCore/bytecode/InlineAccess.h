@@ -81,11 +81,8 @@ public:
 #endif
     }
 
-    // FIXME: Make this constexpr when GCC is able to compile std::max() inside a constexpr function.
-    // https://bugs.webkit.org/show_bug.cgi?id=159436
-    //
     // This is the maximum between array length, string length, and regular self access sizes.
-    ALWAYS_INLINE static size_t sizeForLengthAccess()
+    ALWAYS_INLINE static constexpr size_t sizeForLengthAccess()
     {
 #if CPU(X86_64)
         size_t size = 43;

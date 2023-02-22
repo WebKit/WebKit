@@ -252,10 +252,10 @@ JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, void* buffe
 
 ObjcValueType objcValueTypeForType(const char *type)
 {
-    int typeLength = strlen(type);
+    size_t typeLength = strlen(type);
     ObjcValueType objcValueType = ObjcInvalidType;
 
-    for (int i = 0; i < typeLength; ++i) {
+    for (size_t i = 0; i < typeLength; ++i) {
         char typeChar = type[i];
         switch (typeChar) {
             case _C_CONST:

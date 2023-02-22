@@ -44,7 +44,7 @@ extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 @end
 
 @protocol TestClassBExports <JSExport>
-- (NSString *)name;
+@property (nonatomic, readonly, copy) NSString *name;
 @end
 
 @interface TestClassB : TestClassA <TestClassBExports>
@@ -58,7 +58,7 @@ extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 @end
 
 @protocol TestClassCExports <JSExport>
-- (NSString *)name;
+@property (nonatomic, readonly, copy) NSString *name;
 @end
 
 @interface TestClassC : TestClassB <TestClassCExports>
@@ -118,15 +118,15 @@ void runRegress141809()
             TestClassC* obj = [[TestClassC alloc] init];
             resultBeforeGC = [dumpPrototypes callWithArguments:@[obj]];
         }
-        
-        JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
-        
+
+        JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
+
         @autoreleasepool {
             TestClassC* obj = [[TestClassC alloc] init];
             JSValue* resultAfterGC = [dumpPrototypes callWithArguments:@[obj]];
-            checkResult(@"object and prototype chain depth is 5 deep", [resultAfterGC[@"objDepth"] toInt32] == 5);
-            checkResult(@"object and prototype chain depth before and after GC matches", [resultAfterGC[@"objDepth"] toInt32] == [resultBeforeGC[@"objDepth"] toInt32]);
-            checkResult(@"object and prototype chain before and after GC matches", [[resultAfterGC[@"objChain"] toString] isEqualToString:[resultBeforeGC[@"objChain"] toString]]);
+            checkResult(@"object and prototype chain depth is 5 deep", (resultAfterGC[@"objDepth"]).toInt32 == 5);
+            checkResult(@"object and prototype chain depth before and after GC matches", (resultAfterGC[@"objDepth"]).toInt32 == (resultBeforeGC[@"objDepth"]).toInt32);
+            checkResult(@"object and prototype chain before and after GC matches", [(resultAfterGC[@"objChain"]).toString isEqualToString:(resultBeforeGC[@"objChain"]).toString]);
         }
     }
 }

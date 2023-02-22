@@ -119,9 +119,7 @@ JSValue ObjcField::valueFromInstance(JSGlobalObject* lexicalGlobalObject, const 
         throwError(lexicalGlobalObject, scope, [localException reason]);
     }
 
-    // Work around problem in some versions of GCC where result gets marked volatile and
-    // it can't handle copying from a volatile to non-volatile.
-    return const_cast<JSValue&>(result);
+    return result;
 }
 
 static id convertValueToObjcObject(JSGlobalObject* lexicalGlobalObject, JSValue value)

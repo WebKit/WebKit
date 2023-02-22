@@ -46,7 +46,7 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 
 - (JSContext *)contextForGlobalContextRef:(JSGlobalContextRef)globalContext;
 - (void)addContext:(JSContext *)wrapper forGlobalContextRef:(JSGlobalContextRef)globalContext;
-- (BOOL)isWebThreadAware;
+@property (nonatomic, getter=isWebThreadAware, readonly) BOOL webThreadAware;
 
 @property (readonly) JSContextGroupRef JSContextGroupRef;
 

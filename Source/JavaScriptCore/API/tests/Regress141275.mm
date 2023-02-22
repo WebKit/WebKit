@@ -115,7 +115,7 @@ static const NSString* JSTEvaluatorThreadContextKey = @"JSTEvaluatorThreadContex
         __pendingTasks = [NSMutableArray new];
 
         NSThread* jsThread = [[NSThread alloc] initWithTarget:self selector:@selector(_jsThreadMain) object:nil];
-        [jsThread setName:@"JSTEval"];
+        jsThread.name = @"JSTEval";
         [jsThread start];
 
     }
@@ -182,7 +182,7 @@ static const NSString* JSTEvaluatorThreadContextKey = @"JSTEvaluatorThreadContex
     NSString* passFailString = @"PASSED";
 
     if (!dispatch_semaphore_wait(_allScriptsDone, dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC))) {
-        int totalScriptsRun = [_jsContext[@"counter"] toInt32];
+        int totalScriptsRun = (_jsContext[@"counter"]).toInt32;
 
         if (totalScriptsRun != scriptToEvaluate) {
             passFailString = @"FAILED";
@@ -241,7 +241,7 @@ static void __JSTRunLoopSourceCancelCallBack(void* info, CFRunLoopRef rl, CFStri
         CFRunLoopRun();
 
         @synchronized(self) {
-            NSMutableDictionary* threadDict = [[NSThread currentThread] threadDictionary];
+            NSMutableDictionary *threadDict = [NSThread currentThread].threadDictionary;
             [threadDict removeObjectForKey:threadDict[JSTEvaluatorThreadContextKey]];
 
             CFRelease(_jsThreadRunLoopSource);
@@ -268,7 +268,7 @@ static void __JSTRunLoopSourceCancelCallBack(void* info, CFRunLoopRef rl, CFStri
 
 - (void)_setupEvaluatorThreadContextIfNeeded
 {
-    NSMutableDictionary* threadDict = [[NSThread currentThread] threadDictionary];
+    NSMutableDictionary *threadDict = [NSThread currentThread].threadDictionary;
     JSTEvaluatorThreadContext* context = threadDict[JSTEvaluatorThreadContextKey];
     // The evaluator may be other evualuator, or nil if this thread has not been used before. Eaither way take ownership.
     if (context.evaluator != self) {
@@ -307,7 +307,7 @@ static void __JSTRunLoopSourceCancelCallBack(void* info, CFRunLoopRef rl, CFStri
                     task.evaluateBlock(self->_jsContext);
                     if (self->_jsContext.exception) {
                         NSLog(@"Did fail on JSContext: %@", self->_jsContext.name);
-                        NSDictionary* userInfo = @{ NSLocalizedDescriptionKey : [self->_jsContext.exception[@"message"] toString] };
+                        NSDictionary* userInfo = @{ NSLocalizedDescriptionKey : (self->_jsContext.exception[@"message"]).toString };
                         error = [NSError errorWithDomain:@"JSTEvaluator" code:1 userInfo:userInfo];
                         self->_jsContext.exception = nil;
                     }
@@ -322,7 +322,7 @@ static void __JSTRunLoopSourceCancelCallBack(void* info, CFRunLoopRef rl, CFStri
         }
 
         dispatch_barrier_sync(_jsSourcePerformQueue, ^{
-            if ([self->_jsContext[@"counter"] toInt32] == scriptToEvaluate)
+            if ((self->_jsContext[@"counter"]).toInt32 == scriptToEvaluate)
                 dispatch_semaphore_signal(self->_allScriptsDone);
         });
     }
@@ -362,7 +362,7 @@ void runRegress141275()
         };
 
         [evaluator evaluateBlock:^(JSContext* context) {
-            JSSynchronousGarbageCollectForDebugging([context JSGlobalContextRef]);
+            JSSynchronousGarbageCollectForDebugging(context.JSGlobalContextRef);
         } completion:showErrorIfNeeded];
 
         [evaluator evaluateBlock:^(JSContext* context) {

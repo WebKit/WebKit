@@ -69,7 +69,7 @@ static NSString *selectorToPropertyName(const char* start)
     // Use 'index' to check for colons, if there are none, this is easy!
     const char* firstColon = strchr(start, ':');
     if (!firstColon)
-        return [NSString stringWithUTF8String:start];
+        return @(start);
 
     // 'header' is the length of string up to the first colon.
     size_t header = firstColon - start;
@@ -101,7 +101,7 @@ static NSString *selectorToPropertyName(const char* start)
         // If we get here, we've consumed a ':' - wash, rinse, repeat.
     }
 done:
-    return [NSString stringWithUTF8String:buffer.data()];
+    return @(buffer.data());
 }
 
 static bool constructorHasInstance(JSContextRef ctx, JSObjectRef constructorRef, JSValueRef possibleInstance, JSValueRef*)
@@ -137,9 +137,9 @@ static JSC::JSObject *objectWithCustomBrand(JSContext *context, NSString *brand,
 {
     JSClassDefinition definition;
     definition = kJSClassDefinitionEmpty;
-    definition.className = [brand UTF8String];
+    definition.className = brand.UTF8String;
     JSClassRef classRef = JSClassCreate(&definition);
-    JSC::JSObject* result = makeWrapper([context JSGlobalContextRef], classRef, cls);
+    JSC::JSObject* result = makeWrapper(context.JSGlobalContextRef, classRef, cls);
     JSClassRelease(classRef);
     return result;
 }
@@ -148,10 +148,10 @@ static JSC::JSObject *constructorWithCustomBrand(JSContext *context, NSString *b
 {
     JSClassDefinition definition;
     definition = kJSClassDefinitionEmpty;
-    definition.className = [brand UTF8String];
+    definition.className = brand.UTF8String;
     definition.hasInstance = constructorHasInstance;
     JSClassRef classRef = JSClassCreate(&definition);
-    JSC::JSObject* result = makeWrapper([context JSGlobalContextRef], classRef, cls);
+    JSC::JSObject* result = makeWrapper(context.JSGlobalContextRef, classRef, cls);
     JSClassRelease(classRef);
     return result;
 }
@@ -169,7 +169,7 @@ static RetainPtr<NSMutableDictionary> createRenameMap(Protocol *protocol, BOOL i
             return;
         NSString *selector = [rename substringToIndex:range.location];
         NSUInteger begin = range.location + range.length;
-        NSUInteger length = [rename length] - begin - 1;
+        NSUInteger length = rename.length - begin - 1;
         NSString *name = [rename substringWithRange:(NSRange){ begin, length }];
         renameMap.get()[selector] = name;
     });
@@ -179,20 +179,20 @@ static RetainPtr<NSMutableDictionary> createRenameMap(Protocol *protocol, BOOL i
 
 inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *propertyName, JSValue *value)
 {
-    if (![base isObject])
+    if (!base.isObject)
         return;
-    JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
+    JSC::JSGlobalObject* globalObject = toJS(context.JSGlobalContextRef);
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
-    JSC::JSObject* baseObject = JSC::asObject(toJS(globalObject, [base JSValueRef]));
+    JSC::JSObject* baseObject = JSC::asObject(toJS(globalObject, base.JSValueRef));
     auto name = OpaqueJSString::tryCreate(propertyName);
     if (!name)
         return;
 
     JSC::PropertyDescriptor descriptor;
-    descriptor.setValue(toJS(globalObject, [value JSValueRef]));
+    descriptor.setValue(toJS(globalObject, value.JSValueRef));
     descriptor.setEnumerable(false);
     descriptor.setConfigurable(true);
     descriptor.setWritable(true);
@@ -200,7 +200,7 @@ inline void putNonEnumerable(JSContext *context, JSValue *base, NSString *proper
     baseObject->methodTable()->defineOwnProperty(baseObject, globalObject, name->identifier(&vm), descriptor, shouldThrow);
 
     JSValueRef exception = 0;
-    if (handleExceptionIfNeeded(scope, [context JSGlobalContextRef], &exception) == ExceptionStatus::DidThrow)
+    if (handleExceptionIfNeeded(scope, context.JSGlobalContextRef, &exception) == ExceptionStatus::DidThrow)
         [context valueFromNotifyException:exception];
 }
 
@@ -209,7 +209,7 @@ static bool isInitFamilyMethod(NSString *name)
     NSUInteger i = 0;
 
     // Skip over initial underscores.
-    for (; i < [name length]; ++i) {
+    for (; i < name.length; ++i) {
         if ([name characterAtIndex:i] != '_')
             break;
     }
@@ -217,17 +217,17 @@ static bool isInitFamilyMethod(NSString *name)
     // Match 'init'.
     NSUInteger initIndex = 0;
     NSString* init = @"init";
-    for (; i < [name length] && initIndex < [init length]; ++i, ++initIndex) {
+    for (; i < name.length && initIndex < init.length; ++i, ++initIndex) {
         if ([name characterAtIndex:i] != [init characterAtIndex:initIndex])
             return false;
     }
 
     // We didn't match all of 'init'.
-    if (initIndex < [init length])
+    if (initIndex < init.length)
         return false;
 
     // If we're at the end or the next character is a capital letter then this is an init-family selector.
-    return i == [name length] || [[NSCharacterSet uppercaseLetterCharacterSet] characterIsMember:[name characterAtIndex:i]]; 
+    return i == name.length || [[NSCharacterSet uppercaseLetterCharacterSet] characterIsMember:[name characterAtIndex:i]];
 }
 
 static bool shouldSkipMethodWithName(NSString *name)
@@ -266,16 +266,16 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
             name = renameMap.get()[name];
             if (!name)
                 name = selectorToPropertyName(nameCStr);
-            JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
+            JSC::JSGlobalObject* globalObject = toJS(context.JSGlobalContextRef);
             JSValue *existingMethod = object[name];
             // ObjCCallbackFunction does a dynamic lookup for the
             // selector before calling the method. In order to save
-            // memory we only put one callback object in any givin
+            // memory we only put one callback object in any given
             // prototype chain. However, to handle the client trying
             // to override normal builtins e.g. "toString" we check if
             // the existing value on the prototype chain is an ObjC
             // callback already.
-            if ([existingMethod isObject] && JSC::jsDynamicCast<JSC::ObjCCallbackFunction*>(toJS(globalObject, [existingMethod JSValueRef])))
+            if (existingMethod.isObject && JSC::jsDynamicCast<JSC::ObjCCallbackFunction*>(toJS(globalObject, existingMethod.JSValueRef)))
                 return;
             JSObjectRef method = objCCallbackFunctionForMethod(context, objcClass, protocol, isInstanceMethod, sel, types);
             if (method)
@@ -346,7 +346,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         Property property { name, nullptr, nullptr };
         bool readonly = parsePropertyAttributes(objcProperty, property);
 
-        // Add the names of the getter & setter methods to
+        // Add the names of the getter & setter methods
         if (!property.getterName)
             property.getterName = @(name);
         accessorMethods[property.getterName.get()] = undefined;
@@ -393,9 +393,9 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 }
 
 - (instancetype)initForClass:(Class)cls;
-- (JSC::JSObject *)wrapperForObject:(id)object inContext:(JSContext *)context;
-- (JSC::JSObject *)constructorInContext:(JSContext *)context;
-- (JSC::JSObject *)prototypeInContext:(JSContext *)context;
+- (JSC::JSObject *)wrapperForObject:(id)object inContext:(JSContext *)context NS_RETURNS_INNER_POINTER;
+- (JSC::JSObject *)constructorInContext:(JSContext *)context NS_RETURNS_INNER_POINTER;
+- (JSC::JSObject *)prototypeInContext:(JSContext *)context NS_RETURNS_INNER_POINTER;
 
 @end
 
@@ -489,7 +489,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     JSC::JSObject* jsConstructor = m_constructor.get();
 
     if (!superClassInfo) {
-        JSC::JSGlobalObject* globalObject = toJSGlobalObject([context JSGlobalContextRef]);
+        JSC::JSGlobalObject* globalObject = toJSGlobalObject(context.JSGlobalContextRef);
         if (!jsConstructor)
             jsConstructor = globalObject->objectConstructor();
 
@@ -519,7 +519,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 
         // Set [Prototype].
         JSC::JSObject* superClassPrototype = [superClassInfo prototypeInContext:context];
-        JSObjectSetPrototype([context JSGlobalContextRef], toRef(jsPrototype), toRef(superClassPrototype));
+        JSObjectSetPrototype(context.JSGlobalContextRef, toRef(jsPrototype), toRef(superClassPrototype));
     }
 
     m_prototype = jsPrototype;
@@ -543,7 +543,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
 
     JSC::Structure* structure = [self structureInContext:context];
 
-    JSC::JSGlobalObject* globalObject = toJS([context JSGlobalContextRef]);
+    JSC::JSGlobalObject* globalObject = toJS(context.JSGlobalContextRef);
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
 
@@ -576,7 +576,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     if (structure)
         return structure;
 
-    JSC::JSGlobalObject* globalObject = toJSGlobalObject([context JSGlobalContextRef]);
+    JSC::JSGlobalObject* globalObject = toJSGlobalObject(context.JSGlobalContextRef);
     JSC::JSObject* prototype = [self prototypeInContext:context];
     m_structure = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::createStructure(globalObject->vm(), globalObject, prototype);
 

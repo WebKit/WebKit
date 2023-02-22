@@ -92,7 +92,7 @@ extern "C" void checkResult(NSString *, bool);
 @end
 
 @protocol TestObject <JSExport>
-- (id)init;
+- (instancetype)init;
 @property int variable;
 @property (readonly) int six;
 @property CGPoint point;
@@ -108,14 +108,14 @@ JSExportAs(testArgumentTypes,
 
 @interface TestObject : ParentObject <TestObject>
 @property int six;
-+ (id)testObject;
++ (instancetype)testObject;
 @end
 
 @implementation TestObject
 @synthesize variable;
 @synthesize six;
 @synthesize point;
-+ (id)testObject
++ (instancetype)testObject
 {
     return [[TestObject alloc] init];
 }
@@ -144,7 +144,7 @@ JSExportAs(testArgumentTypes,
 bool testXYZTested = false;
 
 @protocol TextXYZ <JSExport>
-- (id)initWithString:(NSString*)string;
+- (instancetype)initWithString:(NSString*)string;
 @property int x;
 @property (readonly) int y;
 @property (assign) JSValue *onclick;
@@ -166,7 +166,7 @@ bool testXYZTested = false;
 @synthesize x;
 @synthesize y;
 @synthesize z;
-- (id)initWithString:(NSString*)string
+- (instancetype)initWithString:(NSString*)string
 {
     self = [super init];
     if (!self)
@@ -225,7 +225,7 @@ bool testXYZTested = false;
     RetainPtr<JSVirtualMachine> m_sharedVirtualMachine;
 }
 
-- (id)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
+- (instancetype)initWithVirtualMachine:(JSVirtualMachine *)virtualMachine
 {
     self = [super init];
     if (!self)
@@ -252,14 +252,14 @@ bool testXYZTested = false;
 {
     if (index >= [m_children count])
         return nil;
-    return [m_children objectAtIndex:index];
+    return m_children[index];
 }
 
 - (void)removeChildAtIndex:(NSUInteger)index
 {
     if (index >= [m_children count])
         return;
-    [m_sharedVirtualMachine removeManagedReference:[m_children objectAtIndex:index] withOwner:self];
+    [m_sharedVirtualMachine removeManagedReference:m_children[index] withOwner:self];
     [m_children removeObjectAtIndex:index];
 }
 
@@ -273,7 +273,7 @@ bool testXYZTested = false;
 @implementation JSCollection {
     NSMutableDictionary *_dict;
 }
-- (id)init
+- (instancetype)init
 {
     self = [super init];
     if (!self)
@@ -286,7 +286,7 @@ bool testXYZTested = false;
 
 - (void)setValue:(JSValue *)value forKey:(NSString *)key
 {
-    JSManagedValue *oldManagedValue = [_dict objectForKey:key];
+    JSManagedValue *oldManagedValue = _dict[key];
     if (oldManagedValue) {
         JSValue* oldValue = [oldManagedValue value];
         if (oldValue)
@@ -294,12 +294,12 @@ bool testXYZTested = false;
     }
     JSManagedValue *managedValue = [JSManagedValue managedValueWithValue:value];
     [value.context.virtualMachine addManagedReference:managedValue withOwner:self];
-    [_dict setObject:managedValue forKey:key];
+    _dict[key] = managedValue;
 }
 
 - (JSValue *)valueForKey:(NSString *)key
 {
-    JSManagedValue *managedValue = [_dict objectForKey:key];
+    JSManagedValue *managedValue = _dict[key];
     if (!managedValue)
         return nil;
     return [managedValue value];
@@ -307,12 +307,12 @@ bool testXYZTested = false;
 @end
 
 @protocol InitA <JSExport>
-- (id)initWithA:(int)a;
+- (instancetype)initWithA:(int)a;
 - (int)initialize;
 @end
 
 @protocol InitB <JSExport>
-- (id)initWithA:(int)a b:(int)b;
+- (instancetype)initWithA:(int)a b:(int)b;
 @end
 
 @protocol InitC <JSExport>
@@ -332,17 +332,17 @@ bool testXYZTested = false;
 @end
 
 @interface ClassD : NSObject<InitA>
-- (id)initWithA:(int)a;
+- (instancetype)initWithA:(int)a;
 @end
 
 @interface ClassE : ClassD
-- (id)initWithA:(int)a;
+- (instancetype)initWithA:(int)a;
 @end
 
 @implementation ClassA {
     int _a;
 }
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = [super init];
     if (!self)
@@ -361,7 +361,7 @@ bool testXYZTested = false;
 @implementation ClassB {
     int _b;
 }
-- (id)initWithA:(int)a b:(int)b
+- (instancetype)initWithA:(int)a b:(int)b
 {
     self = [super initWithA:a];
     if (!self)
@@ -376,11 +376,11 @@ bool testXYZTested = false;
 @implementation ClassC {
     int _c;
 }
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     return [self initWithA:a b:0];
 }
-- (id)initWithA:(int)a b:(int)b
+- (instancetype)initWithA:(int)a b:(int)b
 {
     self = [super initWithA:a b:b];
     if (!self)
@@ -393,7 +393,7 @@ bool testXYZTested = false;
 @end
 
 @implementation ClassCPrime
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = [super initWithA:a b:0];
     if (!self)
@@ -408,7 +408,7 @@ bool testXYZTested = false;
 
 @implementation ClassD
 
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = nil;
     return [[ClassE alloc] initWithA:a];
@@ -423,7 +423,7 @@ bool testXYZTested = false;
     int _a;
 }
 
-- (id)initWithA:(int)a
+- (instancetype)initWithA:(int)a
 {
     self = [super init];
     if (!self)
@@ -444,7 +444,7 @@ static bool evilAllocationObjectWasDealloced = false;
 @implementation EvilAllocationObject {
     JSContext *m_context;
 }
-- (id)initWithContext:(JSContext *)context
+- (instancetype)initWithContext:(JSContext *)context
 {
     self = [super init];
     if (!self)
@@ -2482,13 +2482,13 @@ static NSURL *resolvePathToScripts()
         NSLog(@"%@\n", error);
         CRASH();
     }
-    [m_keyToScript setObject:result forKey:[filePath absoluteString]];
+    m_keyToScript[[filePath absoluteString]] = result;
     return result;
 }
 
 - (JSScript *)findScriptForKey:(NSString *)key
 {
-    return [m_keyToScript objectForKey:key];
+    return m_keyToScript[key];
 }
 
 - (void)context:(JSContext *)context fetchModuleForIdentifier:(JSValue *)identifier withResolveHandler:(JSValue *)resolve andRejectHandler:(JSValue *)reject
@@ -2507,7 +2507,7 @@ static NSURL *resolvePathToScripts()
         inVirtualMachine:context.virtualMachine
         error:nil];
     if (script) {
-        [m_keyToScript setObject:script forKey:[identifier toString]];
+        m_keyToScript[[identifier toString]] = script;
         [resolve callWithArguments:@[script]];
     } else
         [reject callWithArguments:@[[JSValue valueWithNewErrorFromMessage:@"Unable to create Script" inContext:context]]];

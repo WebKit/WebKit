@@ -461,32 +461,32 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
     if (!target.allowsInspectionByPolicy())
         return nil;
 
-    RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
-    [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
+    NSMutableDictionary *listing = [[NSMutableDictionary alloc] init];
+    listing[WIRTargetIdentifierKey] = @(target.targetIdentifier());
 
     switch (target.type()) {
     case RemoteInspectionTarget::Type::ITML:
-        [listing setObject:target.name() forKey:WIRTitleKey];
-        [listing setObject:WIRTypeITML forKey:WIRTypeKey];
+        listing[WIRTitleKey] = target.name();
+        listing[WIRTypeKey] = WIRTypeITML;
         break;
     case RemoteInspectionTarget::Type::JavaScript:
-        [listing setObject:target.name() forKey:WIRTitleKey];
-        [listing setObject:WIRTypeJavaScript forKey:WIRTypeKey];
+        listing[WIRTitleKey] = target.name();
+        listing[WIRTypeKey] = WIRTypeJavaScript;
         break;
     case RemoteInspectionTarget::Type::Page:
-        [listing setObject:target.url() forKey:WIRURLKey];
-        [listing setObject:target.name() forKey:WIRTitleKey];
-        [listing setObject:WIRTypePage forKey:WIRTypeKey];
+        listing[WIRURLKey] = target.url();
+        listing[WIRTitleKey] = target.name();
+        listing[WIRTypeKey] = WIRTypePage;
         break;
     case RemoteInspectionTarget::Type::ServiceWorker:
-        [listing setObject:target.url() forKey:WIRURLKey];
-        [listing setObject:target.name() forKey:WIRTitleKey];
-        [listing setObject:WIRTypeServiceWorker forKey:WIRTypeKey];
+        listing[WIRURLKey] = target.url();
+        listing[WIRTitleKey] = target.name();
+        listing[WIRTypeKey] = WIRTypeServiceWorker;
         break;
     case RemoteInspectionTarget::Type::WebPage:
-        [listing setObject:target.url() forKey:WIRURLKey];
-        [listing setObject:target.name() forKey:WIRTitleKey];
-        [listing setObject:WIRTypeWebPage forKey:WIRTypeKey];
+        listing[WIRURLKey] = target.url();
+        listing[WIRTitleKey] = target.name();
+        listing[WIRTypeKey] = WIRTypeWebPage;
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -494,12 +494,12 @@ RetainPtr<NSDictionary> RemoteInspector::listingForInspectionTarget(const Remote
     }
 
     if (auto* connectionToTarget = m_targetConnectionMap.get(target.targetIdentifier()))
-        [listing setObject:connectionToTarget->connectionIdentifier() forKey:WIRConnectionIdentifierKey];
+        listing[WIRConnectionIdentifierKey] = connectionToTarget->connectionIdentifier();
 
     if (target.hasLocalDebugger())
-        [listing setObject:@YES forKey:WIRHasLocalDebuggerKey];
+        listing[WIRHasLocalDebuggerKey] = @YES;
 
-    return listing;
+    return adoptNS(listing);
 }
 
 RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const RemoteAutomationTarget& target) const
@@ -511,20 +511,20 @@ RetainPtr<NSDictionary> RemoteInspector::listingForAutomationTarget(const Remote
     if (target.isPendingTermination())
         return nullptr;
 
-    RetainPtr<NSMutableDictionary> listing = adoptNS([[NSMutableDictionary alloc] init]);
-    [listing setObject:@(target.targetIdentifier()) forKey:WIRTargetIdentifierKey];
-    [listing setObject:target.name() forKey:WIRSessionIdentifierKey];
-    [listing setObject:WIRTypeAutomation forKey:WIRTypeKey];
-    [listing setObject:@(target.isPaired()) forKey:WIRAutomationTargetIsPairedKey];
+    NSMutableDictionary *listing = [[NSMutableDictionary alloc] init];
+    listing[WIRTargetIdentifierKey] = @(target.targetIdentifier());
+    listing[WIRSessionIdentifierKey] = target.name();
+    listing[WIRTypeKey] = WIRTypeAutomation;
+    listing[WIRAutomationTargetIsPairedKey] = @(target.isPaired());
     if (m_clientCapabilities) {
-        [listing setObject:m_clientCapabilities->browserName forKey:WIRAutomationTargetNameKey];
-        [listing setObject:m_clientCapabilities->browserVersion forKey:WIRAutomationTargetVersionKey];
+        listing[WIRAutomationTargetNameKey] = m_clientCapabilities->browserName;
+        listing[WIRAutomationTargetVersionKey] = m_clientCapabilities->browserVersion;
     }
 
     if (auto connectionToTarget = m_targetConnectionMap.get(target.targetIdentifier()))
-        [listing setObject:connectionToTarget->connectionIdentifier() forKey:WIRConnectionIdentifierKey];
+        listing[WIRConnectionIdentifierKey] = connectionToTarget->connectionIdentifier();
 
-    return listing;
+    return adoptNS(listing);
 }
 
 void RemoteInspector::pushListingsNow()
@@ -537,23 +537,19 @@ void RemoteInspector::pushListingsNow()
 
     RetainPtr<NSMutableDictionary> listings = adoptNS([[NSMutableDictionary alloc] init]);
     for (const auto& listing : m_targetListingMap.values()) {
-        NSString *targetIdentifierString = [[listing.get() objectForKey:WIRTargetIdentifierKey] stringValue];
-        [listings setObject:listing.get() forKey:targetIdentifierString];
+        NSString *targetIdentifierString = [listing.get()[WIRTargetIdentifierKey] stringValue];
+        listings.get()[targetIdentifierString] = listing.get();
     }
 
     RetainPtr<NSMutableDictionary> message = adoptNS([[NSMutableDictionary alloc] init]);
-    [message setObject:listings.get() forKey:WIRListingKey];
+    message.get()[WIRListingKey] = listings.get();
 
     if (!m_clientCapabilities)
-        [message setObject:WIRAutomationAvailabilityUnknown forKey:WIRAutomationAvailabilityKey];
+        message.get()[WIRAutomationAvailabilityKey] = WIRAutomationAvailabilityUnknown;
     else if (m_clientCapabilities->remoteAutomationAllowed)
-        [message setObject:WIRAutomationAvailabilityAvailable forKey:WIRAutomationAvailabilityKey];
+        message.get()[WIRAutomationAvailabilityKey] = WIRAutomationAvailabilityAvailable;
     else
-        [message setObject:WIRAutomationAvailabilityNotAvailable forKey:WIRAutomationAvailabilityKey];
-
-    // COMPATIBILITY(iOS 13): this key is deprecated and not used by newer versions of webinspectord.
-    BOOL isAllowed = m_clientCapabilities && m_clientCapabilities->remoteAutomationAllowed;
-    [message setObject:@(isAllowed) forKey:WIRRemoteAutomationEnabledKey];
+        message.get()[WIRAutomationAvailabilityKey] = WIRAutomationAvailabilityNotAvailable;
 
     m_relayConnection->sendMessage(WIRListingMessage, message.get());
 }

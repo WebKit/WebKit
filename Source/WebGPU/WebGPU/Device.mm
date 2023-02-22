@@ -82,13 +82,13 @@ private:
     static void captureFrame(id<MTLDevice> captureObject)
     {
         MTLCaptureManager* captureManager = [MTLCaptureManager sharedCaptureManager];
-        if ([captureManager isCapturing])
+        if (captureManager.isCapturing)
             return;
 
         MTLCaptureDescriptor* captureDescriptor = [[MTLCaptureDescriptor alloc] init];
         captureDescriptor.captureObject = captureObject;
         captureDescriptor.destination = MTLCaptureDestinationGPUTraceDocument;
-        captureDescriptor.outputURL = [[NSFileManager.defaultManager temporaryDirectory] URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.gputrace", NSUUID.UUID.UUIDString]];
+        captureDescriptor.outputURL = [NSFileManager.defaultManager.temporaryDirectory URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.gputrace", NSUUID.UUID.UUIDString]];
 
         NSError *error;
         if (![captureManager startCaptureWithDescriptor:captureDescriptor error:&error])
@@ -221,7 +221,7 @@ Queue& Device::getQueue()
 
 bool Device::hasFeature(WGPUFeatureName feature)
 {
-    return std::find(m_capabilities.features.begin(), m_capabilities.features.end(), feature);
+    return m_capabilities.features.find(feature);
 }
 
 auto Device::currentErrorScope(WGPUErrorFilter type) -> ErrorScope*

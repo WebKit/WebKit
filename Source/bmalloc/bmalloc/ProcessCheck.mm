@@ -38,12 +38,12 @@ bool gigacageEnabledForProcess()
     // If we wanted to make it efficient to call more than once, we could memoize the result in a global boolean.
 
     @autoreleasepool {
-        if (NSString *appName = [[NSBundle mainBundle] bundleIdentifier]) {
+        if (NSString *appName = NSBundle.mainBundle.bundleIdentifier) {
             bool isWebProcess = [appName hasPrefix:@"com.apple.WebKit.WebContent"];
             return isWebProcess;
         }
 
-        NSString *processName = [[NSProcessInfo processInfo] processName];
+        NSString *processName = NSProcessInfo.processInfo.processName;
         bool isOptInBinary = [processName isEqualToString:@"jsc"]
             || [processName isEqualToString:@"DumpRenderTree"]
             || [processName isEqualToString:@"wasm"]
@@ -78,13 +78,13 @@ bool shouldProcessUnconditionallyUseBmalloc()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] () {
         @autoreleasepool {
-            if (NSString *appName = [[NSBundle mainBundle] bundleIdentifier]) {
+            if (NSString *appName = NSBundle.mainBundle.bundleIdentifier) {
                 auto contains = [&] (NSString *string) {
                     return [appName rangeOfString:string options:NSCaseInsensitiveSearch].location != NSNotFound;
                 };
                 result = contains(@"com.apple.WebKit") || contains(@"safari");
             } else {
-                NSString *processName = [[NSProcessInfo processInfo] processName];
+                NSString *processName = NSProcessInfo.processInfo.processName;
                 result = [processName isEqualToString:@"jsc"]
                     || [processName isEqualToString:@"wasm"]
                     || [processName hasPrefix:@"test"];

@@ -82,7 +82,7 @@ static JSClassRef ConstructorClass(void)
 + (JSValue *)valueWithConstructorDescriptor:(id)constructorDescriptor inContext:(JSContext *)context
 {
     NSMutableDictionary *privateProperties = [@{ @"constructorDescriptor" : constructorDescriptor } mutableCopy];
-    JSGlobalContextRef ctx = [context JSGlobalContextRef];
+    JSGlobalContextRef ctx = context.JSGlobalContextRef;
     JSObjectRef constructorRef = JSObjectMake(ctx, ConstructorClass(), const_cast<void*>(CFBridgingRetain(privateProperties)));
     JSValue *constructor = [JSValue valueWithJSValueRef:constructorRef inContext:context];
     return constructor;

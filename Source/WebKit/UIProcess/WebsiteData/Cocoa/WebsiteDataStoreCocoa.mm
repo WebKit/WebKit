@@ -99,8 +99,8 @@ static bool experimentalFeatureEnabled(const String& key, bool defaultValue = fa
 
 static NSString* applicationOrProcessIdentifier()
 {
-    NSString *identifier = [NSBundle mainBundle].bundleIdentifier;
-    NSString *processName = [NSProcessInfo processInfo].processName;
+    NSString *identifier = NSBundle.mainBundle.bundleIdentifier;
+    NSString *processName = NSProcessInfo.processInfo.processName;
     // SafariForWebKitDevelopment has the same bundle identifier as Safari, but it does not have the privilege to
     // access Safari's paths.
     if ([identifier isEqualToString:@"com.apple.Safari"] && [processName isEqualToString:@"SafariForWebKitDevelopment"])

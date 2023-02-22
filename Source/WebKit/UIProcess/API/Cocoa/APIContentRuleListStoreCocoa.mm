@@ -46,9 +46,9 @@ WTF::String ContentRuleListStore::defaultStorePath()
         url = [url URLByAppendingPathComponent:@"WebKit" isDirectory:YES];
 
         if (!WebKit::processHasContainer()) {
-            NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
+            NSString *bundleIdentifier = NSBundle.mainBundle.bundleIdentifier;
             if (!bundleIdentifier)
-                bundleIdentifier = [NSProcessInfo processInfo].processName;
+                bundleIdentifier = NSProcessInfo.processInfo.processName;
             url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
         }
         
