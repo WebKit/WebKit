@@ -39,6 +39,7 @@
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
 #include "RenderText.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "ShadowData.h"
 #include "StyledMarkedText.h"
@@ -804,30 +805,30 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
 
     auto bounds = calculateDocumentMarkerBounds(makeIterator(), markedText);
 
-    auto lineStyleForMarkedTextType = [&]() -> DocumentMarkerLineStyle {
-        bool shouldUseDarkAppearance = m_renderer.useDarkAppearance();
+    auto lineStyleMode = [&] {
         switch (markedText.type) {
         case MarkedText::SpellingError:
-            return { DocumentMarkerLineStyleMode::Spelling, shouldUseDarkAppearance };
+            return DocumentMarkerLineStyleMode::Spelling;
         case MarkedText::GrammarError:
-            return { DocumentMarkerLineStyleMode::Grammar, shouldUseDarkAppearance };
+            return DocumentMarkerLineStyleMode::Grammar;
         case MarkedText::Correction:
-            return { DocumentMarkerLineStyleMode::AutocorrectionReplacement, shouldUseDarkAppearance };
+            return DocumentMarkerLineStyleMode::AutocorrectionReplacement;
         case MarkedText::DictationAlternatives:
-            return { DocumentMarkerLineStyleMode::DictationAlternatives, shouldUseDarkAppearance };
+            return DocumentMarkerLineStyleMode::DictationAlternatives;
 #if PLATFORM(IOS_FAMILY)
         case MarkedText::DictationPhraseWithAlternatives:
             // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS_FAMILY)-guard.
-            return { DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives, shouldUseDarkAppearance };
+            return DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives;
 #endif
         default:
             ASSERT_NOT_REACHED();
-            return { DocumentMarkerLineStyleMode::Spelling, shouldUseDarkAppearance };
+            return DocumentMarkerLineStyleMode::Spelling;
         }
-    };
+    }();
+    auto lineStyleColor = RenderTheme::singleton().documentMarkerLineColor(lineStyleMode, m_renderer.styleColorOptions());
 
     bounds.moveBy(m_paintRect.location());
-    m_paintInfo.context().drawDotsForDocumentMarker(bounds, lineStyleForMarkedTextType());
+    m_paintInfo.context().drawDotsForDocumentMarker(bounds, { lineStyleMode, lineStyleColor });
 }
 
 template<typename TextBoxPath>

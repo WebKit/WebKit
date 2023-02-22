@@ -255,10 +255,7 @@ void DrawLinesForText::apply(GraphicsContext& context) const
 
 void DrawDotsForDocumentMarker::apply(GraphicsContext& context) const
 {
-    context.drawDotsForDocumentMarker(m_rect, {
-        static_cast<DocumentMarkerLineStyleMode>(m_styleMode),
-        m_styleShouldUseDarkAppearance,
-    });
+    context.drawDotsForDocumentMarker(m_rect, m_style);
 }
 
 void DrawEllipse::apply(GraphicsContext& context) const

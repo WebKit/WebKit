@@ -40,6 +40,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <algorithm>
 #import <pal/spi/cf/CoreTextSPI.h>
+#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/Language.h>
 
 #if ENABLE(VIDEO)
@@ -241,5 +242,37 @@ void RenderThemeCocoa::paintAttachmentText(GraphicsContext& context, AttachmentL
 }
 
 #endif
+
+static Color grammarColor(bool useDarkMode)
+{
+#if ENABLE(POST_EDITING_GRAMMAR_CHECKING)
+    static bool useBlueForGrammar = false;
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        useBlueForGrammar = os_feature_enabled(TextComposer, PostEditing) && os_feature_enabled(TextComposer, PostEditingUseBlueDots);
+    });
+
+    if (useBlueForGrammar)
+        return useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 };
+#endif
+    return useDarkMode ? SRGBA<uint8_t> { 50, 215, 75, 217 } : SRGBA<uint8_t> { 25, 175, 50, 191 };
+}
+
+Color RenderThemeCocoa::documentMarkerLineColor(DocumentMarkerLineStyleMode mode, OptionSet<StyleColorOptions> options) const
+{
+    bool useDarkMode = options.contains(StyleColorOptions::UseDarkAppearance);
+    switch (mode) {
+    // Red
+    case DocumentMarkerLineStyleMode::Spelling:
+        return useDarkMode ? SRGBA<uint8_t> { 255, 140, 140, 217 } : SRGBA<uint8_t> { 255, 59, 48, 191 };
+    // Blue
+    case DocumentMarkerLineStyleMode::DictationAlternatives:
+    case DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyleMode::AutocorrectionReplacement:
+        return useDarkMode ? SRGBA<uint8_t> { 40, 145, 255, 217 } : SRGBA<uint8_t> { 0, 122, 255, 191 };
+    case DocumentMarkerLineStyleMode::Grammar:
+        return grammarColor(useDarkMode);
+    }
+}
 
 }

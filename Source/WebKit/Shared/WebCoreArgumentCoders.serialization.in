@@ -3590,7 +3590,7 @@ header: <WebCore/GraphicsTypes.h>
 header: <WebCore/GraphicsTypes.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DocumentMarkerLineStyle {
     WebCore::DocumentMarkerLineStyleMode mode;
-    bool shouldUseDarkAppearance;
+    WebCore::Color color;
 };
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
@@ -3646,9 +3646,8 @@ header: <WebCore/ImageDecoder.h>
 
 header: <WebCore/DisplayListItems.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDotsForDocumentMarker {
-    WebCore::FloatRect m_rect;
-    uint8_t m_styleMode;
-    bool m_styleShouldUseDarkAppearance;
+    WebCore::FloatRect rect();
+    WebCore::DocumentMarkerLineStyle style();
 };
 
 [Nested] enum class WebCore::ImageOrientation::Orientation : int {

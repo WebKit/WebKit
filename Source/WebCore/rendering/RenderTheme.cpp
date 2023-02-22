@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
+#include "GraphicsTypes.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLInputElement.h"
@@ -1980,6 +1981,22 @@ Color RenderTheme::datePlaceholderTextColor(const Color& textColor, const Color&
 
     // FIXME: Consider keeping color in LCHA (if that change is made) or converting back to the initial underlying color type to avoid unnecessarily clamping colors outside of sRGB.
     return convertColor<SRGBA<float>>(hsla);
+}
+
+Color RenderTheme::documentMarkerLineColor(DocumentMarkerLineStyleMode mode, OptionSet<StyleColorOptions>) const
+{
+    switch (mode) {
+    case DocumentMarkerLineStyleMode::Spelling:
+        return Color::red;
+    case DocumentMarkerLineStyleMode::DictationAlternatives:
+    case DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives:
+    case DocumentMarkerLineStyleMode::AutocorrectionReplacement:
+    case DocumentMarkerLineStyleMode::Grammar:
+        return Color::green;
+    }
+
+    ASSERT_NOT_REACHED();
+    return Color::transparentBlack;
 }
 
 void RenderTheme::setCustomFocusRingColor(const Color& color)

@@ -1057,10 +1057,8 @@ void drawDotsForDocumentMarker(GraphicsContextCairo& platformContext, const Floa
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
 
-    if (style.mode == DocumentMarkerLineStyleMode::Spelling)
-        cairo_set_source_rgb(cr, 1, 0, 0);
-    else if (style.mode == DocumentMarkerLineStyleMode::Grammar)
-        cairo_set_source_rgb(cr, 0, 1, 0);
+    auto [r, g, b, a] = style.color.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
+    cairo_set_source_rgba(cr, r, g, b, a);
 
     drawErrorUnderline(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_restore(cr);

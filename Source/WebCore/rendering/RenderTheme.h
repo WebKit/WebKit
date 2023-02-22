@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+enum class DocumentMarkerLineStyleMode : uint8_t;
+
 struct AttachmentLayout;
 class BorderData;
 class Element;
@@ -181,6 +183,8 @@ public:
     Color defaultButtonTextColor(OptionSet<StyleColorOptions>) const;
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
+
+    virtual Color documentMarkerLineColor(DocumentMarkerLineStyleMode, OptionSet<StyleColorOptions>) const;
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
