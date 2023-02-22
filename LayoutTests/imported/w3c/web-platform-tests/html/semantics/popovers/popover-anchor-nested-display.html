@@ -3,18 +3,19 @@
 <link rel=author href="mailto:xiaochengh@chromium.org">
 <link rel=help href="https://open-ui.org/components/popover.research.explainer">
 <link rel=help href="https://html.spec.whatwg.org/multipage/popover.html">
+<link rel=match href="popover-anchor-nested-display-ref.html">
 
-<button id=main-menu-button>Show menu</button>
+<button id=main-menu-button popovertoggletarget=main-menu>Show menu</button>
 
-<div id=main-menu>
+<div id=main-menu popover anchor=main-menu-button>
   <div>Foo</div>
-  <button id=nested-menu-button>
+  <button id=nested-menu-button popovertoggletarget=nested-menu>
     Show nested menu
   </button>
   <div>Bar</div>
 </div>
 
-<div id=nested-menu>
+<div id=nested-menu popover anchor=nested-menu-button>
   Baz
 </div>
 
@@ -27,9 +28,8 @@
 }
 
 #main-menu {
-  position: absolute;
-  top: 200px;;
-  left: 200px;
+  top: anchor(top);
+  left: anchor(right);
   width: 150px;
   line-height: 20px;
 }
@@ -39,9 +39,8 @@
 }
 
 #nested-menu {
-  position: absolute;
-  top: 220px;
-  left: 350px;
+  top: anchor(top);
+  left: anchor(right);
 }
 
 [popover] {
