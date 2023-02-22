@@ -130,6 +130,7 @@
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PointerCaptureController.h>
 #import <WebCore/PointerCharacteristics.h>
+#import <WebCore/PrintContext.h>
 #import <WebCore/Quirks.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderBlock.h>
@@ -4280,6 +4281,63 @@ void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const
 
     ASSERT(pageRects.size() >= 1);
     reply(pageRects.size());
+}
+
+void WebPage::drawToImage(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmapHandle&&)>&& reply)
+{  
+    Vector<WebCore::IntRect> pageRects;
+    double totalScaleFactor;
+    auto margin = printInfo.margin;
+    computePagesForPrintingImpl(frameID, printInfo, pageRects, totalScaleFactor, margin);
+
+    ASSERT(pageRects.size() >= 1);
+
+    if (!m_printContext) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    Checked<int> pageWidth = pageRects[0].width();
+    Checked<int> pageHeight = pageRects[0].height();
+
+    int imageHeight;
+    if (!WTF::safeMultiply(pageHeight.value<size_t>(), pageCount, imageHeight)) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    auto bitmap = ShareableBitmap::create({ pageWidth, imageHeight }, { });
+    if (!bitmap) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    auto graphicsContext = bitmap->createGraphicsContext();
+    if (!graphicsContext) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    for (size_t pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+        graphicsContext->save();
+        graphicsContext->translate(0, pageHeight * static_cast<int>(pageIndex));
+        m_printContext->spoolPage(*graphicsContext, pageIndex, pageWidth);
+        graphicsContext->restore();
+    }
+
+    auto handle = bitmap->createHandle(SharedMemory::Protection::ReadOnly);
+    if (!handle) {
+        reply({ });
+        endPrinting();
+        return;
+    }
+
+    reply(WTFMove(*handle));
+    endPrinting();
 }
 
 void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(RefPtr<SharedBuffer>&&)>&& reply)

@@ -1053,6 +1053,16 @@ IPC::Connection::AsyncReplyID WebPageProxy::drawToPDFiOS(FrameIdentifier frameID
     return sendWithAsyncReply(Messages::WebPage::DrawToPDFiOS(frameID, printInfo, pageCount), WTFMove(completionHandler));
 }
 
+IPC::Connection::AsyncReplyID WebPageProxy::drawToImage(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmapHandle&&)>&& completionHandler)
+{
+    if (!hasRunningProcess()) {
+        completionHandler({ });
+        return { };
+    }
+
+    return sendWithAsyncReply(Messages::WebPage::DrawToImage(frameID, printInfo, pageCount), WTFMove(completionHandler));
+}
+
 void WebPageProxy::contentSizeCategoryDidChange(const String& contentSizeCategory)
 {
     send(Messages::WebPage::ContentSizeCategoryDidChange(contentSizeCategory));

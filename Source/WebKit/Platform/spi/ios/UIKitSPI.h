@@ -63,6 +63,7 @@
 #import <UIKit/UIPickerView_Private.h>
 #import <UIKit/UIPopoverPresentationController_Private.h>
 #import <UIKit/UIPresentationController_Private.h>
+#import <UIKit/UIPrintPageRenderer_Private.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScene_Private.h>
 #import <UIKit/UIScrollEvent_Private.h>
@@ -512,6 +513,10 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 + (CGSize)defaultSizeForCurrentOrientation;
 - (void)_setUsesCheckedSelection:(BOOL)usesCheckedSelection;
 @property (nonatomic, setter=_setMagnifierEnabled:) BOOL _magnifierEnabled;
+@end
+
+@interface UIPrintPageRenderer ()
+@property (readonly) UIPrintRenderingQuality requestedRenderingQuality;
 @end
 
 @interface UIResponder ()
