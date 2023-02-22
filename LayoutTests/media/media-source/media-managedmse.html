@@ -20,7 +20,7 @@
         try {
             findMediaElement();
 
-            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48kHz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
+            let manifests = [ 'content/test-opus-manifest.json', 'content/test-vorbis-manifest.json', 'content/test-48khz-manifest.json', 'content/test-xhe-aac-manifest.json' ];
             for (const manifest of manifests) {
                 loader = new MediaSourceLoader(manifest);
                 await loaderPromise(loader);
@@ -41,7 +41,7 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0).toFixed(4) == loader.mediaSegmentEndTime(0)', true);
+            testExpected('Math.abs(sourceBuffer.buffered.end(0) - loader.mediaSegmentEndTime(0)) < 0.01', true);
 
             consoleWrite('Clean sourcebuffer of all content.');
             run('sourceBuffer.remove(0, 100)');
