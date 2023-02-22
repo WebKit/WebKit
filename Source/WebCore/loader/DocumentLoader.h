@@ -702,15 +702,6 @@ private:
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
-
-    DisabledContentExtensions m_disabledContentExtensions { DisabledContentExtensionsMode::None };
-
-    ScriptExecutionContextIdentifier m_resultingClientId;
-
-#if ENABLE(SERVICE_WORKER)
-    std::unique_ptr<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
-#endif
-
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState m_deviceOrientationAndMotionAccessState { DeviceOrientationOrMotionPermissionState::Prompt };
 #endif

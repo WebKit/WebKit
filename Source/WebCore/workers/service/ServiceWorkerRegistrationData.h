@@ -39,8 +39,6 @@ namespace WebCore {
 enum class ServiceWorkerUpdateViaCache : uint8_t;
 
 struct ServiceWorkerRegistrationData {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-
     ServiceWorkerRegistrationKey key;
     ServiceWorkerRegistrationIdentifier identifier;
     URL scopeURL;
