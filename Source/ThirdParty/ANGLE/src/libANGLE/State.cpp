@@ -431,7 +431,8 @@ State::State(const State *shareContextState,
       mBoundingBoxMaxZ(1.0f),
       mBoundingBoxMaxW(1.0f),
       mShadingRatePreserveAspectRatio(false),
-      mShadingRate(ShadingRate::Undefined)
+      mShadingRate(ShadingRate::Undefined),
+      mFetchPerSample(false)
 {}
 
 State::~State() {}
@@ -1370,6 +1371,9 @@ void State::setEnableFeature(GLenum feature, bool enabled)
         case GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM:
             mShadingRatePreserveAspectRatio = enabled;
             return;
+        case GL_FETCH_PER_SAMPLE_ARM:
+            mFetchPerSample = enabled;
+            return;
     }
 
     ASSERT(mClientVersion.major == 1);
@@ -1524,6 +1528,8 @@ bool State::getEnableFeature(GLenum feature) const
             break;
         case GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM:
             return mShadingRatePreserveAspectRatio;
+        case GL_FETCH_PER_SAMPLE_ARM:
+            return mFetchPerSample;
     }
 
     ASSERT(mClientVersion.major == 1);
@@ -2561,6 +2567,14 @@ void State::getBooleanv(GLenum pname, GLboolean *params) const
                 *params = mClipDistancesEnabled.test(pname - GL_CLIP_DISTANCE0_EXT);
             }
             break;
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FETCH_PER_SAMPLE_ARM:
+            *params = mFetchPerSample;
+            break;
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+            *params = mCaps.fragmentShaderFramebufferFetchMRT;
+            break;
         default:
             UNREACHABLE();
             break;
@@ -2688,6 +2702,14 @@ void State::getFloatv(GLenum pname, GLfloat *params) const
             break;
         case GL_CLIP_DEPTH_MODE_EXT:
             *params = static_cast<float>(mClipControlDepth);
+            break;
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FETCH_PER_SAMPLE_ARM:
+            *params = mFetchPerSample ? 1.0f : 0.0f;
+            break;
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+            *params = mCaps.fragmentShaderFramebufferFetchMRT ? 1.0f : 0.0f;
             break;
         default:
             UNREACHABLE();
@@ -3171,6 +3193,16 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
         // GL_ANGLE_shader_pixel_local_storage
         case GL_PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE:
             *params = mPixelLocalStorageActivePlanes;
+            break;
+
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FETCH_PER_SAMPLE_ARM:
+            *params = mFetchPerSample ? 1 : 0;
+            break;
+
+        // GL_ARM_shader_framebuffer_fetch
+        case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+            *params = mCaps.fragmentShaderFramebufferFetchMRT ? 1 : 0;
             break;
 
         default:

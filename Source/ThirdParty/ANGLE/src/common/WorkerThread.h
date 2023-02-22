@@ -53,6 +53,20 @@ class WaitableEvent : angle::NonCopyable
             waitable->wait();
         }
     }
+
+    template <class T>
+    // Checks if all events are ready. T should be some container of std::shared_ptr<WaitableEvent>.
+    static bool AllReady(T *waitables)
+    {
+        for (auto &waitable : *waitables)
+        {
+            if (!waitable->isReady())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 
 // A waitable event that is always ready.

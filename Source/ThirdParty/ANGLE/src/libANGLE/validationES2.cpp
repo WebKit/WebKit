@@ -664,6 +664,12 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
             return context->getClientVersion() < Version(2, 0) ||
                    context->getExtensions().logicOpANGLE;
 
+        case GL_FETCH_PER_SAMPLE_ARM:
+            return context->getExtensions().shaderFramebufferFetchARM;
+
+        case GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM:
+            return queryOnly && context->getExtensions().shaderFramebufferFetchARM;
+
         default:
             break;
     }

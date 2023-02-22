@@ -398,6 +398,9 @@ struct Caps
     // ES 3.2 Table 20.41: Implementation Dependent Values (cont.)
     GLint maxTextureBufferSize         = 0;
     GLint textureBufferOffsetAlignment = 0;
+
+    // GL_ARM_shader_framebuffer_fetch
+    bool fragmentShaderFramebufferFetchMRT = false;
 };
 
 Caps GenerateMinimumCaps(const Version &clientVersion, const Extensions &extensions);

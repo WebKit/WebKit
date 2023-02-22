@@ -29,6 +29,19 @@ bool SetPtr(T *dst, void *src)
     }
     return false;
 }
+
+bool IsValidPlatformTypeForPlatformDisplayConnection(EGLAttrib platformType)
+{
+    switch (platformType)
+    {
+        case EGL_PLATFORM_SURFACELESS_MESA:
+            return true;
+        default:
+            break;
+    }
+    return false;
+}
+
 }  // namespace
 
 namespace rx
@@ -218,7 +231,7 @@ egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->surfaceAttribPtr, eglSurfaceAttrib);
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->swapIntervalPtr, eglSwapInterval);
 
-    if (platformType != 0)
+    if (IsValidPlatformTypeForPlatformDisplayConnection(platformType))
     {
         mEGLDisplay = getPlatformDisplay(platformType, nativeDisplay);
     }
@@ -374,12 +387,23 @@ EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
     }
     angle::SplitStringAlongWhitespace(extensions, &mExtensions);
 
-    bool hasPlatformBaseEXT = hasExtension("EGL_EXT_platform_base");
     PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplayEXTPtr;
-    if (!hasPlatformBaseEXT ||
+    if (!hasExtension("EGL_EXT_platform_base") ||
         !SetPtr(&getPlatformDisplayEXTPtr, getProcAddress("eglGetPlatformDisplayEXT")))
     {
         return EGL_NO_DISPLAY;
+    }
+
+    ASSERT(IsValidPlatformTypeForPlatformDisplayConnection(platformType));
+    switch (platformType)
+    {
+        case EGL_PLATFORM_SURFACELESS_MESA:
+            if (!hasExtension("EGL_MESA_platform_surfaceless"))
+                return EGL_NO_DISPLAY;
+            break;
+        default:
+            UNREACHABLE();
+            return EGL_NO_DISPLAY;
     }
 
     return getPlatformDisplayEXTPtr(static_cast<EGLenum>(platformType),

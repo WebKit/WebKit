@@ -2732,6 +2732,72 @@ TEST_P(FramebufferFetchES31, SingleSampledMultiSampledMixedTest_ARM)
     EXPECT_PIXEL_COLOR_EQ(kViewportWidth / 2, kViewportHeight / 2, GLColor::red);
 }
 
+// Test ARM extension with new tokens
+TEST_P(FramebufferFetchES31, BasicTokenUsage_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
+
+    // GL_FETCH_PER_SAMPLE_ARM can be set and queried
+    GLboolean isFetchPerSampleEnabledBool = false;
+    GLint isFetchPerSampleEnabledInt      = -1;
+    GLfloat isFetchPerSampleEnabledFloat  = -1.0f;
+
+    // Set GL_FETCH_PER_SAMPLE_ARM true
+    glEnable(GL_FETCH_PER_SAMPLE_ARM);
+    EXPECT_GL_TRUE(glIsEnabled(GL_FETCH_PER_SAMPLE_ARM));
+
+    // Ensure it returns true
+    glGetBooleanv(GL_FETCH_PER_SAMPLE_ARM, &isFetchPerSampleEnabledBool);
+    EXPECT_GL_TRUE(isFetchPerSampleEnabledBool);
+    glGetIntegerv(GL_FETCH_PER_SAMPLE_ARM, &isFetchPerSampleEnabledInt);
+    ASSERT_EQ(isFetchPerSampleEnabledInt, 1);
+    glGetFloatv(GL_FETCH_PER_SAMPLE_ARM, &isFetchPerSampleEnabledFloat);
+    ASSERT_EQ(isFetchPerSampleEnabledFloat, 1.0);
+
+    // Set GL_FETCH_PER_SAMPLE_ARM false
+    glDisable(GL_FETCH_PER_SAMPLE_ARM);
+    EXPECT_GL_FALSE(glIsEnabled(GL_FETCH_PER_SAMPLE_ARM));
+
+    // Ensure it returns false
+    glGetBooleanv(GL_FETCH_PER_SAMPLE_ARM, &isFetchPerSampleEnabledBool);
+    EXPECT_GL_FALSE(isFetchPerSampleEnabledBool);
+    glGetIntegerv(GL_FETCH_PER_SAMPLE_ARM, &isFetchPerSampleEnabledInt);
+    ASSERT_EQ(isFetchPerSampleEnabledInt, 0);
+    glGetFloatv(GL_FETCH_PER_SAMPLE_ARM, &isFetchPerSampleEnabledFloat);
+    ASSERT_EQ(isFetchPerSampleEnabledFloat, 0.0);
+
+    ASSERT_GL_NO_ERROR();
+
+    // GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM can only be queried
+    GLboolean isFragmentShaderFramebufferFetchMrtBool = false;
+    GLint isFragmentShaderFramebufferFetchMrtInt      = -1;
+    GLfloat isFragmentShaderFramebufferFetchMrtFloat  = -1.0f;
+
+    // Try to set it, ensure we can't
+    glEnable(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+    glDisable(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+
+    // Ensure we can't query its state with isEnabled
+    // Commented out due to http://anglebug.com/8025
+    // glIsEnabled(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM);
+    // EXPECT_GL_ERROR(GL_INVALID_ENUM);
+
+    // Ensure GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM returns false
+    glGetBooleanv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
+                  &isFragmentShaderFramebufferFetchMrtBool);
+    EXPECT_GL_FALSE(isFragmentShaderFramebufferFetchMrtBool);
+    glGetIntegerv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
+                  &isFragmentShaderFramebufferFetchMrtInt);
+    ASSERT_EQ(isFragmentShaderFramebufferFetchMrtInt, 0);
+    glGetFloatv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
+                &isFragmentShaderFramebufferFetchMrtFloat);
+    ASSERT_EQ(isFragmentShaderFramebufferFetchMrtFloat, 0.0);
+
+    ASSERT_GL_NO_ERROR();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);
 ANGLE_INSTANTIATE_TEST_ES31(FramebufferFetchES31);
 }  // namespace angle

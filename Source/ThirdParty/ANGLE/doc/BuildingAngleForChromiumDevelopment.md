@@ -17,7 +17,7 @@ Prerequisite Steps:
 
 ```bash
 cd src/third_party/angle
-python scripts/bootstrap.py
+python3 scripts/bootstrap.py
 gclient sync
 ```
 
