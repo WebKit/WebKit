@@ -607,13 +607,6 @@ static void* keyValueObservingContext = &keyValueObservingContext;
     return 1;
 }
 
-- (NSRect)confinementRectForMenu:(NSMenu *)menu onScreen:(NSScreen *)screen
-{
-    auto confinementRect = WebCore::enclosingIntRect(NSRect { NSEvent.mouseLocation, menu.size });
-    confinementRect.move(0, -confinementRect.height());
-    return confinementRect;
-}
-
 - (void)_web_grantDOMPasteAccess
 {
     _impl->handleDOMPasteRequestForCategoryWithResult(_category, WebCore::DOMPasteAccessResponse::GrantedForGesture);
@@ -4287,8 +4280,9 @@ void WebViewImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAcc
     auto pasteMenuItem = RetainPtr([m_domPasteMenu insertItemWithTitle:WebCore::contextMenuItemTagPaste() action:@selector(_web_grantDOMPasteAccess) keyEquivalent:emptyString() atIndex:0]);
     [pasteMenuItem setTarget:m_domPasteMenuDelegate.get()];
 
-    RetainPtr event = m_page->createSyntheticEventForContextMenu(NSEvent.mouseLocation);
-    [NSMenu popUpContextMenu:m_domPasteMenu.get() withEvent:event.get() forView:[m_view window].contentView];
+    auto window = [m_view window];
+    RetainPtr event = m_page->createSyntheticEventForContextMenu([window convertPointFromScreen:NSEvent.mouseLocation]);
+    [NSMenu popUpContextMenu:m_domPasteMenu.get() withEvent:event.get() forView:window.contentView];
 }
 
 void WebViewImpl::handleDOMPasteRequestForCategoryWithResult(WebCore::DOMPasteAccessCategory pasteAccessCategory, WebCore::DOMPasteAccessResponse response)
