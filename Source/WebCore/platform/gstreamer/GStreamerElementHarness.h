@@ -52,7 +52,10 @@ public:
         bool sendEvent(GstEvent*);
 
         const GRefPtr<GstPad>& pad() const { return m_pad; }
+        const GRefPtr<GstPad>& targetPad() const { return m_targetPad; }
         const GRefPtr<GstCaps>& outputCaps();
+
+        const RefPtr<GStreamerElementHarness> downstreamHarness() const { return m_downstreamHarness; }
 
     private:
         Stream(GRefPtr<GstPad>&&, RefPtr<GStreamerElementHarness>&&);
@@ -95,6 +98,8 @@ public:
 
     void processOutputBuffers();
     void flush();
+
+    void dumpGraph(const char* filenamePrefix);
 
 private:
     GStreamerElementHarness(GRefPtr<GstElement>&&, ProcessBufferCallback&&, std::optional<PadLinkCallback>&&);

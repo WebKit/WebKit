@@ -337,6 +337,8 @@ GstClockTime webkitGstElementGetCurrentRunningTime(GstElement*);
 #define gst_element_get_current_running_time webkitGstElementGetCurrentRunningTime
 #endif
 
+GstClockTime webkitGstInitTime();
+
 PlatformVideoColorSpace videoColorSpaceFromCaps(const GstCaps*);
 PlatformVideoColorSpace videoColorSpaceFromInfo(const GstVideoInfo&);
 void fillVideoInfoColorimetryFromColorSpace(GstVideoInfo*, const PlatformVideoColorSpace&);

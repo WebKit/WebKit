@@ -81,6 +81,8 @@ GST_DEBUG_CATEGORY(webkit_gst_common_debug);
 
 namespace WebCore {
 
+static GstClockTime s_webkitGstInitTime;
+
 GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate* staticPadTemplate, const gchar* name, GstPad* target)
 {
     GstPad* pad;
@@ -296,6 +298,7 @@ bool ensureGStreamerInitialized()
 
         GUniqueOutPtr<GError> error;
         isGStreamerInitialized = gst_init_check(&argc, &argv, &error.outPtr());
+        s_webkitGstInitTime = gst_util_get_timestamp();
         ASSERT_WITH_MESSAGE(isGStreamerInitialized, "GStreamer initialization failed: %s", error ? error->message : "unknown error occurred");
         g_strfreev(argv);
         GST_DEBUG_CATEGORY_INIT(webkit_gst_common_debug, "webkitcommon", 0, "WebKit Common utilities");
@@ -752,6 +755,11 @@ GstClockTime webkitGstElementGetCurrentRunningTime(GstElement* element)
     return clockTime - baseTime;
 }
 #endif
+
+GstClockTime webkitGstInitTime()
+{
+    return s_webkitGstInitTime;
+}
 
 PlatformVideoColorSpace videoColorSpaceFromCaps(const GstCaps* caps)
 {
