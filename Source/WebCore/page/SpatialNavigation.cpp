@@ -51,7 +51,6 @@ static bool areRectsPartiallyAligned(FocusDirection, const LayoutRect&, const La
 static bool areRectsMoreThanFullScreenApart(FocusDirection, const LayoutRect& curRect, const LayoutRect& targetRect, const LayoutSize& viewSize);
 static bool isRectInDirection(FocusDirection, const LayoutRect&, const LayoutRect&);
 static void deflateIfOverlapped(LayoutRect&, LayoutRect&);
-static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRect&);
 static void entryAndExitPointsForDirection(FocusDirection, const LayoutRect& startingRect, const LayoutRect& potentialRect, LayoutPoint& exitPoint, LayoutPoint& entryPoint);
 static bool isScrollableNode(const Node*);
 
@@ -500,48 +499,29 @@ bool canScrollInDirection(const Frame* frame, FocusDirection direction)
     }
 }
 
-// FIXME: This is completely broken. This should be deleted and callers should be calling ScrollView::contentsToWindow() instead.
-static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRect& initialRect)
-{
-    LayoutRect rect = initialRect;
-    for (AbstractFrame* frame = initialFrame; frame; frame = frame->tree().parent()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
-        if (Element* element = localFrame->ownerElement()) {
-            do {
-                rect.move(LayoutUnit(element->offsetLeft()), LayoutUnit(element->offsetTop()));
-            } while ((element = element->offsetParent()));
-            rect.moveBy((-localFrame->view()->scrollPosition()));
-        }
-    }
-    return rect;
-}
-
 LayoutRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
 {
     ASSERT(node && node->renderer() && !node->document().view()->needsLayout());
-
+    
     if (is<Document>(*node))
         return frameRectInAbsoluteCoordinates(downcast<Document>(*node).frame());
 
-    LayoutRect rect;
-    if (RenderObject* renderer = node->renderer())
-        rect = rectToAbsoluteCoordinates(node->document().frame(), renderer->absoluteBoundingBoxRect());
+    RenderObject* renderer = node->renderer();
+    LayoutRect rect = ScrollView::contentsToWindow(renderer->absoluteBoundingBoxRect());
 
     // For authors that use border instead of outline in their CSS, we compensate by ignoring the border when calculating
     // the rect of the focused element.
     if (ignoreBorder) {
-        rect.move(node->renderer()->style().borderLeftWidth(), node->renderer()->style().borderTopWidth());
-        rect.setWidth(rect.width() - node->renderer()->style().borderLeftWidth() - node->renderer()->style().borderRightWidth());
-        rect.setHeight(rect.height() - node->renderer()->style().borderTopWidth() - node->renderer()->style().borderBottomWidth());
+        rect.move(renderer->style().borderLeftWidth(), renderer->style().borderTopWidth());
+        rect.setWidth(rect.width() - renderer->style().borderLeftWidth() - renderer->style().borderRightWidth());
+        rect.setHeight(rect.height() - renderer->style().borderTopWidth() - renderer->style().borderBottomWidth());
     }
     return rect;
 }
 
 LayoutRect frameRectInAbsoluteCoordinates(Frame* frame)
 {
-    return rectToAbsoluteCoordinates(frame, frame->view()->visibleContentRect());
+    return ScrollView::contentsToWindow(frame->view()->visibleContentRect());
 }
 
 // This method calculates the exitPoint from the startingRect and the entryPoint into the candidate rect.
@@ -759,7 +739,7 @@ LayoutRect virtualRectForAreaElementAndDirection(HTMLAreaElement* area, FocusDir
     ASSERT(area->imageElement());
     // Area elements tend to overlap more than other focusable elements. We flatten the rect of the area elements
     // to minimize the effect of overlapping areas.
-    LayoutRect rect = virtualRectForDirection(direction, rectToAbsoluteCoordinates(area->document().frame(), area->computeRect(area->imageElement()->renderer())), 1);
+    LayoutRect rect = virtualRectForDirection(direction, ScrollView::contentsToWindow(area->computeRect(area->imageElement()->renderer())), 1);
     return rect;
 }
 
