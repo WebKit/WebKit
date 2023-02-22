@@ -580,8 +580,6 @@ imported/w3c/web-platform-tests/reporting/document-reporting-override-endpoint.h
 imported/w3c/web-platform-tests/reporting/document-reporting-path-absolute.https.sub.html [ Skip ]
 
 # Skip preload tests that timeout
-imported/w3c/web-platform-tests/preload/link-header-modulepreload.html [ Skip ]
-imported/w3c/web-platform-tests/preload/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/preload/preconnect-onerror-event.html [ Skip ]
 imported/w3c/web-platform-tests/preload/preconnect.html [ Skip ]
 imported/w3c/web-platform-tests/preload/prefetch-events.html [ Skip ]

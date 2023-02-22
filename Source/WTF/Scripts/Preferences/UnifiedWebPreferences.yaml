@@ -3565,6 +3565,20 @@ LineHeightUnitsEnabled:
     WebCore:
       default: true
 
+LinkModulePreloadEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Link rel=modulepreload"
+  humanReadableDescription: "Enable Link rel=modulepreload"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 LinkPreconnect:
   type: bool
   status: embedder
