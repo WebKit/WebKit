@@ -38,7 +38,7 @@
     {
         "action": {
             "type": "css-display-none",
-            "selector": "div:has(.hidden_hasTestNotMatchingEverything)"
+            "selector": "div:has(.hidden_has_test_not_matching_everything)"
         },
         "trigger": {
             "url-filter": ".*css-display-none.html"
@@ -47,7 +47,25 @@
     {
         "action": {
             "type": "css-display-none",
-            "selector": "div:has(.hidden_hasTestMatchingEverything)"
+            "selector": "div:has(.hidden_has_test_matching_everything)"
+        },
+        "trigger": {
+            "url-filter": ".*"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".hiDDen"
+        },
+        "trigger": {
+            "url-filter": ".*css-display-none.html"
+        }
+    },
+    {
+        "action": {
+            "type": "css-display-none",
+            "selector": ".HiDDeN"
         },
         "trigger": {
             "url-filter": ".*"
