@@ -3125,31 +3125,69 @@ void WebViewImpl::capitalizeWord()
     m_page->capitalizeWord();
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebViewImplAdditions.mm>
+#else
+static Vector<WebCore::CompositionUnderline> extractInitialUnderlines(NSAttributedString *)
+{
+    return { };
+}
+
+bool WebViewImpl::markedTextInputEnabled() const
+{
+    return false;
+}
+
+void WebViewImpl::showMarkedTextForCandidate(NSTextCheckingResult *, NSRange, NSRange)
+{
+}
+
+void WebViewImpl::showMarkedTextForCandidates(NSArray<NSTextCheckingResult *> *)
+{
+}
+
+NSTextCheckingTypes WebViewImpl::getTextCheckingTypes() const
+{
+    return NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
+}
+#endif
+
 void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 {
     if (!shouldRequestCandidates())
         return;
 
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
         return;
 
-    if (!editorState.hasPostLayoutData())
-        return;
+    m_lastStringForCandidateRequest = postLayoutData->stringForCandidateRequest;
 
-    auto& postLayoutData = *editorState.postLayoutData;
-    m_lastStringForCandidateRequest = postLayoutData.stringForCandidateRequest;
+    NSRange selectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
+    NSTextCheckingTypes checkingTypes = getTextCheckingTypes();
 
-    NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
-    NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
     WeakPtr weakThis { *this };
-    m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
+    m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:selectedRange inString:postLayoutData->paragraphContextForCandidateRequest types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakThis](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         RunLoop::main().dispatch([weakThis, sequenceNumber, candidates = retainPtr(candidates)] {
             if (!weakThis)
                 return;
             weakThis->handleRequestedCandidates(sequenceNumber, candidates.get());
         });
     }];
+}
+
+std::optional<EditorState::PostLayoutData> WebViewImpl::postLayoutDataForContentEditable()
+{
+    const EditorState& editorState = m_page->editorState();
+    if (!editorState.isContentEditable)
+        return std::nullopt;
+
+    // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
+    // and that we just bail if it is missing.
+    if (!editorState.hasPostLayoutData())
+        return std::nullopt;
+
+    return editorState.postLayoutData;
 }
 
 void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates)
@@ -3160,25 +3198,22 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
     if (m_lastCandidateRequestSequenceNumber != sequenceNumber)
         return;
 
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
         return;
 
-    // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
-    // and that we just bail if it is missing.
-    if (!editorState.hasPostLayoutData())
-        return;
-
-    auto& postLayoutData = *editorState.postLayoutData;
-    if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
+    if (m_lastStringForCandidateRequest != postLayoutData->stringForCandidateRequest)
         return;
 
 #if HAVE(TOUCH_BAR)
-    NSRange selectedRange = NSMakeRange(postLayoutData.candidateRequestStartPosition, postLayoutData.selectedTextLength);
-    WebCore::IntRect offsetSelectionRect = postLayoutData.selectionBoundingRect;
+    NSRange selectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
+    WebCore::IntRect offsetSelectionRect = postLayoutData->selectionBoundingRect;
     offsetSelectionRect.move(0, offsetSelectionRect.height());
 
-    [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData.paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view.getAutoreleased() completionHandler:nil];
+    [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData->paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view.getAutoreleased() completionHandler:nil];
+
+    if (markedTextInputEnabled())
+        showMarkedTextForCandidates(candidates);
 #else
     UNUSED_PARAM(candidates);
 #endif
@@ -3209,17 +3244,11 @@ static WebCore::TextCheckingResult textCheckingResultFromNSTextCheckingResult(NS
 
 void WebViewImpl::handleAcceptedCandidate(NSTextCheckingResult *acceptedCandidate)
 {
-    const EditorState& editorState = m_page->editorState();
-    if (!editorState.isContentEditable)
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
         return;
 
-    // FIXME: It's pretty lame that we have to depend on the most recent EditorState having post layout data,
-    // and that we just bail if it is missing.
-    if (!editorState.hasPostLayoutData())
-        return;
-
-    auto& postLayoutData = *editorState.postLayoutData;
-    if (m_lastStringForCandidateRequest != postLayoutData.stringForCandidateRequest)
+    if (m_lastStringForCandidateRequest != postLayoutData->stringForCandidateRequest)
         return;
 
     m_isHandlingAcceptedCandidate = true;
@@ -4622,15 +4651,6 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
     return validAttributes.get().get();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebViewImplAdditions.mm>
-#else
-static Vector<WebCore::CompositionUnderline> extractInitialUnderlines(NSAttributedString *string)
-{
-    return { };
-}
-#endif
-
 static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)
 {
     Vector<WebCore::CompositionUnderline> result;
@@ -5755,7 +5775,10 @@ void WebViewImpl::forceRequestCandidatesForTesting()
 
 bool WebViewImpl::shouldRequestCandidates() const
 {
-    return !m_page->editorState().isInPasswordField && candidateListTouchBarItem().candidateListVisible;
+    if (m_page->editorState().isInPasswordField)
+        return false;
+
+    return candidateListTouchBarItem().candidateListVisible || markedTextInputEnabled();
 }
 
 void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)

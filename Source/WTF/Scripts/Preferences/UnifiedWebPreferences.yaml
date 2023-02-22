@@ -3808,6 +3808,17 @@ ManagedMediaSourceEnabled:
     WebCore:
       default: true
 
+MarkedTextInputEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MaskWebGLStringsEnabled:
   type: bool
   status: stable

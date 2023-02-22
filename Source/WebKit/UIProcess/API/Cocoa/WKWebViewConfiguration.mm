@@ -183,6 +183,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
     double _sampledPageTopColorMaxDifference;
     double _sampledPageTopColorMinHeight;
+    BOOL _markedTextInputEnabled;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -281,6 +282,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
     _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
     _sampledPageTopColorMinHeight = DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight;
+
+    _markedTextInputEnabled = NO;
 
     return self;
 }
@@ -471,6 +474,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
     configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
     configuration->_sampledPageTopColorMinHeight = self->_sampledPageTopColorMinHeight;
+
+    configuration->_markedTextInputEnabled = self->_markedTextInputEnabled;
 
     return configuration;
 }
@@ -1435,6 +1440,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (_WKContentSecurityPolicyModeForExtension)_contentSecurityPolicyModeForExtension
 {
     return WebKit::toWKContentSecurityPolicyModeForExtension(_pageConfiguration->contentSecurityPolicyModeForExtension());
+}
+
+- (void)_setMarkedTextInputEnabled:(BOOL)enabled
+{
+    _markedTextInputEnabled = enabled;
+}
+
+- (BOOL)_markedTextInputEnabled
+{
+    return _markedTextInputEnabled;
 }
 
 @end
