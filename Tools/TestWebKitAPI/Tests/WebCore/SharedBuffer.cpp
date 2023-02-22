@@ -195,13 +195,18 @@ TEST_F(FragmentedSharedBufferTest, builder)
     EXPECT_TRUE(builder2.isEmpty());
 }
 
+static void checkBufferWithLength(const uint8_t* buffer, size_t bufferLength, const char* expected, size_t length)
+{
+    ASSERT_EQ(length, bufferLength);
+    for (size_t i = 0; i < length; ++i)
+        EXPECT_EQ(buffer[i], expected[i]);
+}
+
 static void checkBuffer(const uint8_t* buffer, size_t bufferLength, const char* expected)
 {
     // expected is null terminated, buffer is not.
     size_t length = strlen(expected);
-    ASSERT_EQ(length, bufferLength);
-    for (size_t i = 0; i < length; ++i)
-        EXPECT_EQ(buffer[i], expected[i]);
+    checkBufferWithLength(buffer, bufferLength, expected, length);
 }
 
 TEST_F(FragmentedSharedBufferTest, getSomeData)
@@ -235,7 +240,7 @@ TEST_F(FragmentedSharedBufferTest, getSomeData)
     checkBuffer(gh2.data(), gh2.size(), "gh");
     checkBuffer(ghijkl.data(), ghijkl.size(), "ghijkl");
     EXPECT_EQ(gh1.size(), gh2.size());
-    checkBuffer(gh1.data(), gh1.size(), gh2.dataAsCharPtr());
+    checkBufferWithLength(gh1.data(), gh1.size(), gh2.dataAsCharPtr(), gh2.size());
     checkBuffer(l.data(), l.size(), "l");
 }
 
