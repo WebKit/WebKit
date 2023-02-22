@@ -391,6 +391,7 @@ UIProcess/Cocoa/GPUProcessProxyCocoa.mm
 UIProcess/Cocoa/GlobalFindInPageState.mm
 UIProcess/Cocoa/IconLoadingDelegate.mm
 UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm
+UIProcess/Cocoa/MarkedTextComposition.mm
 UIProcess/Cocoa/MediaUtilities.mm
 UIProcess/Cocoa/MediaPermissionUtilities.mm
 UIProcess/Cocoa/ModalContainerControlClassifier.mm

@@ -38,6 +38,7 @@
 #import "FullscreenClient.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
+#import "MarkedTextComposition.h"
 #import "NativeWebGestureEvent.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebMouseEvent.h"
@@ -4631,9 +4632,9 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebViewImplAdditions.mm>
 #else
-static Vector<WebCore::CompositionUnderline> extractInitialUnderlines(NSAttributedString *string)
+static inline bool shouldExtractMarkedTextComposition()
 {
-    return { };
+    return false;
 }
 #endif
 
@@ -4928,17 +4929,19 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", isAttributedString ? [string string] : string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
 
-    Vector<WebCore::CompositionUnderline> underlines;
+    MarkedTextComposition composition;
     NSString *text;
 
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
-        auto initialUnderlines = extractInitialUnderlines(string);
-        underlines = !initialUnderlines.isEmpty() ? initialUnderlines : extractUnderlines(string);
+        if (shouldExtractMarkedTextComposition())
+            composition = extractMarkedTextComposition(string);
+        else
+            composition = extractUnderlines(string);
     } else {
         text = string;
-        underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
+        composition = Vector<WebCore::CompositionUnderline> { WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false) };
     }
 
     if (inSecureInputState()) {
@@ -4954,7 +4957,13 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         return;
     }
 
-    m_page->setCompositionAsync(text, underlines, { }, selectedRange, replacementRange);
+    WTF::switchOn(composition, [&](std::monostate) {
+        m_page->setCompositionAsync(text, { }, { }, selectedRange, replacementRange);
+    }, [&](const Vector<WebCore::CompositionUnderline>& underlines) {
+        m_page->setCompositionAsync(text, underlines, { }, selectedRange, replacementRange);
+    }, [&](const Vector<WebCore::CompositionHighlight>& highlights) {
+        m_page->setCompositionAsync(text, { }, highlights, selectedRange, replacementRange);
+    });
 }
 
 // Synchronous NSTextInputClient is still implemented to catch spurious sync calls. Remove when that is no longer needed.

@@ -36,6 +36,7 @@
 #import "InputViewUpdateDeferrer.h"
 #import "InsertTextOptions.h"
 #import "Logging.h"
+#import "MarkedTextComposition.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
 #import "PageClient.h"
@@ -5686,16 +5687,34 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WKContentViewInteractionAdditions.mm>
 #else
-- (void)setAttributedMarkedText:(NSAttributedString *)markedText selectedRange:(NSRange)selectedRange
-{
-    [self _setMarkedText:markedText.string underlines:Vector<WebCore::CompositionUnderline> { } highlights:compositionHighlights(markedText) selectedRange:selectedRange];
-}
-
 - (void)setMarkedText:(NSString *)markedText selectedRange:(NSRange)selectedRange
 {
     [self _setMarkedText:markedText underlines:Vector<WebCore::CompositionUnderline> { } highlights:Vector<WebCore::CompositionHighlight> { } selectedRange:selectedRange];
 }
+
+static inline bool shouldExtractMarkedTextComposition()
+{
+    return false;
+}
 #endif
+
+- (void)setAttributedMarkedText:(NSAttributedString *)markedText selectedRange:(NSRange)selectedRange
+{
+    WebKit::MarkedTextComposition composition;
+    if (shouldExtractMarkedTextComposition())
+        composition = WebKit::extractMarkedTextComposition(markedText);
+    else
+        composition = compositionHighlights(markedText);
+
+    WTF::switchOn(composition, [&](std::monostate) {
+        [self _setMarkedText:markedText.string underlines: { } highlights: { } selectedRange:selectedRange];
+    }, [&](const Vector<WebCore::CompositionUnderline>& underlines) {
+        [self _setMarkedText:markedText.string underlines:underlines highlights: { } selectedRange:selectedRange];
+    }, [&](const Vector<WebCore::CompositionHighlight>& highlights) {
+        [self _setMarkedText:markedText.string underlines: { } highlights:highlights selectedRange:selectedRange];
+    });
+}
+
 
 - (void)_setMarkedText:(NSString *)markedText underlines:(const Vector<WebCore::CompositionUnderline>&)underlines highlights:(const Vector<WebCore::CompositionHighlight>&)highlights selectedRange:(NSRange)selectedRange
 {

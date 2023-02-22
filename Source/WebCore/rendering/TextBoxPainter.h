@@ -73,8 +73,8 @@ protected:
     TextDecorationPainter createDecorationPainter(const StyledMarkedText&, const FloatRect&);
     void paintBackgroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
     void paintForegroundDecorations(TextDecorationPainter&, const StyledMarkedText&, const FloatRect&);
-    void paintCompositionUnderline(const CompositionUnderline&, const FloatRoundedRect::Radii&, bool hasLiveConversion);
-    void fillCompositionUnderline(float start, float width, const CompositionUnderline&, const FloatRoundedRect::Radii&, bool hasLiveConversion) const;
+    void paintCompositionUnderline(const CompositionUnderline&, const FloatRoundedRect::Radii&);
+    void fillCompositionUnderline(float start, float width, const CompositionUnderline&, const FloatRoundedRect::Radii&) const;
     void paintPlatformDocumentMarker(const MarkedText&);
 
     float textPosition();

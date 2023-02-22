@@ -659,7 +659,7 @@ static FloatRoundedRect::Radii radiiForUnderline(const CompositionUnderline&, un
 }
 
 template<typename TextBoxPath>
-void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float width, const CompositionUnderline& underline, const FloatRoundedRect::Radii&, bool) const
+void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float width, const CompositionUnderline& underline, const FloatRoundedRect::Radii&) const
 {
     // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
     // All other marked text underlines are 1px thick.
@@ -693,15 +693,10 @@ void TextBoxPainter<TextBoxPath>::paintCompositionUnderlines()
     if (!underlineCount)
         return;
 
-    auto hasLiveConversion = false;
-
     auto markedTextStartOffset = underlines[0].startOffset;
     auto markedTextEndOffset = underlines[0].endOffset;
 
     for (const auto& underline : underlines) {
-        if (underline.thick)
-            hasLiveConversion = true;
-
         if (underline.startOffset < markedTextStartOffset)
             markedTextStartOffset = underline.startOffset;
 
@@ -724,7 +719,7 @@ void TextBoxPainter<TextBoxPath>::paintCompositionUnderlines()
         auto underlineRadii = radiiForUnderline(underline, markedTextStartOffset, markedTextEndOffset);
 
         // Underline intersects this run. Paint it.
-        paintCompositionUnderline(underline, underlineRadii, hasLiveConversion);
+        paintCompositionUnderline(underline, underlineRadii);
 
         if (underline.endOffset > textBox().end())
             break; // Underline also runs into the next run. Bail now, no more marker advancement.
@@ -749,7 +744,7 @@ float TextBoxPainter<TextBoxPath>::textPosition()
 }
 
 template<typename TextBoxPath>
-void TextBoxPainter<TextBoxPath>::paintCompositionUnderline(const CompositionUnderline& underline, const FloatRoundedRect::Radii& radii, bool hasLiveConversion)
+void TextBoxPainter<TextBoxPath>::paintCompositionUnderline(const CompositionUnderline& underline, const FloatRoundedRect::Radii& radii)
 {
     float start = 0; // start of line to draw, relative to tx
     float width = m_logicalRect.width(); // how much line to draw
@@ -774,7 +769,7 @@ void TextBoxPainter<TextBoxPath>::paintCompositionUnderline(const CompositionUnd
         mirrorRTLSegment(m_logicalRect.width(), textBox().direction(), start, width);
     }
 
-    fillCompositionUnderline(start, width, underline, radii, hasLiveConversion);
+    fillCompositionUnderline(start, width, underline, radii);
 }
 
 template<typename TextBoxPath>
