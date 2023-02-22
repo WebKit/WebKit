@@ -53,6 +53,9 @@ public:
 
     static bool supports(StringView type) { return type == "classic"_s || type == "module"_s || type == "importmap"_s; }
 
+    void setFetchPriorityForBindings(const AtomString&);
+    String fetchPriorityForBindings() const;
+
 private:
     HTMLScriptElement(const QualifiedName&, Document&, bool wasInsertedByParser, bool alreadyStarted);
 

@@ -48,6 +48,7 @@
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "JSRequestPriority.h"
 #include "Logging.h"
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryParser.h"
@@ -55,6 +56,7 @@
 #include "MouseEvent.h"
 #include "ParsedContentType.h"
 #include "RenderStyle.h"
+#include "RequestPriority.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
@@ -674,6 +676,16 @@ ReferrerPolicy HTMLLinkElement::referrerPolicy() const
 String HTMLLinkElement::debugDescription() const
 {
     return makeString(HTMLElement::debugDescription(), ' ', type(), ' ', href().string());
+}
+
+void HTMLLinkElement::setFetchPriorityForBindings(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(fetchpriorityAttr, value);
+}
+
+String HTMLLinkElement::fetchPriorityForBindings() const
+{
+    return convertEnumerationToString(parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto));
 }
 
 } // namespace WebCore

@@ -3924,6 +3924,7 @@ JSReportingObserver.cpp
 JSReportingObserverCallback.cpp
 JSRequestAnimationFrameCallback.cpp
 JSRequestCookieConsentOptions.cpp
+JSRequestPriority.cpp
 JSResidentKeyRequirement.cpp
 JSResizeObserver.cpp
 JSResizeObserverBoxOptions.cpp
