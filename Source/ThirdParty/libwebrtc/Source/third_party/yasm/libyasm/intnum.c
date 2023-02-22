@@ -1067,7 +1067,7 @@ yasm_intnum_get_str(const yasm_intnum *intn)
     switch (intn->type) {
         case INTNUM_L:
             s = yasm_xmalloc(16);
-            sprintf((char *)s, "%ld", intn->val.l);
+            snprintf((char *)s, 16, "%ld", intn->val.l);
             return (char *)s;
             break;
         case INTNUM_BV:

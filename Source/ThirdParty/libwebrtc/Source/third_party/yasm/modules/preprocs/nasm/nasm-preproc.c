@@ -205,8 +205,9 @@ nasm_preproc_get_line(yasm_preproc *preproc)
         preproc_nasm->lineinc =
             (altline != -1 || preproc_nasm->lineinc != 1);
         preproc_nasm->line = line;
-        line = yasm_xmalloc(40+strlen(preproc_nasm->file_name));
-        sprintf(line, "%%line %ld+%d %s", linnum,
+        size_t line_length = 40 + strlen(preproc_nasm->file_name);
+        line = yasm_xmalloc(line_length);
+        snprintf(line, line_length, "%%line %ld+%d %s", linnum,
                 preproc_nasm->lineinc, preproc_nasm->file_name);
         preproc_nasm->prior_linnum = linnum;
     }
