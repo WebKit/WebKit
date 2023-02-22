@@ -69,9 +69,10 @@ public:
     RefPtr<HTMLImageElement> enclosingImageElement() const;
 
     WEBCORE_EXPORT String attachmentTitle() const;
+    const AtomString& attachmentSubtitle() const;
     const AtomString& attachmentActionForDisplay() const;
     String attachmentTitleForDisplay() const;
-    String attachmentSubtitleForDisplay() const;
+    const AtomString& attachmentSubtitleForDisplay() const;
     WEBCORE_EXPORT String attachmentType() const;
     String attachmentPath() const;
     RefPtr<Image> thumbnail() const { return m_thumbnail; }

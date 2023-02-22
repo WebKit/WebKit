@@ -131,6 +131,11 @@ static const AtomString& attachmentSaveButtonIdentifier()
     return identifier;
 }
 
+static QualifiedName subtitleAttr()
+{
+    return QualifiedName { nullAtom(), "subtitle"_s, nullAtom() };
+}
+
 static QualifiedName saveAttr()
 {
     return QualifiedName { nullAtom(), "save"_s, nullAtom() };
@@ -300,11 +305,11 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
             setAttributeWithoutSynchronization(HTMLNames::titleAttr, AtomString { m_file->name() });
-            setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, PAL::fileSizeDescription(m_file->size()));
+            setAttributeWithoutSynchronization(subtitleAttr(), PAL::fileSizeDescription(m_file->size()));
             setAttributeWithoutSynchronization(HTMLNames::typeAttr, AtomString { m_file->type() });
         } else {
             removeAttribute(HTMLNames::titleAttr);
-            removeAttribute(HTMLNames::subtitleAttr);
+            removeAttribute(subtitleAttr());
             removeAttribute(HTMLNames::typeAttr);
         }
     }
@@ -355,7 +360,7 @@ RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 
 void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
-    if (name == actionAttr || name == progressAttr || name == subtitleAttr || name == titleAttr || name == typeAttr)
+    if (name == actionAttr || name == progressAttr || name == subtitleAttr() || name == titleAttr || name == typeAttr)
         invalidateRendering();
 
     HTMLElement::parseAttribute(name, value);
@@ -366,7 +371,7 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
     } else if (name == titleAttr) {
         if (m_titleElement)
             m_titleElement->setTextContent(String(value.string()));
-    } else if (name == subtitleAttr) {
+    } else if (name == subtitleAttr()) {
         if (m_subtitleElement)
             m_subtitleElement->setTextContent(String(value.string()));
     } else if (name == saveAttr())
@@ -389,6 +394,11 @@ String HTMLAttachmentElement::attachmentTitle() const
     if (!title.isEmpty())
         return title;
     return m_file ? m_file->name() : String();
+}
+
+const AtomString& HTMLAttachmentElement::attachmentSubtitle() const
+{
+    return attributeWithoutSynchronization(subtitleAttr());
 }
 
 const AtomString& HTMLAttachmentElement::attachmentActionForDisplay() const
@@ -418,12 +428,12 @@ String HTMLAttachmentElement::attachmentTitleForDisplay() const
     );
 }
 
-String HTMLAttachmentElement::attachmentSubtitleForDisplay() const
+const AtomString& HTMLAttachmentElement::attachmentSubtitleForDisplay() const
 {
     if (m_implementation == Implementation::ImageOnly)
-        return { };
+        return nullAtom();
 
-    return attributeWithoutSynchronization(subtitleAttr);
+    return attachmentSubtitle();
 }
 
 String HTMLAttachmentElement::attachmentType() const
@@ -454,9 +464,9 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
         removeAttribute(HTMLNames::typeAttr);
 
     if (newFileSize)
-        setAttributeWithoutSynchronization(HTMLNames::subtitleAttr, PAL::fileSizeDescription(*newFileSize));
+        setAttributeWithoutSynchronization(subtitleAttr(), PAL::fileSizeDescription(*newFileSize));
     else
-        removeAttribute(HTMLNames::subtitleAttr);
+        removeAttribute(subtitleAttr());
 
     invalidateRendering();
 }
