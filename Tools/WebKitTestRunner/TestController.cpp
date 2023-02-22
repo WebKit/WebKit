@@ -3079,6 +3079,7 @@ UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebVi
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
+    WKPageGroupSetPreferences(m_pageGroup.get(), adoptWK(WKPreferencesCreate()).get());
     return context;
 }
 
