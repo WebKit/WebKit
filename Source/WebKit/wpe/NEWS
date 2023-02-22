@@ -1,3 +1,30 @@
+==================
+WPE WebKit 2.39.90
+==================
+
+  - Add network session API when building with the new API.
+  - Add new JavaScript execution APIs.
+  - Add support for speech synthesis using Flite.
+  - Always update the active URI of WebKitFrame.
+  - Bring back the WebKitConsoleMessage API implementation.
+  - Do not allow the sandbox to mount the entire home directory.
+  - Fix criticals from webkitOptionMenuSetEvent when opening any combo box.
+  - Fix large memory allocation when uploading content.
+  - Fix scrolling after a history navigation with PSON enabled.
+  - Fix the webkit.h public header causing applications failing to build.
+  - Enable WebGL2 by default, which was disabled by mistake.
+  - Fix the build with WebGL disabled.
+  - Remove the favicon functionality when building with the new API.
+  - Make most public types final (non-derivable) and class struct declarations
+    private when building with the new API.
+  - Merge functions of registering and unregistering script message handler in
+    the new API.
+  - Remove most of the webkit_web_view_new_with_*() constructors when building
+    with the new GLib API.
+  - Remove webkit_web_context_get/set_process_model when building with the new
+    GLib API.
+  - Fix several crashes and rendering issues.
+
 =================
 WPE WebKit 2.39.4
 =================
