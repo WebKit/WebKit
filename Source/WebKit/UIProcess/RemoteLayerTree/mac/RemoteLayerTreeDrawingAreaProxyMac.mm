@@ -108,7 +108,7 @@ DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::exisingDisplayLink()
     return m_webPageProxy.process().processPool().displayLinks().existingDisplayLinkForDisplay(*m_displayID);
 }
 
-DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::ensureDisplayLink()
+DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::displayLink()
 {
     ASSERT(m_displayID);
 
@@ -251,7 +251,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::scheduleDisplayRefreshCallbacks()
         return;
     }
 
-    auto& displayLink = ensureDisplayLink();
+    auto& displayLink = this->displayLink();
     m_displayRefreshObserverID = DisplayLinkObserverID::generate();
     displayLink.addObserver(*m_displayLinkClient, *m_displayRefreshObserverID, m_clientPreferredFramesPerSecond);
 }
@@ -281,7 +281,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::setDisplayLinkWantsFullSpeedUpdates(boo
     if (!m_displayID)
         return;
 
-    auto& displayLink = ensureDisplayLink();
+    auto& displayLink = this->displayLink();
 
     // Use a second observer for full-speed updates (used to drive scroll animations).
     if (wantsFullSpeedUpdates) {
@@ -307,6 +307,8 @@ void RemoteLayerTreeDrawingAreaProxyMac::windowScreenDidChange(PlatformDisplayID
 
     m_displayID = displayID;
     m_displayNominalFramesPerSecond = nominalFramesPerSecond;
+
+    m_webPageProxy.scrollingCoordinatorProxy()->windowScreenDidChange(displayID, nominalFramesPerSecond);
 
     scheduleDisplayRefreshCallbacks();
     if (hadFullSpeedOberver) {

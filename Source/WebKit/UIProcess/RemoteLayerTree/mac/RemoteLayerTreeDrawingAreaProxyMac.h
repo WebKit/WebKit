@@ -48,9 +48,13 @@ public:
 
     void didRefreshDisplay() override;
 
+    DisplayLink& displayLink();
+
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
+
+    bool isRemoteLayerTreeDrawingAreaProxyMac() const override { return true; }
 
     void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) override;
 
@@ -73,7 +77,6 @@ private:
     void removeObserver(std::optional<DisplayLinkObserverID>&);
 
     DisplayLink* exisingDisplayLink();
-    DisplayLink& ensureDisplayLink();
 
     WTF::MachSendRight createFence() override;
 

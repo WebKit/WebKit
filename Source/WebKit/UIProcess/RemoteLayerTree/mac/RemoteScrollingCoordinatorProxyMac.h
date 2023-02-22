@@ -32,9 +32,14 @@
 
 namespace WebKit {
 
+#if ENABLE(SCROLLING_THREAD)
+class RemoteLayerTreeEventDispatcher;
+#endif
+
 class RemoteScrollingCoordinatorProxyMac final : public RemoteScrollingCoordinatorProxy {
 public:
     explicit RemoteScrollingCoordinatorProxyMac(WebPageProxy&);
+    ~RemoteScrollingCoordinatorProxyMac();
 
 private:
     WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent&) override;
@@ -47,7 +52,13 @@ private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&) override;
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&) override;
 
+    void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
+
     std::unique_ptr<WebCore::WheelEventDeltaFilter> m_recentWheelEventDeltaFilter;
+
+#if ENABLE(SCROLLING_THREAD)
+    RefPtr<RemoteLayerTreeEventDispatcher> m_wheelEventDispatcher;
+#endif
 };
 
 } // namespace WebKit
