@@ -439,6 +439,14 @@ class YarrPatternConstructor {
         UnresolvedForwardReference(PatternAlternative* alternative, unsigned termIndex)
             : m_alternative(alternative)
             , m_termIndex(termIndex)
+            , m_namedGroup(String())
+        {
+        }
+
+        UnresolvedForwardReference(PatternAlternative* alternative, unsigned termIndex, const String namedGroup)
+            : m_alternative(alternative)
+            , m_termIndex(termIndex)
+            , m_namedGroup(namedGroup)
         {
         }
 
@@ -447,9 +455,20 @@ class YarrPatternConstructor {
             return &m_alternative->m_terms[m_termIndex];
         }
 
+        bool hasNamedGroup()
+        {
+            return !m_namedGroup.isNull();
+        }
+
+        const String namedGroup()
+        {
+            return m_namedGroup;
+        }
+
     private:
         PatternAlternative* m_alternative;
         unsigned m_termIndex;
+        const String m_namedGroup;
     };
 
 public:
@@ -479,6 +498,57 @@ public:
         m_pattern.m_body = body.get();
         m_alternative = body->addNewAlternative();
         m_pattern.m_disjunctions.append(WTFMove(body));
+    }
+
+    unsigned namedCaptureGroupIdForName(const String groupName, unsigned subpatternId)
+    {
+        ASSERT(subpatternId);
+        unsigned namedCaptureGroupId;
+
+        auto addResult = m_pattern.m_namedGroupToParenIndeces.add(groupName, Vector<unsigned>());
+        auto& thisGroupNameSubpatternIds = addResult.iterator->value;
+        if (addResult.isNewEntry) {
+            namedCaptureGroupId = ++m_pattern.m_numNamedSubpatterns;
+
+            while (m_pattern.m_captureGroupNames.size() < subpatternId)
+                m_pattern.m_captureGroupNames.append(String());
+            m_pattern.m_captureGroupNames.append(groupName);
+
+            thisGroupNameSubpatternIds.append(namedCaptureGroupId);
+        } else
+            namedCaptureGroupId = thisGroupNameSubpatternIds[0];
+
+        thisGroupNameSubpatternIds.append(subpatternId);
+
+        return namedCaptureGroupId;
+    }
+
+    void tryConvertingForwardReferencesToBackreferences()
+    {
+        //  There are forward references that could actually be lookbehind back references.
+        for (unsigned i = 0; i < m_forwardReferencesInLookbehind.size(); ++i) {
+            auto unresolvedForwardReference = m_forwardReferencesInLookbehind[i];
+            auto term = unresolvedForwardReference.term();
+            if (unresolvedForwardReference.hasNamedGroup()) {
+                auto namedGroupIndecesIter = m_pattern.m_namedGroupToParenIndeces.find(unresolvedForwardReference.namedGroup());
+                if (namedGroupIndecesIter == m_pattern.m_namedGroupToParenIndeces.end())
+                    continue;
+
+                unsigned namedGroupSubpatternId = namedGroupIndecesIter->value.last();
+                if (namedGroupSubpatternId == term->backReferenceSubpatternId) {
+                    term->backReferenceSubpatternId = 0;
+                    continue;
+                }
+                term->backReferenceSubpatternId = namedGroupSubpatternId;
+                term->convertToBackreference();
+                m_pattern.m_containsBackreferences = true;
+            } else if (term->backReferenceSubpatternId && term->backReferenceSubpatternId <= m_pattern.m_numSubpatterns) {
+                term->convertToBackreference();
+                m_pattern.m_containsBackreferences = true;
+            }
+        }
+
+        m_forwardReferencesInLookbehind.clear();
     }
 
     void assertionBOL()
@@ -609,10 +679,7 @@ public:
         if (capture) {
             m_pattern.m_numSubpatterns++;
             if (optGroupName) {
-                while (m_pattern.m_captureGroupNames.size() < subpatternId)
-                    m_pattern.m_captureGroupNames.append(String());
-                m_pattern.m_captureGroupNames.append(optGroupName.value());
-                m_pattern.m_namedGroupToParenIndex.add(optGroupName.value(), subpatternId);
+                namedCaptureGroupIdForName(optGroupName.value(), subpatternId);
             }
         } else
             ASSERT(!optGroupName);
@@ -672,18 +739,8 @@ public:
 
         popParenthesisContext();
 
-        if (shouldTryConvertingForwardReferencesToBackreferences && parenthesisMatchDirection() == Forward) {
-            //  There are forward references that could actually be lookbehind back references.
-            for (unsigned i = 0; i < m_forwardReferencesInLookbehind.size(); ++i) {
-                auto term = m_forwardReferencesInLookbehind[i].term();
-                if (term->backReferenceSubpatternId <= m_pattern.m_numSubpatterns) {
-                    term->convertToBackreference();
-                    m_pattern.m_containsBackreferences = true;
-                }
-            }
-
-            m_forwardReferencesInLookbehind.clear();
-        }
+        if (shouldTryConvertingForwardReferencesToBackreferences && parenthesisMatchDirection() == Forward)
+            tryConvertingForwardReferencesToBackreferences();
     }
 
     void atomBackReference(unsigned subpatternId)
@@ -730,13 +787,39 @@ public:
 
     void atomNamedBackReference(const String& subpatternName)
     {
-        ASSERT(m_pattern.m_namedGroupToParenIndex.find(subpatternName) != m_pattern.m_namedGroupToParenIndex.end());
-        atomBackReference(m_pattern.m_namedGroupToParenIndex.get(subpatternName));
+        ASSERT(m_pattern.m_namedGroupToParenIndeces.find(subpatternName) != m_pattern.m_namedGroupToParenIndeces.end());
+        auto namedGroupIndeces = m_pattern.m_namedGroupToParenIndeces.get(subpatternName);
+
+        if (parenthesisMatchDirection() == Forward) {
+            m_alternative->m_terms.append(PatternTerm(namedGroupIndeces.last()));
+            PatternTerm& lastTerm = m_alternative->lastTerm();
+            lastTerm.m_matchDirection = parenthesisMatchDirection();
+            m_pattern.m_containsBackreferences = true;
+            return;
+        }
+
+        // When part of a lookbehind, it could be the case that a prior alternative has a duplicate
+        // named capture. Therefore we create a ForwardReference that will be converted to a
+        // Backreference when the lookbehind or alternative is closed.
+        m_alternative->m_terms.append(PatternTerm::ForwardReference());
+        PatternTerm& term = m_alternative->lastTerm();
+        term.m_matchDirection = parenthesisMatchDirection();
+        // We record the current subpatternId, which we use when we try to convert to a back reference.
+        // To convert this forward reference to a back reference, the patternId for the named groups must be greater than the
+        // subpatternId we save here. We'll change it then.
+        term.backReferenceSubpatternId = m_pattern.m_numSubpatterns;
+        m_forwardReferencesInLookbehind.append(UnresolvedForwardReference(m_alternative, m_alternative->lastTermIndex(), subpatternName));
     }
 
-    void atomNamedForwardReference(const String&)
+    void atomNamedForwardReference(const String& subpatternName)
     {
         m_alternative->m_terms.append(PatternTerm::ForwardReference());
+
+        if (parenthesisMatchDirection() == Backward) {
+            PatternTerm& term = m_alternative->lastTerm();
+            term.m_matchDirection = parenthesisMatchDirection();
+            m_forwardReferencesInLookbehind.append(UnresolvedForwardReference(m_alternative, m_alternative->lastTermIndex(), subpatternName));
+        }
     }
     
     // deep copy the argument disjunction.  If filterStartsWithBOL is true,
@@ -857,7 +940,10 @@ public:
             // Top level alternative, record captured ranges to clear out from prior alternatives.
             m_alternative->m_lastSubpatternId = m_pattern.m_numSubpatterns;
         }
-        
+
+        if (!m_forwardReferencesInLookbehind.isEmpty() && parenthesisMatchDirection() == Backward)
+            tryConvertingForwardReferencesToBackreferences();
+
         m_alternative = m_alternative->m_parent->addNewAlternative(m_pattern.m_numSubpatterns, parenthesisMatchDirection());
     }
 
@@ -1173,6 +1259,44 @@ public:
         }
     }
 
+    void setupDuplicateNamedCaptures()
+    {
+        if (!m_pattern.m_numNamedSubpatterns)
+            return;
+
+        // Finish padding out m_captureGroupNames vector.
+        while (m_pattern.m_captureGroupNames.size() <= m_pattern.m_numSubpatterns)
+            m_pattern.m_captureGroupNames.append(String());
+
+        m_pattern.m_numDuplicateNamedCaptureGroups = 0;
+
+        for (auto& namedGroupIndecies : m_pattern.m_namedGroupToParenIndeces.values()) {
+            if (namedGroupIndecies.size() > 2)
+                m_pattern.m_numDuplicateNamedCaptureGroups++;
+            else {
+                // Since this named group is only used in one place, make that subpatternId
+                // as the only value in the vector.
+                ASSERT(namedGroupIndecies.size() == 2);
+                auto onlyIndex = namedGroupIndecies.takeLast();
+                namedGroupIndecies[0] = onlyIndex;
+            }
+        }
+
+        if (m_pattern.m_numDuplicateNamedCaptureGroups) {
+            m_pattern.m_duplicateNamedGroupForSubpatternId.fill(0, m_pattern.m_numSubpatterns + 1);
+            for (auto& namedGroupIndecies : m_pattern.m_namedGroupToParenIndeces.values()) {
+                if (namedGroupIndecies.size() > 2) {
+                    auto duplicateNamedGroupId = namedGroupIndecies[0];
+                    for (unsigned i = 1; i < namedGroupIndecies.size(); ++i) {
+                        auto subpatternId = namedGroupIndecies[i];
+                        ASSERT(!m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId]);
+                        m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId] = duplicateNamedGroupId;
+                    }
+                }
+            }
+        }
+    }
+
     ErrorCode error() { return m_error; }
 
 private:
@@ -1322,6 +1446,8 @@ ErrorCode YarrPattern::compile(StringView patternString)
         if (hasError(error))
             return error;
     }
+
+    constructor.setupDuplicateNamedCaptures();
 
     if (UNLIKELY(Options::dumpCompiledRegExpPatterns()))
         dumpPattern(patternString);

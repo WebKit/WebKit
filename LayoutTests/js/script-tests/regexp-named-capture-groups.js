@@ -104,7 +104,6 @@ shouldBe('"10/20/1930".replace(/(?<month>\\d{2})\\\/(?<day>\\d{2})\\\/(?<year>\\
 shouldBe('"10/20/1930".replace(/(?<month>\\d{2})\\\/(?<day>\\d{2})\\\/(?<year>\\d{4})/, "$<day>-$<month>-$<year")', '"20-10-$<year"');
 
 // Check invalid group name exceptions.
-shouldThrow('let r = new RegExp("/(?<groupName1>abc)|(?<groupName1>def)/")', '"SyntaxError: Invalid regular expression: duplicate group specifier name"');
 shouldThrow('let r = new RegExp("/(?< groupName1>abc)/")', '"SyntaxError: Invalid regular expression: invalid group specifier name"');
 shouldThrow('let r = new RegExp("/(?<g=oupName1>abc)/")', '"SyntaxError: Invalid regular expression: invalid group specifier name"');
 

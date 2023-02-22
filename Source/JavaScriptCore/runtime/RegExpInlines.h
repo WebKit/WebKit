@@ -123,8 +123,7 @@ ALWAYS_INLINE int RegExp::matchInline(JSGlobalObject* nullOrGlobalObject, VM& vm
     if (m_state == ParseError)
         return throwError();
 
-    int offsetVectorSize = (m_numSubpatterns + 1) * 2;
-    ovector.resize(offsetVectorSize);
+    ovector.resize(offsetVectorSize());
     int* offsetVector = ovector.data();
 
     int result;
@@ -290,11 +289,10 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(JSGlobalObject* nullOrGlobalObject
     }
 #endif
 
-    int offsetVectorSize = (m_numSubpatterns + 1) * 2;
     int* offsetVector;
     int result;
     Vector<int, 32> nonReturnedOvector;
-    nonReturnedOvector.grow(offsetVectorSize);
+    nonReturnedOvector.grow(offsetVectorSize());
     offsetVector = nonReturnedOvector.data();
     {
         constexpr bool usesPatternContextBuffer = false;

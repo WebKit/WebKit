@@ -91,27 +91,43 @@ public:
     
     unsigned numSubpatterns() const { return m_numSubpatterns; }
 
-    bool hasNamedCaptures()
+    unsigned offsetVectorBaseForNamedCaptures() const
+    {
+        return (numSubpatterns() + 1) * 2;
+    }
+
+    int offsetVectorSize() const
+    {
+        if (!hasNamedCaptures())
+            return offsetVectorBaseForNamedCaptures();
+        return offsetVectorBaseForNamedCaptures() + m_rareData->m_numDuplicateNamedCaptureGroups;
+    }
+
+    bool hasNamedCaptures() const
     {
         return m_rareData && !m_rareData->m_captureGroupNames.isEmpty();
     }
 
-    String getCaptureGroupName(unsigned i)
+    String getCaptureGroupNameForSubpatternId(unsigned i) const
     {
-        if (!i || !m_rareData || m_rareData->m_captureGroupNames.size() <= i)
+        if (!i || !m_rareData || m_rareData->m_captureGroupNames.isEmpty())
             return String();
         ASSERT(m_rareData);
         return m_rareData->m_captureGroupNames[i];
     }
 
-    unsigned subpatternForName(StringView groupName)
+    template <typename Offsets>
+    unsigned subpatternIdForGroupName(StringView groupName, const Offsets ovector) const
     {
         if (!m_rareData)
             return 0;
-        auto it = m_rareData->m_namedGroupToParenIndex.find<StringViewHashTranslator>(groupName);
-        if (it == m_rareData->m_namedGroupToParenIndex.end())
+        auto it = m_rareData->m_namedGroupToParenIndeces.find<StringViewHashTranslator>(groupName);
+        if (it == m_rareData->m_namedGroupToParenIndeces.end())
             return 0;
-        return it->value;
+        if (it->value.size() == 1)
+            return it->value[0];
+
+        return ovector[offsetVectorBaseForNamedCaptures() + it->value[0] - 1];
     }
 
     bool hasCode()
@@ -185,8 +201,13 @@ private:
 
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        unsigned m_numDuplicateNamedCaptureGroups;
         Vector<String> m_captureGroupNames;
-        HashMap<String, unsigned> m_namedGroupToParenIndex;
+
+        // This first element of the RHS vector is the subpatternId in the non-duplicate case.
+        // For the duplicate case, the first element is the namedCaptureGroupId.
+        // The remaining elements are the subpatternIds for each of the duplicate groups.
+        HashMap<String, Vector<unsigned>> m_namedGroupToParenIndeces;
     };
 
     String m_patternString;

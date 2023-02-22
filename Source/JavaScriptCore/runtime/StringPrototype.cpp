@@ -221,7 +221,7 @@ NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView
                 continue;
 
             unsigned nameLength = closingBracket - i - 2;
-            unsigned backrefIndex = reg->subpatternForName(replacement.substring(i + 2, nameLength));
+            unsigned backrefIndex = reg->subpatternIdForGroupName(replacement.substring(i + 2, nameLength), ovector);
 
             if (!backrefIndex || backrefIndex > reg->numSubpatterns()) {
                 backrefStart = 0;
@@ -458,9 +458,24 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                 cachedCall.appendArgument(patternValue);
 
                 if (i && hasNamedCaptures) {
-                    String groupName = regExp->getCaptureGroupName(i);
-                    if (!groupName.isEmpty())
-                        groups->putDirect(vm, Identifier::fromString(vm, groupName), patternValue);
+                    String groupName = regExp->getCaptureGroupNameForSubpatternId(i);
+                    if (!groupName.isEmpty()) {
+                        auto captureIndex = regExp->subpatternIdForGroupName(groupName, ovector);
+
+                        if (captureIndex == i)
+                            groups->putDirect(vm, Identifier::fromString(vm, groupName), patternValue);
+                        else if (captureIndex > 0) {
+                            int captureStart = ovector[captureIndex * 2];
+                            int captureLen = ovector[captureIndex * 2 + 1] - captureStart;
+                            JSValue captureValue;
+                            if (captureStart < 0)
+                                captureValue = jsUndefined();
+                            else
+                                captureValue = jsSubstring(vm, source, captureStart, captureLen);
+                            groups->putDirect(vm, Identifier::fromString(vm, groupName), captureValue);
+                        } else
+                            groups->putDirect(vm, Identifier::fromString(vm, groupName), jsUndefined());
+                    }
                 }
             }
 
@@ -521,9 +536,26 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                     args.append(patternValue);
 
                     if (i && hasNamedCaptures) {
-                        String groupName = regExp->getCaptureGroupName(i);
-                        if (!groupName.isEmpty())
-                            groups->putDirect(vm, Identifier::fromString(vm, groupName), patternValue);
+                        String groupName = regExp->getCaptureGroupNameForSubpatternId(i);
+                        if (!groupName.isEmpty()) {
+                            auto captureIndex = regExp->subpatternIdForGroupName(groupName, ovector);
+
+                            if (captureIndex == i)
+                                groups->putDirect(vm, Identifier::fromString(vm, groupName), patternValue);
+                            else if (captureIndex > 0) {
+                                int captureStart = ovector[captureIndex * 2];
+                                int captureLen = ovector[captureIndex * 2 + 1] - captureStart;
+                                JSValue captureValue;
+                                if (captureStart < 0)
+                                    captureValue = jsUndefined();
+                                else {
+                                    captureValue = jsSubstring(vm, source, captureStart, captureLen);
+                                    RETURN_IF_EXCEPTION(scope, nullptr);
+                                }
+                                groups->putDirect(vm, Identifier::fromString(vm, groupName), captureValue);
+                            } else
+                                groups->putDirect(vm, Identifier::fromString(vm, groupName), jsUndefined());
+                        }
                     }
                 }
 

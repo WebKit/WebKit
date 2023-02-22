@@ -163,10 +163,11 @@ void RegExp::finishCreation(VM& vm)
     }
 
     m_numSubpatterns = pattern.m_numSubpatterns;
-    if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndex.isEmpty()) {
+    if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndeces.isEmpty()) {
         m_rareData = makeUnique<RareData>();
+        m_rareData->m_numDuplicateNamedCaptureGroups = pattern.m_numDuplicateNamedCaptureGroups;
         m_rareData->m_captureGroupNames.swap(pattern.m_captureGroupNames);
-        m_rareData->m_namedGroupToParenIndex.swap(pattern.m_namedGroupToParenIndex);
+        m_rareData->m_namedGroupToParenIndeces.swap(pattern.m_namedGroupToParenIndeces);
     }
 }
 

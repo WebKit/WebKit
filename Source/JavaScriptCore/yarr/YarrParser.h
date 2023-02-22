@@ -53,6 +53,65 @@ private:
         Lookbehind = 2
     };
 
+    class NamedCaptureGroups {
+        typedef HashSet<String> GroupNameHashSet;
+
+    public:
+        NamedCaptureGroups()
+        {
+            m_activeCaptureGroupNames.grow(1);
+        }
+
+        bool contains(String name)
+        {
+            return m_captureGroupNames.contains(name);
+        }
+
+        bool isEmpty()
+        {
+            return m_captureGroupNames.isEmpty();
+        }
+
+        void reset()
+        {
+            m_captureGroupNames.clear();
+            m_activeCaptureGroupNames.clear();
+            m_activeCaptureGroupNames.grow(1);
+        }
+
+        void nextAlternative()
+        {
+            m_activeCaptureGroupNames.last().clear();
+
+            // For nested parenthesis, we need to seed the new alternative with the already seen
+            // named captures for the encompassing alternative.
+            if (m_activeCaptureGroupNames.size() > 1)
+                m_activeCaptureGroupNames.last().formUnion(m_activeCaptureGroupNames[m_activeCaptureGroupNames.size() - 2]);
+        }
+
+        void pushParenthesis()
+        {
+            auto currentTop = m_activeCaptureGroupNames.last();
+            m_activeCaptureGroupNames.append(currentTop);
+        }
+
+        void popParenthesis()
+        {
+            ASSERT(m_activeCaptureGroupNames.size() > 1);
+            m_activeCaptureGroupNames.removeLast();
+        }
+
+        GroupNameHashSet::AddResult add(String name)
+        {
+            m_captureGroupNames.add(name);
+            return m_activeCaptureGroupNames.last().add(name);
+        }
+
+    private:
+        GroupNameHashSet m_captureGroupNames;
+        Vector<GroupNameHashSet, 1> m_activeCaptureGroupNames;
+    };
+
     /*
      * CharacterClassParserDelegate:
      *
@@ -467,7 +526,7 @@ private:
                     break;
 
                 if (groupName) {
-                    if (m_captureGroupNames.contains(groupName.value())) {
+                    if (m_namedCaptureGroups.contains(groupName.value())) {
                         delegate.atomNamedBackReference(groupName.value());
                         break;
                     }
@@ -659,7 +718,7 @@ private:
                         break;
                     }
 
-                    auto setAddResult = m_captureGroupNames.add(groupName.value());
+                    auto setAddResult = m_namedCaptureGroups.add(groupName.value());
                     if (setAddResult.isNewEntry)
                         m_delegate.atomParenthesesSubpatternBegin(true, groupName);
                     else
@@ -692,6 +751,7 @@ private:
             ++m_numSubpatterns;
 
         m_parenthesesStack.append(type);
+        m_namedCaptureGroups.pushParenthesis();
     }
 
     /*
@@ -715,6 +775,9 @@ private:
         }
 
         m_delegate.atomParenthesesEnd();
+
+        m_namedCaptureGroups.popParenthesis();
+
         auto type = m_parenthesesStack.takeLast();
         if (type == ParenthesesType::LookbehindAssertion)
             return TokenType::Lookbehind;
@@ -767,6 +830,7 @@ private:
                 consume();
                 m_delegate.disjunction(CreateDisjunctionPurpose::ForNextAlternative);
                 lastTokenType = TokenType::NotAtom;
+                m_namedCaptureGroups.nextAlternative();
                 break;
 
             case '(':
@@ -914,7 +978,7 @@ private:
             shouldReparse = true;
         }
 
-        if (m_kIdentityEscapeSeen && !m_captureGroupNames.isEmpty()) {
+        if (m_kIdentityEscapeSeen && !m_namedCaptureGroups.isEmpty()) {
             m_errorCode = ErrorCode::InvalidNamedBackReference;
             return;
         }
@@ -922,7 +986,7 @@ private:
         if (containsIllegalNamedForwardReference()) {
             // \k<a> is parsed as named reference in Unicode patterns because of strict IdentityEscape grammar.
             // See https://tc39.es/ecma262/#sec-patterns-static-semantics-early-errors
-            if (m_isUnicode || !m_captureGroupNames.isEmpty()) {
+            if (m_isUnicode || !m_namedCaptureGroups.isEmpty()) {
                 m_errorCode = ErrorCode::InvalidNamedBackReference;
                 return;
             }
@@ -942,11 +1006,11 @@ private:
         if (m_forwardReferenceNames.isEmpty())
             return false;
 
-        if (m_captureGroupNames.isEmpty())
+        if (m_namedCaptureGroups.isEmpty())
             return true;
 
         for (auto& entry : m_forwardReferenceNames) {
-            if (!m_captureGroupNames.contains(entry))
+            if (!m_namedCaptureGroups.contains(entry))
                 return true;
         }
 
@@ -963,7 +1027,7 @@ private:
         m_maxSeenBackReference = 0;
         m_kIdentityEscapeSeen = false;
         m_parenthesesStack.clear();
-        m_captureGroupNames.clear();
+        m_namedCaptureGroups.reset();
         m_forwardReferenceNames.clear();
     }
 
@@ -1244,7 +1308,7 @@ private:
     bool m_isNamedForwardReferenceAllowed;
     bool m_kIdentityEscapeSeen { false };
     Vector<ParenthesesType, 16> m_parenthesesStack;
-    HashSet<String> m_captureGroupNames;
+    NamedCaptureGroups m_namedCaptureGroups;
     HashSet<String> m_forwardReferenceNames;
 
     // Derived by empirical testing of compile time in PCRE and WREC.
