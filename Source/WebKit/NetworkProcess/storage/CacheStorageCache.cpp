@@ -196,11 +196,10 @@ void CacheStorageCache::removeRecords(WebCore::ResourceRequest&& request, WebCor
     if (iterator == m_records.end())
         return callback({ });
 
-    auto& urlRecords = iterator->value;
     Vector<uint64_t> targetRecordIdentifiers;
     Vector<CacheStorageRecordInformation> targetRecordInfos;
     uint64_t sizeDecreased = 0;
-    urlRecords.removeAllMatching([&](auto& record) {
+    iterator->value.removeAllMatching([&](auto& record) {
         if (!WebCore::DOMCacheEngine::queryCacheMatch(request, record.url, record.hasVaryStar, record.varyHeaders, options))
             return false;
 
@@ -209,6 +208,8 @@ void CacheStorageCache::removeRecords(WebCore::ResourceRequest&& request, WebCor
         sizeDecreased += record.size;
         return true;
     });
+    if (iterator->value.isEmpty())
+        m_records.remove(iterator);
 
     if (m_manager && sizeDecreased)
         m_manager->sizeDecreased(sizeDecreased);
