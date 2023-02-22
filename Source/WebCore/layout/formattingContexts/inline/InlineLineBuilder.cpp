@@ -366,7 +366,7 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
         , WTFMove(m_placedFloats)
         , WTFMove(m_overflowingFloats)
         , m_lineIsConstrainedByFloat
-        , m_lineInitialLogicalLeft + m_initialIntrusiveFloatsWidth
+        , m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , contentLogicalLeft
@@ -443,7 +443,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     createLineSpanningInlineBoxes();
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLine());
 
-    m_lineInitialLogicalLeft = initialLineLogicalRect.left();
+    m_lineInitialLogicalRect = initialLineLogicalRect;
     m_lineMarginStart = lineConstraints.marginStart;
     m_lineLogicalRect = lineConstraints.logicalRect;
     // This is by how much intrusive floats (coming from parent/sibling FCs) initially offset the line.
@@ -1024,8 +1024,8 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
         // When intrusive initial letter is cleared, we introduce a clear gap. This is (with proper floats) normally computed before starting
         // line layout but intrusive initial letters are cleared only when another initial letter shows up. Regular inline content
         // does not need clearance.
-        auto intrusiveInitialLetterWidth = std::max(0.f, m_lineLogicalRect.left() - m_lineInitialLogicalLeft);
-        m_lineLogicalRect.setLeft(m_lineInitialLogicalLeft);
+        auto intrusiveInitialLetterWidth = std::max(0.f, m_lineLogicalRect.left() - m_lineInitialLogicalRect.left());
+        m_lineLogicalRect.setLeft(m_lineInitialLogicalRect.left());
         m_lineLogicalRect.expandHorizontally(intrusiveInitialLetterWidth);
         clearGapBeforeFirstLine = *intrusiveBottom;
     }
@@ -1051,6 +1051,44 @@ LayoutUnit LineBuilder::adjustGeometryForInitialLetterIfNeeded(const Box& floatB
     return initialLetterCapHeightOffset.value_or(0_lu);
 }
 
+bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, LineBoxConstraintApplies lineBoxConstraintApplies) const
+{
+    // Floats never terminate the line. If a float does not fit the current line
+    // we can still continue placing inline content on the line, but we have to save all the upcoming floats for subsequent lines.
+    auto lineHasSkippedFloats = !m_overflowingFloats.isEmpty();
+    if (lineHasSkippedFloats) {
+        // Overflowing floats must have been constrained by the current line box.
+        ASSERT(lineBoxConstraintApplies == LineBoxConstraintApplies::Yes);
+        return false;
+    }
+    if (lineBoxConstraintApplies == LineBoxConstraintApplies::No) {
+        // This is an overflowing float from previous line. Now we need to find a place for it.
+        // (which also means that the current line can't have any floats that we couldn't place yet i.e. overflown)
+        ASSERT(m_overflowingFloats.isEmpty());
+        return true;
+    }
+    auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineIsConstrainedByFloat;
+    if (lineIsConsideredEmpty)
+        return true;
+    // Non-clear type of floats stack up (horizontally). It's easy to check if there's space for this float at all,
+    // while floats with clear needs post-processing to see if they overlap existing line content (and here we just check if they may fit at all).
+    auto lineLogicalWidth = floatBox.hasFloatClear() ? m_lineInitialLogicalRect.width() : m_lineLogicalRect.width();
+    auto availableWidthForFloat = lineLogicalWidth - m_line.contentLogicalRight() + m_line.trimmableTrailingWidth();
+    return availableWidthForFloat >= InlineLayoutUnit { floatBoxMarginBoxWidth };
+}
+
+static bool haveEnoughSpaceForFloatWithClear(const LayoutRect& floatBoxMarginBox, bool isLeftPositioned, const InlineRect& lineLogicalRect, InlineLayoutUnit contentLogicalWidth)
+{
+    auto adjustedLineLogicalLeft = lineLogicalRect.left();
+    auto adjustedLineLogicalRight = lineLogicalRect.right();
+    if (isLeftPositioned)
+        adjustedLineLogicalLeft = std::max<InlineLayoutUnit>(floatBoxMarginBox.maxX(), adjustedLineLogicalLeft);
+    else
+        adjustedLineLogicalRight = std::min<InlineLayoutUnit>(floatBoxMarginBox.x(), adjustedLineLogicalRight);
+    auto availableSpaceForContentWithPlacedFloat = adjustedLineLogicalRight - adjustedLineLogicalLeft;
+    return contentLogicalWidth <= availableSpaceForContentWithPlacedFloat;
+}
+
 bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstraintApplies lineBoxConstraintApplies)
 {
     if (isInIntrinsicWidthMode()) {
@@ -1058,52 +1096,31 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
         // Just ignore floats by pretending they have been placed.
         return true;
     }
-    auto& floatBox = floatItem.layoutBox();
     ASSERT(formattingState());
+
+    auto& floatBox = floatItem.layoutBox();
     auto& boxGeometry = formattingState()->boxGeometry(floatBox);
-    auto shouldBePlaced = [&] {
-        // Floats never terminate the line. If a float does not fit the current line
-        // we can still continue placing inline content on the line, but we have to save all the upcoming floats for subsequent lines.
-        auto lineHasSkippedFloats = !m_overflowingFloats.isEmpty();
-        if (lineHasSkippedFloats) {
-            // Overflowing floats must have been constrained by the current line box.
-            ASSERT(lineBoxConstraintApplies == LineBoxConstraintApplies::Yes);
-            return false;
-        }
-        if (lineBoxConstraintApplies == LineBoxConstraintApplies::No) {
-            // This is an overflowing float from previous line. Now we need to find a place for it.
-            // (which also means that the current line can't have any floats that we couldn't place yet i.e. overflown)
-            ASSERT(m_overflowingFloats.isEmpty());
-            return true;
-        }
-        auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineIsConstrainedByFloat;
-        if (lineIsConsideredEmpty)
-            return true;
-        auto availableWidthForFloat = m_lineLogicalRect.width() - m_line.contentLogicalRight() + m_line.trimmableTrailingWidth();
-        return availableWidthForFloat >= boxGeometry.marginBoxWidth();
-    };
-    if (!shouldBePlaced()) {
+    if (!shouldTryToPlaceFloatBox(floatBox, boxGeometry.marginBoxWidth(), lineBoxConstraintApplies)) {
         // This float needs to go somewhere else on a subsequent line.
         return false;
     }
 
-    auto additionalOffset = adjustGeometryForInitialLetterIfNeeded(floatBox);
-    // Set static position first.
     auto lineMarginBoxLeft = std::max(0.f, m_lineLogicalRect.left() - m_lineMarginStart);
-    auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() + additionalOffset };
-    staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
-    boxGeometry.setLogicalTopLeft(staticPosition);
-    // Float it.
-    ASSERT(m_rootHorizontalConstraints);
     auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
-    auto floatingPosition = floatingContext.positionForFloat(floatBox, *m_rootHorizontalConstraints);
-    boxGeometry.setLogicalTopLeft(floatingPosition);
-    auto floatBoxItem = floatingContext.toFloatItem(floatBox);
-    auto isLogicalLeftPositionedInFloatingState = floatBoxItem.isLeftPositioned();
-    floatingState()->append(floatBoxItem);
-    m_placedFloats.append(&floatItem);
+    auto computeFloatBoxPosition = [&] {
+        // Set static position first.
+        auto additionalOffset = adjustGeometryForInitialLetterIfNeeded(floatBox);
+        auto staticPosition = LayoutPoint { lineMarginBoxLeft, m_lineLogicalRect.top() + additionalOffset };
+        staticPosition.move(boxGeometry.marginStart(), boxGeometry.marginBefore());
+        boxGeometry.setLogicalTopLeft(staticPosition);
 
-    auto intersects = [&] {
+        // Compute float position by running float layout.
+        auto floatingPosition = floatingContext.positionForFloat(floatBox, *m_rootHorizontalConstraints);
+        boxGeometry.setLogicalTopLeft(floatingPosition);
+    };
+    computeFloatBoxPosition();
+
+    auto willFloatBoxShrinkLine = [&] {
         // Float boxes don't get positioned higher than the line.
         auto floatBoxMarginBox = BoxGeometry::marginBoxRect(boxGeometry);
         if (floatBoxMarginBox.isEmpty())
@@ -1114,31 +1131,57 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
         }
         // Empty rect case: "line-height: 0px;" line still intersects with intrusive floats.
         return floatBoxMarginBox.top() == m_lineLogicalRect.top() || floatBoxMarginBox.top() < m_lineLogicalRect.bottom();
-    };
-    if (!intersects()) {
-        // This float is placed outside the line. No need to shrink the current line.
-        return true;
-    }
+    }();
 
-    // Shrink the line box with the intrusive float box's margin box.
-    m_lineIsConstrainedByFloat = true;
-    auto shouldAdjustLineLogicalLeft = [&] {
-        auto matchingInlineDirection = floatingState()->isLeftToRightDirection() == formattingContext().root().style().isLeftToRightDirection();
-        // Floating state inherited from the parent BFC with mismatching inline direction (ltr vs. rtl) puts
-        // a right float (float: right in direction: ltr but parent direction: rtl) to logical left.
-        return (matchingInlineDirection && isLogicalLeftPositionedInFloatingState) || (!matchingInlineDirection && !isLogicalLeftPositionedInFloatingState);
+    auto willFloatBoxWithClearFit = [&] {
+        if (!willFloatBoxShrinkLine)
+            return true;
+        auto lineIsConsideredEmpty = !m_line.hasContent() && !m_lineIsConstrainedByFloat;
+        if (lineIsConsideredEmpty)
+            return true;
+        // When floats with clear are placed under existing floats, we may find ourselves in an over-constrained state and
+        // can't place this float here.
+        auto contentLogicalWidth = m_line.contentLogicalWidth() - m_line.trimmableTrailingWidth();
+        return haveEnoughSpaceForFloatWithClear(BoxGeometry::marginBoxRect(boxGeometry), floatingContext.isLogicalLeftPositioned(floatBox), m_lineLogicalRect, contentLogicalWidth);
     };
+    if (floatBox.hasFloatClear() && !willFloatBoxWithClearFit())
+        return false;
 
-    // FIXME: In quirks mode some content may sneak above this float.
-    if (shouldAdjustLineLogicalLeft()) {
-        auto floatLogicalRight = InlineLayoutUnit { floatBoxItem.rectWithMargin().right() };
-        auto lineMarginLogicalLeft = m_lineLogicalRect.left() - m_lineMarginStart;
-        m_lineLogicalRect.shiftLeftTo(m_lineMarginStart + std::max(lineMarginLogicalLeft, floatLogicalRight));
-    } else {
+    auto floatBoxItem = floatingContext.toFloatItem(floatBox);
+    auto isLogicalLeftPositionedInFloatingState = floatBoxItem.isLeftPositioned();
+    auto placeFloatBox = [&] {
+        floatingState()->append(floatBoxItem);
+        m_placedFloats.append(&floatItem);
+    };
+    placeFloatBox();
+
+    auto adjustLineRectIfNeeded = [&] {
+        if (!willFloatBoxShrinkLine) {
+            // This float is placed outside the line box. No need to shrink the current line.
+            return;
+        }
+        // Shrink the line box with the intrusive float box's margin box.
+        m_lineIsConstrainedByFloat = true;
+        auto shouldAdjustLineLogicalLeft = [&] {
+            auto matchingInlineDirection = floatingState()->isLeftToRightDirection() == formattingContext().root().style().isLeftToRightDirection();
+            // Floating state inherited from the parent BFC with mismatching inline direction (ltr vs. rtl) puts
+            // a right float (float: right in direction: ltr but parent direction: rtl) to logical left.
+            return (matchingInlineDirection && isLogicalLeftPositionedInFloatingState) || (!matchingInlineDirection && !isLogicalLeftPositionedInFloatingState);
+        };
+
+        // FIXME: In quirks mode some content may sneak above this float.
+        if (shouldAdjustLineLogicalLeft()) {
+            auto floatLogicalRight = InlineLayoutUnit { floatBoxItem.rectWithMargin().right() };
+            auto lineMarginLogicalLeft = m_lineLogicalRect.left() - m_lineMarginStart;
+            m_lineLogicalRect.shiftLeftTo(m_lineMarginStart + std::max(lineMarginLogicalLeft, floatLogicalRight));
+            return;
+        }
         auto floatLogicalLeft = InlineLayoutUnit { floatBoxItem.rectWithMargin().left() };
         auto shrinkLineBy = m_lineLogicalRect.right() - floatLogicalLeft;
         m_lineLogicalRect.expandHorizontally(std::min(0.f, -shrinkLineBy));
-    }
+    };
+    adjustLineRectIfNeeded();
+
     return true;
 }
 

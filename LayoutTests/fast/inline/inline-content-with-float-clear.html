@@ -1,0 +1,85 @@
+<style>
+.container {
+  width: 50px;
+  overflow: hidden;
+  margin-bottom: 5px;
+  border: 1px solid black;
+}
+.inline-block {
+  display: inline-block;
+  width: 25px;
+  height: 20px;
+  border: 1px solid blue;
+  box-sizing: border-box;
+}
+.float {
+  width: 25px;
+  height: 10px;
+  background: green;
+}
+</style>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: left"></div>
+  <div class=float style="float: left"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: right"></div>
+  <div class=float style="float: left"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: right"></div>
+  <div class=float style="float: right"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: left;"></div>
+  <div class=float style="float: left; clear: left;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: left;"></div>
+  <div class=float style="float: left; clear: right;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: left;"></div>
+  <div class=float style="float: right; clear: left;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: right;"></div>
+  <div class=float style="float: right; clear: right;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: left;"></div>
+  <div class=float style="float: left; clear: left; width: 20px;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: left;"></div>
+  <div class=float style="float: left; clear: left; width: 30px;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: right;"></div>
+  <div class=float style="float: right; clear: right; width: 20px;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: right;"></div>
+  <div class=float style="float: right; clear: right; width: 30px;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: left; width: 10px;"></div>
+  <div class=float style="float: right; clear: left; width: 20px;"></div>
+</div>
+<div class=container>
+  <div class=inline-block></div>
+  <div class=float style="float: right; width: 10px;"></div>
+  <div class=float style="float: left; clear: right; width: 20px;"></div>
+</div>

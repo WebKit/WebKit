@@ -132,6 +132,7 @@ private:
 
     TextDirection inlineBaseDirectionForLineContent() const;
     InlineLayoutUnit horizontalAlignmentOffset(bool isLastLine) const;
+    bool shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit floatBoxMarginBoxWidth, LineBoxConstraintApplies) const;
 
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
@@ -153,9 +154,9 @@ private:
     std::optional<HorizontalConstraints> m_rootHorizontalConstraints;
 
     Line m_line;
+    InlineRect m_lineInitialLogicalRect;
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
-    InlineLayoutUnit m_lineInitialLogicalLeft { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
     const InlineItems& m_inlineItems;
     FloatList m_placedFloats;
