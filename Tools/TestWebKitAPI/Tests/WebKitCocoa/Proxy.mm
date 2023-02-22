@@ -263,7 +263,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                 "</script>";
                 switch (connectionCount) {
                 case 1: {
-                    EXPECT_TRUE(strstr(request.data(), "GET http://www.webkit.org/path1 HTTP/1.1\r\n"));
+                    EXPECT_TRUE(strnstr(request.data(), "GET http://www.webkit.org/path1 HTTP/1.1\r\n", request.size()));
                     reply = makeString(
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: ", strlen(body), "\r\n"
@@ -274,7 +274,7 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                     break;
                 }
                 case 3: {
-                    EXPECT_TRUE(strstr(request.data(), "GET http://example.com/path2 HTTP/1.1\r\n"));
+                    EXPECT_TRUE(strnstr(request.data(), "GET http://example.com/path2 HTTP/1.1\r\n", request.size()));
                     reply = makeString(
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/html\r\n"
@@ -287,10 +287,10 @@ TEST(WebKit, RelaxThirdPartyCookieBlocking)
                 case 2:
                 case 4:
                     if (connectionCount == 2 || shouldRelaxThirdPartyCookieBlocking)
-                        EXPECT_TRUE(strstr(request.data(), "Cookie: a=b\r\n"));
+                        EXPECT_TRUE(strnstr(request.data(), "Cookie: a=b\r\n", request.size()));
                     else
-                        EXPECT_FALSE(strstr(request.data(), "Cookie: a=b\r\n"));
-                    EXPECT_TRUE(strstr(request.data(), "GET http://www.webkit.org/path3 HTTP/1.1\r\n"));
+                        EXPECT_FALSE(strnstr(request.data(), "Cookie: a=b\r\n", request.size()));
+                    EXPECT_TRUE(strnstr(request.data(), "GET http://www.webkit.org/path3 HTTP/1.1\r\n", request.size()));
                     reply =
                         "HTTP/1.1 200 OK\r\n"
                         "Content-Length: 0\r\n"
