@@ -180,6 +180,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setStorageAPIEnabled:) BOOL _storageAPIEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, setter=_setAccessHandleEnabled:) BOOL _accessHandleEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, setter=_setNotificationsEnabled:) BOOL _notificationsEnabled WK_API_AVAILABLE(macos(10.13.4), ios(16.0));
+@property (nonatomic, setter=_setNotificationEventEnabled:) BOOL _notificationEventEnabled WK_API_AVAILABLE(macos(13.3), ios(16.4));
 @property (nonatomic, setter=_setPushAPIEnabled:) BOOL _pushAPIEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, setter=_setModelDocumentEnabled:) BOOL _modelDocumentEnabled WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic, setter=_setInteractionRegionMinimumCornerRadius:) double _interactionRegionMinimumCornerRadius WK_API_AVAILABLE(macos(13.3), ios(16.4));
