@@ -29,6 +29,10 @@ bool IsNoOp(TIntermNode *node)
     {
         return true;
     }
+    if (node->getAsSymbolNode() != nullptr)
+    {
+        return true;
+    }
     bool isEmptyDeclaration = node->getAsDeclarationNode() != nullptr &&
                               node->getAsDeclarationNode()->getSequence()->empty();
     if (isEmptyDeclaration)

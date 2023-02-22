@@ -76,12 +76,8 @@ class RefCountObjectReleaser : angle::NonCopyable
 
     RefCountObjectReleaser &operator=(RefCountObjectReleaser &&other)
     {
-        mContext = other.mContext;
-        mObject  = other.mObject;
-
-        other.mContext = nullptr;
-        other.mObject  = nullptr;
-
+        std::swap(mContext, other.mContext);
+        std::swap(mObject, other.mObject);
         return *this;
     }
 

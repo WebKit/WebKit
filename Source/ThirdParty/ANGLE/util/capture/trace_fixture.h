@@ -106,6 +106,30 @@ extern GLeglImageOES *gEGLImageMap2;
 extern EGLSurface *gSurfaceMap2;
 extern EGLContext *gContextMap2;
 extern GLsync *gSyncMap2;
+extern EGLSync *gEGLSyncMap;
+void InitializeReplay4(const char *binaryDataFileName,
+                       size_t maxClientArraySize,
+                       size_t readBufferSize,
+                       size_t resourceIDBufferSize,
+                       GLuint contextId,
+                       uint32_t maxBuffer,
+                       uint32_t maxContext,
+                       uint32_t maxFenceNV,
+                       uint32_t maxFramebuffer,
+                       uint32_t maxImage,
+                       uint32_t maxMemoryObject,
+                       uint32_t maxProgramPipeline,
+                       uint32_t maxQuery,
+                       uint32_t maxRenderbuffer,
+                       uint32_t maxSampler,
+                       uint32_t maxSemaphore,
+                       uint32_t maxShaderProgram,
+                       uint32_t maxSurface,
+                       uint32_t maxSync,
+                       uint32_t maxTexture,
+                       uint32_t maxTransformFeedback,
+                       uint32_t maxVertexArray,
+                       uint32_t maxEGLSyncID);
 
 void InitializeReplay3(const char *binaryDataFileName,
                        size_t maxClientArraySize,
@@ -227,6 +251,8 @@ void CreateEGLImageKHR(EGLDisplay dpy,
                        uintptr_t buffer,
                        const EGLint *attrib_list,
                        GLuint imageID);
+void CreateEGLSyncKHR(EGLDisplay dpy, EGLenum type, const EGLint *attrib_list, GLuint syncID);
+void CreateEGLSync(EGLDisplay dpy, EGLenum type, const EGLAttrib *attrib_list, GLuint syncID);
 void CreatePbufferSurface(EGLDisplay dpy,
                           EGLConfig config,
                           const EGLint *attrib_list,

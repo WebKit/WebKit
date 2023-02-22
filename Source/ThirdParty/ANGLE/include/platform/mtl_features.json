@@ -275,6 +275,14 @@
                 "Cache MTLLibrary objects in memory."
             ],
             "issue": "http://crbug.com/1385510"
+        },
+        {
+            "name": "enable_parallel_mtl_library_compilation",
+            "category": "Features",
+            "description": [
+                "Compile MTLLibrary in multiple threads."
+            ],
+            "issue": "http://crbug.com/1385510"
         }
     ]
 }

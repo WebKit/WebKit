@@ -436,12 +436,13 @@ TEST_P(EGLMultiContextTest, ReuseUnterminatedDisplay)
         glClear(GL_COLOR_BUFFER_BIT);
         EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
 
+        srf = EGL_NO_SURFACE;
+        ctx = EGL_NO_CONTEXT;
+        EXPECT_EGL_TRUE(eglMakeCurrent(dpy, srf, srf, ctx));
         eglTerminate(dpy);
         EXPECT_EGL_SUCCESS();
         EXPECT_EGL_SUCCESS();
         dpy = EGL_NO_DISPLAY;
-        srf = EGL_NO_SURFACE;
-        ctx = EGL_NO_CONTEXT;
     });
     threadB.join();
 }

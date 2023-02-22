@@ -6510,6 +6510,28 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test that samplers in structs can be extracted if the first reference to the struct does not
+// select an attribute.
+TEST_P(GLSLTest, SamplerInStructNoMemberIndexing)
+{
+    constexpr char kVS[] = R"(
+uniform struct {
+    sampler2D n;
+    vec2 c;
+} s;
+void main()
+{
+    s;
+})";
+
+    constexpr char kFS[] = R"(void main()
+{
+    gl_FragColor = vec4(1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+}
+
 // Tests that rewriting samplers in structs doesn't mess up indexing.
 TEST_P(GLSLTest, SamplerInStructMemberIndexing)
 {
@@ -6527,6 +6549,7 @@ uniform S uni;
 varying vec2 texCoord;
 void main()
 {
+    uni;
     if (uni.b)
     {
         gl_FragColor = texture2D(uni.samp, texCoord);

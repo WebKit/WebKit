@@ -478,7 +478,10 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
 
         // Declare a new struct with the same name and the new fields.
         modifiedData->modified =
-            new TStructure(mSymbolTable, structure->name(), newFieldList, structure->symbolType());
+            new TStructure(mSymbolTable,
+                           structure->symbolType() == SymbolType::Empty ? kEmptyImmutableString
+                                                                        : structure->name(),
+                           newFieldList, structure->symbolType());
         TType *newStructType = new TType(modifiedData->modified, true);
         TVariable *newStructVar =
             new TVariable(mSymbolTable, kEmptyImmutableString, newStructType, SymbolType::Empty);

@@ -170,4 +170,17 @@ TEST(FixedQueue, ConcurrentPushPop)
     enqueueThread.join();
     dequeueThread.join();
 }
+
+// Test clearing the queue
+TEST(FixedQueue, Clear)
+{
+    FixedQueue<int, 5> q;
+    for (int i = 0; i < 5; ++i)
+    {
+        q.push(i);
+    }
+    q.clear();
+    EXPECT_EQ(0u, q.size());
+    EXPECT_EQ(true, q.empty());
+}
 }  // namespace angle

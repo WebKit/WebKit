@@ -5,7 +5,7 @@
 //
 // VulkanPerformanceCounterTest:
 //   Validates specific GL call patterns with ANGLE performance counters.
-//   For example we can verify a certain call set doesn't break the RenderPass.
+//   For example we can verify a certain call set doesn't break the render pass.
 
 #include "test_utils/ANGLETest.h"
 #include "test_utils/angle_test_instantiate.h"
@@ -7121,6 +7121,26 @@ TEST_P(VulkanPerformanceCounterTest, AsyncMonolithicPipelineCreation)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 
     drawQuad(drawRed, essl3_shaders::PositionAttrib(), 0.0f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Verify that changing framebuffer and back doesn't break the render pass.
+TEST_P(VulkanPerformanceCounterTest, FBOChangeAndBackDoesNotBreakRenderPass)
+{
+    uint64_t expectedRenderPassCount = getPerfCounters().renderPasses + 1;
+
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    drawQuad(drawRed, essl1_shaders::PositionAttrib(), 0);
+
+    // Verify render pass count.
+    EXPECT_EQ(getPerfCounters().renderPasses, expectedRenderPassCount);
+
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 

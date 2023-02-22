@@ -18,8 +18,12 @@
 namespace egl
 {
 
-Sync::Sync(rx::EGLImplFactory *factory, EGLenum type, const AttributeMap &attribs)
+Sync::Sync(rx::EGLImplFactory *factory,
+           const egl::SyncID &id,
+           EGLenum type,
+           const AttributeMap &attribs)
     : mLabel(nullptr),
+      mId(id),
       mType(type),
       mCondition(EGL_SYNC_PRIOR_COMMANDS_COMPLETE_KHR),
       mNativeFenceFD(

@@ -112,13 +112,13 @@ class FixedQueue final : angle::NonCopyable
     // index for current head
     size_type mFrontIndex;
     // Virtual index for next write.
-    size_type mBackIndex;
+    size_type mEndIndex;
     // Atomic so that we can support concurrent push and pop.
     std::atomic<size_type> mSize;
 };
 
 template <class T, size_t N, class Storage>
-FixedQueue<T, N, Storage>::FixedQueue() : mFrontIndex(0), mBackIndex(0), mSize(0)
+FixedQueue<T, N, Storage>::FixedQueue() : mFrontIndex(0), mEndIndex(0), mSize(0)
 {}
 
 template <class T, size_t N, class Storage>
@@ -177,8 +177,8 @@ template <class T, size_t N, class Storage>
 void FixedQueue<T, N, Storage>::push(const value_type &value)
 {
     ASSERT(mSize < N);
-    mData[mBackIndex % N] = value;
-    mBackIndex++;
+    mData[mEndIndex % N] = value;
+    mEndIndex++;
     // We must increment size last, after we wrote data. That way if another thread is doing
     // `if(!dq.empty()){ s = dq.front(); }`, it will only see not empty until element is fully
     // pushed.
@@ -189,8 +189,8 @@ template <class T, size_t N, class Storage>
 void FixedQueue<T, N, Storage>::push(value_type &&value)
 {
     ASSERT(mSize < N);
-    mData[mBackIndex % N] = std::move(value);
-    mBackIndex++;
+    mData[mEndIndex % N] = std::move(value);
+    mEndIndex++;
     // We must increment size last, after we wrote data. That way if another thread is doing
     // `if(!dq.empty()){ s = dq.front(); }`, it will only see not empty until element is fully
     // pushed.
@@ -201,7 +201,7 @@ template <class T, size_t N, class Storage>
 ANGLE_INLINE typename FixedQueue<T, N, Storage>::reference FixedQueue<T, N, Storage>::back()
 {
     ASSERT(mSize > 0);
-    return mData[(mBackIndex + (N - 1)) % N];
+    return mData[(mEndIndex + (N - 1)) % N];
 }
 
 template <class T, size_t N, class Storage>
@@ -209,7 +209,7 @@ ANGLE_INLINE typename FixedQueue<T, N, Storage>::const_reference FixedQueue<T, N
     const
 {
     ASSERT(mSize > 0);
-    return mData[(mBackIndex + (N - 1)) % N];
+    return mData[(mEndIndex + (N - 1)) % N];
 }
 
 template <class T, size_t N, class Storage>
@@ -226,7 +226,9 @@ void FixedQueue<T, N, Storage>::pop()
 template <class T, size_t N, class Storage>
 void FixedQueue<T, N, Storage>::clear()
 {
-    for (size_type i = 0; i < mSize; i++)
+    // Size will change in the "pop()" and also by "push()" calls from other thread.
+    const size_type localSize = mSize;
+    for (size_type i = 0; i < localSize; i++)
     {
         pop();
     }

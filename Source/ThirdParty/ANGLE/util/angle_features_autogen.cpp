@@ -115,6 +115,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::EnableCaptureLimits, "enableCaptureLimits"},
     {Feature::EnableInMemoryMtlLibraryCache, "enableInMemoryMtlLibraryCache"},
     {Feature::EnableMultisampledRenderToTexture, "enableMultisampledRenderToTexture"},
+    {Feature::EnableParallelMtlLibraryCompilation, "enableParallelMtlLibraryCompilation"},
     {Feature::EnablePrecisionQualifiers, "enablePrecisionQualifiers"},
     {Feature::EnablePreRotateSurfaces, "enablePreRotateSurfaces"},
     {Feature::EnableProgramBinaryForCapture, "enableProgramBinaryForCapture"},

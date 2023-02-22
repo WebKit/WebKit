@@ -4522,19 +4522,20 @@ egl::Error SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value)
     return NoError();
 }
 
-Error GetSyncAttrib(Display *display, Sync *sync, EGLint attribute, EGLint *value)
+Error GetSyncAttrib(Display *display, SyncID sync, EGLint attribute, EGLint *value)
 {
+    const egl::Sync *syncObj = display->getSync(sync);
     switch (attribute)
     {
         case EGL_SYNC_TYPE_KHR:
-            *value = sync->getType();
+            *value = syncObj->getType();
             return NoError();
 
         case EGL_SYNC_STATUS_KHR:
-            return sync->getStatus(display, value);
+            return syncObj->getStatus(display, value);
 
         case EGL_SYNC_CONDITION_KHR:
-            *value = sync->getCondition();
+            *value = syncObj->getCondition();
             return NoError();
 
         default:

@@ -1897,17 +1897,7 @@ class ProgramD3D::GraphicsProgramLinkEvent final : public LinkEvent
         return isLinked ? angle::Result::Continue : angle::Result::Incomplete;
     }
 
-    bool isLinking() override
-    {
-        for (auto &event : mWaitEvents)
-        {
-            if (!event->isReady())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool isLinking() override { return !WaitableEvent::AllReady(&mWaitEvents); }
 
   private:
     angle::Result checkTask(const gl::Context *context, ProgramD3D::GetExecutableTask *task)

@@ -313,6 +313,7 @@ class EGLSurfaceTest : public ANGLETest<>
     }
 
     void runWaitSemaphoreTest(bool useSecondContext);
+    void runDestroyNotCurrentSurfaceTest(bool testWindowsSurface);
 
     void drawQuadThenTearDown();
 
@@ -467,6 +468,8 @@ class EGLSingleBufferTest : public ANGLETest<>
         EXPECT_TRUE(result);
         return result;
     }
+
+    uint32_t drawAndSwap(EGLSurface &surface, EGLDisplay &display, uint32_t color, bool flush);
 
     EGLDisplay mDisplay  = EGL_NO_DISPLAY;
     EGLint mMajorVersion = 0;
@@ -2003,6 +2006,181 @@ TEST_P(EGLSingleBufferTest, OnSetSurfaceAttrib)
     context = EGL_NO_CONTEXT;
 }
 
+uint32_t EGLSingleBufferTest::drawAndSwap(EGLSurface &surface,
+                                          EGLDisplay &display,
+                                          uint32_t color,
+                                          bool flush)
+{
+    ASSERT(color < 256);
+
+    glClearColor((float)color / 255.f, (float)color / 255.f, (float)color / 255.f,
+                 (float)color / 255.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (flush)
+    {
+        glFlush();
+    }
+    else
+    {
+        eglSwapBuffers(display, surface);
+    }
+
+    return (color | color << 8 | color << 16 | color << 24);
+}
+
+// Replicate dEQP-EGL.functional.mutable_render_buffer#basic
+TEST_P(EGLSingleBufferTest, MutableRenderBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
+
+    EGLConfig config       = EGL_NO_CONFIG_KHR;
+    const EGLint attribs[] = {EGL_RED_SIZE,
+                              8,
+                              EGL_GREEN_SIZE,
+                              8,
+                              EGL_BLUE_SIZE,
+                              8,
+                              EGL_ALPHA_SIZE,
+                              8,
+                              EGL_SURFACE_TYPE,
+                              EGL_WINDOW_BIT | EGL_MUTABLE_RENDER_BUFFER_BIT_KHR,
+                              EGL_RENDERABLE_TYPE,
+                              EGL_OPENGL_ES2_BIT,
+                              EGL_NONE};
+    EGLint count           = 0;
+    ANGLE_SKIP_TEST_IF(!eglChooseConfig(mDisplay, attribs, &config, 1, &count));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_EGL_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLSingleBufferTest", kWidth, kHeight);
+    EXPECT_EGL_TRUE(
+        createWindowSurface(config, osWindow->getNativeWindow(), &surface, EGL_BACK_BUFFER));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    int frameNumber = 1;
+
+    // run a few back-buffered frames
+    for (; frameNumber < 5; frameNumber++)
+    {
+        drawAndSwap(surface, mDisplay, frameNumber, false);
+    }
+
+    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    {
+        drawAndSwap(surface, mDisplay, frameNumber, false);
+        frameNumber++;
+
+        // test a few single-buffered frames
+        for (; frameNumber < 10; frameNumber++)
+        {
+            uint32_t backBufferPixel  = 0xFFFFFFFF;
+            uint32_t frontBufferPixel = drawAndSwap(surface, mDisplay, frameNumber, true);
+            glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &backBufferPixel);
+            EXPECT_EQ(backBufferPixel, frontBufferPixel);
+        }
+    }
+
+    else
+    {
+        std::cout << "EGL_SINGLE_BUFFER mode is not supported." << std::endl;
+    }
+
+    // switch back to back-buffer rendering
+    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_BACK_BUFFER))
+    {
+        for (; frameNumber < 14; frameNumber++)
+        {
+            drawAndSwap(surface, mDisplay, frameNumber, false);
+        }
+    }
+    else
+    {
+        std::cout << "EGL_BACK_BUFFER mode is not supported." << std::endl;
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
+// Tests bug with incorrect ImageLayout::SharedPresent barrier.
+TEST_P(EGLSingleBufferTest, SharedPresentBarrier)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    ANGLE_SKIP_TEST_IF(!chooseConfig(&config, true));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_EGL_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLSingleBufferTest", kWidth, kHeight);
+    EXPECT_EGL_TRUE(
+        createWindowSurface(config, osWindow->getNativeWindow(), &surface, EGL_BACK_BUFFER));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    {
+        // Transition into EGL_SINGLE_BUFFER mode.
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
+
+        EGLint actualRenderbuffer;
+        EXPECT_EGL_TRUE(eglQueryContext(mDisplay, context, EGL_RENDER_BUFFER, &actualRenderbuffer));
+        EXPECT_EGL_TRUE(actualRenderbuffer == EGL_SINGLE_BUFFER);
+
+        for (int i = 0; i < 5; ++i)
+        {
+            GLColor testColor(rand() % 255, rand() % 255, rand() % 255, 255);
+            angle::Vector4 clearColor = testColor.toNormalizedVector();
+            glClearColor(clearColor.x(), clearColor.y(), clearColor.z(), clearColor.w());
+            glClear(GL_COLOR_BUFFER_BIT);
+            // Skip flush because present operations may add other barriers that will make appear
+            // that everything works as expected.
+
+            // Check color without flush - may get invalid result if have incorrect barrier bug.
+            EXPECT_PIXEL_COLOR_EQ(1, 1, testColor);
+        }
+    }
+    else
+    {
+        std::cout << "EGL_SINGLE_BUFFER mode is not supported." << std::endl;
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
 // Test that setting a surface to EGL_SINGLE_BUFFER after enabling
 // EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID does not disable auto refresh
 TEST_P(EGLAndroidAutoRefreshTest, Basic)
@@ -2226,6 +2404,82 @@ TEST_P(EGLSurfaceTest, WaitSemaphoreAddedAfterCommands)
 TEST_P(EGLSurfaceTest, CommandsSubmittedWithoutWaitSemaphore)
 {
     runWaitSemaphoreTest(true);
+}
+
+void EGLSurfaceTest::runDestroyNotCurrentSurfaceTest(bool testWindowsSurface)
+{
+    initializeDisplay();
+
+    // Initialize an RGBA8 window and pbuffer surface
+    constexpr EGLint kSurfaceAttributes[] = {EGL_RED_SIZE,     8,
+                                             EGL_GREEN_SIZE,   8,
+                                             EGL_BLUE_SIZE,    8,
+                                             EGL_ALPHA_SIZE,   8,
+                                             EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                             EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ASSERT_EGL_TRUE(eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ASSERT_NE(configCount, 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    initializeSurface(surfaceConfig);
+    initializeMainContext();
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+    ASSERT_NE(mPbufferSurface, EGL_NO_SURFACE);
+
+    EGLSurface &testSurface  = testWindowsSurface ? mWindowSurface : mPbufferSurface;
+    EGLSurface &otherSurface = testWindowsSurface ? mPbufferSurface : mWindowSurface;
+
+    eglMakeCurrent(mDisplay, testSurface, testSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    // Start RenderPass in the testSurface
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, 4, 4);
+    glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_SCISSOR_TEST);
+    ASSERT_GL_NO_ERROR();
+
+    // Make other surface current keeping the context.
+    // If bug present, the context may have unflushed work, related to the testSurface.
+    eglMakeCurrent(mDisplay, otherSurface, otherSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    if (testWindowsSurface)
+    {
+        // This may flush Window Surface RenderPass
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(0, 0, 4, 4);
+        glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_SCISSOR_TEST);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    // Destroy the surface
+    eglDestroySurface(mDisplay, testSurface);
+    testSurface = EGL_NO_SURFACE;
+
+    // This will submit all work (if bug present - include work related to the deleted testSurface).
+    eglMakeCurrent(mDisplay, otherSurface, otherSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+}
+
+// Test that there is no crash because of the bug when not current PBuffer Surface destroyed, while
+// there are still unflushed work in the Context.
+TEST_P(EGLSurfaceTest, DestroyNotCurrentPbufferSurface)
+{
+    runDestroyNotCurrentSurfaceTest(false);
+}
+
+// Test that there is no crash because of the bug when not current Window Surface destroyed, while
+// there are still unflushed work in the Context.
+TEST_P(EGLSurfaceTest, DestroyNotCurrentWindowSurface)
+{
+    runDestroyNotCurrentSurfaceTest(true);
 }
 
 }  // anonymous namespace

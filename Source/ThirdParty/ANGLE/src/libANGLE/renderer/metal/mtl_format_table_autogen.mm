@@ -4006,6 +4006,11 @@ void FormatTable::initNativeFormatCapsAutogen(const DisplayMtl *display)
                   /** colorRenderable*/ display->supportsAppleGPUFamily(1),
                   /** depthRenderable*/ false);
 
+    setFormatCaps(MTLPixelFormatDepth16Unorm, /** filterable*/ true, /** writable*/ false,
+                  /** blendable*/ false, /** multisample*/ true,
+                  /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
+                  /** depthRenderable*/ true);
+
     setFormatCaps(MTLPixelFormatEAC_R11Snorm, /** filterable*/ display->supportsAppleGPUFamily(1),
                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);

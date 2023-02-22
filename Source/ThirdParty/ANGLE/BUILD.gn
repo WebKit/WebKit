@@ -320,19 +320,8 @@ _use_copy_compiler_dll = angle_has_build && is_win && target_cpu != "arm64"
 # Windows ARM64 is available since 10.0.16299 so no need to copy
 # d3dcompiler_47.dll because this file is available as inbox.
 if (_use_copy_compiler_dll) {
-  # We also ship an older DLL for compatiblity with Windows 7 machines without
-  # the UCRT. This DLL isn't available in the standard SDK distribution.
-  _old_compiler = "$windows_sdk_path/Redist/D3D/$target_cpu/d3dcompiler_old.dll"
-  _has_old_compiler =
-      exec_script("scripts/file_exists.py", [ _old_compiler ], "value")
-
   copy("copy_compiler_dll") {
     sources = [ "$windows_sdk_path/Redist/D3D/$target_cpu/d3dcompiler_47.dll" ]
-
-    if (_has_old_compiler) {
-      sources += [ _old_compiler ]
-    }
-
     outputs = [ "$root_out_dir/{{source_file_part}}" ]
   }
 }

@@ -91,7 +91,7 @@ EGLBoolean ChooseConfig(Thread *thread,
 
 EGLint ClientWaitSync(Thread *thread,
                       Display *display,
-                      Sync *syncObject,
+                      SyncID syncID,
                       EGLint flags,
                       EGLTime timeout)
 {
@@ -99,9 +99,10 @@ EGLint ClientWaitSync(Thread *thread,
                          GetDisplayIfValid(display), EGL_FALSE);
     gl::Context *currentContext = thread->getContext();
     EGLint syncStatus           = EGL_FALSE;
+    Sync *syncObject            = display->getSync(syncID);
     ANGLE_EGL_TRY_RETURN(
         thread, syncObject->clientWait(display, currentContext, flags, timeout, &syncStatus),
-        "eglClientWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
+        "eglClientWaitSync", GetSyncIfValid(display, syncID), EGL_FALSE);
 
     thread->setSuccess();
     return syncStatus;
@@ -259,7 +260,7 @@ EGLSync CreateSync(Thread *thread, Display *display, EGLenum type, const Attribu
                          "eglCreateSync", GetDisplayIfValid(display), EGL_NO_SYNC);
 
     thread->setSuccess();
-    return static_cast<EGLSync>(syncObject);
+    return reinterpret_cast<EGLSync>(static_cast<uintptr_t>(syncObject->id().value));
 }
 
 EGLSurface CreateWindowSurface(Thread *thread,
@@ -319,11 +320,12 @@ EGLBoolean DestroySurface(Thread *thread, Display *display, egl::SurfaceID surfa
     return EGL_TRUE;
 }
 
-EGLBoolean DestroySync(Thread *thread, Display *display, Sync *syncObject)
+EGLBoolean DestroySync(Thread *thread, Display *display, SyncID syncID)
 {
+    Sync *sync = display->getSync(syncID);
     ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglDestroySync",
                          GetDisplayIfValid(display), EGL_FALSE);
-    display->destroySync(syncObject);
+    display->destroySync(sync);
 
     thread->setSuccess();
     return EGL_TRUE;
@@ -443,13 +445,13 @@ __eglMustCastToProperFunctionPointerType GetProcAddress(Thread *thread, const ch
 
 EGLBoolean GetSyncAttrib(Thread *thread,
                          Display *display,
-                         Sync *syncObject,
+                         SyncID syncID,
                          EGLint attribute,
                          EGLAttrib *value)
 {
     EGLint valueExt;
-    ANGLE_EGL_TRY_RETURN(thread, GetSyncAttrib(display, syncObject, attribute, &valueExt),
-                         "eglGetSyncAttrib", GetSyncIfValid(display, syncObject), EGL_FALSE);
+    ANGLE_EGL_TRY_RETURN(thread, GetSyncAttrib(display, syncID, attribute, &valueExt),
+                         "eglGetSyncAttrib", GetSyncIfValid(display, syncID), EGL_FALSE);
     *value = valueExt;
 
     thread->setSuccess();
@@ -770,13 +772,14 @@ EGLBoolean WaitNative(Thread *thread, EGLint engine)
     return EGL_TRUE;
 }
 
-EGLBoolean WaitSync(Thread *thread, Display *display, Sync *syncObject, EGLint flags)
+EGLBoolean WaitSync(Thread *thread, Display *display, SyncID syncID, EGLint flags)
 {
     ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglWaitSync",
                          GetDisplayIfValid(display), EGL_FALSE);
     gl::Context *currentContext = thread->getContext();
+    Sync *syncObject            = display->getSync(syncID);
     ANGLE_EGL_TRY_RETURN(thread, syncObject->serverWait(display, currentContext, flags),
-                         "eglWaitSync", GetSyncIfValid(display, syncObject), EGL_FALSE);
+                         "eglWaitSync", GetSyncIfValid(display, syncID), EGL_FALSE);
 
     thread->setSuccess();
     return EGL_TRUE;

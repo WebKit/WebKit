@@ -68,7 +68,7 @@ def _CheckCommitMessageFormatting(input_api, output_api):
     def _CheckTabInCommit(lines):
         return all([line.find("\t") == -1 for line in lines])
 
-    allowlist_strings = ['Revert "', 'Roll ', 'Manual roll ', 'Reland ', 'Re-land ']
+    allowlist_strings = ['Revert', 'Roll', 'Manual roll', 'Reland', 'Re-land']
     summary_linelength_warning_lower_limit = 65
     summary_linelength_warning_upper_limit = 70
     description_linelength_limit = 72
@@ -170,9 +170,9 @@ def _CheckCommitMessageFormatting(input_api, output_api):
         # loop through description body
         while len(commit_msg_lines) > 0:
             line = commit_msg_lines.pop(0)
-            # lines starting with 4 spaces or lines without space(urls)
+            # lines starting with 4 spaces, quotes or lines without space(urls)
             # are exempt from length check
-            if line.startswith("    ") or " " not in line:
+            if line.startswith("    ") or line.startswith("> ") or " " not in line:
                 continue
             if len(line) > description_linelength_limit:
                 errors.append(

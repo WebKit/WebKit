@@ -1043,6 +1043,13 @@ void DisplayMtl::initializeExtensions() const
     // behaviour. Allow users to change the provoking vertex for improved performance.
     mNativeExtensions.provokingVertexANGLE = true;
 
+    // GL_EXT_blend_func_extended
+    if (ANGLE_APPLE_AVAILABLE_XCI(10.12, 11.0, 13.1))
+    {
+        mNativeExtensions.blendFuncExtendedEXT = true;
+        mNativeCaps.maxDualSourceDrawBuffers   = 1;
+    }
+
     // GL_ANGLE_shader_pixel_local_storage.
     if (!mFeatures.disableProgrammableBlending.enabled && supportsAppleGPUFamily(1))
     {
@@ -1246,6 +1253,7 @@ void DisplayMtl::initializeFeatures()
                             supportsEitherGPUFamily(4, 2));
 
     ANGLE_FEATURE_CONDITION((&mFeatures), enableInMemoryMtlLibraryCache, true);
+    ANGLE_FEATURE_CONDITION((&mFeatures), enableParallelMtlLibraryCompilation, true);
 
     ApplyFeatureOverrides(&mFeatures, getState());
 }

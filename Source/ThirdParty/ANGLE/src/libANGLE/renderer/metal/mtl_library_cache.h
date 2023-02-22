@@ -25,6 +25,9 @@ class LibraryCache
     LibraryCache()  = default;
     ~LibraryCache() = default;
 
+    AutoObjCPtr<id<MTLLibrary>> get(const std::string &source,
+                                    const std::map<std::string, std::string> &macros,
+                                    bool enableFastMath);
     AutoObjCPtr<id<MTLLibrary>> getOrCompileShaderLibrary(
         ContextMtl *context,
         const std::string &source,
@@ -66,8 +69,27 @@ class LibraryCache
         bool operator()(const LibraryKey::LValueTuple &a, const LibraryKey &b) const;
     };
 
-    angle::HashMap<LibraryKey, AutoObjCPtr<id<MTLLibrary>>, LibraryKeyCompare, LibraryKeyCompare>
-        mCache;
+    struct LibraryCacheEntry
+    {
+        LibraryCacheEntry() = default;
+
+        // library can only go from the null -> not null state. It is safe to check if the library
+        // already exists without locking.
+        AutoObjCPtr<id<MTLLibrary>> library;
+
+        // Lock for this specific library to avoid multiple threads compiling the same shader at
+        // once.
+        std::mutex lock;
+    };
+
+    LibraryCacheEntry &getCacheEntry(const LibraryKey::LValueTuple &lValueKey);
+
+    // Lock for searching and adding new entries to the cache
+    std::mutex mCacheLock;
+
+    using CacheMap =
+        std::unordered_map<LibraryKey, LibraryCacheEntry, LibraryKeyCompare, LibraryKeyCompare>;
+    CacheMap mCache;
 };
 
 }  // namespace mtl

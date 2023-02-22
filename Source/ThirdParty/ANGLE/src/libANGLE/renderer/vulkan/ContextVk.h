@@ -37,6 +37,7 @@ class SyncHelper;
 class ProgramExecutableVk;
 class RendererVk;
 class WindowSurfaceVk;
+class OffscreenSurfaceVk;
 class ShareGroupVk;
 
 static constexpr uint32_t kMaxGpuEventNameLen = 32;
@@ -286,6 +287,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     // Context switching
     angle::Result onMakeCurrent(const gl::Context *context) override;
     angle::Result onUnMakeCurrent(const gl::Context *context) override;
+    angle::Result onSurfaceUnMakeCurrent(WindowSurfaceVk *surface);
+    angle::Result onSurfaceUnMakeCurrent(OffscreenSurfaceVk *surface);
 
     // Native capabilities, unmodified by gl::Context.
     gl::Caps getNativeCaps() const override;

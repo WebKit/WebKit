@@ -1263,7 +1263,7 @@ angle::Result OneOffCommandPool::getCommandBuffer(vk::Context *context,
     std::unique_lock<std::mutex> lock(mMutex);
 
     if (!mPendingCommands.empty() &&
-        !context->getRenderer()->hasUnfinishedUse(mPendingCommands.front().use))
+        context->getRenderer()->hasResourceUseFinished(mPendingCommands.front().use))
     {
         *commandBufferOut = std::move(mPendingCommands.front().commandBuffer);
         mPendingCommands.pop_front();
@@ -4277,8 +4277,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // - Avoiding swapchain recreation when present modes change
     // - Amortizing the cost of memory allocation for swapchain creation over multiple frames
     //
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsSwapchainMaintenance1,
-                            mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE);
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsSwapchainMaintenance1,
+        !IsAndroid() && mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE);
 
     // http://anglebug.com/6872
     // On ARM hardware, framebuffer-fetch-like behavior on Vulkan is already coherent, so we can
@@ -4862,7 +4863,7 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
 
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.queueSubmitOneOff(
+        ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
             context, protectionType, priority, primary.getHandle(), waitSemaphore,
             waitSemaphoreStageMasks, fence, submitPolicy, submitQueueSerial));
     }
@@ -5020,7 +5021,7 @@ void RendererVk::cleanupPendingSubmissionGarbage()
     while (!mPendingSubmissionGarbage.empty())
     {
         vk::SharedGarbage &garbage = mPendingSubmissionGarbage.front();
-        if (!garbage.hasUnsubmittedUse(this))
+        if (garbage.hasResourceUseSubmitted(this))
         {
             mSharedGarbage.push(std::move(garbage));
         }
@@ -5040,7 +5041,7 @@ void RendererVk::cleanupPendingSubmissionGarbage()
     {
         vk::SharedBufferSuballocationGarbage &suballocationGarbage =
             mPendingSubmissionSuballocationGarbage.front();
-        if (!suballocationGarbage.hasUnsubmittedUse(this))
+        if (suballocationGarbage.hasResourceUseSubmitted(this))
         {
             mSuballocationGarbageSizeInBytes += suballocationGarbage.getSize();
             mSuballocationGarbage.push(std::move(suballocationGarbage));
@@ -5202,7 +5203,7 @@ angle::Result RendererVk::submitCommands(vk::Context *context,
 
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.submitCommands(
+        ANGLE_TRY(mCommandProcessor.enqueueSubmitCommands(
             context, protectionType, contextPriority, signalVkSemaphore,
             std::move(commandBuffersToReset), commandPools, submitQueueSerial));
     }
@@ -5282,8 +5283,8 @@ angle::Result RendererVk::flushWaitSemaphores(
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushWaitSemaphores");
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.flushWaitSemaphores(protectionType, std::move(waitSemaphores),
-                                                        std::move(waitSemaphoreStageMasks)));
+        ANGLE_TRY(mCommandProcessor.enqueueFlushWaitSemaphores(
+            protectionType, std::move(waitSemaphores), std::move(waitSemaphoreStageMasks)));
     }
     else
     {
@@ -5303,8 +5304,8 @@ angle::Result RendererVk::flushRenderPassCommands(
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushRenderPassCommands");
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.flushRenderPassCommands(context, protectionType, renderPass,
-                                                            renderPassCommands));
+        ANGLE_TRY(mCommandProcessor.enqueueFlushRenderPassCommands(context, protectionType,
+                                                                   renderPass, renderPassCommands));
     }
     else
     {
@@ -5323,8 +5324,8 @@ angle::Result RendererVk::flushOutsideRPCommands(
     ANGLE_TRACE_EVENT0("gpu.angle", "RendererVk::flushOutsideRPCommands");
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(
-            mCommandProcessor.flushOutsideRPCommands(context, protectionType, outsideRPCommands));
+        ANGLE_TRY(mCommandProcessor.enqueueFlushOutsideRPCommands(context, protectionType,
+                                                                  outsideRPCommands));
     }
     else
     {
@@ -5334,27 +5335,27 @@ angle::Result RendererVk::flushOutsideRPCommands(
     return angle::Result::Continue;
 }
 
-VkResult RendererVk::queuePresent(vk::Context *context,
-                                  egl::ContextPriority priority,
-                                  const VkPresentInfoKHR &presentInfo,
-                                  vk::SwapchainStatus *swapchainStatus)
+void RendererVk::queuePresent(vk::Context *context,
+                              egl::ContextPriority priority,
+                              const VkPresentInfoKHR &presentInfo,
+                              vk::SwapchainStatus *swapchainStatus)
 {
-    VkResult result = VK_SUCCESS;
     if (isAsyncCommandQueueEnabled())
     {
-        result = mCommandProcessor.queuePresent(priority, presentInfo, swapchainStatus);
+        mCommandProcessor.enqueuePresent(priority, presentInfo, swapchainStatus);
+        // lastPresentResult should always VK_SUCCESS when isPending is true
+        ASSERT(!swapchainStatus->isPending || swapchainStatus->lastPresentResult == VK_SUCCESS);
     }
     else
     {
-        result = mCommandQueue.queuePresent(priority, presentInfo, swapchainStatus);
+        mCommandQueue.queuePresent(priority, presentInfo, swapchainStatus);
+        ASSERT(!swapchainStatus->isPending);
     }
 
     if (getFeatures().logMemoryReportStats.enabled)
     {
         mMemoryReport.logMemoryReportStats();
     }
-
-    return result;
 }
 
 template <typename CommandBufferHelperT, typename RecyclerT>
@@ -5512,7 +5513,7 @@ angle::Result RendererVk::allocateQueueSerialIndex(QueueSerial *queueSerialOut)
     {
         return angle::Result::Stop;
     }
-    Serial serial   = isAsyncCommandQueueEnabled() ? mCommandProcessor.getLastSubmittedSerial(index)
+    Serial serial   = isAsyncCommandQueueEnabled() ? mCommandProcessor.getLastEnqueuedSerial(index)
                                                    : mCommandQueue.getLastSubmittedSerial(index);
     *queueSerialOut = QueueSerial(index, serial);
     return angle::Result::Continue;

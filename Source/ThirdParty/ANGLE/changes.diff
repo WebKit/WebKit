@@ -1,10 +1,10 @@
 diff --git a/src/common/ANGLEShaderProgramVersion.h b/src/common/ANGLEShaderProgramVersion.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..451c309bcd874785a235e831ee99a6c8611e9d25
+index 0000000000000000000000000000000000000000..e55905bf3c9a0ff338c7c970c4e6ac0b0403818d
 --- /dev/null
 +++ b/src/common/ANGLEShaderProgramVersion.h
 @@ -0,0 +1,2 @@
-+#define ANGLE_PROGRAM_VERSION "64a3d1fa4537ba219c1235144c59c474"
++#define ANGLE_PROGRAM_VERSION "fc7c14cde1fc55b40d84cc05829a365a"
 +#define ANGLE_PROGRAM_VERSION_HASH_SIZE 16
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 7a0a706519887e596a18e2dbd3489051c78c7ba0..f11469503fd488b856e448c8ed8385d01cc522f1 100644
@@ -36,6 +36,21 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+diff --git a/src/compiler/translator/TranslatorMetalDirect.cpp b/src/compiler/translator/TranslatorMetalDirect.cpp
+index 77c40332376be8910aa2113b92cb903730568664..a0539c17c63ebcebe8cfedcda04910f82ce68902 100644
+--- a/src/compiler/translator/TranslatorMetalDirect.cpp
++++ b/src/compiler/translator/TranslatorMetalDirect.cpp
+@@ -337,8 +337,8 @@ void AddSampleMaskDeclaration(TIntermBlock &root, TSymbolTable &symbolTable)
+     TIntermSequence declareGLFragdataSequence;
+ 
+     // Create gl_FragData_i or gl_SecondaryFragDataEXT_i
+-    constexpr const char fragData[]             = "gl_FragData";
+-    constexpr const char secondaryFragDataEXT[] = "gl_SecondaryFragDataEXT";
++    static constexpr const char fragData[]             = "gl_FragData";
++    static constexpr const char secondaryFragDataEXT[] = "gl_SecondaryFragDataEXT";
+     const char *name                                   = secondary ? secondaryFragDataEXT : fragData;
+     for (int i = 0; i < maxDrawBuffers; i++)
+     {
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
 index 233b571b7985ba9d33b245f495725851a12be569..6bd263e0b1ec4137e5b8bb1a6269ce07cc8a6b32 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
@@ -94,7 +109,7 @@ index 101e04ccdc4a7217be38960dd372878ad4c15472..9ddc681d320550b171a2916cac8e9a4b
  {
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 1b0dc537ed9397cc47dbbac75787b1e8bfa2a3d9..dc9542eeee6c84137f6609a932d59076697c803c 100644
+index ea38c52af238f556dab0ccbef564d1a554eb5bbd..744ec1e62be1a7d5e152dd92a76318517e6b4dd5 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -107,146 +122,6 @@ index 1b0dc537ed9397cc47dbbac75787b1e8bfa2a3d9..dc9542eeee6c84137f6609a932d59076
  #include "libANGLE/State.h"
  
  #include <string.h>
-diff --git a/src/libANGLE/renderer/gl/egl/DisplayEGL.cpp b/src/libANGLE/renderer/gl/egl/DisplayEGL.cpp
-index 3a190c62dc6d27a18cf63630cbf7b8fdf99143fa..da4feaf278fb6afdfdfa8c1372ed285c3bb52f83 100644
---- a/src/libANGLE/renderer/gl/egl/DisplayEGL.cpp
-+++ b/src/libANGLE/renderer/gl/egl/DisplayEGL.cpp
-@@ -255,7 +255,10 @@ egl::Error DisplayEGL::initialize(egl::Display *display)
- 
-     void *eglHandle =
-         reinterpret_cast<void *>(mDisplayAttributes.get(EGL_PLATFORM_ANGLE_EGL_HANDLE_ANGLE, 0));
--    ANGLE_TRY(mEGL->initialize(display->getNativeDisplayId(), getEGLPath(), eglHandle));
-+    EGLAttrib platformType =
-+        mDisplayAttributes.get(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, 0);
-+    ANGLE_TRY(
-+        mEGL->initialize(platformType, display->getNativeDisplayId(), getEGLPath(), eglHandle));
- 
-     gl::Version eglVersion(mEGL->majorVersion, mEGL->minorVersion);
-     if (eglVersion < gl::Version(1, 4))
-diff --git a/src/libANGLE/renderer/gl/egl/FunctionsEGL.cpp b/src/libANGLE/renderer/gl/egl/FunctionsEGL.cpp
-index 84a99de605c4782d129e3b7410eef38f30157e0a..d752563aecae3135c9ee529c184e87f29fac3548 100644
---- a/src/libANGLE/renderer/gl/egl/FunctionsEGL.cpp
-+++ b/src/libANGLE/renderer/gl/egl/FunctionsEGL.cpp
-@@ -175,7 +175,7 @@ FunctionsEGL::~FunctionsEGL()
-     SafeDelete(mFnPtrs);
- }
- 
--egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
-+egl::Error FunctionsEGL::initialize(EGLAttrib platformType, EGLNativeDisplayType nativeDisplay)
- {
- #define ANGLE_GET_PROC_OR_WARNING(MEMBER, NAME)                \
-     do                                                         \
-@@ -218,7 +218,15 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
-     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->surfaceAttribPtr, eglSurfaceAttrib);
-     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->swapIntervalPtr, eglSwapInterval);
- 
-+    if (platformType != 0)
-+    {
-+        mEGLDisplay = getPlatformDisplay(platformType, nativeDisplay);
-+    }
-+    else
-+    {
-         mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
-+    }
-+
-     if (mEGLDisplay != EGL_NO_DISPLAY)
-     {
-         if (mFnPtrs->initializePtr(mEGLDisplay, &majorVersion, &minorVersion) != EGL_TRUE)
-@@ -352,6 +360,32 @@ egl::Error FunctionsEGL::terminate()
-     return egl::Error(mFnPtrs->getErrorPtr());
- }
- 
-+EGLDisplay FunctionsEGL::getPlatformDisplay(EGLAttrib platformType,
-+                                            EGLNativeDisplayType nativeDisplay)
-+{
-+    // As in getNativeDisplay(), querying EGL_EXTENSIONS string and loading it into the mExtensions
-+    // vector will at this point retrieve the client extensions since mEGLDisplay is still
-+    // EGL_NO_DISPLAY. This is desired, and mExtensions will later be reinitialized with the display
-+    // extensions once the display is created and initialized.
-+    const char *extensions = queryString(EGL_EXTENSIONS);
-+    if (!extensions)
-+    {
-+        return EGL_NO_DISPLAY;
-+    }
-+    angle::SplitStringAlongWhitespace(extensions, &mExtensions);
-+
-+    bool hasPlatformBaseEXT = hasExtension("EGL_EXT_platform_base");
-+    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplayEXTPtr;
-+    if (!hasPlatformBaseEXT ||
-+        !SetPtr(&getPlatformDisplayEXTPtr, getProcAddress("eglGetPlatformDisplayEXT")))
-+    {
-+        return EGL_NO_DISPLAY;
-+    }
-+
-+    return getPlatformDisplayEXTPtr(static_cast<EGLenum>(platformType),
-+                                    reinterpret_cast<void *>(nativeDisplay), nullptr);
-+}
-+
- EGLDisplay FunctionsEGL::getNativeDisplay(int *major, int *minor)
- {
-     // We haven't queried extensions yet since some platforms require a display
-diff --git a/src/libANGLE/renderer/gl/egl/FunctionsEGL.h b/src/libANGLE/renderer/gl/egl/FunctionsEGL.h
-index ef717b8853a5fd89522a472fb3b4ffab14e67cac..b93ea49e6b79981b864a186f42f5c6007962c161 100644
---- a/src/libANGLE/renderer/gl/egl/FunctionsEGL.h
-+++ b/src/libANGLE/renderer/gl/egl/FunctionsEGL.h
-@@ -33,7 +33,7 @@ class FunctionsEGL
-     std::string vendorString;
-     std::string versionString;
- 
--    egl::Error initialize(EGLNativeDisplayType nativeDisplay);
-+    egl::Error initialize(EGLAttrib platformType, EGLNativeDisplayType nativeDisplay);
-     egl::Error terminate();
- 
-     virtual void *getProcAddress(const char *name) const = 0;
-@@ -126,6 +126,9 @@ class FunctionsEGL
-     FunctionsEGL(const FunctionsEGL &)   = delete;
-     void operator=(const FunctionsEGL &) = delete;
- 
-+    // Helper mechanism for creating a display for the desired platform type.
-+    EGLDisplay getPlatformDisplay(EGLAttrib platformType, EGLNativeDisplayType nativeDisplay);
-+
-     // Fallback mechanism for creating a display from a native device object.
-     EGLDisplay getNativeDisplay(int *major, int *minor);
- 
-diff --git a/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.cpp b/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.cpp
-index a9cd9349b1683997ffc1e233c27fcd70d7cd3ad8..8ad1e18292405e40f59310d5e3416fe6692949be 100644
---- a/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.cpp
-+++ b/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.cpp
-@@ -28,7 +28,8 @@ FunctionsEGLDL::FunctionsEGLDL() : mGetProcAddressPtr(nullptr) {}
- 
- FunctionsEGLDL::~FunctionsEGLDL() {}
- 
--egl::Error FunctionsEGLDL::initialize(EGLNativeDisplayType nativeDisplay,
-+egl::Error FunctionsEGLDL::initialize(EGLAttrib platformType,
-+                                      EGLNativeDisplayType nativeDisplay,
-                                       const char *libName,
-                                       void *eglHandle)
- {
-@@ -56,7 +57,7 @@ egl::Error FunctionsEGLDL::initialize(EGLNativeDisplayType nativeDisplay,
-         return egl::EglNotInitialized() << "Could not find eglGetProcAddress";
-     }
- 
--    return FunctionsEGL::initialize(nativeDisplay);
-+    return FunctionsEGL::initialize(platformType, nativeDisplay);
- }
- 
- void *FunctionsEGLDL::getProcAddress(const char *name) const
-diff --git a/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.h b/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.h
-index 4d4a1f678fb11b5373c5c6a1e03949f057728313..22cfaf952404fd7d0dd1956708933974328857a0 100644
---- a/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.h
-+++ b/src/libANGLE/renderer/gl/egl/FunctionsEGLDL.h
-@@ -20,7 +20,10 @@ class FunctionsEGLDL : public FunctionsEGL
-     FunctionsEGLDL();
-     ~FunctionsEGLDL() override;
- 
--    egl::Error initialize(EGLNativeDisplayType nativeDisplay, const char *libName, void *eglHandle);
-+    egl::Error initialize(EGLAttrib platformType,
-+                          EGLNativeDisplayType nativeDisplay,
-+                          const char *libName,
-+                          void *eglHandle);
-     void *getProcAddress(const char *name) const override;
- 
-   private:
 diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/metal/BufferMtl.mm
 index e261e90255c6de20704e79b01a6575fc120e6f84..dc5a3613d1532a9c6e3162c9fdce996378927a9e 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
@@ -289,10 +164,10 @@ index df9dadabc57d29d0ee96617827f5f6e837578af2..dbedfa11ddbf6a4c6180a0438e37d0f2
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 6586cdbd63f8b2dc4ff87ed43d89734f9063c672..9f819666a6483c8bc536d3ec2a20a55436d5e68c 100644
+index cb06689bc777a256183610ef47a7db63fb50a0f2..7c57e581532b2e3dfb7c2e48994162f7d2cf32ef 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1343,8 +1343,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1351,8 +1351,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -319,10 +194,10 @@ index a74c4e6d9a0b930dd0f8c3c10f5e417f9d033f30..746dd53eee510da93f4498bb301f71e8
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index f87fa268132b2483c26023895d4e8416d210a99a..9a1946cbcc46c9b50f2e2a0d17d79b094a269e4d 100644
+index 2855cbfc1adf69c01b70278e454b68dfdcfca4ae..9d731ac417dc6b7d7adbff8f938c6ee6d448c44c 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -1448,7 +1448,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
+@@ -1540,7 +1540,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
                                      bool uniformBuffersDirty)
  {
      ContextMtl *context = mtl::GetImpl(glContext);
@@ -619,10 +494,10 @@ index 558075b21cdcdcac0b9cd4ab8fc915bc032f57f7..b3990a828944bab60e692cdd16019ac2
          if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 0059adda2402128f4cd45f704d849028b2c59c99..512b14708acfd8abfa7a4acb7de7c59a982ed139 100644
+index bfa6a6838035d47c36040eec48293b09493949c4..47be2fdef6a650588ac83ae4ea1084a6fa94455a 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1348,6 +1348,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1356,6 +1356,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -647,7 +522,7 @@ index 0059adda2402128f4cd45f704d849028b2c59c99..512b14708acfd8abfa7a4acb7de7c59a
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1362,10 +1380,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1370,10 +1388,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -660,7 +535,7 @@ index 0059adda2402128f4cd45f704d849028b2c59c99..512b14708acfd8abfa7a4acb7de7c59a
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1388,7 +1406,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1396,7 +1414,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

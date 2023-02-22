@@ -12,8 +12,9 @@
 namespace sh
 {
 
-constexpr const char kUniformsVar[]               = "angleUniforms";
-constexpr const char kUnassignedAttributeString[] = " __unassigned_attribute__";
+constexpr const char kUniformsVar[]                    = "angleUniforms";
+constexpr const char kUnassignedAttributeString[]      = " __unassigned_attribute__";
+constexpr const char kUnassignedFragmentOutputString[] = "__unassigned_output__";
 
 class DriverUniform;
 class DriverUniformMetal;

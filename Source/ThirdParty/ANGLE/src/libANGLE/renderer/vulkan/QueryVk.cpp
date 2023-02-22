@@ -442,21 +442,7 @@ angle::Result QueryVk::queryCounter(const gl::Context *context)
 bool QueryVk::isCurrentlyInUse(RendererVk *renderer) const
 {
     ASSERT(mQueryHelper.isReferenced());
-
-    if (renderer->hasUnfinishedUse(mQueryHelper.get().getResourceUse()))
-    {
-        return true;
-    }
-
-    for (const vk::Shared<vk::QueryHelper> &query : mStashedQueryHelpers)
-    {
-        if (renderer->hasUnfinishedUse(query.get().getResourceUse()))
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return !renderer->hasResourceUseFinished(mQueryHelper.get().getResourceUse());
 }
 
 angle::Result QueryVk::finishRunningCommands(ContextVk *contextVk)
@@ -464,7 +450,7 @@ angle::Result QueryVk::finishRunningCommands(ContextVk *contextVk)
     RendererVk *renderer = contextVk->getRenderer();
 
     // Caller already made sure query has been submitted.
-    if (renderer->hasUnfinishedUse(mQueryHelper.get().getResourceUse()))
+    if (!renderer->hasResourceUseFinished(mQueryHelper.get().getResourceUse()))
     {
         ANGLE_TRY(renderer->finishResourceUse(contextVk, mQueryHelper.get().getResourceUse()));
     }
@@ -472,7 +458,7 @@ angle::Result QueryVk::finishRunningCommands(ContextVk *contextVk)
     // Since mStashedQueryHelpers are older than mQueryHelper, these must also finished.
     for (vk::Shared<vk::QueryHelper> &query : mStashedQueryHelpers)
     {
-        ASSERT(!renderer->hasUnfinishedUse(query.get().getResourceUse()));
+        ASSERT(renderer->hasResourceUseFinished(query.get().getResourceUse()));
     }
     return angle::Result::Continue;
 }
@@ -508,9 +494,10 @@ angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
     {
         ANGLE_TRY(contextVk->flushImpl(nullptr, RenderPassClosureReason::GetQueryResult));
 
-        ASSERT(!contextVk->getRenderer()->hasUnsubmittedUse(
+        ASSERT(contextVk->getRenderer()->hasResourceUseSubmitted(
             mQueryHelperTimeElapsedBegin.getResourceUse()));
-        ASSERT(!contextVk->getRenderer()->hasUnsubmittedUse(mQueryHelper.get().getResourceUse()));
+        ASSERT(
+            contextVk->getRenderer()->hasResourceUseSubmitted(mQueryHelper.get().getResourceUse()));
     }
 
     // If the command buffer this query is being written to is still in flight and uses

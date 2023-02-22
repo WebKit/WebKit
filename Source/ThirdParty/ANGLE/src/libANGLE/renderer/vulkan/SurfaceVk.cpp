@@ -605,6 +605,16 @@ void OffscreenSurfaceVk::destroy(const egl::Display *display)
     SurfaceVk::destroy(display);
 }
 
+egl::Error OffscreenSurfaceVk::unMakeCurrent(const gl::Context *context)
+{
+    ContextVk *contextVk = vk::GetImpl(context);
+    DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
+
+    angle::Result result = contextVk->onSurfaceUnMakeCurrent(this);
+
+    return angle::ToEGL(result, displayVk, EGL_BAD_CURRENT_SURFACE);
+}
+
 egl::Error OffscreenSurfaceVk::swap(const gl::Context *context)
 {
     return egl::NoError();
@@ -868,6 +878,7 @@ WindowSurfaceVk::WindowSurfaceVk(const egl::SurfaceState &surfaceState, EGLNativ
                                    gl::LevelIndex(0), 0, 1, RenderTargetTransience::Default);
     mDepthStencilImageBinding.bind(&mDepthStencilImage);
     mColorImageMSBinding.bind(&mColorImageMS);
+    mSwapchainStatus.isPending = false;
 }
 
 WindowSurfaceVk::~WindowSurfaceVk()
@@ -886,7 +897,7 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
     // flush the pipe.
     (void)renderer->finish(displayVk);
 
-    waitPendingPresent();
+    (void)renderer->waitForPresentToBeSubmitted(&mSwapchainStatus);
 
     if (mLockBufferHelper.valid())
     {
@@ -946,6 +957,16 @@ egl::Error WindowSurfaceVk::initialize(const egl::Display *display)
     {
         return angle::ToEGL(result, displayVk, EGL_BAD_SURFACE);
     }
+}
+
+egl::Error WindowSurfaceVk::unMakeCurrent(const gl::Context *context)
+{
+    ContextVk *contextVk = vk::GetImpl(context);
+    DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
+
+    angle::Result result = contextVk->onSurfaceUnMakeCurrent(this);
+
+    return angle::ToEGL(result, displayVk, EGL_BAD_CURRENT_SURFACE);
 }
 
 angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
@@ -1986,8 +2007,7 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
 
     ASSERT(mAcquireImageSemaphore == nullptr);
 
-    VkResult result =
-        renderer->queuePresent(contextVk, contextVk->getPriority(), presentInfo, &mSwapchainStatus);
+    renderer->queuePresent(contextVk, contextVk->getPriority(), presentInfo, &mSwapchainStatus);
 
     // Set FrameNumber for the presented image.
     mSwapchainImages[mCurrentSwapchainImageIndex].mFrameNumber = mFrameCount++;
@@ -2013,7 +2033,8 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     // Clean up whatever present is already finished.
     ANGLE_TRY(cleanUpPresentHistory(contextVk));
 
-    ANGLE_TRY(computePresentOutOfDate(contextVk, result, presentOutOfDate));
+    ANGLE_TRY(
+        computePresentOutOfDate(contextVk, mSwapchainStatus.lastPresentResult, presentOutOfDate));
 
     // Now update swapSerial With last submitted queue serial and apply CPU throttle if needed
     QueueSerial swapSerial = contextVk->getLastSubmittedQueueSerial();
@@ -2022,15 +2043,6 @@ angle::Result WindowSurfaceVk::present(ContextVk *contextVk,
     contextVk->resetPerFramePerfCounters();
 
     return angle::Result::Continue;
-}
-
-void WindowSurfaceVk::waitPendingPresent() const
-{
-    std::unique_lock<std::mutex> lock(mSwapchainStatus.mutex);
-    while (mSwapchainStatus.isPending)
-    {
-        mSwapchainStatus.condVar.wait(lock);
-    }
 }
 
 angle::Result WindowSurfaceVk::throttleCPU(ContextVk *contextVk,
@@ -2149,7 +2161,8 @@ angle::Result WindowSurfaceVk::onSharedPresentContextFlush(const gl::Context *co
 
 bool WindowSurfaceVk::hasStagedUpdates() const
 {
-    return mSwapchainImages[mCurrentSwapchainImageIndex].image.hasStagedUpdatesInAllocatedLevels();
+    return !mNeedToAcquireNextSwapchainImage &&
+           mSwapchainImages[mCurrentSwapchainImageIndex].image.hasStagedUpdatesInAllocatedLevels();
 }
 
 void WindowSurfaceVk::setTimestampsEnabled(bool enabled)
@@ -2176,11 +2189,12 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImage(const gl::Context *con
                                                           bool presentOutOfDate)
 {
     ContextVk *contextVk = vk::GetImpl(context);
+    RendererVk *renderer = contextVk->getRenderer();
 
     // TODO(jmadill): Expose in CommandQueueInterface, or manage in CommandQueue. b/172704839
-    if (contextVk->getRenderer()->isAsyncCommandQueueEnabled())
+    if (renderer->isAsyncCommandQueueEnabled())
     {
-        waitPendingPresent();
+        ANGLE_TRY(renderer->waitForPresentToBeSubmitted(&mSwapchainStatus));
         VkResult result = mSwapchainStatus.lastPresentResult;
 
         // Now that we have the result from the last present need to determine if it's out of date

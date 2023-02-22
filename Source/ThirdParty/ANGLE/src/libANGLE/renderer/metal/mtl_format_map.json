@@ -707,6 +707,15 @@
             }
         },
         "caps_ios_platform": {
+            "MTLPixelFormatDepth16Unorm":{
+                "filterable": "true",
+                "writable": "false",
+                "blendable": "false",
+                "multisample": "true",
+                "resolve": "supportDepthAutoResolve",
+                "colorRenderable": "false",
+                "depthRenderable": "true"
+            },
             "MTLPixelFormatR8Unorm_sRGB":{
                 "filterable": "display->supportsAppleGPUFamily(1)",
                 "writable": "display->supportsAppleGPUFamily(2)",

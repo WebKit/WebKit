@@ -1093,6 +1093,15 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
             }
             break;
 
+        case TQualifier::EvqFragColor:
+            mOut << " [[color(0)]]";
+            break;
+
+        case TQualifier::EvqSecondaryFragColorEXT:
+        case TQualifier::EvqSecondaryFragDataEXT:
+            mOut << " [[color(0), index(1)]]";
+            break;
+
         case TQualifier::EvqFragmentOut:
         case TQualifier::EvqFragmentInOut:
         case TQualifier::EvqFragData:
@@ -1101,7 +1110,7 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
                 if ((type.isVector() &&
                      (basic == TBasicType::EbtInt || basic == TBasicType::EbtUInt ||
                       basic == TBasicType::EbtFloat)) ||
-                    type.getQualifier() == EvqFragData)
+                    qual == EvqFragData)
                 {
                     // The OpenGL ES 3.0 spec says locations must be specified
                     // unless there is only a single output, in which case the
@@ -1109,9 +1118,25 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
                     // will have been rejected if locations are not specified
                     // and there is more than one output.
                     const TLayoutQualifier &layoutQualifier = type.getLayoutQualifier();
-                    size_t index = layoutQualifier.locationsSpecified ? layoutQualifier.location
-                                                                      : annotationIndices.color++;
-                    mOut << " [[color(" << index << ")";
+                    if (layoutQualifier.locationsSpecified)
+                    {
+                        mOut << " [[color(" << layoutQualifier.location << ")";
+                        ASSERT(layoutQualifier.index >= -1 && layoutQualifier.index <= 1);
+                        if (layoutQualifier.index == 1)
+                        {
+                            mOut << ", index(1)";
+                        }
+                    }
+                    else if (qual == EvqFragData)
+                    {
+                        mOut << " [[color(" << annotationIndices.color++ << ")";
+                    }
+                    else
+                    {
+                        // Either the only output or EXT_blend_func_extended is used;
+                        // actual assignment will happen in UpdateFragmentShaderOutputs.
+                        mOut << " [[" << sh::kUnassignedFragmentOutputString;
+                    }
                     if (mRasterOrderGroupsSupported && qual == TQualifier::EvqFragmentInOut)
                     {
                         // Put fragment inouts in their own raster order group for better

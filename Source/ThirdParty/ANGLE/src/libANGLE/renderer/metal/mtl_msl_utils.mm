@@ -208,6 +208,55 @@ std::string updateShaderAttributes(std::string shaderSourceIn, const gl::Program
     return outputSource;
 }
 
+std::string UpdateFragmentShaderOutputs(std::string shaderSourceIn,
+                                        const gl::ProgramState &programState)
+{
+    std::ostringstream stream;
+    std::string outputSource    = shaderSourceIn;
+    const auto &outputVariables = programState.getOutputVariables();
+
+    auto assignLocations = [&](const std::vector<gl::VariableLocation> &locations, bool secondary) {
+        for (auto &outputLocation : locations)
+        {
+            if (!outputLocation.used())
+            {
+                continue;
+            }
+
+            const sh::ShaderVariable &outputVar = outputVariables[outputLocation.index];
+
+            ASSERT(outputVar.location >= 0);
+            int elementLocation = outputVar.location;
+
+            stream.str("");
+            stream << outputVar.mappedName;
+            if (outputVar.getOutermostArraySize() > 0)
+            {
+                ASSERT(outputLocation.arrayIndex >= 0);
+                elementLocation += outputLocation.arrayIndex;
+                stream << "_" << outputLocation.arrayIndex;
+            }
+            stream << " [[" << sh::kUnassignedFragmentOutputString;
+            const std::string placeholder(stream.str());
+
+            size_t outputFound = outputSource.find(placeholder);
+            if (outputFound != std::string::npos)
+            {
+                stream.str("");
+                stream << "color(" << elementLocation << (secondary ? "), index(1)" : ")");
+                outputSource =
+                    outputSource.replace(outputFound + placeholder.length() -
+                                             strlen(sh::kUnassignedFragmentOutputString),
+                                         strlen(sh::kUnassignedFragmentOutputString), stream.str());
+            }
+        }
+    };
+    assignLocations(programState.getOutputLocations(), false);
+    assignLocations(programState.getSecondaryOutputLocations(), true);
+
+    return outputSource;
+}
+
 std::string SubstituteTransformFeedbackMarkers(const std::string &originalSource,
                                                const std::string &xfbBindings,
                                                const std::string &xfbOut)
@@ -422,7 +471,8 @@ angle::Result MTLGetMSL(const gl::Context *glContext,
         }
         else
         {
-            source = shaderSources[type];
+            ASSERT(type == gl::ShaderType::Fragment);
+            source = UpdateFragmentShaderOutputs(shaderSources[type], programState);
         }
         (*mslCodeOut)[type]                             = source;
         (*mslShaderInfoOut)[type].metalShaderSource     = source;

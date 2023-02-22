@@ -6089,6 +6089,16 @@ CallCapture ParseCallCapture(const Token &nameToken,
         ParamBuffer params = ParseParameters<decltype(CreateEGLImageKHR)>(paramTokens, strings);
         return CallCapture("CreateEGLImageKHR", std::move(params));
     }
+    if (strcmp(nameToken, "CreateEGLSync") == 0)
+    {
+        ParamBuffer params = ParseParameters<decltype(CreateEGLSync)>(paramTokens, strings);
+        return CallCapture("CreateEGLSync", std::move(params));
+    }
+    if (strcmp(nameToken, "CreateEGLSyncKHR") == 0)
+    {
+        ParamBuffer params = ParseParameters<decltype(CreateEGLSyncKHR)>(paramTokens, strings);
+        return CallCapture("CreateEGLSyncKHR", std::move(params));
+    }
     if (strcmp(nameToken, "CreateNativeClientBufferANDROID") == 0)
     {
         ParamBuffer params =
@@ -6145,6 +6155,11 @@ CallCapture ParseCallCapture(const Token &nameToken,
     {
         ParamBuffer params = ParseParameters<decltype(InitializeReplay3)>(paramTokens, strings);
         return CallCapture("InitializeReplay3", std::move(params));
+    }
+    if (strcmp(nameToken, "InitializeReplay4") == 0)
+    {
+        ParamBuffer params = ParseParameters<decltype(InitializeReplay4)>(paramTokens, strings);
+        return CallCapture("InitializeReplay4", std::move(params));
     }
     if (strcmp(nameToken, "MapBufferOES") == 0)
     {
@@ -6373,6 +6388,16 @@ void DispatchCallCapture(Fn *fn, const Captures &cap)
           Arg<Fn, 20>(cap), Arg<Fn, 21>(cap));
 }
 
+template <typename Fn, EnableIfNArgs<Fn, 23> = 0>
+void DispatchCallCapture(Fn *fn, const Captures &cap)
+{
+    (*fn)(Arg<Fn, 0>(cap), Arg<Fn, 1>(cap), Arg<Fn, 2>(cap), Arg<Fn, 3>(cap), Arg<Fn, 4>(cap),
+          Arg<Fn, 5>(cap), Arg<Fn, 6>(cap), Arg<Fn, 7>(cap), Arg<Fn, 8>(cap), Arg<Fn, 9>(cap),
+          Arg<Fn, 10>(cap), Arg<Fn, 11>(cap), Arg<Fn, 12>(cap), Arg<Fn, 13>(cap), Arg<Fn, 14>(cap),
+          Arg<Fn, 15>(cap), Arg<Fn, 16>(cap), Arg<Fn, 17>(cap), Arg<Fn, 18>(cap), Arg<Fn, 19>(cap),
+          Arg<Fn, 20>(cap), Arg<Fn, 21>(cap), Arg<Fn, 22>(cap));
+}
+
 void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &customFunctions)
 {
     ASSERT(call.entryPoint == EntryPoint::Invalid);
@@ -6391,6 +6416,16 @@ void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &c
     if (call.customFunctionName == "CreateEGLImageKHR")
     {
         DispatchCallCapture(CreateEGLImageKHR, captures);
+        return;
+    }
+    if (call.customFunctionName == "CreateEGLSync")
+    {
+        DispatchCallCapture(CreateEGLSync, captures);
+        return;
+    }
+    if (call.customFunctionName == "CreateEGLSyncKHR")
+    {
+        DispatchCallCapture(CreateEGLSyncKHR, captures);
         return;
     }
     if (call.customFunctionName == "CreateNativeClientBufferANDROID")
@@ -6446,6 +6481,11 @@ void ReplayCustomFunctionCall(const CallCapture &call, const TraceFunctionMap &c
     if (call.customFunctionName == "InitializeReplay3")
     {
         DispatchCallCapture(InitializeReplay3, captures);
+        return;
+    }
+    if (call.customFunctionName == "InitializeReplay4")
+    {
+        DispatchCallCapture(InitializeReplay4, captures);
         return;
     }
     if (call.customFunctionName == "MapBufferOES")

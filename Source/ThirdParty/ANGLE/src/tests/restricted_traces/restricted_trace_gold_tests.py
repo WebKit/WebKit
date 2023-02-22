@@ -225,7 +225,7 @@ def upload_test_result_to_skia_gold(args, gold_session_manager, gold_session, go
         raise Exception('Screenshot not found: ' + png_file_name)
 
     # These arguments cause Gold to use the fuzzy inexact matching algorithm.
-    # It is set to allow up to 20k pixels to differ by 1 on a single channel,
+    # It is set to allow up to 20k pixels to differ by 1 on all channels,
     # which is meant to help reduce triage overhead caused by new images from
     # rounding differences.
     #
@@ -241,7 +241,7 @@ def upload_test_result_to_skia_gold(args, gold_session_manager, gold_session, go
         '--add-test-optional-key',
         'fuzzy_max_different_pixels:20000',
         '--add-test-optional-key',
-        'fuzzy_pixel_delta_threshold:1',
+        'fuzzy_pixel_per_channel_delta_threshold:1',
     ]
 
     status, error = gold_session.RunComparison(

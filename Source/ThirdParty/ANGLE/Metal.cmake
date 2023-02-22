@@ -54,8 +54,6 @@ set(metal_backend_sources
     "src/libANGLE/renderer/metal/VertexArrayMtl.mm"
     "src/libANGLE/renderer/metal/blocklayoutMetal.cpp"
     "src/libANGLE/renderer/metal/blocklayoutMetal.h"
-    "src/libANGLE/renderer/metal/mtl_buffer_manager.h"
-    "src/libANGLE/renderer/metal/mtl_buffer_manager.mm"
     "src/libANGLE/renderer/metal/mtl_buffer_pool.h"
     "src/libANGLE/renderer/metal/mtl_buffer_pool.mm"
     "src/libANGLE/renderer/metal/mtl_command_buffer.h"
