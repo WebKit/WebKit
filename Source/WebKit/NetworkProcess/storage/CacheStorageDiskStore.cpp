@@ -259,7 +259,7 @@ static std::optional<RecordHeader> decodeRecordHeader(Span<const uint8_t> header
         *insertionTime,
         *size,
         *requestHeadersGuard,
-        *request,
+        WTFMove(*request),
         WTFMove(options),
         WTFMove(*referrer),
         *responseHeadersGuard,
@@ -506,8 +506,9 @@ void CacheStorageDiskStore::writeRecords(Vector<CacheStorageRecord>&& records, W
         auto bodyData = encodeRecordBody(record);
         auto bodyHash = computeSHA1(bodyData.span(), m_salt);
         bool shouldCreateBlob = shouldStoreBodyAsBlob(bodyData);
+        auto recordInfoKey = record.info.key;
         auto headerData = encodeRecordHeader(WTFMove(record));
-        auto recordData = encodeRecord(record.info.key, headerData, !shouldCreateBlob, bodyData, bodyHash, m_salt);
+        auto recordData = encodeRecord(recordInfoKey, headerData, !shouldCreateBlob, bodyData, bodyHash, m_salt);
         recordDatas.append(WTFMove(recordData));
         if (!shouldCreateBlob)
             bodyData = { };
