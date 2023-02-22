@@ -195,14 +195,7 @@ String capitalize(const String& string, UChar previousCharacter)
 
 inline RenderText::RenderText(Node& node, const String& text)
     : RenderObject(node)
-    , m_hasTab(false)
-    , m_linesDirty(false)
-    , m_needsVisualReordering(false)
     , m_isAllASCII(text.impl()->isAllASCII())
-    , m_knownToHaveNoOverflowAndNoFallbackFonts(false)
-    , m_useBackslashAsYenSymbol(false)
-    , m_originalTextDiffersFromRendered(false)
-    , m_hasInlineWrapperForDisplayContents(false)
     , m_text(text)
 {
     ASSERT(!m_text.isNull());
@@ -275,9 +268,6 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         m_useBackslashAsYenSymbol = computeUseBackslashAsYenSymbol();
         needsResetText = true;
     }
-
-    if (!oldStyle || oldStyle->fontCascade() != newStyle.fontCascade())
-        m_canUseSimplifiedTextMeasuring = computeCanUseSimplifiedTextMeasuring();
 
     TextTransform oldTransform = oldStyle ? oldStyle->textTransform() : TextTransform::None;
     TextSecurity oldSecurity = oldStyle ? oldStyle->textSecurity() : TextSecurity::None;
@@ -1459,7 +1449,6 @@ void RenderText::setRenderedText(const String& newText)
 
     m_isAllASCII = text().isAllASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
-    m_canUseSimplifiedTextMeasuring = computeCanUseSimplifiedTextMeasuring();
     
     if (m_text != originalText) {
         originalTextMap().set(this, originalText);
@@ -1500,42 +1489,6 @@ void RenderText::secureText(UChar maskingCharacter)
         characters[i] = maskingCharacter;
     if (characterToReveal)
         characters[revealedCharactersOffset] = characterToReveal;
-}
-
-bool RenderText::computeCanUseSimplifiedTextMeasuring() const
-{
-    if (!m_canUseSimpleFontCodePath)
-        return false;
-    
-    // FIXME: All these checks should be more fine-grained at the inline item level.
-    auto& style = this->style();
-    auto& fontCascade = style.fontCascade();
-    if (fontCascade.wordSpacing() || fontCascade.letterSpacing())
-        return false;
-
-    // Additional check on the font codepath.
-    TextRun run(m_text);
-    run.setCharacterScanForCodePath(false);
-    if (fontCascade.codePath(run) != FontCascade::CodePath::Simple)
-        return false;
-
-    if (&style != &firstLineStyle() && fontCascade != firstLineStyle().fontCascade())
-        return false;
-
-    auto& primaryFont = fontCascade.primaryFont();
-    if (primaryFont.syntheticBoldOffset())
-        return false;
-
-    auto whitespaceIsCollapsed = style.collapseWhiteSpace();
-    for (unsigned i = 0; i < text().length(); ++i) {
-        auto character = text()[i];
-        if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
-            return false;
-        auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-        if (!glyphData.isValid() || glyphData.font != &primaryFont)
-            return false;
-    }
-    return true;
 }
 
 void RenderText::setText(const String& text, bool force)
@@ -1628,7 +1581,7 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
         return *width;
 
     if (length == 1 && (characterAt(from) == space))
-        return canUseSimplifiedTextMeasuring() ? fontCascade.primaryFont().spaceWidth() : fontCascade.widthOfSpaceString();
+        return fontCascade.widthOfSpaceString();
 
     float width = 0.f;
     if (&fontCascade == &style.fontCascade()) {

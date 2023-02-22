@@ -171,8 +171,6 @@ public:
     StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
     bool containsOnlyHTMLWhitespace(unsigned from, unsigned length) const;
-    
-    bool canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
 
     Vector<std::pair<unsigned, unsigned>> draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const;
 
@@ -218,7 +216,6 @@ private:
     void secureText(UChar mask);
 
     LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>*);
-    bool computeCanUseSimplifiedTextMeasuring() const;
 
     void node() const = delete;
     void container() const = delete; // Use parent() instead.
@@ -228,23 +225,22 @@ private:
     float widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, HashSet<const Font*>& fallbackFonts, GlyphOverflow&) const;
 
     // We put the bitfield first to minimize padding on 64-bit.
-    unsigned m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
-    unsigned m_hasBreak : 1; // Whether or not we have a hard break (e.g., <pre> with '\n').
-    unsigned m_hasTab : 1; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
-    unsigned m_hasBeginWS : 1; // Whether or not we begin with WS (only true if we aren't pre)
-    unsigned m_hasEndWS : 1; // Whether or not we end with WS (only true if we aren't pre)
-    unsigned m_linesDirty : 1; // This bit indicates that the text run has already dirtied specific
+    unsigned m_hasBreakableChar : 1 { false }; // Whether or not we can be broken into multiple lines.
+    unsigned m_hasBreak : 1 { false }; // Whether or not we have a hard break (e.g., <pre> with '\n').
+    unsigned m_hasTab : 1 { false }; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
+    unsigned m_hasBeginWS : 1 { false }; // Whether or not we begin with WS (only true if we aren't pre)
+    unsigned m_hasEndWS : 1 { false }; // Whether or not we end with WS (only true if we aren't pre)
+    unsigned m_linesDirty : 1 { false }; // This bit indicates that the text run has already dirtied specific
                            // line boxes, and this hint will enable layoutInlineChildren to avoid
                            // just dirtying everything when character data is modified (e.g., appended/inserted
                            // or removed).
-    unsigned m_needsVisualReordering : 1;
-    unsigned m_isAllASCII : 1;
-    unsigned m_canUseSimpleFontCodePath : 1;
-    mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1;
-    unsigned m_useBackslashAsYenSymbol : 1;
-    unsigned m_originalTextDiffersFromRendered : 1;
-    unsigned m_hasInlineWrapperForDisplayContents : 1;
-    unsigned m_canUseSimplifiedTextMeasuring : 1;
+    unsigned m_needsVisualReordering : 1 { false };
+    unsigned m_isAllASCII : 1 { false };
+    unsigned m_canUseSimpleFontCodePath : 1 { false };
+    mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1 { false };
+    unsigned m_useBackslashAsYenSymbol : 1 { false };
+    unsigned m_originalTextDiffersFromRendered : 1 { false };
+    unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
 
 #if ENABLE(TEXT_AUTOSIZING)
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
