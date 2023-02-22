@@ -93,6 +93,7 @@ private:
 
     void didAddUserAgentShadowRoot(ShadowRoot&) final;
     void ensureModernShadowTree(ShadowRoot&);
+    void updateSaveButton(const AtomString& eventTypeName);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
     bool shouldSelectOnMouseDown() final {
@@ -119,9 +120,11 @@ private:
     FloatSize m_iconSize;
 
     RefPtr<HTMLAttachmentElement> m_innerLegacyAttachment;
-    RefPtr<HTMLElement> m_elementWithAction;
-    RefPtr<HTMLElement> m_elementWithTitle;
-    RefPtr<HTMLElement> m_elementWithSubtitle;
+    RefPtr<HTMLElement> m_containerElement;
+    RefPtr<HTMLElement> m_actionTextElement;
+    RefPtr<HTMLElement> m_titleElement;
+    RefPtr<HTMLElement> m_subtitleElement;
+    RefPtr<HTMLElement> m_saveButton;
 
 #if ENABLE(SERVICE_CONTROLS)
     bool m_isImageMenuEnabled { false };
