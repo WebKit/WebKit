@@ -597,7 +597,8 @@ void FullscreenManager::dispatchEventForNode(Node& node, EventType eventType)
     case EventType::Change:
         if (supportsUnprefixedAPI)
             node.dispatchEvent(Event::create(eventNames().fullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
-        node.dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
+        if (!supportsUnprefixedAPI || !node.hasEventListeners(eventNames().fullscreenchangeEvent))
+            node.dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No, Event::IsComposed::Yes));
         break;
     case EventType::Error:
         if (supportsUnprefixedAPI)
