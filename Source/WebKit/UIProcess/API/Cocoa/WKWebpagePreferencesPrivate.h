@@ -82,7 +82,12 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteNetworkConnectionIntegrityPolicy) {
     _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnly = 1 << 2,
     _WKWebsiteNetworkConnectionIntegrityPolicyHTTPSOnlyExplicitlyBypassedForDomain = 1 << 3,
     _WKWebsiteNetworkConnectionIntegrityPolicyFailClosed = 1 << 4,
+    _WKWebsiteNetworkConnectionIntegrityPolicyWebSearchContent WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 5,
+    _WKWebsiteNetworkConnectionIntegrityPolicyEnhancedTelemetry WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 6,
+    _WKWebsiteNetworkConnectionIntegrityPolicyRequestValidation WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 7,
+    _WKWebsiteNetworkConnectionIntegrityPolicySanitizeLookalikeCharacters WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)) = 1 << 8,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 
 @class _WKCustomHeaderFields;
 @class WKUserContentController;
