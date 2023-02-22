@@ -375,15 +375,15 @@ protected:
     void markContextLost();
 
     static inline Seconds defaultSendTimeout = 30_s;
-    template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    template<typename T, typename... ArgumentTypes>
+    WARN_UNUSED_RETURN bool send(ArgumentTypes&&... arguments)
     {
-        return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
+        return m_streamConnection->send<T>({ m_graphicsContextGLIdentifier, defaultSendTimeout }, std::forward<ArgumentTypes>(arguments)...);
     }
-    template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
+    template<typename T, typename... ArgumentTypes>
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(ArgumentTypes&&... arguments)
     {
-        return m_streamConnection->sendSync(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
+        return m_streamConnection->sendSync<T>({ m_graphicsContextGLIdentifier, defaultSendTimeout }, std::forward<ArgumentTypes>(arguments)...);
     }
 
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier { GraphicsContextGLIdentifier::generate() };

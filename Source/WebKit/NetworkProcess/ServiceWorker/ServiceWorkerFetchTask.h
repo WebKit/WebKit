@@ -116,7 +116,7 @@ private:
     NetworkSession* session();
     void preloadResponseIsReady();
 
-    template<typename Message> bool sendToServiceWorker(Message&&);
+    template<typename T, typename... ArgumentTypes> bool sendToServiceWorker(ArgumentTypes&&...);
     template<typename Message> bool sendToClient(Message&&);
 
     WeakPtr<WebSWServerConnection> m_swServerConnection;

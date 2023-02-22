@@ -308,7 +308,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
         hasVP9ExtensionSupport
 #endif
     };
-    m_connection->send(Messages::GPUProcessConnection::DidInitialize(info), 0);
+    m_connection->send<Messages::GPUProcessConnection::DidInitialize>({ }, std::make_optional(WTFMove(info)));
     ++gObjectCountForTesting;
 }
 
@@ -663,7 +663,7 @@ void GPUConnectionToWebProcess::updateSupportedRemoteCommands()
 
 void GPUConnectionToWebProcess::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
-    connection().send(Messages::GPUProcessConnection::DidReceiveRemoteCommand(type, argument), 0);
+    connection().send<Messages::GPUProcessConnection::DidReceiveRemoteCommand>({ }, type, argument);
 }
 
 #if USE(AUDIO_SESSION)

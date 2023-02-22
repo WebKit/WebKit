@@ -101,12 +101,12 @@ void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIden
 {
     if (auto completionHandler = m_unregisterJobs.take(jobIdentifier))
         return completionHandler(makeUnexpected(exceptionData));
-    send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
+    send<Messages::WebSWClientConnection::JobRejectedInServer>({ }, jobIdentifier, exceptionData);
 }
 
 void WebSWServerConnection::resolveRegistrationJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobIdentifier, registrationData, shouldNotifyWhenResolved));
+    send<Messages::WebSWClientConnection::RegistrationJobResolvedInServer>({ }, jobIdentifier, registrationData, shouldNotifyWhenResolved);
 }
 
 void WebSWServerConnection::resolveUnregistrationJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
@@ -132,37 +132,37 @@ void WebSWServerConnection::resolveUnregistrationJobInClient(ServiceWorkerJobIde
 
 void WebSWServerConnection::startScriptFetchInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
 {
-    send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier, registrationKey, cachePolicy));
+    send<Messages::WebSWClientConnection::StartScriptFetchForServer>({ }, jobIdentifier, registrationKey, cachePolicy);
 }
 
 void WebSWServerConnection::updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
 {
-    send(Messages::WebSWClientConnection::UpdateRegistrationState(identifier, state, serviceWorkerData));
+    send<Messages::WebSWClientConnection::UpdateRegistrationState>({ }, identifier, state, serviceWorkerData);
 }
 
 void WebSWServerConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
-    send(Messages::WebSWClientConnection::FireUpdateFoundEvent(identifier));
+    send<Messages::WebSWClientConnection::FireUpdateFoundEvent>(IPC::Connection::AsyncMessageOptions { }, identifier);
 }
 
 void WebSWServerConnection::setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
 {
-    send(Messages::WebSWClientConnection::SetRegistrationLastUpdateTime(identifier, lastUpdateTime));
+    send<Messages::WebSWClientConnection::SetRegistrationLastUpdateTime>({ }, identifier, lastUpdateTime);
 }
 
 void WebSWServerConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerUpdateViaCache updateViaCache)
 {
-    send(Messages::WebSWClientConnection::SetRegistrationUpdateViaCache(identifier, updateViaCache));
+    send<Messages::WebSWClientConnection::SetRegistrationUpdateViaCache>({ }, identifier, updateViaCache);
 }
 
 void WebSWServerConnection::notifyClientsOfControllerChange(const HashSet<ScriptExecutionContextIdentifier>& contextIdentifiers, const ServiceWorkerData& newController)
 {
-    send(Messages::WebSWClientConnection::NotifyClientsOfControllerChange(contextIdentifiers, newController));
+    send<Messages::WebSWClientConnection::NotifyClientsOfControllerChange>({ }, contextIdentifiers, newController);
 }
 
 void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier worker, ServiceWorkerState state)
 {
-    send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
+    send<Messages::WebSWClientConnection::UpdateWorkerState>({ }, worker, state);
 }
 
 void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& parameters, SWServerRegistration& registration, const ResourceRequest& request, WebCore::ProcessIdentifier webProcessIdentifier)
@@ -180,11 +180,11 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
     // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
     // We register the service worker client using the identifier provided by DocumentLoader and notify DocumentLoader about it.
     // If notification is successful, DocumentLoader is responsible to unregister the service worker client as needed.
-    sendWithAsyncReply(Messages::WebSWClientConnection::SetServiceWorkerClientIsControlled { clientIdentifier, registration.data() }, [weakThis = WeakPtr { *this }, this, clientIdentifier](bool isSuccess) {
+    sendWithAsyncReply<Messages::WebSWClientConnection::SetServiceWorkerClientIsControlled>({ }, [weakThis = WeakPtr { *this }, this, clientIdentifier](bool isSuccess) {
         if (!weakThis || isSuccess)
             return;
         unregisterServiceWorkerClient(clientIdentifier);
-    });
+    }, clientIdentifier, registration.data());
 
     auto ancestorOrigins = map(parameters.frameAncestorOrigins, [](auto& origin) { return origin->toString(); });
     ServiceWorkerClientData data { clientIdentifier, clientType, ServiceWorkerClientFrameType::None, request.url(), URL(), parameters.webPageID, parameters.webFrameID, request.isAppInitiated() ? WebCore::LastNavigationWasAppInitiated::Yes : WebCore::LastNavigationWasAppInitiated::No, false, false, 0, WTFMove(ancestorOrigins) };
@@ -324,7 +324,7 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
     server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](auto* contextConnection) mutable {
         if (contextConnection)
-            sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), WTFMove(sourceData) });
+            sendToContextProcess<Messages::WebSWContextManagerConnection::PostMessageToServiceWorker>(*contextConnection, destinationIdentifier, WTFMove(message), WTFMove(sourceData));
     });
 }
 
@@ -386,7 +386,7 @@ void WebSWServerConnection::postMessageToServiceWorkerClient(ScriptExecutionCont
     if (!sourceServiceWorker)
         return;
 
-    send(Messages::WebSWClientConnection::PostMessageToServiceWorkerClient { destinationContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin });
+    send<Messages::WebSWClientConnection::PostMessageToServiceWorkerClient>({ }, destinationContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin);
 }
 
 void WebSWServerConnection::matchRegistration(const SecurityOriginData& topOrigin, const URL& clientURL, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&& callback)
@@ -633,9 +633,10 @@ NetworkSession* WebSWServerConnection::session()
     return m_networkProcess->networkSession(sessionID());
 }
 
-template<typename U> void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, U&& message)
+template<typename T, typename... ArgumentTypes>
+void WebSWServerConnection::sendToContextProcess(WebCore::SWServerToContextConnection& connection, ArgumentTypes&&... arguments)
 {
-    static_cast<WebSWServerToContextConnection&>(connection).send(WTFMove(message));
+    static_cast<WebSWServerToContextConnection&>(connection).send<T>({ }, std::forward<ArgumentTypes>(arguments)...);
 }
 
 void WebSWServerConnection::fetchTaskTimedOut(ServiceWorkerIdentifier serviceWorkerIdentifier)
@@ -690,7 +691,7 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
 
 void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
 {
-    sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTFMove(callback));
+    sendWithAsyncReply<Messages::WebSWClientConnection::FocusServiceWorkerClient>({ }, WTFMove(callback), clientIdentifier);
 }
 
 void WebSWServerConnection::transferServiceWorkerLoadToNewWebProcess(NetworkResourceLoader& loader, WebCore::SWServerRegistration& registration, WebCore::ProcessIdentifier webProcessIdentifier)

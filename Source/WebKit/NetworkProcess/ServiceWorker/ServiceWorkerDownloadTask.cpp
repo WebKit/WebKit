@@ -81,9 +81,12 @@ void ServiceWorkerDownloadTask::close()
     }
 }
 
-template<typename Message> bool ServiceWorkerDownloadTask::sendToServiceWorker(Message&& message)
+template<typename T, typename... ArgumentTypes>
+bool ServiceWorkerDownloadTask::sendToServiceWorker(ArgumentTypes&&... arguments)
 {
-    return m_serviceWorkerConnection ? m_serviceWorkerConnection->ipcConnection().send(std::forward<Message>(message), 0) : false;
+    if (m_serviceWorkerConnection)
+        return m_serviceWorkerConnection->ipcConnection().send<T>({ }, std::forward<ArgumentTypes>(arguments)...);
+    return false;
 }
 
 void ServiceWorkerDownloadTask::dispatch(Function<void()>&& function)
@@ -109,7 +112,7 @@ void ServiceWorkerDownloadTask::cancel()
         m_sandboxExtension = nullptr;
     }
 
-    sendToServiceWorker(Messages::WebSWContextManagerConnection::CancelFetch { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier });
+    sendToServiceWorker<Messages::WebSWContextManagerConnection::CancelFetch>(m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier);
 
     m_state = State::Completed;
     close();
@@ -165,7 +168,7 @@ void ServiceWorkerDownloadTask::start()
 {
     ASSERT(m_state != State::Completed);
 
-    if (!sendToServiceWorker(Messages::WebSWContextManagerConnection::ConvertFetchToDownload { m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier })) {
+    if (!sendToServiceWorker<Messages::WebSWContextManagerConnection::ConvertFetchToDownload>(m_serverConnectionIdentifier, m_serviceWorkerIdentifier, m_fetchIdentifier)) {
         sharedServiceWorkerDownloadTaskQueue().dispatch([this, protectedThis = Ref { *this }]() mutable {
             didFailDownload();
         });

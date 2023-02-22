@@ -2030,20 +2030,20 @@ void WebProcessProxy::setRemoteWorkerUserAgent(const String& userAgent)
 {
 #if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerInformation)
-        send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
+        send<Messages::WebSWContextManagerConnection::SetUserAgent>({ }, userAgent);
 #endif
     if (m_sharedWorkerInformation)
-        send(Messages::WebSharedWorkerContextManagerConnection::SetUserAgent { userAgent }, 0);
+        send<Messages::WebSharedWorkerContextManagerConnection::SetUserAgent>({ }, userAgent);
 }
 
 void WebProcessProxy::updateRemoteWorkerPreferencesStore(const WebPreferencesStore& store)
 {
 #if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerInformation)
-        send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
+        send<Messages::WebSWContextManagerConnection::UpdatePreferencesStore>({ }, store);
 #endif
     if (m_sharedWorkerInformation)
-        send(Messages::WebSharedWorkerContextManagerConnection::UpdatePreferencesStore { store }, 0);
+        send<Messages::WebSharedWorkerContextManagerConnection::UpdatePreferencesStore>({ }, store);
 }
 
 void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType workerType)
@@ -2160,11 +2160,11 @@ void WebProcessProxy::disableRemoteWorkers(RemoteWorkerType workerType)
     switch (workerType) {
     case RemoteWorkerType::ServiceWorker:
 #if ENABLE(SERVICE_WORKER)
-        send(Messages::WebSWContextManagerConnection::Close { }, 0);
+        send<Messages::WebSWContextManagerConnection::Close>({ });
 #endif
         break;
     case RemoteWorkerType::SharedWorker:
-        send(Messages::WebSharedWorkerContextManagerConnection::Close { }, 0);
+        send<Messages::WebSharedWorkerContextManagerConnection::Close>({ });
         break;
     }
 

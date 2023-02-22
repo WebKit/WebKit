@@ -60,31 +60,85 @@ public:
 
     virtual ProcessThrottler& throttler() = 0;
 
-    template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
+    enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
+
+    class AsyncMessageOptions {
+    public:
+        template<typename T, typename = void> struct IsOptionType : std::false_type { };
+        template<typename... OptionTypes, typename = std::enable_if_t<std::conjunction_v<IsOptionType<OptionTypes>...>>>
+        AsyncMessageOptions(const OptionTypes&... options)
+        {
+            (..., setOption(options));
+        }
+
+        auto destinationID() const { return m_destinationID; }
+        auto sendOptions() const { return m_sendOptions; }
+        auto shouldStartProcessThrottlerActivity() const { return m_shouldStartProcessThrottlerActivity; }
+
+    private:
+        void setOption(uint64_t destinationID) { m_destinationID = destinationID; }
+        template<typename T> void setOption(ObjectIdentifier<T> destinationID) { m_destinationID = destinationID.toUInt64(); }
+        void setOption(OptionSet<IPC::SendOption> sendOptions) { m_sendOptions = sendOptions; }
+        void setOption(ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity) { m_shouldStartProcessThrottlerActivity = shouldStartProcessThrottlerActivity; }
+
+        uint64_t m_destinationID { 0 };
+        OptionSet<IPC::SendOption> m_sendOptions { };
+        ShouldStartProcessThrottlerActivity m_shouldStartProcessThrottlerActivity { ShouldStartProcessThrottlerActivity::Yes };
+    };
+
+    template<typename T, typename... ArgumentTypes>
+    bool send(AsyncMessageOptions, ArgumentTypes&&...);
+
+    template<typename T>
+    auto send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { })
+    {
+        return std::apply([&](auto&&... arguments) {
+            return send<T>({ destinationID, sendOptions }, arguments...);
+        }, message.arguments());
+    }
+
+    template<typename T, typename U>
+    auto send(T&& message, ObjectIdentifier<U> destinationID, OptionSet<IPC::SendOption> sendOptions = { })
+    {
+        return send(WTFMove(message), destinationID.toUInt64(), sendOptions);
+    }
 
     template<typename T> using SendSyncResult = IPC::Connection::SendSyncResult<T>;
-    template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
+    template<typename T, typename... ArgumentTypes>
+    SendSyncResult<T> sendSync(IPC::Connection::SyncMessageOptions, ArgumentTypes&&...);
 
-    enum class ShouldStartProcessThrottlerActivity : bool { No, Yes };
+    template<typename T>
+    auto sendSync(T&& message, uint64_t destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
+    {
+        return std::apply([&](auto&&... arguments) {
+            return sendSync<T>({ destinationID, timeout, sendSyncOptions }, arguments...);
+        }, message.arguments());
+    }
+
+    template<typename T, typename U>
+    auto sendSync(T&& message, ObjectIdentifier<U> destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
+    {
+        return sendSync(WTFMove(message), destinationID.toUInt64(), timeout, sendSyncOptions);
+    }
+
     using AsyncReplyID = IPC::Connection::AsyncReplyID;
-    template<typename T, typename C> AsyncReplyID sendWithAsyncReply(T&&, C&&, uint64_t destinationID = 0, OptionSet<IPC::SendOption> = { }, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    template<typename T, typename C, typename... ArgumentTypes>
+    AsyncReplyID sendWithAsyncReply(AsyncMessageOptions, C&&, ArgumentTypes&&...);
+
+    template<typename T, typename C>
+    auto sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID = 0, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    {
+        return std::apply([&](auto&&... arguments) {
+            return sendWithAsyncReply<T>({ destinationID, sendOptions, shouldStartProcessThrottlerActivity }, WTFMove(completionHandler), arguments...);
+        }, message.arguments());
+    }
 
     template<typename T, typename C, typename U>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
+    auto sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, OptionSet<IPC::SendOption> sendOptions = { }, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes)
     {
-        return sendWithAsyncReply(std::forward<T>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), sendOptions, shouldStartProcessThrottlerActivity);
-    }
-
-    template<typename T, typename U>
-    bool send(T&& message, ObjectIdentifier<U> destinationID, OptionSet<IPC::SendOption> sendOptions = { })
-    {
-        return send<T>(WTFMove(message), destinationID.toUInt64(), sendOptions);
-    }
-    
-    template<typename T, typename U>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U> destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
-    {
-        return sendSync<T>(WTFMove(message), destinationID.toUInt64(), timeout, sendSyncOptions);
+        return std::apply([&](auto&&... arguments) {
+            return sendWithAsyncReply<T>({ destinationID, sendOptions, shouldStartProcessThrottlerActivity }, WTFMove(completionHandler), arguments...);
+        }, message.arguments());
     }
 
     IPC::Connection* connection() const
@@ -222,40 +276,43 @@ private:
 #endif
 };
 
-template<typename T>
-bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
+template<typename T> struct AuxiliaryProcessProxy::AsyncMessageOptions::IsOptionType<T, std::void_t<decltype(std::declval<AuxiliaryProcessProxy::AsyncMessageOptions>().setOption(std::declval<T>()))>> : std::true_type { };
+
+template<typename T, typename... ArgumentTypes>
+bool AuxiliaryProcessProxy::send(AsyncMessageOptions messageOptions, ArgumentTypes&&... arguments)
 {
-    static_assert(!T::isSync, "Async message expected");
+    static_assert(!T::isSync);
+    static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
 
-    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
-    encoder.get() << message.arguments();
-
-    return sendMessage(WTFMove(encoder), sendOptions);
+    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), messageOptions.destinationID());
+    (encoder.get() << ... << std::forward<ArgumentTypes>(arguments));
+    return sendMessage(WTFMove(encoder), messageOptions.sendOptions());
 }
 
-template<typename T>
-AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& message, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
+template<typename T, typename... ArgumentTypes>
+AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(IPC::Connection::SyncMessageOptions messageOptions, ArgumentTypes&&... arguments)
 {
-    static_assert(T::isSync, "Sync message expected");
+    static_assert(T::isSync);
+    static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
 
     if (!m_connection)
         return { };
 
     TraceScope scope(SyncMessageStart, SyncMessageEnd);
-
-    return connection()->sendSync(std::forward<T>(message), destinationID, timeout, sendSyncOptions);
+    return m_connection->sendSync<T>(messageOptions, std::forward<ArgumentTypes>(arguments)...);
 }
 
-template<typename T, typename C>
-AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
+template<typename T, typename C, typename... ArgumentTypes>
+AuxiliaryProcessProxy::AsyncReplyID AuxiliaryProcessProxy::sendWithAsyncReply(AsyncMessageOptions messageOptions, C&& completionHandler, ArgumentTypes&&... arguments)
 {
-    static_assert(!T::isSync, "Async message expected");
+    static_assert(!T::isSync);
+    static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
 
-    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
-    encoder.get() << message.arguments();
+    auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), messageOptions.destinationID());
+    (encoder.get() << ... << std::forward<ArgumentTypes>(arguments));
     auto handler = IPC::Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
     auto replyID = handler.replyID;
-    if (sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler), shouldStartProcessThrottlerActivity))
+    if (sendMessage(WTFMove(encoder), messageOptions.sendOptions(), WTFMove(handler), messageOptions.shouldStartProcessThrottlerActivity()))
         return replyID;
     return { };
 }

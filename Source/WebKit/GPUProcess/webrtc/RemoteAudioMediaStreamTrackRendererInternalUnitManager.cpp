@@ -179,7 +179,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::reset()
         return;
 
     m_canReset = false;
-    m_connection->send(Messages::GPUProcessConnection::ResetAudioMediaStreamTrackRendererInternalUnit { m_identifier }, 0);
+    m_connection->send<Messages::GPUProcessConnection::ResetAudioMediaStreamTrackRendererInternalUnit>(IPC::Connection::AsyncMessageOptions { }, m_identifier);
 }
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManager::Unit::setShouldRegisterAsSpeakerSamplesProducer(bool value)

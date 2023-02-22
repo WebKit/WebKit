@@ -116,7 +116,7 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {
     if (isContextLost())
         return;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay());
+    auto sendResult = sendSync<Messages::RemoteGraphicsContextGL::PrepareForDisplay>();
     if (!sendResult) {
         markContextLost();
         return;

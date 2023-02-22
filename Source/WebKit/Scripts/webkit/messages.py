@@ -61,6 +61,7 @@ NOT_REFCOUNTED_RECEIVER_ATTRIBUTE = 'NotRefCounted'
 NOT_STREAM_ENCODABLE_ATTRIBUTE = 'NotStreamEncodable'
 NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE = 'NotStreamEncodableReply'
 STREAM_BATCHED_ATTRIBUTE = 'StreamBatched'
+MODERN_MESSAGE_CONSTRUCTION_ATTRIBUTE = 'ModernMessageConstruction'
 
 attributes_to_generate_validators = {
     "messageAllowedWhenWaitingForSyncReply": [ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, STREAM_ATTRIBUTE],
@@ -169,6 +170,7 @@ def message_to_struct_declaration(receiver, message):
     result.append('    static IPC::MessageName name() { return IPC::MessageName::%s_%s; }\n' % (receiver.name, message.name))
     result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(SYNCHRONOUS_ATTRIBUTE)])
     if receiver.has_attribute(STREAM_ATTRIBUTE):
+        result.append('\n')
         result.append('    static constexpr bool isStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_ATTRIBUTE)])
         if message.reply_parameters is not None:
             result.append('    static constexpr bool isReplyStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_REPLY_ATTRIBUTE)])
@@ -177,8 +179,8 @@ def message_to_struct_declaration(receiver, message):
                 sys.exit(1)
         result.append('    static constexpr bool isStreamBatched = %s;\n' % ('false', 'true')[message.has_attribute(STREAM_BATCHED_ATTRIBUTE)])
 
-    result.append('\n')
     if message.reply_parameters != None:
+        result.append('\n')
         if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
         if message.has_attribute(MAINTHREADCALLBACK_ATTRIBUTE):
@@ -187,18 +189,20 @@ def message_to_struct_declaration(receiver, message):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
         result.append('    using ReplyArguments = std::tuple<%s>;\n' % ', '.join([parameter.type for parameter in message.reply_parameters]))
 
-    if len(function_parameters):
-        result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
-        result.append('\n        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
+    if not receiver.has_attribute(MODERN_MESSAGE_CONSTRUCTION_ATTRIBUTE):
+        result.append('\n')
+        if len(function_parameters):
+            result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
+            result.append('\n        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
+            result.append('    {\n')
+            result.append('    }\n\n')
+        result.append('    const auto& arguments() const\n')
         result.append('    {\n')
-        result.append('    }\n\n')
-    result.append('    const auto& arguments() const\n')
-    result.append('    {\n')
-    result.append('        return m_arguments;\n')
-    result.append('    }\n')
-    result.append('\n')
-    result.append('private:\n')
-    result.append('    std::tuple<%s> m_arguments;\n' % ', '.join([x[0] for x in function_parameters]))
+        result.append('        return m_arguments;\n')
+        result.append('    }\n')
+        result.append('\n')
+        result.append('private:\n')
+        result.append('    std::tuple<%s> m_arguments;\n' % ', '.join([x[0] for x in function_parameters]))
     result.append('};\n')
     return surround_in_condition(''.join(result), message.condition)
 

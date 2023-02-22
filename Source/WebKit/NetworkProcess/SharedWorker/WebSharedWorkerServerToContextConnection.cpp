@@ -128,7 +128,7 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
         }
 #endif
     }
-    send(Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker { sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.workerOptions(), sharedWorker.fetchResult(), initializationData });
+    send<Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker>({ }, sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.workerOptions(), sharedWorker.fetchResult(), initializationData);
     sharedWorker.forEachSharedWorkerObject([&](auto, auto& port) {
         postConnectEvent(sharedWorker, port, [](bool) { });
     });
@@ -136,24 +136,24 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
 
 void WebSharedWorkerServerToContextConnection::suspendSharedWorker(WebCore::SharedWorkerIdentifier identifier)
 {
-    send(Messages::WebSharedWorkerContextManagerConnection::SuspendSharedWorker { identifier });
+    send<Messages::WebSharedWorkerContextManagerConnection::SuspendSharedWorker>(IPC::Connection::AsyncMessageOptions { }, identifier);
 }
 
 void WebSharedWorkerServerToContextConnection::resumeSharedWorker(WebCore::SharedWorkerIdentifier identifier)
 {
-    send(Messages::WebSharedWorkerContextManagerConnection::ResumeSharedWorker { identifier });
+    send<Messages::WebSharedWorkerContextManagerConnection::ResumeSharedWorker>(IPC::Connection::AsyncMessageOptions { }, identifier);
 }
 
 void WebSharedWorkerServerToContextConnection::postConnectEvent(const WebSharedWorker& sharedWorker, const WebCore::TransferredMessagePort& port, CompletionHandler<void(bool)>&& completionHandler)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("postConnectEvent: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
-    sendWithAsyncReply(Messages::WebSharedWorkerContextManagerConnection::PostConnectEvent { sharedWorker.identifier(), port, sharedWorker.origin().clientOrigin.toString() }, WTFMove(completionHandler));
+    sendWithAsyncReply<Messages::WebSharedWorkerContextManagerConnection::PostConnectEvent>({ }, WTFMove(completionHandler), sharedWorker.identifier(), port, sharedWorker.origin().clientOrigin.toString());
 }
 
 void WebSharedWorkerServerToContextConnection::terminateSharedWorker(const WebSharedWorker& sharedWorker)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("terminateSharedWorker: sharedWorkerIdentifier=%" PRIu64, sharedWorker.identifier().toUInt64());
-    send(Messages::WebSharedWorkerContextManagerConnection::TerminateSharedWorker { sharedWorker.identifier() });
+    send<Messages::WebSharedWorkerContextManagerConnection::TerminateSharedWorker>(IPC::Connection::AsyncMessageOptions { }, sharedWorker.identifier());
 }
 
 void WebSharedWorkerServerToContextConnection::addSharedWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier)

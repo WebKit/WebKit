@@ -44,6 +44,7 @@ struct MockTestMessageWithConnection {
         : m_arguments(handle)
     {
     }
+    using Arguments = std::tuple<IPC::Connection::Handle>;
     std::tuple<const IPC::Connection::Handle&> m_arguments;
 };
 

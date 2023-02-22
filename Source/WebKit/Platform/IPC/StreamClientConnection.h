@@ -74,15 +74,55 @@ public:
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
 
-    template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
+    class MessageOptions {
+    public:
+        template<typename T>
+        MessageOptions(ObjectIdentifier<T> destinationID, Timeout timeout)
+            : m_destinationID(destinationID.toUInt64())
+            , m_timeout(timeout)
+        { }
+
+        auto destinationID() const { return m_destinationID; }
+        auto timeout() const { return m_timeout; }
+
+    private:
+        uint64_t m_destinationID;
+        Timeout m_timeout;
+    };
+
+    template<typename T, typename... ArgumentTypes> bool send(MessageOptions, ArgumentTypes&&...);
+
+    template<typename T, typename U>
+    auto send(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
+    {
+        return std::apply([&](auto&&... arguments) {
+            return send<T>({ destinationID, timeout }, arguments...);
+        }, message.arguments());
+    }
 
     using AsyncReplyID = Connection::AsyncReplyID;
+    template<typename T, typename C, typename... ArgumentTypes>
+    AsyncReplyID sendWithAsyncReply(MessageOptions, C&& completionHandler, ArgumentTypes&&...);
+
     template<typename T, typename C, typename U>
-    AsyncReplyID sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, Timeout);
+    auto sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, Timeout timeout)
+    {
+        return std::apply([&](auto&&... arguments) {
+            return sendWithAsyncReply<T>({ destinationID, timeout }, WTFMove(completionHandler), arguments...);
+        }, message.arguments());
+    }
 
     template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
+    template<typename T, typename... ArgumentTypes>
+    SendSyncResult<T> sendSync(MessageOptions, ArgumentTypes&&...);
+
     template<typename T, typename U>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout);
+    auto sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
+    {
+        return std::apply([&](auto&&... arguments) {
+            return sendSync<T>({ destinationID, timeout }, arguments...);
+        }, message.arguments());
+    }
 
     template<typename T, typename U>
     bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout, OptionSet<WaitForOption> = { });
@@ -92,11 +132,10 @@ public:
 
 private:
     StreamClientConnection(Ref<Connection>, unsigned bufferSizeLog2);
-
-    template<typename T, typename... AdditionalData>
-    bool trySendStream(Span<uint8_t>&, T& message, AdditionalData&&...);
-    template<typename T>
-    std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, Span<uint8_t>&);
+    template<typename T, typename... ArgumentTypes>
+    bool trySendStream(Span<uint8_t>&, const ArgumentTypes&...);
+    template<typename T, typename... ArgumentTypes>
+    std::optional<SendSyncResult<T>> trySendSyncStream(Timeout, Span<uint8_t>&, const ArgumentTypes&...);
     bool trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
     void sendProcessOutOfStreamMessage(Span<uint8_t>&&);
     using WakeUpServer = StreamClientConnectionBuffer::WakeUpServer;
@@ -125,45 +164,47 @@ private:
     friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
 };
 
-template<typename T, typename U>
-bool StreamClientConnection::send(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
+template<typename T, typename... ArgumentTypes>
+bool StreamClientConnection::send(MessageOptions messageOptions, ArgumentTypes&&... arguments)
 {
-    static_assert(!T::isSync, "Message is sync!");
-    if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
+    static_assert(!T::isSync);
+    static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
+
+    if (!trySendDestinationIDIfNeeded(messageOptions.destinationID(), messageOptions.timeout()))
         return false;
-    auto span = m_buffer.tryAcquire(timeout);
+    auto span = m_buffer.tryAcquire(messageOptions.timeout());
     if (!span)
         return false;
     if constexpr(T::isStreamEncodable) {
-        if (trySendStream(*span, message))
+        if (trySendStream<T>(*span, arguments...))
             return true;
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    if (!m_connection->send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply))
-        return false;
-    return true;
+    return m_connection->send<T>({ messageOptions.destinationID(), OptionSet<SendOption> { SendOption::DispatchMessageEvenWhenWaitingForSyncReply } }, std::forward<ArgumentTypes>(arguments)...);
 }
 
-template<typename T, typename C, typename U>
-StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifier<U> destinationID, Timeout timeout)
+template<typename T, typename C, typename... ArgumentTypes>
+StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(MessageOptions messageOptions, C&& completionHandler, ArgumentTypes&&... arguments)
 {
-    static_assert(!T::isSync, "Message is sync!");
-    if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
+    static_assert(!T::isSync);
+    static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
+
+    if (!trySendDestinationIDIfNeeded(messageOptions.destinationID(), messageOptions.timeout()))
         return { };
 
-    auto span = m_buffer.tryAcquire(timeout);
+    auto span = m_buffer.tryAcquire(messageOptions.timeout());
     if (!span)
         return { };
     auto handler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
     auto replyID = handler.replyID;
     m_connection->addAsyncReplyHandler(WTFMove(handler));
     if constexpr(T::isStreamEncodable) {
-        if (trySendStream(*span, message, replyID))
+        if (trySendStream<T>(*span, arguments..., replyID))
             return replyID;
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID.toUInt64());
-    encoder.get() << message.arguments() << replyID;
+    auto encoder = makeUniqueRef<Encoder>(T::name(), messageOptions.destinationID());
+    (encoder.get() << ... << std::forward<ArgumentTypes>(arguments)) << replyID;
     if (m_connection->sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }))
         return replyID;
     // replyHandlerToCancel might be already cancelled if invalidate() happened in-between.
@@ -178,11 +219,11 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
     return { };
 }
 
-template<typename T, typename... AdditionalData>
-bool StreamClientConnection::trySendStream(Span<uint8_t>& span, T& message, AdditionalData&&... args)
+template<typename T, typename... ArgumentTypes>
+bool StreamClientConnection::trySendStream(Span<uint8_t>& span, const ArgumentTypes&... arguments)
 {
     StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
-    if (((messageEncoder << message.arguments()) << ... << std::forward<decltype(args)>(args))) {
+    if ((messageEncoder << ... << arguments)) {
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
         if constexpr(T::isStreamBatched)
             wakeUpServerBatched(wakeUpResult);
@@ -193,22 +234,24 @@ bool StreamClientConnection::trySendStream(Span<uint8_t>& span, T& message, Addi
     return false;
 }
 
-template<typename T, typename U>
-StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
+template<typename T, typename... ArgumentTypes>
+StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(MessageOptions messageOptions, ArgumentTypes&&... arguments)
 {
-    static_assert(T::isSync, "Message is not sync!");
-    if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
+    static_assert(T::isSync);
+    static_assert(std::is_same_v<std::tuple<std::remove_cvref_t<ArgumentTypes>...>, typename T::Arguments>);
+
+    if (!trySendDestinationIDIfNeeded(messageOptions.destinationID(), messageOptions.timeout()))
         return { };
-    auto span = m_buffer.tryAcquire(timeout);
+    auto span = m_buffer.tryAcquire(messageOptions.timeout());
     if (!span)
         return { };
     if constexpr(T::isStreamEncodable) {
-        auto maybeSendResult = trySendSyncStream(message, timeout, *span);
+        auto maybeSendResult = trySendSyncStream<T>(messageOptions.timeout(), *span, arguments...);
         if (maybeSendResult)
             return WTFMove(*maybeSendResult);
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    return m_connection->sendSync(WTFMove(message), destinationID.toUInt64(), timeout);
+    return m_connection->sendSync<T>({ messageOptions.destinationID(), messageOptions.timeout() }, std::forward<ArgumentTypes>(arguments)...);
 }
 
 template<typename T, typename U>
@@ -217,8 +260,8 @@ bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifier<U> d
     return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
 }
 
-template<typename T>
-std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection::trySendSyncStream(T& message, Timeout timeout, Span<uint8_t>& span)
+template<typename T, typename... ArgumentTypes>
+std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection::trySendSyncStream(Timeout timeout, Span<uint8_t>& span, const ArgumentTypes&... arguments)
 {
     // In this function, SendSyncResult<T> { } means error happened and caller should stop processing.
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
@@ -228,7 +271,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
 
     auto decoderResult = [&]() -> std::optional<std::unique_ptr<Decoder>> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
-        if (!(messageEncoder << syncRequestID << message.arguments()))
+        if (!((messageEncoder << syncRequestID) << ... << arguments))
             return std::nullopt;
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
         wakeUpServer(wakeUpResult);
