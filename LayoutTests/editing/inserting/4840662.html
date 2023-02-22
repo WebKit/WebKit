@@ -3,12 +3,12 @@
 
 <script>
 var sel = window.getSelection();
-var div = document.getElementById("div");
-sel.setPosition(div, 0);
+var anchor = document.querySelector('a');
+sel.setPosition(anchor, 0);
 
 document.execCommand("InsertText", false, "This sentence should ");
 
-sel.setPosition(div, div.childNodes.length);
+sel.setPosition(anchor, anchor.childNodes.length);
 
 document.execCommand("InsertText", false, " on one line.");
 </script>

@@ -66,6 +66,12 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
     if (!pos.containerNode()->isTextNode()) {
+        auto* nodeBeforePosition = pos.computeNodeBeforePosition();
+        if (nodeBeforePosition && nodeBeforePosition->isTextNode())
+            return lastPositionInNode(nodeBeforePosition);
+        auto* nodeAfterPosition = pos.computeNodeAfterPosition();
+        if (nodeAfterPosition && nodeAfterPosition->isTextNode())
+            return firstPositionInNode(nodeAfterPosition);
         auto textNode = document().createEditingTextNode(String { emptyString() });
         insertNodeAt(textNode.copyRef(), pos);
         return firstPositionInNode(textNode.ptr());
@@ -151,8 +157,8 @@ void InsertTextCommand::doApply()
             return;
     }
 
-    Position startPosition(endingSelection().start());
-    
+    Position startPosition = endingSelection().uncanonicalizedStart();
+
     Position placeholder;
     // We want to remove preserved newlines and brs that will collapse (and thus become unnecessary) when content 
     // is inserted just before them.
@@ -168,20 +174,14 @@ void InsertTextCommand::doApply()
         // we get a chance to insert into it.  We check for a placeholder now, though, because doing so requires
         // the creation of a VisiblePosition, and if we did that post-insertion it would force a layout.
     }
-    
-    // Insert the character at the leftmost candidate.
-    startPosition = startPosition.upstream();
-    
+
+    Position upstreamPosition = endingSelection().start().upstream();
     // It is possible for the node that contains startPosition to contain only unrendered whitespace,
     // and so deleteInsignificantText could remove it.  Save the position before the node in case that happens.
-    Position positionBeforeStartNode(positionInParentBeforeNode(startPosition.containerNode()));
-    deleteInsignificantText(startPosition.upstream(), startPosition.downstream());
-    if (!startPosition.anchorNode()->isConnected())
-        startPosition = positionBeforeStartNode;
-    if (!startPosition.isCandidate())
-        startPosition = startPosition.downstream();
+    deleteInsignificantText(upstreamPosition.upstream(), upstreamPosition.downstream());
+    startPosition = document().selection().selection().uncanonicalizedStart();
     
-    startPosition = positionAvoidingSpecialElementBoundary(startPosition);
+    startPosition = positionOutsideTabSpan(positionAvoidingSpecialElementBoundary(startPosition));
     if (endingSelection().isNoneOrOrphaned())
         return;
 
@@ -203,6 +203,8 @@ void InsertTextCommand::doApply()
         RefPtr<Text> textNode = startPosition.containerText();
         const unsigned offset = startPosition.offsetInContainerNode();
 
+        bool startPositionWasCandidate = startPosition.isCandidate();
+
         insertTextIntoNode(*textNode, offset, m_text);
         endPosition = Position(textNode.get(), offset + m_text.length());
         if (m_markerSupplier)
@@ -210,9 +212,10 @@ void InsertTextCommand::doApply()
 
         if (m_rebalanceType == RebalanceLeadingAndTrailingWhitespaces) {
             // The insertion may require adjusting adjacent whitespace, if it is present.
-            rebalanceWhitespaceAt(endPosition);
+            if (startPositionWasCandidate || (m_text.length() && deprecatedIsEditingWhitespace(m_text[m_text.length() - 1])))
+                rebalanceWhitespaceAt(endPosition);
             // Rebalancing on both sides isn't necessary if we've inserted only spaces.
-            if (!shouldRebalanceLeadingWhitespaceFor(m_text))
+            if (!shouldRebalanceLeadingWhitespaceFor(m_text) && startPositionWasCandidate)
                 rebalanceWhitespaceAt(startPosition);
         } else {
             ASSERT(m_rebalanceType == RebalanceAllWhitespaces);

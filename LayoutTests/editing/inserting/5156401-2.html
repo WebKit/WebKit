@@ -5,7 +5,7 @@
 <script>
 var sel = window.getSelection();
 var link = document.getElementById("link");
-sel.setPosition(link, link.childNodes.length);
+sel.setPosition(link, link.childNodes.length - 1);
 document.execCommand("InsertText", false, "in this editable region should be in the same paragraph.");
 </script>
 </body>

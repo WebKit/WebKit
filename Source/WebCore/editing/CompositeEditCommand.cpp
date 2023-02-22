@@ -814,8 +814,23 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
 
 Position CompositeEditCommand::positionOutsideTabSpan(const Position& position)
 {
-    if (!isTabSpanTextNode(position.anchorNode()))
-        return position;
+    if (!isTabSpanTextNode(position.anchorNode())) {
+        if (!isTabSpanNode(position.anchorNode()))
+            return position;
+        RELEASE_ASSERT(is<Element>(position.anchorNode()));
+        switch (position.anchorType()) {
+        case Position::PositionIsOffsetInAnchor:
+            if (RefPtr nodeAfterPosition = position.computeNodeAfterPosition())
+                splitElement(*downcast<Element>(position.anchorNode()), *nodeAfterPosition);
+            return positionInParentAfterNode(position.anchorNode());
+        case Position::PositionIsBeforeChildren:
+        case Position::PositionIsBeforeAnchor:
+            return positionInParentBeforeNode(position.anchorNode());
+        case Position::PositionIsAfterChildren:
+        case Position::PositionIsAfterAnchor:
+            return positionInParentAfterNode(position.anchorNode());
+        }
+    }
 
     switch (position.anchorType()) {
     case Position::PositionIsBeforeChildren:
