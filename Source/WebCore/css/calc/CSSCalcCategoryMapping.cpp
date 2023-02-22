@@ -96,6 +96,7 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_KHZ:
         return CalculationCategory::Frequency;
     case CSSUnitType::CSS_DPPX:
+    case CSSUnitType::CSS_X:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPCM:
         return CalculationCategory::Resolution;
