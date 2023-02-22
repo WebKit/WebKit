@@ -70,6 +70,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SVGRenderTreeAsText.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "StylePropertiesInlines.h"
 #include <wtf/HexNumber.h>
@@ -642,8 +643,6 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
             FrameView& view = downcast<FrameView>(*widget);
             auto* localFrame = dynamicDowncast<LocalFrame>(view.frame());
             if (RenderView* root = localFrame ? localFrame->contentRenderer() : nullptr) {
-                if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)))
-                    view.layoutContext().layout();
                 if (RenderLayer* layer = root->layer())
                     writeLayers(ts, *layer, *layer, layer->rect(), behavior);
             }
@@ -651,7 +650,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
     }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if  (is<RenderSVGModelObject>(o) || is<RenderSVGRoot>(o))
+    if (is<RenderSVGModelObject>(o) || is<RenderSVGRoot>(o))
         writeResources(ts, o, behavior);
 #endif
 }
@@ -914,6 +913,7 @@ static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsText
 
     LOG(Layout, "externalRepresentation: dumping layer tree");
 
+    ScriptDisallowedScope scriptDisallowedScope;
     RenderLayer& layer = *renderer.layer();
     writeLayers(ts, layer, layer, layer.rect(), behavior);
     writeSelection(ts, renderer);

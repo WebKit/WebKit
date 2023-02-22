@@ -1,0 +1,25 @@
+<style>
+  iframe {
+    content: url();
+    zoom: 0.01;
+  }
+</style>
+<script>
+  internals.settings.setAsyncFrameScrollingEnabled(true);
+  internals.settings.setCaretBrowsingEnabled(true);
+
+  onload = () => {
+    if (window.testRunner)
+        testRunner.dumpAsText()
+    document.documentElement.append(document.createElement('frameset'));
+    i0.onfocus = () => {
+      location.hash = 'y';
+    };
+    location.hash = 'x';
+
+    let s0 = document.createElement('script');
+    s0.src = `data:text/javascript,caches.has('a').then(() => i0.focus());`;
+    document.head.append(s0);
+  };
+</script>
+<iframe id="i0"></iframe>
