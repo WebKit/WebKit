@@ -274,7 +274,8 @@ protected:
     void createContextConnection(const WebCore::RegistrableDomain&, std::optional<WebCore::ProcessIdentifier>, std::optional<WebCore::ScriptExecutionContextIdentifier>, CompletionHandler<void()>&&) final;
     void appBoundDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&&) final;
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, std::optional<WebCore::ProcessIdentifier>, WebCore::RegistrableDomain&&) final;
-#endif
+    void requestBackgroundFetchPermission(const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&) final;
+#endif // ENABLE(SERVICE_WORKER)
 
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;

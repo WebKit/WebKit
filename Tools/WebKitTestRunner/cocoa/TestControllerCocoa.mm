@@ -528,6 +528,11 @@ void TestController::setAllowsAnySSLCertificate(bool allows)
     [globalWebsiteDataStoreDelegateClient() setAllowAnySSLCertificate: allows];
 }
 
+void TestController::setBackgroundFetchPermission(bool value)
+{
+    [globalWebsiteDataStoreDelegateClient() setBackgroundFetchPermission: value];
+}
+
 void TestController::setAllowedMenuActions(const Vector<String>& actions)
 {
 #if PLATFORM(IOS_FAMILY)

@@ -1582,10 +1582,30 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
     });
 }
 
-void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier, const String&, Vector<BackgroundFetchRequest>&&, BackgroundFetchOptions&&, ExceptionOrBackgroundFetchInformationCallback&& callback)
+void SWServer::Connection::startBackgroundFetch(ServiceWorkerRegistrationIdentifier registrationIdentifier, const String& backgroundFetchIdentifier, Vector<BackgroundFetchRequest>&& requests, BackgroundFetchOptions&& options, ExceptionOrBackgroundFetchInformationCallback&& callback)
 {
-    // FIXME: To implement.
-    callback(makeUnexpected(ExceptionData { NotSupportedError, emptyString() }));
+    auto* registration = server().getRegistration(registrationIdentifier);
+    if (!registration) {
+        callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
+        return;
+    }
+
+    server().requestBackgroundFetchPermission({ registration->key().topOrigin(), SecurityOriginData::fromURL(registration->key().scope()) }, [server = WeakPtr { server() }, registrationIdentifier, backgroundFetchIdentifier, requests = WTFMove(requests), options = WTFMove(options), callback = WTFMove(callback)](bool result) mutable {
+        if (!server || !result) {
+            callback(makeUnexpected(ExceptionData { NotAllowedError, "Background fetch permission is denied"_s }));
+            return;
+        }
+
+        auto* registration = server->getRegistration(registrationIdentifier);
+        if (!registration) {
+            callback(makeUnexpected(ExceptionData { InvalidStateError, "No registration found"_s }));
+            return;
+        }
+
+        // FIXME: To implement.
+        callback(makeUnexpected(ExceptionData { NotSupportedError, emptyString() }));
+    });
+
 }
 
 void SWServer::Connection::backgroundFetchInformation(ServiceWorkerRegistrationIdentifier, const String&, ExceptionOrBackgroundFetchInformationCallback&& callback)

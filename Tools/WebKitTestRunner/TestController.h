@@ -188,6 +188,8 @@ public:
     void setAuthenticationUsername(String username) { m_authenticationUsername = username; }
     void setAuthenticationPassword(String password) { m_authenticationPassword = password; }
     void setAllowsAnySSLCertificate(bool);
+    void setBackgroundFetchPermission(bool);
+
     void setShouldSwapToEphemeralSessionOnNextNavigation(bool value) { m_shouldSwapToEphemeralSessionOnNextNavigation = value; }
     void setShouldSwapToDefaultSessionOnNextNavigation(bool value) { m_shouldSwapToDefaultSessionOnNextNavigation = value; }
 

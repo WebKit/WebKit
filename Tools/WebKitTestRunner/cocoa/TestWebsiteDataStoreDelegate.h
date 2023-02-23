@@ -29,10 +29,12 @@
 @private
     BOOL _shouldAllowRaisingQuota;
     BOOL _shouldAllowAnySSLCertificate;
+    BOOL _shouldAllowBackgroundFetchPermission;
     NSUInteger _quota;
 }
 - (instancetype)init;
 - (void)setAllowRaisingQuota:(BOOL)shouldAllowRaisingQuota;
 - (void)setQuota:(NSUInteger)quota;
 - (void)setAllowAnySSLCertificate:(BOOL)shouldAllowAnySSLCertificate;
+- (void)setBackgroundFetchPermission:(BOOL)shouldAllowBackgroundFetchPermission;
 @end

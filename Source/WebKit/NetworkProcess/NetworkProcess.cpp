@@ -2855,4 +2855,11 @@ void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, Comple
     completionHandler(session ? session->countNonDefaultSessionSets() : 0);
 }
 
+#if ENABLE(SERVICE_WORKER)
+void NetworkProcess::requestBackgroundFetchPermission(PAL::SessionID sessionID, const ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
+{
+    parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestBackgroundFetchPermission(sessionID, origin), WTFMove(callback));
+}
+#endif
+
 } // namespace WebKit
