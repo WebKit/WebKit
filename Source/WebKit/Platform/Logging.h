@@ -104,6 +104,7 @@ extern "C" {
     M(SharedWorker) \
     M(Storage) \
     M(StorageAPI) \
+    M(SystemPreview) \
     M(TextInput) \
     M(TextInteraction) \
     M(Translation) \

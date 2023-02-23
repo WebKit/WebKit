@@ -283,6 +283,8 @@ void SystemPreviewController::start(URL originatingPageURL, const String& mimeTy
 #endif
 
     m_originatingPageURL = originatingPageURL;
+
+    RELEASE_LOG(SystemPreview, "SystemPreview began on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 }
 
 void SystemPreviewController::setDestinationURL(URL url)
@@ -321,6 +323,8 @@ void SystemPreviewController::finish(URL url)
 #else
     if (m_qlPreviewControllerDataSource)
         [m_qlPreviewControllerDataSource finish:url];
+
+    RELEASE_LOG(SystemPreview, "SystemPreview load has finished on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 #endif
 }
 
@@ -333,6 +337,8 @@ void SystemPreviewController::cancel()
     m_qlPreviewControllerDelegate = nullptr;
     m_qlPreviewControllerDataSource = nullptr;
     m_qlPreviewController = nullptr;
+
+    RELEASE_LOG(SystemPreview, "SystemPreview ended/cancelled on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
 #endif
 }
 
@@ -346,6 +352,8 @@ void SystemPreviewController::fail(const WebCore::ResourceError& error)
 
 void SystemPreviewController::triggerSystemPreviewAction()
 {
+    RELEASE_LOG(SystemPreview, "SystemPreview action was triggered on %lld", m_systemPreviewInfo.element.elementIdentifier.toUInt64());
+
     page().systemPreviewActionTriggered(m_systemPreviewInfo, "_apple_ar_quicklook_button_tapped"_s);
 }
 
