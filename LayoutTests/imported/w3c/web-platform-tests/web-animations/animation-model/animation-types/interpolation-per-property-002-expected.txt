@@ -70,9 +70,9 @@ PASS mask-composite uses discrete animation when animating between "add" and "su
 PASS mask-composite uses discrete animation when animating between "add" and "subtract" with effect easing
 PASS mask-composite uses discrete animation when animating between "add" and "subtract" with keyframe easing
 PASS mask-image (type: discrete) has testInterpolation function
-FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
-FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
-FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+PASS mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing
+PASS mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing
+PASS mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing
 PASS mask-mode (type: discrete) has testInterpolation function
 PASS mask-mode uses discrete animation when animating between "alpha" and "luminance" with linear easing
 PASS mask-mode uses discrete animation when animating between "alpha" and "luminance" with effect easing
