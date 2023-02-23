@@ -1,0 +1,23 @@
+<style>
+  #z, :is(:focus-visible) {
+    width: 0;
+  }
+</style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  document.designMode = "on";
+
+  onload = () => {
+    i0.onblur = () => {
+      document.styleSheets[0].cssRules[0].selectorText = `#w`;
+    };
+    i0.focus();
+    document.body.offsetLeft;
+    i1.focus();
+  };
+</script>
+<iframe id="i0"></iframe>
+<iframe id="i1"></iframe>
+This test passes if it doesn't crash.

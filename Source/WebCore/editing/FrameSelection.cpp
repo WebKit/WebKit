@@ -2169,8 +2169,10 @@ void FrameSelection::pageActivationChanged()
 {
     bool isActive = isPageActive(m_document.get());
     RefPtr focusedElement = m_document->focusedElement();
-    auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), m_focused && isActive);
-    m_isActive = isActive;
+    {
+        auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), m_focused && isActive);
+        m_isActive = isActive;
+    }
 
     focusedOrActiveStateChanged();
 }
@@ -2182,9 +2184,11 @@ void FrameSelection::setFocused(bool isFocused)
 
     bool isActive = isPageActive(m_document.get());
     RefPtr focusedElement = m_document->focusedElement();
-    auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), isFocused && isActive);
-    m_focused = isFocused;
-    m_isActive = isActive;
+    {
+        auto invalidations = invalidateFocusedElementAndShadowIncludingAncestors(focusedElement.get(), isFocused && isActive);
+        m_focused = isFocused;
+        m_isActive = isActive;
+    }
 
     focusedOrActiveStateChanged();
 }

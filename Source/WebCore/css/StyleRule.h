@@ -423,8 +423,13 @@ inline void StyleRule::wrapperAdoptSelectorList(CSSSelectorList&& selectors)
 
 inline CompiledSelector& StyleRule::compiledSelectorForListIndex(unsigned index) const
 {
-    if (!m_compiledSelectors)
-        m_compiledSelectors = makeUniqueArray<CompiledSelector>(m_selectorList.listSize());
+    ASSERT(index < m_selectorList.listSize());
+
+    if (!m_compiledSelectors) {
+        auto listSize = m_selectorList.listSize();
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < listSize);
+        m_compiledSelectors = makeUniqueArray<CompiledSelector>(listSize);
+    }
     return m_compiledSelectors[index];
 }
 
