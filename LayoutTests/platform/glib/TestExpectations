@@ -1741,7 +1741,6 @@ webkit.org/b/235885 webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
-webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute.html [ Pass Timeout ]
 
 # In these tests only one canvas frame is pushed towards the sender webrtcbin,
 # this is not enough for the receiver webrtcbin to create its video source pad,
