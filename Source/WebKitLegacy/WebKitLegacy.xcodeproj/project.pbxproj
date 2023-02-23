@@ -645,25 +645,9 @@
 		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
 		CEDA12DB152CBE6800D9E08D /* WebAlternativeTextClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */; };
 		CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */; };
+		DD7AF5D1298C53160059E87E /* migrate-headers.py in Headers */ = {isa = PBXBuildFile; fileRef = DD7AF5D0298C52FC0059E87E /* migrate-headers.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
-		DDF74C7E27EE3C740011F633 /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C7D27EE3C740011F633 /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8027EE3CA70011F633 /* WebScriptObject.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C7F27EE3CA60011F633 /* WebScriptObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8227EE3CAE0011F633 /* AbstractPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8127EE3CAE0011F633 /* AbstractPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8427EE3CBF0011F633 /* KeyEventCodesIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8327EE3CBF0011F633 /* KeyEventCodesIOS.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8627EE3CC70011F633 /* WAKAppKitStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8527EE3CC70011F633 /* WAKAppKitStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8827EE3CCD0011F633 /* WAKResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8727EE3CCD0011F633 /* WAKResponder.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8A27EE3CD10011F633 /* WAKView.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8927EE3CD10011F633 /* WAKView.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8C27EE3CD60011F633 /* WAKWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8B27EE3CD60011F633 /* WAKWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C8E27EE3CDB0011F633 /* WKContentObservation.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8D27EE3CDB0011F633 /* WKContentObservation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9027EE3CE10011F633 /* WKGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C8F27EE3CE10011F633 /* WKGraphics.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9227EE3CE60011F633 /* WKTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C9127EE3CE60011F633 /* WKTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9427EE3CEE0011F633 /* WebCoreThread.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C9327EE3CEE0011F633 /* WebCoreThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9627EE3CF20011F633 /* WebCoreThreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C9527EE3CF20011F633 /* WebCoreThreadMessage.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9827EE3CF90011F633 /* WebCoreThreadRun.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C9727EE3CF90011F633 /* WebCoreThreadRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9A27EE3CFE0011F633 /* WebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C9927EE3CFE0011F633 /* WebEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9C27EE3D050011F633 /* WebItemProviderPasteboard.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C9B27EE3D050011F633 /* WebItemProviderPasteboard.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF74C9E27EE3D0B0011F633 /* WebEventRegion.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF74C9D27EE3D0B0011F633 /* WebEventRegion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E15663190FB61C1F00C199CA /* WebDownload.mm in Sources */ = {isa = PBXBuildFile; fileRef = E15663180FB61C1F00C199CA /* WebDownload.mm */; };
@@ -692,24 +676,6 @@
 			);
 			runOncePerArchitecture = 0;
 			script = "exec \"${SCRIPT_INPUT_FILE_0}\"\n";
-		};
-		DDF74C9F27EE3D6D0011F633 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*/Source/WebCore/*.h";
-			fileType = pattern.proxy;
-			inputFiles = (
-				"$(SRCROOT)/scripts/migrate-header-rule",
-			);
-			isEditable = 1;
-			name = "Migrate WebCore Headers";
-			outputFiles = (
-				"$(HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
-				"$(DERIVED_FILE_DIR)/WebCore/$(INPUT_FILE_NAME)",
-				"$(DERIVED_FILE_DIR)/WebCore/$(INPUT_FILE_BASE).exp",
-			);
-			runOncePerArchitecture = 0;
-			script = "\"${SCRIPT_INPUT_FILE_0}\"\n";
 		};
 /* End PBXBuildRule section */
 
@@ -1485,25 +1451,11 @@
 		CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenController.mm; sourceTree = "<group>"; };
 		CEDA12D9152CBE6800D9E08D /* WebAlternativeTextClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebAlternativeTextClient.mm; sourceTree = "<group>"; };
 		CEDA12DA152CBE6800D9E08D /* WebAlternativeTextClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAlternativeTextClient.h; sourceTree = "<group>"; };
+		DD2170FC29A58B300057233A /* MigratedHeaders-input.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = "MigratedHeaders-input.xcfilelist"; sourceTree = "<group>"; };
+		DD2170FD29A58B300057233A /* MigratedHeaders-output.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = "MigratedHeaders-output.xcfilelist"; sourceTree = "<group>"; };
+		DD7AF5D0298C52FC0059E87E /* migrate-headers.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = "migrate-headers.py"; path = "scripts/migrate-headers.py"; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		DDF74C7D27EE3C740011F633 /* WebKitAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebKitAvailability.h; path = ../WebCore/platform/cocoa/WebKitAvailability.h; sourceTree = "<group>"; };
-		DDF74C7F27EE3CA60011F633 /* WebScriptObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebScriptObject.h; path = ../WebCore/bridge/objc/WebScriptObject.h; sourceTree = "<group>"; };
-		DDF74C8127EE3CAE0011F633 /* AbstractPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractPasteboard.h; path = ../WebCore/platform/ios/AbstractPasteboard.h; sourceTree = "<group>"; };
-		DDF74C8327EE3CBF0011F633 /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIOS.h; path = ../WebCore/platform/ios/KeyEventCodesIOS.h; sourceTree = "<group>"; };
-		DDF74C8527EE3CC70011F633 /* WAKAppKitStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKAppKitStubs.h; path = ../WebCore/platform/ios/wak/WAKAppKitStubs.h; sourceTree = "<group>"; };
-		DDF74C8727EE3CCD0011F633 /* WAKResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKResponder.h; path = ../WebCore/platform/ios/wak/WAKResponder.h; sourceTree = "<group>"; };
-		DDF74C8927EE3CD10011F633 /* WAKView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKView.h; path = ../WebCore/platform/ios/wak/WAKView.h; sourceTree = "<group>"; };
-		DDF74C8B27EE3CD60011F633 /* WAKWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WAKWindow.h; path = ../WebCore/platform/ios/wak/WAKWindow.h; sourceTree = "<group>"; };
-		DDF74C8D27EE3CDB0011F633 /* WKContentObservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContentObservation.h; path = ../WebCore/platform/ios/wak/WKContentObservation.h; sourceTree = "<group>"; };
-		DDF74C8F27EE3CE10011F633 /* WKGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKGraphics.h; path = ../WebCore/platform/ios/wak/WKGraphics.h; sourceTree = "<group>"; };
-		DDF74C9127EE3CE60011F633 /* WKTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKTypes.h; path = ../WebCore/platform/ios/wak/WKTypes.h; sourceTree = "<group>"; };
-		DDF74C9327EE3CEE0011F633 /* WebCoreThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThread.h; path = ../WebCore/platform/ios/wak/WebCoreThread.h; sourceTree = "<group>"; };
-		DDF74C9527EE3CF20011F633 /* WebCoreThreadMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadMessage.h; path = ../WebCore/platform/ios/wak/WebCoreThreadMessage.h; sourceTree = "<group>"; };
-		DDF74C9727EE3CF90011F633 /* WebCoreThreadRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreThreadRun.h; path = ../WebCore/platform/ios/wak/WebCoreThreadRun.h; sourceTree = "<group>"; };
-		DDF74C9927EE3CFE0011F633 /* WebEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEvent.h; path = ../WebCore/platform/ios/WebEvent.h; sourceTree = "<group>"; };
-		DDF74C9B27EE3D050011F633 /* WebItemProviderPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebItemProviderPasteboard.h; path = ../WebCore/platform/ios/WebItemProviderPasteboard.h; sourceTree = "<group>"; };
-		DDF74C9D27EE3D0B0011F633 /* WebEventRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebEventRegion.h; path = ../WebCore/page/ios/WebEventRegion.h; sourceTree = "<group>"; };
 		DDF74CA627EED8500011F633 /* migrate-header-rule */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "migrate-header-rule"; path = "scripts/migrate-header-rule"; sourceTree = "<group>"; };
 		E13E782B1E5A7365001849D1 /* WebCreateFragmentInternal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = WebCreateFragmentInternal.h; sourceTree = "<group>"; };
 		E1531BD72187B8F2002E3F81 /* NSURLDownloadSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSURLDownloadSPI.h; sourceTree = "<group>"; };
@@ -1582,6 +1534,8 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				DD2170FC29A58B300057233A /* MigratedHeaders-input.xcfilelist */,
+				DD2170FD29A58B300057233A /* MigratedHeaders-output.xcfilelist */,
 				5C9D925822D7E8AD008E9266 /* Sources.txt */,
 				5C9D925922D7E8AD008E9266 /* SourcesCocoa.txt */,
 				44DDD0812540F8C800836F81 /* TestingFunctions.h */,
@@ -1592,6 +1546,7 @@
 				7C671116251C2459004F4536 /* generate-unified-sources.sh */,
 				7C671117251C2459004F4536 /* generate-webkitversion.pl */,
 				DDF74CA627EED8500011F633 /* migrate-header-rule */,
+				DD7AF5D0298C52FC0059E87E /* migrate-headers.py */,
 				7C671118251C2459004F4536 /* postprocess-header-rule */,
 				7C671119251C2483004F4536 /* check-xcfilelists.sh */,
 				6508A4A7099B375F00BCBF45 /* Default Delegates */,
@@ -1608,7 +1563,6 @@
 				089C1665FE841158C02AAC07 /* Resources */,
 				7C02320E251B8E3A00BA7BB6 /* Scripts */,
 				534F75362578AAE8005BE7D8 /* Modules */,
-				DDF74C7C27EE3BF40011F633 /* Migrated Headers */,
 				0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				1C904FCE0BA9DCF20081E9D0 /* Configurations */,
@@ -2160,30 +2114,6 @@
 			name = ios;
 			sourceTree = "<group>";
 		};
-		DDF74C7C27EE3BF40011F633 /* Migrated Headers */ = {
-			isa = PBXGroup;
-			children = (
-				DDF74C8127EE3CAE0011F633 /* AbstractPasteboard.h */,
-				DDF74C8327EE3CBF0011F633 /* KeyEventCodesIOS.h */,
-				DDF74C8527EE3CC70011F633 /* WAKAppKitStubs.h */,
-				DDF74C8727EE3CCD0011F633 /* WAKResponder.h */,
-				DDF74C8927EE3CD10011F633 /* WAKView.h */,
-				DDF74C8B27EE3CD60011F633 /* WAKWindow.h */,
-				DDF74C9327EE3CEE0011F633 /* WebCoreThread.h */,
-				DDF74C9527EE3CF20011F633 /* WebCoreThreadMessage.h */,
-				DDF74C9727EE3CF90011F633 /* WebCoreThreadRun.h */,
-				DDF74C9927EE3CFE0011F633 /* WebEvent.h */,
-				DDF74C9D27EE3D0B0011F633 /* WebEventRegion.h */,
-				DDF74C9B27EE3D050011F633 /* WebItemProviderPasteboard.h */,
-				DDF74C7D27EE3C740011F633 /* WebKitAvailability.h */,
-				DDF74C7F27EE3CA60011F633 /* WebScriptObject.h */,
-				DDF74C8D27EE3CDB0011F633 /* WKContentObservation.h */,
-				DDF74C8F27EE3CE10011F633 /* WKGraphics.h */,
-				DDF74C9127EE3CE60011F633 /* WKTypes.h */,
-			);
-			name = "Migrated Headers";
-			sourceTree = "<group>";
-		};
 		F52CA6BD02DF9D0F018635CA /* HTML */ = {
 			isa = PBXGroup;
 			children = (
@@ -2675,7 +2605,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9398101B0824BF01008DF038 /* WebKit.h in Headers */,
-				DDF74C8227EE3CAE0011F633 /* AbstractPasteboard.h in Headers */,
 				1A9119F71DB0470A0087D1FD /* BackForwardList.h in Headers */,
 				1A60519217502A5D00BC62F5 /* BinaryPropertyList.h in Headers */,
 				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
@@ -2888,7 +2817,7 @@
 				93D437991D57ABEF00AB85EA /* ExceptionHandlers.h in Headers */,
 				1A60519417502A5D00BC62F5 /* HistoryPropertyList.h in Headers */,
 				9364006F23996E81001E185E /* InProcessIDBServer.h in Headers */,
-				DDF74C8427EE3CBF0011F633 /* KeyEventCodesIOS.h in Headers */,
+				DD7AF5D1298C53160059E87E /* migrate-headers.py in Headers */,
 				5CA46E7821F1451D00CE86B4 /* NetworkStorageSessionMap.h in Headers */,
 				E1531BD82187B954002E3F81 /* NSURLDownloadSPI.h in Headers */,
 				93D4379B1D57ABEF00AB85EA /* ObjCEventListener.h in Headers */,
@@ -2907,10 +2836,6 @@
 				1A6B313C1A51F3A900422975 /* StorageTracker.h in Headers */,
 				1A6B313D1A51F3A900422975 /* StorageTrackerClient.h in Headers */,
 				44DDD0822540F97F00836F81 /* TestingFunctions.h in Headers */,
-				DDF74C8627EE3CC70011F633 /* WAKAppKitStubs.h in Headers */,
-				DDF74C8827EE3CCD0011F633 /* WAKResponder.h in Headers */,
-				DDF74C8A27EE3CD10011F633 /* WAKView.h in Headers */,
-				DDF74C8C27EE3CD60011F633 /* WAKWindow.h in Headers */,
 				7C1FB3C21846E8E1001A03D8 /* WebAllowDenyPolicyListener.h in Headers */,
 				CEDA12DC152CBE6800D9E08D /* WebAlternativeTextClient.h in Headers */,
 				B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */,
@@ -2933,9 +2858,6 @@
 				939810490824BF01008DF038 /* WebClipView.h in Headers */,
 				065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */,
 				939810160824BF01008DF038 /* WebCoreStatistics.h in Headers */,
-				DDF74C9427EE3CEE0011F633 /* WebCoreThread.h in Headers */,
-				DDF74C9627EE3CF20011F633 /* WebCoreThreadMessage.h in Headers */,
-				DDF74C9827EE3CF90011F633 /* WebCoreThreadRun.h in Headers */,
 				E13E782C1E5A7365001849D1 /* WebCreateFragmentInternal.h in Headers */,
 				93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */,
 				511F3FD70CECC88F00852565 /* WebDatabaseManagerClient.h in Headers */,
@@ -2976,8 +2898,6 @@
 				1C8CB07A0AE9830C00B1F6E9 /* WebEditingDelegatePrivate.h in Headers */,
 				4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */,
 				DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */,
-				DDF74C9A27EE3CFE0011F633 /* WebEvent.h in Headers */,
-				DDF74C9E27EE3D0B0011F633 /* WebEventRegion.h in Headers */,
 				7C023214251B925C00BA7BB6 /* WebFeature.h in Headers */,
 				7C02321A251B988200BA7BB6 /* WebFeatureInternal.h in Headers */,
 				A10C1D681820300E0036883A /* WebFixedPositionContent.h in Headers */,
@@ -3024,10 +2944,8 @@
 				06693DDC0BFBA85200216072 /* WebInspectorClient.h in Headers */,
 				B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */,
 				7A8FF0D11075024A00A80A08 /* WebInspectorPrivate.h in Headers */,
-				DDF74C9C27EE3D050011F633 /* WebItemProviderPasteboard.h in Headers */,
 				939810420824BF01008DF038 /* WebJavaScriptTextInputPanel.h in Headers */,
 				37D1DCA81065928C0068F7EF /* WebJSPDFDoc.h in Headers */,
-				DDF74C7E27EE3C740011F633 /* WebKitAvailability.h in Headers */,
 				9398101C0824BF01008DF038 /* WebKitErrors.h in Headers */,
 				9398106D0824BF01008DF038 /* WebKitErrorsPrivate.h in Headers */,
 				CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */,
@@ -3107,7 +3025,6 @@
 				939810890824BF01008DF038 /* WebResourcePrivate.h in Headers */,
 				7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */,
 				C0167BF80D7F5DD00028696E /* WebScriptDebugger.h in Headers */,
-				DDF74C8027EE3CA70011F633 /* WebScriptObject.h in Headers */,
 				C0B1F7E810AC8E3100C925D9 /* WebScriptWorld.h in Headers */,
 				C0B1F7EA10AC8E3100C925D9 /* WebScriptWorldInternal.h in Headers */,
 				A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */,
@@ -3139,9 +3056,6 @@
 				A10C1D761820300E0036883A /* WebVisiblePosition.h in Headers */,
 				A10C1D781820300E0036883A /* WebVisiblePositionInternal.h in Headers */,
 				1AC7176F1A26568A002E3115 /* WebVisitedLinkStore.h in Headers */,
-				DDF74C8E27EE3CDB0011F633 /* WKContentObservation.h in Headers */,
-				DDF74C9027EE3CE10011F633 /* WKGraphics.h in Headers */,
-				DDF74C9227EE3CE60011F633 /* WKTypes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3156,6 +3070,7 @@
 				7C02321B251B9A8A00BA7BB6 /* Generate Preferences */,
 				9398100D0824BF01008DF038 /* Headers */,
 				DDF74CA027EE3E990011F633 /* (Legacy) Install Headers */,
+				DD7AF5CF298C51C90059E87E /* Migrate WebCore Headers and Generate Export List */,
 				939810B20824BF01008DF038 /* Resources */,
 				1C395DE20C6BE8E0000D1E52 /* Generate Export Files */,
 				939810BB0824BF01008DF038 /* Sources */,
@@ -3167,7 +3082,6 @@
 				650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */,
 			);
 			buildRules = (
-				DDF74C9F27EE3D6D0011F633 /* PBXBuildRule */,
 				535E08C322545B4C00DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
@@ -3248,7 +3162,8 @@
 				"$(PROJECT_DIR)/mac/WebKit.exp",
 				"$(PROJECT_DIR)/mac/WebKit.mac.exp",
 				"$(PROJECT_DIR)/ios/WebKit.iOS.exp",
-				"$(DERIVED_FILE_DIR)/WebCore/",
+				"$(TARGET_TEMP_DIR)/ReexportedFromWebCore.exp",
+				"$(PROJECT_DIR)/mac/WebKit.Testing.exp",
 			);
 			name = "Generate Export Files";
 			outputPaths = (
@@ -3256,7 +3171,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\nmkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKitLegacy\"\n\nEXP_GENERATED=\"${EXPORTED_SYMBOLS_FILE}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\nif [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n    EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/ios/WebKit.iOS.exp\"\nelse\n    EXP_WEBKIT_PLATFORM=\"${PROJECT_DIR}/mac/WebKit.mac.exp\"\nfi\n\ncat \"${PROJECT_DIR}/mac/WebKit.exp\" > \"${EXP_GENERATED}\"\ncat \"${EXP_WEBKIT_PLATFORM}\" >> \"${EXP_GENERATED}\"\n\nif [ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]; then\n    echo >> \"${EXP_GENERATED}\"\n    echo \"# Reexported from migrated WebCore headers\" >> \"${EXP_GENERATED}\"\n    cat \"${SCRIPT_INPUT_FILE_3}\"/*.exp >> \"${EXP_GENERATED}\"\nfi\n\nif [[ \"${WK_BUILD_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${PROJECT_DIR}/mac/WebKit.Testing.exp\" >> \"${EXP_GENERATED}\"\nfi\n";
+			shellScript = "set -e\n\nEXP_GENERATED=\"${SCRIPT_OUTPUT_FILE_0}\"\n\n[[ -z \"${EXP_GENERATED}\" ]] && exit 1\n\nif [[ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]]; then\n    EXP_WEBKIT_PLATFORM=\"${SCRIPT_INPUT_FILE_2}\"\nelse\n    EXP_WEBKIT_PLATFORM=\"${SCRIPT_INPUT_FILE_1}\"\nfi\n\ncat \"${SCRIPT_INPUT_FILE_0}\" > \"${EXP_GENERATED}\"\ncat \"${EXP_WEBKIT_PLATFORM}\" >> \"${EXP_GENERATED}\"\n\nif [ \"${WK_PLATFORM_NAME}\" != \"macosx\" ]; then\n    echo >> \"${EXP_GENERATED}\"\n    echo \"# Reexported from migrated WebCore headers\" >> \"${EXP_GENERATED}\"\n    cat \"${SCRIPT_INPUT_FILE_3}\" >> \"${EXP_GENERATED}\"\nfi\n\nif [[ \"${WK_BUILD_FOR_TESTING}\" == \"YES\" ]]; then\n    cat \"${SCRIPT_INPUT_FILE_4}\" >> \"${EXP_GENERATED}\"\nfi\n";
 		};
 		3713F018142905B70036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3426,6 +3341,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/mac/Scripts/generate-preferences.sh\n";
+		};
+		DD7AF5CF298C51C90059E87E /* Migrate WebCore Headers and Generate Export List */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"$(SRCROOT)/MigratedHeaders-input.xcfilelist",
+			);
+			inputPaths = (
+				"$(SRCROOT)/scripts/migrate-headers.py",
+				"$(SRCROOT)/scripts/migrate-header-rule",
+			);
+			name = "Migrate WebCore Headers and Generate Export List";
+			outputFileListPaths = (
+				"$(SRCROOT)/MigratedHeaders-output.xcfilelist",
+			);
+			outputPaths = (
+				"$(TARGET_TEMP_DIR)/ReexportedFromWebCore.exp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -f \"${SCRIPT_OUTPUT_FILE_0}\" && \"${SCRIPT_INPUT_FILE_0}\"\n";
 		};
 		DDF74CA027EE3E990011F633 /* (Legacy) Install Headers */ = {
 			isa = PBXShellScriptBuildPhase;

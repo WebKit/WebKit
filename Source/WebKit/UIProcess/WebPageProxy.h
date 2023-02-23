@@ -1482,6 +1482,7 @@ public:
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #if PLATFORM(IOS_FAMILY)
     size_t computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&);
+    IPC::Connection::AsyncReplyID drawToImage(WebCore::FrameIdentifier, const PrintInfo&, size_t pageCount, CompletionHandler<void(WebKit::ShareableBitmapHandle&&)>&&);
     IPC::Connection::AsyncReplyID drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t pageCount, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #endif
 #elif PLATFORM(GTK)

@@ -231,27 +231,32 @@ void PageConsoleClient::profileEnd(JSC::JSGlobalObject* lexicalGlobalObject, con
 
 void PageConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
 {
-    InspectorInstrumentation::takeHeapSnapshot(m_page.mainFrame(), title);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+        InspectorInstrumentation::takeHeapSnapshot(*localMainFrame, title);
 }
 
 void PageConsoleClient::time(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    InspectorInstrumentation::startConsoleTiming(m_page.mainFrame(), lexicalGlobalObject, label);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+        InspectorInstrumentation::startConsoleTiming(*localMainFrame, lexicalGlobalObject, label);
 }
 
 void PageConsoleClient::timeLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& label, Ref<ScriptArguments>&& arguments)
 {
-    InspectorInstrumentation::logConsoleTiming(m_page.mainFrame(), lexicalGlobalObject, label, WTFMove(arguments));
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+        InspectorInstrumentation::logConsoleTiming(*localMainFrame, lexicalGlobalObject, label, WTFMove(arguments));
 }
 
 void PageConsoleClient::timeEnd(JSC::JSGlobalObject* lexicalGlobalObject, const String& label)
 {
-    InspectorInstrumentation::stopConsoleTiming(m_page.mainFrame(), lexicalGlobalObject, label);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+        InspectorInstrumentation::stopConsoleTiming(*localMainFrame, lexicalGlobalObject, label);
 }
 
 void PageConsoleClient::timeStamp(JSC::JSGlobalObject*, Ref<ScriptArguments>&& arguments)
 {
-    InspectorInstrumentation::consoleTimeStamp(m_page.mainFrame(), WTFMove(arguments));
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+        InspectorInstrumentation::consoleTimeStamp(*localMainFrame, WTFMove(arguments));
 }
 
 static JSC::JSObject* objectArgumentAt(ScriptArguments& arguments, unsigned index)
@@ -377,8 +382,10 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
                 }
 
                 if (dataURL.isEmpty()) {
-                    if (!snapshot)
-                        snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+                    if (!snapshot) {
+                        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+                            snapshot = WebCore::snapshotNode(*localMainFrame, *node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
+                    }
 
                     if (snapshot)
                         dataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
@@ -422,10 +429,12 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
 
     if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
         if (!target) {
-            // If no target is provided, capture an image of the viewport.
-            auto viewportRect = m_page.mainFrame().view()->unobscuredContentRect();
-            if (auto snapshot = WebCore::snapshotFrameRect(m_page.mainFrame(), viewportRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
-                dataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+            if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame())) {
+                // If no target is provided, capture an image of the viewport.
+                auto viewportRect = localMainFrame->view()->unobscuredContentRect();
+                if (auto snapshot = WebCore::snapshotFrameRect(*localMainFrame, viewportRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
+                    dataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+            }
         }
 
         if (dataURL.isEmpty()) {

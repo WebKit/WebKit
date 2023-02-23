@@ -102,8 +102,10 @@ void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()
 
     Vector<Ref<DOMWrapperWorld>> worlds;
     static_cast<JSVMClientData*>(vm().clientData)->getAllWorlds(worlds);
-    for (auto& world : worlds)
-        serviceWorkerPage->mainFrame().loader().client().dispatchServiceWorkerGlobalObjectAvailable(world);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(serviceWorkerPage->mainFrame())) {
+        for (auto& world : worlds)
+            localMainFrame->loader().client().dispatchServiceWorkerGlobalObjectAvailable(world);
+    }
 }
 
 Page* ServiceWorkerGlobalScope::serviceWorkerPage()

@@ -96,7 +96,7 @@ struct FormStreamFields {
     Vector<FormDataElement> remainingElements; // in reverse order
     RetainPtr<CFReadStreamRef> currentStream;
     long long currentStreamRangeLength { BlobDataItem::toEndOfFile };
-    MallocPtr<uint8_t, WTF::VectorMalloc> currentData;
+    MallocPtr<uint8_t, WTF::VectorBufferMalloc> currentData;
     CFReadStreamRef formStream { nullptr };
     unsigned long long streamLength { 0 };
     unsigned long long bytesSent { 0 };
@@ -132,7 +132,7 @@ static bool advanceCurrentStream(FormStreamFields* form)
     bool success = WTF::switchOn(nextInput.data,
         [form] (Vector<uint8_t>& bytes) {
             size_t size = bytes.size();
-            MallocPtr<uint8_t, WTF::VectorMalloc> data = bytes.releaseBuffer();
+            MallocPtr<uint8_t, WTF::VectorBufferMalloc> data = bytes.releaseBuffer();
             form->currentStream = adoptCF(CFReadStreamCreateWithBytesNoCopy(0, data.get(), size, kCFAllocatorNull));
             form->currentData = WTFMove(data);
             return true;

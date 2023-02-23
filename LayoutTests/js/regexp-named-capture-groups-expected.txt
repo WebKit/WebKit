@@ -64,7 +64,6 @@ PASS "Give me \'k2\'!".match(/Give me \'\k2\'/u)[0] threw exception SyntaxError:
 PASS "Give me a \'kat\'!".match(/Give me a \'\kat\'/u)[0] threw exception SyntaxError: Invalid regular expression: invalid escaped character for Unicode pattern.
 PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$<mouth>-$<year>") is "20--1930"
 PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$<month>-$<year") is "20-10-$<year"
-PASS let r = new RegExp("/(?<groupName1>abc)|(?<groupName1>def)/") threw exception SyntaxError: Invalid regular expression: duplicate group specifier name.
 PASS let r = new RegExp("/(?< groupName1>abc)/") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
 PASS let r = new RegExp("/(?<g=oupName1>abc)/") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.
 PASS let r = new RegExp("/(?<𐆐groupName1>abc)/u") threw exception SyntaxError: Invalid regular expression: invalid group specifier name.

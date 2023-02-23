@@ -43,7 +43,7 @@ namespace WebCore {
 class ContentSecurityPolicy;
 struct ContentRuleListResults;
 struct ContentSecurityPolicyClient;
-enum class NetworkConnectionIntegrity : uint8_t;
+enum class NetworkConnectionIntegrity : uint16_t;
 class SecurityOrigin;
 enum class PreflightPolicy : uint8_t;
 enum class StoredCredentialsPolicy : uint8_t;

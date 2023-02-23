@@ -216,15 +216,11 @@
     // - The completion of the view controller dismissal in willRotate.
     // (We cannot present something again until the dismissal is done)
 
-    BOOL isBeingPresented = [presentedViewController presentingViewController] || [self presentingViewController];
-
-    if (_isRotating || !_readyToPresentAfterRotation || isBeingPresented)
+    if (_isRotating || !_readyToPresentAfterRotation || [presentedViewController presentingViewController] || [self presentingViewController])
         return;
 
     CGRect presentationRect = [self _presentationRectForStyle:_currentPresentationStyle];
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    BOOL wasPresentedViewControllerModal = [_presentedViewControllerWhileRotating isModalInPopover];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    BOOL wasPresentedViewControllerModal = [_presentedViewControllerWhileRotating isModalInPresentation];
 
     if (!CGRectIsEmpty(presentationRect) || wasPresentedViewControllerModal) {
         // Re-present the popover only if we are still pointing to content onscreen, or if we can't dismiss it without losing information.

@@ -2569,21 +2569,24 @@ void FrameView::textFragmentIndicatorTimerFired()
         auto textRects = RenderFlexibleBox::absoluteTextRects(range);
         
         HitTestResult result;
-        result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+        if (!localMainFrame)
+            return;
+        result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
         if (!intersects(range, *result.targetNode()))
             return;
         
         if (textRects.size() >= 2) {
-            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[1].center()), hitType);
+            result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[1].center()), hitType);
             if (!intersects(range, *result.targetNode()))
                 return;
         }
         
         if (textRects.size() >= 4) {
-            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.last().center()), hitType);
+            result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.last().center()), hitType);
             if (!intersects(range, *result.targetNode()))
                 return;
-            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[textRects.size() - 2].center()), hitType);
+            result = localMainFrame->eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[textRects.size() - 2].center()), hitType);
             if (!intersects(range, *result.targetNode()))
                 return;
         }
@@ -2966,7 +2969,11 @@ bool FrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (!page)
         return true;
 
-    if (&page->mainFrame() != m_frame.ptr())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return true;
+
+    if (localMainFrame != m_frame.ptr())
         return true;
 
     auto scrollingCoordinator = this->scrollingCoordinator();
@@ -5864,8 +5871,9 @@ void FrameView::firePaintRelatedMilestonesIfNeeded()
 
     m_milestonesPendingPaint = { };
 
-    if (milestonesAchieved)
-        page->mainFrame().loader().didReachLayoutMilestone(milestonesAchieved);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (milestonesAchieved && localMainFrame)
+        localMainFrame->loader().didReachLayoutMilestone(milestonesAchieved);
 }
 
 void FrameView::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowed)

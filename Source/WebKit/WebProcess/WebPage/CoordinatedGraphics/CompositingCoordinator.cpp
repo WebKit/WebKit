@@ -186,7 +186,8 @@ bool CompositingCoordinator::flushPendingLayerChanges(OptionSet<FinalizeRenderin
 
 double CompositingCoordinator::timestamp() const
 {
-    auto* document = m_page.corePage()->mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame());
+    auto* document = localMainFrame ? localMainFrame->document() : nullptr;
     if (!document)
         return 0;
     return document->domWindow() ? document->domWindow()->nowTimestamp().seconds() : document->monotonicTimestamp();
@@ -194,7 +195,8 @@ double CompositingCoordinator::timestamp() const
 
 void CompositingCoordinator::syncDisplayState()
 {
-    m_page.corePage()->mainFrame().view()->updateLayoutAndStyleIfNeededRecursive();
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame()))
+        localMainFrame->view()->updateLayoutAndStyleIfNeededRecursive();
 }
 
 double CompositingCoordinator::nextAnimationServiceTime() const
@@ -258,7 +260,8 @@ void CompositingCoordinator::setVisibleContentsRect(const FloatRect& rect)
             registeredLayer->setNeedsVisibleRectAdjustment();
     }
 
-    FrameView* view = m_page.corePage()->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_page.corePage()->mainFrame());
+    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (view->useFixedLayout() && contentsRectDidChange) {
         // Round the rect instead of enclosing it to make sure that its size stays
         // the same while panning. This can have nasty effects on layout.

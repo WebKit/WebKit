@@ -54,10 +54,6 @@ NSString * const _WKWebsiteDataTypeAdClickAttributions = @"_WKWebsiteDataTypeAdC
 NSString * const _WKWebsiteDataTypePrivateClickMeasurements = @"_WKWebsiteDataTypePrivateClickMeasurements";
 NSString * const _WKWebsiteDataTypeAlternativeServices = @"_WKWebsiteDataTypeAlternativeServices";
 
-#if PLATFORM(MAC)
-NSString * const _WKWebsiteDataTypePlugInData = @"_WKWebsiteDataTypePlugInData";
-#endif
-
 @implementation WKWebsiteDataRecord
 
 - (void)dealloc
@@ -102,10 +98,6 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Search Field Recent Searches"];
     if ([dataTypes containsObject:WKWebsiteDataTypeFileSystem])
         [array addObject:@"File System"];
-#if PLATFORM(MAC)
-    if ([dataTypes containsObject:_WKWebsiteDataTypePlugInData])
-        [array addObject:@"Plug-in Data"];
-#endif
     if ([dataTypes containsObject:_WKWebsiteDataTypeResourceLoadStatistics])
         [array addObject:@"Resource Load Statistics"];
     if ([dataTypes containsObject:_WKWebsiteDataTypeCredentials])

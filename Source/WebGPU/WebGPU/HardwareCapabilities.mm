@@ -74,7 +74,7 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
 {
     Vector<WGPUFeatureName> features;
 
-    // FIXME: Determine if WGPUFeatureName_DepthClipControl is supported.
+    features.append(WGPUFeatureName_DepthClipControl);
     features.append(WGPUFeatureName_Depth32FloatStencil8);
 
     if (baseCapabilities.timestampCounterSet)

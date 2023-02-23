@@ -63,12 +63,18 @@ protected:
 
     void updateCellStates(const FloatRect&, const ControlStyle&) override;
 
-    void drawCell(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, NSView *, bool drawCell = true);
-    void drawCellOrFocusRing(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, NSView *, bool drawCell = true);
+    void drawCell(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, bool drawCell = true);
 
 #if ENABLE(DATALIST_ELEMENT)
     void drawListButton(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
 #endif
+
+private:
+    void drawCellInternal(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
+    void drawCellFocusRingInternal(const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
+
+    void drawCellFocusRing(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);
+    void drawCellOrFocusRing(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, bool drawCell = true);
 
     ControlFactoryMac& m_controlFactory;
 };

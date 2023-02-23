@@ -319,11 +319,14 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(page);
 
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
-    frame->_private->coreFrame = &page->mainFrame();
-    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame.get());
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
+    frame->_private->coreFrame = localMainFrame;
+    static_cast<WebFrameLoaderClient&>(localMainFrame->loader().client()).setWebFrame(*frame.get());
 
-    page->mainFrame().tree().setName(name);
-    page->mainFrame().init();
+    localMainFrame->tree().setName(name);
+    localMainFrame->init();
 
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
 }
@@ -343,11 +346,14 @@ static NSURL *createUniqueWebDataURL();
 
 + (void)_createMainFrameWithSimpleHTMLDocumentWithPage:(WebCore::Page*)page frameView:(WebFrameView *)frameView style:(NSString *)style
 {
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
     WebView *webView = kit(page);
     
     RetainPtr<WebFrame> frame = adoptNS([[self alloc] _initWithWebFrameView:frameView webView:webView]);
-    frame->_private->coreFrame = &page->mainFrame();
-    static_cast<WebFrameLoaderClient&>(page->mainFrame().loader().client()).setWebFrame(*frame.get());
+    frame->_private->coreFrame = localMainFrame;
+    static_cast<WebFrameLoaderClient&>(localMainFrame->loader().client()).setWebFrame(*frame.get());
 
     frame.get()->_private->coreFrame->initWithSimpleHTMLDocument(style, createUniqueWebDataURL());
 }

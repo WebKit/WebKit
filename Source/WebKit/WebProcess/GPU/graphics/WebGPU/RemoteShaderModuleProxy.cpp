@@ -48,13 +48,14 @@ RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 
 void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&& callback)
 {
-    auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfo());
-    auto [messages] = sendResult.takeReplyOr(Vector<CompilationMessage> { });
-
-    auto backingMessages = messages.map([](CompilationMessage compilationMessage) {
-        return PAL::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
+    auto sendResult = sendWithAsyncReply(Messages::RemoteShaderModule::CompilationInfo(), [callback = WTFMove(callback)](auto messages) mutable {
+        auto backingMessages = messages.map([](CompilationMessage compilationMessage) {
+            return PAL::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);
+        });
+        callback(PAL::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));
     });
-    callback(PAL::WebGPU::CompilationInfo::create(WTFMove(backingMessages)));
+
+    UNUSED_PARAM(sendResult);
 }
 
 void RemoteShaderModuleProxy::setLabelInternal(const String& label)

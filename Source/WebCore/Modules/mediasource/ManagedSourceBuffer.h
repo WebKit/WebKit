@@ -25,11 +25,13 @@
 
 #pragma once
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
 
 #include "SourceBuffer.h"
 
 namespace WebCore {
+
+class ManagedMediaSource;
 
 class ManagedSourceBuffer final : public SourceBuffer {
     WTF_MAKE_ISO_ALLOCATED(ManagedSourceBuffer);

@@ -746,7 +746,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     // in modern WebKit.
     m_page->settings().setBackForwardCacheExpirationInterval(Seconds::infinity());
 
-    m_mainFrame->initWithCoreMainFrame(*this, m_page->mainFrame(), receivedMainFrameIdentifierFromUIProcess);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        m_mainFrame->initWithCoreMainFrame(*this, *localMainFrame, receivedMainFrameIdentifierFromUIProcess);
 
     m_drawingArea->updatePreferences(parameters.store);
 
@@ -945,10 +946,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
 
-#if HAVE(MACH_BOOTSTRAP_EXTENSION)
-    SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
-#endif
-
 #if HAVE(SANDBOX_STATE_FLAGS)
     if (!m_page->settings().offlineWebApplicationCacheEnabled()) {
         // This call is not meant to actually read a preference, but is only here to trigger a sandbox rule in the
@@ -963,10 +960,16 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         sandbox_enable_state_flag("EnableExperimentalSandbox", *auditToken);
 #if USE(APPLE_INTERNAL_SDK)
     uint64_t bootTime = mach_boottime_usec();
-    if (!(bootTime & 0x7) || isRunningTest(WebCore::applicationBundleIdentifier())) {
+    bool experimentalSandboxWithProbability = !(bootTime & 0x7u) || isRunningTest(WebCore::applicationBundleIdentifier());
+    experimentalSandboxWithProbability &= parameters.store.getBoolValueForKey(WebPreferencesKey::experimentalSandboxWithProbabilityEnabledKey());
+    if (experimentalSandboxWithProbability) {
         // Set sandbox state variable with probability of 1/8.
         sandbox_enable_state_flag("EnableExperimentalSandboxWithProbability", *auditToken);
     }
+#if HAVE(MACH_BOOTSTRAP_EXTENSION)
+    if (!(experimentalSandbox || experimentalSandboxWithProbability))
+        SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
+#endif
 #endif // USE(APPLE_INTERNAL_SDK)
 
     if (WebProcess::singleton().isLockdownModeEnabled())
@@ -1335,7 +1338,8 @@ void WebPage::selectAll()
 
 bool WebPage::shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const
 {
-    auto* document = m_page->mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    auto* document = localMainFrame ? localMainFrame->document() : nullptr;
     return document && document->quirks().shouldDispatchSyntheticMouseEventsWhenModifyingSelection();
 }
 
@@ -1771,8 +1775,10 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
 
-    if (loadParameters.effectiveSandboxFlags)
-        corePage()->mainFrame().loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
+    if (loadParameters.effectiveSandboxFlags) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))
+            localMainFrame->loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
+    }
 
     corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));
 
@@ -1927,8 +1933,10 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, const BackForwardItemId
     SendStopResponsivenessTimer stopper;
 
     m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated;
-    if (auto* documentLoader = corePage()->mainFrame().loader().documentLoader())
-        documentLoader->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame())) {
+        if (auto* documentLoader = localMainFrame->loader().documentLoader())
+            documentLoader->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated);
+    }
 
     WebProcess::singleton().webLoaderStrategy().setExistingNetworkResourceLoadIdentifierToResume(existingNetworkResourceLoadIdentifierToResume);
     auto resumingLoadScope = makeScopeExit([] {
@@ -1958,7 +1966,8 @@ void WebPage::goToBackForwardItem(uint64_t navigationID, const BackForwardItemId
 
 void WebPage::tryRestoreScrollPosition()
 {
-    m_page->mainFrame().loader().history().restoreScrollPositionAndViewState();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->loader().history().restoreScrollPositionAndViewState();
 }
 
 WebPage& WebPage::fromCorePage(Page& page)
@@ -1972,7 +1981,9 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
         return;
 
     m_viewSize = viewSize;
-    FrameView* view = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+
     view->resize(viewSize);
     m_drawingArea->setNeedsDisplay();
 
@@ -1985,7 +1996,11 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 #if USE(COORDINATED_GRAPHICS)
 void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArguments)
 {
-    FrameView* view = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FrameView* view = localMainFrame->view();
     ASSERT(view && view->useFixedLayout());
 
     // Viewport properties have no impact on zero sized fixed viewports.
@@ -2028,7 +2043,10 @@ void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArg
 
 void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffset)
 {
-    FrameView* frameView = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+    FrameView* frameView = localMainFrame->view();
 
     ScrollPosition scrollPosition = frameView->scrollPosition();
     ScrollPosition maximumScrollPosition = frameView->maximumScrollPosition();
@@ -2050,7 +2068,10 @@ void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffse
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
 #if PLATFORM(MAC)
-    FrameView* mainFrameView = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+    FrameView* mainFrameView = localMainFrame->view();
     LocalDefaultSystemAppearance localAppearance(mainFrameView ? mainFrameView->useDarkAppearance() : false);
 #endif
 
@@ -2302,7 +2323,8 @@ void WebPage::scaleView(double scale)
     float pageScale = pageScaleFactor();
 
     IntPoint scrollPositionAtNewScale;
-    if (FrameView* mainFrameView = m_page->mainFrame().view()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (FrameView* mainFrameView = localMainFrame ? localMainFrame->view() : nullptr) {
         double scaleRatio = scale / viewScaleFactor();
         scrollPositionAtNewScale = mainFrameView->scrollPosition();
         scrollPositionAtNewScale.scale(scaleRatio);
@@ -2489,7 +2511,8 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-    FrameView* view = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (view && view->useFixedLayout())
         sendViewportAttributesChanged(viewportArguments);
     else
@@ -2752,8 +2775,10 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
 static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage& page)
 {
 #if USE(CG)
-    if (options & SnapshotOptionsUseScreenColorSpace)
-        return screenColorSpace(page.corePage()->mainFrame().view());
+    if (options & SnapshotOptionsUseScreenColorSpace) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.corePage()->mainFrame()))
+            return screenColorSpace(localMainFrame->view());
+    }
 #endif
     return DestinationColorSpace::SRGB();
 }
@@ -2842,8 +2867,10 @@ void WebPage::pageDidScroll()
 
     m_pageScrolledHysteresis.impulse();
 
-    auto scrollPosition = m_page->mainFrame().view()->scrollPosition();
-    send(Messages::WebPageProxy::PageDidScroll(scrollPosition));
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+        auto scrollPosition = localMainFrame->view()->scrollPosition();
+        send(Messages::WebPageProxy::PageDidScroll(scrollPosition));
+    }
 }
 
 void WebPage::pageStoppedScrolling()
@@ -2873,7 +2900,10 @@ WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
     // Simulate a mouse click to generate the correct menu.
     PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::Type::MousePressed, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     corePage()->userInputBridge().handleMousePressEvent(mousePressEvent);
-    Ref mainFrame = corePage()->mainFrame();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+    Ref mainFrame = *localMainFrame;
     bool handled = corePage()->userInputBridge().handleContextMenuEvent(mousePressEvent, mainFrame);
     auto* menu = handled ? &contextMenu() : nullptr;
     PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::Type::MouseReleased, 1, { }, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
@@ -3063,11 +3093,14 @@ static bool isContextClick(const PlatformMouseEvent& event)
 
 static bool handleContextMenuEvent(const PlatformMouseEvent& platformMouseEvent, WebPage* page)
 {
-    IntPoint point = page->corePage()->mainFrame().view()->windowToContents(platformMouseEvent.position());
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->corePage()->mainFrame());
+    if (!localMainFrame)
+        return false;
+    IntPoint point = localMainFrame->view()->windowToContents(platformMouseEvent.position());
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent,  HitTestRequest::Type::AllowChildFrameContent };
-    HitTestResult result = page->corePage()->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
+    HitTestResult result = localMainFrame->eventHandler().hitTestResultAtPoint(point, hitType);
 
-    Ref frame = page->corePage()->mainFrame();
+    Ref frame = *localMainFrame;
     if (result.innerNonSharedNode())
         frame = *result.innerNonSharedNode()->document().frame();
 
@@ -3098,8 +3131,11 @@ void WebPage::contextMenuForKeyEvent()
 
 static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
 {
-    Frame& frame = page->corePage()->mainFrame();
-    if (!frame.view())
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->corePage()->mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    if (!localMainFrame->view())
         return false;
 
     PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
@@ -3120,7 +3156,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
         }
         case PlatformEvent::Type::MouseReleased:
             if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
-                frame.eventHandler().invalidateClick();
+                localMainFrame->eventHandler().invalidateClick();
             return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
 
         case PlatformEvent::Type::MouseMoved:
@@ -3205,8 +3241,9 @@ bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
     CurrentEvent currentEvent(wheelEvent);
 
     auto dispatchWheelEvent = [&](const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps) {
-        auto& frame = m_page->mainFrame();
-        if (!frame.view())
+
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        if (!localMainFrame || !localMainFrame->view())
             return false;
 
         auto platformWheelEvent = platform(wheelEvent);
@@ -3221,7 +3258,8 @@ bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
 void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(KINETIC_SCROLLING)
-    auto gestureState = m_page->mainFrame().eventHandler().wheelScrollGestureState();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    auto gestureState =  localMainFrame ? localMainFrame->eventHandler().wheelScrollGestureState() : std::nullopt;
     bool isCancelable = !gestureState || gestureState == WheelScrollGestureState::Blocking || wheelEvent.phase() == WebWheelEvent::PhaseBegan;
 #else
     bool isCancelable = true;
@@ -3233,7 +3271,11 @@ void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent
 
 static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 {
-    if (!page->mainFrame().view())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    if (!localMainFrame->view())
         return false;
 
     if (keyboardEvent.type() == WebEventType::Char && keyboardEvent.isSystemKey())
@@ -3337,7 +3379,8 @@ void WebPage::setCurrentHistoryItemForReattach(WebKit::BackForwardListItemState&
     auto historyItem = toHistoryItem(itemState);
     auto& historyItemRef = historyItem.get();
     static_cast<WebBackForwardListProxy&>(corePage()->backForward().client()).addItemFromUIProcess(itemState.identifier, WTFMove(historyItem), m_identifier, WebBackForwardListProxy::OverwriteExistingItem::Yes);
-    corePage()->mainFrame().loader().history().setCurrentItem(historyItemRef);
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))
+        localMainFrame->loader().history().setCurrentItem(historyItemRef);
 }
 
 void WebPage::requestFontAttributesAtSelectionStart(CompletionHandler<void(const WebCore::FontAttributes&)>&& completionHandler)
@@ -3356,10 +3399,11 @@ void WebPage::cancelCurrentInteractionInformationRequest()
 #if ENABLE(TOUCH_EVENTS)
 static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 {
-    if (!page->mainFrame().view())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame || !localMainFrame->view())
         return false;
 
-    return page->mainFrame().eventHandler().handleTouchEvent(platform(touchEvent));
+    return localMainFrame->eventHandler().handleTouchEvent(platform(touchEvent));
 }
 #endif
 
@@ -3390,15 +3434,18 @@ void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, 
     if (touchEvent.type() != WebEventType::TouchStart)
         return;
 
-    auto& mainFrame = m_page->mainFrame();
-    auto document = mainFrame.document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto document = localMainFrame->document();
     if (!document)
         return;
 
     if (!document->handlingTouchEvent())
         return;
 
-    Frame* touchEventTargetFrame = &mainFrame;
+    Frame* touchEventTargetFrame = localMainFrame;
     while (auto subframe = touchEventTargetFrame->eventHandler().touchEventTargetSubframe())
         touchEventTargetFrame = subframe;
 
@@ -3435,10 +3482,11 @@ void WebPage::touchWithIdentifierWasRemoved(WebCore::PointerID pointerId)
 #if ENABLE(MAC_GESTURE_EVENTS)
 static bool handleGestureEvent(const WebGestureEvent& event, Page* page)
 {
-    if (!page->mainFrame().view())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame || !localMainFrame->view())
         return false;
 
-    return page->mainFrame().eventHandler().handleGestureEvent(platform(event));
+    return localMainFrame->eventHandler().handleGestureEvent(platform(event));
 }
 
 void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
@@ -3743,7 +3791,8 @@ void WebPage::setNeedsDOMWindowResizeEvent()
     if (!m_page)
         return;
 
-    if (auto* document = m_page->mainFrame().document())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (auto* document = localMainFrame ? localMainFrame->document() : nullptr)
         document->setNeedsDOMWindowResizeEvent();
 }
 
@@ -3860,7 +3909,8 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 #if ENABLE(APP_BOUND_DOMAINS)
     if (frame->shouldEnableInAppBrowserPrivacyProtections()) {
         completionHandler({ }, ExceptionDetails { "Unable to execute JavaScript in a frame that is not in an app-bound domain"_s, 0, 0, ExceptionDetails::Type::AppBoundDomain });
-        if (auto* document = m_page->mainFrame().document())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        if (auto* document = localMainFrame ? localMainFrame->document() : nullptr)
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
         WEBPAGE_RELEASE_LOG_ERROR(Loading, "runJavaScript: Ignoring user script injection for non app-bound domain");
         return;
@@ -4389,7 +4439,11 @@ void WebPage::detectDataInAllFrames(OptionSet<WebCore::DataDetectorType> dataDet
 #if PLATFORM(COCOA)
 void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
 {
-    FrameView* frameView = corePage()->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FrameView* frameView = localMainFrame->view();
     if (!frameView)
         return;
 
@@ -4771,12 +4825,13 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
     IntPoint adjustedGlobalPosition(globalPosition.x() + m_page->dragController().dragOffset().x(), globalPosition.y() + m_page->dragController().dragOffset().y());
 
     m_page->dragController().dragEnded();
-    FrameView* view = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
     if (!view)
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::Type::MouseMoved, 0, { }, WallTime::now(), 0, WebCore::NoTap);
-    m_page->mainFrame().eventHandler().dragSourceEndedAt(event, dragOperationMask);
+    localMainFrame->eventHandler().dragSourceEndedAt(event, dragOperationMask);
 
     send(Messages::WebPageProxy::DidEndDragging());
 
@@ -4798,13 +4853,15 @@ void WebPage::mayPerformUploadDragDestinationAction()
 void WebPage::didStartDrag()
 {
     m_isStartingDrag = false;
-    m_page->mainFrame().eventHandler().didStartDrag();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->eventHandler().didStartDrag();
 }
 
 void WebPage::dragCancelled()
 {
     m_isStartingDrag = false;
-    m_page->mainFrame().eventHandler().dragCancelled();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->eventHandler().dragCancelled();
 }
 
 #endif // ENABLE(DRAG_SUPPORT)
@@ -5599,8 +5656,8 @@ bool WebPage::hasLocalDataForURL(const URL& url)
 {
     if (url.isLocalFile())
         return true;
-
-    DocumentLoader* documentLoader = m_page->mainFrame().loader().documentLoader();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    DocumentLoader* documentLoader = localMainFrame ? localMainFrame->loader().documentLoader() : nullptr;
     if (documentLoader && documentLoader->subresource(MemoryCache::removeFragmentIdentifierIfNeeded(url)))
         return true;
 
@@ -5609,7 +5666,8 @@ bool WebPage::hasLocalDataForURL(const URL& url)
 
 void WebPage::setCustomTextEncodingName(const String& encoding)
 {
-    m_page->mainFrame().loader().reloadWithOverrideEncoding(encoding);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->loader().reloadWithOverrideEncoding(encoding);
 }
 
 void WebPage::didRemoveBackForwardItem(const BackForwardItemIdentifier& itemID)
@@ -5774,7 +5832,11 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
 #if PLATFORM(COCOA)
 void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>& rect, bool allowTransparentBackground,  CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&& completionHandler)
 {
-    auto& frameView = *m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto& frameView = *localMainFrame->view();
     IntSize snapshotSize;
     if (rect)
         snapshotSize = IntSize(rect->size());
@@ -5876,7 +5938,6 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
 
 #if USE(CG)
     if (coreFrame) {
-
 #if PLATFORM(MAC)
         ASSERT(coreFrame->document()->printing() || pdfDocumentForPrintingFrame(coreFrame));
 #else
@@ -5887,6 +5948,7 @@ void WebPage::drawPagesToPDFImpl(FrameIdentifier frameID, const PrintInfo& print
         RetainPtr<CGDataConsumerRef> pdfDataConsumer = adoptCF(CGDataConsumerCreateWithCFData(pdfPageData.get()));
 
         CGRect mediaBox = (m_printContext && m_printContext->pageCount()) ? m_printContext->pageRect(0) : CGRectMake(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight);
+
         RetainPtr<CGContextRef> context = adoptCF(CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
 
 #if PLATFORM(MAC)
@@ -6152,7 +6214,7 @@ void WebPage::recomputeShortCircuitHorizontalWheelEventsState()
 
 Frame* WebPage::mainFrame() const
 {
-    return m_page ? &m_page->mainFrame() : nullptr;
+    return m_page ? dynamicDowncast<LocalFrame>(m_page->mainFrame()) : nullptr;
 }
 
 FrameView* WebPage::mainFrameView() const
@@ -6258,8 +6320,11 @@ void WebPage::getSelectedRangeAsync(CompletionHandler<void(const EditingRange&)>
 
 void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CompletionHandler<void(uint64_t)>&& completionHandler)
 {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent,  HitTestRequest::Type::AllowChildFrameContent };
-    auto result = m_page->mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
+    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(point, hitType);
     Ref frame = result.innerNonSharedNode() ? *result.innerNodeFrame() : CheckedRef(m_page->focusController())->focusedOrMainFrame();
     auto range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
     auto editingRange = EditingRange::fromRange(frame, range);
@@ -6608,7 +6673,12 @@ void WebPage::setAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScrolle
         return;
 
     m_alwaysShowsHorizontalScroller = alwaysShowsHorizontalScroller;
-    auto view = corePage()->mainFrame().view();
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+    
+    auto view = localMainFrame->view();
     if (!alwaysShowsHorizontalScroller)
         view->setHorizontalScrollbarLock(false);
     view->setHorizontalScrollbarMode(alwaysShowsHorizontalScroller ? ScrollbarMode::AlwaysOn : m_mainFrameIsScrollable ? ScrollbarMode::Auto : ScrollbarMode::AlwaysOff, alwaysShowsHorizontalScroller || !m_mainFrameIsScrollable);
@@ -6620,7 +6690,12 @@ void WebPage::setAlwaysShowsVerticalScroller(bool alwaysShowsVerticalScroller)
         return;
 
     m_alwaysShowsVerticalScroller = alwaysShowsVerticalScroller;
-    auto view = corePage()->mainFrame().view();
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto view = localMainFrame->view();
     if (!alwaysShowsVerticalScroller)
         view->setVerticalScrollbarLock(false);
     view->setVerticalScrollbarMode(alwaysShowsVerticalScroller ? ScrollbarMode::AlwaysOn : m_mainFrameIsScrollable ? ScrollbarMode::Auto : ScrollbarMode::AlwaysOff, alwaysShowsVerticalScroller || !m_mainFrameIsScrollable);
@@ -6632,12 +6707,17 @@ void WebPage::setMinimumSizeForAutoLayout(const IntSize& size)
         return;
 
     m_minimumSizeForAutoLayout = size;
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
     if (size.width() <= 0) {
-        corePage()->mainFrame().view()->enableFixedWidthAutoSizeMode(false, { });
+        localMainFrame->view()->enableFixedWidthAutoSizeMode(false, { });
         return;
     }
 
-    corePage()->mainFrame().view()->enableFixedWidthAutoSizeMode(true, { size.width(), std::max(size.height(), 1) });
+    localMainFrame->view()->enableFixedWidthAutoSizeMode(true, { size.width(), std::max(size.height(), 1) });
 }
 
 void WebPage::setSizeToContentAutoSizeMaximumSize(const IntSize& size)
@@ -6646,12 +6726,17 @@ void WebPage::setSizeToContentAutoSizeMaximumSize(const IntSize& size)
         return;
 
     m_sizeToContentAutoSizeMaximumSize = size;
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
     if (size.width() <= 0 || size.height() <= 0) {
-        corePage()->mainFrame().view()->enableSizeToContentAutoSizeMode(false, { });
+        localMainFrame->view()->enableSizeToContentAutoSizeMode(false, { });
         return;
     }
 
-    corePage()->mainFrame().view()->enableSizeToContentAutoSizeMode(true, size);
+    localMainFrame->view()->enableSizeToContentAutoSizeMode(true, size);
 }
 
 void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
@@ -6661,7 +6746,8 @@ void WebPage::setAutoSizingShouldExpandToViewHeight(bool shouldExpand)
 
     m_autoSizingShouldExpandToViewHeight = shouldExpand;
 
-    corePage()->mainFrame().view()->setAutoSizeFixedMinimumHeight(shouldExpand ? m_viewSize.height() : 0);
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))
+        localMainFrame->view()->setAutoSizeFixedMinimumHeight(shouldExpand ? m_viewSize.height() : 0);
 }
 
 void WebPage::setViewportSizeForCSSViewportUnits(std::optional<WebCore::FloatSize> viewportSize)
@@ -6670,8 +6756,10 @@ void WebPage::setViewportSizeForCSSViewportUnits(std::optional<WebCore::FloatSiz
         return;
 
     m_viewportSizeForCSSViewportUnits = viewportSize;
-    if (m_viewportSizeForCSSViewportUnits)
-        corePage()->mainFrame().view()->setSizeForCSSDefaultViewportUnits(*m_viewportSizeForCSSViewportUnits);
+    if (m_viewportSizeForCSSViewportUnits) {
+        if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))
+            localMainFrame->view()->setSizeForCSSDefaultViewportUnits(*m_viewportSizeForCSSViewportUnits);
+    }
 }
 
 bool WebPage::isSmartInsertDeleteEnabled()
@@ -6721,8 +6809,12 @@ bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const 
 
     if (!mimeType.isNull() && m_mimeTypesWithCustomContentProviders.contains(mimeType))
         return true;
+    
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return false;
 
-    if (corePage()->mainFrame().arePluginsEnabled() && pluginsSupport(mimeType, PluginData::AllPlugins))
+    if (localMainFrame->arePluginsEnabled() && pluginsSupport(mimeType, PluginData::AllPlugins))
         return true;
 
     // We can use application plugins even if plugins aren't enabled.
@@ -7092,7 +7184,8 @@ void WebPage::updateWebsitePolicies(WebsitePoliciesData&& websitePolicies)
     if (!m_page)
         return;
 
-    auto* documentLoader = m_page->mainFrame().loader().documentLoader();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    auto* documentLoader = localMainFrame ? localMainFrame->loader().documentLoader() : nullptr;
     if (!documentLoader)
         return;
 
@@ -7123,7 +7216,8 @@ unsigned WebPage::extendIncrementalRenderingSuppression()
         token++;
 
     m_activeRenderingSuppressionTokens.add(token);
-    m_page->mainFrame().view()->setVisualUpdatesAllowedByClient(false);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->view()->setVisualUpdatesAllowedByClient(false);
 
     m_maximumRenderingSuppressionToken = token;
 
@@ -7135,13 +7229,15 @@ void WebPage::stopExtendingIncrementalRenderingSuppression(unsigned token)
     if (!m_activeRenderingSuppressionTokens.remove(token))
         return;
 
-    m_page->mainFrame().view()->setVisualUpdatesAllowedByClient(!shouldExtendIncrementalRenderingSuppression());
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->view()->setVisualUpdatesAllowedByClient(!shouldExtendIncrementalRenderingSuppression());
 }
     
 void WebPage::setScrollPinningBehavior(WebCore::ScrollPinningBehavior pinning)
 {
     m_scrollPinningBehavior = pinning;
-    m_page->mainFrame().view()->setScrollPinningBehavior(m_scrollPinningBehavior);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->view()->setScrollPinningBehavior(m_scrollPinningBehavior);
 }
 
 void WebPage::setScrollbarOverlayStyle(std::optional<uint32_t> scrollbarStyle)
@@ -7150,7 +7246,9 @@ void WebPage::setScrollbarOverlayStyle(std::optional<uint32_t> scrollbarStyle)
         m_scrollbarOverlayStyle = static_cast<ScrollbarOverlayStyle>(scrollbarStyle.value());
     else
         m_scrollbarOverlayStyle = std::optional<ScrollbarOverlayStyle>();
-    m_page->mainFrame().view()->recalculateScrollbarOverlayStyle();
+    
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->view()->recalculateScrollbarOverlayStyle();
 }
 
 Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRequest& request, const SubstituteData& substituteData)
@@ -7376,7 +7474,10 @@ void WebPage::didLosePointerLock()
 
 void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, CompletionHandler<void(const IPC::SharedBufferReference&)>&& completionHandler)
 {
-    auto* documentLoader = corePage()->mainFrame().loader().documentLoader();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return completionHandler({ });
+    auto* documentLoader = localMainFrame->loader().documentLoader();
     if (!documentLoader)
         return completionHandler({ });
 
@@ -7387,7 +7488,8 @@ void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier
 
 void WebPage::setUseIconLoadingClient(bool useIconLoadingClient)
 {
-    static_cast<WebFrameLoaderClient&>(corePage()->mainFrame().loader().client()).setUseIconLoadingClient(useIconLoadingClient);
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame()))
+        static_cast<WebFrameLoaderClient&>(localMainFrame->loader().client()).setUseIconLoadingClient(useIconLoadingClient);
 }
 
 WebURLSchemeHandlerProxy* WebPage::urlSchemeHandlerForScheme(StringView scheme)
@@ -7792,7 +7894,8 @@ void WebPage::startTextManipulations(Vector<WebCore::TextManipulationController:
     if (!m_page)
         return;
 
-    RefPtr mainDocument = m_page->mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
     if (!mainDocument)
         return;
 
@@ -7819,7 +7922,8 @@ void WebPage::completeTextManipulation(const Vector<WebCore::TextManipulationIte
         return;
     }
 
-    RefPtr mainDocument = m_page->mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr;
     if (!mainDocument) {
         completionHandler(true, { });
         return;
@@ -8067,8 +8171,14 @@ void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& resul
         return;
     }
 
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame) {
+        completionHandler(TextRecognitionUpdateResult::NoText);
+        return;
+    }
+
     ImageOverlay::updateWithTextRecognitionResult(downcast<HTMLElement>(*elementToUpdate), result);
-    auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
+    auto hitTestResult = localMainFrame->eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
         HitTestRequest::Type::AllowVisibleChildFrameContentOnly,
@@ -8377,7 +8487,8 @@ void WebPage::clearNotificationPermissionState()
 
 void WebPage::generateTestReport(String&& message, String&& group)
 {
-    if (RefPtr document = m_page->mainFrame().document())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (RefPtr document = localMainFrame ? localMainFrame->document() : nullptr)
         document->reportingScope().generateTestReport(WTFMove(message), WTFMove(group));
 }
 

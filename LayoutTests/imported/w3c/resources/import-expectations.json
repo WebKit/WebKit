@@ -408,6 +408,7 @@
     "web-platform-tests/pointerlock": "import",
     "web-platform-tests/preload": "skip",
     "web-platform-tests/presentation-api": "skip",
+    "web-platform-tests/priority-hints": "import",
     "web-platform-tests/progress-events": "skip",
     "web-platform-tests/proximity": "skip",
     "web-platform-tests/push-api": "import",

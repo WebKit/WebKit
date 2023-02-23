@@ -172,7 +172,8 @@ PageSerializer::PageSerializer(Vector<PageSerializer::Resource>& resources)
 
 void PageSerializer::serialize(Page& page)
 {
-    serializeFrame(&page.mainFrame());
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame()))
+        serializeFrame(localMainFrame);
 }
 
 void PageSerializer::serializeFrame(Frame* frame)

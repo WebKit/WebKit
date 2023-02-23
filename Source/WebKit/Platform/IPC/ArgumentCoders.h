@@ -698,13 +698,16 @@ template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
     }
 };
 
+using EncodedVariantIndex = uint8_t;
+
 template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     template<typename Encoder, typename T>
     static void encode(Encoder& encoder, T&& variant)
     {
         static_assert(std::is_same_v<std::remove_cvref_t<T>, std::variant<Types...>>);
+        static_assert(sizeof...(Types) <= static_cast<size_t>(std::numeric_limits<EncodedVariantIndex>::max()));
 
-        size_t i = variant.index();
+        EncodedVariantIndex i = variant.index();
         encoder << i;
         encode(encoder, std::forward<T>(variant), std::index_sequence<> { }, i);
     }
@@ -725,7 +728,7 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     template<typename Decoder>
     static std::optional<std::variant<Types...>> decode(Decoder& decoder)
     {
-        auto i = decoder.template decode<size_t>();
+        auto i = decoder.template decode<EncodedVariantIndex>();
         if (!i || *i >= sizeof...(Types))
             return std::nullopt;
         return decode(decoder, std::index_sequence<> { }, *i);

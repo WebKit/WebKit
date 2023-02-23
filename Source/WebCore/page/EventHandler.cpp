@@ -4008,8 +4008,10 @@ static void removeDraggedContentDocumentMarkersFromAllFramesInPage(Page& page)
         document.markers().removeMarkers(DocumentMarker::DraggedContent);
     });
 
-    if (auto* mainFrameRenderer = page.mainFrame().contentRenderer())
-        mainFrameRenderer->repaintRootContents();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame())) {
+        if (auto* mainFrameRenderer = localMainFrame->contentRenderer())
+            mainFrameRenderer->repaintRootContents();
+    }
 }
 
 void EventHandler::dragCancelled()

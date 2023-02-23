@@ -48,7 +48,7 @@ OBJC_CLASS NSURLCredentialStorage;
 #include <wtf/Seconds.h>
 
 namespace WebCore {
-enum class NetworkConnectionIntegrity : uint8_t;
+enum class NetworkConnectionIntegrity : uint16_t;
 }
 
 namespace WebKit {

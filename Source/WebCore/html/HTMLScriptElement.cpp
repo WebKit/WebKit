@@ -29,6 +29,8 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "JSRequestPriority.h"
+#include "RequestPriority.h"
 #include "Settings.h"
 #include "Text.h"
 #include <wtf/IsoMallocInlines.h>
@@ -201,6 +203,16 @@ ReferrerPolicy HTMLScriptElement::referrerPolicy() const
     if (document().settings().referrerPolicyAttributeEnabled())
         return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
+}
+
+void HTMLScriptElement::setFetchPriorityForBindings(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(fetchpriorityAttr, value);
+}
+
+String HTMLScriptElement::fetchPriorityForBindings() const
+{
+    return convertEnumerationToString(parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto));
 }
 
 }

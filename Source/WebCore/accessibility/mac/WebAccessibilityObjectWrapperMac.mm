@@ -2964,7 +2964,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }
 
-    page->contextMenuController().showContextMenuAt(page->mainFrame(), rect.center());
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame()))
+        page->contextMenuController().showContextMenuAt(*localMainFrame, rect.center());
 }
 
 - (void)accessibilityScrollToVisible

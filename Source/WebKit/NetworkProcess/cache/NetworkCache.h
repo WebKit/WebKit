@@ -44,7 +44,7 @@
 
 namespace WebCore {
 class LowPowerModeNotifier;
-enum class NetworkConnectionIntegrity : uint8_t;
+enum class NetworkConnectionIntegrity : uint16_t;
 class ResourceRequest;
 class FragmentedSharedBuffer;
 }

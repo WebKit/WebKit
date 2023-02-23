@@ -216,6 +216,19 @@ a: d"""
         errors = self.run_check_commit_message_formatting(commit_msg)
         self.assertEqual(len(errors), 0)
 
+    def test_description_body_exceeds_line_count_limit_but_in_quote(self):
+        commit_msg = """a
+
+cc
+
+dddd
+
+> bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+a: d"""
+        errors = self.run_check_commit_message_formatting(commit_msg)
+        self.assertEqual(len(errors), 0)
+
     def test_tabs_in_commit_message(self):
         commit_msg = """																a
 
@@ -248,6 +261,15 @@ Change-Id: I443c36aaa8956c20da1abddf7aea613659e2cd5b"""
 
     def test_allowlist_reland(self):
         commit_msg = """Reland sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssadd
+
+bbbbbbbbbbbbbbbbbbbb
+
+Change-Id: I443c36aaa8956c20da1abddf7aea613659e2cd5b"""
+        errors = self.run_check_commit_message_formatting(commit_msg)
+        self.assertEqual(len(errors), 0)
+
+    def test_allowlist_reland2(self):
+        commit_msg = """Reland: sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssadd
 
 bbbbbbbbbbbbbbbbbbbb
 

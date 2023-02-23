@@ -134,6 +134,7 @@ event
 expanded
 exportparts
 face
+fetchpriority
 filename
 focused
 for
@@ -219,6 +220,7 @@ onbeforeinput
 onbeforeload
 onbeforepaste
 onbeforeprint
+onbeforetoggle
 onbeforeunload
 onblur
 oncancel
@@ -407,7 +409,6 @@ standby
 start
 step
 style
-subtitle
 summary
 tabindex
 tableborder

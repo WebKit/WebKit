@@ -99,7 +99,6 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
     , m_ioSurfacePool(ioSurfacePool)
 {
     ASSERT(m_surface);
-    applyBaseTransformToContext();
 }
 
 ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
@@ -110,12 +109,12 @@ ImageBufferIOSurfaceBackend::~ImageBufferIOSurfaceBackend()
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context() const
 {
-    GraphicsContext& context = m_surface->ensureGraphicsContext();
-    if (m_needsSetupContext) {
-        m_needsSetupContext = false;
-        applyBaseTransformToContext();
+    if (!m_context) {
+        m_context = makeUnique<GraphicsContextCG>(m_surface->ensurePlatformContext());
+        m_context->setIsAcceleratedContext(true);
+        applyBaseTransform(*m_context);
     }
-    return context;
+    return *m_context;
 }
 
 void ImageBufferIOSurfaceBackend::flushContext()
@@ -203,8 +202,8 @@ bool ImageBufferIOSurfaceBackend::isInUse() const
 
 void ImageBufferIOSurfaceBackend::releaseGraphicsContext()
 {
-    m_needsSetupContext = true;
-    return m_surface->releaseGraphicsContext();
+    m_context = nullptr;
+    m_surface->releasePlatformContext();
 }
 
 bool ImageBufferIOSurfaceBackend::setVolatile()

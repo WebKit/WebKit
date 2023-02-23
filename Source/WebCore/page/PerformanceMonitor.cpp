@@ -144,7 +144,11 @@ enum class ReportingReason { HighCPUUsage, HighMemoryUsage };
 static void reportPageOverPostLoadResourceThreshold(Page& page, ReportingReason reason)
 {
 #if ENABLE(PUBLIC_SUFFIX_LIST)
-    auto* document = page.mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto* document = localMainFrame->document();
     if (!document)
         return;
 

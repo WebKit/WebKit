@@ -45,7 +45,6 @@ class TextStream;
 
 namespace WebCore {
 
-class GraphicsContext;
 class IOSurfacePool;
 
 enum class PixelFormat : uint8_t;
@@ -130,8 +129,10 @@ public:
     id asLayerContents() const { return (__bridge id)m_surface.get(); }
 #endif
     IOSurfaceRef surface() const { return m_surface.get(); }
-    WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();
     WEBCORE_EXPORT CGContextRef ensurePlatformContext(PlatformDisplayID = 0);
+    // The graphics context cached on the surface counts as a "user", so to get
+    // an accurate result from isInUse(), it needs to be released.
+    WEBCORE_EXPORT void releasePlatformContext();
 
     // Querying volatility can be expensive, so in cases where the surface is
     // going to be used immediately, use the return value of setVolatile to
@@ -152,10 +153,6 @@ public:
     WEBCORE_EXPORT IOSurfaceSeed seed() const;
 
     WEBCORE_EXPORT bool isInUse() const;
-
-    // The graphics context cached on the surface counts as a "user", so to get
-    // an accurate result from isInUse(), it needs to be released.
-    WEBCORE_EXPORT void releaseGraphicsContext();
 
 #if HAVE(IOSURFACE_ACCELERATOR)
     WEBCORE_EXPORT static bool allowConversionFromFormatToFormat(Format, Format);
@@ -188,7 +185,6 @@ private:
     size_t m_totalBytes;
 
     ProcessIdentity m_resourceOwner;
-    std::unique_ptr<GraphicsContext> m_graphicsContext;
     RetainPtr<CGContextRef> m_cgContext;
 
     RetainPtr<IOSurfaceRef> m_surface;

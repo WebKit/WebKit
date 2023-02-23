@@ -1,0 +1,7 @@
+
+PASS The "beforetoggle" event (listener) get properly dispatched for popovers
+PASS The "beforetoggle" event (attribute) get properly dispatched for popovers
+PASS The "beforetoggle" event is cancelable for the "opening" transition
+PASS The "beforetoggle" event is not fired for element removal
+PASS The "toggle" event is coalesced
+

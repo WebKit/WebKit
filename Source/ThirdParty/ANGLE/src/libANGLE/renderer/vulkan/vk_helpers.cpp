@@ -112,8 +112,8 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
         ImageMemoryBarrierData{
             "Undefined",
             VK_IMAGE_LAYOUT_UNDEFINED,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             // Transition to: we don't expect to transition into Undefined.
             0,
             // Transition from: there's no data in the image to care about.
@@ -371,8 +371,8 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
         ImageMemoryBarrierData{
             "Present",
             VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
             // transition to: vkQueuePresentKHR automatically performs the appropriate memory barriers:
             //
             // > Any writes to memory backing the images referenced by the pImageIndices and
@@ -391,8 +391,9 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
         ImageMemoryBarrierData{
             "SharedPresent",
             VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+            // All currently possible stages for SharedPresent
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+            VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
             // Transition to: all reads and writes must happen after barrier.
             VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
             // Transition from: all writes must finish before barrier.
@@ -415,7 +416,7 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
             // layout.  If the content is not already defined, the first operation may not be a
             // glWaitSemaphore, but in this case undefined layout is appropriate.
             VK_IMAGE_LAYOUT_UNDEFINED,
-            VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+            VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
             VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
             // Transition to: we don't expect to transition into PreInitialized.
             0,
@@ -2834,7 +2835,7 @@ angle::Result DynamicBuffer::allocate(Context *context,
     // The front of the free list should be the oldest. Thus if it is in use the rest of the
     // free list should be in use as well.
     if (mBufferFreeList.empty() ||
-        renderer->hasUnfinishedUse(mBufferFreeList.front()->getResourceUse()))
+        !renderer->hasResourceUseFinished(mBufferFreeList.front()->getResourceUse()))
     {
         ANGLE_TRY(allocateNewBuffer(context));
     }
@@ -3328,7 +3329,7 @@ angle::Result DescriptorPoolHelper::init(Context *context,
 
     if (mDescriptorPool.valid())
     {
-        ASSERT(!renderer->hasUnfinishedUse(getResourceUse()));
+        ASSERT(renderer->hasResourceUseFinished(getResourceUse()));
         mDescriptorPool.destroy(renderer->getDevice());
     }
 
@@ -3382,7 +3383,7 @@ bool DescriptorPoolHelper::allocateDescriptorSet(Context *context,
         RendererVk *rendererVk = context->getRenderer();
 
         DescriptorSetHelper &garbage = mDescriptorSetGarbageList.front();
-        if (!rendererVk->hasUnfinishedUse(garbage.getResourceUse()))
+        if (rendererVk->hasResourceUseFinished(garbage.getResourceUse()))
         {
             *descriptorSetsOut = garbage.getDescriptorSet();
             mDescriptorSetGarbageList.pop_front();
@@ -3572,7 +3573,7 @@ angle::Result DynamicDescriptorPool::allocateNewPool(Context *context)
             continue;
         }
         if (!mDescriptorPools[poolIndex]->isReferenced() &&
-            !renderer->hasUnfinishedUse(mDescriptorPools[poolIndex]->get().getResourceUse()))
+            renderer->hasResourceUseFinished(mDescriptorPools[poolIndex]->get().getResourceUse()))
         {
             mDescriptorPools[poolIndex]->get().destroy(renderer);
             mDescriptorPools.erase(mDescriptorPools.begin() + poolIndex);
@@ -3718,7 +3719,7 @@ bool DynamicallyGrowingPool<Pool>::findFreeEntryPool(ContextVk *contextVk)
     for (size_t poolIndex = 0; poolIndex < mPools.size(); ++poolIndex)
     {
         PoolResource &pool = mPools[poolIndex];
-        if (pool.freedCount == mPoolSize && !renderer->hasUnfinishedUse(pool.getResourceUse()))
+        if (pool.freedCount == mPoolSize && renderer->hasResourceUseFinished(pool.getResourceUse()))
         {
             mCurrentPool      = poolIndex;
             mCurrentFreeEntry = 0;
@@ -3749,7 +3750,7 @@ void DynamicallyGrowingPool<Pool>::onEntryFreed(ContextVk *contextVk,
                                                 const ResourceUse &use)
 {
     ASSERT(poolIndex < mPools.size() && mPools[poolIndex].freedCount < mPoolSize);
-    if (contextVk->getRenderer()->hasUnfinishedUse(use))
+    if (!contextVk->getRenderer()->hasResourceUseFinished(use))
     {
         mPools[poolIndex].mergeResourceUse(use);
     }
@@ -4626,7 +4627,7 @@ angle::Result BufferHelper::allocateForVertexConversion(ContextVk *contextVk,
         if (size <= getSize() &&
             (hostVisibility == MemoryHostVisibility::Visible) == isHostVisible())
         {
-            if (!renderer->hasUnfinishedUse(getResourceUse()))
+            if (renderer->hasResourceUseFinished(getResourceUse()))
             {
                 initializeBarrierTracker(contextVk);
                 return angle::Result::Continue;
@@ -4818,13 +4819,13 @@ void BufferHelper::releaseBufferAndDescriptorSetCache(ContextVk *contextVk)
 {
     RendererVk *renderer = contextVk->getRenderer();
 
-    if (renderer->hasUnfinishedUse(getResourceUse()))
+    if (renderer->hasResourceUseFinished(getResourceUse()))
     {
-        mDescriptorSetCacheManager.releaseKeys(contextVk);
+        mDescriptorSetCacheManager.destroyKeys(renderer);
     }
     else
     {
-        mDescriptorSetCacheManager.destroyKeys(renderer);
+        mDescriptorSetCacheManager.releaseKeys(contextVk);
     }
 
     release(renderer);

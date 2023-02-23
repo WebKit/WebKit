@@ -72,8 +72,10 @@ void PageOverlayController::installedPageOverlaysChanged()
     else
         detachViewOverlayLayers();
 
-    if (auto* frameView = m_page.mainFrame().view())
-        frameView->setNeedsCompositingConfigurationUpdate();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame())) {
+        if (auto* frameView = localMainFrame->view())
+            frameView->setNeedsCompositingConfigurationUpdate();
+    }
 
     updateForceSynchronousScrollLayerPositionUpdates();
 }
@@ -207,8 +209,10 @@ void PageOverlayController::installPageOverlay(PageOverlay& overlay, PageOverlay
 
     overlay.setPage(&m_page);
 
-    if (FrameView* frameView = m_page.mainFrame().view())
-        frameView->enterCompositingMode();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame())) {
+        if (FrameView* frameView = localMainFrame->view())
+            frameView->enterCompositingMode();
+    }
 
     updateOverlayGeometry(overlay, rawLayer);
 

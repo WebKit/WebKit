@@ -1,0 +1,4 @@
+
+
+PASS Moving popover between documents shouldn't cause issues
+

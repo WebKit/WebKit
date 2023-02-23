@@ -269,7 +269,7 @@ URL URL::truncatedForUseAsBase() const
     return URL(m_string.left(m_pathAfterLastSlash));
 }
 
-#if !USE(CF)
+#if !USE(CF) || PLATFORM(WIN)
 
 String URL::fileSystemPath() const
 {
@@ -278,7 +278,8 @@ String URL::fileSystemPath() const
 
     auto result = decodeEscapeSequencesFromParsedURL(path());
 #if PLATFORM(WIN)
-    result = FileSystem::fileSystemRepresentation(result);
+    if (result.startsWith('/'))
+        result = result.substring(1);
 #endif
     return result;
 }

@@ -26,7 +26,9 @@
 #include "config.h"
 #include "ManagedMediaSource.h"
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
+
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 

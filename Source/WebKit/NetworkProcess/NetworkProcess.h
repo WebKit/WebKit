@@ -402,6 +402,10 @@ public:
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
     void webProcessWillLoadWebArchive(WebCore::ProcessIdentifier);
 
+#if ENABLE(SERVICE_WORKER)
+    void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
+#endif
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

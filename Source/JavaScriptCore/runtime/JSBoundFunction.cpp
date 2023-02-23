@@ -107,7 +107,7 @@ JSC_DEFINE_HOST_FUNCTION(boundThisNoArgsFunctionConstruct, (JSGlobalObject* glob
     ASSERT(constructData.type != CallData::Type::None);
 
     JSValue newTarget = callFrame->newTarget();
-    if (newTarget == boundFunction)
+    if (newTarget.inherits<JSBoundFunction>())
         newTarget = targetFunction;
     return JSValue::encode(construct(globalObject, targetFunction, constructData, args, newTarget));
 }
@@ -137,7 +137,7 @@ JSC_DEFINE_HOST_FUNCTION(boundFunctionConstruct, (JSGlobalObject* globalObject, 
     ASSERT(constructData.type != CallData::Type::None);
 
     JSValue newTarget = callFrame->newTarget();
-    if (newTarget == boundFunction)
+    if (newTarget.inherits<JSBoundFunction>())
         newTarget = targetFunction;
     RELEASE_AND_RETURN(scope, JSValue::encode(construct(globalObject, targetFunction, constructData, args, newTarget)));
 }

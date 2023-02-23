@@ -84,9 +84,17 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBufferCGBackend::createFlushe
     return makeUnique<ThreadSafeImageBufferFlusherCG>(context().platformContext());
 }
 
+ImageBufferCGBackend::~ImageBufferCGBackend() = default;
+
 bool ImageBufferCGBackend::originAtBottomLeftCorner() const
 {
     return isOriginAtBottomLeftCorner;
+}
+
+void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
+{
+    context.applyDeviceScaleFactor(m_parameters.resolutionScale);
+    context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
 }
 
 } // namespace WebCore

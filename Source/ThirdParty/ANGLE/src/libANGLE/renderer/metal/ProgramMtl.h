@@ -194,12 +194,6 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     bool hasSpecializedShader(gl::ShaderType shaderType,
                               const mtl::RenderPipelineDesc &renderPipelineDesc) override;
 
-    angle::Result createMslShaderLib(
-        ContextMtl *context,
-        gl::ShaderType shaderType,
-        gl::InfoLog &infoLog,
-        mtl::TranslatedShaderInfo *translatedMslInfo,
-        const std::map<std::string, std::string> &substitutionMacros = {});
     // Calls this before drawing, changedPipelineDesc is passed when vertex attributes desc and/or
     // shader program changed.
     angle::Result setupDraw(const gl::Context *glContext,
@@ -222,6 +216,9 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
     bool hasFlatAttribute() const { return mProgramHasFlatAttributes; }
 
   private:
+    class ProgramLinkEvent;
+    class CompileMslTask;
+
     template <int cols, int rows>
     void setUniformMatrixfv(GLint location,
                             GLsizei count,
@@ -281,18 +278,9 @@ class ProgramMtl : public ProgramImpl, public mtl::RenderPipelineCacheSpecialize
 
     void linkUpdateHasFlatAttributes(const gl::Context *context);
 
-    angle::Result linkImplDirect(const gl::Context *glContext,
-                                 const gl::ProgramLinkedResources &resources,
-                                 gl::InfoLog &infoLog);
-
     void linkResources(const gl::Context *context, const gl::ProgramLinkedResources &resources);
-    angle::Result linkImpl(const gl::Context *glContext,
-                           const gl::ProgramLinkedResources &resources,
-                           gl::InfoLog &infoLog);
-
-    angle::Result linkTranslatedShaders(const gl::Context *glContext,
-                                        gl::BinaryInputStream *stream,
-                                        gl::InfoLog &infoLog);
+    std::unique_ptr<LinkEvent> compileMslShaderLibs(const gl::Context *context,
+                                                    gl::InfoLog &infoLog);
 
     mtl::BufferPool *getBufferPool(ContextMtl *context);
 

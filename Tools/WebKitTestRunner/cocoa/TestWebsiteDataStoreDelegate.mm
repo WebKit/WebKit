@@ -36,6 +36,7 @@
 - (instancetype)init
 {
     _shouldAllowRaisingQuota = false;
+    _shouldAllowBackgroundFetchPermission = false;
     _quota = 40 * KB;
     return self;
 }
@@ -89,4 +90,14 @@
     completionHandler(webView);
 }
 
+- (void)setBackgroundFetchPermission:(BOOL)shouldAllowBackgroundFetchPermission
+{
+    _shouldAllowBackgroundFetchPermission = shouldAllowBackgroundFetchPermission;
+}
+
+
+- (void)requestBackgroundFetchPermission:(NSURL *)mainFrameURL frameOrigin:(NSURL *)frameURL  decisionHandler:(void (^)(bool isGranted))decisionHandler
+{
+    decisionHandler(_shouldAllowBackgroundFetchPermission);
+}
 @end

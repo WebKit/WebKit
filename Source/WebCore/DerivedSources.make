@@ -315,6 +315,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/fetch/FetchRequestMode.idl \
     $(WebCore)/Modules/fetch/FetchRequestRedirect.idl \
     $(WebCore)/Modules/fetch/FetchResponse.idl \
+    $(WebCore)/Modules/fetch/RequestPriority.idl \
     $(WebCore)/Modules/fetch/WindowOrWorkerGlobalScope+Fetch.idl \
     $(WebCore)/Modules/filesystemaccess/FileSystemDirectoryHandle.idl \
     $(WebCore)/Modules/filesystemaccess/FileSystemFileHandle.idl \

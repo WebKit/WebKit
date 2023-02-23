@@ -50,30 +50,3 @@ enum class PlatformVideoTransferCharacteristics : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PlatformVideoTransferCharacteristics> {
-    using values = EnumValues<
-        WebCore::PlatformVideoTransferCharacteristics,
-        WebCore::PlatformVideoTransferCharacteristics::Bt709,
-        WebCore::PlatformVideoTransferCharacteristics::Smpte170m,
-        WebCore::PlatformVideoTransferCharacteristics::Iec6196621,
-        WebCore::PlatformVideoTransferCharacteristics::Gamma22curve,
-        WebCore::PlatformVideoTransferCharacteristics::Gamma28curve,
-        WebCore::PlatformVideoTransferCharacteristics::Smpte240m,
-        WebCore::PlatformVideoTransferCharacteristics::Linear,
-        WebCore::PlatformVideoTransferCharacteristics::Log,
-        WebCore::PlatformVideoTransferCharacteristics::LogSqrt,
-        WebCore::PlatformVideoTransferCharacteristics::Iec6196624,
-        WebCore::PlatformVideoTransferCharacteristics::Bt1361ExtendedColourGamut,
-        WebCore::PlatformVideoTransferCharacteristics::Bt2020_10bit,
-        WebCore::PlatformVideoTransferCharacteristics::Bt2020_12bit,
-        WebCore::PlatformVideoTransferCharacteristics::SmpteSt2084,
-        WebCore::PlatformVideoTransferCharacteristics::SmpteSt4281,
-        WebCore::PlatformVideoTransferCharacteristics::AribStdB67Hlg,
-        WebCore::PlatformVideoTransferCharacteristics::Unspecified
-    >;
-};
-
-}

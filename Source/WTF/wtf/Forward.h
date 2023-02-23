@@ -58,9 +58,9 @@ struct FastMalloc;
 struct MainThreadAccessTraits;
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
-struct VectorMalloc;
+struct VectorBufferMalloc;
 #else
-using VectorMalloc = FastMalloc;
+using VectorBufferMalloc = FastMalloc;
 #endif
 
 template<typename> struct DefaultRefDerefTraits;
@@ -88,7 +88,7 @@ template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
 template<typename> class UniqueRef;
-template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename Malloc = VectorMalloc> class Vector;
+template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename Malloc = VectorBufferMalloc> class Vector;
 template<typename, typename = DefaultWeakPtrImpl> class WeakPtr;
 
 template<typename> struct DefaultHash;

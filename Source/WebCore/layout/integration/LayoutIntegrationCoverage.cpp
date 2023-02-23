@@ -115,9 +115,6 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
     case AvoidanceReason::MultiColumnFlowHasVerticalWritingMode:
         stream << "column has vertical writing mode";
         break;
-    case AvoidanceReason::MultiColumnFlowVerticalAlign:
-        stream << "column with vertical-align != baseline";
-        break;
     case AvoidanceReason::MultiColumnFlowIsFloating:
         stream << "column with floating objects";
         break;
@@ -427,8 +424,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         auto& style = flow.style();
         if (!style.isHorizontalWritingMode())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowHasVerticalWritingMode, reasons, includeReasons);
-        if (style.verticalAlign() != VerticalAlign::Baseline)
-            SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowVerticalAlign, reasons, includeReasons);
         if (style.isFloating())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsFloating, reasons, includeReasons);
     }
@@ -485,10 +480,17 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     return canUseForLineLayout(blockContainer);
 }
 
-bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow&, const RenderObject&, const LineLayout&)
+bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& newChild, const LineLayout&)
 {
-    // FIXME: Add partial support starting with a simple "a new RenderText has been appeared" case.
-    return true;
+    UNUSED_PARAM(rootBlockContainer);
+    if (!is<RenderText>(newChild) || !is<RenderBlockFlow>(newChild.parent()))
+        return true;
+    if (!newChild.style().isLeftToRightDirection() || !newChild.style().isHorizontalWritingMode())
+        return true;
+    if (newChild.nextSibling())
+        return true;
+    // Simple text content append only.
+    return false;
 }
 
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, StyleDifference)

@@ -31,6 +31,7 @@
 #include "SuperSampler.h"
 #include "Yarr.h"
 #include "YarrCanonicalize.h"
+#include <wtf/BitVector.h>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
@@ -132,17 +133,26 @@ public:
 
     struct ParenthesesDisjunctionContext
     {
-        ParenthesesDisjunctionContext(unsigned* output, ByteTerm& term)
-        {
-            unsigned firstSubpatternId = term.subpatternId();
-            unsigned numNestedSubpatterns = term.atom.parenthesesDisjunction->m_numSubpatterns;
+        ParenthesesDisjunctionContext(BytecodePattern* pattern, unsigned* output, ByteTerm& term, unsigned numDuplicateNamedGroups, BitVector& duplicateNamedGroups)
+            : m_pattern(pattern)
+            , m_numNestedSubpatterns(term.atom.parenthesesDisjunction->m_numSubpatterns)
+            , m_duplicateNamedGroups(duplicateNamedGroups)
 
-            for (unsigned i = 0; i < (numNestedSubpatterns << 1); ++i) {
-                subpatternBackup[i] = output[(firstSubpatternId << 1) + i];
+        {
+            m_numBackupIds = m_numNestedSubpatterns * 2 + numDuplicateNamedGroups;
+            unsigned firstSubpatternId = term.subpatternId();
+
+            for (unsigned i = 0; i < (m_numNestedSubpatterns << 1); ++i) {
+                subpatternAndGroupIdBackup[i] = output[(firstSubpatternId << 1) + i];
                 output[(firstSubpatternId << 1) + i] = offsetNoMatch;
             }
 
-            new (getDisjunctionContext(term)) DisjunctionContext();
+            for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups) {
+                subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(duplicateNamedGroupId)] = output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
+                output[pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = 0;
+            }
+
+            new (getDisjunctionContext()) DisjunctionContext();
         }
 
         void* operator new(size_t, void* where)
@@ -150,36 +160,71 @@ public:
             return where;
         }
 
-        void restoreOutput(unsigned* output, unsigned firstSubpatternId, unsigned numNestedSubpatterns)
+        void restoreOutput(unsigned* output, unsigned firstSubpatternId)
         {
-            for (unsigned i = 0; i < (numNestedSubpatterns << 1); ++i)
-                output[(firstSubpatternId << 1) + i] = subpatternBackup[i];
+            for (unsigned i = 0; i < (m_numNestedSubpatterns << 1); ++i)
+                output[(firstSubpatternId << 1) + i] = subpatternAndGroupIdBackup[i];
+
+            for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups)
+                output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(duplicateNamedGroupId)];
         }
 
-        DisjunctionContext* getDisjunctionContext(ByteTerm& term)
+        DisjunctionContext* getDisjunctionContext()
         {
-            return bitwise_cast<DisjunctionContext*>(bitwise_cast<uintptr_t>(this) + allocationSize(term.atom.parenthesesDisjunction->m_numSubpatterns));
+            return bitwise_cast<DisjunctionContext*>(bitwise_cast<uintptr_t>(this) + allocationSize(m_numBackupIds));
         }
 
-        static size_t allocationSize(unsigned numberOfSubpatterns)
+        unsigned backupOffsetForDuplicateNamedGroup(unsigned duplicateNamedGroup)
+        {
+            ASSERT(duplicateNamedGroup);
+            return (m_numNestedSubpatterns << 1) + duplicateNamedGroup - 1;
+        }
+
+        static size_t allocationSize(unsigned numberOfSubpatterns, unsigned numDuplicateNamedGroups)
+        {
+            Checked<size_t> numBackupIds = (Checked<size_t>(numberOfSubpatterns) * 2U) + Checked<size_t>(numDuplicateNamedGroups);
+            return allocationSize(numBackupIds.value());
+        }
+
+        static size_t allocationSize(unsigned numBackupIds)
         {
             static_assert(alignof(ParenthesesDisjunctionContext) <= sizeof(void*));
-            size_t rawSize = sizeof(ParenthesesDisjunctionContext) - sizeof(unsigned) + (Checked<size_t>(numberOfSubpatterns) * 2U) * sizeof(unsigned);
+            size_t rawSize = sizeof(ParenthesesDisjunctionContext) + Checked<size_t>(numBackupIds) * sizeof(unsigned);
             size_t roundedSize = roundUpToMultipleOf<sizeof(void*)>(rawSize);
             RELEASE_ASSERT(roundedSize >= rawSize);
             return roundedSize;
         }
 
         ParenthesesDisjunctionContext* next { nullptr };
-        unsigned subpatternBackup[1];
+        BytecodePattern* m_pattern;
+        unsigned m_numNestedSubpatterns;
+        size_t m_numBackupIds;
+        BitVector m_duplicateNamedGroups;
+        unsigned subpatternAndGroupIdBackup[1];
     };
 
     ParenthesesDisjunctionContext* allocParenthesesDisjunctionContext(ByteDisjunction* disjunction, unsigned* output, ByteTerm& term)
     {
-        size_t size = Checked<size_t>(ParenthesesDisjunctionContext::allocationSize(term.atom.parenthesesDisjunction->m_numSubpatterns)) + DisjunctionContext::allocationSize(disjunction->m_frameSize);
+        BitVector duplicateNamedCaptureGroups;
+        unsigned firstSubpatternId = term.subpatternId();
+        unsigned numNestedSubpatterns = term.atom.parenthesesDisjunction->m_numSubpatterns;
+        unsigned numDuplicateNamedGroups = 0;
+
+        if (pattern->hasDuplicateNamedCaptureGroups()) {
+            for (unsigned i = 0; i < numNestedSubpatterns; ++i) {
+                unsigned subpatternId = firstSubpatternId + i;
+                unsigned duplicateNamedGroup = pattern->m_duplicateNamedGroupForSubpatternId[subpatternId];
+                if (duplicateNamedGroup)
+                    duplicateNamedCaptureGroups.set(duplicateNamedGroup);
+            }
+
+            numDuplicateNamedGroups = duplicateNamedCaptureGroups.bitCount();
+        }
+
+        size_t size = Checked<size_t>(ParenthesesDisjunctionContext::allocationSize(numNestedSubpatterns, numDuplicateNamedGroups)) + DisjunctionContext::allocationSize(disjunction->m_frameSize);
         allocatorPool = allocatorPool->ensureCapacity(size);
         RELEASE_ASSERT(allocatorPool);
-        return new (allocatorPool->alloc(size)) ParenthesesDisjunctionContext(output, term);
+        return new (allocatorPool->alloc(size)) ParenthesesDisjunctionContext(pattern, output, term, numDuplicateNamedGroups, duplicateNamedCaptureGroups);
     }
 
     void freeParenthesesDisjunctionContext(ParenthesesDisjunctionContext* context)
@@ -893,8 +938,19 @@ public:
         ASSERT(term.type == ByteTerm::Type::BackReference);
         BackTrackInfoBackReference* backTrack = reinterpret_cast<BackTrackInfoBackReference*>(context->frame + term.frameLocation);
 
-        unsigned matchBegin = output[(term.subpatternId() << 1)];
-        unsigned matchEnd = output[(term.subpatternId() << 1) + 1];
+        unsigned subpatternId;
+
+        if (auto duplicateNamedGroupId = term.duplicateNamedGroupId()) {
+            subpatternId = output[pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
+            if (subpatternId < 1) {
+                // If we don't have a subpattern that matched, then the string to match is empty.
+                return true;
+            }
+        } else
+            subpatternId = term.subpatternId();
+
+        unsigned matchBegin = output[(subpatternId << 1)];
+        unsigned matchEnd = output[(subpatternId << 1) + 1];
 
         // If the end position of the referenced match hasn't set yet then the backreference in the same parentheses where it references to that.
         // In this case the result of match is empty string like when it references to a parentheses with zero-width match.
@@ -927,6 +983,7 @@ public:
             while ((matchAmount < term.atom.quantityMaxCount) && tryConsumeBackReference(matchBegin, matchEnd, term))
                 ++matchAmount;
             backTrack->matchAmount = matchAmount;
+            backTrack->backReferenceSize = matchEnd - matchBegin;
             return true;
         }
 
@@ -965,7 +1022,7 @@ public:
         case QuantifierType::Greedy:
             if (backTrack->matchAmount) {
                 --backTrack->matchAmount;
-                input.rewind(matchEnd - matchBegin);
+                input.rewind(backTrack->backReferenceSize);
                 return true;
             }
             break;
@@ -986,23 +1043,23 @@ public:
     {
         if (term.capture()) {
             unsigned subpatternId = term.subpatternId();
-            // For Backward matches, the captured indexes where recorded end then start.
-            output[(subpatternId << 1) + term.matchDirection()] = context->getDisjunctionContext(term)->matchBegin - term.inputPosition;
-            output[(subpatternId << 1) + 1 - term.matchDirection()] = context->getDisjunctionContext(term)->matchEnd - term.inputPosition;
+            // For Backward matches, the captured indexes are recorded end then start.
+            output[(subpatternId << 1) + term.matchDirection()] = context->getDisjunctionContext()->matchBegin - term.inputPosition;
+            output[(subpatternId << 1) + 1 - term.matchDirection()] = context->getDisjunctionContext()->matchEnd - term.inputPosition;
         }
     }
     void resetMatches(ByteTerm& term, ParenthesesDisjunctionContext* context)
     {
         unsigned firstSubpatternId = term.subpatternId();
-        unsigned count = term.atom.parenthesesDisjunction->m_numSubpatterns;
-        context->restoreOutput(output, firstSubpatternId, count);
+        context->restoreOutput(output, firstSubpatternId);
     }
+
     JSRegExpResult parenthesesDoBacktrack(ByteTerm& term, BackTrackInfoParentheses* backTrack)
     {
         while (backTrack->matchAmount) {
             ParenthesesDisjunctionContext* context = backTrack->lastContext;
 
-            JSRegExpResult result = matchDisjunction(term.atom.parenthesesDisjunction, context->getDisjunctionContext(term), true);
+            JSRegExpResult result = matchDisjunction(term.atom.parenthesesDisjunction, context->getDisjunctionContext(), true);
             if (result == JSRegExpResult::Match)
                 return JSRegExpResult::Match;
 
@@ -1041,7 +1098,7 @@ public:
 
         if (term.capture()) {
             unsigned subpatternId = term.subpatternId();
-            // For Backward matches, the captured indexes where recorded end then start.
+            // For Backward matches, the captured indexes are recorded end then start.
             output[(subpatternId << 1) + term.matchDirection()] = input.getPos() - term.inputPosition;
         }
 
@@ -1055,8 +1112,13 @@ public:
 
         if (term.capture()) {
             unsigned subpatternId = term.subpatternId();
-            // For Backward matches, the captured indexes where recorded end then start.
+            // For Backward matches, the captured indexes are recorded end then start.
             output[(subpatternId << 1) + 1 - term.matchDirection()] = input.getPos() - term.inputPosition;
+
+            if (term.duplicateNamedGroupId()) {
+                // Record which of the duplicate named subpatterns matched.
+                output[pattern->offsetForDuplicateNamedGroupId(term.duplicateNamedGroupId())] = subpatternId;
+            }
         }
 
         if (term.atom.quantityType == QuantifierType::FixedCount)
@@ -1077,6 +1139,11 @@ public:
             unsigned subpatternId = term.subpatternId();
             output[(subpatternId << 1)] = offsetNoMatch;
             output[(subpatternId << 1) + 1] = offsetNoMatch;
+
+            if (term.duplicateNamedGroupId()) {
+                // Clear matching subpatternId.
+                output[pattern->offsetForDuplicateNamedGroupId(term.duplicateNamedGroupId())] = 0;
+            }
         }
 
         switch (term.atom.quantityType) {
@@ -1120,7 +1187,7 @@ public:
                     ASSERT((&term - term.atom.parenthesesWidth)->type == ByteTerm::Type::ParenthesesSubpatternOnceBegin);
                     ASSERT((&term - term.atom.parenthesesWidth)->inputPosition == term.inputPosition);
                     unsigned subpatternId = term.subpatternId();
-                    // For Backward matches, the captured indexes where recorded end then start.
+                    // For Backward matches, the captured indexes are recorded end then start.
                     output[(subpatternId << 1) + term.matchDirection()] = input.getPos() - term.inputPosition;
                 }
                 context->term -= term.atom.parenthesesWidth;
@@ -1274,7 +1341,7 @@ public:
             while (backTrack->matchAmount < minimumMatchCount) {
                 // Try to do a match, and it it succeeds, add it to the list.
                 ParenthesesDisjunctionContext* context = allocParenthesesDisjunctionContext(disjunctionBody, output, term);
-                fixedMatchResult = matchDisjunction(disjunctionBody, context->getDisjunctionContext(term));
+                fixedMatchResult = matchDisjunction(disjunctionBody, context->getDisjunctionContext());
                 if (fixedMatchResult == JSRegExpResult::Match)
                     appendParenthesesDisjunctionContext(backTrack, context);
                 else {
@@ -1303,7 +1370,7 @@ public:
         case QuantifierType::Greedy: {
             while (backTrack->matchAmount < term.atom.quantityMaxCount) {
                 ParenthesesDisjunctionContext* context = allocParenthesesDisjunctionContext(disjunctionBody, output, term);
-                JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext(term));
+                JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext());
                 if (result == JSRegExpResult::Match)
                     appendParenthesesDisjunctionContext(backTrack, context);
                 else {
@@ -1363,7 +1430,7 @@ public:
             while (backTrack->matchAmount < term.atom.quantityMaxCount) {
                 // Try to do a match, and it it succeeds, add it to the list.
                 context = allocParenthesesDisjunctionContext(disjunctionBody, output, term);
-                result = matchDisjunction(disjunctionBody, context->getDisjunctionContext(term));
+                result = matchDisjunction(disjunctionBody, context->getDisjunctionContext());
 
                 if (result == JSRegExpResult::Match)
                     appendParenthesesDisjunctionContext(backTrack, context);
@@ -1391,11 +1458,11 @@ public:
                 return JSRegExpResult::NoMatch;
 
             ParenthesesDisjunctionContext* context = backTrack->lastContext;
-            JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext(term), true);
+            JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext(), true);
             if (result == JSRegExpResult::Match) {
                 while (backTrack->matchAmount < term.atom.quantityMaxCount) {
                     ParenthesesDisjunctionContext* context = allocParenthesesDisjunctionContext(disjunctionBody, output, term);
-                    JSRegExpResult parenthesesResult = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext(term));
+                    JSRegExpResult parenthesesResult = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext());
                     if (parenthesesResult == JSRegExpResult::Match)
                         appendParenthesesDisjunctionContext(backTrack, context);
                     else {
@@ -1440,7 +1507,7 @@ public:
             // If we've not reached the limit, try to add one more match.
             if (backTrack->matchAmount < term.atom.quantityMaxCount) {
                 ParenthesesDisjunctionContext* context = allocParenthesesDisjunctionContext(disjunctionBody, output, term);
-                JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext(term));
+                JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext());
                 if (result == JSRegExpResult::Match) {
                     appendParenthesesDisjunctionContext(backTrack, context);
                     recordParenthesesMatch(term, context);
@@ -1457,7 +1524,7 @@ public:
             // Nope - okay backtrack looking for an alternative.
             while (backTrack->matchAmount) {
                 ParenthesesDisjunctionContext* context = backTrack->lastContext;
-                JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext(term), true);
+                JSRegExpResult result = matchNonZeroDisjunction(disjunctionBody, context->getDisjunctionContext(), true);
                 if (result == JSRegExpResult::Match) {
                     // successful backtrack! we're back in the game!
                     if (backTrack->matchAmount) {
@@ -2052,6 +2119,9 @@ public:
         for (unsigned i = 0; i < pattern->m_body->m_numSubpatterns + 1; ++i)
             output[i << 1] = offsetNoMatch;
 
+        for (unsigned i = pattern->m_offsetVectorBaseForNamedCaptures; i < pattern->m_offsetsSize; ++i)
+            output[i] = 0;
+
         allocatorPool = pattern->m_allocator->startAllocator();
         RELEASE_ASSERT(allocatorPool);
 
@@ -2136,7 +2206,7 @@ public:
             ByteTermDumper(&m_pattern).dumpDisjunction(m_bodyDisjunction.get());
 #endif
 
-        return makeUnique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock);
+        return makeUnique<BytecodePattern>(WTFMove(m_bodyDisjunction), m_allParenthesesInfo, m_pattern, allocator, lock, m_pattern.offsetVectorBaseForNamedCaptures(), m_pattern.offsetsSize());
     }
 
     void checkInput(unsigned count)
@@ -2204,6 +2274,11 @@ public:
 
         m_bodyDisjunction->terms.append(ByteTerm::BackReference(subpatternId, matchDirection, inputPosition));
 
+        if (m_pattern.hasDuplicateNamedCaptureGroups()) {
+            auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId];
+            if (duplicateNamedGroupId)
+                m_bodyDisjunction->terms.last().atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+        }
         m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms.last().atom.quantityType = quantityType;
         m_bodyDisjunction->terms.last().frameLocation = frameLocation;
@@ -2252,11 +2327,11 @@ public:
         m_currentAlternativeIndex = beginTerm + 1;
     }
 
-    void atomParentheticalAssertionBegin(unsigned subpatternId, unsigned minimumSize, bool invert, MatchDirection matchDirection, unsigned frameLocation, unsigned alternativeFrameLocation)
+    void atomParentheticalAssertionBegin(unsigned subpatternId, bool invert, MatchDirection matchDirection, unsigned frameLocation, unsigned alternativeFrameLocation)
     {
         unsigned beginTerm = m_bodyDisjunction->terms.size();
 
-        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::Type::ParentheticalAssertionBegin, subpatternId, false, invert, matchDirection, minimumSize));
+        m_bodyDisjunction->terms.append(ByteTerm::ParentheticalAssertionBegin(subpatternId, invert, matchDirection));
         m_bodyDisjunction->terms.last().frameLocation = frameLocation;
         m_bodyDisjunction->terms.append(ByteTerm::AlternativeBegin());
         m_bodyDisjunction->terms.last().frameLocation = alternativeFrameLocation;
@@ -2265,7 +2340,7 @@ public:
         m_currentAlternativeIndex = beginTerm + 1;
     }
 
-    void atomParentheticalAssertionEnd(unsigned inputPosition, unsigned lastSubpatternId, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType)
+    void atomParentheticalAssertionEnd(unsigned lastSubpatternId, unsigned frameLocation, Checked<unsigned> quantityMaxCount, QuantifierType quantityType)
     {
         unsigned beginTerm = popParenthesesStack();
         closeAlternative(beginTerm + 1);
@@ -2277,11 +2352,9 @@ public:
         MatchDirection matchDirection = m_bodyDisjunction->terms[beginTerm].matchDirection();
         unsigned subpatternId = m_bodyDisjunction->terms[beginTerm].subpatternId();
 
-        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::Type::ParentheticalAssertionEnd, subpatternId, false, invert, matchDirection, inputPosition));
+        m_bodyDisjunction->terms.append(ByteTerm::ParentheticalAssertionEnd(subpatternId, lastSubpatternId, invert, matchDirection));
         m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
-        m_bodyDisjunction->terms[beginTerm].atom.ids.lastSubpatternId = lastSubpatternId;
-        m_bodyDisjunction->terms[endTerm].atom.ids.lastSubpatternId = lastSubpatternId;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
 
         m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
@@ -2386,6 +2459,14 @@ public:
         m_bodyDisjunction->terms.last().m_matchDirection = parenthesesMatchDirection;
         m_allParenthesesInfo.append(WTFMove(parenthesesDisjunction));
 
+        if (m_pattern.hasDuplicateNamedCaptureGroups() && m_bodyDisjunction->terms[beginTerm].capture()) {
+            auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId];
+            if (duplicateNamedGroupId) {
+                m_bodyDisjunction->terms[endTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+                m_bodyDisjunction->terms[beginTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+            }
+        }
+
         m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount;
         m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
@@ -2409,6 +2490,15 @@ public:
             m_bodyDisjunction->terms[endTerm].inputPosition = m_bodyDisjunction->terms[beginTerm].inputPosition;
             m_bodyDisjunction->terms[beginTerm].inputPosition = inputPosition;
         }
+
+        if (m_pattern.hasDuplicateNamedCaptureGroups() && m_bodyDisjunction->terms[beginTerm].capture()) {
+            auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId];
+            if (duplicateNamedGroupId) {
+                m_bodyDisjunction->terms[endTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+                m_bodyDisjunction->terms[beginTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+            }
+        }
+
         m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
@@ -2439,6 +2529,14 @@ public:
         m_bodyDisjunction->terms[beginTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
+
+        if (m_pattern.hasDuplicateNamedCaptureGroups() && m_bodyDisjunction->terms[beginTerm].capture()) {
+            auto duplicateNamedGroupId = m_pattern.m_duplicateNamedGroupForSubpatternId[subpatternId];
+            if (duplicateNamedGroupId) {
+                m_bodyDisjunction->terms[endTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+                m_bodyDisjunction->terms[beginTerm].atom.parenIds.duplicateNamedGroupId = duplicateNamedGroupId;
+            }
+        }
 
         m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount;
         m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
@@ -2600,10 +2698,10 @@ public:
                                 return ErrorCode::OffsetTooLarge;
                         }
 
-                        atomParentheticalAssertionBegin(term.parentheses.subpatternId, 0, term.invert(), term.matchDirection(), term.frameLocation, alternativeFrameLocation);
+                        atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invert(), term.matchDirection(), term.frameLocation, alternativeFrameLocation);
                         if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset - uncheckAmount, term.matchDirection()))
                             return error;
-                        atomParentheticalAssertionEnd(0, term.parentheses.lastSubpatternId, term.frameLocation, term.quantityMaxCount, term.quantityType);
+                        atomParentheticalAssertionEnd(term.parentheses.lastSubpatternId, term.frameLocation, term.quantityMaxCount, term.quantityType);
                         if (uncheckAmount) {
                             checkInput(uncheckAmount);
                             currentCountAlreadyChecked += uncheckAmount;
@@ -2627,11 +2725,11 @@ public:
                                 haveCheckedInput(checkedCountForLookbehind);
                             }
                         }
-                        atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.parentheses.disjunction->m_minimumSize, term.invert(), term.matchDirection(), term.frameLocation, alternativeFrameLocation);
+                        atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invert(), term.matchDirection(), term.frameLocation, alternativeFrameLocation);
 
                         if (auto error = emitDisjunction(term.parentheses.disjunction, checkedCountForLookbehind, positiveInputOffset + minimumSize, term.matchDirection()))
                             return error;
-                        atomParentheticalAssertionEnd(0, term.parentheses.lastSubpatternId, term.frameLocation, term.quantityMaxCount, term.quantityType);
+                        atomParentheticalAssertionEnd(term.parentheses.lastSubpatternId, term.frameLocation, term.quantityMaxCount, term.quantityType);
 
                         if (uncheckAmount) {
                             checkInput(uncheckAmount);
@@ -2864,6 +2962,7 @@ void ByteTermDumper::dumpTerm(size_t idx, ByteTerm term)
         dumpMatchDirection(term);
         break;
     case ByteTerm::Type::BackReference:
+        //  Need to update this for named capture group back references
         outputTermIndexAndNest(idx, m_nesting);
         out.print("BackReference #", term.subpatternId());
         dumpInputPosition(term);

@@ -1022,9 +1022,6 @@
 7495 WIN GLES : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
 7495 OpenGL : EGLContextSharingTestNoFixture.InactiveThreadDoesntPreventCleanup/* = SKIP
 7495 WIN GLES : EGLContextSharingTestNoFixture.InactiveThreadDoesntPreventCleanup/* = SKIP
-// Also causes crashes/failures in other tests on Pixel 4 and Win Intel
-7602 PIXEL4ORXL GLES : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
-7602 WIN INTEL VULKAN : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
 
 7546 LINUX VULKAN : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
 

@@ -609,7 +609,11 @@ void WebChromeClient::invalidateRootView(const IntRect&)
 
 void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
 {
-    if (Document* document = m_page.corePage()->mainFrame().document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    if (Document* document = localMainFrame->document()) {
         if (document->printing())
             return;
     }
@@ -619,7 +623,11 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect)
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
 {
-    if (Document* document = m_page.corePage()->mainFrame().document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    if (Document* document = localMainFrame->document()) {
         if (document->printing())
             return;
     }

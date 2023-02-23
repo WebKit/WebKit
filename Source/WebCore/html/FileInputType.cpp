@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2004-2020 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -253,13 +253,17 @@ String FileInputType::firstElementPathForInputValue() const
     return makeString("C:\\fakepath\\", m_fileList->file(0).name());
 }
 
-void FileInputType::setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection)
+void FileInputType::setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     // FIXME: Should we clear the file list, or replace it with a new empty one here? This is observable from JavaScript through custom properties.
+    if (!valueChanged)
+        return;
+    
     m_fileList->clear();
     m_icon = nullptr;
     ASSERT(element());
     element()->invalidateStyleForSubtree();
+    element()->updateValidity();
 }
 
 void FileInputType::createShadowSubtree()

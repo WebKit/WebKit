@@ -705,6 +705,10 @@
 (deny mach-lookup (with no-report)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service"))
 
+;; See <rdar://103181433>
+(allow mach-lookup
+    (global-name "com.apple.audio.AudioSession"))
+
 #if !ENABLE(CFPREFS_DIRECT_MODE)
 (allow mach-lookup
     (global-name "com.apple.cfprefsd.agent"))

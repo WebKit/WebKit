@@ -1,0 +1,46 @@
+This is a popover
+
+first button
+This is a popover
+
+This is a popover
+
+button
+This is a popover
+
+autofocus button
+This is a popover with autofocus on a tabindex=0 element
+
+button
+This is a popover
+
+autofocus button  second autofocus button
+This is a popover
+
+autofocus button  second autofocus button
+
+FAIL Popover focus test: default behavior - popover is not focused assert_false: expected false got true
+FAIL Popover button click focus test: default behavior - popover is not focused assert_false: popover should start out hidden expected false got true
+PASS Popover corner cases test: default behavior - popover is not focused
+FAIL Popover focus test: autofocus popover assert_equals: autofocus popover activated by popover.showPopover() expected Element node <div popover="" data-test="autofocus popover" autofocus="... but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus popover assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: autofocus popover assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: autofocus empty popover assert_equals: autofocus empty popover activated by popover.showPopover() expected Element node <div popover="" data-test="autofocus empty popover" autof... but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus empty popover assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: autofocus empty popover assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: autofocus popover with button assert_equals: autofocus popover with button activated by popover.showPopover() expected Element node <div popover="" data-test="autofocus popover with button"... but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus popover with button assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: autofocus popover with button assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: autofocus child assert_equals: autofocus child activated by popover.showPopover() expected Element node <button autofocus="" class="should-be-focused">autofocus ... but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus child assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: autofocus child assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: autofocus on tabindex=0 element assert_equals: autofocus on tabindex=0 element activated by popover.showPopover() expected Element node <p autofocus="" tabindex="0" class="should-be-focused">Th... but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus on tabindex=0 element assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: autofocus on tabindex=0 element assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: autofocus multiple children assert_equals: autofocus multiple children activated by popover.showPopover() expected Element node <button autofocus="" class="should-be-focused">autofocus ... but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus multiple children assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: autofocus multiple children assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: autofocus popover and multiple autofocus children assert_equals: autofocus popover and multiple autofocus children activated by popover.showPopover() expected Element node <div popover="" autofocus="" tabindex="-1" data-test="aut... but got Element node <button id="priorFocus"></button>
+FAIL Popover button click focus test: autofocus popover and multiple autofocus children assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: autofocus popover and multiple autofocus children assert_false: popover should start out hidden expected false got true
+

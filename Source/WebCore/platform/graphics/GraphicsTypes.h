@@ -101,7 +101,7 @@ enum class DocumentMarkerLineStyleMode : uint8_t {
 
 struct DocumentMarkerLineStyle {
     DocumentMarkerLineStyleMode mode;
-    bool shouldUseDarkAppearance { false };
+    Color color;
 };
 
 // Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.

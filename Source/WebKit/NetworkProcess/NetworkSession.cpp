@@ -668,6 +668,10 @@ bool NetworkSession::hasServiceWorkerDatabasePath() const
     return m_serviceWorkerInfo && !m_serviceWorkerInfo->databasePath.isEmpty();
 }
 
+void NetworkSession::requestBackgroundFetchPermission(const ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
+{
+    m_networkProcess->requestBackgroundFetchPermission(m_sessionID, origin, WTFMove(callback));
+}
 #endif // ENABLE(SERVICE_WORKER)
 
 WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()

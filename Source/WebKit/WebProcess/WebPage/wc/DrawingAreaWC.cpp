@@ -48,8 +48,8 @@ DrawingAreaWC::DrawingAreaWC(WebPage& webPage, const WebPageCreationParameters& 
     : DrawingArea(DrawingAreaType::WC, parameters.drawingAreaIdentifier, webPage)
     , m_remoteWCLayerTreeHostProxy(makeUnique<RemoteWCLayerTreeHostProxy>(webPage, parameters.usesOffscreenRendering))
     , m_layerFactory(*this)
-    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient))
     , m_updateRenderingTimer(*this, &DrawingAreaWC::updateRendering)
+    , m_rootLayer(GraphicsLayer::create(graphicsLayerFactory(), this->m_rootLayerClient))
     , m_commitQueue(WorkQueue::create("DrawingAreaWC CommitQueue"_s))
 {
     m_rootLayer->setName(MAKE_STATIC_STRING_IMPL("drawing area root"));

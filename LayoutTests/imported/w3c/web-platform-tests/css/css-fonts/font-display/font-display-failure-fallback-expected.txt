@@ -1,4 +1,4 @@
 hello
 
-PASS Fallback for font failure period
+FAIL Fallback for font failure period assert_equals: first source should be loaded expected 1 but got 0
 

@@ -2816,6 +2816,8 @@
 		0F174AA2142A4CB60039250F /* APIGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIGeometry.h; sourceTree = "<group>"; };
 		0F174AA6142AAC610039250F /* WKGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeometry.cpp; sourceTree = "<group>"; };
 		0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayLinkObserverID.h; sourceTree = "<group>"; };
+		0F25C49F29A5DF8E00D2CF5A /* RemoteLayerTreeEventDispatcher.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerTreeEventDispatcher.cpp; sourceTree = "<group>"; };
+		0F25C4A029A5DF8E00D2CF5A /* RemoteLayerTreeEventDispatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeEventDispatcher.h; sourceTree = "<group>"; };
 		0F2E0DF628F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteScrollingCoordinatorProxyMac.mm; sourceTree = "<group>"; };
 		0F2E0DF728F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinatorProxyMac.h; sourceTree = "<group>"; };
 		0F2E0DF828F0D04D006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDrawingAreaProxyMac.mm; sourceTree = "<group>"; };
@@ -13643,6 +13645,8 @@
 			children = (
 				0F2E0DF928F0D04E006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.h */,
 				0F2E0DF828F0D04D006B9079 /* RemoteLayerTreeDrawingAreaProxyMac.mm */,
+				0F25C49F29A5DF8E00D2CF5A /* RemoteLayerTreeEventDispatcher.cpp */,
+				0F25C4A029A5DF8E00D2CF5A /* RemoteLayerTreeEventDispatcher.h */,
 				0F2E0DF728F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.h */,
 				0F2E0DF628F0CD35006B9079 /* RemoteScrollingCoordinatorProxyMac.mm */,
 				0FF7CE8A2901FDAC00EA62D6 /* RemoteScrollingTreeMac.h */,
@@ -16581,7 +16585,7 @@
 				"$(SRCROOT)/MigratedHeaders-input.xcfilelist",
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/migrate-headers.py",
+				"$(WEBKITLEGACY_PRIVATE_HEADERS_DIR)/migrate-headers.py",
 				"$(SRCROOT)/Scripts/postprocess-header-rule",
 			);
 			name = "Migrate WebCore and WebKitLegacy Headers";

@@ -230,6 +230,7 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
         [m_renderCommandEncoder setDepthStencilState:pipeline.depthStencilState()];
     [m_renderCommandEncoder setCullMode:pipeline.cullMode()];
     [m_renderCommandEncoder setFrontFacingWinding:pipeline.frontFace()];
+    [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
 }
 
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
@@ -240,7 +241,7 @@ void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, u
 
 void RenderPassEncoder::setStencilReference(uint32_t reference)
 {
-    UNUSED_PARAM(reference);
+    [m_renderCommandEncoder setStencilReferenceValue:reference];
 }
 
 void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, uint64_t offset, uint64_t size)

@@ -1988,8 +1988,7 @@ class WebCore::TransformOperations {
     std::optional<WebCore::SourceBrush::Brush> brush();
 }
 
-#if ENABLE(GPU_PROCESS)
-
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 header: <WebCore/GraphicsContextGLAttributes.h>
 [CustomHeader] enum class WebCore::GraphicsContextGLPowerPreference : uint8_t {
     Default,
@@ -2012,7 +2011,6 @@ struct WebCore::GraphicsContextGLAttributes {
     bool preserveDrawingBuffer;
     bool failIfMajorPerformanceCaveat;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
-    bool failPlatformContextCreationForTesting;
     bool shareResources;
     bool noExtensions;
     float devicePixelRatio;
@@ -2028,8 +2026,9 @@ struct WebCore::GraphicsContextGLAttributes {
 #if ENABLE(WEBXR)
     bool xrCompatible;
 #endif
+    bool failPlatformContextCreationForTesting;
 };
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 [RefCounted] class WebCore::TimingFunction subclasses {
   WebCore::LinearTimingFunction,
@@ -2975,17 +2974,27 @@ header: <WebCore/ScrollingStateNode.h>
 };
 
 #if ENABLE(ENCRYPTED_MEDIA)
+
 enum class WebCore::CDMEncryptionScheme : bool
+
 struct WebCore::CDMMediaCapability {
     String contentType;
     String robustness;
     std::optional<WebCore::CDMEncryptionScheme> encryptionScheme;
 };
+
 enum class WebCore::CDMSessionType : uint8_t {
     Temporary,
     PersistentUsageRecord,
     PersistentLicense
 };
+
+struct WebCore::CDMRestrictions {
+    bool distinctiveIdentifierDenied;
+    bool persistentStateDenied;
+    HashSet<WebCore::CDMSessionType, IntHash<WebCore::CDMSessionType>, WTF::StrongEnumHashTraits<WebCore::CDMSessionType>> deniedSessionTypes;
+}
+
 #endif
 
 struct WebCore::MediaSelectionOption {
@@ -3590,7 +3599,7 @@ header: <WebCore/GraphicsTypes.h>
 header: <WebCore/GraphicsTypes.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DocumentMarkerLineStyle {
     WebCore::DocumentMarkerLineStyleMode mode;
-    bool shouldUseDarkAppearance;
+    WebCore::Color color;
 };
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder]  enum class WebCore::ShadowRadiusMode : bool;
@@ -3646,9 +3655,8 @@ header: <WebCore/ImageDecoder.h>
 
 header: <WebCore/DisplayListItems.h>
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDotsForDocumentMarker {
-    WebCore::FloatRect m_rect;
-    uint8_t m_styleMode;
-    bool m_styleShouldUseDarkAppearance;
+    WebCore::FloatRect rect();
+    WebCore::DocumentMarkerLineStyle style();
 };
 
 [Nested] enum class WebCore::ImageOrientation::Orientation : int {
@@ -4133,6 +4141,83 @@ class WebCore::RealtimeMediaSourceCapabilities {
 
 #endif
 
+enum class WebCore::PlatformVideoColorPrimaries : uint8_t {
+    Bt709,
+    Bt470bg,
+    Smpte170m,
+    Bt470m,
+    Smpte240m,
+    Film,
+    Bt2020,
+    SmpteSt4281,
+    SmpteRp431,
+    SmpteEg432,
+    JedecP22Phosphors,
+    Unspecified,
+};
+
+enum class WebCore::PlatformVideoTransferCharacteristics : uint8_t {
+    Bt709,
+    Smpte170m,
+    Iec6196621,
+    Gamma22curve,
+    Gamma28curve,
+    Smpte240m,
+    Linear,
+    Log,
+    LogSqrt,
+    Iec6196624,
+    Bt1361ExtendedColourGamut,
+    Bt2020_10bit,
+    Bt2020_12bit,
+    SmpteSt2084,
+    SmpteSt4281,
+    AribStdB67Hlg,
+    Unspecified
+};
+
+enum class WebCore::PlatformVideoMatrixCoefficients : uint8_t {
+    Rgb,
+    Bt709,
+    Bt470bg,
+    Smpte170m,
+    Smpte240m,
+    Fcc,
+    YCgCo,
+    Bt2020NonconstantLuminance,
+    Bt2020ConstantLuminance,
+    Unspecified,
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PlatformVideoColorSpace {
+    std::optional<WebCore::PlatformVideoColorPrimaries> primaries;
+    std::optional<WebCore::PlatformVideoTransferCharacteristics> transfer;
+    std::optional<WebCore::PlatformVideoMatrixCoefficients> matrix;
+    std::optional<bool> fullRange;
+};
+
+#if ENABLE(VIDEO)
+
+struct WebCore::PlatformTrackConfiguration {
+    String codec;
+};
+
+struct WebCore::PlatformAudioTrackConfiguration : WebCore::PlatformTrackConfiguration {
+    uint32_t sampleRate;
+    uint32_t numberOfChannels;
+    uint64_t bitrate;
+};
+
+struct WebCore::PlatformVideoTrackConfiguration : WebCore::PlatformTrackConfiguration {
+    uint32_t width;
+    uint32_t height;
+    WebCore::PlatformVideoColorSpace colorSpace;
+    double framerate;
+    uint64_t bitrate;
+};
+
+#endif
+
 #if ENABLE(WEB_RTC)
 
 header: <WebCore/RTCDataChannelHandler.h>
@@ -4255,7 +4340,7 @@ enum class WebCore::ModalContainerObservationPolicy : bool
 
 enum class WebCore::AllowsContentJavaScript : bool
 
-[OptionSet] enum class WebCore::NetworkConnectionIntegrity : uint8_t {
+[OptionSet] enum class WebCore::NetworkConnectionIntegrity : uint16_t {
     Enabled,
     HTTPSFirst,
     HTTPSOnly,
@@ -4264,4 +4349,41 @@ enum class WebCore::AllowsContentJavaScript : bool
     WebSearchContent,
     EnhancedTelemetry,
     RequestValidation,
+    SanitizeLookalikeCharacters,
 };
+
+enum class WebCore::ViolationReportType : uint8_t {
+    COEPInheritenceViolation,
+    CORPViolation,
+    ContentSecurityPolicy,
+    CrossOriginOpenerPolicy,
+    Deprecation,
+    StandardReportingAPIViolation,
+    Test
+};
+
+enum class WebCore::COEPDisposition : bool;
+
+[RefCounted] class WebCore::COEPInheritenceViolationReportBody {
+    WebCore::COEPDisposition m_disposition;
+    URL m_blockedURL;
+    String m_type;
+};
+
+[RefCounted] class WebCore::CORPViolationReportBody {
+    WebCore::COEPDisposition m_disposition;
+    URL m_blockedURL;
+    WebCore::FetchOptionsDestination m_destination;
+};
+
+[RefCounted] class WebCore::ReportBody subclasses {
+  WebCore::CSPViolationReportBody,
+  WebCore::COEPInheritenceViolationReportBody,
+  WebCore::CORPViolationReportBody,
+  WebCore::DeprecationReportBody
+  WebCore::TestReportBody
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceImage {
+    WebCore::RenderingResourceIdentifier imageIdentifier();
+}

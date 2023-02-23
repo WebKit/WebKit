@@ -149,7 +149,8 @@ static void buildRendererHighlight(RenderObject* renderer, const InspectorOverla
 
     highlight.setDataFromConfig(highlightConfig);
     FrameView* containingView = containingFrame->view();
-    FrameView* mainView = containingFrame->page()->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
+    FrameView* mainView = localMainFrame ? localMainFrame->view() : nullptr;
 
     // (Legacy)RenderSVGRoot should be highlighted through the isBox() code path, all other SVG elements should just dump their absoluteQuads().
     bool isSVGRenderer = renderer->node() && renderer->node()->isSVGElement() && !renderer->isSVGRootOrLegacySVGRoot();
@@ -322,7 +323,8 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
         return;
 
     FrameView* containingView = containingFrame->view();
-    FrameView* mainView = containingFrame->page()->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(containingFrame->page()->mainFrame());
+    FrameView* mainView = localMainFrame ? localMainFrame->view() : nullptr;
 
     static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
 
@@ -404,7 +406,11 @@ void InspectorOverlay::paint(GraphicsContext& context)
     if (!shouldShowOverlay())
         return;
 
-    FloatSize viewportSize = m_page.mainFrame().view()->sizeForVisibleContent();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FloatSize viewportSize = localMainFrame->view()->sizeForVisibleContent();
 
     context.clearRect({ FloatPoint::zero(), viewportSize });
 
@@ -601,8 +607,12 @@ void InspectorOverlay::highlightNode(Node* node, const InspectorOverlay::Highlig
 
 void InspectorOverlay::highlightQuad(std::unique_ptr<FloatQuad> quad, const InspectorOverlay::Highlight::Config& highlightConfig)
 {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
     if (highlightConfig.usePageCoordinates)
-        *quad -= toIntSize(m_page.mainFrame().view()->scrollPosition());
+        *quad -= toIntSize(localMainFrame->view()->scrollPosition());
 
     m_quadHighlightConfig = highlightConfig;
     m_highlightQuad = WTFMove(quad);
@@ -648,7 +658,11 @@ void InspectorOverlay::update()
         return;
     }
 
-    FrameView* view = m_page.mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FrameView* view = localMainFrame->view();
     if (!view)
         return;
 
@@ -673,7 +687,11 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
     if (!m_showPaintRects)
         return;
 
-    IntRect rootRect = m_page.mainFrame().view()->contentsToRootView(enclosingIntRect(rect));
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    IntRect rootRect = localMainFrame->view()->contentsToRootView(enclosingIntRect(rect));
 
     const auto removeDelay = 250_ms;
 
@@ -845,7 +863,11 @@ void InspectorOverlay::drawPaintRects(GraphicsContext& context, const Deque<Time
 
 void InspectorOverlay::drawBounds(GraphicsContext& context, const InspectorOverlay::Highlight::Bounds& bounds)
 {
-    FrameView* pageView = m_page.mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FrameView* pageView = localMainFrame->view();
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
 
@@ -900,15 +922,18 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
     constexpr auto darkRulerColor = Color::black.colorWithAlphaByte(128);
 
     IntPoint scrollOffset;
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
 
-    FrameView* pageView = m_page.mainFrame().view();
+    FrameView* pageView = localMainFrame->view();
     if (!pageView->delegatesScrollingToNativeView())
         scrollOffset = pageView->visibleContentRect().location();
 
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
     float pageScaleFactor = m_page.pageScaleFactor();
-    float pageZoomFactor = m_page.mainFrame().pageZoomFactor();
+    float pageZoomFactor = localMainFrame->pageZoomFactor();
 
     float pageFactor = pageZoomFactor * pageScaleFactor;
     float scrollX = scrollOffset.x() * pageScaleFactor;
@@ -1240,7 +1265,11 @@ Path InspectorOverlay::drawElementTitle(GraphicsContext& context, Node& node, co
         }
     }
 
-    FrameView* pageView = m_page.mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return { };
+
+    FrameView* pageView = localMainFrame->view();
 
     FloatSize viewportSize = pageView->sizeForVisibleContent();
     FloatSize contentInset(0, pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset));
@@ -1508,8 +1537,11 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     }
 
     constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(230);
-    
-    FrameView* pageView = m_page.mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return { };
+
+    FrameView* pageView = localMainFrame->view();
     if (!pageView)
         return { };
     FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };

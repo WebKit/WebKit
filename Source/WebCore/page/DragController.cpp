@@ -216,10 +216,11 @@ std::optional<DragOperation> DragController::dragEntered(DragData&& dragData)
 void DragController::dragExited(DragData&& dragData)
 {
     disallowFileAccessIfNeeded(dragData);
-
-    auto& mainFrame = m_page.mainFrame();
-    if (mainFrame.view())
-        mainFrame.eventHandler().cancelDragAndDrop(createMouseEvent(dragData), Pasteboard::create(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+    if (localMainFrame->view())
+        localMainFrame->eventHandler().cancelDragAndDrop(createMouseEvent(dragData), Pasteboard::create(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
     mouseMovedIntoDocument(nullptr);
     if (m_fileInputElementUnderMouse)
         m_fileInputElementUnderMouse->setCanReceiveDroppedFiles(false);
@@ -251,7 +252,11 @@ bool DragController::performDragOperation(DragData&& dragData)
     SetForScope isPerformingDrop(m_isPerformingDrop, true);
     IgnoreSelectionChangeForScope ignoreSelectionChanges { m_page.focusController().focusedOrMainFrame() };
 
-    m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    m_documentUnderMouse = localMainFrame->documentAtPoint(dragData.clientPosition());
 
     disallowFileAccessIfNeeded(dragData);
 
@@ -261,10 +266,10 @@ bool DragController::performDragOperation(DragData&& dragData)
 
     if ((m_dragDestinationActionMask.contains(DragDestinationAction::DHTML)) && dragIsHandledByDocument(m_dragHandlingMethod)) {
         client().willPerformDragDestinationAction(DragDestinationAction::DHTML, dragData);
-        Ref<Frame> mainFrame(m_page.mainFrame());
+        Ref<Frame> protectedLocalMainFrame(*localMainFrame);
         bool preventedDefault = false;
-        if (mainFrame->view())
-            preventedDefault = mainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), Pasteboard::create(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
+        if (protectedLocalMainFrame->view())
+            preventedDefault = protectedLocalMainFrame->eventHandler().performDragAndDrop(createMouseEvent(dragData), Pasteboard::create(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
         if (preventedDefault) {
             clearDragCaret();
             m_documentUnderMouse = nullptr;
@@ -292,10 +297,10 @@ bool DragController::performDragOperation(DragData&& dragData)
     client().willPerformDragDestinationAction(DragDestinationAction::Load, dragData);
     ResourceRequest resourceRequest { urlString };
     resourceRequest.setIsAppInitiated(false);
-    FrameLoadRequest frameLoadRequest { m_page.mainFrame(), resourceRequest };
+    FrameLoadRequest frameLoadRequest { *localMainFrame, resourceRequest };
     frameLoadRequest.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
-    m_page.mainFrame().loader().load(WTFMove(frameLoadRequest));
+    localMainFrame->loader().load(WTFMove(frameLoadRequest));
     return true;
 }
 
@@ -312,7 +317,10 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
 
 std::optional<DragOperation> DragController::dragEnteredOrUpdated(DragData&& dragData)
 {
-    mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return std::nullopt;
+    mouseMovedIntoDocument(localMainFrame->documentAtPoint(dragData.clientPosition()));
 
     m_dragDestinationActionMask = dragData.dragDestinationActionMask();
     if (m_dragDestinationActionMask.isEmpty()) {
@@ -504,7 +512,10 @@ OptionSet<DragSourceAction> DragController::delegateDragSourceAction(const IntPo
 
 std::optional<DragOperation> DragController::operationForLoad(const DragData& dragData)
 {
-    Document* document = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return std::nullopt;
+    Document* document = localMainFrame->documentAtPoint(dragData.clientPosition());
 
     bool pluginDocumentAcceptsDrags = false;
     if (auto* pluginDocument = dynamicDowncast<PluginDocument>(document)) {
@@ -659,13 +670,16 @@ bool DragController::concludeEditDrag(const DragData& dragData)
 
 bool DragController::canProcessDrag(const DragData& dragData)
 {
-    IntPoint point = m_page.mainFrame().view()->windowToContents(dragData.clientPosition());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    IntPoint point = localMainFrame->view()->windowToContents(dragData.clientPosition());
     HitTestResult result = HitTestResult(point);
-    if (!m_page.mainFrame().contentRenderer())
+    if (!localMainFrame->contentRenderer())
         return false;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent };
-    result = m_page.mainFrame().eventHandler().hitTestResultAtPoint(point, hitType);
+    result = localMainFrame->eventHandler().hitTestResultAtPoint(point, hitType);
 
     auto* dragNode = result.innerNonSharedNode();
     if (!dragNode)
@@ -723,13 +737,17 @@ static std::optional<DragOperation> defaultOperationForDrag(OptionSet<DragOperat
 bool DragController::tryDHTMLDrag(const DragData& dragData, std::optional<DragOperation>& operation)
 {
     ASSERT(m_documentUnderMouse);
-    Ref<Frame> mainFrame(m_page.mainFrame());
-    RefPtr<FrameView> viewProtector = mainFrame->view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    Ref<Frame> protectedLocalMainFrame(*localMainFrame);
+    RefPtr<FrameView> viewProtector = protectedLocalMainFrame->view();
     if (!viewProtector)
         return false;
 
     auto sourceOperationMask = dragData.draggingSourceOperationMask();
-    auto targetResponse = mainFrame->eventHandler().updateDragAndDrop(createMouseEvent(dragData), [&dragData]() {
+    auto targetResponse = protectedLocalMainFrame->eventHandler().updateDragAndDrop(createMouseEvent(dragData), [&dragData]() {
         return Pasteboard::create(dragData);
     }, sourceOperationMask, dragData.containsFiles());
     if (!targetResponse.accept)
@@ -1355,9 +1373,12 @@ void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& 
     m_didInitiateDrag = true;
     m_dragInitiator = frame.document();
 
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
-    Ref<Frame> mainFrameProtector(m_page.mainFrame());
-    RefPtr<FrameView> viewProtector = mainFrameProtector->view();
+    Ref<Frame> protectedLocalMainFrame(*localMainFrame);
+    RefPtr<FrameView> viewProtector = protectedLocalMainFrame->view();
 
     auto mouseDownPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDownPoint));
     auto mouseDraggedPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDraggedPoint));
@@ -1378,9 +1399,12 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
 {
     m_didInitiateDrag = true;
     m_dragInitiator = frame.document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
-    Ref<Frame> frameProtector(m_page.mainFrame());
-    RefPtr<FrameView> viewProtector = frameProtector->view();
+    Ref<Frame> protectedLocalMainFrame(*localMainFrame);
+    RefPtr<FrameView> viewProtector = protectedLocalMainFrame->view();
 
     DragItem item;
     item.image = WTFMove(image);
@@ -1418,9 +1442,9 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
             item.url = frame.document()->completeURL(stripLeadingAndTrailingHTMLSpaces(link->getAttribute(HTMLNames::hrefAttr)));
         }
     }
-    client().startDrag(WTFMove(item), *state.dataTransfer, frameProtector.get());
+    client().startDrag(WTFMove(item), *state.dataTransfer, protectedLocalMainFrame.get());
     // DragClient::startDrag can cause our Page to dispear, deallocating |this|.
-    if (!frameProtector->page())
+    if (!protectedLocalMainFrame->page())
         return;
 
     cleanupAfterSystemDrag();
@@ -1564,7 +1588,10 @@ void DragController::finalizeDroppedImagePlaceholder(HTMLImageElement& placehold
 // Manual drag caret manipulation
 void DragController::placeDragCaret(const IntPoint& windowPoint)
 {
-    mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(windowPoint));
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+    mouseMovedIntoDocument(localMainFrame->documentAtPoint(windowPoint));
     if (!m_documentUnderMouse)
         return;
     Frame* frame = m_documentUnderMouse->frame();

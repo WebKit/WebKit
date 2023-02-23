@@ -616,6 +616,8 @@ constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPas
     {RenderPassClosureReason::GLFinish, "Render pass closed due to glFinish()"},
     {RenderPassClosureReason::EGLSwapBuffers, "Render pass closed due to eglSwapBuffers()"},
     {RenderPassClosureReason::EGLWaitClient, "Render pass closed due to eglWaitClient()"},
+    {RenderPassClosureReason::SurfaceUnMakeCurrent,
+     "Render pass closed due to onSurfaceUnMakeCurrent()"},
     {RenderPassClosureReason::FramebufferBindingChange,
      "Render pass closed due to framebuffer binding change"},
     {RenderPassClosureReason::FramebufferChange, "Render pass closed due to framebuffer change"},
@@ -1175,7 +1177,7 @@ void ContextVk::onDestroy(const gl::Context *context)
     (void)finishImpl(RenderPassClosureReason::ContextDestruction);
 
     // Everything must be finished
-    ASSERT(!mRenderer->hasUnfinishedUse(mSubmittedResourceUse));
+    ASSERT(mRenderer->hasResourceUseFinished(mSubmittedResourceUse));
 
     VkDevice device = getDevice();
 
@@ -1561,7 +1563,7 @@ angle::Result ContextVk::setupIndexedDraw(const gl::Context *context,
             vk::BufferHelper &bufferHelper = bufferVk->getBuffer();
 
             if (bufferHelper.isHostVisible() &&
-                !mRenderer->hasUnfinishedUse(bufferHelper.getResourceUse()))
+                mRenderer->hasResourceUseFinished(bufferHelper.getResourceUse()))
             {
                 uint8_t *src = nullptr;
                 ANGLE_TRY(
@@ -3641,9 +3643,9 @@ angle::Result ContextVk::checkCompletedGpuEvents()
 
     for (GpuEventQuery &eventQuery : mInFlightGpuEventQueries)
     {
-        ASSERT(!mRenderer->hasUnsubmittedUse(eventQuery.queryHelper.getResourceUse()));
+        ASSERT(mRenderer->hasResourceUseSubmitted(eventQuery.queryHelper.getResourceUse()));
         // Only check the timestamp query if the submission has finished.
-        if (mRenderer->hasUnfinishedUse(eventQuery.queryHelper.getResourceUse()))
+        if (!mRenderer->hasResourceUseFinished(eventQuery.queryHelper.getResourceUse()))
         {
             break;
         }
@@ -5331,6 +5333,15 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 // as some optimizations in non-draw commands require the render pass to remain
                 // open, such as invalidate or blit. Note that we always start a new command buffer
                 // because we currently can only support one open RenderPass at a time.
+                //
+                // The render pass is not closed if binding is changed to the same framebuffer as
+                // before.
+                if (hasActiveRenderPass() && hasStartedRenderPassWithQueueSerial(
+                                                 drawFramebufferVk->getLastRenderPassQueueSerial()))
+                {
+                    break;
+                }
+
                 onRenderPassFinished(RenderPassClosureReason::FramebufferBindingChange);
                 if (getFeatures().preferSubmitAtFBOBoundary.enabled &&
                     mRenderPassCommands->started())
@@ -5639,6 +5650,57 @@ angle::Result ContextVk::onUnMakeCurrent(const gl::Context *context)
     {
         releaseQueueSerialIndex();
     }
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::onSurfaceUnMakeCurrent(WindowSurfaceVk *surface)
+{
+    // It is possible to destroy "WindowSurfaceVk" while not all rendering commands are submitted:
+    // 1. Make "WindowSurfaceVk" current.
+    // 2. Draw something.
+    // 3. Make other Surface current (same Context).
+    // 4. (optional) Draw something.
+    // 5. Delete "WindowSurfaceVk".
+    // 6. UnMake the Context from current.
+    // Flush all command to the GPU while still having access to the Context.
+
+    // The above "onUnMakeCurrent()" may have already been called.
+    if (mCurrentQueueSerialIndex != kInvalidQueueSerialIndex)
+    {
+        // May be nullptr if only used as a readSurface.
+        ASSERT(mCurrentWindowSurface == surface || mCurrentWindowSurface == nullptr);
+        ANGLE_TRY(flushImpl(nullptr, RenderPassClosureReason::SurfaceUnMakeCurrent));
+        mCurrentWindowSurface = nullptr;
+    }
+
+    ASSERT(mCurrentWindowSurface == nullptr);
+    ASSERT(mOutsideRenderPassCommands->empty() && mRenderPassCommands->empty());
+    ASSERT(!mHasWaitSemaphoresPendingSubmission);
+    ASSERT(mLastSubmittedQueueSerial == mLastFlushedQueueSerial);
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::onSurfaceUnMakeCurrent(OffscreenSurfaceVk *surface)
+{
+    // It is possible to destroy "OffscreenSurfaceVk" while RenderPass is still opened:
+    // 1. Make "OffscreenSurfaceVk" current.
+    // 2. Draw something with RenderPass.
+    // 3. Make other Surface current (same Context)
+    // 4. Delete "OffscreenSurfaceVk".
+    // 5. UnMake the Context from current.
+    // End RenderPass to avoid crash in the "RenderPassCommandBufferHelper::endRenderPass()".
+    // Flush commands unconditionally even if surface is not used in the RenderPass to fix possible
+    // problems related to other accesses. "flushImpl()" is not required because
+    // "OffscreenSurfaceVk" uses GC.
+
+    // The above "onUnMakeCurrent()" may have already been called.
+    if (mCurrentQueueSerialIndex != kInvalidQueueSerialIndex)
+    {
+        ANGLE_TRY(flushCommandsAndEndRenderPass(RenderPassClosureReason::SurfaceUnMakeCurrent));
+    }
+
+    ASSERT(mOutsideRenderPassCommands->empty() && mRenderPassCommands->empty());
+    ASSERT(!mHasWaitSemaphoresPendingSubmission);
     return angle::Result::Continue;
 }
 

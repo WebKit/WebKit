@@ -546,11 +546,15 @@ void Internals::resetToConsistentState(Page& page)
 
     page.setDefersLoading(false);
 
-    page.mainFrame().setTextZoomFactor(1.0f);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    localMainFrame->setTextZoomFactor(1.0f);
 
     page.setCompositingPolicyOverride(WebCore::CompositingPolicy::Normal);
 
-    FrameView* mainFrameView = page.mainFrame().view();
+    FrameView* mainFrameView = localMainFrame->view();
     if (mainFrameView) {
         page.setHeaderHeight(0);
         page.setFooterHeight(0);
@@ -568,11 +572,11 @@ void Internals::resetToConsistentState(Page& page)
     WTF::clearDefaultPortForProtocolMapForTesting();
     overrideUserPreferredLanguages(Vector<String>());
     WebCore::DeprecatedGlobalSettings::setUsesOverlayScrollbars(false);
-    if (!page.mainFrame().editor().isContinuousSpellCheckingEnabled())
-        page.mainFrame().editor().toggleContinuousSpellChecking();
-    if (page.mainFrame().editor().isOverwriteModeEnabled())
-        page.mainFrame().editor().toggleOverwriteModeEnabled();
-    page.mainFrame().loader().clearTestingOverrides();
+    if (!localMainFrame->editor().isContinuousSpellCheckingEnabled())
+        localMainFrame->editor().toggleContinuousSpellChecking();
+    if (localMainFrame->editor().isOverwriteModeEnabled())
+        localMainFrame->editor().toggleOverwriteModeEnabled();
+    localMainFrame->loader().clearTestingOverrides();
     page.applicationCacheStorage().setDefaultOriginQuota(ApplicationCacheStorage::noQuota());
 #if ENABLE(VIDEO)
     page.group().ensureCaptionPreferences().setCaptionDisplayMode(CaptionUserPreferences::ForcedOnly);
@@ -2928,8 +2932,10 @@ bool Internals::isElementAlive(uint64_t elementIdentifier) const
 
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
-    if (auto* page = document.page())
-        return page->mainFrame().loader().frameID().object().toUInt64();
+    if (auto* page = document.page()) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame()))
+            return localMainFrame->loader().frameID().object().toUInt64();
+    }
     return 0;
 }
 
@@ -2951,7 +2957,8 @@ String Internals::serviceWorkerClientInternalIdentifier(const Document& document
 RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
 {
     auto* inspectedPage = contextDocument()->frame()->page();
-    auto* window = inspectedPage->mainFrame().document()->domWindow();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(inspectedPage->mainFrame());
+    auto* window = localMainFrame ? localMainFrame->document()->domWindow() : nullptr;
     auto frontendWindowProxy = window->open(*window, *window, url, emptyAtom(), emptyString()).releaseReturnValue();
     m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<DOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;

@@ -183,7 +183,7 @@ enum class ParamType
     Tegl_DevicePointer,
     Tegl_DisplayPointer,
     Tegl_StreamPointer,
-    Tegl_SyncPointer,
+    Tegl_SyncID,
     TvoidConstPointer,
     TvoidConstPointerPointer,
     TvoidPointer,
@@ -360,7 +360,7 @@ union ParamValue
     egl::Device *egl_DevicePointerVal;
     egl::Display *egl_DisplayPointerVal;
     egl::Stream *egl_StreamPointerVal;
-    egl::Sync *egl_SyncPointerVal;
+    egl::SyncID egl_SyncIDVal;
     const void *voidConstPointerVal;
     const void *const *voidConstPointerPointerVal;
     void *voidPointerVal;
@@ -1465,9 +1465,9 @@ inline egl::Stream *GetParamVal<ParamType::Tegl_StreamPointer, egl::Stream *>(
 }
 
 template <>
-inline egl::Sync *GetParamVal<ParamType::Tegl_SyncPointer, egl::Sync *>(const ParamValue &value)
+inline egl::SyncID GetParamVal<ParamType::Tegl_SyncID, egl::SyncID>(const ParamValue &value)
 {
-    return value.egl_SyncPointerVal;
+    return value.egl_SyncIDVal;
 }
 
 template <>
@@ -1839,8 +1839,8 @@ T AccessParamValue(ParamType paramType, const ParamValue &value)
             return GetParamVal<ParamType::Tegl_DisplayPointer, T>(value);
         case ParamType::Tegl_StreamPointer:
             return GetParamVal<ParamType::Tegl_StreamPointer, T>(value);
-        case ParamType::Tegl_SyncPointer:
-            return GetParamVal<ParamType::Tegl_SyncPointer, T>(value);
+        case ParamType::Tegl_SyncID:
+            return GetParamVal<ParamType::Tegl_SyncID, T>(value);
         case ParamType::TvoidConstPointer:
             return GetParamVal<ParamType::TvoidConstPointer, T>(value);
         case ParamType::TvoidConstPointerPointer:
@@ -2922,9 +2922,9 @@ inline void SetParamVal<ParamType::Tegl_StreamPointer>(egl::Stream *valueIn, Par
 }
 
 template <>
-inline void SetParamVal<ParamType::Tegl_SyncPointer>(egl::Sync *valueIn, ParamValue *valueOut)
+inline void SetParamVal<ParamType::Tegl_SyncID>(egl::SyncID valueIn, ParamValue *valueOut)
 {
-    valueOut->egl_SyncPointerVal = valueIn;
+    valueOut->egl_SyncIDVal = valueIn;
 }
 
 template <>
@@ -3461,8 +3461,8 @@ void InitParamValue(ParamType paramType, T valueIn, ParamValue *valueOut)
         case ParamType::Tegl_StreamPointer:
             SetParamVal<ParamType::Tegl_StreamPointer>(valueIn, valueOut);
             break;
-        case ParamType::Tegl_SyncPointer:
-            SetParamVal<ParamType::Tegl_SyncPointer>(valueIn, valueOut);
+        case ParamType::Tegl_SyncID:
+            SetParamVal<ParamType::Tegl_SyncID>(valueIn, valueOut);
             break;
         case ParamType::TvoidConstPointer:
             SetParamVal<ParamType::TvoidConstPointer>(valueIn, valueOut);
@@ -3504,6 +3504,7 @@ enum class ResourceIDType
     Texture,
     TransformFeedback,
     VertexArray,
+    egl_Sync,
     EnumCount,
     InvalidEnum = EnumCount
 };
@@ -3614,6 +3615,12 @@ template <>
 struct GetResourceIDTypeFromType<gl::VertexArrayID>
 {
     static constexpr ResourceIDType IDType = ResourceIDType::VertexArray;
+};
+
+template <>
+struct GetResourceIDTypeFromType<egl::SyncID>
+{
+    static constexpr ResourceIDType IDType = ResourceIDType::egl_Sync;
 };
 
 }  // namespace angle

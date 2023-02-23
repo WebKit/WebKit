@@ -32,9 +32,7 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "ImageControlsButtonPart.h"
-#import "LocalCurrentGraphicsContext.h"
 #import <pal/spi/mac/NSServicesRolloverButtonCellSPI.h>
-#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
@@ -54,16 +52,9 @@ IntSize ImageControlsButtonMac::servicesRolloverButtonCellSize()
 
 void ImageControlsButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    LocalCurrentGraphicsContext localContext(context);
-    GraphicsContextStateSaver stateSaver(context);
-
-    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
-    
-    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_servicesRolloverButtonCell.get(), view, true);
-    
-    END_BLOCK_OBJC_EXCEPTIONS
+    drawCell(context, borderRect.rect(), deviceScaleFactor, style, m_servicesRolloverButtonCell.get(), true);
 }
 
 } // namespace WebCore

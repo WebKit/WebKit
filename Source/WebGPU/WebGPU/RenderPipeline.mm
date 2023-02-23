@@ -437,8 +437,16 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     if (descriptor.vertex.bufferCount)
         mtlRenderPipelineDescriptor.vertexDescriptor = createVertexDescriptor(descriptor.vertex);
 
-    if (descriptor.primitive.nextInChain)
-        return RenderPipeline::createInvalid(*this);
+    MTLDepthClipMode mtlDepthClipMode = MTLDepthClipModeClip;
+    if (descriptor.primitive.nextInChain) {
+        if (!hasFeature(WGPUFeatureName_DepthClipControl) || descriptor.primitive.nextInChain->sType != WGPUSType_PrimitiveDepthClipControl || descriptor.primitive.nextInChain->next)
+            return RenderPipeline::createInvalid(*this);
+
+        auto* depthClipControl = reinterpret_cast<const WGPUPrimitiveDepthClipControl*>(descriptor.primitive.nextInChain);
+
+        if (depthClipControl->unclippedDepth)
+            mtlDepthClipMode = MTLDepthClipModeClamp;
+    }
 
     mtlRenderPipelineDescriptor.inputPrimitiveTopology = topologyType(descriptor.primitive.topology);
 
@@ -450,19 +458,18 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     auto mtlFrontFace = frontFace(descriptor.primitive.frontFace);
     auto mtlCullMode = cullMode(descriptor.primitive.cullMode);
 
-    // FIXME: GPUPrimitiveState.unclippedDepth
-
     MTLRenderPipelineReflection *reflection;
-    const auto& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
-    bool hasBindGroups = pipelineLayout.numberOfBindGroupLayouts() > 0;
-    id<MTLRenderPipelineState> renderPipelineState = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor options: hasBindGroups ? MTLPipelineOptionNone : MTLPipelineOptionArgumentInfo reflection:&reflection error:nil];
+    const PipelineLayout* pipelineLayout = nullptr;
+    if (descriptor.layout) {
+        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.numberOfBindGroupLayouts())
+            pipelineLayout = &layout;
+    }
+
+    id<MTLRenderPipelineState> renderPipelineState = [m_device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor options: pipelineLayout ? MTLPipelineOptionNone : MTLPipelineOptionArgumentInfo reflection:&reflection error:nil];
     if (!renderPipelineState)
         return RenderPipeline::createInvalid(*this);
 
-    if (hasBindGroups)
-        return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, depthStencilDescriptor, pipelineLayout, *this);
-
-    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, depthStencilDescriptor, reflection, *this);
+    return RenderPipeline::create(renderPipelineState, mtlPrimitiveType, mtlIndexType, mtlFrontFace, mtlCullMode, mtlDepthClipMode, depthStencilDescriptor, reflection, pipelineLayout, *this);
 }
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
@@ -474,35 +481,24 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     });
 }
 
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, MTLRenderPipelineReflection *reflection, Device& device)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode clipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, MTLRenderPipelineReflection *reflection, const PipelineLayout *pipelineLayout, Device& device)
     : m_renderPipelineState(renderPipelineState)
     , m_device(device)
     , m_primitiveType(primitiveType)
     , m_indexType(indexType)
     , m_frontFace(frontFace)
     , m_cullMode(cullMode)
+    , m_clipMode(clipMode)
     , m_depthStencilDescriptor(depthStencilDescriptor)
     , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
 #if HAVE(METAL_BUFFER_BINDING_REFLECTION)
     , m_reflection(reflection)
 #endif
+    , m_pipelineLayout(pipelineLayout)
 {
 #if !HAVE(METAL_BUFFER_BINDING_REFLECTION)
     UNUSED_PARAM(reflection);
 #endif
-}
-
-RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, const PipelineLayout &pipelineLayout, Device& device)
-    : m_renderPipelineState(renderPipelineState)
-    , m_device(device)
-    , m_primitiveType(primitiveType)
-    , m_indexType(indexType)
-    , m_frontFace(frontFace)
-    , m_cullMode(cullMode)
-    , m_depthStencilDescriptor(depthStencilDescriptor)
-    , m_depthStencilState(depthStencilDescriptor ? [device.device() newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil)
-    , m_pipelineLayout(&pipelineLayout)
-{
 }
 
 RenderPipeline::RenderPipeline(Device& device)

@@ -550,6 +550,7 @@ UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 UIProcess/RemoteLayerTree/cocoa/RemoteLayerTreeLayers.mm
 
 UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm
+UIProcess/RemoteLayerTree/mac/RemoteLayerTreeEventDispatcher.cpp
 UIProcess/RemoteLayerTree/mac/RemoteScrollingCoordinatorProxyMac.mm
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/RemoteLayerTree/mac/ScrollingTreeFrameScrollingNodeRemoteMac.cpp

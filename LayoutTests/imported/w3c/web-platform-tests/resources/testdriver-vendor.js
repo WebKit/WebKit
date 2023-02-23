@@ -384,8 +384,8 @@ window.test_driver_internal.set_permission = async function(permission_params)
 {
     switch (permission_params.descriptor.name) {
     case "background-fetch":
-        if (permission_params.state !== "granted")
-            throw new Error(`FIXME: Add support for denied background-fetch permission".`);
+        if (window.testRunner && testRunner.setBackgroundFetchPermission)
+            testRunner.setBackgroundFetchPermission(permission_params.state === "granted");
         break;
     case "geolocation":
         const granted = permission_params.state === "granted";

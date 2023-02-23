@@ -130,7 +130,7 @@ bool ValidateGetCurrentContext(const ValidationContext *val);
 // EGL 1.5
 bool ValidateClientWaitSync(const ValidationContext *val,
                             const egl::Display *dpyPacked,
-                            const egl::Sync *syncPacked,
+                            egl::SyncID syncPacked,
                             EGLint flags,
                             EGLTime timeout);
 bool ValidateCreateImage(const ValidationContext *val,
@@ -158,19 +158,19 @@ bool ValidateDestroyImage(const ValidationContext *val,
                           ImageID imagePacked);
 bool ValidateDestroySync(const ValidationContext *val,
                          const egl::Display *dpyPacked,
-                         const egl::Sync *syncPacked);
+                         egl::SyncID syncPacked);
 bool ValidateGetPlatformDisplay(const ValidationContext *val,
                                 EGLenum platform,
                                 const void *native_display,
                                 const AttributeMap &attrib_listPacked);
 bool ValidateGetSyncAttrib(const ValidationContext *val,
                            const egl::Display *dpyPacked,
-                           const egl::Sync *syncPacked,
+                           egl::SyncID syncPacked,
                            EGLint attribute,
                            const EGLAttrib *value);
 bool ValidateWaitSync(const ValidationContext *val,
                       const egl::Display *dpyPacked,
-                      const egl::Sync *syncPacked,
+                      egl::SyncID syncPacked,
                       EGLint flags);
 
 // EGL_ANDROID_blob_cache
@@ -217,7 +217,7 @@ bool ValidateGetNativeClientBufferANDROID(const ValidationContext *val,
 // EGL_ANDROID_native_fence_sync
 bool ValidateDupNativeFenceFDANDROID(const ValidationContext *val,
                                      const egl::Display *dpyPacked,
-                                     const egl::Sync *syncPacked);
+                                     egl::SyncID syncPacked);
 
 // EGL_ANDROID_presentation_time
 bool ValidatePresentationTimeANDROID(const ValidationContext *val,
@@ -245,7 +245,7 @@ bool ValidateQueryDisplayAttribANGLE(const ValidationContext *val,
 // EGL_ANGLE_metal_shared_event_sync
 bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
                                        const egl::Display *dpyPacked,
-                                       const egl::Sync *syncPacked);
+                                       egl::SyncID syncPacked);
 
 // EGL_ANGLE_power_preference
 bool ValidateReleaseHighPowerGPUANGLE(const ValidationContext *val,
@@ -394,7 +394,7 @@ bool ValidateQueryDebugKHR(const ValidationContext *val, EGLint attribute, const
 // EGL_KHR_fence_sync
 bool ValidateClientWaitSyncKHR(const ValidationContext *val,
                                const egl::Display *dpyPacked,
-                               const egl::Sync *syncPacked,
+                               egl::SyncID syncPacked,
                                EGLint flags,
                                EGLTimeKHR timeout);
 bool ValidateCreateSyncKHR(const ValidationContext *val,
@@ -403,10 +403,10 @@ bool ValidateCreateSyncKHR(const ValidationContext *val,
                            const AttributeMap &attrib_listPacked);
 bool ValidateDestroySyncKHR(const ValidationContext *val,
                             const egl::Display *dpyPacked,
-                            const egl::Sync *syncPacked);
+                            egl::SyncID syncPacked);
 bool ValidateGetSyncAttribKHR(const ValidationContext *val,
                               const egl::Display *dpyPacked,
-                              const egl::Sync *syncPacked,
+                              egl::SyncID syncPacked,
                               EGLint attribute,
                               const EGLint *value);
 
@@ -445,7 +445,7 @@ bool ValidateSetDamageRegionKHR(const ValidationContext *val,
 // EGL_KHR_reusable_sync
 bool ValidateSignalSyncKHR(const ValidationContext *val,
                            const egl::Display *dpyPacked,
-                           const egl::Sync *syncPacked,
+                           egl::SyncID syncPacked,
                            EGLenum mode);
 
 // EGL_KHR_stream
@@ -492,7 +492,7 @@ bool ValidateSwapBuffersWithDamageKHR(const ValidationContext *val,
 // EGL_KHR_wait_sync
 bool ValidateWaitSyncKHR(const ValidationContext *val,
                          const egl::Display *dpyPacked,
-                         const egl::Sync *syncPacked,
+                         egl::SyncID syncPacked,
                          EGLint flags);
 
 // EGL_NV_post_sub_buffer

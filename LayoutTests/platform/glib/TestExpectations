@@ -133,6 +133,9 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-001.html [ Pass ]
 
+# WTR should allow background-fetch permission.
+imported/w3c/web-platform-tests/background-fetch [ Pass Failure ]
+
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 
@@ -1018,8 +1021,6 @@ webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]
 
-webkit.org/b/252386 media/media-source/media-managedmse.html [ Failure ]
-
 # MSE failures
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
 
@@ -1692,6 +1693,7 @@ webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
 
 # On-the-fly track switching not supported yet.
+webkit.org/b/235885 webrtc/audio-replace-track.html [ Skip ]
 webkit.org/b/235885 webrtc/video-replace-track-to-null.html [ Skip ]
 webkit.org/b/235885 webrtc/video-replace-track.html [ Skip ]
 webkit.org/b/235885 webrtc/video-replace-muted-track.html
@@ -1739,6 +1741,7 @@ webkit.org/b/235885 webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
+webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute.html [ Pass Timeout ]
 
 # In these tests only one canvas frame is pushed towards the sender webrtcbin,
 # this is not enough for the receiver webrtcbin to create its video source pad,
@@ -2387,6 +2390,7 @@ accessibility/ax-object-destroyed-on-reload.html [ Skip ]
 fast/mediastream/captureInGPUProcess.html [ Skip ]
 fast/mediastream/video-rotation-gpu-process-crash.html [ Skip ]
 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html [ Skip ]
+webgl/webgl-fail-remote-context-ipc-buffer-allocation-no-crash.html [ Skip ]
 
 # Payment Request
 imported/w3c/web-platform-tests/payment-request [ Skip ]

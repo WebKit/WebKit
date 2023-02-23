@@ -6529,7 +6529,18 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addSIMDSplat(SIMDLane lane, ExpressionType value, ExpressionType& result)
     {
-        Location valueLocation = loadIfNecessary(value);
+        Location valueLocation;
+        if (value.isConst()) {
+            if (value.isFloat()) {
+                ScratchScope<0, 1> scratches(*this);
+                valueLocation = Location::fromFPR(scratches.fpr(0));
+            } else {
+                ScratchScope<1, 0> scratches(*this);
+                valueLocation = Location::fromGPR(scratches.gpr(0));
+            }
+            emitMoveConst(value, valueLocation);
+        } else
+            valueLocation = loadIfNecessary(value);
         consume(value);
 
         result = topValue(TypeKind::V128);
@@ -7023,11 +7034,11 @@ public:
             return { };
         case JSC::SIMDLaneOperation::AnyTrue:
 #if CPU(ARM64)
-                m_jit.vectorUnsignedMax(SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, valueLocation.asFPR(), m_scratchFPR);
-                m_jit.moveFloatTo32(m_scratchFPR, resultLocation.asGPR());
-                m_jit.test32(ResultCondition::NonZero, resultLocation.asGPR(), resultLocation.asGPR(), resultLocation.asGPR());
+            m_jit.vectorUnsignedMax(SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, valueLocation.asFPR(), m_scratchFPR);
+            m_jit.moveFloatTo32(m_scratchFPR, resultLocation.asGPR());
+            m_jit.test32(ResultCondition::NonZero, resultLocation.asGPR(), resultLocation.asGPR(), resultLocation.asGPR());
 #else
-                m_jit.vectorAnyTrue(valueLocation.asFPR(), resultLocation.asGPR());
+            m_jit.vectorAnyTrue(valueLocation.asFPR(), resultLocation.asGPR());
 #endif
             return { };
         case JSC::SIMDLaneOperation::AllTrue:
@@ -7204,15 +7215,16 @@ public:
             m_jit.vectorTruncSat(info, valueLocation.asFPR(), resultLocation.asFPR());
 #endif
             return { };
-        case JSC::SIMDLaneOperation::Not:
+        case JSC::SIMDLaneOperation::Not: {
 #if CPU(X86_64)
-                // Equality is always a single instruction for this lane, so it doesn't matter that our scratch register is the same as the operands.
-                m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, m_scratchFPR);
-                m_jit.vectorXor(info, valueLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
+            ScratchScope<0, 1> scratches(*this, valueLocation, resultLocation);
+            m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, scratches.fpr(0));
+            m_jit.vectorXor(info, valueLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
 #else
-                m_jit.vectorNot(info, valueLocation.asFPR(), resultLocation.asFPR());
+            m_jit.vectorNot(info, valueLocation.asFPR(), resultLocation.asFPR());
 #endif
             return { };
+        }
         case JSC::SIMDLaneOperation::Neg:
 #if CPU(X86_64)
             switch (info.lane) {
@@ -7299,35 +7311,43 @@ public:
         // directly implement most relational conditions between vectors: the cases below
         // are best emitted as inversions of conditions that are supported.
         switch (relOp.asRelationalCondition()) {
-        case MacroAssembler::NotEqual:
+        case MacroAssembler::NotEqual: {
+            ScratchScope<0, 1> scratches(*this, leftLocation, rightLocation, resultLocation);
             m_jit.compareIntegerVector(RelationalCondition::Equal, info, leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR(), m_scratchFPR);
-            m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, m_scratchFPR);
+            m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, scratches.fpr(0));
             m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
             break;
-        case MacroAssembler::Above:
+        }
+        case MacroAssembler::Above: {
+            ScratchScope<0, 1> scratches(*this, leftLocation, rightLocation, resultLocation);
             m_jit.compareIntegerVector(RelationalCondition::BelowOrEqual, info, leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR(), m_scratchFPR);
-            m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, m_scratchFPR);
+            m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, scratches.fpr(0));
             m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
             break;
-        case MacroAssembler::Below:
+        }
+        case MacroAssembler::Below: {
+            ScratchScope<0, 1> scratches(*this, leftLocation, rightLocation, resultLocation);
             m_jit.compareIntegerVector(RelationalCondition::AboveOrEqual, info, leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR(), m_scratchFPR);
-            m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, m_scratchFPR);
+            m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, scratches.fpr(0));
             m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
             break;
+        }
         case MacroAssembler::GreaterThanOrEqual:
             if (info.lane == SIMDLane::i64x2) {
                 // Note: rhs and lhs are reversed here, we are semantically negating LessThan. GreaterThan is
                 // just better supported on AVX.
+                ScratchScope<0, 1> scratches(*this, leftLocation, rightLocation, resultLocation);
                 m_jit.compareIntegerVector(RelationalCondition::GreaterThan, info, rightLocation.asFPR(), leftLocation.asFPR(), resultLocation.asFPR(), m_scratchFPR);
-                m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, m_scratchFPR);
+                m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, scratches.fpr(0));
                 m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
             } else
                 m_jit.compareIntegerVector(relOp.asRelationalCondition(), info, leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR(), m_scratchFPR);
             break;
         case MacroAssembler::LessThanOrEqual:
             if (info.lane == SIMDLane::i64x2) {
+                ScratchScope<0, 1> scratches(*this, leftLocation, rightLocation, resultLocation);
                 m_jit.compareIntegerVector(RelationalCondition::GreaterThan, info, leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR(), m_scratchFPR);
-                m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, m_scratchFPR);
+                m_jit.compareIntegerVector(RelationalCondition::Equal, SIMDInfo { SIMDLane::i32x4, SIMDSignMode::None }, m_scratchFPR, m_scratchFPR, m_scratchFPR, scratches.fpr(0));
                 m_jit.vectorXor(SIMDInfo { SIMDLane::v128, SIMDSignMode::None }, resultLocation.asFPR(), m_scratchFPR, resultLocation.asFPR());
             } else
                 m_jit.compareIntegerVector(relOp.asRelationalCondition(), info, leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR(), m_scratchFPR);
@@ -7349,11 +7369,12 @@ public:
             m_jit.vectorExtractLaneInt64(TrustedImm32(0), left.asFPR(), m_scratchGPR);
             m_jit.vectorExtractLaneInt64(TrustedImm32(0), right.asFPR(), m_dataScratchGPR);
             m_jit.mul64(m_scratchGPR, m_dataScratchGPR, m_scratchGPR);
-            m_jit.vectorReplaceLane(SIMDLane::i64x2, TrustedImm32(0), m_scratchGPR, result.asFPR());
+            m_jit.vectorReplaceLane(SIMDLane::i64x2, TrustedImm32(0), m_scratchGPR, m_scratchFPR);
             m_jit.vectorExtractLaneInt64(TrustedImm32(1), left.asFPR(), m_scratchGPR);
             m_jit.vectorExtractLaneInt64(TrustedImm32(1), right.asFPR(), m_dataScratchGPR);
             m_jit.mul64(m_scratchGPR, m_dataScratchGPR, m_scratchGPR);
-            m_jit.vectorReplaceLane(SIMDLane::i64x2, TrustedImm32(1), m_scratchGPR, result.asFPR());
+            m_jit.vectorReplaceLane(SIMDLane::i64x2, TrustedImm32(1), m_scratchGPR, m_scratchFPR);
+            m_jit.moveVector(m_scratchFPR, result.asFPR());
         } else
             m_jit.vectorMul(info, left.asFPR(), right.asFPR(), result.asFPR());
     }

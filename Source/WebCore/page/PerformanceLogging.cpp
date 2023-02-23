@@ -97,8 +97,10 @@ void PerformanceLogging::didReachPointOfInterest(PointOfInterest poi)
     UNUSED_VARIABLE(m_page);
 #else
     // Ignore synthetic main frames used internally by SVG and web inspector.
-    if (m_page.mainFrame().loader().client().isEmptyFrameLoaderClient())
-        return;
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame())) {
+        if (localMainFrame->loader().client().isEmptyFrameLoaderClient())
+            return;
+    }
 
     RELEASE_LOG(PerformanceLogging, "Memory usage info dump at %s:", toString(poi));
     for (auto& it : memoryUsageStatistics(ShouldIncludeExpensiveComputations::No))

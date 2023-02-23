@@ -85,7 +85,6 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
     collectInlineItems(inlineItems, startPosition);
     if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering()) {
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
-        ASSERT(!startPosition);
         breakAndComputeBidiLevels(inlineItems);
     }
     computeInlineTextItemWidths(inlineItems);

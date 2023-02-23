@@ -72,6 +72,11 @@ public:
     virtual void workerUpdatedAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>)
     {
     }
+    
+    virtual void requestBackgroundFetchPermission(const WebCore::SecurityOriginData& topOrigin, const WebCore::SecurityOriginData& frameOrigin, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        completionHandler(false);
+    }
 };
 
 } // namespace WebKit

@@ -169,7 +169,7 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
 bool defaultManagedMediaSourceEnabled()
 {
     // TBD

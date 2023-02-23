@@ -23,7 +23,7 @@
 
 #include "BaseTarget.xcconfig"
 
-OTHER_LDFLAGS = $(inherited) $(ASAN_OTHER_LDFLAGS) $(OTHER_LDFLAGS_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS = $(inherited) $(OTHER_LDFLAGS_$(WK_COCOA_TOUCH));
 OTHER_LDFLAGS_cocoatouch = -framework JavaScriptCore;
 OTHER_LDFLAGS_ = -lWebCoreTestSupport -force_load $(BUILT_PRODUCTS_DIR)/libDumpRenderTree.a -framework Carbon -framework Cocoa -framework JavaScriptCore -framework OpenGL -framework QuartzCore -framework WebKit;
 

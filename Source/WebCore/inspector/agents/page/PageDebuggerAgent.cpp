@@ -98,7 +98,11 @@ String PageDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& scr
     static constexpr auto sourceMapHTTPHeaderDeprecated = "X-SourceMap"_s;
 
     if (!script.url.isEmpty()) {
-        CachedResource* resource = InspectorPageAgent::cachedResource(&m_inspectedPage.mainFrame(), URL({ }, script.url));
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPage.mainFrame());
+        if (!localMainFrame)
+            return String();
+
+        CachedResource* resource = InspectorPageAgent::cachedResource(localMainFrame, URL({ }, script.url));
         if (resource) {
             String sourceMapHeader = resource->response().httpHeaderField(StringView { sourceMapHTTPHeader });
             if (!sourceMapHeader.isEmpty())
@@ -140,8 +144,12 @@ void PageDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalOb
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(Protocol::ErrorString& errorString, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPage.mainFrame());
+    if (!localMainFrame)
+        return InjectedScript();
+
     if (!executionContextId)
-        return injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(m_inspectedPage.mainFrame()));
+        return injectedScriptManager().injectedScriptFor(&mainWorldGlobalObject(*localMainFrame));
 
     InjectedScript injectedScript = injectedScriptManager().injectedScriptForId(*executionContextId);
     if (injectedScript.hasNoValue())

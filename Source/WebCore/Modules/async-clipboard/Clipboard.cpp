@@ -36,6 +36,7 @@
 #include "JSClipboardItem.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
+#include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
 #include "Settings.h"
@@ -252,6 +253,9 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
         promise->reject(NotAllowedError);
         return;
     }
+
+    if (auto* page = frame->page())
+        resultAsString = page->sanitizeLookalikeCharacters(resultAsString, LookalikeCharacterSanitizationTrigger::Paste);
 
     promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->document(), resultAsString, type));
 }

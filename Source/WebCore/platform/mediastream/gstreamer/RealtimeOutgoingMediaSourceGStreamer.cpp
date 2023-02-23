@@ -42,15 +42,11 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(const
 {
     m_bin = gst_bin_new(nullptr);
 
-    m_valve = gst_element_factory_make("valve", nullptr);
-    gst_util_set_object_arg(G_OBJECT(m_valve.get()), "drop-mode", "forward-sticky-events");
-
     m_preEncoderQueue = gst_element_factory_make("queue", nullptr);
     m_postEncoderQueue = gst_element_factory_make("queue", nullptr);
     m_capsFilter = gst_element_factory_make("capsfilter", nullptr);
 
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_valve.get(), m_preEncoderQueue.get(),
-        m_postEncoderQueue.get(), m_capsFilter.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_preEncoderQueue.get(), m_postEncoderQueue.get(), m_capsFilter.get(), nullptr);
 
     auto srcPad = adoptGRef(gst_element_get_static_pad(m_capsFilter.get(), "src"));
     gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("src", srcPad.get()));
@@ -60,6 +56,8 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(const
 
 RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
 {
+    teardown();
+
     if (m_transceiver)
         g_signal_handlers_disconnect_by_data(m_transceiver.get(), this);
 
@@ -110,7 +108,7 @@ void RealtimeOutgoingMediaSourceGStreamer::start()
 {
     m_source.value()->addObserver(*this);
     m_isStopped = false;
-    gst_element_link(m_outgoingSource.get(), m_valve.get());
+    GST_DEBUG_OBJECT(m_bin.get(), "Starting");
     gst_element_sync_state_with_parent(m_bin.get());
 }
 
@@ -120,6 +118,7 @@ void RealtimeOutgoingMediaSourceGStreamer::stop()
     if (!m_source)
         return;
 
+    GST_DEBUG_OBJECT(m_bin.get(), "Stopping");
     m_source.value()->removeObserver(*this);
     webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_outgoingSource.get()));
 
@@ -136,6 +135,7 @@ void RealtimeOutgoingMediaSourceGStreamer::sourceMutedChanged()
         return;
     ASSERT(m_muted != m_source.value()->muted());
     m_muted = m_source.value()->muted();
+    GST_DEBUG_OBJECT(m_bin.get(), "Mute state changed to %s", boolForPrinting(m_muted));
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::sourceEnabledChanged()
@@ -144,14 +144,14 @@ void RealtimeOutgoingMediaSourceGStreamer::sourceEnabledChanged()
         return;
 
     m_enabled = m_source.value()->enabled();
-    if (m_valve)
-        g_object_set(m_valve.get(), "drop", !m_enabled, nullptr);
+    GST_DEBUG_OBJECT(m_bin.get(), "Enabled state changed to %s", boolForPrinting(m_enabled));
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::initializeFromTrack()
 {
     m_muted = m_source.value()->muted();
     m_enabled = m_source.value()->enabled();
+    GST_DEBUG_OBJECT(m_bin.get(), "Initializing from track, muted: %s, enabled: %s", boolForPrinting(m_muted), boolForPrinting(m_enabled));
     m_outgoingSource = webkitMediaStreamSrcNew();
     gst_bin_add(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
     webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(m_outgoingSource.get()), m_source->ptr(), true);

@@ -33,7 +33,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(ToggleEvent);
 
 ToggleEvent::ToggleEvent(const AtomString& type, const ToggleEvent::Init& initializer, Event::IsCancelable cancelable)
-    : Event(type, Event::CanBubble::Yes, cancelable, Event::IsComposed::No)
+    : Event(type, Event::CanBubble::No, cancelable, Event::IsComposed::No)
     , m_oldState(initializer.oldState)
     , m_newState(initializer.newState)
 {

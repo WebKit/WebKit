@@ -431,6 +431,7 @@ set(WTF_SOURCES
     AutomaticThread.cpp
     Bag.cpp
     BitVector.cpp
+    BloomFilter.cpp
     CPUTime.cpp
     ClockType.cpp
     CodePtr.cpp
@@ -517,6 +518,7 @@ set(WTF_SOURCES
     WTFAssertions.cpp
     WTFConfig.cpp
     WallTime.cpp
+    WeakPtr.cpp
     WeakRandomNumber.cpp
     WordLock.cpp
     WorkQueue.cpp

@@ -312,7 +312,7 @@ private:
 
     Vector<std::pair<Ref<DOMWrapperWorld>, UniqueRef<UserScript>>> m_userScriptsAwaitingNotification;
 
-    Frame& m_mainFrame;
+    AbstractFrame& m_mainFrame;
     const RefPtr<Settings> m_settings;
     UniqueRef<FrameLoader> m_loader;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;

@@ -194,7 +194,9 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
         auto text = style.textSecurity() == TextSecurity::None
             ? (isCombinedText ? textRenderer.originalText() : textRenderer.text())
             : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : textRenderer.text());
-        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, textRenderer.canUseSimplifiedTextMeasuring(), textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
+        auto canUseSimpleFontCodePath = textRenderer.canUseSimpleFontCodePath();
+        auto canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, firstLineStyle.get());
+        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style), WTFMove(firstLineStyle));
     }
 
     auto& renderElement = downcast<RenderElement>(renderer);

@@ -430,8 +430,9 @@ FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID 
     if (!m_scrollingStateTree->rootStateNode())
         return nullptr;
     
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
     if (scrollingNodeID == m_scrollingStateTree->rootStateNode()->scrollingNodeID())
-        return m_page->mainFrame().view();
+        return localMainFrame ? localMainFrame->view() : nullptr;
 
     RefPtr stateNode = m_scrollingStateTree->stateNodeForID(scrollingNodeID);
     if (!stateNode)
@@ -444,7 +445,10 @@ FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID 
     
     if (!parentNode)
         return nullptr;
-    
+
+    if (!localMainFrame)
+        return nullptr;
+
     // Walk the frame tree to find the matching FrameView. This is not ideal, but avoids back pointers to FrameViews
     // from ScrollingTreeStateNodes.
     for (AbstractFrame* frame = &m_page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -848,7 +852,11 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     if (!is<ScrollingStateFrameScrollingNode>(stateNode))
         return;
 
-    auto& settings = m_page->mainFrame().settings();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto& settings = localMainFrame->settings();
     auto& frameScrollingNode = downcast<ScrollingStateFrameScrollingNode>(*stateNode);
 
     if (auto* localFrame = dynamicDowncast<LocalFrame>(frameView.frame()))
@@ -1128,7 +1136,10 @@ void AsyncScrollingCoordinator::reportSynchronousScrollingReasonsChanged(Monoton
 bool AsyncScrollingCoordinator::scrollAnimatorEnabled() const
 {
     ASSERT(isMainThread());
-    auto& settings = m_page->mainFrame().settings();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return false;
+    auto& settings = localMainFrame->settings();
     return settings.scrollAnimatorEnabled();
 }
 

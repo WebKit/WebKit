@@ -602,20 +602,20 @@ angle::Result CommandProcessor::checkAndPopPendingError(Context *errorHandlingCo
 angle::Result CommandProcessor::queueCommand(CommandProcessorTask &&task)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandProcessor::queueCommand");
-    // Take mWorkerMutex lock. If task queue is full, try to drain one.
-    std::unique_lock<std::mutex> enqueueLock(mWorkerMutex);
-    if (mTasks.full())
+    // Take mTaskEnqueueMutex lock. If task queue is full, try to drain one.
+    std::unique_lock<std::mutex> enqueueLock(mTaskEnqueueMutex);
+    if (mTaskQueue.full())
     {
-        std::lock_guard<std::mutex> dequeueLock(mSubmissionMutex);
+        std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
         // Check mTasks again in case someone just drained the mTasks.
-        if (mTasks.full())
+        if (mTaskQueue.full())
         {
-            CommandProcessorTask frontTask(std::move(mTasks.front()));
-            mTasks.pop();
+            CommandProcessorTask frontTask(std::move(mTaskQueue.front()));
+            mTaskQueue.pop();
             ANGLE_TRY(processTask(&frontTask));
         }
     }
-    mTasks.push(std::move(task));
+    mTaskQueue.push(std::move(task));
     mWorkAvailableCondition.notify_one();
 
     return angle::Result::Continue;
@@ -647,28 +647,28 @@ angle::Result CommandProcessor::processTasksImpl(bool *exitThread)
 {
     while (true)
     {
-        std::unique_lock<std::mutex> enqueueLock(mWorkerMutex);
-        if (mTasks.empty())
+        std::unique_lock<std::mutex> enqueueLock(mTaskEnqueueMutex);
+        if (mTaskQueue.empty())
         {
             // Only wake if notified and command queue is not empty
             mWorkAvailableCondition.wait(
-                enqueueLock, [this] { return !mTasks.empty() || mTaskThreadShouldExit; });
+                enqueueLock, [this] { return !mTaskQueue.empty() || mTaskThreadShouldExit; });
         }
 
         if (mTaskThreadShouldExit)
         {
             break;
         }
-        // Do submission with mWorkerMutex unlocked so that we still allow enqueue while we
+        // Do submission with mTaskEnqueueMutex unlocked so that we still allow enqueue while we
         // process work.
         enqueueLock.unlock();
 
         // Take submission lock to ensure the submission is in the same order as we received.
-        std::lock_guard<std::mutex> dequeueLock(mSubmissionMutex);
-        if (!mTasks.empty())
+        std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+        if (!mTaskQueue.empty())
         {
-            CommandProcessorTask task(std::move(mTasks.front()));
-            mTasks.pop();
+            CommandProcessorTask task(std::move(mTaskQueue.front()));
+            mTaskQueue.pop();
 
             // Artificially make the task take longer to catch threading issues.
             if (getFeatures().slowAsyncCommandQueueForTesting.enabled)
@@ -726,13 +726,12 @@ angle::Result CommandProcessor::processTask(CommandProcessorTask *task)
         }
         case CustomTask::Present:
         {
-            VkResult result =
-                present(task->getPriority(), task->getPresentInfo(), task->getSwapchainStatus());
-            if (ANGLE_UNLIKELY(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR))
-            {
-                // We get to ignore these as they are not fatal
-            }
-            else if (ANGLE_UNLIKELY(result != VK_SUCCESS))
+            present(task->getPriority(), task->getPresentInfo(), task->getSwapchainStatus());
+
+            VkResult result = task->getSwapchainStatus()->lastPresentResult;
+            // We get to ignore these as they are not fatal
+            if (result != VK_ERROR_OUT_OF_DATE_KHR && result != VK_SUBOPTIMAL_KHR &&
+                result != VK_SUCCESS)
             {
                 // Save the error so that we can handle it.
                 // Don't leave processing loop, don't consider errors from present to be fatal.
@@ -778,14 +777,16 @@ angle::Result CommandProcessor::processTask(CommandProcessorTask *task)
 angle::Result CommandProcessor::waitForAllWorkToBeSubmitted(Context *context)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandProcessor::waitForAllWorkToBeSubmitted");
+    std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+
     // Sync any errors to the context
+    // Do this inside the mutex to prevent new errors adding to the list.
     ANGLE_TRY(checkAndPopPendingError(context));
 
-    std::lock_guard<std::mutex> dequeueLock(mSubmissionMutex);
-    while (!mTasks.empty())
+    while (!mTaskQueue.empty())
     {
-        CommandProcessorTask task(std::move(mTasks.front()));
-        mTasks.pop();
+        CommandProcessorTask task(std::move(mTaskQueue.front()));
+        mTaskQueue.pop();
         ANGLE_TRY(processTask(&task));
     }
 
@@ -803,7 +804,7 @@ void CommandProcessor::destroy(Context *context)
 {
     {
         // Request to terminate the worker thread
-        std::lock_guard<std::mutex> enqueueLock(mWorkerMutex);
+        std::lock_guard<std::mutex> enqueueLock(mTaskEnqueueMutex);
         mTaskThreadShouldExit = true;
         mWorkAvailableCondition.notify_one();
     }
@@ -818,52 +819,37 @@ void CommandProcessor::destroy(Context *context)
 void CommandProcessor::handleDeviceLost(RendererVk *renderer)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "CommandProcessor::handleDeviceLost");
-    // Take mWorkerMutex lock so that no one is able to add more work to the queue while we drain it
-    // and handle device lost.
-    std::lock_guard<std::mutex> enqueueLock(mWorkerMutex);
+    // Take mTaskEnqueueMutex lock so that no one is able to add more work to the queue while we
+    // drain it and handle device lost.
+    std::lock_guard<std::mutex> enqueueLock(mTaskEnqueueMutex);
     (void)waitForAllWorkToBeSubmitted(this);
     // Worker thread is idle and command queue is empty so good to continue
     mCommandQueue->handleDeviceLost(renderer);
 }
 
-VkResult CommandProcessor::present(egl::ContextPriority priority,
-                                   const VkPresentInfoKHR &presentInfo,
-                                   SwapchainStatus *swapchainStatus)
+void CommandProcessor::present(egl::ContextPriority priority,
+                               const VkPresentInfoKHR &presentInfo,
+                               SwapchainStatus *swapchainStatus)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "vkQueuePresentKHR");
-    VkResult result = mCommandQueue->queuePresent(priority, presentInfo, nullptr);
-
     // Verify that we are presenting one and only one swapchain
     ASSERT(presentInfo.swapchainCount == 1);
     ASSERT(presentInfo.pResults == nullptr);
-    updateSwapchainStatus(swapchainStatus, result);
 
-    return result;
+    mCommandQueue->queuePresent(priority, presentInfo, swapchainStatus);
+    ASSERT(swapchainStatus->isPending);
+    // Always make sure update isPending after status has been updated.
+    swapchainStatus->isPending = false;
 }
 
-void CommandProcessor::updateSwapchainStatus(SwapchainStatus *swapchainStatus,
-                                             VkResult presentResult)
-{
-    ASSERT(swapchainStatus);
-
-    swapchainStatus->lastPresentResult = presentResult;
-
-    {
-        std::unique_lock<std::mutex> lock(swapchainStatus->mutex);
-        ASSERT(swapchainStatus->isPending);
-        swapchainStatus->isPending = false;
-    }
-
-    swapchainStatus->condVar.notify_all();
-}
-
-angle::Result CommandProcessor::submitCommands(Context *context,
-                                               ProtectionType protectionType,
-                                               egl::ContextPriority priority,
-                                               const VkSemaphore signalSemaphore,
-                                               SecondaryCommandBufferList &&commandBuffersToReset,
-                                               SecondaryCommandPools *commandPools,
-                                               const QueueSerial &submitQueueSerial)
+angle::Result CommandProcessor::enqueueSubmitCommands(
+    Context *context,
+    ProtectionType protectionType,
+    egl::ContextPriority priority,
+    const VkSemaphore signalSemaphore,
+    SecondaryCommandBufferList &&commandBuffersToReset,
+    SecondaryCommandPools *commandPools,
+    const QueueSerial &submitQueueSerial)
 {
     ANGLE_TRY(checkAndPopPendingError(context));
 
@@ -873,20 +859,21 @@ angle::Result CommandProcessor::submitCommands(Context *context,
 
     ANGLE_TRY(queueCommand(std::move(task)));
 
-    mLastSubmittedSerials.setQueueSerial(submitQueueSerial);
+    mLastEnqueuedSerials.setQueueSerial(submitQueueSerial);
 
     return angle::Result::Continue;
 }
 
-angle::Result CommandProcessor::queueSubmitOneOff(Context *context,
-                                                  ProtectionType protectionType,
-                                                  egl::ContextPriority contextPriority,
-                                                  VkCommandBuffer commandBufferHandle,
-                                                  const Semaphore *waitSemaphore,
-                                                  VkPipelineStageFlags waitSemaphoreStageMask,
-                                                  const Fence *fence,
-                                                  SubmitPolicy submitPolicy,
-                                                  const QueueSerial &submitQueueSerial)
+angle::Result CommandProcessor::enqueueSubmitOneOffCommands(
+    Context *context,
+    ProtectionType protectionType,
+    egl::ContextPriority contextPriority,
+    VkCommandBuffer commandBufferHandle,
+    const Semaphore *waitSemaphore,
+    VkPipelineStageFlags waitSemaphoreStageMask,
+    const Fence *fence,
+    SubmitPolicy submitPolicy,
+    const QueueSerial &submitQueueSerial)
 {
     ANGLE_TRY(checkAndPopPendingError(context));
 
@@ -895,7 +882,7 @@ angle::Result CommandProcessor::queueSubmitOneOff(Context *context,
                                waitSemaphoreStageMask, fence, submitQueueSerial);
     ANGLE_TRY(queueCommand(std::move(task)));
 
-    mLastSubmittedSerials.setQueueSerial(submitQueueSerial);
+    mLastEnqueuedSerials.setQueueSerial(submitQueueSerial);
 
     if (submitPolicy == SubmitPolicy::EnsureSubmitted)
     {
@@ -907,29 +894,23 @@ angle::Result CommandProcessor::queueSubmitOneOff(Context *context,
     return angle::Result::Continue;
 }
 
-VkResult CommandProcessor::queuePresent(egl::ContextPriority contextPriority,
-                                        const VkPresentInfoKHR &presentInfo,
-                                        SwapchainStatus *swapchainStatus)
+void CommandProcessor::enqueuePresent(egl::ContextPriority contextPriority,
+                                      const VkPresentInfoKHR &presentInfo,
+                                      SwapchainStatus *swapchainStatus)
 {
-    {
-        std::lock_guard<std::mutex> lock(swapchainStatus->mutex);
-        ASSERT(!swapchainStatus->isPending);
-        swapchainStatus->isPending = true;
-    }
+    ASSERT(!swapchainStatus->isPending);
+    swapchainStatus->isPending = true;
+    // Always return with VK_SUCCESS initially. When we call acquireNextImage we'll check the
+    // return code again. This allows the app to continue working until we really need to know
+    // the return code from present.
+    swapchainStatus->lastPresentResult = VK_SUCCESS;
 
     CommandProcessorTask task;
     task.initPresent(contextPriority, presentInfo, swapchainStatus);
-
-    ANGLE_TRACE_EVENT0("gpu.angle", "CommandProcessor::queuePresent");
     (void)queueCommand(std::move(task));
-
-    // Always return success, when we call acquireNextImage we'll check the return code. This
-    // allows the app to continue working until we really need to know the return code from
-    // present.
-    return VK_SUCCESS;
 }
 
-angle::Result CommandProcessor::flushWaitSemaphores(
+angle::Result CommandProcessor::enqueueFlushWaitSemaphores(
     ProtectionType protectionType,
     std::vector<VkSemaphore> &&waitSemaphores,
     std::vector<VkPipelineStageFlags> &&waitSemaphoreStageMasks)
@@ -942,7 +923,7 @@ angle::Result CommandProcessor::flushWaitSemaphores(
     return angle::Result::Continue;
 }
 
-angle::Result CommandProcessor::flushOutsideRPCommands(
+angle::Result CommandProcessor::enqueueFlushOutsideRPCommands(
     Context *context,
     ProtectionType protectionType,
     OutsideRenderPassCommandBufferHelper **outsideRPCommands)
@@ -964,7 +945,7 @@ angle::Result CommandProcessor::flushOutsideRPCommands(
     return angle::Result::Continue;
 }
 
-angle::Result CommandProcessor::flushRenderPassCommands(
+angle::Result CommandProcessor::enqueueFlushRenderPassCommands(
     Context *context,
     ProtectionType protectionType,
     const RenderPass &renderPass,
@@ -987,39 +968,53 @@ angle::Result CommandProcessor::flushRenderPassCommands(
     return angle::Result::Continue;
 }
 
-bool CommandProcessor::hasUnsubmittedUse(const vk::ResourceUse &use) const
-{
-    const Serials &serials = use.getSerials();
-    for (SerialIndex i = 0; i < serials.size(); ++i)
-    {
-        if (serials[i] > mLastSubmittedSerials[i])
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-angle::Result CommandProcessor::waitForResourceUseToBeSubmitted(vk::Context *context,
+angle::Result CommandProcessor::waitForResourceUseToBeSubmitted(Context *context,
                                                                 const ResourceUse &use)
 {
-    ANGLE_TRY(checkAndPopPendingError(context));
-
-    if (mCommandQueue->hasUnsubmittedUse(use))
+    if (mCommandQueue->hasResourceUseSubmitted(use))
     {
-        // We do not hold mWorkerMutex lock, so that we still allow other context to enqueue work
-        // while we are processing them.
-        std::lock_guard<std::mutex> dequeueLock(mSubmissionMutex);
-        size_t maxTaskCount = mTasks.size();
+        ANGLE_TRY(checkAndPopPendingError(context));
+    }
+    else
+    {
+        // We do not hold mTaskEnqueueMutex lock, so that we still allow other context to enqueue
+        // work while we are processing them.
+        std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+
+        // Do this inside the mutex to prevent new errors adding to the list.
+        ANGLE_TRY(checkAndPopPendingError(context));
+
+        size_t maxTaskCount = mTaskQueue.size();
         size_t taskCount    = 0;
-        while (taskCount < maxTaskCount && mCommandQueue->hasUnsubmittedUse(use))
+        while (taskCount < maxTaskCount && !mCommandQueue->hasResourceUseSubmitted(use))
         {
-            CommandProcessorTask task(std::move(mTasks.front()));
-            mTasks.pop();
+            CommandProcessorTask task(std::move(mTaskQueue.front()));
+            mTaskQueue.pop();
             ANGLE_TRY(processTask(&task));
             taskCount++;
         }
     }
+    return angle::Result::Continue;
+}
+
+angle::Result CommandProcessor::waitForPresentToBeSubmitted(SwapchainStatus *swapchainStatus)
+{
+    if (!swapchainStatus->isPending)
+    {
+        return angle::Result::Continue;
+    }
+
+    std::lock_guard<std::mutex> dequeueLock(mTaskDequeueMutex);
+    size_t maxTaskCount = mTaskQueue.size();
+    size_t taskCount    = 0;
+    while (taskCount < maxTaskCount && swapchainStatus->isPending)
+    {
+        CommandProcessorTask task(std::move(mTaskQueue.front()));
+        mTaskQueue.pop();
+        ANGLE_TRY(processTask(&task));
+        taskCount++;
+    }
+    ASSERT(!swapchainStatus->isPending);
     return angle::Result::Continue;
 }
 
@@ -1130,7 +1125,7 @@ angle::Result CommandQueue::postSubmitCheck(Context *context)
     // command buffer in flight, we do not wait here to ensure we keep GPU busy.
     VkDeviceSize suballocationGarbageSize = renderer->getSuballocationGarbageSize();
     while (suballocationGarbageSize > kMaxBufferSuballocationGarbageSize &&
-           !mInFlightCommands.empty())
+           mInFlightCommands.size() > 1)
     {
         ANGLE_TRY(finishOneCommandBatch(context, renderer->getMaxFenceWaitTimeNs()));
         suballocationGarbageSize = renderer->getSuballocationGarbageSize();
@@ -1181,7 +1176,7 @@ angle::Result CommandQueue::finishResourceUse(Context *context,
         ANGLE_TRY(retireFinishedCommandsAndCleanupGarbage(context, finishedCount));
     }
     ASSERT(allInFlightCommandsAreAfterSerials(use.getSerials()));
-    ASSERT(!hasUnfinishedUse(use));
+    ASSERT(hasResourceUseFinished(use));
 
     return angle::Result::Continue;
 }
@@ -1234,7 +1229,7 @@ angle::Result CommandQueue::waitForResourceUseToFinishWithUserTimeout(Context *c
     }
 
     // Serial is not yet submitted. This is undefined behaviour, so we can do anything.
-    if (hasUnsubmittedUse(use))
+    if (!hasResourceUseSubmitted(use))
     {
         WARN() << "Waiting on an unsubmitted serial.";
         *result = VK_TIMEOUT;
@@ -1504,23 +1499,13 @@ angle::Result CommandQueue::queueSubmit(Context *context,
     return angle::Result::Continue;
 }
 
-VkResult CommandQueue::queuePresent(egl::ContextPriority contextPriority,
-                                    const VkPresentInfoKHR &presentInfo,
-                                    SwapchainStatus *swapchainStatus)
+void CommandQueue::queuePresent(egl::ContextPriority contextPriority,
+                                const VkPresentInfoKHR &presentInfo,
+                                SwapchainStatus *swapchainStatus)
 {
     std::lock_guard<std::mutex> queueSubmitLock(mQueueSubmitMutex);
-    VkQueue queue   = getQueue(contextPriority);
-    VkResult result = vkQueuePresentKHR(queue, &presentInfo);
-
-    // "swapchainStatus" will be "nullptr" when called from the CommandProcessor
-    if (swapchainStatus)
-    {
-        // Mutex lock is not required.
-        ASSERT(!swapchainStatus->isPending);
-        // Assigned "lastPresentResult" is not used, but assigned for consistency anyway.
-        swapchainStatus->lastPresentResult = result;
-    }
-    return result;
+    VkQueue queue                      = getQueue(contextPriority);
+    swapchainStatus->lastPresentResult = vkQueuePresentKHR(queue, &presentInfo);
 }
 
 const angle::VulkanPerfCounters CommandQueue::getPerfCounters() const

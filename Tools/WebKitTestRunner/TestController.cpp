@@ -1212,6 +1212,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 #endif
 
     setAllowsAnySSLCertificate(true);
+    setBackgroundFetchPermission(true);
 
     statisticsResetToConsistentState();
     clearLoadedSubresourceDomains();
@@ -1408,6 +1409,11 @@ void TestController::setAllowsAnySSLCertificate(bool allows)
 {
     m_allowsAnySSLCertificate = allows;
     WKWebsiteDataStoreSetAllowsAnySSLCertificateForWebSocketTesting(websiteDataStore(), allows);
+}
+
+void TestController::setBackgroundFetchPermission(bool)
+{
+    // FIXME: Add support.
 }
 #endif
 
@@ -3079,6 +3085,7 @@ UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebVi
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
+    WKPageGroupSetPreferences(m_pageGroup.get(), adoptWK(WKPreferencesCreate()).get());
     return context;
 }
 

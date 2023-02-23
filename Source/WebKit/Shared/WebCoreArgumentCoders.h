@@ -576,11 +576,6 @@ template<> struct ArgumentCoder<WebCore::PixelBuffer> {
     static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {
-    static void encode(Encoder&, const RefPtr<WebCore::ReportBody>&);
-    static std::optional<RefPtr<WebCore::ReportBody>> decode(Decoder&);
-};
-
 } // namespace IPC
 
 namespace WTF {

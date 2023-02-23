@@ -276,6 +276,9 @@ void ItemHandle::destroy()
     case ItemType::DrawLinesForText:
         get<DrawLinesForText>().~DrawLinesForText();
         return;
+    case ItemType::DrawDotsForDocumentMarker:
+        get<DrawDotsForDocumentMarker>().~DrawDotsForDocumentMarker();
+        return;
     case ItemType::DrawPath:
         get<DrawPath>().~DrawPath();
         return;
@@ -337,9 +340,6 @@ void ItemHandle::destroy()
         return;
     case ItemType::ConcatenateCTM:
         static_assert(std::is_trivially_destructible<ConcatenateCTM>::value);
-        return;
-    case ItemType::DrawDotsForDocumentMarker:
-        static_assert(std::is_trivially_destructible<DrawDotsForDocumentMarker>::value);
         return;
     case ItemType::DrawEllipse:
         static_assert(std::is_trivially_destructible<DrawEllipse>::value);

@@ -57,11 +57,11 @@ namespace ax = WebCore::Accessibility;
     if (!page)
         return nullptr;
 
-    auto& core = page->mainFrame();
-    if (!core.document())
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame || !localMainFrame->document())
         return nullptr;
 
-    return core.document()->axObjectCache();
+    return localMainFrame->document()->axObjectCache();
 }
 
 - (id)accessibilityPluginObject

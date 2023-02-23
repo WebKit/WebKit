@@ -91,6 +91,7 @@ public:
     static bool hasHangableStopOrCommaEnd(const InlineTextItem&, const RenderStyle&);
     static float hangableStopOrCommaEndWidth(const InlineTextItem&, const RenderStyle&);
 
+    static bool canUseSimplifiedTextMeasuring(StringView, const RenderStyle& style, const RenderStyle* firstLineStyle);
 };
 
 }

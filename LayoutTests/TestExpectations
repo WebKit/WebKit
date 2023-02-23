@@ -572,8 +572,6 @@ imported/w3c/web-platform-tests/reporting/document-reporting-override-endpoint.h
 imported/w3c/web-platform-tests/reporting/document-reporting-path-absolute.https.sub.html [ Skip ]
 
 # Skip preload tests that timeout
-imported/w3c/web-platform-tests/preload/link-header-modulepreload.html [ Skip ]
-imported/w3c/web-platform-tests/preload/modulepreload.html [ Skip ]
 imported/w3c/web-platform-tests/preload/preconnect-onerror-event.html [ Skip ]
 imported/w3c/web-platform-tests/preload/preconnect.html [ Skip ]
 imported/w3c/web-platform-tests/preload/prefetch-events.html [ Skip ]
@@ -693,16 +691,13 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/srcdoc_change_hash.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/natural-size-orientation.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-submit-remove-children.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display.tentative.html [ ImageOnlyFailure ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display.tentative.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-animated-hide-display.tentative.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-animated-hide-finishes.tentative.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-animated-show-display.tentative.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-dialog-crash.tentative.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-manual-crash.tentative.html [ Skip ]
-webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-interactions.tentative.html [ Skip ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-change-display.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-display.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-nested-display.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-anchor-scroll-display.html [ ImageOnlyFailure ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-dialog-crash.html [ Skip ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-manual-crash.html [ Skip ]
+webkit.org/b/250171 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-interactions.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset-bom.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/referrer-policies.sub.html [ Skip ]
@@ -3722,6 +3717,7 @@ webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-3.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-1.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-2a.html [ ImageOnlyFailure ]
+webkit.org/b/252668 imported/w3c/web-platform-tests/css/css-fonts/font-size-adjust-012.html [ Pass ImageOnlyFailure ]
 
 # Untriaged font-style/font-face @font-face descriptor bugs
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-style-auto-variable.html [ ImageOnlyFailure ]
@@ -3770,6 +3766,11 @@ imported/w3c/web-platform-tests/css/css-fonts/font-variant-position-03.html [ Im
 imported/w3c/web-platform-tests/css/css-fonts/font-weight-bolder-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-weight-lighter-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-fonts/font-weight-normal-001.xht [ ImageOnlyFailure ]
+
+# These tests are currently only relevant on older OSes. They should be removed once Metal is
+# the only backend on Cocoa WebKit.
+webgl/webgl-metal-disabled.html [ Skip ]
+webgl/webgl-via-metal-flag-off.html [ Skip ]
 
 # webkit.org/b/203763 2019 WebGL test gardening: These tests pass in Safari and the conformance suite, but timeout in TestRunner and MiniBrowser.
 webgl/1.0.3/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
@@ -4181,7 +4182,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/3dtransfo
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-transform-equivalent.html [ ImageOnlyFailure Pass ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-skew.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-translate-em.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-004.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-005.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-animated-002.html [ ImageOnlyFailure ]

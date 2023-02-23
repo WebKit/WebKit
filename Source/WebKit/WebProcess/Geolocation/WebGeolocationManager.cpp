@@ -42,7 +42,7 @@ using namespace WebCore;
 
 static RegistrableDomain registrableDomainForPage(WebPage& page)
 {
-    auto* document = page.corePage() ? page.corePage()->mainFrame().document() : nullptr;
+    auto* document = page.corePage() && dynamicDowncast<LocalFrame>(page.corePage()->mainFrame()) ? dynamicDowncast<LocalFrame>(page.corePage()->mainFrame())->document() : nullptr;
     if (!document)
         return { };
     return RegistrableDomain { document->url() };
@@ -189,7 +189,7 @@ void WebGeolocationManager::resetPermissions(const WebCore::RegistrableDomain& r
         return;
 
     for (auto& page : copyToVector(it->value.pageSet)) {
-        if (auto* mainFrame = page->corePage() ? &page->corePage()->mainFrame() : nullptr)
+        if (auto* mainFrame = page->corePage() ? dynamicDowncast<LocalFrame>(page->corePage()->mainFrame()) : nullptr)
             mainFrame->resetAllGeolocationPermission();
     }
 }

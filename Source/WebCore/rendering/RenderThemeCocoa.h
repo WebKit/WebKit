@@ -56,6 +56,8 @@ private:
     void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;
 #endif
 
+    Color documentMarkerLineColor(DocumentMarkerLineStyleMode, OptionSet<StyleColorOptions>) const final;
+
 #if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
     String mediaControlsStyleSheet() override;
     Vector<String, 2> mediaControlsScripts() override;

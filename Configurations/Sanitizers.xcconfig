@@ -1,0 +1,84 @@
+// Copyright (C) 2023 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// This configures any WebKit project to build with clang sanitizers simply
+// by setting ENABLE_*_SANITIZER Xcode variables to YES during a build.
+
+// Requires SDKVariant.xcconfig.
+
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL = $(WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_$(CONFIGURATION));
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_Debug = 0;
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_Production = 1;
+WK_SANITIZER_GCC_OPTIMIZATION_LEVEL_Release = 1;
+
+WK_SANITIZER_OTHER_CFLAGS = $(WK_ANY_SANITIZER_CFLAGS_$(WK_ANY_SANITIZER_ENABLED)) $(WK_ADDRESS_SANITIZER_OTHER_CFLAGS_$(ENABLE_ADDRESS_SANITIZER)) $(WK_UNDEFINED_BEHAVIOR_SANITIZER_OTHER_CFLAGS_$(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER));
+
+WK_SANITIZER_OTHER_CPLUSPLUSFLAGS = $(WK_ADDRESS_SANITIZER_OTHER_CPLUSPLUSFLAGS_$(ENABLE_ADDRESS_SANITIZER));
+
+WK_SANITIZER_OTHER_LDFLAGS = $(WK_ANY_SANITIZER_LDFLAGS_$(WK_ANY_SANITIZER_ENABLED));
+
+// All Sanitizers
+
+// FIXME: Tell Xcode not to compile host-side tools with sanitizers enabled (see <rdar://99386433>).
+// Workaround is to use `WK_SANITIZER_DISALLOWED = YES`.
+
+WK_ANY_SANITIZER_ENABLED = $(WK_AND_$(WK_OR_$(ENABLE_ADDRESS_SANITIZER)_$(WK_OR_$(ENABLE_THREAD_SANITIZER)_$(ENABLE_UNDEFINED_BEHAVIOR_SANITIZER)))_$(WK_NOT_$(WK_SANITIZER_DISALLOWED)));
+
+// -DRELEASE_WITHOUT_OPTIMIZATIONS is from <wtf/Compiler.h>.
+WK_ANY_SANITIZER_CFLAGS_YES = -DRELEASE_WITHOUT_OPTIMIZATIONS -fno-omit-frame-pointer -g;
+
+// Workaround for <rdar://problem/49498092>.
+WK_ANY_SANITIZER_LDFLAGS_YES = -Wl,-rpath,@executable_path/Frameworks;
+
+// Address Sanitizer
+
+WK_ADDRESS_SANITIZER_OTHER_CFLAGS_YES = $(WK_NEEDS_ASAN_USE_AFTER_SCOPE_WORKAROUND_FOR_$(PRODUCT_NAME)_$(WK_NEEDS_ASAN_USE_AFTER_SCOPE_WORKAROUND));
+
+WK_ADDRESS_SANITIZER_OTHER_CPLUSPLUSFLAGS_YES = -U_LIBCPP_HAS_NO_ASAN;
+
+// Workaround ASan false positive in certain Xcode versions: <https://bugs.webkit.org/show_bug.cgi?id=236001>.
+WK_NEEDS_ASAN_USE_AFTER_SCOPE_WORKAROUND_FOR_bmalloc_YES = -DWK_WORKAROUND_RDAR_87613908_ASAN_STACK_USE_AFTER_SCOPE;
+
+WK_NEEDS_ASAN_USE_AFTER_SCOPE_WORKAROUND = $(WK_NOT_$(WK_OR_$(WK_XCODE_VERSION_BEFORE_13_3_$(XCODE_VERSION_MAJOR))_$(WK_XCODE_VERSION_AFTER_13_3_$(XCODE_VERSION_MAJOR))));
+
+WK_XCODE_VERSION_BEFORE_13_3_0800 = YES;
+WK_XCODE_VERSION_BEFORE_13_3_0900 = YES;
+WK_XCODE_VERSION_BEFORE_13_3_1000 = YES;
+WK_XCODE_VERSION_BEFORE_13_3_1100 = YES;
+WK_XCODE_VERSION_BEFORE_13_3_1200 = YES;
+WK_XCODE_VERSION_BEFORE_13_3_1300 = $(WK_XCODE_VERSION_BEFORE_13_3_1300_$(XCODE_VERSION_MINOR));
+WK_XCODE_VERSION_BEFORE_13_3_1300_1300 = YES;
+WK_XCODE_VERSION_BEFORE_13_3_1300_1310 = YES;
+WK_XCODE_VERSION_BEFORE_13_3_1300_1320 = YES;
+WK_XCODE_VERSION_AFTER_13_3_1400 = YES;
+WK_XCODE_VERSION_AFTER_13_3_1500 = YES;
+WK_XCODE_VERSION_AFTER_13_3_1600 = YES;
+WK_XCODE_VERSION_AFTER_13_3_1700 = YES;
+
+// Undefined Behavior Sanitizer
+
+// FIXME: <rdar://105760852> Tune list of Undefined Behavior (UBSan) checkers
+// FIXME: UBSan checker -fsanitize=vptr is incompatible with GCC_ENABLE_CPP_RTTI=NO.
+// -fno-delete-null-pointer-checks: do not let the compiler remove nullptr checks that could otherwise be removed because they are considered undefined behavior.
+// -fno-optimize-sibling-calls: disable tail call elimination for more accurate crash stacks.
+WK_UNDEFINED_BEHAVIOR_SANITIZER_OTHER_CFLAGS_YES = -fno-delete-null-pointer-checks -fno-optimize-sibling-calls -fno-sanitize=vptr -fsanitize=enum,return;

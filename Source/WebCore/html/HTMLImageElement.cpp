@@ -45,6 +45,7 @@
 #include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
+#include "JSRequestPriority.h"
 #include "LazyLoadImageObserver.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
@@ -54,6 +55,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderImage.h"
 #include "RenderView.h"
+#include "RequestPriority.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -1018,6 +1020,16 @@ Ref<Element> HTMLImageElement::cloneElementWithoutAttributesAndChildren(Document
     }
 #endif
     return clone;
+}
+
+void HTMLImageElement::setFetchPriorityForBindings(const AtomString& value)
+{
+    setAttributeWithoutSynchronization(fetchpriorityAttr, value);
+}
+
+String HTMLImageElement::fetchPriorityForBindings() const
+{
+    return convertEnumerationToString(parseEnumerationFromString<RequestPriority>(attributeWithoutSynchronization(fetchpriorityAttr)).value_or(RequestPriority::Auto));
 }
 
 }

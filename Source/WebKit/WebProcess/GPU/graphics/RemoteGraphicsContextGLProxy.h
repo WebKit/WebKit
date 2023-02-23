@@ -364,11 +364,12 @@ public:
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
+
 protected:
 #if ENABLE(VIDEO)
-    RemoteGraphicsContextGLProxy(IPC::Connection&, SerialFunctionDispatcher&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+    RemoteGraphicsContextGLProxy(IPC::Connection&, RefPtr<IPC::StreamClientConnection>, const WebCore::GraphicsContextGLAttributes&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
 #else
-    RemoteGraphicsContextGLProxy(IPC::Connection&, SerialFunctionDispatcher&, const WebCore::GraphicsContextGLAttributes&, RenderingBackendIdentifier);
+    RemoteGraphicsContextGLProxy(IPC::Connection&, RefPtr<IPC::StreamClientConnection>, const WebCore::GraphicsContextGLAttributes&);
 #endif
 
     bool isContextLost() const { return !m_connection; }
@@ -388,6 +389,12 @@ protected:
 
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier { GraphicsContextGLIdentifier::generate() };
 private:
+#if ENABLE(VIDEO)
+    static Ref<RemoteGraphicsContextGLProxy> platformCreate(IPC::Connection&, Ref<IPC::StreamClientConnection>, const WebCore::GraphicsContextGLAttributes&, Ref<RemoteVideoFrameObjectHeapProxy>&&);
+#else 
+    static Ref<RemoteGraphicsContextGLProxy> platformCreate(IPC::Connection&, Ref<IPC::StreamClientConnection>, const WebCore::GraphicsContextGLAttributes&);
+#endif
+    void initializeIPC(IPC::StreamServerConnection::Handle&&, RemoteRenderingBackendProxy&);
     // Messages to be received.
     void wasCreated(bool didSucceed, IPC::Semaphore&&, IPC::Semaphore&&, String&& availableExtensions, String&& requestedExtensions);
     void wasLost();

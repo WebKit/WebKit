@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum class NetworkConnectionIntegrity : uint8_t {
+enum class NetworkConnectionIntegrity : uint16_t {
     Enabled = 1 << 0,
     HTTPSFirst = 1 << 1,
     HTTPSOnly = 1 << 2,
@@ -36,6 +36,7 @@ enum class NetworkConnectionIntegrity : uint8_t {
     WebSearchContent = 1 << 5,
     EnhancedTelemetry = 1 << 6,
     RequestValidation = 1 << 7,
+    SanitizeLookalikeCharacters = 1 << 8,
 };
 
 }

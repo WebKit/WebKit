@@ -813,7 +813,11 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 {
     layoutIfNeeded();
 
-    auto& mainFrame = corePage()->mainFrame();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    auto& mainFrame = *localMainFrame;
     if (!mainFrame.view() || !mainFrame.view()->renderView()) {
         send(Messages::WebPageProxy::DidPerformImmediateActionHitTest(WebHitTestResultData(), false, UserData()));
         return;
@@ -922,11 +926,11 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
 std::optional<std::tuple<WebCore::SimpleRange, NSDictionary *>> WebPage::lookupTextAtLocation(FloatPoint locationInViewCoordinates)
 {
-    auto& mainFrame = corePage()->mainFrame();
-    if (!mainFrame.view() || !mainFrame.view()->renderView())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame || !localMainFrame->view() || !localMainFrame->view()->renderView())
         return std::nullopt;
 
-    return DictionaryLookup::rangeAtHitTestResult(mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(locationInViewCoordinates)), {
+    return DictionaryLookup::rangeAtHitTestResult(localMainFrame->eventHandler().hitTestResultAtPoint(localMainFrame->view()->windowToContents(roundedIntPoint(locationInViewCoordinates)), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
         HitTestRequest::Type::DisallowUserAgentShadowContentExceptForImageOverlays,
@@ -936,21 +940,26 @@ std::optional<std::tuple<WebCore::SimpleRange, NSDictionary *>> WebPage::lookupT
 
 void WebPage::immediateActionDidUpdate()
 {
-    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionUpdated);
 }
 
 void WebPage::immediateActionDidCancel()
 {
-    ImmediateActionStage lastStage = m_page->mainFrame().eventHandler().immediateActionStage();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+    ImmediateActionStage lastStage = localMainFrame->eventHandler().immediateActionStage();
     if (lastStage == ImmediateActionStage::ActionUpdated)
-        m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
+        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledAfterUpdate);
     else
-        m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledWithoutUpdate);
+        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCancelledWithoutUpdate);
 }
 
 void WebPage::immediateActionDidComplete()
 {
-    m_page->mainFrame().eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->eventHandler().setImmediateActionStage(ImmediateActionStage::ActionCompleted);
 }
 
 void WebPage::dataDetectorsDidPresentUI(PageOverlay::PageOverlayID overlayID)
@@ -977,10 +986,11 @@ void WebPage::dataDetectorsDidChangeUI(PageOverlay::PageOverlayID overlayID)
 
 void WebPage::dataDetectorsDidHideUI(PageOverlay::PageOverlayID overlayID)
 {
-    auto& mainFrame = corePage()->mainFrame();
-
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
     // Dispatching a fake mouse event will allow clients to display any UI that is normally displayed on hover.
-    mainFrame.eventHandler().dispatchFakeMouseMoveEventSoon();
+    localMainFrame->eventHandler().dispatchFakeMouseMoveEventSoon();
 
     for (const auto& overlay : corePage()->pageOverlayController().pageOverlays()) {
         if (overlay->pageOverlayID() == overlayID) {
@@ -1031,7 +1041,8 @@ void WebPage::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdenti
 void WebPage::didEndMagnificationGesture()
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
-    m_page->mainFrame().eventHandler().didEndMagnificationGesture();
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+        localMainFrame->eventHandler().didEndMagnificationGesture();
 #endif
 }
 

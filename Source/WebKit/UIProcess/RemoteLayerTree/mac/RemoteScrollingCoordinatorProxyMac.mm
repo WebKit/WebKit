@@ -29,6 +29,7 @@
 #if PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)
 
 #import "RemoteLayerTreeDrawingAreaProxy.h"
+#import "RemoteLayerTreeEventDispatcher.h"
 #import "WebPageProxy.h"
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingStateOverflowScrollProxyNode.h>
@@ -47,10 +48,20 @@ using namespace WebCore;
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
     , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
+#if ENABLE(SCROLLING_THREAD)
+    , m_wheelEventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
+#endif
 {
 }
 
-PlatformWheelEvent RemoteScrollingCoordinatorProxyMac::filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent)
+RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->invalidate();
+#endif
+}
+
+PlatformWheelEvent RemoteScrollingCoordinatorProxyMac::filteredWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     m_recentWheelEventDeltaFilter->updateFromEvent(wheelEvent);
 
@@ -74,7 +85,7 @@ void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID dis
     scrollingTree()->applyLayerPositions();
 }
 
-bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(WebCore::ScrollingNodeID, const WebCore::RequestedScrollData&)
+bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsScroll(ScrollingNodeID, const RequestedScrollData&)
 {
     // Unlike iOS, we handle scrolling requests for the main frame in the same way we handle them for subscrollers.
     return false;
@@ -161,6 +172,13 @@ void RemoteScrollingCoordinatorProxyMac::connectStateNodeLayers(ScrollingStateTr
 
 void RemoteScrollingCoordinatorProxyMac::establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&)
 {
+}
+
+void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
+#endif
 }
 
 } // namespace WebKit

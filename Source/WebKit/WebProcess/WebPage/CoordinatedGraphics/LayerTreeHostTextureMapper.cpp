@@ -75,7 +75,10 @@ void LayerTreeHost::compositeLayersToContext()
 
 bool LayerTreeHost::flushPendingLayerChanges()
 {
-    FrameView* frameView = m_webPage.corePage()->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.corePage()->mainFrame());
+    if (!localMainFrame)
+        return false;
+    FrameView* frameView = localMainFrame->view();
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     if (!frameView->flushCompositingStateIncludingSubframes())
         return false;
@@ -290,7 +293,8 @@ void LayerTreeHost::paintContents(const GraphicsLayer*, GraphicsContext& context
 {
     context.save();
     context.clip(rectToPaint);
-    m_webPage.corePage()->mainFrame().view()->paint(context, enclosingIntRect(rectToPaint));
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.corePage()->mainFrame()))
+        localMainFrame->view()->paint(context, enclosingIntRect(rectToPaint));
     context.restore();
 }
 

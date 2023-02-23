@@ -301,7 +301,10 @@ void LayerTreeHost::didChangeViewport()
     // When using non overlay scrollbars, the contents size doesn't include the scrollbars, but we need to include them
     // in the visible area used by the compositor to ensure that the scrollbar layers are also updated.
     // See https://bugs.webkit.org/show_bug.cgi?id=160450.
-    FrameView* view = m_webPage.corePage()->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.corePage()->mainFrame());
+    FrameView* view = localMainFrame ? localMainFrame->view() : nullptr;
+    if (!view)
+        return;
     Scrollbar* scrollbar = view->verticalScrollbar();
     if (scrollbar && !scrollbar->isOverlayScrollbar())
         visibleRect.expand(scrollbar->width(), 0);

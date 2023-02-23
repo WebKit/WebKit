@@ -1551,6 +1551,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->notificationsEnabled();
 }
 
+- (void)_setNotificationEventEnabled:(BOOL)enabled
+{
+    _preferences->setNotificationEventEnabled(enabled);
+}
+
+- (BOOL)_notificationEventEnabled
+{
+    return _preferences->notificationEventEnabled();
+}
+
 - (BOOL)_pushAPIEnabled
 {
     return _preferences->pushAPIEnabled();

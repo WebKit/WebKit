@@ -41,10 +41,12 @@ template<typename, typename, typename = DefaultWeakPtrImpl> class WeakHashMap;
 template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakHashSet;
 template <typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakListHashSet;
 
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
+
 template<typename Derived>
 class WeakPtrImplBase : public ThreadSafeRefCounted<Derived> {
     WTF_MAKE_NONCOPYABLE(WeakPtrImplBase);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
 public:
     ~WeakPtrImplBase() = default;
 

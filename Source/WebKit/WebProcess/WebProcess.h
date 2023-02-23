@@ -528,7 +528,7 @@ private:
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    void displayWasRefreshed(uint32_t displayID, const WebCore::DisplayUpdate&);
+    void displayDidRefresh(uint32_t displayID, const WebCore::DisplayUpdate&);
 #endif
 
 #if PLATFORM(MAC)

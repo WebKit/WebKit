@@ -2064,11 +2064,11 @@ void WebProcess::setClientBadge(WebPageProxyIdentifier pageIdentifier, const Web
 }
 
 #if HAVE(CVDISPLAYLINK)
-void WebProcess::displayWasRefreshed(uint32_t displayID, const DisplayUpdate& displayUpdate)
+void WebProcess::displayDidRefresh(uint32_t displayID, const DisplayUpdate& displayUpdate)
 {
     ASSERT(RunLoop::isMain());
-    m_eventDispatcher.notifyScrollingTreesDisplayWasRefreshed(displayID);
-    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID, displayUpdate);
+    m_eventDispatcher.notifyScrollingTreesDisplayDidRefresh(displayID);
+    DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(displayID, displayUpdate);
 }
 #endif
 

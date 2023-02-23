@@ -145,15 +145,20 @@ Ref<FragmentedSharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
 
     StringBuilder stringBuilder;
     stringBuilder.append("From: <Saved by WebKit>\r\n");
-    stringBuilder.append("Subject: ");
-    // We replace non ASCII characters with '?' characters to match IE's behavior.
-    stringBuilder.append(replaceNonPrintableCharacters(page->mainFrame().document()->title()));
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (localMainFrame) {
+        stringBuilder.append("Subject: ");
+        // We replace non ASCII characters with '?' characters to match IE's behavior.
+        stringBuilder.append(replaceNonPrintableCharacters(localMainFrame->document()->title()));
+    }
     stringBuilder.append("\r\nDate: ");
     stringBuilder.append(dateString);
     stringBuilder.append("\r\nMIME-Version: 1.0\r\n");
     stringBuilder.append("Content-Type: multipart/related;\r\n");
-    stringBuilder.append("\ttype=\"");
-    stringBuilder.append(page->mainFrame().document()->suggestedMIMEType());
+    if (localMainFrame) {
+        stringBuilder.append("\ttype=\"");
+        stringBuilder.append(localMainFrame->document()->suggestedMIMEType());
+    }
     stringBuilder.append("\";\r\n");
     stringBuilder.append("\tboundary=\"");
     stringBuilder.append(boundary);

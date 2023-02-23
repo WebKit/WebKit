@@ -951,34 +951,23 @@ std::optional<DrawLinesForText> DrawLinesForText::decode(Decoder& decoder)
 class DrawDotsForDocumentMarker {
 public:
     static constexpr ItemType itemType = ItemType::DrawDotsForDocumentMarker;
-    static constexpr bool isInlineItem = true;
+    static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = true;
-
-    using UnderlyingDocumentMarkerLineStyleType = std::underlying_type<DocumentMarkerLineStyleMode>::type;
 
     DrawDotsForDocumentMarker(const FloatRect& rect, const DocumentMarkerLineStyle& style)
         : m_rect(rect)
-        , m_styleMode(static_cast<UnderlyingDocumentMarkerLineStyleType>(style.mode))
-        , m_styleShouldUseDarkAppearance(style.shouldUseDarkAppearance)
-    {
-    }
-
-    DrawDotsForDocumentMarker(const FloatRect& rect, UnderlyingDocumentMarkerLineStyleType styleMode, bool styleShouldUseDarkAppearance)
-        : m_rect(rect)
-        , m_styleMode(styleMode)
-        , m_styleShouldUseDarkAppearance(styleShouldUseDarkAppearance)
+        , m_style(style)
     {
     }
     
     FloatRect rect() const { return m_rect; }
+    DocumentMarkerLineStyle style() const { return m_style; }
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 
 private:
-    friend struct IPC::ArgumentCoder<DrawDotsForDocumentMarker, void>;
     FloatRect m_rect;
-    UnderlyingDocumentMarkerLineStyleType m_styleMode { 0 };
-    bool m_styleShouldUseDarkAppearance { false };
+    DocumentMarkerLineStyle m_style;
 };
 
 class DrawEllipse {

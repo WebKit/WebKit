@@ -68,7 +68,7 @@ class BlobDataFileReference;
 class BlobPart;
 class BlobRegistryImpl;
 class MockContentFilterSettings;
-enum class NetworkConnectionIntegrity : uint8_t;
+enum class NetworkConnectionIntegrity : uint16_t;
 class ResourceError;
 class ResourceRequest;
 enum class ApplyTrackingPrevention : bool;

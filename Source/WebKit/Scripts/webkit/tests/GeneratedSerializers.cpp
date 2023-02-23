@@ -570,7 +570,7 @@ std::optional<NullableSoftLinkedMember> ArgumentCoder<NullableSoftLinkedMember>:
     };
 }
 
-enum class WebCore_TimingFunction_Subclass : uint8_t {
+enum class WebCore_TimingFunction_Subclass : IPC::EncodedVariantIndex {
     LinearTimingFunction,
     CubicBezierTimingFunction,
     StepsTimingFunction,
@@ -644,7 +644,7 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunctio
 
 namespace WTF {
 
-template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(uint8_t value)
+template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(IPC::EncodedVariantIndex value)
 {
     switch (static_cast<IPC::WebCore_TimingFunction_Subclass>(value)) {
     case IPC::WebCore_TimingFunction_Subclass::LinearTimingFunction:

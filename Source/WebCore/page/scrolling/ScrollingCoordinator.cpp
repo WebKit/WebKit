@@ -195,7 +195,10 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
 
 EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegions() const
 {
-    return absoluteEventTrackingRegionsForFrame(m_page->mainFrame());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return EventTrackingRegions();
+    return absoluteEventTrackingRegionsForFrame(*localMainFrame);
 }
 
 void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView& frameView)
@@ -369,7 +372,11 @@ void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool fo
 
 bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const FrameView& frameView) const
 {
-    if (&frameView == m_page->mainFrame().view())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return false;
+
+    if (&frameView == localMainFrame->view())
         return !synchronousScrollingReasons(frameView.scrollingNodeID()).isEmpty();
     
     return true;
@@ -434,8 +441,11 @@ String ScrollingCoordinator::synchronousScrollingReasonsAsText(OptionSet<Synchro
 
 String ScrollingCoordinator::synchronousScrollingReasonsAsText() const
 {
-    if (auto* frameView = m_page->mainFrame().view())
-        return synchronousScrollingReasonsAsText(synchronousScrollingReasons(frameView->scrollingNodeID()));
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (localMainFrame) {
+        if (auto* frameView = localMainFrame->view())
+            return synchronousScrollingReasonsAsText(synchronousScrollingReasons(frameView->scrollingNodeID()));
+    }
 
     return String();
 }

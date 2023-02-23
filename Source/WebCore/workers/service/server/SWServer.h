@@ -275,6 +275,8 @@ public:
     };
     WEBCORE_EXPORT std::optional<GatheredClientData> gatherClientData(const ClientOrigin&, ScriptExecutionContextIdentifier);
 
+    void requestBackgroundFetchPermission(const ClientOrigin& clientOrigin, CompletionHandler<void(bool)>&& callback) { m_delegate->requestBackgroundFetchPermission(clientOrigin, WTFMove(callback)); }
+
 private:
     unsigned maxRegistrationCount();
     bool allowLoopbackIPAddress(const String&);

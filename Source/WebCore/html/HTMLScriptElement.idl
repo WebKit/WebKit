@@ -33,6 +33,7 @@
     [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
     [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
     [EnabledBySetting=ReferrerPolicyAttributeEnabled, ImplementedAs=referrerPolicyForBindings, CEReactions=NotNeeded] attribute [AtomString] DOMString referrerPolicy;
+    [CEReactions, EnabledBySetting=PriorityHintsEnabled, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
 
     static boolean supports(DOMString type);
 };

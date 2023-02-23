@@ -225,7 +225,8 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
     if (!allowSandboxException && !documentSecurityOrigin.canRequest(fullURL) && (fullURL.path() != documentURL.path() || fullURL.query() != documentURL.query()))
         return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document.");
 
-    auto* mainWindow = frame->page()->mainFrame().window();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(frame->page()->mainFrame());
+    auto* mainWindow = localMainFrame ? localMainFrame->window() : nullptr;
     if (!mainWindow)
         return { };
 

@@ -1516,7 +1516,20 @@ void NetworkProcessProxy::endServiceWorkerBackgroundProcessing(WebCore::ProcessI
     if (auto serviceWorkerProcess = WebProcessProxy::processForIdentifier(serviceWorkerProcessIdentifier))
         serviceWorkerProcess->endServiceWorkerBackgroundProcessing();
 }
-#endif
+
+void NetworkProcessProxy::requestBackgroundFetchPermission(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
+{
+    RELEASE_LOG(Storage, "%p - NetworkProcessProxy::requestStorageSpace", this);
+    auto* store = websiteDataStoreFromSessionID(sessionID);
+
+    if (!store) {
+        callback(false);
+        return;
+    }
+
+    store->client().requestBackgroundFetchPermission(origin.topOrigin, origin.clientOrigin, WTFMove(callback));
+}
+#endif // ENABLE(SERVICE_WORKER)
 
 void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&& completionHandler)
 {

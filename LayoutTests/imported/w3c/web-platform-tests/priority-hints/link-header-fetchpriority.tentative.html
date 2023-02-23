@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<title>Priority Hints - Link element</title>
+<meta name="author" title="Dominic Farolino" href="mailto:domfarolino@gmail.com">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<script>
+  test(() => {
+    const link = document.createElement("link");
+    assert_equals(link.fetchPriority, "auto");
+  }, "default fetchpriority attribute on <link> elements should be 'auto'");
+</script>

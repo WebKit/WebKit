@@ -1,4 +1,0 @@
-
-
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "Error fetching /interfaces/popover.tentative.idl."
-
