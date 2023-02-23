@@ -47,7 +47,7 @@ public:
     GraphicsContext& context() const final;
 
 private:
-    ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
+    ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContextCG>&&);
 
     IntSize backendSize() const final;
     unsigned bytesPerRow() const final;
@@ -59,7 +59,6 @@ private:
 
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;
-    std::unique_ptr<GraphicsContext> m_context;
 };
 
 } // namespace WebCore
