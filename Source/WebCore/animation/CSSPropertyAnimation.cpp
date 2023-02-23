@@ -663,33 +663,23 @@ static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrack
     return result;
 }
 
-class AnimationPropertyWrapperBase {
-    WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
-    WTF_MAKE_FAST_ALLOCATED;
+class AnimationPropertyWrapperBase : public AnimatableCSSProperty {
 public:
     explicit AnimationPropertyWrapperBase(CSSPropertyID property)
-        : m_property(property)
+        : AnimatableCSSProperty(property)
     {
     }
-    virtual ~AnimationPropertyWrapperBase() = default;
 
-    virtual bool isShorthandWrapper() const { return false; }
     virtual bool isAdditiveOrCumulative() const { return true; }
     virtual bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const { return false; }
-    virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
+    virtual bool equals(const RenderStyle&, const RenderStyle&) const { return false; }
     virtual bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const { return true; }
-    virtual void blend(RenderStyle&, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const = 0;
-    
-#if !LOG_DISABLED
-    virtual void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const = 0;
-#endif
-
-    CSSPropertyID property() const { return m_property; }
-
+    virtual void blend(RenderStyle&, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const { };
     virtual bool animationIsAccelerated() const { return false; }
 
-private:
-    CSSPropertyID m_property;
+#if !LOG_DISABLED
+    virtual void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const { };
+#endif
 };
 
 template <typename T>
@@ -2227,7 +2217,7 @@ public:
     {
     }
 
-    bool isShorthandWrapper() const final { return true; }
+    bool isShorthand() const final { return true; }
 
     const Vector<AnimationPropertyWrapperBase*>& propertyWrappers() const { return m_propertyWrappers; }
 
@@ -3190,19 +3180,21 @@ public:
         if (wrapperIndex == cInvalidPropertyWrapperIndex)
             return nullptr;
 
-        return m_propertyWrappers[wrapperIndex].get();
+        return static_cast<AnimationPropertyWrapperBase*>(m_propertyWrappers[wrapperIndex].get());
     }
 
     AnimationPropertyWrapperBase* wrapperForIndex(unsigned index)
     {
         ASSERT(index < m_propertyWrappers.size());
-        return m_propertyWrappers[index].get();
+        return static_cast<AnimationPropertyWrapperBase*>(m_propertyWrappers[index].get());
     }
 
     unsigned size()
     {
         return m_propertyWrappers.size();
     }
+
+    const Vector<std::unique_ptr<AnimatableCSSProperty>>& wrappers() const { return m_propertyWrappers; }
 
 private:
     CSSPropertyAnimationWrapperMap();
@@ -3213,7 +3205,7 @@ private:
         return m_propertyToIdMap[propertyID - firstCSSProperty];
     }
 
-    Vector<std::unique_ptr<AnimationPropertyWrapperBase>> m_propertyWrappers;
+    Vector<std::unique_ptr<AnimatableCSSProperty>> m_propertyWrappers;
     unsigned short m_propertyToIdMap[numCSSProperties];
 
     static const unsigned short cInvalidPropertyWrapperIndex = std::numeric_limits<unsigned short>::max();
@@ -3615,7 +3607,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
             if (wrapperIndex == cInvalidPropertyWrapperIndex)
                 continue;
             ASSERT(m_propertyWrappers[wrapperIndex]);
-            longhandWrappers.uncheckedAppend(m_propertyWrappers[wrapperIndex].get());
+            longhandWrappers.uncheckedAppend(static_cast<AnimationPropertyWrapperBase*>(m_propertyWrappers[wrapperIndex].get()));
         }
         longhandWrappers.shrinkToFit();
 
@@ -4178,21 +4170,9 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(AnimatableProperty property
     );
 }
 
-CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, std::optional<bool>& isShorthand)
+const Vector<std::unique_ptr<AnimatableCSSProperty>>& CSSPropertyAnimation::animatableProperties()
 {
-    CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::singleton();
-
-    if (i < 0 || static_cast<unsigned>(i) >= map.size())
-        return CSSPropertyInvalid;
-
-    AnimationPropertyWrapperBase* wrapper = map.wrapperForIndex(i);
-    isShorthand = wrapper->isShorthandWrapper();
-    return wrapper->property();
-}
-
-int CSSPropertyAnimation::getNumProperties()
-{
-    return CSSPropertyAnimationWrapperMap::singleton().size();
+    return CSSPropertyAnimationWrapperMap::singleton().wrappers();
 }
 
 }

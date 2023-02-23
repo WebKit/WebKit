@@ -675,13 +675,10 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
     compileTransitionPropertiesInStyle(newStyle, transitionProperties, transitionPropertiesContainAll);
 
     if (transitionPropertiesContainAll) {
-        auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
-        for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
-            std::optional<bool> isShorthand;
-            auto property = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
-            if (isShorthand && *isShorthand)
+        for (auto& animatableCSSProperty : CSSPropertyAnimation::animatableProperties()) {
+            if (animatableCSSProperty->isShorthand())
                 continue;
-            updateCSSTransitionsForStyleableAndProperty(*this, property, currentStyle, newStyle, generationTime);
+            updateCSSTransitionsForStyleableAndProperty(*this, animatableCSSProperty->property(), currentStyle, newStyle, generationTime);
         }
 
         HashSet<AtomString> animatableCustomProperties;

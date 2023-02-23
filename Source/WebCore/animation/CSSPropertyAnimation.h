@@ -40,6 +40,24 @@ class CSSPropertyBlendingClient;
 class Document;
 class RenderStyle;
 
+class AnimatableCSSProperty {
+    WTF_MAKE_NONCOPYABLE(AnimatableCSSProperty);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit AnimatableCSSProperty(CSSPropertyID property)
+        : m_property(property)
+    {
+    }
+
+    virtual ~AnimatableCSSProperty() = default;
+
+    CSSPropertyID property() const { return m_property; }
+    virtual bool isShorthand() const { return false; }
+
+private:
+    CSSPropertyID m_property;
+};
+
 class CSSPropertyAnimation {
 public:
     static bool isPropertyAnimatable(AnimatableProperty);
@@ -48,8 +66,7 @@ public:
     static bool animationOfPropertyIsAccelerated(AnimatableProperty);
     static bool propertiesEqual(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
     static bool canPropertyBeInterpolated(AnimatableProperty, const RenderStyle& a, const RenderStyle& b, const Document&);
-    static CSSPropertyID getPropertyAtIndex(int, std::optional<bool>& isShorthand);
-    static int getNumProperties();
+    static const Vector<std::unique_ptr<AnimatableCSSProperty>>& animatableProperties();
 
     static void blendProperty(const CSSPropertyBlendingClient&, AnimatableProperty, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress, CompositeOperation, IterationCompositeOperation = IterationCompositeOperation::Replace, double currentIteration = 0);
 };
