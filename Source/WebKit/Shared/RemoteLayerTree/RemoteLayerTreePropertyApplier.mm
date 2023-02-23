@@ -33,6 +33,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -257,10 +258,8 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         auto* backingStore = properties.backingStore.get();
         if (backingStore && properties.backingStoreAttached)
             backingStore->applyBackingStoreToLayer(layer, layerContentsType, layerTreeHost->replayCGDisplayListsIntoBackingStore());
-        else {
-            layer.contents = nil;
-            layer.contentsOpaque = NO;
-        }
+        else
+            [layer _web_clearContents];
     }
 
     if (properties.changedProperties & LayerChange::FiltersChanged)

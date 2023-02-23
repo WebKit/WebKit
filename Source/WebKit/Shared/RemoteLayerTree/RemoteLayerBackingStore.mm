@@ -44,6 +44,7 @@
 #import <WebCore/IOSurfacePool.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/PlatformCALayerClient.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebLayer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -593,6 +594,11 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
     // m_bufferHandle can be unset here if IPC with the GPU process timed out.
     if (m_bufferHandle)
         contents = layerContentsBufferFromBackendHandle(WTFMove(*m_bufferHandle), contentsType);
+
+    if (!contents) {
+        [layer _web_clearContents];
+        return;
+    }
 
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
     if (m_displayListBufferHandle) {
