@@ -196,7 +196,7 @@ void DrawImageBuffer::apply(GraphicsContext& context, WebCore::ImageBuffer& imag
 
 void DrawNativeImage::apply(GraphicsContext& context, NativeImage& image) const
 {
-    context.drawNativeImageInternal(image, m_imageSize, m_destinationRect, m_srcRect, m_options);
+    context.drawNativeImage(image, m_imageSize, m_destinationRect, m_srcRect, m_options);
 }
 
 void DrawSystemImage::apply(GraphicsContext& context) const

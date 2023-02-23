@@ -28,7 +28,6 @@
 #pragma once
 
 #include "Color.h"
-#include "ImagePaintingOptions.h"
 #include "IntSize.h"
 #include "PlatformImage.h"
 #include "RenderingResourceIdentifier.h"
@@ -38,8 +37,6 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WebCore {
-
-class GraphicsContext;
 
 class NativeImage final
     : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NativeImage> {
@@ -64,8 +61,6 @@ public:
     bool hasAlpha() const;
     Color singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
-
-    void draw(GraphicsContext&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions&);
 
     void addObserver(Observer& observer) { m_observers.add(&observer); }
     void removeObserver(Observer& observer) { m_observers.remove(&observer); }
