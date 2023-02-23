@@ -2779,7 +2779,6 @@ imported/w3c/web-platform-tests/websockets/cookies/007.html?wss&wpt_flags=https 
 [ Monterey+ x86_64 ] inspector/animation/lifecycle-css-transition.html [ Pass Failure ]
 [ BigSur+ ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html [ Pass Failure ]
 [ Ventura+ ] fast/text/synthetic-bold-transformed.html [ Pass ImageOnlyFailure ]
-[ Monterey+ x86_64 ] media/video-object-fit.html [ Pass ImageOnlyFailure ]
 [ Monterey+ x86_64 ] media/track/track-cues-cuechange.html [ Pass Timeout Failure ]
 [ BigSur+ x86_64 ] js/promises-tests/promises-tests-2-3-3.html [ Pass Timeout ]
 
@@ -2790,6 +2789,8 @@ webkit.org/b/251051 [ BigSur+ Debug ] storage/indexeddb/modern/deleteindex-4-pri
 webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Crash ]
+
+webkit.org/b/252839 media/video-object-fit.html [ ImageOnlyFailure ]
 
 #webkit.org/b/251526 [ Ventura EWS ] 2x AVIF tests are constant failures on EWS only
 [ Ventura ] fast/images/avif-as-image.html [ Pass ImageOnlyFailure Crash ]

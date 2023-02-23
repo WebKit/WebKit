@@ -2364,6 +2364,8 @@ fast/animation/height-auto-transition-computed-value.html [ ImageOnlyFailure ]
 
 webkit.org/b/155174 svg/animations/animate-marker-orient-from-angle-to-autostartreverse.html [ Skip ]
 
+webkit.org/b/252839 media/video-object-fit.html [ ImageOnlyFailure ]
+
 webkit.org/b/155372 [ Debug ] css3/masking/mask-luminance-svg.html [ Pass Crash ]
 webkit.org/b/155372 [ Debug ] css3/masking/mask-svg-script-none-to-png.html [ Pass Crash ]
 
