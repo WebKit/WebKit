@@ -137,7 +137,10 @@ void WebInspectorFrontendClient::setSheetRect(const FloatRect&) { }
 void WebInspectorFrontendClient::startWindowDrag() { }
 void WebInspectorFrontendClient::inspectedURLChanged(const String&) { }
 void WebInspectorFrontendClient::showCertificate(const CertificateInfo&) { }
+bool WebInspectorFrontendClient::supportsDiagnosticLogging() { return false; }
+void WebInspectorFrontendClient::logDiagnosticEvent(const String& eventName, const WebCore::DiagnosticLoggingClient::ValueDictionary&) { }
 void WebInspectorFrontendClient::updateWindowTitle() const { }
+bool WebInspectorFrontendClient::canSave(WebCore::InspectorFrontendClient::SaveMode) { return false; }
 void WebInspectorFrontendClient::save(Vector<InspectorFrontendClient::SaveData>&&, bool /* forceSaveAs */) { }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -16593,7 +16593,7 @@
 				"$(SRCROOT)/MigratedHeaders-input.xcfilelist",
 			);
 			inputPaths = (
-				"$(SRCROOT)/Scripts/migrate-headers.py",
+				"$(WEBKITLEGACY_PRIVATE_HEADERS_DIR)/migrate-headers.py",
 				"$(SRCROOT)/Scripts/postprocess-header-rule",
 			);
 			name = "Migrate WebCore and WebKitLegacy Headers";
