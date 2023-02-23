@@ -176,11 +176,6 @@ static WebDefaultUIKitDelegate *sharedDelegate = nil;
 {
 }
 
-// FIXME: to be removed when UIKit implements the new one below.
-- (void)deleteFromInput
-{
-}
-
 - (void)deleteFromInputWithFlags:(NSUInteger)flags
 {
 }
