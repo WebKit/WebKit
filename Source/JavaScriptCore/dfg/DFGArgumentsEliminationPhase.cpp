@@ -36,6 +36,7 @@
 #include "DFGForAllKills.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
+#include "DFGLivenessAnalysisPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGPhase.h"
 #include "JSCInlines.h"
@@ -495,8 +496,37 @@ private:
         dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "After escape analysis: ", listDump(m_candidates.keys()));
     }
 
+    // Anywhere that a candidate is live (in bytecode or in DFG), check if there is a chance of
+    // interference between the stack area that the arguments object copies from and the arguments
+    // object's payload. Conservatively this means that the stack region doesn't get stored to.
     void eliminateCandidatesThatInterfere()
     {
+        performLivenessAnalysis(m_graph);
+        m_graph.initializeNodeOwners();
+        CombinedLiveness combinedLiveness(m_graph);
+
+        BlockMap<Operands<bool>> clobberedByBlock(m_graph);
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            Operands<bool>& clobberedByThisBlock = clobberedByBlock[block];
+            clobberedByThisBlock = Operands<bool>(OperandsLike, m_graph.block(0)->variablesAtHead);
+            for (Node* node : *block) {
+                clobberize(
+                    m_graph, node, NoOpClobberize(),
+                    [&] (AbstractHeap heap) {
+                        if (heap.kind() != Stack) {
+                            ASSERT(!heap.overlaps(Stack));
+                            return;
+                        }
+                        ASSERT(!heap.payload().isTop());
+                        Operand operand = heap.operand();
+                        // The register may not point to an argument or local, for example if we are looking at SetArgumentCountIncludingThis.
+                        if (!operand.isHeader())
+                            clobberedByThisBlock.operand(operand) = true;
+                    },
+                    NoOpClobberize());
+            }
+        }
+
         auto forEachDependentNode = recursableLambda([&](auto self, Node* node, const auto& functor) -> IterationStatus {
             if (functor(node) == IterationStatus::Done)
                 return IterationStatus::Done;
@@ -517,16 +547,27 @@ private:
             return IterationStatus::Continue;
         });
 
+        using InlineCallFrames = HashSet<InlineCallFrame*, WTF::DefaultHash<InlineCallFrame*>, WTF::NullableHashTraits<InlineCallFrame*>>;
+        using InlineCallFramesForCanditates = HashMap<Node*, InlineCallFrames>;
+        InlineCallFramesForCanditates inlineCallFramesForCandidate;
+        for (auto& [candidate, availability] : m_candidates) {
+            auto& set = inlineCallFramesForCandidate.add(candidate, InlineCallFrames()).iterator->value;
+            forEachDependentNode(candidate, [&](Node* dependent) {
+                if (dependent->op() != CreateRest && dependent->op() != CreateDirectArguments && dependent->op() != CreateClonedArguments)
+                    return IterationStatus::Continue;
+                set.add(dependent->origin.semantic.inlineCallFrame());
+                return IterationStatus::Continue;
+            });
+        }
+
         auto computeInterference = [&](Node* candidate, const AvailabilityMap& availability) {
             bool interfere = false;
             forEachDependentNode(candidate, [&](Node* dependent) -> IterationStatus {
                 if (dependent->op() != CreateRest && dependent->op() != CreateDirectArguments && dependent->op() != CreateClonedArguments)
                     return IterationStatus::Continue;
-
                 auto iterator = m_candidates.find(dependent);
                 if (iterator == m_candidates.end())
                     return IterationStatus::Continue;
-
                 InlineCallFrame* inlineCallFrame = dependent->origin.semantic.inlineCallFrame();
                 if (inlineCallFrame) {
                     if (inlineCallFrame->isVarargs()) {
@@ -536,7 +577,6 @@ private:
                             return IterationStatus::Done;
                         }
                     }
-
                     if (inlineCallFrame->isClosureCall) {
                         VirtualRegister reg(inlineCallFrame->stackOffset + CallFrameSlot::callee);
                         if (availability.m_locals.operand(reg) != iterator->value.m_locals.operand(reg)) {
@@ -544,7 +584,6 @@ private:
                             return IterationStatus::Done;
                         }
                     }
-
                     for (unsigned i = 0; i < static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1); ++i) {
                         VirtualRegister reg = VirtualRegister(inlineCallFrame->stackOffset) + CallFrame::argumentOffset(i);
                         if (availability.m_locals.operand(reg) != iterator->value.m_locals.operand(reg)) {
@@ -567,6 +606,103 @@ private:
             return interfere;
         };
 
+        auto removeViaKill = [&](BasicBlock* block, unsigned nodeIndex, Node* candidate) {
+            if (!m_candidates.contains(candidate))
+                return;
+
+            for (InlineCallFrame* inlineCallFrame : inlineCallFramesForCandidate.get(candidate)) {
+                // Check if this block has any clobbers that affect this candidate. This is a fairly
+                // fast check.
+                bool isClobberedByBlock = false;
+                Operands<bool>& clobberedByThisBlock = clobberedByBlock[block];
+
+                if (inlineCallFrame) {
+                    if (inlineCallFrame->isVarargs()) {
+                        isClobberedByBlock |= clobberedByThisBlock.operand(
+                            VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
+                    }
+
+                    if (!isClobberedByBlock || inlineCallFrame->isClosureCall) {
+                        isClobberedByBlock |= clobberedByThisBlock.operand(
+                            VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::callee));
+                    }
+
+                    if (!isClobberedByBlock) {
+                        for (unsigned i = 0; i < static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1); ++i) {
+                            VirtualRegister reg =
+                                VirtualRegister(inlineCallFrame->stackOffset) +
+                                CallFrame::argumentOffset(i);
+                            if (clobberedByThisBlock.operand(reg)) {
+                                isClobberedByBlock = true;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    // We don't include the ArgumentCount or Callee in this case because we can be
+                    // damn sure that this won't be clobbered.
+                    for (unsigned i = 1; i < static_cast<unsigned>(codeBlock()->numParameters()); ++i) {
+                        if (clobberedByThisBlock.argument(i)) {
+                            isClobberedByBlock = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!isClobberedByBlock)
+                    continue;
+
+                // Check if we can immediately eliminate this candidate. If the block has a clobber
+                // for this arguments allocation, and we'd have to examine every node in the block,
+                // then we can just eliminate the candidate.
+                if (nodeIndex == block->size() && candidate->owner != block) {
+                    dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by block", block);
+                    transitivelyRemoveCandidate(candidate);
+                    return;
+                }
+
+                // This loop considers all nodes up to the nodeIndex, excluding the nodeIndex.
+                //
+                // Note: nodeIndex here has a double meaning. Before entering this
+                // while loop, it refers to the remaining number of nodes that have
+                // yet to be processed. Inside the loop, it refers to the index
+                // of the current node to process (after we decrement it).
+                //
+                // If the remaining number of nodes is 0, we should not decrement nodeIndex.
+                // Hence, we must only decrement nodeIndex inside the while loop instead of
+                // in its condition statement. Note that this while loop is embedded in an
+                // outer for loop. If we decrement nodeIndex in the condition statement, a
+                // nodeIndex of 0 will become UINT_MAX, and the outer loop will wrongly
+                // treat this as there being UINT_MAX remaining nodes to process.
+                while (nodeIndex) {
+                    --nodeIndex;
+                    Node* node = block->at(nodeIndex);
+                    if (node == candidate)
+                        break;
+
+                    bool found = false;
+                    clobberize(
+                        m_graph, node, NoOpClobberize(),
+                        [&] (AbstractHeap heap) {
+                            if (heap.kind() == Stack && !heap.payload().isTop()) {
+                                if (argumentsInvolveStackSlot(inlineCallFrame, heap.operand()))
+                                    found = true;
+                                return;
+                            }
+                            if (heap.overlaps(Stack))
+                                found = true;
+                        },
+                        NoOpClobberize());
+
+                    if (found) {
+                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", block->at(nodeIndex));
+                        transitivelyRemoveCandidate(candidate);
+                        return;
+                    }
+                }
+            }
+        };
+
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
             // Stop if we've already removed all candidates.
             if (m_candidates.isEmpty())
@@ -574,173 +710,39 @@ private:
 
             LocalOSRAvailabilityCalculator calculator(m_graph);
             calculator.beginBlock(block);
-            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
-                Node* node = block->at(nodeIndex);
 
-                bool alreadyRun = false;
-                auto runAvailabilityAnalysis = [&](Node* node) {
-                    if (alreadyRun)
-                        return;
+            bool clobberStack = false;
+            for (unsigned i = clobberedByBlock[block].size(); i--;) {
+                if (clobberedByBlock[block][i])
+                    clobberStack = true;
+            }
+
+            for (Node* candidate : combinedLiveness.liveAtHead[block]) {
+                if (!m_candidates.contains(candidate))
+                    continue;
+                if (computeInterference(candidate, calculator.m_availability)) {
+                    dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered at block ", block);
+                    transitivelyRemoveCandidate(candidate);
+                    continue;
+                }
+            }
+
+            if (clobberStack) {
+                for (Node* node : combinedLiveness.liveAtTail[block])
+                    removeViaKill(block, block->size(), node);
+
+                for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                    Node* node = block->at(nodeIndex);
+                    if (nodeIndex) {
+                        forAllKilledNodesAtNodeIndex(
+                            m_graph, calculator.m_availability, block, nodeIndex,
+                            [&] (Node* node) {
+                                removeViaKill(block, nodeIndex, node);
+                            });
+                    }
+
                     calculator.executeNode(node);
-                    alreadyRun = true;
-                };
-
-                switch (node->op()) {
-                case GetFromArguments: {
-                    Node* candidate = node->child1().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    DFG_ASSERT(m_graph, node, node->child1()->op() == CreateDirectArguments, node->child1()->op());
-                    VirtualRegister reg = virtualRegisterForArgumentIncludingThis(node->capturedArgumentsOffset().offset() + 1) + node->origin.semantic.stackOffset();
-                    bool interfere = false;
-                    forEachDependentNode(candidate, [&](Node* dependent) -> IterationStatus {
-                        if (dependent->op() != CreateRest && dependent->op() != CreateDirectArguments && dependent->op() != CreateClonedArguments)
-                            return IterationStatus::Continue;
-
-                        auto iterator = m_candidates.find(dependent);
-                        if (iterator == m_candidates.end())
-                            return IterationStatus::Continue;
-
-                        if (iterator->value.m_locals.operand(reg) != calculator.m_availability.m_locals.operand(reg)) {
-                            interfere = true;
-                            return IterationStatus::Done;
-                        }
-
-                        return IterationStatus::Continue;
-                    });
-                    if (interfere) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
                 }
-
-                case GetByOffset: {
-                    Node* candidate = node->child2().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    ASSERT(candidate->op() == CreateClonedArguments);
-                    ASSERT(node->storageAccessData().offset == clonedArgumentsLengthPropertyOffset);
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                case GetArrayLength: {
-                    Node* candidate = node->child1().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                case GetByVal: {
-                    Node* candidate = m_graph.varArgChild(node, 0).node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                case VarargsLength: {
-                    Node* candidate = node->argumentsChild().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                case LoadVarargs: {
-                    Node* candidate = node->argumentsChild().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-
-                    // Only LoadVarargs can be lowered into sequence of PutStacks. And these PutStacks can interfere with the candidates' StackSlots.
-                    // This is problematic: when OSR exit happens in the middle of PutStack sequence in LoadVarargs, then we need to materialize phantom candidates, and it will see already clobbered stack slots.
-                    // So, here, we also check whether the candidates do not interfere after "LoadVarargs" happens.
-                    runAvailabilityAnalysis(node);
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by LoadVarargs on the same node ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                case CallVarargs:
-                case ConstructVarargs:
-                case TailCallVarargs:
-                case TailCallVarargsInlinedCaller: {
-                    Node* candidate = node->child3().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                case CheckArrayOrEmpty:
-                case CheckArray:
-                case GetButterfly:
-                case FilterGetByStatus:
-                case FilterPutByStatus:
-                case FilterCallLinkStatus:
-                case FilterInByStatus:
-                case FilterDeleteByStatus:
-                case FilterCheckPrivateBrandStatus:
-                case FilterSetPrivateBrandStatus: {
-                    Node* candidate = node->child1().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                case CheckStructureOrEmpty:
-                case CheckStructure: {
-                    Node* candidate = node->child1().node();
-                    if (!m_candidates.contains(candidate))
-                        break;
-
-                    if (computeInterference(candidate, calculator.m_availability)) {
-                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
-                        transitivelyRemoveCandidate(candidate);
-                    }
-                    break;
-                }
-
-                default:
-                    break;
-                }
-
-                runAvailabilityAnalysis(node);
             }
         }
 
