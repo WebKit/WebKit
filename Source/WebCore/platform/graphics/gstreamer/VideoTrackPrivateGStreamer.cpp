@@ -36,16 +36,29 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkit_video_track_debug);
+#define GST_CAT_DEFAULT webkit_video_track_debug
+
+static void ensureDebugCategoryInitialized()
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_video_track_debug, "webkitvideotrack", 0, "WebKit Video Track");
+    });
+}
+
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GRefPtr<GstPad>&& pad, bool shouldHandleStreamStartEvent)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTFMove(pad), shouldHandleStreamStartEvent)
     , m_player(player)
 {
+    ensureDebugCategoryInitialized();
 }
 
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(WeakPtr<MediaPlayerPrivateGStreamer> player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, stream)
     , m_player(player)
 {
+    ensureDebugCategoryInitialized();
     int kind;
     auto tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
 
@@ -83,6 +96,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags()
     if (!tags || !gst_tag_list_get_uint(tags.get(), GST_TAG_BITRATE, &bitrate))
         return;
 
+    GST_DEBUG_OBJECT(m_stream.get(), "Setting bitrate to %u", bitrate);
     auto configuration = this->configuration();
     configuration.bitrate = bitrate;
     setConfiguration(WTFMove(configuration));
@@ -104,6 +118,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
     if (!doCapsHaveType(caps.get(), GST_VIDEO_CAPS_TYPE_PREFIX))
         return;
 
+    GST_DEBUG_OBJECT(m_stream.get(), "Updating video configuration from %" GST_PTR_FORMAT, caps.get());
     auto configuration = this->configuration();
     auto scopeExit = makeScopeExit([&] {
         setConfiguration(WTFMove(configuration));
@@ -119,11 +134,9 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
 
     GstVideoInfo info;
     if (gst_video_info_from_caps(&info, caps.get())) {
-        if (GST_VIDEO_INFO_FPS_N(&info)) {
-            double framerate;
-            gst_util_fraction_to_double(GST_VIDEO_INFO_FPS_N(&info), GST_VIDEO_INFO_FPS_D(&info), &framerate);
-            configuration.framerate = framerate;
-        }
+        if (GST_VIDEO_INFO_FPS_N(&info))
+            gst_util_fraction_to_double(GST_VIDEO_INFO_FPS_N(&info), GST_VIDEO_INFO_FPS_D(&info), &configuration.framerate);
+
         configuration.width = GST_VIDEO_INFO_WIDTH(&info);
         configuration.height = GST_VIDEO_INFO_HEIGHT(&info);
         configuration.colorSpace = videoColorSpaceFromInfo(info);
@@ -131,6 +144,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps()
 
 #if GST_CHECK_VERSION(1, 20, 0)
     GUniquePtr<char> codec(gst_codec_utils_caps_get_mime_codec(caps.get()));
+    GST_DEBUG_OBJECT(m_stream.get(), "Setting codec to %s", codec.get());
     configuration.codec = String::fromLatin1(codec.get());
 #endif
 }
