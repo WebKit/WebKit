@@ -2221,12 +2221,12 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
     }
 #endif
     // FIXME: Following is a hack needed to get westeros-sink autoplug correctly with playbin3.
-    if (!m_isLegacyPlaybin && westerosSinkCaps && g_str_has_prefix(GST_ELEMENT_NAME(element), "decodebin3")) {
+    if (!m_isLegacyPlaybin && westerosSinkCaps && g_str_has_prefix(GST_ELEMENT_NAME(element), "uridecodebin3")) {
         GRefPtr<GstCaps> defaultCaps;
         g_object_get(element, "caps", &defaultCaps.outPtr(), NULL);
-        defaultCaps = adoptGRef(gst_caps_merge(defaultCaps.leakRef(), gst_caps_ref(westerosSinkCaps)));
+        defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(westerosSinkCaps), defaultCaps.leakRef()));
         g_object_set(element, "caps", defaultCaps.get(), NULL);
-        GST_ERROR_OBJECT(pipeline(), "setting stop caps tp %" GST_PTR_FORMAT, defaultCaps.get());
+        GST_INFO_OBJECT(pipeline(), "setting stop caps tp %" GST_PTR_FORMAT, defaultCaps.get());
     }
 #endif
 }
