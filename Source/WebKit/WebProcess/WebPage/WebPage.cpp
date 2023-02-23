@@ -3255,6 +3255,7 @@ bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
     return handled;
 }
 
+#if PLATFORM(IOS_FAMILY)
 void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(KINETIC_SCROLLING)
@@ -3268,6 +3269,7 @@ void WebPage::dispatchWheelEventWithoutScrolling(const WebWheelEvent& wheelEvent
     // The caller of dispatchWheelEventWithoutScrolling never cares about DidReceiveEvent being sent back.
     completionHandler(handled);
 }
+#endif
 
 static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 {
