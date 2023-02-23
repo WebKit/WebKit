@@ -169,7 +169,7 @@ public:
 #endif
 
 #if USE(FREETYPE)
-#if USE(HARFBUZZ) && !ENABLE(OPENTYPE_MATH)
+#if USE(HARFBUZZ)
     HbUniquePtr<hb_font_t> createOpenTypeMathHarfBuzzFont() const;
 #endif
     bool hasCompatibleCharmap() const;

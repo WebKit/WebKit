@@ -302,7 +302,7 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     return SharedBuffer::create(WTFMove(data));
 }
 
-#if USE(HARFBUZZ) && !ENABLE(OPENTYPE_MATH)
+#if USE(HARFBUZZ)
 HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 {
     CairoFtFaceLocker cairoFtFaceLocker(m_scaledFont.get());
