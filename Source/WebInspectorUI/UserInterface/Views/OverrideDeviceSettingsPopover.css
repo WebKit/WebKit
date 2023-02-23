@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.popover .settings-content.user-preferences-content {
-    grid-template-columns: auto auto;
+.popover .settings-content.device-settings-content > label {
+    width: fit-content;
 }
 
-.popover .settings-content.user-preferences-content > h1 {
-    grid-column: 1 / -1;
+.popover .settings-content.device-settings-content > label > input {
+    margin: 0;
+    margin-inline: 0.5px 4px;
 }
 
-.popover .settings-content.user-preferences-content > label {
-    grid-column: 1;
-    align-self: center;
+.popover .settings-content.device-settings-content > .select-with-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px 0;
 }
 
-.popover .settings-content.user-preferences-content > select {
-    grid-column: 2;
+.popover .settings-content.device-settings-content > .reference-page-link-container {
+    position: absolute;
+    bottom: 0.5em;
+    inset-inline-end: 0.5em;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.popover .settings-content.user-preferences-content {
-    grid-template-columns: auto auto;
-}
+WI.SettingsPopover = class SettingsPopover extends WI.Popover
+{
+    constructor(delegate)
+    {
+        super(delegate);
 
-.popover .settings-content.user-preferences-content > h1 {
-    grid-column: 1 / -1;
-}
+        this._targetElement = null;
+        this.windowResizeHandler = this._presentOverTargetElement.bind(this);
+    }
 
-.popover .settings-content.user-preferences-content > label {
-    grid-column: 1;
-    align-self: center;
-}
+    // Public
 
-.popover .settings-content.user-preferences-content > select {
-    grid-column: 2;
-}
+    show(targetElement)
+    {
+        this._targetElement = targetElement;
+        this.content = this.createContentElement();
+
+        this._presentOverTargetElement();
+    }
+
+    set content(content)
+    {
+        console.assert(content instanceof HTMLElement, content);
+
+        content.classList.add("settings-content");
+
+        super.content = content;
+    }
+
+    // Protected
+
+    createContentElement()
+    {
+        // Implemented by subclasses.
+        throw WI.NotImplementedError.subclassMustOverride();
+    }
+
+    // Private
+
+    _presentOverTargetElement()
+    {
+        if (!this._targetElement)
+            return;
+
+        let targetFrame = WI.Rect.rectFromClientRect(this._targetElement.getBoundingClientRect());
+        const preferredEdges = [WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X];
+
+        this.present(targetFrame.pad(2), preferredEdges);
+    }
+};

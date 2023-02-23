@@ -130,11 +130,13 @@ WI.loaded = function()
         WI.domDebuggerManager = new WI.DOMDebuggerManager,
         WI.canvasManager = new WI.CanvasManager,
         WI.animationManager = new WI.AnimationManager,
+        WI.deviceSettingsManager = new WI.DeviceSettingsManager,
     ];
 
     // Register for events.
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, WI._debuggerDidPause, WI);
     WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Resumed, WI._debuggerDidResume, WI);
+    WI.deviceSettingsManager.addEventListener(WI.DeviceSettingsManager.Event.SettingChanged, WI._handleDeviceSettingChanged, WI);
     WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, WI._inspectModeStateChanged, WI);
     WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, WI._domNodeWasInspected, WI);
     WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, WI._domStorageWasInspected, WI);
@@ -171,9 +173,6 @@ WI.loaded = function()
     WI.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
     WI.visible = false;
     WI._windowKeydownListeners = [];
-    WI._overridenDeviceUserAgent = null;
-    WI._overridenDeviceScreenSize = null;
-    WI._overridenDeviceSettings = new Map;
 
     // Targets.
     WI.backendTarget = null;
@@ -631,16 +630,6 @@ WI.performOneTimeFrontendInitializationsUsingTarget = function(target)
 WI.initializeTarget = function(target)
 {
     if (target.hasDomain("Page")) {
-        // COMPATIBILITY (iOS 12.2): Page.overrideUserAgent did not exist.
-        if (target.hasCommand("Page.overrideUserAgent") && WI._overridenDeviceUserAgent)
-            target.PageAgent.overrideUserAgent(WI._overridenDeviceUserAgent);
-
-        // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-        if (target.hasCommand("Page.overrideSetting")) {
-            for (let [setting, value] of WI._overridenDeviceSettings)
-                target.PageAgent.overrideSetting(setting, value);
-        }
-
         // COMPATIBILITY (iOS 13.4): Page.setShowRulers was removed.
         if (target.hasCommand("Page.setShowRulers") && WI.settings.showRulers.value)
             target.PageAgent.setShowRulers(true).catch((error) => {
@@ -2101,392 +2090,17 @@ WI._toggleInspectMode = function(event)
 
 WI._handleDeviceSettingsTabBarButtonClicked = function(event)
 {
-    if (WI._deviceSettingsPopover) {
-        WI._deviceSettingsPopover.dismiss();
-        WI._deviceSettingsPopover = null;
-        return;
-    }
-
-    let target = WI.assumingMainTarget();
-
-    function updateActivatedState() {
-        WI._deviceSettingsTabBarButton.activated = WI._overridenDeviceUserAgent || WI._overridenDeviceSettings.size > 0;
-    }
-
-    function applyOverriddenUserAgent(value, force) {
-        if (value === WI._overridenDeviceUserAgent)
-            return;
-
-        if (!force && (!value || value === "default")) {
-            target.PageAgent.overrideUserAgent((error) => {
-                if (error) {
-                    console.error(error);
-                    return;
-                }
-
-                WI._overridenDeviceUserAgent = null;
-                updateActivatedState();
-                target.PageAgent.reload();
-            });
-        } else {
-            target.PageAgent.overrideUserAgent(value, (error) => {
-                if (error) {
-                    console.error(error);
-                    return;
-                }
-
-                WI._overridenDeviceUserAgent = value;
-                updateActivatedState();
-                target.PageAgent.reload();
-            });
-        }
-    }
-
-    function applyOverriddenSetting(setting, value, callback) {
-        if (WI._overridenDeviceSettings.has(setting)) {
-            // We've just "disabled" the checkbox, so clear the override instead of applying it.
-            target.PageAgent.overrideSetting(setting, (error) => {
-                if (error) {
-                    console.error(error);
-                    return;
-                }
-
-                WI._overridenDeviceSettings.delete(setting);
-                callback(false);
-                updateActivatedState();
-            });
-        } else {
-            target.PageAgent.overrideSetting(setting, value, (error) => {
-                if (error) {
-                    console.error(error);
-                    return;
-                }
-
-                WI._overridenDeviceSettings.set(setting, value);
-                callback(true);
-                updateActivatedState();
-            });
-        }
-    }
-
-    function createCheckbox(container, label, setting, value) {
-        if (!setting)
-            return;
-
-        let labelElement = container.appendChild(document.createElement("label"));
-
-        let checkboxElement = labelElement.appendChild(document.createElement("input"));
-        checkboxElement.type = "checkbox";
-        checkboxElement.checked = WI._overridenDeviceSettings.has(setting);
-        checkboxElement.addEventListener("change", (event) => {
-            applyOverriddenSetting(setting, value, (enabled) => {
-                checkboxElement.checked = enabled;
-            });
-        });
-
-        labelElement.append(label);
-    }
-
-    function calculateTargetFrame() {
-        return WI.Rect.rectFromClientRect(WI._deviceSettingsTabBarButton.element.getBoundingClientRect()).pad(2);
-    }
-
-    const preferredEdges = [WI.RectEdge.MAX_Y, WI.RectEdge.MAX_X];
-
-    WI._deviceSettingsPopover = new WI.Popover(WI);
-    WI._deviceSettingsPopover.windowResizeHandler = function(event) {
-        WI._deviceSettingsPopover.present(calculateTargetFrame(), preferredEdges);
-    };
-
-    let contentElement = document.createElement("div");
-    contentElement.classList.add("device-settings-content");
-
-    let table = contentElement.appendChild(document.createElement("table"));
-
-    // FIXME: webkit.org/b/247809 Enable user agent UI once the UI tracks engine-level changes to the current UA (e.g. via API)
-    if (InspectorFrontendHost.isRemote) {
-        let userAgentRow = table.appendChild(document.createElement("tr"));
-
-        let userAgentTitle = userAgentRow.appendChild(document.createElement("td"));
-        userAgentTitle.textContent = WI.UIString("User Agent:");
-
-        let userAgentValue = userAgentRow.appendChild(document.createElement("td"));
-        userAgentValue.classList.add("user-agent");
-
-        let userAgentValueSelect = userAgentValue.appendChild(document.createElement("select"));
-
-        let userAgentValueInput = null;
-
-        let userAgents = WebKitAdditions.userAgents ?? [
-            [
-                { name: WI.UIString("Default"), value: "default" },
-            ],
-            [
-                { name: "Safari 16.0", value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
-            ],
-            [
-                { name: `Safari ${emDash} iOS 16.0 ${emDash} iPhone`, value: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
-                { name: `Safari ${emDash} iPadOS 16.0 ${emDash} iPad mini`, value: "Mozilla/5.0 (iPad; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1" },
-                { name: `Safari ${emDash} iPadOS 16.0 ${emDash} iPad`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Safari/605.1.15" },
-            ],
-            [
-                { name: `Microsoft Edge ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36 Edg/103.0.1264.37" },
-                { name: `Microsoft Edge ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36 Edg/103.0.1264.37" },
-            ],
-            [
-                { name: `Google Chrome ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.53 Safari/537.36" },
-                { name: `Google Chrome ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36" },
-            ],
-            [
-                { name: `Firefox ${emDash} macOS`, value: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:101.0) Gecko/20100101 Firefox/101.0" },
-                { name: `Firefox ${emDash} Windows`, value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0" },
-            ],
-            [
-                { name: WI.UIString("Other\u2026"), value: "other" },
-            ],
-        ];
-
-        let selectedOptionElement = null;
-
-        for (let group of userAgents) {
-            for (let {name, value} of group) {
-                let optionElement = userAgentValueSelect.appendChild(document.createElement("option"));
-                optionElement.value = value;
-                optionElement.textContent = name;
-
-                if (value === WI._overridenDeviceUserAgent)
-                    selectedOptionElement = optionElement;
-            }
-
-            if (group !== userAgents.lastValue)
-                userAgentValueSelect.appendChild(document.createElement("hr"));
-        }
-
-        function showUserAgentInput() {
-            if (userAgentValueInput)
-                return;
-
-            userAgentValueInput = userAgentValue.appendChild(document.createElement("input"));
-            userAgentValueInput.spellcheck = false;
-            userAgentValueInput.value = userAgentValueInput.placeholder = WI._overridenDeviceUserAgent || navigator.userAgent;
-            userAgentValueInput.addEventListener("click", (clickEvent) => {
-                clickEvent.preventDefault();
-            });
-            userAgentValueInput.addEventListener("change", (inputEvent) => {
-                applyOverriddenUserAgent(userAgentValueInput.value, true);
-            });
-
-            WI._deviceSettingsPopover.update();
-        }
-
-        if (selectedOptionElement)
-            userAgentValueSelect.value = selectedOptionElement.value;
-        else if (WI._overridenDeviceUserAgent) {
-            userAgentValueSelect.value = "other";
-            showUserAgentInput();
-        }
-
-        userAgentValueSelect.addEventListener("change", () => {
-            let value = userAgentValueSelect.value;
-            if (value === "other") {
-                showUserAgentInput();
-                userAgentValueInput.select();
-            } else {
-                if (userAgentValueInput) {
-                    userAgentValueInput.remove();
-                    userAgentValueInput = null;
-
-                    WI._deviceSettingsPopover.update();
-                }
-
-                applyOverriddenUserAgent(value);
-            }
-        });
-    }
-
-    if (InspectorBackend.hasCommand("Page.setScreenSizeOverride")) {
-        function applyOverriddenScreenSize(value, force) {
-            if (value === WI._overridenDeviceScreenSize)
-                return;
-
-            if (!force && (!value || value === "default")) {
-                target.PageAgent.setScreenSizeOverride((error) => {
-                    if (error) {
-                        WI.reportInternalError(error);
-                        return;
-                    }
-
-                    WI._overridenDeviceScreenSize = null;
-                    updateActivatedState();
-                    target.PageAgent.reload();
-                });
-            } else {
-                let tokens = value.split("x");
-                let width = parseInt(tokens[0]);
-                let height = parseInt(tokens[1]);
-                target.PageAgent.setScreenSizeOverride(width, height, (error) => {
-                    if (error) {
-                        WI.reportInternalError(error);
-                        return;
-                    }
-
-                    WI._overridenDeviceScreenSize = value;
-                    updateActivatedState();
-                    target.PageAgent.reload();
-                });
-            }
-        }
-
-
-        let screenSizeRow = table.appendChild(document.createElement("tr"));
-
-        let screenSizeTitle = screenSizeRow.appendChild(document.createElement("td"));
-        screenSizeTitle.textContent = WI.UIString("Screen size:");
-
-        let screenSizeValue = screenSizeRow.appendChild(document.createElement("td"));
-        screenSizeValue.classList.add("screen-size");
-
-        let screenSizeValueSelect = screenSizeValue.appendChild(document.createElement("select"));
-
-        let screenSizeValueInput = null;
-
-        const screenSizes = [
-            [
-                {name: WI.UIString("Default"), value: "default"},
-            ],
-            [
-                {name: WI.UIString("1080p"), value: "1920x1080"},
-                {name: WI.UIString("720p"), value: "1280x720"},
-            ],
-            [
-                {name: WI.UIString("Other\u2026"), value: "other"},
-            ],
-        ];
-
-        let selectedScreenSizeOptionElement = null;
-
-        for (let group of screenSizes) {
-            for (let {name, value} of group) {
-                let optionElement = screenSizeValueSelect.appendChild(document.createElement("option"));
-                optionElement.value = value;
-                optionElement.textContent = name;
-
-                if (value === WI._overridenDeviceScreenSize)
-                    selectedScreenSizeOptionElement = optionElement;
-            }
-
-            if (group !== screenSizes.lastValue)
-                screenSizeValueSelect.appendChild(document.createElement("hr"));
-        }
-
-        function showScreenSizeInput() {
-            if (screenSizeValueInput)
-                return;
-
-            screenSizeValueInput = screenSizeValue.appendChild(document.createElement("input"));
-            screenSizeValueInput.spellcheck = false;
-            screenSizeValueInput.value = screenSizeValueInput.placeholder = WI._overridenDeviceScreenSize || (window.screen.width + "x" + window.screen.height);
-            screenSizeValueInput.addEventListener("click", (clickEvent) => {
-                clickEvent.preventDefault();
-            });
-            screenSizeValueInput.addEventListener("change", (inputEvent) => {
-                applyOverriddenScreenSize(screenSizeValueInput.value, true);
-            });
-
-            WI._deviceSettingsPopover.update();
-        }
-
-        if (selectedScreenSizeOptionElement)
-            screenSizeValueSelect.value = selectedScreenSizeOptionElement.value;
-        else if (WI._overridenDeviceScreenSize) {
-            screenSizeValueSelect.value = "other";
-            showScreenSizeInput();
-        }
-
-        screenSizeValueSelect.addEventListener("change", () => {
-            let value = screenSizeValueSelect.value;
-            if (value === "other") {
-                showScreenSizeInput();
-                screenSizeValueInput.select();
-            } else {
-                if (screenSizeValueInput) {
-                    screenSizeValueInput.remove();
-                    screenSizeValueInput = null;
-
-                    WI._deviceSettingsPopover.update();
-                }
-
-                applyOverriddenScreenSize(value);
-            }
-        });
-    }
-
-    const settings = [
-        {
-            name: WI.UIString("Disable:"),
-            columns: [
-                [
-                    {name: WI.UIString("Images"), setting: InspectorBackend.Enum.Page.Setting.ImagesEnabled, value: false},
-                    {name: WI.UIString("Styles"), setting: InspectorBackend.Enum.Page.Setting.AuthorAndUserStylesEnabled, value: false},
-                    {name: WI.UIString("JavaScript"), setting: InspectorBackend.Enum.Page.Setting.ScriptEnabled, value: false},
-                ],
-                [
-                    {name: WI.UIString("Site-specific Hacks"), setting: InspectorBackend.Enum.Page.Setting.NeedsSiteSpecificQuirks, value: false},
-                    {name: WI.UIString("Cross-Origin Restrictions"), setting: InspectorBackend.Enum.Page.Setting.WebSecurityEnabled, value: false},
-                ]
-            ],
-        },
-        {
-            name: WI.UIString("Enable:"),
-            columns: [
-                [
-                    {name: WI.UIString("Intelligent Tracking Prevention Debug Mode"), setting: InspectorBackend.Enum.Page.Setting.ITPDebugModeEnabled, value: true},
-                    // COMPATIBILITY (iOS 14.0): `Page.Setting.AdClickAttributionDebugModeEnabled` was renamed to `Page.Setting.PrivateClickMeasurementDebugModeEnabled`.
-                    {name: WI.UIString("Private Click Measurement Debug Mode"), setting: InspectorBackend.Enum.Page.Setting.PrivateClickMeasurementDebugModeEnabled, value: true},
-                    {name: WI.UIString("Ad Click Attribution Debug Mode"), setting: InspectorBackend.Enum.Page.Setting.AdClickAttributionDebugModeEnabled, value: true},
-                ],
-            ],
-        },
-        {
-            name: WI.UIString("%s:").format(WI.unlocalizedString("WebRTC")),
-            columns: [
-                [
-                    {name: WI.UIString("Allow Media Capture on Insecure Sites"), setting: InspectorBackend.Enum.Page.Setting.MediaCaptureRequiresSecureConnection, value: false},
-                    {name: WI.UIString("Disable ICE Candidate Restrictions"), setting: InspectorBackend.Enum.Page.Setting.ICECandidateFilteringEnabled, value: false},
-                    {name: WI.UIString("Use Mock Capture Devices"), setting: InspectorBackend.Enum.Page.Setting.MockCaptureDevicesEnabled, value: true},
-                    {name: WI.UIString("Disable Encryption"), setting: InspectorBackend.Enum.Page.Setting.WebRTCEncryptionEnabled, value: false},
-                ],
-            ],
-        },
-    ];
-
-    for (let group of settings) {
-        if (!group.columns.some((column) => column.some((item) => item.setting)))
-            continue;
-
-        let settingsGroupRow = table.appendChild(document.createElement("tr"));
-
-        let settingsGroupTitle = settingsGroupRow.appendChild(document.createElement("td"));
-        settingsGroupTitle.textContent = group.name;
-
-        let settingsGroupValue = settingsGroupRow.appendChild(document.createElement("td"));
-
-        let settingsGroupItemContainer = settingsGroupValue.appendChild(document.createElement("div"));
-        settingsGroupItemContainer.classList.add("container");
-
-        for (let column of group.columns) {
-            let columnElement = settingsGroupItemContainer.appendChild(document.createElement("div"));
-            columnElement.classList.add("column");
-
-            for (let item of column)
-                createCheckbox(columnElement, item.name, item.setting, item.value);
-        }
-    }
-
-    contentElement.appendChild(WI.ReferencePage.DeviceSettings.createLinkElement());
-
-    WI._deviceSettingsPopover.presentNewContentWithFrame(contentElement, calculateTargetFrame(), preferredEdges);
+    if (WI._deviceSettingsPopover)
+        return; // Clicking the button while the popover is shown will automatically dismiss the popover. The object is cleared by `WI.didDismissPopover()`.
+
+    WI._deviceSettingsPopover = new WI.OverrideDeviceSettingsPopover(WI);
+    WI._deviceSettingsPopover.show(WI._deviceSettingsTabBarButton.element);
 };
+
+WI._handleDeviceSettingChanged = function()
+{
+    WI._deviceSettingsTabBarButton.activated = WI.deviceSettingsManager.hasOverridenDefaultSettings;
+}
 
 WI._downloadWebArchive = function(event)
 {
