@@ -577,6 +577,14 @@ private:
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
 
+                bool alreadyRun = false;
+                auto runAvailabilityAnalysis = [&](Node* node) {
+                    if (alreadyRun)
+                        return;
+                    calculator.executeNode(node);
+                    alreadyRun = true;
+                };
+
                 switch (node->op()) {
                 case GetFromArguments: {
                     Node* candidate = node->child1().node();
@@ -667,6 +675,15 @@ private:
                         dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by ", node);
                         transitivelyRemoveCandidate(candidate);
                     }
+
+                    // Only LoadVarargs can be lowered into sequence of PutStacks. And these PutStacks can interfere with the candidates' StackSlots.
+                    // This is problematic: when OSR exit happens in the middle of PutStack sequence in LoadVarargs, then we need to materialize phantom candidates, and it will see already clobbered stack slots.
+                    // So, here, we also check whether the candidates do not interfere after "LoadVarargs" happens.
+                    runAvailabilityAnalysis(node);
+                    if (computeInterference(candidate, calculator.m_availability)) {
+                        dataLogLnIf(DFGArgumentsEliminationPhaseInternal::verbose, "eliminating candidate: ", candidate, " because it is clobbered by LoadVarargs on the same node ", node);
+                        transitivelyRemoveCandidate(candidate);
+                    }
                     break;
                 }
 
@@ -723,7 +740,7 @@ private:
                     break;
                 }
 
-                calculator.executeNode(node);
+                runAvailabilityAnalysis(node);
             }
         }
 
@@ -1037,8 +1054,6 @@ private:
 
                             unsigned argumentCountIncludingThis = 1 + countNumberOfArguments(candidate); // |this|
                             if (argumentCountIncludingThis <= varargsData->limit) {
-                                storeArgumentCountIncludingThis(argumentCountIncludingThis);
-
                                 DFG_ASSERT(m_graph, node, varargsData->limit - 1 >= varargsData->mandatoryMinimum, varargsData->limit, varargsData->mandatoryMinimum);
                                 // Define our limit to exclude "this", since that's a bit easier to reason about.
                                 unsigned limit = varargsData->limit - 1;
@@ -1099,6 +1114,7 @@ private:
                                     }
                                     storeValue(undefined, storeIndex);
                                 }
+                                storeArgumentCountIncludingThis(argumentCountIncludingThis);
                                 
                                 node->remove(m_graph);
                                 node->origin.exitOK = canExit;
@@ -1122,8 +1138,6 @@ private:
                             RELEASE_ASSERT(argumentCountIncludingThis >= 1);
 
                             if (argumentCountIncludingThis <= varargsData->limit) {
-                                storeArgumentCountIncludingThis(argumentCountIncludingThis);
-
                                 DFG_ASSERT(m_graph, node, varargsData->limit - 1 >= varargsData->mandatoryMinimum, varargsData->limit, varargsData->mandatoryMinimum);
                                 // Define our limit to exclude "this", since that's a bit easier to reason about.
                                 unsigned limit = varargsData->limit - 1;
@@ -1161,6 +1175,7 @@ private:
                                     // Now that we have a value, store it.
                                     storeValue(value, storeIndex);
                                 }
+                                storeArgumentCountIncludingThis(argumentCountIncludingThis);
                                 
                                 node->remove(m_graph);
                                 node->origin.exitOK = canExit;
