@@ -2350,13 +2350,18 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, Securit
         session->storageManager().moveData(dataTypes, WTFMove(oldOrigin), WTFMove(newOrigin), [aggregator] { });
 }
 
-void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, ClientOrigin&& origin, WebsiteDataType dataType, CompletionHandler<void(const String&)>&& completionHandler)
+void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, ClientOrigin&& origin, OptionSet<WebsiteDataType> dataType, CompletionHandler<void(const String&)>&& completionHandler)
 {
+    if (!dataType.hasExactlyOneBitSet()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
     auto* session = networkSession(sessionID);
     if (!session)
         return completionHandler({ });
 
-    session->storageManager().getOriginDirectory(WTFMove(origin), dataType, WTFMove(completionHandler));
+    session->storageManager().getOriginDirectory(WTFMove(origin), *dataType.toSingleValue(), WTFMove(completionHandler));
 }
 
 #if ENABLE(SERVICE_WORKER)

@@ -46,9 +46,6 @@ namespace WebKit {
 struct WebAutocorrectionData {
     Vector<WebCore::FloatRect> textRects;
     RetainPtr<UIFont> font;
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebAutocorrectionData> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

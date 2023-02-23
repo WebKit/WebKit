@@ -211,9 +211,7 @@ Shared/IPCTester.cpp
 Shared/IPCTesterReceiver.cpp
 Shared/LayerTreeContext.cpp
 Shared/LoadParameters.cpp
-Shared/NavigationActionData.cpp
 Shared/PersistencyUtils.cpp
-Shared/PlatformPopupMenuData.cpp
 Shared/PrintInfo.cpp
 Shared/ProcessTerminationReason.cpp
 Shared/RTCNetwork.cpp
