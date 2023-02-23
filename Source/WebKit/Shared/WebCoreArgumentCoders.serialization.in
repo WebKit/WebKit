@@ -1988,8 +1988,7 @@ class WebCore::TransformOperations {
     std::optional<WebCore::SourceBrush::Brush> brush();
 }
 
-#if ENABLE(GPU_PROCESS)
-
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 header: <WebCore/GraphicsContextGLAttributes.h>
 [CustomHeader] enum class WebCore::GraphicsContextGLPowerPreference : uint8_t {
     Default,
@@ -2029,7 +2028,7 @@ struct WebCore::GraphicsContextGLAttributes {
     bool xrCompatible;
 #endif
 };
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 [RefCounted] class WebCore::TimingFunction subclasses {
   WebCore::LinearTimingFunction,
