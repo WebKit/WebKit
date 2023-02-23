@@ -172,6 +172,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "secondMember"_s
             }
         } },
+        { "WebCore::TimingFunction"_s, {
+            { "std::variant<WebCore::LinearTimingFunction, WebCore::CubicBezierTimingFunction, WebCore::StepsTimingFunction, WebCore::SpringTimingFunction>"_s, "subclasses"_s }
+        } },
         { "WebCore::SharedStringHash"_s, {
             { "uint32_t"_s, "alias"_s }
         } },

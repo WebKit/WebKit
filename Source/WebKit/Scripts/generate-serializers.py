@@ -524,7 +524,7 @@ def generate_impl(serialized_types, serialized_enums, headers):
             result.append('#if ' + type.condition)
 
         if type.members_are_subclasses:
-            result.append('enum class ' + type.subclass_enum_name() + " : uint8_t {")
+            result.append('enum class ' + type.subclass_enum_name() + " : IPC::EncodedVariantIndex {")
             for idx in range(0, len(type.members)):
                 member = type.members[idx]
                 if idx == len(type.members) - 1:
@@ -578,7 +578,7 @@ def generate_impl(serialized_types, serialized_enums, headers):
         result.append('')
         if type.condition is not None:
             result.append('#if ' + type.condition)
-        result.append('template<> bool ' + type.function_name_for_enum() + '<IPC::' + type.subclass_enum_name() + ', void>(uint8_t value)')
+        result.append('template<> bool ' + type.function_name_for_enum() + '<IPC::' + type.subclass_enum_name() + ', void>(IPC::EncodedVariantIndex value)')
         result.append('{')
         result.append('    switch (static_cast<IPC::' + type.subclass_enum_name() + '>(value)) {')
         for member in type.members:
@@ -659,9 +659,11 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, t
     result.append('{')
     result.append('    return {')
     for type in serialized_types:
-        if type.members_are_subclasses:
-            continue
         result.append('        { "' + type.namespace_unless_wtf_and_name() + '"_s, {')
+        if type.members_are_subclasses:
+            result.append('            { "std::variant<' + ', '.join([member.namespace + '::' + member.name for member in type.members]) + '>"_s, "subclasses"_s }')
+            result.append('        } },')
+            continue
         for i in range(len(type.members)):
             if i == 0:
                 result.append('            {')
