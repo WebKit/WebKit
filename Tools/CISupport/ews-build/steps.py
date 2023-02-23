@@ -1261,6 +1261,11 @@ class CheckChangeRelevance(AnalyzeChange):
             self.finished(SUCCESS)
             return None
 
+        architecture = self.getProperty('architecture')
+        if architecture in ['mipsel', 'armv7']:
+            self.jsc_path_regexes.append(re.compile(rb'LayoutTests/js', re.IGNORECASE))
+            self.group_to_paths_mapping = self.jsc_path_regexes
+
         if self._patch_is_relevant(patch, self.getProperty('buildername', '')):
             self._addToLog('stdio', 'This {} contains relevant changes.'.format(self.change_type.lower()))
             self.finished(SUCCESS)
