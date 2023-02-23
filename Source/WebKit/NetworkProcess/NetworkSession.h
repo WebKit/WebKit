@@ -260,8 +260,6 @@ public:
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
-    static bool needsAdditionalNetworkConnectionIntegritySettings(const WebCore::ResourceRequest&);
-
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
