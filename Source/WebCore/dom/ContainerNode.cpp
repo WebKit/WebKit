@@ -665,7 +665,8 @@ ExceptionOr<void> ContainerNode::removeChild(Node& oldChild)
     // If it is, it can be deleted as a side effect of sending mutation events.
     ASSERT(refCount() || parentOrShadowHostNode());
 
-    Ref<ContainerNode> protectedThis(*this);
+    Ref protectedThis { *this };
+    Ref protectedOldChild { oldChild };
 
     // NotFoundError: Raised if oldChild is not a child of this node.
     if (oldChild.parentNode() != this)
