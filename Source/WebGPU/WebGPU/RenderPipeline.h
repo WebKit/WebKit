@@ -43,14 +43,9 @@ class PipelineLayout;
 class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, MTLRenderPipelineReflection *reflection, Device& device)
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthClipMode depthClipMode, MTLDepthStencilDescriptor *depthStencilDescriptor, MTLRenderPipelineReflection *reflection, const PipelineLayout *pipelineLayout, Device& device)
     {
-        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthStencilDescriptor, reflection, device));
-    }
-
-    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState, MTLPrimitiveType primitiveType, std::optional<MTLIndexType> indexType, MTLWinding frontFace, MTLCullMode cullMode, MTLDepthStencilDescriptor *depthStencilDescriptor, const PipelineLayout &pipelineLayout, Device& device)
-    {
-        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthStencilDescriptor, pipelineLayout, device));
+        return adoptRef(*new RenderPipeline(renderPipelineState, primitiveType, indexType, frontFace, cullMode, depthClipMode, depthStencilDescriptor, reflection, pipelineLayout, device));
     }
 
     static Ref<RenderPipeline> createInvalid(Device& device)
@@ -71,12 +66,12 @@ public:
     MTLPrimitiveType primitiveType() const { return m_primitiveType; }
     MTLWinding frontFace() const { return m_frontFace; }
     MTLCullMode cullMode() const { return m_cullMode; }
+    MTLDepthClipMode depthClipMode() const { return m_clipMode; }
 
     Device& device() const { return m_device; }
 
 private:
-    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthStencilDescriptor *, MTLRenderPipelineReflection*, Device&);
-    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthStencilDescriptor *, const PipelineLayout&, Device&);
+    RenderPipeline(id<MTLRenderPipelineState>, MTLPrimitiveType, std::optional<MTLIndexType>, MTLWinding, MTLCullMode, MTLDepthClipMode, MTLDepthStencilDescriptor *, MTLRenderPipelineReflection*, const PipelineLayout*, Device&);
     RenderPipeline(Device&);
 
     const id<MTLRenderPipelineState> m_renderPipelineState { nil };
@@ -87,6 +82,7 @@ private:
     std::optional<MTLIndexType> m_indexType;
     MTLWinding m_frontFace;
     MTLCullMode m_cullMode;
+    MTLDepthClipMode m_clipMode;
     MTLDepthStencilDescriptor *m_depthStencilDescriptor;
     id<MTLDepthStencilState> m_depthStencilState;
 #if HAVE(METAL_BUFFER_BINDING_REFLECTION)
