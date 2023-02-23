@@ -333,12 +333,40 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 #endif
 }
 
-void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+void EventSenderProxy::rawKeyDown(WKStringRef key, WKEventModifiers wkModifiers, unsigned keyLocation)
 {
+    uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
+    uint32_t keySym = wpeKeySymForKeyRef(key, keyLocation, &modifiers);
+#if defined(WPE_ENABLE_XKB) && WPE_ENABLE_XKB
+    struct wpe_input_xkb_keymap_entry* entries;
+    uint32_t entriesCount;
+    wpe_input_xkb_context_get_entries_for_key_code(wpe_input_xkb_context_get_default(), keySym, &entries, &entriesCount);
+    struct wpe_input_keyboard_event event { secToMsTimestamp(m_time), keySym, entriesCount ? entries[0].hardware_key_code : 0, true, modifiers };
+#else
+    struct wpe_input_keyboard_event event { secToMsTimestamp(m_time), keySym, 0, true, modifiers };
+#endif
+    wpe_view_backend_dispatch_keyboard_event(viewBackend(*m_testController), &event);
+#if defined(WPE_ENABLE_XKB) && WPE_ENABLE_XKB
+    free(entries);
+#endif
 }
 
-void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers modifiers, unsigned keyLocation)
+void EventSenderProxy::rawKeyUp(WKStringRef key, WKEventModifiers wkModifiers, unsigned keyLocation)
 {
+    uint32_t modifiers = wkEventModifiersToWPE(wkModifiers);
+    uint32_t keySym = wpeKeySymForKeyRef(key, keyLocation, &modifiers);
+#if defined(WPE_ENABLE_XKB) && WPE_ENABLE_XKB
+    struct wpe_input_xkb_keymap_entry* entries;
+    uint32_t entriesCount;
+    wpe_input_xkb_context_get_entries_for_key_code(wpe_input_xkb_context_get_default(), keySym, &entries, &entriesCount);
+    struct wpe_input_keyboard_event event { secToMsTimestamp(m_time), keySym, entriesCount ? entries[0].hardware_key_code : 0, false, modifiers };
+#else
+    struct wpe_input_keyboard_event event { secToMsTimestamp(m_time), keySym, 0, false, modifiers };
+#endif
+    wpe_view_backend_dispatch_keyboard_event(viewBackend(*m_testController), &event);
+#if defined(WPE_ENABLE_XKB) && WPE_ENABLE_XKB
+    free(entries);
+#endif
 }
 
 #if ENABLE(TOUCH_EVENTS)
