@@ -790,16 +790,14 @@ bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> v
 static bool hasGlyphsForCharacterRange(CTFontRef font, UniChar firstCharacter, UniChar lastCharacter, bool expectValidGlyphsForAllCharacters)
 {
     const unsigned numberOfCharacters = lastCharacter - firstCharacter + 1;
-    Vector<CGGlyph> glyphs;
-    glyphs.fill(0, numberOfCharacters);
+    Vector<CGGlyph> glyphs(numberOfCharacters, 0);
     CTFontGetGlyphsForCharacterRange(font, glyphs.begin(), CFRangeMake(firstCharacter, numberOfCharacters));
     glyphs.removeAll(0);
 
     if (glyphs.isEmpty())
         return false;
 
-    Vector<CGRect> boundingRects;
-    boundingRects.fill(CGRectZero, glyphs.size());
+    Vector<CGRect> boundingRects(glyphs.size(), CGRectZero);
     CTFontGetBoundingRectsForGlyphs(font, kCTFontOrientationDefault, glyphs.begin(), boundingRects.begin(), glyphs.size());
 
     unsigned validGlyphsCount = 0;

@@ -64,6 +64,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTable);
 
 RenderTable::RenderTable(Element& element, RenderStyle&& style)
     : RenderBlock(element, WTFMove(style), 0)
+    , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
     , m_collapsedEmptyBorderIsPresent(false)
@@ -78,11 +79,11 @@ RenderTable::RenderTable(Element& element, RenderStyle&& style)
     , m_columnOffsetHeight(-1)
 {
     setChildrenInline(false);
-    m_columnPos.fill(0, 1);
 }
 
 RenderTable::RenderTable(Document& document, RenderStyle&& style)
     : RenderBlock(document, WTFMove(style), 0)
+    , m_columnPos(1, 0)
     , m_currentBorder(nullptr)
     , m_collapsedBordersValid(false)
     , m_collapsedEmptyBorderIsPresent(false)
@@ -95,7 +96,6 @@ RenderTable::RenderTable(Document& document, RenderStyle&& style)
     , m_borderEnd(0)
 {
     setChildrenInline(false);
-    m_columnPos.fill(0, 1);
 }
 
 RenderTable::~RenderTable() = default;

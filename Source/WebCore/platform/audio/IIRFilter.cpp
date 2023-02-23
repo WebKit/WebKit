@@ -52,11 +52,11 @@ static std::complex<double> evaluatePolynomial(const double* coefficients, std::
 }
 
 IIRFilter::IIRFilter(const Vector<double>& feedforward, const Vector<double>& feedback)
-    : m_feedforward(feedforward)
+    : m_xBuffer(bufferLength, 0)
+    , m_yBuffer(bufferLength, 0)
+    , m_feedforward(feedforward)
     , m_feedback(feedback)
 {
-    m_xBuffer.fill(0, bufferLength);
-    m_yBuffer.fill(0, bufferLength);
 }
 
 void IIRFilter::reset()

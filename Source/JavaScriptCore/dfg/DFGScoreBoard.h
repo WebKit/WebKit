@@ -43,8 +43,8 @@ class ScoreBoard {
 public:
     ScoreBoard(unsigned nextMachineLocal)
         : m_highWatermark(nextMachineLocal + 1)
+        , m_used(nextMachineLocal, max())
     {
-        m_used.fill(max(), nextMachineLocal);
         m_free.reserveInitialCapacity(nextMachineLocal);
     }
 

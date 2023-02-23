@@ -41,9 +41,8 @@ const ClassInfo JSWebAssemblyStruct::s_info = { "WebAssembly.Struct"_s, &Base::s
 JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const Wasm::TypeDefinition>&& type)
     : Base(vm, structure)
     , m_type(WTFMove(type))
-    , m_payload(structType()->instancePayloadSize())
+    , m_payload(structType()->instancePayloadSize(), 0)
 {
-    m_payload.fill(0);
 }
 
 JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex)
