@@ -76,7 +76,7 @@ public:
     void resume();
 
     void gatherDecoderImplementationName(Function<void(String&&)>&&);
-    bool isNegotiationNeeded() const { return m_isNegotiationNeeded; }
+    bool isNegotiationNeeded(uint32_t eventId) const { return eventId == m_negotiationNeededEventId; }
 
     void configureAndLinkSource(RealtimeOutgoingMediaSourceGStreamer&);
 
@@ -176,7 +176,7 @@ private:
     int m_ptCounter { 96 };
     unsigned m_pendingIncomingStreams { 0 };
     bool m_isInitiator { false };
-    bool m_isNegotiationNeeded { false };
+    uint32_t m_negotiationNeededEventId { 0 };
 
 #if !RELEASE_LOG_DISABLED
     Timer m_statsLogTimer;

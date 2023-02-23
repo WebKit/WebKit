@@ -365,9 +365,9 @@ void GStreamerPeerConnectionBackend::gatherDecoderImplementationName(Function<vo
     m_endpoint->gatherDecoderImplementationName(WTFMove(callback));
 }
 
-bool GStreamerPeerConnectionBackend::isNegotiationNeeded(uint32_t) const
+bool GStreamerPeerConnectionBackend::isNegotiationNeeded(uint32_t eventId) const
 {
-    return m_endpoint->isNegotiationNeeded();
+    return m_endpoint->isNegotiationNeeded(eventId);
 }
 
 } // namespace WebCore

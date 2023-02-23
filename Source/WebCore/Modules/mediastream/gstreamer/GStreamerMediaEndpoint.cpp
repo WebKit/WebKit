@@ -1140,13 +1140,10 @@ void GStreamerMediaEndpoint::resume()
 
 void GStreamerMediaEndpoint::onNegotiationNeeded()
 {
-    m_isNegotiationNeeded = true;
-
+    ++m_negotiationNeededEventId;
     callOnMainThread([protectedThis = Ref(*this), this] {
-        if (isStopped())
-            return;
         GST_DEBUG_OBJECT(m_pipeline.get(), "Negotiation needed!");
-        m_peerConnectionBackend.markAsNeedingNegotiation(0);
+        m_peerConnectionBackend.markAsNeedingNegotiation(m_negotiationNeededEventId);
     });
 }
 
