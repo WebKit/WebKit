@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParsing.h"
 
 #include "CSSBackgroundRepeatValue.h"
@@ -55,6 +56,7 @@
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -73,6 +75,7 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"
 #include "CSSUnresolvedColor.h"
+#include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableParser.h"
@@ -4426,11 +4429,18 @@ static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSPar
         auto image = consumeImage(args, context, allowedImageTypes);
         if (!image)
             return nullptr;
+
+        auto option = CSSImageSetOptionValue::create(image.releaseNonNull());
+
         auto resolution = consumeResolution(args);
-        if (!resolution || resolution->floatValue() <= 0)
-            return nullptr;
-        imageSet.append(image.releaseNonNull());
-        imageSet.append(resolution.releaseNonNull());
+        if (resolution) {
+            if (resolution->floatValue() <= 0)
+                return nullptr;
+            option->setResolution(resolution.releaseNonNull());
+        }
+
+        imageSet.append(WTFMove(option));
+
     } while (consumeCommaIncludingWhitespace(args));
     if (!args.atEnd())
         return nullptr;

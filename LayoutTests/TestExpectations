@@ -3543,8 +3543,6 @@ webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fal
 webkit.org/b/200209 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial.html [ ImageOnlyFailure ]
 
 # wpt image-set failures
-webkit.org/b/251811 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-no-res-rendering-2.html [ ImageOnlyFailure ]
-webkit.org/b/251811 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-no-res-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/251811 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-first-match-rendering.html [ ImageOnlyFailure ]
 webkit.org/b/251811 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-rendering-2.html [ ImageOnlyFailure ]
 webkit.org/b/251811 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-rendering-3.html [ ImageOnlyFailure ]
@@ -6270,3 +6268,5 @@ webkit.org/b/252183 imported/w3c/web-platform-tests/css/css-box/margin-trim/bloc
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-computed.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-invalid.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing/text-spacing-valid.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-text/text-spacing/tentative/parsing [ Skip ]
+

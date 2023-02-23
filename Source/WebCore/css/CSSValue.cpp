@@ -56,6 +56,7 @@
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -160,6 +161,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSGridTemplateAreasValue>(*this));
     case ImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSImageValue>(*this));
+    case ImageSetOptionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSImageSetOptionValue>(*this));
     case ImageSetClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSImageSetValue>(*this));
     case InsetShapeClass:

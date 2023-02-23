@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleImageSet.h"
 
+#include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSPrimitiveValue.h"
 #include "Document.h"
@@ -58,10 +59,11 @@ bool StyleImageSet::equals(const StyleImageSet& other) const
 Ref<CSSValue> StyleImageSet::computedStyleValue(const RenderStyle& style) const
 {
     CSSValueListBuilder builder;
-    for (auto& image : m_images) {
-        builder.append(image.image->computedStyleValue(style));
-        builder.append(CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX));
-    }
+    builder.reserveInitialCapacity(m_images.size());
+
+    for (auto& image : m_images)
+        builder.uncheckedAppend(CSSImageSetOptionValue::create(image.image->computedStyleValue(style), CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX)));
+
     return CSSImageSetValue::create(WTFMove(builder));
 }
 
