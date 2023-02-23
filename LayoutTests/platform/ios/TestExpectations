@@ -245,7 +245,6 @@ media/video-does-not-loop.html [ WontFix ]
 # This test uses movie matricies, which AVFoundation and QTKit64 do not support.
 media/video-size-intrinsic-scale.html [ WontFix ]
 
-media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ Pass ]
 
 # MediaSource is not currently supported on iOS.
 media/media-source
@@ -3816,6 +3815,8 @@ webkit.org/b/248065 imported/w3c/web-platform-tests/service-workers/cache-storag
 
 imported/w3c/web-platform-tests/css/selectors/selection-image-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/selection-image-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/252837 media/video-element-fullscreen-not-in-dom-accelerated-iphone.html [ ImageOnlyFailure ] 
 
 # No Websocket H2 support.
 imported/w3c/web-platform-tests/websockets/binary/001.html?wpt_flags=h2 [ Skip ]
