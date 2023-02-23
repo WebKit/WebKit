@@ -1544,7 +1544,6 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
         contentExtensionsPath = "/tmp/wktr-contentextensions";
 
     if (!test.urlContains("contentextensions/"_s)) {
-        WKPageSetUserContentExtensionsEnabled(m_mainWebView->page(), false);
         return;
     }
 
@@ -1570,7 +1569,6 @@ void TestController::configureContentExtensionForTest(const TestInvocation& test
     ASSERT(context.status == kWKUserContentExtensionStoreSuccess);
     ASSERT(context.filter);
 
-    WKPageSetUserContentExtensionsEnabled(mainWebView()->page(), true);
     WKUserContentControllerAddUserContentFilter(userContentController(), context.filter.get());
 }
 
@@ -1578,8 +1576,6 @@ void TestController::resetContentExtensions()
 {
     if (!mainWebView())
         return;
-
-    WKPageSetUserContentExtensionsEnabled(mainWebView()->page(), false);
 
     const char* contentExtensionsPath = libraryPathForTesting();
     if (!contentExtensionsPath)
