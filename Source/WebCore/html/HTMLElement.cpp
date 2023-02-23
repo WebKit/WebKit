@@ -417,6 +417,9 @@ Node::InsertedIntoAncestorResult HTMLElement::insertedIntoAncestor(InsertionType
 
 void HTMLElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
+    if (popoverData())
+        hidePopoverInternal(FocusPreviousElement::No, FireEvents::No);
+
     StyledElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (UNLIKELY(usesEffectiveTextDirection()) && !isValidDirValue(attributeWithoutSynchronization(dirAttr))) {
@@ -1233,6 +1236,23 @@ static ExceptionOr<void> checkPopoverValidity(Element& element, PopoverVisibilit
     return { };
 }
 
+void HTMLElement::queuePopoverToggleEventTask(PopoverVisibilityState oldState, PopoverVisibilityState newState)
+{
+    if (auto queuedEventData = popoverData()->queuedToggleEventData())
+        oldState = queuedEventData->oldState;
+    popoverData()->setQueuedToggleEventData({ oldState, newState });
+    queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this, newState] {
+        auto queuedEventData = popoverData()->queuedToggleEventData();
+        if (!queuedEventData || queuedEventData->newState != newState)
+            return;
+        popoverData()->clearQueuedToggleEventData();
+        auto stringForState = [](PopoverVisibilityState state) {
+            return state == PopoverVisibilityState::Hidden ? "closed"_s : "open"_s;
+        };
+        dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, { EventInit { }, stringForState(queuedEventData->oldState), stringForState(queuedEventData->newState) }, Event::IsCancelable::No));
+    });
+}
+
 ExceptionOr<void> HTMLElement::showPopover()
 {
     if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
@@ -1242,7 +1262,7 @@ ExceptionOr<void> HTMLElement::showPopover()
 
     auto event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "closed"_s, "open"_s }, Event::IsCancelable::Yes);
     dispatchEvent(event);
-    if (event->defaultPrevented())
+    if (event->defaultPrevented() || event->defaultHandled())
         return { };
 
     if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden); check.hasException())
@@ -1263,7 +1283,7 @@ ExceptionOr<void> HTMLElement::showPopover()
     });
     popoverData()->setVisibilityState(PopoverVisibilityState::Showing);
 
-    // FIXME: Queue popover toggle event task.
+    queuePopoverToggleEventTask(PopoverVisibilityState::Hidden, PopoverVisibilityState::Showing);
 
     return { };
 }
@@ -1277,12 +1297,8 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
 
     // FIXME: Run auto popover steps.
 
-    if (fireEvents == FireEvents::Yes) {
-        auto event = ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No);
-        dispatchEvent(event);
-        if (event->defaultPrevented())
-            return { };
-    }
+    if (fireEvents == FireEvents::Yes)
+        dispatchEvent(ToggleEvent::create(eventNames().beforetoggleEvent, { EventInit { }, "open"_s, "closed"_s }, Event::IsCancelable::No));
 
     if (auto check = checkPopoverValidity(*this, PopoverVisibilityState::Showing); check.hasException())
         return check.releaseException();
@@ -1297,7 +1313,8 @@ ExceptionOr<void> HTMLElement::hidePopoverInternal(FocusPreviousElement focusPre
     });
     popoverData()->setVisibilityState(PopoverVisibilityState::Hidden);
 
-    // FIXME: Queue popover toggle event task.
+    if (fireEvents == FireEvents::Yes)
+        queuePopoverToggleEventTask(PopoverVisibilityState::Showing, PopoverVisibilityState::Hidden);
 
     if (RefPtr element = popoverData()->previouslyFocusedElement()) {
         if (focusPreviousElement == FocusPreviousElement::Yes) {

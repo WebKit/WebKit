@@ -220,6 +220,7 @@ onbeforeinput
 onbeforeload
 onbeforepaste
 onbeforeprint
+onbeforetoggle
 onbeforeunload
 onblur
 oncancel

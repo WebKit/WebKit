@@ -208,9 +208,9 @@ PASS IDL attribute reflection
 FAIL Popover attribute value should be case insensitive Element has unexpected visibility state
 FAIL Changing attribute values for popover should work Element has unexpected visibility state
 PASS Changing attribute values should close open popovers
-FAIL Removing a visible popover=auto element from the document should close the popover assert_false: expected false got true
+PASS Removing a visible popover=auto element from the document should close the popover
 PASS A showing popover=auto does not match :modal
-FAIL Removing a visible popover=manual element from the document should close the popover assert_false: expected false got true
+PASS Removing a visible popover=manual element from the document should close the popover
 PASS A showing popover=manual does not match :modal
 FAIL Changing the popover type in a "beforetoggle" event handler should throw an exception (during showPopover()) assert_throws_dom: function "() => popover.showPopover()" did not throw
 FAIL Changing the popover type in a "beforetoggle" event handler should throw an exception (during hidePopover()) assert_throws_dom: function "() => popover.hidePopover()" did not throw

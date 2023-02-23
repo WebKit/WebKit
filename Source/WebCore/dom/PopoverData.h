@@ -35,12 +35,17 @@ enum class PopoverVisibilityState : bool {
     Showing,
 };
 
+struct PopoverToggleEventData {
+    PopoverVisibilityState oldState;
+    PopoverVisibilityState newState;
+};
+
 class PopoverData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PopoverData() = default;
 
-    PopoverState popoverState() { return m_popoverState; }
+    PopoverState popoverState() const { return m_popoverState; }
     void setPopoverState(PopoverState state) { m_popoverState = state; }
 
     PopoverVisibilityState visibilityState() const { return m_visibilityState; }
@@ -49,9 +54,14 @@ public:
     Element* previouslyFocusedElement() const { return m_previouslyFocusedElement.get(); }
     void setPreviouslyFocusedElement(Element* element) { m_previouslyFocusedElement = element; }
 
+    std::optional<PopoverToggleEventData> queuedToggleEventData() const { return m_queuedToggleEventData; }
+    void setQueuedToggleEventData(PopoverToggleEventData data) { m_queuedToggleEventData = data; }
+    void clearQueuedToggleEventData() { m_queuedToggleEventData = std::nullopt; }
+
 private:
     PopoverState m_popoverState;
     PopoverVisibilityState m_visibilityState;
+    std::optional<PopoverToggleEventData> m_queuedToggleEventData;
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
 };
 
