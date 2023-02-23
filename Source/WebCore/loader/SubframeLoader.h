@@ -51,6 +51,7 @@ public:
 
     void clear();
 
+    void createFrameIfNecessary(HTMLFrameOwnerElement&, const AtomString& frameName);
     bool requestFrame(HTMLFrameOwnerElement&, const String& url, const AtomString& frameName, LockHistory = LockHistory::Yes, LockBackForwardList = LockBackForwardList::Yes);
     bool requestObject(HTMLPlugInImageElement&, const String& url, const AtomString& frameName,
         const String& serviceType, const Vector<AtomString>& paramNames, const Vector<AtomString>& paramValues);

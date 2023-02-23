@@ -81,6 +81,18 @@ void FrameLoader::SubframeLoader::clear()
     m_containsPlugins = false;
 }
 
+void FrameLoader::SubframeLoader::createFrameIfNecessary(HTMLFrameOwnerElement& ownerElement, const AtomString& frameName)
+{
+    if (ownerElement.contentFrame())
+        return;
+    m_frame.loader().client().createFrame(frameName, ownerElement);
+    if (!ownerElement.contentFrame())
+        return;
+
+    if (auto* contentDocument = downcast<LocalFrame>(ownerElement.contentFrame())->document())
+        contentDocument->setReferrerPolicy(ownerElement.referrerPolicy());
+}
+
 bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerElement, const String& urlString, const AtomString& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList)
 {
     // Support for <frame src="javascript:string">

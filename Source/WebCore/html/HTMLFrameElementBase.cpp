@@ -91,21 +91,20 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
     if (m_frameURL.isEmpty())
         m_frameURL = AtomString { aboutBlankURL().string() };
 
-    // FIXME: This should delay the navigation to m_frameURL but shouldn't delay the creation
-    // of the Frame object or the load of the intially empty document.
-    if (shouldLoadFrameLazily())
-        return;
-
     RefPtr<Frame> parentFrame = document().frame();
     if (!parentFrame)
         return;
-
-    document().willLoadFrameElement(document().completeURL(m_frameURL));
 
     auto frameName = getNameAttribute();
     if (frameName.isNull() && UNLIKELY(document().settings().needsFrameNameFallbackToIdQuirk()))
         frameName = getIdAttribute();
 
+    if (shouldLoadFrameLazily()) {
+        parentFrame->loader().subframeLoader().createFrameIfNecessary(*this, frameName);
+        return;
+    }
+
+    document().willLoadFrameElement(document().completeURL(m_frameURL));
     parentFrame->loader().subframeLoader().requestFrame(*this, m_frameURL, frameName, lockHistory, lockBackForwardList);
 }
 
