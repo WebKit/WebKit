@@ -117,7 +117,7 @@ static inline void setPatternPhaseInUserSpace(CGContextRef context, CGPoint phas
     CGContextSetPatternPhase(context, CGSizeMake(phase.x, phase.y));
 }
 
-void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+static inline void drawDotsForDocumentMarker(CGContextRef context, const FloatRect& rect, DocumentMarkerLineStyle style)
 {
     // We want to find the number of full dots, so we're solving the equations:
     // dotDiameter = height
@@ -135,18 +135,26 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
     // Center the dots
     auto offset = (width - (dotDiameter * numberOfWholeDots + dotGap * numberOfWholeGaps)) / 2;
 
-    CGContextRef platformContext = this->platformContext();
-    CGContextStateSaver stateSaver { platformContext };
-    CGContextSetFillColorWithColor(platformContext, cachedCGColor(style.color).get());
+    CGContextStateSaver stateSaver { context };
+    CGContextSetFillColorWithColor(context, cachedCGColor(style.color).get());
     for (unsigned i = 0; i < numberOfWholeDots; ++i) {
         auto location = rect.location();
         location.move(offset + i * (dotDiameter + dotGap), 0);
         auto size = FloatSize(dotDiameter, dotDiameter);
-        CGContextAddEllipseInRect(platformContext, FloatRect(location, size));
+        CGContextAddEllipseInRect(context, FloatRect(location, size));
     }
-    CGContextSetCompositeOperation(platformContext, kCGCompositeSover);
-    CGContextFillPath(platformContext);
+    CGContextSetCompositeOperation(context, kCGCompositeSover);
+    CGContextFillPath(context);
 }
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/GraphicsContextCocoaAdditions.mm>
+#else
+void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
+{
+    WebCore::drawDotsForDocumentMarker(this->platformContext(), rect, style);
+}
+#endif
 
 void GraphicsContextCG::convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>& image)
 {
