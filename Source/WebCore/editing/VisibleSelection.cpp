@@ -152,17 +152,20 @@ bool VisibleSelection::isOrphan() const
 
 RefPtr<Document> VisibleSelection::document() const
 {
-    RefPtr baseDocument { m_base.document() };
-    if (!baseDocument)
+    RefPtr document { m_base.document() };
+    if (!document) {
+        document = m_anchor.document();
+        if (!document || !document->settings().liveRangeSelectionEnabled())
+            return nullptr;
+    }
+
+    if (m_extent.document() != document.get() || m_start.document() != document.get() || m_end.document() != document.get())
         return nullptr;
 
-    if (m_extent.document() != baseDocument.get() || m_start.document() != baseDocument.get() || m_end.document() != baseDocument.get())
+    if (document->settings().liveRangeSelectionEnabled() && (m_anchor.document() != document.get() || m_focus.document() != document.get()))
         return nullptr;
 
-    if (baseDocument->settings().liveRangeSelectionEnabled() && (m_anchor.document() != baseDocument.get() || m_focus.document() != baseDocument.get()))
-        return nullptr;
-
-    return baseDocument;
+    return document;
 }
 
 std::optional<SimpleRange> VisibleSelection::firstRange() const

@@ -1,0 +1,30 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+function main() {
+    var input1 = document.getElementById("input1");
+    input1.selectionDirection = "backward";
+    document.execCommand("insertText", false, "AA");
+    x1.show();
+    input1.defaultValue = ""; // 4
+    input2.setRangeText("A"); // 5
+    document.body.textContent = 'PASS';
+}
+
+function f1() {
+    document.execCommand("undo",false,null); // 0, insertText "AA"
+    document.execCommand("redo",false,null); // 3
+}
+
+function f2() {
+    parser = new DOMParser();
+    doc = parser.parseFromString("A", "text/html");
+    input1.defaultValue = "A"; // 1
+    doc.body.appendChild(input1); // 2
+}
+</script>
+<body onload="main()">
+<dialog id="x1" onfocusin="f1()" onfocusout="f2()" tabindex="-1">
+</dialog>
+<input id="input1" style="display: contents">
+<input id="input2" value="A">
