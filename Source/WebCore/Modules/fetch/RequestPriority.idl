@@ -25,7 +25,7 @@
 
 // https://fetch.spec.whatwg.org/#enumdef-requestpriority
 enum RequestPriority {
-  "high"
-  "low"
+  "high",
+  "low",
   "auto"
 };
