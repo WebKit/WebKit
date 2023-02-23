@@ -1830,7 +1830,8 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
 #endif
 
         auto processIdentifier = process->coreProcessIdentifier();
-        page->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url()), loadedWebArchive), [completionHandler = WTFMove(completionHandler), process = WTFMove(process), suspendedPage = WTFMove(suspendedPage), reason] () mutable {
+        auto preventProcessShutdownScope = process->shutdownPreventingScope();
+        page->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url()), loadedWebArchive), [completionHandler = WTFMove(completionHandler), process = WTFMove(process), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), suspendedPage = WTFMove(suspendedPage), reason] () mutable {
             completionHandler(WTFMove(process), suspendedPage, reason);
         });
     });
