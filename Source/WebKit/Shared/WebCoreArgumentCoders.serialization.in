@@ -4387,3 +4387,177 @@ enum class WebCore::COEPDisposition : bool;
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::SourceImage {
     WebCore::RenderingResourceIdentifier imageIdentifier();
 }
+
+enum class WebCore::LinkIconType : uint8_t {
+    Favicon,
+    TouchIcon,
+    TouchPrecomposedIcon
+};
+
+struct WebCore::LinkIcon {
+    URL url;
+    WebCore::LinkIconType type;
+    String mimeType;
+    std::optional<unsigned> size;
+    Vector<std::pair<String, String>> attributes;
+};
+
+header: <WebCore/PluginData.h>
+[CustomHeader] struct WebCore::SupportedPluginIdentifier {
+    String matchingDomain;
+    String pluginIdentifier;
+};
+
+enum class WebCore::PluginLoadClientPolicy : uint8_t {
+    Undefined,
+    Block,
+    Ask,
+    Allow,
+    AllowAlways,
+};
+
+struct WebCore::CSSValueKey {
+    unsigned cssValueID;
+    bool useDarkAppearance;
+    bool useElevatedUserInterfaceLevel;
+};
+
+struct WebCore::VideoFrameTimeMetadata {
+    std::optional<double> processingDuration;
+    std::optional<Seconds> captureTime;
+    std::optional<Seconds> receiveTime;
+    std::optional<unsigned> rtpTimestamp;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::PositionedGlyphs {
+    Vector<WebCore::GlyphBufferGlyph> glyphs;
+    [Validator='glyphs->size() == advances->size()'] Vector<WebCore::GlyphBufferAdvance> advances;
+    WebCore::FloatPoint localAnchor;
+    WebCore::FontSmoothingMode smoothingMode;
+};
+
+class WebCore::EventRegion {
+    WebCore::Region m_region;
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    Vector<WebCore::Region> m_touchActionRegions;
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    WebCore::Region m_wheelEventListenerRegion;
+    WebCore::Region m_nonPassiveWheelEventListenerRegion;
+#endif
+#if ENABLE(EDITABLE_REGION)
+    std::optional<WebCore::Region> m_editableRegion;
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    Vector<WebCore::InteractionRegion> m_interactionRegions;
+#endif
+};
+
+enum class WebCore::PasteboardItemPresentationStyle : uint8_t {
+    Unspecified,
+    Inline,
+    Attachment
+};
+
+[CustomHeader] struct WebCore::PresentationSize {
+    std::optional<double> width;
+    std::optional<double> height;
+};
+
+struct WebCore::PasteboardItemInfo {
+    Vector<String> pathsForFileUpload;
+    Vector<String> platformTypesForFileUpload;
+    Vector<String> platformTypesByFidelity;
+    String suggestedFileName;
+    WebCore::PresentationSize preferredPresentationSize;
+    bool isNonTextType;
+    bool containsFileURLAndFileUploadContent;
+    Vector<String> webSafeTypesByFidelity;
+    WebCore::PasteboardItemPresentationStyle preferredPresentationStyle;
+};
+
+struct WebCore::WorkerOptions {
+    WebCore::WorkerType type;
+    WebCore::FetchRequestCredentials credentials;
+    String name;
+};
+
+struct WebCore::WorkerInitializationData {
+#if ENABLE(SERVICE_WORKER)
+    std::optional<WebCore::ServiceWorkerData> serviceWorkerData;
+#endif
+    std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
+    String userAgent;
+};
+
+struct WebCore::WorkerFetchResult {
+    WebCore::ScriptBuffer script;
+    URL responseURL;
+    WebCore::CertificateInfo certificateInfo;
+    WebCore::ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
+    WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
+    String referrerPolicy;
+    WebCore::ResourceError error;
+};
+
+struct WebCore::SharedWorkerKey {
+    WebCore::ClientOrigin origin;
+    URL url;
+    String name;
+};
+
+#if ENABLE(SERVICE_WORKER)
+
+struct WebCore::ServiceWorkerRegistrationOptions {
+    String scope;
+    WebCore::WorkerType type;
+    WebCore::ServiceWorkerUpdateViaCache updateViaCache;
+};
+
+class WebCore::ServiceWorkerRegistrationKey {
+    WebCore::SecurityOriginData topOrigin();
+    URL scope();
+};
+
+struct WebCore::ServiceWorkerRegistrationData {
+    WebCore::ServiceWorkerRegistrationKey key;
+    WebCore::ServiceWorkerRegistrationIdentifier identifier;
+    URL scopeURL;
+    WebCore::ServiceWorkerUpdateViaCache updateViaCache;
+    WallTime lastUpdateTime;
+    std::optional<WebCore::ServiceWorkerData> installingWorker;
+    std::optional<WebCore::ServiceWorkerData> waitingWorker;
+    std::optional<WebCore::ServiceWorkerData> activeWorker;
+};
+
+struct WebCore::ServiceWorkerJobDataIdentifier {
+    WebCore::SWServerConnectionIdentifier connectionIdentifier;
+    WebCore::ServiceWorkerJobIdentifier jobIdentifier;
+};
+
+struct WebCore::ServiceWorkerImportedScript {
+    WebCore::ScriptBuffer script;
+    URL responseURL;
+    String mimeType;
+};
+
+header: <wtf/RobinHoodHashTable.h>
+struct WebCore::ServiceWorkerContextData {
+    std::optional<WebCore::ServiceWorkerJobDataIdentifier> jobDataIdentifier;
+    WebCore::ServiceWorkerRegistrationData registration;
+    WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier;
+    WebCore::ScriptBuffer script;
+    WebCore::CertificateInfo certificateInfo;
+    WebCore::ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
+    WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
+    String referrerPolicy;
+    URL scriptURL;
+    WebCore::WorkerType workerType;
+    bool loadedFromDisk;
+    std::optional<WebCore::LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
+    MemoryCompactRobinHoodHashMap<URL, WebCore::ServiceWorkerImportedScript> scriptResourceMap;
+    std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
+    WebCore::NavigationPreloadState navigationPreloadState;
+};
+
+#endif

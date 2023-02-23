@@ -99,9 +99,6 @@ public:
 protected:
     WebEvent();
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebEvent&);
-
 private:
     WebEventType m_type;
     OptionSet<WebEventModifier> m_modifiers;

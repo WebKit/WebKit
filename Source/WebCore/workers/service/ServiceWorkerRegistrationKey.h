@@ -59,9 +59,6 @@ public:
     ServiceWorkerRegistrationKey isolatedCopy() const &;
     ServiceWorkerRegistrationKey isolatedCopy() &&;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ServiceWorkerRegistrationKey> decode(Decoder&);
-
     String toDatabaseKey() const;
     WEBCORE_EXPORT static std::optional<ServiceWorkerRegistrationKey> fromDatabaseKey(const String&);
 
@@ -75,29 +72,6 @@ private:
     SecurityOriginData m_topOrigin;
     URL m_scope;
 };
-
-template<class Encoder>
-void ServiceWorkerRegistrationKey::encode(Encoder& encoder) const
-{
-    RELEASE_ASSERT(!m_topOrigin.isNull());
-    RELEASE_ASSERT(!m_scope.isNull());
-    encoder << m_topOrigin << m_scope;
-}
-
-template<class Decoder>
-std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode(Decoder& decoder)
-{
-    std::optional<SecurityOriginData> topOrigin;
-    decoder >> topOrigin;
-    if (!topOrigin)
-        return std::nullopt;
-
-    URL scope;
-    if (!decoder.decode(scope))
-        return std::nullopt;
-
-    return ServiceWorkerRegistrationKey { WTFMove(*topOrigin), WTFMove(scope) };
-}
 
 inline void add(Hasher& hasher, const ServiceWorkerRegistrationKey& key)
 {

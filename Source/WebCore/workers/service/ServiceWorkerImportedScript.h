@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,19 +25,21 @@
 
 #pragma once
 
-#include "LinkIconType.h"
-#include <wtf/HashMap.h>
-#include <wtf/URL.h>
-#include <wtf/text/WTFString.h>
+#include "ScriptBuffer.h"
+#include <wtf/URLHash.h>
+
+#if ENABLE(SERVICE_WORKER)
 
 namespace WebCore {
 
-struct LinkIcon {
-    URL url;
-    LinkIconType type;
+struct ServiceWorkerImportedScript {
+    ScriptBuffer script;
+    URL responseURL;
     String mimeType;
-    std::optional<unsigned> size;
-    Vector<std::pair<String, String>> attributes;
-};
 
+    ServiceWorkerImportedScript isolatedCopy() const & { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
+    ServiceWorkerImportedScript isolatedCopy() && { return { WTFMove(script).isolatedCopy(), WTFMove(responseURL).isolatedCopy(), WTFMove(mimeType).isolatedCopy() }; }
+};
 } // namespace WebCore
+
+#endif // ENABLE(SERVICE_WORKER)

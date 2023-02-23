@@ -40,9 +40,6 @@ struct WorkerInitializationData {
     String userAgent;
 
     WorkerInitializationData isolatedCopy() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<WorkerInitializationData> decode(Decoder&);
 };
 
 inline WorkerInitializationData WorkerInitializationData::isolatedCopy() const
@@ -53,45 +50,6 @@ inline WorkerInitializationData WorkerInitializationData::isolatedCopy() const
 #endif
         clientIdentifier,
         userAgent.isolatedCopy()
-    };
-}
-
-
-template<class Encoder>
-void WorkerInitializationData::encode(Encoder& encoder) const
-{
-#if ENABLE(SERVICE_WORKER)
-    encoder << serviceWorkerData;
-#endif
-    encoder << clientIdentifier << userAgent;
-}
-
-template<class Decoder>
-std::optional<WorkerInitializationData> WorkerInitializationData::decode(Decoder& decoder)
-{
-#if ENABLE(SERVICE_WORKER)
-    std::optional<std::optional<ServiceWorkerData>> serviceWorkerData;
-    decoder >> serviceWorkerData;
-    if (!serviceWorkerData)
-        return { };
-#endif
-
-    std::optional<std::optional<ScriptExecutionContextIdentifier>> clientIdentifier;
-    decoder >> clientIdentifier;
-    if (!clientIdentifier)
-        return { };
-
-    std::optional<String> userAgent;
-    decoder >> userAgent;
-    if (!userAgent)
-        return { };
-
-    return WorkerInitializationData {
-#if ENABLE(SERVICE_WORKER)
-        WTFMove(*serviceWorkerData),
-#endif
-        WTFMove(*clientIdentifier),
-        WTFMove(*userAgent)
     };
 }
 

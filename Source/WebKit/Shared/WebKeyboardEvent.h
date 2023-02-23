@@ -77,9 +77,6 @@ public:
     bool isKeypad() const { return m_isKeypad; }
     bool isSystemKey() const { return m_isSystemKey; }
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebKeyboardEvent&);
-
     static bool isKeyboardEventType(WebEventType);
 
 private:
