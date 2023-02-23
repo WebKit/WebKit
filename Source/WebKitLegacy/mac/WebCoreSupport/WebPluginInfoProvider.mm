@@ -62,7 +62,11 @@ Vector<WebCore::PluginInfo> WebPluginInfoProvider::pluginInfo(WebCore::Page& pag
 
 
     // WebKit1 has no application plug-ins, so we don't need to add them here.
-    if (!page.mainFrame().arePluginsEnabled())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return plugins;
+
+    if (!localMainFrame->arePluginsEnabled())
         return plugins;
 
     for (WebPluginPackage *plugin in [WebPluginDatabase sharedDatabase].plugins)

@@ -74,11 +74,12 @@ void WebContextMenuClient::searchWithSpotlight()
     // FIXME: Why do we need to search all the frames like this?
     // Isn't there any function in WebCore that can do this?
     // If not, can we find a place in WebCore to put this?
-
-    Frame& mainFrame = m_page->corePage()->mainFrame();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->corePage()->mainFrame());
+    if (!localMainFrame)
+        return;
 
     LocalFrame* selectionFrame = [&] () -> LocalFrame* {
-        for (AbstractFrame* selectionFrame = &mainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
+        for (AbstractFrame* selectionFrame = localMainFrame; selectionFrame; selectionFrame = selectionFrame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(selectionFrame);
             if (!localFrame)
                 continue;
@@ -88,7 +89,7 @@ void WebContextMenuClient::searchWithSpotlight()
         return nullptr;
     }();
     if (!selectionFrame)
-        selectionFrame = &mainFrame;
+        selectionFrame = localMainFrame;
 
     String selectedString = selectionFrame->displayStringModifiedByEncoding(selectionFrame->editor().selectedText());
 

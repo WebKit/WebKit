@@ -396,7 +396,9 @@ Frame& FocusController::focusedOrMainFrame() const
 {
     if (Frame* frame = focusedFrame())
         return *frame;
-    return m_page.mainFrame();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    ASSERT(localMainFrame);
+    return *localMainFrame;
 }
 
 void FocusController::setFocused(bool focused)
@@ -409,8 +411,10 @@ void FocusController::setFocusedInternal(bool focused)
     if (!isFocused())
         focusedOrMainFrame().eventHandler().stopAutoscrollTimer();
 
-    if (!m_focusedFrame)
-        setFocusedFrame(&m_page.mainFrame());
+    if (!m_focusedFrame) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
+            setFocusedFrame(localMainFrame);
+    }
 
     if (m_focusedFrame->view()) {
         m_focusedFrame->selection().setFocused(focused);
@@ -508,7 +512,10 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         }
 
         // Chrome doesn't want focus, so we should wrap focus.
-        element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(*m_page.mainFrame().document()), nullptr, event);
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+        if (!localMainFrame)
+            return false;
+        element = findFocusableElementAcrossFocusScope(direction, FocusNavigationScope::scopeOf(*localMainFrame->document()), nullptr, event);
 
         if (!element)
             return false;
@@ -834,7 +841,10 @@ static bool shouldClearSelectionWhenChangingFocusedElement(const Page& page, Ref
     if (!oldFocusedElement->isRootEditableElement() && !is<HTMLInputElement>(oldFocusedElement) && !is<HTMLTextAreaElement>(oldFocusedElement))
         return true;
 
-    for (auto ancestor = page.mainFrame().eventHandler().draggedElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return false;
+    for (auto ancestor = localMainFrame->eventHandler().draggedElement(); ancestor; ancestor = ancestor->parentOrShadowHostElement()) {
         if (ancestor == oldFocusedElement)
             return false;
     }
@@ -927,7 +937,10 @@ void FocusController::setActive(bool active)
 
 void FocusController::setActiveInternal(bool active)
 {
-    if (FrameView* view = m_page.mainFrame().view()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+    if (FrameView* view = localMainFrame->view()) {
         if (!view->platformWidget()) {
             view->updateLayoutAndStyleIfNeededRecursive();
             view->updateControlTints();
@@ -950,13 +963,17 @@ static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didSho
 
 void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
 {
-    FrameView* view = m_page.mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FrameView* view = localMainFrame->view();
     if (!view)
         return;
 
     contentAreaDidShowOrHide(view, contentIsVisible);
 
-    for (AbstractFrame* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (AbstractFrame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1006,7 +1023,10 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
         // If 2 nodes are intersecting, do hit test to find which node in on top.
         auto center = flooredIntPoint(intersectionRect.center()); // FIXME: Would roundedIntPoint be better?
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::IgnoreClipping, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-        HitTestResult result = candidate.visibleNode->document().page()->mainFrame().eventHandler().hitTestResultAtPoint(center, hitType);
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(candidate.visibleNode->document().page()->mainFrame());
+        if (!localMainFrame)
+            return;
+        HitTestResult result = localMainFrame->eventHandler().hitTestResultAtPoint(center, hitType);
         if (candidate.visibleNode->contains(result.innerNode())) {
             closest = candidate;
             return;

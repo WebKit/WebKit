@@ -244,8 +244,12 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
     WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
     if (!page)
         return 0;
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return 0;
     
-    WebCore::Frame& core = page->mainFrame();
+    WebCore::Frame& core = *localMainFrame;
     if (!core.document())
         return 0;
     
@@ -299,8 +303,12 @@ bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)
     WebCore::Page* page = WebKit::toImpl(pageRef)->corePage();
     if (!page)
         return false;
+    
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return false;
 
-    WebCore::Frame& core = page->mainFrame();
+    WebCore::Frame& core = *localMainFrame;
     if (!core.document())
         return false;
 
@@ -738,8 +746,12 @@ void WKBundlePageCallAfterTasksAndTimers(WKBundlePageRef pageRef, WKBundlePageTe
     WebCore::Page* page = webPage ? webPage->corePage() : nullptr;
     if (!page)
         return;
+    
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
 
-    WebCore::Document* document = page->mainFrame().document();
+    WebCore::Document* document = localMainFrame->document();
     if (!document)
         return;
 

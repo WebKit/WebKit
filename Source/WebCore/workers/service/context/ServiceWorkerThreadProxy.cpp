@@ -65,7 +65,7 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
 
 ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(UniqueRef<Page>&& page, ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, String&& userAgent, WorkerThreadMode workerThreadMode, CacheStorageProvider& cacheStorageProvider, std::unique_ptr<NotificationClient>&& notificationClient)
     : m_page(WTFMove(page))
-    , m_document(*m_page->mainFrame().document())
+    , m_document(*dynamicDowncast<LocalFrame>(m_page->mainFrame())->document())
 #if ENABLE(REMOTE_INSPECTOR)
     , m_remoteDebuggable(makeUnique<ServiceWorkerDebuggable>(*this, contextData))
 #endif

@@ -521,10 +521,13 @@ void FindController::redraw()
 Vector<FloatRect> FindController::rectsForTextMatchesInRect(IntRect clipRect)
 {
     Vector<FloatRect> rects;
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_webPage->corePage()->mainFrame());
+    if (!localMainFrame)
+        return rects;
 
-    FrameView* mainFrameView = m_webPage->corePage()->mainFrame().view();
+    FrameView* mainFrameView = localMainFrame->view();
 
-    for (AbstractFrame* frame = &m_webPage->corePage()->mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (AbstractFrame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

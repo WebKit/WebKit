@@ -320,7 +320,10 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
 // 5) Translate the window rect coordinates to be within the coordinate space of the screen.
 FloatRect DOMWindow::adjustWindowRect(Page& page, const FloatRect& pendingChanges)
 {
-    FloatRect screen = screenAvailableRect(page.mainFrame().view());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return FloatRect();
+    FloatRect screen = screenAvailableRect(localMainFrame->view());
     FloatRect window = page.chrome().windowRect();
 
     // Make sure we're in a valid state before adjusting dimensions.
@@ -1820,7 +1823,11 @@ void DOMWindow::moveTo(float x, float y) const
 
     auto* page = frame()->page();
     FloatRect fr = page->chrome().windowRect();
-    FloatRect sr = screenAvailableRect(page->mainFrame().view());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FloatRect sr = screenAvailableRect(localMainFrame->view());
     fr.setLocation(sr.location());
     FloatRect update = fr;
     update.move(x, y);

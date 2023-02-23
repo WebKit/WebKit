@@ -1923,7 +1923,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
 {
     WebThreadLock();
-    return _private->page->mainFrame().eventHandler().tryToBeginDragAtPoint(WebCore::IntPoint(clientPosition), WebCore::IntPoint(globalPosition));
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame());
+    if (!localMainFrame)
+        return NO;
+    return localMainFrame->eventHandler().tryToBeginDragAtPoint(WebCore::IntPoint(clientPosition), WebCore::IntPoint(globalPosition));
 }
 
 - (void)_startDrag:(const WebCore::DragItem&)dragItem
@@ -2778,7 +2781,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             // If this item is showing , save away its current scroll and form state,
             // since that might have changed since loading and it is normally not saved
             // until we leave that page.
-            otherView->_private->page->mainFrame().loader().history().saveDocumentAndScrollState();
+            if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(otherView->_private->page->mainFrame()))
+                localMainFrame->loader().history().saveDocumentAndScrollState();
         }
         Ref<WebCore::HistoryItem> newItem = otherBackForward.itemAtIndex(i)->copy();
         if (i == 0)
@@ -3422,8 +3426,12 @@ IGNORE_WARNINGS_END
 
     if (!_private->page)
         return nil;
+    
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame());
+    if (!localMainFrame)
+        return nil;
 
-    if (auto storageSession = _private->page->mainFrame().loader().networkingContext()->storageSession()->platformSession())
+    if (auto storageSession = localMainFrame->loader().networkingContext()->storageSession()->platformSession())
         cachedResponse = WebCore::cachedResponseForRequest(storageSession, request.get());
     else
         cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request.get()];
@@ -4090,7 +4098,8 @@ IGNORE_WARNINGS_END
 
 - (void)_clearMainFrameName
 {
-    _private->page->mainFrame().tree().clearName();
+    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame()))
+        localMainFrame->tree().clearName();
 }
 
 - (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag
@@ -5900,7 +5909,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     // This can be called in initialization, before _private has been set up (3465613)
     if (!_private || !_private->page)
         return nil;
-    return kit(&_private->page->mainFrame());
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame());
+    if (!localMainFrame)
+        return nil;
+
+    return kit(localMainFrame);
 }
 
 - (WebFrame *)selectedFrame
@@ -7863,7 +7877,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(JSC::JSGlobalObject* lexicalGlo
     auto* page = core(self);
     if (!page)
         return nil;
-    return kit(page->mainFrame().editor().rangeForPoint(WebCore::IntPoint([self convertPoint:point toView:nil])));
+
+    auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return nil;
+
+    return kit(localMainFrame->editor().rangeForPoint(WebCore::IntPoint([self convertPoint:point toView:nil])));
 }
 
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
@@ -8741,7 +8760,7 @@ FORWARD(toggleUnderline)
 
 - (WebCore::Frame*)_mainCoreFrame
 {
-    return (_private && _private->page) ? &_private->page->mainFrame() : 0;
+    return (_private && _private->page) ? dynamicDowncast<WebCore::LocalFrame>(_private->page->mainFrame()) : 0;
 }
 
 - (WebFrame *)_selectedOrMainFrame

@@ -120,12 +120,13 @@ void ScopeRuleSets::initializeUserStyle()
 
 #if ENABLE(APP_BOUND_DOMAINS)
     auto* page = m_styleResolver.document().page();
-    if (!extensionStyleSheets.injectedUserStyleSheets().isEmpty() && page && page->mainFrame().loader().client().shouldEnableInAppBrowserPrivacyProtections())
+    auto* localMainFrame = page ? dynamicDowncast<LocalFrame>(page->mainFrame()) : nullptr;
+    if (!extensionStyleSheets.injectedUserStyleSheets().isEmpty() && page && localMainFrame && localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections())
         m_styleResolver.document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
     else {
         collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);
-        if (page && !extensionStyleSheets.injectedUserStyleSheets().isEmpty())
-            page->mainFrame().loader().client().notifyPageOfAppBoundBehavior();
+        if (page && localMainFrame && !extensionStyleSheets.injectedUserStyleSheets().isEmpty())
+            localMainFrame->loader().client().notifyPageOfAppBoundBehavior();
     }
 #else
     collectRulesFromUserStyleSheets(extensionStyleSheets.injectedUserStyleSheets(), userStyle, mediaQueryEvaluator);

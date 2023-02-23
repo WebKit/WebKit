@@ -2606,7 +2606,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
         if (Page* page = m_frame.page()) {
             if (isBackForwardLoadType(loadType())) {
                 // Reset the back forward list to the last committed history item at the top level.
-                item = page->mainFrame().loader().history().currentItem();
+                if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame()))
+                    item = localMainFrame->loader().history().currentItem();
             }
         }
 
@@ -4339,7 +4340,9 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
     if (!page)
         return nullptr;
 
-    RefPtr<Frame> frame = &page->mainFrame();
+    RefPtr<Frame> frame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!frame)
+        return nullptr;
 
     if (isDocumentSandboxed(openerFrame, SandboxPropagatesToAuxiliaryBrowsingContexts))
         frame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());

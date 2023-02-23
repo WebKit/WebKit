@@ -1031,7 +1031,8 @@ static void suspendMemoryCacheClientCalls(Document& document)
 
     page->setMemoryCacheClientCallsEnabled(false);
 
-    memoryCacheClientCallsResumeQueue().append(&page->mainFrame());
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame()))
+        memoryCacheClientCallsResumeQueue().append(localMainFrame);
 }
 
 static unsigned resolutionNestingDepth;

@@ -82,7 +82,11 @@ void ScrollingCoordinatorMac::didCompletePlatformRenderingUpdate()
 
 void ScrollingCoordinatorMac::updateTiledScrollingIndicator()
 {
-    FrameView* frameView = m_page->mainFrame().view();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+
+    FrameView* frameView = localMainFrame->view();
     if (!frameView)
         return;
     

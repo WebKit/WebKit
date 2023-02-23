@@ -217,8 +217,12 @@ void ServiceWorkerContainer::willSettleRegistrationPromise(bool success)
     Page* page = is<Document>(context) ? downcast<Document>(*context).page() : nullptr;
     if (!page || !page->isServiceWorkerPage())
         return;
+    
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
+    if (!localMainFrame)
+        return;
 
-    page->mainFrame().loader().client().didFinishServiceWorkerPageRegistration(success);
+    localMainFrame->loader().client().didFinishServiceWorkerPageRegistration(success);
 }
 
 void ServiceWorkerContainer::unregisterRegistration(ServiceWorkerRegistrationIdentifier registrationIdentifier, DOMPromiseDeferred<IDLBoolean>&& promise)

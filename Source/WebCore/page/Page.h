@@ -30,6 +30,7 @@
 #include "EventTrackingRegions.h"
 #include "FilterRenderingMode.h"
 #include "FindOptions.h"
+#include "Frame.h"
 #include "FrameLoaderTypes.h"
 #include "IntRectHash.h"
 #include "KeyboardScrollingAnimator.h"
@@ -124,7 +125,6 @@ class EditorClient;
 class Element;
 class FocusController;
 class FormData;
-class Frame;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
@@ -308,8 +308,8 @@ public:
 
     EditorClient& editorClient() { return m_editorClient.get(); }
 
-    Frame& mainFrame() { return m_mainFrame.get(); }
-    const Frame& mainFrame() const { return m_mainFrame.get(); }
+    AbstractFrame& mainFrame() { return m_mainFrame.get(); }
+    const AbstractFrame& mainFrame() const { return m_mainFrame.get(); }
 
     bool openedByDOM() const;
     WEBCORE_EXPORT void setOpenedByDOM();

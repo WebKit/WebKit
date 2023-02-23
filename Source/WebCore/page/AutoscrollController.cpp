@@ -50,7 +50,7 @@ static const Seconds autoscrollInterval { 50_ms };
 static Frame* getMainFrame(Frame* frame)
 {
     Page* page = frame->page();
-    return page ? &page->mainFrame() : 0;
+    return page && dynamicDowncast<LocalFrame>(page->mainFrame()) ? dynamicDowncast<LocalFrame>(page->mainFrame()) : 0;
 }
 #endif
 

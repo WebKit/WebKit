@@ -169,11 +169,15 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return Color();
     }
 
-    RefPtr mainDocument = page.mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!localMainFrame)
+        return std::nullopt;
+
+    RefPtr mainDocument = localMainFrame->document();
     if (!mainDocument)
         return std::nullopt;
 
-    RefPtr frameView = page.mainFrame().view();
+    RefPtr frameView = localMainFrame->view();
     if (!frameView)
         return std::nullopt;
 

@@ -164,7 +164,8 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, UniqueRef<FrameLoa
     StaticCSSValuePool::init();
 
     if (ownerElement) {
-        m_mainFrame.selfOnlyRef();
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame))
+            localMainFrame->selfOnlyRef();
         ownerElement->setContentFrame(*this);
     }
 
@@ -210,8 +211,9 @@ Frame::~Frame()
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->frameDestroyed();
 
-    if (!isMainFrame())
-        m_mainFrame.selfOnlyDeref();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame);
+    if (!isMainFrame() && localMainFrame)
+        localMainFrame->selfOnlyDeref();
 }
 
 void Frame::addDestructionObserver(FrameDestructionObserver& observer)
@@ -1138,7 +1140,7 @@ Frame* Frame::fromJSContext(JSContextRef context)
         return window->wrapped().frame();
 #if ENABLE(SERVICE_WORKER)
     if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj))
-        return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? &serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame() : nullptr;
+        return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? dynamicDowncast<LocalFrame>(serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame()) : nullptr;
 #endif
     return nullptr;
 }

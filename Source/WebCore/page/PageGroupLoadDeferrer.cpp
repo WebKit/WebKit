@@ -37,11 +37,14 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page& page, bool deferSelf)
             continue;
         if (otherPage.defersLoading())
             continue;
-        m_deferredFrames.append(&otherPage.mainFrame());
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(otherPage.mainFrame());
+        if (!localMainFrame)
+            continue;
+        m_deferredFrames.append(localMainFrame);
 
         // This code is not logically part of load deferring, but we do not want JS code executed beneath modal
         // windows or sheets, which is exactly when PageGroupLoadDeferrer is used.
-        for (AbstractFrame* frame = &otherPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        for (AbstractFrame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
             auto* localFrame = dynamicDowncast<LocalFrame>(frame);
             if (!localFrame)
                 continue;

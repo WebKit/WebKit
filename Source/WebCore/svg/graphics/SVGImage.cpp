@@ -90,7 +90,12 @@ inline RefPtr<SVGSVGElement> SVGImage::rootElement() const
 {
     if (!m_page)
         return nullptr;
-    return DocumentSVG::rootElement(*m_page->mainFrame().document());
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+
+    return DocumentSVG::rootElement(*localMainFrame->document());
 }
 
 bool SVGImage::renderingTaintsOrigin() const
@@ -343,7 +348,12 @@ FrameView* SVGImage::frameView() const
 {
     if (!m_page)
         return nullptr;
-    return m_page->mainFrame().view();
+
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return nullptr;
+
+    return localMainFrame->view();
 }
 
 bool SVGImage::hasRelativeWidth() const
@@ -432,7 +442,10 @@ bool SVGImage::isAnimating() const
 
 void SVGImage::reportApproximateMemoryCost() const
 {
-    RefPtr document = m_page->mainFrame().document();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame)
+        return;
+    RefPtr document = localMainFrame->document();
     size_t decodedImageMemoryCost = 0;
 
     for (RefPtr<Node> node = document; node; node = NodeTraversal::next(*node))
@@ -475,8 +488,11 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         if (auto* observer = imageObserver())
             m_page->settings().setLayerBasedSVGEngineEnabled(observer->layerBasedSVGEngineEnabled());
 #endif
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+        if (!localMainFrame)
+            return EncodedDataStatus::Unknown;
 
-        Frame& frame = m_page->mainFrame();
+        Frame& frame = *localMainFrame;
         frame.setView(FrameView::create(frame));
         frame.init();
         FrameLoader& loader = frame.loader();
