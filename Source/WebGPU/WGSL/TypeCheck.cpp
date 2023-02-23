@@ -45,7 +45,7 @@ class TypeChecker : public AST::Visitor, public ContextProvider<Type*> {
 public:
     TypeChecker(ShaderModule&);
 
-    void check();
+    std::optional<FailedCheck> check();
 
     // Declarations
     void visit(AST::Structure&) override;
@@ -122,7 +122,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 #include "TypeDeclarations.h" // NOLINT
 }
 
-void TypeChecker::check()
+std::optional<FailedCheck> TypeChecker::check()
 {
     // FIXME: fill in struct fields in a second pass since declarations might be
     // out of order
@@ -145,6 +145,14 @@ void TypeChecker::check()
         for (auto& error : m_errors)
             dataLogLn(error);
     }
+
+    if (m_errors.isEmpty())
+        return std::nullopt;
+
+
+    // FIXME: add support for warnings
+    Vector<Warning> warnings { };
+    return FailedCheck { WTFMove(m_errors), WTFMove(warnings) };
 }
 
 // Declarations
@@ -563,9 +571,9 @@ void TypeChecker::typeError(InferBottom inferBottom, const SourceSpan& span, Arg
         inferred(m_types.bottomType());
 }
 
-void typeCheck(ShaderModule& shaderModule)
+std::optional<FailedCheck> typeCheck(ShaderModule& shaderModule)
 {
-    TypeChecker(shaderModule).check();
+    return TypeChecker(shaderModule).check();
 }
 
 } // namespace WGSL

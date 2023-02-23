@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include "WGSL.h"
+
 namespace WGSL {
 
 class ShaderModule;
 
-void typeCheck(ShaderModule&);
+std::optional<FailedCheck> typeCheck(ShaderModule&);
 
 } // namespace WGSL
