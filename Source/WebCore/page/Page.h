@@ -1092,7 +1092,7 @@ private:
     const std::unique_ptr<ProgressTracker> m_progress;
 
     const std::unique_ptr<BackForwardController> m_backForwardController;
-    Ref<Frame> m_mainFrame;
+    Ref<AbstractFrame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 

@@ -405,7 +405,8 @@ Page::~Page()
     m_validationMessageClient = nullptr;
     m_diagnosticLoggingClient = nullptr;
     m_performanceLoggingClient = nullptr;
-    m_mainFrame->setView(nullptr);
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get()))
+        localMainFrame->setView(nullptr);
     setGroupName(String());
     allPages().remove(this);
     if (!isUtilityPage()) {
@@ -515,7 +516,8 @@ ScrollingCoordinator* Page::scrollingCoordinator()
 
 String Page::scrollingStateTreeAsText()
 {
-    if (Document* document = m_mainFrame->document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (Document* document = localMainFrame ? localMainFrame->document() : nullptr) {
         document->updateLayout();
 #if ENABLE(IOS_TOUCH_EVENTS)
         document->updateTouchEventRegions();
@@ -530,7 +532,8 @@ String Page::scrollingStateTreeAsText()
 
 String Page::synchronousScrollingReasonsAsText()
 {
-    if (Document* document = m_mainFrame->document())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (Document* document = localMainFrame ? localMainFrame->document() : nullptr)
         document->updateLayout();
 
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
@@ -541,7 +544,8 @@ String Page::synchronousScrollingReasonsAsText()
 
 Ref<DOMRectList> Page::nonFastScrollableRectsForTesting()
 {
-    if (Document* document = m_mainFrame->document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (Document* document = localMainFrame ? localMainFrame->document() : nullptr) {
         document->updateLayout();
 #if ENABLE(IOS_TOUCH_EVENTS)
         document->updateTouchEventRegions();
@@ -564,7 +568,8 @@ Ref<DOMRectList> Page::nonFastScrollableRectsForTesting()
 
 Ref<DOMRectList> Page::touchEventRectsForEventForTesting(EventTrackingRegions::EventType eventType)
 {
-    if (Document* document = m_mainFrame->document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (auto* document = localMainFrame ? localMainFrame->document() : nullptr) {
         document->updateLayout();
 #if ENABLE(IOS_TOUCH_EVENTS)
         document->updateTouchEventRegions();
@@ -587,7 +592,8 @@ Ref<DOMRectList> Page::touchEventRectsForEventForTesting(EventTrackingRegions::E
 
 Ref<DOMRectList> Page::passiveTouchEventListenerRectsForTesting()
 {
-    if (Document* document = m_mainFrame->document()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (auto* document = localMainFrame ? localMainFrame->document() : nullptr) {
         document->updateLayout();
 #if ENABLE(IOS_TOUCH_EVENTS)
         document->updateTouchEventRegions();
@@ -658,11 +664,17 @@ void Page::goToItem(HistoryItem& item, FrameLoadType type, ShouldTreatAsContinui
     // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
     Ref<HistoryItem> protector(item);
 
-    auto& frameLoader = m_mainFrame->loader();
-    if (frameLoader.history().shouldStopLoadingForHistoryItem(item))
-        m_mainFrame->loader().stopAllLoadersAndCheckCompleteness();
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (!localMainFrame)
+        return;
 
-    m_mainFrame->loader().history().goToItem(item, type, shouldTreatAsContinuingLoad);
+    auto& frameLoader = localMainFrame->loader();
+    if (frameLoader.history().shouldStopLoadingForHistoryItem(item)) {
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get()))
+            localMainFrame->loader().stopAllLoadersAndCheckCompleteness();
+    }
+
+    localMainFrame->loader().history().goToItem(item, type, shouldTreatAsContinuingLoad);
 }
 
 void Page::setGroupName(const String& name)
@@ -839,7 +851,8 @@ void Page::analyzeImagesForFindInPage(Function<void()>&& callback)
 {
     if (settings().imageAnalysisDuringFindInPageEnabled()) {
         imageAnalysisQueue().setDidBecomeEmptyCallback(WTFMove(callback));
-        if (RefPtr mainDocument = m_mainFrame->document())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        if (RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr)
             imageAnalysisQueue().enqueueAllImagesIfNeeded(*mainDocument, { }, { });
     }
 }
@@ -1622,7 +1635,8 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::layoutIfNeeded()
 {
-    if (FrameView* view = m_mainFrame->view())
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (FrameView* view = localMainFrame ? localMainFrame->view() : nullptr)
         view->updateLayoutAndStyleIfNeededRecursive();
 }
 
@@ -2512,8 +2526,10 @@ void Page::suspendAllMediaPlayback()
 MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
 {
     if (!m_mediaSessionGroupIdentifier) {
-        if (auto identifier = m_mainFrame->loader().pageID())
-            m_mediaSessionGroupIdentifier = makeObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
+        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
+            if (auto identifier = localMainFrame->loader().pageID())
+                m_mediaSessionGroupIdentifier = makeObjectIdentifier<MediaSessionGroupIdentifierType>(identifier->toUInt64());
+        }
     }
     return m_mediaSessionGroupIdentifier;
 }
@@ -2592,7 +2608,8 @@ void Page::setActivityState(OptionSet<ActivityState::Flag> activityState)
     if (changed & ActivityState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(activityState.contains(ActivityState::IsVisuallyIdle));
     if (changed & ActivityState::WindowIsActive) {
-        if (auto* view = m_mainFrame->view())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
             view->updateTiledBackingAdaptiveSizing();
     }
 
@@ -3276,7 +3293,8 @@ void Page::setSessionID(PAL::SessionID sessionID)
 
     if (sessionID != m_sessionID) {
         constexpr auto doNotCreate = StorageNamespaceProvider::ShouldCreateNamespace::No;
-        if (auto sessionStorage = m_storageNamespaceProvider->sessionStorageNamespace(m_mainFrame->document()->topOrigin(), *this, doNotCreate))
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        if (auto sessionStorage = localMainFrame ? m_storageNamespaceProvider->sessionStorageNamespace(localMainFrame->document()->topOrigin(), *this, doNotCreate) : nullptr)
             sessionStorage->setSessionIDForTesting(sessionID);
     }
 
@@ -3771,12 +3789,20 @@ static void dispatchPrintEvent(Frame& mainFrame, const AtomString& eventType, Di
 
 void Page::dispatchBeforePrintEvent()
 {
-    dispatchPrintEvent(m_mainFrame, eventNames().beforeprintEvent, DispatchedOnDocumentEventLoop::No);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (!localMainFrame)
+        return;
+
+    dispatchPrintEvent(*localMainFrame, eventNames().beforeprintEvent, DispatchedOnDocumentEventLoop::No);
 }
 
 void Page::dispatchAfterPrintEvent()
 {
-    dispatchPrintEvent(m_mainFrame, eventNames().afterprintEvent, DispatchedOnDocumentEventLoop::Yes);
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (!localMainFrame)
+        return;
+
+    dispatchPrintEvent(*localMainFrame, eventNames().afterprintEvent, DispatchedOnDocumentEventLoop::Yes);
 }
 
 #if ENABLE(APPLE_PAY)
@@ -3857,7 +3883,8 @@ void Page::configureLoggingChannel(const String& channelName, WTFLogChannelState
         channel->level = level;
 
 #if USE(LIBWEBRTC)
-        if (channel == &LogWebRTC && m_mainFrame->document() && !sessionID().isEphemeral())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        if (channel == &LogWebRTC && localMainFrame && localMainFrame->document() && !sessionID().isEphemeral())
             webRTCProvider().setLoggingLevel(LogWebRTC.level);
 #endif
     }
@@ -3945,22 +3972,26 @@ void Page::revealCurrentSelection()
 void Page::injectUserStyleSheet(UserStyleSheet& userStyleSheet)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    if (m_mainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
-        if (auto* document = m_mainFrame->document())
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
-        return;
+    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get())) {
+        if (localMainFrame->loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
+            if (auto* document = localMainFrame->document())
+                document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user style sheet for non-app bound domain."_s);
+            return;
+        }
+        localMainFrame->loader().client().notifyPageOfAppBoundBehavior();
     }
-    m_mainFrame->loader().client().notifyPageOfAppBoundBehavior();
 #endif
 
     // We need to wait until we're no longer displaying the initial empty document before we can inject the stylesheets.
-    if (m_mainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument()) {
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (localMainFrame && localMainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument()) {
         m_userStyleSheetsPendingInjection.append(userStyleSheet);
         return;
     }
 
     if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly) {
-        if (auto* document = m_mainFrame->document())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        if (auto* document = localMainFrame ? localMainFrame->document() : nullptr)
             document->extensionStyleSheets().injectPageSpecificUserStyleSheet(userStyleSheet);
     } else {
         forEachDocument([&] (Document& document) {
@@ -3979,7 +4010,8 @@ void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
     }
 
     if (userStyleSheet.injectedFrames() == UserContentInjectedFrames::InjectInTopFrameOnly) {
-        if (auto* document = m_mainFrame->document())
+        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+        if (auto* document = localMainFrame ? localMainFrame->document() : nullptr)
             document->extensionStyleSheets().removePageSpecificUserStyleSheet(userStyleSheet);
     } else {
         forEachDocument([&] (Document& document) {
@@ -3990,7 +4022,8 @@ void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
 
 void Page::mainFrameDidChangeToNonInitialEmptyDocument()
 {
-    ASSERT(!m_mainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    ASSERT(localMainFrame && !localMainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument());
     for (auto& userStyleSheet : m_userStyleSheetsPendingInjection)
         injectUserStyleSheet(userStyleSheet);
     m_userStyleSheetsPendingInjection.clear();
@@ -4263,7 +4296,8 @@ void Page::didFinishScrolling()
 
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const
 {
-    if (m_mainFrame->document()->topOrigin().data() != origin.topOrigin)
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    if (!localMainFrame || localMainFrame->document()->topOrigin().data() != origin.topOrigin)
         return;
 
     for (AbstractFrame* frame = &m_mainFrame.get(); frame;) {
