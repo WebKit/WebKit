@@ -1,10 +1,10 @@
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
 <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; background-color: black;"></div>
 <script>
 
-async_test(t => {
-
+promise_test(async () => {
     const target = document.querySelector("div");
     const animation = target.animate([
         { transform: "translateY(0px)", easing: "step-start" },
@@ -12,16 +12,11 @@ async_test(t => {
         { transform: "translateY(0px)" }
     ], 60 * 1000);
 
-    animation.ready.then(() => {
-        // We wait for two frames to ensure an accelerated animation would have been committed.
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "The animation's target has no accelerated animation.");
-                t.done();
-            });
-        });
-    });
+    await animation.ready;
 
+    // We wait for two frames to ensure an accelerated animation would have been committed.
+    await renderingFrames(2);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "The animation's target has no accelerated animation.");
 }, "An animation targeting an accelerated property should not be accelerated if it uses a steps timing function in one of its keyframes.");
 
 </script>

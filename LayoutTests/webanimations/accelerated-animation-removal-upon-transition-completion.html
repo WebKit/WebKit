@@ -15,32 +15,21 @@
 <body>
 <script src="../resources/testharness.js"></script>
 <script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
 <div id="target"></div>
 
 <script>
 
-function waitNFrames(numberOfFrames, continuation)
-{
-    let elapsedFrames = 0;
-    (function rAFCallback() {
-        if (elapsedFrames++ >= numberOfFrames)
-            continuation();
-        else
-            requestAnimationFrame(rAFCallback);
-    })();
-}
+promise_test(async () => {
+    await renderingFrames(1);
 
-async_test(t => {
-    requestAnimationFrame(() => {
-        const target = document.getElementById("target");
-        target.style.transform = "translate3d(100px, 0, 0)";
-        target.getAnimations()[0].finished.then(() => {
-            waitNFrames(2, () => {
-                assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "There should be no accelerated animation after the animation completed.");
-                t.done();
-            });
-        });
-    });
+    const target = document.getElementById("target");
+    target.style.transform = "translate3d(100px, 0, 0)";
+
+    await target.getAnimations()[0].finished;
+    await renderingFrames(2);
+
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "There should be no accelerated animation after the animation completed.");
 }, "An accelerated CSS transition should remove its animation upon completion.");
 
 </script>

@@ -36,25 +36,25 @@
 
 <script>
 
-    async_test(t => {
+promise_test(async () => {
+    return new Promise(resolve => {
+        const once = { once: true };
+        const target = document.getElementById("target");
 
-    const once = { once: true };
-    const target = document.getElementById("target");
-
-    // Start the animation.
-    target.classList.add("animated");
-    target.addEventListener("animationstart", event => {
-        // Now we can cancel this animation.
-        target.classList.remove("animated");
-        target.addEventListener("animationend", event => {
-            // We wait a frame, resume the animation and check it's the same animation.
-            requestAnimationFrame(() => {
-                target.classList.add("animated");
-                target.addEventListener("animationstart", event => t.done(), once);
-            });
+        // Start the animation.
+        target.classList.add("animated");
+        target.addEventListener("animationstart", event => {
+            // Now we can cancel this animation.
+            target.classList.remove("animated");
+            target.addEventListener("animationend", event => {
+                // We wait a frame, resume the animation and check it's the same animation.
+                requestAnimationFrame(() => {
+                    target.classList.add("animated");
+                    target.addEventListener("animationstart", resolve, once);
+                });
+            }, once);
         }, once);
-    }, once);
-
+    });
 }, "A CSS Animation can be canceled and resumed by modifying its animation-duration.");
 
 </script>
