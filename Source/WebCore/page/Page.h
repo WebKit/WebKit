@@ -239,10 +239,11 @@ enum class RenderingUpdateStep : uint32_t {
     FocusFixup                      = 1 << 18,
 };
 
-enum LookalikeCharacterSanitizationTrigger : uint8_t {
+enum class LookalikeCharacterSanitizationTrigger : uint8_t {
     Unspecified,
     Navigation,
     Copy,
+    Paste,
 };
 
 constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {

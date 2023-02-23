@@ -646,7 +646,10 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     auto target = findEventTargetFromSelection();
     if (!target)
         return;
-    target->dispatchEvent(TextEvent::createForPlainTextPaste(document().windowProxy(), pastingText, smartReplace));
+    auto sanitizedText = pastingText;
+    if (auto* page = m_document.page())
+        sanitizedText = page->sanitizeLookalikeCharacters(sanitizedText, LookalikeCharacterSanitizationTrigger::Paste);
+    target->dispatchEvent(TextEvent::createForPlainTextPaste(document().windowProxy(), WTFMove(sanitizedText), smartReplace));
 }
 
 void Editor::pasteAsFragment(Ref<DocumentFragment>&& pastingFragment, bool smartReplace, bool matchStyle, MailBlockquoteHandling respectsMailBlockquote, EditAction action)

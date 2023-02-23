@@ -673,7 +673,11 @@ bool WebContentReader::readPlainText(const String& text)
     if (!allowPlainText)
         return false;
 
-    addFragment(createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]));
+    String precomposedString = [text precomposedStringWithCanonicalMapping];
+    if (auto* page = frame.page())
+        precomposedString = page->sanitizeLookalikeCharacters(precomposedString, LookalikeCharacterSanitizationTrigger::Paste);
+
+    addFragment(createFragmentFromText(context, precomposedString));
 
     madeFragmentFromPlainText = true;
     return true;
@@ -824,11 +828,17 @@ bool WebContentReader::readURL(const URL& url, const String& title)
         return false;
 #endif // PLATFORM(IOS_FAMILY)
 
+    auto sanitizedURLString = [&] {
+        if (auto* page = frame.page())
+            return page->sanitizeLookalikeCharacters(url, LookalikeCharacterSanitizationTrigger::Paste);
+        return url;
+    }().string();
+
     Ref document = *frame.document();
     auto anchor = HTMLAnchorElement::create(document.get());
-    anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, AtomString { url.string() });
+    anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, AtomString { sanitizedURLString });
 
-    NSString *linkText = title.isEmpty() ? [(NSURL *)url absoluteString] : (NSString *)title;
+    NSString *linkText = title.isEmpty() ? sanitizedURLString : title;
     anchor->appendChild(document->createTextNode([linkText precomposedStringWithCanonicalMapping]));
 
     auto newFragment = document->createDocumentFragment();
