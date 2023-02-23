@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC) && ENABLE(SCROLLING_THREAD)
 
+#include "DisplayLinkObserverID.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -40,6 +41,7 @@ struct WheelEventHandlingResult;
 
 namespace WebKit {
 
+class DisplayLink;
 class NativeWebWheelEvent;
 class RemoteScrollingCoordinatorProxyMac;
 class RemoteScrollingTree;
@@ -71,6 +73,13 @@ private:
     WebCore::WheelEventHandlingResult scrollingTreeHandleWheelEvent(RemoteScrollingTree&, const PlatformWheelEvent&);
     PlatformWheelEvent filteredWheelEvent(const PlatformWheelEvent&);
 
+    DisplayLink* displayLink() const;
+
+    void startDisplayLinkObserver();
+    void stopDisplayLinkObserver();
+
+    void startOrStopDisplayLink();
+
     RefPtr<RemoteScrollingTree> scrollingTree();
 
     Lock m_scrollingTreeLock;
@@ -80,6 +89,8 @@ private:
     WebCore::PageIdentifier m_pageIdentifier;
 
     std::unique_ptr<WebCore::WheelEventDeltaFilter> m_wheelEventDeltaFilter;
+    std::unique_ptr<RemoteLayerTreeEventDispatcherDisplayLinkClient> m_displayLinkClient;
+    std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
 };
 
 } // namespace WebKit
