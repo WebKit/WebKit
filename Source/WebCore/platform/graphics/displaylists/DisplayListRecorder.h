@@ -58,7 +58,7 @@ public:
         DeconstructUsingDrawDecomposedGlyphsCommands,
     };
 
-    WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode = DrawGlyphsMode::Normal);
+    WEBCORE_EXPORT Recorder(const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DrawGlyphsMode = DrawGlyphsMode::Normal);
     WEBCORE_EXPORT virtual ~Recorder();
 
     virtual void convertToLuminanceMask() = 0;
@@ -187,8 +187,6 @@ private:
     bool hasPlatformContext() const final { return false; }
     PlatformGraphicsContext* platformContext() const final { return nullptr; }
 
-    const DestinationColorSpace& colorSpace() const final { return m_colorSpace; }
-
 #if USE(CG)
     void setIsCALayerContext(bool) final { }
     bool isCALayerContext() const final { return false; }
@@ -286,9 +284,9 @@ private:
     Vector<ContextState, 4> m_stateStack;
     std::unique_ptr<DrawGlyphsRecorder> m_drawGlyphsRecorder;
     float m_initialScale { 1 };
-    DestinationColorSpace m_colorSpace;
     const DrawGlyphsMode m_drawGlyphsMode { DrawGlyphsMode::Normal };
 };
 
 } // namespace DisplayList
 } // namespace WebCore
+

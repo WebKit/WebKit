@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,16 @@ size_t ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(const Parameters
     return calculateMemoryCost(parameters);
 }
 
+RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const GraphicsContext& context)
+{
+    CGContextRef cgContext = context.platformContext();
+
+    if (CGContextGetType(cgContext) == kCGContextTypeIOSurface)
+        return CGIOSurfaceContextGetColorSpace(cgContext);
+    
+    return ImageBufferCGBackend::contextColorSpace(context);
+}
+
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const ImageBufferCreationContext& creationContext)
 {
     IntSize backendSize = calculateSafeBackendSize(parameters);
@@ -91,6 +101,18 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
     return makeUnique<ImageBufferIOSurfaceBackend>(parameters, WTFMove(surface), creationContext.surfacePool);
+}
+
+std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, const GraphicsContext& context)
+{
+    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr) {
+        auto overrideParameters = parameters;
+        overrideParameters.colorSpace = DestinationColorSpace { cgColorSpace };
+
+        return ImageBufferIOSurfaceBackend::create(overrideParameters, nullptr);
+    }
+
+    return ImageBufferIOSurfaceBackend::create(parameters, nullptr);
 }
 
 ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface>&& surface, IOSurfacePool* ioSurfacePool)

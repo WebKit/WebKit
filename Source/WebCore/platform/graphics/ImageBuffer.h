@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,15 @@ public:
     }
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(const FloatSize&, const GraphicsContext&, RenderingPurpose, Arguments&&...);
+    static RefPtr<ImageBufferType> create(const FloatSize& size, const GraphicsContext& context, RenderingPurpose purpose, Arguments&&... arguments)
+    {
+        auto parameters = ImageBufferBackend::Parameters { size, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, purpose };
+        auto backend = BackendType::create(parameters, context);
+        if (!backend)
+            return nullptr;
+        auto backendInfo = populateBackendInfo<BackendType>(parameters);
+        return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
+    }
 
     template<typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const ImageBufferBackend::Parameters& parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)

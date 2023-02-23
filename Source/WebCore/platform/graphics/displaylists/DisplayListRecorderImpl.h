@@ -35,7 +35,7 @@ class RecorderImpl : public Recorder {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(RecorderImpl);
 public:
-    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), DrawGlyphsMode = DrawGlyphsMode::Normal);
+    WEBCORE_EXPORT RecorderImpl(DisplayList&, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, DrawGlyphsMode = DrawGlyphsMode::Normal);
     WEBCORE_EXPORT virtual ~RecorderImpl();
 
     bool isEmpty() const { return m_displayList.isEmpty(); }

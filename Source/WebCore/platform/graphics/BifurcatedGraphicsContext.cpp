@@ -57,11 +57,6 @@ PlatformGraphicsContext* BifurcatedGraphicsContext::platformContext() const
     return m_primaryContext.platformContext();
 }
 
-const DestinationColorSpace& BifurcatedGraphicsContext::colorSpace() const
-{
-    return m_primaryContext.colorSpace();
-}
-
 void BifurcatedGraphicsContext::save()
 {
     // FIXME: Consider not using the BifurcatedGraphicsContext's state stack at all,

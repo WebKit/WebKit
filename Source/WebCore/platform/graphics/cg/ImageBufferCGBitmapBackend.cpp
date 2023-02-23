@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,6 +92,18 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
     }));
 
     return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data, WTFMove(dataProvider), WTFMove(context)));
+}
+
+std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, const GraphicsContext& context)
+{
+    if (auto cgColorSpace = context.hasPlatformContext() ? contextColorSpace(context) : nullptr) {
+        auto overrideParameters = parameters;
+        overrideParameters.colorSpace = DestinationColorSpace { cgColorSpace };
+
+        return ImageBufferCGBitmapBackend::create(overrideParameters, nullptr);
+    }
+
+    return ImageBufferCGBitmapBackend::create(parameters, nullptr);
 }
 
 ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, void* data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContext>&& context)
