@@ -47,8 +47,15 @@ void InlineInvalidation::styleChanged(const Box& layoutBox, const RenderStyle& o
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 }
 
-static std::optional<InlineItemPosition> leadingInlineItemPositionOnDamagedLine(const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
+struct DamagedLine {
+    size_t lineIndex { 0 };
+    InlineItemPosition leadingInlineItemPosition { };
+};
+static std::optional<DamagedLine> leadingInlineItemPositionOnDamagedLine(const InlineItems& inlineItems, const DisplayBoxes& displayBoxes)
 {
+    // 1. Find the last root inline box (this is our damaged line)
+    // 2. Find the first content display box on the last line
+    // 3. Find the associated InlineItem with partial text offset if applicable
     auto leadingContentDisplayBox = [&]() -> const InlineDisplay::Box* {
         // FIXME: This only covers the append case yet.
         auto rootInlineBoxIndexOnDamagedLine = [&]() -> size_t {
@@ -104,7 +111,16 @@ static std::optional<InlineItemPosition> leadingInlineItemPositionOnDamagedLine(
                 }
                 return { };
             };
-            return leadingInlineItemPosition();
+            if (auto damangedInlineItemPosition = leadingInlineItemPosition()) {
+                auto damagedLineIndex = leadingContentDisplayBox->lineIndex();
+                if (damagedLineIndex && !*damangedInlineItemPosition) {
+                    // This is clearly not correct (starting position is 0 while the damaged line is not the first one).
+                    ASSERT_NOT_REACHED();
+                    damagedLineIndex = 0;
+                }
+                return DamagedLine { damagedLineIndex, *damangedInlineItemPosition };
+            }
+            return { };
         }
     }
     return { };
@@ -115,14 +131,8 @@ void InlineInvalidation::textInserted(const InlineTextBox&, std::optional<size_t
     if (m_displayBoxes.isEmpty())
         return m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 
-    if (auto damagedLeadingInlineItemPosition = leadingInlineItemPositionOnDamagedLine(m_inlineFormattingState.inlineItems(), m_displayBoxes)) {
-        auto damagedLineIndex = m_displayBoxes[damagedLeadingInlineItemPosition->index].lineIndex();
-        if (damagedLineIndex && !*damagedLeadingInlineItemPosition) {
-            ASSERT_NOT_REACHED();
-            damagedLineIndex = 0;
-        }
-        m_inlineDamage.setDamagedPosition({ damagedLineIndex, *damagedLeadingInlineItemPosition });
-    }
+    if (auto damangedContent = leadingInlineItemPositionOnDamagedLine(m_inlineFormattingState.inlineItems(), m_displayBoxes))
+        m_inlineDamage.setDamagedPosition({ damangedContent->lineIndex, damangedContent->leadingInlineItemPosition });
     m_inlineDamage.setDamageType(InlineDamage::Type::NeedsContentUpdateAndLineLayout);
 }
 

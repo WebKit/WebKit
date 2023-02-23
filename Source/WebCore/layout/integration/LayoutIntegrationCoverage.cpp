@@ -480,10 +480,17 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     return canUseForLineLayout(blockContainer);
 }
 
-bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow&, const RenderObject&, const LineLayout&)
+bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& newChild, const LineLayout&)
 {
-    // FIXME: Add partial support starting with a simple "a new RenderText has been appeared" case.
-    return true;
+    UNUSED_PARAM(rootBlockContainer);
+    if (!is<RenderText>(newChild) || !is<RenderBlockFlow>(newChild.parent()))
+        return true;
+    if (!newChild.style().isLeftToRightDirection() || !newChild.style().isHorizontalWritingMode())
+        return true;
+    if (newChild.nextSibling())
+        return true;
+    // Simple text content append only.
+    return false;
 }
 
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline& renderer, StyleDifference)
