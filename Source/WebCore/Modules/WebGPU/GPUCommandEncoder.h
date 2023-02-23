@@ -83,7 +83,7 @@ public:
 
     void clearBuffer(
         const GPUBuffer&,
-        GPUSize64 offset,
+        std::optional<GPUSize64> offset,
         std::optional<GPUSize64>);
 
     void pushDebugGroup(String&& groupLabel);

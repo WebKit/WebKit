@@ -108,6 +108,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
 
                 [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index++];
+                resources.append({ buffer, MTLResourceUsageRead, metalRenderStage(stage) });
             } else if (samplerIsPresent) {
                 id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
                 [argumentEncoder[stage] setSamplerState:sampler atIndex:index++];
