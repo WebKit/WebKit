@@ -214,6 +214,7 @@ TEST_F(StreamConnectionTest, OpenConnections)
 {
     auto cleanup = localReferenceBarrier();
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    ASSERT_TRUE(clientConnection);
     auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), serverQueue());
     MockMessageReceiver mockClientReceiver;
     clientConnection->open(mockClientReceiver);
@@ -230,6 +231,7 @@ TEST_F(StreamConnectionTest, InvalidateUnopened)
 {
     auto cleanup = localReferenceBarrier();
     auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(defaultBufferSizeLog2);
+    ASSERT_TRUE(clientConnection);
     auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), serverQueue());
     serverQueue().dispatch([this, serverConnection] {
         assertIsCurrent(serverQueue());
@@ -249,6 +251,7 @@ public:
     {
         setupBase();
         auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(bufferSizeLog2());
+        ASSERT(clientConnection);
         auto serverConnection = IPC::StreamServerConnection::create(WTFMove(serverConnectionHandle), serverQueue());
         m_clientConnection = WTFMove(clientConnection);
         m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());

@@ -82,6 +82,8 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
     if (!m_streamConnection) {
         static constexpr auto connectionBufferSizeLog2 = 21;
         auto [streamConnection, serverHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+        if (!streamConnection)
+            CRASH();
         m_streamConnection = WTFMove(streamConnection);
         m_streamConnection->open(*this, m_dispatcher);
 

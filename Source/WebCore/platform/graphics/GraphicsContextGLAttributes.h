@@ -59,7 +59,6 @@ struct GraphicsContextGLAttributes {
     bool failIfMajorPerformanceCaveat { false };
     using PowerPreference = GraphicsContextGLPowerPreference;
     PowerPreference powerPreference { PowerPreference::Default };
-    bool failPlatformContextCreationForTesting { false };
 
     // Additional attributes.
     bool shareResources { true };
@@ -78,6 +77,8 @@ struct GraphicsContextGLAttributes {
 #if ENABLE(WEBXR)
     bool xrCompatible { false };
 #endif
+    bool failPlatformContextCreationForTesting { false };
+    unsigned remoteIPCBufferSizeLog2ForTesting { 0 }; // Not serialized.
 
     PowerPreference effectivePowerPreference() const
     {

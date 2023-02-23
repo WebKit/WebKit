@@ -91,7 +91,7 @@ public:
     Connection& connectionForTesting();
 
 private:
-    StreamClientConnection(Ref<Connection>, unsigned bufferSizeLog2);
+    StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&);
 
     template<typename T, typename... AdditionalData>
     bool trySendStream(Span<uint8_t>&, T& message, AdditionalData&&...);

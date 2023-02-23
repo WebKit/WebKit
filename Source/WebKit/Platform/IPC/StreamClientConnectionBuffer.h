@@ -33,7 +33,9 @@ namespace IPC {
 
 class StreamClientConnectionBuffer : public StreamConnectionBuffer {
 public:
-    explicit StreamClientConnectionBuffer(unsigned dataSizeLog2);
+    static std::optional<StreamClientConnectionBuffer> create(unsigned dataSizeLog2);
+    StreamClientConnectionBuffer(StreamClientConnectionBuffer&&) = default;
+    StreamClientConnectionBuffer& operator=(StreamClientConnectionBuffer&&) = default;
 
     std::optional<Span<uint8_t>> tryAcquire(Timeout);
     std::optional<Span<uint8_t>> tryAcquireAll(Timeout);
@@ -52,7 +54,8 @@ public:
 private:
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
-    static Ref<WebKit::SharedMemory> createMemory(unsigned dataSizeLog2);
+    explicit StreamClientConnectionBuffer(Ref<WebKit::SharedMemory>);
+
     size_t size(size_t offset, size_t limit);
     size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
     Atomic<ClientOffset>& sharedClientOffset() { return clientOffset(); }
@@ -68,24 +71,28 @@ private:
     std::optional<Semaphores> m_semaphores;
 };
 
-inline Ref<WebKit::SharedMemory> StreamClientConnectionBuffer::createMemory(unsigned dataSizeLog2)
+inline std::optional<StreamClientConnectionBuffer> StreamClientConnectionBuffer::create(unsigned dataSizeLog2)
 {
-    auto size = (static_cast<size_t>(1) << dataSizeLog2) + headerSize();
-    auto memory = WebKit::SharedMemory::allocate(size);
-    if (!memory)
-        CRASH();
-    return memory.releaseNonNull();
-}
+    // Currently expected to be not that big, and offset to fit in size_t with the tag bits.
+    if (dataSizeLog2 >= 31)
+        return std::nullopt;
 
-inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(unsigned dataSizeLog2)
-    : StreamConnectionBuffer(createMemory(dataSizeLog2))
-{
-    ASSERT(dataSizeLog2 < 31u); // Currently expected to be not that big, and offset to fit in size_t with the tag bits.
     // Currently the minimum message size is 16, and as such 32 bytes is not enough to hold one message.
     // The problem happens after initial write and read, because after the read the buffer is split between
     // 15 free bytes and 15 free bytes.
-    ASSERT(dataSizeLog2 > 5);
+    if (dataSizeLog2 <= 5)
+        return std::nullopt;
 
+    auto size = (static_cast<size_t>(1) << dataSizeLog2) + headerSize();
+    auto memory = WebKit::SharedMemory::allocate(size);
+    if (!memory)
+        return std::nullopt;
+    return StreamClientConnectionBuffer { memory.releaseNonNull() };
+}
+
+inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebKit::SharedMemory> memory)
+    : StreamConnectionBuffer(WTFMove(memory))
+{
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
 
     // Read starts from 0 with limit of 0 and reader sleeping.

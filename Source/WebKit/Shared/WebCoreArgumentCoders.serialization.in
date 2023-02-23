@@ -2022,7 +2022,6 @@ struct WebCore::GraphicsContextGLAttributes {
     bool preserveDrawingBuffer;
     bool failIfMajorPerformanceCaveat;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
-    bool failPlatformContextCreationForTesting;
     bool shareResources;
     bool noExtensions;
     float devicePixelRatio;
@@ -2038,6 +2037,7 @@ struct WebCore::GraphicsContextGLAttributes {
 #if ENABLE(WEBXR)
     bool xrCompatible;
 #endif
+    bool failPlatformContextCreationForTesting;
 };
 #endif
 

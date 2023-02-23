@@ -71,8 +71,11 @@ public:
     RefPtr<WebCore::VideoFrame> paintCompositedResultsToVideoFrame() final { return nullptr; }
 #endif
 private:
-    RemoteGraphicsContextGLProxyWC(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
-        : RemoteGraphicsContextGLProxy(connection, dispatcher, attributes, renderingBackend, WTFMove(videoFrameObjectHeapProxy))
+    RemoteGraphicsContextGLProxyWC(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes
+    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
+    )
+        : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy))
+        : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes)
         , m_layerContentsDisplayDelegate(PlatformLayerDisplayDelegate::create(makeUnique<WCPlatformLayerGCGL>()))
     {
     }
@@ -98,9 +101,13 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
 
 }
 
-RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
+Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(IPC::Connection& connection, Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes
+    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
+    )
 {
-    return adoptRef(new RemoteGraphicsContextGLProxyWC(connection, renderingBackend.dispatcher(), attributes, renderingBackend.ensureBackendCreated(), WTFMove(videoFrameObjectHeapProxy)));
+    return adoptRef(*new RemoteGraphicsContextGLProxyWC(connection, WTFMove(streamConnection), attributes
+        , WTFMove(videoFrameObjectHeapProxy)
+    ));
 }
 
 }
