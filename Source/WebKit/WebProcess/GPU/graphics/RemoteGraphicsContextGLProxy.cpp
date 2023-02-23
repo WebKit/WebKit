@@ -70,22 +70,47 @@ IPC::ArrayReferenceTuple<Types...> toArrayReferenceTuple(const GCGLSpanTuple<Spa
 
 }
 
-RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& connection, SerialFunctionDispatcher& dispatcher, const GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend
+RefPtr<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::create(IPC::Connection& connection, const WebCore::GraphicsContextGLAttributes& attributes, RemoteRenderingBackendProxy& renderingBackend
+#if ENABLE(VIDEO)
+    , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
+#endif
+    )
+{
+    constexpr unsigned defaultConnectionBufferSizeLog2 = 21;
+    unsigned connectionBufferSizeLog2 = defaultConnectionBufferSizeLog2;
+    if (attributes.remoteIPCBufferSizeLog2ForTesting)
+        connectionBufferSizeLog2 = attributes.remoteIPCBufferSizeLog2ForTesting;
+    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
+    if (!clientConnection)
+        return nullptr;
+    auto instance = platformCreate(connection, clientConnection.releaseNonNull(), attributes
+#if ENABLE(VIDEO)
+        , WTFMove(videoFrameObjectHeapProxy)
+#endif
+    );
+    instance->initializeIPC(WTFMove(serverConnectionHandle), renderingBackend);
+    return instance;
+}
+
+
+RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& connection, RefPtr<IPC::StreamClientConnection> streamConnection, const GraphicsContextGLAttributes& attributes
 #if ENABLE(VIDEO)
     , Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy
 #endif
     )
     : GraphicsContextGL(attributes)
+    , m_connection(&connection) // NOLINT
+    , m_streamConnection(WTFMove(streamConnection)) // NOLINT
 #if ENABLE(VIDEO)
     , m_videoFrameObjectHeapProxy(WTFMove(videoFrameObjectHeapProxy))
 #endif
 {
-    constexpr unsigned connectionBufferSizeLog2 = 21;
-    auto [clientConnection, serverConnectionHandle] = IPC::StreamClientConnection::create(connectionBufferSizeLog2);
-    m_streamConnection = WTFMove(clientConnection);
-    m_connection = &connection;
-    m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(attributes, m_graphicsContextGLIdentifier, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    m_streamConnection->open(*this, dispatcher);
+}
+
+void RemoteGraphicsContextGLProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverConnectionHandle, RemoteRenderingBackendProxy& renderingBackend)
+{
+    m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(contextAttributes(), m_graphicsContextGLIdentifier, renderingBackend.ensureBackendCreated(), WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    m_streamConnection->open(*this, renderingBackend.dispatcher());
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
     waitUntilInitialized();
