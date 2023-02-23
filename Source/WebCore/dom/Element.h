@@ -683,6 +683,7 @@ public:
 
     bool hasDisplayContents() const;
     void storeDisplayContentsStyle(std::unique_ptr<RenderStyle>);
+    void clearDisplayContentsStyle();
 
     using ContainerNode::setAttributeEventListener;
     void setAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value);

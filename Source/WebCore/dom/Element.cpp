@@ -2416,16 +2416,27 @@ bool Element::hasDisplayContents() const
     if (!hasRareData())
         return false;
 
-    const RenderStyle* style = elementRareData()->computedStyle();
-    return style && style->display() == DisplayType::Contents;
+    auto* style = elementRareData()->displayContentsStyle();
+    ASSERT(!style || style->display() == DisplayType::Contents);
+    return !!style;
 }
 
 void Element::storeDisplayContentsStyle(std::unique_ptr<RenderStyle> style)
 {
+    // This is used by RenderTreeBuilder to store the style for Elements with display:contents.
+    // Normally style is held in renderers but display:contents doesn't generate one.
+    // This is kept distinct from ElementRareData::computedStyle() which can update outside style resolution.
+    // This way renderOrDisplayContentsStyle() always returns consistent styles matching the rendering state.
     ASSERT(style && style->display() == DisplayType::Contents);
     ASSERT(!renderer() || isPseudoElement());
-    ensureElementRareData().setComputedStyle(WTFMove(style));
-    clearNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+    ensureElementRareData().setDisplayContentsStyle(WTFMove(style));
+}
+
+void Element::clearDisplayContentsStyle()
+{
+    if (!hasRareData())
+        return;
+    elementRareData()->setDisplayContentsStyle(nullptr);
 }
 
 // Returns true is the given attribute is an event handler.
@@ -3846,7 +3857,7 @@ const RenderStyle* Element::existingComputedStyle() const
             return style;
     }
 
-    return renderStyle();
+    return renderOrDisplayContentsStyle();
 }
 
 const RenderStyle* Element::renderOrDisplayContentsStyle(PseudoId pseudoId) const
@@ -3855,24 +3866,21 @@ const RenderStyle* Element::renderOrDisplayContentsStyle(PseudoId pseudoId) cons
         if (auto* pseudoElement = beforeOrAfterPseudoElement(*this, pseudoId))
             return pseudoElement->renderOrDisplayContentsStyle();
 
-        if (auto* computedStyle = existingComputedStyle()) {
-            if (auto* cachedPseudoStyle = computedStyle->getCachedPseudoStyle(pseudoId))
+        if (auto* style = renderOrDisplayContentsStyle()) {
+            if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoId))
                 return cachedPseudoStyle;
         }
-
         return nullptr;
     }
 
-    if (auto* style = renderStyle())
-        return style;
+    if (hasRareData()) {
+        if (auto* style = elementRareData()->displayContentsStyle()) {
+            ASSERT(style->display() == DisplayType::Contents);
+            return style;
+        }
+    }
 
-    if (!hasRareData())
-        return nullptr;
-    auto* style = elementRareData()->computedStyle();
-    if (style && style->display() == DisplayType::Contents)
-        return style;
-
-    return nullptr;
+    return renderStyle();
 }
 
 const RenderStyle* Element::resolveComputedStyle(ResolveComputedStyleMode mode)
@@ -4807,7 +4815,7 @@ void Element::resetComputedStyle()
     auto reset = [](Element& element) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willResetComputedStyle();
-        element.elementRareData()->resetComputedStyle();
+        element.elementRareData()->setComputedStyle(nullptr);
     };
     reset(*this);
     for (auto& child : descendantsOfType<Element>(*this)) {

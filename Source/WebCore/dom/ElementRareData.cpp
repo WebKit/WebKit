@@ -36,7 +36,7 @@ namespace WebCore {
 struct SameSizeAsElementRareData : NodeRareData {
     IntPoint savedLayerScrollPosition;
     Vector<std::unique_ptr<ElementAnimationRareData>> animationRareData;
-    void* pointers[14];
+    void* pointers[15];
     void* intersectionObserverData;
     void* typedOMData[2];
     void* resizeObserverData;

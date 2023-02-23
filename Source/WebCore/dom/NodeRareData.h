@@ -273,6 +273,7 @@ public:
         ExplicitlySetAttrElementsMap = 1 << 21,
         EffectiveLang = 1 << 22,
         FormAssociatedCustomElement = 1 << 23,
+        DisplayContentsStyle = 1 << 26,
     };
 #endif
 

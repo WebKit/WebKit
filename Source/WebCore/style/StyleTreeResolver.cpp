@@ -860,8 +860,7 @@ void TreeResolver::resolveComposedTree()
 
         auto resolutionType = determineResolutionType(element, style, parent.descendantsToResolve, parent.change);
         if (resolutionType) {
-            if (!element.hasDisplayContents())
-                element.resetComputedStyle();
+            element.resetComputedStyle();
             element.resetStyleRelations();
 
             if (element.hasCustomStyleResolveCallbacks())
