@@ -2275,8 +2275,6 @@ webkit.org/b/237783 imported/w3c/web-platform-tests/html/semantics/forms/input-c
 
 webkit.org/b/237552 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Pass Failure ]
 
-webkit.org/b/240081 [ Debug ]  webaudio/AudioBuffer/huge-buffer.html [ Pass Slow ]
-
 # Flaky since their import.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/window-open-self-during-load.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/window-open-self-during-pageshow.html [ Failure Pass ]

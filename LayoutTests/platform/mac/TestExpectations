@@ -2788,3 +2788,5 @@ imported/w3c/web-platform-tests/websockets/cookies/007.html?wss&wpt_flags=https 
 webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
 
 webkit.org/b/251051 [ BigSur+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
+
+webkit.org/b/251710 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
