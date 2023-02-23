@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@
 #import "LocalDefaultSystemAppearance.h"
 #import "ToggleButtonPart.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
-#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
@@ -98,7 +97,7 @@ IntOutsets ToggleButtonMac::cellOutsets(NSControlSize controlSize, const Control
 
 void ToggleButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
     GraphicsContextStateSaver stateSaver(context);
 
@@ -124,10 +123,6 @@ void ToggleButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& bor
         context.scale(style.zoomFactor);
     }
 
-    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
-
-    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
-
     if ([m_buttonCell _stateAnimationRunning]) {
         context.translate(logicalRect.location());
         context.scale(FloatSize(1, -1));
@@ -136,11 +131,9 @@ void ToggleButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& bor
         [m_buttonCell _renderCurrentAnimationFrameInContext:context.platformContext() atLocation:NSMakePoint(0, 0)];
 
         if (![m_buttonCell _stateAnimationRunning] && style.states.contains(ControlStyle::State::Focused))
-            drawCell(context, logicalRect, deviceScaleFactor, style, m_buttonCell.get(), view, false);
+            drawCell(context, logicalRect, deviceScaleFactor, style, m_buttonCell.get(), false);
     } else
-        drawCell(context, logicalRect, deviceScaleFactor, style, m_buttonCell.get(), view, true);
-
-    END_BLOCK_OBJC_EXCEPTIONS
+        drawCell(context, logicalRect, deviceScaleFactor, style, m_buttonCell.get(), true);
 }
 
 } // namespace WebCore

@@ -29,10 +29,12 @@
 #if PLATFORM(MAC)
 
 #import "ColorCocoa.h"
+#import "ControlFactoryMac.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContextCG.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
+#import "RuntimeApplicationChecks.h"
 #import "WebControlView.h"
 #import <pal/spi/cocoa/NSButtonCellSPI.h>
 #import <pal/spi/mac/CoreUISPI.h>
@@ -40,6 +42,7 @@
 #import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSGraphicsSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
+#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
@@ -181,8 +184,14 @@ void ControlMac::updateCellStates(const FloatRect&, const ControlStyle& style)
 static bool supportsViewlessCells()
 {
     static std::optional<BOOL> supportsViewlessCells;
-    if (!supportsViewlessCells)
+    if (!supportsViewlessCells) {
+        // FIXME: rdar://105249508 - Remove the GPUP check when the viewless focus ring an be drawn without a problem.
+#if ENABLE(GPU_PROCESS)
+        supportsViewlessCells = isInGPUProcess() && [NSCell instancesRespondToSelector:@selector(_setFallbackBackingScaleFactor:)];
+#else
         supportsViewlessCells = [NSCell instancesRespondToSelector:@selector(_setFallbackBackingScaleFactor:)];
+#endif
+    }
     return *supportsViewlessCells;
 }
 
@@ -209,9 +218,9 @@ static void applyViewlessCellSettings(float deviceScaleFactor, const ControlStyl
 #endif
 }
 
-static void drawViewlessCell(const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, bool flipContext)
+static void drawViewlessCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, bool flipContext)
 {
-    CGContextRef cgContext = [[NSGraphicsContext currentContext] CGContext];
+    CGContextRef cgContext = context.platformContext();
     CGContextStateSaver stateSaver(cgContext);
 
     applyViewlessCellSettings(deviceScaleFactor, style, cell);
@@ -242,15 +251,53 @@ static void drawCellInView(const FloatRect& rect, NSCell *cell, NSView *view)
     [cell setControlView:nil];
 }
 
+void ControlMac::drawCellInternal(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
+{
+    // For slider cells, draw only the knob.
+    if ([cell isKindOfClass:[NSSliderCell class]]) {
+        [(NSSliderCell *)cell drawKnob:rect];
+        return;
+    }
+
+    if (supportsViewlessCells()) {
+        drawViewlessCell(context, rect, deviceScaleFactor, style, cell, shouldFlipContext(m_owningPart));
+        return;
+    }
+
+    auto *view = m_controlFactory.drawingView(rect, style);
+    drawCellInView(rect, cell, view);
+}
+
+static void drawViewlessCellFocusRing(const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
+{
+    applyViewlessCellSettings(deviceScaleFactor, style, cell);
+
+    // FIXME: rdar://105250010 - Needs a nullable version of [NSCell drawFocusRingMaskWithFrame].
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+    [cell drawFocusRingMaskWithFrame:rect inView:nil];
+#pragma clang diagnostic pop
+}
+
 static void drawCellFocusRingInView(const FloatRect& rect, NSCell *cell, NSView *view)
 {
     [cell drawFocusRingMaskWithFrame:rect inView:view];
 }
 
-static void drawCellFocusRing(const FloatRect& rect, NSCell *cell, NSView *view)
+void ControlMac::drawCellFocusRingInternal(const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
 {
-    CGContextRef cgContext = [[NSGraphicsContext currentContext] CGContext];
+    if (supportsViewlessCells()) {
+        drawViewlessCellFocusRing(rect, deviceScaleFactor, style, cell);
+        return;
+    }
 
+    auto *view = m_controlFactory.drawingView(rect, style);
+    drawCellFocusRingInView(rect, cell, view);
+}
+
+void ControlMac::drawCellFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell)
+{
+    CGContextRef cgContext = context.platformContext();
     CGContextStateSaver stateSaver(cgContext);
 
     CGFocusRingStyle focusRingStyle;
@@ -269,38 +316,33 @@ static void drawCellFocusRing(const FloatRect& rect, NSCell *cell, NSView *view)
     CGContextSetStyle(cgContext, cgStyle.get());
 
     CGContextBeginTransparencyLayerWithRect(cgContext, rect, nullptr);
-
-    // FIXME: rdar://105249508 - Needs to call viewless version of drawCellFocusRing().
-    drawCellFocusRingInView(rect, cell, view);
+    drawCellFocusRingInternal(rect, deviceScaleFactor, style, cell);
     CGContextEndTransparencyLayer(cgContext);
 }
 
-void ControlMac::drawCellOrFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
+void ControlMac::drawCellOrFocusRing(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, bool drawCell)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
     LocalCurrentGraphicsContext localContext(context);
 
-    if (drawCell) {
-        // For slider cells, draw only the knob.
-        if ([cell isKindOfClass:[NSSliderCell class]])
-            [(NSSliderCell *)cell drawKnob:rect];
-        else if (supportsViewlessCells())
-            drawViewlessCell(rect, deviceScaleFactor, style, cell, shouldFlipContext(m_owningPart));
-        else
-            drawCellInView(rect, cell, view);
-    }
+    if (drawCell)
+        drawCellInternal(context, rect, deviceScaleFactor, style, cell);
 
     if (style.states.contains(ControlStyle::State::Focused))
-        drawCellFocusRing(rect, cell, view);
+        drawCellFocusRing(context, rect, deviceScaleFactor, style, cell);
+
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, NSView *view, bool drawCell)
+void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float deviceScaleFactor, const ControlStyle& style, NSCell *cell, bool drawCell)
 {
     auto platformContext = context.platformContext();
     auto userCTM = AffineTransform(CGAffineTransformConcat(CGContextGetCTM(platformContext), CGAffineTransformInvert(CGContextGetBaseCTM(platformContext))));
     bool useImageBuffer = userCTM.xScale() != 1.0 || userCTM.yScale() != 1.0;
 
     if (!useImageBuffer) {
-        drawCellOrFocusRing(context, rect, deviceScaleFactor, style, cell, view, drawCell);
+        drawCellOrFocusRing(context, rect, deviceScaleFactor, style, cell, drawCell);
         return;
     }
 
@@ -314,7 +356,7 @@ void ControlMac::drawCell(GraphicsContext& context, const FloatRect& rect, float
     if (!imageBuffer)
         return;
 
-    drawCellOrFocusRing(imageBuffer->context(), cellDrawingRect, deviceScaleFactor, style, cell, view, drawCell);
+    drawCellOrFocusRing(imageBuffer->context(), cellDrawingRect, deviceScaleFactor, style, cell, drawCell);
     context.drawConsumingImageBuffer(WTFMove(imageBuffer), rect.location() - focusRingPadding);
 }
 
@@ -325,7 +367,6 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
         return;
 
     // We can't paint an NSComboBoxCell since they are not height-resizable.
-    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
     const FloatSize comboBoxSize { 40, 19 };
     const FloatSize comboBoxButtonSize { 16, 16 };
@@ -372,7 +413,6 @@ void ControlMac::drawListButton(GraphicsContext& context, const FloatRect& rect,
     else
         listButtonLocation = { rect.maxX() - desiredComboBoxButtonSize.width() - desiredComboBoxInset, listButtonY };
 
-    GraphicsContextStateSaver stateSaver(context);
     context.drawConsumingImageBuffer(WTFMove(comboBoxButtonImageBuffer), listButtonLocation);
 }
 #endif

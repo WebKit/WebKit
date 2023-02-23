@@ -31,7 +31,6 @@
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
 #import "InnerSpinButtonPart.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import <pal/spi/mac/CoreUISPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
@@ -90,8 +89,7 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& 
         context.scale(style.zoomFactor);
     }
 
-    LocalCurrentGraphicsContext localContext(context);
-    [[NSAppearance currentDrawingAppearance] _drawInRect:logicalRect context:localContext.cgContext() options:@{
+    [[NSAppearance currentDrawingAppearance] _drawInRect:logicalRect context:context.platformContext() options:@{
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetButtonLittleArrows,
         (__bridge NSString *)kCUISizeKey: coreUISize,
         (__bridge NSString *)kCUIStateKey: coreUIState,

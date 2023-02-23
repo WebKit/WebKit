@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,6 @@
 #import "ControlFactoryMac.h"
 #import "FloatRoundedRect.h"
 #import "GraphicsContext.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "SearchFieldCancelButtonPart.h"
 
@@ -83,8 +82,6 @@ void SearchFieldCancelButtonMac::draw(GraphicsContext& context, const FloatRound
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    LocalCurrentGraphicsContext localContext(context);
-
     GraphicsContextStateSaver stateSaver(context);
 
     auto logicalRect = rectForBounds(borderRect.rect(), style);
@@ -97,9 +94,7 @@ void SearchFieldCancelButtonMac::draw(GraphicsContext& context, const FloatRound
     auto styleForDrawing = style;
     styleForDrawing.states.remove(ControlStyle::State::Focused);
 
-    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
-
-    drawCell(context, logicalRect, deviceScaleFactor, styleForDrawing, [m_searchFieldCell cancelButtonCell], view, true);
+    drawCell(context, logicalRect, deviceScaleFactor, styleForDrawing, [m_searchFieldCell cancelButtonCell], true);
 }
 
 } // namespace WebCore

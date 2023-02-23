@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,8 @@
 
 #import "ControlFactoryMac.h"
 #import "GraphicsContext.h"
-#import "LocalCurrentGraphicsContext.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "MenuListPart.h"
-#import <wtf/BlockObjCExceptions.h>
 
 namespace WebCore {
 
@@ -105,26 +103,18 @@ FloatRect MenuListMac::rectForBounds(const FloatRect& bounds, const ControlStyle
 
 void MenuListMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    LocalCurrentGraphicsContext localContext(context);
-
-    auto inflatedRect = rectForBounds(borderRect.rect(), style);
+    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
     GraphicsContextStateSaver stateSaver(context);
+
+    auto inflatedRect = rectForBounds(borderRect.rect(), style);
 
     if (style.zoomFactor != 1) {
         inflatedRect.scale(1 / style.zoomFactor);
         context.scale(style.zoomFactor);
     }
 
-    LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
-
-    auto *view = m_controlFactory.drawingView(borderRect.rect(), style);
-
-    drawCell(context, inflatedRect, deviceScaleFactor, style, m_popUpButtonCell.get(), view, true);
-
-    END_BLOCK_OBJC_EXCEPTIONS
+    drawCell(context, inflatedRect, deviceScaleFactor, style, m_popUpButtonCell.get(), true);
 }
 
 } // namespace WebCore
