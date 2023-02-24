@@ -1313,7 +1313,7 @@ void BytecodeGenerator::initializeVarLexicalEnvironment(int symbolTableConstantI
         RELEASE_ASSERT(m_lexicalEnvironmentRegister);
         OpCreateLexicalEnvironment::emit(this, m_lexicalEnvironmentRegister, scopeRegister(), VirtualRegister { symbolTableConstantIndex }, addConstantValue(jsUndefined()));
 
-        OpMov::emit(this, scopeRegister(), m_lexicalEnvironmentRegister);
+        move(scopeRegister(), m_lexicalEnvironmentRegister);
 
         pushLocalControlFlowScope();
     }
@@ -1604,25 +1604,24 @@ RegisterID* BytecodeGenerator::moveLinkTimeConstant(RegisterID* dst, LinkTimeCon
     if (!dst)
         return constant;
 
-    OpMov::emit(this, dst, constant);
-
-    return dst;
+    return move(dst, constant);
 }
 
 RegisterID* BytecodeGenerator::moveEmptyValue(RegisterID* dst)
 {
     RefPtr<RegisterID> emptyValue = addConstantEmptyValue();
 
-    OpMov::emit(this, dst, emptyValue.get());
-
-    return dst;
+    return move(dst, emptyValue.get());
 }
 
 RegisterID* BytecodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
 {
-    ASSERT(src != m_emptyValueRegister);
-
     m_staticPropertyAnalyzer.mov(dst, src);
+    if (canDoPeepholeOptimization() && m_lastInstruction->is<OpMov>()) {
+        auto op = m_lastInstruction->as<OpMov>();
+        if (op.m_dst == dst->virtualRegister())
+            rewind();
+    }
     OpMov::emit(this, dst, src);
 
     return dst;
@@ -4746,6 +4745,7 @@ void BytecodeGenerator::pushForInScope(RegisterID* localRegister, RegisterID* pr
         return;
     unsigned bodyBytecodeStartOffset = instructions().size();
     m_forInContextStack.append(adoptRef(*new ForInContext(localRegister, propertyNameRegister, propertyOffsetRegister, enumeratorRegister, modeRegister, baseVariable, bodyBytecodeStartOffset)));
+    disablePeepholeOptimization();
 }
 
 void BytecodeGenerator::popForInScope(RegisterID* localRegister)
