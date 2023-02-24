@@ -4023,7 +4023,7 @@ void Page::removeInjectedUserStyleSheet(UserStyleSheet& userStyleSheet)
 void Page::mainFrameDidChangeToNonInitialEmptyDocument()
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
-    ASSERT(localMainFrame && !localMainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument());
+    ASSERT_UNUSED(localMainFrame, localMainFrame && !localMainFrame->loader().stateMachine().isDisplayingInitialEmptyDocument());
     for (auto& userStyleSheet : m_userStyleSheetsPendingInjection)
         injectUserStyleSheet(userStyleSheet);
     m_userStyleSheetsPendingInjection.clear();
