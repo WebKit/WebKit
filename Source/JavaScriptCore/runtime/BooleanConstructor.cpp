@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008, 2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -55,15 +55,26 @@ JSC_DEFINE_HOST_FUNCTION(constructWithBooleanConstructor, (JSGlobalObject* globa
     return JSValue::encode(obj);
 }
 
-BooleanConstructor::BooleanConstructor(VM& vm, Structure* structure)
-    : InternalFunction(vm, structure, callBooleanConstructor, constructWithBooleanConstructor)
+BooleanConstructor::BooleanConstructor(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure)
+    : Base(vm, executable, globalObject, structure)
 {
 }
 
 void BooleanConstructor::finishCreation(VM& vm, BooleanPrototype* booleanPrototype)
 {
-    Base::finishCreation(vm, 1, vm.propertyNames->Boolean.string(), PropertyAdditionMode::WithoutStructureTransition);
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, booleanPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    Base::finishCreation(vm);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, booleanPrototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->name, jsString(vm, vm.propertyNames->Boolean.string()), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
+}
+
+BooleanConstructor* BooleanConstructor::create(VM& vm, Structure* structure, BooleanPrototype* booleanPrototype, GetterSetter*)
+{
+    JSGlobalObject* globalObject = structure->globalObject();
+    NativeExecutable* executable = vm.getHostFunction(callBooleanConstructor, ImplementationVisibility::Public, BooleanConstructorIntrinsic, constructWithBooleanConstructor, nullptr, vm.propertyNames->Boolean.string());
+    BooleanConstructor* constructor = new (NotNull, allocateCell<BooleanConstructor>(vm)) BooleanConstructor(vm, executable, globalObject, structure);
+    constructor->finishCreation(vm, booleanPrototype);
+    return constructor;
 }
 
 JSObject* constructBooleanFromImmediateBoolean(JSGlobalObject* globalObject, JSValue immediateBooleanValue)

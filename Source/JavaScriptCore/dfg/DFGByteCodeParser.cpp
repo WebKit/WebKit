@@ -3852,6 +3852,15 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return CallOptimizationResult::Inlined;
         }
 
+        case BooleanConstructorIntrinsic: {
+            insertChecks();
+            if (argumentCountIncludingThis <= 1)
+                setResult(jsConstant(jsBoolean(false)));
+            else
+                setResult(addToGraph(ToBoolean, get(virtualRegisterForArgumentIncludingThis(1, registerOffset))));
+            return CallOptimizationResult::Inlined;
+        }
+
 #if ENABLE(WEBASSEMBLY)
         case WasmFunctionIntrinsic: {
             if (callOp != Call)

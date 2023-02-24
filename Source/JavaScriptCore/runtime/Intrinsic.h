@@ -59,6 +59,7 @@ namespace JSC {
     macro(ArrayValuesIntrinsic) \
     macro(ArrayKeysIntrinsic) \
     macro(ArrayEntriesIntrinsic) \
+    macro(BooleanConstructorIntrinsic) \
     macro(CharCodeAtIntrinsic) \
     macro(CharAtIntrinsic) \
     macro(DatePrototypeGetTimeIntrinsic) \
