@@ -293,9 +293,9 @@ ExceptionOr<Ref<RTCRtpTransceiver>> GStreamerPeerConnectionBackend::addTransceiv
     return addTransceiverFromTrackOrKind(WTFMove(track), init);
 }
 
-void GStreamerPeerConnectionBackend::setSenderSourceFromTrack(GStreamerRtpSenderBackend& sender, MediaStreamTrack& track)
+GStreamerRtpSenderBackend::Source GStreamerPeerConnectionBackend::createLinkedSourceForTrack(MediaStreamTrack& track)
 {
-    m_endpoint->setSenderSourceFromTrack(sender, track);
+    return m_endpoint->createLinkedSourceForTrack(track);
 }
 
 static inline GStreamerRtpTransceiverBackend& backendFromRTPTransceiver(RTCRtpTransceiver& transceiver)

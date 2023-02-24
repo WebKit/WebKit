@@ -34,6 +34,7 @@ public:
 
     bool setPayloadType(const GRefPtr<GstCaps>&) final;
     void teardown() final;
+    void flush() final;
 
     const GstStructure* stats() const { return m_stats.get(); }
 
@@ -51,8 +52,13 @@ private:
     void startUpdatingStats();
     void stopUpdatingStats();
 
+    void connectFallbackSource() final;
+    void unlinkOutgoingSource() final;
+    void linkOutgoingSource() final;
+
     void updateStats(GstBuffer*);
 
+    GRefPtr<GstElement> m_fallbackSource;
     GRefPtr<GstElement> m_videoConvert;
     GRefPtr<GstElement> m_videoFlip;
     GUniquePtr<GstStructure> m_stats;

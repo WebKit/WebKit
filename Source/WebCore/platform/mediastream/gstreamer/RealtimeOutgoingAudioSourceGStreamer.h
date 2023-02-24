@@ -38,6 +38,11 @@ private:
     void codecPreferencesChanged(const GRefPtr<GstCaps>&) final;
     RTCRtpCapabilities rtpCapabilities() const final;
 
+    void connectFallbackSource() final;
+    void unlinkOutgoingSource() final;
+    void linkOutgoingSource() final;
+
+    GRefPtr<GstElement> m_fallbackSource;
     GRefPtr<GstElement> m_audioconvert;
     GRefPtr<GstElement> m_audioresample;
 };
