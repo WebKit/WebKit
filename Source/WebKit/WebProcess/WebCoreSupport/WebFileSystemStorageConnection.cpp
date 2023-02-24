@@ -60,7 +60,11 @@ void WebFileSystemStorageConnection::closeHandle(WebCore::FileSystemHandleIdenti
     if (!m_connection)
         return;
 
-    m_connection->send(Messages::NetworkStorageManager::CloseHandle(identifier), 0);
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return;
+
+    m_connection->send(Messages::NetworkStorageManager::CloseHandle(iterator->value, identifier), 0);
 }
 
 void WebFileSystemStorageConnection::isSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier otherIdentifier, WebCore::FileSystemStorageConnection::SameEntryCallback&& completionHandler)
@@ -71,7 +75,11 @@ void WebFileSystemStorageConnection::isSameEntry(WebCore::FileSystemHandleIdenti
     if (identifier == otherIdentifier)
         return completionHandler(true);
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::IsSameEntry(identifier, otherIdentifier), WTFMove(completionHandler));
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::IsSameEntry(iterator->value, identifier, otherIdentifier), WTFMove(completionHandler));
 }
 
 void WebFileSystemStorageConnection::getFileHandle(WebCore::FileSystemHandleIdentifier identifier, const String& name, bool createIfNecessary, WebCore::FileSystemStorageConnection::GetHandleCallback&& completionHandler)
@@ -79,12 +87,17 @@ void WebFileSystemStorageConnection::getFileHandle(WebCore::FileSystemHandleIden
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFileHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFileHandle(iterator->value, identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, origin = iterator->value, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
         auto identifier = result.value();
         ASSERT(identifier.isValid());
+        registerFileSystemHandle(identifier, origin);
         completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, false, *this));
     });
 }
@@ -94,12 +107,17 @@ void WebFileSystemStorageConnection::getDirectoryHandle(WebCore::FileSystemHandl
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetDirectoryHandle(identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetDirectoryHandle(iterator->value, identifier, name, createIfNecessary), [this, protectedThis = Ref { *this }, name, origin = iterator->value, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
         auto identifier = result.value();
         ASSERT(identifier.isValid());
+        registerFileSystemHandle(identifier, origin);
         completionHandler(WebCore::FileSystemHandleCloseScope::create(identifier, true, *this));
     });
 }
@@ -109,7 +127,11 @@ void WebFileSystemStorageConnection::removeEntry(WebCore::FileSystemHandleIdenti
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::RemoveEntry(identifier, name, deleteRecursively), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::RemoveEntry(iterator->value, identifier, name, deleteRecursively), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
         return completionHandler(convertToExceptionOr(error));
     });
 }
@@ -119,7 +141,11 @@ void WebFileSystemStorageConnection::resolve(WebCore::FileSystemHandleIdentifier
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::Resolve(identifier, otherIdentifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::Resolve(iterator->value, identifier, otherIdentifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -132,7 +158,11 @@ void WebFileSystemStorageConnection::getFile(WebCore::FileSystemHandleIdentifier
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFile(identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetFile(iterator->value, identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -145,7 +175,11 @@ void WebFileSystemStorageConnection::createSyncAccessHandle(WebCore::FileSystemH
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateSyncAccessHandle(identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CreateSyncAccessHandle(iterator->value, identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -158,7 +192,11 @@ void WebFileSystemStorageConnection::closeSyncAccessHandle(WebCore::FileSystemHa
     if (!m_connection)
         return;
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseSyncAccessHandle(identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)]() mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::CloseSyncAccessHandle(iterator->value, identifier, accessHandleIdentifier), [completionHandler = WTFMove(completionHandler)]() mutable {
         return completionHandler({ });
     });
 }
@@ -168,7 +206,11 @@ void WebFileSystemStorageConnection::getHandleNames(WebCore::FileSystemHandleIde
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandleNames(identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandleNames(iterator->value, identifier), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -181,7 +223,11 @@ void WebFileSystemStorageConnection::getHandle(WebCore::FileSystemHandleIdentifi
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandle(identifier, name), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::GetHandle(iterator->value, identifier, name), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
         
@@ -196,7 +242,11 @@ void WebFileSystemStorageConnection::move(WebCore::FileSystemHandleIdentifier id
     if (!m_connection)
         return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::Move(identifier, destinationIdentifier, newName), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(WebCore::Exception { WebCore::UnknownError, "Origin is not found"_s });
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::Move(iterator->value, identifier, destinationIdentifier, newName), [completionHandler = WTFMove(completionHandler)](auto error) mutable {
         completionHandler(convertToExceptionOr(error));
     });
 }
@@ -226,7 +276,18 @@ void WebFileSystemStorageConnection::requestNewCapacityForSyncAccessHandle(WebCo
     if (!m_connection)
         return completionHandler(std::nullopt);
 
-    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::RequestNewCapacityForSyncAccessHandle(identifier, accessHandleIdentifier, newCapacity), WTFMove(completionHandler));
+    auto iterator = m_origins.find(identifier);
+    if (iterator == m_origins.end())
+        return completionHandler(std::nullopt);
+
+    m_connection->sendWithAsyncReply(Messages::NetworkStorageManager::RequestNewCapacityForSyncAccessHandle(iterator->value, identifier, accessHandleIdentifier, newCapacity), WTFMove(completionHandler));
+}
+
+void WebFileSystemStorageConnection::registerFileSystemHandle(WebCore::FileSystemHandleIdentifier identifier, const WebCore::ClientOrigin& origin)
+{
+    ASSERT(!m_origins.contains(identifier));
+
+    m_origins.add(identifier, origin);
 }
 
 } // namespace WebKit

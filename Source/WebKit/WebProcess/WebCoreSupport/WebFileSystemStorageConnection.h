@@ -68,6 +68,7 @@ public:
     static Ref<WebFileSystemStorageConnection> create(IPC::Connection&);
     void connectionClosed();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void registerFileSystemHandle(WebCore::FileSystemHandleIdentifier, const WebCore::ClientOrigin&);
 
 private:
     explicit WebFileSystemStorageConnection(IPC::Connection&);
@@ -92,6 +93,7 @@ private:
     void invalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier) final;
 
     HashMap<WebCore::FileSystemSyncAccessHandleIdentifier, WebCore::ScriptExecutionContextIdentifier> m_syncAccessHandles;
+    HashMap<WebCore::FileSystemHandleIdentifier, WebCore::ClientOrigin> m_origins;
     RefPtr<IPC::Connection> m_connection;
 };
 

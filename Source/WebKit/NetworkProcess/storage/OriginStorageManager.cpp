@@ -26,6 +26,7 @@
 #include "config.h"
 #include "OriginStorageManager.h"
 
+#include "CacheStorageCache.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageRegistry.h"
 #include "FileSystemStorageHandleRegistry.h"
@@ -75,7 +76,6 @@ public:
     IDBStorageManager* existingIDBStorageManager() { return m_idbStorageManager.get(); }
     CacheStorageManager& cacheStorageManager(CacheStorageRegistry&, const WebCore::ClientOrigin&, CacheStorageManager::QuotaCheckFunction&&, Ref<WorkQueue>&&);
     CacheStorageManager* existingCacheStorageManager() { return m_cacheStorageManager.get(); }
-    uint64_t cacheStorageSize();
     void closeCacheStorageManager();
     bool isActive() const;
     bool isEmpty();
@@ -238,10 +238,10 @@ bool OriginStorageManager::StorageBucket::isActive() const
     // We cannot remove the bucket if it has in-memory data, otherwise session
     // data may be lost.
     return (m_fileSystemStorageManager && m_fileSystemStorageManager->isActive())
-        || (m_localStorageManager && (m_localStorageManager->hasDataInMemory() || m_localStorageManager->isActive()))
-        || (m_sessionStorageManager && (m_sessionStorageManager->hasDataInMemory() || m_sessionStorageManager->isActive()))
-        || (m_idbStorageManager && (m_idbStorageManager->hasDataInMemory() || m_idbStorageManager->isActive()))
-        || (m_cacheStorageManager && (m_cacheStorageManager->hasDataInMemory() || m_cacheStorageManager->isActive()));
+    || (m_localStorageManager && (m_localStorageManager->hasDataInMemory() || m_localStorageManager->isActive()))
+    || (m_sessionStorageManager && (m_sessionStorageManager->hasDataInMemory() || m_sessionStorageManager->isActive()))
+    || (m_idbStorageManager && (m_idbStorageManager->hasDataInMemory() || m_idbStorageManager->isActive()))
+    || (m_cacheStorageManager && (m_cacheStorageManager->hasDataInMemory() || m_cacheStorageManager->isActive()));
 }
 
 bool OriginStorageManager::StorageBucket::isEmpty()
@@ -430,7 +430,7 @@ void OriginStorageManager::StorageBucket::moveData(OptionSet<WebsiteDataType> ty
     if (types.contains(WebsiteDataType::IndexedDBDatabases) && !idbStoragePath.isEmpty()) {
         if (m_idbStorageManager)
             m_idbStorageManager->closeDatabasesForDeletion();
-
+    
         auto currentIDBStoragePath = resolvedIDBStoragePath();
         if (!currentIDBStoragePath.isEmpty()) {
             FileSystem::makeAllDirectories(FileSystem::parentPath(idbStoragePath));
@@ -589,8 +589,9 @@ Ref<QuotaManager> OriginStorageManager::createQuotaManager()
     return QuotaManager::create(m_quota, WTFMove(getUsageFunction), std::exchange(m_increaseQuotaFunction, { }));
 }
 
-OriginStorageManager::OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
-    : m_path(WTFMove(path))
+OriginStorageManager::OriginStorageManager(uint64_t quota, QuotaManager::IncreaseQuotaFunction&& increaseQuotaFunction, const WebCore::ClientOrigin& origin, String&& path, String&& customLocalStoragePath, String&& customIDBStoragePath, String&& customCacheStoragePath, UnifiedOriginStorageLevel level)
+    : m_origin(origin)
+    , m_path(WTFMove(path))
     , m_customLocalStoragePath(WTFMove(customLocalStoragePath))
     , m_customIDBStoragePath(WTFMove(customIDBStoragePath))
     , m_customCacheStoragePath(WTFMove(customCacheStoragePath))
@@ -599,12 +600,18 @@ OriginStorageManager::OriginStorageManager(uint64_t quota, QuotaManager::Increas
     , m_level(level)
 {
     ASSERT(!RunLoop::isMain());
+    
+    m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
+    m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
+    m_idbStorageRegistry = makeUnique<IDBStorageRegistry>();
+    m_cacheStorageRegistry = makeUnique<CacheStorageRegistry>();
 }
 
 OriginStorageManager::~OriginStorageManager() = default;
 
 void OriginStorageManager::connectionClosed(IPC::Connection::UniqueID connection)
 {
+    m_idbStorageRegistry->removeConnectionToClient(connection);
     if (m_defaultBucket)
         m_defaultBucket->connectionClosed(connection);
 }
@@ -625,9 +632,9 @@ QuotaManager& OriginStorageManager::quotaManager()
     return *m_quotaManager;
 }
 
-FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry)
+FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager()
 {
-    return defaultBucket().fileSystemStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+    return defaultBucket().fileSystemStorageManager(*m_fileSystemStorageHandleRegistry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
         auto strongReference = quotaManager.get();
         if (!strongReference)
             return completionHandler(false);
@@ -643,9 +650,9 @@ FileSystemStorageManager* OriginStorageManager::existingFileSystemStorageManager
     return defaultBucket().existingFileSystemStorageManager();
 }
 
-LocalStorageManager& OriginStorageManager::localStorageManager(StorageAreaRegistry& registry)
+LocalStorageManager& OriginStorageManager::localStorageManager()
 {
-    return defaultBucket().localStorageManager(registry);
+    return defaultBucket().localStorageManager(*m_storageAreaRegistry);
 }
 
 LocalStorageManager* OriginStorageManager::existingLocalStorageManager()
@@ -653,9 +660,9 @@ LocalStorageManager* OriginStorageManager::existingLocalStorageManager()
     return defaultBucket().existingLocalStorageManager();
 }
 
-SessionStorageManager& OriginStorageManager::sessionStorageManager(StorageAreaRegistry& registry)
+SessionStorageManager& OriginStorageManager::sessionStorageManager()
 {
-    return defaultBucket().sessionStorageManager(registry);
+    return defaultBucket().sessionStorageManager(*m_storageAreaRegistry);
 }
 
 SessionStorageManager* OriginStorageManager::existingSessionStorageManager()
@@ -663,9 +670,9 @@ SessionStorageManager* OriginStorageManager::existingSessionStorageManager()
     return defaultBucket().existingSessionStorageManager();
 }
 
-IDBStorageManager& OriginStorageManager::idbStorageManager(IDBStorageRegistry& registry)
+IDBStorageManager& OriginStorageManager::idbStorageManager()
 {
-    return defaultBucket().idbStorageManager(registry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+    return defaultBucket().idbStorageManager(*m_idbStorageRegistry, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
         auto strongReference = quotaManager.get();
         if (!strongReference)
             return completionHandler(false);
@@ -686,9 +693,9 @@ CacheStorageManager* OriginStorageManager::existingCacheStorageManager()
     return defaultBucket().existingCacheStorageManager();
 }
 
-CacheStorageManager& OriginStorageManager::cacheStorageManager(CacheStorageRegistry& registry, const WebCore::ClientOrigin& origin, Ref<WorkQueue>&& queue)
+CacheStorageManager& OriginStorageManager::cacheStorageManager(Ref<WorkQueue>&& queue)
 {
-    return defaultBucket().cacheStorageManager(registry, origin, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
+    return defaultBucket().cacheStorageManager(*m_cacheStorageRegistry, m_origin, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
         if (!quotaManager.get())
             return completionHandler(false);
 
@@ -708,11 +715,6 @@ bool OriginStorageManager::isActive()
     return defaultBucket().isActive();
 }
 
-bool OriginStorageManager::isEmpty()
-{
-    return defaultBucket().isEmpty();
-}
-
 void OriginStorageManager::setPersisted(bool value)
 {
     ASSERT(!RunLoop::isMain());
@@ -726,6 +728,61 @@ WebCore::StorageEstimate OriginStorageManager::estimate()
     ASSERT(!RunLoop::isMain());
 
     return WebCore::StorageEstimate { quotaManager().usage(), quotaManager().quota() };
+}
+
+void OriginStorageManager::didIncreaseQuota(QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
+{
+    if (m_quotaManager)
+        m_quotaManager->didIncreaseQuota(identifier, newQuota);
+}
+
+void OriginStorageManager::resetQuotaForTesting()
+{
+    if (m_quotaManager)
+        m_quotaManager->resetQuotaForTesting();
+}
+
+void OriginStorageManager::resetQuotaUpdatedBasedOnUsageForTesting()
+{
+    if (m_quotaManager)
+        m_quotaManager->resetQuotaUpdatedBasedOnUsageForTesting();
+}
+
+void OriginStorageManager::requestSpace(uint64_t size, CompletionHandler<void(bool)>&& completionHandler)
+{
+    quotaManager().requestSpace(size, [completionHandler = WTFMove(completionHandler)](auto decision) mutable {
+        completionHandler(decision == QuotaManager::Decision::Grant);
+    });
+}
+
+void OriginStorageManager::suspend()
+{
+    if (auto localStorageManager = existingLocalStorageManager())
+        localStorageManager->syncLocalStorage();
+
+    if (auto idbStorageManager = existingIDBStorageManager())
+        idbStorageManager->stopDatabaseActivitiesForSuspend();
+}
+
+void OriginStorageManager::handleLowMemoryWarning()
+{
+    if (auto localStorageManager = existingLocalStorageManager())
+        localStorageManager->handleLowMemoryWarning();
+
+    if (auto idbStorageManager = existingIDBStorageManager())
+        idbStorageManager->handleLowMemoryWarning();
+}
+
+void OriginStorageManager::clearSessionStorage(StorageNamespaceIdentifier identifier)
+{
+    if (auto* sessionStorageManager = existingSessionStorageManager())
+        sessionStorageManager->removeNamespace(identifier);
+}
+
+void OriginStorageManager::syncLocalStorage()
+{
+    if (auto localStorageManager = existingLocalStorageManager())
+        localStorageManager->syncLocalStorage();
 }
 
 OriginStorageManager::DataTypeSizeMap OriginStorageManager::fetchDataTypesInList(OptionSet<WebsiteDataType> types, bool shouldComputeSize)
@@ -763,6 +820,479 @@ void OriginStorageManager::closeCacheStorageManager()
 {
     if (m_defaultBucket)
         m_defaultBucket->closeCacheStorageManager();
+}
+
+void OriginStorageManager::fileSystemGetDirectory(IPC::Connection& connection, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+{
+    completionHandler(fileSystemStorageManager().getDirectory(connection.uniqueID()));
+}
+
+void OriginStorageManager::fileSystemCloseHandle(WebCore::FileSystemHandleIdentifier identifier)
+{
+    if (auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier))
+        handle->close();
+}
+
+void OriginStorageManager::fileSystemIsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(false);
+    
+    completionHandler(handle->isSameEntry(targetIdentifier));
+}
+
+void OriginStorageManager::fileSystemMove(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, const String& newName, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(FileSystemStorageError::Unknown);
+    
+    completionHandler(handle->move(destinationIdentifier, newName));
+}
+
+void OriginStorageManager::fileSystemGetFileHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+    
+    completionHandler(handle->getFileHandle(connection.uniqueID(), WTFMove(name), createIfNecessary));
+}
+
+void OriginStorageManager::fileSystemGetDirectoryHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+    
+    completionHandler(handle->getDirectoryHandle(connection.uniqueID(), WTFMove(name), createIfNecessary));
+}
+
+void OriginStorageManager::fileSystemRemoveEntry(WebCore::FileSystemHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(FileSystemStorageError::Unknown);
+    
+    completionHandler(handle->removeEntry(name, deleteRecursively));
+}
+
+void OriginStorageManager::fileSystemResolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+    
+    completionHandler(handle->resolve(targetIdentifier));
+}
+
+void OriginStorageManager::fileSystemGetFile(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<String, FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+    
+    completionHandler(handle->path());
+}
+
+void OriginStorageManager::fileSystemCreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+    
+    completionHandler(handle->createSyncAccessHandle());
+}
+
+void OriginStorageManager::fileSystemCloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier))
+        handle->closeSyncAccessHandle(accessHandleIdentifier);
+    
+    completionHandler();
+}
+
+void OriginStorageManager::fileSystemRequestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(std::nullopt);
+    
+    handle->requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, WTFMove(completionHandler));
+}
+
+void OriginStorageManager::fileSystemGetHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+    
+    completionHandler(handle->getHandleNames());
+}
+
+void OriginStorageManager::fileSystemGetHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, FileSystemStorageError>)>&& completionHandler)
+{
+    auto handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
+    if (!handle)
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
+    
+    completionHandler(handle->getHandle(connection.uniqueID(), WTFMove(name)));
+}
+
+void OriginStorageManager::webStorageConnectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, Ref<WorkQueue>&& taskQueue, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&& completionHandler)
+{
+    auto connectionIdentifier = connection.uniqueID();
+    StorageAreaIdentifier resultIdentifier;
+    switch (type) {
+    case WebCore::StorageType::Local:
+        resultIdentifier = localStorageManager().connectToLocalStorageArea(connectionIdentifier, sourceIdentifier, m_origin, WTFMove(taskQueue));
+        break;
+    case WebCore::StorageType::TransientLocal:
+        resultIdentifier = localStorageManager().connectToTransientLocalStorageArea(connectionIdentifier, sourceIdentifier, m_origin);
+        break;
+    case WebCore::StorageType::Session:
+        if (!namespaceIdentifier)
+            return completionHandler(StorageAreaIdentifier { }, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
+        resultIdentifier = sessionStorageManager().connectToSessionStorageArea(connectionIdentifier, sourceIdentifier, m_origin, *namespaceIdentifier);
+    }
+    
+    if (auto storageArea = m_storageAreaRegistry->getStorageArea(resultIdentifier))
+        return completionHandler(resultIdentifier, storageArea->allItems(), StorageAreaBase::nextMessageIdentifier());
+    
+    completionHandler(resultIdentifier, HashMap<String, String> { }, StorageAreaBase::nextMessageIdentifier());
+}
+
+void OriginStorageManager::webStorageConnectToStorageAreaSync(IPC::Connection& connection, WebCore::StorageType type, StorageAreaMapIdentifier sourceIdentifier, std::optional<StorageNamespaceIdentifier> namespaceIdentifier, Ref<WorkQueue>&& taskQueue, CompletionHandler<void(StorageAreaIdentifier, HashMap<String, String>, uint64_t)>&& completionHandler)
+{
+    webStorageConnectToStorageArea(connection, type, sourceIdentifier, namespaceIdentifier, WTFMove(taskQueue), WTFMove(completionHandler));
+}
+
+void OriginStorageManager::webStorageCancelConnectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, std::optional<StorageNamespaceIdentifier> namespaceIdentifier)
+{
+    auto connectionIdentifier = connection.uniqueID();
+    switch (type) {
+    case WebCore::StorageType::Local:
+        if (auto localStorageManager = existingLocalStorageManager())
+            localStorageManager->cancelConnectToLocalStorageArea(connectionIdentifier);
+        break;
+    case WebCore::StorageType::TransientLocal:
+        if (auto localStorageManager = existingLocalStorageManager())
+            localStorageManager->cancelConnectToTransientLocalStorageArea(connectionIdentifier);
+        break;
+    case WebCore::StorageType::Session:
+        if (!namespaceIdentifier)
+            return;
+        if (auto sessionStorageManager = existingSessionStorageManager())
+            sessionStorageManager->cancelConnectToSessionStorageArea(connectionIdentifier, *namespaceIdentifier);
+    }
+}
+
+void OriginStorageManager::webStorageDisconnectFromStorageArea(IPC::Connection& connection, StorageAreaIdentifier identifier)
+{
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return;
+    
+    if (storageArea->storageType() == StorageAreaBase::StorageType::Local)
+        localStorageManager().disconnectFromStorageArea(connection.uniqueID(), identifier);
+    else
+        sessionStorageManager().disconnectFromStorageArea(connection.uniqueID(), identifier);
+}
+
+void OriginStorageManager::webStorageCloneSessionStorageNamespace(StorageNamespaceIdentifier fromIdentifier, StorageNamespaceIdentifier toIdentifier)
+{
+    if (auto* sessionStorageManager = existingSessionStorageManager())
+        sessionStorageManager->cloneStorageArea(fromIdentifier, toIdentifier);
+}
+
+void OriginStorageManager::webStorageSetItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& value, String&& urlString, CompletionHandler<void(bool, HashMap<String, String>&&)>&& completionHandler)
+{
+    bool hasError = false;
+    HashMap<String, String> allItems;
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return completionHandler(hasError, WTFMove(allItems));
+    
+    auto result = storageArea->setItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(value), WTFMove(urlString));
+    hasError = !result;
+    if (hasError)
+        allItems = storageArea->allItems();
+    completionHandler(hasError, WTFMove(allItems));
+}
+
+void OriginStorageManager::webStorageRemoveItem(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& key, String&& urlString, CompletionHandler<void()>&& completionHandler)
+{
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return completionHandler();
+
+    storageArea->removeItem(connection.uniqueID(), implIdentifier, WTFMove(key), WTFMove(urlString));
+    completionHandler();
+}
+
+void OriginStorageManager::webStorageClear(IPC::Connection& connection, StorageAreaIdentifier identifier, StorageAreaImplIdentifier implIdentifier, String&& urlString, CompletionHandler<void()>&& completionHandler)
+{
+    auto storageArea = m_storageAreaRegistry->getStorageArea(identifier);
+    if (!storageArea)
+        return completionHandler();
+
+    storageArea->clear(connection.uniqueID(), implIdentifier, WTFMove(urlString));
+    completionHandler();
+}
+
+void OriginStorageManager::idbOpenDatabase(IPC::Connection& connection, const WebCore::IDBRequestData& requestData)
+{
+    auto& connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), requestData.requestIdentifier().connectionIdentifier());
+    idbStorageManager().openDatabase(connectionToClient, requestData);
+}
+
+void OriginStorageManager::idbOpenDBRequestCancelled(const WebCore::IDBRequestData& requestData)
+{
+    idbStorageManager().openDBRequestCancelled(requestData);
+}
+
+void OriginStorageManager::idbDeleteDatabase(IPC::Connection& connection, const WebCore::IDBRequestData& requestData)
+{
+    auto& connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), requestData.requestIdentifier().connectionIdentifier());
+    idbStorageManager().deleteDatabase(connectionToClient, requestData);
+}
+
+void OriginStorageManager::idbEstablishTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBTransactionInfo& transactionInfo)
+{
+    if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+        connection->establishTransaction(transactionInfo);
+}
+
+void OriginStorageManager::idbDatabaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
+{
+    if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+        connection->connectionPendingCloseFromClient();
+}
+
+void OriginStorageManager::idbDatabaseConnectionClosed(uint64_t databaseConnectionIdentifier)
+{
+    if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+        connection->connectionClosedFromClient();
+}
+
+void OriginStorageManager::idbAbortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<WebCore::IDBResourceIdentifier>& transactionIdentifier)
+{
+    if (transactionIdentifier) {
+        if (auto transaction = m_idbStorageRegistry->transaction(*transactionIdentifier))
+            transaction->abortWithoutCallback();
+    }
+
+    if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+        connection->connectionClosedFromClient();
+}
+
+void OriginStorageManager::idbDidFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const WebCore::IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
+{
+    if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+        connection->didFireVersionChangeEvent(requestIdentifier, connectionClosed);
+}
+
+void OriginStorageManager::idbAbortTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
+        transaction->abort();
+}
+
+void OriginStorageManager::idbCommitTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(transactionIdentifier))
+        transaction->commit(pendingRequestCount);
+}
+
+void OriginStorageManager::idbDidFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
+{
+    if (auto connection = m_idbStorageRegistry->connection(databaseConnectionIdentifier))
+        connection->didFinishHandlingVersionChange(transactionIdentifier);
+}
+
+void OriginStorageManager::idbCreateObjectStore(const WebCore::IDBRequestData& requestData, const WebCore::IDBObjectStoreInfo& objectStoreInfo)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier())) {
+        ASSERT(transaction->isVersionChange());
+        transaction->createObjectStore(requestData, objectStoreInfo);
+    }
+}
+
+void OriginStorageManager::idbDeleteObjectStore(const WebCore::IDBRequestData& requestData, const String& objectStoreName)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier())) {
+        ASSERT(transaction->isVersionChange());
+        transaction->deleteObjectStore(requestData, objectStoreName);
+    }
+}
+
+void OriginStorageManager::idbRenameObjectStore(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier())) {
+        ASSERT(transaction->isVersionChange());
+        transaction->renameObjectStore(requestData, objectStoreIdentifier, newName);
+    }
+}
+
+void OriginStorageManager::idbClearObjectStore(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->clearObjectStore(requestData, objectStoreIdentifier);
+}
+
+void OriginStorageManager::idbCreateIndex(const WebCore::IDBRequestData& requestData, const WebCore::IDBIndexInfo& indexInfo)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->createIndex(requestData, indexInfo);
+}
+
+void OriginStorageManager::idbDeleteIndex(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
+}
+
+void OriginStorageManager::idbRenameIndex(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
+}
+
+void OriginStorageManager::idbPutOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->putOrAdd(requestData, keyData, value, overwriteMode);
+}
+
+void OriginStorageManager::idbGetRecord(const WebCore::IDBRequestData& requestData, const WebCore::IDBGetRecordData& getRecordData)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->getRecord(requestData, getRecordData);
+}
+
+void OriginStorageManager::idbGetAllRecords(const WebCore::IDBRequestData& requestData, const WebCore::IDBGetAllRecordsData& getAllRecordsData)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->getAllRecords(requestData, getAllRecordsData);
+}
+
+void OriginStorageManager::idbGetCount(const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyRangeData& keyRangeData)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->getCount(requestData, keyRangeData);
+}
+
+void OriginStorageManager::idbDeleteRecord(const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyRangeData& keyRangeData)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->deleteRecord(requestData, keyRangeData);
+}
+
+void OriginStorageManager::idbOpenCursor(const WebCore::IDBRequestData& requestData, const WebCore::IDBCursorInfo& cursorInfo)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->openCursor(requestData, cursorInfo);
+}
+
+void OriginStorageManager::idbIterateCursor(const WebCore::IDBRequestData& requestData, const WebCore::IDBIterateCursorData& cursorData)
+{
+    if (auto transaction = m_idbStorageRegistry->transaction(requestData.transactionIdentifier()))
+        transaction->iterateCursor(requestData, cursorData);
+}
+
+void OriginStorageManager::idbGetAllDatabaseNamesAndVersions(IPC::Connection& connection, const WebCore::IDBResourceIdentifier& requestIdentifier)
+{
+    auto& connectionToClient = m_idbStorageRegistry->ensureConnectionToClient(connection.uniqueID(), requestIdentifier.connectionIdentifier());
+    auto result = idbStorageManager().getAllDatabaseNamesAndVersions();
+    connectionToClient.didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(result));
+}
+
+void OriginStorageManager::cacheStorageOpenCache(Ref<WorkQueue>&& callbackQueue, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& completionHandler)
+{
+    cacheStorageManager(WTFMove(callbackQueue)).openCache(cacheName, WTFMove(completionHandler));
+}
+
+void OriginStorageManager::cacheStorageRemoveCache(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& completionHandler)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return completionHandler(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    auto* cacheStorageManager = cache->manager();
+    if (!cacheStorageManager)
+        return completionHandler(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cacheStorageManager->removeCache(cacheIdentifier, WTFMove(completionHandler));
+}
+
+void OriginStorageManager::cacheStorageAllCaches(Ref<WorkQueue>&& callbackQueue, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&& completionHandler)
+{
+    cacheStorageManager(WTFMove(callbackQueue)).allCaches(updateCounter, WTFMove(completionHandler));
+}
+
+void OriginStorageManager::cacheStorageReference(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return;
+
+    auto* cacheStorageManager = cache->manager();
+    if (!cacheStorageManager)
+        return;
+
+    cacheStorageManager->reference(connection.uniqueID(), cacheIdentifier);
+}
+
+void OriginStorageManager::cacheStorageDereference(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return;
+
+    auto* cacheStorageManager = cache->manager();
+    if (!cacheStorageManager)
+        return;
+
+    cacheStorageManager->dereference(connection.uniqueID(), cacheIdentifier);
+}
+
+void OriginStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& completionHandler)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return completionHandler(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cache->retrieveRecords(WTFMove(options), WTFMove(completionHandler));
+}
+
+void OriginStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& completionHandler)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return completionHandler(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cache->removeRecords(WTFMove(request), WTFMove(options), WTFMove(completionHandler));
+}
+
+void OriginStorageManager::cacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& completionHandler)
+{
+    auto* cache = m_cacheStorageRegistry->cache(cacheIdentifier);
+    if (!cache)
+        return completionHandler(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    cache->putRecords(WTFMove(records), WTFMove(completionHandler));
+}
+
+void OriginStorageManager::cacheStorageClearMemoryRepresentation(CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&& callback)
+{
+    closeCacheStorageManager();
+    callback(std::nullopt);
+}
+
+String OriginStorageManager::cacheStorageRepresentation(Ref<WorkQueue>&& callbackQueue)
+{
+    return cacheStorageManager(WTFMove(callbackQueue)).representationString();
 }
 
 } // namespace WebKit
