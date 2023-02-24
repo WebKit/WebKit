@@ -356,6 +356,22 @@ const void* wgpuBufferGetConstMappedRange(WGPUBuffer buffer, size_t offset, size
     return WebGPU::fromAPI(buffer).getConstMappedRange(offset, size);
 }
 
+WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
+{
+    switch (WebGPU::fromAPI(buffer).state()) {
+    case WebGPU::Buffer::State::Mapped:
+        return WGPUBufferMapState_Mapped;
+    case WebGPU::Buffer::State::MappedAtCreation:
+        return WGPUBufferMapState_Mapped;
+    case WebGPU::Buffer::State::MappingPending:
+        return WGPUBufferMapState_Pending;
+    case WebGPU::Buffer::State::Unmapped:
+        return WGPUBufferMapState_Unmapped;
+    case WebGPU::Buffer::State::Destroyed:
+        return WGPUBufferMapState_Unmapped;
+    }
+}
+
 void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
     return WebGPU::fromAPI(buffer).getMappedRange(offset, size);

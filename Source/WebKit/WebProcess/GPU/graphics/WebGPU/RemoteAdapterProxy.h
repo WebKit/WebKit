@@ -77,7 +77,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void requestDevice(const PAL::WebGPU::DeviceDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::Device>&&)>&&) final;
+    void requestDevice(const PAL::WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<PAL::WebGPU::Device>&&)>&&) final;
 
     Deque<CompletionHandler<void(Ref<PAL::WebGPU::Device>)>> m_callbacks;
 

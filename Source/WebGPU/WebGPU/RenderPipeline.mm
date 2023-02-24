@@ -477,7 +477,7 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descr
     // FIXME: Implement this.
     UNUSED_PARAM(descriptor);
     instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-        callback(WGPUCreatePipelineAsyncStatus_Error, RenderPipeline::createInvalid(strongThis), { });
+        callback(WGPUCreatePipelineAsyncStatus_InternalError, RenderPipeline::createInvalid(strongThis), { });
     });
 }
 

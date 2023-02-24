@@ -66,7 +66,13 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
         return;
     }
 
-    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier] (Ref<PAL::WebGPU::Device>&& device) mutable {
+    m_backing->requestDevice(*convertedDescriptor, [callback = WTFMove(callback), objectHeap = Ref { m_objectHeap }, streamConnection = m_streamConnection.copyRef(), identifier, queueIdentifier] (RefPtr<PAL::WebGPU::Device>&& devicePtr) mutable {
+        if (!devicePtr.get()) {
+            callback({ }, { });
+            return;
+        }
+
+        auto device = devicePtr.releaseNonNull();
         auto remoteDevice = RemoteDevice::create(device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier);
         objectHeap->addObject(identifier, remoteDevice);
         objectHeap->addObject(queueIdentifier, remoteDevice->queue());
@@ -78,6 +84,7 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
             limits.maxTextureDimension3D(),
             limits.maxTextureArrayLayers(),
             limits.maxBindGroups(),
+            limits.maxBindingsPerBindGroup(),
             limits.maxDynamicUniformBuffersPerPipelineLayout(),
             limits.maxDynamicStorageBuffersPerPipelineLayout(),
             limits.maxSampledTexturesPerShaderStage(),
@@ -90,9 +97,13 @@ void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, We
             limits.minUniformBufferOffsetAlignment(),
             limits.minStorageBufferOffsetAlignment(),
             limits.maxVertexBuffers(),
+            limits.maxBufferSize(),
             limits.maxVertexAttributes(),
             limits.maxVertexBufferArrayStride(),
             limits.maxInterStageShaderComponents(),
+            limits.maxInterStageShaderVariables(),
+            limits.maxColorAttachments(),
+            limits.maxColorAttachmentBytesPerSample(),
             limits.maxComputeWorkgroupStorageSize(),
             limits.maxComputeInvocationsPerWorkgroup(),
             limits.maxComputeWorkgroupSizeX(),

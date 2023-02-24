@@ -83,6 +83,9 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
         case WGPUFeatureName_RG11B10UfloatRenderable:
             result.append("rg11b10ufloat-renderable"_s);
             break;
+        case WGPUFeatureName_BGRA8UnormStorage:
+            result.append("bgra8unorm-storage"_s);
+            break;
         case WGPUFeatureName_Force32:
             continue;
         }
@@ -102,6 +105,7 @@ static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
         limits.limits.maxTextureDimension3D,
         limits.limits.maxTextureArrayLayers,
         limits.limits.maxBindGroups,
+        limits.limits.maxBindingsPerBindGroup,
         limits.limits.maxDynamicUniformBuffersPerPipelineLayout,
         limits.limits.maxDynamicStorageBuffersPerPipelineLayout,
         limits.limits.maxSampledTexturesPerShaderStage,
@@ -114,9 +118,13 @@ static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
         limits.limits.minUniformBufferOffsetAlignment,
         limits.limits.minStorageBufferOffsetAlignment,
         limits.limits.maxVertexBuffers,
+        limits.limits.maxBufferSize,
         limits.limits.maxVertexAttributes,
         limits.limits.maxVertexBufferArrayStride,
         limits.limits.maxInterStageShaderComponents,
+        limits.limits.maxInterStageShaderVariables,
+        limits.limits.maxColorAttachments,
+        limits.limits.maxColorAttachmentBytesPerSample,
         limits.limits.maxComputeWorkgroupStorageSize,
         limits.limits.maxComputeInvocationsPerWorkgroup,
         limits.limits.maxComputeWorkgroupSizeX,
@@ -144,7 +152,43 @@ AdapterImpl::~AdapterImpl()
     wgpuAdapterRelease(m_backing);
 }
 
-void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHandler<void(Ref<Device>&&)>&& callback)
+static bool setMaxIntegerValue(uint32_t& limitValue, uint64_t i)
+{
+    CheckedUint32 narrowed = i;
+    if (narrowed.hasOverflowed())
+        return false;
+
+    if (uint32_t narrowedValue = narrowed.value(); narrowedValue > limitValue)
+        limitValue = narrowedValue;
+
+    return true;
+}
+
+static bool setMaxIntegerValue(uint64_t& limitValue, uint64_t i)
+{
+    if (i > limitValue)
+        limitValue = i;
+
+    return true;
+}
+
+static bool setAlignmentIntegerValue(uint32_t& limitValue, uint64_t i, uint32_t supportedAlignment)
+{
+    CheckedUint32 narrowed = i;
+    if (narrowed.hasOverflowed())
+        return false;
+
+    uint32_t narrowedValue = narrowed.value();
+    if (narrowedValue < supportedAlignment || (narrowedValue % supportedAlignment))
+        return false;
+
+    if (narrowedValue < limitValue)
+        limitValue = narrowedValue;
+
+    return true;
+}
+
+void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<Device>&&)>&& callback)
 {
     auto label = descriptor.label.utf8();
 
@@ -158,7 +202,7 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         .maxTextureDimension3D =    2048,
         .maxTextureArrayLayers =    256,
         .maxBindGroups =    4,
-        .maxBindingsPerBindGroup =    31,
+        .maxBindingsPerBindGroup =    640,
         .maxDynamicUniformBuffersPerPipelineLayout =    8,
         .maxDynamicStorageBuffersPerPipelineLayout =    4,
         .maxSampledTexturesPerShaderStage =    16,
@@ -171,13 +215,14 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         .minUniformBufferOffsetAlignment =    256,
         .minStorageBufferOffsetAlignment =    256,
         .maxVertexBuffers =    8,
-        .maxBufferSize =    1024 * 1024,
+        .maxBufferSize =    268435456,
         .maxVertexAttributes =    16,
         .maxVertexBufferArrayStride =    2048,
-        .maxInterStageShaderComponents =    32,
-        .maxInterStageShaderVariables =    32,
+        .maxInterStageShaderComponents =    60,
+        .maxInterStageShaderVariables =    16,
         .maxColorAttachments =    8,
-        .maxComputeWorkgroupStorageSize =    16352,
+        .maxColorAttachmentBytesPerSample = 32,
+        .maxComputeWorkgroupStorageSize =    16384,
         .maxComputeInvocationsPerWorkgroup =    256,
         .maxComputeWorkgroupSizeX =    256,
         .maxComputeWorkgroupSizeY =    256,
@@ -185,60 +230,64 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         .maxComputeWorkgroupsPerDimension =    65535,
     };
 
-    auto requestInvalidDevice = [this, &callback]() {
-        wgpuAdapterRequestInvalidDeviceWithBlock(m_backing, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPUDevice device) mutable {
-            callback(DeviceImpl::create(device, Ref { protectedThis->features() }, Ref { protectedThis->limits() }, convertToBackingContext));
-        }).get());
-    };
+    auto& supportedLimits = this->limits();
 
     for (const auto& pair : descriptor.requiredLimits) {
-#define SET_VALUE_32(LIMIT) \
-    else if (pair.key == #LIMIT ""_s) { \
-        CheckedUint32 narrowed = pair.value; \
-        if (narrowed.hasOverflowed()) { \
-            requestInvalidDevice(); \
-            return; \
-        } \
-        limits.LIMIT = narrowed.value(); \
-    }
-#define SET_VALUE_64(LIMIT) \
-    else if (pair.key == #LIMIT ""_s) \
-        limits.LIMIT = pair.value;
+#define SET_MAX_VALUE(LIMIT) \
+        else if (pair.key == #LIMIT ""_s) { \
+            if (pair.value > supportedLimits.LIMIT() || !setMaxIntegerValue(limits.LIMIT, pair.value)) { \
+                callback(nullptr); \
+                return; \
+            } \
+        }
+
+#define SET_ALIGNMENT_VALUE(LIMIT) \
+        else if (pair.key == #LIMIT ""_s) { \
+            if (!setAlignmentIntegerValue(limits.LIMIT, pair.value, supportedLimits.LIMIT())) { \
+                callback(nullptr); \
+                return; \
+            } \
+        }
 
         if (false) { }
-        SET_VALUE_32(maxTextureDimension1D)
-        SET_VALUE_32(maxTextureDimension2D)
-        SET_VALUE_32(maxTextureDimension3D)
-        SET_VALUE_32(maxTextureArrayLayers)
-        SET_VALUE_32(maxBindGroups)
-        SET_VALUE_32(maxBindingsPerBindGroup)
-        SET_VALUE_32(maxDynamicUniformBuffersPerPipelineLayout)
-        SET_VALUE_32(maxDynamicStorageBuffersPerPipelineLayout)
-        SET_VALUE_32(maxSampledTexturesPerShaderStage)
-        SET_VALUE_32(maxSamplersPerShaderStage)
-        SET_VALUE_32(maxStorageBuffersPerShaderStage)
-        SET_VALUE_32(maxStorageTexturesPerShaderStage)
-        SET_VALUE_32(maxUniformBuffersPerShaderStage)
-        SET_VALUE_64(maxUniformBufferBindingSize)
-        SET_VALUE_64(maxStorageBufferBindingSize)
-        SET_VALUE_32(minUniformBufferOffsetAlignment)
-        SET_VALUE_32(minStorageBufferOffsetAlignment)
-        SET_VALUE_32(maxVertexBuffers)
-        SET_VALUE_32(maxBufferSize)
-        SET_VALUE_32(maxVertexAttributes)
-        SET_VALUE_32(maxVertexBufferArrayStride)
-        SET_VALUE_32(maxInterStageShaderComponents)
-        SET_VALUE_32(maxInterStageShaderVariables)
-        SET_VALUE_32(maxColorAttachments)
-        SET_VALUE_32(maxComputeWorkgroupStorageSize)
-        SET_VALUE_32(maxComputeInvocationsPerWorkgroup)
-        SET_VALUE_32(maxComputeWorkgroupSizeX)
-        SET_VALUE_32(maxComputeWorkgroupSizeY)
-        SET_VALUE_32(maxComputeWorkgroupSizeZ)
-        SET_VALUE_32(maxComputeWorkgroupsPerDimension)
+        SET_MAX_VALUE(maxTextureDimension1D)
+        SET_MAX_VALUE(maxTextureDimension2D)
+        SET_MAX_VALUE(maxTextureDimension3D)
+        SET_MAX_VALUE(maxTextureArrayLayers)
+        SET_MAX_VALUE(maxBindGroups)
+        SET_MAX_VALUE(maxBindingsPerBindGroup)
+        SET_MAX_VALUE(maxDynamicUniformBuffersPerPipelineLayout)
+        SET_MAX_VALUE(maxDynamicStorageBuffersPerPipelineLayout)
+        SET_MAX_VALUE(maxSampledTexturesPerShaderStage)
+        SET_MAX_VALUE(maxSamplersPerShaderStage)
+        SET_MAX_VALUE(maxStorageBuffersPerShaderStage)
+        SET_MAX_VALUE(maxStorageTexturesPerShaderStage)
+        SET_MAX_VALUE(maxUniformBuffersPerShaderStage)
+        SET_MAX_VALUE(maxUniformBufferBindingSize)
+        SET_MAX_VALUE(maxStorageBufferBindingSize)
+        SET_ALIGNMENT_VALUE(minUniformBufferOffsetAlignment)
+        SET_ALIGNMENT_VALUE(minStorageBufferOffsetAlignment)
+        SET_MAX_VALUE(maxVertexBuffers)
+        SET_MAX_VALUE(maxBufferSize)
+        SET_MAX_VALUE(maxVertexAttributes)
+        SET_MAX_VALUE(maxVertexBufferArrayStride)
+        SET_MAX_VALUE(maxInterStageShaderComponents)
+        SET_MAX_VALUE(maxInterStageShaderVariables)
+        SET_MAX_VALUE(maxColorAttachments)
+        SET_MAX_VALUE(maxColorAttachmentBytesPerSample)
+        SET_MAX_VALUE(maxComputeWorkgroupStorageSize)
+        SET_MAX_VALUE(maxComputeInvocationsPerWorkgroup)
+        SET_MAX_VALUE(maxComputeWorkgroupSizeX)
+        SET_MAX_VALUE(maxComputeWorkgroupSizeY)
+        SET_MAX_VALUE(maxComputeWorkgroupSizeZ)
+        SET_MAX_VALUE(maxComputeWorkgroupsPerDimension)
+        else {
+            callback(nullptr);
+            return;
+        }
 
-#undef SET_VALUE_32
-#undef SET_VALUE_64
+#undef SET_ALIGNMENT_VALUE
+#undef SET_MAX_VALUE
     }
 
     WGPURequiredLimits requiredLimits { nullptr, WTFMove(limits) };
@@ -254,8 +303,39 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         }
     };
 
-    wgpuAdapterRequestDeviceWithBlock(m_backing, &backingDescriptor, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
-        callback(DeviceImpl::create(device, Ref { protectedThis->features() }, Ref { protectedThis->limits() }, convertToBackingContext));
+    auto requestedLimits = SupportedLimits::create(limits.maxTextureDimension1D,
+        limits.maxTextureDimension2D,
+        limits.maxTextureDimension3D,
+        limits.maxTextureArrayLayers,
+        limits.maxBindGroups,
+        limits.maxBindingsPerBindGroup,
+        limits.maxDynamicUniformBuffersPerPipelineLayout,
+        limits.maxDynamicStorageBuffersPerPipelineLayout,
+        limits.maxSampledTexturesPerShaderStage,
+        limits.maxSamplersPerShaderStage,
+        limits.maxStorageBuffersPerShaderStage,
+        limits.maxStorageTexturesPerShaderStage,
+        limits.maxUniformBuffersPerShaderStage,
+        limits.maxUniformBufferBindingSize,
+        limits.maxStorageBufferBindingSize,
+        limits.minUniformBufferOffsetAlignment,
+        limits.minStorageBufferOffsetAlignment,
+        limits.maxVertexBuffers,
+        limits.maxBufferSize,
+        limits.maxVertexAttributes,
+        limits.maxVertexBufferArrayStride,
+        limits.maxInterStageShaderComponents,
+        limits.maxInterStageShaderVariables,
+        limits.maxColorAttachments,
+        limits.maxColorAttachmentBytesPerSample,
+        limits.maxComputeWorkgroupStorageSize,
+        limits.maxComputeInvocationsPerWorkgroup,
+        limits.maxComputeWorkgroupSizeX,
+        limits.maxComputeWorkgroupSizeY,
+        limits.maxComputeWorkgroupSizeZ,
+        limits.maxComputeWorkgroupsPerDimension);
+    wgpuAdapterRequestDeviceWithBlock(m_backing, &backingDescriptor, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
+        callback(DeviceImpl::create(device, Ref { protectedThis->features() }, WTFMove(requestedLimits), convertToBackingContext));
     }).get());
 }
 
