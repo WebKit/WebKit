@@ -1296,7 +1296,7 @@ void GraphicsLayerCA::setContentsToPlatformLayerHost(LayerHostingContextIdentifi
 
 void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, ContentsLayerPurpose purpose)
 {
-#if ENABLE(AVKIT)
+#if HAVE(AVKIT)
     auto hostingContextID = videoElement.layerHostingContextID();
     if (hostingContextID != m_layerHostingContextID) {
         m_contentsLayer = createPlatformVideoLayer(videoElement, this);
