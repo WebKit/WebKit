@@ -29,7 +29,6 @@
 #include "GlyphBuffer.h"
 #include "GlyphMetricsMap.h"
 #include "GlyphPage.h"
-#include "OpenTypeMathData.h"
 #include "RenderingResourceIdentifier.h"
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
@@ -39,6 +38,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <pal/cf/OTSVGTable.h>
 #include <wtf/RetainPtr.h>
+#endif
+
+#if ENABLE(MATHML)
+#include "OpenTypeMathData.h"
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -88,7 +91,9 @@ public:
     static const Font* systemFallback() { return reinterpret_cast<const Font*>(-1); }
 
     const FontPlatformData& platformData() const { return m_platformData; }
+#if ENABLE(MATHML)
     const OpenTypeMathData* mathData() const;
+#endif
 #if ENABLE(OPENTYPE_VERTICAL)
     const OpenTypeVerticalData* verticalData() const { return m_verticalData.get(); }
 #endif
@@ -288,7 +293,9 @@ private:
     mutable std::unique_ptr<GlyphMetricsMap<std::optional<Path>>> m_glyphPathMap;
     mutable BitVector m_codePointSupport;
 
+#if ENABLE(MATHML)
     mutable RefPtr<OpenTypeMathData> m_mathData;
+#endif
 #if ENABLE(OPENTYPE_VERTICAL)
     RefPtr<OpenTypeVerticalData> m_verticalData;
 #endif

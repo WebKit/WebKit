@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if ENABLE(MATHML)
+
 #include "Glyph.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -140,3 +142,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(MATHML)
