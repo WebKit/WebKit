@@ -3246,6 +3246,9 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                 // but left for later.
                 object.releaseFlag = DMABufReleaseFlag { };
 
+                // No way (yet) to retrieve the modifier information. Until then, no modifiers are specified
+                // for this DMABufObject (via the modifierPresent and modifierValue member variables).
+
                 // For each plane, the relevant data (stride, offset, skip, dmabuf fd) is retrieved and assigned
                 // as appropriate. Modifier values are zeroed out for now, since GStreamer doesn't yet provide
                 // the information.
@@ -3265,7 +3268,6 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     gst_video_format_info_component(videoInfo.finfo, i, comp);
                     object.offset[i] = offset;
                     object.stride[i] = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
-                    object.modifier[i] = 0;
                 }
                 return WTFMove(object);
             });
