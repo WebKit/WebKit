@@ -262,8 +262,8 @@ void ScopeRuleSets::collectFeatures() const
     m_features.shrinkToFit();
 }
 
-template<typename KeyType, typename RuleFeatureVectorType, typename Hash, typename HashTraits>
-static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& key, HashMap<KeyType, std::unique_ptr<Vector<InvalidationRuleSet>>, Hash, HashTraits>& ruleSetMap, const HashMap<KeyType, std::unique_ptr<RuleFeatureVectorType>, Hash, HashTraits>& ruleFeatures)
+template<typename KeyType, typename Hash, typename HashTraits, typename U>
+static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& key, HashMap<KeyType, std::unique_ptr<Vector<InvalidationRuleSet>>, Hash, HashTraits>& ruleSetMap, const U& ruleFeatures)
 {
     return ruleSetMap.ensure(key, [&] () -> std::unique_ptr<Vector<InvalidationRuleSet>> {
         auto* features = ruleFeatures.get(key);
@@ -286,7 +286,7 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
 
             invalidationRuleSet.ruleSet->addRule(*feature.styleRule, feature.selectorIndex, feature.selectorListIndex);
 
-            if constexpr (std::is_same<typename RuleFeatureVectorType::ValueType, RuleFeatureWithInvalidationSelector>::value) {
+            if constexpr (std::is_same<typename U::MappedType, std::unique_ptr<Vector<InvalidationRuleSet>>>::value) {
                 if (feature.invalidationSelector)
                     invalidationRuleSet.invalidationSelectors.append(feature.invalidationSelector);
             }

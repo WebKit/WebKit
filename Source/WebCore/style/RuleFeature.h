@@ -26,6 +26,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -107,8 +108,8 @@ struct RuleFeatureSet {
     Vector<RuleAndSelector> siblingRules;
     Vector<RuleAndSelector> uncommonAttributeRules;
 
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
-    HashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
+    FastRobinHoodHashMap<AtomString, std::unique_ptr<RuleFeatureVector>> idRules;
+    FastRobinHoodHashMap<AtomString, std::unique_ptr<RuleFeatureVector>> classRules;
     HashMap<AtomString, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> attributeRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<RuleFeatureVector>> pseudoClassRules;
     HashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> hasPseudoClassRules;
