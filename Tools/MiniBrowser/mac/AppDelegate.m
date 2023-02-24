@@ -136,7 +136,6 @@ static WKWebsiteDataStore *persistentDataStore(void)
         configuration.preferences.elementFullscreenEnabled = YES;
         configuration.preferences._allowsPictureInPictureMediaPlayback = YES;
         configuration.preferences._developerExtrasEnabled = YES;
-        configuration.preferences._mockCaptureDevicesEnabled = YES;
         configuration.preferences._accessibilityIsolatedTreeEnabled = YES;
         configuration.preferences._logsPageMessagesToSystemConsoleEnabled = YES;
     }

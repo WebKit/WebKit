@@ -322,16 +322,18 @@ static BOOL areEssentiallyEqual(double a, double b)
 {
     SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
 
-    [[WebPreferences standardPreferences] setShowDebugBorders:settings.layerBordersVisible];
-    [[WebPreferences standardPreferences] setLegacyLineLayoutVisualCoverageEnabled:settings.legacyLineLayoutVisualCoverageEnabled];
-    [[WebPreferences standardPreferences] setShowRepaintCounter:settings.layerBordersVisible];
-    [[WebPreferences standardPreferences] setSuppressesIncrementalRendering:settings.incrementalRenderingSuppressed];
-    [[WebPreferences standardPreferences] setAcceleratedDrawingEnabled:settings.acceleratedDrawingEnabled];
-    [[WebPreferences standardPreferences] setResourceLoadStatisticsEnabled:settings.resourceLoadStatisticsEnabled];
-    [[WebPreferences standardPreferences] setLargeImageAsyncDecodingEnabled:settings.largeImageAsyncDecodingEnabled];
-    [[WebPreferences standardPreferences] setAnimatedImageAsyncDecodingEnabled:settings.animatedImageAsyncDecodingEnabled];
-    [[WebPreferences standardPreferences] setColorFilterEnabled:settings.appleColorFilterEnabled];
-    [[WebPreferences standardPreferences] setPunchOutWhiteBackgroundsInDarkMode:settings.punchOutWhiteBackgroundsInDarkMode];
+    WebPreferences *preferences = [WebPreferences standardPreferences];
+    preferences.showDebugBorders = settings.layerBordersVisible;
+    preferences.legacyLineLayoutVisualCoverageEnabled = settings.legacyLineLayoutVisualCoverageEnabled;
+    preferences.showRepaintCounter = settings.layerBordersVisible;
+    preferences.suppressesIncrementalRendering = settings.incrementalRenderingSuppressed;
+    preferences.acceleratedDrawingEnabled = settings.acceleratedDrawingEnabled;
+    preferences.resourceLoadStatisticsEnabled = settings.resourceLoadStatisticsEnabled;
+    preferences.largeImageAsyncDecodingEnabled = settings.largeImageAsyncDecodingEnabled;
+    preferences.animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
+    preferences.colorFilterEnabled = settings.appleColorFilterEnabled;
+    preferences.punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
+    preferences.mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
 
     _webView._useSystemAppearance = settings.useSystemAppearance;
 

@@ -495,6 +495,7 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._animatedImageAsyncDecodingEnabled = settings.animatedImageAsyncDecodingEnabled;
     preferences._colorFilterEnabled = settings.appleColorFilterEnabled;
     preferences._punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
+    preferences._mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
 
     _webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = settings.resourceLoadStatisticsEnabled;
 
