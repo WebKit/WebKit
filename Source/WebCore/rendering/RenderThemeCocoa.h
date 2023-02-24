@@ -45,6 +45,11 @@ protected:
     void paintAttachmentText(GraphicsContext&, AttachmentLayout*) final;
 #endif
 
+    Color platformSpellingMarkerColor(OptionSet<StyleColorOptions>) const override;
+    Color platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const override;
+    Color platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions>) const override;
+    Color platformGrammarMarkerColor(OptionSet<StyleColorOptions>) const override;
+
 private:
     void purgeCaches() override;
 
@@ -55,8 +60,6 @@ private:
 #if ENABLE(APPLE_PAY)
     void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;
 #endif
-
-    Color documentMarkerLineColor(DocumentMarkerLineStyleMode, OptionSet<StyleColorOptions>) const final;
 
 #if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
     String mediaControlsStyleSheet() override;
