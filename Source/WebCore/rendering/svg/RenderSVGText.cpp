@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
@@ -252,9 +252,8 @@ void RenderSVGText::subtreeChildWasRemoved(const Vector<SVGTextLayoutAttributes*
         m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(affectedAttributes[i]->context());
 }
 
-void RenderSVGText::subtreeStyleDidChange(RenderSVGInlineText* text)
+void RenderSVGText::willLayout()
 {
-    ASSERT(text);
     if (!shouldHandleSubtreeMutations() || renderTreeBeingDestroyed())
         return;
 
@@ -262,7 +261,7 @@ void RenderSVGText::subtreeStyleDidChange(RenderSVGInlineText* text)
 
     // Only update the metrics cache, but not the text positioning element cache
     // nor the layout attributes cached in the leaf #text renderers.
-    for (RenderObject* descendant = text; descendant; descendant = descendant->nextInPreOrder(text)) {
+    for (RenderObject* descendant = firstChild(); descendant; descendant = descendant->nextInPreOrder(this)) {
         if (is<RenderSVGInlineText>(*descendant))
             m_layoutAttributesBuilder.rebuildMetricsForTextRenderer(downcast<RenderSVGInlineText>(*descendant));
     }
@@ -318,6 +317,9 @@ void RenderSVGText::layout()
 
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
+
+    willLayout();
+
     LayoutRepainter repainter(*this, isLayerBasedSVGEngineEnabled() ? checkForRepaintDuringLayout() : SVGRenderSupport::checkForSVGRepaintDuringLayout(*this));
 
     // FIXME: [LBSE] Upstream SVGLengthContext changes

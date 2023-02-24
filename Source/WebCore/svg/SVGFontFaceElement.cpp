@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
 #include "SVGFontFaceElement.h"
 
 #include "CSSFontFaceSrcValue.h"
+#include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSParserIdioms.h"
 #include "CSSPropertyNames.h"
@@ -319,6 +320,9 @@ void SVGFontFaceElement::removedFromAncestor(RemovalType removalType, ContainerN
     if (removalType.disconnectedFromDocument) {
         m_fontElement = nullptr;
         document().accessSVGExtensions().unregisterSVGFontFaceElement(*this);
+        auto& fontFaceSet = document().fontSelector().cssFontFaceSet();
+        if (auto* fontFace = fontFaceSet.lookUpByCSSConnection(m_fontFaceRule))
+            fontFaceSet.remove(*fontFace);
         m_fontFaceRule->mutableProperties().clear();
 
         document().styleScope().didChangeStyleSheetEnvironment();
