@@ -398,14 +398,8 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 newCase = ModuleNamespaceAccessCase::create(vm, codeBlock, propertyName, jsCast<JSModuleNamespaceObject*>(baseCell), moduleNamespaceSlot->environment, ScopeOffset(moduleNamespaceSlot->scopeOffset));
         }
 
-        if ((kind == GetByKind::ById || kind == GetByKind::ByVal || kind == GetByKind::ByIdWithThis || kind == GetByKind::ByValWithThis) && (!propertyName.uid()->isSymbol() || !static_cast<SymbolImpl&>(*propertyName.uid()).isPrivate()) && baseCell->inherits<ProxyObject>()) {
-            if (!propertyName.isCell()) {
-                if (propertyName.uid()->isSymbol())
-                    propertyName = CacheableIdentifier::createFromCell(Symbol::create(vm, static_cast<SymbolImpl&>(*propertyName.uid())));
-                else
-                    propertyName = CacheableIdentifier::createFromCell(jsString(vm, String(static_cast<AtomStringImpl*>(propertyName.uid()))));
-            }
-            ASSERT(propertyName.isCell());
+        if ((kind == GetByKind::ById || kind == GetByKind::ByVal || kind == GetByKind::ByIdWithThis || kind == GetByKind::ByValWithThis) && !propertyName.isPrivateName() && baseCell->inherits<ProxyObject>()) {
+            propertyName.ensureIsCell(vm);
             newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectLoad, propertyName);
         }
         
@@ -852,21 +846,24 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
         
         if (!baseValue.isCell())
             return GiveUpOnCache;
-        
-        if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
-            return GiveUpOnCache;
-
-        // FIXME: We should try to do something smarter here...
-        if (isCopyOnWrite(oldStructure->indexingMode()))
-            return GiveUpOnCache;
-        // We can't end up storing to a CoW on the prototype since it shouldn't own properties.
-        ASSERT(!isCopyOnWrite(slot.base()->indexingMode()));
-
-        if (!oldStructure->propertyAccessesAreCacheable())
-            return GiveUpOnCache;
 
         JSCell* baseCell = baseValue.asCell();
 
+        bool isProxyObject = baseCell->type() == ProxyObjectType;
+        if (!isProxyObject) {
+            if (!slot.isCacheablePut() && !slot.isCacheableCustom() && !slot.isCacheableSetter())
+                return GiveUpOnCache;
+
+            // FIXME: We should try to do something smarter here...
+            if (isCopyOnWrite(oldStructure->indexingMode()))
+                return GiveUpOnCache;
+            // We can't end up storing to a CoW on the prototype since it shouldn't own properties.
+            ASSERT(!isCopyOnWrite(slot.base()->indexingMode()));
+
+            if (!oldStructure->propertyAccessesAreCacheable())
+                return GiveUpOnCache;
+        }
+        
         bool isProxy = false;
         if (baseCell->type() == PureForwardingProxyType) {
             baseCell = jsCast<JSProxy*>(baseCell)->target();
@@ -1040,6 +1037,9 @@ static InlineCacheAction tryCachePutBy(JSGlobalObject* globalObject, CodeBlock* 
                 newCase = GetterSetterAccessCase::create(
                     vm, codeBlock, AccessCase::Setter, oldStructure, propertyName, offset, conditionSet, WTFMove(prototypeAccessChain), isProxy);
             }
+        } else if (!propertyName.isPrivateName() && isProxyObject) {
+            propertyName.ensureIsCell(vm);
+            newCase = ProxyObjectAccessCase::create(vm, codeBlock, AccessCase::ProxyObjectStore, propertyName);
         }
 
         LOG_IC((ICEvent::PutByAddAccessCase, oldStructure->classInfoForCells(), ident, slot.base() == baseValue));

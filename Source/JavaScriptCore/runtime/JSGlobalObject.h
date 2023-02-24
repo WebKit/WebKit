@@ -867,6 +867,8 @@ public:
     JSFunction* stringProtoSubstringFunction() const;
     JSFunction* performProxyObjectGetFunction() const;
     JSFunction* performProxyObjectGetFunctionConcurrently() const;
+    JSFunction* performProxyObjectSetSloppyFunction() const;
+    JSFunction* performProxyObjectSetStrictFunction() const;
     JSObject* regExpProtoSymbolReplaceFunction() const { return m_regExpProtoSymbolReplace.get(); }
     GetterSetter* regExpProtoGlobalGetter() const;
     GetterSetter* regExpProtoUnicodeGetter() const;

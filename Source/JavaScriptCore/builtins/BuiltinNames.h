@@ -183,6 +183,8 @@ namespace JSC {
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
     macro(handleProxyGetTrapResult) \
+    macro(handleProxySetTrapResultSloppy) \
+    macro(handleProxySetTrapResultStrict) \
     macro(importModule) \
     macro(copyDataProperties) \
     macro(meta) \

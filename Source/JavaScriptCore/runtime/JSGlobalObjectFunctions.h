@@ -61,6 +61,8 @@ JSC_DECLARE_HOST_FUNCTION(globalFuncImportMapStatus);
 JSC_DECLARE_HOST_FUNCTION(globalFuncImportModule);
 JSC_DECLARE_HOST_FUNCTION(globalFuncCopyDataProperties);
 JSC_DECLARE_HOST_FUNCTION(globalFuncDateTimeFormat);
+JSC_DECLARE_HOST_FUNCTION(globalFuncHandleProxySetTrapResultSloppy);
+JSC_DECLARE_HOST_FUNCTION(globalFuncHandleProxySetTrapResultStrict);
 
 JS_EXPORT_PRIVATE double jsToNumber(StringView);
 

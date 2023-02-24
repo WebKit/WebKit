@@ -83,6 +83,8 @@ enum class LinkTimeConstant : int32_t;
     macro(putByIdDirect) \
     macro(putByIdDirectPrivate) \
     macro(putByValDirect) \
+    macro(putByValWithThisSloppy) \
+    macro(putByValWithThisStrict) \
     macro(putPromiseInternalField) \
     macro(putGeneratorInternalField) \
     macro(putAsyncGeneratorInternalField) \

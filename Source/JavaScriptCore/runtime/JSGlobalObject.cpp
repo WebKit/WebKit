@@ -1666,9 +1666,17 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 1, "hasOwnLengthProperty"_s, hasOwnLengthProperty, ImplementationVisibility::Private));
         });
 
-    // Proxy prototype helpers.
+    // Proxy helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::handleProxyGetTrapResult)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 3, "handleProxyGetTrapResult"_s, globalFuncHandleProxyGetTrapResult, ImplementationVisibility::Private));
+        });
+
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::handleProxySetTrapResultSloppy)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "handleProxySetTrapResultSloppy"_s, globalFuncHandleProxySetTrapResultSloppy, ImplementationVisibility::Private));
+        });
+
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::handleProxySetTrapResultStrict)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 4, "handleProxySetTrapResultStrict"_s, globalFuncHandleProxySetTrapResultStrict, ImplementationVisibility::Private));
         });
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::dateTimeFormat)].initLater([] (const Initializer<JSCell>& init) {
