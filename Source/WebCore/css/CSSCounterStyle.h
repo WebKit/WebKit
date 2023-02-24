@@ -37,7 +37,6 @@ class StyleRuleCounterStyle;
 class CSSCounterStyle : public RefCounted<CSSCounterStyle>, public CanMakeWeakPtr<CSSCounterStyle> {
 public:
     static Ref<CSSCounterStyle> create(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
-    static Ref<CSSCounterStyle> createCounterStyleDecimal();
 
     bool operator==(const CSSCounterStyle& other) const
     {

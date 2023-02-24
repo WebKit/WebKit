@@ -40,6 +40,7 @@ class CSSCounterStyleRegistry {
 public:
     RefPtr<CSSCounterStyle> resolvedCounterStyle(const AtomString&);
     static RefPtr<CSSCounterStyle> decimalCounter();
+    static void addUserAgentCounterStyle(const CSSCounterStyleDescriptors&);
     void addCounterStyle(const CSSCounterStyleDescriptors&);
     void resolveReferencesIfNeeded();
     bool operator==(const CSSCounterStyleRegistry& other) const;

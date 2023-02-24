@@ -98,6 +98,11 @@ void CSSCounterStyleRegistry::addCounterStyle(const CSSCounterStyleDescriptors& 
     m_authorCounterStyles.set(descriptors.m_name, CSSCounterStyle::create(descriptors, false));
 }
 
+void CSSCounterStyleRegistry::addUserAgentCounterStyle(const CSSCounterStyleDescriptors& descriptors)
+{
+    userAgentCounterStyles().set(descriptors.m_name, CSSCounterStyle::create(descriptors, true));
+}
+
 RefPtr<CSSCounterStyle> CSSCounterStyleRegistry::decimalCounter()
 {
     auto& userAgentCounters = userAgentCounterStyles();

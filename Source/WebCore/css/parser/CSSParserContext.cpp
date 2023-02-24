@@ -59,6 +59,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
         propertySettings.cssContainmentEnabled = true;
         propertySettings.cssIndividualTransformPropertiesEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
+        propertySettings.cssCounterStyleAtRulesEnabled = true;
 #if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
         transformStyleOptimized3DEnabled = true;
 #endif
