@@ -67,8 +67,10 @@ constexpr VKAnalysisTypes analysisTypesForElementFullscreenVideo()
 #if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
         | VKAnalysisTypeMachineReadableCode
 #endif
-        | VKAnalysisTypeAppClip
-        | VKAnalysisTypeImageSegmentation;
+#if HAVE(VK_IMAGE_ANALYSIS_TYPE_IMAGE_SEGMENTATION)
+        | VKAnalysisTypeImageSegmentation
+#endif
+        | VKAnalysisTypeAppClip;
 }
 
 constexpr VKAnalysisTypes analysisTypesForFullscreenVideo()
