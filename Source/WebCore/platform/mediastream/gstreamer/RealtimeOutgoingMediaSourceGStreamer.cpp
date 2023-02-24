@@ -42,11 +42,13 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(const
 {
     m_bin = gst_bin_new(nullptr);
 
+    m_inputSelector = gst_element_factory_make("input-selector", nullptr);
+
     m_preEncoderQueue = gst_element_factory_make("queue", nullptr);
     m_postEncoderQueue = gst_element_factory_make("queue", nullptr);
     m_capsFilter = gst_element_factory_make("capsfilter", nullptr);
 
-    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_preEncoderQueue.get(), m_postEncoderQueue.get(), m_capsFilter.get(), nullptr);
+    gst_bin_add_many(GST_BIN_CAST(m_bin.get()), m_inputSelector.get(), m_preEncoderQueue.get(), m_postEncoderQueue.get(), m_capsFilter.get(), nullptr);
 
     auto srcPad = adoptGRef(gst_element_get_static_pad(m_capsFilter.get(), "src"));
     gst_element_add_pad(m_bin.get(), gst_ghost_pad_new("src", srcPad.get()));
@@ -61,9 +63,7 @@ RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
     if (m_transceiver)
         g_signal_handlers_disconnect_by_data(m_transceiver.get(), this);
 
-    stop();
-
-    if (m_webrtcSinkPad) {
+    if (GST_IS_PAD(m_webrtcSinkPad.get())) {
         auto srcPad = adoptGRef(gst_element_get_static_pad(m_bin.get(), "src"));
         if (gst_pad_unlink(srcPad.get(), m_webrtcSinkPad.get())) {
             GST_DEBUG_OBJECT(m_bin.get(), "Removing webrtcbin pad %" GST_PTR_FORMAT, m_webrtcSinkPad.get());
@@ -98,35 +98,75 @@ void RealtimeOutgoingMediaSourceGStreamer::setSource(Ref<MediaStreamTrackPrivate
     if (m_source && !m_initialSettings)
         m_initialSettings = m_source.value()->settings();
 
-    if (m_source)
-        m_source.value()->removeObserver(*this);
+    GST_DEBUG_OBJECT(m_bin.get(), "Setting source to %s", newSource->id().ascii().data());
+
+    if (m_source.has_value())
+        stopOutgoingSource();
+
     m_source = WTFMove(newSource);
     initializeFromTrack();
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::start()
 {
+    if (!m_isStopped)
+        return;
+
+    GST_DEBUG_OBJECT(m_bin.get(), "Starting outgoing source");
     m_source.value()->addObserver(*this);
     m_isStopped = false;
-    GST_DEBUG_OBJECT(m_bin.get(), "Starting");
+
+    if (m_transceiver) {
+        auto selectorSrcPad = adoptGRef(gst_element_get_static_pad(m_inputSelector.get(), "src"));
+        if (!gst_pad_is_linked(selectorSrcPad.get())) {
+            GRefPtr<GstCaps> codecPreferences;
+            g_object_get(m_transceiver.get(), "codec-preferences", &codecPreferences.outPtr(), nullptr);
+            callOnMainThreadAndWait([&] {
+                codecPreferencesChanged(codecPreferences);
+            });
+        }
+    }
+
+    linkOutgoingSource();
     gst_element_sync_state_with_parent(m_bin.get());
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::stop()
 {
+    GST_DEBUG_OBJECT(m_bin.get(), "Stopping outgoing source");
     m_isStopped = true;
     if (!m_source)
         return;
 
-    GST_DEBUG_OBJECT(m_bin.get(), "Stopping");
+    connectFallbackSource();
+
+    stopOutgoingSource();
+    m_source.reset();
+}
+
+void RealtimeOutgoingMediaSourceGStreamer::flush()
+{
+    gst_element_send_event(m_outgoingSource.get(), gst_event_new_flush_start());
+    gst_element_send_event(m_outgoingSource.get(), gst_event_new_flush_stop(FALSE));
+}
+
+void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource()
+{
+    if (!m_source)
+        return;
+
+    GST_DEBUG_OBJECT(m_bin.get(), "Stopping outgoing source %" GST_PTR_FORMAT, m_outgoingSource.get());
     m_source.value()->removeObserver(*this);
     webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_outgoingSource.get()));
 
     gst_element_set_locked_state(m_outgoingSource.get(), TRUE);
+
+    unlinkOutgoingSource();
+
     gst_element_set_state(m_outgoingSource.get(), GST_STATE_NULL);
     gst_bin_remove(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
     gst_element_set_locked_state(m_outgoingSource.get(), FALSE);
-    m_source.reset();
+    m_outgoingSource.clear();
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::sourceMutedChanged()
@@ -152,7 +192,12 @@ void RealtimeOutgoingMediaSourceGStreamer::initializeFromTrack()
     m_muted = m_source.value()->muted();
     m_enabled = m_source.value()->enabled();
     GST_DEBUG_OBJECT(m_bin.get(), "Initializing from track, muted: %s, enabled: %s", boolForPrinting(m_muted), boolForPrinting(m_enabled));
+
+    if (m_outgoingSource)
+        return;
+
     m_outgoingSource = webkitMediaStreamSrcNew();
+    GST_DEBUG_OBJECT(m_bin.get(), "Created outgoing source %" GST_PTR_FORMAT, m_outgoingSource.get());
     gst_bin_add(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
     webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(m_outgoingSource.get()), m_source->ptr(), true);
 }

@@ -21,8 +21,10 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "GStreamerRtpSenderBackend.h"
 #include "PeerConnectionBackend.h"
 #include "RealtimeMediaSource.h"
+
 #include <gst/gst.h>
 #include <wtf/HashMap.h>
 
@@ -30,7 +32,6 @@ namespace WebCore {
 
 class GStreamerMediaEndpoint;
 class GStreamerRtpReceiverBackend;
-class GStreamerRtpSenderBackend;
 class GStreamerRtpTransceiverBackend;
 class RTCRtpReceiver;
 class RTCRtpReceiverBackend;
@@ -89,7 +90,8 @@ private:
 
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&) final;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
-    void setSenderSourceFromTrack(GStreamerRtpSenderBackend&, MediaStreamTrack&);
+
+    GStreamerRtpSenderBackend::Source createLinkedSourceForTrack(MediaStreamTrack&);
 
     RTCRtpTransceiver* existingTransceiver(WTF::Function<bool(GStreamerRtpTransceiverBackend&)>&&);
     RTCRtpTransceiver& newRemoteTransceiver(std::unique_ptr<GStreamerRtpTransceiverBackend>&&, RealtimeMediaSource::Type);
@@ -99,7 +101,6 @@ private:
     void addPendingTrackEvent(PendingTrackEvent&&);
     void dispatchPendingTrackEvents(MediaStream&);
 
-private:
     bool isLocalDescriptionSet() const final { return m_isLocalDescriptionSet; }
 
     template<typename T>
@@ -110,6 +111,9 @@ private:
     void suspend() final;
     void resume() final;
 
+    void setReconfiguring(bool isReconfiguring) { m_isReconfiguring = isReconfiguring; }
+    bool isReconfiguring() const { return m_isReconfiguring; }
+
     Ref<GStreamerMediaEndpoint> m_endpoint;
     bool m_isLocalDescriptionSet { false };
     bool m_isRemoteDescriptionSet { false };
@@ -117,6 +121,8 @@ private:
     Vector<std::unique_ptr<GStreamerIceCandidate>> m_pendingCandidates;
     Vector<Ref<RTCRtpReceiver>> m_pendingReceivers;
     Vector<PendingTrackEvent> m_pendingTrackEvents;
+
+    bool m_isReconfiguring { false };
 };
 
 } // namespace WebCore

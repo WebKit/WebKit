@@ -38,6 +38,7 @@ public:
     void start();
     void stop();
     void setSource(Ref<MediaStreamTrackPrivate>&&);
+    virtual void flush();
     MediaStreamTrackPrivate& source() const { return m_source->get(); }
 
     const String& mediaStreamID() const { return m_mediaStreamId; }
@@ -59,16 +60,20 @@ protected:
     void initializeFromTrack();
     virtual void sourceEnabledChanged();
 
+    bool isStopped() const { return m_isStopped; }
+
     String m_mediaStreamId;
     String m_trackId;
 
     bool m_enabled { true };
     bool m_muted { false };
-    bool m_isStopped { false };
+    bool m_isStopped { true };
     std::optional<Ref<MediaStreamTrackPrivate>> m_source;
     std::optional<RealtimeMediaSourceSettings> m_initialSettings;
     GRefPtr<GstElement> m_bin;
     GRefPtr<GstElement> m_outgoingSource;
+    GRefPtr<GstElement> m_inputSelector;
+    GRefPtr<GstPad> m_fallbackPad;
     GRefPtr<GstElement> m_valve;
     GRefPtr<GstElement> m_preEncoderQueue;
     GRefPtr<GstElement> m_encoder;
@@ -83,8 +88,14 @@ protected:
 private:
     void sourceMutedChanged();
 
+    void stopOutgoingSource();
+
     virtual RTCRtpCapabilities rtpCapabilities() const = 0;
     virtual void codecPreferencesChanged(const GRefPtr<GstCaps>&) { }
+
+    virtual void connectFallbackSource() { }
+    virtual void unlinkOutgoingSource() { }
+    virtual void linkOutgoingSource() { }
 
     // MediaStreamTrackPrivate::Observer API
     void trackMutedChanged(MediaStreamTrackPrivate&) override { sourceMutedChanged(); }

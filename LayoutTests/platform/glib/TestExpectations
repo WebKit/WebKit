@@ -1007,7 +1007,6 @@ webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1017
 
 webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
 fast/mediastream/mediastreamtrack-configurationchange.html [ Failure ]
@@ -1691,13 +1690,7 @@ webrtc/video-sframe.html [ Skip ]
 webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
 
-# On-the-fly track switching not supported yet.
-webkit.org/b/235885 webrtc/audio-replace-track.html [ Skip ]
-webkit.org/b/235885 webrtc/video-replace-track-to-null.html [ Skip ]
-webkit.org/b/235885 webrtc/video-replace-track.html [ Skip ]
-webkit.org/b/235885 webrtc/video-replace-muted-track.html
-webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Skip ]
-webkit.org/b/216763 webkit.org/b/235885 webrtc/captureCanvas-webrtc-software-h264-high.html [ Skip ]
+# GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented and also hitting srtpenc errors.
 webkit.org/b/235885 webrtc/video-addTransceiver.html [ Skip ]
 
 # GstWebRTC doesn't support transceiver direction changes.
@@ -1707,6 +1700,10 @@ webkit.org/b/235885 webrtc/direction-change.html [ Skip ]
 # Specific to LibWebRTC:
 webkit.org/b/235885 webrtc/disable-encryption.html [ Skip ]
 webkit.org/b/235885 webrtc/libwebrtc/release-while-getting-stats.html [ Skip ]
+
+# This test is flaky because sometimes the onnegotiationneeded event is not fired fast enough after
+# the addTrack() call.
+webrtc/video-replace-track.html [ Pass Failure ]
 
 # Pending investigation.
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]
