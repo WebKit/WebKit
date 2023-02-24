@@ -76,6 +76,28 @@ UnrealizedCoreTextFont::operator bool() const
     });
 }
 
+void UnrealizedCoreTextFont::addAttributesForOpticalSizing(CFMutableDictionaryRef attributes, VariationsMap& variationsToBeApplied, OpticalSizingType opticalSizingType, CGFloat size)
+{
+    switch (opticalSizingType) {
+    case OpticalSizingType::None:
+        CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("none"));
+        break;
+    case OpticalSizingType::JustVariation:
+#if USE(VARIABLE_OPTICAL_SIZING)
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=252592 We should never be enabling just the opsz variation without also enabling trak.
+        // We should delete this and use the OpticalSizingType::Everything path instead.
+        variationsToBeApplied.set({ { 'o', 'p', 's', 'z' } }, size);
+#else
+        UNUSED_PARAM(variationsToBeApplied);
+        UNUSED_PARAM(size);
+#endif
+        break;
+    case OpticalSizingType::Everything:
+        CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("auto"));
+        break;
+    }
+}
+
 static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontFeature& feature)
 {
     auto featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(feature.tag().data()), feature.tag().size() * sizeof(FontTag::value_type), kCFStringEncodingASCII, false));
@@ -153,8 +175,6 @@ static void addAttributesForFontPalettes(CFMutableDictionaryRef attributes, cons
     }
 }
 
-using VariationsMap = HashMap<FontTag, float, FourCharacterTagHash, FourCharacterTagHashTraits>;
-
 static void applyFeatures(CFMutableDictionaryRef attributes, const FeaturesMap& featuresToBeApplied)
 {
     if (featuresToBeApplied.isEmpty())
@@ -174,7 +194,7 @@ static void applyFeatures(CFMutableDictionaryRef attributes, const FeaturesMap& 
     CFDictionarySetValue(attributes, kCTFontFeatureSettingsAttribute, featureArray.get());
 }
 
-static void applyVariations(CFMutableDictionaryRef attributes, const VariationsMap& variationsToBeApplied)
+void UnrealizedCoreTextFont::applyVariations(CFMutableDictionaryRef attributes, const VariationsMap& variationsToBeApplied)
 {
     if (variationsToBeApplied.isEmpty())
         return;
@@ -195,9 +215,8 @@ static void applyVariations(CFMutableDictionaryRef attributes, const VariationsM
     CFDictionarySetValue(attributes, kCTFontVariationAttribute, variationDictionary.get());
 }
 
-static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations, float weight, float width, float slope)
+void UnrealizedCoreTextFont::modifyFromContext(CFMutableDictionaryRef attributes, const FontDescription& fontDescription, const FontCreationContext& fontCreationContext, ApplyTraitsVariations applyTraitsVariations, float weight, float width, float slope, CGFloat size, OpticalSizingType opticalSizingType)
 {
-    auto fontOpticalSizing = fontDescription.opticalSizing();
     auto fontStyleAxis = fontDescription.fontStyleAxis();
     const auto& variations = fontDescription.variationSettings();
     const auto& features = fontDescription.featureSettings();
@@ -209,9 +228,6 @@ static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescr
     FeaturesMap featuresToBeApplied;
     VariationsMap variationsToBeApplied;
 
-    // Step 1: CoreText handles default features (such as required ligatures).
-
-    // Step 2: font-weight, font-stretch, and font-style
     // The system font is somewhat magical. Don't mess with its variations.
     if (applyTraitsVariations == ApplyTraitsVariations::Yes) {
         variationsToBeApplied.set({ { 'w', 'g', 'h', 't' } }, weight);
@@ -222,23 +238,20 @@ static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescr
             variationsToBeApplied.set({ { 's', 'l', 'n', 't' } }, slope);
     }
 
-    // FIXME: Implement Step 5: font-named-instance
+    // FIXME: Implement font-named-instance
 
-    // FIXME: Implement Step 6: the font-variation-settings descriptor inside @font-face
+    // FIXME: Implement the font-variation-settings descriptor inside @font-face
 
-    // Step 7: Consult with font-feature-settings inside @font-face
     if (fontCreationContext.fontFaceFeatures()) {
         for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures())
             featuresToBeApplied.set(fontFaceFeature.tag(), fontFaceFeature.value());
     }
 
-    // FIXME: Move font-optical-sizing handling here. It should be step 9.
+    addAttributesForOpticalSizing(attributes, variationsToBeApplied, opticalSizingType, size);
 
-    // Step 10: Font-variant
     for (auto& newFeature : computeFeatureSettingsFromVariants(variantSettings, fontCreationContext.fontFeatureValues()))
         featuresToBeApplied.set(newFeature.key, newFeature.value);
 
-    // Step 11: Other properties
     if (textRenderingMode == TextRenderingMode::OptimizeSpeed) {
         featuresToBeApplied.set(fontFeatureTag("liga"), 0);
         featuresToBeApplied.set(fontFeatureTag("clig"), 0);
@@ -254,23 +267,14 @@ static void modifyFromContext(CFMutableDictionaryRef attributes, const FontDescr
         // Core Text doesn't disable calt when letter-spacing is applied, so we won't either.
     }
 
-    // Step 13: Font-feature-settings
     for (auto& newFeature : features)
         featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
-    // Step 12: font-variation-settings
     for (auto& newVariation : variations)
         variationsToBeApplied.set(newVariation.tag(), newVariation.value());
 
     applyFeatures(attributes, featuresToBeApplied);
     applyVariations(attributes, variationsToBeApplied);
-
-    // Step 9: font-optical-sizing
-    // FIXME: Apply this before font-variation-settings
-    if (textRenderingMode == TextRenderingMode::OptimizeLegibility)
-        CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("auto"));
-    else if (fontOpticalSizing == FontOpticalSizing::Disabled)
-        CFDictionarySetValue(attributes, kCTFontOpticalSizeAttribute, CFSTR("none"));
 
     addAttributesForFontPalettes(attributes, fontDescription.fontPalette(), fontCreationContext.fontPaletteValues());
 
@@ -304,10 +308,19 @@ void UnrealizedCoreTextFont::modifyFromContext(const FontDescription& fontDescri
         }
     }
 
+    m_size = getSize();
+
+    if (fontDescription.textRenderingMode() == TextRenderingMode::OptimizeLegibility)
+        m_opticalSizingType = OpticalSizingType::Everything;
+    else if (fontDescription.opticalSizing() == FontOpticalSizing::Disabled)
+        m_opticalSizingType = OpticalSizingType::None;
+    else
+        m_opticalSizingType = OpticalSizingType::JustVariation;
+
     m_variationSettings = fontDescription.variationSettings();
 
     modify([&](CFMutableDictionaryRef attributes) {
-        WebCore::modifyFromContext(attributes, fontDescription, fontCreationContext, m_applyTraitsVariations, m_weight, m_width, m_slope);
+        modifyFromContext(attributes, fontDescription, fontCreationContext, m_applyTraitsVariations, m_weight, m_width, m_slope, m_size, m_opticalSizingType);
     });
 }
 
@@ -316,22 +329,20 @@ RetainPtr<CTFontRef> UnrealizedCoreTextFont::realize() const
     if (!static_cast<bool>(*this))
         return nullptr;
 
-    auto size = getSize();
-
-    auto font = WTF::switchOn(m_baseFont, [this, size](const RetainPtr<CTFontRef>& font) -> RetainPtr<CTFontRef> {
+    auto font = WTF::switchOn(m_baseFont, [this](const RetainPtr<CTFontRef>& font) -> RetainPtr<CTFontRef> {
         if (!font)
             return nullptr;
         if (!CFDictionaryGetCount(m_attributes.get()))
             return font;
         auto modification = adoptCF(CTFontDescriptorCreateWithAttributes(m_attributes.get()));
-        return adoptCF(CTFontCreateCopyWithAttributes(font.get(), size, nullptr, modification.get()));
-    }, [this, size](const RetainPtr<CTFontDescriptorRef>& fontDescriptor) -> RetainPtr<CTFontRef> {
+        return adoptCF(CTFontCreateCopyWithAttributes(font.get(), m_size, nullptr, modification.get()));
+    }, [this](const RetainPtr<CTFontDescriptorRef>& fontDescriptor) -> RetainPtr<CTFontRef> {
         if (!fontDescriptor)
             return nullptr;
         if (!CFDictionaryGetCount(m_attributes.get()))
-            return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+            return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), m_size, nullptr));
         auto updatedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), m_attributes.get()));
-        return adoptCF(CTFontCreateWithFontDescriptor(updatedFontDescriptor.get(), size, nullptr));
+        return adoptCF(CTFontCreateWithFontDescriptor(updatedFontDescriptor.get(), m_size, nullptr));
     });
     ASSERT(font);
 
@@ -365,14 +376,17 @@ RetainPtr<CTFontRef> UnrealizedCoreTextFont::realize() const
             else
                 variationsToBeApplied.set({ { 's', 'l', 'n', 't' } }, slope);
 
+            auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+            addAttributesForOpticalSizing(attributes.get(), variationsToBeApplied, m_opticalSizingType, m_size);
+
             for (auto& newVariation : m_variationSettings)
                 variationsToBeApplied.set(newVariation.tag(), newVariation.value());
 
-            auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             applyVariations(attributes.get(), variationsToBeApplied);
 
             auto modification = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-            return adoptCF(CTFontCreateCopyWithAttributes(font.get(), size, nullptr, modification.get()));
+            return adoptCF(CTFontCreateCopyWithAttributes(font.get(), m_size, nullptr, modification.get()));
         }
     }
 
