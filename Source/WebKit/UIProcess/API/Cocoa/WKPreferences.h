@@ -54,7 +54,7 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 /*! @abstract A Boolean value indicating whether the web view should include backgrounds when printing.
  @discussion The default value is `NO`.
  */
-@property (nonatomic) BOOL shouldPrintBackgrounds WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL shouldPrintBackgrounds WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 #if !TARGET_OS_IPHONE
 /*!

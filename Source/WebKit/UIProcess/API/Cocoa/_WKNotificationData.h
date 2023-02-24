@@ -24,7 +24,7 @@
  */
 #import <WebKit/WKFoundation.h>
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @interface _WKNotificationData : NSObject
 @property (nonatomic, readonly, copy) NSString *title;
 @property (nonatomic, readonly, copy) NSString *body;

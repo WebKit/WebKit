@@ -39,7 +39,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @abstract Indicates a @link WKWebExtension @/link error. */
-WK_EXTERN NSErrorDomain const _WKWebExtensionErrorDomain NS_SWIFT_NAME(_WKWebExtension.ErrorDomain) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXTERN NSErrorDomain const _WKWebExtensionErrorDomain NS_SWIFT_NAME(_WKWebExtension.ErrorDomain) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*!
  @abstract Constants used by NSError to indicate errors in the @link WKWebExtension @/link domain.
@@ -63,17 +63,17 @@ typedef NS_ERROR_ENUM(_WKWebExtensionErrorDomain, _WKWebExtensionError) {
     _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry,
     _WKWebExtensionErrorInvalidBackgroundPersistence,
     _WKWebExtensionErrorBackgroundContentFailedToLoad,
-} NS_SWIFT_NAME(_WKWebExtension.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+} NS_SWIFT_NAME(_WKWebExtension.Error) WK_API_AVAILABLE(macos(13.3), ios(16.4));
 
 /*! @abstract This notification is sent whenever a @link WKWebExtension @/link has new errors or errors were cleared. */
-WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macos(13.3), ios(16.4))
 WK_EXTERN NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification NS_SWIFT_NAME(_WKWebExtension.errorsWereUpdatedNotification);
 
 /*!
  @abstract A `WKWebExtension` object encapsulates a web extension’s resources that are defined by a `manifest.json` file.
  @discussion This class handles the reading and parsing of the manifest file along with the supporting resources like icons and localizations.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @interface _WKWebExtension : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
