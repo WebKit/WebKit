@@ -253,15 +253,15 @@ JSC::JSValue ObjcInstance::invokeObjcMethod(JSGlobalObject* lexicalGlobalObject,
         [invocation setArgument:&jsName atIndex:2];
 
         NSMutableArray* objcArgs = [NSMutableArray array];
-        int count = callFrame->argumentCount();
-        for (int i = 0; i < count; i++) {
+        size_t count = callFrame->argumentCount();
+        for (size_t i = 0; i < count; i++) {
             ObjcValue value = convertValueToObjcValue(lexicalGlobalObject, callFrame->uncheckedArgument(i), ObjcObjectType);
             [objcArgs addObject:(__bridge id)value.objectValue];
         }
         [invocation setArgument:&objcArgs atIndex:3];
     } else {
-        unsigned count = [signature numberOfArguments];
-        for (unsigned i = 2; i < count; ++i) {
+        NSUInteger count = [signature numberOfArguments];
+        for (NSUInteger i = 2; i < count; ++i) {
             const char* type = [signature getArgumentTypeAtIndex:i];
             ObjcValueType objcValueType = objcValueTypeForType(type);
 
@@ -367,8 +367,8 @@ JSC::JSValue ObjcInstance::invokeDefaultMethod(JSGlobalObject* lexicalGlobalObje
     }
 
     NSMutableArray* objcArgs = [NSMutableArray array];
-    unsigned count = callFrame->argumentCount();
-    for (unsigned i = 0; i < count; i++) {
+    NSUInteger count = callFrame->argumentCount();
+    for (NSUInteger i = 0; i < count; i++) {
         ObjcValue value = convertValueToObjcValue(lexicalGlobalObject, callFrame->uncheckedArgument(i), ObjcObjectType);
         [objcArgs addObject:(__bridge id)value.objectValue];
     }

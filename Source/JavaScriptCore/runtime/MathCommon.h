@@ -180,7 +180,7 @@ inline uint32_t toUInt32(double number)
 {
     // As commented in the spec, the operation of ToInt32 and ToUint32 only differ
     // in how the result is interpreted; see NOTEs in sections 9.5 and 9.6.
-    return toInt32(number);
+    return static_cast<uint32_t>(toInt32(number));
 }
 
 ALWAYS_INLINE constexpr UCPUStrictInt32 toUCPUStrictInt32(int32_t value)
