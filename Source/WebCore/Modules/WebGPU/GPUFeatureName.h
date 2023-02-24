@@ -38,6 +38,9 @@ enum class GPUFeatureName : uint8_t {
     TextureCompressionAstc,
     TimestampQuery,
     IndirectFirstInstance,
+    ShaderF16,
+    Rg11b10ufloatRenderable,
+    Bgra8unormStorage,
 };
 
 inline PAL::WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
@@ -57,6 +60,12 @@ inline PAL::WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return PAL::WebGPU::FeatureName::TimestampQuery;
     case GPUFeatureName::IndirectFirstInstance:
         return PAL::WebGPU::FeatureName::IndirectFirstInstance;
+    case GPUFeatureName::Bgra8unormStorage:
+        return PAL::WebGPU::FeatureName::Bgra8unormStorage;
+    case GPUFeatureName::ShaderF16:
+        return PAL::WebGPU::FeatureName::ShaderF16;
+    case GPUFeatureName::Rg11b10ufloatRenderable:
+        return PAL::WebGPU::FeatureName::Rg11b10ufloatRenderable;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -87,6 +87,7 @@ static Ref<SupportedFeatures> supportedFeatures(WGPUAdapter adapter)
             result.append("bgra8unorm-storage"_s);
             break;
         case WGPUFeatureName_Force32:
+            ASSERT_NOT_REACHED();
             continue;
         }
     }

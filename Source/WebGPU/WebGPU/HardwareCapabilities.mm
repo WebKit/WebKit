@@ -100,6 +100,8 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
 
     features.append(WGPUFeatureName_IndirectFirstInstance);
     features.append(WGPUFeatureName_RG11B10UfloatRenderable);
+    features.append(WGPUFeatureName_ShaderF16);
+    features.append(static_cast<WGPUFeatureName>(WGPUFeatureName_BGRA8UnormStorage));
 
     return features;
 }
