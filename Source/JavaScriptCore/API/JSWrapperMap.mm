@@ -69,7 +69,7 @@ static NSString *selectorToPropertyName(const char* start)
     // Use 'index' to check for colons, if there are none, this is easy!
     const char* firstColon = strchr(start, ':');
     if (!firstColon)
-        return [NSString stringWithUTF8String:start];
+        return @(start);
 
     // 'header' is the length of string up to the first colon.
     size_t header = firstColon - start;
@@ -101,7 +101,7 @@ static NSString *selectorToPropertyName(const char* start)
         // If we get here, we've consumed a ':' - wash, rinse, repeat.
     }
 done:
-    return [NSString stringWithUTF8String:buffer.data()];
+    return @(buffer.data());
 }
 
 static bool constructorHasInstance(JSContextRef ctx, JSObjectRef constructorRef, JSValueRef possibleInstance, JSValueRef*)

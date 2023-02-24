@@ -50,14 +50,7 @@ namespace TestWebKitAPI {
 
 static RetainPtr<NSURL> currentExecutableLocation()
 {
-    uint32_t size { 0 };
-    _NSGetExecutablePath(nullptr, &size);
-    Vector<char> buffer;
-    buffer.resize(size + 1);
-    _NSGetExecutablePath(buffer.data(), &size);
-    buffer[size] = '\0';
-    auto pathString = adoptNS([[NSString alloc] initWithUTF8String:buffer.data()]);
-    return adoptNS([[NSURL alloc] initFileURLWithPath:pathString.get() isDirectory:NO]);
+    return [NSBundle mainBundle].executableURL;
 }
 
 RetainPtr<NSURL> currentExecutableDirectory()
