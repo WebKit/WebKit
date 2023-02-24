@@ -3064,7 +3064,7 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
     } else {
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
         if (m_scrollingCoordinatorProxy) {
-            handlingResult = m_scrollingCoordinatorProxy->handleWheelEvent(platform(event), rubberBandableEdges);
+            handlingResult = m_scrollingCoordinatorProxy->handleWheelEvent(event, rubberBandableEdges);
             if (!handlingResult.needsMainThreadProcessing()) {
                 if (!handlingResult.wasHandled)
                     wheelEventWasNotHandled(event);
