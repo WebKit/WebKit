@@ -219,13 +219,8 @@ NS_DIRECT_MEMBERS
 namespace WebKit {
 using namespace WebCore;
 
-static void registerUserDefaultsIfNeeded()
+static void registerUserDefaults()
 {
-    static bool didRegister;
-    if (didRegister)
-        return;
-
-    didRegister = true;
     NSMutableDictionary *registrationDictionary = [NSMutableDictionary dictionary];
     
     [registrationDictionary setObject:@YES forKey:WebKitJSCJITEnabledDefaultsKey];
@@ -304,36 +299,30 @@ static void logProcessPoolState(const WebProcessPool& pool)
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
 static bool determineIfWeShouldCrashWhenCreatingWebProcess()
 {
-    static bool shouldCrashResult { false };
-    static std::once_flag onceFlag;
-    std::call_once(
-        onceFlag,
-        [&] {
-            if (isInternalBuild()) {
-                auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
+    if (!isInternalBuild())
+        return false;
 
-                RELEASE_LOG(Process, "shouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
+    auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
 
-                if (![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"]
-                    && !canaryInBaseState())
-                    shouldCrashResult = true;
-            }
-        });
+    RELEASE_LOG(Process, "shouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
 
-    return shouldCrashResult;
+    return ![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"] && !canaryInBaseState();
 }
 #endif
 
 void WebProcessPool::platformInitialize()
 {
-    registerUserDefaultsIfNeeded();
     registerNotificationObservers();
     initializeClassesForParameterCoding();
+
+    if (s_didGlobalStaticInitialization)
+        return;
+
+    registerUserDefaults();
 
     // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
     // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
     // and you can only have one WebCore::MemoryPressureHandler.
-
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
         installMemoryPressureHandler();
 
@@ -349,12 +338,9 @@ void WebProcessPool::platformInitialize()
     [WKWebInspectorPreferenceObserver sharedInstance];
 #endif
 
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
-        PAL::registerNotifyCallback("com.apple.WebKit.logProcessState"_s, ^{
-            for (const auto& pool : WebProcessPool::allProcessPools())
-                logProcessPoolState(pool.get());
-        });
+    PAL::registerNotifyCallback("com.apple.WebKit.logProcessState"_s, ^{
+        for (const auto& pool : WebProcessPool::allProcessPools())
+            logProcessPoolState(pool.get());
     });
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
@@ -363,9 +349,8 @@ void WebProcessPool::platformInitialize()
 #elif PLATFORM(MAC)
     bool isSafari = WebCore::MacApplication::isSafari();
 #endif
-
     if (isSafari)
-        m_shouldCrashWhenCreatingWebProcess = determineIfWeShouldCrashWhenCreatingWebProcess();
+        s_shouldCrashWhenCreatingWebProcess = determineIfWeShouldCrashWhenCreatingWebProcess();
 #endif
 }
 

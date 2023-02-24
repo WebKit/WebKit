@@ -452,7 +452,7 @@ public:
 #endif
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
-    bool shouldCrashWhenCreatingWebProcess() const { return m_shouldCrashWhenCreatingWebProcess; }
+    static bool shouldCrashWhenCreatingWebProcess() { return s_shouldCrashWhenCreatingWebProcess; }
 #endif
 
     ForegroundWebProcessToken foregroundWebProcessToken() const { return ForegroundWebProcessToken(m_foregroundWebProcessCounter.count()); }
@@ -759,7 +759,7 @@ private:
 #endif
 
 #if ENABLE(WEBCONTENT_CRASH_TESTING)
-    bool m_shouldCrashWhenCreatingWebProcess { false };
+    static bool s_shouldCrashWhenCreatingWebProcess;
 #endif
 
     struct Paths {
@@ -822,6 +822,7 @@ private:
     bool m_isDelayedWebProcessLaunchDisabled { false };
 #endif
     static bool s_useSeparateServiceWorkerProcess;
+    static bool s_didGlobalStaticInitialization;
 
 #if ENABLE(TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
