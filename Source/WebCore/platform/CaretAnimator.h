@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "LayoutRect.h"
 #include "ReducedResolutionSeconds.h"
 #include "Timer.h"
 
@@ -35,18 +34,11 @@ class CaretAnimator;
 class Document;
 class Page;
 
-enum class CaretAnimatorType {
-    Default,
-    Alternate
-};
-
 class CaretAnimationClient {
 public:
     virtual ~CaretAnimationClient() = default;
 
     virtual void caretAnimationDidUpdate(CaretAnimator&) { }
-    virtual void caretAnimatorInvalidated(CaretAnimator&, CaretAnimatorType) { }
-    virtual LayoutRect localCaretRect() const = 0;
 
     virtual Document* document() = 0;
 };
@@ -86,7 +78,6 @@ public:
     virtual void setVisible(bool) = 0;
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
-    virtual CaretAnimatorType type() const { return CaretAnimatorType::Default; }
 
 protected:
     explicit CaretAnimator(CaretAnimationClient& client)

@@ -450,7 +450,6 @@ private:
     virtual void paintColumnRules(PaintInfo&, const LayoutPoint&) { };
     void paintSelection(PaintInfo&, const LayoutPoint&);
     void paintCaret(PaintInfo&, const LayoutPoint&, CaretType);
-    void paintCarets(PaintInfo&, const LayoutPoint&);
 
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     // FIXME-BLOCKFLOW: Remove virtualization when all callers have moved to RenderBlockFlow

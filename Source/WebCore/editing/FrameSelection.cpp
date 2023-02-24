@@ -163,37 +163,17 @@ static inline bool isPageActive(Document* document)
 #import <WebKitAdditions/FrameSelectionAdditions.cpp>
 #else
 #if ENABLE(TEXT_CARET)
-static void fillCaretRect(const Node&, GraphicsContext& context, const FloatRect& caret, const Color&color, const LayoutPoint&, CaretAnimator*)
+static void fillCaretRect(const Node&, GraphicsContext& context, const FloatRect& caret, const Color&color, const CaretAnimator::PresentationProperties&)
 {
     context.fillRect(caret, color);
 }
 #endif
 
-static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType = CaretAnimatorType::Default)
+static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection)
 {
     return makeUniqueRef<SimpleCaretAnimator>(*frameSelection);
 }
-#endif // USE(APPLE_INTERNAL_SDK)
-
-// FIXME: Remove staging once repaintCaretRectForLocalRect is defined in FrameSelectionAdditions.cpp
-#ifndef FRAME_SELECTION_ADDITIONS_REPAINT_CARET_RECT_FOR_LOCAL_RECT_DEFINED
-static LayoutRect repaintCaretRectForLocalRect(LayoutRect rect, CaretAnimator*)
-{
-    return rect;
-}
-
-#if USE(APPLE_INTERNAL_SDK)
-static void fillCaretRect(const Node& node, GraphicsContext& context, const FloatRect& caret, const Color& color, const LayoutPoint&, CaretAnimator* animator)
-{
-    fillCaretRect(node, context, caret, color, animator ? animator->presentationProperties() : CaretAnimator::PresentationProperties());
-}
-
-static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType)
-{
-    return createCaretAnimator(frameSelection);
-}
 #endif
-#endif // FRAME_SELECTION_ADDITIONS_REPAINT_CARET_RECT_FOR_LOCAL_RECT_DEFINED
 
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
@@ -1786,10 +1766,10 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
     return m_absCaretBounds;
 }
 
-static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect, CaretAnimator* caretAnimator)
+static void repaintCaretForLocalRect(Node* node, const LayoutRect& rect)
 {
     if (auto* caretPainter = rendererForCaretPainting(node))
-        caretPainter->repaintRectangle(repaintCaretRectForLocalRect(rect, caretAnimator));
+        caretPainter->repaintRectangle(rect);
 }
 
 bool FrameSelection::recomputeCaretRect()
@@ -1841,9 +1821,9 @@ bool FrameSelection::recomputeCaretRect()
         bool previousOrNewCaretNodeIsContentEditable = m_selection.isContentEditable() || (m_previousCaretNode && m_previousCaretNode->isContentEditable());
         if (shouldRepaintCaret(view, previousOrNewCaretNodeIsContentEditable)) {
             if (m_previousCaretNode)
-                repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect, m_caretAnimator.ptr());
+                repaintCaretForLocalRect(m_previousCaretNode.get(), oldRect);
             m_previousCaretNode = caretNode;
-            repaintCaretForLocalRect(caretNode.get(), newRect, m_caretAnimator.ptr());
+            repaintCaretForLocalRect(caretNode.get(), newRect);
         }
     }
 #endif
@@ -1863,10 +1843,10 @@ void FrameSelection::invalidateCaretRect()
     if (!isCaret())
         return;
 
-    CaretBase::invalidateCaretRect(m_selection.start().deprecatedNode(), recomputeCaretRect(), m_caretAnimator.ptr());
+    CaretBase::invalidateCaretRect(m_selection.start().deprecatedNode(), recomputeCaretRect());
 }
 
-void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged, CaretAnimator* caretAnimator)
+void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
 {
     // EDIT FIXME: This is an unfortunate hack.
     // Basically, we can't trust this layout position since we 
@@ -1886,14 +1866,14 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged, CaretAnim
 
     if (RenderView* view = node->document().renderView()) {
         if (shouldRepaintCaret(view, isEditableNode(*node)))
-            repaintCaretForLocalRect(node, localCaretRectWithoutUpdate(), caretAnimator);
+            repaintCaretForLocalRect(node, localCaretRectWithoutUpdate());
     }
 }
 
 void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
 {
     if (m_selection.isCaret() && m_selection.start().deprecatedNode())
-        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect, m_caretAnimator.ptr());
+        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect, m_caretAnimator->presentationProperties());
 }
 
 Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
@@ -1919,10 +1899,9 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #endif
 }
 
-void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect, CaretAnimator* caretAnimator) const
+void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect, const CaretAnimator::PresentationProperties& caretPresentationProperties) const
 {
 #if ENABLE(TEXT_CARET)
-    auto caretPresentationProperties = caretAnimator ? caretAnimator->presentationProperties() : CaretAnimator::PresentationProperties();
     if (m_caretVisibility == Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
         return;
 
@@ -1940,13 +1919,13 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
         caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
-    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor, paintOffset, caretAnimator);
+    fillCaretRect(node, context, pixelSnappedCaretRect, caretColor, caretPresentationProperties);
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
     UNUSED_PARAM(paintOffset);
     UNUSED_PARAM(clipRect);
-    UNUSED_PARAM(caretAnimator);
+    UNUSED_PARAM(caretPresentationProperties);
 #endif
 }
 
@@ -1963,11 +1942,6 @@ bool FrameSelection::isCaretBlinkingSuspended() const
 void FrameSelection::caretAnimationDidUpdate(CaretAnimator&)
 {
     invalidateCaretRect();
-}
-
-void FrameSelection::caretAnimatorInvalidated(CaretAnimator&, CaretAnimatorType newCaretType)
-{
-    m_caretAnimator = createCaretAnimator(this, newCaretType);
 }
 
 Document* FrameSelection::document()
@@ -2370,7 +2344,7 @@ void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext& p, const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
+        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect, { });
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
