@@ -60,17 +60,18 @@ static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRo
 
         auto allUTIs = adoptCF(_UTCopyDeclaredTypeIdentifiers());
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        for (NSString *uti in (__bridge NSArray<NSString *> *)allUTIs.get()) {
-            auto type = adoptCF(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)uti, kUTTagClassMIMEType));
+        for (CFIndex i = 0, size = CFArrayGetCount(allUTIs.get()); i < size; i++) {
+            CFStringRef uti = static_cast<CFStringRef>(CFArrayGetValueAtIndex(allUTIs.get(), i));
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            auto type = adoptCF(UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType));
             if (!type)
                 continue;
-            auto extensions = adoptCF(UTTypeCopyAllTagsWithClass((__bridge CFStringRef)uti, kUTTagClassFilenameExtension));
+            auto extensions = adoptCF(UTTypeCopyAllTagsWithClass(uti, kUTTagClassFilenameExtension));
+            ALLOW_DEPRECATED_DECLARATIONS_END
             if (!extensions || !CFArrayGetCount(extensions.get()))
                 continue;
             addExtensions(type.get(), (__bridge NSArray<NSString *> *)extensions.get());
         }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
         return map;
     }();

@@ -449,9 +449,9 @@ static void prepareDataForPrintingOnSecondaryThread(WKPrintingView *view)
     return 0; // Invalid page number.
 }
 
-static NSString *linkDestinationName(PDFDocument *document, PDFDestination *destination)
+static RetainPtr<CFStringRef> createLinkDestinationName(PDFDocument *document, PDFDestination *destination)
 {
-    return [NSString stringWithFormat:@"%lu-%f-%f", (unsigned long)[document indexForPage:destination.page], destination.point.x, destination.point.y];
+    return adoptCF(CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("%lu-%f-%f"), (unsigned long)[document indexForPage:destination.page], destination.point.x, destination.point.y));
 }
 
 - (void)_drawPDFDocument:(PDFDocument *)pdfDocument page:(unsigned)page atPoint:(NSPoint)point
@@ -483,7 +483,8 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
 
     for (const auto& destination : _linkDestinationsPerPage[page]) {
         CGPoint destinationPoint = CGPointApplyAffineTransform(NSPointToCGPoint([destination point]), transform);
-        CGPDFContextAddDestinationAtPoint(context, (__bridge CFStringRef)linkDestinationName(pdfDocument, destination.get()), destinationPoint);
+        auto destinationName = createLinkDestinationName(pdfDocument, destination.get());
+        CGPDFContextAddDestinationAtPoint(context, destinationName.get(), destinationPoint);
     }
 
     for (PDFAnnotation *annotation in [pdfPage annotations]) {
@@ -500,7 +501,8 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
             PDFDestination *destination = [linkAnnotation destination];
             if (!destination)
                 continue;
-            CGPDFContextSetDestinationForRect(context, (__bridge CFStringRef)linkDestinationName(pdfDocument, destination), transformedRect);
+            auto destinationName = createLinkDestinationName(pdfDocument, destination);
+            CGPDFContextSetDestinationForRect(context, destinationName.get(), transformedRect);
             continue;
         }
 

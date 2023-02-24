@@ -76,17 +76,16 @@ String createTemporaryZipArchive(const String& path)
         CString archivePath([NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitGeneratedFileXXXXXX"].fileSystemRepresentation);
         if (mkstemp(archivePath.mutableData()) == -1)
             return;
-        
-        NSDictionary *options = @{
-            (__bridge id)kBOMCopierOptionCreatePKZipKey : @YES,
-            (__bridge id)kBOMCopierOptionSequesterResourcesKey : @YES,
-            (__bridge id)kBOMCopierOptionKeepParentKey : @YES,
-            (__bridge id)kBOMCopierOptionCopyResourcesKey : @YES,
-        };
-        
+
+        CFStringRef keys[4] = { kBOMCopierOptionCreatePKZipKey, kBOMCopierOptionSequesterResourcesKey, kBOMCopierOptionKeepParentKey, kBOMCopierOptionCopyResourcesKey };
+        CFBooleanRef vals[4] = { kCFBooleanTrue, kCFBooleanTrue, kCFBooleanTrue, kCFBooleanTrue };
+
+        CFDictionaryRef options = CFDictionaryCreate(kCFAllocatorDefault, (const void **)keys, (const void **)vals, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
         BOMCopier copier = BOMCopierNew();
-        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), (__bridge CFDictionaryRef)options))
+        if (!BOMCopierCopyWithOptions(copier, newURL.path.fileSystemRepresentation, archivePath.data(), options))
             temporaryFile = String::fromUTF8(archivePath);
+
+        CFRelease(options);
         BOMCopierFree(copier);
     }];
     

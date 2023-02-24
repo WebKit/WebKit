@@ -94,8 +94,8 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
         if (!serviceInfo.service)
             continue;
 
-        auto cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, (__bridge CFStringRef)@(kIOHIDVendorIDKey)));
-        auto cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, (__bridge CFStringRef)@(kIOHIDProductIDKey)));
+        auto cfVendorID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDVendorIDKey)));
+        auto cfProductID = adoptCF((CFNumberRef)IOHIDServiceClientCopyProperty(serviceInfo.service, CFSTR(kIOHIDProductIDKey)));
 
         int vendorID, productID;
         CFNumberGetValue(cfVendorID.get(), kCFNumberIntType, &vendorID);

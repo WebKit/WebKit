@@ -155,8 +155,7 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
             resourceLoadStatisticsManualPrevalentResource = WebCore::RegistrableDomain { url };
     }
 #if !RELEASE_LOG_DISABLED
-    static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
-    shouldLogCookieInformation = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
+    shouldLogCookieInformation = [defaults boolForKey:@"WebKitLogCookieInformation"];
 #endif
 #endif // ENABLE(TRACKING_PREVENTION)
 

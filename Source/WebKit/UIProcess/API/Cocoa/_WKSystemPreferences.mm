@@ -40,8 +40,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
     if (preferenceValue.get() == kCFBooleanTrue)
         return true;
 
-    key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, LDMEnabledKey, kCFStringEncodingUTF8));
-    preferenceValue = adoptCF(CFPreferencesCopyValue(key.get(), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+    preferenceValue = adoptCF(CFPreferencesCopyValue(LDMEnabledKey, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
     return preferenceValue.get() == kCFBooleanTrue;
 }
 
@@ -50,7 +49,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
     auto key = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, WKLockdownModeEnabledKey.characters(), kCFStringEncodingUTF8));
     CFPreferencesSetValue(key.get(), enabled ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     CFPreferencesSynchronize(kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 }
 
 + (BOOL)isCaptivePortalModeIgnored:(NSString *)containerPath
@@ -84,7 +83,7 @@ constexpr auto CaptivePortalConfigurationIgnoreFileName = @"com.apple.WebKit.cpm
     else
         [[NSFileManager defaultManager] removeItemAtPath:cpmconfigIgnoreFilePath error:NULL];
 
-    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (__bridge CFStringRef)WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
+    CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), WKLockdownModeContainerConfigurationChangedNotification, nullptr, nullptr, true);
 #endif
 }
 
