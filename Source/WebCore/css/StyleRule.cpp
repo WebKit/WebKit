@@ -306,7 +306,7 @@ Vector<RefPtr<StyleRule>> StyleRule::splitIntoMultipleRulesWithMaximumSelectorCo
 
 const CSSSelectorList& StyleRule::resolvedSelectorList() const
 {
-    if (isStyleRuleWithNesting())
+    if (UNLIKELY(isStyleRuleWithNesting()))
         return downcast<StyleRuleWithNesting>(*this).resolvedSelectorList();
 
     return m_selectorList;
