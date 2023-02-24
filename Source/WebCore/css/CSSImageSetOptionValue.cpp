@@ -40,7 +40,7 @@ CSSImageSetOptionValue::Type::Type(String mimeType)
 
 String CSSImageSetOptionValue::Type::cssText() const
 {
-    return makeString("type("_s, m_mimeType, ')');
+    return makeString("type(\""_s, m_mimeType, "\")"_s);
 }
 
 CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image)
@@ -56,6 +56,14 @@ CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPri
 {
 }
 
+CSSImageSetOptionValue::CSSImageSetOptionValue(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution, String&& type)
+    : CSSValue(ImageSetOptionClass)
+    , m_image(WTFMove(image))
+    , m_resolution(resolution.ptr())
+    , m_type(CSSImageSetOptionValue::Type(type))
+{
+}
+
 Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image)
 {
     ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
@@ -66,6 +74,14 @@ Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image
 {
     ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
     return adoptRef(*new CSSImageSetOptionValue(WTFMove(image), WTFMove(resolution)));
+}
+
+Ref<CSSImageSetOptionValue> CSSImageSetOptionValue::create(Ref<CSSValue>&& image, Ref<CSSPrimitiveValue>&& resolution, String type)
+{
+    ASSERT(is<CSSImageValue>(image) || image->isImageGeneratorValue());
+    if (type.isNull())
+        return CSSImageSetOptionValue::create(WTFMove(image), WTFMove(resolution));
+    return adoptRef(*new CSSImageSetOptionValue(WTFMove(image), WTFMove(resolution), WTFMove(type)));
 }
 
 bool CSSImageSetOptionValue::equals(const CSSImageSetOptionValue& other) const
@@ -127,6 +143,11 @@ std::optional<CSSImageSetOptionValue::Type> CSSImageSetOptionValue::type() const
 void CSSImageSetOptionValue::setType(Type&& type)
 {
     m_type = WTFMove(type);
+}
+
+void CSSImageSetOptionValue::setType(String&& type)
+{
+    m_type = { WTFMove(type) };
 }
 
 } // namespace WebCore

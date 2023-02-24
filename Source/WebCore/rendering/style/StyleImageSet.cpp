@@ -62,7 +62,7 @@ Ref<CSSValue> StyleImageSet::computedStyleValue(const RenderStyle& style) const
     builder.reserveInitialCapacity(m_images.size());
 
     for (auto& image : m_images)
-        builder.uncheckedAppend(CSSImageSetOptionValue::create(image.image->computedStyleValue(style), CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX)));
+        builder.uncheckedAppend(CSSImageSetOptionValue::create(image.image->computedStyleValue(style), CSSPrimitiveValue::create(image.scaleFactor, CSSUnitType::CSS_DPPX), image.mimeType));
 
     return CSSImageSetValue::create(WTFMove(builder));
 }

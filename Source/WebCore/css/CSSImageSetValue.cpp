@@ -77,7 +77,7 @@ RefPtr<StyleImage> CSSImageSetValue::createStyleImage(Style::BuilderState& state
         if (option->resolution())
             scaleFactor = option->resolution()->floatValue(CSSUnitType::CSS_DPPX);
 
-        images.uncheckedAppend({ state.createStyleImage(option->image()), scaleFactor });
+        images.uncheckedAppend(ImageWithScale { state.createStyleImage(option->image()), scaleFactor, option->type() ? option->type()->mimeType() : String() });
     }
 
     // Sort the images so that they are stored in order from lowest resolution to highest.

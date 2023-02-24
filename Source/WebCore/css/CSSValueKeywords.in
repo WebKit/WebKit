@@ -1268,6 +1268,9 @@ filter
 -webkit-filter
 paint enable-if=ENABLE_CSS_PAINTING_API
 
+// image-set's MIME type
+type
+
 // deprecated gradients
 from
 to

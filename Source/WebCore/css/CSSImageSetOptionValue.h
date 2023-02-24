@@ -35,7 +35,7 @@ class CSSImageSetOptionValue final : public CSSValue {
 public:
     class Type {
     public:
-        explicit Type(String);
+        Type(String);
 
         bool isSupported() const { return m_isSupported; }
         String mimeType() const { return m_mimeType; }
@@ -48,6 +48,7 @@ public:
 
     static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&);
     static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&);
+    static Ref<CSSImageSetOptionValue> create(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&, String);
 
     bool equals(const CSSImageSetOptionValue&) const;
     String customCSSText() const;
@@ -59,10 +60,12 @@ public:
 
     std::optional<Type> type() const;
     void setType(Type&&);
+    void setType(String&&);
 
 private:
     CSSImageSetOptionValue(Ref<CSSValue>&&);
     CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&);
+    CSSImageSetOptionValue(Ref<CSSValue>&&, Ref<CSSPrimitiveValue>&&, String&&);
 
     Ref<CSSValue> m_image;
     RefPtr<CSSPrimitiveValue> m_resolution;
