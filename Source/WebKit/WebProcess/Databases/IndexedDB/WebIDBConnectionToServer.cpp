@@ -87,117 +87,162 @@ void WebIDBConnectionToServer::deleteDatabase(const IDBRequestData& requestData)
 
 void WebIDBConnectionToServer::openDatabase(const IDBRequestData& requestData)
 {
+    m_origins.add(requestData.requestIdentifier(), requestData.databaseIdentifier().origin());
     send(Messages::NetworkStorageManager::OpenDatabase(requestData));
 }
 
 void WebIDBConnectionToServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
 {
-    send(Messages::NetworkStorageManager::AbortTransaction(transactionIdentifier));
+    auto iterator = m_origins.find(transactionIdentifier);
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::AbortTransaction(iterator->value, transactionIdentifier));
 }
 
 void WebIDBConnectionToServer::commitTransaction(const IDBResourceIdentifier& transactionIdentifier, uint64_t pendingRequestCount)
 {
-    send(Messages::NetworkStorageManager::CommitTransaction(transactionIdentifier, pendingRequestCount));
+    auto iterator = m_origins.find(transactionIdentifier);
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::CommitTransaction(iterator->value, transactionIdentifier, pendingRequestCount));
 }
 
 void WebIDBConnectionToServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& transactionIdentifier)
 {
-    send(Messages::NetworkStorageManager::DidFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier));
+    auto iterator = m_originsByConnection.find(databaseConnectionIdentifier);
+    RELEASE_ASSERT(iterator != m_originsByConnection.end());
+    send(Messages::NetworkStorageManager::DidFinishHandlingVersionChangeTransaction(iterator->value, databaseConnectionIdentifier, transactionIdentifier));
 }
 
 void WebIDBConnectionToServer::createObjectStore(const IDBRequestData& requestData, const IDBObjectStoreInfo& info)
 {
-    send(Messages::NetworkStorageManager::CreateObjectStore(requestData, info));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::CreateObjectStore(iterator->value, requestData, info));
 }
 
 void WebIDBConnectionToServer::deleteObjectStore(const IDBRequestData& requestData, const String& objectStoreName)
 {
-    send(Messages::NetworkStorageManager::DeleteObjectStore(requestData, objectStoreName));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::DeleteObjectStore(iterator->value, requestData, objectStoreName));
 }
 
 void WebIDBConnectionToServer::renameObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
 {
-    send(Messages::NetworkStorageManager::RenameObjectStore(requestData, objectStoreIdentifier, newName));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::RenameObjectStore(iterator->value, requestData, objectStoreIdentifier, newName));
 }
 
 void WebIDBConnectionToServer::clearObjectStore(const IDBRequestData& requestData, uint64_t objectStoreIdentifier)
 {
-    send(Messages::NetworkStorageManager::ClearObjectStore(requestData, objectStoreIdentifier));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::ClearObjectStore(iterator->value, requestData, objectStoreIdentifier));
 }
 
 void WebIDBConnectionToServer::createIndex(const IDBRequestData& requestData, const IDBIndexInfo& info)
 {
-    send(Messages::NetworkStorageManager::CreateIndex(requestData, info));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::CreateIndex(iterator->value, requestData, info));
 }
 
 void WebIDBConnectionToServer::deleteIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
 {
-    send(Messages::NetworkStorageManager::DeleteIndex(requestData, objectStoreIdentifier, indexName));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::DeleteIndex(iterator->value, requestData, objectStoreIdentifier, indexName));
 }
 
 void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
 {
-    send(Messages::NetworkStorageManager::RenameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::RenameIndex(iterator->value, requestData, objectStoreIdentifier, indexIdentifier, newName));
 }
 
 void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
-    send(Messages::NetworkStorageManager::PutOrAdd(requestData, keyData, value, mode));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::PutOrAdd(iterator->value, requestData, keyData, value, mode));
 }
 
 void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData)
 {
-    send(Messages::NetworkStorageManager::GetRecord(requestData, getRecordData));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::GetRecord(iterator->value, requestData, getRecordData));
 }
 
 void WebIDBConnectionToServer::getAllRecords(const IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData)
 {
-    send(Messages::NetworkStorageManager::GetAllRecords(requestData, getAllRecordsData));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::GetAllRecords(iterator->value, requestData, getAllRecordsData));
 }
 
 void WebIDBConnectionToServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeData& range)
 {
-    send(Messages::NetworkStorageManager::GetCount(requestData, range));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::GetCount(iterator->value, requestData, range));
 }
 
 void WebIDBConnectionToServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRangeData& range)
 {
-    send(Messages::NetworkStorageManager::DeleteRecord(requestData, range));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::DeleteRecord(iterator->value, requestData, range));
 }
 
 void WebIDBConnectionToServer::openCursor(const IDBRequestData& requestData, const IDBCursorInfo& info)
 {
-    send(Messages::NetworkStorageManager::OpenCursor(requestData, info));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::OpenCursor(iterator->value, requestData, info));
 }
 
 void WebIDBConnectionToServer::iterateCursor(const IDBRequestData& requestData, const IDBIterateCursorData& data)
 {
-    send(Messages::NetworkStorageManager::IterateCursor(requestData, data));
+    auto iterator = m_origins.find(requestData.transactionIdentifier());
+    RELEASE_ASSERT(iterator != m_origins.end());
+    send(Messages::NetworkStorageManager::IterateCursor(iterator->value, requestData, data));
 }
 
 void WebIDBConnectionToServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
-    send(Messages::NetworkStorageManager::EstablishTransaction(databaseConnectionIdentifier, info));
+    auto iterator = m_originsByConnection.find(databaseConnectionIdentifier);
+    RELEASE_ASSERT(iterator != m_originsByConnection.end());
+    m_origins.add(info.identifier(), iterator->value);
+    send(Messages::NetworkStorageManager::EstablishTransaction(iterator->value, databaseConnectionIdentifier, info));
 }
 
 void WebIDBConnectionToServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
 {
-    send(Messages::NetworkStorageManager::DatabaseConnectionPendingClose(databaseConnectionIdentifier));
+    auto iterator = m_originsByConnection.find(databaseConnectionIdentifier);
+    RELEASE_ASSERT(iterator != m_originsByConnection.end());
+    send(Messages::NetworkStorageManager::DatabaseConnectionPendingClose(iterator->value, databaseConnectionIdentifier));
 }
 
 void WebIDBConnectionToServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
-    send(Messages::NetworkStorageManager::DatabaseConnectionClosed(databaseConnectionIdentifier));
+    auto origin = m_originsByConnection.take(databaseConnectionIdentifier);
+    send(Messages::NetworkStorageManager::DatabaseConnectionClosed(origin, databaseConnectionIdentifier));
 }
 
 void WebIDBConnectionToServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const std::optional<IDBResourceIdentifier>& transactionIdentifier)
 {
-    send(Messages::NetworkStorageManager::AbortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier));
+    auto iterator = m_originsByConnection.find(databaseConnectionIdentifier);
+    RELEASE_ASSERT(iterator != m_originsByConnection.end());
+    send(Messages::NetworkStorageManager::AbortOpenAndUpgradeNeeded(iterator->value, databaseConnectionIdentifier, transactionIdentifier));
 }
 
 void WebIDBConnectionToServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
-    send(Messages::NetworkStorageManager::DidFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed));
+    auto iterator = m_originsByConnection.find(databaseConnectionIdentifier);
+    RELEASE_ASSERT(iterator != m_originsByConnection.end());
+    send(Messages::NetworkStorageManager::DidFireVersionChangeEvent(iterator->value, databaseConnectionIdentifier, requestIdentifier, connectionClosed));
 }
 
 void WebIDBConnectionToServer::openDBRequestCancelled(const IDBRequestData& requestData)
@@ -217,16 +262,24 @@ void WebIDBConnectionToServer::didDeleteDatabase(const IDBResultData& result)
 
 void WebIDBConnectionToServer::didOpenDatabase(const IDBResultData& result)
 {
+    auto origin =  m_origins.take(result.requestIdentifier());
+    if (result.type() == IDBResultType::OpenDatabaseSuccess || result.type() == IDBResultType::OpenDatabaseUpgradeNeeded) {
+        ASSERT(result.databaseConnectionIdentifier());
+        m_originsByConnection.add(result.databaseConnectionIdentifier(), origin);
+    }
+
     m_connectionToServer->didOpenDatabase(result);
 }
 
 void WebIDBConnectionToServer::didAbortTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
+    m_origins.remove(transactionIdentifier);
     m_connectionToServer->didAbortTransaction(transactionIdentifier, error);
 }
 
 void WebIDBConnectionToServer::didCommitTransaction(const IDBResourceIdentifier& transactionIdentifier, const IDBError& error)
 {
+    m_origins.remove(transactionIdentifier);
     m_connectionToServer->didCommitTransaction(transactionIdentifier, error);
 }
 

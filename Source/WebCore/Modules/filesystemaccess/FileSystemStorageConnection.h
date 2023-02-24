@@ -40,6 +40,7 @@ class FileSystemFileHandle;
 class FileHandle;
 class FileSystemHandleCloseScope;
 class FileSystemSyncAccessHandle;
+struct ClientOrigin;
 template<typename> class ExceptionOr;
 
 class FileSystemStorageConnection : public ThreadSafeRefCounted<FileSystemStorageConnection> {

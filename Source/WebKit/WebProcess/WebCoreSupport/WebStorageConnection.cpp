@@ -65,7 +65,7 @@ void WebStorageConnection::getEstimate(WebCore::ClientOrigin&& origin, StorageCo
 void WebStorageConnection::fileSystemGetDirectory(WebCore::ClientOrigin&& origin, StorageConnection::GetDirectoryCallback&& completionHandler)
 {
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    connection.sendWithAsyncReply(Messages::NetworkStorageManager::FileSystemGetDirectory(origin), [completionHandler = WTFMove(completionHandler)](auto result) mutable {
+    connection.sendWithAsyncReply(Messages::NetworkStorageManager::FileSystemGetDirectory(origin), [origin = WTFMove(origin), completionHandler = WTFMove(completionHandler)](auto result) mutable {
         if (!result)
             return completionHandler(convertToException(result.error()));
 
@@ -73,6 +73,7 @@ void WebStorageConnection::fileSystemGetDirectory(WebCore::ClientOrigin&& origin
         if (!identifier.isValid())
             return completionHandler(WebCore::Exception { WebCore::UnknownError, "Connection is lost"_s });
 
+        WebProcess::singleton().fileSystemStorageConnection().registerFileSystemHandle(identifier, origin);
         auto connection = RefPtr<WebCore::FileSystemStorageConnection> { &WebProcess::singleton().fileSystemStorageConnection() };
         return completionHandler(std::pair { identifier, WTFMove(connection) });
     });

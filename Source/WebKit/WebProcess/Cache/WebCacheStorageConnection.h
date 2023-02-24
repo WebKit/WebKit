@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/CacheStorageConnection.h>
+#include <WebCore/ClientOrigin.h>
 #include <wtf/HashMap.h>
 
 namespace IPC {
@@ -70,6 +71,7 @@ private:
 
     WebCacheStorageProvider& m_provider;
     HashSet<WebCore::DOMCacheIdentifier> m_connectedIdentifiers;
+    HashMap<WebCore::DOMCacheIdentifier, WebCore::ClientOrigin> m_origins;
 };
 
 }

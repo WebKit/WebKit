@@ -106,6 +106,8 @@ private:
     void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, Vector<WebCore::IDBDatabaseNameAndVersion>&&);
 
     Ref<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
+    HashMap<WebCore::IDBResourceIdentifier, WebCore::ClientOrigin> m_origins;
+    HashMap<uint64_t, WebCore::ClientOrigin> m_originsByConnection;
 };
 
 } // namespace WebKit

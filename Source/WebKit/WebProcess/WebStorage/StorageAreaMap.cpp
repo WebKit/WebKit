@@ -105,7 +105,7 @@ void StorageAreaMap::setItem(Frame& sourceFrame, StorageAreaImpl* sourceArea, co
             weakThis->didSetItem(seed, key, hasError, WTFMove(allItems));
     };
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    connection.sendWithAsyncReply(Messages::NetworkStorageManager::SetItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, value, sourceFrame.document()->url().string()), WTFMove(callback));
+    connection.sendWithAsyncReply(Messages::NetworkStorageManager::SetItem(clientOrigin(), *m_remoteAreaIdentifier, sourceArea->identifier(), key, value, sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
 void StorageAreaMap::removeItem(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea, const String& key)
@@ -130,7 +130,7 @@ void StorageAreaMap::removeItem(WebCore::Frame& sourceFrame, StorageAreaImpl* so
         if (weakThis)
             weakThis->didRemoveItem(seed, key);
     };
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::RemoveItem(*m_remoteAreaIdentifier, sourceArea->identifier(), key, sourceFrame.document()->url().string()), WTFMove(callback));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::RemoveItem(clientOrigin(), *m_remoteAreaIdentifier, sourceArea->identifier(), key, sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
 void StorageAreaMap::clear(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceArea)
@@ -149,7 +149,7 @@ void StorageAreaMap::clear(WebCore::Frame& sourceFrame, StorageAreaImpl* sourceA
         if (weakThis)
             weakThis->didClear(seed);
     };
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::Clear(*m_remoteAreaIdentifier, sourceArea->identifier(), sourceFrame.document()->url().string()), WTFMove(callback));
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkStorageManager::Clear(clientOrigin(), *m_remoteAreaIdentifier, sourceArea->identifier(), sourceFrame.document()->url().string()), WTFMove(callback));
 }
 
 bool StorageAreaMap::contains(const String& key)
@@ -333,16 +333,17 @@ void StorageAreaMap::didConnect(StorageAreaIdentifier remoteAreaIdentifier, Hash
 
 void StorageAreaMap::disconnect()
 {
+    auto origin = clientOrigin();
     if (!m_remoteAreaIdentifier) {
         auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
         if (m_isWaitingForConnectReply && networkProcessConnection)
-            networkProcessConnection->connection().send(Messages::NetworkStorageManager::CancelConnectToStorageArea(computeStorageType(), m_namespace.storageNamespaceID(), clientOrigin()), 0);
+            networkProcessConnection->connection().send(Messages::NetworkStorageManager::CancelConnectToStorageArea(computeStorageType(), m_namespace.storageNamespaceID(), origin), 0);
 
         return;
     }
 
     if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::NetworkStorageManager::DisconnectFromStorageArea(*m_remoteAreaIdentifier), 0);
+        networkProcessConnection->connection().send(Messages::NetworkStorageManager::DisconnectFromStorageArea(origin, *m_remoteAreaIdentifier), 0);
 
     m_remoteAreaIdentifier = { };
     m_lastHandledMessageIdentifier = 0;
