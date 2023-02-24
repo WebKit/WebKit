@@ -93,4 +93,6 @@ bool defaultGamepadVibrationActuatorEnabled();
 bool defaultShouldTakeSuspendedAssertions();
 bool defaultShowModalDialogEnabled();
 
+bool defaultShouldEnableScreenOrientationAPI();
+
 } // namespace WebKit

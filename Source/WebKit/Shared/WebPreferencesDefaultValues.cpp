@@ -215,4 +215,16 @@ bool defaultGamepadVibrationActuatorEnabled()
 }
 #endif
 
+bool defaultShouldEnableScreenOrientationAPI()
+{
+#if PLATFORM(MAC)
+    return true;
+#elif PLATFORM(IOS_FAMILY)
+    static bool shouldEnableScreenOrientationAPI = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ScreenOrientationAPIEnabled);
+    return shouldEnableScreenOrientationAPI;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit
