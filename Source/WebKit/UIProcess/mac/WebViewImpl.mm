@@ -6134,7 +6134,7 @@ void WebViewImpl::installImageAnalysisOverlayView(VKCImageAnalysis *analysis)
         m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[m_view bounds]]);
         m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*this]);
         [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
-        setUpAdditionalImageAnalysisBehaviors(m_imageAnalysisOverlayView.get());
+        prepareImageAnalysisForOverlayView(m_imageAnalysisOverlayView.get());
         RELEASE_LOG(ImageAnalysis, "Installing image analysis overlay view at {{ %.0f, %.0f }, { %.0f, %.0f }}",
             m_imageAnalysisInteractionBounds.x(), m_imageAnalysisInteractionBounds.y(), m_imageAnalysisInteractionBounds.width(), m_imageAnalysisInteractionBounds.height());
     }
