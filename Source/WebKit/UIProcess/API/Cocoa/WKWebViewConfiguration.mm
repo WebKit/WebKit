@@ -155,6 +155,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _invisibleAutoplayNotPermitted;
     BOOL _mediaDataLoadsAutomatically;
     BOOL _attachmentElementEnabled;
+    BOOL _attachmentWideLayoutEnabled;
     Class _attachmentFileWrapperClass;
     BOOL _mainContentUserGestureOverrideEnabled;
 
@@ -223,6 +224,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
     _attachmentElementEnabled = NO;
+    _attachmentWideLayoutEnabled = NO;
 
 #if PLATFORM(IOS_FAMILY)
     _respectsImageOrientation = YES;
@@ -419,6 +421,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_invisibleAutoplayNotPermitted = self->_invisibleAutoplayNotPermitted;
     configuration->_mediaDataLoadsAutomatically = self->_mediaDataLoadsAutomatically;
     configuration->_attachmentElementEnabled = self->_attachmentElementEnabled;
+    configuration->_attachmentWideLayoutEnabled = self->_attachmentWideLayoutEnabled;
     configuration->_attachmentFileWrapperClass = self->_attachmentFileWrapperClass;
     configuration->_mediaTypesRequiringUserActionForPlayback = self->_mediaTypesRequiringUserActionForPlayback;
     configuration->_mainContentUserGestureOverrideEnabled = self->_mainContentUserGestureOverrideEnabled;
@@ -971,6 +974,16 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 - (void)_setAttachmentElementEnabled:(BOOL)attachmentElementEnabled
 {
     _attachmentElementEnabled = attachmentElementEnabled;
+}
+
+- (BOOL)_attachmentWideLayoutEnabled
+{
+    return _attachmentWideLayoutEnabled;
+}
+
+- (void)_setAttachmentWideLayoutEnabled:(BOOL)attachmentWideLayoutEnabled
+{
+    _attachmentWideLayoutEnabled = attachmentWideLayoutEnabled;
 }
 
 - (Class)_attachmentFileWrapperClass
