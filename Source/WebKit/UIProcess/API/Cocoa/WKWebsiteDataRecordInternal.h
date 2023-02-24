@@ -63,7 +63,7 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
         return WebsiteDataType::FileSystem;
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeHSTSCache])
         return WebsiteDataType::HSTSCache;
-    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeMediaKeys])
+    if ([websiteDataType isEqualToString:WKWebsiteDataTypeMediaKeys])
         return WebsiteDataType::MediaKeys;
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeSearchFieldRecentSearches])
         return WebsiteDataType::SearchFieldRecentSearches;
@@ -125,7 +125,7 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
     if (websiteDataTypes.contains(WebsiteDataType::HSTSCache))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeHSTSCache];
     if (websiteDataTypes.contains(WebsiteDataType::MediaKeys))
-        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeMediaKeys];
+        [wkWebsiteDataTypes addObject:WKWebsiteDataTypeMediaKeys];
     if (websiteDataTypes.contains(WebsiteDataType::SearchFieldRecentSearches))
         [wkWebsiteDataTypes addObject:WKWebsiteDataTypeSearchFieldRecentSearches];
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
