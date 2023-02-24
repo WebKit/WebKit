@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,6 +86,7 @@ public:
 
     FontFaceSet* fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
+    CSSFontFaceSet& cssFontFaceSet() { return m_cssFontFaceSet; }
 
     void incrementIsComputingRootStyleFont() { ++m_computingRootStyleFontCount; }
     void decrementIsComputingRootStyleFont() { --m_computingRootStyleFontCount; }
