@@ -702,6 +702,7 @@ private:
     String m_customNavigatorPlatform;
     bool m_userContentExtensionsEnabled { true };
     MemoryCompactRobinHoodHashMap<String, Vector<UserContentURLPattern>> m_activeContentRuleListActionPatterns;
+
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState m_deviceOrientationAndMotionAccessState { DeviceOrientationOrMotionPermissionState::Prompt };
 #endif
@@ -717,7 +718,7 @@ private:
     ColorSchemePreference m_colorSchemePreference { ColorSchemePreference::NoPreference };
 
 #if ENABLE(SERVICE_WORKER)
-    std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
+    std::unique_ptr<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
     bool m_canUseServiceWorkers { true };
 #endif
     ScriptExecutionContextIdentifier m_resultingClientId;
