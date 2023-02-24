@@ -54,6 +54,7 @@ typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 typedef struct _NSRange NSRange;
 typedef const struct __AXTextMarker* AXTextMarkerRef;
 typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
+OBJC_CLASS NSAttributedString;
 #elif USE(ATSPI)
 typedef WebCore::AccessibilityObjectAtspi AccessibilityObjectWrapper;
 #else
@@ -72,6 +73,7 @@ namespace WebCore {
 
 class AXCoreObject;
 class AXObjectCache;
+class AXTextMarkerRange;
 class AccessibilityScrollView;
 class Document;
 class Element;
@@ -1137,6 +1139,10 @@ public:
     virtual String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const = 0;
     virtual String text() const = 0;
     virtual int textLength() const = 0;
+#if PLATFORM(COCOA)
+    enum class SpellCheck : bool { No, Yes };
+    virtual RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const = 0;
+#endif
     virtual const String placeholderValue() const = 0;
 
     // Abbreviations

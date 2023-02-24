@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,19 @@
 
 #if ENABLE(ACCESSIBILITY) && PLATFORM(COCOA)
 
+#import "AXObjectCache.h"
+#import "TextIterator.h"
 #import "WebAccessibilityObjectWrapperBase.h"
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebCore {
 
-PlainTextRange::PlainTextRange(NSRange r)
-    : start(r.location)
-    , length(r.length)
+PlainTextRange::PlainTextRange(NSRange range)
+    : start(range.location)
+    , length(range.length)
 {
 }
-    
+
 String AccessibilityObject::speechHintAttributeValue() const
 {
     auto speak = speakAsProperty();
@@ -96,10 +99,10 @@ String AccessibilityObject::descriptionAttributeValue() const
     // One exception is the media control labels that have a value and a description. Those are set programatically.
     if (roleValue() == AccessibilityRole::StaticText && !isMediaControlLabel())
         return { };
-
+    
     Vector<AccessibilityText> textOrder;
     accessibilityText(textOrder);
-
+    
     // Determine if any visible text is available, which influences our usage of title tag.
     bool visibleTextAvailable = false;
     for (const auto& text : textOrder) {
@@ -108,14 +111,14 @@ String AccessibilityObject::descriptionAttributeValue() const
             break;
         }
     }
-
+    
     NSMutableString *returnText = [NSMutableString string];
     for (const auto& text : textOrder) {
         if (text.textSource == AccessibilityTextSource::Alternative) {
             [returnText appendString:text.text];
             break;
         }
-
+        
         switch (text.textSource) {
         // These are sub-components of one element (Attachment) that are re-combined in OSX and iOS.
         case AccessibilityTextSource::Title:
@@ -209,6 +212,172 @@ String AccessibilityObject::helpTextAttributeValue() const
     return { };
 }
 
-}; // namespace WebCore
+// NSAttributedString support.
+
+#ifndef NSAttachmentCharacter
+#define NSAttachmentCharacter 0xfffc
+#endif
+
+static void addObjectWrapperToArray(const AccessibilityObject& object, NSMutableArray *array)
+{
+    auto* wrapper = object.wrapper();
+    if (!wrapper)
+        return;
+
+    // Don't add the same object twice.
+    if ([array containsObject:wrapper])
+        return;
+
+#if PLATFORM(IOS_FAMILY)
+    // Explicitly set that this is a new element, in case other logic tries to override.
+    [wrapper setValue:@YES forKey:@"isAccessibilityElement"];
+#endif
+
+    [array addObject:wrapper];
+}
+
+// When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
+// To protect against such cases, the range should be validated before adding or removing attributes.
+bool attributedStringContainsRange(NSAttributedString *attributedString, const NSRange& range)
+{
+    return NSMaxRange(range) <= attributedString.length;
+}
+
+void attributedStringSetNumber(NSMutableAttributedString *attrString, NSString *attribute, NSNumber *number, const NSRange& range)
+{
+    if (!attributedStringContainsRange(attrString, range))
+        return;
+
+    if (number)
+        [attrString addAttribute:attribute value:number range:range];
+    else
+        [attrString removeAttribute:attribute range:range];
+}
+
+void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFontRef font, const NSRange& range)
+{
+    if (!attributedStringContainsRange(attributedString, range))
+        return;
+
+    if (!font) {
+#if PLATFORM(MAC)
+        [attributedString removeAttribute:NSAccessibilityFontTextAttribute range:range];
+#endif
+        return;
+    }
+
+    auto fontAttributes = adoptNS([[NSMutableDictionary alloc] init]);
+    auto familyName = adoptCF(CTFontCopyFamilyName(font));
+    NSNumber *size = [NSNumber numberWithFloat:CTFontGetSize(font)];
+
+#if PLATFORM(IOS_FAMILY)
+    auto fullName = adoptCF(CTFontCopyFullName(font));
+    if (fullName)
+        [fontAttributes setValue:bridge_cast(fullName.get()) forKey:UIAccessibilityTokenFontName];
+    if (familyName)
+        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:UIAccessibilityTokenFontFamily];
+    if ([size boolValue])
+        [fontAttributes setValue:size forKey:UIAccessibilityTokenFontSize];
+    auto traits = CTFontGetSymbolicTraits(font);
+    if (traits & kCTFontTraitBold)
+        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenBold];
+    if (traits & kCTFontTraitItalic)
+        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenItalic];
+
+    [attributedString addAttributes:fontAttributes.get() range:range];
+#endif
+
+#if PLATFORM(MAC)
+    [fontAttributes setValue:size forKey:NSAccessibilityFontSizeKey];
+
+    if (familyName)
+        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:NSAccessibilityFontFamilyKey];
+    auto postScriptName = adoptCF(CTFontCopyPostScriptName(font));
+    if (postScriptName)
+        [fontAttributes setValue:bridge_cast(postScriptName.get()) forKey:NSAccessibilityFontNameKey];
+    auto displayName = adoptCF(CTFontCopyDisplayName(font));
+    if (displayName)
+        [fontAttributes setValue:bridge_cast(displayName.get()) forKey:NSAccessibilityVisibleNameKey];
+    auto traits = CTFontGetSymbolicTraits(font);
+    if (traits & kCTFontTraitBold)
+        [fontAttributes setValue:@YES forKey:@"AXFontBold"];
+    if (traits & kCTFontTraitItalic)
+        [fontAttributes setValue:@YES forKey:@"AXFontItalic"];
+
+    [attributedString addAttribute:NSAccessibilityFontTextAttribute value:fontAttributes.get() range:range];
+#endif
+}
+
+static void attributedStringAppendWrapper(NSMutableAttributedString *attrString, WebAccessibilityObjectWrapper *wrapper)
+{
+    const auto attachmentCharacter = static_cast<UniChar>(NSAttachmentCharacter);
+    [attrString appendAttributedString:[[NSMutableAttributedString alloc] initWithString:[NSString stringWithCharacters:&attachmentCharacter length:1]
+#if PLATFORM(MAC)
+        attributes:@{ NSAccessibilityAttachmentTextAttribute : (__bridge id)adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)).get() }]];
+#else
+        attributes:@{ UIAccessibilityTokenAttachment : wrapper }]];
+#endif
+}
+
+RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range, SpellCheck spellCheck) const
+{
+    auto result = adoptNS([[NSMutableArray alloc] init]);
+
+    // Iterate over the range to build the AX attributed strings.
+    for (TextIterator it(range); !it.atEnd(); it.advance()) {
+        Node& node = it.range().start.container;
+
+        // Non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX).
+        if (it.text().length()) {
+            auto listMarkerText = listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
+            if (!listMarkerText.isEmpty()) {
+                if (auto attrString = attributedStringCreate(&node, listMarkerText, SpellCheck::No))
+                    [result addObject:attrString.get()];
+            }
+
+            if (auto attrString = attributedStringCreate(&node, it.text(), spellCheck))
+                [result addObject:attrString.get()];
+        } else {
+            if (Node* replacedNode = it.node()) {
+                auto* object = axObjectCache()->getOrCreate(replacedNode->renderer());
+                if (object)
+                    addObjectWrapperToArray(*object, result.get());
+            }
+        }
+    }
+
+    return result;
+}
+
+RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForTextMarkerRange(AXTextMarkerRange&& textMarkerRange, SpellCheck spellCheck) const
+{
+#if PLATFORM(MAC)
+    auto range = rangeForTextMarkerRange(axObjectCache(), textMarkerRange);
+#else
+    auto range = textMarkerRange.simpleRange();
+#endif
+    if (!range)
+        return nil;
+
+    auto result = adoptNS([[NSMutableAttributedString alloc] init]);
+
+    auto contents = contentForRange(*range, spellCheck);
+    for (id content in contents.get()) {
+        auto item = retainPtr(content);
+        if ([item isKindOfClass:[WebAccessibilityObjectWrapper class]]) {
+            attributedStringAppendWrapper(result.get(), item.get());
+            continue;
+        }
+
+        if (![item isKindOfClass:[NSAttributedString class]])
+            continue;
+
+        [result appendAttributedString:item.get()];
+    }
+
+    return result;
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(ACCESSIBILITY) && PLATFORM(COCOA)

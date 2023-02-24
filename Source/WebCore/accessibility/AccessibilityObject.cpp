@@ -1529,7 +1529,7 @@ String AccessibilityObject::stringForRange(const SimpleRange& range) const
     TextIterator it(range);
     if (it.atEnd())
         return String();
-    
+
     StringBuilder builder;
     for (; !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
@@ -1546,7 +1546,7 @@ String AccessibilityObject::stringForRange(const SimpleRange& range) const
                 builder.append(objectReplacementCharacter);
         }
     }
-    
+
     return builder.toString();
 }
 

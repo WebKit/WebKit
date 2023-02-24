@@ -48,10 +48,7 @@
 #import "AccessibilityTableRow.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
-#import "ColorMac.h"
 #import "ContextMenuController.h"
-#import "Editing.h"
-#import "Editor.h"
 #import "ElementInlines.h"
 #import "Font.h"
 #import "FontCascade.h"
@@ -74,9 +71,6 @@
 #import "RenderView.h"
 #import "RenderWidget.h"
 #import "ScrollView.h"
-#import "TextCheckerClient.h"
-#import "TextCheckingHelper.h"
-#import "TextDecorationPainter.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
@@ -117,10 +111,6 @@ using namespace WebCore;
 #endif
 
 // Miscellaneous
-#ifndef NSAccessibilityBlockQuoteLevelAttribute
-#define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
-#endif
-
 #ifndef NSAccessibilityAccessKeyAttribute
 #define NSAccessibilityAccessKeyAttribute @"AXAccessKey"
 #endif
@@ -216,10 +206,6 @@ using namespace WebCore;
 
 #ifndef NSAccessibilityPathAttribute
 #define NSAccessibilityPathAttribute @"AXPath"
-#endif
-
-#ifndef NSAccessibilityExpandedTextValueAttribute
-#define NSAccessibilityExpandedTextValueAttribute @"AXExpandedTextValue"
 #endif
 
 #ifndef NSAccessibilityIsMultiSelectableAttribute
@@ -519,8 +505,6 @@ using namespace WebCore;
 #define AXHasWebApplicationAncestorAttribute @"AXHasWebApplicationAncestor"
 #endif
 
-extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
-
 @implementation WebAccessibilityObjectWrapper
 
 - (void)detach
@@ -752,323 +736,14 @@ static RetainPtr<AXTextMarkerRef> previousTextMarker(AXObjectCache* cache, const
     return adoptCF(AXTextMarkerCreate(kCFAllocatorDefault, (const UInt8*)&textMarkerData.value(), sizeof(textMarkerData.value())));
 }
 
-static void AXAttributeStringSetColor(NSMutableAttributedString* attrString, NSString* attribute, NSColor* color, NSRange range)
+- (NSAttributedString *)attributedStringForTextMarkerRange:(AXTextMarkerRangeRef)textMarkerRangeRef spellCheck:(AXCoreObject::SpellCheck)spellCheck
 {
-    if (!AXAttributedStringRangeIsValid(attrString, range))
-        return;
-
-    if (color) {
-        CGColorRef cgColor = color.CGColor;
-        id existingColor = [attrString attribute:attribute atIndex:range.location effectiveRange:nil];
-        if (!existingColor || !CGColorEqualToColor((__bridge CGColorRef)existingColor, cgColor))
-            [attrString addAttribute:attribute value:(__bridge id)cgColor range:range];
-    } else
-        [attrString removeAttribute:attribute range:range];
-}
-
-static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NSString* attribute, NSNumber* number, NSRange range)
-{
-    if (!AXAttributedStringRangeIsValid(attrString, range))
-        return;
-    
-    if (number)
-        [attrString addAttribute:attribute value:number range:range];
-    else
-        [attrString removeAttribute:attribute range:range];
-}
-
-static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
-{
-    const RenderStyle& style = renderer->style();
-
-    // set basic font info
-    AXAttributedStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
-
-    // set basic colors
-    AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, cocoaColor(style.visitedDependentColor(CSSPropertyColor)).get(), range);
-    AXAttributeStringSetColor(attrString, NSAccessibilityBackgroundColorTextAttribute, cocoaColor(style.visitedDependentColor(CSSPropertyBackgroundColor)).get(), range);
-    
-    // set super/sub scripting
-    VerticalAlign alignment = style.verticalAlign();
-    if (alignment == VerticalAlign::Sub)
-        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, @(-1), range);
-    else if (alignment == VerticalAlign::Super)
-        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, @(1), range);
-    else
-        [attrString removeAttribute:NSAccessibilitySuperscriptTextAttribute range:range];
-    
-    // set shadow
-    if (style.textShadow())
-        AXAttributeStringSetNumber(attrString, NSAccessibilityShadowTextAttribute, @YES, range);
-    else
-        [attrString removeAttribute:NSAccessibilityShadowTextAttribute range:range];
-    
-    // set underline and strikethrough
-    auto decor = style.textDecorationsInEffect();
-    if (!(decor & TextDecorationLine::Underline)) {
-        [attrString removeAttribute:NSAccessibilityUnderlineTextAttribute range:range];
-        [attrString removeAttribute:NSAccessibilityUnderlineColorTextAttribute range:range];
-    }
-    if (!(decor & TextDecorationLine::LineThrough)) {
-        [attrString removeAttribute:NSAccessibilityStrikethroughTextAttribute range:range];
-        [attrString removeAttribute:NSAccessibilityStrikethroughColorTextAttribute range:range];
-    }
-
-    if (decor & TextDecorationLine::Underline || decor & TextDecorationLine::LineThrough) {
-        // FIXME: Should the underline style be reported here?
-        auto decorationStyles = TextDecorationPainter::stylesForRenderer(*renderer, decor);
-
-        if (decor & TextDecorationLine::Underline) {
-            AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, @YES, range);
-            AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, cocoaColor(decorationStyles.underline.color).get(), range);
-        }
-
-        if (decor & TextDecorationLine::LineThrough) {
-            AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, @YES, range);
-            AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, cocoaColor(decorationStyles.linethrough.color).get(), range);
-        }
-    }
-    
-    // FIXME: This traversal should be replaced by a flag in AccessibilityObject::m_ancestorFlags (e.g., AXAncestorFlag::HasHTMLMarkAncestor)
-    // Indicate background highlighting.
-    for (Node* node = renderer->node(); node; node = node->parentNode()) {
-        if (node->hasTagName(HTMLNames::markTag))
-            AXAttributeStringSetNumber(attrString, @"AXHighlight", @YES, range);
-        if (auto* element = dynamicDowncast<Element>(*node)) {
-            auto& roleValue = element->attributeWithoutSynchronization(HTMLNames::roleAttr);
-            if (equalLettersIgnoringASCIICase(roleValue, "insertion"_s))
-                AXAttributeStringSetNumber(attrString, @"AXIsSuggestedInsertion", @YES, range);
-            else if (equalLettersIgnoringASCIICase(roleValue, "deletion"_s))
-                AXAttributeStringSetNumber(attrString, @"AXIsSuggestedDeletion", @YES, range);
-            else if (equalLettersIgnoringASCIICase(roleValue, "suggestion"_s))
-                AXAttributeStringSetNumber(attrString, @"AXIsSuggestion", @YES, range);
-            else if (equalLettersIgnoringASCIICase(roleValue, "mark"_s))
-                AXAttributeStringSetNumber(attrString, @"AXHighlight", @YES, range);
-        }
-    }
-}
-
-static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
-{
-    if (!AXAttributedStringRangeIsValid(attrString, range))
-        return;
-    
-    AccessibilityObject* obj = renderer->document().axObjectCache()->getOrCreate(renderer);
-    int quoteLevel = obj->blockquoteLevel();
-    
-    if (quoteLevel)
-        [attrString addAttribute:NSAccessibilityBlockQuoteLevelAttribute value:@(quoteLevel) range:range];
-    else
-        [attrString removeAttribute:NSAccessibilityBlockQuoteLevelAttribute range:range];
-}
-
-static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, StringView text, NSRange range)
-{
-    ASSERT(node);
-    
-    // If this node is not inside editable content, do not run the spell checker on the text.
-    if (!node->document().axObjectCache()->rootAXEditableElement(node))
-        return;
-
-    if (unifiedTextCheckerEnabled(node->document().frame())) {
-        // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
-        TextCheckerClient* checker = node->document().editor().textChecker();
-        
-        // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
-        Vector<TextCheckingResult> results;
-        checkTextOfParagraph(*checker, text, TextCheckingType::Spelling, results, node->document().frame()->selection().selection());
-        
-        size_t size = results.size();
-        for (unsigned i = 0; i < size; i++) {
-            const TextCheckingResult& result = results[i];
-            AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, @YES, NSMakeRange(result.range.location + range.location, result.range.length));
-#if PLATFORM(MAC)
-            AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, @YES, NSMakeRange(result.range.location + range.location, result.range.length));
-#endif
-        }
-        return;
-    }
-
-    for (unsigned currentPosition = 0; currentPosition < text.length(); ) {
-        int misspellingLocation = -1;
-        int misspellingLength = 0;
-        node->document().editor().textChecker()->checkSpellingOfString(text.substring(currentPosition), &misspellingLocation, &misspellingLength);
-        if (misspellingLocation == -1 || !misspellingLength)
-            break;
-        
-        NSRange spellRange = NSMakeRange(range.location + currentPosition + misspellingLocation, misspellingLength);
-        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, @YES, spellRange);
-#if PLATFORM(MAC)
-        AXAttributeStringSetNumber(attrString, NSAccessibilityMarkedMisspelledTextAttribute, @YES, spellRange);
-#endif
-
-        currentPosition += misspellingLocation + misspellingLength;
-    }
-}
-
-static void AXAttributeStringSetExpandedTextValue(NSMutableAttributedString *attrString, RenderObject* renderer, NSRange range)
-{
-    if (!renderer || !AXAttributedStringRangeIsValid(attrString, range))
-        return;
-    AccessibilityObject* axObject = renderer->document().axObjectCache()->getOrCreate(renderer);
-    if (axObject->supportsExpandedTextValue())
-        [attrString addAttribute:NSAccessibilityExpandedTextValueAttribute value:axObject->expandedTextValue() range:range];
-    else
-        [attrString removeAttribute:NSAccessibilityExpandedTextValueAttribute range:range];
-}
-
-static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
-{
-    if (!renderer)
-        return;
-    
-    if (!AXAttributedStringRangeIsValid(attrString, range))
-        return;
-    
-    // Sometimes there are objects between the text and the heading.
-    // In those cases the parent hierarchy should be queried to see if there is a heading level.
-    int parentHeadingLevel = 0;
-    AccessibilityObject* parentObject = renderer->document().axObjectCache()->getOrCreate(renderer->parent());
-    for (; parentObject; parentObject = parentObject->parentObject()) {
-        parentHeadingLevel = parentObject->headingLevel();
-        if (parentHeadingLevel)
-            break;
-    }
-    
-    if (parentHeadingLevel)
-        [attrString addAttribute:@"AXHeadingLevel" value:@(parentHeadingLevel) range:range];
-    else
-        [attrString removeAttribute:@"AXHeadingLevel" range:range];
-}
-
-static void AXAttributeStringSetElement(NSMutableAttributedString* attrString, NSString* attribute, AccessibilityObject* object, NSRange range)
-{
-    if (!AXAttributedStringRangeIsValid(attrString, range))
-        return;
-    
-    if (is<AccessibilityRenderObject>(object)) {
-        // make a serializable AX object
-        
-        RenderObject* renderer = downcast<AccessibilityRenderObject>(*object).renderer();
-        if (!renderer)
-            return;
-        
-        AXObjectCache* cache = renderer->document().axObjectCache();
-        if (!cache)
-            return;
-        
-        id objectWrapper = object->wrapper();
-        if ([attribute isEqualToString:NSAccessibilityAttachmentTextAttribute] && object->isAttachment() && [objectWrapper attachmentView])
-            objectWrapper = [objectWrapper attachmentView];
-        
-        if (auto axElement = adoptCF(NSAccessibilityCreateAXUIElementRef(objectWrapper)))
-            [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
-    } else
-        [attrString removeAttribute:attribute range:range];
-}
-
-static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, StringView text, bool spellCheck)
-{
-    // skip invisible text
-    RenderObject* renderer = node->renderer();
-    if (!renderer || !text.length())
-        return;
-    
-    // easier to calculate the range before appending the string
-    NSRange attrStringRange = NSMakeRange([attrString length], text.length());
-    
-    // append the string from this node
-    NSAttributedString *stringToAppend = adoptNS([[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()]).autorelease();
-    [attrString appendAttributedString:stringToAppend];
-    
-    // add new attributes and remove irrelevant inherited ones
-    // NOTE: color attributes are handled specially because -[NSMutableAttributedString addAttribute: value: range:] does not merge
-    // identical colors.  Workaround is to not replace an existing color attribute if it matches what we are adding.  This also means
-    // we cannot just pre-remove all inherited attributes on the appended string, so we have to remove the irrelevant ones individually.
-    
-    // remove inherited attachment from prior AXAttributedStringAppendReplaced
-    [attrString removeAttribute:NSAccessibilityAttachmentTextAttribute range:attrStringRange];
-    if (spellCheck) {
-#if PLATFORM(MAC)
-        [attrString removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:attrStringRange];
-#endif
-        [attrString removeAttribute:NSAccessibilityMisspelledTextAttribute range:attrStringRange];
-    }
-
-    // set new attributes
-    AXAttributeStringSetStyle(attrString, renderer, attrStringRange);
-    AXAttributeStringSetHeadingLevel(attrString, renderer, attrStringRange);
-    AXAttributeStringSetBlockquoteLevel(attrString, renderer, attrStringRange);
-    AXAttributeStringSetExpandedTextValue(attrString, renderer, attrStringRange);
-    AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), attrStringRange);
-    
-    // do spelling last because it tends to break up the range
-    if (spellCheck)
-        AXAttributeStringSetSpelling(attrString, node, text, attrStringRange);
-}
-
-static NSString* nsStringForReplacedNode(Node* replacedNode)
-{
-    // we should always be given a rendered node and a replaced node, but be safe
-    // replaced nodes are either attachments (widgets) or images
-    if (!replacedNode || !isRendererReplacedElement(replacedNode->renderer()) || replacedNode->isTextNode()) {
-        ASSERT_NOT_REACHED();
+    if (!textMarkerRangeRef)
         return nil;
-    }
-    
-    // create an AX object, but skip it if it is not supposed to be seen
-    RefPtr<AccessibilityObject> obj = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode->renderer());
-    if (obj->accessibilityIsIgnored())
-        return nil;
-    
-    // use the attachmentCharacter to represent the replaced node
-    const UniChar attachmentChar = NSAttachmentCharacter;
-    return [NSString stringWithCharacters:&attachmentChar length:1];
-}
 
-- (NSAttributedString *)doAXAttributedStringForTextMarkerRange:(AXTextMarkerRangeRef)textMarkerRange spellCheck:(BOOL)spellCheck
-{
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<NSAttributedString *>([textMarkerRange = retainPtr(textMarkerRange), &spellCheck, protectedSelf = retainPtr(self)] () -> RetainPtr<NSAttributedString> {
-        auto* backingObject = protectedSelf.get().axBackingObject;
-        if (!backingObject)
-            return nil;
-
-        auto range = rangeForTextMarkerRange(backingObject->axObjectCache(), textMarkerRange.get());
-        if (!range)
-            return nil;
-        auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
-        TextIterator it(*range);
-        while (!it.atEnd()) {
-            Node& node = it.range().start.container;
-
-            // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
-            if (it.text().length()) {
-                // Add the text of the list marker item if necessary.
-                StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
-                if (!listMarkerText.isEmpty())
-                    AXAttributedStringAppendText(attrString.get(), &node, listMarkerText, false);
-                AXAttributedStringAppendText(attrString.get(), &node, it.text(), spellCheck);
-            } else {
-                Node* replacedNode = it.node();
-                NSString *attachmentString = nsStringForReplacedNode(replacedNode);
-                if (attachmentString) {
-                    NSRange attrStringRange = NSMakeRange([attrString length], [attachmentString length]);
-
-                    // append the placeholder string
-                    [[attrString mutableString] appendString:attachmentString];
-
-                    // remove all inherited attributes
-                    [attrString setAttributes:nil range:attrStringRange];
-
-                    // add the attachment attribute
-                    AccessibilityObject* obj = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode->renderer());
-                    AXAttributeStringSetElement(attrString.get(), NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
-                }
-            }
-            it.advance();
-        }
-
-        return attrString;
+    return Accessibility::retrieveAutoreleasedValueFromMainThread<NSAttributedString *>([textMarkerRange = retainPtr(textMarkerRangeRef), &spellCheck, protectedSelf = retainPtr(self)] () -> RetainPtr<NSAttributedString> {
+        RefPtr<AXCoreObject> object = protectedSelf.get().axBackingObject;
+        return object ? object->attributedStringForTextMarkerRange(AXTextMarkerRange(textMarkerRange.get()), spellCheck) : nil;
     });
 }
 
@@ -2019,10 +1694,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         }
     }
 
-    if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute]) {
+    if ([attributeName isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute]) {
         if (backingObject->isPasswordField())
             return nil;
-        // TODO: Get actual visible range. <rdar://problem/4712101>
+        // FIXME: Get actual visible range. <rdar://problem/4712101>
         if (backingObject->isTextControl())
             return [NSValue valueWithRange:NSMakeRange(0, backingObject->textLength())];
         return [NSValue valueWithRange:[self accessibilityVisibleCharacterRange]];
@@ -3164,7 +2839,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             return nil;
 
         auto webRange = backingObject->rangeForPlainTextRange(range);
-        return [protectedSelf doAXAttributedStringForTextMarkerRange:textMarkerRangeFromRange(backingObject->axObjectCache(), webRange) spellCheck:YES];
+        return [protectedSelf attributedStringForTextMarkerRange:textMarkerRangeFromRange(backingObject->axObjectCache(), webRange) spellCheck:AXCoreObject::SpellCheck::Yes];
     });
 }
 
@@ -3769,11 +3444,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     }
 
     if ([attribute isEqualToString:@"AXAttributedStringForTextMarkerRange"])
-        return [self doAXAttributedStringForTextMarkerRange:textMarkerRange spellCheck:YES];
+        return [self attributedStringForTextMarkerRange:textMarkerRange spellCheck:AXCoreObject::SpellCheck::Yes];
 
     if ([attribute isEqualToString:@"AXAttributedStringForTextMarkerRangeWithOptions"]) {
         if (textMarkerRange)
-            return [self doAXAttributedStringForTextMarkerRange:textMarkerRange spellCheck:NO];
+            return [self attributedStringForTextMarkerRange:textMarkerRange spellCheck:AXCoreObject::SpellCheck::No];
 
         if (dictionary) {
             AXTextMarkerRangeRef textMarkerRange = nil;
@@ -3781,12 +3456,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             if (AXObjectIsTextMarkerRange(parameter))
                 textMarkerRange = (AXTextMarkerRangeRef)parameter;
 
-            BOOL spellCheck = NO;
+            auto spellCheck = AXCoreObject::SpellCheck::No;
             parameter = [dictionary objectForKey:@"AXSpellCheck"];
-            if ([parameter isKindOfClass:[NSNumber class]])
-                spellCheck = [parameter boolValue];
-
-            return [self doAXAttributedStringForTextMarkerRange:textMarkerRange spellCheck:spellCheck];
+            if ([parameter isKindOfClass:[NSNumber class]] && [parameter boolValue])
+                spellCheck = AXCoreObject::SpellCheck::Yes;
+            return [self attributedStringForTextMarkerRange:textMarkerRange spellCheck:spellCheck];
         }
 
         return nil;

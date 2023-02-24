@@ -398,8 +398,14 @@ public:
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
     String stringValue() const override { return String(); }
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override { return String(); }
-    String text() const override { return String(); }
+    String text() const override { return { }; }
     int textLength() const override { return 0; }
+#if PLATFORM(COCOA)
+    // Returns an array of strings and AXObject wrappers corresponding to the
+    // textruns and replacement nodes included in the given range.
+    RetainPtr<NSArray> contentForRange(const SimpleRange&, SpellCheck = SpellCheck::No) const;
+    RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck = SpellCheck::No) const override;
+#endif
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
     const String placeholderValue() const override;
