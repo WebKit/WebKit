@@ -64,11 +64,11 @@ protected:
     enum CaretVisibility { Visible, Hidden };
     explicit CaretBase(CaretVisibility = Hidden);
 
-    void invalidateCaretRect(Node*, bool caretRectChanged = false);
+    void invalidateCaretRect(Node*, bool caretRectChanged = false, CaretAnimator* = nullptr);
     void clearCaretRect();
     bool updateCaretRect(Document&, const VisiblePosition& caretPosition);
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect, const CaretAnimator::PresentationProperties&) const;
+    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, const LayoutRect& clipRect, CaretAnimator* = nullptr) const;
 
     const LayoutRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
 
@@ -320,6 +320,7 @@ private:
     void invalidateCaretRect();
 
     void caretAnimationDidUpdate(CaretAnimator&) final;
+    void caretAnimatorInvalidated(CaretAnimator&, CaretAnimatorType) final;
 
     Document* document() final;
 
@@ -330,6 +331,7 @@ private:
 #endif
 
     void updateAssociatedLiveRange();
+    LayoutRect localCaretRect() const final { return localCaretRectWithoutUpdate(); }
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     RefPtr<Range> m_associatedLiveRange;
