@@ -267,6 +267,8 @@ private:
 
     bool handleInByAsMatchStructure(VirtualRegister destination, Node* base, InByStatus);
     void handleInById(VirtualRegister destination, Node* base, CacheableIdentifier, InByStatus);
+    void handleGetScope(VirtualRegister destination);
+    void handleCheckTraps();
 
     // Either register a watchpoint or emit a check for this condition. Returns false if the
     // condition no longer holds, and therefore no reasonable check can be emitted.
@@ -1201,6 +1203,7 @@ private:
 
         // Optional: a continuation block for returns to jump to. It is set by early returns if it does not exist.
         BasicBlock* m_continuationBlock;
+        BasicBlock* m_entryBlockForRecursiveTailCall { nullptr };
 
         Operand m_returnValue;
         
@@ -1566,9 +1569,8 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         m_inlineStackTop = oldStackTop;
         m_exitOK = false;
 
-        BasicBlock** entryBlockPtr = tryBinarySearch<BasicBlock*, BytecodeIndex>(stackEntry->m_blockLinkingTargets, stackEntry->m_blockLinkingTargets.size(), BytecodeIndex(opcodeLengths[op_enter] + 1), getBytecodeBeginForBlock);
-        RELEASE_ASSERT(entryBlockPtr);
-        addJumpTo(*entryBlockPtr);
+        RELEASE_ASSERT(stackEntry->m_entryBlockForRecursiveTailCall);
+        addJumpTo(stackEntry->m_entryBlockForRecursiveTailCall);
         return true;
         // It would be unsound to jump over a non-tail call: the "tail" call is not really a tail call in that case.
     } while (stackEntry->m_inlineCallFrame && stackEntry->m_inlineCallFrame->kind == InlineCallFrame::TailCall && (stackEntry = stackEntry->m_caller));
@@ -5310,6 +5312,22 @@ void ByteCodeParser::handleInById(VirtualRegister destination, Node* base, Cache
     set(destination, addToGraph(InById, OpInfo(identifier), base));
 }
 
+void ByteCodeParser::handleGetScope(VirtualRegister destination)
+{
+    Node* callee = get(VirtualRegister(CallFrameSlot::callee));
+    Node* result;
+    if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>())
+        result = weakJSConstant(function->scope());
+    else
+        result = addToGraph(GetScope, callee);
+    set(destination, result);
+}
+
+void ByteCodeParser::handleCheckTraps()
+{
+    addToGraph((Options::usePollingTraps() || m_graph.m_plan.isUnlinked()) ? CheckTraps : InvalidationPoint);
+}
+
 void ByteCodeParser::emitPutById(
     Node* base, CacheableIdentifier identifier, Node* value, const PutByStatus& putByStatus, bool isDirect, ECMAMode ecmaMode)
 {
@@ -5790,6 +5808,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // Initialize all locals to undefined.
             for (unsigned i = 0; i < m_inlineStackTop->m_codeBlock->numVars(); ++i)
                 set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
+
+            if (codeBlock->hasTailCalls()) {
+                m_inlineStackTop->m_entryBlockForRecursiveTailCall = allocateUntargetableBlock();
+                addToGraph(Jump, OpInfo(m_inlineStackTop->m_entryBlockForRecursiveTailCall));
+                m_currentBlock = m_inlineStackTop->m_entryBlockForRecursiveTailCall;
+            }
+
+            handleGetScope(codeBlock->scopeRegister());
+
+            // Normally we wouldn't be allowed to exit here, but in this case we'd
+            // only be re-initializing the locals and resetting the scope register
+            m_exitOK = true;
+            addToGraph(ExitOK);
+
+            handleCheckTraps();
 
             NEXT_OPCODE(op_enter);
         }
@@ -8433,7 +8466,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         }
         
         case op_check_traps: {
-            addToGraph((Options::usePollingTraps() || m_graph.m_plan.isUnlinked()) ? CheckTraps : InvalidationPoint);
+            handleCheckTraps();
             NEXT_OPCODE(op_check_traps);
         }
 
@@ -8486,13 +8519,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             // loads from the scope register later, as that would prevent the DFG from tracking the
             // bytecode-level liveness of the scope register.
             auto bytecode = currentInstruction->as<OpGetScope>();
-            Node* callee = get(VirtualRegister(CallFrameSlot::callee));
-            Node* result;
-            if (JSFunction* function = callee->dynamicCastConstant<JSFunction*>())
-                result = weakJSConstant(function->scope());
-            else
-                result = addToGraph(GetScope, callee);
-            set(bytecode.m_dst, result);
+            handleGetScope(bytecode.m_dst);
             NEXT_OPCODE(op_get_scope);
         }
 

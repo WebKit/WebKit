@@ -589,6 +589,7 @@ namespace JSC {
         void emitSlow_op_jstricteq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnstricteq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_hint(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_enter(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_check_traps(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_pow(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
@@ -625,6 +626,8 @@ namespace JSC {
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
         void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
+        void emitGetScope(VirtualRegister destination);
+        void emitCheckTraps();
 
         bool isKnownCell(VirtualRegister);
 

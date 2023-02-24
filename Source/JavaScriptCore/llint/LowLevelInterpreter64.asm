@@ -901,7 +901,10 @@ _llint_op_enter:
     btqnz t2, .opEnterLoop
 .opEnterDone:
     callSlowPath(_slow_path_enter)
-    dispatchOp(narrow, op_enter)
+
+    checkTraps(macro()
+        dispatchOp(narrow, op_enter)
+    end)
 
 
 llintOpWithProfile(op_get_argument, OpGetArgument, macro (size, get, dispatch, return)

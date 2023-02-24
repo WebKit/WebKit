@@ -356,9 +356,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
 
     emitEnter();
 
-    allocateAndEmitScope();
-
-    emitCheckTraps();
+    allocateScope();
 
     const FunctionStack& functionStack = programNode->functionStack();
 
@@ -484,9 +482,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode))
         m_generatorRegister = &m_parameters[static_cast<unsigned>(JSGenerator::Argument::Generator)];
 
-    allocateAndEmitScope();
-
-    emitCheckTraps();
+    allocateScope();
 
     switch (constructorKind()) {
     case ConstructorKind::None:
@@ -910,9 +906,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
 
     emitEnter();
 
-    allocateAndEmitScope();
-
-    emitCheckTraps();
+    allocateScope();
     
     for (FunctionMetadataNode* function : evalNode->functionStack()) {
         m_codeBlock->addFunctionDecl(makeFunction(function));
@@ -1004,11 +998,9 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
 
     emitEnter();
 
-    allocateAndEmitScope();
+    allocateScope();
     RegisterID* moduleScope = addVar();
     move(moduleScope, scopeRegister());
-
-    emitCheckTraps();
     
     m_calleeRegister.setIndex(CallFrameSlot::callee);
 
@@ -3931,12 +3923,11 @@ LabelScope* BytecodeGenerator::continueTarget(const Identifier& name)
     return nullptr;
 }
 
-void BytecodeGenerator::allocateAndEmitScope()
+void BytecodeGenerator::allocateScope()
 {
     m_scopeRegister = addVar();
     m_scopeRegister->ref();
     m_codeBlock->setScopeRegister(scopeRegister()->virtualRegister());
-    emitGetScope();
 }
 
 TryData* BytecodeGenerator::pushTry(Label& start, Label& handlerLabel, HandlerType handlerType)

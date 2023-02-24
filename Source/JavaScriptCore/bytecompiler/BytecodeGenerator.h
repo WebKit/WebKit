@@ -1075,7 +1075,7 @@ namespace JSC {
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
         ALWAYS_INLINE void rewind();
 
-        void allocateAndEmitScope();
+        void allocateScope();
 
         template<typename JumpOp>
         void setTargetForJumpInstruction(JSInstructionStream::MutableRef&, int target);
