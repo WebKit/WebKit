@@ -480,14 +480,14 @@ bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow& blockContainer, 
     return canUseForLineLayout(blockContainer);
 }
 
-bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& newChild, const LineLayout&)
+bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& rendererWithNewContent, const LineLayout&)
 {
     UNUSED_PARAM(rootBlockContainer);
-    if (!is<RenderText>(newChild) || !is<RenderBlockFlow>(newChild.parent()))
+    if (!is<RenderText>(rendererWithNewContent) || !is<RenderBlockFlow>(rendererWithNewContent.parent()))
         return true;
-    if (!newChild.style().isLeftToRightDirection() || !newChild.style().isHorizontalWritingMode())
+    if (!rendererWithNewContent.style().isLeftToRightDirection() || !rendererWithNewContent.style().isHorizontalWritingMode())
         return true;
-    if (newChild.nextSibling())
+    if (rendererWithNewContent.nextSibling())
         return true;
     // Simple text content append only.
     return false;

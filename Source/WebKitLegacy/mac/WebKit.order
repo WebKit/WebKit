@@ -288,7 +288,6 @@ __Z4core40WebTextDirectionSubmenuInclusionBehavior
 -[WebPreferences(WebPrivate) showsToolTipOverTruncatedText]
 -[WebPreferences(WebPrivate) developerExtrasEnabled]
 -[WebPreferences(WebPrivate) authorAndUserStylesEnabled]
--[WebPreferences(WebPrivate) applicationChromeModeEnabled]
 -[WebPreferences userStyleSheetEnabled]
 -[WebView(WebPrivate) _needsAdobeFrameReloadingQuirk]
 _WKAppVersionCheckLessThan
@@ -1529,7 +1528,6 @@ __ZN18WebInspectorClient21openInspectorFrontendEPN7WebCore19InspectorControllerE
 -[WebInspectorWindowController initWithInspectedWebView:]
 -[WebInspectorWindowController init]
 -[WebPreferences init]
--[WebPreferences(WebPrivate) setApplicationChromeModeEnabled:]
 -[WebInspectorWindowController inspectorPagePath]
 __ZL21useWebKitWebInspectorv
 -[WebInspectorWindowController webView:decidePolicyForNavigationAction:request:frame:decisionListener:]

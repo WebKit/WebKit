@@ -1207,6 +1207,14 @@ void MediaSource::failedToCreateRenderer(RendererType type)
         context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("MediaSource ", type == RendererType::Video ? "video" : "audio", " renderer creation failed."));
 }
 
+void MediaSource::memoryPressure()
+{
+    if (!isManaged())
+        return;
+    for (auto& sourceBuffer : *m_sourceBuffers)
+        sourceBuffer->memoryPressure();
+}
+
 }
 
 #endif

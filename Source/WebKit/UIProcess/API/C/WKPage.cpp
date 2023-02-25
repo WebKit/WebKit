@@ -504,11 +504,6 @@ void WKPageSetCustomUserAgent(WKPageRef pageRef, WKStringRef userAgentRef)
     toImpl(pageRef)->setCustomUserAgent(toWTFString(userAgentRef));
 }
 
-void WKPageSetUserContentExtensionsEnabled(WKPageRef pageRef, bool enabled)
-{
-    // FIXME: Remove this function once it is no longer used.
-}
-
 bool WKPageSupportsTextEncoding(WKPageRef pageRef)
 {
     return toImpl(pageRef)->supportsTextEncoding();

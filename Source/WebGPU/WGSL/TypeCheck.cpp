@@ -45,7 +45,7 @@ class TypeChecker : public AST::Visitor, public ContextProvider<Type*> {
 public:
     TypeChecker(ShaderModule&);
 
-    std::optional<FailedCheck> check();
+    void check();
 
     // Declarations
     void visit(AST::Structure&) override;
@@ -118,11 +118,36 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
     introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
 
-    // This file contains the declarations generated from `TypeDeclarations.rb`
-#include "TypeDeclarations.h" // NOLINT
+    // FIXME: Add all other overloads
+    // FIXME: we should make this a lot more convenient
+    // operator + [T<:Number](T, T) -> T
+    OverloadCandidate plus1;
+    {
+        TypeVariable T { 0, TypeVariable::Number };
+        plus1.typeVariables.append(T);
+        plus1.parameters.append(T);
+        plus1.parameters.append(T);
+        plus1.result = T;
+    }
+    // operator + [T<:Number, N](vector<T, N>, T) -> vector<T, N>
+    OverloadCandidate plus2;
+    {
+        TypeVariable T { 0, TypeVariable::Number };
+        NumericVariable N { 0 };
+        plus2.typeVariables.append(T);
+        plus2.numericVariables.append(N);
+        plus2.parameters.append(AbstractVector { T, N });
+        plus2.parameters.append(T);
+        plus2.result = AbstractVector { T, N };
+    }
+
+    m_overloadedOperations.add("+"_s, WTF::Vector<OverloadCandidate> ({
+        WTFMove(plus1),
+        WTFMove(plus2),
+    }));
 }
 
-std::optional<FailedCheck> TypeChecker::check()
+void TypeChecker::check()
 {
     // FIXME: fill in struct fields in a second pass since declarations might be
     // out of order
@@ -145,14 +170,6 @@ std::optional<FailedCheck> TypeChecker::check()
         for (auto& error : m_errors)
             dataLogLn(error);
     }
-
-    if (m_errors.isEmpty())
-        return std::nullopt;
-
-
-    // FIXME: add support for warnings
-    Vector<Warning> warnings { };
-    return FailedCheck { WTFMove(m_errors), WTFMove(warnings) };
 }
 
 // Declarations
@@ -571,9 +588,9 @@ void TypeChecker::typeError(InferBottom inferBottom, const SourceSpan& span, Arg
         inferred(m_types.bottomType());
 }
 
-std::optional<FailedCheck> typeCheck(ShaderModule& shaderModule)
+void typeCheck(ShaderModule& shaderModule)
 {
-    return TypeChecker(shaderModule).check();
+    TypeChecker(shaderModule).check();
 }
 
 } // namespace WGSL

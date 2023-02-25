@@ -116,7 +116,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL developerExtrasEnabled;
 @property (nonatomic) WebKitJavaScriptRuntimeFlags javaScriptRuntimeFlags;
 @property (nonatomic) BOOL authorAndUserStylesEnabled;
-@property (nonatomic) BOOL applicationChromeModeEnabled;
 @property (nonatomic) BOOL usesEncodingDetector;
 @property (nonatomic) BOOL shrinksStandaloneImagesToFit;
 @property (nonatomic) BOOL automaticallyDetectsCacheModel;

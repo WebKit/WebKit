@@ -35,14 +35,14 @@
             consoleWrite('Append the init segment in two chunks');
             run('sourceBuffer = source.addSourceBuffer(loader.type())');
             consoleWrite('Divide the init segment in two.');
-            run('random = randomNumber(1, 271)');
+            run('random = randomNumber(1, loader.initSegmentSize()-1)');
             run('partial1 = loader.initSegment().slice(0, random)');
             run('partial2 = loader.initSegment().slice(random)');
             let firstSegment = true;
             run('sourceBuffer.appendBuffer(partial1)');
             waitFor(video, 'loadedmetadata').then(() => {
                 if (firstSegment)
-                    failtest('loadedmetada can only be fired once the whole init segment has been appended');
+                    failTest('loadedmetada can only be fired once the whole init segment has been appended');
             });
             await waitFor(sourceBuffer, 'update');
             firstSegment = false;
@@ -50,16 +50,16 @@
             await waitFor(sourceBuffer, 'update');
 
             consoleWrite('Append the two partial media segments in reverse order. Separated with an abort');
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, 65677))');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, loader.mediaSegmentSize(1)/2))');
             await waitFor(sourceBuffer, 'update');
             run('sourceBuffer.abort()');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '82.981');
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 65677))');
+            testExpected('sourceBuffer.buffered.end(0)', '7.401');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '2');
-            testExpected('sourceBuffer.buffered.end(0)', '6.041');
-            testExpected('sourceBuffer.buffered.end(1)', '82.981');
+            testExpected('sourceBuffer.buffered.end(0)', '3.961');
+            testExpected('sourceBuffer.buffered.end(1)', '7.401');
 
             consoleWrite('Clean sourcebuffer of all content.');
             run('sourceBuffer.remove(0, 100)');
@@ -70,18 +70,18 @@
             run('sourceBuffer.abort()');
             run('sourceBuffer.remove(0, 100)');
             await waitFor(sourceBuffer, 'update');
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, 65677))');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, loader.mediaSegmentSize(1)/2))');
             await waitFor(sourceBuffer, 'update');
             run('sourceBuffer.abort()');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '82.981');
+            testExpected('sourceBuffer.buffered.end(0)', '7.401');
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 65677))');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '2');
-            testExpected('sourceBuffer.buffered.end(0)', '6.041');
-            testExpected('sourceBuffer.buffered.end(1)', '82.981');
+            testExpected('sourceBuffer.buffered.end(0)', '3.961');
+            testExpected('sourceBuffer.buffered.end(1)', '7.401');
 
             consoleWrite('Clean sourcebuffer of all content.');
             run('sourceBuffer.abort()');
@@ -89,15 +89,15 @@
             await waitFor(sourceBuffer, 'update');
 
             consoleWrite('Same as above without waiting for the first append to complete. This is not a deterministic speced behaviour');
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, 65677))');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(1).slice(0, loader.mediaSegmentSize(1)/2))');
             await waitFor(sourceBuffer, 'updatestart');
             run('sourceBuffer.abort()');
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');
-            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, 65677))');
+            run('sourceBuffer.appendBuffer(loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '6.041');
+            testExpected('sourceBuffer.buffered.end(0)', '3.961');
 
             endTest();
         } catch (e) {

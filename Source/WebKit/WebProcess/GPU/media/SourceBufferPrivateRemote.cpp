@@ -474,6 +474,22 @@ uint64_t SourceBufferPrivateRemote::totalTrackBufferSizeInBytes() const
     return m_totalTrackBufferSizeInBytes;
 }
 
+void SourceBufferPrivateRemote::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().sendWithAsyncReply(
+        Messages::RemoteSourceBufferProxy::MemoryPressure(maximumBufferSize, currentTime, isEnded), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& buffer, uint64_t totalTrackBufferSizeInBytes) mutable {
+            auto oldBuffered = buffered()->ranges();
+            setBufferedRanges(WTFMove(buffer));
+            m_totalTrackBufferSizeInBytes = totalTrackBufferSizeInBytes;
+            completionHandler(oldBuffered != buffered()->ranges());
+        },
+        m_remoteSourceBufferIdentifier);
+}
+
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& SourceBufferPrivateRemote::logChannel() const
 {

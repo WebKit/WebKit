@@ -15,6 +15,8 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-computed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-conic-gradient-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-conic-gradient-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-content-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-content-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-dpcm-rendering-expected.html
@@ -48,6 +50,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering-2.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-repeating-conic-gradient-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-repeating-conic-gradient-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-repeating-linear-gradient-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-repeating-linear-gradient-rendering.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-repeating-radial-gradient-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-repeating-radial-gradient-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-resolution-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-resolution-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-images/image-set/image-set-resolution-001.html

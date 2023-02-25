@@ -1372,6 +1372,16 @@ WebCoreOpaqueRoot SourceBuffer::opaqueRoot()
     return WebCoreOpaqueRoot { this };
 }
 
+void SourceBuffer::memoryPressure()
+{
+    if (!isManaged())
+        return;
+    m_private->memoryPressure(maximumBufferSize(), m_source->currentTime(), m_source->isEnded(), [this, protectedThis = Ref { *this }] (bool bufferedChange) {
+        if (bufferedChange)
+            scheduleEvent(eventNames().bufferedchangeEvent);
+    });
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& SourceBuffer::logChannel() const
 {

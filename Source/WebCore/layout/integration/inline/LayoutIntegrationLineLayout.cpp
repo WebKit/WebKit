@@ -96,7 +96,7 @@ static inline bool isContentRenderer(const RenderObject& renderer)
     return !renderer.isReplica() && !renderer.isRenderScrollbarPart();
 }
 
-RenderBlockFlow* LineLayout::blockContainer(RenderObject& renderer)
+RenderBlockFlow* LineLayout::blockContainer(const RenderObject& renderer)
 {
     if (!isContentRenderer(renderer))
         return nullptr;
@@ -171,10 +171,10 @@ bool LineLayout::canUseForAfterInlineBoxStyleChange(const RenderInline& inlineBo
     return canUseForLineLayoutAfterInlineBoxStyleChange(inlineBox, diff);
 }
 
-bool LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& newChild, const LineLayout& lineLayout)
+bool LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout& lineLayout)
 {
     ASSERT(isEnabled());
-    return shouldInvalidateLineLayoutPathAfterContentChangeFor(parent, newChild, lineLayout);
+    return shouldInvalidateLineLayoutPathAfterContentChangeFor(parent, rendererWithNewContent, lineLayout);
 }
 
 bool LineLayout::shouldSwitchToLegacyOnInvalidation() const
@@ -1195,6 +1195,13 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
         return;
     }
     ASSERT_NOT_IMPLEMENTED_YET();
+}
+
+void LineLayout::updateTextContent(const RenderText& renderText, size_t offset, size_t length)
+{
+    UNUSED_PARAM(renderText);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(length);
 }
 
 void LineLayout::releaseCaches(RenderView& view)

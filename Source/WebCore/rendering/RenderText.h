@@ -121,7 +121,7 @@ public:
     WEBCORE_EXPORT virtual IntRect linesBoundingBox() const;
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
 
-    virtual void setText(const String&, bool force = false);
+    void setText(const String&, bool force = false);
     void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);
 
     bool canBeSelectionLeaf() const override { return true; }
@@ -188,6 +188,8 @@ protected:
 
     virtual void setRenderedText(const String&);
     virtual UChar previousCharacter() const;
+
+    virtual void setTextInternal(const String&, bool force);
 
     RenderTextLineBoxes m_lineBoxes;
 

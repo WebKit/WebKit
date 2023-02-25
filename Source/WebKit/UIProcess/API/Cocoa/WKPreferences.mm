@@ -731,15 +731,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     _preferences->setICECandidateFilteringEnabled(enabled);
 }
 
-- (BOOL)_webRTCLegacyAPIEnabled
-{
-    return NO;
-}
-
-- (void)_setWebRTCLegacyAPIEnabled:(BOOL)enabled
-{
-}
-
 - (void)_setJavaScriptCanAccessClipboard:(BOOL)javaScriptCanAccessClipboard
 {
     _preferences->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);

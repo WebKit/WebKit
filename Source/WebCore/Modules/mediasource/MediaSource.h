@@ -130,6 +130,7 @@ public:
     void failedToCreateRenderer(RendererType) final;
 
     virtual bool isManaged() const { return false; }
+    void memoryPressure();
 
 protected:
     explicit MediaSource(ScriptExecutionContext&);

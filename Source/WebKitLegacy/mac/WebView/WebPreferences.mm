@@ -1106,16 +1106,6 @@ public:
     [self _setBoolValue:flag forKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
 }
 
-// FIXME: applicationChromeMode is no longer needed by ToT, but is still used in Safari 8.
-- (BOOL)applicationChromeModeEnabled
-{
-    return NO;
-}
-
-- (void)setApplicationChromeModeEnabled:(BOOL)flag
-{
-}
-
 - (BOOL)domTimersThrottlingEnabled
 {
     return [self _boolValueForKey:WebKitDOMTimersThrottlingEnabledPreferenceKey];

@@ -1288,19 +1288,6 @@ void RenderText::setSelectionState(HighlightState state)
         containingBlock->setSelectionState(state);
 }
 
-void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsigned length, bool force)
-{
-    if (!force && text() == newText)
-        return;
-
-    int delta = newText.length() - text().length();
-    unsigned end = offset + length;
-
-    m_linesDirty = m_lineBoxes.dirtyRange(*this, offset, end, delta);
-
-    setText(newText, force || m_linesDirty);
-}
-
 static inline bool isInlineFlowOrEmptyText(const RenderObject& renderer)
 {
     return is<RenderInline>(renderer) || (is<RenderText>(renderer) && downcast<RenderText>(renderer).text().isEmpty());
@@ -1491,7 +1478,31 @@ void RenderText::secureText(UChar maskingCharacter)
         characters[revealedCharactersOffset] = characterToReveal;
 }
 
-void RenderText::setText(const String& text, bool force)
+#define ALLOW_PARTIAL_CONTENT_INVALIDATION 0
+static void invalidateLineLayoutPathOnContentChangeIfNeeded(const RenderText& renderer, size_t offset, size_t length)
+{
+    auto* container = LayoutIntegration::LineLayout::blockContainer(renderer);
+    if (!container)
+        return;
+
+    auto* modernLineLayout = container->modernLineLayout();
+    if (!modernLineLayout)
+        return;
+
+    if (LayoutIntegration::LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(*container, renderer, *modernLineLayout)) {
+        container->invalidateLineLayoutPath();
+        return;
+    }
+#if ALLOW_PARTIAL_CONTENT_INVALIDATION
+    modernLineLayout->updateTextContent(renderer, offset, length);
+#else
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(length);
+    container->invalidateLineLayoutPath();
+#endif
+}
+
+void RenderText::setTextInternal(const String& text, bool force)
 {
     ASSERT(!text.isNull());
 
@@ -1509,11 +1520,28 @@ void RenderText::setText(const String& text, bool force)
     setNeedsLayoutAndPrefWidthsRecalc();
     m_knownToHaveNoOverflowAndNoFallbackFonts = false;
 
-    if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
-        container->invalidateLineLayoutPath();
-
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->deferTextChangedIfNeeded(textNode());
+}
+
+void RenderText::setText(const String& newContent, bool force)
+{
+    setTextInternal(newContent, force);
+    invalidateLineLayoutPathOnContentChangeIfNeeded(*this, 0, text().length());
+}
+
+void RenderText::setTextWithOffset(const String& newText, unsigned offset, unsigned length, bool force)
+{
+    if (!force && text() == newText)
+        return;
+
+    int delta = newText.length() - text().length();
+    unsigned end = offset + length;
+
+    m_linesDirty = m_lineBoxes.dirtyRange(*this, offset, end, delta);
+
+    setTextInternal(newText, force || m_linesDirty);
+    invalidateLineLayoutPathOnContentChangeIfNeeded(*this, offset, length);
 }
 
 String RenderText::textWithoutConvertingBackslashToYenSymbol() const
