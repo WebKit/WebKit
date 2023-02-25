@@ -53,12 +53,12 @@ public:
     void setContentString(const String& text);
     StringImpl* contentString() const { return m_contentString.impl(); }
 
-    void setText(const String&, bool force = false) override;
-
     const String& altText() const { return m_altText; }
     void setAltText(const String& altText) { m_altText = altText; }
     
 private:
+    void setTextInternal(const String&, bool force) override;
+
     bool isTextFragment() const override { return true; }
 
     UChar previousCharacter() const override;

@@ -107,7 +107,7 @@ enum class AvoidanceReason : uint64_t {
 bool canUseForLineLayout(const RenderBlockFlow&);
 bool canUseForLineLayoutAfterStyleChange(const RenderBlockFlow&, StyleDifference);
 bool canUseForLineLayoutAfterInlineBoxStyleChange(const RenderInline&, StyleDifference);
-bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow&, const RenderObject& newChild, const LineLayout&);
+bool shouldInvalidateLineLayoutPathAfterContentChangeFor(const RenderBlockFlow& rootBlockContainer, const RenderObject& rendererWithNewContent, const LineLayout&);
 
 bool canUseForFlexLayout(const RenderFlexibleBox&);
 
