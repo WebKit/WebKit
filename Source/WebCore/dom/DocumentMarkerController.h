@@ -27,6 +27,7 @@
 #pragma once
 
 #include "DocumentMarker.h"
+#include "Timer.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -73,6 +74,8 @@ public:
     void repaintMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     void shiftMarkers(Node&, unsigned startOffset, int delta);
 
+    void dismissMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
+
     WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersInRange(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>);
     void clearDescriptionOnMarkersIntersectingRange(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>);
@@ -99,16 +102,22 @@ private:
     Vector<TextRange> collectTextRanges(const SimpleRange&);
 
     void forEach(const SimpleRange&, OptionSet<DocumentMarker::MarkerType>, const Function<bool(RenderedDocumentMarker&)>);
+    void forEachOfTypes(OptionSet<DocumentMarker::MarkerType>, const Function<bool(Node&, RenderedDocumentMarker&)>);
 
     using MarkerMap = HashMap<RefPtr<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 
     bool possiblyHasMarkers(OptionSet<DocumentMarker::MarkerType>);
-    void removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::MarkerType>);
+    void removeMarkers(OptionSet<DocumentMarker::MarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
+    void removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::MarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
+
+    void fadeAnimationTimerFired();
 
     MarkerMap m_markers;
     // Provide a quick way to determine whether a particular marker type is absent without going through the map.
     OptionSet<DocumentMarker::MarkerType> m_possiblyExistingMarkerTypes;
     Document& m_document;
+
+    Timer m_fadeAnimationTimer;
 };
 
 void addMarker(const SimpleRange&, DocumentMarker::MarkerType, const DocumentMarker::Data& = { });

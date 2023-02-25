@@ -41,6 +41,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RenderedDocumentMarker.h"
 #include "ShadowData.h"
 #include "StyledMarkedText.h"
 #include "TextPaintStyle.h"
@@ -825,7 +826,10 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
             return DocumentMarkerLineStyleMode::Spelling;
         }
     }();
+
     auto lineStyleColor = RenderTheme::singleton().documentMarkerLineColor(lineStyleMode, m_renderer.styleColorOptions());
+    if (auto* marker = markedText.marker)
+        lineStyleColor = lineStyleColor.colorWithAlpha(marker->opacity());
 
     bounds.moveBy(m_paintRect.location());
     m_paintInfo.context().drawDotsForDocumentMarker(bounds, { lineStyleMode, lineStyleColor });
