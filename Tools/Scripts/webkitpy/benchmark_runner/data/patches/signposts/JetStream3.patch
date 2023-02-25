@@ -1,0 +1,22 @@
+diff --git a/Tests/InternalJSTests/JetStream3/JetStreamDriver.js b/Tests/InternalJSTests/JetStream3/JetStreamDriver.js
+index 54a504e53d7..946cf74cf4f 100644
+--- a/Tests/InternalJSTests/JetStream3/JetStreamDriver.js
++++ b/Tests/InternalJSTests/JetStream3/JetStreamDriver.js
+@@ -662,6 +662,8 @@ class Benchmark {
+         if (RAMification)
+             resetMemoryPeak();
+ 
++        __signpostStart(this.name);
++
+         let magicFrame;
+         try {
+             magicFrame = JetStream.runCode(code);
+@@ -672,6 +674,8 @@ class Benchmark {
+         }
+         let results = await promise;
+ 
++        __signpostStop(this.name);
++
+         this.endTime = new Date();
+ 
+         if (RAMification) {
