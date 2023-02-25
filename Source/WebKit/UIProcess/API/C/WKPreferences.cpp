@@ -1986,15 +1986,6 @@ bool WKPreferencesGetKeygenElementEnabled(WKPreferencesRef preferencesRef)
     return false;
 }
 
-void WKPreferencesSetWebRTCLegacyAPIEnabled(WKPreferencesRef, bool)
-{
-}
-
-bool WKPreferencesGetWebRTCLegacyAPIEnabled(WKPreferencesRef)
-{
-    return false;
-}
-
 void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef, bool)
 {
 }
@@ -2028,28 +2019,6 @@ void WKPreferencesSetHixie76WebSocketProtocolEnabled(WKPreferencesRef, bool)
 
 bool WKPreferencesGetHixie76WebSocketProtocolEnabled(WKPreferencesRef)
 {
-    return false;
-}
-
-void WKPreferencesSetApplicationChromeModeEnabled(WKPreferencesRef, bool)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
-}
-
-bool WKPreferencesGetApplicationChromeModeEnabled(WKPreferencesRef)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 8.
-    return false;
-}
-
-void WKPreferencesSetInspectorUsesWebKitUserInterface(WKPreferencesRef, bool)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
-}
-
-bool WKPreferencesGetInspectorUsesWebKitUserInterface(WKPreferencesRef)
-{
-    // FIXME: Remove once WebKit nightlies don't need to support Safari 6 thru 7.
     return false;
 }
 
