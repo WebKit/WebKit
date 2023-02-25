@@ -3542,9 +3542,6 @@ webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fal
 webkit.org/b/200207 imported/w3c/web-platform-tests/css/css-images/css-image-fallbacks-and-annotations.html [ ImageOnlyFailure ]
 webkit.org/b/200209 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-radial.html [ ImageOnlyFailure ]
 
-webkit.org/b/251811 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-unsupported-rendering-2.html [ ImageOnlyFailure ]
-webkit.org/b/251811 imported/w3c/web-platform-tests/css/css-images/image-set/image-set-type-unsupported-rendering.html [ ImageOnlyFailure ]
-
 # wpt css-transitions and css-animations failures and flakiness
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/nested-scale-animations.html [ ImageOnlyFailure ]
 webkit.org/b/225407 imported/w3c/web-platform-tests/css/css-animations/transform-animation-under-large-scale.html [ ImageOnlyFailure ]
