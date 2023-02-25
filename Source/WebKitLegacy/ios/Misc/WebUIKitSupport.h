@@ -49,7 +49,6 @@ void WebKitSetEndBackgroundTaskBlock(EndBackgroundTaskBlock);
 void WebKitSetBackgroundAndForegroundNotificationNames(NSString *, NSString *);
 
 void WebKitInitialize(void);
-void WebKitSetIsClassic(BOOL);
 float WebKitGetMinimumZoomFontSize(void);
     
 int WebKitGetLastLineBreakInBuffer(UChar *characters, int position, int length);
