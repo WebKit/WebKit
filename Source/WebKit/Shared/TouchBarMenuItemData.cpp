@@ -50,27 +50,12 @@ TouchBarMenuItemData::TouchBarMenuItemData(const WebCore::HTMLMenuItemElement& e
     priority = element.attributeWithoutSynchronization(WebCore::HTMLNames::valueAttr).toFloat();
 }
 
-void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
-{
-    encoder << type;
-    
-    encoder << identifier;
-    encoder << priority;
-}
 
-std::optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decoder)
+TouchBarMenuItemData::TouchBarMenuItemData(ItemType type, String&& identifier, float priority)
+    : type(type)
+    , identifier(identifier)
+    , priority(priority)
 {
-    TouchBarMenuItemData result;
-    if (!decoder.decode(result.type))
-        return std::nullopt;
-    
-    if (!decoder.decode(result.identifier))
-        return std::nullopt;
-    
-    if (!decoder.decode(result.priority))
-        return std::nullopt;
-    
-    return std::make_optional(WTFMove(result));
 }
 
 }

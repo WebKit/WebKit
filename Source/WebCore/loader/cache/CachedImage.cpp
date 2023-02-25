@@ -88,7 +88,7 @@ CachedImage::CachedImage(const URL& url, Image* image, PAL::SessionID sessionID,
 
     // Use the incoming URL in the response field. This ensures that code using the response directly,
     // such as origin checks for security, actually see something.
-    m_response.setURL(url);
+    mutableResponse().setURL(url);
 }
 
 CachedImage::~CachedImage()
@@ -358,12 +358,12 @@ void CachedImage::checkShouldPaintBrokenImage()
 
 bool CachedImage::isPDFResource() const
 {
-    return Image::isPDFResource(m_response.mimeType(), url());
+    return Image::isPDFResource(response().mimeType(), url());
 }
 
 bool CachedImage::isPostScriptResource() const
 {
-    return Image::isPostScriptResource(m_response.mimeType(), url());
+    return Image::isPostScriptResource(response().mimeType(), url());
 }
 
 void CachedImage::clear()
@@ -613,11 +613,11 @@ void CachedImage::error(CachedResource::Status status)
     notifyObservers();
 }
 
-void CachedImage::responseReceived(const ResourceResponse& response)
+void CachedImage::responseReceived(const ResourceResponse& newResponse)
 {
-    if (!m_response.isNull())
+    if (!response().isNull())
         clear();
-    CachedResource::responseReceived(response);
+    CachedResource::responseReceived(newResponse);
 }
 
 void CachedImage::destroyDecodedData()

@@ -844,6 +844,11 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
         if (peer.get() != demuxerSrcPad) {
             GST_DEBUG_OBJECT(peer.get(), "Unlinking from track %s", matchingTrack->trackId.string().ascii().data());
             gst_pad_unlink(peer.get(), matchingTrack->entryPad.get());
+
+            const String& type = m_sourceBufferPrivate.type().containerType();
+            if (type.endsWith("webm"_s))
+                gst_pad_add_probe(demuxerSrcPad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, matroskademuxForceSegmentStartToEqualZero, nullptr, nullptr);
+
             matchingTrack->emplaceOptionalParserForFormat(GST_BIN_CAST(m_pipeline.get()), parsedCaps);
             linkPadWithTrack(demuxerSrcPad, *matchingTrack);
             matchingTrack->caps = WTFMove(parsedCaps);

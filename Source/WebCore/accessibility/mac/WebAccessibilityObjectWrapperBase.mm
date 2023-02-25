@@ -48,7 +48,6 @@
 #import "ContextMenuController.h"
 #import "Editing.h"
 #import "FrameSelection.h"
-#import "HTMLNames.h"
 #import "LayoutRect.h"
 #import "LocalizedStrings.h"
 #import "Page.h"
@@ -70,7 +69,6 @@
 #endif
 
 using namespace WebCore;
-using namespace HTMLNames;
 
 // Search Keys
 #ifndef NSAccessibilityAnyTypeSearchKey
@@ -537,188 +535,6 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
     return backingObject->convertRectToPlatformSpace(rect, space);
 }
 
-static BOOL addObjectWrapperToArray(AccessibilityObject* axObject, NSMutableArray *array)
-{
-    if (!axObject)
-        return NO;
-
-    auto* wrapper = axObject->wrapper();
-    if (!wrapper)
-        return NO;
-
-    // Don't add the same object twice, but since this has already been added, we should return
-    // YES because we want to inform that it's in the array
-    if ([array containsObject:wrapper])
-        return YES;
-
-#if PLATFORM(IOS_FAMILY)
-    // Explicitly set that this is a now element, in case other logic tries to override.
-    [wrapper setValue:@YES forKey:@"isAccessibilityElement"];
-#endif
-
-    [array addObject:wrapper];
-    return YES;
-}
-
-static int blockquoteLevel(RenderObject* renderer)
-{
-    if (!renderer)
-        return 0;
-
-    int result = 0;
-    for (Node* node = renderer->node(); node; node = node->parentNode()) {
-        if (node->hasTagName(blockquoteTag))
-            result += 1;
-    }
-
-    return result;
-}
-
-static void AXAttributeStringSetLanguage(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
-{
-    if (!renderer)
-        return;
-
-    AccessibilityObject* axObject = renderer->document().axObjectCache()->getOrCreate(renderer);
-    NSString *language = axObject->language();
-    if ([language length])
-        [attrString addAttribute:UIAccessibilityTokenLanguage value:language range:range];
-    else
-        [attrString removeAttribute:UIAccessibilityTokenLanguage range:range];
-}
-
-static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
-{
-    int quoteLevel = blockquoteLevel(renderer);
-
-    if (quoteLevel)
-        [attrString addAttribute:UIAccessibilityTokenBlockquoteLevel value:@(quoteLevel) range:range];
-    else
-        [attrString removeAttribute:UIAccessibilityTokenBlockquoteLevel range:range];
-}
-
-static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
-{
-    if (!renderer)
-        return;
-
-    AccessibilityObject* parentObject = renderer->document().axObjectCache()->getOrCreate(renderer->parent());
-    int parentHeadingLevel = parentObject->headingLevel();
-
-    if (parentHeadingLevel)
-        [attrString addAttribute:UIAccessibilityTokenHeadingLevel value:@(parentHeadingLevel) range:range];
-    else
-        [attrString removeAttribute:UIAccessibilityTokenHeadingLevel range:range];
-}
-
-// When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
-// To protect against such cases, the range should be validated before adding or removing attributes.
-bool AXAttributedStringRangeIsValid(NSAttributedString *attributedString, const NSRange& range)
-{
-    return NSMaxRange(range) <= [attributedString length];
-}
-
-void AXAttributedStringSetFont(NSMutableAttributedString *attributedString, CTFontRef font, const NSRange& range)
-{
-    if (!AXAttributedStringRangeIsValid(attributedString, range))
-        return;
-
-    if (!font) {
-#if PLATFORM(MAC)
-        [attributedString removeAttribute:NSAccessibilityFontTextAttribute range:range];
-#endif
-        return;
-    }
-
-    auto fontAttributes = adoptNS([[NSMutableDictionary alloc] init]);
-    auto familyName = adoptCF(CTFontCopyFamilyName(font));
-    NSNumber *size = [NSNumber numberWithFloat:CTFontGetSize(font)];
-#if PLATFORM(IOS_FAMILY)
-    auto fullName = adoptCF(CTFontCopyFullName(font));
-    if (fullName)
-        [fontAttributes setValue:bridge_cast(fullName.get()) forKey:UIAccessibilityTokenFontName];
-    if (familyName)
-        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:UIAccessibilityTokenFontFamily];
-    if ([size boolValue])
-        [fontAttributes setValue:size forKey:UIAccessibilityTokenFontSize];
-    auto traits = CTFontGetSymbolicTraits(font);
-    if (traits & kCTFontTraitBold)
-        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenBold];
-    if (traits & kCTFontTraitItalic)
-        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenItalic];
-
-    [attributedString addAttributes:fontAttributes.get() range:range];
-#endif
-
-#if PLATFORM(MAC)
-    [fontAttributes setValue:size forKey:NSAccessibilityFontSizeKey];
-
-    if (familyName)
-        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:NSAccessibilityFontFamilyKey];
-    auto postScriptName = adoptCF(CTFontCopyPostScriptName(font));
-    if (postScriptName)
-        [fontAttributes setValue:bridge_cast(postScriptName.get()) forKey:NSAccessibilityFontNameKey];
-    auto displayName = adoptCF(CTFontCopyDisplayName(font));
-    if (displayName)
-        [fontAttributes setValue:bridge_cast(displayName.get()) forKey:NSAccessibilityVisibleNameKey];
-    auto traits = CTFontGetSymbolicTraits(font);
-    if (traits & kCTFontTraitBold)
-        [fontAttributes setValue:@YES forKey:@"AXFontBold"];
-    if (traits & kCTFontTraitItalic)
-        [fontAttributes setValue:@YES forKey:@"AXFontItalic"];
-
-    [attributedString addAttribute:NSAccessibilityFontTextAttribute value:fontAttributes.get() range:range];
-#endif
-}
-
-static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NSString* attribute, NSNumber* number, NSRange range)
-{
-    if (number)
-        [attrString addAttribute:attribute value:number range:range];
-    else
-        [attrString removeAttribute:attribute range:range];
-}
-
-static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
-{
-    auto& style = renderer->style();
-
-    // set basic font info
-    AXAttributedStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
-
-    auto decor = style.textDecorationsInEffect();
-    if (decor & TextDecorationLine::Underline)
-        AXAttributeStringSetNumber(attrString, UIAccessibilityTokenUnderline, @YES, range);
-
-    // Add code context if this node is within a <code> block.
-    AccessibilityObject* axObject = renderer->document().axObjectCache()->getOrCreate(renderer);
-    auto matchFunc = [] (const AXCoreObject& object) {
-        return object.node() && object.node()->hasTagName(codeTag);
-    };
-
-    if (const AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*axObject, true, WTFMove(matchFunc)))
-        [attrString addAttribute:UIAccessibilityTextAttributeContext value:UIAccessibilityTextualContextSourceCode range:range];
-}
-
-static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, Node* node, StringView text)
-{
-    // skip invisible text
-    if (!node->renderer())
-        return;
-
-    // easier to calculate the range before appending the string
-    NSRange attrStringRange = NSMakeRange([attrString length], text.length());
-
-    // append the string from this node
-    [[attrString mutableString] appendString:text.createNSStringWithoutCopying().get()];
-
-    // set new attributes
-    AXAttributeStringSetStyle(attrString, node->renderer(), attrStringRange);
-    AXAttributeStringSetHeadingLevel(attrString, node->renderer(), attrStringRange);
-    AXAttributeStringSetBlockquoteLevel(attrString, node->renderer(), attrStringRange);
-    AXAttributeStringSetLanguage(attrString, node->renderer(), attrStringRange);
-}
-
 NSRange makeNSRange(std::optional<SimpleRange> range)
 {
     if (!range)
@@ -762,59 +578,6 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
     return resolveCharacterRange(makeRangeSelectingNodeContents(*scope), range);
 }
 
-// Returns an array of strings and AXObject wrappers corresponding to the text
-// runs and replacement nodes included in the given range.
-- (NSArray *)contentForSimpleRange:(const SimpleRange&)range attributed:(BOOL)attributed
-{
-    auto array = adoptNS([[NSMutableArray alloc] init]);
-
-    // Iterate over the range to build the AX attributed string.
-    TextIterator it(range);
-    for (; !it.atEnd(); it.advance()) {
-        Node& node = it.range().start.container;
-
-        // Non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX).
-        if (it.text().length()) {
-            if (!attributed) {
-                // First check if this is represented by a link.
-                auto* linkObject = AccessibilityObject::anchorElementForNode(&node);
-                if (addObjectWrapperToArray(linkObject, array.get()))
-                    continue;
-
-                // Next check if this region is represented by a heading.
-                auto* headingObject = AccessibilityObject::headingElementForNode(&node);
-                if (addObjectWrapperToArray(headingObject, array.get()))
-                    continue;
-
-                StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
-                if (!listMarkerText.isEmpty())
-                    [array addObject:listMarkerText.createNSString().get()];
-                // There was not an element representation, so just return the text.
-                [array addObject:it.text().createNSString().get()];
-            } else {
-                StringView listMarkerText = AccessibilityObject::listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
-                if (!listMarkerText.isEmpty()) {
-                    auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
-                    AXAttributedStringAppendText(attrString.get(), &node, listMarkerText);
-                    [array addObject:attrString.get()];
-                }
-
-                auto attrString = adoptNS([[NSMutableAttributedString alloc] init]);
-                AXAttributedStringAppendText(attrString.get(), &node, it.text());
-                [array addObject:attrString.get()];
-            }
-        } else {
-            if (Node* replacedNode = it.node()) {
-                auto* object = self.axBackingObject->axObjectCache()->getOrCreate(replacedNode->renderer());
-                if (object)
-                    addObjectWrapperToArray(object, array.get());
-            }
-        }
-    }
-
-    return array.autorelease();
-}
-
 - (WebCore::AXCoreObject*)baseUpdateBackingStore
 {
 #if PLATFORM(MAC)
@@ -831,10 +594,12 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
 
 - (NSArray<NSDictionary *> *)lineRectsAndText
 {
-    auto backingObject = self.baseUpdateBackingStore;
+    ASSERT(isMainThread());
+
+    RefPtr backingObject = dynamicDowncast<AccessibilityObject>(self.baseUpdateBackingStore);
     if (!backingObject)
         return nil;
-    
+
     auto range = backingObject->elementRange();
     if (!range)
         return nil;
@@ -853,9 +618,9 @@ std::optional<SimpleRange> makeDOMRange(Document* document, NSRange range)
         if (!lineRange)
             break;
 
-        NSArray *content = [self contentForSimpleRange:*lineRange attributed:YES];
+        auto content = backingObject->contentForRange(*lineRange, AXCoreObject::SpellCheck::Yes);
         auto text = adoptNS([[NSMutableAttributedString alloc] init]);
-        for (id item in content) {
+        for (id item in content.get()) {
             if ([item isKindOfClass:NSAttributedString.class])
                 [text appendAttributedString:item];
             else if ([item isKindOfClass:WebAccessibilityObjectWrapper.class]) {

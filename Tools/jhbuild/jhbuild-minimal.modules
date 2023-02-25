@@ -175,8 +175,7 @@
     </branch>
   </meson>
 
-  <meson id="glib-networking"
-	 mesonargs="-Dgnutls=disabled -Dopenssl=enabled">
+  <meson id="glib-networking">
     <dependencies>
       <dep package="glib"/>
     </dependencies>

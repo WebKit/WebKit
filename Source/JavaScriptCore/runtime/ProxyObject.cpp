@@ -433,6 +433,14 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
     ASSERT(!arguments.hasOverflowed());
     JSValue trapResult = call(globalObject, setMethod, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, false);
+    RELEASE_AND_RETURN(scope, validateSetTrapResult(globalObject, trapResult, target, propertyName, putValue, shouldThrow));
+}
+
+bool ProxyObject::validateSetTrapResult(JSGlobalObject* globalObject, JSValue trapResult, JSObject* target, PropertyName propertyName, JSValue putValue, bool shouldThrow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     bool trapResultAsBool = trapResult.toBoolean(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
     if (!trapResultAsBool) {
@@ -457,6 +465,7 @@ bool ProxyObject::performPut(JSGlobalObject* globalObject, JSValue putValue, JSV
             return false;
         }
     }
+
     return true;
 }
 

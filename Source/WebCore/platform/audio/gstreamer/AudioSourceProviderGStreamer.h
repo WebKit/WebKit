@@ -73,6 +73,8 @@ public:
 
 private:
 #if ENABLE(MEDIA_STREAM)
+    WeakPtr<MediaStreamTrackPrivate> m_captureSource;
+    RefPtr<MediaStreamPrivate> m_streamPrivate;
     GRefPtr<GstElement> m_pipeline;
 #endif
     enum MainThreadNotification {

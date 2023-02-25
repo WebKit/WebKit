@@ -1370,6 +1370,33 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getByValWithThis(BytecodeGener
     return generator.emitGetByVal(generator.finalDestination(dst), base.get(), thisValue.get(), property.get());
 }
 
+static ALWAYS_INLINE void emitIntrinsicPutByValWithThis(BytecodeGenerator& generator, ArgumentListNode* node, ECMAMode ecmaMode)
+{
+    RefPtr<RegisterID> base = generator.emitNode(node);
+    node = node->m_next;
+    RefPtr<RegisterID> thisValue = generator.emitNode(node);
+    node = node->m_next;
+    RefPtr<RegisterID> property = generator.emitNodeForProperty(node);
+    node = node->m_next;
+    RefPtr<RegisterID> value = generator.emitNodeForProperty(node);
+
+    ASSERT(!node->m_next);
+
+    generator.emitPutByValWithECMAMode(base.get(), thisValue.get(), property.get(), value.get(), ecmaMode);
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByValWithThisSloppy(BytecodeGenerator& generator, RegisterID* dst)
+{
+    emitIntrinsicPutByValWithThis(generator, m_args->m_listNode, ECMAMode::sloppy());
+    return dst;
+}
+
+RegisterID* BytecodeIntrinsicNode::emit_intrinsic_putByValWithThisStrict(BytecodeGenerator& generator, RegisterID* dst)
+{
+    emitIntrinsicPutByValWithThis(generator, m_args->m_listNode, ECMAMode::strict());
+    return dst;
+}
+
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_getPrototypeOf(BytecodeGenerator& generator, RegisterID* dst)
 {
     ArgumentListNode* node = m_args->m_listNode;

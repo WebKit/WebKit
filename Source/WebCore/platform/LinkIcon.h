@@ -38,37 +38,6 @@ struct LinkIcon {
     String mimeType;
     std::optional<unsigned> size;
     Vector<std::pair<String, String>> attributes;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, LinkIcon&);
 };
-
-template<class Encoder>
-void LinkIcon::encode(Encoder& encoder) const
-{
-    encoder << url << mimeType << size << attributes;
-    encoder << type;
-}
-
-template<class Decoder>
-bool LinkIcon::decode(Decoder& decoder, LinkIcon& result)
-{
-    if (!decoder.decode(result.url))
-        return false;
-
-    if (!decoder.decode(result.mimeType))
-        return false;
-
-    if (!decoder.decode(result.size))
-        return false;
-
-    if (!decoder.decode(result.attributes))
-        return false;
-
-    if (!decoder.decode(result.type))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore

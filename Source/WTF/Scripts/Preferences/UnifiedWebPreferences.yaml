@@ -3567,17 +3567,17 @@ LineHeightUnitsEnabled:
 
 LinkModulePreloadEnabled:
   type: bool
-  status: testable
+  status: preview
   category: networking
   humanReadableName: "Link rel=modulepreload"
   humanReadableDescription: "Enable Link rel=modulepreload"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 LinkPreconnect:
   type: bool
@@ -5357,7 +5357,21 @@ ScreenOrientationAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: WebKit::defaultShouldEnableScreenOrientationAPI()
+    WebCore:
+      default: false
+
+ScreenOrientationLockingAPIEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Screen Orientation API (Locking / Unlocking)"
+  humanReadableDescription: "Enable Screen Orientation API (Locking / Unlocking)"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
     WebCore:
       default: false
 

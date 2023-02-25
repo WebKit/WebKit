@@ -41,6 +41,18 @@
 #define NSAccessibilityChildrenInNavigationOrderAttribute @"AXChildrenInNavigationOrder"
 #endif
 
+// NSAttributedString support.
+
+#ifndef NSAccessibilityBlockQuoteLevelAttribute
+#define NSAccessibilityBlockQuoteLevelAttribute @"AXBlockQuoteLevel"
+#endif
+
+#ifndef NSAccessibilityExpandedTextValueAttribute
+#define NSAccessibilityExpandedTextValueAttribute @"AXExpandedTextValue"
+#endif
+
+extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
+
 @interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase
 
 - (RetainPtr<AXTextMarkerRef>)textMarkerForFirstPositionInTextControl:(WebCore::HTMLTextFormControlElement&)textControl;
@@ -85,4 +97,4 @@ AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache*, const std::optional
 AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache*, const std::optional<SimpleRange>&);
 std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache*, AXTextMarkerRangeRef);
 
-}
+} // namespace WebCore

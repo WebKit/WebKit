@@ -71,7 +71,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
 
         // If the encoded and decoded data are the same, there is no decoded data cost!
         setDecodedSize(0);
-        m_decodedDataDeletionTimer.stop();
+        stopDecodedDataDeletionTimer();
 
         m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(contiguousData.data(), m_data->size());
     }
@@ -95,7 +95,7 @@ StringView CachedScript::script(ShouldDecodeAsUTF8Only shouldDecodeAsUTF8Only)
         setDecodedSize(m_script.sizeInBytes());
     }
 
-    m_decodedDataDeletionTimer.restart();
+    restartDecodedDataDeletionTimer();
     return m_script;
 }
 

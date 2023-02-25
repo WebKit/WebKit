@@ -43,9 +43,12 @@
 
 #if USE(FREETYPE)
 #include "FcUniquePtr.h"
-#include "HbUniquePtr.h"
 #include "RefPtrFontconfig.h"
 #include <memory>
+
+#if ENABLE(MATHML) && USE(HARFBUZZ)
+#include "HbUniquePtr.h"
+#endif
 #endif
 
 #if USE(APPKIT)
@@ -169,7 +172,7 @@ public:
 #endif
 
 #if USE(FREETYPE)
-#if USE(HARFBUZZ) && !ENABLE(OPENTYPE_MATH)
+#if ENABLE(MATHML) && USE(HARFBUZZ)
     HbUniquePtr<hb_font_t> createOpenTypeMathHarfBuzzFont() const;
 #endif
     bool hasCompatibleCharmap() const;

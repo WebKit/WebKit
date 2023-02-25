@@ -113,6 +113,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AccessCase);
     macro(ScopedArgumentsLength) \
     macro(ModuleNamespaceLoad) \
     macro(ProxyObjectLoad) \
+    macro(ProxyObjectStore) \
     macro(InstanceOfHit) \
     macro(InstanceOfMiss) \
     macro(InstanceOfGeneric) \

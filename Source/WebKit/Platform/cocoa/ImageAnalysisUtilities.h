@@ -61,6 +61,23 @@ RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRef, VKAn
 void requestVisualTranslation(CocoaImageAnalyzer *, NSURL *, const String& source, const String& target, CGImageRef, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
 void requestBackgroundRemoval(CGImageRef, CompletionHandler<void(CGImageRef)>&&);
 
+constexpr VKAnalysisTypes analysisTypesForElementFullscreenVideo()
+{
+    return VKAnalysisTypeText
+#if ENABLE(IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+        | VKAnalysisTypeMachineReadableCode
+#endif
+#if HAVE(VK_IMAGE_ANALYSIS_TYPE_IMAGE_SEGMENTATION)
+        | VKAnalysisTypeImageSegmentation
+#endif
+        | VKAnalysisTypeAppClip;
+}
+
+constexpr VKAnalysisTypes analysisTypesForFullscreenVideo()
+{
+    return analysisTypesForElementFullscreenVideo() | VKAnalysisTypeVisualSearch;
+}
+
 std::pair<RetainPtr<NSData>, RetainPtr<CFStringRef>> imageDataForRemoveBackground(CGImageRef, const String& sourceMIMEType);
 
 #if PLATFORM(IOS_FAMILY)
@@ -68,7 +85,7 @@ using PlatformImageAnalysisObject = VKCImageAnalysisInteraction;
 #else
 using PlatformImageAnalysisObject = VKCImageAnalysisOverlayView;
 #endif
-void setUpAdditionalImageAnalysisBehaviors(PlatformImageAnalysisObject *);
+void prepareImageAnalysisForOverlayView(PlatformImageAnalysisObject *);
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 }

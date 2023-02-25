@@ -44,25 +44,65 @@
 namespace WebKit {
 using namespace WebCore;
 
+class RemoteLayerTreeEventDispatcherDisplayLinkClient final : public DisplayLink::Client {
+public:
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit RemoteLayerTreeEventDispatcherDisplayLinkClient(RemoteLayerTreeEventDispatcher& eventDispatcher)
+        : m_eventDispatcher(&eventDispatcher)
+    {
+    }
+    
+    void invalidate()
+    {
+        Locker locker(m_eventDispatcherLock);
+        m_eventDispatcher = nullptr;
+    }
+
+private:
+    // This is called on the display link callback thread.
+    void displayLinkFired(PlatformDisplayID displayID, DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) override
+    {
+        RefPtr<RemoteLayerTreeEventDispatcher> eventDispatcher;
+        {
+            Locker locker(m_eventDispatcherLock);
+            eventDispatcher = m_eventDispatcher;
+        }
+
+        if (!eventDispatcher)
+            return;
+
+        ScrollingThread::dispatch([dispatcher = Ref { *eventDispatcher }, displayID] {
+            dispatcher->didRefreshDisplay(displayID);
+        });
+    }
+    
+    Lock m_eventDispatcherLock;
+    RefPtr<RemoteLayerTreeEventDispatcher> m_eventDispatcher WTF_GUARDED_BY_LOCK(m_eventDispatcherLock);
+};
+
+
 Ref<RemoteLayerTreeEventDispatcher> RemoteLayerTreeEventDispatcher::create(RemoteScrollingCoordinatorProxyMac& scrollingCoordinator, WebCore::PageIdentifier pageIdentifier)
 {
     return adoptRef(*new RemoteLayerTreeEventDispatcher(scrollingCoordinator, pageIdentifier));
 }
 
-static const Seconds wheelEventHysteresisDuration { 1_s };
-
 RemoteLayerTreeEventDispatcher::RemoteLayerTreeEventDispatcher(RemoteScrollingCoordinatorProxyMac& scrollingCoordinator, WebCore::PageIdentifier pageIdentifier)
     : m_scrollingCoordinator(WeakPtr { scrollingCoordinator })
     , m_pageIdentifier(pageIdentifier)
     , m_wheelEventDeltaFilter(WheelEventDeltaFilter::create())
+    , m_displayLinkClient(makeUnique<RemoteLayerTreeEventDispatcherDisplayLinkClient>(*this))
 {
 }
 
 RemoteLayerTreeEventDispatcher::~RemoteLayerTreeEventDispatcher() = default;
 
+// This must be called to break the cycle between RemoteLayerTreeEventDispatcherDisplayLinkClient and this.
 void RemoteLayerTreeEventDispatcher::invalidate()
 {
-    // Will be used to break ref cycles.
+    stopDisplayLinkObserver();
+    m_displayLinkClient->invalidate();
+    m_displayLinkClient = nullptr;
 }
 
 void RemoteLayerTreeEventDispatcher::setScrollingTree(RefPtr<RemoteScrollingTree>&& scrollingTree)
@@ -138,6 +178,64 @@ PlatformWheelEvent RemoteLayerTreeEventDispatcher::filteredWheelEvent(const Plat
     return filteredEvent;
 }
 
+DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
+{
+    ASSERT(isMainRunLoop());
+    
+    if (!m_scrollingCoordinator)
+        return nullptr;
+
+    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_scrollingCoordinator->webPageProxy().drawingArea());
+    ASSERT(drawingArea && drawingArea->isRemoteLayerTreeDrawingAreaProxyMac());
+    auto* drawingAreaMac = static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(drawingArea);
+
+    return &drawingAreaMac->displayLink();
+}
+
+void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
+{
+    auto needsDisplayLink = [&]() {
+        auto scrollingTree = this->scrollingTree();
+        return scrollingTree && scrollingTree->hasNodeWithActiveScrollAnimations();
+    }();
+
+    if (needsDisplayLink)
+        startDisplayLinkObserver();
+    else
+        stopDisplayLinkObserver();
+}
+
+void RemoteLayerTreeEventDispatcher::startDisplayLinkObserver()
+{
+    if (m_displayRefreshObserverID)
+        return;
+
+    auto* displayLink = this->displayLink();
+    if (!displayLink)
+        return;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::startDisplayLinkObserver");
+
+    m_displayRefreshObserverID = DisplayLinkObserverID::generate();
+    // This display link always runs at the display update frequency (e.g. 120Hz).
+    displayLink->addObserver(*m_displayLinkClient, *m_displayRefreshObserverID, displayLink->nominalFramesPerSecond());
+}
+
+void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
+{
+    if (!m_displayRefreshObserverID)
+        return;
+
+    auto* displayLink = this->displayLink();
+    if (!displayLink)
+        return;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver");
+
+    displayLink->removeObserver(*m_displayLinkClient, *m_displayRefreshObserverID);
+    m_displayRefreshObserverID = { };
+}
+
 void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID displayID)
 {
     ASSERT(ScrollingThread::isCurrentThread());
@@ -149,8 +247,9 @@ void RemoteLayerTreeEventDispatcher::didRefreshDisplay(PlatformDisplayID display
     scrollingTree->displayDidRefresh(displayID);
 }
 
-void RemoteLayerTreeEventDispatcher::windowScreenDidChange(WebCore::PlatformDisplayID displayID, std::optional<WebCore::FramesPerSecond> nominalFramesPerSecond)
+void RemoteLayerTreeEventDispatcher::windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>)
 {
+    // FIXME: Restart the displayLink if necessary.
 }
 
 } // namespace WebKit

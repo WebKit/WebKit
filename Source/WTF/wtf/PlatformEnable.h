@@ -85,8 +85,8 @@
 #include <wtf/PlatformEnableCocoa.h>
 #endif
 
-/* --------- Windows CAIRO port --------- */
-#if PLATFORM(WIN_CAIRO)
+/* --------- Windows port --------- */
+#if PLATFORM(WIN)
 #include <wtf/PlatformEnableWinCairo.h>
 #endif
 

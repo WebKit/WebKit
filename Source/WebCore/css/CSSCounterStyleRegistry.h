@@ -39,7 +39,8 @@ class CSSCounterStyleRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RefPtr<CSSCounterStyle> resolvedCounterStyle(const AtomString&);
-    RefPtr<CSSCounterStyle> decimalCounter() const;
+    static RefPtr<CSSCounterStyle> decimalCounter();
+    static void addUserAgentCounterStyle(const CSSCounterStyleDescriptors&);
     void addCounterStyle(const CSSCounterStyleDescriptors&);
     void resolveReferencesIfNeeded();
     bool operator==(const CSSCounterStyleRegistry& other) const;

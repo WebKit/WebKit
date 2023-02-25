@@ -28,10 +28,12 @@
 #if ENABLE(UI_SIDE_COMPOSITING)
 #include "RemoteScrollingCoordinatorProxy.h"
 
+#include "NativeWebWheelEvent.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteScrollingCoordinator.h"
 #include "RemoteScrollingCoordinatorMessages.h"
 #include "RemoteScrollingCoordinatorTransaction.h"
+#include "WebEventConversion.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/PerformanceLoggingClient.h>
@@ -97,24 +99,26 @@ std::optional<RequestedScrollData> RemoteScrollingCoordinatorProxy::commitScroll
     return std::exchange(m_requestedScroll, { });
 }
 
-WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const PlatformWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
+WheelEventHandlingResult RemoteScrollingCoordinatorProxy::handleWheelEvent(const NativeWebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
     if (!m_scrollingTree)
         return WheelEventHandlingResult::unhandled();
 
+    auto platformWheelEvent = platform(wheelEvent);
+
     // Replicate the hack in EventDispatcher::internalWheelEvent(). We could pass rubberBandableEdges all the way through the
     // WebProcess and back via the ScrollingTree, but we only ever need to consult it here.
-    if (wheelEvent.phase() == PlatformWheelEventPhase::Began)
+    if (platformWheelEvent.phase() == PlatformWheelEventPhase::Began)
         m_scrollingTree->setMainFrameCanRubberBand(rubberBandableEdges);
 
-    auto processingSteps = m_scrollingTree->determineWheelEventProcessing(wheelEvent);
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::handleWheelEvent " << wheelEvent << " - steps " << processingSteps);
+    auto processingSteps = m_scrollingTree->determineWheelEventProcessing(platformWheelEvent);
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::handleWheelEvent " << platformWheelEvent << " - steps " << processingSteps);
     if (!processingSteps.contains(WheelEventProcessingSteps::ScrollingThread))
         return WheelEventHandlingResult::unhandled(processingSteps);
 
     m_scrollingTree->willProcessWheelEvent();
 
-    auto filteredEvent = filteredWheelEvent(wheelEvent);
+    auto filteredEvent = filteredWheelEvent(platformWheelEvent);
     auto result = m_scrollingTree->handleWheelEvent(filteredEvent, processingSteps);
     didReceiveWheelEvent(result.wasHandled);
     return result;

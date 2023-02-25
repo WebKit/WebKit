@@ -175,7 +175,7 @@ private:
     HashMap<WebCore::PageIdentifier, DisplayProperties> m_displayProperties;
 
     mutable Lock m_accelerationCurvesLock;
-    HashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves;
+    HashMap<WebCore::PageIdentifier, std::optional<ScrollingAccelerationCurve>> m_accelerationCurves WTF_GUARDED_BY_LOCK(m_accelerationCurvesLock);
     Client& m_client;
 };
 

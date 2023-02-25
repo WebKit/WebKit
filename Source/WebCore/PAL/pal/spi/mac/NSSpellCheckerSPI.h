@@ -43,6 +43,13 @@ extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
 
 @end
 
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(NSSPELLCHECKER_CORRECTION_INDICATOR_UNDERLINE_COLOR)
+// FIXME: rdar://105853874 Remove staging code.
+@interface NSSpellChecker (Staging_105286196)
++ (NSColor *)correctionIndicatorUnderlineColor;
+@end
 #endif
 
 #endif // PLATFORM(MAC)

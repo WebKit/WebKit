@@ -80,6 +80,8 @@ public:
     JSObject* target() const { return jsCast<JSObject*>(internalField(Field::Target).get()); }
     JSValue handler() const { return internalField(Field::Handler).get(); }
 
+    static bool validateSetTrapResult(JSGlobalObject*, JSValue trapResult, JSObject*, PropertyName, JSValue putValue, bool shouldThrow);
+
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool putByIndex(JSCell*, JSGlobalObject*, unsigned propertyName, JSValue, bool shouldThrow);
     bool putByIndexCommon(JSGlobalObject*, JSValue thisValue, unsigned propertyName, JSValue putValue, bool shouldThrow);

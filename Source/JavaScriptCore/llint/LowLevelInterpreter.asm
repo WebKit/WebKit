@@ -2334,7 +2334,7 @@ llintOp(op_loop_hint, OpLoopHint, macro (unused, unused, dispatch)
 end)
 
 
-llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
+macro checkTraps(dispatch)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
     loadi VM::m_traps+VMTraps::m_trapBits[t1], t0
@@ -2347,6 +2347,10 @@ llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
     jmp .afterHandlingTraps
 .throwHandler:
     jmp _llint_throw_from_slow_path_trampoline
+end
+
+llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
+    checkTraps(dispatch)
 end)
 
 

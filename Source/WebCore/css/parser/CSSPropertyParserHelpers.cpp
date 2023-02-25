@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParsing.h"
 
 #include "CSSBackgroundRepeatValue.h"
@@ -55,6 +56,7 @@
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
+#include "CSSImageSetOptionValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -73,6 +75,7 @@
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"
 #include "CSSUnresolvedColor.h"
+#include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableParser.h"
@@ -823,6 +826,23 @@ struct NoneRawKnownTokenTypeIdentConsumer {
     }
 };
 
+
+// MARK: Image Set Type
+
+struct ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer {
+    static constexpr CSSParserTokenType tokenType = FunctionToken;
+
+    static RefPtr<CSSPrimitiveValue> consume(CSSParserTokenRange& range, const CSSCalcSymbolTable&, ValueRange, CSSParserMode, UnitlessQuirk, UnitlessZeroQuirk)
+    {
+        ASSERT(range.peek().type() == FunctionToken);
+        if (range.peek().functionId() != CSSValueType || range.peek(1).type() != StringToken)
+            return nullptr;
+
+        auto typeArg = consumeFunction(range);
+        return consumeString(typeArg);
+    }
+};
+
 // MARK: Specialized combination consumers.
 
 // FIXME: It would be good to find a way to synthesize this from an angle and number specific variants.
@@ -1354,6 +1374,21 @@ struct NumberOrPercentOrNoneRawAllowingSymbolTableIdentConsumer : NumberOrPercen
         NumberOrPercentRawKnownTokenTypeIdentConsumer
     >;
 };
+
+// MARK: Image Set Resolution + Type
+
+struct ImageSetResolutionOrTypeConsumer {
+    using Result = RefPtr<CSSPrimitiveValue>;
+
+    using FunctionToken = SameTokenMetaConsumer<
+        IdentityTransformer<Result>,
+        ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeFunctionConsumer,
+        ImageSetTypeCSSPrimitiveValueKnownTokenTypeFunctionConsumer
+    >;
+
+    using DimensionToken = ResolutionCSSPrimitiveValueWithCalcWithKnownTokenTypeDimensionConsumer;
+};
+
 
 // MARK: - Consumer functions - utilize consumer definitions above, giving more targetted interfaces and allowing exposure to other files.
 
@@ -4417,23 +4452,61 @@ static RefPtr<CSSValue> consumeGeneratedImage(CSSParserTokenRange& range, const 
     return result;
 }
 
+// https://w3c.github.io/csswg-drafts/css-images-4/#image-set-notation
+static RefPtr<CSSImageSetOptionValue> consumeImageSetOption(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<AllowedImageType> allowedImageTypes)
+{
+    auto image = consumeImage(range, context, allowedImageTypes);
+    if (!image)
+        return nullptr;
+
+    auto result = CSSImageSetOptionValue::create(image.releaseNonNull());
+
+    RefPtr<CSSPrimitiveValue> resolution;
+    RefPtr<CSSPrimitiveValue> type;
+
+    // Optional resolution and type in any order.
+    for (size_t i = 0; i < 2 && !range.atEnd(); ++i) {
+        if (auto optionalArgument = consumeMetaConsumer<ImageSetResolutionOrTypeConsumer>(range, { }, { }, { }, { }, { })) {
+            if ((resolution && optionalArgument->isResolution()) || (type && optionalArgument->isString()))
+                return nullptr;
+
+            if (optionalArgument->isResolution()) {
+                if (optionalArgument->floatValue() <= 0)
+                    return nullptr;
+                resolution = optionalArgument;
+                result->setResolution(optionalArgument.releaseNonNull());
+                continue;
+            }
+
+            if (optionalArgument->isString()) {
+                type = optionalArgument;
+                result->setType(type->stringValue());
+                continue;
+            }
+        }
+        break;
+    }
+
+    if (!range.atEnd() && range.peek().type() != CommaToken)
+        return nullptr;
+    return result;
+}
+
 static RefPtr<CSSValue> consumeImageSet(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<AllowedImageType> allowedImageTypes)
 {
     auto rangeCopy = range;
     auto args = consumeFunction(rangeCopy);
     CSSValueListBuilder imageSet;
     do {
-        auto image = consumeImage(args, context, allowedImageTypes);
-        if (!image)
+        if (auto option = consumeImageSetOption(args, context, allowedImageTypes))
+            imageSet.append(option.releaseNonNull());
+        else
             return nullptr;
-        auto resolution = consumeResolution(args);
-        if (!resolution || resolution->floatValue() <= 0)
-            return nullptr;
-        imageSet.append(image.releaseNonNull());
-        imageSet.append(resolution.releaseNonNull());
     } while (consumeCommaIncludingWhitespace(args));
+
     if (!args.atEnd())
         return nullptr;
+
     range = rangeCopy;
     return CSSImageSetValue::create(WTFMove(imageSet));
 }

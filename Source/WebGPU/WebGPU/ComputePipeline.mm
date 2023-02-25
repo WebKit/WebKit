@@ -191,7 +191,7 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& des
     // FIXME: Implement this
     UNUSED_PARAM(descriptor);
     instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-        callback(WGPUCreatePipelineAsyncStatus_Error, ComputePipeline::createInvalid(strongThis), { });
+        callback(WGPUCreatePipelineAsyncStatus_InternalError, ComputePipeline::createInvalid(strongThis), { });
     });
 }
 

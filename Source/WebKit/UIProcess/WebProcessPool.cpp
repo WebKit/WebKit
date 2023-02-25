@@ -158,6 +158,12 @@ constexpr Seconds resetGPUProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
+#if ENABLE(WEBCONTENT_CRASH_TESTING)
+bool WebProcessPool::s_shouldCrashWhenCreatingWebProcess = false;
+#endif
+
+bool WebProcessPool::s_didGlobalStaticInitialization = false;
+
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
@@ -215,8 +221,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
     , m_webProcessWithMediaStreamingCounter([this](RefCounterEvent) { updateMediaStreamingActivity(); })
 {
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    if (!s_didGlobalStaticInitialization) {
         WTF::setProcessPrivileges(allPrivileges());
         WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
         Process::setIdentifier(WebCore::ProcessIdentifier::generate());
@@ -232,7 +237,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         if (isSafari)
             enableAllSDKAlignedBehaviors();
 #endif
-    });
+    }
 
     for (auto& scheme : m_configuration->alwaysRevalidatedURLSchemes())
         m_schemesToRegisterAsAlwaysRevalidated.add(scheme);
@@ -279,6 +284,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         });
     }
 #endif
+
+    s_didGlobalStaticInitialization = true;
 }
 
 WebProcessPool::~WebProcessPool()
@@ -1831,7 +1838,8 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, const API::Navigat
 #endif
 
         auto processIdentifier = process->coreProcessIdentifier();
-        page->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url()), loadedWebArchive), [completionHandler = WTFMove(completionHandler), process = WTFMove(process), suspendedPage = WTFMove(suspendedPage), reason] () mutable {
+        auto preventProcessShutdownScope = process->shutdownPreventingScope();
+        page->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation->currentRequest().url()), loadedWebArchive), [completionHandler = WTFMove(completionHandler), process = WTFMove(process), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), suspendedPage = WTFMove(suspendedPage), reason] () mutable {
             completionHandler(WTFMove(process), suspendedPage, reason);
         });
     });

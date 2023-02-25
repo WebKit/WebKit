@@ -1542,7 +1542,9 @@ public:
     void setAppHighlightsVisibility(const WebCore::HighlightVisibility);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+#endif
 
 #if ENABLE(PDFKIT_PLUGIN)
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;

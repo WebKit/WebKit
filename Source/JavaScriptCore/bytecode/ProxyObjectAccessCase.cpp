@@ -66,6 +66,7 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     CCallHelpers& jit = *state.jit;
     CodeBlock* codeBlock = jit.codeBlock();
     VM& vm = state.m_vm;
+    ECMAMode ecmaMode = state.m_ecmaMode;
     StructureStubInfo& stubInfo = *state.stubInfo;
     JSValueRegs valueRegs = stubInfo.valueRegs();
     GPRReg baseGPR = stubInfo.m_baseGPR;
@@ -95,6 +96,9 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
 
     unsigned numberOfParameters = 3;
 
+    if (m_type == ProxyObjectStore)
+        numberOfParameters++;
+
     unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + roundArgumentCountToAlignFrame(numberOfParameters);
     ASSERT(!(numberOfRegsForCall % stackAlignmentRegisters()));
     unsigned numberOfBytesForCall = numberOfRegsForCall * sizeof(Register) - sizeof(CallerFrameAndPC);
@@ -120,13 +124,22 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     } else
         jit.storeTrustedValue(identifier().cell(), calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(2).offset() * sizeof(Register)));
 
-    jit.move(CCallHelpers::TrustedImmPtr(globalObject->performProxyObjectGetFunction()), scratchGPR);
+    if (m_type == ProxyObjectStore)
+        jit.storeValue(valueRegs, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(3).offset() * sizeof(Register)));
+
+    JSFunction* proxyInternalMethod = m_type == ProxyObjectLoad ?
+        globalObject->performProxyObjectGetFunction() :
+        (ecmaMode.isStrict() ? globalObject->performProxyObjectSetStrictFunction() : globalObject->performProxyObjectSetSloppyFunction());
+
+    jit.move(CCallHelpers::TrustedImmPtr(proxyInternalMethod), scratchGPR);
     jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
     auto slowCase = CallLinkInfo::emitFastPath(jit, callLinkInfo, scratchGPR, scratchGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2);
     auto doneLocation = jit.label();
 
-    jit.setupResults(valueRegs);
+    if (m_type == ProxyObjectLoad)
+        jit.setupResults(valueRegs);
+
     auto done = jit.jump();
 
     slowCase.link(&jit);
@@ -139,7 +152,8 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     jit.move(CCallHelpers::TrustedImmPtr(globalObject), GPRInfo::regT3);
     callLinkInfo->emitSlowPath(vm, jit);
 
-    jit.setupResults(valueRegs);
+    if (m_type == ProxyObjectLoad)
+        jit.setupResults(valueRegs);
 
     done.link(&jit);
 
@@ -147,9 +161,11 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 
     RegisterSet dontRestore;
-    // This is the result value. We don't want to overwrite the result with what we stored to the stack.
-    // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-    dontRestore.add(valueRegs, IgnoreVectors);
+    if (m_type == ProxyObjectLoad) {
+        // This is the result value. We don't want to overwrite the result with what we stored to the stack.
+        // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
+        dontRestore.add(valueRegs, IgnoreVectors);
+    }
     state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {

@@ -31,6 +31,7 @@
 #if ENABLE(MEDIA_STREAM)
 #include "GStreamerAudioData.h"
 #include "GStreamerMediaStreamSource.h"
+#include "MediaStreamPrivate.h"
 #endif
 
 namespace WebCore {
@@ -90,18 +91,34 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer()
 
 #if ENABLE(MEDIA_STREAM)
 AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPrivate& source)
-    : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
+    : m_captureSource(source)
+    , m_notifier(MainThreadNotifier<MainThreadNotification>::create())
 {
     initializeDebugCategory();
-    auto pipelineName = makeString("WebAudioProvider_MediaStreamTrack_", source.id());
+    registerWebKitGStreamerElements();
+    const char* pipelineNamePrefix = "";
+#if USE(GSTREAMER_WEBRTC)
+    if (m_captureSource->source().isIncomingAudioSource())
+        pipelineNamePrefix = "incoming-";
+#endif
+    auto pipelineName = makeString(pipelineNamePrefix, "WebAudioProvider_MediaStreamTrack_", source.id());
     m_pipeline = gst_element_factory_make("pipeline", pipelineName.utf8().data());
     GST_DEBUG_OBJECT(m_pipeline.get(), "MediaStream WebAudio provider created");
-    auto src = webkitMediaStreamSrcNew();
-    webkitMediaStreamSrcAddTrack(WEBKIT_MEDIA_STREAM_SRC(src), &source, true);
+
+    m_streamPrivate = MediaStreamPrivate::create(source.logger(), { source });
 
     m_audioSinkBin = gst_parse_bin_from_description("tee name=audioTee", true, nullptr);
 
-    auto* decodebin = makeGStreamerElement("decodebin3", nullptr);
+    auto* decodebin = makeGStreamerElement("uridecodebin3", nullptr);
+
+    g_signal_connect_swapped(decodebin, "source-setup", G_CALLBACK(+[](AudioSourceProviderGStreamer* provider, GstElement* sourceElement) {
+        if (!WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        webkitMediaStreamSrcSetStream(WEBKIT_MEDIA_STREAM_SRC(sourceElement), provider->m_streamPrivate.get(), false);
+    }), this);
+
     g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](AudioSourceProviderGStreamer* provider, GstPad* pad) {
         auto padCaps = adoptGRef(gst_pad_query_caps(pad, nullptr));
         bool isAudio = doCapsHaveType(padCaps.get(), "audio");
@@ -115,8 +132,7 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
         gst_element_sync_state_with_parent(provider->m_audioSinkBin.get());
     }), this);
 
-    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), src, decodebin, m_audioSinkBin.get(), nullptr);
-    gst_element_link(src, decodebin);
+    gst_bin_add_many(GST_BIN_CAST(m_pipeline.get()), decodebin, m_audioSinkBin.get(), nullptr);
 
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
     ASSERT(bus);
@@ -155,11 +171,14 @@ AudioSourceProviderGStreamer::AudioSourceProviderGStreamer(MediaStreamTrackPriva
 
         return GST_BUS_DROP;
     }, gst_object_ref(decodebin), gst_object_unref);
+
+    g_object_set(decodebin, "uri", "mediastream://", nullptr);
 }
 #endif
 
 AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer()
 {
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Disposing");
     m_notifier->invalidate();
 
     auto deinterleave = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_audioSinkBin.get()), "deinterleave"));
@@ -174,6 +193,7 @@ AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer()
     if (m_pipeline)
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 #endif
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Disposing DONE");
 }
 
 void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstElement* audioSink)
@@ -256,7 +276,7 @@ void AudioSourceProviderGStreamer::setClient(WeakPtr<AudioSourceProviderClient>&
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    GST_DEBUG_OBJECT(m_pipeline.get(), "Setting up client %p (previous: %p)", newClient.get(), client());
+    GST_DEBUG_OBJECT(m_pipeline.get(), "[%p] Setting up client %p (previous: %p)", this, newClient.get(), client());
 #endif
     bool previousClientWasValid = !!m_client;
     m_client = WTFMove(newClient);

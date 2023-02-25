@@ -61,6 +61,7 @@ public:
     AbstractColoringAllocator(Code& code, const Vector<Reg>& regsInPriorityOrder, IndexType lastPrecoloredRegisterIndex, unsigned tmpArraySize, const BitVector& unspillableTmps, const UseCounts& useCounts)
         : m_regsInPriorityOrder(regsInPriorityOrder)
         , m_lastPrecoloredRegisterIndex(lastPrecoloredRegisterIndex)
+        , m_coalescedTmps(tmpArraySize, 0)
         , m_unspillableTmps(unspillableTmps)
         , m_useCounts(useCounts)
         , m_code(code)
@@ -76,7 +77,6 @@ public:
         
         m_adjacencyList.resize(tmpArraySize);
         m_moveList.resize(tmpArraySize);
-        m_coalescedTmps.fill(0, tmpArraySize);
         m_isOnSelectStack.ensureSize(tmpArraySize);
         m_spillWorklist.ensureSize(tmpArraySize);
     }
@@ -1896,8 +1896,7 @@ private:
         unsigned numTmps = m_code.numTmps(bank);
         unsigned arraySize = AbsoluteTmpMapper<bank>::absoluteIndex(numTmps);
 
-        Vector<Range, 0, UnsafeVectorOverflow> ranges;
-        ranges.fill(Range(), arraySize);
+        Vector<Range, 0, UnsafeVectorOverflow> ranges(arraySize, Range());
 
         unsigned globalIndex = 0;
         for (BasicBlock* block : m_code) {

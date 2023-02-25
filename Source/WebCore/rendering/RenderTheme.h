@@ -184,7 +184,7 @@ public:
 
     Color datePlaceholderTextColor(const Color& textColor, const Color& backgroundColor) const;
 
-    virtual Color documentMarkerLineColor(DocumentMarkerLineStyleMode, OptionSet<StyleColorOptions>) const;
+    Color documentMarkerLineColor(DocumentMarkerLineStyleMode, OptionSet<StyleColorOptions>) const;
 
     WEBCORE_EXPORT Color focusRingColor(OptionSet<StyleColorOptions>) const;
     virtual Color platformFocusRingColor(OptionSet<StyleColorOptions>) const { return Color::black; }
@@ -281,6 +281,11 @@ protected:
     virtual Color platformAnnotationHighlightColor(OptionSet<StyleColorOptions>) const;
 
     virtual Color platformDefaultButtonTextColor(OptionSet<StyleColorOptions>) const;
+
+    virtual Color platformSpellingMarkerColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions>) const;
+    virtual Color platformGrammarMarkerColor(OptionSet<StyleColorOptions>) const;
 
     virtual bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
@@ -429,6 +434,11 @@ protected:
         Color annotationHighlightColor;
 
         Color defaultButtonTextColor;
+
+        Color spellingMarkerColor;
+        Color dictationAlternativesMarkerColor;
+        Color autocorrectionReplacementMarkerColor;
+        Color grammarMarkerColor;
     };
 
     virtual ColorCache& colorCache(OptionSet<StyleColorOptions>) const;
@@ -436,6 +446,11 @@ protected:
 private:
     StyleAppearance autoAppearanceForElement(RenderStyle&, const Element*) const;
     StyleAppearance adjustAppearanceForElement(RenderStyle&, const Element*, StyleAppearance) const;
+
+    Color spellingMarkerColor(OptionSet<StyleColorOptions>) const;
+    Color dictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const;
+    Color autocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions>) const;
+    Color grammarMarkerColor(OptionSet<StyleColorOptions>) const;
 
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
 };

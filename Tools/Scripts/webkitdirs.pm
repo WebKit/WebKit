@@ -120,13 +120,11 @@ BEGIN {
        &isAppleCocoaWebKit
        &isAppleMacWebKit
        &isAppleWebKit
-       &isAppleWinWebKit
        &isCMakeBuild
        &isCygwin
        &isDebianBased
        &isFedoraBased
        &isEmbeddedWebKit
-       &isFTW
        &isGenerateProjectOnly
        &isGtk
        &isIOSWebKit
@@ -183,7 +181,6 @@ BEGIN {
        &setPathForRunningWebKitApp
        &setUpGuardMallocIfNeeded
        &setXcodeSDK
-       &setupAppleWinEnv
        &setupMacWebKitEnvironment
        &setupUnixWebKitEnvironment
        &sharedCommandLineOptions
@@ -216,8 +213,6 @@ BEGIN {
 
 # Ports
 use constant {
-    AppleWin    => "AppleWin",
-    FTW         => "FTW",
     GTK         => "GTK",
     iOS         => "iOS",
     tvOS        => "tvOS",
@@ -714,7 +709,6 @@ sub argumentsForConfiguration()
     push(@args, '--maccatalyst') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'maccatalyst');
     push(@args, '--32-bit') if ($architecture eq "x86" and !isWin64());
     push(@args, '--64-bit') if (isWin64());
-    push(@args, '--ftw') if isFTW();
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
@@ -726,7 +720,7 @@ sub argumentsForConfiguration()
 sub extractNonMacOSHostConfiguration
 {
     my @args = ();
-    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', '--ftw', '--tvos', '--watchos', 'SDKROOT', 'ARCHS');
+    my @extract = ('--device', '--gtk', '--ios', '--platform', '--sdk', '--simulator', '--wincairo', '--tvos', '--watchos', 'SDKROOT', 'ARCHS');
     foreach (@{$_[0]}) {
         my $line = $_;
         my $flag = 0;
@@ -997,7 +991,7 @@ sub usesPerConfigurationBuildDirectory
     # autotool builds (non build-webkit). In this case and if
     # WEBKIT_OUTPUTDIR exist, use that as our configuration dir. This will
     # allows us to run run-webkit-tests without using build-webkit.
-    return ($ENV{"WEBKIT_OUTPUTDIR"} && isGtk()) || isAppleWinWebKit() || isFTW();
+    return $ENV{"WEBKIT_OUTPUTDIR"} && isGtk();
 }
 
 sub determineConfigurationProductDir
@@ -1005,7 +999,7 @@ sub determineConfigurationProductDir
     return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
-    if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
+    if (isWinCairo() || isPlayStation()) {
         $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
@@ -1446,13 +1440,6 @@ sub builtDylibPathForName
     if (isAppleCocoaWebKit()) {
         return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
     }
-    if (isAppleWinWebKit() || isFTW()) {
-        if ($libraryName eq "JavaScriptCore") {
-            return "$baseProductDir/lib/$libraryName.lib";
-        } else {
-            return "$baseProductDir/$libraryName.intermediate/$configuration/$libraryName.intermediate/$libraryName.lib";
-        }
-    }
     if (isWPE()) {
         return "$configurationProductDir/lib/libWPEWebKit-1.0.so";
     }
@@ -1568,7 +1555,6 @@ sub determinePortName()
     return if defined $portName;
 
     my %argToPortName = (
-        ftw => FTW,
         gtk => GTK,
         'jsc-only' => JSCOnly,
         playstation => PlayStation,
@@ -1656,11 +1642,6 @@ sub isDebianBased()
 sub isFedoraBased()
 {
     return -e "/etc/fedora-release";
-}
-
-sub isFTW()
-{
-    return portName() eq FTW;
 }
 
 sub isWinCairo()
@@ -1825,7 +1806,7 @@ sub isEmbeddedWebKit()
 
 sub isAppleWebKit()
 {
-    return isAppleCocoaWebKit() || isAppleWinWebKit();
+    return isAppleCocoaWebKit();
 }
 
 sub isAppleMacWebKit()
@@ -1841,11 +1822,6 @@ sub isMacCatalystWebKit()
 sub isAppleCocoaWebKit()
 {
     return isAppleMacWebKit() || isEmbeddedWebKit() || isMacCatalystWebKit();
-}
-
-sub isAppleWinWebKit()
-{
-    return portName() eq AppleWin;
 }
 
 sub simulatorDeviceFromJSON
@@ -2100,8 +2076,6 @@ sub launcherName()
         return "MiniBrowser";
     } elsif (isAppleMacWebKit()) {
         return "Safari";
-    } elsif (isAppleWinWebKit() || isFTW()) {
-        return "MiniBrowser";
     }
 }
 
@@ -2160,108 +2134,6 @@ sub fontExists($)
     my $cmd = "reg query \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Fonts\" /v \"$font\" 2>&1";
     my $val = `$cmd`;
     return $? == 0;
-}
-
-sub checkInstalledTools()
-{
-    # environment variables. Avoid until this is corrected.
-    my $pythonVer = `python --version 2>&1`;
-    die "You must have Python installed to build WebKit.\n" if ($?);
-
-    # cURL 7.34.0 has a bug that prevents authentication with opensource.apple.com (and other things using SSL3).
-    my $curlVer = `curl --version 2> NUL`;
-    if (!$? and $curlVer =~ "(.*curl.*)") {
-        $curlVer = $1;
-        if ($curlVer =~ /libcurl\/7\.34\.0/) {
-            print "cURL version 7.34.0 has a bug that prevents authentication with SSL v2 or v3.\n";
-            print "cURL 7.33.0 is known to work. The cURL projects is preparing an update to\n";
-            print "correct this problem.\n\n";
-            die "Please install a working cURL and try again.\n";
-        }
-    }
-
-    # MathML requires fonts that may not ship with Windows.
-    # Warn the user if they are missing.
-    my @fonts = ('Cambria & Cambria Math (TrueType)', 'LatinModernMath-Regular (TrueType)', 'STIXMath-Regular (TrueType)');
-    my @missing = ();
-    foreach my $font (@fonts) {
-        push @missing, $font if not fontExists($font);
-    }
-
-    if (scalar @missing > 0) {
-        print "*************************************************************\n";
-        print "Mathematical fonts, such as Latin Modern Math are needed to\n";
-        print "use the MathML feature.  You do not appear to have these fonts\n";
-        print "on your system.\n\n";
-        print "You can download a suitable set of fonts from the following URL:\n";
-        print "https://trac.webkit.org/wiki/MathML/Fonts\n";
-        print "*************************************************************\n";
-    }
-
-    print "Installed tools are correct for the WebKit build.\n";
-}
-
-sub setupAppleWinEnv()
-{
-    return unless isAppleWinWebKit() || isFTW();
-
-    checkInstalledTools();
-
-    if (isWindowsNT()) {
-        my $restartNeeded = 0;
-        my %variablesToSet = ();
-
-        # FIXME: We should remove this explicit version check for cygwin once we stop supporting Cygwin 1.7.9 or older versions. 
-        # https://bugs.webkit.org/show_bug.cgi?id=85791
-        my $uname_version = (POSIX::uname())[2];
-        $uname_version =~ s/\(.*\)//;  # Remove the trailing cygwin version, if any.
-        $uname_version =~ s/\-.*$//; # Remove trailing dash-version content, if any
-        if (version->parse($uname_version) < version->parse("1.7.10")) {
-            # Setting the environment variable 'CYGWIN' to 'tty' makes cygwin enable extra support (i.e., termios)
-            # for UNIX-like ttys in the Windows console
-            $variablesToSet{CYGWIN} = "tty" unless $ENV{CYGWIN};
-        }
-        
-        # Those environment variables must be set to be able to build inside Visual Studio.
-        $variablesToSet{WEBKIT_LIBRARIES} = windowsLibrariesDir() unless $ENV{WEBKIT_LIBRARIES};
-        $variablesToSet{WEBKIT_OUTPUTDIR} = windowsOutputDir() unless $ENV{WEBKIT_OUTPUTDIR};
-        $variablesToSet{MSBUILDDISABLENODEREUSE} = "1" unless $ENV{MSBUILDDISABLENODEREUSE};
-        $variablesToSet{_IsNativeEnvironment} = "true" unless $ENV{_IsNativeEnvironment};
-        $variablesToSet{PreferredToolArchitecture} = "x64" unless $ENV{PreferredToolArchitecture};
-
-        foreach my $variable (keys %variablesToSet) {
-            print "Setting the Environment Variable '" . $variable . "' to '" . $variablesToSet{$variable} . "'\n\n";
-            my $ret = system "setx", $variable, $variablesToSet{$variable};
-            if ($ret != 0) {
-                system qw(regtool -s set), '\\HKEY_CURRENT_USER\\Environment\\' . $variable, $variablesToSet{$variable};
-            }
-            $restartNeeded ||=  $variable eq "WEBKIT_LIBRARIES" || $variable eq "WEBKIT_OUTPUTDIR";
-        }
-
-        if ($restartNeeded) {
-            print "Please restart your computer before attempting to build inside Visual Studio.\n\n";
-        }
-    } else {
-        if (!defined $ENV{'WEBKIT_LIBRARIES'} || !$ENV{'WEBKIT_LIBRARIES'}) {
-            print "Warning: You must set the 'WebKit_Libraries' environment variable\n";
-            print "         to be able build WebKit from within Visual Studio 2017 and newer.\n";
-            print "         Make sure that 'WebKit_Libraries' points to the\n";
-            print "         'WebKitLibraries/win' directory, not the 'WebKitLibraries/' directory.\n\n";
-        }
-        if (!defined $ENV{'WEBKIT_OUTPUTDIR'} || !$ENV{'WEBKIT_OUTPUTDIR'}) {
-            print "Warning: You must set the 'WebKit_OutputDir' environment variable\n";
-            print "         to be able build WebKit from within Visual Studio 2017 and newer.\n\n";
-        }
-        if (!defined $ENV{'MSBUILDDISABLENODEREUSE'} || !$ENV{'MSBUILDDISABLENODEREUSE'}) {
-            print "Warning: You should set the 'MSBUILDDISABLENODEREUSE' environment variable to '1'\n";
-            print "         to avoid periodic locked log files when building.\n\n";
-        }
-    }
-    # FIXME (125180): Remove the following temporary 64-bit support once official support is available.
-    if (isWin64() and !$ENV{'WEBKIT_64_SUPPORT'}) {
-        print "Warning: You must set the 'WEBKIT_64_SUPPORT' environment variable\n";
-        print "         to be able run WebKit or JavaScriptCore tests.\n\n";
-    }
 }
 
 sub setupCygwinEnv()
@@ -2933,31 +2805,14 @@ sub promptUser
     return $input ? $input : $default;
 }
 
-sub appleApplicationSupportPath
-{
-    open INSTALL_DIR, "</proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Apple\ Inc./Apple\ Application\ Support/InstallDir";
-    my $path = <INSTALL_DIR>;
-    $path =~ s/[\r\n\x00].*//;
-    close INSTALL_DIR;
-
-    my $unixPath = `cygpath -u '$path'`;
-    chomp $unixPath;
-    return $unixPath;
-}
-
 sub setPathForRunningWebKitApp
 {
     my ($env) = @_;
 
     if (isAnyWindows()) {
         my $productBinaryDir = executableProductDir();
-        if (isAppleWinWebKit() || isFTW()) {
-            $env->{PATH} = join(':', $productBinaryDir, appleApplicationSupportPath(), $env->{PATH} || "");
-        } elsif (isWinCairo()) {
-            my $winCairoBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
-            my $gstreamerBin = isWin64() ? $ENV{"GSTREAMER_1_0_ROOT_X86_64"} . "bin" : $ENV{"GSTREAMER_1_0_ROOT_X86"} . "bin";
-            $env->{PATH} = join(':', $productBinaryDir, $winCairoBin, $gstreamerBin, $env->{PATH} || "");
-        }
+        my $winCairoBin = sourceDir() . "/WebKitLibraries/win/" . (isWin64() ? "bin64/" : "bin32/");
+        $env->{PATH} = join(':', $productBinaryDir, $winCairoBin, $env->{PATH} || "");
     }
 }
 
@@ -3421,12 +3276,6 @@ sub runSafari
         return runMacWebKitApp(safariPath());
     }
 
-    if (isAppleWinWebKit() || isFTW()) {
-        my $result;
-        my $webKitLauncherPath = File::Spec->catfile(executableProductDir(), "MiniBrowser.exe");
-        return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
-    }
-
     return 1; # Unsupported platform; can't run Safari on this platform.
 }
 
@@ -3434,10 +3283,6 @@ sub runMiniBrowser
 {
     if (isAppleMacWebKit()) {
         return runMacWebKitApp(File::Spec->catfile(productDir(), "MiniBrowser.app", "Contents", "MacOS", "MiniBrowser"));
-    }
-    if (isAppleWinWebKit() || isFTW()) {
-        my $webKitLauncherPath = File::Spec->catfile(executableProductDir(), "MiniBrowser.exe");
-        return system { $webKitLauncherPath } $webKitLauncherPath, @ARGV;
     }
     if (isIOSWebKit()) {
         return runIOSWebKitApp(mobileMiniBrowserBundle());

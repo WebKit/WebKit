@@ -86,7 +86,7 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayerHost(WebCore::L
     return PlatformCALayerRemoteHost::create(identifier, owner, *m_context);
 }
 
-#if ENABLE(AVKIT)
+#if HAVE(AVKIT)
 Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformVideoLayer(WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner)
 {
     return PlatformCALayerRemote::create(videoElement, owner, *m_context);

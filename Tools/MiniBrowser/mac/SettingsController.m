@@ -66,6 +66,7 @@ static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"Anima
 static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
 static NSString * const PunchOutWhiteBackgroundsInDarkModePreferenceKey = @"PunchOutWhiteBackgroundsInDarkMode";
 static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
+static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
 static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2UseRemoteLayerTreeDrawingArea";
@@ -181,6 +182,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Enable color-filter", @selector(toggleAppleColorFilterEnabled:));
     addItem(@"Punch Out White Backgrounds in Dark Mode", @selector(togglePunchOutWhiteBackgroundsInDarkMode:));
     addItem(@"Use System Appearance", @selector(toggleUseSystemAppearance:));
+    addItem(@"Use Mock Capture Devices", @selector(toggleUseMockCaptureDevices:));
 
     addSeparator();
     addItem(@"WebKit2-only Settings", nil);
@@ -340,6 +342,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
         [menuItem setState:[self useSystemAppearance] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleUseMockCaptureDevices:))
+        [menuItem setState:[self useMockCaptureDevices] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
         [menuItem setState:[self isSpaceReservedForBanners] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
@@ -651,6 +655,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)useSystemAppearance
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseSystemAppearancePreferenceKey];
+}
+
+- (void)toggleUseMockCaptureDevices:(id)sender
+{
+    [self _toggleBooleanDefault:UseMockCaptureDevicesPreferenceKey];
+}
+
+- (BOOL)useMockCaptureDevices
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:UseMockCaptureDevicesPreferenceKey];
 }
 
 - (BOOL)nonFastScrollableRegionOverlayVisible

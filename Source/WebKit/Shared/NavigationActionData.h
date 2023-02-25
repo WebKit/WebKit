@@ -45,9 +45,6 @@ typedef int SandboxFlags;
 namespace WebKit {
 
 struct NavigationActionData {
-    void encode(IPC::Encoder&) const;
-    static std::optional<NavigationActionData> decode(IPC::Decoder&);
-
     WebCore::NavigationType navigationType { WebCore::NavigationType::Other };
     OptionSet<WebEventModifier> modifiers;
     WebMouseEventButton mouseButton { WebMouseEventButton::NoButton };

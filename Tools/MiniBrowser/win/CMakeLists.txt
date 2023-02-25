@@ -42,4 +42,3 @@ WEBKIT_WRAP_EXECUTABLE(MiniBrowser
 WEBKIT_EXECUTABLE(MiniBrowser)
 
 set_target_properties(MiniBrowser PROPERTIES WIN32_EXECUTABLE ON)
-target_compile_definitions(MiniBrowser PRIVATE WIN_CAIRO)

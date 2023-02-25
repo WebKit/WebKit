@@ -35,57 +35,6 @@
 
 namespace WebKit {
 
-void WebsiteData::Entry::encode(IPC::Encoder& encoder) const
-{
-    encoder << origin;
-    encoder << type;
-    encoder << size;
-}
-
-auto WebsiteData::Entry::decode(IPC::Decoder& decoder) -> std::optional<Entry>
-{
-    Entry result;
-
-    std::optional<WebCore::SecurityOriginData> securityOriginData;
-    decoder >> securityOriginData;
-    if (!securityOriginData)
-        return std::nullopt;
-    result.origin = WTFMove(*securityOriginData);
-
-    if (!decoder.decode(result.type))
-        return std::nullopt;
-
-    if (!decoder.decode(result.size))
-        return std::nullopt;
-
-    return result;
-}
-
-void WebsiteData::encode(IPC::Encoder& encoder) const
-{
-    encoder << entries;
-    encoder << hostNamesWithCookies;
-    encoder << hostNamesWithHSTSCache;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    encoder << registrableDomainsWithResourceLoadStatistics;
-#endif
-}
-
-bool WebsiteData::decode(IPC::Decoder& decoder, WebsiteData& result)
-{
-    if (!decoder.decode(result.entries))
-        return false;
-    if (!decoder.decode(result.hostNamesWithCookies))
-        return false;
-    if (!decoder.decode(result.hostNamesWithHSTSCache))
-        return false;
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    if (!decoder.decode(result.registrableDomainsWithResourceLoadStatistics))
-        return false;
-#endif
-    return true;
-}
-
 WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
 {
     switch (dataType) {
@@ -153,7 +102,7 @@ WebsiteData WebsiteData::isolatedCopy() const &
         crossThreadCopy(entries),
         crossThreadCopy(hostNamesWithCookies),
         crossThreadCopy(hostNamesWithHSTSCache),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(registrableDomainsWithResourceLoadStatistics),
 #endif
     };
@@ -165,20 +114,35 @@ WebsiteData WebsiteData::isolatedCopy() &&
         crossThreadCopy(WTFMove(entries)),
         crossThreadCopy(WTFMove(hostNamesWithCookies)),
         crossThreadCopy(WTFMove(hostNamesWithHSTSCache)),
-#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(WTFMove(registrableDomainsWithResourceLoadStatistics)),
 #endif
     };
 }
 
+WebsiteData::Entry::Entry(WebCore::SecurityOriginData inOrigin, WebsiteDataType inType, uint64_t inSize)
+    : origin(inOrigin)
+    , type(inType)
+    , size(inSize)
+{
+}
+
+WebsiteData::Entry::Entry(WebCore::SecurityOriginData&& inOrigin, OptionSet<WebsiteDataType>&& inType, uint64_t inSize)
+    : origin(WTFMove(inOrigin))
+    , size(inSize)
+{
+    RELEASE_ASSERT(inType.hasExactlyOneBitSet());
+    type = *inType.toSingleValue();
+}
+
 auto WebsiteData::Entry::isolatedCopy() const & -> Entry
 {
-    return { crossThreadCopy(origin), type, size };
+    return { crossThreadCopy(origin), crossThreadCopy(type), size };
 }
 
 auto WebsiteData::Entry::isolatedCopy() && -> Entry
 {
-    return { crossThreadCopy(WTFMove(origin)), type, size };
+    return { crossThreadCopy(WTFMove(origin)), crossThreadCopy(WTFMove(type)), size };
 }
 
 }

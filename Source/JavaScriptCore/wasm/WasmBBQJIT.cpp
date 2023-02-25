@@ -8077,7 +8077,8 @@ private:
     }
 
     template<typename Register>
-    struct LRU {
+    class LRU {
+    public:
         ALWAYS_INLINE LRU(uint32_t numRegisters)
             : m_keys(numRegisters, -1) // We use -1 to signify registers that can never be allocated or used.
         { }
@@ -8094,13 +8095,18 @@ private:
             int32_t minIndex = -1;
             int32_t minKey = -1;
             for (unsigned i = 0; i < m_keys.size(); i ++) {
-                if (m_keys[i] >= 0 && (minKey < 0 || m_keys[i] < minKey)) {
+                Register reg = static_cast<Register>(i);
+                if (m_locked.contains(reg, conservativeWidth(reg)))
+                    continue;
+                if (m_keys[i] < 0)
+                    continue;
+                if (minKey < 0 || m_keys[i] < minKey) {
                     minKey = m_keys[i];
                     minIndex = i;
                 }
             }
             ASSERT(minIndex >= 0, "No allocatable registers in LRU");
-            return Register(minIndex);
+            return static_cast<Register>(minIndex);
         }
 
         void increaseKey(Register reg, uint32_t newKey)
@@ -8108,8 +8114,20 @@ private:
             if (m_keys[reg] >= 0) // Leave untracked registers alone.
                 m_keys[reg] = newKey;
         }
+
+        void lock(Register reg)
+        {
+            m_locked.add(reg, conservativeWidth(reg));
+        }
+
+        void unlock(Register reg)
+        {
+            m_locked.remove(reg);
+        }
+
     private:
         Vector<int32_t, 32> m_keys;
+        RegisterSet m_locked;
     };
 
     RegisterID nextGPR()
@@ -8188,9 +8206,9 @@ private:
     }
 
     template<int GPRs, int FPRs>
-    struct ScratchScope {
+    class ScratchScope {
         WTF_MAKE_NONCOPYABLE(ScratchScope);
-
+    public:
         template<typename... Args>
         ScratchScope(BBQJIT& generator, Args... locationsToPreserve)
             : m_generator(generator)
@@ -8221,6 +8239,21 @@ private:
             unbind();
         }
 
+        inline RegisterID gpr(unsigned i) const
+        {
+            ASSERT(i < GPRs);
+            ASSERT(!m_endedEarly);
+            return m_tempGPRs[i];
+        }
+
+        inline FPRegisterID fpr(unsigned i) const
+        {
+            ASSERT(i < FPRs);
+            ASSERT(!m_endedEarly);
+            return m_tempFPRs[i];
+        }
+
+    private:
         RegisterID bindGPRToScratch(RegisterID reg)
         {
             RegisterBinding& binding = m_generator.m_gprBindings[reg];
@@ -8232,6 +8265,7 @@ private:
             ASSERT(binding.isNone());
             binding = RegisterBinding::scratch();
             m_generator.m_gprSet.remove(reg);
+            m_generator.m_gprLRU.lock(reg);
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReserving scratch GPR ", MacroAssembler::gprName(reg));
             return reg;
@@ -8248,6 +8282,7 @@ private:
             ASSERT(binding.isNone());
             binding = RegisterBinding::scratch();
             m_generator.m_fprSet.remove(reg);
+            m_generator.m_fprLRU.lock(reg);
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReserving scratch FPR ", MacroAssembler::fprName(reg));
             return reg;
@@ -8263,6 +8298,7 @@ private:
             ASSERT(binding.isScratch());
             binding = RegisterBinding::none();
             m_generator.m_gprSet.add(reg, Width::Width64);
+            m_generator.m_gprLRU.unlock(reg);
         }
 
         void unbindFPRFromScratch(FPRegisterID reg)
@@ -8275,6 +8311,7 @@ private:
             ASSERT(binding.isScratch());
             binding = RegisterBinding::none();
             m_generator.m_fprSet.add(reg, Width::Width128);
+            m_generator.m_fprLRU.unlock(reg);
         }
 
         template<typename... Args>
@@ -8302,20 +8339,6 @@ private:
         inline void initializedPreservedSet()
         { }
 
-        inline RegisterID gpr(unsigned i) const
-        {
-            ASSERT(i < GPRs);
-            ASSERT(!m_endedEarly);
-            return m_tempGPRs[i];
-        }
-
-        inline FPRegisterID fpr(unsigned i) const
-        {
-            ASSERT(i < FPRs);
-            ASSERT(!m_endedEarly);
-            return m_tempFPRs[i];
-        }
-    private:
         void unbind()
         {
             for (int i = 0; i < GPRs; i ++)

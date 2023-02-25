@@ -31,6 +31,7 @@
 #include "Region.h"
 #include "RenderStyleConstants.h"
 #include "TouchAction.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -115,6 +116,21 @@ private:
 class EventRegion {
 public:
     WEBCORE_EXPORT EventRegion();
+    WEBCORE_EXPORT EventRegion(Region&&
+#if ENABLE(TOUCH_ACTION_REGIONS)
+    , Vector<WebCore::Region> touchActionRegions
+#endif
+#if ENABLE(WHEEL_EVENT_REGIONS)
+    , WebCore::Region wheelEventListenerRegion
+    , WebCore::Region nonPassiveWheelEventListenerRegion
+#endif
+#if ENABLE(EDITABLE_REGION)
+    , std::optional<WebCore::Region>
+#endif
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    , Vector<WebCore::InteractionRegion>
+#endif
+    );
 
     EventRegionContext makeContext() { return EventRegionContext(*this); }
 
@@ -149,11 +165,6 @@ public:
     Vector<IntRect, 1> rectsForEditableElements() const { return m_editableRegion ? m_editableRegion->rects() : Vector<IntRect, 1> { }; }
 #endif
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<EventRegion> decode(Decoder&);
-    // FIXME: Remove legacy decode.
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, EventRegion&);
-
     void dump(TextStream&) const;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -162,6 +173,7 @@ public:
 #endif
 
 private:
+    friend struct IPC::ArgumentCoder<EventRegion, void>;
 #if ENABLE(TOUCH_ACTION_REGIONS)
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
 #endif
@@ -184,91 +196,6 @@ private:
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const EventRegion&);
-
-template<class Encoder>
-void EventRegion::encode(Encoder& encoder) const
-{
-    encoder << m_region;
-#if ENABLE(WHEEL_EVENT_REGIONS)
-    encoder << m_wheelEventListenerRegion;
-    encoder << m_nonPassiveWheelEventListenerRegion;
-#endif
-#if ENABLE(TOUCH_ACTION_REGIONS)
-    encoder << m_touchActionRegions;
-#endif
-#if ENABLE(EDITABLE_REGION)
-    encoder << m_editableRegion;
-#endif
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    encoder << m_interactionRegions;
-#endif
-}
-
-template<class Decoder>
-std::optional<EventRegion> EventRegion::decode(Decoder& decoder)
-{
-    std::optional<Region> region;
-    decoder >> region;
-    if (!region)
-        return std::nullopt;
-
-    EventRegion eventRegion;
-    eventRegion.m_region = WTFMove(*region);
-
-#if ENABLE(WHEEL_EVENT_REGIONS)
-    std::optional<Region> wheelEventListenerRegion;
-    decoder >> wheelEventListenerRegion;
-    if (!wheelEventListenerRegion)
-        return std::nullopt;
-
-    eventRegion.m_wheelEventListenerRegion = WTFMove(*wheelEventListenerRegion);
-
-    std::optional<Region> nonPassiveWheelEventListenerRegion;
-    decoder >> nonPassiveWheelEventListenerRegion;
-    if (!nonPassiveWheelEventListenerRegion)
-        return std::nullopt;
-
-    eventRegion.m_nonPassiveWheelEventListenerRegion = WTFMove(*nonPassiveWheelEventListenerRegion);
-#endif
-
-#if ENABLE(TOUCH_ACTION_REGIONS)
-    std::optional<Vector<Region>> touchActionRegions;
-    decoder >> touchActionRegions;
-    if (!touchActionRegions)
-        return std::nullopt;
-
-    eventRegion.m_touchActionRegions = WTFMove(*touchActionRegions);
-#endif
-
-#if ENABLE(EDITABLE_REGION)
-    std::optional<std::optional<Region>> editableRegion;
-    decoder >> editableRegion;
-    if (!editableRegion)
-        return std::nullopt;
-    eventRegion.m_editableRegion = WTFMove(*editableRegion);
-#endif
-
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    std::optional<Vector<InteractionRegion>> interactionRegions;
-    decoder >> interactionRegions;
-    if (!interactionRegions)
-        return std::nullopt;
-    eventRegion.m_interactionRegions = WTFMove(*interactionRegions);
-#endif
-
-    return eventRegion;
-}
-
-template<class Decoder>
-bool EventRegion::decode(Decoder& decoder, EventRegion& eventRegion)
-{
-    std::optional<EventRegion> decodedEventRegion;
-    decoder >> decodedEventRegion;
-    if (!decodedEventRegion)
-        return false;
-    eventRegion = WTFMove(*decodedEventRegion);
-    return true;
-}
 
 #if ENABLE(EDITABLE_REGION)
 

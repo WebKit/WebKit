@@ -2132,7 +2132,7 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 
 void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
 {
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK)
+#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC)
     configureElementPlatformQuirks(element);
 #endif
 
@@ -2173,10 +2173,19 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
         g_object_set(G_OBJECT(element), "high-watermark", 0.10, nullptr);
 }
 
-#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK)
+#if PLATFORM(BROADCOM) || USE(WESTEROS_SINK) || PLATFORM(AMLOGIC)
 void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* element)
 {
     GST_DEBUG_OBJECT(pipeline(), "Element set-up for %s", GST_ELEMENT_NAME(element));
+
+#if PLATFORM(AMLOGIC)
+    if (!g_strcmp0(G_OBJECT_TYPE_NAME(G_OBJECT(element)), "GstAmlHalAsink")) {
+        GST_INFO_OBJECT(pipeline(), "Set property disable-xrun to TRUE");
+        g_object_set(element, "disable-xrun", TRUE, nullptr);
+        if (hasVideo())
+            g_object_set(G_OBJECT(element), "wait-video", TRUE, nullptr);
+    }
+#endif
 
 #if PLATFORM(BROADCOM)
     if (g_str_has_prefix(GST_ELEMENT_NAME(element), "brcmaudiosink"))
@@ -2212,12 +2221,12 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
     }
 #endif
     // FIXME: Following is a hack needed to get westeros-sink autoplug correctly with playbin3.
-    if (!m_isLegacyPlaybin && westerosSinkCaps && g_str_has_prefix(GST_ELEMENT_NAME(element), "decodebin3")) {
+    if (!m_isLegacyPlaybin && westerosSinkCaps && g_str_has_prefix(GST_ELEMENT_NAME(element), "uridecodebin3")) {
         GRefPtr<GstCaps> defaultCaps;
         g_object_get(element, "caps", &defaultCaps.outPtr(), NULL);
-        defaultCaps = adoptGRef(gst_caps_merge(defaultCaps.leakRef(), gst_caps_ref(westerosSinkCaps)));
+        defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(westerosSinkCaps), defaultCaps.leakRef()));
         g_object_set(element, "caps", defaultCaps.get(), NULL);
-        GST_ERROR_OBJECT(pipeline(), "setting stop caps tp %" GST_PTR_FORMAT, defaultCaps.get());
+        GST_INFO_OBJECT(pipeline(), "setting stop caps tp %" GST_PTR_FORMAT, defaultCaps.get());
     }
 #endif
 }
@@ -3237,6 +3246,9 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                 // but left for later.
                 object.releaseFlag = DMABufReleaseFlag { };
 
+                // No way (yet) to retrieve the modifier information. Until then, no modifiers are specified
+                // for this DMABufObject (via the modifierPresent and modifierValue member variables).
+
                 // For each plane, the relevant data (stride, offset, skip, dmabuf fd) is retrieved and assigned
                 // as appropriate. Modifier values are zeroed out for now, since GStreamer doesn't yet provide
                 // the information.
@@ -3256,7 +3268,6 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     gst_video_format_info_component(videoInfo.finfo, i, comp);
                     object.offset[i] = offset;
                     object.stride[i] = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
-                    object.modifier[i] = 0;
                 }
                 return WTFMove(object);
             });

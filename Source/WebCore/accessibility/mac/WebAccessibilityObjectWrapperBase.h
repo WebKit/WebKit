@@ -43,25 +43,16 @@ class FloatPoint;
 class HTMLTextFormControlElement;
 class Path;
 class VisiblePosition;
+
+// NSAttributedString support.
+// FIXME: move to a new AXAttributedStringBuilder class. For now, these
+// functions are implemented in AccessibilityObjectCocoa.mm. Additional helper
+// functions are implemented in AccessibilityObjectMac or IOS .mm respectively.
+bool attributedStringContainsRange(NSAttributedString *, const NSRange&);
+void attributedStringSetNumber(NSMutableAttributedString *, NSString *, NSNumber *, const NSRange&);
+void attributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSRange&);
+RetainPtr<NSAttributedString> attributedStringCreate(Node*, StringView, AXCoreObject::SpellCheck);
 }
-
-// Tokens used to denote attributes in NSAttributedStrings.
-static NSString * const UIAccessibilityTokenBlockquoteLevel = @"UIAccessibilityTokenBlockquoteLevel";
-static NSString * const UIAccessibilityTokenHeadingLevel = @"UIAccessibilityTokenHeadingLevel";
-static NSString * const UIAccessibilityTokenFontName = @"UIAccessibilityTokenFontName";
-static NSString * const UIAccessibilityTokenFontFamily = @"UIAccessibilityTokenFontFamily";
-static NSString * const UIAccessibilityTokenFontSize = @"UIAccessibilityTokenFontSize";
-static NSString * const UIAccessibilityTokenBold = @"UIAccessibilityTokenBold";
-static NSString * const UIAccessibilityTokenItalic = @"UIAccessibilityTokenItalic";
-static NSString * const UIAccessibilityTokenUnderline = @"UIAccessibilityTokenUnderline";
-static NSString * const UIAccessibilityTokenLanguage = @"UIAccessibilityTokenLanguage";
-static NSString * const UIAccessibilityTokenAttachment = @"UIAccessibilityTokenAttachment";
-
-static NSString * const UIAccessibilityTextAttributeContext = @"UIAccessibilityTextAttributeContext";
-static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibilityTextualContextSourceCode";
-
-bool AXAttributedStringRangeIsValid(NSAttributedString *, const NSRange&);
-void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSRange&);
 
 @interface WebAccessibilityObjectWrapperBase : NSObject {
     WebCore::AccessibilityObject* m_axObject;
@@ -116,7 +107,6 @@ void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSR
 - (CGPathRef)convertPathToScreenSpace:(const WebCore::Path&)path;
 
 - (CGRect)convertRectToSpace:(const WebCore::FloatRect&)rect space:(WebCore::AccessibilityConversionSpace)space;
-- (NSArray *)contentForSimpleRange:(const WebCore::SimpleRange&)range attributed:(BOOL)attributed;
 
 // Math related functions
 - (NSArray *)accessibilityMathPostscriptPairs;

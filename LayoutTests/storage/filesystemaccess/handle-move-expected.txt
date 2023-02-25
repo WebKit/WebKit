@@ -12,7 +12,7 @@ PASS fileHandle2.kind is "file"
 Test move to a file handle:
 PASS moveFileError.toString() is "TypeMismatchError: The type of an object was incompatible with the expected type of the parameter associated to the object."
 Test move to a destination with existing file:
-PASS moveFileError.toString() is "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
+PASS fileHandle.name is "secondFile"
 Test move with an invalid name:
 PASS moveFileError.toString() is "TypeError: Name is invalid"
 PASS moveFileError.toString() is "TypeError: Name is invalid"

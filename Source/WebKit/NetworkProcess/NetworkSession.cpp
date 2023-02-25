@@ -707,17 +707,6 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-bool NetworkSession::needsAdditionalNetworkConnectionIntegritySettings(const ResourceRequest& request)
-{
-    if (request.isThirdParty())
-        return false;
-
-    if (request.url().host() == request.firstPartyForCookies().host())
-        return false;
-
-    return true;
-}
-
 #if ENABLE(SERVICE_WORKER)
 void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, WebCore::ResourceRequest&& request, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&& completionHandler)
 {

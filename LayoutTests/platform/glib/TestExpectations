@@ -315,7 +315,6 @@ media/video-with-alpha.html [ Pass ]
 
 # NOTIFICATION_EVENT tests
 http/tests/workers/service/shownotification-allowed-document.html [ Pass ]
-http/tests/workers/service/shownotification-allowed.html [ Pass ]
 http/tests/workers/service/shownotification-invalid-data.html [ Pass ]
 http/wpt/push-api/pushEvent.any.serviceworker.html [ Pass ]
 imported/w3c/web-platform-tests/notifications/idlharness.https.any.html [ Pass ]
@@ -852,6 +851,7 @@ webkit.org/b/251527 imported/w3c/web-platform-tests/css/css-scroll-snap/selectio
 webkit.org/b/251528 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-uneditable.html [ Failure ]
 
 webkit.org/b/251529 imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html [ Failure ]
+
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/delegatesFocus-highlight-sibling.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback-default-tabindex.html [ Failure ]
@@ -863,8 +863,8 @@ webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-fallback.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-shadow-in-slot.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots.html [ Failure ]
+webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slots-in-slot.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-with-tabindex.html [ Failure ]
-webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-web-component-input-type-radio.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-with-delegatesFocus.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-nested-slots.html [ Failure ]
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-reverse-unassignable-slot.html [ Failure ]
@@ -873,7 +873,6 @@ webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/
 webkit.org/b/251530 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-with-negative-index.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html [ Failure ]
-
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
@@ -1008,7 +1007,6 @@ webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1017
 
 webkit.org/b/230415 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
 fast/mediastream/mediastreamtrack-configurationchange.html [ Failure ]
@@ -1692,13 +1690,7 @@ webrtc/video-sframe.html [ Skip ]
 webkit.org/b/219825 webrtc/sframe-keys.html [ Skip ]
 webkit.org/b/229055 http/wpt/webrtc/sframe-transform-error.html [ Skip ]
 
-# On-the-fly track switching not supported yet.
-webkit.org/b/235885 webrtc/audio-replace-track.html [ Skip ]
-webkit.org/b/235885 webrtc/video-replace-track-to-null.html [ Skip ]
-webkit.org/b/235885 webrtc/video-replace-track.html [ Skip ]
-webkit.org/b/235885 webrtc/video-replace-muted-track.html
-webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Skip ]
-webkit.org/b/216763 webkit.org/b/235885 webrtc/captureCanvas-webrtc-software-h264-high.html [ Skip ]
+# GStreamerRtpReceiverBackend::getSynchronizationSources() unimplemented and also hitting srtpenc errors.
 webkit.org/b/235885 webrtc/video-addTransceiver.html [ Skip ]
 
 # GstWebRTC doesn't support transceiver direction changes.
@@ -1708,6 +1700,10 @@ webkit.org/b/235885 webrtc/direction-change.html [ Skip ]
 # Specific to LibWebRTC:
 webkit.org/b/235885 webrtc/disable-encryption.html [ Skip ]
 webkit.org/b/235885 webrtc/libwebrtc/release-while-getting-stats.html [ Skip ]
+
+# This test is flaky because sometimes the onnegotiationneeded event is not fired fast enough after
+# the addTrack() call.
+webrtc/video-replace-track.html [ Pass Failure ]
 
 # Pending investigation.
 webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]
@@ -1741,7 +1737,6 @@ webkit.org/b/235885 webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/video.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
-webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute.html [ Pass Timeout ]
 
 # In these tests only one canvas frame is pushed towards the sender webrtcbin,
 # this is not enough for the receiver webrtcbin to create its video source pad,
@@ -3213,6 +3208,26 @@ webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_put
 media/audio-session-category-unmute-mute.html [ Skip ]
 
 webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
+
+# Flaky tests detected both on GTK and WPE from 29Jan2023 to 23Feb2023
+webkit.org/b/252878 fast/css/caret-color-fallback-to-color.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/css/caret-color.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/css/caret-color-inherit.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/css/caret-color-span-inside-editable-parent.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/css/color-matching-translucent-border-color.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/css/computed-image-width-with-percent-height.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Failure Pass Timeout ]
+webkit.org/b/252878 http/tests/workers/service/shownotification-allowed.html [ Pass Timeout ]
+webkit.org/b/252878 imported/w3c/web-platform-tests/fetch/http-cache/split-cache.html [ Failure Pass ]
+webkit.org/b/252878 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/same-hash.html [ Failure Pass ]
+webkit.org/b/252878 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/navigation-reporting/reporting-coop-navigated-opener.https.html [ Failure Pass ]
+webkit.org/b/252878 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure Pass ]
+webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.serviceworker.html [ Failure Pass ]
+webkit.org/b/252878 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming.any.sharedworker.html [ Failure Pass ]
+webkit.org/b/252878 loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html [ Failure Pass ]
+webkit.org/b/252878 webrtc/multi-video.html [ Failure Pass Timeout ]
+webkit.org/b/252878 webrtc/peer-connection-remote-audio-mute2.html [ Pass Timeout ]
 
 # End: Common failures between GTK and WPE.
 

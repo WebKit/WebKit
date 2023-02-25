@@ -128,13 +128,6 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
     callback(WGPURequestDeviceStatus_Success, Device::create(this->m_device, WTFMove(label), WTFMove(capabilities), *this), { });
 }
 
-void Adapter::requestInvalidDevice(CompletionHandler<void(Ref<Device>&&)>&& callback)
-{
-    instance().scheduleWork([strongThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-        callback(Device::createInvalid(strongThis));
-    });
-}
-
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -178,9 +171,3 @@ void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor
     });
 }
 
-void wgpuAdapterRequestInvalidDeviceWithBlock(WGPUAdapter adapter, WGPURequestInvalidDeviceBlockCallback callback)
-{
-    WebGPU::fromAPI(adapter).requestInvalidDevice([callback = WebGPU::fromAPI(WTFMove(callback))](Ref<WebGPU::Device>&& device) {
-        callback(WebGPU::releaseToAPI(WTFMove(device)));
-    });
-}

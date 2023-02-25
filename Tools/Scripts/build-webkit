@@ -129,10 +129,9 @@ Usage: $programName [options] [options to pass to build system]
   --no-use-workspace                Build projects one at a time instead of using WebKit.xcworkspace (Apple platforms only)
   --cross-target=<target_machine>   Use the cross-toolchain-helper to build WebKit for the specified machine (Linux platforms only)
 
-  --ftw                             Build the FTW Windows port
   --gtk                             Build the GTK+ port
   --wpe                             Build the WPE port
-  --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
+  --wincairo                        Build the Windows port
   --playstation                     Build the PlayStation port
 
   --inspector-frontend              Copy Web Inspector user interface resources to the build directory
@@ -211,7 +210,7 @@ push @projects, ("Source/WebKitLegacy");
 
 
 # Build WTF as a separate static library on ports which support it.
-splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo() or isFTW();
+splice @projects, 0, 0, "Source/WTF" if isWinCairo();
 
 splice @projects, 0, 0, "Source/bmalloc" if isAppleCocoaWebKit();
 
@@ -224,7 +223,7 @@ if (!isCMakeBuild()) {
     }
 }
 
-if ((isAppleWebKit() || isWinCairo() || isPlayStation() || isFTW()) && !-d "WebKitLibraries") {
+if ((isAppleWebKit() || isWinCairo() || isPlayStation()) && !-d "WebKitLibraries") {
     die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
 }
 
@@ -290,12 +289,6 @@ if (isAppleCocoaWebKit()) {
 
 } elsif (isWinCairo() && !$skipLibraryUpdate) {
     (system("python Tools/Scripts/update-webkit-wincairo-libs.py") == 0) or die;
-} elsif (isAppleWinWebKit() && !$skipLibraryUpdate) {
-    # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
-    # Will fail if WebKitSupportLibrary.zip is not in source root.
-    (system("perl Tools/Scripts/update-webkit-support-libs") == 0) or die;
-    (system("perl Tools/Scripts/update-webkit-auxiliary-libs") == 0) or die;
-    setupAppleWinEnv()
 }
 
 # If asked to build just the WebKit project, overwrite the projects
@@ -330,13 +323,13 @@ if (isCMakeBuild() && !isAnyWindows()) {
 }
 
 my $baseProductDir = baseProductDir();
-if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
+if (isWinCairo() || isPlayStation()) {
     my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
     removeCMakeCache(@featureArgs);
 
     chdirWebKit();
     if (exitStatus(generateBuildSystemFromCMakeProject($prefixPath, @featureArgs, @cmakeArgs))) {
-        die "Run Visual Studio 2017 installation vcvars.bat before build-webkit when using ninja";
+        die "Run Visual Studio installation vcvars.bat before build-webkit when using ninja";
     }
 
     exit 0 if isGenerateProjectOnly();
@@ -349,12 +342,6 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
         $result = buildVisualStudioProject(File::Spec->catfile($baseProductDir, configuration(), "WebKit.sln"), $clean);
     }
     if (exitStatus($result)) {
-        my $scriptDir = relativeScriptsDir();
-        if (isAppleWinWebKit() || isWinCairo() || isFTW()) {
-            print "\n\n===== BUILD FAILED ======\n\n";
-            print "Please ensure you have run $scriptDir/update-webkit to install dependencies.\n\n";
-            print "You can view build errors by checking the BuildLog.htm files located at:\n$baseProductDir/obj/<project>/<config>.\n";
-        }
         exit exitStatus($result);
     }
 } elsif (isAppleCocoaWebKit() && !isCMakeBuild()) {
@@ -364,10 +351,6 @@ if (isAppleWinWebKit() || isWinCairo() || isPlayStation() || isFTW()) {
     push @local_options, XcodeCoverageSupportOptions() if $coverageSupport;
     push @local_options, XcodeStaticAnalyzerOption() if $shouldRunStaticAnalyzer;
     push @local_options, "WK_LTO_MODE=$ltoMode" if ($ltoMode ne "default");
-    if (isAppleMacWebKit()) {
-        my $version = osXVersion();
-        push @local_options, "MACOSX_DEPLOYMENT_TARGET=$version->{major}.$version->{minor}";
-    }
     # FIXME: Move this setting to xcconfigs once all local Xcode builds of WebKit
     # happen in the workspace. When this is only passed on the command line, it
     # invalidates build results made in the IDE (rdar://88135402).

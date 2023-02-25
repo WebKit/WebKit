@@ -527,7 +527,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         case AccessCase::Getter:
         case AccessCase::Setter:
         case AccessCase::ProxyObjectLoad:
-            // Getter / Setter / ProxyObjectLoad relies on stack-pointer adjustment, which is tied to the linked CodeBlock, which makes this code unshareable.
+        case AccessCase::ProxyObjectStore:
+            // Getter / Setter / ProxyObjectLoad / ProxyObjectStore relies on stack-pointer adjustment, which is tied to the linked CodeBlock, which makes this code unshareable.
             canBeShared = false;
             doesJSCalls = true;
             break;

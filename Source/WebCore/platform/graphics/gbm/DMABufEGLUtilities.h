@@ -57,10 +57,10 @@ static inline Vector<EGLint> constructEGLCreateImageAttributes(const DMABufObjec
         EGL_DMA_BUF_PLANE0_PITCH_EXT, EGLint(object.stride[planeIndex]),
     }));
 
-    if (planeModifiersUsage == PlaneModifiersUsage::Use) {
+    if (planeModifiersUsage == PlaneModifiersUsage::Use && object.modifierPresent[planeIndex]) {
         attributes.uncheckedAppend(Span<const EGLint>({
-            EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, EGLint(object.modifier[planeIndex] >> 32),
-            EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, EGLint(object.modifier[planeIndex] & 0xffffffff),
+            EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT, EGLint(object.modifierValue[planeIndex] >> 32),
+            EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT, EGLint(object.modifierValue[planeIndex] & 0xffffffff),
         }));
     }
 

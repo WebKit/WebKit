@@ -97,6 +97,7 @@ public:
     bool isGridIntegerRepeatValue() const { return m_classType == GridIntegerRepeatClass; }
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
     bool isGridTemplateAreasValue() const { return m_classType == GridTemplateAreasClass; }
+    bool isImageSetOptionValue() const { return m_classType == ImageSetOptionClass; }
     bool isImageSetValue() const { return m_classType == ImageSetClass; }
     bool isImageValue() const { return m_classType == ImageClass; }
     bool isInsetShape() const { return m_classType == InsetShapeClass; }
@@ -185,6 +186,7 @@ protected:
 
         // Image classes.
         ImageClass,
+        ImageSetOptionClass,
         CursorImageClass,
 
         // Image generator classes.

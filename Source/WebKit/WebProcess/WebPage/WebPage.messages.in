@@ -676,7 +676,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
     HandleWheelEvent(WebKit::WebWheelEvent event, OptionSet<WebCore::WheelEventProcessingSteps> processingSteps)
+#if PLATFORM(IOS_FAMILY)
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled)
+#endif
 
     LastNavigationWasAppInitiated() -> (bool wasAppBound)
 

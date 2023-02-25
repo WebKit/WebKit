@@ -266,7 +266,7 @@ bool PropertyCascade::shouldApplyAfterAnimation(const StyleProperties::PropertyR
         // We could check if the we are actually animating the referenced variable. Indirect cases would need to be taken into account.
         if (customProperty && !customProperty->isResolved())
             return true;
-        if (property.value()->isVariableReferenceValue())
+        if (property.value()->hasVariableReferences())
             return true;
     }
 

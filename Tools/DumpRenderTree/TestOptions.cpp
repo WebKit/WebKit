@@ -132,6 +132,7 @@ const TestFeatures& TestOptions::defaults()
             { "AspectRatioEnabled", true },
             { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },
+            { "AttachmentWideLayoutEnabled", false },
             { "CSSContainmentEnabled", false },
             { "CSSCounterStyleAtRuleImageSymbolsEnabled", false },
             { "CSSCounterStyleAtRulesEnabled", false },

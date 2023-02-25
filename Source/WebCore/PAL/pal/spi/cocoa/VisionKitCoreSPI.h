@@ -64,6 +64,7 @@ typedef NS_OPTIONS(NSUInteger, VKAnalysisTypes) {
     VKAnalysisTypeMachineReadableCode  = 1 << 2,
     VKAnalysisTypeAppClip              = 1 << 3,
     VKAnalysisTypeVisualSearch         = 1 << 4,
+    VKAnalysisTypeImageSegmentation    = 1 << 5,
     VKAnalysisTypeNone = 0,
     VKAnalysisTypeAll = NSUIntegerMax,
 };

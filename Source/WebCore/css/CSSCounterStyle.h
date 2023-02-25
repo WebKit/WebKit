@@ -37,7 +37,6 @@ class StyleRuleCounterStyle;
 class CSSCounterStyle : public RefCounted<CSSCounterStyle>, public CanMakeWeakPtr<CSSCounterStyle> {
 public:
     static Ref<CSSCounterStyle> create(const CSSCounterStyleDescriptors&, bool isPredefinedCounterStyle);
-    static Ref<CSSCounterStyle> createCounterStyleDecimal();
 
     bool operator==(const CSSCounterStyle& other) const
     {
@@ -84,21 +83,22 @@ private:
     bool isInRange(int) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative
     bool usesNegativeSign();
-    bool shouldApplyNegativeSymbols(int);
+    bool shouldApplyNegativeSymbols(int) const;
     // https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback
-    Ref<CSSCounterStyle> fallback();
+    WeakPtr<CSSCounterStyle> fallback() const { return m_fallbackReference; };
+    String fallbackText(int);
     // Generates a CSSCounterStyle object as it was defined by a 'decimal' descriptor. It is used as a last-resource in case we can't resolve fallback references.
-    void applyPadSymbols(String&);
-    void applyNegativeSymbols(String&);
+    void applyPadSymbols(String&, int) const;
+    void applyNegativeSymbols(String&) const;
     // Initial text representation for the counter, before applying pad and/or negative symbols. Suffix and Prefix are also not considered as described by https://www.w3.org/TR/css-counter-styles-3/#counter-styles.
-    String initialRepresentation(int);
+    String initialRepresentation(int) const;
 
-    String counterForSystemCyclic(int);
-    String counterForSystemFixed(int);
-    String counterForSystemSymbolic(int);
-    String counterForSystemAlphabetic(int);
-    String counterForSystemNumeric(int);
-    String counterForSystemAdditive(int);
+    String counterForSystemCyclic(int) const;
+    String counterForSystemFixed(int) const;
+    String counterForSystemSymbolic(int) const;
+    String counterForSystemAlphabetic(int) const;
+    String counterForSystemNumeric(int) const;
+    String counterForSystemAdditive(int) const;
 
     bool isPredefinedCounterStyle() const { return m_predefinedCounterStyle; }
     bool isAutoRange() const { return ranges().isEmpty(); }

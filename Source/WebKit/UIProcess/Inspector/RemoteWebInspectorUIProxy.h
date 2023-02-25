@@ -113,7 +113,7 @@ public:
     void updateWindowTitle(const CString&);
 #endif
 
-#if PLATFORM(WIN_CAIRO)
+#if PLATFORM(WIN)
     LRESULT sizeChange();
     LRESULT onClose();
 
@@ -185,7 +185,7 @@ private:
     GWeakPtr<GtkWidget> m_webView;
     GWeakPtr<GtkWidget> m_window;
 #endif
-#if PLATFORM(WIN_CAIRO)
+#if PLATFORM(WIN)
     HWND m_frontendHandle;
     RefPtr<WebView> m_webView;
 #endif

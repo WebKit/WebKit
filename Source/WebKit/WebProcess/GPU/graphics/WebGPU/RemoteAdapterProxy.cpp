@@ -46,7 +46,7 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
 {
 }
 
-void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(Ref<PAL::WebGPU::Device>&&)>&& callback)
+void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<PAL::WebGPU::Device>&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
@@ -60,6 +60,11 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
         return;
 
     auto [supportedFeatures, supportedLimits] = sendResult.takeReply();
+    if (!supportedLimits.maxTextureDimension2D) {
+        callback(nullptr);
+        return;
+    }
+
     auto resultSupportedFeatures = PAL::WebGPU::SupportedFeatures::create(WTFMove(supportedFeatures.features));
     auto resultSupportedLimits = PAL::WebGPU::SupportedLimits::create(
         supportedLimits.maxTextureDimension1D,
@@ -67,6 +72,7 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
         supportedLimits.maxTextureDimension3D,
         supportedLimits.maxTextureArrayLayers,
         supportedLimits.maxBindGroups,
+        supportedLimits.maxBindingsPerBindGroup,
         supportedLimits.maxDynamicUniformBuffersPerPipelineLayout,
         supportedLimits.maxDynamicStorageBuffersPerPipelineLayout,
         supportedLimits.maxSampledTexturesPerShaderStage,
@@ -79,9 +85,13 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
         supportedLimits.minUniformBufferOffsetAlignment,
         supportedLimits.minStorageBufferOffsetAlignment,
         supportedLimits.maxVertexBuffers,
+        supportedLimits.maxBufferSize,
         supportedLimits.maxVertexAttributes,
         supportedLimits.maxVertexBufferArrayStride,
         supportedLimits.maxInterStageShaderComponents,
+        supportedLimits.maxInterStageShaderVariables,
+        supportedLimits.maxColorAttachments,
+        supportedLimits.maxColorAttachmentBytesPerSample,
         supportedLimits.maxComputeWorkgroupStorageSize,
         supportedLimits.maxComputeInvocationsPerWorkgroup,
         supportedLimits.maxComputeWorkgroupSizeX,

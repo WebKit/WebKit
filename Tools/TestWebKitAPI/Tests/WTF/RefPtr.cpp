@@ -417,13 +417,13 @@ struct ConstRefCounted : RefCounted<ConstRefCounted> {
 
 static const ConstRefCounted& returnConstRefCountedRef()
 {
-    static NeverDestroyed<ConstRefCounted> instance;
-    return instance.get();
+    static NeverDestroyed<Ref<ConstRefCounted>> instance { ConstRefCounted::create() };
+    return instance.get().get();
 }
 static ConstRefCounted& returnRefCountedRef()
 {
-    static NeverDestroyed<ConstRefCounted> instance;
-    return instance.get();
+    static NeverDestroyed<Ref<ConstRefCounted>> instance { ConstRefCounted::create() };
+    return instance.get().get();
 }
 
 TEST(WTF_RefPtr, Const)

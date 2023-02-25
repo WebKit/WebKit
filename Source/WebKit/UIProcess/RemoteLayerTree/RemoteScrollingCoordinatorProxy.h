@@ -47,6 +47,7 @@ class PlatformWheelEvent;
 
 namespace WebKit {
 
+class NativeWebWheelEvent;
 class RemoteLayerTreeHost;
 class RemoteScrollingCoordinatorTransaction;
 class RemoteScrollingTree;
@@ -91,7 +92,7 @@ public:
 
     void currentSnapPointIndicesDidChange(WebCore::ScrollingNodeID, std::optional<unsigned> horizontal, std::optional<unsigned> vertical);
 
-    WebCore::WheelEventHandlingResult handleWheelEvent(const WebCore::PlatformWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    WebCore::WheelEventHandlingResult handleWheelEvent(const NativeWebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
     void handleMouseEvent(const WebCore::PlatformMouseEvent&);
     
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }

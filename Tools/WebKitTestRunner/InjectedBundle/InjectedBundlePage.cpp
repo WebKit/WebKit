@@ -58,7 +58,7 @@
 #include <wtf/text/cf/StringConcatenateCF.h>
 #endif
 
-#if USE(CF) && !PLATFORM(WIN_CAIRO)
+#if USE(CF) && !PLATFORM(WIN)
 #include "WebArchiveDumpSupport.h"
 #endif
 
@@ -747,7 +747,7 @@ void InjectedBundlePage::dumpAllFramesText(StringBuilder& stringBuilder)
 
 void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuilder& stringBuilder)
 {
-#if USE(CF) && !PLATFORM(WIN_CAIRO)
+#if USE(CF) && !PLATFORM(WIN)
     auto wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
     auto cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
     stringBuilder.append(WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get()).get());

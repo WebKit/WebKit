@@ -1983,16 +1983,71 @@ Color RenderTheme::datePlaceholderTextColor(const Color& textColor, const Color&
     return convertColor<SRGBA<float>>(hsla);
 }
 
-Color RenderTheme::documentMarkerLineColor(DocumentMarkerLineStyleMode mode, OptionSet<StyleColorOptions>) const
+
+Color RenderTheme::spellingMarkerColor(OptionSet<StyleColorOptions> options) const
+{
+    auto& cache = colorCache(options);
+    if (!cache.spellingMarkerColor.isValid())
+        cache.spellingMarkerColor = platformSpellingMarkerColor(options);
+    return cache.spellingMarkerColor;
+}
+
+Color RenderTheme::platformSpellingMarkerColor(OptionSet<StyleColorOptions>) const
+{
+    return Color::red;
+}
+
+Color RenderTheme::dictationAlternativesMarkerColor(OptionSet<StyleColorOptions> options) const
+{
+    auto& cache = colorCache(options);
+    if (!cache.dictationAlternativesMarkerColor.isValid())
+        cache.dictationAlternativesMarkerColor = platformDictationAlternativesMarkerColor(options);
+    return cache.dictationAlternativesMarkerColor;
+}
+
+Color RenderTheme::platformDictationAlternativesMarkerColor(OptionSet<StyleColorOptions>) const
+{
+    return Color::green;
+}
+
+Color RenderTheme::autocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions> options) const
+{
+    auto& cache = colorCache(options);
+    if (!cache.autocorrectionReplacementMarkerColor.isValid())
+        cache.autocorrectionReplacementMarkerColor = platformAutocorrectionReplacementMarkerColor(options);
+    return cache.autocorrectionReplacementMarkerColor;
+}
+
+Color RenderTheme::platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions>) const
+{
+    return Color::green;
+}
+
+Color RenderTheme::grammarMarkerColor(OptionSet<StyleColorOptions> options) const
+{
+    auto& cache = colorCache(options);
+    if (!cache.grammarMarkerColor.isValid())
+        cache.grammarMarkerColor = platformGrammarMarkerColor(options);
+    return cache.grammarMarkerColor;
+}
+
+Color RenderTheme::platformGrammarMarkerColor(OptionSet<StyleColorOptions>) const
+{
+    return Color::green;
+}
+
+Color RenderTheme::documentMarkerLineColor(DocumentMarkerLineStyleMode mode, OptionSet<StyleColorOptions> options) const
 {
     switch (mode) {
     case DocumentMarkerLineStyleMode::Spelling:
-        return Color::red;
+        return spellingMarkerColor(options);
     case DocumentMarkerLineStyleMode::DictationAlternatives:
     case DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives:
+        return dictationAlternativesMarkerColor(options);
     case DocumentMarkerLineStyleMode::AutocorrectionReplacement:
+        return autocorrectionReplacementMarkerColor(options);
     case DocumentMarkerLineStyleMode::Grammar:
-        return Color::green;
+        return grammarMarkerColor(options);
     }
 
     ASSERT_NOT_REACHED();

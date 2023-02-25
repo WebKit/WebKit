@@ -64,6 +64,9 @@ void StyleMultiImage::load(CachedResourceLoader& loader, const ResourceLoaderOpt
     m_isPending = false;
 
     auto bestFitImage = selectBestFitImage(*loader.document());
+    if (!bestFitImage.image)
+        return;
+
     ASSERT(is<StyleCachedImage>(bestFitImage.image) || is<StyleGeneratedImage>(bestFitImage.image));
 
     if (is<StyleGeneratedImage>(bestFitImage.image)) {

@@ -110,6 +110,8 @@ class JSGlobalObject;
     v(makeBoundFunction, nullptr) \
     v(hasOwnLengthProperty, nullptr) \
     v(handleProxyGetTrapResult, nullptr) \
+    v(handleProxySetTrapResultSloppy, nullptr) \
+    v(handleProxySetTrapResultStrict, nullptr) \
     v(dateTimeFormat, nullptr) \
     v(webAssemblyCompileStreamingInternal, nullptr) \
     v(webAssemblyInstantiateStreamingInternal, nullptr) \

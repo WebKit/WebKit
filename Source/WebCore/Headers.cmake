@@ -2029,6 +2029,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/BreakLines.h
     rendering/CaretRectComputation.h
     rendering/CSSFilter.h
+    rendering/CSSValueKey.h
     rendering/ClipRect.h
     rendering/EventRegion.h
     rendering/FloatingObjects.h
@@ -2234,6 +2235,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/service/ServiceWorkerContextData.h
     workers/service/ServiceWorkerData.h
     workers/service/ServiceWorkerIdentifier.h
+    workers/service/ServiceWorkerImportedScript.h
     workers/service/ServiceWorkerJob.h
     workers/service/ServiceWorkerJobClient.h
     workers/service/ServiceWorkerJobData.h

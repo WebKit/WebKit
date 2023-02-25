@@ -2090,7 +2090,9 @@ public:
     bool isServiceWorkerPage() const { return false; }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
 #if ENABLE(IMAGE_ANALYSIS)

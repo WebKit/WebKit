@@ -4935,6 +4935,72 @@ void WebViewImpl::unmarkText()
     m_page->confirmCompositionAsync();
 }
 
+static BOOL shouldUseHighlightsForMarkedText(NSAttributedString *string)
+{
+    __block BOOL result = NO;
+
+    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange, BOOL *stop) {
+        BOOL hasUnderlineStyle = !![attributes objectForKey:NSUnderlineStyleAttributeName];
+        BOOL hasUnderlineColor = !![attributes objectForKey:NSUnderlineColorAttributeName];
+
+        BOOL hasBackgroundColor = !![attributes objectForKey:NSBackgroundColorAttributeName];
+        BOOL hasForegroundColor = !![attributes objectForKey:NSForegroundColorAttributeName];
+
+        // Marked text may be represented either as an underline or a highlight; this mode is dictated
+        // by the attributes it has, and therefore having both types of attributes is not allowed.
+        ASSERT(!((hasUnderlineStyle || hasUnderlineColor) && (hasBackgroundColor || hasForegroundColor)));
+
+        if (hasUnderlineStyle || hasUnderlineColor) {
+            result = NO;
+            *stop = YES;
+        } else if (hasBackgroundColor || hasForegroundColor) {
+            result = YES;
+            *stop = YES;
+        }
+    }];
+
+    return result;
+}
+
+static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedString *string)
+{
+    if (!string.length)
+        return { };
+
+    Vector<WebCore::CompositionHighlight> highlights;
+    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&highlights](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        std::optional<WebCore::Color> backgroundHighlightColor;
+        if (CocoaColor *backgroundColor = attributes[NSBackgroundColorAttributeName])
+            backgroundHighlightColor = WebCore::colorFromCocoaColor(backgroundColor);
+
+        std::optional<WebCore::Color> foregroundHighlightColor;
+        if (CocoaColor *foregroundColor = attributes[NSForegroundColorAttributeName])
+            foregroundHighlightColor = WebCore::colorFromCocoaColor(foregroundColor);
+
+        highlights.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), backgroundHighlightColor, foregroundHighlightColor });
+    }];
+
+    std::sort(highlights.begin(), highlights.end(), [](auto& a, auto& b) {
+        if (a.startOffset < b.startOffset)
+            return true;
+        if (a.startOffset > b.startOffset)
+            return false;
+        return a.endOffset < b.endOffset;
+    });
+
+    Vector<WebCore::CompositionHighlight> mergedHighlights;
+    mergedHighlights.reserveInitialCapacity(highlights.size());
+    for (auto& highlight : highlights) {
+        if (mergedHighlights.isEmpty() || mergedHighlights.last().backgroundColor != highlight.backgroundColor || mergedHighlights.last().foregroundColor != highlight.foregroundColor)
+            mergedHighlights.uncheckedAppend(highlight);
+        else
+            mergedHighlights.last().endOffset = highlight.endOffset;
+    }
+
+    mergedHighlights.shrinkToFit();
+    return mergedHighlights;
+}
+
 void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replacementRange)
 {
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
@@ -4943,13 +5009,18 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u) replacementRange:(%u, %u)", isAttributedString ? [string string] : string, selectedRange.location, selectedRange.length, replacementRange.location, replacementRange.length);
 
     Vector<WebCore::CompositionUnderline> underlines;
+    Vector<WebCore::CompositionHighlight> highlights;
     NSString *text;
 
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
-        auto initialUnderlines = extractInitialUnderlines(string);
-        underlines = !initialUnderlines.isEmpty() ? initialUnderlines : extractUnderlines(string);
+        if (shouldUseHighlightsForMarkedText(string))
+            highlights = compositionHighlights(string);
+        else {
+            auto initialUnderlines = extractInitialUnderlines(string);
+            underlines = !initialUnderlines.isEmpty() ? initialUnderlines : extractUnderlines(string);
+        }
     } else {
         text = string;
         underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
@@ -4968,7 +5039,7 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
         return;
     }
 
-    m_page->setCompositionAsync(text, underlines, { }, selectedRange, replacementRange);
+    m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), selectedRange, replacementRange);
 }
 
 // Synchronous NSTextInputClient is still implemented to catch spurious sync calls. Remove when that is no longer needed.
@@ -6063,7 +6134,7 @@ void WebViewImpl::installImageAnalysisOverlayView(VKCImageAnalysis *analysis)
         m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[m_view bounds]]);
         m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*this]);
         [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
-        setUpAdditionalImageAnalysisBehaviors(m_imageAnalysisOverlayView.get());
+        prepareImageAnalysisForOverlayView(m_imageAnalysisOverlayView.get());
         RELEASE_LOG(ImageAnalysis, "Installing image analysis overlay view at {{ %.0f, %.0f }, { %.0f, %.0f }}",
             m_imageAnalysisInteractionBounds.x(), m_imageAnalysisInteractionBounds.y(), m_imageAnalysisInteractionBounds.width(), m_imageAnalysisInteractionBounds.height());
     }

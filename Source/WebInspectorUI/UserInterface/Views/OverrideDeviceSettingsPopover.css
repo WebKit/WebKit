@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebAutocorrectionData.h"
-
-#if PLATFORM(IOS_FAMILY)
-
-#import "ArgumentCodersCocoa.h"
-#import "Decoder.h"
-#import "Encoder.h"
-#import "WebCoreArgumentCoders.h"
-#import <UIKit/UIKit.h>
-#import <WebCore/FloatRect.h>
-
-namespace WebKit {
-using namespace WebCore;
-
-void WebAutocorrectionData::encode(IPC::Encoder& encoder) const
-{
-    encoder << textRects;
-    IPC::encode(encoder, font.get());
+.popover .settings-content.device-settings-content > label {
+    width: fit-content;
 }
 
-std::optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
-{
-    std::optional<Vector<FloatRect>> textRects;
-    decoder >> textRects;
-    if (!textRects)
-        return std::nullopt;
-
-    RetainPtr<UIFont> font;
-    if (!IPC::decode(decoder, font, @[ UIFont.class ]))
-        return std::nullopt;
-
-    return {{ *textRects, font }};
+.popover .settings-content.device-settings-content > label > input {
+    margin: 0;
+    margin-inline: 0.5px 4px;
 }
 
-} // namespace WebKit
+.popover .settings-content.device-settings-content > .select-with-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px 0;
+}
 
-#endif // PLATFORM(IOS_FAMILY)
+.popover .settings-content.device-settings-content > .reference-page-link-container {
+    position: absolute;
+    bottom: 0.5em;
+    inset-inline-end: 0.5em;
+}

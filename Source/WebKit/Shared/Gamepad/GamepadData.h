@@ -33,11 +33,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 class GamepadData {
@@ -48,9 +43,8 @@ public:
     }
 
     GamepadData(unsigned index, const String& id, const String& mapping, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime, const WebCore::GamepadHapticEffectTypeSet& supportedEffectTypes);
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<GamepadData> decode(IPC::Decoder&);
+    
+    GamepadData(unsigned index, String&& id, String&& mapping, Vector<double>&& axisValues, Vector<double>&& buttonValues, MonotonicTime lastUpdateTime, WebCore::GamepadHapticEffectTypeSet&& supportedEffectTypes);
 
     bool isNull() const { return m_isNull; }
 

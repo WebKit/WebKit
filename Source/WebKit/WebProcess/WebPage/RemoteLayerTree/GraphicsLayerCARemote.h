@@ -52,7 +52,7 @@ private:
 #if ENABLE(MODEL_ELEMENT)
     Ref<WebCore::PlatformCALayer> createPlatformCALayer(Ref<WebCore::Model>, WebCore::PlatformCALayerClient* owner) override;
 #endif
-#if ENABLE(AVKIT)
+#if HAVE(AVKIT)
     Ref<WebCore::PlatformCALayer> createPlatformVideoLayer(WebCore::HTMLVideoElement&, WebCore::PlatformCALayerClient* owner) override;
 #endif
     Ref<WebCore::PlatformCAAnimation> createPlatformCAAnimation(WebCore::PlatformCAAnimation::AnimationType, const String& keyPath) override;

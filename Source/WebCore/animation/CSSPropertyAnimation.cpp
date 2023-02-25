@@ -2050,6 +2050,8 @@ private:
 
     bool canInterpolate(const FillLayer* from, const FillLayer* to) const final
     {
+        if (property() == CSSPropertyMaskImage)
+            return false;
         return value(from) && value(to);
     }
 
@@ -2188,12 +2190,34 @@ private:
         auto* toLayer = &(to.*m_layersGetter)();
         auto* dstLayer = &(destination.*m_layersAccessor)();
 
-        while (fromLayer && toLayer && dstLayer) {
+        if (context.isDiscrete) {
+            ASSERT(!context.progress || context.progress == 1.0);
+            auto* layer = context.progress ? toLayer : fromLayer;
+            fromLayer = layer;
+            toLayer = layer;
+        }
+
+        size_t layerCount = 0;
+        Vector<FillLayer*> previousDstLayers;
+        FillLayer* previousDstLayer = nullptr;
+        while (fromLayer && toLayer) {
+            if (dstLayer)
+                previousDstLayers.append(dstLayer);
+            else {
+                ASSERT(!previousDstLayers.isEmpty());
+                auto* layerToCopy = previousDstLayers[layerCount % previousDstLayers.size()];
+                previousDstLayer->setNext(layerToCopy->copy());
+                dstLayer = previousDstLayer->next();
+            }
+
             dstLayer->setSizeType((context.progress ? toLayer : fromLayer)->sizeType());
             m_fillLayerPropertyWrapper->blend(dstLayer, fromLayer, toLayer, context);
             fromLayer = fromLayer->next();
             toLayer = toLayer->next();
+
+            previousDstLayer = dstLayer;
             dstLayer = dstLayer->next();
+            layerCount++;
         }
     }
 
