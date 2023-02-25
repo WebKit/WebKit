@@ -507,14 +507,14 @@ bool TextFieldInputType::shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited
 
 #endif // ENABLE(DATALIST_ELEMENT)
 
-static String limitLength(const String& string, unsigned maxNumGraphemeClusters)
+static String limitLength(const String& string, unsigned maxLength)
 {
-    StringView stringView { string };
-
-    if (!stringView.is8Bit())
-        maxNumGraphemeClusters = numCodeUnitsInGraphemeClusters(stringView, maxNumGraphemeClusters);
-
-    return string.left(maxNumGraphemeClusters);
+    unsigned newLength = std::min(maxLength, string.length());
+    if (newLength == string.length())
+        return string;
+    if (newLength > 0 && U16_IS_LEAD(string[newLength - 1]))
+        --newLength;
+    return string.left(newLength);
 }
 
 static String autoFillButtonTypeToAccessibilityLabel(AutoFillButtonType autoFillButtonType)
@@ -606,7 +606,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     // because they can be mismatched by sanitizeValue() in
     // HTMLInputElement::subtreeHasChanged() in some cases.
     String innerText = element()->innerTextValue();
-    unsigned oldLength = numGraphemeClusters(innerText);
+    unsigned oldLength = innerText.length();
 
     // selectionLength represents the selection length of this text field to be
     // removed by this insertion.
@@ -618,8 +618,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
         ASSERT(enclosingTextFormControl(element()->document().frame()->selection().selection().start()) == element());
         unsigned selectionStart = element()->selectionStart();
         ASSERT(selectionStart <= element()->selectionEnd());
-        int selectionCodeUnitCount = element()->selectionEnd() - selectionStart;
-        selectionLength = selectionCodeUnitCount ? numGraphemeClusters(StringView(innerText).substring(selectionStart, selectionCodeUnitCount)) : 0;
+        selectionLength = element()->selectionEnd() - selectionStart;
     }
     ASSERT(oldLength >= selectionLength);
 

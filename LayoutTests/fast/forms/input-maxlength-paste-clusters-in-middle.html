@@ -15,8 +15,8 @@ shouldBeEqualToString('input.value', 'abc');
 shouldBeEqualToString('input.getAttribute("maxlength")', '3');
 evalAndLog('input.selectionStart = input.selectionEnd = 2');
 evalAndLog('getSelection().modify("extend", "backward", "character")');
-shouldBeEqualToString('document.execCommand("insertText", false, "\u0938\u094D"); input.value', 'a\u0938\u094Dc');
-shouldBe('input.value.length', '4');
+shouldBeEqualToString('document.execCommand("insertText", false, "\u0938\u094D"); input.value', 'a\u0938c');
+shouldBe('input.value.length', '3');
 
 var successfullyParsed = true;
 

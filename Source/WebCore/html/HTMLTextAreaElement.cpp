@@ -60,7 +60,7 @@ using namespace HTMLNames;
 // This function returns number of characters considering this.
 static unsigned computeLengthForSubmission(StringView text, unsigned numberOfLineBreaks)
 {
-    return numGraphemeClusters(text) + numberOfLineBreaks;
+    return text.length() + numberOfLineBreaks;
 }
 
 static unsigned numberOfLineBreaks(StringView text)
@@ -76,7 +76,7 @@ static unsigned numberOfLineBreaks(StringView text)
 
 static unsigned computeLengthForSubmission(StringView text)
 {
-    return numGraphemeClusters(text) + numberOfLineBreaks(text);
+    return text.length() + numberOfLineBreaks(text);
 }
 
 static unsigned upperBoundForLengthForSubmission(StringView text, unsigned numberOfLineBreaks)

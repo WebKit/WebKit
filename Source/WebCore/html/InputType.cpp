@@ -563,10 +563,10 @@ String InputType::validationMessage() const
         return validationMessagePatternMismatchText();
 
     if (element()->tooShort())
-        return validationMessageTooShortText(numGraphemeClusters(value), element()->minLength());
+        return validationMessageTooShortText(value.length(), element()->minLength());
 
     if (element()->tooLong())
-        return validationMessageTooLongText(numGraphemeClusters(value), element()->effectiveMaxLength());
+        return validationMessageTooLongText(value.length(), element()->effectiveMaxLength());
 
     if (!isSteppable())
         return emptyString();
