@@ -5115,7 +5115,6 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-select
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-057.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-digraph.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-punctuation-and-space.html [ ImageOnlyFailure ]
-webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-punctuation-dynamic.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-skip-empty-span-nested.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-skip-empty-span.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/first-line-with-inline-block.html [ ImageOnlyFailure ]

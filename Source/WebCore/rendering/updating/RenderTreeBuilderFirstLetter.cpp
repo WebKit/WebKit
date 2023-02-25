@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2007 David Smith (catfish.man@gmail.com)
- * Copyright (C) 2003-2011, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -102,9 +102,9 @@ static inline bool isPunctuationForFirstLetter(UChar32 c)
     return U_GET_GC_MASK(c) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
 }
 
-static inline bool shouldSkipForFirstLetter(UChar32 c)
+static inline bool isSpaceForFirstLetter(UChar32 c)
 {
-    return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
+    return isSpaceOrNewline(c) || c == noBreakSpace;
 }
 
 static bool supportsFirstLetter(RenderBlock& block)
@@ -245,10 +245,22 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
 
     if (!oldText.isEmpty()) {
         unsigned length = 0;
+        unsigned textLength = oldText.length();
 
-        // Account for leading spaces and punctuation.
-        while (length < oldText.length() && shouldSkipForFirstLetter(oldText.characterStartingAt(length)))
+        if (!textLength)
+            return;
+
+        // Account for leading spaces first.
+        while (length < textLength && isSpaceForFirstLetter(oldText.characterStartingAt(length)))
             length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
+        
+        // Account for leading punctuation.
+        while (length < textLength && isPunctuationForFirstLetter(oldText.characterStartingAt(length)))
+            length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
+        
+        // Bail if we didn't find a letter before the end of the text or before a space.
+        if (isSpaceForFirstLetter(oldText.characterStartingAt(length)) || length == textLength)
+            return;
 
         // Account for first grapheme cluster.
         length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
@@ -256,16 +268,15 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         // Keep looking for whitespace and allowed punctuation, but avoid
         // accumulating just whitespace into the :first-letter.
         unsigned numCodeUnits = 0;
-        for (unsigned scanLength = length; scanLength < oldText.length(); scanLength += numCodeUnits) {
+        for (unsigned scanLength = length; scanLength < textLength; scanLength += numCodeUnits) {
             UChar32 c = oldText.characterStartingAt(scanLength);
 
-            if (!shouldSkipForFirstLetter(c))
+            if (!isPunctuationForFirstLetter(c))
                 break;
 
             numCodeUnits = numCodeUnitsInGraphemeClusters(StringView(oldText).substring(scanLength), 1);
 
-            if (isPunctuationForFirstLetter(c))
-                length = scanLength + numCodeUnits;
+            length = scanLength + numCodeUnits;
         }
 
         auto* textNode = currentTextChild.textNode();

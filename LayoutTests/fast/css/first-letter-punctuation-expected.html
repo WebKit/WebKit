@@ -10,11 +10,20 @@
         </style>
     </head>
     <body>
-        <p>Test passes if all the T and surrounding punctuation are green.</p>
+        <p>Test passes if all the T are green, as well as punctuation elements when they are adjacent to a letter (without spaces)</p>
+        <div><span class="bigGreenText">T</span>est</div>
+        <div><span class="bigGreenText">&nbsp;T</span>est&nbsp;</div>
         <div><span class="bigGreenText">(T)</span>est</div>
+        <div><span class="bigGreenText">&nbsp;(T)</span>est</div>
         <div><span class="bigGreenText">&ldquo;T&rdquo;</span>est</div>
-        <div><span class="bigGreenText">&laquo;&nbsp;T&nbsp;&raquo;</span>est</div>
-        <div><span class="bigGreenText">&laquo;&nbsp;T&nbsp;&raquo;</span>&nbsp;&nbsp;&nbsp;&nbsp;est</div>
-        <div><span class="bigGreenText">&#x10100;T&#x10100;</span>est</div>
+        <div><span class="bigGreenText">&amp;T</span>est</div>
+        <div><span class="bigGreenText">&nbsp;&amp;T</span>est</div>
+        <div><span class="bigGreenText">T&amp;</span>S<div>
+        <div><span class="bigGreenText">T</span>&nbsp;&amp;&nbsp;S<div>
+        <div><span class="bigGreenText">T</span> &amp; S<div>
+        <div>&laquo;&nbsp;S&nbsp;&raquo;</div>
+        <div>&laquo;&nbsp;S&nbsp;&raquo;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div>&bull; </div>
+        <div>&nbsp;&bull; &nbsp;</div>
     </body>
 </html>
