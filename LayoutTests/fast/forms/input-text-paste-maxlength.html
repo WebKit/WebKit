@@ -96,8 +96,9 @@ shouldBe("visibleValueOf('g')", "'12' + fancyX + '45'");
 debug("pasting too much text");
 document.getElementById("k").focus();
 document.execCommand("InsertHTML", false, "12x&#x305;&#x332;45");
-shouldBe("domValueOf('k')", "'12' + fancyX + '4'");
-shouldBe("visibleValueOf('k')", "'12' + fancyX + '4'");
+let truncatedFancyX = "x" + String.fromCharCode(0x305);
+shouldBe("domValueOf('k')", "'12' + truncatedFancyX");
+shouldBe("visibleValueOf('k')", "'12' + truncatedFancyX");
 
 debug("pasting too much text with maxlength=0");
 document.getElementById("l").focus();
