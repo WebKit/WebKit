@@ -88,7 +88,7 @@ synchronize our SDK with its parent.
 4. Make sure the pipenv uses a version of `bst` compatible with the new SDK version. For instance
    22.08 still depends on bst-1, while 23.08 is expected to require bst-2.
 5. If you updated the `Pipfile`, update your local environment accordingly. For instance here I use
-   this command: `toolbox run -c fedora-toolbox-36 $PWD/Tools/Scripts/bst-wrapper pipenv update`.
+   this command: `toolbox run -c fedora-toolbox-37 $PWD/Tools/Scripts/bst-wrapper pipenv update`.
    YMMV.
 
 ### Updating FDO junction and recipes
