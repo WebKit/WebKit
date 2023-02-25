@@ -32,21 +32,21 @@
             await waitFor(sourceBuffer, 'update');
 
             consoleWrite('Divide the first media segment in two.');
-            run('partial1 = loader.mediaSegment(0).slice(0, 14006)');
-            run('partial2 = loader.mediaSegment(0).slice(14006)');
+            run('partial1 = loader.mediaSegment(0).slice(0, loader.mediaSegmentSize(0)/2)');
+            run('partial2 = loader.mediaSegment(0).slice(loader.mediaSegmentSize(0)/2)');
 
             consoleWrite('Append a partial media segment.')
             run('sourceBuffer.appendBuffer(partial1)');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '3.621', '==');
+            testExpected('sourceBuffer.buffered.end(0)', '3.961', '==');
 
             consoleWrite('Complete the partial media segment.')
             run('sourceBuffer.appendBuffer(partial2)');
             await waitFor(sourceBuffer, 'update');
 
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '10.001', '==');
+            testExpected('sourceBuffer.buffered.end(0)', '4.981', '==');
 
             consoleWrite('Clean sourcebuffer of all content.');
             run('sourceBuffer.remove(0, 100)');
@@ -56,13 +56,14 @@
             run('sourceBuffer.appendBuffer(loader.mediaSegment(1))');
             await waitFor(sourceBuffer, 'update');
             testExpected('sourceBuffer.buffered.length', '1');
-            testExpected('sourceBuffer.buffered.end(0)', '90.001', '==');
+            testExpected('sourceBuffer.buffered.start(0)', '4.981', '==');
+            testExpected('sourceBuffer.buffered.end(0)', '9.981', '==');
 
             run('sourceBuffer.appendBuffer(loader.mediaSegment(0))');
             await waitFor(sourceBuffer, 'update');
-            testExpected('sourceBuffer.buffered.length', '2');
-            testExpected('sourceBuffer.buffered.end(0)', '10.001', '==');
-            testExpected('sourceBuffer.buffered.end(1)', '90.001', '==');
+            testExpected('sourceBuffer.buffered.length', '1');
+            testExpected('sourceBuffer.buffered.start(0)', '0', '==');
+            testExpected('sourceBuffer.buffered.end(0)', '9.981', '==');
 
             endTest();
         } catch (e) {

@@ -1,10 +1,13 @@
 {
     "url": "content/test-opus.webm",
     "type": "audio/webm; codecs=\"opus\"",
-    "init": { "offset": 0, "size": 272 },
-    "duration": 169.001,
+    "init": { "offset": 0, "size": 461 },
+    "duration": 90.001,
     "media": [
-        { "offset": 272, "size": 142176, "timestamp": 0, "duration": 10.001 },
-        { "offset": 142448, "size": 207102, "timestamp": 80.001, "duration": 10 }
+        { "offset": 461, "size": 42710, "timestamp": 0, "duration": 4.981 },
+        { "offset": 43171, "size": 99081, "timestamp": 4.981, "duration": 5 },
+        { "offset": 142252, "size": 401, "timestamp": 9.981, "duration": 70.02 },
+        { "offset": 142653, "size": 105160, "timestamp": 80.001, "duration": 5 },
+        { "offset": 247813, "size": 101949, "timestamp": 85.001, "duration": 5 }
     ]
 }
