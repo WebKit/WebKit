@@ -6224,6 +6224,7 @@ imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noop
 
 # CSS nesting unsupported yet
 imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-nesting/nesting-basic.html [ ImageOnlyFailure ]
 
 # Needs non-zero line gap in 'Arial'
 fast/text/text-edge-no-half-leading-simple.html [ Skip ]
