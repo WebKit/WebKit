@@ -3232,6 +3232,9 @@ webkit.org/b/252878 loader/navigation-policy/should-open-external-urls/subframe-
 webkit.org/b/252878 webrtc/multi-video.html [ Failure Pass Timeout ]
 webkit.org/b/252878 webrtc/peer-connection-remote-audio-mute2.html [ Pass Timeout ]
 
+# Missing support for UIScriptController.paste()
+fast/forms/input-text-max-length-emojis.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -48,6 +48,7 @@ public:
     ~BoxTree();
 
     void updateStyle(const RenderBoxModelObject&);
+    void updateContent(const RenderText&);
     const Layout::Box& insert(const RenderElement& parent, RenderObject& child);
 
     const RenderBlock& rootRenderer() const { return m_rootRenderer; }

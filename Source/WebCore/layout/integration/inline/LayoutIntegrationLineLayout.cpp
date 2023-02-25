@@ -1191,17 +1191,20 @@ void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
     auto& childLayoutBox = m_boxTree.insert(parent, child);
     if (m_inlineContent && is<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
-        invalidation.textInserted(downcast<Layout::InlineTextBox>(childLayoutBox), { }, { });
+        invalidation.textInserted();
         return;
     }
     ASSERT_NOT_IMPLEMENTED_YET();
 }
 
-void LineLayout::updateTextContent(const RenderText& renderText, size_t offset, size_t length)
+void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset, size_t length)
 {
-    UNUSED_PARAM(renderText);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(length);
+    m_boxTree.updateContent(textRenderer);
+    if (m_inlineContent) {
+        auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineFormattingState, m_inlineContent->boxes };
+        invalidation.textInserted(&downcast<Layout::InlineTextBox>(m_boxTree.layoutBoxForRenderer(textRenderer)), offset, length);
+        return;
+    }
 }
 
 void LineLayout::releaseCaches(RenderView& view)

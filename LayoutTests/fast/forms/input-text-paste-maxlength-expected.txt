@@ -23,8 +23,8 @@ set maxLength property that is smaller than pasted value
 PASS domValueOf('g') is '12' + fancyX + '45'
 PASS visibleValueOf('g') is '12' + fancyX + '45'
 pasting too much text
-PASS domValueOf('k') is '12' + fancyX + '4'
-PASS visibleValueOf('k') is '12' + fancyX + '4'
+PASS domValueOf('k') is '12' + truncatedFancyX
+PASS visibleValueOf('k') is '12' + truncatedFancyX
 pasting too much text with maxlength=0
 PASS domValueOf('l') is ''
 PASS visibleValueOf('l') is ''

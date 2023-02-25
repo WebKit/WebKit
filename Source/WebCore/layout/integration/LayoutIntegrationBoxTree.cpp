@@ -267,6 +267,11 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     }
 }
 
+void BoxTree::updateContent(const RenderText& textRenderer)
+{
+    UNUSED_PARAM(textRenderer);
+}
+
 const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child)
 {
     UNUSED_PARAM(parent);

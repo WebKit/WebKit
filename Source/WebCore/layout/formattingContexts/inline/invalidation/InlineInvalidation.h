@@ -49,7 +49,7 @@ public:
 
     void styleChanged(const Box&, const RenderStyle& oldStyle);
 
-    void textInserted(const InlineTextBox&, std::optional<size_t> offset, std::optional<size_t> length);
+    void textInserted(const InlineTextBox* damagedInlineTextBox = nullptr, std::optional<size_t> offset = { }, std::optional<size_t> length = { });
     void textWillBeRemoved(const InlineTextBox&, std::optional<size_t> offset, std::optional<size_t> length);
 
     void inlineLevelBoxInserted(const Box&);

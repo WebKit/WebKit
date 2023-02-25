@@ -198,11 +198,11 @@ TEST(FontManagerTests, ChangeFontWithPanel)
     [webView waitForNextPresentationUpdate];
 
     auto expectSameAttributes = [](NSFont *font1, NSFont *font2) {
-        NSMutableDictionary<NSFontDescriptorAttributeName, id> *fontAttributes1 = font1.fontDescriptor.fontAttributes.mutableCopy;
-        NSMutableDictionary<NSFontDescriptorAttributeName, id> *fontAttributes2 = font2.fontDescriptor.fontAttributes.mutableCopy;
+        auto fontAttributes1 = adoptNS(font1.fontDescriptor.fontAttributes.mutableCopy);
+        auto fontAttributes2 = adoptNS(font2.fontDescriptor.fontAttributes.mutableCopy);
         [fontAttributes1 removeObjectForKey:NSFontVariationAttribute];
         [fontAttributes2 removeObjectForKey:NSFontVariationAttribute];
-        BOOL attributesAreEqual = [fontAttributes1 isEqualToDictionary:fontAttributes2];
+        BOOL attributesAreEqual = [fontAttributes1 isEqualToDictionary:fontAttributes2.get()];
         EXPECT_TRUE(attributesAreEqual);
         if (!attributesAreEqual)
             NSLog(@"Expected %@ to have the same attributes as %@", font1, font2);

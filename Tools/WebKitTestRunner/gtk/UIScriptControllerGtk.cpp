@@ -93,6 +93,11 @@ void UIScriptControllerGtk::copyText(JSStringRef text)
 #endif
 }
 
+void UIScriptControllerGtk::paste()
+{
+    // FIXME: implement.
+}
+
 void UIScriptControllerGtk::dismissMenu()
 {
     // FIXME: implement.

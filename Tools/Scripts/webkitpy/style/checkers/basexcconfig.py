@@ -21,6 +21,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 from webkitpy.common.memoized import memoized
 
 
@@ -47,7 +48,9 @@ class BaseXcconfigChecker(object):
         inherited_vars = {}
         override_vars = {}
 
-        for line in open('Configurations/CommonBase.xcconfig'):
+        common_base_xcconfig_path = os.path.join(
+            os.path.dirname(__file__), '../../../../..', 'Configurations/CommonBase.xcconfig')
+        for line in open(common_base_xcconfig_path):
             # Find lines containing assignments.
             lhs, operator, rhs = map(str.strip, line.partition('='))
 
