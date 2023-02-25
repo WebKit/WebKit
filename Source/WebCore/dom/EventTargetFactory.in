@@ -22,6 +22,8 @@ IDBDatabase
 IDBOpenDBRequest
 IDBRequest
 IDBTransaction
+ManagedMediaSource conditional=MANAGED_MEDIA_SOURCE
+ManagedSourceBuffer conditional=MANAGED_MEDIA_SOURCE
 MediaController conditional=VIDEO
 MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA
