@@ -7,8 +7,8 @@ PASS input.value is "abc"
 PASS input.getAttribute("maxlength") is "3"
 input.selectionStart = input.selectionEnd = 2
 getSelection().modify("extend", "backward", "character")
-PASS document.execCommand("insertText", false, "स्"); input.value is "aस्c"
-PASS input.value.length is 4
+PASS document.execCommand("insertText", false, "स्"); input.value is "aसc"
+PASS input.value.length is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE

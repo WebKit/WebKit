@@ -3202,6 +3202,9 @@ media/audio-session-category-unmute-mute.html [ Skip ]
 
 webkit.org/b/229732 fast/text/font-promises-gc.html [ Failure ]
 
+# Missing support for UIScriptController.paste()
+fast/forms/input-text-max-length-emojis.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
